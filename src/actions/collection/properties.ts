@@ -74,8 +74,14 @@ export async function deleteProperty(propertyId: string) {
     throw new Error('集合不存在');
   }
 
-  await db.orm.public.CollectionValue.where({ propertyId }).delete();
-  await db.orm.public.CollectionProperty.where({ id: propertyId }).delete();
+  await db.orm.public.CollectionValue.where({ propertyId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+  await db.orm.public.CollectionProperty.where({ id: propertyId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
 
   revalidatePath(`/collections/${(property as any).collectionId}`);
 }

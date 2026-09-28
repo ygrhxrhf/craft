@@ -82,7 +82,10 @@ export async function deleteView(viewId: string) {
     throw new Error('集合不存在');
   }
 
-  await db.orm.public.CollectionView.where({ id: viewId }).delete();
+  await db.orm.public.CollectionView.where({ id: viewId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
 
   revalidatePath(`/collections/${(view as any).collectionId}`);
 }

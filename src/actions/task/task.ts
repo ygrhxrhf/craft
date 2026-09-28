@@ -92,7 +92,10 @@ export async function syncDocumentTasks(
   for (const t of existing) {
     const row = t as any;
     if (typeof row.blockId === 'string' && !incoming.has(row.blockId)) {
-      await db.orm.public.Task.where({ id: row.id }).delete();
+      await db.orm.public.Task.where({ id: row.id }).update({
+        deletedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
     }
   }
 }
@@ -234,7 +237,10 @@ export async function deleteTask(id: string) {
   const task = await db.orm.public.Task.first({ id });
   if (!task || (task as any).userId !== session.user.id) throw new Error('未授权');
 
-  await db.orm.public.Task.where({ id }).delete();
+  await db.orm.public.Task.where({ id }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
 }
 
 export async function getTasksForDay(dayStart: string, dayEnd: string): Promise<TaskItem[]> {

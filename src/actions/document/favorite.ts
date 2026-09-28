@@ -9,21 +9,33 @@ export async function toggleFavorite(documentId: string) {
   await requireDocumentAccess(documentId, userId, 'viewer');
 
   const db = await getDb();
-  const existing = await db.orm.public.Favorite.first({
+  const existing = (await db.orm.public.Favorite.first({
     userId: userId,
     documentId,
-  });
+  })) as { id: string; deletedAt?: string | null } | null;
 
-  if (existing) {
-    await db.orm.public.Favorite.where({ id: (existing as { id: string }).id }).delete();
+  if (existing && !existing.deletedAt) {
+    // 已收藏 → 取消收藏：写墓碑而非物理删除（对增量同步可见）
+    await db.orm.public.Favorite.where({ id: existing.id }).update({
+      deletedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
     return false;
   }
 
-  await db.orm.public.Favorite.create({
-    id: crypto.randomUUID(),
-    userId: userId,
-    documentId,
-  });
+  if (existing) {
+    // 含墓碑的旧行命中：清墓碑复用（唯一键 [userId, documentId] 不加 deletedAt 后缀）
+    await db.orm.public.Favorite.where({ id: existing.id }).update({
+      deletedAt: null,
+      updatedAt: new Date().toISOString(),
+    });
+  } else {
+    await db.orm.public.Favorite.create({
+      id: crypto.randomUUID(),
+      userId: userId,
+      documentId,
+    });
+  }
   return true;
 }
 

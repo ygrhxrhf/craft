@@ -45,10 +45,16 @@ export async function deleteItem(itemId: string) {
 
   const values = await db.orm.public.CollectionValue.where({ itemId }).all();
   for (const v of values) {
-    await db.orm.public.CollectionValue.where({ id: (v as any).id }).delete();
+    await db.orm.public.CollectionValue.where({ id: (v as any).id }).update({
+      deletedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
   }
 
-  await db.orm.public.CollectionItem.where({ id: itemId }).delete();
+  await db.orm.public.CollectionItem.where({ id: itemId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
 
   revalidatePath(`/collections/${(item as any).collectionId}`);
 }

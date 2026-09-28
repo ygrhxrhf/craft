@@ -121,5 +121,8 @@ export async function deleteComment(commentId: string) {
     throw new Error('未授权');
   }
 
-  await db.orm.public.Comment.where({ id: commentId }).delete();
+  await db.orm.public.Comment.where({ id: commentId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
 }

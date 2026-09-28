@@ -43,9 +43,19 @@ async function findOrCreateTag(userId: string, name: string, color?: string) {
   if (!normalized) return null;
 
   const db = await getDb();
-  const existing = (await db.orm.public.Tag.where({ userId }).all()) as TagRecord[];
-  const found = existing.find((tag) => tag.name === normalized);
-  if (found) return found;
+  const found = (await db.orm.public.Tag.first({ name: normalized, userId })) as
+    | (TagRecord & { deletedAt?: string | null })
+    | null;
+  if (found) {
+    // 同名重建：命中含墓碑的旧行 → 清墓碑复用旧 id（唯一键 [name, userId] 不加 deletedAt 后缀）
+    if (found.deletedAt) {
+      await db.orm.public.Tag.where({ id: found.id }).update({
+        deletedAt: null,
+        updatedAt: new Date().toISOString(),
+      });
+    }
+    return found;
+  }
 
   const created = (await db.orm.public.Tag.create({
     id: crypto.randomUUID(),
@@ -65,9 +75,17 @@ export async function attachTag(documentId: string, name: string, color?: string
   if (!tag) return null;
 
   const db = await getDb();
-  const existing = await db.orm.public.DocumentTag.first({ documentId, tagId: tag.id });
-  if (!existing) {
-    await db.orm.public.DocumentTag.create({ documentId, tagId: tag.id });
+  const link = await db.orm.public.DocumentTag.first({ documentId, tagId: tag.id });
+  if (link) {
+    // 含墓碑的旧行命中：清墓碑复用（@@id([documentId, tagId]) 不带 deletedAt）
+    await db.orm.public.DocumentTag
+      .where({ documentId, tagId: tag.id })
+      .update({ deletedAt: null, updatedAt: new Date().toISOString() });
+  } else {
+    await db.orm.public.DocumentTag.create({
+      documentId, tagId: tag.id, createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
   }
   return tag;
 }
@@ -79,7 +97,11 @@ export async function detachTag(documentId: string, tagId: string) {
 
   const db = await getDb();
   const link = await db.orm.public.DocumentTag.first({ documentId, tagId });
-  if (link) await db.orm.public.DocumentTag.where({ documentId, tagId }).delete();
+  if (link) {
+    await db.orm.public.DocumentTag
+      .where({ documentId, tagId })
+      .update({ deletedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+  }
   return true;
 }
 
@@ -107,7 +129,10 @@ export async function deleteTag(tagId: string) {
   await assertOwned('Tag', tagId, userId, '标签不存在');
 
   const db = await getDb();
-  await db.orm.public.Tag.where({ id: tagId }).delete();
+  await db.orm.public.Tag.where({ id: tagId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
   return true;
 }
 

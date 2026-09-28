@@ -81,6 +81,7 @@ model Document {
 
   createdAt     TimestamptzString @default(now())
   updatedAt     temporal.updatedAtString()
+  metaUpdatedAt TimestamptzString?
 
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   parent        Document? @relation("DocumentTree", fields: [parentId], references: [id])
@@ -155,6 +156,7 @@ model CollectionProperty {
   width        Int?
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
+  deletedAt    TimestamptzString?
 
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   values       CollectionValue[]
@@ -170,6 +172,7 @@ model CollectionItem {
   documentId   String?
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
+  deletedAt    TimestamptzString?
 
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   document     Document?  @relation(fields: [documentId], references: [id])
@@ -186,6 +189,7 @@ model CollectionValue {
   value        Json?
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
+  deletedAt    TimestamptzString?
 
   item         CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
   property     CollectionProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
@@ -204,6 +208,7 @@ model CollectionView {
   order        Int      @default(0)
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
+  deletedAt    TimestamptzString?
 
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
@@ -228,6 +233,7 @@ model Whiteboard {
 
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
+  metaUpdatedAt TimestamptzString?
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
@@ -243,6 +249,8 @@ model Tag {
   color     String   @default("#6366f1")
   userId    String
   createdAt TimestamptzString @default(now())
+  updatedAt TimestamptzString @default(now())
+  deletedAt TimestamptzString?
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   documents DocumentTag[]
@@ -255,6 +263,8 @@ model DocumentTag {
   documentId String
   tagId      String
   createdAt  TimestamptzString @default(now())
+  updatedAt  TimestamptzString @default(now())
+  deletedAt  TimestamptzString?
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
   @@id([documentId, tagId])
@@ -267,6 +277,8 @@ model Favorite {
   documentId String
   order      Float    @default(0)
   createdAt  TimestamptzString @default(now())
+  updatedAt  TimestamptzString @default(now())
+  deletedAt  TimestamptzString?
 
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
@@ -305,6 +317,7 @@ model Task {
   order       Float    @default(0)
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
+  deletedAt   TimestamptzString?
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
@@ -324,6 +337,7 @@ model DocumentShare {
   isPublished  Boolean  @default(false)
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
+  deletedAt    TimestamptzString?
 
   document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
@@ -353,6 +367,7 @@ model CommentThread {
   resolved     Boolean  @default(false)
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
+  deletedAt    TimestamptzString?
 
   document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   comments     Comment[]
@@ -368,6 +383,7 @@ model Comment {
   body       String
   createdAt  TimestamptzString @default(now())
   updatedAt  temporal.updatedAtString()
+  deletedAt  TimestamptzString?
 
   thread     CommentThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
   user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -405,4 +421,15 @@ model YjsDocumentState {
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   @@map("yjs_document_states")
+}
+
+model SyncEvent {
+  id     Int    @id @default(autoincrement())
+  ts     TimestamptzString @default(now())
+  tables String[]
+  cursor String
+  userId String
+
+  @@index([userId])
+  @@map("sync_events")
 }

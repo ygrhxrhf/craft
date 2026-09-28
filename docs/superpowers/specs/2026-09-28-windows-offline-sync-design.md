@@ -269,18 +269,20 @@ key 规则：沿用 storage.ts 现有 UUID 化文件名
 
 ### 5.4 实时广播
 
-**进程间通知（web 与 collab 是两进程）**：数据库通知表，不引入 Redis——
+**进程间通知**：`sync_events` 数据库通知表，不引入 Redis——
 
 ```
-新增表 sync_events(id bigserial PK, ts timestamptz, tables text[], cursor text)
+新增表 sync_events(id bigserial PK, ts timestamptz, tables text[], cursor text, userId text)
 web 侧：元数据写入成功后 INSERT（与业务同事务，保证不漏）
-collab 侧：每 500ms SELECT 未处理行 → 给该用户全部 ws 连接广播 → DELETE 已处理行
+web 侧：进程内 500ms 轮询该表 → 经 SSE /api/v1/events 推给本进程订阅者 → DELETE 已处理行
 延迟 ≤500ms，单用户可接受
 ```
 
+> **v2.1 修正（规划期发现）**：原方案写"collab 进程轮询广播"。代码事实：Hocuspocus provider 按文档建立（`use-collab-session.ts:62`），文档未打开时客户端收不到消息，且 collab 进程从不写元数据。改为 web 进程轮询 + SSE 推送：collab 进程零改动；多实例部署时每实例各自轮询同一表（天然扇出，删除已处理行防重复）。客户端订阅 `EventSource('/api/v1/events')`，断线降级 30s 轮询不变。
+
 **发射点**：`/api/v1/sync` 落库后（applied 非空时）、所有服务端元数据 action 落库后（updateDocument 元数据字段、create/delete/restore/move/rename、tag/favorite/collection/comment/share/user 设置）。
 
-**广播消息**：`{ "t": "meta", "tables": ["document","folder"], "cursor": "<syncTs>|<id>" }`（发给该用户全部 ws 连接）。
+**广播消息**：`{ "t": "meta", "tables": ["document","folder"], "cursor": "<syncTs>|<id>" }`（经 SSE 发给该用户的全部订阅连接）。
 
 **客户端处理**：收到且 cursor > 本地 → 500ms 去抖合并 → `GET /sync?since=本地cursor` 拉完 → apply + 推进 cursor → 发 `store:changed(table)` → UI 刷新。广播丢失无害。
 

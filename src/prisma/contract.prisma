@@ -249,7 +249,7 @@ model Tag {
   color     String   @default("#6366f1")
   userId    String
   createdAt TimestamptzString @default(now())
-  updatedAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
   deletedAt TimestamptzString?
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -263,7 +263,7 @@ model DocumentTag {
   documentId String
   tagId      String
   createdAt  TimestamptzString @default(now())
-  updatedAt  TimestamptzString @default(now())
+  updatedAt  temporal.updatedAtString()
   deletedAt  TimestamptzString?
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
@@ -277,7 +277,7 @@ model Favorite {
   documentId String
   order      Float    @default(0)
   createdAt  TimestamptzString @default(now())
-  updatedAt  TimestamptzString @default(now())
+  updatedAt  temporal.updatedAtString()
   deletedAt  TimestamptzString?
 
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)

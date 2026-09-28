@@ -4559,10 +4559,6 @@
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
                   "nativeType": "timestamptz",
                   "nullable": false
                 }
@@ -5034,10 +5030,6 @@
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
@@ -5343,10 +5335,6 @@
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
@@ -5910,10 +5898,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d4b8989be956cdc30b0f9ff509da2b70ad06314e3784362c27ff0d700420f185"
+    "storageHash": "96531d333eeca0c4ca17467558a679a049c77e8e6529ec55e09c8ccfc6e7571a"
   },
   "execution": {
-    "executionHash": "980ddcd2812657c86e600b2499dbc3eae9d2dde1891c970544bc5970c85ade5c",
+    "executionHash": "e72ca840a70c0f5d8c018458ca5e51e719faeaf3b55b3ab52cf67d03b5599c04",
     "mutations": {
       "defaults": [
         {
@@ -6189,6 +6177,21 @@
         },
         {
           "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "document_tags"
+          }
+        },
+        {
+          "onCreate": {
             "id": "uuidv4",
             "kind": "generator"
           },
@@ -6237,6 +6240,21 @@
         },
         {
           "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "favorites"
+          }
+        },
+        {
+          "onCreate": {
             "id": "uuidv4",
             "kind": "generator"
           },
@@ -6268,6 +6286,21 @@
           },
           "ref": {
             "column": "id",
+            "namespace": "public",
+            "table": "tags"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
             "namespace": "public",
             "table": "tags"
           }

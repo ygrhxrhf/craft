@@ -125,6 +125,39 @@ describe('唯一键复用', () => {
   });
 });
 
+describe('attachTag 对活行 no-op（R-8）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('attachTag 命中已存在的活 DocumentTag 行时不调用 update（避免重复 sync 事件）', async () => {
+    const dtRow = { update: vi.fn(async () => ({})) };
+    const dtCreate = vi.fn(async () => ({}));
+    const liveTag = { id: 't1', name: 'work', color: '#6366f1' };
+    (getDb as any).mockResolvedValue({
+      orm: {
+        public: {
+          Tag: {
+            first: vi.fn(async () => liveTag),
+            where: () => ({ all: async () => [liveTag] }),
+          },
+          DocumentTag: {
+            first: vi.fn(async () => ({
+              documentId: 'd1',
+              tagId: 't1',
+              deletedAt: null,
+            })),
+            where: () => dtRow,
+            create: dtCreate,
+          },
+        },
+      },
+    });
+    const tag = await attachTag('d1', 'Work');
+    expect(dtRow.update).not.toHaveBeenCalled();
+    expect(dtCreate).not.toHaveBeenCalled();
+    expect(tag?.id).toBe('t1');
+  });
+});
+
 describe('读侧墓碑过滤（C-1）', () => {
   beforeEach(() => vi.clearAllMocks());
 

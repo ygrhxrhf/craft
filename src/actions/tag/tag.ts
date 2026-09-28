@@ -76,17 +76,18 @@ export async function attachTag(documentId: string, name: string, color?: string
 
   const db = await getDb();
   const link = await db.orm.public.DocumentTag.first({ documentId, tagId: tag.id });
-  if (link) {
+  if (link && link.deletedAt) {
     // 含墓碑的旧行命中：清墓碑复用（@@id([documentId, tagId]) 不带 deletedAt）
     await db.orm.public.DocumentTag
       .where({ documentId, tagId: tag.id })
       .update({ deletedAt: null, updatedAt: new Date().toISOString() });
-  } else {
+  } else if (!link) {
     await db.orm.public.DocumentTag.create({
       documentId, tagId: tag.id, createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
   }
+  // 活行命中：no-op（不 bump updatedAt，避免未变更行产生重复 sync 事件）
   return tag;
 }
 

@@ -47,6 +47,7 @@ export async function isDocumentFavorite(documentId: string) {
   const existing = await db.orm.public.Favorite.first({
     userId: userId,
     documentId,
+    deletedAt: null,
   });
   return !!existing;
 }

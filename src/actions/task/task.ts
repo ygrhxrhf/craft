@@ -66,11 +66,15 @@ export async function syncDocumentTasks(
   for (const [taskId, task] of incoming) {
     const match = existingByBlockId.get(taskId);
     if (match) {
+      const tombstoned = Boolean((match as any).deletedAt);
       if (
+        tombstoned ||
         (match as any).title !== task.title ||
         (match as any).isCompleted !== task.isCompleted
       ) {
+        // 命中墓碑行且 block 重新出现 → 清墓碑复活（恢复"任务重新可见"语义）
         await db.orm.public.Task.where({ id: (match as any).id }).update({
+          ...(tombstoned ? { deletedAt: null, updatedAt: new Date().toISOString() } : {}),
           title: task.title,
           isCompleted: task.isCompleted,
           status: task.isCompleted ? 'done' : 'todo',
@@ -91,7 +95,8 @@ export async function syncDocumentTasks(
 
   for (const t of existing) {
     const row = t as any;
-    if (typeof row.blockId === 'string' && !incoming.has(row.blockId)) {
+    // 已墓碑行跳过：避免每次保存重写 deletedAt/updatedAt（时间戳抖动 + 重复 sync 删除事件）
+    if (typeof row.blockId === 'string' && !incoming.has(row.blockId) && !row.deletedAt) {
       await db.orm.public.Task.where({ id: row.id }).update({
         deletedAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -106,7 +111,7 @@ export async function getTasks(): Promise<TaskItem[]> {
 
   const db = await getDb();
   const tasks = await db.orm.public.Task
-    .where({ userId: session.user.id })
+    .where({ userId: session.user.id, deletedAt: null })
     .orderBy((t: any) => t.createdAt.desc())
     .limit(200)
     .all();
@@ -249,7 +254,7 @@ export async function getTasksForDay(dayStart: string, dayEnd: string): Promise<
 
   const db = await getDb();
   const tasks = await db.orm.public.Task
-    .where({ userId: session.user.id })
+    .where({ userId: session.user.id, deletedAt: null })
     .where((t: any) => t.dueDate.gte(dayStart))
     .where((t: any) => t.dueDate.lte(dayEnd))
     .all();

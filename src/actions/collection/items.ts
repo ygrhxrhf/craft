@@ -129,14 +129,14 @@ export async function getItems(collectionId: string) {
   }
 
   const items = await db.orm.public.CollectionItem
-    .where({ collectionId })
+    .where({ collectionId, deletedAt: null })
     .orderBy((m: any) => m.order.asc())
     .all();
 
   const result = [];
   for (const item of items) {
     const values = await db.orm.public.CollectionValue
-      .where({ itemId: (item as any).id })
+      .where({ itemId: (item as any).id, deletedAt: null })
       .all();
     result.push({ ...item, values });
   }

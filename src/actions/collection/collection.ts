@@ -99,24 +99,24 @@ export async function getCollection(id: string) {
   if (c.userId !== session.user.id || c.isDeleted) return null;
 
   const properties = await db.orm.public.CollectionProperty
-    .where({ collectionId: id })
+    .where({ collectionId: id, deletedAt: null })
     .orderBy((m: any) => m.order.asc())
     .all();
 
   const items = await db.orm.public.CollectionItem
-    .where({ collectionId: id })
+    .where({ collectionId: id, deletedAt: null })
     .orderBy((m: any) => m.order.asc())
     .all();
 
   const views = await db.orm.public.CollectionView
-    .where({ collectionId: id })
+    .where({ collectionId: id, deletedAt: null })
     .orderBy((m: any) => m.order.asc())
     .all();
 
   const itemsWithValues = [];
   for (const item of items) {
     const values = await db.orm.public.CollectionValue
-      .where({ itemId: (item as any).id })
+      .where({ itemId: (item as any).id, deletedAt: null })
       .all();
     itemsWithValues.push({ ...item, values });
   }
@@ -145,10 +145,10 @@ export async function getCollections() {
   const result = [];
   for (const collection of collections) {
     const properties = await db.orm.public.CollectionProperty
-      .where({ collectionId: (collection as any).id })
+      .where({ collectionId: (collection as any).id, deletedAt: null })
       .all();
     const items = await db.orm.public.CollectionItem
-      .where({ collectionId: (collection as any).id })
+      .where({ collectionId: (collection as any).id, deletedAt: null })
       .all();
 
     result.push({

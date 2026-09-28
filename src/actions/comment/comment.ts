@@ -58,7 +58,7 @@ export async function getThreads(documentId: string) {
   for (const thread of threads) {
     const row = thread as any;
     const comments = await db.orm.public.Comment
-      .where({ threadId: row.id })
+      .where({ threadId: row.id, deletedAt: null })
       .orderBy((c: any) => c.createdAt.asc())
       .all();
     result.push({

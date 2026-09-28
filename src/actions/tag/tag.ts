@@ -15,7 +15,7 @@ export interface TagRecord {
 export async function getTags(): Promise<TagRecord[]> {
   const userId = await requireUserId();
   const db = await getDb();
-  const tags = (await db.orm.public.Tag.where({ userId }).all()) as (TagRecord & {
+  const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null }).all()) as (TagRecord & {
     documents?: unknown[];
   })[];
 
@@ -27,12 +27,12 @@ export async function getDocumentTags(documentId: string): Promise<TagRecord[]> 
   await requireDocumentAccess(documentId, userId, 'viewer');
 
   const db = await getDb();
-  const links = (await db.orm.public.DocumentTag.where({ documentId }).all()) as {
+  const links = (await db.orm.public.DocumentTag.where({ documentId, deletedAt: null }).all()) as {
     tagId: string;
   }[];
   if (links.length === 0) return [];
 
-  const tags = (await db.orm.public.Tag.where({ userId }).all()) as TagRecord[];
+  const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null }).all()) as TagRecord[];
   const wanted = new Set(links.map((link) => link.tagId));
   return tags.filter((tag) => wanted.has(tag.id));
 }
@@ -141,7 +141,7 @@ export async function getDocumentsByTag(tagId: string) {
   await assertOwned('Tag', tagId, userId, '标签不存在');
 
   const db = await getDb();
-  const links = (await db.orm.public.DocumentTag.where({ tagId }).all()) as {
+  const links = (await db.orm.public.DocumentTag.where({ tagId, deletedAt: null }).all()) as {
     documentId: string;
   }[];
   if (links.length === 0) return [];

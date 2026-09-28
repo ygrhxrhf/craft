@@ -97,12 +97,14 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
   // Tag hits are document matches too — Craft folds them into the same list.
   const taggedDocs: SearchResultDoc[] = [];
   const tagMatches = await db.orm.public.Tag
-    .where({ userId: uid })
+    .where({ userId: uid, deletedAt: null })
     .where((t: any) => t.name.ilike(pattern))
     .limit(5)
     .all();
   for (const tag of tagMatches) {
-    const links = await db.orm.public.DocumentTag.where({ tagId: (tag as any).id }).all();
+    const links = await db.orm.public.DocumentTag
+      .where({ tagId: (tag as any).id, deletedAt: null })
+      .all();
     for (const link of links) {
       // `first()` with a boolean in the filter silently misses, so the flag is
       // checked after loading.
@@ -172,7 +174,7 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
 /** Collection rows are searched by their stored cell text. */
 async function searchCollectionRows(db: any, userId: string, pattern: string): Promise<SearchResultRow[]> {
   const values = await db.orm.public.CollectionValue
-    .where({})
+    .where({ deletedAt: null })
     .where((v: any) => v.value.ilike(pattern))
     .limit(8)
     .all();
@@ -180,7 +182,10 @@ async function searchCollectionRows(db: any, userId: string, pattern: string): P
   const rows: SearchResultRow[] = [];
   const seen = new Set<string>();
   for (const entry of values) {
-    const item = await db.orm.public.CollectionItem.first({ id: (entry as any).itemId });
+    const item = await db.orm.public.CollectionItem.first({
+      id: (entry as any).itemId,
+      deletedAt: null,
+    });
     if (!item) continue;
     const collection = await db.orm.public.Collection.first({ id: (item as any).collectionId });
     if (!collection || (collection as any).userId !== userId || (collection as any).isDeleted) continue;

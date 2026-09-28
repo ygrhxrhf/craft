@@ -13,7 +13,12 @@ vi.mock('@/lib/authz/document-access', () => ({
 }));
 
 import { getDb } from '@/prisma/db';
-import { deleteTag, detachTag, attachTag } from './tag';
+import { deleteTag, detachTag, attachTag, getTags } from './tag';
+
+/** 真实 where 语义的最小实现：`{ k: null }` → IS NULL，其余等值匹配。 */
+function matchRow(row: Record<string, unknown>, cond: Record<string, unknown>) {
+  return Object.entries(cond).every(([k, v]) => (v === null ? row[k] == null : row[k] === v));
+}
 
 describe('deleteTag 软删', () => {
   beforeEach(() => vi.clearAllMocks());
@@ -117,5 +122,35 @@ describe('唯一键复用', () => {
     expect(tagCreate).not.toHaveBeenCalled();
     expect(tag?.id).toBe('t1');
     expect(dtCreate).toHaveBeenCalled();
+  });
+});
+
+describe('读侧墓碑过滤（C-1）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('getTags 不返回带 deletedAt 的标签行', async () => {
+    const rows = [
+      { id: 't1', userId: 'u1', name: 'live', color: '#6366f1', deletedAt: null },
+      {
+        id: 't2',
+        userId: 'u1',
+        name: 'dead',
+        color: '#ef4444',
+        deletedAt: '2026-09-28T00:00:00.000Z',
+      },
+    ];
+    (getDb as any).mockResolvedValue({
+      orm: {
+        public: {
+          Tag: {
+            where: (cond: Record<string, unknown>) => ({
+              all: async () => rows.filter((row) => matchRow(row, cond)),
+            }),
+          },
+        },
+      },
+    });
+    const tags = await getTags();
+    expect(tags.map((tag) => tag.id)).toEqual(['t1']);
   });
 });

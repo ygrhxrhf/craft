@@ -20,7 +20,7 @@ export interface TableDef {
 
 export const SYNC_TABLES: TableDef[] = [
   { table: 'document', model: 'Document', cols: [...DOC_META_COLS], tsCol: 'metaUpdatedAt', id: r => String(r.id) },
-  { table: 'folder', model: 'Folder', cols: ['name','icon','order','parentId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  { table: 'folder', model: 'Folder', cols: ['id','name','icon','order','parentId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'tag', model: 'Tag', cols: ['id','name','color','userId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'document_tag', model: 'DocumentTag', cols: ['documentId','tagId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => `${r.documentId}__${r.tagId}` },
   { table: 'favorite', model: 'Favorite', cols: ['id','userId','documentId','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
@@ -35,4 +35,6 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'comment', model: 'Comment', cols: ['id','threadId','userId','body','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'comment_thread', model: 'CommentThread', cols: ['id','documentId','blockId','blockText','resolved','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'document_share', model: 'DocumentShare', cols: ['id','documentId','token','slug','passcode','isPublished','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  // whiteboard：spec 5.1 白板 payload 排除 data（内容走独立通道），tsCol=metaUpdatedAt
+  { table: 'whiteboard', model: 'Whiteboard', cols: ['id','name','shareToken','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'metaUpdatedAt', id: r => String(r.id) },
 ];

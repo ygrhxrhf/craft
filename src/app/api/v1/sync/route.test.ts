@@ -107,6 +107,37 @@ describe('POST /api/v1/sync', () => {
     expect((await POST(new NextRequest('http://x/api/v1/sync', { method: 'POST', body: big }))).status).toBe(413);
   });
 
+  it('R-10 I-1：document_tag 复合键取自 data——applied id 与 cursor 为 documentId__tagId', async () => {
+    const create = vi.fn(async () => ({}));
+    const chain = { where: () => chain, first: vi.fn(async () => null), update: vi.fn(), create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, { get: (_t, m) => m === 'SyncEvent' ? { create } : chain }) } });
+
+    const res = await POST(req({ records: [
+      { table: 'document_tag', id: 'x', op: 'upsert',
+        data: { documentId: 'd1', tagId: 't1' }, syncTs: '2026-09-28T12:00:00.000Z' },
+    ]}));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.applied).toEqual([{ table: 'document_tag', id: 'd1__t1' }]);
+    expect(body.cursor).toContain('d1__t1');
+    expect(body.cursor).not.toContain('undefined');
+    // where 与 pk 同源（merged data）：单行读用复合键两列
+    expect(chain.first).toHaveBeenCalledWith({ documentId: 'd1', tagId: 't1' });
+  });
+
+  it('R-10 M-3：document_tag 缺 data（documentId/tagId 必填非空字符串）→ 400', async () => {
+    const res = await POST(req({ records: [
+      { table: 'document_tag', id: 'x', op: 'upsert', syncTs: '2026-09-28T12:00:00.000Z' },
+    ]}));
+    expect(res.status).toBe(400);
+
+    const res2 = await POST(req({ records: [
+      { table: 'document_tag', id: 'x', op: 'delete',
+        data: { documentId: 'd1', tagId: '' }, syncTs: '2026-09-28T12:00:00.000Z' },
+    ]}));
+    expect(res2.status).toBe(400);
+  });
+
   it('事务中途异常 → 整批 500 且不 emit；整批重推幂等成功', async () => {
     const create = vi.fn(async () => ({}));
     const rows = [

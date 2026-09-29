@@ -118,7 +118,24 @@ const recordSchema = z.object({
   data: z.record(z.string(), z.unknown()).optional(),
   syncTs: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
 });
-const bodySchema = z.object({ records: z.array(recordSchema).min(1).max(200) });
+// R-10/M-3：document_tag 的复合键两列只存在于 data（zod 不保留顶层未知键），
+// 缺失会让 delete 的 where 退化成 {documentId: undefined}，故在批级强制必填非空字符串。
+const bodySchema = z.object({
+  records: z.array(recordSchema).min(1).max(200).superRefine((recs, ctx) => {
+    recs.forEach((rec, i) => {
+      if (rec.table !== 'document_tag') return;
+      for (const f of ['documentId', 'tagId'] as const) {
+        const v = rec.data?.[f];
+        if (typeof v !== 'string' || v.length === 0) {
+          ctx.addIssue({
+            code: 'custom', path: [i, 'data', f],
+            message: `document_tag requires non-empty data.${f}`,
+          });
+        }
+      }
+    });
+  }),
+});
 
 type PostRecord = z.infer<typeof recordSchema>;
 type BatchResult = {
@@ -182,10 +199,13 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
 
     for (const rec of records) {
       const def = SYNC_TABLES.find(d => d.table === rec.table)!; // 上游已整批校验
-      const pk = def.id(rec); // document_tag 复合键；其余即 r.id
+      // R-10 I-1：复合键字段在 data（document_tag 的 id 读 r.documentId/r.tagId），
+      // 顶层 rec 只有 table/id/op/data/syncTs——pk/rejected id/cursor id 与 where 统一取合并源
+      const key: Record<string, unknown> = { ...rec, ...rec.data };
+      const pk = def.id(key); // document_tag → `${documentId}__${tagId}`；其余即 rec.id
       const model = scope.orm.public[def.model];
       const where = rec.table === 'document_tag'
-        ? { documentId: rec.data?.documentId, tagId: rec.data?.tagId }
+        ? { documentId: key.documentId, tagId: key.tagId }
         : { id: rec.id };
       const current = await model.first(where);
       const tSrv = current ? new Date(current[def.tsCol]).toISOString() : null;

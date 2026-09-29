@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useSession } from 'next-auth/react';
 import {
   Camera,
   ChevronDown,
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import { getPreferences, updatePreferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
+import { getSyncManager } from '@/lib/sync-core';
 import { Switch } from '@/components/ui/switch';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
 import { cn } from 'cn';
@@ -96,6 +98,7 @@ const ACCENTS = [
 
 export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const { setTheme } = useTheme();
+  const { data: session } = useSession();
   const [prefs, setPrefs] = useState<{ theme: string; editorFont: string; editorWidth: string } | null>(null);
   const [accent, setAccent] = useState('blue');
   const [notify, setNotify] = useState({ comments: true, reminders: true, daily: true });
@@ -113,7 +116,15 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     if (!base) return;
     const next = { ...base, ...patch };
     setPrefs(next);
-    await updatePreferences(patch).catch(() => setPrefs(base));
+    // 偏好（user 表）→ applyLocal；本地已乐观更新，失败（IDB 异常）才回滚
+    const userId = session?.user?.id;
+    if (!userId) {
+      await updatePreferences(patch).catch(() => setPrefs(base));
+      return;
+    }
+    await getSyncManager()
+      .applyLocal({ table: 'user', id: userId, patch: { ...patch } })
+      .catch(() => setPrefs(base));
   };
 
   switch (section) {

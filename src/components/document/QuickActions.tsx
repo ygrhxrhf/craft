@@ -2,20 +2,21 @@
 
 import { FileText, FolderPlus, Database, PenTool } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { createDocument } from '@/actions/document/create';
-import { createFolder } from '@/actions/folder/create';
+import { useSession } from 'next-auth/react';
+import { createDocumentLocal, createFolderLocal } from '@/components/sync/create-local';
 import { useRouter } from 'next/navigation';
 
 export function QuickActions() {
   const router = useRouter();
+  const { data: session } = useSession();
 
   async function handleNewDoc() {
-    const doc = await createDocument({ title: '无标题' });
-    if (doc) router.push(`/documents/${doc.id}`);
+    const id = await createDocumentLocal({ userId: session?.user?.id });
+    router.push(`/documents/${id}`);
   }
 
   async function handleNewFolder() {
-    await createFolder({ name: '未命名文件夹' });
+    await createFolderLocal({ userId: session?.user?.id, name: '未命名文件夹' });
     router.refresh();
   }
 

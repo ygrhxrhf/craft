@@ -3,6 +3,7 @@
 import type { Editor } from '@tiptap/react';
 import { Sparkles } from 'lucide-react';
 import { cn } from 'cn';
+import { toast } from '@/components/ui/toast';
 import { useAiBubbleStore } from '@/lib/store/use-ai-bubble-store';
 import { aiBubbleKey, mainBubbleKey } from '../bubble-menu/keys';
 
@@ -15,6 +16,11 @@ export function AiToolbar({ editor }: AiToolbarProps) {
   const toggle = useAiBubbleStore((s) => s.toggle);
 
   const handleToggle = () => {
+    // spec D7-④ 离线提示：AI 入口需要网络
+    if (!isOpen && typeof navigator !== 'undefined' && !navigator.onLine) {
+      toast.add({ id: 'offline-hint', type: 'warning', title: '需要网络' });
+      return;
+    }
     if (!isOpen && editor.state.selection.empty) return;
     toggle();
     if (!isOpen) {

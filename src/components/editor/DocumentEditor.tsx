@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import { updateDocument } from '@/actions/document/update';
+import { getSyncManager } from '@/lib/sync-core';
 import { Editor, type SaveState } from './Editor';
 import { EditorHeader } from './EditorHeader';
 import { RightPanel, type RightTabId } from './tabs/RightPanel';
@@ -101,7 +101,14 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     }
     setSaveState('saving');
     try {
-      await updateDocument(doc.id, { ...rest, pageStyle: pageStyleToSave });
+      // 页面信息（title/icon/cover/width/pageStyle 均为元数据列）→ applyLocal；
+      // patch 只带实际变更字段（undefined 不能入 payload）
+      const patch: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(rest)) {
+        if (value !== undefined) patch[key] = value;
+      }
+      if (pageStyleToSave !== undefined) patch.pageStyle = pageStyleToSave;
+      await getSyncManager().applyLocal({ table: 'document', id: doc.id, patch });
       setSaveState('saved');
       // The sidebar row shows the same title, so keep it in step with the editor.
       if (data.title !== undefined) bumpTree();

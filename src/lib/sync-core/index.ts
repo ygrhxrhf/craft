@@ -30,6 +30,7 @@ export interface SyncManager {
   boot(): Promise<void>;                       // 幂等：pull(full 无 cursor) + 广播 + flush
   resume(): Promise<void>;                     // R-12：清 paused → pull + flush（SPA 登录后恢复）
   applyLocal(o: ApplyLocalOpts): Promise<void>; // 写本地 + 入队 + debounce flush（不等 flush）
+  flushNow(): Promise<void>;                     // 清 debounce 立即 push：新建后跳转等需要服务端先可见的场景
   status(): SyncStatus;
   pendingCount(): Promise<number>;
   subscribe(cb: (s: SyncStatus, pending: number) => void): () => void; // 指示器订阅
@@ -300,11 +301,24 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
         syncTs,
       },
     ]);
+    // spec 5.5 同 (table,recordId) 只留一条；字段级合并 payload——否则「新建后紧跟改名/删除」
+    // 会把 create 的全字段（含 userId，服务端建行必需）覆盖丢掉，推送时整批 500。
+    let payloadData: Record<string, unknown> | undefined = o.patch ?? undefined;
+    if (op === 'upsert') {
+      try {
+        const pendingOps = await store.peekBatch(Number.MAX_SAFE_INTEGER, '9999-12-31T23:59:59.999Z');
+        const prev = pendingOps.find(p =>
+          p.table === o.table && p.recordId === o.id && p.op === 'upsert');
+        if (prev?.payload.data) payloadData = { ...prev.payload.data, ...o.patch };
+      } catch {
+        // 读 pending 失败 → 按新 patch 入队（保持旧行为）
+      }
+    }
     await store.enqueue({
       table: o.table,
       recordId: o.id,
       op,
-      payload: { data: o.patch ?? undefined, syncTs },
+      payload: { data: payloadData, syncTs },
       createdAt: syncTs,
     });
     emitTouched();   // UI 树即时刷新（硬规则 7）
@@ -323,6 +337,10 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     boot,
     resume,
     applyLocal,
+    flushNow: () => {
+      clearDebounce();
+      return flush();
+    },
     status: () => status,
     pendingCount: () => queue.pendingCount(),
     subscribe(cb) {

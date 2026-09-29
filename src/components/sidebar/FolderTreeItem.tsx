@@ -2,13 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { ChevronRight, Folder } from 'lucide-react';
 import { cn } from 'cn';
-import { moveFolder } from '@/actions/folder/move';
-import { updateFolder } from '@/actions/folder/update';
-import { deleteFolder } from '@/actions/folder/delete';
-import { createDocument } from '@/actions/document/create';
-import { moveDocument } from '@/actions/document/move';
+import { getSyncManager } from '@/lib/sync-core';
+import { createDocumentLocal } from '@/components/sync/create-local';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { SIDEBAR_DOC_MIME, sidebarDragState } from '@/lib/dnd/sidebar-drag';
 import {
@@ -55,6 +53,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, level }: Fold
   const expandTimerRef = useRef<number | null>(null);
   const bumpTree = useSidebarStore((s) => s.bumpTree);
   const router = useRouter();
+  const { data: session } = useSession();
 
   function startRename() {
     setDraftName(folder.name);
@@ -65,19 +64,31 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, level }: Fold
     setRenaming(false);
     const next = draftName.trim();
     if (!next || next === folder.name) return;
-    await updateFolder(folder.id, { name: next });
+    await getSyncManager().applyLocal({
+      table: 'folder',
+      id: folder.id,
+      patch: { name: next },
+    });
     bumpTree();
   }
 
   async function createDocumentInFolder() {
-    const doc = await createDocument({ folderId: folder.id });
+    const docId = await createDocumentLocal({
+      userId: session?.user?.id,
+      folderId: folder.id,
+    });
     setExpanded(true);
     bumpTree();
-    router.push(`/documents/${doc.id}`);
+    router.push(`/documents/${docId}`);
   }
 
   async function moveToTrash() {
-    await deleteFolder(folder.id);
+    // 同 document 删除：读侧按 isDeleted 过滤，patch 带 isDeleted/deletedAt（见 task-13 报告）
+    await getSyncManager().applyLocal({
+      table: 'folder',
+      id: folder.id,
+      patch: { isDeleted: true, deletedAt: new Date().toISOString() },
+    });
     bumpTree();
   }
 
@@ -173,6 +184,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, level }: Fold
     if (!payload || !('type' in payload) || !currentZone) return;
 
     try {
+      // 移动 → applyLocal（cycle 前置守卫仍在上面的 isDescendantOf 检查）
       if (payload.type === 'folder') {
         const draggedFolderId = payload.folderId;
         if (
@@ -207,15 +219,23 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, level }: Fold
                 : folder.order + 1;
           data = { parentId: folder.parentId, order };
         }
-        await moveFolder(draggedFolderId, data);
+        await getSyncManager().applyLocal({
+          table: 'folder',
+          id: draggedFolderId,
+          patch: data,
+        });
       } else if (payload.type === 'doc') {
         const childOrders = allDocuments
           .filter(d => d.folderId === folder.id && d.parentId === null)
           .map(d => d.order);
-        await moveDocument(payload.documentId, {
-          parentId: null,
-          folderId: folder.id,
-          order: (childOrders.length ? Math.max(...childOrders) : 0) + 1,
+        await getSyncManager().applyLocal({
+          table: 'document',
+          id: payload.documentId,
+          patch: {
+            parentId: null,
+            folderId: folder.id,
+            order: (childOrders.length ? Math.max(...childOrders) : 0) + 1,
+          },
         });
         setExpanded(true);
       }

@@ -1,28 +1,68 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { File, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { restoreDocument } from '@/actions/document/delete';
+import { getSyncManager } from '@/lib/sync-core';
+import { readPendingRows, mergePending } from '@/components/sync/local-records';
 import { useRouter } from 'next/navigation';
 
+interface TrashDoc {
+  id: string;
+  title: string;
+  icon: string | null;
+  deletedAt: string | null;
+}
+
 interface TrashListProps {
-  documents: Array<{
-    id: string;
-    title: string;
-    icon: string | null;
-    deletedAt: string | null;
-  }>;
+  documents: TrashDoc[];
+}
+
+/** 回收站视图 = 服务端删除行 + 本地未推送意图（刚移入的进来、恢复的先消失）。 */
+async function mergeTrashRows(serverDocs: TrashDoc[]): Promise<TrashDoc[]> {
+  const pending = await readPendingRows('document');
+  const merged = mergePending<TrashDoc>(serverDocs, pending, (id, p) => ({
+    id,
+    title: '无标题',
+    icon: null,
+    deletedAt: null,
+    ...(p.data as Partial<TrashDoc>),
+  }));
+  // getDeletedDocuments 按 isDeleted/deletedAt 过滤；pending 行要补同样的过滤
+  return merged.filter(d => d.deletedAt !== null && (d as { isDeleted?: boolean }).isDeleted !== false);
 }
 
 export function TrashList({ documents }: TrashListProps) {
   const router = useRouter();
+  const [rows, setRows] = useState<TrashDoc[]>(documents);
+
+  useEffect(() => {
+    let alive = true;
+    mergeTrashRows(documents).then((merged) => {
+      if (alive) setRows(merged);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [documents]);
+
+  // 恢复（applyLocal）/ 删除入站 → 重算列表
+  useEffect(() => getSyncManager().onStoreChanged((table) => {
+    if (table !== 'document') return;
+    mergeTrashRows(documents).then(setRows).catch(() => {});
+  }), [documents]);
 
   async function handleRestore(id: string) {
-    await restoreDocument(id);
+    // 恢复 → applyLocal（patch: isDeleted:false, deletedAt:null）
+    await getSyncManager().applyLocal({
+      table: 'document',
+      id,
+      patch: { isDeleted: false, deletedAt: null },
+    });
     router.refresh();
   }
 
-  if (documents.length === 0) {
+  if (rows.length === 0) {
     return (
       <div className="flex min-h-[180px] flex-col items-center justify-center rounded-[15px] bg-foreground/[0.03] px-6 text-center">
         <Trash2 className="mx-auto mb-2 size-8 text-foreground/40" />
@@ -33,7 +73,7 @@ export function TrashList({ documents }: TrashListProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      {documents.map(doc => {
+      {rows.map(doc => {
         const deletedDate = doc.deletedAt
           ? new Date(doc.deletedAt).toLocaleDateString('zh-CN')
           : '';

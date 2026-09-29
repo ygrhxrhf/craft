@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { cn } from 'cn';
 import { getWhiteboards } from '@/actions/whiteboard/whiteboard';
 import type { WhiteboardItem } from '@/actions/whiteboard/whiteboard';
+import { getSyncManager } from '@/lib/sync-core';
+import { readPendingRows, mergePending } from '@/components/sync/local-records';
 import {
   SIDEBAR_WHITEBOARD_MIME,
   sidebarDragState,
@@ -56,18 +58,38 @@ export function WhiteboardTree() {
   const [boards, setBoards] = useState<WhiteboardItem[]>([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
+  const [version, setVersion] = useState(0);
 
   useEffect(() => {
+    let alive = true;
     async function load() {
       try {
-        const data = await getWhiteboards();
-        setBoards(data);
+        const [data, pending] = await Promise.all([
+          getWhiteboards(),
+          readPendingRows('whiteboard'),
+        ]);
+        if (!alive) return;
+        // applyLocal 的本地改名先于服务端可见（pending 覆盖）
+        setBoards(mergePending<WhiteboardItem>(data, pending, (id, p) => ({
+          id,
+          name: '未命名白板',
+          icon: null,
+          updatedAt: p.syncTs,
+        })).filter((b) => !(b as { isDeleted?: boolean }).isDeleted));
       } finally {
-        setLoading(false);
+        if (alive) setLoading(false);
       }
     }
     load();
-  }, [pathname]);
+    return () => {
+      alive = false;
+    };
+  }, [pathname, version]);
+
+  // applyLocal 改名 / pull 远端变化 → 重取
+  useEffect(() => getSyncManager().onStoreChanged((table) => {
+    if (table === 'whiteboard') setVersion((v) => v + 1);
+  }), []);
 
   if (loading) {
     return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;

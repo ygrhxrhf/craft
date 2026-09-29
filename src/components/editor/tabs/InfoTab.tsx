@@ -11,13 +11,13 @@ import { cn } from 'cn';
 import { getBacklinks } from '@/actions/document/backlinks';
 import { saveAsTemplate } from '@/actions/document/template';
 import { isDocumentFavorite, toggleFavorite } from '@/actions/document/favorite';
-import { deleteDocument } from '@/actions/document/delete';
-import { moveDocument } from '@/actions/document/move';
 import { createDocument } from '@/actions/document/create';
 import { getFolders } from '@/actions/folder/get';
 import { getDocuments } from '@/actions/document/get';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
+import { getSyncManager } from '@/lib/sync-core';
+import { findLiveFavoriteId, findDocumentShareId } from '@/components/sync/local-records';
 import { VersionDialog } from './VersionDialog';
 import { CommentSection } from '../comments/CommentSection';
 import { TagsSection } from './TagsSection';
@@ -130,8 +130,21 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
   const handleToggleFavorite = async () => {
     setBusy(true);
     try {
-      const favored = await toggleFavorite(documentId);
-      setIsFavorite(!!favored);
+      if (isFavorite) {
+        // 取消收藏 → applyLocal 墓碑推送（活行 id 来自本地镜像；缺失则退回服务端）
+        const liveId = await findLiveFavoriteId(documentId);
+        if (liveId) {
+          await getSyncManager().applyLocal({ table: 'favorite', id: liveId, patch: null });
+          setIsFavorite(false);
+        } else {
+          // 镜像还没拉到该行 → 退回服务端 action（toggleFavorite 返回新状态）
+          setIsFavorite(!!(await toggleFavorite(documentId)));
+        }
+      } else {
+        // 收藏保留服务端 action：Favorite 墓碑行无 data，客户端无法复用旧行 id
+        // （盲建会撞 @@unique([userId,documentId])），见 task-13 报告
+        setIsFavorite(!!(await toggleFavorite(documentId)));
+      }
       setActionError(null);
     } catch {
       setActionError('收藏操作失败');
@@ -156,9 +169,14 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
   const handleMove = async (target: { folderId?: string | null; parentId?: string | null }) => {
     setBusy(true);
     try {
-      await moveDocument(documentId, {
-        folderId: target.folderId ?? null,
-        parentId: target.parentId ?? null,
+      // 移动 → applyLocal，patch 只带变更字段
+      await getSyncManager().applyLocal({
+        table: 'document',
+        id: documentId,
+        patch: {
+          folderId: target.folderId ?? null,
+          parentId: target.parentId ?? null,
+        },
       });
       setMoving(false);
       setActionError(null);
@@ -173,7 +191,12 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
   const handleDelete = async () => {
     setBusy(true);
     try {
-      await deleteDocument(documentId);
+      // 删除 → applyLocal（读侧按 isDeleted 过滤，patch 带 isDeleted/deletedAt）
+      await getSyncManager().applyLocal({
+        table: 'document',
+        id: documentId,
+        patch: { isDeleted: true, deletedAt: new Date().toISOString() },
+      });
       router.refresh();
       router.push('/documents');
     } catch {
@@ -333,7 +356,17 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
               setBusy(true);
               try {
                 const share = await getOrCreateShare(documentId);
-                await setSharePublished(documentId, true);
+                // 发布开关 → applyLocal（share 行 id 走本地镜像；镜像没有则退回服务端 action）
+                const shareId = await findDocumentShareId(documentId);
+                if (shareId) {
+                  await getSyncManager().applyLocal({
+                    table: 'document_share',
+                    id: shareId,
+                    patch: { isPublished: true },
+                  });
+                } else {
+                  await setSharePublished(documentId, true);
+                }
                 window.open(`/p/${share.token}`, '_blank');
               } catch {
                 setActionError('打开发布页失败');

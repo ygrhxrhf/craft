@@ -1,6 +1,8 @@
 'use server';
 
 import { assertOwned, getTable, requireUserId } from '@/lib/authz/guard';
+import { getDb } from '@/prisma/db';
+import { emitSyncEvent } from '@/lib/sync/emit-event';
 
 export interface WhiteboardRecord {
   id: string;
@@ -90,4 +92,13 @@ export async function deleteWhiteboard(id: string) {
     deletedAt: now,
     metaUpdatedAt: now,
   } as Record<string, unknown>);
+
+  // R-17 选定「server emit」：当前 UI 无白板删除调用点（无法 applyLocal 迁移），
+  // 删除动作发生时同步广播，其他端拉取即见（与 R-16 兜底同模式）。
+  try {
+    const db = await getDb();
+    await emitSyncEvent(db, userId, ['whiteboard'], { ts: now, id });
+  } catch {
+    // broadcast failure must never block deleting
+  }
 }

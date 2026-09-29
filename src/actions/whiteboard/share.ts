@@ -3,6 +3,8 @@
 import { createShareToken } from '@/lib/whiteboard-sharing/token';
 import { isSharePermission, type WhiteboardSharePermission } from '@/lib/whiteboard-sharing/access';
 import { assertOwned, getTable, requireUserId } from '@/lib/authz/guard';
+import { getDb } from '@/prisma/db';
+import { emitSyncEvent } from '@/lib/sync/emit-event';
 
 export interface WhiteboardShareState {
   permission: WhiteboardSharePermission;
@@ -66,11 +68,23 @@ export async function setWhiteboardShare(
   const shareVersion = ((board?.shareVersion as number) ?? 0) + 1;
   const shareToken = (board?.shareToken as string) ?? (permission === 'off' ? null : createShareToken());
 
+  // R-16 白板分享无法走 applyLocal（sharePermission/shareVersion 不在同步载荷列白名单，
+  // 且吊销要调内部 notifySyncService）→ 按 update.ts 模式兜底：bump metaUpdatedAt
+  //（whiteboard 的增量游标列）让本变更进入增量同步，并同事务 emit 广播其他端。
+  const metaTs = new Date().toISOString();
   await table.where({ id: whiteboardId }).update({
     sharePermission: permission,
     shareToken,
     shareVersion,
-  });
+    metaUpdatedAt: metaTs,
+  } as Record<string, unknown>);
+
+  try {
+    const db = await getDb();
+    await emitSyncEvent(db, userId, ['whiteboard'], { ts: metaTs, id: whiteboardId });
+  } catch {
+    // broadcast failure must never block saving
+  }
 
   // Turning a link off must reach the sync service too — that is exactly the
   // case where live visitors have to be disconnected.

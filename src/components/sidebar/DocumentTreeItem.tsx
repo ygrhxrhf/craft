@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { ChevronRight, File } from 'lucide-react';
 import { cn } from 'cn';
-import { moveDocument } from '@/actions/document/move';
+import { toggleFavorite, isDocumentFavorite } from '@/actions/document/favorite';
 import { createDocument } from '@/actions/document/create';
-import { deleteDocument } from '@/actions/document/delete';
-import { isDocumentFavorite, toggleFavorite } from '@/actions/document/favorite';
-import { updateDocument } from '@/actions/document/update';
+import { getSyncManager } from '@/lib/sync-core';
+import { createDocumentLocal } from '@/components/sync/create-local';
+import { findLiveFavoriteId } from '@/components/sync/local-records';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import {
   SIDEBAR_DOC_MIME,
@@ -50,6 +51,7 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   const [draftTitle, setDraftTitle] = useState(doc.title);
   const [favorite, setFavorite] = useState<boolean | null>(null);
   const router = useRouter();
+  const { data: session } = useSession();
   const bumpTree = useSidebarStore((s) => s.bumpTree);
 
   const children = allDocuments
@@ -71,7 +73,12 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
     setRenaming(false);
     const next = draftTitle.trim();
     if (!next || next === doc.title) return;
-    await updateDocument(doc.id, { title: next });
+    // 元数据改名 → applyLocal（本地立即可见，入队推送）
+    await getSyncManager().applyLocal({
+      table: 'document',
+      id: doc.id,
+      patch: { title: next },
+    });
     bumpTree();
   }
 
@@ -86,10 +93,11 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   }
 
   async function createChild() {
-    const child = await createDocument({ parentId: doc.id });
+    // brief 映射：本地先生成 id → applyLocal → flushNow 后再跳转（服务端可见）
+    const childId = await createDocumentLocal({ userId: session?.user?.id, parentId: doc.id });
     setExpanded(true);
     bumpTree();
-    router.push(`/documents/${child.id}`);
+    router.push(`/documents/${childId}`);
   }
 
   async function duplicateSelf() {
@@ -103,8 +111,22 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   }
 
   async function toggleFavoriteSelf() {
-    const added = await toggleFavorite(doc.id);
-    setFavorite(added);
+    if (favorite) {
+      // 取消收藏 → applyLocal 墓碑推送（活行 id 来自本地镜像）
+      const liveId = await findLiveFavoriteId(doc.id);
+      if (liveId) {
+        await getSyncManager().applyLocal({ table: 'favorite', id: liveId, patch: null });
+        setFavorite(false);
+      } else {
+        // 镜像还没拉到该行 → 退回服务端 action（唯一键墓碑复用在服务端）
+        setFavorite(await toggleFavorite(doc.id));
+      }
+      bumpTree();
+      return;
+    }
+    // 收藏保留服务端 action：Favorite id 是服务端 uuid，墓碑行不携带 data，
+    // 客户端盲建新 id 会撞 @@unique([userId,documentId]) 让整批同步 500（见 task-13 报告）
+    setFavorite(await toggleFavorite(doc.id));
     bumpTree();
   }
 
@@ -113,7 +135,13 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   }
 
   async function moveToTrash() {
-    await deleteDocument(doc.id);
+    // 删除 → applyLocal（不用 patch:null：同步协议的 delete 只写 deletedAt，
+    // 而读侧（getDocuments/回收站/搜索）按 isDeleted 过滤，会复活/丢进回收站失败）
+    await getSyncManager().applyLocal({
+      table: 'document',
+      id: doc.id,
+      patch: { isDeleted: true, deletedAt: new Date().toISOString() },
+    });
     bumpTree();
     if (window.location.pathname.startsWith(`/documents/${doc.id}`)) router.push('/documents');
   }
@@ -199,7 +227,12 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
     }
 
     try {
-      await moveDocument(payload.documentId, data);
+      // 移动（parent/folder/order 变更）→ applyLocal，patch 只带变更字段
+      await getSyncManager().applyLocal({
+        table: 'document',
+        id: payload.documentId,
+        patch: data,
+      });
       bumpTree();
     } catch (err) {
       console.error('移动文档失败', err);

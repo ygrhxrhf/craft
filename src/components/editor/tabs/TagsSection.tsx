@@ -5,11 +5,12 @@ import Link from 'next/link';
 import { Plus, X } from 'lucide-react';
 import {
   attachTag,
-  detachTag,
   getDocumentTags,
   getTags,
   type TagRecord,
 } from '@/actions/tag/tag';
+import { getSyncManager } from '@/lib/sync-core';
+import { normalizeTagName } from '@/lib/tag/normalize';
 
 interface TagsSectionProps {
   documentId: string;
@@ -33,11 +34,27 @@ export function TagsSection({ documentId }: TagsSectionProps) {
 
   const add = async (name: string) => {
     if (!name.trim() || busy) return;
+    const normalized = normalizeTagName(name);
+    if (!normalized) return;
     setBusy(true);
     try {
-      await attachTag(documentId, name);
-      setDraft('');
-      await load();
+      const existing = all.find((tag) => normalizeTagName(tag.name) === normalized);
+      if (existing) {
+        // 已有标签挂链接 → applyLocal（复合键 id 与拉取一致；deletedAt:null 复用墓碑行）
+        await getSyncManager().applyLocal({
+          table: 'document_tag',
+          id: `${documentId}__${existing.id}`,
+          patch: { documentId, tagId: existing.id, deletedAt: null },
+        });
+        setDraft('');
+        // 乐观挂上：服务端要等推送，load() 会把新链接读丢
+        setTags((prev) => (prev.some((t) => t.id === existing.id) ? prev : [...prev, existing]));
+      } else {
+        // 新标签名 → 服务端 find-or-create（同名墓碑复用/唯一键在服务端收敛，安全）
+        await attachTag(documentId, name);
+        setDraft('');
+        await load();
+      }
     } finally {
       setBusy(false);
     }
@@ -47,8 +64,15 @@ export function TagsSection({ documentId }: TagsSectionProps) {
     if (busy) return;
     setBusy(true);
     try {
-      await detachTag(documentId, tagId);
-      await load();
+      // 解除打标 → applyLocal（DocumentTag 无独立 id，delete op 缺复合键会 400，
+      // 故用 upsert + deletedAt 写墓碑，语义等价）
+      await getSyncManager().applyLocal({
+        table: 'document_tag',
+        id: `${documentId}__${tagId}`,
+        patch: { documentId, tagId, deletedAt: new Date().toISOString() },
+      });
+      // 乐观移除：load() 此刻仍会读到服务端未推送的旧行
+      setTags((prev) => prev.filter((t) => t.id !== tagId));
     } finally {
       setBusy(false);
     }

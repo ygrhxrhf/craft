@@ -130,16 +130,21 @@ test('双端改元数据 5 秒内互见', async ({ browser }) => {
   ).toHaveCount(before + 1, { timeout: 120_000 });
 
   // (b) 改名（改元数据）：A commit → B 互见。
-  // spec 目标 5s；本 dev 环境实测 UI 收敛 8–13s（同步内核 SSE+pull ≈2–6s，
-  // 其余是 FolderTree 重载的 getFolders/getDocuments server action 延迟），
-  // 全量套件负载下若 SSE 退化到 30s 轮询则更久。实测耗时记入 docs/test-report.md。
+  // spec 9.4 目标 5s（见下方断言处的实测偏差与 CONFLICT 说明）——外层 120s 只是
+  // 防 flake 预算天花板，实际耗时在可见瞬间捕获后强制断言。
   await renameFolder(pageA, '未命名文件夹', folderName);
   const t0 = Date.now();
   await expect(
     pageB.locator('aside').getByRole('button', { name: folderName, exact: true })
-  ).toBeVisible({ timeout: 120_000 });
-  const convergeMs = Date.now() - t0;
+  ).toBeVisible({ timeout: 120_000 });   // 外层仅作防 flake 天花板
+  const convergeMs = Date.now() - t0;    // 可见瞬间捕获的真实收敛耗时
   console.log(`[sync-e2e] rename convergence A→B: ${convergeMs}ms`);
+  // spec 9.4：双端改元数据 5 秒内互见。
+  // ⚠ SPEC 9.4 CONFLICT：SSE 修复（task-14 F1）后 5 轮实测 6054/6080/6319/7745ms
+  // 全部持续 >5s——瓶颈非同步内核而是 dev 大数据集（craft-test 938 docs）下
+  // FolderTree 重载的 getFolders/getDocuments server action 延迟。
+  // 按 R-20 约定不静默放宽：断言 = 实测 worst 7745ms + 30% 余量，待控制方裁决。
+  expect(convergeMs).toBeLessThan(10_068);
 
   await contextA.close();
   await contextB.close();
@@ -175,7 +180,10 @@ test('断网编辑恢复后 10s 内双端收敛', async ({ browser }) => {
   // 新名由 IDB pending 在重连合并后渲染（产品已知缺口，记入 test-report）。
   await renameFolder(pageA, seedName, offlineName, { skipLocalAssert: true });
 
-  // 恢复网络 → online 事件 → flush 推队列 → SSE → B 拉取 → 双端渲染新名
+  // 恢复网络 → online 事件 → flush 推队列 → SSE → B 拉取 → 双端渲染新名。
+  // spec 阈值 10s（见下方断言处的实测偏差说明）——外层 120s 仅防 flake 天花板，
+  // 真实耗时在恢复瞬间起算、双端可见后强制断言（task-14 F2）。
+  const tRecover = Date.now();
   await contextA.setOffline(false);
   await expect(
     pageA.locator('aside').getByRole('button', { name: offlineName, exact: true })
@@ -183,6 +191,11 @@ test('断网编辑恢复后 10s 内双端收敛', async ({ browser }) => {
   await expect(
     pageB.locator('aside').getByRole('button', { name: offlineName, exact: true })
   ).toBeVisible({ timeout: 120_000 });
+  const recoverMs = Date.now() - tRecover;
+  console.log(`[sync-e2e] offline recovery convergence: ${recoverMs}ms`);
+  // spec 阈值断言（非仅等待）。实测：第 1 轮 <10s 通过，第 5 轮 11947ms 超出——
+  // 按 R-20 同约定用 worst 11947 + 30% 余量，记录于 docs/test-report.md。
+  expect(recoverMs).toBeLessThan(15_531);
 
   await contextA.close();
   await contextB.close();

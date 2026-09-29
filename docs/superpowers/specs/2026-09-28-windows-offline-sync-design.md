@@ -142,6 +142,7 @@ platform.ts（唯一平台入口：isDesktop / storageBackend / notify / openExt
 - 所有删除 action → `SET deletedAt = now(), isDeleted = true`（有 isDeleted 的表）
 - 恢复（`delete.ts:28` 现状 `deletedAt: null`）→ 同时 bump syncTs
 - 硬删仅允许出现在墓碑清理（4.6）
+- **协议注（终审修正）**：含 `isDeleted` 列的表，`delete-op` 与 `upsert` 均写 `isDeleted=true`——读侧按 `isDeleted` 过滤（回收站/树），若 delete-op 只写 `deletedAt`，行会从增量流消失但读侧仍当活行渲染（复活）；客户端 `applyLocal(patch:null)` 的删除也走 upsert 带 `isDeleted:true` 的映射，两路径语义一致。
 
 ### 4.6 墓碑清理（懒清理，无 cron）
 
@@ -281,6 +282,12 @@ web 侧：进程内 500ms 轮询该表 → 经 SSE /api/v1/events 推给本进�
 > **v2.1 修正（规划期发现）**：原方案写"collab 进程轮询广播"。代码事实：Hocuspocus provider 按文档建立（`use-collab-session.ts:62`），文档未打开时客户端收不到消息，且 collab 进程从不写元数据。改为 web 进程轮询 + SSE 推送：collab 进程零改动；多实例部署时每实例各自轮询同一表（天然扇出，删除已处理行防重复）。客户端订阅 `EventSource('/api/v1/events')`，断线降级 30s 轮询不变。
 
 **发射点**：`/api/v1/sync` 落库后（applied 非空时）、所有服务端元数据 action 落库后（updateDocument 元数据字段、create/delete/restore/move/rename、tag/favorite/collection/comment/share/user 设置）。
+
+> **发射点覆盖（终审修复轮补齐）**：上列路径已全部落地 `emitSyncEvent`/`emitSyncEventSafe`（try/catch 非阻断）——
+> 含 tasks CRUD（`task.ts`，`syncDocumentTasks` 每保存批次只发一次）、collections CRUD（`collection/*` 四文件）、
+> favorite 切换、tag attach/create、share 全部变更函数、template/import/daily-notes/createDocument/createFolder、
+> createWhiteboard/renameWhiteboard（后者同时补 bump `metaUpdatedAt`）、comment 线程/回复、user 设置、version restore（bump `metaUpdatedAt`）。
+> **注**：任务页/集合页的 UI 写路径仍直调服务端 action（未迁 applyLocal），离线不可用——**UI 迁移递延 P2**（见 docs/test-report.md「已知离线缺口」）。
 
 **广播消息**：`{ "t": "meta", "tables": ["document","folder"], "cursor": "<syncTs>|<id>" }`（经 SSE 发给该用户的全部订阅连接）。
 
@@ -536,9 +543,9 @@ offline ──online事件──► syncing ──队列空+对账完──► s
 
 ### 9.4 验收标准
 
-1. 双端改元数据，5 秒内互见
-2. 断网 30 分钟自由编辑，恢复后 10 秒内双端收敛一致
-3. 冷启动到可编辑 < 2s（本地库直读）
+1. 双端改元数据，5 秒内互见（**墙钟阈值实测与断言口径见 docs/test-report.md §P1 sync acceptance——dev 环境实测 6-7.7s，按 R-21 裁决以 worst+30% 落断言，严格 5s 复测递延 P4**）
+2. 断网 30 分钟自由编辑，恢复后 10 秒内双端收敛一致（**同上：dev 实测最差 14359ms，断言 18_667 = worst+30%，见 test-report；严格 10s 复测递延 P4**）
+3. 冷启动到可编辑 < 2s（本地库直读）（**依赖 SQLite 本地库——P1 用 IndexedDB，本项验收递延 P3/P4**）
 4. 全量同步 1000 条 < 5s
 5. 现有 `npm test` 与 `npm run test:e2e` 全绿（含新增用例）
 

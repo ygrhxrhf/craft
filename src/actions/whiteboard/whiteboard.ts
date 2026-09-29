@@ -82,8 +82,12 @@ export async function deleteWhiteboard(id: string) {
   const userId = await requireUserId();
   await assertOwned('Whiteboard', id, userId, '白板不存在');
 
+  // Deletion is metadata: bump metaUpdatedAt (whiteboard tsCol) so the
+  // deletion propagates via incremental sync. Content saves must not bump it.
+  const now = new Date().toISOString();
   await (await getTable('Whiteboard')).where({ id, userId }).update({
     isDeleted: true,
-    deletedAt: new Date().toISOString(),
+    deletedAt: now,
+    metaUpdatedAt: now,
   } as Record<string, unknown>);
 }

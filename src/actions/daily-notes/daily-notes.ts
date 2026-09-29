@@ -79,6 +79,9 @@ export async function getOrCreateTodayNote() {
     folderId,
     isDailyNote: true,
     dailyNoteDate: start,
+    // No DB default on metaUpdatedAt; without it new rows never enter the
+    // incremental-sync stream (document tsCol is metaUpdatedAt).
+    metaUpdatedAt: now.toISOString(),
   });
 
   return { id: (doc as any).id as string, created: true };

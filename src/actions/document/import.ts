@@ -63,6 +63,9 @@ export async function importMarkdownDocuments(input: {
       folderId,
       content,
       plainText: serializeDocument(content, 'text'),
+      // No DB default on metaUpdatedAt; without it new rows never enter the
+      // incremental-sync stream (document tsCol is metaUpdatedAt).
+      metaUpdatedAt: new Date().toISOString(),
     });
     created.push({ id: (document as any).id, title: (document as any).title });
   }

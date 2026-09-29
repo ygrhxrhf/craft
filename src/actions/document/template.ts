@@ -23,6 +23,9 @@ export async function saveAsTemplate(documentId: string) {
     width: d.width,
     userId: session.user.id,
     isTemplate: true,
+    // No DB default on metaUpdatedAt; without it new rows never enter the
+    // incremental-sync stream (document tsCol is metaUpdatedAt).
+    metaUpdatedAt: new Date().toISOString(),
   });
 
   return copy;

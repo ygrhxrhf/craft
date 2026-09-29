@@ -45,7 +45,10 @@ export function createQueue(
           return { pushed, status: 'network' };
         }
         if (res.status === 401) return { pushed, status: 'auth' };
-        if (!res.ok) return { pushed, status: 'http' };
+        // I6/spec 9.2：只有 400/413（程序 bug）不重试；5xx 与其余失败归 network，
+        // 上层 manager 按退避阶梯重试（连续 3 次 → error）
+        if (res.status === 400 || res.status === 413) return { pushed, status: 'http' };
+        if (!res.ok) return { pushed, status: 'network' };
 
         const body = await res.json();
         await store.ack(batch.map(op => op.seq));

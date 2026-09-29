@@ -50,4 +50,20 @@ describe('queue.flush', () => {
     expect((await q400.flush()).status).toBe('http');
     expect(await store.countPending()).toBe(1);   // 非 ok 都不 ack
   });
+
+  // I6/spec 9.2：5xx 与其余非 401/400/413 失败 → network（上层按退避重试），
+  // 只有 400/413（程序 bug）才是 http（不重试）
+  it('I6：500/503 → status=network（触发退避重试）；413 → status=http', async () => {
+    for (const status of [500, 503]) {
+      const store = await mk();
+      await store.enqueue({ table: 'folder', recordId: 'f1', op: 'upsert', payload: { syncTs: NOW }, createdAt: NOW });
+      const q = createQueue(store, { fetchImpl: (async () => new Response('{}', { status })) as any });
+      expect((await q.flush()).status, `status=${status}`).toBe('network');
+      expect(await store.countPending()).toBe(1);   // 不 ack，留待重试
+    }
+    const store = await mk();
+    await store.enqueue({ table: 'folder', recordId: 'f1', op: 'upsert', payload: { syncTs: NOW }, createdAt: NOW });
+    const q413 = createQueue(store, { fetchImpl: (async () => new Response('{}', { status: 413 })) as any });
+    expect((await q413.flush()).status).toBe('http');
+  });
 });

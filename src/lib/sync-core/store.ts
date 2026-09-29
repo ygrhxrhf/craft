@@ -15,11 +15,15 @@ export interface SyncStore {
   countPending(): Promise<number>;
   getCursor(): Promise<Cursor | null>;
   setCursor(c: Cursor): Promise<void>;
+  // I7：sync_state 通用 kv（lastPullAt 等键值状态；与 cursor 键空间并存）
+  getKv(key: string): Promise<string | null>;
+  setKv(key: string, value: string): Promise<void>;
 }
 
 export function createMemoryStore(): SyncStore {
   const records = new Map<string, SyncRecord>(); // key: `${table}::${id}`
   const pending = new Map<number, PendingOp>();  // key: seq
+  const kv = new Map<string, string>();          // key: kv 键（如 lastPullAt）
   let seq = 0;
   let cursor: Cursor | null = null;
 
@@ -93,5 +97,13 @@ export function createMemoryStore(): SyncStore {
     cursor = { ...c };
   }
 
-  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, getCursor, setCursor };
+  async function getKv(key: string): Promise<string | null> {
+    return kv.get(key) ?? null;
+  }
+
+  async function setKv(key: string, value: string): Promise<void> {
+    kv.set(key, value);
+  }
+
+  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, getCursor, setCursor, getKv, setKv };
 }

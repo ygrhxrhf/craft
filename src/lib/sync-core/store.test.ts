@@ -60,4 +60,18 @@ describe.each([
     await s.setCursor({ ts: '2026-09-28T10:00:00.000Z', id: 'x' });
     expect(await s.getCursor()).toEqual({ ts: '2026-09-28T10:00:00.000Z', id: 'x' });
   });
+
+  // I7：lastPullAt 等 sync_state 走通用 kv（两适配器同一契约）
+  it('kv 读写：setKv/getKv 往返；缺失键返回 null；与 cursor 互不干扰', async () => {
+    expect(await s.getKv('lastPullAt')).toBeNull();
+    await s.setKv('lastPullAt', '2026-09-28T10:00:00.000Z');
+    expect(await s.getKv('lastPullAt')).toBe('2026-09-28T10:00:00.000Z');
+    // 与 cursor 键共存（idb 同一 KV store，键空间不冲突）
+    await s.setCursor({ ts: '2026-09-28T10:00:00.000Z', id: 'x' });
+    expect(await s.getKv('lastPullAt')).toBe('2026-09-28T10:00:00.000Z');
+    expect(await s.getCursor()).toEqual({ ts: '2026-09-28T10:00:00.000Z', id: 'x' });
+    // 覆盖写
+    await s.setKv('lastPullAt', '2026-09-29T00:00:00.000Z');
+    expect(await s.getKv('lastPullAt')).toBe('2026-09-29T00:00:00.000Z');
+  });
 });

@@ -19,6 +19,8 @@ const DEBOUNCE = 2000;      // spec：applyLocal → flush 去抖
 const FLUSH_AT = 50;        // spec：pending 达阈值立即 flush
 // 退避阶梯 [2000..300000]（硬规则 5）：第 n 次失败取 BACKOFF[n-1]，封顶末位
 const BACKOFF = [2_000, 4_000, 8_000, 16_000, 32_000, 64_000, 128_000, 256_000, 300_000];
+// I7：距上次成功 pull 超过该时长 → boot 全量对账（墓碑保留期 30 天，spec 6.4）
+const FULL_RECONCILE_AFTER_MS = 30 * 24 * 60 * 60 * 1000;
 
 export interface ApplyLocalOpts {
   table: string;
@@ -72,7 +74,9 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
   const statusSubs = new Set<(s: SyncStatus, pending: number) => void>();
   const storeSubs = new Set<(table: string) => void>();
 
-  let status: SyncStatus = 'offline';   // boot 前无连接
+  // I5：初始 'syncing' 而非 'offline'——boot 前指示器显示良性的「同步中」，
+  // 不误报「离线 · 0 条待传」（真实离线由 offline 事件 / navigator.onLine 判定）
+  let status: SyncStatus = 'syncing';
   let paused = false;                   // auth 暂停：不重试（硬规则 6）
   let failStreak = 0;
   let cachedPending = 0;
@@ -259,8 +263,13 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     if (bootPromise) return bootPromise;
     bootPromise = (async () => {
       await store.init();
+      // I7：30 天全量对账——墓碑 30d 已清（spec 6.4），超龄的增量游标不可信，
+      // boot 时改走 {full:true}（含首次全量、lastPullAt 缺失/超龄/不可解析）
       const cursor = await store.getCursor();
-      await pull(cursor ? undefined : { full: true });
+      const lastPullAt = await store.getKv('lastPullAt');
+      const age = lastPullAt ? Date.now() - Date.parse(lastPullAt) : NaN;
+      const stale = !Number.isFinite(age) || age > FULL_RECONCILE_AFTER_MS;
+      await pull(!cursor || stale ? { full: true } : undefined);
       if (!broadcastStarted) {
         broadcaster.start();     // 硬规则 3：start() 一次
         broadcastStarted = true;

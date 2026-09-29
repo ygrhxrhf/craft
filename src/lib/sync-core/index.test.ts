@@ -131,6 +131,39 @@ describe('SyncManager', () => {
     expect(queue.flush).toHaveBeenCalledTimes(1);
   });
 
+  // I5：boot 前指示器不能显示「离线 · 0 条待传」——初始状态须为 syncing（良性「同步中」）
+  it('I5：初始状态 !== offline（订阅者首帧收到 syncing，指示器显示「同步中」）', async () => {
+    const { manager, notify } = await makeManager();
+    expect(manager.status()).not.toBe('offline');
+    expect(manager.status()).toBe('syncing');
+    // subscribe 的首帧回调（SyncStatusIndicator 据此渲染）也必须不是 offline
+    expect(notify.mock.calls[0]![0]).not.toBe('offline');
+  });
+
+  // I7：30 天全量对账——boot 时 cursor 存在但 lastPullAt 超龄 → pull({full:true})
+  it('I7：cursor 存在 + lastPullAt 超 30 天 → boot 全量对账 {full:true}；缺失同超龄', async () => {
+    const stale = await makeManager();
+    await stale.store.setCursor({ ts: '2026-06-01T00:00:00.000Z', id: 'x' });
+    await stale.store.setKv('lastPullAt', '2026-06-01T00:00:00.000Z');   // >30d 前
+    await stale.manager.boot();
+    expect(stale.pullSpy).toHaveBeenCalledWith({ full: true });
+
+    // cursor 存在但从未记录 lastPullAt（升级自旧版本）→ 视为超龄，同样全量
+    const missing = await makeManager();
+    await missing.store.setCursor({ ts: '2026-09-28T00:00:00.000Z', id: 'y' });
+    await missing.manager.boot();
+    expect(missing.pullSpy).toHaveBeenCalledWith({ full: true });
+  });
+
+  it('I7：cursor 存在 + lastPullAt 新鲜（≤30 天）→ boot 走增量 pull（不带 full）', async () => {
+    const fresh = await makeManager();
+    await fresh.store.setCursor({ ts: '2026-09-28T00:00:00.000Z', id: 'z' });
+    await fresh.store.setKv('lastPullAt', new Date().toISOString());
+    await fresh.manager.boot();
+    expect(fresh.pullSpy).toHaveBeenCalledWith(undefined);
+    expect(fresh.pullSpy).not.toHaveBeenCalledWith({ full: true });
+  });
+
   // R-12：SPA 登录后 manager 不能永久 paused
   it('resume：401 pull → paused 后，resume() 清除暂停并重新 pull + flush', async () => {
     const { manager, pullSpy, queue } = await makeManager();

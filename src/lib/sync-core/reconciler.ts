@@ -96,6 +96,8 @@ export function createReconciler(store: SyncStore, opts: { fetchImpl?: typeof fe
         // 全量判定可能制造新墓碑 → 子引用随之收养
         await adoptOrphans();
       }
+      // I7：仅成功走到这里才记账（401/5xx 抛错在前）——boot 据此判断 30d 全量对账
+      await store.setKv('lastPullAt', new Date().toISOString());
       return { applied, deletedLocally };
     },
   };

@@ -117,4 +117,31 @@ describe('reconciler.pull', () => {
     const r = createReconciler(store, { fetchImpl: fetchImpl as any });
     await expect(r.pull()).rejects.toThrow(/500/);
   });
+
+  // ---- I7：lastPullAt 记账（boot 据此判断 30 天全量对账）----
+
+  it('I7：pull 成功后写入 lastPullAt（增量与全量都写）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    const fetchImpl = vi.fn(async () => ok(
+      { records: [], cursor: '2026-09-28T10:00:00.000Z|z', hasMore: false }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await r.pull();
+    expect(await store.getKv('lastPullAt')).toBeTruthy();
+    await store.setKv('lastPullAt', '2026-01-01T00:00:00.000Z');
+    await r.pull({ full: true });
+    expect(await store.getKv('lastPullAt')).not.toBe('2026-01-01T00:00:00.000Z');
+  });
+
+  it('I7：pull 失败（401/500）不写 lastPullAt（未成功对账不得当作新鲜）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    const e500 = createReconciler(store, {
+      fetchImpl: (async () => new Response('{}', { status: 500 })) as any });
+    await expect(e500.pull()).rejects.toThrow();
+    expect(await store.getKv('lastPullAt')).toBeNull();
+
+    const e401 = createReconciler(store, {
+      fetchImpl: (async () => new Response('{}', { status: 401 })) as any });
+    await expect(e401.pull()).rejects.toBeInstanceOf(SyncAuthError);
+    expect(await store.getKv('lastPullAt')).toBeNull();
+  });
 });

@@ -128,5 +128,15 @@ export function createIdbStore(): SyncStore {
     await requireDb().put(KV, { ...c }, CURSOR_KEY);
   }
 
-  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, getCursor, setCursor };
+  // I7：sync_state 通用 kv（与 cursor 同一 KV store，键空间独立）
+  async function getKv(key: string): Promise<string | null> {
+    const v = await requireDb().get(KV, key);
+    return typeof v === 'string' ? v : null;
+  }
+
+  async function setKv(key: string, value: string): Promise<void> {
+    await requireDb().put(KV, value, key);
+  }
+
+  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, getCursor, setCursor, getKv, setKv };
 }

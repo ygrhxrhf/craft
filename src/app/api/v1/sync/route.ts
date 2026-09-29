@@ -144,6 +144,13 @@ type BatchResult = {
   cursor: string;
 };
 
+// I1(c)：带 userId 列的表（与 GET 侧 else 分支同源）——写侧 where 强制会话 userId 收窄，
+// payload 的 userId 无条件覆盖为会话用户（不取客户端值，防跨用户改写/转移行）。
+const USER_ID_TABLES = new Set([
+  'document', 'folder', 'tag', 'favorite', 'task',
+  'daily_notes_config', 'collection', 'comment', 'whiteboard',
+]);
+
 // R-19：唯一键表在「按 pk 定位不到、但唯一键撞上存量（含墓碑）行」时盲 create 会抛
 // 唯一约束 → 整批 500 → 客户端无限重推（毒批次）。冲突时按这里的定位器回读现存行，
 // 跑与主路径同一条 decideLww（update-or-reject）。
@@ -188,6 +195,10 @@ export async function POST(req: NextRequest) {
     if (!SYNC_TABLES.some(d => d.table === rec.table)) {
       return Response.json({ error: `unknown table ${rec.table}` }, { status: 400 });
     }
+    // I1(b)：user 表只允许写本人行——记录 id 与会话用户不符 → 400 整批拒绝
+    if (rec.table === 'user' && rec.id !== userId) {
+      return Response.json({ error: 'user id mismatch' }, { status: 400 });
+    }
   }
 
   const db = await getDb();
@@ -220,9 +231,15 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
       const key: Record<string, unknown> = { ...rec, ...rec.data };
       const pk = def.id(key); // document_tag → `${documentId}__${tagId}`；其余即 rec.id
       const model = scope.orm.public[def.model];
-      const where = rec.table === 'document_tag'
+      // I1(b)(c)：user 表 where 强制会话用户 id（上游已拒 id≠会话用户的记录）；
+      // 带 userId 列的表 where 追加会话 userId——update/first/delete 定位均被收窄到本人行
+      const where: Record<string, unknown> = rec.table === 'document_tag'
         ? { documentId: key.documentId, tagId: key.tagId }
-        : { id: rec.id };
+        : rec.table === 'user'
+          ? { id: userId }
+          : USER_ID_TABLES.has(rec.table)
+            ? { id: rec.id, userId }
+            : { id: rec.id };
       const current = await model.first(where);
       const tSrv = current ? new Date(current[def.tsCol]).toISOString() : null;
       const decision = decideLww(rec.op, rec.syncTs, tSrv);
@@ -243,7 +260,11 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
         } // 本就不存在 → 幂等接受，无写入
         maxCursor = newer(maxCursor, { ts, id: pk });
       } else {
-        const payload = { ...rec.data, [def.tsCol]: ts };
+        // I1(a)：payload 与 def.cols 求交——白名单外的键（content/plainText/任意伪造键）直接丢弃；
+        // I1(c)：带 userId 列的表无条件盖会话 userId（create 落库必需，update 与 where 同值）
+        const payload: Record<string, unknown> = { [def.tsCol]: ts };
+        for (const c of def.cols) if (c in (rec.data ?? {})) payload[c] = rec.data![c];
+        if (USER_ID_TABLES.has(rec.table)) payload.userId = userId;
         if (current) {
           await model.where(where).update(payload);
         } else {

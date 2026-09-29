@@ -18,11 +18,11 @@ describe('GET /api/v1/events (SSE)', () => {
   it('401 未登录', async () => {
     const { requireUserId } = await import('@/lib/authz/guard');
     (requireUserId as any).mockRejectedValueOnce(new (await import('@/lib/authz/guard')).AuthorizationError());
-    const res = await GET(new (await import('next/server')).NextRequest('http://x/api/v1/events'));
+    const res = await GET();
     expect(res.status).toBe(401);
   });
   it('200 且 content-type text/event-stream', async () => {
-    const res = await GET(new (await import('next/server')).NextRequest('http://x/api/v1/events'));
+    const res = await GET();
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('text/event-stream');
   });

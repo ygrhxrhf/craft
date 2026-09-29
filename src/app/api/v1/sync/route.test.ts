@@ -212,6 +212,53 @@ describe('POST /api/v1/sync', () => {
     expect(body2.rejected[0].data.id).toBe('f1');
   });
 
+  it('I1(a)(c)：data 与 def.cols 求交——content 等白名单外键不入写入；带 userId 列的表强制会话 userId', async () => {
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const first = vi.fn(async (_where: Record<string, unknown>): Promise<any> => null);
+    const chain = { where: () => chain, first, update, create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [{
+      table: 'document', id: 'd9', op: 'upsert',
+      data: { title: 'ok', content: { secret: 1 }, evil: 'x', userId: 'attacker' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(res.status).toBe(200);
+    expect(create).toHaveBeenCalledTimes(1);
+    const arg = create.mock.calls[0]![0]!;
+    expect(arg).not.toHaveProperty('content'); // 白名单外列不落库
+    expect(arg).not.toHaveProperty('evil');
+    expect(arg.title).toBe('ok');
+    expect(arg.userId).toBe('u1'); // 会话用户覆盖 payload 里的 userId
+    // (c) first/update 的 where 带会话 userId 收窄
+    expect(first).toHaveBeenCalledWith({ id: 'd9', userId: 'u1' });
+
+    // update 分支同样收窄 where、且 payload 求交
+    first.mockResolvedValueOnce({ id: 'd9', userId: 'u1', title: 'old',
+      updatedAt: '2026-09-28T09:00:00.000Z', metaUpdatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null });
+    const res2 = await POST(req({ records: [{
+      table: 'document', id: 'd9', op: 'upsert',
+      data: { title: 'new', content: { secret: 2 } },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(res2.status).toBe(200);
+    expect(update).toHaveBeenCalledTimes(1);
+    expect(update.mock.calls[0]![0]).not.toHaveProperty('content');
+    expect(chain.where()).toBe(chain); // where 简写链可组合
+    expect(first).toHaveBeenLastCalledWith({ id: 'd9', userId: 'u1' });
+  });
+
+  it('I1(b)：user 表记录 id ≠ 会话用户 id → 400 整批拒绝', async () => {
+    const res = await POST(req({ records: [{
+      table: 'user', id: 'someone-else', op: 'upsert',
+      data: { name: 'x' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(res.status).toBe(400);
+  });
+
   it('R-19：create 抛错且无唯一键定位器/定位不到存量行 → 仍整批 500（不吞真错误）', async () => {
     const create = vi.fn(async () => { throw new Error('boom'); });
     const first = vi.fn(async () => null);

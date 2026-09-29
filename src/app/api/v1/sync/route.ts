@@ -256,7 +256,12 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
       let appliedId = pk;
       if (rec.op === 'delete') {
         if (current) {
-          await model.where(where).update({ deletedAt: ts, [def.tsCol]: ts });
+          // I8/spec 4.5：读侧（树/回收站/搜索）按 isDeleted 过滤——含该列的表
+          // delete-op 必须同时写 isDeleted:true，否则行从增量流消失但读侧仍当活行
+          // 渲染（复活）。不含该列的表（document_tag 等）只写 deletedAt/updatedAt。
+          const tombstone: Record<string, unknown> = { deletedAt: ts, [def.tsCol]: ts };
+          if (def.cols.includes('isDeleted')) tombstone.isDeleted = true;
+          await model.where(where).update(tombstone);
         } // 本就不存在 → 幂等接受，无写入
         maxCursor = newer(maxCursor, { ts, id: pk });
       } else {

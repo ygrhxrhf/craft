@@ -259,6 +259,34 @@ describe('POST /api/v1/sync', () => {
     expect(res.status).toBe(400);
   });
 
+  it('I8：delete-op 对含 isDeleted 列的表同时写 isDeleted:true（读侧按 isDeleted 过滤，只写 deletedAt 会复活）', async () => {
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const first = vi.fn(async (_where: Record<string, unknown>): Promise<any> => ({
+      id: 'd1', updatedAt: '2026-09-28T09:00:00.000Z',
+      metaUpdatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null,
+    }));
+    const chain = { where: () => chain, first, update, create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [
+      { table: 'document', id: 'd1', op: 'delete', syncTs: '2026-09-28T12:00:00.000Z' },
+      // 无 isDeleted 列的表（document_tag）不受影响，只写 deletedAt/updatedAt
+      { table: 'document_tag', id: 'x', op: 'delete',
+        data: { documentId: 'd1', tagId: 't1' }, syncTs: '2026-09-28T12:00:00.000Z' },
+    ] }));
+    expect(res.status).toBe(200);
+    expect(update).toHaveBeenCalledTimes(2);
+    const docDel = update.mock.calls[0]![0]!;
+    expect(docDel.isDeleted).toBe(true);              // 含列的表：delete-op 强制写
+    expect(typeof docDel.deletedAt).toBe('string');
+    const tagDel = update.mock.calls[1]![0]!;
+    expect(tagDel).not.toHaveProperty('isDeleted');   // 不含列的表：不写
+    expect(typeof tagDel.deletedAt).toBe('string');
+  });
+
   it('R-19：create 抛错且无唯一键定位器/定位不到存量行 → 仍整批 500（不吞真错误）', async () => {
     const create = vi.fn(async () => { throw new Error('boom'); });
     const first = vi.fn(async () => null);

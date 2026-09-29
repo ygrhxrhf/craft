@@ -57,6 +57,9 @@ export async function createWhiteboard(name?: string) {
     name: name ?? '未命名白板',
     icon: '🎨',
     userId,
+    // No DB default on metaUpdatedAt; without it new rows never enter the
+    // incremental-sync stream (whiteboard tsCol is metaUpdatedAt).
+    metaUpdatedAt: new Date().toISOString(),
   });
 }
 

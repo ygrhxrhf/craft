@@ -172,4 +172,58 @@ describe('POST /api/v1/sync', () => {
     expect((await retry.json()).applied).toHaveLength(2);
     expect(create).toHaveBeenCalledTimes(1);
   });
+
+  it('R-19：create 撞唯一键（同唯一键存量行不同 pk）→ 回读现存行跑 LWW，200 非 500', async () => {
+    const existing = {
+      id: 'f1', userId: 'u1', documentId: 'd1', order: 0,
+      createdAt: '2026-09-01T00:00:00.000Z', updatedAt: '2026-09-28T09:00:00.000Z',
+      deletedAt: '2026-09-28T09:00:00.000Z', // 墓碑行：pk 不同但 (userId,documentId) 撞唯一键
+    };
+    const update = vi.fn(async (..._args: unknown[]) => ({}));
+    const create = vi.fn(async () => { throw new Error('unique violation'); });
+    const first = vi.fn(async (where: any) => (where.id === 'f2' ? null : existing));
+    const chain = { where: () => chain, first, update, create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const rec = (syncTs: string) => ({
+      table: 'favorite', id: 'f2', op: 'upsert',
+      data: { id: 'f2', userId: 'u1', documentId: 'd1', order: 3 },
+      syncTs,
+    });
+
+    // 客户端更新（12:00 > 服务端 09:00）→ apply：盖存量行，applied 报存量行真实 pk
+    const res = await POST(req({ records: [rec('2026-09-28T12:00:00.000Z')] }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'favorite', id: 'f1' }]);
+    expect(first).toHaveBeenCalledWith({ userId: 'u1', documentId: 'd1' });
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ order: 3 }));
+    // 不动存量行主键（payload 里的 id 必须剥掉）
+    expect(update.mock.calls[0][0]).not.toHaveProperty('id');
+
+    // 客户端更旧（08:00 < 09:00）→ reject：回传现存行现值，仍 200
+    const res2 = await POST(req({ records: [rec('2026-09-28T08:00:00.000Z')] }));
+    expect(res2.status).toBe(200);
+    const body2 = await res2.json();
+    expect(body2.applied).toHaveLength(0);
+    expect(body2.rejected).toHaveLength(1);
+    expect(body2.rejected[0].data.id).toBe('f1');
+  });
+
+  it('R-19：create 抛错且无唯一键定位器/定位不到存量行 → 仍整批 500（不吞真错误）', async () => {
+    const create = vi.fn(async () => { throw new Error('boom'); });
+    const first = vi.fn(async () => null);
+    const chain = { where: () => chain, first, update: vi.fn(), create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [{
+      table: 'folder', id: 'f1', op: 'upsert', data: { name: 'x' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(res.status).toBe(500);
+  });
 });

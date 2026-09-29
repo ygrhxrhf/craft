@@ -11,6 +11,7 @@ import {
 } from '@/actions/tag/tag';
 import { getSyncManager } from '@/lib/sync-core';
 import { normalizeTagName } from '@/lib/tag/normalize';
+import { toast } from '@/components/ui/toast';
 
 interface TagsSectionProps {
   documentId: string;
@@ -55,6 +56,9 @@ export function TagsSection({ documentId }: TagsSectionProps) {
         setDraft('');
         await load();
       }
+    } catch {
+      // spec D7-④ 离线提示：新标签走服务端 action，失败（多为离线）给反馈
+      toast.add({ id: 'offline-hint', type: 'warning', title: '需要网络' });
     } finally {
       setBusy(false);
     }

@@ -144,6 +144,22 @@ type BatchResult = {
   cursor: string;
 };
 
+// R-19：唯一键表在「按 pk 定位不到、但唯一键撞上存量（含墓碑）行」时盲 create 会抛
+// 唯一约束 → 整批 500 → 客户端无限重推（毒批次）。冲突时按这里的定位器回读现存行，
+// 跑与主路径同一条 decideLww（update-or-reject）。
+// 作用域强制用批级 userId（R-1），不取 payload 里的 userId，避免越权定位他人行。
+const UNIQUE_KEY_LOCATORS: Record<
+  string,
+  (key: Record<string, unknown>, userId: string) => Record<string, unknown> | null
+> = {
+  tag: (key, userId) => (key.name == null ? null : { name: key.name, userId }),
+  favorite: (key, userId) => (key.documentId == null ? null : { userId, documentId: key.documentId }),
+  collection_value: (key) =>
+    (key.itemId == null || key.propertyId == null)
+      ? null
+      : { itemId: key.itemId, propertyId: key.propertyId },
+};
+
 export async function POST(req: NextRequest) {
   let userId: string;
   try {
@@ -219,6 +235,8 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
         continue;
       }
       const ts = serverNow();
+      // 撞唯一键改写存量行时，applied/cursor 报存量行真实 pk（与 GET 侧 def.id 同源）
+      let appliedId = pk;
       if (rec.op === 'delete') {
         if (current) {
           await model.where(where).update({ deletedAt: ts, [def.tsCol]: ts });
@@ -226,11 +244,35 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
         maxCursor = newer(maxCursor, { ts, id: pk });
       } else {
         const payload = { ...rec.data, [def.tsCol]: ts };
-        if (current) await model.where(where).update(payload);
-        else await model.create({ ...payload, id: rec.table === 'document_tag' ? undefined : rec.id });
-        maxCursor = newer(maxCursor, { ts, id: pk });
+        if (current) {
+          await model.where(where).update(payload);
+        } else {
+          try {
+            await model.create({ ...payload, id: rec.table === 'document_tag' ? undefined : rec.id });
+          } catch (err) {
+            // R-19：唯一键冲突（同唯一键存量行、不同 pk）→ 按定位器回读存量行，
+            // 跑与主路径同一条 decideLww（apply→update / reject→回传现值），批保持原子
+            const locator = UNIQUE_KEY_LOCATORS[rec.table]?.(key, userId) ?? null;
+            const existing = locator ? await model.first(locator) : null;
+            if (!existing) throw err; // 无定位器或定位不到 → 非唯一键错误，维持整批 500
+            const exSrv = new Date(existing[def.tsCol]).toISOString();
+            if (decideLww(rec.op, rec.syncTs, exSrv) === 'reject') {
+              rejected.push({
+                table: rec.table, id: pk, op: existing.deletedAt ? 'delete' : 'upsert',
+                data: pickCols(def, existing), syncTs: exSrv,
+              });
+              continue;
+            }
+            // 不动存量行主键（Tag.id 被 document_tag 外键引用）→ payload 的 id 剥掉
+            const patch = { ...payload };
+            delete patch.id;
+            await model.where(locator).update(patch);
+            appliedId = def.id(existing);
+          }
+        }
+        maxCursor = newer(maxCursor, { ts, id: appliedId });
       }
-      applied.push({ table: rec.table, id: pk });
+      applied.push({ table: rec.table, id: appliedId });
       touchedTables.add(rec.table);
     }
 

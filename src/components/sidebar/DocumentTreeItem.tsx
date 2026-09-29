@@ -7,6 +7,7 @@ import { ChevronRight, File } from 'lucide-react';
 import { cn } from 'cn';
 import { toggleFavorite, isDocumentFavorite } from '@/actions/document/favorite';
 import { createDocument } from '@/actions/document/create';
+import { toast } from '@/components/ui/toast';
 import { getSyncManager } from '@/lib/sync-core';
 import { createDocumentLocal } from '@/components/sync/create-local';
 import { findLiveFavoriteId } from '@/components/sync/local-records';
@@ -111,23 +112,28 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   }
 
   async function toggleFavoriteSelf() {
-    if (favorite) {
-      // 取消收藏 → applyLocal 墓碑推送（活行 id 来自本地镜像）
-      const liveId = await findLiveFavoriteId(doc.id);
-      if (liveId) {
-        await getSyncManager().applyLocal({ table: 'favorite', id: liveId, patch: null });
-        setFavorite(false);
-      } else {
-        // 镜像还没拉到该行 → 退回服务端 action（唯一键墓碑复用在服务端）
-        setFavorite(await toggleFavorite(doc.id));
+    try {
+      if (favorite) {
+        // 取消收藏 → applyLocal 墓碑推送（活行 id 来自本地镜像）
+        const liveId = await findLiveFavoriteId(doc.id);
+        if (liveId) {
+          await getSyncManager().applyLocal({ table: 'favorite', id: liveId, patch: null });
+          setFavorite(false);
+        } else {
+          // 镜像还没拉到该行 → 退回服务端 action（唯一键墓碑复用在服务端）
+          setFavorite(await toggleFavorite(doc.id));
+        }
+        bumpTree();
+        return;
       }
+      // 收藏保留服务端 action：Favorite id 是服务端 uuid，墓碑行不携带 data，
+      // 客户端盲建新 id 会撞 @@unique([userId,documentId]) 让整批同步 500（见 task-13 报告）
+      setFavorite(await toggleFavorite(doc.id));
       bumpTree();
-      return;
+    } catch {
+      // spec D7-④ 离线提示：收藏走服务端 action，失败（多为离线）给反馈
+      toast.add({ id: 'offline-hint', type: 'warning', title: '需要网络' });
     }
-    // 收藏保留服务端 action：Favorite id 是服务端 uuid，墓碑行不携带 data，
-    // 客户端盲建新 id 会撞 @@unique([userId,documentId]) 让整批同步 500（见 task-13 报告）
-    setFavorite(await toggleFavorite(doc.id));
-    bumpTree();
   }
 
   async function copyLink() {

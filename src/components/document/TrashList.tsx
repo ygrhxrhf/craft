@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { File, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getSyncManager } from '@/lib/sync-core';
-import { readPendingRows, mergePending } from '@/components/sync/local-records';
+import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
+import { getDeletedDocuments } from '@/actions/document/get';
 import { useRouter } from 'next/navigation';
 
 interface TrashDoc {
@@ -18,9 +19,8 @@ interface TrashListProps {
   documents: TrashDoc[];
 }
 
-/** 回收站视图 = 服务端删除行 + 本地未推送意图（刚移入的进来、恢复的先消失）。 */
-async function mergeTrashRows(serverDocs: TrashDoc[]): Promise<TrashDoc[]> {
-  const pending = await readPendingRows('document');
+/** 纯逻辑：服务端删除行 + 本地未推送意图 → 回收站行（过滤条件同 getDeletedDocuments）。 */
+export function overlayTrashRows(serverDocs: TrashDoc[], pending: Map<string, PendingRow>): TrashDoc[] {
   const merged = mergePending<TrashDoc>(serverDocs, pending, (id, p) => ({
     id,
     title: '无标题',
@@ -32,13 +32,27 @@ async function mergeTrashRows(serverDocs: TrashDoc[]): Promise<TrashDoc[]> {
   return merged.filter(d => d.deletedAt !== null && (d as { isDeleted?: boolean }).isDeleted !== false);
 }
 
+async function overlayOnProps(serverDocs: TrashDoc[]): Promise<TrashDoc[]> {
+  return overlayTrashRows(serverDocs, await readPendingRows('document'));
+}
+
+/** R-18：重取服务端权威删除行，再盖 pending overlay（ack+pull 后恢复的不回流、新删的带真实标题）。 */
+export async function loadTrashRows(): Promise<TrashDoc[]> {
+  const [fresh, pending] = await Promise.all([
+    getDeletedDocuments(),
+    readPendingRows('document'),
+  ]);
+  return overlayTrashRows(fresh, pending);
+}
+
 export function TrashList({ documents }: TrashListProps) {
   const router = useRouter();
   const [rows, setRows] = useState<TrashDoc[]>(documents);
 
+  // 首屏 / router.refresh 后的新 prop 行：只做本地 overlay（不发服务端 action，离线安全）
   useEffect(() => {
     let alive = true;
-    mergeTrashRows(documents).then((merged) => {
+    overlayOnProps(documents).then((merged) => {
       if (alive) setRows(merged);
     });
     return () => {
@@ -46,10 +60,14 @@ export function TrashList({ documents }: TrashListProps) {
     };
   }, [documents]);
 
-  // 恢复（applyLocal）/ 删除入站 → 重算列表
+  // 恢复（applyLocal）/ 删除入站 / ack+pull → 在线时重取服务端权威行再 overlay（R-18）；
+  // 离线不发服务端 action，退回本地 overlay（刚移入/恢复的意图仍然即时可见）
   useEffect(() => getSyncManager().onStoreChanged((table) => {
     if (table !== 'document') return;
-    mergeTrashRows(documents).then(setRows).catch(() => {});
+    const offline = typeof navigator !== 'undefined' && !navigator.onLine;
+    (offline ? overlayOnProps(documents) : loadTrashRows())
+      .then(setRows)
+      .catch(() => {});
   }), [documents]);
 
   async function handleRestore(id: string) {

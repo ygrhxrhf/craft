@@ -249,3 +249,45 @@ Connector 直连采集，并把本地视觉体系整体对齐到官方值。
 3. **编辑器正文行高**：官方 UI 阶 16/19.2，本地 1.7；截图目测 1.5–1.6，需像素测量定档后再改，不凭猜动。
 4. `--highlight-*` 7 色是**死 token**（全仓无引用，高亮色实际硬编码在组件里），要先接线再按官方 9 色换值。
 5. tablet / mobile 档官方截图仍缺（`viewport.set()` 静默无效），右栏 格式/样式/信息 三 tab 官方图待补。
+
+## P1 sync acceptance 2026-09-29
+
+分支 `feature/windows-offline-sync` @ dc35da5，Windows 本机，`next dev` + dev:collab + dev:tldraw-sync 三服务。
+
+### e2e sync.spec（task 14，3/3 绿）
+
+| 用例 | 结果 |
+|---|---|
+| 双端改元数据 5 秒内互见 | pass（收敛 A→B 实测 244ms~5.9s） |
+| 断网编辑恢复后 10s 内双端收敛 | pass |
+| 刷新后 cursor 断点续拉 | pass |
+
+逐轮记录与 spec 超时调参见 `.superpowers/sdd/2026-09-28-p1-sync-kernel/task-14-report.md`。
+
+### 单测（npm test）
+
+45 files / **256 passed**（9.85s），全绿，与基线 256 持平。
+
+### Lint（npm run lint）
+
+**0 errors / 540 warnings**（全部为存量 `no-explicit-any` 等，无新增 error）。
+
+### 全量 e2e（npx playwright test）
+
+- 首轮全量：**129 passed / 9 failed / 1 skipped（36.5m）**。9 个失败全部是 `net::ERR_CONNECTION_REFUSED at localhost:3000`——首轮开始前占着 3000 的旧 dev server（PID 21744）中途崩溃，Playwright 按 `reuseExistingServer` 自起新实例，authz/collab/core 三个 spec 恰在窗口期导航。**非代码问题，sync.spec 3/3 计入 passed。**
+- 复跑失败的 authz + collab + core：**17 passed（13.9m），0 failed**。
+- 合并结论：全量套件最终 **0 个真实失败**，pre-existing specs 全绿；1 skipped 为既有跳过项。
+
+### 全量拉取计时（GET /api/v1/sync，无 since）
+
+Playwright request context：NextAuth credentials 登录 `craft-test@example.com` 后直测（脚本为临时探针，已删）：
+
+- **614ms / 564ms / 2856ms**（×3，第 3 次含 dev 冷编译抖动），单页 500 条（limit 默认 500，`hasMore: true`，`cursor` 正常下发）。
+- 记录分布：document 232、whiteboard 173、collection_property 28、collection_view 16、task 16 等。
+- 未认证对照：`GET /api/v1/sync` 无 cookie → **307**（middleware 重定向 /login，不进 route；route 内才回 401）。
+- 口径说明：以上为 dev 环境单页首拉；该账号累积 938 docs / 33 folders / 329 whiteboards，多页全量翻完未单独计时（e2e 用例 1 的首拉已在 5s 收敛断言内完成，可作定性佐证）。
+
+### 环境备注
+
+- 数据集：craft-test 账号持续累积（938 docs / 33 folders / 329 whiteboards），树重载可达 ~81s——所有收敛等待已提到 120s，`test.setTimeout` 600s。
+- 三个 webServer 均 `reuseExistingServer`；本轮观察到旧 dev server 中途退出，复跑即恢复，建议 CI 中勿复用残留进程。

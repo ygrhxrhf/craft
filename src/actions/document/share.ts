@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { normalizeShareSlug } from '@/lib/share/slug';
 import { findShare } from '@/lib/share/resolve';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface ShareState {
   token: string;
@@ -14,6 +15,10 @@ export interface ShareState {
 
 function stateOf(s: any): ShareState {
   return { token: s.token, slug: s.slug ?? null, isPublished: s.isPublished, hasPasscode: !!s.passcode };
+}
+
+async function emitShare(db: any, userId: string, documentId: string): Promise<void> {
+  await emitSyncEventSafe(db, userId, ['document_share'], documentId);
 }
 
 export async function getOrCreateShare(documentId: string): Promise<ShareState> {
@@ -36,6 +41,7 @@ export async function getOrCreateShare(documentId: string): Promise<ShareState> 
     documentId,
     token: crypto.randomUUID(),
   });
+  await emitShare(db, session.user.id, documentId);
 
   const created = await db.orm.public.DocumentShare
     .where({ documentId })
@@ -54,6 +60,7 @@ export async function setSharePublished(documentId: string, isPublished: boolean
   if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
 
   await db.orm.public.DocumentShare.where({ documentId }).update({ isPublished });
+  await emitShare(db, session.user.id, documentId);
   return await getOrCreateShare(documentId);
 }
 
@@ -68,6 +75,7 @@ export async function setSharePasscode(documentId: string, passcode: string | nu
   await db.orm.public.DocumentShare.where({ documentId }).update({
     passcode: passcode && passcode.trim() ? passcode.trim() : null,
   });
+  await emitShare(db, session.user.id, documentId);
   return await getOrCreateShare(documentId);
 }
 
@@ -82,6 +90,7 @@ export async function setShareSlug(documentId: string, rawSlug: string | null): 
   const trimmed = rawSlug?.trim() ?? '';
   if (!trimmed) {
     await db.orm.public.DocumentShare.where({ documentId }).update({ slug: null });
+    await emitShare(db, session.user.id, documentId);
     return await getOrCreateShare(documentId);
   }
 
@@ -94,6 +103,7 @@ export async function setShareSlug(documentId: string, rawSlug: string | null): 
   }
 
   await db.orm.public.DocumentShare.where({ documentId }).update({ slug: normalized.slug });
+  await emitShare(db, session.user.id, documentId);
   return await getOrCreateShare(documentId);
 }
 

@@ -5,6 +5,12 @@ import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { nextOccurrence, parseRecurrence } from '@/lib/task/recurrence';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+
+// I2：任务表用 updatedAt 自动 bump（无需 metaUpdatedAt），落库后广播即可；
+// 失败不阻断业务（与 updateDocument 的 emit 姿态一致）。
+const emitTasks = (db: any, userId: string, id: string) =>
+  emitSyncEventSafe(db, userId, ['task'], id);
 
 function updateTaskNode(content: unknown, blockId: string, isCompleted: boolean): unknown {
   const next = JSON.parse(JSON.stringify(content));
@@ -63,6 +69,9 @@ export async function syncDocumentTasks(
       .map((task: any) => [task.blockId, task]),
   );
 
+  // I2：本保存批次任一派生变更（复活/新建/改写/清退）只发一次广播
+  let mutated = false;
+
   for (const [taskId, task] of incoming) {
     const match = existingByBlockId.get(taskId);
     if (match) {
@@ -79,6 +88,7 @@ export async function syncDocumentTasks(
           isCompleted: task.isCompleted,
           status: task.isCompleted ? 'done' : 'todo',
         });
+        mutated = true;
       }
     } else {
       await db.orm.public.Task.create({
@@ -90,6 +100,7 @@ export async function syncDocumentTasks(
         isCompleted: task.isCompleted,
         status: task.isCompleted ? 'done' : 'todo',
       });
+      mutated = true;
     }
   }
 
@@ -101,8 +112,11 @@ export async function syncDocumentTasks(
         deletedAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
+      mutated = true;
     }
   }
+
+  if (mutated) await emitTasks(db, userId, documentId);
 }
 
 export async function getTasks(): Promise<TaskItem[]> {
@@ -153,6 +167,7 @@ export async function createTask(title: string, dueDate?: string | null) {
     title: title.trim(),
     dueDate: dueDate ?? null,
   });
+  await emitTasks(db, session.user.id, (task as any).id ?? '');
   return task;
 }
 
@@ -173,6 +188,8 @@ export async function toggleTask(id: string, timeZone?: string) {
   await syncTaskToDocument(db, task, next);
 
   if (next) await rollForward(db, task as any, timeZone);
+  // rollForward 可能派生下一期任务行——同一次 toggle 合并为一次广播
+  await emitTasks(db, session.user.id, id);
   return next;
 }
 
@@ -232,6 +249,7 @@ export async function setTaskSchedule(id: string, schedule: TaskSchedule) {
     recurrence: schedule.recurrence,
     recurrenceEnd: schedule.recurrenceEnd,
   });
+  await emitTasks(db, userId, id);
 }
 
 export async function deleteTask(id: string) {
@@ -246,6 +264,7 @@ export async function deleteTask(id: string) {
     deletedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   });
+  await emitTasks(db, session.user.id, id);
 }
 
 export async function getTasksForDay(dayStart: string, dayEnd: string): Promise<TaskItem[]> {

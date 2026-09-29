@@ -2,6 +2,8 @@
 
 import { assertOwned, getTable, requireUserId } from '@/lib/authz/guard';
 import { findFolderCycle } from '@/lib/authz/folder-tree';
+import { getDb } from '@/prisma/db';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export async function moveFolder(id: string, data: {
   parentId?: string | null;
@@ -26,4 +28,5 @@ export async function moveFolder(id: string, data: {
   }
 
   await folders.where({ id, userId }).update(data as Record<string, unknown>);
+  await emitSyncEventSafe(await getDb(), userId, ['folder'], id);
 }

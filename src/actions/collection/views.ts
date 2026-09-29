@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export async function createView(
   collectionId: string,
@@ -36,6 +37,7 @@ export async function createView(
     isActive: false,
   });
 
+  await emitSyncEventSafe(db, session.user.id, ['collection_view'], viewId);
   revalidatePath(`/collections/${collectionId}`);
   return { id: viewId, collectionId, name: data.name, type: data.type };
 }
@@ -66,6 +68,7 @@ export async function updateView(
 
   await db.orm.public.CollectionView.where({ id: viewId }).update(updateData);
 
+  await emitSyncEventSafe(db, session.user.id, ['collection_view'], viewId);
   revalidatePath(`/collections/${(view as any).collectionId}`);
 }
 
@@ -87,6 +90,7 @@ export async function deleteView(viewId: string) {
     updatedAt: new Date().toISOString(),
   });
 
+  await emitSyncEventSafe(db, session.user.id, ['collection_view'], viewId);
   revalidatePath(`/collections/${(view as any).collectionId}`);
 }
 
@@ -111,5 +115,6 @@ export async function setActiveView(
     });
   }
 
+  await emitSyncEventSafe(db, session.user.id, ['collection_view'], collectionId);
   revalidatePath(`/collections/${collectionId}`);
 }

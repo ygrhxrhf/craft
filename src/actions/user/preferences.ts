@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 const themeValues = new Set(['light', 'dark', 'system']);
 const fontValues = new Set(['inter', 'serif', 'mono', 'rounded']);
@@ -48,4 +49,6 @@ export async function updatePreferences(data: {
   if (data.editorWidth !== undefined) update.editorWidth = validate('editorWidth', data.editorWidth);
 
   await db.orm.public.User.where({ id: session.user.id }).update(update);
+  // user 表 tsCol=updatedAt（自动 bump）→ 只需广播（spec 5.4「user 设置」发射点）
+  await emitSyncEventSafe(db, session.user.id, ['user'], session.user.id);
 }

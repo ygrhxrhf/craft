@@ -4,6 +4,7 @@ import { assertOwned, requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { normalizeTagColor, normalizeTagName } from '@/lib/tag/normalize';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface TagRecord {
   id: string;
@@ -53,6 +54,7 @@ async function findOrCreateTag(userId: string, name: string, color?: string) {
         deletedAt: null,
         updatedAt: new Date().toISOString(),
       });
+      await emitSyncEventSafe(db, userId, ['tag'], found.id);
     }
     return found;
   }
@@ -64,6 +66,7 @@ async function findOrCreateTag(userId: string, name: string, color?: string) {
     color: normalizeTagColor(color),
   })) as TagRecord;
 
+  await emitSyncEventSafe(db, userId, ['tag'], created.id);
   return created;
 }
 
@@ -81,11 +84,13 @@ export async function attachTag(documentId: string, name: string, color?: string
     await db.orm.public.DocumentTag
       .where({ documentId, tagId: tag.id })
       .update({ deletedAt: null, updatedAt: new Date().toISOString() });
+    await emitSyncEventSafe(db, userId, ['document_tag'], `${documentId}__${tag.id}`);
   } else if (!link) {
     await db.orm.public.DocumentTag.create({
       documentId, tagId: tag.id, createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
+    await emitSyncEventSafe(db, userId, ['document_tag'], `${documentId}__${tag.id}`);
   }
   // 活行命中：no-op（不 bump updatedAt，避免未变更行产生重复 sync 事件）
   return tag;

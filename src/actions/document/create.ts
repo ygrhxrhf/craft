@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export async function createDocument(input: {
   title?: string;
@@ -77,5 +78,6 @@ export async function createDocument(input: {
     metaUpdatedAt: now,
   });
 
+  await emitSyncEventSafe(db, session.user.id, ['document'], (doc as any).id ?? now);
   return doc;
 }

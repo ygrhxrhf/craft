@@ -2,6 +2,7 @@
 
 import { assertOwned, requireUserId } from '@/lib/authz/guard';
 import { getDb } from '@/prisma/db';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export async function createFolder(input: {
   name?: string;
@@ -18,5 +19,6 @@ export async function createFolder(input: {
     parentId: input.parentId ?? null,
   });
 
+  await emitSyncEventSafe(db, userId, ['folder'], (folder as any).id ?? userId);
   return folder;
 }

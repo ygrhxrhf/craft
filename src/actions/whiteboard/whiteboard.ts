@@ -54,22 +54,43 @@ export async function getWhiteboard(id: string) {
 export async function createWhiteboard(name?: string) {
   const userId = await requireUserId();
 
-  return (await getTable('Whiteboard')).create({
+  const metaTs = new Date().toISOString();
+  const board = await (await getTable('Whiteboard')).create({
     id: crypto.randomUUID(),
     name: name ?? '未命名白板',
     icon: '🎨',
     userId,
     // No DB default on metaUpdatedAt; without it new rows never enter the
     // incremental-sync stream (whiteboard tsCol is metaUpdatedAt).
-    metaUpdatedAt: new Date().toISOString(),
+    metaUpdatedAt: metaTs,
   });
+
+  // I2：新建白板同样要广播（其余端靠 meta 事件拉到新行）
+  try {
+    const db = await getDb();
+    await emitSyncEvent(db, userId, ['whiteboard'],
+      { ts: metaTs, id: (board as any).id ?? metaTs });
+  } catch {
+    // broadcast failure must never block creating
+  }
+  return board;
 }
 
 export async function renameWhiteboard(id: string, name: string) {
   const userId = await requireUserId();
   await assertOwned('Whiteboard', id, userId, '白板不存在');
 
-  await (await getTable('Whiteboard')).where({ id, userId }).update({ name });
+  // 白板 tsCol 是 metaUpdatedAt：改名属元数据，须 bump 才进增量流（I2 NOTE）
+  const now = new Date().toISOString();
+  await (await getTable('Whiteboard')).where({ id, userId })
+    .update({ name, metaUpdatedAt: now });
+
+  try {
+    const db = await getDb();
+    await emitSyncEvent(db, userId, ['whiteboard'], { ts: now, id });
+  } catch {
+    // broadcast failure must never block renaming
+  }
 }
 
 export async function saveWhiteboardData(id: string, data: unknown) {

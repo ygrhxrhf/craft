@@ -1,6 +1,8 @@
 'use server';
 
 import { assertOwned, getTable, requireUserId } from '@/lib/authz/guard';
+import { getDb } from '@/prisma/db';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export async function deleteFolder(id: string) {
   const userId = await requireUserId();
@@ -10,4 +12,5 @@ export async function deleteFolder(id: string) {
     isDeleted: true,
     deletedAt: new Date().toISOString(),
   } as Record<string, unknown>);
+  await emitSyncEventSafe(await getDb(), userId, ['folder'], id);
 }

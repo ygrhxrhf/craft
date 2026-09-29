@@ -15,7 +15,7 @@ vi.mock('@/lib/authz/document-access', () => ({
 }));
 
 import { getDb } from '@/prisma/db';
-import { getTasks, syncDocumentTasks } from './task';
+import { getTasks, syncDocumentTasks, createTask } from './task';
 
 type Row = Record<string, unknown>;
 type Log = { updates: { conds: Row[]; data: Row }[]; creates: Row[] };
@@ -51,8 +51,10 @@ function taskTable(rows: Row[], log: Log) {
 
 function setupDb(rows: Row[]) {
   const log: Log = { updates: [], creates: [] };
+  const emitCreate = vi.fn(async (_data?: Record<string, unknown>) => ({}));
+  (log as any).emit = emitCreate;
   (getDb as any).mockResolvedValue({
-    orm: { public: { Task: taskTable(rows, log) } },
+    orm: { public: { Task: taskTable(rows, log), SyncEvent: { create: emitCreate } } },
   });
   return log;
 }
@@ -129,5 +131,46 @@ describe('syncDocumentTasks 墓碑语义（C-2）', () => {
       status: 'todo',
     });
     expect(log.creates).toEqual([]);
+  });
+});
+
+describe('I2：元数据写入后 emit sync_events', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const docScopedTombstone: Row = {
+    id: 't1',
+    userId: 'u1',
+    documentId: 'd1',
+    blockId: 'b1',
+    title: '块任务',
+    isCompleted: false,
+    deletedAt: '2026-09-28T00:00:00.000Z',
+  };
+
+  it('syncDocumentTasks 有变更 → 每保存批次只 emit 一次（tables=task）', async () => {
+    const log = setupDb([docScopedTombstone]);
+    await syncDocumentTasks('d1', [
+      { taskId: 'b1', title: '块任务', isCompleted: false },
+    ]);
+    const emitCreate = (log as any).emit;
+    expect(emitCreate).toHaveBeenCalledTimes(1); // 复活 1 行 + 新增 1 行也只发一次
+    const arg = emitCreate.mock.calls[0]![0]!;
+    expect(arg.tables).toEqual(['task']);
+    expect(arg.userId).toBe('u1');
+    expect(typeof arg.cursor).toBe('string');
+  });
+
+  it('syncDocumentTasks 无变更 → 不 emit', async () => {
+    const log = setupDb([docScopedTombstone]);
+    await syncDocumentTasks('d1', []);
+    expect((log as any).emit).not.toHaveBeenCalled();
+  });
+
+  it('createTask → emit（tables=task）', async () => {
+    const log = setupDb([]);
+    await createTask('新任务');
+    const emitCreate = (log as any).emit;
+    expect(emitCreate).toHaveBeenCalledTimes(1);
+    expect(emitCreate.mock.calls[0]![0]!.tables).toEqual(['task']);
   });
 });

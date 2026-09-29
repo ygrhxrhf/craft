@@ -3,6 +3,10 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+
+// I2：集合系列表用 updatedAt 自动 bump，落库后广播即可；失败不阻断业务。
+const emitCollections = emitSyncEventSafe;
 
 export async function createCollection(data: {
   name: string;
@@ -42,6 +46,10 @@ export async function createCollection(data: {
     isVisible: true,
   });
 
+  // 集合 + 默认视图 + 默认属性同批创建 → 合并为一次广播
+  await emitCollections(db, session.user.id,
+    ['collection', 'collection_view', 'collection_property'], collectionId);
+
   revalidatePath('/collections');
   return { id: collectionId };
 }
@@ -65,6 +73,7 @@ export async function updateCollection(
   if (data.description !== undefined) updateData.description = data.description || null;
 
   await db.orm.public.Collection.where({ id }).update(updateData);
+  await emitCollections(db, session.user.id, ['collection'], id);
   revalidatePath('/collections');
   revalidatePath(`/collections/${id}`);
 }
@@ -83,6 +92,7 @@ export async function deleteCollection(id: string) {
     isDeleted: true,
     deletedAt: new Date(),
   });
+  await emitCollections(db, session.user.id, ['collection'], id);
 
   revalidatePath('/collections');
 }

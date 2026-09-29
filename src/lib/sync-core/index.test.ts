@@ -2,6 +2,7 @@
 // TDD Step 1：SyncManager 失败测试（先 RED，后实现）
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createManager, type TestSyncManager } from './index';
+import { SyncAuthError } from './reconciler';
 import { createMemoryStore, type SyncStore } from './store';
 import type { Queue } from './queue';
 
@@ -16,18 +17,28 @@ interface Harness {
   pullSpy: ReturnType<typeof vi.fn>;
   broadcasterStart: ReturnType<typeof vi.fn>;
   notify: ReturnType<typeof vi.fn>;
+  fireLive: (live: boolean) => void;
   lastEnqueue: () => { table: string; recordId: string; op: 'upsert' | 'delete' } | null;
 }
 
 async function makeManager(
-  opts: { flushResult?: 'ok' | 'network' | 'auth' | 'http' } = {},
+  opts: { flushResult?: 'ok' | 'network' | 'auth' | 'http'; failInitOnce?: boolean } = {},
 ): Promise<Harness> {
   const base = createMemoryStore();
   await base.init();
 
   let last: { table: string; recordId: string; op: 'upsert' | 'delete' } | null = null;
+  let initFailed = false;
   const store: SyncStore = {
     ...base,
+    init: async () => {
+      // R-14：模拟 boot 初始化抛错（仅一次），验证 bootPromise 可重试
+      if (opts.failInitOnce && !initFailed) {
+        initFailed = true;
+        throw new Error('init boom');
+      }
+      await base.init();
+    },
     enqueue: async (op) => {
       last = { table: op.table, recordId: op.recordId, op: op.op };
       await base.enqueue(op);
@@ -45,22 +56,31 @@ async function makeManager(
     deletedLocally: [] as string[],
   }));
   const broadcasterStart = vi.fn();
+  let liveHandler: ((live: boolean) => void) | null = null;
 
   const manager = createManager({
     store: () => store,
     makeQueue: () => queue,
     makeReconciler: () => ({ pull: pullSpy }),
-    makeBroadcaster: () => ({
-      start: broadcasterStart,
-      stop: vi.fn(),
-      isLive: () => false,
-    }),
+    makeBroadcaster: (_onMeta: () => void, onLiveChange?: (live: boolean) => void) => {
+      liveHandler = onLiveChange ?? null;
+      return { start: broadcasterStart, stop: vi.fn(), isLive: () => false };
+    },
   });
 
   const notify = vi.fn();
   manager.subscribe(notify);
 
-  return { manager, queue, store, pullSpy, broadcasterStart, notify, lastEnqueue: () => last };
+  return {
+    manager,
+    queue,
+    store,
+    pullSpy,
+    broadcasterStart,
+    notify,
+    fireLive: (live) => liveHandler?.(live),
+    lastEnqueue: () => last,
+  };
 }
 
 describe('SyncManager', () => {
@@ -109,5 +129,72 @@ describe('SyncManager', () => {
     expect(pullSpy).toHaveBeenCalledWith({ full: true });
     expect(broadcasterStart).toHaveBeenCalledTimes(1);
     expect(queue.flush).toHaveBeenCalledTimes(1);
+  });
+
+  // R-12：SPA 登录后 manager 不能永久 paused
+  it('resume：401 pull → paused 后，resume() 清除暂停并重新 pull + flush', async () => {
+    const { manager, pullSpy, queue } = await makeManager();
+    pullSpy.mockImplementationOnce(async () => {
+      throw new SyncAuthError();                 // 首次 pull 401
+    });
+    await manager.boot();
+    // paused：meta 事件不再触发 pull；boot 内 flush 也因 paused 早退
+    manager.fireMetaForTest();
+    expect(pullSpy).toHaveBeenCalledTimes(1);
+    expect(queue.flush).not.toHaveBeenCalled();
+
+    await manager.resume();
+    expect(pullSpy).toHaveBeenCalledTimes(2);             // 登录后 pull 恢复
+    expect(queue.flush).toHaveBeenCalledTimes(1);         // flush 尝试执行
+  });
+
+  // R-13：'degraded' 仅保留给 SSE 断连（spec 9.1）
+  it('SSE 断连（在线）→ degraded；重连 → syncing 并重新 pull', async () => {
+    const { manager, pullSpy, fireLive } = await makeManager();
+    fireLive(false);
+    expect(manager.status()).toBe('degraded');
+    fireLive(true);
+    expect(manager.status()).toBe('syncing');
+    expect(pullSpy).toHaveBeenCalled();
+  });
+
+  it('flush ok 但 pending>0 → 保持 syncing（不是 degraded）', async () => {
+    vi.useFakeTimers();
+    const { manager, store } = await makeManager();
+    await store.enqueue({
+      table: 'document',
+      recordId: 'd1',
+      op: 'upsert',
+      payload: { data: { t: 1 }, syncTs: new Date().toISOString() },
+      createdAt: new Date().toISOString(),
+    });
+    manager.triggerFlushForTest();
+    await vi.advanceTimersByTimeAsync(0);   // flush 首个 await 后才 setStatus
+    expect(manager.status()).toBe('syncing');   // ok && pending>0：不落 degraded
+  });
+
+  it('network 失败 1-2 次 → 保持 syncing（degraded 仅 SSE 断连）', async () => {
+    vi.useFakeTimers();
+    const { manager } = await makeManager({ flushResult: 'network' });
+    manager.triggerFlushForTest();
+    await vi.advanceTimersByTimeAsync(2000);    // 第 1 次失败 + 退避
+    expect(manager.status()).toBe('syncing');
+  });
+
+  // R-14：boot 失败必须可重试，不静默吞错
+  it('boot 失败 → console.error + 重置 bootPromise，后续 boot() 可重试', async () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const { manager, pullSpy, broadcasterStart } = await makeManager({ failInitOnce: true });
+      await manager.boot();
+      expect(errSpy).toHaveBeenCalledWith('[sync] boot failed', expect.any(Error));
+      expect(pullSpy).not.toHaveBeenCalled();
+
+      await manager.boot();                     // bootPromise 已重置 → 重试成功
+      expect(pullSpy).toHaveBeenCalledWith({ full: true });
+      expect(broadcasterStart).toHaveBeenCalledTimes(1);
+    } finally {
+      errSpy.mockRestore();
+    }
   });
 });

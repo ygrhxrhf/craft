@@ -28,6 +28,7 @@ export interface ApplyLocalOpts {
 
 export interface SyncManager {
   boot(): Promise<void>;                       // 幂等：pull(full 无 cursor) + 广播 + flush
+  resume(): Promise<void>;                     // R-12：清 paused → pull + flush（SPA 登录后恢复）
   applyLocal(o: ApplyLocalOpts): Promise<void>; // 写本地 + 入队 + debounce flush（不等 flush）
   status(): SyncStatus;
   pendingCount(): Promise<number>;
@@ -45,7 +46,7 @@ export interface ManagerDeps {
   store?: () => SyncStore;
   makeQueue?: (store: SyncStore, onRejected: (rejected: SyncRecord[]) => void) => Queue;
   makeReconciler?: (store: SyncStore) => Reconciler;
-  makeBroadcaster?: (onMeta: () => void) => Broadcaster;
+  makeBroadcaster?: (onMeta: () => void, onLiveChange: (live: boolean) => void) => Broadcaster;
   fetchImpl?: typeof fetch;
 }
 
@@ -158,8 +159,9 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
 
       if (res.status === 'ok') {
         failStreak = 0;
-        // 硬规则 2：'synced' 仅当 flush ok && countPending()===0
-        setStatus(cachedPending === 0 ? 'synced' : 'degraded');
+        // 硬规则 2（R-13 修订）：'synced' 仅当 flush ok && countPending()===0；
+        // ok 但 pending>0 保持 'syncing'（'degraded' 专留给 SSE 断连，spec 9.1）
+        if (cachedPending === 0) setStatus('synced');
         return;
       }
       if (res.status === 'auth') {
@@ -179,8 +181,9 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
         return;
       }
       failStreak += 1;
-      // 硬规则 5：3 次失败 → 'error'，其间 degraded；仅首转 'error' 通知
-      setStatus(failStreak >= 3 ? 'error' : 'degraded');
+      // 硬规则 5（R-13 修订）：3 次失败 → 'error'；1-2 次保持 'syncing' 带退避重试
+      // （瞬时失败不再落 'degraded'——该状态专留给 SSE 断连，spec 9.1）
+      setStatus(failStreak >= 3 ? 'error' : 'syncing');
       const delay = BACKOFF[Math.min(failStreak - 1, BACKOFF.length - 1)];
       await bumpPendingRetry(delay);
       scheduleBackoff(delay);
@@ -206,6 +209,19 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     void pull();     // 500ms 去抖已在 broadcaster 内
   };
 
+  // R-13：'degraded' 仅由 SSE 断连触发（spec 9.1）
+  const handleLiveChange = (live: boolean): void => {
+    if (!live) {
+      // 在线且非 error 才降级（offline 状态由 offline 事件管理，error 不被 SSE 掩盖）
+      if (!isOffline() && status !== 'error') setStatus('degraded');
+      return;
+    }
+    if (status === 'degraded') {
+      setStatus('syncing');
+      void pull();
+    }
+  };
+
   // onRejected：服务端权威版本覆盖本地（硬规则 7）
   const handleRejected = (rejected: SyncRecord[]): void => {
     if (!rejected.length) return;
@@ -219,8 +235,8 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     ? deps.makeReconciler(store)
     : createReconciler(store, { fetchImpl: deps.fetchImpl });
   const broadcaster: Broadcaster = deps.makeBroadcaster
-    ? deps.makeBroadcaster(handleMeta)
-    : createBroadcaster({ onMeta: handleMeta });
+    ? deps.makeBroadcaster(handleMeta, handleLiveChange)
+    : createBroadcaster({ onMeta: handleMeta, onLiveChange: handleLiveChange });
 
   function listen(): void {
     if (listening || typeof window === 'undefined') return;
@@ -250,10 +266,25 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
       }
       await flush();
       listen();
-    })().catch(() => {
-      // UI 侧 void boot()：初始化错误不向外抛（auth 已在 pull 内静默转 paused）
+    })().catch((err) => {
+      // R-14：401 → pull 内已静默转 paused，不算 boot 失败；其余必须可观测且可重试
+      if (err instanceof SyncAuthError) return;
+      console.error('[sync] boot failed', err);
+      bootPromise = null;   // 重置幂等缓存：下一次 boot() 重新尝试
     });
     return bootPromise;
+  }
+
+  // R-12：SPA 登录（router.push，无 reload）后解除 auth 暂停并恢复同步
+  async function resume(): Promise<void> {
+    paused = false;
+    // 与 boot 同守卫：离线只做状态迁移，不发请求（online 事件会再触发）
+    if (isOffline()) {
+      setStatus('offline');
+      return;
+    }
+    await pull();
+    await flush();
   }
 
   async function applyLocal(o: ApplyLocalOpts): Promise<void> {
@@ -290,6 +321,7 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
 
   return {
     boot,
+    resume,
     applyLocal,
     status: () => status,
     pendingCount: () => queue.pendingCount(),

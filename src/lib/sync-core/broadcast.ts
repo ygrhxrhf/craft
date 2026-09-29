@@ -14,6 +14,7 @@ export interface Broadcaster {
 
 export function createBroadcaster(opts: {
   onMeta: () => void;
+  onLiveChange?: (live: boolean) => void;  // R-13：SSE 连接状态转换（每次转换只通知一次）
   pollMs?: number;      // 30_000（spec）
   debounceMs?: number;  // 500（spec）
   eventSourceFactory?: () => EventSourceLike;
@@ -49,7 +50,11 @@ export function createBroadcaster(opts: {
   const connect = () => {
     es = factory();
     es.onopen = () => {
-      live = true;
+      // 仅在 false → true 转换时通知（重复 open 不重复通知）
+      if (!live) {
+        live = true;
+        opts.onLiveChange?.(true);
+      }
       stopPolling();
     };
     es.onmessage = (ev) => {
@@ -61,7 +66,11 @@ export function createBroadcaster(opts: {
       }
     };
     es.onerror = () => {
-      live = false;
+      // 仅在 true → false 转换时通知（EventSource 会连续报错，不重复通知）
+      if (live) {
+        live = false;
+        opts.onLiveChange?.(false);
+      }
       startPolling();
     };
   };

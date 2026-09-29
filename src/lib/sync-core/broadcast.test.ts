@@ -42,4 +42,25 @@ describe('broadcast', () => {
     vi.advanceTimersByTime(30_000);
     expect(onMeta).toHaveBeenCalledTimes(1);       // 已恢复 live，轮询停止
   });
+
+  it('onLiveChange：onopen→true、onerror→false，每次状态转换只通知一次', () => {
+    const es = new FakeES();
+    const onMeta = vi.fn();
+    const onLiveChange = vi.fn();
+    const b = createBroadcaster({
+      onMeta,
+      onLiveChange,
+      eventSourceFactory: () => es as unknown as EventSourceLike,
+    });
+    b.start();
+    es.onopen!();
+    expect(onLiveChange).toHaveBeenNthCalledWith(1, true);
+    es.onerror!();
+    es.onerror!();                                 // 重复 onerror：不重复通知
+    expect(onLiveChange).toHaveBeenCalledTimes(2);
+    expect(onLiveChange).toHaveBeenLastCalledWith(false);
+    es.onopen!();                                  // 重连成功 → true 再次通知
+    expect(onLiveChange).toHaveBeenCalledTimes(3);
+    expect(onLiveChange).toHaveBeenLastCalledWith(true);
+  });
 });

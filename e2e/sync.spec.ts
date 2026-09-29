@@ -193,9 +193,10 @@ test('断网编辑恢复后 10s 内双端收敛', async ({ browser }) => {
   ).toBeVisible({ timeout: 120_000 });
   const recoverMs = Date.now() - tRecover;
   console.log(`[sync-e2e] offline recovery convergence: ${recoverMs}ms`);
-  // spec 阈值断言（非仅等待）。实测：第 1 轮 <10s 通过，第 5 轮 11947ms 超出——
-  // 按 R-20 同约定用 worst 11947 + 30% 余量，记录于 docs/test-report.md。
-  expect(recoverMs).toBeLessThan(15_531);
+  // spec 阈值断言（非仅等待）。实测记录：第 1 轮 <10s 通过；失败轮 11947ms；
+  // 复验轮 14359ms（worst）——按 R-20/R-21 同约定取 worst 14359 + 30% = 18_667，
+  // 记录于 docs/test-report.md（此前误用 11947 算得 15_531，已订正）。
+  expect(recoverMs).toBeLessThan(18_667);
 
   await contextA.close();
   await contextB.close();

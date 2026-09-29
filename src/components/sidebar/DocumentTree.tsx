@@ -19,13 +19,12 @@ export interface Document {
   order: number;
 }
 
-/** 服务端行 + 本地未推送意图 → 树的即时视图（重命名/删除/新建在 applyLocal 后立刻生效）。 */
-export async function loadTreeDocuments(): Promise<Document[]> {
-  const [data, pending] = await Promise.all([
-    getDocuments(),
-    readPendingRows('document'),
-  ]);
-  const merged = mergePending<Document>(data as Document[], pending, (id, p) => ({
+/** 纯逻辑：行集合 + 本地 pending overlay（过滤条件与 getDocuments 同源）。 */
+export function overlayDocumentRows(
+  rows: Document[],
+  pending: Map<string, import('@/components/sync/local-records').PendingRow>,
+): Document[] {
+  const merged = mergePending<Document>(rows, pending, (id, p) => ({
     id,
     title: '无标题',
     icon: null,
@@ -38,6 +37,28 @@ export async function loadTreeDocuments(): Promise<Document[]> {
   }));
   // 服务端 action 已按这些条件过滤；pending 合并进来的行要补同样的过滤
   return merged.filter(d => !d.isDeleted && !d.isDailyNote);
+}
+
+/** 服务端行 + 本地未推送意图 → 树的即时视图（重命名/删除/新建在 applyLocal 后立刻生效）。 */
+export async function loadTreeDocuments(): Promise<Document[]> {
+  const [data, pending] = await Promise.all([
+    getDocuments(),
+    readPendingRows('document'),
+  ]);
+  return overlayDocumentRows(data as Document[], pending);
+}
+
+/**
+ * I3：loader 兜底——服务端 action 失败（离线/RSC 失败）时退回
+ * 「旧行 + readPendingRows overlay」，不再让 Promise 悬空把树卡死在「加载中...」。
+ */
+export async function safeLoadTreeDocuments(prevRows: Document[]): Promise<Document[]> {
+  try {
+    return await loadTreeDocuments();
+  } catch {
+    const pending = await readPendingRows('document');
+    return overlayDocumentRows(prevRows, pending);
+  }
 }
 
 interface DocumentTreeProps {
@@ -53,7 +74,8 @@ export function DocumentTree({ folderId = null }: DocumentTreeProps) {
   useEffect(() => {
     let alive = true;
     async function load() {
-      const data = await loadTreeDocuments();
+      // I3：safe 版兜底（离线 → 旧行 + pending overlay），失败也不会悬空
+      const data = await safeLoadTreeDocuments(documents);
       if (!alive) return;
       setDocuments(data);
       setLoading(false);
@@ -62,6 +84,8 @@ export function DocumentTree({ folderId = null }: DocumentTreeProps) {
     return () => {
       alive = false;
     };
+    // documents 仅作离线兜底的旧行快照，不作为依赖（避免 overlay 后死循环）
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeVersion]);
 
   // applyLocal 本地写 / pull 远端变化 → 重取（覆盖层保证未推送的本地意图不丢）

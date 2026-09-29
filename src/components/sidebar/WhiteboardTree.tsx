@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from 'cn';
@@ -54,28 +54,61 @@ function WhiteboardTreeItem({ board, isActive }: WhiteboardTreeItemProps) {
   );
 }
 
+/** 纯逻辑：行集合 + 本地 pending overlay（过滤条件与 getWhiteboards 同源）。 */
+export function overlayWhiteboardRows(
+  rows: WhiteboardItem[],
+  pending: Map<string, import('@/components/sync/local-records').PendingRow>,
+): WhiteboardItem[] {
+  // applyLocal 的本地改名先于服务端可见（pending 覆盖）
+  return mergePending<WhiteboardItem>(rows, pending, (id, p) => ({
+    id,
+    name: '未命名白板',
+    icon: null,
+    updatedAt: p.syncTs,
+  })).filter((b) => !(b as { isDeleted?: boolean }).isDeleted);
+}
+
+async function loadWhiteboards(): Promise<WhiteboardItem[]> {
+  const [data, pending] = await Promise.all([
+    getWhiteboards(),
+    readPendingRows('whiteboard'),
+  ]);
+  return overlayWhiteboardRows(data, pending);
+}
+
+/**
+ * I3：loader 兜底——服务端 action 失败（离线/RSC 失败）时退回
+ * 「旧行 + readPendingRows overlay」，不再无 catch 悬空。
+ */
+export async function safeLoadWhiteboards(prevRows: WhiteboardItem[]): Promise<WhiteboardItem[]> {
+  try {
+    return await loadWhiteboards();
+  } catch {
+    const pending = await readPendingRows('whiteboard');
+    return overlayWhiteboardRows(prevRows, pending);
+  }
+}
+
 export function WhiteboardTree() {
   const [boards, setBoards] = useState<WhiteboardItem[]>([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const [version, setVersion] = useState(0);
 
+  // 旧行快照：loader 兜底时的「旧行」来源（不触发重渲染）
+  const boardsRef = useRef<WhiteboardItem[]>([]);
+  useEffect(() => {
+    boardsRef.current = boards;
+  }, [boards]);
+
   useEffect(() => {
     let alive = true;
     async function load() {
+      // I3：safe 版兜底（离线 → 旧行 + pending overlay），finally 保证 loading 收敛
       try {
-        const [data, pending] = await Promise.all([
-          getWhiteboards(),
-          readPendingRows('whiteboard'),
-        ]);
+        const data = await safeLoadWhiteboards(boardsRef.current);
         if (!alive) return;
-        // applyLocal 的本地改名先于服务端可见（pending 覆盖）
-        setBoards(mergePending<WhiteboardItem>(data, pending, (id, p) => ({
-          id,
-          name: '未命名白板',
-          icon: null,
-          updatedAt: p.syncTs,
-        })).filter((b) => !(b as { isDeleted?: boolean }).isDeleted));
+        setBoards(data);
       } finally {
         if (alive) setLoading(false);
       }
@@ -84,6 +117,7 @@ export function WhiteboardTree() {
     return () => {
       alive = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, version]);
 
   // applyLocal 改名 / pull 远端变化 → 重取

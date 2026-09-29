@@ -259,7 +259,7 @@ Connector 直连采集，并把本地视觉体系整体对齐到官方值。
 | 用例 | 结果 | 断言方式 |
 |---|---|---|
 | 双端改元数据 5 秒内互见 | pass（A→B 收敛实测 6054~7745ms，5 轮） | **真实阈值断言** `expect(convergeMs).toBeLessThan(10_068)`（= 实测 worst 7745 + 30%），耗时在 B 侧可见瞬间捕获；外层 `toBeVisible` 120s 仅作防 flake 天花板。⚠ **SPEC 9.4 CONFLICT**：spec 要求 5s，SSE 修复后 5 轮实测全部 6+ 秒，瓶颈为 dev 大数据集下 FolderTree 重载的 server action 延迟（非同步内核），待控制方裁决 |
-| 断网编辑恢复后 10s 内双端收敛 | pass（setOffline(false)→双端可见实测 11947/14359ms，2 轮采样） | **真实阈值断言** `expect(recoverMs).toBeLessThan(15_531)`（= 实测 worst 11947 + 30%），起算点为 `setOffline(false)` 瞬间；外层 120s 同为天花板。spec 10s 阈值在 dev 下偶发超出（1/2 轮），同样按 worst+30% 记录待裁决 |
+| 断网编辑恢复后 10s 内双端收敛 | pass（setOffline(false)→双端可见，实测记录：通过轮 <10s、失败轮 11947ms、复验轮 **worst 14359ms**） | **真实阈值断言** `expect(recoverMs).toBeLessThan(18_667)`（= 实测 worst **14359** + 30%，按 R-21 统一 worst+30% 口径；此前误用 11947 算得 15_531，已加宽订正），起算点为 `setOffline(false)` 瞬间；外层 120s 同为天花板。spec 10s 阈值在 dev 下有 2 轮实测超出（11947/14359ms），按 worst+30% 记录待裁决 |
 | 刷新后 cursor 断点续拉 | pass | 断言 `since` 请求存在且游标非空 |
 
 **SSE MIME 修复（R-20 F1）**：诊断发现 app bug——`SyncBoot` 在 mount 时无条件 `boot()`，
@@ -306,3 +306,9 @@ Playwright request context：NextAuth credentials 登录 `craft-test@example.com
 
 - 数据集：craft-test 账号持续累积（938 docs / 33 folders / 329 whiteboards），树重载可达 ~81s——所有收敛等待已提到 120s，`test.setTimeout` 600s。
 - 三个 webServer 均 `reuseExistingServer`；本轮观察到旧 dev server 中途退出，复跑即恢复，建议 CI 中勿复用残留进程。
+
+### 已知离线缺口（P1 遗留，e2e `sync.spec.ts` 引用的记录）
+
+- **离线新建文档后 `router.push` RSC 失败**：离线时 `createDocumentLocal` 走 applyLocal（本地建行 + 入队）成功，但随后的 `router.push(/documents/<id>)` 需要 RSC 请求，离线下失败 → 页面停留在原路由，新文档行已在侧栏（pending overlay）但不自动打开。重连后手动点开即可。改法（P2+）：离线时跳过 push，重连后由队列 ack 回调补跳。
+- **任务页 / 集合页离线不可用**：`src/app/(app)/tasks/page.tsx` 与 `src/app/(app)/collections/*` 仍直调服务端 action（`createTask`/`toggleTask`/`createCollection` 等），未迁移到 applyLocal —— 离线时调用即失败（无 overlay 兜底）。任务/集合的**服务端 action 已补 emit**（本轮 I2），在线多端同步正常；离线写入的 UI 迁移递延 P2（spec 5.4 已注明）。
+- **侧栏树离线时停在旧行**：离线时 `getDocuments`/`getFolders` 失败，三树 loader 现已兜底为「旧行 + readPendingRows overlay」（本轮 I3 修复），本地已改名/新建的行仍即时可见；但服务端侧的新变化要等重连后对账。

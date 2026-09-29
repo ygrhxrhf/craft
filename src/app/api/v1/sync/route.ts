@@ -1,9 +1,12 @@
 import { NextRequest } from 'next/server';
 import { and, or } from '@prisma/orm-postgres/orm-client';
+import { z } from 'zod';
 import { AuthorizationError, requireUserId } from '@/lib/authz/guard';
 import { getDb } from '@/prisma/db';
 import { SYNC_TABLES } from '@/lib/sync/tables';
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
+import { decideLww } from '@/lib/sync/lww';
+import { emitSyncEvent } from '@/lib/sync/emit-event';
 
 export const dynamic = 'force-dynamic';
 
@@ -106,6 +109,126 @@ export async function GET(req: NextRequest) {
     { records: page, cursor: formatCursor(cursor), hasMore },
     { headers: { 'Cache-Control': 'no-store' } },
   );
+}
+
+const recordSchema = z.object({
+  table: z.string().min(1),
+  id: z.string().min(1),
+  op: z.enum(['upsert', 'delete']),
+  data: z.record(z.string(), z.unknown()).optional(),
+  syncTs: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+});
+const bodySchema = z.object({ records: z.array(recordSchema).min(1).max(200) });
+
+type PostRecord = z.infer<typeof recordSchema>;
+type BatchResult = {
+  applied: { table: string; id: string }[];
+  rejected: { table: string; id: string; op: string; data: unknown; syncTs: string }[];
+  cursor: string;
+};
+
+export async function POST(req: NextRequest) {
+  let userId: string;
+  try {
+    userId = await requireUserId();
+  } catch (e) {
+    return Response.json({ error: 'unauthorized' }, {
+      status: e instanceof AuthorizationError ? 401 : 500,
+    });
+  }
+
+  // 先整体读文本：>2MB 直接 413（不解析），随后从同一份文本解析 JSON
+  const text = await req.text();
+  if (text.length > 2 * 1024 * 1024) {
+    return Response.json({ error: 'payload too large' }, { status: 413 });
+  }
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    return Response.json({ error: 'bad records' }, { status: 400 });
+  }
+  const parsed = bodySchema.safeParse(json);
+  if (!parsed.success) return Response.json({ error: 'bad records' }, { status: 400 });
+  // 未知表在开事务前整批 400，避免半途作废的事务
+  for (const rec of parsed.data.records) {
+    if (!SYNC_TABLES.some(d => d.table === rec.table)) {
+      return Response.json({ error: `unknown table ${rec.table}` }, { status: 400 });
+    }
+  }
+
+  const db = await getDb();
+  try {
+    const result = await applyBatch(db, userId, parsed.data.records);
+    return Response.json(result, { headers: { 'Cache-Control': 'no-store' } });
+  } catch {
+    // 事务内任一异常 → 整批 500、无部分确认（客户端整批重推，LWW 幂等安全）
+    return Response.json({ error: 'sync failed' }, { status: 500 });
+  }
+}
+
+// 事务原子性（spec C6）：本项目 Postgres façade 支持 db.transaction（见
+// .agents/skills/prisma-8/references/queries.md:13/216 与 queries-postgres.md:342-361，
+// 以及 node_modules/@prisma/orm-postgres/dist/*.d.mts 中 transaction 的声明）。
+// 批量写 + 同事务广播（emitSyncEvent 走 tx.orm）包进单事务，异常整体回滚；
+// 若运行面没有 transaction（如测试替身），退化为直跑——异常仍以 500 收口、无部分确认。
+async function applyBatch(db: any, userId: string, records: PostRecord[]): Promise<BatchResult> {
+  const run = async (scope: any): Promise<BatchResult> => {
+    const applied: { table: string; id: string }[] = [];
+    const rejected: any[] = [];
+    const touchedTables = new Set<string>();
+    let maxCursor: Cursor = { ts: '1970-01-01T00:00:00.000Z', id: '' };
+    const serverNow = () => new Date().toISOString(); // spec C3：服务端时钟无条件覆盖
+
+    for (const rec of records) {
+      const def = SYNC_TABLES.find(d => d.table === rec.table)!; // 上游已整批校验
+      const pk = def.id(rec); // document_tag 复合键；其余即 r.id
+      const model = scope.orm.public[def.model];
+      const where = rec.table === 'document_tag'
+        ? { documentId: rec.data?.documentId, tagId: rec.data?.tagId }
+        : { id: rec.id };
+      const current = await model.first(where);
+      const tSrv = current ? new Date(current[def.tsCol]).toISOString() : null;
+      const decision = decideLww(rec.op, rec.syncTs, tSrv);
+
+      if (decision === 'reject') {
+        rejected.push({
+          table: rec.table, id: pk, op: current?.deletedAt ? 'delete' : 'upsert',
+          data: pickCols(def, current), syncTs: tSrv!,
+        });
+        continue;
+      }
+      const ts = serverNow();
+      if (rec.op === 'delete') {
+        if (current) {
+          await model.where(where).update({ deletedAt: ts, [def.tsCol]: ts });
+        } // 本就不存在 → 幂等接受，无写入
+        maxCursor = newer(maxCursor, { ts, id: pk });
+      } else {
+        const payload = { ...rec.data, [def.tsCol]: ts };
+        if (current) await model.where(where).update(payload);
+        else await model.create({ ...payload, id: rec.table === 'document_tag' ? undefined : rec.id });
+        maxCursor = newer(maxCursor, { ts, id: pk });
+      }
+      applied.push({ table: rec.table, id: pk });
+      touchedTables.add(rec.table);
+    }
+
+    // 同事务广播：emit 与批量写同生共死（applied 非空才广播）
+    if (applied.length) await emitSyncEvent(scope, userId, [...touchedTables], maxCursor);
+    return { applied, rejected, cursor: formatCursor(maxCursor) };
+  };
+  return typeof db.transaction === 'function' ? db.transaction(run) : run(db);
+}
+
+function pickCols(def: (typeof SYNC_TABLES)[number], row: any) {
+  if (!row) return undefined;
+  const out: Record<string, unknown> = {};
+  for (const c of def.cols) if (c in row) out[c] = row[c];
+  return out;
+}
+function newer(a: Cursor, b: Cursor): Cursor {
+  return cmpCursor(a, b) >= 0 ? a : b;
 }
 
 // 懒清理：每次同步轮换一张表，物理删除 30 天前的墓碑，单次至多 100 行。

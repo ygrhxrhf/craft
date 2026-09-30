@@ -3,12 +3,14 @@
 // 服务端 action 返回的是「推送前」的旧数据，本地 applyLocal 的写要靠 pending 队列
 // 覆盖（mergePending）才能即时可见；flush ack 后服务端即权威，pending 自然清空。
 import { createIdbStore } from '@/lib/sync-core/adapter-idb';
+import { createSqliteStore } from '@/lib/sync-core/adapter-sqlite';
+import { storageBackend } from '@/lib/platform';
 import type { SyncStore } from '@/lib/sync-core/store';
 
 let store: SyncStore | null = null;
 
 async function getStore(): Promise<SyncStore> {
-  if (!store) store = createIdbStore();
+  if (!store) store = storageBackend() === 'sqlite' ? createSqliteStore() : createIdbStore();
   await store.init();   // 幂等：已 init 直接返回
   return store;
 }

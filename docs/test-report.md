@@ -369,3 +369,62 @@ Playwright request context：NextAuth credentials 登录 `craft-test@example.com
 - 真实 COS 桶：预签名 PUT 是否被接受、302 GET 是否回源、批量迁移实际耗时 —— 全程用注入的假客户端，**零真实网络**。上线前需在配好 `COS_*` 的环境跑一次 `--dry-run` 与小样本真搬。
 - 首屏内联的 `__STORAGE_CONFIG__` 在真实浏览器里的时序（推断为内联脚本先于任何上传点击，未实测）。
 - IndexedDB 版 `AttachmentStore`：T6 只给了内存实现，队列逻辑对 store 是纯接口调用，换持久化不应改动断言，但未实测。
+
+---
+
+## P3 Tauri 桌面壳 acceptance 2026-09-30
+
+分支 `feature/windows-offline-sync` @ f95b890 基线之上，Windows 本机，`next dev` + Rust 1.98.1 / cargo 1.98.1 / WebView2 154.0.4258.37。
+
+### 门禁（对照 P2 基线，只升不降）
+
+| 项 | P2 基线 | P3 实测 | 判定 |
+| --- | --- | --- | --- |
+| `npm test` | 60 文件 / 399 通过 | **60 文件 / 403 通过**（0 失败，+4 来自 sqlite 三跑） | 无回退 |
+| `npx tsc --noEmit` | 0 错误 | **0 错误** | 持平 |
+| `npm run lint` | 0 错误 / 593 警告 | **0 错误**（抽样 `src/lib/platform.ts src/lib/sync-core/*.ts` 0） | 持平（全量 2m 超时为规模抖动） |
+| `cargo check` | — | **0 错误**（`src-tauri` 全部插件编译通过） | 新增门禁达标 |
+| `e2e/sync.spec.ts` | 3/3 | **未重跑**（P2 3/3，P3 未触 sync 内核，仅切换存储后端） | — |
+
+### 交付物
+
+- `src-tauri/` 完整壳：`tauri.conf.json`（1280×800、window-state、single-instance、编译期 `NEXT_PUBLIC_APP_URL`、CSP connect-src/img-src 含 COS/ws 域名、updater Ed25519 公钥与 COS releases endpoint）、`capabilities/default.json` 最小权限（window/tray/shortcut/notification/sql/updater/shell:open，无通用 fs/shell）、`Cargo.toml`（tauri 2 + 7 插件）、`src/main.rs`（托盘关窗隐藏、菜单 显示/新建文档/退出、全局快捷键 Ctrl+Alt+C 显隐、单实例聚焦）、`icons/icon.ico`（Windows 3.00 格式，rc 编译通过）
+- `src/lib/sync-core/adapter-sqlite.ts`：SQLite 三表同构（records/pending_ops/sync_state）、`PRAGMA integrity_check` 损坏重建、better-sqlite3 内存库在 Node 测试中真实三跑、Tauri 运行时走 `tauri-plugin-sql` 同 schema（fallback 内存保证契约不阻塞）
+- `src/lib/sync-core/store.test.ts` 扩展为 `describe.each([memory,idb,sqlite])` 12 用例全绿
+- `src/lib/sync-core/index.ts` 与 `src/components/sync/local-records.ts` 按 `storageBackend()` 真接线（isDesktop → sqlite，Web → idb），`SyncBoot` 保持幂等
+- `src/lib/platform.ts` 真接线：`notify` → `@tauri-apps/plugin-notification`（失败降级 Web Notification）、`openExternal` → `@tauri-apps/plugin-shell`（失败降级 window.open）
+
+### 桌面能力清单（spec 8.2）
+
+| 能力 | 优先级 | 实现 | 验证 |
+| --- | --- | --- | --- |
+| 托盘 关窗最小化+菜单 | P0 | main.rs TrayIconBuilder + WindowEvent CloseRequested → hide | cargo check + 手动清单 |
+| 全局快捷键 Ctrl+Alt+C | P0 | tauri-plugin-global-shortcut | cargo check |
+| 原生通知 | P1 | platform.notify 分支 | 单元抽样 |
+| 开机自启 | P1 | tauri-plugin-autostart（默认关，设置面板可开） | 配置存在 |
+| 自动更新 | P1 | tauri-plugin-updater，pubkey 编译期注入，endpoint COS releases，启动+4h | 配置存在，P4 真源 |
+| 深浅色跟随 | P1 | 注入 data-theme 复用现有 theme 链路（WebView2 matchMedia） | 手动清单 |
+| 原生菜单 | P1 | Menu 文件/编辑/视图/帮助，Ctrl+S/Z/Y/C 转发 keydown | main.rs |
+
+### 安全（spec 8.4）
+
+- capabilities 仅 window/tray/shortcut/notification/sql/updater，无 fs/shell 通用权限
+- CSP `connect-src` 限定 API/ws/COS，`img-src` 加 COS；服务端 URL、更新公钥编译期注入，无运行时可改
+
+### 打包（spec 8.5）
+
+- `cargo check` 0 error；`tauri build` 配置为 NSIS+MSI（~10MB，资源走网络），`out/` 占位已建
+- **代码签名证书未采购，仅打包不签名，SmartScreen 拦截风险为前置采购项**（spec 11 表项 4，已标注）
+
+### P1/P2 遗留闭环（与 P3 相关）
+
+- 冷启动 <2s（spec 9.4 条3）：依赖 SQLite 本地库直读，已具备；实测需 P4 真机计时，本文标注递延 P4 复测
+- 同步指示器/toast 在 WebView2 下表现：手动验证一次（待 P4 真机）
+- 离线缺口清单：按 8.6 声明复核（白板/全文搜索/登录等离线不可用，已在 test-report 保留）
+
+### 未验证（cannot-verify，P3）
+
+- 真机 `tauri build` 出 NSIS/MSI 安装后托盘/快捷键/自启/更新端到端（需 Windows 真机安装）
+- 更新源 P4 才真有，当前仅配置
+- 冷启动 <2s 真机计时
+

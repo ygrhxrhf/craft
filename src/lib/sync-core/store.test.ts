@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createMemoryStore } from './store';
 import type { SyncStore } from './store';
 import { createIdbStore, SYNC_DB_NAME } from './adapter-idb';
+import { createSqliteStore } from './adapter-sqlite';
 
 // idb 跨用例持久，删库隔离；memory 实例天然隔离（deleteDatabase 为无害空操作）
 function deleteIdb(): Promise<void> {
@@ -22,7 +23,8 @@ const rec = (id: string, ts: string, title = 'a') => ({
 describe.each([
   ['memory', createMemoryStore],
   ['idb', createIdbStore],
-])('SyncStore 契约（%s，MemoryStore 与 adapter-idb 共用同一套用例）', (_label, factory) => {
+  ['sqlite', createSqliteStore],
+])('SyncStore 契约（%s，MemoryStore 与 adapter-idb/sqlite 共用同一套用例）', (_label, factory) => {
   let s: SyncStore;
   beforeEach(async () => {
     await deleteIdb();

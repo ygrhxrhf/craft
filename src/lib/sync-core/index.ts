@@ -1,6 +1,7 @@
 // src/lib/sync-core/index.ts
 // SyncManager 编排器：状态机 + applyLocal + boot（spec task-11 Step 3）
 import { createIdbStore } from './adapter-idb';
+import { createSqliteStore } from './adapter-sqlite';
 import { createQueue, type Queue } from './queue';
 import { createReconciler, SyncAuthError, type Reconciler } from './reconciler';
 import { createBroadcaster, type Broadcaster } from './broadcast';
@@ -10,10 +11,6 @@ import type { SyncStatus } from './types';
 import { storageBackend } from '@/lib/platform';
 
 export type { SyncStatus };
-
-// P1 硬规则：store 一律 createIdbStore()，不按 storageBackend 分支（P3 接真 sqlite 时再启用）。
-// 保留 import 引用（平台能力探测入口），避免 unused-import。
-void storageBackend;
 
 const DEBOUNCE = 2000;      // spec：applyLocal → flush 去抖
 const FLUSH_AT = 50;        // spec：pending 达阈值立即 flush
@@ -58,8 +55,8 @@ function isOffline(): boolean {
 }
 
 export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager {
-  // 4) store 装配：P1 一律 createIdbStore()（测试经 deps.store 注入 memory）
-  const base = deps.store ? deps.store() : createIdbStore();
+  // P3 接线：按 storageBackend 选择 sqlite/idb（测试经 deps.store 注入 memory 保持隔离）
+  const base = deps.store ? deps.store() : storageBackend() === 'sqlite' ? createSqliteStore() : createIdbStore();
 
   // 触达表集合：applyRemote 过程记录 table，pull/applyLocal 完成后广播 onStoreChanged
   let touched = new Set<string>();

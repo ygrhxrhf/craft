@@ -1,0 +1,23 @@
+invite.members	邀请成员
+invite.members.family.and.team.plan	家庭版最多可邀请 6 名成员，团队版最多可邀请 10 名成员。
+invite.nudge.description	邀请成员加入，共同查看、编辑和评论你的文档。
+invite.nudge.description.with.team	邀请成员加入 <b>[team]</b>，共同查看、编辑和评论你的文档。
+invite.nudge.invalid.emails	请检查高亮显示的地址。
+invite.nudge.subtitle	现在邀请团队来查看吧
+invite.nudge.title	太棒了，你的新团队文档！
+invite.survey.comment.placeholder	选填…
+invite.survey.reason.exploring.alone	还在自己先探索这款应用
+invite.survey.reason.nobody.to.invite	暂时没有要邀请的人
+invite.survey.reason.other.placeholder	请告诉我们更多…
+invite.survey.reason.planning.to	打算邀请，只是还没来得及
+invite.survey.reason.something.else	其他原因
+invite.survey.reason.subtitle	帮助我们了解，我们一直在寻找改进的方向。
+invite.survey.reason.title	还没邀请团队，主要是什么原因？
+invite.survey.reason.unsure.who.for	不确定哪些人会用得上
+invite.survey.reason.wanted.but.unsure	想试试，但不确定怎么操作
+invite.survey.thanks.description	有什么想补充的吗？哪怕一句话也能帮助我们更好地了解。
+invite.survey.thanks.title	谢谢，很有帮助
+invite.team.members	邀请团队成员
+invite.team.members.desc	试用期间最多邀请 10 名成员，每人拥有独立私人空间和全部 Plus 权益
+invite.your.team	邀请团队
+invited.by.invitorname	{{invitorName}} 邀请

@@ -1,0 +1,52 @@
+{
+ "note": "curated short excerpt windows from page-bundle probe (batch 92-lower); NOT full bundle text",
+ "a6_body_tail": "[31]!==w||e[32]!==c?(_=w&&a.jsx(\"span\",{className:Tr.rightContent,children:c}),e[31]=w,e[32]=c,e[33]=_):_=e[33];let j;return e[34]!==l||e[35]!==r||e[36]!==D||e[37]!==_||e[38]!==S||e[39]!==I||e[40]!==T||e[41]!==C?(j=a.jsxs(zre,{type:C,render:r,nativeButton:S,\"data-ds\":\"a",
+ "npe_head": ":d9t,list:u9t,tab:f9t,tabLabel:p9t,tabIcon:h9t,indicator:m9t,sizeLg:g9t},b9t={sm:void 0,lg:lh.sizeLg},y9t={sm:18,lg:24},Npe=t=>{const e=H.c(20),{items:n,value:o,onValueChange:s,size:i,className:l}=t,r=i===void 0?\"sm\":i,c=k.useRef(null),d=k.useRef(null),u=k.useRef(0);let f;e[0]!==s?(f=S=>{document.documentElement.dataset.whatintent===\"touch\"&&_2(),s(S)},e[0]=s,e[1]=f):f=e[1];const p=f;let h,m;e[2]===Symbol.for(\"react.memo_cache_sentinel\")?(h=()=>{const S=c.current,v=d.current;if(!S||!v)return;const I=new ResizeObserver(()=>{cancelAnimationFrame(u.current),v.style.transition=\"none\",u.current=requestAnimationFrame(()=>{v.style.transition=\"\"})});return I.observe(S),()=>{I.disconnect(),cancelAnimationFrame(u.current)}},m=[],e[2]=h,e[3]=m):(h=e[2],m=e[3]),k.useEffect(h,m);const g=b9t[r];let b;e[4]!==l||e[5]!==g?(b=$e(lh.root,g,l),e[4]=l,e[5]=g,e[6]=b):b=e[6];let y;if(e[7]!==n||e[8]!==r){let S;e[10]!==r?(S=v=>a.jsxs(kIe,{value:v.value,className:lh.tab,disabled:v.disabled,\"aria-label\":v.ariaLabel,children:[v.icon&&a.jsx(\"span\",{className:lh.tabIcon,children:a.jsx(v.icon,{height:y9t[r]})}),v.label&&a.jsx(\"span\",{className:lh.tabLabel,children:v.label})]},v.value),e[10]=r,e[11]=S):S=e[11],y=n.map(S),e[7]=n,e[8]=r,e[9]=y}else y=e[9];let C;e[12]===Symbol.for(\"react.memo_cache_sentinel\")?(C=a.jsx(vIe,{ref:d,className:lh.indicator}),e[12]=C):C=e[12];let x;e[13]!==y?(x=a.jsxs(IIe,{className:lh.list,activateOnFocus:!0,children:[y,C]}),e[13]=y,e[14]=x):x=e[14];let w;return e[15]!==p||e[16]!==",
+ "native_colon_offsets": [
+  1070879,
+  1079286,
+  2117559
+ ],
+ "composite_offs": [
+  1584409,
+  1584497,
+  3323789,
+  3323814,
+  6642695
+ ],
+ "export_a6_offsets": [
+  6828569,
+  6829090
+ ],
+ "a6_rail_usage_in_panel": {
+  "i": 2119491,
+  "s": ":d.id,onValueChange:c,items:l.map(b=>({value:b.id,icon:b.icon,ariaLabel:b.getLabel(e)}))})}):a.jsx(\"nav\",{className:Aa.sidebar,\"aria-label\":e(\"preferences.keyboard.shortcuts\"),children:l.map(b=>a.jsx(a6,{variant:b.id===d.id?\"active\":\"default\",leftContent:a.jsx(Do,{icon:b.icon}),onClick:()=>c(b.id),children:b.getLabel(e)},b.id))});return a.jsxs(ls.Content,{className:$e(Aa.dialog,{[Aa.isCompact]:i}),\"aria-labelledby\":s,children:[!i&&g,a.jsxs(\"div\",{className:Aa.main,children:[a.jsxs(\"div\",{className:Aa.header,children:[a.jsxs(\"div\",{className:Aa.headerText,children:[a.jsx(\"span\",{className:Aa.caption,id:s,children:"
+ },
+ "ds_menuitem_usage": {
+  "i": 2633506,
+  "s": "]=f,e[4]=S):S=e[4];let v;return e[5]!==i||e[6]!==n||e[7]!==h||e[8]!==g||e[9]!==c||e[10]!==y||e[11]!==o||e[12]!==p||e[13]!==u||e[14]!==s||e[15]!==C||e[16]!==x||e[17]!==w||e[18]!==S||e[19]!==m?(v=a.jsx(a6,{ref:p,render:u,role:\"menuitem\",variant:m,\"data-testid\":h,leftContent:o,rightContent:s,caption:i,disabled:g,forceHover:c,isOneLine:C,onClick:y,\"data-disabled\":x,tabIndex:w,className:S,children:n}),e[5]=i,e[6]=n,e[7]=h,e[8]=g,e[9]=c,e[10]=y,e[11]=o,e[12]=p,e[13]=u,e[14]=s,e[15]=C,e[16]=x,e[17]=w,e[18]=S,e[19]=m,e[20]=v):v=e[20],v},E6e=t=>{const e=H.c(9),{children:n,label:o,onLabelClick:s,className:i}=t;let l;e[0]!="
+ },
+ "collection_item_usage": {
+  "i": 2637609,
+  "s": ";const g=m;let b;e[3]===Symbol.for(\"react.memo_cache_sentinel\")?(b=a.jsx(\"div\",{}),e[3]=b):b=e[3];const y=r==null,C=h||void 0;let x;e[4]!==r||e[5]!==i||e[6]!==l||e[7]!==y||e[8]!==C||e[9]!==p?(x=a.jsx(a6,{render:b,variant:p,leftContent:i,rightContent:l,caption:r,isOneLine:y,\"data-disabled\":C}),e[4]=r,e[5]=i,e[6]=l,e[7]=y,e[8]=C,e[9]=p,e[10]=x):x=e[10];let w;e[11]!==f?(w=$e(ga.item,f),e[11]=f,e[12]=w):w=e[12];let S;return e[13]!==n||e[14]!==h||e[15]!==g||e[16]!==s||e[17]!==x||e[18]!==w||e[19]!==o?(S=a.jsx(UIe,{value:o,index:s,disabled:h,onClick:g,render:x,className:w,children:n}),e[13]=n,e[14]=h,e[15]=g,e[16]=s,e[1"
+ },
+ "titlebar_action_usage": {
+  "i": 2704783,
+  "s": " b;e[4]!==s||e[5]!==l?(b=a.jsx(_Mt,{onContextMenu:l,children:s}),e[4]=s,e[5]=l,e[6]=b):b=e[6];let y;return e[7]!==i||e[8]!==r||e[9]!==c||e[10]!==n||e[11]!==d||e[12]!==p||e[13]!==g||e[14]!==b?(y=a.jsx(a6,{render:n,variant:p,onClick:i,onMouseEnter:r,onMouseLeave:c,rightContent:d,isOneLine:!0,className:g,children:b}),e[7]=i,e[8]=r,e[9]=c,e[10]=n,e[11]=d,e[12]=p,e[13]=g,e[14]=b,e[15]=y):y=e[15],y},_Mt=t=>{const e=H.c(5),{children:n,onContextMenu:o}=t;let s;e[0]!==n?(s=a.jsx(\"span\",{className:Ay.titleText,children:n}),e[0]=n,e[1]=s):s=e[1];let i;return e[2]!==o||e[3]!==s?(i=a.jsx(Gat,{onContextMenu:o,children:s}),e[2]"
+ },
+ "nativeButton_sites": [
+  {
+   "i": 1540180,
+   "s": ":Z=e[44];let V;return e[45]!==$||e[46]!==T||e[47]!==s||e[48]!==l||e[49]!==r||e[50]!==c||e[51]!==W||e[52]!==z||e[53]!==G||e[54]!==Z||e[55]!==E?(V=a.jsxs(zre,{className:$,onClick:s,onMouseDown:l,disabled:T,type:E,render:c,nativeButton:W,\"data-ds\":\"button\",...r,children:[z,G,Z]}),e[45]=$,e[46]=T,e[47]=s,e[48]=l,e[49]=r,e[50]=c,e[51]=W,e[52]=z,e[53]=G,e[54]=Z,e[55]=E,e[56]=V):V=e[56],V},q5e=\"craft:debug-panel\",sht=()=>{const t=window.innerWidth||1024,e=window.innerHeight||768;ret"
+  },
+  {
+   "i": 2094829,
+   "s": "w&&a.jsx(\"span\",{className:Tr.rightContent,children:c}),e[31]=w,e[32]=c,e[33]=_):_=e[33];let j;return e[34]!==l||e[35]!==r||e[36]!==D||e[37]!==_||e[38]!==S||e[39]!==I||e[40]!==T||e[41]!==C?(j=a.jsxs(zre,{type:C,render:r,nativeButton:S,\"data-ds\":\"action\",className:I,...l,children:[T,D,_]}),e[34]=l,e[35]=r,e[36]=D,e[37]=_,e[38]=S,e[39]=I,e[40]=T,e[41]=C,e[42]=j):j=e[42],j},Do=t=>{const e=H.c(2),{icon:n}=t;let o;return e[0]!==n?(o=a.jsx(\"span\",{className:Tr.iconActionContent,chi"
+  }
+ ],
+ "import_zre_alias": {
+  "i": 5881,
+  "s": ",dO as oIe,dP as Zre,dQ as sIe,dR as xE,dS as Ps,dT as Vre,dU as iIe,dV as lIe,dW as rIe,dX as aIe,dY as cIe,dZ as Wre,d_ as Vu,d$ as wE,e0 as dIe,e1 as uIe,e2 as fIe,e3 as pIe,e4 as hIe,e5 as mIe,e6 as gIe,e7 as bIe,e8 as yIe,e9 as CIe,ea as xIe,eb as wIe,ec as zre,ed as SIe,ee as zi,ef as kIe,eg as vIe,eh as IIe,ei as TIe,ej as AIe,ek as EIe,el as d5,em as DIe,en as _Ie,eo as"
+ },
+ "npe_segmented_root_line": "t w;return e[15]!==p||e[16]!==b||e[17]!==x||e[18]!==o?(w=a.jsx(TIe,{ref:c,\"data-ds\":\"segmented-control\",className:b,value:o,onValueChange:p,children:x}),e[15]=p,e[16]=b,e[17]=x,e[18]=o,e[19]=w):w=e[19],w},sA=!0,Q0=()=>{const t=H.c(7),e=qe(x9t),n=qe(C9t),o=Nr(),s=z0();let i;t[0]!==o||t[1]!==s||t[2]!==n?(i=(n==null?void 0:n.toUpperCase())===\"CN\"||o||"
+}

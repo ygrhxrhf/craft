@@ -1,0 +1,53 @@
+{
+  "actOffs": [
+    1215996,
+    1226228,
+    1227454
+  ],
+  "nameHits": [
+    {
+      "k": "tabActivationDirection",
+      "o": 1211609
+    },
+    {
+      "k": "tabActivationDirection",
+      "o": 1213065
+    },
+    {
+      "k": "tabActivationDirection",
+      "o": 1213630
+    },
+    {
+      "k": "tabActivationDirection",
+      "o": 1219612
+    },
+    {
+      "k": "tabActivationDirection",
+      "o": 1221078
+    },
+    {
+      "k": "tabActivationDirection",
+      "o": 1226386
+    },
+    {
+      "k": "tabActivationDirection",
+      "o": 1227324
+    }
+  ],
+  "txt": "string",
+  "vendor": "string",
+  "windows": [
+    {
+      "o": 1215996,
+      "s": "ent;if(ba)return Hr(ba,Cr),()=>{ca(ba)}},[Ir,Hr,ca,Cr]),useIsoLayoutEffect(()=>{if(Ir==null)return fa(ba=>{var xa;const Ea=ya.current?(xa=ba.get(ya.current))==null?void 0:xa.index:null;Ea!=null&&va(Ea)})},[Ir,fa,va]),reactExports.useMemo(()=>({ref:wa,index:ga}),[ga,wa])}function useCompositeItem($r={}){const{highlightItemOnHover:Ar,highlightedIndex:Cr,onHighlightedIndexChange:Rr}=useCompositeRootContext(),{ref:Pr,index:Ir}=useCompositeListItem($r),Hr=Cr===Ir,ca=reactExports.useRef(null),fa=useMergedRefs(Pr,ca);return{compositeProps:reactExports.useMemo(()=>({tabIndex:Hr?0:-1,onFocus(){Rr(Ir)},onMouseMove(){const pa=ca.current;if(!Ar||!pa)return;const ha=pa.hasAttribute(\"disabled\")||pa.ariaDisabled===\"true\";!Hr&&!ha&&pa.focus()}}),[Hr,Rr,Ir,Ar]),compositeRef:fa,index:Ir}}const TabsListContext=reactExports.createContext(void 0);function useTabsListContext(){const $r=reactExports.useContext(TabsListContext);if($r===void 0)throw new Error(formatErrorMessage(65));return $r}const TabsTab=reactExports.forwardRef(function $r(Ar,Cr){const{className:Rr,disabled:Pr=!1,render:Ir,value:Hr,id:ca,nativeButton:fa=!0,...da}=Ar,{value:pa,getTabPanelIdByValue:ha,orientation:ma}=useTabsRootContext(),{activateOnFocus:ga,highlightedTabIndex:va,onTabActivation:ya,registerTabResizeObserverElement:wa,setHighlightedTabIndex:ba,tabsListElement:Ea}=useTabsListContext(),xa=useBaseUiId(ca),Sa=reactExports.useMemo(()=>({disabled:Pr,id:xa,value:Hr}),[Pr,xa,Hr]),{compositeProps:$a,compositeRef:Ta,index:Aa}=useCompositeItem({metadata:Sa}),Oa=Hr===pa,Pa=reactExports.useRef(!1),Ua=reactExports.useRef(null);reactExports.useEffect(()=>{const Xa=Ua.current;if(Xa)return wa(Xa)},[wa]),useIsoLayoutEffect(()=>{if(Pa.current){Pa.current=!1;return}if(!(Oa&&Aa>-1&&va!==Aa))return;const Xa=Ea;if(Xa!=null){const eu=activeElement(ownerDocument(Xa));if(eu&&contains(Xa,eu))return}Pr||ba(Aa)},[Oa,Aa,va,ba,Pr,Ea]);const{getButtonProps:qa,buttonRef:Ia}=useButton({disabled:Pr,native:fa,focusableWhenDisabled:!0}),La=ha(Hr),Da=reactExports.useRef(!1),Fa=reactExports.useRef(!1);function ru(Xa){Oa||Pr||ya(Hr,createChangeEventDetails(none$1,Xa.nativeEvent,void 0,{activationDirection:\"none\"}))}function Va(Xa){Oa||(Aa>-1&&!Pr&&ba(Aa),!Pr&&ga&&(!Da.current||Da.current&&Fa.current)&&ya(Hr,createChangeEventDetails(none$1,Xa.nativeEvent,void 0,{activationDirection:\"none\"})))}function Za(Xa){if(Oa||Pr)return;Da.current=!0;f"
+    },
+    {
+      "o": 1226228,
+      "s": "MPTY_ARRAY$1,props:Pr=EMPTY_ARRAY$1,state:Ir=EMPTY_OBJECT$1,stateAttributesMapping:Hr,highlightedIndex:ca,onHighlightedIndexChange:fa,orientation:da,dense:pa,itemSizes:ha,loopFocus:ma,cols:ga,enableHomeAndEndKeys:va,onMapChange:ya,stopEventPropagation:wa=!0,rootRef:ba,disabledIndices:Ea,modifierKeys:xa,highlightItemOnHover:Sa=!1,tag:$a=\"div\",...Ta}=$r,Aa=useDirection(),{props:Oa,highlightedIndex:Pa,onHighlightedIndexChange:Ua,elementsRef:qa,onMapChange:Ia,relayKeyboardEvent:La}=useCompositeRoot({itemSizes:ha,cols:ga,loopFocus:ma,dense:pa,orientation:da,highlightedIndex:ca,onHighlightedIndexChange:fa,rootRef:ba,stopEventPropagation:wa,enableHomeAndEndKeys:va,direction:Aa,disabledIndices:Ea,modifierKeys:xa}),Da=useRenderElement($a,$r,{state:Ir,ref:Rr,props:[Oa,...Pr,Ta],stateAttributesMapping:Hr}),Fa=reactExports.useMemo(()=>({highlightedIndex:Pa,onHighlightedIndexChange:Ua,highlightItemOnHover:Sa,relayKeyboardEvent:La}),[Pa,Ua,Sa,La]);return jsxRuntimeExports.jsx(CompositeRootContext.Provider,{value:Fa,children:jsxRuntimeExports.jsx(CompositeList,{elementsRef:qa,onMapChange:ru=>{ya==null||ya(ru),Ia(ru)},children:Da})})}const TabsList=reactExports.forwardRef(function $r(Ar,Cr){const{activateOnFocus:Rr=!1,className:Pr,loopFocus:Ir=!0,render:Hr,...ca}=Ar,{getTabElementBySelectedValue:fa,onValueChange:da,orientation:pa,value:ha,setTabMap:ma,tabActivationDirection:ga}=useTabsRootContext(),[va,ya]=reactExports.useState(0),[wa,ba]=reactExports.useState(null),Ea=reactExports.useRef(new Set),xa=reactExports.useRef(new Set),Sa=reactExports.useRef(null),$a=useStableCallback(()=>{Ea.current.forEach(La=>{La()})});reactExports.useEffect(()=>{if(typeof ResizeObserver>\"u\")return;const La=new ResizeObserver(()=>{Ea.current.size&&$a()});return Sa.current=La,wa&&La.observe(wa),xa.current.forEach(Da=>{La.observe(Da)}),()=>{La.disconnect(),Sa.current=null}},[wa,$a]);const Ta=useStableCallback(La=>(Ea.current.add(La),()=>{Ea.current.delete(La)})),Aa=useStableCallback(La=>{var Da;return xa.current.add(La),(Da=Sa.current)==null||Da.observe(La),()=>{var Fa;xa.current.delete(La),(Fa=Sa.current)==null||Fa.unobserve(La)}}),Oa=useActivationDirectionDetector(ha,pa,wa,fa),Pa=useStableCallback((La,Da)=>{if(La!==ha){const Fa=Oa(La);Da.activationDirection=Fa,da(La,Da)}}),Ua={orientation:pa,tabActivationDirection:ga},qa={\"aria-orientation\":pa===\"vertical\"?\"vertical\":void 0,role:\"tablist\"},Ia=r"
+    },
+    {
+      "o": 1227454,
+      "s": "sName:Pr,loopFocus:Ir=!0,render:Hr,...ca}=Ar,{getTabElementBySelectedValue:fa,onValueChange:da,orientation:pa,value:ha,setTabMap:ma,tabActivationDirection:ga}=useTabsRootContext(),[va,ya]=reactExports.useState(0),[wa,ba]=reactExports.useState(null),Ea=reactExports.useRef(new Set),xa=reactExports.useRef(new Set),Sa=reactExports.useRef(null),$a=useStableCallback(()=>{Ea.current.forEach(La=>{La()})});reactExports.useEffect(()=>{if(typeof ResizeObserver>\"u\")return;const La=new ResizeObserver(()=>{Ea.current.size&&$a()});return Sa.current=La,wa&&La.observe(wa),xa.current.forEach(Da=>{La.observe(Da)}),()=>{La.disconnect(),Sa.current=null}},[wa,$a]);const Ta=useStableCallback(La=>(Ea.current.add(La),()=>{Ea.current.delete(La)})),Aa=useStableCallback(La=>{var Da;return xa.current.add(La),(Da=Sa.current)==null||Da.observe(La),()=>{var Fa;xa.current.delete(La),(Fa=Sa.current)==null||Fa.unobserve(La)}}),Oa=useActivationDirectionDetector(ha,pa,wa,fa),Pa=useStableCallback((La,Da)=>{if(La!==ha){const Fa=Oa(La);Da.activationDirection=Fa,da(La,Da)}}),Ua={orientation:pa,tabActivationDirection:ga},qa={\"aria-orientation\":pa===\"vertical\"?\"vertical\":void 0,role:\"tablist\"},Ia=reactExports.useMemo(()=>({activateOnFocus:Rr,highlightedTabIndex:va,registerIndicatorUpdateListener:Ta,registerTabResizeObserverElement:Aa,onTabActivation:Pa,setHighlightedTabIndex:ya,tabsListElement:wa}),[Rr,va,Ta,Aa,Pa,ya,wa]);return jsxRuntimeExports.jsx(TabsListContext.Provider,{value:Ia,children:jsxRuntimeExports.jsx(CompositeRoot,{render:Hr,className:Pr,state:Ua,refs:[Cr,ba],props:[qa,ca],stateAttributesMapping:tabsStateAttributesMapping,highlightedIndex:va,enableHomeAndEndKeys:!0,loopFocus:Ir,orientation:pa,onHighlightedIndexChange:ya,onMapChange:ma,disabledIndices:EMPTY_ARRAY$1})})});function getInset($r,Ar){const{left:Cr,top:Rr}=$r.getBoundingClientRect(),{left:Pr,top:Ir}=Ar.getBoundingClientRect(),Hr=Cr-Pr,ca=Rr-Ir;return{left:Hr,top:ca}}function useActivationDirectionDetector($r,Ar,Cr,Rr){const[Pr,Ir]=reactExports.useState(null);return useIsoLayoutEffect(()=>{if($r==null||Cr==null){Ir(null);return}const Hr=Rr($r);if(Hr==null){Ir(null);return}const{left:ca,top:fa}=getInset(Hr,Cr);Ir(Ar===\"horizontal\"?ca:fa)},[Ar,Rr,Cr,$r]),reactExports.useCallback(Hr=>{if(Hr===$r)return\"none\";if(Hr==null)return Ir(null),\"none\";if(Hr!=null&&Cr!=null){const ca=Rr(Hr);if(ca!=null){const{left:fa,top:da}=getInset(ca,Cr"
+    }
+  ]
+}

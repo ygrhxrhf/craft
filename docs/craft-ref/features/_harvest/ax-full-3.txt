@@ -1,0 +1,284 @@
+Browser tab: 1701771223, Title: "无标题文档", URL: "https://docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/6cc9761c-874a-40d7-b806-5bda1bca49a4?s=R51rJnqn792To1tBt2rY5CfTiFJTmbKggqrjPGcsGmrL".
+279 AXWebArea 无标题文档, URL: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/6cc9761c-874a-40d7-b806-5bda1bca49a4?s=R51rJnqn792To1tBt2rY5CfTiFJTmbKggqrjPGcsGmrL
+	280 container
+		281 container, ID: root
+			282 container
+				283 container
+					284 container
+						285 link Description: Craft Logo, Value: docs.craft.do/
+							286 container Craft Logo
+								287 image
+						288 button Sidebar Left Icon Chevron Down Bold Icon
+							289 container Sidebar Left Icon
+								290 image
+							291 container Chevron Down Bold Icon
+								292 image
+						293 container
+							294 container Magnifyingglass Icon
+								295 image
+							296 link Description: 无标题页面, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/6cc9761c-874a-40d7-b806-5bda1bca49a4
+						297 button Arrowshape Turn Up Right Circle Fill Icon 共享
+							298 container Arrowshape Turn Up Right Circle Fill Icon
+								299 image
+							300 text 共享
+						301 button Bell Badge Icon
+							302 image
+							303 image Bell Badge Icon
+								304 image
+						305 button Question Mark Icon
+							306 container Question Mark Icon
+								307 image
+						308 button Sidebar Right Icon Chevron Down Bold Icon
+							309 container Sidebar Right Icon
+								310 image
+							311 container Chevron Down Bold Icon
+								312 image
+					313 container
+						314 container
+							315 container
+								316 container, ID: current-space-sidebar
+									317 container
+										318 button zhang's Space Chevron Down Bold Icon
+											319 container
+												320 container
+													321 image
+											322 text zhang's Space
+											323 container Chevron Down Bold Icon
+												324 image
+										325 link Description: Doc Badge Plus Icon 新建文档, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581?nd=ec565130-0ab3-4c33-8357-8dbb7afb5735
+											326 container Doc Badge Plus Icon
+												327 image
+											328 text 新建文档
+										329 container
+											330 link Description: Doc On Doc Icon 所有文档, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/all
+												331 container Doc On Doc Icon
+													332 image
+												333 text 所有文档
+											334 link Description: Checkmark Circle Icon 任务 Plus Icon, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/tasks
+												335 container Checkmark Circle Icon
+													336 image
+												337 text 任务
+												338 button Plus Icon
+													339 container Plus Icon
+														340 image
+											341 link Description: Calendar Icon 日历 Dot Viewfinder Icon, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/calendar
+												342 container Calendar Icon
+													343 image
+												344 text 日历
+												345 button Dot Viewfinder Icon
+													346 container Dot Viewfinder Icon
+														347 image
+										348 link Description: Cloud Icon 连接, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/connections
+											349 container Cloud Icon
+												350 image
+											351 text 连接
+										352 link Description: Person Wave2 Fill Icon 与我共享 0, Value: docs.craft.do/shared-with-me
+											353 container Person Wave2 Fill Icon
+												354 image
+											355 text 与我共享
+											356 text 0
+										357 link Description: Doc Append Icon 我的模板 0, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/templates
+											358 container Doc Append Icon
+												359 image
+											360 text 我的模板
+											361 text 0
+										362 container
+											363 container
+												364 button 星标 Plus Bold Icon Chevron Down Icon
+													365 text 星标
+													366 button Plus Bold Icon
+														367 container Plus Bold Icon
+															368 image
+													369 container Chevron Down Icon
+														370 image
+											371 text 收藏文档以便快速访问
+										372 container
+											373 container
+												374 button 文件夹 Plus Bold Icon Chevron Down Icon
+													375 text 文件夹
+													376 button Plus Bold Icon
+														377 container Plus Bold Icon
+															378 image
+													379 container Chevron Down Icon
+														380 image
+											381 container
+												382 container
+													383 link (collapsed) Description: Tray Full Icon Expand 未分类 未分类 5, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/inbox, Secondary Actions: Expand
+														384 container
+															385 container Tray Full Icon
+																386 image
+															387 button Expand 未分类
+																388 image Arrow Triangle Down Fill Icon
+																	389 image
+														390 text 未分类
+														391 text 5
+												392 container
+													393 link (collapsed) Description: 👋 Expand How to use Craft How to use Craft 5, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/f/How-to-use-Craft--7d860c07-cf11-1ab4-08cf-7b6ae60f25d7, Secondary Actions: Expand
+														394 container
+															395 text 👋
+															396 button Expand How to use Craft
+																397 image Arrow Triangle Down Fill Icon
+																	398 image
+														399 text How to use Craft
+														400 text 5
+										401 container
+											402 container
+												403 button 标签 Plus Bold Icon Chevron Down Icon
+													404 text 标签
+													405 button Plus Bold Icon
+														406 container Plus Bold Icon
+															407 image
+													408 container Chevron Down Icon
+														409 image
+											410 text 固定关键标签以便快速访问
+									411 button Desktop Icon
+										412 container Desktop Icon
+											413 image
+									414 button Square And Arrow Down Icon
+										415 container Square And Arrow Down Icon
+											416 image
+									417 button Person3 Fill Icon
+										418 container Person3 Fill Icon
+											419 image
+								420 container
+									421 container
+										422 image
+									423 text 12 分钟前
+									424 container
+										425 button List Bullet Icon
+											426 container List Bullet Icon
+												427 image
+										428 button Checkmark Circle Icon
+											429 container Checkmark Circle Icon
+												430 image
+										431 button Paperclip Icon
+											432 container Paperclip Icon
+												433 image
+										434 button Magnifyingglass Icon
+											435 container Magnifyingglass Icon
+												436 image
+									437 text 目录
+									438 text 使用标题、页面或卡片创建目录。
+							439 container
+								440 button Folder Fill Bold Icon
+									441 container Folder Fill Bold Icon
+										442 image
+								443 button Doc Fill Bold Icon
+									444 container Doc Fill Bold Icon
+										445 image
+						446 container
+							447 container, ID: page-background-1
+								448 Canvas
+							449 container, ID: page-background-2
+								450 Canvas
+							451 text entry area (settable), ID: sinktextarea
+							452 container, ID: just-below-page-vscroll
+								453 container, Value: 页面标题
+﻿
+
+​, ID: spellCheckEnabler
+									454 container
+										455 container
+											456 text 页面标题
+											457 text entry area (settable), Value: ﻿
+
+												458 container
+													459 LineBreak
+										460 container
+											461 button Reaction Icon
+												462 container Reaction Icon
+													463 image
+											464 button Text Bubble Icon
+												465 container Text Bubble Icon
+													466 image
+									467 container
+									468 container
+										469 text ​
+										470 button Ellipsis Icon
+											471 container Ellipsis Icon
+												472 image
+							473 container
+						474 container
+							475 container
+								476 button 插入
+								477 button 格式
+								478 button 样式
+								479 button 信息
+							480 container
+								481 container
+									482 button 页面信息
+									483 button 动作
+								484 text 页面信息
+								485 text 属性
+								486 container Calendar Icon
+									487 image
+								488 container
+									489 text 已创建
+									490 text :
+								491 button 3 小时前
+								492 container Calendar Icon
+									493 image
+								494 container
+									495 text 已更新
+									496 text :
+								497 button 12 分钟前
+								498 container Person Crop Circle Badge Icon
+									499 image
+								500 container
+									501 text 作者
+									502 text :
+								503 text zhang meng
+								504 text 动作
+								505 button Play Rectangle Icon 展示
+									506 container Play Rectangle Icon
+										507 image
+									508 text 展示
+								509 button Folder Icon 移动到…
+									510 container Folder Icon
+										511 image
+									512 text 移动到…
+								513 button Doc On Doc Icon 创建副本
+									514 container Doc On Doc Icon
+										515 image
+									516 text 创建副本
+								517 button Star Icon 收藏文档, ID: star
+									518 container Star Icon
+										519 image
+									520 text 收藏文档
+								521 button Arrow Uturn Backward Circle Icon 查看备份
+									522 container Arrow Uturn Backward Circle Icon
+										523 image
+									524 text 查看备份
+								525 button Trash Icon 删除, ID: delete
+									526 container Trash Icon
+										527 image
+									528 text 删除
+								529 text 位置
+								530 button Folder Icon 未分类
+									531 container Folder Icon
+										532 image
+									533 text 未分类
+								534 text 统计 · 这一页
+								535 container
+									536 button Doc Richtext Icon
+										537 container Doc Richtext Icon
+											538 image
+									539 button Doc Plaintext Icon
+										540 container Doc Plaintext Icon
+											541 image
+									542 button Viewfinder Icon
+										543 container Viewfinder Icon
+											544 image
+								545 text 字数
+								546 text 0
+								547 text 字符数
+								548 text 0
+								549 text 不包括空格
+								550 text 0
+								551 text 区块
+								552 text 0
+								553 text 阅读时间
+								554 text 0s
+			555 container, ID: design-system-popupContainer
+556 AXWebArea ns, URL: gtm.craft.do/ns.html?id=GTM-TZCGFK6
+557 AXWebArea, URL: about:blank

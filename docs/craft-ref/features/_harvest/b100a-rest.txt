@@ -1,0 +1,68 @@
+
+## 十一、**DS 按钮的完整官方规格（21 variant × 3 size × 8 状态类，逐字底色）＋ 两段式 18 档色阶全表**（✓盘上 第 100 批·上半 2026-09-30 00:3x–00:5x，零浏览器＝已落盘 CSS 的定点读；原始读数在 `gap.md` §三点一〇四五 G1009–G1017、`_harvest/b100-ds-button-1bml7.json`；⚠ 本节同时**作废 §九.2 的 accent 档位结论**）
+
+### 一、两段式色阶（本目录此前只写过前一段）
+
+| 族 | 档位数 | 前段（alpha） | 后段（不透明逐暗） |
+| --- | --- | --- | --- |
+| `--foreground-{0,25,…,900}` | **20** | `0%｜2%｜3%｜4%｜6%｜8%｜10%｜12%｜18%｜25%｜32%｜40%｜48%｜55%｜62%｜70%｜78%｜85%｜92%｜100%`（步长 25，多一档 `-0`） | **无**（前景已是最暗墨，变暗无意义） |
+| `--red-{50,…,900}` | **18** | `-50…-500`＝`rgb(var(--red) / 6%…100%)`，逐档 `6｜12｜18｜24｜32｜40｜55｜70｜85｜100%` | `-550…-900`＝`rgb(237 54 58)`→`rgb(118 39 42)`（8 档，等步长变暗） |
+| `--accent-{50,…,900}` | **18** | 别名转发 `var(--accent-<色>-N)` | 同左（转发到各色的加深段） |
+| `--accent-blue-{50,…,900}` | **18** | 基色 `--accent-blue: 46 109 233`，alpha 段同 red | `rgb(44 103 217)`→`rgb(34 60 111)` |
+
+⇒ ★ **两条要记住的口径**＝① **`-950` 依然不存在**（第 97 批那条没错），但 **`-900` 存在**（旧结论"accent 到 `-500` 为止"作废）；② **同一个后缀数字在不同族里是两种量纲**（foreground 是透明度、red/accent 的 `-550+` 是明度）⇒ **换算表不能跨族共用**。
+⇒ ☆ 强调色主题＝`[data-accent=blue|pink|green|purple|yellow|gray]` **恰好 6 档**，每档整体重指 18 条别名（两跳：消费方读 `--accent-100`，主题块改指向）。
+
+### 二、DS 按钮变体全集（`_1bml7_` 族，逐字底色）
+
+| variant | 底色（逐字） | 反馈态 |
+| --- | --- | --- |
+| `variantPlain` | `color:var(--foreground-900);background:transparent` | hover／focus／`[data-popup-open]` ⇒ 各自规则（`:not(._isStatic,[data-disabled])` 前置） |
+| `variantPlainAccent` | 同上族 | hover `background:var(--accent-100)` |
+| `variantPlainDanger` | `color:var(--red-500);background:transparent` | hover `background:var(--red-100)` |
+| `variantFilled` | `color:var(--foreground-900);background:var(--foreground-100)`（＝**4% 前景底**） | — |
+| `variantFilledDanger` | `color:var(--red-500);background:var(--red-100)`（＝**12% 红底**） | — |
+| `variantOutlined` | `background:var(--foreground-0);box-shadow:inset 0 0 0 1px var(--foreground-200)` | ★ **边框是 inset shadow 画的，不是 `border`**（与第 97 批六位码面同族 ⇒ DS 通用做法） |
+
+☆ 全集 21 个变体名（Plain 族 7／Filled 族 9／Outlined 族 3／`variantActive`）与 33 条基础规则逐字在 `_harvest/b100-ds-button-1bml7.json`；★ 另 3 条（`dropdownIconWrapper`／`iconContainer`／`isHoverable`）**没有独立基础规则**，只出现在组合选择器里。
+
+### 三、尺寸与形状（三档，全部逐字）
+
+| 档 | height | radius | padding | `--icon-height` | `--chevron-size` | gap |
+| --- | --- | --- | --- | --- | --- | --- |
+| `sizeSm` | `1.75rem`(28px) | **7px** | `0 .625rem` | 18px | 13px | `.125rem` |
+| `sizeMd` | `2rem`(32px) | **8px** | `0 .75rem` | 20px | 14px | `.125rem` |
+| `sizeLg` | `2.125rem`(34px) | **9px** | `0 .8125rem` | 22px | 15px | `.125rem` |
+
+☆ 两个修饰类＝`isOnlyIcon{padding:0 .3125rem;align-items:center;justify-content:center}`（**"只有图标"是状态类、不是尺寸档**）＋ `fluid{width:100%;justify-content:center}`。
+☆ 禁用＝`[data-disabled]{opacity:.4;cursor:default}`（★ **40%**，本地 `src/components/ui/button.tsx:6` 是 `disabled:opacity-50`＝50%）。
+
+**仍未采到（本节）**：各 variant 的 `:active`／按下态底色（本轮只读到 hover／focus／popup-open 三档）；暗档下这 18 阶是否整体换表（未查 `[data-theme]`）；`@layer utilities` 的工具类全集；其余 12 份 CSS（含 `TaskViews.css`）里的第三套色阶可能。
+
+<!--SPLIT-->
+
+## 三十八、**输入意图被做成 CSS 契约：`[data-whatintent]` 承担 `:focus-visible` 与"触屏无 hover"两件事，一处写入、349 处消费**（✓盘上 第 100 批·上半 2026-09-30 00:3x–00:5x，零浏览器；原始读数在 `gap.md` §三点一〇四五 G1011／G1014、`styles.md §十一`）
+
+1. ★★★ **机制**＝官方**不写 `:focus-visible`**，而是在 `document` 上写一个属性 `data-whatintent`（值域实测出现在 CSS 里的＝`keyboard`／`touch`，第三态＝属性存在但值既非 keyboard 也非 touch＝鼠标），然后：
+   - **焦点环**＝`[data-whatintent=keyboard] .X:focus{…}` ⇒ 只有键盘导航才画；
+   - **悬停态**＝`[data-whatintent]:not([data-whatintent=touch]) .X:hover{…}` ⇒ 触屏设备**永不进 hover 样式**（不是 `@media (hover:hover)`，是运行时判定）。
+   ⇒ CSS 内该属性出现 **349 次** ⇒ 这是**全仓级别的约定**，不是个别组件的补丁。
+2. ★★ **与既有静态读数的咬合**＝第 94 批读到 `Npe` 的 `dataset.whatintent==="touch"` → `navigator.vibrate(...)`（触觉反馈只在触屏触发）⇒ **同一个属性的第二个消费者** ⇒  ⇒ 该属性的**写入方是全局输入意图检测器**（本轮未定位写入点，属未采到），**读取方至少两处＝DS 样式表 ＋ 触觉反馈**。
+3. ★★ **第二道状态闸＝`isStatic`**＝所有 hover／focus 规则都写成 `:not(._isStatic_1bml7_134,[data-disabled])` ⇒ 官方把"**长得像被选中但不该响应**"（`isStatic`）与"**用户禁用**"（`data-disabled`）**分成两个类**，前者连常驻底色反馈也拿不到；★ 禁用态本体只有 `[data-disabled]{opacity:.4;cursor:default}`（**注意是 `cursor:default` 不是 `not-allowed`**）。
+4. ★ **对本地实现的含义（两条，方向不同）**＝① 焦点环：本地用 Tailwind `focus-visible:`（`src/components/ui/button.tsx:6`）达成同一目的 ⇒ **登记有意偏差、不要求改**；② 触屏无 hover：本地**没有等价机制**（`focus-visible` 管不着 hover）⇒ 若要对齐，要么自建 `data-whatintent` 检测器，要么退一步用 `@media (hover:hover)`（形状不同、效果接近，需注明）。
+5. ☆ **一条取证用法**＝DS 组件的"弹层开着"有 `[data-popup-open]` 属性 ⇒ 屏上判浮层开合时，**DS 族可读该属性**，零 ARIA 的自绘族仍只能读"新增文案集＋容器字节"（承第 96 批）。
+
+**仍未采到（本机制面）**：`data-whatintent` 的**写入点**（在哪个 chunk、用什么事件判定、是否有防抖）；`isStatic` 的赋值来源（哪个 prop）；属性是否同时驱动 JS 侧逻辑（除触觉外还有没有别的读取方）。
+
+<!--SPLIT-->
+
+## 二十四、**按钮几何长尾（28／32／34 高三档、圆角 7／8／9、内边距只给横向）＋ 三处"正则少一个下划线就全空"的坑**（第 100 批·上半 2026-09-30 00:3x–00:5x，**盘上＝零浏览器、零写入**；原始读数在 `gap.md` §三点一〇四五 G1012／G1017、`styles.md §十一.三`）
+
+1. ★★ **三档尺寸的完整六元组**（height／radius／padding／`--icon-height`／`--chevron-size`／gap）＝`28px·7px·0 10px·18·13·2px`、`32px·8px·0 12px·20·14·2px`、`34px·9px·0 13px·22·15·2px` ⇒ ★ **圆角是 7／8／9 的连续小步**、不是第 97 批那套 `sm4/md8/lg12/xl16` 的通用 radius 阶 ⇒ **按钮 radius 走的是组件私有阶**（复刻时别套通用阶，会差 1～4px）。
+2. ★★ **`--icon-height` 与 `--chevron-size` 是"由尺寸档写入的局部变量"**＝图标高度 18／20／22、下拉箭头 13／14／15 ⇒ ★ 本地若只按 Tailwind `size-4` 写死图标，**三档尺寸下图标不会跟着变**（本地 `button.tsx` 的 `[&_svg:not([class*='size-'])]:size-4` 是单一档）。
+3. ★ **`isOnlyIcon` 只改 padding 不改 width**＝`padding:0 .3125rem`＋居中 ⇒ 方形外观来自"padding 对称＋内容等宽"，**不是 `aspect-ratio` 或固定 width**；☆ 本地把"只有图标"做成了 `icon`／`icon-xs`／`icon-sm`／`icon-lg` **四个尺寸档**（`button.tsx` size 变体）⇒ 轴不同，见 G1012。
+4. ★ **`fluid` 是"占满＋内容居中"两个声明**（`width:100%;justify-content:center`）⇒ 官方没有 `block` 型按钮 prop，只有这一个类。
+5. ★☆ **坑（工具层，值得记）**＝CSS Module 类名**自带前导下划线**（`_variantPlainDanger_1bml7_165`），所以：① 正则写 `[A-Za-z][A-Za-z0-9]*_1bml7_[0-9]+` 能**枚举到**类名，但拿它去搜 `.`＋名字会**全部 NOT FOUND**（因为选择器里是 `._variant…`）⇒ **枚举与检索要用同一个带下划线的形态**；② 本轮 36 个类名里 **33 个有独立基础规则、3 个只在组合选择器出现** ⇒ "搜不到基础规则"不等于"这个类不存在/没样式"。
+6. ☆ **一屏四套 hash 族的成员数（本轮实测）**＝`_1bml7_` **36**（DS 按钮）／`_1j891_` **21**（菜单项与 rail 按钮，承第 96 批）／`_16nf6_` **11**（菜单浮层壳：`searchField`／`scrollArea`／`header`／`group`／`item`／`groupLabel`／`groupLabelClickable`／`footer`／`searchList`／`content`／`scrollAreaViewport`）／`_1fgll_` **3**（复选框 `wrapper`／`checkbox`／`icon`）⇒ ★ **`_16nf6_` 里有 `searchField` 与 `searchList`** ⇒ 这套浮层是**带搜索框的命令菜单壳**（本轮未屏上验证，属"结构暗示"级，标 `~`）。
+
+**仍未采到（本节）**：`_16nf6_`／`_1fgll_` 两族的规则正文（本轮只枚举手类名）；`_1bml7_` 的 `:active` 态；暗档色阶映射表；`TaskViews.css` 等其余 12 份 CSS 里的第四／第五套族。

@@ -37,6 +37,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -69,3 +70,6 @@ dist/
 # tauri
 /src-tauri/target/
 /src-tauri/gen/
+
+# CloudRun 构建上下文暂存（scripts/deploy 生成，勿入库）
+/.cloudrun-src/

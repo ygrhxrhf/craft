@@ -1,0 +1,76 @@
+
+@69357  nearest [data-theme=…] none   nearest :root ":root{--red-550: rgb(237 54 58"
+
+@78234  nearest [data-theme=…] "[data-theme=dark]{--red-550: rgb(255 80 "   nearest :root none
+
+@287638  nearest [data-theme=…] "[data-theme=light]{--accent-blue: 46 109"   nearest :root ":root,[data-theme=light]{--acc"
+
+@289700  nearest [data-theme=…] "[data-theme=dark]{--accent-contrast: var"   nearest :root none
+
+AIChatPopup.css.D9rwJ006.css  distinct --heading-* consumed = 0
+
+BlankFont.css.CSdHt10-.css  distinct --heading-* consumed = 0
+
+fontdef.avenir-next-rounded.css  distinct --heading-* consumed = 0
+
+fontdef.common.css  distinct --heading-* consumed = 0
+
+fontdef.inter.css  distinct --heading-* consumed = 0
+
+fontdef.m-plus-rounded-1c.css  distinct --heading-* consumed = 0
+
+fontdef.roboto-mono.css  distinct --heading-* consumed = 0
+
+fontdef.source-serif.css  distinct --heading-* consumed = 0
+
+fontdef.untitled-serif.css  distinct --heading-* consumed = 0
+
+index.css.CP00jDAy.css  distinct --heading-* consumed = 30
+
+TaskViews.css.DghTjfLb.css  distinct --heading-* consumed = 0
+
+vendor-code-editor.css.DkZwelau.css  distinct --heading-* consumed = 0
+
+vendor-excalidraw.css.tkYuNB5W.css  distinct --heading-* consumed = 0
+
+--- index.css consuming selectors (unique 42) ---
+  .typography-heading-xxs-600  →  --heading-xxs-600-size
+  .typography-heading-xxs-600  →  --heading-xxs-600-weight
+  .typography-heading-xxs-600  →  --heading-xxs-600-line-height
+  .typography-heading-xxs-600  →  --heading-xxs-600-letter-spacing
+  .typography-heading-xxs-600-allcaps  →  --heading-xxs-600-allcaps-size
+  .typography-heading-xxs-600-allcaps  →  --heading-xxs-600-allcaps-weight
+  .typography-heading-xxs-600-allcaps  →  --heading-xxs-600-allcaps-line-height
+  .typography-heading-xxs-600-allcaps  →  --heading-xxs-600-allcaps-letter-spacing
+  .typography-heading-xxs-600-allcaps  →  --heading-xxs-600-allcaps-transform
+  .typography-heading-xs-500  →  --heading-xs-500-size
+  .typography-heading-xs-500  →  --heading-xs-500-weight
+  .typography-heading-xs-500  →  --heading-xs-500-line-height
+  .typography-heading-xs-500  →  --heading-xs-500-letter-spacing
+  .typography-heading-xs-600  →  --heading-xs-600-size
+  .typography-heading-xs-600  →  --heading-xs-600-weight
+  .typography-heading-xs-600  →  --heading-xs-600-line-height
+  .typography-heading-xs-600  →  --heading-xs-600-letter-spacing
+  .typography-heading-xs-600-allcaps  →  --heading-xs-600-allcaps-size
+  .typography-heading-xs-600-allcaps  →  --heading-xs-600-allcaps-weight
+  .typography-heading-xs-600-allcaps  →  --heading-xs-600-allcaps-line-height
+  .typography-heading-xs-600-allcaps  →  --heading-xs-600-allcaps-letter-spacing
+  .typography-heading-xs-600-allcaps  →  --heading-xs-600-allcaps-transform
+  .typography-heading-md-500  →  --heading-md-500-size
+  .typography-heading-md-500  →  --heading-md-500-weight
+  .typography-heading-md-500  →  --heading-md-500-line-height
+  .typography-heading-md-500  →  --heading-md-500-letter-spacing
+  .typography-heading-md-600  →  --heading-md-600-size
+  .typography-heading-md-600  →  --heading-md-600-weight
+  .typography-heading-md-600  →  --heading-md-600-line-height
+  .typography-heading-md-600  →  --heading-md-600-letter-spacing
+  ._title_hlglt_58  →  --heading-md-600-size
+  ._title_hlglt_58  →  --heading-md-600-weight
+  ._title_hlglt_58  →  --heading-md-600-line-height
+  ._title_hlglt_58  →  --heading-md-600-letter-spacing
+  ._groupLabel_16nf6_75  →  --heading-xs-500-size
+  ._groupLabel_16nf6_75  →  --heading-xs-500-weight
+  ._groupLabel_16nf6_75  →  --heading-xs-500-line-height
+  ._groupLabel_16nf6_75  →  --heading-xs-500-letter-spacing
+  ._title_1kiy9_23  →  --heading-md-600-size
+  ._title_1kiy9_23  →  --heading-md-600-weight

@@ -1,0 +1,66 @@
+tags.add.custom.rule	添加自定义规则
+tags.add.ignore.rule	添加忽略规则
+tags.all.tags	所有标签
+tags.all.tags.placeholder	尚无已加标签的文档。从添加 #工作、#想法 或 #学校 等标签开始，为你的笔记建立条理。
+tags.any.tag	任意 [0]
+tags.change.to.text	更改为文本
+tags.changing.these.settings.wont.affect.member.settings	更改这些设置不会影响其他成员的设置。
+tags.continue.typing.to.create.a.valid.tag	继续输入以创建有效标签
+tags.continue.typing.to.create.tag	继续输入以创建标签
+tags.create.tag.x	创建 #[0]
+tags.delete.rule	删除规则
+tags.delete.rule.message	你确定要删除“[0]”吗？
+tags.disabled	标签已禁用。你可以在空间设置中启用它们。
+tags.edit.ignore.rule	编辑忽略规则
+tags.edit.rule	编辑规则
+tags.edit.tag	编辑标签
+tags.enable.tags.in.the.settings	在设置中启用标签
+tags.enter.a.valid.tag	输入有效标签（例如 #标签 或 #父级/子级）
+tags.entered.current.tag	你已输入当前标签。
+tags.entered.invalid.tag	你输入了无效的标签。
+tags.exclude.tag.from.filter	从筛选中排除标签
+tags.hexcolor.descriptionkey	十六进制格式的颜色值，如 #ff0000 或 #ccc
+tags.hexcolor.titlekey	十六进制颜色值
+tags.hide.tags	隐藏标签
+tags.hide.word.with.hashtag	隐藏以 # 开头的词语
+tags.ignore.list	忽略列表
+tags.ignore.list.desc	这里的任何内容都不会出现在你的标签列表中，即使带有 #。
+tags.ignore.tag	忽略标签
+tags.include.tag.in.filter	在筛选中包含标签
+tags.invalid.tag.x	无效标签：[0]
+tags.learn.more.about.tags	了解有关标签的更多信息
+tags.manage.pinned	管理固定标签
+tags.no.docs.found	未找到具有所选标签的文档
+tags.no.keep.on	不，保持开启
+tags.no.other.existing.tags	你没有其他现有标签。
+tags.no.tags.in.doc	你的文档中尚未添加标签
+tags.number.descriptionkey	仅包含数字的标签，例如#1
+tags.number.titlekey	数字
+tags.only.one.child.allowed	仅允许一个“/”
+tags.other.tags	其他标签
+tags.pin.and.show.all.children	固定并显示所有子项
+tags.pin.key.tags	固定关键标签以便快速访问
+tags.pin.tag	固定标签
+tags.pinned.error	无法固定标签
+tags.pinned.limit.reached	你已达到固定标签数的上限
+tags.recommended.tags	推荐标签
+tags.related.tags	相关标签
+tags.search.for.tags	搜索标签
+tags.search.tags	搜索标签
+tags.settings.error	保存标签设置时发生错误
+tags.space.and.punctuation.are.not.allowed	标签中不允许使用空格和标点符号。
+tags.tag.added.to.the.ignore.list	标签已添加到忽略列表。你可以在“设置”中管理它
+tags.tag.ignored.by.custom.rule.x	被自定义规则忽略的标签：[0]
+tags.tag.is.valid	标签有效
+tags.tags.cannot.contain.delimiter.char	标签不能包含分隔符
+tags.tags.cannot.contain.emojis	标签不能包含表情符号
+tags.tags.lowercase	标签
+tags.tags.uppercase	标签
+tags.tags.will.appear.here	你的标签将显示在这里
+tags.text.to.ignore	要忽略的文本
+tags.turn.off.tags.for.this.space	关闭此空间的标签吗？
+tags.turn.off.tags.for.this.space.desc	此空间中的标签仍处于活动状态。关闭后，标签将在所有位置隐藏。
+tags.unpin.tag	取消固定标签
+tags.use.tags	使用标签
+tags.x.tags	[0] 个标签
+tags.yes.turn.off	是的，关闭

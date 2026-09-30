@@ -1,0 +1,30 @@
+By default only pending tasks are shown in the calendar. If this flag is set to true, completed and cancelled tasks will also be included.		AIChatPopup-ClUQFRna.js
+Default is true.		AIChatPopup-ClUQFRna.js
+Default value is true		AIChatPopup-ClUQFRna.js
+Filter folders by name pattern (case-insensitive regex). Example: 'Performance' will show only folders with 'Performance' in their name. Use this to find specific folders when you don't know the folder ID.		AIChatPopup-ClUQFRna.js
+If provided, only tasks whose content matches the given regular expression will be included in the results.		AIChatPopup-ClUQFRna.js
+If set, block matches are included for each document. Default value is true.		AIChatPopup-ClUQFRna.js
+If set, document modification and creation date, block count and starred and daily note flags will be displayed. Default value is true		AIChatPopup-ClUQFRna.js
+If set, only daily notes (true) or non-daily notes (false) are returned. Default value is undefined, so no filtering is applied.		AIChatPopup-ClUQFRna.js
+If set, only starred (true) or non-starred (false) documents are returned. Default value is undefined, so no filtering is applied.		AIChatPopup-ClUQFRna.js
+If the current context is tied to a folder (when the user opened the assistant from a folder), the folder Id can be provided here to limit the results to what the user is focusing on. The tool will automatically list the content from subfolders, it's enough to specify the folderId from the context. The returned documents and documentCount will only include documents from the specified folder and its subfolders.		AIChatPopup-ClUQFRna.js
+If the current context is tied to a folder (when the user opened the assistant from a folder), the folder Id can be provided here to limit the results to what the user is focusing on. The tool will automatically list the content from subfolders, it's enough to specify the folderId from the context. The returned documents and totalCount will only include documents from the specified folder and its subfolders.		AIChatPopup-ClUQFRna.js
+If true, fetch subpages recursively, otherwise only a single level of blocks will be returned, but the subpages will be listed instead. Default value is true.		AIChatPopup-ClUQFRna.js
+If true, the content of all subpages will be included in the pageContent string recursively. If false, only the content of the direct children of the requested block will be included in pageContent. If any of their children that have children themselves		AIChatPopup-ClUQFRna.js
+List of subpages (children with their own children). Only included if includeSubPagesRecursively is false.		AIChatPopup-ClUQFRna.js
+List of subpages contained in this page, that means all children who have children themselves. Only included if includeSubPagesRecursively is false.		AIChatPopup-ClUQFRna.js
+Maximum depth the structure is displayed. Default value is 10.		AIChatPopup-ClUQFRna.js
+Maximum number of documents and folders to return in the result. Default value is 100.		AIChatPopup-ClUQFRna.js
+Maximum number of documents to return in the result. Default value is 50.		AIChatPopup-ClUQFRna.js
+Number of direct children this block has		AIChatPopup-ClUQFRna.js
+Optional message to display to the user describing the action.		AIChatPopup-ClUQFRna.js
+Set to true to include documents within each folder in the tree. Set to false to show only folder structure without documents. Default value is false		AIChatPopup-ClUQFRna.js
+The content of all child blocks in markdown-like format		AIChatPopup-ClUQFRna.js
+The end date of the calendar range in ISO 8601 format (yyyy-MM-dd). If not provided the calendar will show sections up to 1 extra month after the current month.		AIChatPopup-ClUQFRna.js
+The heading level: 'title', 'subtitle', 'heading', 'strong', 'page', or 'body'		AIChatPopup-ClUQFRna.js
+The pageContent of a block, that means the content of all its direct children in one string in markdown format. If includeSubPagesRecursively is true, it will include the content of all decendends recursively, not just the direct children.		AIChatPopup-ClUQFRna.js
+The start date of the calendar range in ISO 8601 format (yyyy-MM-dd). If not provided the calendar won't show sections for past months, the first section after the 'Ongoing' items will be the today section. Note, that the ongoing section contains tasks from the past, which are still pending. Past sections can only contain completed/cancelled tasks and daily notes.		AIChatPopup-ClUQFRna.js
+Total number of documents matching the search criteria		AIChatPopup-ClUQFRna.js
+Values: `dateCreated` or 'dateModified'. Default is `dateCreated`.		AIChatPopup-ClUQFRna.js
+Values: `relevance` or `dateCreated` or 'dateModified'. Default is `relevance`.		AIChatPopup-ClUQFRna.js
+Whether this block has children (is a page/subpage)		AIChatPopup-ClUQFRna.js

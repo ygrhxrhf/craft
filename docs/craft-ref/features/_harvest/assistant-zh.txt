@@ -1,0 +1,283 @@
+assistant.1.message	1 条消息
+assistant.add.additional.context	添加更多上下文
+assistant.add.helpful.comments.to.this.code	请为这段代码添加有用的注释
+assistant.ai.assistant.help.me.with	AI 助手能帮我做什么？
+assistant.ai.usage	AI 使用量
+assistant.aiCredits	AI 积分
+assistant.aiCreditsAvailable	[0] AI 积分可用
+assistant.analyze.the.writing	分析本页的写作风格
+assistant.analyze.this.code.for.potential.bugs	请分析这段代码，找出潜在的错误
+assistant.analyze.writing.style	分析写作风格
+assistant.analyze.writing.style.in.this.doc	分析本文档的写作风格
+assistant.ask.about.pdf	询问有关 PDF 的问题
+assistant.ask.about.this.pdf	询问有关此 PDF 的信息
+assistant.ask.about.this.pdf.prompt	我对这份 PDF 有一些疑问： 
+assistant.ask.craft	询问 Craft：
+assistant.ask.for.feedback	征求反馈
+assistant.ask.for.help	寻求帮助
+assistant.assistant	助手
+assistant.assistant.disabled	助手已禁用
+assistant.assistant.gpt35.desc	非常适合日常任务
+assistant.assistant.gpt4o.desc	最新、最先进的模型
+assistant.availableAiCredits	可用 AI 积分
+assistant.availableAiCreditsForTeam	可用 AI 积分（[0]）
+assistant.based.on.my.daily.notes.what.progress.have.i.made	根据我的每日笔记，我在过去几周取得了哪些进展？
+assistant.buyMoreCredits	购买更多积分
+assistant.can.you.suggest.related.topics.for.me	根据这些文档的内容，你能否推荐一些相关的研究主题供我参考？
+assistant.can.you.suggest.related.topics.for.me.to.explore	根据本页内容，你能否推荐一些相关的研究主题供我参考？
+assistant.change.title	更改标题
+assistant.check.grammar.and.spelling	检查语法和拼写
+assistant.check.these.blocks.for.spelling.and.grammar	请检查这些区块的拼写和语法错误，并提出改进建议
+assistant.check.this.doc.for.spelling.and.grammear.mistakes	请检查此文档中的拼写和语法错误，并提出改进建议
+assistant.check.this.page.for.spelling.and.grammar	请检查此页面是否存在拼写和语法错误，并提出改进建议
+assistant.check.tone.of.voice	检查语气
+assistant.chese.these.docs.for.spelling.and.grammar.mistakes	请检查这些文档中的拼写和语法错误，并提出改进建议
+assistant.clear.history.3dot	清除历史记录……
+assistant.compare.docs	比较文档
+assistant.compare.these.docs	请比较这些文档
+assistant.conv.history	对话历史
+assistant.create.a.comprehensive.summary	请根据我的所有文档内容，创建一份全面的摘要： 
+assistant.create.a.summary	创建摘要
+assistant.create.caption	创建说明
+assistant.create.caption.for.this.img	为这张图片创建说明
+assistant.create.caption.prompt	请为这张图片创建描述性说明
+assistant.create.custom.prompt	创建自定义提示
+assistant.current.document	当前文档
+assistant.current.selection	当前选择
+assistant.delete.conversation	删除对话
+assistant.delete.conversation.desc	你确定要删除此对话吗？此操作无法撤销。
+assistant.describe.this.image	描述这张图片
+assistant.describe.this.image.prompt	请描述一下你在这张图片中看到了什么
+assistant.document.review	文档审阅
+assistant.document.review.desc	获取关于你写作风格的反馈
+assistant.download.failed	下载失败
+assistant.enable.assistant.in.settings	在设置中启用助手
+assistant.ensure.clarity	确保清晰
+assistant.error.conversation.too.long	对话太长了，请开始新对话。
+assistant.error.document.too.big	文档太大，无法处理，请缩小处理范围或复制粘贴重要部分。
+assistant.expand.weak.areas	补充薄弱部分
+assistant.explain.a.feature	解释一项功能
+assistant.explain.like.im.five	用五岁小孩都能听懂的方式解释
+assistant.explain.like.im.five.prompt	请用五岁小孩都能听懂的方式给我解释一下这个话题： 
+assistant.explain.this.code	解释这段代码
+assistant.explain.this.feature.to.me.x	请给我解释一下这个功能： 
+assistant.explain.what.this.code.does	请解释一下这段代码的作用
+assistant.extract.action.items	提取行动项
+assistant.extract.action.items.from.these.docs	请从这些文档中提取行动项
+assistant.extract.action.items.from.this.doc	请从本文档中提取行动项
+assistant.extract.action.items.from.this.page	请从此页面提取行动项
+assistant.extract.any.action.items.from.this.pdf	请从这份 PDF 中提取所有行动项
+assistant.extract.key.info	提取关键信息
+assistant.extract.key.info.prompt	请从这份 PDF 中提取关键信息
+assistant.extract.text.from.image	从图像中提取文本
+assistant.extract.text.from.image.prompt	请提取并转录此图像中可见的所有文字
+assistant.find.all.blocks.tagged.x	查找所有标记为 # 的区块
+assistant.find.an.entry	查找条目
+assistant.find.and.summarize.anything.related.to	请查找并总结与以下内容相关的任何信息： 
+assistant.find.areas.in.my.doc.that.need.more.detail	找出文档中需要更详细解释的部分
+assistant.find.areas.in.this.page	找出此页面中需要更详细说明的区域
+assistant.find.docs	查找文档
+assistant.find.document.about.x	查找以下方面的文档： 
+assistant.find.other.docs.on.this.topic	请查找有关此主题的其他文档
+assistant.find.patterns	寻找规律
+assistant.find.potential.bugs	查找潜在漏洞
+assistant.find.related.docs	查找相关文档
+assistant.general.assistance.for.any.task	通用任务助手
+assistant.generate.alt.text	生成替代文本
+assistant.generate.alt.text.prompt	为该图像生成描述性替代文本
+assistant.generate.insights	生成洞察
+assistant.get.an.executive.summary	获取执行摘要
+assistant.get.an.executive.summary.prompt	请调研这一主题并为我撰写一份执行摘要： 
+assistant.get.an.overview	获取概览
+assistant.get.started.with.craft	我该如何开始使用 Craft？
+assistant.give.feedback.on.structure	获取结构方面的反馈
+assistant.help.and.support.desc	关于 Craft 的一切，随时问我
+assistant.help.center.topics	帮助中心主题
+assistant.help.filter.collection	帮助筛选合集
+assistant.help.me.brainstorm.ideas	请帮我集思广益，想想如何扩展这个页面
+assistant.help.me.brainstorm.ideas.to.expand.this.doc	请帮我集思广益，想想如何扩展这份文档
+assistant.help.me.find.a.doc.that.was.about	你能帮我找到一份与以下主题相关的文档吗？ 
+assistant.help.me.find.the.entry.that.contains	请帮我找到包含以下内容的条目： 
+assistant.help.me.organize.my.docs.by.topic	你能帮我按主题整理一下我的文档吗？
+assistant.how.can.i.optimize.this.code	如何优化这段代码？
+assistant.how.could.i.make.these.blocks.easier.to.understand	我该如何让这些区块更容易理解？
+assistant.how.could.i.make.these.docs.easier.to.understand	我该如何让这些文档更容易理解？
+assistant.how.could.i.make.this.doc.easier.to.understand	我该如何让这份文档更容易理解？
+assistant.how.could.i.make.this.page.easier.to.understand	我该如何让这个页面更容易理解？
+assistant.how.could.i.refactor.this.code	如何重构这段代码以提高其可读性？
+assistant.identify.patterns	识别模式
+assistant.improve.clarity	提升清晰度
+assistant.improve.spelling.and.grammar	改进拼写和语法
+assistant.insert.document	插入
+assistant.insights.can.you.derive	你从这个合集中能获得哪些启发？
+assistant.learn.more	详细了解助手
+assistant.learn.more.about.history	进一步了解对话历史
+assistant.list.all.docs.related.to	请列出所有与以下内容相关的文档： 
+assistant.list.all.ongoing.tasks	请列出所有正在进行的任务
+assistant.list.all.tasks.for.today	请列出今天的所有任务
+assistant.list.all.tasks.i.completed.today	请列出我今天完成的所有任务
+assistant.list.completed.tasks	列出已完成的任务
+assistant.list.ongoing.tasks	列出正在进行的任务
+assistant.list.todays.tasks	列出今日任务
+assistant.list.upcoming.tasks	列出即将执行的任务
+assistant.make.it.more.concise	使其更简洁
+assistant.make.it.more.friendly	让它更友好
+assistant.make.it.more.professional	使其更专业
+assistant.make.this.doc.more.concise	如何使这份文档更简洁？
+assistant.make.this.more.friendly	我怎样才能让它更友好、更平易近人？
+assistant.make.this.sound.more.professional	我怎样才能让我的表达听起来更专业？
+assistant.message.craft.assistant	给 Craft 助手发消息
+assistant.model.switch.gpt4o	切换到 GPT-4o 以释放 Craft AI 的全部潜力
+assistant.model.switched	已切换助手模型
+assistant.model.switched.to.x	已将助手模型切换为 [0]，因为它有可用额度。
+assistant.new.chat	新聊天
+assistant.new.search	新搜索
+assistant.new.thread	新对话
+assistant.no.conv.history	无对话历史
+assistant.one.request.remaining	个请求剩余
+assistant.operation.cancelled	AI 操作已取消
+assistant.organize.by.topic	按主题整理
+assistant.organize.my.docs.in.craft	如何在 Craft 中整理我的文档？
+assistant.organizing.docs	整理文档
+assistant.patterns.do.you.notice	你从这个合集中发现了哪些规律？
+assistant.please.summarize.these.blocks	请总结这些区块
+assistant.prioritize.tasks	确定任务优先级
+assistant.prompt	问我任何问题，或在下面选择一个选项
+assistant.prompt.brainstorm.ideas	集思广益
+assistant.prompt.brainstorm.ideas.template	集思广益关于这个话题的想法： --- {0} ---
+assistant.prompt.change.tone.confident	改为自信的语气
+assistant.prompt.change.tone.confident.template	改为自信的语气: --- {0} --- 
+assistant.prompt.change.tone.friendly	改为友好的语气
+assistant.prompt.change.tone.friendly.template	改为友好的语气: --- {0} --- 
+assistant.prompt.change.tone.professional	改为专业的语气
+assistant.prompt.change.tone.professional.template	改为专业的语气: --- {0} --- 
+assistant.prompt.continue.writing	继续写作
+assistant.prompt.continue.writing.template	继续写作： --- {0} ---
+assistant.prompt.error	发生错误
+assistant.prompt.error.try.again	请稍后重试
+assistant.prompt.explain	给我解释一下
+assistant.prompt.explain.template	用五岁小孩能懂的方式给我解释： --- {0} --- 
+assistant.prompt.find.action.items	找出行动项
+assistant.prompt.fix.spelling.and.grammar	修正拼写和语法
+assistant.prompt.fix.spelling.and.grammar.template	修正拼写和语法: --- {0} --- 
+assistant.prompt.generate.hashtags	生成主题标签
+assistant.prompt.generate.hashtags.template	根据以下内容生成主题标签： --- {0} ---
+assistant.prompt.generate.keywords	生成关键词
+assistant.prompt.generate.keywords.template	根据以下内容生成关键词： --- {0} ---
+assistant.prompt.improve.writing	改善写作
+assistant.prompt.improve.writing.template	改善写作: --- {0} --- 
+assistant.prompt.length.limit	提示不能超过 [0] 个字符
+assistant.prompt.limit	你无法保存超过 [0] 条提示
+assistant.prompt.make.longer	加长
+assistant.prompt.make.longer.template	加长: --- {0} ---
+assistant.prompt.make.shorter	缩短
+assistant.prompt.make.shorter.template	缩短: --- {0} --- 
+assistant.prompt.outline	创建大纲
+assistant.prompt.outline.template	根据以下内容创建大纲： --- {0} ---
+assistant.prompt.pros.and.cons	列出优缺点
+assistant.prompt.pros.and.cons.template	列出这份文档的优缺点： --- {0} ---
+assistant.prompt.save	保存提示
+assistant.prompt.saved	提示已保存
+assistant.prompt.simplify.language	简化语言
+assistant.prompt.simplify.language.template	简化语言: --- {0} --- 
+assistant.prompt.suggest.title	建议标题
+assistant.prompt.suggest.title.template	这份文档的好标题是什么？ : --- {0} ---
+assistant.prompt.summarize	总结
+assistant.prompt.summarize.template	总结一下： --- {0} ---
+assistant.prompt.translate.dutch	翻译成荷兰语
+assistant.prompt.translate.dutch.template	将其翻译成荷兰语： --- {0} ---
+assistant.prompt.translate.english	翻译成英文
+assistant.prompt.translate.english.template	将其翻译成英文： --- {0} ---
+assistant.prompt.translate.french	翻译成法语
+assistant.prompt.translate.french.template	将其翻译成法语： --- {0} ---
+assistant.prompt.translate.german	翻译成德语
+assistant.prompt.translate.german.template	将其翻译成德语： --- {0} ---
+assistant.prompt.translate.italian	翻译成意大利语
+assistant.prompt.translate.italian.template	将其翻译成意大利语： --- {0} ---
+assistant.prompt.translate.japanese	翻译成日语
+assistant.prompt.translate.japanese.template	将其翻译成日语： --- {0} ---
+assistant.prompt.translate.korean	翻译成韩语
+assistant.prompt.translate.korean.template	将其翻译成韩语： --- {0} ---
+assistant.prompt.translate.portuguese	翻译成葡萄牙语
+assistant.prompt.translate.portuguese.template	将其翻译成葡萄牙语： --- {0} ---
+assistant.prompt.translate.spanish	翻译成西班牙语
+assistant.prompt.translate.spanish.template	将其翻译成西班牙语： --- {0} ---
+assistant.prompt.write.article	写一篇关于这个话题的文章
+assistant.prompt.write.article.template	写一篇关于这个主题的文章： --- {0} ---
+assistant.prompt.write.blog	关于这个话题写一篇博客
+assistant.prompt.write.blog.template	关于这个话题写一篇博客: --- {0} --- 
+assistant.prompt.write.essay	关于这个话题写一篇文章
+assistant.prompt.write.essay.template	关于这个话题写一篇文章: --- {0} --- 
+assistant.prompt.write.example	为此创建示例文本
+assistant.prompt.write.example.template	为此创建示例文本： --- {0} ---
+assistant.prompt.write.facebook.post	写一篇关于这个主题的 Facebook 帖子
+assistant.prompt.write.facebook.post.template	写一篇关于这个主题的 Facebook 帖子： --- {0} ---
+assistant.prompt.write.poem	写一首关于这个话题的诗
+assistant.prompt.write.poem.template	就这个话题写一首诗： --- {0} ---
+assistant.prompt.write.template	创建有关此主题的模板
+assistant.prompt.write.template.template	创建有关此主题的模板： --- {0} ---
+assistant.prompt.write.twitter.post	写一篇关于这个话题的 X (Twitter) 帖子
+assistant.prompt.write.twitter.post.template	写一篇关于这个主题的 Twitter 帖子： --- {0} ---
+assistant.recently.edited	最近编辑
+assistant.reflect.on.progress	反思进展
+assistant.replace.document	替换
+assistant.research.a.subject	研究某个主题
+assistant.research.a.topic	研究某个主题
+assistant.research.a.topic.online	在线搜索相关主题
+assistant.research.this.topic.for.me	请帮我研究一下这个主题： 
+assistant.save.image	保存图片
+assistant.save.x	保存 [0]
+assistant.search.in.natural.language	使用自然语言进行搜索
+assistant.search.in.pdf	在 PDF 中搜索
+assistant.search.in.pdf.prompt	请在 PDF 中搜索： 
+assistant.search.using.natural.language	使用自然语言进行搜索
+assistant.selected.block	已选区块
+assistant.semantic.search	语义搜索
+assistant.share.docs.with.others	如何与他人共享文档？
+assistant.suggest.how.i.can.set.up.filters	请建议如何设置筛选条件，以便我能从该合集中查找以下内容： 
+assistant.suggest.optimizations	提出优化建议
+assistant.suggest.refactoring	建议重构
+assistant.suggest.related.topics	建议相关主题
+assistant.suggest.related.topics.for.me.to.explore	你能否根据我文档的内容，推荐一些相关的研究主题供我参考？
+assistant.summarize.docs	文档摘要
+assistant.summarize.entries	条目摘要
+assistant.summarize.last.week	上周总结
+assistant.summarize.my.daily.notes	请总结一下我上周的每日笔记。
+assistant.summarize.pdf	PDF 摘要
+assistant.summarize.pdf.prompt	请提供这份 PDF 文档的完整摘要。
+assistant.summarize.the.entries.in.this.collection	请概括总结此合集中的条目。
+assistant.summarize.the.key.points	请总结这份 PDF 中的要点。
+assistant.summarize.these.docs	请总结这些文档
+assistant.summarize.this.doc	请总结这份文档
+assistant.summarize.this.page	请总结本页内容
+assistant.switch.to.gpt4o.short	切换到 GPT-4o
+assistant.this.conversation	这次对话
+assistant.thnking.3dot	正在思考…
+assistant.thought.for.x.s	思考 [0] 秒
+assistant.translate	翻译
+assistant.translate.these.blocks.into	请将以下区块翻译成：
+assistant.translate.these.docs.into	请将这些文档翻译成： 
+assistant.translate.this.doc.into	请将此文档翻译成： 
+assistant.translate.this.page.into	请将此页面翻译成： 
+assistant.upgrade.for.more.ai.usage	升级获取更多 AI 使用
+assistant.upgradeToGetMoreCredits	升级以获取更多积分
+assistant.usage	[0] 用量
+assistant.usage.and.limits	使用和限制
+assistant.usage.date	限制重置日期
+assistant.usage.max	最大请求数（30 天）
+assistant.usage.remaining	剩余请求数
+assistant.usage.used	使用的请求数
+assistant.use.templates.in.craft	如何在 Craft 中使用模板？
+assistant.using.ai.assistant	使用 AI 助手
+assistant.using.templates	使用模板
+assistant.view.credits	查看积分
+assistant.web.research	网络搜索
+assistant.what.are.my.upcoming.tasks	我接下来的任务有哪些？
+assistant.what.patterns.do.you.notice.in.my.daily.notes	你从我的每日笔记中发现了什么规律？
+assistant.which.tasks.should.i.prioritize	我应该优先处理哪些任务？
+assistant.x.blocks	[0] 个区块
+assistant.x.messages	[0] 条消息
+assistant.x.requests.remaining	剩余 [0] 个请求
+assistant.you.reached.usage.limit	已达到 Craft 助手使用限制。可随时查看和更新 [使用配额](craft://credit)。
+assistant.you.used.all.your.available.credits	你的可用积分已全部用完。你可以随时查看你的[余额](craft://credit)。
+assistant.your.prompts	你的提示

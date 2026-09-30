@@ -1,0 +1,56 @@
+=== A) whatintent across ALL chunks (bare word, no data- prefix) ===
+  index-DiTmKH3z.js x1
+    @2099675: ===void 0?"sm":i,c=k.useRef(null),d=k.useRef(null),u=k.useRef(0);let f;e[0]!==s?(f=S=>{document.documentElement.dataset.whatintent==="touch"&&_2(),s(S)},e[0]=s,e[1]=f):f=e[1];const p=f;let h,m;e[2]===Symbol.for("react.memo_cache_sentinel")?(h=()=>{const S=c.current,v=d.current;if
+  vendor-BZCR0rqu.js x4
+    @2527: function($r){return Array.prototype.map.apply(this,arguments).flat()},writable:!0});var whatInput$1={exports:{}};/** * what-input - A global utility for tracking the current input method (mouse, keyboard or touch). * @version v5.2.12 * @link https://github.com/ten1seven/what-i
+  chunks containing it=2
+=== A2) setAttribute with a data- name built at runtime ===
+  "setAttributes(" count=0
+  "\"data-" count=291 first@492278
+    @492278: css","_japanese/rounded/m-plus-rounded-1c/fontdef.css"],X1e="data-cjk-font-css";function UHe(){return!OHe.IS_DESKTOP&&!1?"":`$
+    @919627:  0:t.allowPrint)??!1;return{onClick:Ri,onMouseDown:e?Lot:Ri,"data-no-print":n?void 0:""}}function Lot(t){t.target instanceof H
+    @920105: gClientRect(),r=[];for(const d of i){const u=d.getAttribute("data-item-id");if(u&&t.has(u)){const f=d.getBoundingClientRect(),
+  distinct setAttribute("data-…" forms=5 -> setAttribute("data-vaul-scaler-open" | setAttribute("data-vaul-dragging" | setAttribute("data-popup-open" | setAttribute("data-slot-exit" | setAttribute("data-domain"
+=== B) 6sjpd CSS-module family in JS (who renders mainWrapper) ===
+  index-DiTmKH3z.js x9
+      ctx "6sjpd" count=9 first@2487132
+    @2487132: nst T_=208,$h=16,ic=20,D7=8,QJ=240,ob=200,of=1/1.25,FEt=268,NEt=5,hm=65,dS=!0,uS=100,UEt="_noScroll_6sjpd_1",$Et="_viewWrapper_6sjpd_5",HEt="_headerWrapper_6sjpd_13",ZEt="_mainWrapper_6sjpd_20",VEt="_scrol
+    @2487159: ,QJ=240,ob=200,of=1/1.25,FEt=268,NEt=5,hm=65,dS=!0,uS=100,UEt="_noScroll_6sjpd_1",$Et="_viewWrapper_6sjpd_5",HEt="_headerWrapper_6sjpd_13",ZEt="_mainWrapper_6sjpd_20",VEt="_scrollRoot_6sjpd_28",WEt="_scrol
+  chunks with 6sjpd=1
+=== C) CodeMirror highlight classes (tok-*) verbatim roster ===
+  distinct tok- names=28 -> tok-link,tok-heading,tok-emphasis,tok-strong,tok-keyword,tok-atom,tok-bool,tok-url,tok-label,tok-inserted,tok-deleted,tok-literal,tok-string,tok-number,tok-string2,tok-variable,tok-local,tok-definition,tok-property,tok-type,tok-namespace,tok-class,tok-macro,tok-operator,tok-comment,tok-meta,tok-invalid,tok-punctuation
+  "class:\"tok-" count=30 first@279197
+    @279197:  W){let i=W[r];i instanceof j2&&(i.name=r)}n_t([{tag:W.link,class:"tok-link"},{tag:W.heading,class:"tok-heading"},{tag:W.emphasis,c
+    @279230: i.name=r)}n_t([{tag:W.link,class:"tok-link"},{tag:W.heading,class:"tok-heading"},{tag:W.emphasis,class:"tok-emphasis"},{tag:W.stron
+  n_t( style builder hits:
+  "tagStyleSpec" count=0
+  "&light" count=20 first@165452
+    @165452: e=Yi.define({combine:r=>r.indexOf(!0)>-1}),Sxe=u4.newName(),C9t=u4.newName(),Y9t=u4.newName(),W9t={"&light":"."+C9t,"&dark":"."+Y9t};function Pxe(r,i,s){return new u4(i,{finish(l){return/&/.test(l)?l.replac
+    @166438: :"pre-wrap",whiteSpace:"break-spaces",wordBreak:"break-word",overflowWrap:"anywhere",flexShrink:1},"&light .cm-content":{caretColor:"black"},"&dark .cm-content":{caretColor:"white"},".cm-line":{display:"blo
+    @166670: ,".cm-layer":{position:"absolute",left:0,top:0,contain:"size style","& > *":{position:"absolute"}},"&light .cm-selectionBackground":{background:"#d9d9d9"},"&dark .cm-selectionBackground":{background:"#222"}
+  "&dark" count=19 first@165469
+    @165469: ine:r=>r.indexOf(!0)>-1}),Sxe=u4.newName(),C9t=u4.newName(),Y9t=u4.newName(),W9t={"&light":"."+C9t,"&dark":"."+Y9t};function Pxe(r,i,s){return new u4(i,{finish(l){return/&/.test(l)?l.replace(/&\w*/,O=>{if(
+    @166480: Break:"break-word",overflowWrap:"anywhere",flexShrink:1},"&light .cm-content":{caretColor:"black"},"&dark .cm-content":{caretColor:"white"},".cm-line":{display:"block",padding:"0 2px 0 6px"},".cm-layer":{p
+  createTheme hits=0
+  light: "light:" count=0
+=== C2) language roster (name:"X" near language defs) ===
+  distinct quoted names=295 -> Document,line,close,search,replace,case,re,word,C,C++,CQL,CSS,Go,HTML,Java,JavaScript,Jinja,JSON,JSX,LESS,Liquid,MariaDB SQL,Markdown,MS SQL,MySQL,PHP,PLSQL,PostgreSQL,Python,Rust,Sass,SCSS,SQL,SQLite,TSX,TypeScript,WebAssembly,XML,YAML,APL,PGP,ASN.1,Asterisk,Brainfuck,Cobol,C#,Clojure,ClojureScript,CMake,CoffeeScript,Common Lisp,Cypher,Cython,Crystal,D,Dart,diff,Dockerfile,DTD,Dylan
+  lezer grammar packages=languageDataAt
+=== D) --st-* injection sites (full windows) ===
+  EditorPopup: "--st-" count=4 first@1163
+    @1163: faultTextColor:a}=s.useContext(D),u=s.useMemo(()=>!E(c,a),[c,a]),k=T({paperBgColor:c,defaultTextColor:a},u),R=e?getComputedStyle(e).getPropertyValue("--st-font-family").trim():void 0;if(s.useEffect(()=>{if(!t||!f)return;const n=setTimeout(()=>{var m;const l=(m=b.current)==null?void 0:m.querySelector('inp
+    @1587: const w=u?y.dark.base[900]:y.light.base[900],P={...d==="anchor"?{minWidth:e.offsetWidth}:d!=="auto"?{width:d}:{},background:w,borderRadius:"inherit","--st-font-family":R||void 0,"--st-text-color":a,"--st-border-color":k};return r.jsx(i.Root,{open:t,onClose:o,anchor:e,triggerRef:g,currentView:"default",pl
+    @1616: light.base[900],P={...d==="anchor"?{minWidth:e.offsetWidth}:d!=="auto"?{width:d}:{},background:w,borderRadius:"inherit","--st-font-family":R||void 0,"--st-text-color":a,"--st-border-color":k};return r.jsx(i.Root,{open:t,onClose:o,anchor:e,triggerRef:g,currentView:"default",placement:h,offset:C,crossAxisO
+    @1636: ..d==="anchor"?{minWidth:e.offsetWidth}:d!=="auto"?{width:d}:{},background:w,borderRadius:"inherit","--st-font-family":R||void 0,"--st-text-color":a,"--st-border-color":k};return r.jsx(i.Root,{open:t,onClose:o,anchor:e,triggerRef:g,currentView:"default",placement:h,offset:C,crossAxisOffset:_,backdrop:"tr
+  index: "\"--st-" count=20 first@4770398
+    @4770398: e used within a SelectionProvider");return t}const V3=8;function Y6n(t){const e=getComputedStyle(t);return{headerHeight:parseFloat(e.getPropertyValue("--st-row-height"))||35,indexColumnWidth:parseFloat(e.getPropertyValue("--st-index-column-width"))||45}}function X6n(t,e){const n=e.getBoundingClientRect(),
+    @4770469: {const e=getComputedStyle(t);return{headerHeight:parseFloat(e.getPropertyValue("--st-row-height"))||35,indexColumnWidth:parseFloat(e.getPropertyValue("--st-index-column-width"))||45}}function X6n(t,e){const n=e.getBoundingClientRect(),o=t.getBoundingClientRect(),{headerHeight:s,indexColumnWidth:i}=Y6n(t);
+    @4790374: nimationFrame(i.current),i.current=requestAnimationFrame(()=>{n.current&&(n.current.style.transform=`translateX(${-f}px)`,n.current.style.setProperty("--st-scroll-left",`${f}px`)),i.current=null})}o.current&&clearTimeout(o.current),o.current=setTimeout(()=>{var f,p,h;s.current=!1,(f=d==null?void 0:d.class
+    @4859833: $,n[40]=z,n[41]=G,n[42]=W,n[43]=S,n[44]=mt,n[45]=Ve,n[46]=x,n[47]=u,n[48]=ze}else ze=n[48];tt=ze}const dt=`${Pe}px`;let Ge;n[71]!==l||n[72]!==dt?(Ge={"--st-grid-columns":l,"--st-row-height":dt},n[71]=l,n[72]=dt,n[73]=Ge):Ge=n[73];const Ye=Ge;let Oe;n[74]!==Y||n[75]!==d||n[76]!==Se||n[77]!==te||n[78]!==r||
+    @4859855: ]=W,n[43]=S,n[44]=mt,n[45]=Ve,n[46]=x,n[47]=u,n[48]=ze}else ze=n[48];tt=ze}const dt=`${Pe}px`;let Ge;n[71]!==l||n[72]!==dt?(Ge={"--st-grid-columns":l,"--st-row-height":dt},n[71]=l,n[72]=dt,n[73]=Ge):Ge=n[73];const Ye=Ge;let Oe;n[74]!==Y||n[75]!==d||n[76]!==Se||n[77]!==te||n[78]!==r||n[79]!==c?(Oe=Se&&a.js
+    @4860455: =Y,n[75]=d,n[76]=Se,n[77]=te,n[78]=r,n[79]=c,n[80]=Oe):Oe=n[80];let Je;n[81]!==oe||n[82]!==et?(Je=mt=>{oe(mt),et(),mt.currentTarget.style.setProperty("--st-scroll-left",`${mt.currentTarget.scrollLeft}px`)},n[81]=oe,n[82]=et,n[83]=Je):Je=n[83];let ct;n[84]!==Y||n[85]!==d||n[86]!==Se||n[87]!==r||n[88]!==c?(
+  index distinct injected names=13 -> "--st-row-height","--st-index-column-width","--st-scroll-left","--st-grid-columns","--st-selection-color","--st-page-bg","--st-page-bg-hover-opaque","--st-text-color","--st-border-color","--st-font-family","--st-accent-selection","--st-selection-bg-opaque","--st-selection-hover-bg-opaque"
+=== E) AdobeBlank consumer context (full) ===
+  "AdobeBlank" count=2 first@1054299
+    @1054299: attrs(({justifyContent:t,alignItems:e,$direction:n,gap:o,flexWrap:s,...i})=>({...i,style:{gap:Wr(o),...i.style}})).withConfig({componentId:"sc-19anezj-0"})([""]),yrt=async t=>{if(t.length===0)return[];!k2&&document.fonts!=null&&await document.fonts.load("1rem AdobeBlank",t[0].character);const e=document.createElement("canvas");e.style.position="absolute",e.style.width="0",e.style.height="0";const n=e.getContext("2d"),o=document.querySelector("body");if(n==null||o==null)return t;o.appendChild(e);let s=[];if(!k2)n.font='1em "A
+    @1054623: as");e.style.position="absolute",e.style.width="0",e.style.height="0";const n=e.getContext("2d"),o=document.querySelector("body");if(n==null||o==null)return t;o.appendChild(e);let s=[];if(!k2)n.font='1em "Apple Color Emoji", "Android Emoji", "Segoe UI Emoji", AdobeBlank',s=t.filter(({character:i})=>n.measureText(i).width!==0);else{n.font='10px sans-serif"';const i=n.measureText("锟匡靠").width/2;s=t.filter(({character:l})=>n.measureText(l).width!==i)}return e.remove(),s},Crt=t=>[...t].sort((e,n)=>e.order-n.order),xrt=t=>[...t].

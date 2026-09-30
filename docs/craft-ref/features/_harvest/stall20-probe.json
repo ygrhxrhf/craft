@@ -1,0 +1,30 @@
+[
+ {
+  "k": "agent",
+  "v": "browsers,documentation"
+ },
+ {
+  "k": "browsers.list",
+  "v": "[{\"id\":\"2603559b-2fbf-4607-9366-bce8e3d370e1\",\"name\":\"Edge 260355\",\"type\":\"extension\",\"capabilities\":{\"browser\":[{\"id\":\"visibility\",\"description\":\"读取、显示或隐藏外部浏览器窗口\"},{\"id\":\"viewport\",\"description\":\"设置或恢复外部浏览器 viewport\"},{\"id\":\"management\",\"description\":\"受限浏览器管理与审计轨迹\"}],\"tab\":[{\"id\":\"cdp\",\"description\":\"受限 Chrome DevTools Protocol 调用与事件\"},{\"id\":\"botDetection\",\"description\":\"报告验证码、挑战循环或访问拒绝\"},{\"id\":\"pageAssets\",\"description\":\"页面资源清单与本地打包\"},{\"id\":\"webmcp\",\"description\":\"发现并调用页面注册的 WebMCP 工具\"}]},\"apiSupportOverrides\":{\"BrowserUser.getTabContext\":true,\"Tabs.content\":true,\"Tab.ax\":true,\"Tab.requestManualHandoff\":true},\"metadata\":{\"provider\":\"qoder-browser-connector\",\"browserName\":\"Microsoft Edge\",\"extensionVersion\":\"1.7.5\"}}]"
+ },
+ {
+  "k": "browser.metadata",
+  "v": "null"
+ },
+ {
+  "k": "openTabs",
+  "v": "[{\"id\":\"user-tab:b30eca5e7a8158a517c71210bcece36f\",\"title\":\"所有文档\",\"url\":\"https://docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/all\"},{\"id\":\"user-tab:37c54c9b34c00396018a453bc027515f\",\"title\":\"所有文档\",\"url\":\"https://docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/all\"},{\"id\":\"user-tab:84cc70643670f5b62dc2fce510782572\",\"title\":\"最近删除\",\"url\":\"https://docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/trash\"},{\"id\":\"user-tab:37542fc58b081e4d80bfbdd979368a43\",\"title\":\"无标题文档\",\"url\":\"https://docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/6cc9761c-874a-40d7-b80\"},{\"id\":\"user-tab:e485bbb63701c495401333c91c2aee5e\",\"title\":\"所有文档\",\"url\":\"https://docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/all\"},{\"id\":\"user-tab:1ac4d5882518c3d8ca82fd0869723fbd\",\"title\":\"无标题文档\",\"url\":\"https://docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/6cc9761c-874a-40d7-b80\"},{\"id\":\"user-tab:fbfbe783a7ccd191e7be9b9658751fde\",\"title\":\"所有文档\",\"url\":\"https://docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/all\"},{\"id\":\"user-tab:8461eea30d6c3e7e90d7a14b455e0433\",\"title\":\"New API\",\"url\":\"http://64.83.14.17:3000/channels\"},{\"id\":\"user-tab:2459e203d22f05c687a5cb3ec6272b41\",\"title\":\"文件箱\",\"url\":\"https://psxfjstxzk.duckdns.org/m/\"}]"
+ },
+ {
+  "k": "picked",
+  "v": "{\"id\":\"user-tab:b30eca5e7a8158a517c71210bcece36f\",\"url\":\"https://docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/all\"}"
+ },
+ {
+  "k": "claimTab",
+  "v": "OK [\"id\",\"browserId\",\"playwright\",\"ax\",\"dom_cua\",\"cua\",\"content\",\"clipboard\",\"dev\",\"capabilities\"]"
+ },
+ {
+  "k": "title(1st-cmd)",
+  "v": "\"所有文档\""
+ }
+]

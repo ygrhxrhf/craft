@@ -1,0 +1,331 @@
+subscription.1.day.left	仅剩1天
+subscription.1.doc.left	还剩 1 份文档
+subscription.1.hour.left	还剩 1 小时
+subscription.2.docs.per.week.keep.existing.docs	每周免费创建 2 个免费文档。 保留你在 Plus 试用期间创建的所有现有文档。
+subscription.additional.card.styles	附加卡片样式
+subscription.advanced.ai.models	高级 AI 模型
+subscription.advanced.customization	高级定制
+subscription.advanced.options.control.desc	使用 Plus 订阅控制高级共享选项
+subscription.advanced.publishing	高级发布
+subscription.advanced.publishing.desc	获取自定义域名和品牌以及高级分析的权限。
+subscription.advanced.sharing.options.desc	订阅用户可以使用高级共享选项
+subscription.ai.upgrade	AI 助手升级
+subscription.ai.upgrade.desc	获得 2 倍 AI 助手请求额度，并可使用改进的 GPT-4o。
+subscription.and.much.more	…还有更多。
+subscription.annual	年付
+subscription.author.control.desc	通过 Plus 订阅控制作者
+subscription.best.value	最超值
+subscription.billed.x.monthly	每月计费 [0]。
+subscription.billed.x.yearly	按年计费 [0]
+subscription.billing.and.subscription	计费和订阅
+subscription.block.limit.used	你已使用此套餐中可用的 <strong>[1]</strong> 个区块中的 <strong>[0]</strong> 个。
+subscription.block.limit.used.all	你已使用此套餐中所有可用的 <strong>[0]</strong> 个区块。
+subscription.blocks.used	[0]/[1] 个区块已使用
+subscription.business.customdomain.desc	使用自定义域名和路径共享 Craft 文档。
+subscription.business.upgraded.to.plus	作为 Business 订阅的一部分，你的帐户已升级为 Plus。
+subscription.button.manage.sub.simple	管理订阅
+subscription.button.restore	恢复购买
+subscription.cancel.at.any.time.before.renewal.date	你可随时取消，但需在续订日期至少提前一天进行。套餐将在你取消前自动续订。
+subscription.capture.your.thoughts	无限捕捉你的想法。一个简单而强大的写作空间。
+subscription.card.styles.control.desc	通过 Plus 订阅访问所有卡片样式
+subscription.change.to.title.billingcycle	更改为 [0] [1]
+subscription.charging.remaining	扣费 [0]，剩余余额：[1]
+subscription.check.benefits	查看权益
+subscription.checkout.copy.link	复制结账链接
+subscription.checkout.ready	结账准备就绪！
+subscription.checkout.ready.description	结账页面已在你的浏览器中打开。如果没有看到，请复制链接并在浏览器中打开。
+subscription.churn.alternative	我找到了更适合我需求的替代方案。
+subscription.churn.before.you.go	在你离开之前…
+subscription.churn.cancel.anyway	仍然取消
+subscription.churn.change.plan	我想更改我的订阅套餐。
+subscription.churn.custom.desc	预约一次简短的通话，解锁专属优惠、升级方案和为你量身定制的灵活选择。
+subscription.churn.custom.title	让我们一起聊聊最适合你的方案
+subscription.churn.desc	在你离开之前，你能否帮助我们了解你决定取消 Craft 订阅的原因？我们非常重视你的反馈，并始终致力于改进。
+subscription.churn.expensive	相比我获得的价值，价格偏高。
+subscription.churn.failed.to.redeem.offer	兑换优惠失败，请重试。
+subscription.churn.issues	我遇到了技术问题。
+subscription.churn.missing.feature	缺少我需要的关键功能。 
+subscription.churn.redeem.offer	兑换优惠
+subscription.churn.service	我不再需要这类服务。
+subscription.churn.thank.you	谢谢你呀！
+subscription.click.to.complete.your.setup	点击 [0] 按钮完成设置，即可邀请其他人加入你的套餐。
+subscription.comments.control.desc	使用 Plus 订阅控制共享文档的评论权限
+subscription.complete.your.subscription.setup	请完成你的订阅设置。
+subscription.continue.upgrade.seats	继续升级你现有的席位 [0]
+subscription.could.not.start.checkout	无法开始结账
+subscription.could.not.start.upgrade	无法开始升级
+subscription.create.new	新建 [0]
+subscription.create.new.space.add	添加
+subscription.create.new.space.add.members	添加成员
+subscription.create.new.space.add.members.to.new	将成员添加到 [0]
+subscription.create.new.space.description	创建一个空间，将一起工作的人分组。
+subscription.create.new.space.description.for.private.plus	创建一个单独整理的空间
+subscription.create.new.space.error.no.team.selected	未选择团队
+subscription.create.new.space.invite.pending	待处理
+subscription.create.new.space.invite.team.member.desc.as.admin	只能将现有团队成员添加到空间。要添加新人，你必须先邀请他们加入团队。
+subscription.create.new.space.invite.team.member.desc.as.member	只能将现有团队成员添加到空间。要添加新人，管理员必须先邀请他们加入团队。
+subscription.create.new.space.invite.to.family	邀请加入家庭
+subscription.create.new.space.invite.to.team	邀请加入团队
+subscription.create.new.space.private.space	私人空间
+subscription.create.new.space.private.space.description	私人空间只能通过邀请查看或加入
+subscription.create.new.space.search.members	搜索成员
+subscription.create.new.space.space.name.placeholder	空间名称
+subscription.create.new.space.title	创建新空间
+subscription.create.new.space.upgrade.to.make.space.private	升级以使空间私有。
+subscription.create.new.team.invite.add.more	添加更多
+subscription.custom.style.control.desc	通过 Plus 订阅保存更多自定义样式
+subscription.custom.templates.control.desc	通过 Plus 订阅创建更多自定义模板
+subscription.discount.applied.for.first.billing.period	折扣适用于第一个计费期。
+subscription.discount.applied.perc.x	已应用 [0] 折扣（优惠 [1]%）
+subscription.discount.applied.perc.x.short	已应用 [0]% 折扣
+subscription.discount.apply.perc.x	应用 [0]% 折扣
+subscription.discount.apply.perc.x.lowercase	应用 [0]% 折扣
+subscription.discount.perc.x	[0]% 折扣
+subscription.discount.save.perc.x.lowercase	节省 [0]
+subscription.discount.tooltip.line1	限时优惠，可享受 [0]% 的折扣。
+subscription.discount.tooltip.line2	如果你现在购买，明年也可锁定此折扣。
+subscription.discount.tooltip.line3	优惠券代码：[0]
+subscription.discount.tooltipv2.line1	终身享受 [0]% 折扣 – 限时优惠！
+subscription.duplicate.template.control.desc	使用 Plus 订阅复制为模板
+subscription.end.of.your.trial	试用期结束后，除非你选择升级，否则我们会自动将你转至免费套餐。
+subscription.expiration.date.control.desc	使用 Plus 订阅为共享链接设置到期日期
+subscription.expired.at	已过期 [0]
+subscription.expires.at	有效期至
+subscription.expires.at.not.renewed	过期于 [0]，未续订
+subscription.family.upgraded.to.plus	作为家庭订阅的一部分，你的帐户已升级为 Plus。
+subscription.for.life	 终身 
+subscription.free.plan.desc	别担心——你仍然可以在免费套餐中创建和编辑！
+subscription.free.trial.started	14 天[0]免费试用已开始
+subscription.free.version.dec	你正在使用 Craft 的免费版本。
+subscription.get	获取 [0]
+subscription.get.annual	按年获取 [0]
+subscription.get.craft.lite	获取 Craft Lite
+subscription.get.craft.plus	获得 Craft Plus
+subscription.get.monthly	按月获取 [0]
+subscription.getting.teams.data	获取团队数据。
+subscription.go.unlimited	畅享无限
+subscription.header.need.more.space	需要更多空间？
+subscription.in.first.year	在第一年
+subscription.increase.limit	你好，作为 [0] 订阅者，我希望增加我的空间限制！你能帮我吗？
+subscription.invite.addseat.success.title	为团队添加了{{count}}个席位
+subscription.invite.business.strong	邀请<strong>你团队中的每个人</strong>一起享受 Craft Plus 的所有好处。
+subscription.invite.error.add.seat.title	无法增加团队规模
+subscription.invite.error.addseat.less.seat.than.allocated	席位数量必须大于或等于分配的席位数量（会员+邀请）。
+subscription.invite.error.addseat.no.active	团队没有活动订阅。
+subscription.invite.error.addseat.payment	付款失败（无法收费）。请重试或联系我们。
+subscription.invite.error.addseat.trial.expired	添加试用席位的期限已过。
+subscription.invite.error.addseat.unknown	出了些问题。请重试或联系我们。
+subscription.invite.error.addseat.unsupported.subscription	在此订阅中无法更改座位数
+subscription.invite.error.seats.less.than.purchased.seat.count	席位数不能少于已购买的基础席位数
+subscription.invite.family.strong	邀请最多 <strong>5 位家庭成员</strong>共同享受 Craft Plus 的所有好处。
+subscription.invite.team.members	邀请 [0] 名成员
+subscription.invite.team.strong	邀请最多 <strong>25 名团队成员</strong>共同享受 Craft Plus 的所有好处。
+subscription.is.almost.ready	你的订阅即将完成！
+subscription.keep	保留 [0]
+subscription.keep.subscription	保持订阅
+subscription.learn.more.pricing	了解更多定价方案信息
+subscription.license.key	许可证密钥
+subscription.license.key.desc	如果你收到了许可证密钥，请在此处使用它来激活你的订阅。
+subscription.limited.to.one	[0] 订阅限制为 1 个空间。升级或联系客服以获取更多空间。
+subscription.limited.to.x	[0] 订阅限制为 [1] 个空间。升级或联系客服以获取更多空间。
+subscription.mac.column.free.price.title	免费
+subscription.main.segmentcontrol.annual	每年
+subscription.main.segmentcontrol.monthly	月付
+subscription.manage.subscription.only.admins	只有团队管理员可以管理团队订阅
+subscription.maybe.later	暂时不了
+subscription.my.family	我的 Family
+subscription.near.limit.document.created	[1] 个文档中的 [0] 个已创建
+subscription.next.billing.date	下次账单日期
+subscription.next.payment.x	下次付款：[0]
+subscription.no.docs.left	没有更多文档了
+subscription.no.estimated.charge.remaining	无预估费用，剩余信用额：[0]
+subscription.notnow_cta	以后再说
+subscription.object.links.control.desc	使用 Plus 订阅控制对象链接
+subscription.one.full.featured.account.desc	一个功能齐全的帐户。获取无限内容和存储空间，记录你的所有创意。
+subscription.one.time.payment.one-year	一次性付款 — 有效期 1 年
+subscription.only.x.per.month	每月仅需 [0]。
+subscription.only.x.per.year	每年仅需 [0]。
+subscription.over.limit.desc	入门团队是免费的，但每个空间最多只能容纳 10 个文档。升级可为你的团队提供更多空间。
+subscription.over.limit.document	你超出了文档限制
+subscription.over.limit.get.unlimited.docs	获取无限文档
+subscription.paddle.id	你的 Paddle 结账 ID 是 [0]
+subscription.payment.method	付款方式：[0]
+subscription.paywall.backups.desc.1	升级即可获得 30 天或 180 天的备份。
+subscription.paywall.backups.desc.2	升级即可获得 180 天的备份。
+subscription.paywall.backups.desc.3	升级可获得 180 天。
+subscription.paywall.backups.desc.4	目前显示 [0] 天。
+subscription.paywall.big.file	哦不！文件太大了！
+subscription.paywall.big.file.contact.us	你无法上传大于 [0] 的文件。如果你希望增加上传限制，请与我们联系！
+subscription.paywall.big.file.contact.us.message	你好，作为团队订阅者，我希望增加我的上传大小限制！你能帮我吗？
+subscription.paywall.big.file.free	免费套餐限制上传 [0] 个文件。升级可获得更多。
+subscription.paywall.big.file.tier	[0] 套餐仅限上传 [1] 个文件。升级可获得更多。
+subscription.paywall.custom.domain.desc	自定义域名和路径仅适用于 Plus 套餐。
+subscription.paywall.file.limit	你无法上传大于 [0] 的文件
+subscription.paywall.markdown.import	Markdown 导入
+subscription.paywall.markdown.import.desc	批量 Markdown 导入仅适用于 Plus 用户。
+subscription.paywall.more.space.desc	[0] 团队最多可创建 25 个空间。请联系销售人员为你的团队获取更多空间。
+subscription.paywall.more.space.desc.1	团队和 Business 订阅限制为 25 个空间。联系客服获取更多空间。
+subscription.paywall.pdf.export	升级到 Craft Plus 以启用 PDF、Markdown 等的高级导出设置
+subscription.paywall.textbundle.export	TextBundle 导出仅适用于 Plus 用户。
+subscription.per.month.family	/月（整个团体）
+subscription.per.month.plus	/月（一人）
+subscription.per.month.team	/月（整个团队总计）
+subscription.per.year.family	/年（整组总计）
+subscription.per.year.plus	/年（单人）
+subscription.per.year.team	/年（整个团队总计）
+subscription.plancard.business.upgrade.to.business	升级
+subscription.please.specify	请指定
+subscription.plus.and.save	立即升级至 Plus 可节省 [0]%[1]
+subscription.plus.benefits.for.all.members	所有成员均可享受 Plus 权益
+subscription.plus.plan	Plus 套餐
+subscription.plus.trial	Plus 试用
+subscription.plus.upgrade.contact.support	联系我们的支持团队将你的帐户升级到 Plus
+subscription.preparing.checkout	准备结账…
+subscription.preparing.upgrade	准备升级…
+subscription.presentation.mode.control.desc	使用 Plus 订阅控制演示模式
+subscription.price.billed.with.vat	含增值税，按[0]计费
+subscription.price.billed.without.vat	不含增值税，按[0]计费
+subscription.price.continue.to.recalculate	继续重新计算
+subscription.price.total	合计
+subscription.price.vat	[0] + 增值税
+subscription.print.control.desc	使用 Plus 订阅打印你的文档
+subscription.pro.aiassistant.desc	使用 Plus 可在助手中解锁更高级的模型。
+subscription.pro.block.limit.reached	已达到区块上限
+subscription.pro.block.limit.reached.desc	你的空间已达到区块上限。升级到 Plus，解锁每个空间的无限区块。
+subscription.pro.team	Plus 团队
+subscription.pro.team.trial.days	[0] 天，共 [1] 天
+subscription.pro.team.trial.desc	要完成升级，请查看你的电子邮件以获取进一步的步骤和指导，或者随时联系我们的团队寻求帮助。
+subscription.pro.textbundle	TextBundle 导出
+subscription.processing.canceled	结账已取消
+subscription.processing.canceled.description	结账已被取消
+subscription.processing.checkout	正在处理你的结账…
+subscription.processing.checkout.description	我们正在确认你的付款，请稍候
+subscription.processing.error	无法确认付款
+subscription.processing.error.description	请联系 Craft 支持团队。
+subscription.processing.success	订阅成功！
+subscription.processing.success.description	你已成功升级你的团队
+subscription.ran.out.of.doc.creation	你已用尽文档创建次数
+subscription.ran.out.of.docs	你的文档用完了
+subscription.remove.all.limits	移除所有限制
+subscription.sales.contact	联系销售
+subscription.savings_tooltip	节省[0]％
+subscription.see.all.features	查看所有功能
+subscription.see.plans	查看套餐
+subscription.select.a.team.to.restore	之前你有一笔订阅付款，但未分配给团队。请选择一个团队来恢复你的订阅。
+subscription.select.your.plan	选择你的计划
+subscription.seo.control.desc	通过 Plus 订阅控制 SEO
+subscription.slashmonth	/月
+subscription.slashweek	/周
+subscription.slashyear	/年
+subscription.solo.pro.subscription.with.apple	看起来你正在使用 Apple 的个人 Pro 订阅。要邀请其他人并扩大你的团队，请开始免费试用。
+subscription.start.14.days.trial	开始 14 天免费试用
+subscription.start.new.checkout	开始新的结账
+subscription.start.pro.team.trial	更新你的信息
+subscription.start.pro.team.trial.desc	你似乎拥有一个 Apple 的 Plus 个人订阅。要邀请其他人并开始协作，请更新你的付款信息。
+subscription.start.stripe.trial	开始 [0] 天免费试用
+subscription.starter.desc	免费创建最多 10 个文档。此后每周获得 2 个额外的免费文档。
+subscription.starter.desc.block.limit.enabled	创建任意数量的文档，最多可创建 [0] 个区块。
+subscription.starter.team.overview	入门团队概览
+subscription.sub.value.prop.1	简单的计划。
+subscription.sub.value.prop.2	一个固定价格。无隐藏费用。
+subscription.sub.verification	订阅验证
+subscription.subscribe.now	立即订阅
+subscription.subscribed.via	通过 [0] 订阅
+subscription.subscription.fallback.desc	我们的付费方案提供此功能。
+subscription.subscription.granted	已获得订阅
+subscription.successful.verification	验证成功。你可以在团队设置中找到你的订阅详情。
+subscription.team.upgraded.to.plus	作为团队订阅的一部分，你的帐户已升级为 Plus。
+subscription.terms.of.use	使用条款
+subscription.tier.free	Free
+subscription.tier.individual	个人
+subscription.tier.teams	团队
+subscription.tier.title.plus	Plus
+subscription.title.control.desc	通过 Plus 订阅控制标题
+subscription.toc.control.desc	使用 Plus 订阅控制目录
+subscription.trial.applied	已应用试用：14 天 Plus 试用
+subscription.trial.ended.desc	你的 14 天免费试用期已结束。升级以享受 Craft 的全部威力。
+subscription.trial.ended.title	你的 Plus 试用已结束
+subscription.trial.period	试用期
+subscription.trial.value	试用
+subscription.troubleshooting.panel.description	如果你遇到订阅问题，请阅读我们的故障排除指南。
+subscription.try.craft.plus.no.strings	尝试 Craft Plus - 无附加条件
+subscription.unlimited	无限
+subscription.unlimited.content	无限内容
+subscription.unlimited.content.and.storage	无限内容和存储空间
+subscription.unlimited.docs	无限畅享 Craft，随心创建文档。
+subscription.unlimited.docs.desc	免费用户可以创建有限数量的文档。 要创建无限文档，请升级到 Craft Plus。
+subscription.unlimited.everything	无限一切
+subscription.unlimited.everything.desc	在你的空间中获取无限存储空间，并且文件上传不受大小限制。
+subscription.unlimited.media.upload	无限制媒体上传
+subscription.unlimited.storage	无限存储空间
+subscription.unlimited.storage.for.days	14 天无限存储。无需信用卡。
+subscription.unsuccessful.verification	验证失败。很遗憾，我们无法验证你的订阅，请联系我们。
+subscription.up.to.x.members	最多 [0] 名成员
+subscription.upgrade.additional.requests	升级即可解锁助手中的额外请求。
+subscription.upgrade.contact.support	联系我们的支持团队来升级你的帐户
+subscription.upgrade.incomplete	升级未完成
+subscription.upgrade.no.more.seats	你的订阅已添加 [0] 个成员。升级以添加更多。
+subscription.upgrade.not.available.for.this.type.of.teams.contact	目前，此类团队无法升级。请联系我们的客户支持，以寻求最适合你的解决方案。
+subscription.upgrade.not.available.for.this.type.of.teams.remove	订阅升级不适用于团队。升级前请移除团队成员和待处理的邀请。
+subscription.upgrade.now	立即升级
+subscription.upgrade.team.v2.appstore.error	出了点问题，请重试。
+subscription.upgrade.team.v2.appstore.next	下一步
+subscription.upgrade.team.v2.appstore.purchase.success	订阅成功
+subscription.upgrade.team.v2.business.is.set	你的 Business 已准备就绪！
+subscription.upgrade.team.v2.change.team.name.later	你可以稍后在设置中更改此设置。
+subscription.upgrade.team.v2.change.team.name.placeholder	为你的团队添加名称
+subscription.upgrade.team.v2.failed.appstore.subscription.and.team.creation.error	无法创建团队并订阅 AppStore 产品
+subscription.upgrade.team.v2.failed.subscription.creation	无法创建订阅。请重试。
+subscription.upgrade.team.v2.failed.to.invite	无法邀请团队成员
+subscription.upgrade.team.v2.failed.to.update.team.name	无法更新团队名称
+subscription.upgrade.team.v2.family.is.set	你的 Family 已准备就绪！
+subscription.upgrade.team.v2.family.is.upgraded.to.business	你的 Family 团队已升级为 Business 订阅
+subscription.upgrade.team.v2.family.is.upgraded.to.team	你的 Family 团队已升级为 Team 订阅
+subscription.upgrade.team.v2.go.to.business.settings	前往 Business 设置
+subscription.upgrade.team.v2.go.to.family.settings	前往 Family 设置
+subscription.upgrade.team.v2.go.to.team.settings	前往团队设置
+subscription.upgrade.team.v2.invite.more.people.to.business	邀请无限数量的成员加入 Craft Plus，无需额外付费。每个人都将获得自己的私人空间和所有 Craft Plus 福利。
+subscription.upgrade.team.v2.invite.more.people.to.family	邀请最多 5 名成员加入 Craft Plus，无需额外付费。每个人都将获得自己的私人空间和所有 Craft Plus 福利。
+subscription.upgrade.team.v2.invite.more.people.to.team	邀请最多 25 名成员加入 Craft Plus，无需额外付费。每个人都将获得自己的私人空间和所有 Craft Plus 福利。
+subscription.upgrade.team.v2.invite.more.people.to.team.x	邀请最多 [0] 名成员加入 Craft Plus，无需额外付费。每个人都将获得自己的私人空间和所有 Craft Plus 福利。
+subscription.upgrade.team.v2.learn.more.about.craft.business	了解有关 Craft Business 的更多信息
+subscription.upgrade.team.v2.learn.more.about.craft.family	了解有关 Craft Families 的更多信息
+subscription.upgrade.team.v2.learn.more.about.craft.plus	了解更多关于 Craft Plus 的信息
+subscription.upgrade.team.v2.learn.more.about.craft.team	了解有关 Craft Teams 的更多信息
+subscription.upgrade.team.v2.lets.explore	让我们来探索一下吧！
+subscription.upgrade.team.v2.lets.setup.business	来创建我的 Craft Business 吧！
+subscription.upgrade.team.v2.lets.setup.family	来设置我的 Craft Family 吧！
+subscription.upgrade.team.v2.lets.setup.team	来设置我的 Craft Team 吧！
+subscription.upgrade.team.v2.name.your.business	为你的 Business 命名
+subscription.upgrade.team.v2.name.your.family	为你的 Family 命名
+subscription.upgrade.team.v2.name.your.team	为你的团队命名
+subscription.upgrade.team.v2.next	下一步
+subscription.upgrade.team.v2.no.appstore.products.error	无法加载 AppStore 产品
+subscription.upgrade.team.v2.successful.purchase.description	感谢你的购买。你已成功升级。
+subscription.upgrade.team.v2.team.is.set	你的团队已准备就绪！
+subscription.upgrade.team.v2.team.is.upgraded.to.business	你的 Team 订阅已升级为 Business 订阅
+subscription.upgrade.team.v2.upgrade.to.plus	升级至 Plus
+subscription.upgrade.team.v2.waiting.for.appstore	差不多了！请等待 App Store 确认你的订阅。
+subscription.upgrade.team.v2.waiting.for.team.creation	差不多了！请等待你的团队创建完毕。
+subscription.upgrade.team.v2.welcome.to.craft.business	欢迎来到 Craft Business！
+subscription.upgrade.team.v2.welcome.to.craft.family	欢迎来到 Craft Family！
+subscription.upgrade.team.v2.welcome.to.craft.plus	欢迎来到 Craft Plus！
+subscription.upgrade.team.v2.welcome.to.craft.team	欢迎来到 Craft Team！
+subscription.upgrade.to	升级至 [0]
+subscription.upgrade.to.plus	升级至 Plus 并立即获得无限制访问权限。
+subscription.upgrade.to.plus.for.powerful.craft	立即升级至 Plus 以获得更强大的 Craft。
+subscription.upgrade.to.plus.unlimited.access	升级到 Plus 即可获得无限制的访问权限。
+subscription.upgrade.unlock.features	立即升级以解锁这些功能。
+subscription.validating.current.sub	验证你当前的订阅
+subscription.view.plans	查看计划
+subscription.wait.for.sub.confirmation	马上就好！请等待你的订阅确认。
+subscription.wait.to.get.more.or.upgrade	等待 [0] 获取更多次数，或升级到 Plus 获取无限使用权限。
+subscription.watermark.control.desc	使用 Plus 订阅控制水印
+subscription.web.sub.restore.problem	Web 订阅恢复问题
+subscription.weekly	每周
+subscription.windows.sub.restore.problem	Windows 订阅恢复问题
+subscription.x.days.left	还剩 [0] 天
+subscription.x.docs.left	还剩 [0] 个文档
+subscription.x.hours.left	还剩 [0] 小时
+subscription.x.left.until	后即可创建新文档。
+subscription.your.are.on.the.free.plan	你当前使用的是免费套餐

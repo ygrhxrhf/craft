@@ -1,0 +1,10 @@
+stats.blocks	区块
+stats.characters	字符数
+stats.full.document	完整文档
+stats.reading.time	阅读时间
+stats.selection	选择
+stats.stats	统计
+stats.this.page	这一页
+stats.try.pro.text	字数、字符数、区块数量及阅读时间统计仅对 Plus 订阅用户开放。
+stats.without.spaces	不包括空格
+stats.words	字数

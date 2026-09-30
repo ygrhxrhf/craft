@@ -1,0 +1,227 @@
+Browser tab: 1701771220, Title: "所有文档", URL: "https://docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/all".
+408 AXWebArea 所有文档, URL: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/all
+	409 container
+		410 container, ID: root
+			411 container
+				412 container
+					413 container
+						414 button Sidebar Left Icon Chevron Down Bold Icon
+							415 container Sidebar Left Icon
+								416 image
+							417 container Chevron Down Bold Icon
+								418 image
+						419 container
+							420 container Magnifyingglass Icon
+								421 image
+							422 text 打开
+						423 button Bell Badge Icon
+							424 image
+							425 image Bell Badge Icon
+								426 image
+						427 button Question Mark Icon
+							428 container Question Mark Icon
+								429 image
+					430 container
+						431 container, ID: current-space-sidebar
+							432 container
+								433 button zhang's Space Chevron Down Bold Icon
+									434 container
+										435 container
+											436 image
+									437 text zhang's Space
+									438 container Chevron Down Bold Icon
+										439 image
+								440 link Description: Doc Badge Plus Icon 新建文档, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581?nd=11daf0cf-f690-4267-b607-d23cd900d0c6
+									441 container Doc Badge Plus Icon
+										442 image
+									443 text 新建文档
+								444 container
+									445 link Description: Doc On Doc Icon 所有文档, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/all
+										446 container Doc On Doc Icon
+											447 image
+										448 text 所有文档
+									449 link Description: Checkmark Circle Icon 任务 Plus Icon, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/tasks
+										450 container Checkmark Circle Icon
+											451 image
+										452 text 任务
+										453 button Plus Icon
+											454 container Plus Icon
+												455 image
+									456 link Description: Calendar Icon 日历 Dot Viewfinder Icon, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/calendar
+										457 container Calendar Icon
+											458 image
+										459 text 日历
+										460 button Dot Viewfinder Icon
+											461 container Dot Viewfinder Icon
+												462 image
+								463 link Description: Cloud Icon 连接, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/connections
+									464 container Cloud Icon
+										465 image
+									466 text 连接
+								467 link Description: Person Wave2 Fill Icon 与我共享 0, Value: docs.craft.do/shared-with-me
+									468 container Person Wave2 Fill Icon
+										469 image
+									470 text 与我共享
+									471 text 0
+								472 link Description: Doc Append Icon 我的模板 0, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/templates
+									473 container Doc Append Icon
+										474 image
+									475 text 我的模板
+									476 text 0
+								477 container
+									478 container
+										479 button 星标 Plus Bold Icon Chevron Down Icon
+											480 text 星标
+											481 button Plus Bold Icon
+												482 container Plus Bold Icon
+													483 image
+											484 container Chevron Down Icon
+												485 image
+									486 text 收藏文档以便快速访问
+								487 container
+									488 container
+										489 button 文件夹 Plus Bold Icon Chevron Down Icon
+											490 text 文件夹
+											491 button Plus Bold Icon
+												492 container Plus Bold Icon
+													493 image
+											494 container Chevron Down Icon
+												495 image
+									496 container
+										497 container
+											498 container
+												499 link (collapsed) Description: Tray Full Icon Expand 未分类 未分类 4, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/inbox, Secondary Actions: Expand
+													500 container
+														501 container Tray Full Icon
+															502 image
+														503 button Expand 未分类
+															504 image Arrow Triangle Down Fill Icon
+																505 image
+													506 text 未分类
+													507 text 4
+											508 container
+												509 link (collapsed) Description: 👋 Expand How to use Craft How to use Craft 5, Value: docs.craft.do/s/zhang's-Space--3b788e8c-7aa3-d2e8-fc70-0c112def1581/f/How-to-use-Craft--7d860c07-cf11-1ab4-08cf-7b6ae60f25d7, Secondary Actions: Expand
+													510 container
+														511 text 👋
+														512 button Expand How to use Craft
+															513 image Arrow Triangle Down Fill Icon
+																514 image
+													515 text How to use Craft
+													516 text 5
+										517 container
+								518 container
+									519 container
+										520 button 标签 Plus Bold Icon Chevron Down Icon
+											521 text 标签
+											522 button Plus Bold Icon
+												523 container Plus Bold Icon
+													524 image
+											525 container Chevron Down Icon
+												526 image
+									527 text 固定关键标签以便快速访问
+							528 button Desktop Icon
+								529 container Desktop Icon
+									530 image
+							531 button Square And Arrow Down Icon
+								532 container Square And Arrow Down Icon
+									533 image
+							534 button Person3 Fill Icon
+								535 container Person3 Fill Icon
+									536 image
+						537 container
+							538 button Plus Circle Fill Icon
+								539 container Plus Circle Fill Icon
+									540 image
+							541 heading 所有文档, Value: 1
+								542 text 所有文档
+							543 button Crown Icon 获得 Craft Plus
+								544 container Crown Icon
+									545 image
+								546 text 获得 Craft Plus
+							547 container
+								548 button Rectangle Grid2x2 Icon
+									549 container Rectangle Grid2x2 Icon
+										550 image
+								551 button Rectangle3 Group Icon
+									552 container Rectangle3 Group Icon
+										553 image
+								554 button Line3 Horizontal Icon
+									555 container Line3 Horizontal Icon
+										556 image
+							557 button (collapsed) Ellipsis Icon, Secondary Actions: Expand
+								558 container Ellipsis Icon
+									559 image
+							560 container
+								561 container
+								562 container
+									563 container
+										564 link Description: 2025/5/5 Folder Icon 日记 • 已更新 14 小时前, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/e3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef
+											565 container
+												566 text 2025/5/5
+												567 checkbox (settable, integer), Value: 0, ID: base-ui-_r_3g_
+												568 container Folder Icon
+													569 image
+												570 text 日记
+												571 text •
+												572 text 已更新 14 小时前
+										573 link Description: 无标题文档 已更新 4天前, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/83b5b441-916b-4713-86bc-9805695b32cf
+											574 container
+												575 text 无标题文档
+												576 checkbox (settable, integer), Value: 0, ID: base-ui-_r_3l_
+												577 text 已更新 4天前
+										578 link Description: 无标题文档 已更新 4天前, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/ae595a30-1377-41d3-aa5a-238c02cb291c
+											579 container
+												580 text 无标题文档
+												581 checkbox (settable, integer), Value: 0, ID: base-ui-_r_3q_
+												582 text 已更新 4天前
+										583 link Description: 无标题文档 Folder Icon 日记 • 已更新 1 年前, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/4be8cd09-103d-42a0-8d99-b930f0cf1825
+											584 container
+												585 text 无标题文档
+												586 checkbox (settable, integer), Value: 0, ID: base-ui-_r_3v_
+												587 container Folder Icon
+													588 image
+												589 text 日记
+												590 text •
+												591 text 已更新 1 年前
+										592 link Description: 无标题文档 已更新 1 年前, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/35edfc37-d02d-4ee0-9499-2554d8ea3543
+											593 container
+												594 text 无标题文档
+												595 checkbox (settable, integer), Value: 0, ID: base-ui-_r_44_
+												596 text 已更新 1 年前
+									597 container
+										598 link Description: Watch: how to videos Folder Icon How to use Craft • 已更新 1 年前, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/c5960794-26af-d54b-0e5a-c4ef5de3ee74
+											599 container
+												600 text Watch: how to videos
+												601 checkbox (settable, integer), Value: 0, ID: base-ui-_r_49_
+												602 container Folder Icon
+													603 image
+												604 text How to use Craft
+												605 text •
+												606 text 已更新 1 年前
+										607 link Description: Welcome to Craft 已更新 3 年前, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/D393492D-4314-4D77-A103-7428AAF2D228
+											608 container
+												609 text Welcome to Craft
+												610 checkbox (settable, integer), Value: 0, ID: base-ui-_r_4e_
+												611 text 已更新 3 年前
+										612 link Description: Craft Handbook Folder Icon How to use Craft • 已更新 3 年前, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/272b46d5-6655-3cd0-9148-58050e4bd445
+											613 container
+												614 container
+													615 text Craft Handbook
+													616 checkbox (settable, integer), Value: 0, ID: base-ui-_r_4j_
+													617 container Folder Icon
+														618 image
+													619 text How to use Craft
+													620 text •
+													621 text 已更新 3 年前
+										622 link Description: Quick Start: get going Folder Icon How to use Craft • 已更新 3 年前, Value: docs.craft.do/editor/d/3b788e8c-7aa3-d2e8-fc70-0c112def1581/ebd94a9d-c16d-bfc4-29b2-e54bf4357c72
+											623 container
+												624 container
+													625 text Quick Start: get going
+													626 checkbox (settable, integer), Value: 0, ID: base-ui-_r_4o_
+													627 container Folder Icon
+														628 image
+													629 text How to use Craft
+													630 text •
+													631 text 已更新 3 年前
+632 AXWebArea ns, URL: gtm.craft.do/ns.html?id=GTM-TZCGFK6
+633 AXWebArea, URL: about:blank

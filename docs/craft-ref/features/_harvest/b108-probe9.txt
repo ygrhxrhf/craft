@@ -1,0 +1,17 @@
+export tables = 1
+  `c` <- gBn   (table@3564566)
+
+--- def of gBn @-1 ---
+
+"{dark:!0}" x1
+   first @406798:  .cm-tooltip-arrow:after":{borderTopColor:e4e,borderBottomColor:e4e},".cm-tooltip-autocomplete":{"& > ul > li[aria-selected]":{backgroundColor:Y4t,color:Nie}}},{dark:!0}),M5n=uE.define([{tag:W.keyword,color:U5n},{tag:[W.name,W.deleted,W.character,W.p
+
+"{dark:!1}" x1
+   first @408679: b:Oe=!0,basicSetup:ke=!0,root:he,initialState:Ae}=r,[Se,$e]=ob.useState(),[re,rt]=ob.useState(),[at,wt]=ob.useState(),G=li.theme({"&":{backgroundColor:"#fff"}},{dark:!1}),Ce=li.theme({"&":{height:x,minHeight:T,maxHeight:X,width:M,minWidth:C,maxWidth:
+
+"defineTheme" x0
+
+"color-scheme" x1
+   first @1113694: lution","scan","grid","orientation","device-pixel-ratio","min-device-pixel-ratio","max-device-pixel-ratio","pointer","any-pointer","hover","any-hover","prefers-color-scheme","dynamic-range","video-dynamic-range"],joe=H2(fzt),hzt=["landscape","portrai
+
+"colorScheme" x0

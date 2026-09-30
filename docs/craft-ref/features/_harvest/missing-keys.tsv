@@ -1,0 +1,1753 @@
+account.delete.email.address	邮箱地址（用于确认）
+activity.activity.footer.earlier	较早
+activity.changes.x.few	
+activity.changes.x.many	
+activity.changes.x.one	[0] 项变更
+activity.changes.x.other	[0] 项变更
+activity.changes.x.two	
+activity.changes.x.zero	
+activity.currently.showing.x.days	目前显示过去 [0] 天。
+activity.one.change	1 项变更
+activity.snapshot.placeholder	还没有任何保存的版本。
+add.custom.domain.fail.desc	自定义域名无效，请重试
+add.custom.domain.fail.title	无法添加自定义域名
+add.email.to.invite	添加邮箱地址以邀请协作者
+add.new.item	添加新项目
+add.to.spaces	添加到空间
+add.to.spaces.desc	至少选择一个空间，受邀成员注册后即可加入。
+ai.add.document.to	添加文档至 [0]
+ai.import.personalized.document	导入你的个性化文档
+ai.select.space.to.add.this.document	选择要添加此文档的空间
+alert.add.email.in.settings	要升级你的订阅，请在“设置”中为你的账户添加邮箱地址。完成后，你可以回到这里继续！
+alert.approving.request.failed	批准请求失败
+alert.authorization.error	授权错误
+alert.authorization.successful	授权成功
+alert.authorization.successful.subtitle	你现在可以在你的文档中使用此集成。
+alert.cannot.paste.into.selected.field.subtitle	请确保复制的值与字段类型兼容
+alert.check.connection	请检查你的网络连接
+alert.code.copied.to.clipboard	代码已复制到剪贴板
+alert.collection.delete.desc	选定的区块包含一个合集，你的所有内容将会丢失
+alert.coming.soon	即将推出
+alert.configuration.is.invalid	配置无效。请检查语法并重试。
+alert.connection.error	连接错误
+alert.copy.success.link	链接已复制到剪贴板
+alert.could.not.delete.account	无法删除账户
+alert.could.not.delete.document	无法删除文档
+alert.could.not.move.space	无法移动空间
+alert.could.not.move.to.folder	无法移至文件夹
+alert.could.not.resolve.the.thread	无法解决该讨论
+alert.could.not.unresolve.the.thread	无法重新打开该讨论
+alert.could.not.update.space.name	无法更新空间名称
+alert.declining.request.failed	拒绝请求失败
+alert.delete.field.desc	你确定要删除该字段吗？
+alert.delete.style.desc	你确定要删除样式“[0]”吗？
+alert.delete.style.title	删除样式
+alert.delete.value.desc	你确定要删除该值吗？
+alert.deleting.view.desc	你确定要删除此视图吗
+alert.document.deleted	文档已删除
+alert.document.move.tofolder	已移至 [0]
+alert.documents.exported	你的文档已导出！
+alert.documents.exported.desc	下载下方的存档文档。
+alert.duplicate.doc.error	无法复制文档。请稍后重试。
+alert.error.admin.site.available.for.team.admins	管理站点仅适用于团队管理员
+alert.error.ask.admin	向你的管理员寻求更多帮助。
+alert.error.change.permission.title	更改用户权限失败
+alert.error.content.generic	请稍后再试。
+alert.error.content.generic.long	请稍后重试或联系客服。
+alert.error.creating.space	创建空间时出错（[0]）
+alert.error.creating.task	创建任务时发生错误
+alert.error.creating.team	创建团队时出错（[0]）
+alert.error.custom.paths.available.with.custom.domains	自定义路径仅适用于自定义域名。
+alert.error.custom.paths.empty	路径不能为空。
+alert.error.custom.paths.no.spaces	路径不能包含空格
+alert.error.custom.paths.too.long	路径长度必须少于 500 个字符。
+alert.error.custom.paths.too.short	路径长度必须至少为 2 个字符
+alert.error.delete.permission.title	删除用户权限失败
+alert.error.desc	告诉我们如何重现该问题以及你遇到了哪些问题
+alert.error.downloading.file	下载文件时出错
+alert.error.importing.markdown.documents	导入 Markdown 文档时出错
+alert.error.invalid.path.base	路径无效
+alert.error.path.cannot.be.changed	路径无法更改
+alert.error.sending.team.invites	发送团队邀请时出错
+alert.error.unknown	出了点问题
+alert.error.while setting.your.name	设置你的姓名时发生错误
+alert.exporting.md.documents	导出 Markdown 文档时出错
+alert.exporting.textbundle	导出 Textbundle 时出错
+alert.failed.to.register.subscription	订阅注册失败
+alert.failed.to.updated.subscription	更新订阅失败
+alert.field.type.changing.title	字段类型变更
+alert.file.not.supported	不支持此文件类型
+alert.import.from.notion	从 Notion 导入
+alert.import.from.notion.desc	在导入之前，请确保 Notion 中的内容以正确的格式导出。这可确保所有内容成功传输。
+alert.items.moved.to.recently.deleted	这些项目将移至最近删除。
+alert.lazy.load.desc	请检查你的网络连接或重新加载页面。
+alert.leave.confirm	离开
+alert.leave.shared.document.title	离开共享文档
+alert.left.shared.document	已离开共享文档
+alert.license.key.already.subscribed	用户已订阅
+alert.license.key.already.used	许可证密钥已被使用
+alert.license.key.invalid.or.expired	许可证密钥无效或已过期
+alert.link.not.created	无法创建链接
+alert.link.not.removed	无法移除链接
+alert.link.not.updated	无法更新链接
+alert.little.detail.helps	每个小细节都有帮助！
+alert.max.in.progress.reminders	你最多可以有 [0] 个进行中的提醒。
+alert.max.x.reminders	你最多可以有 [0] 个提醒。
+alert.no.files.to.import	未找到要导入的文件！
+alert.no.internet.connection.title	无网络连接
+alert.not.connected.to.internet.adding.reactions	离线状态下无法添加表情
+alert.not.connected.to.internet.removing.reactions	离线状态下无法移除表情
+alert.not.update.comment	无法更新评论
+alert.page.removed	页面已被移除
+alert.recent.doc.removed	最近的文档已移除
+alert.reload.page	请重新加载页面并确保此 Craft 页面已共享
+alert.remove.doc.desc	无法移除文档，请稍后重试。
+alert.remove.doc.title	移除文档
+alert.reschedule.reminder.desc	请确认你是否要更改。
+alert.send.report	发送报告
+alert.share.unknown.error	未知错误
+alert.something.went.wrong.contact.us	好像出了点问题。请重试或联系我们。
+alert.subscription.provider.changes.are.not.supported	不支持订阅提供商变更。请联系我们寻求帮助。
+alert.successfully.imported.md.document	成功导入 1 个 Markdown 文档
+alert.successfully.imported.md.document.plural	成功导入 [0] 个 Markdown 文档
+alert.task.moved.to.a.daily.note.plural	任务已移至每日笔记
+alert.task.moved.to.plural	任务已移至 [0]
+alert.team.already.subscribed	你的团队已订阅
+alert.team.settings.open.fail.desc	缺少团队 ID
+alert.team.settings.open.fail.title	无法打开团队设置
+alert.template.not.supported.on.mobile	目前不支持在移动设备上通过模板创建文档。
+alert.thank.for.report.desc	感谢你的反馈，我们会尽快与你联系。
+alert.thank.for.your.feedback	感谢你的反馈！
+alert.try.it.later	请稍后再试。
+alert.unknown.error.try.again	未知错误 - 请重试
+alert.unsaved.changes.close.the.document	你有未保存的更改。确定要关闭该文档吗？
+alert.warning.sure	你确定吗？
+analytics.analytics.for	'[0]' 分析
+analytics.avg.reading.time	平均阅读时间
+analytics.could.not.load	无法加载数据，请检查你的网络连接。
+analytics.direct.none	直接 / 无
+analytics.open.analytics.guide	打开分析指南
+analytics.readers	读者
+analytics.readers.viewed.total	位读者在过去 30 天内查看了此链接
+analytics.refresh.data	刷新数据
+analytics.time	时间
+analytics.top.browsers	热门浏览器
+analytics.top.countries	热门国家
+analytics.top.devices	热门设备
+analytics.top.pages	热门页面
+analytics.top.sources	热门来源
+analytics.total.readers	读者总数
+analytics.total.views	总浏览量
+aspect.ratio	长宽比
+assistant.add.additional.context	添加更多上下文
+assistant.add.helpful.comments.to.this.code	请为这段代码添加有用的注释
+assistant.analyze.the.writing	分析本页的写作风格
+assistant.analyze.this.code.for.potential.bugs	请分析这段代码，找出潜在的错误
+assistant.analyze.writing.style	分析写作风格
+assistant.analyze.writing.style.in.this.doc	分析本文档的写作风格
+assistant.ask.about.pdf	询问有关 PDF 的问题
+assistant.ask.about.this.pdf	询问有关此 PDF 的信息
+assistant.ask.about.this.pdf.prompt	我对这份 PDF 有一些疑问： 
+assistant.ask.craft	询问 Craft：
+assistant.ask.for.feedback	征求反馈
+assistant.ask.for.help	寻求帮助
+assistant.based.on.my.daily.notes.what.progress.have.i.made	根据我的每日笔记，我在过去几周取得了哪些进展？
+assistant.can.you.suggest.related.topics.for.me	根据这些文档的内容，你能否推荐一些相关的研究主题供我参考？
+assistant.can.you.suggest.related.topics.for.me.to.explore	根据本页内容，你能否推荐一些相关的研究主题供我参考？
+assistant.check.grammar.and.spelling	检查语法和拼写
+assistant.check.these.blocks.for.spelling.and.grammar	请检查这些区块的拼写和语法错误，并提出改进建议
+assistant.check.this.page.for.spelling.and.grammar	请检查此页面是否存在拼写和语法错误，并提出改进建议
+assistant.check.tone.of.voice	检查语气
+assistant.compare.docs	比较文档
+assistant.compare.these.docs	请比较这些文档
+assistant.create.a.comprehensive.summary	请根据我的所有文档内容，创建一份全面的摘要： 
+assistant.create.a.summary	创建摘要
+assistant.create.caption	创建说明
+assistant.create.caption.for.this.img	为这张图片创建说明
+assistant.create.caption.prompt	请为这张图片创建描述性说明
+assistant.delete.conversation.desc	你确定要删除此对话吗？此操作无法撤销。
+assistant.describe.this.image	描述这张图片
+assistant.describe.this.image.prompt	请描述一下你在这张图片中看到了什么
+assistant.document.review	文档审阅
+assistant.document.review.desc	获取关于你写作风格的反馈
+assistant.download.failed	下载失败
+assistant.ensure.clarity	确保清晰
+assistant.expand.weak.areas	补充薄弱部分
+assistant.explain.a.feature	解释一项功能
+assistant.explain.like.im.five	用五岁小孩都能听懂的方式解释
+assistant.explain.like.im.five.prompt	请用五岁小孩都能听懂的方式给我解释一下这个话题： 
+assistant.explain.this.code	解释这段代码
+assistant.explain.this.feature.to.me.x	请给我解释一下这个功能： 
+assistant.explain.what.this.code.does	请解释一下这段代码的作用
+assistant.extract.action.items	提取行动项
+assistant.extract.action.items.from.these.docs	请从这些文档中提取行动项
+assistant.extract.action.items.from.this.doc	请从本文档中提取行动项
+assistant.extract.action.items.from.this.page	请从此页面提取行动项
+assistant.extract.any.action.items.from.this.pdf	请从这份 PDF 中提取所有行动项
+assistant.extract.key.info	提取关键信息
+assistant.extract.key.info.prompt	请从这份 PDF 中提取关键信息
+assistant.extract.text.from.image	从图像中提取文本
+assistant.extract.text.from.image.prompt	请提取并转录此图像中可见的所有文字
+assistant.find.all.blocks.tagged.x	查找所有标记为 # 的区块
+assistant.find.an.entry	查找条目
+assistant.find.and.summarize.anything.related.to	请查找并总结与以下内容相关的任何信息： 
+assistant.find.areas.in.my.doc.that.need.more.detail	找出文档中需要更详细解释的部分
+assistant.find.areas.in.this.page	找出此页面中需要更详细说明的区域
+assistant.find.docs	查找文档
+assistant.find.document.about.x	查找以下方面的文档： 
+assistant.find.other.docs.on.this.topic	请查找有关此主题的其他文档
+assistant.find.patterns	寻找规律
+assistant.find.potential.bugs	查找潜在漏洞
+assistant.find.related.docs	查找相关文档
+assistant.general.assistance.for.any.task	通用任务助手
+assistant.generate.alt.text	生成替代文本
+assistant.generate.alt.text.prompt	为该图像生成描述性替代文本
+assistant.generate.insights	生成洞察
+assistant.get.an.executive.summary	获取执行摘要
+assistant.get.an.executive.summary.prompt	请调研这一主题并为我撰写一份执行摘要： 
+assistant.get.an.overview	获取概览
+assistant.get.started.with.craft	我该如何开始使用 Craft？
+assistant.give.feedback.on.structure	获取结构方面的反馈
+assistant.help.filter.collection	帮助筛选合集
+assistant.help.me.brainstorm.ideas	请帮我集思广益，想想如何扩展这个页面
+assistant.help.me.brainstorm.ideas.to.expand.this.doc	请帮我集思广益，想想如何扩展这份文档
+assistant.help.me.find.a.doc.that.was.about	你能帮我找到一份与以下主题相关的文档吗？ 
+assistant.help.me.find.the.entry.that.contains	请帮我找到包含以下内容的条目： 
+assistant.help.me.organize.my.docs.by.topic	你能帮我按主题整理一下我的文档吗？
+assistant.how.can.i.optimize.this.code	如何优化这段代码？
+assistant.how.could.i.make.these.blocks.easier.to.understand	我该如何让这些区块更容易理解？
+assistant.how.could.i.make.these.docs.easier.to.understand	我该如何让这些文档更容易理解？
+assistant.how.could.i.make.this.doc.easier.to.understand	我该如何让这份文档更容易理解？
+assistant.how.could.i.make.this.page.easier.to.understand	我该如何让这个页面更容易理解？
+assistant.how.could.i.refactor.this.code	如何重构这段代码以提高其可读性？
+assistant.identify.patterns	识别模式
+assistant.improve.clarity	提升清晰度
+assistant.improve.spelling.and.grammar	改进拼写和语法
+assistant.insights.can.you.derive	你从这个合集中能获得哪些启发？
+assistant.learn.more.about.history	进一步了解对话历史
+assistant.list.all.docs.related.to	请列出所有与以下内容相关的文档： 
+assistant.list.all.ongoing.tasks	请列出所有正在进行的任务
+assistant.list.all.tasks.for.today	请列出今天的所有任务
+assistant.list.all.tasks.i.completed.today	请列出我今天完成的所有任务
+assistant.list.completed.tasks	列出已完成的任务
+assistant.list.ongoing.tasks	列出正在进行的任务
+assistant.list.todays.tasks	列出今日任务
+assistant.list.upcoming.tasks	列出即将执行的任务
+assistant.make.it.more.concise	使其更简洁
+assistant.make.it.more.friendly	让它更友好
+assistant.make.it.more.professional	使其更专业
+assistant.make.this.doc.more.concise	如何使这份文档更简洁？
+assistant.make.this.more.friendly	我怎样才能让它更友好、更平易近人？
+assistant.make.this.sound.more.professional	我怎样才能让我的表达听起来更专业？
+assistant.organize.by.topic	按主题整理
+assistant.organize.my.docs.in.craft	如何在 Craft 中整理我的文档？
+assistant.organizing.docs	整理文档
+assistant.patterns.do.you.notice	你从这个合集中发现了哪些规律？
+assistant.please.summarize.these.blocks	请总结这些区块
+assistant.prioritize.tasks	确定任务优先级
+assistant.prompt.brainstorm.ideas	集思广益
+assistant.prompt.brainstorm.ideas.template	集思广益关于这个话题的想法： --- {0} ---
+assistant.prompt.change.tone.confident	改为自信的语气
+assistant.prompt.change.tone.confident.template	改为自信的语气: --- {0} --- 
+assistant.prompt.change.tone.friendly	改为友好的语气
+assistant.prompt.change.tone.friendly.template	改为友好的语气: --- {0} --- 
+assistant.prompt.change.tone.professional	改为专业的语气
+assistant.prompt.change.tone.professional.template	改为专业的语气: --- {0} --- 
+assistant.prompt.continue.writing	继续写作
+assistant.prompt.continue.writing.template	继续写作： --- {0} ---
+assistant.prompt.explain	给我解释一下
+assistant.prompt.explain.template	用五岁小孩能懂的方式给我解释： --- {0} --- 
+assistant.prompt.find.action.items	找出行动项
+assistant.prompt.fix.spelling.and.grammar	修正拼写和语法
+assistant.prompt.fix.spelling.and.grammar.template	修正拼写和语法: --- {0} --- 
+assistant.prompt.generate.hashtags	生成主题标签
+assistant.prompt.generate.hashtags.template	根据以下内容生成主题标签： --- {0} ---
+assistant.prompt.generate.keywords	生成关键词
+assistant.prompt.generate.keywords.template	根据以下内容生成关键词： --- {0} ---
+assistant.prompt.improve.writing	改善写作
+assistant.prompt.improve.writing.template	改善写作: --- {0} --- 
+assistant.prompt.make.longer	加长
+assistant.prompt.make.longer.template	加长: --- {0} ---
+assistant.prompt.make.shorter	缩短
+assistant.prompt.make.shorter.template	缩短: --- {0} --- 
+assistant.prompt.outline	创建大纲
+assistant.prompt.outline.template	根据以下内容创建大纲： --- {0} ---
+assistant.prompt.pros.and.cons	列出优缺点
+assistant.prompt.pros.and.cons.template	列出这份文档的优缺点： --- {0} ---
+assistant.prompt.simplify.language	简化语言
+assistant.prompt.simplify.language.template	简化语言: --- {0} --- 
+assistant.prompt.suggest.title	建议标题
+assistant.prompt.suggest.title.template	这份文档的好标题是什么？ : --- {0} ---
+assistant.prompt.summarize	总结
+assistant.prompt.summarize.template	总结一下： --- {0} ---
+assistant.prompt.translate.dutch	翻译成荷兰语
+assistant.prompt.translate.dutch.template	将其翻译成荷兰语： --- {0} ---
+assistant.prompt.translate.english	翻译成英文
+assistant.prompt.translate.english.template	将其翻译成英文： --- {0} ---
+assistant.prompt.translate.french	翻译成法语
+assistant.prompt.translate.french.template	将其翻译成法语： --- {0} ---
+assistant.prompt.translate.german	翻译成德语
+assistant.prompt.translate.german.template	将其翻译成德语： --- {0} ---
+assistant.prompt.translate.italian	翻译成意大利语
+assistant.prompt.translate.italian.template	将其翻译成意大利语： --- {0} ---
+assistant.prompt.translate.japanese	翻译成日语
+assistant.prompt.translate.japanese.template	将其翻译成日语： --- {0} ---
+assistant.prompt.translate.korean	翻译成韩语
+assistant.prompt.translate.korean.template	将其翻译成韩语： --- {0} ---
+assistant.prompt.translate.portuguese	翻译成葡萄牙语
+assistant.prompt.translate.portuguese.template	将其翻译成葡萄牙语： --- {0} ---
+assistant.prompt.translate.spanish	翻译成西班牙语
+assistant.prompt.translate.spanish.template	将其翻译成西班牙语： --- {0} ---
+assistant.prompt.write.article	写一篇关于这个话题的文章
+assistant.prompt.write.article.template	写一篇关于这个主题的文章： --- {0} ---
+assistant.prompt.write.blog	关于这个话题写一篇博客
+assistant.prompt.write.blog.template	关于这个话题写一篇博客: --- {0} --- 
+assistant.prompt.write.essay	关于这个话题写一篇文章
+assistant.prompt.write.essay.template	关于这个话题写一篇文章: --- {0} --- 
+assistant.prompt.write.example	为此创建示例文本
+assistant.prompt.write.example.template	为此创建示例文本： --- {0} ---
+assistant.prompt.write.facebook.post	写一篇关于这个主题的 Facebook 帖子
+assistant.prompt.write.facebook.post.template	写一篇关于这个主题的 Facebook 帖子： --- {0} ---
+assistant.prompt.write.poem	写一首关于这个话题的诗
+assistant.prompt.write.poem.template	就这个话题写一首诗： --- {0} ---
+assistant.prompt.write.twitter.post	写一篇关于这个话题的 X (Twitter) 帖子
+assistant.prompt.write.twitter.post.template	写一篇关于这个主题的 Twitter 帖子： --- {0} ---
+assistant.recently.edited	最近编辑
+assistant.reflect.on.progress	反思进展
+assistant.research.a.subject	研究某个主题
+assistant.research.a.topic	研究某个主题
+assistant.research.a.topic.online	在线搜索相关主题
+assistant.research.this.topic.for.me	请帮我研究一下这个主题： 
+assistant.search.in.natural.language	使用自然语言进行搜索
+assistant.search.in.pdf	在 PDF 中搜索
+assistant.search.in.pdf.prompt	请在 PDF 中搜索： 
+assistant.search.using.natural.language	使用自然语言进行搜索
+assistant.selected.block	已选区块
+assistant.semantic.search	语义搜索
+assistant.share.docs.with.others	如何与他人共享文档？
+assistant.suggest.how.i.can.set.up.filters	请建议如何设置筛选条件，以便我能从该合集中查找以下内容： 
+assistant.suggest.optimizations	提出优化建议
+assistant.suggest.refactoring	建议重构
+assistant.suggest.related.topics	建议相关主题
+assistant.suggest.related.topics.for.me.to.explore	你能否根据我文档的内容，推荐一些相关的研究主题供我参考？
+assistant.summarize.docs	文档摘要
+assistant.summarize.entries	条目摘要
+assistant.summarize.last.week	上周总结
+assistant.summarize.my.daily.notes	请总结一下我上周的每日笔记。
+assistant.summarize.pdf	PDF 摘要
+assistant.summarize.pdf.prompt	请提供这份 PDF 文档的完整摘要。
+assistant.summarize.the.entries.in.this.collection	请概括总结此合集中的条目。
+assistant.summarize.the.key.points	请总结这份 PDF 中的要点。
+assistant.summarize.these.docs	请总结这些文档
+assistant.summarize.this.doc	请总结这份文档
+assistant.summarize.this.page	请总结本页内容
+assistant.this.conversation	这次对话
+assistant.translate.these.blocks.into	请将以下区块翻译成：
+assistant.translate.these.docs.into	请将这些文档翻译成： 
+assistant.translate.this.doc.into	请将此文档翻译成： 
+assistant.translate.this.page.into	请将此页面翻译成： 
+assistant.use.templates.in.craft	如何在 Craft 中使用模板？
+assistant.using.ai.assistant	使用 AI 助手
+assistant.using.templates	使用模板
+assistant.web.research	网络搜索
+assistant.what.are.my.upcoming.tasks	我接下来的任务有哪些？
+assistant.what.patterns.do.you.notice.in.my.daily.notes	你从我的每日笔记中发现了什么规律？
+assistant.which.tasks.should.i.prioritize	我应该优先处理哪些任务？
+blockdetails.ios.export.pdf.a.darkEnabled	深色模式
+blockdetails.ios.export.pdf.a.pagenumbers	显示页码
+blockdetails.ios.export.pdf.a.watermark	显示水印
+blockdetails.ios.export.pdf.paper.a4	A4
+blockdetails.ios.export.pdf.paper.usletter	信纸
+blockdetails.ios.insertmenu.files	文件
+blockdetails.mentions.collapse.all	全部折叠
+blockdetails.mentions.loading.links	正在加载此页面的链接…
+blockdetails.mentions.sort.alphabetically	按字母顺序排序
+blockdetails.mentions.sort.by.date.created	按创建日期排序
+blockdetails.mentions.sort.by.number.of.links	按链接数排序
+blockdetails.share.image.panel.config.font.big	大
+blockdetails.share.image.panel.config.font.regular	标准
+blockdetails.share.image.panel.config.font.small	小
+blockdetails.share.image.panel.config.section.font.title	字体大小
+blockdetails.share.image.panel.config.section.size.title	页面大小
+blockdetails.share.image.panel.config.size.fit	适应文档
+blockdetails.share.image.panel.config.size.landscape	横排
+blockdetails.share.image.panel.config.size.portrait	竖排
+blockdetails.share.image.panel.config.size.square	正方形
+blockdetails.sidebar.pageinfo	页面信息
+book.a.call	预约通话
+browse.about.x	关于 [0]
+browse.cannot.open.space.desc	你可能需要使用其他帐户登录，或者请空间所有者邀请你。
+browse.change.space.avatar.desc	添加或更改团队的徽标或图标
+browse.change.space.avatar.error	无法更改空间头像
+browse.change.space.name.desc	更改你的空间名称
+browse.click.to.edit	点击编辑
+browse.collapse.folders	折叠文件夹
+browse.collapse.starred	折叠收藏
+browse.collapse.tags	折叠标签
+browse.color.choose	选择颜色
+browse.customize.home	自定义主页
+browse.customize.sidebar	自定义侧边栏
+browse.deleting.space	正在删除空间…
+browse.doc.not.in.folder.will.appear.here	不在任何文件夹中的文档将显示在此处
+browse.expand.folders	展开文件夹
+browse.expand.starred	展开收藏
+browse.expand.tags	展开标签
+browse.folder.all.documents	此空间中的所有文档
+browse.folder.created	文件夹已创建
+browse.folder.name	文件夹名称
+browse.icon.choose	选择一个图标
+browse.keep.things.tidy	保持整洁
+browse.one.document	1 个文档
+browse.organize.includes.all.your.documents.and.folders	整理包括你的所有文档和文件夹
+browse.sort.alphabetically	按字母顺序
+browse.sort.date.created	创建日期
+browse.sort.date.created.shared	创建/共享日期
+browse.sort.date.updated	更新日期
+browse.sort.date.viewed	浏览日期
+browse.sort.kind	类型
+browse.sort.last.edited	最后编辑时间
+browse.sort.manual	手动的
+browse.sort.shared.by	分享者
+browse.star.doc.you.want.to.easily.find.later	收藏你想要稍后轻松找到的文档
+browse.starred.desc	收藏你想要稍后轻松找到的文档。只有你能看到自己的收藏项目。
+browse.start.something.new	开始新创作
+browse.task.will.appear.here	任务将显示在这里
+btn.invite.to.your.team	邀请加入你的团队
+button.read.more	阅读更多
+calendar.add.task	添加任务
+calendar.date.last.30.days	过去 30 天
+calendar.date.last.7.days	过去 7 天
+calendar.date.last.weekday	上[0]
+calendar.date.last.weekday.feminine	
+calendar.date.later	之后
+calendar.date.next.30.days	接下来的 30 天
+calendar.date.next.7.days	接下来的 7 天
+calendar.date.next.weekday	下[0]
+calendar.date.next.weekday.feminine	
+calendar.date.tomorrow	明天
+calendar.event.dailynote.create	创建每日笔记
+calendar.event.details	详情
+calendar.event.show.x.more.notes	再显示 [0] 个
+calendar.one.month.ago	1 个月前
+calendar.overdue.since	自 [0] 起已逾期
+calendar.show.month	显示月视图
+calendar.show.next.month	显示下个月
+calendar.show.previous.day	显示前一天
+calendar.show.previous.days	显示前几天
+calendar.show.previous.month	显示上个月
+calendar.show.week	显示周视图
+calendar.x.month.ago	[0] 个月前
+cannot.open.notification	无法打开通知
+clipboard.item.one	[0] 件
+clipboard.items.x	[0] 件
+collab.access.edit.and.comment	可以编辑和评论
+collab.access.footer	将链接设置为"查看"或"编辑"以方便协作，无需 Craft 帐户。
+collab.access.only.collaborators	仅限有访问权限的协作者
+collab.add.to.space	添加到空间
+collab.by.author	由[0]
+collab.by.author.capital	来自 [0]
+collab.cant.delete.this.space	你无法删除该空间。
+collab.comment.delete.thread	删除话题
+collab.comment.delete.thread.question	删除话题？
+collab.comment.failed.to.edit	编辑失败
+collab.comment.failed.to.update	更新失败
+collab.comment.one.more.comment	还有 1 条评论
+collab.comment.type.placeholder.unresolve	输入你的评论以重新打开
+collab.comment.unable.to.load.comment	无法加载评论
+collab.comment.x.more.comments	还有 [0] 条评论
+collab.content.not.published	你的内容已取消发布
+collab.contributor.anonymus	[0]（外部）
+collab.could.not.invite.users	无法邀请 [0] 位用户
+collab.create.a.team.invite.others	创建团队，邀请他人并开始协作。
+collab.editor.in.this.document	本文档的编辑者
+collab.invite.all.to.view.doc	邀请所有人查看文档
+collab.invite.members.to.space	邀请成员加入 [0]
+collab.invite.people.to.collaborate	邀请他人协作
+collab.invite.share.doc	分享文档
+collab.invite.to.collaborate	邀请协作
+collab.invite.to.collaborate.desc	即使没有 Craft 帐户，也能轻松与任何人协作
+collab.invite.to.view.doc	邀请查看文档
+collab.invited.collaborators	受邀协作者
+collab.keep.invited.access	保留受邀访问权限
+collab.notifications.disable	已禁用电子邮件通知
+collab.notifications.disabled.desc	要接收电子邮件通知，前往设置并启用电子邮件通知。
+collab.only.accessible.to.you	只有你可以访问
+collab.people.invite	邀请他人
+collab.reacted.count.2	[0] 和 [1] 添加了 [2] 表情
+collab.reacted.count.x	[0] 和 [1] 添加了 [2] 表情
+collab.request.access.to.document.subtitle	你的请求获得批准后，你可以查看此文档。
+collab.settings.and.members	设置和成员
+collab.shared.document.request.sent	请求已发送
+collab.sharing.access.in.space	[0] 中的人员可以访问此文档。
+collab.sharing.learn.more	共享功能如何使用？
+collab.space.delete.offline.space	移除此空间不会从你的磁盘中删除内容——你需要手动执行此操作。
+collab.space.invite.delete	删除邀请
+collab.space.invite.delete.alert.title	删除邀请？
+collab.space.invite.link.generate.alert.title	生成新链接？
+collab.space.invite.pending	待接受的邀请
+collab.space.invites.delete	删除邀请
+collab.space.invites.delete.all	删除所有邀请
+collab.space.invites.delete.all.alert.description	是否确定？受邀用户将无法再加入此空间。
+collab.space.invites.delete.all.alert.title	删除所有邀请？
+collab.space.invites.delete.all.invites.confirmation	你确定要删除所有邀请吗？
+collab.space.member.remove.alert	移除用户
+collab.space.member.remove.alert.title	移除用户？
+collab.space.member.remove.failed	无法移除成员
+collab.space.member.remove.success	用户已从空间中移除
+collab.space.member.role.update.failed	无法更新成员角色
+collab.space.member.role.updated	用户角色已更新
+collab.space.pending.invite.deleted	邀请已删除
+collab.space.permission.guest	访客
+collab.space.permission.owner.description	可以更改设置并邀请新成员
+collab.space.permission.owner.remove.from.self.button	移除所有权
+collab.space.permission.owner.remove.from.self.description	你确定要将角色更改为成员吗？你将无法再管理此空间。
+collab.space.permission.owner.remove.from.self.title	移除你的所有权？
+collab.space.settings.members	成员
+collab.space.settings.show.in.finder.description	在 Finder 中显示此空间
+collab.space.settings.space.delete	删除空间
+collab.space.settings.space.delete.success	空间已删除
+collab.space.settings.space.leave	离开空间
+collab.space.settings.space.leave.alert.confirm	是，离开
+collab.space.settings.space.leave.alert.description	是否确定？你将无法再访问此空间。
+collab.space.settings.space.leave.alert.title	离开空间？
+collab.space.settings.space.remove	移除空间
+collab.space.settings.space.remove.alert.title	移除空间？
+collab.viewer.on.this.document	此文档的查看者
+collab.x.members.plural	[0] 个成员
+collection.duplicate.rows	重复行
+collections.card.size.large	大
+collections.clear.x	清除 [0]
+collections.create.document.error.desc	遇到了技术问题，请重试
+collections.edit.x	编辑 [0]
+commands.clear.history.desc	你确定要删除[0]的所有对话记录吗？此操作无法撤销。
+confirm.asquestion	你确定吗？
+continue.crafting	继续使用 Craft
+could.not.change.profile.photo	无法更改头像
+craft.did.not.quit.desc	Craft 已设置为在通知区域中持续运行。
+craft.did.not.quit.title	为什么 Craft 没有退出？
+craft.three	Craft 3
+crafts.template.desc	数百个模板可帮助你加快工作流程，变得更有条理并释放你的创造力
+crafts.template.gallery	Craft 的模板库
+create.new.team	创建新团队
+create.reminder.empty.state.title	创建提醒，让你不再遗忘任务和灵感
+daily.create.note	创建新的每日笔记
+daily.note.next.day	后一天
+daily.note.previous.day	前一天
+daily.updated.x	已更新 [0]
+delete.one.document.question	删除 1 个文档？
+diagnostics.subscription.report.subject.web	Web 订阅问题报告
+diagnostics.subscription.report.subject.windows	Windows 订阅问题报告
+diagnostics.subscription.report.title	报告订阅问题
+diagnostics.subscription.troubleshooting.title	订阅疑难排解
+diagnostics.sync.error.offline	报告错误
+diagnostics.sync.troubleshooting	故障排除
+doc.email.access.unavailable	启用密码保护后，邮件访问功能不可用。
+doc.password.protection.unavailable	启用邮件访问后，密码保护功能不可用。
+doc.x.few	
+doc.x.many	
+doc.x.one	[0] 份文档
+doc.x.other	[0] 份文档
+doc.x.two	
+doc.x.zero	
+document.x.few	
+document.x.many	
+document.x.one	[0] 份文档
+document.x.other	[0] 份文档
+document.x.two	
+document.x.zero	
+documents.ellipsis	文档…
+download.prompt.benefit.ai	AI 驱动的无缝工作流
+download.prompt.benefit.native	精美的原生体验
+download.prompt.benefit.offline	即使离线也能快速运行
+download.prompt.button.android	在 Google Play 获取
+download.prompt.button.ios	在 App Store 获取
+download.prompt.button.macos	下载 Mac 版
+download.prompt.button.windows	下载 Windows 版
+download.prompt.continue.in.browser	在浏览器中继续
+download.prompt.get.the.full.experience	获得完整体验
+download.starting.desc	选择目标文件夹来开始下载过程。
+download.starting.title	下载开始…
+edit.ellipsis	编辑…
+email.when.you.have.access	当你可以访问时，我们将通过电子邮件通知你。
+error.cannot.create.share.page	无法创建共享页面
+error.exporting.x	导出 [0] 时出错
+error.network.error	网络错误
+error.payment.failed	付款失败
+error.report.contact.support	联系客服
+error.report.does.it.happen.every.time	每次都是这样吗？
+error.report.issue.desc	请报告此问题，以便我们确保不再发生此类问题
+error.report.keeps.happening	这个问题一直发生吗？
+error.report.steps.before.it.happened	问题发生前的步骤
+error.report.steps.before.it.happened.example	例如： 1. 打开现有文档 2. 开始编辑区块 3. 使用 / 命令菜单中的插入文件 4. 发生崩溃
+error.report.what.were.you.doing	你当时想要做什么？
+error.report.what.were.you.doing.example	示例：尝试插入图像
+error.unexpected.error.occurred	发生意外错误
+export.image.preview	图片预览
+export.pdf.preview	PDF 预览
+export.to.pdf	导出为 PDF
+exporting.to.x	导出至 [0]
+family.badge	家庭版
+feedback.email.optional	电子邮件（可选）
+feedback.feel.about.craft	你对 Craft 有什么感想？
+feedback.form.subtitle	选择你喜欢的（可多选）
+feedback.input.like.or.not	告诉我们你喜欢什么或不喜欢什么……
+feedback.input.subtitle	每一条反馈都很重要！
+feedback.join.the.community	加入 Craft 社区，了解最新的功能、技巧和窍门，甚至可能影响我们的路线图！
+feedback.rate.craft	评价 Craft
+feedback.rate.in.store	你介意花几秒钟在商店中为 Craft 评分吗？
+feedback.table.missing.function	缺少功能？告诉我们！
+feedback.thanks.secondarybutton	以后再说
+feedback.thanks.subtitle	我们期待了解更多
+feedback.thanks.support	感谢你的支持！
+feedback.thanks.title	谢谢！
+find.next	查找下一个
+find.next.match	下一个匹配项 [0]
+find.previous.match	上一个匹配项 [0]
+find.replace.search	[0] 结果 [1]
+find.replace.with	替换为……
+focus.on.3dot	专注于…
+folder.added.to.assistant.learning	文件夹[0]已添加到助手学习
+friday.short	五
+go.to.settings	前往“设置”
+go.to.team.members	前往团队成员
+go.to.x	跳转到 [0]
+help.toggle.debug.panel	切换调试面板
+help.toggle.fps.overlay	切换 FPS 浮层
+how.publishing.works	发布功能如何运作？
+ideastarter.loading.default.0	正在创建文档…
+ideastarter.loading.default.1	正在创建结构…
+ideastarter.loading.default.2	正在添加引导部分…
+ideastarter.loading.default.3	正在准备模板…
+ideastarter.loading.guide.0	正在规划内容…
+ideastarter.loading.guide.1	正在添加关键部分…
+ideastarter.loading.guide.2	正在构建叙事结构…
+ideastarter.loading.guide.3	正在创建框架…
+ideastarter.loading.list.0	正在整理任务…
+ideastarter.loading.list.1	正在创建待办事项…
+ideastarter.loading.list.2	正在添加优先级部分…
+ideastarter.loading.list.3	正在创建清单…
+ideastarter.loading.meeting.0	正在创建议程…
+ideastarter.loading.meeting.1	正在添加讨论部分…
+ideastarter.loading.meeting.2	正在整理行动事项…
+ideastarter.loading.meeting.3	正在准备模板…
+ideastarter.loading.project.0	正在创建行动计划…
+ideastarter.loading.project.1	正在规划关键里程碑…
+ideastarter.loading.project.2	正在添加引导部分…
+ideastarter.loading.project.3	正在制定路线图…
+ideastarter.loading.travel.0	正在规划行程…
+ideastarter.loading.travel.1	正在添加目的地部分…
+ideastarter.loading.travel.2	正在创建行李清单…
+ideastarter.loading.travel.3	正在规划旅程…
+ideastarter.loading.weekly.0	正在捕捉灵感…
+ideastarter.loading.weekly.1	正在创建思考空间…
+ideastarter.loading.weekly.2	正在整理头脑风暴…
+ideastarter.loading.weekly.3	正在创建灵感画布…
+ideastarter.popup.subtitle	我们知道空白页面让人无从下手。描述你的需求，我们来帮你搭建结构。
+ideastarter.suggestion.guide	博客文章
+ideastarter.suggestion.list	任务清单
+ideastarter.suggestion.meeting	会议记录
+ideastarter.suggestion.project	项目文档
+ideastarter.suggestion.travel	旅行计划
+ideastarter.suggestion.weekly	头脑风暴
+ignore.diacritics	忽略变音符号（例如 ä = a）
+imagine.access.mode	访问模式
+imagine.api.created.successfully	API 创建成功
+imagine.api.deleted.successfully	API 已成功删除
+imagine.api.for.all.doc	所有文档的 API
+imagine.api.for.selected.docs	连接选定文档
+imagine.api.for.x	用于 [0] 的 API
+imagine.api.key	API 密钥
+imagine.api.key.copied	API 密钥已复制
+imagine.api.key.copied.subtitle	API 密钥已复制到剪贴板。
+imagine.api.key.created	API 密钥已创建
+imagine.api.key.created.successfully	API 密钥创建成功
+imagine.api.key.default.name	API 密钥 [0]
+imagine.api.key.deleted.successfully	API 密钥已成功删除
+imagine.api.key.desc	访问需要 API 密钥
+imagine.api.key.name	API 密钥名称
+imagine.api.keys	API 密钥
+imagine.api.limit.reached	API 调用次数已达上限
+imagine.api.limit.reached.desc	目前仅支持 10 个 API。如需更多，请联系 support@craft.do
+imagine.api.updated.successfully	API 已成功更新
+imagine.browse.examples.desc	看看其他人都构建了些什么
+imagine.build.apps.and.workflows	用于构建工作流程和快捷方式
+imagine.build.apps.on.top.of.your.docs	选择要用于工作流程、快捷方式或内容管理系统的文档
+imagine.build.apps.workflows	设置工作流程，并围绕你的每日笔记和任务创建快捷方式
+imagine.chat.with.your.docs	让 AI 工具访问你的文档
+imagine.connect.all.docs	连接所有文档
+imagine.connect.daily.notes.tasks	连接每日笔记和任务
+imagine.connect.selected.docs	连接选定文档
+imagine.connect.your.favourite.ai.tools	将你最喜欢的 AI 工具连接到你的每日笔记和任务
+imagine.copy.api.key	复制 API 密钥
+imagine.copy.your.api.key.now	请务必立即复制你的 API 密钥。你将无法再次查看它！
+imagine.could.not.create.api	无法创建 API
+imagine.could.not.create.api.key	无法创建 API 密钥
+imagine.could.not.create.mcp.server	无法创建 MCP 服务器
+imagine.could.not.delete.api	无法删除 API
+imagine.could.not.delete.api.key	无法删除 API 密钥
+imagine.could.not.delete.mcp.server	无法删除 MCP 服务器
+imagine.could.not.set.password	无法设置密码
+imagine.could.not.update.api	无法更新 API
+imagine.could.not.update.mcp.server	无法更新 MCP 服务器
+imagine.create.api.key	创建 API 密钥
+imagine.create.new.api	创建新 **API 连接**
+imagine.create.new.mcp	创建新 **MCP 连接**
+imagine.create.your.first.api	添加你的第一个 API 连接
+imagine.create.your.first.mcp.server	创建你的第一个 MCP 连接
+imagine.delete.api.confirm.message	你确定要删除此 API 吗？所有 API 密钥都将被撤销，且此操作无法撤销。
+imagine.delete.api.confirm.title	删除 API？
+imagine.delete.api.key	删除 API 密钥
+imagine.delete.api.key.confirm	你确定要删除此 API 密钥吗？此操作无法撤销。
+imagine.delete.api.key.title	删除“[0]” API 密钥
+imagine.delete.mcp.confirm.message	你确定要删除此 MCP 服务器吗？所有连接都将被终止，且此操作无法撤销。
+imagine.delete.mcp.confirm.title	删除 MCP 服务器？
+imagine.delete.this.api	删除此 API
+imagine.delete.this.mcp	删除此 MCP
+imagine.enable.api.desc	你可以将此文档用作应用或网站的后端或内容管理系统。
+imagine.enable.mcp.desc	将此文档连接到 AI 工具进行处理，或将其用于你的工作流程。
+imagine.enter.new.password.to.update.access.protection.for.this.mcp	输入新密码以更新此 MCP 服务器的访问保护
+imagine.give.access.to.every.doc.in.this.space	授予对该空间中所有文档的访问权限
+imagine.imagine.desc	**Imagine** 无限可能 当一切都与 Craft 相连。
+imagine.imagine.description	Craft 不仅仅是一种形式。 它是你所能 **想象**的一切。
+imagine.learn.more about.api	了解更多关于 API 的定义以及如何使用它的信息
+imagine.make.every.doc.in.this.space.available	让此空间中的所有文档都能被你喜爱的 AI 工具访问
+imagine.make.specific.docs.available	将特定文档提供给你最喜欢的 AI 工具
+imagine.mcp.for.all.doc	所有文档的 MCP
+imagine.mcp.reference.desc	了解更多关于 MCP 服务器及其使用方法的信息
+imagine.mcp.server.created.successfully	MCP 服务器创建成功
+imagine.mcp.server.deleted.successfully	MCP 服务器已成功删除
+imagine.mcp.server.for.x	用于 [0] 的 MCP 服务器
+imagine.mcp.server.updated.successfully	MCP 服务器已成功更新
+imagine.no.keys	没有密钥
+imagine.permission.level	权限级别
+imagine.public.desc	任何拥有该网址的人都可以访问
+imagine.read.and.write	读取和写入
+imagine.read.and.write.desc	可以查看和修改文档内容
+imagine.read.only	只读
+imagine.read.only.desc	只能查看文档内容
+imagine.rename.api	重命名 API
+imagine.rename.mcp	重命名 MCP
+imagine.set.password.to.protect.access.to.this.mcp	设置密码以保护对此 MCP 服务器的访问。
+imagine.some.ideas.to.get.you.started	一些入门建议
+imagine.view.integration.guide.for	查看集成指南…
+imagine.write.only	仅写入
+imagine.write.only.desc	只能修改文档内容
+import.from.evernote	来自 Evernote
+import.from.google.docs	来自 Google Docs
+import.from.notion	来自 Notion
+import.from.readwise	来自 Readwise
+import.standalone.md	来自 Markdown 文件
+importing.markdown.documents	导入 Markdown 文档
+inline.mention.tooltip	此人未收到提及通知，因为他们尚未被邀请。要让他们收到通知，请邀请他们加入此文档。
+insert.linetype	插入 [0]
+insert.table.desc	插入一个包含所选行数和列数的表格。
+integration.fetch.error	获取可用集成时出错。请稍后重试。
+integration.playground.debug	集成 Playground（调试）
+integration.redirecting	正在重定向…
+integrations.provider.disconnected	提供商已断开连接
+integrations.successfully.disconnected	你已成功断开此提供商的连接。
+invite.members.family.and.team.plan	家庭版最多可邀请 6 名成员，团队版最多可邀请 10 名成员。
+invite.nudge.invalid.emails	请检查高亮显示的地址。
+invite.nudge.subtitle	现在邀请团队来查看吧
+invite.nudge.title	太棒了，你的新团队文档！
+invite.survey.comment.placeholder	选填…
+invite.survey.reason.exploring.alone	还在自己先探索这款应用
+invite.survey.reason.nobody.to.invite	暂时没有要邀请的人
+invite.survey.reason.other.placeholder	请告诉我们更多…
+invite.survey.reason.planning.to	打算邀请，只是还没来得及
+invite.survey.reason.something.else	其他原因
+invite.survey.reason.subtitle	帮助我们了解，我们一直在寻找改进的方向。
+invite.survey.reason.title	还没邀请团队，主要是什么原因？
+invite.survey.reason.unsure.who.for	不确定哪些人会用得上
+invite.survey.reason.wanted.but.unsure	想试试，但不确定怎么操作
+invite.survey.thanks.description	有什么想补充的吗？哪怕一句话也能帮助我们更好地了解。
+invite.survey.thanks.title	谢谢，很有帮助
+invite.team.members	邀请团队成员
+invite.team.members.desc	试用期间最多邀请 10 名成员，每人拥有独立私人空间和全部 Plus 权益
+invite.your.team	邀请团队
+inviting.new.member.requires	 位新成员需要 
+inviting.new.members.requires	 位新成员需要 
+join.and.open	加入并打开
+kanban.add_new_group	添加新组
+kanban.delete_items	删除项目
+last.small	最后
+learn.more.about.plans	了解更多套餐信息
+learn.more.about.pricing	了解更多定价方案
+leave.team.confirmation	确定要离开 [0] 吗？
+leave.team.title	离开团队？
+lets.set.up.my.team	开始设置团队！
+license.key.activate	输入你的许可证密钥以激活团队订阅：
+license.key.activate.key	激活许可证密钥
+license.key.paste	粘贴许可证密钥
+license.key.successfully.activated	已成功为团队激活订阅：
+license.key.valid.until	你的许可证有效期至： 
+manage.your.team.from.settings	在设置中管理团队
+marking.documents.as	将文档标记为 [0]
+members.tab.is.not.available.for.external.locations	成员选项卡不适用于外部位置。
+mobile.rotate.to.portrait	请将手机旋转至竖屏模式，获得更好的体验。
+mobile.web.craft.available	Craft 适用于桌面网页版、iOS、iPadOS 和 macOS，并计划在未来支持更多平台。
+mobile.web.ipados.visionos	下载 iPadOS 或 visionOS 应用程序以获得最佳体验。
+mobile.web.looking.for	你可能正在寻找
+mobile.web.not.available.on.mobile	网页版 Craft 无法在移动设备上使用
+mobile.web.not.optimized.for.this.device	网页版 Craft 未针对此设备进行优化
+mobile.web.optimized.for.desktop	Craft for Web 针对桌面体验进行了优化。在移动设备上，请下载我们的 iOS 和 iPadOS 应用程序。
+monday.short	一
+more.3.dot	更多…
+more.3dot	更多…
+my.subscriptions	我的订阅
+no.credit.card.required	无需信用卡
+no.new.members.to.invite	没有可邀请的新成员
+no.preview.available	没有可用的预览
+no.suggestions.found	未找到任何建议
+not.available.while offline	离线时不可用
+onboarding.by.myself	个人使用
+onboarding.by.myself.desc	只需一个私人空间来整理工作和生活
+onboarding.confirm.email.change	确认电子邮件变更
+onboarding.confirm.email.to.continue	请确认你的邮箱以继续，或 [0]
+onboarding.confirm.email.to.continue.with.sso	请确认你的邮箱以通过 SSO 继续，或 [0]
+onboarding.confirmation.code	验证码
+onboarding.continue.sso.lowercase	使用 SSO 继续
+onboarding.email.new.page.title	让我们开始吧！
+onboarding.get.to.know.craft	了解 Craft
+onboarding.how.to.use.craft	计划如何使用 Craft？
+onboarding.insert.panel.first.task	第一个任务
+onboarding.insert.panel.second.task	第二个任务
+onboarding.insert.panel.third.task	第三个任务
+onboarding.interests.books	书单
+onboarding.interests.finances	理财
+onboarding.interests.habit	习惯追踪
+onboarding.interests.project	项目跟踪
+onboarding.interests.story	故事策划
+onboarding.interests.student	学生空间
+onboarding.interests.todo	待办事项清单
+onboarding.interests.travel	旅行
+onboarding.menu.blog	博客
+onboarding.menu.blog.desc	我们的新闻和公告
+onboarding.menu.community	社区
+onboarding.menu.download	下载
+onboarding.menu.help.and.support	帮助和支持
+onboarding.menu.help.and.support.desc	获取答案并请求帮助
+onboarding.menu.login	登录
+onboarding.menu.planning	规划
+onboarding.menu.planning.desc	按你的方式计划你的一天
+onboarding.menu.pricing	价格
+onboarding.menu.product	产品
+onboarding.menu.reddit	Reddit 社区
+onboarding.menu.reddit.desc	向我们提问并分享想法
+onboarding.menu.research	研究
+onboarding.menu.research.desc	以自己的方式积累知识
+onboarding.menu.slack	Slack 群组
+onboarding.menu.slack.desc	与其他 Craft 用户一起参与讨论
+onboarding.menu.styling	样式
+onboarding.menu.styling.desc	你的笔记，你的风格
+onboarding.menu.try.craft.free	免费试用 Craft
+onboarding.menu.whats.new	最新动态
+onboarding.menu.whats.new.desc	了解我们最新发布的内容
+onboarding.menu.writing	写作
+onboarding.menu.writing.desc	每种设备均能获得相同的书写体验
+onboarding.menu.youtube	YouTube 频道
+onboarding.menu.youtube.desc	提示、技巧和方法
+onboarding.next	下一步
+onboarding.open.craft.doc	打开 Craft 文档
+onboarding.select.where.you.would.like.to.continue	请选择你想要继续的位置。
+onboarding.start.crafting	立即开始
+onboarding.terms.and.conditions	条款和条件
+onboarding.use.offer	使用优惠
+onboarding.v3.intro.1.content	这次更新让你处理任务更高效，合集管理更有条理，样式搭配也更有创意。
+onboarding.v3.intro.1.title	为你焕新
+onboarding.v3.intro.2.content	安排任务、规划日程，一站式查看所有内容。
+onboarding.v3.intro.2.title	完成你的任务
+onboarding.v3.intro.3.title	创造你的风格
+onboarding.v3.intro.4.content	给内容分类，或在不同想法之间建立关联。
+onboarding.v3.intro.4.title	建立你的合集
+onboarding.v326.intro.1.content	令人振奋的更新与焕新的界面设计，助你发挥最佳状态，并在 Craft 中保持专注与流畅。
+onboarding.v326.intro.1.title	九月更新
+onboarding.v326.intro.4.content	我们正在全面升级核心功能，那些你每天都依赖的功能。
+onboarding.v326.intro.4.title	任务、标签、合集
+onboarding.v326.intro.5.content.amount	限时优惠，新用户订阅 Craft Plus 和 Craft Family 可享受 [0]% 优惠。
+onboarding.v326.intro.5.content.weekly.amount	限时优惠，订阅 Craft Plus 周套餐可享受 [0]% 折扣。
+onboarding.v326.intro.clipper.content	将你的研究直接放入你的文档或每日笔记中。 
+onboarding.v326.intro.weekly.content	千万别错过我们的每周套餐优惠！解锁所有 Craft 高级功能。
+onboarding.v326.intro.weekly.title	无限畅享 Craft
+onboarding.v330.intro.1.december.update.title	12月更新
+onboarding.v330.intro.1.november.update.content	推出更智能的 AI 协作、大量改进，以及全新的方式来管理和跟进你的笔记。
+onboarding.v330.intro.1.november.update.title	11月更新
+onboarding.v330.intro.2.android.content	Craft 正式支持 Android，延续标志性的设计品质，支持无缝同步，并且现在还加入了离线模式。
+onboarding.v330.intro.3.smarter.ai.assistant.title	更智能的 AI 助手
+onboarding.v330.intro.4.whiteboard.content	借助改进后的白板、合集和代码块，你现在可以充分利用你的笔记。
+onboarding.v330.intro.4.whiteboard.title	改进的白板
+onboarding.v330.intro.5.api.mcp.connectors.content	将文档连接到外部工具和 LLM。在全新的 Imagine 版块中管理权限。
+onboarding.v330.intro.5.api.mcp.connectors.title	API 和 MCP 连接器
+onboarding.v330.intro.5.celebrate.content	限时优惠，新用户可享受 Craft Plus 和 Craft Family 40% 的折扣。
+onboarding.v330.intro.5.celebrate.title	与我们一起庆祝
+onboarding.v330.intro.6.winter.deal.content	4 款精心挑选的应用，限时 60% 折扣，助你度过一个更从容、更高效的冬天。
+onboarding.v330.intro.6.winter.deal.title	冬季焕清优惠
+onboarding.v330.winter.deal.view.apps	查看应用
+onboarding.v350.intro.1.offline.content	离线编辑现已在浏览器和 Windows 应用中推出测试版。重新联网后，你的更改将自动同步。
+onboarding.v350.intro.1.offline.title	离线编辑
+onboarding.v350.intro.2.smoother.content	我们还完成了 100 多项底层优化和错误修复，带来更流畅、更快速的体验。
+onboarding.v350.intro.2.smoother.title	更流畅，更快速
+onboarding.v350.intro.3.lunar.content	我们以全新文档样式迎接农历新年。无论是制作邀请函、共享内容还是烘托节日氛围，都再合适不过。
+onboarding.v350.intro.3.lunar.title	农历新年新样式
+onboarding.v350.introducing.kanban	推出看板
+onboarding.v350.kanban.content	为项目、任务和想法增添结构。从零开始整理，或应用到现有收藏。
+onboarding.v350.mermaid.content	在文档中创建图表、流程图、序列图或时间线。无需额外工具。
+onboarding.v350.mermaid.diagrams	Mermaid 图表
+onboarding.v350.upgrade.content	升级至 Craft Plus 或 Craft Family，立享六折优惠。限时特惠，仅限新订阅用户。
+onboarding.welcome.to.craft	欢迎来到 Craft
+onboarding.welcome.to.craft.desc	准备好开始创建了吗？<br/>让我们从你的第一个文档开始。
+onboarding.welcome.to.craft.desc2	单击此处的任意位置即可开始。
+onboarding.what.is.craft	什么是 Craft？
+onboarding.whats.your.name	你叫什么名字？
+onboarding.with.my.team	与团队协作
+onboarding.with.my.team.desc	创建共享空间，与团队一起协作
+onboarding.your.account.will.be.ready.in.a.moment	欢迎 [0]，你的帐户马上就好！
+open.in.browser	在浏览器中打开
+pdf.export.body	在下方下载导出的文档
+pdf.export.title	你的文档已导出！🎉
+preferences.add.members.to.space.sending	发送空间邀请
+preferences.advanced.completed.task.appearance.description	自定义已完成任务在应用中的显示方式
+preferences.advanced.completed.task.appearance.faded	淡化
+preferences.advanced.completed.task.appearance.none	无
+preferences.advanced.completed.task.appearance.strike	删除线
+preferences.advanced.date.badges.description	显示带有日期标记的每日笔记链接是在文档中突出显示它的好方法。
+preferences.advanced.date.badges.title	日期标记
+preferences.appearance.accent.color.description	选择强调色
+preferences.comments.and.mentions.desc	当你收到新的评论和提及时得到通知。
+preferences.daily.email.desc	接收当天所有任务和提醒的摘要。你还将收到今天截止的摘要推送通知。
+preferences.email.notifications	电子邮件通知
+preferences.general.settings	常规设置
+preferences.manage.access.desc	管理谁可以看到这个空间
+preferences.manage.private.desc	私人空间只能通过邀请查看或加入
+preferences.name.change	更改姓名
+preferences.notifications.for.x	“[0]”的通知
+preferences.notifications.push.desc	如果此空间中有新评论和提及，Craft 可以向你发送通知
+preferences.offline.mode.description	离线查看和编辑文档
+preferences.offline.mode.description.disabled	你可以离线查看已访问的文档，但需要联网才能编辑
+preferences.offline.mode.description.enabled	离线更改已保存，将在你下次上线时同步
+preferences.offline.mode.disable.confirm.button	放弃并禁用
+preferences.offline.mode.disable.confirm.description	以下文档有未同步的离线更改，将会丢失：
+preferences.offline.mode.disable.confirm.more	还有 [0] 个
+preferences.offline.mode.disable.confirm.other.space	在 [0]：
+preferences.offline.mode.disable.confirm.title	放弃离线更改？
+preferences.offline.mode.disabled.title	离线编辑模式已禁用
+preferences.offline.mode.enabled.title	离线编辑模式已启用
+preferences.privacy.policy	隐私政策
+preferences.remove.user.from.space.confirm	你确定要从空间"[1]"中移除"[0]"吗？
+preferences.remove.user.from.team.confirm	你确定要从团队“[1]”中移除“[0]”吗？
+preferences.settings.apply.to.published.content.in.all.spaces	这些设置适用于“[0]”团队所有空间中发布的内容。
+preferences.setup.custom.domain.desc	发布 Craft 文档时使用你自己的域名。
+preferences.space.public.desc	所有团队成员都可以看到并加入。
+preferences.subscription.overview	订阅概述
+preferences.switch.subscription	切换订阅
+qrcode.howto.desc	二维码在共享页面时非常方便 – 无论是贴在设备上还是实物表面上都可以。
+qrcode.howto.title	如何使用二维码？
+reminders.how.work	提醒功能如何工作？
+reminders.reminder.removed	提醒已移除
+saturday.short	六
+save.x.capital	节省 [0]
+search.by.name.or.content	你可以按名称或内容搜索文档。
+search.in.space	在[0]中
+search.no.matching.result	我们找不到符合 [0] 的任何内容
+search.noresults	无结果
+search.recent.searches	最近搜索
+secret.link.update.success	秘密链接已成功更新
+setting.up	正在设置…
+settings.download.app	下载应用
+settings.enter.license.key	输入许可证密钥
+share.or.publish.to.web	共享或发布到网络
+sidebar.attachment.desc	添加到此文档的图像、视频、链接和文件将显示在此处。
+sign.in.as.email	以 {{email}} 登录
+sign.up.or.log.in.to.accept	注册或登录以接受邀请
+skip.for.now	暂时跳过
+snapshot.go.to.document	转至文档
+space.btn	空格键
+space.could.not.delete.space	无法删除空间
+space.could.not.leave.space	无法离开空间
+space.delete.spacename	删除 [0]？
+space.no.longer.a.member	你不再是此空间的成员
+space.proceed.type.name.of.the.space	要继续，请输入空间的名称：
+space.space.name.for.confirmation	空间名称（用于确认）
+space.type.the.name.of.the.space	你确定吗？此操作无法撤消。要继续，请输入空间的名称：
+spaces.manage.space	管理空间
+spaces.rename.space	重命名空间
+spaceSettings.open.space.description	开放空间对所有团队成员可见，且均可加入。
+spaceSettings.private.space.description	私人空间仅可通过邀请来查看或加入。
+star.a.doc	收藏文档
+star.docs.to.keep.them.close	收藏文档以便快速访问
+start.your.free.trial	开始 15 天免费试用
+starting.trial	正在开始试用…
+stats.full.document	完整文档
+stats.reading.time	阅读时间
+stats.this.page	这一页
+stats.without.spaces	不包括空格
+stats.words	字数
+style.card.configure	配置卡片
+style.card.emoji	卡片表情符号
+style.color.black	黑色
+style.color.blue	蓝色
+style.color.blue.navy	海军蓝
+style.color.blue.ocean	海洋蓝
+style.color.brown	棕色
+style.color.dark.blue	深蓝色
+style.color.dark.green	深绿色
+style.color.dark.pink	深粉色
+style.color.dark.purple	深紫色
+style.color.default	默认颜色
+style.color.green	绿色
+style.color.grey	灰色
+style.color.grey.light	浅灰色
+style.color.light.beige	浅米色
+style.color.light.blue	浅蓝色
+style.color.light.pink	浅粉色
+style.color.olive	橄榄绿
+style.color.orange	橙色
+style.color.pink	粉色
+style.color.purple	紫色
+style.color.red	红色
+style.color.turquoise	青绿色
+style.color.white	白色
+style.custom.style	自定义样式
+style.font.default	默认字体
+style.font.round	Round
+style.font.round.long	Round
+style.font.serif	Serif
+style.font.serif.long	Serif
+style.font.system	System
+style.image.fit.fill	填充
+style.image.fit.fit	适应
+style.image.size.auto	自动
+style.image.size.large	大
+style.inline.bold	粗体
+style.inline.code	代码
+style.inline.highlight	高亮
+style.inline.italic	斜体
+style.inline.strike	删除线
+style.insert.menu.section.separators	分隔符
+style.insert.menu.section.text.styles	文本样式
+style.layout.card	卡片
+style.layout.embed	嵌入
+style.layout.regular	标准
+style.layout.small	小
+style.list.bullet	无序列表
+style.list.numbered	编号列表
+style.list.todo	待办列表
+style.list.toggle	折叠列表
+style.my.custom.style	我的自定义样式
+style.page.background.end.color	结束颜色
+style.page.background.faded	淡化
+style.page.background.image.blur	模糊图像
+style.page.background.immersive	沉浸式
+style.page.background.start.color	起始颜色
+style.style.apply	套用样式
+style.style.background	样式背景
+style.text.align.center	居中对齐
+style.text.align.justify	两端对齐
+style.text.align.left	左对齐
+style.text.align.right	右对齐
+style.text.body	正文
+style.text.caption	说明
+style.text.card	卡片
+style.text.page	页面
+style.text.strong	小标题
+style.text.title	标题
+style.textstyles.groups	分组
+style.turn.into.card	转换为卡片
+style.turn.into.page	转换为页面
+style.turn.into.text.link	变成文字链接
+sub.value.prop.5	用 Craft 共同创建精彩内容
+sub.value.prop.6	团队统一定价。
+subscription.1.day.left	仅剩1天
+subscription.1.doc.left	还剩 1 份文档
+subscription.1.hour.left	还剩 1 小时
+subscription.advanced.customization	高级定制
+subscription.advanced.sharing.options.desc	订阅用户可以使用高级共享选项
+subscription.and.much.more	…还有更多。
+subscription.annual	年付
+subscription.best.value	最超值
+subscription.billed.x.monthly	每月计费 [0]。
+subscription.billed.x.yearly	按年计费 [0]
+subscription.billing.and.subscription	计费和订阅
+subscription.block.limit.used.all	你已使用此套餐中所有可用的 <strong>[0]</strong> 个区块。
+subscription.button.manage.sub.simple	管理订阅
+subscription.capture.your.thoughts	无限捕捉你的想法。一个简单而强大的写作空间。
+subscription.change.to.title.billingcycle	更改为 [0] [1]
+subscription.check.benefits	查看权益
+subscription.churn.alternative	我找到了更适合我需求的替代方案。
+subscription.churn.custom.desc	预约一次简短的通话，解锁专属优惠、升级方案和为你量身定制的灵活选择。
+subscription.churn.custom.title	让我们一起聊聊最适合你的方案
+subscription.churn.expensive	相比我获得的价值，价格偏高。
+subscription.churn.failed.to.redeem.offer	兑换优惠失败，请重试。
+subscription.churn.issues	我遇到了技术问题。
+subscription.churn.missing.feature	缺少我需要的关键功能。 
+subscription.churn.redeem.offer	兑换优惠
+subscription.churn.service	我不再需要这类服务。
+subscription.churn.thank.you	谢谢你呀！
+subscription.click.to.complete.your.setup	点击 [0] 按钮完成设置，即可邀请其他人加入你的套餐。
+subscription.comments.control.desc	使用 Plus 订阅控制共享文档的评论权限
+subscription.complete.your.subscription.setup	请完成你的订阅设置。
+subscription.continue.upgrade.seats	继续升级你现有的席位 [0]
+subscription.could.not.start.checkout	无法开始结账
+subscription.could.not.start.upgrade	无法开始升级
+subscription.create.new.space.add	添加
+subscription.create.new.space.add.members	添加成员
+subscription.create.new.space.add.members.to.new	将成员添加到 [0]
+subscription.create.new.space.description	创建一个空间，将一起工作的人分组。
+subscription.create.new.space.description.for.private.plus	创建一个单独整理的空间
+subscription.create.new.space.error.no.team.selected	未选择团队
+subscription.create.new.space.invite.pending	待处理
+subscription.create.new.space.invite.team.member.desc.as.admin	只能将现有团队成员添加到空间。要添加新人，你必须先邀请他们加入团队。
+subscription.create.new.space.invite.team.member.desc.as.member	只能将现有团队成员添加到空间。要添加新人，管理员必须先邀请他们加入团队。
+subscription.create.new.space.invite.to.family	邀请加入家庭
+subscription.create.new.space.invite.to.team	邀请加入团队
+subscription.create.new.space.private.space	私人空间
+subscription.create.new.space.private.space.description	私人空间只能通过邀请查看或加入
+subscription.create.new.space.search.members	搜索成员
+subscription.create.new.space.space.name.placeholder	空间名称
+subscription.create.new.space.title	创建新空间
+subscription.create.new.space.upgrade.to.make.space.private	升级以使空间私有。
+subscription.create.new.team.invite.add.more	添加更多
+subscription.custom.style.control.desc	通过 Plus 订阅保存更多自定义样式
+subscription.custom.templates.control.desc	通过 Plus 订阅创建更多自定义模板
+subscription.discount.apply.perc.x.lowercase	应用 [0]% 折扣
+subscription.discount.tooltip.line2	如果你现在购买，明年也可锁定此折扣。
+subscription.discount.tooltip.line3	优惠券代码：[0]
+subscription.discount.tooltipv2.line1	终身享受 [0]% 折扣 – 限时优惠！
+subscription.duplicate.template.control.desc	使用 Plus 订阅复制为模板
+subscription.expiration.date.control.desc	使用 Plus 订阅为共享链接设置到期日期
+subscription.family.upgraded.to.plus	作为家庭订阅的一部分，你的帐户已升级为 Plus。
+subscription.for.life	 终身 
+subscription.get	获取 [0]
+subscription.get.annual	按年获取 [0]
+subscription.get.craft.lite	获取 Craft Lite
+subscription.get.craft.plus	获得 Craft Plus
+subscription.get.monthly	按月获取 [0]
+subscription.getting.teams.data	获取团队数据。
+subscription.go.unlimited	畅享无限
+subscription.header.need.more.space	需要更多空间？
+subscription.in.first.year	在第一年
+subscription.increase.limit	你好，作为 [0] 订阅者，我希望增加我的空间限制！你能帮我吗？
+subscription.invite.business.strong	邀请<strong>你团队中的每个人</strong>一起享受 Craft Plus 的所有好处。
+subscription.invite.error.add.seat.title	无法增加团队规模
+subscription.invite.error.addseat.no.active	团队没有活动订阅。
+subscription.invite.error.addseat.payment	付款失败（无法收费）。请重试或联系我们。
+subscription.invite.error.addseat.unknown	出了些问题。请重试或联系我们。
+subscription.invite.error.addseat.unsupported.subscription	在此订阅中无法更改座位数
+subscription.invite.error.seats.less.than.purchased.seat.count	席位数不能少于已购买的基础席位数
+subscription.invite.team.members	邀请 [0] 名成员
+subscription.is.almost.ready	你的订阅即将完成！
+subscription.keep	保留 [0]
+subscription.keep.subscription	保持订阅
+subscription.learn.more.pricing	了解更多定价方案信息
+subscription.license.key.desc	如果你收到了许可证密钥，请在此处使用它来激活你的订阅。
+subscription.limited.to.x	[0] 订阅限制为 [1] 个空间。升级或联系客服以获取更多空间。
+subscription.mac.column.free.price.title	免费
+subscription.main.segmentcontrol.annual	每年
+subscription.main.segmentcontrol.monthly	月付
+subscription.manage.subscription.only.admins	只有团队管理员可以管理团队订阅
+subscription.maybe.later	暂时不了
+subscription.my.family	我的 Family
+subscription.near.limit.document.created	[1] 个文档中的 [0] 个已创建
+subscription.next.billing.date	下次账单日期
+subscription.next.payment.x	下次付款：[0]
+subscription.no.docs.left	没有更多文档了
+subscription.no.estimated.charge.remaining	无预估费用，剩余信用额：[0]
+subscription.notnow_cta	以后再说
+subscription.object.links.control.desc	使用 Plus 订阅控制对象链接
+subscription.one.time.payment.one-year	一次性付款 — 有效期 1 年
+subscription.only.x.per.month	每月仅需 [0]。
+subscription.only.x.per.year	每年仅需 [0]。
+subscription.over.limit.document	你超出了文档限制
+subscription.over.limit.get.unlimited.docs	获取无限文档
+subscription.paddle.id	你的 Paddle 结账 ID 是 [0]
+subscription.payment.method	付款方式：[0]
+subscription.paywall.backups.desc.2	升级即可获得 180 天的备份。
+subscription.paywall.backups.desc.3	升级可获得 180 天。
+subscription.paywall.backups.desc.4	目前显示 [0] 天。
+subscription.paywall.big.file.contact.us	你无法上传大于 [0] 的文件。如果你希望增加上传限制，请与我们联系！
+subscription.paywall.big.file.contact.us.message	你好，作为团队订阅者，我希望增加我的上传大小限制！你能帮我吗？
+subscription.paywall.big.file.tier	[0] 套餐仅限上传 [1] 个文件。升级可获得更多。
+subscription.paywall.markdown.import.desc	批量 Markdown 导入仅适用于 Plus 用户。
+subscription.paywall.more.space.desc.1	团队和 Business 订阅限制为 25 个空间。联系客服获取更多空间。
+subscription.plancard.business.upgrade.to.business	升级
+subscription.please.specify	请指定
+subscription.plus.and.save	立即升级至 Plus 可节省 [0]%[1]
+subscription.plus.upgrade.contact.support	联系我们的支持团队将你的帐户升级到 Plus
+subscription.preparing.checkout	准备结账…
+subscription.preparing.upgrade	准备升级…
+subscription.presentation.mode.control.desc	使用 Plus 订阅控制演示模式
+subscription.price.billed.without.vat	不含增值税，按[0]计费
+subscription.print.control.desc	使用 Plus 订阅打印你的文档
+subscription.pro.team.trial.days	[0] 天，共 [1] 天
+subscription.pro.textbundle	TextBundle 导出
+subscription.processing.canceled.description	结账已被取消
+subscription.processing.checkout.description	我们正在确认你的付款，请稍候
+subscription.processing.error.description	请联系 Craft 支持团队。
+subscription.processing.success	订阅成功！
+subscription.processing.success.description	你已成功升级你的团队
+subscription.ran.out.of.doc.creation	你已用尽文档创建次数
+subscription.ran.out.of.docs	你的文档用完了
+subscription.remove.all.limits	移除所有限制
+subscription.sales.contact	联系销售
+subscription.savings_tooltip	节省[0]％
+subscription.see.all.features	查看所有功能
+subscription.see.plans	查看套餐
+subscription.select.a.team.to.restore	之前你有一笔订阅付款，但未分配给团队。请选择一个团队来恢复你的订阅。
+subscription.select.your.plan	选择你的计划
+subscription.seo.control.desc	通过 Plus 订阅控制 SEO
+subscription.slashmonth	/月
+subscription.slashweek	/周
+subscription.slashyear	/年
+subscription.solo.pro.subscription.with.apple	看起来你正在使用 Apple 的个人 Pro 订阅。要邀请其他人并扩大你的团队，请开始免费试用。
+subscription.start.new.checkout	开始新的结账
+subscription.starter.team.overview	入门团队概览
+subscription.sub.value.prop.1	简单的计划。
+subscription.sub.value.prop.2	一个固定价格。无隐藏费用。
+subscription.sub.verification	订阅验证
+subscription.subscribe.now	立即订阅
+subscription.subscribed.via	通过 [0] 订阅
+subscription.subscription.granted	已获得订阅
+subscription.successful.verification	验证成功。你可以在团队设置中找到你的订阅详情。
+subscription.team.upgraded.to.plus	作为团队订阅的一部分，你的帐户已升级为 Plus。
+subscription.terms.of.use	使用条款
+subscription.tier.free	Free
+subscription.tier.individual	个人
+subscription.tier.teams	团队
+subscription.tier.title.plus	Plus
+subscription.title.control.desc	通过 Plus 订阅控制标题
+subscription.toc.control.desc	使用 Plus 订阅控制目录
+subscription.trial.applied	已应用试用：14 天 Plus 试用
+subscription.trial.ended.desc	你的 14 天免费试用期已结束。升级以享受 Craft 的全部威力。
+subscription.trial.ended.title	你的 Plus 试用已结束
+subscription.trial.period	试用期
+subscription.trial.value	试用
+subscription.troubleshooting.panel.description	如果你遇到订阅问题，请阅读我们的故障排除指南。
+subscription.try.craft.plus.no.strings	尝试 Craft Plus - 无附加条件
+subscription.unlimited.content	无限内容
+subscription.unlimited.content.and.storage	无限内容和存储空间
+subscription.unlimited.everything	无限一切
+subscription.unlimited.everything.desc	在你的空间中获取无限存储空间，并且文件上传不受大小限制。
+subscription.unlimited.media.upload	无限制媒体上传
+subscription.unsuccessful.verification	验证失败。很遗憾，我们无法验证你的订阅，请联系我们。
+subscription.up.to.x.members	最多 [0] 名成员
+subscription.upgrade.no.more.seats	你的订阅已添加 [0] 个成员。升级以添加更多。
+subscription.upgrade.not.available.for.this.type.of.teams.contact	目前，此类团队无法升级。请联系我们的客户支持，以寻求最适合你的解决方案。
+subscription.upgrade.not.available.for.this.type.of.teams.remove	订阅升级不适用于团队。升级前请移除团队成员和待处理的邀请。
+subscription.upgrade.now	立即升级
+subscription.upgrade.team.v2.appstore.error	出了点问题，请重试。
+subscription.upgrade.team.v2.appstore.next	下一步
+subscription.upgrade.team.v2.appstore.purchase.success	订阅成功
+subscription.upgrade.team.v2.business.is.set	你的 Business 已准备就绪！
+subscription.upgrade.team.v2.change.team.name.later	你可以稍后在设置中更改此设置。
+subscription.upgrade.team.v2.change.team.name.placeholder	为你的团队添加名称
+subscription.upgrade.team.v2.failed.appstore.subscription.and.team.creation.error	无法创建团队并订阅 AppStore 产品
+subscription.upgrade.team.v2.failed.subscription.creation	无法创建订阅。请重试。
+subscription.upgrade.team.v2.failed.to.invite	无法邀请团队成员
+subscription.upgrade.team.v2.failed.to.update.team.name	无法更新团队名称
+subscription.upgrade.team.v2.family.is.set	你的 Family 已准备就绪！
+subscription.upgrade.team.v2.family.is.upgraded.to.business	你的 Family 团队已升级为 Business 订阅
+subscription.upgrade.team.v2.family.is.upgraded.to.team	你的 Family 团队已升级为 Team 订阅
+subscription.upgrade.team.v2.go.to.business.settings	前往 Business 设置
+subscription.upgrade.team.v2.go.to.family.settings	前往 Family 设置
+subscription.upgrade.team.v2.go.to.team.settings	前往团队设置
+subscription.upgrade.team.v2.invite.more.people.to.business	邀请无限数量的成员加入 Craft Plus，无需额外付费。每个人都将获得自己的私人空间和所有 Craft Plus 福利。
+subscription.upgrade.team.v2.invite.more.people.to.family	邀请最多 5 名成员加入 Craft Plus，无需额外付费。每个人都将获得自己的私人空间和所有 Craft Plus 福利。
+subscription.upgrade.team.v2.invite.more.people.to.team	邀请最多 25 名成员加入 Craft Plus，无需额外付费。每个人都将获得自己的私人空间和所有 Craft Plus 福利。
+subscription.upgrade.team.v2.invite.more.people.to.team.x	邀请最多 [0] 名成员加入 Craft Plus，无需额外付费。每个人都将获得自己的私人空间和所有 Craft Plus 福利。
+subscription.upgrade.team.v2.learn.more.about.craft.business	了解有关 Craft Business 的更多信息
+subscription.upgrade.team.v2.learn.more.about.craft.family	了解有关 Craft Families 的更多信息
+subscription.upgrade.team.v2.learn.more.about.craft.plus	了解更多关于 Craft Plus 的信息
+subscription.upgrade.team.v2.learn.more.about.craft.team	了解有关 Craft Teams 的更多信息
+subscription.upgrade.team.v2.lets.explore	让我们来探索一下吧！
+subscription.upgrade.team.v2.lets.setup.business	来创建我的 Craft Business 吧！
+subscription.upgrade.team.v2.lets.setup.family	来设置我的 Craft Family 吧！
+subscription.upgrade.team.v2.lets.setup.team	来设置我的 Craft Team 吧！
+subscription.upgrade.team.v2.name.your.business	为你的 Business 命名
+subscription.upgrade.team.v2.name.your.family	为你的 Family 命名
+subscription.upgrade.team.v2.name.your.team	为你的团队命名
+subscription.upgrade.team.v2.next	下一步
+subscription.upgrade.team.v2.no.appstore.products.error	无法加载 AppStore 产品
+subscription.upgrade.team.v2.successful.purchase.description	感谢你的购买。你已成功升级。
+subscription.upgrade.team.v2.team.is.set	你的团队已准备就绪！
+subscription.upgrade.team.v2.team.is.upgraded.to.business	你的 Team 订阅已升级为 Business 订阅
+subscription.upgrade.team.v2.upgrade.to.plus	升级至 Plus
+subscription.upgrade.team.v2.waiting.for.appstore	差不多了！请等待 App Store 确认你的订阅。
+subscription.upgrade.team.v2.waiting.for.team.creation	差不多了！请等待你的团队创建完毕。
+subscription.upgrade.team.v2.welcome.to.craft.business	欢迎来到 Craft Business！
+subscription.upgrade.team.v2.welcome.to.craft.family	欢迎来到 Craft Family！
+subscription.upgrade.team.v2.welcome.to.craft.plus	欢迎来到 Craft Plus！
+subscription.upgrade.team.v2.welcome.to.craft.team	欢迎来到 Craft Team！
+subscription.upgrade.to.plus	升级至 Plus 并立即获得无限制访问权限。
+subscription.upgrade.to.plus.for.powerful.craft	立即升级至 Plus 以获得更强大的 Craft。
+subscription.upgrade.to.plus.unlimited.access	升级到 Plus 即可获得无限制的访问权限。
+subscription.upgrade.unlock.features	立即升级以解锁这些功能。
+subscription.validating.current.sub	验证你当前的订阅
+subscription.view.plans	查看计划
+subscription.watermark.control.desc	使用 Plus 订阅控制水印
+subscription.web.sub.restore.problem	Web 订阅恢复问题
+subscription.windows.sub.restore.problem	Windows 订阅恢复问题
+subscription.x.docs.left	还剩 [0] 个文档
+subscription.your.are.on.the.free.plan	你当前使用的是免费套餐
+subscriptions	订阅
+sunday.short	日
+switching.to.craft.me	切换到 craft.me 域名
+table.alert.actions.use.x.to.y	请使用 [0] 来 [1]
+table.delete.column	删除列
+table.delete.columns	删除列
+table.delete.one.column	删除列
+table.edit.table	编辑表格
+table.formula.abs.desc	ABS 函数会返回数字值或持续时间值的绝对值。
+table.formula.average.desc	AVERAGE 函数会返回一组数字的平均值（算术平均）。
+table.formula.below.desc	指下面的单元格范围
+table.formula.count.desc	COUNT 函数会返回含有数字、数值表达式或日期的参数的个数。
+table.formula.counta.desc	COUNTA 函数会返回不为空的参数的个数。
+table.formula.e.desc	欧拉常数
+table.formula.int.desc	INT 函数会返回小于或等于指定数字的最近整数。
+table.formula.left.desc	指左侧的单元格范围
+table.formula.ln10.desc	10 的自然对数
+table.formula.ln2.desc	2 的自然对数
+table.formula.log10e.desc	E 的以 10 为底的对数
+table.formula.log2e.desc	E 的以 2 为底的对数
+table.formula.max.desc	MAX 函数会返回一组参数中的最大值。
+table.formula.median.desc	MEDIAN 函数会返回数字集合中的中值。
+table.formula.min.desc	MIN 函数会返回一组参数中的最小值。
+table.formula.mode.desc	MODE 函数会返回数值集合中出现频率最高的值。
+table.formula.pi.desc	PI 函数会返回 π (pi)（圆的圆周与其直径的比）的近似值。
+table.formula.product.desc	PRODUCT 函数会返回一组数字值的乘积。
+table.formula.right.desc	指右侧的单元格范围
+table.formula.round.desc	ROUND 函数会返回数字四舍五入到指定位数而得出的数字。两个参数都是数字值。
+table.formula.sign.desc	当参数为正时，SIGN 函数会返回 1；当参数为负时，会返回 –1；当参数为 0 时，会返回 0。
+table.formula.sqrt1_2.desc	½ 的平方根
+table.formula.sqrt2.desc	2 的平方根
+table.formula.sum.desc	SUM 函数会返回一组数字的和。
+table.insert.column.after	在后面插入列
+table.insert.column.x	插入列 [0]
+table.insert.row.after	在下面插入行
+table.insert.row.x	插入行 [0]
+table.move.column.right	向右移动列
+table.move.columns.right	向右移动列
+table.move.one.column.right	向右移动列
+table.move.one.row.down	下移行
+table.move.row.down	向下移动行
+table.move.rows.down	下移行
+tag.all.x	全部 [0]
+tags.continue.typing.to.create.a.valid.tag	继续输入以创建有效标签
+tags.continue.typing.to.create.tag	继续输入以创建标签
+tags.ignore.list.desc	这里的任何内容都不会出现在你的标签列表中，即使带有 #。
+tags.ignore.tag	忽略标签
+tags.search.for.tags	搜索标签
+tags.search.tags	搜索标签
+tags.tags.lowercase	标签
+tags.tags.uppercase	标签
+tags.turn.off.tags.for.this.space.desc	此空间中的标签仍处于活动状态。关闭后，标签将在所有位置隐藏。
+task.document.share.tip	要共享，请将此任务移动到文档
+tasks.add.details	添加详细信息
+tasks.add.task	添加任务
+tasks.after.1.month	1 个月后
+tasks.after.1.year	一年后
+tasks.after.x.weeks	[0] 周后
+tasks.after.x.years	[0] 年后
+tasks.all.tasks.closed	全部任务已关闭
+tasks.all.tasks.completed	所有任务完成
+tasks.collapse.section	收起分组
+tasks.create.and.open	创建并打开
+tasks.create.new.task	创建新任务
+tasks.create.new.task.with	使用 [0] 创建新任务
+tasks.create.task.in.doc	在文档中创建任务
+tasks.creating.new.pinned.doc	创建新的固定文档
+tasks.daily.brackets	（每日）
+tasks.deadline.set.for	截止日期为 [0]
+tasks.delete.3dot	删除…
+tasks.edit.task	编辑任务
+tasks.enter.title.before.submitting	提交前请输入标题
+tasks.every.day	每天
+tasks.every.month.on.x	每月[0]日
+tasks.every.week.on.x	每周[0]
+tasks.every.x	每[0]
+tasks.every.x.days	每 [0] 天
+tasks.every.x.days.skip.weekends	每 [0] 天一次，周末除外
+tasks.every.x.months	每 [0] 个月
+tasks.every.x.months.on.y.days	每[0]个月，在[1]日
+tasks.every.x.weeks	每 [0] 周
+tasks.every.x.weeks.on.y	每[0]周的[1]
+tasks.every.x.years	每 [0] 年
+tasks.every.x.years.on.y	每[0]年，在[1]
+tasks.every.year	每年
+tasks.every.year.on.x	每年[0]
+tasks.go.back.to.tasks	返回任务
+tasks.inbox.empty	你的 Inbox 为空！准备就绪后即可添加任务。
+tasks.inbox.empty.hover	创建新任务
+tasks.mark.cancelled	标记为已取消
+tasks.mark.complete	标记为完成
+tasks.mark.tasks.as	将任务标记为…
+tasks.more.tasks	更多任务
+tasks.move.task	移动任务
+tasks.moving.task	正在移动任务
+tasks.new.pinned.doc	新建固定文档
+tasks.next.task	下一个任务
+tasks.on.schedule	如期
+tasks.one.task.todo	1 项待办任务
+tasks.open.doc	打开文档
+tasks.pin.empty.hover	固定现有文档
+tasks.repeating.brackets	（重复）
+tasks.scheduled.for	预定于 [0]
+tasks.scheduled.for.previous.days	前几天安排的
+tasks.scheduled.for.this.day	这一天
+tasks.show.in.document	在文档中显示
+tasks.show.past.dates	显示过去日期
+tasks.show.scheduled.tasks	显示计划任务
+tasks.skip.to.docs.with.tasks	跳至包含任务的文档
+tasks.something.went.wrong	出了点问题。请重试。
+tasks.task.moved.error	无法将任务移至每日笔记。请刷新页面并重试。
+tasks.task.moved.to.daily.note	任务移至每日笔记
+tasks.task.moved.to.daily.note.x	任务移至每日笔记 [0]
+tasks.task.scheduled.to.later	当你完成任务后，下一个任务将在 [0] 后自动安排。
+tasks.task.succesfully.created	任务创建成功
+tasks.tasks.in.daily.notes	来自每日笔记
+tasks.tasks.in.documents.from.docs	来自文档
+tasks.tasks.in.x	[0] 中的任务
+tasks.tasks.moved.to.daily.note	任务移至每日笔记
+tasks.toggle.task	切换任务
+tasks.view.completed.tasks	查看已完成的任务
+tasks.view.details	查看详情
+tasks.view.task	查看任务
+tasks.x.tasks.todo	[0] 项待办事项
+team.benefit.multiple.spaces	多个团队空间，可邀请成员
+team.benefit.plus.private	每位成员专属 Plus 私人账号
+team.benefit.shared.team	用于协作的共享团队
+team.charge.monthly	将从今日起每月收取 [0]，可随时取消。
+team.charge.yearly	将从今日起每年收取 [0]，可随时取消。
+team.invite.already.a.member	已是成员
+team.invite.already.accepted	此邀请已被接受
+team.invite.already.joined	已加入此团队。
+team.invite.already.used	此邀请已被使用
+team.invite.could.not.load	无法加载邀请
+team.invite.could.not.process	无法处理邀请
+team.invite.invited.by	由 [0] 邀请
+team.invite.limit	你每次最多可以邀请 10 个人。
+team.invite.no.longer.valid	此邀请已失效
+team.invite.not.found.or.revoked	邀请不存在或已撤销
+team.invite.not.recognized	无法识别邀请
+team.invite.open.craft.to.sign.in	打开 Craft，登录并找到你的团队。
+team.invite.sign.in.as	以 [0] 身份登录
+team.invite.wrong.account.desc	当前登录为 [0]，但此邀请属于 [1]。
+team.invite.x.emails.already.members	[0] 个邮箱已是团队成员或有待处理的邀请。
+team.invite.youve.been.invited	你已被邀请加入
+team.paywall.big.subtitle	固定价格套餐，最多包含 10 个 Plus 账号，统一订阅。
+team.paywall.small.subtitle	固定价格套餐，包含 2 至 6 个 Plus 账号，统一订阅。
+team.paywall.space.count	最多 [0] 个项目团队空间
+team.plan.benefit.everything.in.family	包含 Family 的全部功能
+team.plan.benefit.room.to.grow	预留成长空间
+team.plan.benefit.shared.space.per.project	每个项目一个共享空间
+team.plan.billing.note	按月计费，可随时在设置中取消
+team.plan.choice.subtitle	两种套餐均让所有人共用一份订阅。
+team.plan.choice.title	你想如何开始？
+team.plan.choose.family	选择 Family
+team.plan.choose.team	选择 Team
+team.plan.family.capacity	2 到 [0] 人
+team.plan.team.capacity	最多 [0] 人
+team.plans.need.larger.team	团队版最多支持 10 名成员。需要更大的团队？
+team.preferences.menu	团队
+team.roles.and.permissions	团队角色与权限
+team.subscription.cancel.policy	可随时取消，至少在续订日前一天。套餐将自动续订，直至取消。
+team.tier.team	[0] 团队
+team.trial.banner.subtitle	免费体验协作功能 15 天——适用于 Family 和 Teams。
+team.trial.banner.title	先试试看
+team.trial.benefit.invite.members	邀请成员与你协作
+team.trial.benefit.multiple.shared.spaces	多个共享空间
+team.trial.ended	团队试用已结束
+team.trial.ended.desc	在你或团队达到 1,500 个块之前，可继续在 Craft 中创建内容。
+team.trial.ends.in.1.day	团队试用将在 1 天后结束
+team.trial.ends.in.x.days	团队试用将在 [0] 天后结束
+team.trial.has.ended	团队试用已结束
+team.trial.no.card.needed	无需信用卡——稍后选择套餐
+team.trial.optin.cta	开始 15 天免费试用
+team.trial.optin.price.note	之后每月 [0]，最多可供 [1] 人使用
+team.trial.optin.start	开始 15 天免费试用
+team.trial.optin.subtitle	无需信用卡，不会自动扣款
+team.trial.optin.title	今天就开始免费协作
+team.trial.optin.unlock.label	解锁内容
+team.trial.pricing.details	，之后固定 [0]/月（最多 [1] 名成员）或固定 [2]/月（最多 [3] 名成员）
+team.trial.start.collaborating.desc	接下来的 [0] 天内，所有协作功能均已解锁——邀请任何人，为每个项目添加多个共享空间。无需信用卡，不会自动升级。
+team.trial.start.collaborating.title	开始协作
+team.trial.starts.now.desc	15 天免费试用现已开始！可随时升级。若未升级，账号将自动切换回免费版。
+team.trial.try.for.x.days	试用 [0] 天
+team.trial.upgrade.desc	升级到 Teams，解锁 Plus 账号和共享协作的无限内容。
+team.trial.upgrade.to.keep	升级到 Teams，保留共享空间和所有成员的 Plus 权益
+team.welcome.slide1.desc	你和团队现在可以在同一个地方共同创建、编辑和整理文档。
+team.welcome.slide2.desc	你还拥有一个专属空间，团队成员无法查看。可在这里起草想法、记录笔记、整理生活。
+team.welcome.slide3.desc	在设置中邀请新成员、控制访问权限，并创建更多共享和私人空间。
+teams.badge	TEAMS
+teamsettings.add.custom.domain	添加自定义域
+teamsettings.alert.invite.revoke.failed	无法撤销邀请
+teamsettings.alert.invite.revoked	邀请已被撤销
+teamsettings.alert.member.remove.failed	无法移除成员
+teamsettings.alert.member.role.update.failed	无法更新成员角色
+teamsettings.alert.member.role.updated	成员角色已更新
+teamsettings.alert.remove.document.permissions.failed	无法移除文档权限
+teamsettings.alert.space.join.failed	无法加入空间
+teamsettings.alert.space.leave.failed	无法离开空间
+teamsettings.alert.subscription.cancel.failed	无法取消订阅
+teamsettings.alert.subscription.canceled	订阅已取消
+teamsettings.alert.subscription.resume.failed	无法恢复订阅
+teamsettings.alert.subscription.resumed	订阅已恢复
+teamsettings.alert.team.delete.failed	无法删除团队
+teamsettings.billing.billingemail.cta	联系支持
+teamsettings.billing.billingemail.header	帐单电子邮件
+teamsettings.billing.billingemail.part3	 如果你想更改帐单电子邮件。我们会在 24 小时内为你完成。
+teamsettings.billing.recurring.coupon.percentage	已应用 <code>[0]</code> [1]% 循环折扣
+teamsettings.billing.recurring.modifiers.flat	已应用 [0] 循环折扣
+teamsettings.billing.table.date	日期
+teamsettings.billing.table.invoice.total	发票合计
+teamsettings.billing.table.paid	已付款
+teamsettings.billing.table.status	状态
+teamsettings.billing.table.unpaid	未付
+teamsettings.billing.table.view.invoice	查看发票
+teamsettings.cancel.subscription.part2	当前计费周期结束
+teamsettings.cancel.subscription.part3	之后，你将无法向文档中添加新内容。
+teamsettings.cancel.team.subscription	取消团队订阅
+teamsettings.cancel.team.subscription.description	取消后，你将可以使用 Craft 直到当前计费周期结束。
+teamsettings.change.payment.method	更改付款方式
+teamsettings.craft.domain.new	[0] 域名
+teamsettings.current.plan	当前套餐
+teamsettings.custom.craft.domain.already.used	已使用
+teamsettings.custom.craft.domain.available	可用
+teamsettings.custom.craft.domain.change.domain	更改域名
+teamsettings.custom.craft.domain.confirm.delete.and.update.text2.part1	如果你的团队在当前域下发布了活动文档（
+teamsettings.custom.craft.domain.confirm.delete.and.update.text2.part2	）。如果你更改团队的 Craft 域，则包含此地址的所有现有链接都将停止工作。
+teamsettings.custom.craft.domain.confirm.delete.and.update.text3	你确定要更改你的域名吗？
+teamsettings.custom.craft.domain.not.available	不可用
+teamsettings.custom.craft.domain.part1	你发布的文档将在此域下：
+teamsettings.custom.craft.domain.part2	了解有关域的更多信息
+teamsettings.custom.craft.domain.type.to.see.availability	输入以查看是否可用
+teamsettings.custom.domain.active	自定义域
+teamsettings.custom.domain.not.active	设置域
+teamsettings.custom.domain.part2	详细了解支持的域。
+teamsettings.custom.domain.yourdomain.placeholder	你的域名
+teamsettings.danger.zone	危险区
+teamsettings.delete.team.title	删除团队
+teamsettings.disconnect.custom.domain.description	取消后，共享页面将在 craft.me 域上可用，但你可以设置一个新的自定义域。
+teamsettings.disconnect.custom.domain.title	断开自定义域
+teamsettings.dns.config.error.subtitle	请稍后重试或联系支持人员。
+teamsettings.dns.config.error.title	找不到 DNS 配置
+teamsettings.dns.description	共享 Craft 文档时使用你的域
+teamsettings.dns.verified	已验证 DNS
+teamsettings.dns.verifying	正在验证 DNS…
+teamsettings.domain.not.added	未设置域
+teamsettings.enter.team.logo.url	输入团队徽标 URL
+teamsettings.error.could.not.update.team.logo	无法更新团队徽标
+teamsettings.error.could.not.update.team.logo.url	无法更新团队徽标 URL
+teamsettings.external.domain.added.dns.records	我已添加 DNS 记录
+teamsettings.external.domain.dns.record	DNS 记录
+teamsettings.external.domain.name.host	名称 / 主机
+teamsettings.external.domain.title.active	外部域名详情
+teamsettings.external.domain.title.modify	修改你的域名 DNS 设置
+teamsettings.external.domain.value.points.to	值 / 指向
+teamsettings.family.members.count	Family ({{count}})
+teamsettings.inspiration.button.community	加入社区
+teamsettings.invite.already.member.subtitle	已经是团队成员
+teamsettings.invite.already.member.title	用户已经加入团队
+teamsettings.invite.error.could.not.invite.users	无法邀请{{count}}位用户
+teamsettings.invite.ignored.emails	忽略的电子邮件
+teamsettings.invite.ignored.emails.subtitle	忽略{{count}}现有或重复的电子邮件
+teamsettings.invite.ignored.emails.subtitle.new	忽略了 [0] 个已存在或重复的邮箱
+teamsettings.invite.n.emails	{{count}}封电子邮件
+teamsettings.invite.n.emails.new	[0] 个邮箱
+teamsettings.invite.to.space	邀请至空间
+teamsettings.invoice.next.issue.date	下次发票签发日期
+teamsettings.invoice.sent.to	发票发送至
+teamsettings.invoices	发票
+teamsettings.join.space	加入空间
+teamsettings.no.invoices	没有发票
+teamsettings.other.spaces	其他空间
+teamsettings.plan.weekly.renewal.new	[0]，每周计费
+teamsettings.plan.yearly.renewal.new	[0]，按年计费
+teamsettings.resume.subscription	恢复订阅
+teamsettings.resume.subscription.description	你的订阅已被取消。你可以恢复它以继续使用 Craft。
+teamsettings.resume.subscription.part1	你正在恢复订阅。将于
+teamsettings.resume.subscription.part2	下次账单日
+teamsettings.resume.subscription.part3	之后，价格将是
+teamsettings.resume.subscription.part4	每个席位。
+teamsettings.resume.team.subscription	恢复团队订阅
+teamsettings.save	保存
+teamsettings.set.custom.craft.domain	设置你自己的 Craft 域
+teamsettings.settings.and.billing	设置和计费
+teamsettings.team.change.logo	更改徽标
+teamsettings.team.change.logo.description	添加或更改你的徽标或图标
+teamsettings.team.change.logo.family	更改 Family 徽标
+teamsettings.team.change.logo.family.description	添加或更改你的 Family 徽标或图标
+teamsettings.team.change.logo.team	更改团队徽标
+teamsettings.team.change.logo.team.description	添加或更改你的团队徽标或图标
+teamsettings.team.change.to.admin.subtitle	可以更改团队设置、账单明细并查看所有空间。
+teamsettings.team.change.to.admin.title	管理员
+teamsettings.team.change.to.member.subtitle	无法查看设置、账单以及未加入的空间。
+teamsettings.team.change.to.member.title	成员
+teamsettings.team.deactivated.members.no.count	已停用成员
+teamsettings.team.invite.people	邀请人员
+teamsettings.team.logo.click.description	单击文档顶部的徽标时，将打开此链接。
+teamsettings.team.logo.url	自定义团队徽标 URL
+teamsettings.team.members.count	成员（{{count}}）
+teamsettings.team.pending.invites	待处理邀请（ {{count}} ）
+teamsettings.team.remove.from.team	从团队中删除
+teamsettings.team.remove.from.team.cta	从团队中移除
+teamsettings.team.remove.from.team.header	从团队中移除
+teamsettings.team.remove.from.team.text	你确定要从团队中删除{{name}} ( {{email}} ) 吗？
+teamsettings.team.revoke.invitation	撤销邀请
+teamsettings.team.revoke.invitation.cta	撤销
+teamsettings.team.revoke.invitation.header	撤销邀请？
+teamsettings.team.revoke.invitation.text	你确定要撤销来自{{email}}的邀请吗？
+teamsettings.team.role.admin	管理员
+teamsettings.team.role.deactivated	停用
+teamsettings.team.role.member	成员
+teamsettings.team.role.pending	待定
+teamsettings.team.seats	团队席位
+teamsettings.team.settings	团队设置
+teamsettings.who.can.help	查看谁可以提供帮助
+template.prompt.button	浏览模板
+template.prompt.description	浏览精心设计的模板合集，快速启动下一个项目。
+template.prompt.title	从模板开始
+thursday.short	四
+tipsandtricks.share.pdf.mac	PDF 导出
+tipsandtricks.tips.share	共享与协作
+tipsandtricks.tips.start	入门
+toolbar.add.people.to.access.document	添加人员来访问你的文档
+toolbar.add.people.to.restrict.access	添加人员以限制链接访问
+toolbar.author.shown	作者将显示
+toolbar.create.link	创建链接
+toolbar.footer.refers.craft	页脚将提及 Craft
+toolbar.invite.x	邀请[0]
+toolbar.learn.more.about.collaboration	了解有关协作的更多信息
+toolbar.off	关闭
+toolbar.page.title.hidden	页面标题将被隐藏
+toolbar.page.title.shown	将显示页面标题
+toolbar.presentation.mode.hidden	演示模式已隐藏
+toolbar.presentation.mode.visible	演示模式可见
+toolbar.publish.page.to.your.domain	将此页面发布到你的域名。
+toolbar.publish.to.the.web	发布到网络
+toolbar.reset.email.access	通过删除所有内容来重置电子邮件访问权限
+toolbar.search.engines	搜索引擎
+toolbar.set.custom.craft.domain.noplus	设置自定义 Craft 域名
+toolbar.set.external.domain	设置外部域名
+toolbar.show.author	显示作者
+toolbar.show.presentation.mode	显示演示模式
+toolbar.show.title	显示标题
+toolbar.show.toc.title	显示目录
+toolbar.toc.hidden	目录已隐藏
+toolbar.toc.placeholder	使用标题、页面或卡片创建目录。
+toolbar.toc.visible	目录可见
+toolbar.view.only	只读
+toolbar.visitor.page.duplicate.allowed	访客可以将此页面用作模板
+toolbar.visitor.page.duplicate.not.allowed	访客无法将此页面用作模板
+toolbar.visitors.add.comments	访客可以添加评论
+toolbar.visitors.follow.block.links.allowed	访客可以查看链接的页面
+toolbar.visitors.follow.block.links.desc	启用后，访客可以跳转此文档中的区块链接，即使它们指向其他文档
+toolbar.visitors.follow.block.links.not.allowed	访客无法访问链接的页面
+toolbar.visitors.view.comments	访客可以查看评论
+toolbar.your.domain	你的域名
+try.collaboration.for.free	免费试用协作
+try.teams.for.free	免费试用 Teams
+try.teams.free.banner	想要协作？免费试用 Teams 15 天
+tuesday.short	二
+turn.off.screen.sharing.mode	关闭屏幕共享模式
+unsplash.alert.update.search	请更新你的搜索并重试
+unsplash.search.photos	搜索照片
+up.to.x.shared.spaces.25	最多 25 个共享工作区
+up.to.x.shared.spaces.5	最多 5 个共享工作区
+update.banner.message	请点击下方更新，获取最新版本。
+update.check.for.updates	检查更新
+update.checking.for.updates	正在检查更新
+update.downloading	正在下载更新
+update.force.update	强制更新
+update.needed	需要更新
+update.no.updates.available	暂无更新
+update.permission.failed.to.update.link	无法更新链接访问
+update.please.reload.to.get.latest.version	请刷新页面以获取最新版本的应用。
+update.remind.me.in	提醒我……
+update.reminder.10.minutes	10 分钟后
+update.reminder.30.minutes	30 分钟后
+update.update.now	立即更新
+upgrade.to.team.plan	升级到团队版
+v319.intro.1.content	根据你的反馈进行改进。现在轮到你探索新功能了。
+v319.intro.1.title	标签、网页剪藏器、移动网页
+v319.intro.2.content	标签终于来了。不只是简单添加，我们用心打磨，只为带来更顺手、简洁、快速、恰到好处的体验。
+v319.intro.2.title	标签
+v319.intro.3.title	网页剪藏器
+v319.intro.4.content	现在，你也可以在安卓上将你的想法转化为结构化、美观且可共享的文档！
+v319.intro.4.title	安卓移动网页
+visit.site	访问网站
+want.to.collaborate	想要协作？
+web.collab.list.2	<emojiwrapper>[0]</emojiwrapper>和<emojiwrapper>[1]</emojiwrapper>
+web.collab.reacted.count.1	<highlight>[0]</highlight> 添加了表情
+web.collab.reacted.count.2	<highlight>[0]</highlight> 和 <highlight>[1]</highlight> 添加了表情
+web.collab.reacted.count.x	<highlight>[0]</highlight> 和 <highlight>[1]</highlight> 添加了表情
+web.collab.reacted.with	<highlight>[0]</highlight>添加了表情
+web.collab.reacted.with.count.1	<highlight>[0]</highlight>添加了 [1] 表情
+web.collab.reacted.with.count.2	<highlight>[0]</highlight>和<highlight>[1]</highlight>添加了 [2] 表情
+web.collab.reacted.with.count.x	<highlight>[0]</highlight>和<highlight>[1]</highlight>添加了 [2] 表情
+web.collab.someone.want.to.edit.the.document	<username>[0]</username>想要编辑文档“[1]”
+web.collab.someone.want.to.read	<username>[0]</username>想要查看
+web.collab.someone.want.to.read.the.document	<username>[0]</username>想要查看文档“[1]”
+web.collab.x.unresolved	<name>[0]</name>标记为未解决
+web.error.report.beta.error.desc.windows	此应用仅供测试使用。请从<formattedlink>[0]</formattedlink>下载最新版本或重新启动应用并使用其他帐户登录。
+web.error.report.beta.error.title	你使用的是测试版本，没有访问权限。如果需要访问权限，请联系我们。
+web.error.report.firewall.footer	你认为你公司的防火墙阻止了 Craft 吗？
+web.error.report.firewall.footer.button	连接故障排除
+web.error.report.internal.build.error.desc.windows	此应用仅供内部使用。请从<formattedlink>[0]</formattedlink>下载最新版本或重新启动应用并使用其他帐户登录。
+web.error.report.internal.build.error.title	看起来你偶然发现了一个内部版本
+web.error.report.killswitch.error.desc	此应用版本不再受支持。请重新加载页面进行更新。
+web.error.report.killswitch.error.desc.windows	此应用版本不再受支持。请退出应用并重新启动以获取自动更新，或从<formattedlink>[0]</formattedlink>下载最新版本
+web.error.report.killswitch.error.title	应用需要更新
+web.error.report.logged.in.error.desc	请退出登录以继续
+web.error.report.logged.in.error.title	已经登录
+web.error.report.network.error.desc	请检查你的连接并重试。
+web.error.report.network.error.title	你似乎处于离线状态
+web.error.report.render.error.desc	我们已记录该错误并通知我们的团队。请重新加载以继续。
+web.error.report.render.error.title	出了点问题
+web.error.report.take.me.to	带我去<bold>[0]</bold>
+web.linklanding.check.supported.platforms	检查 Craft 支持的平台
+web.linklanding.doc.was.opened.in.app	此文档已在 Craft 应用中打开
+web.linklanding.link.cannot.be.opened.on.platform	此链接无法在此平台上打开。
+web.linklanding.link.requires.craft.app	此链接需要 Craft 应用
+web.linklanding.open.in.app	在应用中打开
+web.linklanding.open.in.browser.instead	改为在浏览器中打开
+web.linklanding.page.was.opened.in.app	此页面已在 Craft 应用中打开
+web.onboarding.click.here.to.logout	<logoutlink>点击这里</logoutlink>退出登录。
+web.onboarding.google.terms.and.privacy	本网站受 reCAPTCHA 保护，适用 Google <toclink>[0]</toclink>和<privacylink>[1]</privacylink>
+web.preferences.language.description	设置你在 [0] 中使用的语言
+web.subscription.cancel.previous.appstore.sub	不要忘记通过 App Store 取消之前的订阅。 <helpsitelink>了解更多</helpsitelink>
+web.subscription.get.more.out.of.craft	让 Craft 发挥<italic>更多</italic>价值
+web.subscription.main.segmentcontrol.annual.20	每年<strong>(节省 20%)</strong>
+web.subscription.modify.subscription.to	你是否想将<strong>[0]</strong>的订阅修改为<strong>[1]</strong>？
+web.subscription.month.billed.annually	<strong>[0]</strong> /月 按年计费
+web.subscription.upgrade.to.plus.sale.desctiption	畅享无限使用，最高可享 <strong>[0]% 折扣</strong>。充分利用这项限时优惠。
+web.subscription.you.can.create.1.more.doc	你可以创建<highlight>另外 1 个文档</highlight>
+web.subscription.you.can.create.x.more.doc	你可以再创建<highlight>[0] 个文档</highlight>
+web.subscriptions.paywall.cancel.at.anytime	你可随时取消，但需在续订日期至少提前一天进行。<br/>套餐将在你取消前自动续订。
+web.subscriptions.paywall.removal.all.limits.desc	一个功能齐全的帐户，没有内容限制。<br/>非常适合个人创作者。
+web.teamsettings.external.domain.description.active	为你的团队设置了<domainlink>[0]</domainlink>外部域名。所有团队空间中的所有共享文档均可在此域名下找到。
+web.teamsettings.external.domain.description.add.line1	要使用外部域名，请将以下 DNS 记录添加到你的域名 DNS 设置中。
+web.teamsettings.external.domain.description.add.line2	查看我们的<guidelink>DNS 指南</guidelink>了解更多信息，或了解 Cloudflare 相关设置。
+wednesday.short	三
+welcome.to.craft.teams	欢迎使用 Craft Teams！
+welcome.to.x	欢迎来到 [0]
+what.happens.after.trial	试用结束后会怎样？
+whats.your.team.name	团队名称是什么？
+whiteboard.assets.limit	你最多只能上传 [0] 张图片。
+whiteboard.block.contains.important.metadata	此区块包含最新版本中可用的新白板区块的重要元数据。 请更新你的应用以查看它。
+whiteboard.close.beta.limited.users.desc	白板目前处于封闭测试阶段，仅供有限的用户使用。
+whiteboard.elements.limit	你最多只能添加 [0] 个元素。
+whiteboard.error.image.upload.failed	图片上传失败
+whiteboard.error.video.upload.failed	视频上传失败
+whiteboard.failed.to.upload.image	图片上传失败。请刷新页面后重试。
+whiteboard.upgrade.button	创建新版本
+whiteboard.upgrade.description	我们改进了白板的使用体验。点击下方即可在新版本中继续。 别担心，你的原始版本会保持不变。
+whiteboard.upgrade.error	白板升级失败
+whiteboard.upgrade.header	更新白板
+x.ago	[0] 前
+x.of.x.documents	[0] / [1] 个文档
+x.of.x.folders	[0] / [1] 个文件夹
+x.successfully.removed.from.y	已成功从“[1]”中移除“[0]”
+x15.days.free.trial	15 天免费试用
+you.can.change.this.later	稍后可在设置中更改。
+you.left.team	已离开 [0]
+your.own.private.space	专属私人空间

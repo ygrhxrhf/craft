@@ -1,0 +1,81 @@
+roster pairs=21
+
+### craftdark  var=uo fn=fo @4898 len=603
+   theme=t  settingsSpread=Ue  destructFrom=undefined  tagEntries=9  distinctColors=7
+   colors=color:"#8b949e" color:"#d2a8ff" color:"#79c0ff" color:"#ff7b72" color:"#a5d6ff" color:"#7ee787" color:"#ffdcd7"
+
+### craftlight  var=go fn=io @3960 len=603
+   theme=t  settingsSpread=We  destructFrom=undefined  tagEntries=9  distinctColors=8
+   colors=color:"#6a737d" color:"#6f42c1" color:"#005cc5" color:"#d73a49" color:"#032f62" color:"#22863a" color:"#24292e" color:"#b31d28"
+
+### atomone  var=so fn=co @3109 len=566
+   theme=t  settingsSpread=Pe  destructFrom=undefined  tagEntries=8  distinctColors=8
+   colors=color:"hsl(207, 82%, 66%)" color:"#e06c75" color:"#54636D" color:"hsl(220, 14%, 71%)" color:"hsl( 29, 54%, 61%)" color:"hsl(38,71%,66%)" color:"hsl(286, 60%, 67%)" color:"#98c379"
+
+### aura  var=bo fn=mo @5841 len=1135
+   theme=t  settingsSpread=Ke  destructFrom=undefined  tagEntries=20  distinctColors=7
+   colors=color:"#a277ff" color:"#edecee" color:"#ffca85" color:"#61ffca" color:"#82e2ff" color:"#6d6d6d" color:"#ff6767"
+
+### bbedit  var=ho fn=po @7242 len=612
+   theme=t  settingsSpread=Ge  destructFrom=undefined  tagEntries=13  distinctColors=12
+   colors=color:"#804000" color:"#0000FF" color:"#FF0080" color:"#006600" color:"#33CC33" color:"#1C02FF" color:"#0C07FF" color:"#000000" color:"#B90690" color:"#888888" color:"#0000A2" color:"#6D79DE"
+
+### darcula  var=lo fn=no @2345 len=450
+   theme=t  settingsSpread=_e  destructFrom=undefined  tagEntries=9  distinctColors=8
+   colors=color:"#bd93f9" color:"#61A151" color:"#6A8759" color:"#A9B7C6" color:"#FFC66D" color:"#CC7832" color:"#ff79c6" color:"#ffb86c"
+
+### dracula  var=yo fn=ko @8170 len=487
+   theme=t  settingsSpread=qe  destructFrom=undefined  tagEntries=8  distinctColors=7
+   colors=color:"#6272a4" color:"#f1fa8c" color:"#bd93f9" color:"#f8f8f2" color:"#ff79c6" color:"#66d9ef" color:"#50fa7b"
+
+### githubdark  var=wo fn=vo @9960 len=846
+   theme=t  settingsSpread=ze  destructFrom=undefined  tagEntries=14  distinctColors=9
+   colors=color:"#7ee787" color:"#8b949e" color:"#d2a8ff" color:"#79c0ff" color:"#ff7b72" color:"#a5d6ff" color:"#ffdcd7" color:"#ffab70" color:"#f97583"
+
+### githublight  var=Co fn=xo @8848 len=902
+   theme=t  settingsSpread=$e  destructFrom=undefined  tagEntries=15  distinctColors=11
+   colors=color:"#116329" color:"#6a737d" color:"#6f42c1" color:"#005cc5" color:"#d73a49" color:"#032f62" color:"#22863a" color:"#24292e" color:"#b31d28" color:"#e36209" color:"#cb2431"
+
+### gruvboxdark  var=Do fn=No @11068 len=1853
+   theme=t  settingsSpread=Ve  destructFrom=undefined  tagEntries=34  distinctColors=11
+   colors=color:"#fb4934" color:"#8ec07c" color:"#83a598" color:"#b8bb26" color:"#ebdbb2" color:"#d3869b" color:"#fb4934d" color:"#fabd2f" color:"#fe8019" color:"#928374" color:"#a89984"
+
+### gruvboxlight  var=Fo fn=So @13209 len=1852
+   theme=t  settingsSpread=Ye  destructFrom=undefined  tagEntries=34  distinctColors=10
+   colors=color:"#9d0006" color:"#427b58" color:"#076678" color:"#79740e" color:"#3c3836" color:"#8f3f71" color:"#b57614" color:"#af3a03" color:"#928374" color:"#7c6f64"
+
+### materialdark  var=Mo fn=Lo @15386 len=1873
+   theme=t  settingsSpread=Xe  destructFrom=undefined  tagEntries=36  distinctColors=12
+   colors=color:"#cf6edf" color:"#56c8d8" color:"#facf4e" color:"#bdbdbd" color:"#fa5788" color:"#ff5f52" color:"#ffad42" color:"#7186f0" color:"#99d066" color:"#606f7a" color:"#6abf69" color:"#707d8b"
+
+### materiallight  var=jo fn=Ao @17527 len=1157
+   theme=t  settingsSpread=Qe  destructFrom=undefined  tagEntries=20  distinctColors=7
+   colors=color:"#39ADB5" color:"#90A4AE" color:"#6182B8" color:"#91B859" color:"#E2931D" color:"#F76D47" color:"#E5393570"
+
+### noctislilac  var=Ro fn=Io @18937 len=805
+   theme=t  settingsSpread=Je  destructFrom=undefined  tagEntries=15  distinctColors=11
+   colors=color:"#9995b7" color:"#ff5792" color:"#0094f0" color:"#5842ff" color:"#0095a8" color:"#b3694d" color:"#fa8900" color:"#e64100" color:"#00b368" color:"#0431fa" color:"#00bdd6"
+
+### nord  var=To fn=Eo @20054 len=1932
+   theme=t  settingsSpread=Ze  destructFrom=undefined  tagEntries=36  distinctColors=13
+   colors=color:"#5e81ac" color:"#88c0d0" color:"#8fbcbb" color:"#81a1c1" color:"#a3be8c" color:"#d30102" color:"#b48ead" color:"#ebcb8b" color:"#bf616a" color:"#d08770" color:"#d8dee9" color:"#4c566a"
+
+### sublime  var=Ho fn=Oo @22250 len=671
+   theme=t  settingsSpread=et  destructFrom=undefined  tagEntries=11  distinctColors=10
+   colors=color:"#A2A9B5" color:"#B78FBA" color:"#5AB0B0" color:"#99C592" color:"#f47954" color:"#E35F63" color:"#fbac52" color:"#539ac4" color:"#629ccd" color:"#36b7b5"
+
+### tokyonightday  var=Po fn=_o @23204 len=1155
+   theme=t  settingsSpread=tt  destructFrom=undefined  tagEntries=20  distinctColors=6
+   colors=color:"#007197" color:"#3760bf" color:"#587539" color:"#b15c00" color:"#848cb5" color:"#f52a65"
+
+### tokyonightstorm  var=Uo fn=Wo @24602 len=1155
+   theme=t  settingsSpread=ot  destructFrom=undefined  tagEntries=20  distinctColors=10
+   colors=color:"#bb9af7" color:"#c0caf5" color:"#7aa2f7" color:"#9ece6a" color:"#ff9e64" color:"#2ac3de" color:"#b4f9f8" color:"#565f89" color:"#89ddff" color:"#ff5370"
+
+### tokyonight  var=Go fn=Ko @26000 len=1135
+   theme=t  settingsSpread=at  destructFrom=undefined  tagEntries=20  distinctColors=10
+   colors=color:"#bb9af7" color:"#c0caf5" color:"#7aa2f7" color:"#9ece6a" color:"#ff9e64" color:"#0db9d7" color:"#b4f9f8" color:"#444b6a" color:"#89ddff" color:"#ff5370"
+
+### vscodedark  var=$o fn=qo @27431 len=1247
+   theme=t  settingsSpread=rt  destructFrom=undefined  tagEntries=17  distinctColors=12
+   colors=color:"#569cd6" color:"#c586c0" color:"#9cdcfe" color:"#4ec9b0" color:"#dcdcaa" color:"#b5cea8" color:"#d4d4d4" color:"#d16969" color:"#ce9178" color:"#808080" color:"#6a9955" color:"#ff0000"

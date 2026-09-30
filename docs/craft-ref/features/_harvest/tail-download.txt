@@ -1,0 +1,13 @@
+download.prompt.benefit.ai	AI 驱动的无缝工作流
+download.prompt.benefit.native	精美的原生体验
+download.prompt.benefit.offline	即使离线也能快速运行
+download.prompt.button.android	在 Google Play 获取
+download.prompt.button.ios	在 App Store 获取
+download.prompt.button.macos	下载 Mac 版
+download.prompt.button.windows	下载 Windows 版
+download.prompt.continue.in.browser	在浏览器中继续
+download.prompt.get.the.full.experience	获得完整体验
+download.prompt.subtitle	在桌面和移动设备上享受更快、更强大的体验
+download.starting.desc	选择目标文件夹来开始下载过程。
+download.starting.title	下载开始…
+download.success	下载成功完成

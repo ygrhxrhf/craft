@@ -1,0 +1,14 @@
+{
+  "hostTag": "DIV",
+  "hostTextLen": 100,
+  "tabs": [
+    "通用",
+    "文档",
+    "任务",
+    "编辑",
+    "样式",
+    "整理",
+    "合集"
+  ],
+  "text": "通用文档任务编辑样式整理合集快捷键通用取消esc查看所有快捷键CtrlShift,导航导航到Ctrl→返回上层Ctrl←快速开启CtrlO或者CtrlP视图切换专注模式Ctrl.切换左侧边栏Ctrl\\"
+}

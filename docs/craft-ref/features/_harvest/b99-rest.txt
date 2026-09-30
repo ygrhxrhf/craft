@@ -1,0 +1,52 @@
+
+## V92〔第 99 批 2026-09-29 23:4x–23:5x 本地＝UTC 15:4x–15:5x〕**回收站选择模式全动线（⋯ →「选择」→ 三态全选框／还原／永久删除所选 → `Escape` 退出）＋「清空最近删除」入口定位 ＋ 一条"进入即默认选中一项"的误删风险面**（零写入；原始读数在 `gap.md` §三点一〇四三 G993–G999、截图 `_harvest/b99-trash-menu.png`）
+
+### 一、动线逐环节
+
+| 环节 | 触发 | 证据 | 守卫／边界 |
+| --- | --- | --- | --- |
+| 1 打开 ⋯ | 合成 pointer 七连发命中 `elementFromPoint(按钮中心)`（`BUTTON[data-testid="browse-sort-button"]`，`1106,60,28×28`） | `[role=menu]` 出现（`_content_16nf6_9`，`874,96,260×88`），`role=group:2`、`role=menuitem:2` | 静止态枚举屏上可点项**看不到任何删除语义** ⇒ **否定性结论必须先穷尽浮层内项**（上一批 G990 就是栽在这条上，已就地 ✎） |
+| 2 读出菜单 | 只读 | 两项：**「选择」**（`880,102,248×32`，前置圆圈对勾图标）＋**「清空最近删除」**（`880,146,248×32`，前置垃圾桶图标）；均无禁用语义、**无键位列** | ⚠ **本批未点「清空最近删除」**（不可逆 ＋ 覆盖面含 3 条非授权项）；文本在 `textContent`、`aria-label` 为空 |
+| 3 进选择模式 | 点「选择」 | 头部改写成选择条，立刻出现 **「已选 1 项」**；同条出现三枚图标＝`role=checkbox` SPAN（`822,65,18×18`，内 icon **`Minus Bold Icon`**＝**半选态**）＋ **`Arrow Uturn Backward Icon`**（`912,64`＝还原所选）＋ **`Trash Slash Icon`**（`944,64`＝永久删除所选） | ★ **进入即有默认选中**（未确认是哪一行）⇒ 用户可能在没注意的情况下批量删；☆「选择」带对勾＝**开关型条目**（再点一次退出） |
+| 4 退出 | `press_key Escape` 一次 | 选择条消失、`已选` 文案消失、四角色计数 `0/0/0/0`；**数据面零变化**（`unsorted` 仍 3、`trash` 仍 15，逐条与进入前一致） | ☆ 与第 96 批"面板级键只需事件送达"一致：`Escape` 不要求元素持焦 |
+
+### 二、两条删除类动词的分工（本目录此前只有一条）
+
+- **⋯ →「清空最近删除」**＝`commands.empty.trash`，语义＝**清空整个回收站**（无差别），配套确认文案 `alert.empty.trash.title`「你确定要永久删除这些项目吗？」（⚠ **确认框屏上形态仍未见**，本批刻意不点开）。
+- **选择条 `Trash Slash`**＝**只永久删除所选**，对应 `commands.delete.permanently.document`／`commands.delete.x`（「Delete [0]」）。
+- ⇒ ★★★ 实操含义＝**"只清 12 条具名采集沙盒、放过 3 条无标题"在官方通路上做得到**（勾 12 行 → `Trash Slash` → 确认）；本批**没做**，等按具名范围单独点头。
+- ☆ 零选中时 `Trash Slash` 是否灰、选中含文件夹时文案是否换成 `commands.delete.x`，**未测**。
+
+### 三、判据门槛（会造假阳性那条）
+
+静止态**每行就恒有一个 `role=checkbox` 节点**（本屏未进选择模式时 `[role=checkbox]`=15＝行数，视觉隐藏）⇒ **数 checkbox 判不了"是否在选择模式"**；有效判据＝**头部三枚图标任一出现 ＋「已选 N 项」文案**。⇒ 与 `paddingLeft` 盲区、浮层零 ARIA、两档 rail 判据并列为**第四条"判据越界"型盲区**。
+
+### 四、复测协议（下批要跑"精确清 12 条"时照抄）
+
+1. 先 `documents list --location trash` 取基线 15 条 id 清单；2. 屏上按行标题**逐行勾选 12 条具名**（回收站行是 `<A>`，勾选要点行内 `role=checkbox` 节点，且**每勾一行复核一次「已选 N 项」计数**）；3. 计数必须**恰好 12** 才允许下一步，否则停手；4. 点 `Trash Slash`；5. 读确认框文案（顺带结掉 `alert.empty.trash.title` 的屏上形态）；6. 确认后 `documents list --location trash` 应剩 **3 条无标题**、`unsorted` 仍 3；7. 任一步计数不符＝**立刻 `Escape` 退出并报告**。⚠ 该协议**不可逆**，需用户按"具名 12 条"重新点头。
+
+**仍未采到（本交互面）**：两条动词各自的**确认框**（文案、按钮、是否列出受影响条数）；`Trash Slash` 的禁用条件；「已选 1 项」的默认落点；选择模式下的跨标签同步；回收站是否有"仅还原所选"以外的批量动作（如批量移动／加星标）。
+
+<!--SPLIT-->
+
+## 三十六、**浮层 ARIA 要分两档：菜单类有、自绘面板类没有** ＋ 官方 testid 属性名 ＋ 三态复选框恒在 DOM（✓屏上 第 99 批 2026-09-29 23:4x–23:5x，零写入；原始读数在 `gap.md` §三点一〇四三 G996／G998、`interactions.md` V92）
+
+1. ★★★ **既有判据要收窄**：本目录此前四次记"Craft 自有浮层零 ARIA"（日期弹层／帮助浮层／快捷键面板／分享浮层），本批在**下拉菜单**上实测相反＝`[role=menu]:1`、`[role=group]:2`、`[role=menuitem]:2` 全都在（且第 96 批·尾记九那次帮助菜单也记过 `role=menu:1`／6 项，只是当时没提炼成规则）。⇒ **正确表述＝"菜单类浮层（Base UI Menu）有 ARIA 角色；非菜单类的自绘面板（日期／分享／快捷键／集合视图）零 ARIA"** ⇒ 判开合前要先问"这是哪一类浮层"，别拿一条覆盖全部（承"判据越界"同族）。
+2. ★★ **官方 testid 属性名＝`data-testid`（无连字符）**：本屏 26 个 testid 全部走这个属性（`header-root`／`sidebar-toggle`／`browse-header`／`browse-layout-toggle`／`browse-sort-button`／`document-list`／`browse-document-list` 等）；⇒ 探针只写 `[data-test-id="…"]` 会**静默 0 命中**（本批因此把 `browse-header` 读成 `null`、`browse-sort-button` 选择器抛 `TypeError`）；⇒ **写法固定为双属性回退**：`document.querySelector('[data-testid="X"],[data-test-id="X"]')`，并在取不到时**先枚举属性名再判"不存在"**。
+3. ★★ **三态复选框在 DOM 里的形态**＝选择条里是 `SPAN[role=checkbox]`（`18×18`）＋ 内层 `SPAN[role=img][aria-label]` 表达**状态**：半选态的图标名是 **`Minus Bold Icon`**（本批实测＝"已选 1 项／共 15 行"⇒ 部分选中）；⇒ 官方用**图标可访问名**编码三态，而不是 `aria-checked="mixed"` ⇒ **判"全选/半选/未选"要读内层图标的 `aria-label`**，读 `aria-checked` 会读不到东西（本目录第一次见这个形态，值得记）。
+4. ☆ **DS 菜单容器的类名家族＝`_content_16nf6_9`**（CSS Modules hash `16nf6`）⇒ 与已知的 `dm375`（快捷键面板）／`1j891`（action 按钮）／`6sjpd`／`1nu3o`／`v0ra3` 并列，**新增一个 hash 家族**；菜单项几何＝`248×32`、容器 `260×88`（左右内边距各 6、项间 12）；⇒ 本地若复刻下拉菜单，行高 32／容器宽 260 是官方值。
+5. ☆ **顶栏中央的「打开」搜索框常驻**（截图可见）＝quick-open 的**可见**入口 ⇒ 与 V1/V2 结论一致（`⌘K` 与这个框都是"跳转到"，**web 侧没有 189 条命令的全局命令面板**；命令只以**局部 ⋯ 菜单**形态出现）。⇒ 这条给"官方删了命令面板"之类的猜测画上句号：**web 构建里命令面板从未存在**，只有 `command-palette-button` 这个 testid 残留在 bundle（本批在屏上 26 个 testid 里**没找到它**＝未渲染，与 V7"注册方不在 web DOM"同族）。
+
+**仍未采到（本机制面）**：`_16nf6_` 家族其余类名与色值；菜单项 hover／键盘态样式；`Minus Bold Icon` 之外两态（全选／未选）的图标名；`command-palette-button` 的渲染条件（哪个开关或屏会挂它）。
+
+<!--SPLIT-->
+
+## 二十二、**回收站屏的图标可访问名清单 ＋ 卡片预览会泄露已删文档正文 ＋ 一处第 97 批结论的意外印证**（第 99 批 2026-09-29 23:4x–23:5x，零写入＝暗档、网格档、桌面档 `innerWidth:1154`；截图 `_harvest/b99-trash-menu.png`；原始读数在 `gap.md` §三点一〇四三 G997、`interactions.md` V92）
+
+1. ★★ **本屏图标可访问名逐枚清单**（顶栏与头部，全部来自 `aria-label`，`role=img` 或 `role` 缺失）＝`Sidebar Left Icon Chevron Down Bold Icon`（侧栏开关）／`Bell Badge Icon`／`Question Mark Icon`／`Sidebar Right Icon Chevron Down Bold Icon`／`Doc Badge Plus Icon 新建文档`／`Doc On Doc Icon 所有文档`／`Checkmark Circle Icon 任务 Plus Icon`／`Calendar Icon 日历 Dot Viewfinder Icon`／`Cloud Icon 连接`／`Person Wave2 Fill Icon 与我共享`／`Doc Append Icon 我的模板`／`Tray Full Icon Expand 未分类`／`Plus Bold Icon`／`Chevron Down Icon`／视图三档＝`Rectangle Grid2x2 Icon`／`Rectangle3 Group Icon`／`Line3 Horizontal Icon`／`Ellipsis Icon`／选择条＝`Minus Bold Icon`／`Arrow Uturn Backward Icon`／`Trash Slash Icon`；左下 rail＝`Desktop Icon`／`Square And Arrow Down Icon`／`Person3 Fill Icon`／`Trash Icon`。⇒ ☆ **图标名是英文、界面文案是中文**（同一元素上并存两套语言）⇒ 本地做 i18n 时这类"图标名不参与翻译"是官方口径。
+2. ★★★ **回收站卡片预览会渲染已删文档正文**（网格档每张卡带内容摘要）：`QODER-HARVEST-B97-DRAG` 卡上次序 **`DRAG-A alpha / DRAG-C charlie / DRAG-B bravo / DRAG-D delta`** ＝ 我删除那一刻的最后状态（撤销后又 `Ctrl+Shift+Z` 重做过）⇒ **摘要反映服务端最后落库态**；`QODER-HARVEST-B96D` 卡上带 `QODER-HARVEST-B96D G1 task` ⇒ 任务块在摘要里以纯文本出现（含前缀的块文本）。
+3. ★★ **一处意外印证**＝`QODER-HARVEST-B97-INDENT` 卡上有一行 **`B97 A4 plain B97 D1 fully bold`**（两段文本**同行**）⇒ 第 97 批"块首 `Backspace` 把 D1 合并进 A4"这条**当场观测过的结论，拿到第二次独立印证**（这次是回收站卡片摘要，不是我读 `blocks get`）⇒ 方法学含义：**历次沙盒文档的卡片摘要是一个可回看的"行为留痕源"**，等价于免费的第二方证据。
+4. ★ **一处隐私边界**＝卡片摘要会把文档正文**明文渲染在列表屏**上（本批截图里能看到历次采集串的自我文本）⇒ 本目录的沙盒文本都是无意义标记，无外泄；但**这条对真实用户内容意味着"回收站列表屏会暴露正文片段"** ⇒ 产物里不复述用户文档正文的纪律，正是为了不在截图／摘要里带出它们（本批截图只含自建的 `QODER-HARVEST-*` 标记文本，且 `_harvest/` 被 gitignore）。
+5. ☆ **暗档观察（未量值）**＝本屏整体暗色（深底 ＋ 卡片描边 ＋ 菜单深灰底），属用户既有偏好，**本批未切主题、未点任何视图切换**（当前档＝网格，与进入前一致）；⇒ 若要 1:1 复刻选择条，暗档色值是下批的活。
+
+**仍未采到（本节）**：分组档／横线档下回收站的布局与是否有"删除日期分组"这类附加行；卡片摘要的**截断规则**（几行、多少字符、超出如何省略）；摘要是否实时（需改一篇已删文档再看，属禁区）；选择模式下卡片是否显示勾选框在右上还是左上（本批未逐枚量）。

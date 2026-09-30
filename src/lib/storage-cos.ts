@@ -15,8 +15,8 @@ let real: CosClient | null = null;
 
 /** 配置字段 → 环境变量名，报错要报运维真正要改的那个名字。 */
 const ENV_NAME = {
-  SecretId: 'COS_SECRET_ID',
-  SecretKey: 'COS_SECRET_KEY',
+  SecretId: 'COS_SECRET_ID（或云托管注入的 TENCENTCLOUD_SECRETID）',
+  SecretKey: 'COS_SECRET_KEY（或云托管注入的 TENCENTCLOUD_SECRETKEY）',
   Bucket: 'COS_BUCKET',
   Region: 'COS_REGION',
 } as const;
@@ -31,6 +31,7 @@ function client(): CosClient {
   real = new COS({
     SecretId: cfg.SecretId,
     SecretKey: cfg.SecretKey,
+    ...(cfg.Token ? { SecurityToken: cfg.Token } : {}),
     Protocol: 'https:',
   }) as unknown as CosClient;
   return real;
@@ -62,7 +63,10 @@ function presign(key: string, method: 'PUT' | 'GET', expires: number, contentTyp
     Headers: headers,
   });
   if (!auth) throw new Error('COS 签名失败：桶名或密钥不合法');
-  return `https://${host}/${encodeKey(key)}?${auth}`;
+  // 临时密钥的 token 不进签名串，跟在 auth 之后（与 SDK getObjectUrl 同形）
+  const token = cosConfig().Token;
+  const tokenQuery = token ? `&x-cos-security-token=${encodeURIComponent(token)}` : '';
+  return `https://${host}/${encodeKey(key)}?${auth}${tokenQuery}`;
 }
 
 export function presignPut(key: string, contentType: string) {

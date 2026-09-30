@@ -1,0 +1,3603 @@
+account.delete.email.address	Email address (for confirmation)
+accountselector.my.spaces	My Spaces
+accountselector.shared.spaces	Shared spaces
+accountselector.shared.with.me	Shared with Me
+activity.activity	Activity
+activity.activity.footer.earlier	Earlier
+activity.changes.x.one	[0] change
+activity.changes.x.other	[0] changes
+activity.currently.showing.x.days	Currently showing last [0] days.
+activity.one.change	1 change
+activity.snapshot.placeholder	There aren鈥檛 any saved versions yet.
+activity.x.changes	[0] changes
+add.custom.domain.fail.desc	Invalid custom domain 鈥� Please try again
+add.custom.domain.fail.title	Failed to add custom domain
+add.document	Add Document
+add.email.to.invite	Add email addresses to invite collaborators
+add.more	Add more
+add.new.item	Add new item
+add.to.spaces	Add to spaces
+add.to.spaces.desc	Choose at least one space to add your invited members to. They'll join it once they sign up.
+adding.members	Adding members鈥�
+ai.add.document.to	Add Document to [0]
+ai.import.personalized.document	Import Your Personalized Document
+ai.select.space.to.add.this.document	Select a space to add this document to
+alert.account.delete.message.confirmation	Are you sure? All documents in your personal space will be deleted forever!
+alert.account.delete.message.otherspaces	Are you sure? All documents in your personal space and all documents in the following spaces will be deleted forever:
+alert.account.delete.type.email	To proceed, please type your email address:
+alert.account.locked	Account locked due to too many failed attempts
+alert.add.email	Add your email to proceed
+alert.all.changes.saved	All changes saved
+alert.apple.id.already.used	Tw贸j nowy adres e-mail Apple ID jest ju偶 u偶ywany przez inne konto. Najpierw usu艅 to konto lub zmie艅 jego adres e-mail
+alert.approving.request.failed	Approving request failed
+alert.authorization.error	Authorization Error
+alert.authorization.successful	Authorization Successful
+alert.authorization.successful.subtitle	You can now use this integration in your documents.
+alert.builing.your.presentation	Hang tight, we鈥檙e building your presentation鈥�
+alert.cannot.add.more.reminders	Cannot add more reminders
+alert.cannot.delete.doc	Could not delete the document
+alert.cannot.load.pinned.document	Cannot load pinned document
+alert.cannot.paste.into.selected.field	Cannot paste into the selected field
+alert.cannot.paste.into.selected.field.subtitle	Please make sure the copied value is compatible with the field type
+alert.character.limit.reached	Character limit reached
+alert.character.limit.reached.subtitle	You can鈥檛 add more than 10000 characters
+alert.check.connection	Please check your connection
+alert.code.already.verified	Code already verified
+alert.code.copied.to.clipboard	Code copied to clipboard
+alert.collection.delete.desc	Selected blocks contain a collection, all of your items will be lost
+alert.coming.soon	Coming Soon
+alert.configuration.is.invalid	The configuration is invalid. Please check the syntax and try again.
+alert.confirm.leave.documents	Are you sure you want to leave [0] documents? You might not be able to access them anymore.
+alert.connection.error	Connection error
+alert.continue	Continue
+alert.copy.link.error	Cannot copy link to clipboard
+alert.copy.success	Copied to Clipboard
+alert.copy.success.deeplink	Deeplink Copied to Clipboard
+alert.copy.success.link	Link Copied to Clipboard
+alert.could.not.add.permission	Could not add document permissions
+alert.could.not.change.role	Could not change user role
+alert.could.not.create.folder	Could not create folder
+alert.could.not.delete.account	Could not delete account
+alert.could.not.delete.document	Could not delete document
+alert.could.not.delete.some.documents	Could not delete some documents
+alert.could.not.invite.members	Could not invite members
+alert.could.not.move.space	Could not move the space
+alert.could.not.move.to.folder	Could not move to folder
+alert.could.not.move.to.trash	Could not move to trash
+alert.could.not.remove.reaction	Could not remove reaction
+alert.could.not.resolve.the.thread	Could not resolve the thread
+alert.could.not.restore.from.trash	Could not restore document from trash
+alert.could.not.star.document	Could not star document
+alert.could.not.unresolve.the.thread	Could not unresolve the thread
+alert.could.not.unstar.document	Could not unstar document
+alert.could.not.update.folder	Could not update folder
+alert.could.not.update.space.name	Could not update space name
+alert.creating.documents	Creating documents
+alert.creating.folders	Creating folders
+alert.creating.link	Creating Link
+alert.declining.request.failed	Declining request failed
+alert.delete.comment.question	Delete Comment?
+alert.delete.field.desc	Are you sure you would like to delete this field?
+alert.delete.invite	Could not delete invite
+alert.delete.invites	Could not delete invites
+alert.delete.style.desc	Are you sure you want to delete style 鈥淸0]鈥�?
+alert.delete.style.title	Delete Style
+alert.delete.value.desc	Are you sure you would like to delete this value?
+alert.deleting.account	Deleting Account鈥�
+alert.deleting.comment.failed	Deleting comment failed
+alert.deleting.document	Deleting document
+alert.deleting.documents	Deleting documents鈥�
+alert.deleting.folders.cannot.be.undone	Deleting folders cannot be undone.
+alert.deleting.invite	Deleting Invite鈥�
+alert.deleting.invites	Deleting Invites鈥�
+alert.deleting.notification.failed	Deleting notification failed
+alert.deleting.thread.failed	Deleting thread failed
+alert.deleting.view.desc	Are you sure you want to delete this view
+alert.document.deleted	Document deleted
+alert.document.move.tofolder	Moved to [0]
+alert.document.removed	This document has been removed
+alert.documents.exported	Your documents have been exported!
+alert.documents.exported.desc	Download the archived documents below.
+alert.domain.enforced	Craft domain is enforced if email based access is enabled.
+alert.duplicate.doc.error	Could not duplicate document. Please try again later.
+alert.empty.trash.title	Are you sure you want to permanently erase the items?
+alert.error	Error
+alert.error.ask.admin	Ask your Admin for more help.
+alert.error.auth.token.missing	Could not authenticate you
+alert.error.business.tier.expired	Since your business tier has expired, you cannot change the custom domain.
+alert.error.change.permission.title	Failed to change user permission
+alert.error.comment.send	Could not send comment
+alert.error.content.generic	Please try again later.
+alert.error.content.generic.long	Please try again later or contact support.
+alert.error.creating.space	Error creating space ([0])
+alert.error.creating.task	An error occurred while creating the task
+alert.error.creating.team	Error creating team ([0])
+alert.error.custom.paths.empty	Path cannot be empty.
+alert.error.custom.paths.no.spaces	Path cannot contain spaces
+alert.error.custom.paths.tier.expired	Since your business tier has expired, you cannot change the custom path.
+alert.error.custom.paths.too.long	Path must be less than 500 characters long.
+alert.error.custom.paths.too.short	Path must be at least 2 characters long
+alert.error.delete.permission.title	Failed to delete user permission
+alert.error.desc	Tell us how can we reproduce the problem and what issues you are experiencing
+alert.error.document.not.found	Document not found
+alert.error.document.not.found.desc	We couldn鈥檛 load the document you were trying to open
+alert.error.downloading.file	Error downloading file
+alert.error.extension.not.installed	Craft Web Clipper is not installed
+alert.error.failed.to.load.documents	Failed to load documents
+alert.error.importing.markdown.documents	Error importing Markdown documents
+alert.error.invalid.params	This login request is not valid
+alert.error.invalid.path.base	Invalid path
+alert.error.leave.doc.title	Failed to leave document
+alert.error.login.failed	Login Failed
+alert.error.occurred	An error occurred!
+alert.error.path.cannot.be.changed	Path cannot be changed
+alert.error.remove.share.access.title	Failed to remove all share access
+alert.error.remove.x.access.title	Failed to remove [0] access
+alert.error.request.access.title	Requesting access failed
+alert.error.sending.team.invites	Error sending team invites
+alert.error.sso.not.setup	绲勭箶銇偡銉炽偘銉偟銈ゃ兂銈兂锛圫SO锛夈亴銇俱仩瑷畾銇曘倢銇︺亜銇俱仜銈撱€俿upport@craft.do 銇€ｇ怠銇欍倠銇嬨€佸垾銇儹銈般偆銉虫柟娉曘倰浣跨敤銇欍倠銈堛亞绠＄悊鑰呫伀渚濋牸銇椼仸銇忋仩銇曘亜銆�
+alert.error.unknown	Something went wrong
+alert.expired.code	Code is expired
+alert.exporting.documents	Exporting documents
+alert.exporting.md.documents	Error exporting Markdown documents
+alert.exporting.textbundle	Error exporting Textbundle
+alert.failed.to.paste	Failed to paste
+alert.failed.to.register.subscription	Failed to register subscription
+alert.failed.to.updated.subscription	Failed to update subscription
+alert.field.limit.title	Field limit reached
+alert.field.type.changing.desc.updated	Modifying field type will convert the current values if the conversion is possible. Are you sure you want to continue?
+alert.field.type.changing.title	Field type changing
+alert.file.not.supported	File not supported
+alert.import.from.notion	Import from Notion
+alert.invalid.code	Code is invalid
+alert.invite.deleted	Invite deleted
+alert.item.moved.to.recently.deleted	This item will be moved to Recently Deleted.
+alert.items.moved.to.recently.deleted	These items will be moved to Recently Deleted.
+alert.lazy.load.desc	Please check your internet connection or reload the page.
+alert.lazy.load.title	Some features couldn鈥檛 be loaded
+alert.learn.more	Learn more
+alert.leave.confirm	Leave
+alert.leave.document	Are you sure you want to leave this doc? You might not be able to access it anymore.
+alert.leave.shared.document.desc	Could not leave the document. Please try again later.
+alert.leave.shared.document.title	Leave shared document
+alert.left.shared.document	Left the shared document
+alert.license.key.already.subscribed	User is already subscribed
+alert.license.key.already.used	License key was already used
+alert.license.key.invalid.or.expired	License key is invalid or expired
+alert.link.not.created	link could not be created
+alert.link.not.removed	link could not be removed
+alert.link.not.updated	link could not be updated
+alert.little.detail.helps	Every little detail helps!
+alert.load.preview.error	Unable to load preview
+alert.max.in.progress.reminders	You can have a maximum of [0] in progress reminders.
+alert.max.resolved.reminders	You can have a maximum of [0] resolved reminders.
+alert.max.x.reminders	You can have a maximum of [0] reminders.
+alert.member.can.edit.doc.file.permission	This person can still edit, because the file is set to anyone with the link can edit.
+alert.member.can.edit.doc.team.permission	This person can still edit, because they have edit permission on the team the doc is in.
+alert.member.will.still.access.doc	This person will still be able to access the doc because they are a member of the team the doc is in.
+alert.moved.to.trash	Moved document to Recently Deleted
+alert.no.files.to.import	No files found to import!
+alert.no.internet.connection.desc	Reconnect to the internet to be able to share this document
+alert.no.internet.connection.title	No internet connection
+alert.not.available.offline	Not available offline
+alert.not.connected.to.internet	Not connected to the internet
+alert.not.connected.to.internet.adding.reactions	Adding reactions is not available offline
+alert.not.connected.to.internet.removing.reactions	Removing reactions is not available offline
+alert.not.get.email.notification.settings	Could not get email notification settings
+alert.not.supported.team.upgrade	Not supported team upgrade
+alert.not.update.comment	Could not update comment
+alert.not.update.email.notification.settings	Could not update email notification settings
+alert.not.update.space.access	Could not update the space access
+alert.not.updated	password could not be updated
+alert.offline.changes.restored	Offline changes restored
+alert.offline.changes.synced	Offline changes synced
+alert.offline.changes.will.sync	Your changes will sync when connected
+alert.only.images.as.cover.image	Only images can be set as cover image
+alert.operation.failed	Operation failed [0]
+alert.page.has.been.removed	The page [0] has been removed.
+alert.page.removed	Page has been removed
+alert.password.not.enabled	Password protection cannot be enabled if email based access is enabled.
+alert.permissions.logged.in	You鈥檙e currently logged in as [0]
+alert.please.retry	Please retry
+alert.previous.link.no.active	Previous links will no longer be active.
+alert.recent.doc.removed	Recent document removed
+alert.reconnect.to.create.new.elements	Reconnect to the internet to create new elements
+alert.reconnect.to.edit.a.comment	Reconnect to the internet to edit a comment
+alert.reconnect.to.the.internet	Reconnect to the internet to export documents
+alert.reconnect.to.the.internet.to.comment	Reconnect to the internet to add comments
+alert.reconnect.to.the.internet.to.import	Reconnect to the internet to import documents
+alert.reconnecting	Reconnecting
+alert.reconnecting.3dot	Reconnecting鈥�
+alert.registration.is.unavailable	Registration is unavailable currently, please try again later
+alert.reload.page	Please reload page and make sure this Craft page is shared
+alert.remove.access.confirmation	Are you sure? You won鈥檛 be able to access this document any more, and you cannot undo this action.
+alert.remove.doc.desc	Could not remove the document. Please try again later.
+alert.remove.doc.title	Remove document
+alert.reschedule.reminder.desc	Please make sure you want to change it.
+alert.reschedule.reminder.title	There is an upcoming reminder for this block.
+alert.row.limit.title	Row limit reached
+alert.send.report	Send Report
+alert.share.permission.change	Are you sure? This will change your permission. You won鈥檛 be able to manage share settings anymore.
+alert.share.unknown.error	Unknown error
+alert.sign.in	Sign In
+alert.something.went.wrong.contact.us	Looks like something went wrong. Please try again or contact us.
+alert.space.moved.successfully	Space Moved Successfully
+alert.subscription.provider	Subscription provider change is not supported
+alert.subscription.provider.changes.are.not.supported	Subscription provider changes are not supported. Please contact us for assistance.
+alert.successfully.imported.md.document	Successfully imported 1 Markdown document
+alert.successfully.imported.md.document.plural	Successfully imported [0] Markdown documents
+alert.support.for.subscription.upgrade	Support needed for subscription upgrade
+alert.table.size.limit.reached	Table size limit reached ([0] columns, [1] rows)
+alert.task.moved.to	Task moved to [0]
+alert.task.moved.to.a.daily.note	Task moved to a daily note
+alert.task.moved.to.plural	Tasks moved to [0]
+alert.team.already.subscribed	Your team is already subscribed
+alert.team.settings.open.fail.desc	Missing team id
+alert.team.settings.open.fail.title	Cannot open team settings
+alert.team.setup.not.support.upgrades	Your current team setup doesn鈥檛 support upgrades. Visit our support page to learn more.
+alert.template.not.supported.on.mobile	Creating documents from templates is currently not supported on mobile devices.
+alert.thank.for.report.desc	Thank you for reporting. We鈥檒l be in touch with you shortly.
+alert.thank.for.your.feedback	Thank you for your feedback!
+alert.this.action.cannot.be.undone	This action cannot be undone
+alert.title.required	Title required
+alert.too.many.attempts	Too many failed attempts
+alert.try.again	Try Again
+alert.try.again.later	Try again later
+alert.try.it.later	Please try it later.
+alert.try.smaller.tables	Try multiple smaller tables?
+alert.unknown.error.try.again	Unknown error 鈥� Please try again
+alert.unsaved.changes	You have unsaved changes
+alert.unsaved.changes.close.the.document	You have unsaved changes. Are you sure you want to close the document?
+alert.unsaved.changes.offline.saved.locally	Your changes are saved locally but not yet synced. Are you sure you want to leave?
+alert.updating.space.avatar	Updating space avatar
+alert.updating.user	Updating user鈥�
+alert.use.sso	This email is associated with SSO authentication, please use SSO to sign in.
+alert.warning	Warning
+alert.warning.delete	Are you sure? This cannot be undone.
+alert.warning.sure	Are you sure?
+alert.x.invites.deleted	[0] Invites Deleted
+alert.you.are.connected	You are connected
+alert.you.are.offline	You are offline
+all.docs	All Docs
+all.files	All Files
+always.ask	Always ask
+analytics.analytics	Analytics
+analytics.analytics.for	Analytics for 鈥榌0]鈥�
+analytics.avg.reading.time	Avg. Reading Time
+analytics.could.not.load	Couldn鈥檛 load data. Please check your internet connection.
+analytics.desktop	Desktop
+analytics.direct.none	Direct / None
+analytics.mobile	Mobile
+analytics.no.data.available	No data available
+analytics.no.data.yet	No data yet
+analytics.open.analytics.guide	Open Analytics Guide
+analytics.other	Other
+analytics.readers	Readers
+analytics.readers.viewed.total	Readers viewed this link in the last 30 days
+analytics.refresh	Refresh
+analytics.refresh.data	Refresh data
+analytics.shared.doc	Shared document
+analytics.source	Source
+analytics.tablet	Tablet
+analytics.time	Time
+analytics.top.browsers	Top Browsers
+analytics.top.countries	Top Countries
+analytics.top.devices	Top Devices
+analytics.top.pages	Top Pages
+analytics.top.sources	Top Sources
+analytics.total.readers	Total Readers
+analytics.total.views	Total Views
+analytics.upgrade.to.unlock	Upgrade to Plus to unlock the detailed statistics behind your [0] document.
+analytics.view.all	View all
+analytics.views	Views
+another.space	Another Space
+aspect.ratio	Aspect ratio
+assistant.1.message	1 message
+assistant.add.additional.context	Add Additional Context
+assistant.add.helpful.comments.to.this.code	Please add helpful comments to this code
+assistant.ai.assistant.help.me.with	What can the AI assistant help me with?
+assistant.ai.usage	AI Usage
+assistant.analyze.the.writing	Analyze the writing style in this page
+assistant.analyze.this.code.for.potential.bugs	Please analyze this code for potential bugs
+assistant.analyze.writing.style	Analyze Writing Style
+assistant.analyze.writing.style.in.this.doc	Analyze the writing style in this document
+assistant.ask.about.pdf	Ask about PDF
+assistant.ask.about.this.pdf	Ask About This PDF
+assistant.ask.about.this.pdf.prompt	I have questions about this PDF: 
+assistant.ask.craft	Ask Craft:
+assistant.ask.for.feedback	Ask for Feedback
+assistant.ask.for.help	Ask for Help
+assistant.assistant	Assistant
+assistant.assistant.disabled	Assistant is disabled
+assistant.assistant.gpt35.desc	Great for everyday tasks
+assistant.assistant.gpt4o.desc	Newest and most advanced model
+assistant.change.title	Change Title
+assistant.check.grammar.and.spelling	Check Grammar and Spelling
+assistant.check.tone.of.voice	Check Tone of Voice
+assistant.clear.history.3dot	Clear History鈥�
+assistant.compare.docs	Compare Documents
+assistant.compare.these.docs	Please compare these documents
+assistant.conv.history	Conversation History
+assistant.create.a.comprehensive.summary	Create a comprehensive summary of all my documents about: 
+assistant.create.a.summary	Create a Summary
+assistant.create.caption	Create Caption
+assistant.create.caption.for.this.img	Create a caption for this image
+assistant.create.caption.prompt	Please create a descriptive caption for this image
+assistant.create.custom.prompt	Create Custom Prompt
+assistant.current.document	Current Document
+assistant.current.selection	Current Selection
+assistant.delete.conversation	Delete Conversation
+assistant.delete.conversation.desc	Are you sure you want to delete this conversation? This action cannot be undone.
+assistant.describe.this.image	Describe This Image
+assistant.describe.this.image.prompt	Please describe what you see in this image
+assistant.document.review	Document Review
+assistant.document.review.desc	Get feedback on your writing style
+assistant.download.failed	Download failed
+assistant.enable.assistant.in.settings	Enable Assistant in Settings
+assistant.ensure.clarity	Ensure Clarity
+assistant.error.conversation.too.long	The conversation is too long, please start a new thread.
+assistant.error.document.too.big	The document is too big to process, change the scope to smaller level or copy paste important parts.
+assistant.expand.weak.areas	Expand Weak Areas
+assistant.explain.a.feature	Explain a Feature
+assistant.explain.like.im.five	Explain Like I鈥檓 Five
+assistant.explain.like.im.five.prompt	Explain this topic for me like I鈥檓 five: 
+assistant.explain.this.code	Explain This Code
+assistant.explain.this.feature.to.me.x	Please explain this feature to me: 
+assistant.explain.what.this.code.does	Please explain what this code does
+assistant.extract.action.items	Extract Action Items
+assistant.extract.action.items.from.these.docs	Please extract action items from these documents
+assistant.extract.action.items.from.this.doc	Please extract action items from this document
+assistant.extract.action.items.from.this.page	Please extract action items from this page
+assistant.extract.key.info	Extract Key Information
+assistant.extract.key.info.prompt	Please extract the key information from this PDF
+assistant.extract.text.from.image	Extract Text from Image
+assistant.extract.text.from.image.prompt	Please extract and transcribe any text visible in this image
+assistant.find.all.blocks.tagged.x	Find all blocks tagged #
+assistant.find.an.entry	Find an Entry
+assistant.find.and.summarize.anything.related.to	Please find and summarize anything related to: 
+assistant.find.areas.in.this.page	Find areas in this page that need more detail
+assistant.find.docs	Find Documents
+assistant.find.document.about.x	Find documents about: 
+assistant.find.other.docs.on.this.topic	Please find other documents on this topic
+assistant.find.patterns	Find Patterns
+assistant.find.potential.bugs	Find Potential Bugs
+assistant.find.related.docs	Find Related Documents
+assistant.general.assistance.for.any.task	General assistance for any task
+assistant.generate.alt.text	Generate Alt Text
+assistant.generate.alt.text.prompt	Generate descriptive alt text for this image
+assistant.generate.insights	Generate Insights
+assistant.get.an.executive.summary	Get an Executive Summary
+assistant.get.an.executive.summary.prompt	Research this topic and create an executive summary for me: 
+assistant.get.an.overview	Get an Overview
+assistant.get.started.with.craft	How do I get started with Craft?
+assistant.give.feedback.on.structure	Get Feedback on Structure
+assistant.help.and.support.desc	Ask anything about Craft
+assistant.help.center.topics	Help Center Topics
+assistant.help.filter.collection	Help Filter Collection
+assistant.help.me.brainstorm.ideas	Help me brainstorm ideas to expand on this page
+assistant.how.can.i.optimize.this.code	How can I optimize this code?
+assistant.how.could.i.refactor.this.code	How could I refactor this code to improve readability?
+assistant.identify.patterns	Identify Patterns
+assistant.improve.clarity	Improve Clarity
+assistant.improve.spelling.and.grammar	Improve Spelling and Grammar
+assistant.insert.document	Insert
+assistant.insights.can.you.derive	What insights can you derive from this collection?
+assistant.learn.more	Learn more about Assistant
+assistant.learn.more.about.history	Learn More About Conversation History
+assistant.list.all.docs.related.to	Please list all documents related to: 
+assistant.list.all.ongoing.tasks	Please list all ongoing tasks
+assistant.list.all.tasks.for.today	Please list all tasks for today
+assistant.list.all.tasks.i.completed.today	Please list all tasks I completed today
+assistant.list.completed.tasks	List Completed Tasks
+assistant.list.ongoing.tasks	List Ongoing Tasks
+assistant.list.todays.tasks	List Today鈥檚 Tasks
+assistant.list.upcoming.tasks	List Upcoming Tasks
+assistant.make.it.more.concise	Make it more Concise
+assistant.make.it.more.friendly	Make it more Friendly
+assistant.make.it.more.professional	Make it more Professional
+assistant.make.this.doc.more.concise	How can I make this document more concise?
+assistant.make.this.more.friendly	How can I make this more friendly and approachable?
+assistant.make.this.sound.more.professional	How can I make this sound more professional?
+assistant.message.craft.assistant	Message Craft Assistant
+assistant.model.switch.gpt4o	Switch to GPT-4o to unlock the full power of Craft AI
+assistant.model.switched	Switched Assistant model
+assistant.model.switched.to.x	Switched assistant model to [0], as it has available tokens.
+assistant.new.chat	New Chat
+assistant.new.search	New Search
+assistant.new.thread	New Thread
+assistant.no.conv.history	No conversation history
+assistant.one.request.remaining	request remaining
+assistant.operation.cancelled	AI operation cancelled
+assistant.organize.by.topic	Organize by Topic
+assistant.organize.my.docs.in.craft	How can I organize my documents in Craft?
+assistant.organizing.docs	Organizing Documents
+assistant.patterns.do.you.notice	What patterns do you notice in this collection?
+assistant.please.summarize.these.blocks	Please summarize these blocks
+assistant.prioritize.tasks	Prioritize Tasks
+assistant.prompt	Ask me anything, or choose an option below
+assistant.prompt.brainstorm.ideas	Brainstorm ideas
+assistant.prompt.change.tone.confident	Change tone to Confident
+assistant.prompt.change.tone.friendly	Change tone to Friendly
+assistant.prompt.change.tone.professional	Change tone to Professional
+assistant.prompt.continue.writing	Continue writing
+assistant.prompt.error	An error occurred
+assistant.prompt.error.try.again	Please try again later
+assistant.prompt.explain	Explain this to me
+assistant.prompt.find.action.items	Find action items
+assistant.prompt.fix.spelling.and.grammar	Fix spelling & grammar
+assistant.prompt.generate.hashtags	Generate hashtags
+assistant.prompt.generate.keywords	Generate keywords
+assistant.prompt.improve.writing	Improve writing
+assistant.prompt.length.limit	Prompt can鈥檛 be longer than [0] characters
+assistant.prompt.limit	You can鈥檛 save more than [0] prompts
+assistant.prompt.make.longer	Make longer
+assistant.prompt.make.shorter	Make shorter
+assistant.prompt.outline	Create outline
+assistant.prompt.pros.and.cons	Write Pros and Cons
+assistant.prompt.save	Save Prompt
+assistant.prompt.saved	Prompt Saved
+assistant.prompt.simplify.language	Simplify language
+assistant.prompt.suggest.title	Suggest a title
+assistant.prompt.summarize	Summarize
+assistant.prompt.translate.dutch	Translate to Dutch
+assistant.prompt.translate.english	Translate to English
+assistant.prompt.translate.french	Translate to French
+assistant.prompt.translate.german	Translate to German
+assistant.prompt.translate.italian	Translate to Italian
+assistant.prompt.translate.japanese	Translate to Japanese
+assistant.prompt.translate.korean	Translate to Korean
+assistant.prompt.translate.portuguese	Translate to Portuguese
+assistant.prompt.translate.spanish	Translate to Spanish
+assistant.prompt.write.article	Write an article about this topic
+assistant.prompt.write.blog	Write a blog post about this topic
+assistant.prompt.write.essay	Write an essay about this topic
+assistant.prompt.write.example	Create example text for this
+assistant.prompt.write.facebook.post	Write a Facebook post about this topic
+assistant.prompt.write.poem	Write a poem about this topic
+assistant.prompt.write.template	Create a template about this topic
+assistant.prompt.write.twitter.post	Write a X (Twitter) post about this topic
+assistant.recently.edited	Recently Edited
+assistant.reflect.on.progress	Reflect on Progress
+assistant.replace.document	Replace
+assistant.research.a.subject	Research a Subject
+assistant.research.a.topic	Research a Topic
+assistant.research.a.topic.online	Research a topic online
+assistant.research.this.topic.for.me	Please research this topic for me: 
+assistant.save.image	Save Image
+assistant.save.x	Save [0]
+assistant.search.in.natural.language	Search in natural language
+assistant.search.in.pdf	Search in PDF
+assistant.search.in.pdf.prompt	Please search the PDF for: 
+assistant.search.using.natural.language	Search using natural language
+assistant.selected.block	Selected Block
+assistant.semantic.search	Semantic Search
+assistant.share.docs.with.others	How do I share documents with others?
+assistant.suggest.optimizations	Suggest Optimizations
+assistant.suggest.refactoring	Suggest Refactoring
+assistant.suggest.related.topics	Suggest Related Topics
+assistant.summarize.docs	Summarize Documents
+assistant.summarize.entries	Summarize Entries
+assistant.summarize.last.week	Summarize Last Week
+assistant.summarize.my.daily.notes	Please summarize my Daily Notes from the last week
+assistant.summarize.pdf	Summarize PDF
+assistant.summarize.pdf.prompt	Please provide a comprehensive summary of this PDF document
+assistant.summarize.the.entries.in.this.collection	Please summarize the entries in this collection
+assistant.summarize.the.key.points	Please summarize the key points from this PDF
+assistant.summarize.these.docs	Please summarize these documents
+assistant.summarize.this.doc	Please summarize this document
+assistant.summarize.this.page	Please summarize this page
+assistant.switch.to.gpt4o.short	Switch to GPT-4o
+assistant.this.conversation	This Conversation
+assistant.thnking.3dot	Thinking鈥�
+assistant.thought.for.x.s	Thought for [0]s
+assistant.translate	Translate
+assistant.translate.these.blocks.into	Please translate these blocks into: 
+assistant.translate.these.docs.into	Please translate these documents into: 
+assistant.translate.this.doc.into	Please translate this doc into: 
+assistant.translate.this.page.into	Please translate this page into: 
+assistant.upgrade.for.more.ai.usage	Upgrade for more AI usage
+assistant.usage	[0] Usage
+assistant.usage.and.limits	Usage and Limits
+assistant.usage.date	Limit Reset Date
+assistant.usage.max	Max No. of Requests (30d)
+assistant.usage.remaining	No. of Requests Remaining
+assistant.usage.used	No. of Requests Used
+assistant.use.templates.in.craft	How do I use templates in Craft?
+assistant.using.ai.assistant	Using the AI Assistant
+assistant.using.templates	Using Templates
+assistant.view.credits	View Credits
+assistant.web.research	Web Research
+assistant.what.are.my.upcoming.tasks	What are my upcoming tasks?
+assistant.which.tasks.should.i.prioritize	Which tasks should I prioritize?
+assistant.x.blocks	[0] Blocks
+assistant.x.messages	[0] messages
+assistant.x.requests.remaining	[0] requests remaining
+assistant.you.reached.usage.limit	You鈥檝e reached your Craft Assistant usage limit. You can review and update your [usage quota](craft://credit) anytime.
+assistant.you.used.all.your.available.credits	You鈥檝e used all your available credits. You can review your [balance](craft://credit) anytime.
+assistant.your.prompts	Your Prompts
+backup.document.restored	Document has been restored
+backup.go.to.restored.document	Go to restored document
+backup.snapshot.of	Snapshot of 
+backup.version.to.restore	Select a version to restore.
+blockdetails.backups	Backups
+blockdetails.bottom.comment	Comment
+blockdetails.code.close.preview	Close preview
+blockdetails.code.split.view	Split view
+blockdetails.connect.to	Connect to [0]
+blockdetails.copy.code	Copy code
+blockdetails.edit.code	Edit Code
+blockdetails.full.screen.mode	Full screen mode
+blockdetails.insert.page.break	Insert Page Break
+blockdetails.ios.export.pdf.a.pagenumbers	Show Page Numbers
+blockdetails.ios.export.pdf.a.watermark	Show Watermark
+blockdetails.ios.export.pdf.paper.a4	A4
+blockdetails.ios.export.pdf.paper.usletter	US Letter
+blockdetails.ios.insertmenu.files	Files
+blockdetails.language	Language
+blockdetails.mentions.collapse.all	Collapse All
+blockdetails.mentions.expand.all	Expand All
+blockdetails.mentions.links.to.this	@Links To This Page
+blockdetails.mentions.loading.links	Loading Links To This Page鈥�
+blockdetails.mentions.sort.alphabetically	Sort Alphabetically
+blockdetails.mentions.sort.by.date.created	Sort by Date Created
+blockdetails.mentions.sort.by.number.of.links	Sort by Number of Links
+blockdetails.more.faq	Frequently Asked Questions
+blockdetails.pagesettings.spelling	Spelling
+blockdetails.placeholder.empty.desc.mac	Preview of the page will be displayed here. Click to add content.
+blockdetails.placeholder.link.paste	Paste a link e.g., www.google.com
+blockdetails.placeholder.title	Page Title
+blockdetails.press.slash.command	Press 鈥�/鈥� for quick actions
+blockdetails.reposition.or.crop.image	Reposition or Crop
+blockdetails.search.languages	Search languages
+blockdetails.search.themes	Search themes
+blockdetails.share.image.panel.config.font.big	Big
+blockdetails.share.image.panel.config.font.regular	Regular
+blockdetails.share.image.panel.config.font.small	Small
+blockdetails.share.image.panel.config.size.fit	Fit Document
+blockdetails.share.image.panel.config.size.landscape	Landscape
+blockdetails.share.image.panel.config.size.portrait	Portrait
+blockdetails.share.image.panel.config.size.square	Square
+blockdetails.share.secretlink.comments.add	Add Comments
+blockdetails.shortcuts.markdown	Markdown Shortcuts
+blockdetails.sidebar.insert	Insert
+blockdetails.sidebar.insert.shortcuts	Shortcuts
+blockdetails.sidebar.insert.subtitle	Drag and drop any item to the document
+blockdetails.sidebar.lists	Lists
+blockdetails.sidebar.media	Media
+blockdetails.sidebar.pageinfo	Page Info
+blockdetails.theme	Theme
+blockdetails.themes	Themes
+blockdetails.toggle.empty	Empty Toggle
+blockdetails.you.are.logged.in.as.strong	You are logged in as <strong>[0]</strong>
+blockdetailsios.export.pdf.paper.dynamic	Dynamic
+book.a.call	Book a Call
+browse.about	About
+browse.about.x	About [0]
+browse.add.description.to.folder	Add a description to this folder
+browse.back.to.login	Back to login
+browse.best.experience.browsers	For the best experience we recommend you using one of our <UncoloredLink>supported browsers.</UncoloredLink>
+browse.cannot.open.space.desc	You might need to sign in with a different account, or ask the space owner to invite you.
+browse.cannot.open.space.title	Space cannot be opened
+browse.change.space.avatar	Change Space logo
+browse.change.space.avatar.desc	Add or change your team鈥檚 logo or icon
+browse.change.space.avatar.error	Could not change space image
+browse.change.space.name	Change Space Name
+browse.change.space.name.desc	Change your Space鈥檚 name
+browse.click.to.edit	Click to edit
+browse.collapse.folders	Collapse Folders
+browse.collapse.starred	Collapse Starred
+browse.collapse.tags	Collapse Tags
+browse.color.choose	Choose a Color
+browse.could.not.delete.folder	Could not delete folder
+browse.create	Create
+browse.create.document	Create document
+browse.create.template	Create template
+browse.created.shared	Created/Shared
+browse.creating.folder	Creating Folder
+browse.custom.templates.desc	Documents added to this folder can be used as templates when creating a new document or page
+browse.customize.home	Customize Home
+browse.customize.sidebar	Customize Sidebar
+browse.deleting.space	Deleting Space鈥�
+browse.doc.edited.offline	Edited offline
+browse.doc.edited.offline.sync	Edited 路 open to sync
+browse.doc.open.to.sync	Open to sync
+browse.doc.you.deleted.will.appear.here	Documents you deleted will appear here
+browse.docs	Docs
+browse.documents	Documents
+browse.drop.here.to.pin.document	Drop here to pin document
+browse.edit.layout.view.sort.and.more	Edit layout view, sort and more鈥�
+browse.edit.template	Edit this template
+browse.empty.document	Empty Document
+browse.expand.folders	Expand Folders
+browse.expand.starred	Expand Starred
+browse.expand.tags	Expand Tags
+browse.export.as.md	Export as Markdown
+browse.export.as.textbundle	Export as TextBundle
+browse.export.contents	Export Contents
+browse.folder.all.documents	Browse documents within this Space
+browse.folder.created	Folder created
+browse.folder.deleted	Folder deleted
+browse.folder.deleteprompt.subtitle	Documents inside the folder will not be deleted.
+browse.folder.empty	This Folder is Empty
+browse.folder.name	Folder Name
+browse.folder.updated	Folder updated
+browse.from.template	From Template
+browse.grid.view	Grid View
+browse.icon.choose	Choose an Icon
+browse.import.files	Import Files
+browse.import.md	Import
+browse.import.md.where	Where would you like to import from?
+browse.inbox.desc	Documents which aren鈥檛 in any folders are collected here
+browse.inbox.desc.new	Any documents you haven鈥檛 moved into a specific folder will appear here.
+browse.keep.things.tidy	Keep things tidy
+browse.leaving.space	Leaving Space鈥�
+browse.list	List
+browse.list.view	List View
+browse.logging.in	Logging in鈥�
+browse.new.doc	New Doc
+browse.new.document	New Document
+browse.new.document.from.template	New Document from This Template
+browse.new.template	New Template
+browse.no.documents.yet	You have no documents yet
+browse.no.results.found	No Results Found
+browse.no.results.found.for	No results found for [0]
+browse.note.for.today	Note for Today
+browse.one.document	1 Document
+browse.open.gallery	Open Gallery
+browse.open.in.app	Open in App
+browse.open.in.app.question	Open in App?
+browse.open.in.desktop.app	Open in Desktop App?
+browse.open.space	Open Space鈥�
+browse.quick.search	Quick Search
+browse.quick.search.alt	Quick search (alt)
+browse.recently.viewed.desc	Documents you recently opened will appear here
+browse.remember.my.choice	Remember my choice
+browse.remove.from.recents	Remove from Recents
+browse.save.time.with.templates	Save time with templates
+browse.search.create.doc	Create [0]
+browse.search.in.documents	Search in documents
+browse.search.results	Search Results
+browse.search.results.for	Search results for [0]
+browse.searching.for.other.matches	Searching for other matches
+browse.see.more.results	See More Results
+browse.shared.with.me.placeholder	Documents that are shared with you will appear here
+browse.shared.with.you	Shared with you
+browse.show.x.more	Show [0] More
+browse.sidebar.inbox	Inbox
+browse.sidebar.reorder.or.hide	Reorder or hide sections to personalize your view.
+browse.sign.in.failed	Sign in failed
+browse.sort.alphabetically	Alphabetically
+browse.sort.by	Sort by
+browse.sort.date.created	Date Created
+browse.sort.date.created.shared	Date Created/Shared
+browse.sort.date.updated	Date Updated
+browse.sort.date.viewed	Date Viewed
+browse.sort.kind	Kind
+browse.sort.last.edited	Last Edited
+browse.sort.last.viewed	Last Viewed
+browse.sort.manual	Manual
+browse.sort.name	Name
+browse.sort.shared.by	Shared By
+browse.space.not.found	Space Not Found
+browse.starred.desc	Star documents you want to easily find later. Only you can see your starred items.
+browse.start.something.new	Start something new
+browse.subfolders	Subfolders
+browse.task.will.appear.here	Tasks will appear here
+browse.templates.cannot.create	Cannot create template
+browse.templates.creating	Creating document from template
+browse.templates.doc.too.large	Document is too large to use as a template
+browse.templates.inserting	Inserting template to document
+browse.trash.disclaimer	Documents are available for 30 days. After that time, documents will be permanently deleted.
+browse.type.to.search	Type to search
+browse.unknown.space	Unknown space
+browse.unsaved.change.switch.space	You have unsaved changes. Are you sure you want to switch spaces?
+browse.updating.folder	Updating Folder
+browse.view.teams.and.spaces	View Teams and Spaces and more鈥�
+browse.viewed	Viewed
+browse.waterfall	Waterfall
+browse.whats.new	What鈥檚 new
+browse.x.documents	[0] Documents
+browser.not.compatible	Seems like your browser is not compatible
+btn.invite.to.your.team	Inviting to your team
+button.offline	Offline
+button.read.more	Read more
+calendar.add.task	Add Task
+calendar.calendar	Calendar
+calendar.date.last.30.days	Last 30 days
+calendar.date.last.7.days	Last 7 days
+calendar.date.last.weekday	Last [0]
+calendar.date.last.weekday.feminine	calendar.date.last.weekday
+calendar.date.later	Later
+calendar.date.next.30.days	Next 30 days
+calendar.date.next.7.days	Next 7 days
+calendar.date.next.weekday	Next [0]
+calendar.date.next.weekday.feminine	calendar.date.next.weekday
+calendar.date.tomorrow	Tomorrow
+calendar.event.dailynote.create	Create Daily Note
+calendar.event.details	Details
+calendar.event.show.x.more.notes	Show [0] more
+calendar.one.month.ago	1 month ago
+calendar.overdue.since	Overdue since [0]
+calendar.show.month	Show Month View
+calendar.show.next.month	Show Next Month
+calendar.show.previous.day	Show Previous Day
+calendar.show.previous.days	Show Previous Days
+calendar.show.previous.month	Show Previous Month
+calendar.show.week	Show Week View
+calendar.x.month.ago	[0] months ago
+cannot.open.notification	Cannot open notification
+centralized.billing	Centralized billing
+checking.your.account	Checking your account...
+checklist.complete	Complete this checklist to get the most out of your Craft documents.
+clipboard.item.one	[0] item
+clipboard.items.x	[0] items
+code.block	Code Block
+collab.access.edit.and.comment	Can edit and comment
+collab.access.footer	Set your link to 鈥渧iew鈥� or 鈥渆dit鈥� for easy collaboration, no Craft account needed.
+collab.access.link.edit	Anyone with the link can edit
+collab.access.link.view	Anyone with the link can view
+collab.access.only.collaborators	Only collaborators with access
+collab.access.request.approve	Approve
+collab.access.request.decline	Decline
+collab.access.view.and.comment	Can view and comment
+collab.add.emails.to.invite	Add emails to invite
+collab.add.to.space	Add to Space
+collab.by.author	by [0]
+collab.by.author.capital	By [0]
+collab.cant.delete.this.space	You can鈥檛 delete this space.
+collab.comment.add	Add Comment
+collab.comment.delete.thread	Delete Thread
+collab.comment.delete.thread.question	Delete Thread?
+collab.comment.edit	Edit Comment
+collab.comment.edited	edited
+collab.comment.failed.to.edit	failed to edit
+collab.comment.failed.to.update	failed to update
+collab.comment.one.more.comment	1 more comment
+collab.comment.reconnect.to.delete	Reconnect to the internet to delete a thread
+collab.comment.type.placeholder	Type your comment
+collab.comment.type.placeholder.unresolve	Type your comment to unresolve
+collab.comment.unable.to.load.comment	Unable to load comment
+collab.comment.x.more.comments	[0] more comments
+collab.comments	comments
+collab.comments.count.1	1 comment
+collab.comments.count.x	[0] comments
+collab.content.not.published	Your content is no longer published
+collab.contributor.anonymus	[0] (external)
+collab.could.not.invite	Could not invite [0]
+collab.could.not.invite.users	Could not invite [0] users
+collab.create.a.team.invite.others	Create a team, invite others and start collaborating.
+collab.delete.notification	Delete Notification?
+collab.doc.viewer.mention.desc	As a viewer on this doc, you can only mention people who are invited via email.
+collab.editor.in.this.document	Editor in this document
+collab.enable.email	Enable E-mail Notifications
+collab.from.your.contacts	From your contacts
+collab.hide.resolved	Hide Resolved
+collab.hide.resolved.threads	Hide resolved threads
+collab.increase.seat.desc	Invited people will gain full member access to the entire team and will see all public spaces. This is a billable event.
+collab.increase.seat.free.desc	Invited people will gain full member access to the entire team and will see all public spaces.
+collab.invite.all.to.view.doc	Invite All to View Doc
+collab.invite.but.not.invited	You want to mention <0></0>, but they鈥檙e not invited to this doc.
+collab.invite.members.to.space	Invite Members to [0]
+collab.invite.people.to.collaborate	Invite people to collaborate
+collab.invite.share.doc	Share Doc
+collab.invite.to.collaborate	Invite to Collaborate
+collab.invite.to.collaborate.desc	For easy collaboration with anyone, even without a Craft account
+collab.invite.to.view.doc	Invite to View Doc
+collab.invited.collaborators	Invited Collaborators
+collab.keep.invited.access	Keep Invited Access
+collab.link.copied.clipboard	Link has been copied to your clipboard
+collab.link.removed	Secret link successfully removed
+collab.mark.all.as.read	Mark all as read
+collab.mark.as.read	Mark as Read
+collab.mark.as.unread	Mark as Unread
+collab.names.list.2	[0] and [1]
+collab.names.list.x	[0] and [1] others
+collab.no.comments.yet	No comments yet
+collab.no.notifications.yet	No notifications yet
+collab.not.invited	Not Invited
+collab.notifications	Notifications
+collab.notifications.are.disabled	E-mail Notifications are disabled.
+collab.notifications.disable	Disabled E-mail Notifications
+collab.notifications.disabled.desc	To get e-mail notifications go to setting and enable E-mail Notifications.
+collab.notifications.onboarding	You鈥檒l be notified here when someone mentions you, writes a comment on your document or replies to your comments.
+collab.only.accessible.to.you	only accessible to you
+collab.people.invite	Invite People
+collab.reacted.count.1	[0] reacted with [1]
+collab.reacted.count.2	[0] and [1] reacted with [2]
+collab.reacted.count.x	[0], and [1] reacted with [2]
+collab.reaction.add	Add Reaction
+collab.realtime.thispage	This Page
+collab.reload.notifications	Reload Notifications
+collab.remove.access.to.all.docs	Remove access to all docs?
+collab.remove.all.access	Remove All Access
+collab.removing.link	Removing Link
+collab.removing.space.wont.delete.the.space	Removing the space won鈥檛 delete the space from your device.
+collab.request.access.to.document	Request access to this document
+collab.request.access.to.document.subtitle	You can view this document once your request is approved.
+collab.resolve	Resolve
+collab.role.editor	Editor
+collab.role.owner	Doc Owner
+collab.role.viewer	Viewer
+collab.secret.link.created	Secret link successfully created
+collab.secret.link.password.updated	Secret Link password successfully updated
+collab.settings.and.members	Settings and Members
+collab.share.document.confirm	Yes, change for the entire document
+collab.share.document.warning	Any changes you make to who can see or edit will apply to the entire [0] document.
+collab.share.subpage.warning	Sharing is for the entire document. Any changes you make to who can see or edit will apply to the entire document.
+collab.share.your.thoughts	Share your thoughts, start a discussion or leave your feedback!
+collab.shared.document.ask.to.edit	Ask to Edit
+collab.shared.document.request.sent	Request Sent
+collab.sharing.access.in.space	People in [0] can access this doc.
+collab.sharing.copied.link	The link you copied is [0]. Setup sharing by inviting others or change the access settings to view or edit.
+collab.sharing.learn.more	How does sharing work?
+collab.show.resolved	Show Resolved
+collab.show.resolved.threads	Show resolved threads
+collab.space.delete.offline.space	Removing this Space will not delete contents from your disk 鈥� you need to do that manually.
+collab.space.details	Space Details
+collab.space.invite	Invite
+collab.space.invite.delete	Delete Invite
+collab.space.invite.delete.alert.title	Delete Invite?
+collab.space.invite.link.generate	Generate New Link
+collab.space.invite.link.generate.alert.title	Generate New Link?
+collab.space.invite.pending	Pending invite
+collab.space.invites.delete	Delete Invites
+collab.space.invites.delete.all	Delete All Invites
+collab.space.invites.delete.all.alert.description	Are you sure? Invited users will no longer be able to join this space.
+collab.space.invites.delete.all.alert.title	Delete All invites?
+collab.space.invites.delete.all.invites.confirmation	Are you sure you want to delete all invites?
+collab.space.invites.pending	Pending Invites
+collab.space.invites.sent	Invites Sent
+collab.space.invites.sent.without.access	We couldn't add them to this space, so you'll need to share it with them.
+collab.space.leave.description	After leaving this Space you will lose access to all its content and you won鈥檛 be able to open this Space anymore.
+collab.space.member	Space member
+collab.space.member.permission.updated	User Role Updated
+collab.space.member.remove	Remove from Space
+collab.space.member.remove.alert	Remove user
+collab.space.member.remove.alert.title	Remove User?
+collab.space.member.remove.failed	Could not remove member
+collab.space.member.remove.success	User removed from space
+collab.space.member.role.update.failed	Could not update member role
+collab.space.member.role.updated	User Role Updated
+collab.space.name	Space Name
+collab.space.pending.invite.deleted	Invite Deleted
+collab.space.permission.guest	Guest
+collab.space.permission.member	Member
+collab.space.permission.member.description	Cannot change settings or invite new members
+collab.space.permission.owner	Owner
+collab.space.permission.owner.description	Can change settings and invite new members
+collab.space.removing.user	Removing User鈥�
+collab.space.settings.members	Members
+collab.space.settings.show.in.finder	Show in Finder
+collab.space.settings.show.in.finder.description	Show this Space in Finder
+collab.space.settings.space.delete	Delete Space
+collab.space.settings.space.delete.success	Space Deleted
+collab.space.settings.space.leave	Leave Space
+collab.space.settings.space.leave.alert.confirm	Yes, Leave
+collab.space.settings.space.leave.alert.description	Are you sure? You will no longer have access to this space.
+collab.space.settings.space.leave.alert.title	Leave Space?
+collab.space.settings.space.remove	Remove Space
+collab.space.settings.space.remove.alert.title	Remove Space?
+collab.space.update.image.success	Space Image Updated
+collab.space.user.removed	User Removed from Space
+collab.suggested.collaborators	Suggested Collaborators
+collab.thread.marked.resolved.short	Thread got marked as resolved
+collab.thread.marked.unresolved.short	Thread got marked as unresolved
+collab.unresolve	Unresolve
+collab.updating.link	Updating Link
+collab.updating.password	Updating Password
+collab.user.is.removed.alert	Are you sure? Once a user is removed, they will no longer have access to this Space.
+collab.view.all.members	View All Members
+collab.viewer.on.this.document	Viewer on this document
+collab.x.members.plural	[0] members
+collection.clear.cell.value	Clear cell value
+collection.duplicate.rows	Duplicate rows
+collection.select.all.rows	Select all rows
+collections.add.a.row	Add a row
+collections.add.additional.view	Add Additional View
+collections.add.content.to.object	Add content inside this object
+collections.add.field	Add Field
+collections.add.filter	Add Filter
+collections.add.gallery.view	Add Gallery View
+collections.add.item	Add Item
+collections.add.item.to.x	Add Item to [0]
+collections.add.kanban.view	Add Kanban View
+collections.add.new.field	Add new field
+collections.add.option	Add Option
+collections.add.option.to.x	Add Option to [0]
+collections.add.row.to.collection	Add Row to Collection
+collections.add.sort	Add another sort
+collections.add.subgroup	Add Subgroup
+collections.add.table.view	Add Table View
+collections.add.value	Add Value
+collections.add.view	Add View
+collections.all	All
+collections.any.of	Any Of
+collections.auto	Auto
+collections.average	Average
+collections.avg	Avg
+collections.calculate	Calculate
+collections.calculation.count	Count
+collections.calculation.percent	Percent
+collections.card.size	Card Size
+collections.card.size.large	Large
+collections.card.size.small	Small
+collections.checked	Checked
+collections.choose	Choose
+collections.choose.collection	Choose collection
+collections.clear.cell.value	Clear cell value
+collections.clear.x	Clear [0]
+collections.collection.configure	Configure this collection
+collections.collection.edit.name	Edit the name of this collection
+collections.column.width	Column Width
+collections.configure	Configure Collection
+collections.confirm.delete.all.items.in.group	Are you sure you want to delete all items in this group? This action cannot be undone.
+collections.contains	Contains
+collections.content	Content
+collections.count.all	Count all
+collections.count.checked	Count checked
+collections.count.empty	Count empty
+collections.count.not.empty	Count not empty
+collections.count.unchecked	Count unchecked
+collections.count.unique	Count unique
+collections.count.values	Count values
+collections.cover	Cover
+collections.create.document.error	Could not create document
+collections.create.document.error.desc	We ran into a technical problem, please try it again
+collections.default.view	Default View
+collections.delete.group	Delete Group
+collections.delete.group.message	This will remove the 鈥淸0]鈥� value on [1] item(s). The items will not be deleted.
+collections.delete.group.title	Delete group?
+collections.delete.items	Delete Items
+collections.delete.rows	Delete Rows
+collections.delete.view	Delete View
+collections.does.not.contain	Does Not Contain
+collections.dont.group.by.this.field	Don鈥檛 Group by this Field
+collections.download.as.csv	Download as CSV
+collections.drag.drop.not.available	Drag and drop is not available
+collections.drag.drop.not.available.desc	Drag and drop for filtered, sorted or grouped collections is not available
+collections.duplicate.row	Duplicate row(s)
+collections.duplicate.view	Duplicate View
+collections.earliest	Earliest
+collections.edit.field	Edit Field
+collections.edit.group	Edit Group
+collections.edit.grouping	Edit Grouping
+collections.edit.properties	Edit Properties
+collections.edit.value	Edit Value
+collections.edit.value_named	Edit "[0]"
+collections.edit.view	Edit View
+collections.edit.view.name	Edit View Name
+collections.edit.x	Edit [0]
+collections.empty	Empty
+collections.empty.brackets	(Empty)
+collections.error.field.limit	You cannot add more than [0] fields
+collections.field	Field
+collections.field.name	Field Name
+collections.fields	Fields
+collections.filter.collection	Filter Collection
+collections.filter.for	Filter for
+collections.filter.for.x	Filter for [0]
+collections.filtered.by.one.field	Filtered by 1 field
+collections.filtered.by.x.fields	Filtered by [0] fields
+collections.gallery.options	Gallery Options
+collections.gallery.show.all.fields	Always show all enabled fields
+collections.group.by	Group By
+collections.group.by.this.field	Group by this Field
+collections.grouped.by.one.field	Grouped by 1 field
+collections.grouped.by.x	Grouped by [0]
+collections.grouped.by.x.fields	Grouped by [0] fields
+collections.has.all.of	Has All Of
+collections.has.any.of	Has Any Of
+collections.has.none.of	Has None Of
+collections.hide.calculation.row	Hide Calculation Row
+collections.hide.fields	Hide Fields
+collections.hide.group	Hide Group
+collections.hide.order.fields	Hide & Order Fields
+collections.insert	Insert Collection
+collections.insert.gallery	Insert Gallery Collection
+collections.insert.kanban	Insert Kanban Collection
+collections.insert.row.above	Insert Row Above
+collections.insert.row.below	Insert Row Below
+collections.insert.table	Insert Table Collection
+collections.invalid.email	Invalid email address
+collections.invalid.phone	Invalid phone number
+collections.is	Is
+collections.is.after	Is After
+collections.is.before	Is Before
+collections.is.empty	Is Empty
+collections.is.not	Is Not
+collections.is.not.empty	Is Not Empty
+collections.kanban	Kanban
+collections.kanban.options	Kanban Options
+collections.kanban.show_hide_groups	Show / Hide Groups
+collections.latest	Latest
+collections.layout.and.visibility	Layout & Visibility
+collections.limit.space.for.visible.fields	Limit space for visible fields
+collections.limit.visible.fields	Limit visible fields
+collections.max	Max
+collections.median	Median
+collections.min	Min
+collections.move.out.item.beta	Move out item (Beta)
+collections.move.out.items.beta	Move out items (Beta)
+collections.move.out.row	Move out row (Beta)
+collections.move.out.rows	Move out rows (Beta)
+collections.multi.select	Multi-select
+collections.multiple.select	Multiple Select
+collections.name.view	Name View
+collections.narrow	Narrow
+collections.navigate.into.block	Navigate into Block
+collections.new.gallery	New Gallery
+collections.new.kanban	New Kanban
+collections.new.object	New Object
+collections.new.table	New Table
+collections.new.view	New View
+collections.no.items.found	No items found
+collections.none.of	None Of
+collections.not.empty	Not Empty
+collections.object.type	Object Type
+collections.one.hidden.field	1 hidden field
+collections.options	Options
+collections.percent.checked	Percent checked
+collections.percent.empty	Percent empty
+collections.percent.not.empty	Percent not empty
+collections.percent.unchecked	Percent unchecked
+collections.possible.values	Possible Values
+collections.preview	Preview
+collections.range	Range
+collections.range.days	Range (days)
+collections.range.mon	Range Mon
+collections.range.months	Range (months)
+collections.related.collection	Related Collection
+collections.related.field	Related Field
+collections.relation	Relation (Beta)
+collections.rename	Rename Collection
+collections.rename.view	Rename view
+collections.reorder.views	Reorder Views
+collections.save.as.new	Save as New
+collections.save.for.current	Save for Current
+collections.search.for.a.user	Search for a user
+collections.search.icons	Search icons
+collections.search.item.3.dot	Search item鈥�
+collections.searching.for.objects	Searching for objects
+collections.select.all.rows	Select all rows
+collections.select.collection	Select Collection
+collections.select.field	Select Field
+collections.select.type	Select a type
+collections.separate.directions	Separate directions
+collections.set.value	Set a value
+collections.show.calculation.row	Show Calculation Row
+collections.show.column.colors	Show column colors
+collections.show.hide.fields	Show/Hide Fields
+collections.show.options	Show Options
+collections.single.select	Single Select
+collections.sort.ascending	Ascending
+collections.sort.by	Sort By
+collections.sort.descending	Descending
+collections.sorted.by.one.field	Sorted by 1 field
+collections.sorted.by.x.fields	Sorted by [0] fields
+collections.sum	Sum
+collections.table.options	Table Options
+collections.title.type.cannot.be.changed	Title鈥檚 type cannot be changed. It serves as an identifier for each item.
+collections.turn.into.collection	Turn into Collection
+collections.two.way	Two-way
+collections.type.to.add.option	Type to add an option
+collections.type.to.search.for.object	Type to search for object
+collections.unchecked	Not Checked
+collections.unique	Unique
+collections.unsupported.property.type	Unsupported property type
+collections.val	Val
+collections.views	Views
+collections.views.turn.into	Turn View Into
+collections.wide	Wide
+collections.x.change.applied	[0] change applied
+collections.x.changes.applied	[0] changes applied
+collections.x.hidden.fields	[0] hidden fields
+commands.add.column	Add Column
+commands.add.columns.before	Add Column(s) Before
+commands.add.content	Add Content
+commands.add.content.3dot	Add Content鈥�
+commands.add.content.desc	Add Content Inside This Block
+commands.add.reminder	Add Reminder
+commands.add.row	Add Row
+commands.add.rows.before	Add Row(s) Before
+commands.add.to.dictionary	Add to Dictionary
+commands.at.cursor	At cursor
+commands.at.the.bottom	At the bottom
+commands.at.the.top	At the top
+commands.block.to.bottom	Blocks to bottom
+commands.block.to.top	Blocks to top
+commands.blocklink.popover.frequently.used	Frequently Used
+commands.blocklink.popover.people	People
+commands.change.deadline.3dot	Change Deadline鈥�
+commands.change.schedule.3dot	Change Schedule鈥�
+commands.clear.history	Clear History
+commands.clear.history.desc	Are you sure you want to delete all conversation history for [0]? This action cannot be undone.
+commands.command.menu	Command Menu
+commands.commands.mention.placeholder	Search for pages to mention
+commands.comment.add	Add Comment
+commands.comment.view.add	Add or View Comments
+commands.copy.link	Copy Link
+commands.copy.link.to.this.block	Copy Link to Block
+commands.copy.of	Copy of [0]
+commands.create.reminder	Create Reminder
+commands.create.subfolder	Create Subfolder
+commands.create.window	Create a new window
+commands.date.and.time	Date & Time
+commands.date.time.now	Now
+commands.delete.permanently	Permanently Delete Document
+commands.delete.permanently.document	Permanently Delete Document
+commands.delete.x	Delete [0]
+commands.deselect.all	Deselect All
+commands.duplicating.document	Duplicating [0]
+commands.edit.block.page	Edit Page Block
+commands.edit.block.text	Edit Text Block
+commands.edit.folder	Edit Folder鈥�
+commands.edit.reminder	Edit Reminder
+commands.edit.selection	Edit Selection
+commands.empty.trash	Empty Recently Deleted
+commands.enable.focus.mode	Enable Focus Mode
+commands.export.home.as	Export Home as鈥�
+commands.focus.mode	Focus Mode
+commands.folder.settings	Folder Settings
+commands.google.for.x	Search for 鈥淸0]鈥� on Google
+commands.group	Group
+commands.group.and.ungroup	Group & Ungroup
+commands.help.report.sync	Report Sync
+commands.help.report.sync.error	Report Sync Error
+commands.help.report.web.sync.error	Web sync error reporting
+commands.help.report.windows.sync.error	Windows sync error reporting
+commands.image.copy	Copy Image
+commands.insert.after	Insert After
+commands.insert.before	Insert Before
+commands.insert.block.above	Insert Block Above
+commands.insert.block.below	Insert Block Below
+commands.insert.image.files	Insert File
+commands.insert.image.unsplash	Image from Unsplash
+commands.insert.line	Insert Separator
+commands.insert.line.extralight	Separator 鈥� Extralight
+commands.insert.line.light	Separator 鈥� Light
+commands.insert.line.regular	Separator 鈥� Regular
+commands.insert.line.strong	Separator 鈥� Strong
+commands.insert.new.block	Insert New Block
+commands.insert.new.block.above	Insert New Block Above
+commands.insert.new.block.below	Insert New Block Below
+commands.insert.snippet	Insert Snippet
+commands.insert.snippet.code	Insert Code Block
+commands.insert.snippet.formula	Insert TeX Formula
+commands.insert.snippet.mermaid	Mermaid Diagram
+commands.insert.snippet.text	Insert Plaintext Snippet
+commands.insert.table	Insert Table
+commands.insert.template.inline	Insert from Template
+commands.insert.whiteboard	Insert Whiteboard
+commands.inspect.element	Inspect Element
+commands.jump	Jump to
+commands.mark.as.resolved	Mark as Resolved
+commands.mobile.layout	Layout
+commands.mobile.react	React
+commands.mobile.remind	Remind
+commands.move.blocks.down	Move blocks down
+commands.move.blocks.selection	Move Selected Blocks
+commands.move.blocks.up	Move blocks up
+commands.move.bottom	Move to Bottom
+commands.move.down	Move Down
+commands.move.space	Move Space
+commands.move.space.to	Move [0] Space to
+commands.move.to	Move to
+commands.move.to.all.docs	Moved to all documents
+commands.move.top	Move to Top
+commands.move.up	Move Up
+commands.navigate	Navigate
+commands.navigate.back	Navigate Back
+commands.navigate.forward	Navigate Forward
+commands.navigate.into	Navigate Into
+commands.navigate.out	Navigate Out
+commands.navigation	Navigation
+commands.new.folder	New Folder
+commands.new.folder.create	Create New Folder
+commands.new.folder.sub.create	Create New Subfolder
+commands.new.space	New Space
+commands.new.space.create	Create New Space
+commands.new.window	New Window
+commands.open.ai.assistant	Open AI Assistant
+commands.open.close.toggle	Open/Close Toggle
+commands.open.in.folder	Open in Folder
+commands.open.link.new.tab	Open Link in New Tab
+commands.open.newtab	Open in New Tab
+commands.open.newwindow	Open in New Window
+commands.open.settings	Open Settings
+commands.open.shortcuts	See All Keyboard Shortcuts
+commands.open.slash.menu	Open Slash Menu
+commands.open.whiteboard	Open Whiteboard
+commands.page.break	Page Break
+commands.pin	Pin
+commands.press.enter	Press Enter
+commands.quick.open	Quick Open
+commands.reload	Reload
+commands.reload.app	Reload App
+commands.reload.document	Reload Document
+commands.reload.whiteboard	Reload Whiteboard
+commands.remind.me	Remind me
+commands.remind.me.3.dots	Remind Me鈥�
+commands.reminder.1.hour	In 1 hour
+commands.reminder.20.min	In 20 minutes
+commands.reminder.3.hour	In 3 hours
+commands.reminder.custom	Custom鈥�
+commands.reminder.mark.resolved	Mark Reminder as Resolved
+commands.reminder.next.week	Next week
+commands.reminder.save.for.later	Save for Later
+commands.reminder.show.in.progress	Show In Progress Reminders
+commands.reminder.show.resolved	Show Resolved Reminders
+commands.remove.reminder	Remove Reminder
+commands.rename.link	Rename Link
+commands.repeat	Repeat鈥�
+commands.request.access	Request Access
+commands.reschedule	Reschedule
+commands.restart.app	Restart app
+commands.restore	Restore
+commands.restore.document	Restore Document
+commands.restoring.document	Restoring document
+commands.search.inpage	Find in Page
+commands.select.days.of.the.month	Select Days of the Month
+commands.select.days.of.the.week	Select Days of the Week
+commands.select.to.bottom	Select to Bottom
+commands.select.to.top	Select to Top
+commands.selection.complete	Check Selected
+commands.selection.uncomplete	Uncheck Selected
+commands.send	Send
+commands.shortcuts.in.collections	In Collections
+commands.shortcuts.in.find.and.replace	In Find and Replace
+commands.shortcuts.in.tables	In Tables
+commands.shortcuts.in.tasks.views	In Tasks Views
+commands.shortcuts.keyboard.editing	Editing
+commands.shortcuts.keyboard.general	General
+commands.show.daily.notes	Show Daily Notes
+commands.show.key.shortcuts	Show key shortcuts
+commands.sort	Sort
+commands.spelling.suggestions	Suggestions
+commands.submit	Submit
+commands.task.deadline	Set Deadline
+commands.task.deadline.clear	Clear Deadline
+commands.task.deadline.date	Set Deadline to Date鈥�
+commands.task.deadline.for.tomorrow	Set Deadline to Tomorrow
+commands.task.deadline.next.monday	Set Deadline to Next Monday
+commands.task.deadline.today	Set Deadline to Today
+commands.task.schedule	Schedule Task
+commands.task.schedule.clear	Clear Schedule
+commands.task.schedule.date	Schedule for Date鈥�
+commands.task.schedule.for.today	Schedule for Today
+commands.task.schedule.for.tomorrow	Schedule for Tomorrow
+commands.task.schedule.next.monday	Schedule for Next Monday
+commands.task.schedule.x	Schedule for [0]
+commands.templates	Templates
+commands.toggle.all.toggles	Toggle all toggles
+commands.toggle.focus.mode	Toggle Focus Mode
+commands.toggle.left.sidebar	Toggle Left Sidebar
+commands.toggle.sidebar	Toggle sidebar
+commands.toggle.sidebar.visibility	Toggle Sidebar Visibility
+commands.toggle.sidebar.visibility.tooltip	Toggle sidebar visibility 鈥� [0]
+commands.turn.into.collection	Turn into a Collection
+commands.turn.into.collection.block.error	The selected block could not be turned into a Collection
+commands.turn.into.collection.block.error.plural	Some of the blocks could not be turned into Collections
+commands.ungroup	Ungroup
+commands.unpin	Unpin
+commands.video.save	Save Video
+commands.view.backups	View Backups
+commans.exit.focus.mode.shortcut	Exit Focus Mode 鈥� [0]
+confirm.asquestion	Are you sure?
+contact.support	Contact support
+contact.us	Contact Us
+continue.crafting	Continue Crafting
+copy.url	Copy URL
+could.not.change.profile.photo	Could not change profile photo
+couldnt.add.members.to.space	We couldn't add members to this space. Please try again.
+couldnt.start.trial	Couldn't start your trial. Please try again.
+country.afghanistan	Afghanistan
+country.aland.islands	脜land Islands
+country.albania	Albania
+country.algeria	Algeria
+country.american.samoa	American Samoa
+country.andorra	Andorra
+country.angola	Angola
+country.anguilla	Anguilla
+country.antarctica	Antarctica
+country.antigua.barbuda	Antigua & Barbuda
+country.argentina	Argentina
+country.armenia	Armenia
+country.aruba	Aruba
+country.ascension.island	Ascension Island
+country.australia	Australia
+country.austria	Austria
+country.azerbaijan	Azerbaijan
+country.bahamas	Bahamas
+country.bahrain	Bahrain
+country.bangladesh	Bangladesh
+country.barbados	Barbados
+country.belarus	Belarus
+country.belgium	Belgium
+country.belize	Belize
+country.benin	Benin
+country.bermuda	Bermuda
+country.bhutan	Bhutan
+country.bolivia	Bolivia
+country.bosnia.herzegovina	Bosnia & Herzegovina
+country.botswana	Botswana
+country.bouvet.island	Bouvet Island
+country.brazil	Brazil
+country.british.indian.ocean.territory	British Indian Ocean Territory
+country.british.virgin.islands	British Virgin Islands
+country.brunei	Brunei
+country.bulgaria	Bulgaria
+country.burkina.faso	Burkina Faso
+country.burundi	Burundi
+country.cambodia	Cambodia
+country.cameroon	Cameroon
+country.canada	Canada
+country.canary.islands	Canary Islands
+country.cape.verde	Cape Verde
+country.caribbean.netherlands	Caribbean Netherlands
+country.cayman.islands	Cayman Islands
+country.central.african.republic	Central African Republic
+country.ceuta.melilla	Ceuta & Melilla
+country.chad	Chad
+country.chile	Chile
+country.china	China
+country.christmas.island	Christmas Island
+country.clipperton.island	Clipperton Island
+country.cocos.islands	Cocos (Keeling) Islands
+country.colombia	Colombia
+country.comoros	Comoros
+country.congo.brazzaville	Congo 鈥� Brazzaville
+country.congo.kinshasa	Congo 鈥� Kinshasa
+country.cook.islands	Cook Islands
+country.costa.rica	Costa Rica
+country.cote.divoire	C么te d鈥橧voire
+country.croatia	Croatia
+country.cuba	Cuba
+country.curacao	Cura莽ao
+country.cyprus	Cyprus
+country.czechia	Czechia
+country.denmark	Denmark
+country.diego.garcia	Diego Garcia
+country.djibouti	Djibouti
+country.dominica	Dominica
+country.dominican.republic	Dominican Republic
+country.ecuador	Ecuador
+country.egypt	Egypt
+country.el.salvador	El Salvador
+country.england	England
+country.equatorial.guinea	Equatorial Guinea
+country.eritrea	Eritrea
+country.estonia	Estonia
+country.eswatini	Eswatini
+country.ethiopia	Ethiopia
+country.european.union	European Union
+country.falkland.islands	Falkland Islands
+country.faroe.islands	Faroe Islands
+country.fiji	Fiji
+country.finland	Finland
+country.france	France
+country.french.guiana	French Guiana
+country.french.polynesia	French Polynesia
+country.french.southern.territories	French Southern Territories
+country.gabon	Gabon
+country.gambia	Gambia
+country.georgia	Georgia
+country.germany	Germany
+country.ghana	Ghana
+country.gibraltar	Gibraltar
+country.greece	Greece
+country.greenland	Greenland
+country.grenada	Grenada
+country.guadeloupe	Guadeloupe
+country.guam	Guam
+country.guatemala	Guatemala
+country.guernsey	Guernsey
+country.guinea	Guinea
+country.guinea-bissau	Guinea-Bissau
+country.guyana	Guyana
+country.haiti	Haiti
+country.heard.mcdonald.islands	Heard & McDonald Islands
+country.honduras	Honduras
+country.hong.kong.sar.china	Hong Kong SAR China
+country.hungary	Hungary
+country.iceland	Iceland
+country.india	India
+country.indonesia	Indonesia
+country.iran	Iran
+country.iraq	Iraq
+country.ireland	Ireland
+country.isle.of.man	Isle of Man
+country.israel	Israel
+country.italy	Italy
+country.jamaica	Jamaica
+country.japan	Japan
+country.jersey	Jersey
+country.jordan	Jordan
+country.kazakhstan	Kazakhstan
+country.kenya	Kenya
+country.kiribati	Kiribati
+country.kosovo	Kosovo
+country.kuwait	Kuwait
+country.kyrgyzstan	Kyrgyzstan
+country.laos	Laos
+country.latvia	Latvia
+country.lebanon	Lebanon
+country.lesotho	Lesotho
+country.liberia	Liberia
+country.libya	Libya
+country.liechtenstein	Liechtenstein
+country.lithuania	Lithuania
+country.luxembourg	Luxembourg
+country.macao.sar.china	Macao SAR China
+country.madagascar	Madagascar
+country.malawi	Malawi
+country.malaysia	Malaysia
+country.maldives	Maldives
+country.mali	Mali
+country.malta	Malta
+country.marshall.islands	Marshall Islands
+country.martinique	Martinique
+country.mauritania	Mauritania
+country.mauritius	Mauritius
+country.mayotte	Mayotte
+country.mexico	Mexico
+country.micronesia	Micronesia
+country.moldova	Moldova
+country.monaco	Monaco
+country.mongolia	Mongolia
+country.montenegro	Montenegro
+country.montserrat	Montserrat
+country.morocco	Morocco
+country.mozambique	Mozambique
+country.myanmar.burma	Myanmar (Burma)
+country.namibia	Namibia
+country.nauru	Nauru
+country.nepal	Nepal
+country.netherlands	Netherlands
+country.new.caledonia	New Caledonia
+country.new.zealand	New Zealand
+country.nicaragua	Nicaragua
+country.niger	Niger
+country.nigeria	Nigeria
+country.niue	Niue
+country.norfolk.island	Norfolk Island
+country.north.korea	North Korea
+country.north.macedonia	North Macedonia
+country.northern.mariana.islands	Northern Mariana Islands
+country.norway	Norway
+country.oman	Oman
+country.pakistan	Pakistan
+country.palau	Palau
+country.palestinian.territories	Palestinian Territories
+country.panama	Panama
+country.papua.new.guinea	Papua New Guinea
+country.paraguay	Paraguay
+country.peru	Peru
+country.philippines	Philippines
+country.pitcairn.islands	Pitcairn Islands
+country.poland	Poland
+country.portugal	Portugal
+country.puerto.rico	Puerto Rico
+country.qatar	Qatar
+country.reunion	R茅union
+country.romania	Romania
+country.russia	Russia
+country.rwanda	Rwanda
+country.samoa	Samoa
+country.san.marino	San Marino
+country.sao.tome.principe	S茫o Tom茅 & Pr铆ncipe
+country.saudi.arabia	Saudi Arabia
+country.scotland	Scotland
+country.senegal	Senegal
+country.serbia	Serbia
+country.seychelles	Seychelles
+country.sierra.leone	Sierra Leone
+country.singapore	Singapore
+country.sint.maarten	Sint Maarten
+country.slovakia	Slovakia
+country.slovenia	Slovenia
+country.solomon.islands	Solomon Islands
+country.somalia	Somalia
+country.south.africa	South Africa
+country.south.georgia.south.sandwich.islands	South Georgia & South Sandwich Islands
+country.south.korea	South Korea
+country.south.sudan	South Sudan
+country.spain	Spain
+country.sri.lanka	Sri Lanka
+country.st.barthelemy	St. Barth茅lemy
+country.st.helena	St. Helena
+country.st.kitts.nevis	St. Kitts & Nevis
+country.st.lucia	St. Lucia
+country.st.martin	St. Martin
+country.st.pierre.miquelon	St. Pierre & Miquelon
+country.st.vincent.grenadines	St. Vincent & Grenadines
+country.sudan	Sudan
+country.suriname	Suriname
+country.svalbard.jan.mayen	Svalbard & Jan Mayen
+country.sweden	Sweden
+country.switzerland	Switzerland
+country.syria	Syria
+country.taiwan	Taiwan
+country.tajikistan	Tajikistan
+country.tanzania	Tanzania
+country.thailand	Thailand
+country.timor-leste	Timor-Leste
+country.togo	Togo
+country.tokelau	Tokelau
+country.tonga	Tonga
+country.trinidad.tobago	Trinidad & Tobago
+country.tristan.da.cunha	Tristan da Cunha
+country.tunisia	Tunisia
+country.turkey	Turkey
+country.turkmenistan	Turkmenistan
+country.turks.caicos.islands	Turks & Caicos Islands
+country.tuvalu	Tuvalu
+country.uganda	Uganda
+country.ukraine	Ukraine
+country.united.arab.emirates	United Arab Emirates
+country.united.kingdom	United Kingdom
+country.united.nations	United Nations
+country.united.states	United States
+country.uruguay	Uruguay
+country.us.outlying.islands	U.S. Outlying Islands
+country.us.virgin.islands	U.S. Virgin Islands
+country.uzbekistan	Uzbekistan
+country.vanuatu	Vanuatu
+country.vatican.city	Vatican City
+country.venezuela	Venezuela
+country.vietnam	Vietnam
+country.wales	Wales
+country.wallis.futuna	Wallis & Futuna
+country.western.sahara	Western Sahara
+country.yemen	Yemen
+country.zambia	Zambia
+country.zimbabwe	Zimbabwe
+cover.image	Cover Image
+craft.did.not.quit.desc	Craft is set to stay running in the notifications area.
+craft.did.not.quit.title	Why didn鈥檛 Craft quit?
+craft.document	Craft Document
+craft.three	Craft 3
+crafts.template.desc	Hundreds of templates to help you speed up your workflow, become more organized and unlock your creativity
+crafts.template.gallery	Craft鈥檚 Template Gallery
+create.new.team	Create New Team
+create.reminder.empty.state.title	Create a reminder to never forget tasks or ideas
+creating.document	Creating document
+current.page	Current Page
+customize.x	Customize [0]
+daily.create.note	Create new daily note
+daily.note	Daily Note
+daily.note.next.day	Next day
+daily.note.previous.day	Previous day
+daily.notes	Daily Notes
+daily.updated.offline.x	Updated offline [0]
+daily.updated.x	Updated [0]
+date.current.month	Current Month
+date.current.week	Current Week
+date.day.ago	1 day ago
+date.day.friday	Friday
+date.day.monday	Monday
+date.day.saturday	Saturday
+date.day.sunday	Sunday
+date.day.thursday	Thursday
+date.day.tuesday	Tuesday
+date.day.wednesday	Wednesday
+date.hour.ago	1 hour ago
+date.justnow	Just Now
+date.last.week	Last week
+date.minute.ago	1 minute ago
+date.next.week	Next Week
+date.select	Select Date鈥�
+date.shared	Date Shared
+date.this.month	This Month
+date.this.week	This Week
+date.today	Today
+date.tomorrow	Tomorrow
+date.week.ago	1 week ago
+date.x	[0] [1]
+date.x.days.ago	[0] days ago
+date.x.days.short	[0]d
+date.x.hours	[0] hours
+date.x.hours.ago	[0] hours ago
+date.x.hours.short	[0]h
+date.x.minutes	[0] minutes
+date.x.minutes.ago	[0] minutes ago
+date.x.minutes.short	[0]m
+date.x.months.ago	[0] ago
+date.x.seconds	[0] seconds
+date.x.seconds.ago	[0] seconds ago
+date.x.seconds.short	[0]s
+date.x.short	[0][1]
+date.x.years.ago	[0] years ago
+date.year.ago	1 year ago
+date.yesterday	Yesterday
+days.capitalized	Days
+delete.document	Delete Document
+delete.document.confirm	Are you sure? You cannot undo this action.
+delete.folder	Delete Folder
+delete.one.document.question	Delete 1 document?
+delete.page	Delete Page
+delete.question	Delete?
+delete.x	Delete [0]
+delete.x.items	Delete [0] items
+delete.x.question	Delete [0]?
+deleting.folder	Deleting folder [0]
+deleting.x.documents	Deleting [0] documents鈥�
+deselect.all	Deselect all
+diagnostics.subscription.report.subject.web	Web subscription issue report
+diagnostics.subscription.report.subject.windows	Windows subscription issue report
+diagnostics.subscription.report.title	Report Subscription Issue
+diagnostics.subscription.troubleshooting.title	Subscription Troubleshooting
+diagnostics.sync.error.offline	Report Error
+diagnostics.sync.troubleshooting	Troubleshooting
+doc.email.access.unavailable	Email access is unavailable when password protection is enabled.
+doc.password.protection.unavailable	Password protection is unavailable when email access is enabled.
+doc.x.one	[0] doc
+doc.x.other	[0] docs
+document.x.one	[0] document
+document.x.other	[0] documents
+documents.ellipsis	documents鈥�
+download.prompt.benefit.ai	Seamless AI-powered workflows
+download.prompt.benefit.native	Beautiful native experience
+download.prompt.benefit.offline	Faster performance, even offline
+download.prompt.button.android	Get on Google Play
+download.prompt.button.ios	Get on App Store
+download.prompt.button.macos	Download for Mac
+download.prompt.button.windows	Download for Windows
+download.prompt.continue.in.browser	Continue in Browser
+download.prompt.get.the.full.experience	Get the Full Experience
+download.prompt.subtitle	A faster, more powerful experience awaits on desktop and mobile
+download.starting.desc	Choose a destination folder to start the download process.
+download.starting.title	Download starting鈥�
+download.success	Download successfully completed
+drag.drop.image	Drag and drop image
+drawing.in	Drawing in [0]
+duplicated.x.documents	Duplicated [0] documents
+edit.ellipsis	Edit鈥�
+email.when.you.have.access	We鈥檒l let you know in email when you have access.
+error.already.subscribed	Already Subscribed
+error.cannot.create.share.page	Cannot create share page
+error.could.not.check.your.space	Could not check your spaces
+error.document.short.link	Error reading document short link
+error.exporting.x	Error exporting [0]
+error.network.error	Network error
+error.payment.failed	Payment Failed
+error.reading.blocklink	Error reading blocklink
+error.report.contact.support	Contact Support
+error.report.does.it.happen.every.time	Does it happen every time?
+error.report.error	Report Error
+error.report.issue	Report issue
+error.report.issue.desc	Please report this issue, so we can make sure it won鈥檛 happen again
+error.report.keeps.happening	This issue keeps happening?
+error.report.steps.before.it.happened	Steps before it happened
+error.report.web	Web App error report
+error.report.what.were.you.doing	What were you trying to do?
+error.report.what.were.you.doing.example	Example: Tried to insert an image
+error.report.windows	Windows App error report
+error.request.email.change	Could not request email change
+error.unexpected.error.occurred	An unexpected error occurred
+every.weekday	Every Weekday
+export.image.preview	Image Preview
+export.pdf.preview	PDF Preview
+export.to.pdf	Export to PDF
+exporting.to.x	Exporting to [0]
+family.badge	FAMILY
+feedback.email.optional	Email (optional)
+feedback.feel.about.craft	How do you feel about Craft?
+feedback.form.subtitle	Pick as many as you鈥檇 like
+feedback.input.like.or.not	Tell us what you liked or what you didn鈥檛鈥�
+feedback.input.subtitle	Every bit of feedback helps!
+feedback.join.the.community	Join the Craft Community and learn about the latest features, tips and tricks 鈥� maybe even influence our roadmap!
+feedback.rate.craft	Rate Craft
+feedback.rate.in.store	Would you mind taking a few seconds to rate Craft in the Store?
+feedback.table.missing.function	Missing function? Let us know!
+feedback.thanks.secondarybutton	Not Now
+feedback.thanks.subtitle	We鈥檇 love to learn more
+feedback.thanks.support	Thank you for your support!
+feedback.thanks.title	Thank You!
+file.attachment	File Attachment
+file.in	File in [0]
+file.pdf	PDF File
+file.zip	Zip File
+find.and.replace	Find and Replace
+find.next	Find Next
+find.next.match	Next Match [0]
+find.previous	Find Previous
+find.previous.match	Previous Match [0]
+find.regex	Find regex [0]
+find.regex.in.doc	Find regex in doc
+find.regex.on.page	Find regex on page
+find.replace.search	[0] results [1]
+find.replace.with	Replace with鈥�
+find.text	Find text [0]
+find.text.in.doc	Find text in doc
+find.text.on.page	Find text on page
+first.small	first
+focus.on.3dot	Focus On鈥�
+folder.added.to.assistant.learning	Folder[0]added to Assistant Learning
+friday.short	Fri
+full.doc	Full Doc
+get.started	Get started
+getting.your.space.ready	Getting your space ready鈥�
+go.to.settings	Go to Settings
+go.to.team.members	Go to Team Members
+go.to.x	Go to [0]
+help.center	Help Center
+help.toggle.debug.panel	Toggle Debug Panel
+help.toggle.fps.overlay	Toggle FPS Overlay
+hide.completed.tasks	Hide Completed Tasks
+hours.capitalized	Hours
+how.publishing.works	How does publishing work?
+ideastarter.loading.default.0	Building your document鈥�
+ideastarter.loading.default.1	Creating the structure鈥�
+ideastarter.loading.default.2	Adding guidance sections鈥�
+ideastarter.loading.default.3	Preparing your template鈥�
+ideastarter.loading.guide.0	Outlining your content鈥�
+ideastarter.loading.guide.1	Adding key sections鈥�
+ideastarter.loading.guide.2	Structuring the narrative鈥�
+ideastarter.loading.guide.3	Creating your framework鈥�
+ideastarter.loading.list.0	Organizing your tasks鈥�
+ideastarter.loading.list.1	Creating actionable items鈥�
+ideastarter.loading.list.2	Adding priority sections鈥�
+ideastarter.loading.list.3	Building the checklist鈥�
+ideastarter.loading.meeting.0	Building the agenda鈥�
+ideastarter.loading.meeting.1	Adding discussion sections鈥�
+ideastarter.loading.meeting.2	Structuring action items鈥�
+ideastarter.loading.meeting.3	Preparing your template鈥�
+ideastarter.loading.project.0	Creating your action plan鈥�
+ideastarter.loading.project.1	Structuring key milestones鈥�
+ideastarter.loading.project.2	Adding guidance sections鈥�
+ideastarter.loading.project.3	Laying out the roadmap鈥�
+ideastarter.loading.title.default	Creating your document
+ideastarter.loading.title.type	Creating your [0]
+ideastarter.loading.travel.0	Mapping out your itinerary鈥�
+ideastarter.loading.travel.1	Adding destination sections鈥�
+ideastarter.loading.travel.2	Creating packing checklist鈥�
+ideastarter.loading.travel.3	Structuring the journey鈥�
+ideastarter.loading.weekly.0	Capturing your ideas鈥�
+ideastarter.loading.weekly.1	Creating space to think鈥�
+ideastarter.loading.weekly.2	Structuring the brainstorm鈥�
+ideastarter.loading.weekly.3	Building your idea canvas鈥�
+ideastarter.popup.close	Close
+ideastarter.popup.create	Create
+ideastarter.popup.placeholder	Describe what you want to create鈥�
+ideastarter.popup.subtitle	We know that the blank page is hard. Describe what you need and we鈥檒l help you with the structure.
+ideastarter.popup.title	What do you want to start with?
+ideastarter.suggestion.guide	Blog Post
+ideastarter.suggestion.list	Task List
+ideastarter.suggestion.meeting	Meeting Notes
+ideastarter.suggestion.project	Project Doc
+ideastarter.suggestion.travel	Trip Plan
+ideastarter.suggestion.weekly	Brainstorm
+ideastarter.toast.error.subtitle	Please try again
+ideastarter.toast.error.title	Failed to create document
+ideastarter.toast.success	Document created!
+ignore.diacritics	Ignore Diacritics (eg 盲 = a)
+image.in	Image in [0]
+imagine.access.mode	Access Mode
+imagine.all.daily.notes.and.tasks	All Daily Notes and Tasks
+imagine.api.created.successfully	API created successfully
+imagine.api.deleted.successfully	API deleted successfully
+imagine.api.for.all.doc	API for All Documents
+imagine.api.for.selected.docs	Connect Selected Documents
+imagine.api.for.x	API for [0]
+imagine.api.key	API Key
+imagine.api.key.copied	API Key Copied
+imagine.api.key.copied.subtitle	The API key has been copied to your clipboard.
+imagine.api.key.created	API Key Created
+imagine.api.key.created.successfully	API Key created successfully
+imagine.api.key.default.name	API Key [0]
+imagine.api.key.deleted.successfully	API Key deleted successfully
+imagine.api.key.desc	Requires API key for access
+imagine.api.key.name	API Key Name
+imagine.api.keys	API Keys
+imagine.api.limit.reached	API Limit Reached
+imagine.api.limit.reached.desc	Only 10 APIs are possible right now. If you鈥檙e interested in more, please contact support@craft.do
+imagine.api.reference	API Reference
+imagine.api.updated.successfully	API updated successfully
+imagine.browse.examples	Browse Examples
+imagine.browse.examples.desc	See what others have built
+imagine.build.apps.and.workflows	For building workflows and shortcuts
+imagine.build.apps.workflows	Set up workflows and create shortcuts around your daily notes and tasks
+imagine.button	Imagine
+imagine.chat.with.your.docs	For AI tools to access your docs
+imagine.connect.all.docs	Connect All Documents
+imagine.connect.daily.notes.tasks	Connect Daily Notes & Tasks
+imagine.connect.selected.docs	Connect Selected Documents
+imagine.connect.your.favourite.ai.tools	Connect your favourite AI tools to your daily notes and tasks
+imagine.connections	Connections
+imagine.copy.api.key	Copy API Key
+imagine.copy.your.api.key.now	Make sure to copy your API key now. You won鈥檛 be able to see it again!
+imagine.could.not.create.api	Could not create API
+imagine.could.not.create.api.key	Could not create API Key
+imagine.could.not.create.mcp.server	Could not create MCP Server
+imagine.could.not.delete.api	Could not delete API
+imagine.could.not.delete.api.key	Could not delete API key
+imagine.could.not.delete.mcp.server	Could not delete MCP Server
+imagine.could.not.set.password	Could not set password
+imagine.could.not.update.api	Could not update API
+imagine.could.not.update.mcp.server	Could not update MCP Server
+imagine.create.api.key	Create API Key
+imagine.create.your.first.api	Add Your First API Connection
+imagine.create.your.first.mcp.server	Create Your First MCP Connection
+imagine.delete.api.confirm.message	Are you sure you want to delete this API? All API keys will be revoked and this action cannot be undone.
+imagine.delete.api.confirm.title	Delete API?
+imagine.delete.api.key	Delete API Key
+imagine.delete.api.key.confirm	Are you sure you want to delete this API key? This action cannot be undone.
+imagine.delete.api.key.title	Delete 鈥淸0]鈥� API Key
+imagine.delete.mcp.confirm.message	Are you sure you want to delete this MCP server? All connections will be terminated and this action cannot be undone.
+imagine.delete.mcp.confirm.title	Delete MCP Server?
+imagine.delete.this.api	Delete this API
+imagine.delete.this.mcp	Delete this MCP
+imagine.download.ai.bundle	Download AI Bundle
+imagine.enable.api	Enable API
+imagine.enable.api.desc	Use this doc as a backend or CMS for your app or website.
+imagine.enable.mcp	Enable MCP
+imagine.enable.mcp.desc	Connect this doc to AI tools to work on it, or use it in your workflow.
+imagine.make.specific.docs.available	Make specific documents available to your favourite AI tools
+imagine.mcp.for.all.doc	MCP for All Documents
+imagine.mcp.for.daily.notes.and.tasks	MCP for Daily Notes & Tasks
+imagine.mcp.reference	MCP reference
+imagine.mcp.reference.desc	Learn more about what is an MCP server and how you can use it
+imagine.mcp.server.created.successfully	MCP Server created successfully
+imagine.mcp.server.deleted.successfully	MCP Server deleted successfully
+imagine.mcp.server.for.x	MCP Server for [0]
+imagine.mcp.server.updated.successfully	MCP Server updated successfully
+imagine.my.api	My API
+imagine.my.mcp	My MCP
+imagine.new.api	New API Connection
+imagine.new.mcp.server	New MCP Connection
+imagine.no.keys	No Keys
+imagine.permission.level	Permission Level
+imagine.press.plus.to.create.a.key	Press + to create a key
+imagine.public	Public
+imagine.public.desc	Anyone with the URL can access
+imagine.read.and.write	Read and Write
+imagine.read.and.write.desc	Can view and modify document content
+imagine.read.only	Read Only
+imagine.read.only.desc	Can only view document content
+imagine.remove.password	Remove Password
+imagine.rename.api	Rename API
+imagine.rename.mcp	Rename MCP
+imagine.some.ideas.to.get.you.started	Some Ideas to Get You Started
+imagine.view.integration.guide.for	View Integration Guide For鈥�
+imagine.write.only	Write Only
+imagine.write.only.desc	Can only modify document content
+imagine.your.apis	Your API Connections
+imagine.your.mcp.servers	Your MCP Connections
+img.craftdocs-media.com	img.craftdocs-media-sandbox.com
+import.from.evernote	From Evernote
+import.from.google.docs	From Google Docs
+import.from.notion	From Notion
+import.from.readwise	From Readwise
+import.standalone.md	From Markdown Files
+importing.markdown.documents	Importing Markdown documents
+in.doc	in doc
+in.progress	In Progress
+in.x	In [0]
+insert.image	Insert Image
+insert.in.document	Insert in Document
+insert.linetype	Insert [0]
+insert.table.desc	Insert a table with the highlighted number of rows and columns.
+integration.fetch.error	An error occurred while fetching available integrations. Please try again later.
+integration.not.available	Integrations are not available yet.
+integration.playground.debug	Integration Playground (Debug)
+integration.redirecting	Redirecting鈥�
+integrations.provider.disconnected	Provider Disconnected
+integrations.successfully.disconnected	You have successfully disconnected this provider.
+invite.members	Invite members
+invite.members.family.and.team.plan	Invite up to 6 members on the Family plan and up to 10 on the Team plan.
+invite.nudge.description	Invite people so they can view, edit, and comment on your docs together.
+invite.nudge.description.with.team	Invite people to <b>[team]</b> so they can view, edit, and comment on your docs together.
+invite.nudge.invalid.emails	Check the highlighted addresses.
+invite.nudge.subtitle	Now invite your team to see it
+invite.nudge.title	Nice, a new team doc!
+invite.survey.comment.placeholder	Optional...
+invite.survey.reason.exploring.alone	I'm still exploring the app on my own first
+invite.survey.reason.nobody.to.invite	I don't have anyone to invite right now
+invite.survey.reason.other.placeholder	Tell us more...
+invite.survey.reason.planning.to	I'm planning to invite people, just haven't yet
+invite.survey.reason.something.else	Something else
+invite.survey.reason.subtitle	Help us understand 鈥� we're always looking for ways to improve.
+invite.survey.reason.title	What's the main reason you haven't invited your team yet?
+invite.survey.reason.unsure.who.for	I'm not sure who this would be useful for
+invite.survey.reason.wanted.but.unsure	I wanted to try it but wasn't sure how
+invite.survey.thanks.description	Anything you'd add? Even one sentence helps us understand better.
+invite.survey.thanks.title	Thanks 鈥� that's helpful
+invite.team.members	Invite team members
+invite.team.members.desc	Invite up to 10 members during trial, each person gets their own private space and all Plus benefits
+invite.your.team	Invite your team
+invited.by.invitorname	invited by {{invitorName}}
+inviting.new.member.requires	 new member requires 
+inviting.new.members	Inviting new members
+inviting.new.members.requires	 new members requires 
+inviting.space	Inviting 
+join.and.open	Join & Open
+joining.team	Joining team...
+kanban.add_new_group	Add new group
+kanban.delete_items	Delete Items
+last.small	last
+learn.more	Learn More
+learn.more.about.plans	Learn more about plans
+learn.more.about.pricing	Learn more about pricing plans
+leave.team	Leave Team
+leave.team.confirmation	Are you sure you want to leave [0]?
+leave.team.title	Leave Team?
+lets.set.up.my.team	Let's set up my Team!
+license.key.activate	Enter your license key to activate your subscription for team: 
+license.key.activate.key	Activate License Key
+license.key.paste	Paste License Key
+license.key.successfully.activated	Successfully activated the subscription for team: 
+license.key.valid.until	Your license is valid until: 
+link.to.block	Link to Block
+loading.invite	Loading invite...
+log.out	Log Out
+login.auth.greeting.sorry	We鈥檙e sorry, [0]
+login.auth.greeting.welcome	Welcome, [0]
+login.auth.signing.in.to	Signing you in to [0]
+login.auth.success.close	You can close this window now.
+login.auth.success.message	You鈥檝e been signed in to [0]
+login.error.heading	Something went wrong
+login.start.sign.in.with.craft	Sign in with Craft to continue to [0]
+login.start.welcome	Welcome!
+manage.your.team.from.settings	Manage your team from Settings
+marking.document.as	Marking document as [0]
+marking.documents.as	Marking documents as [0]
+match.case	Match Case
+menu.file	File
+minutes.capitalized	Minutes
+mobile.rotate.to.portrait	Please rotate the phone to portrait mode for a better experience.
+mobile.web.craft.available	Craft is available for Desktop Web, iOS, iPadOS and macOS, with plans to support additional platforms in the future.
+mobile.web.ipados.visionos	Download the iPadOS or visionOS apps for the best experience.
+mobile.web.looking.for	You might be looking for
+mobile.web.not.available.on.mobile	Craft on the web is not available on mobile
+mobile.web.not.optimized.for.this.device	Craft on the web is not optimized for this device
+mobile.web.optimized.for.desktop	Craft for Web is optimized for desktop experience. On mobile please download our iOS and iPadOS apps.
+monday.short	Mon
+monthly.capitalized	Monthly
+more.3.dot	More鈥�
+more.3dot	More鈥�
+more.options	More Options
+move.x.items.to.recently.deleted	Move [0] items to Recently Deleted
+move.x.to.recently.deleted	Move "[0]" to Recently Deleted
+moved.to.recently.deleted	Moved to recently deleted
+my.subscriptions	My Subscriptions
+my.team	My Team
+my.teams	My Teams
+my.templates	My Templates
+need.some.inspiration.our.ai.assistant	Need some inspiration? Our AI assistant can create headings and structure to get your started
+new.email	New Email
+new.task	New Task
+no.access	No Access
+no.credit.card.required	No credit card required
+no.documents.yet	No documents yet
+no.email	No email
+no.new.members.to.invite	No new members to invite
+no.preview.available	No Preview Available
+no.result	No results [0]
+no.suggestions.found	No Suggestions found
+not.set	Not set
+not.show.this.again	Don鈥檛 show this again
+on.page	on page
+onboarding.by.myself	By myself
+onboarding.by.myself.desc	I just need a personal space to organize my work and life
+onboarding.code.confirm.issue.question	Didn鈥檛 receive the email?
+onboarding.code.confirm.issue.suggestion	Check your spam folder
+onboarding.code.confirm.title	Please enter the code sent to
+onboarding.confirm.email.change	Confirm Email Change
+onboarding.confirm.email.to.continue	Please confirm your email to continue or [0]
+onboarding.confirm.email.to.continue.with.sso	Please confirm your email to continue with SSO or [0]
+onboarding.confirmation.code	Confirmation Code
+onboarding.confirming.email.change	Confirming email change鈥�
+onboarding.continue	Continue
+onboarding.continue.email.lowercase	continue with email
+onboarding.continue.sso	Continue with SSO
+onboarding.continue.sso.lowercase	continue with SSO
+onboarding.continue.with.apple	Continue with Apple
+onboarding.continue.with.google	Continue with Google
+onboarding.continue.with.microsoft	Continue with Microsoft
+onboarding.could.not.complete.email.change	Could not complete email change
+onboarding.document.popup.desc	Pick something you are interested about:
+onboarding.document.popup.title	Get the real feel of Craft
+onboarding.dont.have.the.app	Don鈥檛 have the App?
+onboarding.email.change.confirm.email	Please confirm your new email to continue.
+onboarding.email.changed	Email Changed
+onboarding.email.new.page.title	Let鈥檚 get started!
+onboarding.error.login.failed	Login failed
+onboarding.get.to.know.craft	Get to know Craft
+onboarding.guide	Guide
+onboarding.how.to.use.craft	How do you plan to use Craft?
+onboarding.insert.panel.first.task	First Task
+onboarding.insert.panel.second.task	Second Task
+onboarding.insert.panel.third.task	Third Task
+onboarding.install.craft	Install Craft
+onboarding.interests.books	Book list
+onboarding.interests.finances	Finances
+onboarding.interests.habit	Habit tracking
+onboarding.interests.project	Project tracking
+onboarding.interests.story	Story planning
+onboarding.interests.student	Student space
+onboarding.interests.todo	To-do lists
+onboarding.interests.travel	Travel
+onboarding.logged.in.to.microsoft	You鈥檙e logged in to Microsoft with [0].
+onboarding.menu.blog	Blog
+onboarding.menu.blog.desc	Our news and announcements
+onboarding.menu.community	Community
+onboarding.menu.download	Download
+onboarding.menu.help.and.support	Help and Support
+onboarding.menu.help.and.support.desc	Get answers and request assistance
+onboarding.menu.login	Login
+onboarding.menu.planning	Planning
+onboarding.menu.planning.desc	Plan your day, your way
+onboarding.menu.pricing	Pricing
+onboarding.menu.product	Product
+onboarding.menu.reddit	Reddit Community
+onboarding.menu.reddit.desc	Ask us questions and share ideas
+onboarding.menu.research	Research
+onboarding.menu.research.desc	Build your knowledge, your way
+onboarding.menu.slack	Slack Group
+onboarding.menu.slack.desc	Join the discussion with fellow Crafters
+onboarding.menu.styling	Styling
+onboarding.menu.styling.desc	Your notes, your style
+onboarding.menu.try.craft.free	Try Craft Free
+onboarding.menu.whats.new	What鈥檚 new
+onboarding.menu.whats.new.desc	Learn about our latest releases
+onboarding.menu.writing	Writing
+onboarding.menu.writing.desc	One writing experience, every device
+onboarding.menu.youtube	YouTube Channel
+onboarding.menu.youtube.desc	Tips, Tricks & How-tos
+onboarding.next	Next
+onboarding.open.craft.doc	Open Craft Doc
+onboarding.page.name.firstname	First Name
+onboarding.page.name.lastname	Last Name
+onboarding.please.sign.in.to.continue	Please sign in to continue
+onboarding.select.one	Select one to get started
+onboarding.sending.code	Sending your activation code鈥�
+onboarding.sign.in.on.web	Sign in on Web
+onboarding.sign.in.with.setapp	Sign in with Setapp
+onboarding.skip	Skip
+onboarding.start.crafting	Start Crafting
+onboarding.terms.and.conditions	Terms and Conditions
+onboarding.use.offer	Use Offer
+onboarding.v3.intro.1.content	Ta aktualizacja zwi臋kszy Twoj膮 produktywno艣膰 w zadaniach, uporz膮dkuje kolekcje i doda kreatywno艣ci w stylach.
+onboarding.v3.intro.1.title	Brand New For You
+onboarding.v3.intro.2.content	Schedule your tasks, plan your days and view everything in one place.
+onboarding.v3.intro.2.title	Complete Your Tasks
+onboarding.v3.intro.3.content	Choose from over 100 pre-made styles or make your own style using doodles, washi tapes, paper and text color.
+onboarding.v3.intro.3.title	Create Your Style
+onboarding.v3.intro.4.content	Catalog your stuff or create relations between your ideas.
+onboarding.v3.intro.4.title	Build your collections
+onboarding.v326.intro.1.content	Exciting updates and a refined look to bring out your best and keep you in the flow with Craft.
+onboarding.v326.intro.1.title	September Updates
+onboarding.v326.intro.4.content	We are levelling up the core features, the ones you rely on every day.
+onboarding.v326.intro.4.title	Tasks, Tags, Collections
+onboarding.v326.intro.5.content	For a limited time, new subscribers can get Craft Plus and Craft Family with a 40% discount.
+onboarding.v326.intro.5.content.amount	For a limited time, new subscribers can get Craft Plus and Craft Family with a [0]% discount.
+onboarding.v326.intro.5.content.weekly.amount	For a limited time, get Craft Plus Weekly with a [0]% discount.
+onboarding.v326.intro.clipper.content	Drop your research right into your docs or daily notes. 
+onboarding.v326.intro.clipper.title	Web Clipper updates
+onboarding.v326.intro.weekly.button	Try for [0]/ week
+onboarding.v326.intro.weekly.content	Don鈥檛 miss out on our Weekly plan offer! Unlock all craft premium features.
+onboarding.v326.intro.weekly.title	Enjoy Craft without limits
+onboarding.v330.intro.1.december.update.title	December Update
+onboarding.v330.intro.1.november.update.content	Introducing smarter AI collaboration, numerous improvements, and new ways to keep up with your notes.
+onboarding.v330.intro.1.november.update.title	November Update
+onboarding.v330.intro.2.android.content	Craft is now available on Android! With the signature design quality, seamless sync, and now, offline mode.
+onboarding.v330.intro.2.android.title	Android App Beta
+onboarding.v330.intro.4.whiteboard.content	With refined Whiteboards, Collections, and Code Blocks, you can now make the most of your notes.
+onboarding.v330.intro.4.whiteboard.title	Improved Whiteboards
+onboarding.v330.intro.5.celebrate.content	For a limited time, new subscribers can get Craft Plus and Craft Family with a 40% discount.
+onboarding.v330.intro.5.celebrate.title	Celebrate with us
+onboarding.v330.intro.6.winter.deal.content	Get 4 carefully curated apps with a 60% discount to make your winter calmer and smarter.
+onboarding.v330.intro.6.winter.deal.title	Winter Clarity Deal
+onboarding.v330.winter.deal.view.apps	View Apps
+onboarding.v350.intro.1.offline.content	Offline editing is now available as a beta for browser and Windows app. Changes sync when you鈥檙e back online.
+onboarding.v350.intro.1.offline.title	Offline Editing
+onboarding.v350.intro.2.smoother.content	We鈥檝e also made 100+ under-the-hood improvements and bug fixes for a smoother, faster experience.
+onboarding.v350.intro.2.smoother.title	Now Smoother & Faster
+onboarding.v350.intro.3.lunar.content	We welcome Lunar New Year with new document styles. Perfect for invitations, sharing, or just the atmosphere.
+onboarding.v350.intro.3.lunar.title	New Styles for Lunar New Year
+onboarding.v350.introducing.kanban	Introducing Kanban
+onboarding.v350.kanban.content	More structure for your projects, tasks and ideas. Start organizing from scratch or apply to a collection you have.
+onboarding.v350.mermaid.content	Create diagrams, flowcharts, sequences or timelines in your document. No additional tools needed.
+onboarding.v350.mermaid.diagrams	Mermaid Diagrams
+onboarding.v350.upgrade.content	Upgrade to Craft Plus or Craft Family with a 40% discount. Available for a limited time, for new subscribers only.
+onboarding.welcome.to.craft	Welcome to Craft
+onboarding.welcome.to.craft.desc	Ready to start creating?<br/>Let鈥檚 begin with your first document.
+onboarding.welcome.to.craft.desc2	Click anywhere here to get started.
+onboarding.what.is.craft	What is Craft?
+onboarding.whats.your.name	What鈥檚 your name?
+onboarding.with.my.team	With my team
+onboarding.with.my.team.desc	I want a shared space where I can collaborate with my Team
+onboarding.your.email	Your Email
+one.item	1 item
+one.result	1 result [0]
+open.assistant	Open Assistant
+open.in.browser	Open in Browser
+open.x	Open [0]
+page.style	Page Style
+password.copied	Password copied to clipboard
+pay.monthly	Pay monthly
+pay.yearly	Pay yearly
+pdf.export.body	Download the exported document below
+pdf.export.title	Your document has been exported! 馃帀
+preferences.about	About
+preferences.about.legal	Legal
+preferences.about.social	Social
+preferences.account.delete	Delete Account
+preferences.account.delete.message	Deleting your account will permanently delete all your documents. This action cannot be undone.
+preferences.account.delete.title	Account Deletion
+preferences.account.title	My Account
+preferences.add.members.to.space	Add Members to Space
+preferences.add.members.to.space.sending	Sending space invites
+preferences.advanced	Advanced
+preferences.advanced.completed.task.appearance	Completed Task Appearance
+preferences.advanced.completed.task.appearance.description	Customize how completed tasks appear across the App
+preferences.advanced.completed.task.appearance.faded	Faded
+preferences.advanced.completed.task.appearance.none	None
+preferences.advanced.completed.task.appearance.strike	Strikethrough
+preferences.advanced.date.badges.description	Displaying the daily note link with a date badge is a great way to highlight it in the document.
+preferences.advanced.date.badges.title	Date Badges
+preferences.advanced.link.open.preference	Craft Document Link Open Preference
+preferences.ai.usage.and.limits	AI Usage and Limits
+preferences.alert.change.name	Could not change name
+preferences.alert.update.photo	Could not update photo
+preferences.appearance	Appearance
+preferences.appearance.accent.color	Accent Color
+preferences.appearance.accent.color.description	Choose your accent color
+preferences.assistant.add.prompt	Add Prompt
+preferences.assistant.delete.prompt	Delete Prompt
+preferences.assistant.model	Model
+preferences.assistant.saved.prompts	Saved Prompts
+preferences.assistant.saved.prompts.limit.desc	Save up to [0] prompts with up to [1] characters each.
+preferences.assistant.space.desc	You can disable the assistant for individual Spaces. This does not affect other members鈥� settings.
+preferences.automatic.beta.redirect	Automatic Beta Redirect
+preferences.available.platforms	Available Platforms
+preferences.comments.and.mentions	Comments & Mentions
+preferences.comments.and.mentions.desc	Get notified when you receive new comments and mentions.
+preferences.connect	Connect
+preferences.connected.platforms	Connected Platforms
+preferences.craft	Craft
+preferences.daily.email	Daily Email
+preferences.daily.note.tooltip	Show Daily Notes by default on Home.
+preferences.disconnect	Disconnect
+preferences.document.cache.cleared	Document cache has been cleared
+preferences.email	Email
+preferences.email.change	Change Email
+preferences.email.description	Your email address used for this account.
+preferences.email.notifications	Email Notifications
+preferences.email.to.craft	Email to Craft
+preferences.enable.assistant	Enable Assistant
+preferences.enable.assistant.description	When disabled, you won鈥檛 be able to access Assistant. Does not affect other members鈥� settings.
+preferences.family.name	Family Name
+preferences.follow.craftdocs.app.x	Follow @CraftDocs on X
+preferences.general.account.settings	Account Settings
+preferences.general.settings	General Settings
+preferences.have.an.idea	Have an idea, feature request, or found a bug? Let us know, and we鈥檒l take a look at it!
+preferences.integrations	Integrations
+preferences.keyboard.shortcuts	Keyboard Shortcuts
+preferences.language	Language
+preferences.learn.more.integrations	Learn more about integrations
+preferences.leave.x.question	Leave [0]?
+preferences.license.notes	License and Open Source Notes
+preferences.manage.access	Manage Space Access
+preferences.manage.access.desc	Manage who can see this Space
+preferences.manage.open.desc	Open spaces are visible and can be joined by all team members
+preferences.manage.private	Private
+preferences.manage.private.desc	Private spaces can only be viewed or joined by invitation
+preferences.members.and.invites	Members & Invites
+preferences.name	Name
+preferences.name.change	Change Name
+preferences.name.description	Your name is visible on documents you share with others via Share Link and Email.
+preferences.name.updated	Name Updated
+preferences.name.updating	Updating Name鈥�
+preferences.notifications.email	E-mail Notifications
+preferences.notifications.email.desc	Enable if you would like to receive e-mail notifications for mentions and comments in this space
+preferences.notifications.for.x	Notifications for 鈥淸0]鈥�
+preferences.notifications.push	Push Notifications
+preferences.notifications.push.desc	Craft can send you notifications in case of new comments and mentions in this space
+preferences.offline.mode.description	View and edit documents while offline
+preferences.offline.mode.description.disabled	You can still view already visited documents while offline, but need to be online to edit them
+preferences.offline.mode.description.enabled	Offline changes are saved and will be synced the next time you鈥檙e online
+preferences.offline.mode.disable.confirm.button	Discard and Disable
+preferences.offline.mode.disable.confirm.description	The following documents have unsynced offline changes that will be lost:
+preferences.offline.mode.disable.confirm.more	+[0] more
+preferences.offline.mode.disable.confirm.other.space	In [0]:
+preferences.offline.mode.disable.confirm.title	Discard Offline Changes?
+preferences.offline.mode.disabled.title	Offline Editing Mode Disabled
+preferences.offline.mode.enabled.title	Offline Editing Mode Enabled
+preferences.offline.mode.title	Offline Mode
+preferences.open.in.app.link.tooltip	Customize if Craft links should open in Craft for Web or our desktop app.
+preferences.privacy.policy	Privacy Policy
+preferences.profile.photo.updated	Profile photo updated
+preferences.published.content.settings	Published Content Settings
+preferences.reminders.desc	Craft will send you notifications when a reminder is due.
+preferences.remove.user.from.space.confirm	Are you sure you want to remove 鈥淸0]鈥� from space 鈥淸1]鈥�?
+preferences.remove.user.from.team	Remove User from Team
+preferences.remove.user.from.team.confirm	Are you sure you want to remove 鈥淸0]鈥� from team 鈥淸1]鈥�?
+preferences.reset.doc.cache	Reset Document Cache
+preferences.section.title.language	Language and Spelling
+preferences.send.feedback	Send Feedback
+preferences.setup.custom.domain	Setup Custom Domain
+preferences.setup.custom.domain.desc	Use your own domain when publishing Craft documents.
+preferences.show.logo.in.header	Show Logo in Header
+preferences.show.your.logo.in.the.header	Show your logo in the header of all published documents.
+preferences.sign.out	Sign Out
+preferences.space.access	Space Access
+preferences.space.override.settings.for.individual.spaces	You can override these settings for individual spaces.
+preferences.space.private.desc	Can be seen by team admins and joined by invitation.
+preferences.space.public.desc	Can be seen and joined by all team members.
+preferences.space.settings	Space Settings
+preferences.spell.checked.language	Spell Checker Language
+preferences.spellcheck.tooltip	Change the default language of the spell checker on all documents.
+preferences.spelling.description	Set the default spell checking language to use in Craft.
+preferences.subscription	Subscription
+preferences.subscription.overview	Subscription Overview
+preferences.switch.subscription	Switch Subscription
+preferences.switch.to.space	Switch to Space
+preferences.team.image.updated	Team image updated
+preferences.updating.photo	Updating Photo鈥�
+preferences.use.your.custom.craft.me	Use your custom craft.me link when publishing Craft documents.
+preferences.view.ai.assistant.credits	View AI Assistant Credits
+preferences.your.craft.me.link	Your craft.me Link
+preferencesinterested.in.new	Interested in new and upcoming features for Craft? Follow us on X and be the first one to know!
+preview.unavailable	Preview Unavailable
+published.content	Published Content
+qrcode.howto.title	How To Use QR Codes?
+quit.craft	Quit Craft
+recently.deleted	Recently Deleted
+recently.viewed	Recently Viewed
+reminder.title	Reminder Title
+reminders.how.work	How do reminders work?
+reminders.next.reminder.time	Next reminder time: [0]
+reminders.no.reminder	No Reminder
+reminders.reminder.changed	Reminder Changed
+reminders.reminder.removed	Reminder Removed
+remove.documents	Remove documents
+remove.x.question	Remove [0]?
+replace.all	Replace All
+replace.selection	Replace Selection
+report.sync	Report Sync
+saturday.short	Sat
+save.changes	Save Changes
+save.file	Save File
+save.x	save [0]
+save.x.capital	Save [0]
+search.by.name.or.content	You can search for documents by name or content.
+search.documents	Search documents
+search.emoji	Search Emoji
+search.in.space	In [0]
+search.no.matching.result	We couldn鈥檛 find anything matching [0]
+search.no.results	No Results
+search.noresults	No Results
+search.recent.searches	Recent Searches
+seconds.capitalized	Seconds
+secret.link.update.success	Secret Link successfully updated
+select.all	Select all
+select.an.image	Select an image
+select.image	Select image
+send.invites	Send invites
+set.x	Set [0]
+setting.up	Setting up鈥�
+settings.download.app	Download App
+settings.enter.license.key	Enter License Key
+share.or.publish.to.web	Share or publish to the web
+share.with.custom.domain	Share Craft documents with a custom Craft domain and path. Available on Plus and other Plans.
+shared.by	Shared by
+sharesheet.save.opencraft.action	Open Craft
+show.1.more.item	Show 1 more item
+show.completed.tasks	Show Completed Tasks
+show.document.title	Show Document Title
+show.more	Show More
+show.x.more.items	Show [0] more items
+sidebar.attachment.desc	Images, Videos, Links and Files added to this document will appear here.
+sign.in.as.email	Sign in as {{email}}
+sign.up.or.log.in.to.accept	Sign up or log in to accept the invitation or [0]
+skip.for.now	Skip for now
+smart.search	Smart Search
+snapshot.cannot.restore.document	Cannot restore document
+snapshot.go.to.document	Go to document
+space.btn	Space
+space.could.not.delete.space	Could not delete Space
+space.could.not.leave.space	Could not leave Space
+space.delete.spacename	Delete [0]?
+space.no.longer.a.member	You are no longer a member of this Space
+space.proceed.type.name.of.the.space	To proceed, please type the name of the Space:
+space.space.name.for.confirmation	Space name (for confirmation)
+space.type.the.name.of.the.space	Are you sure? This cannot be undone. To proceed, please type the name of the Space:
+spaces.manage.space	Manage Space
+spaces.rename.space	Rename Space
+star.a.doc	Star a Doc
+star.docs.to.keep.them.close	Star Docs to keep them close
+star.document	Star Document
+start.your.free.trial	Start your 15-day free trial
+starting.trial	Starting trial鈥�
+stats.blocks	Blocks
+stats.characters	Characters
+stats.full.document	Full Document
+stats.reading.time	Reading Time
+stats.selection	Selection
+stats.stats	Stats
+stats.this.page	This Page
+stats.try.pro.text	Words, characters, block count and reading time statistics are available to our Plus subscribers.
+stats.without.spaces	Without Spaces
+stats.words	Words
+style.advanced	Advanced
+style.all.styles	All Styles
+style.backdrop	Backdrop
+style.card.configurations	Configurations
+style.card.configure	Configure Card
+style.card.emoji	Card Emoji
+style.card.style	Card Style
+style.card.style.task	Task
+style.clear	Clear Styling
+style.color	Color
+style.color.black	Black
+style.color.blue	Blue
+style.color.blue.navy	Navy Blue
+style.color.blue.ocean	Ocean Blue
+style.color.brown	Brown
+style.color.dark.blue	Dark Blue
+style.color.dark.green	Dark Green
+style.color.dark.pink	Dark Pink
+style.color.dark.purple	Dark Purple
+style.color.default	Default Color
+style.color.gray	Gray
+style.color.green	Green
+style.color.grey	Grey
+style.color.grey.light	Light Grey
+style.color.light.beige	Light Beige
+style.color.light.blue	Light Blue
+style.color.light.pink	Light Pink
+style.color.olive	Olive
+style.color.orange	Orange
+style.color.pink	Pink
+style.color.purple	Purple
+style.color.red	Red
+style.color.turquoise	Turquoise
+style.color.white	White
+style.cover	Cover
+style.crafts.styles	Craft鈥檚 Styles
+style.created.by.craft	Created by Craft
+style.created.by.you	Created by you
+style.currency	Currency
+style.custom.background	Custom Background
+style.custom.limit.desc	You have reached the limit of custom styles. Upgrade to save more styles.
+style.custom.style	Custom Style
+style.decimals	Decimals
+style.decoration.block	Block
+style.decoration.focus	Focus
+style.decorations	Decorations
+style.default.style	Default Style
+style.deindent	Deindent
+style.direction	Direction
+style.document.color	Document Color
+style.doodle	Doodle
+style.dynamic.style	Dynamic Style
+style.font	Font
+style.font.default	Default Font
+style.font.mono	Mono
+style.font.mono.long	Mono Font
+style.font.round	Round
+style.font.round.long	Round Font
+style.font.serif	Serif
+style.font.serif.long	Serif Font
+style.font.system	System
+style.image.fit	Image Fit
+style.image.fit.fill	Fill
+style.image.fit.fit	Fit
+style.image.size	Image Size
+style.image.size.auto	Auto
+style.image.size.large	Large
+style.indent	Indent
+style.indent.in	Increase Indent
+style.indent.out	Decrease Indent
+style.indentation	Indentation
+style.inline.blocklink	Block Link
+style.inline.bold	Bold
+style.inline.code	Code
+style.inline.equation	Equation
+style.inline.format	Text Format
+style.inline.highlight	Highlight
+style.inline.italic	Italic
+style.inline.link	Link
+style.inline.strike	Strikethrough
+style.inline.type.date	Type a Date
+style.inline.type.user.link	Type a user link
+style.insert.menu.section.separators	Separators
+style.insert.menu.section.text.styles	Text Styles
+style.layout	Layout
+style.layout.card	Card
+style.layout.embed	Embed
+style.layout.regular	Regular
+style.layout.small	Small
+style.left.to.right	Left to Right
+style.line	Line
+style.list.bullet	Bullet List
+style.list.none	No List
+style.list.numbered	Numbered List
+style.list.todo	Todo List
+style.list.toggle	Toggle List
+style.mixed	Mixed
+style.my.custom.style	My Custom Style
+style.number	Number
+style.number.of.images	Number of Images
+style.original	Original
+style.page.background.end.color	End Color
+style.page.background.faded	Faded
+style.page.background.image.blur	Blur Image
+style.page.background.immersive	Immersive
+style.page.background.start.color	Start Color
+style.paper	Paper
+style.pattern	Pattern
+style.percent	Percent
+style.plain.text	Plain Text
+style.radial	Radial
+style.reload.link.info	Reload Link Info
+style.rename.style	Rename Style
+style.save.style	Save Style
+style.select.color	Select Color
+style.separator.strong	Strong
+style.separator.style	Separator Style
+style.set.as.default.style	Set as Default Style
+style.shuffle	Shuffle
+style.style	Style
+style.style.apply	Apply Style
+style.style.background	Style Background
+style.style.format	Format
+style.style.gallery	Style Gallery
+style.styles	Styles
+style.text.align	Alignment
+style.text.align.center	Align Center
+style.text.align.justify	Justify
+style.text.align.left	Align Left
+style.text.align.right	Align Right
+style.text.body	Body
+style.text.caption	Caption
+style.text.card	Card
+style.text.heading	Heading
+style.text.heading.short	Heading
+style.text.page	Page
+style.text.strong	Strong
+style.text.style	Text Style
+style.text.subtitle	Subtitle
+style.text.title	Title
+style.textstyles.groups	Groups
+style.top.to.bottom	Top to Bottom
+style.turn.into.card	Turn into Card
+style.turn.into.page	Turn into Page
+style.turn.into.preview.link	Turn into Rich Link
+style.turn.into.rich.link	Turn Into Rich Link
+style.turn.into.text.link	Turn into Text Link
+style.unsaved	Unsaved
+style.unsplash	Unsplash
+style.use.style	Use Style
+style.washi	Washi
+style.washi.gallery	Washi Gallery
+style.washi.tape	Washi Tape
+style.wide.page	Wide Page
+style.your.styles	Your Styles
+sub.value.prop.5	Build something together using Craft
+sub.value.prop.6	Fixed price for the whole team.
+subcription.file.upload.limit	File Upload Limit
+subscription.1.day.left	1 day left
+subscription.1.doc.left	1 more doc left
+subscription.1.hour.left	1 hour left
+subscription.additional.card.styles	Additional Card Styles
+subscription.advanced.ai.models	Advanced AI models
+subscription.advanced.customization	Advanced customization
+subscription.advanced.options.control.desc	Control advanced sharing options with a Plus subscription
+subscription.advanced.publishing	Advanced Publishing
+subscription.advanced.publishing.desc	Get access to custom domains and branding, as well as advanced analytics.
+subscription.advanced.sharing.options.desc	Advanced sharing options are available for subscribed Users
+subscription.ai.upgrade	AI Assistant Upgrade
+subscription.ai.upgrade.desc	Get 2x more AI assistant requests, and access to the improved GPT-4o.
+subscription.and.much.more	鈥� and much more.
+subscription.annual	Annual
+subscription.author.control.desc	Control author with a Plus subscription
+subscription.best.value	Best value
+subscription.billed.x.monthly	Billed [0] monthly.
+subscription.billed.x.yearly	Billed [0] yearly
+subscription.billing.and.subscription	Billing & Subscription
+subscription.block.limit.used	You have used <strong>[0]</strong> out of <strong>[1]</strong> blocks available on this plan.
+subscription.block.limit.used.all	You have used all <strong>[0]</strong> blocks available on this plan.
+subscription.blocks.used	[0] of [1] blocks used
+subscription.business.customdomain.desc	Share Craft documents with your custom domain and path.
+subscription.business.upgraded.to.plus	As part of the business subscription, your account has been upgraded to Plus.
+subscription.button.manage.sub.simple	Manage Subscription
+subscription.button.restore	Restore Purchase
+subscription.capture.your.thoughts	Capture your thoughts without limits. A simple, powerful writing space.
+subscription.card.styles.control.desc	Access all card styles with a Plus subscription
+subscription.change.to.title.billingcycle	Change to [0] [1]
+subscription.charging.remaining	charging [0], remaining credit: [1]
+subscription.check.benefits	Check benefits
+subscription.checkout.copy.link	Copy checkout link
+subscription.checkout.ready	Checkout ready!
+subscription.checkout.ready.description	The checkout page has been opened in your browser. If you don鈥檛 see it, copy the link and open it in your browser.
+subscription.churn.alternative	I found an alternative that better suits my needs.
+subscription.churn.before.you.go	Before you go鈥�
+subscription.churn.cancel.anyway	Cancel Anyway
+subscription.churn.change.plan	I want to change my subscription plan.
+subscription.churn.custom.desc	Book a quick call with us to unlock exclusive savings, upgrades, and flexible options tailored to your needs.
+subscription.churn.custom.title	Let鈥檚 talk about your best plan
+subscription.churn.expensive	It is too expensive for the value I am getting.
+subscription.churn.failed.to.redeem.offer	Failed to redeem the offer. Please try again.
+subscription.churn.issues	I experienced technical issues.
+subscription.churn.missing.feature	I鈥檓 missing key features that I need. 
+subscription.churn.redeem.offer	Redeem Offer
+subscription.churn.service	I no longer need this type of service.
+subscription.churn.thank.you	Thank youuu!
+subscription.click.to.complete.your.setup	Click on the [0] button to complete your setup and unlock inviting others to your plan.
+subscription.comments.control.desc	Control commenting permissions on your shared documents with a Plus subscription
+subscription.complete.your.subscription.setup	Please complete your subscription setup.
+subscription.continue.upgrade.seats	Continue to upgrade your existing seats [0]
+subscription.could.not.start.checkout	Could not start the checkout
+subscription.could.not.start.upgrade	Could not start the upgrade
+subscription.create.new	Create New [0]
+subscription.create.new.space.add	Add
+subscription.create.new.space.add.members	Add Members
+subscription.create.new.space.description	Create a space to group people who work together.
+subscription.create.new.space.invite.pending	Pending
+subscription.create.new.space.invite.to.family	Invite to Family
+subscription.create.new.space.invite.to.team	Invite to Team
+subscription.create.new.space.private.space	Private space
+subscription.create.new.space.private.space.description	Private spaces can only be viewed or joined by invitation
+subscription.create.new.space.search.members	Search members
+subscription.create.new.space.space.name.placeholder	Space鈥檚 name
+subscription.create.new.space.title	Create New Space
+subscription.create.new.team.invite.add.more	Add More
+subscription.custom.style.control.desc	Save more custom style with a Plus subscription
+subscription.custom.templates.control.desc	Create more custom templates with a Plus subscription
+subscription.discount.applied.for.first.billing.period	Discount applied for the first billing period.
+subscription.discount.applied.perc.x	[0] discount applied ([1]% off)
+subscription.discount.applied.perc.x.short	[0]% discount applied
+subscription.discount.apply.perc.x	Apply [0]% discount
+subscription.discount.apply.perc.x.lowercase	apply [0]% discount
+subscription.discount.perc.x	[0]% discount
+subscription.discount.save.perc.x.lowercase	save [0]
+subscription.discount.tooltip.line1	Limited time deal that grants you a [0]% discount.
+subscription.discount.tooltip.line2	If you purchase now, you will be able to lock in this discount for the following year as well.
+subscription.discount.tooltip.line3	Coupon code: [0]
+subscription.discount.tooltipv2.line1	Get [0]% off for life 鈥� Limited time only!
+subscription.duplicate.template.control.desc	Duplicate as template with a Plus subscription
+subscription.end.of.your.trial	At the end of your trial, we鈥檒l automatically move you to our Free plan unless you choose to upgrade.
+subscription.expiration.date.control.desc	Set an expiration date for your shared links with a Plus subscription
+subscription.expired.at	Expired at [0]
+subscription.expires.at	Expires at
+subscription.expires.at.not.renewed	Expires at [0], not renewed
+subscription.family.upgraded.to.plus	As part of the family subscription, your account has been upgraded to Plus.
+subscription.for.life	 for life 
+subscription.free.plan.desc	Don鈥檛 worry 鈥� you can still create and edit on the Free plan!
+subscription.free.trial.started	14 day[0]free trial started
+subscription.free.version.dec	You are using the free version of Craft.
+subscription.get	Get [0]
+subscription.get.annual	Get [0] Annual
+subscription.get.craft.lite	Get Craft Lite
+subscription.get.craft.plus	Get Craft Plus
+subscription.get.monthly	Get [0] Monthly
+subscription.getting.teams.data	Getting teams data.
+subscription.go.unlimited	Go Unlimited
+subscription.header.need.more.space	Need more space?
+subscription.in.first.year	in first year
+subscription.increase.limit	Hi, I wish to increase my spaces limit as a [0] subscriber! Could you help me please?
+subscription.invite.addseat.success.title	Added {{count}} seats to team
+subscription.invite.business.strong	Invite <strong>everyone on your team</strong> to enjoy all the benefits of Craft Plus together.
+subscription.invite.error.add.seat.title	Could not increase team size
+subscription.invite.error.addseat.no.active	Team has no active subscription.
+subscription.invite.error.addseat.payment	Payment failed (could not charge). Please try again or contact us.
+subscription.invite.error.addseat.trial.expired	Period to add trial seats expired.
+subscription.invite.error.addseat.unknown	Something went wrong. Please try again or contact us.
+subscription.invite.error.addseat.unsupported.subscription	Seat count can not be changed in this subscription
+subscription.invite.family.strong	Invite up to <strong>5 family members</strong> to enjoy all the benefits of Craft Plus together.
+subscription.invite.team.members	Invite [0] Members
+subscription.invite.team.strong	Invite up to <strong>25 team members</strong> to enjoy all the benefits of Craft Plus together.
+subscription.is.almost.ready	Your subscription is almost ready!
+subscription.keep	Keep [0]
+subscription.keep.subscription	Keep Subscription
+subscription.learn.more.pricing	Learn more about pricing plans
+subscription.license.key	License Key
+subscription.license.key.desc	If you have received a license key, use it here to activate your subscription.
+subscription.limited.to.one	[0] subscriptions are limited to 1 limit. Upgrade or contact customer service to get more space.
+subscription.limited.to.x	[0] subscriptions are limited to [1] limits. Upgrade or contact customer service to get more space.
+subscription.mac.column.free.price.title	Free
+subscription.main.segmentcontrol.annual	Yearly
+subscription.main.segmentcontrol.monthly	Monthly
+subscription.manage.subscription.only.admins	Only team admins can manage the team subscription
+subscription.maybe.later	Maybe later
+subscription.my.family	My Family
+subscription.near.limit.document.created	[0] of [1] documents created
+subscription.next.billing.date	Next Billing Date
+subscription.next.payment.x	Next payment: [0]
+subscription.no.docs.left	No more docs left
+subscription.no.estimated.charge.remaining	no estimated charge, remaining credit: [0]
+subscription.notnow_cta	Not now
+subscription.object.links.control.desc	Control object links with a Plus subscription
+subscription.one.full.featured.account.desc	One full-featured account. Get unlimited content and storage for all your ideas.
+subscription.one.time.payment.one-year	One-time payment 鈥� valid for 1 year
+subscription.only.x.per.month	Only [0] per month.
+subscription.only.x.per.year	Only [0] per year.
+subscription.over.limit.desc	Starter teams are free but limited to 10 documents in a space. Upgrade to get more space for your team.
+subscription.over.limit.document	You are over the document limit
+subscription.over.limit.get.unlimited.docs	Get Unlimited Documents
+subscription.paddle.id	Your Paddle checkout ID is [0]
+subscription.payment.method	Payment method: [0]
+subscription.paywall.backups.desc.1	Upgrade to get backups for 30 or 180 days.
+subscription.paywall.backups.desc.2	Upgrade to get backups for 180 days.
+subscription.paywall.backups.desc.3	Upgrade to get 180 days.
+subscription.paywall.backups.desc.4	Currently showing at [0] days.
+subscription.paywall.big.file	Oh no! The file is too large!
+subscription.paywall.big.file.contact.us	You can鈥檛 upload files larger than [0]. Please contact us if you wish to increase your upload limit!
+subscription.paywall.big.file.contact.us.message	Hi, I wish to increase my upload size limit as a Team subscriber! Could you help me please?
+subscription.paywall.big.file.free	Free plan is free, but limited to [0] file upload. Upgrade to get more.
+subscription.paywall.big.file.tier	[0] plan is limited to [1] file upload. Upgrade to get more.
+subscription.paywall.custom.domain.desc	Custom Domain and paths are only available with Plus tier.
+subscription.paywall.file.limit	You can鈥檛 upload files larger than [0]
+subscription.paywall.markdown.import	Markdown Import
+subscription.paywall.markdown.import.desc	Bulk Markdown import is only available for Plus Users.
+subscription.paywall.more.space.desc	[0] teams are limited to 25 spaces in a team. Contact sales to get more space for your team.
+subscription.paywall.more.space.desc.1	Team and business subscriptions are limited to 25 spaces. Contact customer service to get more space.
+subscription.paywall.pdf.export	Upgrade to Craft Plus to enable Advanced Export Settings for PDF, Markdown and more
+subscription.paywall.textbundle.export	TextBundle export is only available for Plus Users.
+subscription.per.month.family	/month for the entire group
+subscription.per.month.plus	/month for one person
+subscription.per.month.team	/month total for the entire team
+subscription.per.year.family	/year total for the entire group
+subscription.per.year.plus	/year for one person
+subscription.per.year.team	/year total for the entire team
+subscription.plancard.business.upgrade.to.business	Upgrade
+subscription.please.specify	Please specify
+subscription.plus.and.save	Upgrade to Plus today and save [0]%[1]
+subscription.plus.benefits.for.all.members	Plus benefits for all members
+subscription.plus.plan	Plus Plan
+subscription.plus.trial	Plus Trial
+subscription.plus.upgrade.contact.support	Contact our Support team to upgrade your account to Plus
+subscription.preparing.checkout	Preparing checkout鈥�
+subscription.preparing.upgrade	Preparing upgrade鈥�
+subscription.presentation.mode.control.desc	Control presentation mode with a Plus subscription
+subscription.price.billed.with.vat	Incl. VAT, billed [0]
+subscription.price.billed.without.vat	VAT N/A, billed [0]
+subscription.price.continue.to.recalculate	continue to recalculate
+subscription.price.total	Total
+subscription.price.vat	[0] + VAT
+subscription.print.control.desc	Print your documents with a Plus subscription
+subscription.pro.aiassistant.desc	Go Plus to unlock more advanced model in the Assistant.
+subscription.pro.block.limit.reached	Block Limit Reached
+subscription.pro.block.limit.reached.desc	Your Space has reached its block limit. Go Plus to unlock unlimited blocks in every Space.
+subscription.pro.team	Plus Team
+subscription.pro.team.trial.days	[0] of [1] days
+subscription.pro.textbundle	TextBundle Export
+subscription.processing.canceled	Checkout canceled
+subscription.processing.canceled.description	The checkout has been canceled
+subscription.processing.checkout	Processing your checkout鈥�
+subscription.processing.checkout.description	Please wait while we confirm your payment
+subscription.processing.error	Unable to confirm payment
+subscription.processing.error.description	Please contact Craft support.
+subscription.processing.success	Subscription successful!
+subscription.processing.success.description	You successfully upgraded your team
+subscription.ran.out.of.doc.creation	You ran out of doc creation
+subscription.ran.out.of.docs	You ran out of docs
+subscription.remove.all.limits	Remove all limits
+subscription.sales.contact	Contact Sales
+subscription.savings_tooltip	Save [0]%
+subscription.see.all.features	See All Features
+subscription.see.plans	See Plans
+subscription.select.your.plan	Select Your Plan
+subscription.seo.control.desc	Control SEO with a Plus subscription
+subscription.slashmonth	/month
+subscription.slashweek	/week
+subscription.slashyear	/year
+subscription.solo.pro.subscription.with.apple	It looks like you are on a solo pro subscription with Apple. To invite others and grow your team, start a free trial.
+subscription.start.14.days.trial	Start 14-day Free Trial
+subscription.start.new.checkout	Start a new checkout
+subscription.start.pro.team.trial	Update your details
+subscription.start.stripe.trial	Start [0]-day Free Trial
+subscription.starter.desc	Create up to 10 docs for free. Get 2 extra free docs per week after that.
+subscription.starter.desc.block.limit.enabled	Create as many docs as you want and up to [0] blocks.
+subscription.starter.team.overview	Starter team overview
+subscription.sub.value.prop.1	Simple Plans.
+subscription.sub.value.prop.2	One fixed price. No hidden costs.
+subscription.sub.verification	Subscription verification
+subscription.subscribe.now	Subscribe now
+subscription.subscribed.via	Subscribed via [0]
+subscription.subscription.fallback.desc	This functionality becomes available with our upgraded plans.
+subscription.subscription.granted	Subscription Granted
+subscription.successful.verification	Successful verification. You can find your subscription details in team settings.
+subscription.team.upgraded.to.plus	As part of the team subscription, your account has been upgraded to Plus.
+subscription.terms.of.use	Terms of Use
+subscription.tier.free	Free
+subscription.tier.individual	Individual
+subscription.tier.teams	Teams
+subscription.tier.title.plus	Plus
+subscription.title.control.desc	Control title with a Plus subscription
+subscription.toc.control.desc	Control table of contents with a Plus subscription
+subscription.trial.applied	Trial applied: 14 days Plus Trial
+subscription.trial.ended.desc	Your 14-day free trial has ended. Upgrade to enjoy the full power of Craft.
+subscription.trial.ended.title	Your Plus trial has ended
+subscription.trial.period	Trial period
+subscription.trial.value	Trial
+subscription.troubleshooting.panel.description	If you are experiencing subscription issues, please read our troubleshooting guide.
+subscription.try.craft.plus.no.strings	Try Craft Plus 鈥� No Strings Attached
+subscription.unlimited	Unlimited
+subscription.unlimited.content	Unlimited content
+subscription.unlimited.content.and.storage	Unlimited content and storage
+subscription.unlimited.everything	Unlimited Everything
+subscription.unlimited.everything.desc	Get unlimited storage in your spaces, and file uploads without size limits.
+subscription.unlimited.media.upload	Unlimited media upload
+subscription.unlimited.storage	Unlimited storage
+subscription.unlimited.storage.for.days	Unlimited storage for 14 days. No credit card needed.
+subscription.unsuccessful.verification	Unsuccessful verification. Unfortunately we could not verify your subscription, please contact us.
+subscription.up.to.x.members	Up to [0] members
+subscription.upgrade.additional.requests	Upgrade to unlock additional requests in the assistant.
+subscription.upgrade.contact.support	Contact our Support team to upgrade your account
+subscription.upgrade.incomplete	Upgrade incomplete
+subscription.upgrade.no.more.seats	Your subscription has [0] members added already. Upgrade to add more.
+subscription.upgrade.now	Upgrade now
+subscription.upgrade.team.v2.appstore.error	Something went wrong, please try again.
+subscription.upgrade.team.v2.appstore.next	Next
+subscription.upgrade.team.v2.appstore.purchase.success	Successful subscription
+subscription.upgrade.team.v2.business.is.set	Your Business is all set!
+subscription.upgrade.team.v2.failed.subscription.creation	Failed to create subscription. Please try again.
+subscription.upgrade.team.v2.failed.to.invite	Failed to invite team members
+subscription.upgrade.team.v2.family.is.set	Your Family is all set!
+subscription.upgrade.team.v2.lets.explore	Let鈥檚 explore!
+subscription.upgrade.team.v2.lets.setup.business	Let鈥檚 create my 鈥楥raft Business鈥�!
+subscription.upgrade.team.v2.lets.setup.family	Let鈥檚 set up my Craft Family!
+subscription.upgrade.team.v2.lets.setup.team	Let鈥檚 set up my Craft Team!
+subscription.upgrade.team.v2.name.your.business	Name Your Business
+subscription.upgrade.team.v2.name.your.family	Name Your Family
+subscription.upgrade.team.v2.name.your.team	Name Your Team
+subscription.upgrade.team.v2.next	Next
+subscription.upgrade.team.v2.successful.purchase.description	Thank you for your purchase. You鈥檝e successfully upgraded.
+subscription.upgrade.team.v2.team.is.set	Your Team is all set!
+subscription.upgrade.team.v2.upgrade.to.plus	Upgrade to Plus
+subscription.upgrade.team.v2.waiting.for.appstore	Almost there! Please wait until the App Store confirms your subscription.
+subscription.upgrade.to	Upgrade to [0]
+subscription.upgrade.to.plus	Upgrade to Plus and get unlimited access now.
+subscription.upgrade.to.plus.for.powerful.craft	Upgrade to Plus today for a more powerful Craft.
+subscription.upgrade.to.plus.unlimited.access	Upgrade to Plus to get unlimited access.
+subscription.upgrade.unlock.features	Upgrade now to unlock these features.
+subscription.validating.current.sub	Validating your current subscription
+subscription.view.plans	View Plans
+subscription.wait.for.sub.confirmation	Almost there! Please wait for the confirmation of your subscription.
+subscription.wait.to.get.more.or.upgrade	Wait [0] to get more or upgrade to Plus to get unlimited access.
+subscription.watermark.control.desc	Control watermark with a Plus subscription
+subscription.web.sub.restore.problem	Web subscription restore problem
+subscription.weekly	Weekly
+subscription.windows.sub.restore.problem	Windows subscription restore problem
+subscription.x.days.left	[0] days left
+subscription.x.docs.left	[0] more docs left
+subscription.x.hours.left	[0] hours left
+subscription.x.left.until	left until you can create a new doc.
+subscription.your.are.on.the.free.plan	You are on the free plan
+sunday.short	Sun
+supported.browsers	supported browsers.
+switch.space	Switch Space
+switching.account	Switching account...
+switching.to.craft.me	Switching to craft.me domain
+table.alert.actions.unavailable	These actions are unavailable via the context menu.
+table.alert.actions.use.x.to.y	Please use [0] to [1]
+table.cell	Cell
+table.cell.color.fill	Cell Fill Color
+table.cell.format	Cell Format
+table.cell.style	Cell Style
+table.clear.cell	Clear Cell Contents
+table.clear.cell.style	Clear Cell Style
+table.column	Column
+table.column.plural	Columns
+table.delete.column	Delete Column(s)
+table.delete.columns	Delete Columns
+table.delete.one.column	Delete Column
+table.delete.one.row	Delete Row
+table.delete.row	Delete Row(s)
+table.delete.rows	Delete Rows
+table.edit.formula	Edit Formula
+table.edit.table	Edit Table
+table.error.row.limit	You cannot add more than [0] rows.
+table.formula.above.desc	Refers to the ranges of cells above
+table.formula.abs.desc	Returns the absolute value of a number
+table.formula.average.desc	Returns the average of its arguments
+table.formula.below.desc	Refers to the ranges of cells below
+table.formula.count.desc	Counts how many numbers are in the list of arguments
+table.formula.counta.desc	Counts how many values are in the list of arguments
+table.formula.e.desc	Euler鈥檚 constant
+table.formula.int.desc	Rounds a number down to the nearest integer
+table.formula.left.desc	Refers to the ranges of cells to the left
+table.formula.ln10.desc	Natural logarithm of 10
+table.formula.ln2.desc	Natural logarithm of 2
+table.formula.log10e.desc	Base-10 logarithm of E
+table.formula.log2e.desc	Base-2 logarithm of E
+table.formula.max.desc	Returns the maximum value in a list of arguments
+table.formula.median.desc	Returns the median of the given numbers
+table.formula.min.desc	Returns the minimum value in a list of arguments
+table.formula.mode.desc	Most commonly occurring value in dataset
+table.formula.pi.desc	Ratio of a circle鈥檚 circumference to its diameter
+table.formula.product.desc	Multiplies its arguments
+table.formula.right.desc	Refers to the ranges of cells to the right
+table.formula.round.desc	Rounds a number to a specified number of digits
+table.formula.sign.desc	Returns the sign of a number
+table.formula.sqrt1_2.desc	Square root of 陆
+table.formula.sqrt2.desc	Square root of 2
+table.formula.sum.desc	Adds its arguments
+table.header	Header
+table.header.column	Header column
+table.header.row	Header row
+table.in	Table in [0]
+table.insert.column.after	Insert Column(s) After
+table.insert.column.before	Insert Column(s) Before
+table.insert.column.x	Insert Column [0]
+table.insert.formula	Insert Formula
+table.insert.row.after	Insert Row(s) After
+table.insert.row.before	Insert Row(s) Before
+table.insert.row.x	Insert Row [0]
+table.move.column.left	Move Column(s) Left
+table.move.column.right	Move Column(s) Right
+table.move.columns.left	Move Columns Left
+table.move.columns.right	Move Columns Right
+table.move.one.column.left	Move Column Left
+table.move.one.column.right	Move Column Right
+table.move.one.row.down	Move Row Down
+table.move.one.row.up	Move Row Up
+table.move.row.down	Move Row(s) Down
+table.move.row.up	Move Row(s) Up
+table.move.rows.down	Move Rows Down
+table.move.rows.up	Move Rows Up
+table.of.contents	Table of Contents
+table.reset.column.size	Reset Column Size
+table.row	Row
+table.row.color.alternating	Alternating Row Color
+table.row.plural	Rows
+table.select.cell	Select Cells
+table.sort	Sort
+table.sort.asc	Sort Ascending (1, 2, 3鈥�)
+table.sort.desc	Sort Descending (3, 2, 1鈥�)
+table.table	Table
+table.table.style	Table Style
+table.text.color	Text Color
+table.text.style	Text Style
+tag.all.x	All [0]
+tags.add.custom.rule	Add Custom Rule
+tags.add.ignore.rule	Add Ignore Rule
+tags.all.tags	All Tags
+tags.all.tags.placeholder	No tagged docs yet. Start by adding tags like #work, #idea, or #school to bring structure to your notes.
+tags.any.tag	any [0]
+tags.change.to.text	Change to Text
+tags.continue.typing.to.create.tag	Continue typing to create tag
+tags.create.tag.x	Create #[0]
+tags.delete.rule	Delete Rule
+tags.delete.rule.message	Are you sure you want to delete 鈥淸0]鈥�?
+tags.disabled	Tags are disabled. You can enable them in space settings.
+tags.edit.ignore.rule	Edit Ignore Rule
+tags.edit.rule	Edit Rule
+tags.edit.tag	Edit Tag
+tags.enable.tags.in.the.settings	Enable tags in the settings
+tags.enter.a.valid.tag	Enter a valid tag (e.g. #tag or #parent/child)
+tags.entered.current.tag	You have entered the current tag.
+tags.entered.invalid.tag	You have entered an invalid tag.
+tags.exclude.tag.from.filter	Exclude Tag from Filter
+tags.hexcolor.descriptionkey	Color Value in hex format like #ff0000 or #ccc
+tags.hexcolor.titlekey	Hex Color Value
+tags.hide.tags	Hide Tags
+tags.hide.word.with.hashtag	Hide Words Starting with Hashtag
+tags.ignore.list	Ignore List
+tags.ignore.list.desc	Anything here stays out of your tag list, even with a hashtag.
+tags.ignore.tag	Ignore Tag
+tags.include.tag.in.filter	Include Tag in Filter
+tags.invalid.tag.x	Invalid tag: [0]
+tags.learn.more.about.tags	Learn more about tags
+tags.manage.pinned	Manage Pinned
+tags.no.docs.found	No documents found with selected tags
+tags.no.keep.on	No, Keep On
+tags.no.other.existing.tags	You have no other existing tags.
+tags.no.tags.in.doc	No tags in your docs yet
+tags.number.descriptionkey	Tags containing only numbers, like #1
+tags.number.titlekey	Numbers
+tags.only.one.child.allowed	Only one 鈥�/鈥� allowed
+tags.other.tags	Other tags
+tags.pin.and.show.all.children	Pin and show all children
+tags.pin.key.tags	Pin your key tags for quick access
+tags.pin.tag	Pin Tag
+tags.pinned.error	Unable to pin a tag
+tags.pinned.limit.reached	You have reached the limit of pinned tags
+tags.recommended.tags	Recommended tags
+tags.related.tags	Related tags
+tags.search.for.tags	Search for tags
+tags.search.tags	Search Tags
+tags.settings.error	An error occurred while saving tag settings
+tags.space.and.punctuation.are.not.allowed	Space and punctuation marks are not allowed in tags.
+tags.tag.added.to.the.ignore.list	Tag added to the ignore list. You can manage it in the Settings
+tags.tag.ignored.by.custom.rule.x	Tag ignored by custom rule: [0]
+tags.tag.is.valid	Tag is valid
+tags.tags.cannot.contain.delimiter.char	Tags cannot contain delimiter characters
+tags.tags.cannot.contain.emojis	Tags cannot contain emojis
+tags.tags.lowercase	tags
+tags.tags.uppercase	Tags
+tags.tags.will.appear.here	Your Tags will appear here
+tags.text.to.ignore	Text to Ignore
+tags.turn.off.tags.for.this.space	Turn off tags for this space?
+tags.unpin.tag	Unpin Tag
+tags.use.tags	Use Tags
+tags.x.tags	[0] tags
+tags.yes.turn.off	Yes, Turn Off
+task.document.share.tip	To share, move this task to a document
+tasks.0.on.1	[0] on [1]
+tasks.0.on.the.1.day	[0] on the [1] day
+tasks.add.details	Add Details
+tasks.add.task	Add Task
+tasks.after.1.day	After 1 day
+tasks.after.1.month	After 1 month
+tasks.after.1.week	After 1 week
+tasks.after.1.year	After 1 year
+tasks.after.completion	After Completion
+tasks.after.x.days	After [0] days
+tasks.after.x.months	After [0] months
+tasks.after.x.weeks	After [0] weeks
+tasks.after.x.years	After [0] years
+tasks.all.tasks	All Tasks
+tasks.all.tasks.closed	All tasks closed
+tasks.all.tasks.completed	All tasks completed
+tasks.also.on.weekends	Also on Weekends
+tasks.cancel.remaining	Cancel Remaining
+tasks.canceled.on	canceled on [0]
+tasks.cancelled	Cancelled
+tasks.collapse.section	Collapse Section
+tasks.complete.remaining	Complete Remaining
+tasks.complete.task.decs	When you complete the task, the next one is scheduled based on the original scheduled date.
+tasks.completed	Completed
+tasks.completed.on	completed on [0]
+tasks.completed.tasks	Completed Tasks
+tasks.create	Create Task
+tasks.create.and.open	Create & Open
+tasks.create.new.task	Create new task
+tasks.create.new.task.with	Create new task with [0]
+tasks.create.task.in.doc	Create Task in Doc
+tasks.creating.new.pinned.doc	Creating New Pinned Doc
+tasks.daily.brackets	(Daily)
+tasks.deadline.set.for	Deadline set for [0]
+tasks.delete.3dot	Delete鈥�
+tasks.delete.all	Delete All
+tasks.delete.remaining	Delete Remaining
+tasks.docs.with.tasks	Docs With Tasks
+tasks.edit.task	Edit task
+tasks.enter.title.before.submitting	Please enter a title before submitting
+tasks.every.day	Every Day
+tasks.every.month.on.x	Monthly, on the [0] day
+tasks.every.week.on.x	Weekly on [0]
+tasks.every.x	Every [0]
+tasks.every.x.days	Every [0] days
+tasks.every.x.days.skip.weekends	Every [0] days, skipping weekends
+tasks.every.x.months	Every [0] months
+tasks.every.x.months.on.y.days	Every [0] months, on the [1] days
+tasks.every.x.weeks	Every [0] weeks
+tasks.every.x.weeks.on.y	Every [0] weeks on [1]
+tasks.every.x.years	Every [0] years
+tasks.every.x.years.on.y	Every [0] years on [1]
+tasks.every.year	Every year
+tasks.every.year.on.x	Yearly, on [0]
+tasks.expand.section	Expand Section
+tasks.global.shortcuts	Global Shortcuts
+tasks.go.back.to.tasks	Go Back to Tasks
+tasks.inbox.empty	Your Inbox is clear! Add a task whenever you鈥檙e ready.
+tasks.inbox.empty.hover	Create a new Task
+tasks.logbook	Logbook
+tasks.logbook.placeholder	Completed tasks will appear here
+tasks.mark.as.uncomplete	Mark as Uncompleted
+tasks.mark.cancelled	Mark as Cancelled
+tasks.mark.complete	Mark as Completed
+tasks.mark.task.as.cancelled	Mark Task as Cancelled
+tasks.mark.task.as.completed	Mark Task as Completed
+tasks.mark.tasks.as	Mark Tasks As鈥�
+tasks.monday.to.friday	(Mon 鈥� Fri)
+tasks.more.tasks	More Tasks
+tasks.move.remaining	Move Remaining To鈥�
+tasks.move.task	Move task
+tasks.moving.task	Moving task
+tasks.new.pinned.doc	New Pinned Doc
+tasks.next.task	Next Task
+tasks.on.schedule	On Schedule
+tasks.one.task.todo	1 task to do
+tasks.ongoing	Ongoing
+tasks.open.doc	Open Document
+tasks.pin.document	Pin Document
+tasks.pin.empty.hover	Pin an existing Document
+tasks.pin.existing.doc	Pin Existing Document
+tasks.pinned.doc	Pinned Doc
+tasks.pinned.docs	Pinned Docs
+tasks.previous.task	Previous Task
+tasks.relative.to.completion	Relative to Completion
+tasks.repeating	Repeating
+tasks.repeating.brackets	(Repeating)
+tasks.reschedule.tasks	Reschedule Tasks
+tasks.scheduled.for	Scheduled for [0]
+tasks.scheduled.for.previous.days	Scheduled for Previous Days
+tasks.scheduled.for.this.day	This Day
+tasks.set.as.default.view	Set as Default View
+tasks.set.cancelled	Set cancelled
+tasks.show.completed	Show Completed
+tasks.show.in.document	Show in Document
+tasks.show.less	Show Less
+tasks.show.past.dates	Show Past Dates
+tasks.show.pinned	Show Pinned
+tasks.show.scheduled.tasks	Show Scheduled Tasks
+tasks.skip.to.docs.with.tasks	Skip to Docs with Tasks
+tasks.skip.to.pinned.docs	Skip to Pinned Docs
+tasks.skip.weekends	Skip Weekends
+tasks.skip.weekends.single	(skip weekends)
+tasks.something.went.wrong	Something went wrong. Please try again.
+tasks.subtasks	Subtasks
+tasks.tap.to.pin.doc	Tap to pin an existing doc
+tasks.task.inbox	Task Inbox
+tasks.task.moved.error	Could not move the task to a daily note. Please refresh the page and try again.
+tasks.task.moved.to.daily.note	Task moved to daily note
+tasks.task.moved.to.daily.note.x	Task moved to daily note [0]
+tasks.task.rescheduled.to.x.later	When you complete the task, the next one is scheduled [0] later.
+tasks.task.scheduled.to.later	When you complete the task, the next one is scheduled [0] later.
+tasks.task.succesfully.created	Task Successfully Created
+tasks.tasks.empty.page	Drag and drop a doc to pin and access more details
+tasks.tasks.in.daily.notes	From Daily Notes
+tasks.tasks.in.documents.from.docs	From Docs
+tasks.tasks.in.x	Tasks in [0]
+tasks.tasks.inbox	Tasks Inbox
+tasks.tasks.moved.to.daily.note	Tasks moved to daily note
+tasks.today	Today
+tasks.toggle.done	Toggle done
+tasks.toggle.task	Toggle task
+tasks.unpin.document	Unpin Document
+tasks.upcoming	Upcoming
+tasks.view.completed.tasks	View Completed Tasks
+tasks.view.details	View Details
+tasks.view.task	View Task
+tasks.x.tasks.todo	[0] tasks to do
+tasks.zero.all	Add your first task to get started.
+tasks.zero.inbox	Well done, all your tasks are organized!
+tasks.zero.today	You are all done for today!
+tasks.zero.upcoming	No scheduled tasks. Add dates to tasks to keep things on track.
+team.benefit.multiple.spaces	Multiple team spaces to invite members
+team.benefit.plus.private	Plus private account for each member
+team.benefit.shared.team	A shared team for collaboration
+team.charge.monthly	You'll be charged [0] per month, starting today. Cancel anytime.
+team.charge.yearly	You'll be charged [0] for year, starting today. Cancel anytime.
+team.invite	Team Invite
+team.invite.already.a.member	You're already a member
+team.invite.already.accepted	This invite has already been accepted
+team.invite.already.joined	You've already joined this team.
+team.invite.already.used	This invite has already been used
+team.invite.could.not.load	Could not load invite
+team.invite.could.not.process	Could not process invite
+team.invite.email.already.member	[0] is already a team member or has a pending invite.
+team.invite.example.email	name@example.com
+team.invite.invited.by	invited by [0]
+team.invite.limit	You can invite up to 10 people at a time.
+team.invite.no.longer.valid	This invite is no longer valid
+team.invite.not.found.or.revoked	Invite not found or has been revoked
+team.invite.not.recognized	Invite not recognized
+team.invite.open.craft.to.sign.in	Open Craft to sign in and find your team.
+team.invite.sign.in.as	Sign in as [0]
+team.invite.subscription.desc	Your subscription has [0] added already. You can add <strong>[1]</strong> at <strong>no extra charge</strong>.
+team.invite.wrong.account.desc	You're signed in as [0], but this invite is for [1].
+team.invite.x.emails.already.members	[0] email addresses are already team members or have pending invites.
+team.invite.youve.been.invited	You've been invited to join
+team.name	Team name
+team.paywall.big.subtitle	Fixed-price bundle up to 10 Plus accounts in a single subscription.
+team.paywall.member.count	Up to [0] member invitations
+team.paywall.small.subtitle	Fixed-price bundle of 2 to 6 Plus accounts in a single subscription.
+team.paywall.space.count	up to [0] team spaces for your projects
+team.plan.benefit.everything.in.family	Everything in Family
+team.plan.benefit.four.more.seats	Four more seats
+team.plan.benefit.plus.for.each.member	Full Plus plan for each member
+team.plan.benefit.room.to.grow	Room to grow into
+team.plan.benefit.shared.space.per.project	A shared space for every project
+team.plan.billing.note	Billed monthly 路 cancel any time from settings
+team.plan.choice.subtitle	Both plans put everyone on one subscription.
+team.plan.choice.title	How would you like to start?
+team.plan.choose.family	Choose Family
+team.plan.choose.team	Choose Team
+team.plan.family.capacity	2 to [0] people
+team.plan.team.capacity	Up to [0] people
+team.plans.need.larger.team	Team plans include up to 10 members. Need a larger team?
+team.preferences.menu	Team
+team.roles.and.permissions	Team roles and permissions
+team.subscription.cancel.policy	Cancel at any time at least one day before renewal date. Plan automatically renews until cancelled.
+team.tier.team	[0] Team
+team.trial.ask.admin	Ask your team admin to upgrade to keep your shared spaces
+team.trial.banner.subtitle	Explore collaboration free for 15 days 鈥� works with Family & Teams.
+team.trial.banner.title	Give it a try first
+team.trial.benefit.invite.members	Invite members to work with you
+team.trial.benefit.multiple.shared.spaces	Multiple shared spaces
+team.trial.ended	Your Team trial ended
+team.trial.ended.desc	You can keep creating content in Craft until you or your team reach 1,500 blocks.
+team.trial.ends.in.1.day	Your Team trial ends in 1 day
+team.trial.ends.in.x.days	Your Team trial ends in [0] days
+team.trial.has.ended	Your Team trial has ended
+team.trial.no.card.needed	No card needed 鈥� pick a plan later
+team.trial.optin.cta	Start my 15 days free trial
+team.trial.optin.price.note	Afterwards [0]/month for up to [1] people
+team.trial.optin.start	Start your 15 day free trial
+team.trial.optin.subtitle	No credit card, no auto charge
+team.trial.optin.title	Start collaborating for free today
+team.trial.optin.unlock.label	What you unlock
+team.trial.pricing.details	, then fixed [0]/month up to [1] members or fixed [2]/month up to [3] members
+team.trial.start.collaborating.title	Start collaborating
+team.trial.try.for.x.days	Try it for [0] days
+team.trial.upgrade.desc	Upgrade to Team to unlock unlimited content for your Plus account and your shared collaboration.
+team.trial.upgrade.to.keep	Upgrade to Team to keep your shared spaces and Plus for all members
+team.welcome.slide1.desc	You and your team can now create, edit, and organize docs together, all in one place.
+team.welcome.slide3.desc	Invite new members, control who has access, and create more shared and private spaces from settings.
+teams.badge	TEAMS
+teamsettings.add.custom.domain	Add Custom Domain
+teamsettings.alert.invite.revoke.failed	Could not revoke invite
+teamsettings.alert.invite.revoked	Invite has been revoked
+teamsettings.alert.member.remove.failed	Could not remove member
+teamsettings.alert.member.role.update.failed	Could not update member role
+teamsettings.alert.member.role.updated	Member role has been updated
+teamsettings.alert.remove.document.permissions.failed	Could not remove document permission
+teamsettings.alert.space.admin.added	You are now an admin of {{spaceName}}
+teamsettings.alert.space.join.failed	Couldn鈥檛 join the space
+teamsettings.alert.space.joined	You are now a member of {{spaceName}}
+teamsettings.alert.space.joined.new	You are now a member of [0]
+teamsettings.alert.space.leave.failed	Couldn鈥檛 leave the space
+teamsettings.alert.space.member.removed	You are no longer a member of {{spaceName}}
+teamsettings.alert.subscription.cancel.failed	Could not cancel subscription
+teamsettings.alert.subscription.canceled	Subscription canceled
+teamsettings.alert.subscription.resume.failed	Could not resume subscription
+teamsettings.alert.subscription.resumed	Subscription resumed
+teamsettings.alert.team.delete.failed	Could not delete team
+teamsettings.billing	Billing
+teamsettings.billing.billingemail.cta	Contact Support
+teamsettings.billing.billingemail.header	Billing Email
+teamsettings.billing.billingemail.part1	Please contact us at 
+teamsettings.billing.billingemail.part3	 in case you鈥檇 like to change your billing email. We鈥檒l do it for you within 24 hours.
+teamsettings.billing.change.email	Request to change billing email for team [0]
+teamsettings.billing.no.active.subscription	No active subscription
+teamsettings.billing.not.renewed.subscription	Not renewed subscription
+teamsettings.billing.recurring.coupon.flat	<code>[0]</code> [1] recurring discount applied
+teamsettings.billing.recurring.coupon.percentage	<code>[0]</code> [1]% recurring discount applied
+teamsettings.billing.recurring.modifiers.flat	[0] recurring discount applied
+teamsettings.billing.table.date	Date
+teamsettings.billing.table.invoice.total	Invoice Total
+teamsettings.billing.table.paid	Paid
+teamsettings.billing.table.status	Status
+teamsettings.billing.table.unpaid	Unpaid
+teamsettings.billing.table.view.invoice	View invoice
+teamsettings.cancel.appstore.on.web	Your subscription is managed by the App Store. Please cancel your subscription there.
+teamsettings.cancel.subscription	Cancel Subscription
+teamsettings.cancel.subscription.part1	You and other team members can keep using Craft until 
+teamsettings.cancel.subscription.part2	the end of the current billing period
+teamsettings.cancel.subscription.part3	After that you won鈥檛 be able to add new content to your documents.
+teamsettings.cancel.team.subscription	Cancel Team Subscription
+teamsettings.cancel.team.subscription.description	After canceling, you鈥檒l be able to use Craft until the end of the current billing period.
+teamsettings.change.payment.method	Change Payment Method
+teamsettings.continue	Continue
+teamsettings.craft.domain	{{craft}} Domain
+teamsettings.craft.domain.desc	Use your custom Craft domain when sharing Craft docs
+teamsettings.craft.domain.new	[0] Domain
+teamsettings.create.business.name	[0]鈥檚 Business
+teamsettings.create.family.name	[0]鈥檚 Family
+teamsettings.create.team.name	[0]鈥檚 Team
+teamsettings.current.plan	Current Plan
+teamsettings.custom.craft.domain.already.used	Already used
+teamsettings.custom.craft.domain.available	Available
+teamsettings.custom.craft.domain.change.domain	Change Domain
+teamsettings.custom.craft.domain.not.available	Not Available
+teamsettings.custom.craft.domain.part1	Docs you publish will be under this domain.
+teamsettings.custom.craft.domain.part2	Learn more about domains
+teamsettings.custom.domain.active	Custom Domain
+teamsettings.custom.domain.not.active	Setup Domain
+teamsettings.custom.domain.part1	You should own this domain. This should be a subdomain.
+teamsettings.custom.domain.part2	Learn more about supported domains.
+teamsettings.custom.domain.yourdomain.placeholder	yourdomain
+teamsettings.danger.zone	Danger Zone
+teamsettings.delete.team	Delete Team
+teamsettings.delete.team.description	Deleting your team will permanently delete all the documents within all Team Spaces. This action cannot be undone!
+teamsettings.delete.team.part1	Deleting this team will cause all team members to lose access. This cannot be undone
+teamsettings.delete.team.success	Team [0] has been deleted
+teamsettings.delete.team.title	Delete Team
+teamsettings.delete.team.tooltip	Your team鈥檚 subscription needs to be canceled first in order to proceed.
+teamsettings.disconnect.custom.domain.description	After cancelling, share pages will be available on craft.me domain, but you can set up a new custom domain then.
+teamsettings.disconnect.custom.domain.title	Disconnect Custom Domain
+teamsettings.disconnect.domain	Disconnect Domain
+teamsettings.disconnect.domain.config	Are you sure you want to continue?
+teamsettings.disconnect.domain.text	You are now disconneting the domain
+teamsettings.dns.config.error.subtitle	Please try again later or contact support.
+teamsettings.dns.config.error.title	Couldn鈥檛 find DNS configuration
+teamsettings.dns.description	Use your domain when sharing Craft Documents
+teamsettings.dns.verified	DNS Verified
+teamsettings.dns.verifying	Verifying DNS鈥�
+teamsettings.domain.not.added	No domain set
+teamsettings.emails	emails
+teamsettings.enter.team.logo.url	Enter Team Logo URL
+teamsettings.error.could.not.update.setting	Could not update setting
+teamsettings.error.could.not.update.team.logo	Could not update team logo
+teamsettings.external.domain.added.dns.records	I鈥檝e added the DNS records
+teamsettings.external.domain.dns.record	DNS Record
+teamsettings.external.domain.name.host	Name / Host
+teamsettings.external.domain.no.dns.found	No DNS configuration found for this domain. Please contact us here.
+teamsettings.external.domain.title.active	External domain details
+teamsettings.external.domain.title.modify	Modify your domain鈥檚 DNS Settings
+teamsettings.external.domain.value.points.to	Value / Points to
+teamsettings.family	Family
+teamsettings.family.members.count	Family ({{count}})
+teamsettings.granted.description	As part of the {{plan}} subscription, your account has been upgraded to {{plusplan}}.
+teamsettings.inspiration.button.community	Join the Community
+teamsettings.invite	Invite
+teamsettings.invite.already.member.subtitle	Already member of the team
+teamsettings.invite.already.member.title	Users are already on team
+teamsettings.invite.error.could.not.invite.email	Could not invite {{email}}
+teamsettings.invite.error.could.not.invite.users	Could not invite {{count}} users
+teamsettings.invite.error.out.of.seats	Team is out of available seats
+teamsettings.invite.ignored.emails	Ignored Emails
+teamsettings.invite.ignored.emails.subtitle	ignored {{count}} existing or duplicate emails
+teamsettings.invite.ignored.emails.subtitle.new	ignored [0] existing or duplicate emails
+teamsettings.invite.n.emails	{{count}} emails
+teamsettings.invite.n.emails.new	[0] emails
+teamsettings.invite.to.space	Invite to Space
+teamsettings.invoice.next.issue.date	Next Invoice Issue Date
+teamsettings.invoice.sent.to	Invoices sent to
+teamsettings.invoice.total	Invoice Total
+teamsettings.invoices	Invoices
+teamsettings.join.space	Join Space
+teamsettings.manage	Manage
+teamsettings.no.invoices	No Invoices
+teamsettings.other.spaces	Other Spaces
+teamsettings.plan.cancel.subscription	Cancel {{plan}} Subscription
+teamsettings.plan.cancel.subscription.new	Cancel [0] Subscription
+teamsettings.plan.expired	Expired
+teamsettings.plan.expired.at	Expired at {{date}}
+teamsettings.plan.expires.at.not.renewed	Expires at {{date}}, not renewed
+teamsettings.plan.monthly	{{plan}}, {{amount}} billed monthly
+teamsettings.plan.monthly.renewal	{{plan}} Plan Monthly Renewal
+teamsettings.plan.monthly.renewal.new	[0], Billed Monthly
+teamsettings.plan.no.active.subscription	No active subscription
+teamsettings.plan.per.seat.monthly	{{plan}}, {{amount}} per seat, billed monthly
+teamsettings.plan.per.seat.yearly	{{plan}}, {{amount}} per seat, billed yearly
+teamsettings.plan.please.retry	Please retry later
+teamsettings.plan.tier	{{tier}} plan
+teamsettings.plan.unknown.provider	unknown
+teamsettings.plan.weekly	{{plan}}, {{amount}} billed weekly
+teamsettings.plan.weekly.renewal	{{plan}} Plan Weekly Renewal
+teamsettings.plan.weekly.renewal.new	[0], Billed Weekly
+teamsettings.plan.yearly	{{plan}}, {{amount}} billed yearly
+teamsettings.plan.yearly.renewal	{{plan}} Plan Yearly Renewal
+teamsettings.plan.yearly.renewal.new	[0], Billed Yearly
+teamsettings.resume.subscription	Resume Subscription
+teamsettings.resume.subscription.description	Your subscription has been cancelled. You can resume it to continue using Craft.
+teamsettings.resume.subscription.part1	You are resuming your subscription. It will start billing again on
+teamsettings.resume.subscription.part2	the next billing date
+teamsettings.resume.subscription.part3	After that, the price will be
+teamsettings.resume.subscription.part4	per seat.
+teamsettings.resume.team.subscription	Resume Team Subscription
+teamsettings.save	Save
+teamsettings.set.custom.craft.domain	Set your own Craft domain
+teamsettings.settings.and.billing	Settings and Billing
+teamsettings.share.page.branding.disabled	Disabled
+teamsettings.share.page.branding.enabled	Enabled
+teamsettings.team.change.logo	Change Logo
+teamsettings.team.change.logo.description	Add or change your logo or icon
+teamsettings.team.change.logo.family	Change Family Logo
+teamsettings.team.change.logo.family.description	Add or change your Family鈥檚 logo or icon
+teamsettings.team.change.logo.team	Change Team Logo
+teamsettings.team.change.logo.team.description	Add or change your Team鈥檚 logo or icon
+teamsettings.team.change.to.admin.subtitle	Can change team settings, billing details and see all the spaces.
+teamsettings.team.change.to.admin.title	Admin
+teamsettings.team.change.to.member.subtitle	Can鈥檛 see settings, billing and spaces where they鈥檙e not a member.
+teamsettings.team.change.to.member.title	Member
+teamsettings.team.deactivated.members	Deactivated Members ({{count}})
+teamsettings.team.deactivated.members.no.count	Deactivated Members
+teamsettings.team.default.cannot.delete	Your default team cannot be deleted.
+teamsettings.team.family.subscription.first.cancel	Your family鈥檚 subscription needs to be canceled first in order to proceed.
+teamsettings.team.invite.people	Invite People
+teamsettings.team.logo.click	Clicking on Team Logo
+teamsettings.team.logo.click.description	This link will open when clicking on your logo at the top of your document.
+teamsettings.team.logo.url	Custom Team Logo URL
+teamsettings.team.members.count	Members ({{count}})
+teamsettings.team.name	Team Name
+teamsettings.team.pending.invites	Pending Invites ({{count}})
+teamsettings.team.remove.from.team	Remove from Team
+teamsettings.team.remove.from.team.cta	Remove from Team
+teamsettings.team.remove.from.team.header	Remove from Team
+teamsettings.team.remove.from.team.text	Are you sure you want to remove {{name}} ({{email}}) from the team?
+teamsettings.team.revoke.invitation	Revoke Invitation
+teamsettings.team.revoke.invitation.cta	Revoke
+teamsettings.team.revoke.invitation.header	Revoke Invitation?
+teamsettings.team.revoke.invitation.text	Are you sure you want to revoke the invitation from {{email}}?
+teamsettings.team.role.admin	Admin
+teamsettings.team.role.deactivated	Deactivated
+teamsettings.team.role.member	Member
+teamsettings.team.role.pending	Pending
+teamsettings.team.seats	Team Seats
+teamsettings.team.settings	Team Settings
+teamsettings.who.can.help	See Who Can Help
+template.prompt.button	Browse Templates
+template.prompt.description	Browse our collection of beautifully designed templates to kickstart your next project.
+template.prompt.title	Start with a Template
+tex.formula	TeX Formula
+the.team	the team
+this.document	This Document
+thursday.short	Thu
+tipsandtricks.share.pdf.mac	PDF Export
+tipsandtricks.tips.share	Sharing & Collaboration
+tipsandtricks.tips.start	Getting Started
+toolbar.add.email.access.fail	Failed to add email access
+toolbar.add.email.domain	Add Email Domain Access
+toolbar.add.email.domain.access.fail	Failed to add email domain access
+toolbar.add.emails.list	Add single emails or paste a comma-separated list
+toolbar.add.password	Add Password
+toolbar.add.people	Add People
+toolbar.add.people.to.access.document	Add people to access your document
+toolbar.add.people.to.restrict.access	Add people to restrict link access
+toolbar.advanced.options	Advanced Options
+toolbar.all.x.email.addresses	All [0] email addresses
+toolbar.author.hidden	Author will not be shown
+toolbar.author.shown	Author will be shown
+toolbar.cancel.and.keep.custom.domain	Cancel and Keep Custom Domain
+toolbar.change	Change
+toolbar.change.password	Change Password
+toolbar.click.to.invite	Click to invite
+toolbar.comments	Comments
+toolbar.create.document.from.template	Create document from template
+toolbar.create.link	Create Link
+toolbar.customize.url	Customize URL
+toolbar.docx	Microsoft Word
+toolbar.dont.show.in.search	Search engines couldn鈥檛 show this page
+toolbar.email.access	Email Access
+toolbar.email.access.revert.to.craft	To enable email access, you must revert to the default craft.me link for this particular document.
+toolbar.enable.search.engine	Enable Search Engine Indexing
+toolbar.enable.search.engine.desc	When enabled this page will show up in search engine results, such as Google. Only works if no password is provided.
+toolbar.enter.password	Enter Password
+toolbar.expiration	Expiration
+toolbar.expiration.date	Expiration Date
+toolbar.expire.never	Never expires
+toolbar.expire.on	Expire on [0]
+toolbar.external.domain	External Domain
+toolbar.external.domain.access.restriction	External domain cannot be used with email access restriction.
+toolbar.footer.refers.craft	Footer will refer to Craft
+toolbar.footer.refers.not.craft	Footer will not refer to Craft
+toolbar.invite.x	Invite [0]
+toolbar.keep.typing.to.invite	Keep typing to invite
+toolbar.learn.more.about.collaboration	Learn More About Collaboration
+toolbar.learn.more.craft.domains	Learn more about Craft Domains
+toolbar.manage	Manage
+toolbar.markdown	Markdown
+toolbar.never	Never
+toolbar.no.password	No Password
+toolbar.off	Off
+toolbar.page.title.hidden	Page title will be hidden
+toolbar.page.title.shown	Page title will be shown
+toolbar.password	Password
+toolbar.password.desc	When a password is set, only people with the password can access the contents of this link.
+toolbar.path	Path
+toolbar.pdf	PDF
+toolbar.people.with.access	People with access
+toolbar.presentation.mode.hidden	Presentation mode is hidden
+toolbar.presentation.mode.visible	Presentation mode is visible
+toolbar.print	Print
+toolbar.publish.page.to.your.domain	Publish this page to your domain.
+toolbar.publish.preview.subtitle	Publish your doc to the web with a secret link and control who sees it
+toolbar.publish.to.the.web	Publish to the Web
+toolbar.remove.all	Remove All
+toolbar.remove.all.question	Are you sure? All people and domain restrictions will be removed, making the link open to all until changed.
+toolbar.reset.email.access	Reset email access by removing all
+toolbar.restrict.email.domains	Restrict access to specific email domains
+toolbar.restrict.individuals	Restrict access to specific individuals
+toolbar.search.engines	Search Engines
+toolbar.select.space.create.template	Select the space where you would create the template
+toolbar.set.custom.craft.domain.noplus	Set Custom Craft Domain
+toolbar.set.external.domain	Set External Domain
+toolbar.share.as.qr.code	Share as QR Code
+toolbar.show.author	Show Author
+toolbar.show.created.with.craft	Show 鈥淐reated With Craft鈥�
+toolbar.show.in.search	Search engines could show this page
+toolbar.show.presentation.mode	Show Presentation Mode
+toolbar.show.title	Show Title
+toolbar.show.toc.title	Show Table of Contents
+toolbar.someone.wants.to.do	[0] wants to [1]
+toolbar.style.and.inspector	Style & Inspector
+toolbar.switch.to.craft	Switch to craft.me
+toolbar.tasks.placeholder	Tasks inside this document will appear here.
+toolbar.textbundle	TextBundle
+toolbar.toc.hidden	Table of content is hidden
+toolbar.toc.placeholder	Use titles, pages or cards to create a table of contents.
+toolbar.toc.visible	Table of content is visible
+toolbar.update.path.fail.title	Could not update path
+toolbar.user.interactivity	User Interactivity
+toolbar.using.external.domain	Currently, you鈥檙e using an external domain.
+toolbar.view.and.add	View & Add
+toolbar.view.only	View only
+toolbar.visitor.page.duplicate.allowed	Visitors will be able to use this page as a Template
+toolbar.visitor.page.duplicate.not.allowed	Visitors will not be able to use this page as a Template
+toolbar.visitors.add.comments	Visitors Can Add Comments
+toolbar.visitors.can.duplicate	Visitors Can Duplicate
+toolbar.visitors.can.duplicate.desc	When enabled, users visiting this link can duplicate contents into their space.
+toolbar.visitors.follow.block.links	Visitors Can Follow Block Links
+toolbar.visitors.follow.block.links.allowed	People can view linked pages
+toolbar.visitors.follow.block.links.desc	When enabled, visitors can follow block links from this document even if they point to other documents
+toolbar.visitors.follow.block.links.not.allowed	People won鈥檛 access linked pages
+toolbar.visitors.view.comments	Visitors Can View Comments
+toolbar.visual.options	Visual Options
+toolbar.word	MS Word
+toolbar.workflowlinks	Workflow Links
+toolbar.your.domain	your domain
+tooltip.redirect.to.beta.environment	We will redirect you to Craft Beta environment automatically.
+tooltip.toggle.comments.sidebar.visibility	Toggle comments sidebar visibility
+trash.find.in.history	Find in History
+try.again	Try again
+try.collaboration.for.free	Try collaboration for free
+try.teams.for.free	Try Teams for free
+try.teams.free.banner	Want to collaborate? Try Teams free for 15 days
+tuesday.short	Tue
+turn.off.screen.sharing.mode	Turn Off Screen Sharing Mode
+type.to.search	Type to search
+undo.redo	Undo / Redo
+unit.day	1 day
+unit.day.ago	1 day ago
+unit.day.short.ago	1d ago
+unit.hour	1 hour
+unit.hour.ago	1 hour ago
+unit.hour.short	1h
+unit.hour.short.ago	1h ago
+unit.minute	1 minute
+unit.minute.short	1m
+unit.minute.short.ago	1m ago
+unit.month	1 month
+unit.month.ago	1 month ago
+unit.month.short.ago	1mo ago
+unit.week	1 week
+unit.week.ago	1 week ago
+unit.week.short.ago	1w ago
+unit.x.days	[0] days
+unit.x.days.ago	[0] days ago
+unit.x.days.short	[0]d
+unit.x.days.short.ago	[0]d ago
+unit.x.hours	[0] hours
+unit.x.hours.ago	[0] hours ago
+unit.x.hours.short	[0]h
+unit.x.hours.short.ago	[0]h ago
+unit.x.minutes	[0] minutes
+unit.x.minutes.ago	[0] minutes ago
+unit.x.minutes.short	[0]m
+unit.x.minutes.short.ago	[0]m ago
+unit.x.months	[0] months
+unit.x.months.ago	[0] months ago
+unit.x.months.short	[0]mo
+unit.x.months.short.ago	[0]mo ago
+unit.x.weeks	[0] weeks
+unit.x.weeks.ago	[0] weeks ago
+unit.x.weeks.short	[0]w
+unit.x.weeks.short.ago	[0]w ago
+unit.x.years	[0] years
+unit.x.years.ago	[0] years ago
+unit.x.years.short	[0]y
+unit.x.years.short.ago	[0]y ago
+unit.year	1 year
+unit.year.ago	1 year ago
+unit.year.short.ago	1y ago
+unlimited.shared.spaces	Unlimited shared spaces
+unsplash.alert.update.search	Please update your search and try again
+unsplash.search.photos	Search photos
+unstar.document	Unstar Document
+untitled.document	Untitled Document
+untitled.folder	Untitled Folder
+untitled.page	Untitled Page
+up.to.x.shared.spaces.25	Up to 25 shared spaces
+up.to.x.shared.spaces.5	Up to 5 shared spaces
+update.available	Update Available
+update.banner.message	Please click below to update and get the latest version of the app.
+update.check.for.updates	Check for updates
+update.checking.for.updates	Checking for updates
+update.downloading	Downloading update
+update.force	Force
+update.force.update	Force Update
+update.needed	Update Needed
+update.no.updates.available	No updates available
+update.permission.failed.to.update.link	Failed to update link access
+update.permissions	Update permissions
+update.please.reload.to.get.latest.version	Please reload the page to get the latest version of the app.
+update.remind.me.in	Remind me in鈥�
+update.reminder.1.hour	In 1 hour
+update.reminder.10.minutes	In 10 minutes
+update.reminder.30.minutes	In 30 minutes
+update.update.now	Update now
+upgrade.to.family	Upgrade to <italic>Family</italic>
+upgrade.to.team.plan	Upgrade to team plan
+use.craft.anyways	Use Craft anyways
+userinterface.dark	Dark
+userinterface.light	Light
+userinterface.system	System
+v319.intro.1.content	Shaped by your feedback. Now it鈥檚 your time to explore what鈥檚 new.
+v319.intro.1.title	Tags, Web Clipper, Mobile Web
+v319.intro.2.content	Tags are finally here. But not just added, we took time to make them feel right. Clean. Fast. Subtle.
+v319.intro.2.title	Tags
+v319.intro.3.content	Drop your research right into your docs or daily notes.
+v319.intro.3.title	Web Clipper
+v319.intro.4.content	Turn your thoughts into structured, beautiful, shareable docs now on Android as well!
+v319.intro.4.title	Mobile Web for Android
+video.in	Video in [0]
+view.x	View [0]
+visit.site	Visit Site
+want.to.collaborate	Want to collaborate?
+web.collab.comment.hint.emoji	Type <highlight>[0]</highlight> or others for quick emojis
+web.collab.comment.hint.mention	Type <highlight>@</highlight> to mention someone
+web.collab.comment.hint.new.line	Press <highlight>Shift + Enter</highlight> to add a new line
+web.collab.comment.hint.send.comment	Press <highlight>Enter</highlight> to send a comment
+web.collab.list.2	<emojiwrapper>[0]</emojiwrapper> and <emojiwrapper>[1]</emojiwrapper>
+web.collab.reacted.count.1	<highlight>[0]</highlight> reacted
+web.collab.reacted.count.2	<highlight>[0]</highlight> and <highlight>[1]</highlight> reacted
+web.collab.reacted.count.x	<highlight>[0]</highlight>, and <highlight>[1]</highlight> reacted
+web.collab.reacted.with	<highlight>[0]</highlight> reacted with
+web.collab.reacted.with.count.1	<highlight>[0]</highlight> reacted with [1]
+web.collab.reacted.with.count.2	<highlight>[0]</highlight> and <highlight>[1]</highlight> reacted with [2]
+web.collab.reacted.with.count.x	<highlight>[0]</highlight>, and <highlight>[1]</highlight> reacted with [2]
+web.collab.share.document.warning	Any changes you make to who can see or edit will apply to the entire <strong>[0]</strong> document.
+web.collab.someone.want.to.edit	<username>[0]</username> wants to edit
+web.collab.someone.want.to.read	<username>[0]</username> wants to view
+web.collab.x.resolved	<name>[0]</name> marked as resolved
+web.collab.x.unresolved	<name>[0]</name> marked as unresolved
+web.error.report.beta.error.title	You鈥檙e on a beta build without access. Reach out if access is needed.
+web.error.report.firewall.footer	Do you think your company firewall is blocking Craft?
+web.error.report.firewall.footer.button	Troubleshoot Connection
+web.error.report.internal.build.error.title	It looks like you stumbled on an internal version
+web.error.report.killswitch.error.desc	This app version is no longer supported. Please reload the page to update.
+web.error.report.killswitch.error.title	App needs to be updated
+web.error.report.logged.in.error.desc	Please sign out to continue
+web.error.report.logged.in.error.title	Already logged in
+web.error.report.network.error.desc	Please check your connection and try again.
+web.error.report.network.error.title	It looks like you are offline
+web.error.report.render.error.desc	We鈥檝e logged the error and notified our team. Reload to continue.
+web.error.report.render.error.title	Something went wrong
+web.error.report.take.me.to	Take me to <bold>[0]</bold>
+web.linklanding.check.supported.platforms	Check Craft鈥檚 supported platforms
+web.linklanding.doc.was.opened.in.app	This doc was opened in the Craft App
+web.linklanding.link.requires.craft.app	This link requires the Craft App
+web.linklanding.open.in.app	Open in the App
+web.linklanding.open.in.browser.instead	Open in browser instead
+web.linklanding.page.was.opened.in.app	This page was opened in the Craft App
+web.onboarding.accept.terms.and.privacy	By clicking continue, you accept our <toclink>[0]</toclink> and <privacylink>[1]</privacylink>
+web.onboarding.click.here.to.logout	<logoutlink>Click here</logoutlink> to log out.
+web.onboarding.google.terms.and.privacy	This site is protected by reCAPTCHA and the Google <toclink>[0]</toclink> and <privacylink>[1]</privacylink> apply
+web.preferences.language.description	Set the language you鈥檇 like to use in [0]
+web.subscription.cancel.previous.appstore.sub	Don鈥檛 forget to cancel your previous subscription through the App Store. <helpsitelink>Learn more</helpsitelink>
+web.subscription.get.more.out.of.craft	Get <italic>more</italic> out of Craft
+web.subscription.main.segmentcontrol.annual.20	Yearly <strong>(Save 20%)</strong>
+web.subscription.modify.subscription.to	Do you want to modify your subscription to <strong>[0]</strong> for <strong>[1]</strong>?
+web.subscription.month.billed.annually	<strong>[0]</strong> /month billed annually
+web.subscription.upgrade.to.plus.sale.desctiption	Go unlimited and get up to <strong>[0]% off</strong> now. Make the most of this limited time offer today.
+web.subscriptions.paywall.cancel.at.anytime	Cancel at any time at least one day before renewal date.<br/>Plan automatically renews until cancelled.
+web.subscriptions.paywall.removal.all.limits.desc	One full-featured account, no content limit.<br/>Ideal for individual creators.
+web.teamsettings.external.domain.description.add.line1	To use external domain add the following DNS records to your domain鈥檚 DNS settings.
+web.teamsettings.external.domain.description.add.line2	Check our <guidelink>DNS guide</guidelink> for more info or if you鈥檙e on Cloudflare.
+wednesday.short	Wed
+welcome.to.craft.teams	Welcome to Craft Teams!
+welcome.to.x	Welcome to [0]
+what.happens.after.trial	What happens after the trial?
+whats.new.on.web.and.windows	What鈥檚 new on Web & Windows
+whats.your.team.name	What's your team name?
+whiteboard.assets.limit	You can only upload up to [0] images.
+whiteboard.close.beta.limited.users.desc	Whiteboards are currently in closed beta and only available to a limited group of users.
+whiteboard.duplicate.desc	This whiteboard is a duplicate. Editing it will also update the original.
+whiteboard.elements.limit	You can only add up to [0] elements.
+whiteboard.error.image.upload.failed	Image upload failed
+whiteboard.error.video.upload.failed	Video upload failed
+whiteboard.failed.to.upload.image	Failed to upload image. Reload the page and try again.
+whiteboard.in	Whiteboard in [0]
+whiteboard.preview.error	Couldn鈥檛 generate preview
+whiteboard.upgrade.button	Create new version
+whiteboard.upgrade.error	Failed to upgrade the whiteboard
+whiteboard.upgrade.header	Update Whiteboard
+wrong.account	Wrong account
+wrong.account.signed.in.as	You're signed in as {{currentEmail}}, but this invite is for {{inviteEmail}}.
+x.ago	[0] ago
+x.documents	[0] documents
+x.folders	[0] folders
+x.items	[0] items
+x.of.x.documents	[0] of [1] documents
+x.of.x.folders	[0] of [1] folders
+x.per.month	[0] per month
+x.private.spaces	5 private spaces
+x.results	[0] Results
+x.selected	[0] selected
+x.successfully.removed.from.y	鈥淸0]鈥� successfully removed from 鈥淸1]鈥�
+x15.days.free.trial	15 days free trial
+yearly.uppercase	Yearly
+you.brackets	(You)
+you.can.change.this.later	You can change this later in settings.
+you.left.team	You left [0]
+you.uppercase	You
+your.own.private.space	Your own private space
+your.spaces	Your Spaces

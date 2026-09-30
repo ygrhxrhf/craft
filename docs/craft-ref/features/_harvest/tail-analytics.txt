@@ -1,0 +1,29 @@
+analytics.analytics	分析
+analytics.analytics.for	'[0]' 分析
+analytics.avg.reading.time	平均阅读时间
+analytics.could.not.load	无法加载数据，请检查你的网络连接。
+analytics.desktop	桌面端
+analytics.direct.none	直接 / 无
+analytics.mobile	移动端
+analytics.no.data.available	没有可用数据
+analytics.no.data.yet	还没有数据
+analytics.open.analytics.guide	打开分析指南
+analytics.other	其他
+analytics.readers	读者
+analytics.readers.viewed.total	位读者在过去 30 天内查看了此链接
+analytics.refresh	刷新
+analytics.refresh.data	刷新数据
+analytics.shared.doc	共享文档
+analytics.source	来源
+analytics.tablet	平板电脑
+analytics.time	时间
+analytics.top.browsers	热门浏览器
+analytics.top.countries	热门国家
+analytics.top.devices	热门设备
+analytics.top.pages	热门页面
+analytics.top.sources	热门来源
+analytics.total.readers	读者总数
+analytics.total.views	总浏览量
+analytics.upgrade.to.unlock	升级到 Plus 即可解锁 [0] 文档背后的详细统计信息。
+analytics.view.all	查看全部
+analytics.views	浏览量

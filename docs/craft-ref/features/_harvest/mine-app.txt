@@ -1,0 +1,295 @@
+
+## kbd  21 distinct / 23 hits  (显示前 21)
+    3  shift   ← vendor-BZCR0rqu.js
+    1  application/load-control+xml   ← vendor-BZCR0rqu.js
+    1  cmd+shift+z   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+backspace   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+d   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+delete   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+h   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+k   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+left   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+right   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+shift+z   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+t   ← vendor-slate-CRtDaGYB.js
+    1  ctrl+y   ← vendor-slate-CRtDaGYB.js
+    1  mod+b   ← vendor-slate-CRtDaGYB.js
+    1  mod+i   ← vendor-slate-CRtDaGYB.js
+    1  mod+z   ← vendor-slate-CRtDaGYB.js
+    1  opt+shift+down   ← vendor-slate-CRtDaGYB.js
+    1  opt+shift+up   ← vendor-slate-CRtDaGYB.js
+    1  shift+enter   ← vendor-slate-CRtDaGYB.js
+    1  shift+left   ← vendor-slate-CRtDaGYB.js
+    1  shift+right   ← vendor-slate-CRtDaGYB.js
+
+## title  1469 distinct / 1717 hits  (显示前 30)
+   38  BlockContextMenuOptionClicked   ← name:index-DiTmKH3z.js
+    8  InsertFromSidebar   ← name:index-DiTmKH3z.js
+    7  鈼�   ← text:vendor-BZCR0rqu.js
+    6  arrow   ← name:vendor-BZCR0rqu.js
+    6  flip   ← name:index-DiTmKH3z.js
+    6  hide   ← name:index-DiTmKH3z.js
+    6  offset   ← name:index-DiTmKH3z.js
+    6  search-icon   ← name:index-DiTmKH3z.js
+    4  assistant.improve.clarity   ← title:AIChatPopup-ClUQFRna.js
+    4  assistant.improve.spelling.and.grammar   ← title:AIChatPopup-ClUQFRna.js
+    4  assistant.translate   ← title:AIChatPopup-ClUQFRna.js
+    4  Collection_InsertNewRow   ← name:index-DiTmKH3z.js
+    4  Collection_OpenFullScreen   ← name:index-DiTmKH3z.js
+    4  email   ← name:index-DiTmKH3z.js
+    4  login   ← name:index-DiTmKH3z.js
+    4  message   ← name:index-DiTmKH3z.js
+    4  reference   ← text:vendor-BZCR0rqu.js
+    4  theme-color   ← name:index-DiTmKH3z.js
+    3  asc   ← desc:index-DiTmKH3z.js
+    3  AssertionError   ← name:index-DiTmKH3z.js
+    3  assistant.create.a.summary   ← title:AIChatPopup-ClUQFRna.js
+    3  assistant.prompt.find.action.items   ← title:AIChatPopup-ClUQFRna.js
+    3  assistant.suggest.related.topics   ← title:AIChatPopup-ClUQFRna.js
+    3  Combobox   ← name:vendor-BZCR0rqu.js
+    3  Invariant Violation   ← name:vendor-BZCR0rqu.js
+    3  loading   ← name:index-DiTmKH3z.js
+    3  main   ← name:index-DiTmKH3z.js
+    3  POP   ← action:vendor-BZCR0rqu.js
+    3  preventOverflow   ← name:index-DiTmKH3z.js
+    3  search   ← name:index-DiTmKH3z.js
+  …另有 1425 条，见 --out JSON
+
+## i18n 命名空间（功能分类树，前 24）
+  270  subscription.
+  261  country.
+  242  assistant.
+  233  alert.
+  198  collections.
+  189  commands.
+  180  teamsettings.
+  155  style.
+  149  collab.
+  130  tasks.
+  124  browse.
+  124  onboarding.
+  117  preferences.
+   99  toolbar.
+   92  imagine.
+   79  table.
+   79  unit.
+   71  team.
+   59  tags.
+   44  ideastarter.
+   41  blockdetails.
+   41  web.
+   39  date.
+   29  analytics.
+
+## i18nKey  3639 distinct / 5080 hits  (显示前 30)
+   13  browse.open.in.app.question   ← index-DiTmKH3z.js
+   13  login.start.sign.in.with.craft   ← index-DiTmKH3z.js
+   13  onboarding.continue.sso   ← index-DiTmKH3z.js
+   13  preferences.space.settings   ← index-DiTmKH3z.js
+   12  accountselector.shared.with.me   ← index-DiTmKH3z.js
+   12  alert.account.locked   ← index-DiTmKH3z.js
+   12  alert.apple.id.already.used   ← index-DiTmKH3z.js
+   12  alert.code.already.verified   ← index-DiTmKH3z.js
+   12  alert.error.auth.token.missing   ← index-DiTmKH3z.js
+   12  alert.error.content.generic   ← index-DiTmKH3z.js
+   12  alert.error.extension.not.installed   ← index-DiTmKH3z.js
+   12  alert.error.invalid.params   ← index-DiTmKH3z.js
+   12  alert.error.login.failed   ← index-DiTmKH3z.js
+   12  alert.error.occurred   ← index-DiTmKH3z.js
+   12  alert.error.sso.not.setup   ← index-DiTmKH3z.js
+   12  alert.error.unknown   ← index-DiTmKH3z.js
+   12  alert.expired.code   ← index-DiTmKH3z.js
+   12  alert.invalid.code   ← index-DiTmKH3z.js
+   12  alert.registration.is.unavailable   ← index-DiTmKH3z.js
+   12  alert.too.many.attempts   ← index-DiTmKH3z.js
+   12  alert.use.sso   ← index-DiTmKH3z.js
+   12  all.docs   ← index-DiTmKH3z.js
+   12  assistant.assistant   ← index-DiTmKH3z.js
+   12  blockdetails.code.close.preview   ← index-DiTmKH3z.js
+   12  blockdetails.code.split.view   ← index-DiTmKH3z.js
+   12  browse.back.to.login   ← index-DiTmKH3z.js
+   12  browse.logging.in   ← index-DiTmKH3z.js
+   12  browse.new.doc   ← index-DiTmKH3z.js
+   12  browse.new.document   ← index-DiTmKH3z.js
+   12  browse.open.in.app   ← index-DiTmKH3z.js
+  …另有 3609 条，见 --out JSON
+
+## blockType  66 distinct / 86 hits  (显示前 30)
+    5  space-browse-link   ← index-DiTmKH3z.js
+    4  daily-note   ← index-DiTmKH3z.js
+    2  after-sibling   ← index-DiTmKH3z.js
+    2  auto-applied   ← index-DiTmKH3z.js
+    2  card-row   ← index-DiTmKH3z.js
+    2  create-space-error   ← index-DiTmKH3z.js
+    2  create-team   ← index-DiTmKH3z.js
+    2  document-counter   ← index-DiTmKH3z.js
+    2  loading-restore   ← index-DiTmKH3z.js
+    2  over-limit   ← index-DiTmKH3z.js
+    2  parent-position   ← index-DiTmKH3z.js
+    2  plain-text   ← index-DiTmKH3z.js
+    2  space-settings   ← index-DiTmKH3z.js
+    2  team-trial-ended   ← index-DiTmKH3z.js
+    2  tool-call   ← AIChatPopup-ClUQFRna.js
+    1  account-settings   ← index-DiTmKH3z.js
+    1  ai-credit   ← index-DiTmKH3z.js
+    1  appearance-settings   ← index-DiTmKH3z.js
+    1  bot-device   ← vendor-BZCR0rqu.js
+    1  breadcrumb-link   ← index-DiTmKH3z.js
+    1  checkout-cancel   ← index-DiTmKH3z.js
+    1  checkout-success   ← index-DiTmKH3z.js
+    1  create-new-team   ← index-DiTmKH3z.js
+    1  custom-media   ← vendor-BZCR0rqu.js
+    1  editing-banner   ← index-DiTmKH3z.js
+    1  font-face   ← vendor-BZCR0rqu.js
+    1  full-search   ← index-DiTmKH3z.js
+    1  global-browse-link   ← index-DiTmKH3z.js
+    1  group-header   ← index-DiTmKH3z.js
+    1  loading-teams   ← index-DiTmKH3z.js
+  …另有 36 条，见 --out JSON
+
+## mime  1753 distinct / 1828 hits  (显示前 30)
+   17  text/plain   ← index-DiTmKH3z.js
+   15  text/html   ← index-DiTmKH3z.js
+    7  application/octet-stream   ← index-DiTmKH3z.js
+    7  application/pdf   ← index-DiTmKH3z.js
+    7  text/css   ← index-DiTmKH3z.js
+    7  text/csv   ← index-DiTmKH3z.js
+    6  application/zip   ← index-DiTmKH3z.js
+    5  text/markdown   ← index-DiTmKH3z.js
+    4  text/javascript   ← index-DiTmKH3z.js
+    3  application/xml   ← index-DiTmKH3z.js
+    2  application/json   ← vendor-BZCR0rqu.js
+    2  application/vnd.openxmlformats-package.core-properties+xml   ← vendor-BZCR0rqu.js
+    2  application/vnd.openxmlformats-package.relationships+xml   ← vendor-BZCR0rqu.js
+    2  application/x-slate-fragment   ← index-DiTmKH3z.js
+    2  application/x-www-form-urlencoded   ← vendor-BZCR0rqu.js
+    2  application/xhtml+xml   ← index-DiTmKH3z.js
+    2  text/xml   ← index-DiTmKH3z.js
+    1  application/1d-interleaved-parityfec   ← vendor-BZCR0rqu.js
+    1  application/3gpdash-qoe-report+xml   ← vendor-BZCR0rqu.js
+    1  application/3gpp-ims+xml   ← vendor-BZCR0rqu.js
+    1  application/3gpphal+json   ← vendor-BZCR0rqu.js
+    1  application/3gpphalforms+json   ← vendor-BZCR0rqu.js
+    1  application/a2l   ← vendor-BZCR0rqu.js
+    1  application/ace+cbor   ← vendor-BZCR0rqu.js
+    1  application/activemessage   ← vendor-BZCR0rqu.js
+    1  application/activity+json   ← vendor-BZCR0rqu.js
+    1  application/alto-costmap+json   ← vendor-BZCR0rqu.js
+    1  application/alto-costmapfilter+json   ← vendor-BZCR0rqu.js
+    1  application/alto-directory+json   ← vendor-BZCR0rqu.js
+    1  application/alto-endpointcost+json   ← vendor-BZCR0rqu.js
+  …另有 1723 条，见 --out JSON
+
+## storageKey  6 distinct / 9 hits  (显示前 6)
+    2  test   ← vendor-BZCR0rqu.js
+    2  what-input   ← vendor-BZCR0rqu.js
+    2  what-intent   ← vendor-BZCR0rqu.js
+    1  lastSeenSurveyDate   ← vendor-BZCR0rqu.js
+    1  userProfilev3   ← index-DiTmKH3z.js
+    1  what-   ← vendor-BZCR0rqu.js
+
+## route  82 distinct / 109 hits  (显示前 30)
+    7  /api   ← index-DiTmKH3z.js
+    5  /photos   ← vendor-BZCR0rqu.js
+    3  /collections   ← vendor-BZCR0rqu.js
+    3  /playground   ← index-DiTmKH3z.js
+    3  /setapplogin   ← index-DiTmKH3z.js
+    2  /api/ws/v1   ← index-DiTmKH3z.js
+    2  /auth/profile   ← index-DiTmKH3z.js
+    2  /e   ← vendor-BZCR0rqu.js
+    2  /editor   ← index-DiTmKH3z.js
+    2  /log/v1/ingest   ← index-DiTmKH3z.js
+    2  /login   ← index-DiTmKH3z.js
+    2  /search   ← index-DiTmKH3z.js
+    2  /shared-with-me   ← index-DiTmKH3z.js
+    2  /subscription/teams   ← index-DiTmKH3z.js
+    2  /team-invite   ← index-DiTmKH3z.js
+    2  /users   ← vendor-BZCR0rqu.js
+    1  /1   ← vendor-BZCR0rqu.js
+    1  /3   ← vendor-BZCR0rqu.js
+    1  /412   ← vendor-BZCR0rqu.js
+    1  /416   ← vendor-BZCR0rqu.js
+    1  /417   ← vendor-BZCR0rqu.js
+    1  /419   ← vendor-BZCR0rqu.js
+    1  /8   ← vendor-BZCR0rqu.js
+    1  /ai-usage   ← index-DiTmKH3z.js
+    1  /api/logo   ← index-DiTmKH3z.js
+    1  /api/ws-ai-agent/v1/socket   ← AIChatPopup-ClUQFRna.js
+    1  /api/ws-noti/v1   ← index-DiTmKH3z.js
+    1  /api/ws-rtc/v1   ← index-DiTmKH3z.js
+    1  /auth/anonymous/new   ← index-DiTmKH3z.js
+    1  /auth/authorization_code/create   ← index-DiTmKH3z.js
+  …另有 52 条，见 --out JSON
+
+## copy  2588 distinct / 4622 hits  (显示前 30)
+  145  鈮�   ← index-DiTmKH3z.js
+  127  鈭�   ← vendor-BZCR0rqu.js
+  113  鈯�   ← vendor-BZCR0rqu.js
+  110  鈫�   ← index-DiTmKH3z.js
+  100  鈰�   ← index-DiTmKH3z.js
+   99  鈥�   ← index-DiTmKH3z.js
+   98  delete   ← index-DiTmKH3z.js
+   78  猹�   ← vendor-markdown-it-CKzlhnmc.js
+   77  鈬�   ← index-DiTmKH3z.js
+   76  鈩�   ← vendor-BZCR0rqu.js
+   55  猊�   ← vendor-markdown-it-CKzlhnmc.js
+   49  猢�   ← vendor-markdown-it-CKzlhnmc.js
+   46  猡�   ← index-DiTmKH3z.js
+   44  猕�   ← vendor-markdown-it-CKzlhnmc.js
+   43  猥�   ← vendor-markdown-it-CKzlhnmc.js
+   42  鈱�   ← index-DiTmKH3z.js
+   42  猞�   ← vendor-markdown-it-CKzlhnmc.js
+   38  鉄�   ← index-DiTmKH3z.js
+   29  鈺�   ← vendor-markdown-it-CKzlhnmc.js
+   28  鈧�   ← index-DiTmKH3z.js
+   24  鈪�   ← vendor-BZCR0rqu.js
+   24  failed   ← index-DiTmKH3z.js
+   24  onboarding.error.login.failed   ← index-DiTmKH3z.js
+   20  猝�   ← vendor-markdown-it-CKzlhnmc.js
+   15  锟�   ← vendor-BZCR0rqu.js
+   14  鈦�   ← index-DiTmKH3z.js
+   14  鈾�   ← vendor-markdown-it-CKzlhnmc.js
+   14  alert.error.login.failed   ← index-DiTmKH3z.js
+   13  browse.sign.in.failed   ← index-DiTmKH3z.js
+   13  recently.deleted   ← index-DiTmKH3z.js
+  …另有 2558 条，见 --out JSON
+
+## files
+  6864717  index-DiTmKH3z.js
+  3911842  vendor-BZCR0rqu.js
+   646886  socket.worker-CMvBLZvP.js
+   349860  AIChatPopup-ClUQFRna.js
+   235862  ShareSheet-DVttiwLH.js
+   184764  vendor-slate-CRtDaGYB.js
+   181813  vendor-ds-C1RQ3Y31.js
+   165110  vendor-chrono-Bk4Kw_1J.js
+   114294  vendor-tanstack-D9bDJw6-.js
+   108281  vendor-craft-export-DIm_3hRN.js
+    99723  vendor-markdown-it-CKzlhnmc.js
+    89544  FloatingThreadWindow-BwcT5ktn.js
+    70105  PageCardMixer-EI_PiWQJ.js
+    40054  RenderOptionsPanel-Ce9vLC8i.js
+    34053  vendor-formulas-bemgBGOl.js
+    26900  Integration-CAcAyZdz.js
+    21366  TemplatePicker-CVwmPUWZ.js
+    16171  vendor-core-utils-BmFWBsTs.js
+    10148  MoveToFolderDialog-B1IJuJnb.js
+     8670  MarkdownExportApi-CkVOp9F7.js
+     8592  NewTaskPopup-Br4pt8ap.js
+     8379  IncompatibleBrowserCheck-tnFLiyTg.js
+     6151  PreferencesPanelWithProfilePicture-YU8QBt8Q.js
+     5698  SubscriptionPopupContainer-BkTs7vCz.js
+     5459  MoveSpaceToTeamPopupContent-qwueFoZp.js
+     4344  useCustomPrompts-D9zcYS-6.js
+     3613  BlockLinkMenuQuickOpenWrapper-Bjzx4tBT.js
+     3386  SubscriptionCheckoutStartedPopup-CATaIRZa.js
+     2595  themePreviews-BJcCJGmn.js
+     2202  EditFolderDescriptionPopup-C9OosogT.js
+     1761  UpgradePrompt-Db6n5YZ0.js
+     1616  TasksBrowseUpcomingView.utils-CXbjE4oj.js
+     1435  Toggle-Csslv1Z6.js
+      799  RenderOptionsPanel.utils-RlQlsoME.js
+      665  HTML5DnDProvider-C6oAI5bn.js
+      617  ClipboardBoundary-BsyMPGZC.js
+
+full dump -> contract-app.json

@@ -1,0 +1,123 @@
+preferences.about	关于 Craft
+preferences.about.legal	法律信息
+preferences.about.social	社交媒体
+preferences.account.delete	删除帐户
+preferences.account.delete.message	删除帐户将永久删除你的所有文档。此操作无法撤消。
+preferences.account.delete.title	帐户删除
+preferences.account.title	我的账户
+preferences.add.members.to.space	将成员添加到空间
+preferences.add.members.to.space.sending	发送空间邀请
+preferences.advanced	高级设置
+preferences.advanced.completed.task.appearance	完成任务的外观
+preferences.advanced.completed.task.appearance.description	自定义已完成任务在应用中的显示方式
+preferences.advanced.completed.task.appearance.faded	淡化
+preferences.advanced.completed.task.appearance.none	无
+preferences.advanced.completed.task.appearance.strike	删除线
+preferences.advanced.date.badges.description	显示带有日期标记的每日笔记链接是在文档中突出显示它的好方法。
+preferences.advanced.date.badges.title	日期标记
+preferences.advanced.link.open.preference	Craft 文档链接默认打开方式
+preferences.ai.usage.and.limits	AI 使用和限制
+preferences.alert.change.name	无法更改名称
+preferences.alert.update.photo	无法更新照片
+preferences.appearance	外观
+preferences.appearance.accent.color	强调色
+preferences.appearance.accent.color.description	选择强调色
+preferences.assistant.add.prompt	添加提示
+preferences.assistant.delete.prompt	删除提示
+preferences.assistant.model	模型
+preferences.assistant.saved.prompts	已保存的提示
+preferences.assistant.saved.prompts.limit.desc	最多可保存 [0] 条提示词，每条最多 [1] 个字符。
+preferences.assistant.space.desc	你可以为单个空间禁用该助手。这不会影响其他成员的设置。
+preferences.automatic.beta.redirect	自动重定向至 Beta 版本
+preferences.available.platforms	可用平台
+preferences.comments.and.mentions	评论和提及
+preferences.comments.and.mentions.desc	当你收到新的评论和提及时得到通知。
+preferences.connect	连接
+preferences.connected.platforms	已连接平台
+preferences.craft	Craft
+preferences.daily.email	每日电子邮件
+preferences.daily.email.desc	接收当天所有任务和提醒的摘要。你还将收到今天截止的摘要推送通知。
+preferences.daily.note.tooltip	在主页上默认显示每日笔记。
+preferences.disconnect	断开
+preferences.document.cache.cleared	文档缓存已清除
+preferences.email	电子邮件
+preferences.email.change	更改邮箱
+preferences.email.description	你用于此帐户的电子邮件地址。
+preferences.email.notifications	电子邮件通知
+preferences.email.to.craft	邮件发送至 Craft
+preferences.enable.assistant	启用助手
+preferences.enable.assistant.description	禁用后，你将无法访问助手。不影响其他成员的设置。
+preferences.family.name	姓
+preferences.follow.craftdocs.app.x	在 X 上关注 @CraftDocs
+preferences.general.account.settings	账户设置
+preferences.general.settings	常规设置
+preferences.have.an.idea	有想法、功能请求或发现了错误？请告诉我们，我们会尽快处理！
+preferences.integrations	集成
+preferences.keyboard.shortcuts	快捷键
+preferences.language	语言
+preferences.learn.more.integrations	了解有关集成的更多信息
+preferences.leave.x.question	离开 [0]？
+preferences.license.notes	许可证和开源说明
+preferences.manage.access	管理空间访问
+preferences.manage.access.desc	管理谁可以看到这个空间
+preferences.manage.open.desc	开放空间是可见的，所有团队成员都可以加入
+preferences.manage.private	私密
+preferences.manage.private.desc	私人空间只能通过邀请查看或加入
+preferences.members.and.invites	成员与邀请
+preferences.name	名称
+preferences.name.change	更改姓名
+preferences.name.description	你的姓名在你通过共享链接和电子邮件与他人共享的文档中可见。
+preferences.name.updated	名称已更新
+preferences.name.updating	正在更新名称…
+preferences.notifications.email	电子邮件通知
+preferences.notifications.email.desc	如果你想在此空间中接收提及和评论的电子邮件通知，请启用
+preferences.notifications.for.x	“[0]”的通知
+preferences.notifications.push	推送通知
+preferences.notifications.push.desc	如果此空间中有新评论和提及，Craft 可以向你发送通知
+preferences.offline.mode.description	离线查看和编辑文档
+preferences.offline.mode.description.disabled	你可以离线查看已访问的文档，但需要联网才能编辑
+preferences.offline.mode.description.enabled	离线更改已保存，将在你下次上线时同步
+preferences.offline.mode.disable.confirm.button	放弃并禁用
+preferences.offline.mode.disable.confirm.description	以下文档有未同步的离线更改，将会丢失：
+preferences.offline.mode.disable.confirm.more	还有 [0] 个
+preferences.offline.mode.disable.confirm.other.space	在 [0]：
+preferences.offline.mode.disable.confirm.title	放弃离线更改？
+preferences.offline.mode.disabled.title	离线编辑模式已禁用
+preferences.offline.mode.enabled.title	离线编辑模式已启用
+preferences.offline.mode.title	离线模式
+preferences.open.in.app.link.tooltip	自定义 Craft 链接应在 Craft for Web 还是桌面应用中打开。
+preferences.privacy.policy	隐私政策
+preferences.profile.photo.updated	个人资料照片已更新
+preferences.published.content.settings	已发布内容设置
+preferences.reminders.desc	当需要提醒时，Craft 会向你发送通知。
+preferences.remove.user.from.space.confirm	你确定要从空间"[1]"中移除"[0]"吗？
+preferences.remove.user.from.team	从团队中移除用户
+preferences.remove.user.from.team.confirm	你确定要从团队“[1]”中移除“[0]”吗？
+preferences.reset.doc.cache	重置文档缓存
+preferences.section.title.language	语言与拼写检查
+preferences.send.feedback	意见反馈
+preferences.settings.apply.to.published.content.in.all.spaces	这些设置适用于“[0]”团队所有空间中发布的内容。
+preferences.settings.apply.to.published.content.in.your.space	这些设置适用于你个人空间中发布的所有内容。
+preferences.setup.custom.domain	设置自定义域名
+preferences.setup.custom.domain.desc	发布 Craft 文档时使用你自己的域名。
+preferences.show.logo.in.header	在页眉中显示徽标
+preferences.show.your.logo.in.the.header	在所有已发布文档的页眉中显示你的徽标。
+preferences.sign.out	退出登录
+preferences.space.access	空间访问权限
+preferences.space.override.settings.for.individual.spaces	你可以覆盖单个空间的这些设置。
+preferences.space.private.desc	团队管理员可以看到并可以通过邀请加入。
+preferences.space.public.desc	所有团队成员都可以看到并加入。
+preferences.space.settings	空间设置
+preferences.spell.checked.language	拼写检查语言
+preferences.spellcheck.tooltip	更改所有文档上拼写检查器的默认语言。
+preferences.spelling.description	设置在 Craft 中使用的默认拼写检查语言。
+preferences.subscription	订阅
+preferences.subscription.overview	订阅概述
+preferences.switch.subscription	切换订阅
+preferences.switch.to.space	切换至空间
+preferences.team.image.updated	团队图片已更新
+preferences.updating.photo	正在更新照片…
+preferences.use.your.custom.craft.me	发布 Craft 文档时使用你的自定义 craft.me 链接。
+preferences.view.ai.assistant.credits	查看 AI 助手额度
+preferences.your.craft.me.link	你的 craft.me 链接
+preferencesinterested.in.new	对 Craft 的新功能和即将推出的功能感兴趣？在 X 上关注我们，第一时间了解最新信息！

@@ -20,6 +20,7 @@ export function createSqliteStore(dbPath?: string): SyncStore {
     if (db || memFallback) return;
     try {
       // 动态 import，避免硬依赖导致 tsc 对未安装包报错（better-sqlite3 为可选依赖）
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore - better-sqlite3 可选依赖，无类型声明时忽略
       const mod: any = await import('better-sqlite3' as string);
       const Database = mod.default ?? mod;

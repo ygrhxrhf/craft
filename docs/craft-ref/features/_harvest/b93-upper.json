@@ -1,0 +1,38 @@
+{
+ "note": "batch 93-upper curated windows (viewport probe + import delimiting + vendor export lookup)",
+ "viewport_probe": {
+  "compactClasses": [],
+  "importStatementEnd": 6600,
+  "importStatementStart": 5288,
+  "mainCached": true,
+  "sidebarClasses": [
+   "_sidebar_dpkxs_58"
+  ],
+  "statementLen": 1312,
+  "tailAfterBrace": "}from\"./vendor-BZCR0rqu.js\";import{r as k,h as H,i as fc,k as K,j as a,l as gt,b as Te,m a",
+  "tiAliasOffset": 5940,
+  "tiLocalDefs": [],
+  "tiWins": []
+ },
+ "ti_local_defs_and_import": {
+  "compactClasses": [],
+  "importStatementEnd": 6600,
+  "importStatementStart": 5288,
+  "mainCached": true,
+  "sidebarClasses": [
+   "_sidebar_dpkxs_58"
+  ],
+  "statementLen": 1312,
+  "tailAfterBrace": "}from\"./vendor-BZCR0rqu.js\";import{r as k,h as H,i as fc,k as K,j as a,l as gt,b as Te,m a",
+  "tiAliasOffset": 5940,
+  "tiLocalDefs": [],
+  "tiWins": []
+ },
+ "vendor_export_ei": {
+  "exportOffset": 3880220,
+  "asEiIdx": 5802,
+  "ctx": "ec,getI18n$2 as ed,Trans$2 as ee,TabsTab as ef,TabsIndicator as eg,TabsList as eh,TabsRoot as ei,Input$1 as ej,Blurhash as ek,instance$3 as el,initRea",
+  "localName": "TabsRoot"
+ },
+ "tabsRoot_body": "TabsRoot=reactExports.forwardRef(function $r(Ar,Cr){const{className:Rr,defaultValue:Pr=0,onValueChange:Ir,orientation:Hr=\"horizontal\",render:ca,value:fa,...da}=Ar,pa=useDirection(),ha=Object.hasOwn(Ar,\"defaultValue\"),ma=reactExports.useRef([]),[ga,va]=reactExports.useState(()=>new Map),[ya,wa]=useControlled({controlled:fa,default:Pr,name:\"Tabs\",state:\"value\"}),ba=fa!==void 0,[Ea,xa]=reactExports.useState(()=>new Map),[Sa,$a]=reactExports.useState(\"none\"),Ta=useStableCallback((Va,Za)=>{Ir==null||Ir(Va,Za),!Za.isCanceled&&(wa(Va),$a(Za.activationDirection))}),Aa=useStableCallback((Va,Za)=>{va(Ga=>{if(Ga.get(Va)===Za)return Ga;const ja=new Map(Ga);return ja.set(Va,Za),ja})}),Oa=useStableCallback((Va,Za)=>{va(Ga=>{if(!Ga.has(Va)||Ga.get(Va)!==Za)return Ga;const ja=new Map(Ga);return ja.delete(Va),ja})}),Pa=reactExports.useCallback(Va=>ga.get(Va),[ga]),Ua=reactExports.useCallback(Va=>{for(const Za of Ea.values())if(Va===(Za==null?void 0:Za.value))return Za==null?void 0:Za.id},[Ea]),qa=reactExports.useCallback(Va=>{if(Va===void 0)return null;for(const[Za,Ga]of Ea.entries())if(Ga!=null&&Va===(Ga.value??Ga.index))return Za;return null},[Ea]),Ia=reactExports.useMemo(()=>({direction:pa,getTa"
+}

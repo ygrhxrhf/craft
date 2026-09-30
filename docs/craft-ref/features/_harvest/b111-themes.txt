@@ -1,0 +1,33 @@
+### V=21  ue=21  工厂解析=20  callMap=22
+### arrow.source=([\w$]+)=([\w$]+)=>\{const\{theme:t="(\w+)",settings:a=\{\},styles:r=\[\]\}=\{\};{0,1}return (\w+)\(\{theme:t,settings:\{\.\.\.([\w$]+),\.\.\.a\},styles:\[
+
+| # | id | label | keywords | isDark | V.settings | 别名链 | 结果变量=工厂() | 工厂形状 | 工厂内 settings 源 | 两表同一对象? | theme 字面量 | tag 数 | background | foreground | caret | selection | gutterBackground | gutterForeground | gutterBorder | fontFamily | settings 键数 | 底色亮度 | 三者一致性 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | auto | Auto | ["system"] | true | null | =自身 | null = ?() | - | - | auto→null | - | - | ? | ? | - | - | - | - | - | ? | - | - | auto 不入表 |
+| 2 | craftdark | Dark | [] | true | Ue | =自身 | uo = fo() | arrow | Ue | YES | "light" | 9 | #28292B | #CECFD0 | #fff | #385576 | #28292B | rgba(255,255,255,0.4) | #f4f4f41f | Roboto Mono, monospace | 11 | 40.9 | 不一致：底色暗／字面量亮／isDark暗 |
+| 3 | craftlight | Light | [] | false | We | =自身 | go = io() | arrow | We | YES | "light" | 9 | #FBFBFB | #3D3D3D | - | #BBDFFF | #FBFBFB | rgba(31,34,37,0.3) | - | Roboto Mono, monospace | 9 | 251.0 | 三者一致 |
+| 4 | atomone | Atom One | ["dark"] | true | Pe | =自身 | so = co() | arrow | Pe | YES | "dark" | 8 | #272C35 | #9d9b97 | #797977 | #ffffff30 | #272C35 | #465063 | transparent | Roboto Mono, monospace | 11 | 43.6 | 三者一致 |
+| 5 | aura | Aura | ["dark"] | true | Ke | =自身 | bo = mo() | arrow | Ke | YES | "dark" | 20 | #21202e | #edecee | #a277ff | #3d375e | #21202e | rgba(237,236,238,0.4) | transparent | Roboto Mono, monospace | 11 | 33.2 | 三者一致 |
+| 6 | bbedit | BBEdit | ["light"] | false | Ge | =自身 | ho = po() | arrow | Ge | YES | "light" | 13 | #FFFFFF | #000000 | #FBAC52 | #fffca5 | #f5f5f5 | #4D4D4C | transparent | Roboto Mono, monospace | 10 | 255.0 | 三者一致 |
+| 7 | darcula | Darcula | ["dark"] | true | _e | =自身 | lo = no() | arrow | _e | YES | "dark" | 9 | #2B2B2B | #f8f8f2 | #FFFFFF | rgba(255, 255, 255, 0.1) | #414040 | #999 | transparent | Roboto Mono, monospace | 10 | 43.0 | 三者一致 |
+| 8 | dracula | Dracula | ["dark"] | true | qe | =自身 | yo = ko() | arrow | qe | YES | "dark" | 8 | #282a36 | #f8f8f2 | #f8f8f0 | rgba(255, 255, 255, 0.2) | #282a36 | #6D8A88 | transparent | Roboto Mono, monospace | 10 | 42.4 | 三者一致 |
+| 9 | githubdark | GitHub Dark | ["dark"] | true | ze | =自身 | wo = vo() | arrow | ze | YES | "dark" | 14 | #0d1117 | #c9d1d9 | #c9d1d9 | #003d73 | - | - | #f4f4f41f | Roboto Mono, monospace | 8 | 16.6 | 三者一致 |
+| 10 | githublight | GitHub Light | [] | false | $e | =自身 | Co = xo() | arrow | $e | YES | "light" | 15 | #fff | #24292e | - | #BBDFFF | #fff | #6e7781 | - | Roboto Mono, monospace | 7 | 255.0 | 三者一致 |
+| 11 | gruvboxdark | Gruvbox Dark | ["dark"] | true | Ve | =自身 | Do = No() | arrow | Ve | YES | "dark" | 34 | #282828 | #ebdbb2 | #ebdbb2 | rgba(189,174,147,0.5) | #282828 | #7c6f64 | - | Roboto Mono, monospace | 9 | 40.0 | 三者一致 |
+| 12 | gruvboxlight | Gruvbox Light | [] | false | Ye | =自身 | Fo = So() | arrow | Ye | YES | "light" | 34 | #fbf1c7 | #3c3836 | #af3a03 | rgba(235,219,178) | #ebdbb2 | #665c54 | transparent | Roboto Mono, monospace | 10 | 240.1 | 三者一致 |
+| 13 | materialdark | Material Dark | [] | true | Bo | Bo→Xe | Mo = Lo() | arrow | Xe | YES | "dark" | 36 | #2e3235 | #bdbdbd | #a0a4ae | rgba(215,212,240,0.7) | #2e3235 | #999 | transparent | Roboto Mono, monospace | 11 | 49.4 | 三者一致 |
+| 14 | materiallight | Material Light | ["light"] | false | Qe | =自身 | jo = Ao() | arrow | Qe | YES | "dark" | 20 | #FAFAFA | #90A4AE | #272727 | #80CBC440 | #FAFAFA | #90A4AE | transparent | Roboto Mono, monospace | 10 | 250.0 | 不一致：底色亮／字面量暗／isDark亮 |
+| 15 | noctislilac | Noctis Lilac | ["light"] | false | Je | =自身 | Ro = Io() | arrow | Je | YES | "light" | 15 | #f2f1f8 | #0c006b | #5c49e9 | #d5d1f2 | #f2f1f8 | #0c006b70 | - | Roboto Mono, monospace | 9 | 241.7 | 三者一致 |
+| 16 | nord | Nord | ["dark"] | true | Ze | =自身 | To = Eo() | arrow | Ze | YES | "dark" | 36 | #2e3440 | #FFFFFF | #FFFFFF | #4c566a | #2e3440 | #4c566a | transparent | Roboto Mono, monospace | 11 | 51.6 | 三者一致 |
+| 17 | sublime | Sublime | ["dark"] | true | et | =自身 | Ho = Oo() | function | et | YES | "dark" | 11 | #303841 | #FFFFFF | #FBAC52 | #4C5964 | #303841 | #FFFFFF70 | transparent | Roboto Mono, monospace | 10 | 54.9 | 三者一致 |
+| 18 | tokyonight | Tokyo Night | ["dark"] | true | at | =自身 | Go = Ko() | arrow | at | YES | "dark" | 20 | #1a1b26 | #787c99 | #c0caf5 | #515c7e | #1a1b26 | #787c99 | transparent | ? | 9 | 27.6 | 三者一致 |
+| 19 | tokyonightday | Tokyo Night Day | ["light"] | false | tt | =自身 | Po = _o() | arrow | tt | YES | "dark" | 20 | #e1e2e7 | #3760bf | #3760bf | #99a7df | #e1e2e7 | #3760bf | transparent | Roboto Mono, monospace | 10 | 226.1 | 不一致：底色亮／字面量暗／isDark亮 |
+| 20 | tokyonightstorm | Tokyo Night Storm | ["dark"] | true | ot | =自身 | Uo = Wo() | arrow | ot | YES | "dark" | 20 | #24283b | #7982a9 | #c0caf5 | #6f7bb6 | #24283b | #7982a9 | transparent | ? | 9 | 40.5 | 三者一致 |
+| 21 | vscodedark | VS Code | ["dark"] | true | rt | =自身 | $o = qo() | function | rt | YES | "dark" | 17 | #1e1e1e | #9cdcfe | #c6c6c6 | #6199ff2f | #1e1e1e | #838383 | transparent | Roboto Mono, monospace | 11 | 30.0 | 三者一致 |
+
+### 聚合（20 档，auto 除外）
+⇒ gutterBorder 取值分布＝{"#f4f4f41f":2,"(无此键)":4,"transparent":14}
+⇒ fontFamily 取值分布＝{"Roboto Mono, monospace":18,"(无此键)":2}
+⇒ caret 分布＝{"#fff":1,"(无此键)":2,"#797977":1,"#a277ff":1,"#FBAC52":2,"#FFFFFF":2,"#f8f8f0":1,"#c9d1d9":1,"#ebdbb2":1,"#af3a03":1,"#a0a4ae":1,"#272727":1,"#5c49e9":1,"#c0caf5":2,"#3760bf":1,"#c6c6c6":1}
+⇒ 每档 settings 键数分布＝{"7":1,"8":1,"9":5,"10":7,"11":6}
+⇒ 每个键在 20 档里出现的档数＝background=20/20、foreground=20/20、selection=20/20、selectionMatch=20/20、lineHighlight=19/20、gutterBackground=19/20、gutterForeground=19/20、caret=18/20、fontFamily=18/20、gutterBorder=16/20、gutterActiveForeground=7/20

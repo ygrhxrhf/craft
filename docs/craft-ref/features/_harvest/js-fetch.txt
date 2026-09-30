@@ -1,0 +1,4 @@
+BATCH 0 ERR ERR Browser extension disconnected
+BATCH 16 ERR ERR 没有可用的外部浏览器。请打开 Qoder Browser Connector 并确认连接状态。
+BATCH 32 ERR ERR 没有可用的外部浏览器。请打开 Qoder Browser Connector 并确认连接状态。
+TOTAL=0 fails=3

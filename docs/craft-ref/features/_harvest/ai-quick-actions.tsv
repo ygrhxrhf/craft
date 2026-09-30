@@ -1,0 +1,63 @@
+action	title	prompt	icon	other
+summarizeBlocks	assistant.prompt.summarize	assistant.please.summarize.these.blocks	at	
+summarizeDocs	assistant.create.a.summary	assistant.summarize.these.docs	at	
+summarizeDoc	assistant.create.a.summary	assistant.summarize.this.doc	at	
+summarizePage	assistant.create.a.summary	assistant.summarize.this.page	at	
+comprehensiveSummary	assistant.summarize.docs	assistant.create.a.comprehensive.summary	at	
+improveClarityBlocks	assistant.improve.clarity	assistant.how.could.i.make.these.blocks.easier.to.understand	It	actionType,openAgentType
+improveClarityDocs	assistant.improve.clarity	assistant.how.could.i.make.these.docs.easier.to.understand	It	actionType,openAgentType
+improveClarityDoc	assistant.improve.clarity	assistant.how.could.i.make.this.doc.easier.to.understand	It	actionType,openAgentType
+improveClarityPage	assistant.improve.clarity	assistant.how.could.i.make.this.page.easier.to.understand	It	actionType,openAgentType
+spellingBlocks	assistant.improve.spelling.and.grammar	assistant.check.these.blocks.for.spelling.and.grammar	zt	actionType,openAgentType
+spellingDocs	assistant.improve.spelling.and.grammar	assistant.check.these.docs.for.spelling.and.grammar.mistakes	zt	actionType,openAgentType
+spellingDoc	assistant.improve.spelling.and.grammar	assistant.check.this.doc.for.spelling.and.grammear.mistakes	zt	actionType,openAgentType
+spellingPage	assistant.improve.spelling.and.grammar	assistant.check.this.page.for.spelling.and.grammar	zt	actionType,openAgentType
+translateBlocks	assistant.translate	assistant.translate.these.blocks.into	xn	
+translateDocs	assistant.translate	assistant.translate.these.docs.into	xn	
+translateDoc	assistant.translate	assistant.translate.this.doc.into	xn	
+translatePage	assistant.translate	assistant.translate.this.page.into	xn	
+actionItemsDocs	assistant.prompt.find.action.items	assistant.extract.action.items.from.these.docs	Tt	
+actionItemsDoc	assistant.prompt.find.action.items	assistant.extract.action.items.from.this.doc	Tt	
+actionItemsPage	assistant.prompt.find.action.items	assistant.extract.action.items.from.this.page	Tt	
+analyzeWritingDoc	assistant.analyze.writing.style	assistant.analyze.writing.style.in.this.doc	Os	actionType,openAgentType
+analyzeWritingPage	assistant.analyze.writing.style	assistant.analyze.the.writing	Os	actionType,openAgentType
+expandWeakAreasDoc	assistant.expand.weak.areas	assistant.find.areas.in.my.doc.that.need.more.detail	Tn	
+expandWeakAreasPage	assistant.expand.weak.areas	assistant.find.areas.in.this.page	Tn	
+brainstormDoc	assistant.prompt.brainstorm.ideas	assistant.help.me.brainstorm.ideas.to.expand.this.doc	ba	
+brainstormPage	assistant.prompt.brainstorm.ideas	assistant.help.me.brainstorm.ideas	ba	
+suggestRelatedTopics	assistant.suggest.related.topics	assistant.can.you.suggest.related.topics.for.me.to.explore	xs	
+suggestRelatedTopicsShort	assistant.suggest.related.topics	assistant.can.you.suggest.related.topics.for.me	xs	
+suggestRelatedTopicsDoc	assistant.suggest.related.topics	assistant.suggest.related.topics.for.me.to.explore	xs	
+findRelatedDocs	assistant.find.related.docs	assistant.find.other.docs.on.this.topic	zc	actionType,openAgentType
+research	assistant.research.a.topic	assistant.research.this.topic.for.me	Fn	actionType,openAgentType
+getOverview	assistant.get.an.overview	assistant.find.and.summarize.anything.related.to	xf	
+compareDocs	assistant.compare.docs	assistant.compare.these.docs	Fn	
+prioritizeTasks	assistant.prioritize.tasks	assistant.which.tasks.should.i.prioritize	Hc	
+todaysTasks	assistant.list.todays.tasks	assistant.list.all.tasks.for.today	bf	
+ongoingTasks	assistant.list.ongoing.tasks	assistant.list.all.ongoing.tasks	Zc	
+completedTasks	assistant.list.completed.tasks	assistant.list.all.tasks.i.completed.today	Ns	
+upcomingTasks	assistant.list.upcoming.tasks	assistant.what.are.my.upcoming.tasks	gf	
+summarizeLastWeek	assistant.summarize.last.week	assistant.summarize.my.daily.notes	yf	
+reflectOnProgress	assistant.reflect.on.progress	assistant.based.on.my.daily.notes.what.progress.have.i.made	kf	
+identifyPatterns	assistant.identify.patterns	assistant.what.patterns.do.you.notice.in.my.daily.notes	ga	
+findDocs	assistant.find.docs	assistant.list.all.docs.related.to	tn	actionType,openAgentType
+semanticSearch	assistant.semantic.search	assistant.help.me.find.a.doc.that.was.about	Tn	actionType,openAgentType
+organizeByTopic	assistant.organize.by.topic	assistant.help.me.organize.my.docs.by.topic	$s	
+explainCode	assistant.explain.this.code	assistant.explain.what.this.code.does	Vo	
+findBugs	assistant.find.potential.bugs	assistant.analyze.this.code.for.potential.bugs	Nc	
+suggestOptimizations	assistant.suggest.optimizations	assistant.how.can.i.optimize.this.code	pi	
+suggestRefactoring	assistant.suggest.refactoring	assistant.how.could.i.refactor.this.code	Uc	
+describeImage	assistant.describe.this.image	assistant.describe.this.image.prompt	Vo	
+createCaption	assistant.create.caption	assistant.create.caption.for.this.img	Wc	
+extractText	assistant.extract.text.from.image	assistant.extract.text.from.image.prompt	Vc	
+generateAltText	assistant.generate.alt.text	assistant.generate.alt.text.prompt	Aa	
+summarizePdf	assistant.summarize.pdf	assistant.summarize.the.key.points	at	
+extractKeyInfo	assistant.extract.key.info	assistant.extract.key.info.prompt	It	
+searchInPdf	assistant.search.in.pdf	assistant.search.in.pdf.prompt	tn	
+askAboutPdf	assistant.ask.about.this.pdf	assistant.ask.about.this.pdf.prompt	xi	
+extractActionItemsPdf	assistant.extract.action.items	assistant.extract.any.action.items.from.this.pdf	Tt	
+summarizeEntries	assistant.summarize.entries	assistant.summarize.the.entries.in.this.collection	at	
+findPatterns	assistant.find.patterns	assistant.patterns.do.you.notice	ga	
+generateInsights	assistant.generate.insights	assistant.insights.can.you.derive	It	
+helpFilter	assistant.help.filter.collection	assistant.suggest.how.i.can.set.up.filters	fi	
+findEntry	assistant.find.an.entry	assistant.help.me.find.the.entry.that.contains	tn	

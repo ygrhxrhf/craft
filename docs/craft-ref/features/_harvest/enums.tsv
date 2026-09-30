@@ -1,0 +1,57 @@
+const-map	map$6	248	vendor-BZCR0rqu.js	AD=EUR AE=AED AF=AFN AG=XCD AI=XCD AL=ALL AM=AMD AN=ANG AO=AOA AR=ARS AS=USD AT=EUR AU=AUD AW=AWG AX=EUR AZ=AZN BA=BAM BB=BBD BD=BDT BE=EUR BF=XOF BG=BGN BH=BHD BI=BIF BJ=XOF BL=EUR BM=BMD BN=BND BO=BOB BQ=USD BR=BRL BS=BSD BT=BTN BV=NOK BW=BWP BY=BYR BZ=BZD CA=CAD CC=AUD CD=CDF CF=XAF CG=XAF CH=CHF CI=XOF CK=NZD CL=CLP CM=XAF CN=CNY CO=COP CR=CRC CU=CUP CV=CVE CW=ANG CX=AUD CY=EUR CZ=CZK DE=EUR DJ=DJF DK=DKK DM=XCD DO=DOP DZ=DZD EC=USD EE=EUR EG=EGP EH=MAD ER=ERN ES=EUR ET=ETB FI=EUR FJ=FJD FK=FKP FM=USD FO=DKK FR=EUR GA=XAF GB=GBP GD=XCD GE=GEL GF=EUR GG=GBP GH=GHS GI=GIP GL=DKK GM=GMD GN=GNF GP=EUR GQ=XAF GR=EUR GS=GBP GT=GTQ GU=USD GW=XOF GY=GYD HK=HKD HM=AUD HN=HNL HR=HRK HT=HTG HU=HUF ID=IDR IE=EUR IL=ILS IM=GBP IN=INR IO=USD IQ=IQD IR=IRR IS=ISK IT=EUR JE=GBP JM=JMD JO=JOD JP=JPY KE=KES KG=KGS KH=KHR KI=AUD KM=KMF KN=XCD KP=KPW KR=KRW KW=KWD KY=KYD KZ=KZT LA=LAK LB=LBP LC=XCD LI=CHF LK=LKR LR=LRD LS=LSL LT=LTL LU=EUR LV=LVL LY=LYD MA=MAD MC=EUR MD=MDL ME=EUR MF=EUR MG=MGA MH=USD MK=MKD ML=XOF MM=MMK MN=MNT MO=MOP MP=USD MQ=EUR MR=MRO MS=XCD MT=EUR MU=MUR MV=MVR MW=MWK MX=MXN MY=MYR MZ=MZN NA=NAD NC=XPF NE=XOF NF=AUD NG=NGN NI=NIO NL=EUR NO=NOK NP=NPR NR=AUD NU=NZD NZ=NZD OM=OMR PA=PAB PE=PEN PF=XPF PG=PGK PH=PHP PK=PKR PL=PLN PM=EUR PN=NZD PR=USD PS=ILS PT=EUR PW=USD PY=PYG QA=QAR RE=EUR RO=RON RS=RSD RU=RUB RW=RWF SA=SAR SB=SBD SC=SCR SD=SDG SE=SEK SG=SGD SH=SHP SI=EUR SJ=NOK SK=EUR SL=SLL SM=EUR SN=XOF SO=SOS SR=SRD ST=STD SV=SVC SX=ANG SY=SYP SZ=SZL TC=USD TD=XAF TF=EUR TG=XOF TH=THB TJ=TJS TK=NZD TL=USD TM=TMT TN=TND TO=TOP TR=TRY TT=TTD TV=AUD TW=TWD TZ=TZS UA=UAH UG=UGX UM=USD US=USD UY=UYU UZ=UZS VA=EUR VC=XCD VE=VEF VG=USD VI=USD VN=VND VU=VUV WF=XPF WS=WST YE=YER YT=EUR ZA=ZAR ZM=ZMK ZW=ZWL
+enum	jt	30	vendor-excalidraw-DbCJmDpU.js	copy paste cut keydown keyup mousemove resize unload focus blur dragover drop gestureend beforeunload gesturestart gesturechange pointermove pointerdown pointerup statechange wheel touchstart touchend hashchange visibilitychange scroll excalidraw-link menu.itemSelect message fullscreenchange
+enum	nt	21	CodeEditorWrapper-DB8UxA00.js	auto craftdark craftlight atomone aura bbedit darcula dracula githubdark githublight gruvboxdark gruvboxlight materialdark materiallight noctislilac nord sublime tokyonightday tokyonightstorm tokyonight vscodedark
+const-map	Type	17	vendor-BZCR0rqu.js	ALIAS=ALIAS BLANK_LINE=BLANK_LINE BLOCK_FOLDED=BLOCK_FOLDED BLOCK_LITERAL=BLOCK_LITERAL COMMENT=COMMENT DIRECTIVE=DIRECTIVE DOCUMENT=DOCUMENT FLOW_MAP=FLOW_MAP FLOW_SEQ=FLOW_SEQ MAP=MAP MAP_KEY=MAP_KEY MAP_VALUE=MAP_VALUE PLAIN=PLAIN QUOTE_DOUBLE=QUOTE_DOUBLE QUOTE_SINGLE=QUOTE_SINGLE SEQ=SEQ SEQ_ITEM=SEQ_ITEM
+enum	le	13	index-DiTmKH3z.js	text number checkbox date url person select multiSelect media relation linkToBlock email phone
+enum	Us	13	index-DiTmKH3z.js	BLOCKED_REG INVALID_CODE EXPIRED EMAIL_LOCKED TOO_MANY_ATTEMPTS ALREADY_VERIFIED NEW_EMAIL_USED_BY_OTHER_ACCOUNT SSO_LOGIN_ENFORCED SSO_NOT_SUPPORTED INVALID_PARAMS AUTH_TOKEN_MISSING EXTENSION_NOT_INSTALLED UNKNOWN
+enum	DatabaseSchemaPropertyType	13	socket.worker-CMvBLZvP.js	text number checkbox date url person select multiSelect media relation linkToBlock email phone
+enum	oi	12	index-DiTmKH3z.js	UNKNOWN ADMIN_ACCESS_REQUIRED PADDLE_SUBSCRIPTION_RESERVED CHECKOUT_NOT_FOUND CHECKOUT_EMAIL_MISMATCH TEAM_ALREADY_SUBSCRIBED INVALID_CHECKOUT_ID INTERNAL_SERVER_ERROR NO_ACTIVE_SUBSCRIPTION INVALID_RETURN_URL NOT_ELIGIBLE_FOR_DISCOUNT AUTHENTICATION_ERROR
+enum	uo	11	index-DiTmKH3z.js	UNKNOWN AUTHENTICATION_ERROR ADMIN_ACCESS_REQUIRED NO_SUBSCRIPTION_FOR_TEAM INVALID_SUBSCRIPTION LESS_SEATS_THAN_MEMBERS CANNOT_CHARGE UNSUPPORTED_MIGRATION INTERNAL_SERVER_ERROR TIER_LIMIT PAUSED_SUBSCRIPTION
+enum	os	11	index-DiTmKH3z.js	connected synced pendingSync syncing error disconnected connecting disconnect_issued creating_worker worker_ready terminated
+enum	SyncStatus	11	socket.worker-CMvBLZvP.js	connected synced pendingSync syncing error disconnected connecting disconnect_issued creating_worker worker_ready terminated
+const-map	ff	10	vendor-excalidraw-DbCJmDpU.js	ONLY_ONE_START=ONLY_ONE_START ONLY_ONE_END=ONLY_ONE_END ZERO_OR_ONE_START=ZERO_OR_ONE_START ZERO_OR_ONE_END=ZERO_OR_ONE_END ONE_OR_MORE_START=ONE_OR_MORE_START ONE_OR_MORE_END=ONE_OR_MORE_END ZERO_OR_MORE_START=ZERO_OR_MORE_START ZERO_OR_MORE_END=ZERO_OR_MORE_END MD_PARENT_END=MD_PARENT_END MD_PARENT_START=MD_PARENT_START
+enum	ie	9	index-DiTmKH3z.js	Free Pro Business V2_Free V2_Plus V2_Family V2_Team V2_Business Lite
+enum	u2	8	index-DiTmKH3z.js	UNKNOWN INTERNAL_SERVER_ERROR ADMIN_ACCESS_REQUIRED TRIAL_ALREADY_USED TEAM_ALREADY_SUBSCRIBED NO_SUBSCRIPTION_FOR_TEAM TEAM_NOT_PRIVATE DEFAULT_TEAM_NOT_FOUND
+enum	Fs	7	index-DiTmKH3z.js	initial synced syncing error unknown connected terminated
+enum	vc	7	index-DiTmKH3z.js	UNKNOWN ADMIN_ACCESS_REQUIRED NO_CUSTOM_DOMAIN INVALID_HOSTNAME HOSTNAME_ALREADY_USED INVALID_PREFIX PREFIX_ALREADY_USED
+enum	za	7	index-DiTmKH3z.js	UNKNOWN UNSUPPORTED_SUBSCRIPTION LESS_SEATS_THAN_ALLOCATED CANNOT_CHARGE LESS_SEATS_THAN_BASE_COUNT NO_ACTIVE_SUBSCRIPTION TRIAL_SEAT_PERIOD_EXPIRED
+enum	yso	7	index-DiTmKH3z.js	UnknownError AccessDeniedError Path segmenet too short Path already used PASSWORD_PROTECTION_IS_ENABLED CRAFT_DOMAIN_IS_REQUIRED EMAIL_BASED_PROTECTION_IS_ENABLED
+const-map	Ah	7	vendor-excalidraw-DbCJmDpU.js	SIDEBAR=sidebar SHAPE_ACTIONS_MENU=App-menu__left ZOOM_ACTIONS=zoom-actions SEARCH_MENU_INPUT_WRAPPER=layer-ui__search-inputWrapper CONVERT_ELEMENT_TYPE_POPUP=ConvertElementTypePopup SHAPE_ACTIONS_THEME_SCOPE=shape-actions-theme-scope FRAME_NAME=frame-name
+const-map	_Pt	7	vendor-excalidraw-DbCJmDpU.js	CONTAINS=contains COPIES=copies DERIVES=derives SATISFIES=satisfies VERIFIES=verifies REFINES=refines TRACES=traces
+enum	X3	6	index-DiTmKH3z.js	UNKNOWN BAD_REQUEST TOO_MANY_SPACES NO_ACTIVE_TEAM_SUBSCRIPTION AUTHENTICATION_ERROR ACCESS_DENIED
+enum	Fo	6	index-DiTmKH3z.js	AUTHENTICATION_ERROR ACCESS_DENIED INVALID_PARAMETERS UNKNOWN INTERNAL_SERVER_ERROR NOT_A_GUEST
+z.enum	Dh	5	AIChatPopup-ClUQFRna.js	ongoing day remainingDaysInMonth month later
+enum	Rft	5	index-DiTmKH3z.js	UNKNOWN SUBSCRIPTION_ALREADY_ASSIGNED ACCOUNT_ALREADY_SUBSCRIBED SUBSCRIPTION_EXPIRED SUBSCRIPTION_NOT_FOUND
+enum	TaskType	5	socket.worker-CMvBLZvP.js	connect refresh sendSync empty syncReceived
+const-map	AlignmentType	5	vendor-BZCR0rqu.js	START=start CENTER=center LEFT=left RIGHT=right JUSTIFIED=both
+const-map	HeadingLevel	5	vendor-BZCR0rqu.js	HEADING_1=Heading1 HEADING_2=Heading2 HEADING_3=Heading3 HEADING_4=Heading4 TITLE=Title
+const-map	LKt	5	vendor-excalidraw-DbCJmDpU.js	ZERO_OR_ONE=ZERO_OR_ONE ZERO_OR_MORE=ZERO_OR_MORE ONE_OR_MORE=ONE_OR_MORE ONLY_ONE=ONLY_ONE MD_PARENT=MD_PARENT
+z.enum	listType	4	AIChatPopup-ClUQFRna.js	inbox today upcoming all
+enum	m7	4	index-DiTmKH3z.js	notLoaded loading loadedFromCache loadedFromServer
+enum	UO	4	index-DiTmKH3z.js	UnknownError AccessDeniedError SubscriptionLimitReached SubscriptionDocumentLimitReached
+enum	W8	4	index-DiTmKH3z.js	UNKNOWN BAD_REQUEST INTERNAL_SERVER_ERROR AUTHENTICATION_ERROR
+enum	DocumentLoadStatus	4	socket.worker-CMvBLZvP.js	notLoaded loading loadedFromCache loadedFromServer
+enum	BlocksV2Actions	4	socket.worker-CMvBLZvP.js	i d m n
+const-map	PageNumber	4	vendor-BZCR0rqu.js	CURRENT=CURRENT TOTAL_PAGES=TOTAL_PAGES TOTAL_PAGES_IN_SECTION=TOTAL_PAGES_IN_SECTION CURRENT_SECTION=SECTION
+const-map	WPt	4	vendor-excalidraw-DbCJmDpU.js	VERIFY_ANALYSIS=Analysis VERIFY_DEMONSTRATION=Demonstration VERIFY_INSPECTION=Inspection VERIFY_TEST=Test
+z.enum	sortBy	3	AIChatPopup-ClUQFRna.js	relevance dateCreated dateModified
+enum	ys	3	index-DiTmKH3z.js	full faded unknown
+enum	Zs	3	index-DiTmKH3z.js	topToBottom leftToRight radial
+enum	bg	3	index-DiTmKH3z.js	strikethrough faded none
+enum	xu	3	index-DiTmKH3z.js	full faded unknown
+enum	ox	3	index-DiTmKH3z.js	UnknownError AccessDeniedError NotFoundError
+enum	g4	3	index-DiTmKH3z.js	UNKNOWN ADMIN_ACCESS_REQUIRED CANNOT_USE
+enum	PageBackgroundSize	3	socket.worker-CMvBLZvP.js	full faded unknown
+enum	GradientPageBackgroundDirection	3	socket.worker-CMvBLZvP.js	topToBottom leftToRight radial
+const-map	FieldCharacterType	3	vendor-BZCR0rqu.js	BEGIN=begin END=end SEPARATE=separate
+const-map	VerticalAlignTable	3	vendor-BZCR0rqu.js	TOP=top CENTER=center BOTTOM=bottom
+const-map	HeaderFooterReferenceType	3	vendor-BZCR0rqu.js	DEFAULT=default FIRST=first EVEN=even
+const-map	WidthType	3	vendor-BZCR0rqu.js	AUTO=auto DXA=dxa PERCENTAGE=pct
+const-map	Chomp	3	vendor-BZCR0rqu.js	CLIP=CLIP KEEP=KEEP STRIP=STRIP
+enum	bNA	3	vendor-excalidraw-DbCJmDpU.js	active away idle
+const-map	gYA	3	vendor-excalidraw-DbCJmDpU.js	TEST=test DEVELOPMENT=development PRODUCTION=production
+const-map	CQ	3	vendor-excalidraw-DbCJmDpU.js	TOP=top MIDDLE=middle BOTTOM=bottom
+const-map	Z_	3	vendor-excalidraw-DbCJmDpU.js	LEFT=left CENTER=center RIGHT=right
+const-map	wu	3	vendor-excalidraw-DbCJmDpU.js	IMMEDIATELY=IMMEDIATELY NEVER=NEVER EVENTUALLY=EVENTUALLY
+const-map	PW	3	vendor-excalidraw-DbCJmDpU.js	GREEN=green RED=red BLUE=blue
+const-map	ZPt	3	vendor-excalidraw-DbCJmDpU.js	LOW_RISK=Low MED_RISK=Medium HIGH_RISK=High

@@ -1,0 +1,14 @@
+contextId	file	键数	allowPropagation	matcher(去重前8)
+CodeEditorContextMenuSelector	CodeEditorWrapper	4	-	ae(Re) ae(Rt) ae(Et) ae(Tt)
+CodeEditorContextMenuUpgrade	CodeEditorWrapper	1	-	ae(Re)
+PresentationModeToolbar	DocumentContainer	10	-	ne(Ve) ne(Xe) ne(Qe) ne(Je) N.TOGGLE_ASSISTANT N.TOGGLE_QUICK_OPEN N.TOGGLE_FOCUS_MODE N.TOGGLE_QUICK_OPEN_SAFARI
+inlinemenu	index	7	-	Vn(ms) Vn(Ts) Vn(Vl) Vn(Il) Vn(nc) Vn(oo) Vn(qs)
+WhatsNewPopup	index	4	-	Vn(Vl) Vn(Il) Vn(vd) Vn(qs)
+SpaceModal	index	3	-	Vn(ms) Vn(Ts) Vn(oo)
+emojimenu	index	3	-	Vn(ms) Vn(Ts) Vn(oo)
+ConfirmPopupDS	index	2	-	Vn(qs) Vn(oo)
+DeleteCommentConfirmationPopup	index	2	-	Vn(qs) Vn(oo)
+CollectionQuickSearchInput	index	2	-	Co(Oo("a")) Vn(qs)
+HelpButton	index	1	-	ot.TOGGLE_KEY_SHORTCUTS
+BrowseSelectionRubberBandEscape	index	1	-	Vn(q7(L=>u.current&&L===qs))
+PageCardMixer	PageCardMixer	1	-	bl(yl)

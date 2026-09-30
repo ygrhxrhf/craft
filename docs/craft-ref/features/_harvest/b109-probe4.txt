@@ -1,0 +1,43 @@
+file=js/CodeEditorWrapper-DB8UxA00.js chars=59843
+roster @28710
+roster={auto:null,craftdark:uo,craftlight:go,atomone:so,aura:bo,bbedit:ho,darcula:lo,dracula:yo,githubdark:wo,githublight:Co,gruvboxdark:Do,gruvboxlight:Fo,materialdark:Mo,materiallight:jo,noctislilac:Ro,nord:To,sublime:Ho,tokyonightday:Po,tokyonightstorm:Uo,tokyonight:Go,vscodedark:$o}
+
+### uo  NOT FOUND as object literal
+
+### go  NOT FOUND as object literal
+
+### so  NOT FOUND as object literal
+
+### bo  NOT FOUND as object literal
+
+### ho  NOT FOUND as object literal
+
+### lo  NOT FOUND as object literal
+
+### yo  NOT FOUND as object literal
+
+### wo  NOT FOUND as object literal
+
+### Co  NOT FOUND as object literal
+
+### Do  NOT FOUND as object literal
+
+### Fo  NOT FOUND as object literal
+
+### Mo  NOT FOUND as object literal
+
+### jo  NOT FOUND as object literal
+
+### Ro  NOT FOUND as object literal
+
+### To  NOT FOUND as object literal
+
+### Ho  NOT FOUND as object literal
+
+### Po  NOT FOUND as object literal
+
+### Uo  NOT FOUND as object literal
+
+### Go  NOT FOUND as object literal
+
+### $o  NOT FOUND as object literal

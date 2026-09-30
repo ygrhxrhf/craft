@@ -1,0 +1,14 @@
+index.css.CP00jDAy.css   --ui  defs=120  consumedDistinct=60
+index.css.CP00jDAy.css   --caption  defs=32  consumedDistinct=16
+index.css.CP00jDAy.css   --body  defs=44  consumedDistinct=22
+index.css.CP00jDAy.css   --heading  defs=60  consumedDistinct=30
+vendor-excalidraw.css.tkYuNB5W.css   --ui  defs=2  consumedDistinct=2
+
+### family ui: defined suffixes=61  used=62  USED-BUT-UNDEFINED=1
+   pointerEvents
+
+### family caption: defined suffixes=16  used=16  USED-BUT-UNDEFINED=0
+
+### family body: defined suffixes=22  used=22  USED-BUT-UNDEFINED=0
+
+### family heading: defined suffixes=30  used=30  USED-BUT-UNDEFINED=0

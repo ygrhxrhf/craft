@@ -1,0 +1,69 @@
+=== 1) data-whatinput usages in app chunk ===
+  "data-whatinput" count=7 first@1584185
+    @1584185: ]!==i||n[9]!==e?(d=a.jsx(c,{...i,ref:e,onFocus:r}),n[6]=c,n[7]=r,n[8]=i,n[9]=e,n[10]=d):d=n[10],d}),Xmt=()=>{var t;return((t=document.querySelector("[data-whatinput]"))==null?void 0:t.getAttribute("data-whatinput"))??null},Jmt=t=>{const e=H.c(10);let n,o,s;e[0]!==t?({children:n,hideAllTooltips:o,...s}=t,e[0]=t,e[
+    @1584233: }),n[6]=c,n[7]=r,n[8]=i,n[9]=e,n[10]=d):d=n[10],d}),Xmt=()=>{var t;return((t=document.querySelector("[data-whatinput]"))==null?void 0:t.getAttribute("data-whatinput"))??null},Jmt=t=>{const e=H.c(10);let n,o,s;e[0]!==t?({children:n,hideAllTooltips:o,...s}=t,e[0]=t,e[1]=n,e[2]=o,e[3]=s):(n=e[1],o=e[2],s=e[3]);const
+    @4544873: rid;width:100%;height:","px;position:relative;",""],W4.ROW_HEIGHT,({isSelected:t,isActive:e,isLastRow:n,isGrouped:o,cellBorder:s,theme:i})=>gt(["",' [data-whatinput="mouse"] &:raw-hover{',";& .onhover{display:block;}& .onnonhover{display:none;}","}& .onhover{display:none;}& .onnonhover{display:block;}"," "," ",""
+    @5190625: .createTouch!=null}}const Ose=/:not\(:focus-visible-within\)/g,Bse=/:focus-visible-within/g,Fse=/:not\(:focus-visible\)/g,Nse=/:focus-visible/g,Use="[data-whatinput]",Pv='[data-whatinput="keyboard"]',$se=t=>t.match(Ose)?`${Use}:not(${Pv}) `+t.replace(Ose,":not(:focus-within)"):t.match(Bse)?Pv+" "+t.replace(Bse,":
+    @5190647: nst Ose=/:not\(:focus-visible-within\)/g,Bse=/:focus-visible-within/g,Fse=/:not\(:focus-visible\)/g,Nse=/:focus-visible/g,Use="[data-whatinput]",Pv='[data-whatinput="keyboard"]',$se=t=>t.match(Ose)?`${Use}:not(${Pv}) `+t.replace(Ose,":not(:focus-within)"):t.match(Bse)?Pv+" "+t.replace(Bse,":focus-within"):t.match
+    @5191060: ):t,Uvn=t=>{t.type===Kre&&(t.props=Array.isArray(t.props)?t.props.map($se):$se(t.props))},Hse=/:not\(:hover\)/g,Zse=/:hover/g,Vse=/:raw-hover/g,$vn="[data-whatinput]",UF='[data-whatinput="touch"]',Wse=`${$vn}:not(${UF})`,zse=t=>t.match(Vse)?t.replace(Vse,":hover"):t.match(Hse)?[Wse+" "+t,UF+" "+t.replace(Hse,":no
+    @5191082: re&&(t.props=Array.isArray(t.props)?t.props.map($se):$se(t.props))},Hse=/:not\(:hover\)/g,Zse=/:hover/g,Vse=/:raw-hover/g,$vn="[data-whatinput]",UF='[data-whatinput="touch"]',Wse=`${$vn}:not(${UF})`,zse=t=>t.match(Vse)?t.replace(Vse,":hover"):t.match(Hse)?[Wse+" "+t,UF+" "+t.replace(Hse,":not(:active)")].join(","
+=== 2) how what-input writes the attributes ===
+  "whatintent" count=0
+  "intentAttribute" count=0
+  "inputAttribute" count=0
+  "pointerAttribute" count=0
+  "setAttribute(" count=64 first@5461
+    @5461: eName.toLowerCase()==="button"&&!Ga(Ha,"form"));Ya&&(ca=za,Ia("intent",ca),Oa("intent"))}},Oa=function(Xa){Pr.setAttribute("data-what"+Xa,Xa==="input"?Hr:ca),ru(Xa)},Pa=function(Xa){var eu=va[Xa.type];eu==="pointer"&&(eu=La(Xa)),Za(X
+    @5816: ca),Oa("intent"))},Ua=function(Xa){if(!Xa.target.nodeName){qa();return}Ir=Xa.target.nodeName.toLowerCase(),Pr.setAttribute("data-whatelement",Ir),Xa.target.classList&&Xa.target.classList.length&&Pr.setAttribute("data-whatclasses",Xa.
+    @5904: Name.toLowerCase(),Pr.setAttribute("data-whatelement",Ir),Xa.target.classList&&Xa.target.classList.length&&Pr.setAttribute("data-whatclasses",Xa.target.classList.toString().replace(" ",","))},qa=function(){Ir=null,Pr.removeAttribute(
+  "documentElement" count=39 first@3303
+    @3303: (){},specificKeys:function(){},registerOnChange:function(){},unRegisterOnChange:function(){}};var Pr=document.documentElement,Ir=null,Hr="initial",ca=Hr,fa=Date.now(),da=!1,pa=["button","input","select","textarea"],ha=[],ma=[16,17,18,9
+    @356245: :void 0}},htmlTag={name:"htmlTag",lookup($r){let{htmlTag:Ar}=$r,Cr;const Rr=Ar||(typeof document<"u"?document.documentElement:null);return Rr&&typeof Rr.getAttribute=="function"&&(Cr=Rr.getAttribute("lang")),Cr}},path$1={name:"path",lo
+    @413844: r||(Hr[Za]=Ga[Za])}(),!Rr||!Rr.getElementsByClassName)return{init:function(){},cfg:Hr,noSupport:!0};var ca=Rr.documentElement,fa=Cr.HTMLPictureElement,da="addEventListener",pa="getAttribute",ha=Cr[da].bind(Cr),ma=Cr.setTimeout,ga=Cr.re
+=== 3) accent six base colours, light vs dark ===
+  theme blocks=9 kinds=light,dark,light,dark,light,dark,dark,light,dark
+  accent-blue -> per block: 46 109 233   113 178 255   ?   ?   46 109 233   113 178 255   ?   46 109 233   113 178 255
+  accent-pink -> per block: 214 23 155   255 106 209   ?   ?   214 23 155   255 106 209   ?   214 23 155   255 106 209
+  accent-green -> per block: 0 194 166   77 255 221   ?   ?   0 194 166   77 255 221   ?   0 194 166   77 255 221
+  accent-purple -> per block: 94 2 210   191 139 255   ?   ?   94 2 210   191 139 255   ?   94 2 210   191 139 255
+  accent-yellow -> per block: 228 192 17   255 233 123   ?   ?   228 192 17   255 233 123   ?   228 192 17   255 233 123
+  accent-gray -> per block: 82 92 102   188 194 201   ?   ?   82 92 102   188 194 201   ?   82 92 102   188 194 201
+  --- one full ramp (accent-pink) from the FIRST block that defines it ---
+  in block light @284350 :
+    --accent-pink-50: rgb(var(--accent-pink) / 6%)
+    --accent-pink-100: rgb(var(--accent-pink) / 12%)
+    --accent-pink-250: rgb(var(--accent-pink) / 32%)
+    --accent-pink-500: rgb(var(--accent-pink) / 100%)
+    --accent-pink-550: rgb(199 23 145 / 100%)
+    --accent-pink-700: rgb(158 24 118 / 100%)
+    --accent-pink-900: rgb(101 26 80 / 100%)
+  --- where are the ramp bodies defined at all? count --accent-pink- occurrences per block ---
+    block#0 light @2419 pinkRefs=0 accentAliasRefs=0
+    block#1 dark @10746 pinkRefs=0 accentAliasRefs=0
+    block#2 light @13773 pinkRefs=0 accentAliasRefs=0
+    block#3 dark @13872 pinkRefs=0 accentAliasRefs=0
+    block#4 light @26175 pinkRefs=0 accentAliasRefs=0
+    block#5 dark @34502 pinkRefs=0 accentAliasRefs=0
+    block#6 dark @77061 pinkRefs=8 accentAliasRefs=0
+    block#7 light @284350 pinkRefs=18 accentAliasRefs=0
+    block#8 dark @289649 pinkRefs=8 accentAliasRefs=0
+=== 4) CodeEditorWrapper chunk surface ===
+  files=CodeEditorFocusMode-BZ_3QTjt.js,CodeEditorWrapper-DB8UxA00.js
+  --- CodeEditorFocusMode-BZ_3QTjt.js len=4757
+  "language" count=1 first@3624
+    @3624: 17]=r,t[18]=c,t[19]=d):d=t[19];const k=n||"",v=((j=e==null?void 0:e.model)==null?void 0:j.language)??null,S=(e==null?void 0:e.textContent)??"",D=M??"";let u;t[20]!==I||t[21]!==_||t[22]!==k
+  "prettier" count=0
+  "lineNumber" count=0
+  "wrap" count=0
+  "data-testid" count=0
+  --- CodeEditorWrapper-DB8UxA00.js len=59843
+  "language" count=12 first@46585
+    @46585: t[25]=p,t[26]=k):k=t[26],k},it=o=>{const t=ee.c(28),{onClose:a,value:r,onLanguageSelect:s,languages:D}=o,F=D===void 0?pe:D,[d,y]=l.useState(""),{t:u}=re();let p;if(t[0]!==F||t[1]!==s||t[2]
+    @47405: M),t[0]=F,t[1]=s,t[2]=d,t[3]=r.storedLangCode,t[4]=p}else p=t[4];let x;t[10]!==p?(x=[{id:"languages",actions:p}],t[10]=p,t[11]=x):x=t[11];const C=x;let w;const g=C.flatMap(ka).findIndex(v=
+    @47589: x(v=>v.id===r.storedLangCode);g===-1?w=0:w=g;const f=w;let m;t[12]!==u?(m=u("blockdetails.language"),t[12]=u,t[13]=m):m=t[13];let c;t[14]!==a||t[15]!==m?(c=n.jsx(G,{paddingX:16,children:n.
+  "prettier" count=0
+  "lineNumber" count=0
+  "wrap" count=3 first@37238
+    @37238: rrent&&(w(O),g(!1))}).catch(()=>{f.current&&(w(`<pre white-space: pre-wrap;">Invalid Mermaid syntax: ${Fe(B)}</pre>`),g(!1))})})}},[t,o,r,y,x]);
+    @44652: v.withConfig({componentId:"sc-1h972fq-2"})(["",";flex:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;"],Nt.UI.MD500);function da(o)
+  "data-testid" count=0

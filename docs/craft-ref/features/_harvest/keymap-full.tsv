@@ -1,0 +1,155 @@
+
+## Iu  (66 项)
+id	mac	windows	keyType
+TODO_LIST	⌘ ⌥ 6	Ctrl-Shift-6	Vr
+TOGGLE_LIST	⌘ ⌥ 7	Ctrl-Shift-7	Vr
+BULLET_LIST	⌘ ⌥ 8	Ctrl-Shift-8	Vr
+NUMBERED_LIST	⌘ ⌥ 9	Ctrl-Shift-9	Vr
+NO_LIST	⌘ ⌥ 0	Ctrl-Shift-`	Vr
+FOCUS_DECOR	⌘ ⇧ \	Ctrl-Shift-\	Vr
+BLOCK_DECOR	⌘ ⇧ '	Ctrl-Shift-'	Vr
+PAGE	⌘ ⇧ P	Ctrl-Shift-P	Oo
+CARD	⌘ ⇧ L	Ctrl-Shift-L	Oo
+BOLD	⌘ B	Ctrl-B	Oo
+ITALIC	⌘ I	Ctrl-I	Oo
+STRIKETHROUGH	⌘ ⇧ -	Ctrl-Shift--	Vr
+HIGHLIGHT	⌘ ⇧ B	Ctrl-Shift-B	Oo
+CODE	⌘ ⇧ C	Ctrl-Shift-C	Oo
+CODE2	⌘ E	Ctrl-E	Oo
+URL	⌘ K	Ctrl-K	Oo
+BLOCKLINK	⌘ ⇧ K	Ctrl-Shift-K	Oo
+INLINE_TEX	⌘ ⇧ E	Ctrl-Shift-E	Oo
+TITLE	⌘ ⌥ 1	Ctrl-Shift-1	Vr
+SUBTITLE	⌘ ⌥ 2	Ctrl-Shift-2	Vr
+HEADING	⌘ ⌥ 3	Ctrl-Shift-3	Vr
+STRONG	⌘ ⌥ 4	Ctrl-Shift-4	Vr
+BODY	⌘ ⌥ 5	Ctrl-Shift-5	Vr
+GROUP	⌘ G	Ctrl-G	Oo
+UNGROUP	⌘ ⇧ G	Ctrl-Shift-G	Oo
+TOGGLE_TOGGLES	⌘ ⌥ T	Ctrl-Alt-T	Oo
+MOVE_BLOCK_UP	⌥ ↑	Alt-↑	Vr
+MOVE_BLOCK_DOWN	⌥ ↓	Alt-↓	Vr
+MOVE_BLOCK_TOP	⌥ ↖	Alt-↖	Vr
+MOVE_BLOCK_BOTTOM	⌥ ↘	Alt-↘	Vr
+SELECT_TO_TOP_COMMON	⌘ ⇧ ↖	Ctrl-Shift-↖	Vr
+SELECT_TO_BOTTOM_COMMON	⌘ ⇧ ↘	Ctrl-Shift-↘	Vr
+CMD_MENU	/	/	q7
+FIND_IN_PAGE	⌘ F	Ctrl-F	Oo
+REPLACE_IN_PAGE	⌘ ⇧ F	Ctrl-Shift-F	Oo
+FIND_NEXT	⌘ G	Ctrl-G	Oo
+FIND_PREVIOUS	⌘ ⇧ G	Ctrl-Shift-G	Oo
+INSERT_AFTER	space	space	Vr
+INSERT_BEFORE	⇧ space	Shift-space	Vr
+DUPLICATE	⌘ D	Ctrl-D	Oo
+TOGGLE_LEFT_SIDEBAR	⌘ \	Ctrl-\	Vr
+TOGGLE_KEY_SHORTCUTS	⌘ ⌥ ,	Ctrl-Shift-,	Vr
+TOGGLE_FOCUS_MODE	⌘ .	Ctrl-.	q7
+TOGGLE_QUICK_OPEN	⌘ O	Ctrl-O	Oo
+TOGGLE_QUICK_OPEN_SAFARI	⌘ ⇧ O	Ctrl-Shift-O	Oo
+TOGGLE_QUICK_OPEN_ALT	⌘ P	Ctrl-P	Oo
+TOGGLE_QUICK_OPEN_LEGACY	⌘ K	Ctrl-K	Oo
+TOGGLE_ASSISTANT	⌘ ⏎	Ctrl-⏎	Vr
+ADD_TABLE_ROW	⌘ ⏎	Ctrl-⏎	Vr
+ADD_TABLE_COLUMN	⌘ ⇧ ⏎	Ctrl-Shift-⏎	Vr
+RENAME	⇧ ⏎	Shift-⏎	Vr
+COMMENT	⌘ ⇧ M	Ctrl-Shift-M	Oo
+OPEN_DAILY_NOTE	⌘ ⌥ N	Ctrl-Alt-N	Oo
+CANCEL	esc	esc	Vr
+SELECT_ALL	⌘ A	Ctrl-A	Oo
+INDENT	⇥	⇥	Vr
+DEINDENT	⇧ ⇥	Shift-⇥	Vr
+EDIT_BLOCK	⏎	⏎	Vr
+NAVIGATE_INTO	⌘ →	Ctrl-→	Vr
+NAVIGATE_OUT	⌘ ←	Ctrl-←	Vr
+UNDO	⌘ Z	Ctrl-Z	Oo
+REDO	⌘ ⇧ Z	Ctrl-Shift-Z	Oo
+MOVE_BLOCK_TOP_MAC	⌘ ⌥ ↑	Ctrl-Shift-↑	Vr
+MOVE_BLOCK_BOTTOM_MAC	⌘ ⌥ ↓	Ctrl-Shift-↓	Vr
+SELECT_TO_TOP_MAC	⌘ ⇧ ↑	Ctrl-Shift-↑	Vr
+SELECT_TO_BOTTOM_MAC	⌘ ⇧ ↓	Ctrl-Shift-↓	Vr
+
+## ho  (23 项)
+id	mac	windows	keyType
+PREV_TASK	↑	↑	Vr
+NEXT_TASK	↓	↓	Vr
+EDIT_START	⏎	⏎	Vr
+TOGGLE_STATE	space	space	Vr
+CREATE_NEW	space	space	Vr
+OPEN_NEW_TASK_POPUP	⌘ J	Ctrl-J	Oo
+OPEN_SCHEDULE_DATEPICKER	⌘ ⇧ S	Ctrl-Shift-S	Oo
+SCHEDULE_FOR_TODAY	⌘ ⌥ ⇧ S	Ctrl-Alt-S	Oo
+OPEN_DEADLINE_DATEPICKER	⌘ ⇧ D	Ctrl-Shift-D	Oo
+OPEN_TASK_LOCATION	⌘ ⇧ O	Ctrl-Shift-O	Oo
+REMIND_IN_ONE_HOUR	⌘ ⌥ ⇧ R	Ctrl-Alt-R	Oo
+TOGGLE_DONE	⌘ ⌥ T	Ctrl-Alt-T	Oo
+TOGGLE_DONE_SLASH	⌘ /	Ctrl-/	q7
+SET_CANCELLED	⌘ ⌥ ⇧ T	Ctrl-Alt-Shift-T	Oo
+SET_CANCELLED_SLASH	⌘ ⌥ / (Mac 专用)
+SECTION_TOGGLE_COLLAPS	space	space	Vr
+SECTION_COLLAPSE	←	←	Vr
+SECTION_EXPAND	→	→	Vr
+OPEN_PAGE	⌘ →	Ctrl-→	Vr
+DELETE	⌫	⌫	Vr
+DELETE_FORWARD	del	del	Vr
+UNDO	⌘ Z	Ctrl-Z	Oo
+REDO	⌘ ⇧ Z	Ctrl-Shift-Z	Oo
+
+## hnt  (15 项)
+id	mac	windows	keyType
+CUT	⌘ X	Ctrl-X	Oo
+COPY	⌘ C	Ctrl-C	Oo
+PASTE	⌘ V	Ctrl-V	Oo
+CLEAR_CELL_CONTENTS	⌫	⌫	Vr
+ADD_ROWS_BEFORE	⌘ ⌥ ⏎	Ctrl-Shift-⏎	Vr
+ADD_ROWS_AFTER	⌘ ⏎	Ctrl-⏎	Vr
+ADD_COLUMNS_BEFORE	⌘ ⌥ ⇧ ⏎	Ctrl-Alt-⏎	Vr
+ADD_COLUMNS_AFTER	⌘ ⇧ ⏎	Ctrl-Shift-⏎	Vr
+MOVE_ROWS_UP	⌥ ↑	Alt-↑	Vr
+MOVE_ROWS_DOWN	⌥ ↓	Alt-↓	Vr
+MOVE_COLUMNS_LEFT	⌥ ←	Alt-←	Vr
+MOVE_COLUMNS_RIGHT	⌥ →	Alt-→	Vr
+DELETE_ROWS	⌘ ⌫	Ctrl-⌫	Vr
+DELETE_COLUMNS	⌘ ⇧ ⌫	Ctrl-Shift-⌫	Vr
+ADD_CONTENT	⌃ [	Ctrl-[	Vr
+
+## bindings  (360 站点 / 39 去重)
+mac	windows	i18nKey	id	flags
+esc	esc			
+?	?			
+↑	↑			
+↓	↓			
+←	←		WhatsNewPopup	
+→	→		WhatsNewPopup	
+space	space		WhatsNewPopup	
+⏎	⏎		ConfirmPopupDS	
+⌘ ⏎	Ctrl-⏎			
+⌘ A	Ctrl-A			
+⇧ →	Shift-→			
+⇧ ←	Shift-←			
+⇧ ↓	Shift-↓			
+⇧ ↑	Shift-↑			
+⌘ ↓	Ctrl-↓			
+⌘ ↑	Ctrl-↑			
+⌘ ⇧ ↓	Ctrl-Shift-↓			
+⌘ ⇧ ↑	Ctrl-Shift-↑			
+⌫	⌫			
+del	del			
+⇥	⇥			
+⇧ ⇥	Shift-⇥			
+⇧ ⏎	Shift-⏎			
+⌥ ⇧ ↓	Alt-Shift-↓			
+⌥ ↑	Alt-↑			
+⌥ ↓	Alt-↓			
+⌥ ⇧ ↑	Alt-Shift-↑			
+⌘ ⇧ ⏎	Ctrl-Shift-⏎			
+⌘ ⌥ ⏎	Ctrl-Shift-⏎			
+⌘ ?	Ctrl-?			
+⌘ ⌥ ⇧ ⏎	Ctrl-Alt-⏎			
+⌘ ⇧ ?	Ctrl-Shift-?			
+⇧ ?	Shift-?			
+⌘ Z	Ctrl-Z			
+⌘ ⇧ Z	Ctrl-Shift-Z			
+⌘ D	Ctrl-D			
+⌘ →	Ctrl-→			
+⌘ ←	Ctrl-←			
+⇧ space	Shift-space			

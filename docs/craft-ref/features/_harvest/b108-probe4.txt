@@ -1,0 +1,7 @@
+vendor-code-editor-BLm003PU.js  tok-x33  syntaxHighlighting-x1  define-x2  hlStyle-x0
+
+syntaxHighlighting first @404807
+defaultHighlightStyle last @-1
+
+--- theme object region @165446 ---
+W9t={"&light":"."+C9t,"&dark":"."+Y9t};function Pxe(r,i,s){return new u4(i,{finish(l){return/&/.test(l)?l.replace(/&\w*/,O=>{if(O=="&")return r;if(!s||!s[O])throw new RangeError(`Unsupported selector: ${O}`);return s[O]}):r+" "+l}})}const m$n=Pxe("."+Sxe,{"&":{position:"relative !important",boxSizing:"border-box","&.cm-focused":{outline:"1px dotted #212121"},display:"flex !important",flexDirection:"column"},".cm-scroller":{display:"flex !important",alignItems:"flex-start !important",fontFamily:"monospace",lineHeight:1.4,height:"100%",overflowX:"auto",position:"relative",zIndex:0,overflowAnchor:"none"},".cm-content":{margin:0,flexGrow:2,flexShrink:0,display:"block",whiteSpace:"pre",wordWrap:"normal",boxSizing:"border-box",minHeight:"100%",padding:"4px 0",outline:"none","&[contenteditable=true]":{WebkitUserModify:"read-write-plaintext-only"}},".cm-lineWrapping":{whiteSpace_fallback:"pre-wr

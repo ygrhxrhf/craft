@@ -1,0 +1,101 @@
+imagine.access.mode	访问模式
+imagine.all.daily.notes.and.tasks	所有每日笔记和任务
+imagine.api.created.successfully	API 创建成功
+imagine.api.deleted.successfully	API 已成功删除
+imagine.api.for.all.doc	所有文档的 API
+imagine.api.for.selected.docs	连接选定文档
+imagine.api.for.x	用于 [0] 的 API
+imagine.api.key	API 密钥
+imagine.api.key.copied	API 密钥已复制
+imagine.api.key.copied.subtitle	API 密钥已复制到剪贴板。
+imagine.api.key.created	API 密钥已创建
+imagine.api.key.created.successfully	API 密钥创建成功
+imagine.api.key.default.name	API 密钥 [0]
+imagine.api.key.deleted.successfully	API 密钥已成功删除
+imagine.api.key.desc	访问需要 API 密钥
+imagine.api.key.name	API 密钥名称
+imagine.api.keys	API 密钥
+imagine.api.limit.reached	API 调用次数已达上限
+imagine.api.limit.reached.desc	目前仅支持 10 个 API。如需更多，请联系 support@craft.do
+imagine.api.reference	API 参考
+imagine.api.updated.successfully	API 已成功更新
+imagine.browse.examples	浏览示例
+imagine.browse.examples.desc	看看其他人都构建了些什么
+imagine.build.apps.and.workflows	用于构建工作流程和快捷方式
+imagine.build.apps.on.top.of.your.docs	选择要用于工作流程、快捷方式或内容管理系统的文档
+imagine.build.apps.workflows	设置工作流程，并围绕你的每日笔记和任务创建快捷方式
+imagine.button	Imagine
+imagine.chat.with.your.docs	让 AI 工具访问你的文档
+imagine.connect.all.docs	连接所有文档
+imagine.connect.daily.notes.tasks	连接每日笔记和任务
+imagine.connect.selected.docs	连接选定文档
+imagine.connect.your.favourite.ai.tools	将你最喜欢的 AI 工具连接到你的每日笔记和任务
+imagine.connections	连接
+imagine.copy.api.key	复制 API 密钥
+imagine.copy.your.api.key.now	请务必立即复制你的 API 密钥。你将无法再次查看它！
+imagine.could.not.create.api	无法创建 API
+imagine.could.not.create.api.key	无法创建 API 密钥
+imagine.could.not.create.mcp.server	无法创建 MCP 服务器
+imagine.could.not.delete.api	无法删除 API
+imagine.could.not.delete.api.key	无法删除 API 密钥
+imagine.could.not.delete.mcp.server	无法删除 MCP 服务器
+imagine.could.not.set.password	无法设置密码
+imagine.could.not.update.api	无法更新 API
+imagine.could.not.update.mcp.server	无法更新 MCP 服务器
+imagine.create.api.key	创建 API 密钥
+imagine.create.new.api	创建新 **API 连接**
+imagine.create.new.mcp	创建新 **MCP 连接**
+imagine.create.your.first.api	添加你的第一个 API 连接
+imagine.create.your.first.mcp.server	创建你的第一个 MCP 连接
+imagine.delete.api.confirm.message	你确定要删除此 API 吗？所有 API 密钥都将被撤销，且此操作无法撤销。
+imagine.delete.api.confirm.title	删除 API？
+imagine.delete.api.key	删除 API 密钥
+imagine.delete.api.key.confirm	你确定要删除此 API 密钥吗？此操作无法撤销。
+imagine.delete.api.key.title	删除“[0]” API 密钥
+imagine.delete.mcp.confirm.message	你确定要删除此 MCP 服务器吗？所有连接都将被终止，且此操作无法撤销。
+imagine.delete.mcp.confirm.title	删除 MCP 服务器？
+imagine.delete.this.api	删除此 API
+imagine.delete.this.mcp	删除此 MCP
+imagine.download.ai.bundle	下载 AI 软件包
+imagine.enable.api	启用 API
+imagine.enable.api.desc	你可以将此文档用作应用或网站的后端或内容管理系统。
+imagine.enable.mcp	启用 MCP
+imagine.enable.mcp.desc	将此文档连接到 AI 工具进行处理，或将其用于你的工作流程。
+imagine.enter.new.password.to.update.access.protection.for.this.mcp	输入新密码以更新此 MCP 服务器的访问保护
+imagine.give.access.to.every.doc.in.this.space	授予对该空间中所有文档的访问权限
+imagine.imagine.desc	**Imagine** 无限可能 当一切都与 Craft 相连。
+imagine.imagine.description	Craft 不仅仅是一种形式。 它是你所能 **想象**的一切。
+imagine.learn.more about.api	了解更多关于 API 的定义以及如何使用它的信息
+imagine.make.every.doc.in.this.space.available	让此空间中的所有文档都能被你喜爱的 AI 工具访问
+imagine.make.specific.docs.available	将特定文档提供给你最喜欢的 AI 工具
+imagine.mcp.for.all.doc	所有文档的 MCP
+imagine.mcp.for.daily.notes.and.tasks	每日笔记和任务的 MCP
+imagine.mcp.reference	MCP 参考
+imagine.mcp.reference.desc	了解更多关于 MCP 服务器及其使用方法的信息
+imagine.mcp.server.created.successfully	MCP 服务器创建成功
+imagine.mcp.server.deleted.successfully	MCP 服务器已成功删除
+imagine.mcp.server.for.x	用于 [0] 的 MCP 服务器
+imagine.mcp.server.updated.successfully	MCP 服务器已成功更新
+imagine.my.api	我的 API
+imagine.my.mcp	我的 MCP
+imagine.new.api	新建 API 连接
+imagine.new.mcp.server	新建 MCP 连接
+imagine.no.keys	没有密钥
+imagine.permission.level	权限级别
+imagine.press.plus.to.create.a.key	按 + 键创建密钥
+imagine.public	公开
+imagine.public.desc	任何拥有该网址的人都可以访问
+imagine.read.and.write	读取和写入
+imagine.read.and.write.desc	可以查看和修改文档内容
+imagine.read.only	只读
+imagine.read.only.desc	只能查看文档内容
+imagine.remove.password	移除密码
+imagine.rename.api	重命名 API
+imagine.rename.mcp	重命名 MCP
+imagine.set.password.to.protect.access.to.this.mcp	设置密码以保护对此 MCP 服务器的访问。
+imagine.some.ideas.to.get.you.started	一些入门建议
+imagine.view.integration.guide.for	查看集成指南…
+imagine.write.only	仅写入
+imagine.write.only.desc	只能修改文档内容
+imagine.your.apis	你的 API 连接
+imagine.your.mcp.servers	你的 MCP 连接

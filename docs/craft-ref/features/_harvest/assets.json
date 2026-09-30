@@ -1,0 +1,1807 @@
+[
+ {
+  "kind": "script",
+  "name": "appleid.auth.js",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 10,
+    "property": "src"
+   }
+  ],
+  "url": "https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:0"
+ },
+ {
+  "kind": "script",
+  "name": "client",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 11,
+    "property": "src"
+   }
+  ],
+  "url": "https://accounts.google.com/gsi/client",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:1"
+ },
+ {
+  "kind": "script",
+  "name": "index-DiTmKH3z.js",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 12,
+    "property": "src"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/index-DiTmKH3z.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:2"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-react-DdV40IJb.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-react-DdV40IJb.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:3"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-BZCR0rqu.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-BZCR0rqu.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:4"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-core-utils-BmFWBsTs.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-core-utils-BmFWBsTs.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:5"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-chrono-Bk4Kw_1J.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-chrono-Bk4Kw_1J.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:6"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-code-editor-BLm003PU.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-code-editor-BLm003PU.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:7"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-formulas-bemgBGOl.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-formulas-bemgBGOl.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:8"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-slate-CRtDaGYB.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-slate-CRtDaGYB.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:9"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-ds-C1RQ3Y31.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-ds-C1RQ3Y31.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:10"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-processing-f96W8flz.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-processing-f96W8flz.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:11"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-tanstack-D9bDJw6-.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-tanstack-D9bDJw6-.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:12"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-markdown-it-CKzlhnmc.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-markdown-it-CKzlhnmc.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:13"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-excalidraw-DbCJmDpU.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-excalidraw-DbCJmDpU.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:14"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-azure-msal-jhIBQ55V.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-azure-msal-jhIBQ55V.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:15"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-code-editor.css.DkZwelau.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/vendor-code-editor.css.DkZwelau.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:16"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-excalidraw.css.tkYuNB5W.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/vendor-excalidraw.css.tkYuNB5W.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:17"
+ },
+ {
+  "kind": "other",
+  "name": "index.css.CP00jDAy.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/index.css.CP00jDAy.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:18"
+ },
+ {
+  "kind": "other",
+  "name": "vendor-react-virtuoso-aBGgpw_y.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-react-virtuoso-aBGgpw_y.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:19"
+ },
+ {
+  "kind": "other",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:20"
+ },
+ {
+  "kind": "other",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:21"
+ },
+ {
+  "kind": "other",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/source-serif/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:22"
+ },
+ {
+  "kind": "other",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/inter/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:23"
+ },
+ {
+  "kind": "other",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/untitled-serif/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:24"
+ },
+ {
+  "kind": "other",
+  "name": "site.webmanifest",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/site.webmanifest",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:25"
+ },
+ {
+  "kind": "script",
+  "name": "script.pageview-props.js",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 13,
+    "property": "src"
+   }
+  ],
+  "url": "https://plausible.io/js/script.pageview-props.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:26"
+ },
+ {
+  "kind": "script",
+  "name": "gtm.js?id=GTM-TZCGFK6",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 9,
+    "property": "src"
+   }
+  ],
+  "url": "https://gtm.craft.do/gtm.js?id=GTM-TZCGFK6",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:27"
+ },
+ {
+  "kind": "other",
+  "name": "ns.html?id=GTM-TZCGFK6",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://gtm.craft.do/ns.html?id=GTM-TZCGFK6",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:28"
+ },
+ {
+  "kind": "other",
+  "name": "zh-Hans.json",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/localization/web_full/zh-Hans.json",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:29"
+ },
+ {
+  "kind": "other",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/_cjk/common/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:30"
+ },
+ {
+  "kind": "other",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/_japanese/rounded/m-plus-rounded-1c/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:31"
+ },
+ {
+  "kind": "script",
+  "name": "vendor-sentry-DQdNDWZm.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-sentry-DQdNDWZm.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:32"
+ },
+ {
+  "kind": "script",
+  "name": "uc.js?cbid=64a11c59-6b14-4106-b89b-8f3bc44a7130&consentmode-dataredaction=dynamic",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 8,
+    "property": "src"
+   }
+  ],
+  "url": "https://consent.cookiebot.com/uc.js?cbid=64a11c59-6b14-4106-b89b-8f3bc44a7130&consentmode-dataredaction=dynamic",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:33"
+ },
+ {
+  "kind": "script",
+  "name": "gtm.js?id=GTM-TZCGFK6&gtg_health=1",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 7,
+    "property": "src"
+   }
+  ],
+  "url": "https://www.googletagmanager.com/gtm.js?id=GTM-TZCGFK6&gtg_health=1",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:34"
+ },
+ {
+  "kind": "script",
+  "name": "js?id=G-C0FEMDWGRH&cx=c&gtm=4e69n1h1&sign=4dc86dab7b87e44d2561df721f2cb35f5a4f55b916b71e5a2392e2e389e611b0_20260926",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 6,
+    "property": "src"
+   }
+  ],
+  "url": "https://gtm.craft.do/gtag/js?id=G-C0FEMDWGRH&cx=c&gtm=4e69n1h1&sign=4dc86dab7b87e44d2561df721f2cb35f5a4f55b916b71e5a2392e2e389e611b0_20260926",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:35"
+ },
+ {
+  "kind": "script",
+  "name": "profitwell.js?auth=78cfc888c33ee94ebab0e106a111812f",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 5,
+    "property": "src"
+   }
+  ],
+  "url": "https://public.profitwell.com/js/profitwell.js?auth=78cfc888c33ee94ebab0e106a111812f",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:36"
+ },
+ {
+  "kind": "other",
+  "name": "other",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://api.amplitude.com/",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:37"
+ },
+ {
+  "kind": "script",
+  "name": "HTML5DnDProvider-C6oAI5bn.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/HTML5DnDProvider-C6oAI5bn.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:38"
+ },
+ {
+  "kind": "other",
+  "name": "collect?v=2&tid=G-C0FEMDWGRH&gtm=45he69n1h1v899621915za20kzb899623758zd899623758xf3xg4&_p=1790445093369&gcs=G100&gcd=13p3pPl2l5l1&npa=1&dma_cps=-&dma=1&gdid=dMWZhNz&ecid=305520181&_eu=AEAEACA&_fplc=0&ae=a&cid=283590417.1790445094&frm=0&ibt=1&ngs=1&pscdl=denied&rcb=18&sr=1536x864&uaa=x86&uab=64&uafvl=Chromium%3B154.0.8037.58%7CMicrosoft%2520Edge%3B154.0.4258.37%7CNot%2520A(Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=10.0.0&uaw=0&ul=zh-cn&ur=&sst.rnd=400869117.1790445094&sst.adr=1&sst.tft=1790445093369&sst.em_event=1&sst.sp=1&sst.lpc=116527123&sst.navt=h&sst.ude=0&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1790445093&sct=1&seg=0&dl=https%3A%2F%2Fdocs.craft.do%2Feditor%2Fd%2F3b788e8c-7aa3-d2e8-fc70-0c112def1581%2Fe3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef%3Fs%3DMT3Sw3rUqpCMvH3gKq3UgfdsYxF1jwZrvSurzQNorCXF&dt=Craft%20%E2%80%94%20A%20fresh%20take%20on%20documents&_tu=DA&uid=3b788e8c-7aa3-d2e8-fc70-0c112def1581&en=view_search_results&_fv=1&_nsi=1&_ss=1&gap.sstd=5&gap.gtb=1&evnid=1790445093369.3&ep.timestamp=2026-09-27T01%3A51%3A33.478%2B08%3A00&ep.search_term=MT3Sw3rUqpCMvH3gKq3UgfdsYxF1jwZrvSurzQNorCXF&tfd=1520&richsstsse",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://gtm.craft.do/g/collect?v=2&tid=G-C0FEMDWGRH&gtm=45he69n1h1v899621915za20kzb899623758zd899623758xf3xg4&_p=1790445093369&gcs=G100&gcd=13p3pPl2l5l1&npa=1&dma_cps=-&dma=1&gdid=dMWZhNz&ecid=305520181&_eu=AEAEACA&_fplc=0&ae=a&cid=283590417.1790445094&frm=0&ibt=1&ngs=1&pscdl=denied&rcb=18&sr=1536x864&uaa=x86&uab=64&uafvl=Chromium%3B154.0.8037.58%7CMicrosoft%2520Edge%3B154.0.4258.37%7CNot%2520A(Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=10.0.0&uaw=0&ul=zh-cn&ur=&sst.rnd=400869117.1790445094&sst.adr=1&sst.tft=1790445093369&sst.em_event=1&sst.sp=1&sst.lpc=116527123&sst.navt=h&sst.ude=0&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1790445093&sct=1&seg=0&dl=https%3A%2F%2Fdocs.craft.do%2Feditor%2Fd%2F3b788e8c-7aa3-d2e8-fc70-0c112def1581%2Fe3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef%3Fs%3DMT3Sw3rUqpCMvH3gKq3UgfdsYxF1jwZrvSurzQNorCXF&dt=Craft%20%E2%80%94%20A%20fresh%20take%20on%20documents&_tu=DA&uid=3b788e8c-7aa3-d2e8-fc70-0c112def1581&en=view_search_results&_fv=1&_nsi=1&_ss=1&gap.sstd=5&gap.gtb=1&evnid=1790445093369.3&ep.timestamp=2026-09-27T01%3A51%3A33.478%2B08%3A00&ep.search_term=MT3Sw3rUqpCMvH3gKq3UgfdsYxF1jwZrvSurzQNorCXF&tfd=1520&richsstsse",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:39"
+ },
+ {
+  "kind": "other",
+  "name": "collect?v=2&tid=G-C0FEMDWGRH&gtm=45he69n1h1v899621915z8899623758za20kzb899623758zd899623758xf3xg4&_p=1790445093369&gcs=G100&gcd=13p3pPl2l5l1&npa=1&dma_cps=-&dma=1&gdid=dMWZhNz&ecid=305520181&_eu=AAAAACA&_fplc=0&cid=283590417.1790445094&frm=0&ibt=1&ngs=1&pscdl=denied&rcb=18&sr=1536x864&uaa=x86&uab=64&uafvl=Chromium%3B154.0.8037.58%7CMicrosoft%2520Edge%3B154.0.4258.37%7CNot%2520A(Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=10.0.0&uaw=0&ul=zh-cn&ur=&sst.rnd=400869117.1790445094&sst.adr=1&sst.tft=1790445093369&sst.lpc=116527123&sst.navt=h&sst.ude=0&_s=2&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1790445093&sct=1&seg=1&dl=https%3A%2F%2Fdocs.craft.do%2Feditor%2Fd%2F3b788e8c-7aa3-d2e8-fc70-0c112def1581%2Fe3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef%3Fs%3DMT3Sw3rUqpCMvH3gKq3UgfdsYxF1jwZrvSurzQNorCXF&dt=Craft%20%E2%80%94%20A%20fresh%20take%20on%20documents&_tu=DA&uid=3b788e8c-7aa3-d2e8-fc70-0c112def1581&en=page_view&gap.sstd=5&gap.gtb=1&evnid=1790445093369.3&ep.timestamp=2026-09-27T01%3A51%3A33.478%2B08%3A00&_et=1&tfd=1523&richsstsse",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://gtm.craft.do/g/collect?v=2&tid=G-C0FEMDWGRH&gtm=45he69n1h1v899621915z8899623758za20kzb899623758zd899623758xf3xg4&_p=1790445093369&gcs=G100&gcd=13p3pPl2l5l1&npa=1&dma_cps=-&dma=1&gdid=dMWZhNz&ecid=305520181&_eu=AAAAACA&_fplc=0&cid=283590417.1790445094&frm=0&ibt=1&ngs=1&pscdl=denied&rcb=18&sr=1536x864&uaa=x86&uab=64&uafvl=Chromium%3B154.0.8037.58%7CMicrosoft%2520Edge%3B154.0.4258.37%7CNot%2520A(Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=10.0.0&uaw=0&ul=zh-cn&ur=&sst.rnd=400869117.1790445094&sst.adr=1&sst.tft=1790445093369&sst.lpc=116527123&sst.navt=h&sst.ude=0&_s=2&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1790445093&sct=1&seg=1&dl=https%3A%2F%2Fdocs.craft.do%2Feditor%2Fd%2F3b788e8c-7aa3-d2e8-fc70-0c112def1581%2Fe3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef%3Fs%3DMT3Sw3rUqpCMvH3gKq3UgfdsYxF1jwZrvSurzQNorCXF&dt=Craft%20%E2%80%94%20A%20fresh%20take%20on%20documents&_tu=DA&uid=3b788e8c-7aa3-d2e8-fc70-0c112def1581&en=page_view&gap.sstd=5&gap.gtb=1&evnid=1790445093369.3&ep.timestamp=2026-09-27T01%3A51%3A33.478%2B08%3A00&_et=1&tfd=1523&richsstsse",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:40"
+ },
+ {
+  "kind": "other",
+  "name": "event",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://plausible.io/api/event",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:41"
+ },
+ {
+  "kind": "other",
+  "name": "bc-v4.min.html",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://consentcdn.cookiebot.com/sdk/bc-v4.min.html",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:42"
+ },
+ {
+  "kind": "other",
+  "name": "settings.json",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://consentcdn.cookiebot.com/consentconfig/64a11c59-6b14-4106-b89b-8f3bc44a7130/settings.json",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:43"
+ },
+ {
+  "kind": "script",
+  "name": "cc.js?renew=false&referer=docs.craft.do&dnt=false&init=false",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 4,
+    "property": "src"
+   }
+  ],
+  "url": "https://consent.cookiebot.com/64a11c59-6b14-4106-b89b-8f3bc44a7130/cc.js?renew=false&referer=docs.craft.do&dnt=false&init=false",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:44"
+ },
+ {
+  "kind": "other",
+  "name": "profile?apiVersion=2025-07-02",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/auth/v3/profile?apiVersion=2025-07-02",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:45"
+ },
+ {
+  "kind": "script",
+  "name": "RenderOptionsPanel-Ce9vLC8i.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/RenderOptionsPanel-Ce9vLC8i.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:46"
+ },
+ {
+  "kind": "script",
+  "name": "Toggle-Csslv1Z6.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/Toggle-Csslv1Z6.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:47"
+ },
+ {
+  "kind": "script",
+  "name": "RenderOptionsPanel.utils-RlQlsoME.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/RenderOptionsPanel.utils-RlQlsoME.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:48"
+ },
+ {
+  "kind": "script",
+  "name": "PreferencesPanelWithProfilePicture-YU8QBt8Q.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/PreferencesPanelWithProfilePicture-YU8QBt8Q.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:49"
+ },
+ {
+  "kind": "script",
+  "name": "themePreviews-BJcCJGmn.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/themePreviews-BJcCJGmn.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:50"
+ },
+ {
+  "kind": "script",
+  "name": "NewTaskPopup-Br4pt8ap.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/NewTaskPopup-Br4pt8ap.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:51"
+ },
+ {
+  "kind": "other",
+  "name": "all?includeUserCount=true",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/teams/v1/5626edd5-c77b-ba38-200a-8cdaa124b2c5/spaces/all?includeUserCount=true",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:52"
+ },
+ {
+  "kind": "other",
+  "name": "team-custom-domains?team_id=5626edd5-c77b-ba38-200a-8cdaa124b2c5",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/share/team-custom-domains?team_id=5626edd5-c77b-ba38-200a-8cdaa124b2c5",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:53"
+ },
+ {
+  "kind": "other",
+  "name": "fetch?userId=3b788e8c-7aa3-d2e8-fc70-0c112def1581&storeId=main",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/auth/store/v1/fetch?userId=3b788e8c-7aa3-d2e8-fc70-0c112def1581&storeId=main",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:54"
+ },
+ {
+  "kind": "other",
+  "name": "?sentry_version=7&sentry_key=4f5c0851ecace18b823e9605720667ce&sentry_client=sentry.javascript.react%2F8.55.0",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://o4507344267247616.ingest.us.sentry.io/api/4507565846429696/envelope/?sentry_version=7&sentry_key=4f5c0851ecace18b823e9605720667ce&sentry_client=sentry.javascript.react%2F8.55.0",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:55"
+ },
+ {
+  "kind": "script",
+  "name": "SubscriptionPopupContainer-BkTs7vCz.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/SubscriptionPopupContainer-BkTs7vCz.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:56"
+ },
+ {
+  "kind": "script",
+  "name": "BlockLinkMenuQuickOpenWrapper-Bjzx4tBT.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/BlockLinkMenuQuickOpenWrapper-Bjzx4tBT.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:57"
+ },
+ {
+  "kind": "script",
+  "name": "SubscriptionCheckoutStartedPopup-CATaIRZa.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/SubscriptionCheckoutStartedPopup-CATaIRZa.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:58"
+ },
+ {
+  "kind": "script",
+  "name": "EditFolderDescriptionPopup-C9OosogT.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/EditFolderDescriptionPopup-C9OosogT.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:59"
+ },
+ {
+  "kind": "script",
+  "name": "MoveToFolderDialog-B1IJuJnb.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/MoveToFolderDialog-B1IJuJnb.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:60"
+ },
+ {
+  "kind": "script",
+  "name": "IncompatibleBrowserCheck-tnFLiyTg.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/IncompatibleBrowserCheck-tnFLiyTg.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:61"
+ },
+ {
+  "kind": "other",
+  "name": "collect?v=2&tid=G-C0FEMDWGRH&gtm=45he69n1h1v899621915za20kzb899623758zd899623758xf3xg4&_p=1790445093369&gcs=G100&gcd=13p3pPl2l5l1&npa=1&dma_cps=-&dma=1&gdid=dMWZhNz&ecid=305520181&_eu=AEAAACA&_fplc=0&ae=a&cid=283590417.1790445094&frm=0&ibt=1&ngs=1&pscdl=denied&rcb=18&sr=1536x864&uaa=x86&uab=64&uafvl=Chromium%3B154.0.8037.58%7CMicrosoft%2520Edge%3B154.0.4258.37%7CNot%2520A(Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=10.0.0&uaw=0&ul=zh-cn&ur=&sst.rnd=400869117.1790445094&sst.adr=1&sst.tft=1790445093369&sst.sp=1&sst.em_event=1&sst.lpc=116527123&sst.navt=h&sst.ude=0&_s=3&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1790445093&sct=1&seg=1&dl=https%3A%2F%2Fdocs.craft.do%2Feditor%2Fd%2F3b788e8c-7aa3-d2e8-fc70-0c112def1581%2Fe3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef%3Fs%3DMT3Sw3rUqpCMvH3gKq3UgfdsYxF1jwZrvSurzQNorCXF&dt=Craft%20%E2%80%94%20A%20fresh%20take%20on%20documents&_tu=DA&uid=3b788e8c-7aa3-d2e8-fc70-0c112def1581&en=scroll&gap.sstd=5&gap.gtb=1&evnid=1790445093369.3&ep.timestamp=2026-09-27T01%3A51%3A33.478%2B08%3A00&epn.percent_scrolled=90&_et=18&tfd=2042&richsstsse",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://gtm.craft.do/g/collect?v=2&tid=G-C0FEMDWGRH&gtm=45he69n1h1v899621915za20kzb899623758zd899623758xf3xg4&_p=1790445093369&gcs=G100&gcd=13p3pPl2l5l1&npa=1&dma_cps=-&dma=1&gdid=dMWZhNz&ecid=305520181&_eu=AEAAACA&_fplc=0&ae=a&cid=283590417.1790445094&frm=0&ibt=1&ngs=1&pscdl=denied&rcb=18&sr=1536x864&uaa=x86&uab=64&uafvl=Chromium%3B154.0.8037.58%7CMicrosoft%2520Edge%3B154.0.4258.37%7CNot%2520A(Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=10.0.0&uaw=0&ul=zh-cn&ur=&sst.rnd=400869117.1790445094&sst.adr=1&sst.tft=1790445093369&sst.sp=1&sst.em_event=1&sst.lpc=116527123&sst.navt=h&sst.ude=0&_s=3&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1790445093&sct=1&seg=1&dl=https%3A%2F%2Fdocs.craft.do%2Feditor%2Fd%2F3b788e8c-7aa3-d2e8-fc70-0c112def1581%2Fe3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef%3Fs%3DMT3Sw3rUqpCMvH3gKq3UgfdsYxF1jwZrvSurzQNorCXF&dt=Craft%20%E2%80%94%20A%20fresh%20take%20on%20documents&_tu=DA&uid=3b788e8c-7aa3-d2e8-fc70-0c112def1581&en=scroll&gap.sstd=5&gap.gtb=1&evnid=1790445093369.3&ep.timestamp=2026-09-27T01%3A51%3A33.478%2B08%3A00&epn.percent_scrolled=90&_et=18&tfd=2042&richsstsse",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:62"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "inter-variable.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/inter/inter-variable.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:63"
+ },
+ {
+  "kind": "script",
+  "name": "EmojiDataSource-D0fKkSPU.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/EmojiDataSource-D0fKkSPU.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:64"
+ },
+ {
+  "kind": "other",
+  "name": "BlankFont.css.CSdHt10-.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/BlankFont.css.CSdHt10-.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:65"
+ },
+ {
+  "kind": "other",
+  "name": "address_book_search",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/search-quick/address_book_search",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:66"
+ },
+ {
+  "kind": "other",
+  "name": "tag-stats",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/search-flexi/space/v1/tag-stats",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:67"
+ },
+ {
+  "kind": "script",
+  "name": "PageCardMixer-EI_PiWQJ.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/PageCardMixer-EI_PiWQJ.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:68"
+ },
+ {
+  "kind": "other",
+  "name": "collaborators",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/space-browse/v2/3b788e8c-7aa3-d2e8-fc70-0c112def1581/document/e3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef/collaborators",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:69"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-cyrillic-ext-wght-normal.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-cyrillic-ext-wght-normal.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:70"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-cyrillic-ext-wght-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-cyrillic-ext-wght-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:71"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-cyrillic-wght-normal.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-cyrillic-wght-normal.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:72"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-cyrillic-wght-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-cyrillic-wght-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:73"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-greek-wght-normal.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-greek-wght-normal.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:74"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-greek-wght-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-greek-wght-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:75"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-latin-ext-wght-normal.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-latin-ext-wght-normal.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:76"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-latin-ext-wght-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-latin-ext-wght-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:77"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-latin-wght-normal.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-latin-wght-normal.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:78"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-latin-wght-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-latin-wght-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:79"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-vietnamese-wght-normal.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-vietnamese-wght-normal.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:80"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "roboto-mono-vietnamese-wght-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/roboto-mono-vietnamese-wght-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:81"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "avenir-next-rounded-regular.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/avenir-next-rounded-regular.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:82"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "avenir-next-rounded-regular-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/avenir-next-rounded-regular-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:83"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "avenir-next-rounded-medium.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/avenir-next-rounded-medium.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:84"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "avenir-next-rounded-medium-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/avenir-next-rounded-medium-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:85"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "avenir-next-rounded-semibold.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/avenir-next-rounded-semibold.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:86"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "avenir-next-rounded-semibold-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/avenir-next-rounded-semibold-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:87"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "avenir-next-rounded-bold.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/avenir-next-rounded-bold.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:88"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "avenir-next-rounded-bold-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/avenir-next-rounded-bold-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:89"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "source-serif-variable.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/source-serif/source-serif-variable.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:90"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "source-serif-variable-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/source-serif/source-serif-variable-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:91"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "inter-variable-italic.woff2",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/inter/inter-variable-italic.woff2",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:92"
+ },
+ {
+  "kind": "other",
+  "name": "all?linkFormat=web",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/reminders/all?linkFormat=web",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:93"
+ },
+ {
+  "kind": "other",
+  "name": "fetch?userId=3b788e8c-7aa3-d2e8-fc70-0c112def1581&storeId=ai_assistant",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/auth/store/v1/fetch?userId=3b788e8c-7aa3-d2e8-fc70-0c112def1581&storeId=ai_assistant",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:94"
+ },
+ {
+  "kind": "other",
+  "name": "fetch?userId=3b788e8c-7aa3-d2e8-fc70-0c112def1581&storeId=savedStyles",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/auth/store/v1/fetch?userId=3b788e8c-7aa3-d2e8-fc70-0c112def1581&storeId=savedStyles",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:95"
+ },
+ {
+  "kind": "other",
+  "name": "all.json",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://res.craft.do/assets/icons/n/all.json",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:96"
+ },
+ {
+  "kind": "script",
+  "name": "FolderIconAssetDataSource-D18MDRmJ.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/FolderIconAssetDataSource-D18MDRmJ.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:97"
+ },
+ {
+  "kind": "script",
+  "name": "AIChatPopup-ClUQFRna.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/AIChatPopup-ClUQFRna.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:98"
+ },
+ {
+  "kind": "script",
+  "name": "MarkdownExportApi-CkVOp9F7.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/MarkdownExportApi-CkVOp9F7.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:99"
+ },
+ {
+  "kind": "script",
+  "name": "vendor-craft-export-DIm_3hRN.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/vendor-craft-export-DIm_3hRN.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:100"
+ },
+ {
+  "kind": "script",
+  "name": "SquareOnSquare-CEc9MgAU.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/SquareOnSquare-CEc9MgAU.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:101"
+ },
+ {
+  "kind": "script",
+  "name": "TasksBrowseUpcomingView.utils-CXbjE4oj.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/TasksBrowseUpcomingView.utils-CXbjE4oj.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:102"
+ },
+ {
+  "kind": "script",
+  "name": "useCustomPrompts-D9zcYS-6.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/useCustomPrompts-D9zcYS-6.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:103"
+ },
+ {
+  "kind": "script",
+  "name": "ClipboardBoundary-BsyMPGZC.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/ClipboardBoundary-BsyMPGZC.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:104"
+ },
+ {
+  "kind": "script",
+  "name": "Eye-Ccwd0MLf.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/Eye-Ccwd0MLf.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:105"
+ },
+ {
+  "kind": "other",
+  "name": "AIChatPopup.css.D9rwJ006.css",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/AIChatPopup.css.D9rwJ006.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:106"
+ },
+ {
+  "kind": "script",
+  "name": "ShareSheet-DVttiwLH.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/ShareSheet-DVttiwLH.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:107"
+ },
+ {
+  "kind": "script",
+  "name": "Integration-CAcAyZdz.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/Integration-CAcAyZdz.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:108"
+ },
+ {
+  "kind": "script",
+  "name": "UpgradePrompt-Db6n5YZ0.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/UpgradePrompt-Db6n5YZ0.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:109"
+ },
+ {
+  "kind": "other",
+  "name": "?includeUnreadEvents=true",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/notification-hub/inbox/summary/?includeUnreadEvents=true",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:110"
+ },
+ {
+  "kind": "other",
+  "name": "shared-with-me?documentPreviewType=preset",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/user-home/v2/shared-with-me?documentPreviewType=preset",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:111"
+ },
+ {
+  "kind": "other",
+  "name": "rules.json",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://res.craft.do/config/ignoredTags/rules.json",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:112"
+ },
+ {
+  "kind": "other",
+  "name": "documentCreationQuota?",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/space-limits/v1/team/5626edd5-c77b-ba38-200a-8cdaa124b2c5/documentCreationQuota?",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:113"
+ },
+ {
+  "kind": "image",
+  "name": "logo?type=u&colorIdx=6&caption=z",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 1,
+    "property": "src"
+   }
+  ],
+  "url": "https://renderserver.craft.do/api/logo?type=u&colorIdx=6&caption=z",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:114"
+ },
+ {
+  "kind": "image",
+  "name": "logo?type=s&colorIdx=6&caption=zS",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "attribute",
+    "nodeId": 2,
+    "property": "src"
+   }
+  ],
+  "url": "https://renderserver.craft.do/api/logo?type=s&colorIdx=6&caption=zS",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:115"
+ },
+ {
+  "kind": "other",
+  "name": "socket.worker-CMvBLZvP.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/socket.worker-CMvBLZvP.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:116"
+ },
+ {
+  "kind": "other",
+  "name": "search?search_text=&document_preview_type=preset&locale=zh-Hans",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/search-quick/search?search_text=&document_preview_type=preset&locale=zh-Hans",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:117"
+ },
+ {
+  "kind": "script",
+  "name": "TemplatePicker-CVwmPUWZ.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/TemplatePicker-CVwmPUWZ.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:118"
+ },
+ {
+  "kind": "script",
+  "name": "MoveSpaceToTeamPopupContent-qwueFoZp.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/MoveSpaceToTeamPopupContent-qwueFoZp.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:119"
+ },
+ {
+  "kind": "script",
+  "name": "DoodleAssets-CE7gq156.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/DoodleAssets-CE7gq156.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:120"
+ },
+ {
+  "kind": "other",
+  "name": "post-user-events",
+  "sources": [
+   {
+    "kind": "resource"
+   },
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/analytics/v1/post-user-events",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:121"
+ },
+ {
+  "kind": "other",
+  "name": "5626edd5-c77b-ba38-200a-8cdaa124b2c5",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/ai-usage/balance/5626edd5-c77b-ba38-200a-8cdaa124b2c5",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:122"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445094622",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445094622",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:123"
+ },
+ {
+  "kind": "other",
+  "name": "permissions",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/permissions/v1/3b788e8c-7aa3-d2e8-fc70-0c112def1581/document/e3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef/permissions",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:124"
+ },
+ {
+  "kind": "other",
+  "name": "open",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/user-home/space/3b788e8c-7aa3-d2e8-fc70-0c112def1581/document/e3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef/track/open",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:125"
+ },
+ {
+  "kind": "other",
+  "name": "recent?linkFormat=web&language=zh-Hans",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/notification-hub/inbox/global/recent?linkFormat=web&language=zh-Hans",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:126"
+ },
+ {
+  "kind": "script",
+  "name": "FloatingThreadWindow-BwcT5ktn.js",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/js/FloatingThreadWindow-BwcT5ktn.js",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:127"
+ },
+ {
+  "kind": "other",
+  "name": "permissions?block_id_hint=65d9dad6-4e21-4508-9618-503ee5bbf637",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/permissions/v1/3b788e8c-7aa3-d2e8-fc70-0c112def1581/document/e3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef/permissions?block_id_hint=65d9dad6-4e21-4508-9618-503ee5bbf637",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:128"
+ },
+ {
+  "kind": "other",
+  "name": "pending-requests",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/permissions/v1/3b788e8c-7aa3-d2e8-fc70-0c112def1581/document/e3b3dc4f-1f3e-47dc-adac-a6cf6f46e6ef/access/pending-requests",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:129"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/favicon.ico",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:130"
+ },
+ {
+  "kind": "other",
+  "name": "192-default.png",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/static/pwa/icons/192-default.png",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:131"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445096106",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445096106",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:132"
+ },
+ {
+  "kind": "other",
+  "name": "ingest",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/api/log/v1/ingest",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:133"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445126619",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445126619",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:134"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445157621",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445157621",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:135"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445188620",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445188620",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:136"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445219629",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445219629",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:137"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445250621",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445250621",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:138"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445281619",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445281619",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:139"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445311909",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445311909",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:140"
+ },
+ {
+  "kind": "other",
+  "name": "favicon.ico?_=1790445342626",
+  "sources": [
+   {
+    "kind": "resource"
+   }
+  ],
+  "url": "https://docs.craft.do/favicon.ico?_=1790445342626",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:141"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 14,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/roboto-mono/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:142"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 15,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/avenir-next-rounded/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:143"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 16,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/source-serif/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:144"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 17,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/inter/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:145"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 18,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/untitled-serif/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:146"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "vendor-code-editor.css.DkZwelau.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 19,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/vendor-code-editor.css.DkZwelau.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:147"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "vendor-excalidraw.css.tkYuNB5W.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 20,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/vendor-excalidraw.css.tkYuNB5W.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:148"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "index.css.CP00jDAy.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 21,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/index.css.CP00jDAy.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:149"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 22,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/_cjk/common/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:150"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "fontdef.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 23,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/fonts/r-48-g9244379/_japanese/rounded/m-plus-rounded-1c/fontdef.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:151"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "BlankFont.css.CSdHt10-.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 24,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/BlankFont.css.CSdHt10-.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:152"
+ },
+ {
+  "kind": "stylesheet",
+  "name": "AIChatPopup.css.D9rwJ006.css",
+  "sources": [
+   {
+    "kind": "attribute",
+    "nodeId": 25,
+    "property": "href"
+   }
+  ],
+  "url": "https://docs.craft.do/static/css/AIChatPopup.css.D9rwJ006.css",
+  "id": "assets:90d3c1bdb8ef1f80da81a3b5fd7058ee:153"
+ }
+]

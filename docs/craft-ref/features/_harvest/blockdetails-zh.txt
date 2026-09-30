@@ -1,0 +1,55 @@
+blockdetails.backups	历史版本
+blockdetails.bottom.addContent	+ 内容
+blockdetails.bottom.comment	评论
+blockdetails.code.close.preview	关闭预览
+blockdetails.code.split.view	拆分视图
+blockdetails.connect.to	连接到 [0]
+blockdetails.copy.code	复制代码
+blockdetails.edit.code	编辑代码
+blockdetails.full.screen.mode	全屏模式
+blockdetails.insert.page.break	插入分页符
+blockdetails.ios.export.pdf.a.darkEnabled	深色模式
+blockdetails.ios.export.pdf.a.pagenumbers	显示页码
+blockdetails.ios.export.pdf.a.watermark	显示水印
+blockdetails.ios.export.pdf.paper.a4	A4
+blockdetails.ios.export.pdf.paper.usletter	信纸
+blockdetails.ios.insertmenu.files	文件
+blockdetails.language	语言
+blockdetails.mentions.collapse.all	全部折叠
+blockdetails.mentions.expand.all	全部展开
+blockdetails.mentions.links.to.this	@链接到此页面
+blockdetails.mentions.loading.links	正在加载此页面的链接…
+blockdetails.mentions.sort.alphabetically	按字母顺序排序
+blockdetails.mentions.sort.by.date.created	按创建日期排序
+blockdetails.mentions.sort.by.number.of.links	按链接数排序
+blockdetails.more.faq	常见问题
+blockdetails.pagesettings.spelling	拼写检查
+blockdetails.placeholder.empty.desc.mac	页面预览将显示在此处。单击以添加内容。
+blockdetails.placeholder.link.paste	粘贴链接，例如 www.baidu.com
+blockdetails.placeholder.title	页面标题
+blockdetails.press.slash.command	按 "/" 快速操作
+blockdetails.reposition.or.crop.image	重新定位或裁剪
+blockdetails.search.languages	搜索语言
+blockdetails.search.themes	搜索主题
+blockdetails.share.image.panel.config.font.big	大
+blockdetails.share.image.panel.config.font.regular	标准
+blockdetails.share.image.panel.config.font.small	小
+blockdetails.share.image.panel.config.section.font.title	字体大小
+blockdetails.share.image.panel.config.section.size.title	页面大小
+blockdetails.share.image.panel.config.size.fit	适应文档
+blockdetails.share.image.panel.config.size.landscape	横排
+blockdetails.share.image.panel.config.size.portrait	竖排
+blockdetails.share.image.panel.config.size.square	正方形
+blockdetails.share.secretlink.comments.add	添加评论
+blockdetails.shortcuts.markdown	Markdown 快捷方式
+blockdetails.sidebar.insert	插入
+blockdetails.sidebar.insert.shortcuts	快捷方式
+blockdetails.sidebar.insert.subtitle	将任何项目拖放到文档中
+blockdetails.sidebar.lists	列表
+blockdetails.sidebar.media	媒体
+blockdetails.sidebar.pageinfo	页面信息
+blockdetails.theme	主题
+blockdetails.themes	主题
+blockdetails.toggle.empty	空折叠块
+blockdetails.you.are.logged.in.as.strong	你已以<strong>[0]</strong>的身份登录
+blockdetailsios.export.pdf.paper.dynamic	动态

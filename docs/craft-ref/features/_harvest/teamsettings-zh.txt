@@ -1,0 +1,190 @@
+teamsettings.add.custom.domain	添加自定义域
+teamsettings.alert.invite.revoke.failed	无法撤销邀请
+teamsettings.alert.invite.revoked	邀请已被撤销
+teamsettings.alert.member.remove.failed	无法移除成员
+teamsettings.alert.member.role.update.failed	无法更新成员角色
+teamsettings.alert.member.role.updated	成员角色已更新
+teamsettings.alert.remove.document.permissions.failed	无法移除文档权限
+teamsettings.alert.space.admin.added	你现在是 {{spaceName}} 的管理员
+teamsettings.alert.space.join.failed	无法加入空间
+teamsettings.alert.space.joined	你现在是 {{spaceName}} 的成员
+teamsettings.alert.space.joined.new	你现在是 [0] 的成员
+teamsettings.alert.space.leave.failed	无法离开空间
+teamsettings.alert.space.member.removed	你不再是 {{spaceName}} 的成员
+teamsettings.alert.subscription.cancel.failed	无法取消订阅
+teamsettings.alert.subscription.canceled	订阅已取消
+teamsettings.alert.subscription.resume.failed	无法恢复订阅
+teamsettings.alert.subscription.resumed	订阅已恢复
+teamsettings.alert.team.delete.failed	无法删除团队
+teamsettings.billing	账单
+teamsettings.billing.billingemail.cta	联系支持
+teamsettings.billing.billingemail.header	帐单电子邮件
+teamsettings.billing.billingemail.part1	请联系我们 
+teamsettings.billing.billingemail.part3	 如果你想更改帐单电子邮件。我们会在 24 小时内为你完成。
+teamsettings.billing.change.email	请求更改团队 [0] 的账单电子邮件
+teamsettings.billing.no.active.subscription	没有有效订阅
+teamsettings.billing.not.renewed.subscription	未续订
+teamsettings.billing.recurring.coupon.flat	已应用 <code>[0]</code> [1] 循环折扣
+teamsettings.billing.recurring.coupon.percentage	已应用 <code>[0]</code> [1]% 循环折扣
+teamsettings.billing.recurring.modifiers.flat	已应用 [0] 循环折扣
+teamsettings.billing.table.date	日期
+teamsettings.billing.table.invoice.total	发票合计
+teamsettings.billing.table.paid	已付款
+teamsettings.billing.table.status	状态
+teamsettings.billing.table.unpaid	未付
+teamsettings.billing.table.view.invoice	查看发票
+teamsettings.cancel.appstore.on.web	你的订阅由 App Store 管理。请在那里取消订阅。
+teamsettings.cancel.subscription	取消订阅
+teamsettings.cancel.subscription.part1	你和其他团队成员可以继续使用 Craft，直到 
+teamsettings.cancel.subscription.part2	当前计费周期结束
+teamsettings.cancel.subscription.part3	之后，你将无法向文档中添加新内容。
+teamsettings.cancel.team.subscription	取消团队订阅
+teamsettings.cancel.team.subscription.description	取消后，你将可以使用 Craft 直到当前计费周期结束。
+teamsettings.change.payment.method	更改付款方式
+teamsettings.continue	继续
+teamsettings.craft.domain	{{craft}} 域名
+teamsettings.craft.domain.desc	共享 Craft 文档时使用你的自定义 Craft 域名
+teamsettings.craft.domain.new	[0] 域名
+teamsettings.create.business.name	[0]的业务
+teamsettings.create.family.name	[0] 的家庭
+teamsettings.create.team.name	[0]的团队
+teamsettings.current.plan	当前套餐
+teamsettings.custom.craft.domain.already.used	已使用
+teamsettings.custom.craft.domain.available	可用
+teamsettings.custom.craft.domain.change.domain	更改域名
+teamsettings.custom.craft.domain.confirm.delete.and.update.text1	此更改将影响已发布的文档。
+teamsettings.custom.craft.domain.confirm.delete.and.update.text2.part1	如果你的团队在当前域下发布了活动文档（
+teamsettings.custom.craft.domain.confirm.delete.and.update.text2.part2	）。如果你更改团队的 Craft 域，则包含此地址的所有现有链接都将停止工作。
+teamsettings.custom.craft.domain.confirm.delete.and.update.text3	你确定要更改你的域名吗？
+teamsettings.custom.craft.domain.not.available	不可用
+teamsettings.custom.craft.domain.part1	你发布的文档将在此域下：
+teamsettings.custom.craft.domain.part2	了解有关域的更多信息
+teamsettings.custom.craft.domain.type.to.see.availability	输入以查看是否可用
+teamsettings.custom.domain.active	自定义域
+teamsettings.custom.domain.not.active	设置域
+teamsettings.custom.domain.part1	你应该拥有这个域名。这应该是一个子域。
+teamsettings.custom.domain.part2	详细了解支持的域。
+teamsettings.custom.domain.yourdomain.placeholder	你的域名
+teamsettings.danger.zone	危险区
+teamsettings.delete.team	删除团队
+teamsettings.delete.team.description	删除你的团队将永久删除所有团队空间中的所有文档。此操作无法撤消！
+teamsettings.delete.team.part1	删除此团队将导致所有团队成员失去访问权限。此操作无法撤消
+teamsettings.delete.team.success	团队 [0] 已删除
+teamsettings.delete.team.title	删除团队
+teamsettings.delete.team.tooltip	你的团队的订阅需要先取消才能继续。
+teamsettings.disconnect.custom.domain.description	取消后，共享页面将在 craft.me 域上可用，但你可以设置一个新的自定义域。
+teamsettings.disconnect.custom.domain.title	断开自定义域
+teamsettings.disconnect.domain	断开域
+teamsettings.disconnect.domain.config	你确定要继续吗？
+teamsettings.disconnect.domain.text	你现在正在断开域
+teamsettings.dns.config.error.subtitle	请稍后重试或联系支持人员。
+teamsettings.dns.config.error.title	找不到 DNS 配置
+teamsettings.dns.description	共享 Craft 文档时使用你的域
+teamsettings.dns.verified	已验证 DNS
+teamsettings.dns.verifying	正在验证 DNS…
+teamsettings.domain.not.added	未设置域
+teamsettings.emails	电子邮件
+teamsettings.enter.team.logo.url	输入团队徽标 URL
+teamsettings.error.could.not.update.setting	无法更新设置
+teamsettings.error.could.not.update.team.logo	无法更新团队徽标
+teamsettings.error.could.not.update.team.logo.url	无法更新团队徽标 URL
+teamsettings.external.domain.added.dns.records	我已添加 DNS 记录
+teamsettings.external.domain.dns.record	DNS 记录
+teamsettings.external.domain.name.host	名称 / 主机
+teamsettings.external.domain.no.dns.found	未找到此域名的 DNS 配置。请在此处联系我们。
+teamsettings.external.domain.title.active	外部域名详情
+teamsettings.external.domain.title.modify	修改你的域名 DNS 设置
+teamsettings.external.domain.value.points.to	值 / 指向
+teamsettings.family	Family
+teamsettings.family.members.count	Family ({{count}})
+teamsettings.granted.description	作为 {{plan}} 订阅的一部分，你的帐户已升级至 {{plusplan}}。
+teamsettings.inspiration.button.community	加入社区
+teamsettings.invite	邀请
+teamsettings.invite.already.member.subtitle	已经是团队成员
+teamsettings.invite.already.member.title	用户已经加入团队
+teamsettings.invite.error.could.not.invite.email	无法邀请{{email}}
+teamsettings.invite.error.could.not.invite.users	无法邀请{{count}}位用户
+teamsettings.invite.error.out.of.seats	团队没有空位
+teamsettings.invite.ignored.emails	忽略的电子邮件
+teamsettings.invite.ignored.emails.subtitle	忽略{{count}}现有或重复的电子邮件
+teamsettings.invite.ignored.emails.subtitle.new	忽略了 [0] 个已存在或重复的邮箱
+teamsettings.invite.n.emails	{{count}}封电子邮件
+teamsettings.invite.n.emails.new	[0] 个邮箱
+teamsettings.invite.to.space	邀请至空间
+teamsettings.invoice.next.issue.date	下次发票签发日期
+teamsettings.invoice.sent.to	发票发送至
+teamsettings.invoice.total	发票总额
+teamsettings.invoices	发票
+teamsettings.join.space	加入空间
+teamsettings.manage	管理
+teamsettings.no.invoices	没有发票
+teamsettings.other.spaces	其他空间
+teamsettings.plan.cancel.subscription	取消 {{plan}} 订阅
+teamsettings.plan.cancel.subscription.new	取消 [0] 订阅
+teamsettings.plan.expired	已到期
+teamsettings.plan.expired.at	于{{date}}过期
+teamsettings.plan.expires.at.not.renewed	{{date}}到期，未续订
+teamsettings.plan.monthly	{{plan}}，每月计费 {{amount}}
+teamsettings.plan.monthly.renewal	{{plan}} 套餐每月续订
+teamsettings.plan.monthly.renewal.new	[0]，按月计费
+teamsettings.plan.no.active.subscription	没有有效订阅
+teamsettings.plan.per.seat.monthly	{{plan}}，每个席位 {{amount}}，按月计费
+teamsettings.plan.per.seat.yearly	{{plan}}，每个席位 {{amount}}，按年计费
+teamsettings.plan.please.retry	请稍后重试
+teamsettings.plan.tier	{{tier}} 套餐
+teamsettings.plan.unknown.provider	未知
+teamsettings.plan.weekly	{{plan}}，每周计费 {{amount}}
+teamsettings.plan.weekly.renewal	{{plan}} 套餐每周续订
+teamsettings.plan.weekly.renewal.new	[0]，每周计费
+teamsettings.plan.yearly	{{plan}}，按年计费 {{amount}}
+teamsettings.plan.yearly.renewal	{{plan}} 套餐年度续订
+teamsettings.plan.yearly.renewal.new	[0]，按年计费
+teamsettings.resume.subscription	恢复订阅
+teamsettings.resume.subscription.description	你的订阅已被取消。你可以恢复它以继续使用 Craft。
+teamsettings.resume.subscription.part1	你正在恢复订阅。将于
+teamsettings.resume.subscription.part2	下次账单日
+teamsettings.resume.subscription.part3	之后，价格将是
+teamsettings.resume.subscription.part4	每个席位。
+teamsettings.resume.team.subscription	恢复团队订阅
+teamsettings.save	保存
+teamsettings.set.custom.craft.domain	设置你自己的 Craft 域
+teamsettings.settings.and.billing	设置和计费
+teamsettings.share.page.branding.disabled	已禁用
+teamsettings.share.page.branding.enabled	已启用
+teamsettings.team.change.logo	更改徽标
+teamsettings.team.change.logo.description	添加或更改你的徽标或图标
+teamsettings.team.change.logo.family	更改 Family 徽标
+teamsettings.team.change.logo.family.description	添加或更改你的 Family 徽标或图标
+teamsettings.team.change.logo.team	更改团队徽标
+teamsettings.team.change.logo.team.description	添加或更改你的团队徽标或图标
+teamsettings.team.change.to.admin.subtitle	可以更改团队设置、账单明细并查看所有空间。
+teamsettings.team.change.to.admin.title	管理员
+teamsettings.team.change.to.member.subtitle	无法查看设置、账单以及未加入的空间。
+teamsettings.team.change.to.member.title	成员
+teamsettings.team.deactivated.members	已停用成员（{{count}}）
+teamsettings.team.deactivated.members.no.count	已停用成员
+teamsettings.team.default.cannot.delete	你的默认团队无法被删除。
+teamsettings.team.family.subscription.first.cancel	你需要先取消 Family 订阅才能继续。
+teamsettings.team.invite.people	邀请人员
+teamsettings.team.logo.click	点击团队标志
+teamsettings.team.logo.click.description	单击文档顶部的徽标时，将打开此链接。
+teamsettings.team.logo.url	自定义团队徽标 URL
+teamsettings.team.members.count	成员（{{count}}）
+teamsettings.team.name	团队名称
+teamsettings.team.pending.invites	待处理邀请（ {{count}} ）
+teamsettings.team.remove.from.team	从团队中删除
+teamsettings.team.remove.from.team.cta	从团队中移除
+teamsettings.team.remove.from.team.header	从团队中移除
+teamsettings.team.remove.from.team.text	你确定要从团队中删除{{name}} ( {{email}} ) 吗？
+teamsettings.team.revoke.invitation	撤销邀请
+teamsettings.team.revoke.invitation.cta	撤销
+teamsettings.team.revoke.invitation.header	撤销邀请？
+teamsettings.team.revoke.invitation.text	你确定要撤销来自{{email}}的邀请吗？
+teamsettings.team.role.admin	管理员
+teamsettings.team.role.deactivated	停用
+teamsettings.team.role.member	成员
+teamsettings.team.role.pending	待定
+teamsettings.team.seats	团队席位
+teamsettings.team.settings	团队设置
+teamsettings.team.subscription.cannot.be.managed.on.platform	该平台无法管理此订阅。
+teamsettings.who.can.help	查看谁可以提供帮助

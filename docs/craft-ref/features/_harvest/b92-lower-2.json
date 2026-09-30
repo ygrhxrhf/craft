@@ -1,0 +1,65 @@
+{
+ "note": "curated short excerpt windows from vendor-BZCR0rqu.js + main bundle (batch 92-lower addendum); NOT full bundle text",
+ "main_keyname_consts": {
+  "i": 19528,
+  "s": "5):t.startsWith(\"Key\")?t.substr(3):pEe[t]}const qs=\"Escape\",oo=\"Enter\",B4=\"Delete\",vd=\" \",nc=\"Backspace\",f1=\"Tab\",ms=\"ArrowDown\",Ts=\"ArrowUp\",Vl=\"ArrowLeft\",Il=\"ArrowRight\",XM=\"Hom"
+ },
+ "main_enter_literal_sites": [
+  19501,
+  2196492,
+  2246965,
+  4531569,
+  4531582,
+  4800611,
+  4943733,
+  5127969
+ ],
+ "vendor_len": 3888008,
+ "vendor_nativeButton_sites": [
+  1208713,
+  1215895,
+  1391153,
+  1408462,
+  1761367,
+  3498883
+ ],
+ "vendor_enter_sites": [
+  876569,
+  993562,
+  1111675,
+  1118892,
+  1234168,
+  1379412,
+  1381573,
+  1713604,
+  1713644
+ ],
+ "vendor_button_nativeButton_mapping": {
+  "i": 1208713,
+  "s": "rs.scrollAreaThumbWidth})`}}},Ir]})}),Button=reactExports.forwardRef(function $r(Ar,Cr){const{render:Rr,className:Pr,disabled:Ir=!1,focusableWhenDisabled:Hr=!1,nativeButton:ca=!0,...fa}=Ar,{getButtonProps:da,buttonRef:pa}=useButton({disabled:Ir,focusableWhenDisabled:Hr,native:ca});return useRenderElement(\"button\",Ar,{state:{disabled:Ir},ref:[Cr,pa],props:[fa,da]})}),CompositeLi"
+ },
+ "vendor_tabs_tab": {
+  "i": 1215895,
+  "s": "new Error(formatErrorMessage(65));return $r}const TabsTab=reactExports.forwardRef(function $r(Ar,Cr){const{className:Rr,disabled:Pr=!1,render:Ir,value:Hr,id:ca,nativeButton:fa=!0,...da}=Ar,{value:pa,getTabPanelIdByValue:ha,orientation:ma}=useTabsRootContext(),{activateOnFocus:ga,highlightedTabIndex:va,onTabActivation:ya,registerTabResizeObserverElement:wa,setHighlightedTabIndex"
+ },
+ "vendor_combobox_item_default_false": {
+  "i": 1391153,
+  "s": "xRowContext)}const ComboboxItem=reactExports.memo(reactExports.forwardRef(function $r(Ar,Cr){const{render:Rr,className:Pr,value:Ir=null,index:Hr,disabled:ca=!1,nativeButton:fa=!1,...da}=Ar,pa=reactExports.useRef(!1),ha=reactExports.useRef(null),ma=useCompositeListItem({index:Hr,textRef:ha,indexGuessBehavior:IndexGuessBehavior.GuessFromOrder}),ga=useComboboxRootContext(),va=useC"
+ },
+ "useButton_full_handler": "Pr?\"button\":void 0,onClick($a){if(Ar){$a.preventDefault();return}va==null||va($a)},onMouseDown($a){Ar||ya==null||ya($a)},onKeyDown($a){if(Ar||(makeEventPreventable($a),ba==null||ba($a),$a.baseUIHandlerPrevented))return;const Ta=$a.target===$a.currentTarget,Aa=$a.currentTarget,Oa=isButtonElement(Aa),Pa=!Pr&&isValidLinkElement(Aa),Ua=Ta&&(Pr?Oa:!Pa),qa=$a.key===\"Enter\",Ia=$a.key===\" \",La=Aa.getAttribute(\"role\"),Da=(La==null?void 0:La.startsWith(\"menuitem\"))||La===\"option\"||La===\"gridcell\";if(Ta&&fa&&Ia){if($a.defaultPrevented&&Da)return;$a.preventDefault(),Pa||Pr&&Oa?(Aa.click(),$a.preventBaseUIHandler()):Ua&&(va==null||va($a),$a.preventBaseUIHandler());return}Ua&&(!Pr&&(Ia||qa)&&$a.preventDefault(),!Pr&&qa&&(va==null||va($a)))},onKeyUp($a){if(!Ar){if(makeEventPreventable($a),wa==null||wa($a),$a.target===$a.currentTarget&&Pr&&fa&&isButtonElement($a.currentTarget)&&$a.key===\" \"){$a.preventDefault();return}$a.baseUIHandlerPrevented||$a.target===$a.currentTarget&&!Pr&&!fa&&$a.key===\" \"&&(va==null||va($a))}},onPointerDown($a){if(Ar){$a.preventDefault();return}Ea==null||Ea($a)}},Pr?void 0:{role:\"button\"},da,xa)},[Ar,da,fa,Pr]),ma=useStableCallback(ga=>{Hr.current=ga,pa()});return{getButtonProps:ha,buttonRef:ma}}function isButtonElement($r){return isHTMLElement$2($r)&&$r.tagName===\"BUTTON\"}function isValidLinkElement($r){return!!(($r==null?void 0:$r.tagName)===\"A\"&&($r!=null&&$r.href))}const none$1=\"none\",triggerPress=\"trigger-press\",triggerHover=\"trigger-hover\",triggerFocus=\"trigger-focus\",outsidePress=\"outside-press\",itemPress=\"item-press\",closePress=\"close-press\",inputChange=\"input-change\",inputClear=\"input-clear\",inputPress=\"input-press\",focusOut=\"focus-out\",escapeKey=\"escape-key\",closeWatcher=\"close-watcher\",listNavigation=\"list-navigation\",disabled=\"disabled\",imperativeAc",
+ "listbox_enter": [
+  {
+   "i": 1379412,
+   "s": "(ya==null?void 0:ya.highlightedChipIndex)!==void 0,vu=Ba(au);if(ya==null||ya.setHighlightedChipIndex(vu),vu!==void 0?(xu=ya==null?void 0:ya.chipsRef.current[vu])==null||xu.focus():hu&&((Tu=Ea.state.inputRef.current)==null||Tu.focus()),au.which!==229&&au.key===\"Enter\"&&Da){const Cu=Ea.state.activeIndex,Fu=au.nativeEvent;if(Cu===null){if(ja)return;Ea.state.setOpen(!1,createChangeEventDetails(none$1,Fu));return}stopEvent(au);const Nu=Ea.state.listRef.current[Cu];Nu&&(Ea.state.selectionEventRef.current=Fu,Nu.click(),Ea"
+  },
+  {
+   "i": 1381573,
+   "s": ")):Hr,[Hr]),Ua={empty:Ta},qa=da.useState(\"floatingId\"),Ia=useRenderElement(\"div\",Ar,{state:Ua,ref:[Cr,Oa,pa?null:Aa],props:[ba,{children:Pa,tabIndex:-1,id:qa,role:wa?\"grid\":\"listbox\",\"aria-multiselectable\":$a?\"true\":void 0,onKeyDown(La){if(!(Ea||xa)&&La.key===\"Enter\"){const Da=fa.state.activeIndex;if(Da==null)return;stopEvent(La);const Fa=La.nativeEvent,ru=fa.state.listRef.current[Da];ru&&(fa.state.selectionEventRef.current=Fa,ru.click(),fa.state.selectionEventRef.current=null)}},onKeyDownCapture(){fa.state.keyboar"
+  }
+ ],
+ "ti_not_in_vendor": {
+  "hasTIe": false,
+  "tiInExport": -1,
+  "exportHead": "export{serialize as $,tinycolor as A,Bm as B,dedent as C,memoize$3 as D,select as E,stepBefore as F,stepAfter as G,curve"
+ }
+}

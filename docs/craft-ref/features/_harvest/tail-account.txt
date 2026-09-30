@@ -1,0 +1,4 @@
+account.delete.email.address	邮箱地址（用于确认）
+accountselector.my.spaces	我的空间
+accountselector.shared.spaces	共享空间
+accountselector.shared.with.me	与我共享

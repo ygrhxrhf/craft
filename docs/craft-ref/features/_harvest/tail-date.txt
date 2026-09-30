@@ -1,0 +1,39 @@
+date.current.month	本月
+date.current.week	本周
+date.day.ago	1 天前
+date.day.friday	周五
+date.day.monday	周一
+date.day.saturday	周六
+date.day.sunday	周日
+date.day.thursday	周四
+date.day.tuesday	周二
+date.day.wednesday	周三
+date.hour.ago	1 小时前
+date.justnow	刚刚
+date.last.week	上周
+date.minute.ago	1 分钟前
+date.next.week	下周
+date.select	选择日期…
+date.shared	共享日期
+date.this.month	本月
+date.this.week	本周
+date.today	今天
+date.tomorrow	明天
+date.week.ago	1 周前
+date.x	[0] [1]
+date.x.days.ago	[0]天前
+date.x.days.short	[0]天
+date.x.hours	[0] 小时
+date.x.hours.ago	[0] 小时前
+date.x.hours.short	[0]小时
+date.x.minutes	[0] 分钟
+date.x.minutes.ago	[0] 分钟前
+date.x.minutes.short	[0]分钟
+date.x.months.ago	[0] 前
+date.x.seconds	[0] 秒
+date.x.seconds.ago	[0] 秒前
+date.x.seconds.short	[0]秒
+date.x.short	[0][1]
+date.x.years.ago	[0] 年前
+date.year.ago	1 年前
+date.yesterday	昨天

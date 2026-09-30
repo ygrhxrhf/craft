@@ -1,0 +1,63 @@
+=== KaTeX selector diff (depth-aware) ===
+  official sel=368 local sel=369 shared=218 officialOnly=150 localOnly=151
+  official first3=[".katex",".katex *",".katex .katex-version:after"] last3=[".katex-display.leqno>.katex>.katex-html>.tag",".katex-display.fleqn>.katex","body"]
+  any non-.katex official sel=["body"]
+  official faces=20 local faces=20
+  src url host official sample=/static/KaTeX_AMS-Regular-BQhdFMY1.woff2
+=== index.css structural (depth-aware) ===
+  selectors total=10 @layer blocks=86 @media=48 @supports=6 @keyframes=7
+  hashed families=90
+  custom-prop definitions=1430 distinct=544
+=== --st-* ===
+  definitions=21 consumed=28 definedOnly=--st-z-index-cell-header consumedNotDefined=--st-page-bg-hover-opaque,--st-selection-bg-opaque,--st-selection-hover-bg-opaque,--st-border-color,--st-grid-columns,--st-font-family,--st-accent-selection,--st-selection-color
+  DEF --st-scroll-left: 0px
+  DEF --st-row-height: 35px
+  DEF --st-index-column-width: 45px
+  DEF --st-cell-padding-x: 10px
+  DEF --st-cell-padding-y: 4px
+  DEF --st-border-radius: 5px
+  DEF --st-max-height: 560px
+  DEF --st-z-base-cell: 1
+  DEF --st-z-index-cell-header: 2
+  DEF --st-z-sticky-index: 3
+  DEF --st-z-sticky-header: 6
+  DEF --st-z-sticky-header-index: 7
+  DEF --st-z-interactive-overlay: 10
+  DEF --st-z-resize-preview: 12
+  DEF --st-index-bg: var(--st-page-bg, #fff)
+  DEF --st-index-bg-hover: var(--st-page-bg-hover-opaque, #f8f8f8)
+  DEF --st-index-bg-selected: var(--st-selection-bg-opaque, rgb(194, 223, 255))
+  DEF --st-index-bg-selected-hover: var(--st-selection-hover-bg-opaque, rgb(173, 212, 255))
+  DEF --st-card-title-line-height: 21px
+  DEF --st-text-color: initial
+  DEF --st-page-bg: initial
+  HOST --st-page-bg-hover-opaque fallback=#f8f8f8
+  HOST --st-selection-bg-opaque fallback=rgb(194, 223, 255
+  HOST --st-selection-hover-bg-opaque fallback=rgb(173, 212, 255
+  HOST --st-border-color fallback=var(--foreground-100
+  HOST --st-grid-columns fallback=none
+  HOST --st-font-family fallback=Inter, system-ui, sans-serif
+  HOST --st-accent-selection fallback=none
+  HOST --st-selection-color fallback=var(--accent-500
+=== TaskViews/AIChatPopup depth-aware ===
+  TaskViews.css.DghTjfLb.css sel=0 fams=["fdch5","11co4","title","ydla7"] defs=0 media=2
+  AIChatPopup.css.D9rwJ006.css sel=0 fams=["apokp"] defs=0 media=0
+=== excalidraw ===
+  chars=163877 sel=1187 allPropDefs=406 distinct=212 --color-* defs=67 --color-* distinct names=67
+  data-theme=0 prefers-color-scheme=0 @media=25 faces=4
+  face families=["Assistant"]
+  primary/selection verbatim: --color-primary=#6965db | --color-selection=#6965db | --color-primary-darker=#5b57d1 | --color-primary-hover=#5753d0 | --ui-font=Assistant, system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif
+=== per-file depth-aware census ===
+  AIChatPopup.css.D9rwJ006.css         chars=    333 sel=   0 ff=   0 ur=   0 fams=  1 props=0/0
+  BlankFont.css.CSdHt10-.css           chars=  25567 sel=   0 ff=   1 ur=   0 fams=  0 props=0/0
+  fontdef.avenir-next-rounded.css      chars=   1485 sel=   0 ff=   8 ur=   0 fams=  0 props=0/0
+  fontdef.common.css                   chars=  25401 sel=  16 ff=  45 ur=  45 fams=  0 props=0/0
+  fontdef.inter.css                    chars=    325 sel=   0 ff=   2 ur=   0 fams=  0 props=0/0
+  fontdef.m-plus-rounded-1c.css        chars= 308022 sel=   0 ff= 354 ur= 354 fams=  0 props=0/0
+  fontdef.roboto-mono.css              chars=   3382 sel=   0 ff=  12 ur=  12 fams=  0 props=0/0
+  fontdef.source-serif.css             chars=    353 sel=   0 ff=   2 ur=   0 fams=  0 props=0/0
+  fontdef.untitled-serif.css           chars=   1045 sel=   0 ff=   6 ur=   0 fams=  0 props=0/0
+  index.css.CP00jDAy.css               chars= 297080 sel=  10 ff=   0 ur=   0 fams= 90 props=1430/544
+  TaskViews.css.DghTjfLb.css           chars=   2240 sel=   0 ff=   0 ur=   0 fams=  4 props=0/0
+  vendor-code-editor.css.DkZwelau.css  chars=  29193 sel= 368 ff=  20 ur=   0 fams=  0 props=0/0
+  vendor-excalidraw.css.tkYuNB5W.css   chars= 163877 sel=1187 ff=   4 ur=   0 fams=  0 props=406/212

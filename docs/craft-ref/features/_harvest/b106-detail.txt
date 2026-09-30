@@ -1,0 +1,49 @@
+=== TaskViews.css.DghTjfLb.css (2240 chars) ===
+  ._rubberBand_fdch5_1 { position:fixed;background:var(--accent-100);border:1px solid var(--accent-500);border-radius:var(--radius-sm);pointer-events:none;z-index:10 }
+  ._heading_11co4_1._heading_11co4_1 { height:auto;flex-wrap:wrap;gap:8px;margin-bottom:16px }
+  ._title_11co4_8 { display:flex;flex:1;align-items:center;min-width:0;min-height:36px }
+  ._title_11co4_8>h1 { margin:0 }
+  ._title_11co4_8 { min-height:48px }
+  ._tabs_11co4_24 { order:1;flex:0 0 calc(100% + 32px);min-width:0;margin:-8px -16px;overflow-x:auto;scrollbar-width:none }
+  ._tabs_11co4_24::-webkit-scrollbar { display:none }
+  ._tabsContent_11co4_37 { display:flex;width:max-content;padding:8px 16px }
+  ._settings_11co4_43 { display:flex;flex-shrink:0 }
+  ._settingsPlaceholder_11co4_48 { visibility:hidden;pointer-events:none }
+  ._heading_11co4_1._heading_11co4_1 { flex-wrap:nowrap }
+  ._tabs_11co4_24 { order:0;flex:0 1 auto;margin:-8px }
+  ._tabsContent_11co4_37 { padding:8px }
+  ._card_ydla7_1 { position:relative;display:block;box-sizing:border-box;width:100%;height:11.25rem;flex-shrink:0;margin:0;padding:0;border:none;border-radius:.9375rem;b }
+  [data-whatintent=keyboard] ._card_ydla7_1:focus { outline:1px solid var(--accent-500);outline-offset:-1px }
+  ._layer_ydla7_27 { position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;padding-inline }
+  ._idle_ydla7_42,._action_ydla7_46._isAlwaysVisible_ydla7_46 { opacity:1 }
+  [data-whatintent]:not([data-whatintent=touch]) ._card_ydla7_1:hover ._idle_ydla7_42,[data- { opacity:0 }
+  [data-whatintent]:not([data-whatintent=touch]) ._card_ydla7_1:hover ._action_ydla7_46,[dat { opacity:1 }
+  ._iconSlot_ydla7_61 { display:flex;width:2.5rem;height:2.5rem;flex-shrink:0 }
+=== AIChatPopup.css.D9rwJ006.css (333 chars) ===
+  ._scrollRoot_apokp_1 { max-width:100%;margin-top:-8px;margin-bottom:-8px }
+  ._scrollViewport_apokp_7 { padding-top:8px;padding-bottom:8px;scrollbar-width:none }
+  ._scrollViewport_apokp_7::-webkit-scrollbar { display:none }
+  ._scrollContent_apokp_19 { display:inline-flex;gap:8px;min-width:fit-content!important;flex-direction:row }
+=== vendor-code-editor.css (29193) ===
+  @font-face count=20
+  font-family decls (17): aTeX_AMS | aTeX_Caligraphic | aTeX_Fraktur | aTeX_Main | aTeX_Math | aTeX_SansSerif | aTeX_Script | aTeX_Size1 | aTeX_Size2 | aTeX_Size3 | aTeX_Size4 | aTeX_Typewriter
+  distinct class tokens (140): .woff2 .woff .ttf .katex .katex-version .katex-mathml .katex-html .newline .base .strut .textbf .textit .textrm .textsf .texttt .mathnormal .mathit .mathrm .mathbf .boldsymbol .amsrm .mathbb .textbb .mathcal .mathfrak .textfrak .mathboldfrak .textboldfrak .mathtt .mathscr .textscr .mathsf .mathboldsf .textboldsf .mathitsf .mathsfit .textitsf .mainrm .vlist-t .vlist-r
+  first 260 chars: @font-face{font-display:block;font-family:KaTeX_AMS;font-style:normal;font-weight:400;src:url(/static/KaTeX_AMS-Regular-BQhdFMY1.woff2) format("woff2"),url(/static/KaTeX_AMS-Regular-DMm9YOAa.woff) format("woff"),url(/static/KaTeX_AMS-Regular-DRggAlZN.ttf) form
+  .cm-* occurrences=0 uniq=0
+=== vendor-excalidraw.css (163877) ===
+  vars=221 sample: --icon-fill-color=var(--color-on-primary-con | --keybinding-color=var(--color-on-primary-con | --selected=active,.excalidraw .Modal  | --spinner-color=var(--icon-fill-color)}.ex | --padding=0 | --radius=4px | --size=1.375rem | --large=after{content:"" | --offset=-1px | --no-focus-visible=after{display:none}[data-w | --default=focus{outline:none | --list-border-color=var(--color-gray-20)}.exca | --slider-thumb-size=16px}.excalidraw .range-wr | --ui-font=Assistant, system-ui, Blin | --readonly=hover{background:none}.exc | --gap=0 | --background=var(--color-surface-mid) | --container-padding-y=1rem | --container-padding-x=.75rem}.excalidraw .librar | --ExcTextField--color=var(--color-on-surface) | --ExcTextField--label-color=var(--color-on-surface) | --ExcTextField--background=var(--color-surface-low) | --ExcTextField--readonly--background=var(--color-surface-high) | --ExcTextField--readonly--color=var(--color-on-surface)
+  excalidraw scopes: .excalidraw .excalidraw--mobile .excalidraw-eye-dropper-container .excalidraw-eye-dropper-backdrop .excalidraw-eye-dropper-preview .excalidraw-eye-dropper-trigger .excalidraw-tooltip .excalidraw-tooltip--visible .excalidraw-tooltip-wrapper .excalidraw-tooltip-icon
+  media queries (25): @media screen and (max-width: 450px) | @media screen and (max-width: 379px) | @media screen and (orientation: landscape) | @media screen and (min-width: 1921px) | @media screen and (min-width: 861px) | @media screen and (max-width: 861px)
+  top selectors sample: }.excalidraw .ToolIcon__hidden ;; }.excalidraw .ToolIcon.fillable .ToolIcon_type_radio:checked+.ToolIcon__icon ;; ,.excalidraw .ToolIcon.fillable .ToolIcon_type_checkbox:checked+.ToolIcon__icon ;; }.excalidraw .ToolIcon.fillable .ToolIcon_type_radio:checked+.ToolIcon__icon svg ;; ,.excalidraw .ToolIcon.fillable .ToolIcon_type_checkbox:checked+.ToolIcon__icon svg ;; }.excalidraw .ToolIcon .ToolIcon
+=== fontdef rosters ===
+  fontdef.avenir-next-rounded.css faces=8 fam=["Avenir Next Rounded"] weights=400,500,600,700 styles=normal,italic formats=woff2 unicodeRanges=0 srcFiles=8 sample="avenir-next-rounded-regular.woff2"
+  fontdef.common.css faces=45 fam=["Noto Sans Mono JP","Pretendard JP","Source Han Serif JP","Jetendard","Nanum Square Round","Pretendard","Source Han Serif KR","Noto Sans Mono SC","Resource Han Rounded SC","Noto Sans SC","Source Han Serif SC","Noto Sans Mono TC","Resource Han Rounded TC","Noto Sans TC","Source Han Serif TC"] weights=100 900,200 900,100,200,300,400 styles=normal,italic formats=woff2 unicodeRanges=45 srcFiles=45 sample='../../_japanese/mono/noto-sans-mono/noto-sans-mono-jp-variable.woff2'
+  fontdef.inter.css faces=2 fam=["Inter"] weights=100 900 styles=normal,italic formats=woff2 unicodeRanges=0 srcFiles=2 sample="inter-variable.woff2"
+  fontdef.m-plus-rounded-1c.css faces=354 fam=["M PLUS Rounded 1c"] weights=400,500,700 styles=normal formats=woff2 unicodeRanges=354 srcFiles=354 sample='m-plus-rounded-1c-400.0.woff2'
+  fontdef.roboto-mono.css faces=12 fam=["Roboto Mono"] weights=100 700 styles=normal,italic formats=woff2 unicodeRanges=12 srcFiles=12 sample='roboto-mono-cyrillic-ext-wght-normal.woff2'
+  fontdef.source-serif.css faces=2 fam=["Source Serif"] weights=200 900 styles=normal,italic formats=woff2 unicodeRanges=0 srcFiles=2 sample='source-serif-variable.woff2'
+  fontdef.untitled-serif.css faces=6 fam=["Untitled Serif"] weights=400,500,700 styles=normal,italic formats=woff2 unicodeRanges=0 srcFiles=6 sample="untitled-serif-regular.woff2"
+=== BlankFont.css (25567) ===
+  head: @font-face{font-family:AdobeBlank;src:url(data:font/opentype;base64,T1RUTwAKAIAAAwAgQ0ZGIDTeCDQAACFkAAAZPERTSUcAAAABAABKqAAAAAhPUy8yAF+xmwAAARAAAABgY21hcCRDbtEAAAdcAAAZ6GhlYWQFl9tDAAAArAAAAD
+  tail: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA==)} 
+  has base64=true format=[]

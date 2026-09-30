@@ -1,0 +1,38 @@
+第 110 批·盘上探针 b110-probe6.txt（源＝`static/js/CodeEditorWrapper-DB8UxA00.js` 59,843 字符 ＋ `static/js/index-DiTmKH3z.js` 6,841,180 字符，页内 `fetch().text()` 落盘；两条原始 dump 已按纪律删除，本文件是全部引用依据）
+
+一、代码块主题的读取路径（index 逐字，@3,633,4xx 一带）
+`let b;e:{const Q=m.pluginData;if(!Q||Q.pluginName!=="codeBlock"||!Q.pluginConfigurationData){b=null;break e}b=Q.pluginConfigurationData.themeId}const y=b;`
+…（同函数内）`const W=(t.isCursorText,"text"),z=y??"";`
+…`a.jsx(Ttn,{blockId:t.blockId,ref:o,inCodeEditing:h,storedLanguage:t.language,storedContent:t.content,onSave:w,onCodeEditorClick:F,onCopy:O,onFocusModeClick:v,inFocusMode:!1,storedThemeId:z,features:t.features,threeDotsMenuWrapperRef:N,isSelectionDragging:g})`
+⇒ 语言与内容是**块本体字段**（`t.language`／`t.content`），主题是 **`pluginData.pluginConfigurationData.themeId`**＝另一个存储层；缺省 ⇒ `null` → `""`。
+
+二、代码块主题的写入路径（CodeEditorWrapper 逐字）
+`(L)=>{B(L),S(Ut([o],{pluginType:"codeBlock",pluginName:"codeBlock",pluginConfigurationData:{themeId:L.id},horizontalSizeClass:null,verticalSizeClass:null,surfaceShadowOpacity:1}))}`
+⇒ `S`＝`docDispatch`（`const{docDispatch:S}=useContext(_t)`）、`o`＝blockId、`L`＝主题对象（取自名册 `V`）；★ payload 固定六字段（`pluginType`／`pluginName`／`pluginConfigurationData`／`horizontalSizeClass:null`／`verticalSizeClass:null`／`surfaceShadowOpacity:1`）⇒ **`pluginData` 是一个跨插件块共用的通用槽位**，且 action 第一参是**数组**（`[o]`）⇒ 多选可一次改多块。
+⇒ ☆ 语言/内容走的是另一条 action：`x=(Q,Y)=>{r(bRe(t.blockId,Q??"",Y))}`（`bRe`＝第 108 批认出的 `updateCodeBlock`，三参 `blockId, content, language`，**没有 theme 位**）⇒ **两条通路互不相干，撤销步数各自独立**。
+
+三、编辑态与 ui 态（index 逐字）
+selector：`p=Q=>{const{docStore:Y,uiStore:X}=Q;return{inCodeEditing:X.codeEditorState!=null&&X.codeEditorState.blockId===t.blockId,block:Y.blocks[t.blockId],isSelectionDragging:X.isSelectionDraggingActive}}`
+⇒ ★ **"当前哪个块在编辑代码"是 `uiStore.codeEditorState.blockId`**（不是块上的字段）；`isSelectionDraggingActive` 同在 uiStore ⇒ 第 110 批框选探针的判据面之一。
+另有 `c(St(Et.blocks([t.blockId])))`（选中该块）、`c(l3(t.blockId,!0))`（进聚焦模式）、`I=`code_editor_${t.blockId}``（bn.pushIntoFocus 的键＝每块一个焦点注册 id）。
+
+四、主题解析与名册（CodeEditorWrapper 逐字）
+`De=(o,t)=>o==="auto"?t?ue.craftdark:ue.craftlight:ue[o]`
+`lt=(o,t)=>{if(o==="auto"){const r=t?"craftdark":"craftlight",s=V.find(D=>D.id===r);return …`
+`V=[{id:"auto",label:"Auto",keywords:["system"…`（挑选面板用的**可搜索名册**，条目形如 `{id,label,keywords}`，过滤式 `v.label.toLowerCase().includes(D.toLowerCase())`）
+面板模式判定：`T==="theme"?jsx(st,{onClose:L,onThemeSelect:oe,value:M})`／`T==="upgrade"`／`Fa=o=>{const{value:a,onThemeSelect:r}=o…}`（＝主题选择器子组件，带 `Oe(null)` 的 ref/updateRef 对）
+CM6 侧：`theme:j??void 0`（把解析出的扩展交进 `@uiw/react-codemirror` 形状的对象）
+mermaid 预览吃同一份：`renderMermaidDiagram(B||"",{themeId:y,isDark:x})` ⇒ ★ **`themeId` 不止着色代码，还传进 mermaid 渲染**（第 107 批只读到"三元组与三条渲染路"，这里补一条：主题 id 是 mermaid 的入参）。
+
+五、pluginName 家族与导出分派（index 逐字）
+`case "card":{const G=t.pluginData.pluginConfigurationData;z.themeAssetId=(G==null?void 0:G.themeAssetId)??void 0;z.fo…`
+`case "codeBlock":{const G=t.pluginData.pluginConfigurationData;z.themeId=(G==null?void 0:G.themeId)??void 0;break}default:`
+⇒ 字面量集合（两文件穷尽枚举）：`pluginName`／`pluginType` 各见 **`"card"`／`"codeBlock"`／`"unknown"`**（`unknown` 是兜底：`return{pluginType:"unknown",pluginName:o,…,pluginConfigurationData:s}`）。
+序列化器：`function S1e(t){const e=t,n=si(t.pluginConfigurationData),o=t.pluginName;if(nMe.includes(o)){let s=null;if(n!=null){const i=n.backgroundData;s={fontStyle:n.fontStyle,pageStyle:n.pageStyle,backgroundData:{backgroundColor:Yt(i.backgroundColor),backgroundColorGradientEnd:Yt(i.backgroundColorGradientEnd),userInterfaceStyle:i.userInterfaceStyle,backgroundImageURL:i.backgroundImageURL,isLightColor:aI(i.isLightColor),key:i.key},decorations:n.decorations,contentStyle:n.contentStyle,themeAssetId:n.themeAssetId}}return{plugi…`
+⇒ ★ card 家族的 `pluginConfigurationData` 是**厚对象**（`fontStyle`／`pageStyle`／`backgroundData{7 字段}`／`decorations`／`contentStyle`／`themeAssetId`），codeBlock 家族只有 `{themeId}` ⇒ **同一个槽位两种厚度**，本地若建模必须允许 `pluginConfigurationData` 为按 `pluginName` 分派的可变形状。
+白名单枚举：`nMe=Object.values(Xa)`、`oMe=Object.values(Pm)`、`sMe=Object.values(ys)`；`Xa=(t=>(t.Large="card.large",t.Wide="card.wide",t.SmallRight="card.small.right",t.Subtle="card.subtle",t.SmallSmallRight="card.small.small.right",t))(Xa||{})` ⇒ ☆ **卡片样式名册 5 档逐字到手**（注意：这些是 `card.*` 值，而 switch 的 case 是裸 `"card"` ⇒ `pluginName` 与"卡片样式值"不是一回事，本批不合并处理）；`Pm={Dynamic:"dynamic",Fix:"fix"}`（分页宽类型）、`ys={FULL:"full",FADED:"faded",UNKNOWN:"unknown"}`（背景淡出档）。
+
+六、仪器侧（同一次屏上会话里发生的事，与本文件主题无关但一起留档）
+- `data-whatinput`／`data-whatintent` 在全新载入（`sessionStorage` 两键已被清空）时逐字取到第 4 个值 **`initial`**。
+- 用 `new MouseEvent('pointermove')`（缺 `pointerType`）派发 ⇒ 库里读出 `void 0` 并把 **字符串 `"undefined"` 写进 `data-whatintent` 与 `sessionStorage['what-intent']`**；随后**真 `PointerEvent(pointermove, pointerType:'mouse')` 也没能把它改回 `mouse`**（读数不变）⇒ 该属性此后不可信，只能清 `sessionStorage` 两键 ＋ 重新载入。本批已按此复原并复核（`initial`／`initial`）。
+- 派发 `Tab` 后两属性仍是 `initial`、`activeElement` 仍是 `BODY` ⇒ 页面 `visibilityState:hidden` 时**注入键不送达**（与 `hasFocus:true` 同时出现，故 `hasFocus` 不是判据）。

@@ -1,0 +1,6 @@
+
+## 第 100 批追加的两条工具纪律（2026-09-30 00:3x–01:1x，★★★ **脱敏脚本的作用域本身就是漏洞**）
+
+1. ★★★ **根因**＝`_harvest/sanitize-pii.mjs` 的作用域写死成 **`features/*.md`**（`readdirSync('.')`）⇒ 同目录树下的 `docs/craft-ref/screens.md`（账户持有人姓名 ×1 ＋ 空间名 ×3）与 `docs/craft-ref/styles/hover-keyframes-nav.json`（**空间 id 完整值 ×11** ＋ 真实对象 id 藏在 URL 里 ×2）**从未被扫过**，并随 3 个提交进入历史。⇒ **教训**＝**"脱敏跑过了"只等于"在那套脚本声明的作用域内跑过了"**；作用域必须按**"哪些文件会被提交"**来定，而不是按"我当前在写哪个目录"。⇒ 修法＝改为**递归 `docs/craft-ref` 全树、`.md/.json/.txt/.tsv`、跳过 `_harvest|raw|screens|local|node_modules`**，并把后置断言扩到"整个作用域内禁物零命中"（实跑＝39 个文件、25 处替换、18 个 UUID 映射、`SANITIZE OK`）。
+2. ★★ **重写历史前必须先量"可达面"而不是先看提交数**＝本轮把 `963a442` 起的 4 个提交里的 16 个完整 UUID 掩码掉（`filter-branch --tree-filter` ＋ 复用 `_harvest/uuid-map.json` ⇒ 与 HEAD 的 `<objId:N>` 完全一致；`git diff backup main` **为空**＝内容零变化；`git cat-file --batch-all-objects` 复核＝harvest 文档侧 **0 命中**）。但**同一批扫描立刻暴露出另两个文件仍带空间 id**，且它们所在的 3 个提交**同时被 `feature/windows-offline-sync` 分支（另一个 worktree）可达** ⇒ **只重写 main 不会让对象消失**。⇒ 固化三条前置检查＝① `git branch -a --contains <commit>`（有几个 ref 可达）② `git merge-base --is-ancestor <c> origin/main`（是否已推送 ⇒ 已推送就要单独点头，不得顺手强推）③ `git cat-file --batch-all-objects --batch | grep -a`（**注意 `-a`，否则二进制流会被当成"binary file matches"而漏数**）。
+3. ☆ **掩码脚本要能处理"映射表已存在"的续写**＝历史重写用的 `mask-history.mjs` 从 `uuid-map.json` 读回已有 16 条再往后编号，避免同一 UUID 在历史与 HEAD 里拿到不同 token。

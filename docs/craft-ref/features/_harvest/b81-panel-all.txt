@@ -1,0 +1,114 @@
+{
+  "cats": [
+    {
+      "headings": [
+        "H2:通用",
+        "H3:导航",
+        "H3:视图"
+      ],
+      "kbd": 16,
+      "keycapSample": [
+        "SPAN|_keys_dm375_124|esc",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|esc",
+        "SPAN|_keys_dm375_124|CtrlShift,"
+      ],
+      "tab": "通用",
+      "text": "通用文档任务编辑样式整理合集快捷键通用取消esc查看所有快捷键CtrlShift,导航导航到Ctrl→返回上层Ctrl←快速开启CtrlO或者CtrlP视图切换专注模式Ctrl.切换左侧边栏Ctrl\\"
+    },
+    {
+      "headings": [
+        "H2:文档"
+      ],
+      "kbd": 11,
+      "keycapSample": [
+        "SPAN|_keys_dm375_124|CtrlAltN",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|Ctrl",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|Alt"
+      ],
+      "tab": "文档",
+      "text": "通用文档任务编辑样式整理合集快捷键文档每日笔记CtrlAltN全选CtrlA选择到顶部CtrlShift⤒选择到底部CtrlShift⤓"
+    },
+    {
+      "headings": [
+        "H2:任务",
+        "H3:全局快捷键",
+        "H3:在任务视图中"
+      ],
+      "kbd": 34,
+      "keycapSample": [
+        "SPAN|_keys_dm375_124|CtrlJ",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|Ctrl",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|J"
+      ],
+      "tab": "任务",
+      "text": "通用文档任务编辑样式整理合集快捷键任务全局快捷键新任务CtrlJ将任务标记为已完成CtrlAltT或者Ctrl/将任务标记为已取消CtrlAltShiftT计划任务CtrlShiftS安排到今天CtrlAltS设定截止日期CtrlShiftD在任务视图中编辑任务⏎导航至区块Ctrl→上一个任务↑下一个任务↓收起分组←展开分组→删除⌫或者Delete撤销CtrlZ重做CtrlShiftZ"
+    },
+    {
+      "headings": [
+        "H2:编辑",
+        "H3:插入新区块",
+        "H3:编辑选择",
+        "H3:评论",
+        "H3:在查找和替换中",
+        "H3:其他"
+      ],
+      "kbd": 27,
+      "keycapSample": [
+        "SPAN|_keys_dm375_124|CtrlF",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|Ctrl",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|F"
+      ],
+      "tab": "编辑",
+      "text": "通用文档任务编辑样式整理合集快捷键编辑查找CtrlF查找和替换CtrlShiftF插入新区块在下方插入新区块space在上方插入新区块Shiftspace编辑选择编辑文本区块⏎编辑页面区块Shift⏎创建副本CtrlD打开斜线菜单/评论添加或查看评论CtrlShiftM在查找和替换中查找下一个CtrlG查找上一个CtrlShiftG其他撤销CtrlZ重做CtrlShiftZ"
+    },
+    {
+      "headings": [
+        "H2:样式",
+        "H3:文本样式",
+        "H3:列表",
+        "H3:装饰",
+        "H3:缩进",
+        "H3:文字格式"
+      ],
+      "kbd": 80,
+      "keycapSample": [
+        "SPAN|_keys_dm375_124|CtrlShift1",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|Ctrl",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|Shift"
+      ],
+      "tab": "样式",
+      "text": "通用文档任务编辑样式整理合集快捷键样式文本样式标题CtrlShift1副标题CtrlShift2中标题CtrlShift3粗CtrlShift4正文CtrlShift5页面CtrlShiftP卡片CtrlShiftL列表待办列表CtrlShift6将任务标记为已完成CtrlAltT或者Ctrl/将任务标记为已取消CtrlAltShiftT折叠列表CtrlShift7打开/关闭切换CtrlAltT无序列表CtrlShift8编号列表CtrlShift9取消列表格式CtrlShift`装饰焦点CtrlShift\\块CtrlShift'缩进增加缩进Tab减少缩进ShiftTab文字格式粗体CtrlB斜体CtrlI代码CtrlShiftC或者CtrlE删除线CtrlShift-链接CtrlK输入方程CtrlShiftE区块链接CtrlShiftK高亮CtrlShiftB"
+    },
+    {
+      "headings": [
+        "H2:整理",
+        "H3:移动所选区块",
+        "H3:组合与取消组合"
+      ],
+      "kbd": 13,
+      "keycapSample": [
+        "SPAN|_keys_dm375_124|Alt↑",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|Alt",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|↑"
+      ],
+      "tab": "整理",
+      "text": "通用文档任务编辑样式整理合集快捷键整理移动所选区块向上移动Alt↑向下移动Alt↓移动到顶部Alt⤒移动到底部Alt⤓组合与取消组合组合CtrlG取消组合CtrlShiftG"
+    },
+    {
+      "headings": [
+        "H2:合集",
+        "H3:在表格中",
+        "H3:在合集中"
+      ],
+      "kbd": 38,
+      "keycapSample": [
+        "SPAN|_keys_dm375_124|⌫",
+        "KBD|_key_dm375_124 typography-ui-md-500 no-select|⌫",
+        "SPAN|_keys_dm375_124|CtrlShift⏎"
+      ],
+      "tab": "合集",
+      "text": "通用文档任务编辑样式整理合集快捷键合集在表格中清除单元格内容⌫在前面添加行CtrlShift⏎添加行Ctrl⏎在前面添加列CtrlAlt⏎添加列CtrlShift⏎向上移动行Alt↑向下移动行Alt↓向左移动列Alt←向右移动列Alt→删除行Ctrl⌫删除列CtrlShift⌫添加内容Ctrl[在合集中添加一行Ctrl⏎或者Shift⏎复制行CtrlD选择所有行CtrlA清除单元格值⌫删除行Ctrl⌫"
+    }
+  ],
+  "panelTag": "DIV._content_hlglt_2 _dialog_dm375_1"
+}

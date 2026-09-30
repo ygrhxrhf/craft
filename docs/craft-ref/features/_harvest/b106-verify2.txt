@@ -1,0 +1,29 @@
+TaskViews.css.DghTjfLb.css: chars=2240 selectorRules=20 distinctSel=19 atBlocks=6 fams=["fdch5","11co4","ydla7"]
+   SEL ._rubberBand_fdch5_1
+   SEL ._heading_11co4_1._heading_11co4_1
+   SEL ._title_11co4_8
+   SEL ._title_11co4_8>h1
+   SEL ._tabs_11co4_24
+   SEL ._tabs_11co4_24::-webkit-scrollbar
+   SEL ._tabsContent_11co4_37
+   SEL ._settings_11co4_43
+   SEL ._settingsPlaceholder_11co4_48
+   SEL ._card_ydla7_1
+   SEL [data-whatintent=keyboard] ._card_ydla7_1:focus
+   SEL ._layer_ydla7_27
+   SEL ._idle_ydla7_42
+   SEL ._action_ydla7_46._isAlwaysVisible_ydla7_46
+   SEL [data-whatintent]:not([data-whatintent=touch]) ._card_ydla7_1:hover ._idle_ydla7_42
+   SEL [data-whatintent=keyboard] ._card_ydla7_1:focus ._idle_ydla7_42
+   SEL [data-whatintent]:not([data-whatintent=touch]) ._card_ydla7_1:hover ._action_ydla7_46
+   SEL [data-whatintent=keyboard] ._card_ydla7_1:focus ._action_ydla7_46
+   SEL ._iconSlot_ydla7_61
+AIChatPopup.css.D9rwJ006.css: chars=333 selectorRules=4 distinctSel=4 atBlocks=1 fams=["apokp"]
+   SEL ._scrollRoot_apokp_1
+   SEL ._scrollViewport_apokp_7
+   SEL ._scrollViewport_apokp_7::-webkit-scrollbar
+   SEL ._scrollContent_apokp_19
+index.css: distinctSel=2220 selectorRules=2114 atBlocks=156 fams=84
+KaTeX official distinctSel=368 rules=229 | local distinctSel=369 rules=230 | shared=218 offOnly=150 locOnly=151
+excalidraw distinctSel=1200 rules=1155 atBlocks=38 faces=4 faceFams=["Assistant"]
+excalidraw --color-* distinct names=67

@@ -1,0 +1,10 @@
+const fs=require('fs');
+const strip=f=>{let h=fs.readFileSync(f,'utf8');h=h.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ');
+return new Set([...h.matchAll(/>([^<>]+)</g)].map(m=>m[1].replace(/&amp;/g,'&').replace(/&#x27;/g,"'").trim()).filter(t=>t&&t.length>1));};
+const a=strip('dyn-trash-base.html'), b=strip('dyn-trash-search.html');
+const added=[...b].filter(x=>!a.has(x));
+console.log('=== ADDED TEXT ('+added.length+') ===');
+added.forEach(t=>console.log(JSON.stringify(t)));
+const h=fs.readFileSync('dyn-trash-search.html','utf8');
+console.log('\n=== trash mentions ===');
+for(const m of h.matchAll(/[^<>"]{0,40}(trash|最近删除|Trash)[^<>"]{0,40}/gi)) console.log(JSON.stringify(m[0]));

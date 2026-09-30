@@ -1,0 +1,10 @@
+
+## 第 100 批·下半（2026-09-30 01:0x–01:3x 本地＝UTC 17:0x–17:3x，★★★ **V91 拖拽协议补上"第 0 步"＋两次拖拽的撤销回不到基线**；沙盒 `QODER-HARVEST-B100-UNDOGROUP` 建→用→已软删，`manifest.jsonl` 135 → 136）
+
+1. ★★★ **拖拽手柄是"单例浮层"，只认沟槽 `pointermove`**＝全页只有 1 个 `[draggable=true].sc-1iqnrwp-0`，其父 `sc-1yfn40-0` rect **0×0**、`closest('[data-block-id]')` 为 **null** ⇒ **"从手柄反查它属于哪一块"结构性不可靠**（第 98 批归属漂移教训的机制解释）；★ 连接器 `hover`（真鼠标移到元素中心）**连续三次驱动不了它**（一直停在 y=339）；正解＝往**左缘沟槽 x=340、目标行中心 y** 派发 `pointermove`＋`mousemove` ⇒ 手柄 y 精确跟行（339→246→210→282，x 322→330）。⇒ **V91 八步协议加第 0 步**（固化在 `interactions.md V94`）。
+2. ★★★ **两次拖拽不能靠连按 `Ctrl+Z` 逆回**＝基线 `U1 U2 U3 U4` → 拖#1（U4→U1 中心）→ `U4 U1 U2 U3` → 拖#2（U1→末块 U3 中心）→ `U4 U2 U1 U3`；焦点四判据齐（`activeElement`＝块 DIV／`hasFocus`／`rangeCount:1`／`anchorText` 命中该块文本）下按三次撤销＝**第 1 次零变化、第 2 次改序成 `U1 U3 U4 U2`、第 3 次零变化**，且 **reload 后保持**（撤销是服务端态）。⇒ **口径收窄**＝第 98 批"一次拖拽＝一步"只对**单拖拽**成立；**两拖拽的步数判为未定**（撤销栈里存在不改变块序列的条目），⚠ 不得写成"官方撤销坏了"。⇒ 正确测法＝**每拖完一次立刻单独按一次并读回**，逐对确认。
+3. ★★ **中心落点＝插到目标之前**（第 2 次独立复现，新增一例＝**拖到最后一块的中心仍是插其前、不是插后**）；☆ 全程平级无嵌套 ⇒ 中心落点≠嵌套（第 2 次印证）；⇒ 做上缘／下缘分档时**别再用行中心**，取上 1/4／下 1/4。
+4. ★ **两条工具事实**＝`hover` 打 StaticText 节点报 `TypeError: this.scrollIntoView is not a function`（只能对元素级节点用）；`take_snapshot` **不收任何参数**（`includeSnapshot` 被 schema 拒）。
+5. ★ **本地判定**＝本地手柄每块渲染（`src/components/editor/drag-handle/DragHandle.tsx`）⇒ 不复现归属漂移；本地撤销严格 LIFO（`Editor.tsx:265` ＋ 单 tr）⇒ 与本轮官方观察方向不同 ⇒ **有意偏差候选、登记不排期**；★ 队列里"`newGroupDelay` 是否写死"这条**先别动**（官方连逆序都不保证，"分组"概念对拖拽可能不适用）。
+6. ☆ 规模＝`gap.md` 1009 → **1015 条／最大 G1023**；`interactions.md` **V94**；`internals.md` **§三十九**；`longtail.md` **§二十五**；`model.md`／`styles.md` 无新节（原因＝零模型字段、零样式读数）；`features.md` 计数行；`todo-actions.md` 本段日志＋第 101 批队列。☆ 三校验＝`ALL TABLES CONSISTENT`／**1878/3639＝51.6%**／`SANITIZE OK`（作用域已扩到 39 个文件）。
+7. ★ **现场（未来批次的基线又变了）**＝`unsorted` 3 逐 id 未动／`trash` **4**＝3 条无标题 ＋ **`QODER-HARVEST-B100-UNDOGROUP`（新具名项，软删未清）**／`reminders` 0／`tasks(all)` 9 无 QODER 行；注入属性随沙盒删除消失、无残留。⚠ 要精确永久清除这条新沙盒＝需**单独点头**（历史授权不沿用），协议现成（`V93` 第三节）。

@@ -1,0 +1,177 @@
+=== A) what-input v5.2.12 written attributes and value set ===
+  data-whatintent in vendor-BZCR0rqu x0 | in index x0
+  data-whatinput in vendor-BZCR0rqu x0 | in index x7
+  data-whatpointer in vendor-BZCR0rqu x0 | in index x0
+  data-whattypes in vendor-BZCR0rqu x0 | in index x0
+  "function setIntent" count=0
+  "inputTypes" count=0
+  "doScroll" count=0
+  "intentElement" count=0
+  "\"touch\"" count=36 first@3619
+    @3619: ousemove:"mouse",MSPointerDown:"pointer",MSPointerMove:"pointer",pointerdown:"pointer",pointermove:"pointer",touchstart:"touch",touchend:"touch"},ya=!1,wa={x:null,y:null},ba={2:"touch",3:"touch",4:"mouse"},Ea=!1;try{var xa=Object.defineProperty({}
+    @3636: MSPointerDown:"pointer",MSPointerMove:"pointer",pointerdown:"pointer",pointermove:"pointer",touchstart:"touch",touchend:"touch"},ya=!1,wa={x:null,y:null},ba={2:"touch",3:"touch",4:"mouse"},Ea=!1;try{var xa=Object.defineProperty({},"passive",{get:f
+    @3676: ointer",pointerdown:"pointer",pointermove:"pointer",touchstart:"touch",touchend:"touch"},ya=!1,wa={x:null,y:null},ba={2:"touch",3:"touch",4:"mouse"},Ea=!1;try{var xa=Object.defineProperty({},"passive",{get:function(){Ea=!0}});window.addEventListen
+  "keyAllowed" count=0
+  "timer" count=43 first@1431971
+    @1431971: ent:"tap",pointers:1,taps:1,interval:300,time:250,threshold:9,posThreshold:10},Rr))||this,Pr.pTime=!1,Pr.pCenter=!1,Pr._timer=null,Pr._input=null,Pr.count=0,Pr}var Cr=Ar.prototype;return Cr.getTouchAction=function(){return[TOUCH_ACTION_MANIPULAT
+  header verbatim: "what-input - A global utility for tracking the current input method (mouse, keyboard or touch).\n * @version v5.2.12\n * @link https://github.com/ten1seven/what-input\n * @license MIT\n */(function($r,Ar){(function(Rr,Pr){$r.exports=Pr()})(commonjsGlobal$1,function(){return function(Cr){var Rr={};function Pr(Ir){if(Rr[Ir])"
+=== B) CJK font CSS runtime injection ===
+  @492279 wide context:
+    "炶█\"},RHe=t=>{const e={translation:QNe},n={translation:(t==null?void 0:t.translationCaches.it)||cUe},o={translation:(t==null?void 0:t.translationCaches.de)||MUe},s={translation:(t==null?void 0:t.translationCaches.es)||KUe},i={translation:(t==null?void 0:t.translationCaches.fr)||r$e},l={translation:(t==null?void 0:t.translationCaches.ja)||x$e},r={translation:(t==null?void 0:t.translationCaches.ko)||L$e},c={translation:(t==null?void 0:t.translationCaches.vi)||z$e},d={translation:(t==null?void 0:t.translationCaches.pl)||SUe},u={translation:(t==null?void 0:t.translationCaches[\"pt-BR\"])||iHe},f={translation:(t==null?void 0:t.translationCaches[\"zh-Hans\"])||yHe},p={translation:(t==null?void 0:t.translationCaches[\"zh-Hant\"])||jHe};return{en:e,de:o,es:s,fr:i,it:n,pl:d,ja:l,ko:r,vi:c,\"pt-BR\":u,\"zh-Hans\":f,\"zh-Hant\":p}},Y1e=\"pseudoLocalize\",LHe={type:\"postProcessor\",name:Y1e,process:t=>Xve.localize(t)},R1o=()=>{const t=ps.options.postProcess;return t?t.includes(Y1e):!1},PHe={en:[\"en\"],de:[\"de\"],es:[\"es\"],fr:[\"fr\"],it:[\"it\"],pl:[\"pl\"],ja:[\"ja\"],ko:[\"ko\"],vi:[\"vi\"],\"pt-BR\":[\"pt-BR\",\"pt\"],\"zh-Hans\":[\"zh-CN\",\"zh-Hans\",\"zh\"],\"zh-Hant\":[\"zh-TW\",\"zh-Hant\"]},MHe=t=>{const e=[];for(const[n,o]of Object.entries(PHe))for(const s of o)e.push([s,n]);e.sort((n,o)=>o[0].length-n[0].length);for(const[n,o]of e)if(t.startsWith(n))return o;return t};var OHe={};const BHe=\"r-48-g9244379\",FHe=[\"ja\",\"ko\",\"zh-Hans\",\"zh-Hant\"],NHe=[\"_cjk/common/fontdef.css\",\"_japanese/rounded/m-plus-rounded-1c/fontdef.css\"],X1e=\"data-cjk-font-css\";function UHe(){return!OHe.IS_DESKTOP&&!1?\"\":`${BHe}/`}function $He(t){return t==null||t===\"\"||t===\"undefined\"?\"\":t.replace(/\\/+$/,\"\")}function HHe(t){const e=$He(t);return NHe.map(n=>`${e}/static/fonts/${UHe()}${n}`)}let Cu=null,MR=!1;function J1e(){return document.head.querySelector(`link[${X1e}]`)!=null}function gk(t,e){if(Cu=null,!J1e())for(const n of HHe(t)){const o=document.createElement(\"link\");o.rel=\"stylesheet\",o.setAttribute(X1e,\"true\"),o.setAttribute(\"fetchpriority\",e),o.media=\"print\",o.onload=()=>{o.media=\"all\"},o.href=n,document.head.appendChild(o)}}function ZHe(t){if(!(typeof document>\"u\"||typeof window>\"u\")&&!J1e()){if(t.cjkLocale){if(Cu!=null&&MR)return;Cu==null||Cu(),MR=!0;let e=!1;const n=()=>{e||(e=!0,cancelAnimationFrame(o),window.clearTimeout(s),gk(t.publicUrlPrefix,\"auto\"))},o=requestAnimationFrame(n),s=window.setTimeout(n,0);Cu=()=>{cancelAnimatio"
+=== C) _6sjpd class roster + nearby constants ===
+  "tle:k3({content:t.title}),isEmpty:!1,rootBlockId:\"\"});var wi=(t=>(t.Name=\"Name\",t.Shared=\"Shared\",t.SharedBy=\"SharedBy\",t.LastViewed=\"LastViewed\",t))(wi||{}),ja=(t=>(t.Ascending=\"Ascending\",t.Descending=\"Descending\",t))(ja||{});const T_=208,$h=16,ic=20,D7=8,QJ=240,ob=200,of=1/1.25,FEt=268,NEt=5,hm=65,dS=!0,uS=100,UEt=\"_noScroll_6sjpd_1\",$Et=\"_viewWrapper_6sjpd_5\",HEt=\"_headerWrapper_6sjpd_13\",ZEt=\"_mainWrapper_6sjpd_20\",VEt=\"_scrollRoot_6sjpd_28\",WEt=\"_scrollViewport_6sjpd_33\",zEt=\"_headingWrapper_6sjpd_39\",GEt=\"_headingRightWrapper_6sjpd_51\",KEt=\"_docGrid_6sjpd_59\",p2={noScroll:UEt,viewWrapper:$Et,headerWrapper:HEt,mainWrapper:ZEt,scrollRoot:VEt,scrollViewport:WEt,headingWrapper:zEt,headingRightWrapper:GEt,docGrid:KEt},cl=()=>{const t=H.c(3);let e;t[0]===Symbol.for(\"react.memo_cache_sentinel\")?(e=li.isOnline(),t[0]=e):e=t[0];co"
+=== D) --heading-* tokens in index.css (queue 6) ===
+  distinct --heading-* definitions=30
+  DEF --heading-xxs-600-size: 11px
+  DEF --heading-xxs-600-weight: 600
+  DEF --heading-xxs-600-line-height: 12px
+  DEF --heading-xxs-600-letter-spacing: .05px
+  DEF --heading-xxs-600-allcaps-size: 11px
+  DEF --heading-xxs-600-allcaps-weight: 600
+  DEF --heading-xxs-600-allcaps-line-height: 12px
+  DEF --heading-xxs-600-allcaps-letter-spacing: .05px
+  DEF --heading-xxs-600-allcaps-transform: uppercase
+  DEF --heading-xs-500-size: 12px
+  DEF --heading-xs-500-weight: 500
+  DEF --heading-xs-500-line-height: 12px
+  DEF --heading-xs-500-letter-spacing: .01px
+  DEF --heading-xs-600-size: 12px
+  DEF --heading-xs-600-weight: 600
+  DEF --heading-xs-600-line-height: 12px
+  DEF --heading-xs-600-letter-spacing: .05px
+  DEF --heading-xs-600-allcaps-size: 12px
+  DEF --heading-xs-600-allcaps-weight: 600
+  DEF --heading-xs-600-allcaps-line-height: 12px
+  DEF --heading-xs-600-allcaps-letter-spacing: .15px
+  DEF --heading-xs-600-allcaps-transform: uppercase
+  DEF --heading-md-500-size: 14px
+  DEF --heading-md-500-weight: 500
+  DEF --heading-md-500-line-height: 16px
+  DEF --heading-md-500-letter-spacing: -.09px
+  DEF --heading-md-600-size: 14px
+  DEF --heading-md-600-weight: 600
+  DEF --heading-md-600-line-height: 16px
+  DEF --heading-md-600-letter-spacing: -.09px
+  consumed via var()=30
+=== E) [data-accent=…] blocks in index.css (queue 6) ===
+  occurrences=12 names=blue,pink,green,purple,yellow,gray,blue,pink,green,purple,yellow,gray
+  BLOCK data-accent=blue @72689 vars=19
+    --accent: var(--accent-blue)
+    --accent-50: var(--accent-blue-50)
+    --accent-100: var(--accent-blue-100)
+    --accent-150: var(--accent-blue-150)
+    --accent-200: var(--accent-blue-200)
+    --accent-250: var(--accent-blue-250)
+    --accent-300: var(--accent-blue-300)
+    --accent-350: var(--accent-blue-350)
+    --accent-400: var(--accent-blue-400)
+    --accent-450: var(--accent-blue-450)
+    --accent-500: var(--accent-blue-500)
+    --accent-550: var(--accent-blue-550)
+    --accent-600: var(--accent-blue-600)
+    --accent-650: var(--accent-blue-650)
+    --accent-700: var(--accent-blue-700)
+    --accent-750: var(--accent-blue-750)
+    --accent-800: var(--accent-blue-800)
+    --accent-850: var(--accent-blue-850)
+    --accent-900: var(--accent-blue-900)
+  BLOCK data-accent=pink @73401 vars=19
+    --accent: var(--accent-pink)
+    --accent-50: var(--accent-pink-50)
+    --accent-100: var(--accent-pink-100)
+    --accent-150: var(--accent-pink-150)
+    --accent-200: var(--accent-pink-200)
+    --accent-250: var(--accent-pink-250)
+    --accent-300: var(--accent-pink-300)
+    --accent-350: var(--accent-pink-350)
+    --accent-400: var(--accent-pink-400)
+    --accent-450: var(--accent-pink-450)
+    --accent-500: var(--accent-pink-500)
+    --accent-550: var(--accent-pink-550)
+    --accent-600: var(--accent-pink-600)
+    --accent-650: var(--accent-pink-650)
+    --accent-700: var(--accent-pink-700)
+    --accent-750: var(--accent-pink-750)
+    --accent-800: var(--accent-pink-800)
+    --accent-850: var(--accent-pink-850)
+    --accent-900: var(--accent-pink-900)
+  BLOCK data-accent=green @74113 vars=19
+    --accent: var(--accent-green)
+    --accent-50: var(--accent-green-50)
+    --accent-100: var(--accent-green-100)
+    --accent-150: var(--accent-green-150)
+    --accent-200: var(--accent-green-200)
+    --accent-250: var(--accent-green-250)
+    --accent-300: var(--accent-green-300)
+    --accent-350: var(--accent-green-350)
+    --accent-400: var(--accent-green-400)
+    --accent-450: var(--accent-green-450)
+    --accent-500: var(--accent-green-500)
+    --accent-550: var(--accent-green-550)
+    --accent-600: var(--accent-green-600)
+    --accent-650: var(--accent-green-650)
+    --accent-700: var(--accent-green-700)
+    --accent-750: var(--accent-green-750)
+    --accent-800: var(--accent-green-800)
+    --accent-850: var(--accent-green-850)
+    --accent-900: var(--accent-green-900)
+  BLOCK data-accent=purple @74845 vars=19
+    --accent: var(--accent-purple)
+    --accent-50: var(--accent-purple-50)
+    --accent-100: var(--accent-purple-100)
+    --accent-150: var(--accent-purple-150)
+    --accent-200: var(--accent-purple-200)
+    --accent-250: var(--accent-purple-250)
+    --accent-300: var(--accent-purple-300)
+    --accent-350: var(--accent-purple-350)
+    --accent-400: var(--accent-purple-400)
+    --accent-450: var(--accent-purple-450)
+    --accent-500: var(--accent-purple-500)
+    --accent-550: var(--accent-purple-550)
+    --accent-600: var(--accent-purple-600)
+    --accent-650: var(--accent-purple-650)
+    --accent-700: var(--accent-purple-700)
+    --accent-750: var(--accent-purple-750)
+    --accent-800: var(--accent-purple-800)
+    --accent-850: var(--accent-purple-850)
+    --accent-900: var(--accent-purple-900)
+  BLOCK data-accent=yellow @75597 vars=19
+    --accent: var(--accent-yellow)
+    --accent-50: var(--accent-yellow-50)
+    --accent-100: var(--accent-yellow-100)
+    --accent-150: var(--accent-yellow-150)
+    --accent-200: var(--accent-yellow-200)
+    --accent-250: var(--accent-yellow-250)
+    --accent-300: var(--accent-yellow-300)
+    --accent-350: var(--accent-yellow-350)
+    --accent-400: var(--accent-yellow-400)
+    --accent-450: var(--accent-yellow-450)
+    --accent-500: var(--accent-yellow-500)
+    --accent-550: var(--accent-yellow-550)
+    --accent-600: var(--accent-yellow-600)
+    --accent-650: var(--accent-yellow-650)
+    --accent-700: var(--accent-yellow-700)
+    --accent-750: var(--accent-yellow-750)
+    --accent-800: var(--accent-yellow-800)
+    --accent-850: var(--accent-yellow-850)
+    --accent-900: var(--accent-yellow-900)
+  BLOCK data-accent=gray @76349 vars=19
+    --accent: var(--accent-gray)
+    --accent-50: var(--accent-gray-50)
+    --accent-100: var(--accent-gray-100)
+    --accent-150: var(--accent-gray-150)
+    --accent-200: var(--accent-gray-200)
+    --accent-250: var(--accent-gray-250)
+    --accent-300: var(--accent-gray-300)
+    --accent-350: var(--accent-gray-350)
+    --accent-400: var(--accent-gray-400)
+    --accent-450: var(--accent-gray-450)
+    --accent-500: var(--accent-gray-500)
+    --accent-550: var(--accent-gray-550)
+    --accent-600: var(--accent-gray-600)
+    --accent-650: var(--accent-gray-650)
+    --accent-700: var(--accent-gray-700)
+    --accent-750: var(--accent-gray-750)
+    --accent-800: var(--accent-gray-800)
+    --accent-850: var(--accent-gray-850)
+    --accent-900: var(--accent-gray-900)

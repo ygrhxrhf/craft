@@ -1,0 +1,12 @@
+activity.activity	动态
+activity.activity.footer.earlier	较早
+activity.changes.x.few	
+activity.changes.x.many	
+activity.changes.x.one	[0] 项变更
+activity.changes.x.other	[0] 项变更
+activity.changes.x.two	
+activity.changes.x.zero	
+activity.currently.showing.x.days	目前显示过去 [0] 天。
+activity.one.change	1 项变更
+activity.snapshot.placeholder	还没有任何保存的版本。
+activity.x.changes	[0] 项变更

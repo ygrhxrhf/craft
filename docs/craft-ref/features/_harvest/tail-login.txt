@@ -1,0 +1,9 @@
+login.auth.greeting.sorry	很抱歉，[0]
+login.auth.greeting.welcome	欢迎，[0]
+login.auth.signing.in.to	正在登录 [0]
+login.auth.success.close	你现在可以关闭此窗口了。
+login.auth.success.message	你已登录 [0]
+login.error.heading	出了点问题
+login.start.sign.in.with.craft	使用 Craft 登录以继续前往 [0]
+login.start.sign.in.with.craft.to.continue	使用 Craft 登录以继续
+login.start.welcome	欢迎！

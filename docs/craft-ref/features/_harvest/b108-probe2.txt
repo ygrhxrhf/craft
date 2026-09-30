@@ -1,0 +1,6 @@
+tok-keyword in vendor-code-editor-BLm003PU.js x1
+
+--- highlight table context @279338 ---
+g:W.heading,class:"tok-heading"},{tag:W.emphasis,class:"tok-emphasis"},{tag:W.strong,class:"tok-strong"},{tag:W.keyword,class:"tok-keyword"},{tag:W.atom,class:"tok-atom"},{tag:W.bool,class:"tok-bool"},{tag:W.url,class:"tok-url"},{tag:W.labelName,class:"tok-labelName"},{tag:W.inserted,class:"tok-inserted"},{tag:W.deleted,class:"tok-deleted"},{tag:W.literal,class:"tok-literal"},{tag:W.string,class:"tok-string"},{tag:W.number,class:"tok-number"},{tag:[W.regexp,W.escape,W.special(W.string)],class:"tok-string2"},{tag:W.variableName,class:"tok-variableName"},{tag:W.local(W.variableName),class:"tok-variableName tok-local"},{tag:W.definition(W.variableName),class:"tok-variableName tok-definition"},{tag:W.special(W.variableName),class:"tok-variableName2"},{tag:W.definition(W.propertyName),class:"tok-propertyName tok-d
+
+--- index chunk tok-keyword @-1 ---

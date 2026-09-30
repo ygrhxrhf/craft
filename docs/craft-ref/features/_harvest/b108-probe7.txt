@@ -1,0 +1,14 @@
+--- theme roster @28692 ---
+const $o=qo(),ue={auto:null,craftdark:uo,craftlight:go,atomone:so,aura:bo,bbedit:ho,darcula:lo,dracula:yo,githubdark:wo,githublight:Co,gruvboxdark:Do,gruvboxlight:Fo,materialdark:Mo,materiallight:jo,noctislilac:Ro,nord:To,sublime:Ho,tokyonightday:Po,tokyonightstorm:Uo,tokyonight:Go,vscodedark:$o}
+
+keys = 21 :: auto,craftdark,craftlight,atomone,aura,bbedit,darcula,dracula,githubdark,githublight,gruvboxdark,gruvboxlight,materialdark,materiallight,noctislilac,nord,sublime,tokyonightday,tokyonightstorm,tokyonight,vscodedark
+
+### go candidate defs = 0
+
+### uo candidate defs = 0
+
+=== first "craftlight" @28733 ===
+otation,e.self,e.namespace],color:"#4ec9b0"},{tag:[e.function(e.variableName),e.function(e.propertyName)],color:"#dcdcaa"},{tag:[e.number],color:"#b5cea8"},{tag:[e.operator,e.punctuation,e.separator,e.url,e.escape,e.regexp],color:"#d4d4d4"},{tag:[e.regexp],color:"#d16969"},{tag:[e.special(e.string),e.processingInstruction,e.string,e.inserted],color:"#ce9178"},{tag:[e.angleBracket],color:"#808080"},{tag:e.strong,fontWeight:"bold"},{tag:e.emphasis,fontStyle:"italic"},{tag:e.strikethrough,textDecoration:"line-through"},{tag:[e.meta,e.comment],color:"#6a9955"},{tag:e.link,color:"#6a9955",textDecoration:"underline"},{tag:e.invalid,color:"#ff0000"},...r]})}const $o=qo(),ue={auto:null,craftdark:uo,craftlight:go,atomone:so,aura:bo,bbedit:ho,darcula:lo,dracula:yo,githubdark:wo,githublight:Co,gruvboxdark:Do,gruvboxligh
+
+=== first "craftdark" @28720 ===
+changed,e.annotation,e.self,e.namespace],color:"#4ec9b0"},{tag:[e.function(e.variableName),e.function(e.propertyName)],color:"#dcdcaa"},{tag:[e.number],color:"#b5cea8"},{tag:[e.operator,e.punctuation,e.separator,e.url,e.escape,e.regexp],color:"#d4d4d4"},{tag:[e.regexp],color:"#d16969"},{tag:[e.special(e.string),e.processingInstruction,e.string,e.inserted],color:"#ce9178"},{tag:[e.angleBracket],color:"#808080"},{tag:e.strong,fontWeight:"bold"},{tag:e.emphasis,fontStyle:"italic"},{tag:e.strikethrough,textDecoration:"line-through"},{tag:[e.meta,e.comment],color:"#6a9955"},{tag:e.link,color:"#6a9955",textDecoration:"underline"},{tag:e.invalid,color:"#ff0000"},...r]})}const $o=qo(),ue={auto:null,craftdark:uo,craftlight:go,atomone:so,aura:bo,bbedit:ho,darcula:lo,dracula:yo,githubdark:wo,githublight:Co,gruvboxdark:D

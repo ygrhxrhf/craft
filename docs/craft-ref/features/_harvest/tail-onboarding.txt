@@ -1,0 +1,138 @@
+onboarding.access.this.document.need.to.sign.in	要访问此文档，你需要登录。
+onboarding.by.myself	个人使用
+onboarding.by.myself.desc	只需一个私人空间来整理工作和生活
+onboarding.code.confirm.issue.question	没有收到邮件？
+onboarding.code.confirm.issue.suggestion	检查垃圾邮件文件夹
+onboarding.code.confirm.title	请输入发送至以下邮箱的验证码
+onboarding.confirm.email.change	确认电子邮件变更
+onboarding.confirm.email.to.continue	请确认你的邮箱以继续，或 [0]
+onboarding.confirm.email.to.continue.with.sso	请确认你的邮箱以通过 SSO 继续，或 [0]
+onboarding.confirmation.code	验证码
+onboarding.confirming.email.change	正在确认电子邮件变更…
+onboarding.continue	继续
+onboarding.continue.email.lowercase	使用邮箱继续
+onboarding.continue.sso	使用 SSO 继续
+onboarding.continue.sso.lowercase	使用 SSO 继续
+onboarding.continue.with.apple	使用 Apple 继续
+onboarding.continue.with.google	使用 Google 继续
+onboarding.continue.with.microsoft	使用 Microsoft 继续
+onboarding.could.not.complete.email.change	无法完成电子邮件变更
+onboarding.document.popup.desc	选择你感兴趣的事物：
+onboarding.document.popup.title	真实体验 Craft
+onboarding.dont.have.the.app	还没有该应用？
+onboarding.email.change.confirm.email	请确认你的新电子邮件以继续。
+onboarding.email.changed	电子邮件已变更
+onboarding.email.new.page.title	让我们开始吧！
+onboarding.error.login.failed	登录失败
+onboarding.get.to.know.craft	了解 Craft
+onboarding.guide	指导
+onboarding.how.to.use.craft	计划如何使用 Craft？
+onboarding.insert.panel.first.task	第一个任务
+onboarding.insert.panel.second.task	第二个任务
+onboarding.insert.panel.third.task	第三个任务
+onboarding.install.craft	安装 Craft
+onboarding.interests.books	书单
+onboarding.interests.finances	理财
+onboarding.interests.habit	习惯追踪
+onboarding.interests.project	项目跟踪
+onboarding.interests.story	故事策划
+onboarding.interests.student	学生空间
+onboarding.interests.todo	待办事项清单
+onboarding.interests.travel	旅行
+onboarding.logged.in.to.microsoft	你已使用 [0] 登录 Microsoft。
+onboarding.menu.blog	博客
+onboarding.menu.blog.desc	我们的新闻和公告
+onboarding.menu.community	社区
+onboarding.menu.download	下载
+onboarding.menu.help.and.support	帮助和支持
+onboarding.menu.help.and.support.desc	获取答案并请求帮助
+onboarding.menu.login	登录
+onboarding.menu.planning	规划
+onboarding.menu.planning.desc	按你的方式计划你的一天
+onboarding.menu.pricing	价格
+onboarding.menu.product	产品
+onboarding.menu.reddit	Reddit 社区
+onboarding.menu.reddit.desc	向我们提问并分享想法
+onboarding.menu.research	研究
+onboarding.menu.research.desc	以自己的方式积累知识
+onboarding.menu.slack	Slack 群组
+onboarding.menu.slack.desc	与其他 Craft 用户一起参与讨论
+onboarding.menu.styling	样式
+onboarding.menu.styling.desc	你的笔记，你的风格
+onboarding.menu.try.craft.free	免费试用 Craft
+onboarding.menu.whats.new	最新动态
+onboarding.menu.whats.new.desc	了解我们最新发布的内容
+onboarding.menu.writing	写作
+onboarding.menu.writing.desc	每种设备均能获得相同的书写体验
+onboarding.menu.youtube	YouTube 频道
+onboarding.menu.youtube.desc	提示、技巧和方法
+onboarding.next	下一步
+onboarding.open.craft.doc	打开 Craft 文档
+onboarding.page.name.firstname	名字
+onboarding.page.name.lastname	姓
+onboarding.please.sign.in.to.continue	请登录以继续
+onboarding.select.one	选择一项开始
+onboarding.select.where.you.would.like.to.continue	请选择你想要继续的位置。
+onboarding.sending.code	正在发送你的激活码…
+onboarding.sign.in.on.web	在 Web 上登录
+onboarding.sign.in.with.setapp	使用 Setapp 登录
+onboarding.skip	跳过
+onboarding.start.crafting	立即开始
+onboarding.terms.and.conditions	条款和条件
+onboarding.use.offer	使用优惠
+onboarding.v3.intro.1.content	这次更新让你处理任务更高效，合集管理更有条理，样式搭配也更有创意。
+onboarding.v3.intro.1.title	为你焕新
+onboarding.v3.intro.2.content	安排任务、规划日程，一站式查看所有内容。
+onboarding.v3.intro.2.title	完成你的任务
+onboarding.v3.intro.3.content	从 100 多种预设样式中选择，或用涂鸦、和纸胶带、纸张和文字颜色打造你自己的风格。
+onboarding.v3.intro.3.title	创造你的风格
+onboarding.v3.intro.4.content	给内容分类，或在不同想法之间建立关联。
+onboarding.v3.intro.4.title	建立你的合集
+onboarding.v326.intro.1.content	令人振奋的更新与焕新的界面设计，助你发挥最佳状态，并在 Craft 中保持专注与流畅。
+onboarding.v326.intro.1.title	九月更新
+onboarding.v326.intro.4.content	我们正在全面升级核心功能，那些你每天都依赖的功能。
+onboarding.v326.intro.4.title	任务、标签、合集
+onboarding.v326.intro.5.content	限时优惠，新用户订阅 Craft Plus 和 Craft Family 可享受 6 折优惠。
+onboarding.v326.intro.5.content.amount	限时优惠，新用户订阅 Craft Plus 和 Craft Family 可享受 [0]% 优惠。
+onboarding.v326.intro.5.content.weekly.amount	限时优惠，订阅 Craft Plus 周套餐可享受 [0]% 折扣。
+onboarding.v326.intro.clipper.content	将你的研究直接放入你的文档或每日笔记中。 
+onboarding.v326.intro.clipper.title	Web Clipper 更新
+onboarding.v326.intro.weekly.button	以每周 [0] 试用
+onboarding.v326.intro.weekly.content	千万别错过我们的每周套餐优惠！解锁所有 Craft 高级功能。
+onboarding.v326.intro.weekly.title	无限畅享 Craft
+onboarding.v330.intro.1.december.update.title	12月更新
+onboarding.v330.intro.1.november.update.content	推出更智能的 AI 协作、大量改进，以及全新的方式来管理和跟进你的笔记。
+onboarding.v330.intro.1.november.update.title	11月更新
+onboarding.v330.intro.2.android.content	Craft 正式支持 Android，延续标志性的设计品质，支持无缝同步，并且现在还加入了离线模式。
+onboarding.v330.intro.2.android.title	Android 应用测试版
+onboarding.v330.intro.3.smarter.ai.assistant.content	一个在你写作和搜索时帮助你保持专注的智能助手。AI 额度已添加到你的订阅中。
+onboarding.v330.intro.3.smarter.ai.assistant.title	更智能的 AI 助手
+onboarding.v330.intro.4.whiteboard.content	借助改进后的白板、合集和代码块，你现在可以充分利用你的笔记。
+onboarding.v330.intro.4.whiteboard.title	改进的白板
+onboarding.v330.intro.5.api.mcp.connectors.content	将文档连接到外部工具和 LLM。在全新的 Imagine 版块中管理权限。
+onboarding.v330.intro.5.api.mcp.connectors.title	API 和 MCP 连接器
+onboarding.v330.intro.5.celebrate.content	限时优惠，新用户可享受 Craft Plus 和 Craft Family 40% 的折扣。
+onboarding.v330.intro.5.celebrate.title	与我们一起庆祝
+onboarding.v330.intro.6.winter.deal.content	4 款精心挑选的应用，限时 60% 折扣，助你度过一个更从容、更高效的冬天。
+onboarding.v330.intro.6.winter.deal.title	冬季焕清优惠
+onboarding.v330.winter.deal.view.apps	查看应用
+onboarding.v350.intro.1.offline.content	离线编辑现已在浏览器和 Windows 应用中推出测试版。重新联网后，你的更改将自动同步。
+onboarding.v350.intro.1.offline.title	离线编辑
+onboarding.v350.intro.2.smoother.content	我们还完成了 100 多项底层优化和错误修复，带来更流畅、更快速的体验。
+onboarding.v350.intro.2.smoother.title	更流畅，更快速
+onboarding.v350.intro.3.lunar.content	我们以全新文档样式迎接农历新年。无论是制作邀请函、共享内容还是烘托节日氛围，都再合适不过。
+onboarding.v350.intro.3.lunar.title	农历新年新样式
+onboarding.v350.introducing.kanban	推出看板
+onboarding.v350.kanban.content	为项目、任务和想法增添结构。从零开始整理，或应用到现有收藏。
+onboarding.v350.mermaid.content	在文档中创建图表、流程图、序列图或时间线。无需额外工具。
+onboarding.v350.mermaid.diagrams	Mermaid 图表
+onboarding.v350.upgrade.content	升级至 Craft Plus 或 Craft Family，立享六折优惠。限时特惠，仅限新订阅用户。
+onboarding.welcome.to.craft	欢迎来到 Craft
+onboarding.welcome.to.craft.desc	准备好开始创建了吗？<br/>让我们从你的第一个文档开始。
+onboarding.welcome.to.craft.desc2	单击此处的任意位置即可开始。
+onboarding.what.is.craft	什么是 Craft？
+onboarding.whats.your.name	你叫什么名字？
+onboarding.with.my.team	与团队协作
+onboarding.with.my.team.desc	创建共享空间，与团队一起协作
+onboarding.your.account.will.be.ready.in.a.moment	欢迎 [0]，你的帐户马上就好！
+onboarding.your.email	你的邮箱

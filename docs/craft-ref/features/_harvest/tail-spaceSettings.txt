@@ -1,0 +1,8 @@
+spaceSettings.enter.space.name	输入你的空间名称。
+spaceSettings.move.space.to.another.team	将此空间移至另一个团队
+spaceSettings.one.invite.deleted	已删除 1 个邀请
+spaceSettings.open.space.description	开放空间对所有团队成员可见，且均可加入。
+spaceSettings.private.space.description	私人空间仅可通过邀请来查看或加入。
+spaceSettings.space.avatar.updated	空间图片已更新
+spaceSettings.space.name.updated	空间名称已更新
+spaceSettings.x.invites.deleted	已删除 {{deletedCount}} 个邀请

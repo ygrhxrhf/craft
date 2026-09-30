@@ -1,0 +1,16 @@
+import statements from code-editor chunk = 1
+imported symbols = 1
+
+--- imports whose def mentions theme/highlight/style ---
+
+--- theme object (dark:!0) boundary @406798 ; assignment @405499
+  name ctx: 1252b",Y4t="#2c313a",W4t="#282c34",e4e="#353a42",V5n="#3E4451",U4t="#528bff",I5n=li.theme({"&":{color:Nie,back
+
+oneDark-ish hexes in chunk:
+  #282c34 x2
+  #e06c75 x1
+  #98c379 x1
+  #61afef x1
+  #c678dd x2
+  #abb2bf x2
+  #56b6c2 x1

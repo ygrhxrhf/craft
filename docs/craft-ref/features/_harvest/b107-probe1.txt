@@ -1,0 +1,41 @@
+=== 1) who imports vendor-code-editor? (scan import statements of all 105 chunks) ===
+  importers=AIChatPopup-ClUQFRna.js x1 | CodeEditorFocusMode-BZ_3QTjt.js x1 | CodeEditorWrapper-DB8UxA00.js x1 | CraftLightboxContent-p1EW-Sw3.js x1 | DocxExportApi-CSOOZbKy.js x1 | index-DiTmKH3z.js x1 | Playground-ByE3MyxU.js x1 | PreferencesPanel-B3i9dbsM.js x1 | PreferencesPanelWithProfilePicture-YU8QBt8Q.js x1 | ShareSheet-DVttiwLH.js x1 | StyleGalleryPopup-DzwMZkOZ.js x1 | SubscriptionPopupContainer-BkTs7vCz.js x1 | TaskViews-X8In_vCO.js x1 | vendor-excalidraw-DbCJmDpU.js x1
+=== 2) CodeMirror detection in vendor-code-editor ===
+  vendor-code-editor-BLm003PU.js :: "cm-editor" count=2 first@193400
+    @193400: s.state.facet(Ene)}updateAttrs(){let i=XPt(this,b9t,{class:"cm-editor"+(this.hasFocus?" cm-focused ":" ")+this.themeClasses}),s={
+    @1481287: d,color:s.foreground},".cm-gutters":{}};s.fontFamily&&(O["&.cm-editor .cm-scroller"]={fontFamily:s.fontFamily}),s.gutterBackgroun
+  vendor-code-editor-BLm003PU.js :: "cm-content" count=10 first@166057
+    @166057: auto",position:"relative",zIndex:0,overflowAnchor:"none"},".cm-content":{margin:0,flexGrow:2,flexShrink:0,display:"block",whiteSpa
+    @166446: "break-word",overflowWrap:"anywhere",flexShrink:1},"&light .cm-content":{caretColor:"black"},"&dark .cm-content":{caretColor:"whit
+  vendor-code-editor-BLm003PU.js :: "EditorView" count=2 first@188267
+    @188267: ns(s,this)}update(i){if(this.updateState!=0)throw new Error("Calls to EditorView.update are not allowed while an update is in progress");let s=!1,l=!1
+    @190253: yCode)})}setState(i){if(this.updateState!=0)throw new Error("Calls to EditorView.setState are not allowed while an update is in progress");if(this.des
+  vendor-code-editor-BLm003PU.js :: "@codemirror" count=1 first@28092
+    @28092: s sometimes happens because multiple instances of @codemirror/state are loaded, breaking instanceof checks.`);p
+  vendor-code-editor-BLm003PU.js :: "HighlightStyle" count=0
+  vendor-code-editor-BLm003PU.js :: "tok-" count=33 first@279204
+    @279204:  in W){let i=W[r];i instanceof j2&&(i.name=r)}n_t([{tag:W.link,class:"tok-link"},{tag:W.heading,class:"tok-heading"},{tag:W.emphasis,class:"tok-
+    @279237: &&(i.name=r)}n_t([{tag:W.link,class:"tok-link"},{tag:W.heading,class:"tok-heading"},{tag:W.emphasis,class:"tok-emphasis"},{tag:W.strong,class:"t
+    @279274: tok-link"},{tag:W.heading,class:"tok-heading"},{tag:W.emphasis,class:"tok-emphasis"},{tag:W.strong,class:"tok-strong"},{tag:W.keyword,class:"tok
+    @279310: -heading"},{tag:W.emphasis,class:"tok-emphasis"},{tag:W.strong,class:"tok-strong"},{tag:W.keyword,class:"tok-keyword"},{tag:W.atom,class:"tok-at
+  vendor-code-editor-BLm003PU.js :: "class:\"" count=83 first@193393
+    @193393: " "+this.state.facet(Ene)}updateAttrs(){let i=XPt(this,b9t,{class:"cm-editor"+(this.hasFocus?" cm-focused ":" ")+this.themeClas
+    @193621: te:"no",contenteditable:this.state.facet(Q5)?"true":"false",class:"cm-content",style:`${_i.tabSize}: ${this.state.tabSize}`,rol
+    @199533: itorAttributes=b9t;li.lineWrapping=li.contentAttributes.of({class:"cm-lineWrapping"});li.announce=Ro.define();const v$n=4096,_P
+    @209009: r.docChanged||r.selectionSet||s},mount(r,i){zPt(i.state,r)},class:"cm-cursorLayer"});function zPt(r,i){i.style.animationDuratio
+  cm- class tokens distinct=63
+  sample cm- names=cm-widget,cm-line,cm-gap,cm-focused,cm-scroller,cm-content,cm-layer,cm-selection,cm-cursor,cm-blink,cm-blink2,cm-drop,cm-iso,cm-announced,cm-active,cm-special,cm-gutters,cm-gutters-before,cm-gutters-after,cm-gutter,cm-panels,cm-panels-top,cm-panels-bottom,cm-dialog,cm-dialog-close,cm-tab,cm-placeholder,cm-highlight,cm-trailing,cm-button,cm-textfield,cm-editor,cm-layer-above,cm-cursor-primary,cm-cursor-secondary,cm-tooltip,cm-tooltip-arrow,cm-tooltip-above,cm-tooltip-below,cm-tooltip-section
+  lezer=0 names=
+  languages chunk markers=name:"Document" | name:"line" | name:"close" | name:"search" | name:"replace" | name:"case" | name:"re" | name:"word" | name:"C++" | name:"CQL"
+=== 3) data-whatintent writer ===
+  index-DiTmKH3z.js :: "data-whatintent" count=0
+=== 4) --st-* and AdobeBlank in JS ===
+  index-DiTmKH3z.js :: "--st-grid-columns" count=1 first@4859834
+    @4859834: t,n[45]=Ve,n[46]=x,n[47]=u,n[48]=ze}else ze=n[48];tt=ze}const dt=`${Pe}px`;let Ge;n[71]!==l||n[72]!==dt?(Ge={"--st-grid-columns":l,"--st-row-height":dt},n[71]=l,n[72]=dt,n[73]=Ge):Ge=n[73];const Ye=Ge;let Oe;n[74]!==Y||n[75]!==d||n[76]!=
+  index-DiTmKH3z.js :: "AdobeBlank" count=2 first@1054299
+    @1054299: ponentId:"sc-19anezj-0"})([""]),yrt=async t=>{if(t.length===0)return[];!k2&&document.fonts!=null&&await document.fonts.load("1rem AdobeBlank",t[0].character);const e=document.createElement("canvas");e.style.position="absolute",e.style.width="0",e.style.height="0";const 
+    @1054623: if(n==null||o==null)return t;o.appendChild(e);let s=[];if(!k2)n.font='1em "Apple Color Emoji", "Android Emoji", "Segoe UI Emoji", AdobeBlank',s=t.filter(({character:i})=>n.measureText(i).width!==0);else{n.font='10px sans-serif"';const i=n.measureText("锟匡靠").width/2;s=t.
+  --st- in EditorPopup-BekynMco.js x4 uniq=--st-font-family,--st-text-color,--st-border-color
+  --st- in index-DiTmKH3z.js x28 uniq=--st-font-family,--st-row-height,--st-index-column-width,--st-scroll-left,--st-grid-columns,--st-selection-color,--st-text-color,--st-page-bg
+=== 5) container name in JS ===
+  index-DiTmKH3z.js :: "web-shared-layout-main-wrapper" count=0

@@ -1,0 +1,8 @@
+distinct tok- tokens = 29
+tok-link,tok-heading,tok-emphasis,tok-strong,tok-keyword,tok-atom,tok-bool,tok-url,tok-labelName,tok-inserted,tok-deleted,tok-literal,tok-string,tok-number,tok-string2,tok-variableName,tok-local,tok-definition,tok-variableName2,tok-propertyName,tok-typeName,tok-namespace,tok-className,tok-macroName,tok-operator,tok-comment,tok-meta,tok-invalid,tok-punctuation
+
+--- table start @279180 ---
+array chars=1254 entries=30
+TAIL: k-propertyName tok-definition"},{tag:W.typeName,class:"tok-typeName"},{tag:W.namespace,class:"tok-namespace"},{tag:W.className,class:"tok-className"},{tag:W.macroName,class:"tok-macroName"},{tag:W.propertyName,class:"tok-propertyName"},{tag:W.operator,class:"tok-operator"},{tag:W.comment,class:"tok-comment"},{tag:W.meta,class:"tok-meta"},{tag:W.invalid,class:"tok-invalid"},{tag:W.punctuation,class:"tok-punctuation"}]
+
+--- .tok-* rule-like hits in chunk = 0 ---

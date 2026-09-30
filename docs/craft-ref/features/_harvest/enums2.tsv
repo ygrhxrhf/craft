@@ -1,0 +1,113 @@
+const-map	map$6	248	vendor-BZCR0rqu.js	AD=EUR AE=AED AF=AFN AG=XCD AI=XCD AL=ALL AM=AMD AN=ANG AO=AOA AR=ARS AS=USD AT=EUR AU=AUD AW=AWG AX=EUR AZ=AZN BA=BAM BB=BBD BD=BDT BE=EUR BF=XOF BG=BGN BH=BHD BI=BIF BJ=XOF BL=EUR BM=BMD BN=BND BO=BOB BQ=USD BR=BRL BS=BSD BT=BTN BV=NOK BW=BWP BY=BYR BZ=BZD CA=CAD CC=AUD CD=CDF CF=XAF CG=XAF CH=CHF CI=XOF CK=NZD CL=CLP CM=XAF CN=CNY CO=COP CR=CRC CU=CUP CV=CVE CW=ANG CX=AUD CY=EUR CZ=CZK DE=EUR DJ=DJF DK=DKK DM=XCD DO=DOP DZ=DZD EC=USD EE=EUR EG=EGP EH=MAD ER=ERN ES=EUR ET=ETB FI=EUR FJ=FJD FK=FKP FM=USD FO=DKK FR=EUR GA=XAF GB=GBP GD=XCD GE=GEL GF=EUR GG=GBP GH=GHS GI=GIP GL=DKK GM=GMD GN=GNF GP=EUR GQ=XAF GR=EUR GS=GBP GT=GTQ GU=USD GW=XOF GY=GYD HK=HKD HM=AUD HN=HNL HR=HRK HT=HTG HU=HUF ID=IDR IE=EUR IL=ILS IM=GBP IN=INR IO=USD IQ=IQD IR=IRR IS=ISK IT=EUR JE=GBP JM=JMD JO=JOD JP=JPY KE=KES KG=KGS KH=KHR KI=AUD KM=KMF KN=XCD KP=KPW KR=KRW KW=KWD KY=KYD KZ=KZT LA=LAK LB=LBP LC=XCD LI=CHF LK=LKR LR=LRD LS=LSL LT=LTL LU=EUR LV=LVL LY=LYD MA=MAD MC=EUR MD=MDL ME=EUR MF=EUR MG=MGA MH=USD MK=MKD ML=XOF MM=MMK MN=MNT MO=MOP MP=USD MQ=EUR MR=MRO MS=XCD MT=EUR MU=MUR MV=MVR MW=MWK MX=MXN MY=MYR MZ=MZN NA=NAD NC=XPF NE=XOF NF=AUD NG=NGN NI=NIO NL=EUR NO=NOK NP=NPR NR=AUD NU=NZD NZ=NZD OM=OMR PA=PAB PE=PEN PF=XPF PG=PGK PH=PHP PK=PKR PL=PLN PM=EUR PN=NZD PR=USD PS=ILS PT=EUR PW=USD PY=PYG QA=QAR RE=EUR RO=RON RS=RSD RU=RUB RW=RWF SA=SAR SB=SBD SC=SCR SD=SDG SE=SEK SG=SGD SH=SHP SI=EUR SJ=NOK SK=EUR SL=SLL SM=EUR SN=XOF SO=SOS SR=SRD ST=STD SV=SVC SX=ANG SY=SYP SZ=SZL TC=USD TD=XAF TF=EUR TG=XOF TH=THB TJ=TJS TK=NZD TL=USD TM=TMT TN=TND TO=TOP TR=TRY TT=TTD TV=AUD TW=TWD TZ=TZS UA=UAH UG=UGX UM=USD US=USD UY=UYU UZ=UZS VA=EUR VC=XCD VE=VEF VG=USD VI=USD VN=VND VU=VUV WF=XPF WS=WST YE=YER YT=EUR ZA=ZAR ZM=ZMK ZW=ZWL
+enum	jt	30	vendor-excalidraw-DbCJmDpU.js	COPY=copy PASTE=paste CUT=cut KEYDOWN=keydown KEYUP=keyup MOUSE_MOVE=mousemove RESIZE=resize UNLOAD=unload FOCUS=focus BLUR=blur DRAG_OVER=dragover DROP=drop GESTURE_END=gestureend BEFORE_UNLOAD=beforeunload GESTURE_START=gesturestart GESTURE_CHANGE=gesturechange POINTER_MOVE=pointermove POINTER_DOWN=pointerdown POINTER_UP=pointerup STATE_CHANGE=statechange WHEEL=wheel TOUCH_START=touchstart TOUCH_END=touchend HASHCHANGE=hashchange VISIBILITY_CHANGE=visibilitychange SCROLL=scroll EXCALIDRAW_LINK=excalidraw-link MENU_ITEM_SELECT=menu.itemSelect MESSAGE=message FULLSCREENCHANGE=fullscreenchange
+enum	f1e	22	index-DiTmKH3z.js	styleId=style saturation=saturation backgroundColor=background-color backdrop=backdrop secondaryColor=secondary-color textColor=color textAlpha=text-alpha textAlignemt=text-align fontName=font-family fontSize=font-size fontWeight=font-weight fontStyle=font-style textDecoration=text-decoration lineHeight=line-height paddingBottom=padding-bottom paddingTop=padding-top scaleFactor=scale forceUserInterfaceStyle=forceUserInterfaceStyle themeId=theme-id pageWidthType=page-width-type separatorStyle=separator-style styleAsset=card-assets
+enum	nt	21	CodeEditorWrapper-DB8UxA00.js	AUTO=auto CRAFTDARK=craftdark CRAFTLIGHT=craftlight ATOMONE=atomone AURA=aura BBEDIT=bbedit DARCULA=darcula DRACULA=dracula GITHUBDARK=githubdark GITHUBLIGHT=githublight GRUVBOXDARK=gruvboxdark GRUVBOXLIGHT=gruvboxlight MATERIALDARK=materialdark MATERIALLIGHT=materiallight NOCTISLILAC=noctislilac NORD=nord SUBLIME=sublime TOKYONIGHTDAY=tokyonightday TOKYONIGHTSTORM=tokyonightstorm TOKYONIGHT=tokyonight VSCODEDARK=vscodedark
+enum	Ut	19	index-DiTmKH3z.js	Filled=Filled FilledStrong=FilledStrong FilledStrongBrand=FilledStrongBrand FilledStrongBrandBlack=FilledStrongBrandBlack FilledAccentLight=FilledAccentLight FilledWeak=FilledWeak FilledDanger=FilledDanger FilledWarning=FilledWarning Outlined=Outlined OutlinedDanger=OutlinedDanger OutlinedWarning=OutlinedWarning Plain=Plain WeakPlain=WeakPlain DangerPlain=PlainDanger WarningPlain=WarningPlain DangerPlainFilled=DangerPlainFilled WarningPlainFilled=WarningPlainFilled AccentPlain=AccentPlain Active=Active
+const-map	Type	17	vendor-BZCR0rqu.js	ALIAS=ALIAS BLANK_LINE=BLANK_LINE BLOCK_FOLDED=BLOCK_FOLDED BLOCK_LITERAL=BLOCK_LITERAL COMMENT=COMMENT DIRECTIVE=DIRECTIVE DOCUMENT=DOCUMENT FLOW_MAP=FLOW_MAP FLOW_SEQ=FLOW_SEQ MAP=MAP MAP_KEY=MAP_KEY MAP_VALUE=MAP_VALUE PLAIN=PLAIN QUOTE_DOUBLE=QUOTE_DOUBLE QUOTE_SINGLE=QUOTE_SINGLE SEQ=SEQ SEQ_ITEM=SEQ_ITEM
+enum	Xe	13	index-DiTmKH3z.js	Text=text Image=image Video=video Url=url File=file Drawing=drawing Code=code Line=line PageSeparator=pageSeparator Table=table RecordObject=object ObjectList=objectList Whiteboard=whiteboard
+enum	le	13	index-DiTmKH3z.js	TEXT=text NUMBER=number CHECKBOX=checkbox DATE=date URL=url PERSON=person SELECT=select MULTISELECT=multiSelect MEDIA=media RELATION=relation BLOCKLINK=linkToBlock EMAIL=email PHONE=phone
+enum	Us	13	index-DiTmKH3z.js	REGISTRATION_BLOCKED=BLOCKED_REG INVALID_CODE=INVALID_CODE EXPIRED=EXPIRED EMAIL_LOCKED=EMAIL_LOCKED TOO_MANY_ATTEMPTS=TOO_MANY_ATTEMPTS ALREADY_VERIFIED=ALREADY_VERIFIED NEW_EMAIL_USED_BY_OTHER_ACCOUNT=NEW_EMAIL_USED_BY_OTHER_ACCOUNT SSO_LOGIN_ENFORCED=SSO_LOGIN_ENFORCED SSO_NOT_SUPPORTED=SSO_NOT_SUPPORTED INVALID_PARAMS=INVALID_PARAMS AUTH_TOKEN_MISSING=AUTH_TOKEN_MISSING EXTENSION_NOT_INSTALLED=EXTENSION_NOT_INSTALLED UNKNOWN=UNKNOWN
+enum	BlockType	13	socket.worker-CMvBLZvP.js	Text=text Image=image Video=video Url=url File=file Drawing=drawing Code=code Line=line PageSeparator=pageSeparator Table=table RecordObject=object ObjectList=objectList Whiteboard=whiteboard
+enum	DatabaseSchemaPropertyType	13	socket.worker-CMvBLZvP.js	TEXT=text NUMBER=number CHECKBOX=checkbox DATE=date URL=url PERSON=person SELECT=select MULTISELECT=multiSelect MEDIA=media RELATION=relation BLOCKLINK=linkToBlock EMAIL=email PHONE=phone
+enum	oi	12	index-DiTmKH3z.js	UNKNOWN=UNKNOWN ADMIN_ACCESS_REQUIRED=ADMIN_ACCESS_REQUIRED PADDLE_SUBSCRIPTION_RESERVED=PADDLE_SUBSCRIPTION_RESERVED CHECKOUT_NOT_FOUND=CHECKOUT_NOT_FOUND CHECKOUT_EMAIL_MISMATCH=CHECKOUT_EMAIL_MISMATCH TEAM_ALREADY_SUBSCRIBED=TEAM_ALREADY_SUBSCRIBED INVALID_CHECKOUT_ID=INVALID_CHECKOUT_ID INTERNAL_SERVER_ERROR=INTERNAL_SERVER_ERROR NO_ACTIVE_SUBSCRIPTION=NO_ACTIVE_SUBSCRIPTION INVALID_RETURN_URL=INVALID_RETURN_URL NOT_ELIGIBLE_FOR_DISCOUNT=NOT_ELIGIBLE_FOR_DISCOUNT AUTHENTICATION_ERROR=AUTHENTICATION_ERROR
+enum	uo	11	index-DiTmKH3z.js	UNKNOWN=UNKNOWN AUTHENTICATION_ERROR=AUTHENTICATION_ERROR ADMIN_ACCESS_REQUIRED=ADMIN_ACCESS_REQUIRED NO_SUBSCRIPTION_FOR_TEAM=NO_SUBSCRIPTION_FOR_TEAM INVALID_SUBSCRIPTION=INVALID_SUBSCRIPTION LESS_SEATS_THAN_MEMBERS=LESS_SEATS_THAN_MEMBERS CANNOT_CHARGE=CANNOT_CHARGE UNSUPPORTED_MIGRATION=UNSUPPORTED_MIGRATION INTERNAL_SERVER_ERROR=INTERNAL_SERVER_ERROR TIER_LIMIT=TIER_LIMIT PAUSED_SUBSCRIPTION=PAUSED_SUBSCRIPTION
+enum	os	11	index-DiTmKH3z.js	CONNECTED=connected SYNCED=synced PENDING=pendingSync SYNCING=syncing ERROR=error DISCONNECTED=disconnected CONNECTING=connecting DISCONNECT_ISSUED=disconnect_issued CREATING_WORKER=creating_worker WORKER_READY=worker_ready TERMINATED=terminated
+enum	SyncStatus	11	socket.worker-CMvBLZvP.js	CONNECTED=connected SYNCED=synced PENDING=pendingSync SYNCING=syncing ERROR=error DISCONNECTED=disconnected CONNECTING=connecting DISCONNECT_ISSUED=disconnect_issued CREATING_WORKER=creating_worker WORKER_READY=worker_ready TERMINATED=terminated
+const-map	ff	10	vendor-excalidraw-DbCJmDpU.js	ONLY_ONE_START=ONLY_ONE_START ONLY_ONE_END=ONLY_ONE_END ZERO_OR_ONE_START=ZERO_OR_ONE_START ZERO_OR_ONE_END=ZERO_OR_ONE_END ONE_OR_MORE_START=ONE_OR_MORE_START ONE_OR_MORE_END=ONE_OR_MORE_END ZERO_OR_MORE_START=ZERO_OR_MORE_START ZERO_OR_MORE_END=ZERO_OR_MORE_END MD_PARENT_END=MD_PARENT_END MD_PARENT_START=MD_PARENT_START
+enum	at	9	index-DiTmKH3z.js	PageRegular=pageRegular Title=title Subtitle=subtitle Heading=heading Strong=strong Body=body Caption=caption Note=note PageCard=pageCard
+enum	ie	9	index-DiTmKH3z.js	FREE=Free PRO=Pro BUSINESS=Business V2_FREE=V2_Free V2_PLUS=V2_Plus V2_FAMILY=V2_Family V2_TEAM=V2_Team V2_BUSINESS=V2_Business LITE=Lite
+enum	m4e	9	index-DiTmKH3z.js	Title=title Subtitle=subtitle Heading=heading UnorderedList=unorderedList OrderedList=orderedList ListItem=listItem Todo=todo Toggle=toggle Focus=focus
+enum	TextStyle	9	socket.worker-CMvBLZvP.js	PageRegular=pageRegular Title=title Subtitle=subtitle Heading=heading Strong=strong Body=body Caption=caption Note=note PageCard=pageCard
+enum	bi	8	index-DiTmKH3z.js	PageTitle=BadgePageTitle Title=BadgeTitle Subtitle=BadgeSubtitle Heading=BadgeHeading Strong=BadgeStrong Body=BadgeBody Caption=BadgeCaption Comment=BadgeComment
+enum	u2	8	index-DiTmKH3z.js	UNKNOWN=UNKNOWN INTERNAL_SERVER_ERROR=INTERNAL_SERVER_ERROR ADMIN_ACCESS_REQUIRED=ADMIN_ACCESS_REQUIRED TRIAL_ALREADY_USED=TRIAL_ALREADY_USED TEAM_ALREADY_SUBSCRIBED=TEAM_ALREADY_SUBSCRIBED NO_SUBSCRIPTION_FOR_TEAM=NO_SUBSCRIPTION_FOR_TEAM TEAM_NOT_PRIVATE=TEAM_NOT_PRIVATE DEFAULT_TEAM_NOT_FOUND=DEFAULT_TEAM_NOT_FOUND
+enum	Zy	7	index-DiTmKH3z.js	Default=default Icon=icon Sticky=sticky Booklet=booklet Collage=collage EmojiCloud=emojiCloud None=none
+enum	Fs	7	index-DiTmKH3z.js	INITIAL=initial SYNCED=synced SYNCING=syncing ERROR=error UNKNOWN=unknown CONNECTED=connected TERMINATED=terminated
+enum	Zo	7	index-DiTmKH3z.js	Default=AppearanceDefault Filled=AppearanceFilled Active=AppearanceActive Danger=AppearanceDanger DangerSubtle=AppearanceDangerSubtle Accent=AppearanceAccent AccentIcon=AppearanceAccentIcon
+enum	vc	7	index-DiTmKH3z.js	UNKNOWN=UNKNOWN ADMIN_ACCESS_REQUIRED=ADMIN_ACCESS_REQUIRED NO_CUSTOM_DOMAIN=NO_CUSTOM_DOMAIN INVALID_HOSTNAME=INVALID_HOSTNAME HOSTNAME_ALREADY_USED=HOSTNAME_ALREADY_USED INVALID_PREFIX=INVALID_PREFIX PREFIX_ALREADY_USED=PREFIX_ALREADY_USED
+enum	za	7	index-DiTmKH3z.js	UNKNOWN=UNKNOWN UNSUPPORTED_SUBSCRIPTION=UNSUPPORTED_SUBSCRIPTION LESS_SEATS_THAN_ALLOCATED=LESS_SEATS_THAN_ALLOCATED CANNOT_CHARGE=CANNOT_CHARGE LESS_SEATS_THAN_BASE_COUNT=LESS_SEATS_THAN_BASE_COUNT NO_ACTIVE_SUBSCRIPTION=NO_ACTIVE_SUBSCRIPTION TRIAL_SEAT_PERIOD_EXPIRED=TRIAL_SEAT_PERIOD_EXPIRED
+const-map	Ah	7	vendor-excalidraw-DbCJmDpU.js	SIDEBAR=sidebar SHAPE_ACTIONS_MENU=App-menu__left ZOOM_ACTIONS=zoom-actions SEARCH_MENU_INPUT_WRAPPER=layer-ui__search-inputWrapper CONVERT_ELEMENT_TYPE_POPUP=ConvertElementTypePopup SHAPE_ACTIONS_THEME_SCOPE=shape-actions-theme-scope FRAME_NAME=frame-name
+const-map	_Pt	7	vendor-excalidraw-DbCJmDpU.js	CONTAINS=contains COPIES=copies DERIVES=derives SATISFIES=satisfies VERIFIES=verifies REFINES=refines TRACES=traces
+enum	$t	6	index-DiTmKH3z.js	None=none ExtraLight=extraLight Light=light Regular=regular Strong=strong PageSeparator=pageSeparator
+enum	Cs	6	index-DiTmKH3z.js	Insert=Insert Style=Style PageStyle=PageStyle Actions=Actions Info=Info Comments=Comments
+enum	us	6	index-DiTmKH3z.js	Name=Name Updated=Updated Created=Created LastViewed=LastViewed Kind=Kind Manual=Manual
+enum	Bs	6	index-DiTmKH3z.js	Relevance=Relevance Title=Title Modified=Modified LastViewed=LastViewed Created=Created Updated=Updated
+enum	X3	6	index-DiTmKH3z.js	UNKNOWN=UNKNOWN BAD_REQUEST=BAD_REQUEST TOO_MANY_SPACES=TOO_MANY_SPACES NO_ACTIVE_TEAM_SUBSCRIPTION=NO_ACTIVE_TEAM_SUBSCRIPTION AUTHENTICATION_ERROR=AUTHENTICATION_ERROR ACCESS_DENIED=ACCESS_DENIED
+enum	Fo	6	index-DiTmKH3z.js	AUTHENTICATION_ERROR=AUTHENTICATION_ERROR ACCESS_DENIED=ACCESS_DENIED INVALID_PARAMETERS=INVALID_PARAMETERS UNKNOWN=UNKNOWN INTERNAL_SERVER_ERROR=INTERNAL_SERVER_ERROR NOT_A_GUEST=NOT_A_GUEST
+enum	yso	6	index-DiTmKH3z.js	UNKNOWN=UnknownError SPACE_ACCESS_DENIED=AccessDeniedError PATH_SEGMENT_TOO_SHORT=Path segmenet too short PATH_ALREADY_USED=Path already used PASSWORD_PROTECTION_IS_ENABLED=PASSWORD_PROTECTION_IS_ENABLED CRAFT_DOMAIN_IS_REQUIRED=CRAFT_DOMAIN_IS_REQUIRED
+enum	LineType	6	socket.worker-CMvBLZvP.js	None=none ExtraLight=extraLight Light=light Regular=regular Strong=strong PageSeparator=pageSeparator
+enum	SideMenuPage	6	socket.worker-CMvBLZvP.js	Insert=Insert Style=Style PageStyle=PageStyle Actions=Actions Info=Info Comments=Comments
+z.enum	Dh	5	AIChatPopup-ClUQFRna.js	ongoing day remainingDaysInMonth month later
+enum	Nt	5	index-DiTmKH3z.js	None=none Bullet=bullet Numbered=numbered Todo=todo Toggle=toggle
+enum	Xa	5	index-DiTmKH3z.js	Large=card.large Wide=card.wide SmallRight=card.small.right Subtle=card.subtle SmallSmallRight=card.small.small.right
+enum	Ffe	5	index-DiTmKH3z.js	Image=Image Video=Video Markdown=Markdown CSV=CSV Blob=Blob
+enum	xr	5	index-DiTmKH3z.js	Blocks=blocks TableColumn=tableColumn TableRow=tableRow NewBlock=newBlock ImportBlocks=importBlocks
+enum	Rft	5	index-DiTmKH3z.js	UNKNOWN=UNKNOWN SUBSCRIPTION_ALREADY_ASSIGNED=SUBSCRIPTION_ALREADY_ASSIGNED ACCOUNT_ALREADY_SUBSCRIBED=ACCOUNT_ALREADY_SUBSCRIBED SUBSCRIPTION_EXPIRED=SUBSCRIPTION_EXPIRED SUBSCRIPTION_NOT_FOUND=SUBSCRIPTION_NOT_FOUND
+enum	ListStyle	5	socket.worker-CMvBLZvP.js	None=none Bullet=bullet Numbered=numbered Todo=todo Toggle=toggle
+enum	CardPluginDataType	5	socket.worker-CMvBLZvP.js	Large=card.large Wide=card.wide SmallRight=card.small.right Subtle=card.subtle SmallSmallRight=card.small.small.right
+enum	TaskType	5	socket.worker-CMvBLZvP.js	CONNECT=connect REFRESH=refresh SEND_SYNC=sendSync EMPTY=empty SYNC_RECEIVED=syncReceived
+const-map	AlignmentType	5	vendor-BZCR0rqu.js	START=start CENTER=center LEFT=left RIGHT=right JUSTIFIED=both
+const-map	HeadingLevel	5	vendor-BZCR0rqu.js	HEADING_1=Heading1 HEADING_2=Heading2 HEADING_3=Heading3 HEADING_4=Heading4 TITLE=Title
+const-map	LKt	5	vendor-excalidraw-DbCJmDpU.js	ZERO_OR_ONE=ZERO_OR_ONE ZERO_OR_MORE=ZERO_OR_MORE ONE_OR_MORE=ONE_OR_MORE ONLY_ONE=ONLY_ONE MD_PARENT=MD_PARENT
+z.enum	listType	4	AIChatPopup-ClUQFRna.js	inbox today upcoming all
+enum	Ho	4	index-DiTmKH3z.js	Left=left Center=center Right=right Justify=justify
+enum	x1e	4	index-DiTmKH3z.js	None=none Single=single Double=double Strong=strong
+enum	S9	4	index-DiTmKH3z.js	Default=default Small=small Regular=regular Card=card
+enum	Xn	4	index-DiTmKH3z.js	Regular=regular Small=small Card=card Embed=embed
+enum	Jt	4	index-DiTmKH3z.js	System=system SystemSerif=system-serif SystemMono=system-mono SystemRounded=system-rounded
+enum	h5	4	index-DiTmKH3z.js	Regular=regular Serif=serif Rounded=rounded Mono=mono
+enum	m7	4	index-DiTmKH3z.js	NOT_LOADED=notLoaded LOADING=loading LOADED_FROM_CACHE=loadedFromCache LOADED_FROM_SERVER=loadedFromServer
+enum	C0	4	index-DiTmKH3z.js	Attachments=Attachments FindReplace=FindAndReplace TableOfContents=TableOfContents Tasks=Tasks
+enum	Ns	4	index-DiTmKH3z.js	Name=Name Updated=Updated Created=Created LastViewed=LastViewed
+enum	Md	4	index-DiTmKH3z.js	Primary=Primary Accent=Accent Danger=Danger Secondary=Secondary
+enum	W8	4	index-DiTmKH3z.js	UNKNOWN=UNKNOWN BAD_REQUEST=BAD_REQUEST INTERNAL_SERVER_ERROR=INTERNAL_SERVER_ERROR AUTHENTICATION_ERROR=AUTHENTICATION_ERROR
+enum	wi	4	index-DiTmKH3z.js	Name=Name Shared=Shared SharedBy=SharedBy LastViewed=LastViewed
+enum	xd	4	index-DiTmKH3z.js	Default=Default Grey=Grey Warning=Warning Danger=Danger
+enum	F8	4	index-DiTmKH3z.js	None=None Solid=Solid Gradient=Gradient Image=Image
+enum	AlignmentStyle	4	socket.worker-CMvBLZvP.js	Left=left Center=center Right=right Justify=justify
+enum	UrlStyle	4	socket.worker-CMvBLZvP.js	Default=default Small=small Regular=regular Card=card
+enum	LayoutStyle	4	socket.worker-CMvBLZvP.js	Regular=regular Small=small Card=card Embed=embed
+enum	FontFamilyId	4	socket.worker-CMvBLZvP.js	System=system SystemSerif=system-serif SystemMono=system-mono SystemRounded=system-rounded
+enum	DocumentLoadStatus	4	socket.worker-CMvBLZvP.js	NOT_LOADED=notLoaded LOADING=loading LOADED_FROM_CACHE=loadedFromCache LOADED_FROM_SERVER=loadedFromServer
+enum	LeftSidebarTab	4	socket.worker-CMvBLZvP.js	Attachments=Attachments FindReplace=FindAndReplace TableOfContents=TableOfContents Tasks=Tasks
+enum	BlocksV2Actions	4	socket.worker-CMvBLZvP.js	INSERT=i DELETE=d MOVE=m NOOP=n
+const-map	PageNumber	4	vendor-BZCR0rqu.js	CURRENT=CURRENT TOTAL_PAGES=TOTAL_PAGES TOTAL_PAGES_IN_SECTION=TOTAL_PAGES_IN_SECTION CURRENT_SECTION=SECTION
+const-map	WPt	4	vendor-excalidraw-DbCJmDpU.js	VERIFY_ANALYSIS=Analysis VERIFY_DEMONSTRATION=Demonstration VERIFY_INSPECTION=Inspection VERIFY_TEST=Test
+z.enum	sortBy	3	AIChatPopup-ClUQFRna.js	relevance dateCreated dateModified
+enum	ys	3	index-DiTmKH3z.js	FULL=full FADED=faded UNKNOWN=unknown
+enum	Zs	3	index-DiTmKH3z.js	TOP_TO_BOTTOM=topToBottom LEFT_TO_RIGHT=leftToRight RADIAL=radial
+enum	io	3	index-DiTmKH3z.js	Automatic=automatic Light=light Dark=dark
+enum	Wu	3	index-DiTmKH3z.js	Small=small Regular=regular Large=large
+enum	Gs	3	index-DiTmKH3z.js	table=table gallery=gallery kanban=kanban
+enum	bg	3	index-DiTmKH3z.js	STRIKETHROUGH=strikethrough FADED=faded NONE=none
+enum	xu	3	index-DiTmKH3z.js	FULL=full FADED=faded UNKNOWN=unknown
+enum	ox	3	index-DiTmKH3z.js	UNKNOWN=UnknownError SPACE_ACCESS_DENIED=AccessDeniedError DOCUMENT_NOT_FOUND=NotFoundError
+enum	UO	3	index-DiTmKH3z.js	UNKNOWN=UnknownError SPACE_ACCESS_DENIED=AccessDeniedError SUBSCRIPTION_LIMIT_REACHED=SubscriptionLimitReached
+enum	Kn	3	index-DiTmKH3z.js	List=List Cards=Cards Waterfall=Waterfall
+enum	qu	3	index-DiTmKH3z.js	Medium=Medium ExtraSmall=ExtraSmall MediumSmall=MediumSmall
+enum	qD	3	index-DiTmKH3z.js	BlockTask=TASK UpdateOnDrop=UPDATE_ON_DROP PinOnDrop=PIN_ON_DROP
+enum	I7	3	index-DiTmKH3z.js	Default=Default Split=Split Picker=Picker
+enum	g4	3	index-DiTmKH3z.js	UNKNOWN=UNKNOWN ADMIN_ACCESS_REQUIRED=ADMIN_ACCESS_REQUIRED CANNOT_USE=CANNOT_USE
+enum	dm	3	index-DiTmKH3z.js	Default=Default BlueToPurple=BlueToPurple YellowToBlue=YellowToBlue
+enum	pd	3	index-DiTmKH3z.js	ScaleAspectFill=scaleAspectFill ScaleAspectFit=scaleAspectFit Center=center
+enum	wl	3	index-DiTmKH3z.js	table=table gallery=gallery kanban=kanban
+enum	r4	3	index-DiTmKH3z.js	AnyoneWithLinkCanView=AnyoneWithLinkCanView AnyoneWithLinkCanEdit=AnyoneWithLinkCanEdit Restricted=Restricted
+enum	Jj	3	index-DiTmKH3z.js	Filled=Filled FilledOutlined=FilledOutlined Plain=Plain
+enum	vSe	3	index-DiTmKH3z.js	Default=Default Active=Active DefaultExpanded=DefaultExpanded
+enum	id	3	index-DiTmKH3z.js	FullDocument=FullDocument ThisPage=ThisPage Selection=Selection
+enum	J	3	PageCardMixer-EI_PiWQJ.js	Solid=Solid Gradient=Gradient Image=Image
+enum	PageBackgroundSize	3	socket.worker-CMvBLZvP.js	FULL=full FADED=faded UNKNOWN=unknown
+enum	GradientPageBackgroundDirection	3	socket.worker-CMvBLZvP.js	TOP_TO_BOTTOM=topToBottom LEFT_TO_RIGHT=leftToRight RADIAL=radial
+enum	f$6	3	vendor-BZCR0rqu.js	Mouse=mouse Touch=touch Pointer=pointer
+enum	l$6	3	vendor-BZCR0rqu.js	CancelledByMovement=cancelled-by-movement CancelledByRelease=cancelled-by-release CancelledOutsideElement=cancelled-outside-element
+const-map	FieldCharacterType	3	vendor-BZCR0rqu.js	BEGIN=begin END=end SEPARATE=separate
+const-map	VerticalAlignTable	3	vendor-BZCR0rqu.js	TOP=top CENTER=center BOTTOM=bottom
+const-map	HeaderFooterReferenceType	3	vendor-BZCR0rqu.js	DEFAULT=default FIRST=first EVEN=even
+const-map	WidthType	3	vendor-BZCR0rqu.js	AUTO=auto DXA=dxa PERCENTAGE=pct
+const-map	Chomp	3	vendor-BZCR0rqu.js	CLIP=CLIP KEEP=KEEP STRIP=STRIP
+enum	bNA	3	vendor-excalidraw-DbCJmDpU.js	ACTIVE=active AWAY=away IDLE=idle
+const-map	gYA	3	vendor-excalidraw-DbCJmDpU.js	TEST=test DEVELOPMENT=development PRODUCTION=production
+const-map	CQ	3	vendor-excalidraw-DbCJmDpU.js	TOP=top MIDDLE=middle BOTTOM=bottom
+const-map	Z_	3	vendor-excalidraw-DbCJmDpU.js	LEFT=left CENTER=center RIGHT=right
+const-map	wu	3	vendor-excalidraw-DbCJmDpU.js	IMMEDIATELY=IMMEDIATELY NEVER=NEVER EVENTUALLY=EVENTUALLY
+const-map	PW	3	vendor-excalidraw-DbCJmDpU.js	GREEN=green RED=red BLUE=blue
+const-map	ZPt	3	vendor-excalidraw-DbCJmDpU.js	LOW_RISK=Low MED_RISK=Medium HIGH_RISK=High

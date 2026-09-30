@@ -5,9 +5,9 @@
   "identifier": "com.crafty.app",
   "build": {
     "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "",
     "devUrl": "http://localhost:3000",
-    "frontendDist": "../out"
+    "frontendDist": "http://localhost:3000"
   },
   "app": {
     "windows": [
@@ -19,7 +19,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' http://localhost:3000 ws://localhost:3001 ws://localhost:3002 https://*.myqcloud.com; img-src 'self' data: blob: https://*.myqcloud.com; script-src 'self'; style-src 'self' 'unsafe-inline'"
+      "csp": "default-src 'self'; connect-src 'self' http://localhost:3000 ws://localhost:3001 ws://localhost:3002 https://*.myqcloud.com https://*.run.tcloudbase.com wss://*.run.tcloudbase.com; img-src 'self' data: blob: https://*.myqcloud.com https://*.run.tcloudbase.com; script-src 'self'; style-src 'self' 'unsafe-inline'"
     }
   },
   "bundle": {

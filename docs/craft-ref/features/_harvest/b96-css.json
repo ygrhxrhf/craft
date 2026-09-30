@@ -1,0 +1,126 @@
+{
+  "cssCount": 12,
+  "hits": [
+    {
+      "activeTab": 0,
+      "bytes": 29193,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "vendor-code-editor.css.DkZwelau.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 163877,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "vendor-excalidraw.css.tkYuNB5W.css"
+    },
+    {
+      "activeTab": 6,
+      "bytes": 296789,
+      "compactNav": 1,
+      "dataActive": 2,
+      "dm375": 22,
+      "segmented": 1,
+      "tablist": 0,
+      "url": "index.css.CP00jDAy.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 3382,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "fontdef.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 1485,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "fontdef.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 353,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "fontdef.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 325,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "fontdef.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 1045,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "fontdef.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 25401,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "fontdef.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 308022,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "fontdef.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 25567,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "BlankFont.css.CSdHt10-.css"
+    },
+    {
+      "activeTab": 0,
+      "bytes": 333,
+      "compactNav": 0,
+      "dataActive": 0,
+      "dm375": 0,
+      "segmented": 0,
+      "tablist": 0,
+      "url": "AIChatPopup.css.D9rwJ006.css"
+    }
+  ],
+  "w_editor_keydownbound": "ction==null)return;const i=Ku(this.state.editorState,this.editor.selection);if(i==null)return;const l=Jr(n,qte(i)),r=(c=!1)=>{if(c){const d=this.props.uiStoreRef.current.textEditState;if(!(d!==null&&d.blockId===this.props.blockId))return}this.context.uiDispatch(l)};o!=null&&s!=null?setTimeout(()=>r(!0),r0n):r()},this.onBlurBound=n=>{if(this.isInOutsideFocusBlurCall||this.isUnmounted)return!0;this.isInComposition=!1,this.saveChangesBound(),this.stopTextEditingBound(!0),this.enableKeyDefs()},this.onKeyDownBound=n=>{if(k2)return;const o=this.props.tableId!=null?[]:uF;this.props.allowBlockStyling&&cne(n.key,n,this.editor,this.state.editorState,this.props.blockId,o,this.saveChangesBound,this.docDispatchBound,this.uiDispatchBound,this.props.blocksRef.current,this.props.uiStoreRef.current.toggleStates)},this.disableKeyDefs=()=>{bn.pushIntoFocus({id:this.disabledId,keyDefs:[],allowPropagation:!1})},this.enableKeyDefs=()=>{bn.removeFromFocus(this.disabledId)},this.isInComposition=!1,this.onCompositionStartBound=()=>{this.isInComposition=!0,this.disableKeyDefs()},this.onCompositionEndBound=()=>{var n,o,s;this.isInComposition=!1,this.enableKeyDefs(),(n=this.cmdMenuRef.current)==null||n.setSearchKeywordOverride(null),(o=this.emojiMenuRef.current)==null||o.setSearchKeywordOverride(null),(s=this.blockLinkMenuRef.current)==null||s.setSearchKeywordOverride(null)},this.onCompositionUpdateBound=n=>{var o,s,i,l,r,c;if(((o=this.state.inlineMenuState)==null?void 0:o.type)===\"cmd\"){const d=this.state.inlineMenuState.searchKeyword;(s=this.cmdMenuRef.current)==null||s.setSearchKeywordOverride(d+n.data)}if(((i=this.state.inlineMenuState)==null?void 0:i.type)===\"emoji\"){const d=this.editor.selection;if(d&&vo.isCollapsed(d)){const[u]=vo.edges(d),p=Lne(this.editor,u)+(n.data??\"\"),h=p!=null?p.match(/^:([^\\s^/]+)(:?)$/):null;if(h!=null){const m=h[1];(l=this.emojiMenuRef.current)==null||l.setSearchKeywordOverride(m)}}}if(((r=this.state.inlineMenuState)==null?void 0:r.type)===\"link\"){const d=this.state.inlineMenuState.searchKeyword;(c=this.blockLinkMenuRef.current)==null||c.setSearchKeywordOverride(d+n.data)}this.checkEmojiMenu(n.data)},this.keyDefs=[],this.undoBound=()=>{this.state.inlineMenuState!=null&&this.setState({inlineMenuState:null}),this.docDispatchBound(hU())},this.redoBound=()=>{this.docDispatchBound(mU())},this.toggleBoldBound=()=>{Ru(this.editor,\"isBold\")},this.toggleItalicBound=()=>{Ru(this.editor,\"isItalic\")},this.toggleStrikethroughBound=()=>{Ru(this.editor,\"isStrikethrough\")},this.toggleHighlightBound=()=>{const n=this.props.lastUsedHightlight==null?obe:this.props.lastUsedHightlight;Ru(this.editor,\"highlightColor\",n)},this.toggleCodeBound=()=>{Ru(this.editor,\"isCode"
+}

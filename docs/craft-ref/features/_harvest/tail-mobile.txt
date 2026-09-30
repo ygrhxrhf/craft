@@ -1,0 +1,7 @@
+mobile.rotate.to.portrait	请将手机旋转至竖屏模式，获得更好的体验。
+mobile.web.craft.available	Craft 适用于桌面网页版、iOS、iPadOS 和 macOS，并计划在未来支持更多平台。
+mobile.web.ipados.visionos	下载 iPadOS 或 visionOS 应用程序以获得最佳体验。
+mobile.web.looking.for	你可能正在寻找
+mobile.web.not.available.on.mobile	网页版 Craft 无法在移动设备上使用
+mobile.web.not.optimized.for.this.device	网页版 Craft 未针对此设备进行优化
+mobile.web.optimized.for.desktop	Craft for Web 针对桌面体验进行了优化。在移动设备上，请下载我们的 iOS 和 iPadOS 应用程序。

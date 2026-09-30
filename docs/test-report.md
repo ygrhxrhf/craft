@@ -428,3 +428,75 @@ Playwright request context：NextAuth credentials 登录 `craft-test@example.com
 - 更新源 P4 才真有，当前仅配置
 - 冷启动 <2s 真机计时
 
+---
+
+## P4 cloud deploy acceptance 2026-10-01（阶段 A：本地可验证；阶段 B BLOCKED）
+
+分支 `feature/windows-offline-sync` @ P4 stage A，`plan: docs/superpowers/plans/2026-10-01-p4-tencent-deploy.md`。前置采购尚无云账号（`dec-f64b7c64bce0964a`：阶段 A 先产出 Dockerfile 与本地验收，云资源递延）— 本章为阶段 A 验收，阶段 B 生产复测待云资源就绪后追加。
+
+### 门禁（对照 P3 基线，实跑）
+
+| 项 | P3 基线 | P4 Stage A 实测 | 判定 |
+|---|---|---|---|
+| `npm test` | 60 文件 / 403 passed | **60 文件 / 403 passed**（本轮实跑） | 持平 |
+| `npx tsc --noEmit` | 0 错误 | **0 错误**（本轮实跑，`@ts-ignore` 已补 `eslint-disable` 消 `ban-ts-comment` 误报） | 持平 |
+| `npm run lint` | 0 errors（BM-限抽样） | **0 errors / 全量 ~540 warnings**（抽样 `src/lib/platform.ts src/lib/sync-core 0 errors, 36 warnings`；全量 2m 超时为 jest 周知抖动，见 P3） | 持平 |
+| `cargo check` | 0 错误 | **0 错误**（`Finished dev profile`，本轮实跑） | 持平 |
+| `e2e/sync.spec.ts` | 3/3（阈值 10_068/18_667 未放宽） | 未重跑（P4 阶段 A 未触同步内核，P3 后 `cargo check` 侧同理；阈值未改，生产复测递延阶段 B） | 无回退 |
+| Dockerfile | — | 新增 `Dockerfile` + `.dockerignore`，`npm run start:collab/start:tldraw` 已补 | — |
+| `.env.example` | 缺 COS 字段（P2 遗留） | 已补 `NEXT_PUBLIC_APP_URL/STORAGE_DRIVER/COS_*` | 闭环 |
+
+### 阶段 A 产出（可本地验证）
+
+- `Dockerfile`：`node:20-slim` 三阶段（deps/builder/runner），`npm run contract:emit && npm run build`，非 root `nextjs`，`EXPOSE 3000/3001/3002`，凭证仅运行时 ENV，`CMD ["npm","run","start"]`（collab/tldraw 以同镜像覆写 CMD，见 `docs/deploy/cloudbase.md`）
+- `.dockerignore`：`node_modules/.next/.git/uploads/.superpowers` 等
+- `.env.example`：补齐 `NEXT_PUBLIC_APP_URL/STORAGE_DRIVER=local|cos/COS_BUCKET/COS_REGION/COS_SECRET_ID/COS_SECRET_KEY`（P2 缺口）
+- `docs/deploy/cloudbase.md`：三服务（web/collab/tldraw）`minInstances≥1`、启动命令、环境变量、CSP、回滚、验证命令；阶段 B BLOCKED 占位
+- `scripts/bench-full-sync.mjs`：`GET /api/v1/sync?since` 翻页至 `hasMore=false` 计时，阈值 5s（spec 9.4-④）
+- `package.json`：新增 `start:collab` / `start:tldraw` 供容器 CMD
+
+### 阶段 B 未验证（BLOCKED，cannot-verify）
+
+- 真实 TencentDB：`SELECT version()`、`metaUpdatedAt/sync_events/text[]` 可用、`pg_dump` + `migrate diff dry-run`、迁移执行
+- 云托管三服务：建服务、`minInstances≥1` 截图、`wss://` 连通、缩容不杀连接
+- COS 真桶：`sign`→`PUT`→`url`→302 闭环、`releases`+`latest.json`+CDN、存量真搬、Tauri updater 一次真实升级冒烟
+- 生产复测 9.4 全量：① 5s 互见 ② 10s 收敛 ④ 1000 条 <5s（`bench-full-sync`）+ ③ 冷启动 <2s 真机 + ⑤ 全量门禁 + 桌面手动清单；无论达标与否如实记录，阈值不得放宽（R-21）
+
+### R-23 留痕（P4 决议）
+
+**web 服务本期保持单实例**，`sync_events` 的 `先到先删` poller 在多实例下会使部分 `SSE` 订阅者漏事件；扩容 >1 实例前必须改为 `PG NOTIFY/LISTEN` 或按实例标记已处理。本约束为 P4 决议写入本章与计划，递延至扩容时。
+
+### 经验（本轮）
+
+- `@ts-ignore` 需配 `eslint-disable-next-line @typescript-eslint/ban-ts-comment` 否则 lint 3 errors / tsc `TS2578` 二选一；已统一为双行抑制
+- `npm run lint` 全量 2m 超时为已知抖动，抽样校验等价（P3 同）
+- 子代理提示词保持短，需求写 brief 再派（P1-P3 实测）
+
+### 阶段 B 进展（2026-09-30 晚）
+
+**门禁补一条此前从未跑过的项：`npm run build`。** P1–P4 的门禁四件套是 `npm test` / `tsc` / `lint` / `cargo check`，**不含 `next build`**，所以上表「持平」并不覆盖构建。本轮首跑即失败：
+
+| 项 | 结果 |
+|---|---|
+| `npm run build`（首跑） | ❌ `Module not found: Can't resolve '@tauri-apps/plugin-notification'` / `'@tauri-apps/plugin-shell'`（`src/lib/platform.ts:12,30`）；`better-sqlite3` 仅 Warning |
+| 根因 | 两个 Tauri 插件的 **JS 绑定从未声明**，而 Rust 侧 `src-tauri/Cargo.toml:16,21` 早已 `= "2"` |
+| 修复 | `dependencies` 补 `@tauri-apps/plugin-notification@^2.5.0`、`@tauri-apps/plugin-shell@^2.4.0` |
+| 复跑 | ✅ exit 0，完整路由表输出；`npx tsc --noEmit` 0 错误；改动文件 eslint 0 errors |
+
+**P3 缺陷修复：桌面壳加载不到前端。** `src-tauri/tauri.conf.json:10` 的 `frontendDist: "../out"` 指向空目录（P3 commit 自述「out/ 占位」），且 `next.config.ts` 从无 `output:'export'` ⇒ 静态导出路线对本项目**不可行**（33 个 `use server`、`src/middleware.ts`、`/api/*` 路由，构建输出多数为 `ƒ (Dynamic)`）。spec 8.1 原文已定「首版加载编译期注入的 `NEXT_PUBLIC_APP_URL`；预留包内静态资源模式，不在本期」，而 `NEXT_PUBLIC_APP_URL` 在 `src/`、`src-tauri/` 里**零消费点** ⇒ P3 声称的「编译期注入」并未实现。
+
+- `frontendDist` → `http://localhost:3000`（开发默认，打包时被覆盖）；`beforeBuildCommand` → `""`（URL 模式不打包资源）
+- CSP `connect-src`/`img-src` 补 `https://*.run.tcloudbase.com`、`wss://*.run.tcloudbase.com`
+- 新增 `scripts/tauri-build.mjs` + `npm run tauri:build`：`CRAFTY_WEB_URL`/`NEXT_PUBLIC_APP_URL` → `TAURI_CONFIG={"build":{"frontendDist":…}}`；护栏 4/4 实测（缺值 / 非法 URL / localhost 全部 exit 2，合法 https 正确生成配置）
+- devDep 补 `@tauri-apps/cli@^2.12.0`（P3 只跑过 `cargo check`，从无打包通路）；`cargo check` 14.32s 通过 ⇒ `tauri-build` 编译期解析新配置无误
+- `frontendDist` 可为远端 URL 的依据：`tauri-utils-2.10.0/src/config.rs:3845-3855`
+- 清掉 `src/lib/platform.ts` 两处已失效的 `@ts-ignore` + `as string`（包已能解析，注释成假话）；`adapter-sqlite.ts` 的 `better-sqlite3` 抑制**保留**（仍非项目依赖）
+
+**未修，登记为缺口：** 远端 `frontendDist` 模式下 Tauri 的 `security.csp` **不生效**——源码证据：CSP 只注入自定义协议（`tauri-2.12.0/src/protocol/tauri.rs:183`）与 `data:` URL（`src/manager/webview.rs:510`，且需 `webview-data-url` feature），远端走 `WebviewUrl::External` 两者皆不适用 ⇒ 桌面壳真实 CSP 取决于 web 服务响应头，而 `next.config.ts` **零 headers**，等于无 CSP。属 Task 5.1/5.3，不可顺手加（Next 严格 CSP 无 nonce 会打断内联脚本与 tldraw，需单独验证）。
+
+**云托管实测（详见 `docs/deploy/cloudbase.md` 阶段 B 节）：** 环境 `aaa11-d1gfgozz987c564a5` / ap-shanghai / 个人版；源码部署走**云端构建，本机无需 docker**；构建+推镜像成功，`curl` 默认域名返回 **307 → /login**（`x-cloudbase-upstream-type: Tencent-CloudBaseRun`，上游 26ms）⇒ 镜像可运行、middleware 鉴权链路工作。三项 CLI 边界：EnvParams 无通路、CPU/Mem 无旗标（默认 **1C2G**，非文档写的 0.5C1G）、`--force` 不跳灰度提示（stdin 空时 exit 0 却未提交 = 假成功，一律回读 `record list`）。
+
+### 下一步（阶段 B）
+
+- 采购清单确认后建 TencentDB/云托管/COS/域名，按 `docs/deploy/cloudbase.md` 执行并以本章追加生产数据
+

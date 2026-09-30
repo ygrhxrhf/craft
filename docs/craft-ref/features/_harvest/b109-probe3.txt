@@ -1,0 +1,21 @@
+
+### variantA @2924800 labelKeys=["react.memo_cache_sentinel","name","browse.sort.last.viewed","updated","created"]
+    enumRefs=["Bs.Title","Bs.LastViewed","Bs.Updated","Bs.Created"]
+
+### variantB @3052900 labelKeys=["react.memo_cache_sentinel","name","browse.sort.last.viewed","updated","created"]
+    enumRefs=["Ns.Name","Ns.LastViewed","Ns.Updated","Ns.Created"]
+
+### variantC @3411300 labelKeys=["react.memo_cache_sentinel","name","shared","shared.by","browse.sort.last.viewed"]
+    enumRefs=["wi.LastViewed","wi.Name","wi.Shared","wi.SharedBy"]
+
+=== "--editor-" in main bundle: 0
+
+
+### chunk CodeEditorFocusMode-BZ_3QTjt.js chars=4757  "--editor-"=0  "var(--"=0
+    var() names: 
+
+### chunk CodeEditorWrapper-DB8UxA00.js chars=59843  "--editor-"=0  "var(--"=0
+    var() names: 
+
+### chunk vendor-code-editor-BLm003PU.js chars=3564744  "--editor-"=0  "var(--"=130
+    var() names: var(--fg) var(--bg) var(--_arrow) var(--_group-fill) var(--_node-stroke) var(--_group-hdr) var(--_text-sec) var(--_line) var(--_inner-stroke) var(--_node-fill) var(--_text) var(--_text-muted) var(--_text-faint) var(--_key-badge)

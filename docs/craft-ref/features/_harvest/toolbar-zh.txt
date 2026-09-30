@@ -1,0 +1,100 @@
+toolbar.add.email.access.fail	无法添加电子邮件访问权限
+toolbar.add.email.domain	添加电子邮件域访问
+toolbar.add.email.domain.access.fail	无法添加邮箱域名访问权限
+toolbar.add.emails.list	添加单个电子邮件或粘贴逗号分隔的列表
+toolbar.add.password	添加密码
+toolbar.add.people	添加人员
+toolbar.add.people.to.access.document	添加人员来访问你的文档
+toolbar.add.people.to.restrict.access	添加人员以限制链接访问
+toolbar.advanced.options	高级选项
+toolbar.all.x.email.addresses	全部 [0] 个电子邮件地址
+toolbar.author.hidden	不显示作者
+toolbar.author.shown	作者将显示
+toolbar.cancel.and.keep.custom.domain	取消并保留自定义域
+toolbar.change	更改
+toolbar.change.password	更改密码
+toolbar.click.to.invite	点击邀请
+toolbar.comments	评论
+toolbar.create.document.from.template	从模板创建文档
+toolbar.create.link	创建链接
+toolbar.customize.url	自定义网址
+toolbar.docx	Microsoft Word
+toolbar.dont.show.in.search	搜索引擎无法显示此页面
+toolbar.email.access	电子邮件访问
+toolbar.email.access.revert.to.craft	要启用电子邮件访问，你必须恢复到此特定文档的默认 craft.me 链接。
+toolbar.enable.search.engine	启用搜索引擎索引
+toolbar.enable.search.engine.desc	启用后，此页面将显示在搜索引擎结果中，例如 Google。只有在没有提供密码的情况下才有效。
+toolbar.enter.password	输入密码
+toolbar.expiration	到期
+toolbar.expiration.date	到期日期
+toolbar.expire.never	永不过期
+toolbar.expire.on	于 [0] 过期
+toolbar.external.domain	外部域名
+toolbar.external.domain.access.restriction	外部域名不能与邮箱访问限制同时使用。
+toolbar.footer.refers.craft	页脚将提及 Craft
+toolbar.footer.refers.not.craft	页脚将不提及 Craft
+toolbar.invite.x	邀请[0]
+toolbar.keep.typing.to.invite	继续输入以邀请
+toolbar.learn.more.about.collaboration	了解有关协作的更多信息
+toolbar.learn.more.craft.domains	了解有关 Craft 域的更多信息
+toolbar.manage	管理
+toolbar.markdown	Markdown
+toolbar.never	永不
+toolbar.no.password	没有密码
+toolbar.off	关闭
+toolbar.page.title.hidden	页面标题将被隐藏
+toolbar.page.title.shown	将显示页面标题
+toolbar.password	密码
+toolbar.password.desc	设置密码后，只有拥有密码的人才能访问此链接的内容。
+toolbar.path	路径
+toolbar.pdf	PDF
+toolbar.people.with.access	有访问权限的人
+toolbar.presentation.mode.hidden	演示模式已隐藏
+toolbar.presentation.mode.visible	演示模式可见
+toolbar.print	打印
+toolbar.publish.page.to.your.domain	将此页面发布到你的域名。
+toolbar.publish.preview.subtitle	使用秘密链接将你的文档发布到网络并控制谁可以看到它
+toolbar.publish.to.the.web	发布到网络
+toolbar.remove.all	移除所有
+toolbar.remove.all.question	你确定吗？所有人员和域限制都将被移除，链接将向所有人开放，直到再次更改。
+toolbar.reset.email.access	通过删除所有内容来重置电子邮件访问权限
+toolbar.restrict.email.domains	限制特定电子邮件域的访问
+toolbar.restrict.individuals	限制特定个人的访问
+toolbar.search.engines	搜索引擎
+toolbar.select.space.create.template	选择要创建模板的空间
+toolbar.set.custom.craft.domain.noplus	设置自定义 Craft 域名
+toolbar.set.external.domain	设置外部域名
+toolbar.share.as.qr.code	共享为二维码
+toolbar.show.author	显示作者
+toolbar.show.created.with.craft	显示"Created With Craft"
+toolbar.show.in.search	搜索引擎可以显示该页面
+toolbar.show.presentation.mode	显示演示模式
+toolbar.show.title	显示标题
+toolbar.show.toc.title	显示目录
+toolbar.someone.wants.to.do	[0] 想要 [1]
+toolbar.style.and.inspector	样式与检查器
+toolbar.switch.to.craft	切换到 craft.me
+toolbar.tasks.placeholder	本文档中的任务将出现在此处。
+toolbar.textbundle	TextBundle
+toolbar.toc.hidden	目录已隐藏
+toolbar.toc.placeholder	使用标题、页面或卡片创建目录。
+toolbar.toc.visible	目录可见
+toolbar.update.path.fail.title	无法更新路径
+toolbar.user.interactivity	用户互动
+toolbar.using.external.domain	目前，你正在使用外部域名。
+toolbar.view.and.add	查看和添加
+toolbar.view.only	只读
+toolbar.visitor.page.duplicate.allowed	访客可以将此页面用作模板
+toolbar.visitor.page.duplicate.not.allowed	访客无法将此页面用作模板
+toolbar.visitors.add.comments	访客可以添加评论
+toolbar.visitors.can.duplicate	访客可以复制
+toolbar.visitors.can.duplicate.desc	启用后，访问此链接的用户可以将内容复制到他们的空间中。
+toolbar.visitors.follow.block.links	访客可以跳转区块链接
+toolbar.visitors.follow.block.links.allowed	访客可以查看链接的页面
+toolbar.visitors.follow.block.links.desc	启用后，访客可以跳转此文档中的区块链接，即使它们指向其他文档
+toolbar.visitors.follow.block.links.not.allowed	访客无法访问链接的页面
+toolbar.visitors.view.comments	访客可以查看评论
+toolbar.visual.options	视觉选项
+toolbar.word	MS Word
+toolbar.workflowlinks	工作流程链接
+toolbar.your.domain	你的域名

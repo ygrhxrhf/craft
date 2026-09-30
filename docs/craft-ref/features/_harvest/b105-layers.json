@@ -1,0 +1,13 @@
+{
+ "fileChars": 297080,
+ "baseChars": 26151,
+ "utilChars": 55653,
+ "compChars": 215275,
+ "basePct": 8.8,
+ "utilPct": 18.7,
+ "compPct": 72.5,
+ "compBlocks": 84,
+ "compHashPrefixes": 95,
+ "utilSelectors": 569,
+ "baseThemeBlocks": null
+}

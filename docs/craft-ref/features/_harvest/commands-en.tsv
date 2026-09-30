@@ -1,0 +1,189 @@
+commands.add.column	Add Column
+commands.add.columns.before	Add Column(s) Before
+commands.add.content	Add Content
+commands.add.content.3dot	Add Content鈥�
+commands.add.content.desc	Add Content Inside This Block
+commands.add.reminder	Add Reminder
+commands.add.row	Add Row
+commands.add.rows.before	Add Row(s) Before
+commands.add.to.dictionary	Add to Dictionary
+commands.at.cursor	At cursor
+commands.at.the.bottom	At the bottom
+commands.at.the.top	At the top
+commands.block.to.bottom	Blocks to bottom
+commands.block.to.top	Blocks to top
+commands.blocklink.popover.frequently.used	Frequently Used
+commands.blocklink.popover.people	People
+commands.change.deadline.3dot	Change Deadline鈥�
+commands.change.schedule.3dot	Change Schedule鈥�
+commands.clear.history	Clear History
+commands.command.menu	Command Menu
+commands.commands.mention.placeholder	Search for pages to mention
+commands.comment.add	Add Comment
+commands.comment.view.add	Add or View Comments
+commands.copy.link	Copy Link
+commands.copy.link.to.this.block	Copy Link to Block
+commands.copy.of	Copy of [0]
+commands.create.reminder	Create Reminder
+commands.create.subfolder	Create Subfolder
+commands.create.window	Create a new window
+commands.date.and.time	Date & Time
+commands.date.time.now	Now
+commands.delete.permanently	Permanently Delete Document
+commands.delete.permanently.document	Permanently Delete Document
+commands.delete.x	Delete [0]
+commands.deselect.all	Deselect All
+commands.duplicating.document	Duplicating [0]
+commands.edit.block.page	Edit Page Block
+commands.edit.block.text	Edit Text Block
+commands.edit.folder	Edit Folder鈥�
+commands.edit.reminder	Edit Reminder
+commands.edit.selection	Edit Selection
+commands.empty.trash	Empty Recently Deleted
+commands.enable.focus.mode	Enable Focus Mode
+commands.export.home.as	Export Home as鈥�
+commands.focus.mode	Focus Mode
+commands.folder.settings	Folder Settings
+commands.google.for.x	Search for 鈥淸0]鈥� on Google
+commands.group	Group
+commands.group.and.ungroup	Group & Ungroup
+commands.help.report.sync	Report Sync
+commands.help.report.sync.error	Report Sync Error
+commands.help.report.web.sync.error	Web sync error reporting
+commands.help.report.windows.sync.error	Windows sync error reporting
+commands.image.copy	Copy Image
+commands.insert.after	Insert After
+commands.insert.before	Insert Before
+commands.insert.block.above	Insert Block Above
+commands.insert.block.below	Insert Block Below
+commands.insert.image.files	Insert File
+commands.insert.image.unsplash	Image from Unsplash
+commands.insert.line	Insert Separator
+commands.insert.line.extralight	Separator 鈥� Extralight
+commands.insert.line.light	Separator 鈥� Light
+commands.insert.line.regular	Separator 鈥� Regular
+commands.insert.line.strong	Separator 鈥� Strong
+commands.insert.new.block	Insert New Block
+commands.insert.new.block.above	Insert New Block Above
+commands.insert.new.block.below	Insert New Block Below
+commands.insert.snippet	Insert Snippet
+commands.insert.snippet.code	Insert Code Block
+commands.insert.snippet.formula	Insert TeX Formula
+commands.insert.snippet.mermaid	Mermaid Diagram
+commands.insert.snippet.text	Insert Plaintext Snippet
+commands.insert.table	Insert Table
+commands.insert.template.inline	Insert from Template
+commands.insert.whiteboard	Insert Whiteboard
+commands.inspect.element	Inspect Element
+commands.jump	Jump to
+commands.mark.as.resolved	Mark as Resolved
+commands.mobile.layout	Layout
+commands.mobile.react	React
+commands.mobile.remind	Remind
+commands.move.blocks.down	Move blocks down
+commands.move.blocks.selection	Move Selected Blocks
+commands.move.blocks.up	Move blocks up
+commands.move.bottom	Move to Bottom
+commands.move.down	Move Down
+commands.move.space	Move Space
+commands.move.space.to	Move [0] Space to
+commands.move.to	Move to
+commands.move.to.all.docs	Moved to all documents
+commands.move.top	Move to Top
+commands.move.up	Move Up
+commands.navigate	Navigate
+commands.navigate.back	Navigate Back
+commands.navigate.forward	Navigate Forward
+commands.navigate.into	Navigate Into
+commands.navigate.out	Navigate Out
+commands.navigation	Navigation
+commands.new.folder	New Folder
+commands.new.folder.create	Create New Folder
+commands.new.folder.sub.create	Create New Subfolder
+commands.new.space	New Space
+commands.new.space.create	Create New Space
+commands.new.window	New Window
+commands.open.ai.assistant	Open AI Assistant
+commands.open.close.toggle	Open/Close Toggle
+commands.open.in.folder	Open in Folder
+commands.open.link.new.tab	Open Link in New Tab
+commands.open.newtab	Open in New Tab
+commands.open.newwindow	Open in New Window
+commands.open.settings	Open Settings
+commands.open.shortcuts	See All Keyboard Shortcuts
+commands.open.slash.menu	Open Slash Menu
+commands.open.whiteboard	Open Whiteboard
+commands.page.break	Page Break
+commands.pin	Pin
+commands.press.enter	Press Enter
+commands.quick.open	Quick Open
+commands.reload	Reload
+commands.reload.app	Reload App
+commands.reload.document	Reload Document
+commands.reload.whiteboard	Reload Whiteboard
+commands.remind.me	Remind me
+commands.remind.me.3.dots	Remind Me鈥�
+commands.reminder.1.hour	In 1 hour
+commands.reminder.20.min	In 20 minutes
+commands.reminder.3.hour	In 3 hours
+commands.reminder.custom	Custom鈥�
+commands.reminder.mark.resolved	Mark Reminder as Resolved
+commands.reminder.next.week	Next week
+commands.reminder.save.for.later	Save for Later
+commands.reminder.show.in.progress	Show In Progress Reminders
+commands.reminder.show.resolved	Show Resolved Reminders
+commands.remove.reminder	Remove Reminder
+commands.rename.link	Rename Link
+commands.repeat	Repeat鈥�
+commands.request.access	Request Access
+commands.reschedule	Reschedule
+commands.restart.app	Restart app
+commands.restore	Restore
+commands.restore.document	Restore Document
+commands.restoring.document	Restoring document
+commands.search.inpage	Find in Page
+commands.select.days.of.the.month	Select Days of the Month
+commands.select.days.of.the.week	Select Days of the Week
+commands.select.to.bottom	Select to Bottom
+commands.select.to.top	Select to Top
+commands.selection.complete	Check Selected
+commands.selection.uncomplete	Uncheck Selected
+commands.send	Send
+commands.shortcuts.in.collections	In Collections
+commands.shortcuts.in.find.and.replace	In Find and Replace
+commands.shortcuts.in.tables	In Tables
+commands.shortcuts.in.tasks.views	In Tasks Views
+commands.shortcuts.keyboard.editing	Editing
+commands.shortcuts.keyboard.general	General
+commands.show.daily.notes	Show Daily Notes
+commands.show.key.shortcuts	Show key shortcuts
+commands.sort	Sort
+commands.spelling.suggestions	Suggestions
+commands.submit	Submit
+commands.task.deadline	Set Deadline
+commands.task.deadline.clear	Clear Deadline
+commands.task.deadline.date	Set Deadline to Date鈥�
+commands.task.deadline.for.tomorrow	Set Deadline to Tomorrow
+commands.task.deadline.next.monday	Set Deadline to Next Monday
+commands.task.deadline.today	Set Deadline to Today
+commands.task.schedule	Schedule Task
+commands.task.schedule.clear	Clear Schedule
+commands.task.schedule.date	Schedule for Date鈥�
+commands.task.schedule.for.today	Schedule for Today
+commands.task.schedule.for.tomorrow	Schedule for Tomorrow
+commands.task.schedule.next.monday	Schedule for Next Monday
+commands.task.schedule.x	Schedule for [0]
+commands.templates	Templates
+commands.toggle.all.toggles	Toggle all toggles
+commands.toggle.focus.mode	Toggle Focus Mode
+commands.toggle.left.sidebar	Toggle Left Sidebar
+commands.toggle.sidebar	Toggle sidebar
+commands.toggle.sidebar.visibility	Toggle Sidebar Visibility
+commands.toggle.sidebar.visibility.tooltip	Toggle sidebar visibility 鈥� [0]
+commands.turn.into.collection	Turn into a Collection
+commands.turn.into.collection.block.error	The selected block could not be turned into a Collection
+commands.turn.into.collection.block.error.plural	Some of the blocks could not be turned into Collections
+commands.ungroup	Ungroup
+commands.unpin	Unpin
+commands.video.save	Save Video
+commands.view.backups	View Backups

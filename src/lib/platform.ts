@@ -7,8 +7,7 @@ export function storageBackend(): 'sqlite' | 'idb' {
 export function notify(title: string, body: string): void {
   if (isDesktop()) {
     // Tauri 原生通知（仅同步 error/大附件完成，spec 8.2）
-    // @ts-ignore - Tauri 插件类型在 Web 构建时可选
-    void import('@tauri-apps/plugin-notification' as string)
+    void import('@tauri-apps/plugin-notification')
       .then((m) => m.sendNotification({ title, body }))
       .catch(() => {
         // 降级到 Web Notification
@@ -24,8 +23,7 @@ export function notify(title: string, body: string): void {
 }
 export function openExternal(url: string): void {
   if (isDesktop()) {
-    // @ts-ignore - Tauri 插件类型在 Web 构建时可选
-    void import('@tauri-apps/plugin-shell' as string)
+    void import('@tauri-apps/plugin-shell')
       .then((m) => m.open(url))
       .catch(() => window.open(url, '_blank', 'noopener'));
     return;

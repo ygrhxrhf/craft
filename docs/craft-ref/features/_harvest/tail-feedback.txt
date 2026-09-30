@@ -1,0 +1,13 @@
+feedback.email.optional	电子邮件（可选）
+feedback.feel.about.craft	你对 Craft 有什么感想？
+feedback.form.subtitle	选择你喜欢的（可多选）
+feedback.input.like.or.not	告诉我们你喜欢什么或不喜欢什么……
+feedback.input.subtitle	每一条反馈都很重要！
+feedback.join.the.community	加入 Craft 社区，了解最新的功能、技巧和窍门，甚至可能影响我们的路线图！
+feedback.rate.craft	评价 Craft
+feedback.rate.in.store	你介意花几秒钟在商店中为 Craft 评分吗？
+feedback.table.missing.function	缺少功能？告诉我们！
+feedback.thanks.secondarybutton	以后再说
+feedback.thanks.subtitle	我们期待了解更多
+feedback.thanks.support	感谢你的支持！
+feedback.thanks.title	谢谢！

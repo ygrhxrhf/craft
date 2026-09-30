@@ -1,0 +1,29 @@
+node_modules
+.next
+.git
+.gitignore
+uploads
+coverage
+test-results
+playwright-report
+blob-report
+.prettier*
+*.pem
+.env*
+# 编译期前端变量只在构建上下文里生成（不入库），必须让 COPY 收到它，
+# 否则 NEXT_PUBLIC_* 静默退成 localhost 默认值，客户端 bundle 里全是本地地址
+!.env.production
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+dist
+src-tauri/target
+src-tauri/gen
+.superpowers
+logs
+docs/craft-ref/ref-*.png
+docs/craft-ref/ref
+docs/craft-ref/_scratch
+docs/craft-ref/local
+docs/craft-ref/tokens.json
+docs/craft-ref/screens

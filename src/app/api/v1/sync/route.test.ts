@@ -1,5 +1,5 @@
 // src/app/api/v1/sync/route.test.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
 vi.mock('@/prisma/db', () => ({ getDb: vi.fn() }));
@@ -300,5 +300,181 @@ describe('POST /api/v1/sync', () => {
       syncTs: '2026-09-28T12:00:00.000Z',
     }] }));
     expect(res.status).toBe(500);
+  });
+});
+
+/**
+ * 墓碑清理（purgeTombstones）的专用替身。
+ *
+ * 为什么不能复用文件顶部的 mockDb：purge 走的是
+ * `where(lambda).select(...cols).limit(100).all()` 再 `where(predicate).deleteAndCount()`，
+ * 而 mockDb 的 chain 没有 select/deleteAndCount ⇒ route.ts:360 的 catch 把 TypeError 吞掉
+ * ⇒ 用旧替身时 purge 的所有断言都会**假通过**（观察到的是"没删"，真相是"根本没跑"）。
+ *
+ * lambda 在这里被真实求值：字段代理的 lt()/in()/eq() 记录 route.ts 传进来的 cutoff 与 id 集，
+ * all() 再按 cutoff 过滤给定行 —— 等价于数据库侧的 `deletedAt < cutoff` 语义。
+ */
+function mockPurgeDb(tombstones: { id: string; deletedAt: string }[]) {
+  const seen = { cutoffs: [] as string[], ids: [] as unknown[], limits: [] as number[], models: [] as string[] };
+  let currentModel = '';
+  let cutoff = '';
+  let cols: string[] = [];
+  let limit = Infinity;
+  // all() 必须只认「本次链是 lambda（purge）还是对象（主循环）」：cutoff 是跨 GET 复用的
+  // 闭包变量，若不隔离，第二次 GET 的主循环也会按上一次的 cutoff 拿到墓碑行 ⇒
+  // document_tag 等 lambda 分支被意外激活，测出来的是替身的串扰而不是路由的行为。
+  let purgeChain = false;
+  const model: any = {
+    where: (cond: unknown) => {
+      purgeChain = typeof cond === 'function';
+      if (purgeChain) {
+        const field = () => ({
+          lt: (v: string) => { cutoff = v; seen.cutoffs.push(v); return true; },
+          in: (ids: unknown) => { seen.ids.push(ids); return true; },
+          eq: () => true,
+        });
+        (cond as (r: Record<string, ReturnType<typeof field>>) => unknown)(
+          new Proxy({}, { get: () => field() }));
+        seen.models.push(currentModel);
+      }
+      return model;
+    },
+    select: (...c: string[]) => { cols = c; return model; },
+    limit: (n: number) => { limit = n; seen.limits.push(n); return model; },
+    all: async () => {
+      if (!purgeChain) return []; // 主循环：本替身只服务 purge，同步流一律空
+      return tombstones
+        .filter(t => t.deletedAt < cutoff)
+        .slice(0, limit)
+        .map(t => Object.fromEntries(cols.map(c => [c, (t as Record<string, unknown>)[c]])));
+    },
+    deleteAndCount: vi.fn(async () => ({ count: 0 })),
+  };
+  (getDb as any).mockResolvedValue({
+    orm: { public: new Proxy({}, { get: (_t, m: string) => { currentModel = m; return model; } }) },
+  });
+  return seen;
+}
+
+describe('GET 墓碑 30 天边界（懒清理轮转）', () => {
+  const NOW = Date.parse('2026-09-30T00:00:00.000Z');
+  const DAY = 864e5;
+  const iso = (ms: number) => new Date(ms).toISOString();
+  let nowSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    nowSpy = vi.spyOn(Date, 'now').mockReturnValue(NOW);
+  });
+  afterEach(() => nowSpy.mockRestore());
+
+  it('31 天前的墓碑被删、29 天前的保留，cutoff 恰为 30 天', async () => {
+    const seen = mockPurgeDb([
+      { id: 'new', deletedAt: iso(NOW - 29 * DAY) },
+      { id: 'old', deletedAt: iso(NOW - 31 * DAY) },
+    ]);
+    expect((await GET(new NextRequest('http://x/api/v1/sync'))).status).toBe(200);
+    expect(seen.cutoffs[0]).toBe(iso(NOW - 30 * DAY));
+    expect(seen.ids[0]).toEqual(['old']); // 只有过期行进删除集
+  });
+
+  it('未过期（29 天）时不发删除语句', async () => {
+    const seen = mockPurgeDb([{ id: 'new', deletedAt: iso(NOW - 29 * DAY) }]);
+    await GET(new NextRequest('http://x/api/v1/sync'));
+    expect(seen.ids).toHaveLength(0); // rows.length===0 → 提前 return，不碰 deleteAndCount
+  });
+
+  it('单次至多 100 行（余量留给下次轮转）', async () => {
+    const many = Array.from({ length: 150 }, (_, i) => ({
+      id: `x${i}`, deletedAt: iso(NOW - 60 * DAY),
+    }));
+    const seen = mockPurgeDb(many);
+    await GET(new NextRequest('http://x/api/v1/sync'));
+    expect(seen.limits).toContain(100);
+    expect(seen.ids[0]).toHaveLength(100);
+  });
+
+  it('轮转：连续两次 GET 清理不同的表（一轮扫不完全部 11 张）', async () => {
+    const seen = mockPurgeDb([{ id: 'old', deletedAt: iso(NOW - 40 * DAY) }]);
+    await GET(new NextRequest('http://x/api/v1/sync'));
+    await GET(new NextRequest('http://x/api/v1/sync'));
+    const tables = seen.models.filter((_, i) => i % 2 === 0); // 每表 select+delete 两次 where
+    expect(new Set(tables).size).toBe(2);
+  });
+});
+
+describe('POST 鉴权与 R-1 写侧归属（P1 遗留补齐）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('未授权返回 401，且在读体/开库之前就短路（不碰数据库）', async () => {
+    const { requireUserId, AuthorizationError } = await import('@/lib/authz/guard');
+    vi.mocked(requireUserId).mockRejectedValueOnce(new AuthorizationError());
+    const res = await POST(req({ records: [{
+      table: 'document', id: 'd1', op: 'upsert',
+      data: { title: 'x' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(res.status).toBe(401);
+    expect(getDb).not.toHaveBeenCalled();
+  });
+
+  it('鉴权抛的不是 AuthorizationError → 500（不把未知故障伪装成未登录）', async () => {
+    const { requireUserId } = await import('@/lib/authz/guard');
+    vi.mocked(requireUserId).mockRejectedValueOnce(new Error('db down'));
+    const res = await POST(req({ records: [{
+      table: 'document', id: 'd1', op: 'upsert',
+      data: { title: 'x' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(res.status).toBe(500);
+  });
+
+  it('I1(c) 写侧收窄：update 与 delete 两条路径的 where 都带会话 userId（不止 first）', async () => {
+    const first = vi.fn(async (): Promise<any> => ({
+      id: 'd5', userId: 'u1', title: 'old',
+      updatedAt: '2026-09-28T09:00:00.000Z', metaUpdatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null,
+    }));
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const chain: any = { first, update, create: vi.fn() };
+    const where = vi.fn((_cond: Record<string, unknown>) => chain);
+    chain.where = where;
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [
+      { table: 'document', id: 'd5', op: 'upsert', data: { title: 'new' }, syncTs: '2026-09-28T12:00:00.000Z' },
+      { table: 'document', id: 'd5', op: 'delete', syncTs: '2026-09-28T13:00:00.000Z' },
+    ] }));
+    expect(res.status).toBe(200);
+    expect(update).toHaveBeenCalledTimes(2);
+    // 谓词写入（model.where(cond).update）同样被会话 userId 收窄：
+    // 只改 first 的话，攻击者可用任意 id 命中他人行。
+    const conds = where.mock.calls.map(c => c[0]);
+    expect(conds).toEqual([
+      { id: 'd5', userId: 'u1' },
+      { id: 'd5', userId: 'u1' },
+    ]);
+    expect(conds.every(c => c.userId === 'u1')).toBe(true);
+  });
+
+  it('R-1：user 表按会话 id 定位，where 不取记录 id 也不带 userId 列', async () => {
+    const first = vi.fn(async (): Promise<any> => ({
+      id: 'u1', name: 'old', updatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null,
+    }));
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const chain: any = { first, update, create: vi.fn() };
+    const where = vi.fn((_cond: Record<string, unknown>) => chain);
+    chain.where = where;
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [{
+      table: 'user', id: 'u1', op: 'upsert', data: { name: 'new' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(res.status).toBe(200);
+    expect(first).toHaveBeenCalledWith({ id: 'u1' });
+    expect(where).toHaveBeenCalledWith({ id: 'u1' });
+    // user 表不在 USER_ID_TABLES：payload 不该出现 userId 列（schema 里也没有）
+    expect(update.mock.calls[0]![0]).not.toHaveProperty('userId');
+    expect(update.mock.calls[0]![0]).toMatchObject({ name: 'new' });
   });
 });

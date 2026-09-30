@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth/auth';
-import { mimeForName, readUpload } from '@/lib/storage';
+import { mimeForName, readUpload, presignGetOrNull } from '@/lib/storage';
 
 export async function GET(
   _req: NextRequest,
@@ -14,6 +14,20 @@ export async function GET(
   const { name } = await params;
   const [baseName] = name.split(/[#?]/);
   const type = mimeForName(baseName);
+
+  // cos 驱动：DB 里的文件名不变，直接 302 到预签名 GET（spec 7.2）。
+  // 桶私有读，字节不过服务端 —— 也不做「服务端先探活」，那个 HEAD 请求只会把 100MB 的事变成一次额外往返。
+  const presigned = presignGetOrNull(baseName);
+  if (presigned) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: presigned.url,
+        'Cache-Control': 'private, no-store',
+      },
+    });
+  }
+
   try {
     const buf = await readUpload(baseName);
     const inline = type.startsWith('image/') && type !== 'image/svg+xml'

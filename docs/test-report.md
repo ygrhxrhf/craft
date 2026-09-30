@@ -312,3 +312,60 @@ Playwright request context：NextAuth credentials 登录 `craft-test@example.com
 - **离线新建文档后 `router.push` RSC 失败**：离线时 `createDocumentLocal` 走 applyLocal（本地建行 + 入队）成功，但随后的 `router.push(/documents/<id>)` 需要 RSC 请求，离线下失败 → 页面停留在原路由，新文档行已在侧栏（pending overlay）但不自动打开。重连后手动点开即可。改法（P2+）：离线时跳过 push，重连后由队列 ack 回调补跳。
 - **任务页 / 集合页离线不可用**：`src/app/(app)/tasks/page.tsx` 与 `src/app/(app)/collections/*` 仍直调服务端 action（`createTask`/`toggleTask`/`createCollection` 等），未迁移到 applyLocal —— 离线时调用即失败（无 overlay 兜底）。任务/集合的**服务端 action 已补 emit**（本轮 I2），在线多端同步正常；离线写入的 UI 迁移递延 P2（spec 5.4 已注明）。
 - **侧栏树离线时停在旧行**：离线时 `getDocuments`/`getFolders` 失败，三树 loader 现已兜底为「旧行 + readPendingRows overlay」（本轮 I3 修复），本地已改名/新建的行仍即时可见；但服务端侧的新变化要等重连后对账。
+
+---
+
+## P2 attachment acceptance 2026-09-30
+
+分支 `feature/windows-attachment-cos`（基线 `feature/windows-offline-sync`，P1 PR 未合前不切 main）。
+提交区间：`a03a7fb`(T6) → `762e212`(T7) → `0f91240`(T8) → `05369df`(T9) → `d5b57c0`(T10) + 本轮收尾。
+
+### 门禁（对照 P1 基线，逐项实跑）
+
+| 项 | P1 基线 | P2 实测 | 判定 |
+| --- | --- | --- | --- |
+| `npm test` | 286 通过 | **60 文件 / 399 通过**（0 失败） | 无回退，+113 |
+| `npx tsc --noEmit` | 0 错误 | **0 错误** | 持平（T8 中途曾 6 错，已修，未用编译豁免） |
+| `npm run lint` | 0 错误 / 540 警告 | **0 错误 / 593 警告** | error 持平；警告增 53 条，全为 `no-explicit-any`/未用形参（Proxy 替身与 mock 签名），集中在本轮新增测试文件 |
+| `e2e/sync.spec.ts` | 3/3 | **3/3**（1.5m / 1.7m / 24.7s 整测耗时） | 用例内阈值断言未放宽：converge `<10_068ms`、recover `<18_667ms`，绿即证明未回退 |
+| `e2e/core.spec.ts` | — | 11/12，1 条 flake | 见下「e2e flake」 |
+| local 驱动零影响 | — | `STORAGE_DRIVER` 未设时 `storage.test.ts` + `api/files/` **19 通过** | spec 7.1 成立 |
+| 迁移脚本 | — | `node --experimental-strip-types scripts/migrate-uploads-cos.ts --dry-run` → `迁移完成：成功 2，跳过 0，失败 0。本地副本保留 7 天后人工清理。` | 真实 `uploads/` 下 2 个文件（计划写"空目录"有误） |
+
+### 契约与常量（spec 5.2 / 12 逐字核对）
+
+- 预签名有效期：PUT `600s` / GET `300s`（`storage-cos.ts:3-4`，测试直接断言常量）。
+- 体积上限 100MB → 413；`NAME_RE` 与 `EXT_MIME` 冻结未增删（`.txt` 的值是 `text/plain; charset=utf-8`，含 charset）。
+- 桶为私有读：读路径 `/api/files/[name]` 在 cos 驱动下 302 到预签名 GET，DB 内文件名不变 ⇒ 零历史迁移。
+- `deleteUpload` 在 cos 分支吞掉一切异常（含非法文件名），不抛 ⇒ 与本地驱动语义一致。
+- 未新增任何依赖；D7 零视觉变化（唯一 UI 侧改动是 `tasks/page.tsx` 的 handler 内部，JSX 未动）。
+
+### 与计划的偏离（5 处，均为读码后裁定，理由见 SDD 台账）
+
+1. **T7**：计划要求客户端 `uploadFile` 无条件走直传 ⇒ local 驱动下每次上传必炸（`bucketHost()` 抛）。改为驱动开关经根布局内联下发 `window.__STORAGE_CONFIG__`，**不引入 `NEXT_PUBLIC_STORAGE_DRIVER`**。
+2. **T8**：计划用 `npx tsx` 跑脚本，但 `tsx` 不在依赖里 ⇒ 会静默拉包，违反"不新增依赖"。改用 Node 自带 `--experimental-strip-types`。
+3. **T8**：脚本**不自动删本地副本**（只按 mtime 提示可删）。自动化删除在 COS 静默丢件时不可逆，spec 未要求无人值守。
+4. **T10 删除语义**：计划的 `taskPatchFor.delete()` 返回 `{deletedAt,updatedAt}` 当 patch 传，但 `applyLocal` 以 `patch === null` 判 delete op ⇒ 那版会退化成一次普通 upsert，服务端 delete 分支独占的 `isDeleted:true` 拿不到。改为 `patch: null`，该构造器不实现。
+5. **T10 范围**：**`toggle` 保持 Server Action**。`toggleTask` 除改四列还有 `syncTaskToDocument`（回写文档正文 taskItem 勾选态）与 `rollForward`（重复任务派生下一期行）两条服务端派生，客户端无等价通路 ⇒ 按计划迁移＝静默功能回归。`e2e/core.spec.ts:204` 现在同时覆盖"新建/改期走 applyLocal"与"toggle 走服务端派生"，两条都绿。
+
+### 本轮新发现并修复的缺陷（3 条，计划未预见）
+
+- **迁移脚本路径穿越**（安全）：计划先 `path.basename()` 归一化再判白名单，而 `basename('../evil') === 'evil'` ⇒ `readFile(path.join(dir,'../evil'))` 会读上传目录**之外**的文件并以其 key 传入 COS。改为逐字判原始条目 + 显式排除纯点号名（`NAME_RE` 本身放行 `.`/`..`）。
+- **子目录被计成 failed**：`readFile` 抛 EISDIR ⇒ `countsMatch` 判 false，一个嵌套目录就让整轮迁移被标成需重跑。改为 `stat().isFile()` 分流到 skipped。
+- **任务页写入竞态**（屏上取证发现）：首轮 `e2e/core.spec.ts` 全量跑时新建任务静默失败，浏览器控制台 `IdbSyncStore: call init() first` —— `applyLocal` 抢在 `SyncBoot` 的 `store.init()` 之前。已在 `writeTask` 前加 `await manager.boot()`（boot 幂等）。加闸后同条件复跑 11/12 通过、单独复跑 3 次全绿。
+
+### 本轮补测但**未**修的项（须裁定）
+
+- **写侧归属缺口**（P1 遗留 4 的实证）：`route.ts:236-242` 对无 `userId` 列的表（`document_tag` / `comment_thread` / `document_share` / `collection_*`）在**写路径**上不做归属收窄（读路径有 docIds 作用域）⇒ 客户端可对他人文档打标签、建评论线程。收紧需为每条记录做一次父行归属查询（每批 N 次额外读），超出"附件上云"影响面 ⇒ **未动，也未写"钉住当前行为"的测试**（那等于把漏洞固化成契约）。列为 P3 项。
+- 仓库内**没有任何 `.env.example`**，`STORAGE_DRIVER` / `COS_*` 在代码与文档之间没有落点，运维无从得知要配哪些变量。
+- 离线队列与直传的**接线未做**：`createAttachmentQueue` 已可用（T6），但五个上传调用点仍是"失败即抛给用户"，未进队列（计划排在验收前，实际未展开）。
+
+### e2e flake（如实记录，不作"非代码问题"的断言）
+
+`e2e/core.spec.ts:304` sidebar tree items expose a right-click menu 在全量负载下失败于 `expect(page).toHaveURL(...)`（点击树行后未按时跳转），**单独跑 1.4m 通过**。该路径本轮 P2 未触碰。同一 run 里 `[browser] flushSync was called from inside a lifecycle method` 与 `TextSelection endpoint not pointing into a node with inline content (doc)` 两条为既有告警。测试账号数据已累积到 938 docs / 33 folders / 329 whiteboards，是这类超时的共同背景。
+
+### 未验证（cannot-verify）
+
+- 真实 COS 桶：预签名 PUT 是否被接受、302 GET 是否回源、批量迁移实际耗时 —— 全程用注入的假客户端，**零真实网络**。上线前需在配好 `COS_*` 的环境跑一次 `--dry-run` 与小样本真搬。
+- 首屏内联的 `__STORAGE_CONFIG__` 在真实浏览器里的时序（推断为内联脚本先于任何上传点击，未实测）。
+- IndexedDB 版 `AttachmentStore`：T6 只给了内存实现，队列逻辑对 store 是纯接口调用，换持久化不应改动断言，但未实测。

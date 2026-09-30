@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Bell, CalendarClock, CheckSquare, FileText, Plus, Trash2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -16,11 +17,14 @@ import {
   toggleTask,
 } from '@/actions/task/task';
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
+import { getSyncManager } from '@/lib/sync-core';
+import { taskPatchFor } from './tasks-local';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 
 export default function TasksPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [newTitle, setNewTitle] = useState('');
@@ -36,11 +40,40 @@ export default function TasksPage() {
     load();
   }, [load]);
 
+  /**
+   * 离线优先写：applyLocal 只落本地 store + 入队，**不等 flush**（去抖 2s）。
+   * 而本页读路径是 getTasks（服务端权威行）⇒ 必须紧跟 flushNow，
+   * 否则紧随其后的 load() 读回的仍是旧数据，这次改动看起来像没发生。
+   * flushNow 内部吞错（离线时按退避阶梯留在队列里重试），不会 reject。
+   * 无会话 userId 时回退旧 Server Action —— 与 SettingsPanels 同一处置。
+   */
+  const writeTask = async (
+    id: string,
+    patchFor: (userId: string) => Record<string, unknown> | null,
+    legacy: () => Promise<unknown>,
+  ) => {
+    const userId = session?.user?.id;
+    if (!userId) {
+      await legacy();
+      return;
+    }
+    const manager = getSyncManager();
+    // 就绪闸门：boot() 幂等（返回同一 promise），但 SyncBoot 挂载后的 store.init() 是异步的，
+    // 而本页登录后可能**立刻**被点到新建 —— 实测过载时 applyLocal 会抛
+    // `IdbSyncStore: call init() first`，写入静默丢失。await boot() 把首次点击串到 init 之后。
+    await manager.boot();
+    await manager.applyLocal({ table: 'task', id, patch: patchFor(userId) });
+    await manager.flushNow();
+  };
+
   const handleAdd = async () => {
-    if (!newTitle.trim()) return;
+    const title = newTitle.trim();
+    if (!title) return;
     setAdding(true);
     try {
-      await createTask(newTitle);
+      const id = crypto.randomUUID();
+      const now = new Date().toISOString();
+      await writeTask(id, (userId) => taskPatchFor.create({ id, userId, title }, now), () => createTask(title));
       setNewTitle('');
       await load();
       router.refresh();
@@ -49,18 +82,23 @@ export default function TasksPage() {
     }
   };
 
+  // toggle 保持 Server Action：它除改四列外还有两条服务端派生
+  // （syncTaskToDocument 回写文档正文的 taskItem 勾选态、rollForward 为重复任务派生下一期行），
+  // 客户端没有等价通路，搬进 applyLocal＝静默功能回归。见 tasks-local.ts 头部裁定 2。
   const handleToggle = async (id: string) => {
     await toggleTask(id, Intl.DateTimeFormat().resolvedOptions().timeZone);
     await load();
   };
 
   const handleSchedule = async (id: string, schedule: TaskSchedule) => {
-    await setTaskSchedule(id, schedule);
+    const now = new Date().toISOString();
+    await writeTask(id, () => taskPatchFor.schedule(schedule, now), () => setTaskSchedule(id, schedule));
     await load();
   };
 
   const handleDelete = async (id: string) => {
-    await deleteTask(id);
+    // patch === null 才是 delete op（applyLocal 据此定 op，服务端 delete 分支写墓碑列）
+    await writeTask(id, () => null, () => deleteTask(id));
     await load();
   };
 

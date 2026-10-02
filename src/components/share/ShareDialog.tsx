@@ -12,18 +12,23 @@ import { Switch } from '@/components/ui/switch';
 import {
   Check,
   Copy,
+  Eye,
   Globe,
   KeyRound,
   LinkIcon,
   Loader2,
+  PencilLine,
   X,
 } from 'lucide-react';
 import {
   getOrCreateShare,
   setSharePasscode,
+  setSharePermission,
   setSharePublished,
   setShareSlug,
 } from '@/actions/document/share';
+import type { DocumentSharePermission } from '@/lib/share/permission';
+import { cn } from 'cn';
 
 interface ShareDialogProps {
   documentId: string;
@@ -31,9 +36,16 @@ interface ShareDialogProps {
   onClose: () => void;
 }
 
+const TIERS: { value: DocumentSharePermission; label: string; hint: string; icon: typeof Eye }[] = [
+  { value: 'view', label: '查看', hint: '拿到链接的人可以查看，不能修改', icon: Eye },
+  { value: 'edit', label: '编辑', hint: '登录用户可以协作编辑；匿名访客只读', icon: PencilLine },
+];
+
 export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [link, setLink] = useState<string | null>(null);
   const [isPublished, setIsPublished] = useState(false);
+  const [permission, setPermission] = useState<DocumentSharePermission | null>(null);
+  const [tierError, setTierError] = useState<string | null>(null);
   const [hasPasscode, setHasPasscode] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [token, setToken] = useState('');
@@ -41,7 +53,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [slugDraft, setSlugDraft] = useState('');
   const [slugError, setSlugError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (!open || link) return;
@@ -52,6 +64,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
           setToken(share.token);
           setLink(`${window.location.origin}/s/${share.token}`);
           setIsPublished(share.isPublished);
+          setPermission(share.permission);
           setHasPasscode(share.hasPasscode);
           setSlug(share.slug);
           setSlugDraft(share.slug ?? '');
@@ -80,6 +93,22 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     setIsPublished(checked);
     startTransition(async () => {
       await setSharePublished(documentId, checked);
+    });
+  };
+
+  const handleTier = (next: DocumentSharePermission) => {
+    if (next === permission) return;
+    const previous = permission;
+    setTierError(null);
+    setPermission(next);
+    startTransition(async () => {
+      try {
+        const result = await setSharePermission(documentId, next);
+        setPermission(result.permission);
+      } catch {
+        setPermission(previous);
+        setTierError('档位没有保存，请重试');
+      }
     });
   };
 
@@ -117,7 +146,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       <DialogContent className="max-w-md rounded-xl! p-0">
         <DialogTitle className="sr-only">分享文档</DialogTitle>
         <DialogDescription className="sr-only">
-          生成并复制此文档的只读分享链接
+          生成此文档的分享链接，并选择查看或编辑档
         </DialogDescription>
         <div className="p-4">
           <div className="mb-3 flex items-center gap-2">
@@ -140,6 +169,33 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
                   {copied ? '已复制' : '复制'}
                 </Button>
+              </div>
+              <div className="mt-3 flex flex-col gap-2">
+                {TIERS.map((tier) => {
+                  const Icon = tier.icon;
+                  const selected = tier.value === permission;
+                  return (
+                    <button
+                      key={tier.value}
+                      type="button"
+                      data-share-permission={tier.value}
+                      aria-pressed={selected}
+                      disabled={permission === null || isPending}
+                      onClick={() => handleTier(tier.value)}
+                      className={cn(
+                        'flex items-start gap-3 rounded-lg border border-border px-3 py-2.5 text-left transition-colors hover:bg-muted',
+                        selected && 'border-primary bg-muted',
+                      )}
+                    >
+                      <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium">{tier.label}</span>
+                        <span className="block text-xs text-muted-foreground">{tier.hint}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+                {tierError && <p className="text-xs text-destructive">{tierError}</p>}
               </div>
               <div className="mt-3 flex items-center justify-between rounded-md border border-border px-3 py-2.5">
                 <div>
@@ -230,7 +286,9 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                 )}
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                任何拥有链接的人都可以只读访问该文档
+                {permission === 'edit'
+                  ? '拥有链接的登录用户可以协作编辑，匿名访客只能查看'
+                  : '任何拥有链接的人都只能查看该文档'}
               </p>
             </>
           )}

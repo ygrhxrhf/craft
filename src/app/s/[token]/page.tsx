@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { auth } from '@/lib/auth/auth';
 import { getSharedDocument } from '@/actions/document/share';
 import { SharedDocView } from '@/components/share/SharedDocView';
 import { PublicDocBanner } from '@/components/share/PublicDocBanner';
@@ -34,15 +35,22 @@ export default async function SharedPage({ params }: SharedPageProps) {
     }
   }
 
+  // Opening the document in collaborative mode is only an intent: the server decides the
+  // role when the editor asks for a connection claim, so a visitor the link does not
+  // authorize stays read-only no matter what this branch renders.
+  const session = await auth();
+  const collaborative = doc.permission === 'edit' && Boolean(session?.user?.id);
+
   return (
     <SharedDocView
-      documentId={token}
+      documentId={doc.id}
       title={doc.title}
       icon={doc.icon}
       coverImage={doc.coverImage}
       coverType={doc.coverType}
       content={doc.content}
-      header={<PublicDocBanner />}
+      collaborative={collaborative}
+      header={<PublicDocBanner collaborative={collaborative} />}
     />
   );
 }

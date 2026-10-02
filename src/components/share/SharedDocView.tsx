@@ -13,6 +13,7 @@ interface SharedDocViewProps {
   content: any;
   pageStyle?: unknown;
   styled?: boolean;
+  collaborative?: boolean;
   header?: React.ReactNode;
 }
 
@@ -25,6 +26,7 @@ export function SharedDocView({
   content,
   pageStyle,
   styled = false,
+  collaborative = false,
   header,
 }: SharedDocViewProps) {
   const style = useMemo(() => normalizePageStyle(pageStyle), [pageStyle]);
@@ -69,7 +71,12 @@ export function SharedDocView({
             <h1 className="flex-1 text-doctitle font-bold text-[#1F2225] dark:text-[#F9F9F9]">{title}</h1>
           </div>
         </div>
-        <Editor documentId={documentId} initialContent={content} readOnly />
+        <Editor
+          documentId={documentId}
+          initialContent={content}
+          collaborative={collaborative}
+          readOnly={!collaborative}
+        />
       </div>
       {header}
     </div>

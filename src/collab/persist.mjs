@@ -182,3 +182,23 @@ async function appendVersion(db, documentName, document, snapshot) {
     wordCount: snapshot.wordCount,
   });
 }
+
+/**
+ * The live state of a document's public link. Read on every share-backed connection so a
+ * revoked or downgraded link cannot keep a room open on a claim that is still signed —
+ * the room is authoritative here, not the token the client already holds.
+ *
+ * Returns only what that decision needs: handing a passcode or the link token to this
+ * process would give a second service secrets it has no use for.
+ */
+export async function loadShareGrant(documentId) {
+  const db = await getClient();
+  const share = await db.orm.public.DocumentShare.first({ documentId });
+  if (!share) return null;
+
+  return {
+    isPublished: share.isPublished,
+    permission: share.permission,
+    shareVersion: share.shareVersion,
+  };
+}

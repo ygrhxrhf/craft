@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'51be9e5814c7452c0e68fbdced58486c8ae38ac94b9c2c27575376c622d09d6f'>;
+  StorageHashBase<'f053adff7597b1179c3aac9fe8e50831e8235fe8c598ff320e4495b3b843a3fb'>;
 export type ExecutionHash =
   ExecutionHashBase<'980ddcd2812657c86e600b2499dbc3eae9d2dde1891c970544bc5970c85ade5c'>;
 export type ProfileHash =
@@ -369,6 +369,8 @@ export type FieldOutputTypes = {
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
       readonly passcode: CodecTypes['pg/text@1']['output'] | null;
       readonly isPublished: CodecTypes['pg/bool@1']['output'];
+      readonly permission: CodecTypes['pg/text@1']['output'];
+      readonly shareVersion: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -596,6 +598,8 @@ export type FieldInputTypes = {
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
       readonly passcode: CodecTypes['pg/text@1']['input'] | null;
       readonly isPublished: CodecTypes['pg/bool@1']['input'];
+      readonly permission: CodecTypes['pg/text@1']['input'];
+      readonly shareVersion: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -796,6 +800,8 @@ export type StorageColumnTypes = {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly isPublished: CodecTypes['pg/bool@1']['output'];
       readonly passcode: CodecTypes['pg/text@1']['output'] | null;
+      readonly permission: CodecTypes['pg/text@1']['output'];
+      readonly shareVersion: CodecTypes['pg/int4@1']['output'];
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
       readonly token: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1023,6 +1029,8 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly isPublished: CodecTypes['pg/bool@1']['input'];
       readonly passcode: CodecTypes['pg/text@1']['input'] | null;
+      readonly permission: CodecTypes['pg/text@1']['input'];
+      readonly shareVersion: CodecTypes['pg/int4@1']['input'];
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
       readonly token: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1420,6 +1428,8 @@ export namespace Models {
     slug: CodecTypes['pg/text@1']['output'] | null;
     passcode: CodecTypes['pg/text@1']['output'] | null;
     isPublished: CodecTypes['pg/bool@1']['output'];
+    permission: CodecTypes['pg/text@1']['output'];
+    shareVersion: CodecTypes['pg/int4@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     document: public_Document;
@@ -2381,6 +2391,24 @@ type ContractBase = Omit<
                   readonly default: {
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly permission: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'view'>;
+                  };
+                };
+                readonly shareVersion: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
                   };
                 };
                 readonly createdAt: {
@@ -4631,6 +4659,14 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly permission: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly shareVersion: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -4670,6 +4706,8 @@ type ContractBase = Omit<
                 readonly slug: { readonly column: 'slug' };
                 readonly passcode: { readonly column: 'passcode' };
                 readonly isPublished: { readonly column: 'isPublished' };
+                readonly permission: { readonly column: 'permission' };
+                readonly shareVersion: { readonly column: 'shareVersion' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };

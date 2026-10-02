@@ -1,9 +1,14 @@
 import { roleSatisfies, type AccessLevel, type ResourceRole } from './resource';
 import { AuthorizationError, getTable } from './guard';
+import { shareWriteRole } from '@/lib/share/permission';
 
 export interface DocumentAccess {
   document: Record<string, unknown>;
   role: ResourceRole;
+}
+
+export interface ShareAccess extends DocumentAccess {
+  shareVersion: number;
 }
 
 const MEMBER_ROLES: ResourceRole[] = ['editor', 'commenter', 'viewer'];
@@ -26,6 +31,28 @@ export async function resolveDocumentAccess(
   if (!role || !MEMBER_ROLES.includes(role)) return null;
 
   return { document, role };
+}
+
+/**
+ * A published link on the edit tier is a grant of its own, so a signed-in visitor with
+ * no member row still reaches the collab chain. Callers try ownership and membership
+ * first, which keeps a private document from widening here, and a trashed document stays
+ * closed even while its link is open.
+ */
+export async function resolveShareAccess(
+  documentId: string,
+  userId: string,
+): Promise<ShareAccess | null> {
+  const document = await (await getTable('Document')).first({ id: documentId });
+  if (!document || document.isDeleted) return null;
+
+  const share = await (await getTable('DocumentShare')).first({ documentId });
+  if (!share || !share.isPublished) return null;
+
+  const role = shareWriteRole(share.permission, userId);
+  if (!role) return null;
+
+  return { document, role, shareVersion: share.shareVersion as number };
 }
 
 export async function requireDocumentAccess(

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.document_shares.permission",
+    "label": "Add column \"permission\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "permission",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"permission\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "permission"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"permission\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"permission\" text DEFAULT 'view' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"permission\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "permission"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.shareVersion",
+    "label": "Add column \"shareVersion\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "shareVersion",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"shareVersion\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "shareVersion"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"shareVersion\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"shareVersion\" int4 DEFAULT 0 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"shareVersion\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "shareVersion"
+        ]
+      }
+    ]
+  }
+]

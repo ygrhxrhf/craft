@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { normalizeShareSlug } from '@/lib/share/slug';
+import { isSharePermission, type DocumentSharePermission } from '@/lib/share/permission';
 import { findShare, isOpenableShare } from '@/lib/share/resolve';
 
 export interface ShareState {
@@ -10,10 +11,17 @@ export interface ShareState {
   slug: string | null;
   isPublished: boolean;
   hasPasscode: boolean;
+  permission: DocumentSharePermission;
 }
 
 function stateOf(s: any): ShareState {
-  return { token: s.token, slug: s.slug ?? null, isPublished: s.isPublished, hasPasscode: !!s.passcode };
+  return {
+    token: s.token,
+    slug: s.slug ?? null,
+    isPublished: s.isPublished,
+    hasPasscode: !!s.passcode,
+    permission: s.permission,
+  };
 }
 
 export async function getOrCreateShare(documentId: string): Promise<ShareState> {
@@ -54,6 +62,31 @@ export async function setSharePublished(documentId: string, isPublished: boolean
   if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
 
   await db.orm.public.DocumentShare.where({ documentId }).update({ isPublished });
+  return await getOrCreateShare(documentId);
+}
+
+/**
+ * Picks the tier of the public link. Every change counts a new share version, so a
+ * connection authorized under the previous tier can be recognized as stale;
+ * re-picking the live tier must not count, or a visitor mid-edit would be dropped
+ * for no reason.
+ */
+export async function setSharePermission(documentId: string, permission: unknown): Promise<ShareState> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+  if (!isSharePermission(permission)) throw new Error('无效的分享权限');
+
+  const db = await getDb();
+  const doc = await db.orm.public.Document.first({ id: documentId });
+  if (!doc || doc.userId !== session.user.id) throw new Error('未授权');
+
+  const state = await getOrCreateShare(documentId);
+  if (state.permission === permission) return state;
+
+  const rows = await db.orm.public.DocumentShare.where({ documentId }).limit(1).all();
+  const shareVersion = (rows[0]?.shareVersion ?? 0) + 1;
+  await db.orm.public.DocumentShare.where({ documentId }).update({ permission, shareVersion });
+
   return await getOrCreateShare(documentId);
 }
 
@@ -121,6 +154,7 @@ export async function getSharedDocument(identifier: string) {
     updatedAt: d.updatedAt,
     plainText: d.plainText,
     isPublished: s.isPublished,
+    permission: s.permission,
     passcodeProtected: !!s.passcode,
   };
 }

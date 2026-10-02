@@ -627,6 +627,14 @@ export function Editor({
       <EditorBubbleMenu editor={editor} />
       <AiBubbleMenu editor={editor} />
       <TableToolbar editor={editor} />
+      {collaborative && (collabState === 'error' || collabState === 'offline') && (
+        <p
+          role="status"
+          className="mb-3 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+        >
+          协作连接已断开，此后的修改不会同步到服务器。若你是通过分享链接编辑的，权限可能已被变更。
+        </p>
+      )}
       <EditorContent editor={editor} />
       <ImageGenDialogHost editor={editor} />
     </div>

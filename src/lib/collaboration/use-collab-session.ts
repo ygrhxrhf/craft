@@ -78,6 +78,12 @@ export function useCollabSession(
           if (status === 'connected') setState('connecting');
           if (status === 'disconnected') setState('offline');
         });
+        // A server-initiated close arrives as a protocol `close` message, which resets
+        // the sync flags without touching the socket status. Without this the page keeps
+        // claiming a live session after the room dropped it.
+        provider.on('close', () => {
+          if (!cancelled) setState('offline');
+        });
         provider.on('synced', () => {
           if (!cancelled) setState('synced');
         });

@@ -322,6 +322,8 @@ model DocumentShare {
   slug         String?  @unique
   passcode     String?
   isPublished  Boolean  @default(false)
+  permission   String   @default("view") // "view" | "edit"
+  shareVersion Int      @default(0)
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
 

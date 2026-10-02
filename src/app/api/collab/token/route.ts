@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { createHmac } from 'node:crypto';
 import { AuthorizationError, getTable, requireUserId } from '@/lib/authz/guard';
-import { resolveDocumentAccess } from '@/lib/authz/document-access';
+import { resolveDocumentAccess, resolveShareAccess } from '@/lib/authz/document-access';
 import { requireSecret } from '@/lib/env/secret';
 import type { ResourceRole } from '@/lib/authz/resource';
 
@@ -13,6 +13,9 @@ export interface CollabClaims {
   role: ResourceRole;
   readOnly: boolean;
   exp: number;
+  /** Set only when a share link, not ownership or a member row, authorized this claim. */
+  viaShare?: true;
+  shareVersion?: number;
 }
 
 export function signCollabToken(claims: CollabClaims): string {
@@ -43,24 +46,33 @@ export async function POST(req: NextRequest) {
   }
 
   const access = await resolveDocumentAccess(documentId, userId);
-  if (!access) {
+  const share = access ? null : await resolveShareAccess(documentId, userId);
+  const grant = access ?? share;
+  if (!grant) {
     return Response.json({ error: '文档不存在' }, { status: 404 });
   }
 
-  const readOnly = access.role === 'viewer' || access.role === 'commenter';
-  const token = signCollabToken({
+  const readOnly = grant.role === 'viewer' || grant.role === 'commenter';
+  const claims: CollabClaims = {
     docId: documentId,
     userId,
-    role: access.role,
+    role: grant.role,
     readOnly,
     exp: Date.now() + TOKEN_TTL_MS,
-  });
+  };
+  // Only a link grant is scoped by the share row. Marking an owner or member claim with
+  // it would let the owner changing a tier lock collaborators out of the document.
+  if (share) {
+    claims.viaShare = true;
+    claims.shareVersion = share.shareVersion;
+  }
+  const token = signCollabToken(claims);
 
   const account = await (await getTable('User')).first({ id: userId });
 
   return Response.json({
     token,
-    role: access.role,
+    role: grant.role,
     readOnly,
     user: {
       id: userId,

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "column.public.users.notifyComments",
+    "label": "Add column \"notifyComments\" to \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "notifyComments",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"notifyComments\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "notifyComments"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"notifyComments\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD COLUMN \"notifyComments\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"notifyComments\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "notifyComments"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.users.notifyDaily",
+    "label": "Add column \"notifyDaily\" to \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "notifyDaily",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"notifyDaily\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "notifyDaily"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"notifyDaily\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD COLUMN \"notifyDaily\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"notifyDaily\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "notifyDaily"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.users.notifyReminders",
+    "label": "Add column \"notifyReminders\" to \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "notifyReminders",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"notifyReminders\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "notifyReminders"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"notifyReminders\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD COLUMN \"notifyReminders\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"notifyReminders\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "notifyReminders"
+        ]
+      }
+    ]
+  }
+]

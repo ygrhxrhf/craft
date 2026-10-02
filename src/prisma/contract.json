@@ -2696,6 +2696,27 @@
                   "kind": "scalar"
                 }
               },
+              "notifyComments": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "notifyDaily": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "notifyReminders": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "password": {
                 "nullable": false,
                 "type": {
@@ -2878,6 +2899,15 @@
                 },
                 "name": {
                   "column": "name"
+                },
+                "notifyComments": {
+                  "column": "notifyComments"
+                },
+                "notifyDaily": {
+                  "column": "notifyDaily"
+                },
+                "notifyReminders": {
+                  "column": "notifyReminders"
                 },
                 "password": {
                   "column": "password"
@@ -5298,6 +5328,33 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "notifyComments": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "notifyDaily": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "notifyReminders": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "password": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -5568,7 +5625,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f053adff7597b1179c3aac9fe8e50831e8235fe8c598ff320e4495b3b843a3fb"
+    "storageHash": "2182bd06858f002d0c32ad287b5836647b58720e627fb3044b3a6f4c3ed0566e"
   },
   "execution": {
     "executionHash": "980ddcd2812657c86e600b2499dbc3eae9d2dde1891c970544bc5970c85ade5c",

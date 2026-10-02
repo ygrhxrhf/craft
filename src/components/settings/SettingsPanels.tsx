@@ -11,6 +11,7 @@ import {
   SquarePlus,
 } from 'lucide-react';
 import { getPreferences, updatePreferences } from '@/actions/user/preferences';
+import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
 import { Switch } from '@/components/ui/switch';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
@@ -32,6 +33,33 @@ function GroupTitle({ children }: { children: React.ReactNode }) {
 
 function GroupDesc({ children }: { children: React.ReactNode }) {
   return <p className="mt-1 text-[13px] text-foreground/55">{children}</p>;
+}
+
+/**
+ * `value` is undefined while the preferences are still loading. A switch has no
+ * neutral state, so rendering one then would announce a value the server has not
+ * answered yet — the row shows that it is loading instead.
+ */
+function NotifySwitch({
+  value,
+  busy = false,
+  onChange,
+}: {
+  value: boolean | undefined;
+  busy?: boolean;
+  onChange: (next: boolean) => void;
+}) {
+  if (value === undefined) {
+    return <span className="text-[12px] text-foreground/45">载入中…</span>;
+  }
+  return (
+    <Switch
+      checked={value}
+      disabled={busy}
+      onCheckedChange={(next) => onChange(next === true)}
+      className="data-checked:bg-(--craft-accent)"
+    />
+  );
 }
 
 function EditIcon() {
@@ -94,11 +122,14 @@ const ACCENTS = [
   { key: 'gray', color: '#525c66' },
 ];
 
+type SwitchKey = 'notifyComments' | 'notifyReminders' | 'notifyDaily';
+
 export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const { setTheme } = useTheme();
-  const [prefs, setPrefs] = useState<{ theme: string; editorFont: string; editorWidth: string } | null>(null);
+  const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [accent, setAccent] = useState('blue');
-  const [notify, setNotify] = useState({ comments: true, reminders: true, daily: true });
+  const [savingSwitch, setSavingSwitch] = useState(false);
+  const [switchError, setSwitchError] = useState<string | null>(null);
 
   useEffect(() => {
     getPreferences()
@@ -114,6 +145,26 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     const next = { ...base, ...patch };
     setPrefs(next);
     await updatePreferences(patch).catch(() => setPrefs(base));
+  };
+
+  const setSwitch = async (key: SwitchKey, value: boolean) => {
+    const base = prefs ?? (await getPreferences().catch(() => null));
+    if (!base) return;
+
+    // A switch paints only after the write lands. Painting first makes an
+    // abandoned navigation look like a saved preference: the action dies with
+    // the page and the row keeps its old value.
+    setSavingSwitch(true);
+    setSwitchError(null);
+    try {
+      await updatePreferences({ [key]: value });
+      setPrefs({ ...base, [key]: value });
+    } catch {
+      setPrefs(base);
+      setSwitchError('开关没有保存，请重试');
+    } finally {
+      setSavingSwitch(false);
+    }
   };
 
   switch (section) {
@@ -379,15 +430,20 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     case 'notifications':
       return (
         <div className="space-y-6">
+          {switchError && (
+            <p role="status" className="text-[12px] text-destructive">
+              {switchError}
+            </p>
+          )}
           <div>
             <GroupTitle>评论和提及</GroupTitle>
             <GroupDesc>当你收到新的评论和提及时得到通知。</GroupDesc>
             <RowCard className="mt-3 flex items-center justify-between px-4 py-3">
               <div className="text-[13px] font-medium">电子邮件通知</div>
-              <Switch
-                checked={notify.comments}
-                onCheckedChange={(v) => setNotify((s) => ({ ...s, comments: v === true }))}
-                className="data-checked:bg-(--craft-accent)"
+              <NotifySwitch
+                value={prefs?.notifyComments}
+                busy={savingSwitch}
+                onChange={(next) => void setSwitch('notifyComments', next)}
               />
             </RowCard>
           </div>
@@ -396,10 +452,10 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
             <GroupDesc>当需要提醒时，Craft 会向你发送通知。</GroupDesc>
             <RowCard className="mt-3 flex items-center justify-between px-4 py-3">
               <div className="text-[13px] font-medium">电子邮件通知</div>
-              <Switch
-                checked={notify.reminders}
-                onCheckedChange={(v) => setNotify((s) => ({ ...s, reminders: v === true }))}
-                className="data-checked:bg-(--craft-accent)"
+              <NotifySwitch
+                value={prefs?.notifyReminders}
+                busy={savingSwitch}
+                onChange={(next) => void setSwitch('notifyReminders', next)}
               />
             </RowCard>
           </div>
@@ -409,10 +465,10 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
             <RowCard className="mt-3 divide-y divide-foreground/4">
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="text-[13px] font-medium">电子邮件通知</div>
-                <Switch
-                  checked={notify.daily}
-                  onCheckedChange={(v) => setNotify((s) => ({ ...s, daily: v === true }))}
-                  className="data-checked:bg-(--craft-accent)"
+                <NotifySwitch
+                  value={prefs?.notifyDaily}
+                  busy={savingSwitch}
+                  onChange={(next) => void setSwitch('notifyDaily', next)}
                 />
               </div>
               <div className="flex items-center justify-between px-4 py-3">

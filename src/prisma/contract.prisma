@@ -9,6 +9,9 @@ model User {
   theme         String    @default("system")
   editorFont    String    @default("inter")
   editorWidth   String    @default("default")
+  notifyComments   Boolean @default(true)
+  notifyReminders  Boolean @default(true)
+  notifyDaily      Boolean @default(true)
   createdAt     TimestamptzString @default(now())
   updatedAt     temporal.updatedAtString()
 

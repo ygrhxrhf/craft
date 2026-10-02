@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f053adff7597b1179c3aac9fe8e50831e8235fe8c598ff320e4495b3b843a3fb'>;
+  StorageHashBase<'2182bd06858f002d0c32ad287b5836647b58720e627fb3044b3a6f4c3ed0566e'>;
 export type ExecutionHash =
   ExecutionHashBase<'980ddcd2812657c86e600b2499dbc3eae9d2dde1891c970544bc5970c85ade5c'>;
 export type ProfileHash =
@@ -441,6 +441,9 @@ export type FieldOutputTypes = {
       readonly theme: CodecTypes['pg/text@1']['output'];
       readonly editorFont: CodecTypes['pg/text@1']['output'];
       readonly editorWidth: CodecTypes['pg/text@1']['output'];
+      readonly notifyComments: CodecTypes['pg/bool@1']['output'];
+      readonly notifyReminders: CodecTypes['pg/bool@1']['output'];
+      readonly notifyDaily: CodecTypes['pg/bool@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -670,6 +673,9 @@ export type FieldInputTypes = {
       readonly theme: CodecTypes['pg/text@1']['input'];
       readonly editorFont: CodecTypes['pg/text@1']['input'];
       readonly editorWidth: CodecTypes['pg/text@1']['input'];
+      readonly notifyComments: CodecTypes['pg/bool@1']['input'];
+      readonly notifyReminders: CodecTypes['pg/bool@1']['input'];
+      readonly notifyDaily: CodecTypes['pg/bool@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -898,6 +904,9 @@ export type StorageColumnTypes = {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly image: CodecTypes['pg/text@1']['output'] | null;
       readonly name: CodecTypes['pg/text@1']['output'] | null;
+      readonly notifyComments: CodecTypes['pg/bool@1']['output'];
+      readonly notifyDaily: CodecTypes['pg/bool@1']['output'];
+      readonly notifyReminders: CodecTypes['pg/bool@1']['output'];
       readonly password: CodecTypes['pg/text@1']['output'];
       readonly theme: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1127,6 +1136,9 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly image: CodecTypes['pg/text@1']['input'] | null;
       readonly name: CodecTypes['pg/text@1']['input'] | null;
+      readonly notifyComments: CodecTypes['pg/bool@1']['input'];
+      readonly notifyDaily: CodecTypes['pg/bool@1']['input'];
+      readonly notifyReminders: CodecTypes['pg/bool@1']['input'];
       readonly password: CodecTypes['pg/text@1']['input'];
       readonly theme: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1167,6 +1179,9 @@ export namespace Models {
     theme: CodecTypes['pg/text@1']['output'];
     editorFont: CodecTypes['pg/text@1']['output'];
     editorWidth: CodecTypes['pg/text@1']['output'];
+    notifyComments: CodecTypes['pg/bool@1']['output'];
+    notifyReminders: CodecTypes['pg/bool@1']['output'];
+    notifyDaily: CodecTypes['pg/bool@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     collections: public_Collection[];
@@ -3272,6 +3287,33 @@ type ContractBase = Omit<
                     readonly value: DefaultLiteralValue<'pg/text@1', 'default'>;
                   };
                 };
+                readonly notifyComments: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly notifyReminders: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly notifyDaily: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
                 readonly createdAt: {
                   readonly nativeType: 'timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
@@ -5248,6 +5290,18 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly notifyComments: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly notifyReminders: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly notifyDaily: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -5371,6 +5425,9 @@ type ContractBase = Omit<
                 readonly theme: { readonly column: 'theme' };
                 readonly editorFont: { readonly column: 'editorFont' };
                 readonly editorWidth: { readonly column: 'editorWidth' };
+                readonly notifyComments: { readonly column: 'notifyComments' };
+                readonly notifyReminders: { readonly column: 'notifyReminders' };
+                readonly notifyDaily: { readonly column: 'notifyDaily' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };

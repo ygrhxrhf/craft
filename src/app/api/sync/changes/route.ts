@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { AuthorizationError, requireUserId } from '@/lib/authz/guard';
 import { collectChanges } from '@/lib/sync/changes';
+import { materializeTaskReminders } from '@/lib/notification/materialize';
 
 // Session-dependent, per-request — never prerender or cache.
 export const dynamic = 'force-dynamic';
@@ -44,6 +45,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // Due task reminders are turned into rows here, so the payload below can
+    // carry them without a second transport. A failure fails the whole tick;
+    // the client's backoff retries it and the reminder arrives then.
+    await materializeTaskReminders(userId);
     const result = await collectChanges({ userId, since, limit });
     return Response.json(result, {
       headers: { 'Cache-Control': 'no-store' },

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
+import { NotificationBell } from '@/components/notification/NotificationBell';
 import { cn } from 'cn';
 
 interface AppPageHeaderProps {
@@ -37,6 +38,7 @@ export function AppPageHeader({ title, actions, className }: AppPageHeaderProps)
         {title}
       </h1>
       {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+      <NotificationBell />
     </header>
   );
 }

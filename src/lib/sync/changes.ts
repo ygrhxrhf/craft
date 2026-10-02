@@ -64,6 +64,14 @@ export const INCREMENTAL_TABLES: Record<string, TableSpec> = {
       'isDeleted', 'deletedAt', 'createdAt', 'updatedAt',
     ],
   },
+  // Reminder notifications the server materialized on this very poll. `title`
+  // carries the task line, never the document body.
+  Notification: {
+    columns: [
+      'id', 'userId', 'kind', 'taskId', 'documentId', 'title',
+      'remindAt', 'isResolved', 'resolvedAt', 'createdAt', 'updatedAt',
+    ],
+  },
 };
 
 /**

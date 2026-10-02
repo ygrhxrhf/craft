@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'2182bd06858f002d0c32ad287b5836647b58720e627fb3044b3a6f4c3ed0566e'>;
+  StorageHashBase<'da51105384aa592c56bc82b6570a31b8f25e056b2e5e35910789c9c23e511338'>;
 export type ExecutionHash =
-  ExecutionHashBase<'980ddcd2812657c86e600b2499dbc3eae9d2dde1891c970544bc5970c85ade5c'>;
+  ExecutionHashBase<'80cf47f786f16fb4134afaa69231948f5429103f4141f0d881607fd11a796f45'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -408,6 +408,19 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly Notification: {
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly userId: CodecTypes['pg/text@1']['output'];
+      readonly kind: CodecTypes['pg/text@1']['output'];
+      readonly taskId: CodecTypes['pg/text@1']['output'] | null;
+      readonly documentId: CodecTypes['pg/text@1']['output'] | null;
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly remindAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly isResolved: CodecTypes['pg/bool@1']['output'];
+      readonly resolvedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Tag: {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -637,6 +650,19 @@ export type FieldInputTypes = {
       readonly userId: CodecTypes['pg/text@1']['input'];
       readonly isDeleted: CodecTypes['pg/bool@1']['input'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly Notification: {
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly userId: CodecTypes['pg/text@1']['input'];
+      readonly kind: CodecTypes['pg/text@1']['input'];
+      readonly taskId: CodecTypes['pg/text@1']['input'] | null;
+      readonly documentId: CodecTypes['pg/text@1']['input'] | null;
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly remindAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly isResolved: CodecTypes['pg/bool@1']['input'];
+      readonly resolvedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -872,6 +898,19 @@ export type StorageColumnTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/text@1']['output'];
     };
+    readonly notifications: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly documentId: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly isResolved: CodecTypes['pg/bool@1']['output'];
+      readonly kind: CodecTypes['pg/text@1']['output'];
+      readonly remindAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly resolvedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly taskId: CodecTypes['pg/text@1']['output'] | null;
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly userId: CodecTypes['pg/text@1']['output'];
+    };
     readonly tags: {
       readonly color: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1104,6 +1143,19 @@ export type StorageColumnInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/text@1']['input'];
     };
+    readonly notifications: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly documentId: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly isResolved: CodecTypes['pg/bool@1']['input'];
+      readonly kind: CodecTypes['pg/text@1']['input'];
+      readonly remindAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly resolvedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly taskId: CodecTypes['pg/text@1']['input'] | null;
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly userId: CodecTypes['pg/text@1']['input'];
+    };
     readonly tags: {
       readonly color: CodecTypes['pg/text@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1190,6 +1242,7 @@ export namespace Models {
     documents: public_Document[];
     favorites: public_Favorite[];
     folders: public_Folder[];
+    notifications: public_Notification[];
     tags: public_Tag[];
     tasks: public_Task[];
     whiteboards: public_Whiteboard[];
@@ -1200,6 +1253,7 @@ export namespace Models {
       | 'documents'
       | 'favorites'
       | 'folders'
+      | 'notifications'
       | 'tags'
       | 'tasks'
       | 'whiteboards';
@@ -1256,6 +1310,7 @@ export namespace Models {
     folder: public_Folder | null;
     linkingDocs: public_Backlink[];
     members: public_DocumentMember[];
+    notifications: public_Notification[];
     parent: public_Document | null;
     shares: public_DocumentShare[];
     tags: public_DocumentTag[];
@@ -1270,6 +1325,7 @@ export namespace Models {
       | 'folder'
       | 'linkingDocs'
       | 'members'
+      | 'notifications'
       | 'parent'
       | 'shares'
       | 'tags'
@@ -1433,8 +1489,26 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     document: public_Document | null;
+    notifications: public_Notification[];
     user: public_User;
-    readonly [RelationKeys]?: 'document' | 'user';
+    readonly [RelationKeys]?: 'document' | 'notifications' | 'user';
+  };
+  export type public_Notification = {
+    id: CodecTypes['pg/text@1']['output'];
+    userId: CodecTypes['pg/text@1']['output'];
+    kind: CodecTypes['pg/text@1']['output'];
+    taskId: CodecTypes['pg/text@1']['output'] | null;
+    documentId: CodecTypes['pg/text@1']['output'] | null;
+    title: CodecTypes['pg/text@1']['output'];
+    remindAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    isResolved: CodecTypes['pg/bool@1']['output'];
+    resolvedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    document: public_Document | null;
+    task: public_Task | null;
+    user: public_User;
+    readonly [RelationKeys]?: 'document' | 'task' | 'user';
   };
   export type public_DocumentShare = {
     id: CodecTypes['pg/text@1']['output'];
@@ -1524,6 +1598,7 @@ export declare const models: {
     Favorite: Models.public_Favorite;
     Backlink: Models.public_Backlink;
     Task: Models.public_Task;
+    Notification: Models.public_Notification;
     DocumentShare: Models.public_DocumentShare;
     DailyNotesConfig: Models.public_DailyNotesConfig;
     CommentThread: Models.public_CommentThread;
@@ -3023,6 +3098,140 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly notifications: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly userId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly kind: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'taskReminder'>;
+                  };
+                };
+                readonly taskId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly documentId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly title: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly remindAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly isResolved: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly resolvedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['taskId', 'remindAt'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'notifications_userId_isResolved_idx_f4797344';
+                  readonly prefix: 'notifications_userId_isResolved_idx';
+                  readonly columns: readonly ['userId', 'isResolved'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'notifications_userId_idx_a489d58a';
+                  readonly prefix: 'notifications_userId_idx';
+                  readonly columns: readonly ['userId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'notifications_taskId_idx_4965c936';
+                  readonly prefix: 'notifications_taskId_idx';
+                  readonly columns: readonly ['taskId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'notifications_documentId_idx_825ef746';
+                  readonly prefix: 'notifications_documentId_idx';
+                  readonly columns: readonly ['documentId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'notifications';
+                    readonly columns: readonly ['userId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'notifications';
+                    readonly columns: readonly ['taskId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'tasks';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'notifications';
+                    readonly columns: readonly ['documentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'documents';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly tags: {
               columns: {
                 readonly id: {
@@ -3568,6 +3777,10 @@ type ContractBase = Omit<
     readonly favorites: { readonly namespace: 'public' & NamespaceId; readonly model: 'Favorite' };
     readonly backlinks: { readonly namespace: 'public' & NamespaceId; readonly model: 'Backlink' };
     readonly tasks: { readonly namespace: 'public' & NamespaceId; readonly model: 'Task' };
+    readonly notifications: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'Notification';
+    };
     readonly document_shares: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'DocumentShare';
@@ -4507,6 +4720,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['documentId'];
                 };
               };
+              readonly notifications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Notification';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['documentId'];
+                };
+              };
               readonly parent: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -5070,6 +5294,115 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly Notification: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly kind: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly taskId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly documentId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly remindAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly isResolved: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly resolvedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly document: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Document';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['documentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly task: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Task' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['taskId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'notifications';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly userId: { readonly column: 'userId' };
+                readonly kind: { readonly column: 'kind' };
+                readonly taskId: { readonly column: 'taskId' };
+                readonly documentId: { readonly column: 'documentId' };
+                readonly title: { readonly column: 'title' };
+                readonly remindAt: { readonly column: 'remindAt' };
+                readonly isResolved: { readonly column: 'isResolved' };
+                readonly resolvedAt: { readonly column: 'resolvedAt' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly Tag: {
             readonly fields: {
               readonly id: {
@@ -5222,6 +5555,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['documentId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly notifications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Notification';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['taskId'];
                 };
               };
               readonly user: {
@@ -5378,6 +5722,17 @@ type ContractBase = Omit<
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Folder';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
+              readonly notifications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Notification';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -5847,6 +6202,23 @@ type ContractBase = Omit<
           readonly ref: {
             readonly namespace: 'public';
             readonly table: 'folders';
+            readonly column: 'updatedAt';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
+          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'notifications';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'notifications';
             readonly column: 'updatedAt';
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };

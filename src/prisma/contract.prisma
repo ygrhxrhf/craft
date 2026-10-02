@@ -24,6 +24,7 @@ model User {
   dailyNotesConfig DailyNotesConfig?
   tasks         Task[]
   documentMembers DocumentMember[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -98,6 +99,7 @@ model Document {
   shares        DocumentShare[]
   members       DocumentMember[]
   collabState   YjsDocumentState?
+  notifications Notification[]
 
   @@index([userId])
   @@index([folderId])
@@ -311,11 +313,34 @@ model Task {
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  notifications Notification[]
 
   @@index([userId, isCompleted])
   @@index([userId, dueDate])
   @@index([documentId, blockId])
   @@map("tasks")
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  kind        String   @default("taskReminder") // "taskReminder"
+  taskId      String?
+  documentId  String?
+  title       String
+  remindAt    TimestamptzString?
+  isResolved  Boolean  @default(false)
+  resolvedAt  TimestamptzString?
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task        Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@unique([taskId, remindAt])
+  @@index([userId, isResolved])
+  @@map("notifications")
 }
 
 model DocumentShare {

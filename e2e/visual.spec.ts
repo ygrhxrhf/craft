@@ -38,8 +38,12 @@ async function openFixture(page: Page, listPath: string, title: string) {
 }
 
 /**
- * Masked: the sidebar tree, the calendar grid, and any timestamp. The seeded data is
- * fixed, but "最后编辑 3 天前" is not, and the month changes under the baseline.
+ * Masked: dates, relative timestamps and any `grid-cols-7` table. The seeded
+ * data is fixed, but "最后编辑 3 天前" is not. The sidebar tree is deliberately
+ * NOT masked (masking it whole hid real regressions), and neither is the
+ * calendar's day grid — it is a `border-collapse` table, so the `grid-cols-7`
+ * locator below measures 0 hits on /calendar; that page is kept stable by the
+ * clock pin instead.
  */
 async function shoot(page: Page, name: string) {
   // Several pages mount a client shell that paints 加载中 first; shooting then puts

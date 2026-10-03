@@ -23,6 +23,9 @@ const APP_ROUTES = [
   '/whiteboards',
 ];
 
+/** The day `light|dark-app-calendar-*` were captured on. See the clock pin below. */
+const CALENDAR_BASELINE_DAY = '2026-09-25T12:00:00';
+
 /** Opens a seeded entity by title. "The first card" would be whatever the CRUD
  *  specs last touched, and that changes between runs. */
 async function openFixture(page: Page, listPath: string, title: string) {
@@ -79,6 +82,18 @@ for (const theme of ['light', 'dark'] as const) {
 
     for (const route of APP_ROUTES) {
       test(`app ${route}`, async ({ page }) => {
+        if (route === '/calendar') {
+          // The page seeds `month` and `selected` from `new Date()`
+          // (src/app/(app)/calendar/page.tsx:20-21) and nothing masks the day
+          // grid -- `[class*="grid-cols-7"]` measures 0 hits here, the only one
+          // in the repo is the collection calendar view -- so the shot walked
+          // out of its own baseline the day after it was recorded. The stale
+          // grid is 5427 px on mobile, just under the 2% budget on its own,
+          // which is why it only failed inside a full run where the dev
+          // "Rendering…" pill adds another 4891. Consequence: this shot cannot
+          // catch a wrong month by itself, so the pin is load-bearing.
+          await page.clock.setFixedTime(new Date(CALENDAR_BASELINE_DAY));
+        }
         await page.goto(route);
         await expect(page.getByRole('main')).toBeVisible();
         await shoot(page, `${theme}-app${route.replace(/\//g, '-')}`);

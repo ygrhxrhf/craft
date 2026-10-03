@@ -22,7 +22,6 @@ export default async function CollectionsPage() {
             <p className="mb-6 text-sm text-muted-foreground">
               创建你的第一个集合来组织数据
             </p>
-            <CreateCollectionButton />
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">

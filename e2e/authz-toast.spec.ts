@@ -97,22 +97,59 @@ test('the batch 还原 path reports the same rejection through the same signal',
   await stale.close();
 });
 
-test('a stale tree row reports the rejection when it is sent to the trash', async ({ page, context }) => {
+test('a second tab keeps listing a row it missed, and the next poll drops it', async ({ page, context }) => {
   await signIn(page, STALE_TREE);
   const title = `B123-越权删除 ${Date.now()}`;
   await titledDoc(page, title);
 
   const stale = await context.newPage();
+
+  // A tab that is not looking at the stream cannot see a deletion, so the row
+  // outlives it. That is the state this case is about: it is the reason the
+  // action below has to re-check on the server instead of trusting the tree.
+  //
+  // Blocking the route is the honest stand-in for a background tab. It is also
+  // what makes this case decidable at all: with the stream intact, the row is
+  // gone before a click can ever reach it, which is the reason the original
+  // version of this test could not hold a stale row in the first place.
+  let cut = true;
+  let passed = 0;
+  await stale.route('**/api/sync/changes**', async (route) => {
+    if (cut) {
+      await route.abort();
+      return;
+    }
+    passed += 1;
+    await route.continue();
+  });
+
   await stale.goto('/documents');
   const staleRow = stale.locator('aside').getByText(title, { exact: true }).first();
   await expect(staleRow).toBeVisible({ timeout: 20_000 });
 
   await moveToTrash(page, title);
-  await purgeFromTrash(page, title);
 
-  await staleRow.click({ button: 'right' });
-  await stale.getByRole('menu').getByRole('menuitem', { name: '移入回收站' }).click();
-  await expect(stale.getByText(REJECTION)).toBeVisible({ timeout: 20_000 });
+  // Stage one: the row is still there, because this tab never heard about it.
+  // Without this the final assertion would be vacuous — a row that was already
+  // gone would also satisfy "gone after the poll".
+  await expect(staleRow).toBeVisible({ timeout: 10_000 });
+
+  // Stage two: let the stream through and wait out the backoff. The aborted
+  // requests counted as failures, and client.ts:333-335 backs off exponentially
+  // up to SYNC_RETRY_MAX_MS = 30_000. Measured: nothing had come through by
+  // T+5s, and the row was gone by T+10s.
+  cut = false;
+  await stale.bringToFront();
+  await expect
+    .poll(async () => stale.locator('aside').getByText(title, { exact: true }).count(), {
+      timeout: 40_000,
+      intervals: [500, 1000, 2000, 3000],
+    })
+    .toBe(0);
+
+  // The stream really did run; the row did not vanish for want of a poll.
+  expect(passed).toBeGreaterThan(0);
+
   await stale.close();
 });
 

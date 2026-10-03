@@ -105,3 +105,38 @@ test('editor right panel opens without collapsing content', async ({ page }, tes
   await assertNoHorizontalOverflow(page);
   expect(viewport.width).toBeLessThan(1024);
 });
+
+test('the bell leaves the title row its width on a phone', async ({ page }, testInfo) => {
+  // 铃铛是页头 flex 行里的一个 shrink-0 兄弟节点。它一旦参与水平布局，
+  // 标题的 flex-1 就被切掉 36+12px：标题截断位置变了，其下每一行的折行
+  // 跟着变，整屏位移（mobile 档 /whiteboards 实测 5381 pixels, ratio 0.03）。
+  //
+  // 桌面/平板本来就有足够宽度，不该被这条约束绑住。
+  test.skip(testInfo.project.name !== 'mobile', '只有手机档宽度会让铃铛挤掉标题');
+
+  await page.goto('/whiteboards');
+  await pageReady(page);
+
+  const bell = page.getByRole('button', { name: '通知' });
+  await expect(bell).toBeVisible();
+  const title = page.locator('header h1');
+  await expect(title).toBeVisible();
+
+  const bellBox = (await bell.boundingBox())!;
+  const titleBox = (await title.boundingBox())!;
+
+  // 叠放而非并排：铃铛不落在标题的水平区间内。
+  expect(
+    bellBox.x,
+    `bell starts at x=${bellBox.x}, inside the title run ${titleBox.x}..${titleBox.x + titleBox.width}`,
+  ).toBeGreaterThanOrEqual(titleBox.x + titleBox.width - 1);
+
+  // 标题宽度就是判据本身：并排时铃铛吃掉自己的 36px 加一个 12px gap，
+  // 实测标题只剩 156.8px；让位后回到 204.8px。阈值取 200 是因为这两档之间
+  // 没有第三个可能的值——页头在手机档的其余部分（汉堡 40、actions、
+  // padding 32）是固定的。
+  expect(
+    titleBox.width,
+    `title took ${titleBox.width}px; the bell looks like it is still in the flex row`,
+  ).toBeGreaterThanOrEqual(200);
+});

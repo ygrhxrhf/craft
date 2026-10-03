@@ -230,11 +230,17 @@ test('the drag handle reorders top-level blocks', async ({ page }) => {
   const to = await last.boundingBox();
   if (!from || !to) throw new Error('drag geometry missing');
 
-  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  // Not the handle's centre. It is 56px wide and packs a grip, a `+` and a `⋮`
+  // side by side, so the centre lands on the `+` button — which stops the
+  // pointerdown on purpose, leaving the drag unarmed and the reorder a no-op
+  // that still looks like a clean pass. Measured: the grip is the first 16px.
+  const gripX = from.x + 6;
+  const gripY = from.y + from.height / 2;
+  await page.mouse.move(gripX, gripY);
   await page.mouse.down();
   // The handle arms the drag only after a few pixels of travel.
-  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2 + 12, { steps: 4 });
-  await page.mouse.move(to.x + to.width / 2, to.y + to.height - 2, { steps: 12 });
+  await page.mouse.move(gripX, gripY + 12, { steps: 4 });
+  await page.mouse.move(gripX, to.y + to.height - 2, { steps: 12 });
   await page.mouse.up();
 
   await expect(editor.locator('p').first()).toHaveText('第二块');

@@ -13,7 +13,7 @@ export function ToggleBlockView({ node, updateAttributes }: NodeViewProps) {
   };
 
   return (
-    <NodeViewWrapper as="div" className="my-1">
+    <NodeViewWrapper as="div" className="my-1" data-open={String(isOpen)}>
       <div className="rounded-md">
         <button
           type="button"

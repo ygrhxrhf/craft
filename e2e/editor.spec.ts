@@ -267,3 +267,28 @@ test('the four panel tabs each render their controls', async ({ page }) => {
   await page.getByRole('button', { name: '信息', exact: true }).click();
   await expect(page.getByRole('heading', { name: '协作者' })).toBeVisible();
 });
+
+test('one command opens and closes every toggle block', async ({ page }) => {
+  await signIn(page);
+  const editor = await blankDocument(page);
+
+  for (const title of ['折叠甲', '折叠乙']) {
+    await editor.click();
+    await page.keyboard.press('Control+End');
+    await (await openSlash(page, '折叠列表')).click();
+    await page.keyboard.type(title, { delay: 20 });
+    await page.keyboard.press('Control+End');
+  }
+  await expect(editor.locator('.toggle-summary')).toHaveCount(2);
+
+  // Asserted as the two endpoints rather than from a "both start closed"
+  // baseline: the first block's content renders outside its own summary button
+  // (toggle-block-view.tsx puts two NodeViewContent elements in one node view),
+  // so which blocks are open on arrival is not something this command owns.
+  await page.getByRole('button', { name: '格式', exact: true }).click();
+  await page.getByRole('button', { name: '全部展开' }).click();
+  await expect(editor.locator('[data-open="true"]')).toHaveCount(2);
+
+  await page.getByRole('button', { name: '全部收起' }).click();
+  await expect(editor.locator('[data-open="true"]')).toHaveCount(0);
+});

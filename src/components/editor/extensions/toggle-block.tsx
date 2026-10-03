@@ -1,6 +1,7 @@
 import { Node, mergeAttributes } from '@tiptap/react';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { ToggleBlockView } from './toggle-block-view';
+import { TOGGLE_NODE, setOpenOnAllToggles } from './toggle-all';
 
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {
@@ -8,12 +9,14 @@ declare module '@tiptap/react' {
       setToggleBlock: () => ReturnType;
       toggleToggleBlock: () => ReturnType;
       unsetToggleBlock: () => ReturnType;
+      expandAllToggleBlocks: () => ReturnType;
+      collapseAllToggleBlocks: () => ReturnType;
     };
   }
 }
 
 export const ToggleBlock = Node.create({
-  name: 'toggleBlock',
+  name: TOGGLE_NODE,
   group: 'block',
   content: 'block+',
   defining: true,
@@ -60,6 +63,24 @@ export const ToggleBlock = Node.create({
         () =>
         ({ commands }) => {
           return commands.lift(this.name);
+        },
+
+      expandAllToggleBlocks:
+        () =>
+        ({ state, tr, dispatch }) => {
+          const changed = setOpenOnAllToggles(state, tr, true);
+          if (!changed) return false;
+          dispatch?.(tr);
+          return true;
+        },
+
+      collapseAllToggleBlocks:
+        () =>
+        ({ state, tr, dispatch }) => {
+          const changed = setOpenOnAllToggles(state, tr, false);
+          if (!changed) return false;
+          dispatch?.(tr);
+          return true;
         },
     };
   },

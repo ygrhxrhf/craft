@@ -4,7 +4,7 @@ import type { Editor } from '@tiptap/react';
 import {
   Bold, Italic, Strikethrough, Code, List, ListOrdered,
   CheckSquare, ChevronRight, AlignLeft, AlignCenter, AlignRight,
-  Indent, Outdent, Eye, Square,
+  Indent, Outdent, Eye, Square, FoldVertical, UnfoldVertical,
 } from 'lucide-react';
 import { cn } from 'cn';
 
@@ -30,9 +30,14 @@ const formatButtons = [
 
 const listButtons = [
   { icon: CheckSquare, active: (e: Editor) => e.isActive('taskList'), action: (e: Editor) => e.chain().focus().toggleTaskList().run(), label: '待办' },
-  { icon: ChevronRight, active: (e: Editor) => e.isActive('toggle'), action: (e: Editor) => e.chain().focus().setToggleBlock().run(), label: '折叠' },
+  { icon: ChevronRight, active: (e: Editor) => e.isActive('toggleBlock'), action: (e: Editor) => e.chain().focus().setToggleBlock().run(), label: '折叠' },
   { icon: List, active: (e: Editor) => e.isActive('bulletList'), action: (e: Editor) => e.chain().focus().toggleBulletList().run(), label: '无序列表' },
   { icon: ListOrdered, active: (e: Editor) => e.isActive('orderedList'), action: (e: Editor) => e.chain().focus().toggleOrderedList().run(), label: '有序列表' },
+];
+
+const toggleGroupButtons = [
+  { icon: UnfoldVertical, action: (e: Editor) => e.chain().focus().expandAllToggleBlocks().run(), label: '全部展开' },
+  { icon: FoldVertical, action: (e: Editor) => e.chain().focus().collapseAllToggleBlocks().run(), label: '全部收起' },
 ];
 
 const alignButtons = [
@@ -155,6 +160,25 @@ export function FormatTab({ editor }: FormatTabProps) {
               onClick={() => btn.action(editor)}
               label={btn.label}
             />
+          ))}
+        </div>
+      </section>
+
+      {/* Toggle blocks. Document-wide, so they get their own row rather than a
+          slot in the per-selection list group. */}
+      <section>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">折叠</h4>
+        <div className="grid grid-cols-2 gap-1">
+          {toggleGroupButtons.map((btn) => (
+            <button
+              key={btn.label}
+              type="button"
+              onClick={() => btn.action(editor)}
+              className="flex items-center justify-center gap-1.5 rounded-md border border-foreground/8 bg-card px-2 py-1.5 text-meta text-foreground/55 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground"
+            >
+              <btn.icon className="size-4" />
+              {btn.label}
+            </button>
           ))}
         </div>
       </section>

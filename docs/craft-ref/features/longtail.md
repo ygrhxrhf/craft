@@ -3009,7 +3009,7 @@ search --include craft --document 7560… --fetch-blocks → 逐字相同 ＋ Hy
 
 ① **篇间序的键**＝本批三把候选（条目数降序／命中位数降序／时间戳）互否＝☆ 已登记"可能不可证"＝只能等写侧造两篇命中完全同构的目标；
 ② **预算"位"在相邻并段上的记账**＝`t**oo**ls` 给出 5 位／4 段＝☆ 需要一枚含"相邻两处同字符命中＋远距一处命中"的目标（官方样例里再找一遍可试，**零写入优先**）；
-③ **前后文保留的常数**＝三枚现场＝49 字符（一整块）／4 字符（半行）／约 100 字符级＝☆ 候选"≈≤100 字符"未钉死＝**零写入可判**＝下批首选；
+③ **前后文保留的常数**＝三枚现场＝49 字符（一整块）／4 字符（半行）／约 100 字符级＝☆ 候选"≈≤100 字符"未钉死＝✎ **第 139 批钉死＝常数 100（G1358）**＝**零写入可判**＝下批首选；
 ④ **三组"未达 5"是否自然耗尽**＝#3 的 d06ab 3 枚／#7 的 5376 3 枚／#15 的 756 4 枚＝未做全文核对＝☆ 判据已写好（本节六）＝下批顺手可结；
 ⑤ **回收站三条具名残留的永久清除**＝读回完成、删除未执行＝等窗口状态可确认（屏上 V93；两面都无 `purge`＝G678）；
 ⑥ ☆ 承历批未动＝写侧四条（四层以上页／>50 直接子块／当日日记页命中形状／名字含 `p{L}` 的目标）＝需当轮具名授权；六条屏幕项＝需用户开页；`api-contract.md` 的 `Common flags` 是否加 ✎；
@@ -3055,7 +3055,7 @@ search --include craft --document 7560… --fetch-blocks → 逐字相同 ＋ Hy
 ### 七、★★ 一处未解异常＝卡片标题做前文位时只留末词
 
 ⇒ `--include you` 首窗前文＝`...text `（5 字符）＝而 `blocks get d06ab4e4… --depth 1` 给出该卡片标题原文逐字＝`"markdown":"Adding Text "`（12 含尾空格）＝⇒ 命中前缀 76、预算余 24，**却只给了 5**；
-⇒ `--include craft` 第 3 条前文＝`...images, videos and files`（24）＝原文＝`Adding Images, Videos and Files`（31）＝⇒ 命中前缀 0、预算余 100，**却只给了 24**＝☆ 两枚都恰好"去掉首词"＝候选＝标题面在索引里另有一条去首词的通路＝**未证＝G1357＝下批首选（零写入可判）**；
+⇒ `--include craft` 第 3 条前文＝`...images, videos and files`（24）＝原文＝`Adding Images, Videos and Files`（31）＝⇒ 命中前缀 0、预算余 100，**却只给了 24**＝☆ 两枚都恰好"去掉首词"＝候选＝标题面在索引里另有一条去首词的通路＝**未证＝G1357＝下批首选（零写入可判）**＝✎ **第 139 批＝本候选作废**（那枚 45 字符是一般规则的必然值＝复算器 MATCH＝异常改绑 `caption`＝G1359＝☆ 本批逐字片段见下节 §五十九）；
 
 ### 八、☆ 回收站读回与屏幕面（删除类授权"动手前先读回"的现场，六位前缀缩写）
 
@@ -3063,4 +3063,58 @@ search --include craft --document 7560… --fetch-blocks → 逐字相同 ＋ Hy
 
 ## 仍未采到（第 138 批末，逐字面口径）
 
-① 前文保留量的等式（界 ≤100 已证、常数未证＝G1351）；② **卡片标题前文只留末词的机制**（G1357＝下批首选）；③ 第三组"未达 5"＝d06ab×`videos` 需整篇深遍历＝零成本不可判；④ 篇间序的键（两发复打序相同＝仍未证）；⑤ 回收站三条具名残留的永久清除（等窗口状态）；⑥ 写侧四条与六条屏幕项（需当轮具名授权／需用户开页）；⑦ ☆ 新问句＝`--cursor`／`--page` 在已截断结果上会不会承认"还有更多"（G1298 延伸＝零依赖可判）。
+① 前文保留量的等式（界 ≤100 已证、常数未证＝G1351）＝✎ **第 139 批等式已证（G1358）＝同批把 ② 的"标题面"候选作废、异常改绑 `caption`（G1359）**；② **卡片标题前文只留末词的机制**（G1357＝下批首选）；③ 第三组"未达 5"＝d06ab×`videos` 需整篇深遍历＝零成本不可判；④ 篇间序的键（两发复打序相同＝仍未证）；⑤ 回收站三条具名残留的永久清除（等窗口状态）；⑥ 写侧四条与六条屏幕项（需当轮具名授权／需用户开页）；⑦ ☆ 新问句＝`--cursor`／`--page` 在已截断结果上会不会承认"还有更多"（G1298 延伸＝零依赖可判）。
+
+
+## 五十九、**第 139 批逐字片段（同一枚卡片子页里"源文 vs 摘录前文"的逐字符对照＝五处模型命中、三处 `caption` 系统性失败）**
+
+⇒ 全部片段取自官方 Handbook 卡片子页 `bfa7cf0a…`（`blocks get --depth 1 --format json` 那一份＝第 5 发）＝☆ 下面每条"源文"逐字照 JSON、"摘录"逐字照 `search` 回包＝用户自己写的块本批零接触；
+⇒ ① **源文 `467a1c3e…`＝`Just type `/` and filter for either `Formula` or `Code`.`（剥标记＋小写后 50 字符）**＝摘录实测＝`...either formula or code.`（23 字符）＝模型预测＝末 `100−75＝25` 字符＝`r either formula or code.` → 砍不完整词 `r ` → **23**＝MATCH；
+⇒ ② **源文卡片标题＝`Adding Code, Math Formula (TeX), and Inline Equation`（52）**＝摘录实测＝`code, math formula (tex), and inline equation`（45）＝模型预测＝末 48＝`ng code, …` → 砍 `ng ` → **45**＝MATCH＝★★★★★ **这一条就是上批"标题面去首词"候选的现场＝它由一般规则精确复算得出＝候选作废（G1359）**；
+⇒ ③ **源文 `f36e6083…`＝三行 swift 代码块（`func isCountEnough(_ number: Int) -> Bool {`／`\treturn number > 15`／`}`）**＝摘录实测＝`...}` ＋ 命中行 `**swift** code...`＝⇒ 预算 `100−0＝100` 全部可用、前两行一个字都没进＝★★★★★ **"前文最多跨到前一枚块的最后一行"的现场**＝☆ 同一条摘录的第二行尾部那枚 `...` 是流续接标记（原文到 `Swift Code` 为止）；
+⇒ ④ **源文 `cea479df…`＝445 字符单行 plaintext（`Lorem ipsum … laborum.`）**＝两窗各取一段＝第 8 发取**开头 93 字符**（`lorem ipsum dolor … tempor incididunt ut...`＝后面被 `...` 截）＝第 11 发取**末尾 96 字符**（`occaecat cupidatat … laborum. `＝MATCH＝末 `100−0` 后砍 `int `）＝★★★ 同一枚**完全没命中**的块被两个窗口各取一段＝⇒ G1362；
+⇒ ⑤ **三枚 `caption` 块的实测＝复算器唯一的三处 MISS**＝`3786ee30…`＝`<caption>*Inline code*</caption>` → 源文行 `inline code`（11）→ 实测 `code`（4）｜`85d00516…`＝`*Swift Code*` → `swift code`（10）→ 实测 `code`（4）｜`bc9aea4d…`＝`*TeX Formula*` → `tex formula`（11）→ 实测 `formula`（7）＝⇒ 三处**全部只留末词**＝☆ 而普通 text／代码／标题块同算法五发全中＝⇒ 异常隔离到 `caption` 这一个块属性（G1359）＝☆ 本账户这枚子页里 caption 恰好全是 2 词＝"去首词"与"只留末词"两假说**无法区分**＝如实挂账；
+⇒ ⑥ **`78b08ae7…`＝`## Code Examples `＝摘录打印成 `code **examples** `＝尾随空格逐字保留**＝☆ 且它后面单独一行只有 `...`＝⇒ 流续接标记可以独占一行（历批只见过它与文本同处一行）＝G1353 补一档；
+⇒ ⑦ ☆ 两形 `...` 并存复证＝本批 `blocks get --format markdown` 的 `<contentPreview>` 里带官方自带的 `...\n...and 22 more blocks`＝判"摘录被截"要先排除这种（历批仪器坑第三次踩点）。
+## 仍未采到（第 139 批末，逐字面口径）
+
+① **`caption` 前文只留末词的机制**＝三枚逐字现场（预测 11／10／11、实测 4／4／7）＝☆ 分"去首词"／"只留末词"要一枚 **≥3 词的 caption** ⇒ ✎ **第 140 批＝"样例全为 2 词"作废**＝本文件 `longtail.md:2994` 那行就逐字记着 `DFF43C2D…` 首块的 32 词 caption ⇒ "全 2 词"只限该卡片子页 7 枚 ⇒ 零写入**可**判＝桥通后一发；
+② **"前文只跨一枚上一行"的第二次采样**＝本批只有一枚反证（3 行代码块只给 `}`）＝☆ 需另一枚多行块（多行 callout／含换行的 text 块）复验（G1358）；
+③ **常数 100 的边界行为**＝`p₁ ≥ 100` 时前文是零还是负数回退？＝☆ 可判条件＝一枚"命中落在行内第 100 字符之后"的目标＝本批五发都没造出这一形状（零写入可判＝下批顺手打）；
+④ **`--cursor` 形状族**＝`50:zzz` 被接受并清空结果＝☆ `0:`／`999:`／无冒号／空串各走哪一支未测（G1360）；
+⑤ **回收站三条具名残留**＝屏上通路本批未探测（零屏幕动作）＝等窗口状态；另 3 项空标题非本轮所建＝不动；
+⑥ 写侧四条与六条屏幕项（需当轮具名授权／需用户开页）；⑦ ☆ 新问句＝第 138 批那条"游标会不会承认还有更多"本批已结案＝新句改成＝**游标清空结果这一档在 `blocks get`／`documents list` 这两面真有分页的动词上是否存在**（G1360 延伸＝零依赖可判）。
+
+## 六十、**第 140 批逐字片段＝32 词 caption 作前文的"预测 vs 实测"一次咬合（复算器 `_harvest/b140-count.mjs`）**
+
+1. ★★★★★ **回包逐字**（留底 `_harvest/b140-r3-strategy.txt`）＝`search --include strategy --document DFF43C2D…` → 1 窗＝`Blocks: <objId:21>`、`Match:` 两行＝前文行 `...videos or click around and explore on your own.` ＋命中行 `the goal of this meeting is to discuss marketing **strategy** for a…...`（**整行小写＋整行打印**＝G1350／G1352 第三次复证）；
+2. ★★★★ **模型预测列**（输入全部取自历批 `blocks get` 的逐字 JSON，非手工转录）＝caption 原文 `<callout><caption>Welcome to Craft! …explore on your own.</caption></callout>` → 索引副本（去标签＋小写）**170 字符**；命中行 **64 字符**、`p₁`（`strategy` 在行内偏移）＝**49** ⇒ 预算 ＝`100−49`＝**51** ⇒ 取末 51 → 起点落在词中 → 回退 → **47 字符 `videos or click around and explore on your own.`** ＝与实测**逐字符相等（MATCH）**；☆ 1-based 与 0-based 两种计法本枚都给 47（回退把它遮住了）＝⇒ **本枚不能分辨 `p₁` 的基数**＝如实登记；
+3. ★★★ **对照组（同脚本同规则）**＝① 批 139 `--include snippet` 窗（前一块＝普通段落）＝预测 `code, math formula (tex), and inline equation` ＝实测 **MATCH**；② 批 139 `--include equation` W2（前一块＝**普通 caption** `<caption>*Inline code*</caption>`）＝预测 `inline code`、实测 `code` ＝**MISS**（预算 93 明明够）⇒ 两组同脚本一个 MATCH 一个 MISS ⇒ 差异**不在复算器**、在输入块的属性；
+4. ★★ **块序逐字**（同一批 JSON 复原）＝`Welcome to Craft` 首页 20 枚子块＝[1] 页根 → [2] caption `CF0F502D…`（208 字符、`decorations:["callout"]`、`textAlignment:center`、`#00ca85`）→ [3] **`markdown` 空串块 `9A680E1A…`** → [4] 命中块 `75406AD9…`（64 字符，尾部自带 `…`）→ [5] `Agenda` … ⇒ **前文跨过 [3] 直接取 [2]**；
+5. ⇒ **本枚 caption 的完整字段**（在册第一次记全）＝`type:text`、`textStyle:caption`、`textAlignment:center`、`decorations:["callout"]`、`color:"#00ca85"`、`markdown` 带 `<callout><caption>…</caption></callout>` 双层标签；☆ 它的**文本**早在 `longtail.md:2994` 记过（第 137 批数句点那行）、**字段**本批首记；
+6. ⇒ **未解交接**＝普通 caption（无 callout）那三枚为何只留末词＝与本枚的差异有两处（callout 装饰／前一块是空串）**不可分**＝判据见 `gap.md` §三点一〇九一 ①。
+
+## 六十一、**第 142 批逐字片段＝转写复算 25 枚摘录窗口的前文分布（复算器 `_harvest/b142-count.mjs`、零新增调用）**
+
+1. ★★★★★ **读数原样**＝`payloads=59  windows_raw=28  dropped_noise=45  unique=25`；`noNL max=99  withNL max=100  noNL>=100=0  withNL>=100=1`。
+2. ★★★★ **noNL 全谱（升序 25 枚）**＝`0,0,1,2,2,3,4,6,18,18,80,89,90,95,95,95,96,96,96,97,97,98,98,98,99`＝☆ 与历批那 13 枚 `{4,4,6,19,24,35,52,53,81,90,90,97,98}` 同口径不同样本池＝**本批把最大值从 98 推到 99**（贴边程度，不是越过 100）。
+3. ★★★ **贴边那枚逐字**（三行窗、首枚命中＝`snippet`）＝
+   前文行 `...code, math formula (tex), and inline equation`
+   命中行 `you can also add code, math formula (tex), plaintext **snippet**s, inline code, and inline equation.`
+   ⇒ 前文行正文 45 ＋换行 1 ＋命中在行内偏移 54＝**换行不计＝99、换行计入＝100**＝这一枚正好卡在两种口径的分界上＝☆ 但两种解释都不被否证（正文口径下"材料只有 45、预算 46"属正常欠载）＝**登记为未决**。
+4. ★★ **口径互证那一枚逐字**（在册 98 那发复算回来）＝前文行 `...at a specific location.` ＋命中行 `if you are using a keyboard, you can also just press space when a block is **focus**ed to insert a new block below....`＝23＋75＝98＝与 G1351 那句"98＝`--include focus` 首窗＝23＋75"逐字相同。
+5. ☆ **从未登记的三族逐字**（在全部 24 份产物里 `grep` 零命中）＝`...in your documents. craft will automatically arrange them in the best possible layout. see some **examples** below:...`（单行窗＝95）／`...perfect both on desktop/laptop devices and on tablets/phones. feel free to take a look at a few **examples** below:...`（95）／前文行 `...a step further - craft can export your hierarchical notes into a flat interactive pdf.` ＋命中行 `see some **examples** below:...`（94）。
+6. ⇒ **数据卫生**＝以上正文全部出自官方样例文档 `d06ab…`（Craft Handbook）＝**用户自己写的块一枚未取**；出处含另一会话转写（`0a19f932…`）＝按历批口径**标为历史读数**、本批未复打＝不冒充本轮实测。
+
+## 六十二、**第 143 批逐字片段＝转写全量回包的两条常数复证（仪器 `_harvest/b143-count.mjs`／`_harvest/b143-pairsum.mjs`、零新增调用）**
+
+1. ★★★★★ **条目内加粗段数分布（71 条目）**＝`{0:3, 1:38, 2:15, 3:7, 4:2, 5:6}`＝**最大值恰为 5、零条目越界**；逐篇条目序列（同一篇跨发不合并）＝`75606`＝2,1,2,5,5,2,2,1,1,3／`89d53`＝5,5,1,1,1,4,2,3,2,1／`DFF43`＝2,1,1,2,2,5,1／`5376f`＝2,1,5／`d06ab`＝41 条目、最大 4。
+2. ★★★★ **"同一发内同一篇"段数和（34 组）**＝`1,1,1,1,1,2,2,2,2,2,2,3,3,3,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,7`＝**=5 的 16 组／<5 的 16 组／>5 的只有 2 组**。
+3. ★★★★★ **两枚越界的逐字分解**＝
+   `d06ab`（`Search results: 12 match(es)` 那一发）＝标题块行 `**Craft** Handbook`（1 段）＋正文 5 段（`here's a 'how to' of **craft**'s features....`／`**craft** lets you insert photos, videos, and any files from your camera, photo library,`／`photos, videos, and files will look absolutely stunning in your documents. **craft** wil`／`**craft** allows you to style your content in a beautiful and simple way. we've created `／`apart from using visual controls and buttons, **craft** allows you to style your content`）＝**1＋5＝6**；
+   `DFF43`（`Search results: 2 match(es)`、检索词＝`o`）＝标题块行 `Welc**o**me t**o** Craft`（2 段）＋正文行 `welc**o**me t**o** craft! this example d**o**cument is full **o**f c**o**ntent for you t`（5 段）＝**2＋5＝7**。
+   ⇒ **正文一侧从不越过 5＝越界全部来自标题块**＝G1334＋G1340 第一次被算成恒等式。
+4. ★★★★ **后文余量分布（行内口径）**＝末枚命中在其本行之后保留 `max=102`、`p50=15`、top5＝`99,100,101,101,102`＝☆ 与历批跨行口径的 116／153 并列＝**两口径都 >100**＝⇒ 后文不设预算这个结论再获一组、且本批给的是分布不是孤例。
+5. ★★★ **仪器自纠逐字**＝未切严边界时同一份数据报出 `payloads=63 pairs=34 max sum=18 >5 共 17 组`＝切严（到下一个 `Search results:` 之前）后 `payloads=81 entries=71 dropped=5`、>5 只剩 2 组＝⇒ 回包数在 59／60／69／81 之间跳过＝**计数类读数只在定稿切法下有效**。
+6. ⇒ **数据卫生**＝以上正文全部出自官方样例文档（`d06ab…` Craft Handbook／`DFF43…` 样例文档）＝用户自己写的块一枚未取＝出处＝会话转写（本会话＋另一会话 `0a19f932…`）＝**标历史读数、本批未复打**。
+

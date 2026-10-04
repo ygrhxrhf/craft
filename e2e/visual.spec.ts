@@ -116,11 +116,22 @@ for (const theme of ['light', 'dark'] as const) {
           // (src/app/(app)/calendar/page.tsx:20-21) and nothing masks the day
           // grid -- `[class*="grid-cols-7"]` measures 0 hits here, the only one
           // in the repo is the collection calendar view -- so the shot walked
-          // out of its own baseline the day after it was recorded. The stale
-          // grid is 5427 px on mobile, just under the 2% budget on its own,
-          // which is why it only failed inside a full run where the dev
-          // "Rendering…" pill adds another 4891. Consequence: this shot cannot
-          // catch a wrong month by itself, so the pin is load-bearing.
+          // out of its own baseline the day after it was recorded.
+          // Budget maths, read off playwright-core 1.63 (coreBundle.js:7903 and
+          // :7909): the ratio is compared against `width * height *
+          // maxDiffPixelRatio` over the WHOLE frame, because a mask paints the
+          // region equal in both images and therefore never shrinks the
+          // denominator. 390x664 = 258,960 px, 2% = 5,179 px. The stale grid
+          // measured 5,390 px (`.pw-out/e2e-report-b5r.json`, 10-03 14:01, repeated
+          // in b5r2 at 14:08) = OVER budget on its own. So the note this replaces
+          // was wrong twice over: the delta was not under 2%, and the "ratio 0.03"
+          // printed beside it is `Math.ceil(count / total * 100) / 100` of 0.0208,
+          // not evidence of a larger difference. What is actually true: the same
+          // shot was green in isolation a minute later (`.pw-out/e2e-report-cal1.json`,
+          // 2 tests, 0 unexpected), so isolated-vs-full-run changed which grid state
+          // got captured, not how close to the budget it sat. Consequence unchanged:
+          // this shot cannot catch a wrong month by itself, so the pin is
+          // load-bearing.
           await page.clock.setFixedTime(new Date(CALENDAR_BASELINE_DAY));
         }
         await page.goto(route);

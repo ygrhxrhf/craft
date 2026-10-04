@@ -142,21 +142,44 @@ export async function getCollections() {
     .orderBy((m: any) => m.order.asc())
     .all();
 
-  const result = [];
-  for (const collection of collections) {
-    const properties = await db.orm.public.CollectionProperty
-      .where({ collectionId: (collection as any).id })
-      .all();
-    const items = await db.orm.public.CollectionItem
-      .where({ collectionId: (collection as any).id })
-      .all();
+  const ids: string[] = [];
+  for (const c of collections) ids.push(String(c.id));
+  if (ids.length === 0) return [];
 
-    result.push({
-      ...collection,
-      properties,
-      _count: { items: items.length },
-    });
+  // Two reads for the whole page instead of two per collection. The loop cost 2N+1 round
+  // trips (measured: 4 collections = 9 statements, 2 = 5) and pulled every item column to
+  // count rows the caller only wants a number for.
+  const [properties, items] = await Promise.all([
+    db.orm.public.CollectionProperty
+      // Callback form: `.where({ collectionId: { in: [] } })` matches nothing instead of
+      // erroring, so the empty case above has to stay.
+      .where((m: any) => m.collectionId.in(ids))
+      .all(),
+    db.orm.public.CollectionItem.where((m: any) => m.collectionId.in(ids))
+      .select('id', 'collectionId')
+      .all(),
+  ]);
+
+  const propsByCollection = new Map<string, Record<string, unknown>[]>();
+  for (const p of properties as Record<string, unknown>[]) {
+    const key = String(p.collectionId);
+    const bucket = propsByCollection.get(key);
+    if (bucket) bucket.push(p);
+    else propsByCollection.set(key, [p]);
+  }
+  const itemsByCollection = new Map<string, number>();
+  for (const i of items as Record<string, unknown>[]) {
+    const key = String(i.collectionId);
+    itemsByCollection.set(key, (itemsByCollection.get(key) ?? 0) + 1);
   }
 
+  const result = [];
+  for (const c of collections) {
+    result.push({
+      ...c,
+      properties: propsByCollection.get(String(c.id)) ?? [],
+      _count: { items: itemsByCollection.get(String(c.id)) ?? 0 },
+    });
+  }
   return result;
 }

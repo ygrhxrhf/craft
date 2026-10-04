@@ -138,13 +138,22 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   }, []);
 
   const setPref = async (patch: Partial<{ theme: string; editorFont: string; editorWidth: string }>) => {
-    if (patch.theme) setTheme(patch.theme);
     // A click can land before the initial preferences fetch resolves; join it instead of dropping it.
     const base = prefs ?? (await getPreferences().catch(() => null));
     if (!base) return;
-    const next = { ...base, ...patch };
-    setPrefs(next);
-    await updatePreferences(patch).catch(() => setPrefs(base));
+
+    // Same rule as setSwitch below: a choice paints only once the write lands. Painting it
+    // first showed 深色 as the stored theme 494ms before the server accepted it, and a
+    // reload inside that window aborts the action. The theme itself waits with it, or
+    // next-themes keeps the unsaved choice in localStorage and the row silently disagrees
+    // with every later read.
+    try {
+      await updatePreferences(patch);
+    } catch {
+      return;
+    }
+    if (patch.theme) setTheme(patch.theme);
+    setPrefs({ ...base, ...patch });
   };
 
   const setSwitch = async (key: SwitchKey, value: boolean) => {

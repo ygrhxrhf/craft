@@ -94,40 +94,268 @@
    撤除理由＝同一构建、同一动作串，只起 1 个 dev server 时 533–1133ms，而本配置同时起 3 个 server 时
    2295–2562ms ⇒ 绝对毫秒数跟踪的是跑测机负载而不是产品；用它当判据既会误红也会误绿
    （两轮里坏构建因 CDP 往返每次 >500ms 反而"通过"，见 `docs/adr/0003` 附注）。
-7. **两枚未修的间歇性红（属产品侧，待判）**：
-   - `core.spec.ts:38 settings persist preference selection`：**产品档，非通路档**。
-     红点在 `core.spec.ts:66:71`（＝`page.reload()` 之后那条 `toHaveAttribute`），
-     **不是** `:58` 那条点击后的断言——也就是说点「深色」当场是绿的，刷新回来才是错的。
-     原文：`Locator: getByRole('button', { name: '深色', exact: true })`
+7. **两枚间歇性红（一枚已修、一枚待判）**：
+   - `core.spec.ts:38 settings persist preference selection`：**产品档，已结案（2026-10-04，本轮未提交）**。
+     原始红点照抄存档，不改写：`core.spec.ts:66:71`（＝`page.reload()` 之后那条 `toHaveAttribute`），
+     **不是** `:58` 那条点击后的断言；`Locator: getByRole('button', { name: '深色', exact: true })`
      `Expected: "true"  Received: "false"  Timeout: 20000ms`，call log
-     `40 × locator resolved to <button type="button" aria-pressed="false">…</button>`。
-     ⇒ 判「产品」而不是「仪器」的依据＝20s 内 40 次轮询取值恒为 `"false"`。窗口宽度类误红（见下一条锚点用例）
-     的长相是"错过一个瞬态"，这里没有瞬态，服务器侧状态确实没有这次写。
-     机制假设（未证）：`:58` 通过可能来自乐观状态，写请求此时仍在飞行，`:64` 的 reload 把它整条打断
-     ＝与本轮刚结案的标题落库缺陷同族（"UI 先成功、写还在队列里、导航即丢"）。
-     归因＝**不是 `13f3549` 引入的**。两档都是**单跑**（`argv` 逐字相同＝
-     `--config .pw-out/pw.local.config.ts e2e/core.spec.ts --project=desktop -g "settings persist preference"`，
-     同一时间只有一个 playwright 占 3000/3001/3002），报**分布**不报单发：
-     - 已提交字节 `13f3549`：**3/6 红**＝`set1` 红、`set2` 绿、`set3` 红、`set4` 绿、`set5` 红、`set6` 绿
-       （startTime `04:22:30.821Z`／`04:23:37.672Z`／`04:24:40.955Z`／`04:25:27.764Z`／`04:42:06.059Z`／`04:42:51.655Z`），
-       三枚红的失败位置**全部**是 `66:71`。
-     - 改动前 `a15f261`：**4/4 红**＝`pre1`–`pre4`（`04:26:40.107Z`–`04:29:26.733Z`），失败位置同样 `66:71`、
-       取值同样 Expected `"true"`／Received `"false"`。
-     用例耗时呈双峰：绿＝11328／12400／19352ms，红＝29627／30549／34718ms（红的那三枚内部都含着 20s 超时）。
-     ⇒ **零并发即可复现，所以不得写成"并发压力类"**；两档之间 3/6 与 4/4 的差在当前样本量下不足以判定
-     `13f3549` 让它变好或变坏，本轮不据此下任何方向的结论。
-     ☆ 不得因为 3/6 绿就把它当噪声关闭、也不得为了读数变绿而回退测量条件／改判据／加大超时。
-     本轮**未修**（属产品侧设计级：开关需确认写入落库后再改画面，与偏好乐观回滚同源，要具名指令）。
-     ☆ 本条初稿曾把它写成"`:51` 异步载入偏好把乐观值回写覆盖"，那是没读 `error.location` 就照着
-       面板注释猜的机制，已按上面的实算位置改正。
+     `40 × locator resolved to <button type="button" aria-pressed="false">…</button>`；
+     已提交字节 `13f3549` 单跑 **3/6 红**、改动前 `a15f261` 单跑 **4/4 红**，耗时双峰
+     （绿 11328／12400／19352ms 对 红 29627／30549／34718ms），零并发即可复现＝**不得写成"并发压力类"**。
+     ★★ 旧条目那句"机制假设（未证）"本轮**证成为真**，并排除了我中途一度以为的另一条成因＝
+     "写通路坏了、`updatePreferences` 落不了库"（那是被上一段的废器读出来的假象，见 (甲)）：
+     机制＝**面板比服务器早 ~0.5s 宣称"已保存"**。修前 `src/components/settings/SettingsPanels.tsx:146`
+     在 `await updatePreferences(patch)` **之前**就 `setPrefs(next)`，而 `:64` 的 reload 落进这段窗口就把
+     写请求整条打断。实算＝浏览器侧只观测、直读 `users.theme`（psql，n=5，同一账号同一行）：
+     上色 218／254／256／266／354ms，落库 354／749／830／846／948ms ⇒ 五发里四发上色早于落库
+     （354ms 那发是我 400ms 采样粒度下的平手，不构成反例），且**五发全部落库**＝写通路本身没坏，
+     坏的是"上色的时机"。
+     ☆ 修法＝`setPref`（现 `:140`）与同文件 `setSwitch`（现 `:159`，历批已是"先确认写入再上色"）对齐：
+     `await updatePreferences(patch)` 成功后才 `setPrefs` 与 `setTheme`。`setTheme` 也一起挪到后面＝
+     next-themes 会把主题写进 localStorage，若画面先走、导航一断，localStorage 与行就长期各说各话
+     且屏上没有任何东西暴露这点。失败分支改为静默不动画面（原来也只是"上色后回滚"，信息量相同）。
+     ☆ 新用例 `core.spec.ts:82 theme choice is not shown as saved before the server accepted it`
+     ＝两把钟对照：`waitForResponse` 只观测不改请求，取 `postData()` 里含 `"<theme>"` 的那一发为"服务器接受"，
+     取 `aria-pressed` 翻真的一刻为"画面宣称"，断言 `paintedAt - acceptedAt >= 0`。
+     **红＝`Received: -494ms`（`.pw-out/e2e-report-preftwo.json`，未修字节，红在 `:128:5`）**，
+     绿＝修后 `--project=desktop -g "theme choice is not shown as saved"` 单跑 **5/5 绿**
+     （15597／15401／15076／15076／15787ms，startTime `08:11:56.881Z`–`08:14:08.041Z`）。
+     旧用例同时在修后单跑 **5/5 绿**（`-g "settings persist preference"`，
+     12971／15264／15519／15580／15372ms，startTime `08:09:07.091Z`–`08:11:16.823Z`）＝
+     **双峰里"红＝含 20s 超时"那一档整体消失**，不是被加大超时压下去的（`expect.timeout` 仍是 20000ms 未动）。
+     ★★★ **两处仪器自纠，都写进判据**：
+     (甲) 我第一版用 `page.route(/\/settings$/)` 扣 POST 想"扣住那一发写"＝**废器**。Next 的 server action
+     全部 POST 到**当前文档 URL**，侧栏批量读／`getPreferences`／`updatePreferences` 共用 `/settings`，
+     扣一个就把三发一起扣住：实测写请求被挤到 `+1843ms`、reload 必然抢跑，读回来的"没落库"是仪器造的。
+     改判据＝凡"扣住某一发写"必须先证这发能被**单独认出**（这里用 `postData()` 含被写的值）。
+     (乙) 用例里 `getByRole(..., { pressed: true })` **不能**当"偏好已载入"的闸门：
+     `(prefs?.theme ?? 'system') === variant` 让 prefs 仍为 `null` 时「系统」就是 pressed＝
+     历批那句注释"the pressed state only appears once they arrive"是错的（本轮改正，未动旧用例本体，
+     只在**新用例**里用 通知 面板的 `载入中…`（`value === undefined` 才渲染）作闸门）。
+     ☆ **同族第二处已一并修掉**：`src/components/theme/ThemeToggle.tsx`（侧栏下拉）原本是
+     `setTheme(...)` 立即上色 ＋ `void updatePreferences(...)` 不await＝同一形状的缺陷，实测差得更远＝
+     红在 `Received: -1569ms`。改法同上，新用例
+     `core.spec.ts:148 sidebar theme choice is not applied before the server accepted it`
+     用同样的两把钟（观测量＝`<html>` 上的 `dark`/`light` 类），修后单跑 **5/5 绿**
+     （startTime `08:49:48.620Z`–`08:51:45.049Z`），跑完 `users.theme` 回读＝`system`（用例复原）。
+     ☆ 本节按用户当轮指令写"结案"，**尚未 commit／push**。
    - `core.spec.ts:119` `.block-anchor-flash`：并跑红、单跑 **5/5 绿**＝覆盖层自毁窗只有 1400ms
      （`src/lib/editor/block-anchor.ts` `deadline = Date.now()+1400`），断言走 CDP 往返轮询，机器吃紧时
      一次往返就整窗错过 ⇒ 仪器窗口宽度不足，不是产品少画一次高亮。**本轮未动**（等具名指令）。
    - ☆ 跑测卫生约定（同一时间只允许一个 playwright 占 3000／3001／3002，不得对 3000 发 `taskkill`）
      的由来：曾为清端口冲突误杀另一路并跑的 dev server，造出 17 枚纯假红与一次 `3001 is already used` 中止。
+8. **★★★ 基线里烘着 dev 浮标＝逐像素扫出来的，不是从"全绿"推的**。
+   按浮标圆点色 `rgb(80,227,194)`（与 `maskColor` 的青 `#00f0f0` 可分）扫 126 张基线的左下 3/4 区域：
+   **15 张命中、每张恰好 44 px＝同一枚同位置的浮标**＝
+   `light-app-{daily-notes,documents,favorites,recent,search,settings,templates,trash}-mobile`（8）＋
+   `dark-app-{documents,recent,search,settings,templates}-mobile`（5）＋
+   `dark-document-tab-信息-{mobile,desktop}`（2）。浮标包围盒实算＝`x 19..135 / y 607..644`
+   （390×664 帧、底左锚定、CSS 偏移 16px），历批那条"行 607–644、列约 30–149"与之相符。
+   ☆ **为什么"视觉 96/0"完全不否证这件事**：整枚浮标在亮色移动帧上实算 **2,955–3,095 px**（本轮重录后
+   逐张量得，见下）＝移动帧的 **1.1%–1.2%**，在 `maxDiffPixelRatio: 0.02` 预算内 ⇒ 全绿与"基线是脏的"
+   同时成立。⇒ **判据：基线卫生只能靠逐像素定位，不能靠通过率**（通过率是"差异 < 预算"的同义反复，
+   对亚预算污染零分辨力）。☆ 暗色帧上"实质差"只有 347–1,171 px＝浮标深灰 `50,50,50` 与暗底
+   `30,30,30` 差 20，压在我 40 的实质差阈值以下＝**同一枚浮标在暗档几乎量不出来**，
+   所以"暗色命中数少"不是"暗色浮标小"，是量法对暗档钝（圆点色那把尺不受影响，恒 44 px）。
+   成因＝这 15 张的 mtime 停在 `10-02 13:16`＝早于把 `expectIndicatorIdle` 闸门加回 `shoot()` 的那次
+   （`13f3549`，10-04 12:13）；同日 12:36 只重录了其中 2 枚（`light-app-collections-mobile`／
+   `light-document-tab-信息-mobile`），剩下 15 枚是漏网的。
+   ☆ **本轮处置＝只保住"能证明只动了浮标"的那 6 枚**：在闸门下 `--update-snapshots=all` 重录一遍，
+   再逐张按"实质差（>40）落在哪里"分类（阈值 40 是为了把下面 (甲) 那个全局 +16 位移当噪声排除）。
+   保住＝`{dark,light}-app-{documents,recent,settings}-mobile` 六枚，逐枚读数＝圆点 `44 → 0`、
+   实质差像素 347／771／1,171／2,955／3,005／3,095、**盒外杂点全部 0**；其余 **103 枚一律 `git restore` 退回**。
+   ★ 退回的理由＝重录一遍把 **109／126** 枚都改了，而其中绝大多数改的不是浮标，是另外两件事
+   （分类读数：17 枚逐字节相同／2 枚只有亚阈值位移／9 枚实质差全在浮标盒内／**98 枚盒外有实质差**）：
+   - **(甲) token 对齐的欠账**：`89e4d52`（09-25 16:32）把暗色 `--base` 从 `oklch(0.17 0.005 260)`
+     改成官方 `oklch(0.235 0 0)`＝实测新帧背景 `rgb(30,30,30)`、旧基线 `rgb(14,15,18)`；亮色侧同理＝
+     `light-login-desktop` 卡片 `255,255,255 → 252,252,252`＝官方 `--base-overlay`。两值都记在
+     `docs/craft-ref/tokens.md`（亮 `--base` `252 253 254`／暗 `--base` `30 30 30`）＝**现在的渲染是官方值、基线是旧的**。
+   - **(乙) 遮罩落点漂了**：`light-app-calendar-desktop` 有 `0,240,240 ↔ 252,253,254` 各 **2,280 px**
+     成对互换＝`shoot()` 第一条 mask（`h2:has-text("19")`／`h2:has-text("20")`）这次盖在别的元素上。
+   - **(丙) 面板左栏内容漂**：`light-document-tab-信息-mobile` 与 `{dark,light}-whiteboard-mobile`
+     在浮标盒内有 3,024–3,038 px 实质差，但**圆点 0 → 0**＝那里根本没有浮标，是内容
+     ⇒ 历批"6908 除浮标外还有内容级漂移"那句由此独立复现。
+   ★★★ **顺带抓到门禁本身的一处弱点（本轮未改，要具名指令）**：`toHaveScreenshot` 的 `threshold`
+   走默认 `0.1`、比率走 `0.02`，两层都看不见"整帧均匀位移"＝暗底 +16 亮度被感知距离判为"相同"；
+   而 `light-app-calendar-desktop` 那 20,162 px 实质差＝1,296,000 的 **1.56%**，正好压在 2% 预算下。
+   ⇒ **判据：通过率对 (a) 全局 token 位移与 (b) 亚预算内容漂移都是零分辨力**，
+   要看得见就得换尺子（圆点色＋实质差包围盒，本轮已建成 `_impl-scripts` 里两份脚本）。
+   ☆ 剩下 **9 枚**仍烘着浮标＝`{dark,light}-app-{search,templates}-mobile`＋
+   `light-app-{daily-notes,favorites,trash}-mobile`＋`dark-document-tab-信息-{mobile,desktop}`，
+   它们与 (甲)(丙) 缠在一起＝重录它们会顺带把未点名的漂移认下来 ⇒ **本轮不替用户做这个决定**。
+   ✎ 该条已被下文第 12 条作废＝下一轮用户点名"全部同意"后，这 9 枚已按 `missing` 闸门重录并逐枚证明
+   改变区间＝浮标几何；(甲)(丙) 那两笔欠账**没有**因此被认下来（其余 117 枚一枚没动）。
+
+9. **本轮（2026-10-04 下午）门禁读数，全取 stdout、均在最终字节上**：
+   - vitest **48 files／404 tests passed**（本轮未新增单测：两枚修法都在客户端组件里，
+     本仓 vitest 是 `node` 环境、无 `@testing-library`，客户端行为只有 e2e 一条通路）。
+   - `tsc --noEmit` **无输出＝0 错**。
+   - `eslint` **0 errors／441 warnings**（与改动前逐字同，警告数一枚没动）。
+   - e2e 非视觉（`--project=desktop`，16 份 spec、**67 枚**）＝**63 passed／1 unexpected／3 skipped**，
+     `startTime 2026-10-04T09:00:57.748Z`、1742s。那枚 unexpected＝`trash-selection.spec.ts:9`
+     红在 `:29` 且**不是断言**＝`page.reload: net::ERR_CONNECTION_REFUSED`，日志里逐字有
+     `[WebServer] ⚠ Server is approaching the used memory threshold, restarting...`
+     ＝Next dev 撞内存阈值自重启、正好砸中第 61 发；单跑复核 **2/2 绿**（`09:31:14.192Z`／`09:32:13.897Z`，
+     两份日志里 `memory threshold` 各 0 次）⇒ 判**通路档**，不记产品回归、不因此改判据。
+     ☆ 3 枚 skipped 全部有具名原因＝`responsive.spec.ts` 三条 `test.skip` 按 project 分档
+     （`editor right panel` 跳 desktop；两枚铃铛回归跳 desktop＋tablet＝只有手机档宽度会让两者撞上），
+     本轮已把它们在**该跑的那一档**实跑出来：`e2e/responsive.spec.ts --project=mobile --project=tablet`
+     ＝**8 passed／0 failed／2 skipped**（那 2 枚＝同两条在 tablet 档），铃铛两枚在 mobile 档**都是绿的**。
+   - e2e 视觉（三档全跑）本轮共三份读数：
+     ① 改动前基线上的复核＝**96 passed／0 failed／0 skipped**（`startTime 2026-10-04T08:52:36.418Z`、
+     393s，跑后 `git status` 里一枚基线都没被改写）；
+     ② `--update-snapshots=all` 全量重录一遍＝同样 **96/0**（`-visrec`，6.6m，改写了 109 张基线的字节）；
+     ③ **保住 6 张纯浮标重录＋退回其余 103 张之后＝96 passed／0 failed／0 skipped**
+     （`startTime 2026-10-04T09:58:15.950Z`、325s）＝那 6 张新基线对第二次独立捕获仍然一致＝不是单发巧合。
+     ☆ ① 两条读数的含义已被第 8 条限定：**96/0 不等于基线干净**。
+
+10. **SQL 往返读数（用户点名的第 ① 项，本轮结案）**：把一枚计数中间件临时接到 `src/prisma/db.ts`
+    （`afterQuery` 逐条落 `../impl-scripts/sql-census.log`），量"方案 A 到底省下了什么"。
+    ☆ **它省下的是传输量，不是往返次数**：同一份字节连跑三档，整跑语句总数是
+    **400／379／358**（a1／a2／b2），单窗计数更摆——冷 `/documents` 在两跑同字节上给出 **119／169**。
+    ⇒ 计数这条尺先作废（历批那句"84→21 次往返"数的是 HTTP action 派发，本来就不是查询数）。
+    真实差异有两处，都改由**形状**承载：
+    - **五枚列表读全在裸奔整行**（含 `content`／`plainText`）。按侧栏那 605 行直接问库实算字节＝
+      `content` **119,517 B** ＋ `plainText` **11,230 B** ＝ **130,747 B/发**，而同表的元数据列合计
+      才 **42,340 B** ⇒ 投影掉的正是这 128 kB。判据＝**"少发几条"是假读数，"少发哪几列"才可核**。
+    - **同步轮询的归属判定原本在 JS 里**：老写法 `SELECT id, userId FROM documents`（无谓词、
+      行数＝**全表 888**），新写法 `SELECT id FROM documents WHERE userId = $1`（**619**＝本账号行数）。
+      A/B/A 四档对照（同一台 dev、同一登录态、每跑各写一份窗口文件），逐档读数＝
+      `b1｜HEAD｜id 单列＋WHERE 的读 0｜整表读 10｜语句 379｜总行 18,151`、
+      `a1｜本轮｜33｜0｜400｜16,139`、`a2｜本轮｜30｜0｜379｜15,441`、
+      `b2｜本轮回切复测｜27｜0｜358｜14,743`。
+
+      ☆ 判据＝**形状列是二值的**（0 ↔ ≥27、10 ↔ 0），计数列不是（同字节两跑 379／400）⇒ 只有形状能作证。
+      按轮归一后＝每轮归属读 **920 行 → 649 行**，且从"随表长"变成"随本账号数据长"。
+      ☆ 那 888 行读的 `ms` 在 **130–1,302** 之间摆＝同一形状自己摆十倍，历批那句 sumMs
+      **14250→12649→9533** 一并降级为**不可用读数**，本轮不引它作证。
+    ★ **四次仪器自纠（三次产出了假读数，都在落笔前被抓）**：
+    ① 窗口 JSON 走固定路径、被第二次运行覆盖 ⇒ 第一次的日志失去归属，对照脚本把 `after` 报成
+       **0 条**——上一轮那个"after=0"就是这么来的，本批改"每跑各写一份"后重跑；
+    ② 表名匹配器原先只认 `"public"."documents"` 这种限定形，非限定名 **126/138** 全落进 `?` 桶；
+    ③ 中间件把 SQL 截到 80 字符 ⇒ "无 WHERE"会把长列名投影误判成裸读，改为"截断行一律记为可疑、
+       不计入 bare"（所以表中"整表读"那列是按 `id, userId FROM` 这一路数的，不是按 `definitively-bare`）；
+    ④ 计数与延迟不可作证（见上）。
+    ☆ 临时中间件在读数取完后已 `git restore`，最终字节里没有它（`git status` 里 `src/prisma/db.ts` 干净）。
+
+11. **集合树的 N+1（第 ② 项，已修）**：`getCollections()` 原本"每枚集合两次子查询"，而侧栏快照
+    每发都含它 ⇒ 一次冷载多份重复读。TDD 三档：
+    - **红（逐字）**＝`AssertionError: four collections cost 9 statements, two cost 5: expected 5 to be 9`
+      （新测试 `src/actions/collection/collection.test.ts`：自建计数中间件、只武装在被测那一发上）。
+    - **绿**＝批量成 1＋2 读（`Collection` ＋ `Promise.all([properties, items])`、`IN (ids)` 用回调形），
+      4 枚与 2 枚都是 **3 条**。
+    - **对照（把修法改坏）**＝故意去掉"按父分组" ⇒ 计数那条**仍然绿**、只有实质断言红
+      （`expected [ { …(10) }, … ] to have a length of 2 but got 8`）⇒ 两条断言互相独立，
+      "语句数不涨"这一条单独不构成验收，与第 7 条主题缺陷那次同形。
+    ☆ 另有一条判据留下＝老写法把 `items` 整批发回来只为数个数；新写法 `.select('id','collectionId')`。
+    ☆ 同档未修的第二处＝`getCollection(id)` 里"每个 item 一次 `CollectionValue` 读"。它只在打开
+      单枚集合时触发、不在冷载路径上（本次 census 里 `collection_values` 只有 n=10／max=35），
+      本轮不顺手扩大改动面。
+    ★ **"快照重放 3–4 次"这条挂账判为按设计、不是缺陷**：`use-sidebar-snapshot.ts:17-22` 的缓存键是
+      `treeVersion:pathname`，而"键里带 pathname"是历批写死的因由＝新建集合不 bump 树、
+      只有导航进去才浮出来。收紧成跨路由复用会把这个已修过的缺陷放回来 ⇒ 只记下"每份快照便宜了"。
+
+12. **余 9 枚浮标基线已重录（第 ③ 项，用户点名后执行）**：闸门换成
+    `--update-snapshots=missing`＋**先把这 9 枚挪出目录**＝`missing` 档只能写入"缺席"的那几张，
+    其余 117 枚即便不匹配也只报红、不改写 ⇒ "只动了这 9 枚"由仪器保证而不是由我声明。
+    实跑两份（`vis-rerecord-a`／`-b`）＝各 9 failed（写缺席快照必然计为失败）／15 passed，
+    跑后 `git status` 里基线恰好 15 枚被改＝6 枚历批已重录＋本批 9 枚，其余一枚没动。
+    ★ **历批那把亮色尺子对暗档零分辨力，本轮换了尺子**：`dark=N` 在暗底基线上是
+    "整角都是暗背景"（新帧 `dark=4,502/4,560`＝98.7%），旧帧也是 `4,295`＝**改前改后都报 PILL?**。
+    ⇒ 换判据＝框内"偏离本框中位数 >40 的像素"＋新旧差集包围盒：
+    `offBg 358 → 66`、`3499/2848/2833` 个改变像素、包围盒 `x 30..133 / y 608..644`
+    ＝**与浮标自身的 101×37 几何重合**；桌面那枚的盒只框到浮标右端 24 px，改点 `x 111..133` 与之相符。
+    亮色 5 枚由老尺子独立复现（圆点色命中 `44 → 0`、`widestDarkRow 105 → 26`）。
+    ☆ 判据＝**"浮标没了"要按改变区间的几何来证，不能按某一档的像素计数来证**（计数对暗底钝）。
+
+13. **视觉门禁阈值（第 ④ 项）：量完价、决定不收**：
+    - **噪声底实算＝0**：同一路由连录两次（间隔 3 分钟、两次独立 dev server 实例），9 枚
+      3,367,680 像素里 **anyDiff=0**、material>40=0、maxDelta=0 ⇒ 拍摄条件本身完全可复现，
+      门禁再紧也不是被"抖动"挡住的。
+    - **紧一档的代价实测**：把 `threshold` 从默认 0.1 临时降到 0.02 跑全矩阵（`--update-snapshots=none`）＝
+      **23 failed／73 passed**，其中 **16 暗／7 亮**，失败行报的都是"255,206 pixels (ratio 0.99 of all
+      image pixels) are different"这种**整帧级**差异＝第 8 条那笔 token 欠账（暗底 `14,15,18 → 30,30,30`
+      每通道 +16，恰好被 `threshold 0.1`≈25/255 吞掉）。实验完已 `git restore playwright.config.ts`，
+      最终字节上阈值仍是默认值。
+    - ⇒ **结论：不收 `threshold`**。0.02 会让门禁在**代码一字未改**时报 24% 红，红的原因不在产品里；
+      要么先做一次 126 枚全量重录（＝把历批判为"不该认下来"的漂移一并认下来，用户没点这个名），
+      要么把它当常态噪声。两条都比"看不见全局位移"更贵。
+      ☆ 补偿控制留在**重录环节**而不是运行环节：`probe-pill-baked.cjs`（圆点色）＋
+      `probe-pill-dark.cjs`（暗档可用的 offBg＋差集包围盒）＋`noise-floor.cjs`（两次录制的逐像素对照），
+      三把尺子都在 `_impl-scripts` 里，重录时按第 12 条的 `missing` 闸门跑一遍就能定档。
+
+14. **本轮（2026-10-04 晚）出口门四件套，均在最终字节上、全取 stdout**：
+    - vitest **50 files／413 tests passed**（历批 48／404 → 本轮新增 `get.test.ts`(6) 与
+      `collection.test.ts`(3)；两枚主题修法仍在客户端组件里，本仓 vitest 是 `node` 环境、
+      无 `@testing-library`，那部分行为只有 e2e 一条通路）。
+    - `tsc --noEmit` **无输出＝0 错**。
+    - `eslint` **0 errors／441 warnings**＝与本轮动手之前逐字同，警告数一枚没动
+      （中途一度 443：新增的两处 `(c: any)` 标注，已改用 `for...of` 迭代掉）。
+    - e2e 非视觉**分两批**（每批各自起全新服务）＝批次 1（authz-toast／authz／block-link-menu／
+      collab／core／drag-drop-band／drag-handle-menu／editor，8 份 spec）**43 passed／1 failed／16.7m**；
+      批次 2（mention-user／notify-switches／reminder-delivery／responsive／share-edit／
+      share-publish／trash-selection／whiteboard-collab，8 份）**28 passed／0 failed／5 skipped／8.4m**
+      ⇒ 合计 **71 passed／1 failed／5 skipped／77 枚**。那枚 failed 的定性见第 15 条；
+      5 枚 skipped 全部＝`responsive.spec.ts` 里按 project 分档的具名 `test.skip`（历批同形，本轮没新增跳过）。
+    - e2e 视觉（三档全跑、全新服务）**96 passed／0 failed／0 skipped，6.3m**＝本轮那 15 枚新基线
+      对一次独立捕获全部吻合；跑后 `git status` 里基线计数仍是 **15 枚**＝这一发没有改写任何基线
+      （`--update-snapshots` 完全没用）。
+    ★ **本轮另外有三份"整批读数"被作废并原样归档**（都不是产品红，是测量条件的问题）：
+      ① `19:11–19:48` 那次非视觉全量（37.2m）报 **3 failed／5 skipped／69 passed**
+      （`editor.spec.ts:109` 两档 slash 命令＋`share-publish.spec.ts:39`）＝**复用了上一发遗留的
+      `next dev`**（19:11 起、已跑了近 40 分钟），同样这几枚在②的干净分批里全绿；
+      ② `19:47` 那次在测试 40 之后连续 38 枚红、每枚 ~400ms＝服务整条没了（连接拒绝），
+      日志末尾"38 failed"不是判据而是现场；
+      ③ `20:12` 那次视觉跑用 `setsid nohup` 分离出去，停在第 8 发、三个端口全空＝分离进程随会话被杀。
+      ⇒ 判据＝**e2e 的每一发读数都要能证明"服务是这一发起的、且没在半路死"**：端口先空、日志取 stdout、
+      通知摘要一律不作数（①那份的转述摘要当时是"66 passed／0 failed／3 skipped"，与 stdout 三处不符）。
+      ☆ 历批那条"一次挂起的写会拖挂后续读"式的通路判语在本轮再次成立＝服务健康与否直接决定
+      38 枚的成败，因此**分批＋全新服务**从今天起是本仓 e2e 的默认跑法，不是特例。
+
+15. **本轮唯一那枚非视觉红的定性（承历批已归档的同一条）**：`core.spec.ts:204`
+    `[[^ link addresses a single block and jumps back to it`，红在"等 `.block-anchor-flash` 可见"
+    这一步（`expect(locator).toBeVisible() failed … Timeout: 4000ms … element(s) not found`，
+    批次 1 里该枚耗时 43.1s）。本轮按"要样本量就跑到 ≥5 并报分布"的口径单跑 **5/5 全绿**＝
+    1.1m／47.1s／46.9s／45.2s／46.1s（每一发都含 ~40s 的全新服务启动，实际用例都在秒级）。
+    ⇒ 判**仪器档**、不记产品回归，与历批那份"隔离 5/5 绿、对着 1400ms 自毁的浮层"同一形状：
+    全批跑时该浮层在断言被调度到之前就已自毁，隔离跑时进程空闲、赶得上。
+    ☆ **不改判据、也不加超时**：`timeout 4000ms` 是这枚用例的意义所在（闪层本来就只活 1400ms），
+    放宽它就等于把这枚用例改成恒真。**留作在册间歇红**，跑法上按第 14 条改为分批＋全新服务后
+    仍会出现，出现时按本条对号即可。
+    ☆ 与之相对，历批那枚"主题开关间歇红"本轮已经是**真修掉**＝批次 1 里 `core.spec.ts:38`
+    （33.4s）、`:82`（43.2s）、`:148`（14.5s）三枚全绿，且本轮非视觉 77 枚里没有任何一枚红落在主题上。
+
+16. **浮标普查的"针"正式定名＋定义（观测侧 19:2x 提的"我的针漏色"，盘上否证）**：
+    - **针名＝`pill-dot-44`／定义**＝与参考色 `rgb(80,227,194)` 的三通道距离和 **≤60** 的像素，且该文件命中 **≥12 px**；
+      并报出包围盒，让"命中"必须能被肉眼复核成圆点形状，而不是只当一个计数。工具＝
+      `../impl-scripts/probe-pill-band.cjs <目录> [band]`。
+    - **读数**＝本次入账之前（`HEAD~1`＝`71a8058` 的 126 枚）命中 **恰好 15 枚、每枚 44 px**，
+      其中 **36 px 是精确色、8 px 是抗锯齿环**，15 枚的包围盒完全同一＝移动帧 `x 32..39 / y 622..629`
+      （桌面帧 `y 858..865`）＝同一枚 **8×8 圆点**；本次入账之后（126 枚）同一把针 **0 枚命中**＝浮标污染清零。
+      ⇒ 观测侧那句"点色不恒为该值"**在这批字节上不成立**＝15 枚里每枚都含 36 个精确色像素。
+      两边 44 vs 36 的差＝**环像素**（精确匹配把抗锯齿圈丢了）；9 vs 15 的差＝**阈值或扫描范围**，
+      不是像素值。☆ 但"精确色那把针会系统性少算"这个方向是对的＝本轮把它换成容差带，
+      并把两把针的差（36/44）写成在册事实。
+    - ☆ **band 不能乱放宽**＝`band≤90` 起就会命中与浮标无关的 UI 青绿（`light-document-tab-样式-desktop`
+      这类 1,400+ px 的散布、`bbox x 22..1396`），特异性反而崩掉。⇒ 定义里必须同时钉住 **距离带＋最小像素数＋包围盒形状** 三件。
+    - ★ **`light-document-tab-信息-mobile`（6908 px 那三张图对应的文件）判为已销项**：它**不在**上面 15 枚里＝
+      10-04 12:36 那次重录已把它洗干净（`docs/test-report.md:161` 在册），观测侧手上的证据是 **10-03 19:08** 的
+      `expected/actual/diff`＝早于那次重录。今天全矩阵对它**绿**。⇒ 观测侧判语 (1)"该重录不该改代码"已由盘上实现；
+      判语 (2)"整页纵向 1–3 px 逐行累积位移"也只对**重录前**成立，它正是那 6908 px 的其余部分（`6908/258,960＝2.7%` 越过 2% 预算，
+      重录后归零）。判语 (3)（浮标在基线与实截同时在场则永远绿）**成立且重要**＝它就是我第 8 条"通过率对浮标污染零分辨力"的机制面，
+      本轮的 15→0 是把它从"看不见"变成"针能看见"。
+    - ☆ 两栏具名（承上一轮要求，同一集已核实）＝**内容变更 6 枚**＝`{dark,light}-app-{documents,recent,settings}-mobile`
+      （历批 17:5x 保住的那 6 枚＝本次入账的 6 枚，**同一集**，由 `pill-dot-44` 针在 `HEAD~1` 上命中这 6 枚＋
+      盒外实质差按历批口径 max>40 为 0 双重确认）；**缺失补齐 9 枚**＝`{dark,light}-app-{search,templates}-mobile`＋
+      `light-app-{daily-notes,favorites,trash}-mobile`＋`dark-document-tab-信息-{mobile,desktop}`。
+      ☆ 两类含义不可混写＝前者是"已有文件被换掉"、后者是"文件先被挪出目录、闸门只能新建它"。
+      ★ 其中 **5 枚页面主色被这次重录迁移**＝`dark-app-templates-mobile` `rgb(14,15,18)→rgb(30,30,30)`
+      （整帧 252,807 px 三通道和>40）、`dark-app-search-mobile` `13,13,16→27,27,27`、`light-app-search-mobile`
+      `225,224,220→226,227,228`、`light-app-{favorites,trash}-mobile` `251,249,245→252,253,254`（＝向官方
+      `--base` 靠拢）。⇒ **照原样入账、没有挑任何一边**，`maxDiffPixelRatio` 与 mask 一字未动
+      （`git diff HEAD~1 HEAD -- playwright.config.ts e2e/visual.spec.ts` 为空）。
 
 ## 结论
-
 19 条路由 + 编辑器交互矩阵 + 白板持久化 + 分享口令流程全部通过;
 `npm run build` 通过;未发现功能缺失、交互异常。视觉层面完成 token 级
 对齐(暖纸白/暖墨色/衬线标题/圆角),无结构性偏差。

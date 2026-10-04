@@ -75,6 +75,117 @@ test('settings persist preference selection', async ({ page }) => {
   );
 });
 
+// The panel shows the new theme long before the server has it, and a reload taken inside
+// that window destroys the write -- which is what made the test above pass or fail by luck.
+// The two clocks here are read without touching the request, because holding the POST open
+// also holds the sidebar's reads on the same URL and moves the very latency being measured.
+test('theme choice is not shown as saved before the server accepted it', async ({ page }) => {
+  await page.goto('/login');
+  await page.fill('input[type="email"]', email);
+  await page.fill('input[type="password"]', password);
+  await page.click('button[type="submit"]');
+  await expect(page).toHaveURL(/\/documents/);
+
+  await page.goto('/settings');
+  // 通知 renders 载入中… until `prefs` is non-null. The pressed theme in 外观 cannot be the
+  // gate, because `prefs?.theme ?? 'system'` paints 系统 as chosen while the read is still
+  // outstanding, so "some theme is pressed" is not evidence that preferences arrived.
+  await page.getByRole('button', { name: '通知', exact: true }).click();
+  await expect(page.getByText('载入中…').first()).toBeHidden();
+  await page.getByRole('button', { name: '外观', exact: true }).click();
+
+  const pressedTheme = page.getByRole('button', { name: /^(系统|浅色|深色)$/, pressed: true });
+  await expect(pressedTheme).toBeVisible();
+  const original = (await pressedTheme.textContent())?.trim() ?? '';
+  const next = original === '深色' ? '浅色' : '深色';
+  const wire = { 系统: 'system', 浅色: 'light', 深色: 'dark' } as const;
+  const nextButton = page.getByRole('button', { name: next, exact: true });
+
+  // The write is the one POST whose body carries the value, so it cannot be confused with
+  // the reads that share this URL.
+  let acceptedAt = 0;
+  const accepted = page
+    .waitForResponse(
+      (res) =>
+        res.request().method() === 'POST' &&
+        (res.request().postData() ?? '').includes(`"${wire[next]}"`),
+      { timeout: 20_000 }
+    )
+    .then((res) => {
+      acceptedAt = Date.now();
+      return res;
+    });
+
+  await nextButton.click();
+  await expect(nextButton).toHaveAttribute('aria-pressed', 'true');
+  const paintedAt = Date.now();
+  await accepted;
+
+  expect(
+    paintedAt - acceptedAt,
+    `the panel presented ${next} as the stored choice ${acceptedAt - paintedAt}ms before the ` +
+      'server had accepted it, so anything that leaves the page in between loses the write'
+  ).toBeGreaterThanOrEqual(0);
+
+  // And the row agrees with what the panel claims.
+  await page.reload();
+  await page.getByRole('button', { name: '通知', exact: true }).click();
+  await expect(page.getByText('载入中…').first()).toBeHidden();
+  await page.getByRole('button', { name: '外观', exact: true }).click();
+  await expect(nextButton).toHaveAttribute('aria-pressed', 'true');
+
+  await page.getByRole('button', { name: original, exact: true }).click();
+  await expect(page.getByRole('button', { name: original, exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+});
+
+// The sidebar's theme dropdown is the same shape the settings panel was: `setTheme` paints
+// from next-themes and the write goes out unawaited, so leaving the page during the write's
+// round trip keeps the new theme on screen -- next-themes also stores it in localStorage --
+// while the row still holds the old one. The two then disagree with nothing to show it.
+test('sidebar theme choice is not applied before the server accepted it', async ({ page }) => {
+  await signIn(page);
+
+  const html = page.locator('html');
+  const cls = (await html.getAttribute('class')) ?? '';
+  const wasDark = cls.includes('dark');
+  const choice = wasDark ? '浅色' : '深色';
+  const wire = wasDark ? 'light' : 'dark';
+
+  let acceptedAt = 0;
+  const accepted = page
+    .waitForResponse(
+      (res) =>
+        res.request().method() === 'POST' &&
+        (res.request().postData() ?? '').includes(`"${wire}"`),
+      { timeout: 20_000 }
+    )
+    .then((res) => {
+      acceptedAt = Date.now();
+      return res;
+    });
+
+  await page.getByRole('button', { name: '切换主题' }).click();
+  await page.getByRole('menuitem', { name: choice, exact: true }).click();
+
+  await expect(html).toHaveClass(new RegExp(`\\b${wire}\\b`));
+  const paintedAt = Date.now();
+  await accepted;
+
+  expect(
+    paintedAt - acceptedAt,
+    `the app repainted as ${wire} ${acceptedAt - paintedAt}ms before the server accepted it, ` +
+      'so a navigation in between leaves localStorage and the stored preference disagreeing'
+  ).toBeGreaterThanOrEqual(0);
+
+  // Back to the neutral default so the row is not left on whatever this run demoed.
+  await page.getByRole('button', { name: '切换主题' }).click();
+  await page.getByRole('menuitem', { name: '跟随系统', exact: true }).click();
+  await expect(html).toHaveClass(/\b(light|dark)\b/);
+});
+
 async function signIn(page: import('@playwright/test').Page) {
   await page.goto('/login');
   await page.fill('input[type="email"]', email);

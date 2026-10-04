@@ -221,17 +221,30 @@ export async function collectChanges(input: {
   }
 
   // --- parent id sets -----------------------------------------------------
-  const idsOf = async (table: string, columns: string[], filter?: (r: any) => boolean) => {
-    const rows: Record<string, unknown>[] = await db.orm.public[table].select(...columns).all();
-    return new Set((filter ? rows.filter(filter) : rows).map((r) => String(r.id)));
+  // Owned by the caller, or by a set the caller already proved it owns. Reading the whole
+  // table and filtering in JS returned the same rows but paid for every other account's data
+  // on every poll: 888 documents and 25k collection items for one sidebar.
+  const idsOwnedByUser = async (table: string) => {
+    const rows: Record<string, unknown>[] = await db.orm.public[table]
+      .where((r: any) => r.userId.eq(input.userId))
+      .select('id')
+      .all();
+    return new Set(rows.map((r) => String(r.id)));
   };
 
-  const documentIds = await idsOf('Document', ['id', 'userId'], (r) => r.userId === input.userId);
-  const collectionIds = await idsOf('Collection', ['id', 'userId'], (r) => r.userId === input.userId);
+  const idsUnder = async (table: string, key: string, parents: Set<string>) => {
+    if (parents.size === 0) return new Set<string>();
+    const rows: Record<string, unknown>[] = await db.orm.public[table]
+      .where((r: any) => r[key].in([...parents]))
+      .select('id')
+      .all();
+    return new Set(rows.map((r) => String(r.id)));
+  };
+
+  const documentIds = await idsOwnedByUser('Document');
+  const collectionIds = await idsOwnedByUser('Collection');
   // Two hops: collection -> item -> value.
-  const itemIds = await idsOf('CollectionItem', ['id', 'collectionId'], (r) =>
-    collectionIds.has(String(r.collectionId)),
-  );
+  const itemIds = await idsUnder('CollectionItem', 'collectionId', collectionIds);
 
   const parentSets: Record<string, Set<string>> = {
     documentId: documentIds,

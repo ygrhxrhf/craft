@@ -28,6 +28,19 @@ export function ThemeToggle() {
       ? <Sun className="size-4" />
       : <Monitor className="size-4" />;
 
+  // Same rule as the settings panel: the theme applies only once the row has it. Firing the
+  // write unawaited repainted the app 1569ms before the server accepted it, and leaving the
+  // page inside that window left next-themes' localStorage ahead of the stored preference
+  // with nothing on screen to show the two disagree.
+  const choose = async (value: 'light' | 'dark' | 'system') => {
+    try {
+      await updatePreferences({ theme: value });
+    } catch {
+      return;
+    }
+    setTheme(value);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -36,15 +49,15 @@ export function ThemeToggle() {
         {icon}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => { setTheme('light'); void updatePreferences({ theme: 'light' }).catch(() => {}); }}>
+        <DropdownMenuItem onClick={() => void choose('light')}>
           <Sun className="mr-2 size-4" />
           浅色
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => { setTheme('dark'); void updatePreferences({ theme: 'dark' }).catch(() => {}); }}>
+        <DropdownMenuItem onClick={() => void choose('dark')}>
           <Moon className="mr-2 size-4" />
           深色
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => { setTheme('system'); void updatePreferences({ theme: 'system' }).catch(() => {}); }}>
+        <DropdownMenuItem onClick={() => void choose('system')}>
           <Monitor className="mr-2 size-4" />
           跟随系统
         </DropdownMenuItem>

@@ -85,3 +85,46 @@ Crafty 有三套同步机制，其中两套已由既有组件覆盖：
 `prisma/schema.prisma` 已过时——它缺少 `Document.pageStyle`、`Task`、`DocumentShare`、`DocumentMember`、`CommentThread`、`Comment`、`Backlink.sourceBlockId`、`Whiteboard.share*` 等。真正的 contract 真源是 **`src/prisma/contract.prisma`**（`contract.json` / `contract.d.ts` 由它生成）。
 
 本次实现按 `contract.prisma` 取字段。建议后续把 `prisma/schema.prisma` 删掉或明确标注为废弃，避免再被当成真源。
+
+## 有意偏差登记（2026-10-04，`13f3549`）：侧栏树另开一条批量读，与本 ADR 的单游标轮询并存
+
+本 ADR 定的通路是 `(app)/layout.tsx:11` 挂着的 `<MetadataSyncProvider />`（第 10 行是它的注释：
+polls `/api/sync/changes` for the signed-in session），经 `GET /api/sync/changes` 单游标轮询。
+侧栏四棵树
+（document／folder／collection／whiteboard）**没有**改走这条同步缓存，而是在 2026-10-04 被收敛成
+一条独立的批量 server action：`src/actions/sidebar/snapshot.ts` 的 `getSidebarSnapshot()`
+一次 `Promise.all` 四个读，客户端由 `src/lib/sidebar/use-sidebar-snapshot.ts` 按
+`treeVersion:pathname` 做模块级共享缓存，四棵树共用同一发请求。
+
+**这是有意的偏差，不得升格为本 ADR 的官方结论**，理由与实测数字一并登记如下。
+
+### 测到的降载（同一探针、同一动作串、各 6 次装载）
+
+| | 收敛前 `a15f261` | 收敛后 `13f3549` |
+| --- | --- | --- |
+| 每次装载的不同 action id 数 | 5 | 2 |
+| 6 次装载的 action 往返总数 | 84（71 枚树读 ＋ 13 枚铃铛） | 21（8 枚快照 ＋ 13 枚铃铛） |
+| 四棵树各自作为独立 action 的出现次数 | 71 | **0** |
+
+⇒ 单看 server action 面，收敛成立（约 −75%）。
+
+### `getSidebarSnapshot()` 的耗时分布（n=8，暖机后稳态）
+
+`199, 211, 223, 247, 248, 266, 272, 287 ms` ⇒ min 199／p50 248／max 287／合计 1953 ms。
+
+⚠ 提交信息与历轮笔记里出现的 `516 / 1047 / 1494 ms` 是**冷启动**（首次编译＋首批调用）读数，
+不代表稳态；本表才是。按在册纪律，队列类延迟只报分布不报单发样本。
+
+### 判语与仍未判的部分
+
+1. **降载价值＝已判，成立**，但只在 action 面上成立。
+2. **它对标题落库缺陷毫无作用**：只有收敛的构建上，标题写入延迟 6 次全部超出旧的 1200ms 预算
+   （1264／1434／2712／4855／4901／4932 ms）。真根因在 `EditorHeader` 的防抖依赖，见
+   `docs/test-report.md` 第六节第 5 条。⇒ 别把这条偏差当作"同步链路性能问题的解"。
+3. **SQL 往返数未观测**。`src/prisma/db.ts` 没有查询日志钩子，要拿真实 SQL 条数必须改产品码去装
+   middleware，本轮没做。上表的"往返"一律指 HTTP／server action 层。四个读各自 `await auth()`
+   ＋ 一次查询，`Promise.all` 只保证并发提交，**是否真的合并了数据库工作量没有证据**；
+   稳态 248ms 与"并行"相符但不构成证明。
+4. **本 ADR 的代价第 1 条（延迟上限＝轮询间隔）没有因此改变**，树的刷新仍然额外吃一次独立请求。
+5. **待判的结构性问题**（留给下一批，属设计级、要用户点名）：侧栏树到底该不该改读同步缓存，
+   从而取消这条并行通路；以及铃铛（13 发／6 次装载，已是当前最大的 fan-out）为什么比树还频繁。

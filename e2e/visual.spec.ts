@@ -38,6 +38,30 @@ async function openFixture(page: Page, listPath: string, title: string) {
 }
 
 /**
+ * The dev "Rendering…" pill is a real overlay on the page, and on a phone-width
+ * viewport it lands on top of the header. Measured: 4891 px on `/collections` and
+ * enough on top of the stale calendar grid to push a shot past the 2% budget.
+ * Waiting for it to collapse is a stricter capture condition than the 350ms settle
+ * below, so a run that shoots while it is up is not comparable with one that
+ * does not -- the difference is the instrument, not the product.
+ */
+async function expectIndicatorIdle(page: Page) {
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() => {
+          const root = document.querySelector('nextjs-portal')?.shadowRoot;
+          if (!root) return false;
+          return Array.from(root.querySelectorAll('button')).some((b) =>
+            (b.textContent ?? '').trim().startsWith('Rendering'),
+          );
+        }),
+      { message: 'the dev "Rendering…" pill is still expanded' },
+    )
+    .toBe(false);
+}
+
+/**
  * Masked: dates, relative timestamps and any `grid-cols-7` table. The seeded
  * data is fixed, but "最后编辑 3 天前" is not. The sidebar tree is deliberately
  * NOT masked (masking it whole hid real regressions), and neither is the
@@ -50,6 +74,7 @@ async function shoot(page: Page, name: string) {
   // the whole page out of place. `toBeHidden` also passes when nothing matches.
   await expect(page.getByText('加载中').first()).toBeHidden();
   await page.waitForTimeout(350);
+  await expectIndicatorIdle(page);
   const dynamic = [
     // Only the genuinely volatile nodes: dates and relative timestamps (the sidebar
     // tree itself is seeded and stable, so masking it whole hid real regressions).

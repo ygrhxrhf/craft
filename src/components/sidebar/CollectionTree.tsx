@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getCollections } from '@/actions/collection/collection';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSidebarStore } from '@/lib/store/use-sidebar-store';
+import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import { cn } from 'cn';
 
 interface Collection {
@@ -15,24 +13,14 @@ interface Collection {
 }
 
 export function CollectionTree() {
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [loading, setLoading] = useState(true);
   const pathname = usePathname();
-  // Bumped by the metadata sync provider when the far side changes a collection.
-  const treeVersion = useSidebarStore((s) => s.treeVersion);
+  const snapshot = useSidebarSnapshot();
 
-  useEffect(() => {
-    async function load() {
-      const data = await getCollections();
-      setCollections(data as Collection[]);
-      setLoading(false);
-    }
-    load();
-  }, [pathname, treeVersion]);
-
-  if (loading) {
+  if (!snapshot) {
     return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;
   }
+
+  const collections = snapshot.collections as Collection[];
 
   if (collections.length === 0) {
     return <div className="px-3 py-2 text-[13px] text-muted-foreground">暂无集合</div>;

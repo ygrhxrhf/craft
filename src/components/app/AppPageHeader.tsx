@@ -22,8 +22,6 @@ export function AppPageHeader({ title, actions, className }: AppPageHeaderProps)
       className={cn(
         'flex min-h-12 items-center gap-3 border-b border-border/60 bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6',
         'pt-[calc(0.5rem+env(safe-area-inset-top))]',
-        // Positioning context for the overlaid bell below.
-        'relative',
         className,
       )}
     >
@@ -39,16 +37,19 @@ export function AppPageHeader({ title, actions, className }: AppPageHeaderProps)
       <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight">
         {title}
       </h1>
-      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
-      {/* The bell rides on top of the header's right edge instead of sitting in
-          the flex row. As a shrink-0 sibling it took 36px plus a 12px gap out
-          of the title's flex-1, which re-truncated the title and re-wrapped
-          everything under it -- 5381 differing pixels on the mobile
-          /whiteboards shot alone. Overlaying costs the title nothing. Above
-          `sm` it goes back into the row, where there is width to share. */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 sm:static sm:translate-y-0">
-        <NotificationBell />
-      </div>
+      {/* On a phone the action button keeps the right edge and the bell queues in
+          front of it: the bell is 36px plus a 12px gap, and anything that takes
+          that out of the row moves the button, which is the one thing here whose
+          position readers aim at. The title gives way instead -- it is already
+          `truncate` for exactly this. From `sm` up there is width to share, so
+          the bell trails the actions the way the desktop header has always drawn
+          it. */}
+      {actions && (
+        <div className="flex shrink-0 items-center gap-2 order-last sm:order-none">
+          {actions}
+        </div>
+      )}
+      <NotificationBell />
     </header>
   );
 }

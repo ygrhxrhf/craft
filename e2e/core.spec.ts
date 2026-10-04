@@ -381,3 +381,101 @@ test('an embedded whiteboard previews its content and zooms into a dialog', asyn
     timeout: 30_000,
   });
 });
+
+// Regression guard for the lost-title bug. DocumentEditor hands EditorHeader an
+// inline onTitleChange, and while that closure sat in the debounce effect's
+// dependency list every unrelated parent re-render cancelled the timer and re-armed
+// it at a full 500ms -- so the write could only leave once rendering stopped, and a
+// navigation before that dropped it. Read from inside the page, 18 panel-tab clicks
+// produced 19 schedules and 18 cancellations, with the write leaving 420ms after the
+// storm ended; the fixed header leaves it ~550ms after typing, mid-storm.
+//
+// What this is NOT: the earlier note here blamed the metadata-sync cycles and the
+// sidebar fan-out, because it measured POST latency against an absolute budget. That
+// instrument is confounded -- the same build reads 533-1133ms against one dev server
+// and 2295-2562ms under the three this config starts. Collapsing the sidebar reads
+// into one batched action did not move the title write at all (0/6 cycles met the old
+// 1200ms budget), so keep the assertion here about persistence, not milliseconds.
+test('a typed title reaches the server while the editor keeps re-rendering', async ({ page }) => {
+  await page.goto('/login');
+  await page.fill('input[type="email"]', email);
+  await page.fill('input[type="password"]', password);
+  await page.click('button[type="submit"]');
+  await expect(page).toHaveURL(/\/documents/);
+
+  await page.goto('/documents');
+  await page.getByRole('button', { name: /新建/ }).first().click();
+  await page.waitForURL(/\/documents\//);
+
+  const marker = `标题落库 ${Date.now()}`;
+  const sent: number[] = [];
+  page.on('request', (req) => {
+    if (req.method() === 'POST' && (req.postData() ?? '').includes(marker)) sent.push(Date.now());
+  });
+
+  const titleInput = page.locator('input[placeholder="页面标题"]');
+  await titleInput.waitFor({ state: 'visible' });
+  const typedAt = Date.now();
+  await titleInput.fill(marker);
+
+  // Keep the parent re-rendering and then leave, which is what a user actually does
+  // to lose a title. A panel tab click lands in DocumentEditor's own state, so every
+  // one hands EditorHeader a fresh inline onTitleChange; if the debounce restarts on
+  // that, it can only fire once rendering stops, and navigating away aborts it.
+  //
+  // Asserting persistence rather than a millisecond budget is deliberate. The first
+  // version here demanded the write leave within 1200ms, and the same build measured
+  // 533-1133ms against a single dev server but 2295-2562ms under the three this config
+  // starts -- so that number tracked CPU contention, not the product. Two follow-up
+  // versions then passed against a deliberately broken header, because Playwright's
+  // click() is a CDP round trip that took over 500ms each under load and handed the
+  // starving debounce a quiet gap to fire in. Clicking from inside the page keeps the
+  // real cadence whatever the machine is doing, and the count proves the churn ran.
+  const churn = await page.evaluate(async () => {
+    const labels = ['插入', '格式'];
+    // Match the accessible name, not the text: at 1440px the rail renders these as
+    // icon buttons named by aria-label, so a textContent comparison finds nothing
+    // and the churn silently clicks nothing (which is how two earlier versions of
+    // this test passed against a broken header).
+    const name = (el: Element) =>
+      (el.getAttribute('aria-label') ?? el.getAttribute('title') ?? el.textContent ?? '').trim();
+    const find = (label: string) =>
+      Array.from(document.querySelectorAll('button')).find((b) => name(b) === label);
+    let clicked = 0;
+    let missing = 0;
+    for (let i = 0; i < 20; i += 1) {
+      const tab = find(labels[i % 2]);
+      if (tab) {
+        tab.click();
+        clicked += 1;
+      } else {
+        missing += 1;
+      }
+      await new Promise((r) => setTimeout(r, 130));
+    }
+    return { clicked, missing, endedAt: Date.now() };
+  });
+  expect(
+    churn.missing,
+    'the panel tabs were absent from the DOM, so nothing re-rendered and the churn proved nothing',
+  ).toBe(0);
+
+  // Leave while a re-armed debounce still has its 500ms to run. Returning by URL
+  // rather than by clicking the sidebar row keeps the assertion about persistence:
+  // looking the row up by the new title would also time out merely because the tree
+  // has not refreshed, which is a different question.
+  const docUrl = page.url();
+  await page.goto('/documents');
+  const stormMs = churn.endedAt - typedAt;
+
+  await page.goto(docUrl);
+  const reopened = page.locator('input[placeholder="页面标题"]');
+  await reopened.waitFor({ state: 'visible' });
+
+  expect(
+    await reopened.inputValue(),
+    `the title never reached the server (${sent.length} write(s) sent during the storm, ` +
+      `first ${sent.length ? Math.min(...sent) - typedAt : -1}ms after typing, ` +
+      `${stormMs}ms of re-rendering before leaving)`,
+  ).toBe(marker);
+});

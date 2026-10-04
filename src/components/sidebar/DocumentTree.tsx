@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getDocuments } from '@/actions/document/get';
-import { useSidebarStore } from '@/lib/store/use-sidebar-store';
+import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import { DocumentTreeItem } from './DocumentTreeItem';
 
 export interface Document {
@@ -22,23 +20,13 @@ interface DocumentTreeProps {
 }
 
 export function DocumentTree({ folderId = null }: DocumentTreeProps) {
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [loading, setLoading] = useState(true);
-  const treeVersion = useSidebarStore((s) => s.treeVersion);
+  const snapshot = useSidebarSnapshot();
 
-  useEffect(() => {
-    async function load() {
-      const data = await getDocuments();
-      setDocuments(data as Document[]);
-      setLoading(false);
-    }
-    load();
-  }, [treeVersion]);
-
-  if (loading) {
+  if (!snapshot) {
     return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;
   }
 
+  const documents = snapshot.documents as Document[];
   const rootDocuments = documents
     .filter(d => d.folderId === folderId && d.parentId === null)
     .sort((a, b) => a.order - b.order);

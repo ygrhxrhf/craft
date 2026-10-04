@@ -1,10 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getFolders } from '@/actions/folder/get';
-import { getDocuments } from '@/actions/document/get';
-import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { FolderTreeItem } from './FolderTreeItem';
+import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import type { Document } from './DocumentTree';
 
 export interface Folder {
@@ -17,27 +14,14 @@ export interface Folder {
 }
 
 export function FolderTree() {
-  const [folders, setFolders] = useState<Folder[]>([]);
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [loading, setLoading] = useState(true);
-  const treeVersion = useSidebarStore((s) => s.treeVersion);
+  const snapshot = useSidebarSnapshot();
 
-  useEffect(() => {
-    async function load() {
-      const [folderData, docData] = await Promise.all([
-        getFolders(),
-        getDocuments()
-      ]);
-      setFolders(folderData as Folder[]);
-      setDocuments(docData as Document[]);
-      setLoading(false);
-    }
-    load();
-  }, [treeVersion]);
-
-  if (loading) {
+  if (!snapshot) {
     return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;
   }
+
+  const folders = snapshot.folders as Folder[];
+  const documents = snapshot.documents as Document[];
 
   const rootFolders = folders
     .filter(f => f.parentId === null)

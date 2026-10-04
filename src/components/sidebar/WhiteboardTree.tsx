@@ -1,12 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from 'cn';
-import { getWhiteboards } from '@/actions/whiteboard/whiteboard';
 import type { WhiteboardItem } from '@/actions/whiteboard/whiteboard';
-import { useSidebarStore } from '@/lib/store/use-sidebar-store';
+import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import {
   SIDEBAR_WHITEBOARD_MIME,
   sidebarDragState,
@@ -54,27 +52,14 @@ function WhiteboardTreeItem({ board, isActive }: WhiteboardTreeItemProps) {
 }
 
 export function WhiteboardTree() {
-  const [boards, setBoards] = useState<WhiteboardItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const snapshot = useSidebarSnapshot();
   const pathname = usePathname();
-  // Bumped by the metadata sync provider when the far side changes a whiteboard.
-  const treeVersion = useSidebarStore((s) => s.treeVersion);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const data = await getWhiteboards();
-        setBoards(data);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [pathname, treeVersion]);
-
-  if (loading) {
+  if (!snapshot) {
     return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;
   }
+
+  const boards = snapshot.whiteboards;
 
   if (boards.length === 0) {
     return <div className="px-3 py-2 text-[13px] text-muted-foreground">暂无白板</div>;

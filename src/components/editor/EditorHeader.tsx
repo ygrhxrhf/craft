@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react';
 
 interface EditorHeaderProps {
@@ -22,11 +22,23 @@ export function EditorHeader({
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [draftTitle, setDraftTitle] = useState(title);
 
+  // The caller hands down a fresh closure on every render (DocumentEditor passes an
+  // inline arrow), so listing `onTitleChange` as a dependency made every unrelated
+  // parent re-render cancel this timer and re-arm it at a full 500ms. Measured during
+  // 18 panel-tab clicks: 19 schedules, 18 of them cancelled before firing, and the
+  // write leaving only once rendering stopped -- which is how a typed title gets lost
+  // when the user navigates. Reading through a ref keeps the schedule tied to the
+  // draft, which is the only thing that may restart it.
+  const titleChangeRef = useRef(onTitleChange);
+  useEffect(() => {
+    titleChangeRef.current = onTitleChange;
+  });
+
   useEffect(() => {
     if (draftTitle === title) return;
-    const timer = window.setTimeout(() => onTitleChange(draftTitle), 500);
+    const timer = window.setTimeout(() => titleChangeRef.current(draftTitle), 500);
     return () => window.clearTimeout(timer);
-  }, [draftTitle, onTitleChange, title]);
+  }, [draftTitle, title]);
 
   const setIcon = (data: EmojiClickData) => {
     onIconChange(data.emoji);

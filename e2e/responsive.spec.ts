@@ -28,6 +28,22 @@ async function assertNoHorizontalOverflow(page: Page) {
   expect(overflow).toBeLessThanOrEqual(1);
 }
 
+/**
+ * The shell is `flex` with the sidebar as a sibling of `<main>`, and the sidebar
+ * has a width before hydration decides it is a drawer. Measured mid-transition at
+ * 390px: the header came back 252px wide with the title crushed to 0px, which is a
+ * layout that never settles into anything the eye sees. Geometry assertions have to
+ * wait for the header to own the viewport.
+ */
+async function headerSettled(page: Page) {
+  const width = page.viewportSize()!.width;
+  await expect
+    .poll(async () => (await page.locator('header').boundingBox())?.width ?? 0, {
+      message: 'the header never reached the full viewport width',
+    })
+    .toBe(width);
+}
+
 /** Opens the seeded document the visual setup owns (no writes, no new docs). */
 async function openFixtureDoc(page: Page) {
   await page.goto('/documents');
@@ -106,37 +122,73 @@ test('editor right panel opens without collapsing content', async ({ page }, tes
   expect(viewport.width).toBeLessThan(1024);
 });
 
-test('the bell leaves the title row its width on a phone', async ({ page }, testInfo) => {
-  // 铃铛是页头 flex 行里的一个 shrink-0 兄弟节点。它一旦参与水平布局，
-  // 标题的 flex-1 就被切掉 36+12px：标题截断位置变了，其下每一行的折行
-  // 跟着变，整屏位移（mobile 档 /whiteboards 实测 5381 pixels, ratio 0.03）。
-  //
-  // 桌面/平板本来就有足够宽度，不该被这条约束绑住。
-  test.skip(testInfo.project.name !== 'mobile', '只有手机档宽度会让铃铛挤掉标题');
+test('the bell does not paint over the header actions on a phone', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', '只有手机档宽度会让两者撞上');
 
-  await page.goto('/whiteboards');
+  // /collections carries the cheapest header actions there is: one 108px button.
+  // Measured before the fix: bell x 338..374 over actions x 266..374, so 36px of
+  // the button -- its rounded right end -- was hidden under the bell.
+  await page.goto('/collections');
   await pageReady(page);
 
   const bell = page.getByRole('button', { name: '通知' });
+  const action = page.getByRole('button', { name: '新建集合' });
   await expect(bell).toBeVisible();
-  const title = page.locator('header h1');
-  await expect(title).toBeVisible();
+  await expect(action).toBeVisible();
+  await headerSettled(page);
 
-  const bellBox = (await bell.boundingBox())!;
-  const titleBox = (await title.boundingBox())!;
+  const a = (await bell.boundingBox())!;
+  const b = (await action.boundingBox())!;
+  const overlapX = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
+  const overlapY = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y);
+  const area = Math.max(0, overlapX) * Math.max(0, overlapY);
 
-  // 叠放而非并排：铃铛不落在标题的水平区间内。
   expect(
-    bellBox.x,
-    `bell starts at x=${bellBox.x}, inside the title run ${titleBox.x}..${titleBox.x + titleBox.width}`,
-  ).toBeGreaterThanOrEqual(titleBox.x + titleBox.width - 1);
-
-  // 标题宽度就是判据本身：并排时铃铛吃掉自己的 36px 加一个 12px gap，
-  // 实测标题只剩 156.8px；让位后回到 204.8px。阈值取 200 是因为这两档之间
-  // 没有第三个可能的值——页头在手机档的其余部分（汉堡 40、actions、
-  // padding 32）是固定的。
-  expect(
-    titleBox.width,
-    `title took ${titleBox.width}px; the bell looks like it is still in the flex row`,
-  ).toBeGreaterThanOrEqual(200);
+    area,
+    `bell [${a.x}..${a.x + a.width}] covers ${area}px² of actions [${b.x}..${b.x + b.width}]`,
+  ).toBe(0);
 });
+
+test('the bell leaves the title text fully readable on a phone', async ({ page }, testInfo) => {
+  // 铃铛一旦参与水平布局就要从标题的 flex-1 里拿走 36+12px。真正要紧的不是
+  // 标题的盒子变窄（`truncate` 本来就允许），而是文字被切掉多少。所以量的是
+  // 文字实宽与可见宽度，不是盒子宽度。
+  test.skip(testInfo.project.name !== 'mobile', '只有手机档宽度会让铃铛挤掉标题');
+
+  for (const path of ['/collections', '/daily-notes', '/whiteboards']) {
+    await page.goto(path);
+    await pageReady(page);
+    const bell = page.getByRole('button', { name: '通知' });
+    await expect(bell).toBeVisible();
+    await headerSettled(page);
+
+    // Read the geometry out of the header the bell actually lives in. A
+    // `header h1` locator would silently measure whichever header matched, and the
+    // first version of this test did exactly that.
+    const read = await bell.evaluate((node) => {
+      const header = node.closest('header') as HTMLElement;
+      const title = header.querySelector('h1') as HTMLElement;
+      const range = document.createRange();
+      range.selectNodeContents(title);
+      return {
+        text: (title.textContent ?? '').trim(),
+        textWidth: range.getBoundingClientRect().width,
+        boxWidth: title.getBoundingClientRect().width,
+        geometry: Array.from(header.children)
+          .map(
+            (el) =>
+              `${el.tagName}:${(el.textContent ?? '').trim().slice(0, 6)}=` +
+              `${el.getBoundingClientRect().width.toFixed(0)}px`,
+          )
+          .join(' '),
+      };
+    });
+
+    // A title that fits is a title the bell has not eaten.
+    expect(
+      read.boxWidth >= read.textWidth,
+      `"${read.text}" is clipped to ${read.boxWidth}px of its ${read.textWidth}px -- [${read.geometry}]`,
+    ).toBe(true);
+  }
+});
+

@@ -145,9 +145,10 @@
 
 | 选择器 | 所在层 | vars | 装什么 |
 | --- | --- | --- | --- |
-| `[data-theme=light]` | @layer base | **200** | 基色与标量尺全集（`--base`/`--foreground`/4 语义色/`--accent-*` 6 基色/`--brand-red`/`--editor-*` 12 色＋5 渐变＋spectrum/spacing 15/radius 5/shadow 8/transition 6/`--header-height`/`--browse-max-width`） |
+| `[data-theme=light]`（✎ **第 160 批实测**＝真实选择器含**裸 `:root`**＝逐字 `:root,[data-theme=light]`＝⇒ **亮档是默认档**、不是"打标才生效"＝见 **G1382**） | @layer base | **200** | 基色与标量尺全集（`--base`/`--foreground`/4 语义色/`--accent-*` 6 基色/`--brand-red`/`--editor-*` 12 色＋5 渐变＋spectrum/spacing 15/radius 5/shadow 8/transition 6/`--header-height`/`--browse-max-width`） |
 | `[data-theme=dark]` | @layer base | **38** | 基色逐色重指（见 §三）＋ `--editor-*` 语法色暗档 |
-| `[data-theme=light]`／`[data-theme=dark]` | @layer base | 0 | 只有 `color-scheme` ＋ `background-color:var(--base-900)` ＋ `color:var(--foreground-900)` |
+| `[data-theme=light]`／`[data-theme=dark]`（✎ **第 160 批实测**＝亮档那根的真实选择器含**裸 `html`**＝逐字 `html,[data-theme=light]`＝见 **G1382**） | @layer base | 0 | 只有 `color-scheme` ＋ `background-color:var(--base-900)` ＋ `color:var(--foreground-900)` |
+| `@media (prefers-color-scheme: dark)` 内的 `html:not([data-theme])` | @layer base | 0 | ★★★ **第 160 批补＝历批在册漏记的第三根页面规则（G1382）**＝逐字 `color-scheme:dark;background-color:#1e1e1e;color:#f9f9f9`＝☆ **字面色、不走 token**＝成因＝未打标时 `--base` 由裸 `:root` 取到亮值 ⇒ `var(--base-900)` 会算出亮底＝★★ 该档**只改这两属性、不翻 token** ⇒ "系统暗＋未打标"＝暗画布＋亮 token 的混合态＝☆ 胜出靠同层内特异性 `(0,1,1)` > `(0,0,1)`（三根规则都在 `@layer base`＝花括号配平实测跨度 1..26151）＝不靠书写顺序也不靠层序 |
 | `[data-theme=light]`／`[data-theme=dark]`（200／38 vars） | @layer utilities | — | ★ **与 `@layer base` 里那两段逐字节相同**（实测 `block0===block4`、`block1===block5` 均为真）⇒ **构建重复，不是两套语义** |
 | `:root`（裸，**全文件共 4 处**：0 vars @13738（base）／4 vars @14086（base）／112 vars @68244（utilities）／19 vars @292006（components（文件末段））） | @layer utilities | **112** | **上段字面色**＝4 语义色＋6 强调色的 `-550…-900`（10 族 × 8 档＝80 条）＋ brand **七族** 32 条 |
 | `:root,.token-scope` | @layer utilities | **127** | **下段 alpha 派生**＝`--base-900` 1 条 ＋ `--foreground-*` 20 档 ＋（4 语义＋6 强调）× `-50…-500` 100 条 ＋ `--brand-red-*` 6 档；★ 全部形如 `rgb(var(--基色) / P%)`，**没有一条是字面色** |

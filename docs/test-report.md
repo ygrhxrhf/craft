@@ -380,6 +380,12 @@
       视觉矩阵**未跑**＝铃铛渲染未变、且第 39 条那 9 枚浮标基线仍挂着，不在本轮顺手重录。
     - ☆ **提交后补跑的那道门（`87e501a` 之后）**＝视觉矩阵 **96 passed / 0 failed（6.7m）**，且跑完 `git status --short` 为空
       ⇒ 这份改动**没有改写任何一枚基线**（`--update-snapshots` 全程未用）＝"铃铛渲染未变"由计数器佐证、不由推断。
+      ☆☆ **该 11 行落盘时的 commit message 是错的**＝`86809eb` 的内容只有 `docs/test-report.md +11/-0`，
+      却挂着上一批（`87e501a`）那条"Coalesce the bell read…"的正文＝我把 `git commit -F` 指到了 `commit-msg-5.txt`（应为 `-6`），
+      并且随后照常推送＝远端已带这条错 message。⇒ **不 amend、不 `--force`**（在册硬边界），改为**前向更正**：
+      本行即为勘误，正确描述随下一枚正常 commit 的正文一并落盘。⇒ 教训入册＝**多份 message 文件并存时，`-F` 的参数要在提交前对一次首行**，
+      别凭"刚写过哪个"的印象选；`chained` 的多条 `git commit` 更是禁止（本次那串里第一条就误提交、第二条才报 nothing to commit）。
+
     - ★ **本条那条不变量的风险面比写下的更窄（静态＋盘上双侧核过）**＝`temporal.updatedAtString()` 的 `updatedAt`
       是 **JS 侧 execution generator**（`onCreate`／`onUpdate` 都挂它），而 `createdAt` 才是 SQL 默认值 `now()`
       （实现＝`@prisma/orm-family-sql/dist/timestamp-now-generator-*.mjs`，`sed -n '55,83p'`）。

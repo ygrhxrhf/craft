@@ -125,6 +125,39 @@ polls `/api/sync/changes` for the signed-in session），经 `GET /api/sync/chan
    middleware，本轮没做。上表的"往返"一律指 HTTP／server action 层。四个读各自 `await auth()`
    ＋ 一次查询，`Promise.all` 只保证并发提交，**是否真的合并了数据库工作量没有证据**；
    稳态 248ms 与"并行"相符但不构成证明。
+   ☆ **该问已于 2026-10-04 晚实测，并把这条偏差的价值判窄（读数在 `docs/test-report.md` 第六节第 10 条）**：
+   临时把一枚 `afterQuery` 计数中间件接到 `src/prisma/db.ts`（取完读数即 `git restore`，最终字节里没有它）。
+   结论＝**这条改动省的不是往返次数**：冷 `/documents` 的语句数在同一份字节上跑出 119 与 169、整跑 358–400，
+   所以"从 N 条降到 M 条"这类句式从此不可用，本 ADR 上表凡以"往返"论降载的句子都只适用于 action／HTTP 面。
+   能作证的两件事：① **形状**（二值、可复现）＝同步轮询的归属读从
+   `SELECT id, userId FROM documents`（无谓词、行数＝全表 888）变为
+   `SELECT id FROM documents WHERE userId = $1`（619＝本账号行数），A/B/A 三档 0↔≥27 与 10↔0；
+   ② **字节**（直接问库）＝五枚列表读原先裸奔整行，`content 119,517 B ＋ plainText 11,230 B`
+   vs 元数据列合计 42,340 B（侧栏那 605 行）。⇒ 本条改判为**"已观测：省的是传输量与跨账号规模，
+   不是往返次数"**；顺带把本 ADR 第 2 条那句"别把它当同步链路性能问题的解"升格为有据判语。
 4. **本 ADR 的代价第 1 条（延迟上限＝轮询间隔）没有因此改变**，树的刷新仍然额外吃一次独立请求。
 5. **待判的结构性问题**（留给下一批，属设计级、要用户点名）：侧栏树到底该不该改读同步缓存，
    从而取消这条并行通路；以及铃铛（13 发／6 次装载，已是当前最大的 fan-out）为什么比树还频繁。
+   ☆ **后半问已于 2026-10-05 实测结案（仪器＝`../impl-scripts/probe-bell-fanout.cjs`：同一探针两跑、
+   每跑 6 次装载、每次装载之间等 8 秒≈3 个轮询间隔、按 dev 日志追加的字节切片逐跑计数）**：
+   - 读数＝默认配置下**铃铛 2 发／装载、树快照 1 发／装载**，6 跑逐次无一例外（总 12／6）。
+     浏览器侧按 `next-action` 头的 POST 计数与服务端 `ƒ` 行一一对上（`00ee35a2=2`、`0076970c=1`）
+     ＝不是日志解析出来的假象。
+   - 对照（唯一变量＝一行配置）＝在 `next.config.ts` 临时写 `reactStrictMode: false` 复跑＝
+     **铃铛 1 发／装载、树仍 1**（总 6／6＝1:1）。读数取完即 `git restore`，最终字节里没有它
+     （`git diff HEAD -- next.config.ts` 空）。
+   - 成因＝`reactStrictMode` 不写时 Next 解析为 true（`node_modules/next/dist/build/define-env.js:151`
+     `config.reactStrictMode === null ? true`），dev 下 React 因此对每个客户端组件的 effect 双跑一次挂载。
+     铃铛的 `useEffect(..., [revision])` 直接调 `listNotifications()`、**没有在途合并** ⇒ 每装载付两发；
+     树的 `src/lib/sidebar/use-sidebar-snapshot.ts:17` 那枚 module-level `cached = {key, promise}`
+     （key＝`treeVersion:pathname`）让双跑的第二跑命中同 key、复用同一 promise ⇒ 只付一发。
+     ⇒ **"铃铛比树频繁"既不是铃铛在轮询、也不是它多开了通路，而是同一份 dev 计数器上"有没有在途缓存"之差：
+     树被缓存挡住了，铃铛没有。**
+   - 与历轮 13／8 的对账＝本跑工作区安静，两跑都是**零额外重发**（`getDocuments=0`、铃铛与快照都没有第三发），
+     所以历轮 13＝12＋1、8＝6＋2 里多出的那部分只可能来自轮询驱动的重发（Notification revision 上台阶／
+     `bumpTree`）＝**那一段本仪器在静默工作区复现不出来，仍未判**。
+   - 未验＝双发是 dev 语义。生产构建里 React 不双跑 effect，而本仪器两跑都在 `next dev` 上，
+     **没有拿过 `next build` ＋ `next start` 的计数** ⇒ "线上铃铛＝1 发／装载"是按机制推的、不是量出来的。
+   - 处方（要用户点名才做）＝要么给铃铛补同族在途缓存（key 取 `revision`，顺带天然吃掉轮询重发），
+     要么接受"只多一发／装载"不动。☆ 选前者的话判据不能只在 dev 看绿——要的是"StrictMode 开与关两档下
+     POST 计数都是 1"，否则这枚改动在同一份计数器上根本区分不出改没改。

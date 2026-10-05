@@ -378,6 +378,17 @@
       非视觉 e2e 两批（新起服务、批间端口空掉）＝批 1 `43 passed / 1 failed`（20.7m）＋批 2 `28 passed / 5 skipped`（9.3m）
       ⇒ 合计 **71 passed / 1 failed / 5 skipped＝与上一轮逐字同形**，唯一那枚红仍是已在册的 `core.spec.ts:204`（第 15 条，本条为它添第 6 枚样本；`core.spec.ts:38` 本轮 14.8s 单档绿）。
       视觉矩阵**未跑**＝铃铛渲染未变、且第 39 条那 9 枚浮标基线仍挂着，不在本轮顺手重录。
+    - ☆ **提交后补跑的那道门（`87e501a` 之后）**＝视觉矩阵 **96 passed / 0 failed（6.7m）**，且跑完 `git status --short` 为空
+      ⇒ 这份改动**没有改写任何一枚基线**（`--update-snapshots` 全程未用）＝"铃铛渲染未变"由计数器佐证、不由推断。
+    - ★ **本条那条不变量的风险面比写下的更窄（静态＋盘上双侧核过）**＝`temporal.updatedAtString()` 的 `updatedAt`
+      是 **JS 侧 execution generator**（`onCreate`／`onUpdate` 都挂它），而 `createdAt` 才是 SQL 默认值 `now()`
+      （实现＝`@prisma/orm-family-sql/dist/timestamp-now-generator-*.mjs`，`sed -n '55,83p'`）。
+      盘上验 3 枚应用写的文档＝`created=476.476810 / updated=948.948000`、`495.495316 / 851.851000`、
+      `280.280942 / 626.626000` ⇒ **`createdAt` 一直带真微秒、`updatedAt` 恒毫秒**。
+      ⇒ 不变量收窄为：**只有"绕开 ORM generator 去写 `updatedAt` 的那一支"（直连 SQL 的 seed／迁移数据段／别的服务）才破坏游标收敛**；
+      应用自身写入与 `createdAt` 的微秒都无害（游标不看它）。⇒ ☆ 反过来也提醒一句：探针 SQL 里 `now()` 落在 `created_at` 上是可以的、
+      落在 `"updatedAt"` 上就会污染"每次装载几发"这一族读数。
+
 
 
 ## 结论

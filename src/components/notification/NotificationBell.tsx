@@ -4,8 +4,13 @@ import { useEffect, useState, useTransition } from 'react';
 import { Bell } from 'lucide-react';
 import { listNotifications, resolveNotification } from '@/actions/notification/notification';
 import type { InboxRow } from '@/lib/notification/inbox';
+import { createReadPerRevision } from '@/lib/read-per-revision';
 import { reminderInstant } from '@/lib/notification/task-reminders';
 import { useMetadataRevision } from '@/lib/store/use-sync-store';
+
+// Module scope, deliberately: the generation it has to survive is the effect's, not the
+// component's, so a hook-local ref would be rebuilt on the very remount being coalesced.
+const inboxRead = createReadPerRevision<InboxRow[]>();
 
 function formatReminder(remindAt: string | null): string {
   if (remindAt === null) return '';
@@ -33,7 +38,8 @@ export function NotificationBell() {
 
   useEffect(() => {
     let cancelled = false;
-    listNotifications()
+    inboxRead
+      .read(revision, () => listNotifications())
       .then((rows) => {
         if (cancelled) return;
         setItems(rows);

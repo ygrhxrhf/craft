@@ -365,6 +365,21 @@
     - ☆ 该改的注释已就地改写（把预算公式、帧像素、5,390 与 5,179 的比较、ceil 打印、以及"单跑绿"的真实归因都写进去），**保留了原句仍然成立的那半**＝"这一发抓不住错的月份，所以时钟钉是承重的"。**没有**为了保住原推论而调措辞，也**没有**动 `maxDiffPixelRatio`、mask 或任何基线（`--update-snapshots` 一字未用）。
     - ★ 同一处错话在文档里的两处（第 8 条与第 13 条把感知容差默认值写作 `0.1`）一并更正为 **`0.2`**＝`coreBundle.js:7897` 的 `options.threshold ?? 0.2`＝每通道 **51/255**。⇒ 门禁"看不见 +16 均匀位移"这件事比我原先写的**更严重**（51/255 远吞 16），而第 13 条那次收紧实验实际是把容差**收窄 10 倍**（0.2→0.02）而不是"减半"。
 
+18. **历轮那两个聚合数（铃铛 13／树 8，各 6 次装载）已在同一台仪器上逐枚复现，并顺带挖出一条数据面不变量**：
+    - **复现 13**＝`../impl-scripts/probe-bell-fanout.cjs` 加了"在第 N 发装载之前执行一份 SQL"的写侧挂钩（这是关键：游标只在轮询端点头部被消费，**装载之前**插进去的到期提醒会被登录那发首屏吃掉＝量到的永远是"无重发"＝假零）。实跑＝`load1..6` 逐枚 `bell=2/2/3/2/2/2`、`snapshot=1×6`、浏览器侧 POST 同为 `00ee35a2=3` 于第 3 装载 ⇒ **总 13＝12（StrictMode 双发）＋1（一枚真·新提醒的合法重发）**。
+    - **复现 8**＝同仪器插一枚**新文件夹**（属 `SIDEBAR_TABLES`）后 ⇒ `snapshot=2` 且**不是只此一次**：紧接的一发装载也是 2，第 4 跑（清行之后）又回到 `1×6`＝总 6。⇒ 该复发是**粘性**的，由"最新一行是不是侧栏表"决定。
+    - ★★★★★ **成因＝时间戳精度，不是"有新行"**（两侧对照，唯一变量＝精度）＝服务端回游标是 `new Date(maxTs).toISOString()`＝**毫秒**；库里应用自己写的行 `µs == ms×1000`（实测 `documents` 最新行 `126-126000`、`folders` `941-941000`、`tasks` `272-272000`、`notifications` `498-498000`）⇒ `updatedAt > since` 对它**为假**＝不重放。而我用 SQL `now()` 插的行带真微秒（取样＝`524.524681`，同一行截到毫秒＝`525.525000`）⇒ 游标**永远收敛不过去**，每一枚**新会话**的第一发轮询都把该行当"新行"重新计入 ⇒ 侧栏表 ⇒ `bumpTree` ⇒ **每次装载多付一发树读**；会话内被 `sameRow` 抑制，所以只有"整页重装"才看得见。反向对照＝插一枚 `date_trunc('milliseconds', now())` 的最新文件夹 ⇒ `snapshot=1×6`＝总 6。⇒ **不变量＝凡是绕过应用写入 `updatedAt` 的通路（迁移、直连 SQL、别的服务）必须截到毫秒**，否则同步游标不收敛、每枚页面装载多一发读，且这条**与 StrictMode 无关、生产档同样付**。
+    - ☆ 诚实限定：历轮那个 `8＝6＋2` 我**只证到"存在这样一条机制、且能按变量复现/取消"**，没有证到"当时就是它"＝当时工作区的行是否带微秒无从回查。
+    - ★★★★ **③-① 铃铛在途缓存＝按 TDD 做，判据先红**＝新纯核 `src/lib/read-per-revision.ts` ＋ `read-per-revision.test.ts`（5 枚）。对"无缓存"桩的逐字红＝`AssertionError: expected "vi.fn()" to be called 1 times, but got 2 times`（`read-per-revision.test.ts:13`）；实现后 **5 passed**。☆ 另 4 枚（revision 上台阶／回来／失败不入缓存）在桩上本就绿＝**它们是防过度缓存的护栏、不是这枚改动的证据**，承重的是第一枚。
+    - **接线验收**（组件级行为无 DOM 测试面，判据落在浏览器计数器上）＝默认档（StrictMode 开）复跑 6 装载 ⇒ `bell=1×6`、`snapshot=1×6`＝总 6/6，与第 44 条那笔生产档读数（12 装载全部 1/装载）**对齐**；☆ 反向没被吃掉＝`e2e/reminder-delivery.spec.ts` **2 passed**（`a reminder that came due arrives in the bell and stays resolved across a reload` 20.7s、`the reminders switch decides whether a due reminder is delivered at all` 32.1s）＝轮询驱动的合法重发仍然进铃铛。
+    - ☆ 没有顺手把 `use-sidebar-snapshot.ts` 折进同一个工具（它的 key 是 `treeVersion:pathname` 两半、且自带 setState 语义，改它需要它目前没有的测试面）＝**重复留在一处、由本条记账**，不在本轮扩大改动面。
+    - 现场＝本轮为取样写入的 3 枚行（1 task／1 微秒 folder／1 毫秒 folder）与其派生 notification 已逐枚删净并回读（`tasks_left=0`、`notifs_left=0`、`post_delete_count=0`）。
+    - **四道门（最终字节）**＝tsc `exit=0`；eslint `0 errors / 441 warnings`（与在册基线同数）；vitest **51 files / 418 tests passed**（＝在册 50/413 正好加上本条这一份 5 枚）；
+      非视觉 e2e 两批（新起服务、批间端口空掉）＝批 1 `43 passed / 1 failed`（20.7m）＋批 2 `28 passed / 5 skipped`（9.3m）
+      ⇒ 合计 **71 passed / 1 failed / 5 skipped＝与上一轮逐字同形**，唯一那枚红仍是已在册的 `core.spec.ts:204`（第 15 条，本条为它添第 6 枚样本；`core.spec.ts:38` 本轮 14.8s 单档绿）。
+      视觉矩阵**未跑**＝铃铛渲染未变、且第 39 条那 9 枚浮标基线仍挂着，不在本轮顺手重录。
+
+
 ## 结论
 19 条路由 + 编辑器交互矩阵 + 白板持久化 + 分享口令流程全部通过;
 `npm run build` 通过;未发现功能缺失、交互异常。视觉层面完成 token 级

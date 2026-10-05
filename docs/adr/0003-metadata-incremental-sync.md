@@ -156,8 +156,24 @@ polls `/api/sync/changes` for the signed-in session），经 `GET /api/sync/chan
    - 与历轮 13／8 的对账＝本跑工作区安静，两跑都是**零额外重发**（`getDocuments=0`、铃铛与快照都没有第三发），
      所以历轮 13＝12＋1、8＝6＋2 里多出的那部分只可能来自轮询驱动的重发（Notification revision 上台阶／
      `bumpTree`）＝**那一段本仪器在静默工作区复现不出来，仍未判**。
-   - 未验＝双发是 dev 语义。生产构建里 React 不双跑 effect，而本仪器两跑都在 `next dev` 上，
-     **没有拿过 `next build` ＋ `next start` 的计数** ⇒ "线上铃铛＝1 发／装载"是按机制推的、不是量出来的。
-   - 处方（要用户点名才做）＝要么给铃铛补同族在途缓存（key 取 `revision`，顺带天然吃掉轮询重发），
-     要么接受"只多一发／装载"不动。☆ 选前者的话判据不能只在 dev 看绿——要的是"StrictMode 开与关两档下
-     POST 计数都是 1"，否则这枚改动在同一份计数器上根本区分不出改没改。
+   - ~~未验＝双发是 dev 语义~~ ⇒ **✎ 已于 2026-10-05 补测结案，dev 语义这一支成立**
+     （仪器＝`../impl-scripts/probe-bell-count.cjs`，改按响应体形状分类，因为 `next start` 不写 dev 那些 `ƒ` 行）：
+     `npm run build`（exit 0）＋`next start -p 3002` 下连跑两档共 12 次装载，**铃铛每装载恰好 1 发**
+     （响应体含 `remindAt` 而**不含** `whiteboards`＝结构上不可能是快照那枚），另一枚 action POST 也恰好 1 发／装载。
+     ☆ 那"另一枚"在生产档**没能直接标签命中**：`response.text()` 对它报
+     `Network.getResponseBody: No resource with given identifier found`（同一次装载里较小的那枚体能读到、较大的读不到），
+     所以它的身份＝**排除法**（一次装载只有两枚 action POST、其中一枚已被体形状钉为铃铛）＋dev 档那两枚 id
+     各自的发数与 `ƒ` 行逐一对齐＝**不是直接读到的**。
+     ☆ 另＝action id 在 dev 与 prod 之间不通用（dev `00ee35a2`/`0076970c` vs prod `006b1cbc`/`009e7112`）
+     ⇒ 任何"按 id 认身份"的计数器都不能跨构建档复用。
+     ⇒ 结论改写为：**"铃铛 2 发／装载"是 dev 仪表的读数，不是产品代价；生产档铃铛与树同为 1 发／装载。**
+   - 处方（要用户点名才做）＝在"生产档＝1 发／装载"之下，给铃铛补在途缓存**不再省任何线上往返**，
+     它只消 dev 计数器上的那一发幻影 ⇒ 本 ADR 原先把它当"最大 fan-out"的判语作废，不改也无需理由。
+     仍要动的唯一实在理由＝dev 仪表会误导后续批次（凡按请求条数论成本者先踩这一坑），那属仪器问题、不属产品问题。
+   - ☆ **补测过程中撞到的两条现场事实**（与 fan-out 无关、但影响任何生产档复跑）：
+     ① 生产档本地跑必须在登录前给 `AUTH_TRUST_HOST=true`，否则 Auth.js v5 直接
+     `UntrustedHost`、`/api/auth/providers` 回 500、`NEXTAUTH_URL` 指对端口也不够（dev 档因为
+     `NODE_ENV=development` 才默认信任 localhost）；
+     ② **`next build` 会覆盖同目录正在运行的 dev server 的 `.next`**——本轮那枚就是这么变成
+     "端口在听、登录跳 `/api/auth/error`"的废器的，而 `playwright.config.ts` 的
+     `reuseExistingServer: !CI` 会把它当成可用服务直接复用 ⇒ 跑过 build 之后必须先确认 3000 上那枚活着的是谁。

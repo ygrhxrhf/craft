@@ -113,12 +113,33 @@ export async function getCollection(id: string) {
     .orderBy((m: any) => m.order.asc())
     .all();
 
+  const itemIds: string[] = [];
+  for (const item of items) itemIds.push(String(item.id));
+
+  // One read for every row on the page. The loop this replaces cost one statement per
+  // item (measured: 1 item = 5 statements, 4 items = 8), and a collection table is
+  // exactly the page where row counts grow.
+  const values = itemIds.length === 0
+    ? []
+    : (await db.orm.public.CollectionValue
+        // Callback form required: the object form silently matches nothing.
+        .where((m: any) => m.itemId.in(itemIds))
+        .all() as Record<string, unknown>[]);
+
+  const valuesByItem = new Map<string, Record<string, unknown>[]>();
+  for (const value of values) {
+    const key = String(value.itemId);
+    const bucket = valuesByItem.get(key);
+    if (bucket) bucket.push(value);
+    else valuesByItem.set(key, [value]);
+  }
+
   const itemsWithValues = [];
   for (const item of items) {
-    const values = await db.orm.public.CollectionValue
-      .where({ itemId: (item as any).id })
-      .all();
-    itemsWithValues.push({ ...item, values });
+    itemsWithValues.push({
+      ...item,
+      values: valuesByItem.get(String(item.id)) ?? [],
+    });
   }
 
   return {

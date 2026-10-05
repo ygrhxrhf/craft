@@ -162,7 +162,7 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
     if (blocks.length >= 12) break;
   }
 
-  const rows = offset === 0 ? await searchCollectionRows(db, uid, pattern) : [];
+  const rows = offset === 0 ? await searchCollectionRows(db, uid, q) : [];
 
   const hasMore = titleMatches.length === PAGE_SIZE || contentMatches.length === PAGE_SIZE;
 
@@ -170,23 +170,50 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
 }
 
 /** Collection rows are searched by their stored cell text. */
-async function searchCollectionRows(db: any, userId: string, pattern: string): Promise<SearchResultRow[]> {
-  const values = await db.orm.public.CollectionValue
-    .where({})
-    .where((v: any) => v.value.ilike(pattern))
-    .limit(8)
-    .all();
+async function searchCollectionRows(
+  db: any,
+  userId: string,
+  query: string
+): Promise<SearchResultRow[]> {
+  // The Json field proxy has no `ilike` -- measured `TypeError: v.value.ilike is not a
+  // function`, which threw on every call: the palette's try/finally has no catch, so a user
+  // just got no rows back and no error. Scope is resolved first, then the text is matched here.
+  const collections = (await db.orm.public.Collection
+    .where({ userId, isDeleted: false })
+    .all()) as Record<string, unknown>[];
+  if (collections.length === 0) return [];
 
+  const collectionIds: string[] = [];
+  const byCollection = new Map<string, Record<string, unknown>>();
+  for (const c of collections) {
+    collectionIds.push(String(c.id));
+    byCollection.set(String(c.id), c);
+  }
+
+  const items = (await db.orm.public.CollectionItem
+    .where((m: any) => m.collectionId.in(collectionIds))
+    .all()) as Record<string, unknown>[];
+  if (items.length === 0) return [];
+
+  const itemIds: string[] = [];
+  const byItem = new Map<string, Record<string, unknown>>();
+  for (const item of items) {
+    itemIds.push(String(item.id));
+    byItem.set(String(item.id), item);
+  }
+
+  const values = (await db.orm.public.CollectionValue
+    .where((v: any) => v.itemId.in(itemIds))
+    .all()) as Record<string, unknown>[];
+
+  const needle = query.toLowerCase();
   const rows: SearchResultRow[] = [];
   const seen = new Set<string>();
   for (const entry of values) {
-    const item = await db.orm.public.CollectionItem.first({ id: (entry as any).itemId });
-    if (!item) continue;
-    const collection = await db.orm.public.Collection.first({ id: (item as any).collectionId });
-    if (!collection || (collection as any).userId !== userId || (collection as any).isDeleted) continue;
-    if (seen.has((entry as any).itemId)) continue;
-    seen.add((entry as any).itemId);
-    let text: unknown = (entry as any).value;
+    const itemId = String(entry.itemId);
+    if (seen.has(itemId)) continue;
+
+    let text: unknown = entry.value;
     if (typeof text === 'string') {
       try {
         text = JSON.parse(text);
@@ -194,11 +221,19 @@ async function searchCollectionRows(db: any, userId: string, pattern: string): P
         /* keep the raw string */
       }
     }
+    const rendered = Array.isArray(text) ? text.join(', ') : String(text ?? '');
+    if (!rendered.toLowerCase().includes(needle)) continue;
+
+    const item = byItem.get(itemId);
+    const collection = item ? byCollection.get(String(item.collectionId)) : undefined;
+    if (!collection) continue;
+
+    seen.add(itemId);
     rows.push({
-      collectionId: (collection as any).id,
-      collectionName: (collection as any).name,
-      itemId: (item as any).id,
-      text: Array.isArray(text) ? text.join(', ') : String(text ?? ''),
+      collectionId: String(collection.id),
+      collectionName: String(collection.name ?? ''),
+      itemId,
+      text: rendered,
     });
     if (rows.length >= 6) break;
   }

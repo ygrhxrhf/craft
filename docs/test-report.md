@@ -395,6 +395,156 @@
       应用自身写入与 `createdAt` 的微秒都无害（游标不看它）。⇒ ☆ 反过来也提醒一句：探针 SQL 里 `now()` 落在 `created_at` 上是可以的、
       落在 `"updatedAt"` 上就会污染"每次装载几发"这一族读数。
 
+19. **集合详情读的第二处 N+1 已修（活路径），并删掉一枚带同样缺陷的死码**：
+    - **先验证目标是不是活的**＝`grep getItems` 全仓（`src`／`e2e`／`docs`）**零引用**＝死码；真正在跑的是 `getCollection(id)`
+      （集合详情页）里那句"每枚行一次 `CollectionValue` 读"。⇒ ☆ 判据＝**修 N+1 之前先问哪条通路真被消费**，
+      否则会把 25 行死码修得很漂亮而活路径一处没动。
+    - **TDD＝先红**（新 `src/actions/collection/collection-detail.test.ts`，真库＋`afterQuery` 计数中间件，同第 11 条的夹具形状）＝
+      逐字红＝`AssertionError: a one-item collection costs 5 statements, a four-item collection costs 8: expected 8 to be 5`
+      ⇒ 改一次批量读（`where((m) => m.itemId.in(itemIds))`＋按 `itemId` 分桶）后 **6 passed**（两份集合测试文件合计）。
+    - ★ **三枚断言各测不同事（控制跑过）**＝把 `CollectionItem` 的作用域摘掉（`.where({ collectionId: id })` 去掉）复跑＝
+      **只有隔离那枚红**＝`AssertionError: expected [ …(60) ] to not deeply equal ArrayContaining{…}`，
+      另两枚（分桶正确／语句数不随行数增长）仍绿 ⇒ 三枚不是同一件事的三次回声；恢复用 `cp` 回原字节并 `cmp` 证逐字相同。
+    - ☆ **计数尺在这条通路可用、在第 10 条那条不可用，差别要说清**＝这里是 vitest **直调 action**＝语句序列确定；
+      那里是 dev 冷装载＝预取与渲染状态会把同一份字节跑出 119 与 169。⇒ 判据＝**用计数前先问这条通路的语句序列是不是确定的**。
+    - **死码 `getItems` 删除**＝lint 总数 **441 → 438**＝正好 −3 全来自它；我的新代码 **0 新增警告**
+      （用 `git show HEAD:<f> | eslint --stdin --stdin-filename <f>` 对同一文件两档逐档核：`items.ts 18→15`、
+      `collection.ts 9→11` → 去掉两枚多余的 `(item as any)` 断言后**回到 9**）。
+    - ★★ **本轮我自己判错又当场撤回的一句话**＝先用 `left(value #>> '{}',1) <> '"'` 把 29 枚 `CollectionValue` 判成
+      "产品在往 `json` 列写裸串"的活缺陷（其中 28 枚属 e2e 账号、时间戳一直写到当天 16:51，看着极像活缺陷）；
+      改用真正的判据"解码出来那段还能不能 `JSON.parse`"重算＝**只有 1 枚不可解析，而那枚正是我自己夹具中止时漏下的**
+      （本轮在同一把新谓词下重算的分母＝库里 **51 枚全扫／不可解析 0 枚**，清理前是 52／1＝那 1 枚就是漏下的夹具行）
+      ⇒ **产品侧写入无缺陷**（`setItemValue` 一直 `JSON.stringify`，是对的）。
+      ✎ **连同当时给的"为什么误收"一起更正**＝原话"合法值里 number/object/boolean 都不以 `"` 开头"不成立＝
+      实算全库 51 枚 `json_typeof` **全是 `string`**＝零枚 number/object/boolean；误收的真正原因是 `#>> '{}'` 已把标量的
+      外层引号剥掉，于是那把谓词对**每一枚**正常行都成立＝它不是"旁证不牢"，是"恒真"。
+      ☆ 判据加一条＝**旁证式分类线除了问"该属性是否成立"，还要问"它在健康样本上是不是也成立"**＝恒真的分类线等于没有。
+    - ★★★★ **这一条本轮补上了"能不能红"，并把我自己写错的机制改对**＝分类线改成属性直写
+      `json_typeof(value) = 'string' and not pg_input_is_valid(value #>> '{}', 'json')`（PG 16+ 的 `pg_input_is_valid`）＝
+      仪器 `../impl-scripts/probe-undecodable.sql`（全程 `begin…rollback`）＝**同一把谓词在真数据上 1 → 2 → 1**
+      （把一枚健康行临时写成单编码形＝2，回滚＝1）＝既非恒真也非恒绿；`fixture-cleanup.sql` 里那枚报 28 的旧 `poison_left`
+      已就地换成此形。
+      ＝☆ **更正我更早的一句话**＝"写裸串能存进去，但读的时候会抛"里**成因写错了**＝实测 PG **拒收**裸串
+      （`../impl-scripts/probe-json-coltype.sql`：未定型字面量→`类型 json 的输入语法无效`＋`DETAIL: Token "苹果" is invalid`；
+      显式 `::text`→`字段 "value" 的类型为 json，但表达式的类型为 text`；合法 JSON 文本那档只撞外键＝写侧本身放行）
+      ＝`json` 列**不可能**存下非法 JSON，"失败延迟到读侧"为真、但通路在 codec 不在存储：
+      `node_modules/@prisma/orm-target-postgres/dist/codecs-*.mjs:277-278`＝`pgJsonEncode = JSON.stringify(value)`、
+      `pgJsonDecode = JSON.parse(wire)`，而驱动交回来的已经是解析过一次的值⇒**读侧解析两次**。
+      三枚字节级读数互相对上＝健康行存 `"\"苹果\""`（12 字节，内层仍是合法 JSON）两次解析落在 `苹果`；
+      漏下的那枚存 `"一枚行#0.0"`（15 字节，内层是裸文本）第二次解析抛
+      `RuntimeError: Failed to decode column collection_values.value with codec 'pg/json@1': Unexpected token '一', "一枚行#0.0" is not valid JSON`。
+      ☆ 活闸门＝`setItemValue` 里那句 `JSON.stringify` **是承重的**＝把它当"重复序列化"清理掉，写入照样成功、库面照样合法，
+      只有下一次详情读才炸＝**写侧不给任何信号**。
+    - ☆ 实验账（单变量＝只摘夹具里那一句 `JSON.stringify`）＝定向跑 `collection-detail.test.ts` **exit=1**＝3 枚全 skipped、
+      `beforeAll` 抛上面那条 `RuntimeError`＝vitest 在 `beforeAll` 失败时**不跑** `afterAll`，那枚行因此留在库里
+      （删前先读回内容＝`users 2／values 1／properties 2／items 1／collections 1`，按邮箱前缀 `collection-detail-%` 选、不用 CJK 显示名）；
+      `cp` 回原字节＋`cmp` 证逐字相同后复跑＝**6 passed / 2 files**；清理后库面＝**总 51 枚／undecodable 0**。
+    - **门禁（最终字节）**＝tsc `exit=0`；eslint `0 errors / 438 warnings`；vitest **52 files / 421 tests passed**；
+      集合相关 e2e 定向批 `-g "collection"` **13 passed（2.4m）**，跑完 `git status --short` 内无任何 `.png`＝基线一字未动；
+      非视觉全量与视觉矩阵**未重跑**（上一份全量基线在 `87e501a`，本批只动 `src/actions/collection/` 两个文件＋一份新测试）。
+      ☆ 第 41 条另一半（126 枚基线全量重录后再谈阈值）按第 13 条的量价**继续不做**。
+20. **全局搜索里"集合行"这一路此前每次必抛＝产品里集合搜索一直是静默零结果**（顺带把上一条评论里那句错机制改对＝见第 19 条）：
+    - 逐字红＝`TypeError: v.value.ilike is not a function`（`search.ts:176`，`Json` 字段的字段代理上没有 `ilike`）＝
+      这一发查询**从来没成功过**；调用方两处（`CommandPalette.tsx:59-67` 首发与 `:78-87` 翻页）都只有 `try/finally` 没有 `catch`⇒
+      界面得到的是"搜索集合没有结果"而不是报错＝☆ 判据＝**通路级抛错在缺 catch 的调用方那里长得像空数据**。
+    - 为什么历批 421 全绿没抓到＝`/search` 页只开关弹层（`src/app/(app)/search/page.tsx` 不读库）、
+      视觉基线拍的是**没有查询词**的空弹层、`e2e/block-link-menu.spec.ts` 走的是另一个入口 `searchDocumentsForLink`
+      ＝覆盖面缺口，不是"没缺陷"。
+    - 判据（新 `src/actions/document/search-collection-scope.test.ts`，真库 3 枚）＝① 别人账号 10 枚命中、我 1 枚时我那枚必须在结果里
+      ② 结果里不许出现别人的 `itemId` ③ 回给的 `text` 是单元格本体、不带 json 外层引号。先红＝**3 枚全红**、原因即上面那条 `TypeError`。
+    - 转绿＝先定作用域（我的集合 → 我的行 → 我的单元格，共 3 发读完）再把文本匹配放到 JS；顺带去掉每命中 2 发的 `first()` 回查。
+    - **控制（三枚不是同一件事的三次回声）**＝把 `.where({ userId, isDeleted: false })` 里的 `userId` 摘掉复跑＝
+      ①红（`search returned [6 枚别人 id], my row … is absent`）、②红（`expected [ Array(1) ] to include 'b06be7a7…'`）、③仍绿；
+      `cp` 回原字节＋`cmp` 逐字相同后 **3 passed**。
+    - ☆ 要说清证据边界＝"页容量限制早于归属过滤会把我的行挤出"这句在**改之前**没能单独测（它挡在那次抛后面）＝
+      本次是从"摘掉作用域"这一侧看到同一形状（别人的 6 枚把我的挤掉）＝结构性推论＋反向观察，不是对原形状的正面复现。
+    - **e2e 已补（同轮，任务 #46 结案）**＝新 `e2e/search-palette.spec.ts` 三枚判据：① 弹层按标题找到我的文档
+      ② 弹层按单元格文本找到我的集合行 ③ 别人账号的数据不出现在我的弹层里（并要落到"未找到"态、不卡在"搜索中…"）。
+      账号自注册 `craft-palette@example.com`＝视觉矩阵 owns 的那枚账号一律不写（往共享账号的集合单元格里打字会把
+      `collection table view` 基线改掉），且 `playwright.config.ts` 的 tablet/mobile 只 `testMatch` visual|responsive＝这枚只跑 desktop。
+      夹具走真入口：新建集合自带一枚 `名称` 文本属性（`createCollection`）→新建行→点 `-` 空格→填→Enter。
+    - **控制的不对称才是要记的东西**＝把 `src/actions/document/search.ts` 整份回退成 HEAD 那枚带 `v.value.ilike` 的缺陷形（`git show HEAD:` 落盘）复跑＝
+      ①② **红**（`expect(locator).toBeVisible() failed`）、③ **仍绿**＝"沉默空结果"这一类**负向判据抓不住、只有正向判据抓得住**；
+      `cp` 回固定字节＋`cmp` 逐字相同后 **3 passed（29.2s）**（首跑因冷编译 53.7s＝同一批字节两种读数都合法，别把编译时间当回归）。
+    - 门禁（本条最终字节）＝tsc `exit=0`；eslint `0 errors / 429 warnings`（438→429，−9 全在 `search.ts`；两份新测试与这份 e2e **各 0 枚警告**）；
+      vitest **53 files / 424 tests passed**；e2e＝`search-palette` 3 passed／`-g "search"` 视觉 6 passed／`block-link-menu` 5 passed／
+      `-g "collection"` 13 passed；各轮跑完 `git status --short` 内 `.png` **0 枚**＝基线一字未动；
+      库面＝`collection_values` 55 枚／`undecodable` 0／历轮夹具账号 0 残留。
+21. **按第 20 条的形状把同族枚举了一遍，并抓出我自己刚写下的那枚空心判据**：
+    - ☆ 谓词面（可红性）＝全库 `grep -rn "\.ilike(" src/` 共 **5 枚**调用点＝唯一打在 `Json` 列上的正是第 20 条那枚，
+      其余 4 枚按 `contract.prisma` 逐枚核实接收列型＝`Document.title String`／`Document.plainText String`／`Tag.name String`
+      ⇒ **同族清零**（这 4 枚仍走 SQL 侧匹配、本轮未动＝它们合法）。
+    - ★★ 浏览器侧到底有没有信号＝**实测**（临时把 `pageerror`／`console` 挂到弹层三枚判据上并把读数写到仓外）：
+      健康档三枚各 `pageerror 0／console error 0`；缺陷档（`git show HEAD:` 回退 `search.ts`）同一枚动作下＝
+      `pageerror=["v.value.ilike is not a function"]`＋`console error=["Failed to load resource: the server responded with a status of 500"]`
+      ⇒ **开发者看得见、用户看不见**（屏面是"未找到与…相关的结果"）＝这就是那枚缺陷能活到今天的完整解释。
+      三枚判据末尾各留一条 `expect(errors).toEqual([])`＝健康档 0 枚＝这枚断言可红、是第二张网不是唯一一张。
+    - ★★★★ **我自己上一轮写下的负向判据是空心的**＝第 20 条那条"别人数据不出现在我的弹层里"当时只断"不出现＋落到未找到态"＝
+      而 `未找到与 “…” 相关的结果` 在 **200ms 防抖窗口内就已渲染**（`hasQuery && !searching && 三个数组皆空`）＝
+      **通路整个死掉也照样绿**＝上一轮控制跑那个 `2 failed / 1 passed` 里的 `1 passed` 不是"缺陷不存在"，是"判据无效"。
+      改形＝先要求一次**看得见地落地**的结果（我的单元格行必须出现），再把查询词换成别人的、断言**它消失**
+      ＝"消失"只能发生在第二次响应之后 ⇒ 同一控制跑变成 **3 failed**＝负向判据自己也能抓住死通路了。
+      ⇒ ☆ 判据＝**任何"零命中"类断言之前，要在同一段里先放一枚"该通路此时真在响应"的正控制**；
+      否则你测的是渲染时序，不是功能。这条比第 20 条那条"覆盖面缺口"更狠：那是要么没测、要么测了个不能红的。
+    - ☆ 放大器清单（**本轮不改**，最终字节上复扫一次与首次扫一致）＝全库 `'use client'` 文件里"只有 `try/finally`、没有 `catch`"的块
+      **15 枚／13 份文件**＝各 1 枚的 11 份（`app/(app)/calendar/page.tsx`、`app/(app)/collections/[id]/FormView.tsx`、
+      `app/(app)/daily-notes/TodayNoteButton.tsx`、`app/(app)/tasks/page.tsx`、`app/(app)/whiteboards/CreateWhiteboardButton.tsx`、
+      `components/collection/AddPropertyMenu.tsx`、`components/collection/AddViewMenu.tsx`、
+      `components/editor/extensions/block-link-menu.tsx`、`components/editor/extensions/mention-user-menu.tsx`、
+      `components/editor/panels/BacklinksPanel.tsx`、`components/sidebar/ImportButton.tsx`）＋各 2 枚的 2 份
+      （`components/editor/tabs/TagsSection.tsx`、`components/search/CommandPalette.tsx`）＝11＋2＋2＝**15**＝逐份列出与总数对平
+      （☆ 第一遍我只列了 10＋2＋2＝14，漏在 `FormView.tsx` 一枚＝**清单必须与分母加得起来**，否则清单本身就是那类抽样当全量的错）。
+      ＝给它们加错误呈现是**产品决策**（toast？内联？静默重试？）＝要用户点名后按官方屏基准对齐，不在观测层擅自补词。
+    - 门禁（本条最终字节）＝tsc `exit=0`；eslint `0 errors / 429 warnings`（本轮新增 0；那两枚 `Unused eslint-disable`/`any` 类读数经逐份归属核实属
+      `e2e/core.spec.ts`／`e2e/whiteboard-collab.spec.ts`／`scripts/probe-collab.mjs`＝非本轮）；vitest **53 files / 424 tests passed**；
+      e2e `search-palette` **3 passed（改形后复跑 27.8s／28.8s）**；本轮 3 份新文件逐份 `npx eslint <file>` **各 0 枚警告**＝分母与逐份读数并排打印。
+      ☆ 非视觉全量与视觉矩阵整体仍未重跑（上一份全量基线在 `87e501a`）。
+
+22. **基线集的两笔审计账（只读，本轮 0 枚基线改动／0 处阈值改动）**：
+    - ★★ **分母假零出在"行尾锚"上，而且专挑最坏的那两枚**＝`git show --name-only --format= 5e7376a | grep -c '\.png$'` ＝ **13**，
+      去掉锚＝**15**，`--name-only -z` 逐条数＝总文件 24／png **15**（三者都已实跑）。成因＝`--name-only` 对含 CJK 的路径输出八进制**引号形式**，
+      整行以 `…win32.png"` 结尾（尾部多一枚引号），`\.png$` 恒不命中。被丢的正是 `dark-document-tab-信息-{desktop,mobile}`＝
+      而这两枚恰是盒外差最大的两枚（**6891／5482**）＝**按 13 枚看会得出"最坏的已经点名了"，实际最坏的两枚在视野外**。
+      ⇒ ☆ 判据＝**锚式 grep 报零或报少时，要把"哪些行没被锚住"逐行打出来**；只看计数会给出方向性错误的账（同族＝`git ls-files`／`status --porcelain` 要 `-z`）。
+    - 15 枚逐枚四列（实质差／差集包围盒／盒外紧档 `19..135×607..644`／盒外宽档 `8..160×h-74..h-4`；暗档用 offBg＋差集包围盒，**不用 `pill-dot-44`**）
+      ＝盒外 **0 的 6 枚**：`dark-app-{documents,recent,settings}-mobile`＋`light-app-{documents,recent,settings}-mobile`；
+      **非零的 9 枚**＝`dark-app-search-mobile` 3518／`dark-app-templates-mobile` 5389／`dark-document-tab-信息-desktop` 6891（宽档 7196）／
+      `dark-document-tab-信息-mobile` 5482（宽档 5167）／`light-app-favorites-mobile` 3125／`light-app-search-mobile` 3554／
+      `light-app-trash-mobile` 3497／`light-app-daily-notes-mobile` 68／`light-app-templates-mobile` 74＝**6＋9＝15**（☆ 我第一遍把这两栏写成"8 枚／7 枚"，
+      逐枚列名才抓住＝**聚合数必须与成员名册加得起来**，否则清单自己就是那类"抽样当全量"的错；这条判据是采集线在册的，我这批原样兑现一次）。
+      分档＝68／74 那两枚全落在 `y0..39` 一行、色变 `252,253,254→82,92,102`＝**标题文字本体＝预期内容变动**；
+      3125／3497／3518／3554／5389 五枚的色变族是灰阶字形边＋暗底换档＝候选＝列表文字随账号数据变｜**未证**（证它要跑当前帧对比＝属视觉轮，本轮未授权、我没跑）；
+      信息 tab 两枚的色变是**彩色的**（`125,194,235`／`235,194,125`／`30,125,194`，只在 `y≥420`）＝既非浮标也非文字＝**判为待判的意外一类，照原样记录、一字未改**；
+      逐枚原始读数在 `../impl-scripts/gate-6-all.log`。
+    - ★ **126 枚内部一致性普查＝"通过率不能审计自己的阈值"被盘上坐实**：页×主题分组 **42**，其中 top1 底色跨档**分裂 27**（全表 `../impl-scripts/census-roster.log`）。
+      所以 `96 passed / 0 failed` 只证"与当前基线集自洽"，不证这套底色本身对。
+      **mtime 不能当录制的钟**＝126 枚只有 **9 个不同 mtime 值**、**94 枚挤在 `2026-10-04 09:56`＋`09:57` 这一分钟对**（＝一次批量触碰）；
+      而 `14,15,18` 那 8 枚 mtime 全为 `10-04 09:56`、提交时间却是 `2026-09-25 16:32:51`＝晚 9 天 ⇒ **能用的钟只有 git committer date**。
+      分裂确实与"录早了"同分布＝按"最后触碰这枚文件的提交"分档＝`09c52df ×67`／**`89e4d52 ×20`**／`5e7376a ×15`／`66cf329 ×14`／`181268f ×8`／`13f3549 ×2`（67＋20＋15＋14＋8＋2＝**126**＝与分母对平），
+      而 `89e4d52 2026-09-25 16:32:51` 那 **20 枚**＝**16 mobile＋4 desktop**，簇内构成＝dark `14,15,18` ×8、light `251,249,245` ×4、dark `21,22,24` ×2、light `249,247,244` ×2
+      ＋另 4 枚落在跨提交的簇里（dark `35,35,35`／dark `249,250,251`／light `252,252,252`／light `249,250,251` 各 1）。
+      ☆ **这里我第一遍写成"一枚提交带走 16 枚"**＝把"只属于该提交的那几簇之和"当成了"该提交触碰的文件数"＝**聚合数必须与成员名册加得起来**（同上一条错误、同一批内二次犯），
+      正确读数是 **20 枚触碰／16 枚独占**；能用的钟只有 git committer date，mtime 那 9 个值里 94 枚挤在同一分钟对。
+      ⇒ 候选＝那批快门打在"主题由运行期 effect 写进 `<html>`"之前（G1384 的预测形状）｜**未证**——证它要把其中一枚在当前代码下重录并看是否落到 `30,30,30`＝属重录、本轮不授权。
+    - ☆ 两枚同题提交的四问（只报读数不报成因）＝`87e501a` 与 `86809eb` 的 `%s` 与 `%B` 逐字相同（`%B` md5 均为 `17d2381df1f092b3e6f10716b8763998`）；
+      numstat **不**相同＝`87e501a` 5 份（adr 19/6、test-report 15/0、NotificationBell 7/1、`read-per-revision.test.ts` 58/0、`read-per-revision.ts` 29/0）
+      vs `86809eb` 1 份（`11 0 docs/test-report.md`）；`86809eb^ = 87e501a`、中间无别的提交（17:27:55 → 17:42:34）；
+      `git ls-remote origin refs/heads/impl/crafty-p0` ＝ `660eefd…` ＝ 本地 `HEAD`。
+    - ★ **非视觉全量 e2e 在当前字节上重跑了一份（补上第 21 条末尾那句"仍未重跑"的欠账）**＝
+      `npx playwright test --project=desktop`＋逐份列出 16 份非视觉 spec（不含 `visual`／`responsive`）＝
+      stdout 原文＝`1 failed`＋`64 passed (22.1m)`、`PW_EXIT=1`（**后台任务的"exit code 0"不作数**＝那是外壳退出码，真正的 playwright 码在日志里＝1）。
+      分母对平＝**65** 枚＝历批那 67 枚去掉 `responsive.spec.ts` 的 5 枚、加本轮 `search-palette.spec.ts` 的 3 枚（`67 − 5 + 3 = 65`）。
+      唯一那枚红＝`whiteboard-collab.spec.ts:93`，**不是断言**＝`Test timeout of 120000ms exceeded` 停在 `secondPage.goto(...)` 的 `waiting until "load"`；
+      日志里 `line 403` 逐字有 `[WebServer] ⚠ Server is approaching the used memory threshold, restarting...` 而 `line 410` 正是那枚红＝时序前后咬住；
+      单跑复核＝`npx playwright test --project=desktop e2e/whiteboard-collab.spec.ts`＝**6 passed (2.6m)／`PW_EXIT=0`／`memory threshold` 出现 0 次**，
+      且那枚 `:93` 这一跑 **22.9s**（全量跑里是 2.0m 撞超时）⇒ 判**通路档**（与历批 `trash-selection.spec.ts:9` 同机制、第二次实例），**不记产品回归、不因此改判据或加超时**。
+      ☆ 另＝本轮该全量跑里在册那枚间歇红 `core.spec.ts:204` 是绿的（`ok 21 … (32.7s)`）。
+      消费面核对＝我改的三份（`document/search.ts`／`collection/collection.ts`／`collection/items.ts`）的 import 面全在 `collections` 页、`sidebar/snapshot.ts` 与两份测试里，
+      白板通路零引用＝超时与改动无因果（这一句是静态核对，不是那条红的判据；判据是上面那个单跑）。
+    - ☆ 仪器（全部仓外、只读）＝`../impl-scripts/gate-6-mobile-baselines.cjs`（新增 `--all` 档＝一次量全 15 枚）、`table-gate-6.cjs`、
+      `strays-profile.cjs`、`baseline-census.cjs`（`.tsv` 全名册）、`census-clusters.cjs`、`census-roster.cjs`。
+
+
 
 
 ## 结论

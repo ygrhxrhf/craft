@@ -110,30 +110,3 @@ export async function setItemValue(
 
   revalidatePath(`/collections/${(item as any).collectionId}`);
 }
-
-export async function getItems(collectionId: string) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('未授权');
-
-  const db = await getDb();
-
-  const collection = await db.orm.public.Collection.first({ id: collectionId });
-  if (!collection || (collection as any).userId !== session.user.id) {
-    throw new Error('集合不存在');
-  }
-
-  const items = await db.orm.public.CollectionItem
-    .where({ collectionId })
-    .orderBy((m: any) => m.order.asc())
-    .all();
-
-  const result = [];
-  for (const item of items) {
-    const values = await db.orm.public.CollectionValue
-      .where({ itemId: (item as any).id })
-      .all();
-    result.push({ ...item, values });
-  }
-
-  return result;
-}

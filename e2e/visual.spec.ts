@@ -62,6 +62,23 @@ async function expectIndicatorIdle(page: Page) {
 }
 
 /**
+ * The theme has to be on `<html>` BEFORE the shutter, not shortly after it: next-themes
+ * hangs every colour token off that class, so a shot taken in between is a light page
+ * filed under a dark name -- and those pixels then become the baseline, which is how
+ * drift gets baked in rather than caught. Read as a single shot rather than
+ * `await expect(...).toHaveClass(...)`, which polls for up to `expect.timeout` and would
+ * therefore forgive exactly the failure being guarded against: a theme that lands late.
+ */
+async function expectThemeApplied(page: Page, name: string) {
+  const theme = /^(light|dark)-/.exec(name)?.[1];
+  // Failing loudly beats guessing: a name without a theme prefix would otherwise be
+  // checked against whichever token a fallback picked, and pass for the wrong reason.
+  if (!theme) throw new Error(`shoot(): "${name}" carries no light-/dark- prefix, so there is no theme to assert`);
+  const cls = await page.evaluate(() => document.documentElement.className);
+  expect(new RegExp(`(^|\\s)${theme}(\\s|$)`).test(cls), `<html class="${cls}"> carries no "${theme}" token at the shutter`).toBe(true);
+}
+
+/**
  * Masked: dates, relative timestamps and any `grid-cols-7` table. The seeded
  * data is fixed, but "最后编辑 3 天前" is not. The sidebar tree is deliberately
  * NOT masked (masking it whole hid real regressions), and neither is the
@@ -75,6 +92,7 @@ async function shoot(page: Page, name: string) {
   await expect(page.getByText('加载中').first()).toBeHidden();
   await page.waitForTimeout(350);
   await expectIndicatorIdle(page);
+  await expectThemeApplied(page, name);
   const dynamic = [
     // Only the genuinely volatile nodes: dates and relative timestamps (the sidebar
     // tree itself is seeded and stable, so masking it whole hid real regressions).

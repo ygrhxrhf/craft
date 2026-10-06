@@ -3338,3 +3338,200 @@ markdown＝"[How To Link and Backlink in Craft](https://youtu.be/Q_eas6gZmVg)"
 | 10 | 枚 7 | `k` | `link` | `i` | 词内（两侧都被字母夹住＝`back**link**ing`） |
 
 ⇒ ★★★ 聚合数＝**10 枚粗段／词内 7／整词 3／两侧都被夹住 1**＝⇒ 粗号只包针本身、不参与构词＝复证 `longtail.md` §六十三那句"粗号可以嵌在一个词的中间"（第 163 批挂账②至此结案＝**不单列 G**）；☆ 枚 6 的 `Blocks:` 列两枚 id＝并段形＝复证在册；☆ 篇序＝`d06ab4e4…` 在前、`756063a0…` 在后＝换针后的一次新读数、与历批同针复打不同批＝不用于证"官方序稳定"（承 G1305 行末两道收窄）。
+
+## 六十七、**第 167 批逐字片段＝六枚卡片 `description` 逐枚长度与两档外形＋失败回包两形对撞＋八枚摘录的"预测 vs 实测"残差一枚＋`line` 档序列化两种形状＋同一回包在会话档里的两份载体**（2026-10-05 机器钟 23:54 开批＝官方钟 23:54:49＝落盘机器钟 00:55 本地；★ 零屏幕、零写入；☆ 账户内容全折占位、id 折 8 位前缀＝完整串只在 `_harvest/b167-probe-*.txt`／`b167-probe-depth2.json`（gitignored＝且那五份是本批**机器提取**、非手抄））
+
+### 一、六枚 `richUrl` 的字段面逐枚（根级一次枚举＝本批第一次把这一篇一次看全）
+
+| 块（前 8 位） | `title` 长 | `description` 整串长 | 剥掉成对包裹引号后 | 尾形 | url 档位 | 判定 |
+| --- | --- | --- | --- | --- | --- | --- |
+| `aee86897` | 43 | 160 | 不适用（无包裹符） | 三枚 ASCII 点 | 站外单视频 | 复证 G1390 |
+| `bcc305f0` | 36 | 160 | 不适用 | 三枚 ASCII 点 | 站外单视频 | 复证 G1390（历批已两枚同数） |
+| `293cf9a0` | 31 | 160 | 不适用 | 三枚 ASCII 点 | 站外单视频 | 尺二样本＝在册那枚逐字再现 160 |
+| `aedc2f51` | 31 | 160 | 不适用 | 三枚 ASCII 点 | 站外单视频 | 复证 G1390（第 166 批那枚 158 是转写侧、已折回） |
+| `341ee325` | 41 | 160 | 不适用 | 三枚 ASCII 点 | 站外单视频 | 复证 G1390 |
+| `10ec9ddf` | 29 | **162** | **160** | `...."`（源串自带三点＋闭合引号） | 站外频道页 | ★★★★ **新档＝整串被一对外层引号包裹、引号不占 160 预算**＝新登记 G1395 |
+
+⇒ ☆ 六枚里**没有一枚短于 160**＝第 164 批挂的判死发（任务 #35）到此结案＝结案形式＝"名册全枚举内零短样本"、不是"不存在短样本"；
+⇒ ☆ 该枚 162 的逐字首末＝首字符 `"`、末字符 `"`＝中间 160 个内容字符；
+⇒ ★★★ **搜 `youtube` 只命中两枚"可见文本里写着 youtube"的块**（一枚是链接标签 `Craft's YouTube channel`、一枚是正文 `on our YouTube channel`）、**不命中 url 里写着 `youtube.com` 的那枚频道卡片**＝⇒ `url` 不进全文索引＝**G1354 已在册同一结论＝复证不登记**。
+
+### 二、失败回包的两形对撞（同一条命令、批内位 2 vs 裸打）
+
+```
+【批内形＝第③发的回包尾部（该发内含两枚命令＝search 与 documents delete --help），逐字】
+Command 2 failed: documents delete --help
+Unknown command: documents delete
+
+Available commands:
+
+  documents list - List documents with optional location, folder, date, and metadata filters
+  documents resolve-link - Resolve a Craft document link to a rootBlockId
+
+Stopped after failure; earlier commands were already applied.
+
+【裸打形＝第④发的回包全文，逐字（222 字节）】
+Unknown command: documents delete
+
+Available commands:
+
+  documents list - List documents with optional location, folder, date, and metadata filters
+  documents resolve-link - Resolve a Craft document link to a rootBlockId
+```
+
+⇒ ★★★★ **两形相差恰好两件事**＝首行 `Command N failed: …` 与尾行 `Stopped after failure; …`＝**都只在分号批里出现**＝⇒ 编号＝批内位置＝"桥内部还有一条前置命令"这一支出局＝新登记 G1394；
+⇒ ☆ 名单两枚逐字与历批三处一致＝`documents list`／`documents resolve-link`＝复证 G1348③（第 3 次跨窗口同参）；
+⇒ ☆ 会话档里另有一层：**同一回包存两份、其中一份带 `Error: ` 前缀**（1550 vs 1543 字节＝差 7）＝那是 harness 的包装、**不是官方面**＝不进 G 表。
+
+### 三、八枚摘录的"原文→预测→回包"对撞（面内 8 枚＝7 全同／1 残差）
+
+| 针 | 块（前 8） | 类型 | 实测行数 | 命中数 | 预测左长 | 预测右长 | 兄弟块 | 逐字 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `the` | `daaa0ecb` | text | 2 | 1 | 64 | 53 | 未给 | 全同 |
+| `the` | `bcc305f0` | richUrl | 1 | 2 | 99 | 23 | 未给 | 全同 |
+| `the` | `78bf4338` | text | 2 | 1 | 75 | 20 | 未给 | 全同 |
+| `the` | `293cf9a0` | richUrl | 2 | 1 | 97 | 69 | 未给 | 全同 |
+| `attachments` | `627f139f` | text | 2 | 1 | 95 | 27 | 未给 | 全同 |
+| `attachments` | `293cf9a0` | richUrl | 4 | 3 | 34 | 98 | 未给 | **残差＝重复行** |
+| `youtube` | `daaa0ecb` | text | 2 | 1 | 99 | 8 | 未给 | 全同 |
+| `youtube` | `b0f800c3` | text | 2 | 1 | 66 | 38 | 未给 | 全同 |
+
+⇒ 那枚残差的实测四条窗口行逐字（☆ 历批已在册"title 在流里出现两次"＝G1354＝本枚只是把它做成"命中数 3 vs 副本命中数 2"的量测）＝
+
+```
+different files behave
+how to add attachments in craft
+how to add attachments in craft
+it's really easy to add attachments to your beautiful craft docs to ensure you have all the information you need in one place.in this
+```
+
+⇒ ☆ 前四行里第三、四行之间多出的那一行＝"每枚命中所在行之前各给一次它的前一行"＝该枚命中跨两行才会显形＝**只有 1 枚样本＝不单列 G**（承第 166 批"同形样本堆多少枚零增益"）；
+⇒ ★★★★ **另有一枚反向残差未解**＝同一档两枚卡片、`bcc305f0` 那枚的借入一字未给、`293cf9a0` 那枚给了 8 个字符（`in craft`）＝两枚自身前缀长度 88 与 87 只差一格＝⇒ 判死发已点名（台账「六十七」待打①）。
+
+### 四、`line` 档在 `markdown` 串里的形状（同篇 6 枚分隔块）
+
+```
+lineStyle "light"       → markdown "****"   （5 枚）
+lineStyle "extraLight"  → markdown "***"    （1 枚）
+```
+
+⇒ 键集＝`type`＋`lineStyle`（`textStyle`／`decorations`／`color` 三根**整根不存在**）＝☆ 契约六档里本面只见两档＝缺样四档不外推＝新登记 G1396。
+
+### 五、名册与顺带结案
+
+⇒ 页根 `type:"page"`／`textStyle:"page"`＝直接子块 **31** 枚＝其中 `text` 19／`richUrl` 6／`line` 6＝☆ 键集分档＝`text → {textStyle+type | type | listStyle+type}`（三档）／`richUrl → {description+title+type+url}`／`line → {lineStyle+type}`＝复证 G1370／G1371 一族（本批 19 枚 `text` 一次到手＝同档样本、不占号）；
+⇒ ★★★ **队列③ 结案**＝`659094d0`（`h3`）之后那一枚＝`019f69f7`＝`text`／`listStyle:"bullet"`／副本 `create links between docs or blocks`（**非空**）＝⇒ 历批那枚"尾行只有一枚孤立 `...`"不由"下一块为空"解释＝是**右窗止于命中行行末**（命中词 `linking` 恰在该行行末＝后文 0 字符）；
+⇒ ★★★★ **历批"后一块的头部"那枚样本的身份到手**＝第 7 发（第 8 枚命令） `blocks get 35f3053d… --depth 1 --format json`＝`type:"page"`／`textStyle:"card"`／`cardLayout:"regular"`／`markdown:"Linking Content"`＋6 枚子块（首枚子块正文＝`Documents and Pages allow you to create structures akin to chapters and sections in books. …`）＝⇒ 摘录右端沿**子树**走、不走兄弟块＝G1333 行末带证据打 ✎；
+⇒ ★★★★★ **"面已采到、量没读走"的实据**＝本批这发 6080 字节回包的**同头字节**在会话档第 187／1499 行就出现过＝时刻 2026-10-02T06:12Z 与 08:12Z＝其前一条助手消息的命令逐字为 `blocks get <同一篇> --depth 1 --format json`＝而 `_harvest/b134-probes.txt`／`b134-longtail.txt`／`b135-longtail.txt`／`b137-probes.txt` 四份含该篇首枚子块 id、`"description"` 键＝**0 枚**＝⇒ 三十批里任务 #35 的答案一直躺在盘上、只是没被抄进去。
+
+## 六十八、第 168 批逐字面＝`description` 的短档四枚、`contentPreviewMd` 的平账十四枚、以及撤掉的那枚"反向残差"（2026-10-06 机器钟 13:04 开批＝官方钟 13:04:24＝落盘机器钟 13:56＝净新增 3 条＝G1397—G1399）
+
+### 一、`richUrl` 四枚短样本逐字（G1397＝收窄在册 G1390 的"定长"）
+
+| 块（前 8 位） | 所属篇（根前 8） | `description` 长 | 与自身 `url` 逐字相同 | `url` 长 | `title` 长 | 判定 |
+| --- | --- | --- | --- | --- | --- | --- |
+| `e8deac94` | `18c55c87` | 32 | 否 | 37 | 15 | 短档＝原样（与下两枚同值） |
+| `223a26ac` | `18c55c87` | 32 | 否 | 37 | 36 | 短档＝原样（同上） |
+| `d986adbf` | `18c55c87` | 32 | 否 | 35 | 44 | 短档＝原样（同上） |
+| `3f8f8e19` | `d06ab4e4` | 31 | **是** | 31 | 15 | 短档＝落回链接本体 |
+
+⇒ 三枚同值那批的 `description` 逐字＝`Craft - Create amazing documents`（32）＝☆ 三枚的 `url` 分别是 `<share 链接三枚、此处只报长度>`、`title` 逐字分别是 `Design showcase`／`Craft - What's New & Version History`／`Job Posting - Senior Mobile Product Designer`＝⇒ **url 与 title 都不同而摘录位一模一样**＝所以这一位不是"这张卡自己的正文"；
+⇒ 第 4 枚逐字＝`description` ＝ `url` ＝ `https://community.craft.do/home`（各 31）＝☆ 它的 `title` ＝ `Craft Community`（15）＝⇒ **"摘要缺失时落回链接本体"**；
+⇒ ☆ 名册并起来看＝167 那六枚（160×5＋162×1）＋本批四枚（31×1＋32×3）＝**10 枚、四档**＝没有 60—140 的中间档＝⇒ 判死发＝一枚带中等长度上游摘要的外链；
+⇒ ☆ 另一面＝`markdown` 位仍是 `[title](url)` 形（四枚逐字核过）＝与在册 G1370 同形＝复证。
+
+### 二、`contentPreviewMd` 十四枚平账（G1398）
+
+⇒ 尾行逐字形如 `\n...and N more blocks`＝**14/14 枚全体合规**（尺二）＝下表逐枚给正文长、尾行的 N、以及"该子页的直接子块总数"（只有四枚本批改取到全子树＝其余十枚标 `—`）；
+
+| 子页卡片（前 8） | 正文长 | 尾行 N | 子块总数 | 平账（N＋已列出） | 是否切半块 |
+| --- | --- | --- | --- | --- | --- |
+| `91ebd394` | 302 | 12 | — | 未对照 | 否 |
+| `95333007` | 304 | 9 | — | 未对照 | 否 |
+| `bfa7cf0a` | 304 | 22 | — | 未对照 | 否 |
+| `84291141` | 267 | 17 | 19 | 17＋2＝19 ✓ | 否 |
+| `acaa56f1` | 304 | 10 | — | 未对照 | 否 |
+| `35a36f35` | 220 | 24 | — | 未对照 | 否 |
+| `702a193b` | 254 | 5 | — | 未对照 | 否 |
+| `80dbff75` | 293 | 10 | — | 未对照 | 否 |
+| `35f3053d` | 295 | 4 | — | 未对照 | 否 |
+| `800dd082` | 302 | 25 | — | 未对照 | 否 |
+| `387e46f0` | 259 | 12 | 14 | 12＋2＝14 ✓ | 否 |
+| `f6b5793d` | 242 | 45 | 48 | 45＋3＝48 ✓ | 否（第三枚是空串） |
+| `18c55c87` | 303 | 9 | 12 | 9＋3＝12 ✓ | **是**（第三枚只给 48 格并补 ` ...`） |
+| `268fe5c6` | 304 | 11 | — | 未对照 | 否 |
+
+⇒ 正文长 max **304**（恰为 304 的有 **4** 枚）、min 220＝☆ 四枚可对照样本里"正文＝子块 `markdown` 顺序拼接的前缀"逐字成立 **4/4**（尺三）＝拼接分隔符＝相邻两枚同为 `text` 且同 `listStyle` 时单个换行、否则 `\n\n`；
+⇒ 唯一一枚切半样本 `18c55c87` 的正文逐字（前 80 格＋尾 60 格）＝
+
+```
+You’ve already seen that Craft is great for writing and organizing content - but
+…
+et link
+- On Mac, from the sidebar tap on the share icon ...
+```
+
+⇒ ⇒ 该枚尾行 N＝9、子块总数＝12＝**被切半的第三枚算"已列出"**＝⇒ 若把它算进 N 就平不上账（12≠9＋2）＝这就是"N 与已列出枚数共用同一个循环变量"的实证；
+⇒ 另两枚整批停在块边界的正文尾巴逐字＝`84291141` 以 `- and all of these work great both in dark or in light mode.` 收尾（无省略号）、`387e46f0` 以 ` them, adding more capabilities and allowing larger tables. ` 收尾（**带尾空格**＝与在册 G1387 那枚"上一块 `Adding Text `" 同族的空格保真）。
+
+### 三、撤账：那枚"反向残差"不存在（承第 167 批 longtail §六十七）
+
+⇒ 被撤句子逐字（`longtail.md:3410`）＝"另有一枚反向残差未解＝同一档两枚卡片、`bcc305f0` 那枚的借入一字未给、`293cf9a0` 那枚给了 8 个字符（`in craft`）＝两枚自身前缀长度 88 与 87 只差一格"；
+⇒ 拆量重测＝`_harvest/b168-calc4.mjs` 把"自身前缀长度"拆成七列（窗口首行长／各行长名册／命中块副本长／命中位／前一枚非空副本长／首行是否为前一枚的尾／首行是否为前一枚的头）＝在册那 8 枚逐枚打印＝**88 与 87 零列出现**；
+⇒ 落点重测＝`_harvest/b168-calc5.mjs`＝逐枚给 `title` 长、命中位、`命中位 − 100` 与预测行数＝
+
+```
+the/bcc305f0         title 长 36  desc 长 160  命中位 154  命中位−100＝54 ⇒ 落进 description ⇒ 预测 1 行｜实测 1
+the/293cf9a0         title 长 31  desc 长 160  命中位 120  命中位−100＝20 ⇒ 落进 title      ⇒ 预测 2 行｜实测 2
+attachments/293cf9a0 title 长 31  desc 长 160  命中位 11   命中位−100＝−89 ⇒ 借上一块        ⇒ 预测 3 行｜实测 4（多出 1 行＝G1354 的 title 两次）
+```
+
+⇒ ⇒ 三枚的行数都由同一条 G1393 加上"索引流里 title 印几遍"解释＝**没有第二档规则**＝该句整句撤销＝任务 #46 与第 167 批待打①同时结清；
+⇒ 那两枚被点名的卡片窗口逐行＝`the/bcc305f0` 一行＝
+
+```
+...built a hierarchy of content to allow our users a seamless experience when creating and organizing **the**ir documents. **the** power of this syste......
+```
+
+⇒ `the/293cf9a0` 两行＝
+
+```
+...in craft
+it's really easy to add attachments to your beautiful craft docs to ensure you have all the information you need in one place.in this...
+```
+
+⇒ ⇒ 上批说的"给了 8 个字符（`in craft`）"其实是**命中块自己 title 行的尾巴**、不是借来的上一块＝而"一字未给"那枚也确实一字未借＝两枚都不例外。
+
+### 四、`line` 档加宽（承 G1396＝两档再一次全同）
+
+```
+lineStyle "extraLight"  →  markdown "***"    （本批 13 枚）
+lineStyle "light"       →  markdown "****"   （本批 2 枚）
+```
+
+⇒ 并入 167 的 6 枚＝**21 枚、观测档位仍为 2**＝契约六档缺四档（`regular`／`strong`／`none`／`pageSeparator`）＝本批仍未观测＝不外推。
+
+### 五、面内枚举＝127 节点／16 档（答第 166 批挂账③）
+
+⇒ 键＝`type`／`textStyle`／`listStyle`／`lineStyle`／`cardLayout`／`textAlignment`／`decorations`／`color`（有无）／`codeStyle`／`taskStyle`＝分母＝5 根＋122 子＝127＝逐档枚数＝
+
+```
+40  text 裸形
+18  page + textStyle:card + cardLayout:regular
+18  text + listStyle:bullet
+13  line + lineStyle:extraLight
+10  text + textStyle:h3
+ 7  text + textStyle:h2
+ 4  richUrl
+ 4  image
+ 3  text + h4 + decorations:[quote,callout]
+ 2  line + lineStyle:light
+ 2  text + h4 + decorations:[quote] + color
+ 2  text + listStyle:bullet + decorations:[callout] + color        ← 新档＝G1399
+ 1  page + textStyle:page（根块形）
+ 1  text + decorations:[quote,callout]（无 textStyle）
+ 1  text + textStyle:h4（裸标题形）
+ 1  text + color（`markdown` 为空串）
+```
+
+⇒ ☆ 只有第 12 行那一枚组合是新的＝其余 15 档逐档能指回在册行＝复证不占号＝☆ `18 枚 page+card+regular` 全部带 `contentPreviewMd` 键、而**页根本人不带该键**（五枚根块的键集逐字＝`{id,type,textStyle,cardLayout,markdown}` 或 `{id,type,textStyle,styling,markdown}`）＝⇒ 预览位是"卡片对父级可见"的字段、不是块自身字段＝与 G1280（`--depth 0` 五键）同族。

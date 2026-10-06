@@ -3118,3 +3118,223 @@ search --include craft --document 7560… --fetch-blocks → 逐字相同 ＋ Hy
 5. ★★★ **仪器自纠逐字**＝未切严边界时同一份数据报出 `payloads=63 pairs=34 max sum=18 >5 共 17 组`＝切严（到下一个 `Search results:` 之前）后 `payloads=81 entries=71 dropped=5`、>5 只剩 2 组＝⇒ 回包数在 59／60／69／81 之间跳过＝**计数类读数只在定稿切法下有效**。
 6. ⇒ **数据卫生**＝以上正文全部出自官方样例文档（`d06ab…` Craft Handbook／`DFF43…` 样例文档）＝用户自己写的块一枚未取＝出处＝会话转写（本会话＋另一会话 `0a19f932…`）＝**标历史读数、本批未复打**。
 
+## 六十三、**第 163 批逐字片段＝摘录左窗"跨块补的那一条"三枚同批到手、外加一次把缩写当 id 的空炮**（2026-10-05 机器钟 18:21:09 开批＝官方钟 18:21:12＝落盘机器钟 18:44＝甲档 8 发＝7 成 1 自伤＝零 `-32603`＝零写入零屏幕 ⇒ `manifest.jsonl` 行数不变；台账在 `gap.md`「六十三」＋§三点一一〇二，机制在 `internals.md` §九十四；六位前缀缩写口径承历批）
+
+⇒ ★★★★ 枚① ＝上一块（卡片标题）原文逐字 `"markdown":"Adding Text "`（**含尾空格＝12 格**）＝而 `search --include you` 本篇首窗逐字＝`...text ` ＋换行＋ `adding content is very simple - just tap on an empty area and start typing. **you** can also drag and drop the input field on both mac (from the sidebar) and ios (from the bottom bar) in order to drop content at a specific location.`＝⇒ 回溯给了 **5 格**（`text `＝含尾空格）＝☆ 与历批第 138 批 §七 那枚**逐字相同**＝本批复证；
+
+⇒ ★★★★ 枚② ＝上一块原文逐字 `"markdown":"Quick Styling"`（13 格）＝而 `search --include visual` 第 2 窗逐字＝`...styling` ＋换行＋ `apart from using **visual** controls and buttons, craft allows you to style your content right from the keyboard as well.`＝⇒ 回溯给了 **7 格**＝`styling`＝**去首词预测（`Styling`→小写 7 格）相符、"从左截去 7 格"预测 `tyling`(6 格) 被否证**＝本枚就是队列⑤ 判死发＝命中块 id＝`7e7166c5…`；
+
+⇒ ★★★★ 枚③ ＝`search --include you` 第 3 窗逐字＝`...or | for block quote` ＋换行＋ `on a keyboard, **you** can also just press cmd + or cmd - to increase or decrease text sizes.` ＋换行＋ `and of course, you can also...`＝⇒ 回溯给了 **20 格**＝而该上一块原文（第 138 批 §三 在册逐字）＝`> or | for block quote`（22 格）＝⇒ **去首词预测（去掉 `>` 连同其后空格＝2 格）相符、截 7 预测 `for block quote`(15 格) 被否证**＝★★ 同一枚串做**命中行**时（第 138 批 §三）含行首 `>`、做**回溯行**时（本批）不含＝⇒ 截断只发生在"作为前文被回溯"这条通路上＝命中块 id＝`cdb4a95f…`＝☆ 该块 `blocks get --depth 1` 直读逐字＝`On a keyboard, you can also just press \`CMD +\` or \`CMD -\` to increase or decrease text sizes.`＝**单行**＝⇒ 那一条 `> or | for block quote` 属上一块、不是同块前一行＝且原文 `CMD` 大写、窗口里小写＝G1350 复证；
+
+⇒ ★★★ 同一发 `--include you` 本篇三枚窗口的**逐字命中位**＝枚 1 三处（`**you** can also drag`／`if **you** are using`／`**you** can also just press`）＋枚 2 一处（`**you**r text blocks`）＋枚 3 一处＝**合计 5**＝复证 G1340"每篇正文 5 枚命中位"＝☆ 顺带钉准口径＝**上限单位是命中次数、不是窗口数**（本发窗口数只有 3）；
+
+⇒ ★★ `search --include visual` 另两枚窗口的形状（本批未展开＝挂账②）＝枚 1 命中落在**词内**＝`they also merge **visual**ly.`（块 `3fa947a6…`）＝枚 3 同形＝`utilise creative **visual**s...`（块 `646F054A…`）＝⇒ 粗号可以嵌在一个词的中间；
+
+⇒ ★★ ③ 那次 `blocks get d06ab4e4… --depth 1 --format json` 的卡片形状（复证不登记）＝卡片＝`type:"page"` ＋ `textStyle:"card"` ＋ `cardLayout:"regular"` ＋ `markdown`＝**标题** ＋ `contentPreviewMd`＝正文预览（截断处叠 `...` ＋另起一行 `...and N more blocks`）＝☆ 同回包内 `line` 块两形＝`lineStyle:"light"`→`****`／`lineStyle:"extraLight"`→`***`＝根块 `styling.pageWidth:"false"` ＋ `backdrop` ＝**一段被字符串化的 JSON**（内含 `imageBgColor:"#ffe5cf"` 与 `imageUrl`）＝本批不登记；
+
+⇒ ★☆ **一发空炮的逐字**＝`blocks get d06ab4e4 --depth 1 --format json`（＝拿产物里的 8 位前缀缩写当 id）回逐字＝`Block not found: d06ab4e4` ＋空行＋ `Hint: If you have a Craft app/web link, run documents resolve-link <url> via craft_read to get the rootBlockId. Otherwise run documents list to find rootBlockIds.`＝⇒ 精确匹配、不支持前缀（G1369 同族）＝☆ 全串只活在 `_harvest/` 原始档里（本批从 `ax-sidebar-tree.txt` 找回）；
+
+⇒ ★★ ⑦⑧ 两发的形状（队列② 结案＋一枚未锚定的形状挂账）＝`documents move --help` 回 `Unknown command: documents move` ＋空行＋ `Available commands:` ＋两行名单（`documents list`／`documents resolve-link`）＝**与在册第 156 批那枚逐字同形**＝复证；`documents delete --help` 本批回**有界 `Unknown command`＝不是 `-32603`**＝☆ 但该回包里"名单是否在场／echo 串是否含 `--help`"两枚形状**本批未逐字锚定**＝留下批同参复打（＝队列⑭）＝☆ 承第 157 批"没核过的形状不写进 G"；
+
+⇒ ☆ 调用账（8 发）＝① `connection info` ✓ 官方钟 18:21:12 → ② 空炮（8 位前缀当 id）✗ → ③ `blocks get d06ab4e4… --depth 1 --format json` ✓（整篇直接子块名册）→ ④ `search --include you --document d06ab4e4…` ✓ → ⑤ `search --include visual` ✓ → ⑥ `blocks get cdb4a95f… --depth 1` ✓ → ⑦ `documents delete --help` ✓ → ⑧ `documents move --help` ✓（⑦ 之后的同形对照＝承 G1378"对照必须在可疑形状之后"）＝☆ ⑥⑦ 同批发射＝两问互不为对照、排序不影响判读＝但记下来以免下批误当"先后"。
+
+## 六十四、**第 164 批逐字片段＝摘录窗口的右端形状 22 枚全录＋两枚 `richUrl` 的 `description` 定长 160 直读＋一枚"后一块"字段直读（复算器 `_harvest/b164-window-calc.mjs`、调用账 `_harvest/b164-probes.txt`）**（2026-10-05 19:22 开批＝桥第五次不请自回＝甲档 8 发＝净新增 1 条＝G1390＝零写入零屏幕）
+
+### 1. ★★★ 三枚 `blocks get --depth 1 --format json` 直读＝`description` 的 160 常数（G1390 的全部证据）
+
+```
+293cf9a0…  type:"richUrl"
+  title      = How to Add Attachments in Craft                              （31 字符）
+  url        = https://youtu.be/3lA7VIjvCis
+  description= It's really easy to add attachments to your beautiful Craft docs to ensure you have all the information
+               you need in one place.In this video, you'll learn:- T...      → 实算 160 字符（正文 157 ＋ 收尾三点）
+  markdown   = [How to Add Attachments in Craft](https://youtu.be/3lA7VIjvCis)（63 字符）
+
+aedc2f51…  type:"richUrl"
+  title      = How To Link and Backlink in Craft                            （33 字符）
+  url        = https://youtu.be/Q_eas6gZmVg
+  description= Craft takes beautiful documents that extra step further and helps you build links between your documents
+               and even individual subpages within them. This way y...        → 实算 160 字符（正文 157 ＋ 收尾三点）
+  markdown   = [How To Link and Backlink in Craft](https://youtu.be/Q_eas6gZmVg)
+
+659094d0…  type:"text"  textStyle:"h3"
+  markdown   = ### <highlight color="gradient-blue">Linking and Backlinking</highlight>
+```
+
+- ☆ 两枚的砍口都**停在词中**（`The` 只剩 `T`／`your` 只剩 `y`）＝⇒ 字段面是**字符级硬砍、不吸附词首**＝与摘录左窗"≤100 且向左吸附到词首"（G1358）**方向相反**＝⇒ 两套砍法互不相干＝本地不许共用一个截断函数。
+- ☆ 第三枚同数＝在册第 157 批 `bcc305f0…` 的 `description` 160（当时用作左窗复算的输入、未升格为常数）＝⇒ **本批把"三枚同数"升格为 G1390 的常数主张**＝☆ 仍挂账＝一枚 `description` 明显短于 160 的 `richUrl`（本会话名册里三枚全是长样本、8 发用满未取到＝**不写成"常数已被第三枚证实"**＝三枚长样本只证"长样本会砍到 160"、不证"短样本也带三点"）。
+- ☆ 第三枚（`659094d0…`）不是卡片＝是一枚 `h3` 标题块＝它的 `markdown` 带 `###` 与 `<highlight …>` 两层记号，而摘录回包里那一行只有小写纯文本 `linking and backlinking`＝⇒ **块型标记与装饰标签在索引副本里脱落**＝复证 G1350（正文＝小写副本）／G1345（`title`＋`description` 参与摘录）＝**不登记**。
+
+### 2. ★★ 摘录窗口右端形状＝22 枚全录（成员名单＝`search --include the` 11 枚 ＋ `search --include you` 8 枚 ＋ `search --include linking` 3 枚）
+
+☆ 逐枚末行尾串（全部实测、无一例外以三枚 ASCII 点收尾＝⇒ **尾标记不蕴含"后文被掐"**＝与 G1353 对行首流标记的判定在右端成对）：
+
+| 发 | 枚 | 命中块（前缀） | 窗口末行尾串（逐字） | 那三点是引擎打的还是源串带的 |
+| --- | --- | --- | --- | --- |
+| the | 1 | `7e3b6872…` | `if you are using a keyboard, you can...` | 引擎（同一条块在 you 发里给到 `...insert a new block below.`＝说明 the 发里右窗被掐） |
+| the | 2 | `669fd545…` | `**the**se include:...` | 未判（该块正文是否就到 `include:` 本批未直读＝不作数） |
+| the | 3 | `8faf787e…` | `craft isn’t your standard note taking...` | 引擎（you 发同块给到 `...what makes us different? craft is easy. just open, write and share - no...`） |
+| the | 9 | `bcc305f0…` | `**the** power of this syste......` | **源串 3 ＋ 引擎 3**＝在册第 157 批已直读该字段以 `syste...` 收尾 |
+| the | 11 | `293cf9a0…` | `you'll learn:- t......` | **源串 3 ＋ 引擎 3**＝本批直读实算 160 字符（§1 枚①） |
+| you | 6 | `293cf9a0…` | 末行 `linking and...` | 引擎＝该行是**后一块**（`659094d0…`＝`h3` 标题）的头部＝复证 G1333"末行是后一块的头部"＝非新事实 |
+| linking | 1 | `659094d0…` | 末行只有一枚孤立 `...` | **未判**＝没读它之后的块＝按第 147 批"输入侧排除"未过＝**不作数**＝判死发＝读它之后那一枚块 |
+
+☆ 其余 15 枚的尾串逐字见 `_harvest/b164-probes.txt`（本批不重复抄进产物＝该档是转写档、可作候选定位器、不得否证一次直读）。
+
+### 3. ★★★★ 同参复打的两发＝逐字节相同（队列④＝复证 G1305＋被 G1326 否证掉我的挡架）
+
+`search --include the` 在同一窗口内打两发、中间夹 `search --include you`（8 枚不同内容）＝两发的条目数、文档序、块序、并段形（枚1 在 you 发里并了两枚块 `7e3b6872…` ＋ `01edf14e…`；枚7 并了三枚 `8faf787e…`／`86e47c69…`／`7f0304ce…`）、粗号落点全部相同＝☆ 这条"相同"本来会被我判成"不能排除按针缓存"＝**在册 G1326 已经证过同一条命令连发两发会给出不同的粗号**＝⇒ 缓存假设出局＝⇒ 本批复证 G1305（第八次）、并给 G1326 补一枚"两发同形"的正样本＝**"高亮可浮动"这条在册结论不改判**（间歇性浮动与同形相容）＝☆ 判据＝**拿"两次相同"当证据之前，先回在册找一条"同参曾不同"**。
+
+## 六十五、**第 165 批逐字片段＝路由注册表 19 项全录＋本批 6 发 `blocks get --format json` 的键集分档五枚**（2026-10-05 机器钟 20:55 落盘＝官方钟 20:41:26）
+
+### 一、路由器里的具名注册对象逐字（源＝`_harvest/js/index-DiTmKH3z.js`，抽取式＝`grep -ohE 'Tmt=\{SPACE_ROOT.{0,1400}'` 后按 `,` 分行）
+
+```
+Tmt={
+  SPACE_ROOT:new RegExp(`/(s/${nA}/?)`)
+  ALL_DOCUMENT:new RegExp(`^${td}/all/?$`)
+  IMAGINE:new RegExp(`^${td}(?:/connections|/imagine)/?$`)
+  HOME:new RegExp(`^${td}/home/?$`)
+  FOLDERS:new RegExp(`^${td}/folders/?$`)
+  INBOX:new RegExp(`^${td}/inbox/?$`)
+  STARRED:new RegExp(`^${td}/starred/?$`)
+  TRASH:new RegExp(`^${td}/trash/?$`)
+  TEMPLATES:new RegExp(`^${td}/templates/?$`)
+  FOLDER:new RegExp(`^${td}/f/${nA}/?$`)
+  TEAM:new RegExp(`${vmt}(/${hpe})?`)
+  SHARED_WITH_ME:new RegExp(mpe)
+  FULL_SEARCH:new RegExp(gpe)
+  PLAYGROUND:new RegExp(Imt)
+  LOGIN_MAGIC_APP_LINK:new RegExp("/link/app/login")
+  LOGIN_MAGIC_WEB_LINK:new RegExp("/link/web/login")
+  TASKS:new RegExp(`^${td}/tasks(?:/(?<task_view>all|today|inbox|upcoming)?)?$`)
+  TASKS_CALENDAR:new RegExp(`^${td}/calendar$`)
+  TAGS:new RegExp(`^${td}/tags$`)}
+```
+
+⇒ 枚数实算＝**19**（逐条列成员后数、不用"约"）；⇒ 前置段的定义同块逐字＝`hpe="([^/]+)"`、`nA="(([^/]+)--)?"+hpe`、`td="(/s/"+nA+")?"`、`vmt="(/team/"+nA+")?"`、`mpe="/shared-with-me"`、`gpe="/search"`、`Imt="/playground"`；⇒ 三处不对称＝`TASKS` 的具名捕获组 `task_view` 四档（`all`／`today`／`inbox`／`upcoming`）；`TASKS_CALENDAR` 与 `TAGS` 的模式紧跟 `$`＝**不吃尾斜杠**，而空间内其余各档一律写 `/?$`＝吃；`PLAYGROUND` 的值是**绝对路径** `/playground`、不含 `(/s/<space>)?` 前缀段。
+
+### 二、名册外四枚调试组件的逐字宿主形状（同一块包体内）
+
+```
+fht=k.lazy(()=>an(()=>import("./SyncLogTab-DBJ__0U_.js"),…).then(t=>({default:t.SyncLogTab})))
+pht=k.lazy(()=>an(()=>import("./BrowseSyncTab-DtAJHsPw.js"),…))
+Ato=Te.lazy(()=>an(()=>import("./Playground-ByE3MyxU.js"),…))
+Eto=Te.lazy(()=>an(()=>import("./EasterEgg-DqGvqK-b.js"),…))
+a.jsx(l_.Fill,{id:"sync",label:"Editor Sync",icon:Q5e,children:a.jsx($o,{children:a.jsx(fht,{})})})
+a.jsx(l_.Fill,{id:"browse-sync",label:"Browse Sync",icon:Y5e,children:a.jsx($o,{children:a.jsx(pht,{})})})
+this.props.isEasterEggOpen&&yi.createPortal(a.jsx($o,{fallback:null,children:a.jsx(Eto,{})}),document.body)
+XGe(t){return{isOpen:t,type:"openPlaygroundAction"}}
+K1o(t){return{isOpen:t,type:"openEasterEggAction"}}
+s.jsx(kt,{exact:!0,path:"/playground",render:h_})
+```
+
+⇒ 判定＝这四位**没有路由**（只有 `Playground` 有 `path:"/playground"` 且注册在 `Tmt.PLAYGROUND`）；☆ `DebugPrimitives-oV8sv16U.js` 只以依赖身份出现（`static/css/DebugPrimitives.css.DYRgRuUN.css` 同名配对）；☆ 给 C 的答复＝**宿主面板的 UI 入口我没找到＝给不出、不猜**。
+
+### 三、本批 6 发的逐字回包键集（判复证、不占 G 号）
+
+| 发 | 块 id（8 位前缀） | 档 | 键集逐字 |
+| --- | --- | --- | --- |
+| ② | `659094d0` | `text`＋h3 | `id`／`type`／`textStyle`／`markdown`＝`### <highlight color="gradient-blue">Linking and Backlinking</highlight>` |
+| ③ | `01edf14e` | `text` | `id`／`type`／`markdown`＝`If you are using a keyboard, you can also just press \`space\` when a block is focused to insert a new block below.` |
+| ④ | `082590b0` | `text`＋callout | `id`／`type`／`decorations`／`markdown`＝`decorations:["callout"]` |
+| ⑤ | `35f3053d` | `page`＋card | `id`／`type`／`textStyle`／`cardLayout`／`markdown`／`content`＝`textStyle:"card"`、`cardLayout:"regular"`、`markdown:"Linking Content"`、`content` 六子块 |
+| ⑥ | `47dd1d46` | `text` | `id`／`type`／`markdown`＝`<highlight color="gradient-purple">**Craft is flexible.**</highlight> Personalize to your heart's content - you run the app, not the other way round.` |
+
+⇒ ☆ ⑤ 的六子块里另两档逐字到手＝`text`＋`textStyle:"h4"`＋`decorations:["quote"]`＋`color:"#004abd"`（`markdown` 内还带 `> ####` 前缀）与 `line`＋`lineStyle:"extraLight"`＋`markdown:"***"`＝⇒ 判复证（`lineStyle` 在册 9 根 G 行、`decorations` 14 根、`cardLayout` 见 G736）；☆ 唯一不重复的两条＝**`description`／`title` 只在 `richUrl` 档出现、其他档是整根键不存在而非空串**＋`connection info` 回包带 `urlTemplates.app`＝`craftdocs://open?spaceId=<spaceId>&blockId={blockId}`（占位符原样吐出）；☆ #35（短 `description` 的 `richUrl`）本批未采到＝5 枚里 4 枚非 `richUrl`＝寻法要换。
+
+**仍未采到（本节）**：☆ 摘录**右窗**长度与吸附（队列① 另一半）；☆ 一枚 `description` 短于 160 的 `richUrl`；☆ 不带 callout 的普通 caption；☆ `--fetch-blocks` 触顶第二枚；☆ `documents delete --help` 回包逐字形状；☆ 词内命中处的粗号形状；☆ 块间分隔符宽度；☆ 逐发时刻只有 `connection info` 一枚官方钟。
+
+## 六十六、**第 166 批逐字片段＝裸跑 17 枚名册逐字＋回收站 7 枚成员逐字＋两枚文件夹自报逐字＋`documents delete --help` 的有界拒绝逐字＋两块 JSON 键集逐字＋词内粗号 10 枚逐枚**（2026-10-05 机器钟 21:19 开批＝官方钟 21:19:41＝落盘机器钟 22:20）
+
+⇒ ☆ 本节的 id 一律折成 8 位前缀＋省略号；**未折形完整 id 与逐发原文只在 gitignored 的 `_harvest/b166-probes.txt`／`_harvest/b166-search-link.txt`**＝产物面不新引入未在册的标识符面（承第 165 批 V159 §5 的同一处置）。
+
+## ① 裸跑 `documents list`＝头行逐字 `17 document(s) — format: <rootBlockId> Title`＝名册 17 枚逐字（序＝回包原序）
+
+1. `<89d53b16…>` Quick Start: get going
+2. `<d06ab4e4…>` Craft Handbook
+3. `<DFF43C2D…>` Welcome to Craft
+4. `<2db38d6b…>` （无题）
+5. `<81ca15d8…>` （无题）
+6. `<5376f8f3…>` （无题）
+7. `<74c0bb3d…>` （无题）
+8. `<756063a0…>` Watch: how to videos
+9. `<65d9dad6…>` 2025/5/5
+10. `<d8af008b…>` （无题）
+11. `<73dc4026…>` （无题）
+12. `<d48fd45a…>` QODER-HARVEST-B109-CODEFIELD
+13. `<e5696832…>` QODER-HARVEST-B111-THEME
+14. `<8d3acfb3…>` QODER-HARVEST-B113-CODEBLOCK
+15. `<30af015f…>` B148 W1 newline budget probe
+16. `<fdf9d6e0…>` QODER-HARVEST-C01-W3-REMIND
+17. `<b514b565…>` QODER-HARVEST-C01-W2-BLOCKS
+
+⇒ ★ 分档（按**标题形状**分＝不是按位置分）＝正文档 5（枚 1／2／3／8／9）＋无题 6（枚 4—7、10、11）＋`BNNN` 残骸 4（枚 12—15）＋`C01-WN` 沙盒 2（枚 16—17）＝合计 **17** 与头行逐字对上。
+
+⇒ ☆ **两把针的差集（本批主件的量测面）**＝按前缀针 `QODER-HARVEST-B\d{3}` 数残骸＝**3** 枚（枚 12—14）；按编号针 `B\d{3}` 数＝**4** 枚（枚 12—15）＝差的那一枚＝枚 15 `B148 W1 newline budget probe`＝标题不带 `QODER-HARVEST-` 前缀＝而它正是本线自己第 148 批造的沙盒（`_harvest/b148-*` 在册）。
+
+⇒ ☆ **集合划分（平账用＝算器 `_harvest/b166-calc.mjs` SETS 段可复跑）**＝trash 7 枚＝枚 4／10／11（三枚无题）＋枚 12—15（四枚具名）；unsorted 5 枚沿第 165 批名册＝枚 3（`DFF43C2D…`）＋枚 6／7（两枚无题）＋枚 16／17（两枚 `C01`）；余下 5 枚＝枚 1／2／5／8／9＝`Quick Start: get going`／`Craft Handbook`／一枚无题 `<81ca15d8…>`／`Watch: how to videos`／`2025/5/5`＝与 `folders list` 自报的 3＋2＝5 对上＝⇒ 名册划分余量 **0**＝templates／daily_notes 两档为 0 由这一划分**反证**（本批未复打）。
+
+## ② `folders list`＝头行逐字 `Showing 1-2 of 2 folders`
+
+1. `<7d860c07…>` How to use Craft (3 docs)
+2. `<886f7ee5…>` 日记 (2 docs)
+
+⇒ ☆ 自报只给**每夹篇数**、不给成员＝本节的成员归属是上面"集合划分"那一步**减出来的**、不是这里读来的＝报口径。
+
+## ③ `documents list --location trash`＝头行逐字 `7 document(s) — format: <rootBlockId> Title`
+
+无题 3 枚＝`<2db38d6b…>`／`<d8af008b…>`／`<73dc4026…>`；具名 4 枚＝`QODER-HARVEST-B109-CODEFIELD`／`QODER-HARVEST-B111-THEME`／`QODER-HARVEST-B113-CODEBLOCK`／`B148 W1 newline budget probe`。
+
+⇒ ★★★ **历批那句"回收站 3 枚具名残留"的两面口径（第 164 批已在册、本批复述以免下批再判错）**＝`interactions.md:3736`＝"账面目＝**我点过名的** 3 枚／屏面目含无题与 `B148` 探针"＝⇒ "3"数的是**点名史**、名册成员数是 **4**＝☆ 本批把待清清单写成 4 枚＝不改写历批读数、只在本节报新数。
+
+## ④ `documents delete --help`＝有界拒绝逐字（甲档窗口＝本批第 5 发）
+
+```
+Command 2 failed: documents delete --help
+Unknown command: documents delete
+documents list
+documents resolve-link
+Stopped after failure; earlier commands were already applied.
+```
+
+⇒ ☆ 判读＝这一发**成功**（探针拿到了要拿的形状）＝名单只有 `documents list`／`documents resolve-link` 两枚＝⇒ 按在册 G1348③"只有 `Unknown command` 能证明动词名不存在"＝该名字在只读面上**不可解析**＝G1379 的 (a)「可解析但处理器不完成」出局＝☆ 复证 G1348③ 与 G1379 行末第 163 批那处 ✎（第 2 次跨窗口同参复打）＝不新登；☆ 头行 `Command 2 failed:` 的编号成因未判＝挂账②（判死＝裸打同一条看编号是否仍是 2）。
+
+## ⑤ `blocks get 8faf787e… --depth 1 --format json`＝键集 5 根逐字（值原样、id 折形）
+
+```
+id＝8faf787e…  type＝"text"  textAlignment＝"center"  decorations＝["callout"]
+markdown＝"<callout>Writing should be fun, simple and writing tools should get out of the way. Craft is there to make this happen and help you ‘Craft’ your document.</callout>"
+```
+
+⇒ ★★ `textStyle` 与 `color` **整根缺席**（不是空串）＝在册 G1371 那枚 caption 样本是 7 根（`textStyle:"caption"`＋`textAlignment:"center"`＋`decorations:["callout"]`＋`color:"#00ca85"`）＝⇒ `center` 不蕴含 `caption`、`callout` 不蕴含 `color`＝☆ 判复证不占号（同一分档规则内的新样本）；☆ 该枚 `markdown` 正文与 `longtail.md` §五十八（第 138 批）那行原文逐字一致＝原文面第二次拿到＝另＝全库**没有一行**把这枚块与 `center` 并列过（两枚探针：`8faf787e` 与 `center` 同行＝0 处＝本批第一次记）。
+
+## ⑥ `blocks get aedc2f51… --depth 1 --format json`＝外部 URL 卡片＝键集 6 根逐字
+
+```
+id＝aedc2f51…  type＝"richUrl"  url＝https://youtu.be/Q_eas6gZmVg
+title＝"How To Link and Backlink in Craft"
+description＝"Craft takes beautiful documents that extra step further and helps you build links between your documents and even individual subpages within them. This way y…"
+markdown＝"[How To Link and Backlink in Craft](https://youtu.be/Q_eas6gZmVg)"
+```
+
+⇒ ★★★ **长度自纠（本节最该留着的一条）**＝上面那行 `description` 在**我这侧转写**里长 **158**、末码点是 `2026`（一枚省略号）＝而在册 G1390 记同一枚块为 **160**、末三枚为 ASCII 点＝把 `…` 还原成 `...` 后长度恰为 **160**＝⇒ 差的 2 格全在我这侧、官方面一字未变＝**复证 G1390（第 4 枚同数样本）＝不改判**＝☆ 判据＝凡"数字符"的实测、该样本已在册有数时先与在册对一次；☆ 键集 6 根与 G1370 逐字同形＝复证。
+
+## ⑦ `search --include link`＝头行逐字 `Search results: 7 match(es)`＝7 条目／2 篇／粗段 10 枚逐枚
+
+⇒ 逐枚＝按回包序取出每处粗段的**左右邻字符**（重复串不能用 `indexOf`、它永远回第一枚＝算器用带邻字符的 `exec` 循环）：
+
+| 序 | 条目 | 左邻 | 粗段 | 右邻 | 判 |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 枚 1 | 空格 | `link` | `s` | 词内 |
+| 2 | 枚 2 | `]` | `link` | 空格 | 整词 |
+| 3 | 枚 2 | 空格 | `link` | 行末 | 整词 |
+| 4 | 枚 3 | 空格 | `link` | 行末 | 整词 |
+| 5 | 枚 4 | 行首 | `link` | `i` | 词内 |
+| 6 | 枚 5 | 空格 | `link` | `s` | 词内 |
+| 7 | 枚 6 | 空格 | `link` | `s` | 词内 |
+| 8 | 枚 6 | 空格 | `link` | `s` | 词内 |
+| 9 | 枚 7 | 空格 | `link` | `i` | 词内 |
+| 10 | 枚 7 | `k` | `link` | `i` | 词内（两侧都被字母夹住＝`back**link**ing`） |
+
+⇒ ★★★ 聚合数＝**10 枚粗段／词内 7／整词 3／两侧都被夹住 1**＝⇒ 粗号只包针本身、不参与构词＝复证 `longtail.md` §六十三那句"粗号可以嵌在一个词的中间"（第 163 批挂账②至此结案＝**不单列 G**）；☆ 枚 6 的 `Blocks:` 列两枚 id＝并段形＝复证在册；☆ 篇序＝`d06ab4e4…` 在前、`756063a0…` 在后＝换针后的一次新读数、与历批同针复打不同批＝不用于证"官方序稳定"（承 G1305 行末两道收窄）。

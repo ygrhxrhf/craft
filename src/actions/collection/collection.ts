@@ -165,6 +165,8 @@ export async function getCollections() {
 
   const ids: string[] = [];
   for (const c of collections) ids.push(String(c.id));
+  // Saves two round trips on an account with no collections; `.in([])` would
+  // have returned nothing anyway.
   if (ids.length === 0) return [];
 
   // Two reads for the whole page instead of two per collection. The loop cost 2N+1 round
@@ -172,8 +174,10 @@ export async function getCollections() {
   // count rows the caller only wants a number for.
   const [properties, items] = await Promise.all([
     db.orm.public.CollectionProperty
-      // Callback form: `.where({ collectionId: { in: [] } })` matches nothing instead of
-      // erroring, so the empty case above has to stay.
+      // Callback form, not `.where({ collectionId: { in: ids } })`: the shorthand
+      // sends its value as a SQL literal, so an operator object there compares the
+      // column against JSON text and returns 0 rows without erroring — measured,
+      // and pinned by src/prisma/where-shorthand.test.ts.
       .where((m: any) => m.collectionId.in(ids))
       .all(),
     db.orm.public.CollectionItem.where((m: any) => m.collectionId.in(ids))

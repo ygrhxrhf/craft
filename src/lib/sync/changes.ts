@@ -196,8 +196,10 @@ export async function collectChanges(input: {
     query =
       scope.kind === 'userId'
         ? query.where({ userId: input.userId })
-        : // Callback form is required: the object form `.where({ id: { in: [] } })`
-          // silently matches nothing instead of erroring.
+        : // Callback form is required. The shorthand sends its value straight to
+          // postgres as a literal, so `.where({ id: { in: [...] } })` compares the
+          // column against JSON text: 0 rows, no error, non-empty list included.
+          // tsc does not flag it either. Pinned by src/prisma/where-shorthand.test.ts.
           query.where((d: any) => d[scope.key].in([...scope.values]));
 
     const rows: Record<string, unknown>[] = await query

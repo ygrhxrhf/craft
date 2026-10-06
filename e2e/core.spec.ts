@@ -206,6 +206,7 @@ test('[[^ link addresses a single block and jumps back to it', async ({ page }) 
   const marker = `锚点段落 ${Date.now()}`;
 
   const target = await newDocument(page);
+  const targetId = new URL(page.url()).pathname.split('/').pop()!;
   await target.click();
   await page.keyboard.type(marker, { delay: 8 });
   await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
@@ -215,14 +216,17 @@ test('[[^ link addresses a single block and jumps back to it', async ({ page }) 
   await page.keyboard.type(`[[${marker}`, { delay: 40 });
 
   await expect(page.getByText('链接到块')).toBeVisible({ timeout: 20_000 });
-  await page.locator(`button:has-text("${marker}")`).first().click();
+  await page.locator(`button[data-block-hit-document="${targetId}"]`).first().click();
 
   const chip = page.locator('[data-block-index]').first();
   await expect(chip).toBeVisible();
   await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
 
   await chip.click();
-  await page.waitForURL(/#i-\d+/);
+  // `#i-\d+` alone was a false gate: a push that only lands the fragment leaves the browser
+  // on the *source* document with `#i-0` appended, and everything after this line then
+  // measures the wrong page. The address has to name the linked document to mean a jump.
+  await page.waitForURL(new RegExp(`/documents/${targetId}#i-\\d+`));
 
   // The jump stamps a stable id through the open editor, so the address bar ends up
   // on the id rather than the positional hint.
@@ -234,6 +238,40 @@ test('[[^ link addresses a single block and jumps back to it', async ({ page }) 
   const blockId = (await anchored.getAttribute('data-block-id'))!;
   await page.reload();
   await expect(page.locator(`[data-block-id="${blockId}"]`)).toHaveText(marker);
+});
+
+test('a block link into the current document still highlights its block', async ({ page }) => {
+  await signIn(page);
+  const marker = `同篇锚点 ${Date.now()}`;
+
+  await page.goto('/documents');
+  await page.getByRole('button', { name: /新建/ }).first().click();
+  await page.waitForURL(/\/documents\//);
+  const docId = new URL(page.url()).pathname.split('/').pop()!;
+  const editor = page.locator('[contenteditable="true"]').first();
+  await editor.click();
+  await page.keyboard.type(marker, { delay: 8 });
+  await page.keyboard.press('Enter');
+  // The block roster is read from Postgres, not from the live editor: without this the
+  // paragraph being searched has not been persisted yet and the menu has nothing to show.
+  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await page.keyboard.type(`[[${marker}`, { delay: 40 });
+
+  await expect(page.getByText('链接到块')).toBeVisible({ timeout: 20_000 });
+  await page.locator(`button[data-block-hit-document="${docId}"][data-block-hit-index="0"]`).click();
+
+  const chip = page.locator('[data-block-index]').first();
+  await expect(chip).toBeVisible();
+  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+
+  // One document, two blocks: the push only changes the fragment, and `history.pushState`
+  // fires no `hashchange` — so the address lands and nothing re-arms the anchor hunt.
+  // A fragment change never emits a `load` event, so this asserts the URL rather than
+  // waiting for a navigation (`waitForURL` would block on a load that cannot happen).
+  await chip.click();
+  await expect(page.locator('.block-anchor-flash')).toBeVisible({ timeout: 4_000 });
+  await expect(page).toHaveURL(new RegExp(`/documents/${docId}#b-[0-9a-f]{8}-`));
+  await expect(page.locator('[data-block-id]').first()).toHaveText(marker);
 });
 
 test('imports a markdown file into a real document', async ({ page }) => {

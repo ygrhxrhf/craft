@@ -16,9 +16,18 @@ export function BlockLinkView({ node }: NodeViewProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (documentId) {
-      router.push(anchorHref({ documentId, blockId, blockIndex }));
+    if (!documentId) return;
+    const href = anchorHref({ documentId, blockId, blockIndex });
+    const base = `/documents/${documentId}`;
+    const fragment = href.startsWith(base) ? href.slice(base.length) : '';
+    // A jump into the document we are already in must not go through the router: `pushState`
+    // changes the address without firing `hashchange`, so nothing re-arms the anchor hunt and
+    // the click silently does nothing. Assigning the hash is the one form that announces itself.
+    if (fragment.startsWith('#') && window.location.pathname === base) {
+      window.location.hash = fragment;
+      return;
     }
+    router.push(href);
   };
 
   return (

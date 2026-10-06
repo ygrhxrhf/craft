@@ -191,6 +191,10 @@ export function BlockLinkMenu({ editor, query, range, onClose, ref }: BlockLinkM
                   ref={(el) => { itemRefs.current[idx] = el; }}
                   type="button"
                   onClick={() => selectItem(idx)}
+                  // Rows carry two 未命名 documents' identical text, so a caller that means
+                  // "the block in that document" cannot use the label: address the row instead.
+                  data-block-hit-document={hit.documentId}
+                  data-block-hit-index={hit.blockIndex}
                   className={cn(
                     'flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 pr-8 text-left transition-colors',
                     idx === selectedIndex

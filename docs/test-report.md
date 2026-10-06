@@ -472,6 +472,7 @@
       库面＝`collection_values` 55 枚／`undecodable` 0／历轮夹具账号 0 残留。
 21. **按第 20 条的形状把同族枚举了一遍，并抓出我自己刚写下的那枚空心判据**：
     - ☆ 谓词面（可红性）＝全库 `grep -rn "\.ilike(" src/` 共 **5 枚**调用点＝唯一打在 `Json` 列上的正是第 20 条那枚，
+      ✎ **这枚数缺的是钟、不是针＝第 22 条末笔更正**＝`HEAD~1`（改前）该针实跑 **5 行**、`HEAD`（改后）同一把针 **4 行**＝被修掉的正是 `v.value.ilike` 那一枚⇒ 5 与 4 都对，第 21 条只是没写它是哪份字节上的读数
       其余 4 枚按 `contract.prisma` 逐枚核实接收列型＝`Document.title String`／`Document.plainText String`／`Tag.name String`
       ⇒ **同族清零**（这 4 枚仍走 SQL 侧匹配、本轮未动＝它们合法）。
     - ★★ 浏览器侧到底有没有信号＝**实测**（临时把 `pageerror`／`console` 挂到弹层三枚判据上并把读数写到仓外）：
@@ -541,8 +542,256 @@
       ☆ 另＝本轮该全量跑里在册那枚间歇红 `core.spec.ts:204` 是绿的（`ok 21 … (32.7s)`）。
       消费面核对＝我改的三份（`document/search.ts`／`collection/collection.ts`／`collection/items.ts`）的 import 面全在 `collections` 页、`sidebar/snapshot.ts` 与两份测试里，
       白板通路零引用＝超时与改动无因果（这一句是静态核对，不是那条红的判据；判据是上面那个单跑）。
+    - ★★★★ **我对第 21 条那枚"5 枚"动的第一版更正是错的、这里连它一起改判＝聚合数缺的是钟、不是针**＝
+      第 21 条写"全库 `grep -rn "\.ilike(" src/` 共 **5 枚**调用点"，我今天同一条命令实跑＝**4 行**（`search.ts:62/83/91/101`＝`Document.title` ×2、`Document.plainText`、`Tag.name`，接收列按 `contract.prisma` 逐枚核实全为 `String`）＝
+      我据此判"数是宽针扫出来的、句子署名给窄针"（宽针 `grep -rn "ilike" src`＝5 行，多出的是 `search.ts:178`＝第 20 条我自己那句注释）。
+      **向版本库取两档读数把它否证了**＝`git show HEAD~1:src/actions/document/search.ts | grep -cF ".ilike("`＝**5**、`git show HEAD:… `＝**4**＝
+      被修掉的正是 `v.value.ilike` 那一枚⇒ **5 是改前字节上的真读数、4 是改后的**，第 21 条两个都没错，**错的只是没把钟写上**；
+      而我那版"更正"把一个对的数改判成错的＝**比原句更错**。已在第 21 条行末把 ✎ 换成本档口径。
+      ⇒ ☆ 判据两条＝① **引聚合数要同屏写"改前／改后·哪份 ref·哪把针"**；② **凡要判历批写错，先向版本库取该针在两档 ref 上的读数再下笔**——
+      "今天的命令跑不出那个数"不等"那个数当时是错的"，样本会随我自己的修改移动，而这批的移动正是我本人造成的。
+    - ☆ 改后字节上 `src` 的 string-only 方法名真实计数（逐条 `grep -rn -F` 单跑）＝`.ilike(` **4**／`.contains(` **4**／`.startsWith(` **28**／`.endsWith(` **2**／`.like(` 0／`.regex(` 0；
+      后三把逐枚看过＝全是宿主 JS 字符串（`view.dom.contains(to)`、`e.currentTarget.contains(to)`、`db.objectStoreNames.contains(STORE)`、`type.startsWith('image/')`、`pathname.endsWith('/')`）＝**零枚打在 Prisma 字段代理上**⇒ 第 21 条"同族清零"在改后字节上仍成立。
+      ☆ 同一条循环曾对这三把给出 `0／0／0`＝逐条单跑与复跑同一循环都得 `4／28／2`＝**该假零不可复现**；候选＝那一次针被多吞一层反斜杠（`\\.` 在 BRE 里＝字面反斜杠＋任意字符）｜**未证**。
+      ⇒ ☆ 判据＝**零命中要先逐条单跑复现、再用 `-F` 与正则两种口径对一次**；两口径不合＝针出了问题，此时的"零"一律不作数（与第 22 条首笔那条"行尾锚假零"同族＝都是输入侧看不见）。
+    - ☆ 普查仪器（把上面那句判据落成一段会红的脚本）＝`../impl-scripts/census-predicates.cjs`＝
+      从 `contract.prisma` 解析 22 枚模型的字段类型，扫全 `src`（排除测试）的回调式谓词 `(x) => x.field.method(`，
+      并解析 `const base = db.orm.public.Document` 这类**构建器变量**来回填模型＝45/58 枚入册、13 枚被模型过滤器丢弃（逐枚打印丢弃原因与原文行，防"丢弃＝干净"）；
+      自带**分母闸**＝另用一把只扫 Prisma 专有名（`ilike`／`like`／`regex`，`contains`/`startsWith` 与 DOM 字符串同名故不入）的独立计数与普查结果对平＝
+      `scan = 4 / census = 4 → GATE: OK`；可疑档（string-only 方法打在非 String 列上或列名在契约里找不到）＝**0 枚**。
+      ☆ 首跑曾因两处仪器缺陷给出假账：`updatedAt temporal.updatedAtString()` 这种**带点与括号的值对象类型**没被类型正则认下（全表报 `?`＝"零可疑"来自解析失败而非干净），
+      以及 `const base = db.orm.public.Document ... base.where((d) => d.title.ilike(...))` 这种**跨语句的构建器变量**让 `search.ts:62` 整个掉出名册＝
+      修好后同一枚 `.ilike` 才回到册内。⇒ ☆ 判据＝**"同族清零"这类结论的前提是仪器自己看得见自己的分母**：
+      修复前那 4 枚在册的只有 3 枚，"清零"当时就已经是假账（第 20 条那枚缺陷就长在 `search.ts`）。
+    - ☆ **这台普查有两面结构上覆盖不到＝动态表访问器与计算键**＝
+      ① `src/lib/sync/changes.ts:204/206/229` 与 `src/actions/whiteboard/whiteboard.ts:33` 写的是 `db.orm.public[table]`（表名运行期传入），
+      静态上不可能回填模型 ⇒ 这 4 枚谓词（`.gt(since)`／`.asc()` ×2／`.eq(userId)`）留在丢弃名单里、**不计入"清零"**；
+      ② 计算键的谓词我的回调正则根本表达不出＝`changes.ts:201` 的 `d[scope.key].in(...)`、`:238` 的 `r[key].in(...)`、`:274` 的 `d[key].in(...)`＝**3 枚整条不在扫描面上**
+      （而 `:201` 那行旁边就是本仓那句承重注释"对象式 `.where({ id: { in: [] } })` 会静默匹配不到任何东西"＝最该被看着的那类通路）。
+      另外 `.gt` 打在 `updatedAt` 上＝契约里 `updatedAt` 全是值对象类型 `temporal.updatedAtString()`，而同表的 `createdAt` 是 `TimestamptzString`＝**同一张表两档时间类型**；
+      现况只由 e2e 的侧栏实时性与轮询路径托住＝**静态普查对它是零证明力**，要判它得单发真库探针（未开工，属下一批）。
+      ⇒ ☆ 判据承第 21 条＝**"清零"要连着报出这台仪器扫了哪些面、扫不了哪些面**，否则零来自看不见。
     - ☆ 仪器（全部仓外、只读）＝`../impl-scripts/gate-6-mobile-baselines.cjs`（新增 `--all` 档＝一次量全 15 枚）、`table-gate-6.cjs`、
       `strays-profile.cjs`、`baseline-census.cjs`（`.tsv` 全名册）、`census-clusters.cjs`、`census-roster.cjs`。
+
+23. **同步游标 `.gt(since)` 有了能红的判据，并把"字段代理到底暴露哪些谓词名"量成一张表**：
+    - ★★★★ **历批两枚活库判据抓不住"静默零行"这个形状**＝`src/lib/sync/changes.test.ts:84`（`never leaks body payloads…`）与 `:122`
+      （`a second pull at the cursor is a no-op replay…`）里的每一条断言都是**对可能为空的数组做全称量化**（`for (const row of rows) expect(...)`），
+      另加 `if (users.length === 0) return;` 兜退＝**`.gt(since)` 整个返回零行时它们一字不改地绿**＝第 21 条那枚"空心判据"族的又一枚，且长在我自己历批写的测试里。
+    - **新增 `src/lib/sync/changes-cursor.test.ts`（真库夹具，账号 `sync-cursor-<id8>@example.com`、两篇文档）**＝三枚判据：
+      ① 按 1970 游标必须真取回我那两枚（`expect(docs.length).toBeGreaterThanOrEqual(2)`＋逐枚 `toContain`）＝正面承重；
+      ② 同一枚测试体内**先跑正控制**（epoch 游标含我那两枚），再把游标推到未来，断言不含＝"从有到无"才叫判据（承第 21 条那条改形）；
+      ③ 改一篇的标题后按上一轮 `cursor` 复拉，断言**那篇回来了**（证明游标真能筛出时间差，而不只是"1970 之后全给"）。
+      正确字节上＝**3 passed（292ms）**、`npx vitest run` 全量＝**54 files / 427 tests passed**。
+    - **控制跑（单变量＝只翻那一枚谓词）**＝`../impl-scripts/change-cursor-predicate.cjs break` 把 `changes.ts:204` 的 `.gt(since)` 改成 `.lt(since)`＝
+      **3 failed**，逐字红＝`Document came back empty at since=null: expected 0 to be greater than or equal to 2`／
+      `positive control went missing, so the zero below proves nothing: expected [] to deeply equal ArrayContaining{…}`／
+      `the touched row did not come back over the cursor: expected [] to include '…'`；
+      `restore`＋`cmp`＝`RESTORED_BYTE_EXACT` 后复跑又 3 passed。⇒ 判据可红＝这条通路从此有闸。
+      ☆ 夹具卫生＝跑后库面 `sync-cursor users = 0 / documents = 0 / collections = 0`（`../impl-scripts/probe-cursor-leftover.cjs`，只数不打印显示名）。
+    - ★★★★★ **字段代理的谓词能力是量出来的**（`../impl-scripts/probe-proxy-methods.cjs`，`typeof` 逐项探）＝
+      `String`／`String?`＝`eq,in,notIn,lt,lte,gt,gte,like,ilike`；`temporal.updatedAtString()`／`temporal.timestamptzString()?`／`TimestamptzString`＝**同上但没有 `like`/`ilike`**；
+      `Int`／`Int?`／`Float`＝`eq,in,notIn,lt,lte,gt,gte`；`Boolean`＝**只有 `eq,in,notIn`**；`Json`／`Json?`＝**一个都不暴露**
+      ＝第 20 条那枚抛错的完整机制（不是"`ilike` 挑类型"，是 Json 档根本没有谓词面）；
+      而 `equals`／`ne`／`not`／`notEquals`／`contains`／`startsWith`／`endsWith`／`regex` **在所测各档上都不存在**＝本批我自己踩了一枚：
+      清理探针写 `u.email.startsWith('sync-cursor-')` → `TypeError: u.email.startsWith is not a function`，换成 `u.email.like('sync-cursor-%')` 才通。
+      ⇒ ☆ 判据＝**"接收列是 `String`，所以这个方法合法"不够**＝名字要对着量过的能力表核。
+    - ☆ 普查闸随之升级（`../impl-scripts/census-predicates.cjs`）＝判红条件从"string-only 方法打在非 `String` 列"换成"**名字不在该声明类型的能力集内**（`asc`/`desc` 属 `orderBy` 不计）"，
+      并加**8 枚夹具自测**（`Json .ilike`／`Json .eq` 必须判红、`String .ilike`／`temporal .gt` 必须判净、`String .contains`／`Boolean .gte`／类型解析不出来 必须判红）＋分母闸，任一不合**非零退出**＝
+      现况＝可疑 **0 枚**、`SELFTEST: OK`、`GATE: OK (4 = 4)`、`CENSUS_EXIT=0`；三面盲区照旧（动态表访问器／计算键／`Json` 档根本没有谓词面）。
+    - 门禁（本条最终字节）＝tsc `exit=0／0 行`；eslint `0 errors / 429 warnings`（新增测试文件单独 `npx eslint` **0 枚警告**＝总数一字未动）；
+      vitest **54 files / 427 tests passed**；e2e **未重跑**＝产品字节与 `ee95145` 逐字相同（本条只动 `docs/` 与新增一份测试），第 22 条那份全量读数（`64 passed／1 failed` 判通路档）仍是当前码的读数。
+
+24. **视觉矩阵在当前字节上全量复跑了一份（只读、未重录），并把字段代理的能力表从抽样升到全表面**：
+    - ★ **全量视觉＝96 枚测试全绿**（分三次跑、同一份字节）：`--project=mobile`＝`32 passed (2.2m)／PW_EXIT=0`；
+      `--project=desktop --project=tablet`＝`64 passed (2.8m)／PW_EXIT=0`；**两次都没带 `--update-snapshots`**，
+      跑完 `git status --short` 内 `.png` **0 枚**、`test-results` 目录 0 枚＝**基线与产物一字未动**。
+    - ☆ **分母三方对平**（这枚是重点，因为"32 passed"很容易被读成"只量了 32 张"）＝每档 **32 枚测试 ↔ 42 枚快门 ↔ 42 份基线**：
+      每主题 1 枚 auth（2 张：login/register）＋12 枚 app 路由（各 1 张）＋1 枚文档（1＋4 张面板 tab）＋集合 1＋白板 1＝**16 枚测试／21 张**；×2 主题＝32 枚测试／42 张；
+      三档 × 42＝**126**＝与第 22 条普查分母（盘上 126 份）逐字对上＝**没有孤儿基线、也没有没被走过的快门**。
+    - ★★ **它对第 22 条那笔"意外漂移"的判语意味着什么**＝"当前构建产出的画面 == 已提交基线集"这一半**已实测**（96/0）；
+      所以那 9 枚盒外非零不是"提交之后又漂了"，而是**`5e7376a` 那次入账自带的、且现在被全量跑认可为当前形状**。
+      这枚读数控住的方向是**产品侧写入**那半：它要的是"与官方屏面一致"，而官方屏面属取证线（会话 C）的读数面，**本线不能自证**＝候选＝这几枚的形状就是当前实现的真实输出｜已证；"该形状是否等于官方"＝**不在本线的证明力范围内**。
+    - ★★★★ **字段代理能力表：从 10 枚字段抽样升到 266 枚字段全表面**（新 `../impl-scripts/census-proxy-capability.cjs`，读数 `proxy-capability-full.log`）＝
+      **22 枚模型的 266 枚字段逐枚 `typeof`，探针报错 0；同一声明类型的所有字段签名完全一致（分裂类型 = 0/42）**＝"能力是声明类型的函数"成立、不必做逐字段表。
+      分档＝`String`(77)＋`String?`(30)＝`eq,in,notIn,lt,lte,gt,gte,like,ilike`；`temporal.updatedAtString()`(17)／`TimestamptzString`(21)／`TimestamptzString?`(11)＝同上**无 `like`/`ilike`**；
+      `Int`(10)／`Int?`(1)／`Float`(7)＝`eq,in,notIn,lt,lte,gt,gte`；`Boolean`(15)与 `Bytes`(1)＝**只有 `eq,in,notIn`**；
+      **`Json`(1)／`Json?`(6) 与所有关系类型（`Document`／`User`／`Tag[]`…）＝一个都不暴露**；
+      `equals`／`ne`／`not`／`notEquals`／`contains`／`startsWith`／`endsWith`／`regex`／`mode`／`searchMode` **在 266 枚字段上全部不存在**。
+      ⇒ 普查的判红条件据此从"string-only 方法打在非 `String` 列"换成"**名字不在该类型能力集内**"，且能力表**由仪器直接读那份实测日志**（打印 `capability table from: measured (proxy-capability-full.log)  types in table = 42`，读不到才退回字面量并如实报源）＝手打字面量正是当初"接收列是 String 所以合法"这句推断的来源。复跑＝**可疑 0 枚／`SELFTEST: OK`（8 枚夹具全分对，含 `Json .ilike` 必须判红）／`GATE: OK (4 = 4)`／`CENSUS_EXIT=0`**。
+    - ★★★ **同一族缺陷在本批抓到我自己一次**＝清理探针写 `u.email.startsWith('sync-cursor-')` → **`TypeError: u.email.startsWith is not a function`**＝
+      与第 20 条那枚同一个机制（不是"挑 Json"，是这个名字在代理上根本不存在），**换成 `.like('sync-cursor-%')` 即通**；
+      ☆ 而我上一轮据"零命中"说过"其余 string-only 方法名在 `src` 出现次数全为 0"——那是假零（真值 `.contains(` 4／`.startsWith(` 28／`.endsWith(` 2，逐枚看过全是宿主 JS 字符串、零枚打在代理上）；
+      该假零**不可复现**＝候选＝那一次针被多吞一层反斜杠（`\\.` 在 BRE 里＝字面反斜杠＋任意字符）｜未证。⇒ 判据已并进第 22 条那两条（聚合数带钟；零命中先复现再换口径对）。
+    - 门禁（本条最终字节）＝tsc `exit=0／0 行`；eslint `0 errors / 429 warnings`；vitest **54 files / 427 tests passed**；
+      e2e 非视觉＝第 22 条那份（`64 passed／1 failed` 判通路档）；e2e 视觉＝本条 **96 枚全绿**；`git status --short`＝`docs/test-report.md` 一份已跟踪改动＋`src/lib/sync/changes-cursor.test.ts` 一份未跟踪＝**0 枚 `.png`**。
+
+25. **同步白名单第一次被对着"发出去的契约"逐列核了一遍；顺带把 `.where()` 简写形量成机制，量出来的东西把两句产品注释改对了**：
+    - ★★★ **新判据 6 枚**（`src/lib/sync/changes.test.ts` 10 枚 → **16 枚**，读数 `SPEC_VERBOSE=1`＝`models=22 tables=15 columns=131`）＝
+      同步模块的三张 spec（`INCREMENTAL_TABLES`／`SCOPED_INCREMENTAL_TABLES`／`FULL_TABLES`）此前**只被自己核自己**——历批那 3 枚判据全是"列名在不在列名册里"，而 `collectChanges` 是用**字符串**取表（`db.orm.public[table]`）与取列（`.select(...columns)`），
+      新加的 6 枚把这一面换成对 `src/prisma/contract.json`（22 枚模型／**逐枚 131 列**）核：表名是不是模型／列名是不是字段／游标档在模型上真有没有 `updatedAt`／作用域列（`userId`、`parentKey`、`ownedByUser` 那批）在不在／以及 `FULL_TABLES` 那句"没有 `updatedAt` 可游"的断言本身。
+      现况＝**不符 0 处**；仪器自身分母闸＝模型数 ≥20（契约换形时整组不会静默空转）。⇒ 历批挂在"动态表名进不了静态覆盖"那笔账，从"未验"变成"有闸"。
+    - ★★★★ **新判据 4 枚（`src/prisma/where-shorthand.test.ts`）＝把"简写形里放运算符对象"这一族量成了机制，而不是传闻**。
+      `where()` 两形：callback（`d.id.in([...])`）与简写对象（`{ id: ... }`）。简写形把值**直接当 SQL 字面量**送进 postgres，所以运算符对象不是"构造不出筛选"，而是"拿列去比那段 JSON 文本"，实测三种结局各一枚：
+      文本／uuid 列＝**静默 0 行**（`{userId:{eq:uid}}`＝0，同一列裸值＝3，callback `eq`＝3；`{id:{in:[真实id]}}`＝0，callback `in`＝1；`{id:{ne:a}}`＝0；`{id:{not:a}}`＝0）；
+      时间列＝**当场抛**（`{updatedAt:{gt:ts}}` → `无效的类型 timestamp with time zone 输入语法: "{"gt":"2026-10-02T05:27:07.241Z"}"`）；
+      `and/or/not` 当顶层键＝抛 `Shorthand filter on "Document.and": field does not support equality comparisons`（＝组合子不在这张面上，因此黑名单里它们与运算符对象是**两种失败模式**，判据文案分开写）。
+      危害档＝**静默那一支**：一次重构（"这堆 callback 太啰嗦，统一换成对象形"）就能让侧栏某棵树变成空数组、无报错、`for (const row of rows)` 整体不执行，而套件全绿。
+    - ★★★★ **全库普查＝291 份文件／108 处简写形 `.where({…})`／违规 0 枚**（`CENSUS_VERBOSE=1`）。这台仪器过了历批那三关：
+      **看得见要找的那一枚**＝4 枚坏形夹具（含三层嵌套 `{OR:[{a},{name:{ilike:…}}]}` 与跨行 `{updatedAt:{gt:since}}`）全部判红；
+      **不被"提到"骗**＝`changes.ts:199` 与 `collection.ts:175` 两句注释里本来就写着这枚坏形，它们在 108 枚里判绿——我改注释时又把同一句坏形**写进 `changes.ts` 的新注释**，复跑仍是 `108／0`＝"剥注释与字符串"那条支路在真字节上被反证（不剥就会报出来）；
+      **分母闸**＝文件数 >200 且简写形站点数 >0，否则判红（_walk 断掉与真的干净是两种零_）。
+    - ★★★★ **本批两处改判我自己刚写下的话**（都在落盘前被实测挡回）＝
+      (甲) 我先在判据头注释里写"假列名会**静默少字段**"→ 直读探针＝`.select('notAColumn')` **会抛** `字段 documents.notAColumn 不存在`，已按实测改成"每次轮询抛错"，这台静态闸的价值随之要重新说＝**不依赖数据库、1.1 秒 vs 活库那两枚 20 秒预算、且覆盖"父集为空时根本不发查询"的那几档**（`SCOPED_*` 与 `viaDocuments` 在用户没有集合／文档时提前 return，活库判据走不到那条 SQL）；
+      (乙) 我写"tsc 挡不住**字符串键访问**那一档"→ 控制跑一次注入两枚（具体形 `db.orm.public.Document.where({id:{in:ids}})` ＋ 字符串形），**tsc 两档都没报**（见下枚控制跑），措辞已升为"tsc 根本不是这张网"。
+      ☆ 同一条命令链上另一枚自己的失误＝取 vitest 总数时我把 grep 指向了一份**从未创建的文件**（`impl/vitest-tmp`），拿到 0 行后又**白跑了第二次全量套件**（`npx vitest run | tail -0`＝丢弃输出）＝两笔都是"读数面"的错、不是代码的错；⇒ 判据＝取读数只从**当轮真实重定向到的那份日志**读，路径不许临时编，且不许在同一命令里既读日志又重跑同一件事。
+    - ★★★ **产品注释改对（两处，纯注释、`git diff` 无一行代码变）**＝原句都把这枚危害限定在"**空列表**"（`{ in: [] }` 那形），实测**非空列表同样中招**，按空列表理解的读者会写出 `{ in: ids }` 而自认为安全；
+      顺带 `collection.ts` 那句"所以空集早退必须留着"不成立＝callback 形 `.in([])` 本就回 0 行，早退省的是**两次往返**而不是正确性，已如实改写。两处均指向 `src/prisma/where-shorthand.test.ts` 作为出处。
+    - ★★★★ **控制跑两枚，均单变量、均逐字还原**＝
+      ① 临时文件注入 `.where({ id: { in: ids } })` 两枚 → 普查红＝`AssertionError: shorthand filter with an operator object returns 0 rows: expected [ …(2) ] to deeply equal []`，逐条点名 `src\lib\sync\__census-control.ts:9`／`:11`；**同一份字节上 `npx tsc --noEmit` exit=0、未提这两枚**（撤文件后仍 exit=0）＝"绿着的 tsc"与"红着的普查"同时在场，这张网的作用面就此钉住。
+      ② `changes.ts` 单枚列名 `dailyNoteDate → dailyNoteData` → `changes.test.ts` **3 failed／13 passed**＝1 枚静态（逐字红＝`Document.dailyNoteData is not a contract field: expected { charCount: { …(2) }, …(23) } to have property "dailyNoteData"`）＋2 枚活库（`字段 documents.dailyNoteData 不存在`）＝静态与运行时同判，而静态那枚先给出表名．列名；
+      还原＝`RESTORE OK md5 c6000d15d042c879984511355546b6b1`（与备份逐字相同），复跑 20 passed。
+    - ★ **抓到我自己一枚真错（新代码自带）**＝首跑 tsc 报 `src/prisma/where-shorthand.test.ts(186,29): error TS7006: Parameter 'r' implicitly has an 'any' type`，另一枚 eslint `'spec' is assigned a value but never used`＝都在提交前于最终字节上修掉并复跑；☆ 一度误把整轮三件套重跑了一遍（grep 用了基础正则的 `|` 交替＝死分支，0 行输出被我读成"没打印"），已记为仪器侧缺陷：判红条件里带 `|` 的针一律用 `-E`。
+    - ☆ **一条被点名但不该由本线动产品的账**＝普查顺带量出 **6 张带 `updatedAt` 却不在同步白名单的模型**＝`Comment`／`CommentThread`／`DailyNotesConfig`／`DocumentMember`／`User`／`YjsDocumentState`。
+      逐张查了读路＝前五张各有 server action 读路（`daily-notes.ts:71`／`backlinks.ts:63`＋`get.ts:171`／`preferences.ts:42`＋`profile.ts:11`／`comment.ts:29` 等），`YjsDocumentState` 由 `src/collab/persist.mjs:97` 走协作侧持久化＝**不是漏，是作用域边界**；但"要不要进同步面"属产品口径，**本线只报名册、不擅自加表**。
+    - 门禁（**提交前在最终字节上新鲜跑**，不复用修前读数）＝tsc `exit=0／0 行`；eslint `src`＝`0 errors / 402 warnings`、`.`＝`0 errors / 429 warnings`（与第 24 条同针同数＝本批净增 **0 枚告警**）；vitest **55 files / 437 tests passed**（较第 24 条 +1 份／+10 枚）；普查 `files=291 shorthandSites=108 violations=0`；契约对账 `models=22 tables=15 columns=131`；`git diff --check` exit 0；
+      改动面＝`src/prisma/where-shorthand.test.ts`（新，241 行）＋`src/lib/sync/changes.test.ts`（102+/0−）＋`src/lib/sync/changes.ts`（纯注释 4+/2−）＋`src/actions/collection/collection.ts`（纯注释 6+/2−）＋本报告（115+/0−）＝**代码面 112 插入／4 删除**（✎ 这组数只对"第 25 条落笔时那份字节"有效；同面在第 26 条落笔后是 **249 插入／4 删除**＝`git diff --numstat` 现取）；另有 `src/lib/sync/changes-cursor.test.ts`（第 23 条那枚，97 行，仍未跟踪）；**0 枚 `.png`、0 处阈值改动**；**未 commit／未 push**（本轮未点名）。
+    - **未验部分**＝① 契约对账只核"列在不在模型上"，**没核**"该不该同步这张表"（上面那 6 张即此口子）；② 普查跳过 `*.test.ts`（夹具自导），测试文件里的简写形不设防；③ 括号深度器不处理 `.where({` 内含 `{` 的模板串——本批 108 枚站点里 0 枚这种形状，属**已知**而非**已证**；④ `{id:{in:[…]}}` 那支"静默 0 行"只在**本库本档**（`@prisma/orm-postgres` 装机版 **8.0.0-rc.11**／CLI **8.0.0-rc.15**，加这份 contract）实测，未跨版本复证。
+
+26. **同步模块的运行期形状补了两张网：一张量"代理给不给这个方法"，一张量"少付的那几次往返还在不在"**（＝第 25 条末尾我自己点名的那半：名字对不对已结案、方法名合法那半仍开）：
+    - ★★★★ **覆盖面事实先量出来：`asc`／`desc` 是历批那张能力表从没量过的第二面**＝历批 `census-proxy-capability.cjs` 的 `NAMES` 只有谓词名（`eq,in,notIn,lt,lte,gt,gte,like,ilike,…`）、**没有排序名**＝"266 枚字段已量完"那句对排序零证明力。
+      本次把 **15 枚真站点逐条执行**（不是 `typeof`，执行更接近生产）＝三元组名册**由源码派生**（`.orderBy((x) => x.field.dir())` 就近配 `db.orm.public.<Model>`／`getTable('<Model>')`）＝**25 处站点／15 枚唯一三元组／1 处如实报"未解析"**（那枚恰是 `changes.ts:208` 的动态表名＝没被我猜掉）；误配风险最高的六枚逐条打上下文核过。读数＝**15/15 全过**。
+      两枚负控制按预期红，且**报错不同档**＝假字段 `Cannot read properties of undefined (reading 'asc')`（字段代理本身不存在）｜`CollectionValue.value` `m[field][dir] is not a function`（代理在、排序方法不在＝`Json` 档什么都不暴露，与历批第 20 条同机制）⇒ 这两档从此分得开。
+    - ★★★★ **新判据 3 枚（`changes.test.ts` 16 → 19 枚）＝代理能力闸**：清单**从导出的 spec 派生**（不会与 spec 走散）＝`INCREMENTAL` 6 张各 `userId.eq`＋`updatedAt.gt`＋`updatedAt.asc`、`SCOPED` 5 张各 `parentKey.in`＋同两枚时间形、`FULL/viaDocuments` 2 张各其键的 `in`＝**`shapes=35 failures=0`**（`CAP_VERBOSE=1`）；分母闸＝清单 ≥30 枚。
+      ☆ 顺带量到一条 API 形状＝`where()` **在调用当场同步执行回调**（抛点栈里就有 `CollectionImpl.where`）＝坏形状是**同步 TypeError**、不是被拒的 promise ⇒ 我第一版用 `.then(_, onReject)` 接它＝结构上接不住（首跑当场红），已改成包住调用本身的 `try`。
+    - ★★★★★ **给"少付往返"补了它唯一会红的判据（新 `src/lib/sync/changes-scope-census.test.ts`）＝这条账此前零覆盖**：
+      先跑控制＝**删掉 `changes.ts:193` 的空父集短路，`src/lib/sync/` 三份 53 枚全绿**＝那行没有任何判据把住；并顺带得一条事实＝`.in([])` 合法回 0 行，短路省的**只有往返**、不是正确性。
+      我据此**先把自己刚写的那枚新判据判为零分辨力**（它的断言在删与不删下同真），并在其注释里写死这件事、指名由谁的闸把住；再补成语句计数闸（沿用仓里 `collection-detail.test.ts` 的 `afterQuery` 计数中间件形状）＝空账号一次 `collectChanges` **实测 10 条**＝6 张游标表＋2 次父 id 探针（Document／Collection）＋2 张按 `userId` 整表（Tag／Favorite），与按 spec 结构推出的 6+2+2 **相符**；控制跑（同一次删短路）＝**15 条**、逐字红＝`round trips for an account with no data: expected 15 to be 10`＝该闸确有分辨力。夹具账号建了又删、删后回读 0 枚。
+    - ★★★ **控制跑一枚，专门测"新闸是不是唯一网"＝答：不是**：把 `CollectionValue.parentKey` 由 `itemId` 换成 `value`（**真列**、**在它自己列名册里**、但 `Json` 档无谓词面）＝契约对账 6 枚**全绿**、自指"选了自己的 parent key"那枚**全绿**、而 `changes.test.ts` **3 failed**＝能力闸＋两枚活库 `collectChanges` 同红（该用户恰好有集合数据）。⇒ 能力闸的独有价值**不在**这枚变异上（此处与活库网冗余），而在"父集为空时那 5 张表根本不发查询"那一档＝由上一条的 10/15 计数**实测**成立，不是口头推。
+    - ★★★★ **本批自己踩的四件**（逐件都有对应处）＝① 三枚"模型名靠猜"的探针样本里有一枚指向 `DailyNotesConfig.dailyNoteDate`——**该模型根本没这列**（真调用点是 `Document.dailyNoteDate`）＝探针把"探针坏了"与"能力缺失"分两档打印才没让我报出一枚假缺陷；② 还原脚本把锚检查放在分支之前 ⇒ `restore` 路径也被"文件已改"挡死＝**撤销路径不可达**，当场手对 md5 还原并把守卫改为只管 `break`；③ `toInclude` 在本机 vitest 的 chai 上不存在（`Invalid Chai property: toInclude`）＝改用 `toContain`；④ 新代码两枚真编译／风格问题在控制跑的 tsc 里被抓出（对 `unknown` 取 `.message`＝`TS2339`；4 枚 `no-explicit-any` 告警）⇒ 补 disable 头时我又连做两次 Edit 造出**重复的 disable 行**，读回才发现合一。☆ 其中②那枚"只有控制态才跑得到 tsc"值得记：我此前每次都在干净字节上跑 tsc，故这枚错活了三轮命令。
+    - 门禁（**最终字节新鲜跑**）＝tsc `exit=0／0 行`；vitest **56 files / 441 tests passed**（较第 25 条 +1 份／+4 枚）；eslint `src`＝`0 errors/402 warnings`、`.`＝`0 errors/429 warnings`＝**与本批开工前逐字相同＝净增 0 枚告警**（中途那枚 406/433 是我自己带进去的 4 枚，已消）；`git diff --check` exit 0；`.png` 0 枚；`changes.ts` 仍只有第 25 条那 4+/2− 注释改动（三次控制跑均以 `md5 c6000d15d042c879984511355546b6b1` 逐字还原）；**未 commit／未 push**（本轮未点名）。
+    - **未验部分**＝① "键合法但**指错列**"（如 `parentKey` 指向另一枚类型合法的列）三张网都抓不到＝能力闸看方法在不在、契约闸看名字在不在、活库网看有无数据，**语义层无判据**；② 排序面本轮量了 15 枚真站点＋能力闸里 11 张表的 `updatedAt.asc`，`desc` 在同步模块零使用；③ 语句计数 10 是**这份库＋这份 spec** 的读数，加表即变（这是它的用途，不是脆弱点，但改 spec 的人必须重跑）；④ 计数中间件那侧的 `familyId: 'sql'` 形状沿用仓里既有仪器，未独立验证它对 `orderBy`-only 语句也计数（10/15 两档差恰为 5＝与 5 张被短路的表一一对上，属**间接**证据）。
+27. **快门时刻第一次有了正面判据＝主题 class 必须早于快门落在 `<html>` 上，并把"这两道闸门是不是在空转"各量了一次**：
+    - ★★★★ **判据 → 先红 → 转绿**＝控制跑把期望 token 硬编码成 `dark` 打在 light 档，逐字红＝
+      `Error: <html class="inter_786c1081-module__J60SBq__variable h-full antialiased light"> carries no "dark" token at the shutter`（`PW_EXIT=1／1 failed`），
+      栈帧 `at shoot (e2e/visual.spec.ts:92:3)`＝**快门语句前三行**抛的 ⇒ 位置也验了，不是"在测试末尾补了一句"。
+      改成从快门名解析 token 后＝`--project=mobile` **32 passed (2.1m)／PW_EXIT=0**、三档合跑 **96 passed (4.5m)／PW_EXIT=0**，
+      两次都没带 `--update-snapshots`、跑完 `git status --short -- '*.png'`＝**0 枚**＝基线一字未动；`e2e/visual.spec.ts` 对 HEAD 的差＝**18 插入／0 删除**（纯增量）。
+    - ★★★★★ **为什么是"单次读"而不是 `await expect(page.locator('html')).toHaveClass(...)`**＝后者会轮询到 `expect.timeout`（20 s），
+      于是恰好放过这枚判据要抓的那种失败＝**主题晚到**。在册第 35 条那次缺陷的形状是"先上色后写入"，它在快门侧的同族形状就是"先快门后上色"＝
+      一张浅色页面被登记成 `dark-*` 基线、然后那些像素变成新基线（漂移被烘进去而不是被抓住）。⇒ 判据＝**正面断言的读法要按"缺陷的形状"选，不按"现在能不能绿"选**；
+      盘上事实＝当前字节上它 24/24 首样即终态（144–534 ms），所以这道闸今天**不会**因晚到而红，它买的是"下次晚到时必红"。
+    - ★★★★ **覆盖面的结构性证明**＝整个 `e2e/` 只有 **1 处** `toHaveScreenshot`（在 `shoot()` 内）⇒ 每档 **42 枚快门**逐枚过这道闸，不靠人记得加；
+      快门名没有 `light-`／`dark-` 前缀时**抛错**而不是回落到某一档＝回落会让一枚"没前缀的新快门"以错的理由通过。
+    - ★★★ **两枚"闸门在空转吗"的假设各量一次**（临时探针 `e2e/_shot-gate-probe.spec.ts` 已删，读数在 `../impl-scripts/shot-gate-probe2.log`／`shot-gate-class2.log`）＝
+      ① `加载中` 标签 12/12 路由都真出现过、524–931 ms 消失、`changesIn350msWindow=0` ⇒ 那句 `toBeHidden` 不是空转、350 ms 落在静默里；
+      ② `<html>` class 在 2 秒窗口内**从不跃变**（`states=1`×24、`classStable=YES`）⇒ 历批"录早了"那枚候选在**当前字节**上不可复发，要判它得回到修复前的字节。
+    - ★★★ **e2e 面上的否定式断言第一次被全数登记**（`../impl-scripts/absence-census3.log` 首行逐字）＝
+      `specs=18 negativeAssertions=30 coveredInFile=8 coveredElsewhere=3 nowhere=6 anchorUnparsed=13`；定位器活性＝**102 枚字面量／判后死锚 0 枚**。
+      ☆ 口径＝`nowhere=6` 是"本仓内没有任何正面断言把住它"，不是"这 6 枚是坏的"；`anchorUnparsed=13` 是仪器解析不出锚、按不可判上报（不可判≠通过）。
+    - ★★★★★ **那 6 枚逐枚判完后，判出来的是仪器自己的错＝v1 把两种缺陷混进了一个桶**（新仪器 `../impl-scripts/census-absence-assertions2.cjs`，读数 `absence-census-v2b.log`）＝
+      拆成**两根独立的轴**：`needle`＝这枚定位器的字面在全仓任何地方被正面断言过在场吗；`guard`＝同一段测试体内有没有正面断言、且它排在缺席声明之**前**／之**后**／根本没有。
+      v2 读数＝`negatives=30 needleLive=8 needleDead=9 needleNoAnchor=13 guardBefore=27 guardAfter=3 guardNone=0 DEAD_AND_NONE=0`（两轴各自对平＝8+9+13＝30、27+3+0＝30）＝**最坏那一格 0 枚**＝没有一枚同时"针不活"且"整段无铺垫"。
+      两处过报的机制都指认到了＝① v1 的正面集含 `.click(`／`waitFor(`＝**动作被当成断言**；② 更硬的一枚＝`whiteboard-collab.spec.ts:155` 访客侧的缺席声明被**主人侧** `:57` 的同一字面 click 判成"已覆盖"＝**按文件搜正面＝跨行动者混用**。
+      ☆ 移进 dead 的 3 枚有名＝`trash-selection:44`／`:45`（正面证据只有 `.click(`）＋`whiteboard-collab:155`；v1 标 elsewhere 的 `authz:80`／`whiteboard-collab:218` 在 v2 落 `guard=after`＝正面排在后面＝整段不会在空白页上过，但**这一行本身会**。
+      ⇒ 判据＝**"覆盖 N 处"类桶要先答它按哪根轴分**；同一份盘按两轴可以报出 6、也可以报出 9，两个数都不指认任何缺陷。
+    - ★★★★ **`needleDead=9` 不等于 9 枚陈旧标签**＝逐枚拿字面回产品源码对了一次（`grep -rlF` 逐串、src／e2e 两份计数并排）＝
+      `载入中`＝src 2 份／`加载中`＝8／`链接到文档`＝1／`永久删除所选`＝1／`还原所选`＝1／`分享白板`＝2＝**六串都还在产品里**，"dead" 只表示没有 spec 正面断言它在场；
+      `路人丙`＝src 0＝**它本来就是测试自造的 fixture 用户名**（`mention-user.spec.ts:7`）＝这枚 dead 是设计不是缺陷；该声明的可证伪性由同文件 `:65-67` 给＝正面断言了 `提及人员` 面板在场＋`协作者乙`／`发起者甲` 两枚**同形状**按钮在场 ⇒ "形状能匹配、这一枚不在其中"才是它的意思。
+      ☆ 顺带一条在册事实＝**两套加载中文案并存且不同字面**（`载入中…` 只在设置面板、`加载中` 在 8 份文件）＝两枚 `toBeHidden` 各守各的串、不可互抄。
+    - ★★★★★ **非视觉全量那一发判为"不可归因"，而抓到它的原因是机器钟、不是测试**＝`../impl-scripts/t3f-e2e-nonvisual.log` 末尾逐字＝
+      `2 failed`＋`63 passed (11.1h)`＋`PW_EXIT=1`（分母对平 63+2＝65）。两枚红同在 `collab.spec.ts`（`:52`／`:75`），第一枚的**原因串自己就是判语**＝
+      `page.goto: net::ERR_NETWORK_IO_SUSPENDED at http://localhost:3000/documents`＝OS 层网络 I/O 被挂起；第二枚是它的下游（提交后停在 `/login`、撞 120 s 测试超时）。
+      ☆ 我最初把它读成"跑了 11 小时"的反常、并据此怀疑自己的时间叙述——核对＝本机钟 `12:45:46` 落盘、开跑约 `01:4x`＝**墙钟真有 11 小时**，
+      而 playwright 的 `Duration` 就是墙钟＝**机器中途睡过去的时间全被算进每一枚测试的耗时里**⇒ 同屏打印的 `Slow test file: editor.spec.ts (5.8m)／core.spec.ts (5.4m)` **不得**当产品耗时读数引用。
+      判据 ②（在册那套三步里唯一有罪责力的那把尺）＝单跑同一份 spec＝`3 passed (1.3m)／PW_EXIT=0`（`t3f-collab-retry.log`）＝**开罪**；
+      判据 ①＝红那两行紧邻的原因串即 `ERR_NETWORK_IO_SUSPENDED`（且全日志只 1 枚）；判据 ③（只算旁证）＝本轮 `src` 侧只有注释级改动。
+      ⇒ 判据＝**凡墙钟类读数先与本机钟对一次再进报告**；"上一轮是几分钟前"在这台机器上不可信（本轮我就是这样把 11 小时当成半小时的）。
+      ☆ 与历批那枚"通路档"的区别要写清＝历批的形状是`超时＋memory restart 行紧邻`，本轮的形状是**OS 网络挂起串自证**＝两种成因两套处方，不可互抄。
+    - ★★★★ **本轮自己踩的五件**＝① 一次 Edit 的 old/new 只差末尾一个换行 ⇒ 它实际删掉了 `shoot()` 尾部的空行、而我以为已经把闸门加进去了＝
+      **读回文件**才发现（`git diff` 现为纯 18/0 就是这条的收工证据）；② 探针复用同一个 page 跑两主题 ⇒ 暗档那轮标签从不出现、
+      `shutterAt=lastBusyAt+350` 打印出 `-1+350` 这种"看着合理的结构垃圾"＝改每主题独立 context＋只打无标签的 `classStable` 判决；
+      ③ `grep -E 'toHaveCount(0)'` 假零（ERE 把 `(0)` 当捕获组）＝`-F` 真值 23 枚、`toBe(0)` 3 枚；
+      ④ 差一点把 00:4x 的四份门禁读数当"最终字节"＝它们早于闸门落笔约 20 分钟，故 tsc／eslint／vitest／视觉全部在 `t3f-*` 重跑；
+      ⑤ **我删掉了一份自己没读懂的 tsc 读数**＝随后 4 次独立 `tsc --noEmit` 全 `exit=0／0 行`，又与活着的 `next dev` 并发跑 3 次仍全空＝
+      该读数不可复现，而它的证据被我删了。☆ 字形也对不上＝它写的是"把 `string | undefined` 赋给 `string`"（TS2322），
+      而本仓 `tsconfig.json` **没设** `noUncheckedIndexedAccess`、`e2e/**` 又确在 tsc 网内（`--listFilesOnly` 命中 1 枚）⇒ 我这两种写法在那个 flag 关闭时同型 ⇒ 候选＝我把另一份日志的行首读了｜未证。
+      **新纪律＝没读懂的读数不许删；归档并标"待判"。删证据是独立于结论对错的缺陷。**
+    - 门禁（**最终字节新鲜跑**）＝vitest **56 files / 441 tests passed／exit=0**（与第 26 条逐字相同＝本轮零新增单测）；tsc `exit=0／0 行`；
+      eslint `.`＝`0 errors/429 warnings`、`src`＝`0 errors/402 warnings`＝**与开工前持平＝净增 0 枚告警**
+      （日志里那枚 `Unused eslint-disable directive` 属 `scripts/probe-collab.mjs`＝不在本线改动集，未动）；e2e 视觉三档 **96 passed／PW_EXIT=0**；`.png` 0 枚。
+    - ★★★★ **e2e 非视觉全量（16 份 spec／分母 65）在最终字节上＝`64 passed (23.1m)／1 failed／PW_EXIT=1`，而那枚红判为通路档、不是产品**（`../impl-scripts/t3f-e2e-nv2.log`）＝
+      红的正是**历批同一枚**＝`whiteboard-collab.spec.ts:93`（两主人实时互见形状），逐字原因＝`page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/whiteboards`（打在 `createBoard` 的第 26 行）；
+      判据 ① 邻接＝`[WebServer] ⚠ Server is approaching the used memory threshold, restarting...` 在**日志第 481 行**、红那枚的报头在**第 483 行**＝相隔两行，且红发生在 `[60/65]`＝长跑末段内存压力峰值处；
+      判据 ②（唯一有罪责力的尺）＝单跑同一份 spec＝**`6 passed (3.0m)／PW_EXIT=0`**、该日志里 memory-threshold 标记 **0 次**＝开罪；判据 ③ 只算旁证＝本轮 `src` 侧仅注释级改动。
+      ☆ **同一行号第三次红、三次原因串各不相同**＝历批＝`Test timeout` 停在 `waiting until "load"`＋重启行紧邻；本轮第一发＝`net::ERR_NETWORK_IO_SUSPENDED`（机器睡过去）；本轮复跑＝`ERR_CONNECTION_REFUSED`＋重启行紧邻。
+      ⇒ 判据＝**形状族是同一条（长跑里 dev server 生命周期吃掉在飞的那枚），但处方不可互抄，每发都要重新按三步判**；也因此"这份 65 分母的全量"里那 1 枚红**不应**被下批读成新增回归＝它已经是三批连续的同一条通路账。
+    - **未验部分**＝① 这道闸只管"主题 token 在不在 class 上"，不验 `color-scheme` 与各 token 的计算值（探针里顺手读过、恒 `light`／`dark`，**未固化成断言**）；
+      ② 它防不住"主题对、token 值错"那一档；③ 快门前的 350 ms／标签／dev 浮标三道仍是**等待**条件，本闸不测它们各自的必要性；
+      ④ 与第 22 条那 9 枚盒外非零无关（那批的形状是重叠／几何，不是颜色晚到）；⑤ ✎ 原写"非视觉 e2e 读数还在跑"——同轮内已到，见本条门禁行的 `64 passed (23.1m)／1 failed／PW_EXIT=1` 与其下那条通路档判定（本机钟 13:15 复跑单份 spec 亦已绿）。
+28. **批间重启 webServer 的分批跑法落地了，它对目标类病灶归零；但它同时把两枚别的红照了出来，其中一枚测成了"随时序单调退化"而不是 flake**：
+    - ★★★★ **仪器＝`../impl-scripts/e2e-batched.cjs`（顺序跑 Playwright 原生 `--shard`，每批发起各自的一套 `next dev`＋collab＋tldraw）**。它不是"把命令跑两遍"，因为带三道会红的闸：
+      ① **覆盖闸**＝各片标题**并集必须逐字等于**不分片的标题集、且两两不相交、且各片枚数之和＝分母（正面读数＝`plan full=65 shards=[35+30] sum=65 dupTitles=0 missing=0 unexpected=0`）；
+      ② **新鲜闸**＝每批**开始前** 3000/3001/3002 必须无监听，否则当场 ABORT（`reuseExistingServer: !CI` 会把一台已经跑热的 server 静默交给下一批＝分批的意义就没了）；☆ 这台闸的正控制是白捡的＝第 1 批运行中用同一谓词量到三台**都在听**（PID 23620／6972／16036）；
+      ③ **`flaky` 计数**＝本轮没有 `CI`，若哪天读到 `flaky>0` 就说明有人开了重试、正在掩盖间歇失败。退出码一律取自子进程，不取管道尾。
+    - ★★★★★ **覆盖闸被证明真的会红**＝注入"两片同取一份"的缺陷（`--control=overlap`）＝读数 `shards=[30+30] sum=60 dupTitles=30 missing=35`、`COVERAGE GATE FAILED`、exit 1＝"分批等于全量"这句话不是我说的，是这台闸说的。
+    - ☆ **为什么不用 `CI=1` 这条捷径**＝它确实能让 `reuseExistingServer` 变 false，但 Playwright 的 CI 档同时会改重试／worker 默认值＝**会把"没人被重试掩盖"这件事从可测变成不可测**；而我两台探针都读不到解析后的 `retries`（`--list` 的文本行、`--list --reporter=json` 的 `config` 里都没有这个键＝25 个键里没有）⇒ 判不了就不依赖，改用上面那道新鲜闸。
+    - ★★★★ **对目标类病灶＝归零**：三批连红的"长跑里 server 因内存阈值重启、吃掉在飞那枚"这一族，本方案读到的 `memoryRestart=0`；总读数＝
+      `AGGREGATE passed=63 failed=2 flaky=0 skipped=0 didNotRun=0 counted=65/65 memoryRestart=0`（逐批＝`34 passed／1 failed (11.7m)`＋`29 passed／1 failed (15.1m)`，`counted=65/65` 由分母闸把住）。
+      ☆ 代价也要报＝两批合计 26.8 分钟 vs 不分批 23.1 分钟＝**多两枚 server 冷启＋按需编译＝+3.7 分钟**，且第 2 批（30 枚／15.1m）每枚更慢＝白板／collab 这些重路由落在了那一片。
+    - ★★★★★ **但两枚新红不是同一类，第一枚被推翻了"flake"这个读法**＝`core.spec.ts:204`（`[[^` 块锚点跳转后 `.block-anchor-flash` 在场）：
+      同一条测试、同一份字节，`--repeat-each=5` 在 13:53＝**3 通／2 红**，在 14:10＝**0 通／5 红**；两枚红的逐字理由同为 `element(s) not found`（4000 ms 窗口内从未在场）。
+      ☆ 我先怀疑是**自己的探针扰动**＝做了双臂对照（带每帧 `querySelector` 采样器 vs 完全不装采样器）＝**两臂都 5/5 红**＝采样器无罪；而带采样器那臂的时间线＝`{idAt:0, hashBAt:0, flashAt:0, flashFrames:0, frames:15368}`＝跳转之后**15 秒内 `[data-block-id]` 一次都没出现过**＝不是"链慢于 4 秒"、是**这条解析根本没有完成**。
+      ⇒ 判语＝这条**不是间歇失败、是随时序单调退化**；候选＝账号数据体量（只读数＝`../impl-scripts/count-docs.cjs`：`craft-test@example.com documents=980 live=958`、`craft-visual@example.com live=6`＝**套件从不清理自己的账号、每跑一遍就长一截**）｜未证。
+      判死发已点名＝(甲) 在小体量账号上同法跑 5 发看分布是否回到通；(乙) 在失败现场读 `#i-<n>` 解析的入参与候选名册。产品侧可疑点（尚未定罪）＝`src/lib/editor/block-anchor.ts:52` 的 `if (!block) return;`＝**单次探测、不重试**＝只要那一刻 id 还没落，高亮就永久静默缺席。
+    - ★★★ **第二枚红还没测**＝`whiteboard-collab.spec.ts:122`＝20 秒内 Postgres 检查点里没有出现形状文本（逐字＝`Expected substring: "重启后仍在"`、`Timeout 20000ms exceeded while waiting on the predicate`）＝**分布未取**（在册规矩＝间歇类要报 ≥5 发的分布、不报单发）＝已挂任务。
+    - ☆ **一条作用域限制**＝这台运行器按在册"诊断脚本法定位置"放在仓库树外，**CI 与别的会话拿不到**；要进仓就得动 `package.json` 与 `scripts/`＝两处都在本线授权面（`src/`／`e2e/`／`migrations/`／`src/prisma/contract.*`）之外＝**等点名**。（✎ 10-06 17:0x 结案＝用户本轮"全部同意"点了这一件，已进仓＝见第 31 条）
+    - ☆ **我一处没动的东西要写明白**＝没有为了变绿去加大那 4000 ms 窗口、没动 `maxDiffPixelRatio: 0.02`（两处原样）、没改任何判据；`core.spec.ts:204` 现在是**红着交出来的**。
+    - 门禁（**最终字节新鲜跑**，本机钟 14:2x—14:4x）＝vitest **56 files / 441 tests passed／`VITEST_EXIT=0`**（与第 26／27 条逐字相同＝本轮零新增单测）；tsc **`exit=0／0 行`**（临时探针已删之后再跑）；
+      eslint `.`＝`0 errors/429 warnings`＝**与开工前持平**；e2e 视觉三档＝第 27 条那份 **96 passed／PW_EXIT=0**（字节未再变）；e2e 非视觉＝**分批 63 passed／2 failed／`counted=65/65`／`memoryRestart=0`**；`.png` 改动 0 枚；`git status`＝5 份改动＋3 份新测试文件、`git diff --check` exit 0；**未 commit／未 push**（本轮未点名）。
+
+29. ★★★★★ **第 28 条那枚"锚点高亮"的红判下来了＝不在锚点上，而在文档之间的客户端跳转上；判的过程里还抓出自己那条 `waitForURL` 是假闸**：
+    - **五台一次性探针**（都写作 `e2e/_<name>.spec.ts`，跑完即删＝现在 `ls e2e/_*.spec.ts`＝0 枚；日志留在仓库树外 `../impl-scripts/anchor-probe*.log`）。同一字节、同一账号、只换"怎么到达目标文档"这一个变量：
+      ① 直达（`page.goto('/documents/<id>#i-0')`）＝**5/5 通**＝编辑器落在 665—741 ms、内容 766—852 ms、`#b-` 808—862 ms、闪光 805—888 ms；
+      ② 逐字复现 `core.spec.ts:204` 的链（chip 客户端跳转）＝**4/5 在 20 秒内什么都没落、1/5 到 4446 ms 才落**；
+      ③ 同链＋20 ms 采样＋"手动改 hash 重新触发"对照＝**3/3 自发落章**，但闪光距点击 2963／3809／4172 ms＝**三发全部超出那 4000 ms 窗口**；
+      ④ 逐帧序列（每 50 ms 一行、含"屏上还有没有 chip"）＝2/3 在 3526／7168 ms 落到目标文档、**1/3 在 35.7 秒里始终停在源文档**、只是把 `#i-0` 贴到了源 URL 上；
+      ⑤ 再加网络／控制台／pageerror 捕获＝落章那发 3762 ms 提交、5772 ms 见闪光；**两发根本不提交**（31.4／29.9 s），且**点击之后线路上再没有发出任何一发请求**＝目标文档的 RSC prefetch 早在点击之前就 200 了。
+    - **判到的东西**：红的主因是 `router.push` 这一跳＝要么 3.3—7.2 s 才提交、要么不提交；提交之后协作内容还要另等 ~2.0 s 才进编辑器。锚点自己那条"盖章→换 `#b-`→铺 overlay"的通路在目标页到位时是好的（① 的 5/5、④ 第 3 发在 8352 ms 见到 `fl=Y`、9297 ms 消失＝overlay 寿命与在册的 1400 ms 相符）。
+    - ★ **上一轮我自己写的"候选＝随账号体量退化"＝本轮判为"未被支持"，但也不写作"被否证"**＝整轮里体量只涨不跌（开局一次读数 `documents=982／live=960`、收尾 `documents=1010／live=988`），而 ②（1/5 落章）与 ③（3/3 落章）是相邻两臂、之间体量差只有个位数枚＝**这把尺在两臂之间分不开**（承在册那条"分辨力要对自己刚写的判据量一次"）；① 也在同一量级上跑到 5/5＝它证明的是"同一账号换个到达方式就差一个量级"。⇒ 体量降为**未证候选**，判死发（低体量账号）改写进任务 #55；☆ 我**没有**取逐发的体量读数，所以这里只到"未被支持"为止。同一条里 `block-anchor.ts:52` 的 `if (!block) return` **本轮也没被定罪**＝它只在"目标页根本没到"时才有机会发生，而那种情形里 hunt 压根没起步。
+    - ★★★★★ **假闸是自家的**＝`core.spec.ts:225` 原写作 `waitForURL(/#i-\d+/)`，而探针 ④ 第 1 发就是它的现场证人＝浏览器还在**源**文档、URL 却已经带上了 `#i-0`＝**跳转完全没发生也能通过这条闸**，后面每一条断言都在量错误的页面。已收紧为 `/documents/<targetId>#i-\d+`（＋5／−1 行）。☆ 方向要说清＝这是**收紧**不是放宽＝同一枚红从此报在更早、更真的那一行上；4000 ms 窗口、`block-anchor.ts` 的 2500 ms、`maxDiffPixelRatio: 0.02`（两处）一律没动。
+    - ★★★ **探针自己的两处缺陷，都是它把自己骗了一次**：① 上一轮那台采样器只盯 `[data-block-id]` 与 `#b-`，**没有"内容到齐"这枚谓词**＝它给出的"解析根本没完成"其实分不开"内容没到"与"窗口已过"两种，本轮补上谓词才判得开；② 新加的"内容到齐"第一版写作"编辑器文本里含 marker"＝**在源文档同样为真**（chip 的标签正文就是那个 marker）＝判据必须同时钉住"在哪一篇"，后来改用 `chipOnScreen=false`（chip 只存在于源文档）作"目标页在屏"的反证。☆ 同族第三枚＝③ 里 `path` 首次命中出现在 `waitForURL` 已经返回**之后**（1414／1437／247 ms）＝fragment 比 pathname 先落地＝这类"两个谓词不同源"的读数只能靠逐帧序列判，首次命中时间不够。
+    - ☆ **现场污染如实报**＝探针期间 `craft-test@` 从 `documents=982／live=960` 涨到 `documents=1010／live=988`＝**+28**（两次读数同幅）；我按逐发预期是 +30＝**差的 2 枚未解释**，所以这里只写实测的 28、不写 30。`craft-visual@`（视觉基线账号）读数 `documents=6／live=6` **未动**＝本轮不碰基线。
+    - ☆ **下一枚待量的红**＝`whiteboard-collab.spec.ts:122` 的检查点分布仍未取（任务 #54）；探针已写好又被本轮的判定挤掉＝它现在多了一个同族问题：#55 说"提交后要 2 s 内容才进编辑器"，而 `:132` 量的正是"20 秒内 Postgres 有没有那枚形状"。
+    - ★★★★★ **收紧后的闸在分批全量里当场给出自己的证人**＝那一片唯一红的逐字原因换成了
+      `Error: page.waitForURL: Test timeout of 120000ms exceeded.`＋闸内日志 `navigated to "http://localhost:3000/documents/8e5824d6-…#i-0"`＝**地址落到的是另一篇（源）文档加 `#i-0`**＝老闸 `/#i-\d+/` 在这种状态下是通的、新闸把它拦下来了＝**非空转判据不需要夹具，本轮真实跑次就是它的样本**。☆ 代价也要报＝这一发从"4 秒红"变成"烧满 120 秒测试超时"（`2.1m`）＝我没有给它另配一个更小的 timeout＝选小数字就是选"多快算失败"，那是要单独定的事，不在本轮顺手做。
+    - 门禁（**最终字节新鲜跑**，本机钟 15:0x—15:5x）＝vitest **`56 files / 441 tests passed`／`VITEST_EXIT=0`**（与第 26／27／28 条逐字相同＝本轮零新增单测）；tsc **`exit=0`／0 行输出**；eslint `.`＝**`0 errors / 429 warnings`**＝与开工前持平（那条 `Unused eslint-disable directive` 仍属 `scripts/probe-collab.mjs`、不在本线改动集）；
+      e2e 非视觉（分批 2 片）＝**`passed=64 failed=1 flaky=0 skipped=0 didNotRun=0 counted=65/65 memoryRestart=0`**、覆盖闸 `full=65 shards=[35+30] sum=65 dupTitles=0 missing=0 unexpected=0`、`BATCHED_EXIT=6`＝唯一那枚红就是上面 `core.spec.ts:204`（**红着交出来的**）；☆ 第 28 条那两枚红现在只剩一枚＝`whiteboard-collab.spec.ts:122` 这一跑是**绿**的＝它因此正式属于"间歇"族、分布仍未取（#54）；
+      e2e 视觉＋响应式（全三档）＝**`106 passed / 5 skipped (5.5m)`／`VISUAL_PW_EXIT=0`**＝分母 111（`--list` 同命令读到 `Total: 111 tests in 2 files`）＝5 枚跳的都在 `responsive.spec.ts`（3 枚 desktop＋2 枚 tablet，逐枚已点名）＝**本轮不重录任何基线**＝`.png` 改动 **0 枚**、未跟踪 `.png` **0 枚**。
+      卫生＝`git diff --check` **exit 0**；改动集＝6 份跟踪文件（`docs/test-report.md` 222／0、`e2e/core.spec.ts` 5／1、`e2e/visual.spec.ts` 18／0、`src/actions/collection/collection.ts` 6／2、`src/lib/sync/changes.test.ts` 239／0、`src/lib/sync/changes.ts` 4／2）＋3 份新测试文件；临时探针 6 份**已全部删除**（`git status` 内 `_*.spec.ts` 0 枚）；☆ 一笔口径＝工作树里这三份文件是 CRLF（`core.autocrlf=true` 检出所致）而我新增的行是 LF＝HEAD 的 blob 全为 LF（`git show HEAD:docs/test-report.md` 数到 CR=0）＝入库侧一致、`--check` 干净，不是丢行。
+      **未 commit／未 push**（本轮未点名）；`craft-visual@` 文档数 `6/6` 未动。
+
+30. ★★★★★ **那条锚点红被拆成三枚不同的东西：我自己测试点错了行（已修）、指向本篇的块链接点了没反应（判据先行、已修）、跨文档那一跳要 1.5—8.1 秒（未修、红着交出来）**：
+    - ★★★★ **先量再改**＝六发路由探针（`../impl-scripts/route-longtask-probe.log`，逐字 `ROUTEPROBE` 行）：`landed` ＝ 3890／NEVER／1503／2739／8110／4426 ms，同发的长任务总时长＝3772／2144／1884／3356／4960／3293 ms、`worstGap`＝910—1537 ms，而**每一发的资源耗时都 ≤ 800 ms**＝**提交延迟与主线程占用同向、与网络不同向**。☆ 那发 NEVER 的形状与其余五发不同＝它取的是 `/documents/<源>#i-0`、**从未取目标文档的 RSC、也从未取 collab token**＝NEVER 不是"慢"、是"跳错了对象"。
+    - ★★★★★ **P3＝测试一直在量它没命名的事**＝`core.spec.ts` 原写作 `button:has-text(marker)` 的 `.first()`，而 `searchBlockAnchors`（`src/actions/document/anchors.ts:25`）**不排除当前文档**、按 `updatedAt desc` 排＝两篇文档标题都是 未命名、而 chip 的正文又恰好等于那个 marker ⇒ `.first()` 经常选到**本篇自己的块**。修＝块行带上稳定标识（`block-link-menu.tsx` 加 `data-block-hit-document`／`data-block-hit-index`），测试按目标文档 id 选行。☆ 判据＝**同名两行必须用稳定 id 选、不能用可见文本**（承在册"标识用稳定 id 而非标题"）。
+    - ★★★★★ **P1＝指向当前文档的块链接点了没反应**＝`router.push('/documents/<同一篇>#i-0')` 只改片段，而 `history.pushState` **不发 `hashchange`**＝`Editor.tsx:470` 那个侦听器不会被触发、依赖 `[editor, documentId]` 又没变＝hunt 从不起步＝地址停在 `#i-0`、既不盖章也不高亮。判据先行＝新用例 `core.spec.ts:243`；**改产品之前**的逐字红＝`Error: expect(locator).toBeVisible() failed`／`Timeout: 4000ms`／`Error: element(s) not found`／`- waiting for locator('.block-anchor-flash')`。修＝同文档且带片段时改走 `window.location.hash = fragment`（这条会真发 `hashchange`）、跨文档仍走 `router.push`（`block-link-view.tsx:16-30`）。转绿＝**5/5 通**（逐发跑时 27.2—28.6 s，闪光逐发在 4 s 预算内在场）。☆ 一笔没留住的现场＝修复前后合起来 8 发里**有 1 发红在同一枚 flash 缺席上**，而那发的 `error-context.md` 被后续跑次覆盖＝我没留住 DOM／URL 现场＝读数只到"8 发 1 红"、成因未定。
+    - ★★★★ **「先红」在提交字节上重演了一次**＝`../impl-scripts/p1-revert.cjs break` 只把 `handleClick` 换回旧体（git 自己认得＝blob 从 `10b2348` 退回 `41022b6`＝HEAD 那一版）＝单跑该用例逐字红在 `core.spec.ts:272`＝`Locator: locator('.block-anchor-flash')`／`Timeout: 4000ms`／`Error: element(s) not found`／`PW_EXIT=1`（`p1-control-red.log`）＝`restore` 按快照字节回写、sha `1ec6aa80e6…` 与快照逐字相同＝同一条命令 `1 passed (42.4s)／PW_EXIT=0`（`p1-control-green.log`）＝判据＝**"改产品之前先红"不能只是我看过一次，要能在落盘字节上重演**；☆ 顺带一枚自家尺缺陷＝第一版 `break` 拿 `\n` 字面量去匹配整段＝**工作树是 CRLF**（`core.autocrlf=true`）＝`fix block found 0 times` 当场 ABORT＝没让我把旧体静默写成半段；改为按整行定位、还原走快照字节。
+    - ★★★★ **量具用错＝假红**＝第一版把这条断言写成 `page.waitForURL(/documents/<id>#i-\d+/)`，三发全部 `Test timeout of 120000ms exceeded`＝`waitForURL` 等的是 **load 事件**，而同文档改片段永远没有 load。换成 `expect(page).toHaveURL(...)` 之后同一枚断言才按预期失败／通过＝**4000 ms 闪光预算全程未动**。
+    - ☆ **P2 未修**＝即便选对行，跨文档那一跳仍要 1.5—8.1 s 才提交＝本轮 `core.spec.ts:204` 三发里 1 通 2 红（红在 `:234` 的 flash 缺席）＝任务 #55 的判死发升级为 **CPU profile**（`longtask` 只给时长不给函数名，下一把尺要能点名是谁占住主线程）。
+    - ☆ 一条在册外事实＝dev server 每跑必打的 `⨯ Error: aborted`（`code: 'ECONNRESET'`）在三份探针日志里各出现 10—49 次＝它**不是**本轮任何一枚红的成因（NEVER 那发点击后根本没有请求），但是历批"通路档"读数反复出现的背景噪声＝值得单开一账、不要再当解释用。
+
+31. ★★★★ **分批跑法进仓了**（第 28 条挂的那笔"运行器在树外、CI 与别的会话拿不到"的账结了）＝`scripts/e2e-batched.mjs`＋`package.json` 的 `npm run test:e2e:batched`：
+    - ☆ 移植时唯一实质重写＝**新鲜闸换了尺**：原来解析 `netstat -ano` 的文本，现在用 `node:net` 直接**试着 bind 那个端口**（`EADDRINUSE`＝忙、其余错误原样打成 `error:CODE` 不许读成"忙"）。换尺的理由是可移植性（CI 上没有 netstat），且刻意绑**通配地址**而不是 `127.0.0.1`＝绑具体地址可能与一台通配监听者共存、会把"忙"读成"空闲"＝**一道只会在错方向上失败的闸比没闸更坏**。
+    - ★★ **新尺的两把控制当场各打一次**＝① 正控制（白捡的现场：另一批正在跑、三台 server 都在听）＝`PORTS BUSY: 3000 3001 3002`，与另一台独立仪器同向（`netstat -E ":(3000|3001|3002) .*LISTENING"` 数到 6 行＝IPv4＋IPv6 各三）；② 覆盖闸在**移植版**上重打负控制＝`--control=overlap` → `shards=[30+30] sum=60 dupTitles=30 missing=36`、`COVERAGE GATE FAILED`、exit 1＝"移植没把闸移丢"是这台闸自己说的。☆ 顺手一枚自家读数缺陷＝第一次交叉核对时我把 netstat 的正则写成 `LISTENING.*:3000`＝**行序写反＝假零**（在册那族"行尾锚假零"的又一枚实例），改序后才数到 6 行。
+    - ☆ 正面读数（当前字节）＝`npm run test:e2e:batched -- --plan-only --shards=2` → `specs=nonvisual files=16 projects=desktop`、`plan full=66 shards=[36+30] sum=66 dupTitles=0 missing=0 unexpected=0`、`COVERAGE GATE OK`＝分母自本批起是 **66**（新增那枚同篇锚点用例）。
+    - ☆ 新增 `--projects=`（默认 `desktop`）＝把"这台运行器只跑桌面档"从隐含变成写在用法注释里的一行；三档视觉矩阵（111 枚）仍按第 29 条那条命令跑，**不要**拿 `--specs=visual` 冒充它。
+    - 门禁（**最终字节新鲜跑**，本机钟 16:1x—17:2x）＝vitest **`56 files / 441 tests passed`／`VITEST_EXIT=0`**（与第 26—29 条逐字相同＝本轮零新增单测，新增的判据都在 e2e 档）；tsc **`exit=0`／0 行**；eslint `.`＝**`0 errors / 429 warnings`**＝与开工前持平＝新进的 `scripts/e2e-batched.mjs` 贡献 **0 枚**告警；
+      e2e 非视觉（分批 **3 片**）＝**`passed=65 failed=1 flaky=0 skipped=0 didNotRun=0 counted=66/66 memoryRestart=0`**、覆盖闸 `full=66 shards=[30+15+21] sum=66 dupTitles=0 missing=0 unexpected=0`、逐批退出码只有 `1/3=1`；**唯一那枚红＝`core.spec.ts:204`**（P2＝跨文档那一跳），新用例 `core.spec.ts:243` 在负载档里同样通过（`ok 22`，27.8 s）；
+      e2e 视觉三档＝第 29 条那份 **106 passed / 5 skipped／`VISUAL_PW_EXIT=0`**（`e2e/visual.spec.ts` 与 `src/**` 之外本轮没再动它的字节；`src/components/editor/*` 两处改动**不在**任何视觉快门的路径上＝这条限定按在册口径明写，不当作已验）；`.png` 改动 **0 枚**。
+      ☆ **一处读数与字节的错位要写明白**＝这份非视觉全量是在 `scripts/e2e-batched.mjs`＋`package.json` 那一条**之前**起跑的（16:56）＝这两份字节只新增了一个无人 import 的脚本与一个无人调用的 script 项＝对 66 枚用例的语义为零影响；其后在同一字节上重跑的 vitest／tsc／eslint（17:2x）才是最终字节。
+      卫生＝`git diff --check` exit 0；改动集＝9 份跟踪＋4 份新文件；`npm run test:e2e:batched -- --plan-only` 与 `--control=overlap` 各跑一次（前者 `COVERAGE GATE OK`、后者 `COVERAGE GATE FAILED`／exit 1）；`--check-ports` 两向各一次（跑中 `PORTS BUSY: 3000 3001 3002`、收工 `PORTS FREE: 3000 3001 3002`）。
+
+
 
 
 

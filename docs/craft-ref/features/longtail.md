@@ -3535,3 +3535,225 @@ lineStyle "light"       →  markdown "****"   （本批 2 枚）
 ```
 
 ⇒ ☆ 只有第 12 行那一枚组合是新的＝其余 15 档逐档能指回在册行＝复证不占号＝☆ `18 枚 page+card+regular` 全部带 `contentPreviewMd` 键、而**页根本人不带该键**（五枚根块的键集逐字＝`{id,type,textStyle,cardLayout,markdown}` 或 `{id,type,textStyle,styling,markdown}`）＝⇒ 预览位是"卡片对父级可见"的字段、不是块自身字段＝与 G1280（`--depth 0` 五键）同族。
+
+## 六十九、第 169 批逐字面＝`contentPreviewMd` 的九枚可测样本与两把尺的分叉枚、`file` 档三枚、`<callout>` 套标题记号两枚、官方文档面的分隔线记号四条（2026-10-06 机器钟 15:24 开批＝官方钟 15:25:33＝落盘机器钟 16:02＝桥连续第七轮甲档＝7 枚命令＝1 枚 `-32603` 后同参即通＝净新增 5 条＝G1400—G1404）
+
+☆ 本节的每一条官方串都由 `_harvest/b169-mklongtail.mjs` 从回包档里取、不是我抄的＝档＝`_harvest/b169-probe-{702a193b,800dd082,95333007,35a36f35,268fe5c6}.json`（gitignored＝完整 uuid 只在档里）＝☆ 屏幕上 `connection info` 那发首发回 `-32603`、同参复打即通＝本节不含账户标识
+
+### 一、九枚可测样本的 preview 平账与逐块累计（主件表）
+
+| 块（前 8 位） | 标题 | 子块总数 | 尾行 N | 整块列出 | 被切半 | 已列出 | N＋已列出 | 逐块累计（前 6 块） | 第 4 块本可容于 304 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 84291141 | Styling Basics | 19 | 17 | 2 | 否 | 2 | 19 | 18→267→375→380→460→531 | 否 |
+| 702a193b | Documents, Pages, an | 7 | 5 | 2 | 否 | 2 | 7 | 23→254→535→693→698→739 | 否 |
+| 800dd082 | Daily Notes and Cale | 27 | 25 | 1 | 是 | 2 | 27 | 238→439→441→460→630→869 | 否 |
+| 387e46f0 | Tables | 14 | 12 | 2 | 否 | 2 | 14 | 39→259→377→379→399→545 | 否 |
+| 95333007 | Adding Images, Video | 12 | 9 | 2 | 是 | 3 | 12 | 149→183→341→529→563→781 | 否 |
+| 35a36f35 | Markdown | 27 | 24 | 3 | 否 | 3 | 27 | 145→169→220→274→328→388 | ★ 是 |
+| 268fe5c6 | Export Options | 14 | 11 | 2 | 是 | 3 | 14 | 93→103→399→412→646→654 | 否 |
+| f6b5793d | Import documents int | 48 | 45 | 3 | 否 | 3 | 48 | 32→240→242→307→338→365 | 否 |
+| 18c55c87 | Link Share | 12 | 9 | 2 | 是 | 3 | 12 | 166→250→322→661→819→959 | 否 |
+
+⇒ 读数＝① **N＋已列出＝子块总数**＝9/9 枚平账（其中 169 批新取子树的 5 枚＝**样本外**＝开窗前预测就已写在盘上）；② 甲尺（只按 304 字符累加）在 `35a36f35` 这 1 枚上被否证＝它的第 4 块累计 274 明明 ≤304、官方不列＝⇒ 另有**枚数预算**＝乙尺（已列出 ≤3 枚）与 9/9 全部相容＝且没有任何一枚列出过 4 块
+
+### 二、截断标记的真形状（14 枚全体逐枚尾形）
+
+| 块（前 8 位） | bodyLen | 末 12 字符 | 尾形 |
+| --- | --- | --- | --- |
+| 35a36f35 | 220 | 「 a **title**」 | 无标记 |
+| f6b5793d | 242 | 「nto Craft.\n\n」 | 无标记 |
+| 702a193b | 254 | 「e structure.」 | 无标记 |
+| 387e46f0 | 259 | 「ger tables. 」 | 无标记 |
+| 84291141 | 267 | 「 light mode.」 | 无标记 |
+| 80dbff75 | 293 | 「le>\n</page>\n」 | 无标记 |
+| 35f3053d | 295 | 「s** come in.」 | 无标记 |
+| 91ebd394 | 302 | 「 when a b...」 | 裸 `...` |
+| 800dd082 | 302 | 「ill **see...」 | 裸 `...` |
+| 18c55c87 | 303 | 「are icon ...」 | 空格＋`...` |
+| 95333007 | 304 | 「cting the...」 | 裸 `...` |
+| bfa7cf0a | 304 | 「or <highl...」 | 裸 `...` |
+| acaa56f1 | 304 | 「 it, just...」 | 裸 `...` |
+| 268fe5c6 | 304 | 「ch amazin...」 | 裸 `...` |
+
+⇒ 读数＝带标记 7 枚／无标记 7 枚＝而其中**裸 `...`** 6 枚、"空格＋`...`" 只有 1 枚＝那一枚的 bodyLen＝303＝它正文第 300 格本来就是正文自带的空格 ⇒ **标记本身从不带空格**＝☆ 在册 G1398 ③ 那句"超预算时切在块中并补 ` ...`（1/14 枚）、恰停在块边界时不补（13/14）"两处都错＝枚数与标记形状＝本批在 G1398 行末带证据打 ✎
+
+### 三、`file` 档三枚逐字（桥面新档）
+
+| 块（前 8 位） | 键名册 | `fileName` | `uploaded` | `markdown` |
+| --- | --- | --- | --- | --- |
+| 58df95ae | `id,type,url,fileName,uploaded,markdown` | 「Job Posting - Senior Mobile Product Designer.pdf」 | true | 「[Job Posting - Senior Mobile Product Designer.pdf](https://r.craft.do/ERqiMGTlSd)」 |
+| 876fafc6 | `id,type,url,fileName,uploaded,markdown` | 「1997 Letter To Shareholders.pdf」 | true | 「[1997 Letter To Shareholders.pdf](https://r.craft.do/QysXRNkOsN)」 |
+| b3b97264 | `id,type,url,fileName,uploaded,markdown` | 「Netflix Culture.pdf」 | true | 「[Netflix Culture.pdf](https://r.craft.do/ybZGuWBIiA)」 |
+
+### 四、`<callout>` 套标题记号两枚逐字（组合名册里的新档）
+
+| 块（前 8 位） | 键组合 | `markdown` |
+| --- | --- | --- |
+| f52b0996 | `textStyle:"h4"`＋`decorations:["callout"]`＋`color:"#0064ff"`（**无** `listStyle`） | 「<callout>#### On iOS :</callout>」 |
+| 2458aebd | `textStyle:"h4"`＋`decorations:["callout"]`＋`color:"#0085a4"`（**无** `listStyle`） | 「<callout>#### On Mac :</callout>」 |
+
+### 五、官方文档面的分隔线记号四条逐字（＝G1229 的第二次独立出处）
+
+| 块（前 8 位） | `markdown` 逐字 |
+| --- | --- |
+| 2efc28de | 「- Type `..-` to insert extra light rule 」 |
+| 9c8c06b1 | 「- Type `.--` to insert light rule 」 |
+| bbf045e0 | 「- Type `---` to insert regular rule 」 |
+| 4f914850 | 「- Type `=--` to insert strong rule 」 |
+
+⇒ 这四条是**文档正文面**（不是 bundle 代码面）＝与在册 G1229／model.md §一之六 的导入器映射 `---`→regular／`..-`→extraLight／`.--`→light／`=--`→strong **逐条相符**＝☆ 而文档面**不列** `===`→pageSeparator＝☆ 按在册"新素材档位的复证不占号"＝这一族不登记、只在 G1400 判定栏指回＝☆ 同时它给出历批缺档问题的**判死路径**＝`regular`／`strong` 两档的 `markdown` 各一枚＝现在有了官方输入记号（打 `---`／`=--`）＝但写入未授权＝仍等当轮具名
+
+### 六、同一篇文档面里的 markdown 输入记号全名册（复证族、逐字留底）
+
+- ## Full Block Commands
+- - `#` followed by a `space` to create a **title**
+- - `##` followed by a `space` to create a **subtitle**
+- - `###` followed by a `space` to create a **heading**
+- - `####` followed by a `space` to create a **strong block**
+- - `x`  or `[]`  followed by a `space` to create an **uncompleted todo**
+- - `[x]`  followed by a `space` to create a **completed todo**
+- - `-` or `*`  followed by a `space` to create a **bullet list**
+- - `1.`, `2.`, `3.`, `4.` etc. followed by a `space` to create a **numbered list**
+- - `+` followed by a `space` to create a **toggle list**
+- - `>`  or `|` followed by a `space` to create a **block quote**
+- - ````` or `'''` followed by a `space` to create a **code block**
+- ## Inline Commands
+- - Wrap words between `*` and `*` or  `_` and `_` for *italic* 
+- - Wrap words between `**` and `**` or `__` and `__` for **bold** 
+- - Wrap words between `***` and `***` or `___` and `___`  for ***bold&italic***
+- - Wrap words between `~~` and `~~` for ~strikethrough~
+- - Wrap words between `::` and `::` or `==` and `==` for <highlight color="yellow">highlight</highlight> 
+- - Use the notation `[link name](url)`  to insert a [link](https://craft.do)
+- - Wrap words between ``` and ``` for `inline code`
+- - Wrap word between `$$` and `$$` for $inline-equation$
+- - Type `..-` to insert extra light rule 
+- - Type `.--` to insert light rule 
+- - Type `---` to insert regular rule 
+- - Type `=--` to insert strong rule 
+- - Type  `@` or `[[` to insert a page or block link
+
+⇒ 本族逐字留底、不登记＝多数条在册能指回（引用块／切换列表／行内码／高亮／链接／公式）＝☆ 唯一要留的增量＝官方文档把"高亮"写成两种包裹符 `::` 与 `==`、把"删除线"写成 `~~` 而渲染串是单枚 `~…~`＝这两点若下批要在桥面验序列化就得逐枚取块＝挂账
+
+## 七十、第 170 批逐字面＝写侧造样本→读回：`line` 家族四档与三套映射、写侧错误形状四条、`documents list` 两形同字节
+
+### 一、`line` 家族的"输入记号 → 落成块"逐枚对照（全部来自本批写侧造出的那一页、非用户内容）
+
+| 阶段（发次） | 我灌进去的 `--markdown` | 读回该块的逐字 |
+| --- | --- | --- |
+| 发 13 灌四枚 | 「..-」 | `type:"text"`＝`markdown` 逐字「..-」 |
+| 发 13 灌四枚 | 「.--」 | `type:"text"`＝`markdown` 逐字「.--」 |
+| 发 13 灌四枚 | 「---」 | `type:"line"`＋`lineStyle:"extraLight"`＝`markdown` 逐字「***」 |
+| 发 13 灌四枚 | 「=--」 | `type:"text"`＝`markdown` 逐字「=--」 |
+
+⇒ 同一页在发 15 的读回里只有 **一枚**落成 `line`＝`---`→`extraLight`→`***`＝另三枚（`..-`／`.--`／`=--`）**原样留成 `text`**＝一字未改＝⇒ G1406＝桥面解析器只认 `---`、且把它送到**最细档**；
+
+### 二、四档律的逐枚到手（发 16 反喂两枚星号形＋发 23／24 `--json` 改档＋发 25／27 读回）
+
+| 档 | `markdown` 逐字 | 到手通路 |
+| --- | --- | --- |
+| `extraLight` | 「***」（星号 3 枚） | 发 15 读回 |
+| `light` | 「****」（星号 4 枚） | 发 17 读回 |
+| `regular` | 「*****」（星号 5 枚） | 发 25 读回 |
+| `strong` | 「******」（星号 6 枚） | 发 25 读回 |
+
+⇒ **双向闭合逐字在场**＝发 16 反喂 `*****`／`******` → 发 27 读回落回 `regular`／`strong`（星号枚数 5／6）＝⇒ 律＝星号枚数 3＋档序＝四档 4/4 无例外＝G1405；
+⇒ 同一页在发 27 共 8 枚子块＝其中 `line` 型 5 枚／`text` 型 3 枚（那三枚点号记号仍然逐字在原位）；
+
+### 三、写侧四条错误形状的逐字（有界 vs 无界＝本批的分层依据）
+
+| 发次 | 我打的命令 | 回包逐字 |
+| --- | --- | --- |
+| 5 | 「blocks move --id 9fa5ec10… --targetId 14311a」 | 「Failed to move blocks: Root block cannot be moved from document」 |
+| 9 | 「documents trash --help; documents delete --h」 | 「MCP error -32603: MCP tool invocation did not complete」 |
+| 12 | 「docs trash --help」 | 「Unknown command: docs」 |
+| 20 | 「documents trash --help」 | 「Unknown command: documents trash」 |
+| 23 | 「blocks update --json "[{\"id\":\"9f3d37b0…\"」 | 「Invalid JSON update payload at "2": Invalid input」 |
+
+⇒ 9↔10 两枚 `-32603` 是同参复打、逐字节相同＝**确定性**＝而 20 那枚裸打同一条回的是有界错误＋该实体动作名单（`create`／`move`／`delete`）＝⇒ 同一枚不可解析动词、裸打与进批是两种形状＝G1407；
+⇒ 12 那枚 `docs trash --help` 的实体名根本不存在＝回的是**全量名册**（3531 字节）＝⇒ "报错串自报通路"再添一例（承第 127 批）；
+
+### 四、`documents list` 两形同字节（G1410 的证据形状）
+
+| 发次 | 命令 | 长度 | sha | 头行 | 行数 |
+| --- | --- | --- | --- | --- | --- |
+| 6 | 「documents list --location unsorted --format json」 | 455 | `3d5c89af179e` | 「7 document(s) — format: <rootBlockId> Title」 | 7 枚 |
+| 8 | 「documents list --location unsorted」 | 455 | `3d5c89af179e` | 「7 document(s) — format: <rootBlockId> Title」 | 7 枚 |
+
+⇒ 两发只差 `--format json` 一枚旗标＝sha 逐字相同＝⇒ 该旗标在 `documents list` 上被静默吞＝☆ 顺带把我本批在屏上读到的"计数 7／只印 5 行"否证掉（真＝7 行全在场、含本线两枚新建＝我漏数了两枚空标题行）＝该假事实不登记；
+
+### 五、发次名册（29 枚命令逐枚＝写侧 18／读侧 11）
+
+| # | 面 | 命令（前 60 字） | 回包长度 |
+| --- | --- | --- | --- |
+| 1 | 读 | 「connection info」 | 413 |
+| 2 | 写 | 「documents create --title QODER-HARVEST-B170-PARENT」 | 392 |
+| 3 | 写 | 「documents create --title QODER-HARVEST-B170-KID」 | 389 |
+| 4 | 写 | 「blocks add --id 9fa5ec10… --markdown "b170k1\n\nb170k2\n\nb170k3」 | 229 |
+| 5 | 写 | 「blocks move --id 9fa5ec10… --targetId 14311ac9…」 | 176 |
+| 6 | 读 | 「documents list --location unsorted --format json」 | 455 |
+| 7 | 读 | 「search --include QODER-HARVEST-B170」 | 484 |
+| 8 | 读 | 「documents list --location unsorted」 | 455 |
+| 9 | 写 | 「documents trash --help; documents delete --help」 | 54 |
+| 10 | 写 | 「documents trash --help; documents delete --help」 | 54 |
+| 11 | 写 | 「blocks delete --help」 | 984 |
+| 12 | 写 | 「docs trash --help」 | 3531 |
+| 13 | 写 | 「blocks add --id 14311ac9… --markdown "..-\n\n.--\n\n---\n\n=--"」 | 179 |
+| 14 | 读 | 「blocks get 14311ac9… --depth 1」 | 180 |
+| 15 | 读 | 「blocks get 14311ac9… --depth 1 --format json」 | 473 |
+| 16 | 写 | 「blocks add --id 14311ac9… --markdown "***\n\n****"」 | 99 |
+| 17 | 读 | 「blocks get 14311ac9… --depth 1 --format json」 | 673 |
+| 18 | 写 | 「documents delete --document 9fa5ec10…; documents delete --do」 | 146 |
+| 19 | 读 | 「documents list --location trash; search --include QODER-HARV」 | 629 |
+| 20 | 写 | 「documents trash --help」 | 339 |
+| 21 | 写 | 「blocks update --help」 | 3727 |
+| 22 | 写 | 「documents move --document 14311ac9… --destination unsorted」 | 65 |
+| 23 | 写 | 「blocks update --json "[{\"id\":\"9f3d37b0…\",\"lineStyle\":\」 | 99 |
+| 24 | 写 | 「blocks update --json "[{\"id\":\"9f3d37b0…\",\"lineStyle\":\」 | 101 |
+| 25 | 读 | 「blocks get 14311ac9… --depth 1 --format json」 | 671 |
+| 26 | 写 | 「blocks add --id 14311ac9… --markdown "*****\n\n******"」 | 99 |
+| 27 | 读 | 「blocks get 14311ac9… --depth 1 --format json」 | 873 |
+| 28 | 写 | 「documents delete --document 14311ac9…」 | 72 |
+| 29 | 读 | 「documents list --location trash; search --include QODER-HARV」 | 629 |
+
+⇒ 名册与逐字档由 `_harvest/b170-index.json` 生成（每档带 `tool_use_id`／命令／时刻／sha＝任一读数可回溯到是哪一发）＝本节的每一枚长度由脚本实算、不是我点。
+## 七十一、第 171 批逐字面＝preview 的展开式与"起不起笔"的夹逼表（全部由在档／本批逐字档机器提取、不经我手抄）
+
+### 一、嵌套 page 子块的展开式（G1413 的逐字出处）
+
+- 官方 `contentPreviewMd`（`d06ab4e4` 之子页 `80dbff75…`、正文 293 格）第 170—293 格逐字＝
+
+```
+ke this:\n\n***\n\n<page id="{36 格 uuid 已按去敏略}">\n  <pageTitle>Finish Project Assignment</pageTitle>\n</page>\n
+```
+
+- 同一枚子块在 `blocks get … --depth 1 --format json` 里的 `markdown` 逐字＝`- [ ] Finish Project Assignment`（31 格）
+- ☆ 本节唯一一处"非逐字"＝展开式里的 id 区段按去敏退回显式省略（该前缀属**用户内容**文档、不是本轮所建实体）＝字节逐字档只留在 gitignored 的 `_harvest/b171-probe-80dbff75.json`（2942 字节／sha256 前 12＝`2a6d985ee3c9`）＝判据＝**去敏优先于逐字、且省略必须声明**＝⇒ **两条通路两种形状**＝☆ 且该子块自带 `contentPreviewMd`＝`- [ ] Finalize Structure\n- [ ] Send for review\n- [ ] Submit final version`＝**这三枚孙块不进父页的预览展开**
+- 平账（逐格可核）＝178 ＋ 2 ＋ 3 ＋ 2 ＋ 108 ＝ 293＝其中 178＝第 1 枚正文、3＝第 2 枚 `line` 的 `***`、108＝展开式长度
+
+### 二、11 枚可测样本的"起笔／停笔"夹逼表（G1412 的逐枚出处）
+
+| 短 id | 已列出枚数 | 形态 | 正文长 | 该次决策时的剩余额度 | 是否已被枚数 3 封顶 | 参与夹逼 |
+| --- | --- | --- | --- | --- | --- | --- |
+| `35f3053d` | 2 | 停在整块边界 | 295 | 9 | 否 | 给上界 |
+| `84291141` | 2 | 停在整块边界 | 267 | 37 | 否 | 给上界 |
+| `387e46f0` | 2 | 停在整块边界 | 259 | 45 | 否 | 给上界 |
+| `702a193b` | 2 | 停在整块边界 | 254 | 50 | 否 | 给上界＝最大停笔 |
+| `18c55c87` | 3 | 切半块 | 303 | 54 | 是 | 给下界＝最小切半 |
+| `800dd082` | 2 | 切半块 | 302 | 66 | 否 | 给下界 |
+| `95333007` | 3 | 切半块 | 304 | 121 | 是 | 给下界 |
+| `268fe5c6` | 3 | 切半块 | 304 | 201 | 是 | 给下界 |
+| `35a36f35` | 3 | 停在整块边界 | 220 | 84 | 是 | 不参与（只由枚数尺解释） |
+| `f6b5793d` | 3 | 停在整块边界 | 242 | 62 | 是 | 不参与（升格为枚数尺第二枚支撑） |
+| `80dbff75` | 3 | 停在整块边界 | 293 | 11 | 是 | 不参与（余额本就 <T） |
+
+⇒ 结论＝**T ∈ (50, 54]**＝整数候选 51／52／53／54＝☆ 而 `35a36f35`（余额 84）与 `f6b5793d`（余额 62）两枚 > T 却仍停在第 3 枚＝⇒ 起笔门槛与枚数上限**互不替代**＝G1400 的支撑枚数由 1 枚升到 2 枚
+
+### 三、名册与出处
+
+| # | 侧 | 命令（去敏） | 回包长度 |
+| --- | --- | --- | --- |
+|  1 | 读（通路） | 「connection info」 | 413 | 16fefed4dcfc |
+|  2 | 读 | 「blocks get 80dbff75… --depth 1 --format json」 | 2926 | 103685995000 |
+|  3 | 读 | 「blocks get 35f3053d… --depth 1 --format json」 | 1638 | 85f3479724ba |
+
+⇒ 名册由 `_harvest/b171-index.json` 生成（每档带 `tool_use_id`／命令／时刻／sha＝任一读数可回溯到哪一发）＝本节每枚长度由脚本实算、不是我点。☆ 本批 3 发全部 `craft_read`＝零写侧动词名。

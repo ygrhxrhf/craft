@@ -2019,7 +2019,7 @@ startCodeEdit <-Ew(t) {}   stopCodeEdit <-Y0e() {}   toggleBlockEditor <-l3(t,e)
 
 - 68 项 UI store 表与 66 项外壳表的**完整名单**（本批只取首 6 项与计数）。
 - 各表的 `default` 分支形态差异（`default:true` 与 `default:He(e)` 之外，`default:false` 的 4 张表是"什么都不做"还是别的结果）。
-- @807569 的 20 项命令 id 全集与其消费方（埋点？命令面板？）。
+- ~~@807569 的 20 项命令 id 全集与其消费方（埋点？命令面板？）~~ ⇒ ✎ **第 184 批结案**（G1481）＝`$Je` 的 20 枚 case（document_star/unstar/archive/unarchive/view/move、folder_create/rename/set_icon/set_description/set_pinned/move/delete/reorder、subfolder_reorder、tag_pin/unpin/reorder、root_reorder、starred_reorder）、default `return{}`＝无操作；唯一消费方＝折叠器 `HJe`（把 change 流折进 spaces state），`HJe` 唯一调用点＝`replayPersistedPending`（离线队列重放）⇒ **消费方既非埋点也非命令面板，是 spaces 离线重放折叠器**。
 - 集合 11 项 uiAction 的字段形态；四个视图枚举的完整取值。
 
 ## 一之三十四、★★★ **UI store 65 项 ＋ 外壳 store 63 项 分派表全文**（含 16 个新 action 名 ⇒ 反向修正第 63 批计数与"有无 `default:He` 可判分派器"的判据）（2026-09-28 00:42 结案，`index-DiTmKH3z.js` @6377790 / @6686072，大括号配平取整表）
@@ -2066,7 +2066,7 @@ startCodeEdit <-Ew(t) {}   stopCodeEdit <-Y0e() {}   toggleBlockEditor <-l3(t,e)
 
 ## 仍未采到（模型面·第 64 批）
 
-- 22 项任务数据表（@3601025）与 20 项命令 id 表（@807569）的完整名单（前者是映射还是路由需看 default）。
+- ~~22 项任务数据表（@3601025）与 20 项命令 id 表（@807569）的完整名单（前者是映射还是路由需看 default）~~ ⇒ ✎ **第 184 批结案**（G1481/G1482）＝22 项 case 全列在 G1482（upsertDocumentsWithTasks／…Active／…Upcoming／upsertInboxDocument／upsertLogbookDocument／upsertPinnedDocuments／updateContinuationToken／updateOngoingTasksContinuationToken／resetFetchDocumentsWithTasks／updateLoadStatus／setPageInfo／updateTask／createTask／deleteTask／moveTask／reorderTasks／setFilter／setSort／pinDocument／unpinDocument／updateDailyDocumentIds／updateUpcomingTasksContinuationToken）；**路由式**：每 case 委派具名 handler（Wnn…Qnn 22 枚）、**无 default 支**、尾 `return void 0`（未知 type 静默无操作）＝与 `$Je` 的「显式 default 空对象」是两种收尾。
 - `He` 与各 `default` 的实际行为差异（`He(n)` vs `He(e)` 只是形参名不同？）。
 - `restoreTextEdit` 与 `stopTextEdit{backupSelection}` 的配对细节（备份什么、何时还原）。
 - 16 个"仅在分派表出现"的 action 的构造器与字段。
@@ -2238,20 +2238,20 @@ HJe = (t, e) => { let n = {};
 
 - **表格是否另有使用 `column.metadata.width` 的渲染路径**（§一之三十九 6 只证到 `repeat(n,1fr)` 等宽那一路）。
 - **`OO` 的调用点**（整格级样式是渲染事实还是导出事实，§一之三十九 9 标 `~`）。
-- **`S1e` 本体定义**：`@149391` 只见到 `Yn(t.pluginData,S1e)` 的引用，主 chunk 内 `S1e=` **0 命中** ⇒ 该 schema 应来自懒加载 chunk，尚未定位到具体文件。
+- ~~**`S1e` 本体定义**：`@149391` 只见到 `Yn(t.pluginData,S1e)` 的引用，主 chunk 内 `S1e=` **0 命中** ⇒ 该 schema 应来自懒加载 chunk，尚未定位到具体文件~~ ⇒ ✎ **第 184 批翻案**（G1483）＝**本体就在主包**：`function S1e(t)` @141019（全文 781 字符＝插件外观归一化器：card 家族读 `pluginConfigurationData` → fontStyle/pageStyle/backgroundData/decorations/contentStyle/themeAssetId、非 card 走 `pluginType:"unknown"` 透传）；「应来自懒加载 chunk」是**针形假零**＝历批用赋值式针 `S1e=` 抓函数声明形 `function S1e(` 抓不到；消费方＝`Yn(t.pluginData,S1e)` 与 `Is(h,S1e)??null`（@5879290 侧）。
 - **列表项 / 待办 / 代码块在屏幕侧的标识**：仍未成功造出一个列表 ⇒ 无 `data-block-type` 之类属性可采（web 端建列表三条通路全失效，见 `gap.md` G617）。
 - **块首 Backspace 的"装饰档"与"前块为非文本块"两档**：四档矩阵缺这两格。
 - **`--indent-w` 是否随层级变宽**、**`_blockOverhang` / `--overhang-*` 何时非 0**：仍只测到 1 档 28px。
 - **`data-slate-zero-width` 的全部取值**（只见过 `"n"`）、**`Ctrl+A` 选中态的真实 DOM 表达**（+14,159 B 但 `data-selected`/`aria-selected` 均 0）。
 - **标题块与正文块 id 大小写两制的边界**。
-- §一之三十三～三十六 遗留项不变：`HJe` 调用方、`tag_*` 宿主、`bD`/`qy` 实现体、`group{actions}` 应用器、16 个"仅在分派表出现"的 action 构造器、`w1e` 分支表、`S1e`/`DU`/`_U` 表格单元格模型、`uT`/`DC` 集合 schema。
+- §一之三十三～三十六 遗留项不变：~~`HJe` 调用方~~（✎ 第 184 批结案＝`replayPersistedPending` @833789，见 gap.md G1481）、`tag_*` 宿主、`bD`/`qy` 实现体、`group{actions}` 应用器、16 个"仅在分派表出现"的 action 构造器、`w1e` 分支表、~~`S1e`~~（✎ 第 184 批结案＝主包 `function S1e(t)` @141019，见 gap.md G1483；"懒加载 chunk"旧判作废）、`DU`/`_U` 表格单元格模型、`uT`/`DC` 集合 schema。
 
 - **块类型的屏幕侧标识**：普通文本块在 DOM 里靠什么属性区分 `textStyle`（本轮只见到 styled class hash 变化，没有 `data-block-type`）。⇒ ★ 需要成功造出一个列表/待办/代码块后再看 DOM。
 - `data-slate-zero-width` 的全部取值（只见过 `"n"`）。
 - 标题块与正文块 **id 大小写两制的边界**（是否"用户新建=大写、导入=小写"，或"space/doc 根块=小写"）。
 - `Ctrl+A` 选中态的真实 DOM 表达（属性名/子元素）。
 - 缩进档数上限与 `--indent-w` 是否会随层级变宽（只测到 1 档 28px）；`_blockOverhang` 与 `--overhang-*` 何时非 0（折叠/列表标记占位？）。
-- §一之三十三～三十六 遗留项不变：`HJe` 调用方、`tag_*` 宿主、`bD`/`qy` 实现体、`group{actions}` 应用器、16 个"仅在分派表出现"的 action 构造器、`w1e` 分支表、`S1e`/`DU`/`_U` 表格单元格模型、`uT`/`DC` 集合 schema。
+- §一之三十三～三十六 遗留项不变：~~`HJe` 调用方~~（✎ 第 184 批结案＝`replayPersistedPending` @833789，见 gap.md G1481）、`tag_*` 宿主、`bD`/`qy` 实现体、`group{actions}` 应用器、16 个"仅在分派表出现"的 action 构造器、`w1e` 分支表、~~`S1e`~~（✎ 第 184 批结案＝主包 `function S1e(t)` @141019，见 gap.md G1483；"懒加载 chunk"旧判作废）、`DU`/`_U` 表格单元格模型、`uT`/`DC` 集合 schema。
 
 
 ## 一之四十、块级键位的模型字段与兄弟序列（第 70 批·静态补账；证据＝`_harvest/js/index-DiTmKH3z.js` 逐字节，带偏移）

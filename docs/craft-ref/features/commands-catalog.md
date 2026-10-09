@@ -4,6 +4,13 @@
 > 这是**功能候选清单**，不是行为事实：每条只证明"产品里有这个概念/入口/文案"，触发方式与效果要按 SKILL.md Step 3 单独验证。
 > 命名：`中文值 | 键 | 英文兜底`。英文兜底缺失时留空。
 
+> ⚠⚠⚠ **本册的「英文兜底」列不是逐字面——那一族的字节在源头就坏了**（第 173 批收尾段现算，2026-10-09 机器钟 02:1x）
+> ① 损坏证据（字节级、不是显示级）＝`_harvest/js/index-DiTmKH3z.js` 偏移 **260596** 处 `Set Deadline to Date` 之后逐字节＝`e9 88 a5 ef bf bd 22`＝官方原形应是 `e2 80 a6`（U+2026 `…`）＝⇒ 整 `js/` 目录（105 枚 chunk／26,856,028 字节）里 **U+FFFD 计 12150 处**、「`鈥`」形 **1463 处**、而**干净的弯标点只剩 4 处**（`…` 1／`’` 3／`–` 0）＝⇒ 这是 UTF-8 被当 cp936/GBK 解后再存回的形状，**信息在落盘那一步就丢了**：换 `utf8` 重读得到的是同一批坏字节、恢复不了
+> ② 本册受影响的行数＝**24 行**（现算＝`grep -c 鈥 commands-catalog.md`＝24）＝典型形状＝`Set Deadline to Date鈥`、`Add Content鈥`、`Custom鈥`、`Change Deadline鈥`＝☆ 这些格**照原样留着不涂改**（涂改＝伪造官方文案）＝但引用时必须按"损坏形状"处理，不得当官方逐字
+> ③ **中文列不受影响、可作逐字出处**＝它取自 `_harvest/zh-Hans.json`（另一条下载通路）＝现算＝该文件 220,210 字节里 **U+FFFD 0 处**、「`鈥`」0 处、干净弯标点 105 处＝⇒ 语言包那一面是干净的，坏的只有 bundle 内联表那一面（这条正面控制历批没做过）
+> ④ 表头那句"由 `render-catalog.mjs` 自动生成"**在盘上不成立**＝现扫 7 枚 worktree（`git worktree list` 全集、maxdepth 6）＝`render-catalog*` 零命中＝⇒ 本册与 `feature-catalog.md` 实际处于**手维护**状态：改它不会自动重生成、也不会有人替你重生成；要恢复生成通路得先重写取表脚本（＝新仪器＝等点名）
+> ☆ 判据（落成一条硬规矩）＝**逐字出处要先问"这一族的字节从哪个文件来"**：`zh-Hans.json` 系（中文）可用；`js/` bundle 系（英文兜底、以及一切带 `… ’ “ ” – —` 的英文串）不可用，只能取其中纯 ASCII 的窗口（本线落盘脚本 `snip()` 已按此断言＝窗口含非 ASCII 即 ABORT）＝见 `internals.md` §一百零三③ 与 §一百零五③
+
 | 分组 | 条数 | 内容 |
 |---|---|---|
 | `commands.insert` | 22 | Insert After、Insert Before、Insert Block Above、Insert Block Below、Insert File、Image from Unsplash… |

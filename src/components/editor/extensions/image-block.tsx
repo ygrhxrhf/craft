@@ -1,4 +1,10 @@
 import { Node, mergeAttributes } from '@tiptap/react';
+
+function readAxis(value: string | null): number | null {
+  if (value == null) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { ImageBlockView } from './image-block-view';
 
@@ -47,6 +53,22 @@ export const ImageBlock = Node.create({
         default: '100%',
         parseHTML: (element) => element.getAttribute('data-width') || '100%',
         renderHTML: (attributes) => ({ 'data-width': attributes.width }),
+      },
+      // The crop frame (G66). Absent reads as centered and unzoomed.
+      posX: {
+        default: null,
+        parseHTML: (element) => readAxis(element.getAttribute('data-pos-x')),
+        renderHTML: (attributes) => (attributes.posX == null ? {} : { 'data-pos-x': attributes.posX }),
+      },
+      posY: {
+        default: null,
+        parseHTML: (element) => readAxis(element.getAttribute('data-pos-y')),
+        renderHTML: (attributes) => (attributes.posY == null ? {} : { 'data-pos-y': attributes.posY }),
+      },
+      scale: {
+        default: null,
+        parseHTML: (element) => readAxis(element.getAttribute('data-scale')),
+        renderHTML: (attributes) => (attributes.scale == null ? {} : { 'data-scale': attributes.scale }),
       },
     };
   },

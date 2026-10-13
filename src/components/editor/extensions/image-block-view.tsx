@@ -3,8 +3,9 @@
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { useRef, useState } from 'react';
-import { ImagePlus, Link2, Loader2 } from 'lucide-react';
+import { Crop, ImagePlus, Link2, Loader2, Minus, Plus } from 'lucide-react';
 import { uploadFile } from '@/lib/upload-client';
+import { frameStyle, moveFrame, readImageFrame, zoomFrame, type ImageFrame } from '@/lib/editor/image-frame';
 
 export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
   const [loaded, setLoaded] = useState(false);
@@ -15,6 +16,14 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
   const src = node.attrs.src as string | null;
   const alt = node.attrs.alt as string;
   const caption = node.attrs.caption as string;
+  const frame = readImageFrame(node.attrs);
+  const [framing, setFraming] = useState(false);
+  const drag = useRef<{ x: number; y: number; frame: ImageFrame } | null>(null);
+  const frameBox = useRef<HTMLDivElement>(null);
+
+  const writeFrame = (next: ImageFrame) => {
+    updateAttributes({ posX: next.x, posY: next.y, scale: next.scale });
+  };
 
   const handleFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -81,14 +90,40 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
                 <div className="size-6 animate-pulse rounded-full bg-muted-foreground/20" />
               </div>
             )}
-            <img
-              src={src}
-              alt={alt || ''}
-              onLoad={() => setLoaded(true)}
-              className={`max-h-[500px] w-full rounded-lg object-contain transition-opacity ${
-                loaded ? 'opacity-100' : 'opacity-0 h-0'
-              }`}
-            />
+            <div ref={frameBox} className="h-72 overflow-hidden rounded-lg">
+              <img
+                src={src}
+                alt={alt || ''}
+                draggable={false}
+                onLoad={() => setLoaded(true)}
+                onPointerDown={(event) => {
+                  if (!framing) return;
+                  drag.current = { x: event.clientX, y: event.clientY, frame };
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  const start = drag.current;
+                  const box = frameBox.current;
+                  if (!start || !box) return;
+                  writeFrame(
+                    moveFrame(
+                      start.frame,
+                      event.clientX - start.x,
+                      event.clientY - start.y,
+                      box.clientWidth,
+                      box.clientHeight,
+                    ),
+                  );
+                }}
+                onPointerUp={() => {
+                  drag.current = null;
+                }}
+                style={frameStyle(frame)}
+                className={`h-full w-full object-cover transition-opacity ${
+                  loaded ? 'opacity-100' : 'opacity-0'
+                } ${framing ? 'cursor-grab' : ''}`}
+              />
+            </div>
             <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
               <button
                 type="button"
@@ -103,6 +138,35 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
                   <ImagePlus className="size-4" />
                 )}
               </button>
+              <button
+                type="button"
+                aria-pressed={framing}
+                onClick={() => setFraming((open) => !open)}
+                className="flex size-7 items-center justify-center rounded-md bg-background/80 text-muted-foreground shadow-sm backdrop-blur transition-colors hover:bg-background hover:text-foreground"
+                title="重新定位或裁剪"
+              >
+                <Crop className="size-4" />
+              </button>
+              {framing && (
+                <>
+                  <button
+                    type="button"
+                    aria-label="放大"
+                    onClick={() => writeFrame(zoomFrame(frame, 1))}
+                    className="flex size-7 items-center justify-center rounded-md bg-background/80 text-muted-foreground shadow-sm backdrop-blur hover:text-foreground"
+                  >
+                    <Plus className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="缩小"
+                    onClick={() => writeFrame(zoomFrame(frame, -1))}
+                    className="flex size-7 items-center justify-center rounded-md bg-background/80 text-muted-foreground shadow-sm backdrop-blur hover:text-foreground"
+                  >
+                    <Minus className="size-4" />
+                  </button>
+                </>
+              )}
               <button
                 type="button"
                 onClick={handleUrl}

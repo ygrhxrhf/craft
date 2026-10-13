@@ -329,6 +329,19 @@ export function Editor({
         addNodeView() {
           return ReactNodeViewRenderer(CodeBlockView);
         },
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            // The block's code theme (G1093/G1108). Official keeps theme and content on separate
+            // actions so their undos stay independent; here it is one attribute, which is a
+            // declared local deviation rather than an oversight.
+            themeId: {
+              default: 'auto',
+              parseHTML: (element) => element.getAttribute('data-theme-id') ?? 'auto',
+              renderHTML: (attributes) => ({ 'data-theme-id': attributes.themeId }),
+            },
+          };
+        },
       }).configure({
         lowlight,
       }),

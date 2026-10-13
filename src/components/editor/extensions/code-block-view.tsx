@@ -5,10 +5,16 @@ import type { NodeViewProps } from '@tiptap/react';
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { CODE_LANGUAGES } from '@/lib/editor/code-languages';
+import { CODE_THEMES, DEFAULT_CODE_THEME, resolveCodeTheme } from '@/lib/editor/code-themes';
 
 export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   const [copied, setCopied] = useState(false);
   const language = (node.attrs.language as string) ?? '';
+  const themeId = (node.attrs.themeId as string) ?? DEFAULT_CODE_THEME;
+  // `auto` reads the app's own light/dark state, which the `.dark` class carries.
+  const isDark =
+    typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+  const surface = resolveCodeTheme(themeId, isDark);
 
   const copy = async () => {
     try {
@@ -35,6 +41,18 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
             </option>
           ))}
         </select>
+        <select
+          value={themeId}
+          aria-label="代码主题"
+          onChange={(e) => updateAttributes({ themeId: e.target.value })}
+          className="rounded bg-transparent text-xs text-muted-foreground outline-none hover:text-foreground"
+        >
+          {CODE_THEMES.map((theme) => (
+            <option key={theme.id} value={theme.id}>
+              {theme.id}
+            </option>
+          ))}
+        </select>
         <button
           type="button"
           onClick={copy}
@@ -45,7 +63,10 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
           {copied ? '已复制' : '复制'}
         </button>
       </div>
-      <pre className="overflow-x-auto p-3 font-mono text-sm">
+      <pre
+        className="overflow-x-auto p-3 font-mono text-sm"
+        style={{ background: surface.background, color: surface.foreground }}
+      >
         <NodeViewContent<'code'> as="code" />
       </pre>    </NodeViewWrapper>
   );

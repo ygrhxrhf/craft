@@ -12,25 +12,42 @@ interface TocEntry {
   index: number;
 }
 
-function collectHeadings(editor: NodeViewProps['editor']): TocEntry[] {
+/**
+ * The entries a table of contents is built from. The official placeholder names three sources —
+ * headings, pages and cards — and the local document has the first and the third, so a card counts
+ * alongside a heading instead of being invisible to the list.
+ */
+export function collectTocEntries(doc: {
+  descendants: (walk: (node: { type: { name: string }; attrs: Record<string, unknown>; textContent: string }) => boolean | void) => void;
+}): TocEntry[] {
   const entries: TocEntry[] = [];
-  editor.state.doc.descendants((node) => {
+  doc.descendants((node) => {
     if (node.type.name === 'heading') {
       entries.push({
         text: node.textContent.trim() || '未命名',
         level: (node.attrs.level as number) ?? 1,
         index: entries.length,
       });
+      return;
+    }
+    if (node.type.name === 'cardBlock') {
+      entries.push({
+        text: node.textContent.trim().slice(0, 80) || '卡片',
+        level: 1,
+        index: entries.length,
+      });
+      // The card is one entry. Headings inside it belong to the card, not to the list again.
+      return false;
     }
   });
   return entries;
 }
 
 export function TableOfContentsView({ editor }: NodeViewProps) {
-  const [entries, setEntries] = useState<TocEntry[]>(() => collectHeadings(editor));
+  const [entries, setEntries] = useState<TocEntry[]>(() => collectTocEntries(editor.state.doc));
 
   useEffect(() => {
-    const sync = () => setEntries(collectHeadings(editor));
+    const sync = () => setEntries(collectTocEntries(editor.state.doc));
     editor.on('update', sync);
     editor.on('transaction', sync);
     return () => {
@@ -42,7 +59,9 @@ export function TableOfContentsView({ editor }: NodeViewProps) {
   const jump = (index: number) => {
     // The headings are the only elements of their kind inside the editor, so the
     // nth match is the entry the list is showing.
-    const target = document.querySelectorAll('.ProseMirror h1, .ProseMirror h2, .ProseMirror h3, .ProseMirror h4')[index];
+    const target = document.querySelectorAll(
+      '.ProseMirror h1, .ProseMirror h2, .ProseMirror h3, .ProseMirror h4, .ProseMirror [data-type="card-block"]',
+    )[index];
     target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 

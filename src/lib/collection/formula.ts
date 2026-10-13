@@ -6,20 +6,120 @@ type Token =
   | { kind: 'name'; name: string }
   | { kind: 'op'; value: string };
 
-const FUNCTIONS: Record<string, (args: number[]) => number> = {
-  min: (args) => Math.min(...args),
-  max: (args) => Math.max(...args),
-  sum: (args) => args.reduce((total, value) => total + value, 0),
-  abs: (args) => Math.abs(args[0]),
-  round: ([value, digits = 0]) => {
+/**
+ * What an argument can be *before* arithmetic gets hold of it. `COUNT` and `COUNTA` are defined
+ * by this distinction — one counts numbers, the other counts non-empty values — so emptiness has
+ * to survive the reference read instead of collapsing into the `null` that used to abort the
+ * whole parse (see `asNumber`, which keeps arithmetic strict exactly as it was).
+ */
+type Atom = { kind: 'num'; value: number } | { kind: 'text'; value: string } | { kind: 'empty' };
+
+/**
+ * The fourteen functions of `table.formula` (`feature-catalog.md:6857-6881`), each following the
+ * verbatim Chinese description next to its key. `null` means "this formula cannot be computed"
+ * and surfaces as the caller's error. Where the official description is silent (empty input,
+ * ties, an even-sized median) the choice is local and marked.
+ *
+ * Not implemented: the four range references `above` / `below` / `left` / `right`. They address a
+ * grid of cells while this engine is handed a single row, so faking them would answer a question
+ * the caller never asked; they fail as unknown names until the engine gets a grid-shaped API.
+ */
+const FUNCTIONS: Record<string, (args: Atom[]) => number | null> = {
+  // Numbers only, filtered — an empty or textual argument is skipped rather than fatal, which is
+  // what lets `COUNT({空列})` answer 0 instead of erroring.
+  min: (args) => {
+    const values = numbersOf(args);
+    return values.length ? Math.min(...values) : null;
+  },
+  max: (args) => {
+    const values = numbersOf(args);
+    return values.length ? Math.max(...values) : null;
+  },
+  sum: (args) => numbersOf(args).reduce((total, value) => total + value, 0),
+  abs: (args) => {
+    const value = firstNumber(args);
+    return value === null ? null : Math.abs(value);
+  },
+  round: (args) => {
+    const value = firstNumber(args);
+    if (value === null) return null;
+    const digits = args.length > 1 ? firstNumber(args.slice(1)) : 0;
+    if (digits === null) return null;
     const factor = 10 ** digits;
     return Math.round(value * factor) / factor;
   },
+  // Official: 「返回小于或等于指定数字的最近整数」— floor, so INT(-2.5) is -3, not -2.
+  int: (args) => {
+    const value = firstNumber(args);
+    return value === null ? null : Math.floor(value);
+  },
+  sign: (args) => {
+    const value = firstNumber(args);
+    return value === null ? null : Math.sign(value);
+  },
+  product: (args) => numbersOf(args).reduce((total, value) => total * value, 1),
+  average: (args) => {
+    const values = numbersOf(args);
+    return values.length ? values.reduce((total, value) => total + value, 0) / values.length : null;
+  },
+  median: (args) => {
+    const values = [...numbersOf(args)].sort((a, b) => a - b);
+    if (!values.length) return null;
+    const middle = Math.floor(values.length / 2);
+    // Even-sized input: the mean of the two middle values. The official line only says 「中值」.
+    return values.length % 2 ? values[middle] : (values[middle - 1] + values[middle]) / 2;
+  },
+  mode: (args) => {
+    const values = numbersOf(args);
+    const counts = new Map<number, number>();
+    for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1);
+    let best: number | null = null;
+    let bestCount = 1; // a value must actually repeat; ties go to the first one seen (local).
+    for (const value of values) {
+      const count = counts.get(value)!;
+      if (count > bestCount) {
+        best = value;
+        bestCount = count;
+      }
+    }
+    return best;
+  },
+  // Official: 「返回含有数字、数值表达式或日期的参数的个数」— numbers only.
+  count: (args) => args.filter((arg) => arg.kind === 'num').length,
+  // Official: 「返回不为空的参数的个数」— anything that is not empty.
+  counta: (args) => args.filter((arg) => arg.kind !== 'empty').length,
+  pi: () => Math.PI,
 };
 
+/** The seven bare-name constants of `table.formula`; looked up when a name is not a call. */
+const CONSTANTS: Record<string, number> = {
+  e: Math.E,
+  ln10: Math.LN10,
+  ln2: Math.LN2,
+  log10e: Math.LOG10E,
+  log2e: Math.LOG2E,
+  sqrt1_2: Math.SQRT1_2,
+  sqrt2: Math.SQRT2,
+};
+
+function numbersOf(args: Atom[]): number[] {
+  return args.filter((arg): arg is { kind: 'num'; value: number } => arg.kind === 'num').map((arg) => arg.value);
+}
+
+function firstNumber(args: Atom[]): number | null {
+  const values = numbersOf(args);
+  return values.length ? values[0] : null;
+}
+
+function asNumber(atom: Atom | null): number | null {
+  // Arithmetic stays as strict as it was: only a number can be added, so an empty or textual
+  // reference in `1 + {名字}` still fails the formula instead of silently becoming zero.
+  return atom && atom.kind === 'num' ? atom.value : null;
+}
+
 /**
- * A deliberately tiny calculator: numbers, `{属性名}` references, the four
- * arithmetic operators, parentheses and a five-function whitelist. Nothing here
+ * A deliberately tiny calculator: numbers, `{属性名}` references, the four arithmetic operators,
+ * parentheses, the fourteen official functions and the seven official constants. Nothing here
  * reaches `eval`, so a formula authored in a shared collection cannot run code.
  */
 export function evaluateFormula(expression: string, row: Record<string, unknown> = {}): FormulaResult {
@@ -37,7 +137,7 @@ export function evaluateFormula(expression: string, row: Record<string, unknown>
     return token;
   };
 
-  const parseSum = (): number | null => {
+  const parseSum = (): Atom | null => {
     let left = parseProduct();
     if (left === null) return null;
     for (;;) {
@@ -45,12 +145,14 @@ export function evaluateFormula(expression: string, row: Record<string, unknown>
       if (token?.kind !== 'op' || (token.value !== '+' && token.value !== '-')) return left;
       position += 1;
       const right = parseProduct();
-      if (right === null) return null;
-      left = token.value === '+' ? left + right : left - right;
+      const a = asNumber(left);
+      const b = asNumber(right);
+      if (right === null || a === null || b === null) return null;
+      left = { kind: 'num', value: token.value === '+' ? a + b : a - b };
     }
   };
 
-  const parseProduct = (): number | null => {
+  const parseProduct = (): Atom | null => {
     let left = parseUnary();
     if (left === null) return null;
     for (;;) {
@@ -58,63 +160,78 @@ export function evaluateFormula(expression: string, row: Record<string, unknown>
       if (token?.kind !== 'op' || (token.value !== '*' && token.value !== '/')) return left;
       position += 1;
       const right = parseUnary();
-      if (right === null) return null;
+      const a = asNumber(left);
+      const b = asNumber(right);
+      if (right === null || a === null || b === null) return null;
       if (token.value === '/') {
-        if (right === 0) return null;
-        left /= right;
+        if (b === 0) return null;
+        left = { kind: 'num', value: a / b };
       } else {
-        left *= right;
+        left = { kind: 'num', value: a * b };
       }
     }
   };
 
-  const parseUnary = (): number | null => {
+  const parseUnary = (): Atom | null => {
     const token = peek();
     if (token?.kind === 'op' && (token.value === '-' || token.value === '+')) {
       position += 1;
-      const value = parseUnary();
-      return value === null ? null : token.value === '-' ? -value : value;
+      const atom = parseUnary();
+      const value = asNumber(atom);
+      if (atom === null || value === null) return null;
+      return { kind: 'num', value: token.value === '-' ? -value : value };
     }
     return parseAtom();
   };
 
-  const parseAtom = (): number | null => {
+  const parseAtom = (): Atom | null => {
     const token = peek();
     if (!token) return null;
 
     if (token.kind === 'number') {
       position += 1;
-      return token.value;
+      return { kind: 'num', value: token.value };
     }
 
     if (token.kind === 'ref') {
       position += 1;
       const raw = row[token.name];
-      const value = typeof raw === 'number' ? raw : typeof raw === 'string' && raw.trim() && Number.isFinite(Number(raw)) ? Number(raw) : null;
-      return value === null ? null : value;
+      if (raw === null || raw === undefined || raw === '') return { kind: 'empty' };
+      if (typeof raw === 'number') return { kind: 'num', value: raw };
+      if (typeof raw === 'string' && raw.trim() && Number.isFinite(Number(raw))) {
+        return { kind: 'num', value: Number(raw) };
+      }
+      return { kind: 'text', value: String(raw) };
     }
 
     if (token.kind === 'name') {
-      const fn = FUNCTIONS[token.name.toLowerCase()];
       position += 1;
-      if (!fn || !expect('op', '(')) return null;
-      const args: number[] = [];
-      if (expect('op', ')')) {
-        return fn(args);
-      }
-      for (;;) {
-        const value = parseSum();
-        if (value === null) return null;
-        args.push(value);
-        const next = peek();
-        if (next?.kind === 'op' && next.value === ',') {
-          position += 1;
-          continue;
+      const key = token.name.toLowerCase();
+      if (peek()?.kind === 'op' && (peek() as { value: string }).value === '(') {
+        const fn = FUNCTIONS[key];
+        if (!fn) return null;
+        position += 1; // consume '('
+        const args: Atom[] = [];
+        if (expect('op', ')')) {
+          const value = fn(args);
+          return value === null || !Number.isFinite(value) ? null : { kind: 'num', value };
         }
-        if (!expect('op', ')')) return null;
-        break;
+        for (;;) {
+          const arg = parseSum();
+          if (arg === null) return null;
+          args.push(arg);
+          const next = peek();
+          if (next?.kind === 'op' && next.value === ',') {
+            position += 1;
+            continue;
+          }
+          if (!expect('op', ')')) return null;
+          const value = fn(args);
+          return value === null || !Number.isFinite(value) ? null : { kind: 'num', value };
+        }
       }
-      return fn(args);
+      const constant = CONSTANTS[key];
+      return constant === undefined ? null : { kind: 'num', value: constant };
     }
 
     if (token.kind === 'op' && token.value === '(') {
@@ -127,8 +244,9 @@ export function evaluateFormula(expression: string, row: Record<string, unknown>
     return null;
   };
 
-  const value = parseSum();
-  if (value === null || position !== tokens.length || !Number.isFinite(value)) {
+  const result = parseSum();
+  const value = asNumber(result);
+  if (result === null || value === null || position !== tokens.length || !Number.isFinite(value)) {
     return { ok: false, error: '公式无法计算' };
   }
   return { ok: true, value };
@@ -164,7 +282,10 @@ function tokenize(expression: string): Token[] | null {
     }
 
     if (/[A-Za-z_]/.test(char)) {
-      const match = /^[A-Za-z_]+/.exec(source.slice(index));
+      // Digits after the first character: the official constants are `LN10`, `LOG2E`,
+      // `SQRT1_2`… — stopping at the first digit split `LN10` into `LN` + `10` and the name
+      // then resolved to nothing.
+      const match = /^[A-Za-z_][A-Za-z0-9_]*/.exec(source.slice(index));
       if (!match) return null;
       tokens.push({ kind: 'name', name: match[0] });
       index += match[0].length;

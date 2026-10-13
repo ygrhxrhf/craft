@@ -114,7 +114,7 @@ test('a second tab keeps listing a row it missed, and the next poll drops it', a
   // version of this test could not hold a stale row in the first place.
   let cut = true;
   let passed = 0;
-  await stale.route('**/api/sync/changes**', async (route) => {
+  await stale.route('**/api/v1/sync**', async (route) => {
     if (cut) {
       await route.abort();
       return;
@@ -135,9 +135,9 @@ test('a second tab keeps listing a row it missed, and the next poll drops it', a
   await expect(staleRow).toBeVisible({ timeout: 10_000 });
 
   // Stage two: let the stream through and wait out the backoff. The aborted
-  // requests counted as failures, and client.ts:333-335 backs off exponentially
-  // up to SYNC_RETRY_MAX_MS = 30_000. Measured: nothing had come through by
-  // T+5s, and the row was gone by T+10s.
+  // requests counted as failures, and the offline kernel backs off exponentially
+  // up to 300s. Measured: nothing had come through by T+5s, and the row was
+  // gone by T+10s.
   cut = false;
   await stale.bringToFront();
   await expect

@@ -31,9 +31,9 @@ export interface DueReminder {
 /**
  * Postgres returns a `timestamptz` as "2026-10-02 18:06:49.485+08" rather than
  * the ISO string that was written, so `Date.parse` gets a second chance with the
- * space swapped for a `T`. Deliberately not importing `toEpochMs` from
- * `@/lib/sync/changes`: that module pulls in Prisma, and this file stays loadable
- * without a database.
+ * space swapped for a `T`. Kept local rather than imported: the only other
+ * copy lived in the retired poll-based sync module, and this file stays
+ * loadable without a database.
  */
 export function reminderInstant(value: string): number {
   const direct = Date.parse(value);

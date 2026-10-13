@@ -1,8 +1,13 @@
 # ADR-0003：元数据增量同步采用游标轮询
 
-- 状态：已接受
+- 状态：**已被取代**（2026-10-13，见 ADR-0005）
 - 日期：2026-10-01
 - 分支：`deploy/vps-fullstack-offsite-backup`
+
+> 本决策的轮询客户端（`src/lib/sync/client.ts`、`use-sync-store.ts`、
+> `MetadataSyncProvider`、`GET /api/sync/changes`）已删除。元数据同步改由离线优先
+> 内核承担（`src/lib/sync-core` + `GET/POST /api/v1/sync` + SSE `/api/v1/events`）。
+> 下文保留作为当时的决策记录。
 
 ## 背景
 

@@ -28,7 +28,7 @@ import { getDb } from '@/prisma/db';
  * `for (const row of rows)` under it simply stops running. Only the temporal
  * columns are loud. TypeScript is not a net at all: a control run injected both
  * `db.orm.public.Document.where({ id: { in: ids } })` and the string-keyed form
- * that src/lib/sync/changes.ts uses, and `tsc --noEmit` reported neither. This
+ * the sync code used, and `tsc --noEmit` reported neither. This
  * census is the only thing between that refactor and a silently empty sidebar.
  */
 

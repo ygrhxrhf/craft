@@ -6,7 +6,6 @@ import { listNotifications, resolveNotification } from '@/actions/notification/n
 import type { InboxRow } from '@/lib/notification/inbox';
 import { createReadPerRevision } from '@/lib/read-per-revision';
 import { reminderInstant } from '@/lib/notification/task-reminders';
-import { useMetadataRevision } from '@/lib/store/use-sync-store';
 
 // Module scope, deliberately: the generation it has to survive is the effect's, not the
 // component's, so a hook-local ref would be rebuilt on the very remount being coalesced.
@@ -25,16 +24,27 @@ function formatReminder(remindAt: string | null): string {
 }
 
 export function NotificationBell() {
-  // The sync poll is only a change signal here — the rows themselves come from
-  // the server action, the same way the sidebar trees read (ADR-0003). Reading
-  // the poll's cache instead would empty the bell on every navigation, since the
-  // cursor is persisted but the rows are not.
-  const revision = useMetadataRevision(['Notification']);
+  // Notifications are not part of the offline sync stream (they are server
+  // generated), so the rows come from the server action and are refreshed when
+  // the tab regains focus rather than off a sync cursor.
+  const [revision, setRevision] = useState(0);
   const [items, setItems] = useState<InboxRow[]>([]);
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === 'visible') setRevision((n) => n + 1);
+    };
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.removeEventListener('focus', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

@@ -20,6 +20,7 @@ const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
     paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null } } },
+    cardBlock: { content: 'block+', group: 'block' },
     taskItem: { content: 'text*', group: 'block', attrs: { remindAt: { default: null } } },
     text: {},
   },
@@ -84,6 +85,7 @@ describe('blockMenuItems', () => {
       'move-top',
       'move-bottom',
       'copy-link',
+      'convert-card',
       'delete',
     ]);
   });
@@ -97,6 +99,7 @@ describe('blockMenuItems', () => {
       '移至顶部',
       '移至底部',
       '复制区块链接',
+      '转换为卡片',
       '删除',
     ]);
   });
@@ -117,6 +120,7 @@ describe('blockMenuItems', () => {
       'move-top',
       'move-bottom',
       'copy-link',
+      'convert-card',
     ]);
   });
 
@@ -169,6 +173,24 @@ describe('deleteBlock', () => {
   it('refuses to empty the document', () => {
     const state = stateWith(['甲']);
     expect(() => run(state, (d) => deleteBlock(state, d, 0))).toThrow();
+  });
+});
+
+describe('convertBlockToCard', () => {
+  it('wraps the addressed block in a card and keeps its text', () => {
+    const state = stateWith(['甲', '乙']);
+    const next = runState(state, (d) => applyBlockAction(state, d, 0, 'convert-card'));
+    expect(next.doc.child(0).type.name).toBe('cardBlock');
+    expect(next.doc.child(0).textContent).toBe('甲');
+    expect(next.doc.child(1).type.name).toBe('paragraph');
+  });
+
+  it('does not nest a card that is already a card', () => {
+    const state = stateWith(['甲']);
+    const once = runState(state, (d) => applyBlockAction(state, d, 0, 'convert-card'));
+    expect(() => run(once, (d) => applyBlockAction(once, d, 0, 'convert-card'))).toThrow(
+      'the action dispatched nothing',
+    );
   });
 });
 

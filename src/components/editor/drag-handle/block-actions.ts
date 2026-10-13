@@ -13,6 +13,7 @@ export type BlockActionId =
   | 'move-top'
   | 'move-bottom'
   | 'copy-link'
+  | 'convert-card'
   | 'delete';
 
 const MOVE_TARGETS: Record<string, MoveTarget> = {
@@ -43,6 +44,7 @@ export function blockMenuItems({ canDelete, isTask }: { canDelete: boolean; isTa
     { id: 'move-top', label: '移至顶部' },
     { id: 'move-bottom', label: '移至底部' },
     { id: 'copy-link', label: '复制区块链接' },
+    { id: 'convert-card', label: '转换为卡片' },
   ];
   if (isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
   if (canDelete) items.push({ id: 'delete', label: '删除' });
@@ -113,6 +115,23 @@ export function blockLinkFor(
  * task item and rides the existing task sync. `saveForLater` and `custom` have no computed time,
  * so they clear the reminder rather than inventing one.
  */
+/**
+ * Wraps the addressed block in a card (G1470's 转换为卡片). A block that is already a card is left
+ * alone, so the entry cannot nest cards inside cards.
+ */
+export function convertBlockToCard(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+) {
+  const card = state.schema.nodes.cardBlock;
+  if (!card) return;
+  const node = state.doc.child(index);
+  if (node.type === card) return;
+  const { before, after } = blockBounds(state, index);
+  dispatch(state.tr.replaceWith(before, after, card.create(null, node)));
+}
+
 /** Clears a task item's reminder. Both 移除提醒 and 标记为已解决 end with the pill gone. */
 export function clearTaskReminder(
   state: EditorState,
@@ -177,6 +196,9 @@ export function applyBlockAction(
       break;
     case 'insert-below':
       insertBlockBelow(state, dispatch, index);
+      break;
+    case 'convert-card':
+      convertBlockToCard(state, dispatch, index);
       break;
     case 'copy-link':
       // The link needs the document id and the clipboard, neither of which the editor state

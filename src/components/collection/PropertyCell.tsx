@@ -94,7 +94,7 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
   if (!editing) {
     return (
       <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => setEditing(true)}>
-        <span className="text-ui">{value || <span className="text-muted-foreground/50">-</span>}</span>
+        <span className="typography-ui-sm-500">{value || <span className="text-muted-foreground/50">-</span>}</span>
       </div>
     );
   }
@@ -181,7 +181,7 @@ function DateCell({ value, onChange }: { value: any; onChange: (v: any) => void 
   if (!editing) {
     return (
       <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
-        <span className="text-ui">{value || <span className="text-muted-foreground/50">-</span>}</span>
+        <span className="typography-ui-sm-500">{value || <span className="text-muted-foreground/50">-</span>}</span>
       </div>
     );
   }

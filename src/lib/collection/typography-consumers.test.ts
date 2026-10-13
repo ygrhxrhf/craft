@@ -14,6 +14,10 @@ const table = readFileSync(
   fileURLToPath(new URL('../../app/(app)/collections/[id]/TableView.tsx', import.meta.url)),
   'utf8',
 );
+const cell = readFileSync(
+  fileURLToPath(new URL('../../components/collection/PropertyCell.tsx', import.meta.url)),
+  'utf8',
+);
 
 describe('the table header consumes the typography layer', () => {
   it('puts the bridge class on the header cells', () => {
@@ -29,8 +33,13 @@ describe('the table header consumes the typography layer', () => {
     expect(css).toContain('.typography-caption-md-500 {');
   });
 
+  it('puts the data-cell class on the cell displays', () => {
+    expect(cell).toContain('typography-ui-sm-500');
+  });
+
   it('compiles, so the class is a real utility in the pipeline', async () => {
     const out = await postcss([tailwind()]).process(css, { from: 'src/app/globals.css' });
     expect(out.css).toContain('typography-caption-md-500');
+    expect(out.css).toContain('typography-ui-sm-500');
   });
 });

@@ -5,7 +5,6 @@ import { useTheme } from 'next-themes';
 import { useSession } from 'next-auth/react';
 import {
   Camera,
-  ChevronDown,
   ChevronRight,
   ChevronsUpDown,
   Pencil,
@@ -297,13 +296,12 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       );
 
     case 'language':
+      // The interface has one language, so this is a statement rather than a control that looks
+      // like it opens a list and then does nothing.
       return (
         <RowCard className="flex w-[360px] items-center justify-between px-4 py-3">
           <div className="text-[13px] font-medium">语言</div>
-          <div className="flex items-center gap-2 rounded-lg bg-foreground/4 px-3 py-1.5 text-[13px]">
-            简体中文
-            <ChevronDown className="size-3.5 text-foreground/45" />
-          </div>
+          <div className="text-[13px] text-foreground/70">简体中文</div>
         </RowCard>
       );
 

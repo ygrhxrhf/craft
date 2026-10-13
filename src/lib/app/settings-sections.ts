@@ -37,8 +37,8 @@ export const SETTINGS_SECTIONS: readonly SettingsSection[] = [
   // The tag switch is a local default with no backing column.
   { id: 'tags', label: '标签', wired: false },
   { id: 'appearance', label: '外观', wired: true },
-  // The language row is a static div.
-  { id: 'language', label: '语言', wired: false },
+  // One language exists, and the row says so instead of pretending to offer a choice.
+  { id: 'language', label: '语言', wired: true },
   { id: 'advanced', label: '高级', wired: true },
   { id: 'account', label: '账户', wired: true },
   { id: 'subscription', label: '订阅', wired: false },

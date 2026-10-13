@@ -146,12 +146,12 @@ export function TableView({ collection, view }: TableViewProps) {
                     {groupLabel} ({items.length})
                   </h3>
                   <table className="w-full border-collapse">
-                    <thead className="sticky top-0 z-10 bg-muted/50 max-md:bg-muted">
+                    <thead className="sticky top-0 z-[var(--st-z-sticky-header)] bg-muted/50 max-md:bg-muted">
                       <tr>
                         {visibleProperties.map((property: any) => (
                           <th
                             key={property.id}
-                            className="border-b border-r border-border px-3 py-2 text-left text-sm font-medium text-muted-foreground first:border-l first:max-md:sticky first:max-md:left-0 first:max-md:z-20 first:max-md:bg-muted"
+                            className="border-b border-r border-border px-[var(--st-cell-padding-x)] py-[var(--st-cell-padding-y)] text-left text-sm font-medium text-muted-foreground first:border-l first:max-md:sticky first:max-md:left-0 first:max-md:z-[var(--st-z-sticky-header-index)] first:max-md:bg-muted"
                           >
                             {property.name}
                           </th>
@@ -161,7 +161,7 @@ export function TableView({ collection, view }: TableViewProps) {
                     </thead>
                     <tbody>
                       {items.map((item: any) => (
-                        <tr key={item.id} className="group hover:bg-muted/30">
+                        <tr key={item.id} className="group h-[var(--st-row-height)] hover:bg-muted/30">
                           {visibleProperties.map((property: any) => (
                             <td
                               key={property.id}
@@ -196,12 +196,12 @@ export function TableView({ collection, view }: TableViewProps) {
           </div>
         ) : (
           <table className="w-full border-collapse">
-            <thead className="sticky top-0 z-10 bg-muted/50 max-md:bg-muted">
+            <thead className="sticky top-0 z-[var(--st-z-sticky-header)] bg-muted/50 max-md:bg-muted">
               <tr>
                 {visibleProperties.map((property: any) => (
                   <th
                     key={property.id}
-                    className="border-b border-r border-border px-3 py-2 text-left text-sm font-medium text-muted-foreground first:border-l first:max-md:sticky first:max-md:left-0 first:max-md:z-20 first:max-md:bg-muted"
+                    className="border-b border-r border-border px-[var(--st-cell-padding-x)] py-[var(--st-cell-padding-y)] text-left text-sm font-medium text-muted-foreground first:border-l first:max-md:sticky first:max-md:left-0 first:max-md:z-[var(--st-z-sticky-header-index)] first:max-md:bg-muted"
                   >
                     {property.name}
                   </th>
@@ -211,7 +211,7 @@ export function TableView({ collection, view }: TableViewProps) {
             </thead>
             <tbody>
               {processedItems.map((item: any) => (
-                <tr key={item.id} className="group hover:bg-muted/30">
+                <tr key={item.id} className="group h-[var(--st-row-height)] hover:bg-muted/30">
                   {visibleProperties.map((property: any) => (
                     <td
                       key={property.id}

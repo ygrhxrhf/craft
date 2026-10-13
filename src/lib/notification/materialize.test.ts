@@ -34,6 +34,10 @@ async function rows() {
   return db.orm.public.Notification.where({ userId }).all();
 }
 
+async function syncEvents() {
+  return db.orm.public.SyncEvent.where({ userId }).all() as Promise<Record<string, unknown>[]>;
+}
+
 beforeAll(async () => {
   db = await getDb();
   userId = crypto.randomUUID();
@@ -61,6 +65,8 @@ async function clearAll(model: 'Task' | 'Document' | 'Notification') {
 }
 
 afterEach(async () => {
+  const events = await syncEvents();
+  for (const event of events) await db.orm.public.SyncEvent.where({ id: event.id }).delete();
   await clearAll('Notification');
   await clearAll('Task');
   await clearAll('Document');
@@ -84,6 +90,9 @@ describe('materializeTaskReminders', () => {
       title: '交周报',
       isResolved: false,
     });
+    const events = await syncEvents();
+    expect(events).toHaveLength(1);
+    expect(events[0].tables).toEqual(['notification']);
   });
 
   it('creates nothing for a reminder still in the future', async () => {

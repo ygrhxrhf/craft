@@ -14,6 +14,18 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     expect(wb!.id({ id: 'wb-1' })).toBe('wb-1');
   });
 
+  it('注册 notification 表：model=Notification，tsCol=updatedAt，payload 取 contract 全列', () => {
+    const n = SYNC_TABLES.find(d => d.table === 'notification');
+    expect(n).toBeDefined();
+    expect(n!.model).toBe('Notification');
+    expect(n!.tsCol).toBe('updatedAt');
+    expect(n!.cols).toEqual([
+      'id', 'userId', 'kind', 'taskId', 'documentId', 'title',
+      'remindAt', 'isResolved', 'resolvedAt', 'createdAt', 'updatedAt',
+    ]);
+    expect(n!.id({ id: 'ntf-1' })).toBe('ntf-1');
+  });
+
   it('folder cols 包含 id（spec 5.1 全列，payload data 需带 id）', () => {
     const folder = SYNC_TABLES.find(d => d.table === 'folder');
     expect(folder).toBeDefined();
@@ -27,6 +39,7 @@ describe('SYNC_TABLES coverage (R-9)', () => {
       'daily_notes_config', 'user',
       'collection', 'collection_item', 'collection_property', 'collection_value', 'collection_view',
       'comment', 'comment_thread', 'document_share',
+      'notification',
       'whiteboard',
     ];
     for (const t of expected) expect(tables).toContain(t);

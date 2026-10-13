@@ -8,6 +8,7 @@
 // keeps repeated polls from stacking duplicates.
 
 import { getDb } from '@/prisma/db';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import {
   REMINDER_LOOKBACK_MS,
   dueReminders,
@@ -58,9 +59,11 @@ export async function materializeTaskReminders(
     pending = pending.filter((row) => !row.documentId || !trashed.has(row.documentId));
   }
 
+  const created: string[] = [];
   for (const due of pending) {
+    const id = crypto.randomUUID();
     await db.orm.public.Notification.create({
-      id: crypto.randomUUID(),
+      id,
       userId,
       kind: 'taskReminder',
       taskId: due.taskId,
@@ -68,6 +71,12 @@ export async function materializeTaskReminders(
       title: due.title,
       remindAt: due.remindAt,
     });
+    created.push(id);
+  }
+  // 落库后广播，其他设备经 meta → pull 秒级看到新提醒。
+  // 游标 id 取本批最后一条：pull 按 (syncTs, id) 续传，广播只是唤醒。
+  if (created.length > 0) {
+    await emitSyncEventSafe(db, userId, ['notification'], created[created.length - 1]);
   }
 
   return pending.length;

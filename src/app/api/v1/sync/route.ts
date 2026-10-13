@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
         rows = await db.orm.public[def.model].where((r: any) => r.collectionId.in(collectionIds)).all();
       }
     } else {
-      // document/folder/tag/favorite/task/daily_notes_config/collection/comment/whiteboard 均有 userId 列
+      // document/folder/tag/favorite/task/daily_notes_config/collection/comment/notification/whiteboard 均有 userId 列
       rows = await db.orm.public[def.model].where({ userId }).all();
     }
 
@@ -148,7 +148,7 @@ type BatchResult = {
 // payload 的 userId 无条件覆盖为会话用户（不取客户端值，防跨用户改写/转移行）。
 const USER_ID_TABLES = new Set([
   'document', 'folder', 'tag', 'favorite', 'task',
-  'daily_notes_config', 'collection', 'comment', 'whiteboard',
+  'daily_notes_config', 'collection', 'comment', 'notification', 'whiteboard',
 ]);
 
 // R-19：唯一键表在「按 pk 定位不到、但唯一键撞上存量（含墓碑）行」时盲 create 会抛

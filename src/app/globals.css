@@ -1662,3 +1662,454 @@
   padding-block-start: var(--search-field-size);
   scroll-padding-block-start: var(--search-field-size);
 }
+
+/* === TYPOGRAPHY TOKENS (generated, G1092) === */
+/* The four token families, verbatim from the collected table. */
+:root, .token-scope {
+  /* The bridge classes' single font entry point: swapping the face changes this one
+     variable, never the class. */
+  --font-family: var(--font-sans);
+  --ui-xs-500-size: 11px;
+  --ui-xs-500-weight: 500;
+  --ui-xs-500-line-height: 13.2px;
+  --ui-xs-500-letter-spacing: .05px;
+  --ui-sm-400-size: 12px;
+  --ui-sm-400-weight: 400;
+  --ui-sm-400-line-height: 14.4px;
+  --ui-sm-400-letter-spacing: .01px;
+  --ui-sm-500-size: 12px;
+  --ui-sm-500-weight: 500;
+  --ui-sm-500-line-height: 14.4px;
+  --ui-sm-500-letter-spacing: .01px;
+  --ui-md-400-size: 13px;
+  --ui-md-400-weight: 400;
+  --ui-md-400-line-height: 16px;
+  --ui-md-400-letter-spacing: -.04px;
+  --ui-md-500-size: 13px;
+  --ui-md-500-weight: 500;
+  --ui-md-500-line-height: 16px;
+  --ui-md-500-letter-spacing: -.04px;
+  --ui-md-600-size: 13px;
+  --ui-md-600-weight: 600;
+  --ui-md-600-line-height: 16px;
+  --ui-md-600-letter-spacing: -.04px;
+  --ui-lg-400-size: 14px;
+  --ui-lg-400-weight: 400;
+  --ui-lg-400-line-height: 16px;
+  --ui-lg-400-letter-spacing: -.09px;
+  --ui-lg-500-size: 14px;
+  --ui-lg-500-weight: 500;
+  --ui-lg-500-line-height: 16px;
+  --ui-lg-500-letter-spacing: -.09px;
+  --ui-lg-600-size: 14px;
+  --ui-lg-600-weight: 600;
+  --ui-lg-600-line-height: 16px;
+  --ui-lg-600-letter-spacing: -.09px;
+  --ui-xl-400-size: 15px;
+  --ui-xl-400-weight: 400;
+  --ui-xl-400-line-height: 18px;
+  --ui-xl-400-letter-spacing: -.13px;
+  --ui-xl-500-size: 15px;
+  --ui-xl-500-weight: 500;
+  --ui-xl-500-line-height: 18px;
+  --ui-xl-500-letter-spacing: -.13px;
+  --ui-xl-600-size: 15px;
+  --ui-xl-600-weight: 600;
+  --ui-xl-600-line-height: 18px;
+  --ui-xl-600-letter-spacing: -.13px;
+  --ui-xxl-400-size: 16px;
+  --ui-xxl-400-weight: 400;
+  --ui-xxl-400-line-height: 19.2px;
+  --ui-xxl-400-letter-spacing: -.18px;
+  --ui-xxl-500-size: 16px;
+  --ui-xxl-500-weight: 500;
+  --ui-xxl-500-line-height: 19.2px;
+  --ui-xxl-500-letter-spacing: -.18px;
+  --ui-xxl-600-size: 16px;
+  --ui-xxl-600-weight: 600;
+  --ui-xxl-600-line-height: 19.2px;
+  --ui-xxl-600-letter-spacing: -.18px;
+  --heading-xxs-600-size: 11px;
+  --heading-xxs-600-weight: 600;
+  --heading-xxs-600-line-height: 12px;
+  --heading-xxs-600-letter-spacing: .05px;
+  --heading-xs-500-size: 12px;
+  --heading-xs-500-weight: 500;
+  --heading-xs-500-line-height: 12px;
+  --heading-xs-500-letter-spacing: .01px;
+  --heading-xs-600-size: 12px;
+  --heading-xs-600-weight: 600;
+  --heading-xs-600-line-height: 12px;
+  --heading-xs-600-letter-spacing: .05px;
+  --heading-md-500-size: 14px;
+  --heading-md-500-weight: 500;
+  --heading-md-500-line-height: 16px;
+  --heading-md-500-letter-spacing: -.09px;
+  --heading-md-600-size: 14px;
+  --heading-md-600-weight: 600;
+  --heading-md-600-line-height: 16px;
+  --heading-md-600-letter-spacing: -.09px;
+  --heading-xxs-600-allcaps-transform: uppercase;
+  --heading-xxs-600-allcaps-letter-spacing: .05px;
+  --heading-xs-600-allcaps-transform: uppercase;
+  --heading-xs-600-allcaps-letter-spacing: .15px;
+  --caption-md-400-size: 11px;
+  --caption-md-400-weight: 400;
+  --caption-md-400-line-height: 16px;
+  --caption-md-400-letter-spacing: .01px;
+  --caption-md-500-size: 11px;
+  --caption-md-500-weight: 500;
+  --caption-md-500-line-height: 13.2px;
+  --caption-md-500-letter-spacing: .05px;
+  --caption-lg-400-size: 12px;
+  --caption-lg-400-weight: 400;
+  --caption-lg-400-line-height: 16px;
+  --caption-lg-400-letter-spacing: .05px;
+  --caption-lg-500-size: 12px;
+  --caption-lg-500-weight: 500;
+  --caption-lg-500-line-height: 16px;
+  --caption-lg-500-letter-spacing: .01px;
+  --body-md-400-size: 13px;
+  --body-md-400-weight: 400;
+  --body-md-400-line-height: 15.6px;
+  --body-md-400-letter-spacing: -.04px;
+  --body-md-500-size: 13px;
+  --body-md-500-weight: 500;
+  --body-md-500-line-height: 15.6px;
+  --body-md-500-letter-spacing: -.04px;
+  --body-md-600-size: 13px;
+  --body-md-600-weight: 600;
+  --body-md-600-line-height: 15.6px;
+  --body-md-600-letter-spacing: -.04px;
+  --body-md-400-italic-size: 13px;
+  --body-md-400-italic-weight: 400;
+  --body-md-400-italic-line-height: 15.6px;
+  --body-md-400-italic-letter-spacing: -.04px;
+  --body-md-400-italic-style: italic;
+  --body-md-500-italic-size: 13px;
+  --body-md-500-italic-weight: 500;
+  --body-md-500-italic-line-height: 15.6px;
+  --body-md-500-italic-letter-spacing: -.04px;
+  --body-md-500-italic-style: italic;
+}
+
+@layer base {
+  /* The 31 bridge classes: one per token group, each the same eight declarations. */
+  .typography-ui-xs-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-xs-500-size);
+    font-weight: var(--ui-xs-500-weight);
+    line-height: var(--ui-xs-500-line-height);
+    letter-spacing: var(--ui-xs-500-letter-spacing);
+  }
+  .typography-ui-sm-400 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-sm-400-size);
+    font-weight: var(--ui-sm-400-weight);
+    line-height: var(--ui-sm-400-line-height);
+    letter-spacing: var(--ui-sm-400-letter-spacing);
+  }
+  .typography-ui-sm-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-sm-500-size);
+    font-weight: var(--ui-sm-500-weight);
+    line-height: var(--ui-sm-500-line-height);
+    letter-spacing: var(--ui-sm-500-letter-spacing);
+  }
+  .typography-ui-md-400 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-md-400-size);
+    font-weight: var(--ui-md-400-weight);
+    line-height: var(--ui-md-400-line-height);
+    letter-spacing: var(--ui-md-400-letter-spacing);
+  }
+  .typography-ui-md-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-md-500-size);
+    font-weight: var(--ui-md-500-weight);
+    line-height: var(--ui-md-500-line-height);
+    letter-spacing: var(--ui-md-500-letter-spacing);
+  }
+  .typography-ui-md-600 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-md-600-size);
+    font-weight: var(--ui-md-600-weight);
+    line-height: var(--ui-md-600-line-height);
+    letter-spacing: var(--ui-md-600-letter-spacing);
+  }
+  .typography-ui-lg-400 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-lg-400-size);
+    font-weight: var(--ui-lg-400-weight);
+    line-height: var(--ui-lg-400-line-height);
+    letter-spacing: var(--ui-lg-400-letter-spacing);
+  }
+  .typography-ui-lg-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-lg-500-size);
+    font-weight: var(--ui-lg-500-weight);
+    line-height: var(--ui-lg-500-line-height);
+    letter-spacing: var(--ui-lg-500-letter-spacing);
+  }
+  .typography-ui-lg-600 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-lg-600-size);
+    font-weight: var(--ui-lg-600-weight);
+    line-height: var(--ui-lg-600-line-height);
+    letter-spacing: var(--ui-lg-600-letter-spacing);
+  }
+  .typography-ui-xl-400 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-xl-400-size);
+    font-weight: var(--ui-xl-400-weight);
+    line-height: var(--ui-xl-400-line-height);
+    letter-spacing: var(--ui-xl-400-letter-spacing);
+  }
+  .typography-ui-xl-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-xl-500-size);
+    font-weight: var(--ui-xl-500-weight);
+    line-height: var(--ui-xl-500-line-height);
+    letter-spacing: var(--ui-xl-500-letter-spacing);
+  }
+  .typography-ui-xl-600 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-xl-600-size);
+    font-weight: var(--ui-xl-600-weight);
+    line-height: var(--ui-xl-600-line-height);
+    letter-spacing: var(--ui-xl-600-letter-spacing);
+  }
+  .typography-ui-xxl-400 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-xxl-400-size);
+    font-weight: var(--ui-xxl-400-weight);
+    line-height: var(--ui-xxl-400-line-height);
+    letter-spacing: var(--ui-xxl-400-letter-spacing);
+  }
+  .typography-ui-xxl-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-xxl-500-size);
+    font-weight: var(--ui-xxl-500-weight);
+    line-height: var(--ui-xxl-500-line-height);
+    letter-spacing: var(--ui-xxl-500-letter-spacing);
+  }
+  .typography-ui-xxl-600 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--ui-xxl-600-size);
+    font-weight: var(--ui-xxl-600-weight);
+    line-height: var(--ui-xxl-600-line-height);
+    letter-spacing: var(--ui-xxl-600-letter-spacing);
+  }
+  .typography-heading-xxs-600 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--heading-xxs-600-size);
+    font-weight: var(--heading-xxs-600-weight);
+    line-height: var(--heading-xxs-600-line-height);
+    letter-spacing: var(--heading-xxs-600-letter-spacing);
+  }
+  .typography-heading-xxs-600-allcaps {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--heading-xxs-600-allcaps-size);
+    font-weight: var(--heading-xxs-600-allcaps-weight);
+    line-height: var(--heading-xxs-600-allcaps-line-height);
+    letter-spacing: var(--heading-xxs-600-allcaps-letter-spacing);
+    text-transform: var(--heading-xxs-600-allcaps-transform);
+    letter-spacing: var(--heading-xxs-600-allcaps-letter-spacing);
+  }
+  .typography-heading-xs-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--heading-xs-500-size);
+    font-weight: var(--heading-xs-500-weight);
+    line-height: var(--heading-xs-500-line-height);
+    letter-spacing: var(--heading-xs-500-letter-spacing);
+  }
+  .typography-heading-xs-600 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--heading-xs-600-size);
+    font-weight: var(--heading-xs-600-weight);
+    line-height: var(--heading-xs-600-line-height);
+    letter-spacing: var(--heading-xs-600-letter-spacing);
+  }
+  .typography-heading-xs-600-allcaps {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--heading-xs-600-allcaps-size);
+    font-weight: var(--heading-xs-600-allcaps-weight);
+    line-height: var(--heading-xs-600-allcaps-line-height);
+    letter-spacing: var(--heading-xs-600-allcaps-letter-spacing);
+    text-transform: var(--heading-xs-600-allcaps-transform);
+    letter-spacing: var(--heading-xs-600-allcaps-letter-spacing);
+  }
+  .typography-heading-md-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--heading-md-500-size);
+    font-weight: var(--heading-md-500-weight);
+    line-height: var(--heading-md-500-line-height);
+    letter-spacing: var(--heading-md-500-letter-spacing);
+  }
+  .typography-heading-md-600 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--heading-md-600-size);
+    font-weight: var(--heading-md-600-weight);
+    line-height: var(--heading-md-600-line-height);
+    letter-spacing: var(--heading-md-600-letter-spacing);
+  }
+  .typography-caption-md-400 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--caption-md-400-size);
+    font-weight: var(--caption-md-400-weight);
+    line-height: var(--caption-md-400-line-height);
+    letter-spacing: var(--caption-md-400-letter-spacing);
+  }
+  .typography-caption-md-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--caption-md-500-size);
+    font-weight: var(--caption-md-500-weight);
+    line-height: var(--caption-md-500-line-height);
+    letter-spacing: var(--caption-md-500-letter-spacing);
+  }
+  .typography-caption-lg-400 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--caption-lg-400-size);
+    font-weight: var(--caption-lg-400-weight);
+    line-height: var(--caption-lg-400-line-height);
+    letter-spacing: var(--caption-lg-400-letter-spacing);
+  }
+  .typography-caption-lg-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--caption-lg-500-size);
+    font-weight: var(--caption-lg-500-weight);
+    line-height: var(--caption-lg-500-line-height);
+    letter-spacing: var(--caption-lg-500-letter-spacing);
+  }
+  .typography-body-md-400 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--body-md-400-size);
+    font-weight: var(--body-md-400-weight);
+    line-height: var(--body-md-400-line-height);
+    letter-spacing: var(--body-md-400-letter-spacing);
+  }
+  .typography-body-md-500 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--body-md-500-size);
+    font-weight: var(--body-md-500-weight);
+    line-height: var(--body-md-500-line-height);
+    letter-spacing: var(--body-md-500-letter-spacing);
+  }
+  .typography-body-md-600 {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--body-md-600-size);
+    font-weight: var(--body-md-600-weight);
+    line-height: var(--body-md-600-line-height);
+    letter-spacing: var(--body-md-600-letter-spacing);
+  }
+  .typography-body-md-400-italic {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--body-md-400-italic-size);
+    font-weight: var(--body-md-400-italic-weight);
+    line-height: var(--body-md-400-italic-line-height);
+    letter-spacing: var(--body-md-400-italic-letter-spacing);
+    font-style: var(--body-md-400-italic-style);
+  }
+  .typography-body-md-500-italic {
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1, "calt" 1;
+    font-size: var(--body-md-500-italic-size);
+    font-weight: var(--body-md-500-italic-weight);
+    line-height: var(--body-md-500-italic-line-height);
+    letter-spacing: var(--body-md-500-italic-letter-spacing);
+    font-style: var(--body-md-500-italic-style);
+  }
+}
+/* === END TYPOGRAPHY TOKENS === */

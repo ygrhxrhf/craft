@@ -17,6 +17,7 @@ export type BlockActionId =
   | 'add-comment'
   | 'add-emoji'
   | 'toggle-open'
+  | 'add-content'
   | 'delete';
 
 const MOVE_TARGETS: Record<string, MoveTarget> = {
@@ -53,6 +54,7 @@ export function blockMenuItems({
   toggleOpen?: boolean;
 }): BlockAction[] {
   const items: BlockAction[] = [
+    { id: 'add-content', label: '添加内容' },
     { id: 'insert-above', label: '在上方插入区块' },
     { id: 'insert-below', label: '在下方插入区块' },
     { id: 'move-up', label: '上移' },
@@ -134,6 +136,22 @@ export function blockLinkFor(
  * task item and rides the existing task sync. `saveForLater` and `custom` have no computed time,
  * so they clear the reminder rather than inventing one.
  */
+/**
+ * Starts a new block below the addressed one with the slash already typed, so the insert menu
+ * opens there (G1470's 添加内容). The caret lands after the slash.
+ */
+export function addContentBelow(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+) {
+  const { after } = blockBounds(state, index);
+  const paragraph = state.schema.nodes.paragraph;
+  const block = paragraph.create(null, state.schema.text('/'));
+  const tr = state.tr.insert(after, block);
+  dispatch(tr.setSelection(TextSelection.create(tr.doc, after + block.nodeSize - 1)).scrollIntoView());
+}
+
 /** Flips a toggle block between open and closed. Does nothing to any other block. */
 export function toggleBlockOpen(
   state: EditorState,
@@ -255,6 +273,9 @@ export function applyBlockAction(
       break;
     case 'toggle-open':
       toggleBlockOpen(state, dispatch, index);
+      break;
+    case 'add-content':
+      addContentBelow(state, dispatch, index);
       break;
     case 'copy-link':
       // The link needs the document id and the clipboard, neither of which the editor state

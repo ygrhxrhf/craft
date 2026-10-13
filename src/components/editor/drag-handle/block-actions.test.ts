@@ -80,6 +80,7 @@ describe('blockMenuItems', () => {
   // something — 提醒我／转换为卡片／添加表情 stay out until they have a local action.
   it('offers the Craft block actions, delete last', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).toEqual([
+      'add-content',
       'insert-above',
       'insert-below',
       'move-up',
@@ -96,6 +97,7 @@ describe('blockMenuItems', () => {
 
   it('labels every entry with the wording Craft shows', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.label)).toEqual([
+      '添加内容',
       '在上方插入区块',
       '在下方插入区块',
       '上移',
@@ -127,6 +129,7 @@ describe('blockMenuItems', () => {
     // deleteBlock refuses to empty the document, so an entry that can only fail
     // would surface as an uncaught error instead of doing nothing visible.
     expect(blockMenuItems({ canDelete: false }).map((item) => item.id)).toEqual([
+      'add-content',
       'insert-above',
       'insert-below',
       'move-up',
@@ -189,6 +192,17 @@ describe('deleteBlock', () => {
   it('refuses to empty the document', () => {
     const state = stateWith(['甲']);
     expect(() => run(state, (d) => deleteBlock(state, d, 0))).toThrow();
+  });
+});
+
+describe('addContentBelow', () => {
+  it('inserts a slash block directly after the addressed one, caret after the slash', () => {
+    const state = stateWith(['甲', '乙']);
+    const next = runState(state, (d) => applyBlockAction(state, d, 0, 'add-content'));
+    expect(next.doc.child(1).textContent).toBe('/');
+    expect(next.doc.child(0).textContent).toBe('甲');
+    expect(next.selection.$from.parent).toBe(next.doc.child(1));
+    expect(next.selection.$from.parentOffset).toBe(1);
   });
 });
 

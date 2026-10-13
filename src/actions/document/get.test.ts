@@ -174,11 +174,13 @@ describe('the other document list reads', () => {
     expect(keys(rows)).toEqual(rows.map(() => ['icon', 'id', 'title', 'updatedAt'].sort()));
   });
 
-  it('getRecentDocuments returns the card columns plus the role it stamps on', async () => {
+  it('getRecentDocuments returns the columns the card and list render, plus the role it stamps on', async () => {
     const rows = await getRecentDocuments(8);
     expect(rows.map((r) => (r as { id: string }).id)).toContain(documentId);
+    // `createdAt` joined the projection for the list layout's 已创建 column (G1113); the grid
+    // simply ignores it. The guard still holds: nothing else may ride along.
     expect(keys(rows)).toEqual(
-      rows.map(() => ['icon', 'id', 'role', 'title', 'updatedAt'].sort())
+      rows.map(() => ['createdAt', 'icon', 'id', 'role', 'title', 'updatedAt'].sort())
     );
     // The collaborator branch has its own projection; nothing else in this file reaches it.
     const shared = rows.find((r) => (r as { id: string }).id === sharedId) as

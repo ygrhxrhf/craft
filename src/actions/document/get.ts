@@ -176,6 +176,7 @@ export async function getRecentDocuments(limit = 20) {
     title: string;
     icon: string | null;
     updatedAt: string;
+    createdAt: string;
     role: string;
   };
 
@@ -183,7 +184,7 @@ export async function getRecentDocuments(limit = 20) {
 
   const own = await db.orm.public.Document
     .where({ userId: session.user.id, isDeleted: false })
-    .select('id', 'title', 'icon', 'updatedAt')
+    .select('id', 'title', 'icon', 'updatedAt', 'createdAt')
     .orderBy((m: any) => m.updatedAt.desc())
     .all();
 
@@ -200,9 +201,9 @@ export async function getRecentDocuments(limit = 20) {
     // `userId` and `isDeleted` are read to filter and then dropped.
     const doc = await db.orm.public.Document
       .where({ id: (grant as { documentId: string }).documentId })
-      .select('id', 'title', 'icon', 'updatedAt', 'userId', 'isDeleted')
+      .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'userId', 'isDeleted')
       .first() as {
-        id: string; title: string; icon: string | null; updatedAt: string;
+        id: string; title: string; icon: string | null; updatedAt: string; createdAt: string;
         userId: string; isDeleted: boolean;
       } | null;
     if (!doc || doc.isDeleted) continue;
@@ -212,6 +213,7 @@ export async function getRecentDocuments(limit = 20) {
       title: doc.title,
       icon: doc.icon,
       updatedAt: doc.updatedAt,
+      createdAt: doc.createdAt,
       role: (grant as { role: string }).role,
     });
   }

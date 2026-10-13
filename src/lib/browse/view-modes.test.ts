@@ -1,11 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
   DEFAULT_VIEW_MODE,
   LAYOUT_ENTRY_LABEL,
   VIEW_MODES,
   isViewMode,
+  readViewMode,
   resolveViewMode,
+  storeViewMode,
 } from './view-modes';
 
 /**
@@ -36,5 +38,39 @@ describe('the three modes', () => {
 describe('the entry sentence', () => {
   it('covers layout, view and sort in one line', () => {
     expect(LAYOUT_ENTRY_LABEL).toBe('编辑布局视图、排序等…');
+  });
+});
+
+describe('the remembered mode', () => {
+  // The test environment is node, so the storage the module probes for is stubbed here rather
+  // than assumed. `readViewMode`/`storeViewMode` guard on the global themselves.
+  const store = new Map<string, string>();
+  const fakeStorage = {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, value: string) => void store.set(key, value),
+    removeItem: (key: string) => void store.delete(key),
+  };
+
+  beforeEach(() => {
+    store.clear();
+    (globalThis as { localStorage?: unknown }).localStorage = fakeStorage;
+  });
+
+  afterEach(() => {
+    delete (globalThis as { localStorage?: unknown }).localStorage;
+  });
+
+  it('reads the default when nothing is stored', () => {
+    expect(readViewMode()).toBe(DEFAULT_VIEW_MODE);
+  });
+
+  it('remembers a choice on this device', () => {
+    storeViewMode('list');
+    expect(readViewMode()).toBe('list');
+  });
+
+  it('folds a corrupt stored value onto the default', () => {
+    fakeStorage.setItem('craft.browse.viewMode', 'kanban');
+    expect(readViewMode()).toBe('grid');
   });
 });

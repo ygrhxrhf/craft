@@ -30,3 +30,19 @@ export function isViewMode(value: unknown): value is BrowseViewMode {
 export function resolveViewMode(value: unknown): BrowseViewMode {
   return isViewMode(value) ? value : DEFAULT_VIEW_MODE;
 }
+
+/**
+ * Where the choice is remembered. The official build keeps the layout on the *space* preference,
+ * which is why the ledger parks it: a space-level preference syncs to every device the account is
+ * signed in on. Locally it stays on this device — same axis, deliberately not the same reach.
+ */
+const STORAGE_KEY = 'craft.browse.viewMode';
+
+export function readViewMode(): BrowseViewMode {
+  if (typeof localStorage === 'undefined') return DEFAULT_VIEW_MODE;
+  return resolveViewMode(localStorage.getItem(STORAGE_KEY));
+}
+
+export function storeViewMode(mode: BrowseViewMode): void {
+  if (typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY, mode);
+}

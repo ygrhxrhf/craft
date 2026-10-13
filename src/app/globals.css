@@ -216,6 +216,13 @@
   /* Browse-view width ceiling, from the official scalar table. */
   --browse-max-width: 1630px;
 
+  /* Checkbox dimensions — the official `_1fgll_` module reads all three from `--cb-*` so a
+     caller can resize the control without editing the component. 20px hit area around an 18px
+     box, 1.5px border. */
+  --cb-wrapper-size: 1.25rem;
+  --cb-size: 1.125rem;
+  --cb-border-width: 1.5px;
+
   /* Transitions — --transition-duration-fast .15s / -medium .2s / -slow .5s */
   --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 150ms var(--transition-easing);

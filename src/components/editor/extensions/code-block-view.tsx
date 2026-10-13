@@ -6,6 +6,7 @@ import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { CODE_LANGUAGES, filterLanguages } from '@/lib/editor/code-languages';
 import { appearsInLanguageMenu } from '@/lib/editor/mermaid-surface';
+import { storeDefaultLanguage, storeDefaultTheme } from '@/lib/editor/code-preferences';
 import { CODE_THEMES, DEFAULT_CODE_THEME, filterThemes, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
 import { SearchableSelect } from './searchable-select';
 
@@ -42,7 +43,10 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
           value={language}
           options={languages}
           onFilter={(query) => filterLanguages(languages, query)}
-          onChange={(next) => updateAttributes({ language: next })}
+          onChange={(next) => {
+            updateAttributes({ language: next });
+            storeDefaultLanguage(next);
+          }}
         />
         <SearchableSelect
           label="代码主题"
@@ -54,7 +58,10 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
               .filter((theme) => themes.some((option) => option.value === theme.id))
               .map((theme) => ({ value: theme.id, label: themeLabel(theme) }))
           }
-          onChange={(next) => updateAttributes({ themeId: next })}
+          onChange={(next) => {
+            updateAttributes({ themeId: next });
+            storeDefaultTheme(next);
+          }}
         />
         <button
           type="button"

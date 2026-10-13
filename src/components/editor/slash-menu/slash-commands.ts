@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
 import type { ComponentType } from 'react';
+import { readDefaultLanguage, readDefaultTheme } from '@/lib/editor/code-preferences';
 import { uploadFile } from '@/lib/upload-client';
 import { createWhiteboard } from '@/actions/whiteboard/whiteboard';
 import { requestImageGen } from '@/components/editor/ai/ImageGenDialog';
@@ -183,7 +184,17 @@ export const slashCommands: SlashCommand[] = [
     keywords: ['code', 'snippet', '代码', '代码块'],
     category: '高级块',
     command: (editor, range) => {
-      editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+      // A fresh block takes the remembered defaults (G1166) rather than the node defaults.
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .toggleCodeBlock()
+        .updateAttributes('codeBlock', {
+          language: readDefaultLanguage(),
+          themeId: readDefaultTheme(),
+        })
+        .run();
     },
   },
   {

@@ -5,8 +5,12 @@ import {
   PSEUDO_LANGUAGES,
   isValidDefaultLanguage,
   isValidDefaultTheme,
+  readDefaultLanguage,
+  readDefaultTheme,
   resolveDefaultLanguage,
   resolveDefaultTheme,
+  storeDefaultLanguage,
+  storeDefaultTheme,
 } from './code-preferences';
 
 /**
@@ -44,6 +48,28 @@ describe('the default language preference', () => {
   it('accepts an ordinary language and rejects a non-string', () => {
     expect(isValidDefaultLanguage('python')).toBe(true);
     expect(isValidDefaultLanguage(42)).toBe(false);
+  });
+
+  it('remembers a choice on this device and refuses a pseudo-language', () => {
+    const store = new Map<string, string>();
+    (globalThis as { localStorage?: unknown }).localStorage = {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => void store.set(key, value),
+    };
+    try {
+      expect(readDefaultTheme()).toBe('auto');
+      storeDefaultTheme('nord');
+      expect(readDefaultTheme()).toBe('nord');
+      storeDefaultTheme('nonsense');
+      expect(readDefaultTheme()).toBe('auto');
+
+      storeDefaultLanguage('python');
+      expect(readDefaultLanguage()).toBe('python');
+      storeDefaultLanguage('mermaid');
+      expect(readDefaultLanguage()).toBe('python');
+    } finally {
+      delete (globalThis as { localStorage?: unknown }).localStorage;
+    }
   });
 
   it('folds an excluded or unknown value onto javascript', () => {

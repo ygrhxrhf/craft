@@ -182,10 +182,19 @@ describe('the trap itself (live database)', () => {
   // discovered in production.
   it('matches nothing in the shorthand, returns rows through the callback', async () => {
     const db = await getDb();
-    const seeded = await db.orm.public.Document.select('id', 'userId').limit(2).all();
-    if (seeded.length < 2) return; // empty dev database — nothing to compare
+    // Scope to one user: other suites leave documents behind for different
+    // users, and a cross-user sample makes the id lookup below return fewer
+    // rows than were sampled.
+    const probe = await db.orm.public.Document.select('userId').limit(1).all();
+    if (probe.length === 0) return; // empty dev database — nothing to compare
+    const userId = String((probe[0] as any).userId);
+    const seeded = await db.orm.public.Document
+      .where((d: any) => d.userId.eq(userId))
+      .select('id', 'userId')
+      .limit(2)
+      .all();
+    if (seeded.length < 2) return; // not enough rows for one user — nothing to compare
     const ids = seeded.map((r: any) => String(r.id));
-    const userId = String(seeded[0].userId);
 
     const throughCallback = await db.orm.public.Document
       .where((d: any) => d.id.in(ids))

@@ -1,0 +1,84 @@
+// src/components/sync/create-local.ts
+// 新建文档/文件夹的本地创建通道（brief 映射：本地先生成 id + applyLocal）。
+// 与 local-records.ts 分文件：本模块静态引 Server Action，而 local-records 的
+// 纯逻辑测试（mergePending 等）不该把 next-auth/next/server 拖进测试模块图。
+import { getSyncManager } from '@/lib/sync-core';
+import { createDocument } from '@/actions/document/create';
+import { createFolder } from '@/actions/folder/create';
+
+/**
+ * 新建文档（brief 映射：本地先生成 crypto.randomUUID()，applyLocal 全字段）。
+ * flushNow 让服务端在跳转前可见（离线时 flush 短路，op 留在队列，离线可用）。
+ * 仅建元数据；模板/副本等带正文的创建仍走服务端 action（正文不在 P1 同步通道）。
+ * session 尚未就绪时退回服务端 create（与迁移前行为一致，避免点击无响应）。
+ */
+export async function createDocumentLocal(input: {
+  userId?: string;
+  title?: string;
+  parentId?: string | null;
+  folderId?: string | null;
+}): Promise<string> {
+  if (!input.userId) {
+    const doc = await createDocument({
+      title: input.title ?? '无标题',
+      parentId: input.parentId ?? null,
+      folderId: input.folderId ?? null,
+    });
+    return doc.id;
+  }
+  const userId = input.userId;
+  const id = crypto.randomUUID();
+  const manager = getSyncManager();
+  await manager.applyLocal({
+    table: 'document',
+    id,
+    patch: {
+      userId,
+      title: input.title ?? '无标题',
+      parentId: input.parentId ?? null,
+      folderId: input.folderId ?? null,
+      icon: null,
+      coverImage: null,
+      coverType: null,
+      width: null,
+      pageStyle: null,
+      isTemplate: false,
+      isDailyNote: false,
+      dailyNoteDate: null,
+    },
+  });
+  await manager.flushNow();
+  return id;
+}
+
+/** 新建文件夹（同上；router.refresh 前先推服务端）。 */
+export async function createFolderLocal(input: {
+  userId?: string;
+  name?: string;
+  parentId?: string | null;
+}): Promise<string> {
+  if (!input.userId) {
+    const folder = await createFolder({
+      name: input.name ?? '未命名文件夹',
+      parentId: input.parentId ?? null,
+    });
+    return folder.id;
+  }
+  const userId = input.userId;
+  const id = crypto.randomUUID();
+  const manager = getSyncManager();
+  await manager.applyLocal({
+    table: 'folder',
+    id,
+    patch: {
+      userId,
+      name: input.name ?? '未命名文件夹',
+      parentId: input.parentId ?? null,
+      icon: null,
+      isDeleted: false,
+      deletedAt: null,
+    },
+  });
+  await manager.flushNow();
+  return id;
+}

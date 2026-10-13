@@ -375,6 +375,14 @@ test('recurring task rolls forward to the next occurrence', async ({ page }) => 
   await expect(instances).toHaveCount(2);
   await expect(page.locator('span.line-through', { hasText: title })).toHaveCount(1);
   await expect(instances.locator('span', { hasText: '每天' })).toHaveCount(2);
+
+  // 删除 → applyLocal(patch:null) + flushNow。刷新后仍只剩一期才算数：
+  // 只验"屏上消失"会漏掉"仅本地 store 生效、服务端没落墓碑"这一类回归（读路径是服务端权威行）。
+  await card.getByLabel('删除任务').click();
+  await expect(instances).toHaveCount(1);
+  await page.reload();
+  await expect(instances).toHaveCount(1);
+  await expect(page.locator('span.line-through', { hasText: title })).toHaveCount(1);
 });
 
 test('镜像 copies another document’s block in read-only form', async ({ page }) => {

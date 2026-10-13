@@ -99,7 +99,7 @@ export async function getFavoriteDocuments() {
   }> = [];
 
   const favorites = await db.orm.public.Favorite
-    .where({ userId: session.user.id })
+    .where({ userId: session.user.id, deletedAt: null })
     .orderBy((m: any) => m.order.asc())
     .all();
 

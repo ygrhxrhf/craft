@@ -1,0 +1,147 @@
+import { describe, it, expect, vi } from 'vitest';
+import { createReconciler, SyncAuthError } from './reconciler';
+import { createMemoryStore } from './store';
+
+const ok = (body: unknown) => new Response(JSON.stringify(body), { status: 200 });
+
+describe('reconciler.pull', () => {
+  it('hasMore 循环拉完，每批即应用并推进 cursor', async () => {
+    const store = await createMemoryStore(); await store.init();
+    const pages = [
+      ok({ records: [{ table: 'folder', id: 'f1', op: 'upsert', data: { name: 'a' }, syncTs: '2026-09-28T10:00:00.000Z' }],
+           cursor: '2026-09-28T10:00:00.000Z|f1', hasMore: true }),
+      ok({ records: [{ table: 'folder', id: 'f2', op: 'upsert', data: { name: 'b' }, syncTs: '2026-09-28T10:00:01.000Z' }],
+           cursor: '2026-09-28T10:00:01.000Z|f2', hasMore: false }),
+    ];
+    const fetchImpl = vi.fn(async () => pages.shift()!);
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    const out = await r.pull();
+    expect(out.applied).toBe(2);
+    expect(await store.get('folder', 'f1')).not.toBeNull();
+    expect(await store.getCursor()).toEqual({ ts: '2026-09-28T10:00:01.000Z', id: 'f2' });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    // 第二次请求带上了第一页的 cursor
+    expect((fetchImpl.mock.calls[1] as any)[0]).toContain('since=' +
+      encodeURIComponent('2026-09-28T10:00:00.000Z|f1'));
+  });
+
+  it('full 模式（首轮）：本地存在而远端全量中缺失的行 → 判定删除（spec 6.4）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.applyRemote([{ table: 'folder', id: 'ghost', op: 'upsert',
+      data: { name: 'g' }, syncTs: '2026-09-28T10:00:00.000Z' }]);
+    const fetchImpl = vi.fn(async () => ok({ records: [], cursor: '1970-01-01T00:00:00.000Z|', hasMore: false }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    const out = await r.pull({ full: true });
+    expect(out.deletedLocally).toContain('folder::ghost');
+    expect((await store.get('folder', 'ghost'))?.op).toBe('delete');
+  });
+
+  it('回环抑制：cursor 参数在响应 cursor ≤ 本地时不再触发（游标只前进）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.setCursor({ ts: '2026-09-28T12:00:00.000Z', id: 'z' });
+    const fetchImpl = vi.fn(async () => ok({ records: [], cursor: '2026-09-28T11:00:00.000Z|a', hasMore: false }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await r.pull();
+    expect(await store.getCursor()).toEqual({ ts: '2026-09-28T12:00:00.000Z', id: 'z' });
+  });
+
+  // ---- carry-in 1：T4 空页游标（parseCursor 返回 null 的容忍与防空转）----
+
+  it('carry-in 1a：空页游标不可解析且 hasMore=false → 不崩溃，保留原游标，只请求一次', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.setCursor({ ts: '2026-09-28T12:00:00.000Z', id: 'z' });
+    const fetchImpl = vi.fn(async () => ok({ records: [], cursor: '1970-01-01T00:00:00.000Z|', hasMore: false }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    const out = await r.pull();
+    expect(out.applied).toBe(0);
+    expect(await store.getCursor()).toEqual({ ts: '2026-09-28T12:00:00.000Z', id: 'z' });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it('carry-in 1b：hasMore=true 但游标不可解析（服务端 bug）→ 抛描述性错误而非空转', async () => {
+    const store = await createMemoryStore(); await store.init();
+    const fetchImpl = vi.fn(async () => ok({ records: [], cursor: '1970-01-01T00:00:00.000Z|', hasMore: true }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await expect(r.pull()).rejects.toThrow(/cursor/i);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it('carry-in 1c：hasMore=true 但响应游标不前进（服务端 bug）→ 抛错而非重复拉同一页', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.setCursor({ ts: '2026-09-28T12:00:00.000Z', id: 'z' });
+    const fetchImpl = vi.fn(async () => ok({ records: [], cursor: '2026-09-28T11:00:00.000Z|a', hasMore: true }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await expect(r.pull()).rejects.toThrow(/advance|stall/i);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  // ---- carry-in 2：C4 父墓碑收养（spec 5.7 C4）----
+
+  it('carry-in 2：pull 到父墓碑后，子行 parentId/folderId 置空迁至根（spec 5.7 C4）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.applyRemote([
+      { table: 'folder', id: 'pf', op: 'upsert', data: { name: 'parent' }, syncTs: '2026-09-28T10:00:00.000Z' },
+      { table: 'folder', id: 'sub', op: 'upsert', data: { name: 'child-folder', parentId: 'pf' }, syncTs: '2026-09-28T10:00:00.000Z' },
+      { table: 'document', id: 'd1', op: 'upsert', data: { title: 'child-doc', folderId: 'pf' }, syncTs: '2026-09-28T10:00:00.000Z' },
+      { table: 'document', id: 'd2', op: 'upsert', data: { title: 'nested-doc', parentId: 'd3' }, syncTs: '2026-09-28T10:00:00.000Z' },
+      { table: 'document', id: 'd3', op: 'upsert', data: { title: 'parent-doc' }, syncTs: '2026-09-28T10:00:00.000Z' },
+    ]);
+    const fetchImpl = vi.fn(async () => ok({
+      records: [
+        { table: 'folder', id: 'pf', op: 'delete', syncTs: '2026-09-28T11:00:00.000Z' },
+        { table: 'document', id: 'd3', op: 'delete', syncTs: '2026-09-28T11:00:00.000Z' },
+      ],
+      cursor: '2026-09-28T11:00:00.000Z|d3', hasMore: false,
+    }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await r.pull();
+    expect((await store.get('document', 'd1'))?.data?.folderId).toBeNull();
+    expect((await store.get('folder', 'sub'))?.data?.parentId).toBeNull();
+    expect((await store.get('document', 'd2'))?.data?.parentId).toBeNull();
+    // 未被删的父引用不受影响
+    expect((await store.get('document', 'd1'))?.op).toBe('upsert');
+  });
+
+  // ---- 401 与错误状态 ----
+
+  it('sync 401 → 抛 SyncAuthError', async () => {
+    const store = await createMemoryStore(); await store.init();
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401 }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await expect(r.pull()).rejects.toBeInstanceOf(SyncAuthError);
+  });
+
+  it('其他 !ok（如 500）→ 抛带 status 的 Error', async () => {
+    const store = await createMemoryStore(); await store.init();
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ error: 'boom' }), { status: 500 }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await expect(r.pull()).rejects.toThrow(/500/);
+  });
+
+  // ---- I7：lastPullAt 记账（boot 据此判断 30 天全量对账）----
+
+  it('I7：pull 成功后写入 lastPullAt（增量与全量都写）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    const fetchImpl = vi.fn(async () => ok(
+      { records: [], cursor: '2026-09-28T10:00:00.000Z|z', hasMore: false }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await r.pull();
+    expect(await store.getKv('lastPullAt')).toBeTruthy();
+    await store.setKv('lastPullAt', '2026-01-01T00:00:00.000Z');
+    await r.pull({ full: true });
+    expect(await store.getKv('lastPullAt')).not.toBe('2026-01-01T00:00:00.000Z');
+  });
+
+  it('I7：pull 失败（401/500）不写 lastPullAt（未成功对账不得当作新鲜）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    const e500 = createReconciler(store, {
+      fetchImpl: (async () => new Response('{}', { status: 500 })) as any });
+    await expect(e500.pull()).rejects.toThrow();
+    expect(await store.getKv('lastPullAt')).toBeNull();
+
+    const e401 = createReconciler(store, {
+      fetchImpl: (async () => new Response('{}', { status: 401 })) as any });
+    await expect(e401.pull()).rejects.toBeInstanceOf(SyncAuthError);
+    expect(await store.getKv('lastPullAt')).toBeNull();
+  });
+});

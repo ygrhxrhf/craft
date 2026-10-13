@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useSession } from 'next-auth/react';
 import {
   Camera,
   ChevronDown,
@@ -13,6 +14,7 @@ import {
 import { getPreferences, updatePreferences } from '@/actions/user/preferences';
 import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
+import { getSyncManager } from '@/lib/sync-core';
 import { Switch } from '@/components/ui/switch';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
 import { cn } from 'cn';
@@ -126,6 +128,7 @@ type SwitchKey = 'notifyComments' | 'notifyReminders' | 'notifyDaily';
 
 export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const { setTheme } = useTheme();
+  const { data: session } = useSession();
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [accent, setAccent] = useState('blue');
   const [savingSwitch, setSavingSwitch] = useState(false);
@@ -142,32 +145,36 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     const base = prefs ?? (await getPreferences().catch(() => null));
     if (!base) return;
 
-    // Same rule as setSwitch below: a choice paints only once the write lands. Painting it
-    // first showed 深色 as the stored theme 494ms before the server accepted it, and a
-    // reload inside that window aborts the action. The theme itself waits with it, or
-    // next-themes keeps the unsaved choice in localStorage and the row silently disagrees
-    // with every later read.
-    try {
-      await updatePreferences(patch);
-    } catch {
+    // 偏好（user 表）→ applyLocal；本地已乐观更新，失败（IDB 异常）才回滚。
+    // 主题本身随写入一起改：applyLocal 只入队，不再有"服务端未接受"的窗口。
+    const next = { ...base, ...patch };
+    setPrefs(next);
+    if (patch.theme) setTheme(patch.theme);
+    const userId = session?.user?.id;
+    if (!userId) {
+      await updatePreferences(patch).catch(() => setPrefs(base));
       return;
     }
-    if (patch.theme) setTheme(patch.theme);
-    setPrefs({ ...base, ...patch });
+    await getSyncManager()
+      .applyLocal({ table: 'user', id: userId, patch: { ...patch } })
+      .catch(() => setPrefs(base));
   };
 
   const setSwitch = async (key: SwitchKey, value: boolean) => {
     const base = prefs ?? (await getPreferences().catch(() => null));
     if (!base) return;
 
-    // A switch paints only after the write lands. Painting first makes an
-    // abandoned navigation look like a saved preference: the action dies with
-    // the page and the row keeps its old value.
+    // 开关同 setPref：乐观更新 + applyLocal，失败回滚。
     setSavingSwitch(true);
     setSwitchError(null);
+    setPrefs({ ...base, [key]: value });
+    const userId = session?.user?.id;
     try {
-      await updatePreferences({ [key]: value });
-      setPrefs({ ...base, [key]: value });
+      if (!userId) {
+        await updatePreferences({ [key]: value });
+      } else {
+        await getSyncManager().applyLocal({ table: 'user', id: userId, patch: { [key]: value } });
+      }
     } catch {
       setPrefs(base);
       setSwitchError('开关没有保存，请重试');

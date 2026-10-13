@@ -5,15 +5,13 @@ import Link from 'next/link';
 import { Plus, X } from 'lucide-react';
 import {
   attachTag,
-  detachTag,
   getDocumentTags,
   getTags,
   type TagRecord,
 } from '@/actions/tag/tag';
-import { useMetadataRevision } from '@/lib/store/use-sync-store';
-
-/** Tables the tag panel renders; a far-side change here means "reload". */
-const TAG_TABLES = ['Tag', 'DocumentTag'];
+import { getSyncManager } from '@/lib/sync-core';
+import { normalizeTagName } from '@/lib/tag/normalize';
+import { toast } from '@/components/ui/toast';
 
 interface TagsSectionProps {
   documentId: string;
@@ -24,8 +22,6 @@ export function TagsSection({ documentId }: TagsSectionProps) {
   const [all, setAll] = useState<TagRecord[]>([]);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
-  // Bumped by the metadata sync provider when another device touched a tag.
-  const syncRevision = useMetadataRevision(TAG_TABLES);
 
   const load = useCallback(async () => {
     const [mine, every] = await Promise.all([getDocumentTags(documentId), getTags()]);
@@ -35,15 +31,39 @@ export function TagsSection({ documentId }: TagsSectionProps) {
 
   useEffect(() => {
     void load();
-  }, [load, syncRevision]);
+  }, [load]);
+
+  // 远端（另一台设备）改了标签 → 重载；本地写走 applyLocal，由下面的乐观更新覆盖
+  useEffect(() => getSyncManager().onStoreChanged((table) => {
+    if (table === 'tag' || table === 'document_tag') void load();
+  }), [load]);
 
   const add = async (name: string) => {
     if (!name.trim() || busy) return;
+    const normalized = normalizeTagName(name);
+    if (!normalized) return;
     setBusy(true);
     try {
-      await attachTag(documentId, name);
-      setDraft('');
-      await load();
+      const existing = all.find((tag) => normalizeTagName(tag.name) === normalized);
+      if (existing) {
+        // 已有标签挂链接 → applyLocal（复合键 id 与拉取一致；deletedAt:null 复用墓碑行）
+        await getSyncManager().applyLocal({
+          table: 'document_tag',
+          id: `${documentId}__${existing.id}`,
+          patch: { documentId, tagId: existing.id, deletedAt: null },
+        });
+        setDraft('');
+        // 乐观挂上：服务端要等推送，load() 会把新链接读丢
+        setTags((prev) => (prev.some((t) => t.id === existing.id) ? prev : [...prev, existing]));
+      } else {
+        // 新标签名 → 服务端 find-or-create（同名墓碑复用/唯一键在服务端收敛，安全）
+        await attachTag(documentId, name);
+        setDraft('');
+        await load();
+      }
+    } catch {
+      // spec D7-④ 离线提示：新标签走服务端 action，失败（多为离线）给反馈
+      toast.add({ id: 'offline-hint', type: 'warning', title: '需要网络' });
     } finally {
       setBusy(false);
     }
@@ -53,8 +73,15 @@ export function TagsSection({ documentId }: TagsSectionProps) {
     if (busy) return;
     setBusy(true);
     try {
-      await detachTag(documentId, tagId);
-      await load();
+      // 解除打标 → applyLocal（DocumentTag 无独立 id，delete op 缺复合键会 400，
+      // 故用 upsert + deletedAt 写墓碑，语义等价）
+      await getSyncManager().applyLocal({
+        table: 'document_tag',
+        id: `${documentId}__${tagId}`,
+        patch: { documentId, tagId, deletedAt: new Date().toISOString() },
+      });
+      // 乐观移除：load() 此刻仍会读到服务端未推送的旧行
+      setTags((prev) => prev.filter((t) => t.id !== tagId));
     } finally {
       setBusy(false);
     }

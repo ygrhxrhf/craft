@@ -9,7 +9,6 @@ const eslintConfig = defineConfig([
     rules: {
       // 项目现状:大量 server action 使用 (t: any) 形式访问 ORM 结果,暂降为警告
       "@typescript-eslint/no-explicit-any": "warn",
-      "react-hooks/set-state-in-effect": "warn",
     },
   },
   // Override default ignores of eslint-config-next.

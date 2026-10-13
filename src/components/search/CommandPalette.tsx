@@ -15,10 +15,13 @@ import {
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { searchAll } from '@/actions/document/search';
 import type { SearchResultDoc, SearchResultBlock, SearchResultRow } from '@/actions/document/search';
-import { createDocument } from '@/actions/document/create';
+import { createDocumentLocal } from '@/components/sync/create-local';
+import { toast } from '@/components/ui/toast';
+import { useSession } from 'next-auth/react';
 
 export function CommandPalette() {
   const router = useRouter();
+  const { data: session } = useSession();
   const { isOpen, close, open, seedQuery } = useCommandPaletteStore();
   const [query, setQuery] = useState('');
   const [docs, setDocs] = useState<SearchResultDoc[]>([]);
@@ -57,6 +60,11 @@ export function CommandPalette() {
       }
       setSearching(true);
       try {
+        // spec D7-④ 离线提示：搜索走服务端，需要网络（固定 id 防重复弹）
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+          toast.add({ id: 'offline-hint', type: 'warning', title: '需要网络' });
+          return;
+        }
         const result = await searchAll(q);
         setDocs(result.documents);
         setBlocks(result.blocks);
@@ -96,8 +104,9 @@ export function CommandPalette() {
   const handleNewDocument = async () => {
     close();
     setQuery('');
-    const doc = await createDocument({ title: '无标题' });
-    if (doc) router.push(`/documents/${(doc as { id: string }).id}`);
+    // 新建文档 → 本地 id + applyLocal + flushNow 后跳转（服务端可见）
+    const id = await createDocumentLocal({ userId: session?.user?.id });
+    router.push(`/documents/${id}`);
   };
 
   const hasQuery = query.trim().length > 0;

@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export async function addProperty(data: {
   collectionId: string;
@@ -33,6 +34,7 @@ export async function addProperty(data: {
     isVisible: true,
   });
 
+  await emitSyncEventSafe(db, session.user.id, ['collection_property'], data.collectionId);
   revalidatePath(`/collections/${data.collectionId}`);
 }
 
@@ -59,6 +61,7 @@ export async function updateProperty(
 
   await db.orm.public.CollectionProperty.where({ id: propertyId }).update(updateData);
 
+  await emitSyncEventSafe(db, session.user.id, ['collection_property'], propertyId);
   revalidatePath(`/collections/${(property as any).collectionId}`);
 }
 
@@ -74,9 +77,18 @@ export async function deleteProperty(propertyId: string) {
     throw new Error('集合不存在');
   }
 
-  await db.orm.public.CollectionValue.where({ propertyId }).delete();
-  await db.orm.public.CollectionProperty.where({ id: propertyId }).delete();
+  await db.orm.public.CollectionValue.where({ propertyId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+  await db.orm.public.CollectionProperty.where({ id: propertyId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
 
+  // 属性 + 其取值同批软删 → 合并一次广播
+  await emitSyncEventSafe(db, session.user.id,
+    ['collection_property', 'collection_value'], propertyId);
   revalidatePath(`/collections/${(property as any).collectionId}`);
 }
 
@@ -105,5 +117,6 @@ export async function reorderProperties(
       .update({ order: i });
   }
 
+  await emitSyncEventSafe(db, session.user.id, ['collection_property'], collectionId);
   revalidatePath(`/collections/${collectionId}`);
 }

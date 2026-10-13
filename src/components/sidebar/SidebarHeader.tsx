@@ -2,17 +2,19 @@
 
 import { Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { createDocument } from '@/actions/document/create';
+import { useSession } from 'next-auth/react';
+import { createDocumentLocal } from '@/components/sync/create-local';
 import { useRouter } from 'next/navigation';
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 
 export function SidebarHeader() {
   const router = useRouter();
+  const { data: session } = useSession();
   const openPalette = useCommandPaletteStore((s) => s.open);
 
   async function handleNewDoc() {
-    const doc = await createDocument({ title: '无标题' });
-    if (doc) router.push(`/documents/${doc.id}`);
+    const id = await createDocumentLocal({ userId: session?.user?.id });
+    router.push(`/documents/${id}`);
   }
 
   return (

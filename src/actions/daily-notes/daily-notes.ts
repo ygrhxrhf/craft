@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { dailyNoteTitle } from '@/lib/utils/daily-note';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface DailyNoteItem {
   id: string;
@@ -79,7 +80,11 @@ export async function getOrCreateTodayNote() {
     folderId,
     isDailyNote: true,
     dailyNoteDate: start,
+    // No DB default on metaUpdatedAt; without it new rows never enter the
+    // incremental-sync stream (document tsCol is metaUpdatedAt).
+    metaUpdatedAt: now.toISOString(),
   });
 
+  await emitSyncEventSafe(db, uid, ['document'], (doc as any).id ?? uid);
   return { id: (doc as any).id as string, created: true };
 }

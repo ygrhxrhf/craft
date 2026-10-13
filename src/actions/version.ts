@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface VersionItem {
   id: string;
@@ -107,12 +108,16 @@ export async function restoreVersion(versionId: string) {
     wordCount: d.wordCount,
   });
 
+  const now = new Date().toISOString();
   await db.orm.public.Document.where({ id: v.documentId }).update({
     content: v.content,
     plainText: v.plainText,
     wordCount: v.wordCount,
     title: v.title,
+    // title 属 DOC_META_COLS → bump metaUpdatedAt 才进增量流（I2 NOTE）
+    metaUpdatedAt: now,
   } as Record<string, unknown>);
+  await emitSyncEventSafe(db, session.user.id, ['document'], v.documentId);
 
   return { documentId: v.documentId, content: v.content };
 }

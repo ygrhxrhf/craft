@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export async function addItem(collectionId: string) {
   const session = await auth();
@@ -25,6 +26,7 @@ export async function addItem(collectionId: string) {
     order: maxOrder + 1,
   });
 
+  await emitSyncEventSafe(db, session.user.id, ['collection_item'], itemId);
   revalidatePath(`/collections/${collectionId}`);
   return { id: itemId, collectionId, order: maxOrder + 1 };
 }
@@ -45,10 +47,19 @@ export async function deleteItem(itemId: string) {
 
   const values = await db.orm.public.CollectionValue.where({ itemId }).all();
   for (const v of values) {
-    await db.orm.public.CollectionValue.where({ id: (v as any).id }).delete();
+    await db.orm.public.CollectionValue.where({ id: (v as any).id }).update({
+      deletedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
   }
 
-  await db.orm.public.CollectionItem.where({ id: itemId }).delete();
+  await db.orm.public.CollectionItem.where({ id: itemId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+  // 条目 + 其取值同批软删 → 合并一次广播
+  await emitSyncEventSafe(db, session.user.id,
+    ['collection_item', 'collection_value'], itemId);
 
   revalidatePath(`/collections/${(item as any).collectionId}`);
 }
@@ -68,6 +79,7 @@ export async function updateItemOrder(itemId: string, newOrder: number) {
   await db.orm.public.CollectionItem.where({ id: itemId }).update({
     order: newOrder,
   });
+  await emitSyncEventSafe(db, session.user.id, ['collection_item'], itemId);
 }
 
 export async function setItemValue(
@@ -108,5 +120,6 @@ export async function setItemValue(
     });
   }
 
+  await emitSyncEventSafe(db, session.user.id, ['collection_value'], itemId);
   revalidatePath(`/collections/${(item as any).collectionId}`);
 }

@@ -37,6 +37,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -81,3 +82,6 @@ dist/
 
 # Turbopack 缓存备份
 /.next.bak-*/
+
+# CloudRun 构建上下文暂存（scripts/deploy 生成，勿入库）
+/.cloudrun-src/

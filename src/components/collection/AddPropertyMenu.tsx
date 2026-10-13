@@ -12,8 +12,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { addProperty } from '@/actions/collection/properties';
 import { getCollections } from '@/actions/collection/collection';
+import { getSyncManager } from '@/lib/sync-core';
+import { readLocalRecords } from '@/components/sync/local-records';
 import { evaluateFormula, type FormulaResult } from '@/lib/collection/formula';
 
 const PROPERTY_TYPES: { value: string; label: string }[] = [
@@ -57,7 +58,28 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
     try {
       const config =
         type === 'formula' ? { expression } : type === 'relation' ? { collectionId: targetId || null } : undefined;
-      await addProperty({ collectionId, name: name.trim(), type, config });
+      // 新属性 → 本地 id + applyLocal（order = 本地镜像内该集合存活属性数，与
+      // 服务端 addProperty 的算法一致）；flushNow 后 refresh 才能读到新行
+      const rows = await readLocalRecords('collection_property');
+      const order = rows.filter((r) =>
+        r.op !== 'delete' &&
+        !r.data?.deletedAt &&
+        r.data?.collectionId === collectionId
+      ).length;
+      const manager = getSyncManager();
+      await manager.applyLocal({
+        table: 'collection_property',
+        id: crypto.randomUUID(),
+        patch: {
+          collectionId,
+          name: name.trim(),
+          type,
+          config: config ? JSON.stringify(config) : null,
+          order,
+          isVisible: true,
+        },
+      });
+      await manager.flushNow();
       setOpen(false);
       setName('');
       setExpression('');

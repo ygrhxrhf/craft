@@ -4,6 +4,7 @@ import { assertOwned, requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { normalizeTagColor, normalizeTagName } from '@/lib/tag/normalize';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface TagRecord {
   id: string;
@@ -15,7 +16,7 @@ export interface TagRecord {
 export async function getTags(): Promise<TagRecord[]> {
   const userId = await requireUserId();
   const db = await getDb();
-  const tags = (await db.orm.public.Tag.where({ userId }).all()) as (TagRecord & {
+  const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null }).all()) as (TagRecord & {
     documents?: unknown[];
   })[];
 
@@ -27,12 +28,12 @@ export async function getDocumentTags(documentId: string): Promise<TagRecord[]> 
   await requireDocumentAccess(documentId, userId, 'viewer');
 
   const db = await getDb();
-  const links = (await db.orm.public.DocumentTag.where({ documentId }).all()) as {
+  const links = (await db.orm.public.DocumentTag.where({ documentId, deletedAt: null }).all()) as {
     tagId: string;
   }[];
   if (links.length === 0) return [];
 
-  const tags = (await db.orm.public.Tag.where({ userId }).all()) as TagRecord[];
+  const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null }).all()) as TagRecord[];
   const wanted = new Set(links.map((link) => link.tagId));
   return tags.filter((tag) => wanted.has(tag.id));
 }
@@ -43,9 +44,20 @@ async function findOrCreateTag(userId: string, name: string, color?: string) {
   if (!normalized) return null;
 
   const db = await getDb();
-  const existing = (await db.orm.public.Tag.where({ userId }).all()) as TagRecord[];
-  const found = existing.find((tag) => tag.name === normalized);
-  if (found) return found;
+  const found = (await db.orm.public.Tag.first({ name: normalized, userId })) as
+    | (TagRecord & { deletedAt?: string | null })
+    | null;
+  if (found) {
+    // 同名重建：命中含墓碑的旧行 → 清墓碑复用旧 id（唯一键 [name, userId] 不加 deletedAt 后缀）
+    if (found.deletedAt) {
+      await db.orm.public.Tag.where({ id: found.id }).update({
+        deletedAt: null,
+        updatedAt: new Date().toISOString(),
+      });
+      await emitSyncEventSafe(db, userId, ['tag'], found.id);
+    }
+    return found;
+  }
 
   const created = (await db.orm.public.Tag.create({
     id: crypto.randomUUID(),
@@ -54,6 +66,7 @@ async function findOrCreateTag(userId: string, name: string, color?: string) {
     color: normalizeTagColor(color),
   })) as TagRecord;
 
+  await emitSyncEventSafe(db, userId, ['tag'], created.id);
   return created;
 }
 
@@ -65,10 +78,21 @@ export async function attachTag(documentId: string, name: string, color?: string
   if (!tag) return null;
 
   const db = await getDb();
-  const existing = await db.orm.public.DocumentTag.first({ documentId, tagId: tag.id });
-  if (!existing) {
-    await db.orm.public.DocumentTag.create({ documentId, tagId: tag.id });
+  const link = await db.orm.public.DocumentTag.first({ documentId, tagId: tag.id });
+  if (link && link.deletedAt) {
+    // 含墓碑的旧行命中：清墓碑复用（@@id([documentId, tagId]) 不带 deletedAt）
+    await db.orm.public.DocumentTag
+      .where({ documentId, tagId: tag.id })
+      .update({ deletedAt: null, updatedAt: new Date().toISOString() });
+    await emitSyncEventSafe(db, userId, ['document_tag'], `${documentId}__${tag.id}`);
+  } else if (!link) {
+    await db.orm.public.DocumentTag.create({
+      documentId, tagId: tag.id, createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+    await emitSyncEventSafe(db, userId, ['document_tag'], `${documentId}__${tag.id}`);
   }
+  // 活行命中：no-op（不 bump updatedAt，避免未变更行产生重复 sync 事件）
   return tag;
 }
 
@@ -79,7 +103,11 @@ export async function detachTag(documentId: string, tagId: string) {
 
   const db = await getDb();
   const link = await db.orm.public.DocumentTag.first({ documentId, tagId });
-  if (link) await db.orm.public.DocumentTag.where({ documentId, tagId }).delete();
+  if (link) {
+    await db.orm.public.DocumentTag
+      .where({ documentId, tagId })
+      .update({ deletedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+  }
   return true;
 }
 
@@ -107,7 +135,10 @@ export async function deleteTag(tagId: string) {
   await assertOwned('Tag', tagId, userId, '标签不存在');
 
   const db = await getDb();
-  await db.orm.public.Tag.where({ id: tagId }).delete();
+  await db.orm.public.Tag.where({ id: tagId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
   return true;
 }
 
@@ -116,7 +147,7 @@ export async function getDocumentsByTag(tagId: string) {
   await assertOwned('Tag', tagId, userId, '标签不存在');
 
   const db = await getDb();
-  const links = (await db.orm.public.DocumentTag.where({ tagId }).all()) as {
+  const links = (await db.orm.public.DocumentTag.where({ tagId, deletedAt: null }).all()) as {
     documentId: string;
   }[];
   if (links.length === 0) return [];

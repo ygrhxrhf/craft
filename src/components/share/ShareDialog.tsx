@@ -29,6 +29,8 @@ import {
 } from '@/actions/document/share';
 import type { DocumentSharePermission } from '@/lib/share/permission';
 import { cn } from 'cn';
+import { getSyncManager } from '@/lib/sync-core';
+import { findDocumentShareId } from '@/components/sync/local-records';
 
 interface ShareDialogProps {
   documentId: string;
@@ -92,7 +94,17 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const handlePublishedChange = (checked: boolean) => {
     setIsPublished(checked);
     startTransition(async () => {
-      await setSharePublished(documentId, checked);
+      // 发布开关 → applyLocal（share 行 id 走本地镜像；镜像没有 → 退回服务端 action）
+      const shareId = await findDocumentShareId(documentId);
+      if (shareId) {
+        await getSyncManager().applyLocal({
+          table: 'document_share',
+          id: shareId,
+          patch: { isPublished: checked },
+        });
+      } else {
+        await setSharePublished(documentId, checked);
+      }
     });
   };
 

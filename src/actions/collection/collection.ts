@@ -3,6 +3,10 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+
+// I2：集合系列表用 updatedAt 自动 bump，落库后广播即可；失败不阻断业务。
+const emitCollections = emitSyncEventSafe;
 
 export async function createCollection(data: {
   name: string;
@@ -42,6 +46,10 @@ export async function createCollection(data: {
     isVisible: true,
   });
 
+  // 集合 + 默认视图 + 默认属性同批创建 → 合并为一次广播
+  await emitCollections(db, session.user.id,
+    ['collection', 'collection_view', 'collection_property'], collectionId);
+
   revalidatePath('/collections');
   return { id: collectionId };
 }
@@ -65,6 +73,7 @@ export async function updateCollection(
   if (data.description !== undefined) updateData.description = data.description || null;
 
   await db.orm.public.Collection.where({ id }).update(updateData);
+  await emitCollections(db, session.user.id, ['collection'], id);
   revalidatePath('/collections');
   revalidatePath(`/collections/${id}`);
 }
@@ -83,6 +92,7 @@ export async function deleteCollection(id: string) {
     isDeleted: true,
     deletedAt: new Date(),
   });
+  await emitCollections(db, session.user.id, ['collection'], id);
 
   revalidatePath('/collections');
 }
@@ -99,17 +109,17 @@ export async function getCollection(id: string) {
   if (c.userId !== session.user.id || c.isDeleted) return null;
 
   const properties = await db.orm.public.CollectionProperty
-    .where({ collectionId: id })
+    .where({ collectionId: id, deletedAt: null })
     .orderBy((m: any) => m.order.asc())
     .all();
 
   const items = await db.orm.public.CollectionItem
-    .where({ collectionId: id })
+    .where({ collectionId: id, deletedAt: null })
     .orderBy((m: any) => m.order.asc())
     .all();
 
   const views = await db.orm.public.CollectionView
-    .where({ collectionId: id })
+    .where({ collectionId: id, deletedAt: null })
     .orderBy((m: any) => m.order.asc())
     .all();
 
@@ -124,6 +134,7 @@ export async function getCollection(id: string) {
     : (await db.orm.public.CollectionValue
         // Callback form required: the object form silently matches nothing.
         .where((m: any) => m.itemId.in(itemIds))
+        .where({ deletedAt: null })
         .all() as Record<string, unknown>[]);
 
   const valuesByItem = new Map<string, Record<string, unknown>[]>();
@@ -179,8 +190,10 @@ export async function getCollections() {
       // column against JSON text and returns 0 rows without erroring — measured,
       // and pinned by src/prisma/where-shorthand.test.ts.
       .where((m: any) => m.collectionId.in(ids))
+      .where({ deletedAt: null })
       .all(),
     db.orm.public.CollectionItem.where((m: any) => m.collectionId.in(ids))
+      .where({ deletedAt: null })
       .select('id', 'collectionId')
       .all(),
   ]);

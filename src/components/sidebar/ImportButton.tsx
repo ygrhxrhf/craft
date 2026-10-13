@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { importMarkdownDocuments } from '@/actions/document/import';
 import { pickTextBundleEntry } from '@/lib/import/markdown';
+import { toast } from '@/components/ui/toast';
 
 interface PendingFile {
   name: string;
@@ -83,11 +84,24 @@ export function ImportButton() {
           <Download className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem onClick={() => fileRef.current?.click()}>
+          <DropdownMenuItem onClick={() => {
+            // spec D7-④ 离线提示：导入落库走服务端，需要网络
+            if (!navigator.onLine) {
+              toast.add({ id: 'offline-hint', type: 'warning', title: '需要网络' });
+              return;
+            }
+            fileRef.current?.click();
+          }}>
             <FileText className="mr-2 size-4" />
             Markdown 文件…
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => folderRef.current?.click()}>
+          <DropdownMenuItem onClick={() => {
+            if (!navigator.onLine) {
+              toast.add({ id: 'offline-hint', type: 'warning', title: '需要网络' });
+              return;
+            }
+            folderRef.current?.click();
+          }}>
             <FolderUp className="mr-2 size-4" />
             Text Bundle 文件夹…
           </DropdownMenuItem>

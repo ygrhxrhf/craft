@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Check, File, Minus, RotateCcw, Trash2, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
@@ -11,26 +11,89 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { restoreDocument, permanentDeleteDocument } from '@/actions/document/delete';
+import { permanentDeleteDocument } from '@/actions/document/delete';
+import { getSyncManager } from '@/lib/sync-core';
+import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
+import { getDeletedDocuments } from '@/actions/document/get';
 import { useRouter } from 'next/navigation';
 
+interface TrashDoc {
+  id: string;
+  title: string;
+  icon: string | null;
+  deletedAt: string | null;
+}
+
 interface TrashListProps {
-  documents: Array<{
-    id: string;
-    title: string;
-    icon: string | null;
-    deletedAt: string | null;
-  }>;
+  documents: TrashDoc[];
+}
+
+/** 纯逻辑：服务端删除行 + 本地未推送意图 → 回收站行（过滤条件同 getDeletedDocuments）。 */
+export function overlayTrashRows(serverDocs: TrashDoc[], pending: Map<string, PendingRow>): TrashDoc[] {
+  const merged = mergePending<TrashDoc>(serverDocs, pending, (id, p) => ({
+    id,
+    title: '无标题',
+    icon: null,
+    deletedAt: null,
+    ...(p.data as Partial<TrashDoc>),
+  }));
+  // getDeletedDocuments 按 isDeleted/deletedAt 过滤；pending 行要补同样的过滤
+  return merged.filter(d => d.deletedAt !== null && (d as { isDeleted?: boolean }).isDeleted !== false);
+}
+
+async function overlayOnProps(serverDocs: TrashDoc[]): Promise<TrashDoc[]> {
+  return overlayTrashRows(serverDocs, await readPendingRows('document'));
+}
+
+/** R-18：重取服务端权威删除行，再盖 pending overlay（ack+pull 后恢复的不回流、新删的带真实标题）。 */
+export async function loadTrashRows(): Promise<TrashDoc[]> {
+  const [fresh, pending] = await Promise.all([
+    getDeletedDocuments(),
+    readPendingRows('document'),
+  ]);
+  return overlayTrashRows(fresh, pending);
 }
 
 export function TrashList({ documents }: TrashListProps) {
   const router = useRouter();
+  const [rows, setRows] = useState<TrashDoc[]>(documents);
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const allSelected = selected.size === documents.length;
+  // 首屏 / router.refresh 后的新 prop 行：只做本地 overlay（不发服务端 action，离线安全）
+  useEffect(() => {
+    let alive = true;
+    overlayOnProps(documents).then((merged) => {
+      if (alive) setRows(merged);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [documents]);
+
+  // 恢复（applyLocal）/ 删除入站 / ack+pull → 在线时重取服务端权威行再 overlay（R-18）；
+  // 离线不发服务端 action，退回本地 overlay（刚移入/恢复的意图仍然即时可见）
+  useEffect(() => getSyncManager().onStoreChanged((table) => {
+    if (table !== 'document') return;
+    const offline = typeof navigator !== 'undefined' && !navigator.onLine;
+    (offline ? overlayOnProps(documents) : loadTrashRows())
+      .then(setRows)
+      .catch(() => {});
+  }), [documents]);
+
+  async function handleRestore(id: string) {
+    // 恢复 → applyLocal（patch: isDeleted:false, deletedAt:null）
+    await getSyncManager().applyLocal({
+      table: 'document',
+      id,
+      patch: { isDeleted: false, deletedAt: null },
+    });
+    router.refresh();
+  }
+
+  const allSelected = selected.size === rows.length;
   const someSelected = selected.size > 0;
 
   function toggle(id: string) {
@@ -43,7 +106,7 @@ export function TrashList({ documents }: TrashListProps) {
   }
 
   function toggleAll() {
-    setSelected(allSelected ? new Set() : new Set(documents.map(d => d.id)));
+    setSelected(allSelected ? new Set() : new Set(rows.map(d => d.id)));
   }
 
   function exitSelection() {
@@ -70,7 +133,7 @@ export function TrashList({ documents }: TrashListProps) {
     }
   }
 
-  if (documents.length === 0) {
+  if (rows.length === 0) {
     return (
       <div className="flex min-h-[180px] flex-col items-center justify-center rounded-[15px] bg-foreground/[0.03] px-6 text-center">
         <Trash2 className="mx-auto mb-2 size-8 text-foreground/40" />
@@ -99,7 +162,7 @@ export function TrashList({ documents }: TrashListProps) {
               aria-label="还原所选"
               title="还原所选"
               disabled={!someSelected || busy}
-              onClick={() => runSelected(restoreDocument)}
+              onClick={() => runSelected(handleRestore)}
             >
               <RotateCcw />
             </Button>
@@ -140,7 +203,7 @@ export function TrashList({ documents }: TrashListProps) {
         </button>
       )}
 
-      {documents.map(doc => {
+      {rows.map(doc => {
         const deletedDate = doc.deletedAt
           ? new Date(doc.deletedAt).toLocaleDateString('zh-CN')
           : '';
@@ -180,8 +243,7 @@ export function TrashList({ documents }: TrashListProps) {
                 variant="ghost"
                 size="sm"
                 className="rounded-md text-ui hover:bg-foreground/4"
-                onClick={() => restoreDocument(doc.id)
-                  .then(() => router.refresh())
+                onClick={() => handleRestore(doc.id)
                   .catch((error: unknown) => toast.add({
                     title: error instanceof Error ? error.message : '恢复失败',
                     type: 'error',

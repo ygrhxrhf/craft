@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { renameWhiteboard } from '@/actions/whiteboard/whiteboard';
+import { getSyncManager } from '@/lib/sync-core';
 
 interface WhiteboardBreadcrumbProps {
   id: string;
@@ -12,13 +11,16 @@ interface WhiteboardBreadcrumbProps {
 }
 
 export function WhiteboardBreadcrumb({ id, name, icon }: WhiteboardBreadcrumbProps) {
-  const router = useRouter();
   const [value, setValue] = useState(name);
 
   const handleRename = async () => {
     if (value !== name && value.trim()) {
-      await renameWhiteboard(id, value.trim());
-      router.refresh();
+      // 白板改名 → applyLocal（R-16：白板元数据走 applyLocal 推送）
+      await getSyncManager().applyLocal({
+        table: 'whiteboard',
+        id,
+        patch: { name: value.trim() },
+      });
     }
   };
 

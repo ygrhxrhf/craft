@@ -1,9 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { MessageSquare, Check, X } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
 import { createThread, getThreads, addReply, setThreadResolved } from '@/actions/comment/comment';
+import { getSyncManager } from '@/lib/sync-core';
 
 interface CommentRow {
   id: string;
@@ -29,6 +31,8 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
   const [showComposer, setShowComposer] = useState(false);
   const [hasSelection, setHasSelection] = useState(false);
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
 
   const reload = useCallback(async () => {
     try {
@@ -62,11 +66,39 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
     const blockText = parent.textBetween(0, parent.content.size, '\n', '');
 
     try {
-      const created = await createThread(documentId, { blockText, body: draft });
-      editor.chain().focus().setComment(created.threadId).run();
+      const body = draft.slice(0, 2000);
+      if (!userId) {
+        // session 尚未就绪 → 退回服务端 action（行为与迁移前一致）
+        const created = await createThread(documentId, { blockText, body: draft });
+        editor.chain().focus().setComment(created.threadId).run();
+        setDraft('');
+        setShowComposer(false);
+        await reload();
+        return;
+      }
+      // 线程 + 首条回复 → applyLocal（本地 id，先落地再推送）
+      const threadId = crypto.randomUUID();
+      const commentId = crypto.randomUUID();
+      await getSyncManager().applyLocal({
+        table: 'comment_thread',
+        id: threadId,
+        patch: { documentId, blockId: null, blockText: blockText.slice(0, 500), resolved: false },
+      });
+      await getSyncManager().applyLocal({
+        table: 'comment',
+        id: commentId,
+        patch: { threadId, userId, body },
+      });
+      editor.chain().focus().setComment(threadId).run();
       setDraft('');
       setShowComposer(false);
-      await reload();
+      // 乐观挂线程：服务端要等推送，reload() 会把它读丢
+      setThreads((prev) => [...prev, {
+        id: threadId,
+        blockText: blockText.slice(0, 500),
+        resolved: false,
+        comments: [{ id: commentId, body, mine: true }],
+      }]);
     } catch {
       // 提交失败保持草稿
     }
@@ -75,10 +107,29 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const handleReply = async (threadId: string) => {
     const body = replyDrafts[threadId]?.trim();
     if (!body) return;
+    let replyId: string | null = null;
     try {
-      await addReply(threadId, body);
+      const text = body.slice(0, 2000);
+      if (!userId) {
+        await addReply(threadId, body);
+      } else {
+        replyId = crypto.randomUUID();
+        await getSyncManager().applyLocal({
+          table: 'comment',
+          id: replyId,
+          patch: { threadId, userId, body: text },
+        });
+      }
       setReplyDrafts((prev) => ({ ...prev, [threadId]: '' }));
-      await reload();
+      if (userId) {
+        // 乐观追加（同上：避免 reload 读到推送前的空）
+        const cid = replyId!;
+        setThreads((prev) => prev.map((t) => (t.id === threadId
+          ? { ...t, comments: [...t.comments, { id: cid, body: text, mine: true }] }
+          : t)));
+      } else {
+        await reload();
+      }
     } catch {
       // 提交失败保持草稿
     }
@@ -86,8 +137,18 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
 
   const handleResolve = async (threadId: string, resolved: boolean) => {
     try {
-      await setThreadResolved(threadId, resolved);
-      await reload();
+      if (!userId) {
+        await setThreadResolved(threadId, resolved);
+        await reload();
+        return;
+      }
+      await getSyncManager().applyLocal({
+        table: 'comment_thread',
+        id: threadId,
+        patch: { resolved },
+      });
+      // 乐观翻转
+      setThreads((prev) => prev.map((t) => (t.id === threadId ? { ...t, resolved } : t)));
     } catch {
       // 状态更新失败保持原状
     }

@@ -5,6 +5,12 @@ import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { nextOccurrence, parseRecurrence } from '@/lib/task/recurrence';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+
+// I2：任务表用 updatedAt 自动 bump（无需 metaUpdatedAt），落库后广播即可；
+// 失败不阻断业务（与 updateDocument 的 emit 姿态一致）。
+const emitTasks = (db: any, userId: string, id: string) =>
+  emitSyncEventSafe(db, userId, ['task'], id);
 
 function updateTaskNode(content: unknown, blockId: string, isCompleted: boolean): unknown {
   const next = JSON.parse(JSON.stringify(content));
@@ -63,18 +69,26 @@ export async function syncDocumentTasks(
       .map((task: any) => [task.blockId, task]),
   );
 
+  // I2：本保存批次任一派生变更（复活/新建/改写/清退）只发一次广播
+  let mutated = false;
+
   for (const [taskId, task] of incoming) {
     const match = existingByBlockId.get(taskId);
     if (match) {
+      const tombstoned = Boolean((match as any).deletedAt);
       if (
+        tombstoned ||
         (match as any).title !== task.title ||
         (match as any).isCompleted !== task.isCompleted
       ) {
+        // 命中墓碑行且 block 重新出现 → 清墓碑复活（恢复"任务重新可见"语义）
         await db.orm.public.Task.where({ id: (match as any).id }).update({
+          ...(tombstoned ? { deletedAt: null, updatedAt: new Date().toISOString() } : {}),
           title: task.title,
           isCompleted: task.isCompleted,
           status: task.isCompleted ? 'done' : 'todo',
         });
+        mutated = true;
       }
     } else {
       await db.orm.public.Task.create({
@@ -86,15 +100,23 @@ export async function syncDocumentTasks(
         isCompleted: task.isCompleted,
         status: task.isCompleted ? 'done' : 'todo',
       });
+      mutated = true;
     }
   }
 
   for (const t of existing) {
     const row = t as any;
-    if (typeof row.blockId === 'string' && !incoming.has(row.blockId)) {
-      await db.orm.public.Task.where({ id: row.id }).delete();
+    // 已墓碑行跳过：避免每次保存重写 deletedAt/updatedAt（时间戳抖动 + 重复 sync 删除事件）
+    if (typeof row.blockId === 'string' && !incoming.has(row.blockId) && !row.deletedAt) {
+      await db.orm.public.Task.where({ id: row.id }).update({
+        deletedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+      mutated = true;
     }
   }
+
+  if (mutated) await emitTasks(db, userId, documentId);
 }
 
 export async function getTasks(): Promise<TaskItem[]> {
@@ -103,7 +125,7 @@ export async function getTasks(): Promise<TaskItem[]> {
 
   const db = await getDb();
   const tasks = await db.orm.public.Task
-    .where({ userId: session.user.id })
+    .where({ userId: session.user.id, deletedAt: null })
     .orderBy((t: any) => t.createdAt.desc())
     .limit(200)
     .all();
@@ -145,6 +167,7 @@ export async function createTask(title: string, dueDate?: string | null) {
     title: title.trim(),
     dueDate: dueDate ?? null,
   });
+  await emitTasks(db, session.user.id, (task as any).id ?? '');
   return task;
 }
 
@@ -165,6 +188,8 @@ export async function toggleTask(id: string, timeZone?: string) {
   await syncTaskToDocument(db, task, next);
 
   if (next) await rollForward(db, task as any, timeZone);
+  // rollForward 可能派生下一期任务行——同一次 toggle 合并为一次广播
+  await emitTasks(db, session.user.id, id);
   return next;
 }
 
@@ -224,6 +249,7 @@ export async function setTaskSchedule(id: string, schedule: TaskSchedule) {
     recurrence: schedule.recurrence,
     recurrenceEnd: schedule.recurrenceEnd,
   });
+  await emitTasks(db, userId, id);
 }
 
 export async function deleteTask(id: string) {
@@ -234,7 +260,11 @@ export async function deleteTask(id: string) {
   const task = await db.orm.public.Task.first({ id });
   if (!task || (task as any).userId !== session.user.id) throw new Error('未授权');
 
-  await db.orm.public.Task.where({ id }).delete();
+  await db.orm.public.Task.where({ id }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+  await emitTasks(db, session.user.id, id);
 }
 
 export async function getTasksForDay(dayStart: string, dayEnd: string): Promise<TaskItem[]> {
@@ -243,7 +273,7 @@ export async function getTasksForDay(dayStart: string, dayEnd: string): Promise<
 
   const db = await getDb();
   const tasks = await db.orm.public.Task
-    .where({ userId: session.user.id })
+    .where({ userId: session.user.id, deletedAt: null })
     .where((t: any) => t.dueDate.gte(dayStart))
     .where((t: any) => t.dueDate.lte(dayEnd))
     .all();

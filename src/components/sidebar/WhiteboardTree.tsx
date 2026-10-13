@@ -1,10 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from 'cn';
 import type { WhiteboardItem } from '@/actions/whiteboard/whiteboard';
 import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
+import { getSyncManager } from '@/lib/sync-core';
+import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import {
   SIDEBAR_WHITEBOARD_MIME,
   sidebarDragState,
@@ -51,15 +54,47 @@ function WhiteboardTreeItem({ board, isActive }: WhiteboardTreeItemProps) {
   );
 }
 
+/** 纯逻辑：行集合 + 本地 pending overlay（过滤条件与 getWhiteboards 同源）。 */
+export function overlayWhiteboardRows(
+  rows: WhiteboardItem[],
+  pending: Map<string, import('@/components/sync/local-records').PendingRow>,
+): WhiteboardItem[] {
+  // applyLocal 的本地改名先于服务端可见（pending 覆盖）
+  return mergePending<WhiteboardItem>(rows, pending, (id, p) => ({
+    id,
+    name: '未命名白板',
+    icon: null,
+    updatedAt: p.syncTs,
+  })).filter((b) => !(b as { isDeleted?: boolean }).isDeleted);
+}
+
 export function WhiteboardTree() {
   const snapshot = useSidebarSnapshot();
   const pathname = usePathname();
+  const [version, setVersion] = useState(0);
+  const [pending, setPending] = useState<Map<string, PendingRow>>(new Map());
+
+  // 未推送的本地意图（applyLocal 改名后立刻可见）；快照每次更新后重读
+  useEffect(() => {
+    let alive = true;
+    readPendingRows('whiteboard').then((p) => {
+      if (alive) setPending(p);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [snapshot, version]);
+
+  // applyLocal 改名 / pull 远端变化 → 重取
+  useEffect(() => getSyncManager().onStoreChanged((table) => {
+    if (table === 'whiteboard') setVersion((v) => v + 1);
+  }), []);
 
   if (!snapshot) {
     return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;
   }
 
-  const boards = snapshot.whiteboards;
+  const boards = overlayWhiteboardRows(snapshot.whiteboards, pending);
 
   if (boards.length === 0) {
     return <div className="px-3 py-2 text-[13px] text-muted-foreground">暂无白板</div>;

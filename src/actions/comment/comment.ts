@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth/auth';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 async function assertDocumentAccess(
   documentId: string,
@@ -32,12 +33,15 @@ export async function createThread(
     blockId: data.blockId ?? null,
     blockText: (data.blockText ?? '').slice(0, 500),
   });
+  const commentId = crypto.randomUUID();
   await db.orm.public.Comment.create({
-    id: crypto.randomUUID(),
+    id: commentId,
     threadId,
     userId: session.user.id,
     body: body.slice(0, 2000),
   });
+  // 线程 + 首条回复同批创建 → 合并一次广播
+  await emitSyncEventSafe(db, session.user.id, ['comment_thread', 'comment'], threadId);
   revalidatePath(`/documents/${documentId}`);
   return { threadId };
 }
@@ -58,7 +62,7 @@ export async function getThreads(documentId: string) {
   for (const thread of threads) {
     const row = thread as any;
     const comments = await db.orm.public.Comment
-      .where({ threadId: row.id })
+      .where({ threadId: row.id, deletedAt: null })
       .orderBy((c: any) => c.createdAt.asc())
       .all();
     result.push({
@@ -90,12 +94,14 @@ export async function addReply(threadId: string, body: string) {
   if (!thread) throw new Error('评论不存在');
   await assertDocumentAccess((thread as { documentId: string }).documentId, session.user.id, 'commenter');
 
+  const replyId = crypto.randomUUID();
   await db.orm.public.Comment.create({
-    id: crypto.randomUUID(),
+    id: replyId,
     threadId,
     userId: session.user.id,
     body: text.slice(0, 2000),
   });
+  await emitSyncEventSafe(db, session.user.id, ['comment'], replyId);
   revalidatePath(`/documents/${(thread as { documentId: string }).documentId}`);
 }
 
@@ -109,6 +115,7 @@ export async function setThreadResolved(threadId: string, resolved: boolean) {
   await assertDocumentAccess((thread as { documentId: string }).documentId, session.user.id, 'commenter');
 
   await db.orm.public.CommentThread.where({ id: threadId }).update({ resolved });
+  await emitSyncEventSafe(db, session.user.id, ['comment_thread'], threadId);
 }
 
 export async function deleteComment(commentId: string) {
@@ -121,5 +128,9 @@ export async function deleteComment(commentId: string) {
     throw new Error('未授权');
   }
 
-  await db.orm.public.Comment.where({ id: commentId }).delete();
+  await db.orm.public.Comment.where({ id: commentId }).update({
+    deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+  await emitSyncEventSafe(db, session.user.id, ['comment'], commentId);
 }

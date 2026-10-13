@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export async function createDocument(input: {
   title?: string;
@@ -55,6 +56,9 @@ export async function createDocument(input: {
     ? `${sourceDoc.title} 副本`
     : (input.title ?? (sourceDoc?.title ?? '无标题'));
 
+  // New rows must carry metaUpdatedAt or they never enter the incremental-sync
+  // stream (document tsCol is metaUpdatedAt and has no DB default).
+  const now = new Date().toISOString();
   const doc = await db.orm.public.Document.create({
     id: crypto.randomUUID(),
     title,
@@ -71,7 +75,9 @@ export async function createDocument(input: {
     isTemplate: input.isTemplate ?? false,
     isDailyNote: false,
     dailyNoteDate: input.dailyNoteDate ?? null,
+    metaUpdatedAt: now,
   });
 
+  await emitSyncEventSafe(db, session.user.id, ['document'], (doc as any).id ?? now);
   return doc;
 }

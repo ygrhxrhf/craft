@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Crafty",
+  "version": "0.1.0",
+  "identifier": "com.crafty.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "",
+    "devUrl": "http://localhost:3000",
+    "frontendDist": "http://localhost:3000"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Crafty",
+        "width": 1280,
+        "height": 800,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' http://localhost:3000 ws://localhost:3001 ws://localhost:3002 https://*.myqcloud.com https://*.run.tcloudbase.com wss://*.run.tcloudbase.com; img-src 'self' data: blob: https://*.myqcloud.com https://*.run.tcloudbase.com; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi"],
+    "icon": ["icons/icon.png"]
+  },
+  "plugins": {
+    "sql": {
+      "preload": []
+    },
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IGV4YW1wbGUgcHVia2V5IGZvciBjaSBzbW9rZQ==",
+      "endpoints": ["https://crafty-attachments-1250000000.cos.ap-guangzhou.myqcloud.com/releases/latest.json"]
+    }
+  }
+}

@@ -97,12 +97,14 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
   // Tag hits are document matches too — Craft folds them into the same list.
   const taggedDocs: SearchResultDoc[] = [];
   const tagMatches = await db.orm.public.Tag
-    .where({ userId: uid })
+    .where({ userId: uid, deletedAt: null })
     .where((t: any) => t.name.ilike(pattern))
     .limit(5)
     .all();
   for (const tag of tagMatches) {
-    const links = await db.orm.public.DocumentTag.where({ tagId: (tag as any).id }).all();
+    const links = await db.orm.public.DocumentTag
+      .where({ tagId: (tag as any).id, deletedAt: null })
+      .all();
     for (const link of links) {
       // `first()` with a boolean in the filter silently misses, so the flag is
       // checked after loading.
@@ -192,6 +194,7 @@ async function searchCollectionRows(
 
   const items = (await db.orm.public.CollectionItem
     .where((m: any) => m.collectionId.in(collectionIds))
+    .where({ deletedAt: null })
     .all()) as Record<string, unknown>[];
   if (items.length === 0) return [];
 
@@ -204,6 +207,7 @@ async function searchCollectionRows(
 
   const values = (await db.orm.public.CollectionValue
     .where((v: any) => v.itemId.in(itemIds))
+    .where({ deletedAt: null })
     .all()) as Record<string, unknown>[];
 
   const needle = query.toLowerCase();

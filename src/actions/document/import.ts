@@ -4,6 +4,7 @@ import { assertOwned, requireUserId } from '@/lib/authz/guard';
 import { getDb } from '@/prisma/db';
 import { parseMarkdown, titleFromMarkdown } from '@/lib/import/markdown';
 import { serializeDocument } from '@/lib/document-codec';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 const MAX_FILES = 20;
 const MAX_CHARS = 500_000;
@@ -63,9 +64,16 @@ export async function importMarkdownDocuments(input: {
       folderId,
       content,
       plainText: serializeDocument(content, 'text'),
+      // No DB default on metaUpdatedAt; without it new rows never enter the
+      // incremental-sync stream (document tsCol is metaUpdatedAt).
+      metaUpdatedAt: new Date().toISOString(),
     });
     created.push({ id: (document as any).id, title: (document as any).title });
   }
 
+  // 整批导入合并为一次广播（文件夹可能同批新建）
+  await emitSyncEventSafe(db, userId,
+    created.length ? ['document'] : ['folder'],
+    created[created.length - 1]?.id ?? folderId);
   return created;
 }

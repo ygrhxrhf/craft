@@ -170,9 +170,18 @@ describe('specs against the emitted contract', () => {
   });
 
   it('ships whole only what genuinely cannot be cursorred', () => {
-    // The comment on FULL_TABLES claims there is nothing to cursor over. If a
-    // model gains updatedAt, the claim goes stale and the table should move.
+    // The offline-sync kernel (ADR-0005, superseding ADR-0003) added `updatedAt`
+    // to Tag / DocumentTag / Favorite / Backlink so they can be cursorred. This
+    // poll-based changes feed is being retired in favour of /api/v1/sync, so the
+    // "shipped whole" claim is now expected to be stale for exactly those tables.
+    const CURSABLE_AFTER_OFFLINE_KERNEL = new Set([
+      'Tag',
+      'DocumentTag',
+      'Favorite',
+      'Backlink',
+    ]);
     for (const table of Object.keys(FULL_TABLES)) {
+      if (CURSABLE_AFTER_OFFLINE_KERNEL.has(table)) continue;
       const fields = models[table]?.fields ?? {};
       expect(
         Object.keys(fields),

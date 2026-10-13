@@ -1,0 +1,7 @@
+{
+  "envId": "aaa11-d1gfgozz987c564a5",
+  "$schema": "https://static.cloudbase.net/cli/cloudbaserc.schema.json",
+  "cloudrun": {
+    "name": "crafty-build-probe"
+  }
+}

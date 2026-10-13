@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import 'katex/dist/katex.min.css';
 import './globals.css';
 import { Providers } from '@/components/providers/Providers';
+import { directUploadEnabled } from '@/lib/storage';
 
 const inter = Inter({
   variable: '--font-sans',
@@ -24,12 +25,21 @@ const swRegister = typeof window !== 'undefined'
   ? `if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});`
   : '';
 
+/**
+ * 把「直传是否启用」下发给客户端。
+ *
+ * 客户端拿不到服务端环境变量，而 NEXT_PUBLIC_ 会被打进产物、且与部署环境的运行时值可能不一致，
+ * 所以这里在服务端渲染期算好、随首屏 HTML 一起下发。html 上已有 suppressHydrationWarning。
+ */
+const storageFlag = `window.__STORAGE_CONFIG__=${JSON.stringify({ directUpload: directUploadEnabled() })};`;
+
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="zh-CN" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="flex h-full flex-col">
         <Providers>{children}</Providers>
         <script dangerouslySetInnerHTML={{ __html: swRegister }} />
+        <script dangerouslySetInnerHTML={{ __html: storageFlag }} />
       </body>
     </html>
   );

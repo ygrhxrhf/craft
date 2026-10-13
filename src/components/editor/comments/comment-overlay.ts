@@ -25,6 +25,19 @@ function str(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value : fallback;
 }
 
+/**
+ * 当前用户 id：session 就绪时用 session；离线/加载中退回本地 user 镜像。
+ * 同步内核只拉本人那一行 user，所以镜像里最多一条活行，其 id 即当前用户。
+ */
+export function pickViewerId(
+  sessionId: string | null | undefined,
+  userRows: Array<{ id: string; op: string }>,
+): string | null {
+  if (sessionId) return sessionId;
+  const live = userRows.find((row) => row.op !== 'delete');
+  return live ? live.id : null;
+}
+
 function strOrNull(value: unknown): string | null {
   return typeof value === 'string' && value ? value : null;
 }

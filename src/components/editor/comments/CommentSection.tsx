@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { MessageSquare, Check, Trash2, X } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
-import { createThread, getThreads, addReply, setThreadResolved } from '@/actions/comment/comment';
+import { getThreads } from '@/actions/comment/comment';
 import { getSyncManager } from '@/lib/sync-core';
-import { readPendingRows } from '@/components/sync/local-records';
-import { overlayCommentThreads, type ThreadView } from './comment-overlay';
+import { readPendingRows, readLocalRecords } from '@/components/sync/local-records';
+import { overlayCommentThreads, pickViewerId, type ThreadView } from './comment-overlay';
 
 interface CommentRow {
   id: string;
@@ -29,6 +29,21 @@ interface CommentSectionProps {
   editor: Editor | null;
 }
 
+function toRows(threads: ThreadView[]): ThreadRow[] {
+  return threads.map((thread) => ({
+    id: thread.id,
+    blockText: thread.blockText,
+    resolved: thread.resolved,
+    comments: thread.comments.map((comment) => ({
+      id: comment.id,
+      userId: comment.userId,
+      body: comment.body,
+      createdAt: comment.createdAt,
+      mine: comment.mine,
+    })),
+  }));
+}
+
 export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [draft, setDraft] = useState('');
@@ -37,35 +52,24 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const [hasSelection, setHasSelection] = useState(false);
   const { data: session } = useSession();
   const userId = session?.user?.id;
+  // 离线/加载中 session 可能为空：viewer id 由本地 user 镜像兜底，写入不依赖 session
+  const viewerIdRef = useRef<string | null>(null);
 
   const reload = useCallback(async () => {
+    const [pendingThreads, pendingComments, userRows] = await Promise.all([
+      readPendingRows('comment_thread'),
+      readPendingRows('comment'),
+      readLocalRecords('user'),
+    ]);
+    const viewerId = pickViewerId(userId, userRows);
+    viewerIdRef.current = viewerId;
+    let serverThreads: ThreadView[] = [];
     try {
-      const [rows, pendingThreads, pendingComments] = await Promise.all([
-        getThreads(documentId),
-        readPendingRows('comment_thread'),
-        readPendingRows('comment'),
-      ]);
-      const overlaid = overlayCommentThreads(
-        rows as ThreadView[],
-        pendingThreads,
-        pendingComments,
-        userId ?? null,
-      );
-      setThreads(overlaid.map((thread) => ({
-        id: thread.id,
-        blockText: thread.blockText,
-        resolved: thread.resolved,
-        comments: thread.comments.map((comment) => ({
-          id: comment.id,
-          userId: comment.userId,
-          body: comment.body,
-          createdAt: comment.createdAt,
-          mine: comment.mine,
-        })),
-      })));
+      serverThreads = (await getThreads(documentId)) as ThreadView[];
     } catch {
-      setThreads([]);
+      // 离线：服务端读不到，退回本地 pending overlay，本地写入仍可见
     }
+    setThreads(toRows(overlayCommentThreads(serverThreads, pendingThreads, pendingComments, viewerId)));
   }, [documentId, userId]);
 
   useEffect(() => {
@@ -96,16 +100,9 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
 
     try {
       const body = draft.slice(0, 2000);
-      if (!userId) {
-        // session 尚未就绪 → 退回服务端 action（行为与迁移前一致）
-        const created = await createThread(documentId, { blockText, body: draft });
-        editor.chain().focus().setComment(created.threadId).run();
-        setDraft('');
-        setShowComposer(false);
-        await reload();
-        return;
-      }
-      // 线程 + 首条回复 → applyLocal（本地 id，先落地再推送）
+      // 线程 + 首条回复 → applyLocal（本地 id，先落地再推送）。
+      // userId 只作本地乐观标记；服务端会按会话覆盖，缺了也不影响推送。
+      const viewerId = viewerIdRef.current ?? userId ?? null;
       const threadId = crypto.randomUUID();
       const commentId = crypto.randomUUID();
       await getSyncManager().applyLocal({
@@ -116,7 +113,7 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
       await getSyncManager().applyLocal({
         table: 'comment',
         id: commentId,
-        patch: { threadId, userId, body },
+        patch: { threadId, ...(viewerId ? { userId: viewerId } : {}), body },
       });
       editor.chain().focus().setComment(threadId).run();
       setDraft('');
@@ -132,15 +129,12 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
     if (!body) return;
     try {
       const text = body.slice(0, 2000);
-      if (!userId) {
-        await addReply(threadId, body);
-      } else {
-        await getSyncManager().applyLocal({
-          table: 'comment',
-          id: crypto.randomUUID(),
-          patch: { threadId, userId, body: text },
-        });
-      }
+      const viewerId = viewerIdRef.current ?? userId ?? null;
+      await getSyncManager().applyLocal({
+        table: 'comment',
+        id: crypto.randomUUID(),
+        patch: { threadId, ...(viewerId ? { userId: viewerId } : {}), body: text },
+      });
       setReplyDrafts((prev) => ({ ...prev, [threadId]: '' }));
       await reload();
     } catch {
@@ -150,15 +144,11 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
 
   const handleResolve = async (threadId: string, resolved: boolean) => {
     try {
-      if (!userId) {
-        await setThreadResolved(threadId, resolved);
-      } else {
-        await getSyncManager().applyLocal({
-          table: 'comment_thread',
-          id: threadId,
-          patch: { resolved },
-        });
-      }
+      await getSyncManager().applyLocal({
+        table: 'comment_thread',
+        id: threadId,
+        patch: { resolved },
+      });
       await reload();
     } catch {
       // 状态更新失败保持原状
@@ -166,7 +156,6 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   };
 
   const handleDelete = async (thread: ThreadRow, commentId: string) => {
-    if (!userId) return;
     const target = thread.comments.find((comment) => comment.id === commentId);
     if (!target?.mine) return;
     try {
@@ -183,6 +172,8 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
           id: thread.id,
           patch: { deletedAt },
         });
+        // 线程连同标记一起消失：正文里的评论高亮也要摘掉
+        editor?.commands.removeComment(thread.id);
       }
       await reload();
     } catch {

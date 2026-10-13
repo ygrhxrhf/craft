@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { PendingRow } from '@/components/sync/local-records';
-import { overlayCommentThreads, type ThreadView } from './comment-overlay';
+import { overlayCommentThreads, pickViewerId, type ThreadView } from './comment-overlay';
 
 const comment = (id: string, threadId: string, body: string, userId = 'u1', createdAt = '2026-10-13T00:00:01.000Z') => ({
   id,
@@ -82,5 +82,19 @@ describe('overlayCommentThreads', () => {
       'u1',
     );
     expect(out).toEqual([]);
+  });
+});
+
+describe('pickViewerId', () => {
+  it('session 就绪时直接用 session 的 id', () => {
+    expect(pickViewerId('u1', [])).toBe('u1');
+  });
+
+  it('session 为空时退回本地 user 镜像', () => {
+    expect(pickViewerId(null, [{ id: 'u9', op: 'upsert' }])).toBe('u9');
+  });
+
+  it('镜像里只有墓碑行时不给 id', () => {
+    expect(pickViewerId(undefined, [{ id: 'u9', op: 'delete' }])).toBeNull();
   });
 });

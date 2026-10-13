@@ -16,7 +16,7 @@ import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { searchAll } from '@/actions/document/search';
 import type { SearchResultDoc, SearchResultBlock, SearchResultRow } from '@/actions/document/search';
 import { createDocumentLocal } from '@/components/sync/create-local';
-import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, createDocLabel } from '@/lib/search/official-copy';
+import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel } from '@/lib/search/official-copy';
 import { toast } from '@/components/ui/toast';
 import { useSession } from 'next-auth/react';
 
@@ -157,7 +157,7 @@ export function CommandPalette() {
         )}
 
         {hasQuery && searching && docs.length === 0 && blocks.length === 0 && rows.length === 0 && (
-          <CommandEmpty>搜索中…</CommandEmpty>
+          <CommandEmpty>{SEARCHING_OTHER_MATCHES}</CommandEmpty>
         )}
 
         {hasQuery && !searching && docs.length === 0 && blocks.length === 0 && rows.length === 0 && (
@@ -226,7 +226,7 @@ export function CommandPalette() {
 
         {nextOffset !== null && (
           <CommandItem value="load-more" onSelect={loadMore} className="justify-center text-muted-foreground">
-            加载更多
+            {SEE_MORE_RESULTS}
           </CommandItem>
         )}
       </CommandList>

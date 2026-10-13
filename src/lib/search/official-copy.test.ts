@@ -10,7 +10,14 @@ import {
   DOCS_HEADING,
   DOCS_HEADING_KEY,
   ROWS_HEADING,
+  SEE_MORE_RESULTS,
+  SEE_MORE_RESULTS_KEY,
+  SEARCHING_OTHER_MATCHES,
+  SEARCHING_OTHER_MATCHES_KEY,
+  SHOW_X_MORE_TEMPLATE,
+  SHOW_X_MORE_KEY,
   createDocLabel,
+  showMoreLabel,
 } from './official-copy';
 
 const catalog = readFileSync(join(process.cwd(), 'docs/craft-ref/features/feature-catalog.md'), 'utf8');
@@ -39,5 +46,15 @@ describe('search palette official group headings (G1419)', () => {
   it('substitutes the query into the [0] slot verbatim', () => {
     expect(createDocLabel('季度复盘')).toBe('创建 季度复盘');
     expect(createDocLabel('a b')).toBe('创建 a b');
+  });
+
+  it('matches the two-stage search copy in the ledger (G235)', () => {
+    expect(SEARCHING_OTHER_MATCHES).toBe(ledgerValue(SEARCHING_OTHER_MATCHES_KEY));
+    expect(SEE_MORE_RESULTS).toBe(ledgerValue(SEE_MORE_RESULTS_KEY));
+    expect(SHOW_X_MORE_TEMPLATE).toBe(ledgerValue(SHOW_X_MORE_KEY));
+  });
+
+  it('fills the count into the next-page row', () => {
+    expect(showMoreLabel(20)).toBe('再显示 20 项');
   });
 });

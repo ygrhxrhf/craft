@@ -25,3 +25,21 @@ export const PAGES_HEADING = '页面';
 export const BLOCKS_HEADING = '块内容';
 export const ROWS_HEADING = '行';
 
+/**
+ * The two-stage search copy (G235). The palette shows a "still looking" line while more matches
+ * are being fetched, and a 「再显示 [0] 项」 row for the next page.
+ */
+export const SEARCHING_OTHER_MATCHES = '正在搜索其他匹配项';
+export const SEARCHING_OTHER_MATCHES_KEY = 'browse.searching.for.other.matches';
+
+export const SEE_MORE_RESULTS = '查看更多结果';
+export const SEE_MORE_RESULTS_KEY = 'browse.see.more.results';
+
+export const SHOW_X_MORE_TEMPLATE = '再显示 [0] 项';
+export const SHOW_X_MORE_KEY = 'browse.show.x.more';
+
+/** The next-page row label: 「再显示 20 项」 with the count in the slot. */
+export function showMoreLabel(count: number): string {
+  return SHOW_X_MORE_TEMPLATE.replace('[0]', String(count));
+}
+

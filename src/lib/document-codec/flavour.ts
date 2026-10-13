@@ -86,3 +86,16 @@ export function listMarker(flavour: MarkdownFlavour, kind: 'bullet' | 'toggle' |
 export function indentFor(flavour: MarkdownFlavour, depth: number): string {
   return flavour.indentationCharacters.repeat(Math.max(0, depth));
 }
+
+/**
+ * The four assembly options (G1230). Official Craft runs its HTML through turndown with these
+ * settings; the local exporter is hand-written, so they are a contract it must honour rather than
+ * options it passes. `atx` headings are `#`, the rule is `---`, bullets are `-`, and code is
+ * fenced.
+ */
+export const EXPORT_ASSEMBLY = {
+  headingStyle: 'atx',
+  hr: '---',
+  bulletListMarker: '-',
+  codeBlockStyle: 'fenced',
+} as const;

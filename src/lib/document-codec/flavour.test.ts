@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { DEFAULT_FLAVOUR, indentFor, listMarker } from './flavour';
+import { DEFAULT_FLAVOUR, EXPORT_ASSEMBLY, indentFor, listMarker } from './flavour';
 
 /**
  * The markdown flavour (G1200). One object, 29 fields, verbatim from the export package. The two
@@ -65,5 +65,22 @@ describe('the flavour helpers', () => {
     expect(indentFor(DEFAULT_FLAVOUR, 0)).toBe('');
     expect(indentFor(DEFAULT_FLAVOUR, 1)).toBe('   ');
     expect(indentFor(DEFAULT_FLAVOUR, 2)).toBe('      ');
+  });
+});
+
+describe('the assembly options the exporter must honour (G1230)', () => {
+  it('names the four turndown settings verbatim', () => {
+    expect(EXPORT_ASSEMBLY).toEqual({
+      headingStyle: 'atx',
+      hr: '---',
+      bulletListMarker: '-',
+      codeBlockStyle: 'fenced',
+    });
+  });
+
+  it('agrees with the flavour table it sits beside', () => {
+    // The rule and the bullet are written in both places, so they must not drift apart.
+    expect(EXPORT_ASSEMBLY.hr).toBe(DEFAULT_FLAVOUR.lineStyle);
+    expect(EXPORT_ASSEMBLY.bulletListMarker).toBe(DEFAULT_FLAVOUR.bulletListStyle.trim());
   });
 });

@@ -115,7 +115,18 @@ export const CraftKeymap = Extension.create({
         // error, it is simply never consulted — the plugin stays registered, the editor stays
         // focused, and no key ever reaches the handler.
         props: {
-          handleKeyDown(_view: EditorView, event: KeyboardEvent) {
+          handleKeyDown(view: EditorView, event: KeyboardEvent) {
+            // In a table, Enter adds a row below (G1478) instead of splitting the cell. Shift-Enter
+            // is left alone, so a line break inside a cell still works.
+            if (event.key === 'Enter' && !event.shiftKey && editor.isActive('table')) {
+              const { $from } = view.state.selection;
+              const inCell = Array.from({ length: $from.depth }, (_, depth) => $from.node(depth + 1).type.name)
+                .some((name) => name === 'tableCell' || name === 'tableHeader');
+              if (inCell) {
+                editor.chain().focus().addRowAfter().run();
+                return true;
+              }
+            }
             const binding = KEY_BINDINGS.find((candidate) =>
               matches(
                 {

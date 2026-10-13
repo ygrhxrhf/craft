@@ -1,4 +1,5 @@
 import { DEFAULT_DIVIDER_STYLE, DIVIDER_PATTERN, dividerStyleFromMarkup } from '@/lib/editor/divider-styles';
+import { isAlignmentRow, prepareCell, splitRow } from '@/lib/import/table';
 
 export interface PmNode {
   type: string;
@@ -199,6 +200,32 @@ function parseBlocks(lines: string[]): PmNode[] {
       });
       index += 1;
       continue;
+    }
+
+    // A pipe row followed by an alignment row is a table. The alignment row is recognised by
+    // "nothing but hyphens", so a colon-marked row is data, not alignment (G1240).
+    if (/^\s*\|.*\|\s*$/.test(line) && index + 1 < lines.length && /^\s*\|.*\|\s*$/.test(lines[index + 1])) {
+      const first = splitRow(lines[index]);
+      const second = splitRow(lines[index + 1]);
+      if (isAlignmentRow(second)) {
+        const rows: string[][] = [first];
+        index += 2;
+        while (index < lines.length && /^\s*\|.*\|\s*$/.test(lines[index])) {
+          rows.push(splitRow(lines[index]));
+          index += 1;
+        }
+        blocks.push({
+          type: 'table',
+          content: rows.map((cells) => ({
+            type: 'tableRow',
+            content: cells.map((cell) => ({
+              type: 'tableCell',
+              content: [{ type: 'paragraph', content: parseInline(prepareCell(cell)) }],
+            })),
+          })),
+        });
+        continue;
+      }
     }
 
     if (/^>\s?/.test(line)) {

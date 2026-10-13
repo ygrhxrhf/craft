@@ -68,6 +68,22 @@ describe('parseMarkdown blocks', () => {
     expect(body('```\nconst a = 1;\n```')).toBe('const a = 1;');
   });
 
+  it('reads a pipe table into the table node shape (G1240)', () => {
+    const [table] = blocks('| 名称 | 数量 |\n| --- | --- |\n| 苹果 | 3 |');
+    expect(table.type).toBe('table');
+    expect(table.content).toHaveLength(2); // the alignment row is dropped
+    expect(table.content[0].type).toBe('tableRow');
+    expect(table.content[0].content).toHaveLength(2);
+    expect(table.content[0].content[0].type).toBe('tableCell');
+    expect(table.content[0].content[0].content[0].content[0].text).toBe('名称');
+    expect(table.content[1].content[0].content[0].content[0].text).toBe('苹果');
+  });
+
+  it('does not swallow a lone pipe line as a table', () => {
+    // A single pipe row with no alignment row under it is not a table.
+    expect(blocks('| 只是一行 |')[0].type).not.toBe('table');
+  });
+
   it('folds extension aliases the way Craft names a language', () => {
     const langs = (source: string) => blocks(source).map((node) => node.attrs?.language);
     expect(langs('```py\nx\n```')).toEqual(['python']);

@@ -19,6 +19,7 @@ import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { applyCompletedFilter } from '@/lib/task/grouping';
 import { agendaDays, revealPreviousDays } from '@/lib/calendar/previous-days';
+import { dayInSpan, spanOf, type CalendarSpan } from '@/lib/calendar/week-view';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 
 export default function CalendarPage() {
@@ -31,6 +32,7 @@ export default function CalendarPage() {
   const [month, setMonth] = useState<Date>(new Date());
   const [selected, setSelected] = useState<Date | undefined>(new Date());
   const [showCompleted, setShowCompleted] = useState(false);
+  const [span, setSpan] = useState<CalendarSpan>('month');
 
   const load = useCallback(async () => {
     try {
@@ -57,6 +59,9 @@ export default function CalendarPage() {
     }
     return map;
   }, [tasks, showCompleted]);
+
+  const window = selected ? spanOf(selected, span) : null;
+  const inWindow = (key: string) => (window ? dayInSpan(new Date(key), window) : true);
 
   const notesByDay = useMemo(() => {
     const map = new Map<string, DailyNoteItem>();
@@ -136,8 +141,8 @@ export default function CalendarPage() {
                 month={month}
                 onMonthChange={setMonth}
                 modifiers={{
-                  withTask: (date) => tasksByDay.has(date.toDateString()),
-                  withNote: (date) => notesByDay.has(date.toDateString()),
+                  withTask: (date) => tasksByDay.has(date.toDateString()) && inWindow(date.toDateString()),
+                  withNote: (date) => notesByDay.has(date.toDateString()) && inWindow(date.toDateString()),
                 }}
                 modifiersClassNames={{
                   withTask: 'calendar-has-task',
@@ -147,12 +152,31 @@ export default function CalendarPage() {
             </div>
 
             <div className="min-w-0 flex-1">
+              <div className="mb-3 flex gap-1">
+                <button
+                  type="button"
+                  aria-pressed={span === 'week'}
+                  onClick={() => setSpan('week')}
+                  className={cn('rounded px-2 py-1 text-sm', span === 'week' ? 'bg-foreground/8 text-foreground' : 'text-foreground/55')}
+                >
+                  显示周视图
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={span === 'month'}
+                  onClick={() => setSpan('month')}
+                  className={cn('rounded px-2 py-1 text-sm', span === 'month' ? 'bg-foreground/8 text-foreground' : 'text-foreground/55')}
+                >
+                  显示月视图
+                </button>
+              </div>
               {selected && earlierDays > 0 && (
                 <div className="mb-4 flex flex-col gap-3">
                   {agendaDays(selected, earlierDays)
                     .slice(0, -1)
                     .map((day) => {
                       const key = day.toDateString();
+                      if (!inWindow(key)) return null;
                       const dayTasks = tasksByDay.get(key) ?? [];
                       const dayNote = notesByDay.get(key);
                       if (dayTasks.length === 0 && !dayNote) return null;

@@ -1616,3 +1616,34 @@
   --accent-850: var(--accent-gray-850);
   --accent-900: var(--accent-gray-900);
 }
+
+/* ═══════════════════════════════════════════
+   Semantic colour board (G1060 / G1061)
+   ═══════════════════════════════════════════
+   Four colours only — red / orange / green / blue — and they are a *different* board from the six
+   accent colours: `--blue` is `0 136 255` where `--accent-blue` is `46 109 233`, so the two can
+   never stand in for one another. Dark is a per-colour re-point, not an inversion.
+
+   `--accent-contrast` is the ink that sits on an accent fill: white in light, and in dark it
+   points back at the page base rather than staying white. */
+
+:root,
+.token-scope {
+  --red: 255 56 60;
+  --orange: 255 141 40;
+  --green: 52 199 89;
+  --blue: 0 136 255;
+  --accent-contrast: 255 255 255;
+  color-scheme: light;
+}
+
+.dark {
+  --red: 255 66 69;
+  --orange: 251 164 65;
+  --green: 64 221 138;
+  --blue: 0 145 255;
+  /* Dark flips the accent ink back to the page base, so text on an accent fill reads as the
+     surface rather than as white. */
+  --accent-contrast: var(--base);
+  color-scheme: dark;
+}

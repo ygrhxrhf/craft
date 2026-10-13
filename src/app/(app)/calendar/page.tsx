@@ -12,6 +12,8 @@ import { getDailyNotes } from '@/actions/daily-notes/daily-notes';
 import type { DailyNoteItem } from '@/actions/daily-notes/daily-notes';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
+import { applyCompletedFilter } from '@/lib/task/grouping';
+import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 
 export default function CalendarPage() {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
@@ -19,6 +21,7 @@ export default function CalendarPage() {
   const [loading, setLoading] = useState(true);
   const [month, setMonth] = useState<Date>(new Date());
   const [selected, setSelected] = useState<Date | undefined>(new Date());
+  const [showCompleted, setShowCompleted] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -36,7 +39,7 @@ export default function CalendarPage() {
 
   const tasksByDay = useMemo(() => {
     const map = new Map<string, TaskItem[]>();
-    for (const task of tasks) {
+    for (const task of applyCompletedFilter(tasks, showCompleted)) {
       if (!task.dueDate) continue;
       const key = new Date(task.dueDate).toDateString();
       const list = map.get(key) ?? [];
@@ -44,7 +47,7 @@ export default function CalendarPage() {
       map.set(key, list);
     }
     return map;
-  }, [tasks]);
+  }, [tasks, showCompleted]);
 
   const notesByDay = useMemo(() => {
     const map = new Map<string, DailyNoteItem>();
@@ -66,7 +69,7 @@ export default function CalendarPage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <AppPageHeader title="日历" />
+      <AppPageHeader title="日历" actions={<ShowCompletedToggle onChange={setShowCompleted} />} />
       <AppPageContainer className="max-w-4xl">
         {loading ? (
           <p className="text-sm text-muted-foreground">加载中…</p>

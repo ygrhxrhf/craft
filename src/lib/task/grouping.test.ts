@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { TaskItem } from '@/actions/task/task';
 
-import { bucketOf, localDayIndex, tasksForGroup } from './grouping';
+import { applyCompletedFilter, bucketOf, localDayIndex, tasksForGroup } from './grouping';
 
 const task = (dueDate: string | null): TaskItem => ({
   id: 't',
@@ -19,6 +19,16 @@ const task = (dueDate: string | null): TaskItem => ({
 // machine happens to run.
 const now = new Date(2026, 9, 9, 12, 0, 0);
 const iso = (y: number, m: number, d: number, h = 12, min = 0) => new Date(y, m, d, h, min).toISOString();
+
+describe('the completed switch', () => {
+  const done = { ...task(null), id: 'done', isCompleted: true };
+  const open = { ...task(null), id: 'open' };
+
+  it('hides completed tasks unless the switch is on', () => {
+    expect(applyCompletedFilter([open, done], false).map((item) => item.id)).toEqual(['open']);
+    expect(applyCompletedFilter([open, done], true).map((item) => item.id)).toEqual(['open', 'done']);
+  });
+});
 
 describe('localDayIndex', () => {
   it('counts the viewer calendar day, not the UTC one', () => {

@@ -19,7 +19,8 @@ import {
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
 import { getSyncManager } from '@/lib/sync-core';
 import { taskPatchFor } from './tasks-local';
-import { tasksForGroup, type TaskGroup } from '@/lib/task/grouping';
+import { applyCompletedFilter, tasksForGroup, type TaskGroup } from '@/lib/task/grouping';
+import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASKS_INBOX_EMPTY } from '@/lib/task/official-copy';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
@@ -40,6 +41,7 @@ export function TasksView({ group }: { group: TaskGroup }) {
   const [loading, setLoading] = useState(true);
   const [newTitle, setNewTitle] = useState('');
   const [adding, setAdding] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   const load = useCallback(async () => {
     const data = await getTasks();
@@ -113,7 +115,7 @@ export function TasksView({ group }: { group: TaskGroup }) {
     await load();
   };
 
-  const visible = tasksForGroup(tasks, group);
+  const visible = applyCompletedFilter(tasksForGroup(tasks, group), showCompleted);
   const active = visible.filter((t) => !t.isCompleted);
   const completed = visible.filter((t) => t.isCompleted);
 
@@ -160,6 +162,9 @@ export function TasksView({ group }: { group: TaskGroup }) {
           </Link>
         ))}
       </nav>
+      <div className="flex justify-end px-4 pt-3">
+        <ShowCompletedToggle onChange={setShowCompleted} />
+      </div>
       <AppPageContainer className="max-w-3xl">
         {loading ? (
           <p className="text-sm text-muted-foreground">加载中…</p>

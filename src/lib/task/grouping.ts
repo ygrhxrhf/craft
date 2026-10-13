@@ -35,6 +35,28 @@ export function bucketOf(task: Pick<TaskItem, 'dueDate'>, now: Date = new Date()
  * - A **past** due date is treated as neither 今天 nor 即将进行; it shows up in `inbox`/`all` only.
  *   The official row does not describe an "overdue" group, so one is not fabricated here.
  */
+/**
+ * 「显示已完成的任务」(`show.completed.tasks`). Off hides them; the caller passes the switch, so a
+ * view that has not grown one yet keeps showing everything.
+ */
+/** The switch is remembered on the device, and it starts off. */
+export const SHOW_COMPLETED_KEY = 'craft.tasks.showCompleted';
+
+export function readShowCompleted(storage: { getItem(key: string): string | null }): boolean {
+  return storage.getItem(SHOW_COMPLETED_KEY) === 'true';
+}
+
+export function writeShowCompleted(storage: { setItem(key: string, value: string): void }, show: boolean): void {
+  storage.setItem(SHOW_COMPLETED_KEY, String(show));
+}
+
+export function applyCompletedFilter<T extends { isCompleted: boolean }>(
+  tasks: readonly T[],
+  showCompleted: boolean,
+): T[] {
+  return showCompleted ? [...tasks] : tasks.filter((task) => !task.isCompleted);
+}
+
 export function tasksForGroup(tasks: TaskItem[], group: TaskGroup, now: Date = new Date()): TaskItem[] {
   switch (group) {
     case 'today':

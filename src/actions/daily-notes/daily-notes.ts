@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { dailyNoteTitle } from '@/lib/utils/daily-note';
+import { dayWindow } from '@/lib/utils/daily-note-window';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface DailyNoteItem {
@@ -12,18 +13,6 @@ export interface DailyNoteItem {
   plainText: string;
   dailyNoteDate: string;
   updatedAt: string;
-}
-
-function startOfDay(date: Date): Date {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-function endOfDay(date: Date): Date {
-  const d = new Date(date);
-  d.setHours(23, 59, 59, 999);
-  return d;
 }
 
 export async function getDailyNotes(): Promise<DailyNoteItem[]> {
@@ -54,13 +43,19 @@ export async function getOrCreateTodayNote() {
 
   const db = await getDb();
   const now = new Date();
-  const start = startOfDay(now).toISOString();
-  const end = endOfDay(now).toISOString();
+
+  // The config carries a start time (G20): with one set, a moment before it belongs to the
+  // previous day's note. Read the config first so the day window is the configured one.
+  const config = await db.orm.public.DailyNotesConfig.first({ userId: uid });
+  const startTime = config ? ((config as any).startTime as string | null) : null;
+  const { start, end } = dayWindow(now, startTime);
+  const startIso = start.toISOString();
+  const endIso = end.toISOString();
 
   const existing = await db.orm.public.Document
     .where({ userId: uid, isDeleted: false, isDailyNote: true })
-    .where((d: any) => d.dailyNoteDate.gte(start))
-    .where((d: any) => d.dailyNoteDate.lte(end))
+    .where((d: any) => d.dailyNoteDate.gte(startIso))
+    .where((d: any) => d.dailyNoteDate.lte(endIso))
     .limit(1)
     .all();
 
@@ -69,17 +64,16 @@ export async function getOrCreateTodayNote() {
     return { id: n.id, created: false };
   }
 
-  const config = await db.orm.public.DailyNotesConfig.first({ userId: uid });
   const folderId = config ? (config as any).folderId : null;
 
   const doc = await db.orm.public.Document.create({
     id: crypto.randomUUID(),
-    title: dailyNoteTitle(now),
+    title: dailyNoteTitle(start),
     icon: '📅',
     userId: uid,
     folderId,
     isDailyNote: true,
-    dailyNoteDate: start,
+    dailyNoteDate: startIso,
     // No DB default on metaUpdatedAt; without it new rows never enter the
     // incremental-sync stream (document tsCol is metaUpdatedAt).
     metaUpdatedAt: now.toISOString(),

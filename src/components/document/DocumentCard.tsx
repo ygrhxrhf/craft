@@ -21,8 +21,14 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
   return (
     <Link
       href={`/documents/${doc.id}`}
-      className="group block rounded-lg px-1.5 pt-1.5 pb-0 transition-colors duration-300 hover:bg-foreground/[0.03]"
+      className="group relative block rounded-lg px-1.5 pt-1.5 pb-0 transition-colors duration-300 hover:bg-foreground/[0.03]"
     >
+      {/* The card's focus ring is a real child element, not an outline (G1127): it can carry its
+          own z-index and is hidden until the card is focused. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-[-1px] z-[1] hidden rounded-lg border-[3px] border-(--craft-accent) group-focus-visible:block"
+      />
       <div className="rounded-lg bg-card px-2.5 pt-[7px] pb-2 shadow-sm">
         <div className="flex items-start gap-2">
           {doc.icon ? (

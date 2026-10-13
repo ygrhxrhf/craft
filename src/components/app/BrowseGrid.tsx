@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from 'cn';
 
-import { CARD_GAP, columnsForWidth } from '@/lib/browse/grid';
+import { CARD_GAP, CARD_MAX_WIDTH, columnsForWidth } from '@/lib/browse/grid';
 
 /**
  * The browse grid (G1096). Columns come from the container's own width, measured with a
@@ -37,7 +37,14 @@ export function BrowseGrid({
       ref={ref}
       data-browse-grid
       data-columns={columns}
-      style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap: `${CARD_GAP}px` }}
+      style={{
+        // The official card has a width ceiling, so a very wide container stretches the gap
+        // rather than the card. `minmax(0, 268px)` is that ceiling; the leftover space is
+        // distributed by `justify-content`.
+        gridTemplateColumns: `repeat(${columns}, minmax(0, ${CARD_MAX_WIDTH}px))`,
+        gap: `${CARD_GAP}px`,
+        justifyContent: 'start',
+      }}
       className={cn('grid', className)}
       {...props}
     >

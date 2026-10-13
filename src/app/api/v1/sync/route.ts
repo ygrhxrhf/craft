@@ -11,12 +11,12 @@ import { emitSyncEvent } from '@/lib/sync/emit-event';
 export const dynamic = 'force-dynamic';
 
 // R-1 归属作用域：SYNC_TABLES 中没有 userId 列的表，经其归属关系收窄到当前用户——
-// document_tag / comment_thread / document_share → documentId 属于本人文档；
+// document_tag / comment_thread / document_share / document_member → documentId 属于本人文档；
 // collection_item / collection_property / collection_view → collectionId 属于本人集合；
 // collection_value → itemId 属于本人集合的条目（CollectionItem → Collection 两跳）。
 // 下列 id 集在主循环里惰性收集（SYNC_TABLES 顺序保证：document/collection/collection_item
 // 均先于依赖它们的表被遍历），且取原始行（不过 since 过滤）以保证续传时集合完整。
-const DOC_SCOPED_TABLES = new Set(['document_tag', 'comment_thread', 'document_share']);
+const DOC_SCOPED_TABLES = new Set(['document_tag', 'comment_thread', 'document_share', 'document_member']);
 const COLLECTION_SCOPED_TABLES = new Set([
   'collection_item', 'collection_property', 'collection_view',
 ]);

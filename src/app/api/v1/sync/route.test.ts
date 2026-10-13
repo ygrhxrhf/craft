@@ -16,18 +16,28 @@ const row = (id: string, ts: string, deletedAt: string | null = null) => ({
   isDeleted: false, deletedAt, updatedAt: ts, metaUpdatedAt: ts,
 });
 
-function mockDb(rows: any[]) {
-  const chain = {
-    where: () => chain,
-    orderBy: () => chain,
-    limit: () => Promise.resolve(rows),
-    all: () => Promise.resolve(rows),
-    delete: vi.fn(async () => ({})),
+function mockDb(rows: any[], byModel: Record<string, any[]> = {}) {
+  const chainFor = (modelRows: any[]) => {
+    const chain = {
+      where: () => chain,
+      orderBy: () => chain,
+      select: () => chain,
+      limit: () => Promise.resolve(modelRows),
+      all: () => Promise.resolve(modelRows),
+      delete: vi.fn(async () => ({})),
+      deleteAndCount: vi.fn(async () => ({ count: 0 })),
+    };
+    return chain;
   };
+  const shared = chainFor(rows);
   (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
-    get: (_t, model: string) => (model === 'SyncEvent' ? { create: vi.fn() } : chain),
+    get: (_t, model: string) => (
+      model === 'SyncEvent' ? { create: vi.fn() }
+        : model in byModel ? chainFor(byModel[model])
+          : shared
+    ),
   }) } });
-  return chain;
+  return shared;
 }
 
 describe('GET /api/v1/sync', () => {
@@ -60,6 +70,24 @@ describe('GET /api/v1/sync', () => {
     expect(del.data).toBeUndefined();
     expect(body.cursor).toContain('|');
     expect(typeof body.hasMore).toBe('boolean');
+  });
+
+  it('document_member 按本人文档归属拉取，不按协作者 userId 漏行', async () => {
+    mockDb([], {
+      Document: [row('d1', '2026-09-28T10:00:00.000Z')],
+      DocumentMember: [{
+        id: 'm1', documentId: 'd1', userId: 'collaborator', role: 'editor',
+        addedBy: 'u1', createdAt: '2026-09-28T10:00:02.000Z',
+        updatedAt: '2026-09-28T10:00:02.000Z',
+      }],
+    });
+    const res = await GET(new NextRequest('http://x/api/v1/sync'));
+    const body = await res.json();
+    const member = body.records.find((r: any) => r.table === 'document_member');
+    expect(member).toMatchObject({
+      id: 'm1', op: 'upsert',
+      data: { documentId: 'd1', userId: 'collaborator', role: 'editor' },
+    });
   });
 });
 

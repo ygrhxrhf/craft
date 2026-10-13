@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Loader2, X } from 'lucide-react';
 import {
-  addDocumentMember,
   listDocumentMembers,
   removeDocumentMember,
-  updateDocumentMemberRole,
+  resolveDocumentMember,
   type MemberRole,
 } from '@/actions/document/members';
+import { getSyncManager } from '@/lib/sync-core';
 
 interface MemberRow {
   id: string;
@@ -59,9 +59,29 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
     setBusy(true);
     setError(null);
     try {
-      await addDocumentMember({ documentId, email, role });
+      // 邮箱解析留在服务端（要查账号）；落库走 applyLocal，离线可排队
+      const resolved = await resolveDocumentMember({ documentId, email, role });
+      await getSyncManager().applyLocal({
+        table: 'document_member',
+        id: resolved.id,
+        patch: resolved.existing
+          ? { role: resolved.role }
+          : {
+              documentId,
+              userId: resolved.userId,
+              role: resolved.role,
+              addedBy: resolved.addedBy,
+            },
+      });
       setEmail('');
-      await reload();
+      const row: MemberRow = {
+        id: resolved.id,
+        userId: resolved.userId,
+        name: resolved.name,
+        email: resolved.email,
+        role: resolved.role,
+      };
+      setMembers((prev) => [...prev.filter((m) => m.id !== row.id), row]);
     } catch (err) {
       message(err, '添加协作者失败');
     } finally {
@@ -71,10 +91,18 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
 
   const handleRoleChange = async (id: string, next: MemberRole) => {
     setError(null);
+    const previous = members.find((m) => m.id === id)?.role;
+    setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, role: next } : m)));
     try {
-      await updateDocumentMemberRole(id, next);
-      setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, role: next } : m)));
+      await getSyncManager().applyLocal({
+        table: 'document_member',
+        id,
+        patch: { role: next },
+      });
     } catch (err) {
+      if (previous) {
+        setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, role: previous } : m)));
+      }
       message(err, '权限更新失败');
     }
   };

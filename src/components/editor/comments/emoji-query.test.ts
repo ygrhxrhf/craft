@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { acceptEmoji, emojiQueryAt, enterAcceptsEmoji } from './emoji-query';
+import { acceptEmoji, emojiQueryAt, enterAcceptsEmoji, mentionQueryAt } from './emoji-query';
 
 describe('the colon query', () => {
   it('reads the word after the colon at the caret', () => {
@@ -18,6 +18,26 @@ describe('the colon query', () => {
 
   it('uses the latest colon', () => {
     expect(emojiQueryAt('a:b :cat', 8)).toEqual({ start: 4, query: 'cat' });
+  });
+});
+
+describe('the @ query', () => {
+  it('lists everyone on a bare @', () => {
+    expect(mentionQueryAt('请看 @', 4)).toEqual({ start: 3, query: '' });
+  });
+
+  it('reads the name being typed', () => {
+    expect(mentionQueryAt('@张', 2)).toEqual({ start: 0, query: '张' });
+  });
+
+  it('closes once a space follows', () => {
+    expect(mentionQueryAt('@张 ', 3)).toBeNull();
+  });
+
+  it('yields to whichever trigger sits closer to the caret', () => {
+    expect(mentionQueryAt(':smile @zhang', 13)?.query).toBe('zhang');
+    expect(emojiQueryAt(':smile @zhang', 13)).toBeNull();
+    expect(emojiQueryAt('@zhang :smi', 12)?.query).toBe('smi');
   });
 });
 

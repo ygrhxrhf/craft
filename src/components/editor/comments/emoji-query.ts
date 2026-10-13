@@ -1,21 +1,37 @@
 /**
- * The `:query` a comment composer completes (G74). It is the run of word characters after the last
- * colon that sits at the caret, and only while the caret is inside it — typing past it, or a colon
- * with nothing after it, offers nothing.
+ * The trigger a comment composer completes (G74): `:` for emoji, `@` for a person. It is the run of
+ * characters after the last trigger that sits at the caret. An empty query is a query for `@`, which
+ * lists everyone, and not one for `:`, which would list the whole emoji set. Typing past it closes it.
  */
 export interface EmojiQuery {
-  /** Where the colon sits, so accepting a suggestion can replace from there. */
+  /** Where the trigger sits, so accepting a suggestion can replace from there. */
   start: number;
   query: string;
 }
 
-export function emojiQueryAt(draft: string, caret: number): EmojiQuery | null {
+export function triggerQueryAt(
+  draft: string,
+  caret: number,
+  trigger: string,
+  allowEmpty: boolean,
+): EmojiQuery | null {
   const upto = draft.slice(0, caret);
-  const colon = upto.lastIndexOf(':');
-  if (colon < 0) return null;
-  const query = upto.slice(colon + 1);
-  if (!query || /\s/.test(query)) return null;
-  return { start: colon, query };
+  const at = upto.lastIndexOf(trigger);
+  if (at < 0) return null;
+  const query = upto.slice(at + trigger.length);
+  // The other trigger wins when it sits closer to the caret, so `:smile @zhang` completes the name.
+  if (/[:@]/.test(query)) return null;
+  if (/\s/.test(query)) return null;
+  if (!query && !allowEmpty) return null;
+  return { start: at, query };
+}
+
+export function emojiQueryAt(draft: string, caret: number): EmojiQuery | null {
+  return triggerQueryAt(draft, caret, ':', false);
+}
+
+export function mentionQueryAt(draft: string, caret: number): EmojiQuery | null {
+  return triggerQueryAt(draft, caret, '@', true);
 }
 
 /**

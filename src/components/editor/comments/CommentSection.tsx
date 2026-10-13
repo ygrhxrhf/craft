@@ -11,6 +11,7 @@ import { overlayCommentThreads, pickViewerId, type ThreadView } from './comment-
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { composerKey } from './composer-keys';
 import { EmojiSuggest } from './EmojiSuggest';
+import { MentionSuggest } from './MentionSuggest';
 
 interface CommentRow {
   id: string;
@@ -253,6 +254,15 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
               setDraftCaret(next.caret);
             }}
           />
+          <MentionSuggest
+            documentId={documentId}
+            draft={draft}
+            caret={draftCaret}
+            onAccept={(next) => {
+              setDraft(next.draft);
+              setDraftCaret(next.caret);
+            }}
+          />
           <div className="flex justify-end gap-1">
             <button
               type="button"
@@ -307,6 +317,12 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
                     [thread.id]: event.target.selectionStart ?? event.target.value.length,
                   }));
                 }}
+                onSelect={(event) =>
+                  setReplyCarets((prev) => ({
+                    ...prev,
+                    [thread.id]: event.currentTarget.selectionStart ?? 0,
+                  }))
+                }
                 onKeyDown={(event) => {
                   if (
                     composerKey({
@@ -344,6 +360,15 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
               </button>
               </div>
               <EmojiSuggest
+                draft={replyDrafts[thread.id] ?? ''}
+                caret={replyCarets[thread.id] ?? (replyDrafts[thread.id]?.length ?? 0)}
+                onAccept={(next) => {
+                  setReplyDrafts((prev) => ({ ...prev, [thread.id]: next.draft }));
+                  setReplyCarets((prev) => ({ ...prev, [thread.id]: next.caret }));
+                }}
+              />
+              <MentionSuggest
+                documentId={documentId}
                 draft={replyDrafts[thread.id] ?? ''}
                 caret={replyCarets[thread.id] ?? (replyDrafts[thread.id]?.length ?? 0)}
                 onAccept={(next) => {

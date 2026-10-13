@@ -11,7 +11,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { dropTargetFor } from './drop-band';
-import { applyBlockAction, blockMenuItems, type BlockActionId } from './block-actions';
+import { applyBlockAction, blockLinkFor, blockMenuItems, type BlockActionId } from './block-actions';
+import { toast } from '@/components/ui/toast';
 
 interface HandlePosition {
   top: number;
@@ -32,7 +33,7 @@ interface DragRange {
 
 const HANDLE_OFFSET = -26;
 
-export function DragHandle({ editor }: { editor: Editor }) {
+export function DragHandle({ editor, documentId }: { editor: Editor; documentId: string }) {
   const [handle, setHandle] = useState<HandlePosition | null>(null);
   const [indicator, setIndicator] = useState<IndicatorPosition>({ top: 0, visible: false });
   const dragStateRef = useRef<{
@@ -87,10 +88,18 @@ export function DragHandle({ editor }: { editor: Editor }) {
       if (index < 0) return;
       const { state, view } = editor;
       if (index >= state.doc.childCount) return;
+      if (id === 'copy-link') {
+        const link = blockLinkFor(state, view.dispatch, index, documentId, () => crypto.randomUUID());
+        void navigator.clipboard.writeText(link).then(
+          () => toast.add({ title: '已复制区块链接', type: 'success' }),
+          () => toast.add({ title: '复制失败', type: 'error' }),
+        );
+        return;
+      }
       applyBlockAction(state, view.dispatch, index, id);
       view.focus();
     },
-    [editor, indexOfBlock],
+    [editor, indexOfBlock, documentId],
   );
 
   useEffect(() => {

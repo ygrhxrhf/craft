@@ -4,6 +4,7 @@ import { EditorState } from '@tiptap/pm/state';
 import type { Transaction } from '@tiptap/pm/state';
 import {
   applyBlockAction,
+  blockLinkFor,
   blockMenuItems,
   deleteBlock,
   insertBlockAbove,
@@ -16,7 +17,7 @@ import {
 const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
-    paragraph: { content: 'text*', group: 'block' },
+    paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null } } },
     text: {},
   },
   marks: {},
@@ -71,10 +72,11 @@ describe('the caret after inserting', () => {
 describe('blockMenuItems', () => {
   // Craft's block menus vary per block type (V43), but every entry we render has to do
   // something — 提醒我／转换为卡片／添加表情 stay out until they have a local action.
-  it('offers the three Craft block actions, delete last', () => {
+  it('offers the Craft block actions, delete last', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).toEqual([
       'insert-above',
       'insert-below',
+      'copy-link',
       'delete',
     ]);
   });
@@ -83,6 +85,7 @@ describe('blockMenuItems', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.label)).toEqual([
       '在上方插入区块',
       '在下方插入区块',
+      '复制区块链接',
       '删除',
     ]);
   });
@@ -93,6 +96,7 @@ describe('blockMenuItems', () => {
     expect(blockMenuItems({ canDelete: false }).map((item) => item.id)).toEqual([
       'insert-above',
       'insert-below',
+      'copy-link',
     ]);
   });
 
@@ -148,6 +152,29 @@ describe('deleteBlock', () => {
   });
 });
 
+describe('blockLinkFor', () => {
+  const ID = '11111111-1111-4111-8111-111111111111';
+
+  it('mints an id for a block that has none and stamps it on', () => {
+    const state = stateWith(['甲', '乙']);
+    const next = runState(state, (d) => {
+      const link = blockLinkFor(state, d, 1, 'doc-1', () => ID);
+      expect(link).toBe(`/documents/doc-1#b-${ID}`);
+    });
+    expect(next.doc.child(1).attrs.blockId).toBe(ID);
+    expect(next.doc.child(0).attrs.blockId).toBeNull();
+  });
+
+  it('reuses an id the block already carries and writes nothing', () => {
+    const base = stateWith(['甲']);
+    const stamped = base.apply(
+      base.tr.setNodeMarkup(0, undefined, { ...base.doc.child(0).attrs, blockId: ID }),
+    );
+    const link = blockLinkFor(stamped, () => { throw new Error('should not dispatch'); }, 0, 'doc-1', () => 'fresh');
+    expect(link).toBe(`/documents/doc-1#b-${ID}`);
+  });
+});
+
 describe('applyBlockAction', () => {
   it('runs the entry the menu labelled 在上方插入区块', () => {
     const state = stateWith(['甲', '乙']);
@@ -171,9 +198,11 @@ describe('applyBlockAction', () => {
     );
   });
 
-  it('covers every id the menu offers', () => {
+  it('covers every id the menu offers except the one that leaves the editor', () => {
+    // 复制区块链接 needs the document id and the clipboard, so it is not a transaction.
     const state = stateWith(['甲', '乙']);
     for (const item of blockMenuItems({ canDelete: true })) {
+      if (item.id === 'copy-link') continue;
       expect(() => run(state, (d) => applyBlockAction(state, d, 0, item.id))).not.toThrow();
     }
   });

@@ -645,7 +645,7 @@ export function Editor({
   return (
     <div className="relative">
       <CursorLayer editor={editor} awareness={collabAwareness} />
-      <DragHandle editor={editor} />
+      <DragHandle editor={editor} documentId={documentId} />
       <EditorBubbleMenu editor={editor} />
       <AiBubbleMenu editor={editor} />
       <TableToolbar editor={editor} />

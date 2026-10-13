@@ -15,6 +15,7 @@ import { getPreferences, updatePreferences } from '@/actions/user/preferences';
 import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
 import { getSyncManager } from '@/lib/sync-core';
+import { ACCENTS as ACCENT_KEYS, pickAccent, readAccent, type Accent } from '@/lib/accent';
 import { Switch } from '@/components/ui/switch';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
 import { cn } from 'cn';
@@ -116,14 +117,14 @@ function ThemePreview({ variant }: { variant: 'system' | 'light' | 'dark' }) {
   );
 }
 
-const ACCENTS = [
-  { key: 'blue', color: '#2e6de9' },
-  { key: 'pink', color: '#d6179b' },
-  { key: 'green', color: '#00c2a6' },
-  { key: 'purple', color: '#5e02d2' },
-  { key: 'yellow', color: '#e4c011' },
-  { key: 'gray', color: '#525c66' },
-];
+const ACCENT_SWATCH: Record<Accent, string> = {
+  blue: '#2e6de9',
+  pink: '#d6179b',
+  green: '#00c2a6',
+  purple: '#5e02d2',
+  yellow: '#e4c011',
+  gray: '#525c66',
+};
 
 type SwitchKey = 'notifyComments' | 'notifyReminders' | 'notifyDaily';
 
@@ -131,7 +132,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const { setTheme } = useTheme();
   const { data: session } = useSession();
   const [prefs, setPrefs] = useState<Preferences | null>(null);
-  const [accent, setAccent] = useState('blue');
+  const [accent, setAccent] = useState<Accent>(() => readAccent() ?? 'blue');
   const [savingSwitch, setSavingSwitch] = useState(false);
   const [switchError, setSwitchError] = useState<string | null>(null);
 
@@ -273,18 +274,21 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
             <div className="text-[15px] font-semibold">强调色</div>
             <div className="mt-0.5 text-xs text-foreground/55">选择强调色</div>
             <div className="mt-3 flex gap-3">
-              {ACCENTS.map(({ key, color }) => (
+              {ACCENT_KEYS.map((key) => (
                 <button
                   key={key}
                   type="button"
                   aria-label={key}
                   aria-pressed={accent === key}
-                  onClick={() => setAccent(key)}
+                  onClick={() => {
+                    setAccent(key);
+                    pickAccent(key);
+                  }}
                   className={cn(
                     'size-8 rounded-full',
                     accent === key && 'ring-2 ring-(--craft-accent) ring-offset-2 ring-offset-background'
                   )}
-                  style={{ backgroundColor: color }}
+                  style={{ backgroundColor: ACCENT_SWATCH[key] }}
                 />
               ))}
             </div>

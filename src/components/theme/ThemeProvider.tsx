@@ -1,6 +1,16 @@
 'use client';
 
+import { useEffect } from 'react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import { applyAccent, readAccent } from '@/lib/accent';
+
+function AccentRestorer() {
+  useEffect(() => {
+    const stored = readAccent();
+    if (stored) applyAccent(stored);
+  }, []);
+  return null;
+}
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
@@ -10,6 +20,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
+      <AccentRestorer />
       {children}
     </NextThemesProvider>
   );

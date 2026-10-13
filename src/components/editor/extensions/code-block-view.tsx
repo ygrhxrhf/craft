@@ -70,7 +70,7 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
           {copied ? '已复制' : '复制'}
         </button>
       </div>
-      <pre className="overflow-x-auto p-3 text-sm">
+      <pre className="overflow-x-auto p-3 font-mono text-sm">
         <NodeViewContent<'code'> as="code" />
       </pre>    </NodeViewWrapper>
   );

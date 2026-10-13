@@ -107,8 +107,15 @@ export function normalizeLanguage(info: string): string | null {
   return PSEUDO_LANGUAGES.has(token) || LANGUAGE_NAMES.has(token) ? token : 'other';
 }
 
-/** Craft exports display math fenced on its own lines, and the shape is also accepted inline. */
-const DISPLAY_MATH = /^\$\$/;
+/**
+ * Craft's importer drops exactly one trailing space from a code block's body: the test is
+ * `content.slice(-1)[0] === " "`, so two spaces lose one and one space loses it entirely.
+ */
+function trimOneTrailingSpace(text: string): string {
+  return text.endsWith(' ') ? text.slice(0, -1) : text;
+}
+
+/** Craft exports display math fenced on its own lines, and the shape is also accepted inline. */const DISPLAY_MATH = /^\$\$/;
 
 /**
  * Converts Markdown (or the `text.md` of a Text Bundle) into the same node JSON
@@ -145,7 +152,7 @@ function parseBlocks(lines: string[]): PmNode[] {
       blocks.push({
         type: 'codeBlock',
         attrs: { language: normalizeLanguage(fence[1]) },
-        content: body.length ? [{ type: 'text', text: body.join('\n') }] : undefined,
+        content: body.length ? [{ type: 'text', text: trimOneTrailingSpace(body.join('\n')) }] : undefined,
       });
       continue;
     }

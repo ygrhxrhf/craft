@@ -58,6 +58,16 @@ describe('parseMarkdown blocks', () => {
     });
   });
 
+  it('drops exactly one trailing space from a code block body (G1232)', () => {
+    const body = (source: string) => blocks(source)[0].content[0].text;
+    // One trailing space is removed.
+    expect(body('```\nconst a = 1; \n```')).toBe('const a = 1;');
+    // Two trailing spaces lose exactly one — the official test only looks at the last character.
+    expect(body('```\nconst a = 1;  \n```')).toBe('const a = 1; ');
+    // A body that does not end in a space is untouched.
+    expect(body('```\nconst a = 1;\n```')).toBe('const a = 1;');
+  });
+
   it('folds extension aliases the way Craft names a language', () => {
     const langs = (source: string) => blocks(source).map((node) => node.attrs?.language);
     expect(langs('```py\nx\n```')).toEqual(['python']);

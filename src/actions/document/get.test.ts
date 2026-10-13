@@ -17,6 +17,7 @@ const {
   getDeletedDocuments,
   getFavoriteDocuments,
   getRecentDocuments,
+  getTemplateContent,
   getTemplates,
 } = await import('@/actions/document/get');
 
@@ -185,5 +186,41 @@ describe('the other document list reads', () => {
       | undefined;
     expect(shared?.role).toBe('editor');
     expect(shared?.title).toBe('别人共享给我的文档');
+  });
+});
+
+/**
+ * G19 从模板插入 (`commands.insert.template.inline`) needs the template *body*, which the card read
+ * above deliberately withholds — a card renders a title, not a document. The two refusal cases are
+ * the point: the id arrives from the client, so neither a plain document nor someone else's
+ * template may ride in through this read, and both must answer with the same sentence so the error
+ * cannot be used to tell them apart.
+ */
+describe('getTemplateContent', () => {
+  it('returns the body the card read withholds, for the owner', async () => {
+    const template = await getTemplateContent(templateId);
+    expect(template.title).toBe('模板样本');
+    expect(template.content).toMatchObject({ type: 'doc' });
+    expect((template.content as { content: unknown[] }).content).toHaveLength(300);
+  });
+
+  it('refuses an ordinary document wearing a template id', async () => {
+    await expect(getTemplateContent(documentId)).rejects.toThrow('模板不存在');
+  });
+
+  it("refuses another owner's template with the same sentence", async () => {
+    const foreign = crypto.randomUUID();
+    await db.orm.public.Document.create({
+      id: foreign,
+      title: '别人的模板',
+      userId: otherUserId,
+      content: BODY,
+      isTemplate: true,
+    });
+    try {
+      await expect(getTemplateContent(foreign)).rejects.toThrow('模板不存在');
+    } finally {
+      await db.orm.public.Document.where({ id: foreign }).delete();
+    }
   });
 });

@@ -106,6 +106,23 @@ test('the palette finds my collection row by its cell text', async ({ page }) =>
   expect(errors).toEqual([]);
 });
 
+/**
+ * `browse.search.create.doc` =「创建 [0]」. The row keeps the query verbatim, and selecting it
+ * lands on a real document titled with that query.
+ */
+test('a query offers the official create-document row and it lands on a real document', async ({ page }) => {
+  const title = `创建行测试 ${Date.now()}`;
+  await openPalette(page, title);
+
+  const createRow = page.getByTestId('palette-create-doc');
+  await expect(createRow).toBeVisible();
+  await expect(createRow).toHaveText(`创建 ${title}`);
+
+  await createRow.click();
+  await page.waitForURL(/\/documents\//, { timeout: 20_000 });
+  await expect(page.locator('input[placeholder="页面标题"]')).toHaveValue(title, { timeout: 20_000 });
+});
+
 test('another account rows never appear in my palette', async ({ page }) => {
   const errors = trackErrors(page);
   await openPalette(page, CELL);

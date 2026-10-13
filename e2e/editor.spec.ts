@@ -55,6 +55,7 @@ async function openSlash(page: Page, name: string) {
 const ALL_COMMANDS = [
   '文本', '标题 1', '标题 2', '标题 3', '标题 4',
   '无序列表', '有序列表', '待办事项', '折叠列表', '引用', '代码块', '表格', '分隔线',
+  '从模板插入',
   '信息提示', '警告提示', '错误提示', '成功提示', '备注',
   'AI 生成图像', '绘图', '图片', '文件附件', '图片网格', '网页链接',
   '卡片', '@提及', '目录', '分栏', '公式', '行内公式', '镜像块', '视频嵌入', '白板',
@@ -183,14 +184,18 @@ test('markdown input rules convert while typing', async ({ page }) => {
   await expect(editor.locator('.crafty-math-inline')).toBeVisible();
 });
 
-/** The four typed sigils are Craft's; each must produce its own weight, not eat another. */
-test('the four divider sigils produce four distinct rules', async ({ page }) => {
+/** Each typed sigil must produce its own official weight, not eat another. */
+test('the typed divider sigils produce the official styles, each once', async ({ page }) => {
   await signIn(page);
   const editor = await blankDocument(page);
   await reset(page, editor);
 
-  const sigils = ['..-', '.--', '---', '=-'];
-  const styles = ['thin', 'medium', 'thick', 'dashed'];
+  // The forms the official docs spell out (`longtail.md`: "Type `=--` to insert strong rule"),
+  // with the styles measured off the official rendered CSS. The local names this test used
+  // before (`thin`/`medium`/`thick`) stay in the schema only so documents already storing them
+  // still render.
+  const sigils = ['..-', '.--', '---', '=--', '==='];
+  const styles = ['extraLight', 'light', 'regular', 'strong', 'pageSeparator'];
 
   for (const sigil of sigils) {
     await page.keyboard.type(sigil, { delay: 30 });
@@ -198,7 +203,7 @@ test('the four divider sigils produce four distinct rules', async ({ page }) => 
   }
 
   const rules = editor.locator('hr[data-type="divider"]');
-  await expect(rules).toHaveCount(4);
+  await expect(rules).toHaveCount(5);
   for (const style of styles) {
     await expect(editor.locator(`hr[data-style="${style}"]`)).toHaveCount(1);
   }

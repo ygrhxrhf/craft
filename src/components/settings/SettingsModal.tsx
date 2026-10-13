@@ -20,6 +20,7 @@ import {
   X,
 } from 'lucide-react';
 import { useSettingsStore, type SettingsSection } from '@/lib/store/use-settings-store';
+import { settingsSection } from '@/lib/app/settings-sections';
 import { getProfile } from '@/actions/user/profile';
 import { SettingsPanel } from './SettingsPanels';
 import { cn } from 'cn';
@@ -155,7 +156,10 @@ export function SettingsModal() {
             </div>
           </div>
 
-          {NAV_GROUPS.map((group, groupIndex) => (
+          {NAV_GROUPS.map((group, groupIndex) => {
+            const visible = group.items.filter(({ key }) => settingsSection(key)?.wired !== false);
+            if (visible.length === 0) return null;
+            return (
             <div key={groupIndex} className={cn('px-5', groupIndex === 0 ? 'mt-6' : 'mt-6')}>
               {group.title ? (
                 <div className="px-2 pb-1.5 text-xs font-semibold">{group.title}</div>
@@ -171,7 +175,7 @@ export function SettingsModal() {
                 </div>
               )}
               <div className="space-y-0">
-                {group.items.map(({ key, label, icon: Icon }) => (
+                {visible.map(({ key, label, icon: Icon }) => (
                   <button
                     key={key}
                     type="button"
@@ -189,7 +193,8 @@ export function SettingsModal() {
                 ))}
               </div>
             </div>
-          ))}
+            );
+          })}
 
           <div className="mt-8 px-5">
             <button

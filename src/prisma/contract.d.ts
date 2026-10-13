@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'5780740deeff3569dde3a020c845af348aec5d574b0e5607a6b8146f8efac338'>;
+  StorageHashBase<'4be49cea398d4512ddf941bebfeb36343e91d1a483c4caa677a323d340fafbe5'>;
 export type ExecutionHash =
   ExecutionHashBase<'5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b'>;
 export type ProfileHash =
@@ -310,6 +310,7 @@ export type FieldOutputTypes = {
       readonly threadId: CodecTypes['pg/text@1']['output'];
       readonly userId: CodecTypes['pg/text@1']['output'];
       readonly body: CodecTypes['pg/text@1']['output'];
+      readonly reactions: CodecTypes['pg/json@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -578,6 +579,7 @@ export type FieldInputTypes = {
       readonly threadId: CodecTypes['pg/text@1']['input'];
       readonly userId: CodecTypes['pg/text@1']['input'];
       readonly body: CodecTypes['pg/text@1']['input'];
+      readonly reactions: CodecTypes['pg/json@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -856,6 +858,7 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
+      readonly reactions: CodecTypes['pg/json@1']['output'] | null;
       readonly threadId: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/text@1']['output'];
@@ -1124,6 +1127,7 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
+      readonly reactions: CodecTypes['pg/json@1']['input'] | null;
       readonly threadId: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/text@1']['input'];
@@ -1659,6 +1663,7 @@ export namespace Models {
     threadId: CodecTypes['pg/text@1']['output'];
     userId: CodecTypes['pg/text@1']['output'];
     body: CodecTypes['pg/text@1']['output'];
+    reactions: CodecTypes['pg/json@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -2386,6 +2391,11 @@ type ContractBase = Omit<
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                };
+                readonly reactions: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: true;
                 };
                 readonly createdAt: {
                   readonly nativeType: 'timestamptz';
@@ -4618,6 +4628,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly reactions: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -4671,6 +4685,7 @@ type ContractBase = Omit<
                 readonly threadId: { readonly column: 'threadId' };
                 readonly userId: { readonly column: 'userId' };
                 readonly body: { readonly column: 'body' };
+                readonly reactions: { readonly column: 'reactions' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly deletedAt: { readonly column: 'deletedAt' };

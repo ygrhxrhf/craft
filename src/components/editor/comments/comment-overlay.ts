@@ -1,10 +1,12 @@
 import { mergePending, type PendingRow } from '@/components/sync/local-records';
+import { readReactions, type Reaction } from './reactions';
 
 export interface CommentView {
   id: string;
   threadId: string;
   userId: string;
   body: string;
+  reactions?: Reaction[];
   createdAt: string;
   mine: boolean;
   deletedAt: string | null;
@@ -60,7 +62,11 @@ export function overlayCommentThreads(
   const serverComments: CommentView[] = [];
   for (const thread of serverThreads) {
     for (const comment of thread.comments) {
-      serverComments.push({ ...comment, threadId: comment.threadId || thread.id });
+      serverComments.push({
+        ...comment,
+        threadId: comment.threadId || thread.id,
+        reactions: readReactions(comment.reactions),
+      });
     }
   }
 
@@ -84,6 +90,7 @@ export function overlayCommentThreads(
       threadId: str(pending.data?.threadId),
       userId,
       body: str(pending.data?.body),
+      reactions: readReactions(pending.data?.reactions),
       createdAt: pending.syncTs,
       mine: viewerId !== null && userId === viewerId,
       deletedAt: null,

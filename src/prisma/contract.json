@@ -948,6 +948,13 @@
                   "kind": "scalar"
                 }
               },
+              "reactions": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "threadId": {
                 "nullable": false,
                 "type": {
@@ -1017,6 +1024,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "reactions": {
+                  "column": "reactions"
                 },
                 "threadId": {
                   "column": "threadId"
@@ -4427,6 +4437,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "reactions": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
                 "threadId": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -6384,7 +6399,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "5780740deeff3569dde3a020c845af348aec5d574b0e5607a6b8146f8efac338"
+    "storageHash": "4be49cea398d4512ddf941bebfeb36343e91d1a483c4caa677a323d340fafbe5"
   },
   "execution": {
     "executionHash": "5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b",

@@ -12,11 +12,16 @@ import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { composerKey } from './composer-keys';
 import { EmojiSuggest } from './EmojiSuggest';
 import { MentionSuggest } from './MentionSuggest';
+import { groupReactions, reactionSentence } from './reaction-copy';
+import { toggleReaction, type Reaction } from './reactions';
+
+const REACTION_CHOICES = ['👍', '❤️', '😄', '🎉'];
 
 interface CommentRow {
   id: string;
   userId: string;
   body: string;
+  reactions: Reaction[];
   createdAt: string;
   mine: boolean;
 }
@@ -42,6 +47,7 @@ function toRows(threads: ThreadView[]): ThreadRow[] {
       id: comment.id,
       userId: comment.userId,
       body: comment.body,
+      reactions: comment.reactions ?? [],
       createdAt: comment.createdAt,
       mine: comment.mine,
     })),
@@ -154,6 +160,23 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
       await reload();
     } catch {
       // 提交失败保持草稿
+    }
+  };
+
+  const handleReact = async (comment: CommentRow, glyph: string) => {
+    const viewerId = viewerIdRef.current ?? userId ?? null;
+    if (!viewerId) return;
+    const name = session?.user?.name ?? session?.user?.email ?? '';
+    const reactions = toggleReaction(comment.reactions, { glyph, userId: viewerId, name });
+    try {
+      await getSyncManager().applyLocal({
+        table: 'comment',
+        id: comment.id,
+        patch: { reactions },
+      });
+      await reload();
+    } catch {
+      // 表情没写上就保持原样
     }
   };
 
@@ -293,7 +316,25 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
             )}
             {thread.comments.map((comment) => (
               <p key={comment.id} className="group flex items-start gap-1 text-meta text-foreground/85">
-                <span className="min-w-0 flex-1">{comment.body}</span>
+                <span className="min-w-0 flex-1">
+                  {comment.body}
+                  {groupReactions(comment.reactions).length > 0 && (
+                    <span className="mt-0.5 block text-foreground/45">
+                      {groupReactions(comment.reactions).map(reactionSentence).join('，')}
+                    </span>
+                  )}
+                </span>
+                {REACTION_CHOICES.map((glyph) => (
+                  <button
+                    key={glyph}
+                    type="button"
+                    aria-label="添加表情"
+                    onClick={() => void handleReact(comment, glyph)}
+                    className="rounded px-0.5 opacity-0 group-hover:opacity-100"
+                  >
+                    {glyph}
+                  </button>
+                ))}
                 {comment.mine && (
                   <button
                     type="button"

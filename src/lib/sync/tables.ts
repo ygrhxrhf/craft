@@ -32,7 +32,7 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'collection_property', model: 'CollectionProperty', cols: ['id','collectionId','name','type','config','order','isVisible','width','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'collection_value', model: 'CollectionValue', cols: ['id','itemId','propertyId','value','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'collection_view', model: 'CollectionView', cols: ['id','collectionId','name','type','config','isActive','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
-  { table: 'comment', model: 'Comment', cols: ['id','threadId','userId','body','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  { table: 'comment', model: 'Comment', cols: ['id','threadId','userId','body','reactions','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'comment_thread', model: 'CommentThread', cols: ['id','documentId','blockId','blockText','resolved','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'document_share', model: 'DocumentShare', cols: ['id','documentId','token','slug','passcode','isPublished','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // document_member：contract 有 updatedAt、无 deletedAt（移除仍是服务端硬删，不走墓碑）

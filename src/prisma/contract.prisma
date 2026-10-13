@@ -411,6 +411,8 @@ model Comment {
   threadId   String
   userId     String
   body       String
+  // JSON list of {glyph, userId, name}. Absent on every comment written before reactions existed.
+  reactions  Json?
   createdAt  TimestamptzString @default(now())
   updatedAt  temporal.updatedAtString()
   deletedAt  TimestamptzString?

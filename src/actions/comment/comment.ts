@@ -91,6 +91,7 @@ export async function getThreads(documentId: string) {
       threadId: c.threadId,
       userId: c.userId,
       body: c.body,
+      reactions: c.reactions ?? null,
       createdAt: c.createdAt,
       mine: c.userId === session.user.id,
       deletedAt: null,

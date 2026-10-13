@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.comments.reactions",
+    "label": "Add column \"reactions\" to \"comments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "reactions",
+        "table": "comments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"reactions\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "comments",
+          "reactions"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"reactions\"",
+        "sql": "ALTER TABLE \"public\".\"comments\" ADD COLUMN \"reactions\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"reactions\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "comments",
+          "reactions"
+        ]
+      }
+    ]
+  }
+]

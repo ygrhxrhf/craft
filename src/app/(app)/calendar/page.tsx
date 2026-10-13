@@ -15,6 +15,7 @@ import type { DailyNoteItem } from '@/actions/daily-notes/daily-notes';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { applyCompletedFilter } from '@/lib/task/grouping';
+import { agendaDays, revealPreviousDays } from '@/lib/calendar/previous-days';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 
 export default function CalendarPage() {
@@ -67,6 +68,7 @@ export default function CalendarPage() {
   };
 
   const [creating, setCreating] = useState(false);
+  const [earlierDays, setEarlierDays] = useState(0);
   const createNote = async () => {
     if (!selected || creating) return;
     setCreating(true);
@@ -94,7 +96,10 @@ export default function CalendarPage() {
               <Calendar
                 mode="single"
                 selected={selected}
-                onSelect={setSelected}
+                onSelect={(day) => {
+                  setSelected(day);
+                  setEarlierDays(0);
+                }}
                 month={month}
                 onMonthChange={setMonth}
                 modifiers={{
@@ -109,6 +114,44 @@ export default function CalendarPage() {
             </div>
 
             <div className="min-w-0 flex-1">
+              {selected && earlierDays > 0 && (
+                <div className="mb-4 flex flex-col gap-3">
+                  {agendaDays(selected, earlierDays)
+                    .slice(0, -1)
+                    .map((day) => {
+                      const key = day.toDateString();
+                      const dayTasks = tasksByDay.get(key) ?? [];
+                      const dayNote = notesByDay.get(key);
+                      if (dayTasks.length === 0 && !dayNote) return null;
+                      return (
+                        <section key={key}>
+                          <h3 className="mb-1 text-xs font-medium text-muted-foreground">
+                            {day.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' })}
+                          </h3>
+                          {dayNote && (
+                            <Link href={`/documents/${dayNote.id}`} className="block truncate text-sm hover:underline">
+                              {dayNote.icon ?? '📄'} {dayNote.title}
+                            </Link>
+                          )}
+                          {dayTasks.map((task) => (
+                            <p key={task.id} className={cn('truncate text-sm', task.isCompleted && 'text-muted-foreground line-through')}>
+                              {task.title}
+                            </p>
+                          ))}
+                        </section>
+                      );
+                    })}
+                </div>
+              )}
+              {selected && (
+                <button
+                  type="button"
+                  onClick={() => setEarlierDays((shown) => revealPreviousDays(shown))}
+                  className="mb-3 text-sm text-foreground/55 hover:text-foreground"
+                >
+                  ↑ 显示前几天
+                </button>
+              )}
               <h2 className="mb-3 text-sm font-medium text-muted-foreground">
                 {selected
                   ? selected.toLocaleDateString('zh-CN', {

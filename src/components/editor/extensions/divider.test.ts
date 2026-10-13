@@ -7,16 +7,17 @@ function styleFor(typed: string): string | undefined {
 }
 
 describe('divider sigils', () => {
-  it('maps each of the four weights', () => {
-    expect(styleFor('..-')).toBe('thin');
-    expect(styleFor('.--')).toBe('medium');
-    expect(styleFor('---')).toBe('thick');
-    expect(styleFor('=-')).toBe('dashed');
+  it('maps each typed weight onto the official table', () => {
+    expect(styleFor('..-')).toBe('extraLight');
+    expect(styleFor('.--')).toBe('light');
+    expect(styleFor('---')).toBe('regular');
+    expect(styleFor('=--')).toBe('strong');
+    expect(styleFor('===')).toBe('pageSeparator');
   });
 
   it('accepts the en/em dash forms typography leaves behind', () => {
-    expect(styleFor('–-')).toBe('thick');
-    expect(styleFor('—-')).toBe('thick');
+    expect(styleFor('–-')).toBe('regular');
+    expect(styleFor('—-')).toBe('regular');
   });
 
   it('does not let one sigil swallow another', () => {

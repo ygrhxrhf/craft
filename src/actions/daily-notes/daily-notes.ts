@@ -70,6 +70,20 @@ export async function getOrCreateDayNote(step: -1 | 0 | 1 = 0) {
   }
 
   const folderId = config ? (config as any).folderId : null;
+  const templateId = config ? ((config as any).templateId as string | null) : null;
+
+  // A configured template seeds the new note (G20). A missing or deleted one is ignored, so a stale
+  // setting never stops the day's note from being created.
+  let content: unknown;
+  if (templateId) {
+    const template = await db.orm.public.Document.first({
+      id: templateId,
+      userId: uid,
+      isTemplate: true,
+      isDeleted: false,
+    });
+    if (template) content = (template as any).content;
+  }
 
   const doc = await db.orm.public.Document.create({
     id: crypto.randomUUID(),
@@ -77,6 +91,7 @@ export async function getOrCreateDayNote(step: -1 | 0 | 1 = 0) {
     icon: '📅',
     userId: uid,
     folderId,
+    ...(content !== undefined ? { content } : {}),
     isDailyNote: true,
     dailyNoteDate: startIso,
     // No DB default on metaUpdatedAt; without it new rows never enter the

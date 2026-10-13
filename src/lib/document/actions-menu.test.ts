@@ -37,14 +37,10 @@ describe('the twelve entries', () => {
 
 describe('the local gap', () => {
   it('lists the entries this build lacks', () => {
+    // findInPage, quickOpen and the four moves have local surfaces now; the four that stay
+    // missing have no local action at all (comment from this tab, group, ungroup, rename).
     expect(missingActions().map((e) => e.id)).toEqual([
-      'findInPage',
-      'quickOpen',
       'addComment',
-      'moveUp',
-      'moveDown',
-      'moveTop',
-      'moveBottom',
       'group',
       'ungroup',
       'rename',

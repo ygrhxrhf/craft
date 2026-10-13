@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Calendar, User, Play, Folder, Copy, Star, Clock, Trash2,
-  FileText, LayoutTemplate, Download,
+  FileText, LayoutTemplate, Download, Search, ArrowUp, ArrowDown, ChevronsUp, ChevronsDown,
 } from 'lucide-react';
 import { cn } from 'cn';
 import { getBacklinks } from '@/actions/document/backlinks';
@@ -21,11 +21,21 @@ import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
 import { getSyncManager } from '@/lib/sync-core';
 import { findLiveFavoriteId, findDocumentShareId } from '@/components/sync/local-records';
+import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
+import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
+import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 import { VersionDialog } from './VersionDialog';
 import { CommentSection } from '../comments/CommentSection';
 import { TagsSection } from './TagsSection';
 import { MembersSection } from './MembersSection';
 import type { Editor } from '@tiptap/react';
+
+/** Moves the block holding the selection. No-ops at the edge, same as the key chord. */
+function moveSelection(editor: Editor | null, target: MoveTarget) {
+  if (!editor) return;
+  const tr = buildBlockMove(editor.state, target);
+  if (tr) editor.view.dispatch(tr);
+}
 
 interface InfoTabProps {
   documentId: string;
@@ -54,7 +64,7 @@ interface DocItem {
   parentId: string | null;
 }
 
-export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps) {
+export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: InfoTabProps) {
   const router = useRouter();
   const [subTab, setSubTab] = useState<'info' | 'actions'>('info');
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
@@ -438,6 +448,45 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
             <Folder className="size-3.5 text-muted-foreground" />
             <span>移动到...</span>
           </button>
+          <button
+            type="button"
+            onClick={() => {
+              useFindReplaceStore.getState().setOpen(true);
+              onClose();
+            }}
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
+          >
+            <Search className="size-3.5 text-muted-foreground" />
+            <span>在页面中查找</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              useCommandPaletteStore.getState().open();
+              onClose();
+            }}
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
+          >
+            <FileText className="size-3.5 text-muted-foreground" />
+            <span>快速开启</span>
+          </button>
+          {([
+            ['up', '上移', ArrowUp],
+            ['down', '下移', ArrowDown],
+            ['top', '移至顶部', ChevronsUp],
+            ['bottom', '移至底部', ChevronsDown],
+          ] as const).map(([target, label, Icon]) => (
+            <button
+              key={target}
+              type="button"
+              disabled={!editor}
+              onClick={() => moveSelection(editor, target)}
+              className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+            >
+              <Icon className="size-3.5 text-muted-foreground" />
+              <span>{label}</span>
+            </button>
+          ))}
           <button
             type="button"
             onClick={handleDuplicate}

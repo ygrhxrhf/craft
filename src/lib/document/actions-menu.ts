@@ -14,13 +14,13 @@ export interface ActionEntry {
 }
 
 export const ACTION_ENTRIES: readonly ActionEntry[] = [
-  { id: 'findInPage', label: '在页面中查找', showsChord: true, implemented: false },
-  { id: 'quickOpen', label: '快速开启', showsChord: true, implemented: false },
+  { id: 'findInPage', label: '在页面中查找', showsChord: true, implemented: true },
+  { id: 'quickOpen', label: '快速开启', showsChord: true, implemented: true },
   { id: 'addComment', label: '添加评论', showsChord: true, implemented: false },
-  { id: 'moveUp', label: '上移', showsChord: true, implemented: false },
-  { id: 'moveDown', label: '下移', showsChord: true, implemented: false },
-  { id: 'moveTop', label: '移至顶部', showsChord: false, implemented: false },
-  { id: 'moveBottom', label: '移至底部', showsChord: false, implemented: false },
+  { id: 'moveUp', label: '上移', showsChord: true, implemented: true },
+  { id: 'moveDown', label: '下移', showsChord: true, implemented: true },
+  { id: 'moveTop', label: '移至顶部', showsChord: false, implemented: true },
+  { id: 'moveBottom', label: '移至底部', showsChord: false, implemented: true },
   { id: 'group', label: '组合', showsChord: false, implemented: false },
   { id: 'ungroup', label: '取消组合', showsChord: false, implemented: false },
   { id: 'rename', label: '重命名', showsChord: false, implemented: false },

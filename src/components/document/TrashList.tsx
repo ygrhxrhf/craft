@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { permanentDeleteDocument } from '@/actions/document/delete';
+import { bulkDeleteAlert, bulkRestoreAlert, runBulkAction } from '@/lib/document/bulk-action';
 import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { getDeletedDocuments } from '@/actions/document/get';
@@ -114,17 +115,26 @@ export function TrashList({ documents }: TrashListProps) {
     setSelected(new Set());
   }
 
-  async function runSelected(action: (id: string) => Promise<void>) {
+  async function runSelected(
+    action: (id: string) => Promise<void>,
+    alert: (failedCount: number, totalCount: number) => string | null,
+  ) {
+    const ids = [...selected];
     setBusy(true);
     try {
-      // Sequential on purpose: the server actions are per-document and a
-      // rejected one must not leave the rest half-attempted without a signal.
-      for (const id of selected) await action(id);
-    } catch (error) {
-      toast.add({
-        title: error instanceof Error ? error.message : '操作失败',
-        type: 'error',
-      });
+      // Partial success: every selected document is attempted, and the alert names how many
+      // failed instead of stopping at the first rejection.
+      const outcome = await runBulkAction(ids, action);
+      const title = alert(outcome.failed.length, ids.length);
+      if (title) {
+        // The official aggregate copy is the headline; the first rejection stays visible as the
+        // description, which is what the batch path and the single-row path both report.
+        toast.add({
+          title,
+          description: outcome.failed[0]?.message,
+          type: 'error',
+        });
+      }
     } finally {
       setBusy(false);
       setConfirmOpen(false);
@@ -162,7 +172,7 @@ export function TrashList({ documents }: TrashListProps) {
               aria-label="还原所选"
               title="还原所选"
               disabled={!someSelected || busy}
-              onClick={() => runSelected(handleRestore)}
+              onClick={() => runSelected(handleRestore, (failed) => bulkRestoreAlert(failed))}
             >
               <RotateCcw />
             </Button>
@@ -276,7 +286,7 @@ export function TrashList({ documents }: TrashListProps) {
               variant="destructive"
               size="sm"
               disabled={busy}
-              onClick={() => runSelected(permanentDeleteDocument)}
+              onClick={() => runSelected(permanentDeleteDocument, bulkDeleteAlert)}
             >
               {busy ? '删除中…' : '删除'}
             </Button>

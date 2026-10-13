@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpDown, X, Plus } from 'lucide-react';
 import { useState } from 'react';
 import type { getCollection } from '@/actions/collection/collection';
+import { compareForSort } from '@/lib/collection/sort-compare';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
 
@@ -124,21 +125,10 @@ export function applySorts(items: any[], sorts: SortRule[], properties: any[]): 
       const aValue = parseValue(a.values?.find((v: any) => v.propertyId === sort.propertyId)?.value);
       const bValue = parseValue(b.values?.find((v: any) => v.propertyId === sort.propertyId)?.value);
 
-      let comparison = 0;
-
-      if (property.type === 'number') {
-        comparison = Number(aValue ?? 0) - Number(bValue ?? 0);
-      } else if (property.type === 'date') {
-        const aDate = aValue ? new Date(aValue).getTime() : 0;
-        const bDate = bValue ? new Date(bValue).getTime() : 0;
-        comparison = aDate - bDate;
-      } else {
-        comparison = String(aValue ?? '').localeCompare(String(bValue ?? ''));
-      }
-
-      if (comparison !== 0) {
-        return sort.direction === 'asc' ? comparison : -comparison;
-      }
+      // One Collator for every column type, blanks first in both directions — protocol §9's
+      // single sort rule, replacing the three-way number/date/string branch this used to take.
+      const comparison = compareForSort(aValue, bValue, sort.direction);
+      if (comparison !== 0) return comparison;
     }
 
     return 0;

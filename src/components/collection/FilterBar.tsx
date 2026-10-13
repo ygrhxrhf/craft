@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { X, Plus } from 'lucide-react';
 import { useState } from 'react';
 import type { getCollection } from '@/actions/collection/collection';
+import { OPERATORS, applyFilter, operatorsFor, resolveOperator } from '@/lib/collection/filter-operators';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
 
@@ -20,54 +21,23 @@ interface FilterBarProps {
   onFiltersChange: (filters: Filter[]) => void;
 }
 
-const operators = {
-  text: [
-    { value: 'contains', label: '包含' },
-    { value: 'not_contains', label: '不包含' },
-    { value: 'is', label: '等于' },
-    { value: 'is_not', label: '不等于' },
-    { value: 'is_empty', label: '为空' },
-    { value: 'is_not_empty', label: '不为空' },
-  ],
-  number: [
-    { value: 'eq', label: '等于' },
-    { value: 'ne', label: '不等于' },
-    { value: 'gt', label: '大于' },
-    { value: 'lt', label: '小于' },
-    { value: 'gte', label: '大于等于' },
-    { value: 'lte', label: '小于等于' },
-  ],
-  date: [
-    { value: 'is', label: '是' },
-    { value: 'before', label: '早于' },
-    { value: 'after', label: '晚于' },
-    { value: 'is_empty', label: '为空' },
-    { value: 'is_not_empty', label: '不为空' },
-  ],
-  select: [
-    { value: 'is', label: '是' },
-    { value: 'is_not', label: '不是' },
-    { value: 'is_empty', label: '为空' },
-    { value: 'is_not_empty', label: '不为空' },
-  ],
-  checkbox: [
-    { value: 'is', label: '是' },
-    { value: 'is_not', label: '不是' },
-  ],
-};
-
 export function FilterBar({ collection, filters, onFiltersChange }: FilterBarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const properties = collection.properties.filter((p: any) => p.isVisible);
 
   const handleAddFilter = () => {
-    if (properties.length === 0) return;
+    // A column type with no permitted operator cannot be filtered at all — official `TKe` has no
+    // default branch, so start from the first column that actually has one instead of silently
+    // doing nothing when the title column happens to be an unfilterable type.
+    const first = properties.find((p: any) => operatorsFor(p.type).length > 0);
+    if (!first) return;
+    const allowed = operatorsFor(first.type);
 
     const newFilter: Filter = {
       id: crypto.randomUUID(),
-      propertyId: properties[0].id,
-      operator: 'contains',
+      propertyId: first.id,
+      operator: allowed[0],
       value: '',
     };
 
@@ -88,10 +58,17 @@ export function FilterBar({ collection, filters, onFiltersChange }: FilterBarPro
     return properties.find((p: any) => p.id === propertyId);
   };
 
-  const getOperatorsForProperty = (propertyId: string) => {
+  /**
+   * Switching the column re-checks the stored line value against the new type's permitted set:
+   * an operator that belonged to the old column would otherwise survive the switch and answer
+   * `true` for everything.
+   */
+  const handlePropertyChange = (filter: Filter, propertyId: string) => {
     const property = getProperty(propertyId);
-    if (!property) return [];
-    return (operators as any)[property.type] ?? operators.text;
+    const allowed = property ? operatorsFor(property.type) : [];
+    const resolved = property ? resolveOperator(filter.operator, property.type) : null;
+    const nextOperator = resolved && allowed.includes(resolved) ? resolved : allowed[0] ?? '';
+    handleUpdateFilter(filter.id, { propertyId, operator: nextOperator });
   };
 
   if (!isOpen) {
@@ -103,7 +80,7 @@ export function FilterBar({ collection, filters, onFiltersChange }: FilterBarPro
         onClick={() => setIsOpen(true)}
       >
         <Plus className="mr-1.5 size-3.5" />
-        添加筛选
+        添加筛选器
       </Button>
     );
   }
@@ -120,13 +97,17 @@ export function FilterBar({ collection, filters, onFiltersChange }: FilterBarPro
       <div className="space-y-2">
         {filters.map(filter => {
           const property = getProperty(filter.propertyId);
-          const availableOperators = getOperatorsForProperty(filter.propertyId);
+          const allowed = property ? operatorsFor(property.type) : [];
+          // Legacy stored line values (`contains`, `gt`, …) are mapped here rather than rewritten
+          // in the database: the mapping is local, and re-writing would lose the original row.
+          const resolved = property ? resolveOperator(filter.operator, property.type) : null;
+          const definition = resolved ? OPERATORS[resolved as keyof typeof OPERATORS] : null;
 
           return (
-            <div key={filter.id} className="flex items-center gap-2">
+            <div key={filter.id} data-testid="filter-row" className="flex items-center gap-2">
               <select
                 value={filter.propertyId}
-                onChange={(e) => handleUpdateFilter(filter.id, { propertyId: e.target.value })}
+                onChange={(e) => handlePropertyChange(filter, e.target.value)}
                 className="h-7 rounded-md border border-border bg-background px-2 text-ui transition-colors duration-150 hover:bg-foreground/4 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
               >
                 {properties.map((p: any) => (
@@ -137,24 +118,27 @@ export function FilterBar({ collection, filters, onFiltersChange }: FilterBarPro
               </select>
 
               <select
-                value={filter.operator}
+                data-testid="filter-operator"
+                value={resolved ?? ''}
                 onChange={(e) => handleUpdateFilter(filter.id, { operator: e.target.value })}
                 className="h-7 rounded-md border border-border bg-background px-2 text-ui transition-colors duration-150 hover:bg-foreground/4 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
               >
-                {availableOperators.map((op: any) => (
-                  <option key={op.value} value={op.value}>
-                    {op.label}
+                {resolved === null && <option value="">{filter.operator}</option>}
+                {allowed.map((id) => (
+                  <option key={id} value={id}>
+                    {OPERATORS[id as keyof typeof OPERATORS].label}
                   </option>
                 ))}
               </select>
 
-              {!['is_empty', 'is_not_empty'].includes(filter.operator) && (
+              {(definition?.takesValue ?? true) && (
                 <input
+                  data-testid="filter-value"
                   type={property?.type === 'number' ? 'number' : property?.type === 'date' ? 'date' : 'text'}
                   value={filter.value ?? ''}
                   onChange={(e) => handleUpdateFilter(filter.id, { value: e.target.value })}
-                  className="h-7 flex-1 rounded-md border border-border bg-background px-2 text-ui focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
                   placeholder="值"
+                  className="h-7 flex-1 rounded-md border border-border bg-background px-2 text-ui focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
                 />
               )}
 
@@ -185,43 +169,12 @@ export function applyFilters(items: any[], filters: Filter[], properties: any[])
   return items.filter(item => {
     return filters.every(filter => {
       const property = properties.find((p: any) => p.id === filter.propertyId);
+      // No property, or a line value this column type may not ask: the filter is inert, which is
+      // the official `xw` rule — dropped, not answered.
       if (!property) return true;
 
       const value = item.values?.find((v: any) => v.propertyId === filter.propertyId)?.value;
-      const parsed = parseValue(value);
-
-      switch (filter.operator) {
-        case 'contains':
-          return String(parsed ?? '').toLowerCase().includes(String(filter.value).toLowerCase());
-        case 'not_contains':
-          return !String(parsed ?? '').toLowerCase().includes(String(filter.value).toLowerCase());
-        case 'is':
-          return String(parsed ?? '') === String(filter.value);
-        case 'is_not':
-          return String(parsed ?? '') !== String(filter.value);
-        case 'is_empty':
-          return parsed == null || parsed === '';
-        case 'is_not_empty':
-          return parsed != null && parsed !== '';
-        case 'eq':
-          return Number(parsed) === Number(filter.value);
-        case 'ne':
-          return Number(parsed) !== Number(filter.value);
-        case 'gt':
-          return Number(parsed) > Number(filter.value);
-        case 'lt':
-          return Number(parsed) < Number(filter.value);
-        case 'gte':
-          return Number(parsed) >= Number(filter.value);
-        case 'lte':
-          return Number(parsed) <= Number(filter.value);
-        case 'before':
-          return new Date(parsed) < new Date(filter.value);
-        case 'after':
-          return new Date(parsed) > new Date(filter.value);
-        default:
-          return true;
-      }
+      return applyFilter(filter, parseValue(value), property.type);
     });
   });
 }

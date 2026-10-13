@@ -40,7 +40,7 @@ export async function getDailyNotes(): Promise<DailyNoteItem[]> {
  * The note for a day (G20). `step` moves one day back or forward from today, which is how 前一天 and
  * 后一天 open their note — creating it when that day has none yet, exactly as today does.
  */
-export async function getOrCreateDayNote(step: -1 | 0 | 1 = 0) {
+export async function getOrCreateDayNote(step: -1 | 0 | 1 | Date = 0) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
   const uid = session.user.id;
@@ -52,7 +52,7 @@ export async function getOrCreateDayNote(step: -1 | 0 | 1 = 0) {
   // previous day's note. Read the config first so the day window is the configured one.
   const config = await db.orm.public.DailyNotesConfig.first({ userId: uid });
   const startTime = config ? ((config as any).startTime as string | null) : null;
-  const target = step === 0 ? now : shiftDay(now, step, startTime);
+  const target = step instanceof Date ? step : step === 0 ? now : shiftDay(now, step, startTime);
   const { start, end } = dayWindow(target, startTime);
   const startIso = start.toISOString();
   const endIso = end.toISOString();

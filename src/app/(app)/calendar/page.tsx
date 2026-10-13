@@ -2,11 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Calendar as CalendarIcon, CheckSquare, FileText } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from 'cn';
 import { getTasks, toggleTask } from '@/actions/task/task';
+import { getOrCreateDayNote } from '@/actions/daily-notes/daily-notes';
 import type { TaskItem } from '@/actions/task/task';
 import { getDailyNotes } from '@/actions/daily-notes/daily-notes';
 import type { DailyNoteItem } from '@/actions/daily-notes/daily-notes';
@@ -16,6 +18,7 @@ import { applyCompletedFilter } from '@/lib/task/grouping';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 
 export default function CalendarPage() {
+  const router = useRouter();
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [notes, setNotes] = useState<DailyNoteItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +66,18 @@ export default function CalendarPage() {
     await load();
   };
 
+  const [creating, setCreating] = useState(false);
+  const createNote = async () => {
+    if (!selected || creating) return;
+    setCreating(true);
+    try {
+      const note = await getOrCreateDayNote(selected);
+      router.push(`/documents/${note.id}`);
+    } finally {
+      setCreating(false);
+    }
+  };
+
   const selectedKey = selected?.toDateString();
   const selectedTasks = selectedKey ? tasksByDay.get(selectedKey) ?? [] : [];
   const selectedNote = selectedKey ? notesByDay.get(selectedKey) : undefined;
@@ -104,6 +119,16 @@ export default function CalendarPage() {
                   : '选择日期'}
               </h2>
 
+              {!selectedNote && (
+                <button
+                  type="button"
+                  onClick={() => void createNote()}
+                  disabled={creating}
+                  className="mb-3 rounded-md border border-border px-3 py-1.5 text-sm text-foreground/70 hover:bg-muted/60 disabled:opacity-50"
+                >
+                  {creating ? '创建中…' : '创建每日笔记'}
+                </button>
+              )}
               {!selectedNote && selectedTasks.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-border p-8 text-center">
                   <CalendarIcon className="mx-auto mb-2 size-5 text-muted-foreground" />

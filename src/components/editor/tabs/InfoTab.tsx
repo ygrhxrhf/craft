@@ -16,6 +16,7 @@ import { getFolders } from '@/actions/folder/get';
 import { getDocument, getDocuments } from '@/actions/document/get';
 import { relativeTime } from '@/lib/document/relative-time';
 import { pageStats, statsTitle } from '@/lib/document/page-stats';
+import { LOCATION_TITLE, locationPathLabel } from '@/lib/document/location-path';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
 import { getSyncManager } from '@/lib/sync-core';
@@ -231,6 +232,9 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
     blockCount: editor?.state.doc.childCount ?? 0,
   });
 
+  // The ancestry chain comes from the same document list the move menu already loads.
+  const locationLabel = locationPathLabel(docs, documentId);
+
   return (
     <div className="p-3">
       {/* Sub-tab switcher */}
@@ -280,6 +284,19 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
               </div>
             </div>
           </section>
+
+          {/* Location — the document's ancestry (G203) */}
+          {locationLabel && (
+            <section>
+              <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">
+                {LOCATION_TITLE}
+              </h4>
+              <div className="flex items-center gap-2.5 text-ui text-muted-foreground">
+                <Folder className="size-3.5" />
+                <span className="truncate">{locationLabel}</span>
+              </div>
+            </section>
+          )}
 
           {/* Tags */}
           <TagsSection documentId={documentId} />

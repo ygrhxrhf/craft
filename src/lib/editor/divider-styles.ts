@@ -20,6 +20,14 @@ export type DividerStyle =
 
 export const DEFAULT_DIVIDER_STYLE: DividerStyle = 'regular';
 
+/** The four weights the style menu offers, with the collected labels. */
+export const DIVIDER_STYLE_CHOICES: readonly { style: DividerStyle; label: string }[] = [
+  { style: 'extraLight', label: '分隔线 - 极细' },
+  { style: 'light', label: '分隔线 - 细' },
+  { style: 'regular', label: '分隔线 - 常规' },
+  { style: 'strong', label: '分隔线 - 粗' },
+];
+
 const KNOWN_STYLES = new Set<string>([...OFFICIAL_DIVIDER_STYLES, ...LEGACY_DIVIDER_STYLES]);
 
 const STYLE_BY_MARKUP: Record<string, DividerStyle> = {

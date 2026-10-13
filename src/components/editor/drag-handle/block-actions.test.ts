@@ -4,6 +4,7 @@ import { EditorState } from '@tiptap/pm/state';
 import type { Transaction } from '@tiptap/pm/state';
 import {
   applyBlockAction,
+  setDividerStyle,
   setBlockEmoji,
   clearTaskReminder,
   setTaskReminder,
@@ -24,6 +25,7 @@ const schema = new Schema({
     cardBlock: { content: 'block+', group: 'block' },
     taskItem: { content: 'text*', group: 'block', attrs: { remindAt: { default: null } } },
     toggleBlock: { content: 'block+', group: 'block', attrs: { open: { default: false } } },
+    divider: { group: 'block', atom: true, attrs: { style: { default: 'regular' } } },
     text: {},
   },
   marks: {},
@@ -112,6 +114,11 @@ describe('blockMenuItems', () => {
     ]);
   });
 
+  it('offers 分隔符样式 only on a divider', () => {
+    expect(blockMenuItems({ canDelete: true, isDivider: true }).map((item) => item.label)).toContain('分隔符样式');
+    expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).not.toContain('divider-style');
+  });
+
   it('offers 展开 on a closed toggle and 收起 on an open one', () => {
     const closed = blockMenuItems({ canDelete: true, isToggle: true });
     expect(closed.map((item) => item.label)).toContain('展开');
@@ -192,6 +199,26 @@ describe('deleteBlock', () => {
   it('refuses to empty the document', () => {
     const state = stateWith(['甲']);
     expect(() => run(state, (d) => deleteBlock(state, d, 0))).toThrow();
+  });
+});
+
+describe('setDividerStyle', () => {
+  function dividerState() {
+    const doc = schema.nodes.doc.create(null, [schema.nodes.divider.create({ style: 'regular' })]);
+    return EditorState.create({ schema, doc });
+  }
+
+  it('changes the weight of a divider', () => {
+    const state = dividerState();
+    const next = runState(state, (d) => setDividerStyle(state, d, 0, 'strong'));
+    expect(next.doc.child(0).attrs.style).toBe('strong');
+  });
+
+  it('does nothing to a block that is not a divider', () => {
+    const state = stateWith(['甲']);
+    expect(() => run(state, (d) => setDividerStyle(state, d, 0, 'light'))).toThrow(
+      'the action dispatched nothing',
+    );
   });
 });
 
@@ -384,7 +411,7 @@ describe('applyBlockAction', () => {
     for (const item of blockMenuItems({ canDelete: true })) {
       // 复制区块链接 leaves the editor; 提醒我… opens a submenu instead of a transaction.
       // 复制区块链接 leaves the editor; 提醒我… and 添加评论 open other surfaces.
-      if (item.id === 'copy-link' || item.id === 'remind' || item.id === 'add-comment' || item.id === 'add-emoji') continue;
+      if (item.id === 'copy-link' || item.id === 'remind' || item.id === 'add-comment' || item.id === 'add-emoji' || item.id === 'divider-style') continue;
       expect(() => run(state, (d) => applyBlockAction(state, d, 1, item.id))).not.toThrow();
     }
   });

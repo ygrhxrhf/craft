@@ -3,6 +3,7 @@ import { TextSelection } from '@tiptap/pm/state';
 import { BLOCK_HASH_PREFIX } from '@/lib/editor/block-anchor';
 import { REMIND_PRESETS, remindInstantFor, type RemindPresetId } from '@/lib/task/remind-presets';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
+import { type DividerStyle } from '@/lib/editor/divider-styles';
 
 export type BlockActionId =
   | 'remind'
@@ -18,6 +19,7 @@ export type BlockActionId =
   | 'add-emoji'
   | 'toggle-open'
   | 'add-content'
+  | 'divider-style'
   | 'delete';
 
 const MOVE_TARGETS: Record<string, MoveTarget> = {
@@ -47,11 +49,13 @@ export function blockMenuItems({
   isTask,
   isToggle,
   toggleOpen,
+  isDivider,
 }: {
   canDelete: boolean;
   isTask?: boolean;
   isToggle?: boolean;
   toggleOpen?: boolean;
+  isDivider?: boolean;
 }): BlockAction[] {
   const items: BlockAction[] = [
     { id: 'add-content', label: '添加内容' },
@@ -68,6 +72,7 @@ export function blockMenuItems({
   ];
   if (isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
   if (isToggle) items.splice(2, 0, { id: 'toggle-open', label: toggleOpen ? '收起' : '展开' });
+  if (isDivider) items.splice(2, 0, { id: 'divider-style', label: '分隔符样式' });
   if (canDelete) items.push({ id: 'delete', label: '删除' });
   return items;
 }
@@ -150,6 +155,19 @@ export function addContentBelow(
   const block = paragraph.create(null, state.schema.text('/'));
   const tr = state.tr.insert(after, block);
   dispatch(tr.setSelection(TextSelection.create(tr.doc, after + block.nodeSize - 1)).scrollIntoView());
+}
+
+/** Sets a divider's weight. Does nothing to any other block. */
+export function setDividerStyle(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  style: DividerStyle,
+) {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'divider') return;
+  const { before } = blockBounds(state, index);
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, style }));
 }
 
 /** Flips a toggle block between open and closed. Does nothing to any other block. */
@@ -276,6 +294,9 @@ export function applyBlockAction(
       break;
     case 'add-content':
       addContentBelow(state, dispatch, index);
+      break;
+    case 'divider-style':
+      // The weight is chosen from the submenu, which calls setDividerStyle itself.
       break;
     case 'copy-link':
       // The link needs the document id and the clipboard, neither of which the editor state

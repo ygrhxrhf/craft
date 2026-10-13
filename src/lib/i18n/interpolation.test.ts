@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { fillPositional, interpolationKinds, mixesSyntaxes } from './interpolation';
 
 /**
- * The four interpolation syntaxes (G229): mustache legacy, positional, prompt slot and i18next
- * named.
+ * The six interpolation conventions (G229 / G321): positional, named, prompt slot, wrapping tag,
+ * indexed children, and a literal `[team]` that is a word rather than a parameter.
  */
-describe('reading the syntaxes a string uses', () => {
+describe('reading the conventions a string uses', () => {
   it('reads a positional slot', () => {
     expect(interpolationKinds('你现在是 [0] 的成员')).toEqual(['positional']);
   });
@@ -15,12 +15,17 @@ describe('reading the syntaxes a string uses', () => {
     expect(interpolationKinds('总结 {0} 的内容')).toEqual(['promptSlot']);
   });
 
-  it('reads a legacy named slot', () => {
+  it('reads a named slot, i18next form included', () => {
     expect(interpolationKinds('你现在是 {{spaceName}} 的管理员')).toEqual(['namedLegacy']);
+    expect(interpolationKinds('已删除 {{deletedCount}} 项')).toEqual(['namedLegacy']);
   });
 
-  it('reads an i18next named slot', () => {
-    expect(interpolationKinds('已删除 {{deletedCount}} 项')).toEqual(['i18nextNamed']);
+  it('reads a wrapping tag', () => {
+    expect(interpolationKinds('请阅读 <b>条款</b> 后再继续')).toEqual(['wrappingTag']);
+  });
+
+  it('reads numeric-index children, distinct from a named tag', () => {
+    expect(interpolationKinds('你想提及 <0></0>，但他们未被邀请')).toEqual(['indexedChildren']);
   });
 
   it('reports the order they appear in', () => {
@@ -28,7 +33,13 @@ describe('reading the syntaxes a string uses', () => {
   });
 });
 
-describe('mixing syntaxes', () => {
+describe('the literal word is not a parameter', () => {
+  it('does not read [team] as a positional slot, because the index is not numeric', () => {
+    expect(interpolationKinds('<b>[team]</b> 说明')).toEqual(['wrappingTag']);
+  });
+});
+
+describe('mixing conventions', () => {
   it('flags a string that uses more than one', () => {
     expect(mixesSyntaxes('[0] 和 {{name}}')).toBe(true);
   });
@@ -50,5 +61,9 @@ describe('filling positional slots', () => {
 
   it('leaves a missing value as an empty string rather than the slot', () => {
     expect(fillPositional('创建 [0] 于 [1]', ['季度复盘'])).toBe('创建 季度复盘 于 ');
+  });
+
+  it('does not touch a literal bracketed word', () => {
+    expect(fillPositional('[team] 与 [0]', ['甲'])).toBe('[team] 与 甲');
   });
 });

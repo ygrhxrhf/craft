@@ -1,44 +1,52 @@
 /**
- * The four interpolation syntaxes (G229, and the correction it makes to `team.md` §一). The ledger
- * had recorded three; there are four, and mixing them shows a parameter name to the user.
+ * The interpolation conventions the product's strings use (G229 / G321). The ledger first recorded
+ * three, then four, and G321 settles on **six**; mixing them shows a parameter name — or a literal
+ * word — to the user, so each is told apart.
  *
- * - `{{name}}` — mustache-style named interpolation, the legacy form. A key with a `.new` variant
- *   has a positional replacement, and the `.new` one should be preferred.
- * - `[0]` — positional, user-visible interpolation. The current form.
- * - `{0}` — a prompt-template slot, AI-only. Never shown to a user as text.
- * - `{{deletedCount}}` — i18next's own named form, which coexists with the positional one.
+ * 1. `[0]` — positional, user-visible interpolation. The current form.
+ * 2. `{{plan}}` — mustache-style named interpolation, the legacy form.
+ * 3. `{0}` — a prompt-template slot, AI-only. Never shown to a user as text.
+ * 4. `<tag>…</tag>` — a wrapping tag, rendered by the component that owns the string.
+ * 5. `<0></0>` — numeric-index children in the React `Trans` style.
+ * 6. literal text — e.g. `[team]` inside `<b>[team]</b>` is a hard-coded word, not a parameter.
+ *    `[N]` is positional only when `N` is a number, which is what separates 1 from 6.
+ *
+ * `{{deletedCount}}` (G229) is the i18next-named instance of form 2.
  */
 
-export type InterpolationKind = 'namedLegacy' | 'positional' | 'promptSlot' | 'i18nextNamed';
+export type InterpolationKind =
+  | 'positional'
+  | 'namedLegacy'
+  | 'promptSlot'
+  | 'wrappingTag'
+  | 'indexedChildren';
 
-/** Which syntaxes a string uses, in the order they appear. */
+/** Which conventions a string uses, in the order they appear. */
 export function interpolationKinds(text: string): InterpolationKind[] {
   const found: { at: number; kind: InterpolationKind }[] = [];
 
-  for (const match of text.matchAll(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/g)) {
-    // A single-token name in double braces is the i18next form; anything else is legacy mustache.
-    const name = match[1];
-    found.push({ at: match.index ?? 0, kind: isI18nextName(name) ? 'i18nextNamed' : 'namedLegacy' });
+  // 5. `<0></0>` — a numeric tag name is a child index, not a tag name.
+  for (const match of text.matchAll(/<(\d+)>\s*<\/\1>/g)) {
+    found.push({ at: match.index ?? 0, kind: 'indexedChildren' });
   }
+  // 4. `<tag>…</tag>` — a named wrapping tag. Skipped for numeric tags, which are form 5.
+  for (const match of text.matchAll(/<([a-zA-Z][\w-]*)>[^<]*<\/\1>/g)) {
+    found.push({ at: match.index ?? 0, kind: 'wrappingTag' });
+  }
+  // 2. `{{name}}` — mustache. `[N]` is form 1 only when N is numeric, which is the split from 6.
+  for (const match of text.matchAll(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/g)) {
+    found.push({ at: match.index ?? 0, kind: 'namedLegacy' });
+  }
+  // 1. `[0]` — positional, numeric only.
   for (const match of text.matchAll(/\[(\d+)\]/g)) {
     found.push({ at: match.index ?? 0, kind: 'positional' });
   }
+  // 3. `{0}` — AI prompt slot.
   for (const match of text.matchAll(/\{(\d+)\}/g)) {
     found.push({ at: match.index ?? 0, kind: 'promptSlot' });
   }
 
   return found.sort((a, b) => a.at - b.at).map((entry) => entry.kind);
-}
-
-/**
- * The i18next named form, from the collected samples. The ledger gives `{{deletedCount}}` as the
- * i18next example and `{{spaceName}}` / `{{email}}` / `{{craft}}` as legacy mustache, so the
- * distinguishing feature is the *suffix* `Count` — not casing, which `spaceName` would break.
- */
-const I18NEXT_NAMES = new Set(['deletedCount']);
-
-function isI18nextName(name: string): boolean {
-  return I18NEXT_NAMES.has(name) || name.endsWith('Count');
 }
 
 /** Fill a positional string's `[N]` slots, left to right. */

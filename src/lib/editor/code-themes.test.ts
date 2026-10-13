@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -8,13 +10,12 @@ import {
   filterThemes,
   isCodeThemeId,
   resolveCodeTheme,
-  themeLabel,
+  type CodeThemeSurface,
 } from './code-themes';
 
 /**
  * The code-theme roster (G1093). Twenty selectable themes plus `auto`, which follows the app's
- * light/dark state. Only the two official `craft` palettes have collected values; the rest keep
- * a `null` surface rather than an invented one.
+ * light/dark state. All twenty palettes are the collected settings (G1141).
  */
 describe('the theme roster', () => {
   it('has 21 keys with auto first and the two craft palettes behind it', () => {
@@ -127,6 +128,54 @@ describe('the two collected craft palettes', () => {
     expect(CRAFTDARK.selection).toBe('#385576');
     expect(CRAFTDARK.lineHighlight).toBe('rgba(255,255,255,0.05)');
     expect(CRAFTDARK.gutterBorder).toBe('#f4f4f41f');
+  });
+});
+
+/**
+ * The eighteen third-party palettes against the collected settings table (G1141). The table is the
+ * source: a cell of `-` means the key is absent, and a cell of `?` was never collected, so neither
+ * is asserted as a colour. Only the keys the table actually holds are compared.
+ */
+const longtail = readFileSync(
+  join(process.cwd(), 'docs/craft-ref/features/longtail.md'),
+  'utf8',
+);
+
+const COLUMNS: { index: number; key: keyof CodeThemeSurface }[] = [
+  { index: 14, key: 'background' },
+  { index: 15, key: 'foreground' },
+  { index: 16, key: 'caret' },
+  { index: 17, key: 'selection' },
+  { index: 18, key: 'gutterBackground' },
+  { index: 19, key: 'gutterForeground' },
+  { index: 20, key: 'gutterBorder' },
+  { index: 21, key: 'fontFamily' },
+];
+
+describe('the eighteen third-party palettes match the collected table', () => {
+  const rows = longtail
+    .split('\n')
+    .filter((line) => /^\| \d+ \| [a-z]+ \|/.test(line))
+    .map((line) => line.split('|').map((cell) => cell.trim()))
+    // `auto` has no palette of its own, so the table marks every colour cell `?`.
+    .filter((row) => row[2] !== 'auto');
+
+  it('reads all twenty palettes out of the ledger', () => {
+    expect(rows).toHaveLength(20);
+  });
+
+  it.each(rows.map((row) => [row[2], row]))('%s matches its row', (_id, row) => {
+    const theme = CODE_THEMES.find((candidate) => candidate.id === row[2]);
+    expect(theme?.surface).toBeTruthy();
+    const surface = theme?.surface as CodeThemeSurface;
+    for (const { index, key } of COLUMNS) {
+      const cell = row[index];
+      if (cell === '-' || cell === '?') {
+        expect(surface[key]).toBeUndefined();
+      } else {
+        expect(surface[key]).toBe(cell);
+      }
+    }
   });
 });
 

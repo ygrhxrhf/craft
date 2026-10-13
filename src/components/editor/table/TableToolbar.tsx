@@ -14,7 +14,14 @@ import {
 } from 'lucide-react';
 import { cn } from 'cn';
 import { tableBubbleKey } from '../bubble-menu/keys';
-import { clearCellContents, evalFormulas, moveTableAxis, resetColumnSizes, sortTable } from '@/lib/table-utils';
+import {
+  clearCellContents,
+  clearCellStyle,
+  evalFormulas,
+  moveTableAxis,
+  resetColumnSizes,
+  sortTable,
+} from '@/lib/table-utils';
 
 interface TableToolbarProps {
   editor: Editor;
@@ -198,16 +205,22 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         </ToolButton>
         <div className="mx-0.5 h-5 w-px bg-foreground/8" />
         <ToolButton
-          title="按首列升序排序"
+          title="升序排序（1、2、3…）"
           onClick={() => sortTable(editor, 'asc')}
         >
           <ArrowUpAZ className="size-4" />
         </ToolButton>
         <ToolButton
-          title="按首列降序排序"
+          title="降序排序（3、2、1…）"
           onClick={() => sortTable(editor, 'desc')}
         >
           <ArrowDownAZ className="size-4" />
+        </ToolButton>
+        <ToolButton title="清除单元格样式" onClick={() => clearCellStyle(editor)}>
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 20h16" />
+            <path d="m14 4-8 8 4 4 8-8z" />
+          </svg>
         </ToolButton>
         <ToolButton title="清除单元格内容" onClick={() => clearCellContents(editor)}>
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

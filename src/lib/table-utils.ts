@@ -4,6 +4,7 @@ import type { Editor } from '@tiptap/react';
 import type { Node as PMNode } from '@tiptap/pm/model';
 import { evaluateCellFormula } from '@/lib/editor/table-formula';
 import { gridIsUniform, movedOrder, type CellSpan } from '@/lib/editor/table-move';
+import { compareCells } from '@/lib/editor/table-sort';
 
 function findTable(
   editor: Editor
@@ -16,11 +17,6 @@ function findTable(
     }
   }
   return null;
-}
-
-function rowSortKey(row: PMNode): string {
-  const firstCell = row.content.content[0];
-  return firstCell ? firstCell.textContent : '';
 }
 
 /**
@@ -88,6 +84,27 @@ export function clearCellContents(editor: Editor): boolean {
   return false;
 }
 
+/** Drop the cell's own colours, leaving its text. */
+export function clearCellStyle(editor: Editor): boolean {
+  const { $from } = editor.state.selection;
+  for (let depth = $from.depth; depth > 0; depth--) {
+    const node = $from.node(depth);
+    if (node.type.name !== 'tableCell' && node.type.name !== 'tableHeader') continue;
+    if (!node.attrs.backgroundColor && !node.attrs.color) return false;
+    editor.view.dispatch(
+      editor.state.tr
+        .setNodeMarkup($from.before(depth), undefined, {
+          ...node.attrs,
+          backgroundColor: null,
+          color: null,
+        })
+        .scrollIntoView(),
+    );
+    return true;
+  }
+  return false;
+}
+
 /** Drop every remembered column width, so the table sizes itself again. */
 export function resetColumnSizes(editor: Editor): boolean {
   const found = findTable(editor);
@@ -123,17 +140,17 @@ export function sortTable(editor: Editor, dir: 'asc' | 'desc'): boolean {
     (r: PMNode) => r.content.content[0]?.type.name !== 'tableHeader'
   );
 
-  const sorted = [...bodyRows].sort((a: PMNode, b: PMNode) => {
-    const ka = rowSortKey(a);
-    const kb = rowSortKey(b);
-    const na = parseFloat(ka.replace(/[^\d.-]/g, ''));
-    const nb = parseFloat(kb.replace(/[^\d.-]/g, ''));
-    if (!Number.isNaN(na) && !Number.isNaN(nb)) {
-      return dir === 'asc' ? na - nb : nb - na;
+  // Sort by the column the caret is in, falling back to the first column.
+  let column = 0;
+  for (let depth = editor.state.selection.$from.depth; depth > 0; depth--) {
+    if (editor.state.selection.$from.node(depth).type.name === 'tableRow') {
+      column = editor.state.selection.$from.index(depth);
     }
-    const cmp = ka.localeCompare(kb, 'zh-CN');
-    return dir === 'asc' ? cmp : -cmp;
-  });
+  }
+
+  const sorted = [...bodyRows].sort((a: PMNode, b: PMNode) =>
+    compareCells(a.content.content[column]?.textContent, b.content.content[column]?.textContent, dir),
+  );
 
   const newContent = [...headerRows, ...sorted];
   const newTable = table.type.create(

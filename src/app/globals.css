@@ -245,7 +245,7 @@
   /* ── Layout & density ───────────────────────
      The only place shell widths live. Container components read these; nothing
      else in the app writes them, so a breakpoint change is one edit.
-     `--editor-max-w` is absent above 767px on purpose: the editor falls back to
+     `--editor-max-w` is absent above 747px on purpose: the editor falls back to
      the reader's own measure, and only phones force it to the full column. */
   /* Measured against the logged-in craft.do web app (2026-09-25): the rail is 288px
      wide (`--header-height: 48px` for the top bar); the right panel is ~360px. */
@@ -264,7 +264,7 @@
 }
 
 /* Phone: single column. The rail becomes a drawer and the panel a bottom sheet. */
-@media (max-width: 767px) {
+@media (max-width: 747px) {
   :root {
     --layout-sidebar-w: min(20rem, 88vw);
     --editor-max-w: 100%;
@@ -1206,7 +1206,7 @@
 /* Phones: the TipTap bubble menu floats over the selection and is unreachable
    under the thumb, so it becomes a bottom bar. The positioner writes left/top/
    transform inline, hence the overrides. */
-@media (max-width: 767px) {
+@media (max-width: 747px) {
   .crafty-bubble-menu {
     position: fixed !important;
     inset: auto 0 0 0 !important;
@@ -1235,7 +1235,7 @@
 }
 
 /* Two columns of body text do not fit a phone; they stack instead. */
-@media (max-width: 767px) {
+@media (max-width: 747px) {
   .tiptap [data-type="columns"] {
     flex-direction: column;
     gap: 0.5rem;
@@ -1295,7 +1295,7 @@
    ═══════════════════════════════════════════ */
 /* Phones get the canvas to themselves: the minimap and the style panel both
    cover drawing area without adding anything a touch user can aim at. */
-@media (max-width: 767px) {
+@media (max-width: 747px) {
   .tl-container .tlui-minimap,
   .tl-container .tlui-style-panel {
     display: none;

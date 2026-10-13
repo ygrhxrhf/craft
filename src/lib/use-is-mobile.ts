@@ -2,7 +2,8 @@
 
 import { useSyncExternalStore } from 'react';
 
-export const MOBILE_QUERY = '(max-width: 767px)';
+/** The official narrow breakpoint is 748 (`max-width: 747px`, G1476), not Tailwind's 768. */
+export const MOBILE_QUERY = '(max-width: 747px)';
 export const COMPACT_QUERY = '(max-width: 1023px)';
 
 interface Store {

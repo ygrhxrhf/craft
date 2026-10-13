@@ -45,6 +45,10 @@
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
+  --radius-full: 9999px;
+  /* The official table stops at `xl` + `full`; these three are local and still have call sites
+     (`rounded-2xl` on the modals and auth cards, `rounded-4xl` on the badge). Removing them is a
+     separate change, because it moves the visual baseline. */
   --radius-2xl: 20px;
   --radius-3xl: 24px;
   --radius-4xl: 28px;
@@ -194,13 +198,23 @@
   --focus-purple: oklch(0.55 0.24 295);
   --focus-pink: oklch(0.6 0.22 350);
 
-  /* Shadows — craft.do's layered `--shadow-*` set (light) */
+  /* Shadows — craft.do's layered `--shadow-*` set (light). Six-layer stacks whose sixth layer is
+     always a `0 0 0 1px` hairline; `empty` keeps the same six layers fully transparent so
+     overriding one stack never drops a layer. `xxs` is the odd one at three layers, and `inner` is
+     a white inset ring rather than a drop. */
+  --shadow-empty: 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0);
   --shadow-xxs: 0 0 0 1px rgb(0 0 0 / 0.04), 0 1px 1.5px rgb(0 0 0 / 0.06), 0 2.5px 4px rgb(0 0 0 / 0.06);
-  --shadow-sm: 0 2px 4px rgb(0 0 0 / 0.07), 0 8px 8px rgb(0 0 0 / 0.06), 0 18px 11px rgb(0 0 0 / 0.04);
-  --shadow-md: 0 4px 9px rgb(0 0 0 / 0.07), 0 16px 16px rgb(0 0 0 / 0.06), 0 36px 22px rgb(0 0 0 / 0.04);
+  --shadow-xs: 0 1px 1px rgb(0 0 0 / 0.04), 0 3px 3px rgb(0 0 0 / 0.04), 0 6px 4px rgb(0 0 0 / 0.02), 0 11px 4px rgb(0 0 0 / 0.01), 0 17px 5px rgb(0 0 0 / 0), 0 0 0 1px rgb(0 0 0 / 0.03);
+  --shadow-sm: 0 2px 4px rgb(0 0 0 / 0.07), 0 8px 8px rgb(0 0 0 / 0.06), 0 18px 11px rgb(0 0 0 / 0.04), 0 32px 13px rgb(0 0 0 / 0.01), 0 51px 14px rgb(0 0 0 / 0), 0 0 0 1px rgb(0 0 0 / 0.03);
+  --shadow-md: 0 4px 9px rgb(0 0 0 / 0.07), 0 16px 16px rgb(0 0 0 / 0.06), 0 36px 22px rgb(0 0 0 / 0.04), 0 65px 26px rgb(0 0 0 / 0.01), 0 101px 28px rgb(0 0 0 / 0), 0 0 0 1px rgb(0 0 0 / 0.03);
+  --shadow-sr: 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 4px rgb(0 0 0 / 0.04), 0 9px 5px rgb(0 0 0 / 0.03), 0 16px 6px rgb(0 0 0 / 0.01), 0 25px 7px rgb(0 0 0 / 0), 0 0 0 1px rgb(0 0 0 / 0.03);
+  --shadow-inner: inset rgb(255 255 255 / 0.88) 0 0 0 1px;
   --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.08), 0 4px 6px -4px oklch(0 0 0 / 0.04);
   /* The document surface: a hairline ring plus a wide, soft drop. */
   --shadow-doc: 0 0 0 1px rgb(0 0 0 / 0.06), 0 1px 1px -0.5px rgb(0 0 0 / 0.06), 0 3px 3px -1.5px rgb(0 0 0 / 0.06), 0 6px 6px -3px rgb(0 0 0 / 0.06), 0 12px 12px -6px rgb(0 0 0 / 0.04), 0 24px 24px -12px rgb(0 0 0 / 0.03);
+
+  /* Browse-view width ceiling, from the official scalar table. */
+  --browse-max-width: 1630px;
 
   /* Transitions — --transition-duration-fast .15s / -medium .2s / -slow .5s */
   --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
@@ -363,9 +377,15 @@
   --focus-purple: oklch(0.5 0.22 295);
   --focus-pink: oklch(0.55 0.2 350);
 
-  /* Shadows (dark) */
-  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2);
-  --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.25), 0 2px 4px -2px oklch(0 0 0 / 0.2);
+  /* Shadows (dark) — every official stack has a second value here and the dark one is *heavier*,
+     not lighter. `inner` flips to a 4% white ring. */
+  --shadow-empty: 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0);
+  --shadow-xxs: 0 0 0 1px rgb(0 0 0 / 0.12), 0 1px 1.5px rgb(0 0 0 / 0.14), 0 2.5px 4px rgb(0 0 0 / 0.16);
+  --shadow-xs: 0 1px 1px rgb(0 0 0 / 0.08), 0 3px 3px rgb(0 0 0 / 0.07), 0 6px 4px rgb(0 0 0 / 0.04), 0 11px 4px rgb(0 0 0 / 0.01), 0 17px 5px rgb(0 0 0 / 0), 0 0 0 1px rgb(0 0 0 / 0.12);
+  --shadow-sm: 0 2px 4px rgb(0 0 0 / 0.1), 0 8px 8px rgb(0 0 0 / 0.09), 0 18px 11px rgb(0 0 0 / 0.05), 0 32px 13px rgb(0 0 0 / 0.01), 0 51px 14px rgb(0 0 0 / 0), 0 0 0 1px rgb(0 0 0 / 0.12);
+  --shadow-md: 0 4px 9px rgb(0 0 0 / 0.12), 0 16px 16px rgb(0 0 0 / 0.1), 0 36px 22px rgb(0 0 0 / 0.06), 0 65px 26px rgb(0 0 0 / 0.02), 0 101px 28px rgb(0 0 0 / 0), 0 0 0 1px rgb(0 0 0 / 0.12);
+  --shadow-sr: 0 1px 2px rgb(0 0 0 / 0.09), 0 4px 4px rgb(0 0 0 / 0.08), 0 9px 5px rgb(0 0 0 / 0.05), 0 16px 6px rgb(0 0 0 / 0.01), 0 25px 7px rgb(0 0 0 / 0), 0 0 0 1px rgb(0 0 0 / 0.12);
+  --shadow-inner: inset rgb(255 255 255 / 0.04) 0 0 0 1px;
   --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.3), 0 4px 6px -4px oklch(0 0 0 / 0.2);
 }
 

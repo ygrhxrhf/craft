@@ -152,10 +152,15 @@ function parseBlocks(lines: string[]): PmNode[] {
         index += 1;
       }
       index += 1;
+      const bodyText = body.length ? trimOneTrailingSpace(body.join('\n')) : '';
+      // A fence whose body starts with an HTML comment is dropped whole (G1245) — the official
+      // importer uses this to keep a comment from being read as content. The check is on the
+      // trimmed start, so leading blank lines do not save it.
+      if (bodyText.trimStart().startsWith('<!--')) continue;
       blocks.push({
         type: 'codeBlock',
         attrs: { language: normalizeLanguage(fence[1]) },
-        content: body.length ? [{ type: 'text', text: trimOneTrailingSpace(body.join('\n')) }] : undefined,
+        content: body.length ? [{ type: 'text', text: bodyText }] : undefined,
       });
       continue;
     }

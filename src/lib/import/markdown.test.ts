@@ -203,6 +203,15 @@ describe('re-importing what the Craft-shaped exporter writes', () => {
     expect(list.content[0].attrs?.checked).toBe(true);
   });
 
+  it('drops a fenced block whose body starts with an HTML comment (G1245)', () => {
+    // The document falls back to an empty paragraph, so the assertion is that no code block
+    // survives rather than that the array is empty.
+    expect(blocks('```\n<!-- 注释\n```').some((node: { type: string }) => node.type === 'codeBlock')).toBe(false);
+    // A comment that is not at the start is ordinary body text.
+    const [code] = blocks('```\nconst a = 1; // 注释\n```');
+    expect(code.type).toBe('codeBlock');
+  });
+
   it('reads a display-math fence as a math block', () => {
     const [math] = blocks('$$\n\\frac{a}{b}\n$$');
     expect(math).toEqual({ type: 'mathBlock', attrs: { latex: '\\frac{a}{b}' } });

@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   NEW_DOCUMENT_TITLE,
+  UNTITLED_BY_ENTITY,
   UNTITLED_DOCUMENT,
+  UNTITLED_FOLDER,
   UNTITLED_PAGE,
   untitledFor,
   untitledKeyFor,
@@ -30,5 +32,23 @@ describe('the two placeholders', () => {
 
   it('stores a new document under the list wording', () => {
     expect(NEW_DOCUMENT_TITLE).toBe('无标题文档');
+  });
+});
+
+describe('the four entities each have their own sentence (G231)', () => {
+  it('gives page, document and folder distinct labels', () => {
+    expect(UNTITLED_BY_ENTITY.page.label).toBe('无标题页面');
+    expect(UNTITLED_BY_ENTITY.document.label).toBe('无标题文档');
+    expect(UNTITLED_BY_ENTITY.folder.label).toBe('无标题文件夹');
+  });
+
+  it('names each key', () => {
+    expect(UNTITLED_BY_ENTITY.page.key).toBe('untitled.page');
+    expect(UNTITLED_BY_ENTITY.document.key).toBe('untitled.document');
+    expect(UNTITLED_BY_ENTITY.folder.key).toBe('untitled.folder');
+  });
+
+  it('keeps the folder label verbatim', () => {
+    expect(UNTITLED_FOLDER).toBe('无标题文件夹');
   });
 });

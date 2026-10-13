@@ -16,6 +16,7 @@ import { bulkDeleteAlert, bulkRestoreAlert, runBulkAction } from '@/lib/document
 import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { getDeletedDocuments } from '@/actions/document/get';
+import { TRASH_DISCLAIMER, TRASH_EMPTY } from '@/lib/browse/trash-copy';
 import { useRouter } from 'next/navigation';
 
 interface TrashDoc {
@@ -147,7 +148,7 @@ export function TrashList({ documents }: TrashListProps) {
     return (
       <div className="flex min-h-[180px] flex-col items-center justify-center rounded-[15px] bg-foreground/[0.03] px-6 text-center">
         <Trash2 className="mx-auto mb-2 size-8 text-foreground/40" />
-        <p className="text-ui font-medium text-foreground/40">回收站是空的</p>
+        <p className="text-ui font-medium text-foreground/40">{TRASH_EMPTY}</p>
       </div>
     );
   }
@@ -159,6 +160,9 @@ export function TrashList({ documents }: TrashListProps) {
         if (e.key === 'Escape' && selecting) exitSelection();
       }}
     >
+      {/* The 30-day line is conditional: the official screen only shows it once the trash has
+          something in it, not in the empty state. */}
+      <p className="text-meta text-foreground/55">{TRASH_DISCLAIMER}</p>
       <div className="flex items-center gap-2">
         <div className="flex-1" />
         {selecting ? (

@@ -15,6 +15,9 @@ vi.mock('@/components/sync/local-records', async (importOriginal) => {
 });
 
 import { overlayTrashRows, loadTrashRows } from './TrashList';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { TRASH_DISCLAIMER, TRASH_EMPTY } from '@/lib/browse/trash-copy';
 
 const serverRow = (id: string, title: string, deletedAt: string) =>
   ({ id, title, icon: null, deletedAt });
@@ -68,5 +71,27 @@ describe('R-18 回收站：重取新鲜行 + pending overlay', () => {
       pending,
     );
     expect(out.map((r) => r.id)).toEqual(['del']);
+  });
+});
+
+describe('the trash copy is the official text, and the disclaimer is conditional', () => {
+  const source = readFileSync(
+    fileURLToPath(new URL('./TrashList.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('uses the official empty-state sentence rather than a local one', () => {
+    expect(TRASH_EMPTY).toBe('你删除的文档将显示在此处');
+    expect(source).toContain('{TRASH_EMPTY}');
+    expect(source).not.toContain('回收站是空的');
+  });
+
+  it('shows the 30-day line only on the populated branch', () => {
+    expect(TRASH_DISCLAIMER).toBe('文档将保留 30 天。之后，文档将被永久删除。');
+    // The empty-state early return happens above the disclaimer, so the line cannot render there.
+    const emptyReturn = source.indexOf('rows.length === 0');
+    const disclaimer = source.indexOf('{TRASH_DISCLAIMER}');
+    expect(emptyReturn).toBeGreaterThanOrEqual(0);
+    expect(disclaimer).toBeGreaterThan(emptyReturn);
   });
 });

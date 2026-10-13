@@ -415,21 +415,35 @@
     @apply font-sans;
   }
 
-  /* ── Input-intent gate (G1080 / G1081 / G1110) ──────────────────────────────
+  /* ── Input-intent gate (G1080 / G1081 / G1064 / G1110) ──────────────────────
      The official build compiles standard pseudo-classes into attribute selectors keyed on the
-     two attributes the gate writes. Two of those rules are reproduced here, because they are
-     what the gate is *for* and reproducing the gate without them would be a shell:
+     two attributes the gate writes, so the focus layer replaces the browser's own
+     `:focus-visible` and a pointer click never leaves a ring. The compiled CSS gates on the
+     *intent* attribute (`[data-whatintent=keyboard]`, 58 rules), and three offsets coexist:
+     the general rule protrudes 1.5px, a control that is itself the focusable target tucks in at
+     -1px, and a compact tab at 2px/-2px. The editor body draws nothing on purpose. */
 
-       1. A keyboard focus draws the ring; a pointer focus does not — the DS button's own
-          `outline:1px solid var(--accent-500); outline-offset:-1px`.
-       2. On touch, "not hovered" becomes "not active" — a touch device has no hover, so a rule
-          written `:not(:hover)` would otherwise stick. */
+  [data-whatintent='keyboard'] :focus {
+    outline: 1px solid var(--craft-accent);
+    outline-offset: 1.5px;
+  }
 
-  /* The ring lives on the button, not on `*`: the accent channel is the official ring colour. */
-  [data-whatinput='keyboard'] [data-slot='button']:focus-visible,
-  [data-whatinput='keyboard'] [data-slot='checkbox']:focus-visible {
+  /* The editor body holds focus by design; the official rule removes its ring. */
+  [data-whatintent='keyboard'] [contenteditable='true']:focus {
+    outline: none;
+  }
+
+  /* Controls that *are* the focusable target tuck the ring inside their own box. */
+  [data-whatintent='keyboard'] [data-slot='button']:focus,
+  [data-whatintent='keyboard'] [data-slot='checkbox']:focus {
     outline: 1px solid var(--craft-accent);
     outline-offset: -1px;
+  }
+
+  /* The compact tab strip carries its own, heavier ring. */
+  [data-whatintent='keyboard'] [role='tab']:focus {
+    outline: 2px solid var(--craft-accent);
+    outline-offset: -2px;
   }
 
   /* ── Touch press feedback (G1063) ───────────────────────────────────────────

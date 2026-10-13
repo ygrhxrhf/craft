@@ -80,11 +80,16 @@ export async function listMentionCandidates(documentId: string): Promise<Mention
   return candidates;
 }
 
-export async function addDocumentMember(input: {
+/**
+ * 邀请前的服务端解析：校验所有者、把邮箱收敛成账号。不写 document_members——
+ * 成员行的创建与改权限走客户端 applyLocal（'document_member'），离线可排队。
+ * 已有协作者复用其 id，避免 @@unique([documentId, userId]) 再插一行。
+ */
+export async function resolveDocumentMember(input: {
   documentId: string;
   email: string;
   role: unknown;
-}): Promise<DocumentMemberItem> {
+}): Promise<DocumentMemberItem & { addedBy: string; existing: boolean }> {
   const userId = await requireUserId();
   const { document } = await requireDocumentAccess(input.documentId, userId, 'owner');
   const role = assertRole(input.role);
@@ -97,42 +102,16 @@ export async function addDocumentMember(input: {
 
   const members = await getTable('DocumentMember');
   const existing = await members.first({ documentId: input.documentId, userId: account.id as string });
-  if (existing) {
-    await members.where({ id: existing.id as string }).update({ role });
-    return {
-      id: existing.id as string,
-      userId: account.id as string,
-      name: (account.name as string) ?? null,
-      email,
-      role,
-    };
-  }
-
-  const created = await members.create({
-    id: crypto.randomUUID(),
-    documentId: input.documentId,
-    userId: account.id,
-    role,
-    addedBy: userId,
-  });
 
   return {
-    id: created.id as string,
+    id: (existing?.id as string) ?? crypto.randomUUID(),
     userId: account.id as string,
     name: (account.name as string) ?? null,
     email,
     role,
+    addedBy: userId,
+    existing: Boolean(existing),
   };
-}
-
-export async function updateDocumentMemberRole(memberId: string, role: unknown) {
-  const userId = await requireUserId();
-  const members = await getTable('DocumentMember');
-  const member = await members.first({ id: memberId });
-  if (!member) throw new Error('协作者不存在');
-  await requireDocumentAccess(member.documentId as string, userId, 'owner');
-
-  await members.where({ id: memberId }).update({ role: assertRole(role) });
 }
 
 export async function removeDocumentMember(memberId: string) {

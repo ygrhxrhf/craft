@@ -35,6 +35,8 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'comment', model: 'Comment', cols: ['id','threadId','userId','body','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'comment_thread', model: 'CommentThread', cols: ['id','documentId','blockId','blockText','resolved','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'document_share', model: 'DocumentShare', cols: ['id','documentId','token','slug','passcode','isPublished','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  // document_member：contract 有 updatedAt、无 deletedAt（移除仍是服务端硬删，不走墓碑）
+  { table: 'document_member', model: 'DocumentMember', cols: ['id','documentId','userId','role','addedBy','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // whiteboard：spec 5.1 白板 payload 排除 data（内容走独立通道），tsCol=metaUpdatedAt
   { table: 'whiteboard', model: 'Whiteboard', cols: ['id','name','shareToken','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'metaUpdatedAt', id: r => String(r.id) },
 ];

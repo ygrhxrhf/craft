@@ -45,6 +45,16 @@ describe('collectTocEntries', () => {
     expect(entries.map((entry) => entry.text)).toEqual(['引言', '一张卡片', '结尾']);
   });
 
+  it('lists a page mention by its title and keeps the document it opens', () => {
+    const entries = collectTocEntries(
+      doc([
+        node('mention', '', [], { documentId: 'doc-1', title: '另一页' }),
+        node('mention', '', [], { userId: 'user-1', title: '某人' }),
+      ]),
+    );
+    expect(entries).toEqual([{ text: '另一页', level: 1, index: 0, documentId: 'doc-1' }]);
+  });
+
   it('names an empty card 卡片', () => {
     const entries = collectTocEntries(doc([node('cardBlock', '   ')]));
     expect(entries.map((entry) => entry.text)).toEqual(['卡片']);

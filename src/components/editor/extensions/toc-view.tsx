@@ -3,6 +3,7 @@
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { List } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { TOC_PLACEHOLDER } from '@/lib/editor/official-copy';
 
@@ -10,6 +11,8 @@ interface TocEntry {
   text: string;
   level: number;
   index: number;
+  /** Set when the entry is a page mention, which opens that document rather than scrolling. */
+  documentId?: string;
 }
 
 /**
@@ -30,6 +33,15 @@ export function collectTocEntries(doc: {
       });
       return;
     }
+    if (node.type.name === 'mention' && typeof node.attrs.documentId === 'string' && node.attrs.documentId) {
+      entries.push({
+        text: (typeof node.attrs.title === 'string' && node.attrs.title) || '未命名',
+        level: 1,
+        index: entries.length,
+        documentId: node.attrs.documentId,
+      });
+      return;
+    }
     if (node.type.name === 'cardBlock') {
       entries.push({
         text: node.textContent.trim().slice(0, 80) || '卡片',
@@ -44,6 +56,7 @@ export function collectTocEntries(doc: {
 }
 
 export function TableOfContentsView({ editor }: NodeViewProps) {
+  const router = useRouter();
   const [entries, setEntries] = useState<TocEntry[]>(() => collectTocEntries(editor.state.doc));
 
   useEffect(() => {
@@ -90,7 +103,7 @@ export function TableOfContentsView({ editor }: NodeViewProps) {
             <li key={`${entry.index}-${entry.text}`}>
               <button
                 type="button"
-                onClick={() => jump(entry.index)}
+                onClick={() => (entry.documentId ? router.push(`/documents/${entry.documentId}`) : jump(entry.index))}
                 className="block w-full truncate rounded px-1 py-0.5 text-left text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 style={{ paddingLeft: `${(entry.level - 1) * 0.75 + 0.25}rem` }}
               >

@@ -13,7 +13,8 @@ import { saveAsTemplate } from '@/actions/document/template';
 import { isDocumentFavorite, toggleFavorite } from '@/actions/document/favorite';
 import { createDocument } from '@/actions/document/create';
 import { getFolders } from '@/actions/folder/get';
-import { getDocuments } from '@/actions/document/get';
+import { getDocument, getDocuments } from '@/actions/document/get';
+import { relativeTime } from '@/lib/document/relative-time';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
 import { getSyncManager } from '@/lib/sync-core';
@@ -65,6 +66,22 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
   const [busy, setBusy] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  // The property rows read the document's own timestamps (G202) rather than fixed strings.
+  const [meta, setMeta] = useState<{ createdAt: string; updatedAt: string } | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    getDocument(documentId)
+      .then((doc) => {
+        if (!alive || !doc) return;
+        const row = doc as { createdAt?: string; updatedAt?: string };
+        setMeta({ createdAt: row.createdAt ?? '', updatedAt: row.updatedAt ?? '' });
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [documentId]);
 
   const handleExport = async (format: ExportFormat) => {
     setBusy(true);
@@ -240,12 +257,12 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
               <div className="flex items-center gap-2.5 text-ui">
                 <Calendar className="size-3.5 text-muted-foreground" />
                 <span className="text-muted-foreground">已创建：</span>
-                <span>今天</span>
+                <span>{meta?.createdAt ? relativeTime(meta.createdAt) : '—'}</span>
               </div>
               <div className="flex items-center gap-2.5 text-ui">
                 <Calendar className="size-3.5 text-muted-foreground" />
                 <span className="text-muted-foreground">已更新：</span>
-                <span>刚刚</span>
+                <span>{meta?.updatedAt ? relativeTime(meta.updatedAt) : '—'}</span>
               </div>
               <div className="flex items-center gap-2.5 text-ui">
                 <User className="size-3.5 text-muted-foreground" />

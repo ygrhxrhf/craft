@@ -7,6 +7,7 @@ import { QuickActions } from '@/components/document/QuickActions';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
+import { SortableDocGrid } from '@/components/document/SortableDocGrid';
 
 export default async function DocumentsPage() {
   const session = await auth();
@@ -37,11 +38,7 @@ export default async function DocumentsPage() {
         <section>
           <h2 className="mb-3 text-lg font-medium">最近编辑</h2>
           {recentDocs.length > 0 ? (
-            <BrowseGrid>
-              {recentDocs.map(doc => (
-                <DocumentCard key={doc.id} document={doc} />
-              ))}
-            </BrowseGrid>
+            <SortableDocGrid documents={recentDocs} />
           ) : (
             <div className="rounded-lg border border-dashed border-border p-8 text-center">
               <p className="text-sm text-muted-foreground">

@@ -52,7 +52,8 @@ export interface CodeTheme {
   surface: CodeThemeSurface | null;
 }
 
-/** The roster in the official order, `auto` first. */
+/** The roster in the official display order (G1165): `auto` first, the two craft palettes next
+ *  (dark before light), then the rest strictly by `id` ascending — there is no runtime sort. */
 export const CODE_THEMES: readonly CodeTheme[] = [
   { id: 'auto', surface: null },
   { id: 'craftdark', surface: CRAFTDARK },
@@ -71,9 +72,9 @@ export const CODE_THEMES: readonly CodeTheme[] = [
   { id: 'noctislilac', surface: null },
   { id: 'nord', surface: null },
   { id: 'sublime', surface: null },
+  { id: 'tokyonight', surface: null },
   { id: 'tokyonightday', surface: null },
   { id: 'tokyonightstorm', surface: null },
-  { id: 'tokyonight', surface: null },
   { id: 'vscodedark', surface: null },
 ] as const;
 

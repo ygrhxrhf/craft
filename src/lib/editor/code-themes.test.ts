@@ -35,11 +35,16 @@ describe('the theme roster', () => {
       'noctislilac',
       'nord',
       'sublime',
+      'tokyonight',
       'tokyonightday',
       'tokyonightstorm',
-      'tokyonight',
       'vscodedark',
     ]);
+  });
+
+  it('keeps the tail in strict id order, with no runtime sort (G1165)', () => {
+    const tail = CODE_THEMES.slice(3).map((t) => t.id);
+    expect(tail).toEqual([...tail].sort());
   });
 
   it('defaults to auto', () => {

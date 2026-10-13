@@ -5,6 +5,12 @@ import Link from 'next/link';
 import { FileText, Link2, X } from 'lucide-react';
 import { getBacklinks } from '@/actions/document/backlinks';
 import type { BacklinkItem } from '@/actions/document/backlinks';
+import {
+  BACKLINK_SORTS,
+  BACKLINK_SORT_LABELS,
+  sortBacklinks,
+  type BacklinkSort,
+} from '@/lib/document/backlink-sort';
 
 interface BacklinksPanelProps {
   documentId: string;
@@ -14,6 +20,7 @@ interface BacklinksPanelProps {
 export function BacklinksPanel({ documentId, onClose }: BacklinksPanelProps) {
   const [items, setItems] = useState<BacklinkItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sort, setSort] = useState<BacklinkSort>('alphabetical');
 
   useEffect(() => {
     let cancelled = false;
@@ -55,7 +62,22 @@ export function BacklinksPanel({ documentId, onClose }: BacklinksPanelProps) {
           </p>
         ) : (
           <div className="flex flex-col gap-0.5">
-            {items.map((item) => (
+            <div className="mb-1 flex items-center justify-between px-2">
+              <span className="text-meta text-foreground/40">排序</span>
+              <select
+                aria-label="反向链接排序"
+                value={sort}
+                onChange={(event) => setSort(event.target.value as BacklinkSort)}
+                className="rounded bg-transparent text-meta text-foreground/55 outline-none hover:text-foreground/85"
+              >
+                {BACKLINK_SORTS.map((option) => (
+                  <option key={option} value={option}>
+                    {BACKLINK_SORT_LABELS[option]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {sortBacklinks(items, sort).map((item) => (
               <Link
                 key={item.sourceDocumentId}
                 href={`/documents/${item.sourceDocumentId}`}

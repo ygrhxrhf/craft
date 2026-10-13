@@ -4,32 +4,7 @@ import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
-
-/** The grammars `createLowlight(common)` actually registers, plus the fallback. */
-export const CODE_LANGUAGES = [
-  'plaintext',
-  'javascript',
-  'typescript',
-  'jsx',
-  'tsx',
-  'python',
-  'bash',
-  'shell',
-  'json',
-  'yaml',
-  'html',
-  'css',
-  'sql',
-  'go',
-  'rust',
-  'java',
-  'kotlin',
-  'php',
-  'ruby',
-  'markdown',
-  'diff',
-  'dockerfile',
-] as const;
+import { CODE_LANGUAGES } from '@/lib/editor/code-languages';
 
 export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   const [copied, setCopied] = useState(false);
@@ -55,8 +30,8 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
           className="rounded bg-transparent text-xs text-muted-foreground outline-none hover:text-foreground"
         >
           {CODE_LANGUAGES.map((item) => (
-            <option key={item} value={item}>
-              {item}
+            <option key={item.storedLangCode} value={item.storedLangCode}>
+              {item.label}
             </option>
           ))}
         </select>

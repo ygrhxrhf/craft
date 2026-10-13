@@ -36,3 +36,20 @@ describe('the card focus ring is its own element', () => {
     expect(source).toContain('border-(--craft-accent)');
   });
 });
+
+describe('the hover swap is a two-layer exchange, not an overlay', () => {
+  it('fades the resting layer out on hover and focus', () => {
+    expect(source).toContain('group-hover:opacity-0');
+    expect(source).toContain('group-focus-visible:opacity-0');
+  });
+
+  it('fades the action layer in with the same triggers', () => {
+    expect(source).toContain('group-hover:opacity-100');
+    expect(source).toContain('group-focus-visible:opacity-100');
+  });
+
+  it('positions the action layer over the card so the height never moves', () => {
+    expect(source).toContain('absolute inset-0');
+    expect(source).toContain('pointer-events-none');
+  });
+});

@@ -29,8 +29,11 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
         aria-hidden
         className="pointer-events-none absolute inset-[-1px] z-[1] hidden rounded-lg border-[3px] border-(--craft-accent) group-focus-visible:block"
       />
-      <div className="rounded-lg bg-card px-2.5 pt-[7px] pb-2 shadow-sm">
-        <div className="flex items-start gap-2">
+      <div className="relative rounded-lg bg-card px-2.5 pt-[7px] pb-2 shadow-sm">
+        {/* Hover/focus swap (G1077): the resting layer fades out and the action layer fades in —
+            a swap, not an overlay, so the card's height never moves. The `group-hover` variant is
+            already gated on the intent attribute, so a touch device never latches it. */}
+        <div className="flex items-start gap-2 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
           {doc.icon ? (
             <span className="text-2xl leading-none">{doc.icon}</span>
           ) : (
@@ -38,7 +41,13 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
           )}
           <h3 className="flex-1 truncate text-card-title font-semibold">{doc.title}</h3>
         </div>
-        <p className="mt-1 text-meta text-foreground/55">{formattedDate}</p>
+        <p className="mt-1 text-meta text-foreground/55 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
+          {formattedDate}
+        </p>
+
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          <span className="text-ui font-medium text-foreground/70">打开</span>
+        </div>
       </div>
     </Link>
   );

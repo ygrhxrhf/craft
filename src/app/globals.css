@@ -423,6 +423,28 @@
     outline: 1px solid var(--craft-accent);
     outline-offset: -1px;
   }
+
+  /* ── Touch press feedback (G1063) ───────────────────────────────────────────
+     A touch device has no hover, so the official build gives it its own press feedback: press
+     shrinks the control 1% and drops it to 75% opacity over 0.2s. `:where(...)` keeps the
+     specificity at 0 so any component can still override it, and `.noPressFeedback` is the one
+     escape hatch. The `!important` on the three transition properties is official — it exists to
+     beat the component's own transition. */
+  [data-whatintent='touch']
+    :where(button, a[href], [role='button'], [role='option'], [role='menuitem'], [role='tab'], [data-interactive]):not(.noPressFeedback) {
+    transform: scale(1);
+    opacity: 1;
+    will-change: transform, opacity;
+    transition-property: transform, opacity !important;
+    transition-duration: 0.2s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  [data-whatintent='touch']
+    :where(button, a[href], [role='button'], [role='option'], [role='menuitem'], [role='tab'], [data-interactive]):not(.noPressFeedback):active {
+    transform: scale(0.99);
+    opacity: 0.75;
+  }
 }
 
 /* ═══════════════════════════════════════════

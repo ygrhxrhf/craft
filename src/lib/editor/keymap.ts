@@ -166,9 +166,8 @@ function chord(
 
 /**
  * G14 的点名项：块移动、样式槽、⇧⏎ 重命名、⌘D 副本，以及表 C 四枚外壳键。Rows whose Windows
- * matcher collides with another row's Windows matcher in the same group (`MOVE_BLOCK_TOP_MAC`
- * and `SELECT_TO_TOP_MAC` both print `Ctrl-Shift-↑`) are left out — the official context
- * dispatch that picks between them was never collected, so binding one of them would be a guess.
+ * matcher is dead on the dispatch side (`MOVE_BLOCK_TOP_MAC` / `MOVE_BLOCK_BOTTOM_MAC`, G1479)
+ * carry an explicit `win: null` so they print nothing and match nothing there.
  */
 export const KEY_BINDINGS: KeyBinding[] = [
   // 表 A · 样式槽 1–9/0（连续一档；Windows 因 Shift 取代 Alt 整体位移，NO_LIST 落到反引号）
@@ -191,8 +190,11 @@ export const KEY_BINDINGS: KeyBinding[] = [
   { id: 'MOVE_BLOCK_DOWN', label: '区块下移', group: 'editing', mac: chord({ altKey: true }, 'ArrowDown', 'ArrowDown') },
   { id: 'MOVE_BLOCK_TOP', label: '区块移至顶部', group: 'editing', mac: chord({ altKey: true }, 'Home', 'Home') },
   { id: 'MOVE_BLOCK_BOTTOM', label: '区块移至底部', group: 'editing', mac: chord({ altKey: true }, 'End', 'End') },
-  { id: 'MOVE_BLOCK_TOP_MAC', label: '区块移至顶部', group: 'editing', mac: chord({ metaKey: true, altKey: true }, 'ArrowUp', 'ArrowUp'), win: chord({ ctrlKey: true, shiftKey: true }, 'ArrowUp', 'ArrowUp') },
-  { id: 'MOVE_BLOCK_BOTTOM_MAC', label: '区块移至底部', group: 'editing', mac: chord({ metaKey: true, altKey: true }, 'ArrowDown', 'ArrowDown'), win: chord({ ctrlKey: true, shiftKey: true }, 'ArrowDown', 'ArrowDown') },
+  // G1479: on Windows these two print a chord but never dispatch — the official reference to
+  // `Ctrl-Shift-↑/↓` lives only in the panel assembler, and the `⌘⌥↑/↓` pair is Mac-only. So the
+  // Windows side is an explicit "unbound" rather than a fallback.
+  { id: 'MOVE_BLOCK_TOP_MAC', label: '区块移至顶部', group: 'editing', mac: chord({ metaKey: true, altKey: true }, 'ArrowUp', 'ArrowUp'), win: null },
+  { id: 'MOVE_BLOCK_BOTTOM_MAC', label: '区块移至底部', group: 'editing', mac: chord({ metaKey: true, altKey: true }, 'ArrowDown', 'ArrowDown'), win: null },
   { id: 'DUPLICATE', label: '创建副本', group: 'editing', mac: chord({ metaKey: true }, 'd', 'KeyD'), win: chord({ ctrlKey: true }, 'd', 'KeyD') },
   { id: 'RENAME', label: '编辑页面区块', group: 'editing', mac: chord({ shiftKey: true }, 'Enter') },
 

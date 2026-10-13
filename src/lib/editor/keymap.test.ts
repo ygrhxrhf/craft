@@ -18,9 +18,16 @@ const by = (id: string): KeyBinding => {
 
 describe('the platform switch — `bae(d) = isMac ? d : (d.winMatcher ?? d)`', () => {
   it('takes the Windows matcher when the row has one', () => {
-    const binding = by('MOVE_BLOCK_TOP_MAC');
+    const binding = by('TITLE');
     expect(chordFor(binding, 'mac')).toMatchObject({ metaKey: true, altKey: true });
     expect(chordFor(binding, 'win')).toMatchObject({ ctrlKey: true, shiftKey: true, altKey: false });
+  });
+
+  it('resolves a row that is deliberately unbound on Windows to null (G1479)', () => {
+    const binding = by('MOVE_BLOCK_TOP_MAC');
+    expect(chordFor(binding, 'mac')).toMatchObject({ metaKey: true, altKey: true });
+    expect(chordFor(binding, 'win')).toBeNull();
+    expect(displayFor(binding, 'win')).toBe('');
   });
 
   it('falls back to the Mac descriptor when the row carries no Windows matcher', () => {
@@ -74,7 +81,8 @@ describe('display strings match the collected ones character for character', () 
     ['MOVE_BLOCK_TOP', 'mac', '⌥ ↖'],
     ['MOVE_BLOCK_BOTTOM', 'win', 'Alt-↘'],
     ['MOVE_BLOCK_TOP_MAC', 'mac', '⌘ ⌥ ↑'],
-    ['MOVE_BLOCK_TOP_MAC', 'win', 'Ctrl-Shift-↑'],
+    // On Windows this row is deliberately unbound (G1479), so it prints nothing.
+    ['MOVE_BLOCK_TOP_MAC', 'win', ''],
     ['DUPLICATE', 'mac', '⌘ D'],
     ['DUPLICATE', 'win', 'Ctrl-D'],
     ['RENAME', 'mac', '⇧ ⏎'],
@@ -99,13 +107,17 @@ describe('display strings match the collected ones character for character', () 
 describe('no two bindings in one group share a chord', () => {
   // This is the gate that would have caught the two Windows rows the ledger prints identically
   // (`MOVE_BLOCK_TOP_MAC` and `SELECT_TO_TOP_MAC` are both `Ctrl-Shift-↑`): a flat table cannot
-  // express official context dispatch, so a collision here is a sign the table is lying.
+  // express official context dispatch, so a collision here is a sign the table is lying. A row
+  // whose Windows side is `null` is unbound there and takes part in no collision.
   const platforms: Platform[] = ['mac', 'win'];
 
   it.each(platforms)('on %s', (platform) => {
     const seen = new Map<string, string>();
     for (const binding of KEY_BINDINGS) {
-      const key = `${binding.group}|${displayFor(binding, platform)}`;
+      const text = displayFor(binding, platform);
+      // A row unbound on this platform prints nothing and can collide with nothing.
+      if (!text) continue;
+      const key = `${binding.group}|${text}`;
       const previous = seen.get(key);
       expect(
         previous,

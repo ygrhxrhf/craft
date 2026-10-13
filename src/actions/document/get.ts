@@ -19,6 +19,51 @@ export interface AuthorizedDocument {
   role: ResourceRole;
 }
 
+export interface SubpageStats {
+  wordCount: number;
+  plainText: string;
+  /** Not stored per page, so a subpage contributes none and the open page keeps its own count. */
+  blockCount: number;
+}
+
+/**
+ * The figures the "完整文档" reading adds to the open page (G67). Only the two columns it counts —
+ * never `content`, which is why the tree read projects them away — and only pages nested under this
+ * one that the actor already owns.
+ */
+export async function getSubpageStats(rootId: string): Promise<SubpageStats[]> {
+  const userId = await requireUserId();
+  const access = await resolveDocumentAccess(rootId, userId);
+  if (!access) return [];
+
+  const db = await getDb();
+  const rows: Array<{ id: string; parentId: string | null; wordCount: number; plainText: string }> =
+    await db.orm.public.Document
+      .where({ userId, isDeleted: false })
+      .select('id', 'parentId', 'wordCount', 'plainText')
+      .all();
+
+  const byParent = new Map<string, typeof rows>();
+  for (const row of rows) {
+    if (!row.parentId) continue;
+    const list = byParent.get(row.parentId) ?? [];
+    list.push(row);
+    byParent.set(row.parentId, list);
+  }
+
+  const stats: SubpageStats[] = [];
+  const pending = [...(byParent.get(rootId) ?? [])];
+  const seen = new Set<string>([rootId]);
+  while (pending.length > 0) {
+    const row = pending.pop()!;
+    if (seen.has(row.id)) continue;
+    seen.add(row.id);
+    stats.push({ wordCount: row.wordCount ?? 0, plainText: row.plainText ?? '', blockCount: 0 });
+    pending.push(...(byParent.get(row.id) ?? []));
+  }
+  return stats;
+}
+
 export async function getDocument(id: string): Promise<AuthorizedDocument | null> {
   const userId = await requireUserId();
   const access = await resolveDocumentAccess(id, userId);

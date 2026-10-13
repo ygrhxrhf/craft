@@ -6,6 +6,7 @@ import {
   charactersExcludingSpaces,
   pageStats,
   readingMinutes,
+  statsInputFor,
   statsTitle,
 } from './page-stats';
 
@@ -58,7 +59,32 @@ describe('the section title', () => {
     expect(statsTitle()).toBe('统计 · 这一页');
   });
 
-  it('drops the suffix for a whole-document reading', () => {
-    expect(statsTitle('document')).toBe('统计');
+  it('names the other two scopes the same way', () => {
+    expect(statsTitle('selection')).toBe('统计 · 选择');
+    expect(statsTitle('document')).toBe('统计 · 完整文档');
+  });
+});
+
+describe('the scope a reading counts', () => {
+  const page = { wordCount: 400, plainText: 'page ', blockCount: 7 };
+  const selection = { wordCount: 2, plainText: 'ab', blockCount: 1 };
+  const subpages = [{ wordCount: 100, plainText: 'sub', blockCount: 3 }];
+
+  it('counts the open page on its own', () => {
+    expect(statsInputFor('page', { page, selection, subpages })).toEqual(page);
+  });
+
+  it('counts only the selection, even when it is empty', () => {
+    expect(statsInputFor('selection', { page, selection, subpages })).toEqual(selection);
+    const empty = { wordCount: 0, plainText: '', blockCount: 0 };
+    expect(statsInputFor('selection', { page, selection: empty, subpages })).toEqual(empty);
+  });
+
+  it('adds the subpages to the open page for the full document', () => {
+    expect(statsInputFor('document', { page, selection, subpages })).toEqual({
+      wordCount: 500,
+      plainText: 'page sub',
+      blockCount: 10,
+    });
   });
 });

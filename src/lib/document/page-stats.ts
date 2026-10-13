@@ -4,10 +4,18 @@
  * title carries a 「 · 这一页」 suffix, which implies the same panel has a whole-document reading
  * elsewhere — so the scope is a parameter, not baked into the labels.
  */
-export type StatsScope = 'page' | 'document';
+export type StatsScope = 'page' | 'selection' | 'document';
+
+export const STATS_SCOPES: readonly StatsScope[] = ['page', 'selection', 'document'];
+
+/** The three scope names, verbatim from the catalog (`stats.this.page` / `selection` / `full.document`). */
+export const STATS_SCOPE_LABELS: Record<StatsScope, string> = {
+  page: '这一页',
+  selection: '选择',
+  document: '完整文档',
+};
 
 export const STATS_TITLE_BASE = '统计';
-export const STATS_TITLE_SUFFIX = ' · 这一页';
 
 /** Characters with whitespace removed — what the "不包括空格" note refers to. */
 export function charactersExcludingSpaces(text: string): number {
@@ -46,9 +54,35 @@ export function pageStats(input: {
   };
 }
 
-/** The section title for a scope. */
+/** The section title for a scope: 「统计 · 这一页」, and the same shape for the other two. */
 export function statsTitle(scope: StatsScope = 'page'): string {
-  return scope === 'page' ? `${STATS_TITLE_BASE}${STATS_TITLE_SUFFIX}` : STATS_TITLE_BASE;
+  return `${STATS_TITLE_BASE} · ${STATS_SCOPE_LABELS[scope]}`;
+}
+
+/**
+ * The slice a scope counts (G67). "这一页" is the open page; "选择" is the highlighted text, and with
+ * nothing highlighted it counts nothing rather than silently falling back to the page; "完整文档" sums
+ * the open page with its subpages, which the caller supplies because the document list does not carry
+ * their text.
+ */
+export function statsInputFor(
+  scope: StatsScope,
+  input: {
+    page: { wordCount: number; plainText: string; blockCount: number };
+    selection: { wordCount: number; plainText: string; blockCount: number };
+    subpages: readonly { wordCount: number; plainText: string; blockCount: number }[];
+  },
+): { wordCount: number; plainText: string; blockCount: number } {
+  if (scope === 'selection') return input.selection;
+  if (scope === 'page') return input.page;
+  return input.subpages.reduce(
+    (sum, page) => ({
+      wordCount: sum.wordCount + page.wordCount,
+      plainText: `${sum.plainText}${page.plainText}`,
+      blockCount: sum.blockCount + page.blockCount,
+    }),
+    input.page,
+  );
 }
 
 /** The four row labels, in order. */

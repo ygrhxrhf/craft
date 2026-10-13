@@ -14,9 +14,9 @@ import { saveAsTemplate } from '@/actions/document/template';
 import { isDocumentFavorite, toggleFavorite } from '@/actions/document/favorite';
 import { createDocument } from '@/actions/document/create';
 import { getFolders } from '@/actions/folder/get';
-import { getDocument, getDocuments } from '@/actions/document/get';
+import { getDocument, getDocuments, getSubpageStats, type SubpageStats } from '@/actions/document/get';
 import { relativeTime } from '@/lib/document/relative-time';
-import { pageStats, statsTitle } from '@/lib/document/page-stats';
+import { pageStats, statsInputFor, statsTitle, STATS_SCOPES, STATS_SCOPE_LABELS, type StatsScope } from '@/lib/document/page-stats';
 import { LOCATION_TITLE, locationPathLabel } from '@/lib/document/location-path';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
@@ -92,6 +92,20 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
   const [showExport, setShowExport] = useState(false);
   // The property rows read the document's own timestamps (G202) rather than fixed strings.
   const [meta, setMeta] = useState<{ createdAt: string; updatedAt: string } | null>(null);
+  const [statsScope, setStatsScope] = useState<StatsScope>('page');
+  const [subpages, setSubpages] = useState<SubpageStats[]>([]);
+  // The selection reading has to repaint when the highlight moves, which a render of this panel does
+  // not otherwise notice.
+  const [selectionTick, setSelectionTick] = useState(0);
+
+  useEffect(() => {
+    if (!editor) return;
+    const repaint = () => setSelectionTick((tick) => tick + 1);
+    editor.on('selectionUpdate', repaint);
+    return () => {
+      editor.off('selectionUpdate', repaint);
+    };
+  }, [editor]);
 
   useEffect(() => {
     let alive = true;
@@ -147,6 +161,9 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
           linkCount: l.linkCount,
         })));
       })
+      .catch(() => {});
+    getSubpageStats(documentId)
+      .then((rows) => setSubpages(rows))
       .catch(() => {});
     isDocumentFavorite(documentId)
       .then((favored) => setIsFavorite(!!favored))
@@ -249,12 +266,25 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
   };
 
   // The four figures are derived from the editor (G201): character count excludes spaces, and
-  // the block count is the document's top-level children.
-  const stats = pageStats({
-    wordCount,
-    plainText: editor?.getText() ?? '',
-    blockCount: editor?.state.doc.childCount ?? 0,
-  });
+  // the block count is the document's top-level children. The scope (G67) picks the page, the
+  // current selection, or the page plus its subpages. A subpage has no stored block count, so it
+  // adds words and characters only.
+  const selection = selectionTick >= 0 ? editor?.state.selection : undefined;
+  const from = selection?.from ?? 0;
+  const to = selection?.to ?? 0;
+  const selectionText = editor && from !== to ? editor.state.doc.textBetween(from, to, ' ') : '';
+  const stats = pageStats(
+    statsInputFor(statsScope, {
+      page: { wordCount, plainText: editor?.getText() ?? '', blockCount: editor?.state.doc.childCount ?? 0 },
+      selection: {
+        // The page's "字数" is the editor's character count, so the selection uses the same measure.
+        wordCount: selectionText.length,
+        plainText: selectionText,
+        blockCount: selectionText ? 1 : 0,
+      },
+      subpages,
+    }),
+  );
 
   // The ancestry chain comes from the same document list the move menu already loads.
   const locationLabel = locationPathLabel(docs, documentId);
@@ -418,9 +448,23 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
 
           {/* Stats */}
           <section>
-            <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">
-              {statsTitle('page')}
-            </h4>
+            <div className="mb-2 flex items-center justify-between">
+              <h4 className="text-caption font-medium uppercase tracking-wider text-foreground/40">
+                {statsTitle(statsScope)}
+              </h4>
+              <select
+                aria-label="统计范围"
+                value={statsScope}
+                onChange={(event) => setStatsScope(event.target.value as StatsScope)}
+                className="rounded bg-transparent text-meta text-foreground/55 outline-none hover:text-foreground/85"
+              >
+                {STATS_SCOPES.map((scope) => (
+                  <option key={scope} value={scope}>
+                    {STATS_SCOPE_LABELS[scope]}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="space-y-1 text-ui text-muted-foreground">
               <div>{stats.words.toLocaleString()} 字</div>
               <div>{stats.characters.toLocaleString()} 字符（不包括空格）</div>

@@ -188,6 +188,11 @@
      so only the foreground is reproduced here. */
   --code-background: #FBFBFB;
   --code-foreground: #3D3D3D;
+  --code-selection: #BBDFFF;
+  --code-line-highlight: rgba(0, 0, 0, 0.03);
+  --code-gutter-background: #FBFBFB;
+  --code-gutter-foreground: rgba(31, 34, 37, 0.3);
+  --code-gutter-active-foreground: rgba(31, 34, 37, 0.6);
   --code-comment: #6a737d;
   --code-symbol: #6f42c1;
   --code-literal: #005cc5;
@@ -374,6 +379,13 @@
   /* Code block palette — craftdark verbatim (factory `fo` in vendor-code-editor). */
   --code-background: #28292B;
   --code-foreground: #CECFD0;
+  --code-caret: #fff;
+  --code-selection: #385576;
+  --code-line-highlight: rgba(255, 255, 255, 0.05);
+  --code-gutter-background: #28292B;
+  --code-gutter-foreground: rgba(255, 255, 255, 0.4);
+  --code-gutter-active-foreground: rgba(255, 255, 255, 0.7);
+  --code-gutter-border: #f4f4f41f;
   --code-comment: #8b949e;
   --code-symbol: #d2a8ff;
   --code-literal: #79c0ff;

@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { Editor } from '@/components/editor/Editor';
-import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient } from '@/components/editor/themes/page-style';
+import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, showsDocumentTitle } from '@/components/editor/themes/page-style';
 
 interface SharedDocViewProps {
   documentId: string;
@@ -63,19 +63,23 @@ export function SharedDocView({
             <img src={coverImage!} alt="Cover" className="h-full w-full object-cover" />
           </div>
         )}
-        <div className="mb-6">
-          <div className="flex items-start gap-3">
-            <span className="mt-1 flex size-10 shrink-0 items-center justify-center rounded-md text-2xl transition-colors duration-150 ease-craft hover:bg-foreground/4">
-              {icon || '📄'}
-            </span>
-            <h1 className="flex-1 text-doctitle font-bold text-[#1F2225] dark:text-[#F9F9F9]">{title}</h1>
+        {showsDocumentTitle(style) && (
+          <div className="mb-6">
+            <div className="flex items-start gap-3">
+              <span className="mt-1 flex size-10 shrink-0 items-center justify-center rounded-md text-2xl transition-colors duration-150 ease-craft hover:bg-foreground/4">
+                {icon || '📄'}
+              </span>
+              <h1 className="flex-1 text-doctitle font-bold text-[#1F2225] dark:text-[#F9F9F9]">{title}</h1>
+            </div>
           </div>
-        </div>
+        )}
         <Editor
           documentId={documentId}
           initialContent={content}
           collaborative={collaborative}
           readOnly={!collaborative}
+          spelling={style.spelling === true}
+          spellingLang={style.spellingLang}
         />
       </div>
       {header}

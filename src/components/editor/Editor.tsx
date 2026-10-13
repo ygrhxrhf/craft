@@ -132,6 +132,9 @@ interface EditorProps {
   onEditorReady?: (editor: TiptapEditor | null) => void;
   onSaveStateChange?: (state: SaveState) => void;
   onSaveNowReady?: (saveNow: (() => void) | null) => void;
+  /** Page-level spell check (G65). Off unless the page turns it on. */
+  spelling?: boolean;
+  spellingLang?: string;
 }
 
 export function Editor({
@@ -143,6 +146,8 @@ export function Editor({
   onEditorReady,
   onSaveStateChange,
   onSaveNowReady,
+  spelling = false,
+  spellingLang,
 }: EditorProps) {
   // Created during the first render so the Collaboration extension can be built
   // synchronously; a ref write here would violate the rules of hooks.
@@ -439,6 +444,8 @@ export function Editor({
     editorProps: {
       attributes: {
         class: 'prose prose-sm max-w-none focus:outline-none',
+        spellcheck: spelling ? 'true' : 'false',
+        ...(spelling && spellingLang ? { lang: spellingLang } : {}),
       },
       handlePaste: (view, event) => {
         const files = Array.from(event.clipboardData?.files ?? []).filter((f) =>
@@ -648,6 +655,16 @@ export function Editor({
       dom.removeEventListener('drop', onDrop);
     };
   }, [editor]);
+
+  // `editorProps` is read once, when the editor is created. The spell-check switch lives on the page,
+  // so it has to be written onto the editable after the fact or toggling it would do nothing.
+  useEffect(() => {
+    const dom = editor?.view.dom;
+    if (!dom) return;
+    dom.setAttribute('spellcheck', spelling ? 'true' : 'false');
+    if (spelling && spellingLang) dom.setAttribute('lang', spellingLang);
+    else dom.removeAttribute('lang');
+  }, [editor, spelling, spellingLang]);
 
   if (!editor) return null;
 

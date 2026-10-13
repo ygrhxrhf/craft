@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ShareDialog } from '@/components/share/ShareDialog';
-import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient } from './themes/page-style';
+import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, showsDocumentTitle } from './themes/page-style';
 import type { PageStyle } from './themes/page-style';
 
 const TAB_ORDER = ['insert', 'format', 'style', 'info'] as const;
@@ -288,19 +288,23 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               </div>
             )}
 
-            <EditorHeader
-              documentId={doc.id}
-              title={title}
-              icon={icon}
-              readOnly={!canEdit}
-              onTitleChange={(t) => handleUpdate({ title: t })}
-              onIconChange={(i) => handleUpdate({ icon: i })}
-            />
+            {showsDocumentTitle(pageStyle) && (
+              <EditorHeader
+                documentId={doc.id}
+                title={title}
+                icon={icon}
+                readOnly={!canEdit}
+                onTitleChange={(t) => handleUpdate({ title: t })}
+                onIconChange={(i) => handleUpdate({ icon: i })}
+              />
+            )}
             <Editor
               documentId={doc.id}
               initialContent={doc.content}
               collaborative
               readOnly={!canEdit}
+              spelling={pageStyle.spelling === true}
+              spellingLang={pageStyle.spellingLang}
               onEditorReady={handleEditorReady}
               onSaveStateChange={setSaveState}
               onSaveNowReady={handleSaveNowReady}

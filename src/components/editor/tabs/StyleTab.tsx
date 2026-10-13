@@ -4,8 +4,17 @@ import { useState } from 'react';
 import type { Editor } from '@tiptap/react';
 import { cn } from 'cn';
 import { Plus, Minus } from 'lucide-react';
-import { fontPacks, pageThemes, washiTapes } from '../themes/page-style';
+import {
+  DEFAULT_SPELLING_LANG,
+  SPELLING_LANGUAGES,
+  filterSpellingLanguages,
+  fontPacks,
+  pageThemes,
+  showsDocumentTitle,
+  washiTapes,
+} from '../themes/page-style';
 import type { PageStyle } from '../themes/page-style';
+import { SearchableSelect } from '../extensions/searchable-select';
 
 interface StyleTabProps {
   editor: Editor;
@@ -214,6 +223,66 @@ export function StyleTab({
             />
           ))}
         </div>
+      </section>
+
+      {/* Page settings (G65): the title switch and the spell checker with its searchable language. */}
+      <section className="space-y-2">
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">页面</h4>
+        <div className="flex items-center justify-between">
+          <span className="text-ui">显示文档标题</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={showsDocumentTitle(pageStyle)}
+            aria-label="显示文档标题"
+            onClick={() => setPageStyle({ showTitle: !showsDocumentTitle(pageStyle) })}
+            className={cn(
+              'relative h-5 w-9 rounded-full transition-colors',
+              showsDocumentTitle(pageStyle) ? 'bg-craft-accent' : 'bg-foreground/15'
+            )}
+          >
+            <span
+              className={cn(
+                'absolute left-0.5 top-0.5 size-4 rounded-full bg-background shadow-sm transition-transform',
+                showsDocumentTitle(pageStyle) && 'translate-x-4'
+              )}
+            />
+          </button>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-ui">拼写检查</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={pageStyle.spelling === true}
+            aria-label="拼写检查"
+            onClick={() => setPageStyle({ spelling: pageStyle.spelling !== true })}
+            className={cn(
+              'relative h-5 w-9 rounded-full transition-colors',
+              pageStyle.spelling === true ? 'bg-craft-accent' : 'bg-foreground/15'
+            )}
+          >
+            <span
+              className={cn(
+                'absolute left-0.5 top-0.5 size-4 rounded-full bg-background shadow-sm transition-transform',
+                pageStyle.spelling === true && 'translate-x-4'
+              )}
+            />
+          </button>
+        </div>
+        {pageStyle.spelling === true && (
+          <div className="flex items-center justify-between">
+            <span className="text-ui">语言</span>
+            <SearchableSelect
+              label="拼写语言"
+              placeholder="搜索语言"
+              value={pageStyle.spellingLang ?? DEFAULT_SPELLING_LANG}
+              options={SPELLING_LANGUAGES}
+              onFilter={filterSpellingLanguages}
+              onChange={(spellingLang) => setPageStyle({ spellingLang })}
+            />
+          </div>
+        )}
       </section>
 
       {/* Advanced: width toggle */}

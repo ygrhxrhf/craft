@@ -3,6 +3,7 @@
 import type { Editor } from '@tiptap/react';
 import type { Node as PMNode } from '@tiptap/pm/model';
 import { evaluateCellFormula } from '@/lib/editor/table-formula';
+import { gridIsUniform, movedOrder, type CellSpan } from '@/lib/editor/table-move';
 
 function findTable(
   editor: Editor
@@ -20,6 +21,91 @@ function findTable(
 function rowSortKey(row: PMNode): string {
   const firstCell = row.content.content[0];
   return firstCell ? firstCell.textContent : '';
+}
+
+/**
+ * Move the row or column holding the caret by one step. A table with a merged cell is left alone,
+ * because swapping across a span would make the grid invalid.
+ */
+export function moveTableAxis(editor: Editor, axis: 'row' | 'col', step: -1 | 1): boolean {
+  const found = findTable(editor);
+  if (!found) return false;
+
+  const rows = found.node.content.content.filter((node: PMNode) => node.type.name === 'tableRow');
+  // TEMP trace
+  const grid: CellSpan[][] = rows.map((row: PMNode) =>
+    row.content.content.map((cell: PMNode) => ({
+      colspan: cell.attrs.colspan ?? 1,
+      rowspan: cell.attrs.rowspan ?? 1,
+    })),
+  );
+  if (!gridIsUniform(grid)) return false;
+
+  const { $from } = editor.state.selection;
+  let rowIndex = -1;
+  let colIndex = -1;
+  for (let depth = $from.depth; depth > 0; depth--) {
+    const name = $from.node(depth).type.name;
+    // The index is among the parent's children, so the row's place is read one level up.
+    if (name === 'table') rowIndex = $from.index(depth);
+    if (name === 'tableRow') colIndex = $from.index(depth);
+  }
+  if (rowIndex < 0 || colIndex < 0) return false;
+
+  const index = axis === 'row' ? rowIndex : colIndex;
+  const count = axis === 'row' ? rows.length : grid[0].length;
+  const order = movedOrder(count, index, step);
+  if (!order) return false;
+
+  const rebuilt =
+    axis === 'row'
+      ? order.map((position) => rows[position])
+      : rows.map((row: PMNode) =>
+          row.type.create(
+            row.attrs,
+            order.map((position) => row.content.content[position]),
+          ),
+        );
+  const table = found.node.type.create(found.node.attrs, rebuilt);
+  editor.view.dispatch(
+    editor.state.tr.replaceWith(found.pos, found.pos + found.node.nodeSize, table).scrollIntoView(),
+  );
+  return true;
+}
+
+/** Empty the cell holding the caret, leaving the cell itself in place. */
+export function clearCellContents(editor: Editor): boolean {
+  const { $from } = editor.state.selection;
+  for (let depth = $from.depth; depth > 0; depth--) {
+    const name = $from.node(depth).type.name;
+    if (name !== 'tableCell' && name !== 'tableHeader') continue;
+    const paragraph = editor.state.schema.nodes.paragraph.create();
+    editor.view.dispatch(
+      editor.state.tr.replaceWith($from.start(depth), $from.end(depth), paragraph).scrollIntoView(),
+    );
+    return true;
+  }
+  return false;
+}
+
+/** Drop every remembered column width, so the table sizes itself again. */
+export function resetColumnSizes(editor: Editor): boolean {
+  const found = findTable(editor);
+  if (!found) return false;
+  let tr = editor.state.tr;
+  let changed = false;
+  found.node.descendants((node, pos) => {
+    if (
+      (node.type.name === 'tableCell' || node.type.name === 'tableHeader') &&
+      node.attrs.colwidth
+    ) {
+      tr = tr.setNodeMarkup(found.pos + 1 + pos, undefined, { ...node.attrs, colwidth: null });
+      changed = true;
+    }
+  });
+  if (!changed) return false;
+  editor.view.dispatch(tr.scrollIntoView());
+  return true;
 }
 
 export function sortTable(editor: Editor, dir: 'asc' | 'desc'): boolean {

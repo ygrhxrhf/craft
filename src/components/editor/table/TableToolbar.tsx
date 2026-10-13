@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from 'cn';
 import { tableBubbleKey } from '../bubble-menu/keys';
-import { sortTable, evalFormulas } from '@/lib/table-utils';
+import { clearCellContents, evalFormulas, moveTableAxis, resetColumnSizes, sortTable } from '@/lib/table-utils';
 
 interface TableToolbarProps {
   editor: Editor;
@@ -112,6 +112,30 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         >
           <MoveDown className="size-4" />
         </ToolButton>
+        <ToolButton title="上移行" onClick={() => moveTableAxis(editor, 'row', -1)}>
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 19V5" />
+            <path d="m5 12 7-7 7 7" />
+          </svg>
+        </ToolButton>
+        <ToolButton title="下移行" onClick={() => moveTableAxis(editor, 'row', 1)}>
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 5v14" />
+            <path d="m19 12-7 7-7-7" />
+          </svg>
+        </ToolButton>
+        <ToolButton title="向左移动列" onClick={() => moveTableAxis(editor, 'col', -1)}>
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
+        </ToolButton>
+        <ToolButton title="向右移动列" onClick={() => moveTableAxis(editor, 'col', 1)}>
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </ToolButton>
         <ToolButton
           title="删除所选行"
           onClick={() => editor.chain().focus().deleteRow().run()}
@@ -184,6 +208,20 @@ export function TableToolbar({ editor }: TableToolbarProps) {
           onClick={() => sortTable(editor, 'desc')}
         >
           <ArrowDownAZ className="size-4" />
+        </ToolButton>
+        <ToolButton title="清除单元格内容" onClick={() => clearCellContents(editor)}>
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6h18" />
+            <path d="M8 6V4h8v2" />
+            <path d="M19 6l-1 14H6L5 6" />
+          </svg>
+        </ToolButton>
+        <ToolButton title="重置列大小" onClick={() => resetColumnSizes(editor)}>
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 12h16" />
+            <path d="M8 8v8" />
+            <path d="M16 8v8" />
+          </svg>
         </ToolButton>
         <ToolButton
           title="计算公式(=SUM(A1:B3) 等)"

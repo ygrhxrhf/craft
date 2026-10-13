@@ -18,6 +18,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { Switch } from '@/components/ui/switch';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
 import { cn } from 'cn';
+import { ShortcutsPanel } from './ShortcutsPanel';
 
 interface PanelProps {
   section: SettingsSection;
@@ -509,6 +510,9 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
           </div>
         </div>
       );
+
+    case 'shortcuts':
+      return <ShortcutsPanel />;
 
     case 'about':
       return (

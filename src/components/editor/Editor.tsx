@@ -40,6 +40,7 @@ import { FocusStyle } from './extensions/focus-style';
 import { ShadedStyle } from './extensions/shaded-style';
 import { ImageBlock } from './extensions/image-block';
 import { Attachment } from './extensions/attachment';
+import { OfficialHardBreak } from './extensions/hard-break';
 import { LinkPreview } from './extensions/link-preview';
 import { ImageGallery } from './extensions/image-gallery';
 import { Drawing } from './extensions/drawing';
@@ -63,6 +64,8 @@ import { WhiteboardEmbed } from './extensions/whiteboard-embed';
 import { SidebarDrop } from './extensions/sidebar-drop';
 import { CardBlock } from './extensions/card-block';
 import { CommentMark } from './extensions/comment-mark';
+import { FindReplace } from './extensions/find-replace';
+import { CraftKeymap } from './extensions/craft-keymap';
 import { saveDraft, getDraft, deleteDraft } from '@/lib/offline/draft-store';
 import { jumpToAnchor, readAnchorHash } from '@/lib/editor/block-anchor';
 import { useCollabSession } from '@/lib/collaboration/use-collab-session';
@@ -260,6 +263,9 @@ export function Editor({
     extensions: [
       StarterKit.configure({
         codeBlock: false,
+        // Official Shift-Enter does nothing on a document page. StarterKit's HardBreak
+        // binds that key, so drop the shortcut and keep the node via OfficialHardBreak.
+        hardBreak: false,
         // Our divider carries four weights; StarterKit's plain <hr> would compete
         // for the `---` input rule and produce a second, featureless node.
         horizontalRule: false,
@@ -281,6 +287,7 @@ export function Editor({
         // another editor's changes.
         undoRedo: collaborative ? false : {},
       }),
+      OfficialHardBreak,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
@@ -385,6 +392,8 @@ export function Editor({
       CardBlock,
       MarkdownShortcuts,
       SlashCommand,
+      FindReplace,
+      CraftKeymap,
       CommentMark.configure({
         HTMLAttributes: {
           class: 'comment-mark',

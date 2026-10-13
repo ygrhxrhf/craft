@@ -1,21 +1,15 @@
 import { Node, mergeAttributes } from '@tiptap/react';
 import { nodeInputRule } from '@tiptap/core';
+import {
+  DEFAULT_DIVIDER_STYLE,
+  DIVIDER_PATTERN,
+  DIVIDER_SIGILS,
+  normalizeDividerStyle,
+  type DividerStyle,
+} from '@/lib/editor/divider-styles';
 
-export type DividerStyle = 'thin' | 'medium' | 'thick' | 'dashed';
-
-/** Craft's four typed sigils. Each is matched whole-line so they cannot eat each other. */
-export const DIVIDER_SIGILS: Record<string, DividerStyle> = {
-  '..-': 'thin',
-  '.--': 'medium',
-  '---': 'thick',
-  '=-': 'dashed',
-  // Typography rewrites `--` into an en dash before input rules run, so a typed
-  // `---` usually reaches us as `–-`. Both spellings mean "thick".
-  '–-': 'thick',
-  '—-': 'thick',
-};
-
-export const DIVIDER_PATTERN = /^(\.\.-|\.--|---|–-|—-|=-)$/;
+export { DIVIDER_PATTERN, DIVIDER_SIGILS };
+export type { DividerStyle };
 
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {
@@ -33,8 +27,8 @@ export const Divider = Node.create({
   addAttributes() {
     return {
       style: {
-        default: 'thin',
-        parseHTML: (element) => element.getAttribute('data-style') || 'thin',
+        default: DEFAULT_DIVIDER_STYLE,
+        parseHTML: (element) => normalizeDividerStyle(element.getAttribute('data-style')),
         renderHTML: (attributes) => ({ 'data-style': attributes.style }),
       },
     };
@@ -63,7 +57,7 @@ export const Divider = Node.create({
   addCommands() {
     return {
       setDivider:
-        (style = 'thin') =>
+        (style = DEFAULT_DIVIDER_STYLE) =>
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,

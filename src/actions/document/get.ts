@@ -142,6 +142,30 @@ export async function getTemplates() {
   return docs;
 }
 
+export interface TemplateContent {
+  title: string;
+  content: unknown;
+}
+
+/** Body for 「从模板插入」. Scoped to the caller's own live templates so a
+ *  missing, foreign, or deleted id all answer the same way. */
+export async function getTemplateContent(documentId: string): Promise<TemplateContent> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const row = await db.orm.public.Document.first({
+    id: documentId,
+    userId: session.user.id,
+    isTemplate: true,
+    isDeleted: false,
+  });
+  if (!row) throw new Error('模板不存在');
+
+  const template = row as { title: string; content: unknown };
+  return { title: template.title, content: template.content };
+}
+
 export async function getRecentDocuments(limit = 20) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');

@@ -6,6 +6,7 @@ export type SettingsSection =
   | 'space'
   | 'appearance'
   | 'language'
+  | 'shortcuts'
   | 'advanced'
   | 'account'
   | 'subscription'

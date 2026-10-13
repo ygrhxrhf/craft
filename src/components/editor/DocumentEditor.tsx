@@ -6,10 +6,15 @@ import { Editor, type SaveState } from './Editor';
 import { EditorHeader } from './EditorHeader';
 import { RightPanel, type RightTabId } from './tabs/RightPanel';
 import { Breadcrumb } from './Breadcrumb';
+import { FindReplacePanel } from './find-replace-panel';
+import { TemplatePicker } from './template-picker';
 import { Share2, LayoutGrid, Type, Palette, Info, Menu, MoreHorizontal } from 'lucide-react';
 import { cn } from 'cn';
 import { useIsCompact, useIsMobile } from '@/lib/use-is-mobile';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
+import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
+import { useFocusStore } from '@/lib/store/use-focus-store';
+import { KEY_BINDINGS, detectPlatform, displayFor } from '@/lib/editor/keymap';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,6 +63,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const [pageStyle, setPageStyle] = useState<PageStyle>(() => normalizePageStyle(doc.pageStyle));
   const pageStyleRef = useRef(pageStyle);
   const [activeTab, setActiveTab] = useState<RightTabId | null>(null);
+  const focusActive = useFocusStore((state) => state.active);
+  const focusBinding = KEY_BINDINGS.find((binding) => binding.id === 'TOGGLE_FOCUS_MODE');
   const [shareOpen, setShareOpen] = useState(false);
   const [editor, setEditor] = useState<import('@tiptap/react').Editor | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('saved');
@@ -69,6 +76,11 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     saveNowRef.current = fn;
   }, []);
   const [wordCount, setWordCount] = useState(0);
+
+  const handleEditorReady = useCallback((next: import('@tiptap/react').Editor | null) => {
+    setEditor(next);
+    useActiveEditorStore.getState().setEditor(next);
+  }, []);
 
   const handleTabClick = (tab: RightTabId) => {
     setActiveTab((prev) => (prev === tab ? null : tab));
@@ -128,7 +140,13 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     <div className="flex h-full flex-1 overflow-hidden">
       <div className="flex min-w-0 flex-1 flex-col">
         {/* 顶栏：面包屑 + 右侧 tab 按钮 */}
-        <div className="flex h-12 shrink-0 items-center justify-between px-4">
+        <div
+          data-testid="document-topbar"
+          className={cn(
+            'flex h-12 shrink-0 items-center justify-between px-4',
+            focusActive && 'hidden',
+          )}
+        >
           <div className="flex min-w-0 items-center gap-3">
             {isMobile && (
               <button
@@ -220,6 +238,18 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
           </div>
         </div>
 
+        <FindReplacePanel editor={editor} />
+        <TemplatePicker />
+        {focusActive && focusBinding && (
+          <button
+            type="button"
+            onClick={() => useFocusStore.getState().toggle()}
+            className="flex items-center gap-3 border-b border-border px-4 py-2 text-xs text-foreground/70 hover:text-foreground"
+            data-testid="focus-exit"
+          >
+            {`退出专注模式 • ${displayFor(focusBinding, detectPlatform())}`}
+          </button>
+        )}
         <div className="flex-1 overflow-y-auto">
         <div className="relative min-h-full bg-background px-3 py-5 sm:px-8">
           <div
@@ -265,7 +295,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               initialContent={doc.content}
               collaborative
               readOnly={!canEdit}
-              onEditorReady={setEditor}
+              onEditorReady={handleEditorReady}
               onSaveStateChange={setSaveState}
               onSaveNowReady={handleSaveNowReady}
               onUpdate={(_, __, count) => setWordCount(count)}
@@ -277,7 +307,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
 
       {/* 右侧栏：统一 4-tab 面板。紧凑布局下面板常驻挂载，只翻转 open，
           这样从 ⋯ 菜单打开时不会和菜单自身的关闭打架。 */}
-      {(isCompact || activeTab) && (
+      {!focusActive && (isCompact || activeTab) && (
         <RightPanel
           open={!!activeTab}
           activeTab={activeTab ?? 'insert'}

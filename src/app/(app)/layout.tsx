@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/sidebar/Sidebar';
 import { CommandPalette } from '@/components/search/CommandPalette';
+import { ShellShortcuts } from '@/components/editor/shell-shortcuts';
 import { SettingsModal } from '@/components/settings/SettingsModal';
 import { AppShellHeader } from '@/components/app/AppPageHeader';
 
@@ -12,6 +13,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <CommandPalette />
+      <ShellShortcuts />
       <SettingsModal />
     </div>
   );

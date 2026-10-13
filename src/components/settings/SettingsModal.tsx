@@ -10,6 +10,7 @@ import {
   Globe,
   Hash,
   Info,
+  Keyboard,
   Paintbrush,
   Plug,
   Settings2,
@@ -44,6 +45,7 @@ const NAV_GROUPS: { title: string | null; items: NavItem[] }[] = [
       { key: 'appearance', label: '外观', icon: Paintbrush },
       { key: 'language', label: '语言', icon: Globe },
       { key: 'advanced', label: '高级设置', icon: SlidersHorizontal },
+      { key: 'shortcuts', label: '快捷键', icon: Keyboard },
     ],
   },
   {
@@ -65,6 +67,7 @@ const SECTION_TITLES: Record<SettingsSection, string> = {
   space: '空间设置',
   appearance: '外观',
   language: '语言',
+  shortcuts: '快捷键',
   advanced: '高级设置',
   account: '我的账户',
   subscription: '我的订阅',

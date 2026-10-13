@@ -4,6 +4,7 @@ import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { List } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { TOC_PLACEHOLDER } from '@/lib/editor/official-copy';
 
 interface TocEntry {
   text: string;
@@ -50,7 +51,7 @@ export function TableOfContentsView({ editor }: NodeViewProps) {
       <NodeViewWrapper as="div">
         <div className="flex items-center gap-2 rounded-lg border border-dashed border-border px-3 py-2 text-[13px] text-muted-foreground">
           <List className="size-4" />
-          目录：给标题加上层级后会自动出现在这里
+          {TOC_PLACEHOLDER}
         </div>
       </NodeViewWrapper>
     );

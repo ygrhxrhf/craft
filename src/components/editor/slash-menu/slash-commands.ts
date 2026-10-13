@@ -8,6 +8,8 @@ import {
   ListOrdered,
   CheckSquare,
   ChevronRight,
+  FoldVertical,
+  UnfoldVertical,
   Quote,
   Code,
   Image,
@@ -22,6 +24,7 @@ import {
   AtSign,
   CreditCard,
   LayoutGrid,
+  LayoutTemplate,
   Columns2,
   Copy,
   Globe,
@@ -36,6 +39,7 @@ import type { ComponentType } from 'react';
 import { uploadFile } from '@/lib/upload-client';
 import { createWhiteboard } from '@/actions/whiteboard/whiteboard';
 import { requestImageGen } from '@/components/editor/ai/ImageGenDialog';
+import { useTemplatePickerStore } from '@/lib/store/use-template-picker-store';
 
 export interface SlashCommand {
   name: string;
@@ -140,6 +144,26 @@ export const slashCommands: SlashCommand[] = [
       editor.chain().focus().deleteRange(range).setToggleBlock().run();
     },
   },
+  {
+    name: '全部展开',
+    description: '展开文档中的全部折叠块',
+    icon: UnfoldVertical,
+    keywords: ['expand all', '全部展开', '展开所有折叠块'],
+    category: '列表',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).expandAllToggleBlocks().run();
+    },
+  },
+  {
+    name: '全部收起',
+    description: '收起文档中的全部折叠块',
+    icon: FoldVertical,
+    keywords: ['collapse all', '全部收起', '收起所有折叠块'],
+    category: '列表',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).collapseAllToggleBlocks().run();
+    },
+  },
 
   // ── 高级块 ──
   {
@@ -179,7 +203,21 @@ export const slashCommands: SlashCommand[] = [
     keywords: ['divider', 'separator', 'hr', 'line', '分隔线', '分割线'],
     category: '高级块',
     command: (editor, range) => {
-      editor.chain().focus().deleteRange(range).setDivider('thin').run();
+      editor.chain().focus().deleteRange(range).setDivider('regular').run();
+    },
+  },
+  {
+    name: '从模板插入',
+    description: '选择一个模板并把它的内容插到当前位置',
+    icon: LayoutTemplate,
+    keywords: ['模板', 'template'],
+    category: '高级块',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      useTemplatePickerStore.getState().openTemplatePicker({
+        editor,
+        at: { from: range.from, to: range.from },
+      });
     },
   },
 

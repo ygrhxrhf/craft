@@ -15,6 +15,7 @@ export type BlockActionId =
   | 'copy-link'
   | 'convert-card'
   | 'add-comment'
+  | 'add-emoji'
   | 'delete';
 
 const MOVE_TARGETS: Record<string, MoveTarget> = {
@@ -36,6 +37,9 @@ export interface BlockAction {
 /** The 「提醒我…」 submenu, only offered on a task item. */
 export const REMIND_MENU = REMIND_PRESETS;
 
+/** The short row the 添加表情 entry offers. Picking the current one again clears it. */
+export const BLOCK_EMOJIS = ['👍', '❤️', '😄', '🎉', '🔥', '👀'] as const;
+
 export function blockMenuItems({ canDelete, isTask }: { canDelete: boolean; isTask?: boolean }): BlockAction[] {
   const items: BlockAction[] = [
     { id: 'insert-above', label: '在上方插入区块' },
@@ -47,6 +51,7 @@ export function blockMenuItems({ canDelete, isTask }: { canDelete: boolean; isTa
     { id: 'copy-link', label: '复制区块链接' },
     { id: 'convert-card', label: '转换为卡片' },
     { id: 'add-comment', label: '添加评论' },
+    { id: 'add-emoji', label: '添加表情' },
   ];
   if (isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
   if (canDelete) items.push({ id: 'delete', label: '删除' });
@@ -117,6 +122,22 @@ export function blockLinkFor(
  * task item and rides the existing task sync. `saveForLater` and `custom` have no computed time,
  * so they clear the reminder rather than inventing one.
  */
+/**
+ * Sets or clears the emoji on a block (G1470's 添加表情). Picking the emoji the block already
+ * carries removes it, which is how a reaction is taken back.
+ */
+export function setBlockEmoji(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  emoji: string,
+) {
+  const { before } = blockBounds(state, index);
+  const node = state.doc.child(index);
+  const next = node.attrs.emoji === emoji ? null : emoji;
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, emoji: next }));
+}
+
 /**
  * Wraps the addressed block in a card (G1470's 转换为卡片). A block that is already a card is left
  * alone, so the entry cannot nest cards inside cards.
@@ -204,6 +225,9 @@ export function applyBlockAction(
       break;
     case 'add-comment':
       // The composer lives in the info panel, so this only names the block. The menu opens it.
+      break;
+    case 'add-emoji':
+      // The emoji is chosen from the submenu, which calls setBlockEmoji itself.
       break;
     case 'copy-link':
       // The link needs the document id and the clipboard, neither of which the editor state

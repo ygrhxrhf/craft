@@ -53,6 +53,7 @@ import { InlineMath } from './extensions/math-inline';
 import { Mention } from './extensions/mention';
 import { BlockLink } from './extensions/block-link';
 import { BlockId } from './extensions/block-id';
+import { BlockEmoji } from './extensions/block-emoji';
 import { MirrorBlock } from './extensions/mirror-block';
 import { BlockLinkSuggestion } from './extensions/block-link-suggestion';
 import { MentionUserSuggestion } from './extensions/mention-user-suggestion';
@@ -407,6 +408,7 @@ export function Editor({
       Mention,
       BlockLink,
       BlockId,
+      BlockEmoji,
       MirrorBlock.configure({ hostDocumentId: documentId }),
       BlockLinkSuggestion,
       MentionUserSuggestion.configure({ documentId }),

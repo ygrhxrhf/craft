@@ -4,6 +4,7 @@ import { EditorState } from '@tiptap/pm/state';
 import type { Transaction } from '@tiptap/pm/state';
 import {
   applyBlockAction,
+  setBlockEmoji,
   clearTaskReminder,
   setTaskReminder,
   blockLinkFor,
@@ -19,7 +20,7 @@ import {
 const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
-    paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null } } },
+    paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null }, emoji: { default: null } } },
     cardBlock: { content: 'block+', group: 'block' },
     taskItem: { content: 'text*', group: 'block', attrs: { remindAt: { default: null } } },
     text: {},
@@ -87,6 +88,7 @@ describe('blockMenuItems', () => {
       'copy-link',
       'convert-card',
       'add-comment',
+      'add-emoji',
       'delete',
     ]);
   });
@@ -102,6 +104,7 @@ describe('blockMenuItems', () => {
       '复制区块链接',
       '转换为卡片',
       '添加评论',
+      '添加表情',
       '删除',
     ]);
   });
@@ -124,6 +127,7 @@ describe('blockMenuItems', () => {
       'copy-link',
       'convert-card',
       'add-comment',
+      'add-emoji',
     ]);
   });
 
@@ -176,6 +180,21 @@ describe('deleteBlock', () => {
   it('refuses to empty the document', () => {
     const state = stateWith(['甲']);
     expect(() => run(state, (d) => deleteBlock(state, d, 0))).toThrow();
+  });
+});
+
+describe('setBlockEmoji', () => {
+  it('puts the emoji on the block', () => {
+    const state = stateWith(['甲']);
+    const next = runState(state, (d) => setBlockEmoji(state, d, 0, '👍'));
+    expect(next.doc.child(0).attrs.emoji).toBe('👍');
+  });
+
+  it('clears the emoji when the same one is picked again', () => {
+    const state = stateWith(['甲']);
+    const once = runState(state, (d) => setBlockEmoji(state, d, 0, '👍'));
+    const twice = runState(once, (d) => setBlockEmoji(once, d, 0, '👍'));
+    expect(twice.doc.child(0).attrs.emoji).toBeNull();
   });
 });
 
@@ -318,7 +337,7 @@ describe('applyBlockAction', () => {
     for (const item of blockMenuItems({ canDelete: true })) {
       // 复制区块链接 leaves the editor; 提醒我… opens a submenu instead of a transaction.
       // 复制区块链接 leaves the editor; 提醒我… and 添加评论 open other surfaces.
-      if (item.id === 'copy-link' || item.id === 'remind' || item.id === 'add-comment') continue;
+      if (item.id === 'copy-link' || item.id === 'remind' || item.id === 'add-comment' || item.id === 'add-emoji') continue;
       expect(() => run(state, (d) => applyBlockAction(state, d, 1, item.id))).not.toThrow();
     }
   });

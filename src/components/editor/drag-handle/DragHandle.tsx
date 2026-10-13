@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { dropTargetFor } from './drop-band';
-import { applyBlockAction, blockLinkFor, blockMenuItems, REMIND_MENU, setTaskReminder, type BlockActionId } from './block-actions';
+import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setTaskReminder, type BlockActionId } from './block-actions';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
@@ -91,6 +91,15 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     (blockEl: HTMLElement) => {
       const index = indexOfBlock(blockEl);
       return index >= 0 && editor.state.doc.child(index).type.name === 'taskItem';
+    },
+    [editor, indexOfBlock],
+  );
+
+  const reactToBlock = useCallback(
+    (blockEl: HTMLElement, emoji: string) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return;
+      setBlockEmoji(editor.state, editor.view.dispatch, index, emoji);
     },
     [editor, indexOfBlock],
   );
@@ -378,7 +387,21 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                 canDelete: editor.state.doc.childCount > 1,
                 isTask: isTaskBlock(handle.blockEl),
               }).map((item) =>
-                item.id === 'remind' ? (
+                item.id === 'add-emoji' ? (
+                  <DropdownMenuSub key={item.id}>
+                    <DropdownMenuSubTrigger>{item.label}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      {BLOCK_EMOJIS.map((emoji) => (
+                        <DropdownMenuItem
+                          key={emoji}
+                          onClick={() => reactToBlock(handle.blockEl, emoji)}
+                        >
+                          {emoji}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                ) : item.id === 'remind' ? (
                   <DropdownMenuSub key={item.id}>
                     <DropdownMenuSubTrigger>{item.label}</DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>

@@ -4,6 +4,7 @@ import { EditorState } from '@tiptap/pm/state';
 import type { Transaction } from '@tiptap/pm/state';
 import {
   applyBlockAction,
+  setTaskReminder,
   blockLinkFor,
   blockMenuItems,
   deleteBlock,
@@ -18,6 +19,7 @@ const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
     paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null } } },
+    taskItem: { content: 'text*', group: 'block', attrs: { remindAt: { default: null } } },
     text: {},
   },
   marks: {},
@@ -98,6 +100,11 @@ describe('blockMenuItems', () => {
     ]);
   });
 
+  it('offers 提醒我… only on a task item', () => {
+    expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).not.toContain('remind');
+    expect(blockMenuItems({ canDelete: true, isTask: true }).map((item) => item.id)).toContain('remind');
+  });
+
   it('withholds 删除 from the only block in the document', () => {
     // deleteBlock refuses to empty the document, so an entry that can only fail
     // would surface as an uncaught error instead of doing nothing visible.
@@ -161,6 +168,35 @@ describe('deleteBlock', () => {
   it('refuses to empty the document', () => {
     const state = stateWith(['甲']);
     expect(() => run(state, (d) => deleteBlock(state, d, 0))).toThrow();
+  });
+});
+
+describe('setTaskReminder', () => {
+  function taskState() {
+    const doc = schema.nodes.doc.create(null, [
+      schema.nodes.taskItem.create(null, schema.text('买牛奶')),
+    ]);
+    return EditorState.create({ schema, doc });
+  }
+
+  it('writes the resolved instant onto a task item', () => {
+    const state = taskState();
+    const now = new Date('2026-10-13T10:00:00Z');
+    const next = runState(state, (d) => setTaskReminder(state, d, 0, 'in1hour', now));
+    expect(next.doc.child(0).attrs.remindAt).toBe('2026-10-13T11:00:00.000Z');
+  });
+
+  it('clears the reminder for a preset with no computed time', () => {
+    const state = taskState();
+    const next = runState(state, (d) => setTaskReminder(state, d, 0, 'saveForLater', new Date()));
+    expect(next.doc.child(0).attrs.remindAt).toBeNull();
+  });
+
+  it('does nothing to a block that is not a task', () => {
+    const state = stateWith(['甲']);
+    expect(() => run(state, (d) => setTaskReminder(state, d, 0, 'in20min', new Date()))).toThrow(
+      'the action dispatched nothing',
+    );
   });
 });
 
@@ -240,7 +276,8 @@ describe('applyBlockAction', () => {
     // The middle block can move in every direction; the first one cannot move up.
     const state = stateWith(['甲', '乙', '丙']);
     for (const item of blockMenuItems({ canDelete: true })) {
-      if (item.id === 'copy-link') continue;
+      // 复制区块链接 leaves the editor; 提醒我… opens a submenu instead of a transaction.
+      if (item.id === 'copy-link' || item.id === 'remind') continue;
       expect(() => run(state, (d) => applyBlockAction(state, d, 1, item.id))).not.toThrow();
     }
   });

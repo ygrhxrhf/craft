@@ -92,8 +92,8 @@ function collectLinkedDocIds(content: unknown): string[] {
   return [...ids];
 }
 
-function collectTaskItems(content: unknown): { taskId: string; title: string; isCompleted: boolean }[] {
-  const tasks: { taskId: string; title: string; isCompleted: boolean }[] = [];
+function collectTaskItems(content: unknown): { taskId: string; title: string; isCompleted: boolean; remindAt: string | null }[] {
+  const tasks: { taskId: string; title: string; isCompleted: boolean; remindAt: string | null }[] = [];
   const walk = (node: any) => {
     if (!node || typeof node !== 'object') return;
     if (node.type === 'taskItem' && Array.isArray(node.content)) {
@@ -103,7 +103,12 @@ function collectTaskItems(content: unknown): { taskId: string; title: string; is
           ? node.attrs.taskId
           : crypto.randomUUID();
         node.attrs = { ...node.attrs, taskId };
-        tasks.push({ taskId, title, isCompleted: !!node.attrs.checked });
+        tasks.push({
+          taskId,
+          title,
+          isCompleted: !!node.attrs.checked,
+          remindAt: typeof node.attrs?.remindAt === 'string' ? node.attrs.remindAt : null,
+        });
       }
     }
     if (Array.isArray(node.content)) node.content.forEach(walk);
@@ -305,6 +310,15 @@ export function Editor({
               parseHTML: (element) => element.getAttribute('data-task-id'),
               renderHTML: (attributes) => attributes.taskId
                 ? { 'data-task-id': attributes.taskId }
+                : {},
+            },
+            // The reminder lives on the task item and rides the existing task sync, which already
+            // carries remindAt. It is not a document transaction of its own.
+            remindAt: {
+              default: null,
+              parseHTML: (element) => element.getAttribute('data-remind-at'),
+              renderHTML: (attributes) => attributes.remindAt
+                ? { 'data-remind-at': attributes.remindAt }
                 : {},
             },
           };

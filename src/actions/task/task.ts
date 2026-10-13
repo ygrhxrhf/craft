@@ -52,7 +52,7 @@ export interface TaskItem {
 
 export async function syncDocumentTasks(
   documentId: string,
-  tasks: { taskId: string; title: string; isCompleted: boolean }[]
+  tasks: { taskId: string; title: string; isCompleted: boolean; remindAt?: string | null }[]
 ) {
   const userId = await requireUserId();
   await requireDocumentAccess(documentId, userId, 'editor');
@@ -79,7 +79,8 @@ export async function syncDocumentTasks(
       if (
         tombstoned ||
         (match as any).title !== task.title ||
-        (match as any).isCompleted !== task.isCompleted
+        (match as any).isCompleted !== task.isCompleted ||
+        ((match as any).remindAt ?? null) !== (task.remindAt ?? null)
       ) {
         // 命中墓碑行且 block 重新出现 → 清墓碑复活（恢复"任务重新可见"语义）
         await db.orm.public.Task.where({ id: (match as any).id }).update({
@@ -87,6 +88,7 @@ export async function syncDocumentTasks(
           title: task.title,
           isCompleted: task.isCompleted,
           status: task.isCompleted ? 'done' : 'todo',
+          remindAt: task.remindAt ?? null,
         });
         mutated = true;
       }
@@ -99,6 +101,7 @@ export async function syncDocumentTasks(
         title: task.title,
         isCompleted: task.isCompleted,
         status: task.isCompleted ? 'done' : 'todo',
+        remindAt: task.remindAt ?? null,
       });
       mutated = true;
     }

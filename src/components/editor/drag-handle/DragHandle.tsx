@@ -8,10 +8,14 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { dropTargetFor } from './drop-band';
-import { applyBlockAction, blockLinkFor, blockMenuItems, type BlockActionId } from './block-actions';
+import { applyBlockAction, blockLinkFor, blockMenuItems, REMIND_MENU, setTaskReminder, type BlockActionId } from './block-actions';
+import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
 
 interface HandlePosition {
@@ -80,6 +84,23 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     (blockEl: HTMLElement): number =>
       Array.prototype.indexOf.call(editor.view.dom.children, blockEl),
     [editor],
+  );
+
+  const isTaskBlock = useCallback(
+    (blockEl: HTMLElement) => {
+      const index = indexOfBlock(blockEl);
+      return index >= 0 && editor.state.doc.child(index).type.name === 'taskItem';
+    },
+    [editor, indexOfBlock],
+  );
+
+  const remindBlock = useCallback(
+    (blockEl: HTMLElement, preset: RemindPresetId) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return;
+      setTaskReminder(editor.state, editor.view.dispatch, index, preset, new Date());
+    },
+    [editor, indexOfBlock],
   );
 
   const runBlockAction = useCallback(
@@ -348,14 +369,33 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              {blockMenuItems({ canDelete: editor.state.doc.childCount > 1 }).map((item) => (
-                <DropdownMenuItem
-                  key={item.id}
-                  onClick={() => runBlockAction(handle.blockEl, item.id)}
-                >
-                  {item.label}
-                </DropdownMenuItem>
-              ))}
+              {blockMenuItems({
+                canDelete: editor.state.doc.childCount > 1,
+                isTask: isTaskBlock(handle.blockEl),
+              }).map((item) =>
+                item.id === 'remind' ? (
+                  <DropdownMenuSub key={item.id}>
+                    <DropdownMenuSubTrigger>{item.label}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      {REMIND_MENU.map((preset) => (
+                        <DropdownMenuItem
+                          key={preset.id}
+                          onClick={() => remindBlock(handle.blockEl, preset.id)}
+                        >
+                          {preset.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                ) : (
+                  <DropdownMenuItem
+                    key={item.id}
+                    onClick={() => runBlockAction(handle.blockEl, item.id)}
+                  >
+                    {item.label}
+                  </DropdownMenuItem>
+                ),
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

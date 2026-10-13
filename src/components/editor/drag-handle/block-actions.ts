@@ -1,9 +1,11 @@
 import type { EditorState, Transaction } from '@tiptap/pm/state';
 import { TextSelection } from '@tiptap/pm/state';
 import { BLOCK_HASH_PREFIX } from '@/lib/editor/block-anchor';
+import { REMIND_PRESETS, remindInstantFor, type RemindPresetId } from '@/lib/task/remind-presets';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 
 export type BlockActionId =
+  | 'remind'
   | 'insert-above'
   | 'insert-below'
   | 'move-up'
@@ -29,7 +31,10 @@ export interface BlockAction {
  * Craft's own block menus vary per block type, but every entry we render has to do
  * something — the reminder, card and emoji entries stay out until they have an action.
  */
-export function blockMenuItems({ canDelete }: { canDelete: boolean }): BlockAction[] {
+/** The 「提醒我…」 submenu, only offered on a task item. */
+export const REMIND_MENU = REMIND_PRESETS;
+
+export function blockMenuItems({ canDelete, isTask }: { canDelete: boolean; isTask?: boolean }): BlockAction[] {
   const items: BlockAction[] = [
     { id: 'insert-above', label: '在上方插入区块' },
     { id: 'insert-below', label: '在下方插入区块' },
@@ -39,6 +44,7 @@ export function blockMenuItems({ canDelete }: { canDelete: boolean }): BlockActi
     { id: 'move-bottom', label: '移至底部' },
     { id: 'copy-link', label: '复制区块链接' },
   ];
+  if (isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
   if (canDelete) items.push({ id: 'delete', label: '删除' });
   return items;
 }
@@ -100,6 +106,30 @@ export function blockLinkFor(
     dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, blockId }));
   }
   return `${locationOrigin()}/documents/${documentId}#${BLOCK_HASH_PREFIX}${blockId}`;
+}
+
+/**
+ * Sets a task item's reminder (G1466). The preset resolves to an instant, which is stored on the
+ * task item and rides the existing task sync. `saveForLater` and `custom` have no computed time,
+ * so they clear the reminder rather than inventing one.
+ */
+export function setTaskReminder(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  preset: RemindPresetId,
+  now: Date,
+) {
+  const { before } = blockBounds(state, index);
+  const node = state.doc.child(index);
+  if (node.type.name !== 'taskItem') return;
+  const instant = remindInstantFor(preset, now);
+  dispatch(
+    state.tr.setNodeMarkup(before, undefined, {
+      ...node.attrs,
+      remindAt: instant ? instant.toISOString() : null,
+    }),
+  );
 }
 
 function locationOrigin(): string {

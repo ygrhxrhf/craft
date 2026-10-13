@@ -6,6 +6,7 @@ import { listNotifications, resolveNotification } from '@/actions/notification/n
 import type { InboxRow } from '@/lib/notification/inbox';
 import { createReadPerRevision } from '@/lib/read-per-revision';
 import { reminderInstant } from '@/lib/notification/task-reminders';
+import { getSyncManager } from '@/lib/sync-core';
 
 // Module scope, deliberately: the generation it has to survive is the effect's, not the
 // component's, so a hook-local ref would be rebuilt on the very remount being coalesced.
@@ -24,9 +25,9 @@ function formatReminder(remindAt: string | null): string {
 }
 
 export function NotificationBell() {
-  // Notifications are not part of the offline sync stream (they are server
-  // generated), so the rows come from the server action and are refreshed when
-  // the tab regains focus rather than off a sync cursor.
+  // Rows stay server-generated (materialize + resolve), but they now ride the
+  // sync stream: another device's reminder lands as a 'notification' store
+  // change and this re-pulls the inbox instead of waiting for tab focus.
   const [revision, setRevision] = useState(0);
   const [items, setItems] = useState<InboxRow[]>([]);
   const [dismissed, setDismissed] = useState<string[]>([]);
@@ -34,17 +35,9 @@ export function NotificationBell() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    const refresh = () => {
-      if (document.visibilityState === 'visible') setRevision((n) => n + 1);
-    };
-    window.addEventListener('focus', refresh);
-    document.addEventListener('visibilitychange', refresh);
-    return () => {
-      window.removeEventListener('focus', refresh);
-      document.removeEventListener('visibilitychange', refresh);
-    };
-  }, []);
+  useEffect(() => getSyncManager().onStoreChanged((table) => {
+    if (table === 'notification') setRevision((n) => n + 1);
+  }), []);
 
   useEffect(() => {
     let cancelled = false;

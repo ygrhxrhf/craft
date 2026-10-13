@@ -4,6 +4,7 @@
 // The filter callbacks below receive column proxies the emitted types do not name.
 import { requireUserId } from '@/lib/authz/guard';
 import { getDb } from '@/prisma/db';
+import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { unreadReminders, type InboxRow } from '@/lib/notification/inbox';
 
 export async function listNotifications(): Promise<InboxRow[]> {
@@ -29,9 +30,11 @@ export async function resolveNotification(id: string) {
   if (!notification || notification.userId !== userId) throw new Error('未授权');
 
   // Bumping updatedAt is the point: the row leaves other devices through the
-  // same cursor that brought it here.
+  // same cursor that brought it here. The broadcast wakes those devices now
+  // instead of waiting for the 30s poll.
   await db.orm.public.Notification.where({ id }).update({
     isResolved: true,
     resolvedAt: new Date().toISOString(),
   });
+  await emitSyncEventSafe(db, userId, ['notification'], id);
 }

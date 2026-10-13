@@ -84,6 +84,14 @@ describe('resolveNotification', () => {
     expect(String(after.updatedAt)).not.toBe(String(before.updatedAt));
   });
 
+  it('broadcasts the resolve so other devices refresh without waiting for focus', async () => {
+    await resolveNotification(notificationId);
+    const events = await db.orm.public.SyncEvent.where({ userId }).all() as Record<string, unknown>[];
+    expect(events.some((event) =>
+      Array.isArray(event.tables) && event.tables.includes('notification'))).toBe(true);
+    for (const event of events) await db.orm.public.SyncEvent.where({ id: event.id }).delete();
+  });
+
   it('refuses to resolve another user’s notification', async () => {
     const theirs = await createNotification(otherUserId);
     await expect(resolveNotification(theirs)).rejects.toThrow('未授权');

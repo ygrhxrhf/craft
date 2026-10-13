@@ -37,6 +37,8 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'document_share', model: 'DocumentShare', cols: ['id','documentId','token','slug','passcode','isPublished','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // document_member：contract 有 updatedAt、无 deletedAt（移除仍是服务端硬删，不走墓碑）
   { table: 'document_member', model: 'DocumentMember', cols: ['id','documentId','userId','role','addedBy','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  // notification：服务端生成的提醒，tsCol=updatedAt（contract 已有该列，解决时 bump）
+  { table: 'notification', model: 'Notification', cols: ['id','userId','kind','taskId','documentId','title','remindAt','isResolved','resolvedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // whiteboard：spec 5.1 白板 payload 排除 data（内容走独立通道），tsCol=metaUpdatedAt
   { table: 'whiteboard', model: 'Whiteboard', cols: ['id','name','shareToken','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'metaUpdatedAt', id: r => String(r.id) },
 ];

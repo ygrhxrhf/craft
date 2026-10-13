@@ -1647,3 +1647,18 @@
   --accent-contrast: var(--base);
   color-scheme: dark;
 }
+
+/* ── Overlay shell structure (G1065) ──────────────────────────────────────────
+   The official shell decides its search-field placement from its own children: with a header the
+   field sits in the flow, and without one it is lifted to the top and the scroll viewport is
+   padded by the field's height so the fade covers it. Written with `:has()` because that is the
+   only way CSS can ask the question. */
+[data-slot='dialog-content']:not(:has([data-slot='dialog-header'])):has([data-overlay-part='search-field']) [data-overlay-part='search-field'] {
+  position: absolute;
+  top: 0;
+}
+
+[data-slot='dialog-content']:not(:has([data-slot='dialog-header'])):has([data-overlay-part='search-field']) [data-overlay-part='scroll-viewport'] {
+  padding-block-start: var(--search-field-size);
+  scroll-padding-block-start: var(--search-field-size);
+}

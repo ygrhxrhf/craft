@@ -7,7 +7,10 @@ import { Calendar as CalendarIcon, CheckSquare, FileText } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from 'cn';
-import { getTasks, toggleTask } from '@/actions/task/task';
+import { createTask, getTasks, toggleTask } from '@/actions/task/task';
+import { useSession } from 'next-auth/react';
+import { getSyncManager } from '@/lib/sync-core';
+import { taskPatchFor } from '../tasks/tasks-local';
 import { getOrCreateDayNote } from '@/actions/daily-notes/daily-notes';
 import type { TaskItem } from '@/actions/task/task';
 import { getDailyNotes } from '@/actions/daily-notes/daily-notes';
@@ -20,6 +23,8 @@ import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 
 export default function CalendarPage() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const [taskTitle, setTaskTitle] = useState('');
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [notes, setNotes] = useState<DailyNoteItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,6 +82,34 @@ export default function CalendarPage() {
       router.push(`/documents/${note.id}`);
     } finally {
       setCreating(false);
+    }
+  };
+
+  const [addingTask, setAddingTask] = useState(false);
+  const addTask = async () => {
+    const title = taskTitle.trim();
+    if (!selected || !title || addingTask) return;
+    setAddingTask(true);
+    try {
+      const id = crypto.randomUUID();
+      const dueDate = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), 9).toISOString();
+      const userId = session?.user?.id;
+      if (userId) {
+        const manager = getSyncManager();
+        await manager.boot();
+        await manager.applyLocal({
+          table: 'task',
+          id,
+          patch: taskPatchFor.create({ id, userId, title, dueDate }, new Date().toISOString()),
+        });
+        await manager.flushNow();
+      } else {
+        await createTask(title, dueDate);
+      }
+      setTaskTitle('');
+      await load();
+    } finally {
+      setAddingTask(false);
     }
   };
 
@@ -162,6 +195,30 @@ export default function CalendarPage() {
                   : '选择日期'}
               </h2>
 
+              {selected && (
+                <form
+                  className="mb-3 flex gap-2"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    void addTask();
+                  }}
+                >
+                  <input
+                    value={taskTitle}
+                    onChange={(event) => setTaskTitle(event.target.value)}
+                    placeholder="添加任务"
+                    aria-label="添加任务"
+                    className="flex-1 rounded-md border border-border bg-transparent px-2 py-1 text-sm outline-none"
+                  />
+                  <button
+                    type="submit"
+                    disabled={addingTask || !taskTitle.trim()}
+                    className="rounded-md border border-border px-3 py-1 text-sm text-foreground/70 hover:bg-muted/60 disabled:opacity-50"
+                  >
+                    添加任务
+                  </button>
+                </form>
+              )}
               {!selectedNote && (
                 <button
                   type="button"

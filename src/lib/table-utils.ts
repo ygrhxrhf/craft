@@ -2,6 +2,7 @@
 
 import type { Editor } from '@tiptap/react';
 import type { Node as PMNode } from '@tiptap/pm/model';
+import { evaluateCellFormula } from '@/lib/editor/table-formula';
 
 function findTable(
   editor: Editor
@@ -62,49 +63,11 @@ export function sortTable(editor: Editor, dir: 'asc' | 'desc'): boolean {
   return true;
 }
 
-const FORMULA_RE = /^=(SUM|AVG|MIN|MAX|COUNT)\(([A-Za-z]+\d+(?::[A-Za-z]+\d+)?)\)$/i;
-
 interface CellRef {
   node: PMNode;
   pos: number;
   row: number;
   col: number;
-}
-
-function labelToIndex(label: string): { row: number; col: number } | null {
-  const m = label.match(/^([A-Za-z]+)(\d+)$/);
-  if (!m) return null;
-  let col = 0;
-  for (const ch of m[1].toUpperCase()) {
-    col = col * 26 + (ch.charCodeAt(0) - 64);
-  }
-  return { row: parseInt(m[2], 10), col };
-}
-
-function regionLabels(ref: string): string[] {
-  const parts = ref.split(':');
-  if (parts.length === 1) return [parts[0].trim()];
-  const from = labelToIndex(parts[0].trim());
-  const to = labelToIndex(parts[1].trim());
-  if (!from || !to) return [];
-  const labels: string[] = [];
-  for (let r = Math.min(from.row, to.row); r <= Math.max(from.row, to.row); r++) {
-    for (let c = Math.min(from.col, to.col); c <= Math.max(from.col, to.col); c++) {
-      let colStr = '';
-      let n = c;
-      while (n > 0) {
-        colStr = String.fromCharCode(((n - 1) % 26) + 65) + colStr;
-        n = Math.floor((n - 1) / 26);
-      }
-      labels.push(`${colStr}${r}`);
-    }
-  }
-  return labels;
-}
-
-function extractNumbers(text: string): number[] {
-  const matches = text.match(/-?\d+(?:\.\d+)?/g) ?? [];
-  return matches.map((m) => parseFloat(m));
 }
 
 export function evalFormulas(editor: Editor): boolean {
@@ -114,16 +77,20 @@ export function evalFormulas(editor: Editor): boolean {
   state.doc.descendants((table, tablePos) => {
     if (table.type.name !== 'table') return true;
 
-    // 1-based grid (A1 = row 1, col A), positions are absolute in the doc
+    // 1-based grid (A1 = row 1, col A). Every cell is kept, empty ones included, because a
+    // direction like ABOVE counts them.
     const cells = new Map<string, CellRef>();
+    const grid: string[][] = [];
     let rowPos = tablePos + 1;
     let rowIndex = 0;
     table.content.content.forEach((row: PMNode) => {
       rowIndex++;
+      const rowText: string[] = [];
       let colPos = rowPos + 1;
       let colIndex = 0;
       row.content.content.forEach((cell: PMNode) => {
         colIndex++;
+        rowText.push(cell.textContent);
         if (
           (cell.type.name === 'tableCell' || cell.type.name === 'tableHeader') &&
           cell.textContent.trim() !== ''
@@ -143,44 +110,14 @@ export function evalFormulas(editor: Editor): boolean {
         }
         colPos += cell.nodeSize;
       });
+      grid.push(rowText);
       rowPos += row.nodeSize;
     });
 
     for (const ref of cells.values()) {
-      const m = ref.node.textContent.trim().match(FORMULA_RE);
-      if (!m) continue;
-      const func = m[1].toLowerCase();
-      const numbers: number[] = [];
-      for (const label of regionLabels(m[2])) {
-        const target = cells.get(label.toUpperCase());
-        if (!target) continue;
-        numbers.push(...extractNumbers(target.node.textContent));
-      }
-
-      let result: number;
-      switch (func) {
-        case 'sum':
-          result = numbers.reduce((a, b) => a + b, 0);
-          break;
-        case 'avg':
-          result = numbers.length
-            ? numbers.reduce((a, b) => a + b, 0) / numbers.length
-            : 0;
-          break;
-        case 'min':
-          result = numbers.length ? Math.min(...numbers) : 0;
-          break;
-        case 'max':
-          result = numbers.length ? Math.max(...numbers) : 0;
-          break;
-        default:
-          result = numbers.length;
-      }
-      replacements.push({
-        pos: ref.pos,
-        cellType: ref.node.type.name,
-        text: Number.isInteger(result) ? String(result) : result.toFixed(2),
-      });
+      const result = evaluateCellFormula(ref.node.textContent, grid, ref.row, ref.col);
+      if (result === null) continue;
+      replacements.push({ pos: ref.pos, cellType: ref.node.type.name, text: result });
     }
     return true;
   });

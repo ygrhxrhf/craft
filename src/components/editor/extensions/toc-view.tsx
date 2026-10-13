@@ -51,7 +51,7 @@ export function TableOfContentsView({ editor }: NodeViewProps) {
       <NodeViewWrapper as="div">
         <div className="flex items-center gap-2 rounded-lg border border-dashed border-border px-3 py-2 text-[13px] text-muted-foreground">
           <List className="size-4" />
-          {TOC_PLACEHOLDER}
+          目录：{TOC_PLACEHOLDER}
         </div>
       </NodeViewWrapper>
     );

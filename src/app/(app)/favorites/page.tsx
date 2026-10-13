@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { getFavoriteDocuments } from '@/actions/document/get';
 import { DocumentCard } from '@/components/document/DocumentCard';
+import { STARRED_EMPTY } from '@/lib/browse/official-copy';
 import { Star } from 'lucide-react';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
@@ -25,7 +26,7 @@ export default async function FavoritesPage() {
         ) : (
           <div className="rounded-lg border border-dashed border-border p-8 text-center">
             <Star className="mx-auto mb-2 size-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">还没有收藏文档</p>
+            <p className="text-sm text-muted-foreground">{STARRED_EMPTY}</p>
           </div>
         )}
       </AppPageContainer>

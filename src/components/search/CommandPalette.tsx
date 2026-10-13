@@ -16,6 +16,7 @@ import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { searchAll } from '@/actions/document/search';
 import type { SearchResultDoc, SearchResultBlock, SearchResultRow } from '@/actions/document/search';
 import { createDocumentLocal } from '@/components/sync/create-local';
+import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, createDocLabel } from '@/lib/search/official-copy';
 import { toast } from '@/components/ui/toast';
 import { useSession } from 'next-auth/react';
 
@@ -111,6 +112,17 @@ export function CommandPalette() {
 
   const hasQuery = query.trim().length > 0;
 
+  // `browse.search.create.doc` =「创建 [0]」. The row sits above the results and the document is
+  // created through the same offline path as 「新建文档」, titled with the query.
+  const handleCreateFromQuery = async () => {
+    const title = query.trim();
+    if (!title) return;
+    close();
+    setQuery('');
+    const id = await createDocumentLocal({ userId: session?.user?.id, title });
+    router.push(`/documents/${id}`);
+  };
+
   return (
     <CommandDialog
       open={isOpen}
@@ -122,6 +134,19 @@ export function CommandPalette() {
       <CommandInput value={query} onValueChange={setQuery} placeholder="搜索文档、内容…" />
 
       <CommandList>
+        {hasQuery && (
+          <CommandGroup>
+            <CommandItem
+              data-testid="palette-create-doc"
+              value={`create-${query.trim()}`}
+              onSelect={handleCreateFromQuery}
+            >
+              <Plus className="size-4" />
+              <span>{createDocLabel(query.trim())}</span>
+            </CommandItem>
+          </CommandGroup>
+        )}
+
         {!hasQuery && (
           <CommandGroup heading="操作">
             <CommandItem onSelect={handleNewDocument}>
@@ -140,7 +165,7 @@ export function CommandPalette() {
         )}
 
         {docs.length > 0 && (
-          <CommandGroup heading="文档">
+          <CommandGroup heading={DOCS_HEADING}>
             {docs.map((doc) => (
               <CommandItem key={`doc-${doc.id}`} value={`doc-${doc.id}-${doc.title}`} onSelect={() => handleOpenDocument(doc.id)}>
                 {doc.icon ? (
@@ -157,7 +182,7 @@ export function CommandPalette() {
         {blocks.length > 0 && (
           <>
             <CommandSeparator />
-            <CommandGroup heading="块内容">
+            <CommandGroup heading={BLOCKS_HEADING}>
               {blocks.map((block, i) => (
                 <CommandItem
                   key={`block-${i}`}
@@ -177,7 +202,7 @@ export function CommandPalette() {
         {rows.length > 0 && (
           <>
             <CommandSeparator />
-            <CommandGroup heading="集合条目">
+            <CommandGroup heading={ROWS_HEADING}>
               {rows.map((row, i) => (
                 <CommandItem
                   key={`row-${row.itemId}-${i}`}

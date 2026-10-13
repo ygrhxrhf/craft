@@ -1,15 +1,19 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { MessageSquare, Check, X } from 'lucide-react';
+import { MessageSquare, Check, Trash2, X } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
-import { createThread, getThreads, addReply, setThreadResolved } from '@/actions/comment/comment';
+import { getThreads } from '@/actions/comment/comment';
 import { getSyncManager } from '@/lib/sync-core';
+import { readPendingRows, readLocalRecords } from '@/components/sync/local-records';
+import { overlayCommentThreads, pickViewerId, type ThreadView } from './comment-overlay';
 
 interface CommentRow {
   id: string;
+  userId: string;
   body: string;
+  createdAt: string;
   mine: boolean;
 }
 
@@ -25,6 +29,21 @@ interface CommentSectionProps {
   editor: Editor | null;
 }
 
+function toRows(threads: ThreadView[]): ThreadRow[] {
+  return threads.map((thread) => ({
+    id: thread.id,
+    blockText: thread.blockText,
+    resolved: thread.resolved,
+    comments: thread.comments.map((comment) => ({
+      id: comment.id,
+      userId: comment.userId,
+      body: comment.body,
+      createdAt: comment.createdAt,
+      mine: comment.mine,
+    })),
+  }));
+}
+
 export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [draft, setDraft] = useState('');
@@ -33,19 +52,33 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const [hasSelection, setHasSelection] = useState(false);
   const { data: session } = useSession();
   const userId = session?.user?.id;
+  // 离线/加载中 session 可能为空：viewer id 由本地 user 镜像兜底，写入不依赖 session
+  const viewerIdRef = useRef<string | null>(null);
 
   const reload = useCallback(async () => {
+    const [pendingThreads, pendingComments, userRows] = await Promise.all([
+      readPendingRows('comment_thread'),
+      readPendingRows('comment'),
+      readLocalRecords('user'),
+    ]);
+    const viewerId = pickViewerId(userId, userRows);
+    viewerIdRef.current = viewerId;
+    let serverThreads: ThreadView[] = [];
     try {
-      const rows = await getThreads(documentId);
-      setThreads(rows as ThreadRow[]);
+      serverThreads = (await getThreads(documentId)) as ThreadView[];
     } catch {
-      setThreads([]);
+      // 离线：服务端读不到，退回本地 pending overlay，本地写入仍可见
     }
-  }, [documentId]);
+    setThreads(toRows(overlayCommentThreads(serverThreads, pendingThreads, pendingComments, viewerId)));
+  }, [documentId, userId]);
 
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  useEffect(() => getSyncManager().onStoreChanged((table) => {
+    if (table === 'comment' || table === 'comment_thread') void reload();
+  }), [reload]);
 
   useEffect(() => {
     if (!editor) return;
@@ -67,16 +100,9 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
 
     try {
       const body = draft.slice(0, 2000);
-      if (!userId) {
-        // session 尚未就绪 → 退回服务端 action（行为与迁移前一致）
-        const created = await createThread(documentId, { blockText, body: draft });
-        editor.chain().focus().setComment(created.threadId).run();
-        setDraft('');
-        setShowComposer(false);
-        await reload();
-        return;
-      }
-      // 线程 + 首条回复 → applyLocal（本地 id，先落地再推送）
+      // 线程 + 首条回复 → applyLocal（本地 id，先落地再推送）。
+      // userId 只作本地乐观标记；服务端会按会话覆盖，缺了也不影响推送。
+      const viewerId = viewerIdRef.current ?? userId ?? null;
       const threadId = crypto.randomUUID();
       const commentId = crypto.randomUUID();
       await getSyncManager().applyLocal({
@@ -87,18 +113,12 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
       await getSyncManager().applyLocal({
         table: 'comment',
         id: commentId,
-        patch: { threadId, userId, body },
+        patch: { threadId, ...(viewerId ? { userId: viewerId } : {}), body },
       });
       editor.chain().focus().setComment(threadId).run();
       setDraft('');
       setShowComposer(false);
-      // 乐观挂线程：服务端要等推送，reload() 会把它读丢
-      setThreads((prev) => [...prev, {
-        id: threadId,
-        blockText: blockText.slice(0, 500),
-        resolved: false,
-        comments: [{ id: commentId, body, mine: true }],
-      }]);
+      await reload();
     } catch {
       // 提交失败保持草稿
     }
@@ -107,29 +127,16 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const handleReply = async (threadId: string) => {
     const body = replyDrafts[threadId]?.trim();
     if (!body) return;
-    let replyId: string | null = null;
     try {
       const text = body.slice(0, 2000);
-      if (!userId) {
-        await addReply(threadId, body);
-      } else {
-        replyId = crypto.randomUUID();
-        await getSyncManager().applyLocal({
-          table: 'comment',
-          id: replyId,
-          patch: { threadId, userId, body: text },
-        });
-      }
+      const viewerId = viewerIdRef.current ?? userId ?? null;
+      await getSyncManager().applyLocal({
+        table: 'comment',
+        id: crypto.randomUUID(),
+        patch: { threadId, ...(viewerId ? { userId: viewerId } : {}), body: text },
+      });
       setReplyDrafts((prev) => ({ ...prev, [threadId]: '' }));
-      if (userId) {
-        // 乐观追加（同上：避免 reload 读到推送前的空）
-        const cid = replyId!;
-        setThreads((prev) => prev.map((t) => (t.id === threadId
-          ? { ...t, comments: [...t.comments, { id: cid, body: text, mine: true }] }
-          : t)));
-      } else {
-        await reload();
-      }
+      await reload();
     } catch {
       // 提交失败保持草稿
     }
@@ -137,20 +144,40 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
 
   const handleResolve = async (threadId: string, resolved: boolean) => {
     try {
-      if (!userId) {
-        await setThreadResolved(threadId, resolved);
-        await reload();
-        return;
-      }
       await getSyncManager().applyLocal({
         table: 'comment_thread',
         id: threadId,
         patch: { resolved },
       });
-      // 乐观翻转
-      setThreads((prev) => prev.map((t) => (t.id === threadId ? { ...t, resolved } : t)));
+      await reload();
     } catch {
       // 状态更新失败保持原状
+    }
+  };
+
+  const handleDelete = async (thread: ThreadRow, commentId: string) => {
+    const target = thread.comments.find((comment) => comment.id === commentId);
+    if (!target?.mine) return;
+    try {
+      const deletedAt = new Date().toISOString();
+      await getSyncManager().applyLocal({
+        table: 'comment',
+        id: commentId,
+        patch: { deletedAt },
+      });
+      const remaining = thread.comments.filter((comment) => comment.id !== commentId);
+      if (remaining.length === 0) {
+        await getSyncManager().applyLocal({
+          table: 'comment_thread',
+          id: thread.id,
+          patch: { deletedAt },
+        });
+        // 线程连同标记一起消失：正文里的评论高亮也要摘掉
+        editor?.commands.removeComment(thread.id);
+      }
+      await reload();
+    } catch {
+      // 删除失败保持原状
     }
   };
 
@@ -211,8 +238,18 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
               </p>
             )}
             {thread.comments.map((comment) => (
-              <p key={comment.id} className="text-meta text-foreground/85">
-                {comment.body}
+              <p key={comment.id} className="group flex items-start gap-1 text-meta text-foreground/85">
+                <span className="min-w-0 flex-1">{comment.body}</span>
+                {comment.mine && (
+                  <button
+                    type="button"
+                    title="删除"
+                    onClick={() => void handleDelete(thread, comment.id)}
+                    className="rounded-md p-1 text-foreground/40 opacity-0 transition-opacity duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground/85 group-hover:opacity-100"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                )}
               </p>
             ))}
             <div className="mt-1.5 flex items-center gap-1">

@@ -15,6 +15,13 @@ import {
   restoreVersion,
   type VersionItem,
 } from '@/actions/version';
+import {
+  VERSION_BUCKETS,
+  VERSION_BUCKET_LABELS,
+  changeCountLabel,
+  versionBucket,
+  versionChangeCount,
+} from '@/lib/document/version-groups';
 
 interface VersionDialogProps {
   documentId: string;
@@ -100,25 +107,35 @@ export function VersionDialog({ documentId, open, onOpenChange }: VersionDialogP
                 暂无版本
               </div>
             ) : (
-              versions.map((v) => (
-                <button
-                  key={v.id}
-                  type="button"
-                  onClick={() => handlePreview(v.id)}
-                  className={`w-full rounded-md px-2 py-1.5 text-left transition-colors duration-150 ease-craft ${
-                    previewId === v.id
-                      ? 'bg-foreground/6'
-                      : 'hover:bg-foreground/4'
-                  }`}
-                >
-                  <div className="text-ui font-medium">
-                    v{v.version} · {formatTime(v.createdAt)}
+              VERSION_BUCKETS.map((bucket) => {
+                const items = versions.filter((v) => versionBucket(v.createdAt) === bucket);
+                if (items.length === 0) return null;
+                return (
+                  <div key={bucket} className="mb-2">
+                    <div className="px-2 py-1 text-meta text-foreground/40">{VERSION_BUCKET_LABELS[bucket]}</div>
+                    {items.map((v) => {
+                      const previous = versions.find((item) => item.version === v.version - 1);
+                      return (
+                        <button
+                          key={v.id}
+                          type="button"
+                          onClick={() => handlePreview(v.id)}
+                          className={`w-full rounded-md px-2 py-1.5 text-left transition-colors duration-150 ease-craft ${
+                            previewId === v.id ? 'bg-foreground/6' : 'hover:bg-foreground/4'
+                          }`}
+                        >
+                          <div className="text-ui font-medium">
+                            v{v.version} · {formatTime(v.createdAt)}
+                          </div>
+                          <div className="text-meta text-foreground/40">
+                            {changeCountLabel(versionChangeCount(v.wordCount, previous ? previous.wordCount : null))}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
-                  <div className="text-meta text-foreground/40">
-                    {v.wordCount} 字
-                  </div>
-                </button>
-              ))
+                );
+              })
             )}
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto rounded-md border border-foreground/10 bg-foreground/4 p-3">

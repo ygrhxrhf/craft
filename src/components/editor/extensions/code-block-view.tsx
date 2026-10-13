@@ -5,7 +5,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { CODE_LANGUAGES } from '@/lib/editor/code-languages';
-import { CODE_THEMES, DEFAULT_CODE_THEME, resolveCodeTheme } from '@/lib/editor/code-themes';
+import { CODE_THEMES, DEFAULT_CODE_THEME, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
 
 export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   const [copied, setCopied] = useState(false);
@@ -49,7 +49,7 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
         >
           {CODE_THEMES.map((theme) => (
             <option key={theme.id} value={theme.id}>
-              {theme.id}
+              {themeLabel(theme)}
             </option>
           ))}
         </select>

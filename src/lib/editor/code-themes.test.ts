@@ -59,6 +59,56 @@ describe('the theme roster', () => {
   });
 });
 
+describe('the labels are not the ids (G1139 / G1474)', () => {
+  it('prints the collected display name for each row', () => {
+    expect(CODE_THEMES.map((t) => t.label)).toEqual([
+      'Auto',
+      'Dark',
+      'Light',
+      'Atom One',
+      'Aura',
+      'BBEdit',
+      'Darcula',
+      'Dracula',
+      'GitHub Dark',
+      'GitHub Light',
+      'Gruvbox Dark',
+      'Gruvbox Light',
+      'Material Dark',
+      'Material Light',
+      'Noctis Lilac',
+      'Nord',
+      'Sublime',
+      'Tokyo Night',
+      'Tokyo Night Day',
+      'Tokyo Night Storm',
+      'VS Code',
+    ]);
+  });
+
+  it('keeps the id/label split on the two rows where it is widest', () => {
+    // `vscodedark` prints without the word "dark"; the craft pair prints as bare 暗/亮.
+    expect(CODE_THEMES.find((t) => t.id === 'vscodedark')?.label).toBe('VS Code');
+    expect(CODE_THEMES.find((t) => t.id === 'craftdark')?.label).toBe('Dark');
+    expect(CODE_THEMES.find((t) => t.id === 'craftlight')?.label).toBe('Light');
+  });
+});
+
+describe('the dark flags are the roster table verbatim (G1139)', () => {
+  it('carries the collected sequence', () => {
+    expect(CODE_THEMES.map((t) => (t.isDark ? 'D' : 'L')).join('')).toBe('DDLDDLDDDLDLDLLDDDLDD');
+  });
+
+  it('does not reproduce the three factory-side mismatches (G1144, intentional deviation)', () => {
+    // The official build tags `craftdark` light and `materiallight`/`tokyonightday` dark inside
+    // its palette factories, and only that flag reaches CM6. Locally there is one flag, and it
+    // follows the roster table, which is the correct classification.
+    expect(CODE_THEMES.find((t) => t.id === 'craftdark')?.isDark).toBe(true);
+    expect(CODE_THEMES.find((t) => t.id === 'materiallight')?.isDark).toBe(false);
+    expect(CODE_THEMES.find((t) => t.id === 'tokyonightday')?.isDark).toBe(false);
+  });
+});
+
 describe('the two collected craft palettes', () => {
   it('matches craftlight verbatim, including the missing caret', () => {
     expect(CRAFTLIGHT.background).toBe('#FBFBFB');
@@ -102,8 +152,18 @@ describe('the menu filter (G1167)', () => {
     const dark = filterThemes('dark');
     expect(dark.length).toBeGreaterThanOrEqual(5);
     for (const theme of dark) {
-      expect(themeLabel(theme).toLowerCase()).toContain('dark');
+      const matchedByLabel = theme.label.toLowerCase().includes('dark');
+      const matchedByKeyword = theme.keywords.includes('dark');
+      expect(matchedByLabel || matchedByKeyword).toBe(true);
     }
+  });
+
+  it('finds a theme by a keyword its label never says', () => {
+    // `nord`'s label says nothing about light or dark; only its `dark` keyword reaches it, so a
+    // search for `dark` returns it alongside the rows whose labels do carry the word.
+    const ids = filterThemes('dark').map((t) => t.id);
+    expect(ids).toContain('nord');
+    expect(ids).not.toContain('githublight');
   });
 
   it('does not match a keyword by substring, only by exact member', () => {

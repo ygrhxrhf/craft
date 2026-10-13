@@ -48,62 +48,79 @@ export const CRAFTDARK: CodeThemeSurface = {
 
 export interface CodeTheme {
   id: string;
-  /** The palette, when it has been collected. The eighteen third-party themes have none yet. */
-  surface: CodeThemeSurface | null;
+  /**
+   * The name the menu prints. It is *not* the id: `vscodedark` prints `VS Code`, `craftdark`
+   * prints `Dark`. Only `auto` happens to print its id with a capital.
+   */
+  label: string;
   /**
    * Extra search terms (G1167). The official filter matches a theme when the query is a substring
-   * of its label **or** an exact member of this array — so `auto` is found by typing `system`.
+   * of its label **or** an exact member of this array — so `tokyonight` is found by typing `dark`
+   * even though its label never says so.
    */
-  keywords?: readonly string[];
+  keywords: readonly string[];
+  /**
+   * The roster's own light/dark tag (G1139). The official build carries a *second* dark flag
+   * inside each palette factory, and three of them disagree with this one (`craftdark` says
+   * `light`, `materiallight` and `tokyonightday` say `dark`). Only the second flag reaches CM6;
+   * locally there is no factory, so this one is the only flag — an intentional deviation from the
+   * three mismatches rather than a reproduction of them (G1144).
+   */
+  isDark: boolean;
+  /** The palette, when it has been collected. The eighteen third-party themes have none yet. */
+  surface: CodeThemeSurface | null;
 }
 
-/** The roster in the official display order (G1165): `auto` first, the two craft palettes next
- *  (dark before light), then the rest strictly by `id` ascending — there is no runtime sort. */
+/**
+ * The roster in the official display order (G1165): `auto` first, the two craft palettes next
+ * (dark before light), then the rest strictly by `id` ascending — there is no runtime sort.
+ * Labels, keywords and dark flags are verbatim from the collected table (G1139).
+ */
 export const CODE_THEMES: readonly CodeTheme[] = [
-  { id: 'auto', surface: null, keywords: ['system'] },
-  { id: 'craftdark', surface: CRAFTDARK },
-  { id: 'craftlight', surface: CRAFTLIGHT },
-  { id: 'atomone', surface: null },
-  { id: 'aura', surface: null },
-  { id: 'bbedit', surface: null },
-  { id: 'darcula', surface: null },
-  { id: 'dracula', surface: null },
-  { id: 'githubdark', surface: null },
-  { id: 'githublight', surface: null },
-  { id: 'gruvboxdark', surface: null },
-  { id: 'gruvboxlight', surface: null },
-  { id: 'materialdark', surface: null },
-  { id: 'materiallight', surface: null },
-  { id: 'noctislilac', surface: null },
-  { id: 'nord', surface: null },
-  { id: 'sublime', surface: null },
-  { id: 'tokyonight', surface: null },
-  { id: 'tokyonightday', surface: null },
-  { id: 'tokyonightstorm', surface: null },
-  { id: 'vscodedark', surface: null },
+  { id: 'auto', label: 'Auto', keywords: ['system'], isDark: true, surface: null },
+  { id: 'craftdark', label: 'Dark', keywords: [], isDark: true, surface: CRAFTDARK },
+  { id: 'craftlight', label: 'Light', keywords: [], isDark: false, surface: CRAFTLIGHT },
+  { id: 'atomone', label: 'Atom One', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'aura', label: 'Aura', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'bbedit', label: 'BBEdit', keywords: ['light'], isDark: false, surface: null },
+  { id: 'darcula', label: 'Darcula', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'dracula', label: 'Dracula', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'githubdark', label: 'GitHub Dark', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'githublight', label: 'GitHub Light', keywords: [], isDark: false, surface: null },
+  { id: 'gruvboxdark', label: 'Gruvbox Dark', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'gruvboxlight', label: 'Gruvbox Light', keywords: [], isDark: false, surface: null },
+  { id: 'materialdark', label: 'Material Dark', keywords: [], isDark: true, surface: null },
+  { id: 'materiallight', label: 'Material Light', keywords: ['light'], isDark: false, surface: null },
+  { id: 'noctislilac', label: 'Noctis Lilac', keywords: ['light'], isDark: false, surface: null },
+  { id: 'nord', label: 'Nord', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'sublime', label: 'Sublime', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'tokyonight', label: 'Tokyo Night', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'tokyonightday', label: 'Tokyo Night Day', keywords: ['light'], isDark: false, surface: null },
+  { id: 'tokyonightstorm', label: 'Tokyo Night Storm', keywords: ['dark'], isDark: true, surface: null },
+  { id: 'vscodedark', label: 'VS Code', keywords: ['dark'], isDark: true, surface: null },
 ] as const;
 
 export const DEFAULT_CODE_THEME = 'auto';
 
 const BY_ID = new Map(CODE_THEMES.map((theme) => [theme.id, theme]));
 
-/** The label a theme prints in the menu; the id is the display name, as the official one does. */
+/** The label a theme prints in the menu; the id is stored, the label is shown (G1139). */
 export function themeLabel(theme: CodeTheme): string {
-  return theme.id;
+  return theme.label;
 }
 
 /**
  * The menu filter (G1167), verbatim in shape: a theme matches when the lower-cased query is a
  * substring of its label, or an exact member of its `keywords`. Not a substring of the keywords —
- * `dar` finds nothing, `dark` finds the dark themes.
+ * `syst` finds nothing, `system` finds `auto`.
  */
 export function filterThemes(query: string): CodeTheme[] {
   const needle = query.trim().toLowerCase();
   if (!needle) return [...CODE_THEMES];
   return CODE_THEMES.filter(
     (theme) =>
-      themeLabel(theme).toLowerCase().includes(needle) ||
-      (theme.keywords?.includes(needle) ?? false),
+      theme.label.toLowerCase().includes(needle) ||
+      theme.keywords.includes(needle),
   );
 }
 

@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { NodeViewProps } from '@tiptap/react';
@@ -11,32 +13,36 @@ function render(language: string | null, themeId = 'auto') {
   return renderToStaticMarkup(<CodeBlockView {...props} />);
 }
 
-/** The language dropdown only, so the theme dropdown's own default cannot answer for it. */
-function languageSelect(html: string): string {
-  const at = html.indexOf('aria-label="代码语言"');
-  const start = html.lastIndexOf('<select', at);
-  const end = html.indexOf('</select>', at);
+/** The closed picker shows its current value as the button text. */
+function pickerText(html: string, label: string): string {
+  const at = html.indexOf(`aria-label="${label}"`);
+  const start = html.lastIndexOf('<button', at);
+  const end = html.indexOf('</button>', at);
   return html.slice(start, end);
 }
 
-describe('代码块语言下拉的展示值＝存储值，不替空值编造语言', () => {
-  it('块上没有 language 时不出现任何选中项（官方＝无语言时不写 language 键）', () => {
-    const html = render(null);
-    expect(languageSelect(html)).not.toMatch(/<option[^>]*\bselected\b/);
+describe('代码块的语言与主题选择器＝带搜索框的菜单，展示值＝存储值', () => {
+  it('两个选择器都带官方搜索占位（搜索语言／搜索主题）', () => {
+    // The search box renders only while the menu is open, so the closed markup cannot show it.
+    const source = readFileSync(fileURLToPath(new URL('./code-block-view.tsx', import.meta.url)), 'utf8');
+    expect(source).toContain('placeholder="搜索语言"');
+    expect(source).toContain('placeholder="搜索主题"');
   });
 
-  it('块上有 language 时选中项就是该语言', () => {
-    const html = render('python');
-    expect(languageSelect(html)).toMatch(/<option value="python" selected/);
+  it('块上没有 language 时语言按钮不编造一个语言名', () => {
+    expect(pickerText(render(null), '代码语言')).not.toContain('Plain text');
   });
 
-  it('菜单不列 mermaid，但一块已经是 mermaid 时仍显示它（不可选但可显示）', () => {
-    expect(languageSelect(render('python'))).not.toContain('value="mermaid"');
-    expect(languageSelect(render('mermaid'))).toMatch(/<option value="mermaid" selected/);
+  it('块上有 language 时按钮显示该语言的标签', () => {
+    expect(pickerText(render('python'), '代码语言')).toContain('Python');
   });
 
-  it('主题下拉默认选中 auto，与语言是否为空无关', () => {
-    const html = render(null);
-    expect(html).toMatch(/<option value="auto" selected/);
+  it('语言菜单仍排除 mermaid，除非当前块就是它', () => {
+    const source = readFileSync(fileURLToPath(new URL('./code-block-view.tsx', import.meta.url)), 'utf8');
+    expect(source).toContain('appearsInLanguageMenu(item.storedLangCode) || item.storedLangCode === language');
+  });
+
+  it('主题按钮默认显示 Auto，与语言是否为空无关', () => {
+    expect(pickerText(render(null), '代码主题')).toContain('Auto');
   });
 });

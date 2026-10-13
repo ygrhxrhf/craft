@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { CODE_LANGUAGES, languageFor, languageLabel } from './code-languages';
+import { CODE_LANGUAGES, filterLanguages, languageFor, languageLabel } from './code-languages';
 
 /**
  * The code-block language list (G1086). 39 entries, each a `{storedLangCode, langCode, label}`
@@ -41,6 +41,15 @@ describe('the official language list', () => {
 
   it('falls back to the raw code for something outside the list', () => {
     expect(languageLabel('cobol')).toBe('cobol');
+  });
+
+  it('filters the menu by a label substring and returns everything for an empty query', () => {
+    expect(filterLanguages(CODE_LANGUAGES, 'script').map((l) => l.storedLangCode)).toEqual([
+      'javascript',
+      'typescript',
+    ]);
+    expect(filterLanguages(CODE_LANGUAGES, '')).toHaveLength(CODE_LANGUAGES.length);
+    expect(filterLanguages(CODE_LANGUAGES, 'cobol')).toEqual([]);
   });
 
   it('reads an empty or missing value as Plain text', () => {

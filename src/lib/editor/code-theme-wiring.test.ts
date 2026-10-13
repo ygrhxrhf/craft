@@ -24,10 +24,12 @@ describe('the block carries a theme', () => {
     expect(editor).toContain("'data-theme-id': attributes.themeId");
   });
 
-  it('offers the roster in a selector', () => {
+  it('offers the roster in a searchable picker', () => {
     expect(view).toContain('CODE_THEMES.map');
-    expect(view).toContain('updateAttributes({ themeId: e.target.value })');
-    expect(view).toContain('aria-label="代码主题"');
+    expect(view).toContain('filterThemes(query)');
+    expect(view).toContain("updateAttributes({ themeId: next })");
+    expect(view).toContain('label="代码主题"');
+    expect(view).toContain('placeholder="搜索主题"');
   });
 
   it('paints the surface from the resolved palette', () => {

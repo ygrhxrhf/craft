@@ -63,6 +63,16 @@ export function languageFor(storedLangCode: unknown): CodeLanguage | undefined {
   return typeof storedLangCode === 'string' ? BY_STORED.get(storedLangCode) : undefined;
 }
 
+/**
+ * The language menu filter, the same shape as the theme one (G1474): a language matches when the
+ * lower-cased query is a substring of its label. An empty query returns the list unchanged.
+ */
+export function filterLanguages<T extends { label: string }>(languages: readonly T[], query: string): T[] {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return [...languages];
+  return languages.filter((language) => language.label.toLowerCase().includes(needle));
+}
+
 /** What the block prints: the label, falling back to the raw code when it is not a known one. */
 export function languageLabel(storedLangCode: unknown): string {
   if (typeof storedLangCode !== 'string' || !storedLangCode) return 'Plain text';

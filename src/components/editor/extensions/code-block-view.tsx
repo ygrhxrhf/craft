@@ -4,9 +4,10 @@ import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
-import { CODE_LANGUAGES } from '@/lib/editor/code-languages';
+import { CODE_LANGUAGES, filterLanguages } from '@/lib/editor/code-languages';
 import { appearsInLanguageMenu } from '@/lib/editor/mermaid-surface';
-import { CODE_THEMES, DEFAULT_CODE_THEME, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
+import { CODE_THEMES, DEFAULT_CODE_THEME, filterThemes, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
+import { SearchableSelect } from './searchable-select';
 
 export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   const [copied, setCopied] = useState(false);
@@ -16,6 +17,11 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   const isDark =
     typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
   const surface = resolveCodeTheme(themeId, isDark);
+  // mermaid stays out of the menu unless this block already is one (G1177).
+  const languages = CODE_LANGUAGES.filter(
+    (item) => appearsInLanguageMenu(item.storedLangCode) || item.storedLangCode === language,
+  ).map((item) => ({ value: item.storedLangCode, label: item.label }));
+  const themes = CODE_THEMES.map((theme) => ({ value: theme.id, label: themeLabel(theme) }));
 
   const copy = async () => {
     try {
@@ -30,32 +36,26 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   return (
     <NodeViewWrapper as="div" className="crafty-code-block my-3 overflow-hidden rounded-lg border border-border">
       <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-3 py-1.5">
-        <select
+        <SearchableSelect
+          label="代码语言"
+          placeholder="搜索语言"
           value={language}
-          aria-label="代码语言"
-          onChange={(e) => updateAttributes({ language: e.target.value })}
-          className="rounded bg-transparent text-xs text-muted-foreground outline-none hover:text-foreground"
-        >
-          {CODE_LANGUAGES.filter(
-            (item) => appearsInLanguageMenu(item.storedLangCode) || item.storedLangCode === language,
-          ).map((item) => (
-            <option key={item.storedLangCode} value={item.storedLangCode}>
-              {item.label}
-            </option>
-          ))}
-        </select>
-        <select
+          options={languages}
+          onFilter={(query) => filterLanguages(languages, query)}
+          onChange={(next) => updateAttributes({ language: next })}
+        />
+        <SearchableSelect
+          label="代码主题"
+          placeholder="搜索主题"
           value={themeId}
-          aria-label="代码主题"
-          onChange={(e) => updateAttributes({ themeId: e.target.value })}
-          className="rounded bg-transparent text-xs text-muted-foreground outline-none hover:text-foreground"
-        >
-          {CODE_THEMES.map((theme) => (
-            <option key={theme.id} value={theme.id}>
-              {themeLabel(theme)}
-            </option>
-          ))}
-        </select>
+          options={themes}
+          onFilter={(query) =>
+            filterThemes(query)
+              .filter((theme) => themes.some((option) => option.value === theme.id))
+              .map((theme) => ({ value: theme.id, label: themeLabel(theme) }))
+          }
+          onChange={(next) => updateAttributes({ themeId: next })}
+        />
         <button
           type="button"
           onClick={copy}

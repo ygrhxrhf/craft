@@ -20,6 +20,7 @@ import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { applyCompletedFilter } from '@/lib/task/grouping';
 import { agendaDays, revealPreviousDays } from '@/lib/calendar/previous-days';
 import { dayInSpan, spanOf, type CalendarSpan } from '@/lib/calendar/week-view';
+import { isOverdue, overdueLabel } from '@/lib/task/overdue';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 
 export default function CalendarPage() {
@@ -299,6 +300,9 @@ export default function CalendarPage() {
                         )}
                       >
                         {task.title}
+                        {task.dueDate && isOverdue(task.dueDate, task.isCompleted) && (
+                          <span className="ml-2 text-xs text-destructive">{overdueLabel(task.dueDate)}</span>
+                        )}
                       </span>
                       {task.documentId && (
                         <Link

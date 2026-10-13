@@ -22,6 +22,7 @@ import { taskPatchFor } from './tasks-local';
 import { applyCompletedFilter, tasksForGroup, type TaskGroup } from '@/lib/task/grouping';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASKS_INBOX_EMPTY } from '@/lib/task/official-copy';
+import { isOverdue, overdueLabel } from '@/lib/task/overdue';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 
@@ -317,6 +318,9 @@ function TaskRow({
           )}
         >
           {task.title}
+          {task.dueDate && isOverdue(task.dueDate, task.isCompleted) && (
+            <span className="ml-2 text-xs text-destructive">{overdueLabel(task.dueDate)}</span>
+          )}
         </span>
 
         {task.recurrence && (

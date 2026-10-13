@@ -4,6 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ── Hover gate (G972 / G1081) ────────────────────────────────────────────────
+   Official Craft compiles `:hover` into an attribute-gated selector so a touch device never
+   latches a hover state — it has no hover to leave. The gate is "the intent attribute exists and
+   is not touch", so mouse *and* keyboard keep their hover. Redefining the `hover` variant here
+   re-aims every `hover:` and `group-hover:` utility at once, which is the same move the official
+   compile layer makes. */
+@custom-variant hover ([data-whatintent]:not([data-whatintent='touch']) &:hover);
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

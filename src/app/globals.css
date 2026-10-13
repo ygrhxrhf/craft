@@ -2115,6 +2115,32 @@
 /* === END TYPOGRAPHY TOKENS === */
 
 /* ═══════════════════════════════════════════
+   Layout container (G1079 / G1124)
+   ═══════════════════════════════════════════
+   The official main wrapper is a *named* inline-size container, which is what lets the column
+   thresholds below key off the content width instead of the viewport. A named query still
+   matches across an unnamed container in between, which is why the name matters. */
+.app-main-wrapper {
+  container-type: inline-size;
+  container-name: web-shared-layout-main-wrapper;
+}
+
+/* The two content-width thresholds, verbatim: a list shows its 更新/创建 columns from 768 and
+   its 最后查看 column from 1024 — measured against the container, not the screen. */
+@container web-shared-layout-main-wrapper (width >= 768px) {
+  .app-col-updated,
+  .app-col-created {
+    display: flex;
+  }
+}
+
+@container web-shared-layout-main-wrapper (width >= 1024px) {
+  .app-col-last-viewed {
+    display: flex;
+  }
+}
+
+/* ═══════════════════════════════════════════
    Collection table interface (G1075)
    ═══════════════════════════════════════════
    The 21 `--st-*` variables the official table exposes, plus the seven-step z ladder for frozen

@@ -8,7 +8,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-[100dvh] overflow-hidden bg-background">
       <Sidebar />
-      <main className="flex flex-1 flex-col overflow-hidden">
+      {/* The named container the official layout hangs its column thresholds on (G1079/G1124):
+          the content area is the reference, not the viewport, so a wide window with the sidebar
+          open still counts as narrow. */}
+      <main className="app-main-wrapper flex flex-1 flex-col overflow-hidden">
         <AppShellHeader />
         {children}
       </main>

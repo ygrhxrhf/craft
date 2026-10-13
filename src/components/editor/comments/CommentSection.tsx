@@ -14,6 +14,7 @@ import { EmojiSuggest } from './EmojiSuggest';
 import { MentionSuggest } from './MentionSuggest';
 import { groupReactions, reactionSentence } from './reaction-copy';
 import { toggleReaction, type Reaction } from './reactions';
+import { offlineReactionMessage } from './offline-reaction';
 
 const REACTION_CHOICES = ['👍', '❤️', '😄', '🎉'];
 
@@ -61,6 +62,18 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
   const [replyCarets, setReplyCarets] = useState<Record<string, number>>({});
   const [showComposer, setShowComposer] = useState(false);
+  const [offline, setOffline] = useState(false);
+
+  useEffect(() => {
+    const update = () => setOffline(!navigator.onLine);
+    update();
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    return () => {
+      window.removeEventListener('online', update);
+      window.removeEventListener('offline', update);
+    };
+  }, []);
   const [hasSelection, setHasSelection] = useState(false);
   const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -166,6 +179,7 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const handleReact = async (comment: CommentRow, glyph: string) => {
     const viewerId = viewerIdRef.current ?? userId ?? null;
     if (!viewerId) return;
+    if (!navigator.onLine) return;
     const name = session?.user?.name ?? session?.user?.email ?? '';
     const reactions = toggleReaction(comment.reactions, { glyph, userId: viewerId, name });
     try {
@@ -324,17 +338,24 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
                     </span>
                   )}
                 </span>
-                {REACTION_CHOICES.map((glyph) => (
-                  <button
-                    key={glyph}
-                    type="button"
-                    aria-label="添加表情"
-                    onClick={() => void handleReact(comment, glyph)}
-                    className="rounded px-0.5 opacity-0 group-hover:opacity-100"
-                  >
-                    {glyph}
-                  </button>
-                ))}
+                {REACTION_CHOICES.map((glyph) => {
+                  const mine = comment.reactions.some(
+                    (reaction) => reaction.userId === (viewerIdRef.current ?? userId) && reaction.glyph === glyph,
+                  );
+                  return (
+                    <button
+                      key={glyph}
+                      type="button"
+                      aria-label="添加表情"
+                      disabled={offline}
+                      title={offline ? offlineReactionMessage(mine) : undefined}
+                      onClick={() => void handleReact(comment, glyph)}
+                      className="rounded px-0.5 opacity-0 group-hover:opacity-100 disabled:cursor-not-allowed"
+                    >
+                      {glyph}
+                    </button>
+                  );
+                })}
                 {comment.mine && (
                   <button
                     type="button"

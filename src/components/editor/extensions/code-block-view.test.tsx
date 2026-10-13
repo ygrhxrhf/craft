@@ -30,6 +30,11 @@ describe('代码块语言下拉的展示值＝存储值，不替空值编造语�
     expect(languageSelect(html)).toMatch(/<option value="python" selected/);
   });
 
+  it('菜单不列 mermaid，但一块已经是 mermaid 时仍显示它（不可选但可显示）', () => {
+    expect(languageSelect(render('python'))).not.toContain('value="mermaid"');
+    expect(languageSelect(render('mermaid'))).toMatch(/<option value="mermaid" selected/);
+  });
+
   it('主题下拉默认选中 auto，与语言是否为空无关', () => {
     const html = render(null);
     expect(html).toMatch(/<option value="auto" selected/);

@@ -5,6 +5,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { CODE_LANGUAGES } from '@/lib/editor/code-languages';
+import { appearsInLanguageMenu } from '@/lib/editor/mermaid-surface';
 import { CODE_THEMES, DEFAULT_CODE_THEME, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
 
 export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
@@ -35,7 +36,9 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
           onChange={(e) => updateAttributes({ language: e.target.value })}
           className="rounded bg-transparent text-xs text-muted-foreground outline-none hover:text-foreground"
         >
-          {CODE_LANGUAGES.map((item) => (
+          {CODE_LANGUAGES.filter(
+            (item) => appearsInLanguageMenu(item.storedLangCode) || item.storedLangCode === language,
+          ).map((item) => (
             <option key={item.storedLangCode} value={item.storedLangCode}>
               {item.label}
             </option>

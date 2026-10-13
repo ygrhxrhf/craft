@@ -1,8 +1,24 @@
 import type { EditorState, Transaction } from '@tiptap/pm/state';
 import { TextSelection } from '@tiptap/pm/state';
 import { BLOCK_HASH_PREFIX } from '@/lib/editor/block-anchor';
+import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 
-export type BlockActionId = 'insert-above' | 'insert-below' | 'copy-link' | 'delete';
+export type BlockActionId =
+  | 'insert-above'
+  | 'insert-below'
+  | 'move-up'
+  | 'move-down'
+  | 'move-top'
+  | 'move-bottom'
+  | 'copy-link'
+  | 'delete';
+
+const MOVE_TARGETS: Record<string, MoveTarget> = {
+  'move-up': 'up',
+  'move-down': 'down',
+  'move-top': 'top',
+  'move-bottom': 'bottom',
+};
 
 export interface BlockAction {
   id: BlockActionId;
@@ -17,6 +33,10 @@ export function blockMenuItems({ canDelete }: { canDelete: boolean }): BlockActi
   const items: BlockAction[] = [
     { id: 'insert-above', label: '在上方插入区块' },
     { id: 'insert-below', label: '在下方插入区块' },
+    { id: 'move-up', label: '上移' },
+    { id: 'move-down', label: '下移' },
+    { id: 'move-top', label: '移至顶部' },
+    { id: 'move-bottom', label: '移至底部' },
     { id: 'copy-link', label: '复制区块链接' },
   ];
   if (canDelete) items.push({ id: 'delete', label: '删除' });
@@ -99,6 +119,16 @@ export function applyBlockAction(
   index: number,
   id: BlockActionId,
 ) {
+  const target = MOVE_TARGETS[id];
+  if (target) {
+    // The move reads the selection, so it has to be inside the addressed block first.
+    const { before } = blockBounds(state, index);
+    const placed = state.tr.setSelection(TextSelection.near(state.doc.resolve(before + 1)));
+    const moved = buildBlockMove(state.apply(placed), target);
+    if (moved) dispatch(moved);
+    return;
+  }
+
   switch (id) {
     case 'insert-above':
       insertBlockAbove(state, dispatch, index);

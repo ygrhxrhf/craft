@@ -76,6 +76,10 @@ describe('blockMenuItems', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).toEqual([
       'insert-above',
       'insert-below',
+      'move-up',
+      'move-down',
+      'move-top',
+      'move-bottom',
       'copy-link',
       'delete',
     ]);
@@ -85,6 +89,10 @@ describe('blockMenuItems', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.label)).toEqual([
       '在上方插入区块',
       '在下方插入区块',
+      '上移',
+      '下移',
+      '移至顶部',
+      '移至底部',
       '复制区块链接',
       '删除',
     ]);
@@ -96,6 +104,10 @@ describe('blockMenuItems', () => {
     expect(blockMenuItems({ canDelete: false }).map((item) => item.id)).toEqual([
       'insert-above',
       'insert-below',
+      'move-up',
+      'move-down',
+      'move-top',
+      'move-bottom',
       'copy-link',
     ]);
   });
@@ -152,6 +164,31 @@ describe('deleteBlock', () => {
   });
 });
 
+describe('the move entries', () => {
+  it('moves the addressed block up one', () => {
+    const state = stateWith(['甲', '乙', '丙']);
+    expect(run(state, (d) => applyBlockAction(state, d, 1, 'move-up'))).toEqual(blocks('乙', '甲', '丙'));
+  });
+
+  it('moves the addressed block down one', () => {
+    const state = stateWith(['甲', '乙', '丙']);
+    expect(run(state, (d) => applyBlockAction(state, d, 1, 'move-down'))).toEqual(blocks('甲', '丙', '乙'));
+  });
+
+  it('moves the addressed block to the top and to the bottom', () => {
+    const state = stateWith(['甲', '乙', '丙']);
+    expect(run(state, (d) => applyBlockAction(state, d, 2, 'move-top'))).toEqual(blocks('丙', '甲', '乙'));
+    expect(run(state, (d) => applyBlockAction(state, d, 0, 'move-bottom'))).toEqual(blocks('乙', '丙', '甲'));
+  });
+
+  it('dispatches nothing when the block is already at the edge', () => {
+    const state = stateWith(['甲', '乙']);
+    expect(() => run(state, (d) => applyBlockAction(state, d, 0, 'move-up'))).toThrow(
+      'the action dispatched nothing',
+    );
+  });
+});
+
 describe('blockLinkFor', () => {
   const ID = '11111111-1111-4111-8111-111111111111';
 
@@ -200,10 +237,11 @@ describe('applyBlockAction', () => {
 
   it('covers every id the menu offers except the one that leaves the editor', () => {
     // 复制区块链接 needs the document id and the clipboard, so it is not a transaction.
-    const state = stateWith(['甲', '乙']);
+    // The middle block can move in every direction; the first one cannot move up.
+    const state = stateWith(['甲', '乙', '丙']);
     for (const item of blockMenuItems({ canDelete: true })) {
       if (item.id === 'copy-link') continue;
-      expect(() => run(state, (d) => applyBlockAction(state, d, 0, item.id))).not.toThrow();
+      expect(() => run(state, (d) => applyBlockAction(state, d, 1, item.id))).not.toThrow();
     }
   });
 });

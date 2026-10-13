@@ -31,8 +31,12 @@ export interface KeyBinding {
   label: string;
   group: ShortcutGroup;
   mac: Chord;
-  /** Present only when the official row carries a `winMatcher`. */
-  win?: Chord;
+  /**
+   * The Windows side. Three states, not two (G1477): absent falls back to the Mac chord, a chord
+   * binds Windows to that chord, and `null` is the official `QM` "matcher is always false" — the
+   * key is deliberately unbound on Windows, which is not the same as falling back.
+   */
+  win?: Chord | null;
 }
 
 /** The six contexts the official panel groups by (`keyboard.md` §官方快捷键面板的分组). */
@@ -53,8 +57,10 @@ export const GROUP_LABELS: Record<ShortcutGroup, string> = {
   findReplace: '在查找和替换中',
 };
 
-export function chordFor(binding: KeyBinding, platform: Platform): Chord {
+export function chordFor(binding: KeyBinding, platform: Platform): Chord | null {
   if (platform === 'mac') return binding.mac;
+  // `null` is the explicit "unbound here" state; only an absent value falls back to Mac.
+  if (binding.win === null) return null;
   return binding.win ?? binding.mac;
 }
 
@@ -106,6 +112,8 @@ function keyName(chord: Chord): string {
 
 export function displayFor(binding: KeyBinding, platform: Platform): string {
   const chord = chordFor(binding, platform);
+  // A key that is deliberately unbound on this platform has nothing to print.
+  if (!chord) return '';
   const flags = [chord.metaKey, chord.ctrlKey, chord.altKey, chord.shiftKey];
   const labels = platform === 'mac' ? MAC_LABELS : WIN_LABELS;
   const parts: string[] = [];
@@ -128,6 +136,8 @@ export interface KeyCombo {
 
 export function matches(combo: KeyCombo, binding: KeyBinding, platform: Platform): boolean {
   const chord = chordFor(binding, platform);
+  // Unbound on this platform: no combination can match it.
+  if (!chord) return false;
   if (chord.metaKey !== combo.metaKey) return false;
   if (chord.ctrlKey !== combo.ctrlKey) return false;
   if (chord.altKey !== combo.altKey) return false;

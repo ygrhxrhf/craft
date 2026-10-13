@@ -33,9 +33,25 @@ describe('the platform switch — `bae(d) = isMac ? d : (d.winMatcher ?? d)`', (
   it('never resolves to a meta chord on Windows', () => {
     // The failure this catches is a forgotten `winMatcher`: a ⌘-based Mac row left unchanged
     // would print `⌘ K` as a Windows binding, which is not a chord a Windows user can press.
+    // A row explicitly unbound on Windows resolves to null and is skipped.
     for (const binding of KEY_BINDINGS) {
-      expect(chordFor(binding, 'win').metaKey, `${binding.id} carries no meta key on windows`).toBe(false);
+      const chord = chordFor(binding, 'win');
+      if (!chord) continue;
+      expect(chord.metaKey, `${binding.id} carries no meta key on windows`).toBe(false);
     }
+  });
+
+  it('treats an explicit null win chord as unbound, not as a fallback (G1477)', () => {
+    const macOnly = {
+      ...KEY_BINDINGS[0],
+      id: 'MAC_ONLY',
+      win: null,
+    };
+    expect(chordFor(macOnly, 'mac')).toBe(macOnly.mac);
+    expect(chordFor(macOnly, 'win')).toBeNull();
+    // Nothing to print, and no combination can match it.
+    expect(displayFor(macOnly, 'win')).toBe('');
+    expect(matches({ metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, key: 'x' }, macOnly, 'win')).toBe(false);
   });
 });
 

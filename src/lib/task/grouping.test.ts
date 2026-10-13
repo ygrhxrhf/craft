@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { TaskItem } from '@/actions/task/task';
 
-import { applyCompletedFilter, bucketOf, localDayIndex, tasksForGroup } from './grouping';
+import { applyCompletedFilter, bucketOf, localDayIndex, tasksForGroup, withinUpcoming } from './grouping';
 
 const task = (dueDate: string | null): TaskItem => ({
   id: 't',
@@ -19,6 +19,23 @@ const task = (dueDate: string | null): TaskItem => ({
 // machine happens to run.
 const now = new Date(2026, 9, 9, 12, 0, 0);
 const iso = (y: number, m: number, d: number, h = 12, min = 0) => new Date(y, m, d, h, min).toISOString();
+
+describe('the upcoming windows', () => {
+  const now = new Date(2026, 9, 14, 12, 0);
+
+  it('counts from tomorrow and stops at the window', () => {
+    const iso = (day: number) => new Date(2026, 9, day, 9).toISOString();
+    expect(withinUpcoming(iso(14), 7, now)).toBe(false);
+    expect(withinUpcoming(iso(15), 7, now)).toBe(true);
+    expect(withinUpcoming(iso(21), 7, now)).toBe(true);
+    expect(withinUpcoming(iso(22), 7, now)).toBe(false);
+    expect(withinUpcoming(iso(22), 30, now)).toBe(true);
+  });
+
+  it('keeps everything when the window is open', () => {
+    expect(withinUpcoming(null, 'all', now)).toBe(true);
+  });
+});
 
 describe('the completed switch', () => {
   const done = { ...task(null), id: 'done', isCompleted: true };

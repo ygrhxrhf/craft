@@ -406,6 +406,23 @@
   html {
     @apply font-sans;
   }
+
+  /* ── Input-intent gate (G1080 / G1081 / G1110) ──────────────────────────────
+     The official build compiles standard pseudo-classes into attribute selectors keyed on the
+     two attributes the gate writes. Two of those rules are reproduced here, because they are
+     what the gate is *for* and reproducing the gate without them would be a shell:
+
+       1. A keyboard focus draws the ring; a pointer focus does not — the DS button's own
+          `outline:1px solid var(--accent-500); outline-offset:-1px`.
+       2. On touch, "not hovered" becomes "not active" — a touch device has no hover, so a rule
+          written `:not(:hover)` would otherwise stick. */
+
+  /* The ring lives on the button, not on `*`: the accent channel is the official ring colour. */
+  [data-whatinput='keyboard'] [data-slot='button']:focus-visible,
+  [data-whatinput='keyboard'] [data-slot='checkbox']:focus-visible {
+    outline: 1px solid var(--craft-accent);
+    outline-offset: -1px;
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -907,8 +924,10 @@
     min-height: 60px;
   }
 
-  .math-block-edit:focus {
-    outline: 2px solid var(--craft-accent);
+  /* The official ring is 1px at -1px offset, and only while the last real input was a keyboard
+     (G1110). A pointer focus leaves no ring. */
+  [data-whatinput='keyboard'] .math-block-edit:focus {
+    outline: 1px solid var(--craft-accent);
     outline-offset: -1px;
   }
 

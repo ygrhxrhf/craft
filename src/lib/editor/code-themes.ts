@@ -50,12 +50,17 @@ export interface CodeTheme {
   id: string;
   /** The palette, when it has been collected. The eighteen third-party themes have none yet. */
   surface: CodeThemeSurface | null;
+  /**
+   * Extra search terms (G1167). The official filter matches a theme when the query is a substring
+   * of its label **or** an exact member of this array — so `auto` is found by typing `system`.
+   */
+  keywords?: readonly string[];
 }
 
 /** The roster in the official display order (G1165): `auto` first, the two craft palettes next
  *  (dark before light), then the rest strictly by `id` ascending — there is no runtime sort. */
 export const CODE_THEMES: readonly CodeTheme[] = [
-  { id: 'auto', surface: null },
+  { id: 'auto', surface: null, keywords: ['system'] },
   { id: 'craftdark', surface: CRAFTDARK },
   { id: 'craftlight', surface: CRAFTLIGHT },
   { id: 'atomone', surface: null },
@@ -81,6 +86,26 @@ export const CODE_THEMES: readonly CodeTheme[] = [
 export const DEFAULT_CODE_THEME = 'auto';
 
 const BY_ID = new Map(CODE_THEMES.map((theme) => [theme.id, theme]));
+
+/** The label a theme prints in the menu; the id is the display name, as the official one does. */
+export function themeLabel(theme: CodeTheme): string {
+  return theme.id;
+}
+
+/**
+ * The menu filter (G1167), verbatim in shape: a theme matches when the lower-cased query is a
+ * substring of its label, or an exact member of its `keywords`. Not a substring of the keywords —
+ * `dar` finds nothing, `dark` finds the dark themes.
+ */
+export function filterThemes(query: string): CodeTheme[] {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return [...CODE_THEMES];
+  return CODE_THEMES.filter(
+    (theme) =>
+      themeLabel(theme).toLowerCase().includes(needle) ||
+      (theme.keywords?.includes(needle) ?? false),
+  );
+}
 
 export function isCodeThemeId(value: unknown): value is string {
   return typeof value === 'string' && BY_ID.has(value);

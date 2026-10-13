@@ -5,8 +5,10 @@ import {
   CRAFTDARK,
   CRAFTLIGHT,
   DEFAULT_CODE_THEME,
+  filterThemes,
   isCodeThemeId,
   resolveCodeTheme,
+  themeLabel,
 } from './code-themes';
 
 /**
@@ -92,5 +94,29 @@ describe('resolving a stored id', () => {
   it('falls back to auto rather than rendering unstyled for an unknown id', () => {
     expect(resolveCodeTheme('nonsense', false)).toBe(CRAFTLIGHT);
     expect(resolveCodeTheme(null, true)).toBe(CRAFTDARK);
+  });
+});
+
+describe('the menu filter (G1167)', () => {
+  it('matches a label substring', () => {
+    const dark = filterThemes('dark');
+    expect(dark.length).toBeGreaterThanOrEqual(5);
+    for (const theme of dark) {
+      expect(themeLabel(theme).toLowerCase()).toContain('dark');
+    }
+  });
+
+  it('does not match a keyword by substring, only by exact member', () => {
+    // `syst` is a prefix of the `system` keyword but not the whole member, so it finds nothing —
+    // the keyword half of the predicate is an exact membership test.
+    expect(filterThemes('syst')).toEqual([]);
+  });
+
+  it('finds auto by its keyword, which is not part of its label', () => {
+    expect(filterThemes('system').map((t) => t.id)).toEqual(['auto']);
+  });
+
+  it('returns the whole roster for an empty query', () => {
+    expect(filterThemes('')).toHaveLength(CODE_THEMES.length);
   });
 });

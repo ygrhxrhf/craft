@@ -4,6 +4,15 @@ import { CalloutView } from './callout-view';
 
 export type CalloutType = 'info' | 'warning' | 'error' | 'success' | 'note';
 
+/** The five callout kinds, named the way the slash menu already names them. */
+export const CALLOUT_CHOICES: readonly { type: CalloutType; label: string }[] = [
+  { type: 'info', label: '信息提示' },
+  { type: 'warning', label: '警告提示' },
+  { type: 'error', label: '错误提示' },
+  { type: 'success', label: '成功提示' },
+  { type: 'note', label: '备注' },
+];
+
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {
     callout: {

@@ -14,7 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { dropTargetFor } from './drop-band';
-import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setDividerStyle, setTaskReminder, type BlockActionId } from './block-actions';
+import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setTaskReminder, type BlockActionId } from './block-actions';
+import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
 import { DIVIDER_STYLE_CHOICES, type DividerStyle } from '@/lib/editor/divider-styles';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
@@ -104,6 +105,23 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     (blockEl: HTMLElement) => {
       const index = indexOfBlock(blockEl);
       return index >= 0 && editor.state.doc.child(index).type.name === 'taskItem';
+    },
+    [editor, indexOfBlock],
+  );
+
+  const isCalloutBlock = useCallback(
+    (blockEl: HTMLElement) => {
+      const index = indexOfBlock(blockEl);
+      return index >= 0 && editor.state.doc.child(index).type.name === 'callout';
+    },
+    [editor, indexOfBlock],
+  );
+
+  const retypeCallout = useCallback(
+    (blockEl: HTMLElement, type: CalloutType) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return;
+      setCalloutType(editor.state, editor.view.dispatch, index, type);
     },
     [editor, indexOfBlock],
   );
@@ -418,8 +436,23 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                 isTask: isTaskBlock(handle.blockEl),
                 ...toggleState(handle.blockEl),
                 isDivider: isDividerBlock(handle.blockEl),
+                isCallout: isCalloutBlock(handle.blockEl),
               }).map((item) =>
-                item.id === 'divider-style' ? (
+                item.id === 'callout-type' ? (
+                  <DropdownMenuSub key={item.id}>
+                    <DropdownMenuSubTrigger>{item.label}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      {CALLOUT_CHOICES.map((choice) => (
+                        <DropdownMenuItem
+                          key={choice.type}
+                          onClick={() => retypeCallout(handle.blockEl, choice.type)}
+                        >
+                          {choice.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                ) : item.id === 'divider-style' ? (
                   <DropdownMenuSub key={item.id}>
                     <DropdownMenuSubTrigger>{item.label}</DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>

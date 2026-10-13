@@ -4,6 +4,7 @@ import { BLOCK_HASH_PREFIX } from '@/lib/editor/block-anchor';
 import { REMIND_PRESETS, remindInstantFor, type RemindPresetId } from '@/lib/task/remind-presets';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 import { type DividerStyle } from '@/lib/editor/divider-styles';
+import { type CalloutType } from '@/components/editor/extensions/callout';
 
 export type BlockActionId =
   | 'remind'
@@ -20,6 +21,7 @@ export type BlockActionId =
   | 'toggle-open'
   | 'add-content'
   | 'divider-style'
+  | 'callout-type'
   | 'delete';
 
 const MOVE_TARGETS: Record<string, MoveTarget> = {
@@ -50,12 +52,14 @@ export function blockMenuItems({
   isToggle,
   toggleOpen,
   isDivider,
+  isCallout,
 }: {
   canDelete: boolean;
   isTask?: boolean;
   isToggle?: boolean;
   toggleOpen?: boolean;
   isDivider?: boolean;
+  isCallout?: boolean;
 }): BlockAction[] {
   const items: BlockAction[] = [
     { id: 'add-content', label: '添加内容' },
@@ -73,6 +77,7 @@ export function blockMenuItems({
   if (isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
   if (isToggle) items.splice(2, 0, { id: 'toggle-open', label: toggleOpen ? '收起' : '展开' });
   if (isDivider) items.splice(2, 0, { id: 'divider-style', label: '分隔符样式' });
+  if (isCallout) items.splice(2, 0, { id: 'callout-type', label: '提示类型' });
   if (canDelete) items.push({ id: 'delete', label: '删除' });
   return items;
 }
@@ -155,6 +160,19 @@ export function addContentBelow(
   const block = paragraph.create(null, state.schema.text('/'));
   const tr = state.tr.insert(after, block);
   dispatch(tr.setSelection(TextSelection.create(tr.doc, after + block.nodeSize - 1)).scrollIntoView());
+}
+
+/** Sets a callout's kind. Does nothing to any other block. */
+export function setCalloutType(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  type: CalloutType,
+) {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'callout') return;
+  const { before } = blockBounds(state, index);
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, type }));
 }
 
 /** Sets a divider's weight. Does nothing to any other block. */
@@ -297,6 +315,9 @@ export function applyBlockAction(
       break;
     case 'divider-style':
       // The weight is chosen from the submenu, which calls setDividerStyle itself.
+      break;
+    case 'callout-type':
+      // The kind is chosen from the submenu, which calls setCalloutType itself.
       break;
     case 'copy-link':
       // The link needs the document id and the clipboard, neither of which the editor state

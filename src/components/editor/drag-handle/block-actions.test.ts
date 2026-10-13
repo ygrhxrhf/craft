@@ -4,6 +4,7 @@ import { EditorState } from '@tiptap/pm/state';
 import type { Transaction } from '@tiptap/pm/state';
 import {
   applyBlockAction,
+  setCalloutType,
   setDividerStyle,
   setBlockEmoji,
   clearTaskReminder,
@@ -26,6 +27,7 @@ const schema = new Schema({
     taskItem: { content: 'text*', group: 'block', attrs: { remindAt: { default: null } } },
     toggleBlock: { content: 'block+', group: 'block', attrs: { open: { default: false } } },
     divider: { group: 'block', atom: true, attrs: { style: { default: 'regular' } } },
+    callout: { content: 'block+', group: 'block', attrs: { type: { default: 'info' } } },
     text: {},
   },
   marks: {},
@@ -114,6 +116,11 @@ describe('blockMenuItems', () => {
     ]);
   });
 
+  it('offers 提示类型 only on a callout', () => {
+    expect(blockMenuItems({ canDelete: true, isCallout: true }).map((item) => item.label)).toContain('提示类型');
+    expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).not.toContain('callout-type');
+  });
+
   it('offers 分隔符样式 only on a divider', () => {
     expect(blockMenuItems({ canDelete: true, isDivider: true }).map((item) => item.label)).toContain('分隔符样式');
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).not.toContain('divider-style');
@@ -199,6 +206,29 @@ describe('deleteBlock', () => {
   it('refuses to empty the document', () => {
     const state = stateWith(['甲']);
     expect(() => run(state, (d) => deleteBlock(state, d, 0))).toThrow();
+  });
+});
+
+describe('setCalloutType', () => {
+  function calloutState() {
+    const doc = schema.nodes.doc.create(null, [
+      schema.nodes.callout.create({ type: 'info' }, schema.nodes.paragraph.create(null, schema.text('甲'))),
+    ]);
+    return EditorState.create({ schema, doc });
+  }
+
+  it('changes the kind and keeps the text', () => {
+    const state = calloutState();
+    const next = runState(state, (d) => setCalloutType(state, d, 0, 'warning'));
+    expect(next.doc.child(0).attrs.type).toBe('warning');
+    expect(next.doc.child(0).textContent).toBe('甲');
+  });
+
+  it('does nothing to a block that is not a callout', () => {
+    const state = stateWith(['甲']);
+    expect(() => run(state, (d) => setCalloutType(state, d, 0, 'note'))).toThrow(
+      'the action dispatched nothing',
+    );
   });
 });
 
@@ -411,7 +441,7 @@ describe('applyBlockAction', () => {
     for (const item of blockMenuItems({ canDelete: true })) {
       // 复制区块链接 leaves the editor; 提醒我… opens a submenu instead of a transaction.
       // 复制区块链接 leaves the editor; 提醒我… and 添加评论 open other surfaces.
-      if (item.id === 'copy-link' || item.id === 'remind' || item.id === 'add-comment' || item.id === 'add-emoji' || item.id === 'divider-style') continue;
+      if (item.id === 'copy-link' || item.id === 'remind' || item.id === 'add-comment' || item.id === 'add-emoji' || item.id === 'divider-style' || item.id === 'callout-type') continue;
       expect(() => run(state, (d) => applyBlockAction(state, d, 1, item.id))).not.toThrow();
     }
   });

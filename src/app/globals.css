@@ -786,6 +786,11 @@
     font-weight: 600;
   }
 
+  /* 隔行颜色: even body rows only, so a header row stays the header colour. */
+  table[data-alternating='true'] tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--muted) 55%, transparent);
+  }
+
   .selectedCell {
     background: oklch(0.93 0.02 250 / 0.3);
   }

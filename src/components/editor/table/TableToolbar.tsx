@@ -29,6 +29,27 @@ function hasTableCellAncestor(editor: Editor): boolean {
   return false;
 }
 
+function checkHeaderColumn(editor: Editor): boolean {
+  const { $from } = editor.state.selection;
+  for (let d = $from.depth; d > 0; d--) {
+    const node = $from.node(d);
+    if (node.type.name === 'table') {
+      const first = node.content.content[0];
+      return first?.content.content[0]?.type.name === 'tableHeader';
+    }
+  }
+  return false;
+}
+
+function isAlternating(editor: Editor): boolean {
+  const { $from } = editor.state.selection;
+  for (let d = $from.depth; d > 0; d--) {
+    const node = $from.node(d);
+    if (node.type.name === 'table') return node.attrs.alternating === true;
+  }
+  return false;
+}
+
 function checkHeaderRow(editor: Editor): boolean {
   const { $from } = editor.state.selection;
   for (let d = $from.depth; d > 0; d--) {
@@ -103,13 +124,40 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         </ToolButton>
         <div className="mx-0.5 h-5 w-px bg-foreground/8" />
         <ToolButton
-          title="切换表头行"
+          title="标题行"
           active={checkHeaderRow(editor)}
           onClick={() => editor.chain().focus().toggleHeaderRow().run()}
         >
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="16" rx="2" />
             <path d="M3 10h18" opacity="0.9" />
+          </svg>
+        </ToolButton>
+        <ToolButton
+          title="标题列"
+          active={checkHeaderColumn(editor)}
+          onClick={() => editor.chain().focus().toggleHeaderColumn().run()}
+        >
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <path d="M9 4v16" opacity="0.9" />
+          </svg>
+        </ToolButton>
+        <ToolButton
+          title="隔行颜色"
+          active={isAlternating(editor)}
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .updateAttributes('table', { alternating: !isAlternating(editor) })
+              .run()
+          }
+        >
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6h18" />
+            <path d="M3 12h18" />
+            <path d="M3 18h18" />
           </svg>
         </ToolButton>
         <ToolButton

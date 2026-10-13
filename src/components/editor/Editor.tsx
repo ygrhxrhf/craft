@@ -367,7 +367,20 @@ export function Editor({
       }).configure({
         lowlight,
       }),
-      Table.configure({
+      Table.extend({
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            // 隔行颜色 (table.row.color.alternating). Absent means off.
+            alternating: {
+              default: false,
+              parseHTML: (element) => element.getAttribute('data-alternating') === 'true',
+              renderHTML: (attributes) =>
+                attributes.alternating ? { 'data-alternating': 'true' } : {},
+            },
+          };
+        },
+      }).configure({
         resizable: true,
       }),
       TableRow,

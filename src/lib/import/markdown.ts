@@ -338,7 +338,7 @@ function parseList(lines: string[]): PmNode {
 }
 
 const INLINE =
-  /(`[^`]+`)|(\*\*[\s\S]+?\*\*(?!\*))|(~~[\s\S]+?~~)|((?<!\*)\*(?!\s)[^*\n]+?\*(?!\*))|((?<!_)_(?!_)[^_\n]+?_(?!_))|(\[[^\]]*\]\([^)\s]+\))|(!\[[^\]]*\]\([^)\s]+\))/;
+  /(`[^`]+`)|\$\$([^$\n]+)\$\$|\$([^$\n]+)\$|(\*\*[\s\S]+?\*\*(?!\*))|(~~[\s\S]+?~~)|((?<!\*)\*(?!\s)[^*\n]+?\*(?!\*))|((?<!_)_(?!_)[^_\n]+?_(?!_))|(\[[^\]]*\]\([^)\s]+\))|(!\[[^\]]*\]\([^)\s]+\))/;
 
 function parseInline(text: string): PmNode[] {
   const nodes: PmNode[] = [];
@@ -356,6 +356,12 @@ function parseInline(text: string): PmNode[] {
     const token = match[0];
     if (token.startsWith('`')) {
       pushMarked(nodes, token.slice(1, -1), { type: 'code' });
+    } else if (token.startsWith('$$')) {
+      // Inline math is `$…$` (or `$$…$$` on one line); the block form is handled earlier, so a
+      // pair that reaches here is inline. The node carries the source without the delimiters.
+      nodes.push({ type: 'inlineMath', attrs: { latex: token.slice(2, -2) } });
+    } else if (token.startsWith('$')) {
+      nodes.push({ type: 'inlineMath', attrs: { latex: token.slice(1, -1) } });
     } else if (token.startsWith('**')) {
       addMark(parseInline(token.slice(2, -2)), { type: 'bold' }, nodes);
     } else if (token.startsWith('~~')) {

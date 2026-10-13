@@ -214,6 +214,19 @@ describe('re-importing what the Craft-shaped exporter writes', () => {
     expect(math.attrs?.latex).toBe('x^2');
   });
 
+  it('reads inline math inside a paragraph as an inlineMath node (G1238)', () => {
+    const [para] = blocks('面积是 $\\pi r^2$ 的结果');
+    expect(para.type).toBe('paragraph');
+    const math = para.content?.find((node: { type: string }) => node.type === 'inlineMath');
+    expect(math?.attrs?.latex).toBe('\\pi r^2');
+  });
+
+  it('reads the double-dollar inline form too', () => {
+    const [para] = blocks('结果是 $$a+b$$ 的值');
+    const math = para.content?.find((node: { type: string }) => node.type === 'inlineMath');
+    expect(math?.attrs?.latex).toBe('a+b');
+  });
+
   it('ends a paragraph where a display-math fence opens', () => {
     expect(blocks('正文\n$$\nx\n$$').map((node) => node.type)).toEqual(['paragraph', 'mathBlock']);
   });

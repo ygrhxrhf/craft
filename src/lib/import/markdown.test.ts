@@ -247,4 +247,36 @@ describe('re-importing what the Craft-shaped exporter writes', () => {
     );
     expect(blocks(markdown)[0]).toEqual({ type: 'mathBlock', attrs: { latex: 'a^2 + b^2' } });
   });
+
+  it('reads back the capital [X] the exporter writes for a checked task (G1239)', () => {
+    // The exporter writes `- [X]` with a capital X; the importer must read that back as checked.
+    const markdown = serializeDocument(
+      {
+        type: 'doc',
+        content: [
+          {
+            type: 'taskList',
+            content: [
+              {
+                type: 'taskItem',
+                attrs: { checked: true },
+                content: [{ type: 'paragraph', content: [{ type: 'text', text: '完成任务' }] }],
+              },
+              {
+                type: 'taskItem',
+                attrs: { checked: false },
+                content: [{ type: 'paragraph', content: [{ type: 'text', text: '待办' }] }],
+              },
+            ],
+          },
+        ],
+      },
+      'markdown'
+    );
+    expect(markdown).toContain('- [X] 完成任务');
+    const [list] = blocks(markdown);
+    expect(list.type).toBe('taskList');
+    expect(list.content[0].attrs?.checked).toBe(true);
+    expect(list.content[1].attrs?.checked).toBe(false);
+  });
 });

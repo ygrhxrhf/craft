@@ -660,6 +660,21 @@
     gap: 0.5rem;
   }
 
+  /* The reminder pill (G1468): 26px tall, sitting inside the task row. */
+  .reminder-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    margin-left: 0.5rem;
+    padding: 0 0.5rem;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--craft-accent) 12%, transparent);
+    color: var(--craft-accent);
+    font-size: 12px;
+    line-height: 26px;
+    white-space: nowrap;
+  }
+
   .task-list-item > label {
     flex-shrink: 0;
     margin-top: 0.25rem;

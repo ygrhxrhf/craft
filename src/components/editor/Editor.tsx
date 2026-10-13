@@ -47,6 +47,7 @@ import { Drawing } from './extensions/drawing';
 import { VideoEmbed } from './extensions/video-embed';
 import { Divider } from './extensions/divider';
 import { CodeBlockView } from './extensions/code-block-view';
+import { ReminderPill } from './extensions/reminder-pill';
 import { MathBlock } from './extensions/math-block';
 import { InlineMath } from './extensions/math-inline';
 import { Mention } from './extensions/mention';
@@ -301,6 +302,7 @@ export function Editor({
           class: 'task-list',
         },
       }),
+      ReminderPill,
       TaskItem.extend({
         addAttributes() {
           return {

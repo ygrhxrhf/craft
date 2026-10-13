@@ -2,14 +2,18 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { MessageSquare, Check, X } from 'lucide-react';
+import { MessageSquare, Check, Trash2, X } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
 import { createThread, getThreads, addReply, setThreadResolved } from '@/actions/comment/comment';
 import { getSyncManager } from '@/lib/sync-core';
+import { readPendingRows } from '@/components/sync/local-records';
+import { overlayCommentThreads, type ThreadView } from './comment-overlay';
 
 interface CommentRow {
   id: string;
+  userId: string;
   body: string;
+  createdAt: string;
   mine: boolean;
 }
 
@@ -36,16 +40,41 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
 
   const reload = useCallback(async () => {
     try {
-      const rows = await getThreads(documentId);
-      setThreads(rows as ThreadRow[]);
+      const [rows, pendingThreads, pendingComments] = await Promise.all([
+        getThreads(documentId),
+        readPendingRows('comment_thread'),
+        readPendingRows('comment'),
+      ]);
+      const overlaid = overlayCommentThreads(
+        rows as ThreadView[],
+        pendingThreads,
+        pendingComments,
+        userId ?? null,
+      );
+      setThreads(overlaid.map((thread) => ({
+        id: thread.id,
+        blockText: thread.blockText,
+        resolved: thread.resolved,
+        comments: thread.comments.map((comment) => ({
+          id: comment.id,
+          userId: comment.userId,
+          body: comment.body,
+          createdAt: comment.createdAt,
+          mine: comment.mine,
+        })),
+      })));
     } catch {
       setThreads([]);
     }
-  }, [documentId]);
+  }, [documentId, userId]);
 
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  useEffect(() => getSyncManager().onStoreChanged((table) => {
+    if (table === 'comment' || table === 'comment_thread') void reload();
+  }), [reload]);
 
   useEffect(() => {
     if (!editor) return;
@@ -92,13 +121,7 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
       editor.chain().focus().setComment(threadId).run();
       setDraft('');
       setShowComposer(false);
-      // 乐观挂线程：服务端要等推送，reload() 会把它读丢
-      setThreads((prev) => [...prev, {
-        id: threadId,
-        blockText: blockText.slice(0, 500),
-        resolved: false,
-        comments: [{ id: commentId, body, mine: true }],
-      }]);
+      await reload();
     } catch {
       // 提交失败保持草稿
     }
@@ -107,29 +130,19 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const handleReply = async (threadId: string) => {
     const body = replyDrafts[threadId]?.trim();
     if (!body) return;
-    let replyId: string | null = null;
     try {
       const text = body.slice(0, 2000);
       if (!userId) {
         await addReply(threadId, body);
       } else {
-        replyId = crypto.randomUUID();
         await getSyncManager().applyLocal({
           table: 'comment',
-          id: replyId,
+          id: crypto.randomUUID(),
           patch: { threadId, userId, body: text },
         });
       }
       setReplyDrafts((prev) => ({ ...prev, [threadId]: '' }));
-      if (userId) {
-        // 乐观追加（同上：避免 reload 读到推送前的空）
-        const cid = replyId!;
-        setThreads((prev) => prev.map((t) => (t.id === threadId
-          ? { ...t, comments: [...t.comments, { id: cid, body: text, mine: true }] }
-          : t)));
-      } else {
-        await reload();
-      }
+      await reload();
     } catch {
       // 提交失败保持草稿
     }
@@ -139,18 +152,41 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
     try {
       if (!userId) {
         await setThreadResolved(threadId, resolved);
-        await reload();
-        return;
+      } else {
+        await getSyncManager().applyLocal({
+          table: 'comment_thread',
+          id: threadId,
+          patch: { resolved },
+        });
       }
-      await getSyncManager().applyLocal({
-        table: 'comment_thread',
-        id: threadId,
-        patch: { resolved },
-      });
-      // 乐观翻转
-      setThreads((prev) => prev.map((t) => (t.id === threadId ? { ...t, resolved } : t)));
+      await reload();
     } catch {
       // 状态更新失败保持原状
+    }
+  };
+
+  const handleDelete = async (thread: ThreadRow, commentId: string) => {
+    if (!userId) return;
+    const target = thread.comments.find((comment) => comment.id === commentId);
+    if (!target?.mine) return;
+    try {
+      const deletedAt = new Date().toISOString();
+      await getSyncManager().applyLocal({
+        table: 'comment',
+        id: commentId,
+        patch: { deletedAt },
+      });
+      const remaining = thread.comments.filter((comment) => comment.id !== commentId);
+      if (remaining.length === 0) {
+        await getSyncManager().applyLocal({
+          table: 'comment_thread',
+          id: thread.id,
+          patch: { deletedAt },
+        });
+      }
+      await reload();
+    } catch {
+      // 删除失败保持原状
     }
   };
 
@@ -211,8 +247,18 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
               </p>
             )}
             {thread.comments.map((comment) => (
-              <p key={comment.id} className="text-meta text-foreground/85">
-                {comment.body}
+              <p key={comment.id} className="group flex items-start gap-1 text-meta text-foreground/85">
+                <span className="min-w-0 flex-1">{comment.body}</span>
+                {comment.mine && (
+                  <button
+                    type="button"
+                    title="删除"
+                    onClick={() => void handleDelete(thread, comment.id)}
+                    className="rounded-md p-1 text-foreground/40 opacity-0 transition-opacity duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground/85 group-hover:opacity-100"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                )}
               </p>
             ))}
             <div className="mt-1.5 flex items-center gap-1">

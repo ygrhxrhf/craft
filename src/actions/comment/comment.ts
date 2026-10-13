@@ -53,34 +53,49 @@ export async function getThreads(documentId: string) {
   const db = await getDb();
   await assertDocumentAccess(documentId, session.user.id, 'viewer');
 
+  // 对象式 where 不能表达 IS NULL / IN（Prisma 8 会静默返回 0 行），用字段回调。
   const threads = await db.orm.public.CommentThread
-    .where({ documentId })
+    .where((t: any) => t.documentId.eq(documentId))
+    .where((t: any) => t.deletedAt.isNull())
     .orderBy((t: any) => t.createdAt.asc())
     .all();
 
-  const result = [];
-  for (const thread of threads) {
-    const row = thread as any;
-    const comments = await db.orm.public.Comment
-      .where({ threadId: row.id, deletedAt: null })
+  const live = threads.filter((thread: any) => !thread.deletedAt);
+  const threadIds = live.map((thread: any) => thread.id as string);
+  const comments = threadIds.length === 0
+    ? []
+    : await db.orm.public.Comment
+      .where((c: any) => c.threadId.in(threadIds))
+      .where((c: any) => c.deletedAt.isNull())
       .orderBy((c: any) => c.createdAt.asc())
       .all();
-    result.push({
-      id: row.id,
-      documentId: row.documentId,
-      blockId: row.blockId,
-      blockText: row.blockText,
-      resolved: row.resolved,
-      comments: comments.map((c: any) => ({
-        id: c.id,
-        userId: c.userId,
-        body: c.body,
-        createdAt: c.createdAt,
-        mine: c.userId === session.user.id,
-      })),
-    });
+
+  const byThread = new Map<string, any[]>();
+  for (const comment of comments as any[]) {
+    if (comment.deletedAt) continue;
+    const list = byThread.get(comment.threadId) ?? [];
+    list.push(comment);
+    byThread.set(comment.threadId, list);
   }
-  return result;
+
+  return live.map((row: any) => ({
+    id: row.id,
+    documentId: row.documentId,
+    blockId: row.blockId,
+    blockText: row.blockText,
+    resolved: row.resolved,
+    createdAt: row.createdAt,
+    deletedAt: null,
+    comments: (byThread.get(row.id) ?? []).map((c: any) => ({
+      id: c.id,
+      threadId: c.threadId,
+      userId: c.userId,
+      body: c.body,
+      createdAt: c.createdAt,
+      mine: c.userId === session.user.id,
+      deletedAt: null,
+    })),
+  }));
 }
 
 export async function addReply(threadId: string, body: string) {

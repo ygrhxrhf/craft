@@ -87,6 +87,18 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     [editor],
   );
 
+  const toggleState = useCallback(
+    (blockEl: HTMLElement) => {
+      const index = indexOfBlock(blockEl);
+      const node = index >= 0 ? editor.state.doc.child(index) : null;
+      return {
+        isToggle: node?.type.name === 'toggleBlock',
+        toggleOpen: node?.attrs.open === true,
+      };
+    },
+    [editor, indexOfBlock],
+  );
+
   const isTaskBlock = useCallback(
     (blockEl: HTMLElement) => {
       const index = indexOfBlock(blockEl);
@@ -386,6 +398,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
               {blockMenuItems({
                 canDelete: editor.state.doc.childCount > 1,
                 isTask: isTaskBlock(handle.blockEl),
+                ...toggleState(handle.blockEl),
               }).map((item) =>
                 item.id === 'add-emoji' ? (
                   <DropdownMenuSub key={item.id}>

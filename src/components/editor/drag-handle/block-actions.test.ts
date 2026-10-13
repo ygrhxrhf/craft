@@ -23,6 +23,7 @@ const schema = new Schema({
     paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null }, emoji: { default: null } } },
     cardBlock: { content: 'block+', group: 'block' },
     taskItem: { content: 'text*', group: 'block', attrs: { remindAt: { default: null } } },
+    toggleBlock: { content: 'block+', group: 'block', attrs: { open: { default: false } } },
     text: {},
   },
   marks: {},
@@ -109,6 +110,14 @@ describe('blockMenuItems', () => {
     ]);
   });
 
+  it('offers 展开 on a closed toggle and 收起 on an open one', () => {
+    const closed = blockMenuItems({ canDelete: true, isToggle: true });
+    expect(closed.map((item) => item.label)).toContain('展开');
+    const open = blockMenuItems({ canDelete: true, isToggle: true, toggleOpen: true });
+    expect(open.map((item) => item.label)).toContain('收起');
+    expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).not.toContain('toggle-open');
+  });
+
   it('offers 提醒我… only on a task item', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).not.toContain('remind');
     expect(blockMenuItems({ canDelete: true, isTask: true }).map((item) => item.id)).toContain('remind');
@@ -180,6 +189,30 @@ describe('deleteBlock', () => {
   it('refuses to empty the document', () => {
     const state = stateWith(['甲']);
     expect(() => run(state, (d) => deleteBlock(state, d, 0))).toThrow();
+  });
+});
+
+describe('toggleBlockOpen', () => {
+  function toggleState(open: boolean) {
+    const doc = schema.nodes.doc.create(null, [
+      schema.nodes.toggleBlock.create({ open }, schema.nodes.paragraph.create(null, schema.text('甲'))),
+    ]);
+    return EditorState.create({ schema, doc });
+  }
+
+  it('opens a closed toggle and closes an open one', () => {
+    const closed = toggleState(false);
+    const opened = runState(closed, (d) => applyBlockAction(closed, d, 0, 'toggle-open'));
+    expect(opened.doc.child(0).attrs.open).toBe(true);
+    const shut = runState(opened, (d) => applyBlockAction(opened, d, 0, 'toggle-open'));
+    expect(shut.doc.child(0).attrs.open).toBe(false);
+  });
+
+  it('does nothing to a block that is not a toggle', () => {
+    const state = stateWith(['甲']);
+    expect(() => run(state, (d) => applyBlockAction(state, d, 0, 'toggle-open'))).toThrow(
+      'the action dispatched nothing',
+    );
   });
 });
 

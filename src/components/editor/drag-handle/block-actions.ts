@@ -16,6 +16,7 @@ export type BlockActionId =
   | 'convert-card'
   | 'add-comment'
   | 'add-emoji'
+  | 'toggle-open'
   | 'delete';
 
 const MOVE_TARGETS: Record<string, MoveTarget> = {
@@ -40,7 +41,17 @@ export const REMIND_MENU = REMIND_PRESETS;
 /** The short row the 添加表情 entry offers. Picking the current one again clears it. */
 export const BLOCK_EMOJIS = ['👍', '❤️', '😄', '🎉', '🔥', '👀'] as const;
 
-export function blockMenuItems({ canDelete, isTask }: { canDelete: boolean; isTask?: boolean }): BlockAction[] {
+export function blockMenuItems({
+  canDelete,
+  isTask,
+  isToggle,
+  toggleOpen,
+}: {
+  canDelete: boolean;
+  isTask?: boolean;
+  isToggle?: boolean;
+  toggleOpen?: boolean;
+}): BlockAction[] {
   const items: BlockAction[] = [
     { id: 'insert-above', label: '在上方插入区块' },
     { id: 'insert-below', label: '在下方插入区块' },
@@ -54,6 +65,7 @@ export function blockMenuItems({ canDelete, isTask }: { canDelete: boolean; isTa
     { id: 'add-emoji', label: '添加表情' },
   ];
   if (isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
+  if (isToggle) items.splice(2, 0, { id: 'toggle-open', label: toggleOpen ? '收起' : '展开' });
   if (canDelete) items.push({ id: 'delete', label: '删除' });
   return items;
 }
@@ -122,6 +134,18 @@ export function blockLinkFor(
  * task item and rides the existing task sync. `saveForLater` and `custom` have no computed time,
  * so they clear the reminder rather than inventing one.
  */
+/** Flips a toggle block between open and closed. Does nothing to any other block. */
+export function toggleBlockOpen(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+) {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'toggleBlock') return;
+  const { before } = blockBounds(state, index);
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, open: !node.attrs.open }));
+}
+
 /**
  * Sets or clears the emoji on a block (G1470's 添加表情). Picking the emoji the block already
  * carries removes it, which is how a reaction is taken back.
@@ -228,6 +252,9 @@ export function applyBlockAction(
       break;
     case 'add-emoji':
       // The emoji is chosen from the submenu, which calls setBlockEmoji itself.
+      break;
+    case 'toggle-open':
+      toggleBlockOpen(state, dispatch, index);
       break;
     case 'copy-link':
       // The link needs the document id and the clipboard, neither of which the editor state

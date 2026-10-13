@@ -9,6 +9,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows, readLocalRecords } from '@/components/sync/local-records';
 import { overlayCommentThreads, pickViewerId, type ThreadView } from './comment-overlay';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
+import { composerKey } from './composer-keys';
 
 interface CommentRow {
   id: string;
@@ -215,6 +216,24 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
           <textarea
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              const action = composerKey({
+                key: event.key,
+                shiftKey: event.shiftKey,
+                metaKey: event.metaKey,
+                ctrlKey: event.ctrlKey,
+                altKey: event.altKey,
+                draft,
+              });
+              if (action === 'ignore') return;
+              event.preventDefault();
+              if (action === 'send') void handleCreate();
+              else {
+                const field = event.currentTarget;
+                const next = `${draft.slice(0, field.selectionStart)}${'\n'}${draft.slice(field.selectionEnd)}`;
+                setDraft(next);
+              }
+            }}
             rows={2}
             placeholder="写下评论..."
             className="w-full resize-none rounded-md border border-foreground/10 bg-transparent p-2 text-meta outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
@@ -268,6 +287,22 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
                 onChange={(event) =>
                   setReplyDrafts((prev) => ({ ...prev, [thread.id]: event.target.value }))
                 }
+                onKeyDown={(event) => {
+                  if (
+                    composerKey({
+                      key: event.key,
+                      shiftKey: event.shiftKey,
+                      metaKey: event.metaKey,
+                      ctrlKey: event.ctrlKey,
+                      altKey: event.altKey,
+                      draft: replyDrafts[thread.id] ?? '',
+                    }) !== 'send'
+                  ) {
+                    return;
+                  }
+                  event.preventDefault();
+                  void handleReply(thread.id);
+                }}
                 placeholder="回复..."
                 className="flex-1 rounded-md border border-foreground/10 bg-transparent px-2 py-1 text-meta outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               />

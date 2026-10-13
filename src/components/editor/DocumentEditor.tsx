@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getSyncManager } from '@/lib/sync-core';
 import { Editor, type SaveState } from './Editor';
 import { EditorHeader } from './EditorHeader';
@@ -14,6 +14,7 @@ import { useIsCompact, useIsMobile } from '@/lib/use-is-mobile';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
 import { useFocusStore } from '@/lib/store/use-focus-store';
+import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { KEY_BINDINGS, detectPlatform, displayFor } from '@/lib/editor/keymap';
 import {
   DropdownMenu,
@@ -63,6 +64,11 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const [pageStyle, setPageStyle] = useState<PageStyle>(() => normalizePageStyle(doc.pageStyle));
   const pageStyleRef = useRef(pageStyle);
   const [activeTab, setActiveTab] = useState<RightTabId | null>(null);
+  // 添加评论 from the block menu opens the info panel, which holds the composer.
+  const commentRequest = useCommentRequestStore((state) => state.request);
+  useEffect(() => {
+    if (commentRequest > 0) setActiveTab('info');
+  }, [commentRequest]);
   const focusActive = useFocusStore((state) => state.active);
   const focusBinding = KEY_BINDINGS.find((binding) => binding.id === 'TOGGLE_FOCUS_MODE');
   const [shareOpen, setShareOpen] = useState(false);

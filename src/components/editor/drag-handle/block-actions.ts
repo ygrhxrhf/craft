@@ -14,6 +14,7 @@ export type BlockActionId =
   | 'move-bottom'
   | 'copy-link'
   | 'convert-card'
+  | 'add-comment'
   | 'delete';
 
 const MOVE_TARGETS: Record<string, MoveTarget> = {
@@ -45,6 +46,7 @@ export function blockMenuItems({ canDelete, isTask }: { canDelete: boolean; isTa
     { id: 'move-bottom', label: '移至底部' },
     { id: 'copy-link', label: '复制区块链接' },
     { id: 'convert-card', label: '转换为卡片' },
+    { id: 'add-comment', label: '添加评论' },
   ];
   if (isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
   if (canDelete) items.push({ id: 'delete', label: '删除' });
@@ -199,6 +201,9 @@ export function applyBlockAction(
       break;
     case 'convert-card':
       convertBlockToCard(state, dispatch, index);
+      break;
+    case 'add-comment':
+      // The composer lives in the info panel, so this only names the block. The menu opens it.
       break;
     case 'copy-link':
       // The link needs the document id and the clipboard, neither of which the editor state

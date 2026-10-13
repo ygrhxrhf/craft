@@ -86,6 +86,7 @@ describe('blockMenuItems', () => {
       'move-bottom',
       'copy-link',
       'convert-card',
+      'add-comment',
       'delete',
     ]);
   });
@@ -100,6 +101,7 @@ describe('blockMenuItems', () => {
       '移至底部',
       '复制区块链接',
       '转换为卡片',
+      '添加评论',
       '删除',
     ]);
   });
@@ -121,6 +123,7 @@ describe('blockMenuItems', () => {
       'move-bottom',
       'copy-link',
       'convert-card',
+      'add-comment',
     ]);
   });
 
@@ -314,7 +317,8 @@ describe('applyBlockAction', () => {
     const state = stateWith(['甲', '乙', '丙']);
     for (const item of blockMenuItems({ canDelete: true })) {
       // 复制区块链接 leaves the editor; 提醒我… opens a submenu instead of a transaction.
-      if (item.id === 'copy-link' || item.id === 'remind') continue;
+      // 复制区块链接 leaves the editor; 提醒我… and 添加评论 open other surfaces.
+      if (item.id === 'copy-link' || item.id === 'remind' || item.id === 'add-comment') continue;
       expect(() => run(state, (d) => applyBlockAction(state, d, 1, item.id))).not.toThrow();
     }
   });

@@ -40,7 +40,6 @@ describe('the local gap', () => {
     // findInPage, quickOpen and the four moves have local surfaces now; the four that stay
     // missing have no local action at all (comment from this tab, group, ungroup, rename).
     expect(missingActions().map((e) => e.id)).toEqual([
-      'addComment',
       'group',
       'ungroup',
       'rename',

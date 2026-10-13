@@ -17,6 +17,7 @@ import { dropTargetFor } from './drop-band';
 import { applyBlockAction, blockLinkFor, blockMenuItems, REMIND_MENU, setTaskReminder, type BlockActionId } from './block-actions';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
+import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 
 interface HandlePosition {
   top: number;
@@ -109,6 +110,10 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
       if (index < 0) return;
       const { state, view } = editor;
       if (index >= state.doc.childCount) return;
+      if (id === 'add-comment') {
+        useCommentRequestStore.getState().ask(state.doc.child(index).textContent);
+        return;
+      }
       if (id === 'copy-link') {
         const link = blockLinkFor(state, view.dispatch, index, documentId, () => crypto.randomUUID());
         void navigator.clipboard.writeText(link).then(

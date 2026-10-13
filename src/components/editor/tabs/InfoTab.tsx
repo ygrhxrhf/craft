@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   Calendar, User, Play, Folder, Copy, Star, Clock, Trash2,
   FileText, LayoutTemplate, Download, Search, ArrowUp, ArrowDown, ChevronsUp, ChevronsDown,
+  MessageSquare,
 } from 'lucide-react';
 import { cn } from 'cn';
 import { getBacklinks } from '@/actions/document/backlinks';
@@ -22,6 +23,7 @@ import { exportDocument, type ExportFormat } from '@/actions/document/export';
 import { getSyncManager } from '@/lib/sync-core';
 import { findLiveFavoriteId, findDocumentShareId } from '@/components/sync/local-records';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
+import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 import { VersionDialog } from './VersionDialog';
@@ -458,6 +460,17 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
           >
             <Search className="size-3.5 text-muted-foreground" />
             <span>在页面中查找</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setSubTab('info');
+              useCommentRequestStore.getState().ask();
+            }}
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
+          >
+            <MessageSquare className="size-3.5 text-muted-foreground" />
+            <span>添加评论</span>
           </button>
           <button
             type="button"

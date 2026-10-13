@@ -8,6 +8,7 @@ import { getThreads } from '@/actions/comment/comment';
 import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows, readLocalRecords } from '@/components/sync/local-records';
 import { overlayCommentThreads, pickViewerId, type ThreadView } from './comment-overlay';
+import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 
 interface CommentRow {
   id: string;
@@ -80,6 +81,13 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
     if (table === 'comment' || table === 'comment_thread') void reload();
   }), [reload]);
 
+  // 添加评论 from the block menu opens this composer and names the block it is about.
+  const commentRequest = useCommentRequestStore((state) => state.request);
+  useEffect(() => {
+    if (commentRequest === 0) return;
+    setShowComposer(true);
+  }, [commentRequest]);
+
   useEffect(() => {
     if (!editor) return;
     const refresh = () => setHasSelection(!editor.state.selection.empty);
@@ -96,7 +104,9 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
 
     // 找到选区起点所在最底层 block 作为锚点
     const parent = editor.state.doc.resolve(from).parent;
-    const blockText = parent.textBetween(0, parent.content.size, '\n', '');
+    const named = useCommentRequestStore.getState().blockText;
+    const blockText = named || parent.textBetween(0, parent.content.size, '\n', '');
+    useCommentRequestStore.getState().clear();
 
     try {
       const body = draft.slice(0, 2000);

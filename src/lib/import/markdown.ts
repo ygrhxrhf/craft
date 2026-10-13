@@ -1,3 +1,5 @@
+import { DEFAULT_DIVIDER_STYLE, DIVIDER_PATTERN, dividerStyleFromMarkup } from '@/lib/editor/divider-styles';
+
 export interface PmNode {
   type: string;
   attrs?: Record<string, unknown>;
@@ -186,8 +188,15 @@ function parseBlocks(lines: string[]): PmNode[] {
       continue;
     }
 
-    if (/^(-{3,}|\*{3,}|_{3,})$/.test(line.trim())) {
-      blocks.push({ type: 'divider', attrs: { style: 'thin' } });
+    if (DIVIDER_PATTERN.test(line.trim()) || /^(-{3,}|\*{3,}|_{3,})$/.test(line.trim())) {
+      // The sigil characters carry the weight (G1229): `---` is the default `regular`, not the
+      // heaviest, and `===` reaches the page-separator style the UI has no entry for. A rule the
+      // table does not name still lands on the default.
+      const markup = line.trim();
+      blocks.push({
+        type: 'divider',
+        attrs: { style: dividerStyleFromMarkup(markup) ?? DEFAULT_DIVIDER_STYLE },
+      });
       index += 1;
       continue;
     }

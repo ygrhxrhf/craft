@@ -98,6 +98,16 @@ describe('parseMarkdown blocks', () => {
     expect(blocks('***')[0].type).toBe('divider');
   });
 
+  it('reads the divider weight out of the sigil characters (G1229)', () => {
+    const style = (source: string) => blocks(source)[0].attrs?.style;
+    // `---` is the default regular, not the heaviest; the table lives in divider-styles.
+    expect(style('---')).toBe('regular');
+    expect(style('=--')).toBe('strong');
+    expect(style('===')).toBe('pageSeparator');
+    // An unnamed rule still lands on the default.
+    expect(style('*****')).toBe('regular');
+  });
+
   it('lifts a lone image into an image block', () => {
     expect(blocks('![封面](https://example.com/a.png)')[0]).toMatchObject({
       type: 'imageBlock',

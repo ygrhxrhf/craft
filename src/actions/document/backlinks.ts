@@ -13,6 +13,8 @@ export interface BacklinkItem {
   sourceTitle: string;
   sourceIcon: string | null;
   createdAt: string;
+  /** How many times the source points here (G63's "按链接数"). Older reads omit it. */
+  linkCount?: number;
 }
 
 export async function syncBacklinks(sourceDocumentId: string, linkedDocumentIds: string[]) {
@@ -70,6 +72,8 @@ export async function getBacklinks(documentId: string): Promise<BacklinkItem[]> 
       sourceTitle: (source as any).title,
       sourceIcon: (source as any).icon,
       createdAt: r.createdAt,
+      // One stored row per source today, so the count is 1 until the unique key is lifted.
+      linkCount: 1,
     });
   }
   return items;

@@ -1,8 +1,7 @@
 /**
  * Backlinks panel sorting (G147). The official panel offers three orders — alphabetically, by
- * creation date, and by link count — plus an expand/collapse-all control. The first two are
- * straightforward; "by link count" needs a per-source count, which the local read does not carry,
- * so an entry without one falls back to its title rather than sorting as zero.
+ * creation date, and by link count — plus an expand/collapse-all control. An entry that arrives
+ * without a count falls back to its title rather than sorting as zero.
  */
 import type { BacklinkItem } from '@/actions/document/backlinks';
 
@@ -11,15 +10,13 @@ export type BacklinkSort = 'alphabetical' | 'created' | 'linkCount';
 export const BACKLINK_SORTS: readonly BacklinkSort[] = ['alphabetical', 'created', 'linkCount'];
 
 export const BACKLINK_SORT_LABELS: Record<BacklinkSort, string> = {
-  alphabetical: '按字母顺序',
-  created: '创建日期',
-  linkCount: '按链接数',
+  alphabetical: '按字母顺序排序',
+  created: '按创建日期排序',
+  linkCount: '按链接数排序',
 };
 
-/** A backlink plus the link count the read does not currently carry. */
-export interface SortableBacklink extends BacklinkItem {
-  linkCount?: number;
-}
+/** A backlink as the panel sorts it. The count is optional because older reads omit it. */
+export type SortableBacklink = BacklinkItem;
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   Calendar, User, Play, Folder, Copy, Star, Clock, Trash2,
   FileText, LayoutTemplate, Download, Search, ArrowUp, ArrowDown, ChevronsUp, ChevronsDown,
-  MessageSquare,
+  MessageSquare, ChevronRight, FoldVertical, UnfoldVertical,
 } from 'lucide-react';
 import { cn } from 'cn';
 import { getBacklinks } from '@/actions/document/backlinks';
@@ -26,6 +26,12 @@ import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
+import {
+  BACKLINK_SORTS,
+  BACKLINK_SORT_LABELS,
+  sortBacklinks,
+  type BacklinkSort,
+} from '@/lib/document/backlink-sort';
 import { VersionDialog } from './VersionDialog';
 import { CommentSection } from '../comments/CommentSection';
 import { TagsSection } from './TagsSection';
@@ -51,6 +57,8 @@ interface Backlink {
   id: string;
   title: string;
   icon: string | null;
+  createdAt: string;
+  linkCount?: number;
 }
 
 interface FolderItem {
@@ -70,6 +78,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
   const router = useRouter();
   const [subTab, setSubTab] = useState<'info' | 'actions'>('info');
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
+  const [backlinkSort, setBacklinkSort] = useState<BacklinkSort>('alphabetical');
+  const [collapsedLinks, setCollapsedLinks] = useState<ReadonlySet<string>>(new Set());
   const [versionsOpen, setVersionsOpen] = useState(false);
   const [templateSaved, setTemplateSaved] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -133,6 +143,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
           id: l.sourceDocumentId,
           title: l.sourceTitle,
           icon: l.sourceIcon,
+          createdAt: l.createdAt,
+          linkCount: l.linkCount,
         })));
       })
       .catch(() => {});
@@ -316,23 +328,90 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
           {/* Collaborators */}
           <MembersSection documentId={documentId} canManage={isOwner} />
 
-          {/* Backlinks */}
+          {/* Backlinks — three sorts plus expand/collapse all (G63). */}
           {backlinks.length > 0 && (
             <section>
-              <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">
-                反向链接 ({backlinks.length})
-              </h4>
-              <div className="space-y-1">
-                {backlinks.map((link) => (
-                  <Link
-                    key={link.id}
-                    href={`/documents/${link.id}`}
-                    className="flex items-center gap-2 rounded-md px-2 py-1.5 text-ui transition-colors hover:bg-foreground/4"
+              <div className="mb-2 flex items-center justify-between">
+                <h4 className="text-caption font-medium uppercase tracking-wider text-foreground/40">
+                  @链接到此页面 ({backlinks.length})
+                </h4>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    aria-label="全部展开"
+                    title="全部展开"
+                    onClick={() => setCollapsedLinks(new Set())}
+                    className="rounded p-0.5 text-foreground/40 hover:text-foreground/85"
                   >
-                    <FileText className="size-3.5 shrink-0 text-muted-foreground" />
-                    <span className="truncate">{link.icon} {link.title || '未命名'}</span>
-                  </Link>
+                    <UnfoldVertical className="size-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="全部折叠"
+                    title="全部折叠"
+                    onClick={() => setCollapsedLinks(new Set(backlinks.map((link) => link.id)))}
+                    className="rounded p-0.5 text-foreground/40 hover:text-foreground/85"
+                  >
+                    <FoldVertical className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+              <select
+                aria-label="反向链接排序"
+                value={backlinkSort}
+                onChange={(event) => setBacklinkSort(event.target.value as BacklinkSort)}
+                className="mb-1 w-full rounded bg-transparent text-meta text-foreground/55 outline-none hover:text-foreground/85"
+              >
+                {BACKLINK_SORTS.map((option) => (
+                  <option key={option} value={option}>
+                    {BACKLINK_SORT_LABELS[option]}
+                  </option>
                 ))}
+              </select>
+              <div className="space-y-1">
+                {sortBacklinks(
+                  backlinks.map((link) => ({
+                    sourceDocumentId: link.id,
+                    sourceTitle: link.title,
+                    sourceIcon: link.icon,
+                    createdAt: link.createdAt,
+                    linkCount: link.linkCount,
+                  })),
+                  backlinkSort,
+                ).map((link) => {
+                  const collapsed = collapsedLinks.has(link.sourceDocumentId);
+                  return (
+                    <div key={link.sourceDocumentId}>
+                      <div className="flex items-center gap-1 rounded-md px-1 py-1 text-ui hover:bg-foreground/4">
+                        <button
+                          type="button"
+                          aria-label={collapsed ? '展开' : '折叠'}
+                          aria-expanded={!collapsed}
+                          onClick={() =>
+                            setCollapsedLinks((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(link.sourceDocumentId)) next.delete(link.sourceDocumentId);
+                              else next.add(link.sourceDocumentId);
+                              return next;
+                            })
+                          }
+                          className="rounded p-0.5 text-foreground/40"
+                        >
+                          <ChevronRight className={cn('size-3.5 transition-transform', !collapsed && 'rotate-90')} />
+                        </button>
+                        <Link href={`/documents/${link.sourceDocumentId}`} className="flex min-w-0 flex-1 items-center gap-2">
+                          <FileText className="size-3.5 shrink-0 text-muted-foreground" />
+                          <span className="truncate">{link.sourceIcon} {link.sourceTitle || '未命名'}</span>
+                        </Link>
+                      </div>
+                      {!collapsed && (
+                        <div className="ml-6 px-2 pb-1 text-meta text-foreground/40">
+                          {link.linkCount ?? 1} 个链接
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </section>
           )}

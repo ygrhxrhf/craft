@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getSyncManager } from '@/lib/sync-core';
 import { Editor, type SaveState } from './Editor';
 import { EditorHeader } from './EditorHeader';
+import { DailyNoteNav } from './DailyNoteNav';
 import { RightPanel, type RightTabId } from './tabs/RightPanel';
 import { Breadcrumb } from './Breadcrumb';
 import { FindReplacePanel } from './find-replace-panel';
@@ -45,6 +46,7 @@ interface DocumentEditorProps {
     width: string | null;
     pageStyle: unknown;
     content: any;
+    isDailyNote?: boolean;
   };
   role?: 'owner' | 'editor' | 'commenter' | 'viewer';
 }
@@ -288,6 +290,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               </div>
             )}
 
+            {doc.isDailyNote && <DailyNoteNav />}
             {showsDocumentTitle(pageStyle) && (
               <EditorHeader
                 documentId={doc.id}

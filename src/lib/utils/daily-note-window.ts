@@ -44,6 +44,17 @@ export function dayWindow(now: Date, startTime?: string | null): DayWindow {
   return { start, end };
 }
 
+/**
+ * The note one day earlier or later (G20's 前一天 / 后一天). Stepping by a calendar day keeps the
+ * start time, so a 04:00 window moves to the next 04:00 rather than to midnight.
+ */
+export function shiftDay(now: Date, step: -1 | 1, startTime?: string | null): Date {
+  const { start } = dayWindow(now, startTime);
+  const shifted = new Date(start);
+  shifted.setDate(shifted.getDate() + step);
+  return shifted;
+}
+
 /** The calendar day a daily note is filed under, as the `YYYY-MM-DD` prefix the title uses. */
 export function noteDateKey(now: Date, startTime?: string | null): string {
   const { start } = dayWindow(now, startTime);

@@ -3,7 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { dailyNoteTitle } from '@/lib/utils/daily-note';
-import { dayWindow } from '@/lib/utils/daily-note-window';
+import { dayWindow, shiftDay } from '@/lib/utils/daily-note-window';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface DailyNoteItem {
@@ -36,7 +36,11 @@ export async function getDailyNotes(): Promise<DailyNoteItem[]> {
   }));
 }
 
-export async function getOrCreateTodayNote() {
+/**
+ * The note for a day (G20). `step` moves one day back or forward from today, which is how 前一天 and
+ * 后一天 open their note — creating it when that day has none yet, exactly as today does.
+ */
+export async function getOrCreateDayNote(step: -1 | 0 | 1 = 0) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
   const uid = session.user.id;
@@ -48,7 +52,8 @@ export async function getOrCreateTodayNote() {
   // previous day's note. Read the config first so the day window is the configured one.
   const config = await db.orm.public.DailyNotesConfig.first({ userId: uid });
   const startTime = config ? ((config as any).startTime as string | null) : null;
-  const { start, end } = dayWindow(now, startTime);
+  const target = step === 0 ? now : shiftDay(now, step, startTime);
+  const { start, end } = dayWindow(target, startTime);
   const startIso = start.toISOString();
   const endIso = end.toISOString();
 
@@ -81,4 +86,8 @@ export async function getOrCreateTodayNote() {
 
   await emitSyncEventSafe(db, uid, ['document'], (doc as any).id ?? uid);
   return { id: (doc as any).id as string, created: true };
+}
+
+export async function getOrCreateTodayNote() {
+  return getOrCreateDayNote(0);
 }

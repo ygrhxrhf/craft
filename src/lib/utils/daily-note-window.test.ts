@@ -5,6 +5,7 @@ import {
   dayWindow,
   noteDateKey,
   parseStartMinutes,
+  shiftDay,
 } from './daily-note-window';
 
 /**
@@ -24,6 +25,28 @@ describe('parsing the start time', () => {
     expect(parseStartMinutes('25:00')).toBe(0);
     expect(parseStartMinutes('04:75')).toBe(0);
     expect(parseStartMinutes('noon')).toBe(0);
+  });
+});
+
+describe('stepping a day', () => {
+  it('moves to the previous and the next calendar day', () => {
+    const now = new Date(2026, 9, 14, 10, 30);
+    expect(shiftDay(now, -1).getDate()).toBe(13);
+    expect(shiftDay(now, 1).getDate()).toBe(15);
+  });
+
+  it('keeps the start time, so a 04:00 window stays at 04:00', () => {
+    const now = new Date(2026, 9, 14, 5, 0);
+    const next = shiftDay(now, 1, '04:00');
+    expect(next.getDate()).toBe(15);
+    expect(next.getHours()).toBe(4);
+  });
+
+  it('crosses a month boundary', () => {
+    const now = new Date(2026, 9, 31, 12, 0);
+    const next = shiftDay(now, 1);
+    expect(next.getMonth()).toBe(10);
+    expect(next.getDate()).toBe(1);
   });
 });
 

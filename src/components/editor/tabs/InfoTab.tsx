@@ -15,6 +15,7 @@ import { createDocument } from '@/actions/document/create';
 import { getFolders } from '@/actions/folder/get';
 import { getDocument, getDocuments } from '@/actions/document/get';
 import { relativeTime } from '@/lib/document/relative-time';
+import { pageStats, statsTitle } from '@/lib/document/page-stats';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
 import { getSyncManager } from '@/lib/sync-core';
@@ -222,6 +223,14 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
     }
   };
 
+  // The four figures are derived from the editor (G201): character count excludes spaces, and
+  // the block count is the document's top-level children.
+  const stats = pageStats({
+    wordCount,
+    plainText: editor?.getText() ?? '',
+    blockCount: editor?.state.doc.childCount ?? 0,
+  });
+
   return (
     <div className="p-3">
       {/* Sub-tab switcher */}
@@ -301,8 +310,15 @@ export function InfoTab({ documentId, editor, wordCount, isOwner }: InfoTabProps
 
           {/* Stats */}
           <section>
-            <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">统计</h4>
-            <div className="text-ui text-muted-foreground">{wordCount.toLocaleString()} 字</div>
+            <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">
+              {statsTitle('page')}
+            </h4>
+            <div className="space-y-1 text-ui text-muted-foreground">
+              <div>{stats.words.toLocaleString()} 字</div>
+              <div>{stats.characters.toLocaleString()} 字符（不包括空格）</div>
+              <div>{stats.blocks.toLocaleString()} 区块</div>
+              <div>{stats.readingMinutes.toLocaleString()} 分钟阅读</div>
+            </div>
           </section>
 
           <CommentSection documentId={documentId} editor={editor} />

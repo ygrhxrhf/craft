@@ -15,6 +15,19 @@ describe('serializeDocument', () => {
     expect(serializeDocument(document, 'markdown')).toBe('# 标题\n\n正文\n\n- [X] 完成任务');
   });
 
+  it('writes a highlight as ::text:: in markdown (G1200)', () => {
+    const highlighted = {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: '重点', marks: [{ type: 'highlight' }] }],
+        },
+      ],
+    };
+    expect(serializeDocument(highlighted, 'markdown')).toBe('::重点::');
+  });
+
   it('serializes core nodes to plain text', () => {
     expect(serializeDocument(document, 'text')).toBe('标题\n正文\n完成任务');
   });

@@ -50,6 +50,8 @@ function renderInlineMarkdown(node: any): string {
       if (mark.type === 'bold') value = `**${value}**`;
       if (mark.type === 'italic') value = `*${value}*`;
       if (mark.type === 'code') value = `\`${value}\``;
+      // The official flavour writes a highlight as `::text::` (G1200).
+      if (mark.type === 'highlight') value = `::${value}::`;
       if (mark.type === 'link') value = `[${value}](${mark.attrs?.href ?? ''})`;
     }
     return value;

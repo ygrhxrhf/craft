@@ -10,6 +10,7 @@ import { readPendingRows, readLocalRecords } from '@/components/sync/local-recor
 import { overlayCommentThreads, pickViewerId, type ThreadView } from './comment-overlay';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { composerKey } from './composer-keys';
+import { EmojiSuggest } from './EmojiSuggest';
 
 interface CommentRow {
   id: string;
@@ -49,7 +50,9 @@ function toRows(threads: ThreadView[]): ThreadRow[] {
 export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [draft, setDraft] = useState('');
+  const [draftCaret, setDraftCaret] = useState(0);
   const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
+  const [replyCarets, setReplyCarets] = useState<Record<string, number>>({});
   const [showComposer, setShowComposer] = useState(false);
   const [hasSelection, setHasSelection] = useState(false);
   const { data: session } = useSession();
@@ -215,7 +218,11 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
         <div className="mb-2 rounded-md border border-foreground/10 p-2">
           <textarea
             value={draft}
-            onChange={(event) => setDraft(event.target.value)}
+            onChange={(event) => {
+              setDraft(event.target.value);
+              setDraftCaret(event.target.selectionStart ?? event.target.value.length);
+            }}
+            onSelect={(event) => setDraftCaret(event.currentTarget.selectionStart ?? draft.length)}
             onKeyDown={(event) => {
               const action = composerKey({
                 key: event.key,
@@ -237,6 +244,14 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
             rows={2}
             placeholder="写下评论..."
             className="w-full resize-none rounded-md border border-foreground/10 bg-transparent p-2 text-meta outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          />
+          <EmojiSuggest
+            draft={draft}
+            caret={draftCaret}
+            onAccept={(next) => {
+              setDraft(next.draft);
+              setDraftCaret(next.caret);
+            }}
           />
           <div className="flex justify-end gap-1">
             <button
@@ -281,12 +296,17 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
                 )}
               </p>
             ))}
-            <div className="mt-1.5 flex items-center gap-1">
+            <div className="mt-1.5">
+            <div className="flex items-center gap-1">
               <input
                 value={replyDrafts[thread.id] ?? ''}
-                onChange={(event) =>
-                  setReplyDrafts((prev) => ({ ...prev, [thread.id]: event.target.value }))
-                }
+                onChange={(event) => {
+                  setReplyDrafts((prev) => ({ ...prev, [thread.id]: event.target.value }));
+                  setReplyCarets((prev) => ({
+                    ...prev,
+                    [thread.id]: event.target.selectionStart ?? event.target.value.length,
+                  }));
+                }}
                 onKeyDown={(event) => {
                   if (
                     composerKey({
@@ -322,6 +342,15 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
               >
                 <Check className="size-3.5" />
               </button>
+              </div>
+              <EmojiSuggest
+                draft={replyDrafts[thread.id] ?? ''}
+                caret={replyCarets[thread.id] ?? (replyDrafts[thread.id]?.length ?? 0)}
+                onAccept={(next) => {
+                  setReplyDrafts((prev) => ({ ...prev, [thread.id]: next.draft }));
+                  setReplyCarets((prev) => ({ ...prev, [thread.id]: next.caret }));
+                }}
+              />
             </div>
           </div>
         ))}

@@ -6,6 +6,7 @@ import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { addItem, deleteItem, setItemValue } from '@/actions/collection/items';
 import { useRouter } from 'next/navigation';
 import { cn } from 'cn';
+import { KANBAN_NO_GROUP_PROPERTY } from '@/lib/collection/kanban-copy';
 import type { getCollection } from '@/actions/collection/collection';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
@@ -104,10 +105,9 @@ export function KanbanView({ collection }: KanbanViewProps) {
     return (
       <div className="flex flex-1 items-center justify-center p-8">
         <div className="text-center">
-          <p className="mb-2 text-lg font-medium">看板视图需要单选属性</p>
-          <p className="text-sm text-muted-foreground">
-            请添加一个「单选」类型的属性来启用看板视图
-          </p>
+          {/* Verbatim `kanban_no_group_property` (G232): the guard points at the action rather
+              than leaving a blank view. */}
+          <p className="text-sm text-muted-foreground">{KANBAN_NO_GROUP_PROPERTY}</p>
         </div>
       </div>
     );

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildIndex, docPosition, findMatches, formatResultCount, type TextSlice } from './matcher';
+import { applyReplacement, buildIndex, docPosition, findMatches, formatResultCount, type TextSlice } from './matcher';
 
 /** Two paragraphs whose positions are what the assertions are written against. */
 const slices: TextSlice[] = [
@@ -118,6 +118,18 @@ describe('docPosition', () => {
     const index = buildIndex([{ text: 'abc', from: 7, to: 10 }]);
     expect(docPosition(index, 2)).toBe(9);
     expect(docPosition(index, 0)).toBe(7);
+  });
+});
+
+describe('applyReplacement', () => {
+  it('writes the replacement verbatim in text mode, groups included', () => {
+    expect(applyReplacement('abc', 'abc', 'X$1', 'text', false)).toBe('X$1');
+  });
+
+  it('expands groups in regex mode and follows the case flag', () => {
+    expect(applyReplacement('ABC', '(abc)', '[$1]', 'regex', false)).toBe('[ABC]');
+    expect(applyReplacement('ABC', '(abc)', '[$1]', 'regex', true)).toBe('ABC');
+    expect(applyReplacement('abc', '(abc)', '[$1]', 'regex', true)).toBe('[abc]');
   });
 });
 

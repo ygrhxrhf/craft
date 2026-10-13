@@ -87,10 +87,8 @@ function escapeRegExp(value: string): string {
 }
 
 /**
- * Case-insensitive in both modes: `match.case` (「匹配大小写」) is collected as its own toggle in
- * a different registry, which makes case sensitivity an option rather than the baseline, and the
- * panel's 14 collected keys carry no such switch — so what the panel shows is the toggle's off
- * state. The toggle itself is not implemented.
+ * Case-insensitive unless `caseSensitive` is set: `match.case` (「区分大小写」) is its own toggle,
+ * off by default, so the baseline is the toggle's off state.
  *
  * Zero-length matches (`a*`, an empty lookahead) are skipped: there is no text to mark or
  * replace, and counting them would make 「N 结果」 disagree with the marks on screen.
@@ -103,7 +101,7 @@ export function findMatches(
 ): FindResult {
   if (!query || slices.length === 0) return { matches: [], invalid: false };
 
-  const flags = caseSensitive ? 'g' : 'gi';
+  const flags = matchFlags(caseSensitive);
   let pattern: RegExp;
   if (mode === 'regex') {
     try {
@@ -139,4 +137,24 @@ export function findMatches(
  */
 export function formatResultCount(total: number): string {
   return `${total} 结果`;
+}
+
+/** Same flags `findMatches` searches with, so a regex replacement cannot ignore `match.case`. */
+export function matchFlags(caseSensitive: boolean): string {
+  return caseSensitive ? 'g' : 'gi';
+}
+
+/**
+ * What one hit becomes. Text mode writes the replacement verbatim (`$1` stays literal); regex mode
+ * expands groups, and honours the same case flag the search used to find the hit.
+ */
+export function applyReplacement(
+  text: string,
+  query: string,
+  replacement: string,
+  mode: FindMode,
+  caseSensitive: boolean,
+): string {
+  if (mode !== 'regex') return replacement;
+  return text.replace(new RegExp(query, matchFlags(caseSensitive)), replacement);
 }

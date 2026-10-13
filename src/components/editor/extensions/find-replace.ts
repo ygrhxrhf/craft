@@ -3,7 +3,7 @@ import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import type { Node } from '@tiptap/pm/model';
 
-import { findMatches, type TextSlice } from '@/lib/find/matcher';
+import { applyReplacement, findMatches, type TextSlice } from '@/lib/find/matcher';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 
 export const FIND_KEY = new PluginKey('findReplace');
@@ -150,10 +150,13 @@ export const FindReplace = Extension.create({
           if (!inRange(state.doc, target)) return false;
           // A function replacer keeps `$&` and `$1` literal in text mode — they only mean
           // something in regex mode, where `String.replace` is given the pattern instead.
-          const value =
-            store.mode === 'regex'
-              ? state.doc.textBetween(target.from, target.to).replace(new RegExp(store.query, 'gi'), replacement)
-              : replacement;
+          const value = applyReplacement(
+            state.doc.textBetween(target.from, target.to),
+            store.query,
+            replacement,
+            store.mode,
+            store.caseSensitive,
+          );
           if (dispatch) {
             const tr = state.tr.setMeta(FIND_KEY, true).insertText(value, target.from, target.to);
             dispatch(tr);
@@ -173,10 +176,13 @@ export const FindReplace = Extension.create({
             // Reverse order so earlier ranges stay valid as later ones shift the document.
             for (const target of [...found.matches].reverse()) {
               if (!inRange(state.doc, target)) continue;
-              const value =
-                store.mode === 'regex'
-                  ? state.doc.textBetween(target.from, target.to).replace(new RegExp(store.query, 'gi'), replacement)
-                  : replacement;
+              const value = applyReplacement(
+                state.doc.textBetween(target.from, target.to),
+                store.query,
+                replacement,
+                store.mode,
+                store.caseSensitive,
+              );
               tr = tr.insertText(value, target.from, target.to);
             }
             dispatch(tr);

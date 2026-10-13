@@ -661,6 +661,21 @@
   }
 
   /* The reminder pill (G1468): 26px tall, sitting inside the task row. */
+  /* The code gutter (G1176): a 36.8px floor, one 24px row per line, matching the code itself. */
+  .code-gutter {
+    min-width: 36.8px;
+    padding-right: 0.75rem;
+    padding-left: 0.5rem;
+    font-size: 14px;
+    line-height: 24px;
+  }
+
+  .crafty-code-block pre,
+  .crafty-code-block code {
+    font-size: 14px;
+    line-height: 24px;
+  }
+
   .reminder-menu {
     position: fixed;
     z-index: 60;

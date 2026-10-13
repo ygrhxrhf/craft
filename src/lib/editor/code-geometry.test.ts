@@ -30,4 +30,10 @@ describe('the code surface geometry', () => {
   it('keeps the block on the mono face', () => {
     expect(view).toContain('font-mono');
   });
+
+  it('gives the gutter the 36.8px floor and one cell per line', () => {
+    expect(css).toContain('min-width: 36.8px;');
+    expect(view).toContain('code-gutter');
+    expect(view).toContain("split('\\n').length");
+  });
 });

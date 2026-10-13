@@ -18,6 +18,8 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   const isDark =
     typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
   const surface = resolveCodeTheme(themeId, isDark);
+  // One gutter cell per line (G1176). An empty block still numbers its single line.
+  const lineCount = Math.max(1, (node.textContent ?? '').split('\n').length);
   // mermaid stays out of the menu unless this block already is one (G1177).
   const languages = CODE_LANGUAGES.filter(
     (item) => appearsInLanguageMenu(item.storedLangCode) || item.storedLangCode === language,
@@ -73,11 +75,20 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
           {copied ? '已复制' : '复制'}
         </button>
       </div>
-      <pre
-        className="overflow-x-auto p-3 font-mono text-sm"
-        style={{ background: surface.background, color: surface.foreground }}
-      >
-        <NodeViewContent<'code'> as="code" />
-      </pre>    </NodeViewWrapper>
+      <div className="flex" style={{ background: surface.background, color: surface.foreground }}>
+        <div
+          aria-hidden
+          className="code-gutter shrink-0 select-none py-3 text-right font-mono"
+          style={{ color: surface.gutterForeground }}
+        >
+          {Array.from({ length: lineCount }, (_, index) => (
+            <div key={index}>{index + 1}</div>
+          ))}
+        </div>
+        <pre className="min-w-0 flex-1 overflow-x-auto py-3 pr-3 font-mono">
+          <NodeViewContent<'code'> as="code" />
+        </pre>
+      </div>
+    </NodeViewWrapper>
   );
 }

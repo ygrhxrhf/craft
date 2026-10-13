@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 import type { NodeViewProps } from '@tiptap/react';
 import { CodeBlockView } from './code-block-view';
 
-function render(language: string | null, themeId = 'auto') {
+function render(language: string | null, themeId = 'auto', text = 'var a = 1') {
   const props = {
-    node: { attrs: { language, themeId }, textContent: 'var a = 1' },
+    node: { attrs: { language, themeId }, textContent: text },
     updateAttributes: () => {},
   } as unknown as NodeViewProps;
   return renderToStaticMarkup(<CodeBlockView {...props} />);
@@ -40,6 +40,15 @@ describe('代码块的语言与主题选择器＝带搜索框的菜单，展示�
   it('语言菜单仍排除 mermaid，除非当前块就是它', () => {
     const source = readFileSync(fileURLToPath(new URL('./code-block-view.tsx', import.meta.url)), 'utf8');
     expect(source).toContain('appearsInLanguageMenu(item.storedLangCode) || item.storedLangCode === language');
+  });
+
+  it('行号槽与代码行数一致，空块也有一行', () => {
+    const gutter = (html: string) => {
+      const start = html.indexOf('code-gutter');
+      return html.slice(start, html.indexOf('</pre>', start));
+    };
+    expect(gutter(render('python', 'auto', 'a\nb\nc')).match(/>\d+<\//g)).toEqual(['>1</', '>2</', '>3</']);
+    expect(gutter(render('python', 'auto', ''))).toContain('>1</');
   });
 
   it('主题按钮默认显示 Auto，与语言是否为空无关', () => {

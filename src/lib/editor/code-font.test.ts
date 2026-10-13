@@ -22,6 +22,8 @@ describe('the code block asks for the official font', () => {
   });
 
   it('puts the font on the block itself rather than inheriting whatever is around', () => {
-    expect(view).toContain('p-3 font-mono text-sm');
+    // The gutter and the code each carry the mono face, so the line numbers match the code.
+    expect(view).toContain('text-right font-mono');
+    expect(view).toContain('pr-3 font-mono');
   });
 });

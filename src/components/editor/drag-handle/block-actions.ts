@@ -113,6 +113,18 @@ export function blockLinkFor(
  * task item and rides the existing task sync. `saveForLater` and `custom` have no computed time,
  * so they clear the reminder rather than inventing one.
  */
+/** Clears a task item's reminder. Both 移除提醒 and 标记为已解决 end with the pill gone. */
+export function clearTaskReminder(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+) {
+  const { before } = blockBounds(state, index);
+  const node = state.doc.child(index);
+  if (node.type.name !== 'taskItem' || !node.attrs.remindAt) return;
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, remindAt: null }));
+}
+
 export function setTaskReminder(
   state: EditorState,
   dispatch: (tr: Transaction) => void,

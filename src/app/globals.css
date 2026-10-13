@@ -661,6 +661,29 @@
   }
 
   /* The reminder pill (G1468): 26px tall, sitting inside the task row. */
+  .reminder-menu {
+    position: fixed;
+    z-index: 60;
+    min-width: 9rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    background: var(--popover);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  }
+
+  .reminder-menu-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    text-align: left;
+    font-size: 0.8125rem;
+  }
+
+  .reminder-menu-item:hover {
+    background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  }
+
   .reminder-pill {
     display: inline-flex;
     align-items: center;

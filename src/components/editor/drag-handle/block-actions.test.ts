@@ -4,6 +4,7 @@ import { EditorState } from '@tiptap/pm/state';
 import type { Transaction } from '@tiptap/pm/state';
 import {
   applyBlockAction,
+  clearTaskReminder,
   setTaskReminder,
   blockLinkFor,
   blockMenuItems,
@@ -190,6 +191,20 @@ describe('setTaskReminder', () => {
     const state = taskState();
     const next = runState(state, (d) => setTaskReminder(state, d, 0, 'saveForLater', new Date()));
     expect(next.doc.child(0).attrs.remindAt).toBeNull();
+  });
+
+  it('clears a reminder that was set', () => {
+    const state = taskState();
+    const set = runState(state, (d) => setTaskReminder(state, d, 0, 'in1hour', new Date()));
+    const cleared = runState(set, (d) => clearTaskReminder(set, d, 0));
+    expect(cleared.doc.child(0).attrs.remindAt).toBeNull();
+  });
+
+  it('does nothing when there is no reminder to clear', () => {
+    const state = taskState();
+    expect(() => run(state, (d) => clearTaskReminder(state, d, 0))).toThrow(
+      'the action dispatched nothing',
+    );
   });
 
   it('does nothing to a block that is not a task', () => {

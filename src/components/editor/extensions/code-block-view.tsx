@@ -2,16 +2,18 @@
 
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { Check, Copy } from 'lucide-react';
-import { useState } from 'react';
+import { Check, Copy, Maximize2, Minimize2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { CODE_LANGUAGES, filterLanguages } from '@/lib/editor/code-languages';
 import { appearsInLanguageMenu } from '@/lib/editor/mermaid-surface';
 import { storeDefaultLanguage, storeDefaultTheme } from '@/lib/editor/code-preferences';
 import { CODE_THEMES, DEFAULT_CODE_THEME, filterThemes, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
+import { cn } from 'cn';
 import { SearchableSelect } from './searchable-select';
 
 export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   const [copied, setCopied] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
   const language = (node.attrs.language as string) ?? '';
   const themeId = (node.attrs.themeId as string) ?? DEFAULT_CODE_THEME;
   // `auto` reads the app's own light/dark state, which the `.dark` class carries.
@@ -26,6 +28,16 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   ).map((item) => ({ value: item.storedLangCode, label: item.label }));
   const themes = CODE_THEMES.map((theme) => ({ value: theme.id, label: themeLabel(theme) }));
 
+  // Escape leaves fullscreen, matching the one key a fullscreen surface always answers to.
+  useEffect(() => {
+    if (!fullscreen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setFullscreen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [fullscreen]);
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(node.textContent ?? '');
@@ -37,7 +49,13 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   };
 
   return (
-    <NodeViewWrapper as="div" className="crafty-code-block my-3 overflow-hidden rounded-lg border border-border">
+    <NodeViewWrapper
+      as="div"
+      className={cn(
+        'crafty-code-block my-3 overflow-hidden rounded-lg border border-border',
+        fullscreen && 'fixed inset-4 z-50 my-0 flex flex-col shadow-2xl',
+      )}
+    >
       <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-3 py-1.5">
         <SearchableSelect
           label="代码语言"
@@ -67,15 +85,28 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
         />
         <button
           type="button"
+          onClick={() => setFullscreen((value) => !value)}
+          aria-label="全屏模式"
+          aria-pressed={fullscreen}
+          className="ml-auto inline-flex items-center gap-1 rounded px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          {fullscreen ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
+          全屏模式
+        </button>
+        <button
+          type="button"
           onClick={copy}
           aria-label="复制代码"
-          className="ml-auto inline-flex items-center gap-1 rounded px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="inline-flex items-center gap-1 rounded px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
           {copied ? '已复制' : '复制'}
         </button>
       </div>
-      <div className="flex" style={{ background: surface.background, color: surface.foreground }}>
+      <div
+        className={cn('flex', fullscreen && 'min-h-0 flex-1')}
+        style={{ background: surface.background, color: surface.foreground }}
+      >
         <div
           aria-hidden
           className="code-gutter shrink-0 select-none py-3 text-right font-mono"

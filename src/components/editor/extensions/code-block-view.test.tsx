@@ -22,6 +22,13 @@ function pickerText(html: string, label: string): string {
 }
 
 describe('代码块的语言与主题选择器＝带搜索框的菜单，展示值＝存储值', () => {
+  it('代码块带全屏模式，Escape 退出', () => {
+    const source = readFileSync(fileURLToPath(new URL('./code-block-view.tsx', import.meta.url)), 'utf8');
+    expect(source).toContain('aria-label="全屏模式"');
+    expect(source).toContain("event.key === 'Escape'");
+    expect(source).toContain('fixed inset-4');
+  });
+
   it('两个选择器都带官方搜索占位（搜索语言／搜索主题）', () => {
     // The search box renders only while the menu is open, so the closed markup cannot show it.
     const source = readFileSync(fileURLToPath(new URL('./code-block-view.tsx', import.meta.url)), 'utf8');

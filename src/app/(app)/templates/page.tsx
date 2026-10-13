@@ -6,6 +6,7 @@ import { FOLDER_EMPTY } from '@/lib/browse/official-copy';
 import { LayoutTemplate } from 'lucide-react';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
+import { BrowseGrid } from '@/components/app/BrowseGrid';
 
 export default async function TemplatesPage() {
   const session = await auth();
@@ -18,11 +19,11 @@ export default async function TemplatesPage() {
       <AppPageHeader title="我的模板" />
       <AppPageContainer>
         {templates.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          <BrowseGrid>
             {templates.map(doc => (
               <TemplateCard key={doc.id} document={doc} />
             ))}
-          </div>
+          </BrowseGrid>
         ) : (
           <div className="rounded-lg border border-dashed border-border p-8 text-center">
             <LayoutTemplate className="mx-auto mb-2 size-8 text-muted-foreground" />

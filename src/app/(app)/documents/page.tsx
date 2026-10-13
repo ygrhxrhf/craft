@@ -6,6 +6,7 @@ import { DocumentCard } from '@/components/document/DocumentCard';
 import { QuickActions } from '@/components/document/QuickActions';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
+import { BrowseGrid } from '@/components/app/BrowseGrid';
 
 export default async function DocumentsPage() {
   const session = await auth();
@@ -25,22 +26,22 @@ export default async function DocumentsPage() {
         {favoriteDocs.length > 0 && (
           <section className="mb-8">
             <h2 className="mb-3 text-lg font-medium">收藏</h2>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            <BrowseGrid>
               {favoriteDocs.slice(0, 6).map(doc => (
                 <DocumentCard key={doc.id} document={doc} />
               ))}
-            </div>
+            </BrowseGrid>
           </section>
         )}
 
         <section>
           <h2 className="mb-3 text-lg font-medium">最近编辑</h2>
           {recentDocs.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            <BrowseGrid>
               {recentDocs.map(doc => (
                 <DocumentCard key={doc.id} document={doc} />
               ))}
-            </div>
+            </BrowseGrid>
           ) : (
             <div className="rounded-lg border border-dashed border-border p-8 text-center">
               <p className="text-sm text-muted-foreground">

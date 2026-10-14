@@ -32,8 +32,19 @@ async function signIn(page: Page, account: Account) {
 
 async function titledDoc(page: Page, title: string) {
   await page.goto('/documents');
-  await page.getByRole('button', { name: /新建/ }).first().click();
-  await page.waitForURL(/\/documents\//);
+  // ☆ 与 `format-panel.spec.ts` 的 `newDoc` 同族：按需编译的 dev 首屏里，按钮比它自己的
+  //   onClick 先到 ⇒ 点空了不发路由，`waitForURL` 会把整分钟预算等成一次超时（本批改完
+  //   回收站清理后，进编辑器前多了一次 `/trash` 往返，这一发就现场复现了一次）。
+  const create = page.getByRole('button', { name: /新建/ }).first();
+  for (let attempt = 0; attempt < 5; attempt++) {
+    await create.click();
+    const arrived = await page
+      .waitForURL(/\/documents\//, { timeout: 8_000 })
+      .then(() => true)
+      .catch(() => false);
+    if (arrived) break;
+  }
+  await expect(page).toHaveURL(/\/documents\//);
   await page.getByPlaceholder('页面标题').fill(title);
   await expect(page.getByText('已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
 }
@@ -60,8 +71,31 @@ async function purgeFromTrash(page: Page, title: string) {
   await expect(row).toHaveCount(0, { timeout: 20_000 });
 }
 
+/**
+ * ☆ 进门先把这个账号的回收站清干净。
+ *
+ * 本 spec 的三处判据都吃严格模式（`getByRole('button',{name:'恢复',exact:true})` ⇒ "回收站里
+ * 只有这一行"就是断言本体），而"上一轮崩在清理之前"留下的 `B123-*` 行会永久留在共享账号里
+ * ⇒ 一轮真红之后，每一轮都红（现跑取证：restore 账号 1 行残留、legit 账号 2 行、tree 账号 3 行，
+ * 三枚标题逐字都是本 spec 自己造的 `B123-越权恢复 1791…`／`B123-合法恢复 1791…`）。
+ * ☆ 这四处账号只属于本 spec，清掉的都是本 spec 自己造的行；判据一个字不松＝清空之后仍然
+ *   只剩本轮那一行。与 `tasks-upcoming-sections.spec.ts`（G1504）同族、同改法。
+ */
+async function emptyTrash(page: Page) {
+  await page.goto('/trash');
+  const restoreButtons = page.getByRole('button', { name: '恢复', exact: true });
+  if ((await restoreButtons.count()) === 0) return;
+  await page.getByRole('button', { name: '选择', exact: true }).click();
+  await page.getByRole('checkbox', { name: '全选' }).click();
+  await page.getByRole('button', { name: '永久删除所选' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: '删除' }).click();
+  await expect(restoreButtons).toHaveCount(0, { timeout: 20_000 });
+}
+
 test('a stale 恢复 row reports the rejection instead of pretending success', async ({ page, context }) => {
+  test.setTimeout(240_000);
   await signIn(page, STALE_RESTORE);
+  await emptyTrash(page);
   const title = `B123-越权恢复 ${Date.now()}`;
   await titledDoc(page, title);
   await moveToTrash(page, title);
@@ -79,7 +113,9 @@ test('a stale 恢复 row reports the rejection instead of pretending success', a
 });
 
 test('the batch 还原 path reports the same rejection through the same signal', async ({ page, context }) => {
+  test.setTimeout(240_000);
   await signIn(page, STALE_BATCH);
+  await emptyTrash(page);
   const title = `B123-越权批量 ${Date.now()}`;
   await titledDoc(page, title);
   await moveToTrash(page, title);
@@ -154,7 +190,9 @@ test('a second tab keeps listing a row it missed, and the next poll drops it', a
 });
 
 test('the same action on a row that does exist clears the row and says nothing', async ({ page }) => {
+  test.setTimeout(240_000);
   await signIn(page, LEGIT);
+  await emptyTrash(page);
   const title = `B123-合法恢复 ${Date.now()}`;
   await titledDoc(page, title);
   await moveToTrash(page, title);

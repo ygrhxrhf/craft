@@ -84,6 +84,7 @@ test('a non-owner cannot open or join another user’s whiteboard', async ({ bro
 });
 
 test('the owner can grant read-only access from the info panel', async ({ browser }) => {
+  test.setTimeout(300_000);
   const ownerCtx = await browser.newContext();
   const ownerPage = await ownerCtx.newPage();
   await login(ownerPage, OWNER);
@@ -111,16 +112,27 @@ test('the owner can grant read-only access from the info panel', async ({ browse
   await ownerPage.getByRole('button', { name: '信息' }).first().click();
   await ownerPage.getByLabel('协作者邮箱').fill(INTRUDER.email);
   await ownerPage.getByLabel('新增协作者权限').selectOption('viewer');
-  await ownerPage.getByRole('button', { name: '添加', exact: true }).click();
+  // ☆ 这一枚以前写的是 `getByRole('button',{name:'添加',exact:true})`＝严格模式两枚命中：
+  //   同一个信息面板里标签段也有一枚「添加」。真缺陷在产品面（两枚同名按钮，读屏听不出区别），
+  //   改法＝给协作者那枚补可及名 `添加协作者`（`MembersSection.tsx:199`），断言按名寻址。
+  await ownerPage.getByLabel('添加协作者').click();
   await expect(
     ownerPage.getByLabel(`移除协作者 ${INTRUDER.email}`)
   ).toBeVisible({ timeout: 20_000 });
 
   // Granted read access: the body renders and the editor refuses writes.
-  await intruderPage.goto(`/documents/${documentId}`);
+  //
+  // ☆ 为什么"别人能不能打开这篇文档"必须 `toPass` 而不是读一次：授权这一笔现在走内核
+  //   （`MembersSection.tsx:64` 的 `applyLocal`）⇒ 上面那行 `移除协作者 …` 出现，只证明**本机**
+  //   镜像改好了，服务端那一行还要等去抖推送（DEBOUNCE=2000）＋一次 RTT。官方是即时生效的，
+  //   这段窗口就是产品洞，已单列成台账一行；本 spec 判的是"最终授权成立"，每一趟都是被授权人
+  //   自己的上下文整页重载 + 服务端鉴权，本机乐观状态进不了判定。
   const body = intruderPage.locator('.ProseMirror').first();
-  await expect(body).toContainText(marker);
-  await expect(body).toHaveAttribute('contenteditable', 'false');
+  await expect(async () => {
+    await intruderPage.goto(`/documents/${documentId}`);
+    await expect(body).toContainText(marker);
+    await expect(body).toHaveAttribute('contenteditable', 'false');
+  }).toPass({ timeout: 60_000, intervals: [2_000] });
 
   const tokenRes = await intruderPage.request.post('/api/collab/token', {
     data: { documentId },
@@ -133,8 +145,12 @@ test('the owner can grant read-only access from the info panel', async ({ browse
   // Revoking takes the page away again on the next load.
   await ownerPage.getByLabel(`移除协作者 ${INTRUDER.email}`).click();
   await expect(ownerPage.getByLabel(`移除协作者 ${INTRUDER.email}`)).toHaveCount(0);
-  await intruderPage.goto(`/documents/${documentId}`);
-  await intruderPage.waitForURL(/\/documents$/);
+  // ☆ 撤销同样是内核写入 ⇒ 服务端那一行也要等推送。这条不是"空过"＝上面那一趟已经证明他被授权时
+  //   **打得开**（正文里读到本轮 marker），这里等的是同一枚判据反向翻面。
+  await expect(async () => {
+    await intruderPage.goto(`/documents/${documentId}`);
+    await expect(intruderPage).toHaveURL(/\/documents$/);
+  }).toPass({ timeout: 60_000, intervals: [2_000] });
 
   await ownerCtx.close();
   await intruderCtx.close();

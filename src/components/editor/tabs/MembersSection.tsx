@@ -196,6 +196,7 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
             type="button"
             onClick={() => void handleAdd()}
             disabled={busy || !email.trim()}
+            aria-label="添加协作者"
             className="h-7 shrink-0 rounded-md border border-input px-2 text-[11px] transition-colors hover:bg-muted disabled:opacity-50"
           >
             {busy ? <Loader2 className="size-3 animate-spin" /> : '添加'}

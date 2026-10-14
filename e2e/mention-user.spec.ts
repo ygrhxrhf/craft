@@ -48,7 +48,9 @@ async function invite(page: Page, account: Account) {
   await page.getByRole('button', { name: '信息', exact: true }).click();
   const emailBox = page.locator('input[aria-label="协作者邮箱"]');
   await emailBox.fill(account.email);
-  await page.getByRole('button', { name: '添加', exact: true }).click();
+  // ☆ 按可及名寻址（`MembersSection.tsx:199`）：信息面板里标签段也有一枚「添加」，
+  //   以前这行的 `getByRole('button',{name:'添加',exact:true})` 是严格模式两枚命中。
+  await page.getByLabel('添加协作者').click();
   await expect(page.getByText(account.name).first()).toBeVisible();
   await page.getByRole('button', { name: '关闭编辑器工具面板' }).click();
 }

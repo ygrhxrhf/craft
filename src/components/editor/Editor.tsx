@@ -54,6 +54,7 @@ import { InlineMath } from './extensions/math-inline';
 import { Mention } from './extensions/mention';
 import { BlockLink } from './extensions/block-link';
 import { BlockId } from './extensions/block-id';
+import { TaskItemId } from './extensions/task-id';
 import { BlockEmoji } from './extensions/block-emoji';
 import { MirrorBlock } from './extensions/mirror-block';
 import { BlockLinkSuggestion } from './extensions/block-link-suggestion';
@@ -103,6 +104,9 @@ function collectTaskItems(content: unknown): { taskId: string; title: string; is
     if (node.type === 'taskItem' && Array.isArray(node.content)) {
       const title = node.content.map(pmNodeText).join(' ').trim();
       if (title) {
+        // 真源＝文档里那枚 `taskId`（`extensions/task-id.ts` 在同一批事务里钉好）。
+        // 这里的兜底只服务"正文来自一枚没跑过该插件的旧文档"这一档：临时副本上补一枚，
+        // 让这一趟投影有个键可对账，但下次保存仍会由插件写回文档而稳定下来。
         const taskId = typeof node.attrs?.taskId === 'string' && node.attrs.taskId
           ? node.attrs.taskId
           : crypto.randomUUID();
@@ -182,6 +186,44 @@ export function Editor({
     onSaveStateChange?.(state);
   }, [onSaveStateChange]);
 
+  /**
+   * 反链与任务行这两张派生表谁都不许把"保存"本身拖下水，但也不能**静默**失败：一台拿着旧契约的
+   * dev server 会让 `syncDocumentTasks` 整批 500（`Unknown column "cancelledAt"`），而屏上一直写着
+   * 「已保存」⇒ 本机库里 `documentId` 非空的任务行数＝0 这件事从来没人看得见（G1497 的教训）。
+   * ☆ 但这两张表是**另一张账**：正文行已经写进去了，就不能因为派生表没跟上而报「这版没保存」——
+   *   那会把 `onUpdate`（标题/字数回灌）与 `deleteDraft` 一起扣下，把成功说成失败。
+   *   所以正文的账照常结，派生表的失败单独记一枚脏标 ⇒ 徽标翻红，「重试」在没有 pending 时只补跑
+   *   派生表那一路（不清脏标＝徽标一直红着，用户不会误以为已经同步好）。
+   */
+  const derivedDirtyRef = useRef<{ content: unknown } | null>(null);
+
+  const syncDerivedTables = async (content: unknown): Promise<boolean> => {
+    const results = await Promise.allSettled([
+      syncBacklinks(documentId, collectLinkedDocIds(content)),
+      syncDocumentTasks(documentId, collectTaskItems(content)),
+    ]);
+    const failed = results.filter((one): one is PromiseRejectedResult => one.status === 'rejected');
+    for (const failure of failed) console.error('[save] 派生表同步失败', failure.reason);
+    return failed.length === 0;
+  };
+
+  const applyDerivedOutcome = (content: unknown, ok: boolean): void => {
+    derivedDirtyRef.current = ok ? null : { content };
+    setSaveState(ok ? 'saved' : 'error');
+  };
+
+  const retryDerived = async (): Promise<void> => {
+    const dirty = derivedDirtyRef.current;
+    if (!dirty) return;
+    setSaveState('saving');
+    if (await syncDerivedTables(dirty.content)) {
+      derivedDirtyRef.current = null;
+      setSaveState('saved');
+    } else {
+      setSaveState('error');
+    }
+  };
+
   const savePending = async () => {
     const pending = pendingRef.current;
     if (!pending || savingRef.current || pending.contentStr === lastSavedRef.current) return;
@@ -194,14 +236,11 @@ export function Editor({
         // into Document.content. Writing that row from every open tab is what
         // used to clobber newer edits with a stale full-document overwrite, so
         // only the side tables that nothing else derives are synced here.
+        const synced = await syncDerivedTables(pending.content);
         lastSavedRef.current = pending.contentStr;
         pendingRef.current = null;
-        setSaveState('saved');
         onUpdate?.(pending.content, pending.plainText, pending.wordCount);
-        await Promise.allSettled([
-          syncBacklinks(documentId, collectLinkedDocIds(pending.content)),
-          syncDocumentTasks(documentId, collectTaskItems(pending.content)),
-        ]);
+        applyDerivedOutcome(pending.content, synced);
         return;
       }
 
@@ -211,21 +250,12 @@ export function Editor({
         wordCount: pending.wordCount,
       });
       if (pending.revision >= revisionRef.current) {
+        const synced = await syncDerivedTables(pending.content);
         lastSavedRef.current = pending.contentStr;
         pendingRef.current = null;
-        setSaveState('saved');
         onUpdate?.(pending.content, pending.plainText, pending.wordCount);
         void deleteDraft(documentId).catch(() => {});
-      }
-      try {
-        await syncBacklinks(documentId, collectLinkedDocIds(pending.content));
-      } catch {
-        // backlink sync must never block saving
-      }
-      try {
-        await syncDocumentTasks(documentId, collectTaskItems(pending.content));
-      } catch {
-        // task sync must never block saving
+        applyDerivedOutcome(pending.content, synced);
       }
     } catch {
       setSaveState('error');
@@ -452,6 +482,7 @@ export function Editor({
       Mention,
       BlockLink,
       BlockId,
+      TaskItemId,
       BlockEmoji,
       MirrorBlock.configure({ hostDocumentId: documentId }),
       BlockLinkSuggestion,
@@ -625,9 +656,13 @@ export function Editor({
   }, [editor, locked, documentId, setSaveState, collaborative, collabState, collabDoc, initialContent]);
 
   useEffect(() => {
-    if (editor && !locked) onSaveNowReady?.(() => { void savePending(); });
+    // 「重试」那枚按钮：还有没写出去的正文就整趟重跑；正文已经落地、只有派生表欠着，就只补派生表。
+    if (editor && !locked) onSaveNowReady?.(() => {
+      if (pendingRef.current) void savePending();
+      else void retryDerived();
+    });
     return () => onSaveNowReady?.(null);
-  }, [editor, onSaveNowReady, locked, savePending]);
+  }, [editor, onSaveNowReady, locked, savePending, retryDerived]);
 
   useEffect(() => {
     if (!editor || locked) return;

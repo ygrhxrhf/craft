@@ -5,6 +5,15 @@ import { expect, test, type Page } from '@playwright/test';
 // 重命名走侧栏 FolderTreeItem 的右键菜单（Base UI ContextMenu）→ 行内 input。
 const OWNER = { email: 'craft-test@example.com', password: 'test1234' };
 
+/**
+ * 新建文件夹的默认名。真源＝`src/lib/document/untitled-copy.ts` 的 `UNTITLED_FOLDER`
+ * （`QuickActions.createFolderLocal` 显式传它）＝「无标题文件夹」。
+ * ☆ 本行此前写「未命名文件夹」＝数据库列 `folders.name` 的 `@default`（`contract.prisma:34`），
+ * 那条默认值在 UI 通路上永远走不到（所有建夹入口都显式带名）⇒ 这两枚字符串不是同一个东西，
+ * 拿列默认值当屏上判据的两条 sync 测因此整条红在第一步（取证见 gap.md 第 191 批）。
+ */
+const UNTITLED = '无标题文件夹';
+
 // 全量套件负载下：登录/树重载的 server action 会排队（attempt-7 在 login 处
 // 撞上默认 120s test timeout），而收敛断言本身就要兜底——整测给 600s。
 // task-14 run-2/3 实测：双 context 下首屏文件夹树 ~31s 才就绪；run-4 探针实测
@@ -69,13 +78,22 @@ async function gotoDocuments(page: Page) {
   throw new Error('folder tree never became ready');
 }
 
+/**
+ * 侧栏里那一枚文件夹行。
+ * ☆ 必须用**子串**匹配，不许 `exact: true`：`FolderTreeItem` 现在把文档数渲染成行内的第二个
+ * generic，可访问名因此是「`<名> N 个文档`」——精确匹配永远取不到元素（`element(s) not found`），
+ * 这两条 sync 测本轮红在"重命名之后看不见"就是这个形状，与同步内核无关。
+ * 本 spec 用到的名字一律带 `Date.now()` 戳，子串不会撞车。
+ */
+function folderRow(page: Page, name: string) {
+  return page.locator('aside').getByRole('button', { name });
+}
+
 /** QuickActions 的「新建文件夹」→ 侧栏出现新行（默认名）。按计数 +1 断言，避免存量行干扰。 */
 async function createFolder(page: Page) {
-  const before = await page.locator('aside').getByRole('button', { name: '未命名文件夹' }).count();
+  const before = await folderRow(page, UNTITLED).count();
   await page.getByRole('button', { name: '新建文件夹' }).click();
-  await expect(
-    page.locator('aside').getByRole('button', { name: '未命名文件夹' })
-  ).toHaveCount(before + 1, { timeout: 60_000 });
+  await expect(folderRow(page, UNTITLED)).toHaveCount(before + 1, { timeout: 60_000 });
 }
 
 /**
@@ -84,9 +102,9 @@ async function createFolder(page: Page) {
  * 或提交在重渲染中丢失——表现为 Enter 后新名不出现（attempt-5 test2 实测）。
  */
 async function renameFolder(page: Page, fromName: string, toName: string, opts?: { skipLocalAssert?: boolean }) {
-  const target = page.locator('aside').getByRole('button', { name: toName, exact: true });
+  const target = folderRow(page, toName);
   for (let attempt = 1; attempt <= 2; attempt++) {
-    await page.locator('aside').getByRole('button', { name: fromName }).last().click({ button: 'right' });
+    await folderRow(page, fromName).last().click({ button: 'right' });
     await page.getByRole('menuitem', { name: '重命名' }).click();
     // 行内重命名是唯一可见 textbox（aside 里另有 2 个 hidden input）
     const input = page.locator('aside').getByRole('textbox');
@@ -123,19 +141,19 @@ test('双端改元数据 5 秒内互见', async ({ browser }) => {
   // (a) 新建：A 落库（flushNow 直推）→ B 侧栏 +1 行
   // 45s：全量 e2e 套件负载下 B 的 SSE 可能退化 → 30s 轮询兜底（poller 30_000ms），
   // 加上树重载的 server action 延迟，20s 不够（attempt-6 实测失败）。
-  const before = await pageB.locator('aside').getByRole('button', { name: '未命名文件夹' }).count();
+  const before = await folderRow(pageB, UNTITLED).count();
   await createFolder(pageA);
   await expect(
-    pageB.locator('aside').getByRole('button', { name: '未命名文件夹' })
+    folderRow(pageB, UNTITLED)
   ).toHaveCount(before + 1, { timeout: 120_000 });
 
   // (b) 改名（改元数据）：A commit → B 互见。
   // spec 9.4 目标 5s（见下方断言处的实测偏差与 CONFLICT 说明）——外层 120s 只是
   // 防 flake 预算天花板，实际耗时在可见瞬间捕获后强制断言。
-  await renameFolder(pageA, '未命名文件夹', folderName);
+  await renameFolder(pageA, UNTITLED, folderName);
   const t0 = Date.now();
   await expect(
-    pageB.locator('aside').getByRole('button', { name: folderName, exact: true })
+    folderRow(pageB, folderName)
   ).toBeVisible({ timeout: 120_000 });   // 外层仅作防 flake 天花板
   const convergeMs = Date.now() - t0;    // 可见瞬间捕获的真实收敛耗时
   console.log(`[sync-e2e] rename convergence A→B: ${convergeMs}ms`);
@@ -168,9 +186,9 @@ test('断网编辑恢复后 10s 内双端收敛', async ({ browser }) => {
 
   // 前置：在线建夹并改名，B 见到种子名（证明链路健康后再断网）
   await createFolder(pageA);
-  await renameFolder(pageA, '未命名文件夹', seedName);
+  await renameFolder(pageA, UNTITLED, seedName);
   await expect(
-    pageB.locator('aside').getByRole('button', { name: seedName, exact: true })
+    folderRow(pageB, seedName)
   ).toBeVisible({ timeout: 120_000 });
 
   // A 断网 → 离线改名（applyLocal 只落 IDB，不发请求）
@@ -186,10 +204,10 @@ test('断网编辑恢复后 10s 内双端收敛', async ({ browser }) => {
   const tRecover = Date.now();
   await contextA.setOffline(false);
   await expect(
-    pageA.locator('aside').getByRole('button', { name: offlineName, exact: true })
+    folderRow(pageA, offlineName)
   ).toBeVisible({ timeout: 120_000 });
   await expect(
-    pageB.locator('aside').getByRole('button', { name: offlineName, exact: true })
+    folderRow(pageB, offlineName)
   ).toBeVisible({ timeout: 120_000 });
   const recoverMs = Date.now() - tRecover;
   console.log(`[sync-e2e] offline recovery convergence: ${recoverMs}ms`);

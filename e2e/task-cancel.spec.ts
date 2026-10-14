@@ -5,10 +5,10 @@ import { expect, test, type Page } from '@playwright/test';
  * 进入它的两条通路都在文档里：`⌘⌥⇧T` / `Ctrl-Alt-Shift-T`（`keyboard.md:116`）与拖拽把手菜单那枚
  * 「将任务标记为已取消」。屏上形态＝"保留原位、只加删除线"（`interactions.md:1087`），
  * 任务页上它属于 pending 之外的那一档（`api-contract.md:36`）——三条都在这里真的走一遍浏览器。
- * 这里只验**文档侧**那三条（键、菜单、正文真源落库）。任务页那一侧的取消分区只有行数据到得了
- * 才谈得上，而"正文的待办 → tasks 行"这条路在真浏览器里从来没通过：本机库
- * `select count(*) from tasks where "documentId" is not null` ＝ 0，POST 文档路由那次 server
- * action 返 500（新条 **G1497**）。所以投影现在由 `src/actions/task/task.test.ts` 钉住，不在这里假验。
+ * 任务页那一侧（第三档分区＋默认只显示 pending）由第三条验——"正文的待办 → `tasks` 行"这条路
+ * 在真浏览器里是**通**的（`/tasks/all` 上能数到行；☆ 上一轮记成的"整库 0 行＋POST 500"是这台机器上
+ * 那枚 dev server 早于 `contract emit` 启动、内存里还拿着旧契约 ⇒ `Unknown column "cancelledAt"`，
+ * 见 G1497 的改判）。
  */
 const email = 'craft-task-cancel@example.com';
 const password = 'test1234';
@@ -133,4 +133,38 @@ test('拖拽把手菜单在 taskList 的行上点得到，标签会翻成「取�
   await third.getByRole('menuitem', { name: '将任务标记为已取消' }).click();
   await expect.poll(() => cancelledAttr(page)).toEqual([true, false]);
   await waitSaved(page);
+});
+
+test('任务页：正文那一行取消后，它离开未办那节、回到「已取消」分区（api-contract.md:36）', async ({
+  page,
+}) => {
+  await signIn(page);
+  const stamp = Date.now();
+  // 两行都用同一个前缀，页面上一切断言都锚在标题上——这个账号里躺着前几轮的残留行。
+  const cancelledTitle = `戊 ${stamp}`;
+  const pendingTitle = `己 ${stamp}`;
+  await newDocWithTwoTasks(page, cancelledTitle, pendingTitle);
+  await clickRow(page, 0);
+  const menu = await openBlockMenu(page, 0);
+  await menu.getByRole('menuitem', { name: '将任务标记为已取消' }).click();
+  await expect.poll(() => cancelledAttr(page)).toEqual([true, false]);
+  await waitSaved(page);
+
+  // 默认只显示 pending：取消行没勾，但它不算未办（`isCompleted` 那一枚兜不住这一档）。
+  await page.goto('/tasks/all');
+  await expect(page.getByText(pendingTitle, { exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText(cancelledTitle, { exact: true })).toHaveCount(0);
+
+  await page.getByLabel('显示已完成的任务').click();
+  const section = page
+    .locator('section')
+    .filter({ has: page.getByRole('heading', { level: 2, name: /^已取消 · \d+$/ }) })
+    .first();
+  await expect(section).toBeVisible();
+  await expect(section.getByText(cancelledTitle, { exact: true })).toBeVisible();
+  await expect(section.getByText(pendingTitle, { exact: true })).toHaveCount(0);
+
+  // 官方第二句词 `tasks.canceled.on`「已于 [0] 取消」＝悬停那句，且只有拿到时间戳才说得出。
+  const badge = section.getByText('已取消', { exact: true }).first();
+  expect(await badge.getAttribute('title')).toMatch(/^已于 .+ 取消$/);
 });

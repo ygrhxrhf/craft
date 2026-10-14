@@ -9,8 +9,11 @@ const source = (relative: string) =>
   readFileSync(new URL(`../../${relative}`, import.meta.url), 'utf8');
 
 describe('the untitled split is wired', () => {
-  it('the top bar shows the page wording', () => {
-    expect(source('components/editor/EditorHeader.tsx')).toContain("untitledFor('topBar')");
+  it('the top bar shows the page wording for the title itself', () => {
+    const header = source('components/editor/EditorHeader.tsx');
+    expect(header).toContain("untitledFor('topBar')");
+    // ...while the empty input keeps its own collected placeholder (V15).
+    expect(header).toContain('placeholder="页面标题"');
   });
 
   it('the sidebar row shows the document wording for an empty title', () => {

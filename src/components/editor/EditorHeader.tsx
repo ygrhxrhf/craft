@@ -54,7 +54,9 @@ export function EditorHeader({
             <span className="mt-1 flex size-10 shrink-0 items-center justify-center text-2xl">
               {icon || '📄'}
             </span>
-            <h1 className="flex-1 font-serif text-3xl font-normal italic break-words">{title}</h1>
+            <h1 className="flex-1 font-serif text-3xl font-normal italic break-words">
+              {title || untitledFor('topBar')}
+            </h1>
           </>
         ) : (
           <>
@@ -80,7 +82,7 @@ export function EditorHeader({
           type="text"
           value={draftTitle ?? ''}
           onChange={(e) => setDraftTitle(e.target.value)}
-          placeholder={untitledFor('topBar')}
+          placeholder="页面标题"
           className="flex-1 bg-transparent font-serif text-3xl font-normal italic outline-none placeholder:text-muted-foreground/50"
         />
           </>

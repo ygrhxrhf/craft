@@ -1,4 +1,4 @@
-import { chromium, type Browser, type Page } from '@playwright/test';
+import { chromium, expect, type Browser, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -52,13 +52,21 @@ async function expectSaved(page: Page) {
   await page.waitForTimeout(500);
 }
 
-async function ensureDocument(page: Page) {
+async function ensureDocument(browser: Browser, page: Page) {
   await page.goto('/documents');
   const existing = page.locator(`a:has-text("${FIXTURE.doc}")`).first();
   if (await existing.count()) {
-    // Seeded already. Never touch the body again: the editor fills in from Yjs
-    // asynchronously, so "does it contain the text?" can read empty and re-type.
-    await page.goto((await existing.getAttribute('href'))!);
+    const href = (await existing.getAttribute('href'))!;
+    // Seeded already — but "already" may only cover the metadata row. The body's
+    // truth-source is the Yjs doc, and that write leaves over the collab socket on
+    // its own schedule, so a run that closed the browser early can leave a titled,
+    // empty document behind (that is exactly what the fixture was). Re-typing is
+    // gated on a FRESH session reading no body, which is also what keeps this from
+    // duplicating text the current client has merely not hydrated yet.
+    if (!(await hasBodyOnServer(browser, href))) {
+      await page.goto(href);
+      await typeBody(browser, page);
+    }
     return;
   }
 
@@ -67,13 +75,30 @@ async function ensureDocument(page: Page) {
   await page.locator('input[placeholder="页面标题"]').fill(FIXTURE.doc);
   // The header debounces the title save by 500ms.
   await page.waitForTimeout(1_200);
+  await typeBody(browser, page);
+}
+
+async function typeBody(browser: Browser, page: Page) {
   const body = page.locator('[contenteditable="true"]').first();
   await body.click();
   // `fill` writes the DOM directly and ProseMirror reconciles that as a bulk
   // mutation, which leaves thousands of empty paragraphs behind in the Yjs doc.
   await page.keyboard.type(FIXTURE.docBody, { delay: 12 });
   await expectSaved(page);
+  const href = new URL(page.url()).pathname;
+  await expectOnServer(browser, `the fixture body on ${href}`, (check) => hasBody(check, href));
 }
+
+function hasBody(page: Page, href: string) {
+  return page
+    .goto(href)
+    .then(() => expect(page.locator('.ProseMirror').first()).toContainText(FIXTURE.docBody, { timeout: 10_000 }))
+    .then(() => true)
+    .catch(() => false);
+}
+
+const hasBodyOnServer = (browser: Browser, href: string) =>
+  readOnServer(browser, (page) => hasBody(page, href));
 
 async function ensureCollection(page: Page) {
   await page.goto('/collections');
@@ -104,7 +129,10 @@ async function ensureBoard(browser: Browser, page: Page) {
   await page.waitForURL(/\/whiteboards\//);
   await page.locator('input[aria-label="白板名称"]').fill(FIXTURE.board);
   await page.keyboard.press('Enter');
-  await expectOnServer(browser, FIXTURE.board, '/whiteboards');
+  await expectOnServer(browser, `"${FIXTURE.board}" on /whiteboards`, async (check) => {
+    await check.goto('/whiteboards');
+    return (await check.locator(`a:has-text("${FIXTURE.board}")`).count()) > 0;
+  });
 }
 
 /**
@@ -119,26 +147,25 @@ async function ensureBoard(browser: Browser, page: Page) {
  * the local pending overlay. Failing loudly here is the point — a seed that
  * silently no-ops turns the whole visual matrix into a diff against junk data.
  */
-async function expectOnServer(browser: Browser, title: string, listPath: string) {
-  const deadline = Date.now() + 40_000;
-  let reason = 'never signed in';
+async function readOnServer<T>(browser: Browser, read: (page: Page) => Promise<T>): Promise<T> {
+  const context = await browser.newContext({ baseURL: BASE_URL, viewport: { width: 1440, height: 900 } });
+  try {
+    const page = await context.newPage();
+    page.setDefaultTimeout(30_000);
+    if (!(await signIn(page))) throw new Error('visual seed: fresh session could not sign in');
+    return await read(page);
+  } finally {
+    await context.close();
+  }
+}
+
+async function expectOnServer(browser: Browser, what: string, read: (page: Page) => Promise<boolean>) {
+  const deadline = Date.now() + 60_000;
   while (Date.now() < deadline) {
-    const context = await browser.newContext({ baseURL: BASE_URL, viewport: { width: 1440, height: 900 } });
-    try {
-      const check = await context.newPage();
-      check.setDefaultTimeout(30_000);
-      if (await signIn(check)) {
-        await check.goto(listPath);
-        if (await check.locator(`a:has-text("${title}")`).count()) return;
-        reason = `no "${title}" link on ${listPath}`;
-      }
-      await check.close();
-    } finally {
-      await context.close();
-    }
+    if (await readOnServer(browser, read)) return;
     await new Promise((resolve) => setTimeout(resolve, 2_000));
   }
-  throw new Error(`visual seed: "${title}" never reached the server (${reason})`);
+  throw new Error(`visual seed: ${what} never reached the server`);
 }
 
 export default async function globalSetup() {
@@ -152,7 +179,7 @@ export default async function globalSetup() {
       if (!(await signIn(page))) throw new Error('visual seed: could not sign in');
     }
 
-    await ensureDocument(page);
+    await ensureDocument(browser, page);
     await ensureCollection(page);
     await ensureBoard(browser, page);
 

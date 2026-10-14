@@ -89,7 +89,10 @@ async function expectThemeApplied(page: Page, name: string) {
 async function shoot(page: Page, name: string) {
   // Several pages mount a client shell that paints 加载中 first; shooting then puts
   // the whole page out of place. `toBeHidden` also passes when nothing matches.
-  await expect(page.getByText('加载中').first()).toBeHidden();
+  // 45s rather than the 20s pixel budget: this is a hydration wait, not an
+  // assertion about the product -- a cold `next dev` boot plus a contended CPU was
+  // measured holding the sidebar's four trees at 加载中… for over 20s once.
+  await expect(page.getByText('加载中').first()).toBeHidden({ timeout: 45_000 });
   await page.waitForTimeout(350);
   await expectIndicatorIdle(page);
   await expectThemeApplied(page, name);
@@ -166,6 +169,12 @@ for (const theme of ['light', 'dark'] as const) {
         // The header label flips 已保存 → 保存中... → 已保存 while the autosave and
         // the Yjs attach settle, and the label is wider in one of those states.
         await expect(page.getByText('已保存', { exact: true })).toBeVisible();
+        // 已保存 is the *metadata* round-trip, not the body. The editor paints its
+        // empty first frame and fills from the doc afterwards, so a shot taken on
+        // that frame shows the `输入 / 使用命令…` placeholder -- and on a 1440x900
+        // frame a one-line body is under the 2% budget, which is how the desktop
+        // baseline ended up storing an empty document. Wait for the body itself.
+        await expect(page.locator('.ProseMirror').first()).toContainText(FIXTURE.docBody);
         await shoot(page, name);
       }
 

@@ -3,9 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Calendar as CalendarIcon, CheckSquare, FileText } from 'lucide-react';
+import { Calendar as CalendarIcon, FileText } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
-import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from 'cn';
 import { createTask, getTasks, toggleTask } from '@/actions/task/task';
 import { useSession } from 'next-auth/react';
@@ -17,10 +16,12 @@ import { getDailyNotes } from '@/actions/daily-notes/daily-notes';
 import type { DailyNoteItem } from '@/actions/daily-notes/daily-notes';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
+import { CalendarTaskRow } from '@/components/calendar/CalendarTaskRow';
+import { CalendarTimeline } from '@/components/calendar/CalendarTimeline';
 import { applyCompletedFilter } from '@/lib/task/grouping';
 import { agendaDays, revealPreviousDays } from '@/lib/calendar/previous-days';
 import { dayInSpan, spanOf, type CalendarSpan } from '@/lib/calendar/week-view';
-import { isOverdue, overdueLabel } from '@/lib/task/overdue';
+import { SHOW_MONTH_VIEW } from '@/lib/calendar/timeline-copy';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 
 export default function CalendarPage() {
@@ -34,6 +35,10 @@ export default function CalendarPage() {
   const [selected, setSelected] = useState<Date | undefined>(new Date());
   const [showCompleted, setShowCompleted] = useState(false);
   const [span, setSpan] = useState<CalendarSpan>('month');
+  // 官方把日历页做成纵向按日时间轴，月格只是另一个视图（G43），所以时间轴是默认视图。
+  const [view, setView] = useState<'timeline' | 'grid'>('timeline');
+  const [laterMonths, setLaterMonths] = useState(0);
+  const today = useMemo(() => new Date(), []);
 
   const load = useCallback(async () => {
     try {
@@ -80,11 +85,11 @@ export default function CalendarPage() {
 
   const [creating, setCreating] = useState(false);
   const [earlierDays, setEarlierDays] = useState(0);
-  const createNote = async () => {
-    if (!selected || creating) return;
+  const createNote = async (day: Date) => {
+    if (creating) return;
     setCreating(true);
     try {
-      const note = await getOrCreateDayNote(selected);
+      const note = await getOrCreateDayNote(day);
       router.push(`/documents/${note.id}`);
     } finally {
       setCreating(false);
@@ -92,13 +97,12 @@ export default function CalendarPage() {
   };
 
   const [addingTask, setAddingTask] = useState(false);
-  const addTask = async () => {
-    const title = taskTitle.trim();
-    if (!selected || !title || addingTask) return;
+  const addTask = async (day: Date, title: string) => {
+    if (!title || addingTask) return;
     setAddingTask(true);
     try {
       const id = crypto.randomUUID();
-      const dueDate = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), 9).toISOString();
+      const dueDate = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9).toISOString();
       const userId = session?.user?.id;
       if (userId) {
         const manager = getSyncManager();
@@ -127,8 +131,35 @@ export default function CalendarPage() {
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title="日历" actions={<ShowCompletedToggle onChange={setShowCompleted} />} />
       <AppPageContainer className="max-w-4xl">
+        {/* 视图切换放在正文里而不是页头：手机上页头只有标题＋一个开关的宽度，
+            再加一枚带字的按钮会把标题挤掉（截图里 日历 被截成半个字）。 */}
+        <div className="mb-3 flex justify-end">
+          <button
+            type="button"
+            aria-pressed={view === 'grid'}
+            onClick={() => setView(view === 'timeline' ? 'grid' : 'timeline')}
+            className="rounded-md border border-border px-3 py-1 text-sm text-foreground/70 hover:bg-muted/60"
+          >
+            {/* 「显示月视图」是目录里的原话；反方向的「显示时间轴」本地补名，官方没有对应键。 */}
+            {view === 'timeline' ? SHOW_MONTH_VIEW : '显示时间轴'}
+          </button>
+        </div>
         {loading ? (
           <p className="text-sm text-muted-foreground">加载中…</p>
+        ) : view === 'timeline' ? (
+          <CalendarTimeline
+            anchor={selected ?? today}
+            today={today}
+            tasks={applyCompletedFilter(tasks, showCompleted)}
+            notes={notes}
+            earlierDays={earlierDays}
+            laterMonths={laterMonths}
+            onShowPreviousDays={() => setEarlierDays(revealPreviousDays)}
+            onShowNextMonth={() => setLaterMonths((shown) => shown + 1)}
+            onToggleTask={(id) => void handleToggle(id)}
+            onAddTask={addTask}
+            onCreateNote={(day) => void createNote(day)}
+          />
         ) : (
           <div className="flex flex-col gap-6 lg:flex-row">
             <div className="shrink-0 rounded-lg border border-border p-3">
@@ -225,7 +256,7 @@ export default function CalendarPage() {
                   className="mb-3 flex gap-2"
                   onSubmit={(event) => {
                     event.preventDefault();
-                    void addTask();
+                    if (selected) void addTask(selected, taskTitle.trim());
                   }}
                 >
                   <input
@@ -247,7 +278,7 @@ export default function CalendarPage() {
               {!selectedNote && (
                 <button
                   type="button"
-                  onClick={() => void createNote()}
+                  onClick={() => selected && void createNote(selected)}
                   disabled={creating}
                   className="mb-3 rounded-md border border-border px-3 py-1.5 text-sm text-foreground/70 hover:bg-muted/60 disabled:opacity-50"
                 >
@@ -285,34 +316,7 @@ export default function CalendarPage() {
                   )}
 
                   {selectedTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/60"
-                    >
-                      <Checkbox
-                        checked={task.isCompleted}
-                        onCheckedChange={() => handleToggle(task.id)}
-                      />
-                      <span
-                        className={cn(
-                          'flex-1 truncate text-sm',
-                          task.isCompleted && 'text-muted-foreground line-through'
-                        )}
-                      >
-                        {task.title}
-                        {task.dueDate && isOverdue(task.dueDate, task.isCompleted) && (
-                          <span className="ml-2 text-xs text-destructive">{overdueLabel(task.dueDate)}</span>
-                        )}
-                      </span>
-                      {task.documentId && (
-                        <Link
-                          href={`/documents/${task.documentId}`}
-                          className="shrink-0 text-muted-foreground hover:text-foreground"
-                        >
-                          <CheckSquare className="size-4" />
-                        </Link>
-                      )}
-                    </div>
+                    <CalendarTaskRow key={task.id} task={task} onToggle={handleToggle} />
                   ))}
                 </div>
               )}

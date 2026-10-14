@@ -1,7 +1,30 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { SYNC_TABLES } from './tables';
 
+/**
+ * `gap.md` G03 的教训：设置面板的开关是乐观绘制＋`applyLocal`，而 `applyLocal` 的
+ * payload 在服务端与 `def.cols` **求交**——白名单漏一列，那一列就在两个方向上都永远
+ * 到不了库，屏上却已经改完了。这条闸从 `Preferences` 那个类型里现读键名，
+ * 所以"加了偏好列忘了加白名单"从下一次起当场红（此前 `user` 那行从没被钉过）。
+ */
+function preferenceColumns(): string[] {
+  const src = readFileSync(join(process.cwd(), 'src', 'actions', 'user', 'preferences.ts'), 'utf8');
+  const block = /export type Preferences = \{([\s\S]*?)\n\};/.exec(src);
+  if (!block) throw new Error('找不到 Preferences 类型＝判据失效，请复核这条闸');
+  return [...block[1].matchAll(/^\s*(\w+)\s*:/gm)].map((m) => m[1]);
+}
+
 describe('SYNC_TABLES coverage (R-9)', () => {
+  it('user 的白名单覆盖设置面板能写的每一列偏好（G03）', () => {
+    const user = SYNC_TABLES.find((d) => d.table === 'user');
+    expect(user).toBeDefined();
+    const prefs = preferenceColumns();
+    expect(prefs.length).toBeGreaterThanOrEqual(6);
+    for (const col of prefs) expect(user!.cols, `${col} 不在 user.cols ⇒ 它永远出不了这台设备`).toContain(col);
+  });
+
   it('注册 whiteboard 表：tsCol=metaUpdatedAt，payload 排除 data', () => {
     const wb = SYNC_TABLES.find(d => d.table === 'whiteboard');
     expect(wb).toBeDefined();

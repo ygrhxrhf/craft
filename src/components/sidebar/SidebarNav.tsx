@@ -9,14 +9,17 @@ import {
   CheckSquare,
   FileText,
   Home,
+  Inbox,
   LayoutTemplate,
   Trash2,
 } from 'lucide-react';
 import { cn } from 'cn';
+import { UNSORTED_TITLE } from '@/lib/browse/official-copy';
 
 const navItems = [
   { href: '/documents', label: '首页', icon: Home },
   { href: '/favorites', label: '收藏', icon: Star },
+  { href: '/inbox', label: UNSORTED_TITLE, icon: Inbox },
   { href: '/recent', label: '最近', icon: Clock },
   { href: '/daily-notes', label: '日记', icon: FileText },
   { href: '/tasks', label: '任务', icon: CheckSquare },

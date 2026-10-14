@@ -13,12 +13,20 @@ import {
   formatDocCount,
   GET_CRAFT_PLUS,
   GET_CRAFT_PLUS_KEY,
+  INBOX_DESC,
+  INBOX_DESC_KEY,
+  INBOX_EMPTY,
+  INBOX_EMPTY_KEY,
+  MOVE_TO,
+  MOVE_TO_KEY,
   NO_DOCUMENTS,
   NO_DOCUMENTS_KEY,
   STARRED_EMPTY,
   STARRED_EMPTY_KEY,
   TAGS_EMPTY,
   TAGS_EMPTY_KEY,
+  UNSORTED_TITLE,
+  UNSORTED_TITLE_KEY,
 } from './official-copy';
 
 const catalog = readFileSync(join(process.cwd(), 'docs/craft-ref/features/feature-catalog.md'), 'utf8');
@@ -38,6 +46,10 @@ const PAIRS: [string, string][] = [
   [NO_DOCUMENTS_KEY, NO_DOCUMENTS],
   [TAGS_EMPTY_KEY, TAGS_EMPTY],
   [GET_CRAFT_PLUS_KEY, GET_CRAFT_PLUS],
+  [UNSORTED_TITLE_KEY, UNSORTED_TITLE],
+  [INBOX_DESC_KEY, INBOX_DESC],
+  [INBOX_EMPTY_KEY, INBOX_EMPTY],
+  [MOVE_TO_KEY, MOVE_TO],
 ];
 
 describe('browse copy is the collected official text', () => {

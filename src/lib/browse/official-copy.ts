@@ -31,6 +31,20 @@ export const TAGS_EMPTY =
 export const GET_CRAFT_PLUS_KEY = 'subscription.get.craft.plus';
 export const GET_CRAFT_PLUS = '获得 Craft Plus';
 
+/** The unsorted collection (`/inbox`, G45). Its page title is the entity word, not a phrase. */
+export const UNSORTED_TITLE_KEY = 'unsorted';
+export const UNSORTED_TITLE = '未分类';
+
+export const INBOX_DESC_KEY = 'browse.inbox.desc';
+export const INBOX_DESC = '不在任何文件夹中的文档都会收集在这里';
+
+export const INBOX_EMPTY_KEY = 'browse.doc.not.in.folder.will.appear.here';
+export const INBOX_EMPTY = '不在任何文件夹中的文档将显示在此处';
+
+/** The archive control on an inbox document. */
+export const MOVE_TO_KEY = 'moveto';
+export const MOVE_TO = '移动到…';
+
 /** 1 takes the singular line, everything else fills the `[0]` slot of the plural one. */
 export function formatDocCount(count: number): string {
   return count === 1 ? DOC_COUNT_ONE : DOC_COUNT_MANY.replace('[0]', String(count));

@@ -61,6 +61,7 @@ const ownHeaderRoutes = [
   '/templates',
   '/trash',
   '/collections',
+  '/inbox',
   '/daily-notes',
   '/tasks',
   '/calendar',

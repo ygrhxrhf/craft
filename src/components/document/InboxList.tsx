@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { File, FolderInput } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,6 +26,7 @@ interface InboxListProps {
 }
 
 export function InboxList({ documents, folders }: InboxListProps) {
+  const router = useRouter();
   const [pending, setPending] = useState<Map<string, PendingRow>>(new Map());
   const bumpTree = useSidebarStore((s) => s.bumpTree);
 
@@ -53,10 +55,16 @@ export function InboxList({ documents, folders }: InboxListProps) {
 
   async function moveTo(documentId: string, folderId: string | null) {
     const manager = getSyncManager();
+    // 就绪闸门同 TasksView：store.init() 是异步的，页面刚打开就点到归档会让
+    // applyLocal 抛 `IdbSyncStore: call init() first`，这次移动静默丢失。
+    await manager.boot();
     await manager.applyLocal({ table: 'document', id: documentId, patch: { folderId } });
-    await manager.flushNow();
+    // 覆盖层只活到 flush ack：队列一清空服务端才是权威，此时若不重取 RSC，
+    // 该行会带着旧 folderId 重新出现（实测归档后 1.5s 仍在列表里）。
     setPending(await readPendingRows('document'));
     bumpTree();
+    await manager.flushNow();
+    router.refresh();
   }
 
   if (rows.length === 0) {

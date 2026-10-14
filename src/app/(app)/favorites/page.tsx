@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { getFavoriteDocuments } from '@/actions/document/get';
 import { DocumentCard } from '@/components/document/DocumentCard';
-import { STARRED_EMPTY } from '@/lib/browse/official-copy';
+import { STARRED_EMPTY, STARRED_PRIVACY } from '@/lib/browse/official-copy';
 import { Star } from 'lucide-react';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
@@ -18,6 +18,7 @@ export default async function FavoritesPage() {
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title="收藏" />
       <AppPageContainer>
+        <p className="mb-4 text-sm text-muted-foreground">{STARRED_PRIVACY}</p>
         {favoriteDocs.length > 0 ? (
           <BrowseGrid>
             {favoriteDocs.map(doc => (

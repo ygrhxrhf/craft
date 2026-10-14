@@ -11,7 +11,7 @@ import {
 import { cn } from 'cn';
 import { getBacklinks } from '@/actions/document/backlinks';
 import { saveAsTemplate } from '@/actions/document/template';
-import { isDocumentFavorite, toggleFavorite } from '@/actions/document/favorite';
+import { toggleFavoriteLocal, resolveFavoriteState } from '@/lib/favorite/toggle-local';
 import { createDocument } from '@/actions/document/create';
 import { getFolders } from '@/actions/folder/get';
 import { getDocument, getDocuments, getSubpageStats, type SubpageStats } from '@/actions/document/get';
@@ -22,7 +22,7 @@ import { MOVE_TO, UNSORTED_TITLE } from '@/lib/browse/official-copy';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
 import { getSyncManager } from '@/lib/sync-core';
-import { findLiveFavoriteId, findDocumentShareId } from '@/components/sync/local-records';
+import { findDocumentShareId } from '@/components/sync/local-records';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
@@ -188,8 +188,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
     getSubpageStats(documentId)
       .then((rows) => setSubpages(rows))
       .catch(() => {});
-    isDocumentFavorite(documentId)
-      .then((favored) => setIsFavorite(!!favored))
+    resolveFavoriteState(documentId)
+      .then((favored) => setIsFavorite(favored))
       .catch(() => {});
   }, [documentId]);
 
@@ -213,21 +213,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
   const handleToggleFavorite = async () => {
     setBusy(true);
     try {
-      if (isFavorite) {
-        // 取消收藏 → applyLocal 墓碑推送（活行 id 来自本地镜像；缺失则退回服务端）
-        const liveId = await findLiveFavoriteId(documentId);
-        if (liveId) {
-          await getSyncManager().applyLocal({ table: 'favorite', id: liveId, patch: null });
-          setIsFavorite(false);
-        } else {
-          // 镜像还没拉到该行 → 退回服务端 action（toggleFavorite 返回新状态）
-          setIsFavorite(!!(await toggleFavorite(documentId)));
-        }
-      } else {
-        // 收藏保留服务端 action：Favorite 墓碑行无 data，客户端无法复用旧行 id
-        // （盲建会撞 @@unique([userId,documentId])），见 task-13 报告
-        setIsFavorite(!!(await toggleFavorite(documentId)));
-      }
+      setIsFavorite(await toggleFavoriteLocal({ documentId, favored: isFavorite }));
       setActionError(null);
     } catch {
       setActionError('收藏操作失败');

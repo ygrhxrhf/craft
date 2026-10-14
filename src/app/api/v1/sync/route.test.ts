@@ -16,10 +16,13 @@ const row = (id: string, ts: string, deletedAt: string | null = null) => ({
   isDeleted: false, deletedAt, updatedAt: ts, metaUpdatedAt: ts,
 });
 
-function mockDb(rows: any[], byModel: Record<string, any[]> = {}) {
-  const chainFor = (modelRows: any[]) => {
+function mockDb(rows: any[], byModel: Record<string, any[]> = {}, whereLog?: { model: string; arg: unknown }[]) {
+  const chainFor = (modelRows: any[], model: string) => {
     const chain = {
-      where: () => chain,
+      where: (arg: unknown) => {
+        whereLog?.push({ model, arg });
+        return chain;
+      },
       orderBy: () => chain,
       select: () => chain,
       limit: () => Promise.resolve(modelRows),
@@ -29,11 +32,11 @@ function mockDb(rows: any[], byModel: Record<string, any[]> = {}) {
     };
     return chain;
   };
-  const shared = chainFor(rows);
+  const shared = chainFor(rows, 'shared');
   (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
     get: (_t, model: string) => (
       model === 'SyncEvent' ? { create: vi.fn() }
-        : model in byModel ? chainFor(byModel[model])
+        : model in byModel ? chainFor(byModel[model], model)
           : shared
     ),
   }) } });
@@ -504,5 +507,50 @@ describe('POST 鉴权与 R-1 写侧归属（P1 遗留补齐）', () => {
     // user 表不在 USER_ID_TABLES：payload 不该出现 userId 列（schema 里也没有）
     expect(update.mock.calls[0]![0]).not.toHaveProperty('userId');
     expect(update.mock.calls[0]![0]).toMatchObject({ name: 'new' });
+  });
+});
+
+describe('GET /api/v1/sync 的收藏隐私作用域（G240）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('Favorite 只按会话 userId 取行，不按文档共享范围取', async () => {
+    const log: { model: string; arg: unknown }[] = [];
+    mockDb([], { Favorite: [] }, log);
+    await GET(new NextRequest('http://x/api/v1/sync'));
+    const fav = log.filter((e) => e.model === 'Favorite').map((e) => e.arg as { userId?: string });
+    expect(fav).toHaveLength(1);
+    expect(fav[0]).toEqual({ userId: 'u1' });
+  });
+});
+
+describe('收藏的墓碑走 upsert 列，不走 delete op（G240 写侧契约）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it.each([
+    ['取消收藏', '2026-09-28T12:00:00.000Z'],
+    ['重新收藏', null as string | null],
+  ])('%s：payload.deletedAt 原样落库，服务端不另写 isDeleted', async (_label, deletedAt) => {
+    const current = {
+      id: 'f1', userId: 'u1', documentId: 'd1', order: 0,
+      createdAt: '2026-09-01T00:00:00.000Z', updatedAt: '2026-09-28T09:00:00.000Z',
+      deletedAt: _label === '取消收藏' ? null : '2026-09-28T09:00:00.000Z',
+    };
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const first = vi.fn(async (_where: Record<string, unknown>): Promise<any> => current);
+    const chain: any = { where: () => chain, first, update, create: vi.fn() };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [{
+      table: 'favorite', id: 'f1', op: 'upsert',
+      data: { documentId: 'd1', deletedAt },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(res.status).toBe(200);
+    expect((await res.json()).applied).toEqual([{ table: 'favorite', id: 'f1' }]);
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ deletedAt }));
+    // Favorite 没有 isDeleted 列：写侧不得凭空造列（读侧按 deletedAt 过滤）
+    expect(update.mock.calls[0]![0]).not.toHaveProperty('isDeleted');
   });
 });

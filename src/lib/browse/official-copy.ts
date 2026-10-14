@@ -18,6 +18,15 @@ export const FOLDER_EMPTY = '这个文件夹是空的';
 export const STARRED_EMPTY_KEY = 'browse.star.doc.you.want.to.easily.find.later';
 export const STARRED_EMPTY = '收藏你想要稍后轻松找到的文档';
 
+// The starred view is private in Craft's own words, and it says so above the grid.
+export const STARRED_PRIVACY_KEY = 'browse.only.you.can.see.your.starred.items';
+export const STARRED_PRIVACY = '只有你可以查看收藏的项目';
+
+// The ledger keeps two names for the same collection: `browse.sidebar.inbox` labels the
+// sidebar row, `unsorted` titles the page it opens.
+export const SIDEBAR_INBOX_KEY = 'browse.sidebar.inbox';
+export const SIDEBAR_INBOX = '未归档';
+
 export const NO_DOCUMENTS_KEY = 'browse.no.documents.yet';
 export const NO_DOCUMENTS = '你还没有任何文档';
 

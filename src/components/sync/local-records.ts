@@ -86,16 +86,26 @@ export function mergePending<T extends { id: string }>(
   return out;
 }
 
-/** 找该文档当前生效的 favorite 行 id（本地镜像；tombstone 不算）。 */
-export async function findLiveFavoriteId(documentId: string): Promise<string | null> {
+/**
+ * 该文档当前生效的 favorite 行 id（本地镜像；tombstone 不算）。
+ * 返回全部而非第一条：跨设备新建 + 本地乐观建行会让镜像里同一个人的同一文档挂着两行，
+ * 取消收藏只墓碑其中一行，另一行仍是活的，星号就「取消不掉」。
+ */
+export async function findLiveFavoriteIds(documentId: string): Promise<string[]> {
   const rows = await readLocalRecords('favorite');
-  for (const r of rows) {
-    if (r.op === 'delete') continue;
-    if (r.data?.documentId !== documentId) continue;
-    if (r.data.deletedAt) continue;
-    return r.id;
-  }
-  return null;
+  return rows
+    .filter((r) => r.op !== 'delete' && r.data?.documentId === documentId && !r.data.deletedAt)
+    .map((r) => r.id);
+}
+
+/**
+ * 该文档的 favorite 行 id，**含墓碑**。收藏必须复用这个 id：
+ * 唯一键 `@@unique([userId,documentId])` 不认 deletedAt，客户端盲建新 id 会撞上存量墓碑行。
+ */
+export async function findFavoriteRowId(documentId: string): Promise<string | null> {
+  const rows = await readLocalRecords('favorite');
+  const row = rows.find((r) => r.data?.documentId === documentId);
+  return row ? row.id : null;
 }
 
 /** 找该文档的 document_share 行 id（getOrCreateShare 不回传 id，走本地镜像补）。 */

@@ -160,12 +160,11 @@ test('两项列表摘走末项：前项留在列表里，且不多出正文行',
   await page.keyboard.press('Control+A');
   await segment(page, '无序列表').click();
   await expect(page.locator('.ProseMirror ul > li')).toHaveCount(2);
-  // ☆ 屏上实测到的既有行为（本批之前就如此，`toggleBulletList` 一字未改）＝把文档末尾的块包成列表时
-  //   多出一个空段落。已另立 G1485 记账；这里把它钉进"摘之前"的形状，是为了下一行能证明
-  //   取消列表格式自己既不添行也不删行。
+  // ☆ G1485 结案＝这枚空段落不再出现：包装尾部块的是 StarterKit 的 `TrailingNode`
+  //   （"最后一块不是段落就补一段"），列表已排进 `notAfter`（`Editor.tsx:294`）⇒ 包装是纯块级替换。
+  //   历批把这枚游离空块钉进了下面两处"形状"，现在钉的是干净的形状。
   expect(await readRows(page), '整项进列表后的正文行').toEqual([
     { tag: 'UL', text: '列表项一列表项二' },
-    { tag: 'P', text: '' },
   ]);
 
   await putCaretIn(page, '.ProseMirror ul > li', 1);
@@ -173,10 +172,32 @@ test('两项列表摘走末项：前项留在列表里，且不多出正文行',
   expect(await readRows(page), '摘走末项后的正文行').toEqual([
     { tag: 'UL', text: '列表项一' },
     { tag: 'P', text: '列表项二' },
-    { tag: 'P', text: '' },
   ]);
   // 相邻项没被带走，摘出的那块也没被拆成两行。
   await expect(page.locator('.ProseMirror ul > li')).toHaveText('列表项一');
+});
+
+test('尾部列表不留游离空块，而光标照样能出列表接着写', async ({ page }) => {
+  await newDoc(page, ['尾列表项']);
+  await openFormatTab(page);
+
+  await putCaretIn(page, '.ProseMirror > *', 0);
+  await segment(page, '无序列表').click();
+  // 包装是纯块级替换：文档以列表收尾，尾巴上没有多出来的空段（G1485）。
+  expect(await readRows(page), '包成列表后的正文行').toEqual([{ tag: 'UL', text: '尾列表项' }]);
+
+  // 去掉那枚游离空块之后，"还能不能在列表后面打字"必须自己站得住＝官方那条
+  // 空项上按回车离开列表的路径。两次回车＝先在末项后分出空项、再把空项请出列表。
+  await page.keyboard.press('End');
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Enter');
+  await page.keyboard.type('接着写的正文');
+  expect(await readRows(page), '离开列表后打的字').toEqual([
+    { tag: 'UL', text: '尾列表项' },
+    { tag: 'P', text: '接着写的正文' },
+  ]);
+  // 列表本身没被顺手拆掉，也没有多出的第三行。
+  await expect(page.locator('.ProseMirror ul > li')).toHaveText('尾列表项');
 });
 
 test('行内格式三态：部分加粗显示混合，整段加粗才回到开', async ({ page }) => {

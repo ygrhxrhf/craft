@@ -287,6 +287,11 @@ export function Editor({
           levels: [1, 2, 3, 4],
         },
         underline: {},
+        // StarterKit's TrailingNode appends an empty paragraph whenever the doc's last
+        // block isn't a paragraph, so wrapping the tail blocks in a list left a stray
+        // empty line (G1485). A list item already holds a paragraph, so the caret is
+        // reachable without it — Enter on an empty item still exits the list.
+        trailingNode: { notAfter: ['bulletList', 'orderedList', 'taskList'] },
         link: {
           openOnClick: false,
           HTMLAttributes: {

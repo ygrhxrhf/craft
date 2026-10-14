@@ -37,6 +37,7 @@ import {
 import type { Editor } from '@tiptap/react';
 import type { ComponentType } from 'react';
 import { readDefaultLanguage, readDefaultTheme } from '@/lib/editor/code-preferences';
+import { promptDialog } from '@/lib/dialog/show';
 import { uploadFile } from '@/lib/upload-client';
 import { createWhiteboard } from '@/actions/whiteboard/whiteboard';
 import { requestImageGen } from '@/components/editor/ai/ImageGenDialog';
@@ -392,13 +393,15 @@ export const slashCommands: SlashCommand[] = [
     icon: Globe,
     keywords: ['link', 'preview', 'web', '链接', '网页', '书签'],
     category: '嵌入',
-    command: (editor, range) => {
-      const url = window.prompt('输入网页 URL:');
-      editor.chain().focus().deleteRange(range);
+    command: async (editor, range) => {
+      // ☆ 原来这句 `deleteRange` 没有 `.run()`，链根本没执行 ⇒ 斜杠文本留在正文里；
+      //   弹层改成异步后更要先把 range 清掉，await 之后的选区才是干净的。
+      editor.chain().focus().deleteRange(range).run();
+      const url = await promptDialog({ title: '输入网页 URL', placeholder: 'https://…', confirmLabel: '插入' });
       if (url) {
-        editor.chain().setLinkPreview({ url }).run();
+        editor.chain().focus().setLinkPreview({ url }).run();
       } else {
-        editor.chain().setParagraph().run();
+        editor.chain().focus().setParagraph().run();
       }
     },
   },
@@ -483,13 +486,13 @@ export const slashCommands: SlashCommand[] = [
     icon: Video,
     keywords: ['video', 'youtube', 'vimeo', '视频', '嵌入'],
     category: '嵌入',
-    command: (editor, range) => {
-      const src = window.prompt('输入视频 URL:');
-      editor.chain().focus().deleteRange(range);
+    command: async (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      const src = await promptDialog({ title: '输入视频 URL', placeholder: 'https://…', confirmLabel: '嵌入' });
       if (src) {
-        editor.chain().setVideoEmbed({ src }).run();
+        editor.chain().focus().setVideoEmbed({ src }).run();
       } else {
-        editor.chain().setParagraph().run();
+        editor.chain().focus().setParagraph().run();
       }
     },
   },

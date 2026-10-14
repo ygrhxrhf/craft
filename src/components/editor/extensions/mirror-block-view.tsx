@@ -8,6 +8,7 @@ import { Copy, Pilcrow, RefreshCw } from 'lucide-react';
 import { getMirroredBlock, type MirroredBlock } from '@/actions/document/mirror';
 import { searchBlockAnchors, type BlockAnchorHit } from '@/actions/document/anchors';
 import { untitledFor } from '@/lib/document/untitled-copy';
+import { ClipboardBoundary } from '@/components/clipboard/ClipboardBoundary';
 
 type State =
   | { kind: 'loading' }
@@ -144,15 +145,17 @@ function MirrorSourcePicker({ onPick }: { onPick: (attributes: PickedSource) => 
         <Copy className="size-3" />
         选择要镜像的块
       </p>
-      <input
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        onKeyDown={(event) => event.stopPropagation()}
-        onKeyUp={(event) => event.stopPropagation()}
-        placeholder="搜索其他文档里的段落…"
-        aria-label="搜索要镜像的块"
-        className="w-full rounded-md border border-border bg-background px-2 py-1 text-[13px] outline-none focus:border-primary/60"
-      />
+      <ClipboardBoundary className="contents">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => event.stopPropagation()}
+          onKeyUp={(event) => event.stopPropagation()}
+          placeholder="搜索其他文档里的段落…"
+          aria-label="搜索要镜像的块"
+          className="w-full rounded-md border border-border bg-background px-2 py-1 text-[13px] outline-none focus:border-primary/60"
+        />
+      </ClipboardBoundary>
       {loading && <p className="mt-1.5 text-[12px] text-muted-foreground">搜索中…</p>}
       {!loading && query.trim() && hits.length === 0 && (
         <p className="mt-1.5 text-[12px] text-muted-foreground">没有匹配的块</p>

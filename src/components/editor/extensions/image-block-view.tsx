@@ -5,6 +5,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { useRef, useState } from 'react';
 import { Crop, ImagePlus, Link2, Loader2, Minus, Plus } from 'lucide-react';
 import { uploadFile } from '@/lib/upload-client';
+import { promptDialog } from '@/lib/dialog/show';
 import { frameStyle, moveFrame, readImageFrame, zoomFrame, type ImageFrame } from '@/lib/editor/image-frame';
 
 export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
@@ -42,8 +43,8 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
     }
   };
 
-  const handleUrl = () => {
-    const url = window.prompt('输入图片 URL:');
+  const handleUrl = async () => {
+    const url = await promptDialog({ title: '输入图片 URL', placeholder: 'https://…', confirmLabel: '保存' });
     if (url) updateAttributes({ src: url, alt: null });
   };
 

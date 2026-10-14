@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Check } from 'lucide-react';
+import { ClipboardBoundary } from '@/components/clipboard/ClipboardBoundary';
 
 export interface SearchableOption {
   value: string;
@@ -60,32 +61,34 @@ export function SearchableSelect({
         {current?.label ?? value}
       </button>
       {open && (
-        <div className="absolute left-0 top-full z-20 mt-1 w-56 rounded-md border border-border bg-popover p-1 shadow-md">
-          <input
-            autoFocus
-            value={query}
-            placeholder={placeholder}
-            aria-label={placeholder}
-            onChange={(event) => setQuery(event.target.value)}
-            className="mb-1 w-full rounded bg-transparent px-2 py-1 text-xs outline-none placeholder:text-muted-foreground"
-          />
-          <div className="max-h-44 overflow-y-auto">
-            {shown.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => {
-                  onChange(option.value);
-                  setOpen(false);
-                }}
-                className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs hover:bg-foreground/[0.06]"
-              >
-                <Check className={option.value === value ? 'size-3' : 'size-3 opacity-0'} />
-                {option.label}
-              </button>
-            ))}
+        <ClipboardBoundary className="contents">
+          <div className="absolute left-0 top-full z-20 mt-1 w-56 rounded-md border border-border bg-popover p-1 shadow-md">
+            <input
+              autoFocus
+              value={query}
+              placeholder={placeholder}
+              aria-label={placeholder}
+              onChange={(event) => setQuery(event.target.value)}
+              className="mb-1 w-full rounded bg-transparent px-2 py-1 text-xs outline-none placeholder:text-muted-foreground"
+            />
+            <div className="max-h-44 overflow-y-auto">
+              {shown.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                  className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs hover:bg-foreground/[0.06]"
+                >
+                  <Check className={option.value === value ? 'size-3' : 'size-3 opacity-0'} />
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </ClipboardBoundary>
       )}
     </div>
   );

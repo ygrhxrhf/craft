@@ -2,6 +2,7 @@
 
 import { BubbleMenu as TiptapBubbleMenu } from '@tiptap/react/menus';
 import type { Editor } from '@tiptap/react';
+import { promptDialog } from '@/lib/dialog/show';
 import {
   Bold,
   Italic,
@@ -73,9 +74,9 @@ export function EditorBubbleMenu({ editor }: EditorBubbleMenuProps) {
         <BubbleMenuButton
           label="链接"
           active={editor.isActive('link')}
-          onClick={() => {
+          onClick={async () => {
             const previousUrl = editor.getAttributes('link').href;
-            const url = window.prompt('URL', previousUrl);
+            const url = await promptDialog({ title: '链接', defaultValue: previousUrl, placeholder: 'https://…', confirmLabel: '保存' });
             if (url === null) return;
             if (url === '') {
               editor.chain().focus().extendMarkRange('link').unsetLink().run();

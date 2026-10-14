@@ -6,6 +6,7 @@ import { X, Image as ImageIcon, Trash2, Link2, Palette } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from 'cn';
 import { updateDocument } from '@/actions/document/update';
+import { promptDialog } from '@/lib/dialog/show';
 import { fontPacks, pageThemes, washiTapes } from '../themes/page-style';
 import type { PageStyle } from '../themes/page-style';
 
@@ -78,7 +79,7 @@ export function PageStylePanel({
   };
 
   const setIcon = async () => {
-    const emoji = prompt('输入 Emoji 作为文档图标');
+    const emoji = await promptDialog({ title: '输入 Emoji 作为文档图标', placeholder: '📄', confirmLabel: '设置' });
     if (emoji) onUpdate({ icon: emoji });
   };
 

@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { History, RotateCcw, Loader2 } from 'lucide-react';
+import { confirmDialog } from '@/lib/dialog/show';
 import {
   getVersions,
   getVersionContent,
@@ -72,7 +73,12 @@ export function VersionDialog({ documentId, open, onOpenChange }: VersionDialogP
   };
 
   const handleRestore = async (id: string) => {
-    if (!window.confirm('恢复此版本?当前内容会先另存为一个版本。')) return;
+    const confirmed = await confirmDialog({
+      title: '恢复此版本?',
+      message: '当前内容会先另存为一个版本。',
+      confirmLabel: '恢复',
+    });
+    if (!confirmed) return;
     setRestoring(id);
     try {
       await restoreVersion(id);

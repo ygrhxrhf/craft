@@ -60,7 +60,7 @@ export function LinkPreviewView({ node, updateAttributes }: NodeViewProps) {
     (node.attrs.siteName as string) ?? data?.siteName ?? hostnameOf(url);
 
   return (
-    <NodeViewWrapper as="div" className="my-3">
+    <NodeViewWrapper as="div" className="my-3" data-type="link-preview">
       <a
         href={url}
         target="_blank"

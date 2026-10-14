@@ -2,6 +2,7 @@
 
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import { DialogHost } from '@/components/dialog/DialogHost';
 import { SyncBoot } from '@/components/sync/SyncBoot';
 import { SyncStatusIndicator } from '@/components/sync/SyncStatusIndicator';
 import { InputIntentProvider } from '@/components/providers/InputIntentProvider';
@@ -14,6 +15,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <InputIntentProvider />
         {children}
         <Toaster />
+        <DialogHost />
         <SyncBoot />
         <SyncStatusIndicator />
       </ThemeProvider>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Plus, X } from 'lucide-react';
 import {
@@ -11,6 +11,8 @@ import {
 } from '@/actions/tag/tag';
 import { getSyncManager } from '@/lib/sync-core';
 import { normalizeTagName } from '@/lib/tag/normalize';
+import { findTagViolation, tagFeedback } from '@/lib/tag/rules';
+import { ENTER_VALID_TAG } from '@/lib/tag/official-copy';
 import { toast } from '@/components/ui/toast';
 
 interface TagsSectionProps {
@@ -40,6 +42,12 @@ export function TagsSection({ documentId }: TagsSectionProps) {
 
   const add = async (name: string) => {
     if (!name.trim() || busy) return;
+    // G170：官方规则表在任何写入之前跑一遍，非法草稿不会落到服务端
+    const violation = findTagViolation(name);
+    if (violation) {
+      toast.add({ id: 'tag-invalid', type: 'warning', title: violation.message });
+      return;
+    }
     const normalized = normalizeTagName(name);
     if (!normalized) return;
     setBusy(true);
@@ -89,6 +97,13 @@ export function TagsSection({ documentId }: TagsSectionProps) {
 
   const unused = all.filter((tag) => !tags.some((own) => own.id === tag.id));
 
+  // 输入过程中的官方四态反馈（valid / current / typing / invalid）
+  const feedback = useMemo(
+    () => tagFeedback(draft, { existing: tags.map((tag) => tag.name) }),
+    [draft, tags],
+  );
+  const canSubmit = feedback.kind === 'valid';
+
   return (
     <section>
       <h4 className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
@@ -127,19 +142,35 @@ export function TagsSection({ documentId }: TagsSectionProps) {
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="添加标签"
+          placeholder={ENTER_VALID_TAG}
           aria-label="添加标签"
+          aria-describedby="tag-feedback"
           className="min-w-0 flex-1 rounded-md border border-border bg-transparent px-2 py-1 text-[13px] outline-none focus:border-primary"
         />
         <button
           type="submit"
-          aria-label="添加标签"
-          disabled={busy || !draft.trim()}
+          aria-label="添加"
+          disabled={busy || !canSubmit}
           className="rounded-md border border-border p-1 text-muted-foreground transition-colors hover:bg-muted disabled:opacity-40"
         >
           <Plus className="size-3.5" />
         </button>
       </form>
+
+      <p
+        id="tag-feedback"
+        data-tag-feedback={feedback.kind}
+        className={
+          feedback.kind === 'invalid'
+            ? 'mt-1.5 text-[11px] text-destructive'
+            : 'mt-1.5 text-[11px] text-muted-foreground'
+        }
+      >
+        {feedback.message}
+        {feedback.kind === 'invalid' && feedback.rule ? (
+          <span className="text-muted-foreground"> {feedback.rule.message}</span>
+        ) : null}
+      </p>
 
       {unused.length > 0 && (
         <div className="mt-1.5 flex flex-wrap gap-1.5">

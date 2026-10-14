@@ -1339,8 +1339,8 @@
 
 | # | 官方事实（证据） | 本地现状 | 类型 | 影响/成本 |
 |---|---|---|---|---|
-| G169 | **标签是两级树**：`#父级/子级`，且**仅允许一个 `/`**（第三级非法）（`tags-browse.md` §一） | 无层级标签概念（`TagsSection.tsx` 是文档标签列表，无父子轴） | 缺失 | 2/2 |
-| G170 | **6 条字符校验规则**成表可实现：禁空格标点、禁 emoji、禁分隔符、纯数字标签需放行、**内置"十六进制颜色值不算标签"规则**（`#ff0000`/`#ccc`）、以及 valid/invalid/重复输入/继续输入四种反馈态（§二） | 无任何标签校验；`#` 直接当文本处理 | 缺失 | 2/2 |
+| G169 | **标签是两级树**：`#父级/子级`，且**仅允许一个 `/`**（第三级非法）（`tags-browse.md` §一） | 无层级标签概念（`TagsSection.tsx` 是文档标签列表，无父子轴） | ☆ 已清（校验＋UI＋e2e）＝`src/lib/tag/rules.ts` 把层级定死两档：`splitTagLevels` 解析 `父级/子级`，第二根 `/` 触发 `tags.only.one.child.allowed`、任一侧为空触发 `tags.tags.cannot.contain.delimiter.char`；`TagsSection` 输入实时呈现，e2e `tag-validation.spec.ts` 屏验，串由 `official-copy.test.ts` 逐条对账 | 2/2 |
+| G170 | **6 条字符校验规则**成表可实现：禁空格标点、禁 emoji、禁分隔符、纯数字标签需放行、**内置"十六进制颜色值不算标签"规则**（`#ff0000`/`#ccc`）、以及 valid/invalid/重复输入/继续输入四种反馈态（§二） | 无任何标签校验；`#` 直接当文本处理 | ☆ 已清（六条规则＋四态反馈全落地）＝`findTagViolation` 顺序＝hexColor（先于 `#` 剥离，故 `#ccc` 不会伪装成标签）→ 长度（本地项，官方无串）→ emoji → depth → delimiter → 空格标点 → numbers（`allowNumbers` 开关＝官方可切换项）；`tagFeedback` 出 valid/current/typing/invalid 四态并接进 `TagsSection`（`data-tag-feedback`），两条提交路径都拦非法草稿；`rules.test.ts` 18 例＋`rules-wiring.test.ts` 接线例＋e2e 屏验七例与提交后重载持久。★ 遗留：新标签名写入仍走 `attachTag` Server Action（红线③，离线建标签未通，另计一批） | 2/2 |
 | G171 | **忽略规则引擎**是自定义规则实体（增删改 + 确认 + 「即使带有 # 也不出现在标签列表」+ 命中标注来源「被自定义规则忽略的标签：[0]」+ 从标签直接加入忽略再回设置管理的双向路径）（§三） | 无忽略规则概念 | 缺失 | 2/2 |
 | G172 | 上一批的遗留项结案 ✓：`publishing.md` 里那个"代码有、文案无"的 `hideHashTagWords` 字段，界面标签就在标签设置里（`hide.word.with.hashtag`「隐藏以 # 开头的词语」/ `hide.tags`） | — | 已归档为互证 | —/— |
 | G173 | **固定标签**含「固定并显示所有子项」、固定数上限（`pinned.limit.reached`，数值远端）、管理入口、失败句；且与 `registries.md` 的 `tag_{pin,unpin,reorder}` 三动作互证 ✓；标签可直接进集合筛选（include/exclude tag in filter）（§四） | 无固定标签、无标签进筛选 | 缺失 | 2/2 |

@@ -231,3 +231,45 @@ describe('SyncManager', () => {
     }
   });
 });
+
+// 并发 flushNow 曾有一轮被 `if (flushing) return` 直接丢弃，而去抖定时器已被
+// clearDebounce 取消 ⇒ 后一次写入滞留在队列里，服务端读路径看不到它。
+describe('flush 串行，不丢后一次请求', () => {
+  it('在途那轮跑完后补一轮，两条 op 都出队', async () => {
+    const store = createMemoryStore();
+    await store.init();
+
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    let firstCall = true;
+    const pendingAtPass: number[] = [];
+    const flush = vi.fn<Queue['flush']>(async () => {
+      pendingAtPass.push(await store.countPending());
+      if (firstCall) {
+        firstCall = false;
+        await gate;                       // 第一批卡在网络往返上
+      }
+      const ops = await store.peekBatch(1, '9999-12-31T23:59:59.999Z'); // 每轮只出一批
+      await store.ack(ops.map((o) => o.seq));
+      return { pushed: ops.length, status: 'ok' as const };
+    });
+
+    const manager = createManager({
+      store: () => store,
+      makeQueue: () => ({ flush, pendingCount: () => store.countPending() }),
+      makeReconciler: () => ({ pull: vi.fn(async () => ({ applied: 0, deletedLocally: [] as string[] })) }),
+      makeBroadcaster: () => ({ start: vi.fn(), stop: vi.fn(), isLive: () => false }),
+    });
+
+    await manager.applyLocal({ table: 'task', id: 't1', patch: { title: 'a' } });
+    const first = manager.flushNow();
+    await manager.applyLocal({ table: 'task', id: 't2', patch: { title: 'b' } });
+    const second = manager.flushNow();     // 旧实现：这里直接 return，t2 留在队列里
+    release();
+    await Promise.all([first, second]);
+
+    expect(flush).toHaveBeenCalledTimes(2);
+    expect(pendingAtPass).toEqual([1, 1]);
+    expect(await store.countPending()).toBe(0);
+  });
+});

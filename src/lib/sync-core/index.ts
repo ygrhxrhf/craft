@@ -77,7 +77,7 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
   let paused = false;                   // auth 暂停：不重试（硬规则 6）
   let failStreak = 0;
   let cachedPending = 0;
-  let flushing = false;
+  let inFlight: Promise<void> | null = null;  // 在途的那轮 flush（串行化用，见 flush）
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
   let backoffTimer: ReturnType<typeof setTimeout> | null = null;
   let bootPromise: Promise<void> | null = null;
@@ -139,58 +139,76 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     }
   }
 
-  async function flush(): Promise<void> {
-    if (paused || flushing) return;
+  async function flushOnce(): Promise<void> {
     // 硬规则 6：offline → status offline，不发请求
     if (isOffline()) {
       setStatus('offline');
       return;
     }
-    flushing = true;
+    cachedPending = await store.countPending();
+    setStatus('syncing');
+    let res: { pushed: number; status: 'ok' | 'network' | 'http' | 'auth' };
     try {
-      cachedPending = await store.countPending();
-      setStatus('syncing');
-      let res: { pushed: number; status: 'ok' | 'network' | 'http' | 'auth' };
-      try {
-        // 硬规则 1：queue.flush 抛错计为 network
-        res = await queue.flush();
-      } catch {
-        res = { pushed: 0, status: 'network' };
-      }
-      cachedPending = await store.countPending();
+      // 硬规则 1：queue.flush 抛错计为 network
+      res = await queue.flush();
+    } catch {
+      res = { pushed: 0, status: 'network' };
+    }
+    cachedPending = await store.countPending();
 
-      if (res.status === 'ok') {
-        failStreak = 0;
-        // 硬规则 2（R-13 修订）：'synced' 仅当 flush ok && countPending()===0；
-        // ok 但 pending>0 保持 'syncing'（'degraded' 专留给 SSE 断连，spec 9.1）
-        if (cachedPending === 0) setStatus('synced');
-        return;
+    if (res.status === 'ok') {
+      failStreak = 0;
+      // 硬规则 2（R-13 修订）：'synced' 仅当 flush ok && countPending()===0；
+      // ok 但 pending>0 保持 'syncing'（'degraded' 专留给 SSE 断连，spec 9.1）
+      if (cachedPending === 0) setStatus('synced');
+      return;
+    }
+    if (res.status === 'auth') {
+      // spec：auth → 暂停不重试，UI 订阅者收到后跳登录
+      paused = true;
+      setStatus('error');
+      return;
+    }
+    if (res.status === 'http') {
+      // 400/413 是程序 bug，不重试
+      setStatus('error');
+      return;
+    }
+    // network
+    if (isOffline()) {
+      setStatus('offline');
+      return;
+    }
+    failStreak += 1;
+    // 硬规则 5（R-13 修订）：3 次失败 → 'error'；1-2 次保持 'syncing' 带退避重试
+    // （瞬时失败不再落 'degraded'——该状态专留给 SSE 断连，spec 9.1）
+    setStatus(failStreak >= 3 ? 'error' : 'syncing');
+    const delay = BACKOFF[Math.min(failStreak - 1, BACKOFF.length - 1)];
+    await bumpPendingRetry(delay);
+    scheduleBackoff(delay);
+  }
+
+  /**
+   * 串行，不丢请求。旧实现是 `if (flushing) return`——并发那次直接落空，而 `flushNow`
+   * 已经先 clearDebounce 把去抖定时器取消了，于是刚入队的 op 只能等下一个无关触发点才推送；
+   * 紧随其后的 `load()` 读的是服务端权威行，这次写看起来就像没发生。
+   * 排在后面的调用等在途那轮跑完再跑自己的一轮；队列空时 queue.flush 直接返回，不发请求。
+   */
+  async function flush(): Promise<void> {
+    if (paused) return;
+    while (inFlight) {
+      try {
+        await inFlight;
+      } catch {
+        // 上一轮的异常由那一轮自己处理（退避/状态），这里只等它结束
       }
-      if (res.status === 'auth') {
-        // spec：auth → 暂停不重试，UI 订阅者收到后跳登录
-        paused = true;
-        setStatus('error');
-        return;
-      }
-      if (res.status === 'http') {
-        // 400/413 是程序 bug，不重试
-        setStatus('error');
-        return;
-      }
-      // network
-      if (isOffline()) {
-        setStatus('offline');
-        return;
-      }
-      failStreak += 1;
-      // 硬规则 5（R-13 修订）：3 次失败 → 'error'；1-2 次保持 'syncing' 带退避重试
-      // （瞬时失败不再落 'degraded'——该状态专留给 SSE 断连，spec 9.1）
-      setStatus(failStreak >= 3 ? 'error' : 'syncing');
-      const delay = BACKOFF[Math.min(failStreak - 1, BACKOFF.length - 1)];
-      await bumpPendingRetry(delay);
-      scheduleBackoff(delay);
+    }
+    const pass = flushOnce();
+    inFlight = pass;
+    try {
+      await pass;
     } finally {
-      flushing = false;
+      if (inFlight === pass) inFlight = null;
     }
   }
 

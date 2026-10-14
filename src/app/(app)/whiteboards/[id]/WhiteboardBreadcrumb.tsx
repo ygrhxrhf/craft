@@ -16,11 +16,15 @@ export function WhiteboardBreadcrumb({ id, name, icon }: WhiteboardBreadcrumbPro
   const handleRename = async () => {
     if (value !== name && value.trim()) {
       // 白板改名 → applyLocal（R-16：白板元数据走 applyLocal 推送）
-      await getSyncManager().applyLocal({
+      const manager = getSyncManager();
+      await manager.applyLocal({
         table: 'whiteboard',
         id,
         patch: { name: value.trim() },
       });
+      // /whiteboards 列表读的是服务端权威行（getWhiteboards），applyLocal 只入队等 2s 去抖
+      // ⇒ 改名后立刻整页跳转就读不到新名字。与 TasksView / AddPropertyMenu 同一规则。
+      await manager.flushNow();
     }
   };
 

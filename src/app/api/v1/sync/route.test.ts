@@ -374,6 +374,124 @@ describe('POST /api/v1/sync', () => {
     }] }));
     expect(res.status).toBe(500);
   });
+
+  /**
+   * G1505——「按 pk 定位不到行」不等于「这台设备在离线新建」。
+   * 离线新建（`create-local.ts`）带齐 `createRequires`，而"对一枚陈旧回收站行点恢复"
+   * 只带 `isDeleted/deletedAt` 两列 ⇒ 旧代码照着 create 的通路铸出一枚服务端从未有过的壳文档。
+   */
+  it('G1505 铸造闸：定位不到行且缺 createRequires 的键 → 不 create，按 not_found 拒绝并回传 delete', async () => {
+    const create = vi.fn(async () => ({}));
+    const first = vi.fn(async () => null);
+    const chain = { where: () => chain, first, update: vi.fn(), create };
+    const emit = vi.fn();
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: emit } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [
+      // 陈旧行的「恢复」——TrashList 的那一笔原样
+      { table: 'document', id: 'already-gone', op: 'upsert',
+        data: { isDeleted: false, deletedAt: null }, syncTs: '2026-09-28T12:00:00.000Z' },
+    ] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(create).not.toHaveBeenCalled();          // 核心：一个字节都不写
+    expect(body.applied).toHaveLength(0);
+    expect(body.rejected).toHaveLength(1);
+    expect(body.rejected[0]).toMatchObject({
+      table: 'document', id: 'already-gone', op: 'delete', reason: 'not_found',
+    });
+    // 服务端本来就没有这行 ⇒ 无从回传权威值（也绝不回传他人行的列）
+    expect(body.rejected[0].data).toBeUndefined();
+    // 全批未落 ⇒ 不广播（否则他端为一枚不存在的行重拉）
+    expect(emit).not.toHaveBeenCalled();
+  });
+
+  it('G1505 铸造闸放过的仍是正常笔：离线新建（title 为空串）照旧 create，且同批陈旧行不牵连它', async () => {
+    const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const first = vi.fn(async (_where: Record<string, unknown>): Promise<any> => null);
+    const chain = { where: () => chain, first, update: vi.fn(), create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [
+      // 闸在前：陈旧行那笔被拒
+      { table: 'document', id: 'ghost', op: 'upsert', data: { deletedAt: null },
+        syncTs: '2026-09-28T12:00:00.000Z' },
+      // create-local.ts 的离线新建＝title 存在但为空串——键在即算，不看值
+      { table: 'document', id: 'new-doc', op: 'upsert',
+        data: { userId: 'u1', title: '', parentId: null, folderId: null },
+        syncTs: '2026-09-28T12:00:01.000Z' },
+    ] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'document', id: 'new-doc' }]);
+    expect(body.rejected).toHaveLength(1);
+    expect(body.rejected[0].id).toBe('ghost');
+    expect(create).toHaveBeenCalledTimes(1);
+    expect(create.mock.calls[0]![0]!.title).toBe('');
+  });
+
+  it('G1505 闸按表配置：folder 无 createRequirements，陈旧文件夹行仍按既有语义建行（不整体锁死）', async () => {
+    const create = vi.fn(async () => ({}));
+    const first = vi.fn(async () => null);
+    const chain = { where: () => chain, first, update: vi.fn(), create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [{
+      table: 'folder', id: 'f9', op: 'upsert', data: { deletedAt: null },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(res.status).toBe(200);
+    expect((await res.json()).applied).toHaveLength(1);
+    expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  it('G1505 第二副面孔：同 id 已在他人名下 → 按 not_found 拒绝，不再撞主键打崩整批', async () => {
+    const create = vi.fn(async () => { throw new Error('Unique constraint failed on Document.id'); });
+    const first = vi.fn(async (where: any): Promise<any> =>
+      // 会话 userId 收窄的那次读＝定位不到；不带 userId 的回读＝命中他人行
+      where.userId === undefined ? { id: 'd1', userId: 'owner-elsewhere', title: '别人的' } : null);
+    const chain = { where: () => chain, first, update: vi.fn(), create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    // 越权成员把自己那版标题推上来：带得齐铸造键，闸放得过，于是走到 create 撞主键
+    const res = await POST(req({ records: [{
+      table: 'document', id: 'd1', op: 'upsert', data: { title: '我的那版' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);                    // 旧行为＝整批 500＋无限重推的毒批次
+    expect(body.applied).toHaveLength(0);
+    expect(body.rejected[0]).toMatchObject({
+      table: 'document', id: 'd1', op: 'delete', reason: 'not_found',
+    });
+    expect(body.rejected[0].data).toBeUndefined();   // 不回传他人行的一列
+  });
+
+  it('G1506：LWW 拒绝带 reason=stale（与 not_found 分得开，UI 才能说不同的话）', async () => {
+    const update = vi.fn(async () => ({}));
+    const rows = [{ id: 'keep', title: 'server-newer',
+      updatedAt: '2026-09-28T11:00:00.000Z', metaUpdatedAt: '2026-09-28T11:00:00.000Z',
+      deletedAt: null }];
+    const chain = { where: () => chain, first: async ({ id }: any) => rows.find(r => r.id === id) ?? null, update, create: vi.fn() };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [
+      { table: 'document', id: 'keep', op: 'upsert', data: { title: 'client-older' },
+        syncTs: '2026-09-28T10:00:00.000Z' },
+    ] }));
+    const body = await res.json();
+    expect(body.rejected[0].reason).toBe('stale');
+    expect(body.rejected[0].data.title).toBe('server-newer');
+  });
 });
 
 /**

@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createManager, type TestSyncManager } from './index';
 import { SyncAuthError } from './reconciler';
 import { createMemoryStore, type SyncStore } from './store';
+import type { SyncRejection } from './types';
 import type { Queue } from './queue';
 
 // 依赖注入点：createManager({ store, makeQueue, makeReconciler, makeBroadcaster })
@@ -357,5 +358,92 @@ describe('applyLocal 的白名单运行时告警（G1492）', () => {
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn.mock.calls[0]![0]).toContain('task.alsoNotAColumn');
     expect(await queuedPayload(store)).toMatchObject({ title: '第一趟合法', alsoNotAColumn: 2 });
+  });
+});
+
+/**
+ * G1506——服务端那句「这笔我不落」此前只用来盖权威值，界面一句不说：
+ * 用户看到的就是"点了恢复，什么都没发生，行还活着"，而屏上此前已闪过一次"已恢复"。
+ * 这一组钉的是**通路**：明细必须原样到达 UI 订阅者，权威值覆盖不能因为加了订阅者就断。
+ */
+describe('服务端拒绝的明细冒到 UI（G1506）', () => {
+  interface RejectHarness {
+    manager: TestSyncManager;
+    store: SyncStore;
+    fireRejected: (rejected: SyncRejection[]) => void;
+  }
+
+  async function makeRejectingManager(): Promise<RejectHarness> {
+    const base = createMemoryStore();
+    await base.init();
+    const store: SyncStore = { ...base };
+
+    let onRejected: ((rejected: SyncRejection[]) => void) | null = null;
+    const manager = createManager({
+      store: () => store,
+      makeQueue: (_s, cb) => {
+        onRejected = cb;
+        return {
+          flush: async () => ({ pushed: 0, status: 'ok' as const }),
+          pendingCount: () => store.countPending(),
+        };
+      },
+      makeReconciler: () => ({ pull: async () => ({ applied: 0, deletedLocally: [] as string[] }) }),
+      makeBroadcaster: () => ({ start: () => {}, stop: () => {}, isLive: () => false }),
+    });
+
+    return {
+      manager,
+      store,
+      fireRejected: (rejected) => {
+        // queue.flush 收到响应体时是这么喊的：opts.onRejected(body.rejected ?? [])
+        onRejected?.(rejected);
+      },
+    };
+  }
+
+  it('onRejected 订阅者收到整批明细（含 reason），且权威值照样盖回本地', async () => {
+    const { manager, store, fireRejected } = await makeRejectingManager();
+    const seen = vi.fn();
+    manager.onRejected(seen);
+
+    fireRejected([{
+      table: 'document', id: 'gone', op: 'delete', syncTs: '2026-09-28T12:00:00.000Z',
+      reason: 'not_found',
+    }]);
+
+    expect(seen).toHaveBeenCalledTimes(1);
+    expect(seen.mock.calls[0]![0][0]).toMatchObject({ id: 'gone', reason: 'not_found' });
+    // 盖权威值＝本地那行重新变回墓碑（旧代码也是这个行为，加订阅者不许把它弄断）
+    const local = await store.get('document', 'gone');
+    expect(local?.op).toBe('delete');
+  });
+
+  it('空明细不发（每一轮 ack 都会带一个 rejected 数组，不能每轮都喊）', async () => {
+    const { manager, fireRejected } = await makeRejectingManager();
+    const seen = vi.fn();
+    manager.onRejected(seen);
+    fireRejected([]);
+    expect(seen).not.toHaveBeenCalled();
+  });
+
+  it('退订之后不再收（订阅者生命周期与组件一致）', async () => {
+    const { manager, fireRejected } = await makeRejectingManager();
+    const seen = vi.fn();
+    const off = manager.onRejected(seen);
+    off();
+    fireRejected([{ table: 'document', id: 'a', op: 'upsert',
+      data: { title: 'x' }, syncTs: '2026-09-28T12:00:00.000Z', reason: 'stale' }]);
+    expect(seen).not.toHaveBeenCalled();
+  });
+
+  it('拒的那一笔同时触发 onStoreChanged（列表/回收站据此重取，陈旧行才会从屏上掉下去）', async () => {
+    const { manager, fireRejected } = await makeRejectingManager();
+    const tables: string[] = [];
+    manager.onStoreChanged(t => tables.push(t));
+    fireRejected([{ table: 'document', id: 'gone', op: 'delete',
+      syncTs: '2026-09-28T12:00:00.000Z', reason: 'not_found' }]);
+    await new Promise(r => setTimeout(r, 0));   // applyRemote 后微任务里 emitTouched
+    expect(tables).toContain('document');
   });
 });

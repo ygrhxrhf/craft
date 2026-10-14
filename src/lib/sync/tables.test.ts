@@ -179,6 +179,22 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     for (const col of prefs) expect(user!.cols, `${col} 不在 user.cols ⇒ 它永远出不了这台设备`).toContain(col);
   });
 
+  it('☆ G1505：铸造闸逐表配置（不整体锁死），且每一枚必需键都在 cols 里', () => {
+    // 配错的两种死法都在这里红：① 把 folder/favorite 一起锁死＝离线新建文件夹点不动；
+    // ② 必需键不在 cols＝payload 求交后永远带不上它＝那张表从此再也建不出行（静默死锁）。
+    const gated = SYNC_TABLES.filter(d => (d.createRequires?.length ?? 0) > 0);
+    expect(gated.map(d => d.table)).toEqual(['document']);
+    for (const d of gated) {
+      for (const k of d.createRequires ?? []) {
+        expect(d.cols, `${d.table}.${k} 不在 cols ⇒ 离线新建永远过不了这道闸`).toContain(k);
+      }
+    }
+    // 键形判据的本体：离线新建文档确实一定带 title（哪怕空串）——读源码，别只信注释
+    const createLocal = readFileSync(
+      join(process.cwd(), 'src', 'components', 'sync', 'create-local.ts'), 'utf8');
+    expect(createLocal).toMatch(/title: input\.title \?\? ''/);
+  });
+
   it('☆ G1489：全仓每一处 applyLocal 的字面量 patch 键都必须在所属表的 cols 里', () => {
     const sites = scanApplyLocalPatches();
     expect(sites.length, '扫描器一处都没找到＝判据失效，请复核这条闸').toBeGreaterThan(25);

@@ -3,19 +3,22 @@ import type { EditorState, Transaction } from '@tiptap/pm/state';
 import {
   alignPresence,
   clearListFormat,
+  directionPresence,
   inlineMarkState,
   listPresence,
   type ListKind,
   type TriState,
+  type WritingMode,
 } from './format-presence';
 
 /**
- * 「格式」页签的控件表。三条线各自成组，命名不再互相冒名（`gap.md` G153 记的就是本地把缩进
+ * 「格式」页签的控件表。四条线各自成组，命名不再互相冒名（`gap.md` G153 记的就是本地把缩进
  * 放进 `alignButtons` 这件事）：
  *
  * - 对齐＝官方 `style.text.align` 五档（左/居中/右/两端 ＋ 默认），默认档写"无属性"；
  * - 缩进＝官方 `style.indent.in` / `style.indent.out`，与对齐是两回事；
- * - 列表＝官方 `style.list.*` 五档，取消列表格式是显式一档（G155）。
+ * - 列表＝官方 `style.list.*` 五档，取消列表格式是显式一档（G155）；
+ * - 方向＝官方 `style.direction` 两轴（G1484），「从左到右」是缺省态。
  *
  * 每档的中文串带官方 i18n 键，由 `format-commands.test.ts` 逐条回查 `feature-catalog.md`，
  * 改一个字就会红。「默认」这一档语言包里没有独立键（五档里的它靠"清掉属性"表达），故 `key: null`。
@@ -43,6 +46,7 @@ export interface FormatCommands extends FormatChain {
   toggleOrderedList(): FormatChain;
   liftListItem(type: string): FormatChain;
   sinkListItem(type: string): FormatChain;
+  setWritingDirection(mode: WritingMode): FormatChain;
 }
 
 export interface FormatHost {
@@ -69,6 +73,10 @@ export interface AlignControl extends FormatControl {
 
 export interface ListControl extends FormatControl {
   kind: ListKind;
+}
+
+export interface DirectionControl extends FormatControl {
+  mode: WritingMode;
 }
 
 /** 官方五档的取值顺序：四个具名档在前，默认档在末（面板上"清掉"总是最后一步）。 */
@@ -101,6 +109,15 @@ export const INDENT_CONTROLS: readonly FormatControl[] = [
   { key: 'style.indent.in', label: '增加缩进', apply: (h) => h.chain().focus().sinkListItem('listItem').run() },
 ];
 
+/**
+ * 方向两档（`gap.md` G1484）。官方语言包里只有「从左到右」与「从上到下」这两枚，
+ * 前者就是缺省态——所以这一族没有"清掉"的第三枚，点它＝把属性写回 `null`。
+ */
+export const DIRECTION_CONTROLS: readonly DirectionControl[] = [
+  { mode: 'ltr', key: 'style.left.to.right', label: '从左到右', apply: (h) => h.chain().focus().setWritingDirection('ltr').run() },
+  { mode: 'ttb', key: 'style.top.to.bottom', label: '从上到下', apply: (h) => h.chain().focus().setWritingDirection('ttb').run() },
+];
+
 export const INLINE_MARK_CONTROLS: readonly MarkControl[] = [
   { mark: 'bold', key: 'style.inline.bold', label: '粗体', apply: (h) => h.chain().focus().toggleBold().run() },
   { mark: 'italic', key: 'style.inline.italic', label: '斜体', apply: (h) => h.chain().focus().toggleItalic().run() },
@@ -108,10 +125,12 @@ export const INLINE_MARK_CONTROLS: readonly MarkControl[] = [
   { mark: 'code', key: 'style.inline.code', label: '代码', apply: (h) => h.chain().focus().toggleCode().run() },
 ];
 
-/** 组标题：官方 `style.text.align`「对齐」与 `style.indentation`「缩进」。列表族语言包只有逐档键，标题用本地词「列表」。 */
+/** 组标题：官方 `style.text.align`「对齐」、`style.indentation`「缩进」与 `style.direction`「方向」。列表族语言包只有逐档键，标题用本地词「列表」。 */
 export const GROUP_KEYS = {
   align: 'style.text.align',
   alignLabel: '对齐',
+  direction: 'style.direction',
+  directionLabel: '方向',
   indent: 'style.indentation',
   indentLabel: '缩进',
   listLabel: '列表',
@@ -140,4 +159,13 @@ export function listState(state: EditorState, kind: ListKind): boolean {
 
 export function listMixed(state: EditorState): boolean {
   return listPresence(state.doc, state.selection.from, state.selection.to).mixed;
+}
+
+export function directionState(state: EditorState, mode: WritingMode): boolean {
+  const presence = directionPresence(state.doc, state.selection.from, state.selection.to);
+  return !presence.mixed && presence.mode === mode;
+}
+
+export function directionMixed(state: EditorState): boolean {
+  return directionPresence(state.doc, state.selection.from, state.selection.to).mixed;
 }

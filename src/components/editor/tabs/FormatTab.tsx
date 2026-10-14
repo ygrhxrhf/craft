@@ -5,17 +5,21 @@ import {
   Bold, Italic, Strikethrough, Code, List, ListOrdered,
   CheckSquare, ChevronRight, AlignLeft, AlignCenter, AlignRight, AlignJustify,
   Indent, Outdent, ListX, Eraser, FoldVertical, UnfoldVertical,
+  ArrowLeftRight, ArrowUpDown,
 } from 'lucide-react';
 import { useEffect, useReducer } from 'react';
 import { cn } from 'cn';
 import {
   ALIGNMENT_CONTROLS,
+  DIRECTION_CONTROLS,
   GROUP_KEYS,
   INDENT_CONTROLS,
   INLINE_MARK_CONTROLS,
   LIST_CONTROLS,
   alignMixed,
   alignState,
+  directionMixed,
+  directionState,
   listMixed,
   listState,
   markState,
@@ -64,6 +68,8 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   'style.text.align.center': AlignCenter,
   'style.text.align.right': AlignRight,
   'style.text.align.justify': AlignJustify,
+  'style.left.to.right': ArrowLeftRight,
+  'style.top.to.bottom': ArrowUpDown,
   default: Eraser,
 };
 
@@ -163,6 +169,7 @@ export function FormatTab({ editor }: FormatTabProps) {
   const marks = INLINE_MARK_CONTROLS.map((control) => ({ control, state: markState(state, control.mark) }));
   const alignGroupMixed = alignMixed(state);
   const listGroupMixed = listMixed(state);
+  const directionGroupMixed = directionMixed(state);
 
   return (
     <div className="space-y-4 p-3">
@@ -274,6 +281,23 @@ export function FormatTab({ editor }: FormatTabProps) {
               icon={iconFor(control)}
               active={false}
               mixedGroup={false}
+              onClick={() => control.apply(host)}
+              label={control.label}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* 方向是第三根轴（G1484）：官方语言包里只有这两枚，「从左到右」就是缺省态。 */}
+      <section>
+        <GroupHeader label={GROUP_KEYS.directionLabel} mixed={directionGroupMixed} />
+        <div className="grid grid-cols-2 gap-1">
+          {DIRECTION_CONTROLS.map((control) => (
+            <SegmentButton
+              key={control.label}
+              icon={iconFor(control)}
+              active={directionState(state, control.mode)}
+              mixedGroup={directionGroupMixed}
               onClick={() => control.apply(host)}
               label={control.label}
             />

@@ -5,21 +5,27 @@ import { EditorState, TextSelection, type Transaction } from '@tiptap/pm/state';
 import {
   alignPresence,
   alignValues,
+  applyWritingDirection,
   clearListFormat,
+  directionPresence,
+  directionValues,
   inlineMarkState,
   listKindsIn,
   listPresence,
   markPresence,
   markTriState,
+  writingModeFromCss,
   ALIGNABLE_TYPES,
+  CSS_WRITING_MODE,
+  WRITING_MODES,
 } from './format-presence';
 
 // 与线上编辑器同形：可对齐的是 heading/paragraph，列表三族各有包装节点，折叠块自己就是容器。
 const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
-    paragraph: { group: 'block', content: 'text*', attrs: { textAlign: { default: null } } },
-    heading: { group: 'block', content: 'text*', attrs: { level: { default: 1 }, textAlign: { default: null } } },
+    paragraph: { group: 'block', content: 'text*', attrs: { textAlign: { default: null }, writingDirection: { default: null } } },
+    heading: { group: 'block', content: 'text*', attrs: { level: { default: 1 }, textAlign: { default: null }, writingDirection: { default: null } } },
     codeBlock: { group: 'block', content: 'text*' },
     bulletList: { group: 'block', content: 'listItem+' },
     orderedList: { group: 'block', content: 'listItem+' },
@@ -309,5 +315,85 @@ describe('clearListFormat（G155 取消列表格式的写侧）', () => {
     const sample = doc(list('bullet', 'only'));
     expect(clearListFormat(stateOf(sample, caret(sample, 'only', 1)))).toBe(true);
     expect(shape(sample)).toEqual(['bulletList']);
+  });
+});
+
+describe('方向两轴（G1484）', () => {
+  it('把「从左到右」读成缺省态：没写过属性的块就是它', () => {
+    const sample = doc(p('alpha'));
+    expect(directionPresence(sample, caret(sample, 'alpha'))).toEqual({ mode: 'ltr', mixed: false, empty: false });
+  });
+
+  it('把「从上到下」读成属性，且只认扩展真正写出去的那枚 CSS 值', () => {
+    const sample = doc(p('alpha', { writingDirection: 'ttb' }));
+    expect(CSS_WRITING_MODE.ttb).toBe('vertical-rl');
+    expect(writingModeFromCss(CSS_WRITING_MODE.ttb)).toBe('ttb');
+    expect(directionPresence(sample, caret(sample, 'alpha')).mode).toBe('ttb');
+  });
+
+  it('跨两轴时既不高亮任何一档，也不取第一个值', () => {
+    const sample = doc(p('one', { writingDirection: 'ttb' }), p('two'));
+    const presence = directionPresence(sample, ...span(sample, 'one', 'two'));
+    expect(presence).toEqual({ mode: null, mixed: true, empty: false });
+    expect(WRITING_MODES).toEqual(['ltr', 'ttb']);
+  });
+
+  it('选区里没有可定向块时判空，而不是判成「从左到右」', () => {
+    const sample = doc(n.codeBlock.create(null, schema.text('x')));
+    expect(directionPresence(sample, caret(sample, 'x'))).toEqual({ mode: null, mixed: false, empty: true });
+    expect(directionValues(sample, caret(sample, 'x'))).toEqual([]);
+  });
+
+  it('CSS 换算对大小写与空白都不敏感，其余取值一律归「从左到右」', () => {
+    expect(writingModeFromCss(' Vertical-RL ')).toBe('ttb');
+    expect(writingModeFromCss('horizontal-tb')).toBe('ltr');
+    expect(writingModeFromCss(undefined)).toBe('ltr');
+    expect(writingModeFromCss('vertical-lr')).toBe('ltr');
+  });
+});
+
+describe('方向写侧 applyWritingDirection', () => {
+  /** 跑一遍写侧：返回有没有事务、事务落地的文档、以及每个顶层块上的属性。 */
+  function applyDirection(document: Node, from: number, to: number, mode: 'ltr' | 'ttb') {
+    const tr = applyWritingDirection(stateOf(document, from, to), mode);
+    if (!tr) return { tr: null, doc: document, attrs: [] as unknown[] };
+    const attrs: unknown[] = [];
+    tr.doc.forEach((child) => attrs.push(child.attrs.writingDirection ?? null));
+    return { tr, doc: tr.doc, attrs };
+  }
+
+  it('光标停在块里就只动这一块，且不动正文', () => {
+    const sample = doc(p('one'), p('two'));
+    const { doc: result, attrs } = applyDirection(sample, caret(sample, 'two'), caret(sample, 'two'), 'ttb');
+    expect(attrs).toEqual([null, 'ttb']);
+    expect(result.textContent).toBe('onetwo');
+    // 读侧要立刻认得写侧刚落的东西，否则面板点完就灭。
+    expect(directionPresence(result, caret(result, 'two')).mode).toBe('ttb');
+  });
+
+  it('整段选区碰到的每个可定向块一起改，非可定向块跳过', () => {
+    const sample = doc(p('one'), n.codeBlock.create(null, schema.text('code')), p('two'));
+    const { attrs } = applyDirection(sample, caret(sample, 'one'), caret(sample, 'two', 3), 'ttb');
+    expect(attrs).toEqual(['ttb', null, 'ttb']);
+  });
+
+  it('「从左到右」把属性清回 null，清完与从没设过的块逐字相同', () => {
+    const sample = doc(p('one', { writingDirection: 'ttb' }));
+    const { doc: result } = applyDirection(sample, caret(sample, 'one'), caret(sample, 'one'), 'ltr');
+    const written = JSON.stringify(result.firstChild!.attrs);
+    const neverSet = JSON.stringify(doc(p('one')).firstChild!.attrs);
+    expect(written).toBe(neverSet);
+  });
+
+  it('已经是那一档时不发事务，方向按钮因此不会往撤销栈里塞空步', () => {
+    const already = doc(p('one', { writingDirection: 'ttb' }));
+    expect(applyDirection(already, caret(already, 'one'), caret(already, 'one'), 'ttb').tr).toBeNull();
+    const plain = doc(p('one'));
+    expect(applyDirection(plain, caret(plain, 'one'), caret(plain, 'one'), 'ltr').tr).toBeNull();
+  });
+
+  it('光标落在不可定向块里时什么都不做', () => {
+    const sample = doc(n.codeBlock.create(null, schema.text('x')));
+    expect(applyDirection(sample, caret(sample, 'x'), caret(sample, 'x'), 'ttb').tr).toBeNull();
   });
 });

@@ -1,4 +1,4 @@
-import { NodeRange } from '@tiptap/pm/model';
+import { NodeRange, type Node } from '@tiptap/pm/model';
 import { liftTarget } from '@tiptap/pm/transform';
 import type { EditorState, Transaction } from '@tiptap/pm/state';
 import { TOGGLE_NODE } from '@/components/editor/extensions/toggle-all';
@@ -26,6 +26,61 @@ export const ALIGNABLE_TYPES = ['heading', 'paragraph'];
 /** 官方列表族的五档词汇（`style.list.{none,todo,toggle,bullet,numbered}`）。 */
 export type ListKind = 'none' | 'todo' | 'toggle' | 'bullet' | 'numbered';
 export const LIST_KINDS: readonly ListKind[] = ['none', 'todo', 'toggle', 'bullet', 'numbered'];
+
+/**
+ * 官方 `style.direction`「方向」的两轴（`gap.md` G1484）：`style.left.to.right`「从左到右」
+ * 与 `style.top.to.bottom`「从上到下」。语言包里**只有这两枚**，没有第三个方向档，
+ * 所以「从左到右」就是缺省态——正如对齐族里的「默认」靠"清掉属性"表达。
+ */
+export type WritingMode = 'ltr' | 'ttb';
+export const WRITING_MODES: readonly WritingMode[] = ['ltr', 'ttb'];
+
+/** 落到 CSS 的写法；`ltr`＝不写属性（横排本来就是初值）。 */
+export const CSS_WRITING_MODE: Record<WritingMode, string | null> = { ltr: null, ttb: 'vertical-rl' };
+
+/** `parseHTML` 认回来的只有这一枚具名档；其余（含 `horizontal-tb` 与缺省）都归 `ltr`。 */
+const WRITING_MODE_BY_CSS: Record<string, WritingMode> = { 'vertical-rl': 'ttb' };
+
+export function writingModeFromCss(value: string | null | undefined): WritingMode {
+  return WRITING_MODE_BY_CSS[(value ?? '').trim().toLowerCase()] ?? 'ltr';
+}
+
+/** 选区里可定向块实际用到的方向档，按文档序去重（缺属性＝`ltr`＝官方那枚「从左到右」）。 */
+export function directionValues(
+  doc: EditorState['doc'],
+  from: number,
+  to: number = from,
+  typeNames: readonly string[] = ALIGNABLE_TYPES,
+): WritingMode[] {
+  const read = (node: Node) => (node.attrs.writingDirection as WritingMode | null) ?? 'ltr';
+  if (to <= from) {
+    const parent = doc.resolve(from).parent;
+    if (!typeNames.includes(parent.type.name)) return [];
+    return [read(parent)];
+  }
+  const seen: WritingMode[] = [];
+  doc.nodesBetween(from, to, (node) => {
+    if (!typeNames.includes(node.type.name)) return;
+    const mode = read(node);
+    if (!seen.includes(mode)) seen.push(mode);
+  });
+  return seen;
+}
+
+export interface DirectionPresence {
+  mode: WritingMode | null;
+  mixed: boolean;
+  /** 选区里没有任何可定向的块。 */
+  empty: boolean;
+}
+
+/** 方向控件该显示哪一档：两档里的单一档、跨档＝混合、还是没有可定向的块。`to` 省略＝光标（`from`）。 */
+export function directionPresence(doc: EditorState['doc'], from: number, to: number = from): DirectionPresence {
+  const modes = directionValues(doc, from, to);
+  if (!modes.length) return { mode: null, mixed: false, empty: true };
+  if (modes.length > 1) return { mode: null, mixed: true, empty: false };
+  return { mode: modes[0], mixed: false, empty: false };
+}
 
 const WRAPPER_KINDS: Record<string, ListKind> = {
   bulletList: 'bullet',
@@ -150,6 +205,37 @@ export function listPresence(doc: EditorState['doc'], from: number, to: number):
   if (!kinds.length) return { kind: null, mixed: false, empty: true };
   if (kinds.length > 1) return { kind: null, mixed: true, empty: false };
   return { kind: kinds[0], mixed: false, empty: false };
+}
+
+/**
+ * 方向族的写侧：把选区碰到的每个可定向块设成某一档。
+ *
+ * 「从左到右」是缺省态，所以它写回 `null`——"设过又设回来"的块要与从没设过的块逐字相同，
+ * 否则正文里会留下一堆等价但不同的表示。空选区时 `nodesBetween` 一个节点都不访问
+ * （ProseMirror 的初等区间语义），而面板上点方向最常见的情形就是光标停在块里，故单取父块。
+ */
+export function applyWritingDirection(
+  state: EditorState,
+  mode: WritingMode,
+  typeNames: readonly string[] = ALIGNABLE_TYPES,
+): Transaction | null {
+  const next: WritingMode | null = CSS_WRITING_MODE[mode] ? mode : null;
+  const tr = state.tr;
+  let touched = false;
+  const write = (pos: number, node: Node) => {
+    if (node.attrs.writingDirection === next) return;
+    tr.setNodeMarkup(pos, undefined, { ...node.attrs, writingDirection: next });
+    touched = true;
+  };
+  const { from, to, $from } = state.selection;
+  if (from === to) {
+    if (typeNames.includes($from.parent.type.name)) write($from.before($from.depth), $from.parent);
+  } else {
+    state.doc.nodesBetween(from, to, (node, pos) => {
+      if (typeNames.includes(node.type.name)) write(pos, node);
+    });
+  }
+  return touched ? tr : null;
 }
 
 /** 每个块的拔层上限：嵌套列表最深处也不过这个数，超了就说明循环没在推进。 */

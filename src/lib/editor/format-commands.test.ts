@@ -7,12 +7,15 @@ import { EditorState, TextSelection } from '@tiptap/pm/state';
 
 import {
   ALIGNMENT_CONTROLS,
+  DIRECTION_CONTROLS,
   GROUP_KEYS,
   INDENT_CONTROLS,
   INLINE_MARK_CONTROLS,
   LIST_CONTROLS,
   alignMixed,
   alignState,
+  directionMixed,
+  directionState,
   listMixed,
   listState,
   type FormatCommands,
@@ -34,9 +37,11 @@ const everyControl = [
   ...ALIGNMENT_CONTROLS.map((c) => [c.key, c.label] as const),
   ...LIST_CONTROLS.map((c) => [c.key, c.label] as const),
   ...INDENT_CONTROLS.map((c) => [c.key, c.label] as const),
+  ...DIRECTION_CONTROLS.map((c) => [c.key, c.label] as const),
   ...INLINE_MARK_CONTROLS.map((c) => [c.key, c.label] as const),
   [GROUP_KEYS.align, GROUP_KEYS.alignLabel] as const,
   [GROUP_KEYS.indent, GROUP_KEYS.indentLabel] as const,
+  [GROUP_KEYS.direction, GROUP_KEYS.directionLabel] as const,
 ];
 
 describe('the control labels are the ledger’s own sentences', () => {
@@ -62,12 +67,18 @@ describe('the control labels are the ledger’s own sentences', () => {
     expect(LIST_CONTROLS.map((c) => c.kind)).toEqual(['todo', 'toggle', 'bullet', 'numbered', 'none']);
     expect(ALIGNMENT_CONTROLS.map((c) => c.value)).toEqual(['left', 'center', 'right', 'justify', null]);
   });
+
+  // 官方语言包里方向只有这两枚（G1484）——第三枚（比如「从右到左」）是本地发明，不许有。
+  it('offers exactly the two direction档位 the ledger has', () => {
+    expect(DIRECTION_CONTROLS.map((c) => c.mode)).toEqual(['ltr', 'ttb']);
+    expect(DIRECTION_CONTROLS.map((c) => c.key)).toEqual(['style.left.to.right', 'style.top.to.bottom']);
+  });
 });
 
 const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
-    paragraph: { group: 'block', content: 'text*', attrs: { textAlign: { default: null } } },
+    paragraph: { group: 'block', content: 'text*', attrs: { textAlign: { default: null }, writingDirection: { default: null } } },
     bulletList: { group: 'block', content: 'listItem+' },
     listItem: { group: 'block', content: 'paragraph block*' },
     text: { marks: 'bold' },
@@ -143,6 +154,10 @@ function fakeHost(state = textState('alpha')) {
       calls.push(`sinkListItem(${type})`);
       return chain;
     },
+    setWritingDirection: (mode: string) => {
+      calls.push(`setWritingDirection(${mode})`);
+      return chain;
+    },
   } as FormatCommands;
   const dispatched: number[] = [];
   const host: FormatHost = { chain: () => chain, state, dispatch: (tr) => dispatched.push(tr.steps.length) };
@@ -205,6 +220,15 @@ describe('every control fires the command its label promises', () => {
     INDENT_CONTROLS[1].apply(inHost.host);
     expect(inHost.calls).toEqual(['focus', 'sinkListItem(listItem)', 'run']);
   });
+
+  // 「从左到右」也照样发一次命令——把它清回缺省态是这条命令的职责，不是面板少调一步。
+  it('routes both direction档位 through the one command that owns the attribute', () => {
+    for (const control of DIRECTION_CONTROLS) {
+      const { host, calls } = fakeHost();
+      control.apply(host);
+      expect(calls, control.label).toEqual(['focus', `setWritingDirection(${control.mode})`, 'run']);
+    }
+  });
 });
 
 describe('the mixed indicator lights no segment', () => {
@@ -247,6 +271,31 @@ describe('the mixed indicator lights no segment', () => {
     expect(listState(state, 'none')).toBe(true);
     expect(listState(state, 'bullet')).toBe(false);
   });
+
+  it('lights 从左到右 only while no block carries the attribute', () => {
+    expect(directionState(textState('alpha'), 'ltr')).toBe(true);
+    expect(directionState(textState('alpha'), 'ttb')).toBe(false);
+
+    const vertical = schema.nodes.doc.create(null, [
+      schema.nodes.paragraph.create({ writingDirection: 'ttb' }, schema.text('one')),
+    ]);
+    const verticalState = EditorState.create({ doc: vertical, selection: TextSelection.create(vertical, 1, 4) });
+    expect(directionState(verticalState, 'ttb')).toBe(true);
+    expect(directionState(verticalState, 'ltr')).toBe(false);
+  });
+
+  it('suppresses both direction档位 when the selection crosses the axes', () => {
+    const mixedDoc = schema.nodes.doc.create(null, [
+      schema.nodes.paragraph.create({ writingDirection: 'ttb' }, schema.text('one')),
+      schema.nodes.paragraph.create(null, schema.text('two')),
+    ]);
+    const state = EditorState.create({
+      doc: mixedDoc,
+      selection: TextSelection.create(mixedDoc, 1, mixedDoc.content.size - 1),
+    });
+    expect(directionMixed(state)).toBe(true);
+    for (const control of DIRECTION_CONTROLS) expect(directionState(state, control.mode), control.label).toBe(false);
+  });
 });
 
 describe('面板接线（屏上的字必须来自这张表）', () => {
@@ -266,9 +315,11 @@ describe('面板接线（屏上的字必须来自这张表）', () => {
     ...ALIGNMENT_CONTROLS.map((c) => c.label),
     ...LIST_CONTROLS.map((c) => c.label),
     ...INDENT_CONTROLS.map((c) => c.label),
+    ...DIRECTION_CONTROLS.map((c) => c.label),
     ...INLINE_MARK_CONTROLS.map((c) => c.label),
     GROUP_KEYS.alignLabel,
     GROUP_KEYS.indentLabel,
+    GROUP_KEYS.directionLabel,
     MIXED_LABEL,
   ];
 
@@ -280,12 +331,12 @@ describe('面板接线（屏上的字必须来自这张表）', () => {
   });
 
   it('drives its segments off the shared tables and the tri-state helper', () => {
-    for (const name of ['ALIGNMENT_CONTROLS', 'LIST_CONTROLS', 'INDENT_CONTROLS', 'INLINE_MARK_CONTROLS']) {
+    for (const name of ['ALIGNMENT_CONTROLS', 'LIST_CONTROLS', 'INDENT_CONTROLS', 'DIRECTION_CONTROLS', 'INLINE_MARK_CONTROLS']) {
       // 一次进 import、一次进渲染，缺一个都点不出这一档。
       wired(panel, name, 2);
     }
-    for (const helper of ['alignState', 'listState', 'markState']) wired(panel, helper, 2);
-    wired(panel, 'control.apply(host)', 4);
+    for (const helper of ['alignState', 'listState', 'directionState', 'markState']) wired(panel, helper, 2);
+    wired(panel, 'control.apply(host)', 5);
   });
 
   it('redraws on selection changes, or the档位 would be read off a stale selection', () => {
@@ -296,5 +347,13 @@ describe('面板接线（屏上的字必须来自这张表）', () => {
   it('aligns the same block types the editor actually gave the attribute to', () => {
     wired(editor, 'ALIGNABLE_TYPES', 2);
     expect(editor).not.toContain("types: ['heading', 'paragraph']");
+  });
+
+  // 方向这一族没有面板上的表就点不出来，但**只有**表也不够：属性得真有人写进正文。
+  it('mounts the extension that owns the direction attribute', () => {
+    const extension = source('components/editor/extensions/writing-direction.ts');
+    wired(editor, 'WritingDirection', 2);
+    wired(extension, 'DIRECTION_TYPES', 3);
+    expect(extension).toContain('ALIGNABLE_TYPES');
   });
 });

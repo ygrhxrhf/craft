@@ -60,6 +60,7 @@ import { BlockLinkSuggestion } from './extensions/block-link-suggestion';
 import { MentionUserSuggestion } from './extensions/mention-user-suggestion';
 import { EmojiSuggestion } from './extensions/emoji-suggestion';
 import { FontSize } from './extensions/font-size';
+import { WritingDirection } from './extensions/writing-direction';
 import { Columns, Column } from './extensions/columns';
 import { TableOfContents } from './extensions/toc';
 import { WhiteboardLink } from './extensions/whiteboard-link';
@@ -434,6 +435,7 @@ export function Editor({
       MentionUserSuggestion.configure({ documentId }),
       EmojiSuggestion,
       FontSize,
+      WritingDirection,
       Columns,
       Column,
       TableOfContents,

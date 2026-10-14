@@ -35,8 +35,18 @@ const segment = (page: import('@playwright/test').Page, label: string) =>
 
 async function newDoc(page: import('@playwright/test').Page, lines: string[]) {
   await page.goto('/documents');
-  await page.getByRole('button', { name: /新建/ }).first().click();
-  await page.waitForURL(/\/documents\//);
+  // ☆ 按需编译的 dev 首屏里，按钮比它自己的 onClick 先到：点空了不发路由，
+  //   于是 `waitForURL` 把整分钟预算等成一次超时。重点几下才是这条路径本来的用法。
+  const create = page.getByRole('button', { name: /新建/ }).first();
+  for (let attempt = 0; attempt < 5; attempt++) {
+    await create.click();
+    const arrived = await page
+      .waitForURL(/\/documents\//, { timeout: 8_000 })
+      .then(() => true)
+      .catch(() => false);
+    if (arrived) break;
+  }
+  await expect(page).toHaveURL(/\/documents\//);
 
   const editor = page.locator('.ProseMirror');
   await editor.click();
@@ -55,6 +65,10 @@ async function openFormatTab(page: import('@playwright/test').Page) {
 
 const alignOf = (page: import('@playwright/test').Page, index: number) =>
   page.$$eval('.ProseMirror > *', (els, i) => els[i]?.getAttribute('style') ?? '', index);
+
+/** 第 index 个块的书写方向；用 computed，这样「从左到右」清掉属性后读回来的是初值。 */
+const writingOf = (page: import('@playwright/test').Page, index: number) =>
+  page.$$eval('.ProseMirror > *', (els, i) => getComputedStyle(els[i]!).writingMode, index);
 
 /** 顶层正文行的形状（标签＋文字），结构类断言用它，报错时能一眼看出多出来的是哪一行。 */
 const readRows = (page: import('@playwright/test').Page) =>
@@ -192,4 +206,85 @@ test('行内格式三态：部分加粗显示混合，整段加粗才回到开',
   await page.keyboard.press('Control+A');
   await expect(page.locator('.ProseMirror strong')).toHaveText('前半后半');
   await expect(segment(page, '粗体')).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('方向是第三根轴：从上到下写进正文，从左到右清掉属性', async ({ page }) => {
+  await newDoc(page, ['第一段文字', '第二段文字']);
+  await openFormatTab(page);
+
+  // G1484 的 Complaint 是这一族整面缺席：两档都得在屏上点得到。
+  await expect(segment(page, '从上到下')).toBeVisible();
+  await expect(segment(page, '从左到右')).toBeVisible();
+
+  await putCaretIn(page, '.ProseMirror > *', 0);
+  await expect(segment(page, '从左到右'), '没写过属性的块该落在缺省档').toHaveAttribute('aria-pressed', 'true');
+
+  await segment(page, '从上到下').click();
+  await expect.poll(() => writingOf(page, 0), { message: '从上到下没写进正文' }).toBe('vertical-rl');
+  await expect(segment(page, '从上到下')).toHaveAttribute('aria-pressed', 'true');
+  await expect(segment(page, '从左到右')).toHaveAttribute('aria-pressed', 'false');
+
+  // ☆ 这一行守的是 G153 那类事故的另一半：对齐与方向都往 `style` 里渲染，
+  //   若属性合并（TipTap `mergeAttributes`）失效，点方向就会把 textAlign 抹掉。
+  await segment(page, '两端对齐').click();
+  await expect
+    .poll(() => alignOf(page, 0), { message: '方向与对齐没能共存于同一 style' })
+    .toMatch(/text-align:\s*justify/);
+  expect(await writingOf(page, 0)).toBe('vertical-rl');
+
+  await segment(page, '从左到右').click();
+  await expect.poll(() => writingOf(page, 0), { message: '从左到右没清掉属性' }).toBe('horizontal-tb');
+  await expect(segment(page, '从左到右')).toHaveAttribute('aria-pressed', 'true');
+  expect(await alignOf(page, 0)).toBe('text-align: justify;');
+});
+
+test('方向跨轴时整组显示混合，两档都不点亮', async ({ page }) => {
+  await newDoc(page, ['第一段文字', '第二段文字']);
+  await openFormatTab(page);
+
+  await putCaretIn(page, '.ProseMirror > *', 0);
+  await segment(page, '从上到下').click();
+
+  await putCaretIn(page, '.ProseMirror > *', 1);
+  await expect(segment(page, '从左到右')).toHaveAttribute('aria-pressed', 'true');
+
+  await page.keyboard.press('Control+A');
+  const mixed = page.locator('[role="tabpanel"] [data-mixed-indicator=""]');
+  await expect(mixed, '方向组的混合标记没出现').toHaveCount(1);
+  await expect(mixed).toHaveText('混合');
+  await expect(segment(page, '从上到下')).toHaveAttribute('aria-pressed', 'false');
+  await expect(segment(page, '从左到右')).toHaveAttribute('aria-pressed', 'false');
+
+  // 光标回到竖排那块，混合消失，该档重新点亮。
+  await putCaretIn(page, '.ProseMirror > *', 0);
+  await expect(page.locator('[role="tabpanel"] [data-mixed-indicator=""]')).toHaveCount(0);
+  await expect(segment(page, '从上到下')).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('书写方向随正文往返：刷新后属性还在，清掉后刷新也回不来', async ({ page }) => {
+  await newDoc(page, ['第一段文字', '第二段文字']);
+  await openFormatTab(page);
+
+  await putCaretIn(page, '.ProseMirror > *', 0);
+  await segment(page, '从上到下').click();
+  await expect.poll(() => writingOf(page, 0)).toBe('vertical-rl');
+
+  // 正文真源是 Yjs：这一笔进了房间，刷新才该读得回来。
+  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await page.reload();
+  await expect(page.locator('.ProseMirror > *')).toHaveCount(2);
+  await expect.poll(() => writingOf(page, 0), { message: '竖排在往返后丢了属性' }).toBe('vertical-rl');
+  await expect(await writingOf(page, 1)).toBe('horizontal-tb');
+
+  await openFormatTab(page);
+  await putCaretIn(page, '.ProseMirror > *', 0);
+  await segment(page, '从左到右').click();
+  await expect.poll(() => writingOf(page, 0)).toBe('horizontal-tb');
+
+  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await page.reload();
+  await expect(page.locator('.ProseMirror > *')).toHaveCount(2);
+  await expect
+    .poll(() => writingOf(page, 0), { message: '清掉的属性又从库里长了回来' })
+    .toBe('horizontal-tb');
 });

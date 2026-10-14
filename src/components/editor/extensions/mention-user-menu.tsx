@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 import { AtSign } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
-import { listMentionCandidates } from '@/actions/document/members';
 import type { MentionCandidate } from '@/actions/document/members';
+import { loadMentionCandidates } from '@/components/sync/mention-candidates';
 import { mentionLabel, rankMentionCandidates } from './mention-users';
 import { cn } from 'cn';
 
@@ -44,7 +44,9 @@ export function MentionUserMenu({ editor, query, documentId, range, onClose, ref
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const found = await listMentionCandidates(documentId);
+        // G1507：服务端那一读只认已落库的成员行，而刚邀请的那位还在 2s 去抖队列里
+        // ⇒ 走 `loadMentionCandidates`，把本机 pending 的成员意图一起算进候选。
+        const found = await loadMentionCandidates(documentId);
         if (latestQuery.current === query) setPeople(rankMentionCandidates(found, query, MAX_ROWS));
       } finally {
         if (latestQuery.current === query) setLoading(false);

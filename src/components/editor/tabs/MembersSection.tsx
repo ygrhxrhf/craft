@@ -9,6 +9,7 @@ import {
   type MemberRole,
 } from '@/actions/document/members';
 import { getSyncManager } from '@/lib/sync-core';
+import { rememberUserDisplay } from '@/components/sync/user-display';
 
 interface MemberRow {
   id: string;
@@ -61,6 +62,9 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
     try {
       // 邮箱解析留在服务端（要查账号）；落库走 applyLocal，离线可排队
       const resolved = await resolveDocumentMember({ documentId, email, role });
+      // G1507：成员行的同步列里没有姓名/邮箱 ⇒ 把这一发当场学到的显示名记下来，
+      // 正文那枚 `@` 叠 pending 时才标得出这位刚授权的人。
+      rememberUserDisplay({ userId: resolved.userId, name: resolved.name, email: resolved.email });
       await getSyncManager().applyLocal({
         table: 'document_member',
         id: resolved.id,

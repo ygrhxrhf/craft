@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { listMentionCandidates, type MentionCandidate } from '@/actions/document/members';
+import type { MentionCandidate } from '@/actions/document/members';
+// G1507：与正文那枚 `@` 同源——名单要认这台设备上刚做的邀请，不能只读服务端已落库的行。
+import { loadMentionCandidates } from '@/components/sync/mention-candidates';
 import { mentionLabel, rankMentionCandidates } from '../extensions/mention-users';
 import { acceptEmoji, mentionQueryAt } from './emoji-query';
 
@@ -26,7 +28,7 @@ export function MentionSuggest({
 
   useEffect(() => {
     let alive = true;
-    listMentionCandidates(documentId)
+    loadMentionCandidates(documentId)
       .then((rows) => {
         if (alive) setPeople(rows);
       })

@@ -7,6 +7,7 @@ import { SYNC_TABLES } from '@/lib/sync/tables';
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
 import { decideLww } from '@/lib/sync/lww';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
+import { materializeTaskReminders } from '@/lib/notification/materialize';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,6 +46,17 @@ export async function GET(req: NextRequest) {
   }
 
   const db = await getDb();
+
+  // G02：到期的提醒在这一次轮询的**头部**落成 notification 行——放在收集循环之前，
+  // 新行（updatedAt=now）才能过得了同一轮的 since 过滤、随这批增量一起出库。
+  // 投递是轮询的副作用，不能反过来把整条元数据通路带崩 ⇒ 失败只记日志，下轮重试
+  // （(taskId, remindAt) 唯一键保证重试不叠份）。
+  try {
+    await materializeTaskReminders(userId);
+  } catch (e) {
+    console.error('[sync] reminder delivery failed', e);
+  }
+
   const collected: { table: string; id: string; op: 'upsert' | 'delete'; data?: any; syncTs: string }[] = [];
 
   let docIds: string[] = [];

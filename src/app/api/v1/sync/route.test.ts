@@ -7,8 +7,14 @@ vi.mock('@/lib/authz/guard', () => ({
   requireUserId: vi.fn(async () => 'u1'),
   AuthorizationError: class extends Error {},
 }));
+// 提醒投递挂在轮询头部（G02）。本文件其余用例只关心增量流，把它当外部依赖挡掉，
+// 接线本身由下面两条专门用例来验。
+vi.mock('@/lib/notification/materialize', () => ({
+  materializeTaskReminders: vi.fn(async () => 0),
+}));
 
 import { getDb } from '@/prisma/db';
+import { materializeTaskReminders } from '@/lib/notification/materialize';
 import { GET, POST } from './route';
 
 const row = (id: string, ts: string, deletedAt: string | null = null) => ({
@@ -91,6 +97,42 @@ describe('GET /api/v1/sync', () => {
       id: 'm1', op: 'upsert',
       data: { documentId: 'd1', userId: 'collaborator', role: 'editor' },
     });
+  });
+
+  // G02 接线：投递没有定时器，它跑在元数据轮询的头部。这两条锁的是"接线"本身——
+  // 核（materialize.test.ts）早就有单测，但没人调用它，屏上就永远收不到提醒。
+  it('轮询头部先做提醒投递，刚落成的行在同一次响应里就出库', async () => {
+    const notifRows: any[] = [];
+    mockDb([], { Notification: notifRows });
+    vi.mocked(materializeTaskReminders).mockImplementationOnce(async () => {
+      notifRows.push({
+        id: 'n1', userId: 'u1', kind: 'taskReminder', taskId: 't1', documentId: null,
+        title: '到期了', isResolved: false,
+        createdAt: '2026-09-28T10:00:03.000Z', updatedAt: '2026-09-28T10:00:03.000Z', deletedAt: null,
+      });
+      return 1;
+    });
+
+    const body = await (await GET(new NextRequest('http://x/api/v1/sync'))).json();
+    expect(materializeTaskReminders).toHaveBeenCalledWith('u1');
+    const notif = body.records.find((r: any) => r.table === 'notification');
+    expect(notif).toMatchObject({
+      id: 'n1', op: 'upsert',
+      data: { kind: 'taskReminder', title: '到期了', taskId: 't1' },
+    });
+  });
+
+  it('投递是轮询的副作用：它失败时元数据照常出库', async () => {
+    mockDb([row('a', '2026-09-28T10:00:00.000Z')]);
+    vi.mocked(materializeTaskReminders).mockRejectedValueOnce(new Error('db down'));
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const res = await GET(new NextRequest('http://x/api/v1/sync'));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.records.map((r: any) => r.id)).toContain('a');
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
   });
 });
 

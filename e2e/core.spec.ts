@@ -75,11 +75,11 @@ test('settings persist preference selection', async ({ page }) => {
   );
 });
 
-// The panel shows the new theme long before the server has it, and a reload taken inside
-// that window destroys the write -- which is what made the test above pass or fail by luck.
-// The two clocks here are read without touching the request, because holding the POST open
-// also holds the sidebar's reads on the same URL and moves the very latency being measured.
-test('theme choice is not shown as saved before the server accepted it', async ({ page }) => {
+// 外观面板的主题写入走离线内核（`applyLocal` + 队列 flush，2s debounce）：
+// 乐观绘制是红线要求，不是这个测试要防的事。它要防的是另一件事——**这一笔到不了服务端**
+// （队列被丢弃 / boot 没补推 / 列白名单漏了 theme），那才是"屏上改了、库里没改"的分叉。
+// 两个时钟都从不阻塞请求来读：按住 POST 会拖慢同一 URL 上的读，动的正是被测的延迟本身。
+test('theme choice paints optimistically and the offline kernel delivers it', async ({ page }) => {
   await page.goto('/login');
   await page.fill('input[type="email"]', email);
   await page.fill('input[type="password"]', password);
@@ -119,13 +119,16 @@ test('theme choice is not shown as saved before the server accepted it', async (
   await nextButton.click();
   await expect(nextButton).toHaveAttribute('aria-pressed', 'true');
   const paintedAt = Date.now();
-  await accepted;
+  const res = await accepted;
+  expect(res.ok(), '离线内核没有把这次偏好写入推上服务端').toBe(true);
 
+  // 队列的 debounce 是 2000ms，所以"绘制早于服务端接受"必然成立；留 500ms 余量而不是留 0，
+  // 是为了让这条断言真的能区分乐观绘制与"等 POST 回来再画"（后者是红线要排除的形态）。
   expect(
-    paintedAt - acceptedAt,
-    `the panel presented ${next} as the stored choice ${acceptedAt - paintedAt}ms before the ` +
-      'server had accepted it, so anything that leaves the page in between loses the write'
-  ).toBeGreaterThanOrEqual(0);
+    acceptedAt - paintedAt,
+    `服务端在 ${acceptedAt - paintedAt}ms 内就接受了这次选择，乐观绘制无从证明；` +
+      '若写入改回阻塞式 POST，这条断言应当失败'
+  ).toBeGreaterThanOrEqual(500);
 
   // And the row agrees with what the panel claims.
   await page.reload();
@@ -141,11 +144,10 @@ test('theme choice is not shown as saved before the server accepted it', async (
   );
 });
 
-// The sidebar's theme dropdown is the same shape the settings panel was: `setTheme` paints
-// from next-themes and the write goes out unawaited, so leaving the page during the write's
-// round trip keeps the new theme on screen -- next-themes also stores it in localStorage --
-// while the row still holds the old one. The two then disagree with nothing to show it.
-test('sidebar theme choice is not applied before the server accepted it', async ({ page }) => {
+// 侧栏的主题下拉与设置面板同一条通路：`setTheme` 立即画，`applyLocal` 入队后由内核推送。
+// 这里同时验两件事——绘制不等服务端、换页不丢队列——用的是同一笔请求的两个时钟，
+// 且不按住请求来读（按住会拖慢同 URL 的读，动的正是被测延迟）。
+test('sidebar theme choice paints optimistically and survives a reload', async ({ page }) => {
   await signIn(page);
 
   const html = page.locator('html');
@@ -172,13 +174,20 @@ test('sidebar theme choice is not applied before the server accepted it', async 
 
   await expect(html).toHaveClass(new RegExp(`\\b${wire}\\b`));
   const paintedAt = Date.now();
-  await accepted;
 
+  // 乐观绘制与入队之间的窗口：立刻换页测试队列是否还在。pending 只活在内存里时这一笔会
+  // 静默丢失——屏上已改、库里没改，正是这条测试要拦的回归（spec 7.x 离线内核的持久性）。
+  await page.reload();
+  await expect(html).toHaveClass(new RegExp(`\\b${wire}\\b`));
+  const res = await accepted;
+  expect(res.ok(), '离线内核没有把侧栏的主题选择推上服务端').toBe(true);
+
+  // 与设置面板同一裁定：先绘制、后入队，`localStorage`（next-themes）与服务端行只是短暂不同步，
+  // 队列会在下一次 boot/flush 补上，不再需要"等服务端才画"。
   expect(
-    paintedAt - acceptedAt,
-    `the app repainted as ${wire} ${acceptedAt - paintedAt}ms before the server accepted it, ` +
-      'so a navigation in between leaves localStorage and the stored preference disagreeing'
-  ).toBeGreaterThanOrEqual(0);
+    acceptedAt - paintedAt,
+    `侧栏在 ${acceptedAt - paintedAt}ms 内就等到服务端接受，乐观绘制无从证明`
+  ).toBeGreaterThanOrEqual(500);
 
   // Back to the neutral default so the row is not left on whatever this run demoed.
   await page.getByRole('button', { name: '切换主题' }).click();
@@ -356,6 +365,13 @@ test('recurring task rolls forward to the next occurrence', async ({ page }) => 
   const today = new Date().toISOString().slice(0, 10);
 
   await page.goto('/tasks');
+
+  // 「显示已完成的任务」是设备级开关且默认关，已完成的一期不进列表 ⇒
+  // 要看"完成的那期留作历史"必须先开开关，否则断言的是过滤器的结果而不是 rollForward 的结果。
+  const showCompleted = page.getByRole('switch', { name: '显示已完成的任务' });
+  await expect(showCompleted).not.toBeChecked();
+  await showCompleted.check();
+
   await page.getByPlaceholder('添加任务，按回车确认…').fill(title);
   await page.keyboard.press('Enter');
 
@@ -376,13 +392,19 @@ test('recurring task rolls forward to the next occurrence', async ({ page }) => 
   await expect(page.locator('span.line-through', { hasText: title })).toHaveCount(1);
   await expect(instances.locator('span', { hasText: '每天' })).toHaveCount(2);
 
+  // 显式指向已完成的那一期：`card` 是惰性 locator，此刻列表里已有两期，
+  // 不锚定删除会随机打在新一期上，"留作历史"这条断言就变成空转。
+  const completedInstance = page.locator('div.border-b', { has: page.locator('span.line-through', { hasText: title }) });
+  await expect(completedInstance).toHaveCount(1);
+
   // 删除 → applyLocal(patch:null) + flushNow。刷新后仍只剩一期才算数：
   // 只验"屏上消失"会漏掉"仅本地 store 生效、服务端没落墓碑"这一类回归（读路径是服务端权威行）。
-  await card.getByLabel('删除任务').click();
+  await completedInstance.getByLabel('删除任务').click();
   await expect(instances).toHaveCount(1);
   await page.reload();
   await expect(instances).toHaveCount(1);
-  await expect(page.locator('span.line-through', { hasText: title })).toHaveCount(1);
+  await expect(page.locator('span.line-through', { hasText: title })).toHaveCount(0);
+  await expect(instances.locator('span', { hasText: '每天' })).toHaveCount(1);
 });
 
 test('镜像 copies another document’s block in read-only form', async ({ page }) => {

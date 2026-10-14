@@ -11,14 +11,18 @@ const CURSOR_KEY = 'cursor';
 
 export function createIdbStore(): SyncStore {
   let db: IDBPDatabase | null = null;
+  // G1514：开库按**在途那一次**去重。现读 `if (db) return` 之后才 `db = await openDB(…)`，
+  // 于是同一实例上并发两发 init() 各开一个句柄：本地读侧门面（`components/sync/local-records.ts`）
+  // 与内核各持一份单例，两个组件同时挂载就会各摸一次 init()。多出来的那个句柄没人再引用，
+  // 却会把日后删库（登出清理）永久堵住。
+  let initPromise: Promise<void> | null = null;
 
   function requireDb(): IDBPDatabase {
     if (!db) throw new Error('IdbSyncStore: call init() first');
     return db;
   }
 
-  async function init(): Promise<void> {
-    if (db) return;
+  async function open(): Promise<void> {
     db = await openDB(SYNC_DB_NAME, DB_VERSION, {
       upgrade(database) {
         if (!database.objectStoreNames.contains(RECORDS)) {
@@ -38,9 +42,21 @@ export function createIdbStore(): SyncStore {
         if (db) {
           db.close();
           db = null;
+          initPromise = null;   // 句柄已让路：下一次 init() 必须真的重开，而不是交回缓存
         }
       },
     });
+  }
+
+  function init(): Promise<void> {
+    if (db) return Promise.resolve();
+    if (!initPromise) {
+      initPromise = open().catch((err: unknown) => {
+        initPromise = null;   // 开库失败不缓存：调用方下次触碰仍然重试
+        throw err;
+      });
+    }
+    return initPromise;
   }
 
   async function applyRemote(incoming: SyncRecord[]): Promise<void> {

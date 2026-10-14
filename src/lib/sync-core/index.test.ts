@@ -1,5 +1,8 @@
 // src/lib/sync-core/index.test.ts
 // TDD Step 1：SyncManager 失败测试（先 RED，后实现）
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createManager, type TestSyncManager } from './index';
 import { SyncAuthError } from './reconciler';
@@ -415,6 +418,8 @@ describe('服务端拒绝的明细冒到 UI（G1506）', () => {
     expect(seen).toHaveBeenCalledTimes(1);
     expect(seen.mock.calls[0]![0][0]).toMatchObject({ id: 'gone', reason: 'not_found' });
     // 盖权威值＝本地那行重新变回墓碑（旧代码也是这个行为，加订阅者不许把它弄断）
+    // G1514：门面每次触碰先等开库 ⇒ 这一盖落在随后的微任务里，与下面 onStoreChanged 那枚同规格
+    await new Promise(r => setTimeout(r, 0));
     const local = await store.get('document', 'gone');
     expect(local?.op).toBe('delete');
   });
@@ -445,5 +450,122 @@ describe('服务端拒绝的明细冒到 UI（G1506）', () => {
       syncTs: '2026-09-28T12:00:00.000Z', reason: 'not_found' }]);
     await new Promise(r => setTimeout(r, 0));   // applyRemote 后微任务里 emitTouched
     expect(tables).toContain('document');
+  });
+});
+
+/**
+ * G1514——开库（IndexedDB / sqlite）是异步的，而**点击不等它**：此前整条线只有 boot() 里
+ * 一句 `await store.init()`，于是新标签页第一下「新建」早于 boot 完成时，applyLocal 直接抛
+ * `IdbSyncStore: call init() first` ⇒ 界面已按本地意图画完，写入却一个字没落地。
+ * 五处调用点各自拿 `await manager.boot()` 当就绪闸门，代价是把一趟网络塞进点击路径。
+ * 这一组钉闸门在**内核门面**里：任何一次触碰之前先把库开开，与 boot 谁先到无关。
+ */
+describe('未 boot 就写：开库闸门在内核门面里（G1514）', () => {
+  interface LazyHarness {
+    manager: TestSyncManager;
+    base: SyncStore;              // 真实数据面：跨过闸门直接读它，证明写确实落了
+    initCalls: () => number;
+    failNextInit: () => void;
+  }
+
+  function makeLazyManager(): LazyHarness {
+    const base = createMemoryStore();
+    let opened = false;
+    let initCalls = 0;
+    let failNext = false;
+
+    // 模仿两个真实适配器共同的形状：未 init 时**每次触碰同步抛错**（async 里 ⇒ 拒绝的 promise）
+    const guard = () => {
+      if (!opened) throw new Error('Store: call init() first');
+    };
+    const store: SyncStore = {
+      ...base,
+      init: async () => {
+        initCalls++;
+        if (failNext) {
+          failNext = false;
+          throw new Error('openDB boom');
+        }
+        await base.init();
+        opened = true;
+      },
+      applyRemote: async (records) => { guard(); await base.applyRemote(records); },
+      get: async (table, id) => { guard(); return base.get(table, id); },
+      all: async (table) => { guard(); return base.all(table); },
+      enqueue: async (op) => { guard(); await base.enqueue(op); },
+      peekBatch: async (limit, nowIso) => { guard(); return base.peekBatch(limit, nowIso); },
+      ack: async (seqList) => { guard(); await base.ack(seqList); },
+      bumpTry: async (seq, nextRetryAt) => { guard(); await base.bumpTry(seq, nextRetryAt); },
+      countPending: async () => { guard(); return base.countPending(); },
+      getCursor: async () => { guard(); return base.getCursor(); },
+      setCursor: async (c) => { guard(); await base.setCursor(c); },
+      getKv: async (key) => { guard(); return base.getKv(key); },
+      setKv: async (key, value) => { guard(); await base.setKv(key, value); },
+    };
+
+    const manager = createManager({
+      store: () => store,
+      makeQueue: () => ({
+        flush: async () => ({ pushed: 0, status: 'ok' as const }),
+        pendingCount: () => store.countPending(),
+      }),
+      makeReconciler: () => ({ pull: async () => ({ applied: 0, deletedLocally: [] as string[] }) }),
+      makeBroadcaster: () => ({ start: () => {}, stop: () => {}, isLive: () => false }),
+    });
+
+    return { manager, base, initCalls: () => initCalls, failNextInit: () => { failNext = true; } };
+  }
+
+  it('第一下 applyLocal 早于 boot：不抛，镜像有行、队列有 op', async () => {
+    const { manager, base, initCalls } = makeLazyManager();
+    await manager.applyLocal({ table: 'document', id: 'd1', patch: { title: '新建' } });
+
+    expect(initCalls()).toBe(1);
+    expect((await base.get('document', 'd1'))?.data?.title).toBe('新建');
+    expect(await base.countPending()).toBe(1);
+  });
+
+  it('并发 boot + 两下写入：只开一次库，三笔触碰都落', async () => {
+    vi.useFakeTimers();
+    const { manager, base, initCalls } = makeLazyManager();
+    await Promise.all([
+      manager.boot(),
+      manager.applyLocal({ table: 'document', id: 'a', patch: { title: 'A' } }),
+      manager.applyLocal({ table: 'document', id: 'b', patch: { title: 'B' } }),
+    ]);
+
+    expect(initCalls()).toBe(1);
+    expect(await base.countPending()).toBe(2);
+    expect((await base.get('document', 'a'))?.data?.title).toBe('A');
+    expect((await base.get('document', 'b'))?.data?.title).toBe('B');
+  });
+
+  it('开库失败不缓存：当场照实抛出，下一次触碰重试并落写', async () => {
+    const { manager, base, initCalls, failNextInit } = makeLazyManager();
+    failNextInit();
+    await expect(
+      manager.applyLocal({ table: 'document', id: 'x', patch: { title: 'X' } })
+    ).rejects.toThrow('openDB boom');
+
+    // ☆ 闸门不能顺手把失败缓存成"永远开着"：那一笔会静默蒸发，正是本批要修的失真
+    await manager.applyLocal({ table: 'document', id: 'y', patch: { title: 'Y' } });
+    expect(initCalls()).toBe(2);
+    expect((await base.get('document', 'y'))?.data?.title).toBe('Y');
+  });
+
+  /**
+   * 闸门搬进内核之后，调用点自己那五处 `await manager.boot()` 就绪闸门必须一起退场——
+   * 留着就是"两处各修一半"：点击路径照旧等一趟 pull + flush，而它想买的东西内核已经白送了。
+   * 真正的 boot 只剩 SyncBoot 一发（`void getSyncManager().boot()`），不在这一列。
+   */
+  it.each([
+    'src/app/(app)/tasks/TasksView.tsx',
+    'src/app/(app)/calendar/page.tsx',
+    'src/components/document/InboxList.tsx',
+    'src/components/editor/tabs/InfoTab.tsx',
+    'src/lib/favorite/toggle-local.ts',
+  ])('%s 不再自己拿 boot() 当写路径的就绪闸门', (rel) => {
+    const src = readFileSync(join(process.cwd(), rel), 'utf8');
+    expect(src).not.toContain('await manager.boot()');
   });
 });

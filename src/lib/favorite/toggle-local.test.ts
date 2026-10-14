@@ -23,9 +23,8 @@ type Applied = { table: string; id: string; patch: Record<string, unknown> | nul
 function manager() {
   const applyLocal = vi.fn(async (_rec: Applied): Promise<void> => {});
   const flushNow = vi.fn(async () => {});
-  const boot = vi.fn(async () => {});
-  (getSyncManager as any).mockReturnValue({ applyLocal, flushNow, boot });
-  return { applyLocal, flushNow, boot };
+  (getSyncManager as any).mockReturnValue({ applyLocal, flushNow });
+  return { applyLocal, flushNow };
 }
 
 beforeEach(() => {
@@ -36,11 +35,10 @@ beforeEach(() => {
 
 describe('toggleFavoriteLocal 的收藏分支', () => {
   it('镜像没有这一行时用新 uuid 建 upsert，并清 deletedAt', async () => {
-    const { applyLocal, flushNow, boot } = manager();
+    const { applyLocal, flushNow } = manager();
     const favored = await toggleFavoriteLocal({ documentId: 'd1', favored: false, userId: 'u1', now: NOW });
 
     expect(favored).toBe(true);
-    expect(boot).toHaveBeenCalled();
     expect(applyLocal).toHaveBeenCalledTimes(1);
     const rec = applyLocal.mock.calls[0]![0];
     expect(rec.table).toBe('favorite');

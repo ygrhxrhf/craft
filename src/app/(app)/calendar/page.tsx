@@ -106,7 +106,7 @@ export default function CalendarPage() {
       const userId = session?.user?.id;
       if (userId) {
         const manager = getSyncManager();
-        await manager.boot();
+        // G1514：开库闸门在内核门面里，写路径不必先等 boot()
         await manager.applyLocal({
           table: 'task',
           id,

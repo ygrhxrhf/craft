@@ -38,7 +38,6 @@ function favoritePatch(input: FavoriteToggleInput, now: string, deletedAt: strin
 export async function toggleFavoriteLocal(input: FavoriteToggleInput): Promise<boolean> {
   const now = input.now ?? new Date().toISOString();
   const manager = getSyncManager();
-  await manager.boot();
 
   if (input.favored) {
     // 生效行可能有多条（跨设备各建一行 + 本地乐观行尚未对账）：全部墓碑，否则星号取消不掉。

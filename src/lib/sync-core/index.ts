@@ -6,7 +6,7 @@ import { createQueue, type Queue } from './queue';
 import { createReconciler, SyncAuthError, type Reconciler } from './reconciler';
 import { createBroadcaster, type Broadcaster } from './broadcast';
 import type { SyncStore } from './store';
-import type { SyncRejection } from './types';
+import type { SyncRecord, SyncRejection } from './types';
 import type { SyncStatus } from './types';
 import { storageBackend } from '@/lib/platform';
 import { unknownPayloadKeys } from '@/lib/sync/tables';
@@ -66,12 +66,51 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
 
   // 触达表集合：applyRemote 过程记录 table，pull/applyLocal 完成后广播 onStoreChanged
   let touched = new Set<string>();
+
+  /**
+   * G1514：开库（IndexedDB / sqlite）是异步的，此前整条线只有 boot() 里一句
+   * `await store.init()` ⇒ 新标签页第一下「新建」早于 boot 完成时，applyLocal 抛
+   * `IdbSyncStore: call init() first`：界面已按本地意图画完，写入却一个字没落地。
+   * ⇒ 闸门收进下面的 store 门面：任何一次触碰之前先把库开开，与 boot 谁先到无关。
+   * ☆ 是 store.init()，不是 boot()——点击路径不该为此等一趟网络往返。
+   *   失败不缓存（下一次触碰重试）：缓存一个拒绝的 promise 等于把这一笔永久说成"已写好"。
+   */
+  let initPromise: Promise<void> | null = null;
+  function ensureInit(): Promise<void> {
+    if (!initPromise) {
+      initPromise = base.init().catch((err: unknown) => {
+        initPromise = null;
+        throw err;
+      });
+    }
+    return initPromise;
+  }
+
+  function guarded<A extends unknown[], R>(fn: (...args: A) => Promise<R>): (...args: A) => Promise<R> {
+    return async (...args: A) => {
+      await ensureInit();
+      return fn(...args);
+    };
+  }
+
   const store: SyncStore = {
     ...base,
-    applyRemote: async (records) => {
+    init: ensureInit,
+    applyRemote: guarded(async (records: SyncRecord[]) => {
       for (const r of records) touched.add(r.table);
       await base.applyRemote(records);
-    },
+    }),
+    get: guarded(base.get),
+    all: guarded(base.all),
+    enqueue: guarded(base.enqueue),
+    peekBatch: guarded(base.peekBatch),
+    ack: guarded(base.ack),
+    bumpTry: guarded(base.bumpTry),
+    countPending: guarded(base.countPending),
+    getCursor: guarded(base.getCursor),
+    setCursor: guarded(base.setCursor),
+    getKv: guarded(base.getKv),
+    setKv: guarded(base.setKv),
   };
 
   const statusSubs = new Set<(s: SyncStatus, pending: number) => void>();

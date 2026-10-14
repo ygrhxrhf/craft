@@ -16,8 +16,7 @@ export function createSqliteStore(dbPath?: string): SyncStore {
     throw new Error('SqliteSyncStore: call init() first');
   }
 
-  async function init(): Promise<void> {
-    if (db || memFallback) return;
+  async function open(): Promise<void> {
     try {
       // 动态 import，避免硬依赖导致 tsc 对未安装包报错（better-sqlite3 为可选依赖）
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -48,6 +47,16 @@ export function createSqliteStore(dbPath?: string): SyncStore {
       memFallback = createMemoryStore();
       await memFallback.init();
     }
+  }
+
+  // G1514：同 adapter-idb，并发 init 按**在途那一次**去重。这里的代价更硬：`:memory:` 每开
+  // 一个句柄＝换一座全新的库，后落地的那次赋值会把先写进去的数据整座城市丢掉。
+  let initPromise: Promise<void> | null = null;
+
+  function init(): Promise<void> {
+    if (db || memFallback) return Promise.resolve();
+    if (!initPromise) initPromise = open();
+    return initPromise;
   }
 
   function createTables(database: any): void {

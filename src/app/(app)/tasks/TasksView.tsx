@@ -78,10 +78,8 @@ export function TasksView({ group }: { group: TaskGroup }) {
       return;
     }
     const manager = getSyncManager();
-    // 就绪闸门：boot() 幂等（返回同一 promise），但 SyncBoot 挂载后的 store.init() 是异步的，
-    // 而本页登录后可能**立刻**被点到新建 —— 实测过载时 applyLocal 会抛
-    // `IdbSyncStore: call init() first`，写入静默丢失。await boot() 把首次点击串到 init 之后。
-    await manager.boot();
+    // G1514：开库闸门已在内核门面里，这里不必再拿 boot() 当就绪闸门——那一等把一趟
+    // 网络往返（pull + flush）塞进了「新建任务」的点击路径。
     await manager.applyLocal({ table: 'task', id, patch: patchFor(userId) });
     await manager.flushNow();
   };

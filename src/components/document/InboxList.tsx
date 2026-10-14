@@ -55,9 +55,8 @@ export function InboxList({ documents, folders }: InboxListProps) {
 
   async function moveTo(documentId: string, folderId: string | null) {
     const manager = getSyncManager();
-    // 就绪闸门同 TasksView：store.init() 是异步的，页面刚打开就点到归档会让
-    // applyLocal 抛 `IdbSyncStore: call init() first`，这次移动静默丢失。
-    await manager.boot();
+    // G1514：开库闸门已在内核门面里 ⇒ 不再拿 boot() 当就绪闸门（那会把一趟网络往返
+    // 塞进「归档」这一击）。
     await manager.applyLocal({ table: 'document', id: documentId, patch: { folderId } });
     // 覆盖层只活到 flush ack：队列一清空服务端才是权威，此时若不重取 RSC，
     // 该行会带着旧 folderId 重新出现（实测归档后 1.5s 仍在列表里）。

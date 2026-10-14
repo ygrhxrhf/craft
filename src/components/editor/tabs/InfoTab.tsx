@@ -240,9 +240,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
     try {
       // 移动 → applyLocal，patch 只带变更字段
       const manager = getSyncManager();
-      // 就绪闸门同 TasksView：store.init() 还没跑完就点移动，applyLocal 会抛
-      // `IdbSyncStore: call init() first`，这次移动静默丢失。
-      await manager.boot();
+      // G1514：开库闸门已在内核门面里 ⇒ 不再拿 boot() 当就绪闸门（那会把一趟网络往返
+      // 塞进「移动到这里」这一击）。
       const patch = { folderId: target.folderId ?? null, parentId: target.parentId ?? null };
       await manager.applyLocal({ table: 'document', id: documentId, patch });
       // 位置段是本面板的常驻内容，router.refresh 不会重跑它的客户端取数 ⇒ 先就地改写

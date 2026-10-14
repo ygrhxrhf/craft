@@ -21,7 +21,7 @@ test('the tag input validates against the official rules', async ({ page }) => {
   await page.waitForTimeout(1_500);
 
   await page.getByRole('button', { name: '信息', exact: true }).click();
-  const section = page.locator('section').filter({ hasText: '标签 (' }).first();
+  const section = page.locator('section').filter({ has: page.getByRole('textbox', { name: '添加标签' }) }).first();
   await expect(section).toBeVisible({ timeout: 20_000 });
   const input = section.getByRole('textbox', { name: '添加标签' });
   const feedback = page.locator('#tag-feedback');
@@ -58,6 +58,6 @@ test('the tag input validates against the official rules', async ({ page }) => {
 
   await page.reload();
   await page.getByRole('button', { name: '信息', exact: true }).click();
-  const reloaded = page.locator('section').filter({ hasText: '标签 (' }).first();
+  const reloaded = page.locator('section').filter({ has: page.getByRole('textbox', { name: '添加标签' }) }).first();
   await expect(reloaded.getByText(`工作/${child}`)).toBeVisible({ timeout: 20_000 });
 });

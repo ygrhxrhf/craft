@@ -38,6 +38,27 @@ export async function getDocumentTags(documentId: string): Promise<TagRecord[]> 
   return tags.filter((tag) => wanted.has(tag.id));
 }
 
+/**
+ * The raw material for the tags collection (`/tags`, G47): every live tag of this user plus every
+ * live document↔tag link. Documents are joined by the caller from `getDocuments()`, which is the
+ * read that already excludes deleted/daily/template pages, so a count can never be inflated by a
+ * page the actor cannot open.
+ */
+export async function getTagBrowseRows(): Promise<{
+  tags: TagRecord[];
+  links: { tagId: string; documentId: string }[];
+}> {
+  const userId = await requireUserId();
+  const db = await getDb();
+  const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null }).all()) as TagRecord[];
+  const owned = new Set(tags.map((tag) => tag.id));
+  const rows = (await db.orm.public.DocumentTag.where({ deletedAt: null }).all()) as {
+    tagId: string;
+    documentId: string;
+  }[];
+  return { tags, links: rows.filter((row) => owned.has(row.tagId)) };
+}
+
 /** Finds the user's tag by normalised name, creating it on first use. */
 async function findOrCreateTag(userId: string, name: string, color?: string) {
   const normalized = normalizeTagName(name);

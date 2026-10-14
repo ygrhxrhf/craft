@@ -4,6 +4,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
+  ALL_TAGS,
+  ALL_TAGS_KEY,
   DOC_COUNT_MANY,
   DOC_COUNT_MANY_KEY,
   DOC_COUNT_ONE,
@@ -11,6 +13,9 @@ import {
   FOLDER_EMPTY,
   FOLDER_EMPTY_KEY,
   formatDocCount,
+  formatTagCount,
+  NO_DOCS_FOUND,
+  NO_DOCS_FOUND_KEY,
   GET_CRAFT_PLUS,
   GET_CRAFT_PLUS_KEY,
   INBOX_DESC,
@@ -24,6 +29,10 @@ import {
   NO_DOCUMENTS,
   NO_DOCUMENTS_KEY,
   STARRED_EMPTY,
+  TAGS_TITLE,
+  TAGS_TITLE_KEY,
+  TAG_COUNT_MANY,
+  TAG_COUNT_MANY_KEY,
   STARRED_EMPTY_KEY,
   TAGS_EMPTY,
   TAGS_EMPTY_KEY,
@@ -53,6 +62,10 @@ const PAIRS: [string, string][] = [
   [INBOX_EMPTY_KEY, INBOX_EMPTY],
   [MOVE_TO_KEY, MOVE_TO],
   [LOADING_KEY, LOADING],
+  [TAGS_TITLE_KEY, TAGS_TITLE],
+  [ALL_TAGS_KEY, ALL_TAGS],
+  [TAG_COUNT_MANY_KEY, TAG_COUNT_MANY],
+  [NO_DOCS_FOUND_KEY, NO_DOCS_FOUND],
 ];
 
 describe('browse copy is the collected official text', () => {
@@ -70,5 +83,12 @@ describe('formatDocCount', () => {
     expect(formatDocCount(1)).toBe('1 个文档');
     expect(formatDocCount(0)).toBe('0 个文档');
     expect(formatDocCount(5)).toBe('5 个文档');
+  });
+});
+
+describe('formatTagCount', () => {
+  it('has no singular line in the ledger, so 1 fills the slot too', () => {
+    expect(formatTagCount(1)).toBe('1 个标签');
+    expect(formatTagCount(12)).toBe('12 个标签');
   });
 });

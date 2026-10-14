@@ -58,6 +58,7 @@ const ownHeaderRoutes = [
   '/documents',
   '/recent',
   '/favorites',
+  '/tags',
   '/templates',
   '/trash',
   '/collections',

@@ -49,7 +49,26 @@ export const MOVE_TO = '移动到…';
 export const LOADING_KEY = 'loading';
 export const LOADING = '加载中…';
 
+/** The tags collection (`/tags`, G47). Its page title is the entity word, like `unsorted`. */
+export const TAGS_TITLE_KEY = 'tags';
+export const TAGS_TITLE = '标签';
+
+export const ALL_TAGS_KEY = 'tags.all.tags';
+export const ALL_TAGS = '所有标签';
+
+/** `[0]` counts tags, which is a different line from `[0] 个文档`. */
+export const TAG_COUNT_MANY_KEY = 'tags.x.tags';
+export const TAG_COUNT_MANY = '[0] 个标签';
+
+export const NO_DOCS_FOUND_KEY = 'tags.no.docs.found';
+export const NO_DOCS_FOUND = '未找到具有所选标签的文档';
+
 /** 1 takes the singular line, everything else fills the `[0]` slot of the plural one. */
 export function formatDocCount(count: number): string {
   return count === 1 ? DOC_COUNT_ONE : DOC_COUNT_MANY.replace('[0]', String(count));
+}
+
+/** Tags have no singular line in the ledger, so every count fills the slot. */
+export function formatTagCount(count: number): string {
+  return TAG_COUNT_MANY.replace('[0]', String(count));
 }

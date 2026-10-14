@@ -13,6 +13,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { normalizeTagName } from '@/lib/tag/normalize';
 import { findTagViolation, tagFeedback } from '@/lib/tag/rules';
 import { ENTER_VALID_TAG } from '@/lib/tag/official-copy';
+import { TAGS_TITLE, formatTagCount } from '@/lib/browse/official-copy';
 import { toast } from '@/components/ui/toast';
 
 interface TagsSectionProps {
@@ -106,8 +107,9 @@ export function TagsSection({ documentId }: TagsSectionProps) {
 
   return (
     <section>
-      <h4 className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
-        标签 ({tags.length})
+      <h4 className="mb-2 flex items-baseline gap-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
+        {TAGS_TITLE}
+        <span className="text-[10px] normal-case tracking-normal">{formatTagCount(tags.length)}</span>
       </h4>
 
       <div className="flex flex-wrap gap-1.5">
@@ -117,7 +119,7 @@ export function TagsSection({ documentId }: TagsSectionProps) {
             className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] text-white"
             style={{ backgroundColor: tag.color }}
           >
-            <Link href={`/search?tag=${encodeURIComponent(tag.name)}`} className="hover:underline">
+            <Link href={`/tags/${tag.id}`} className="hover:underline">
               {tag.name}
             </Link>
             <button

@@ -9,12 +9,13 @@ import { RightPanel, type RightTabId } from './tabs/RightPanel';
 import { Breadcrumb } from './Breadcrumb';
 import { FindReplacePanel } from './find-replace-panel';
 import { TemplatePicker } from './template-picker';
-import { Share2, LayoutGrid, Type, Palette, Info, Menu, MoreHorizontal } from 'lucide-react';
+import { Share2, LayoutGrid, Type, Palette, Info, Menu, MoreHorizontal, Focus } from 'lucide-react';
 import { cn } from 'cn';
 import { useIsCompact, useIsMobile } from '@/lib/use-is-mobile';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
 import { useFocusStore } from '@/lib/store/use-focus-store';
+import { EXIT_FOCUS_MODE_PREFIX, FOCUS_MODE } from '@/lib/editor/focus-mode-copy';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { KEY_BINDINGS, detectPlatform, displayFor } from '@/lib/editor/keymap';
 import {
@@ -189,6 +190,18 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             </span>
           </div>
           <div className="flex items-center gap-0.5">
+            {/* 专注模式开关：快捷键（⌘/Ctrl+.）已经在 shell-shortcuts 里，但一条键位不是入口——
+                用户不知道键位就没有办法进来。顶栏自身在专注态隐藏，所以退出走下面那条
+                `focus-exit` 横条，不依赖这个按钮。 */}
+            <button
+              onClick={() => useFocusStore.getState().toggle()}
+              type="button"
+              aria-label={FOCUS_MODE}
+              title={focusBinding ? `${FOCUS_MODE} • ${displayFor(focusBinding, detectPlatform())}` : FOCUS_MODE}
+              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Focus className="size-4" />
+            </button>
             {/* Tab toggle buttons; phones keep two in the bar and fold the rest away */}
             {primaryTabs.map((tab) => {
               const Icon = TAB_ICONS[tab];
@@ -255,7 +268,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             className="flex items-center gap-3 border-b border-border px-4 py-2 text-xs text-foreground/70 hover:text-foreground"
             data-testid="focus-exit"
           >
-            {`退出专注模式 • ${displayFor(focusBinding, detectPlatform())}`}
+            {`${EXIT_FOCUS_MODE_PREFIX}${displayFor(focusBinding, detectPlatform())}`}
           </button>
         )}
         <div className="flex-1 overflow-y-auto">

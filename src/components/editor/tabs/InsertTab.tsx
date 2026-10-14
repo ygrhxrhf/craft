@@ -57,7 +57,7 @@ const COLLECTION_ITEMS: PanelItem[] = [
 ];
 
 const TAIL_ITEMS: PanelItem[] = [
-  { label: '插入 线', command: '分隔线' },
+  { label: '插入 线', command: '分隔线 - 常规' },
   { label: '插入分页符', missing: true },
   { label: '插入表格', missing: true, hint: '插入一个包含所选行数和列数的表格。' },
 ];

@@ -906,13 +906,23 @@
     font-weight: 600;
   }
 
-  /* ── Divider styles ── */
+  /* ── Divider styles ──
+     官方四档（G31）：极细/细/常规/粗，宽度单调递增。旧文档存的是本地旧名
+     （thin/medium/thick/dashed，`divider-styles.ts` 的 LEGACY 表），旧名一律保留且
+     宽度一字不动——改名不能改变已写好的文档长什么样。⇒ 阶梯是 1/2/3/6，
+     其中 常规=旧 medium、粗=旧 thick，`light` 是四档里唯一没有旧名对应的一档。 */
+  hr[data-style="extraLight"],
   hr[data-style="thin"] {
     border-top: 1px solid var(--border);
   }
+  hr[data-style="light"] {
+    border-top: 2px solid var(--border);
+  }
+  hr[data-style="regular"],
   hr[data-style="medium"] {
     border-top: 3px solid var(--border);
   }
+  hr[data-style="strong"],
   hr[data-style="thick"] {
     border-top: 6px solid var(--border);
   }

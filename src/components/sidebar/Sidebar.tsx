@@ -1,6 +1,7 @@
 'use client';
 
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
+import { useFocusStore } from '@/lib/store/use-focus-store';
 import { useIsMobile } from '@/lib/use-is-mobile';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { SidebarHeader } from './SidebarHeader';
@@ -46,6 +47,11 @@ function SidebarBody() {
 export function Sidebar() {
   const { isOpen, width, mobileNavOpen, setMobileNavOpen } = useSidebarStore();
   const isMobile = useIsMobile();
+  // 专注模式（G11）：侧栏自己读旗标并整块不挂载，退出即还原——`isOpen`/`width`/抽屉状态
+  // 一个都没被改动，所以不存在"恢复步骤和用户的开合状态对不上"这类漂移。
+  const focusActive = useFocusStore((state) => state.active);
+
+  if (focusActive) return null;
 
   if (isMobile) {
     return (

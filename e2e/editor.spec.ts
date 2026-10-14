@@ -54,7 +54,9 @@ async function openSlash(page: Page, name: string) {
 
 const ALL_COMMANDS = [
   '文本', '标题 1', '标题 2', '标题 3', '标题 4',
-  '无序列表', '有序列表', '待办事项', '折叠列表', '引用', '代码块', '表格', '分隔线',
+  '无序列表', '有序列表', '待办事项', '折叠列表', '引用', '代码块', '表格',
+  // 官方把分隔线列为四条命令（G31），一条一个权重档；本地曾经只有一条。
+  '分隔线 - 极细', '分隔线 - 细', '分隔线 - 常规', '分隔线 - 粗',
   '从模板插入',
   '信息提示', '警告提示', '错误提示', '成功提示', '备注',
   'AI 生成图像', '绘图', '图片', '文件附件', '图片网格', '网页链接',
@@ -90,7 +92,11 @@ const INSERTS: { name: string; marker: string }[] = [
   { name: '引用', marker: 'blockquote' },
   { name: '代码块', marker: '.crafty-code-block' },
   { name: '表格', marker: 'table' },
-  { name: '分隔线', marker: 'hr[data-type="divider"]' },
+  // 逐档核 `data-style`：四档若都落成同一权重，只有带档名的 marker 会红。
+  { name: '分隔线 - 极细', marker: 'hr[data-type="divider"][data-style="extraLight"]' },
+  { name: '分隔线 - 细', marker: 'hr[data-type="divider"][data-style="light"]' },
+  { name: '分隔线 - 常规', marker: 'hr[data-type="divider"][data-style="regular"]' },
+  { name: '分隔线 - 粗', marker: 'hr[data-type="divider"][data-style="strong"]' },
   { name: '信息提示', marker: '.callout-content' },
   { name: '卡片', marker: '.card-block-content' },
   { name: '分栏', marker: 'div[data-type="columns"]' },

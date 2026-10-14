@@ -208,13 +208,45 @@ export const slashCommands: SlashCommand[] = [
     },
   },
   {
-    name: '分隔线',
-    description: '水平分隔线（也可输入 --- / ..- / .-- / =- 快速插入）',
+    name: '分隔线 - 极细',
+    description: '最细的水平分隔线',
+    icon: Minus,
+    keywords: ['divider', 'separator', 'hr', 'line', '分隔线', '分割线', '极细'],
+    category: '高级块',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).setDivider('extraLight').run();
+    },
+  },
+  {
+    name: '分隔线 - 细',
+    description: '细水平分隔线',
+    icon: Minus,
+    keywords: ['divider', 'separator', 'hr', 'line', '分隔线', '分割线', '细'],
+    category: '高级块',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).setDivider('light').run();
+    },
+  },
+  {
+    name: '分隔线 - 常规',
+    // 官方把四档各列为一条命令（G31），`---` 这档是默认档；输入速记只在默认档这条上提示，
+    // 免得四条各挂一遍签名串把面板变成文档页。
+    description: '水平分隔线（也可输入 --- / ..- / .-- / =-- 直接成档）',
     icon: Minus,
     keywords: ['divider', 'separator', 'hr', 'line', '分隔线', '分割线'],
     category: '高级块',
     command: (editor, range) => {
       editor.chain().focus().deleteRange(range).setDivider('regular').run();
+    },
+  },
+  {
+    name: '分隔线 - 粗',
+    description: '最重的水平分隔线',
+    icon: Minus,
+    keywords: ['divider', 'separator', 'hr', 'line', '分隔线', '分割线', '粗'],
+    category: '高级块',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).setDivider('strong').run();
     },
   },
   {

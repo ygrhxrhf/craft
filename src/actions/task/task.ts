@@ -5,6 +5,7 @@ import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { nextOccurrence, parseRecurrence } from '@/lib/task/recurrence';
+import { listsTaskFromDocument } from '@/lib/task/display';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 // I2：任务表用 updatedAt 自动 bump（无需 metaUpdatedAt），落库后广播即可；
@@ -137,11 +138,13 @@ export async function getTasks(): Promise<TaskItem[]> {
   for (const t of tasks) {
     const row = t as any;
     let documentTitle: string | null = null;
-    if (row.documentId) {
-      const doc = await db.orm.public.Document.first({ id: row.documentId });
-      if (doc && !(doc as any).isDeleted) documentTitle = (doc as any).title;
-      else documentTitle = null;
+    const doc = row.documentId
+      ? await db.orm.public.Document.first({ id: row.documentId })
+      : null;
+    if (!listsTaskFromDocument(row.documentId ?? null, doc ? { isDeleted: (doc as any).isDeleted } : null)) {
+      continue;
     }
+    if (doc && !(doc as any).isDeleted) documentTitle = (doc as any).title;
     items.push({
       id: row.id,
       title: row.title,
@@ -268,27 +271,4 @@ export async function deleteTask(id: string) {
     updatedAt: new Date().toISOString(),
   });
   await emitTasks(db, session.user.id, id);
-}
-
-export async function getTasksForDay(dayStart: string, dayEnd: string): Promise<TaskItem[]> {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('未授权');
-
-  const db = await getDb();
-  const tasks = await db.orm.public.Task
-    .where({ userId: session.user.id, deletedAt: null })
-    .where((t: any) => t.dueDate.gte(dayStart))
-    .where((t: any) => t.dueDate.lte(dayEnd))
-    .all();
-
-  return tasks.map((t: any) => ({
-    id: t.id,
-    title: t.title,
-    isCompleted: t.isCompleted,
-    dueDate: t.dueDate,
-    remindAt: t.remindAt,
-    recurrence: t.recurrence,
-    recurrenceEnd: t.recurrenceEnd,
-    documentId: t.documentId,
-  }));
 }

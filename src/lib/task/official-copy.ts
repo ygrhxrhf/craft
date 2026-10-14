@@ -25,3 +25,10 @@ export const TASK_GROUP_KEYS = {
 
 export const TASKS_INBOX_EMPTY_KEY = 'tasks.inbox.empty';
 export const TASKS_ADD_TASK_KEY = 'tasks.add.task';
+
+/** 「即将进行」的节头：`week` 一节用 `date.this.week`，`month` 一节在本月时用 `date.this.month`
+ *  （其余月用长月名，`year` 一节用纯年份数字）——见 `upcoming-groups.ts:upcomingGroupTitle`。 */
+export const UPCOMING_THIS_WEEK = '本周';
+export const UPCOMING_THIS_MONTH = '本月';
+export const UPCOMING_THIS_WEEK_KEY = 'date.this.week';
+export const UPCOMING_THIS_MONTH_KEY = 'date.this.month';

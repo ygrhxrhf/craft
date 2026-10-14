@@ -18,8 +18,10 @@ import {
 } from '@/actions/task/task';
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
 import { getSyncManager } from '@/lib/sync-core';
+import { currentUserId } from '@/lib/sync-core/current-user';
 import { taskPatchFor } from './tasks-local';
-import { applyCompletedFilter, tasksForGroup, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
+import { applyCompletedFilter, tasksForGroup, withinUpcoming, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
+import { upcomingSections } from '@/lib/task/upcoming-groups';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASKS_INBOX_EMPTY } from '@/lib/task/official-copy';
 import { isOverdue, overdueLabel } from '@/lib/task/overdue';
@@ -60,14 +62,15 @@ export function TasksView({ group }: { group: TaskGroup }) {
    * 而本页读路径是 getTasks（服务端权威行）⇒ 必须紧跟 flushNow，
    * 否则紧随其后的 load() 读回的仍是旧数据，这次改动看起来像没发生。
    * flushNow 内部吞错（离线时按退避阶梯留在队列里重试），不会 reject。
-   * 无会话 userId 时回退旧 Server Action —— 与 SettingsPanels 同一处置。
+   * userId 先走 `currentUserId`：`useSession` 的 data 是异步到位的，登录后立刻点新建会退到
+   * 旧 Server Action（与 SettingsPanels 同一处置），而 Server Action 的 createdAt 用的是真实时钟。
    */
   const writeTask = async (
     id: string,
     patchFor: (userId: string) => Record<string, unknown> | null,
     legacy: () => Promise<unknown>,
   ) => {
-    const userId = session?.user?.id;
+    const userId = await currentUserId(session?.user?.id);
     if (!userId) {
       await legacy();
       return;
@@ -117,7 +120,22 @@ export function TasksView({ group }: { group: TaskGroup }) {
     await load();
   };
 
-  const visible = applyCompletedFilter(tasksForGroup(tasks, group, new Date(), window), showCompleted);
+  const now = new Date();
+  /**
+   * 官方的「即将进行」不是列表，是分节时间轴：`C` 拿到**全部有排期的块**（无排期跳过，逾期项并进
+   * 夹到下周一的当月节），`H1` 再按 `showCompleted ? n : f` 裁掉已完成、空节整节不显示。
+   * 窗口开关（接下来的 7/30 天）是本地附加的收窄，`all` 时即官方输入。
+   */
+  const sectioned =
+    group === 'upcoming'
+      ? upcomingSections(
+          window === 'all' ? tasks : tasks.filter((task) => withinUpcoming(task.dueDate, window, now)),
+          showCompleted,
+          now,
+        )
+      : null;
+
+  const visible = applyCompletedFilter(tasksForGroup(tasks, group, now, window), showCompleted);
   const active = visible.filter((t) => !t.isCompleted);
   const completed = visible.filter((t) => t.isCompleted);
 
@@ -187,27 +205,34 @@ export function TasksView({ group }: { group: TaskGroup }) {
       <AppPageContainer className="max-w-3xl">
         {loading ? (
           <p className="text-sm text-muted-foreground">加载中…</p>
+        ) : sectioned ? (
+          <div className="flex flex-col gap-8">
+            {sectioned.sections.length === 0 ? (
+              <GroupEmpty hint={sectioned.hasScheduled ? '全部完成！' : '这个分组里暂时没有任务'} />
+            ) : (
+              sectioned.sections.map((section) => (
+                <section key={section.key} data-testid="upcoming-section">
+                  <h2 className="mb-2 flex items-baseline gap-2 text-sm font-medium">
+                    <span className="text-foreground">{section.title}</span>
+                    <span className="text-muted-foreground">{section.undone}</span>
+                  </h2>
+                  <TaskList
+                    items={section.blocks}
+                    onToggle={handleToggle}
+                    onDelete={handleDelete}
+                    onSchedule={handleSchedule}
+                  />
+                </section>
+              ))
+            )}
+          </div>
         ) : (
           <>
             <section className="mb-8">
               {visible.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-border p-8 text-center">
-                  <CheckSquare className="mx-auto mb-2 size-5 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
-                    {group === 'inbox' ? TASKS_INBOX_EMPTY : '这个分组里暂时没有任务'}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      document
-                        .querySelector<HTMLInputElement>('input[placeholder="添加任务，按回车确认…"]')
-                        ?.focus()
-                    }
-                    className="mt-3 rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground"
-                  >
-                    {TASKS_ADD_TASK}
-                  </button>
-                </div>
+                <GroupEmpty
+                  hint={group === 'inbox' ? TASKS_INBOX_EMPTY : '这个分组里暂时没有任务'}
+                />
               ) : active.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-border p-8 text-center">
                   <CheckSquare className="mx-auto mb-2 size-5 text-muted-foreground" />
@@ -241,6 +266,26 @@ export function TasksView({ group }: { group: TaskGroup }) {
           </>
         )}
       </AppPageContainer>
+    </div>
+  );
+}
+
+function focusAddInput(): void {
+  document.querySelector<HTMLInputElement>('input[placeholder="添加任务，按回车确认…"]')?.focus();
+}
+
+function GroupEmpty({ hint }: { hint: string }) {
+  return (
+    <div className="rounded-lg border border-dashed border-border p-8 text-center">
+      <CheckSquare className="mx-auto mb-2 size-5 text-muted-foreground" />
+      <p className="text-sm text-muted-foreground">{hint}</p>
+      <button
+        type="button"
+        onClick={focusAddInput}
+        className="mt-3 rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground"
+      >
+        {TASKS_ADD_TASK}
+      </button>
     </div>
   );
 }

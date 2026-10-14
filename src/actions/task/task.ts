@@ -49,6 +49,8 @@ export interface TaskItem {
   recurrenceEnd: string | null;
   documentId: string | null;
   documentTitle?: string | null;
+  /** 「即将进行」的节内排序要用它做同排期时的次级比较（官方 `createdMs`），只读路径。 */
+  createdAt?: string | null;
 }
 
 export async function syncDocumentTasks(
@@ -155,6 +157,7 @@ export async function getTasks(): Promise<TaskItem[]> {
       recurrenceEnd: row.recurrenceEnd,
       documentId: row.documentId,
       documentTitle,
+      createdAt: row.createdAt,
     });
   }
   items.sort((a, b) => (a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1));

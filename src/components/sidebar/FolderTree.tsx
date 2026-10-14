@@ -9,6 +9,7 @@ import { overlayDocumentRows, type Document } from './DocumentTree';
 import { folderDocumentCounts } from '@/lib/browse/folder-counts';
 import { UNTITLED_FOLDER } from '@/lib/document/untitled-copy';
 import { FolderTreeItem } from './FolderTreeItem';
+import { LOADING } from '@/lib/browse/official-copy';
 
 export interface Folder {
   id: string;
@@ -60,7 +61,7 @@ export function FolderTree() {
   }), [bumpTree]);
 
   if (!snapshot) {
-    return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;
+    return <div className="px-3 py-2 text-[13px] text-muted-foreground">{LOADING}</div>;
   }
 
   const folders = overlayFolderRows(snapshot.folders as Folder[], pendingFolders);

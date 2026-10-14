@@ -45,6 +45,10 @@ export const INBOX_EMPTY = '不在任何文件夹中的文档将显示在此处'
 export const MOVE_TO_KEY = 'moveto';
 export const MOVE_TO = '移动到…';
 
+/** The tree/panel placeholder while its rows load. Official uses the single `…` glyph. */
+export const LOADING_KEY = 'loading';
+export const LOADING = '加载中…';
+
 /** 1 takes the singular line, everything else fills the `[0]` slot of the plural one. */
 export function formatDocCount(count: number): string {
   return count === 1 ? DOC_COUNT_ONE : DOC_COUNT_MANY.replace('[0]', String(count));

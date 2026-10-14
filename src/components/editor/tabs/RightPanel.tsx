@@ -10,6 +10,7 @@ import { StyleTab } from './StyleTab';
 import { InfoTab } from './InfoTab';
 import type { Editor } from '@tiptap/react';
 import type { PageStyle } from '../themes/page-style';
+import { LOADING } from '@/lib/browse/official-copy';
 
 export type RightTabId = 'insert' | 'format' | 'style' | 'info';
 
@@ -111,7 +112,7 @@ export function RightPanel({
         aria-labelledby={`editor-tab-${visibleActiveTab}`}
       >
         {!editor ? (
-          <div className="p-4 text-xs text-muted-foreground">加载中...</div>
+          <div className="p-4 text-xs text-muted-foreground">{LOADING}</div>
         ) : (
           <>
             {visibleActiveTab === 'insert' && <InsertTab editor={editor} />}

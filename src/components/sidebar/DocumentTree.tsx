@@ -7,6 +7,7 @@ import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { DocumentTreeItem } from './DocumentTreeItem';
 import { untitledFor } from '@/lib/document/untitled-copy';
+import { LOADING } from '@/lib/browse/official-copy';
 
 export interface Document {
   id: string;
@@ -66,7 +67,7 @@ export function DocumentTree({ folderId = null }: DocumentTreeProps) {
   }), [bumpTree]);
 
   if (!snapshot) {
-    return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;
+    return <div className="px-3 py-2 text-[13px] text-muted-foreground">{LOADING}</div>;
   }
 
   const documents = overlayDocumentRows(snapshot.documents as Document[], pending);

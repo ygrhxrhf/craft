@@ -12,6 +12,7 @@ import {
   SIDEBAR_WHITEBOARD_MIME,
   sidebarDragState,
 } from '@/lib/dnd/sidebar-drag';
+import { LOADING } from '@/lib/browse/official-copy';
 
 interface WhiteboardTreeItemProps {
   board: WhiteboardItem;
@@ -91,7 +92,7 @@ export function WhiteboardTree() {
   }), []);
 
   if (!snapshot) {
-    return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;
+    return <div className="px-3 py-2 text-[13px] text-muted-foreground">{LOADING}</div>;
   }
 
   const boards = overlayWhiteboardRows(snapshot.whiteboards, pending);

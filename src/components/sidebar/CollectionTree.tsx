@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import { cn } from 'cn';
+import { LOADING } from '@/lib/browse/official-copy';
 
 interface Collection {
   id: string;
@@ -17,7 +18,7 @@ export function CollectionTree() {
   const snapshot = useSidebarSnapshot();
 
   if (!snapshot) {
-    return <div className="px-3 py-2 text-[13px] text-muted-foreground">加载中...</div>;
+    return <div className="px-3 py-2 text-[13px] text-muted-foreground">{LOADING}</div>;
   }
 
   const collections = snapshot.collections as Collection[];

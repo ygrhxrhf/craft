@@ -17,6 +17,8 @@ import {
   INBOX_DESC_KEY,
   INBOX_EMPTY,
   INBOX_EMPTY_KEY,
+  LOADING,
+  LOADING_KEY,
   MOVE_TO,
   MOVE_TO_KEY,
   NO_DOCUMENTS,
@@ -50,6 +52,7 @@ const PAIRS: [string, string][] = [
   [INBOX_DESC_KEY, INBOX_DESC],
   [INBOX_EMPTY_KEY, INBOX_EMPTY],
   [MOVE_TO_KEY, MOVE_TO],
+  [LOADING_KEY, LOADING],
 ];
 
 describe('browse copy is the collected official text', () => {

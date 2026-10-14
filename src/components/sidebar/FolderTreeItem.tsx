@@ -9,6 +9,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { createDocumentLocal } from '@/components/sync/create-local';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { SIDEBAR_DOC_MIME, sidebarDragState } from '@/lib/dnd/sidebar-drag';
+import { formatDocCount } from '@/lib/browse/official-copy';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -26,6 +27,7 @@ interface FolderTreeItemProps {
   folder: FolderType;
   allFolders: FolderType[];
   allDocuments: Document[];
+  documentCounts: Map<string, number>;
   level: number;
 }
 
@@ -45,7 +47,7 @@ function isDescendantOf(
   return false;
 }
 
-export function FolderTreeItem({ folder, allFolders, allDocuments, level }: FolderTreeItemProps) {
+export function FolderTreeItem({ folder, allFolders, allDocuments, documentCounts, level }: FolderTreeItemProps) {
   const [expanded, setExpanded] = useState(false);
   const [zone, setZone] = useState<DropZone>(null);
   const [renaming, setRenaming] = useState(false);
@@ -290,7 +292,12 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, level }: Fold
           className="min-w-0 flex-1 rounded border border-input bg-background px-1 text-[13px] outline-none focus:border-ring"
         />
       ) : (
-        <span className="truncate">{folder.name}</span>
+        <>
+          <span className="truncate">{folder.name}</span>
+          <span className="ml-auto shrink-0 text-[11px] tabular-nums text-muted-foreground">
+            {formatDocCount(documentCounts.get(folder.id) ?? 0)}
+          </span>
+        </>
       )}
     </>
   );
@@ -353,6 +360,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, level }: Fold
               folder={child}
               allFolders={allFolders}
               allDocuments={allDocuments}
+              documentCounts={documentCounts}
               level={level + 1}
             />
           ))}

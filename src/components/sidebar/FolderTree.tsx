@@ -6,6 +6,7 @@ import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { overlayDocumentRows, type Document } from './DocumentTree';
+import { folderDocumentCounts } from '@/lib/browse/folder-counts';
 import { FolderTreeItem } from './FolderTreeItem';
 
 export interface Folder {
@@ -63,6 +64,7 @@ export function FolderTree() {
 
   const folders = overlayFolderRows(snapshot.folders as Folder[], pendingFolders);
   const documents = overlayDocumentRows(snapshot.documents as Document[], pendingDocs);
+  const documentCounts = folderDocumentCounts(folders, documents);
 
   const rootFolders = folders
     .filter(f => f.parentId === null)
@@ -84,6 +86,7 @@ export function FolderTree() {
           folder={folder}
           allFolders={folders}
           allDocuments={documents}
+          documentCounts={documentCounts}
           level={0}
         />
       ))}

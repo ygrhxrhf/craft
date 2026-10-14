@@ -152,7 +152,10 @@ const bodySchema = z.object({
 type PostRecord = z.infer<typeof recordSchema>;
 type BatchResult = {
   applied: { table: string; id: string }[];
-  rejected: { table: string; id: string; op: string; data: unknown; syncTs: string }[];
+  rejected: {
+    table: string; id: string; op: string; data: unknown; syncTs: string;
+    reason?: 'stale' | 'not_found';
+  }[];
   cursor: string;
 };
 
@@ -259,7 +262,7 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
       if (decision === 'reject') {
         rejected.push({
           table: rec.table, id: pk, op: current?.deletedAt ? 'delete' : 'upsert',
-          data: pickCols(def, current), syncTs: tSrv!,
+          data: pickCols(def, current), syncTs: tSrv!, reason: 'stale',
         });
         continue;
       }
@@ -285,6 +288,18 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
         if (current) {
           await model.where(where).update(payload);
         } else {
+          // G1505 铸造闸：定位不到行 ≠ 这台设备在离线新建。离线新建（`create-local.ts`）
+          // 一定带齐 `createRequires` 的键（哪怕 title 是空串），而"对一枚陈旧行点了动作"
+          // 只带被改的那几列——放过去就会带着会话 userId 铸出一枚服务端从未有过的壳行。
+          const mintable = (def.createRequires ?? []).every(k => k in payload);
+          if (!mintable) {
+            // 不 create、也不回传任何列（服务端本来就没有这行）：op=delete 让本机镜像
+            // 停止假装它还活着，reason 交给 UI 说清"不存在或不属于你"（G1506）。
+            rejected.push({
+              table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'not_found',
+            });
+            continue;
+          }
           try {
             await model.create({ ...payload, id: rec.table === 'document_tag' ? undefined : rec.id });
           } catch (err) {
@@ -292,20 +307,34 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
             // 跑与主路径同一条 decideLww（apply→update / reject→回传现值），批保持原子
             const locator = UNIQUE_KEY_LOCATORS[rec.table]?.(key, userId) ?? null;
             const existing = locator ? await model.first(locator) : null;
-            if (!existing) throw err; // 无定位器或定位不到 → 非唯一键错误，维持整批 500
-            const exSrv = new Date(existing[def.tsCol]).toISOString();
-            if (decideLww(rec.op, rec.syncTs, exSrv) === 'reject') {
+            if (existing) {
+              const exSrv = new Date(existing[def.tsCol]).toISOString();
+              if (decideLww(rec.op, rec.syncTs, exSrv) === 'reject') {
+                rejected.push({
+                  table: rec.table, id: pk, op: existing.deletedAt ? 'delete' : 'upsert',
+                  data: pickCols(def, existing), syncTs: exSrv, reason: 'stale',
+                });
+                continue;
+              }
+              // 不动存量行主键（Tag.id 被 document_tag 外键引用）→ payload 的 id 剥掉
+              const patch = { ...payload };
+              delete patch.id;
+              await model.where(locator).update(patch);
+              appliedId = def.id(existing);
+            } else {
+              // G1505 的第二副面孔：同一枚 id 已在**他人**名下（越权成员推自己那版元数据，
+              // 带得齐铸造键，闸放得过）。盲 create 撞主键 → 整批 500 → 客户端无限重推＝
+              // 毒批次，这台设备的元数据通路从此卡死。按 not_found 拒绝（不回传他人行一列），
+              // 其余错误照旧上抛维持整批 500——不把真错误吞成"成功"。
+              const foreign = USER_ID_TABLES.has(rec.table)
+                ? await model.first({ id: rec.id })
+                : null;
+              if (!foreign) throw err;
               rejected.push({
-                table: rec.table, id: pk, op: existing.deletedAt ? 'delete' : 'upsert',
-                data: pickCols(def, existing), syncTs: exSrv,
+                table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'not_found',
               });
               continue;
             }
-            // 不动存量行主键（Tag.id 被 document_tag 外键引用）→ payload 的 id 剥掉
-            const patch = { ...payload };
-            delete patch.id;
-            await model.where(locator).update(patch);
-            appliedId = def.id(existing);
           }
         }
         maxCursor = newer(maxCursor, { ts, id: appliedId });

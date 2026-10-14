@@ -1,5 +1,5 @@
 import type { SyncStore } from './store';
-import type { SyncRecord } from './types';
+import type { SyncRejection } from './types';
 
 export interface Queue {
   flush(): Promise<{ pushed: number; status: 'ok' | 'network' | 'http' | 'auth' }>;
@@ -11,7 +11,7 @@ const TABLE_ORDER: Record<string, number> = { folder: 0 };  // 其余默认 1
 
 export function createQueue(
   store: SyncStore,
-  opts: { fetchImpl?: typeof fetch; onRejected?: (rejected: SyncRecord[]) => void } = {},
+  opts: { fetchImpl?: typeof fetch; onRejected?: (rejected: SyncRejection[]) => void } = {},
 ): Queue {
   const fetchImpl = opts.fetchImpl ?? fetch;
 
@@ -53,7 +53,7 @@ export function createQueue(
         const body = await res.json();
         await store.ack(batch.map(op => op.seq));
         pushed += records.length;
-        // rejected 交由上层：index.ts 覆盖本地（接口在 Task 11 接线）
+        // rejected 交由上层：manager 先按权威值覆盖本地，再把明细冒给 UI 订阅者（G1506）
         if (opts.onRejected) opts.onRejected(body.rejected ?? []);
         // 继续下一批（hasMore 语义由 store 里还有没有 pending 决定）
       }

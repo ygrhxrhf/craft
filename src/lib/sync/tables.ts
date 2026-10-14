@@ -16,10 +16,18 @@ export interface TableDef {
   cols: string[];     // payload 列（显式名单，禁 SELECT *）
   tsCol: string;      // syncTs 列
   id: (r: Record<string, unknown>) => string;
+  /**
+   * G1505「铸造必需列」：服务端对"按 pk 定位不到行"的 upsert 一律 `create`——那既是离线
+   * 新建的合法通路（`create-local.ts` 一定带全字段），也是"陈旧列表上的一行被点了一次恢复"
+   * 时铸出一枚只有那两三列的壳行的通路（`TrashList.tsx` 的 `patch:{isDeleted,deletedAt}`）。
+   * 两者在协议里形状不同，只能靠键形区分：缺这里任一枚键 ⇒ 不认定是新建 ⇒ 不 create。
+   * ☆ 逐表判定，不整体锁死：只有"陈旧行动作"真在本仓发生过的表才配这一列。
+   */
+  createRequires?: string[];
 }
 
 export const SYNC_TABLES: TableDef[] = [
-  { table: 'document', model: 'Document', cols: [...DOC_META_COLS], tsCol: 'metaUpdatedAt', id: r => String(r.id) },
+  { table: 'document', model: 'Document', cols: [...DOC_META_COLS], tsCol: 'metaUpdatedAt', id: r => String(r.id), createRequires: ['title'] },
   { table: 'folder', model: 'Folder', cols: ['id','name','icon','order','parentId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'tag', model: 'Tag', cols: ['id','name','color','userId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'document_tag', model: 'DocumentTag', cols: ['documentId','tagId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => `${r.documentId}__${r.tagId}` },

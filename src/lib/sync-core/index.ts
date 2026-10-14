@@ -6,7 +6,7 @@ import { createQueue, type Queue } from './queue';
 import { createReconciler, SyncAuthError, type Reconciler } from './reconciler';
 import { createBroadcaster, type Broadcaster } from './broadcast';
 import type { SyncStore } from './store';
-import type { SyncRecord } from './types';
+import type { SyncRejection } from './types';
 import type { SyncStatus } from './types';
 import { storageBackend } from '@/lib/platform';
 import { unknownPayloadKeys } from '@/lib/sync/tables';
@@ -35,6 +35,11 @@ export interface SyncManager {
   pendingCount(): Promise<number>;
   subscribe(cb: (s: SyncStatus, pending: number) => void): () => void; // 指示器订阅
   onStoreChanged(cb: (table: string) => void): () => void;            // UI 树刷新订阅
+  /**
+   * G1506：服务端拒绝（LWW 更旧、或铸造闸/他人行拒收）的明细。每次 push 的响应里
+   * 有 `rejected` 才发一次；权威值此时已由本模块盖回本地镜像，订阅者只负责"看得见"。
+   */
+  onRejected(cb: (rejected: SyncRejection[]) => void): () => void;
 }
 
 // 测试缝隙（仅测试消费；生产代码只依赖 SyncManager）
@@ -45,7 +50,7 @@ export interface TestSyncManager extends SyncManager {
 
 export interface ManagerDeps {
   store?: () => SyncStore;
-  makeQueue?: (store: SyncStore, onRejected: (rejected: SyncRecord[]) => void) => Queue;
+  makeQueue?: (store: SyncStore, onRejected: (rejected: SyncRejection[]) => void) => Queue;
   makeReconciler?: (store: SyncStore) => Reconciler;
   makeBroadcaster?: (onMeta: () => void, onLiveChange: (live: boolean) => void) => Broadcaster;
   fetchImpl?: typeof fetch;
@@ -71,6 +76,7 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
 
   const statusSubs = new Set<(s: SyncStatus, pending: number) => void>();
   const storeSubs = new Set<(table: string) => void>();
+  const rejectedSubs = new Set<(rejected: SyncRejection[]) => void>();
 
   // I5：初始 'syncing' 而非 'offline'——boot 前指示器显示良性的「同步中」，
   // 不误报「离线 · 0 条待传」（真实离线由 offline 事件 / navigator.onLine 判定）
@@ -244,9 +250,13 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     }
   };
 
-  // onRejected：服务端权威版本覆盖本地（硬规则 7）
-  const handleRejected = (rejected: SyncRecord[]): void => {
+  // onRejected：服务端权威版本覆盖本地（硬规则 7）。
+  // G1506：覆盖只让界面"看起来变回了原样"，本人那一笔到底有没有落地，界面此前一句不说
+  // （丢列＝出不了设备、派生失败＝徽标说谎、这一枚＝动作凭空蒸发，同一族失真的第三个身位）。
+  // ⇒ 明细同时发给 UI 订阅者，由 `rejection-copy` 决定说什么。
+  const handleRejected = (rejected: SyncRejection[]): void => {
     if (!rejected.length) return;
+    for (const cb of rejectedSubs) cb(rejected);
     void store.applyRemote(rejected).then(emitTouched).catch(() => {});
   };
 
@@ -388,6 +398,10 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     onStoreChanged(cb) {
       storeSubs.add(cb);
       return () => void storeSubs.delete(cb);
+    },
+    onRejected(cb) {
+      rejectedSubs.add(cb);
+      return () => void rejectedSubs.delete(cb);
     },
     // 测试缝隙
     triggerFlushForTest: () => void flush(),

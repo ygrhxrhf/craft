@@ -17,7 +17,8 @@ import { getFolders } from '@/actions/folder/get';
 import { getDocument, getDocuments, getSubpageStats, type SubpageStats } from '@/actions/document/get';
 import { relativeTime } from '@/lib/document/relative-time';
 import { pageStats, statsInputFor, statsTitle, STATS_SCOPES, STATS_SCOPE_LABELS, type StatsScope } from '@/lib/document/page-stats';
-import { LOCATION_TITLE, locationPathLabel } from '@/lib/document/location-path';
+import { LOCATION_TITLE, locationPathLabel, type PathNode } from '@/lib/document/location-path';
+import { MOVE_TO, UNSORTED_TITLE } from '@/lib/browse/official-copy';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
 import { getSyncManager } from '@/lib/sync-core';
@@ -88,6 +89,12 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
   const [moving, setMoving] = useState(false);
   const [folders, setFolders] = useState<FolderItem[]>([]);
   const [docs, setDocs] = useState<DocItem[]>([]);
+  // 「位置」段自己取数：移动菜单的 docs 特意过滤掉本文档，而面包屑要看它自己的
+  // parentId / folderId；菜单数据也只有点开菜单才加载，位置段却是常驻的。
+  const [locDocs, setLocDocs] = useState<PathNode[]>([]);
+  const [locFolders, setLocFolders] = useState<FolderItem[]>([]);
+  const [locationLoaded, setLocationLoaded] = useState(false);
+  const [locationTick, setLocationTick] = useState(0);
   const [busy, setBusy] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showExport, setShowExport] = useState(false);
@@ -121,6 +128,21 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
       alive = false;
     };
   }, [documentId]);
+
+  useEffect(() => {
+    let alive = true;
+    Promise.all([getDocuments(), getFolders()])
+      .then(([docRows, folderRows]) => {
+        if (!alive) return;
+        setLocDocs((docRows as PathNode[]) ?? []);
+        setLocFolders((folderRows as FolderItem[]) ?? []);
+        setLocationLoaded(true);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [documentId, locationTick]);
 
   const handleExport = async (format: ExportFormat) => {
     setBusy(true);
@@ -231,14 +253,16 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
     setBusy(true);
     try {
       // 移动 → applyLocal，patch 只带变更字段
-      await getSyncManager().applyLocal({
-        table: 'document',
-        id: documentId,
-        patch: {
-          folderId: target.folderId ?? null,
-          parentId: target.parentId ?? null,
-        },
-      });
+      const manager = getSyncManager();
+      // 就绪闸门同 TasksView：store.init() 还没跑完就点移动，applyLocal 会抛
+      // `IdbSyncStore: call init() first`，这次移动静默丢失。
+      await manager.boot();
+      const patch = { folderId: target.folderId ?? null, parentId: target.parentId ?? null };
+      await manager.applyLocal({ table: 'document', id: documentId, patch });
+      // 位置段是本面板的常驻内容，router.refresh 不会重跑它的客户端取数 ⇒ 先就地改写
+      setLocDocs((rows) => rows.map((row) => (row.id === documentId ? { ...row, ...patch } : row)));
+      await manager.flushNow();
+      setLocationTick((tick) => tick + 1);
       setMoving(false);
       setActionError(null);
       router.refresh();
@@ -288,7 +312,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
   );
 
   // The ancestry chain comes from the same document list the move menu already loads.
-  const locationLabel = locationPathLabel(docs, documentId);
+  const locationLabel = locationPathLabel(locDocs, documentId, locFolders);
 
   return (
     <div className="p-3">
@@ -340,8 +364,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
             </div>
           </section>
 
-          {/* Location — the document's ancestry (G203) */}
-          {locationLabel && (
+          {/* Location — the document's folder or ancestry (G203), 未分类 when it has neither */}
+          {locationLoaded && (
             <section>
               <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">
                 {LOCATION_TITLE}
@@ -487,7 +511,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
           {moving && (
             <div className="mb-2 rounded-lg border border-foreground/10 p-2">
               <div className="mb-1 flex items-center justify-between">
-                <span className="text-meta font-medium">移动到...</span>
+                <span className="text-meta font-medium">{MOVE_TO}</span>
                 <button
                   type="button"
                   onClick={() => setMoving(false)}
@@ -503,7 +527,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
                   onClick={() => handleMove({ folderId: null, parentId: null })}
                   className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-meta text-muted-foreground transition-colors hover:bg-foreground/4 disabled:opacity-50"
                 >
-                  📄 独立文档（根目录）
+                  <span>📁</span>
+                  <span className="truncate">{UNSORTED_TITLE}</span>
                 </button>
                 {folders.map((folder) => (
                   <button
@@ -572,7 +597,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
             className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
           >
             <Folder className="size-3.5 text-muted-foreground" />
-            <span>移动到...</span>
+            <span>{MOVE_TO}</span>
           </button>
           <button
             type="button"

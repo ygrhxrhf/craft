@@ -57,7 +57,27 @@ describe('the labels', () => {
     expect(locationPathLabel(tree, 'doc')).toBe(`👋 How to use Craft${PATH_SEPARATOR}中继`);
   });
 
-  it('is an empty string for a root document', () => {
-    expect(locationPathLabel([node('root', 'R', null)], 'root')).toBe('');
+  it('says 未分类 when the document belongs to nothing', () => {
+    expect(locationPathLabel([node('root', 'R', null)], 'root')).toBe('未分类');
+  });
+
+  it('names the folder when the document has no ancestors', () => {
+    const docs = [{ id: 'doc', title: 'D', icon: null, parentId: null, folderId: 'f1' }];
+    const folders = [{ id: 'f1', name: '工作', icon: '💼' }];
+    expect(locationPathLabel(docs, 'doc', folders)).toBe('💼 工作');
+    expect(locationPathLabel(docs, 'doc', [{ id: 'f1', name: '无图标夹', icon: null }])).toBe('无图标夹');
+  });
+
+  it('falls back to 未分类 when the folder id points at nothing', () => {
+    const docs = [{ id: 'doc', title: 'D', icon: null, parentId: null, folderId: 'gone' }];
+    expect(locationPathLabel(docs, 'doc', [])).toBe('未分类');
+  });
+
+  it('prefers the ancestor chain over the folder', () => {
+    const docs = [
+      node('root', '根页', null, '👋'),
+      { id: 'doc', title: 'D', icon: null, parentId: 'root', folderId: 'f1' },
+    ];
+    expect(locationPathLabel(docs, 'doc', [{ id: 'f1', name: '工作', icon: null }])).toBe('👋 根页');
   });
 });

@@ -108,14 +108,30 @@ export async function findFavoriteRowId(documentId: string): Promise<string | nu
   return row ? row.id : null;
 }
 
-/** 找该文档的 document_share 行 id（getOrCreateShare 不回传 id，走本地镜像补）。 */
-export async function findDocumentShareId(documentId: string): Promise<string | null> {
+/**
+ * 该文档的 `document_share` 行（本地镜像；tombstone 不算），含改档要带的那两列。
+ * ☆ `shareVersion` 只有 `cols` 里带了它才拉得回来（G1491 本批补进去）：客户端改档要算的是
+ *   `max(服务端已知值, 镜像值) + 1`，只看镜像会在镜像比服务端旧时把这个计数器**往回拨**，
+ *   而它存在的意义就是"按旧档授权的那条连接要被认成过期"。
+ */
+export async function findDocumentShare(
+  documentId: string,
+): Promise<{ id: string; permission?: string; shareVersion?: number } | null> {
   const rows = await readLocalRecords('document_share');
   for (const r of rows) {
     if (r.op === 'delete') continue;
     if (r.data?.documentId !== documentId) continue;
     if (r.data.deletedAt) continue;
-    return r.id;
+    return {
+      id: r.id,
+      permission: typeof r.data.permission === 'string' ? r.data.permission : undefined,
+      shareVersion: typeof r.data.shareVersion === 'number' ? r.data.shareVersion : undefined,
+    };
   }
   return null;
+}
+
+/** 只要 id 的那一路（发布开关用）：`getOrCreateShare` 不回传 id，走本地镜像补。 */
+export async function findDocumentShareId(documentId: string): Promise<string | null> {
+  return (await findDocumentShare(documentId))?.id ?? null;
 }

@@ -87,10 +87,18 @@ test('the share dialog offers a view tier and an edit tier, and the tier is what
 
   // The dialog paints the choice from local state, which proves nothing. Reopen it after a
   // full reload: only a share row that really holds `edit` comes back pressed.
-  await page.goto(`/documents/${documentId}`);
-  await openShareDialog(page);
-  await expect(page.locator('[data-share-permission="edit"]')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('[data-share-permission="view"]')).toHaveAttribute('aria-pressed', 'false');
+  //
+  // ☆ 为什么这里要 `toPass` 而不是一次断言：档位现在走内核（`applyLocal` + 2s 去抖推送），
+  //   从"点下去"到"服务端那一行真的改了"之间有一个窗口；面板挂载时读的还是上一次的值，
+  //   而这一次读到的值不会自己翻新。旧代码走 `'use server'` 时写入在服务端 action 返回前
+  //   就落库了，所以同一条断言以前一次就过。每一趟都是"整页重载 + 服务端重新读"，本地乐观
+  //   状态进不了判定——收敛不到 'edit' 就是真没写进去。
+  await expect(async () => {
+    await page.goto(`/documents/${documentId}`);
+    await openShareDialog(page);
+    await expect(page.locator('[data-share-permission="edit"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('[data-share-permission="view"]')).toHaveAttribute('aria-pressed', 'false');
+  }).toPass({ timeout: 60_000, intervals: [2_000] });
 
   // The edit tier is still read-only for someone with no account at all.
   const visitor = await browser.newContext();

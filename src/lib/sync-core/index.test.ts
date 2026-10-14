@@ -273,3 +273,89 @@ describe('flush 串行，不丢后一次请求', () => {
     expect(await store.countPending()).toBe(0);
   });
 });
+
+/**
+ * `gap.md` G1492 —— 静态那道白名单闸（`src/lib/sync/tables.test.ts`）只判得出写得出键名的字面量，
+ * 而本仓 `applyLocal` 有一半调用点把 `patch` 交给变量。这一枚是运行时补面：入队之前把 payload 的键
+ * 与所属表 `cols` 求差，多出来的当场说出口——**只报不改**（悄悄剔键就等于再造一次
+ * "界面照样乐观上色、服务端永远不知道"的静默丢失，那正是 G03/G1487 那一族失真的机制本体）。
+ */
+describe('applyLocal 的白名单运行时告警（G1492）', () => {
+  let warn: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+  afterEach(() => warn.mockRestore());
+
+  /** 取最后一条 pending 的 payload（告警判的是**合并之后**的那份，不是新 patch）。 */
+  async function queuedPayload(store: SyncStore) {
+    const ops = await store.peekBatch(Number.MAX_SAFE_INTEGER, '9999-12-31T23:59:59.999Z');
+    return ops[ops.length - 1]!.payload.data as Record<string, unknown>;
+  }
+
+  it('白名单外的键：当场告警，且**不**把那一枚键从 payload 里剔掉', async () => {
+    const { manager, store } = await makeManager();
+    await manager.applyLocal({ table: 'task', id: 't1', patch: { title: 'ok', notAColumn: 1 } });
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0]![0]).toContain('task.notAColumn');
+    expect(await queuedPayload(store)).toMatchObject({ title: 'ok', notAColumn: 1 });
+  });
+
+  it('同一枚非法键第二次不再重复报（去重＝让真信息不被刷屏埋掉）', async () => {
+    const { manager } = await makeManager();
+    await manager.applyLocal({ table: 'task', id: 't1', patch: { notAColumn: 1 } });
+    await manager.applyLocal({ table: 'task', id: 't2', patch: { notAColumn: 2 } });
+    expect(warn).toHaveBeenCalledTimes(1);
+  });
+
+  it('全部键都在 cols 里：闭嘴（这道闸不是每次都喊）', async () => {
+    const { manager } = await makeManager();
+    await manager.applyLocal({ table: 'task', id: 't1', patch: { title: 'a', dueDate: null } });
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('☆ G1491 那两列现在算合法：document_share 的档位改完推得出去了', async () => {
+    const { manager } = await makeManager();
+    await manager.applyLocal({
+      table: 'document_share',
+      id: 's1',
+      patch: { permission: 'edit', shareVersion: 3 },
+    });
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('删除那一档（patch=null）不告警：墓碑没有键可查', async () => {
+    const { manager } = await makeManager();
+    await manager.applyLocal({ table: 'task', id: 't1', patch: null });
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('没注册的表不告警：这里不发明规则，交给调用方自己那一道', async () => {
+    const { manager } = await makeManager();
+    await manager.applyLocal({ table: 'not_a_table', id: 'x', patch: { whatever: 1 } });
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('production 下一字不提（诊断面不许跟着打进产线包）', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    try {
+      const { manager } = await makeManager();
+      await manager.applyLocal({ table: 'task', id: 't1', patch: { notAColumn: 1 } });
+      expect(warn).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('☆ 判的是**合并后**那份 payload：前一次留下的非法键这一趟照样照出来', async () => {
+    const { manager, store } = await makeManager();
+    // 同 (table, recordId) 只留最后一条 op，字段级合并——所以合并结果才是真正要推出去的东西。
+    await manager.applyLocal({ table: 'task', id: 't1', patch: { title: '第一趟合法' } });
+    expect(warn).not.toHaveBeenCalled();
+    await manager.applyLocal({ table: 'task', id: 't1', patch: { alsoNotAColumn: 2 } });
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0]![0]).toContain('task.alsoNotAColumn');
+    expect(await queuedPayload(store)).toMatchObject({ title: '第一趟合法', alsoNotAColumn: 2 });
+  });
+});

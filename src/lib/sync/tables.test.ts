@@ -252,6 +252,17 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     expect(folder!.cols).toContain('id');
   });
 
+  it('☆ G1491：document_share.cols 必须带档位那两列，否则分享面板改了档他端永远读不到', () => {
+    const share = SYNC_TABLES.find(d => d.table === 'document_share');
+    expect(share).toBeDefined();
+    // push 侧 `route.ts:283` 与 pull 侧 `:104` 都是「与 cols 求交」＝名单外直接丢，
+    // 所以 `permission` 不在名单里时，本机面板照样乐观选中、服务端一行没变（G1487 那一族失真）。
+    expect(share!.cols, 'permission 不在 document_share.cols ⇒ 档位出不了这台设备').toContain('permission');
+    // 这一枚决定的是「按旧档授权的那条访客连接要被认成过期」，漏了它=改档不生效到访客身上。
+    expect(share!.cols, 'shareVersion 不在 document_share.cols ⇒ 改档的过期计数出不了这台设备')
+      .toContain('shareVersion');
+  });
+
   it('brief Step 7 的所有表组仍在注册表（无移除）', () => {
     const tables = SYNC_TABLES.map(d => d.table);
     const expected = [

@@ -8,20 +8,32 @@ import { findShare, isOpenableShare } from '@/lib/share/resolve';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface ShareState {
+  /**
+   * 那一枚 `document_share` 行的 id。面板要靠它把档位写进离线内核——行是这边刚建的、
+   * 本地镜像里可能还没有，没有 id 就只剩"退回服务端 action"这一条路（G1491）。
+   */
+  id: string;
   token: string;
   slug: string | null;
   isPublished: boolean;
   hasPasscode: boolean;
   permission: DocumentSharePermission;
+  /**
+   * 档位每改一次就 +1，访客那条按旧档授权的连接据此被判为过期。客户端改档走 `applyLocal`，
+   * 它拿得到这一枚才可能算出「比服务端已知的那次更大」的下一个数（G1491）。
+   */
+  shareVersion: number;
 }
 
 function stateOf(s: any): ShareState {
   return {
+    id: s.id,
     token: s.token,
     slug: s.slug ?? null,
     isPublished: s.isPublished,
     hasPasscode: !!s.passcode,
     permission: s.permission,
+    shareVersion: s.shareVersion ?? 0,
   };
 }
 
@@ -93,6 +105,9 @@ export async function setSharePermission(documentId: string, permission: unknown
   const rows = await db.orm.public.DocumentShare.where({ documentId }).limit(1).all();
   const shareVersion = (rows[0]?.shareVersion ?? 0) + 1;
   await db.orm.public.DocumentShare.where({ documentId }).update({ permission, shareVersion });
+  // ☆ 这一枚此前没有（其余三处都有）＝他端不会被通知这次改档，只能等下一次自己进面板时重读
+  //   （G1491）。它现在只服务"本地镜像里还没有这一行"那一档回退，走的就是同一条广播。
+  await emitShare(db, session.user.id, documentId);
 
   return await getOrCreateShare(documentId);
 }

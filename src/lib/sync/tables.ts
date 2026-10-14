@@ -34,7 +34,7 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'collection_view', model: 'CollectionView', cols: ['id','collectionId','name','type','config','isActive','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'comment', model: 'Comment', cols: ['id','threadId','userId','body','reactions','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'comment_thread', model: 'CommentThread', cols: ['id','documentId','blockId','blockText','resolved','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
-  { table: 'document_share', model: 'DocumentShare', cols: ['id','documentId','token','slug','passcode','isPublished','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  { table: 'document_share', model: 'DocumentShare', cols: ['id','documentId','token','slug','passcode','isPublished','permission','shareVersion','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // document_member：contract 有 updatedAt、无 deletedAt（移除仍是服务端硬删，不走墓碑）
   { table: 'document_member', model: 'DocumentMember', cols: ['id','documentId','userId','role','addedBy','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // notification：服务端生成的提醒，tsCol=updatedAt（contract 已有该列，解决时 bump）
@@ -42,3 +42,20 @@ export const SYNC_TABLES: TableDef[] = [
   // whiteboard：spec 5.1 白板 payload 排除 data（内容走独立通道），tsCol=metaUpdatedAt
   { table: 'whiteboard', model: 'Whiteboard', cols: ['id','name','shareToken','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'metaUpdatedAt', id: r => String(r.id) },
 ];
+
+const COLS_BY_TABLE = new Map(SYNC_TABLES.map((d) => [d.table, new Set(d.cols)]));
+
+/**
+ * `gap.md` G1492 —— 静态那道闸（`tables.test.ts`「全仓每一处 applyLocal 的字面量 patch 键都必须在
+ * `cols` 里」）只判得出**写得出键名的字面量**，而本仓 `applyLocal` 有一半调用点把 `patch` 交给变量。
+ * 这一枚是它的运行时补面：入队之前把 payload 的键与所属表的 `cols` 求差，多出来的就是
+ * "本地已经改了、服务端永远不会知道"的那一列（G03 那整类失真的机制本体）。
+ *
+ * ☆ 这里只告警不改写：把差掉的键悄悄剔掉会让界面照常乐观上色、和静默丢失一模一样难查；
+ *   未注册的表返回空数组（`document_tag` 那类复合键写入由调用方自己负责，别在这里发明规则）。
+ */
+export function unknownPayloadKeys(table: string, data: Record<string, unknown> | undefined): string[] {
+  const cols = COLS_BY_TABLE.get(table);
+  if (!cols || !data) return [];
+  return Object.keys(data).filter((key) => !cols.has(key));
+}

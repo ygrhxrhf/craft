@@ -9,6 +9,7 @@ import type { SyncStore } from './store';
 import type { SyncRecord } from './types';
 import type { SyncStatus } from './types';
 import { storageBackend } from '@/lib/platform';
+import { unknownPayloadKeys } from '@/lib/sync/tables';
 
 export type { SyncStatus };
 
@@ -83,6 +84,7 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
   let bootPromise: Promise<void> | null = null;
   let listening = false;
   let broadcastStarted = false;
+  const warnedCols = new Set<string>();   // G1492 白名单告警去重（每 manager 实例一次）
 
   function notifyAll(): void {
     for (const cb of statusSubs) cb(status, cachedPending);
@@ -336,6 +338,17 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
         if (prev?.payload.data) payloadData = { ...prev.payload.data, ...o.patch };
       } catch {
         // 读 pending 失败 → 按新 patch 入队（保持旧行为）
+      }
+    }
+    // G1492 运行时补面：静态那道闸判不出变量 patch，这里在**入队之前**把键与白名单求差。
+    // ☆ 只报不改：剔掉键就等于再造一次"本地已改、服务端永远不知道"的静默丢失。
+    //   一枚 `table.列` 只报一次（同一处调用点会随输入反复触发，刷屏会把真信息埋掉）。
+    if (op === 'upsert' && process.env.NODE_ENV !== 'production') {
+      for (const key of unknownPayloadKeys(o.table, payloadData)) {
+        const seen = `${o.table}.${key}`;
+        if (warnedCols.has(seen)) continue;
+        warnedCols.add(seen);
+        console.warn(`[sync] ${o.table}.${key} 不在 SYNC_TABLES.cols ⇒ 本地已改，却永远推不到服务端（G1492）`);
       }
     }
     await store.enqueue({

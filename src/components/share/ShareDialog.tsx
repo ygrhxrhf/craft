@@ -30,7 +30,7 @@ import {
 import type { DocumentSharePermission } from '@/lib/share/permission';
 import { cn } from 'cn';
 import { getSyncManager } from '@/lib/sync-core';
-import { findDocumentShareId } from '@/components/sync/local-records';
+import { findDocumentShare, findDocumentShareId } from '@/components/sync/local-records';
 
 interface ShareDialogProps {
   documentId: string;
@@ -47,6 +47,8 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [link, setLink] = useState<string | null>(null);
   const [isPublished, setIsPublished] = useState(false);
   const [permission, setPermission] = useState<DocumentSharePermission | null>(null);
+  const [shareId, setShareId] = useState<string | null>(null);
+  const [serverVersion, setServerVersion] = useState(0);
   const [tierError, setTierError] = useState<string | null>(null);
   const [hasPasscode, setHasPasscode] = useState(false);
   const [passcode, setPasscode] = useState('');
@@ -63,10 +65,12 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     getOrCreateShare(documentId)
       .then((share) => {
         if (!cancelled) {
+          setShareId(share.id);
           setToken(share.token);
           setLink(`${window.location.origin}/s/${share.token}`);
           setIsPublished(share.isPublished);
           setPermission(share.permission);
+          setServerVersion(share.shareVersion);
           setHasPasscode(share.hasPasscode);
           setSlug(share.slug);
           setSlugDraft(share.slug ?? '');
@@ -115,8 +119,33 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     setPermission(next);
     startTransition(async () => {
       try {
+        // 档位是元数据 ⇒ 走离线内核（G1491）：本地镜像里有这一行就只改这两列；
+        // 镜像还没有（这篇文档刚被分享、或本机还没拉过这张表）就连着面板挂载时读回来的那一行
+        // 一起写进去——一枚 op，档位与建档不分成两趟；两条都不成立才退回服务端 action（那条路
+        // 此前连广播都没发，本批补上）。
+        const local = await findDocumentShare(documentId);
+        // ☆ 计数器只增不减：镜像可能比服务端旧，所以取「服务端读回来的那一枚」与「镜像那一枚」
+        //   的较大值再 +1。往回拨等于让按旧档授权的那条访客连接躲过过期判定。
+        const shareVersion = Math.max(serverVersion, local?.shareVersion ?? 0) + 1;
+        if (local) {
+          await getSyncManager().applyLocal({
+            table: 'document_share',
+            id: local.id,
+            patch: { permission: next, shareVersion },
+          });
+          return;
+        }
+        if (shareId) {
+          await getSyncManager().applyLocal({
+            table: 'document_share',
+            id: shareId,
+            patch: { documentId, token, isPublished, permission: next, shareVersion },
+          });
+          return;
+        }
         const result = await setSharePermission(documentId, next);
         setPermission(result.permission);
+        setServerVersion(result.shareVersion);
       } catch {
         setPermission(previous);
         setTierError('档位没有保存，请重试');
@@ -124,10 +153,19 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     });
   };
 
+  // ☆ 两枚 `applyLocal` 的 `patch` 都必须写成**字面量**：G1489 那道静态闸（`tables.test.ts`）判得出
+  //   字面量键、判不出变量（G1492 的盲区基线就按调用点数在钉），抽成 helper 传 patch 会把这一处
+  //   从"可判"降级成"要人工复核"。
   const handleEnablePasscode = () => {
     if (!passcode.trim()) return;
     startTransition(async () => {
-      await setSharePasscode(documentId, passcode.trim());
+      const shareId = await findDocumentShareId(documentId);
+      const value = passcode.trim();
+      if (shareId) {
+        await getSyncManager().applyLocal({ table: 'document_share', id: shareId, patch: { passcode: value } });
+      } else {
+        await setSharePasscode(documentId, value);
+      }
       setHasPasscode(true);
       setPasscode('');
     });
@@ -135,7 +173,12 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
 
   const handleRemovePasscode = () => {
     startTransition(async () => {
-      await setSharePasscode(documentId, null);
+      const shareId = await findDocumentShareId(documentId);
+      if (shareId) {
+        await getSyncManager().applyLocal({ table: 'document_share', id: shareId, patch: { passcode: null } });
+      } else {
+        await setSharePasscode(documentId, null);
+      }
       setHasPasscode(false);
       setPasscode('');
     });

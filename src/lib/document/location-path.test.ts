@@ -44,8 +44,8 @@ describe('the labels', () => {
     expect(pathLabel(node('r', '无图标', null))).toBe('无图标');
   });
 
-  it('falls back to 无标题 for an empty name', () => {
-    expect(pathLabel(node('r', '', null))).toBe('无标题');
+  it('falls back to the list wording for an empty name', () => {
+    expect(pathLabel(node('r', '', null))).toBe('无标题文档');
   });
 
   it('joins the chain with the collected separator', () => {

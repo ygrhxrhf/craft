@@ -3,6 +3,7 @@
 import { assertOwned, requireUserId } from '@/lib/authz/guard';
 import { getDb } from '@/prisma/db';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { UNTITLED_FOLDER } from '@/lib/document/untitled-copy';
 
 export async function createFolder(input: {
   name?: string;
@@ -14,7 +15,7 @@ export async function createFolder(input: {
   const db = await getDb();
   const folder = await db.orm.public.Folder.create({
     id: crypto.randomUUID(),
-    name: input.name ?? '未命名文件夹',
+    name: input.name ?? UNTITLED_FOLDER,
     userId,
     parentId: input.parentId ?? null,
   });

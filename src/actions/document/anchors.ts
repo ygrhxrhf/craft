@@ -3,6 +3,7 @@
 import { requireUserId } from '@/lib/authz/guard';
 import { getDb } from '@/prisma/db';
 import { collectAnchorCandidates } from '@/lib/search/anchors';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 export interface BlockAnchorHit {
   documentId: string;
@@ -34,7 +35,7 @@ export async function searchBlockAnchors(query: string): Promise<BlockAnchorHit[
       if (candidate.text.toLowerCase().includes(term)) {
         hits.push({
           documentId: doc.id,
-          documentTitle: doc.title ?? '未命名',
+          documentTitle: doc.title || untitledFor('list'),
           blockIndex: candidate.index,
           blockId: candidate.blockId,
           text: candidate.text,

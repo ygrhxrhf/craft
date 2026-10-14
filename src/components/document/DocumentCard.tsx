@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { File } from 'lucide-react';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 interface DocumentCardProps {
   document: {
@@ -39,7 +40,7 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
           ) : (
             <File className="size-5 shrink-0 text-foreground/40" />
           )}
-          <h3 className="flex-1 truncate text-card-title font-semibold">{doc.title}</h3>
+          <h3 className="flex-1 truncate text-card-title font-semibold">{doc.title || untitledFor('list')}</h3>
         </div>
         <p className="mt-1 text-meta text-foreground/55 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
           {formattedDate}

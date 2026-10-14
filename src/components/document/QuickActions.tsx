@@ -4,6 +4,7 @@ import { FileText, FolderPlus, Database, PenTool } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
 import { createDocumentLocal, createFolderLocal } from '@/components/sync/create-local';
+import { UNTITLED_FOLDER } from '@/lib/document/untitled-copy';
 import { useRouter } from 'next/navigation';
 
 export function QuickActions() {
@@ -16,7 +17,7 @@ export function QuickActions() {
   }
 
   async function handleNewFolder() {
-    await createFolderLocal({ userId: session?.user?.id, name: '未命名文件夹' });
+    await createFolderLocal({ userId: session?.user?.id, name: UNTITLED_FOLDER });
     router.refresh();
   }
 

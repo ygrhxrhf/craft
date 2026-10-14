@@ -37,6 +37,7 @@ import { CommentSection } from '../comments/CommentSection';
 import { TagsSection } from './TagsSection';
 import { MembersSection } from './MembersSection';
 import type { Editor } from '@tiptap/react';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 /** Moves the block holding the selection. No-ops at the edge, same as the key chord. */
 function moveSelection(editor: Editor | null, target: MoveTarget) {
@@ -431,7 +432,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
                         </button>
                         <Link href={`/documents/${link.sourceDocumentId}`} className="flex min-w-0 flex-1 items-center gap-2">
                           <FileText className="size-3.5 shrink-0 text-muted-foreground" />
-                          <span className="truncate">{link.sourceIcon} {link.sourceTitle || '未命名'}</span>
+                          <span className="truncate">{link.sourceIcon} {link.sourceTitle || untitledFor('list')}</span>
                         </Link>
                       </div>
                       {!collapsed && (
@@ -528,7 +529,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
                       className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4 disabled:opacity-50"
                     >
                       <span>{doc.icon || '📄'}</span>
-                      <span className="truncate">{doc.title || '未命名'}</span>
+                      <span className="truncate">{doc.title || untitledFor('list')}</span>
                     </button>
                   ))}
               </div>

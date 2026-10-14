@@ -5,6 +5,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { Link2, Pilcrow } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { anchorHref } from '@/lib/editor/block-anchor';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 export function BlockLinkView({ node }: NodeViewProps) {
   const router = useRouter();
@@ -48,7 +49,7 @@ export function BlockLinkView({ node }: NodeViewProps) {
         ) : (
           <Link2 className="size-3.5 text-muted-foreground" />
         )}
-        <span>{title || '未命名'}</span>
+        <span>{title || untitledFor('list')}</span>
       </button>
     </NodeViewWrapper>
   );

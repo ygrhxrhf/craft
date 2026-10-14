@@ -6,6 +6,7 @@ import { List } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { TOC_PLACEHOLDER } from '@/lib/editor/official-copy';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 interface TocEntry {
   text: string;
@@ -35,7 +36,7 @@ export function collectTocEntries(doc: {
     }
     if (node.type.name === 'mention' && typeof node.attrs.documentId === 'string' && node.attrs.documentId) {
       entries.push({
-        text: (typeof node.attrs.title === 'string' && node.attrs.title) || '未命名',
+        text: (typeof node.attrs.title === 'string' && node.attrs.title) || untitledFor('list'),
         level: 1,
         index: entries.length,
         documentId: node.attrs.documentId,

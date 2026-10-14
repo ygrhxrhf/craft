@@ -11,6 +11,7 @@ import { toast } from '@/components/ui/toast';
 import { getSyncManager } from '@/lib/sync-core';
 import { createDocumentLocal } from '@/components/sync/create-local';
 import { findLiveFavoriteId } from '@/components/sync/local-records';
+import { untitledFor } from '@/lib/document/untitled-copy';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import {
   SIDEBAR_DOC_MIME,
@@ -310,7 +311,7 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
           className="min-w-0 flex-1 rounded border border-input bg-background px-1 text-[13px] outline-none focus:border-ring"
         />
       ) : (
-        <span className="truncate">{doc.title}</span>
+        <span className="truncate">{doc.title || untitledFor('list')}</span>
       )}
     </>
   );

@@ -6,6 +6,7 @@ import { SharedDocView } from '@/components/share/SharedDocView';
 import { PublicDocBanner } from '@/components/share/PublicDocBanner';
 import { PasscodeGate } from '@/components/share/PasscodeGate';
 import { shareCookieName, verifyShareCookie } from '@/lib/share-passcode';
+import { UNTITLED_PAGE } from '@/lib/document/untitled-copy';
 
 interface PublishPageProps {
   params: Promise<{ slug: string }>;
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: PublishPageProps): Promise<Me
   const doc = await getSharedDocument(slug);
   if (!doc || !doc.isPublished) return { title: '页面不存在' };
 
-  const title = `${doc.icon ? `${doc.icon} ` : ''}${doc.title || '未命名'}`;
+  const title = `${doc.icon ? `${doc.icon} ` : ''}${doc.title || UNTITLED_PAGE}`;
   const description = (doc.plainText ?? '').slice(0, 160) || undefined;
 
   return {

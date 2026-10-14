@@ -6,6 +6,7 @@ import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { DocumentTreeItem } from './DocumentTreeItem';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 export interface Document {
   id: string;
@@ -26,7 +27,7 @@ export function overlayDocumentRows(
 ): Document[] {
   const merged = mergePending<Document>(rows, pending, (id, p) => ({
     id,
-    title: '无标题',
+    title: untitledFor('list'),
     icon: null,
     parentId: null,
     folderId: null,

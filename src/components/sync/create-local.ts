@@ -5,6 +5,7 @@
 import { getSyncManager } from '@/lib/sync-core';
 import { createDocument } from '@/actions/document/create';
 import { createFolder } from '@/actions/folder/create';
+import { UNTITLED_FOLDER } from '@/lib/document/untitled-copy';
 
 /**
  * 新建文档（brief 映射：本地先生成 crypto.randomUUID()，applyLocal 全字段）。
@@ -20,7 +21,7 @@ export async function createDocumentLocal(input: {
 }): Promise<string> {
   if (!input.userId) {
     const doc = await createDocument({
-      title: input.title ?? '无标题',
+      title: input.title ?? '',
       parentId: input.parentId ?? null,
       folderId: input.folderId ?? null,
     });
@@ -34,7 +35,7 @@ export async function createDocumentLocal(input: {
     id,
     patch: {
       userId,
-      title: input.title ?? '无标题',
+      title: input.title ?? '',
       parentId: input.parentId ?? null,
       folderId: input.folderId ?? null,
       icon: null,
@@ -59,7 +60,7 @@ export async function createFolderLocal(input: {
 }): Promise<string> {
   if (!input.userId) {
     const folder = await createFolder({
-      name: input.name ?? '未命名文件夹',
+      name: input.name ?? UNTITLED_FOLDER,
       parentId: input.parentId ?? null,
     });
     return folder.id;
@@ -72,7 +73,7 @@ export async function createFolderLocal(input: {
     id,
     patch: {
       userId,
-      name: input.name ?? '未命名文件夹',
+      name: input.name ?? UNTITLED_FOLDER,
       parentId: input.parentId ?? null,
       icon: null,
       isDeleted: false,

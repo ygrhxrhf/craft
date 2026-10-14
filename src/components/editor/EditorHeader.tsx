@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 interface EditorHeaderProps {
   documentId: string;
@@ -79,7 +80,7 @@ export function EditorHeader({
           type="text"
           value={draftTitle ?? ''}
           onChange={(e) => setDraftTitle(e.target.value)}
-          placeholder="页面标题"
+          placeholder={untitledFor('topBar')}
           className="flex-1 bg-transparent font-serif text-3xl font-normal italic outline-none placeholder:text-muted-foreground/50"
         />
           </>

@@ -18,6 +18,7 @@ import { readPendingRows, mergePending, type PendingRow } from '@/components/syn
 import { getDeletedDocuments } from '@/actions/document/get';
 import { TRASH_DISCLAIMER, TRASH_EMPTY } from '@/lib/browse/trash-copy';
 import { useRouter } from 'next/navigation';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 interface TrashDoc {
   id: string;
@@ -34,7 +35,7 @@ interface TrashListProps {
 export function overlayTrashRows(serverDocs: TrashDoc[], pending: Map<string, PendingRow>): TrashDoc[] {
   const merged = mergePending<TrashDoc>(serverDocs, pending, (id, p) => ({
     id,
-    title: '无标题',
+    title: untitledFor('list'),
     icon: null,
     deletedAt: null,
     ...(p.data as Partial<TrashDoc>),
@@ -233,7 +234,7 @@ export function TrashList({ documents }: TrashListProps) {
                 type="button"
                 role="checkbox"
                 aria-checked={isChecked}
-                aria-label={`选择 ${doc.title || '无标题文档'}`}
+                aria-label={`选择 ${doc.title || untitledFor('list')}`}
                 onClick={() => toggle(doc.id)}
                 className="shrink-0"
               >
@@ -247,7 +248,7 @@ export function TrashList({ documents }: TrashListProps) {
               )
             )}
             <div className="flex-1 truncate">
-              <p className="truncate text-body font-medium">{doc.title}</p>
+              <p className="truncate text-body font-medium">{doc.title || untitledFor('list')}</p>
               <p className="text-meta text-foreground/55">
                 删除于 {deletedDate}
               </p>

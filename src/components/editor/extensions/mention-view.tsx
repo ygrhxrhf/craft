@@ -5,6 +5,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { AtSign, FileText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { mentionIsPerson } from './mention-users';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 export function MentionView({ node }: NodeViewProps) {
   const router = useRouter();
@@ -19,7 +20,7 @@ export function MentionView({ node }: NodeViewProps) {
   const label = (
     <>
       <Icon className="size-3.5 text-foreground/40" />
-      <span>{title || '未命名'}</span>
+      <span>{title || untitledFor('list')}</span>
     </>
   );
 

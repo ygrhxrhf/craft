@@ -5,6 +5,7 @@ import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { serializeDocument } from '@/lib/document-codec';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 export type ExportFormat = 'markdown' | 'html' | 'text' | 'json';
 
@@ -31,7 +32,7 @@ export async function exportDocument(documentId: string, format: ExportFormat) {
   const body = serializeDocument(doc.content ?? { type: 'doc', content: [] }, format);
 
   return {
-    filename: `${doc.title || '无标题'}.${extensionByFormat[format]}`,
+    filename: `${doc.title || untitledFor('list')}.${extensionByFormat[format]}`,
     mime: mimeByFormat[format],
     body,
   };

@@ -54,7 +54,7 @@ export async function createDocument(input: {
   const sourceDoc = base as SourceDoc;
   const title = creatingCopy
     ? `${sourceDoc.title} 副本`
-    : (input.title ?? (sourceDoc?.title ?? '无标题'));
+    : (input.title ?? (sourceDoc?.title ?? ''));
 
   // New rows must carry metaUpdatedAt or they never enter the incremental-sync
   // stream (document tsCol is metaUpdatedAt and has no DB default).

@@ -7,6 +7,7 @@ import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { overlayDocumentRows, type Document } from './DocumentTree';
 import { folderDocumentCounts } from '@/lib/browse/folder-counts';
+import { UNTITLED_FOLDER } from '@/lib/document/untitled-copy';
 import { FolderTreeItem } from './FolderTreeItem';
 
 export interface Folder {
@@ -25,7 +26,7 @@ export function overlayFolderRows(
 ): Folder[] {
   const merged = mergePending<Folder>(rows, pending, (id) => ({
     id,
-    name: '未命名文件夹',
+    name: UNTITLED_FOLDER,
     icon: null,
     parentId: null,
     order: 0,

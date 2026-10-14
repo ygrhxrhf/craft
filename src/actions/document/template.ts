@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 export async function saveAsTemplate(documentId: string) {
   const session = await auth();
@@ -16,7 +17,7 @@ export async function saveAsTemplate(documentId: string) {
   const metaTs = new Date().toISOString();
   const copy = await db.orm.public.Document.create({
     id: crypto.randomUUID(),
-    title: `${d.title || '无标题'} 模板`,
+    title: `${d.title || untitledFor('list')} 模板`,
     icon: d.icon,
     content: d.content,
     plainText: d.plainText,

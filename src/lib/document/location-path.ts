@@ -1,3 +1,5 @@
+import { untitledFor } from './untitled-copy';
+
 /**
  * The 「位置」 section (G203). The info panel renders the current document's ancestry as a
  * breadcrumb — an emoji and the ancestor's name, joined by ` / `. The chain runs from the root
@@ -36,7 +38,7 @@ export function ancestryPath(nodes: readonly PathNode[], documentId: string): Pa
 
 /** One node's label: its emoji when it has one, then its name. */
 export function pathLabel(node: PathNode): string {
-  const name = node.title || '无标题';
+  const name = node.title || untitledFor('list');
   return node.icon ? `${node.icon} ${name}` : name;
 }
 

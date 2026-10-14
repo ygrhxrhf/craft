@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 interface PasscodeGateProps {
   token: string;
@@ -46,7 +47,7 @@ export function PasscodeGate({ token, path, title, icon }: PasscodeGateProps) {
           <Lock className="size-5 text-foreground/40" />
         </div>
         <div className="mb-1 text-2xl">{icon || '📄'}</div>
-        <h1 className="mb-1 truncate text-h3 font-semibold text-[#1F2225] dark:text-[#F9F9F9]">{title || '未命名'}</h1>
+        <h1 className="mb-1 truncate text-h3 font-semibold text-[#1F2225] dark:text-[#F9F9F9]">{title || untitledFor('list')}</h1>
         <p className="mb-6 text-ui text-foreground/55">此文档受口令保护，请输入口令查看</p>
         <form onSubmit={handleSubmit} className={error ? 'animate-shake' : ''}>
           <input

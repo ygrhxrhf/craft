@@ -7,6 +7,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { Copy, Pilcrow, RefreshCw } from 'lucide-react';
 import { getMirroredBlock, type MirroredBlock } from '@/actions/document/mirror';
 import { searchBlockAnchors, type BlockAnchorHit } from '@/actions/document/anchors';
+import { untitledFor } from '@/lib/document/untitled-copy';
 
 type State =
   | { kind: 'loading' }
@@ -25,7 +26,7 @@ export function MirrorBlockView({ node, editor, selected, updateAttributes }: No
   const sourceDocumentId = node.attrs.sourceDocumentId as string | null;
   const sourceBlockId = node.attrs.sourceBlockId as string | null;
   const sourceBlockIndex = node.attrs.sourceBlockIndex as number | null;
-  const title = (node.attrs.title as string) || '未命名';
+  const title = (node.attrs.title as string) || untitledFor('list');
 
   const load = useCallback(async () => {
     const hostDocumentId = editor.storage.mirrorBlock?.hostDocumentId;

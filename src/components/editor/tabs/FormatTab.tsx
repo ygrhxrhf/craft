@@ -3,10 +3,26 @@
 import type { Editor } from '@tiptap/react';
 import {
   Bold, Italic, Strikethrough, Code, List, ListOrdered,
-  CheckSquare, ChevronRight, AlignLeft, AlignCenter, AlignRight,
-  Indent, Outdent, Eye, Square, FoldVertical, UnfoldVertical,
+  CheckSquare, ChevronRight, AlignLeft, AlignCenter, AlignRight, AlignJustify,
+  Indent, Outdent, ListX, Eraser, FoldVertical, UnfoldVertical,
 } from 'lucide-react';
+import { useEffect, useReducer } from 'react';
 import { cn } from 'cn';
+import {
+  ALIGNMENT_CONTROLS,
+  GROUP_KEYS,
+  INDENT_CONTROLS,
+  INLINE_MARK_CONTROLS,
+  LIST_CONTROLS,
+  alignMixed,
+  alignState,
+  listMixed,
+  listState,
+  markState,
+  type FormatControl,
+  type FormatHost,
+} from '@/lib/editor/format-commands';
+import { MIXED_LABEL, type TriState } from '@/lib/editor/format-presence';
 
 interface FormatTabProps {
   editor: Editor;
@@ -21,31 +37,9 @@ const textStyles = [
   { label: '说明', action: (e: Editor) => e.chain().focus().toggleBlockquote().run(), check: (e: Editor) => e.isActive('blockquote') },
 ];
 
-const formatButtons = [
-  { icon: Bold, active: (e: Editor) => e.isActive('bold'), action: (e: Editor) => e.chain().focus().toggleBold().run(), label: '加粗' },
-  { icon: Italic, active: (e: Editor) => e.isActive('italic'), action: (e: Editor) => e.chain().focus().toggleItalic().run(), label: '斜体' },
-  { icon: Strikethrough, active: (e: Editor) => e.isActive('strike'), action: (e: Editor) => e.chain().focus().toggleStrike().run(), label: '删除线' },
-  { icon: Code, active: (e: Editor) => e.isActive('code'), action: (e: Editor) => e.chain().focus().toggleCode().run(), label: '代码' },
-];
-
-const listButtons = [
-  { icon: CheckSquare, active: (e: Editor) => e.isActive('taskList'), action: (e: Editor) => e.chain().focus().toggleTaskList().run(), label: '待办' },
-  { icon: ChevronRight, active: (e: Editor) => e.isActive('toggleBlock'), action: (e: Editor) => e.chain().focus().setToggleBlock().run(), label: '折叠' },
-  { icon: List, active: (e: Editor) => e.isActive('bulletList'), action: (e: Editor) => e.chain().focus().toggleBulletList().run(), label: '无序列表' },
-  { icon: ListOrdered, active: (e: Editor) => e.isActive('orderedList'), action: (e: Editor) => e.chain().focus().toggleOrderedList().run(), label: '有序列表' },
-];
-
 const toggleGroupButtons = [
   { icon: UnfoldVertical, action: (e: Editor) => e.chain().focus().expandAllToggleBlocks().run(), label: '全部展开' },
   { icon: FoldVertical, action: (e: Editor) => e.chain().focus().collapseAllToggleBlocks().run(), label: '全部收起' },
-];
-
-const alignButtons = [
-  { icon: Outdent, action: (e: Editor) => e.chain().focus().liftListItem('listItem').run(), label: '左缩进' },
-  { icon: Indent, action: (e: Editor) => e.chain().focus().sinkListItem('listItem').run(), label: '右缩进' },
-  { icon: AlignLeft, active: (e: Editor) => e.isActive({ textAlign: 'left' }), action: (e: Editor) => e.chain().focus().setTextAlign('left').run(), label: '左对齐' },
-  { icon: AlignCenter, active: (e: Editor) => e.isActive({ textAlign: 'center' }), action: (e: Editor) => e.chain().focus().setTextAlign('center').run(), label: '居中' },
-  { icon: AlignRight, active: (e: Editor) => e.isActive({ textAlign: 'right' }), action: (e: Editor) => e.chain().focus().setTextAlign('right').run(), label: '右对齐' },
 ];
 
 const formatColors = [
@@ -53,20 +47,92 @@ const formatColors = [
   '#db3035', '#b425f6', '#7e5019', '#687485', '#9fa4a9',
 ];
 
-function FormatButton({ icon: Icon, active, onClick, label }: {
+/** 图标留在组件侧：`format-commands` 那张表要能在没有编辑器时单测，所以不带 JSX。 */
+const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  'style.inline.bold': Bold,
+  'style.inline.italic': Italic,
+  'style.inline.strike': Strikethrough,
+  'style.inline.code': Code,
+  'style.list.todo': CheckSquare,
+  'style.list.toggle': ChevronRight,
+  'style.list.bullet': List,
+  'style.list.numbered': ListOrdered,
+  'style.list.none': ListX,
+  'style.indent.out': Outdent,
+  'style.indent.in': Indent,
+  'style.text.align.left': AlignLeft,
+  'style.text.align.center': AlignCenter,
+  'style.text.align.right': AlignRight,
+  'style.text.align.justify': AlignJustify,
+  default: Eraser,
+};
+
+function iconFor(control: FormatControl) {
+  return ICONS[control.key ?? 'default'] ?? ICONS.default;
+}
+
+function FormatButton({ icon: Icon, state, onClick, label }: {
   icon: React.ComponentType<{ className?: string }>;
-  active?: boolean;
+  /** `mixed` 只属于行内格式：这一枚自己既不是开也不是关（G154）。 */
+  state: TriState;
   onClick: () => void;
   label: string;
 }) {
   return (
     <button
       type="button"
-      title={label}
+      title={state === 'mixed' ? `${label}（${MIXED_LABEL}）` : label}
+      // ARIA 本来就有 pressed 的第三态，官方的「混合」正好落在它上面。
+      aria-pressed={state === 'on' ? true : state === 'mixed' ? 'mixed' : false}
+      onClick={onClick}
+      className={cn(
+        'flex size-8 items-center justify-center rounded-md border transition-colors duration-150 ease-craft',
+        state === 'on' && 'border-foreground/8 bg-foreground/8 text-foreground',
+        state === 'off' && 'border-foreground/8 bg-card text-foreground/55 hover:bg-foreground/4 hover:text-foreground/85',
+        state === 'mixed' && 'border-dashed border-foreground/30 bg-card text-foreground/75 hover:bg-foreground/4',
+      )}
+    >
+      <Icon className="size-4" />
+    </button>
+  );
+}
+
+/**
+ * 组标题带「混合」：官方在选区跨档时让控件显示「混合」而不是第一个值（G154），
+ * 于是这一组里没有任何一档点亮。
+ */
+function GroupHeader({ label, mixed }: { label: string; mixed: boolean }) {
+  return (
+    <h4 className="mb-2 flex items-center gap-1.5 text-caption font-medium uppercase tracking-wider text-foreground/40">
+      {label}
+      {mixed && (
+        <span
+          className="rounded border border-dashed border-foreground/30 px-1 text-[10px] normal-case tracking-normal text-foreground/60"
+          data-mixed-indicator=""
+        >
+          {MIXED_LABEL}
+        </span>
+      )}
+    </h4>
+  );
+}
+
+function SegmentButton({ icon: Icon, active, mixedGroup, onClick, label }: {
+  icon: React.ComponentType<{ className?: string }>;
+  active: boolean;
+  mixedGroup: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      title={mixedGroup ? `${label}（${MIXED_LABEL}）` : label}
+      aria-pressed={active}
       onClick={onClick}
       className={cn(
         'flex size-8 items-center justify-center rounded-md border border-foreground/8 transition-colors duration-150 ease-craft',
-        active ? 'bg-foreground/8 text-foreground' : 'bg-card text-foreground/55 hover:bg-foreground/4 hover:text-foreground/85'
+        active ? 'bg-foreground/8 text-foreground' : 'bg-card text-foreground/55 hover:bg-foreground/4 hover:text-foreground/85',
       )}
     >
       <Icon className="size-4" />
@@ -75,6 +141,29 @@ function FormatButton({ icon: Icon, active, onClick, label }: {
 }
 
 export function FormatTab({ editor }: FormatTabProps) {
+  // 三态判的是选区，选区自己会变而正文一个字没动：tiptap 的 selectionUpdate 是唯一能让本面板
+  // 跟着重画的信号，不订阅就会拿着旧选区算新档位。
+  const [, redraw] = useReducer((count: number) => count + 1, 0);
+  useEffect(() => {
+    const onSelection = () => redraw();
+    editor.on('selectionUpdate', onSelection);
+    return () => {
+      editor.off('selectionUpdate', onSelection);
+    };
+  }, [editor]);
+
+  const state = editor.state;
+  // 控件表只认 FormatHost（chain / state / dispatch），真编辑器的 dispatch 在 view 上；
+  // 在这一层接上，lib 里那张表才能不带编辑器实例被单测。
+  const host: FormatHost = {
+    chain: () => editor.chain(),
+    state,
+    dispatch: (tr) => editor.view.dispatch(tr),
+  };
+  const marks = INLINE_MARK_CONTROLS.map((control) => ({ control, state: markState(state, control.mark) }));
+  const alignGroupMixed = alignMixed(state);
+  const listGroupMixed = listMixed(state);
+
   return (
     <div className="space-y-4 p-3">
       {/* Text styles */}
@@ -127,38 +216,66 @@ export function FormatTab({ editor }: FormatTabProps) {
         </div>
       </section>
 
-      {/* Format tools */}
+      {/* Inline marks. Tri-state: a partly-bold selection shows 混合 rather than picking a side. */}
       <section>
         <div className="grid grid-cols-4 gap-1">
-          {formatButtons.map((btn) => (
+          {marks.map(({ control, state: mark }) => (
             <FormatButton
-              key={btn.label}
-              icon={btn.icon}
-              active={btn.active(editor)}
-              onClick={() => btn.action(editor)}
-              label={btn.label}
+              key={control.label}
+              icon={iconFor(control)}
+              state={mark}
+              onClick={() => control.apply(host)}
+              label={control.label}
             />
           ))}
         </div>
-        <div className="mt-1 grid grid-cols-4 gap-1">
-          {listButtons.map((btn) => (
-            <FormatButton
-              key={btn.label}
-              icon={btn.icon}
-              active={btn.active(editor)}
-              onClick={() => btn.action(editor)}
-              label={btn.label}
+      </section>
+
+      {/* The five official list档位, 取消列表格式 included (G155). */}
+      <section>
+        <GroupHeader label={GROUP_KEYS.listLabel} mixed={listGroupMixed} />
+        <div className="grid grid-cols-5 gap-1">
+          {LIST_CONTROLS.map((control) => (
+            <SegmentButton
+              key={control.label}
+              icon={iconFor(control)}
+              active={listState(state, control.kind)}
+              mixedGroup={listGroupMixed}
+              onClick={() => control.apply(host)}
+              label={control.label}
             />
           ))}
         </div>
-        <div className="mt-1 grid grid-cols-5 gap-1">
-          {alignButtons.map((btn) => (
-            <FormatButton
-              key={btn.label}
-              icon={btn.icon}
-              active={btn.active?.(editor)}
-              onClick={() => btn.action(editor)}
-              label={btn.label}
+      </section>
+
+      {/* Alignment is its own control, indentation its own (G153). */}
+      <section>
+        <GroupHeader label={GROUP_KEYS.alignLabel} mixed={alignGroupMixed} />
+        <div className="grid grid-cols-5 gap-1">
+          {ALIGNMENT_CONTROLS.map((control) => (
+            <SegmentButton
+              key={control.label}
+              icon={iconFor(control)}
+              active={alignState(state, control.value)}
+              mixedGroup={alignGroupMixed}
+              onClick={() => control.apply(host)}
+              label={control.label}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <GroupHeader label={GROUP_KEYS.indentLabel} mixed={false} />
+        <div className="grid grid-cols-2 gap-1">
+          {INDENT_CONTROLS.map((control) => (
+            <SegmentButton
+              key={control.label}
+              icon={iconFor(control)}
+              active={false}
+              mixedGroup={false}
+              onClick={() => control.apply(host)}
+              label={control.label}
             />
           ))}
         </div>

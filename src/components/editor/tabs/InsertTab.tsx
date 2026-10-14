@@ -98,8 +98,8 @@ export function InsertTab({ editor }: InsertTabProps) {
       {/* `sidebar.insert.subtitle`, verbatim. */}
       <p className="mb-3 text-[11px] text-muted-foreground">将任何项目拖放到文档中</p>
 
-      {PANEL_ITEMS.map((group) => (
-        <div key={group.title ?? 'flat'} className="mb-3">
+      {PANEL_ITEMS.map((group, i) => (
+        <div key={group.title ?? `flat-${i}`} className="mb-3">
           {group.title && (
             <h4 className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
               {group.title}

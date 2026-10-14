@@ -25,6 +25,7 @@ import { uploadFile } from '@/lib/upload-client';
 import { syncBacklinks } from '@/actions/document/backlinks';
 import { syncDocumentTasks } from '@/actions/task/task';
 import { pmNodeText } from '@/lib/search/extract';
+import { ALIGNABLE_TYPES } from '@/lib/editor/format-presence';
 import { EditorBubbleMenu } from './bubble-menu/BubbleMenu';
 import { AiBubbleMenu } from './bubble-menu/AiBubbleMenu';
 import { ImageGenDialogHost } from './ai/ImageGenDialog';
@@ -301,7 +302,8 @@ export function Editor({
       }),
       OfficialHardBreak,
       TextAlign.configure({
-        types: ['heading', 'paragraph'],
+        // 与「格式」面板的对齐判定同源（`format-presence.ts`）：面板点亮某一档，正文就必须写得进这一档。
+        types: ALIGNABLE_TYPES,
       }),
       TaskList.configure({
         HTMLAttributes: {

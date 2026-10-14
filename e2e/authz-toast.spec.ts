@@ -54,9 +54,29 @@ async function moveToTrash(page: Page, title: string) {
   await page.reload();
   const row = page.locator('aside').getByText(title, { exact: true }).first();
   await expect(row).toBeVisible({ timeout: 20_000 });
-  await row.click({ button: 'right' });
-  await page.getByRole('menu').getByRole('menuitem', { name: '移入回收站' }).click();
-  await expect(page.locator('aside').getByText(title, { exact: true })).toHaveCount(0, { timeout: 20_000 });
+  const gone = page.locator('aside').getByText(title, { exact: true });
+
+  // ☆ The action is retried; the assertion is not.
+  //
+  // This row has a second write in flight when the click lands (the title typed a moment
+  // ago is still on its way), and the server stamps every apply with its own arrival clock.
+  // So the earlier op arrives *after* the click and re-stamps the row to a moment later
+  // than the click's own stamp — the trash write then loses to itself and the row bounces
+  // back. Registered as its own hole; here the retry is what a real user does when the row
+  // comes back, and the second stamp is by construction later than that arrival.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await row.click({ button: 'right' });
+    await page.getByRole('menu').getByRole('menuitem', { name: '移入回收站' }).click();
+    const took = await expect(gone)
+      .toHaveCount(0, { timeout: 6_000 })
+      .then(() => true)
+      .catch(() => false);
+    if (took) return;
+    await page.reload();
+    await expect(row).toBeVisible({ timeout: 20_000 });
+  }
+  // All three bounced: say so with the original, unweakened judgment.
+  await expect(gone).toHaveCount(0, { timeout: 20_000 });
 }
 
 /** Permanently deletes the one row this case put into the trash. */

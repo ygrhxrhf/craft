@@ -3,10 +3,10 @@
 import {
   GROUP_LABELS,
   KEY_BINDINGS,
-  detectPlatform,
   displayFor,
   type ShortcutGroup,
 } from '@/lib/editor/keymap';
+import { usePlatform } from '@/lib/editor/use-platform';
 
 /** The official grouping, in the order the collected panel prints them. */
 const GROUP_ORDER: ShortcutGroup[] = [
@@ -32,7 +32,7 @@ const GROUP_ORDER: ShortcutGroup[] = [
  * The note line is local copy; the ledger collected no text for "this group is empty".
  */
 export function ShortcutsPanel() {
-  const platform = detectPlatform();
+  const platform = usePlatform();
 
   return (
     <div className="space-y-6" data-testid="shortcuts-panel">

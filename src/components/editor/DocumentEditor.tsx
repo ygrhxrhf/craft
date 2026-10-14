@@ -17,7 +17,8 @@ import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
 import { useFocusStore } from '@/lib/store/use-focus-store';
 import { EXIT_FOCUS_MODE_PREFIX, FOCUS_MODE } from '@/lib/editor/focus-mode-copy';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
-import { KEY_BINDINGS, detectPlatform, displayFor } from '@/lib/editor/keymap';
+import { KEY_BINDINGS, displayFor } from '@/lib/editor/keymap';
+import { usePlatform } from '@/lib/editor/use-platform';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,6 +75,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   }, [commentRequest]);
   const focusActive = useFocusStore((state) => state.active);
   const focusBinding = KEY_BINDINGS.find((binding) => binding.id === 'TOGGLE_FOCUS_MODE');
+  // 键位提示是渲染期读出来的文案，所以平台只能挂载后再猜（G1486）。
+  const platform = usePlatform();
   const [shareOpen, setShareOpen] = useState(false);
   const [editor, setEditor] = useState<import('@tiptap/react').Editor | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('saved');
@@ -197,7 +200,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               onClick={() => useFocusStore.getState().toggle()}
               type="button"
               aria-label={FOCUS_MODE}
-              title={focusBinding ? `${FOCUS_MODE} • ${displayFor(focusBinding, detectPlatform())}` : FOCUS_MODE}
+              title={focusBinding ? `${FOCUS_MODE} • ${displayFor(focusBinding, platform)}` : FOCUS_MODE}
               className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <Focus className="size-4" />
@@ -268,7 +271,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             className="flex items-center gap-3 border-b border-border px-4 py-2 text-xs text-foreground/70 hover:text-foreground"
             data-testid="focus-exit"
           >
-            {`${EXIT_FOCUS_MODE_PREFIX}${displayFor(focusBinding, detectPlatform())}`}
+            {`${EXIT_FOCUS_MODE_PREFIX}${displayFor(focusBinding, platform)}`}
           </button>
         )}
         <div className="flex-1 overflow-y-auto">

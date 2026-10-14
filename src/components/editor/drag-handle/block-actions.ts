@@ -1,13 +1,16 @@
 import type { EditorState, Transaction } from '@tiptap/pm/state';
+import type { Node } from '@tiptap/pm/model';
 import { TextSelection } from '@tiptap/pm/state';
 import { BLOCK_HASH_PREFIX } from '@/lib/editor/block-anchor';
 import { REMIND_PRESETS, remindInstantFor, type RemindPresetId } from '@/lib/task/remind-presets';
+import { applyCancelled } from '@/lib/editor/task-status';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 import { type DividerStyle } from '@/lib/editor/divider-styles';
 import { type CalloutType } from '@/components/editor/extensions/callout';
 
 export type BlockActionId =
   | 'remind'
+  | 'set-cancelled'
   | 'insert-above'
   | 'insert-below'
   | 'move-up'
@@ -49,6 +52,7 @@ export const BLOCK_EMOJIS = ['👍', '❤️', '😄', '🎉', '🔥', '👀'] a
 export function blockMenuItems({
   canDelete,
   isTask,
+  taskCancelled,
   isToggle,
   toggleOpen,
   isDivider,
@@ -56,6 +60,7 @@ export function blockMenuItems({
 }: {
   canDelete: boolean;
   isTask?: boolean;
+  taskCancelled?: boolean;
   isToggle?: boolean;
   toggleOpen?: boolean;
   isDivider?: boolean;
@@ -74,7 +79,15 @@ export function blockMenuItems({
     { id: 'add-comment', label: '添加评论' },
     { id: 'add-emoji', label: '添加表情' },
   ];
-  if (isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
+  if (isTask) {
+    // 取消是同一枚轴上的第三档（`SET_CANCELLED`），所以它与「提醒我…」一起只出现在任务块上；
+    // 已在取消档时这一枚就是反向的「取消标记」，与「展开／收起」同一族的两用条目。
+    items.splice(2, 0, { id: 'remind', label: '提醒我…' });
+    items.splice(3, 0, {
+      id: 'set-cancelled',
+      label: taskCancelled ? '取消标记' : '将任务标记为已取消',
+    });
+  }
   if (isToggle) items.splice(2, 0, { id: 'toggle-open', label: toggleOpen ? '收起' : '展开' });
   if (isDivider) items.splice(2, 0, { id: 'divider-style', label: '分隔符样式' });
   if (isCallout) items.splice(2, 0, { id: 'callout-type', label: '提示类型' });
@@ -233,16 +246,94 @@ export function convertBlockToCard(
   dispatch(state.tr.replaceWith(before, after, card.create(null, node)));
 }
 
+/**
+ * 任务行有两种形状：`taskItem` 直接是顶层块（导入与旧文档），或被 `taskList` 包着
+ * （编辑器里敲 `/待办` 的正常产物）。只认前一形的话，提醒与取消两枚菜单项在真浏览器里
+ * 一枚都点不到——所以寻址必须两形通用，选中的那一行优先于该块里的第一行。
+ */
+export function taskItemTarget(state: EditorState, index: number): { pos: number; node: Node } | null {
+  const { before } = blockBounds(state, index);
+  const child = state.doc.child(index);
+  if (child.type.name === 'taskItem') return { pos: before, node: child };
+  const caret = state.selection.from;
+  let first: { pos: number; node: Node } | null = null;
+  let enclosing: { pos: number; node: Node } | null = null;
+  child.descendants((node, offset) => {
+    if (node.type.name !== 'taskItem') return true;
+    const pos = before + 1 + offset;
+    first ??= { pos, node };
+    if (caret > pos && caret < pos + node.nodeSize) enclosing = { pos, node };
+    return true;
+  });
+  return enclosing ?? first;
+}
+
+/**
+ * 键盘那一路：`SET_CANCELLED` 作用在光标所在的那一行，而不是拖拽菜单那样按顶层块寻址。
+ * 嵌套列表里以最深的一枚为准（光标在子项里就取消子项），非任务行返回 false＝这枚键没被吃掉。
+ */
+export function toggleTaskCancelledAtSelection(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  now: Date,
+): boolean {
+  const caret = state.selection.from;
+  const enclosing: { pos: number; node: Node }[] = [];
+  state.doc.descendants((node, pos) => {
+    if (node.type.name === 'taskItem' && caret >= pos && caret <= pos + node.nodeSize) {
+      enclosing.push({ pos, node });
+    }
+    return true;
+  });
+  const target = enclosing[enclosing.length - 1];
+  if (!target) return false;
+  const attrs = applyCancelled(
+    {
+      checked: !!target.node.attrs.checked,
+      cancelled: !!target.node.attrs.cancelled,
+      cancelledAt: typeof target.node.attrs.cancelledAt === 'string' ? target.node.attrs.cancelledAt : null,
+    },
+    !target.node.attrs.cancelled,
+    now,
+  );
+  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, ...attrs }).scrollIntoView());
+  return true;
+}
+
 /** Clears a task item's reminder. Both 移除提醒 and 标记为已解决 end with the pill gone. */
 export function clearTaskReminder(
   state: EditorState,
   dispatch: (tr: Transaction) => void,
   index: number,
 ) {
-  const { before } = blockBounds(state, index);
-  const node = state.doc.child(index);
-  if (node.type.name !== 'taskItem' || !node.attrs.remindAt) return;
-  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, remindAt: null }));
+  const target = taskItemTarget(state, index);
+  if (!target || !target.node.attrs.remindAt) return;
+  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, remindAt: null }));
+}
+
+/**
+ * `SET_CANCELLED`／`取消标记` — 同一枚轴上的第三档（tasks.md:11）。走的是 `task-status.ts`
+ * 那个纯核：取消会把 `checked` 让出来并记一个时间戳，再点一次则整档清干净。
+ * 返回假值时不发事务，所以重复点同一档不会把时间戳挪到新的一次点击上。
+ */
+export function setTaskCancelled(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  now: Date,
+) {
+  const target = taskItemTarget(state, index);
+  if (!target) return;
+  const attrs = applyCancelled(
+    {
+      checked: !!target.node.attrs.checked,
+      cancelled: !!target.node.attrs.cancelled,
+      cancelledAt: typeof target.node.attrs.cancelledAt === 'string' ? target.node.attrs.cancelledAt : null,
+    },
+    !target.node.attrs.cancelled,
+    now,
+  );
+  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, ...attrs }));
 }
 
 export function setTaskReminder(
@@ -252,13 +343,12 @@ export function setTaskReminder(
   preset: RemindPresetId,
   now: Date,
 ) {
-  const { before } = blockBounds(state, index);
-  const node = state.doc.child(index);
-  if (node.type.name !== 'taskItem') return;
+  const target = taskItemTarget(state, index);
+  if (!target) return;
   const instant = remindInstantFor(preset, now);
   dispatch(
-    state.tr.setNodeMarkup(before, undefined, {
-      ...node.attrs,
+    state.tr.setNodeMarkup(target.pos, undefined, {
+      ...target.node.attrs,
       remindAt: instant ? instant.toISOString() : null,
     }),
   );
@@ -309,6 +399,9 @@ export function applyBlockAction(
       break;
     case 'toggle-open':
       toggleBlockOpen(state, dispatch, index);
+      break;
+    case 'set-cancelled':
+      setTaskCancelled(state, dispatch, index, new Date());
       break;
     case 'add-content':
       addContentBelow(state, dispatch, index);

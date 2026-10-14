@@ -185,6 +185,13 @@ export const KEY_BINDINGS: KeyBinding[] = [
   { id: 'NUMBERED_LIST', label: '编号', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '9', 'Digit9'), win: chord({ ctrlKey: true, shiftKey: true }, '9', 'Digit9') },
   { id: 'NO_LIST', label: '无列表', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '0', 'Digit0'), win: chord({ ctrlKey: true, shiftKey: true }, '`', 'Backquote') },
 
+  // 表 A 的两枚「标记取消」（keyboard.md:116-117）。它们收在编辑组：官方表 D 把它们列在
+  // 「任务」大类，但那是*全局*命令面板的分类，本地这套分组名来自面板的**上下文**六档，
+  // `taskViews` 指的是"只在任务视图里生效"的键位——这两枚在文档正文里就该生效，不是视图专属。
+  { id: 'SET_CANCELLED', label: '标记取消', group: 'editing', mac: chord({ metaKey: true, altKey: true, shiftKey: true }, 't', 'KeyT'), win: chord({ ctrlKey: true, altKey: true, shiftKey: true }, 't', 'KeyT') },
+  // Mac 专用第二条通路（keyboard.md:117＝QM 屏蔽 Windows），Windows 侧是显式不绑。
+  { id: 'SET_CANCELLED_SLASH', label: '标记取消', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '/', 'Slash'), win: null },
+
   // 表 B · 块移动与块操作
   { id: 'MOVE_BLOCK_UP', label: '区块上移', group: 'editing', mac: chord({ altKey: true }, 'ArrowUp', 'ArrowUp') },
   { id: 'MOVE_BLOCK_DOWN', label: '区块下移', group: 'editing', mac: chord({ altKey: true }, 'ArrowDown', 'ArrowDown') },

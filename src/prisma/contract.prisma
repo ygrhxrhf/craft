@@ -318,7 +318,9 @@ model Task {
   recurrence  String?
   recurrenceEnd TimestamptzString?
   completedAt TimestamptzString?
-  status      String   @default("todo") // "todo" | "doing" | "done"
+  // 官方取消与完成各记一个时间戳（`tasks.canceled.on`／`tasks.completed.on`＝tasks.md:104）
+  cancelledAt TimestamptzString?
+  status      String   @default("todo") // "todo" | "doing" | "done" | "cancelled"
   order       Float    @default(0)
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()

@@ -757,6 +757,13 @@
     color: var(--muted-foreground);
   }
 
+  /* 已取消是同一枚轴上的第三档（G52）。官方的屏上形态＝"保留在原位、只加删除线"
+     （interactions.md:1087），所以这里只改字的形态，不去动勾选框——它没完成，只是不再要做。 */
+  .task-list-item[data-cancelled="true"] > div > p {
+    text-decoration: line-through;
+    color: var(--muted-foreground);
+  }
+
   /* ── Horizontal Rule ── */
   hr {
     border: none;

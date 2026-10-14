@@ -23,6 +23,8 @@ function task(id: string, dueDate: string | null, createdAt: string | null = nul
     id,
     title: id,
     isCompleted: false,
+    status: 'todo',
+    cancelledAt: null,
     dueDate,
     remindAt: null,
     recurrence: null,
@@ -223,6 +225,43 @@ describe('upcomingSections（官方 H1 的展示规则）', () => {
 
   it('没有任何排期时 hasScheduled 为假，与「有但都做完了」可分辨', () => {
     expect(upcomingSections([task('无排期', null)], false, NOW)).toEqual({ sections: [], hasScheduled: false });
+  });
+
+  it('★ 取消那一档不算未完成：开关关着时它不显示，开着时它跟完成行一起回来（G52）', () => {
+    // 官方开关加回来的是"完成 **与** 已取消"（api-contract.md:36），而"已取消"行上的勾是空的：
+    // 只判 `isCompleted` 的实现会把它当成未办，节头数字与列表都会多出一行。
+    const cancelled = (id: string, due: Date): TaskItem => ({
+      ...task(id, iso(due)),
+      status: 'cancelled',
+      cancelledAt: iso(day(9, 13)),
+    });
+
+    const off = upcomingSections(
+      [task('未办', iso(day(9, 16))), cancelled('取消', day(9, 16)), done('完成', day(9, 16))],
+      false,
+      NOW
+    );
+    expect(off.sections).toHaveLength(1);
+    expect(off.sections[0]!.undone).toBe(1);
+    expect(off.sections[0]!.blocks.map((item) => item.id)).toEqual(['未办']);
+
+    const on = upcomingSections(
+      [task('未办', iso(day(9, 16))), cancelled('取消', day(9, 16)), done('完成', day(9, 16))],
+      true,
+      NOW
+    );
+    expect(on.sections[0]!.blocks.map((item) => item.id)).toEqual(['未办', '取消', '完成']);
+    expect(on.sections[0]!.undone).toBe(1);
+  });
+
+  it('一个节里只剩取消行时，开关关着整节不占位', () => {
+    const only = upcomingSections(
+      [{ ...task('取消', iso(day(9, 16))), status: 'cancelled' as const }],
+      false,
+      NOW
+    );
+    expect(only.sections).toEqual([]);
+    expect(only.hasScheduled).toBe(true);
   });
 });
 

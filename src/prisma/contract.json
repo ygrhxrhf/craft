@@ -2865,6 +2865,13 @@
                   "kind": "scalar"
                 }
               },
+              "cancelledAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "completedAt": {
                 "nullable": true,
                 "type": {
@@ -3024,6 +3031,9 @@
               "fields": {
                 "blockId": {
                   "column": "blockId"
+                },
+                "cancelledAt": {
+                  "column": "cancelledAt"
                 },
                 "completedAt": {
                   "column": "completedAt"
@@ -5868,6 +5878,11 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "cancelledAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "completedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
@@ -6399,7 +6414,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "4be49cea398d4512ddf941bebfeb36343e91d1a483c4caa677a323d340fafbe5"
+    "storageHash": "c16fd7809f84501c3ee488355777ddfc1bd6edd757813d83fa2ef4804e06cee9"
   },
   "execution": {
     "executionHash": "5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b",

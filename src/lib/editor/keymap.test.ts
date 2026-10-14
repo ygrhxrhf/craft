@@ -97,6 +97,11 @@ describe('display strings match the collected ones character for character', () 
     ['OPEN_DAILY_NOTE', 'win', 'Ctrl-Alt-N'],
     ['COMMENT', 'mac', '⌘ ⇧ M'],
     ['COMMENT', 'win', 'Ctrl-Shift-M'],
+    // G52：标记取消。表D keyboard.md:116 与官方面板逐字相同；:117 那条斜线通路是 Mac 专用。
+    ['SET_CANCELLED', 'mac', '⌘ ⌥ ⇧ T'],
+    ['SET_CANCELLED', 'win', 'Ctrl-Alt-Shift-T'],
+    ['SET_CANCELLED_SLASH', 'mac', '⌘ ⌥ /'],
+    ['SET_CANCELLED_SLASH', 'win', ''],
   ];
 
   it.each(expected)('%s on %s prints %s', (id, platform, text) => {
@@ -125,6 +130,27 @@ describe('no two bindings in one group share a chord', () => {
       ).toBeUndefined();
       seen.set(key, binding.id);
     }
+  });
+});
+
+describe('标记取消这一对键（G52＝表D keyboard.md:116–117）', () => {
+  const win = { metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, key: '' };
+
+  it('Ctrl-Alt-Shift-T 才是取消；同族的 Ctrl-Alt-T（标记已完成）不许被判成取消', () => {
+    // 这两行只差一枚 Shift，正是 `matches` 里"每一枚修饰键都得对上"那条规则的靶子。
+    expect(matches({ ...win, ctrlKey: true, altKey: true, shiftKey: true, key: 't', code: 'KeyT' }, by('SET_CANCELLED'), 'win')).toBe(true);
+    expect(matches({ ...win, ctrlKey: true, altKey: true, key: 't', code: 'KeyT' }, by('SET_CANCELLED'), 'win')).toBe(false);
+    expect(matches({ ...win, ctrlKey: true, altKey: true, shiftKey: true, key: 'T', code: 'KeyT' }, by('SET_CANCELLED'), 'win')).toBe(true);
+    // 官方中文列的标签逐字＝「标记取消」，两行同名（面板也各印一次）。
+    expect(by('SET_CANCELLED').label).toBe('标记取消');
+    expect(by('SET_CANCELLED_SLASH').label).toBe('标记取消');
+  });
+
+  it('斜线那一枚在 Windows 是"注册了但永不命中"，不是回落到 Mac 键位', () => {
+    // QM 屏蔽 Windows ⇒ `win: null`，与"这行没有 win 字段"是两回事（G1477 的同一条判据）。
+    expect(chordFor(by('SET_CANCELLED_SLASH'), 'win')).toBeNull();
+    expect(chordFor(by('SET_CANCELLED'), 'win')).not.toBeNull();
+    expect(matches({ ...win, metaKey: true, altKey: true, key: '/', code: 'Slash' }, by('SET_CANCELLED_SLASH'), 'mac')).toBe(true);
   });
 });
 

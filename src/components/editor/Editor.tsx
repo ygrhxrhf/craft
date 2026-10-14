@@ -96,8 +96,8 @@ function collectLinkedDocIds(content: unknown): string[] {
   return [...ids];
 }
 
-function collectTaskItems(content: unknown): { taskId: string; title: string; isCompleted: boolean; remindAt: string | null }[] {
-  const tasks: { taskId: string; title: string; isCompleted: boolean; remindAt: string | null }[] = [];
+function collectTaskItems(content: unknown): { taskId: string; title: string; isCompleted: boolean; remindAt: string | null; cancelled: boolean; cancelledAt: string | null }[] {
+  const tasks: { taskId: string; title: string; isCompleted: boolean; remindAt: string | null; cancelled: boolean; cancelledAt: string | null }[] = [];
   const walk = (node: any) => {
     if (!node || typeof node !== 'object') return;
     if (node.type === 'taskItem' && Array.isArray(node.content)) {
@@ -112,6 +112,8 @@ function collectTaskItems(content: unknown): { taskId: string; title: string; is
           title,
           isCompleted: !!node.attrs.checked,
           remindAt: typeof node.attrs?.remindAt === 'string' ? node.attrs.remindAt : null,
+          cancelled: !!node.attrs?.cancelled,
+          cancelledAt: typeof node.attrs?.cancelledAt === 'string' ? node.attrs.cancelledAt : null,
         });
       }
     }
@@ -335,6 +337,22 @@ export function Editor({
               parseHTML: (element) => element.getAttribute('data-remind-at'),
               renderHTML: (attributes) => attributes.remindAt
                 ? { 'data-remind-at': attributes.remindAt }
+                : {},
+            },
+            // 官方是「一条轴、三档」（tasks.md:11）：取消不是第二个勾选框，它把完成态让出来，
+            // 并且自己记一个时间戳（`tasks.canceled.on`）。两枚属性都得进 doc JSON，取消才谈得上持久。
+            cancelled: {
+              default: false,
+              parseHTML: (element) => element.getAttribute('data-cancelled') === 'true',
+              renderHTML: (attributes) => attributes.cancelled
+                ? { 'data-cancelled': 'true' }
+                : {},
+            },
+            cancelledAt: {
+              default: null,
+              parseHTML: (element) => element.getAttribute('data-cancelled-at'),
+              renderHTML: (attributes) => attributes.cancelledAt
+                ? { 'data-cancelled-at': attributes.cancelledAt }
                 : {},
             },
           };

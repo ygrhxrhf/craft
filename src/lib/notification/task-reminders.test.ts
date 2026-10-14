@@ -62,6 +62,13 @@ describe('dueReminders', () => {
     expect(dueReminders([candidate({ id: 't1', status: 'done' })], [], NOW)).toEqual([]);
   });
 
+  it('取消那一档同样闭嘴——而且它没打勾，只滤 isCompleted 兜不住（G52）', () => {
+    // 官方把"已取消"记在同一枚轴上（tasks.md:11），行上的勾是空的；提醒驱动若只看
+    // `isCompleted`，一条被取消的任务会照样在到点时弹通知。
+    expect(dueReminders([candidate({ id: 't1', status: 'cancelled' })], [], NOW)).toEqual([]);
+    expect(dueReminders([candidate({ id: 't1', status: 'cancelled', isCompleted: false })], [], NOW)).toEqual([]);
+  });
+
   it('does not re-notify a reminder that already has a notification', () => {
     const row = candidate({ id: 't1' });
     expect(dueReminders([row], [notificationKey('t1', row.remindAt!)], NOW)).toEqual([]);

@@ -5,6 +5,7 @@ import type { EditorView } from '@tiptap/pm/view';
 import type { Editor } from '@tiptap/react';
 
 import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from '@/lib/editor/block-move';
+import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 
@@ -77,6 +78,11 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
   }
 
   if (id === 'DUPLICATE') return duplicateTopBlock(editor);
+
+  // 两枚「标记取消」是同一命令的第二条通路（Mac `⌘⌥⇧T` 与 `⌘⌥/`），分派到同一处。
+  if (id === 'SET_CANCELLED' || id === 'SET_CANCELLED_SLASH') {
+    return toggleTaskCancelledAtSelection(editor.state, editor.view.dispatch, new Date());
+  }
 
   // The four find chords: `⌘F` / `⌘⇧F` open the one panel (the local panel always carries both
   // fields, so the two chords land in the same place — the official split between "find" and

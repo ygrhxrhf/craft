@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CheckSquare } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { isOverdue, overdueLabel } from '@/lib/task/overdue';
+import { CancelledBadge } from '@/components/task/cancelled-badge';
 import type { TaskItem } from '@/actions/task/task';
 import { cn } from 'cn';
 
@@ -25,14 +26,15 @@ export function CalendarTaskRow({
       <span
         className={cn(
           'flex-1 truncate text-sm',
-          task.isCompleted && 'text-muted-foreground line-through'
+          (task.isCompleted || task.status === 'cancelled') && 'text-muted-foreground line-through'
         )}
       >
         {task.title}
-        {task.dueDate && isOverdue(task.dueDate, task.isCompleted) && (
+        {task.dueDate && isOverdue(task.dueDate, task.isCompleted || task.status === 'cancelled') && (
           <span className="ml-2 text-xs text-destructive">{overdueLabel(task.dueDate)}</span>
         )}
       </span>
+      {task.status === 'cancelled' && <CancelledBadge cancelledAt={task.cancelledAt} />}
       {task.documentId && (
         <Link
           href={`/documents/${task.documentId}`}

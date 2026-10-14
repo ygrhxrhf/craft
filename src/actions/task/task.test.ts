@@ -15,7 +15,7 @@ vi.mock('@/lib/authz/document-access', () => ({
 }));
 
 import { getDb } from '@/prisma/db';
-import { getTasks, syncDocumentTasks, createTask } from './task';
+import { getTasks, syncDocumentTasks, createTask, toggleTask } from './task';
 
 type Row = Record<string, unknown>;
 type Log = { updates: { conds: Row[]; data: Row }[]; creates: Row[] };
@@ -26,22 +26,34 @@ function matchRow(row: Row, cond: Row) {
 }
 
 /** 可链式 where().orderBy().limit().all() / where().update() 的最小表 mock。 */
+type Query = {
+  where: (cond: Row) => Query;
+  orderBy: () => Query;
+  limit: () => Query;
+  all: () => Promise<Row[]>;
+  first: () => Promise<Row | null>;
+  update: (data: Row) => Promise<Row>;
+};
+
 function taskTable(rows: Row[], log: Log) {
-  const chain = (conds: Row[]) => {
+  const chain = (conds: Row[]): Query => {
     const scoped = rows.filter((row) => conds.every((cond) => matchRow(row, cond)));
-    const q: Record<string, unknown> = {};
-    q.where = (cond: Row) => chain([...conds, cond]);
-    q.orderBy = () => q;
-    q.limit = () => q;
-    q.all = async () => scoped;
-    q.update = async (data: Row) => {
-      log.updates.push({ conds, data });
-      return data;
+    const q: Query = {
+      where: (cond) => chain([...conds, cond]),
+      orderBy: () => q,
+      limit: () => q,
+      all: async () => scoped,
+      first: async () => scoped[0] ?? null,
+      update: async (data) => {
+        log.updates.push({ conds, data });
+        return data;
+      },
     };
     return q;
   };
   return {
     where: (cond: Row) => chain([cond]),
+    first: (cond: Row) => chain([cond]).first(),
     create: async (data: Row) => {
       log.creates.push(data);
       return data;
@@ -172,5 +184,129 @@ describe('I2：元数据写入后 emit sync_events', () => {
     const emitCreate = (log as any).emit;
     expect(emitCreate).toHaveBeenCalledTimes(1);
     expect(emitCreate.mock.calls[0]![0]!.tables).toEqual(['task']);
+  });
+});
+
+const CANCEL_AT = '2026-10-14T02:00:00.000Z';
+
+/**
+ * `gap.md` G52：正文里的 `cancelled` 是同一枚轴上的第三档，行侧要投影成 `status='cancelled'`
+ * 且带着自己的时间戳；勾与取消同时为真时取消说了算（`tasks.md:11`）。
+ * 这里钉的是**投影与比较**，状态机本身在 `src/lib/editor/task-status.test.ts`。
+ */
+describe('取消档的投影（G52）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const inDocRow: Row = {
+    id: 't1',
+    userId: 'u1',
+    documentId: 'd1',
+    blockId: 'b1',
+    title: '块任务',
+    isCompleted: false,
+    status: 'todo',
+    cancelledAt: null,
+    remindAt: null,
+    deletedAt: null,
+  };
+
+  it('正文标了取消 → 新行写 status=cancelled，且不算完成', async () => {
+    const log = setupDb([]);
+    await syncDocumentTasks('d1', [
+      { taskId: 'b9', title: '交报告', isCompleted: false, cancelled: true, cancelledAt: CANCEL_AT },
+    ]);
+    expect(log.creates[0]).toMatchObject({
+      isCompleted: false,
+      status: 'cancelled',
+      cancelledAt: CANCEL_AT,
+    });
+  });
+
+  it('取消优先于勾：正文两枚都真时不许投影成 done', async () => {
+    const log = setupDb([]);
+    await syncDocumentTasks('d1', [
+      { taskId: 'b9', title: '交报告', isCompleted: true, cancelled: true, cancelledAt: CANCEL_AT },
+    ]);
+    expect(log.creates[0]).toMatchObject({ isCompleted: false, status: 'cancelled' });
+  });
+
+  it('只动取消轴也算变更（比较谓词漏了 status 就会同步后悄悄退回待办）', async () => {
+    const log = setupDb([inDocRow]);
+    await syncDocumentTasks('d1', [
+      { taskId: 'b1', title: '块任务', isCompleted: false, cancelled: true, cancelledAt: CANCEL_AT },
+    ]);
+    expect(log.updates).toHaveLength(1);
+    expect(log.updates[0]!.data).toMatchObject({
+      status: 'cancelled',
+      cancelledAt: CANCEL_AT,
+      isCompleted: false,
+    });
+  });
+
+  it('取消行重新勾成完成 → 上一次取消时间戳必须清掉', async () => {
+    const log = setupDb([{ ...inDocRow, status: 'cancelled', cancelledAt: CANCEL_AT }]);
+    await syncDocumentTasks('d1', [
+      { taskId: 'b1', title: '块任务', isCompleted: true, cancelled: false, cancelledAt: CANCEL_AT },
+    ]);
+    expect(log.updates[0]!.data).toMatchObject({ status: 'done', cancelledAt: null, isCompleted: true });
+  });
+
+  it('没取消的行投影出 cancelledAt=null（旧时间戳不许留在列上）', async () => {
+    const log = setupDb([{ ...inDocRow, title: '旧标题' }]);
+    await syncDocumentTasks('d1', [{ taskId: 'b1', title: '块任务', isCompleted: false }]);
+    expect(log.updates[0]!.data).toMatchObject({ status: 'todo', cancelledAt: null });
+  });
+});
+
+describe('勾选框那一次点击走三值循环（tasks.md:12）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const row = (over: Row): Row => ({
+    id: 't1',
+    userId: 'u1',
+    documentId: null,
+    blockId: null,
+    title: '任务',
+    isCompleted: false,
+    status: 'todo',
+    cancelledAt: null,
+    remindAt: null,
+    recurrence: null,
+    deletedAt: null,
+    ...over,
+  });
+
+  it('待办 → 完成', async () => {
+    const log = setupDb([row({})]);
+    const completed = await toggleTask('t1');
+    expect(completed).toBe(true);
+    expect(log.updates[0]!.data).toMatchObject({ isCompleted: true, status: 'done', cancelledAt: null });
+  });
+
+  it('★ 已取消 → 待办：不是完成，也不留下上一次的取消时间戳', async () => {
+    const log = setupDb([row({ status: 'cancelled', cancelledAt: CANCEL_AT })]);
+    const completed = await toggleTask('t1');
+    expect(completed).toBe(false);
+    expect(log.updates[0]!.data).toMatchObject({
+      isCompleted: false,
+      status: 'todo',
+      cancelledAt: null,
+    });
+  });
+});
+
+describe('读侧三档排序（G52）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('待办在前，完成与取消都算退场；status 与 cancelledAt 一并交给行侧', async () => {
+    setupDb([
+      { id: 'done', userId: 'u1', documentId: null, blockId: null, title: '完成', isCompleted: true, status: 'done', cancelledAt: null, deletedAt: null },
+      { id: 'dead', userId: 'u1', documentId: null, blockId: null, title: '取消', isCompleted: false, status: 'cancelled', cancelledAt: CANCEL_AT, deletedAt: null },
+      { id: 'live', userId: 'u1', documentId: null, blockId: null, title: '待办', isCompleted: false, status: 'todo', cancelledAt: null, deletedAt: null },
+    ]);
+    const tasks = await getTasks();
+    expect(tasks.map((task) => task.id)).toEqual(['live', 'done', 'dead']);
+    const dead = tasks.find((task) => task.id === 'dead');
+    expect(dead).toMatchObject({ status: 'cancelled', cancelledAt: CANCEL_AT, isCompleted: false });
   });
 });

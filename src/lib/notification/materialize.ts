@@ -30,13 +30,16 @@ export async function materializeTaskReminders(
   // The settings switch gates delivery: off means nothing is generated at all.
   if (!user || user.notifyReminders !== true) return 0;
 
-  const candidates: ReminderCandidate[] = await db.orm.public.Task
+  const rows: ReminderCandidate[] = await db.orm.public.Task
     .where((d: any) => d.userId.eq(userId))
     .where((d: any) => d.isCompleted.eq(false))
     .where((d: any) => d.remindAt.gte(new Date(now - REMINDER_LOOKBACK_MS)))
     .where((d: any) => d.remindAt.lte(new Date(now)))
     .select('id', 'title', 'documentId', 'isCompleted', 'status', 'remindAt')
     .all();
+  // 已取消的任务同样退出投递（G52）。走 JS 侧过滤而不是再叠一条列谓词：`isCompleted.eq(false)`
+  // 已经在筛"未勾选"，而取消行恰好也是未勾选，把它写进查询里＝在 SQL 里再表达一遍三档状态机。
+  const candidates = rows.filter((task) => task.status !== 'cancelled');
   if (candidates.length === 0) return 0;
 
   const notified: Record<string, unknown>[] = await db.orm.public.Notification

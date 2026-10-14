@@ -161,4 +161,12 @@ describe('materializeTaskReminders', () => {
     expect(await materializeTaskReminders(userId)).toBe(0);
     expect(await rows()).toHaveLength(0);
   });
+
+  it('取消那一档同样不投递：行上的勾是空的，列谓词兜不住（G52）', async () => {
+    // `isCompleted.eq(false)` 这一条 SQL 谓词只拦得住"完成"，取消行恰好是 isCompleted=false，
+    // 必须靠 JS 侧那一刀。这一枚就是那一刀的存活性证明。
+    await createTask({ status: 'cancelled', cancelledAt: minutesAgo(30) });
+    expect(await materializeTaskReminders(userId)).toBe(0);
+    expect(await rows()).toHaveLength(0);
+  });
 });

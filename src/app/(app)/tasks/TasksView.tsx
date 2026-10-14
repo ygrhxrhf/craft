@@ -25,6 +25,8 @@ import { upcomingSections } from '@/lib/task/upcoming-groups';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASKS_INBOX_EMPTY } from '@/lib/task/official-copy';
 import { isOverdue, overdueLabel } from '@/lib/task/overdue';
+import { CANCELLED_LABEL } from '@/lib/editor/task-status';
+import { CancelledBadge } from '@/components/task/cancelled-badge';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 
@@ -136,8 +138,10 @@ export function TasksView({ group }: { group: TaskGroup }) {
       : null;
 
   const visible = applyCompletedFilter(tasksForGroup(tasks, group, now, window), showCompleted);
-  const active = visible.filter((t) => !t.isCompleted);
+  // 三档是一枚轴：`isCompleted` 只说"勾没勾"，取消行没勾却不能算进未办那节（官方把它单独叫「已取消」）。
+  const active = visible.filter((t) => !t.isCompleted && t.status !== 'cancelled');
   const completed = visible.filter((t) => t.isCompleted);
+  const cancelled = visible.filter((t) => t.status === 'cancelled');
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -263,6 +267,19 @@ export function TasksView({ group }: { group: TaskGroup }) {
                 />
               </section>
             )}
+            {cancelled.length > 0 && (
+              <section>
+                <h2 className="mb-2 text-sm font-medium text-muted-foreground">
+                  {CANCELLED_LABEL} · {cancelled.length}
+                </h2>
+                <TaskList
+                  items={cancelled}
+                  onToggle={handleToggle}
+                  onDelete={handleDelete}
+                  onSchedule={handleSchedule}
+                />
+              </section>
+            )}
           </>
         )}
       </AppPageContainer>
@@ -377,14 +394,16 @@ function TaskRow({
         <span
           className={cn(
             'flex-1 truncate text-sm',
-            task.isCompleted && 'text-muted-foreground line-through'
+            (task.isCompleted || task.status === 'cancelled') && 'text-muted-foreground line-through'
           )}
         >
           {task.title}
-          {task.dueDate && isOverdue(task.dueDate, task.isCompleted) && (
+          {task.dueDate && isOverdue(task.dueDate, task.isCompleted || task.status === 'cancelled') && (
             <span className="ml-2 text-xs text-destructive">{overdueLabel(task.dueDate)}</span>
           )}
         </span>
+
+        {task.status === 'cancelled' && <CancelledBadge cancelledAt={task.cancelledAt} />}
 
         {task.recurrence && (
           <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">

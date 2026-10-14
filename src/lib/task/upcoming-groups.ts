@@ -197,7 +197,8 @@ export function upcomingSections(
   return {
     sections: groups
       .map((group) => {
-        const undone = group.tasks.filter((task) => !task.isCompleted);
+        // 官方三档里"还活着"的只有 pending：完成与取消都不该在未办计数里，也不该在开关关闭时被显示。
+        const undone = group.tasks.filter((task) => !task.isCompleted && task.status !== 'cancelled');
         return {
           key: `${group.kind}:${group.date.getTime()}`,
           title: upcomingGroupTitle(group, now),

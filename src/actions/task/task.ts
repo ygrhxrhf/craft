@@ -6,6 +6,7 @@ import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { nextOccurrence, parseRecurrence } from '@/lib/task/recurrence';
 import { listsTaskFromDocument } from '@/lib/task/display';
+import { applyToggled, taskLineStatus, type TaskAttrs } from '@/lib/editor/task-status';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 // I2：任务表用 updatedAt 自动 bump（无需 metaUpdatedAt），落库后广播即可；
@@ -13,13 +14,17 @@ import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 const emitTasks = (db: any, userId: string, id: string) =>
   emitSyncEventSafe(db, userId, ['task'], id);
 
-function updateTaskNode(content: unknown, blockId: string, isCompleted: boolean): unknown {
+function updateTaskNode(
+  content: unknown,
+  blockId: string,
+  attrs: { checked: boolean; cancelled?: boolean; cancelledAt?: string | null },
+): unknown {
   const next = JSON.parse(JSON.stringify(content));
   let updated = false;
   const walk = (node: any) => {
     if (!node || typeof node !== 'object') return;
     if (node.type === 'taskItem' && node.attrs?.taskId === blockId) {
-      node.attrs = { ...node.attrs, checked: isCompleted };
+      node.attrs = { ...node.attrs, ...attrs };
       updated = true;
       return;
     }
@@ -29,11 +34,15 @@ function updateTaskNode(content: unknown, blockId: string, isCompleted: boolean)
   return updated ? next : content;
 }
 
-async function syncTaskToDocument(db: any, task: any, isCompleted: boolean) {
+async function syncTaskToDocument(
+  db: any,
+  task: any,
+  attrs: { checked: boolean; cancelled?: boolean; cancelledAt?: string | null },
+) {
   if (!task.documentId || !task.blockId) return;
   const document = await db.orm.public.Document.first({ id: task.documentId });
   if (!document || !(document as any).content) return;
-  const content = updateTaskNode((document as any).content, task.blockId, isCompleted);
+  const content = updateTaskNode((document as any).content, task.blockId, attrs);
   if (content !== (document as any).content) {
     await db.orm.public.Document.where({ id: task.documentId }).update({ content });
   }
@@ -43,6 +52,9 @@ export interface TaskItem {
   id: string;
   title: string;
   isCompleted: boolean;
+  /** 官方三档落在同一枚轴上（`status` 列）：`todo`／`done`／`cancelled`。 */
+  status: 'todo' | 'done' | 'cancelled';
+  cancelledAt: string | null;
   dueDate: string | null;
   remindAt: string | null;
   recurrence: string | null;
@@ -53,9 +65,29 @@ export interface TaskItem {
   createdAt?: string | null;
 }
 
+/**
+ * 文档正文里的 taskItem 属性（`checked` + `cancelled`）是这条任务的唯一输入，三档的裁定权在
+ * `task-status.ts` 那个纯核里——投影只把它翻译成列，不在这里再写一遍状态机（写两遍＝会分叉）。
+ */
+function taskProjection(task: { isCompleted: boolean; cancelled?: boolean; cancelledAt?: string | null }) {
+  const line = taskLineStatus({ checked: task.isCompleted, cancelled: !!task.cancelled });
+  return {
+    isCompleted: line === 'done',
+    status: line,
+    cancelledAt: line === 'cancelled' ? (task.cancelledAt ?? null) : null,
+  };
+}
+
 export async function syncDocumentTasks(
   documentId: string,
-  tasks: { taskId: string; title: string; isCompleted: boolean; remindAt?: string | null }[]
+  tasks: {
+    taskId: string;
+    title: string;
+    isCompleted: boolean;
+    remindAt?: string | null;
+    cancelled?: boolean;
+    cancelledAt?: string | null;
+  }[]
 ) {
   const userId = await requireUserId();
   await requireDocumentAccess(documentId, userId, 'editor');
@@ -77,20 +109,22 @@ export async function syncDocumentTasks(
 
   for (const [taskId, task] of incoming) {
     const match = existingByBlockId.get(taskId);
+    const cols = taskProjection(task);
     if (match) {
       const tombstoned = Boolean((match as any).deletedAt);
       if (
         tombstoned ||
         (match as any).title !== task.title ||
-        (match as any).isCompleted !== task.isCompleted ||
+        (match as any).isCompleted !== cols.isCompleted ||
+        (match as any).status !== cols.status ||
+        ((match as any).cancelledAt ?? null) !== cols.cancelledAt ||
         ((match as any).remindAt ?? null) !== (task.remindAt ?? null)
       ) {
         // 命中墓碑行且 block 重新出现 → 清墓碑复活（恢复"任务重新可见"语义）
         await db.orm.public.Task.where({ id: (match as any).id }).update({
           ...(tombstoned ? { deletedAt: null, updatedAt: new Date().toISOString() } : {}),
           title: task.title,
-          isCompleted: task.isCompleted,
-          status: task.isCompleted ? 'done' : 'todo',
+          ...cols,
           remindAt: task.remindAt ?? null,
         });
         mutated = true;
@@ -102,8 +136,7 @@ export async function syncDocumentTasks(
         documentId,
         blockId: taskId,
         title: task.title,
-        isCompleted: task.isCompleted,
-        status: task.isCompleted ? 'done' : 'todo',
+        ...cols,
         remindAt: task.remindAt ?? null,
       });
       mutated = true;
@@ -151,6 +184,8 @@ export async function getTasks(): Promise<TaskItem[]> {
       id: row.id,
       title: row.title,
       isCompleted: row.isCompleted,
+      status: row.status === 'cancelled' || row.status === 'done' ? row.status : 'todo',
+      cancelledAt: row.cancelledAt ?? null,
       dueDate: row.dueDate,
       remindAt: row.remindAt,
       recurrence: row.recurrence,
@@ -160,7 +195,9 @@ export async function getTasks(): Promise<TaskItem[]> {
       createdAt: row.createdAt,
     });
   }
-  items.sort((a, b) => (a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1));
+  // pending 在前，完成与取消都算"退场"——三档是一枚轴，排序只看是不是还活着
+  const rank = (item: TaskItem) => (item.status === 'todo' ? 0 : 1);
+  items.sort((a, b) => rank(a) - rank(b));
   return items;
 }
 
@@ -188,18 +225,30 @@ export async function toggleTask(id: string, timeZone?: string) {
   const task = await db.orm.public.Task.first({ id });
   if (!task || (task as any).userId !== session.user.id) throw new Error('未授权');
 
-  const next = !(task as any).isCompleted;
+  // 三档只有一枚轴（tasks.md:11），而勾选框那一次点击走的是三值循环（tasks.md:12＝
+  // Canceled 回到"未勾选"而不是"完成"）。判定全部走 `task-status.ts` 那个纯核，这里不重复写状态机。
+  const current: TaskAttrs = {
+    checked: (task as any).isCompleted,
+    cancelled: (task as any).status === 'cancelled',
+    cancelledAt: (task as any).cancelledAt ?? null,
+  };
+  const next = applyToggled(current);
   await db.orm.public.Task.where({ id }).update({
-    isCompleted: next,
-    status: next ? 'done' : 'todo',
-    completedAt: next ? new Date().toISOString() : null,
+    isCompleted: next.checked,
+    status: next.cancelled ? 'cancelled' : next.checked ? 'done' : 'todo',
+    completedAt: next.checked ? new Date().toISOString() : null,
+    cancelledAt: next.cancelledAt,
   });
-  await syncTaskToDocument(db, task, next);
+  await syncTaskToDocument(db, task, {
+    checked: next.checked,
+    cancelled: next.cancelled,
+    cancelledAt: next.cancelledAt,
+  });
 
-  if (next) await rollForward(db, task as any, timeZone);
+  if (next.checked) await rollForward(db, task as any, timeZone);
   // rollForward 可能派生下一期任务行——同一次 toggle 合并为一次广播
   await emitTasks(db, session.user.id, id);
-  return next;
+  return next.checked;
 }
 
 /**

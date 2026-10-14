@@ -4,9 +4,9 @@ import { taskPatchFor, TASK_WS_COLS } from './tasks-local';
 const NOW = '2026-09-30T00:00:00.000Z';
 
 describe('tasks 本地写 patch', () => {
-  it('白名单与 SYNC_TABLES.task 的 16 列一致', () => {
+  it('白名单与 SYNC_TABLES.task 的 17 列一致', () => {
     expect([...TASK_WS_COLS].sort()).toEqual([
-      'blockId', 'completedAt', 'createdAt', 'deletedAt', 'documentId', 'dueDate',
+      'blockId', 'cancelledAt', 'completedAt', 'createdAt', 'deletedAt', 'documentId', 'dueDate',
       'id', 'isCompleted', 'order', 'recurrence', 'recurrenceEnd', 'remindAt',
       'status', 'title', 'updatedAt', 'userId',
     ]);

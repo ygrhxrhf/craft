@@ -56,7 +56,8 @@ export function dueReminders(
   const due: DueReminder[] = [];
 
   for (const task of candidates) {
-    if (!task.remindAt || task.isCompleted || task.status === 'done') continue;
+    // 已取消＝不再要做（G52）：它和完成一样退出投递，否则一个被放弃的任务还会敲门。
+    if (!task.remindAt || task.isCompleted || task.status === 'done' || task.status === 'cancelled') continue;
 
     const at = reminderInstant(task.remindAt);
     if (Number.isNaN(at) || at > now || now - at > REMINDER_LOOKBACK_MS) continue;

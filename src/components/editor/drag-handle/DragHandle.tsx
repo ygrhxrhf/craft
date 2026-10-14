@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { dropTargetFor } from './drop-band';
-import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setTaskReminder, type BlockActionId } from './block-actions';
+import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
 import { DIVIDER_STYLE_CHOICES, type DividerStyle } from '@/lib/editor/divider-styles';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
@@ -101,10 +101,12 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     [editor, indexOfBlock],
   );
 
-  const isTaskBlock = useCallback(
+  // 顶层块可能是 taskItem 本身（导入的扁平文档），也可能是包着它的 taskList。两形都算任务块，
+  // 具体作用在哪一行由 `taskItemTarget` 决定（光标那一行优先）。
+  const taskTargetOf = useCallback(
     (blockEl: HTMLElement) => {
       const index = indexOfBlock(blockEl);
-      return index >= 0 && editor.state.doc.child(index).type.name === 'taskItem';
+      return index >= 0 ? taskItemTarget(editor.state, index) : null;
     },
     [editor, indexOfBlock],
   );
@@ -433,7 +435,8 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
             <DropdownMenuContent align="start">
               {blockMenuItems({
                 canDelete: editor.state.doc.childCount > 1,
-                isTask: isTaskBlock(handle.blockEl),
+                isTask: taskTargetOf(handle.blockEl) !== null,
+                taskCancelled: taskTargetOf(handle.blockEl)?.node.attrs.cancelled === true,
                 ...toggleState(handle.blockEl),
                 isDivider: isDividerBlock(handle.blockEl),
                 isCallout: isCalloutBlock(handle.blockEl),

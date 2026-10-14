@@ -14,12 +14,12 @@ import type { TaskSchedule } from '@/actions/task/task';
  *   `rollForward`（重复任务派生下一期新行，要算 `nextOccurrence`）。
  *   客户端没有这两条通路，搬过来＝静默功能回归 ⇒ toggle 保持 Server Action。
  *
- * 键必须逐字落在 SYNC_TABLES.task 的 16 列白名单内：服务端会求交丢弃白名单外键，
+ * 键必须逐字落在 SYNC_TABLES.task 的 17 列白名单内：服务端会求交丢弃白名单外键，
  * 但**本地 store 没有这道闸门**，写进去的脏键会直接被离线期的 UI 读到。
  */
 export const TASK_WS_COLS = [
   'id', 'userId', 'documentId', 'blockId', 'title', 'isCompleted', 'dueDate', 'remindAt',
-  'recurrence', 'recurrenceEnd', 'completedAt', 'status', 'order', 'createdAt', 'updatedAt', 'deletedAt',
+  'recurrence', 'recurrenceEnd', 'completedAt', 'cancelledAt', 'status', 'order', 'createdAt', 'updatedAt', 'deletedAt',
 ] as const;
 
 export type TaskPatch = Record<string, unknown>;

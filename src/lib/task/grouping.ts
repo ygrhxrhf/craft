@@ -1,4 +1,5 @@
 import type { TaskItem } from '@/actions/task/task';
+import { isPending, type TaskLineStatus } from '@/lib/editor/task-status';
 
 /**
  * The four official groups of the tasks page (`gap.md` G46): 未归档 / 今天 / 即将进行 / 所有任务,
@@ -64,11 +65,16 @@ export function writeShowCompleted(storage: { setItem(key: string, value: string
   storage.setItem(SHOW_COMPLETED_KEY, String(show));
 }
 
-export function applyCompletedFilter<T extends { isCompleted: boolean }>(
+export function applyCompletedFilter<T extends { isCompleted: boolean; status?: TaskLineStatus | 'doing' }>(
   tasks: readonly T[],
   showCompleted: boolean,
 ): T[] {
-  return showCompleted ? [...tasks] : tasks.filter((task) => !task.isCompleted);
+  // 官方那枚开关只管一件事：默认只显示 pending，打开才把完成与**取消**一起放进来
+  // （`api-contract.md:36`）。所以这里问的是"还活着吗"，而不是"勾了吗"——只滤 `isCompleted`
+  // 的话，取消掉的行会一直挂在日历与任务视图上，正是 G52 登记的那处行为差异。
+  return showCompleted
+    ? [...tasks]
+    : tasks.filter((task) => isPending(task.status ?? (task.isCompleted ? 'done' : 'todo')));
 }
 
 export function tasksForGroup(

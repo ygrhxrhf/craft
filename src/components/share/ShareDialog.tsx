@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -59,28 +59,63 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [copied, setCopied] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  // G1508：挂载读先吃本地镜像——镜像里有这一行就当场渲染档位／发布态／口令态／slug，
+  //   断链时也看得见现值；镜像没有（这篇文档还没被分享过、本机也没拉过这张表）才回落到
+  //   `getOrCreateShare` 去建行。☆ 回落那一趟是**首次分享**的唯一服务端依赖，不是读侧常态。
+  const reloadShareFromMirror = useCallback(async (): Promise<boolean> => {
+    const view = await findDocumentShare(documentId);
+    if (!view || typeof view.token !== 'string') return false;
+    setShareId(view.id);
+    setToken(view.token);
+    setLink(`${window.location.origin}/s/${view.token}`);
+    if (typeof view.isPublished === 'boolean') setIsPublished(view.isPublished);
+    if (view.permission === 'view' || view.permission === 'edit') setPermission(view.permission);
+    if (typeof view.shareVersion === 'number') setServerVersion(view.shareVersion);
+    if (typeof view.hasPasscode === 'boolean') setHasPasscode(view.hasPasscode);
+    if (view.slug !== undefined) {
+      setSlug(view.slug);
+      setSlugDraft(view.slug ?? '');
+    }
+    return true;
+  }, [documentId]);
+
   useEffect(() => {
-    if (!open || link) return;
+    if (!open) return;
     let cancelled = false;
-    getOrCreateShare(documentId)
-      .then((share) => {
-        if (!cancelled) {
-          setShareId(share.id);
-          setToken(share.token);
-          setLink(`${window.location.origin}/s/${share.token}`);
-          setIsPublished(share.isPublished);
-          setPermission(share.permission);
-          setServerVersion(share.shareVersion);
-          setHasPasscode(share.hasPasscode);
-          setSlug(share.slug);
-          setSlugDraft(share.slug ?? '');
-        }
-      })
-      .catch(() => {});
+    void (async () => {
+      // 每次开面板都先吃镜像（本机读，廉价）：档位／发布态／口令态／slug 当场翻新。
+      if (await reloadShareFromMirror()) return;
+      if (cancelled || link) return;
+      try {
+        const share = await getOrCreateShare(documentId);
+        if (cancelled) return;
+        setShareId(share.id);
+        setToken(share.token);
+        setLink(`${window.location.origin}/s/${share.token}`);
+        setIsPublished(share.isPublished);
+        setPermission(share.permission);
+        setServerVersion(share.shareVersion);
+        setHasPasscode(share.hasPasscode);
+        setSlug(share.slug);
+        setSlugDraft(share.slug ?? '');
+      } catch {
+        // 首次分享也失败（断链且镜像没有行）：停在"生成链接中…"，不谎报档位
+      }
+    })();
     return () => {
       cancelled = true;
     };
-  }, [open, link, documentId]);
+  }, [open, link, documentId, reloadShareFromMirror]);
+
+  // G1509：面板开着时他端改档／本机改档／入站 ack+pull 都会触碰 document_share ⇒ 重读镜像翻新选中态。
+  //   只读镜像、不回落 action：这一路是"已建档之后"的翻新，建行那一步归挂载那一趟。
+  useEffect(() => {
+    if (!open) return;
+    return getSyncManager().onStoreChanged((table) => {
+      if (table !== 'document_share') return;
+      void reloadShareFromMirror();
+    });
+  }, [open, reloadShareFromMirror]);
 
   const handleSaveSlug = () => {
     setSlugError(null);

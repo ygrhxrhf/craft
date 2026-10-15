@@ -108,25 +108,49 @@ export async function findFavoriteRowId(documentId: string): Promise<string | nu
   return row ? row.id : null;
 }
 
+/** 面板视图（本地镜像那一枚 `document_share` 行解出来的形状）。口令只报「有没有」，明文不外传。 */
+export interface DocumentShareView {
+  id: string;
+  token?: string;
+  slug?: string | null;
+  isPublished?: boolean;
+  hasPasscode?: boolean;
+  permission?: string;
+  shareVersion?: number;
+}
+
+/**
+ * 纯函数：把一枚本地镜像行（`{id, data}`）解成面板视图。tombstone／他篇的行由调用方先滤掉。
+ * 缺字段一律留 `undefined`（＝"这一列镜像里没有"，与"值是 null/false"要分得开：面板据此决定
+ * 覆不覆盖已有 state）。
+ */
+export function shareViewFromRow(id: string, data: Record<string, unknown>): DocumentShareView {
+  return {
+    id,
+    token: typeof data.token === 'string' ? data.token : undefined,
+    slug: data.slug === undefined ? undefined : typeof data.slug === 'string' ? data.slug : null,
+    isPublished: typeof data.isPublished === 'boolean' ? data.isPublished : undefined,
+    hasPasscode: typeof data.passcode === 'string' ? data.passcode.length > 0 : false,
+    permission: typeof data.permission === 'string' ? data.permission : undefined,
+    shareVersion: typeof data.shareVersion === 'number' ? data.shareVersion : undefined,
+  };
+}
+
 /**
  * 该文档的 `document_share` 行（本地镜像；tombstone 不算），含改档要带的那两列。
  * ☆ `shareVersion` 只有 `cols` 里带了它才拉得回来（G1491 本批补进去）：客户端改档要算的是
  *   `max(服务端已知值, 镜像值) + 1`，只看镜像会在镜像比服务端旧时把这个计数器**往回拨**，
  *   而它存在的意义就是"按旧档授权的那条连接要被认成过期"。
+ * ☆ 本批（G1508）扩到整份面板视图：面板不再"挂载即读服务端"，镜像有这一行就当场渲染档位、
+ *   发布态、口令态与 slug——断链时看得见现值。
  */
-export async function findDocumentShare(
-  documentId: string,
-): Promise<{ id: string; permission?: string; shareVersion?: number } | null> {
+export async function findDocumentShare(documentId: string): Promise<DocumentShareView | null> {
   const rows = await readLocalRecords('document_share');
   for (const r of rows) {
     if (r.op === 'delete') continue;
     if (r.data?.documentId !== documentId) continue;
     if (r.data.deletedAt) continue;
-    return {
-      id: r.id,
-      permission: typeof r.data.permission === 'string' ? r.data.permission : undefined,
-      shareVersion: typeof r.data.shareVersion === 'number' ? r.data.shareVersion : undefined,
-    };
+    return shareViewFromRow(r.id, r.data);
   }
   return null;
 }

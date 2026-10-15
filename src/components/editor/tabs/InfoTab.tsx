@@ -30,6 +30,7 @@ import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 import {
   BACKLINK_SORTS,
   BACKLINK_SORT_LABELS,
+  BACKLINKS_LOADING,
   sortBacklinks,
   type BacklinkSort,
 } from '@/lib/document/backlink-sort';
@@ -80,6 +81,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
   const router = useRouter();
   const [subTab, setSubTab] = useState<'info' | 'actions'>('info');
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
+  const [backlinksLoaded, setBacklinksLoaded] = useState(false);
   const [backlinkSort, setBacklinkSort] = useState<BacklinkSort>('alphabetical');
   const [collapsedLinks, setCollapsedLinks] = useState<ReadonlySet<string>>(new Set());
   const [versionsOpen, setVersionsOpen] = useState(false);
@@ -184,7 +186,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
           linkCount: l.linkCount,
         })));
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setBacklinksLoaded(true));
     getSubpageStats(documentId)
       .then((rows) => setSubpages(rows))
       .catch(() => {});
@@ -368,8 +371,12 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
           {/* Collaborators */}
           <MembersSection documentId={documentId} canManage={isOwner} />
 
-          {/* Backlinks — three sorts plus expand/collapse all (G63). */}
-          {backlinks.length > 0 && (
+          {/* Backlinks — three sorts plus expand/collapse all (G63), with its own loading line. */}
+          {!backlinksLoaded ? (
+            <p className="text-ui text-foreground/40" role="status" aria-live="polite">
+              {BACKLINKS_LOADING}
+            </p>
+          ) : backlinks.length > 0 && (
             <section>
               <div className="mb-2 flex items-center justify-between">
                 <h4 className="text-caption font-medium uppercase tracking-wider text-foreground/40">

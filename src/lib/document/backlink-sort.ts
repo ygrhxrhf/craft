@@ -15,6 +15,13 @@ export const BACKLINK_SORT_LABELS: Record<BacklinkSort, string> = {
   linkCount: '按链接数排序',
 };
 
+/**
+ * G63：反链面板有**独立加载态**（官方 `blockdetails.mentions.loading.links`「正在加载此页面的链接…」，
+ * `i18n-zh.tsv:634`）。此前 `getBacklinks` 回来之前面板是一片空白，与"没有链接"不可分辨。
+ */
+export const BACKLINKS_LOADING = '正在加载此页面的链接…';
+export const BACKLINKS_LOADING_KEY = 'blockdetails.mentions.loading.links';
+
 /** A backlink as the panel sorts it. The count is optional because older reads omit it. */
 export type SortableBacklink = BacklinkItem;
 

@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import { BACKLINK_SORTS, sortBacklinks, type SortableBacklink } from './backlink-sort';
+import { BACKLINK_SORTS, BACKLINKS_LOADING, sortBacklinks, type SortableBacklink } from './backlink-sort';
 
 /**
  * Backlinks panel sorting (G147): alphabetical, by creation date, and by link count.
@@ -43,5 +45,24 @@ describe('the three sorts', () => {
     const copy = [...items];
     sortBacklinks(items, 'alphabetical');
     expect(items).toEqual(copy);
+  });
+});
+
+/**
+ * G63 —— 反链面板的独立加载态（官方 `blockdetails.mentions.loading.links`，
+ * `i18n-zh.tsv:634`）。此前 `getBacklinks` 回来前面板一片空白，与"没有链接"不可分辨。
+ */
+describe('反链加载态（G63）', () => {
+  it('加载句逐字', () => {
+    expect(BACKLINKS_LOADING).toBe('正在加载此页面的链接…');
+  });
+
+  it('面板确实在未加载完时渲染它（源码接线，不是只定义了常量）', () => {
+    const src = readFileSync(
+      path.resolve('src/components/editor/tabs/InfoTab.tsx'),
+      'utf8',
+    );
+    expect(src, 'InfoTab 没有渲染加载句').toContain('{BACKLINKS_LOADING}');
+    expect(src, 'InfoTab 没有加载完的旗标').toContain('backlinksLoaded');
   });
 });

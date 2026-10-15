@@ -6,9 +6,17 @@ const CURSOR_KEY = 'cursor';
 // SQLite 适配器：Node 测试用 better-sqlite3 内存库，Tauri 运行时走 tauri-plugin-sql（同构 schema）
 // 为满足契约三跑，本文件在 Node 环境优先使用 better-sqlite3；若不可用则回退到内存（仅保证测试不阻塞）
 
-export function createSqliteStore(dbPath?: string): SyncStore {
+/** G1517：`SyncStore` 之外多一问——本实例实际跑的是真 sqlite 还是内存回退。 */
+export type SqliteSyncStore = SyncStore & {
+  backendKind(): 'unopened' | 'better-sqlite3' | 'memory-fallback';
+};
+
+export function createSqliteStore(dbPath?: string): SqliteSyncStore {
   let db: any = null;
   let memFallback: SyncStore | null = null;
+  // G1517：这一列契约跑的是**哪一支**要能被问出来。名目上写着 sqlite、实际跑的是内存回退
+  // （本机没有 better-sqlite3 时必然如此），那一列给出的绿就是别的东西的绿。
+  let backendKind: 'unopened' | 'better-sqlite3' | 'memory-fallback' = 'unopened';
 
   async function getDb(): Promise<any> {
     if (db) return db;
@@ -41,12 +49,19 @@ export function createSqliteStore(dbPath?: string): SyncStore {
       }
       db = instance;
       createTables(db);
+      backendKind = 'better-sqlite3';
     } catch {
       // better-sqlite3 不可用（CI 无原生编译环境）→ 回退内存实现，保证契约三跑仍可执行
       const { createMemoryStore } = await import('./store');
       memFallback = createMemoryStore();
       await memFallback.init();
+      backendKind = 'memory-fallback';
     }
+  }
+
+  /** G1517：本实例实际跑的是真 sqlite 句柄还是内存回退（`unopened`＝还没 init）。 */
+  function kind(): 'unopened' | 'better-sqlite3' | 'memory-fallback' {
+    return backendKind;
   }
 
   // G1514：同 adapter-idb，并发 init 按**在途那一次**去重。这里的代价更硬：`:memory:` 每开
@@ -233,5 +248,5 @@ export function createSqliteStore(dbPath?: string): SyncStore {
     database.prepare('INSERT OR REPLACE INTO sync_state (key, value) VALUES (?, ?)').run(key, value);
   }
 
-  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, getCursor, setCursor, getKv, setKv };
+  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, getCursor, setCursor, getKv, setKv, backendKind: kind };
 }

@@ -1,4 +1,6 @@
 import 'fake-indexeddb/auto';   // 文件头，为 idb 提供全局
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createMemoryStore } from './store';
 import type { SyncStore } from './store';
@@ -21,10 +23,17 @@ const rec = (id: string, ts: string, title = 'a') => ({
   data: { title }, syncTs: ts,
 });
 
+// G1517：第三列的**名目必须等于实际**。本机没有 `better-sqlite3`（全仓 deps 里 0 命中）⇒
+// `createSqliteStore()` 的 `open()` 走 catch 支、跑的是内存回退；若列名照旧写 "sqlite"，
+// 这一列给出的绿就是别的东西的绿。这里在模块加载时问一次"实际跑的是哪一支"，把它写进列名。
+const sqliteProbe = createSqliteStore();
+await sqliteProbe.init();
+const SQLITE_KIND = sqliteProbe.backendKind();
+
 describe.each([
   ['memory', createMemoryStore],
   ['idb', createIdbStore],
-  ['sqlite', createSqliteStore],
+  [`sqlite（本机实际：${SQLITE_KIND}）`, createSqliteStore],
 ])('SyncStore 契约（%s，MemoryStore 与 adapter-idb/sqlite 共用同一套用例）', (_label, factory) => {
   let s: SyncStore;
   beforeEach(async () => {
@@ -76,6 +85,37 @@ describe.each([
     // 覆盖写
     await s.setKv('lastPullAt', '2026-09-29T00:00:00.000Z');
     expect(await s.getKv('lastPullAt')).toBe('2026-09-29T00:00:00.000Z');
+  });
+});
+
+/**
+ * G1517 —— 第三列的名目必须等于实际跑的那一支。
+ *
+ * ☆ 判据是**自洽式**的：期望值由 `package.json` 的依赖图**现推**（有 `better-sqlite3` 就该跑真句柄、
+ *   没有就该跑内存回退），再与适配器**实际报出来的**那一支对比。
+ *   ⇒ 谁把 `better-sqlite3` 写进依赖却没装上（或反过来装上却忘了删）都会红；
+ *   也正因如此，"契约三跑"这句自述从此不许再把这一列默默算成一次 sqlite。
+ */
+describe('sqlite 列的成色（G1517）', () => {
+  const pkg = JSON.parse(
+    readFileSync(join(process.cwd(), 'package.json'), 'utf8'),
+  ) as Record<string, Record<string, string>>;
+  const declared = ['dependencies', 'devDependencies', 'optionalDependencies'].some(
+    (k) => typeof pkg[k] === 'object' && pkg[k] !== null && 'better-sqlite3' in pkg[k],
+  );
+
+  it('列里跑的那一支 == 依赖图推出来的那一支', () => {
+    expect(['better-sqlite3', 'memory-fallback']).toContain(SQLITE_KIND);
+    expect(
+      SQLITE_KIND,
+      declared
+        ? 'package.json 声明了 better-sqlite3 ⇒ 这一列应当跑真句柄'
+        : 'package.json 没有 better-sqlite3 ⇒ 这一列跑的是内存回退，列名不许写成「sqlite」',
+    ).toBe(declared ? 'better-sqlite3' : 'memory-fallback');
+  });
+
+  it('名目与实际一致已经写进列名本身（人读报告时不会把回退读成 sqlite）', () => {
+    expect(`sqlite（本机实际：${SQLITE_KIND}）`).toContain(SQLITE_KIND);
   });
 });
 

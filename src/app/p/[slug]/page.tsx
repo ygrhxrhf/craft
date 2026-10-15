@@ -7,6 +7,7 @@ import { PublicDocBanner } from '@/components/share/PublicDocBanner';
 import { PasscodeGate } from '@/components/share/PasscodeGate';
 import { shareCookieName, verifyShareCookie } from '@/lib/share-passcode';
 import { UNTITLED_DOCUMENT } from '@/lib/document/untitled-copy';
+import { authorByline } from '@/lib/share/author-visibility';
 
 interface PublishPageProps {
   params: Promise<{ slug: string }>;
@@ -67,6 +68,7 @@ export default async function PublishPage({ params }: PublishPageProps) {
       content={doc.content}
       pageStyle={doc.pageStyle}
       styled
+      authorByline={doc.showAuthor ? authorByline(doc.authorName) : null}
       header={<PublicDocBanner />}
     />
   );

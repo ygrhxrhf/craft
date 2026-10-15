@@ -25,9 +25,11 @@ import {
   setSharePasscode,
   setSharePermission,
   setSharePublished,
+  setShareShowAuthor,
   setShareSlug,
 } from '@/actions/document/share';
 import type { DocumentSharePermission } from '@/lib/share/permission';
+import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
 import { cn } from 'cn';
 import { getSyncManager } from '@/lib/sync-core';
 import { findDocumentShare, findDocumentShareId } from '@/components/sync/local-records';
@@ -46,6 +48,7 @@ const TIERS: { value: DocumentSharePermission; label: string; hint: string; icon
 export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [link, setLink] = useState<string | null>(null);
   const [isPublished, setIsPublished] = useState(false);
+  const [showAuthor, setShowAuthor] = useState(true);
   const [permission, setPermission] = useState<DocumentSharePermission | null>(null);
   const [shareId, setShareId] = useState<string | null>(null);
   const [serverVersion, setServerVersion] = useState(0);
@@ -72,6 +75,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       setToken(view.token);
       setLink(`${window.location.origin}/s/${view.token}`);
       if (typeof view.isPublished === 'boolean') setIsPublished(view.isPublished);
+      if (typeof view.showAuthor === 'boolean') setShowAuthor(view.showAuthor);
       if (view.permission === 'view' || view.permission === 'edit') setPermission(view.permission);
       if (typeof view.shareVersion === 'number') setServerVersion(view.shareVersion);
       if (typeof view.hasPasscode === 'boolean') setHasPasscode(view.hasPasscode);
@@ -98,6 +102,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
         setToken(share.token);
         setLink(`${window.location.origin}/s/${share.token}`);
         setIsPublished(share.isPublished);
+        setShowAuthor(share.showAuthor);
         setPermission(share.permission);
         setServerVersion(share.shareVersion);
         setHasPasscode(share.hasPasscode);
@@ -148,6 +153,24 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
         });
       } else {
         await setSharePublished(documentId, checked);
+      }
+    });
+  };
+
+  // G38：显示作者 → applyLocal（share 行 id 走本地镜像；镜像没有 → 退回服务端 action）。
+  //   与发布开关同形：这一列是元数据，断链也要留得住。
+  const handleShowAuthorChange = (checked: boolean) => {
+    setShowAuthor(checked);
+    startTransition(async () => {
+      const shareId = await findDocumentShareId(documentId);
+      if (shareId) {
+        await getSyncManager().applyLocal({
+          table: 'document_share',
+          id: shareId,
+          patch: { showAuthor: checked },
+        });
+      } else {
+        await setShareShowAuthor(documentId, checked);
       }
     });
   };
@@ -303,6 +326,18 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   checked={isPublished}
                   onCheckedChange={handlePublishedChange}
                   aria-label="发布为公开页面"
+                />
+              </div>
+              {/* G38：官方 visual.options 里的「显示作者」一组——开关名＋成对状态句逐字。 */}
+              <div className="mt-3 flex items-center justify-between rounded-md border border-border px-3 py-2.5">
+                <div>
+                  <p className="text-sm">{SHOW_AUTHOR_LABEL}</p>
+                  <p className="text-xs text-muted-foreground">{authorStatusLabel(showAuthor)}</p>
+                </div>
+                <Switch
+                  checked={showAuthor}
+                  onCheckedChange={handleShowAuthorChange}
+                  aria-label={SHOW_AUTHOR_LABEL}
                 />
               </div>
               {isPublished && (

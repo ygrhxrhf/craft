@@ -14,6 +14,8 @@ interface SharedDocViewProps {
   pageStyle?: unknown;
   styled?: boolean;
   collaborative?: boolean;
+  /** G38：发布页作者署名（`showAuthor` 关掉时调用方传 null，这里不渲染）。 */
+  authorByline?: string | null;
   header?: React.ReactNode;
 }
 
@@ -27,6 +29,7 @@ export function SharedDocView({
   pageStyle,
   styled = false,
   collaborative = false,
+  authorByline = null,
   header,
 }: SharedDocViewProps) {
   const style = useMemo(() => normalizePageStyle(pageStyle), [pageStyle]);
@@ -71,6 +74,9 @@ export function SharedDocView({
               </span>
               <h1 className="flex-1 text-doctitle font-bold text-[#1F2225] dark:text-[#F9F9F9]">{title}</h1>
             </div>
+            {authorByline && (
+              <p className="mt-2 text-meta text-foreground/40">{authorByline}</p>
+            )}
           </div>
         )}
         <Editor

@@ -368,6 +368,8 @@ model DocumentShare {
   passcode     String?
   isPublished  Boolean  @default(false)
   permission   String   @default("view") // "view" | "edit"
+  // G38：发布页「显示作者」（官方 showAuthor 默认 true）——只影响公开页渲不渲染作者署名。
+  showAuthor   Boolean  @default(true)
   shareVersion Int      @default(0)
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()

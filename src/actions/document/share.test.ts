@@ -5,7 +5,9 @@ import { describe, expect, it, vi } from 'vitest';
 const state = vi.hoisted(() => ({
   share: null as Record<string, unknown> | null,
   document: null as Record<string, unknown> | null,
+  owner: null as Record<string, unknown> | null,
   refuseDocumentRead: false,
+  ownerReads: 0,
 }));
 
 vi.mock('@/lib/auth/auth', () => ({ auth: async () => ({}) }));
@@ -20,6 +22,12 @@ vi.mock('@/prisma/db', () => ({
             return state.document;
           },
         },
+        User: {
+          first: async () => {
+            state.ownerReads++;
+            return state.owner;
+          },
+        },
       },
     },
   }),
@@ -30,9 +38,30 @@ const { getSharedDocument } = await import('@/actions/document/share');
 describe('getSharedDocument', () => {
   it('returns the document when the share row is published', async () => {
     state.share = { documentId: 'doc-1', isPublished: true, passcode: null };
-    state.document = { id: 'doc-1', title: 'Shared page', content: '{}', isDeleted: false };
+    state.document = { id: 'doc-1', title: 'Shared page', content: '{}', isDeleted: false, userId: 'u-1' };
+    state.owner = { id: 'u-1', name: '张三', email: 'z@example.com' };
     const result = await getSharedDocument('my-page');
     expect(result).toMatchObject({ id: 'doc-1', title: 'Shared page', isPublished: true });
+    // G38：默认显示作者 ⇒ 回传署名要用的作者名
+    expect(result).toMatchObject({ showAuthor: true, authorName: '张三' });
+  });
+
+  it('G38：关掉「显示作者」时不查、不回传作者名（隐藏了还发给客户端等于没隐藏）', async () => {
+    state.share = { documentId: 'doc-1', isPublished: true, passcode: null, showAuthor: false };
+    state.document = { id: 'doc-1', title: 'Shared page', content: '{}', isDeleted: false, userId: 'u-1' };
+    state.owner = { id: 'u-1', name: '张三', email: 'z@example.com' };
+    state.ownerReads = 0;
+    const result = await getSharedDocument('my-page');
+    expect(result).toMatchObject({ showAuthor: false, authorName: null });
+    expect(state.ownerReads, '关掉作者却仍去查了所有者').toBe(0);
+  });
+
+  it('G38：作者没填名字时退到邮箱', async () => {
+    state.share = { documentId: 'doc-1', isPublished: true, passcode: null };
+    state.document = { id: 'doc-1', title: 'Shared page', content: '{}', isDeleted: false, userId: 'u-1' };
+    state.owner = { id: 'u-1', name: '  ', email: 'z@example.com' };
+    const result = await getSharedDocument('my-page');
+    expect(result).toMatchObject({ authorName: 'z@example.com' });
   });
 
   it('returns nothing when the share row was never published', async () => {

@@ -18,6 +18,8 @@ export interface ShareState {
   isPublished: boolean;
   hasPasscode: boolean;
   permission: DocumentSharePermission;
+  /** G38：发布页是否显示作者（官方 showAuthor 默认 true）。 */
+  showAuthor: boolean;
   /**
    * 档位每改一次就 +1，访客那条按旧档授权的连接据此被判为过期。客户端改档走 `applyLocal`，
    * 它拿得到这一枚才可能算出「比服务端已知的那次更大」的下一个数（G1491）。
@@ -33,6 +35,7 @@ function stateOf(s: any): ShareState {
     isPublished: s.isPublished,
     hasPasscode: !!s.passcode,
     permission: s.permission,
+    showAuthor: s.showAuthor !== false,
     shareVersion: s.shareVersion ?? 0,
   };
 }
@@ -112,6 +115,20 @@ export async function setSharePermission(documentId: string, permission: unknown
   return await getOrCreateShare(documentId);
 }
 
+/** G38：发布页「显示作者」开关（镜像没有那一行时的回退路；有行走 `applyLocal`）。 */
+export async function setShareShowAuthor(documentId: string, showAuthor: boolean) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const doc = await db.orm.public.Document.first({ id: documentId });
+  if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
+
+  await db.orm.public.DocumentShare.where({ documentId }).update({ showAuthor });
+  await emitShare(db, session.user.id, documentId);
+  return await getOrCreateShare(documentId);
+}
+
 export async function setSharePasscode(documentId: string, passcode: string | null) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
@@ -168,6 +185,15 @@ export async function getSharedDocument(identifier: string) {
   if (!doc || (doc as any).isDeleted) return null;
 
   const d = doc as any;
+  // G38：署名要显示作者名 ⇒ 公开页得拿到它。作者就是文档所有者，取 name（缺则退邮箱）。
+  // ☆ 关掉「显示作者」时**不查、不回传**：隐藏了却把名字照样发给客户端，等于没隐藏。
+  const showAuthor = s.showAuthor !== false;
+  let authorName: string | null = null;
+  if (showAuthor) {
+    const owner = await db.orm.public.User.first({ id: d.userId });
+    authorName = (owner as any)?.name?.trim() || (owner as any)?.email || null;
+  }
+
   return {
     id: d.id,
     title: d.title,
@@ -181,5 +207,7 @@ export async function getSharedDocument(identifier: string) {
     isPublished: s.isPublished,
     permission: s.permission,
     passcodeProtected: !!s.passcode,
+    showAuthor: s.showAuthor !== false,
+    authorName,
   };
 }

@@ -114,6 +114,8 @@ export interface DocumentShareView {
   isPublished?: boolean;
   hasPasscode?: boolean;
   permission?: string;
+  /** G38：发布页「显示作者」（缺列＝旧镜像行，按默认显示）。 */
+  showAuthor?: boolean;
   shareVersion?: number;
 }
 
@@ -130,6 +132,7 @@ export function shareViewFromRow(id: string, data: Record<string, unknown>): Doc
     isPublished: typeof data.isPublished === 'boolean' ? data.isPublished : undefined,
     hasPasscode: typeof data.passcode === 'string' ? data.passcode.length > 0 : false,
     permission: typeof data.permission === 'string' ? data.permission : undefined,
+    showAuthor: typeof data.showAuthor === 'boolean' ? data.showAuthor : undefined,
     shareVersion: typeof data.shareVersion === 'number' ? data.shareVersion : undefined,
   };
 }

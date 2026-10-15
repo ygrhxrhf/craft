@@ -6,6 +6,7 @@ import { PublicDocBanner } from '@/components/share/PublicDocBanner';
 import { PasscodeGate } from '@/components/share/PasscodeGate';
 import { shareCookieName, verifyShareCookie } from '@/lib/share-passcode';
 import { findShare } from '@/lib/share/resolve';
+import { authorByline } from '@/lib/share/author-visibility';
 
 interface SharedPageProps {
   params: Promise<{ token: string }>;
@@ -50,6 +51,7 @@ export default async function SharedPage({ params }: SharedPageProps) {
       coverType={doc.coverType}
       content={doc.content}
       collaborative={collaborative}
+      authorByline={doc.showAuthor ? authorByline(doc.authorName) : null}
       header={<PublicDocBanner collaborative={collaborative} />}
     />
   );

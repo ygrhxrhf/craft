@@ -19,7 +19,8 @@
     "postinstall": "prisma skills sync || exit 0",
     "contract:emit": "prisma contract emit",
     "db:migrate": "prisma db migrate --advance-ref db",
-    "db:migrate:show": "prisma db migrate --advance-ref db --show"
+    "db:migrate:show": "prisma db migrate --advance-ref db --show",
+    "check:dev-contract-log": "node scripts/check-dev-contract-log.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

@@ -6,6 +6,12 @@ import { cn } from 'cn';
 import { evaluateFormula } from '@/lib/collection/formula';
 import { getCollection } from '@/actions/collection/collection';
 import { uploadFile } from '@/lib/upload-client';
+import {
+  CHARACTER_LIMIT_SUBTITLE,
+  CHARACTER_LIMIT_TITLE,
+  clampToCharacterLimit,
+  exceedsCharacterLimit,
+} from '@/lib/collection/character-limit';
 
 interface Property {
   id: string;
@@ -85,6 +91,7 @@ export function CellDisplay({ value }: { value: any }) {
 function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value ?? '');
+  const [limitHit, setLimitHit] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -104,7 +111,20 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
       ref={ref}
       type="text"
       value={text}
-      onChange={e => setText(e.target.value)}
+      title={limitHit ? `${CHARACTER_LIMIT_TITLE}：${CHARACTER_LIMIT_SUBTITLE}` : undefined}
+      aria-invalid={limitHit || undefined}
+      onChange={e => {
+        // G89/G1532：单字段 10000 字符上限（官方两句逐字）。触到上限就截住并给提示，
+        // 不静默吞掉用户的输入。
+        const next = e.target.value;
+        if (exceedsCharacterLimit(next)) {
+          setText(clampToCharacterLimit(next));
+          setLimitHit(true);
+          return;
+        }
+        setLimitHit(false);
+        setText(next);
+      }}
       onBlur={() => { setEditing(false); onChange(text); }}
       onKeyDown={e => {
         if (e.key === 'Enter') { setEditing(false); onChange(text); }

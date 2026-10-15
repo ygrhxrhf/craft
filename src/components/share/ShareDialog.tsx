@@ -34,6 +34,12 @@ import type { DocumentSharePermission } from '@/lib/share/permission';
 import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
 import { VISUAL_OPTIONS, visualOptionStatus } from '@/lib/share/visual-options';
 import { SEO_DESC, expiryLabel } from '@/lib/share/publishing-options';
+import {
+  linkOperationDone,
+  linkOperationPending,
+  type LinkOperation,
+} from '@/lib/share/link-operation-copy';
+import { toast } from '@/components/ui/toast';
 import { cn } from 'cn';
 import { getSyncManager } from '@/lib/sync-core';
 import { findDocumentShare, findDocumentShareId } from '@/components/sync/local-records';
@@ -75,6 +81,28 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [slugError, setSlugError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [isPending, startTransition] = useTransition();
+  // G139：每个链接写操作有自己的进行时句，写完后换成该操作的结果句（不是通用 spinner）。
+  const [linkOp, setLinkOp] = useState<LinkOperation | null>(null);
+
+  /**
+   * Run a link write with its own named progress line, then announce its result on success.
+   *
+   * `setLinkOp` is deliberately *outside* the transition: both calls inside one transition coalesce
+   * into a single commit, so the in-flight line would never reach the DOM. The urgent update lands
+   * first, the transition carries the write.
+   */
+  const runLinkOp = (op: LinkOperation, work: () => Promise<void>) => {
+    setLinkOp(op);
+    startTransition(async () => {
+      try {
+        await work();
+        const done = linkOperationDone(op);
+        if (done) toast.add({ id: `link-op-${op}`, type: 'success', title: done });
+      } finally {
+        setLinkOp(null);
+      }
+    });
+  };
 
   // G1508：挂载读先吃本地镜像——镜像里有这一行就当场渲染档位／发布态／口令态／slug，
   //   断链时也看得见现值；镜像没有（这篇文档还没被分享过、本机也没拉过这张表）才回落到
@@ -154,7 +182,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
 
   const handleSaveSlug = () => {
     setSlugError(null);
-    startTransition(async () => {
+    runLinkOp('updatingLink', async () => {
       const result = await setShareSlug(documentId, slugDraft);
       if ('error' in result && result.error) {
         setSlugError(result.error);
@@ -275,7 +303,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   //   从"可判"降级成"要人工复核"。
   const handleEnablePasscode = () => {
     if (!passcode.trim()) return;
-    startTransition(async () => {
+    runLinkOp('updatingPassword', async () => {
       const shareId = await findDocumentShareId(documentId);
       const value = passcode.trim();
       if (shareId) {
@@ -289,7 +317,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   };
 
   const handleRemovePasscode = () => {
-    startTransition(async () => {
+    runLinkOp('removingLink', async () => {
       const shareId = await findDocumentShareId(documentId);
       if (shareId) {
         await getSyncManager().applyLocal({ table: 'document_share', id: shareId, patch: { passcode: null } });
@@ -342,6 +370,17 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   {copied ? '已复制' : '复制'}
                 </Button>
               </div>
+              {/* G139：写操作进行时按操作命名（正在更新链接／正在更新密码／正在移除链接）。 */}
+              {linkOp && (
+                <p
+                  role="status"
+                  aria-live="polite"
+                  className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground"
+                >
+                  <Loader2 className="size-3.5 animate-spin" />
+                  {linkOperationPending(linkOp)}
+                </p>
+              )}
               <div className="mt-3 flex flex-col gap-2">
                 {TIERS.map((tier) => {
                   const Icon = tier.icon;

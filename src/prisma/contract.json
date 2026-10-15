@@ -1876,6 +1876,13 @@
                   "kind": "scalar"
                 }
               },
+              "enableSeo": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "hidePresentationMode": {
                 "nullable": false,
                 "type": {
@@ -1996,6 +2003,9 @@
                 },
                 "documentId": {
                   "column": "documentId"
+                },
+                "enableSeo": {
+                  "column": "enableSeo"
                 },
                 "hidePresentationMode": {
                   "column": "hidePresentationMode"
@@ -4803,6 +4813,15 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "enableSeo": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "hidePresentationMode": {
                   "codecId": "pg/bool@1",
                   "default": {
@@ -6528,7 +6547,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "7a3412f9c8cbefe3993dd398e5abacdea70810a3dbf26c7739e4ec1a8785d4d6"
+    "storageHash": "e7b3df90b4d20d945a3ab1258ef01fc1be72f0a43cdb9dacc77dfd72f3a65146"
   },
   "execution": {
     "executionHash": "5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b",

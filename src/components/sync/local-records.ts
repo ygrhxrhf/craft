@@ -121,6 +121,8 @@ export interface DocumentShareView {
   hideTableOfContents?: boolean;
   hidePresentationMode?: boolean;
   showWatermark?: boolean;
+  /** G143：搜索引擎索引（缺列＝旧镜像行，按官方默认 false）。 */
+  enableSeo?: boolean;
   shareVersion?: number;
 }
 
@@ -142,6 +144,7 @@ export function shareViewFromRow(id: string, data: Record<string, unknown>): Doc
     hideTableOfContents: typeof data.hideTableOfContents === 'boolean' ? data.hideTableOfContents : undefined,
     hidePresentationMode: typeof data.hidePresentationMode === 'boolean' ? data.hidePresentationMode : undefined,
     showWatermark: typeof data.showWatermark === 'boolean' ? data.showWatermark : undefined,
+    enableSeo: typeof data.enableSeo === 'boolean' ? data.enableSeo : undefined,
     shareVersion: typeof data.shareVersion === 'number' ? data.shareVersion : undefined,
   };
 }

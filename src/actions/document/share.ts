@@ -25,6 +25,8 @@ export interface ShareState {
   hideTableOfContents: boolean;
   hidePresentationMode: boolean;
   showWatermark: boolean;
+  /** G143：搜索引擎索引（官方默认 false；与口令互斥）。 */
+  enableSeo: boolean;
   /**
    * 档位每改一次就 +1，访客那条按旧档授权的连接据此被判为过期。客户端改档走 `applyLocal`，
    * 它拿得到这一枚才可能算出「比服务端已知的那次更大」的下一个数（G1491）。
@@ -45,6 +47,7 @@ function stateOf(s: any): ShareState {
     hideTableOfContents: s.hideTableOfContents === true,
     hidePresentationMode: s.hidePresentationMode === true,
     showWatermark: s.showWatermark !== false,
+    enableSeo: s.enableSeo === true,
     shareVersion: s.shareVersion ?? 0,
   };
 }
@@ -127,7 +130,7 @@ export async function setSharePermission(documentId: string, permission: unknown
 /** G1534：visual.options 四组的开关（镜像没有那一行时的回退路；有行走 `applyLocal`）。 */
 export async function setShareVisualOption(
   documentId: string,
-  key: 'showPageTitle' | 'hideTableOfContents' | 'hidePresentationMode' | 'showWatermark',
+  key: 'showPageTitle' | 'hideTableOfContents' | 'hidePresentationMode' | 'showWatermark' | 'enableSeo',
   value: boolean,
 ) {
   const session = await auth();
@@ -240,5 +243,6 @@ export async function getSharedDocument(identifier: string) {
     showWatermark: s.showWatermark !== false,
     hideTableOfContents: s.hideTableOfContents === true,
     hidePresentationMode: s.hidePresentationMode === true,
+    enableSeo: s.enableSeo === true,
   };
 }

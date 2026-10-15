@@ -32,6 +32,7 @@ import {
 import type { DocumentSharePermission } from '@/lib/share/permission';
 import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
 import { VISUAL_OPTIONS, visualOptionStatus } from '@/lib/share/visual-options';
+import { SEO_DESC } from '@/lib/share/publishing-options';
 import { cn } from 'cn';
 import { getSyncManager } from '@/lib/sync-core';
 import { findDocumentShare, findDocumentShareId } from '@/components/sync/local-records';
@@ -57,6 +58,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     hideTableOfContents: false,
     hidePresentationMode: false,
     showWatermark: true,
+    enableSeo: false,
   });
   const [permission, setPermission] = useState<DocumentSharePermission | null>(null);
   const [shareId, setShareId] = useState<string | null>(null);
@@ -87,7 +89,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       if (typeof view.showAuthor === 'boolean') setShowAuthor(view.showAuthor);
       setVisuals((prev) => {
         const next = { ...prev };
-        for (const key of ['showPageTitle', 'hideTableOfContents', 'hidePresentationMode', 'showWatermark'] as const) {
+        for (const key of ['showPageTitle', 'hideTableOfContents', 'hidePresentationMode', 'showWatermark', 'enableSeo'] as const) {
           const value = view[key];
           if (typeof value === 'boolean') next[key] = value;
         }
@@ -193,7 +195,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   };
 
   const handleVisualOption = (
-    key: 'showPageTitle' | 'hideTableOfContents' | 'hidePresentationMode' | 'showWatermark',
+    key: 'showPageTitle' | 'hideTableOfContents' | 'hidePresentationMode' | 'showWatermark' | 'enableSeo',
     checked: boolean,
   ) => {
     setVisuals((prev) => ({ ...prev, [key]: checked }));
@@ -401,6 +403,18 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   </div>
                 );
               })}
+              {/* G143：搜索引擎索引（官方 enableSeo 默认关；与口令互斥——口令一设即失效）。 */}
+              <div className="mt-3 flex items-start justify-between gap-3 rounded-md border border-border px-3 py-2.5">
+                <div>
+                  <p className="text-sm">启用搜索引擎索引</p>
+                  <p className="text-xs text-muted-foreground">{SEO_DESC}</p>
+                </div>
+                <Switch
+                  checked={visuals.enableSeo}
+                  onCheckedChange={(next) => handleVisualOption('enableSeo', next)}
+                  aria-label="启用搜索引擎索引"
+                />
+              </div>
               {isPublished && (
                 <div className="mt-3 rounded-md border border-border px-3 py-2.5">
                   <p className="text-sm">公开页面地址</p>

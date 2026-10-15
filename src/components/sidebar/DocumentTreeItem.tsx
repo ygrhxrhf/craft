@@ -20,6 +20,7 @@ import {
   SIDEBAR_DOC_MIME,
   sidebarDragState,
 } from '@/lib/dnd/sidebar-drag';
+import { pressStartsDrag } from '@/lib/dnd/activation-guard';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -151,6 +152,12 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   }
 
   function handleDragStart(e: React.DragEvent) {
+    // G269：落在表单控件或链接上的按下永不起拖（点击让给控件）。侧栏行里嵌着展开箭头，
+    //   重命名态还有一个 input——从这些地方起拖会把点击吞掉。
+    if (!pressStartsDrag(e.target as Element | null, 'general', e.currentTarget as Element)) {
+      e.preventDefault();
+      return;
+    }
     const payload = { kind: 'sidebar-item' as const, type: 'doc' as const, documentId: doc.id, title: doc.title };
     sidebarDragState.payload = payload;
     e.dataTransfer.effectAllowed = 'move';

@@ -12,6 +12,7 @@ import {
   SIDEBAR_WHITEBOARD_MIME,
   sidebarDragState,
 } from '@/lib/dnd/sidebar-drag';
+import { pressStartsDrag } from '@/lib/dnd/activation-guard';
 import { LOADING } from '@/lib/browse/official-copy';
 
 interface WhiteboardTreeItemProps {
@@ -21,6 +22,11 @@ interface WhiteboardTreeItemProps {
 
 function WhiteboardTreeItem({ board, isActive }: WhiteboardTreeItemProps) {
   function handleDragStart(e: React.DragEvent) {
+    // G269：落在表单控件或链接上的按下永不起拖（点击让给控件）。
+    if (!pressStartsDrag(e.target as Element | null, 'general', e.currentTarget as Element)) {
+      e.preventDefault();
+      return;
+    }
     const payload = {
       kind: 'sidebar-item' as const,
       type: 'whiteboard' as const,

@@ -9,6 +9,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { createDocumentLocal } from '@/components/sync/create-local';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { SIDEBAR_DOC_MIME, sidebarDragState } from '@/lib/dnd/sidebar-drag';
+import { pressStartsDrag } from '@/lib/dnd/activation-guard';
 import { formatDocCount } from '@/lib/browse/official-copy';
 import {
   DELETE_FOLDER_LABEL,
@@ -123,6 +124,11 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
   }, []);
 
   function handleDragStart(e: React.DragEvent) {
+    // G269：落在表单控件或链接上的按下永不起拖（行内嵌着重命名 input 与展开箭头）。
+    if (!pressStartsDrag(e.target as Element | null, 'general', e.currentTarget as Element)) {
+      e.preventDefault();
+      return;
+    }
     const payload = { kind: 'sidebar-item' as const, type: 'folder' as const, folderId: folder.id, title: folder.name };
     sidebarDragState.payload = payload;
     e.dataTransfer.effectAllowed = 'move';

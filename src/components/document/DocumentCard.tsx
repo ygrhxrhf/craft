@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { File } from 'lucide-react';
-import { untitledFor } from '@/lib/document/untitled-copy';
+import { cn } from 'cn';
+import { cardHead } from '@/lib/document/card-head';
 
 interface DocumentCardProps {
   document: {
@@ -10,14 +11,13 @@ interface DocumentCardProps {
     title: string;
     icon: string | null;
     updatedAt: string;
+    /** G250: the card head carries the location breadcrumb, resolved by the caller. */
+    breadcrumb?: { icon?: string | null; title: string }[];
   };
 }
 
 export function DocumentCard({ document: doc }: DocumentCardProps) {
-  const formattedDate = new Date(doc.updatedAt).toLocaleDateString('zh-CN', {
-    month: 'short',
-    day: 'numeric',
-  });
+  const head = cardHead({ title: doc.title, updatedAt: doc.updatedAt, breadcrumb: doc.breadcrumb });
 
   return (
     <Link
@@ -40,10 +40,25 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
           ) : (
             <File className="size-5 shrink-0 text-foreground/40" />
           )}
-          <h3 className="flex-1 truncate text-card-title font-semibold">{doc.title || untitledFor('list')}</h3>
+          {/* G250：未命名文档的标题是**斜体灰**——它在说"这篇还没有名字"。 */}
+          <h3
+            className={cn(
+              'flex-1 truncate text-card-title font-semibold',
+              head.placeholder && 'italic font-normal text-foreground/45',
+            )}
+          >
+            {head.title}
+          </h3>
         </div>
+        {/* G250：卡片头第二行是**位置面包屑**（📁 日记 •），不是日期。 */}
+        {head.breadcrumb && (
+          <p className="mt-0.5 truncate text-meta text-foreground/45 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
+            {head.breadcrumb}
+          </p>
+        )}
+        {/* G250：「已更新 14 小时前」是**相对时间带动词**，不是裸日期。 */}
         <p className="mt-1 text-meta text-foreground/55 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
-          {formattedDate}
+          {head.updated}
         </p>
 
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">

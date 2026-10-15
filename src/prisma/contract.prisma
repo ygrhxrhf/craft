@@ -375,6 +375,8 @@ model DocumentShare {
   hideTableOfContents  Boolean @default(false) // 显示目录
   hidePresentationMode Boolean @default(false) // 显示演示模式
   showWatermark        Boolean @default(true)  // 显示"Created With Craft"页脚
+  // G143/G1535：链接到期是独立一轴（官方 expiration.date / expire.on / expire.never）。
+  expiresAt            TimestamptzString?
   // G143/G85：搜索引擎索引（官方 enableSeo 默认 false；与口令保护互斥，口令一设即失效）。
   enableSeo            Boolean @default(false)
   shareVersion Int      @default(0)

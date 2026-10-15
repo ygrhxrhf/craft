@@ -28,11 +28,12 @@ import {
   setShareShowAuthor,
   setShareSlug,
   setShareVisualOption,
+  setShareExpiry,
 } from '@/actions/document/share';
 import type { DocumentSharePermission } from '@/lib/share/permission';
 import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
 import { VISUAL_OPTIONS, visualOptionStatus } from '@/lib/share/visual-options';
-import { SEO_DESC } from '@/lib/share/publishing-options';
+import { SEO_DESC, expiryLabel } from '@/lib/share/publishing-options';
 import { cn } from 'cn';
 import { getSyncManager } from '@/lib/sync-core';
 import { findDocumentShare, findDocumentShareId } from '@/components/sync/local-records';
@@ -65,6 +66,8 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [serverVersion, setServerVersion] = useState(0);
   const [tierError, setTierError] = useState<string | null>(null);
   const [hasPasscode, setHasPasscode] = useState(false);
+  // G1535：链接到期（ISO 日期串；''＝永不过期）。
+  const [expiresAt, setExpiresAt] = useState<string>('');
   const [passcode, setPasscode] = useState('');
   const [token, setToken] = useState('');
   const [slug, setSlug] = useState<string | null>(null);
@@ -98,6 +101,9 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       if (view.permission === 'view' || view.permission === 'edit') setPermission(view.permission);
       if (typeof view.shareVersion === 'number') setServerVersion(view.shareVersion);
       if (typeof view.hasPasscode === 'boolean') setHasPasscode(view.hasPasscode);
+      // ☆ 镜像里的到期是完整 ISO 时间戳，而 `type="date"` 只认 `YYYY-MM-DD` ⇒ 截前 10 位，
+      //   否则输入框会渲染成空、标签退回「永不过期」（本批第一次就踩到）。
+      if (view.expiresAt !== undefined) setExpiresAt(view.expiresAt ? String(view.expiresAt).slice(0, 10) : '');
       if (view.slug !== undefined) {
         setSlug(view.slug);
         if (opts?.seedSlugDraft) setSlugDraft(view.slug ?? '');
@@ -190,6 +196,20 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
         });
       } else {
         await setShareShowAuthor(documentId, checked);
+      }
+    });
+  };
+
+  // G1535：链接到期独立一轴 → applyLocal（镜像缺行退回服务端 action）。
+  const handleExpiryChange = (value: string) => {
+    setExpiresAt(value);
+    startTransition(async () => {
+      const shareId = await findDocumentShareId(documentId);
+      const next = value ? value : null;
+      if (shareId) {
+        await getSyncManager().applyLocal({ table: 'document_share', id: shareId, patch: { expiresAt: next } });
+      } else {
+        await setShareExpiry(documentId, next);
       }
     });
   };
@@ -414,6 +434,27 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   onCheckedChange={(next) => handleVisualOption('enableSeo', next)}
                   aria-label="启用搜索引擎索引"
                 />
+              </div>
+              {/* G1535：链接到期是独立一轴（官方 expiration.date／expire.on [0]／expire.never）。 */}
+              <div className="mt-3 rounded-md border border-border px-3 py-2.5">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm">链接到期</p>
+                  <span className="text-xs text-muted-foreground">{expiryLabel(expiresAt || null)}</span>
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <input
+                    type="date"
+                    value={expiresAt}
+                    onChange={(event) => handleExpiryChange(event.target.value)}
+                    aria-label="链接到期日期"
+                    className="h-8 min-w-0 flex-1 rounded-md border border-input bg-transparent px-2 text-xs outline-none transition-colors focus:border-ring"
+                  />
+                  {expiresAt && (
+                    <Button size="sm" variant="ghost" onClick={() => handleExpiryChange('')} className="h-8 shrink-0 px-2 text-xs">
+                      永不过期
+                    </Button>
+                  )}
+                </div>
               </div>
               {isPublished && (
                 <div className="mt-3 rounded-md border border-border px-3 py-2.5">

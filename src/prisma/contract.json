@@ -1883,6 +1883,13 @@
                   "kind": "scalar"
                 }
               },
+              "expiresAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "hidePresentationMode": {
                 "nullable": false,
                 "type": {
@@ -2006,6 +2013,9 @@
                 },
                 "enableSeo": {
                   "column": "enableSeo"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
                 },
                 "hidePresentationMode": {
                   "column": "hidePresentationMode"
@@ -4822,6 +4832,11 @@
                   "nativeType": "bool",
                   "nullable": false
                 },
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "hidePresentationMode": {
                   "codecId": "pg/bool@1",
                   "default": {
@@ -6547,7 +6562,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "e7b3df90b4d20d945a3ab1258ef01fc1be72f0a43cdb9dacc77dfd72f3a65146"
+    "storageHash": "f21e8df1d0a22d1a34aa4d71f12a6b6817c93f578add0dd64b5c4921e6223f04"
   },
   "execution": {
     "executionHash": "5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b",

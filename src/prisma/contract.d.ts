@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'e7b3df90b4d20d945a3ab1258ef01fc1be72f0a43cdb9dacc77dfd72f3a65146'>;
+  StorageHashBase<'f21e8df1d0a22d1a34aa4d71f12a6b6817c93f578add0dd64b5c4921e6223f04'>;
 export type ExecutionHash =
   ExecutionHashBase<'5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b'>;
 export type ProfileHash =
@@ -383,6 +383,7 @@ export type FieldOutputTypes = {
       readonly hideTableOfContents: CodecTypes['pg/bool@1']['output'];
       readonly hidePresentationMode: CodecTypes['pg/bool@1']['output'];
       readonly showWatermark: CodecTypes['pg/bool@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly enableSeo: CodecTypes['pg/bool@1']['output'];
       readonly shareVersion: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -660,6 +661,7 @@ export type FieldInputTypes = {
       readonly hideTableOfContents: CodecTypes['pg/bool@1']['input'];
       readonly hidePresentationMode: CodecTypes['pg/bool@1']['input'];
       readonly showWatermark: CodecTypes['pg/bool@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly enableSeo: CodecTypes['pg/bool@1']['input'];
       readonly shareVersion: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -902,6 +904,7 @@ export type StorageColumnTypes = {
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly documentId: CodecTypes['pg/text@1']['output'];
       readonly enableSeo: CodecTypes['pg/bool@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly hidePresentationMode: CodecTypes['pg/bool@1']['output'];
       readonly hideTableOfContents: CodecTypes['pg/bool@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
@@ -1179,6 +1182,7 @@ export type StorageColumnInputTypes = {
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly documentId: CodecTypes['pg/text@1']['input'];
       readonly enableSeo: CodecTypes['pg/bool@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly hidePresentationMode: CodecTypes['pg/bool@1']['input'];
       readonly hideTableOfContents: CodecTypes['pg/bool@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -1666,6 +1670,7 @@ export namespace Models {
     hideTableOfContents: CodecTypes['pg/bool@1']['output'];
     hidePresentationMode: CodecTypes['pg/bool@1']['output'];
     showWatermark: CodecTypes['pg/bool@1']['output'];
+    expiresAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     enableSeo: CodecTypes['pg/bool@1']['output'];
     shareVersion: CodecTypes['pg/int4@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2733,6 +2738,11 @@ type ContractBase = Omit<
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/bool@1', true>;
                   };
+                };
+                readonly expiresAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
                 };
                 readonly enableSeo: {
                   readonly nativeType: 'bool';
@@ -5374,6 +5384,13 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly expiresAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
               readonly enableSeo: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
@@ -5434,6 +5451,7 @@ type ContractBase = Omit<
                 readonly hideTableOfContents: { readonly column: 'hideTableOfContents' };
                 readonly hidePresentationMode: { readonly column: 'hidePresentationMode' };
                 readonly showWatermark: { readonly column: 'showWatermark' };
+                readonly expiresAt: { readonly column: 'expiresAt' };
                 readonly enableSeo: { readonly column: 'enableSeo' };
                 readonly shareVersion: { readonly column: 'shareVersion' };
                 readonly createdAt: { readonly column: 'createdAt' };

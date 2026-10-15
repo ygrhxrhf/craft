@@ -5,6 +5,7 @@ import { getDb } from '@/prisma/db';
 import { normalizeShareSlug } from '@/lib/share/slug';
 import { isSharePermission, type DocumentSharePermission } from '@/lib/share/permission';
 import { findShare, isOpenableShare } from '@/lib/share/resolve';
+import { isExpired } from '@/lib/share/publishing-options';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface ShareState {
@@ -27,6 +28,8 @@ export interface ShareState {
   showWatermark: boolean;
   /** G143：搜索引擎索引（官方默认 false；与口令互斥）。 */
   enableSeo: boolean;
+  /** G1535：链接到期（ISO 日期或 null＝永不过期）。 */
+  expiresAt: string | null;
   /**
    * 档位每改一次就 +1，访客那条按旧档授权的连接据此被判为过期。客户端改档走 `applyLocal`，
    * 它拿得到这一枚才可能算出「比服务端已知的那次更大」的下一个数（G1491）。
@@ -48,6 +51,7 @@ function stateOf(s: any): ShareState {
     hidePresentationMode: s.hidePresentationMode === true,
     showWatermark: s.showWatermark !== false,
     enableSeo: s.enableSeo === true,
+    expiresAt: s.expiresAt ? String(s.expiresAt) : null,
     shareVersion: s.shareVersion ?? 0,
   };
 }
@@ -124,6 +128,20 @@ export async function setSharePermission(documentId: string, permission: unknown
   //   （G1491）。它现在只服务"本地镜像里还没有这一行"那一档回退，走的就是同一条广播。
   await emitShare(db, session.user.id, documentId);
 
+  return await getOrCreateShare(documentId);
+}
+
+/** G1535：链接到期（ISO 日期或 null＝永不过期；镜像缺行时的回退路）。 */
+export async function setShareExpiry(documentId: string, expiresAt: string | null) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const doc = await db.orm.public.Document.first({ id: documentId });
+  if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
+
+  await db.orm.public.DocumentShare.where({ documentId }).update({ expiresAt });
+  await emitShare(db, session.user.id, documentId);
   return await getOrCreateShare(documentId);
 }
 
@@ -211,6 +229,9 @@ export async function getSharedDocument(identifier: string) {
   if (!isOpenableShare(share)) return null;
   const s = share as any;
 
+  // G1535：链接到期是独立一轴 ⇒ 到期后与"未发布"同档（两条形状都打不开）。
+  if (isExpired(s.expiresAt ? String(s.expiresAt) : null)) return null;
+
   const doc = await db.orm.public.Document.first({ id: s.documentId });
   if (!doc || (doc as any).isDeleted) return null;
 
@@ -244,5 +265,6 @@ export async function getSharedDocument(identifier: string) {
     hideTableOfContents: s.hideTableOfContents === true,
     hidePresentationMode: s.hidePresentationMode === true,
     enableSeo: s.enableSeo === true,
+    expiresAt: s.expiresAt ? String(s.expiresAt) : null,
   };
 }

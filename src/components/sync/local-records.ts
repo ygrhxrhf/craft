@@ -123,6 +123,8 @@ export interface DocumentShareView {
   showWatermark?: boolean;
   /** G143：搜索引擎索引（缺列＝旧镜像行，按官方默认 false）。 */
   enableSeo?: boolean;
+  /** G1535：链接到期（ISO 日期或 null＝永不过期）。 */
+  expiresAt?: string | null;
   shareVersion?: number;
 }
 
@@ -145,6 +147,7 @@ export function shareViewFromRow(id: string, data: Record<string, unknown>): Doc
     hidePresentationMode: typeof data.hidePresentationMode === 'boolean' ? data.hidePresentationMode : undefined,
     showWatermark: typeof data.showWatermark === 'boolean' ? data.showWatermark : undefined,
     enableSeo: typeof data.enableSeo === 'boolean' ? data.enableSeo : undefined,
+    expiresAt: data.expiresAt === undefined ? undefined : typeof data.expiresAt === 'string' ? data.expiresAt : null,
     shareVersion: typeof data.shareVersion === 'number' ? data.shareVersion : undefined,
   };
 }

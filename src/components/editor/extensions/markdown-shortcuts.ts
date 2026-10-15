@@ -103,10 +103,11 @@ export const MarkdownShortcuts = Extension.create({
     // Todo: `[] ` or `[x] ` at the start of a line, Craft's shortcut. Restricted to
     // top-level paragraphs — inside a bullet list the replacement would be content the
     // schema rejects, and `- [ ]` there is the importer's job, not the editor's.
+    // G358：官方表 `uF` 的 pattern 一律 `^\s*`（允许前导空白），故 `  [] ` 也应转任务块。
     if (this.editor.schema.nodes.taskList && this.editor.schema.nodes.taskItem) {
       rules.push(
         new InputRule({
-          find: /^\[([ xX])\]\s$/,
+          find: /^\s*\[([ xX])\]\s$/,
           handler: ({ state, range, match }) => {
             const $at = state.doc.resolve(range.from);
             if ($at.depth !== 1 || $at.parent.type.name !== 'paragraph') return;

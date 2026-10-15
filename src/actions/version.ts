@@ -3,6 +3,22 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { requireDocumentAccess } from '@/lib/authz/document-access';
+
+/**
+ * `gap.md` G18 —— 备份/历史版本对**协作者**可用（官方 `commands.view.backups`「查看备份」是
+ * 文档级一等入口，`plans.md` 的 30/180 天额度是同一功能的两端）。
+ * ☆ 此前四个函数一律 `doc.userId !== session.user.id` ⇒ **editor 看不到也恢复不了**；现在统一
+ *   走 `requireDocumentAccess(…, 'editor')`：所有者满足任何档、`editor` 协作者也满足。
+ * ☆ 为什么是 `editor` 而不是 `viewer`：恢复会**改写正文**（`restoreVersion` 直接写 Document 行），
+ *   属写操作；只读协作者不该能回滚别人的编辑。
+ */
+async function requireEditor(documentId: string): Promise<string> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+  await requireDocumentAccess(documentId, session.user.id, 'editor');
+  return session.user.id;
+}
 
 export interface VersionItem {
   id: string;
@@ -14,12 +30,11 @@ export interface VersionItem {
 }
 
 export async function createVersion(documentId: string) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('未授权');
+  const userId = await requireEditor(documentId);
 
   const db = await getDb();
   const doc = await db.orm.public.Document.first({ id: documentId });
-  if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
+  if (!doc) throw new Error('文档不存在');
   const d = doc as any;
 
   const latest = await db.orm.public.DocumentVersion
@@ -41,12 +56,9 @@ export async function createVersion(documentId: string) {
 }
 
 export async function getVersions(documentId: string): Promise<VersionItem[]> {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('未授权');
+  await requireEditor(documentId);
 
   const db = await getDb();
-  const doc = await db.orm.public.Document.first({ id: documentId });
-  if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
 
   const versions = await db.orm.public.DocumentVersion
     .where({ documentId })
@@ -71,10 +83,7 @@ export async function getVersionContent(versionId: string) {
   const version = await db.orm.public.DocumentVersion.first({ id: versionId });
   if (!version) throw new Error('版本不存在');
 
-  const doc = await db.orm.public.Document.first({
-    id: (version as any).documentId,
-  });
-  if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
+  await requireDocumentAccess((version as any).documentId, session.user.id, 'editor');
 
   return version as any;
 }
@@ -88,8 +97,9 @@ export async function restoreVersion(versionId: string) {
   if (!version) throw new Error('版本不存在');
   const v = version as any;
 
+  await requireDocumentAccess(v.documentId, session.user.id, 'editor');
   const doc = await db.orm.public.Document.first({ id: v.documentId });
-  if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
+  if (!doc) throw new Error('文档不存在');
   const d = doc as any;
 
   // Save the current content as a version first so restore is never destructive

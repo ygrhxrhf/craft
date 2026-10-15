@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -65,5 +65,31 @@ describe('gap.md 表形闸：每张表的每一行列数都与表头一致（第
       t.offBy.map((r) => `L${r.line}：${r.width} 栏（表头在 L${t.startLine}，${t.width} 栏）`),
     );
     expect(off, `表形错位（多/少一个竖线都会让它读起来串列）⇒ ${off.join('；')}`).toEqual([]);
+  });
+});
+
+/**
+ * ☆ 第 209 批把同一枚闸**摊到全部成文面**：`gap.md` 只是 25 份 `features/*.md` 里的一份，
+ *   单看它＝只看了 310／约 700 张表。摊开后扫描面立刻翻倍（现跑 692 张），
+ *   而"扫描面够不够"正是本会话反复栽的那一类（第 208 批 check-tables 空转、第 209 批 `\d{3,4}` 漏 91 行）。
+ */
+describe('全部 features/*.md 的表形闸（第 209 批摊开）', () => {
+  const dir = join(process.cwd(), 'docs', 'craft-ref', 'features');
+  const files = readdirSync(dir).filter((f) => f.endsWith('.md'));
+
+  it('扫描面非空且够广', () => {
+    expect(files.length, '一份成文面都没扫到＝这条闸在空转').toBeGreaterThanOrEqual(20);
+    const total = files.reduce((n, f) => n + tablesOf(readFileSync(join(dir, f), 'utf8')).length, 0);
+    expect(total, '总表数太少＝扫描面可疑').toBeGreaterThanOrEqual(600);
+  });
+
+  it('没有一处行列数与表头不符（全部成文面）', () => {
+    const off: string[] = [];
+    for (const f of files) {
+      for (const t of tablesOf(readFileSync(join(dir, f), 'utf8'))) {
+        for (const r of t.offBy) off.push(`${f} L${r.line}：${r.width} 栏（表头在 L${t.startLine}，${t.width} 栏）`);
+      }
+    }
+    expect(off, `表形错位 ⇒ ${off.slice(0, 8).join('；')}`).toEqual([]);
   });
 });

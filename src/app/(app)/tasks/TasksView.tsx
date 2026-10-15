@@ -23,7 +23,7 @@ import { taskPatchFor } from './tasks-local';
 import { applyCompletedFilter, tasksForGroup, withinUpcoming, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
 import { upcomingSections } from '@/lib/task/upcoming-groups';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
-import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASKS_INBOX_EMPTY } from '@/lib/task/official-copy';
+import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
 import { isOverdue, overdueLabel } from '@/lib/task/overdue';
 import { CANCELLED_LABEL } from '@/lib/editor/task-status';
 import { completedTaskClasses } from '@/lib/task/completed-appearance';
@@ -215,7 +215,9 @@ export function TasksView({ group }: { group: TaskGroup }) {
         ) : sectioned ? (
           <div className="flex flex-col gap-8">
             {sectioned.sections.length === 0 ? (
-              <GroupEmpty hint={sectioned.hasScheduled ? '全部完成！' : '这个分组里暂时没有任务'} />
+              <GroupEmpty
+                hint={sectioned.hasScheduled ? '全部完成！' : TASK_VIEW_EMPTY.upcoming}
+              />
             ) : (
               sectioned.sections.map((section) => (
                 <section key={section.key} data-testid="upcoming-section">
@@ -237,9 +239,7 @@ export function TasksView({ group }: { group: TaskGroup }) {
           <>
             <section className="mb-8">
               {visible.length === 0 ? (
-                <GroupEmpty
-                  hint={group === 'inbox' ? TASKS_INBOX_EMPTY : '这个分组里暂时没有任务'}
-                />
+                <GroupEmpty hint={TASK_VIEW_EMPTY[group]} />
               ) : active.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-border p-8 text-center">
                   <CheckSquare className="mx-auto mb-2 size-5 text-muted-foreground" />

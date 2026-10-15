@@ -10,6 +10,8 @@ import {
   TASKS_ADD_TASK_KEY,
   TASKS_INBOX_EMPTY,
   TASKS_INBOX_EMPTY_KEY,
+  TASK_VIEW_EMPTY,
+  TASK_VIEW_EMPTY_KEYS,
 } from './official-copy';
 
 /**
@@ -37,6 +39,22 @@ describe('the tasks page copy is the collected official text', () => {
 
   it('the empty-state button matches tasks.add.task', () => {
     expect(ledgerValue(TASKS_ADD_TASK_KEY)).toBe(TASKS_ADD_TASK);
+  });
+
+  /**
+   * G262: each of the four views has its own zero-state sentence — one shared line would erase the
+   * distinction between "nothing here" and "all done".
+   */
+  it.each(Object.entries(TASK_VIEW_EMPTY_KEYS))(
+    'the %s view empty state matches %s in the ledger',
+    (view, key) => {
+      expect(ledgerValue(key)).toBe(TASK_VIEW_EMPTY[view as keyof typeof TASK_VIEW_EMPTY]);
+    },
+  );
+
+  it('the four view sentences are all different', () => {
+    const lines = Object.values(TASK_VIEW_EMPTY);
+    expect(new Set(lines).size).toBe(lines.length);
   });
 
   it('fails loudly when the ledger does not contain a key at all', () => {

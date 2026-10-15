@@ -14,6 +14,26 @@ export const TASK_GROUP_LABELS = {
 export const TASKS_INBOX_EMPTY = '你的 Inbox 为空！准备就绪后即可添加任务。';
 export const TASKS_ADD_TASK = '添加任务';
 
+/**
+ * G262: the four task views each have their **own** empty sentence — the same zero state reads
+ * differently depending on what the view was supposed to hold. `tasks.zero.inbox` congratulates,
+ * `zero.today` reports the day is clear, `zero.upcoming` nudges toward scheduling, and `zero.all`
+ * is the plain first-run invitation.
+ */
+export const TASK_VIEW_EMPTY = {
+  inbox: '做得好，你的所有任务都已安排好！',
+  today: '你今天的任务都完成了！',
+  upcoming: '没有已安排的任务。为任务添加日期，保持进度不落下。',
+  all: '添加你的第一个任务即可开始。',
+} as const;
+
+export const TASK_VIEW_EMPTY_KEYS = {
+  inbox: 'tasks.zero.inbox',
+  today: 'tasks.zero.today',
+  upcoming: 'tasks.zero.upcoming',
+  all: 'tasks.zero.all',
+} as const satisfies Record<keyof typeof TASK_VIEW_EMPTY, string>;
+
 /** The i18n key each string must match in the ledger — kept next to the value so the test and
  *  the copy cannot drift apart independently. */
 export const TASK_GROUP_KEYS = {

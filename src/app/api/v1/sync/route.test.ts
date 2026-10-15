@@ -381,7 +381,9 @@ describe('POST /api/v1/sync', () => {
     }) } });
 
     const res = await POST(req({ records: [{
-      table: 'folder', id: 'f1', op: 'upsert', data: { name: 'x' },
+      // 用 favorite（无 createRequirements，单点动作本就是建行）：走到 create 抛错 ⇒ 整批 500。
+      // folder 现在配了闸，改名 patch 会被判 not_found、到不了 create —— 那由 G1513 那组用例覆盖。
+      table: 'favorite', id: 'fav1', op: 'upsert', data: { documentId: 'd1' },
       syncTs: '2026-09-28T12:00:00.000Z',
     }] }));
     expect(res.status).toBe(500);
@@ -445,7 +447,7 @@ describe('POST /api/v1/sync', () => {
     expect(create.mock.calls[0]![0]!.title).toBe('');
   });
 
-  it('G1505 闸按表配置：folder 无 createRequirements，陈旧文件夹行仍按既有语义建行（不整体锁死）', async () => {
+  it('G1505 闸按表配置：favorite 无 createRequirements，陈旧行仍按既有语义建行（不整体锁死）', async () => {
     const create = vi.fn(async () => ({}));
     const first = vi.fn(async () => null);
     const chain = { where: () => chain, first, update: vi.fn(), create };
@@ -453,13 +455,91 @@ describe('POST /api/v1/sync', () => {
       get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
     }) } });
 
+    // favorite 的"单点动作＝收藏"本就是建行语义 ⇒ 不许配闸（配了会把离线收藏判成 not_found）
     const res = await POST(req({ records: [{
-      table: 'folder', id: 'f9', op: 'upsert', data: { deletedAt: null },
+      table: 'favorite', id: 'fav9', op: 'upsert', data: { documentId: 'd1', deletedAt: null },
       syncTs: '2026-09-28T12:00:00.000Z',
     }] }));
     expect(res.status).toBe(200);
     expect((await res.json()).applied).toHaveLength(1);
     expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  it('G1513：folder 有 createRequirements ⇒ 陈旧行的"改名/移入回收站"不再铸出壳文件夹', async () => {
+    const create = vi.fn(async () => ({}));
+    const first = vi.fn(async () => null);
+    const chain = { where: () => chain, first, update: vi.fn(), create };
+    const docChain = { first: vi.fn(async () => null) };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : m === 'Document' ? docChain : chain),
+    }) } });
+
+    // 改名 patch 只带 name（缺 isDeleted）⇒ 不是离线新建 ⇒ 不 create，按 not_found 回传
+    const renamed = await POST(req({ records: [{
+      table: 'folder', id: 'stale-f', op: 'upsert', data: { name: '改了名' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect(renamed.status).toBe(200);
+    const rb = await renamed.json();
+    expect(rb.applied).toEqual([]);
+    expect(rb.rejected[0]).toMatchObject({ table: 'folder', id: 'stale-f', reason: 'not_found' });
+
+    // 移入回收站 patch 只带 isDeleted/deletedAt（缺 name）⇒ 同样拒绝
+    const trashed = await POST(req({ records: [{
+      table: 'folder', id: 'stale-f2', op: 'upsert',
+      data: { isDeleted: true, deletedAt: '2026-09-28T12:00:00.000Z' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await trashed.json()).rejected[0]).toMatchObject({ table: 'folder', reason: 'not_found' });
+
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('G1513：folder 的离线新建（带齐 name+isDeleted）照旧 create；task 的改排期不再铸壳', async () => {
+    const create = vi.fn(async () => ({}));
+    const first = vi.fn(async () => null);
+    const chain = { where: () => chain, first, update: vi.fn(), create };
+    const docChain = { first: vi.fn(async () => null) };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : m === 'Document' ? docChain : chain),
+    }) } });
+
+    const res = await POST(req({ records: [
+      { table: 'folder', id: 'new-f', op: 'upsert',
+        data: { name: '未命名文件夹', isDeleted: false, deletedAt: null },
+        syncTs: '2026-09-28T12:00:00.000Z' },
+      // task 改排期只带四列（缺 title）⇒ 陈旧行上不铸壳
+      { table: 'task', id: 'stale-t', op: 'upsert',
+        data: { dueDate: '2026-10-01T00:00:00.000Z' },
+        syncTs: '2026-09-28T12:00:00.000Z' },
+    ] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'folder', id: 'new-f' }]);
+    // 拒收的 syncTs 是服务端时钟（serverNow），不是 rec.syncTs
+    expect(body.rejected).toHaveLength(1);
+    expect(body.rejected[0]).toMatchObject({ table: 'task', id: 'stale-t', op: 'delete', reason: 'not_found' });
+    expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  it('G1513：whiteboard 改名（无内核新建通路）不铸壳；comment 加表情同样不铸壳', async () => {
+    const create = vi.fn(async () => ({}));
+    const first = vi.fn(async () => null);
+    const chain = { where: () => chain, first, update: vi.fn(), create };
+    const docChain = { first: vi.fn(async () => null) };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : m === 'Document' ? docChain : chain),
+    }) } });
+
+    const res = await POST(req({ records: [
+      { table: 'whiteboard', id: 'stale-wb', op: 'upsert', data: { name: '改了名' },
+        syncTs: '2026-09-28T12:00:00.000Z' },
+      { table: 'comment', id: 'stale-c', op: 'upsert', data: { reactions: [] },
+        syncTs: '2026-09-28T12:00:00.000Z' },
+    ] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected.map((r: any) => r.table)).toEqual(['whiteboard', 'comment']);
+    expect(create).not.toHaveBeenCalled();
   });
 
   it('G1505 第二副面孔：同 id 已在他人名下 → 按 not_found 拒绝，不再撞主键打崩整批', async () => {

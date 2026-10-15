@@ -186,10 +186,18 @@ describe('SYNC_TABLES coverage (R-9)', () => {
   });
 
   it('☆ G1505：铸造闸逐表配置（不整体锁死），且每一枚必需键都在 cols 里', () => {
-    // 配错的两种死法都在这里红：① 把 folder/favorite 一起锁死＝离线新建文件夹点不动；
-    // ② 必需键不在 cols＝payload 求交后永远带不上它＝那张表从此再也建不出行（静默死锁）。
+    // 配错的两种死法都在这里红：① 把 favorite／collection_* 这类"单点动作本就是建行"的表一起锁死
+    // ＝离线收藏/新建集合点不动；② 必需键不在 cols＝payload 求交后永远带不上它＝那张表再也建不出行。
+    // G1513：闸从 document 一表推广到"有真建行通路且单点动作会铸壳"的六表。
     const gated = SYNC_TABLES.filter(d => (d.createRequires?.length ?? 0) > 0);
-    expect(gated.map(d => d.table)).toEqual(['document']);
+    expect(gated.map(d => d.table)).toEqual(
+      ['document', 'folder', 'task', 'comment', 'comment_thread', 'whiteboard'],
+    );
+    // 反面：这几枚**不许**配闸——它们的单点动作（收藏）或复合键写入（打标）本就是建行语义，
+    // 配了就会把正常操作判成 not_found。
+    for (const t of ['favorite', 'document_tag', 'collection_property', 'collection_view']) {
+      expect(SYNC_TABLES.find(d => d.table === t)?.createRequires ?? []).toEqual([]);
+    }
     for (const d of gated) {
       for (const k of d.createRequires ?? []) {
         expect(d.cols, `${d.table}.${k} 不在 cols ⇒ 离线新建永远过不了这道闸`).toContain(k);

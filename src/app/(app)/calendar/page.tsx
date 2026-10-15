@@ -18,6 +18,8 @@ import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { CalendarTaskRow } from '@/components/calendar/CalendarTaskRow';
 import { CalendarTimeline } from '@/components/calendar/CalendarTimeline';
+import { useCompletedTaskAppearance } from '@/components/task/use-completed-appearance';
+import { completedTaskClasses } from '@/lib/task/completed-appearance';
 import { applyCompletedFilter } from '@/lib/task/grouping';
 import { agendaDays, revealPreviousDays } from '@/lib/calendar/previous-days';
 import { dayInSpan, spanOf, type CalendarSpan } from '@/lib/calendar/week-view';
@@ -37,6 +39,8 @@ export default function CalendarPage() {
   const [span, setSpan] = useState<CalendarSpan>('month');
   // 官方把日历页做成纵向按日时间轴，月格只是另一个视图（G43），所以时间轴是默认视图。
   const [view, setView] = useState<'timeline' | 'grid'>('timeline');
+  // G160：日历「前几天」列表里的已完成任务行也吃同一档外观
+  const completedAppearance = useCompletedTaskAppearance();
   const [laterMonths, setLaterMonths] = useState(0);
   const today = useMemo(() => new Date(), []);
 
@@ -223,7 +227,10 @@ export default function CalendarPage() {
                             </Link>
                           )}
                           {dayTasks.map((task) => (
-                            <p key={task.id} className={cn('truncate text-sm', task.isCompleted && 'text-muted-foreground line-through')}>
+                            <p
+                              key={task.id}
+                              className={cn('truncate text-sm', task.isCompleted && completedTaskClasses(completedAppearance))}
+                            >
                               {task.title}
                             </p>
                           ))}

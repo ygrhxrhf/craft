@@ -7,13 +7,17 @@ import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 const themeValues = new Set(['light', 'dark', 'system']);
 const fontValues = new Set(['inter', 'serif', 'mono', 'rounded']);
 const widthValues = new Set(['narrow', 'default', 'wide']);
+// G160：已完成任务的外观三档（官方 preferences.advanced.completed.task.appearance.*＝淡化/删除线/无）
+const completedAppearanceValues = new Set(['faded', 'strike', 'none']);
 
 function validate(kind: string, value: string): string {
   const allowed = kind === 'theme'
     ? themeValues
     : kind === 'editorFont'
       ? fontValues
-      : widthValues;
+      : kind === 'completedTaskAppearance'
+        ? completedAppearanceValues
+        : widthValues;
   if (!allowed.has(value)) throw new Error('无效的偏好值');
   return value;
 }
@@ -30,6 +34,7 @@ export type Preferences = {
   theme: string;
   editorFont: string;
   editorWidth: string;
+  completedTaskAppearance: string;
   notifyComments: boolean;
   notifyReminders: boolean;
   notifyDaily: boolean;
@@ -47,6 +52,7 @@ export async function getPreferences(): Promise<Preferences> {
     theme: string;
     editorFont: string;
     editorWidth: string;
+    completedTaskAppearance: string;
     notifyComments: boolean;
     notifyReminders: boolean;
     notifyDaily: boolean;
@@ -55,6 +61,7 @@ export async function getPreferences(): Promise<Preferences> {
     theme: row.theme,
     editorFont: row.editorFont,
     editorWidth: row.editorWidth,
+    completedTaskAppearance: row.completedTaskAppearance,
     notifyComments: row.notifyComments,
     notifyReminders: row.notifyReminders,
     notifyDaily: row.notifyDaily,
@@ -65,6 +72,7 @@ export async function updatePreferences(data: {
   theme?: string;
   editorFont?: string;
   editorWidth?: string;
+  completedTaskAppearance?: string;
   notifyComments?: boolean;
   notifyReminders?: boolean;
   notifyDaily?: boolean;
@@ -77,6 +85,9 @@ export async function updatePreferences(data: {
   if (data.theme !== undefined) update.theme = validate('theme', data.theme);
   if (data.editorFont !== undefined) update.editorFont = validate('editorFont', data.editorFont);
   if (data.editorWidth !== undefined) update.editorWidth = validate('editorWidth', data.editorWidth);
+  if (data.completedTaskAppearance !== undefined) {
+    update.completedTaskAppearance = validate('completedTaskAppearance', data.completedTaskAppearance);
+  }
   for (const kind of switchPreferences) {
     if (kind in data) update[kind] = validateSwitch(data[kind]);
   }

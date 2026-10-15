@@ -12,6 +12,8 @@ model User {
   notifyComments   Boolean @default(true)
   notifyReminders  Boolean @default(true)
   notifyDaily      Boolean @default(true)
+  // G160：已完成任务的外观三档（官方 preferences.advanced.completed.task.appearance.*＝淡化/删除线/无）
+  completedTaskAppearance String @default("strike") // "faded" | "strike" | "none"
   createdAt     TimestamptzString @default(now())
   updatedAt     temporal.updatedAtString()
 

@@ -18,6 +18,12 @@ import { ACCENTS as ACCENT_KEYS, pickAccent, readAccent, type Accent } from '@/l
 import { Switch } from '@/components/ui/switch';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
 import { cn } from 'cn';
+import {
+  COMPLETED_TASK_APPEARANCE_DESC,
+  COMPLETED_TASK_APPEARANCE_LABELS,
+  COMPLETED_TASK_APPEARANCE_TITLE,
+  COMPLETED_TASK_APPEARANCES,
+} from '@/lib/task/completed-appearance';
 import { ShortcutsPanel } from './ShortcutsPanel';
 
 interface PanelProps {
@@ -141,7 +147,12 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       .catch(() => setPrefs(null));
   }, []);
 
-  const setPref = async (patch: Partial<{ theme: string; editorFont: string; editorWidth: string }>) => {
+  const setPref = async (patch: Partial<{
+    theme: string;
+    editorFont: string;
+    editorWidth: string;
+    completedTaskAppearance: string;
+  }>) => {
     // A click can land before the initial preferences fetch resolves; join it instead of dropping it.
     const base = prefs ?? (await getPreferences().catch(() => null));
     if (!base) return;
@@ -333,6 +344,27 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                   )}
                 >
                   {label}
+                </button>
+              ))}
+            </div>
+          </RowCard>
+          {/* G160：官方 preferences.advanced.completed.task.appearance.*（标题/说明/三档标签逐字） */}
+          <RowCard className="px-4 py-3">
+            <div className="text-[13px] font-medium">{COMPLETED_TASK_APPEARANCE_TITLE}</div>
+            <p className="mt-0.5 text-[12px] text-muted-foreground">{COMPLETED_TASK_APPEARANCE_DESC}</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {COMPLETED_TASK_APPEARANCES.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-label={`完成任务的外观：${COMPLETED_TASK_APPEARANCE_LABELS[value]}`}
+                  onClick={() => setPref({ completedTaskAppearance: value })}
+                  className={cn(
+                    'rounded-lg px-3 py-1.5 text-[13px] transition-colors hover:bg-foreground/4',
+                    prefs?.completedTaskAppearance === value && 'bg-foreground/8 font-medium'
+                  )}
+                >
+                  {COMPLETED_TASK_APPEARANCE_LABELS[value]}
                 </button>
               ))}
             </div>

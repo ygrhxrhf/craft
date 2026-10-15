@@ -5,6 +5,8 @@ import { CheckSquare } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { isOverdue, overdueLabel } from '@/lib/task/overdue';
 import { CancelledBadge } from '@/components/task/cancelled-badge';
+import { useCompletedTaskAppearance } from '@/components/task/use-completed-appearance';
+import { completedTaskClasses } from '@/lib/task/completed-appearance';
 import type { TaskItem } from '@/actions/task/task';
 import { cn } from 'cn';
 
@@ -20,13 +22,14 @@ export function CalendarTaskRow({
   task: TaskItem;
   onToggle: (id: string) => void;
 }) {
+  const appearance = useCompletedTaskAppearance();
   return (
     <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/60">
       <Checkbox checked={task.isCompleted} onCheckedChange={() => onToggle(task.id)} />
       <span
         className={cn(
           'flex-1 truncate text-sm',
-          (task.isCompleted || task.status === 'cancelled') && 'text-muted-foreground line-through'
+          (task.isCompleted || task.status === 'cancelled') && completedTaskClasses(appearance)
         )}
       >
         {task.title}

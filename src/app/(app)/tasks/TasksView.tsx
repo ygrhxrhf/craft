@@ -26,6 +26,8 @@ import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASKS_INBOX_EMPTY } from '@/lib/task/official-copy';
 import { isOverdue, overdueLabel } from '@/lib/task/overdue';
 import { CANCELLED_LABEL } from '@/lib/editor/task-status';
+import { completedTaskClasses } from '@/lib/task/completed-appearance';
+import { useCompletedTaskAppearance } from '@/components/task/use-completed-appearance';
 import { CancelledBadge } from '@/components/task/cancelled-badge';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
@@ -58,6 +60,9 @@ export function TasksView({ group }: { group: TaskGroup }) {
   useEffect(() => {
     load();
   }, [load]);
+
+  // G160：已完成任务的外观走本机 user 镜像（改设置页 → applyLocal → onStoreChanged('user') 即时生效）
+  const appearance = useCompletedTaskAppearance();
 
   /**
    * 离线优先写：applyLocal 只落本地 store + 入队，**不等 flush**（去抖 2s）。
@@ -222,7 +227,7 @@ export function TasksView({ group }: { group: TaskGroup }) {
                     items={section.blocks}
                     onToggle={handleToggle}
                     onDelete={handleDelete}
-                    onSchedule={handleSchedule}
+                    onSchedule={handleSchedule} appearance={appearance}
                   />
                 </section>
               ))
@@ -247,7 +252,7 @@ export function TasksView({ group }: { group: TaskGroup }) {
                   items={active}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onSchedule={handleSchedule}
+                  onSchedule={handleSchedule} appearance={appearance}
                 />
               )}
             </section>
@@ -261,7 +266,7 @@ export function TasksView({ group }: { group: TaskGroup }) {
                   items={completed}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onSchedule={handleSchedule}
+                  onSchedule={handleSchedule} appearance={appearance}
                 />
               </section>
             )}
@@ -274,7 +279,7 @@ export function TasksView({ group }: { group: TaskGroup }) {
                   items={cancelled}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onSchedule={handleSchedule}
+                  onSchedule={handleSchedule} appearance={appearance}
                 />
               </section>
             )}
@@ -310,16 +315,25 @@ function TaskList({
   onToggle,
   onDelete,
   onSchedule,
+  appearance,
 }: {
   items: TaskItem[];
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onSchedule: (id: string, schedule: TaskSchedule) => Promise<void>;
+  appearance: 'faded' | 'strike' | 'none';
 }) {
   return (
     <div className="flex flex-col">
       {items.map((task) => (
-        <TaskRow key={task.id} task={task} onToggle={onToggle} onDelete={onDelete} onSchedule={onSchedule} />
+        <TaskRow
+          key={task.id}
+          task={task}
+          onToggle={onToggle}
+          onDelete={onDelete}
+          onSchedule={onSchedule}
+          appearance={appearance}
+        />
       ))}
     </div>
   );
@@ -367,11 +381,13 @@ function TaskRow({
   onToggle,
   onDelete,
   onSchedule,
+  appearance,
 }: {
   task: TaskItem;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onSchedule: (id: string, schedule: TaskSchedule) => Promise<void>;
+  appearance: 'faded' | 'strike' | 'none';
 }) {
   const [open, setOpen] = useState(false);
   const schedule = {
@@ -392,7 +408,7 @@ function TaskRow({
         <span
           className={cn(
             'flex-1 truncate text-sm',
-            (task.isCompleted || task.status === 'cancelled') && 'text-muted-foreground line-through'
+            (task.isCompleted || task.status === 'cancelled') && completedTaskClasses(appearance)
           )}
         >
           {task.title}

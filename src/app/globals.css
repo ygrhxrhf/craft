@@ -1106,6 +1106,19 @@
   }
 }
 
+/* 「完成任务的外观」三档（G160）。上面 `.tiptap` 里那条 `[data-checked="true"]` 规则＝默认档
+   （删除线）；这里按偏好改写它：`faded` 只弱化文字色、`none` 原样。偏好写在**编辑器根节点**上
+   （`.tiptap` 自己带 data-completed-appearance），所以选择器必须是 `.tiptap[...]` 而不是后代 ——
+   母块里的后代写法匹配不到，这是第一版会失效的原因。取消行不在此列：它始终保留删除线。 */
+.tiptap[data-completed-appearance='faded'] .task-list-item[data-checked='true'] > div > p {
+  text-decoration: none;
+}
+
+.tiptap[data-completed-appearance='none'] .task-list-item[data-checked='true'] > div > p {
+  text-decoration: none;
+  color: inherit;
+}
+
 /* ═══════════════════════════════════════════
    Calendar markers
    ═══════════════════════════════════════════ */

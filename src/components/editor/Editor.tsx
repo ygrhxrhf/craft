@@ -26,6 +26,7 @@ import { syncBacklinks } from '@/actions/document/backlinks';
 import { syncDocumentTasks } from '@/actions/task/task';
 import { pmNodeText } from '@/lib/search/extract';
 import { ALIGNABLE_TYPES } from '@/lib/editor/format-presence';
+import { useCompletedTaskAppearance } from '@/components/task/use-completed-appearance';
 import { EditorBubbleMenu } from './bubble-menu/BubbleMenu';
 import { AiBubbleMenu } from './bubble-menu/AiBubbleMenu';
 import { ImageGenDialogHost } from './ai/ImageGenDialog';
@@ -731,6 +732,10 @@ export function Editor({
     };
   }, [editor]);
 
+  // G160：正文里的待办勾选行也吃同一档「完成任务的外观」。和拼写开关同理——偏好会在编辑器建好
+  // 之后才从本机镜像读到／被设置页改掉，所以写进 editable 的 data 属性由 CSS 接管，而不是建编辑器时定死。
+  const completedAppearance = useCompletedTaskAppearance();
+
   // `editorProps` is read once, when the editor is created. The spell-check switch lives on the page,
   // so it has to be written onto the editable after the fact or toggling it would do nothing.
   useEffect(() => {
@@ -739,7 +744,8 @@ export function Editor({
     dom.setAttribute('spellcheck', spelling ? 'true' : 'false');
     if (spelling && spellingLang) dom.setAttribute('lang', spellingLang);
     else dom.removeAttribute('lang');
-  }, [editor, spelling, spellingLang]);
+    dom.setAttribute('data-completed-appearance', completedAppearance);
+  }, [editor, spelling, spellingLang, completedAppearance]);
 
   if (!editor) return null;
 

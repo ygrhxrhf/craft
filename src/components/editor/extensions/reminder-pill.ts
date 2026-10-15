@@ -5,7 +5,14 @@ import type { EditorView } from '@tiptap/pm/view';
 
 import { REMINDER_ACTIONS, reminderPillLabel } from '@/lib/task/reminder-pill';
 import { REMIND_PRESETS } from '@/lib/task/remind-presets';
-import { clearTaskReminder, setTaskReminder } from '@/components/editor/drag-handle/block-actions';
+import {
+  RESCHEDULE_CONFIRM_LABEL,
+  RESCHEDULE_REMINDER_DESC,
+  RESCHEDULE_REMINDER_TITLE,
+  needsRescheduleConfirm,
+} from '@/lib/task/reminder-reschedule';
+import { confirmDialog } from '@/lib/dialog/show';
+import { clearTaskReminder, setTaskReminder, taskItemTarget } from '@/components/editor/drag-handle/block-actions';
 
 export const REMINDER_PILL_KEY = new PluginKey('reminderPill');
 
@@ -48,6 +55,7 @@ function menuItem(label: string, onPick: () => void): HTMLButtonElement {
 /**
  * The pill's own menu (G1468): 标记为已解决, 改期, 移除提醒. The first and the last both end with
  * the reminder gone; 改期 reopens the seven presets, since that is the only reschedule surface.
+ * ☆ G87：块上已有**即将到期**的提醒时，改期要先确认（官方那对逐字句），过了就照旧直接开七档。
  */
 function openReminderMenu(anchor: HTMLElement, view: EditorView, pos: number) {
   closeReminderMenu();
@@ -66,6 +74,17 @@ function openReminderMenu(anchor: HTMLElement, view: EditorView, pos: number) {
       menuItem(action.label, () => {
         if (action.id === 'reschedule') {
           closeReminderMenu();
+          const current = taskItemTarget(view.state, blockIndexAt(view, pos))?.node.attrs.remindAt;
+          if (needsRescheduleConfirm(current)) {
+            void confirmDialog({
+              title: RESCHEDULE_REMINDER_TITLE,
+              message: RESCHEDULE_REMINDER_DESC,
+              confirmLabel: RESCHEDULE_CONFIRM_LABEL,
+            }).then((confirmed) => {
+              if (confirmed) openPresetMenu(anchor, view, pos);
+            });
+            return;
+          }
           openPresetMenu(anchor, view, pos);
           return;
         }

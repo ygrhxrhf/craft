@@ -54,4 +54,16 @@ describe('gap.md 一致面闸：正文写过「清 Gx」的行必须回填判定
     }
     expect(stale, `这些行是"批表登记快照未回填"的漏项 ⇒ ${stale.join('；')}`).toEqual([]);
   });
+
+  it('G 号唯一（上面的 `verdicts` 只取每个号的首行 ⇒ 重号会让所有以它为准的判据失准）', () => {
+    const counts = new Map<string, number>();
+    for (const line of text.split(/\r?\n/)) {
+      const m = /^\|\s*G(\d{3,4})\s*\|/.exec(line);
+      if (!m) continue;
+      counts.set(m[1], (counts.get(m[1]) ?? 0) + 1);
+    }
+    const dups = [...counts].filter(([, n]) => n > 1).map(([id, n]) => `G${id}×${n}`);
+    expect(counts.size, '一行 G 行都没解析到＝表格形状变了').toBeGreaterThan(500);
+    expect(dups, `重号 ⇒ ${dups.join('、')}`).toEqual([]);
+  });
 });

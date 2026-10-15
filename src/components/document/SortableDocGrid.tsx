@@ -28,6 +28,8 @@ interface SortableDoc {
   updatedAt: string;
   createdAt?: string | null;
   lastViewedAt?: string | null;
+  /** G248: carried through to the list row's content-summary subtitle. */
+  plainText?: string | null;
 }
 
 /**

@@ -15,6 +15,7 @@ import {
   columnWidthValue,
 } from '@/lib/browse/list-columns';
 import { relativeTime } from '@/lib/document/relative-time';
+import { rowSubtitle } from '@/lib/browse/row-subtitle';
 
 interface ListDoc {
   id: string;
@@ -23,6 +24,8 @@ interface ListDoc {
   updatedAt: string;
   createdAt?: string | null;
   lastViewedAt?: string | null;
+  /** G248: the row's subtitle comes from the body, not from a date. */
+  plainText?: string | null;
 }
 
 /**
@@ -120,7 +123,13 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
             ) : (
               <File className="size-4 shrink-0 text-foreground/40" />
             )}
-            <span className={cn('truncate', LIST_TITLE_TYPOGRAPHY)}>{doc.title}</span>
+            <div className="flex min-w-0 flex-col">
+              <span className={cn('truncate', LIST_TITLE_TYPOGRAPHY)}>{doc.title}</span>
+              {/* G248：行副标题是内容摘要回退链（正文预览→「空文档」→「/」），不是日期。 */}
+              <span className="truncate text-meta text-foreground/45">
+                {rowSubtitle({ plainText: doc.plainText })}
+              </span>
+            </div>
           </div>
           <div
             className={cn(

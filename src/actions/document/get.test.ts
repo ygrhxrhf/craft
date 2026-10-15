@@ -178,9 +178,12 @@ describe('the other document list reads', () => {
     const rows = await getRecentDocuments(8);
     expect(rows.map((r) => (r as { id: string }).id)).toContain(documentId);
     // `createdAt` joined the projection for the list layout's 已创建 column (G1113); the grid
-    // simply ignores it. The guard still holds: nothing else may ride along.
+    // simply ignores it. `plainText` joined for the list row's content-summary subtitle (G248).
+    // The guard still holds: nothing else may ride along.
     expect(keys(rows)).toEqual(
-      rows.map(() => ['createdAt', 'icon', 'id', 'role', 'title', 'updatedAt'].sort())
+      rows.map(() =>
+        ['createdAt', 'icon', 'id', 'plainText', 'role', 'title', 'updatedAt'].sort()
+      )
     );
     // The collaborator branch has its own projection; nothing else in this file reaches it.
     const shared = rows.find((r) => (r as { id: string }).id === sharedId) as

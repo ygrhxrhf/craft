@@ -31,6 +31,14 @@ export interface SyncManager {
   resume(): Promise<void>;                     // R-12：清 paused → pull + flush（SPA 登录后恢复）
   applyLocal(o: ApplyLocalOpts): Promise<void>; // 写本地 + 入队 + debounce flush（不等 flush）
   flushNow(): Promise<void>;                     // 清 debounce 立即 push：新建后跳转等需要服务端先可见的场景
+  /**
+   * G1516：把内核那座库交给读侧门面（`components/sync/local-records.ts`）。
+   * ☆ 此前读侧**另开一份 store 单例**：浏览器上看不出（idb 按库名开，两个句柄指同一座库），
+   *   而桌面 `createSqliteStore()` 写死 `:memory:` ⇒ 两个句柄＝两座互不相通的库（G1516 的机制本体）。
+   * 这里给的是**已经过了开库闸门**的那一座（`await ensureInit()` 之后返回），
+   * 于是读侧既不必自管 init，也不会绕过内核闸门。
+   */
+  readyStore(): Promise<SyncStore>;
   status(): SyncStatus;
   pendingCount(): Promise<number>;
   subscribe(cb: (s: SyncStatus, pending: number) => void): () => void; // 指示器订阅
@@ -434,6 +442,11 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     flushNow: () => {
       clearDebounce();
       return flush();
+    },
+    // G1516：读侧门面要的那座库——先过开库闸门，再把**同一个**句柄交出去
+    readyStore: async () => {
+      await ensureInit();
+      return base;
     },
     status: () => status,
     pendingCount: () => queue.pendingCount(),

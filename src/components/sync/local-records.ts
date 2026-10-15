@@ -2,17 +2,15 @@
 // UI 读侧与 sync 本地库（IndexedDB）之间的桥：
 // 服务端 action 返回的是「推送前」的旧数据，本地 applyLocal 的写要靠 pending 队列
 // 覆盖（mergePending）才能即时可见；flush ack 后服务端即权威，pending 自然清空。
-import { createIdbStore } from '@/lib/sync-core/adapter-idb';
-import { createSqliteStore } from '@/lib/sync-core/adapter-sqlite';
-import { storageBackend } from '@/lib/platform';
+// G1516：读侧**不再自开一份 store 单例**——向内核要那座库（`readyStore()`，已过开库闸门）。
+//   以前两处各开一份：浏览器上看不出（idb 按库名开、两个句柄指同一座库），而桌面
+//   `createSqliteStore()` 写死 `:memory:` ⇒ 两座互不相通的库（离线写入既不上屏也不跨重启）。
+import { getSyncManager } from '@/lib/sync-core';
 import type { SyncStore } from '@/lib/sync-core/store';
 
-let store: SyncStore | null = null;
-
 async function getStore(): Promise<SyncStore> {
-  if (!store) store = storageBackend() === 'sqlite' ? createSqliteStore() : createIdbStore();
-  await store.init();   // 幂等：已 init 直接返回
-  return store;
+  // ☆ 内核门面自己会先开库（G1514／G1518），这里不必再 `store.init()`
+  return await getSyncManager().readyStore();
 }
 
 export interface PendingRow {

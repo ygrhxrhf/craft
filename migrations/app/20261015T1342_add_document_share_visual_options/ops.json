@@ -1,0 +1,170 @@
+[
+  {
+    "id": "column.public.document_shares.hidePresentationMode",
+    "label": "Add column \"hidePresentationMode\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "hidePresentationMode",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"hidePresentationMode\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "hidePresentationMode"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"hidePresentationMode\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"hidePresentationMode\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"hidePresentationMode\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "hidePresentationMode"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.hideTableOfContents",
+    "label": "Add column \"hideTableOfContents\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "hideTableOfContents",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"hideTableOfContents\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "hideTableOfContents"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"hideTableOfContents\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"hideTableOfContents\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"hideTableOfContents\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "hideTableOfContents"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.showPageTitle",
+    "label": "Add column \"showPageTitle\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showPageTitle",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showPageTitle\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "showPageTitle"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showPageTitle\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"showPageTitle\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showPageTitle\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "showPageTitle"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.showWatermark",
+    "label": "Add column \"showWatermark\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showWatermark",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showWatermark\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "showWatermark"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showWatermark\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"showWatermark\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showWatermark\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "showWatermark"
+        ]
+      }
+    ]
+  }
+]

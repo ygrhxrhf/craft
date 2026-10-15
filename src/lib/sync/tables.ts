@@ -51,7 +51,7 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'comment', model: 'Comment', cols: ['id','threadId','userId','body','reactions','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['threadId'] },
   // G1513：comment_thread 的单点动作＝解决 {resolved}／删除 {deletedAt}；离线新建一定带 documentId。
   { table: 'comment_thread', model: 'CommentThread', cols: ['id','documentId','blockId','blockText','resolved','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['documentId'] },
-  { table: 'document_share', model: 'DocumentShare', cols: ['id','documentId','token','slug','passcode','isPublished','permission','showAuthor','shareVersion','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  { table: 'document_share', model: 'DocumentShare', cols: ['id','documentId','token','slug','passcode','isPublished','permission','showAuthor','showPageTitle','hideTableOfContents','hidePresentationMode','showWatermark','shareVersion','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // document_member：contract 有 updatedAt、无 deletedAt（移除仍是服务端硬删，不走墓碑）
   { table: 'document_member', model: 'DocumentMember', cols: ['id','documentId','userId','role','addedBy','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // notification：服务端生成的提醒，tsCol=updatedAt（contract 已有该列，解决时 bump）

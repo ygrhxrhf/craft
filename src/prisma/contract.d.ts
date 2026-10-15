@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'207324b7ddc004692c6be48aa22a557c977c6d038f7a1c4285763b2f04465958'>;
+  StorageHashBase<'7a3412f9c8cbefe3993dd398e5abacdea70810a3dbf26c7739e4ec1a8785d4d6'>;
 export type ExecutionHash =
   ExecutionHashBase<'5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b'>;
 export type ProfileHash =
@@ -379,6 +379,10 @@ export type FieldOutputTypes = {
       readonly isPublished: CodecTypes['pg/bool@1']['output'];
       readonly permission: CodecTypes['pg/text@1']['output'];
       readonly showAuthor: CodecTypes['pg/bool@1']['output'];
+      readonly showPageTitle: CodecTypes['pg/bool@1']['output'];
+      readonly hideTableOfContents: CodecTypes['pg/bool@1']['output'];
+      readonly hidePresentationMode: CodecTypes['pg/bool@1']['output'];
+      readonly showWatermark: CodecTypes['pg/bool@1']['output'];
       readonly shareVersion: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -651,6 +655,10 @@ export type FieldInputTypes = {
       readonly isPublished: CodecTypes['pg/bool@1']['input'];
       readonly permission: CodecTypes['pg/text@1']['input'];
       readonly showAuthor: CodecTypes['pg/bool@1']['input'];
+      readonly showPageTitle: CodecTypes['pg/bool@1']['input'];
+      readonly hideTableOfContents: CodecTypes['pg/bool@1']['input'];
+      readonly hidePresentationMode: CodecTypes['pg/bool@1']['input'];
+      readonly showWatermark: CodecTypes['pg/bool@1']['input'];
       readonly shareVersion: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -891,12 +899,16 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly documentId: CodecTypes['pg/text@1']['output'];
+      readonly hidePresentationMode: CodecTypes['pg/bool@1']['output'];
+      readonly hideTableOfContents: CodecTypes['pg/bool@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly isPublished: CodecTypes['pg/bool@1']['output'];
       readonly passcode: CodecTypes['pg/text@1']['output'] | null;
       readonly permission: CodecTypes['pg/text@1']['output'];
       readonly shareVersion: CodecTypes['pg/int4@1']['output'];
       readonly showAuthor: CodecTypes['pg/bool@1']['output'];
+      readonly showPageTitle: CodecTypes['pg/bool@1']['output'];
+      readonly showWatermark: CodecTypes['pg/bool@1']['output'];
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
       readonly token: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1163,12 +1175,16 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly documentId: CodecTypes['pg/text@1']['input'];
+      readonly hidePresentationMode: CodecTypes['pg/bool@1']['input'];
+      readonly hideTableOfContents: CodecTypes['pg/bool@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly isPublished: CodecTypes['pg/bool@1']['input'];
       readonly passcode: CodecTypes['pg/text@1']['input'] | null;
       readonly permission: CodecTypes['pg/text@1']['input'];
       readonly shareVersion: CodecTypes['pg/int4@1']['input'];
       readonly showAuthor: CodecTypes['pg/bool@1']['input'];
+      readonly showPageTitle: CodecTypes['pg/bool@1']['input'];
+      readonly showWatermark: CodecTypes['pg/bool@1']['input'];
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
       readonly token: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1642,6 +1658,10 @@ export namespace Models {
     isPublished: CodecTypes['pg/bool@1']['output'];
     permission: CodecTypes['pg/text@1']['output'];
     showAuthor: CodecTypes['pg/bool@1']['output'];
+    showPageTitle: CodecTypes['pg/bool@1']['output'];
+    hideTableOfContents: CodecTypes['pg/bool@1']['output'];
+    hidePresentationMode: CodecTypes['pg/bool@1']['output'];
+    showWatermark: CodecTypes['pg/bool@1']['output'];
     shareVersion: CodecTypes['pg/int4@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2665,6 +2685,42 @@ type ContractBase = Omit<
                   };
                 };
                 readonly showAuthor: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly showPageTitle: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly hideTableOfContents: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly hidePresentationMode: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly showWatermark: {
                   readonly nativeType: 'bool';
                   readonly codecId: 'pg/bool@1';
                   readonly nullable: false;
@@ -5288,6 +5344,22 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly showPageTitle: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly hideTableOfContents: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly hidePresentationMode: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly showWatermark: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly shareVersion: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -5340,6 +5412,10 @@ type ContractBase = Omit<
                 readonly isPublished: { readonly column: 'isPublished' };
                 readonly permission: { readonly column: 'permission' };
                 readonly showAuthor: { readonly column: 'showAuthor' };
+                readonly showPageTitle: { readonly column: 'showPageTitle' };
+                readonly hideTableOfContents: { readonly column: 'hideTableOfContents' };
+                readonly hidePresentationMode: { readonly column: 'hidePresentationMode' };
+                readonly showWatermark: { readonly column: 'showWatermark' };
                 readonly shareVersion: { readonly column: 'shareVersion' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };

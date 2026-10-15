@@ -69,7 +69,8 @@ export default async function PublishPage({ params }: PublishPageProps) {
       pageStyle={doc.pageStyle}
       styled
       authorByline={doc.showAuthor ? authorByline(doc.authorName) : null}
-      header={<PublicDocBanner />}
+      showPageTitle={doc.showPageTitle}
+      header={<PublicDocBanner showWatermark={doc.showWatermark} />}
     />
   );
 }

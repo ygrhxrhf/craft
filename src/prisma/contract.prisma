@@ -370,6 +370,11 @@ model DocumentShare {
   permission   String   @default("view") // "view" | "edit"
   // G38：发布页「显示作者」（官方 showAuthor 默认 true）——只影响公开页渲不渲染作者署名。
   showAuthor   Boolean  @default(true)
+  // G1534：visual.options 其余四组（官方默认值见 publishing.md:17 的 Pa 表）。
+  showPageTitle        Boolean @default(true)  // 显示标题（hideTableOfContents 的兄弟档）
+  hideTableOfContents  Boolean @default(false) // 显示目录
+  hidePresentationMode Boolean @default(false) // 显示演示模式
+  showWatermark        Boolean @default(true)  // 显示"Created With Craft"页脚
   shareVersion Int      @default(0)
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()

@@ -27,9 +27,11 @@ import {
   setSharePublished,
   setShareShowAuthor,
   setShareSlug,
+  setShareVisualOption,
 } from '@/actions/document/share';
 import type { DocumentSharePermission } from '@/lib/share/permission';
 import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
+import { VISUAL_OPTIONS, visualOptionStatus } from '@/lib/share/visual-options';
 import { cn } from 'cn';
 import { getSyncManager } from '@/lib/sync-core';
 import { findDocumentShare, findDocumentShareId } from '@/components/sync/local-records';
@@ -49,6 +51,13 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [link, setLink] = useState<string | null>(null);
   const [isPublished, setIsPublished] = useState(false);
   const [showAuthor, setShowAuthor] = useState(true);
+  // G1534：visual.options 其余四组（键与 document_share 列同名）。
+  const [visuals, setVisuals] = useState<Record<string, boolean>>({
+    showPageTitle: true,
+    hideTableOfContents: false,
+    hidePresentationMode: false,
+    showWatermark: true,
+  });
   const [permission, setPermission] = useState<DocumentSharePermission | null>(null);
   const [shareId, setShareId] = useState<string | null>(null);
   const [serverVersion, setServerVersion] = useState(0);
@@ -76,6 +85,14 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       setLink(`${window.location.origin}/s/${view.token}`);
       if (typeof view.isPublished === 'boolean') setIsPublished(view.isPublished);
       if (typeof view.showAuthor === 'boolean') setShowAuthor(view.showAuthor);
+      setVisuals((prev) => {
+        const next = { ...prev };
+        for (const key of ['showPageTitle', 'hideTableOfContents', 'hidePresentationMode', 'showWatermark'] as const) {
+          const value = view[key];
+          if (typeof value === 'boolean') next[key] = value;
+        }
+        return next;
+      });
       if (view.permission === 'view' || view.permission === 'edit') setPermission(view.permission);
       if (typeof view.shareVersion === 'number') setServerVersion(view.shareVersion);
       if (typeof view.hasPasscode === 'boolean') setHasPasscode(view.hasPasscode);
@@ -171,6 +188,21 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
         });
       } else {
         await setShareShowAuthor(documentId, checked);
+      }
+    });
+  };
+
+  const handleVisualOption = (
+    key: 'showPageTitle' | 'hideTableOfContents' | 'hidePresentationMode' | 'showWatermark',
+    checked: boolean,
+  ) => {
+    setVisuals((prev) => ({ ...prev, [key]: checked }));
+    startTransition(async () => {
+      const shareId = await findDocumentShareId(documentId);
+      if (shareId) {
+        await getSyncManager().applyLocal({ table: 'document_share', id: shareId, patch: { [key]: checked } });
+      } else {
+        await setShareVisualOption(documentId, key, checked);
       }
     });
   };
@@ -340,6 +372,35 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   aria-label={SHOW_AUTHOR_LABEL}
                 />
               </div>
+              {/* G1534：visual.options 其余四组（标题／目录／演示模式／页脚），逐组开关名＋成对状态句。 */}
+              {VISUAL_OPTIONS.map((option) => {
+                const key = option.labelKey === 'toolbar.show.title'
+                  ? 'showPageTitle'
+                  : option.labelKey === 'toolbar.show.toc.title'
+                    ? 'hideTableOfContents'
+                    : option.labelKey === 'toolbar.show.presentation.mode'
+                      ? 'hidePresentationMode'
+                      : 'showWatermark';
+                const on = key === 'hideTableOfContents' || key === 'hidePresentationMode'
+                  ? !visuals[key]
+                  : visuals[key];
+                return (
+                  <div
+                    key={key}
+                    className="mt-3 flex items-center justify-between rounded-md border border-border px-3 py-2.5"
+                  >
+                    <div>
+                      <p className="text-sm">{option.label}</p>
+                      <p className="text-xs text-muted-foreground">{visualOptionStatus(option, on)}</p>
+                    </div>
+                    <Switch
+                      checked={on}
+                      onCheckedChange={(next) => handleVisualOption(key, next)}
+                      aria-label={option.label}
+                    />
+                  </div>
+                );
+              })}
               {isPublished && (
                 <div className="mt-3 rounded-md border border-border px-3 py-2.5">
                   <p className="text-sm">公开页面地址</p>

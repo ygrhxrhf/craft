@@ -3,13 +3,24 @@
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
 
-export function PublicDocBanner({ collaborative = false }: { collaborative?: boolean }) {
+export function PublicDocBanner({
+  collaborative = false,
+  showWatermark = true,
+}: {
+  collaborative?: boolean;
+  /** G1534：官方 `showWatermark`（页脚是否提及 Craft），默认显示。 */
+  showWatermark?: boolean;
+}) {
   return (
     <footer className="sticky bottom-0 flex items-center justify-between border-t border-border bg-background/90 px-6 py-3 backdrop-blur-sm">
-      <span className="text-meta text-foreground/40">
-        由 <Link href="/" className="font-medium text-foreground/55 transition-colors duration-150 ease-craft hover:text-foreground/85">Crafty</Link>
-        {' '}生成 · {collaborative ? '可编辑视图' : '只读视图'}
-      </span>
+      {showWatermark ? (
+        <span className="text-meta text-foreground/40">
+          由 <Link href="/" className="font-medium text-foreground/55 transition-colors duration-150 ease-craft hover:text-foreground/85">Crafty</Link>
+          {' '}生成 · {collaborative ? '可编辑视图' : '只读视图'}
+        </span>
+      ) : (
+        <span className="text-meta text-foreground/40">{collaborative ? '可编辑视图' : '只读视图'}</span>
+      )}
       {!collaborative && (
         <Link
           href="/login"

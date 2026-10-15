@@ -1876,6 +1876,20 @@
                   "kind": "scalar"
                 }
               },
+              "hidePresentationMode": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "hideTableOfContents": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -1912,6 +1926,20 @@
                 }
               },
               "showAuthor": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "showPageTitle": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "showWatermark": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/bool@1",
@@ -1969,6 +1997,12 @@
                 "documentId": {
                   "column": "documentId"
                 },
+                "hidePresentationMode": {
+                  "column": "hidePresentationMode"
+                },
+                "hideTableOfContents": {
+                  "column": "hideTableOfContents"
+                },
                 "id": {
                   "column": "id"
                 },
@@ -1986,6 +2020,12 @@
                 },
                 "showAuthor": {
                   "column": "showAuthor"
+                },
+                "showPageTitle": {
+                  "column": "showPageTitle"
+                },
+                "showWatermark": {
+                  "column": "showWatermark"
                 },
                 "slug": {
                   "column": "slug"
@@ -4763,6 +4803,24 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "hidePresentationMode": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "hideTableOfContents": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -4801,6 +4859,24 @@
                   "nullable": false
                 },
                 "showAuthor": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "showPageTitle": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "showWatermark": {
                   "codecId": "pg/bool@1",
                   "default": {
                     "kind": "literal",
@@ -6452,7 +6528,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "207324b7ddc004692c6be48aa22a557c977c6d038f7a1c4285763b2f04465958"
+    "storageHash": "7a3412f9c8cbefe3993dd398e5abacdea70810a3dbf26c7739e4ec1a8785d4d6"
   },
   "execution": {
     "executionHash": "5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b",

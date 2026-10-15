@@ -20,6 +20,11 @@ export interface ShareState {
   permission: DocumentSharePermission;
   /** G38：发布页是否显示作者（官方 showAuthor 默认 true）。 */
   showAuthor: boolean;
+  /** G1534：visual.options 其余四组（官方默认值见 `publishing.md:17`）。 */
+  showPageTitle: boolean;
+  hideTableOfContents: boolean;
+  hidePresentationMode: boolean;
+  showWatermark: boolean;
   /**
    * 档位每改一次就 +1，访客那条按旧档授权的连接据此被判为过期。客户端改档走 `applyLocal`，
    * 它拿得到这一枚才可能算出「比服务端已知的那次更大」的下一个数（G1491）。
@@ -36,6 +41,10 @@ function stateOf(s: any): ShareState {
     hasPasscode: !!s.passcode,
     permission: s.permission,
     showAuthor: s.showAuthor !== false,
+    showPageTitle: s.showPageTitle !== false,
+    hideTableOfContents: s.hideTableOfContents === true,
+    hidePresentationMode: s.hidePresentationMode === true,
+    showWatermark: s.showWatermark !== false,
     shareVersion: s.shareVersion ?? 0,
   };
 }
@@ -112,6 +121,24 @@ export async function setSharePermission(documentId: string, permission: unknown
   //   （G1491）。它现在只服务"本地镜像里还没有这一行"那一档回退，走的就是同一条广播。
   await emitShare(db, session.user.id, documentId);
 
+  return await getOrCreateShare(documentId);
+}
+
+/** G1534：visual.options 四组的开关（镜像没有那一行时的回退路；有行走 `applyLocal`）。 */
+export async function setShareVisualOption(
+  documentId: string,
+  key: 'showPageTitle' | 'hideTableOfContents' | 'hidePresentationMode' | 'showWatermark',
+  value: boolean,
+) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const doc = await db.orm.public.Document.first({ id: documentId });
+  if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
+
+  await db.orm.public.DocumentShare.where({ documentId }).update({ [key]: value });
+  await emitShare(db, session.user.id, documentId);
   return await getOrCreateShare(documentId);
 }
 
@@ -209,5 +236,9 @@ export async function getSharedDocument(identifier: string) {
     passcodeProtected: !!s.passcode,
     showAuthor: s.showAuthor !== false,
     authorName,
+    showPageTitle: s.showPageTitle !== false,
+    showWatermark: s.showWatermark !== false,
+    hideTableOfContents: s.hideTableOfContents === true,
+    hidePresentationMode: s.hidePresentationMode === true,
   };
 }

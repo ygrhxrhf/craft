@@ -16,6 +16,8 @@ interface SharedDocViewProps {
   collaborative?: boolean;
   /** G38：发布页作者署名（`showAuthor` 关掉时调用方传 null，这里不渲染）。 */
   authorByline?: string | null;
+  /** G1534：`showPageTitle` 关掉时不渲染标题块（与 pageStyle.showTitle 取与）。 */
+  showPageTitle?: boolean;
   header?: React.ReactNode;
 }
 
@@ -30,6 +32,7 @@ export function SharedDocView({
   styled = false,
   collaborative = false,
   authorByline = null,
+  showPageTitle = true,
   header,
 }: SharedDocViewProps) {
   const style = useMemo(() => normalizePageStyle(pageStyle), [pageStyle]);
@@ -66,7 +69,7 @@ export function SharedDocView({
             <img src={coverImage!} alt="Cover" className="h-full w-full object-cover" />
           </div>
         )}
-        {showsDocumentTitle(style) && (
+        {showPageTitle && showsDocumentTitle(style) && (
           <div className="mb-6">
             <div className="flex items-start gap-3">
               <span className="mt-1 flex size-10 shrink-0 items-center justify-center rounded-md text-2xl transition-colors duration-150 ease-craft hover:bg-foreground/4">

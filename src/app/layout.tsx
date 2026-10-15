@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import 'katex/dist/katex.min.css';
 import './globals.css';
 import { Providers } from '@/components/providers/Providers';
+import { UpdateBanner } from '@/components/app/UpdateBanner';
 import { directUploadEnabled } from '@/lib/storage';
 
 const inter = Inter({
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     <html lang="zh-CN" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="flex h-full flex-col">
         <Providers>{children}</Providers>
+        <UpdateBanner />
         <script dangerouslySetInnerHTML={{ __html: swRegister }} />
         <script dangerouslySetInnerHTML={{ __html: storageFlag }} />
       </body>

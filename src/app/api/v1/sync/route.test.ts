@@ -183,7 +183,9 @@ describe('POST /api/v1/sync', () => {
   it('R-10 I-1：document_tag 复合键取自 data——applied id 与 cursor 为 documentId__tagId', async () => {
     const create = vi.fn(async () => ({}));
     const chain = { where: () => chain, first: vi.fn(async () => null), update: vi.fn(), create };
-    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, { get: (_t, m) => m === 'SyncEvent' ? { create } : chain }) } });
+    // G1523 写侧鉴权要读 Document 判归属：这一篇归会话用户 u1（所有者）
+    const docChain = { first: vi.fn(async () => ({ id: 'd1', userId: 'u1', isDeleted: false })) };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, { get: (_t, m) => m === 'SyncEvent' ? { create } : m === 'Document' ? docChain : chain }) } });
 
     const res = await POST(req({ records: [
       { table: 'document_tag', id: 'x', op: 'upsert',
@@ -340,8 +342,18 @@ describe('POST /api/v1/sync', () => {
       metaUpdatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null,
     }));
     const chain = { where: () => chain, first, update, create };
+    // G1523 写侧鉴权要读 Document 判归属：d1 归会话用户 u1（所有者）。
+    // ☆ Document 这个 model 自己也是 document 表（本用例第一笔就是 document delete），
+    //   所以它必须同时具备 where/update，且 first 回的是同一枚文档行。
+    const docChain: any = {
+      where: () => docChain,
+      first: async () => ({ id: 'd1', userId: 'u1', isDeleted: false, deletedAt: null,
+        updatedAt: '2026-09-28T09:00:00.000Z', metaUpdatedAt: '2026-09-28T09:00:00.000Z' }),
+      update,
+      create,
+    };
     (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
-      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : m === 'Document' ? docChain : chain),
     }) } });
 
     const res = await POST(req({ records: [
@@ -712,5 +724,209 @@ describe('收藏的墓碑走 upsert 列，不走 delete op（G240 写侧契约�
     expect(update).toHaveBeenCalledWith(expect.objectContaining({ deletedAt }));
     // Favorite 没有 isDeleted 列：写侧不得凭空造列（读侧按 deletedAt 过滤）
     expect(update.mock.calls[0]![0]).not.toHaveProperty('isDeleted');
+  });
+});
+
+/**
+ * G1523——写侧文档作用域鉴权。GET 侧一直按"本人文档"收窄（`DOC_SCOPED_TABLES`），
+ * 而 POST 侧此前**一次都没校验**：document_tag/comment_thread/document_share/document_member
+ * 都没有 userId 列、不在 USER_ID_TABLES 里，where 只剩 `{id}`／`{documentId,tagId}` ⇒
+ * 任何登录用户 POST 一枚 `document_member{documentId: 别人的文档, userId: 自己, role: editor}`
+ * 就能把自己加成那篇文档的编辑（IDOR 提权）。这里逐表钉住档位与拒收形状。
+ */
+describe('POST /api/v1/sync — G1523 文档作用域写侧鉴权', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  /** 造一个 db：Document/DocumentMember 按给定行回，其余表共用一条可记录 create/update 的链。 */
+  function scopedDb(opts: {
+    documents?: Record<string, unknown>[];
+    members?: Record<string, unknown>[];
+  }) {
+    const create = vi.fn(async () => ({}));
+    const update = vi.fn(async () => ({}));
+    const del = vi.fn(async () => ({}));
+    const makeTable = (rows: Record<string, unknown>[]) => {
+      const t: any = {
+        where: () => t,
+        first: async (where: Record<string, unknown>) =>
+          rows.find((r) => Object.entries(where).every(([k, v]) => r[k] === v)) ?? null,
+        create,
+        update,
+        delete: del,
+      };
+      return t;
+    };
+    const generic = makeTable([]);
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) =>
+        m === 'SyncEvent' ? { create: vi.fn() }
+          : m === 'Document' ? makeTable(opts.documents ?? [])
+            : m === 'DocumentMember' ? makeTable(opts.members ?? [])
+              : generic,
+    }) } });
+    return { create, update, del };
+  }
+
+  it('越权：把自己加成别人文档的编辑 → not_found 拒绝，不 create', async () => {
+    // victim-doc 归 owner-elsewhere；会话用户 u1 既非所有者也不是它的成员
+    const { create } = scopedDb({
+      documents: [{ id: 'victim-doc', userId: 'owner-elsewhere', isDeleted: false }],
+      members: [],
+    });
+    const res = await POST(req({ records: [{
+      table: 'document_member', id: 'forged-1', op: 'upsert',
+      data: { documentId: 'victim-doc', userId: 'u1', role: 'editor' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.applied).toEqual([]);
+    expect(body.rejected).toEqual([{
+      table: 'document_member', id: 'forged-1', op: 'delete', syncTs: '2026-09-28T12:00:00.000Z', reason: 'not_found',
+    }]);
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('越权：往别人文档挂一枚标签（document_tag upsert）→ 同样 not_found', async () => {
+    const { create } = scopedDb({
+      documents: [{ id: 'victim-doc', userId: 'owner-elsewhere', isDeleted: false }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'document_tag', id: 'x', op: 'upsert',
+      data: { documentId: 'victim-doc', tagId: 't1' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'document_tag', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('放行：所有者对自己文档的 document_member 增删照常落库', async () => {
+    const { create } = scopedDb({
+      documents: [{ id: 'my-doc', userId: 'u1', isDeleted: false }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'document_member', id: 'm-1', op: 'upsert',
+      data: { documentId: 'my-doc', userId: 'friend', role: 'editor' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'document_member', id: 'm-1' }]);
+    expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  it('放行：editor 成员对本文档挂标签（档位＝editor）', async () => {
+    const { create } = scopedDb({
+      documents: [{ id: 'shared-doc', userId: 'owner-elsewhere', isDeleted: false }],
+      members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'editor' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'document_tag', id: 'x', op: 'upsert',
+      data: { documentId: 'shared-doc', tagId: 't1' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'document_tag', id: 'shared-doc__t1' }]);
+    expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  it('拒收：viewer 成员想改分享档位（档位＝owner）→ not_found', async () => {
+    const { create } = scopedDb({
+      documents: [{ id: 'shared-doc', userId: 'owner-elsewhere', isDeleted: false }],
+      members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'viewer' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'document_share', id: 's-1', op: 'upsert',
+      data: { documentId: 'shared-doc', permission: 'edit' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'document_share', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('放行：commenter 成员发评论（档位＝commenter）', async () => {
+    const { create } = scopedDb({
+      documents: [{ id: 'shared-doc', userId: 'owner-elsewhere', isDeleted: false }],
+      members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'commenter' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment_thread', id: 'th-1', op: 'upsert',
+      data: { documentId: 'shared-doc', blockText: 'x', resolved: false },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'comment_thread', id: 'th-1' }]);
+    expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  it('拒收：viewer 成员想发评论（档位＝commenter）→ not_found', async () => {
+    const { create } = scopedDb({
+      documents: [{ id: 'shared-doc', userId: 'owner-elsewhere', isDeleted: false }],
+      members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'viewer' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment_thread', id: 'th-1', op: 'upsert',
+      data: { documentId: 'shared-doc', blockText: 'x', resolved: false },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'comment_thread', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('拒收：upsert 带不出 documentId、服务端也定位不到行 → not_found（不铸无归属的壳）', async () => {
+    const { create } = scopedDb({ documents: [], members: [] });
+    const res = await POST(req({ records: [{
+      table: 'document_member', id: 'ghost-1', op: 'upsert',
+      data: { userId: 'u1', role: 'editor' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'document_member', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('放行：delete 定位不到行属于幂等 no-op（不带 documentId 的陈旧删除不报错）', async () => {
+    const { update } = scopedDb({ documents: [], members: [] });
+    const res = await POST(req({ records: [{
+      table: 'document_member', id: 'gone-1', op: 'delete', syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.applied).toEqual([{ table: 'document_member', id: 'gone-1' }]);
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('放行：delete 带 documentId 且是所有者 → 正常落库（document_member 无 deletedAt ⇒ 硬删）', async () => {
+    const { update, del } = scopedDb({
+      documents: [{ id: 'my-doc', userId: 'u1', isDeleted: false }],
+      members: [{ id: 'm-1', documentId: 'my-doc', userId: 'friend', role: 'editor',
+        createdAt: '2026-09-01T00:00:00.000Z', updatedAt: '2026-09-28T09:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'document_member', id: 'm-1', op: 'delete',
+      data: { documentId: 'my-doc' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).applied).toEqual([{ table: 'document_member', id: 'm-1' }]);
+    // G1521：document_member 的 cols 无 deletedAt／isDeleted ⇒ 不能 update 墓碑（会抛
+    // unknown column），必须走真删除
+    expect(update).not.toHaveBeenCalled();
+    expect(del).toHaveBeenCalledTimes(1);
+  });
+
+  it('拒收：delete 带 documentId 但是别人文档 → not_found，不写墓碑', async () => {
+    const { update } = scopedDb({
+      documents: [{ id: 'victim-doc', userId: 'owner-elsewhere', isDeleted: false }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'document_member', id: 'm-9', op: 'delete',
+      data: { documentId: 'victim-doc' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'document_member', reason: 'not_found' });
+    expect(update).not.toHaveBeenCalled();
   });
 });

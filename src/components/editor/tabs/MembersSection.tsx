@@ -4,11 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { Loader2, X } from 'lucide-react';
 import {
   listDocumentMembers,
-  removeDocumentMember,
   resolveDocumentMember,
   type MemberRole,
 } from '@/actions/document/members';
 import { getSyncManager } from '@/lib/sync-core';
+import { readPendingRows } from '@/components/sync/local-records';
+import { overlayMemberRows } from '@/components/sync/member-rows';
 import { rememberUserDisplay } from '@/components/sync/user-display';
 
 interface MemberRow {
@@ -42,7 +43,11 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
 
   const reload = useCallback(async () => {
     try {
-      setMembers(await listDocumentMembers(documentId));
+      const server = await listDocumentMembers(documentId);
+      // G1521：叠本机未推送意图——"移除协作者"走内核之后断链时，服务端名册里那一行还在，
+      // 只有本机 pending 的墓碑能把它从屏上摘掉（与 R-18 回收站叠法同源）。
+      const pending = await readPendingRows('document_member');
+      setMembers(overlayMemberRows(server, pending));
     } catch {
       setMembers([]);
     }
@@ -51,6 +56,16 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  // G1521：本机增删改／他端推送／入站 ack+pull 触碰 document_member ⇒ 重读名册（同 TrashList.tsx:81）。
+  useEffect(
+    () =>
+      getSyncManager().onStoreChanged((table) => {
+        if (table !== 'document_member') return;
+        void reload();
+      }),
+    [reload],
+  );
 
   const message = (err: unknown, fallback: string) =>
     setError(err instanceof Error ? err.message : fallback);
@@ -113,10 +128,14 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
 
   const handleRemove = async (id: string) => {
     setError(null);
+    const previous = members;
+    setMembers((prev) => prev.filter((m) => m.id !== id));
     try {
-      await removeDocumentMember(id);
-      setMembers((prev) => prev.filter((m) => m.id !== id));
+      // G1521：移除协作者改走内核（patch:null ＝ 删除 op），断链时也留得住；服务端按
+      // document_member 无 deletedAt 列走硬删（route.ts 的墓碑分支按 cols 分档）。
+      await getSyncManager().applyLocal({ table: 'document_member', id, patch: null });
     } catch (err) {
+      setMembers(previous);
       message(err, '移除协作者失败');
     }
   };

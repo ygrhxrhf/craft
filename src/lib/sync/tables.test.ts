@@ -145,6 +145,12 @@ function scanApplyLocalPatches(): Site[] {
       const table = /table:\s*'([a-z_]+)'/.exec(body)?.[1] ?? null;
       const pm = /patch:\s*\{/.exec(body);
       if (!pm) {
+        // `patch: null` ＝ 删除 op（`ApplyLocalOpts.patch === null`），不带任何列 ⇒ 不可能
+        // 出现"白名单外的键"，不算 unresolved（它没有键可判）。
+        if (/patch:\s*null\b/.test(body)) {
+          sites.push({ file: rel, table, patchKind: 'literal', keys: [] });
+          continue;
+        }
         const varName = /patch:\s*(\w+)/.exec(body)?.[1] ?? (/[{,]\s*patch\s*[,}]/.test(body) ? 'patch' : null);
         const bag = varName ? literals.get(varName) : undefined;
         if (bag) {

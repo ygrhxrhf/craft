@@ -113,13 +113,3 @@ export async function resolveDocumentMember(input: {
     existing: Boolean(existing),
   };
 }
-
-export async function removeDocumentMember(memberId: string) {
-  const userId = await requireUserId();
-  const members = await getTable('DocumentMember');
-  const member = await members.first({ id: memberId });
-  if (!member) return;
-  await requireDocumentAccess(member.documentId as string, userId, 'owner');
-
-  await members.where({ id: memberId }).delete();
-}

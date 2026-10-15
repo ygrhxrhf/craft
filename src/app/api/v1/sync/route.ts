@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { and, or } from '@prisma/orm-postgres/orm-client';
 import { z } from 'zod';
 import { AuthorizationError, requireUserId } from '@/lib/authz/guard';
+import { roleSatisfies, type AccessLevel, type ResourceRole } from '@/lib/authz/resource';
 import { getDb } from '@/prisma/db';
 import { SYNC_TABLES } from '@/lib/sync/tables';
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
@@ -21,6 +22,39 @@ const DOC_SCOPED_TABLES = new Set(['document_tag', 'comment_thread', 'document_s
 const COLLECTION_SCOPED_TABLES = new Set([
   'collection_item', 'collection_property', 'collection_view',
 ]);
+
+// G1523 写侧文档作用域鉴权：GET 侧一直按"本人文档"收窄（上面那一段），而 POST 侧此前
+// **一次都没校验**——document_tag/comment_thread/document_share/document_member 都不在
+// USER_ID_TABLES 里（它们没有 userId 列），where 只剩 `{id}`／`{documentId,tagId}` ⇒
+// 任何登录用户 POST 一枚 `document_member{documentId: 别人的文档, userId: 自己, role: editor}`
+// 就能把自己加成那篇文档的编辑（IDOR 提权）。这里的档位逐表对齐各自 action 里的要求：
+// attachTag/detachTag=editor、createThread=commenter、分享档位与成员增删=owner。
+const DOC_WRITE_LEVEL: Record<string, AccessLevel> = {
+  document_tag: 'editor',
+  comment_thread: 'commenter',
+  document_share: 'owner',
+  document_member: 'owner',
+};
+
+const MEMBER_ROLES: ResourceRole[] = ['editor', 'commenter', 'viewer'];
+
+/** 在**同一事务作用域**内解析调用者对该文档的角色并比档（不另开连接，避免读到事务外的旧值）。 */
+async function hasDocumentScope(
+  scope: any,
+  table: string,
+  documentId: string,
+  userId: string,
+): Promise<boolean> {
+  const need = DOC_WRITE_LEVEL[table];
+  if (!need || !documentId) return false;
+  const doc = await scope.orm.public.Document.first({ id: documentId });
+  if (!doc || doc.isDeleted) return false;
+  if (doc.userId === userId) return roleSatisfies('owner', need); // 所有者：满足任何档
+  const member = await scope.orm.public.DocumentMember.first({ documentId, userId });
+  const role = member?.role as ResourceRole | undefined;
+  if (!role || !MEMBER_ROLES.includes(role)) return false;
+  return roleSatisfies(role, need);
+}
 
 export async function GET(req: NextRequest) {
   let userId: string;
@@ -255,6 +289,26 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           : USER_ID_TABLES.has(rec.table)
             ? { id: rec.id, userId }
             : { id: rec.id };
+      // G1523：文档作用域表的写侧鉴权（GET 侧一直按"本人文档"收窄，POST 侧此前一次都没有）。
+      // documentId 优先取记录自带（upsert 与带 data 的 delete），没有则回读存量行（不带 data 的
+      // delete、以及 document_share 改档那种只带两列的 patch）；这一读只用来判"这一行属于哪篇
+      // 文档"，不把任何列回给调用者。越权＝not_found（不泄露"这篇文档存在"，与 G1505/G1506 同档）。
+      if (DOC_SCOPED_TABLES.has(rec.table)) {
+        const inline = typeof key.documentId === 'string' ? key.documentId : '';
+        const probe = inline ? null : await model.first(where);
+        const docId = inline || (typeof probe?.documentId === 'string' ? probe.documentId : '');
+        if (!docId) {
+          // 定位不到这一行属于哪篇文档：delete 是无写入的幂等 no-op，放它走正常流程（current=null
+          // 会跳过 update）；upsert 则是一次"没有文档可归属的铸造"——拒。
+          if (rec.op === 'upsert') {
+            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
+            continue;
+          }
+        } else if (!(await hasDocumentScope(scope, rec.table, docId, userId))) {
+          rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
+          continue;
+        }
+      }
       const current = await model.first(where);
       const tSrv = current ? new Date(current[def.tsCol]).toISOString() : null;
       const decision = decideLww(rec.op, rec.syncTs, tSrv);
@@ -273,10 +327,19 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
         if (current) {
           // I8/spec 4.5：读侧（树/回收站/搜索）按 isDeleted 过滤——含该列的表
           // delete-op 必须同时写 isDeleted:true，否则行从增量流消失但读侧仍当活行
-          // 渲染（复活）。不含该列的表（document_tag 等）只写 deletedAt/updatedAt。
-          const tombstone: Record<string, unknown> = { deletedAt: ts, [def.tsCol]: ts };
+          // 渲染（复活）。
+          // G1521：墓碑列按表配置——`deletedAt` 只有真在 `cols` 里的表才写。此前无条件写，
+          // 而 document_member（contract 无 deletedAt）一旦走 delete-op 就会在
+          // `update({deletedAt})` 抛 unknown column ⇒ 整批 500。缺该列的表＝硬删（真 delete()），
+          // 语义与该表 action 里的 `members.where({id}).delete()` 一致。
+          const tombstone: Record<string, unknown> = { [def.tsCol]: ts };
+          if (def.cols.includes('deletedAt')) tombstone.deletedAt = ts;
           if (def.cols.includes('isDeleted')) tombstone.isDeleted = true;
-          await model.where(where).update(tombstone);
+          if (def.cols.includes('deletedAt') || def.cols.includes('isDeleted')) {
+            await model.where(where).update(tombstone);
+          } else {
+            await model.where(where).delete();
+          }
         } // 本就不存在 → 幂等接受，无写入
         maxCursor = newer(maxCursor, { ts, id: pk });
       } else {

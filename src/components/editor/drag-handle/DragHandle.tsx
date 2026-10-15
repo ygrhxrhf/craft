@@ -17,6 +17,7 @@ import { dropTargetFor } from './drop-band';
 import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
 import { DIVIDER_STYLE_CHOICES, type DividerStyle } from '@/lib/editor/divider-styles';
+import { DRAG_THRESHOLDS } from '@/lib/dnd/drag-threshold';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
@@ -345,8 +346,11 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
         const st = dragStateRef.current;
         if (!st) return;
         if (!st.range) {
+          // G268：通用档＝指针位移 8px 起拖。触摸端的"长按 150ms"档需要计时器，本把手是
+          //   悬停才出现的（`mousemove` 驱动），触摸根本到不了这里，故触摸端沿用同一枚位移门限。
+          const armAt = DRAG_THRESHOLDS.general.pointerDistance;
           const dist = Math.hypot(ev.clientX - st.startX, ev.clientY - st.startY);
-          if (dist < 4) return;
+          if (dist < armAt) return;
           st.range = resolveDragRange();
         }
         if (!st.range) return;

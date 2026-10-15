@@ -8,6 +8,10 @@ import { DocumentListView } from '@/components/document/DocumentListView';
 import { ViewModeSwitcher } from '@/components/document/ViewModeSwitcher';
 import { DEFAULT_SORT, sortDocs, type SortSpec } from '@/lib/browse/sort';
 import {
+  DEFAULT_BROWSE_SORT_SPEC,
+  type BrowseSortSpec,
+} from '@/lib/browse/list-sort';
+import {
   SORT_BY_LABEL,
   SORT_DIMENSION_LABELS,
   SORT_DIRECTION_LABELS,
@@ -43,6 +47,9 @@ interface SortableDoc {
  */
 export function SortableDocGrid({ documents }: { documents: SortableDoc[] }) {
   const [spec, setSpec] = useState<SortSpec>(DEFAULT_SORT);
+  // G247：列表档的列头排序是**另一套四档**（名称/上次浏览/已更新/已创建），与 ⋯ 菜单那套
+  //   （name/shared/sharedBy/lastViewed）不同源，故单独持一份，互不覆盖。
+  const [browseSort, setBrowseSort] = useState<BrowseSortSpec>(DEFAULT_BROWSE_SORT_SPEC);
   const [viewMode, setViewMode] = useState<BrowseViewMode>(DEFAULT_VIEW_MODE);
   const sorted = sortDocs(documents, spec);
 
@@ -103,7 +110,11 @@ export function SortableDocGrid({ documents }: { documents: SortableDoc[] }) {
       </div>
 
       {viewMode === 'list' ? (
-        <DocumentListView documents={sorted} />
+        <DocumentListView
+          documents={sorted}
+          sort={browseSort}
+          onSortChange={setBrowseSort}
+        />
       ) : viewMode === 'waterfall' ? (
         <div data-testid="browse-waterfall" className="columns-2 gap-5 md:columns-3 xl:columns-4">
           {sorted.map((doc) => (

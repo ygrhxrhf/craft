@@ -16,6 +16,13 @@ import {
 } from '@/lib/browse/list-columns';
 import { relativeTime } from '@/lib/document/relative-time';
 import { rowSubtitle } from '@/lib/browse/row-subtitle';
+import {
+  ariaSortValue,
+  nextSortSpec,
+  sortArrow,
+  sortBrowseRows,
+  type BrowseSortSpec,
+} from '@/lib/browse/list-sort';
 
 interface ListDoc {
   id: string;
@@ -38,7 +45,16 @@ interface ListDoc {
  * measures zero, and zero is written as `0px` — which is exactly why the `112px` fallback never
  * fires in the official build.
  */
-export function DocumentListView({ documents }: { documents: ListDoc[] }) {
+export function DocumentListView({
+  documents,
+  sort,
+  onSortChange,
+}: {
+  documents: ListDoc[];
+  /** G247：列头即排序器——当前档与方向由外部持有，点列头回调上去。 */
+  sort?: BrowseSortSpec;
+  onSortChange?: (next: BrowseSortSpec) => void;
+}) {
   const ref = useRef<HTMLDivElement | null>(null);
   const headerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -68,7 +84,15 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
       <div
         className="flex items-center gap-3 border-b border-border px-3 pb-1"
       >
-        <div className="min-w-0 flex-1" />
+        <button
+          type="button"
+          onClick={() => sort && onSortChange?.(nextSortSpec(sort, 'name'))}
+          aria-sort={sort ? ariaSortValue(sort, 'name') : undefined}
+          className={cn('min-w-0 flex-1 text-left', LIST_HEADER_TYPOGRAPHY, 'text-muted-foreground')}
+        >
+          名称
+          {sort && sortArrow(sort, 'name') ? <span className="ml-1">{sortArrow(sort, 'name')}</span> : null}
+        </button>
         <div
           ref={(node) => {
             headerRefs.current.lastViewed = node;
@@ -80,7 +104,15 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
             LIST_COLUMN_CLASSES.lastViewed,
           )}
         >
-          {LIST_COLUMN_LABELS.lastViewed}
+          <button
+            type="button"
+            onClick={() => sort && onSortChange?.(nextSortSpec(sort, 'lastViewed'))}
+            aria-sort={sort ? ariaSortValue(sort, 'lastViewed') : undefined}
+            className="w-full text-left"
+          >
+            {LIST_COLUMN_LABELS.lastViewed}
+            {sort && sortArrow(sort, 'lastViewed') ? <span className="ml-1">{sortArrow(sort, 'lastViewed')}</span> : null}
+          </button>
         </div>
         <div
           ref={(node) => {
@@ -93,7 +125,15 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
             LIST_COLUMN_CLASSES.updated,
           )}
         >
-          {LIST_COLUMN_LABELS.updated}
+          <button
+            type="button"
+            onClick={() => sort && onSortChange?.(nextSortSpec(sort, 'updated'))}
+            aria-sort={sort ? ariaSortValue(sort, 'updated') : undefined}
+            className="w-full text-left"
+          >
+            {LIST_COLUMN_LABELS.updated}
+            {sort && sortArrow(sort, 'updated') ? <span className="ml-1">{sortArrow(sort, 'updated')}</span> : null}
+          </button>
         </div>
         <div
           ref={(node) => {
@@ -106,11 +146,19 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
             LIST_COLUMN_CLASSES.created,
           )}
         >
-          {LIST_COLUMN_LABELS.created}
+          <button
+            type="button"
+            onClick={() => sort && onSortChange?.(nextSortSpec(sort, 'created'))}
+            aria-sort={sort ? ariaSortValue(sort, 'created') : undefined}
+            className="w-full text-left"
+          >
+            {LIST_COLUMN_LABELS.created}
+            {sort && sortArrow(sort, 'created') ? <span className="ml-1">{sortArrow(sort, 'created')}</span> : null}
+          </button>
         </div>
       </div>
 
-      {documents.map((doc) => (
+      {(sort ? sortBrowseRows(documents, sort) : documents).map((doc) => (
         <Link
           key={doc.id}
           href={`/documents/${doc.id}`}

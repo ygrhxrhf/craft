@@ -56,7 +56,9 @@ describe('the three data columns are slots, not identities', () => {
       '--col-updated-width',
       '--col-created-width',
     ]);
-    expect(COLUMN_WIDTH_FALLBACK).toBe('8rem');
+    // The official container carries all three at 112px inline; a different fallback would be
+    // measured and frozen at that other number (G246).
+    expect(COLUMN_WIDTH_FALLBACK).toBe('112px');
   });
 
   it('writes a hidden column as 0px so the fallback never fires', () => {

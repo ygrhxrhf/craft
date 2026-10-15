@@ -41,10 +41,10 @@ describe('the column width sync follows the official two-place pattern', () => {
     expect(source).toContain('observer.observe(cell)');
   });
 
-  it('reads each width back with the CSS-side 8rem fallback', () => {
-    expect(source).toContain('var(--col-last-viewed-width,8rem)');
-    expect(source).toContain('var(--col-updated-width,8rem)');
-    expect(source).toContain('var(--col-created-width,8rem)');
+  it('reads each width back with the official 112px fallback', () => {
+    expect(source).toContain('var(--col-last-viewed-width,112px)');
+    expect(source).toContain('var(--col-updated-width,112px)');
+    expect(source).toContain('var(--col-created-width,112px)');
   });
 });
 

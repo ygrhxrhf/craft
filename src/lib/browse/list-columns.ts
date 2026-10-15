@@ -33,18 +33,24 @@ export const LIST_COLUMN_CLASSES: Record<Exclude<ListColumn, 'name'>, string> = 
   created: 'app-col-created',
 };
 
-/** The custom property each data cell reads its width from, with the CSS-side `8rem` fallback. */
+/** The custom property each data cell reads its width from, with the CSS-side `112px` fallback. */
 export const COLUMN_WIDTH_VARS: Record<Exclude<ListColumn, 'name'>, string> = {
   lastViewed: '--col-last-viewed-width',
   updated: '--col-updated-width',
   created: '--col-created-width',
 };
 
-export const COLUMN_WIDTH_FALLBACK = '8rem';
+/**
+ * The official build writes all three columns at `112px` inline on the list container. The fallback
+ * here has to be the same number: the header sync measures each header cell and writes the measured
+ * value back onto the container, so whatever the fallback is gets measured and then frozen — an
+ * `8rem` fallback would settle the columns at 128px instead of the official 112.
+ */
+export const COLUMN_WIDTH_FALLBACK = '112px';
 
 /**
  * What the width sync writes. A hidden column measures 0, so it is written as `0px` — which is
- * what makes the CSS `8rem` fallback unreachable, exactly as the official build behaves.
+ * what makes the `112px` fallback unreachable, exactly as the official build behaves.
  */
 export function columnWidthValue(width: number): string {
   return `${Math.round(width)}px`;

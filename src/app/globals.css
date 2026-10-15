@@ -2236,7 +2236,8 @@
 /* The two content-width thresholds, verbatim: a list shows its 更新/创建 columns from 768 and
    its 最后查看 column from 1024 — measured against the container, not the screen. The three
    slots rest hidden; the queries reveal them. Widths come from the header sync (`--col-*-width`,
-   written as `0px` while hidden), with the `8rem` fallback here for the frame before it runs. */
+   written as `0px` while hidden), with the official `112px` fallback here for the frame before it
+   runs. */
 .app-col-last-viewed,
 .app-col-updated,
 .app-col-created {

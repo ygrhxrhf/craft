@@ -32,7 +32,7 @@ interface ListDoc {
  *
  * The column widths are pushed from the header cells onto the container as custom properties, so
  * a data cell lines up with its header even when the two are separate grid items. A hidden header
- * measures zero, and zero is written as `0px` — which is exactly why the CSS `8rem` fallback never
+ * measures zero, and zero is written as `0px` — which is exactly why the `112px` fallback never
  * fires in the official build.
  */
 export function DocumentListView({ documents }: { documents: ListDoc[] }) {
@@ -71,7 +71,7 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
             headerRefs.current.lastViewed = node;
           }}
           className={cn(
-            'hidden w-[var(--col-last-viewed-width,8rem)] shrink-0',
+            'hidden w-[var(--col-last-viewed-width,112px)] shrink-0',
             LIST_HEADER_TYPOGRAPHY,
             'text-muted-foreground',
             LIST_COLUMN_CLASSES.lastViewed,
@@ -84,7 +84,7 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
             headerRefs.current.updated = node;
           }}
           className={cn(
-            'hidden w-[var(--col-updated-width,8rem)] shrink-0',
+            'hidden w-[var(--col-updated-width,112px)] shrink-0',
             LIST_HEADER_TYPOGRAPHY,
             'text-muted-foreground',
             LIST_COLUMN_CLASSES.updated,
@@ -97,7 +97,7 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
             headerRefs.current.created = node;
           }}
           className={cn(
-            'hidden w-[var(--col-created-width,8rem)] shrink-0',
+            'hidden w-[var(--col-created-width,112px)] shrink-0',
             LIST_HEADER_TYPOGRAPHY,
             'text-muted-foreground',
             LIST_COLUMN_CLASSES.created,
@@ -124,7 +124,7 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
           </div>
           <div
             className={cn(
-              'hidden w-[var(--col-last-viewed-width,8rem)] shrink-0 truncate',
+              'hidden w-[var(--col-last-viewed-width,112px)] shrink-0 truncate',
               LIST_CELL_TYPOGRAPHY,
               'text-muted-foreground',
               LIST_COLUMN_CLASSES.lastViewed,
@@ -134,7 +134,7 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
           </div>
           <div
             className={cn(
-              'hidden w-[var(--col-updated-width,8rem)] shrink-0 truncate',
+              'hidden w-[var(--col-updated-width,112px)] shrink-0 truncate',
               LIST_CELL_TYPOGRAPHY,
               'text-muted-foreground',
               LIST_COLUMN_CLASSES.updated,
@@ -144,7 +144,7 @@ export function DocumentListView({ documents }: { documents: ListDoc[] }) {
           </div>
           <div
             className={cn(
-              'hidden w-[var(--col-created-width,8rem)] shrink-0 truncate',
+              'hidden w-[var(--col-created-width,112px)] shrink-0 truncate',
               LIST_CELL_TYPOGRAPHY,
               'text-muted-foreground',
               LIST_COLUMN_CLASSES.created,

@@ -4,6 +4,13 @@ import { useState } from 'react';
 import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { untitledFor } from '@/lib/document/untitled-copy';
+import {
+  PASSCODE_ARIA_LABEL,
+  PASSCODE_ERROR,
+  PASSCODE_GATE_HINT,
+  PASSCODE_PLACEHOLDER,
+  PASSCODE_SUBMIT,
+} from '@/lib/share/passcode-gate-copy';
 
 interface PasscodeGateProps {
   token: string;
@@ -48,7 +55,7 @@ export function PasscodeGate({ token, path, title, icon }: PasscodeGateProps) {
         </div>
         <div className="mb-1 text-2xl">{icon || '📄'}</div>
         <h1 className="mb-1 truncate text-h3 font-semibold text-[#1F2225] dark:text-[#F9F9F9]">{title || untitledFor('list')}</h1>
-        <p className="mb-6 text-ui text-foreground/55">此文档受口令保护，请输入口令查看</p>
+        <p className="mb-6 text-ui text-foreground/55">{PASSCODE_GATE_HINT}</p>
         <form onSubmit={handleSubmit} className={error ? 'animate-shake' : ''}>
           <input
             type="text"
@@ -59,13 +66,13 @@ export function PasscodeGate({ token, path, title, icon }: PasscodeGateProps) {
               setPasscode(e.target.value);
               setError(false);
             }}
-            placeholder="输入口令"
-            aria-label="访问口令"
+            placeholder={PASSCODE_PLACEHOLDER}
+            aria-label={PASSCODE_ARIA_LABEL}
             className="h-10 w-full rounded-lg border border-foreground/10 bg-foreground/4 px-3 text-center text-ui outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50"
           />
           {error && (
             <p className="mt-2 text-meta text-destructive" role="alert">
-              口令错误，请重试
+              {PASSCODE_ERROR}
             </p>
           )}
           <Button
@@ -73,7 +80,7 @@ export function PasscodeGate({ token, path, title, icon }: PasscodeGateProps) {
             className="mt-4 w-full bg-craft-accent text-white transition-colors duration-150 ease-craft hover:bg-craft-accent-hover"
             disabled={loading || !passcode.trim()}
           >
-            {loading ? '验证中…' : '解锁'}
+            {loading ? '验证中…' : PASSCODE_SUBMIT}
           </Button>
         </form>
       </div>

@@ -483,8 +483,10 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
               </select>
             </div>
             <div className="space-y-1 text-ui text-muted-foreground">
+              {/* G377：官方「统计」区是五项（字数／字符数／不包括空格／区块／阅读时间）。 */}
               <div>{stats.words.toLocaleString()} 字</div>
-              <div>{stats.characters.toLocaleString()} 字符（不包括空格）</div>
+              <div>{stats.characters.toLocaleString()} 字符</div>
+              <div>{stats.charactersNoSpaces.toLocaleString()} 字符（不包括空格）</div>
               <div>{stats.blocks.toLocaleString()} 区块</div>
               <div>{stats.readingMinutes.toLocaleString()} 分钟阅读</div>
             </div>

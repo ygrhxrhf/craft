@@ -39,18 +39,19 @@ describe('the reading time', () => {
   });
 });
 
-describe('the four figures', () => {
-  it('assembles words, characters, blocks and reading time', () => {
+describe('the five figures (G377)', () => {
+  it('assembles words, characters (with/without spaces), blocks and reading time', () => {
     expect(pageStats({ wordCount: 400, plainText: 'a b c', blockCount: 7 })).toEqual({
       words: 400,
-      characters: 3,
+      characters: 5, // 含空格
+      charactersNoSpaces: 3,
       blocks: 7,
       readingMinutes: 2,
     });
   });
 
-  it('names the four rows in order', () => {
-    expect([...STATS_LABELS]).toEqual(['字数', '字符数', '区块', '阅读时间']);
+  it('names the five rows in order', () => {
+    expect([...STATS_LABELS]).toEqual(['字数', '字符数', '不包括空格', '区块', '阅读时间']);
   });
 });
 

@@ -23,6 +23,14 @@ export function charactersExcludingSpaces(text: string): number {
 }
 
 /**
+ * `gap.md` G377 —— 官方「统计」区是**五项**：`字数` / `字符数` / `不包括空格` / `区块` / `阅读时间`
+ * （V39 实采值 2/4/4/1/0s）。所以 `字符数`（**含**空格）与 `不包括空格` 是**两行**，不是一行里的注记。
+ */
+export function charactersWithSpaces(text: string): number {
+  return text.length;
+}
+
+/**
  * Reading time in minutes. 200 words a minute is the common figure; a non-empty page rounds up to
  * at least one minute, so a short page does not read as "0 分钟".
  */
@@ -35,12 +43,15 @@ export function readingMinutes(wordCount: number): number {
 
 export interface PageStats {
   words: number;
+  /** 字符数：**含**空格（G377 五项里的第二项）。 */
   characters: number;
+  /** 不包括空格：第三项。 */
+  charactersNoSpaces: number;
   blocks: number;
   readingMinutes: number;
 }
 
-/** Assemble the four figures. `blocks` is counted by the caller, which has the document. */
+/** Assemble the five figures (G377). `blocks` is counted by the caller, which has the document. */
 export function pageStats(input: {
   wordCount: number;
   plainText: string;
@@ -48,7 +59,8 @@ export function pageStats(input: {
 }): PageStats {
   return {
     words: input.wordCount,
-    characters: charactersExcludingSpaces(input.plainText),
+    characters: charactersWithSpaces(input.plainText),
+    charactersNoSpaces: charactersExcludingSpaces(input.plainText),
     blocks: input.blockCount,
     readingMinutes: readingMinutes(input.wordCount),
   };
@@ -85,5 +97,5 @@ export function statsInputFor(
   );
 }
 
-/** The four row labels, in order. */
-export const STATS_LABELS = ['字数', '字符数', '区块', '阅读时间'] as const;
+/** The five row labels, in order (G377). */
+export const STATS_LABELS = ['字数', '字符数', '不包括空格', '区块', '阅读时间'] as const;

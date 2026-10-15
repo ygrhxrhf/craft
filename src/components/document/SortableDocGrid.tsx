@@ -15,6 +15,7 @@ import {
 import { SORT_DIMENSIONS, SORT_DIRECTIONS } from '@/lib/browse/sort';
 import {
   DEFAULT_VIEW_MODE,
+  LAYOUT_ENTRY_LABEL,
   readViewMode,
   storeViewMode,
   type BrowseViewMode,
@@ -57,7 +58,11 @@ export function SortableDocGrid({ documents }: { documents: SortableDoc[] }) {
 
   return (
     <>
-      <div className="mb-3 flex flex-wrap items-center gap-2" data-testid="browse-sort">
+      <div
+        className="mb-3 flex flex-wrap items-center gap-2"
+        data-testid="browse-sort"
+        aria-label={LAYOUT_ENTRY_LABEL}
+      >
         <label className="text-sm text-muted-foreground" htmlFor="browse-sort-dimension">
           {SORT_BY_LABEL}
         </label>

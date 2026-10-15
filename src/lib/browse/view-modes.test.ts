@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -38,6 +40,15 @@ describe('the three modes', () => {
 describe('the entry sentence', () => {
   it('covers layout, view and sort in one line', () => {
     expect(LAYOUT_ENTRY_LABEL).toBe('编辑布局视图、排序等…');
+  });
+
+  it('is actually hung on the toolbar, not a dead constant (G234)', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src/components/document/SortableDocGrid.tsx'),
+      'utf8',
+    );
+    expect(source).toContain('LAYOUT_ENTRY_LABEL');
+    expect(source).toContain('aria-label={LAYOUT_ENTRY_LABEL}');
   });
 });
 

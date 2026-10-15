@@ -24,9 +24,18 @@ import { applyCompletedFilter, tasksForGroup, withinUpcoming, type TaskGroup, ty
 import { upcomingSections } from '@/lib/task/upcoming-groups';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
+import {
+  SET_AS_DEFAULT_VIEW,
+  defaultViewRedirect,
+  readDefaultTaskGroup,
+  storeDefaultTaskGroup,
+  taskGroupHref,
+  type TaskGroupId,
+} from '@/lib/task/default-view';
 import { isOverdue, overdueLabel } from '@/lib/task/overdue';
 import { CANCELLED_LABEL } from '@/lib/editor/task-status';
 import { completedTaskClasses } from '@/lib/task/completed-appearance';
+import { toast } from '@/components/ui/toast';
 import { useCompletedTaskAppearance } from '@/components/task/use-completed-appearance';
 import { CancelledBadge } from '@/components/task/cancelled-badge';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
@@ -41,7 +50,7 @@ const GROUPS: { group: TaskGroup; href: string; label: string }[] = [
   { group: 'all', href: '/tasks/all', label: TASK_GROUP_LABELS.all },
 ];
 
-export function TasksView({ group }: { group: TaskGroup }) {
+export function TasksView({ group, entryRoute = false }: { group: TaskGroup; entryRoute?: boolean }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [tasks, setTasks] = useState<TaskItem[]>([]);
@@ -50,6 +59,22 @@ export function TasksView({ group }: { group: TaskGroup }) {
   const [adding, setAdding] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
   const [window, setWindow] = useState<UpcomingWindow>('all');
+
+  /**
+   * G262「设置为默认视图」：把当前视图记为默认。`/tasks`（收件箱路由）落地时若不是默认档，
+   *   就把读者送去那一档——已在默认档时不跳，否则会自己重定向自己。只在**入口路由**生效：
+   *   其余档是用户主动点进去的，不该被弹回。
+   */
+  const handleSetDefaultView = () => {
+    storeDefaultTaskGroup(group as TaskGroupId);
+    toast.add({ id: 'default-view', type: 'success', title: SET_AS_DEFAULT_VIEW });
+  };
+
+  useEffect(() => {
+    if (!entryRoute) return;
+    const redirectTo = defaultViewRedirect(group as TaskGroupId, readDefaultTaskGroup());
+    if (redirectTo) router.replace(taskGroupHref(redirectTo));
+  }, [entryRoute, group, router]);
 
   const load = useCallback(async () => {
     const data = await getTasks();
@@ -208,6 +233,13 @@ export function TasksView({ group }: { group: TaskGroup }) {
           <span />
         )}
         <ShowCompletedToggle onChange={setShowCompleted} />
+        <button
+          type="button"
+          onClick={handleSetDefaultView}
+          className="ml-2 shrink-0 rounded px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-foreground"
+        >
+          {SET_AS_DEFAULT_VIEW}
+        </button>
       </div>
       <AppPageContainer className="max-w-3xl">
         {loading ? (

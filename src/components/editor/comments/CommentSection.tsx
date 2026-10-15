@@ -15,6 +15,7 @@ import { MentionSuggest } from './MentionSuggest';
 import { groupReactions, reactionSentence } from './reaction-copy';
 import { toggleReaction, type Reaction } from './reactions';
 import { offlineReactionMessage } from './offline-reaction';
+import { resolvedToggleHint, resolvedToggleLabel } from '@/lib/comment/resolved-toggle';
 
 const REACTION_CHOICES = ['👍', '❤️', '😄', '🎉'];
 
@@ -63,6 +64,8 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const [replyCarets, setReplyCarets] = useState<Record<string, number>>({});
   const [showComposer, setShowComposer] = useState(false);
   const [offline, setOffline] = useState(false);
+  // G74：已解决区默认收起；展开时标签翻成「隐藏已解决」（官方短标签＋长说明两套）。
+  const [showResolved, setShowResolved] = useState(false);
 
   useEffect(() => {
     const update = () => setOffline(!navigator.onLine);
@@ -442,9 +445,13 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
           </div>
         ))}
         {resolvedThreads.length > 0 && (
-          <details>
-            <summary className="cursor-pointer text-meta text-foreground/40 transition-colors hover:text-foreground/70">
-              已解决 ({resolvedThreads.length})
+          <details className="group" open={showResolved} onToggle={(e) => setShowResolved((e.target as HTMLDetailsElement).open)}>
+            {/* G74：官方是短标签＋长说明两套（R26）；展开时标签翻成「隐藏已解决」。 */}
+            <summary
+              title={resolvedToggleHint(showResolved)}
+              className="cursor-pointer text-meta text-foreground/40 transition-colors hover:text-foreground/70"
+            >
+              {`${resolvedToggleLabel(showResolved)} (${resolvedThreads.length})`}
             </summary>
             {resolvedThreads.map((thread) => (
               <div

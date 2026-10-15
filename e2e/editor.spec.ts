@@ -266,7 +266,12 @@ test('the four panel tabs each render their controls', async ({ page }) => {
   await blankDocument(page);
 
   await page.getByRole('button', { name: '插入', exact: true }).click();
-  await expect(page.getByText('标题 1').last()).toBeVisible();
+  // G1494 改判：这里原来断言 `getByText('标题 1')`，但**插入面板从来不列标题**（`InsertTab.tsx`
+  // 的条目是 文本/页面/卡片/文件附件/图片/代码块/公式/白板/分隔线…；标题只活在斜杠菜单里），
+  // 所以那是一条**陈旧选择器**（G1502 同族），与"点空了/水合慢"无关——本批连点五次都不出现，
+  // 正是"内容本来就没有"的形状。判据换成面板真渲染出来的东西：它自己的 `data-testid` 与副标题。
+  await expect(page.getByTestId('insert-panel')).toBeVisible();
+  await expect(page.getByText('将任何项目拖放到文档中')).toBeVisible();
 
   await page.getByRole('button', { name: '格式', exact: true }).click();
   await expect(page.getByText('字号', { exact: true })).toBeVisible();

@@ -116,3 +116,21 @@ describe('接线闸：两处 `@` 与邀请那一路都接到同源上（G1507）
     expect(s).toContain("readPendingRows('document_member')");
   });
 });
+
+describe('接线闸：评论 `@` 随 store 变化重读候选（G1519）', () => {
+  const src = (rel: string) => readFileSync(join(process.cwd(), rel), 'utf8');
+
+  it('评论补全订阅 document_member 的 store 变化并重读（挂载后新邀的人当场进候选）', () => {
+    const s = src('src/components/editor/comments/MentionSuggest.tsx');
+    expect(
+      /getSyncManager\(\)\.onStoreChanged\(\(table\) => \{\s*if \(table !== 'document_member'\) return;[\s\S]*?refresh\(\)/.exec(s)?.[0],
+      '评论 `@` 没订阅 document_member＝挂着评论框时新邀的人要整页重载才进候选（G1519）',
+    ).toBeTruthy();
+  });
+
+  it('重读走的是同源那一枚 loadMentionCandidates（不是裸读服务端名单）', () => {
+    const s = src('src/components/editor/comments/MentionSuggest.tsx');
+    expect(s).toContain('loadMentionCandidates(documentId)');
+    expect(s).not.toContain('listMentionCandidates(documentId)');
+  });
+});

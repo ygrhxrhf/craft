@@ -519,8 +519,7 @@ export function Editor({
         spellcheck: spelling ? 'true' : 'false',
         ...(spelling && spellingLang ? { lang: spellingLang } : {}),
       },
-      handlePaste: (view, event) => {
-        const files = Array.from(event.clipboardData?.files ?? []).filter((f) =>
+      handlePaste: (view, event) => {        const files = Array.from(event.clipboardData?.files ?? []).filter((f) =>
           f.type.startsWith('image/')
         );
         if (files.length === 0) {

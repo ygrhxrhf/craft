@@ -30,6 +30,7 @@ import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, show
 import type { PageStyle } from './themes/page-style';
 import { getDraft } from '@/lib/offline/draft-store';
 import { offlineSaveLabel } from '@/lib/offline/save-status';
+import { planTrailingClick } from '@/lib/editor/trailing-click';
 
 const TAB_ORDER = ['insert', 'format', 'style', 'info'] as const;
 const TAB_ICONS = { insert: LayoutGrid, format: Type, style: Palette, info: Info };
@@ -331,6 +332,33 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               maxWidth: 'var(--editor-max-w, var(--editor-measure))',
               backgroundColor: themeColor,
               fontFamily: getFontStack(pageStyle.fontPack),
+            }}
+            /**
+             * G220：点击正文下方那片空白（页面列自己的 `pb-32` 留白）⇒ 落点落到末尾空块，
+             * 末尾不是空块就当场补一个。判据走纯函数 `planTrailingClick`。
+             * ☆ 只在可编辑时接：只读视图不该因为点空白就改文档。
+             */
+            onMouseDown={(event) => {
+              if (!canEdit || !editor) return;
+              const target = event.target as HTMLElement;
+              // 点在已有块/控件上时不插手——交给 ProseMirror 自己的落点规则。
+              if (target.closest('.ProseMirror, button, input, a, [role="button"]')) return;
+              const lastDom = editor.view.nodeDOM(editor.state.doc.childCount - 1) as HTMLElement | null;
+              if (!lastDom) return;
+              const last = editor.state.doc.lastChild;
+              const plan = planTrailingClick({
+                clickY: event.clientY,
+                contentBottom: lastDom.getBoundingClientRect().bottom,
+                lastBlockIsEmpty: Boolean(last && last.type.name === 'paragraph' && last.textContent.length === 0),
+              });
+              if (!plan.trailing) return;
+              event.preventDefault();
+              // ☆ 一条 chain 只能 `run()` 一次：插入与落光标要各起一条，否则第二次带的是
+              //   插入前的位置 ⇒ "Applying a mismatched transaction"。
+              if (plan.appendEmptyBlock) {
+                editor.chain().focus().insertContentAt(editor.state.doc.content.size, { type: 'paragraph' }).run();
+              }
+              editor.chain().focus('end').run();
             }}
           >
             {washiGradient && (

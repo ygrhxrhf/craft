@@ -231,6 +231,13 @@ test('[[^ link addresses a single block and jumps back to it', async ({ page }) 
   await expect(chip).toBeVisible();
   await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
 
+  // G1495：那枚高亮 overlay 自带 1400ms 生命期（`block-anchor.ts:60` 到点就 `remove()`），
+  // 而点完 chip 再等 `waitForURL` 才轮到断言 ⇒ dev 按需编译快过 1400ms 时这段窗口整个走完，
+  // 第一次轮询必然 miss＝结构性假红（不是功能坏、也不是超时）。所以**先开观察再点**：
+  // `waitForSelector(state:'attached')` 在点击之前就挂上监听，overlay 一被 append 就记下，
+  // 它自己随后移除也不影响这个 promise 已经 resolve。
+  // ☆ 不许把 `block-anchor.ts` 的 1400ms 调大来"修"这条断言——那是拿产品行为喂测试。
+  const flashSeen = page.waitForSelector('.block-anchor-flash', { state: 'attached', timeout: 20_000 });
   await chip.click();
   // `#i-\d+` alone was a false gate: a push that only lands the fragment leaves the browser
   // on the *source* document with `#i-0` appended, and everything after this line then
@@ -240,7 +247,7 @@ test('[[^ link addresses a single block and jumps back to it', async ({ page }) 
   // The jump stamps a stable id through the open editor, so the address bar ends up
   // on the id rather than the positional hint.
   const anchored = page.locator('[data-block-id]').first();
-  await expect(page.locator('.block-anchor-flash')).toBeVisible({ timeout: 4_000 });
+  await flashSeen;
   await expect(anchored).toHaveText(marker);
   await expect(page).toHaveURL(/#b-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
 

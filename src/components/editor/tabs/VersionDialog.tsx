@@ -11,6 +11,14 @@ import {
 import { History, RotateCcw, Loader2 } from 'lucide-react';
 import { confirmDialog } from '@/lib/dialog/show';
 import {
+  CANNOT_RESTORE_DOCUMENT,
+  DOCUMENT_RESTORED,
+  GO_TO_RESTORED_DOCUMENT,
+  RESTORE_VERSION_PROMPT,
+} from '@/lib/document/backup-restore-copy';
+import { toast } from '@/components/ui/toast';
+import { useRouter } from 'next/navigation';
+import {
   getVersions,
   getVersionContent,
   restoreVersion,
@@ -49,6 +57,7 @@ export function VersionDialog({ documentId, open, onOpenChange }: VersionDialogP
   const [previewText, setPreviewText] = useState<string | null>(null);
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [restoring, setRestoring] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!open) return;
@@ -73,20 +82,30 @@ export function VersionDialog({ documentId, open, onOpenChange }: VersionDialogP
   };
 
   const handleRestore = async (id: string) => {
+    // G230：恢复产出新文档并跳过去（官方 backup.go.to.restored.document「转至已恢复的文档」）。
     const confirmed = await confirmDialog({
-      title: '恢复此版本?',
-      message: '当前内容会先另存为一个版本。',
+      title: RESTORE_VERSION_PROMPT,
+      message: '将按此版本内容新建一份文档，原文档保持不变。',
       confirmLabel: '恢复',
     });
     if (!confirmed) return;
     setRestoring(id);
     try {
-      await restoreVersion(id);
+      const { documentId } = await restoreVersion(id);
       onOpenChange(false);
-      window.location.reload();
+      toast.add({
+        id: 'document-restored',
+        type: 'success',
+        title: DOCUMENT_RESTORED,
+        actionProps: {
+          children: GO_TO_RESTORED_DOCUMENT,
+          onClick: () => router.push(`/documents/${documentId}`),
+        },
+      });
+      router.push(`/documents/${documentId}`);
     } catch {
       setRestoring(null);
-      alert('恢复失败');
+      toast.add({ id: 'restore-failed', type: 'error', title: CANNOT_RESTORE_DOCUMENT });
     }
   };
 

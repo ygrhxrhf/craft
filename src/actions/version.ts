@@ -102,32 +102,34 @@ export async function restoreVersion(versionId: string) {
   if (!doc) throw new Error('文档不存在');
   const d = doc as any;
 
-  // Save the current content as a version first so restore is never destructive
-  const latest = await db.orm.public.DocumentVersion
-    .where({ documentId: v.documentId })
-    .orderBy((ver: any) => ver.version.desc())
-    .limit(1)
-    .all();
-  await db.orm.public.DocumentVersion.create({
+  // G230：恢复是**产出新文档再导航**，不是就地回滚。判据＝官方 `backup.go.to.restored.document`
+  //   「转至已恢复的文档」——有"已恢复的文档"可去，说明恢复留下了独立实体；就地改写会让人留在原页。
+  //   于是原文档一字不动，这里按版本内容新建一行（正文随行带走，故走服务端 action，与 create-local
+  //   里"带正文的创建仍走服务端"同一口径）。
+  const now = new Date().toISOString();
+  const restored = await db.orm.public.Document.create({
     id: crypto.randomUUID(),
-    documentId: v.documentId,
-    version: latest.length ? (latest[0] as any).version + 1 : 1,
-    title: d.title,
-    content: d.content,
-    plainText: d.plainText,
-    wordCount: d.wordCount,
+    title: v.title,
+    userId: session.user.id,
+    parentId: null,
+    folderId: d.folderId ?? null,
+    icon: d.icon ?? null,
+    coverImage: d.coverImage ?? null,
+    coverType: d.coverType ?? null,
+    content: v.content,
+    plainText: v.plainText ?? '',
+    wordCount: v.wordCount ?? 0,
+    width: d.width ?? null,
+    pageStyle: d.pageStyle ?? null,
+    isTemplate: false,
+    isDailyNote: false,
+    dailyNoteDate: null,
+    // 新行必须带 metaUpdatedAt，否则永远进不了增量流（document 的 tsCol 无默认值）。
+    metaUpdatedAt: now,
   });
 
-  const now = new Date().toISOString();
-  await db.orm.public.Document.where({ id: v.documentId }).update({
-    content: v.content,
-    plainText: v.plainText,
-    wordCount: v.wordCount,
-    title: v.title,
-    // title 属 DOC_META_COLS → bump metaUpdatedAt 才进增量流（I2 NOTE）
-    metaUpdatedAt: now,
-  } as Record<string, unknown>);
-  await emitSyncEventSafe(db, session.user.id, ['document'], v.documentId);
+  const newId = (restored as any).id ?? now;
+  await emitSyncEventSafe(db, session.user.id, ['document'], newId);
 
-  return { documentId: v.documentId, content: v.content };
+  return { documentId: newId, content: v.content };
 }

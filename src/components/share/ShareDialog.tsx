@@ -492,19 +492,44 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   <span className="text-sm">口令保护</span>
                 </div>
                 {hasPasscode ? (
-                  <div className="mt-2 flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground">
-                      已启用，访问者需输入口令才能查看
-                    </p>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={handleRemovePasscode}
-                      className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-destructive"
-                    >
-                      <X className="size-3.5" />
-                      清除
-                    </Button>
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-muted-foreground">
+                        已启用，访问者需输入口令才能查看
+                      </p>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleRemovePasscode}
+                        className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-destructive"
+                      >
+                        <X className="size-3.5" />
+                        清除
+                      </Button>
+                    </div>
+                    {/* G1535：官方把「更改密码」与「添加密码」分成两档（toolbar.change.password）。 */}
+                    <div className="mt-2 flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={passcode}
+                        onChange={(e) => setPasscode(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleEnablePasscode();
+                        }}
+                        placeholder="输入新口令"
+                        aria-label="更改访问口令"
+                        className="h-8 min-w-0 flex-1 rounded-md border border-input bg-transparent px-2 text-xs outline-none transition-colors focus:border-ring"
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleEnablePasscode}
+                        disabled={!passcode.trim()}
+                        className="h-8 shrink-0 text-xs"
+                      >
+                        更改密码
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="mt-2 flex items-center gap-2">

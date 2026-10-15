@@ -16,13 +16,18 @@ import { describe, expect, it } from 'vitest';
  */
 const LEDGER = join(process.cwd(), 'docs', 'craft-ref', 'features', 'gap.md');
 
-/** 行号 → 该行第 3 个数据格（判定）。同一 G 号只取首次出现（主表优先）。 */
+/** 行号 → 该行第 3 个数据格（判定）。同一 G 号只取首次出现（主表优先）。
+ *  ☆ 号必须是 `\d+` 而不是 `\d{3,4}`：本台账前 100 批的号是 **G1…G99 两位**
+ *   （第 209 批发现：`\d{3,4}` 会静默漏掉 91 行，等于这条闸只看了 94% 的台账）。 */
 function verdicts(text: string): Map<string, string> {
   const out = new Map<string, string>();
   for (const line of text.split(/\r?\n/)) {
-    const m = /^\|\s*G(\d{3,4})\s*\|(.*)$/.exec(line);
+    const m = /^\|\s*G(\d+)\s*\|(.*)$/.exec(line);
     if (!m) continue;
-    const cells = m[2].split('|').map((c) => c.trim());
+    // ☆ 必须先把 `\|` 折叠掉再切（与 `check-tables.mjs` 同口径）：单元格里写成 `todo\|doing`
+    //   的那种**转义竖线**若不折叠，会把一格切成两格、把后面的"判定"整体错位一位
+    //   （第 209 批首跑就因此把 G52 判成 `doing\`）。
+    const cells = m[2].replace(/\\\|/g, '@').split('|').map((c) => c.trim());
     if (cells.length < 4) continue;
     if (!out.has(m[1])) out.set(m[1], cells[2]);
   }
@@ -33,14 +38,14 @@ describe('gap.md 一致面闸：正文写过「清 Gx」的行必须回填判定
   const text = readFileSync(LEDGER, 'utf8');
 
   it('扫描面非空（判据没在空转）', () => {
-    const ids = new Set([...text.matchAll(/清 G(\d{3,4})/g)].map((m) => m[1]));
+    const ids = new Set([...text.matchAll(/清 G(\d+)/g)].map((m) => m[1]));
     expect(ids.size, '一条「清 Gx」都没扫到＝这条闸在空转').toBeGreaterThanOrEqual(10);
-    expect(verdicts(text).size, '一行 G 行都没解析到＝表格形状变了').toBeGreaterThan(500);
+    expect(verdicts(text).size, '一行 G 行都没解析到＝表格形状变了').toBeGreaterThan(1400);
   });
 
-  it('每一条被"清"过的 G 号，判定格里都有 `已清` 或 `不做`', () => {
+  it('每一条被"清"过的 G 号，判定格里都有 `已清`／`不做`／`部分落地`', () => {
     const rows = verdicts(text);
-    const cleared = new Set([...text.matchAll(/清 G(\d{3,4})/g)].map((m) => m[1]));
+    const cleared = new Set([...text.matchAll(/清 G(\d+)/g)].map((m) => m[1]));
     const stale: string[] = [];
     for (const id of cleared) {
       const verdict = rows.get(id);
@@ -48,7 +53,10 @@ describe('gap.md 一致面闸：正文写过「清 Gx」的行必须回填判定
         stale.push(`G${id}：正文说已清，但找不到它的行`);
         continue;
       }
-      if (!/已清|不做/.test(verdict)) {
+      // §一 那批老行（G01…G99 时代）的第 3 格放的是**差异类型**（缺失／行为不同／只有壳／有意偏差），
+      // 不是状态 ⇒ 它们的"清了没有"由 §〇·一 那张 P0 台账另记，这里跳过（第 209 批首跑把它们误报成漏项）。
+      if (/^(缺失|行为不同|只有壳|有意偏差)/.test(verdict)) continue;
+      if (!/已清|不做|部分落地/.test(verdict)) {
         stale.push(`G${id}：判定格仍写着「${verdict.slice(0, 40)}…」`);
       }
     }
@@ -58,12 +66,12 @@ describe('gap.md 一致面闸：正文写过「清 Gx」的行必须回填判定
   it('G 号唯一（上面的 `verdicts` 只取每个号的首行 ⇒ 重号会让所有以它为准的判据失准）', () => {
     const counts = new Map<string, number>();
     for (const line of text.split(/\r?\n/)) {
-      const m = /^\|\s*G(\d{3,4})\s*\|/.exec(line);
+      const m = /^\|\s*G(\d+)\s*\|/.exec(line);
       if (!m) continue;
       counts.set(m[1], (counts.get(m[1]) ?? 0) + 1);
     }
     const dups = [...counts].filter(([, n]) => n > 1).map(([id, n]) => `G${id}×${n}`);
-    expect(counts.size, '一行 G 行都没解析到＝表格形状变了').toBeGreaterThan(500);
+    expect(counts.size, '一行 G 行都没解析到＝表格形状变了').toBeGreaterThan(1400);
     expect(dups, `重号 ⇒ ${dups.join('、')}`).toEqual([]);
   });
 });

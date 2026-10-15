@@ -76,21 +76,29 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
    *   失败不缓存（下一次触碰重试）：缓存一个拒绝的 promise 等于把这一笔永久说成"已写好"。
    */
   let initPromise: Promise<void> | null = null;
+  // G1518 的解锁条件：库**已经开好**之后走直通，不再为每一次 store 触碰白等一拍微任务。
+  // ☆ `initSettled` 只在开库**成功**后置真；失败照旧清空 `initPromise` 让下一次重试（R-14）。
+  let initSettled = false;
   function ensureInit(): Promise<void> {
+    if (initSettled) return Promise.resolve();
     if (!initPromise) {
-      initPromise = base.init().catch((err: unknown) => {
-        initPromise = null;
-        throw err;
-      });
+      initPromise = base.init().then(
+        () => {
+          initSettled = true;
+        },
+        (err: unknown) => {
+          initPromise = null;
+          throw err;
+        },
+      );
     }
     return initPromise;
   }
 
   function guarded<A extends unknown[], R>(fn: (...args: A) => Promise<R>): (...args: A) => Promise<R> {
-    return async (...args: A) => {
-      await ensureInit();
-      return fn(...args);
-    };
+    // 直通那一支**不再经过 `.then`**：`await 一个已 resolve 的 promise` 本身也要多一拍微任务，
+    // 这一拍正是 G1518 记的那一枚（"applyLocal 之后同步读镜像读不到"要补 `setTimeout(r,0)` 的成因）。
+    return (...args: A) => (initSettled ? fn(...args) : ensureInit().then(() => fn(...args)));
   }
 
   const store: SyncStore = {

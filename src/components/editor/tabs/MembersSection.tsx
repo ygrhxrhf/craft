@@ -9,9 +9,12 @@ import {
 } from '@/actions/document/members';
 import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows } from '@/components/sync/local-records';
+import { findDocumentShare } from '@/components/sync/local-records';
 import { overlayMemberRows } from '@/components/sync/member-rows';
 import { rememberUserDisplay } from '@/components/sync/user-display';
 import { persistUserDisplay } from '@/components/sync/user-display-persist';
+import { memberRemovalNote } from '@/lib/share/member-access-notes';
+import { confirmDialog } from '@/lib/dialog/show';
 
 interface MemberRow {
   id: string;
@@ -131,6 +134,14 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
 
   const handleRemove = async (id: string) => {
     setError(null);
+    // G85：链接档是 edit 时，移除个人条目**不代表**他失去编辑权 ⇒ 先给官方那句解释再动手
+    //   （权限是多路叠加的）。view 档、或镜像里还没有这一行，照常移除、不打扰。
+    const share = await findDocumentShare(documentId).catch(() => null);
+    const note = memberRemovalNote(share?.permission);
+    if (note) {
+      const confirmed = await confirmDialog({ title: note, confirmLabel: '移除' });
+      if (!confirmed) return;
+    }
     const previous = members;
     setMembers((prev) => prev.filter((m) => m.id !== id));
     try {

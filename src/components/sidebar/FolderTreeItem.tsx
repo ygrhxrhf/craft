@@ -11,6 +11,11 @@ import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { SIDEBAR_DOC_MIME, sidebarDragState } from '@/lib/dnd/sidebar-drag';
 import { formatDocCount } from '@/lib/browse/official-copy';
 import {
+  DELETE_FOLDER_LABEL,
+  DELETE_FOLDER_SUBTITLE,
+} from '@/lib/folder/delete-copy';
+import { confirmDialog } from '@/lib/dialog/show';
+import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
@@ -85,6 +90,13 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
   }
 
   async function moveToTrash() {
+    // G241：删文件夹先确认，且确认句明说「不会删除文件夹中的文档」——文件夹是容器不是父级。
+    const ok = await confirmDialog({
+      title: DELETE_FOLDER_LABEL,
+      message: DELETE_FOLDER_SUBTITLE,
+      confirmLabel: DELETE_FOLDER_LABEL,
+    });
+    if (!ok) return;
     // 同 document 删除：读侧按 isDeleted 过滤，patch 带 isDeleted/deletedAt（见 task-13 报告）
     await getSyncManager().applyLocal({
       table: 'folder',

@@ -530,7 +530,7 @@ test('sidebar tree items expose a right-click menu', async ({ page }) => {
   await page.keyboard.press('Control+s');
   await page.getByRole('link', { name: '文档' }).first().click();
   await openMenu(renamed);
-  await page.getByRole('menu').getByRole('menuitem', { name: '移入回收站' }).click();
+  await page.getByRole('menu').getByRole('menuitem', { name: /移至最近删除/ }).click();
   await expect(sidebar.getByText(renamed, { exact: true })).toHaveCount(0);
 });
 

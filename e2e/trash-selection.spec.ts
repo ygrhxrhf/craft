@@ -31,7 +31,7 @@ test('trash selection deletes only the checked documents', async ({ page }) => {
   await expect(row).toBeVisible({ timeout: 20_000 });
 
   await row.click({ button: 'right' });
-  await page.getByRole('menu').getByRole('menuitem', { name: '移入回收站' }).click();
+  await page.getByRole('menu').getByRole('menuitem', { name: /移至最近删除/ }).click();
   await expect(sidebar.getByText(title, { exact: true })).toHaveCount(0, { timeout: 20_000 });
 
   const main = page.locator('main');

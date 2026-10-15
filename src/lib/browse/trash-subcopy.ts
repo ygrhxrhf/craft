@@ -31,6 +31,21 @@ export const COULD_NOT_RESTORE_FROM_TRASH_KEY = 'alert.could.not.restore.from.tr
 export const MOVE_ITEM_TO_TRASH = '此项目将移至最近删除。';
 export const MOVE_ITEMS_TO_TRASH = '这些项目将移至最近删除。';
 
+/**
+ * The delete menu entry's own title is dynamic (G245): a single item names itself, a batch counts
+ * itself. Officially the single form quotes the title and the batch form is pluralised by count —
+ * they are two keys, not one templated string.
+ */
+export const MOVE_X_TO_RECENTLY_DELETED_KEY = 'move.x.to.recently.deleted';
+
+export function moveToTrashMenuTitle(title: string): string {
+  return `将"${title}"移至最近删除`;
+}
+
+/** The sentence shown once the move has actually happened. */
+export const MOVED_TO_RECENTLY_DELETED = '已移至最近删除';
+export const MOVED_TO_RECENTLY_DELETED_KEY = 'moved.to.recently.deleted';
+
 /** Whether a document is still inside the retention window, given when it was deleted. */
 export function isWithinRetention(deletedAt: string | null, now: number = Date.now()): boolean {
   if (!deletedAt) return false;

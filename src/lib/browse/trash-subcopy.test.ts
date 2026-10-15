@@ -6,9 +6,11 @@ import {
   EMPTY_TRASH_CONFIRM,
   MOVE_ITEMS_TO_TRASH,
   MOVE_ITEM_TO_TRASH,
+  MOVED_TO_RECENTLY_DELETED,
   TRASH_RETENTION_DAYS,
   isWithinRetention,
   moveToTrashConfirm,
+  moveToTrashMenuTitle,
 } from './trash-subcopy';
 
 /**
@@ -52,5 +54,25 @@ describe('the move confirmation splits by count', () => {
     expect(moveToTrashConfirm(1)).toBe(MOVE_ITEM_TO_TRASH);
     expect(moveToTrashConfirm(2)).toBe(MOVE_ITEMS_TO_TRASH);
     expect(moveToTrashConfirm(0)).toBe(MOVE_ITEMS_TO_TRASH);
+  });
+});
+
+/**
+ * G245: the delete menu entry names the item it will move, and a completion sentence follows the
+ * move. Both are verbatim from the pack (`move.x.to.recently.deleted`, `moved.to.recently.deleted`).
+ */
+describe('the delete menu entry is dynamic', () => {
+  it('quotes the document title, verbatim', () => {
+    expect(moveToTrashMenuTitle('周报')).toBe('将"周报"移至最近删除');
+  });
+
+  it('keeps the official quotes and spacing around the title', () => {
+    expect(moveToTrashMenuTitle('')).toBe('将""移至最近删除');
+  });
+});
+
+describe('the completion sentence', () => {
+  it('is the past-tense line, verbatim', () => {
+    expect(MOVED_TO_RECENTLY_DELETED).toBe('已移至最近删除');
   });
 });

@@ -66,7 +66,7 @@ async function moveToTrash(page: Page, title: string) {
   // comes back, and the second stamp is by construction later than that arrival.
   for (let attempt = 0; attempt < 3; attempt++) {
     await row.click({ button: 'right' });
-    await page.getByRole('menu').getByRole('menuitem', { name: '移入回收站' }).click();
+    await page.getByRole('menu').getByRole('menuitem', { name: /移至最近删除/ }).click();
     const took = await expect(gone)
       .toHaveCount(0, { timeout: 6_000 })
       .then(() => true)

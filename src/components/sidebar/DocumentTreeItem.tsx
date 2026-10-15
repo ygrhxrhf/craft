@@ -11,6 +11,10 @@ import { getSyncManager } from '@/lib/sync-core';
 import { createDocumentLocal } from '@/components/sync/create-local';
 import { resolveFavoriteState, toggleFavoriteLocal } from '@/lib/favorite/toggle-local';
 import { untitledFor } from '@/lib/document/untitled-copy';
+import {
+  MOVED_TO_RECENTLY_DELETED,
+  moveToTrashMenuTitle,
+} from '@/lib/browse/trash-subcopy';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import {
   SIDEBAR_DOC_MIME,
@@ -142,6 +146,7 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
       return;
     }
     bumpTree();
+    toast.add({ id: 'moved-to-trash', type: 'success', title: MOVED_TO_RECENTLY_DELETED });
     if (window.location.pathname.startsWith(`/documents/${doc.id}`)) router.push('/documents');
   }
 
@@ -340,7 +345,7 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
             <ContextMenuItem onClick={() => void copyLink()}>复制链接</ContextMenuItem>
             <ContextMenuSeparator />
             <ContextMenuItem variant="destructive" onClick={() => void moveToTrash()}>
-              移入回收站
+              {moveToTrashMenuTitle(doc.title || untitledFor('list'))}
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>

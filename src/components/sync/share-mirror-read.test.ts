@@ -73,10 +73,10 @@ describe('接线闸：面板读侧先吃镜像、并订阅 store 变化（G1508�
   const dialog = read(DIALOG);
 
   it('挂载那一趟先读本地镜像（findDocumentShare），镜像没有才回落 getOrCreateShare', () => {
-    const mount = /useEffect\(\(\) => \{\s*if \(!open\) return;[\s\S]*?reloadShareFromMirror\(\)[\s\S]*?\n  \}, \[open, link, documentId, reloadShareFromMirror\]\)/.exec(dialog)?.[0];
+    const mount = /useEffect\(\(\) => \{\s*if \(!open\) return;[\s\S]*?reloadShareFromMirror\(\{ seedSlugDraft: true \}\)[\s\S]*?\n  \}, \[open, link, documentId, reloadShareFromMirror\]\)/.exec(dialog)?.[0];
     expect(mount, '找不到"挂载先读镜像"那一趟（判据失效：被断言的对象不存在）').toBeTruthy();
     // 镜像先手：getOrCreateShare 只能出现在镜像未命中的回落分支之后。
-    const mirrorIdx = mount!.indexOf('reloadShareFromMirror()');
+    const mirrorIdx = mount!.indexOf('reloadShareFromMirror({ seedSlugDraft: true })');
     const actionIdx = mount!.indexOf('getOrCreateShare(');
     expect(actionIdx, '挂载那一趟没有回落 getOrCreateShare＝首次分享建不出行').toBeGreaterThan(-1);
     expect(actionIdx, '回落 action 跑在了读镜像之前＝又变回"挂载即读服务端"（G1508）').toBeGreaterThan(mirrorIdx);
@@ -97,5 +97,27 @@ describe('接线闸：面板读侧先吃镜像、并订阅 store 变化（G1508�
 
   it('镜像行 → 视图的解在 local-records 里（纯函数可单测），面板不自己拼字段', () => {
     expect(read(RECORDS)).toContain('export function shareViewFromRow');
+  });
+});
+
+describe('接线闸：翻新读不覆盖用户敲着的 slug 草稿（G1522）', () => {
+  const dialog = read(DIALOG);
+
+  it('`slugDraft` 只在"种子那一趟"被写：翻新读里只有那一处、且带 seedSlugDraft 守卫', () => {
+    const body = /const reloadShareFromMirror = useCallback\([\s\S]*?\n  \);/.exec(dialog)?.[0];
+    expect(body, '找不到 reloadShareFromMirror（判据失效）').toBeTruthy();
+    const writes = body!.match(/setSlugDraft\(/g) ?? [];
+    expect(writes.length, `翻新读里出现了 ${writes.length} 处 setSlugDraft ⇒ 用户敲了一半的地址会被推送盖掉（G1522）`).toBe(1);
+    expect(body!, '那一处 setSlugDraft 没有被 seedSlugDraft 守卫住').toMatch(/if \(opts\?\.seedSlugDraft\) setSlugDraft\(/);
+  });
+
+  it('挂载那一趟显式播种草稿、订阅那一趟不传（同一函数、两处行为不同）', () => {
+    expect(
+      /reloadShareFromMirror\(\{ seedSlugDraft: true \}\)/.exec(dialog)?.[0],
+      '挂载那一趟没播种草稿 ⇒ 打开面板时输入框是空的',
+    ).toBeTruthy();
+    const sub = /getSyncManager\(\)\.onStoreChanged\(\(table\) => \{[\s\S]*?\n    \}\);/.exec(dialog)?.[0] ?? '';
+    expect(sub, '订阅体里没重读镜像').toContain('reloadShareFromMirror');
+    expect(sub, '订阅那一路也播种了草稿 ⇒ G1522 复发').not.toContain('seedSlugDraft');
   });
 });

@@ -62,29 +62,34 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   // G1508：挂载读先吃本地镜像——镜像里有这一行就当场渲染档位／发布态／口令态／slug，
   //   断链时也看得见现值；镜像没有（这篇文档还没被分享过、本机也没拉过这张表）才回落到
   //   `getOrCreateShare` 去建行。☆ 回落那一趟是**首次分享**的唯一服务端依赖，不是读侧常态。
-  const reloadShareFromMirror = useCallback(async (): Promise<boolean> => {
-    const view = await findDocumentShare(documentId);
-    if (!view || typeof view.token !== 'string') return false;
-    setShareId(view.id);
-    setToken(view.token);
-    setLink(`${window.location.origin}/s/${view.token}`);
-    if (typeof view.isPublished === 'boolean') setIsPublished(view.isPublished);
-    if (view.permission === 'view' || view.permission === 'edit') setPermission(view.permission);
-    if (typeof view.shareVersion === 'number') setServerVersion(view.shareVersion);
-    if (typeof view.hasPasscode === 'boolean') setHasPasscode(view.hasPasscode);
-    if (view.slug !== undefined) {
-      setSlug(view.slug);
-      setSlugDraft(view.slug ?? '');
-    }
-    return true;
-  }, [documentId]);
+  // G1522：`slugDraft` 是**受控输入**，只在"种子那一趟"（挂载）才跟着镜像播种——翻新读
+  //   （订阅触发的重读）只动 `slug`，否则用户敲了一半的自定义地址会被一次他端推送盖掉。
+  const reloadShareFromMirror = useCallback(
+    async (opts?: { seedSlugDraft?: boolean }): Promise<boolean> => {
+      const view = await findDocumentShare(documentId);
+      if (!view || typeof view.token !== 'string') return false;
+      setShareId(view.id);
+      setToken(view.token);
+      setLink(`${window.location.origin}/s/${view.token}`);
+      if (typeof view.isPublished === 'boolean') setIsPublished(view.isPublished);
+      if (view.permission === 'view' || view.permission === 'edit') setPermission(view.permission);
+      if (typeof view.shareVersion === 'number') setServerVersion(view.shareVersion);
+      if (typeof view.hasPasscode === 'boolean') setHasPasscode(view.hasPasscode);
+      if (view.slug !== undefined) {
+        setSlug(view.slug);
+        if (opts?.seedSlugDraft) setSlugDraft(view.slug ?? '');
+      }
+      return true;
+    },
+    [documentId],
+  );
 
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
     void (async () => {
       // 每次开面板都先吃镜像（本机读，廉价）：档位／发布态／口令态／slug 当场翻新。
-      if (await reloadShareFromMirror()) return;
+      if (await reloadShareFromMirror({ seedSlugDraft: true })) return;
       if (cancelled || link) return;
       try {
         const share = await getOrCreateShare(documentId);

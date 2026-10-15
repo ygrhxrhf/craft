@@ -28,6 +28,8 @@ import {
 import { ShareDialog } from '@/components/share/ShareDialog';
 import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, showsDocumentTitle } from './themes/page-style';
 import type { PageStyle } from './themes/page-style';
+import { getDraft } from '@/lib/offline/draft-store';
+import { offlineSaveLabel } from '@/lib/offline/save-status';
 
 const TAB_ORDER = ['insert', 'format', 'style', 'info'] as const;
 const TAB_ICONS = { insert: LayoutGrid, format: Type, style: Palette, info: Info };
@@ -88,6 +90,46 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     saveNowRef.current = fn;
   }, []);
   const [wordCount, setWordCount] = useState(0);
+
+  /**
+   * G36：保存徽标的离线语义（官方 `interactions.md:71`）。在线时徽标一字不动（返回 null）；
+   * 离线时改说「未连接到网络」，每日笔记若已把草稿落进本机库则说「离线更新于 HH:MM」。
+   */
+  const [offline, setOffline] = useState(false);
+  const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
+  useEffect(() => {
+    const update = () => setOffline(!navigator.onLine);
+    update();
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    return () => {
+      window.removeEventListener('online', update);
+      window.removeEventListener('offline', update);
+    };
+  }, []);
+  // 离线时读一眼本机草稿的落盘时刻（每日笔记那句要它）；失败/没有就退到「未连接到网络」。
+  useEffect(() => {
+    if (!offline) {
+      setDraftSavedAt(null);
+      return;
+    }
+    let alive = true;
+    getDraft(doc.id)
+      .then((draft) => {
+        if (alive) setDraftSavedAt(draft?.savedAt ?? null);
+      })
+      .catch(() => {
+        if (alive) setDraftSavedAt(null);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [offline, doc.id, saveState]);
+  const offlineLabel = offlineSaveLabel({
+    offline,
+    isDailyNote: Boolean(doc.isDailyNote),
+    draftSavedAt,
+  });
 
   const handleEditorReady = useCallback((next: import('@tiptap/react').Editor | null) => {
     setEditor(next);
@@ -179,15 +221,21 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
                 saveState === 'error' ? 'text-destructive' : 'text-muted-foreground/60'
               )}
             >
-              {saveState === 'dirty' && '未保存'}
-              {saveState === 'saving' && '保存中...'}
-              {saveState === 'saved' && '已保存'}
-              {saveState === 'error' && (
+              {offlineLabel ? (
+                offlineLabel
+              ) : (
                 <>
-                  保存失败
-                  <button type="button" onClick={() => saveNowRef.current?.()} className="ml-1 underline underline-offset-2">
-                    重试
-                  </button>
+                  {saveState === 'dirty' && '未保存'}
+                  {saveState === 'saving' && '保存中...'}
+                  {saveState === 'saved' && '已保存'}
+                  {saveState === 'error' && (
+                    <>
+                      保存失败
+                      <button type="button" onClick={() => saveNowRef.current?.()} className="ml-1 underline underline-offset-2">
+                        重试
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </span>

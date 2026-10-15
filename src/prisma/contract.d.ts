@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f21e8df1d0a22d1a34aa4d71f12a6b6817c93f578add0dd64b5c4921e6223f04'>;
+  StorageHashBase<'499195a540f8cb093b6989fecbc411fadb0db0d6d4acfcfd5b5d738a850b58e1'>;
 export type ExecutionHash =
   ExecutionHashBase<'5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b'>;
 export type ProfileHash =
@@ -354,6 +354,7 @@ export type FieldOutputTypes = {
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly isDailyNote: CodecTypes['pg/bool@1']['output'];
       readonly dailyNoteDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly lastViewedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly wordCount: CodecTypes['pg/int4@1']['output'];
       readonly charCount: CodecTypes['pg/int4@1']['output'];
       readonly version: CodecTypes['pg/int4@1']['output'];
@@ -632,6 +633,7 @@ export type FieldInputTypes = {
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly isDailyNote: CodecTypes['pg/bool@1']['input'];
       readonly dailyNoteDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly lastViewedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly wordCount: CodecTypes['pg/int4@1']['input'];
       readonly charCount: CodecTypes['pg/int4@1']['input'];
       readonly version: CodecTypes['pg/int4@1']['input'];
@@ -951,6 +953,7 @@ export type StorageColumnTypes = {
       readonly isDailyNote: CodecTypes['pg/bool@1']['output'];
       readonly isDeleted: CodecTypes['pg/bool@1']['output'];
       readonly isTemplate: CodecTypes['pg/bool@1']['output'];
+      readonly lastViewedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly metaUpdatedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly order: CodecTypes['pg/float8@1']['output'];
       readonly pageStyle: CodecTypes['pg/json@1']['output'] | null;
@@ -1229,6 +1232,7 @@ export type StorageColumnInputTypes = {
       readonly isDailyNote: CodecTypes['pg/bool@1']['input'];
       readonly isDeleted: CodecTypes['pg/bool@1']['input'];
       readonly isTemplate: CodecTypes['pg/bool@1']['input'];
+      readonly lastViewedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly metaUpdatedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly order: CodecTypes['pg/float8@1']['input'];
       readonly pageStyle: CodecTypes['pg/json@1']['input'] | null;
@@ -1431,6 +1435,7 @@ export namespace Models {
     deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     isDailyNote: CodecTypes['pg/bool@1']['output'];
     dailyNoteDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    lastViewedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     wordCount: CodecTypes['pg/int4@1']['output'];
     charCount: CodecTypes['pg/int4@1']['output'];
     version: CodecTypes['pg/int4@1']['output'];
@@ -3073,6 +3078,11 @@ type ContractBase = Omit<
                   };
                 };
                 readonly dailyNoteDate: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly lastViewedAt: {
                   readonly nativeType: 'timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: true;
@@ -5040,6 +5050,13 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly lastViewedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
               readonly wordCount: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -5251,6 +5268,7 @@ type ContractBase = Omit<
                 readonly deletedAt: { readonly column: 'deletedAt' };
                 readonly isDailyNote: { readonly column: 'isDailyNote' };
                 readonly dailyNoteDate: { readonly column: 'dailyNoteDate' };
+                readonly lastViewedAt: { readonly column: 'lastViewedAt' };
                 readonly wordCount: { readonly column: 'wordCount' };
                 readonly charCount: { readonly column: 'charCount' };
                 readonly version: { readonly column: 'version' };

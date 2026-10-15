@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.documents.lastViewedAt",
+    "label": "Add column \"lastViewedAt\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lastViewedAt",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lastViewedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "lastViewedAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"lastViewedAt\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"lastViewedAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lastViewedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "lastViewedAt"
+        ]
+      }
+    ]
+  }
+]

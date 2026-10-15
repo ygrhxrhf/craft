@@ -1363,6 +1363,13 @@
                   "kind": "scalar"
                 }
               },
+              "lastViewedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "metaUpdatedAt": {
                 "nullable": true,
                 "type": {
@@ -1700,6 +1707,9 @@
                 },
                 "isTemplate": {
                   "column": "isTemplate"
+                },
+                "lastViewedAt": {
+                  "column": "lastViewedAt"
                 },
                 "metaUpdatedAt": {
                   "column": "metaUpdatedAt"
@@ -5266,6 +5276,11 @@
                   "nativeType": "bool",
                   "nullable": false
                 },
+                "lastViewedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "metaUpdatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
@@ -6562,7 +6577,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f21e8df1d0a22d1a34aa4d71f12a6b6817c93f578add0dd64b5c4921e6223f04"
+    "storageHash": "499195a540f8cb093b6989fecbc411fadb0db0d6d4acfcfd5b5d738a850b58e1"
   },
   "execution": {
     "executionHash": "5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b",

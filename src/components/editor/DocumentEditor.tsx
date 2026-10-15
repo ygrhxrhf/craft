@@ -126,6 +126,20 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
       alive = false;
     };
   }, [offline, doc.id, saveState]);
+  // G610：打开一篇文档即记一次「上次浏览」（官方 `document_view` 的等价物）——列表档那一列读它。
+  //   走内核 applyLocal（元数据列），与页面信息的写入同一条通路。
+  useEffect(() => {
+    getSyncManager()
+      .applyLocal({
+        table: 'document',
+        id: doc.id,
+        patch: { lastViewedAt: new Date().toISOString() },
+      })
+      .catch(() => {
+        // 记浏览时间是便利项，写失败不该打断阅读。
+      });
+  }, [doc.id]);
+
   const offlineLabel = offlineSaveLabel({
     offline,
     isDailyNote: Boolean(doc.isDailyNote),

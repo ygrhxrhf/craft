@@ -5,7 +5,7 @@
 export const DOC_META_COLS = [
   'title', 'icon', 'coverImage', 'coverType', 'font', 'width', 'pageStyle',
   'parentId', 'folderId', 'order', 'isDeleted', 'deletedAt',
-  'isDailyNote', 'dailyNoteDate', 'isTemplate', 'metaUpdatedAt',
+  'isDailyNote', 'dailyNoteDate', 'isTemplate', 'lastViewedAt', 'metaUpdatedAt',
 ] as const;
 
 export const DOC_CONTENT_COLS = ['content', 'plainText', 'wordCount', 'charCount', 'version'] as const;

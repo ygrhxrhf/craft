@@ -80,6 +80,9 @@ model Document {
   isDailyNote   Boolean   @default(false)
   dailyNoteDate TimestamptzString?
 
+  // G610：官方 `document_view` 会把"上次浏览"并进文档对象；列表档「上次浏览」列读它。
+  lastViewedAt  TimestamptzString?
+
   wordCount     Int       @default(0)
   charCount     Int       @default(0)
 

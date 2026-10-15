@@ -207,18 +207,38 @@ function DateCell({ value, onChange }: { value: any; onChange: (v: any) => void 
   }
 
   return (
-    <input
-      ref={ref}
-      type="date"
-      value={text}
-      onChange={e => setText(e.target.value)}
-      onBlur={() => { setEditing(false); onChange(text || null); }}
-      onKeyDown={e => {
-        if (e.key === 'Enter') { setEditing(false); onChange(text || null); }
-        if (e.key === 'Escape') { setEditing(false); }
-      }}
-      className="w-full rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-    />
+    <div className="relative min-h-8 px-2 py-1">
+      <div className="flex items-center gap-1">
+        <input
+          ref={ref}
+          type="date"
+          value={text}
+          onChange={e => setText(e.target.value)}
+          onBlur={() => { setEditing(false); onChange(text || null); }}
+          onKeyDown={e => {
+            if (e.key === 'Enter') { setEditing(false); onChange(text || null); }
+            if (e.key === 'Escape') { setEditing(false); }
+          }}
+          className="w-full min-w-0 flex-1 rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+        />
+        {/* G367：日期框的"有值态"副面孔——有值时出现 `×` 清除按钮（空态没有它）。 */}
+        {text && (
+          <button
+            type="button"
+            aria-label="清除日期"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setText('');
+              setEditing(false);
+              onChange(null);
+            }}
+            className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:text-destructive"
+          >
+            <X className="size-3.5" />
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 

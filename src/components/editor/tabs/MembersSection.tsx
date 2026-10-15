@@ -11,6 +11,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows } from '@/components/sync/local-records';
 import { overlayMemberRows } from '@/components/sync/member-rows';
 import { rememberUserDisplay } from '@/components/sync/user-display';
+import { persistUserDisplay } from '@/components/sync/user-display-persist';
 
 interface MemberRow {
   id: string;
@@ -80,6 +81,8 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
       // G1507：成员行的同步列里没有姓名/邮箱 ⇒ 把这一发当场学到的显示名记下来，
       // 正文那枚 `@` 叠 pending 时才标得出这位刚授权的人。
       rememberUserDisplay({ userId: resolved.userId, name: resolved.name, email: resolved.email });
+      // G1520：顺手把缓存落进内核，刷新后 @ 名单里那枚人不再丢（pending 还没推上去时尤其）。
+      persistUserDisplay();
       await getSyncManager().applyLocal({
         table: 'document_member',
         id: resolved.id,

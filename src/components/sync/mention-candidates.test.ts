@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 // 被测的是纯函数；同源那一枚的两次外部读（服务端 action 与本地库）都不该在单测里真跑。
 vi.mock('@/actions/document/members', () => ({ listMentionCandidates: vi.fn() }));
-vi.mock('./local-records', () => ({ readPendingRows: vi.fn() }));
+vi.mock('./local-records', () => ({ readPendingRows: vi.fn(), readUserDisplayCache: vi.fn(async () => null) }));
 
 import { overlayMentionCandidates } from './mention-candidates';
 import type { PendingRow } from './local-records';
@@ -106,9 +106,15 @@ describe('接线闸：两处 `@` 与邀请那一路都接到同源上（G1507）
     expect(s).not.toContain('listMentionCandidates(documentId)');
   });
 
-  it('邀请那一路把学到的显示名记进会话缓存', () => {
+  it('邀请那一路把学到的显示名记进缓存，并落进内核（G1520）', () => {
     const s = src('src/components/editor/tabs/MembersSection.tsx');
     expect(s).toContain('rememberUserDisplay({ userId: resolved.userId');
+    expect(s, '邀请后没落库＝刷新页面后那条 pending 行标不出名字（G1520）').toContain('persistUserDisplay()');
+  });
+
+  it('读候选前先 hydrate 落库的显示名（G1520）', () => {
+    const s = src('src/components/sync/mention-candidates.ts');
+    expect(s).toContain('await hydrateUserDisplay()');
   });
 
   it('同源那一枚读的是 document_member 的 pending（不是别的表，也不是全量镜像）', () => {

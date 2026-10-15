@@ -159,3 +159,32 @@ export async function findDocumentShare(documentId: string): Promise<DocumentSha
 export async function findDocumentShareId(documentId: string): Promise<string | null> {
   return (await findDocumentShare(documentId))?.id ?? null;
 }
+
+/** G1520：显示名缓存的 kv 键（落内核同一座库的通用 kv 段，与 cursor/lastPullAt 并存）。 */
+const USER_DISPLAY_KV = 'user_display';
+
+/**
+ * 读回落的显示名缓存（`rememberUserDisplay` 学到的那半截）。读不到／坏 JSON 一律返回 null，
+ * 调用方按"缓存还没落过"处理，不阻塞。
+ */
+export async function readUserDisplayCache(): Promise<
+  Array<[string, { name: string | null; email: string }]> | null
+> {
+  try {
+    const raw = await (await getStore()).getKv(USER_DISPLAY_KV);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+/** 把显示名缓存写进内核的 kv 段（失败静默：这只是缓存，不是主数据）。 */
+export async function writeUserDisplayCache(entries: unknown): Promise<void> {
+  try {
+    await (await getStore()).setKv(USER_DISPLAY_KV, JSON.stringify(entries));
+  } catch {
+    // 本地库不可用：缓存丢失不影响主流程，下一次邀请会重新学到
+  }
+}

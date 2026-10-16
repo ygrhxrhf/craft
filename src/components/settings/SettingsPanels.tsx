@@ -6,7 +6,6 @@ import { useSession } from 'next-auth/react';
 import {
   Camera,
   ChevronRight,
-  ChevronsUpDown,
   Pencil,
   SquarePlus,
 } from 'lucide-react';
@@ -513,23 +512,17 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
           <div>
             <GroupTitle>每日电子邮件</GroupTitle>
             <GroupDesc>接收当天所有任务和提醒的摘要。你还将收到今天截止的摘要推送通知。</GroupDesc>
-            <RowCard className="mt-3 divide-y divide-foreground/4">
-              <div className="flex items-center justify-between px-4 py-3">
-                <div className="text-[13px] font-medium">电子邮件通知</div>
-                <NotifySwitch
-                  value={prefs?.notifyDaily}
-                  busy={savingSwitch}
-                  onChange={(next) => void setSwitch('notifyDaily', next)}
-                />
-              </div>
-              <div className="flex items-center justify-between px-4 py-3">
-                <div className="text-[13px] font-medium">时间</div>
-                <div className="flex w-[150px] items-center justify-between rounded-lg bg-foreground/4 px-3 py-1.5 text-[13px]">
-                  08:00
-                  <ChevronsUpDown className="size-3.5 text-foreground/45" />
-                </div>
-              </div>
+            <RowCard className="mt-3 flex items-center justify-between px-4 py-3">
+              <div className="text-[13px] font-medium">电子邮件通知</div>
+              <NotifySwitch
+                value={prefs?.notifyDaily}
+                busy={savingSwitch}
+                onChange={(next) => void setSwitch('notifyDaily', next)}
+              />
             </RowCard>
+            {/* G03：这里原有一行「时间 08:00」——官方语言包里**没有任何可配摘要时刻的键**
+                （只有 `preferences.daily.email` 与其 desc），且该行带按钮式外框与 ChevronsUpDown
+                图标、看着能点却是个无处理器/无输入的裸 DIV ⇒ 已删除，不再伪造一个不存在的设置。 */}
           </div>
           <div>
             <GroupTitle>空间</GroupTitle>

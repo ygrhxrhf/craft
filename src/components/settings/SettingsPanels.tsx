@@ -623,17 +623,11 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                 （只有 `preferences.daily.email` 与其 desc），且该行带按钮式外框与 ChevronsUpDown
                 图标、看着能点却是个无处理器/无输入的裸 DIV ⇒ 已删除，不再伪造一个不存在的设置。 */}
           </div>
-          <div>
-            <GroupTitle>空间</GroupTitle>
-            <GroupDesc>你可以覆盖单个空间的这些设置。</GroupDesc>
-            <RowCard className="mt-3 flex items-center justify-between px-4 py-3">
-              <div className="flex items-center gap-2.5">
-                <SpaceIcon className="size-6 rounded-md text-[10px]" />
-                <div className="text-[13px] font-medium">{spaceName}</div>
-              </div>
-              <ChevronRight className="size-4 text-foreground/45" />
-            </RowCard>
-          </div>
+          {/* G163：这里原有「空间」一行——文案承诺可以按空间覆盖这些设置、右侧还带
+              ChevronRight 暗示可进入，但实测是裸 DIV（不在 button 里、无 onClick），而且本地
+              **没有任何按空间的通知存储**（零 spaceId／perSpace 列，`per-space` 只作为
+              `notification-settings.ts` 里的一句描述存在）⇒ 它承诺了一个不存在的功能。
+              按"有列就接线、没列就移除"的同一把尺删掉：三档开关（真落库）保留，不画按空间那层。 */}
         </div>
       );
 

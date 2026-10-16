@@ -174,3 +174,26 @@ describe('the email row is read-only, not a fake edit affordance', () => {
     expect(panels).not.toMatch(/\bupdateEmail\s*\(/);
   });
 });
+
+/**
+ * G163：通知分区末尾那行「空间」承诺"你可以覆盖单个空间的这些设置"、还带 ChevronRight 暗示可进入，
+ * 但本地**没有任何按空间的通知存储**（零 spaceId／perSpace 列）⇒ 承诺了一个不存在的功能。
+ * 按同一把尺移除该行，三档真开关保留。
+ */
+describe('the notifications panel does not promise per-space overrides it cannot store', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('drops the per-space row', () => {
+    expect(panels).not.toContain('覆盖单个空间的这些设置');
+  });
+
+  it('keeps the three real switches and their verbatim sentences', () => {
+    expect(panels).toContain("setSwitch('notifyComments'");
+    expect(panels).toContain("setSwitch('notifyReminders'");
+    expect(panels).toContain("setSwitch('notifyDaily'");
+    expect(panels).toContain('当需要提醒时，Craft 会向你发送通知。');
+  });
+});

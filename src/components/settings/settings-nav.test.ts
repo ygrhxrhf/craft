@@ -197,3 +197,24 @@ describe('the notifications panel does not promise per-space overrides it cannot
     expect(panels).toContain('当需要提醒时，Craft 会向你发送通知。');
   });
 });
+
+/**
+ * About 面板末尾两枚按钮此前都是 inert（无 onClick）。按同一把尺分开处置：社媒那枚有可推导的
+ * 目标（官方串逐字给了句柄）故**接线**；反馈那枚的宿主是官方一个 13 键弹窗（G1414 记其"没上屏、
+ * 实际长什么样未证"）而本地零反馈弹窗基建，故**移除**。
+ */
+describe('the about panel buttons are wired or removed, never inert', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('opens the official X profile with noopener', () => {
+    expect(panels).toMatch(/window\.open\('https:\/\/x\.com\/CraftDocs', '_blank', 'noopener,noreferrer'\)/);
+  });
+
+  it('drops the feedback button it cannot host', () => {
+    expect(panels).toContain('有想法、功能请求或发现了错误');
+    expect(panels).not.toMatch(/<button[^>]*>\s*意见反馈\s*<\/button>/);
+  });
+});

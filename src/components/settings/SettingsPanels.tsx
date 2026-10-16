@@ -659,8 +659,11 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
           <div className="border-t border-foreground/4 pt-6">
             <GroupTitle>社交媒体</GroupTitle>
             <GroupDesc>对 Craft 的新功能和即将推出的功能感兴趣？ 在 X 上关注我们，第一时间了解最新信息！</GroupDesc>
+            {/* G164 复核：这枚按钮此前是 inert（无 onClick）。官方串逐字给了句柄
+                （`preferences.follow.craftdocs.app.x`「在 X 上关注 @CraftDocs」）⇒ URL 可推导，接线。 */}
             <button
               type="button"
+              onClick={() => window.open('https://x.com/CraftDocs', '_blank', 'noopener,noreferrer')}
               className="mt-3 rounded-lg border border-foreground/8 px-4 py-2 text-[13px] font-medium"
             >
               在 X 上关注 @CraftDocs
@@ -669,12 +672,10 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
           <div className="border-t border-foreground/4 pt-6">
             <GroupTitle>意见反馈</GroupTitle>
             <GroupDesc>有想法、功能请求或发现了错误？ 请告诉我们，我们会尽快处理！</GroupDesc>
-            <button
-              type="button"
-              className="mt-3 rounded-lg border border-foreground/8 px-4 py-2 text-[13px] font-medium"
-            >
-              意见反馈
-            </button>
+            {/* G164 复核：这里原有第二枚 inert 按钮。官方那是个 **13 键的反馈弹窗**（G1414：
+                subject／email／message 三字段＋提交屏＋感谢屏；`email` 格只在匿名用户下渲染），
+                而本目录明确记该弹窗**没上屏、实际长什么样未证**，本地也没有任何反馈弹窗基建
+                ⇒ 无宿主。按"有列就接线、没列就移除"删掉按钮，只留说明文字。 */}
           </div>
         </div>
       );

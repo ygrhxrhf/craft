@@ -1,6 +1,11 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
+  CARD_GAP,
+  CARD_GAP_NARROW,
   CARD_MAX_WIDTH,
   NARROW_THRESHOLD,
   cardHeightForWidth,
@@ -56,5 +61,27 @@ describe('card geometry', () => {
     const width = cardWidthForWidth(1112);
     expect(width).toBeLessThanOrEqual(CARD_MAX_WIDTH);
     expect(width).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * G1096：官方 gap 逐字 `({$isMobile:t}) => t ? 8 : 20`。窄档常量此前声明了却没人用，
+ * BrowseGrid 恒用 20 —— 钉住"移动档真的取 8"。
+ */
+describe('the narrow gap is actually applied on mobile', () => {
+  const source = readFileSync(
+    join(process.cwd(), 'src/components/app/BrowseGrid.tsx'),
+    'utf8',
+  );
+
+  it('keeps the two official gaps distinct', () => {
+    expect(CARD_GAP).toBe(20);
+    expect(CARD_GAP_NARROW).toBe(8);
+  });
+
+  it('switches on the mobile query rather than hard-coding 20', () => {
+    expect(source).toContain('CARD_GAP_NARROW');
+    expect(source).toContain('useIsMobile');
+    expect(source).not.toMatch(/gap:\s*`\$\{CARD_GAP\}px`/);
   });
 });

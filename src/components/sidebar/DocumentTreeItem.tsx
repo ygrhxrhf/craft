@@ -13,8 +13,10 @@ import { resolveFavoriteState, toggleFavoriteLocal } from '@/lib/favorite/toggle
 import { untitledFor } from '@/lib/document/untitled-copy';
 import {
   MOVED_TO_RECENTLY_DELETED,
+  moveToTrashConfirm,
   moveToTrashMenuTitle,
 } from '@/lib/browse/trash-subcopy';
+import { confirmDialog } from '@/lib/dialog/show';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import {
   SIDEBAR_DOC_MIME,
@@ -131,6 +133,15 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   }
 
   async function moveToTrash() {
+    // G233 的第四件：移入回收站前先确认，确认句按数量分档（one/other）——
+    // 官方四键里这一对（`MOVE_ITEM_TO_TRASH`／`MOVE_ITEMS_TO_TRASH`）此前只躺在
+    // trash-subcopy 里没有生产消费者。文件夹侧早已走同一枚 confirmDialog（G241）。
+    const ok = await confirmDialog({
+      title: moveToTrashMenuTitle(doc.title || untitledFor('list')),
+      message: moveToTrashConfirm(1),
+      confirmLabel: moveToTrashMenuTitle(doc.title || untitledFor('list')),
+    });
+    if (!ok) return;
     try {
       // 删除 → applyLocal（不用 patch:null：同步协议的 delete 只写 deletedAt，
       // 而读侧（getDocuments/回收站/搜索）按 isDeleted 过滤，会复活/丢进回收站失败）

@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 import {
   COULD_NOT_DELETE_DOCUMENT,
@@ -74,5 +76,27 @@ describe('the delete menu entry is dynamic', () => {
 describe('the completion sentence', () => {
   it('is the past-tense line, verbatim', () => {
     expect(MOVED_TO_RECENTLY_DELETED).toBe('已移至最近删除');
+  });
+});
+
+/**
+ * G233's fourth piece: the confirmation pair had no production consumer until the sidebar started
+ * routing its delete through it. Pin the wiring, not just the strings — the whole defect class this
+ * ledger keeps recording is "the copy exists, nothing calls it".
+ */
+describe('the move confirmation is actually wired', () => {
+  const source = readFileSync(
+    fileURLToPath(new URL('../../components/sidebar/DocumentTreeItem.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('asks before moving, and bails when the user declines', () => {
+    expect(source).toContain('moveToTrashConfirm');
+    expect(source).toMatch(/if\s*\(!ok\)\s*return/);
+  });
+
+  it('asks through the shared confirm dialog rather than window.confirm', () => {
+    expect(source).toContain("from '@/lib/dialog/show'");
+    expect(source).not.toContain('window.confirm');
   });
 });

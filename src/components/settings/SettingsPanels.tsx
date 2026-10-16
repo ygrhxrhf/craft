@@ -267,23 +267,18 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       return (
         <div className="space-y-6">
           <div className="flex justify-center pt-6">
-            <div className="relative">
-              <SpaceIcon className="size-32 rounded-[28px] text-5xl" />
-              <button
-                type="button"
-                aria-label="更换空间图标"
-                className="absolute -right-3 -bottom-3 flex size-10 items-center justify-center rounded-full bg-background shadow-(--shadow-xxs)"
-              >
-                <Camera className="size-4" />
-              </button>
-            </div>
+            {/* G179：这里原有两枚**无宿主**的假控件——「更换空间图标」相机按钮（无 onClick）
+                与「空间名称」右侧的裸 `<EditIcon />`（不是按钮）。本地没有 `Space` 实体：
+                空间名由用户 `name` 派生、图标是固定渐变，两者都没有可写入的地方 ⇒ 删掉，
+                不画一个不存在的设置。（G164 的账户改名/改头像**有** `user.name`／`image` 列，
+                故那两处是"接线"、这里只能是"移除"——同一条判据，两种结论。） */}
+            <SpaceIcon className="size-32 rounded-[28px] text-5xl" />
           </div>
           <RowCard className="flex items-center justify-between px-4 py-3">
             <div>
               <div className="text-xs text-foreground/55">空间名称</div>
               <div className="mt-1 text-[15px]">{spaceName}</div>
             </div>
-            <EditIcon />
           </RowCard>
         </div>
       );

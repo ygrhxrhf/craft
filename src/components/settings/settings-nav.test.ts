@@ -119,3 +119,32 @@ describe('the account panel can actually rename the user', () => {
     expect(panels).toMatch(/if \(!trimmed \|\| trimmed === displayName\) return/);
   });
 });
+
+/**
+ * G179：空间分区曾有两枚**无宿主**的假控件——「更换空间图标」相机按钮（无 onClick）与
+ * 「空间名称」右侧的裸 `<EditIcon />`。本地没有 `Space` 实体（空间名由用户 name 派生、
+ * 图标是固定渐变）⇒ 没有可写入的地方，只能移除。判据与 G164 同一把尺，结论相反：
+ * 那边有 `user.name`／`image` 列可接，这边没有。
+ */
+describe('the space panel does not fake controls it cannot back', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('has no space-icon camera button', () => {
+    // 只看属性位置，不看注释（注释里会引用那条旧标签作说明）。
+    expect(panels).not.toMatch(/aria-label="更换空间图标"/);
+  });
+
+  it('still shows the space name and its icon', () => {
+    expect(panels).toContain('空间名称');
+    expect(panels).toContain('<SpaceIcon');
+  });
+
+  it('keeps the avatar camera button, which has a real column behind it', () => {
+    // 与空间图标形成对照：这枚相机是接真了的（写 user.image）。
+    expect(panels).toContain('更换头像');
+    expect(panels).toContain('avatarInputRef.current?.click()');
+  });
+});

@@ -18,6 +18,7 @@ import { overlayTrashRows, loadTrashRows } from './TrashList';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { TRASH_DISCLAIMER, TRASH_EMPTY } from '@/lib/browse/trash-copy';
+import { EMPTY_TRASH_ACTION, EMPTY_TRASH_CONFIRM } from '@/lib/browse/trash-subcopy';
 
 const serverRow = (id: string, title: string, deletedAt: string) =>
   ({ id, title, icon: null, deletedAt });
@@ -93,5 +94,26 @@ describe('the trash copy is the official text, and the disclaimer is conditional
     const disclaimer = source.indexOf('{TRASH_DISCLAIMER}');
     expect(emptyReturn).toBeGreaterThanOrEqual(0);
     expect(disclaimer).toBeGreaterThan(emptyReturn);
+  });
+});
+
+describe('G233 清空最近删除', () => {
+  const source = readFileSync(
+    fileURLToPath(new URL('./TrashList.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('offers the official command behind its own confirmation', () => {
+    expect(EMPTY_TRASH_ACTION).toBe('清空最近删除');
+    expect(EMPTY_TRASH_CONFIRM).toBe('你确定要永久删除这些项目吗？');
+    // 菜单项与确认框都用官方常量，而不是各自写一份字面量
+    expect(source).toContain('{EMPTY_TRASH_ACTION}');
+    expect(source).toContain('{EMPTY_TRASH_CONFIRM}');
+    expect(source).not.toContain('清空回收站');
+  });
+
+  it('routes the action through the server action rather than a local delete', () => {
+    expect(source).toContain('emptyTrash');
+    expect(source).toMatch(/import\s*\{[^}]*emptyTrash[^}]*\}\s*from\s*'@\/actions\/document\/delete'/);
   });
 });

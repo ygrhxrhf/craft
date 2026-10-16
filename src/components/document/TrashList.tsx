@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Check, File, Minus, RotateCcw, Trash2, Trash } from 'lucide-react';
+import { Check, File, Minus, MoreHorizontal, RotateCcw, Trash2, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import {
@@ -11,12 +11,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { permanentDeleteDocument } from '@/actions/document/delete';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { emptyTrash, permanentDeleteDocument } from '@/actions/document/delete';
 import { bulkDeleteAlert, bulkRestoreAlert, runBulkAction } from '@/lib/document/bulk-action';
 import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { getDeletedDocuments } from '@/actions/document/get';
 import { TRASH_DISCLAIMER, TRASH_EMPTY } from '@/lib/browse/trash-copy';
+import {
+  COULD_NOT_DELETE_DOCUMENT,
+  EMPTY_TRASH_ACTION,
+  EMPTY_TRASH_CONFIRM,
+  PERMANENT_DELETE_DOCUMENT,
+} from '@/lib/browse/trash-subcopy';
 import { useRouter } from 'next/navigation';
 import { untitledFor } from '@/lib/document/untitled-copy';
 
@@ -63,6 +75,7 @@ export function TrashList({ documents }: TrashListProps) {
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [emptyConfirmOpen, setEmptyConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
   // 首屏 / router.refresh 后的新 prop 行：只做本地 overlay（不发服务端 action，离线安全）
@@ -94,6 +107,23 @@ export function TrashList({ documents }: TrashListProps) {
       patch: { isDeleted: false, deletedAt: null },
     });
     router.refresh();
+  }
+
+  async function handleEmptyTrash() {
+    setBusy(true);
+    try {
+      await emptyTrash();
+      setEmptyConfirmOpen(false);
+      exitSelection();
+      router.refresh();
+    } catch (error) {
+      toast.add({
+        title: error instanceof Error ? error.message : COULD_NOT_DELETE_DOCUMENT,
+        type: 'error',
+      });
+    } finally {
+      setBusy(false);
+    }
   }
 
   const allSelected = selected.size === rows.length;
@@ -193,14 +223,38 @@ export function TrashList({ documents }: TrashListProps) {
             </Button>
           </>
         ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="rounded-md text-ui"
-            onClick={() => setSelecting(true)}
-          >
-            选择
-          </Button>
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="rounded-md text-ui"
+              onClick={() => setSelecting(true)}
+            >
+              选择
+            </Button>
+            {/* G242：回收站屏的 ⋯ 是按屏裁剪的子集——官方这里是「选择」＋「清空最近删除」，
+                没有所有文档 ⋯ 里的排序方式／导入／导出／空间设置。 */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label="更多"
+                    title="更多"
+                    disabled={busy}
+                  />
+                }
+              >
+                <MoreHorizontal />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setEmptyConfirmOpen(true)}>
+                  {EMPTY_TRASH_ACTION}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         )}
       </div>
 
@@ -294,6 +348,31 @@ export function TrashList({ documents }: TrashListProps) {
               onClick={() => runSelected(permanentDeleteDocument, bulkDeleteAlert)}
             >
               {busy ? '删除中…' : '删除'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={emptyConfirmOpen} onOpenChange={setEmptyConfirmOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{EMPTY_TRASH_CONFIRM}</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={busy}
+              onClick={() => setEmptyConfirmOpen(false)}
+            >
+              取消
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={busy}
+              onClick={handleEmptyTrash}
+            >
+              {busy ? '删除中…' : EMPTY_TRASH_ACTION}
             </Button>
           </DialogFooter>
         </DialogContent>

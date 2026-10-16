@@ -50,3 +50,26 @@ export async function permanentDeleteDocument(id: string) {
     .delete();
   await emitSyncEventSafe(db, userId, ['document'], id);
 }
+
+/** G233：清空最近删除＝把该用户所有在回收站里的文档一次性物理删除（等同官方 `commands.empty.trash`）。 */
+export async function emptyTrash(): Promise<number> {
+  const userId = await requireUserId();
+
+  const db = await getDb();
+  const rows = await db.orm.public.Document
+    .where({ userId, isDeleted: true })
+    .select('id')
+    .all();
+  const ids = rows.map((row: { id: string }) => String(row.id));
+  if (ids.length === 0) return 0;
+
+  // 先取主键、再按主键集合删（与 sync route 的 purgeTombstones 同一口径）：
+  // 本版 ORM 的 where 简写只支持 = / IS NULL，且多条件 delete 终端的行数语义未经证实
+  // ——探针实测 `where({userId,isDeleted:true}).delete()` 只删掉一行。
+  await db.orm.public.Document
+    .where((r: any) => r.id.in(ids))
+    .deleteAndCount();
+  // 广播一次让其他端尽快 pull（同 permanentDeleteDocument：物理删除无 tsCol 可 bump）
+  await emitSyncEventSafe(db, userId, ['document'], ids[ids.length - 1]);
+  return ids.length;
+}

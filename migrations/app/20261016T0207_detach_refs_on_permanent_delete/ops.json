@@ -1,0 +1,170 @@
+[
+  {
+    "id": "dropConstraint.collection_items.collection_items_documentId_fkey",
+    "label": "Drop constraint \"collection_items_documentId_fkey\" on \"collection_items\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "collection_items_documentId_fkey",
+        "table": "collection_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"collection_items_documentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "collection_items_documentId_fkey",
+          "public",
+          "\"public\".\"collection_items\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"collection_items_documentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"collection_items\" DROP CONSTRAINT \"collection_items_documentId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"collection_items_documentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "collection_items_documentId_fkey",
+          "public",
+          "\"public\".\"collection_items\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.collection_items.collection_items_documentId_fkey",
+    "label": "Add foreign key \"collection_items_documentId_fkey\" on \"collection_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "collection_items_documentId_fkey",
+        "table": "collection_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"collection_items_documentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "collection_items_documentId_fkey",
+          "public",
+          "\"public\".\"collection_items\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"collection_items_documentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"collection_items\"\nADD CONSTRAINT \"collection_items_documentId_fkey\"\nFOREIGN KEY (\"documentId\")\nREFERENCES \"public\".\"documents\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"collection_items_documentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "collection_items_documentId_fkey",
+          "public",
+          "\"public\".\"collection_items\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.folders.folders_parentId_fkey",
+    "label": "Drop constraint \"folders_parentId_fkey\" on \"folders\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "folders_parentId_fkey",
+        "table": "folders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"folders_parentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "folders_parentId_fkey",
+          "public",
+          "\"public\".\"folders\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"folders_parentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"folders\" DROP CONSTRAINT \"folders_parentId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"folders_parentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "folders_parentId_fkey",
+          "public",
+          "\"public\".\"folders\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.folders.folders_parentId_fkey",
+    "label": "Add foreign key \"folders_parentId_fkey\" on \"folders\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "folders_parentId_fkey",
+        "table": "folders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"folders_parentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "folders_parentId_fkey",
+          "public",
+          "\"public\".\"folders\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"folders_parentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"folders\"\nADD CONSTRAINT \"folders_parentId_fkey\"\nFOREIGN KEY (\"parentId\")\nREFERENCES \"public\".\"folders\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"folders_parentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "folders_parentId_fkey",
+          "public",
+          "\"public\".\"folders\""
+        ]
+      }
+    ]
+  }
+]

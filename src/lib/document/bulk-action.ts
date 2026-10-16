@@ -4,6 +4,11 @@
  * replaces aborted on the first rejection, which is exactly the "all or nothing" behaviour the
  * ledger records as a difference — the remaining ids were never even attempted.
  */
+import {
+  COULD_NOT_DELETE_DOCUMENT,
+  COULD_NOT_RESTORE_FROM_TRASH,
+} from '@/lib/browse/trash-subcopy';
+
 export interface BulkOutcome {
   succeeded: string[];
   failed: { id: string; message: string }[];
@@ -33,7 +38,7 @@ export async function runBulkAction(
  */
 export function bulkDeleteAlert(failedCount: number, totalCount: number): string | null {
   if (failedCount === 0) return null;
-  if (failedCount === totalCount) return '无法删除文档';
+  if (failedCount === totalCount) return COULD_NOT_DELETE_DOCUMENT;
   return '无法删除某些文档';
 }
 
@@ -43,5 +48,5 @@ export function bulkDeleteAlert(failedCount: number, totalCount: number): string
  * over official text, not an official decision.
  */
 export function bulkRestoreAlert(failedCount: number): string | null {
-  return failedCount > 0 ? '无法从最近删除中恢复文档' : null;
+  return failedCount > 0 ? COULD_NOT_RESTORE_FROM_TRASH : null;
 }

@@ -4,6 +4,7 @@ import { getDeletedDocuments } from '@/actions/document/get';
 import { TrashList } from '@/components/document/TrashList';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
+import { TRASH_TITLE } from '@/lib/browse/trash-copy';
 
 export default async function TrashPage() {
   const session = await auth();
@@ -13,7 +14,7 @@ export default async function TrashPage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <AppPageHeader title="回收站" />
+      <AppPageHeader title={TRASH_TITLE} />
       <AppPageContainer>
         <TrashList documents={deletedDocs} />
       </AppPageContainer>

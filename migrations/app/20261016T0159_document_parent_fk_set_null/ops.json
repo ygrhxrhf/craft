@@ -1,0 +1,86 @@
+[
+  {
+    "id": "dropConstraint.documents.documents_parentId_fkey",
+    "label": "Drop constraint \"documents_parentId_fkey\" on \"documents\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "documents_parentId_fkey",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"documents_parentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "documents_parentId_fkey",
+          "public",
+          "\"public\".\"documents\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"documents_parentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" DROP CONSTRAINT \"documents_parentId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"documents_parentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "documents_parentId_fkey",
+          "public",
+          "\"public\".\"documents\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.documents.documents_parentId_fkey",
+    "label": "Add foreign key \"documents_parentId_fkey\" on \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "documents_parentId_fkey",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"documents_parentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "documents_parentId_fkey",
+          "public",
+          "\"public\".\"documents\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"documents_parentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"documents\"\nADD CONSTRAINT \"documents_parentId_fkey\"\nFOREIGN KEY (\"parentId\")\nREFERENCES \"public\".\"documents\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"documents_parentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "documents_parentId_fkey",
+          "public",
+          "\"public\".\"documents\""
+        ]
+      }
+    ]
+  }
+]

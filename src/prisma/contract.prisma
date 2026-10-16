@@ -44,7 +44,9 @@ model Folder {
   updatedAt temporal.updatedAtString()
 
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  parent    Folder?   @relation("FolderTree", fields: [parentId], references: [id])
+  // G233：同一类缺陷的第三处——文件夹树自引用也是 NO ACTION，`purgeTombstones` 30 天后
+  // 硬删文件夹时若子文件夹还在就会撞 FK。与 documents.parentId 同档：删父时子项提升到根。
+  parent    Folder?   @relation("FolderTree", fields: [parentId], references: [id], onDelete: SetNull)
   children  Folder[]  @relation("FolderTree")
   documents Document[]
   collections Collection[]
@@ -93,7 +95,10 @@ model Document {
   metaUpdatedAt TimestamptzString?
 
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  parent        Document? @relation("DocumentTree", fields: [parentId], references: [id])
+  // G233：自引用 FK 此前是 NO ACTION ⇒ 任何有子文档的文档都无法物理删除
+  // （`permanentDeleteDocument` 与「清空最近删除」都会撞 FK）。与 `folderId` 同档：
+  // 永久删除父文档时把子文档提升到根，而不是连坐删掉它们。
+  parent        Document? @relation("DocumentTree", fields: [parentId], references: [id], onDelete: SetNull)
   children      Document[] @relation("DocumentTree")
   folder        Folder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
   favorites     Favorite[]
@@ -185,7 +190,9 @@ model CollectionItem {
   deletedAt    TimestamptzString?
 
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  document     Document?  @relation(fields: [documentId], references: [id])
+  // G233：与 documents.parentId 同一类缺陷——可空自引用/外键用了 NO ACTION，
+  // 于是永久删除一篇被收进集合的文档会撞 FK。删文档时把集合行留成"无宿主"（值仍在，靠 deletedAt 收口）。
+  document     Document?  @relation(fields: [documentId], references: [id], onDelete: SetNull)
   values       CollectionValue[]
 
   @@index([collectionId])

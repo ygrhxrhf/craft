@@ -938,6 +938,39 @@
     border-top: 2px dashed var(--border);
   }
 
+  /* ── 和纸分隔线（G1247）──
+     官方写侧 `--separator washi` ＋ `--washi-pattern <name>`（六档 built-in）＋ `--washi-color <hex>`。
+     六档图案只用 `--washi-color`（缺省＝官方示例值）与背景图拼出来；`data-separator` 不是
+     `washi` 时这段一条都不命中，普通分隔线渲染一字不变。 */
+  hr[data-separator="washi"] {
+    border: none;
+    height: 10px;
+    /* 未指定颜色时的缺省；指定了则由行内 `--washi-color` 覆盖（渲染器写在 style 上）。 */
+    --washi-color: #3b82f6;
+    background-color: color-mix(in srgb, var(--washi-color) 18%, transparent);
+  }
+  hr[data-separator="washi"][data-washi-pattern="hex"] {
+    background-image: repeating-linear-gradient(60deg, var(--washi-color) 0 2px, transparent 2px 10px),
+      repeating-linear-gradient(-60deg, var(--washi-color) 0 2px, transparent 2px 10px);
+  }
+  hr[data-separator="washi"][data-washi-pattern="dot"] {
+    background-image: radial-gradient(var(--washi-color) 1.5px, transparent 1.5px);
+    background-size: 8px 8px;
+  }
+  hr[data-separator="washi"][data-washi-pattern="stripe"] {
+    background-image: repeating-linear-gradient(0deg, var(--washi-color) 0 3px, transparent 3px 7px);
+  }
+  hr[data-separator="washi"][data-washi-pattern="diagonal"] {
+    background-image: repeating-linear-gradient(45deg, var(--washi-color) 0 3px, transparent 3px 8px);
+  }
+  hr[data-separator="washi"][data-washi-pattern="grid"] {
+    background-image: repeating-linear-gradient(0deg, var(--washi-color) 0 1px, transparent 1px 8px),
+      repeating-linear-gradient(90deg, var(--washi-color) 0 1px, transparent 1px 8px);
+  }
+  hr[data-separator="washi"][data-washi-pattern="wave"] {
+    background-image: repeating-radial-gradient(circle at 0 50%, transparent 0 4px, var(--washi-color) 4px 5px, transparent 5px 9px);
+  }
+
   /* ── Callout ── */
   .callout {
     border-radius: 8px;

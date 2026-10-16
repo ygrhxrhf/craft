@@ -6,6 +6,11 @@ import { REMIND_PRESETS, remindInstantFor, type RemindPresetId } from '@/lib/tas
 import { applyCancelled } from '@/lib/editor/task-status';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 import { type DividerStyle } from '@/lib/editor/divider-styles';
+import {
+  normalizeWashiColor,
+  normalizeWashiPattern,
+  type SeparatorMaterial,
+} from '@/lib/editor/separator-material';
 import { type CalloutType } from '@/components/editor/extensions/callout';
 
 export type BlockActionId =
@@ -199,6 +204,30 @@ export function setDividerStyle(
   if (node.type.name !== 'divider') return;
   const { before } = blockBounds(state, index);
   dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, style }));
+}
+
+/**
+ * G1247：分隔线的**材质轴**。官方写侧三件＝`--separator washi` ＋ `--washi-pattern <name>` ＋
+ * `--washi-color <hex>`；这里一次把材质、图案、颜色都写进块属性。`line` 档只换材质，
+ * 图案与颜色原样留着（切回和纸时还在），但渲染侧只看材质。
+ */
+export function setSeparatorMaterial(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  material: SeparatorMaterial,
+  pattern?: string,
+  color?: string,
+) {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'divider') return;
+  const { before } = blockBounds(state, index);
+  dispatch(state.tr.setNodeMarkup(before, undefined, {
+    ...node.attrs,
+    separator: material,
+    ...(pattern ? { washiPattern: normalizeWashiPattern(pattern) } : {}),
+    ...(color ? { washiColor: normalizeWashiColor(color) } : {}),
+  }));
 }
 
 /** Flips a toggle block between open and closed. Does nothing to any other block. */

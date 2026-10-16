@@ -8,15 +8,21 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { dropTargetFor } from './drop-band';
-import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
+import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
 import { DIVIDER_STYLE_CHOICES, type DividerStyle } from '@/lib/editor/divider-styles';
+import {
+  SEPARATOR_MATERIAL_LABELS,
+  WASHI_PATTERN_CHOICES,
+  type SeparatorMaterial,
+} from '@/lib/editor/separator-material';
 import { DRAG_THRESHOLDS } from '@/lib/dnd/drag-threshold';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
@@ -142,6 +148,16 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
       const index = indexOfBlock(blockEl);
       if (index < 0) return;
       setDividerStyle(editor.state, editor.view.dispatch, index, style);
+    },
+    [editor, indexOfBlock],
+  );
+
+  // G1247：材质轴（line/washi ＋ 图案）。`line` 只切材质，图案原样留着。
+  const restyleSeparator = useCallback(
+    (blockEl: HTMLElement, material: SeparatorMaterial, pattern?: string) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return;
+      setSeparatorMaterial(editor.state, editor.view.dispatch, index, material, pattern);
     },
     [editor, indexOfBlock],
   );
@@ -471,6 +487,20 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                           {choice.label}
                         </DropdownMenuItem>
                       ))}
+                      {/* G1247：官方分隔线的材质轴——`--separator washi` ＋ 六档图案。 */}
+                      <DropdownMenuSeparator />
+                      {WASHI_PATTERN_CHOICES.map((choice) => (
+                        <DropdownMenuItem
+                          key={choice.name}
+                          onClick={() => restyleSeparator(handle.blockEl, 'washi', choice.name)}
+                        >
+                          {SEPARATOR_MATERIAL_LABELS.washi} - {choice.label}
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => restyleSeparator(handle.blockEl, 'line')}>
+                        分隔线（普通）
+                      </DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
                 ) : item.id === 'add-emoji' ? (

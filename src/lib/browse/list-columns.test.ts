@@ -61,6 +61,21 @@ describe('the three data columns are slots, not identities', () => {
     expect(COLUMN_WIDTH_FALLBACK).toBe('112px');
   });
 
+  it('keeps the view\'s literal fallbacks in step with the constant', () => {
+    // Tailwind's JIT cannot see a class built from a variable, so `w-[var(--col-…,112px)]` has to
+    // stay a literal in the view — which means the constant and those six sites can drift apart
+    // silently. Pin them together.
+    const source = readFileSync(
+      join(process.cwd(), 'src/components/document/DocumentListView.tsx'),
+      'utf8',
+    );
+    const literals = source.match(/w-\[var\(--col-[a-z-]+width,(\d+px)\)\]/g) ?? [];
+    expect(literals.length).toBe(6);
+    for (const literal of literals) {
+      expect(literal).toContain(`,${COLUMN_WIDTH_FALLBACK})`);
+    }
+  });
+
   it('writes a hidden column as 0px so the fallback never fires', () => {
     expect(columnWidthValue(0)).toBe('0px');
     expect(columnWidthValue(112.4)).toBe('112px');

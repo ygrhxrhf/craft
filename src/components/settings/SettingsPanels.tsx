@@ -15,6 +15,7 @@ import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
 import { getSyncManager } from '@/lib/sync-core';
 import { uploadFile } from '@/lib/upload-client';
+import { promptDialog } from '@/lib/dialog/show';
 import { ACCENTS as ACCENT_KEYS, pickAccent, readAccent, type Accent } from '@/lib/accent';
 import { Switch } from '@/components/ui/switch';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
@@ -140,6 +141,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [accent, setAccent] = useState<Accent>(() => readAccent() ?? 'blue');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(profile?.image ?? null);
+  const [displayName, setDisplayName] = useState<string | null>(profile?.name ?? null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [savingSwitch, setSavingSwitch] = useState(false);
@@ -156,6 +158,10 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   useEffect(() => {
     if (profile?.image) setAvatarUrl(profile.image);
   }, [profile?.image]);
+
+  useEffect(() => {
+    if (profile?.name) setDisplayName(profile.name);
+  }, [profile?.name]);
 
   const setPref = async (patch: Partial<{
     theme: string;
@@ -205,6 +211,32 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       setSwitchError(error instanceof Error ? error.message : '头像上传失败');
     } finally {
       setUploadingAvatar(false);
+    }
+  };
+
+  /**
+   * G164 改名。官方给这一档配"进行时+成功+失败"三件套；本地走 `promptDialog` 收名字、
+   * `applyLocal(table:'user')` 写 `name`（元数据过离线内核，不新开 Server Action），
+   * 失败给一句并把乐观值撤回。空串/纯空格按"没改"处理（官方那套也 trim 后再落）。
+   */
+  const renameSelf = async () => {
+    const userId = session?.user?.id;
+    if (!userId) return;
+    const next = await promptDialog({
+      title: '更改名称',
+      placeholder: '你的名字',
+      confirmLabel: '保存',
+    });
+    const trimmed = next?.trim();
+    if (!trimmed || trimmed === displayName) return;
+    const previous = displayName;
+    setDisplayName(trimmed);
+    setSwitchError(null);
+    try {
+      await getSyncManager().applyLocal({ table: 'user', id: userId, patch: { name: trimmed } });
+    } catch (error) {
+      setDisplayName(previous);
+      setSwitchError(error instanceof Error ? error.message : '名称更新失败');
     }
   };
 
@@ -470,12 +502,20 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
               <div className="flex items-start justify-between pb-4">
                 <div>
                   <div className="text-xs text-foreground/55">名称</div>
-                  <div className="mt-1 text-[15px]">{profile?.name || '未设置'}</div>
+                  <div className="mt-1 text-[15px]">{displayName || '未设置'}</div>
                   <div className="mt-1 text-xs text-foreground/55">
                     你的姓名在你通过共享链接和电子邮件与他人共享的文档中可见。
                   </div>
                 </div>
-                <EditIcon />
+                <button
+                  type="button"
+                  aria-label="更改名称"
+                  title="更改名称"
+                  onClick={() => void renameSelf()}
+                  className="shrink-0 rounded p-1 hover:bg-foreground/4"
+                >
+                  <EditIcon />
+                </button>
               </div>
               <div className="flex items-start justify-between pt-4">
                 <div>

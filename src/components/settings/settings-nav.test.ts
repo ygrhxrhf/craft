@@ -90,3 +90,32 @@ describe('the account panel can actually change the avatar', () => {
     expect(panels).toMatch(/if \(profile\?\.image\) setAvatarUrl\(profile\.image\)/);
   });
 });
+
+/**
+ * G164 改名：名称行右侧那枚铅笔此前是**裸 `<EditIcon />`**——不是按钮、没有处理，看着能点却
+ * 什么也不做。官方明确有改名，且 `user.name` 在 sync 白名单里、`promptDialog` 也在 ⇒ 接线即可。
+ */
+describe('the account panel can actually rename the user', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('makes the pencil a real button with a handler', () => {
+    expect(panels).toMatch(/aria-label="更改名称"[\s\S]{0,200}onClick=/);
+    expect(panels).toContain('renameSelf');
+  });
+
+  it('collects the new name through the shared dialog, not window.prompt', () => {
+    expect(panels).toContain('promptDialog');
+    expect(panels).not.toContain('window.prompt');
+  });
+
+  it('writes the name through the offline kernel', () => {
+    expect(panels).toMatch(/applyLocal\(\{\s*table:\s*'user'[\s\S]{0,80}name:\s*trimmed/);
+  });
+
+  it('treats an empty or unchanged name as no edit', () => {
+    expect(panels).toMatch(/if \(!trimmed \|\| trimmed === displayName\) return/);
+  });
+});

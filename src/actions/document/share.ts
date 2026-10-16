@@ -3,7 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { normalizeShareSlug } from '@/lib/share/slug';
-import { isSharePermission, type DocumentSharePermission } from '@/lib/share/permission';
+import { isSharePermission, tierOpensToLink, type DocumentSharePermission } from '@/lib/share/permission';
 import { findShare, isOpenableShare } from '@/lib/share/resolve';
 import { isExpired } from '@/lib/share/publishing-options';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
@@ -228,6 +228,10 @@ export async function getSharedDocument(identifier: string) {
   // `'use server'`: a client can call the action without going through any route.
   if (!isOpenableShare(share)) return null;
   const s = share as any;
+
+  // G04：第三档「仅限有访问权限的协作者」**不给链接任何角色** ⇒ 链接本身打不开文档（打开它要靠
+  //   ownership／membership）。判据与 `resolveShareAccess` 同一枚纯函数，避免两处各写一遍。
+  if (!tierOpensToLink(s.permission)) return null;
 
   // G1535：链接到期是独立一轴 ⇒ 到期后与"未发布"同档（两条形状都打不开）。
   if (isExpired(s.expiresAt ? String(s.expiresAt) : null)) return null;

@@ -37,7 +37,7 @@ const { getSharedDocument } = await import('@/actions/document/share');
 
 describe('getSharedDocument', () => {
   it('returns the document when the share row is published', async () => {
-    state.share = { documentId: 'doc-1', isPublished: true, passcode: null };
+    state.share = { documentId: 'doc-1', isPublished: true, passcode: null, permission: 'view' };
     state.document = { id: 'doc-1', title: 'Shared page', content: '{}', isDeleted: false, userId: 'u-1' };
     state.owner = { id: 'u-1', name: '张三', email: 'z@example.com' };
     const result = await getSharedDocument('my-page');
@@ -47,7 +47,7 @@ describe('getSharedDocument', () => {
   });
 
   it('G38：关掉「显示作者」时不查、不回传作者名（隐藏了还发给客户端等于没隐藏）', async () => {
-    state.share = { documentId: 'doc-1', isPublished: true, passcode: null, showAuthor: false };
+    state.share = { documentId: 'doc-1', isPublished: true, passcode: null, showAuthor: false, permission: 'view' };
     state.document = { id: 'doc-1', title: 'Shared page', content: '{}', isDeleted: false, userId: 'u-1' };
     state.owner = { id: 'u-1', name: '张三', email: 'z@example.com' };
     state.ownerReads = 0;
@@ -57,7 +57,7 @@ describe('getSharedDocument', () => {
   });
 
   it('G38：作者没填名字时退到邮箱', async () => {
-    state.share = { documentId: 'doc-1', isPublished: true, passcode: null };
+    state.share = { documentId: 'doc-1', isPublished: true, passcode: null, permission: 'view' };
     state.document = { id: 'doc-1', title: 'Shared page', content: '{}', isDeleted: false, userId: 'u-1' };
     state.owner = { id: 'u-1', name: '  ', email: 'z@example.com' };
     const result = await getSharedDocument('my-page');
@@ -66,6 +66,13 @@ describe('getSharedDocument', () => {
 
   it('returns nothing when the share row was never published', async () => {
     state.share = { documentId: 'doc-1', isPublished: false, passcode: null };
+    state.document = { id: 'doc-1', title: 'Shared page', content: '{}', isDeleted: false };
+    expect(await getSharedDocument('my-page')).toBeNull();
+  });
+
+  // G04：第三档「仅限有访问权限的协作者」不给链接任何角色 ⇒ 链接本身打不开文档。
+  it('returns nothing when the tier is collaborators-only, even though the row is published', async () => {
+    state.share = { documentId: 'doc-1', isPublished: true, passcode: null, permission: 'collaborators' };
     state.document = { id: 'doc-1', title: 'Shared page', content: '{}', isDeleted: false };
     expect(await getSharedDocument('my-page')).toBeNull();
   });

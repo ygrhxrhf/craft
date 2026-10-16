@@ -17,6 +17,7 @@ import {
   KeyRound,
   LinkIcon,
   Loader2,
+  Lock,
   PencilLine,
   X,
 } from 'lucide-react';
@@ -31,6 +32,7 @@ import {
   setShareExpiry,
 } from '@/actions/document/share';
 import type { DocumentSharePermission } from '@/lib/share/permission';
+import { ONLY_COLLABORATORS_LABEL } from '@/lib/share/permission';
 import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
 import { VISUAL_OPTIONS, visualOptionStatus } from '@/lib/share/visual-options';
 import { SEO_DESC, expiryLabel } from '@/lib/share/publishing-options';
@@ -53,6 +55,9 @@ interface ShareDialogProps {
 const TIERS: { value: DocumentSharePermission; label: string; hint: string; icon: typeof Eye }[] = [
   { value: 'view', label: '查看', hint: '拿到链接的人可以查看，不能修改', icon: Eye },
   { value: 'edit', label: '编辑', hint: '登录用户可以协作编辑；匿名访客只读', icon: PencilLine },
+  // G04：官方第三档（`collab.access.only.collaborators`）——链接本身不给任何角色，只有已被
+  //   授权为协作者的人能打开。
+  { value: 'collaborators', label: ONLY_COLLABORATORS_LABEL, hint: '链接不再放行，仅协作者可打开', icon: Lock },
 ];
 
 export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {

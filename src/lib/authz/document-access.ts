@@ -1,6 +1,6 @@
 import { roleSatisfies, type AccessLevel, type ResourceRole } from './resource';
 import { AuthorizationError, getTable } from './guard';
-import { shareWriteRole } from '@/lib/share/permission';
+import { shareWriteRole, tierOpensToLink } from '@/lib/share/permission';
 
 export interface DocumentAccess {
   document: Record<string, unknown>;
@@ -48,6 +48,10 @@ export async function resolveShareAccess(
 
   const share = await (await getTable('DocumentShare')).first({ documentId });
   if (!share || !share.isPublished) return null;
+
+  // G04：第三档「仅限有访问权限的协作者」**不给链接任何角色**——它不是一条链接授权，而是授权
+  //   的缺席，故这里显式放行不住（打开文档靠 ownership／membership 两条既有路径）。
+  if (!tierOpensToLink(share.permission)) return null;
 
   const role = shareWriteRole(share.permission, userId);
   if (!role) return null;

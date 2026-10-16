@@ -19,13 +19,22 @@ export interface HelpEntry {
 export const HELP_CENTER_MARKDOWN_PATH =
   'support.craft.do/zh-Hans/write-and-edit/formatting/markdown-shortcuts';
 
+/**
+ * G765：六项的落点由官方闭包逐字读出（`window.open(<url>,"_blank","noopener=true")`）。本地把
+ * 三枚外链的目标记全，菜单才不必自己猜 URL。`意见反馈` 在官方**不调 `window.open`**（落点未确认），
+ * 本地按"站内反馈"处理、归 `dialog`。
+ */
+export const HELP_LINK_WHATS_NEW = 'https://www.craft.do/whats-new';
+export const HELP_LINK_WHATS_NEW_WEB_WINDOWS = 'https://www.craft.do/whats-new-web-windows';
+export const HELP_LINK_FAQ = 'https://support.craft.do';
+
 export const HELP_ENTRIES: readonly HelpEntry[] = [
   { id: 'feedback', label: '意见反馈', kind: 'dialog' },
-  { id: 'whatsNew', label: '最新特性', kind: 'dialog' },
-  { id: 'whatsNewWebWindows', label: 'Web 和 Windows 版最新特性', kind: 'dialog' },
-  { id: 'faq', label: '常见问题', kind: 'externalLink' },
+  { id: 'whatsNew', label: '最新特性', kind: 'externalLink', href: HELP_LINK_WHATS_NEW },
+  { id: 'whatsNewWebWindows', label: 'Web 和 Windows 版最新特性', kind: 'externalLink', href: HELP_LINK_WHATS_NEW_WEB_WINDOWS },
+  { id: 'faq', label: '常见问题', kind: 'externalLink', href: HELP_LINK_FAQ },
   { id: 'shortcuts', label: '快捷键', kind: 'inAppPanel' },
-  { id: 'markdownShortcuts', label: 'Markdown 快捷方式', kind: 'externalLink', href: HELP_CENTER_MARKDOWN_PATH },
+  { id: 'markdownShortcuts', label: 'Markdown 快捷方式', kind: 'externalLink', href: `https://${HELP_CENTER_MARKDOWN_PATH}` },
 ] as const;
 
 const BY_ID = new Map(HELP_ENTRIES.map((entry) => [entry.id, entry]));
@@ -38,4 +47,15 @@ export function helpEntry(id: string): HelpEntry | null {
 export function opensInApp(id: string): boolean {
   const entry = helpEntry(id);
   return entry?.kind === 'inAppPanel' || entry?.kind === 'dialog';
+}
+
+/**
+ * The absolute URL a link entry opens, or null when the entry is not an external link. Entries
+ * that carry a bare help-centre path are completed with `https://`; the ones already carrying a
+ * scheme pass through, so the model can hold either spelling.
+ */
+export function helpEntryUrl(id: string): string | null {
+  const entry = helpEntry(id);
+  if (!entry || entry.kind !== 'externalLink' || !entry.href) return null;
+  return /^https?:\/\//.test(entry.href) ? entry.href : `https://${entry.href}`;
 }

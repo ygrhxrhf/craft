@@ -3,6 +3,7 @@
 import { Settings } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { ImportButton } from '@/components/sidebar/ImportButton';
+import { HelpMenu } from '@/components/app/HelpMenu';
 import { Button } from '@/components/ui/button';
 import { useSettingsStore } from '@/lib/store/use-settings-store';
 
@@ -22,6 +23,7 @@ export function SidebarFooter() {
         >
           <Settings className="size-4" />
         </Button>
+        <HelpMenu />
       </div>
       <ThemeToggle />
     </div>

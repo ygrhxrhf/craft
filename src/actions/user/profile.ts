@@ -11,8 +11,8 @@ export async function getProfile() {
   const user = await db.orm.public.User.first({ id: session.user.id });
   if (!user) throw new Error('用户不存在');
 
-  const row = user as { name: string | null; email: string };
-  return { name: row.name ?? '', email: row.email };
+  const row = user as { name: string | null; email: string; image: string | null };
+  return { name: row.name ?? '', email: row.email, image: row.image ?? null };
 }
 
 export async function logout() {

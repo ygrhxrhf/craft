@@ -59,3 +59,34 @@ describe('the about panel does not fake its version or an update button', () => 
     expect(panels).not.toMatch(/>\s*检查更新\s*</);
   });
 });
+
+/**
+ * G164 改头像：相机按钮此前是 inert（无 onClick），头像也只渲染首字母。上传通道与 `User.image`
+ * 其实都在，缺的只是接线。钉住它别再退回成装饰。
+ */
+describe('the account panel can actually change the avatar', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('wires the camera button to a file picker rather than leaving it inert', () => {
+    expect(panels).toMatch(/aria-label="更换头像"[\s\S]{0,400}onClick=/);
+    expect(panels).toContain('avatarInputRef.current?.click()');
+  });
+
+  it('routes the upload through the shared channel and the offline kernel', () => {
+    expect(panels).toContain("from '@/lib/upload-client'");
+    expect(panels).toMatch(/applyLocal\(\{\s*table:\s*'user'[\s\S]{0,80}image/);
+  });
+
+  it('renders the stored image, falling back to the initial', () => {
+    expect(panels).toContain('avatarUrl ?');
+    expect(panels).toContain('profile?.name?.slice(0, 1)');
+  });
+
+  it('re-syncs when the async profile lands', () => {
+    // profile 由父组件异步取 ⇒ 初值那刻是 null，没有这条 effect 头像永远停在首字母。
+    expect(panels).toMatch(/if \(profile\?\.image\) setAvatarUrl\(profile\.image\)/);
+  });
+});

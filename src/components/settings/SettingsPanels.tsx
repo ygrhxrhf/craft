@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useSession } from 'next-auth/react';
 import {
@@ -14,6 +14,7 @@ import { APP_VERSION } from '@/lib/app/app-version';
 import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
 import { getSyncManager } from '@/lib/sync-core';
+import { uploadFile } from '@/lib/upload-client';
 import { ACCENTS as ACCENT_KEYS, pickAccent, readAccent, type Accent } from '@/lib/accent';
 import { Switch } from '@/components/ui/switch';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
@@ -28,7 +29,7 @@ import { ShortcutsPanel } from './ShortcutsPanel';
 
 interface PanelProps {
   section: SettingsSection;
-  profile: { name: string; email: string } | null;
+  profile: { name: string; email: string; image?: string | null } | null;
   spaceName: string;
 }
 
@@ -138,6 +139,9 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const { data: session } = useSession();
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [accent, setAccent] = useState<Accent>(() => readAccent() ?? 'blue');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(profile?.image ?? null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [savingSwitch, setSavingSwitch] = useState(false);
   const [switchError, setSwitchError] = useState<string | null>(null);
 
@@ -146,6 +150,12 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       .then(setPrefs)
       .catch(() => setPrefs(null));
   }, []);
+
+  // profile 是父组件异步取的（`SettingsModal` 的 useEffect）⇒ 初值那一刻它还是 null。
+  // 拿到之后再补一次，否则头像永远停在首字母。
+  useEffect(() => {
+    if (profile?.image) setAvatarUrl(profile.image);
+  }, [profile?.image]);
 
   const setPref = async (patch: Partial<{
     theme: string;
@@ -172,8 +182,33 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       .catch(() => setPrefs(base));
   };
 
-  const setSwitch = async (key: SwitchKey, value: boolean) => {
-    const base = prefs ?? (await getPreferences().catch(() => null));
+  /**
+   * G164 改头像：上传走与编辑器图片同一条通道（`uploadFile`），落库走 `applyLocal(table:'user')`
+   * 写 `image`——元数据仍过离线内核，不新开 Server Action。失败给一句、并把乐观值撤回。
+   */
+  const changeAvatar = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      setSwitchError('仅支持图片文件');
+      return;
+    }
+    const userId = session?.user?.id;
+    if (!userId) return;
+    const previous = avatarUrl;
+    setUploadingAvatar(true);
+    setSwitchError(null);
+    try {
+      const { url } = await uploadFile(file);
+      setAvatarUrl(url);
+      await getSyncManager().applyLocal({ table: 'user', id: userId, patch: { image: url } });
+    } catch (error) {
+      setAvatarUrl(previous);
+      setSwitchError(error instanceof Error ? error.message : '头像上传失败');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const setSwitch = async (key: SwitchKey, value: boolean) => {    const base = prefs ?? (await getPreferences().catch(() => null));
     if (!base) return;
 
     // 开关同 setPref：乐观更新 + applyLocal，失败回滚。
@@ -396,16 +431,40 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
         <div className="space-y-4">
           <RowCard className="flex gap-6 p-6">
             <div className="relative shrink-0">
-              <div className="flex size-26 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-purple-700 text-4xl font-semibold text-white">
-                {profile?.name?.slice(0, 1) ?? '我'}
-              </div>
+              {avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={avatarUrl}
+                  alt=""
+                  className="size-26 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex size-26 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-purple-700 text-4xl font-semibold text-white">
+                  {profile?.name?.slice(0, 1) ?? '我'}
+                </div>
+              )}
+              {/* G164：改头像。官方该按钮配"进行时+成功+失败"三件套；本地走同一上传通道
+                  （`uploadFile`）＋`applyLocal(table:'user')` 写 `image`。 */}
               <button
                 type="button"
                 aria-label="更换头像"
-                className="absolute -right-1 -bottom-1 flex size-10 items-center justify-center rounded-full bg-background shadow-(--shadow-xxs)"
+                disabled={uploadingAvatar}
+                onClick={() => avatarInputRef.current?.click()}
+                className="absolute -right-1 -bottom-1 flex size-10 items-center justify-center rounded-full bg-background shadow-(--shadow-xxs) disabled:opacity-50"
               >
                 <Camera className="size-4" />
               </button>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) void changeAvatar(file);
+                  e.target.value = '';
+                }}
+              />
             </div>
             <div className="min-w-0 flex-1 divide-y divide-foreground/4">
               <div className="flex items-start justify-between pb-4">

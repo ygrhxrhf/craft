@@ -24,8 +24,12 @@ export interface CardHeadInput {
   title: string;
   /** The document's updated timestamp, ISO. */
   updatedAt: string;
-  /** Ancestor names root-first, already resolved by the caller. */
-  breadcrumb?: readonly { icon?: string | null; title: string }[];
+  /**
+   * The location breadcrumb, already resolved to one line. The join and the fallback chain live in
+   * `location-path.ts` (`locationPathLabel`) so the card and the info panel cannot drift apart —
+   * this module only decides *whether* to show the line.
+   */
+  breadcrumb?: string | null;
 }
 
 /** Whether the card is showing a placeholder rather than a real name. */
@@ -40,16 +44,6 @@ export function isUntitled(title: string): boolean {
 export function cardTitle(title: string): { text: string; placeholder: boolean } {
   const placeholder = isUntitled(title);
   return { text: placeholder ? untitledFor('list') : title, placeholder };
-}
-
-/** The breadcrumb line, or `null` when there is no ancestry to show. */
-export function cardBreadcrumb(
-  breadcrumb: CardHeadInput['breadcrumb'],
-): string | null {
-  if (!breadcrumb?.length) return null;
-  return breadcrumb
-    .map((node) => `${node.icon ? `${node.icon} ` : ''}${node.title}`)
-    .join(` ${CARD_CRUMB_SEPARATOR} `);
 }
 
 /** The update line: 「已更新 14 小时前」, relative to `now`. */
@@ -70,7 +64,7 @@ export function cardHead(input: CardHeadInput, now: number = Date.now()): {
   return {
     title: text,
     placeholder,
-    breadcrumb: cardBreadcrumb(input.breadcrumb),
+    breadcrumb: input.breadcrumb?.trim() ? input.breadcrumb : null,
     updated: cardUpdatedLabel(input.updatedAt, now),
   };
 }

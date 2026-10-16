@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  CARD_CRUMB_SEPARATOR,
   UPDATED_PREFIX,
-  cardBreadcrumb,
   cardHead,
   cardTitle,
   cardUpdatedLabel,
@@ -35,15 +33,16 @@ describe('the title line', () => {
 });
 
 describe('the breadcrumb line', () => {
-  it('joins nodes with the middle dot, icon first', () => {
-    expect(cardBreadcrumb([{ icon: '📁', title: '日记' }, { title: '十月' }])).toBe(
-      `📁 日记 ${CARD_CRUMB_SEPARATOR} 十月`,
-    );
+  it('passes a pre-joined label through unchanged', () => {
+    // The join and the fallback chain live in `location-path.ts`; this module only decides
+    // whether the line shows, so a label is passed through verbatim.
+    expect(cardHead({ title: 'a', updatedAt: hoursAgo(1), breadcrumb: '📁 日记 • 十月' }, NOW).breadcrumb)
+      .toBe('📁 日记 • 十月');
   });
 
   it('is null when there is no ancestry', () => {
-    expect(cardBreadcrumb(undefined)).toBeNull();
-    expect(cardBreadcrumb([])).toBeNull();
+    expect(cardHead({ title: 'a', updatedAt: hoursAgo(1) }, NOW).breadcrumb).toBeNull();
+    expect(cardHead({ title: 'a', updatedAt: hoursAgo(1), breadcrumb: '   ' }, NOW).breadcrumb).toBeNull();
   });
 });
 
@@ -65,7 +64,7 @@ describe('the whole head', () => {
         {
           title: '',
           updatedAt: hoursAgo(14),
-          breadcrumb: [{ icon: '📁', title: '日记' }],
+          breadcrumb: '📁 日记',
         },
         NOW,
       ),

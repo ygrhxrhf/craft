@@ -179,11 +179,15 @@ describe('the other document list reads', () => {
     expect(rows.map((r) => (r as { id: string }).id)).toContain(documentId);
     // `createdAt` joined the projection for the list layout's 已创建 column (G1113); the grid
     // simply ignores it. `plainText` joined for the list row's content-summary subtitle (G248),
-    // and `lastViewedAt` for the list's 上次浏览 column (G610). The guard still holds: nothing
-    // else may ride along.
+    // `lastViewedAt` for the list's 上次浏览 column (G610), and `folderId`/`parentId` so the
+    // card head can resolve its location breadcrumb (G250). The guard still holds: nothing else
+    // may ride along.
     expect(keys(rows)).toEqual(
       rows.map(() =>
-        ['createdAt', 'icon', 'id', 'lastViewedAt', 'plainText', 'role', 'title', 'updatedAt'].sort()
+        [
+          'createdAt', 'folderId', 'icon', 'id', 'lastViewedAt', 'parentId',
+          'plainText', 'role', 'title', 'updatedAt',
+        ].sort()
       )
     );
     // The collaborator branch has its own projection; nothing else in this file reaches it.

@@ -11,8 +11,8 @@ interface DocumentCardProps {
     title: string;
     icon: string | null;
     updatedAt: string;
-    /** G250: the card head carries the location breadcrumb, resolved by the caller. */
-    breadcrumb?: { icon?: string | null; title: string }[];
+    /** G250: the card head's location breadcrumb, already joined by the caller. */
+    breadcrumb?: string | null;
   };
 }
 

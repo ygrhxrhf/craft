@@ -34,6 +34,8 @@ interface SortableDoc {
   lastViewedAt?: string | null;
   /** G248: carried through to the list row's content-summary subtitle. */
   plainText?: string | null;
+  /** G250: the card head's location breadcrumb, already joined by the page. */
+  breadcrumb?: string | null;
 }
 
 /**

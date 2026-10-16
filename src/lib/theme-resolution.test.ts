@@ -7,6 +7,7 @@ import {
   readUrlOverride,
   resolveScheme,
   storeScheme,
+  storedThemeChoice,
 } from './theme-resolution';
 
 /**
@@ -82,5 +83,26 @@ describe('the URL override is actually wired into the provider', () => {
 
   it('keeps ?system live by watching the media query', () => {
     expect(source).toContain("addEventListener('change'");
+  });
+
+  it('loads the stored preference at boot instead of only writing it (G1224)', () => {
+    // 真错：user.theme 只写不读 ⇒ 换设备后库里写着 dark 却渲染成浅色。读回须走离线内核镜像。
+    expect(source).toContain('StoredThemeRestorer');
+    expect(source).toContain('readLocalRecords');
+    expect(source).toContain('storedThemeChoice');
+  });
+});
+
+describe('the stored preference maps to a next-themes choice', () => {
+  it('passes light and dark through', () => {
+    expect(storedThemeChoice('light')).toBe('light');
+    expect(storedThemeChoice('dark')).toBe('dark');
+  });
+
+  it('falls back to following the system for anything else', () => {
+    expect(storedThemeChoice('system')).toBe('system');
+    expect(storedThemeChoice(undefined)).toBe('system');
+    expect(storedThemeChoice(null)).toBe('system');
+    expect(storedThemeChoice('不是主题')).toBe('system');
   });
 });

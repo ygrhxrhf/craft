@@ -1,15 +1,50 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import { ThemeProvider as NextThemesProvider, useTheme } from 'next-themes';
 import { applyAccent, readAccent } from '@/lib/accent';
-import { readUrlOverride, resolveScheme, type ResolvedScheme } from '@/lib/theme-resolution';
+import { readUrlOverride, resolveScheme, storedThemeChoice, type ResolvedScheme } from '@/lib/theme-resolution';
+import { readLocalRecords } from '@/components/sync/local-records';
+import { getSyncManager } from '@/lib/sync-core';
+import { useSession } from 'next-auth/react';
 
 function AccentRestorer() {
   useEffect(() => {
     const stored = readAccent();
     if (stored) applyAccent(stored);
   }, []);
+  return null;
+}
+
+/**
+ * G1224 的实现侧：`user.theme` 此前**只写不读**——`getPreferences()` 只被设置面板调用，启动时
+ * 从不把已存偏好交给 next-themes ⇒ 换台设备（或清了 localStorage）打开，明明库里写着 `dark`，
+ * 渲染出来的却是浅色（探针实测）。这里在启动时经**离线内核的本地镜像**读回它并 `setTheme`：
+ * 元数据走内核（不新开 Server Action），且 URL 覆写仍是更高档（`forcedTheme` 压过它）。
+ */
+function StoredThemeRestorer() {
+  const { setTheme } = useTheme();
+  const { status, data: session } = useSession();
+
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+    const userId = session?.user?.id;
+    if (!userId) return;
+
+    let alive = true;
+    const apply = async () => {
+      const rows = await readLocalRecords('user');
+      const row = rows.find((r) => r.id === userId && r.op !== 'delete');
+      if (!alive || !row) return;
+      setTheme(storedThemeChoice(row.data?.theme));
+    };
+    void apply().catch(() => {});
+    // ack+pull 之后镜像里才有权威行 ⇒ 跟着 store 变化再读一次（幂等）。
+    return getSyncManager().onStoreChanged((table) => {
+      if (table === 'user') void apply().catch(() => {});
+    });
+  }, [status, session?.user?.id, setTheme]);
+
   return null;
 }
 
@@ -55,6 +90,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       forcedTheme={forced}
     >
       <AccentRestorer />
+      <StoredThemeRestorer />
       {children}
     </NextThemesProvider>
   );

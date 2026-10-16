@@ -60,3 +60,13 @@ export function resolveScheme({ forced, url, stored, system }: ResolveInput): Re
   const picked = url ?? stored ?? 'system';
   return picked === 'system' ? system : picked;
 }
+
+/**
+ * The stored preference as next-themes spells it. Locally `user.theme` is a real column holding
+ * `'light' | 'dark' | 'system'` (G1224 records that the official build instead *deletes* the key
+ * and normalises on read; the observable behaviour is the same), so a stored row maps straight
+ * through and anything unknown falls back to following the system.
+ */
+export function storedThemeChoice(value: unknown): 'light' | 'dark' | 'system' {
+  return value === 'light' || value === 'dark' ? value : 'system';
+}

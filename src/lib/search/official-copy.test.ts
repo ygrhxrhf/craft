@@ -75,4 +75,15 @@ describe('search palette official group headings (G1419)', () => {
     expect(source).toContain('noResultsFor');
     expect(source).not.toMatch(/<CommandEmpty/);
   });
+
+  it('offers the official see-all-shortcuts command (G13)', () => {
+    // `commands.open.shortcuts`「查看所有快捷键」：本地命令面板此前只有「新建文档」。
+    const source = readFileSync(
+      join(process.cwd(), 'src/components/search/CommandPalette.tsx'),
+      'utf8',
+    );
+    expect(source).toContain('查看所有快捷键');
+    // 落点与 TOGGLE_KEY_SHORTCUTS 一致：打开设置的快捷键分区，不另造面板。
+    expect(source).toMatch(/openSettings\('shortcuts'\)/);
+  });
 });

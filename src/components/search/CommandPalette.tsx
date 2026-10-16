@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Database, FileText, Plus, Search, Type } from 'lucide-react';
+import { Database, FileText, Keyboard, Plus, Search, Type } from 'lucide-react';
 import {
   CommandDialog,
   CommandGroup,
@@ -12,6 +12,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
+import { useSettingsStore } from '@/lib/store/use-settings-store';
 import { searchAll } from '@/actions/document/search';
 import type { SearchResultDoc, SearchResultBlock, SearchResultRow } from '@/actions/document/search';
 import { createDocumentLocal } from '@/components/sync/create-local';
@@ -109,6 +110,13 @@ export function CommandPalette() {
     router.push(`/documents/${id}`);
   };
 
+  /** G13：与 TOGGLE_KEY_SHORTCUTS 同落点——打开设置的快捷键分区。 */
+  const handleSeeAllShortcuts = () => {
+    close();
+    setQuery('');
+    useSettingsStore.getState().openSettings('shortcuts');
+  };
+
   const hasQuery = query.trim().length > 0;
 
   // `browse.search.create.doc` =「创建 [0]」. The row sits above the results and the document is
@@ -151,6 +159,17 @@ export function CommandPalette() {
             <CommandItem onSelect={handleNewDocument}>
               <Plus className="size-4" />
               <span>新建文档</span>
+            </CommandItem>
+            {/* G13 第二半：官方命令菜单有 `commands.open.shortcuts`「查看所有快捷键」
+                （`feature-catalog.md:3051`）。落点与 shell-shortcuts 的 TOGGLE_KEY_SHORTCUTS 一致
+                ——打开设置的快捷键分区，不另造一个面板。 */}
+            <CommandItem
+              value="see-all-shortcuts"
+              data-testid="palette-see-shortcuts"
+              onSelect={handleSeeAllShortcuts}
+            >
+              <Keyboard className="size-4" />
+              <span>查看所有快捷键</span>
             </CommandItem>
           </CommandGroup>
         )}

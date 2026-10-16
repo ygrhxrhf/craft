@@ -1,12 +1,20 @@
 'use client';
 
 import type { Editor } from '@tiptap/react';
+import { useState } from 'react';
 import { GripVertical } from 'lucide-react';
 import { cn } from 'cn';
 import { slashCommands } from '../slash-menu/slash-commands';
 import { SIDEBAR_SLASH_COMMAND_MIME } from '@/lib/dnd/sidebar-drag';
 import { sidebarDragState } from '@/lib/dnd/sidebar-drag';
 import type { SlashCommand } from '../slash-menu/slash-commands';
+import {
+  INSERT_SUBVIEW_IDS,
+  INSERT_SUBVIEW_LABELS,
+  MARKDOWN_SHORTCUTS,
+  MARKDOWN_SHORTCUTS_TITLE,
+  type InsertSubView,
+} from '@/lib/editor/insert-panel';
 
 interface InsertTabProps {
   editor: Editor;
@@ -69,6 +77,7 @@ const PANEL_ITEMS: { title?: string; items: PanelItem[] }[] = [
 ];
 
 export function InsertTab({ editor }: InsertTabProps) {
+  const [subView, setSubView] = useState<InsertSubView>('insert');
   const findCommand = (item: PanelItem): SlashCommand | undefined =>
     item.command ? slashCommands.find((c) => c.name === item.command) : undefined;
 
@@ -95,10 +104,54 @@ export function InsertTab({ editor }: InsertTabProps) {
 
   return (
     <div className="p-3" data-testid="insert-panel">
-      {/* `sidebar.insert.subtitle`, verbatim. */}
-      <p className="mb-3 text-[11px] text-muted-foreground">将任何项目拖放到文档中</p>
+      {/* G67：官方插入面板有**两个子视图**（`插入` 与 `快捷方式`）——`sidebar.insert.shortcuts`
+          「快捷方式」＋`blockdetails.shortcuts.markdown`「Markdown 快捷方式」。此前本地只有一档。 */}
+      <div className="mb-3 flex gap-1" role="tablist" aria-label="插入面板视图">
+        {INSERT_SUBVIEW_IDS.map((view) => (
+          <button
+            key={view}
+            type="button"
+            role="tab"
+            aria-selected={view === subView}
+            data-testid={`insert-subview-${view}`}
+            onClick={() => setSubView(view)}
+            className={cn(
+              'rounded-md px-2.5 py-1 text-[12px] transition-colors',
+              view === subView
+                ? 'bg-foreground/8 font-medium text-foreground'
+                : 'text-muted-foreground hover:bg-foreground/4',
+            )}
+          >
+            {INSERT_SUBVIEW_LABELS[view]}
+          </button>
+        ))}
+      </div>
 
-      {PANEL_ITEMS.map((group, i) => (
+      {subView === 'shortcuts' ? (
+        <div data-testid="insert-shortcuts-view">
+          <h4 className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
+            {MARKDOWN_SHORTCUTS_TITLE}
+          </h4>
+          {/* 只列本地**真的会触发**的规则（源自 `markdown-shortcuts.ts` 的输入规则表）。 */}
+          <ul className="space-y-1">
+            {MARKDOWN_SHORTCUTS.map((rule) => (
+              <li
+                key={rule.syntax}
+                className="flex items-center justify-between gap-3 rounded-lg bg-foreground/4 px-2.5 py-1.5 text-[12px]"
+              >
+                <span>{rule.label}</span>
+                <kbd className="rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[11px] text-foreground/70">
+                  {rule.syntax}
+                </kbd>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <>
+          {/* `sidebar.insert.subtitle`, verbatim. */}
+          <p className="mb-3 text-[11px] text-muted-foreground">将任何项目拖放到文档中</p>
+          {PANEL_ITEMS.map((group, i) => (
         <div key={group.title ?? `flat-${i}`} className="mb-3">
           {group.title && (
             <h4 className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
@@ -151,6 +204,8 @@ export function InsertTab({ editor }: InsertTabProps) {
           </div>
         </div>
       ))}
+        </>
+      )}
     </div>
   );
 }

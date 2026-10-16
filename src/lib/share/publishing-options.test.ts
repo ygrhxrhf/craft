@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -26,6 +29,17 @@ describe('search-engine indexing', () => {
 
   it('keeps the description sentence verbatim', () => {
     expect(SEO_DESC).toBe('启用后，此页面将显示在搜索引擎结果中，例如 Google。只有在没有提供密码的情况下才有效。');
+  });
+
+  it('is actually consulted by the published page metadata', () => {
+    // G143：这条规则此前只活在纯函数里——`/p/[slug]` 的 generateMetadata 无条件输出
+    // 标题/描述/OG，开关在服务端完全无效。钉住接线。
+    const source = readFileSync(
+      join(process.cwd(), 'src/app/p/[slug]/page.tsx'),
+      'utf8',
+    );
+    expect(source).toContain('seoEffective');
+    expect(source).toMatch(/robots:\s*\{\s*index:\s*false/);
   });
 });
 

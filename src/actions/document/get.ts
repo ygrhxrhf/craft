@@ -68,7 +68,21 @@ export async function getDocument(id: string): Promise<AuthorizedDocument | null
   const userId = await requireUserId();
   const access = await resolveDocumentAccess(id, userId);
   if (!access) return null;
-  return { ...access.document, role: access.role } as AuthorizedDocument;
+
+  // G202：信息页的「作者」此前写死成「你」。作者是文档所有者（`Document.userId`），
+  // 与公开页同一口径取 name（缺则退邮箱）；取不到就回 null，由 UI 退成占位符而不是谎报"你"。
+  const db = await getDb();
+  const ownerId = (access.document as { userId?: string }).userId;
+  let authorName: string | null = null;
+  if (ownerId) {
+    const owner = await db.orm.public.User.first({ id: ownerId });
+    authorName = (owner as { name?: string | null; email?: string | null } | null)?.name?.trim()
+      || (owner as { email?: string | null } | null)?.email
+      || null;
+  }
+
+  const merged: Record<string, unknown> = { ...access.document, role: access.role, authorName };
+  return merged as unknown as AuthorizedDocument;
 }
 
 export async function getDocuments() {

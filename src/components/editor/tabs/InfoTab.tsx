@@ -102,8 +102,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
   const [busy, setBusy] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showExport, setShowExport] = useState(false);
-  // The property rows read the document's own timestamps (G202) rather than fixed strings.
-  const [meta, setMeta] = useState<{ createdAt: string; updatedAt: string } | null>(null);
+  // The property rows read the document's own timestamps and author (G202) rather than fixed strings.
+  const [meta, setMeta] = useState<{ createdAt: string; updatedAt: string; authorName: string | null } | null>(null);
   const [statsScope, setStatsScope] = useState<StatsScope>('page');
   const [subpages, setSubpages] = useState<SubpageStats[]>([]);
   // The selection reading has to repaint when the highlight moves, which a render of this panel does
@@ -124,8 +124,12 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
     getDocument(documentId)
       .then((doc) => {
         if (!alive || !doc) return;
-        const row = doc as { createdAt?: string; updatedAt?: string };
-        setMeta({ createdAt: row.createdAt ?? '', updatedAt: row.updatedAt ?? '' });
+        const row = doc as { createdAt?: string; updatedAt?: string; authorName?: string | null };
+        setMeta({
+          createdAt: row.createdAt ?? '',
+          updatedAt: row.updatedAt ?? '',
+          authorName: row.authorName ?? null,
+        });
       })
       .catch(() => {});
     return () => {
@@ -350,7 +354,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
               <div className="flex items-center gap-2.5 text-ui">
                 <User className="size-3.5 text-muted-foreground" />
                 <span className="text-muted-foreground">作者：</span>
-                <span>你</span>
+                <span>{meta?.authorName || '—'}</span>
               </div>
             </div>
           </section>

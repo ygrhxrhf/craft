@@ -145,6 +145,18 @@ describe('the sidebar document read', () => {
   });
 });
 
+describe('the single-document read carries the author name (G202)', () => {
+  it('resolves the owner display name instead of leaving the panel to hard-code it', async () => {
+    // 信息页的「作者」此前写死成「你」；这条读回真正的所有者名（缺则邮箱），UI 才有得显示。
+    const { getDocument } = await import('./get');
+    const doc = await getDocument(documentId);
+    expect(doc).toBeTruthy();
+    const authorName = (doc as unknown as { authorName?: unknown }).authorName;
+    expect(typeof authorName).toBe('string');
+    expect((authorName as string).length).toBeGreaterThan(0);
+  });
+});
+
 // Every one of these feeds a card or a trash row, which renders four columns at most. Asked of
 // the database directly, the body columns this read used to carry come to 119,517 + 11,230 bytes
 // across the 605 rows the busiest account has in the tree, against 42,340 bytes for everything

@@ -63,3 +63,42 @@ export function noteDateKey(now: Date, startTime?: string | null): string {
   const day = String(start.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+
+/** The five buckets the daily-notes list renders, newest first. */
+export type DailyNoteBucket = 'today' | 'yesterday' | 'week' | 'month' | 'earlier';
+
+export const DAILY_NOTE_BUCKETS: readonly DailyNoteBucket[] = [
+  'today',
+  'yesterday',
+  'week',
+  'month',
+  'earlier',
+];
+
+/**
+ * Which bucket a note belongs in, by **whole days between its own window start and today's**.
+ *
+ * Counting day boundaries rather than elapsed milliseconds is what keeps a configured start time
+ * honest: with a 04:00 start, yesterday's 10:00 note and today's 02:00 note are one "day" apart even
+ * though under 24 hours separates them, and a midnight-based difference would file the newest note
+ * under 昨天. The caller passes each note's `dailyNoteDate` (already a window start) and `now`.
+ */
+export function dailyNoteBucket(
+  noteDate: Date,
+  now: Date,
+  startTime?: string | null,
+): DailyNoteBucket {
+  const todayStart = dayWindow(now, startTime).start;
+  const noteStart = dayWindow(noteDate, startTime).start;
+  const days = Math.round(
+    (todayStart.getTime() - noteStart.getTime()) / (24 * 60 * 60 * 1000),
+  );
+  if (days <= 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 7) return 'week';
+  if (noteStart.getFullYear() === todayStart.getFullYear()
+    && noteStart.getMonth() === todayStart.getMonth()) {
+    return 'month';
+  }
+  return 'earlier';
+}

@@ -37,6 +37,20 @@ export async function getDailyNotes(): Promise<DailyNoteItem[]> {
 }
 
 /**
+ * The configured day start (`HH:MM`), or null for the default midnight. The list page needs it to
+ * bucket notes by the same window `getOrCreateDayNote` uses (G20) — otherwise a non-midnight start
+ * files the same note under two different days in the two places.
+ */
+export async function getDailyNoteStartTime(): Promise<string | null> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const config = await db.orm.public.DailyNotesConfig.first({ userId: session.user.id });
+  return config ? (((config as any).startTime as string | null) ?? null) : null;
+}
+
+/**
  * The note for a day (G20). `step` moves one day back or forward from today, which is how 前一天 and
  * 后一天 open their note — creating it when that day has none yet, exactly as today does.
  */

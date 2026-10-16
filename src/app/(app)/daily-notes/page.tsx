@@ -1,43 +1,43 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
-import { getDailyNotes } from '@/actions/daily-notes/daily-notes';
+import { getDailyNotes, getDailyNoteStartTime } from '@/actions/daily-notes/daily-notes';
 import type { DailyNoteItem } from '@/actions/daily-notes/daily-notes';
+import { dailyNoteBucket, type DailyNoteBucket } from '@/lib/utils/daily-note-window';
 import { TodayNoteButton } from './TodayNoteButton';
 import { DailyNotesList } from './DailyNotesList';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 
+const BUCKET_LABELS: Record<DailyNoteBucket, string> = {
+  today: '今天',
+  yesterday: '昨天',
+  week: '7 天内',
+  month: '本月早些时候',
+  earlier: '更早',
+};
+
 export default async function DailyNotesPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
 
-  const notes = await getDailyNotes();
+  // G20：分组必须与 `getOrCreateDayNote` 同源——它按配置的起始时间算日窗，页面此前却按午夜分组，
+  // 于是起始时间非 00:00 时同一条笔记在两处被归到不同的天（04:00 起始时凌晨写的那篇落到「昨天」）。
+  const [notes, startTime] = await Promise.all([getDailyNotes(), getDailyNoteStartTime()]);
 
-  const today = startOfDay(new Date()).getTime();
-  const yesterday = today - 24 * 60 * 60 * 1000;
-  const weekAgo = today - 6 * 24 * 60 * 60 * 1000;
-  const monthStart = new Date();
-  monthStart.setDate(1);
-  monthStart.setHours(0, 0, 0, 0);
-  const monthStartTime = monthStart.getTime() > yesterday ? yesterday : monthStart.getTime();
-
-  const groups: { label: string; notes: DailyNoteItem[] }[] = [
-    { label: '今天', notes: [] },
-    { label: '昨天', notes: [] },
-    { label: '7 天内', notes: [] },
-    { label: '本月早些时候', notes: [] },
-    { label: '更早', notes: [] },
-  ];
-
+  const now = new Date();
+  const byBucket = new Map<DailyNoteBucket, DailyNoteItem[]>();
   for (const note of notes) {
-    const t = note.dailyNoteDate ? new Date(note.dailyNoteDate).getTime() : 0;
-    const dayStart = startOfDay(new Date(t)).getTime();
-    if (dayStart >= today) groups[0].notes.push(note);
-    else if (dayStart >= yesterday) groups[1].notes.push(note);
-    else if (dayStart >= weekAgo) groups[2].notes.push(note);
-    else if (dayStart >= monthStartTime) groups[3].notes.push(note);
-    else groups[4].notes.push(note);
+    const date = note.dailyNoteDate ? new Date(note.dailyNoteDate) : null;
+    if (!date || Number.isNaN(date.getTime())) continue;
+    const bucket = dailyNoteBucket(date, now, startTime);
+    const list = byBucket.get(bucket) ?? [];
+    list.push(note);
+    byBucket.set(bucket, list);
   }
+
+  const groups: { label: string; notes: DailyNoteItem[] }[] = (
+    ['today', 'yesterday', 'week', 'month', 'earlier'] as const
+  ).map((bucket) => ({ label: BUCKET_LABELS[bucket], notes: byBucket.get(bucket) ?? [] }));
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -56,10 +56,4 @@ export default async function DailyNotesPage() {
       </AppPageContainer>
     </div>
   );
-}
-
-function startOfDay(date: Date): Date {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d;
 }

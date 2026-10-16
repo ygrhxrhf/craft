@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   DEFAULT_START_MINUTES,
+  dailyNoteBucket,
   dayWindow,
   noteDateKey,
   parseStartMinutes,
@@ -88,5 +89,29 @@ describe('the note date key', () => {
     expect(noteDateKey(new Date(2026, 9, 14, 10, 0), null)).toBe('2026-10-14');
     // 02:00 with a 04:00 start files under the 13th.
     expect(noteDateKey(new Date(2026, 9, 14, 2, 0), '04:00')).toBe('2026-10-13');
+  });
+});
+
+describe('the list buckets follow the configured start time', () => {
+  it('files a note under today when its window contains the moment', () => {
+    const now = new Date(2026, 9, 14, 10, 0);
+    expect(dailyNoteBucket(new Date(2026, 9, 14, 0, 0), now, null)).toBe('today');
+  });
+
+  it('counts whole windows, so a 04:00 start keeps last night\'s note under today', () => {
+    // 本批修掉的那条真错：起始 04:00 且**此刻还没到 04:00** 时，当前窗口是「昨天 04:00 起」。
+    // 旧的午夜分组会拿 14 日 00:00 当"今天"、把该笔记归到「昨天」；按窗口起点算则是「今天」。
+    const beforeStart = new Date(2026, 9, 14, 2, 0);
+    expect(dailyNoteBucket(new Date(2026, 9, 13, 4, 0), beforeStart, '04:00')).toBe('today');
+    // 午夜起始（默认）下，同一时刻的笔记确实属于昨天。
+    expect(dailyNoteBucket(new Date(2026, 9, 13, 4, 0), beforeStart, null)).toBe('yesterday');
+  });
+
+  it('walks back through yesterday, the week and the month', () => {
+    const now = new Date(2026, 9, 14, 10, 0);
+    expect(dailyNoteBucket(new Date(2026, 9, 13, 10, 0), now, null)).toBe('yesterday');
+    expect(dailyNoteBucket(new Date(2026, 9, 11, 10, 0), now, null)).toBe('week');
+    expect(dailyNoteBucket(new Date(2026, 9, 3, 10, 0), now, null)).toBe('month');
+    expect(dailyNoteBucket(new Date(2026, 8, 20, 10, 0), now, null)).toBe('earlier');
   });
 });

@@ -48,3 +48,18 @@ describe('the cheat-sheet lists the rules this build actually fires', () => {
     expect(labels).toEqual(['删除线', '高亮', '链接', '块级公式', '行内公式', '待办事项']);
   });
 });
+
+/**
+ * 副标题也走常量：上一批把字符串搬进本模块时，面板里还留着一份**同字的副本**——
+ * 两处并存就会各自漂移。钉住面板用常量而非再抄一遍。
+ */
+describe('the panel reads its subtitle from this module', () => {
+  const panel = readFileSync(
+    join(process.cwd(), 'src/components/editor/tabs/InsertTab.tsx'),
+    'utf8',
+  );
+
+  it('renders the constant instead of a second copy of the sentence', () => {
+    expect(panel).toContain('{INSERT_PANEL_SUBTITLE}');
+  });
+});

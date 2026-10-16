@@ -9,6 +9,7 @@ import { SIDEBAR_SLASH_COMMAND_MIME } from '@/lib/dnd/sidebar-drag';
 import { sidebarDragState } from '@/lib/dnd/sidebar-drag';
 import type { SlashCommand } from '../slash-menu/slash-commands';
 import {
+  INSERT_PANEL_SUBTITLE,
   INSERT_SUBVIEW_IDS,
   INSERT_SUBVIEW_LABELS,
   MARKDOWN_SHORTCUTS,
@@ -150,7 +151,7 @@ export function InsertTab({ editor }: InsertTabProps) {
       ) : (
         <>
           {/* `sidebar.insert.subtitle`, verbatim. */}
-          <p className="mb-3 text-[11px] text-muted-foreground">将任何项目拖放到文档中</p>
+          <p className="mb-3 text-[11px] text-muted-foreground">{INSERT_PANEL_SUBTITLE}</p>
           {PANEL_ITEMS.map((group, i) => (
         <div key={group.title ?? `flat-${i}`} className="mb-3">
           {group.title && (

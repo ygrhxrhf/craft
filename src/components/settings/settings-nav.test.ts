@@ -39,3 +39,23 @@ describe('the notifications panel does not fake a daily-digest time', () => {
     expect(panels).toContain("setSwitch('notifyDaily'");
   });
 });
+
+/**
+ * About 面板曾写死官方版本号 `3.6.3`（本包实际是 `0.1.0`），并挂着一枚 inert 的「检查更新」——
+ * 它点了不跳转、不提示，且宿主根本不存在（G1533：本仓无 Tauri updater 通道）。两处都不该在。
+ */
+describe('the about panel does not fake its version or an update button', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('prints the real version from the package manifest', () => {
+    expect(panels).toContain('APP_VERSION');
+    expect(panels).not.toMatch(/>\s*3\.6\.3\s*</);
+  });
+
+  it('has no update-check button, since nothing hosts one', () => {
+    expect(panels).not.toMatch(/>\s*检查更新\s*</);
+  });
+});

@@ -10,6 +10,7 @@ import {
   SquarePlus,
 } from 'lucide-react';
 import { getPreferences, updatePreferences } from '@/actions/user/preferences';
+import { APP_VERSION } from '@/lib/app/app-version';
 import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
 import { getSyncManager } from '@/lib/sync-core';
@@ -551,10 +552,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
             <div>
               <div className="text-[15px] font-semibold">Craft</div>
               <div className="mt-1 flex items-center gap-2">
-                <span className="text-[13px] text-foreground/55">3.6.3</span>
-                <button type="button" className="rounded-lg bg-foreground/4 px-3 py-1.5 text-[13px] font-medium">
-                  检查更新
-                </button>
+                <span className="text-[13px] text-foreground/55">{APP_VERSION}</span>
               </div>
             </div>
           </div>

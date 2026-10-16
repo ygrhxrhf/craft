@@ -518,7 +518,11 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                   <div className="mt-1 text-[15px]">{profile?.email || '—'}</div>
                   <div className="mt-1 text-xs text-foreground/55">你用于此帐户的电子邮件地址。</div>
                 </div>
-                <EditIcon />
+                {/* G164：这里原有第三枚裸铅笔图标（EditIcon）——同样"不是按钮"，且本地
+                    **没有任何改邮箱能力**（全仓零 `changeEmail`／`updateEmail`／`verifyEmail`），
+                    `email` 还被 spec 5.1 明确排除在 sync 白名单外 ⇒ 无宿主可写。按"有列就接线、
+                    没列就移除"的同一把尺删掉：邮箱只作只读展示。（改邮箱要收信验证，属于本仓零
+                    发信通路的一部分，见 G1488。） */}
               </div>
             </div>
           </RowCard>

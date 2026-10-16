@@ -148,3 +148,29 @@ describe('the space panel does not fake controls it cannot back', () => {
     expect(panels).toContain('avatarInputRef.current?.click()');
   });
 });
+
+/**
+ * G164 邮箱那半：账户面板「电子邮件」行右侧也曾有一枚裸 `<EditIcon />`，但本地**没有任何改
+ * 邮箱能力**（全仓零 `changeEmail`／`updateEmail`／`verifyEmail`），`email` 还被 spec 5.1
+ * 排除在 sync 白名单外 ⇒ 无宿主。按同一把尺移除，邮箱只作只读展示。
+ */
+describe('the email row is read-only, not a fake edit affordance', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('renders the address without a pencil next to it', () => {
+    // 账户那一格内只留一枚 pencil（名称，包在真按钮里）；邮箱那格不再有。
+    const start = panels.indexOf("case 'account'");
+    const block = panels.slice(start, panels.indexOf("case 'subscription'"));
+    expect((block.match(/<EditIcon \/>/g) ?? []).length).toBe(1);
+    expect(block).toContain('你用于此帐户的电子邮件地址。');
+  });
+
+  it('has no email-change capability anywhere, which is why it cannot be wired', () => {
+    // 钉住"移除"的理由：能力不存在，接不了。（只查调用式，避开注释里的说明文字。）
+    expect(panels).not.toMatch(/\bchangeEmail\s*\(/);
+    expect(panels).not.toMatch(/\bupdateEmail\s*\(/);
+  });
+});

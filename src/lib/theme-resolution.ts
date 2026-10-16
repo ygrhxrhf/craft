@@ -49,9 +49,14 @@ export interface ResolveInput {
 }
 
 /** Resolve the scheme through the four levels. */
+/**
+ * Resolve the scheme through the four levels, mirroring the official `Ik(t,e,n)`:
+ * `let o = n ?? t; return o === "system" ? e : o`. So the URL override replaces the stored value
+ * outright — including `?system`, which means "ignore what is stored and follow the OS", not
+ * "fall through to the stored value". A `null` stored value is the local spelling of "system".
+ */
 export function resolveScheme({ forced, url, stored, system }: ResolveInput): ResolvedScheme {
   if (forced) return forced;
-  if (url === 'dark' || url === 'light') return url;
-  if (stored) return stored;
-  return system;
+  const picked = url ?? stored ?? 'system';
+  return picked === 'system' ? system : picked;
 }

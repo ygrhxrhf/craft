@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -54,7 +57,30 @@ describe('the resolution order', () => {
     expect(resolveScheme({ stored: null, system: 'dark' })).toBe('dark');
   });
 
-  it('treats ?system as "no override", so the stored value still decides', () => {
-    expect(resolveScheme({ url: 'system', stored: 'light', system: 'dark' })).toBe('light');
+  it('treats ?system as an override that follows the OS, ignoring the stored value', () => {
+    // 官方 `Ik` 逐字 `o==="system"?e:o` ⇒ `?system` 不是"没有覆写"，而是"忽略存储值、跟系统"。
+    expect(resolveScheme({ url: 'system', stored: 'light', system: 'dark' })).toBe('dark');
+    expect(resolveScheme({ url: 'system', stored: 'dark', system: 'light' })).toBe('light');
+  });
+});
+
+/**
+ * G1206：这条链此前是"纯逻辑写好了、没人调用"——`readUrlOverride`/`resolveScheme` 全仓零消费者，
+ * `ThemeProvider` 直接交给 next-themes。钉住接线，别让 URL 开关再悄悄失效。
+ */
+describe('the URL override is actually wired into the provider', () => {
+  const source = readFileSync(
+    join(process.cwd(), 'src/components/theme/ThemeProvider.tsx'),
+    'utf8',
+  );
+
+  it('reads the override and hands it to next-themes as forcedTheme', () => {
+    expect(source).toContain('readUrlOverride');
+    expect(source).toContain('resolveScheme');
+    expect(source).toContain('forcedTheme');
+  });
+
+  it('keeps ?system live by watching the media query', () => {
+    expect(source).toContain("addEventListener('change'");
   });
 });

@@ -43,3 +43,17 @@ export function showMoreLabel(count: number): string {
   return SHOW_X_MORE_TEMPLATE.replace('[0]', String(count));
 }
 
+/**
+ * G235: the no-results sentence quotes the query, verbatim from the catalog
+ * (`browse.no.results.found.for`). The pack also carries a bare `browse.no.results.found`
+ * 「未找到结果」 for the *no-query* empty state — that state does not exist locally (an empty query
+ * shows the launcher's action list instead), so only the with-query sentence is wired here.
+ */
+export const NO_RESULTS_FOUND_FOR_TEMPLATE = '未找到 [0] 的结果';
+export const NO_RESULTS_FOUND_FOR_KEY = 'browse.no.results.found.for';
+
+/** The with-query line: 「未找到 某某 的结果」, query verbatim in the slot. */
+export function noResultsFor(query: string): string {
+  return NO_RESULTS_FOUND_FOR_TEMPLATE.replace('[0]', query);
+}
+

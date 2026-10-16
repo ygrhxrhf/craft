@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Database, FileText, Plus, Search, Type } from 'lucide-react';
 import {
   CommandDialog,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -16,7 +15,7 @@ import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { searchAll } from '@/actions/document/search';
 import type { SearchResultDoc, SearchResultBlock, SearchResultRow } from '@/actions/document/search';
 import { createDocumentLocal } from '@/components/sync/create-local';
-import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel } from '@/lib/search/official-copy';
+import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel, noResultsFor } from '@/lib/search/official-copy';
 import { toast } from '@/components/ui/toast';
 import { useSession } from 'next-auth/react';
 
@@ -156,12 +155,15 @@ export function CommandPalette() {
           </CommandGroup>
         )}
 
+        {/* G235：空态是显式分支，不是 `CommandEmpty`。结果项里永远有一条「创建 [0]」，
+            它的 value 含查询词、于是自己命中自己 ⇒ 列表从不"空"，`CommandEmpty` 永不渲染，
+            官方那句「未找到 [0] 的结果」就永远出不来（探针实测：搜不存在的词只剩创建行）。 */}
         {hasQuery && searching && docs.length === 0 && blocks.length === 0 && rows.length === 0 && (
-          <CommandEmpty>{SEARCHING_OTHER_MATCHES}</CommandEmpty>
+          <div className="py-6 text-center text-ui text-foreground/40">{SEARCHING_OTHER_MATCHES}</div>
         )}
 
         {hasQuery && !searching && docs.length === 0 && blocks.length === 0 && rows.length === 0 && (
-          <CommandEmpty>未找到与 “{query.trim()}” 相关的结果</CommandEmpty>
+          <div className="py-6 text-center text-ui text-foreground/40">{noResultsFor(query.trim())}</div>
         )}
 
         {docs.length > 0 && (

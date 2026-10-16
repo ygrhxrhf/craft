@@ -9,6 +9,8 @@ import {
   CREATE_DOC_TEMPLATE,
   DOCS_HEADING,
   DOCS_HEADING_KEY,
+  NO_RESULTS_FOUND_FOR_KEY,
+  NO_RESULTS_FOUND_FOR_TEMPLATE,
   ROWS_HEADING,
   SEE_MORE_RESULTS,
   SEE_MORE_RESULTS_KEY,
@@ -17,6 +19,7 @@ import {
   SHOW_X_MORE_TEMPLATE,
   SHOW_X_MORE_KEY,
   createDocLabel,
+  noResultsFor,
   showMoreLabel,
 } from './official-copy';
 
@@ -56,5 +59,20 @@ describe('search palette official group headings (G1419)', () => {
 
   it('fills the count into the next-page row', () => {
     expect(showMoreLabel(20)).toBe('再显示 20 项');
+  });
+
+  it('quotes the query into the official no-results line (G235)', () => {
+    expect(NO_RESULTS_FOUND_FOR_TEMPLATE).toBe(ledgerValue(NO_RESULTS_FOUND_FOR_KEY));
+    expect(noResultsFor('季度复盘')).toBe('未找到 季度复盘 的结果');
+  });
+
+  it('renders the no-results line as its own branch, not through CommandEmpty', () => {
+    // 结果项里永远有一条「创建 [0]」，它自己命中自己 ⇒ 列表从不"空"、CommandEmpty 永不渲染。
+    const source = readFileSync(
+      join(process.cwd(), 'src/components/search/CommandPalette.tsx'),
+      'utf8',
+    );
+    expect(source).toContain('noResultsFor');
+    expect(source).not.toMatch(/<CommandEmpty/);
   });
 });

@@ -2,7 +2,7 @@ import type { EditorState, Transaction } from '@tiptap/pm/state';
 import type { Node } from '@tiptap/pm/model';
 import { TextSelection } from '@tiptap/pm/state';
 import { BLOCK_HASH_PREFIX } from '@/lib/editor/block-anchor';
-import { REMIND_PRESETS, remindInstantFor, type RemindPresetId } from '@/lib/task/remind-presets';
+import { REMIND_PRESETS, isInstantPreset, remindInstantFor, type RemindPresetId } from '@/lib/task/remind-presets';
 import { applyCancelled } from '@/lib/editor/task-status';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 import { type DividerStyle } from '@/lib/editor/divider-styles';
@@ -374,11 +374,16 @@ export function setTaskReminder(
 ) {
   const target = taskItemTarget(state, index);
   if (!target) return;
+  // ☆ `saveForLater`／`custom` 两档没有算得出来的时刻（官方那边一档进"以后"桶、一档开自定义
+  // 选择器），本仓两样都没有对应列。此前这里照旧发事务并把 `remindAt` 写成 `null` ⇒ 点这两档
+  // 会**静默抹掉已有提醒**（数据丢失，且屏上没有任何提示）。没有承载面就不发事务。
+  if (!isInstantPreset(preset)) return;
   const instant = remindInstantFor(preset, now);
+  if (!instant) return;
   dispatch(
     state.tr.setNodeMarkup(target.pos, undefined, {
       ...target.node.attrs,
-      remindAt: instant ? instant.toISOString() : null,
+      remindAt: instant.toISOString(),
     }),
   );
 }

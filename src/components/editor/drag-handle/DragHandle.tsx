@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { dropTargetFor } from './drop-band';
 import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
+import { isInstantPreset } from '@/lib/task/remind-presets';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
 import { DIVIDER_STYLE_CHOICES, type DividerStyle } from '@/lib/editor/divider-styles';
 import {
@@ -524,6 +525,11 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                       {REMIND_MENU.map((preset) => (
                         <DropdownMenuItem
                           key={preset.id}
+                          // ☆ 七档里有**两档在本仓没有承载面**：`留着以后用` 要一个"以后"桶、
+                          // `自定义…` 要一个自定义选择器，两样都没有对应列。此前它们照旧可点、
+                          // 点下去还会把已有提醒抹掉（见 `setTaskReminder`）⇒ 现按"没列就不装作能用"
+                          // 灰掉，与 G03／G179 那几批同一判据。
+                          disabled={!isInstantPreset(preset.id)}
                           onClick={() => remindBlock(handle.blockEl, preset.id)}
                         >
                           {preset.label}

@@ -351,10 +351,17 @@ describe('setTaskReminder', () => {
     expect(next.doc.child(0).attrs.remindAt).toBe('2026-10-13T11:00:00.000Z');
   });
 
-  it('clears the reminder for a preset with no computed time', () => {
+  it('refuses the two presets that have no host in this repo instead of wiping the reminder', () => {
     const state = taskState();
-    const next = runState(state, (d) => setTaskReminder(state, d, 0, 'saveForLater', new Date()));
-    expect(next.doc.child(0).attrs.remindAt).toBeNull();
+    // 先种一枚真提醒，再点没有承载面的两档：不许发事务（旧实现会把它抹成 null）。
+    const now = new Date('2026-10-13T10:00:00Z');
+    const set = runState(state, (d) => setTaskReminder(state, d, 0, 'in1hour', now));
+    for (const preset of ['saveForLater', 'custom'] as const) {
+      expect(() => run(set, (d) => setTaskReminder(set, d, 0, preset, now))).toThrow(
+        'the action dispatched nothing',
+      );
+      expect(set.doc.child(0).attrs.remindAt).toBe('2026-10-13T11:00:00.000Z');
+    }
   });
 
   it('clears a reminder that was set', () => {

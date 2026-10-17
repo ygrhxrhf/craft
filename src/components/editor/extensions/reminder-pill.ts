@@ -4,7 +4,7 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import type { EditorView } from '@tiptap/pm/view';
 
 import { REMINDER_ACTIONS, reminderPillLabel } from '@/lib/task/reminder-pill';
-import { REMIND_PRESETS } from '@/lib/task/remind-presets';
+import { REMIND_PRESETS, isInstantPreset } from '@/lib/task/remind-presets';
 import {
   RESCHEDULE_CONFIRM_LABEL,
   RESCHEDULE_REMINDER_DESC,
@@ -100,13 +100,18 @@ function openPresetMenu(anchor: HTMLElement, view: EditorView, pos: number) {
   menu.className = 'reminder-menu';
   menu.dataset.reminderMenu = '';
   for (const preset of REMIND_PRESETS) {
-    menu.appendChild(
-      menuItem(preset.label, () => {
-        const index = blockIndexAt(view, pos);
-        if (index >= 0) setTaskReminder(view.state, view.dispatch, index, preset.id, new Date());
-        closeReminderMenu();
-      }),
-    );
+    const item = menuItem(preset.label, () => {
+      const index = blockIndexAt(view, pos);
+      if (index >= 0) setTaskReminder(view.state, view.dispatch, index, preset.id, new Date());
+      closeReminderMenu();
+    });
+    // 与块菜单同一口径：没有承载面的两档灰掉，不装作能用（`setTaskReminder` 也已拒发事务）。
+    if (!isInstantPreset(preset.id)) {
+      item.disabled = true;
+      item.style.opacity = '0.5';
+      item.style.cursor = 'default';
+    }
+    menu.appendChild(item);
   }
   placeMenu(anchor, menu);
 }

@@ -5518,6 +5518,7 @@
 | G1541 | 白板可**改名** | ☆ **本行当日即改判＝误判（不改台账判定列，仅记原委）**＝`renameWhiteboard` 零调用**不代表没面**：`WhiteboardBreadcrumb.tsx` 的白板名输入框在 `onBlur` 走 `applyLocal({table:'whiteboard', patch:{name}})`＋`flushNow()`（正是红线要的写法）。⇒ 该 action 属"被 applyLocal 取代的旧写路径"（同 G293 批删掉那四枚一类），**不是功能洞**；本批不删它（留着给未来的服务端调用方），但**撤回**"白板无改名入口"这半句 | 误判撤回 | 1/1 |
 
 **☆ 另记两枚"被取代的死读路径"（不改判、仅备注）**＝`tag.ts` 的 `getDocumentsByTag` 与 `version.ts` 的 `createVersion` 同样零调用：前者被 `getTagBrowseRows`（`/tags/[id]` 页在用）取代，后者是手动存版本的入口（`getVersions`／`restoreVersion` 有面：`VersionDialog`，唯独"手动存一版"没面）⇒ 前者属可删冗余、后者属功能洞，留待后续批次分头处理，本批不混进来。
+**☆ 第 293 批续（同一批内收尾）**＝前段说的"可删冗余"那一枚当场删掉：`getDocumentsByTag` 已从 `src/actions/tag/tag.ts` 移除（两处标签页都走 `getTagBrowseRows`＋`buildTagTree`，语义更全且已在用）；`assertOwned`／`getDb` 在同文件另有 5／10 处调用 ⇒ 无孤儿 import。`version.ts` 的 `createVersion` 属**功能洞**（要接"手动存一版"的面），**保留不删**，已在 G1536…G1541 那一族的判据下留待后续。
 批内验收＝`npx vitest run` **263 文件／2131 测试全绿**（净删 4 个无测试文件，测试数不变）＋`npx tsc --noEmit` **0 错**；零新依赖，三条红线**加固**（删掉的正是绕过内核的第二条写路径）。
 
 

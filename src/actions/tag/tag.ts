@@ -162,27 +162,3 @@ export async function deleteTag(tagId: string) {
   });
   return true;
 }
-
-export async function getDocumentsByTag(tagId: string) {
-  const userId = await requireUserId();
-  await assertOwned('Tag', tagId, userId, '标签不存在');
-
-  const db = await getDb();
-  const links = (await db.orm.public.DocumentTag.where({ tagId, deletedAt: null }).all()) as {
-    documentId: string;
-  }[];
-  if (links.length === 0) return [];
-
-  const documents = (await db.orm.public.Document.where({ userId }).all()) as Record<
-    string,
-    unknown
-  >[];
-  const wanted = new Set(links.map((link) => link.documentId));
-  return documents
-    .filter((doc) => wanted.has(doc.id as string) && doc.isDeleted !== true)
-    .map((doc) => ({ id: doc.id, title: doc.title, icon: doc.icon })) as {
-    id: string;
-    title: string;
-    icon: string | null;
-  }[];
-}

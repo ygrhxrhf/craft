@@ -5540,8 +5540,18 @@
 **☆ 本批一件＝清 G1536（集合改名／删除）**。第 293 批登记时写的是"`updateCollection`／`deleteCollection` 零调用 ⇒ 无入口"，本批按**红线**接线：**不走那两枚 Server Action**，改走 `applyLocal`——`collection` 表的落库列（`name`／`icon`／`description`／`isDeleted`／`deletedAt`…）**全在 `tables.ts` 白名单内**，正是内核能承担的那一类。
 **落点**＝`CollectionHeader.tsx`（集合详情页右上）：① 新增「集合操作」`⋯` 菜单（`DropdownMenu`，`aria-label="集合操作"`）；② 「重命名」⇒ `promptDialog`（预填当前名、`confirmLabel:'保存'`）⇒ `applyLocal({table:'collection',id,patch:{name}})` ＋ `flushNow()` ＋ `router.refresh()`；③ 「删除集合」⇒ `confirmDialog`（官方句「你确定要删除"[0]"吗？」）⇒ `applyLocal({patch:{isDeleted:true,deletedAt}})` ＋ `flushNow()` ＋ `router.push('/collections')`；④ 标题由 `collection.name` 改读本地 `name` 态 ⇒ 改名即时可见（`flushNow` 是因为列表／标题读服务端权威行，去抖 2s 内会读到旧名——与白板改名同一条规则）。
 **☆ 一处自纠**＝首跑 `npx tsc --noEmit` 报 **1 错**：`promptDialog` 的 `confirmLabel` 是**必填**（`PromptDialogConfig` 里非可选），初版漏了 ⇒ 补 `confirmLabel:'保存'` 后 0 错。这条错误只有 tsc 抓得到（运行期弹层照样开）。
-**☆ 本批的诚实边界**＝**未做真浏览器取证**。按本目录「不能只看代码在不在，要看屏上能不能用」的判据，G1536 标「已清」但**缺一次屏上核验**（本会话 G66／G67 那几批都是开浏览器核过的）⇒ **下一批第一件事就该补**：打开某集合 ⇒ 点 `⋯` ⇒ 重命名 ⇒ 标题即时变；再删 ⇒ 回列表且卡片消失。
+**☆ 本批的诚实边界（已在后续复核中补齐）**＝第 294 批提交时尚未做真浏览器取证；本批已补上屏上核验：登录 `craft-test@example.com` 后打开集合，点 `aria-label="集合操作"` ⇒「重命名」保存后标题即时变为「实验集合 1791947297199 验证」；再点「删除集合」并确认 ⇒ 页面回到 `/collections`，且该卡片「实验集合 1791947297199 验证」从列表消失。此前的缺口现有真实浏览器证据闭环，G1536 可维持「已清」。
 批内验收＝`npx vitest run` **263 文件／2131 测试全绿**（零测试改动）＋`npx tsc --noEmit` **0 错**（首跑 1 错已修）；零新依赖，三条红线未动（新写入走 applyLocal，未碰那两枚旧 Server Action）。
+
+### 三点二三〇、第 295 批（真浏览器取证批）＝补 G1536 屏上证据，G1537–G1540 仍待真实承载面（2026-10-17 本机钟 23:3x—23:4x＝**取证批**＝净新增 0 条）
+
+**⇒ 规模**：`gap.md` strictG **1533 条不变**（最大仍 **G1541**；本批只补 G1536 的真浏览器证据，未新登记 G）；P0 仍 **7／8**（本批未动 §〇·一 任何一行，剩 G1488 电子邮件档待裁决）。
+
+**☆ 本批第一件＝补 G1536 的真实浏览器核验**。启动本地 `:3000`，登录 `craft-test@example.com / test1234`，进入 `/collections` 的「实验集合 1791947297199」，点击 `aria-label="集合操作"`：① 点「重命名」，输入「实验集合 1791947297199 验证」并保存，详情页标题即时显示新名称；② 再次打开同一菜单点「删除集合」并确认，页面回到 `/collections`，列表中该卡片消失。故 G1536 的代码入口与屏上行为均已闭环，仍记「已清」。
+
+**☆ 本批第二件＝复核 G1537–G1540 的承载面**。实读当前集合页：`AddPropertyMenu.tsx` 只有新增属性，`AddViewMenu.tsx` 只有新增视图，`CollectionHeader.tsx` 只有视图切换；`TableView.tsx` 只有筛选／排序／分组、单元格编辑和增删条目，六种视图没有拖拽排序；`TagsSection.tsx` 只有挂／摘标签。故本批**不凭空增加伪入口**：G1537 字段改／删／重排、G1538 视图删除、G1539 条目拖拽重排、G1540 标签改名／换色仍保留「待办」，待后续逐项形成官方对账与真实承载面后再接线；四条的既有 action 和白名单列未改动。
+
+批内验收＝PostgreSQL `pg_ctl status` 确认 `5432` 正在监听；`npx vitest run` **263 文件／2131 测试全绿**；`npx tsc --noEmit` **0 错**；真浏览器完成 G1536 改名／删除闭环；零新依赖，三条红线未动。
 
 ### 三点二二四、第 289 批（复核批）＝G66 由「缺失」改「已清」（原判陈旧）（2026-10-16 本机钟 09:4x—09:5x＝**零代码改动批**＝净新增 0 条）
 

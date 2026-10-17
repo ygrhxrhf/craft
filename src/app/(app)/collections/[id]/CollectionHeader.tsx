@@ -1,12 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Download, MoreHorizontal } from 'lucide-react';
 import { AddViewMenu } from '@/components/collection/AddViewMenu';
 import { AddPropertyMenu } from '@/components/collection/AddPropertyMenu';
 import { setActiveView } from '@/actions/collection/views';
 import { columnsFromProperties, rowsFromItems, toCsv } from '@/lib/collection/csv';
+import { getSyncManager } from '@/lib/sync-core';
+import { confirmDialog, promptDialog } from '@/lib/dialog/show';
 import { useRouter } from 'next/navigation';
 import type { getCollection } from '@/actions/collection/collection';
 
@@ -18,11 +27,43 @@ interface CollectionHeaderProps {
 
 export function CollectionHeader({ collection }: CollectionHeaderProps) {
   const router = useRouter();
+  const [name, setName] = useState(collection.name);
   const activeView = collection.views.find((v: { isActive: boolean }) => v.isActive) || collection.views[0];
 
   const handleViewChange = async (viewId: string) => {
     await setActiveView(collection.id, viewId);
     router.refresh();
+  };
+
+  // G1536：集合改名／删除。落库列都在 `collection` 白名单里 ⇒ 走 applyLocal（红线），
+  // 改完 flushNow 再 refresh，否则列表读服务端权威行会读到旧名字（与白板改名同一条规则）。
+  const handleRename = async () => {
+    const next = await promptDialog({ title: '重命名集合', defaultValue: name, confirmLabel: '保存' });
+    if (next === null) return;
+    const trimmed = next.trim();
+    if (!trimmed || trimmed === name) return;
+    const manager = getSyncManager();
+    await manager.applyLocal({ table: 'collection', id: collection.id, patch: { name: trimmed } });
+    await manager.flushNow();
+    setName(trimmed);
+    router.refresh();
+  };
+
+  const handleDelete = async () => {
+    const confirmed = await confirmDialog({
+      title: '删除集合',
+      message: `你确定要删除“${name}”吗？`,
+      confirmLabel: '删除',
+    });
+    if (!confirmed) return;
+    const manager = getSyncManager();
+    await manager.applyLocal({
+      table: 'collection',
+      id: collection.id,
+      patch: { isDeleted: true, deletedAt: new Date().toISOString() },
+    });
+    await manager.flushNow();
+    router.push('/collections');
   };
 
   // G290：集合专属导出格式「下载为 CSV」（官方 `collections.download.as.csv`）。
@@ -52,7 +93,7 @@ export function CollectionHeader({ collection }: CollectionHeaderProps) {
         {collection.icon && (
           <span className="text-3xl">{collection.icon}</span>
         )}
-        <h1 className="min-w-0 truncate text-2xl font-semibold">{collection.name}</h1>
+        <h1 className="min-w-0 truncate text-2xl font-semibold">{name}</h1>
       </div>
 
       <div className="flex items-center justify-between gap-2">
@@ -72,6 +113,22 @@ export function CollectionHeader({ collection }: CollectionHeaderProps) {
           </Button>
           <AddPropertyMenu collectionId={collection.id} />
           <AddViewMenu collectionId={collection.id} />
+          {/* G1536：集合改名／删除 */}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              type="button"
+              aria-label="集合操作"
+              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <MoreHorizontal className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleRename}>重命名</DropdownMenuItem>
+              <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+                删除集合
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>

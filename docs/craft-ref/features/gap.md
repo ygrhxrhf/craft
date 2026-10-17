@@ -5510,7 +5510,7 @@
 
 | G号 | 官方行为（本轮对账） | 本地对照 | 判定 | 分 |
 | --- | --- | --- | --- | --- |
-| G1536 | 集合可**改名/改图标/软删**（`collections` 写侧 11 条里含 rename／delete） | `src/actions/collection/collection.ts` 的 `updateCollection`／`deleteCollection` **零调用**；`/collections` 页与 `CollectionHeader` 只有「下载为 CSV／加属性／加视图」，无改名／删除入口 | 待办（本地功能洞，已登记） | 1/1 |
+| G1536 | 集合可**改名/改图标/软删**（`collections` 写侧 11 条里含 rename／delete） | ☆ 已清（第 294 批）＝`CollectionHeader` 右上补「集合操作」`⋯` 菜单：「重命名」走 `promptDialog`（预填当前名）⇒ `applyLocal({table:'collection',patch:{name}})`＋`flushNow()`＋`refresh()`；「删除集合」走 `confirmDialog`（官方句「你确定要删除"[0]"吗？」）⇒ `applyLocal({patch:{isDeleted,deletedAt}})`＋`flushNow()`＋`router.push('/collections')`。落库列全在 `collection` 白名单内 ⇒ 走红线要的 applyLocal，不碰那两枚同名的旧 Server Action；标题改读本地 `name` 态，改名即时可见 | 已清 | 1/1 |
 | G1537 | 集合**字段**可改／删／重排（`collections schema-update`） | `properties.ts` 的 `updateProperty`／`deleteProperty`／`reorderProperties` **三枚零调用**；`AddPropertyMenu` 只做新增 | 待办（本地功能洞，已登记） | 1/1 |
 | G1538 | 集合**视图**可删（`collections views-delete`） | `views.ts` 的 `deleteView` **零调用**（`updateView` 有面：`TableView.tsx:42`；`setActiveView` 有面：`CollectionHeader`） | 待办（本地功能洞，已登记） | 1/1 |
 | G1539 | 集合**条目可重排**（拖拽换序） | `items.ts` 的 `updateItemOrder` **零调用**；四视图（List/Table/Kanban/Gallery/Form/Calendar）都无拖拽换序 | 待办（本地功能洞，已登记） | 1/1 |

@@ -16,6 +16,8 @@ import {
   ENTERED_CURRENT_TAG_KEY,
   ENTERED_INVALID_TAG,
   ENTERED_INVALID_TAG_KEY,
+  EDIT_TAG,
+  EDIT_TAG_KEY,
   ENTER_VALID_TAG,
   ENTER_VALID_TAG_KEY,
   HEX_COLOR_DESC,
@@ -65,6 +67,7 @@ const PAIRS: [string, string][] = [
   [ENTERED_INVALID_TAG_KEY, ENTERED_INVALID_TAG],
   [CONTINUE_TYPING_VALID_KEY, CONTINUE_TYPING_VALID],
   [CONTINUE_TYPING_KEY, CONTINUE_TYPING],
+  [EDIT_TAG_KEY, EDIT_TAG],
 ];
 
 describe('tag copy is the collected official text', () => {
@@ -72,9 +75,9 @@ describe('tag copy is the collected official text', () => {
     expect(ledgerValue(key)).toBe(local);
   });
 
-  it('covers all twelve rule/feedback keys from tags-browse.md §二', () => {
-    expect(PAIRS.length).toBe(15);
-    expect(new Set(PAIRS.map(([key]) => key)).size).toBe(15);
+  it('covers every rule/feedback key from tags-browse.md §二 plus the G1540 edit entry', () => {
+    expect(PAIRS.length).toBe(16);
+    expect(new Set(PAIRS.map(([key]) => key)).size).toBe(16);
   });
 
   it('fills the invalid-tag slot where the ledger puts [0]', () => {

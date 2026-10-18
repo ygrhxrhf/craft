@@ -36,6 +36,15 @@ export const HEX_COLOR_DESC = '十六进制格式的颜色值，如 #ff0000 或 
 export const TAG_IS_VALID_KEY = 'tags.tag.is.valid';
 export const TAG_IS_VALID = '标签有效';
 
+/**
+ * G1540：标签改名／换色。官方只给了「编辑标签」这一个 key（`tags.edit.tag`，_Edit Tag_）；
+ * 改名是它的正身，换色落在本地既有的 `tag.color` 列上。
+ * ☆ 别顺手把 `tags.hexcolor.*` 拿来当颜色选择器的文案——那两个 key 属于「十六进制颜色词不算标签」
+ *   的忽略规则（`tags-browse.md:19`），不是标签颜色编辑器。
+ */
+export const EDIT_TAG_KEY = 'tags.edit.tag';
+export const EDIT_TAG = '编辑标签';
+
 /** `[0]` is where the offending text goes; `formatInvalidTag` substitutes it. */
 export const INVALID_TAG_X_KEY = 'tags.invalid.tag.x';
 export const INVALID_TAG_X = '无效标签：[0]';

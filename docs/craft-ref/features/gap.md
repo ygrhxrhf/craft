@@ -5511,10 +5511,10 @@
 | G号 | 官方行为（本轮对账） | 本地对照 | 判定 | 分 |
 | --- | --- | --- | --- | --- |
 | G1536 | 集合可**改名/改图标/软删**（`collections` 写侧 11 条里含 rename／delete） | ☆ 已清（第 294 批）＝`CollectionHeader` 右上补「集合操作」`⋯` 菜单：「重命名」走 `promptDialog`（预填当前名）⇒ `applyLocal({table:'collection',patch:{name}})`＋`flushNow()`＋`refresh()`；「删除集合」走 `confirmDialog`（官方句「你确定要删除"[0]"吗？」）⇒ `applyLocal({patch:{isDeleted,deletedAt}})`＋`flushNow()`＋`router.push('/collections')`。落库列全在 `collection` 白名单内 ⇒ 走红线要的 applyLocal，不碰那两枚同名的旧 Server Action；标题改读本地 `name` 态，改名即时可见 | 已清 | 1/1 |
-| G1537 | 集合**字段**可改／删／重排（`collections schema-update`） | `properties.ts` 的 `updateProperty`／`deleteProperty`／`reorderProperties` **三枚零调用**；`AddPropertyMenu` 只做新增 | 待办（本地功能洞，已登记） | 1/1 |
-| G1538 | 集合**视图**可删（`collections views-delete`） | `views.ts` 的 `deleteView` **零调用**（`updateView` 有面：`TableView.tsx:42`；`setActiveView` 有面：`CollectionHeader`） | 待办（本地功能洞，已登记） | 1/1 |
-| G1539 | 集合**条目可重排**（拖拽换序） | `items.ts` 的 `updateItemOrder` **零调用**；四视图（List/Table/Kanban/Gallery/Form/Calendar）都无拖拽换序 | 待办（本地功能洞，已登记） | 1/1 |
-| G1540 | 标签可**改名/换色**（`tags.edit.tag`） | `tag.ts` 的 `renameTag` **零调用**；`TagsSection` 只能挂/摘，无改名入口 | 待办（本地功能洞，已登记） | 1/1 |
+| G1537 | 集合**字段**可改／删／重排（`collections schema-update`） | ☆ 已清（第 296 批）＝照官方的**两处承载面**接线：① 列头 `⋯` 菜单 `FieldMenu.tsx`（可及名「字段操作 <列名>」）＝「编辑字段」走 `promptDialog`（预填当前名）⇒ `applyLocal({table:'collection_property',patch:{name}})`；「隐藏字段」／「显示/隐藏字段」⇒ `patch:{isVisible}`；删除走 `confirmDialog`（官方句 `alert.delete.field.desc`「你确定要删除该字段吗？」）⇒ 该列与其 `collection_value` 取值**一并**软删 `deletedAt`（否则留下指向已删列的孤儿值，与 `deleteProperty` 同语义）；② 视图工具条「隐藏和排序字段」`HideOrderFieldsMenu.tsx`＝逐行显示切换＋上移／下移改 `order`。文案集中在 `src/lib/collection/field-menu-copy.ts`，由 `field-menu-copy.test.ts` 与 `feature-catalog.md` 逐字比对；写入全走 `applyLocal`，未碰 `properties.ts` 那三枚零调用 action | 已清 | 1/1 |
+| G1538 | 集合**视图**可删（`collections views-delete`） | ☆ 已清（第 296 批）＝`CollectionHeader.tsx` 的「视图操作」`⋯` 菜单补「删除视图」（官方键 `collections.delete.view`）⇒ `confirmDialog`（官方句式「你确定要删除"[0]"吗？」）⇒ `applyLocal({table:'collection_view',patch:{deletedAt,isActive:false}})`，并把另一枚存活视图顶上（一个 `true`、其余 `false`，与 `setActiveView` 同语义）＋`flushNow()`＋`refresh()`。☆ 一处**本地取舍**＝**最后一个视图不可删**（菜单项置灰）：集合详情页要靠一个激活视图渲染，删到零个会留下一个打不开的集合 | 已清 | 1/1 |
+| G1539 | 集合**条目可重排**（拖拽换序） | ☆ 已清（第 296 批）＝表格视图行首补拖拽手柄（可及名「拖动排序 <行标签>」，行标签取首个可见字段的值）⇒ `handleDrop` 用纯核 `src/lib/collection/item-reorder.ts`（`moveRow`／`renumber`／`orderPatches`／`canReorder`，**8 条单测**）算出**只写 `order` 真变了的行** ⇒ `applyLocal({table:'collection_item',patch:{order}})`＋`flushNow()`＋`refresh()`。☆ 两处判据：① 带排序或分组的视图上**不给手柄**（`canReorder`：屏上顺序由它们决定，`order` 改了也看不见——宁可没有，也不要"拖了没反应"）；② 未碰 `items.ts` 的 `updateItemOrder`（同属被 `applyLocal` 取代的写路径） | 已清 | 1/1 |
+| G1540 | 标签可**改名/换色**（`tags.edit.tag`） | ☆ 已清（第 296 批）＝`TagsSection.tsx` 每个标签胶囊补「编辑标签 <标签名>」入口（官方键 `tags.edit.tag`）⇒ `TagEditDialog.tsx`：名称输入（可及名「标签名称」）＋色板（`TAG_COLORS`，每档可及名「颜色 #rrggbb」＋`aria-pressed`）⇒ `applyLocal({table:'tag',patch:{name,color}})`＋`flushNow()`＋`refresh()`。☆ 换色那一半**没有官方 key**（落在本地 `tag.color` 列与 `TAG_COLORS` 色板），故只在改名上做逐字对账；未碰 `tag.ts` 的 `renameTag`（被 `applyLocal` 取代的写路径） | 已清 | 1/1 |
 | G1541 | 白板可**改名** | ☆ **本行当日即改判＝误判（不改台账判定列，仅记原委）**＝`renameWhiteboard` 零调用**不代表没面**：`WhiteboardBreadcrumb.tsx` 的白板名输入框在 `onBlur` 走 `applyLocal({table:'whiteboard', patch:{name}})`＋`flushNow()`（正是红线要的写法）。⇒ 该 action 属"被 applyLocal 取代的旧写路径"（同 G293 批删掉那四枚一类），**不是功能洞**；本批不删它（留着给未来的服务端调用方），但**撤回**"白板无改名入口"这半句 | 误判撤回 | 1/1 |
 
 **☆ 另记两枚"被取代的死读路径"（不改判、仅备注）**＝`tag.ts` 的 `getDocumentsByTag` 与 `version.ts` 的 `createVersion` 同样零调用：前者被 `getTagBrowseRows`（`/tags/[id]` 页在用）取代，后者是手动存版本的入口（`getVersions`／`restoreVersion` 有面：`VersionDialog`，唯独"手动存一版"没面）⇒ 前者属可删冗余、后者属功能洞，留待后续批次分头处理，本批不混进来。
@@ -5552,6 +5552,53 @@
 **☆ 本批第二件＝复核 G1537–G1540 的承载面**。实读当前集合页：`AddPropertyMenu.tsx` 只有新增属性，`AddViewMenu.tsx` 只有新增视图，`CollectionHeader.tsx` 只有视图切换；`TableView.tsx` 只有筛选／排序／分组、单元格编辑和增删条目，六种视图没有拖拽排序；`TagsSection.tsx` 只有挂／摘标签。故本批**不凭空增加伪入口**：G1537 字段改／删／重排、G1538 视图删除、G1539 条目拖拽重排、G1540 标签改名／换色仍保留「待办」，待后续逐项形成官方对账与真实承载面后再接线；四条的既有 action 和白名单列未改动。
 
 批内验收＝PostgreSQL `pg_ctl status` 确认 `5432` 正在监听；`npx vitest run` **263 文件／2131 测试全绿**；`npx tsc --noEmit` **0 错**；真浏览器完成 G1536 改名／删除闭环；零新依赖，三条红线未动。
+
+### 三点二三一、第 296 批（真写入批）＝接线第 293 批登记的四枚"有列没面"的洞：G1537／G1538／G1539／G1540 由「待办」改「已清」（2026-10-18 本机钟 10:3x—11:1x＝**真写入批**＝净新增 0 条）
+
+**⇒ 规模**：`gap.md` strictG **1533 条不变**（最大仍 **G1541**；本批只把第 293 批登记的 4 行由「待办」改「已清」，未新登记 G）；P0 仍 **7／8**（本批未动 §〇·一 任何一行，剩 G1488 电子邮件档待裁决）。
+
+**☆ 起因**＝第 295 批复核时判"四条的既有 action 和白名单列未改动、承载面不存在"，故留「待办」。本批把这四处承载面**按官方对账逐项接上**，且**一律不碰那几枚零调用的 server action**——`collection_property`／`collection_value`／`collection_view`／`collection_item`／`tag` 都在 `src/lib/sync/tables.ts` 白名单内，写入全走 `applyLocal`，正对三条红线里"新写入一律走 applyLocal"那条。
+
+**① G1537 字段可改／删／重排**＝官方把字段管理拆在**两处**，本批照办：单列 `⋯` 菜单（`FieldMenu.tsx`）＋视图工具条「隐藏和排序字段」面板（`HideOrderFieldsMenu.tsx`，与「添加筛选器」「添加排序条件」同排）。删除要**连取值一起软删**——只删列会在 `collection_value` 里留下指向已删列的孤儿值（与 `deleteProperty` 同语义）。☆ 一处**不冒充官方**：排序机制官方是**拖拽**、没有 key，本地用上移／下移两枚按钮，故那两枚按钮的可及名是描述性中文，不进逐字对账。
+
+**② G1538 视图可删**＝「视图操作」菜单补「删除视图」。☆ 一处**本地取舍**＝**最后一个视图不可删**（菜单项置灰）：集合详情页要靠一个激活视图渲染，删到零个会留下一个打不开的集合。删的是激活视图时，把另一枚存活视图顶上（一个 `true`、其余 `false`，与 `setActiveView` 同语义）。
+
+**③ G1539 条目拖拽重排**＝表格视图行首补手柄，顺序的权威是每行的 `order` 列（0 基，列表顺序即顺序）。拖放只把 `order` 真变了的行推给服务端（一次拖拽通常两行，不是整表）。☆ 判据在纯核 `src/lib/collection/item-reorder.ts`：`moveRow`／`renumber`／`orderPatches`／`canReorder`＋**8 条单测**钉住语义；`canReorder` 让**带排序或分组的视图上不出现手柄**——屏上顺序由它们决定，`order` 改了也看不见，宁可没有入口也不要"拖了没反应"。
+
+**④ G1540 标签改名／换色**＝标签胶囊补「编辑标签」入口（官方键 `tags.edit.tag`）。☆ 官方只给了改名这一个 key，换色那一半落在本地 `tag.color` 列与 `TAG_COLORS` 色板，故**只在改名上做逐字对账**，换色不冒充官方文案。
+
+**☆ 一处方法论**＝四处文案都先落进文案模块（`src/lib/collection/field-menu-copy.ts`／`src/lib/tag/official-copy.ts`），再由 `field-menu-copy.test.ts`／`view-menu-copy.test.ts`／`official-copy.test.ts` 从 `feature-catalog.md` **读回逐字比对**（ledger-as-source，与 `tag/official-copy.test.ts` 同一手法）；另有三份 wiring 测试钉住"面板真的引用了那个常量、而不是又抄一遍字面量"（防本目录反复记的**双声明漂移**）。
+
+**☆ 一处自纠**＝本批收尾时按 eslint 报错逐条处理**自己引入**的两处：`HideOrderFieldsMenu` 原在 `useEffect` 里同步 `setState` 铺开面板行（`react-hooks/set-state-in-effect`）⇒ 改为在**打开面板的事件里**铺开，effect 整条删掉；`ViewActionsMenu` 声明了却没用到的 `collectionId` prop ⇒ 连挂载处一起删。另有 `TableView.tsx:40`／`TagsSection.tsx:39` 两处**同规则报错，属既有基线**（`git show HEAD:<file>` 在这两行就是同一个 `useEffect`，本批未触碰）——本批**不改判、不动刀**。
+
+**☆ 一处自伤（留给后来人）**＝收尾时发现 `.next/dev/types/validator.ts` 被中断的 `next dev` 写成半截文件（第 467 行是残片 `./src/app/(auth)/layout.js")`），于是 `rm -rf .next` 清缓存——**清完 `tsc --noEmit` 立刻报 `src/app/layout.tsx(37,50): Cannot find name 'LayoutProps'`**：`LayoutProps` 是 Next 生成在 `.next/types` 里的全局类型，缓存一删它就没主人，这条报错**不是源码问题**。`npm run build` 重建 `.next` 后 tsc 回到 **0 错**。教训＝清 `.next` 之后必须先 build 再验 tsc，否则会把生成物的缺席读成源码错。
+
+**☆ lint 一项据实记录（环境失败，未以其他结果冒充）**＝`npm run lint`（= `eslint`，全仓）**在本机跑不完**：默认堆 OOM，`--max-old-space-size=4096` 仍 `Ineffective mark-compacts near heap limit`，`--concurrency=2` 则 `ERR_WORKER_OUT_OF_MEMORY`（Worker 2.5 GB 堆仍不够）。已排除"残留 dev 进程占内存"这一可能（当时 `node` 进程只剩 4 个、最大 24 MB；机器 15.4 GB／空闲 6.5 GB）。故改用**范围化替代**＝对本批全部 22 个改动／新增文件单跑 eslint：**新代码 0 error**；全批仅 2 个 error，正是 `TableView.tsx:40` 与 `TagsSection.tsx:39` 的 `react-hooks/set-state-in-effect`，**HEAD 原文同位置同规则就已存在**（`git show HEAD:<file>` 逐行核对，且本批 diff 未触及这两处 `useEffect`）⇒ **全仓 lint 这道闸在本批之前就是红的**，与本批无关；本批不改判、不动刀。☆ 另 26 条 warning 里含既有基线项，未逐条清理。
+
+批内验收＝`npx vitest run` **269 文件／2168 测试全绿**（第 295 批记的基线是 263／2131＝**＋6 文件**；这 6 个新测试文件自带 **36 条**——`field-menu-copy` 10＋`field-menu-wiring` 6＋`item-reorder` 8＋`view-menu-wiring` 5＋`edit-wiring` 5＋`view-menu-copy` 2；另 `official-copy.test.ts` 的 `PAIRS` 由 15 键扩到 16 键（加 `tags.edit.tag`），该文件测试条数不变。**☆ 两处读数相差 1 条，不逐条去凑**，如实并列）；`npx tsc --noEmit` **0 错**；`npm run build` **通过**（路由表完整、退出码 0）；**真浏览器取证 4 条全绿**＝`e2e/collection-field-menu.spec.ts`（改名→加列→上移→隐藏→面板计数→放回→删除→刷新仍在）、`e2e/collection-view-delete.spec.ts`（末视图置灰→建第二视图→删激活视图→刷新只剩一个）、`e2e/collection-row-reorder.spec.ts`（两行换序→刷新仍换过→带排序时手柄消失）、`e2e/tag-edit.spec.ts`（改名＋换色→刷新后名字与背景色 `rgb(224,89,107)` 都在），截图落在 `screenshots/tmp-field-menu-*.png`／`tmp-view-delete-*.png`／`tmp-row-reorder-*.png`／`tmp-tag-edit-*.png`；四条 e2e 在**清过 `.next` 的冷缓存**上又跑一遍仍 **4 passed (2.2m)**（同时验了冷启动可用）。零新依赖，三条红线未动。
+
+**☆ 范围外唯一遗留（非本批所出，未动）**＝未跟踪文件 `scripts/seed-test-user.mjs`（建 `craft-test@example.com` 的一次性脚本）。它 mtime 是 **2026-10-13**，比本批早五天，且**全仓无任何引用**（`e2e/global-setup.ts` 用的是自注册的 `craft-visual@example.com`），与本批四条洞无关。留原地、不删不并，此处仅登记以免下批复核时被误记为本批产物。
+
+**☆ 第 296 批续（补证，不改判）**＝本次新增证据把“行为验证”和“接线回归保护”分开记录，G1537–G1540 主表判定保持「已清」不变。
+
+**行为验证**＝四条真实 E2E 复跑通过：字段改名／排序／隐藏显示／删除后刷新仍保持；视图删除后刷新仍只剩可用视图；条目拖拽换序后刷新仍保持，且配置排序刷新后拖拽手柄继续隐藏；标签改名与换色后刷新仍保持。排序配置曾在刷新后暴露旧写入路径问题，已由 `TableView.tsx` 改为写入 `collection_view.config` 后重新验证通过。
+
+**接线回归保护**＝新增 `src/lib/collection/view-config-wiring.test.ts`，静态锁定 `TableView.tsx` 使用 `getSyncManager` 写入 `collection_view.config`、调用 `await manager.flushNow()` 和 `router.refresh()`；同时排除 `updateView(` 与 `@/actions/collection/views`，并确认筛选、排序、分组三个回调仍调用 `persistConfig`。该测试还读取 `src/lib/sync/tables.ts`，确认 `collection_view` 白名单包含 `config`，防止只保护调用形状而遗漏同步协议列。
+
+批内补证验收＝定向接线测试 **4 文件／23 测试全绿**；四条真实 E2E **4 passed**。本次只追加证据，不重写历史批次，不改变四条判定。
+
+**☆ 第 296 批再续（审阅修复批，不改判）**＝一次资深审阅按"可操作 Bug／回归／契约／安全"列出 2 条 P1 与若干 P2/P3，**本次全部修复**；G1537–G1540 主表判定与验收数字均不改写，只追加证据。
+
+**P1-① 筛选视图下的条目重排会破坏全局 `order`**＝旧 `handleDrop` 拿 `processedItems`（筛选后的可见子集）去 `renumber`，可见行被压成 `0..k-1`、与留在集合里的隐藏行**撞号**，撤掉筛选后顺序就不再是用户拖出来的那个。修法＝纯核新增 `planReorder(rows, sourceId, targetId)`（`src/lib/collection/item-reorder.ts`），组件改传 `collection.items` **全集**；`canReorder` 的注释同时写明"筛选不参与该判据，但重排必须按全集算"。证据＝`item-reorder.test.ts` 由 8 条增至 **12 条**（新增：全集拖拽的补丁、可见行不被压成 0..k-1、无效 id／同 id／空 id 三类 no-op）；`e2e/collection-row-reorder.spec.ts` 新增第 2 条用例（三行 → 筛掉中间行 → 拖首行到末行 → 刷新 → 撤筛选，断言顺序为 middle／last／first）。
+
+**P1-② 标签改名的旧读覆盖乐观更新**＝`applyLocal` 会在返回前**同步**广播 store 变更（`sync-core/index.ts` 的 `emitTouched`），于是订阅里那次 `load()` 是在推送**之前**发出的、读到的还是旧名；它晚于乐观更新落地就会"改完名又闪回旧名"。修法＝`handleEdited` 去掉乐观更新后的冗余 `await load()`，并新增两道丢弃：写入纪元（`writeEpochRef`，本地写之后回来的读一律丢）与文档令牌（`documentIdRef`，切文档后旧结果整批丢）；挂载 effect 保留 `cancelled` 保护。
+
+**☆ 过程中另撞出两个真实缺陷（不在原审阅清单里，一并修）**＝① **乱序回显顶回新编辑**：`persistConfig` 写完就 `router.refresh()`，而**前一次**写入的 refresh 可能后到，带回更旧的 config，被当成"外部变更"采纳后把屏上刚填的筛选条件顶回去；修法＝`writtenConfigKeys` 记录本机写过的 key，**本机旧 key 一律不采纳**（`staleEcho`），换视图则无条件采纳。② **并发 flush 让旧快照后落地**：连续改动（加筛选条件 → 改操作符 → 填值）会并发调用 `flushNow()`，而每次 flush 推的是"调用那一刻的队列快照"，较早那次可能后落地；修法＝配置写入串行化（`configWriteChain`）。**库上实证**＝修复前该视图的 `config` 落成 `{"operator":"string_contains","value":""}`（`string_contains` 遇空 operand 对每行都答 false ⇒ 全表 0 行），修复后落成 `{"operator":"string_doesNotContain","value":"乙…"}`，行序为 `乙0／丙1／甲2`（即拖拽后的全集顺序）。
+
+**P2/P3 一并收口**＝`TagsSection` 订阅 `onRejected`，**只认 `tag` 表**的拒绝，且 `not_found`（不存在或不属于你）与 `stale`（已被其他设备覆盖）**分开措辞**，不再静默回退；`TagEditDialog` 与 `ViewActionsMenu` 的写入失败补离线 toast（`需要网络`），对话框保持打开、`busy` 复位、可原样重试；`ViewActionsMenu` 中"`setActiveView` 已被 applyLocal 取代"的**误导注释改正**（切视图 Tab 仍走该 server action，本次不改该路径）；`view-config-wiring.test.ts` 的守卫从单个脆弱正则改为锁定条件性同步语义（`configKey`／`syncedView`／`staleEcho`）＋一条"重排必须来自全集"的反向断言。
+
+批内验收＝`npx vitest run src/lib/collection src/lib/tag src/actions/collection src/actions/tag` **22 文件／164 测试全绿**；真浏览器 **7 passed**＝`e2e/collection-filter.spec.ts` ＋ 四条 G1537–G1540（`collection-row-reorder` 已含 2 条用例）；范围化 `npx eslint` **0 error／27 warning**（27 条全为既有 `@typescript-eslint/no-explicit-any`）；`npx tsc --noEmit` **0 错**；`npm run build` **通过**；`git diff --check` 干净。零新依赖，三条红线未动（新写入仍全走 `applyLocal`）。
+**☆ 一处过程事实（不入库）**＝为定位"筛选控件不落库"，本批临时建过 `e2e/tmp-debug-filter.spec.ts` 与一次性 `probe.tmp.mjs`（直连 `DATABASE_URL` 读 `collection_views.config` 与 `collection_items.order`），两者**已删除**，工作区无残留。
 
 ### 三点二二四、第 289 批（复核批）＝G66 由「缺失」改「已清」（原判陈旧）（2026-10-16 本机钟 09:4x—09:5x＝**零代码改动批**＝净新增 0 条）
 

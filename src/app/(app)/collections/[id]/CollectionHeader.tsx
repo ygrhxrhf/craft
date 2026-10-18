@@ -12,6 +12,7 @@ import {
 import { Download, MoreHorizontal } from 'lucide-react';
 import { AddViewMenu } from '@/components/collection/AddViewMenu';
 import { AddPropertyMenu } from '@/components/collection/AddPropertyMenu';
+import { ViewActionsMenu } from '@/components/collection/ViewActionsMenu';
 import { setActiveView } from '@/actions/collection/views';
 import { columnsFromProperties, rowsFromItems, toCsv } from '@/lib/collection/csv';
 import { getSyncManager } from '@/lib/sync-core';
@@ -106,6 +107,11 @@ export function CollectionHeader({ collection }: CollectionHeaderProps) {
             ))}
           </TabsList>
         </Tabs>
+        {/* G1538：视图删除。Tab 里塞不下第二个按钮（TabsTrigger 本身就是 button），故单独立一个菜单 */}
+        <ViewActionsMenu
+          views={collection.views as { id: string; name: string; isActive: boolean }[]}
+          activeViewId={activeView?.id ?? ''}
+        />
         <div className="flex shrink-0 items-center gap-1">
           <Button size="sm" variant="outline" onClick={handleDownloadCsv} className="h-8 gap-1.5 text-xs">
             <Download className="size-3.5" />

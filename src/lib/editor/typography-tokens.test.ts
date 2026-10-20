@@ -18,6 +18,10 @@ import {
  * weight changes, and the allcaps variant is the one place a variant moves a non-transform value.
  */
 const css = readFileSync(fileURLToPath(new URL('../../app/globals.css', import.meta.url)), 'utf8');
+const generator = readFileSync(
+  fileURLToPath(new URL('../../../scripts/gen-typography.mjs', import.meta.url)),
+  'utf8',
+);
 
 describe('the token families', () => {
   it('counts 60 + 30 + 16 + 22 token names', () => {
@@ -91,5 +95,17 @@ describe('the bridge classes', () => {
 
   it('defines the single font entry point the classes read', () => {
     expect(css).toContain('--font-family: var(--font-sans);');
+  });
+});
+
+/**
+ * The generator once carried a second, byte-identical copy of the 31-name list; two copies drift
+ * silently. The pin matches the reference form (`const names = TYPOGRAPHY_CLASSES`), and the
+ * absence check targets a literal only the inline copy could hold.
+ */
+describe('the generator reads the class list from this module', () => {
+  it('binds names to TYPOGRAPHY_CLASSES instead of restating the list', () => {
+    expect(generator).toContain('const names = TYPOGRAPHY_CLASSES;');
+    expect(generator).not.toContain("'heading-xxs-600-allcaps'");
   });
 });

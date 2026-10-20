@@ -9,6 +9,7 @@ const {
   CAPTION_TOKENS,
   BODY_TOKENS,
   BODY_ITALIC,
+  TYPOGRAPHY_CLASSES,
 } = await import('../src/lib/editor/typography-tokens.ts');
 
 const START = '/* === TYPOGRAPHY TOKENS (generated, G1092) === */';
@@ -75,20 +76,7 @@ const classBody = (name) => {
   return out;
 };
 
-const names = [
-  ...Object.keys(UI_TOKENS).map((g) => `ui-${g}`),
-  'heading-xxs-600',
-  'heading-xxs-600-allcaps',
-  'heading-xs-500',
-  'heading-xs-600',
-  'heading-xs-600-allcaps',
-  'heading-md-500',
-  'heading-md-600',
-  ...Object.keys(CAPTION_TOKENS).map((g) => `caption-${g}`),
-  ...Object.keys(BODY_TOKENS).map((g) => `body-${g}`),
-  'body-md-400-italic',
-  'body-md-500-italic',
-];
+const names = TYPOGRAPHY_CLASSES;
 
 for (const name of names) {
   const body = classBody(name);

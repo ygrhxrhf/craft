@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
+import { NOTIFICATION_EVENTS } from '@/lib/app/notification-settings';
+
 /**
  * A settings section that is not wired must not appear in the navigation (G24). The ledger's rule is
  * that a section is either backed by real state or its entry is removed, so the modal filters on
@@ -35,7 +37,11 @@ describe('the notifications panel does not fake a daily-digest time', () => {
   });
 
   it('keeps the real daily-email switch and its verbatim sentence', () => {
-    expect(panels).toContain('接收当天所有任务和提醒的摘要。你还将收到今天截止的摘要推送通知。');
+    // 句子的唯一声明处迁到了 NOTIFICATION_EVENTS（生产代码不再手抄），此处钉常量值＋面板的引用形态。
+    expect(NOTIFICATION_EVENTS.dailyTasks.label).toBe(
+      '接收当天所有任务和提醒的摘要。你还将收到今天截止的摘要推送通知。',
+    );
+    expect(panels).toContain('{NOTIFICATION_EVENTS.dailyTasks.label}');
     expect(panels).toContain("setSwitch('notifyDaily'");
   });
 });
@@ -194,7 +200,9 @@ describe('the notifications panel does not promise per-space overrides it cannot
     expect(panels).toContain("setSwitch('notifyComments'");
     expect(panels).toContain("setSwitch('notifyReminders'");
     expect(panels).toContain("setSwitch('notifyDaily'");
-    expect(panels).toContain('当需要提醒时，Craft 会向你发送通知。');
+    // 同上：提醒句的唯一声明处是 NOTIFICATION_EVENTS，面板只渲染常量。
+    expect(NOTIFICATION_EVENTS.reminders.label).toBe('当需要提醒时，Craft 会向你发送通知。');
+    expect(panels).toContain('{NOTIFICATION_EVENTS.reminders.label}');
   });
 });
 

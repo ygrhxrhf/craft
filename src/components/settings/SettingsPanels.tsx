@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { getPreferences, updatePreferences } from '@/actions/user/preferences';
 import { APP_VERSION } from '@/lib/app/app-version';
+import { NOTIFICATION_EVENTS } from '@/lib/app/notification-settings';
 import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
 import { getSyncManager } from '@/lib/sync-core';
@@ -586,7 +587,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
           )}
           <div>
             <GroupTitle>评论和提及</GroupTitle>
-            <GroupDesc>当你收到新的评论和提及时得到通知。</GroupDesc>
+            <GroupDesc>{NOTIFICATION_EVENTS.commentsAndMentions.label}</GroupDesc>
             <RowCard className="mt-3 flex items-center justify-between px-4 py-3">
               <div className="text-[13px] font-medium">电子邮件通知</div>
               <NotifySwitch
@@ -598,7 +599,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
           </div>
           <div>
             <GroupTitle>提醒</GroupTitle>
-            <GroupDesc>当需要提醒时，Craft 会向你发送通知。</GroupDesc>
+            <GroupDesc>{NOTIFICATION_EVENTS.reminders.label}</GroupDesc>
             <RowCard className="mt-3 flex items-center justify-between px-4 py-3">
               <div className="text-[13px] font-medium">电子邮件通知</div>
               <NotifySwitch
@@ -610,7 +611,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
           </div>
           <div>
             <GroupTitle>每日电子邮件</GroupTitle>
-            <GroupDesc>接收当天所有任务和提醒的摘要。你还将收到今天截止的摘要推送通知。</GroupDesc>
+            <GroupDesc>{NOTIFICATION_EVENTS.dailyTasks.label}</GroupDesc>
             <RowCard className="mt-3 flex items-center justify-between px-4 py-3">
               <div className="text-[13px] font-medium">电子邮件通知</div>
               <NotifySwitch

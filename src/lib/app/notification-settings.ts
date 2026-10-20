@@ -29,11 +29,11 @@ export interface NotificationEventInfo {
 
 export const NOTIFICATION_EVENTS: Record<NotificationEvent, NotificationEventInfo> = {
   commentsAndMentions: {
-    label: '当你收到新的评论和提及时得到通知',
+    label: '当你收到新的评论和提及时得到通知。',
     key: 'comments.and.mentions',
   },
   reminders: {
-    label: '当需要提醒时，Craft 会向你发送通知',
+    label: '当需要提醒时，Craft 会向你发送通知。',
     key: 'reminders.desc',
   },
   dailyTasks: {

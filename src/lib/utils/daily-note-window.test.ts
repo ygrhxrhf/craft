@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -89,6 +91,22 @@ describe('the note date key', () => {
     expect(noteDateKey(new Date(2026, 9, 14, 10, 0), null)).toBe('2026-10-14');
     // 02:00 with a 04:00 start files under the 13th.
     expect(noteDateKey(new Date(2026, 9, 14, 2, 0), '04:00')).toBe('2026-10-13');
+  });
+});
+
+/**
+ * The page must render the same five buckets the module declares. The pin matches the call form
+ * (`DAILY_NOTE_BUCKETS.map(`) rather than the bare name, so a mention in a comment does not count.
+ */
+const pageSource = readFileSync(
+  fileURLToPath(new URL('../../app/(app)/daily-notes/page.tsx', import.meta.url)),
+  'utf8',
+);
+
+describe('the daily-notes page renders the shared bucket list', () => {
+  it('maps over the exported constant instead of a private copy', () => {
+    expect(pageSource).toContain('DAILY_NOTE_BUCKETS.map(');
+    expect(pageSource).not.toContain("['today', 'yesterday', 'week', 'month', 'earlier']");
   });
 });
 

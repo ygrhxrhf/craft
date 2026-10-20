@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { getDailyNotes, getDailyNoteStartTime } from '@/actions/daily-notes/daily-notes';
 import type { DailyNoteItem } from '@/actions/daily-notes/daily-notes';
-import { dailyNoteBucket, type DailyNoteBucket } from '@/lib/utils/daily-note-window';
+import { DAILY_NOTE_BUCKETS, dailyNoteBucket, type DailyNoteBucket } from '@/lib/utils/daily-note-window';
 import { TodayNoteButton } from './TodayNoteButton';
 import { DailyNotesList } from './DailyNotesList';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
@@ -35,9 +35,10 @@ export default async function DailyNotesPage() {
     byBucket.set(bucket, list);
   }
 
-  const groups: { label: string; notes: DailyNoteItem[] }[] = (
-    ['today', 'yesterday', 'week', 'month', 'earlier'] as const
-  ).map((bucket) => ({ label: BUCKET_LABELS[bucket], notes: byBucket.get(bucket) ?? [] }));
+  const groups: { label: string; notes: DailyNoteItem[] }[] = DAILY_NOTE_BUCKETS.map((bucket) => ({
+    label: BUCKET_LABELS[bucket],
+    notes: byBucket.get(bucket) ?? [],
+  }));
 
   return (
     <div className="flex-1 overflow-y-auto">

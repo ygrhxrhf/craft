@@ -10,11 +10,12 @@
 import {
   DEFAULT_WASHI_COLOR,
   WASHI_PATTERNS,
+  WASHI_SEPARATOR,
   isWashiPattern,
   washiPattern,
 } from './washi-patterns';
 
-export const SEPARATOR_MATERIAL_IDS = ['line', 'washi'] as const;
+export const SEPARATOR_MATERIAL_IDS = ['line', WASHI_SEPARATOR] as const;
 export type SeparatorMaterial = (typeof SEPARATOR_MATERIAL_IDS)[number];
 
 export const SEPARATOR_MATERIAL_LABELS: Record<SeparatorMaterial, string> = {
@@ -47,7 +48,7 @@ export const DEFAULT_SEPARATOR_ATTRS: SeparatorAttrs = {
 
 /** A value outside the vocabulary must not ride through: it lands on the default material. */
 export function normalizeSeparatorMaterial(value: unknown): SeparatorMaterial {
-  return value === 'washi' ? 'washi' : 'line';
+  return value === WASHI_SEPARATOR ? WASHI_SEPARATOR : 'line';
 }
 
 const HEX_COLOR = /^#[0-9a-f]{6}$/i;
@@ -74,5 +75,5 @@ export function washiPatternDescription(name: unknown): string | null {
  * — the material decides — which is what keeps a weight-only document rendering as a plain rule.
  */
 export function isWashiSeparator(attrs: { separator?: unknown }): boolean {
-  return normalizeSeparatorMaterial(attrs.separator) === 'washi';
+  return normalizeSeparatorMaterial(attrs.separator) === WASHI_SEPARATOR;
 }

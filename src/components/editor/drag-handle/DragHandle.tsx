@@ -24,6 +24,7 @@ import {
   WASHI_PATTERN_CHOICES,
   type SeparatorMaterial,
 } from '@/lib/editor/separator-material';
+import { WASHI_SEPARATOR } from '@/lib/editor/washi-patterns';
 import { DRAG_THRESHOLDS } from '@/lib/dnd/drag-threshold';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
@@ -493,7 +494,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                       {WASHI_PATTERN_CHOICES.map((choice) => (
                         <DropdownMenuItem
                           key={choice.name}
-                          onClick={() => restyleSeparator(handle.blockEl, 'washi', choice.name)}
+                          onClick={() => restyleSeparator(handle.blockEl, WASHI_SEPARATOR, choice.name)}
                         >
                           {SEPARATOR_MATERIAL_LABELS.washi} - {choice.label}
                         </DropdownMenuItem>

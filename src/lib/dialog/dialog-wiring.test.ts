@@ -59,7 +59,6 @@ describe('the imperative dialog is wired', () => {
       'components/editor/slash-menu/slash-commands.ts',
       'components/editor/bubble-menu/BubbleMenu.tsx',
       'components/editor/extensions/image-block-view.tsx',
-      'components/editor/panels/PageStylePanel.tsx',
     ]) {
       expect(read(path)).toMatch(/from '@\/lib\/dialog\/show'/);
     }

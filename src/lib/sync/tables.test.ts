@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { SYNC_TABLES } from './tables';
+import { SYNC_TABLES, DOC_CONTENT_COLS } from './tables';
 
 /**
  * `gap.md` G03 的教训：设置面板的开关是乐观绘制＋`applyLocal`，而 `applyLocal` 的
@@ -291,6 +291,19 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     // 这一枚决定的是「按旧档授权的那条访客连接要被认成过期」，漏了它=改档不生效到访客身上。
     expect(share!.cols, 'shareVersion 不在 document_share.cols ⇒ 改档的过期计数出不了这台设备')
       .toContain('shareVersion');
+  });
+
+  it('☆ 红线①：内容列绝不出现在 document 表的同步白名单（Document.content 是服务端派生只读镜像）', () => {
+    // 先钉输入非空：白名单或内容列被清空时这条断言必须先红，防"空夹具假绿"。
+    const document = SYNC_TABLES.find((d) => d.table === 'document');
+    expect(document, 'document 表没在 SYNC_TABLES 里＝判据失效').toBeDefined();
+    expect(document!.cols.length, 'document 白名单是空的＝判据失效').toBeGreaterThan(0);
+    expect(DOC_CONTENT_COLS.length, 'DOC_CONTENT_COLS 是空的＝判据失效').toBeGreaterThan(0);
+    const leaked = DOC_CONTENT_COLS.filter((col) => document!.cols.includes(col));
+    expect(
+      leaked,
+      `内容列泄漏进 document 同步白名单：${leaked.join(', ')} ⇒ 客户端将能写服务端派生的只读镜像`,
+    ).toEqual([]);
   });
 
   it('brief Step 7 的所有表组仍在注册表（无移除）', () => {

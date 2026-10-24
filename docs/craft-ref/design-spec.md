@@ -2,27 +2,28 @@
 
 > 采集方法：browser-use 连接用户已登录 `docs.craft.do` 浏览器，程序化提取 `getComputedStyle` + CSSOM 规则 + 全页截图。
 > 采集日期：2026-09-24 ｜ 桌面视口 1528×~734 ｜ 中文（zh-CN）｜ 亮色为主，暗色经设置临时切换采集后已恢复「系统」。
-> 原始数据：`docs/craft-ref/styles/*.json`；截图：`docs/craft-ref/screens/ref-*.png`。
+> 原始数据：`docs/craft-ref/styles/*.json`；截图：**`docs/craft-ref/ref/`**（2026-10-22 重采 66 张，
+> 见 `screens.md` §十二）。⚠️ 旧路径 `docs/craft-ref/screens/` 不存在、旧文件名 `ref-*` 均已作废。
 > 本文档是阶段 1–5 的唯一视觉基准；与旧 `visual-diff-checklist.md`（营销页基准）冲突时**以本文为准**（产品内界面 ≠ 营销页，例如营销页暖纸白 `rgb(252,249,247)` 而产品实际是 `rgb(252,253,254)` 冷白）。
 
 ## 0. 采集范围与豁免
 
 | 本地路由 | 原版参照 | 状态 |
 |---|---|---|
-| `/documents` | `…/all` 所有文档（卡片网格） | ✅ ref-documents* |
-| `/documents/[id]` | `/editor/d/…`（官方示例文档） | ✅ ref-editor*（含选区气泡菜单） |
-| `/tasks` | `…/tasks/inbox` | ✅ ref-tasks（空状态） |
-| `/calendar` | `…/calendar` | ✅ ref-calendar |
-| `/favorites` | `…/starred` 星标 | ✅ ref-starred（空状态） |
-| `/templates` | `…/templates` 我的模板 | ✅ ref-templates |
+| `/documents` | `…/all` 所有文档（卡片网格） | ✅ `ref/all-documents-{desktop,tablet,mobile}.png` |
+| `/documents/[id]` | `/editor/d/…`（官方示例文档） | ✅ `ref/document-detail-desktop.png`（右栏 4 tab 见 `document-tab-*-desktop.png`） |
+| `/tasks` | `…/tasks/inbox` | ✅ `ref/tasks-{desktop,tablet,mobile}.png` |
+| `/calendar` | `…/calendar` | ✅ `ref/calendar-{desktop,tablet,mobile}.png` |
+| `/favorites` | `…/starred` 星标 | ✅ `ref/starred-desktop.png` |
+| `/templates` | `…/templates` 我的模板 | ✅ `ref/templates-desktop.png`、`ref/templates-gallery-desktop.png`（237 卡片 / 8 分类） |
 | `/trash` | 无直接页（回收站在原版入口深） | ⚪ 豁免，用空状态规范 |
-| `/recent`、`/collections` | `…/shared-with-me`（最近使用）、文件夹视图 | 近似参照 ref-shared-recent / ref-inbox |
-| `/settings` | 空间菜单 → 设置（**模态**） | ✅ ref-settings / ref-settings-dark |
-| `/search` ⌘K | Ctrl+K 命令面板 | ✅ ref-commandpalette |
-| 分享/协作 UI | 编辑器「共享」对话框 | ✅ ref-sharedialog |
-| `/whiteboards` | 原版无网页白板 | ⚪ 豁免（tldraw 用主题 token 皮肤） |
+| `/recent`、`/collections` | `…/shared-with-me`（最近使用）、文件夹视图 | 近似：`ref/shared-with-me-desktop.png` / `ref/collections-{desktop,tablet,mobile}.png` |
+| `/settings` | 空间菜单 → 设置（**模态**） | ✅ `ref/settings-open.png` + 13 个分区 `ref/settings-*.png` |
+| `/search` ⌘K | Ctrl+K 命令面板 | ✅ `ref/search-panel.png`、`ref/dark-search.png` |
+| 分享/协作 UI | 编辑器「共享」对话框 | ✅ `ref/share-sheet.png` |
+| `/whiteboards` | 原版无白板**列表**；但内联白板块已采 | ✅ `ref/whiteboard-{desktop,tablet,mobile}.png`（内联块，非独立路由） |
 | `/login` `/register` `/p` `/s` | 需登出才能采集，不登出 | ⚪ 豁免（本地自定，保证 token 一致即可） |
-| 移动/平板视口截图 | 连接器浏览器不可调窗口尺寸 | ⚪ 用 CSSOM 断点（§6）+ 本地三视口回归验证 |
+| 移动/平板视口截图 | ~~连接器不可调窗口尺寸~~ 已可控 | ✅ 6 屏有 tablet/mobile 档；余按 CSSOM 断点（§6） |
 
 ## 1. 色彩体系
 
@@ -142,4 +143,13 @@
 
 ## 8. 截图索引
 
-`ref-documents`、`ref-documents-dark`、`ref-documents-card-hover`、`ref-tasks`、`ref-calendar`、`ref-starred`、`ref-templates`、`ref-inbox`、`ref-connections`、`ref-tags`、`ref-shared-recent`、`ref-editor`、`ref-editor-bubblemenu`、`ref-spacemenu`、`ref-settings`、`ref-settings-dark`、`ref-commandpalette`、`ref-sharedialog`（均 1528×734 PNG，位于 `docs/craft-ref/screens/`）。
+官方参照图在 **`docs/craft-ref/ref/`**，共 **66 张**（已 `.gitignore`：含用户真实工作区内容，只留本地）。
+逐屏清单与几何量取见 `screens.md` §十二；逐屏对照表见 `manual-checklist.md` §一。
+
+- **三档矩阵**（1440×900 / 768×1024 / 390×844）：`all-documents`、`tasks`、`calendar`、
+  `collections`、`whiteboard`、`inbox`。
+- **desktop 单档**：`document-detail`、`document-tab-{insert,format,style,info}`、`collection-{table,gallery,kanban}`、
+  `templates`、`templates-gallery`、`starred`、`trash`、`tags`、`folders`、`connections`、`shared-with-me`、
+  `layout-{grid,list,table}`、`insert-panel-slash`、`shortcuts-modal`、`share-sheet`、`search-panel`、`menu-*`、
+  `settings-*`。
+- **暗色**（四屏，非全量）：`dark-{browse,doc,search,settings-appearance}`。

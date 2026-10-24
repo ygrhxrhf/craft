@@ -1,0 +1,152 @@
+# 交互实验台（Wave 0 起造，Wave 1 在用）
+
+**一句话**：同一份 spec 在**官方**与**本地**两侧各跑一遍，自动出差异表。
+
+- 官方靶 ＝ `https://docs.craft.do`（复用已登录会话）
+- 本地靶 ＝ `http://localhost:3000`
+- 唯一驱动 ＝ `ego-browser`（**两侧都用它** —— 同一套 API、同一段观测代码，两边记录才可比）
+
+## 文件
+
+| 文件 | 作用 |
+| --- | --- |
+| `observe.mjs` | 共享观测库：页面侧采集函数（`captureAll` 等）＋宿主侧归一化/差集/期望求值 |
+| `lab.mjs` | runner 库（纯导出，无副作用）；入口是同目录 `run.mjs` |
+| `run.mjs` | 薄入口：`await main({ only, targets, tag })` |
+| `diff.mjs` | differ：出 `docs/craft-ref/features/interaction-matrix.md` ＋ `runs/latest-diff.json` |
+| `soft-delete.mjs` | 两侧的软删通路（采完必须把临时文档移进最近删除） |
+| `exp-differ.mjs` | **对照实验**：证明 differ 真会红（见下） |
+| `probe-one.mjs` | 单 spec 调试跑（逐段看观测值，不落矩阵） |
+| `specs/*.mjs` | spec 本体 |
+| `runs/` | 原始记录（**gitignore**：含空间名/作者名/个人文档标题） |
+
+## 跑法（PowerShell）
+
+```powershell
+# 参数写死在 run.mjs / diff.mjs 顶部（ego-browser 不传 process.env）
+ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/interaction-lab/run.mjs')"
+ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/interaction-lab/diff.mjs')"
+```
+
+## spec 契约
+
+```js
+{
+  id, wave, surface, target: 'official'|'local'|'both',
+  selectors: { key: { official, local } },   // 两侧选择器各写一份
+  setup:   [ navigate | seedTempDoc | placeCaret | placeCaretTrailing | openPanel | setPreference ],
+  steps:   [ key | chord | type | paste | click | clickRef | clickXY | drag | wait ],
+  observe: ['dom','text','state','selection','blocks','attrs','indent','computed','screenshot'],
+  observeTexts:    ['<具名文本>'],           // 进指纹的 counts
+  stateSelectors:  ['<selector key>'],       // 进 stateAttrs.named
+  attrProbes:      [{ key, selector, attrs }],
+  computedProbes:  [{ key, selector }],
+  expect:  [ { facet, op: equals|contains|count|gt|lt|exists|absent, value, at? } ],
+  deviations: [ { facet|prefix, reason, ref } ],   // 已声明偏差（severity 0，不参与判定）
+  teardown:[ restoreCaret | softDeleteTempDoc | restorePreference | key ],
+}
+```
+
+`facet` 口径：`text:<名>`（末步或 `at` 步的计数）／`blocks`／`blocksCount`／`dom`／
+`selection:<字段>`／`state:<selector key 或扁平属性名>`／`attr:<key>`／
+`indentLevel`（光标所在块的缩进级数）／`focusInEditor`（焦点是否还在编辑器内）。
+`at` 缺省＝末步；指定值＝ **record 里的 step 下标**（`baseline` 占 **0**，第 1 个动作是 **1**）。
+★ 这一档极易错一位：写 spec 时按"第几个动作"数会整体偏 1，断言会落在前一步上。
+
+## record 契约
+
+```js
+{ specId, target, builtFrom, startedAt,
+  steps: [{ index, label, fingerprint:{domLength, bodyTextLength, counts},
+            textNodes, stateAttrs, selection, blocks, attrs, indent, focus, computed? }],
+  selfCheck: [{ facet, op, at, expected, actual, pass }],   // spec.expect 对**本侧自己**求值
+  errors: [], log: [], finishedAt }
+```
+
+## diff 契约
+
+```js
+{ specId, verdict: match|differ|uncomparable,
+  rows: [{ facet, step, official, local, delta, severity 0|1|2|3 }],
+  deviations: [...], textSummary, selfCheckRaw }
+```
+
+**判定口径**：
+
+- severity **1** ＝只记录、不判定：绝对 DOM 规模、绝对可见文本长度。
+  两侧是两套实现（官方 Slate／本地 TipTap），绝对量天然不等。
+- severity **2** ＝参与判定：具名文本计数的 **delta**（第 i 步 − 基线）、文本名册单侧增删、
+  属性／块名册／选区不一致。
+- severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
+- severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
+
+## ★ 七条踩过的坑（都改掉了，别再犯）
+
+1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
+   旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
+   改成比**动作引起的改变量**（delta）与**文本名册差集**后才有意义。
+2. **观测必须原子**。旧版把 fingerprint / textNodes / state / blocks 拆成**多次** `page.evaluate`，
+   两次调用之间页面还能继续渲染 ⇒ 采到**自相矛盾**的记录
+   （实测：`counts.插入 = 0` 而同一份 `textNodes` 里有 4 条「插入…」；同一交互 smoke-01 记 4、smoke-02 记 0）。
+   ⇒ `captureAll` 一次求值取回全部面。
+3. **临时文档要起唯一标题**。本地侧栏行是 `<button>`（**无 id 属性**）、列表卡是 `<a href="/documents/<id>">`，
+   而新文档标题是空串、占位文案「无标题文档」是多行共用的 ⇒ 按标题/按 id 都定位不到具体那一行。
+   ⇒ `seedTempDoc` 建完就给临时文档写唯一标题 `QODER-ILAB-<specId>`。
+
+另：官方文档 URL 是 `/editor/d/<spaceId>/<docId>?s=<sig>`，**不是** `/documents/<id>` ——
+旧版只写了一条正则，官方侧恒 `id=null` ⇒ 官方软删**从没真正跑过**。
+4. **探针不能沿"祖先链"找标记元素（Wave 1 修）**。官方缩进的载体
+   〈`div._indent_1oz2o_33` `style="--indent-w: 28px"`〉与块行**同层并列**（同在 `div._flexRow_1oz2o_1` 下），
+   不在 `blockrowwrap-*` 的祖先链上 ⇒ 沿祖先链找**恒读 0**，于是错判成"官方 Tab 无反应"。
+   改成「**标记 → 属主块**」归位：先收全树所有非零标记，再为每个标记向上找**只包含一个块根**的最近祖先
+   ⇒ 那个块根即属主。无论标记是祖先、同层兄弟还是后代都能归位。
+   ☆ 教训：**"观测不到"与"不存在"必须分开**——探针读 0 时要先自证探针能读到已知存在的样本。
+
+5. **两侧文档模型不同 ⇒ 名册要摊平（Wave 1 修）**。官方是**扁平块名册**（每个列表项各是一条 `blockrowwrap-*`），
+   本地是**树**（一个 `<ul>` 包住所有项）。直接取 `.ProseMirror > *` ⇒ 本地整个列表只算**一块**、官方算**两块**＝假红。
+   ⇒ 命中的根若是 `UL`/`OL`，展开到每个 `li` 的首个文本块并递归嵌套列表。
+
+6. **"键没反应"与"键被浏览器接管"要分开量（Wave 1 新增）**。两类在块名册上**长得一样**（DOM 都不变）。
+   实测本地 `Tab` 把 `activeElement` 带出编辑器（`.ProseMirror` → `nextjs-portal` → `body` → 按钮）。
+   ⇒ `captureAll` 常带一个**焦点面** `focus.inEditor`（宿主选择器由 spec 的 `editorBody` 传入），differ 逐帧比。
+
+7. **官方靶的 `goto` 必须容错（Wave 1 续批修）**。官方侧 `page.goto(url, {waitUntil:'load'})`
+   **恒超时**：编辑器挂着长连接，`document.readyState` 停在 `interactive`，`load` 不再触发
+   ⇒ 旧写法抛错进 `record.errors` ⇒ differ 判 **`uncomparable`**，**每一条官方 spec 都采不到**。
+   处置（`lab.mjs` 的 `navigate` 分支）＝**只吞"导航已提交的超时"**这一种
+   （错误文案自陈 `navigation committed`，且 `document.readyState !== 'loading'`），其余错误照旧上抛。
+   ☆ 这是**仪器缺陷**，与"官方没这个行为"是两件事——若不修，会把整个 Wave 1 报成"官方不可比"。
+
+
+## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
+
+`spec.deviations` **只**留给"**同一件事的两种画法**"：两侧落到同一个状态、只是画法不同，
+所以它降为 severity 0 不影响判定。判据是**"下一个键的语义会不会因此改变"**。
+
+| 例 | 两侧状态 | 处置 |
+| --- | --- | --- |
+| 项目符号 | 两侧**都**有圆点（官方文本节点 `•` / 本地 CSS `list-style: disc`） | ✅ `deviations`（画法差异） |
+| `⌘A` 第二档 / `⌘D` 之后的选区 | 官方进**块选区态**、本地仍是**文本折叠光标** | ❌ **不可**用 `deviations`：它改变下一个键的语义（官方块选区上 `⌥↑` 才是"移动所选区块"）⇒ 如实判 `differ` ＋ 登记 G 行 |
+
+★ **教训（Wave 1 续批真犯过一次）**：一度把 `⌘D` 的选区态差异写成 `deviations`，会让一个真差异
+静默消失。写 `deviations` 前先问：**"如果用户接着按下一个键，两侧行为会一样吗？"** 不一样就不是画法差异。
+
+## 对照实验（证明 differ 不是恒绿）
+
+```powershell
+node docs/craft-ref/interaction-lab/exp-differ.mjs
+```
+
+把 `editor.key.enter-mid-block` 的两侧 record 原样喂给 `compare()`，再逐个扰动行为量：
+
+| 扰动 | 判定 | 命中 facet |
+| --- | --- | --- |
+| 原样 | `match` | — |
+| 块名册 `BBBB` → `BXBB` | `differ` | `blocks` |
+| `counts.BBBB` 1 → 2 | `differ` | `countΔ:BBBB` |
+| `selection.anchorOffset` 0 → 3 | `differ` | `selection:anchorOffset` |
+| 步数 7 → 6 | `uncomparable` | `precondition` |
+| 注入假 error | `uncomparable` | `precondition` |
+| 逐字还原 | `match` | — |
+
+三种判定都真的出得来。

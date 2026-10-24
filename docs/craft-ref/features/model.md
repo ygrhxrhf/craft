@@ -1801,7 +1801,7 @@ const qs="Escape", oo="Enter", B4="Delete", vd=" ", nc="Backspace", f1="Tab",
 mo(t)={meta:0,shift:0,alt:0,ctrl:0}   qi(t)={shift:1}   y2(t)={alt:1}   Co(t)={meta:1}
 eT(t)={shift:1,alt:1, winMatcher:{…}}   Vn(t)={只给 keyCondition ⇒ 不限修饰键}
 ```
-⇒ 注册表实测解码：`mo(f1)` Tab ⇒ `Qte(…,+1)`｜`qi(f1)` Shift+Tab ⇒ `-1`｜`mo(oo)` **Enter ⇒ `Esn`/`lGe`**｜`qi(oo)` Shift+Enter ⇒ `N9e`（**函数体只有 `return{preventDefault:!1}` ⇒ 空实现，软换行交给默认行为**）｜`mo(nc)` **Backspace ⇒ `Dsn`**｜`mo(B4)` Delete ⇒ `jsn`｜`mo(ms)` ↓ `Rsn`｜`qi(ms)`/`eT(ms)` ⇒ `PP`｜`y2(Ts)` Alt+↑ ⇒ `Xte(…, {skipDirection:"prev", shouldSkipFromEdgeOfBlock:true})`。⇒ ★ **§十四 的 UIFocusStack 包装器族有了具体名与语义**（`mo/qi/y2/Co/eT/Vn` ＝ 修饰键组合的六种预设，`eT` 带 `winMatcher` 印证平台双写），且 ★ **`pEe` 字形表结案**（遗留项"pEe 字形从语言包"改为：就在主包 @19502，`space/↑/↓/←/→` 等，`Key*` 走 `substr(3)`）。
+⇒ 注册表实测解码：`mo(f1)` Tab ⇒ `Qte(…,+1)`｜`qi(f1)` Shift+Tab ⇒ `-1`｜`mo(oo)` **Enter ⇒ `Esn`/`lGe`**｜`qi(oo)` Shift+Enter ⇒ `N9e`（**函数体只有 `return{preventDefault:!1}` ⇒ 空实现，软换行交给默认行为**）｜`mo(nc)` **Backspace ⇒ `Dsn`**｜`mo(B4)` Delete ⇒ `jsn`｜`mo(ms)` ↓ `Rsn`｜`qi(ms)`/`eT(ms)` ⇒ `PP`｜`y2(Ts)` Alt+↑ ⇒ `Xte(…, {skipDirection:"prev", shouldSkipFromEdgeOfBlock:true})`。⇒ ★ **§十四 的 UIFocusStack 包装器族有了具体名与语义**（`mo/qi/y2/Co/eT/Vn` ＝ 修饰键组合的六种预设，`eT` 带 `winMatcher` 印证平台双写），且 ★ **`pEe` 字形表结案**（遗留项"pEe 字形从语言包"改为：就在主包 @19502，`space/↑/↓/←/→` 等，`Key*` 走 `substr(3)`）。 ☆ **第 300 批续批更正（实测推翻本处，见 `interactions.md` V169 与 `gap.md` G1552）**：官方 `Shift+Enter` **不是零效果** —— 四次独立运行一致读到块内 `<br>` **0→1**、块文本出现行内换行、`domBytes` **+231 B**、键事件**未被消费**、**刷新后换行仍在**（⇒ 落进文档模型）。旧读数"零变化／被彻底吞掉"作废。
 
 ### 5. 本地对照（本轮实跑）
 

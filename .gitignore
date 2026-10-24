@@ -64,6 +64,10 @@ dist/
 /test-results/
 /playwright-report/
 
+# e2e 取证截图：8 个 spec 无条件写入（13 处写入点），可随 `npx playwright test` 重生成；
+# 其中 tmp-297-* 三张还被 gap.md 当证据引用，故只忽略、不删。
+/screenshots/
+
 # craft.do 参照截图采自已登录会话，含个人内容，只留本地对照，不入库
 /docs/craft-ref/screens/
 
@@ -85,3 +89,12 @@ dist/
 
 # CloudRun 构建上下文暂存（scripts/deploy 生成，勿入库）
 /.cloudrun-src/
+
+# 模板库页文本转储：含空间名与本人文档标题（与 ref/ 同因，只留本地）
+/docs/craft-ref/data-20261022/templates-list.json
+# craft.do DOM 快照（2026-10-23）：含空间名、作者名与个人文档标题，与 ref/、screens/、
+# templates-list.json 同因，只留本地对照、不入库。（无邮箱/头像/token，已扫）
+/docs/craft-ref/dom-20261023/
+
+# 交互实验台的原始记录：含空间名、作者名与个人文档标题（与 ref/、screens/、dom-20261023/ 同因，只留本地对照、不入库）
+/docs/craft-ref/interaction-lab/runs/

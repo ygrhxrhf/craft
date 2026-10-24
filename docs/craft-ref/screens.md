@@ -1,12 +1,18 @@
-# craft.do 屏幕与弹层清单（2026-09-25 全量重采）
+# craft.do 屏幕与弹层清单
+
+> ⚠️ **本文分三个时代。最新基准在文末「§十三」（2026-10-23，29 份 DOM 快照）；截图基准是「§十二」（2026-10-22 ego-browser，66 张，统一 1440×900）。**
+> §一—§十一 是 2026-09-25/26 的 Qoder 批次（路径 B，基准图横跨 4 种尺寸）。两者冲突时**以 §十二 / §十三 为准**；
+> 旧章节保留为历史取证记录（含失败路径与旧结论），其中「视口不可控」类结论均已作废。
 
 来源：用户已登录的 Edge 会话（docs.craft.do，Qoder Browser Connector 1.7.5）。截图含真实工作区内容，已被 `.gitignore` 的 `/docs/craft-ref/ref/` 覆盖，只留本地对照。
 
 上一轮只采了 5 屏（all-documents / tasks / calendar / connections / document），本轮按路由 + 弹层 + 设置分区重采。
 
-## 一、路由屏（10 屏，均已截图 + 几何量取）
+## 一、路由屏（10 屏，均已截图 + 几何量取）· 2026-09-25 批次
 
-窗口实测 1910×925（`viewport.set()` 无效，见下）。
+> ⚠️ 本节几何均基于 **1910×925**（路径 B 的窗口实测）。新基准是 **1440×900**，几何表见 §12.2。
+
+~~窗口实测 1910×925（`viewport.set()` 无效，见下）。~~
 
 | 屏 | 路由 | 截图字节 | 侧栏 | 内容列 |
 |---|---|---|---|---|
@@ -27,7 +33,9 @@
 
 ### ⚠️ 基准图窗口尺寸不统一（本轮用 sharp 逐张读 metadata 发现）
 
-`ref/` 里 28 张 PNG 实际横跨 **4 种尺寸**，不能直接互相比像素：
+2026-09-25/26 那批的 28 张 PNG 实际横跨 **4 种尺寸**，不能直接互相比像素：
+
+> ⚠️ 下表只对应**旧批次**。新批次已统一，见 §12.2。
 
 | 尺寸（设备像素） | 张数 | 对应 CSS 视口（÷1.219） | 采集批次 |
 |---|---|---|---|
@@ -105,7 +113,7 @@
 - ~~搜索面板（顶栏「打开」）~~ 已于 2026-09-26 17:51 采到，见第九节
 - ~~白板屏（excalidraw）~~ 已于 2026-09-26 21:48 采到（内联态 + 全屏编辑态 + 块菜单 + `/` 插入面板），见第十节
 - ~~暗色截图~~ 已于 2026-09-26 21:40–21:42 补齐 4 屏并已还原为「系统」，见第十节
-- 移动端 / 平板视口：`viewport.set()` 实测静默无效，采不到不同分辨率
+- ~~移动端 / 平板视口：`viewport.set()` 实测静默无效~~ ⚠️ **已推翻**（路径 C 可控）：下列事项均已在 §12 采齐
 
 ## 四点五、连接器三次失效记录（失效模式已收敛）
 
@@ -467,3 +475,326 @@ await vis.set(true);      // 命令 browser_visibility_set —— 等价于"取�
 - 格式 tab 文本色 10 圆点换成官方 10 色 hex（内容存 hex，不存 var）。
 - 5 组渐变接入 washi 胶带（sunset/ocean/forest/candy/aurora → orange/blue/gold/pink/purple）。
 - 编辑器正文行高 1.7 → **1.5**：官方正文段落多为单行、像素行距无法定档（ref-editor 仅 5 个文本簇）；依据 goal 给定官方值 ~1.2/1.5 与壳 token 族（15.6/13=1.2、19.2/16=1.2）定档。
+
+---
+
+# 十二、2026-10-22 ego-browser 批次（视口首次可精确控制）
+
+来源：用户已登录的 docs.craft.do 会话，改用 **ego-browser（ego lite 0.6.0.16）** 而非此前的 Qoder Browser Connector。
+截图 66 张进 `docs/craft-ref/ref/`（已 gitignore），全部按 md5 校验唯一（0 组重复）。
+
+## 12.1 本轮推翻的两条旧结论（`capture.md` 路径 B 的「四条坑」）
+
+| 旧结论 | 本轮实测 | 影响 |
+|---|---|---|
+| `playwright.evaluate(...)` 恒返回 `null` | **`page.evaluate()` 正常返回**（本轮所有几何 / token 都靠它） | 可取真实 `getComputedStyle`，不必再靠 `elementInfo` 猜 |
+| `viewport.set({width,height})` 返回 `undefined` 但不生效 | **`Emulation.setDeviceMetricsOverride` 生效** | 视口第一次真正可控：1440×900 / 768×1024 / 390×844 都是精确 CSS 像素 |
+| `pageAssets.bundle()` 恒报 `snapshot is stale` | 改用 `page.fetch()` 取 CSS 原文 | 见 `tokens-css-assets.md` |
+| CDP 只放开 `DOM.*` | **`task.cdp()` 可发 `Browser.*` / `Emulation.*`** | 能读 / 设窗口状态，解决「窗口最小化导致截图失败」 |
+
+**窗口最小化会打断截图**（`Cannot capture a screenshot while the window is minimized`）。每张截图前须先
+`Browser.getWindowForTarget`，非 `normal` 就 `Browser.setWindowBounds` 复原。
+
+## 12.2 统一视口基准：1440×900（dpr 1，light，accent blue）
+
+此前各批基准图横跨 4 种尺寸（见旧 §一 的警告）。本轮全部统一到 1440×900，几何如下：
+
+| 元素 | x | y | 宽 | 高 | 备注 |
+|---|---|---|---|---|---|
+| 顶栏 | 0 | 0 | 1440 | 48 | `--header-height: 48px` |
+| 侧栏 `aside` | 0 | 48 | **288** | 852 | 所有路由一致 |
+| 内容区 `main` | 288 | 48 | 1152 | 852 | 浏览类路由 |
+| 页标题 `h1` | 358 | 61 | 视文字 | 26 | 22px / 26.4px，weight 600；`tags` / `starred` / `trash` 的 x=304 |
+| 编辑器右栏 | — | — | **296** | — | `#right-sidebar-container` |
+
+字体族第一顺位实测为 **Inter**；根 token 实测 `--base: 252 253 254`、`--foreground: 26 28 30`。
+
+## 12.3 本轮新增可采屏（旧批次完全没有）
+
+| 屏 | 文件名 | 说明 |
+|---|---|---|
+| 快捷键弹窗 | `shortcuts-modal.png` | **7 个分类**：通用 / 文档 / 任务 / 编辑 / 样式 / 整理 / 合集。旧批次列为「未采到」 |
+| 模板库 | `templates-gallery-desktop.png` | 237 张卡片、8 个分类；经「新建 → 来自模板」进入，是**页面**而非弹窗 |
+| 白板（内联块） | `whiteboard-{desktop,tablet,mobile}.png` | 经斜线菜单「插入白板」；canvas 尺寸随断点 1440×900 / 768×1024 / 390×844 |
+| 集合块 · 表格 | `collection-table-desktop.png`、`collections-{desktop,tablet,mobile}.png` | 「插入表格集合」 |
+| 集合块 · 画廊 | `collection-gallery-desktop.png` | 「插入画廊集合」 |
+| 集合块 · 看板 | `collection-kanban-desktop.png` | 「插入看板集合」 |
+| 新建菜单 | `menu-new.png` | 右上「＋」→ 新文档 / 来自模板 |
+
+### 修正旧 §10.2：「白板是子页面，不是内联块」
+
+**旧结论不完整。** 斜线菜单里「插入白板」确实**产出内联块**（实测在 `[data-block-id]` 内，1440 下 734×412）。
+旧批次的「子页面」说法来自白板的另一种进入路径；两条路径都存在，复刻时两种都要支持。
+
+### 斜线菜单实测全量（`insert-panel-slash.png`）
+
+一级：列表 / 文本样式 / 装饰 / 颜色 / 缩进 / 对齐 / 字体 / 文字格式 / 日期和时间 / 插入文件 / 插入片段 /
+插入表格 / 插入分隔符 / 动作 / 提醒我… / 取消样式 / **插入白板** / **插入表格集合** / **插入画廊集合** / **插入看板集合**。
+
+## 12.4 快捷键表全文（`shortcuts-modal.png`）
+
+复刻侧栏 / 编辑器快捷键时以本节为准（官方弹窗原文）：
+
+- **通用**：查看所有快捷键 `Ctrl Shift ,`；导航到 `Ctrl →`；返回上层 `Ctrl ←`；快速开启 `Ctrl O` / `Ctrl P`；
+  切换专注模式 `Ctrl .`；切换左侧边栏 `Ctrl \`
+- **文档**：每日笔记 `Ctrl Alt N`；全选 `Ctrl A`；选择到顶部 `Ctrl Shift ⤒`；选择到底部 `Ctrl Shift ⤓`
+- **任务**：新任务 `Ctrl J`；标记已完成 `Ctrl Alt T` / `Ctrl /`；标记已取消 `Ctrl Alt Shift T`；计划任务 `Ctrl Shift S`；
+  安排到今天 `Ctrl Alt S`；设定截止日期 `Ctrl Shift D`；编辑任务 `⏎`；导航至区块 `Ctrl →`；上一个 / 下一个任务 `↑` / `↓`；
+  收起 / 展开分组 `←` / `→`；删除 `⌫` / `Delete`；撤销 `Ctrl Z`；重做 `Ctrl Shift Z`
+- **编辑**：查找 `Ctrl F`；查找和替换 `Ctrl Shift F`；在下方插入新区块 `space`；在上方插入 `Shift space`；
+  编辑文本区块 `⏎`；编辑页面区块 `Shift ⏎`；创建副本 `Ctrl D`；打开斜线菜单 `/`；评论 `Ctrl Shift M`；
+  查找下一个 `Ctrl G`；查找上一个 `Ctrl Shift G`
+- **样式**：标题 `Ctrl Shift 1`；副标题 `2`；中标题 `3`；粗 `4`；正文 `5`；页面 `Ctrl Shift P`；卡片 `Ctrl Shift L`；
+  待办列表 `Ctrl Shift 6`；折叠列表 `Ctrl Shift 7`；无序列表 `8`；编号列表 `9`；取消列表格式 `Ctrl Shift 反引号`；
+  焦点 `Ctrl Shift \`；块 `Ctrl Shift 单引号`；增加 / 减少缩进 `Tab` / `Shift Tab`；粗体 `Ctrl B`；斜体 `Ctrl I`；
+  代码 `Ctrl Shift C` / `Ctrl E`；删除线 `Ctrl Shift -`；链接 `Ctrl K`；输入方程 `Ctrl Shift E`；区块链接 `Ctrl Shift K`；高亮 `Ctrl Shift B`
+- **整理**：向上 / 向下移动 `Alt ↑` / `Alt ↓`；移到顶部 / 底部 `Alt ⤒` / `Alt ⤓`；组合 `Ctrl G`；取消组合 `Ctrl Shift G`
+- **合集**：表格内 清除单元格 `⌫`、前面添加行 `Ctrl Shift ⏎`、添加行 `Ctrl ⏎`、前面添加列 `Ctrl Alt ⏎`、
+  添加列 `Ctrl Shift ⏎`、移动行 `Alt ↑` / `Alt ↓`、移动列 `Alt ←` / `Alt →`、删除行 `Ctrl ⌫`、删除列 `Ctrl Shift ⌫`、添加内容 `Ctrl [`；
+  合集内 添加一行 `Ctrl ⏎` / `Shift ⏎`、复制行 `Ctrl D`、选择所有行 `Ctrl A`、清除单元格 `⌫`、删除行 `Ctrl ⌫`
+
+## 12.5 本轮仍未采到
+
+- 集合详情独立路由屏（`/collections/<id>`）：本账号的集合均为**内联块**，无独立路由可采。
+- 白板独立路由屏（`/whiteboards/<id>`）：同上，实测为内联块。
+- 团队 / 协作态（分享给他人后的视图）：需第二个账号。
+- `menu-people`（Teams 付费墙）：免费档不触发。
+
+## 12.6 操作风险记录（复刻项目必须知道）
+
+- Craft Web 的 **`Ctrl+Z` 不会撤销已插入的区块**。在真实文档里误插区块后，唯一可靠的复原路径是
+  「信息 → 查看备份 → 选历史版本」，且**点击版本行即触发恢复**（不是预览）。
+- 恢复动作会**另存一份「快照」文档**到「未分类」，不覆盖原文档，也不删除原文档。
+- 因此：自动化采集**不要**在真实文档里做插入 / 输入类操作；应新建临时文档，用完删除。
+
+---
+
+## 十三、DOM 快照批（2026-10-23，ego-browser，27 份 HTML，统一 1440×900 dpr 1）
+
+> 本节不是截图批，是**DOM 批**：补 `gap.md` 所列「4 处硬缺口」的第 1 处「缺 DOM 快照」。
+> 产物目录 `docs/craft-ref/dom-20261023/`（**含个人内容，已 gitignore，只留本地**），另有 `README.md` 与 `custom-property-coverage.md` 两份说明。
+
+### 13.1 版本对齐（采前必做）
+
+采前读首页 `<link rel="stylesheet">`，确认仍是 `/static/css/index.css.CiV2oimr.css`。
+**27 份整页快照全部命中同一 hash**（`DISTINCT_HASHES = ["index.css.CiV2oimr.css"]`；另 1 份 `slash-menu.html` 是子树片段，按构造不含 `<link>`）⇒ 与 §12 的 CSS 原文（`css-20261022/index.css.CiV2oimr.css`，302,319 B）**同版本，可直接对读**。
+对照：`features/_harvest/` 里 2026-10-13 那批 DOM 引用的是旧版 `index.css.CP00jDAy.css`，**与本批对不上**，这也是必须重采的原因。
+
+### 13.2 几何回归：与 §12.2 逐字段对拍，差异 0
+
+`geometry-1440-20261023.json` vs `data-20261022/geometry-1440.json`：
+10 条路由 × 3 元素（aside/main/h1）× 8 个共有字段（x,y,w,h,font,size,bg,color）＝ **240 次比较，差异 0 处**；`dpr` 同为 1。
+⇒ §12.2 那张 1440×900 基准表**一天后仍然成立**，可继续当复刻基准。
+
+### 13.3 采到的 DOM 面（28 份 html）
+
+| 组 | 文件 | 备注 |
+| --- | --- | --- |
+| 空间级路由 10 条 | `all-documents` `tasks` `calendar` `connections` `templates` `starred` `folders` `inbox` `tags` **`trash`** | `trash` 是 §12 缺的那条 |
+| 其它路由 2 条 | `shared-with-me` `search` | |
+| 暗色 | `dark-all-documents` | 经 `Emulation.setEmulatedMedia` 强制，**未改用户设置**（与 §五 的做法不同，属非破坏性） |
+| 编辑器文档 4 份 | `editor-doc`（32 区块）`doc-D393492D`（20）`doc-83b5b441`（4，含 **Kanban+Gallery 集合**标记）`doc-e3b3dc4f`（3） | 文件名沿用 10-22 批次的路由标签 |
+| 右栏 4 tab | `tab-insert` `tab-format` `tab-style` `tab-info` | 同一文档，逐个点击后取整页，各 32 区块 |
+| `/` 插入面板 | `slash-menu`（子树 38,871 B）+ `slash-menu-fullpage`（194,086 B） | 在**本次新建的临时文档**里唤起 |
+| 弹层存证 | `settings-modal` `account-menu` `teams-upsell-modal` | 见 13.5 的过程事实 |
+
+☆ **一份采集失败样本按原样保留**：`doc-editor.html` 落到了文件夹落地页、**0 区块**，不删、不假装成功。
+
+### 13.4 这批快照解开了什么
+
+1. **CSS Modules 哈希类名可解**：本批 DOM 里形如 `_iconWrapper_5mbm6_1` 的哈希类名 **227 个**，其中 **214 个（94.3%）** 能在 `index.css.CiV2oimr.css` 找到同名规则；余 13 个属运行时才挂载/已被裁掉的分支。
+   ⇒ 复刻时这 214 个类名可以**直接照着 CSS 原文写**，不必靠肉眼反推。
+2. **styled-components 类名无解**：360 个 `sc-*-N` 类名在 **7 份 CSS 原文里 0 命中** —— 运行时注入，只能靠几何/截图反推。
+3. **自定义属性覆盖度**：544 个 `--*` 声明中，`:root` 命中 467、逐元素再补 51 ⇒ **518 / 544（95.2%）可求值**；余 26 个属本轮没走到的屏面。详见 `dom-20261023/custom-property-coverage.md`。
+   ☆ 该文里记了一次**被推翻的结论**：我最初用静态字符串扫描判「131 个是死代码（24.1%）」，真浏览器抽查 11 个时**9 个当场求值成功** ⇒ 静态扫描在此不可信，已废弃。
+
+### 13.5 过程事实与残留（如实登记）
+
+- 工具：ego-browser（ego lite 2.1.0），任务空间 `craft dom snapshot 20261023`（spaceId 1），视口 1440×900 dpr 1。
+- **只做读**（`outerHTML` + 几何/求值），**未做任何插入/输入**；斜线菜单在**本次新建的临时文档**里唤起，未碰用户既有文档 —— 遵守 §12.6 的红线。
+- 落盘快照含**空间名 `zhang's-Space`、作者名 `zhang meng`、若干个人文档标题**；**无邮箱、无头像 URL、无 token**（已扫：`emails=[] / avatars=[] / tokens=[]`）。
+  ⇒ 按 `screens/`、`ref/`、`templates-list.json` 的先例只留本地（`.gitignore` 加 `/docs/craft-ref/dom-20261023/`，`git check-ignore` 已验证命中）。
+- ☆ **一次误点**：点侧栏底部第 3 个按钮（Person3 Fill Icon）弹出的**不是账户设置，而是 Teams 试用推广弹窗**（免费档也会触发）；已存证为 `teams-upsell-modal.html` 后按 Escape 关闭。期间弹出过一个 `craft.do/download` 标签页，已 `page.close()` 清掉。
+- ☆ **斜线菜单的可见性陷阱**：它的节点**不在 `document.documentElement.outerHTML` 里**（实测 `outerHTML` 无 `白板` 字样，但 `document.body.innerText` 有），且开合很快。最终靠「先点中正文块 → 全选删除 → `type("/")` → 立刻取整页 HTML」采到；**单靠 `outerHTML` 会误判为「菜单没打开」**。
+
+### 13.6 本批仍未覆盖
+
+- 集合详情独立路由屏、白板独立路由屏：本账号均为**内联块**，无独立路由（同 §12.5）。
+- 分享面板、通知、设置各分区、卡片右键菜单：**本批未采**（属 §12 旧批次的截图范围，DOM 侧仍缺）。
+- 团队 / 协作态：需第二个账号（同 §12.5）。
+
+### 13.7 第 2 轮（同日）＝运行时 CSSOM 与「类名哈希」缺口的闭合
+
+> 产物目录 `docs/craft-ref/dom-20261023/runtime-cssom/`（含个人内容，已 gitignore）。完整口径见该目录 `README.md`。
+
+**★ 本节推翻 13.4 的第 2 条。** 13.4 写「styled-components 类名无解：360 个 `sc-*` 在 7 份 CSS 原文里 0 命中 ⇒ 运行时注入，只能靠几何/截图反推」。两处错：
+
+1. **读错了源** —— 只读了 `<link rel=stylesheet>` 的 **7 份静态 CSS 文件**，漏掉页面里**运行时注入的 `<style>` 表**。
+   实测 `/all` 页 **20 张 styleSheet 里有 7 张内联**，最大那张带 `data-styled`（styled-components 注入，340 规则 / 43,905 B）。
+2. **量错了对象** —— `class="sc-1aa5cow-0 duhUCj"` 里 `sc-*` 是**组件 ID，不出现在任何选择器里**；
+   样式挂在**第二个类**（生成类 `duhUCj`）上。按类名去问「能否找到同名规则」，它必然 0 命中，**但这不等于无样式**。
+
+**正确口径＝元素级**（「这个元素至少有一个类能解析吗」）：合计 **3931 / 4030 ＝ 97.5%**（all 99.6% / doc-editor 97.4% / doc-collection 99.0% / doc-welcome 95.3% / tasks 96.7% / search 99.1%）；仅 34 个元素（0.8%）只有 `sc-*` 且无规则。
+类名级分类：`_hash_*` 214/227＝94.3%（全在静态 CSS）、`sc-*` 29/360＝8.1%（见上，不代表无样式）、其它 439/613＝71.6%（其中 395 靠运行时 CSSOM）。
+
+**`sc-*` → 生成类映射**＝跨 16 页采到 **181 个 styled 组件 / 259 个生成类**，**254 个（98.1%）在运行时 CSSOM 里找得到规则**（`sc-class-mapping.json`）。
+
+**动态内容（原 13.4 的"仍缺"之一）大部分已可采**：运行时并集 vs 静态 7 份 CSS ⇒ `@keyframes` **16→237**、`transition:` **150→654**、`animation:` **21→89**、`box-shadow:` **128→412**、`gradient(` **96→120**、`filter:` **36→59**、`@media` **82→717**；并拿到 **33 个具名 `@keyframes` 全文**（7 个是 CSS Modules 哈希名，且这 7 个在静态 `index.css.CiV2oimr.css` 里也都在 ⇒ 哈希类名→动画链路通）。
+**真剩余**＝运行期由 JS 算完内联进 `style=` 的值（拖拽位移、滚动位置等），只能触发状态后逐个取 computed style。
+
+**采集方式**＝ego-browser，空间 `craft dom snapshot 20261023 r2`（spaceId 2），1440×900 dpr 1 浅色；16 页＝10 路由＋`/shared-with-me`＋`/search`＋4 编辑器文档；**只做读**（`document.styleSheets`→`cssRules`→`cssText`），无插入/输入、未新建文档；采前 hash 校验未变。
+
+## 13.8 第 3 轮（同日）＝静态资产批：字体 494 文件 + 其余 /static/ 88 文件
+
+**为什么这轮值得单独记**＝第 1/2 轮采的是 **DOM 与 CSS 的"形状"**，本轮采的是**渲染所需的二进制**。
+少了它，前面所有几何/样式数据都只能"看起来对"——**排版会整体走形**，因为本地 `public/fonts/` 原本只有 1 个文件。
+
+### 一、落盘规模
+
+| 类别 | 文件数 | 体积 | 校验 |
+|---|---|---|---|
+| 字体（492 URL + 2 内联） | **494** | **188.5 MB** | magic 全通过，0 坏 |
+| css | 7 | 0.51 MB | 0 坏 |
+| js | 55 | 24.49 MB | 0 坏 |
+| image | 18 | 0.53 MB | 0 坏 |
+| manifest | 1 | 0.01 MB | 0 坏 |
+| fontdef.css | 7 | 0.32 MB | 0 坏 |
+| **合计** | **582** | **214.4 MB** | **0 失败 / 0 坏** |
+
+镜像布局：`dom-20261023/static/**` 忠实镜像远端 `/static/` 树 ⇒ **本地路径 == 远端路径（仅去 origin），零重写**。
+
+### 二、字体族清单（34 族）
+
+西文/UI：`Inter`（2 文件，变量字体 100–900）、`Assistant`（4）、`Avenir Next Rounded`（8）、
+`Source Serif`（2）、`Untitled Serif`（6）、`Roboto Mono`（12，含 wght 变量）。
+
+数学公式（KaTeX，11 族 65 文件）：`KaTeX_Main` / `_AMS` / `_Caligraphic` / `_Fraktur` / `_Math` /
+`_SansSerif` / `_Script` / `_Size1`–`_Size4` / `_Typewriter`；`_Size3` 是 `data:` URI（已解码落盘）。
+
+CJK（含大量变量字体与切片）：
+- 简体：`Noto Sans SC`、`Noto Sans Mono SC`、`Source Han Serif SC`、`Resource Han Rounded SC`（7 字重）
+- 繁体：`Noto Sans TC`、`Noto Sans Mono TC`、`Source Han Serif TC`、`Resource Han Rounded TC`（7 字重）
+- 日文：`Noto Sans Mono JP`、`Source Han Serif JP`、`Pretendard JP`、`M PLUS Rounded 1c`（**354 个切片**）
+- 韩文：`Jetendard`（16）、`Nanum Square Round`（4）、`Pretendard`、`Source Han Serif KR`
+- 占位：`AdobeBlank`（`data:` URI，已解码）
+
+**注意 `M PLUS Rounded 1c` 有 354 个文件**（按 `unicode-range` 切片，每片一个 `@font-face`），
+这是 `@font-face` 条数（454）远多于字体族数（34）的主因。`Jetendard` 16 个是 8 字重 × 正斜体。
+
+### 三、像素级可复刻性的证据（真浏览器双端对照）
+
+| 验证层 | 口径 | 结果 |
+|---|---|---|
+| 宽度度量 | 34 族 × 6 文本（拉丁/汉字/假名/韩文/数学符号/定界符） | **204/204，delta 全 0.0000** |
+| 像素哈希 | 34 族 × 5 探针（FNV-1a 于 `getImageData`） | **170/170 一致** |
+| `fontFaceSet` | `[...document.fonts]` 排序集合差 | 本地 454 / 线上 454，**onlyLocal=0 onlyLive=0** |
+| 小字号矩阵 | Inter 9 字号 × 3 字重 | **25/27**（仅 15px/400、15px/600 亚像素差 0.234 px） |
+| DOM 布局 | 相同 CSS 下 `getBoundingClientRect().width` | **delta = 0.0000** |
+
+**哨兵机制**：加 `ZZZ_NoSuchFamily_ZZZ` 作回退基线，两端回退值一致（latin 221.241 / han 96.000）⇒
+证明上面的「一致」不是"两边都回退成一样"的假通过。
+
+**8 个 CJK 族的拉丁样本不具判别性**（`unicode-range` 排除 U+0041–007A ⇒ 全为回退值 221.241），
+故补做像素哈希；本批 `NO_DISCRIMINATING=0`，即**每族至少 1 个探针能区分于哨兵**。
+
+### 四、全页像素对照（含不利结果与归因）
+
+| 对照 | 差异 |
+|---|---|
+| 本地快照（禁 JS）vs 线上（hydrate） | **10.99%**（>8 灰阶阈） |
+| 对齐后（垂直 −18 px） | **9.83%** |
+| 线上禁 JS | 仅 10,285 B 空壳（`You need to enable JavaScript`）⇒ craft.do **SSR 不含内容** |
+
+**归因（取证，非推测）**：
+1. 快照 HTML 自带 `<noscript>` ⇒ 禁 JS 渲染多一行 "You need to enable JavaScript…"，**整体下移 18 px**；
+2. **相对时间文案本身漂移**（"已更新 11 小时前" vs "已更新 13 小时前"）；
+3. 快照与线上命中的 CSS 不同（线上元素带 `font-weight:600; letter-spacing:-0.13px; font-feature-settings:"calt","lnum"`），
+   但**相同 CSS 下 DOM 宽度两边完全一致**（`129.5375` vs `129.5375`）⇒ **不是字体问题**。
+
+⇒ **9.83% 主要是采集方法的伪差异，不是资产缺失。** 资产层证据是上表的 204/204 与 170/170。
+
+### 五、复刻仍未覆盖的项（已知且不可从公开面取）
+
+1. **文档预览图** `res.craft.do/render/document_preview/v1/<spaceId>/<docId>/t/<ts>?v=1&s=<sig>&size=m&theming=true`
+   ——带**签名 token**，属**个人内容**，未采集。
+2. **头像** `resv2.craft.do/user/full/<spaceId>/<userId>/<hash>`——同上。
+3. **第三方资源**：`i.ytimg.com` / `yt3.ggpht.com` / `www.youtube.com` / `renderserver.craft.do/api/logo`（空间 logo，按空间 ID 生成，可服务端复现）。
+4. **应用运行时数据**：本地镜像开 JS 后 hydrate 成空壳（`bodyText=""`、canvas 空白、**0 个失败请求**）⇒ 需后端 API。
+5. **快照 HTML 自带 `<noscript>` 行**，复刻时需剔除。
+
+### 六、采集方式与残留
+
+- ego-browser，任务空间沿用 `craft assets 20261023 r3`（spaceId 3），视口 1440×900 dpr 1。
+- 下载用本机 node v22.23.3，并发 10–12，增量落盘 + 断点续传 + 每文件最多重试 3 次。
+- **全程只读**：`document.styleSheets` 读取、`fetch` 下载、本地静态服务（8899 / 8901）。
+  **未新建/修改/删除任何 craft 文档，未注销任何账号。**
+- 采前校验 `index.css.CiV2oimr.css` 未变（与 10-22 基线同版本）；落盘后复核**字节相同**（302,319 B）。
+- 产物：`dom-20261023/static/**`、`dom-20261023/fontface-local.css`、`dom-20261023/fonts-report/`（`REPORT.md` + 16 JSON + 8 截图）。
+- 个人内容边界：快照含空间名、作者名、文档标题、预览图 URL（含 token）；**不含邮箱/头像文件/登录 token**。整个 `dom-20261023/` 已在 `.gitignore:97` 忽略。
+
+## 13.9 第 4 轮（同日）＝补缺口 ④「截图 dpr 非 1:1」
+
+**本机真实 dpr = 1.25**（`screen` 1536x864）。此前所有采集都在 `dpr=1` 下做的 —— 这就是缺口的实质。
+
+### 一、dpr 不改变布局（已证）
+
+固定 1440x900 CSS 视口，dpr 设 1 / 1.25 / 2，逐个导航线上 `/all` 采几何：
+`aside` / `main` / `h1` / `header` / `body` 的 x,y,w,h,font,fontSize **逐字段一致，差异 NONE**。
+
+侧证：CSS 里几乎没有 dpr 分支 —— `min-resolution` / `max-resolution` / `device-pixel-ratio` /
+`image-set` / `image-rendering` 在运行时 CSSOM 并集里**全为 0 次**；155 条 `@media` 的 44 个唯一条件中，
+唯一沾 dpr 的是 Excalidraw 的 `screen and (min-device-width: 1921px)`（本机 1536 不匹配，不生效）。
+
+### 二、★ 本轮主要发现：`page.screenshot()` 的 `raw: true` 无效
+
+ego-browser 的 `help("page.screenshot")` 写 `raw: Bypass device-pixel-ratio correction`，
+但实测 **`screenshot({path})` 与 `screenshot({path, raw:true})` 输出字节完全相同（MD5 相同），且恒为 1440x900**：
+
+| dpr | css 模式 | raw 模式 | 期望（设备像素） |
+|---|---|---|---|
+| 1 | 1440x900 | 1440x900 | 1440x900 |
+| 1.25 | 1440x900 | 1440x900 | **1800x1125** |
+| 2 | 1440x900 | 1440x900 | **2880x1800** |
+
+**解法＝绕过 wrapper，直接用原始 CDP `Page.captureScreenshot`**，同一序列下正确输出
+1800x1125（dpr 1.25）/ 2880x1800（dpr 2）。**这条要写进采集规范：要设备像素就别用 `page.screenshot()`。**
+
+### 三、补采结果
+
+用 CDP 在 dpr=1.25 下重采全部可导航路由，**13/13 全部 1800x1125**：
+10 个空间路由（/all /tasks /calendar /connections /templates /starred /folders /inbox /tags /trash）+
+暗色 /all + /shared-with-me + /search。
+
+**已验证不是 1x 假放大**：把 1x 图放大 1.25 倍后与原生 1.25x 逐像素比，
+NN 放大差 **4.81%**、双线性放大差 **5.07%**（文字密集区 2.4–4.5%）；锐度 2.7229 > NN 放大的 2.0029。
+（先用「相邻列重复率」做判据 —— **无效**，被大片纯色背景稀释，三者 88.29/90.08/90.64% 几乎无差；改直接差分才有效。）
+
+### 四、高清图片资产：craft.do 根本不提供（服务端限制，非采集遗漏）
+
+`document_preview` 的 `size` 参数**只有两个合法值**：`s`=1,264 B、`m`=10,875 B；
+`l` / `xl` / `2x` / `medium` / `M` 与「去掉 size」**全部 400**。
+再试 `width=1200/2400`、`w=1200`、`dpr=2`、`scale=2/1.25`、`retina=true`、`hd=true`、
+`quality=100`、`q=100`、`format=png`、`type=png` —— **全部被忽略，返回同样的 10,875 B**。
+
+侧证：28 份快照里 `srcset` **0 次**、`@2x` **0 次**、`image-set(` **0 次**；
+那 245 个 "2x" 全是 `32x32`/`192x192` favicon 的 `sizes` 属性，与 DPR 无关。
+
+⇒ **高 DPI 下列表预览图必然偏软，这是产品固有上限。** 头像 `resv2.craft.do/user/full/...`
+不带参数即 403（需登录态 + 属个人内容，本就不应采）。
+
+### 五、缺口 ④ 最终状态
+
+| 子项 | 状态 |
+|---|---|
+| 布局是否随 dpr 变 | ✅ 已证：不变 |
+| CSS 是否有 dpr 分支 | ✅ 已证：无 |
+| 截图能否出设备像素 | ✅ 已解：须用 CDP，wrapper 的 `raw:true` 无效 |
+| 高清截图是否已补 | ✅ 13 路由 @1.25，全部 1800x1125，已验非假放大 |
+| 高清图片资产 | ✅ 已证：服务端不提供（仅 s/m） |
+| 编辑器/弹层类路由高清图 | ⬜ 未补（需临时文档，按既有规则**不新建**） |
+| dpr=2 全量 | ⬜ 未做（本机真实 dpr=1.25，机制已验证可用） |
+
+**产物**＝`dom-20261023/dpr-report/`（`REPORT.md` + 3 份 JSON + 22 张截图，5.09 MB）。
+**采集方式**＝ego-browser，任务空间沿用 `craft assets 20261023 r3`，**全程只读**，
+未新建/修改/删除任何 craft 文档，未注销任何账号。过程中浏览器窗口被最小化过两次
+（`Page.captureScreenshot` 在最小化时失败），已用 `Browser.setWindowBounds` 恢复 `normal` 后继续。

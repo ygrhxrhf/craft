@@ -503,7 +503,7 @@ ADDED  : …owZ"></div><div class="_flexRow_1oz2o_1"><div class="_indent_1oz2o_3
 - 再按第三次 Enter ⇒ `−64 B`，但 **块数不变、缩进不变**，diff 只有 `_flexRow` 前一个 styled class hash 变化（`iPZHUS→hGrGnA`）⇒ 屏幕上**没有任何可辨识的新语义**，故记为：`ind=0` 之后 Enter 的效果 **~ 未确认**（见末节遗留）。
 - ★ **退档顺序只能证到"缩进先退"**：因为**列表档与装饰档在屏幕上建不出来**（见第 5、6 条两条失败通路），**G579 的"Enter 与 Backspace 退档顺序相反"在 web 屏上无法判定** ⇒ 不得据此改本地实现。
 
-### 4. ★ E：**Shift+Enter 在屏幕上产生零变化**（✓ 实测，含同周期对照）
+### 4. ★ E：**Shift+Enter 在屏幕上产生零变化**（✓ 实测，含同周期对照） ☆ **第 300 批续批更正（实测推翻本处，见 `interactions.md` V169 与 `gap.md` G1552）**：官方 `Shift+Enter` **不是零效果** —— 四次独立运行一致读到块内 `<br>` **0→1**、块文本出现行内换行、`domBytes` **+231 B**、键事件**未被消费**、**刷新后换行仍在**（⇒ 落进文档模型）。旧读数"零变化／被彻底吞掉"作废。
 
 | 观测 | 光标所在块 | `bytes` | 块数 | `<br>` | 结果 |
 |---|---|---|---|---|---|
@@ -511,7 +511,7 @@ ADDED  : …owZ"></div><div class="_flexRow_1oz2o_1"><div class="_indent_1oz2o_3
 | s4→s5 | 乙段（非空）行尾 | 152,940 → 152,940 | 3 → 3 | 0 → 0 | **无变化** |
 | **同 cell 对照** | 同一状态改按**纯 Enter** | 150,894 → **152,883** | 2 → **3** | 0 → **1** | **生效** |
 
-⇒ 通路本身被对照实验证明有效（同 cell 内 Enter 立刻 +1989 B 并新增块），**不是点击静默失效**。⇒ ★ **官方 web 端 `Shift+Enter` 既不做软换行、也不新建块 —— 它被彻底吞掉**。静态侧读到的 `N9e` 只 `return {preventDefault:!1}`（"显式不拦截"）**在屏幕上表现为"无任何效果"**，说明后续没有浏览器默认行为接管（contenteditable 默认的插 `<br>` 也没发生）⇒ 本地 TipTap 默认 `Shift-Enter → hardBreak` 会插 `<br>`，**与官方不一致**。
+⇒ 通路本身被对照实验证明有效（同 cell 内 Enter 立刻 +1989 B 并新增块），**不是点击静默失效**。⇒ ★ **官方 web 端 `Shift+Enter` 既不做软换行、也不新建块 —— 它被彻底吞掉**。静态侧读到的 `N9e` 只 `return {preventDefault:!1}`（"显式不拦截"）**在屏幕上表现为"无任何效果"**，说明后续没有浏览器默认行为接管（contenteditable 默认的插 `<br>` 也没发生）⇒ 本地 TipTap 默认 `Shift-Enter → hardBreak` 会插 `<br>`，**与官方不一致**。 ☆ **第 300 批续批更正（实测推翻本处，见 `interactions.md` V169 与 `gap.md` G1552）**：官方 `Shift+Enter` **不是零效果** —— 四次独立运行一致读到块内 `<br>` **0→1**、块文本出现行内换行、`domBytes` **+231 B**、键事件**未被消费**、**刷新后换行仍在**（⇒ 落进文档模型）。旧读数"零变化／被彻底吞掉"作废。
 
 ### 5. ~ **markdown 简写 `- ` 不创建列表**（两条通路都试过）
 
@@ -680,7 +680,7 @@ z11 157,247   z12 157,100   z13 157,099   z14 157,098   z15 155,047
    | `Backspace` | `Dsn(...)` | 块首退档 / 删前块 / 合并 |
    | `Delete` | `jsn(...)` | ★ 与 Backspace **对称的另一套分派器**（本批未读其体）|
 
-4. ★⇒ **E 项结案（`Shift+Enter`）**：官方**没有**软换行的产品实现——handler 是空壳。屏上若出现软换行，来源只能是编辑器内核默认行为。⇒ 本地若绑 `setHardBreak` 即**超出官方**；不绑则与官方同源（都是"交给默认"）。
+4. ★⇒ **E 项结案（`Shift+Enter`）**：官方**没有**软换行的产品实现——handler 是空壳。屏上若出现软换行，来源只能是编辑器内核默认行为。⇒ 本地若绑 `setHardBreak` 即**超出官方**；不绑则与官方同源（都是"交给默认"）。 ☆ **第 300 批续批更正（实测推翻本处，见 `interactions.md` V169 与 `gap.md` G1552）**：官方 `Shift+Enter` **不是零效果** —— 四次独立运行一致读到块内 `<br>` **0→1**、块文本出现行内换行、`domBytes` **+231 B**、键事件**未被消费**、**刷新后换行仍在**（⇒ 落进文档模型）。旧读数"零变化／被彻底吞掉"作废。
 
 ### 2 `Dsn`＝块首 Backspace 全解（@3646846 起逐字）——补掉第 68 批缺的两档
 
@@ -1718,7 +1718,7 @@ if (type === "fixed") {
 
 | 键 | 前置态 | 结果 | 判据 |
 | --- | --- | --- | --- |
-| `Shift+Enter` | 光标在 T2 块末 | **零变化**（三块不变、html 恒 454、无软换行） | ✓实测 ⇒ 证实第 70 批"空壳 handler" |
+| `Shift+Enter` | 光标在 T2 块末 | **零变化**（三块不变、html 恒 454、无软换行） | ✓实测 ⇒ 证实第 70 批"空壳 handler" | ☆ **第 300 批续批更正（实测推翻本处，见 `interactions.md` V169 与 `gap.md` G1552）**：官方 `Shift+Enter` **不是零效果** —— 四次独立运行一致读到块内 `<br>` **0→1**、块文本出现行内换行、`domBytes` **+231 B**、键事件**未被消费**、**刷新后换行仍在**（⇒ 落进文档模型）。旧读数"零变化／被彻底吞掉"作废。
 | `Enter` | 同上 | 拆出同型任务块 `815407D6…`（`listStyle:"task"`、`state:"todo"`），**插在 T2 后 T3 前** | ✓实测（MCP 读回） |
 | `Ctrl+Z` × 1 | 上一步之后 | **一步就回原状**，且 MCP 侧同步可见 ⇒ 撤销非纯本地栈；日志 `t=BODY` ⇒ 文档级绑定、不需编辑器焦点 | ✓实测 |
 | `Tab` | 焦点在 T1（首块）／T2（有前兄弟） | **两次都零变化**（html 455／454、paddingLeft 恒 0px、祖先深度恒 4） | ✓实测 ⇒ 与静态 `sm` 冲突，见 G887 |
@@ -3906,3 +3906,414 @@ if (type === "fixed") {
 - ⚠ 回收站残留（本线两枚 `B170-PARENT`／`B170-KID` ＋历批 4 枚具名＋会话 C 的两枚）永久清除＝不可逆＋屏幕单操作者＝会话 C＝未执行；沙盒**不改名**（承 OBS 约定）
 - ⚠ 第 169—170 两批墨迹已 staged、门禁全绿＝**未提交未推送**（本轮不含提交类具名词）
 - ☆ 任务 #44 两把针复算＝本批仍未做＝连续第五批＝本批把额度与篇幅花在 ① 号靶的盘上结案＝如实挂账、不写成"已排期"
+
+## V166＝Wave 0（2026-10-23 机器钟 15:5x 开批＝官方 CSS hash 未变 `index.css.CiV2oimr.css`＝**零产品代码批**＝净新增 2 条＝G1543—G1544）
+
+**本批不是"再采一轮"，是造一台仪器。** `interactions.md` 开头那句「**动态行为面（触发→效果→反馈→可逆性）尚未验证**」缺的不是更多一次性实测，而是**同一份 spec 在官方与本地两侧各跑一遍、自动出差异表**的能力。
+
+**产物**（`docs/craft-ref/interaction-lab/`）：`observe.mjs`（共享观测库）· `lab.mjs`（runner 库）· `run.mjs`（入口）· `diff.mjs`（differ）· `soft-delete.mjs`（两侧软删通路）· `exp-differ.mjs`（对照实验）· `specs/*.mjs`。台账＝`docs/craft-ref/features/interaction-matrix.md`；原始记录进 `interaction-lab/runs/`（**gitignore**，含空间名/作者名/个人文档标题，`git check-ignore -v` 自证命中 `.gitignore:100`）。
+
+### 1、交互侧新增
+
+- ★★★★★ **三条冒烟 spec 两侧跑通、diff 全判 `match`**（`runs/smoke-05-*`，两侧各 0 error）：
+  - `editor.key.enter-mid-block`：两侧末步块名册逐字 `["AAAA","BBBB"]`、`{AAAA:1, BBBB:1}`、光标偏移 0 ⇒ 6 条 selfCheck 两侧全 PASS。
+  - `editor.slash.open-and-filter`：两侧「打 `/` 面板在场（`state:slashMenu`=1）」「斜杠留在正文块 `["/"]`」「过滤词也进块 `["/wen"]`」全 PASS。
+  - `shell.command-palette.toggle-vs-jump`：两侧「⌘K 后面板输入框在场」PASS。
+- ★★★★★ **两枚产品级交互差异**（照实登记，不掩盖）＝**G1543**（⌘K：官方是"跳转到"、本地是真命令面板）与 **G1544**（`/` 菜单：官方扁平 20 项、本地分组带副标题长列表）。两条都由矩阵里同 spec 的**已声明偏差**逐字承载。
+- ★★★★ **对照实验证明 differ 真会红**（`exp-differ.mjs`，三种判定都出得来）＝块名册扰动⇒`differ/blocks`、计数扰动⇒`differ/countΔ:BBBB`、选区扰动⇒`differ/selection:anchorOffset`、步数不一致⇒`uncomparable/precondition`、注入 error⇒`uncomparable/precondition`、逐字还原⇒`match`。
+
+### 2、★ 仪器自身踩的三个坑（都改掉了，写进 `interaction-lab/README.md`）
+
+- ★★★★★ **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。真可比的是**动作引起的改变量**与**文本名册差集**。
+- ★★★★★ **观测必须原子**。旧版把 fingerprint / textNodes / state / blocks 拆成**多次** `page.evaluate`，两次调用之间页面还能继续渲染 ⇒ 采到**自相矛盾**的记录（实测：`counts.插入=0` 而同一份 `textNodes` 里有 4 条「插入…」；同一交互 smoke-01 记 4、smoke-02 记 0）⇒ 改 `captureAll` 一次求值取回全部面。
+- ★★★★★ **官方软删从没真正跑过**。官方文档 URL 是 `/editor/d/<spaceId>/<docId>?s=<sig>`、**不是** `/documents/<id>`，而旧版只写了一条正则 ⇒ 官方侧恒 `id=null`。同类第二坑＝本地侧栏行是 `<button>`（**无 id 属性**）、新文档标题是空串、占位文案「无标题文档」多行共用 ⇒ 定位不到具体那一行 ⇒ `seedTempDoc` 改为建完即写唯一标题 `QODER-ILAB-<specId>`。
+
+### 3、交互侧未动／仍挂
+
+- ⚠ `expect` 在 spec 契约里声明了却**零消费者**（本批补上 `evalExpect`）；同理 `observe: ['a11y','animation','db']` 三档**仍未实现**（a11y 树、动画采样、库面核对），本批只落了 dom/text/state/selection/blocks/attrs/computed/screenshot。
+- ⚠ Wave 1—7（编辑器块级核心起的 12 个表面）**未开工**。
+- ⚠ 本轮临时文档已全部软删：本地库 `isDeleted=false` 计数 **0**（清理走真实产品路径＝侧栏右键「移至"最近删除"」＋确认框，日志 `cleanup.log`）；官方侧浏览卡回到 **12 张**（均为用户既有文档，无 ILAB 残留）。
+- ⚠ 门禁：`npx vitest run` **270 文件／2189 条全绿**（含 `gap.md` 第 9 行自述数闸）＋`npx tsc --noEmit` **0 错**；`src/`／`e2e/` **零改动**（`git status --porcelain src e2e` 为空）。
+
+## V167＝Wave 1（2026-10-23 机器钟 17:5x—18:3x＝**零产品代码批**＝净新增 3 条＝G1545—G1547）
+
+**Wave 1 的第一件事不是写产品代码，是把 Wave 0 的仪器修到能读 Wave 1 的量。** 三条 spec 里一条 `match`、两条 `differ`；两条 `differ` 全部落在**缩进**这一个面上（普通段落 / 列表项两条通路）。
+
+### 1、交互侧新增
+
+- ★★★★★ **`editor.block.enter-empty-block` 两侧 `match`**（`runs/wave1-09-*`，两侧 0 error）：空块上 `Enter` 块数 1→2→3、末步块名册逐字 `["XY","",""]`、`{XY:1}`，5 条 selfCheck 两侧全 PASS。
+- ★★★★★ **`editor.block.indent-in-list` 两侧 `differ`**（5 条 severity≥2）：第 6 步（第二次 `Tab`）官方 `indentLevels [0,2]` / `indentLevel 2` / `focusInEditor true`，本地 `[0,1]` / `1` / **`false`**（`activeElement` → `nextjs-portal`，光标被 Tab 送出编辑器）。
+- ★★★★★ **`editor.block.indent-plain-paragraph` 两侧 `differ`**（9 条 severity≥2）：普通段落上 `Tab`×2 官方缩到 2 级、`Shift-Tab` 回 1 级（`indentLevel` 1/2/1，`--indent-w` 28/56px），本地**三级全 0**且**三次焦点全丢**（`focusInEditor` 3/3 `false`）。
+- ★★★★★ **推翻一条旧判**＝`interaction-lab/specs/editor.block.indent-in-list.mjs` 文件头原先写着"`Tab` 在**普通段落**上**毫无反应**"。那是**探针缺陷**造成的假象（旧探针沿块根的**祖先链**找 `--indent-w`，而官方载体与块行**同层并列** ⇒ 恒读 0）。修好探针后实测：**官方普通段落照样缩进**，一级 28px、可连升三级（`probe-plain-tab2` 逐级取证）。
+
+### 2、★ 仪器补强三处（都在 `interaction-lab/`，`src/` 零改动）
+
+- ★★★★★ **缩进探针改「标记 → 属主块」归位**：官方 `--indent-w` 的载体是一个与块行**同层并列**的标记元素〈`div._indent_1oz2o_33`〉，沿祖先链**找不到**。改为先收全树所有非零标记，再为每个标记向上找**只包含一个块根**的最近祖先 ⇒ 那个块根即属主。本地侧无该变量 ⇒ 归一读**列表嵌套档**（`ul`/`ol` 层数，最外层不计）。两侧都归一到"级"后才可比。
+- ★★★★★ **块名册改列表摊平**：官方是**扁平块名册**（每个列表项各是一条 `blockrowwrap-*`），本地是**树**（一个 `<ul>` 包住所有项）。旧口径直接取 `.ProseMirror > *` ⇒ 本地整个列表只算**一块**（`["L1 L2"]`）、官方算**两块**（`["L1","L2"]`）＝假红。改为展开到每个 `li` 的首个文本块并递归嵌套。
+- ★★★★★ **新增焦点面 `focusInEditor`**：键"没反应"与"键被浏览器接管"在块名册上**长得一样**（DOM 都不变）。实测本地 `Tab` 把 `activeElement` 带出编辑器（`.ProseMirror` → `nextjs-portal` → `body` → 按钮），只比块名册会漏掉这一类差异 ⇒ 焦点面单列一条判据。
+- ★★★★ **两处呈现机制差异抹平**（都声明成 chrome 不是行为）：① 项目符号——官方画成**文本节点** `•`（进 `innerText`、占块内偏移），本地用 CSS `list-style: disc`（不进、不占）；实测两侧屏上都有圆点（`probe-bullet`：官方 `childTexts ["•","L1"]` / 本地 `listStyleType:disc`）⇒ 块名册剥行首圆点、名册丢纯圆点条目，只剩"空列表项光标偏移差 1"在 spec 的 `deviations` 里声明。② 缩进载体不同（见上）⇒ 归一到"级"。
+
+### 3、★ 三枚产品级差异（照实登记）
+
+- **G1545**＝缩进 `Tab`/`⇧Tab` 在**普通段落**上本地**完全缺失且丢焦点**（官方 28/56/84px 连升三级、光标不跑）。根因＝`src/lib/editor/block-indent.ts` 是**纯核零消费者**。
+- **G1546**＝缩进在**列表项**上本地**只能进一级**、第二次 `Tab` 丢焦点。根因＝`@tiptap/extension-list` 的 `ListItem` 自带 `Tab: sinkListItem()`，而没有"前一个兄弟列表项"时它返回 `false` ⇒ 键**不被消费**、落回浏览器默认 Tab 焦点移动。
+- **G1547**＝缩进**载体** `--indent-w` 本地**从未落地**（实测列表缩进前后 `indentVars: []`；全仓该变量只在纯核与一条测试注释里）⇒ 本地只能靠 `<ul>` 嵌套表达缩进，**普通段落无法缩进**（G1545 的载体面根因）。与 G1546 分开记：前者是"键没被消费"、后者是"载体不存在"，修一个不自动修另一个。
+
+### 4、交互侧未动／仍挂
+
+- ⚠ 本轮**只采不修**：`src/`／`e2e/` 零改动（`git status --porcelain src e2e` 为空）＝G1545/G1546/G1547 三枚**已登记未实现**。
+- ⚠ 门禁：`npx vitest run` 全绿（含 `gap.md` 第 9 行自述数闸＝自述 1539／G1547 与现跑逐字相同）＋`npx tsc --noEmit` 0 错。
+- ⚠ 临时文档已全部软删（本地侧栏右键「移至最近删除」；官方侧右键卡片「删除」＋确认框）。
+- ⚠ `scripts/_w1chk*.mjs` 三枚调试脚本待删（本批临时件）。
+- ⚠ Wave 1 其余候选未采：`⌘D` 创建副本、`⇧⏎` RENAME、`⌥↑↓`/`⌥↖↘` 块移动（G279＝官方移动单位是含缩进子块的整块）、`⌘⇧↑↓` 选至顶/底、`⌘←/→` NAVIGATE_INTO/OUT、`⌘A` SELECT_ALL、`⌘Z`/`⌘⇧Z` 撤销粒度、框选、块间转换保真。
+
+## V168＝Wave 1·续（2026-10-24 机器钟 11:5x—12:2x＝官方 CSS hash 未变 `index.css.CiV2oimr.css`＝**零产品代码批**＝净新增 4 条＝G1548—G1551）
+
+**这一批做了什么**：Wave 1 缩进面（V167）收口后，接着采**块移动 / 创建副本 / 选区**三面 —— 官方面板「整理」段与表 B 的 `⌥↑↓`／`⌥↖↘` 一直有**两条互相矛盾的静态记录**（"移动**所选**区块" vs "跨块移光标"），必须实测才能定案。
+
+**spec 四条（两侧各跑一遍，`runs/wave1-10-*`／`wave1-11-*`，两侧 0 error）**：
+
+| spec | 判定 | sev2+ | 已声明偏差 |
+| --- | --- | --- | --- |
+| `editor.block.move-alt-updown` | **differ** | 1 | 0 |
+| `editor.block.move-top-bottom` | **differ** | 5 | 0 |
+| `editor.key.duplicate-and-undo` | **differ** | 12 | 0 |
+| `editor.selection.ctrl-a-ladder` | **differ** | 8 | 0 |
+
+### 1、★★ 定案：折叠光标上 `⌥↑↓`／`⌥↖↘` 官方**不动块序**，动的是**光标**
+
+官方逐字证据（`wave1-10-editor.block.move-alt-updown-official.json`）：三块 `AAA/BBB/CCC`，光标在中间块 BBB 的块首，按 `Alt-↑` 之后——
+
+- **三条 `blockId` 一字未变**（`F30FCA0E`／`38C838B0`／`6DB0DDF7` 顺序照旧）；
+- `selection.anchorBlock` 由 `38C838B0`（BBB）**变成** `F30FCA0E`（AAA）⇒ **光标跳到了上一块**。
+
+⇒ §分派机制 里 `y2(Ts)` 带 `{skipDirection:"prev", shouldSkipFromEdgeOfBlock:!0}` 那条**才是真分派**；面板「移动**所选**区块」要**先有块选区**才生效。两条静态记录由此分开归属。
+
+`Alt-Home`／`Alt-End` 同结论（`wave1-10-editor.block.move-top-bottom-official.json`：块序两键前后都是 `AAA/BBB/CCC`）。
+
+本地同一序列**换块序**（`Alt-↑` ⇒ `BBB/AAA/CCC`；`Alt-Home` ⇒ `CCC/AAA/BBB`）⇒ 登记 **G1548**／**G1549**。
+
+### 2、★★ `⌘A` 官方是**两档阶梯**，本地只有一档
+
+官方（`wave1-10-editor.selection.ctrl-a-ladder-official.json`）：
+
+| 动作 | `selection` | `focus` |
+| --- | --- | --- |
+| `Ctrl-A` #1 | `{collapsed:false, text:"CCC"}` | `div` · `inEditor=true` |
+| `Ctrl-A` #2 | `{present:false}` | `body` · `cls="noshift nodrag block-select nocmd"` ⇒ **块选区态** |
+| `Ctrl-A` #3 | `{present:false}` | 同上 |
+
+本地三档都是"整篇文本选区"（`collapsed:false`、`inEditor=true`），**没有块选区态**（`grep -rn "block-select / selection-box" src/` 零命中）⇒ 登记 **G1550**。这一条也解释了官方面板「选择到顶部/底部 `CtrlShift⤒⤓`」为什么在本地无处依附。
+
+### 3、`⌘D` 创建副本：**块序与撤销粒度两侧一致**，差异只在"落到哪种选区"
+
+| 动作 | 官方块序 | 本地块序 |
+| --- | --- | --- |
+| 起点 | A / B / C | A / B / C |
+| `Ctrl-D` | A / B / C / **C** | A / B / C / **C** |
+| `Ctrl-Z` | A / B / C | A / B / C |
+| `Ctrl-Shift-Z` | A / B / C / **C** | A / B / C / **C** |
+
+⇒ 创建副本是**一步可逆**操作、重做粒度两侧相同（这是 `interactions.md` 开篇自陈"可逆性尚未验证"的第一条实测回答）。差异：官方 `Ctrl-D` 后 `focus.tag=body`、`cls` 含 `block-select`（`inEditor=false`、`selection.present=false`），本地留在 `.ProseMirror` 内 ⇒ 登记 **G1551**。
+
+### 4、★ 本批自我更正两处（写下来防止下个会话再犯）
+
+1. **一度把 Ctrl-D 的选区态差异写成 `deviations`** ⇒ 当场改回。理由：`deviations` 的用途是"**同一件事的两种画法**"（例：项目符号——官方文本节点 `•` / 本地 CSS `list-style: disc`，两侧屏上都有圆点）。而这里两侧落到的是**两个不同状态**，它会直接改变**下一个键**的语义（官方块选区上 `⌥↑` 才是"移动所选区块"）⇒ 是产品级差异，按 Wave 1 先例如实判 `differ` 并登记 G 行。
+2. **自己 spec 里的两处假红**：`editor.selection.ctrl-a-ladder` 与 `editor.key.duplicate-and-undo` 都在 step 8 断了 `selection:collapsed equals false`，而官方那一步 `selection.present=false` ⇒ 读成 `null` ⇒ **只有官方侧假红**。改法＝selfCheck 只放**两侧共有**的量，差异交给 differ ⇒ 现跑 selfCheck 只剩**本地侧**的真 FAIL（10 条）。
+
+### 5、★ 修掉一枚"让每一条官方 spec 都采不到"的仪器缺陷
+
+官方侧 `page.goto({waitUntil:'load'})` **恒超时**（编辑器挂长连接，`document.readyState` 停在 `interactive`，`load` 不再触发）⇒ 旧写法抛错进 `record.errors` ⇒ differ 判 **`uncomparable`**。
+
+改法（`docs/craft-ref/interaction-lab/lab.mjs` 的 `navigate` 分支）：**只吞"导航已提交的超时"**这一种（错误文案自陈 `navigation committed` ⇒ 留在本页、`readyState !== 'loading'` 即可继续），其余错误照旧上抛。★ 这条若不修，Wave 1 之后**每一条**官方 spec 都会以 `uncomparable` 收场——是仪器缺陷，不是产品差异。
+
+### 6、门禁与收尾
+
+| 项 | 结果 |
+| --- | --- |
+| `npx vitest run` | **270 文件／2189 条全绿**（含 `gap.md` 第 9 行自述数闸） |
+| `npx tsc --noEmit` | **0 行输出**（0 错） |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| `gap.md` 第 9 行自述数 | 自述 **1543／G1551** ＝ 现跑 **1543／G1551** |
+| 临时文档残留 | 官方浏览屏 **12 张卡、其中 ILAB 0 张**（回到本批前的基线）· 本地侧栏/列表 **0** 行 QODER（两侧逐轮清到 0 并复核） |
+
+★ 首跑 `vitest` 被 `ledger-arity-gate` 抓住 **1 处表形错位**：G1550 行里的 grep 备选符含**字面竖线**，把该行多切出一栏（8 栏 vs 表头 7 栏）⇒ 改成 `block-select / selection-box` 复绿。**教训：往 Markdown 表里写 grep 备选符要避开裸 `|`。**
+
+### 7、仍挂（如实挂账）
+
+- ⚠ 本轮**只采不修**：G1548／G1549／G1550／G1551 四枚**已登记未实现**。
+- ⚠ Wave 1 仍未采：`⇧⏎` RENAME（探针的**起手没重置干净**：`probe-w1j` 的 S2 段落在 S1 留下的块选区态上跑，快照只剩 `BBB/CCC`、没有可比基线 ⇒ **该探针作废**，语义未定案 ⇒ 不写 spec 不猜）、`⌘←/→` NAVIGATE_INTO/OUT、`⌘⇧↑↓` 选至顶/底、框选、块间转换保真。
+- ⚠ `observe: ['a11y','animation','db']` 三档仍未实现（Wave 0 就挂着）。
+
+## V169＝Wave 1·续批二（2026-10-24 机器钟 13:0x—14:0x＝官方 CSS hash 未变 `index.css.CiV2oimr.css`＝**零产品代码批**＝净新增 1 条＝G1552）
+
+**这一批做了什么**：接着 V168 的三面之后采 `⇧⏎`（`RENAME` 族）。V168 末尾把上一手的探针判为"作废"（起手没重置干净），
+本批**重写探针**（每条场景硬重置并**自校验**）后拿到的读数，**与既有静态记录正面冲突** ⇒ 这条不是"补采"，是**推翻**。
+
+### 1、★★★ 官方 `Shift+Enter` **插入行内换行**（不是"什么都不做"）
+
+四次独立运行一致（单块 / 三块中间块 / 三块末块 / **两块首块＝V50 §4 的原始前置**）：
+
+| 观测 | 官方 | 本地 |
+| --- | --- | --- |
+| 块内文本 | `AAA` → `AAA`＋换行＋`\uFEFF`＋换行 | `AAA`（**一字未变**） |
+| 块内 `<br>` 计数 | **0 → 1** | 0 → 0 |
+| 键是否被消费 | **否**（`Shift`、`Enter` 都 `defaultPrevented=false`） | **是**（`Enter![consumed]`） |
+| 刷新页面后 | 换行**仍在** | 无 |
+| `domBytes`（两块前置） | 114,817 → 115,048（**+231 B**） | 不变 |
+
+三块语境同样成立：光标在**中间块**行尾 ⇒ `totalBr` 0→1；在**末块**行尾 ⇒ 1→2（逐块名册 `AAA` / `BBB`+换行 / `CCC`）。
+★ 刷新后仍在 ⇒ **落进了文档模型**，不是 contenteditable 的瞬时产物；且撤销栈把它当**一步**（`Ctrl+Z` 后回到含换行的状态）。
+
+### 2、★★★ 由此**推翻三处既有记录**（它们此前互相印证，故一直没人复采）
+
+| 被推翻处 | 旧读数 | 本批实测 |
+| --- | --- | --- |
+| `keyboard.md:286` | `Shift+Enter` 两块两次**逐字节相同**（`150,894→150,894`、`152,940→152,940`）、`<br>` 恒 0 ⇒ ✓ **确认无效** | 逐字节**变了**（+231 B）、`<br>` 0→1 ⇒ **有效** |
+| `interactions.md:506`（V50 §4） | "官方 web 端 `Shift+Enter` 既不做软换行、也不新建块 —— 它被彻底吞掉" | 插了行内换行（软换行） |
+| `gap.md` **G615** | "官方屏幕上零变化"＋"本地 StarterKit 默认 `HardBreak` 会插 `<br>`，与官方相反" | 恰好**反过来**：官方插、本地不插 |
+
+★ 连带后果（必须一起更正）：本地 `src/components/editor/extensions/hard-break.ts:4-16` 与
+`src/components/editor/Editor.tsx:313-315` 的注释**逐字照抄了被推翻的旧读数**，并据此关掉了 `StarterKit` 的 `hardBreak` 键位
+⇒ 那个取舍的**前提是错的**（"官方什么都不做"）。本批只登记、**不动产品代码**（Wave 1 实现另起批）。
+
+### 3、★ 仪器缺陷两枚（本轮真踩，已修）
+
+1. **`soft-delete.mjs` 的 `goto` 与 `lab.mjs` 同一根因**：官方侧 `waitUntil: 'load'` 恒超时（文档已提交、`readyState` 停在 `interactive`）
+   ⇒ 抛错 ⇒ **软删失败、临时文档残留**（实测残留 1 张）。处置＝同一写法只吞"导航已提交的超时"。
+2. **`page.evaluate` 回调的三次同类误用**：回调读不到宿主变量（`SEL`）、也不能调用脚本里的另一个函数（`tree`）
+   ⇒ `ReferenceError`。三次都报错可见、逐次修掉；**教训：`page.evaluate` 的回调必须自包含，参数一律显式传。**
+
+### 4、★ 探针重写（上一手 probe-w1j 作废的根因已定案）
+
+根因不是"没重置"，而是**官方的 `Escape` 会把焦点交给 `body` 并进入块选区态**（实测 `bodyCls` 含 `block-select`、`inEditor=false`）
+——此后 `Ctrl+A` 选的是"块"不是文本。且官方 `Ctrl+A` 是**两档阶梯**（V168 已定案），一次 `Ctrl+A`+`Delete` 清不干净。
+⇒ 新探针改成**逐块清 + 空文档后恢复焦点**，并把每次重置的读数写进日志（不再假设）。
+
+### 5、spec 一条（两侧各跑一遍，`runs/wave1-12-*`，两侧 0 error）
+
+| spec | 判定 | sev2+ | 已声明偏差 |
+| --- | --- | --- | --- |
+| `editor.key.shift-enter-hard-break` | **differ** | 3 | 0 |
+
+★ 为此给观测库加了**加性**的一档 `breaks`（逐块 `<br>` 计数与不压空白的行数）——
+**不改既有 `blocks` 口径**，所以 V168 那 10 条记录不受影响（`breaks` 只在两侧都采到时参与判定）。
+
+### 6、对照实验（任务书强制）
+
+承重量＝`breaks`。三段式：基线 differ（sev2+ **3**，含 `breaks`）⇒ 把本地 `breaks` 中和成与官方同 ⇒
+`breaks` 行**必消失**（sev2+ 2，只剩选区偏移）⇒ 从原始 JSON 逐字重算 ⇒ **逐字复红**（sev2+ 3）。
+★ 过程中踩到并修掉一处 diff 缺陷：`breaks` 判一度被写进 `blocks` 的 `if (不等)` 里 ⇒ 块名册两侧相同时整段不求值、
+该行永远不出现（本条 spec 的名册恰是两侧相同）⇒ 挪成同级判。
+
+### 7、仍挂（如实挂账）
+
+- ⚠ **本轮只采不修**：G1552 **已登记未实现**（且它推翻的那条取舍还在产品代码注释里）。
+- ⚠ Wave 1 仍未采：`⌘←/→` NAVIGATE_INTO/OUT、`⌘⇧↑↓` 选至顶/底、框选、块间转换保真。 ✎ **后记（V170）**：其中前两族**已采**（G1553／G1554，见本文件 V170）；✎ **后记（V171）**：**框选也已采**（G1555，见本文件 V171）。
+- ⚠ `observe: ['a11y','animation','db']` 三档仍未实现（Wave 0 就挂着）。
+
+## V170＝Wave 1·续批四（2026-10-24 机器钟 15:2x—16:1x＝官方 CSS hash 未变 `index.css.CiV2oimr.css`＝**零产品代码批**＝净新增 2 条＝G1553／G1554）
+
+**这一批做了什么**：接着 V169 之后采两条**跨块/跨层导航族** —— `⌘←`/`⌘→`（`NAVIGATE_INTO`/`NAVIGATE_OUT`）与
+`⌘⇧↖`/`⌘⇧↘`（`SELECT_TO_TOP`/`SELECT_TO_BOTTOM`）。两条都**不是**"官方也零实现"：官方有明确行为，
+本地是**零实现**（`git grep` 自证）。本批同时给仪器补了一档**加性**探针 `keys`（按键消费），否则这一族的差异会被读成一致。
+
+### 1、★★ `⌘←`/`⌘→` 是词级导航，且官方**把键消费掉**
+
+`runs/wave1-18-*`（两侧 14 步 0 error、selfCheck 两侧全 7 PASS）。单块 `AAA BBB CCC`、光标在行尾偏移 11：
+
+| 步 | 官方 | 本地 |
+| --- | --- | --- |
+| `Ctrl+←` ×3 | `11→8→4→0` | **逐字相同** `11→8→4→0` |
+| `Ctrl+→` #1 | `0→3`（**词尾**） | `0→4`（**词首**） |
+| `Ctrl+→` #2 | `3→7` | `4→8` |
+
+跨块（两块 `AAA BBB CCC` / `DDD`，光标在块 1 行尾偏移 11）：官方 `Ctrl+→` **不动**（仍在块 1 偏移 11）、
+`Ctrl+←` `11→8`（仍在块 1）；本地 `Ctrl+→` **跳进块 2 偏移 0**、`Ctrl+←` 停在 11。
+
+★ **键归属**（本批新采，`keys` 档）：官方 7 个组合键步**全部 consumed**（名册 `ArrowLeft!` / `ArrowRight!`），
+本地**全部未消费**（`ArrowLeft` / `ArrowRight`）⇒ **只比选区偏移会把"键归谁"读成一致**，这正是补这档探针的理由。
+
+### 2、★★ `⌘⇧↖`/`⌘⇧↘` 是**块选区**入口，不是文本选区
+
+`runs/wave1-13-*`（两侧 12 步 0 error，三块 `AAA`/`BBB`/`CCC`、光标在中间块行尾）：
+
+| chord | 官方 | 本地 |
+| --- | --- | --- |
+| `Ctrl+Shift+Home` | **进块选区态**（`selection.present=false`、焦点交 `body`、`cls` 含 `block-select`、`inEditor=false`） | **文本选区**（`3→0`、选中 `AAA`＋两换行＋`BBB`、`inEditor=true`） |
+| `Ctrl+Shift+End` | 同上进块选区态 | 文本选区（`focusOffset 2`、换行＋`CCC`） |
+| `Ctrl+Shift+↑`（MAC 变体） | 键**被消费**但**选区零变化** | **生效**（文本选区） |
+| `Ctrl+Shift+↓` | 同上（零变化） | 生效 |
+| `Alt+Shift+↓` | **进块选区态** | 零变化 |
+| `Alt+Shift+↑` | **零变化** | 零变化（不对称） |
+
+静态依据吻合：`keyboard.md:72-75`（`COMMON` 与 `MAC` 两条变体）＋`keyboard.md:486` 装配器
+`Ll ? [COMMON, MAC] : [COMMON]`（`Ll`＝是 Mac）⇒ 预测 Windows 只注册 `COMMON`，实测**吻合**。
+
+### 3、本地实现面（`git grep` 自证，两族都**零实现**）
+
+- `NAVIGATE` 族：`git grep -n "NAVIGATE" -- src` **无命中**；`src/lib/editor/keymap.ts:86-87` 只有 `ArrowLeft: '←'` / `ArrowRight: '→'` 两个字形映射。
+- `SELECT_TO_*` 族：`git grep -n "SELECT_TO_TOP\|SELECT_TO_BOTTOM" -- src` 只命中 `src/lib/editor/keymap.test.ts:114` 的**一行注释**（`SELECT_TO_TOP_MAC` 与 `MOVE_BLOCK_TOP_MAC` 撞键）⇒ 四条一条都没注册。
+
+### 4、★ 本批新增加性档 `keys`（按键消费探针）
+
+动三处：`observe.mjs` 加 `installKeyProbe()`（cap/bub 两处 window keydown，只记带 Ctrl/Alt 的）＋`readKeys()`；
+`lab.mjs` 在 **`runSetup` 之后** 装探针（装之前会被 setup 的整页导航清掉）＋`observe()` 里按需带上；
+`diff.mjs` 加 ⑤c 段比 `keys`（`facet:'keys'`、sev2）。
+**加性自证**：加这一档后重跑 `node diff.mjs`，既有 **12 条 spec 的判定与 sev2+ 数逐字未变**。
+
+### 5、★ 本批真踩的仪器缺陷（都已修）
+
+| # | 缺陷 | 后果 | 修法 |
+| --- | --- | --- | --- |
+| 1 | `captureAll` 里调同模块的 `readKeys()` | `page.evaluate` 序列化后在页面内跑、读不到兄弟函数 ⇒ `ReferenceError: readKeys is not defined`，`wave1-15` 两侧 **steps=0 / errors=1** | 逻辑**内联**成 IIFE 写进返回对象 |
+| 2 | 探针装在 `runSetup` **之前** | setup 里的 `navigate`/`seedTempDoc` 整页导航 ⇒ 监听器被清掉 ⇒ `wave1-16` 的 `keys` 名册**恒空** | 移到 `runSetup` **之后**、baseline 之前 |
+| 3 | spec 自身：`Enter` 前没先 `End` | 光标停在上一步词边界处、分块点两侧不同（官方 7 / 本地 8，是词边界差异的**下游**）⇒ 块名册被**自造差异**污染 | `Enter` 前插一步 `{ op:'key', chord:'End' }` |
+| 4 | `run` 卡住时**无任何磁盘痕迹** | `console.log` 不回传 ⇒ `wave1-17`/`wave1-18` 两次挂起**查不动**（`runs/` 空、`.out.txt` 0 字节） | `lab.mjs` 的 `log()` **同时**追加写 `progress.log`（加性；定位到卡点后确认是**被杀的浏览器会话**，非代码缺陷） |
+
+### 6、★ 两条诚实边界（如实挂账）
+
+- `probe-w1s` 的 `caretIn(i)` 落点**恒为 `abIdx=2`** ⇒ 「`Alt+Shift+↑` vs `↓`」的**位置对照未达成**；
+  但三位置读数一致 ⇒ 不对称结论仍成立（已在 G1554 单元格内标注）。
+- 本批**只采不修**：G1553／G1554 两枚**已登记未实现**。
+
+### 7、仍挂（如实挂账）
+
+- ⚠ Wave 1 仍未采：框选（drag）、块间转换保真。
+- ⚠ `observe: ['a11y','animation','db']` 三档仍未实现（Wave 0 就挂着）。
+
+## V171＝Wave 1·续批五（2026-10-24 机器钟 16:2x—16:3x＝官方 CSS hash 未变 `index.css.CiV2oimr.css`＝**零产品代码批**＝净新增 1 条＝G1555）
+
+**这一批做了什么**：采**浏览屏框选（drag marquee）**。这一族此前**连续 6 批欠账**已在盘上结案（G1135／G1136 给出逐字算法），
+本批把它**搬到屏幕上验**，并为此给仪器补一档**加性**探针 `marquee` ＋ 一对**加性** step `dragHold`/`dragEnd`。
+
+### 1、★★★ 官方框选：矩形 ＋ 选中集（与盘上逐字算法**吻合**）
+
+`runs/wave1-19-*`（两侧 4 步 0 error、selfCheck 两侧 PASS）。起手点＝**内容区左侧空白**（视口 295,500；
+官方内容视口 x ∈ [288,1440]）⇒ 拖到 (795,200)。官方侧 `[data-item-id]` 14 枚、`role=checkbox` 14 枚。
+
+| 观测 | 官方 | 本地 |
+| --- | --- | --- |
+| 按住期间的矩形 | **有**（见下逐字） | **无**（`rect=null`） |
+| 矩形几何 | `x295 y200 w500 h300` | — |
+| `aria-checked=true` | **0 → 6** | **0 → 0** |
+| 松手后矩形 | **卸载**（`rect=null`） | — |
+| 松手后选中 | **保留**（仍 6） | 0 |
+
+矩形逐字：`class="_rubberBand_fdch5_1"`、`position:fixed`、`z-index:10`、`pointer-events:none`、
+底色 `rgba(46,109,233,0.12)`、边框 `solid 0.8px rgb(46,109,233)`、`border-radius:4px`
+⇒ **与 G1135 ⑥ 记的 CSS 逐字吻合**（`position:fixed`／`z-index:10`／`pointer-events:none`／`var(--accent-100)` 底／`var(--accent-500)` 边／`var(--radius-sm)`）。
+
+### 2、★★ 本地：**三档全零**（不是"算法不同"，是整条缺失）
+
+同一动作在本地侧：`[data-item-id]` **0 枚**、`role=checkbox` **0 枚**、`[class*=rubber]` **0 枚**；
+矩形 `null`、选中 `0`、松手后仍 `0` ⇒ differ 判 **22 行／14 sev2+**。
+
+★ 本地**回收站**确有「选择」模式（点后出 **68 枚** `role=checkbox`、「已选 0 项」、「全选」），
+但**那是按钮触发的勾选模式、不是拖拽框选**（同屏 `[class*="rubber"]` 仍 0）⇒ 两条通路**不可互相顶替**，台账里须分开记。
+缺的是 G1136 的**两层**：三型几何模型（`items`／`documentsGrid`／`columns`）＋按型分派的命中器。
+
+### 3、★ G1138 的判据门槛**用上了**（不踩老坑）
+
+本批选中一律读 **`role=checkbox` 的 `aria-checked`**，**不读** `_isActive_`：
+静止态实测 **14/14** 张卡都带 `_isActive_1nu3o_62` ⇒ 用它会把"全都没选"读成"全都选中"。
+（首版探针 `probe-w1v` 正是踩了这个坑，读数全 `selCount=14` ⇒ 作废重写。）
+
+### 4、★ 本批新增两处**加性**仪器（都为"看得到"服务）
+
+| 加性件 | 为什么必须 | 落点 |
+| --- | --- | --- |
+| 观测档 `marquee` | 框选的判据是「矩形 ＋ 选中集」，用现成的 `state:`／`selection:` 都读不到矩形 | `observe.mjs`（内联进 `captureAll` 返回对象）＋`lab.mjs` 按需带上＋`diff.mjs` ⑤d 段 |
+| step `dragHold`／`dragEnd` | ★ **矩形只在按住期间存在**（松手即卸载）⇒ 用一条原子的 `drag` 做完就只能采到"松手后"，矩形**恒 `null`**（`wave1-19` 首跑实测） | `lab.mjs` 的 `runStep` |
+
+**加性自证**：加这两处后重跑 `node diff.mjs`，既有 **13 条 spec 的判定与 sev2+ 数逐字未变**（`browse.box-select` 是新增第 14 条）。
+
+### 5、★ 一处诚实边界
+
+本地侧起手拖拽时**该屏文档为 0 枚**（本批的临时文档已全部软删）⇒ 严格说这是"**没有对象可划过**"而非"有对象但框选不生效"。
+但同一动作在本地**三档全零**（连矩形层都没有），且 `git grep "rubber\|marquee" -- src` 无命中 ⇒ 「本地无框选」这一结论**不依赖文档数**。
+已在 G1555 单元格内如实标注。
+
+### 6、仍挂（如实挂账）
+
+- ⚠ **本批只采不修**：G1555 **已登记未实现**（三层：几何模型 ＋ 命中器 ＋ `data-item-id` 寻址）。
+- ⚠ Wave 1 仍未采：块间转换保真。
+- ⚠ `observe: ['a11y','animation','db']` 三档仍未实现（Wave 0 就挂着）。
+
+## V172＝Wave 1·续批六（2026-10-24 机器钟 17:0x—17:2x＝官方 CSS hash 未变 `index.css.CiV2oimr.css`＝**零产品代码批**＝净新增 1 条＝G1556）
+
+**这一批做了什么**：采 Wave 1 最后一条在册候选 —— **块间转换保真（样式档 TURN_INTO 族）**＝`Ctrl-Shift-1/2/3/5`
+（`keyboard.md:26-30` 表 A：`TITLE`／`SUBTITLE`／`HEADING`／`BODY`）。选它的理由写在 spec 头注释里：
+`model.md` §一之六 记官方是**九值 `textStyle` ＋ 数字序号 `eY()` ＋ 导出映射表**（`title→h1 … toggle→h4`、`Video/File→p` 塌缩）
+⇒「**同一个块、只换样式档**」正是官方模型里**唯一一种"块间转换"**（其余都是换类型 ⇒ 另起块）。
+所以本 spec 问的是三件事：① 文本是否原样保留 ② 块数是否不变 ③ 计算样式（字号/字重）是否跟着换。
+
+### 1、★★ 两侧**都真的换档**（这一族不是"本地缺失"）
+
+`runs/wave1-22-*`（两侧 6 步 0 error）。单块 `AAA`、光标在块内，依次 `Ctrl-Shift-1`(TITLE) → `-3`(HEADING) → `-2`(SUBTITLE) → `-5`(回 BODY)：
+
+| step | 官方 leaf 字号/字重（行高） | 本地 leaf 字号/字重（行高） | 官方块名册 | 本地块名册 |
+| --- | --- | --- | --- | --- |
+| baseline | 15px/400（23px） | 16px/400（24px） | `["span:"]` | `["p:"]` |
+| typeKeys AAA | 15px/400（23px） | 16px/400（24px） | `["span:AAA"]` | `["p:AAA"]` |
+| Ctrl-Shift-1 TITLE | **23px/700**（28px） | **30px/700**（39px） | `["span:AAA"]` | `["h1:AAA","p:"]` |
+| Ctrl-Shift-3 HEADING | **18px/600**（22px） | **20px/600**（28px） | `["span:AAA"]` | `["h3:AAA","p:"]` |
+| Ctrl-Shift-2 SUBTITLE | **20px/700**（24px） | **24px/600**（32.4px） | `["span:AAA"]` | `["h2:AAA","p:"]` |
+| Ctrl-Shift-5 BODY（回） | **15px/400**（23px） | **16px/400**（24px） | `["span:AAA"]` | `["p:AAA","p:"]` |
+
+官方六步的块 id **一字未变**（`AB4247D0-DA6E-4229-8949-A6F27702BD10`）、`found` 恒 1、文本恒 `AAA`
+⇒ 「同一个块就地换档」在两侧**都成立**；两侧键位表也**同组**（本地 `src/lib/editor/keymap.ts:177-181` 四条 `win` 都是 `ctrl+shift+digit`）。
+
+### 2、★★ 差异只有两面：**口径**与**块数**
+
+① **字号/字重口径**＝本地标题更大、副标题更轻（TITLE `30px/700` 对官方 `23px/700`；HEADING `20px/600` 对 `18px/600`；
+SUBTITLE `24px/600` 对 `20px/700`）。来源逐字＝`src/app/globals.css:497-519`（`h1 1.875rem/700`、`h2 1.5rem/600`、`h3 1.25rem/600`）。
+
+② ★★ **本地换档后多出一枚空 `<p>`**＝本地 `found` 1→2、名册 `["h1:AAA","p:"]`／`["h3:AAA","p:"]`／`["h2:AAA","p:"]`，
+回 BODY 后仍是 `["p:AAA","p:"]`。⇒ 本地 `Ctrl-Shift-1` 是「**改样式 ＋ 建一枚空块**」，官方不建。
+☆ **根因不是本批新缺陷**：本地派发是 `craft-keymap.ts:27-31` 的 `setHeading`／`setParagraph`（**就地改节点**，注释逐字"样式是 set、列表是 toggle"），
+而 `StarterKit` 的 `TrailingNode` 规则是"末块不是段落就补一枚空段"，`Editor.tsx:327` 的 `notAfter` **只豁免三族列表**
+⇒ 末块换成标题档**必然**补一枚＝正是 **G1485** 那条豁免的**已知边界**（同族现象，不另立新账）。
+
+判据逐字＝`interaction-matrix.md` 的 `editor.key.turn-into-style`：**19 行／7 sev2+／0 declared deviations**
+（step 2/3/4 的 `countΔ:AAA` 官方 2 ↔ 本地 1；step 2/3/4/5 的 `blocks` 官方 `["AAA"]` ↔ 本地 `["AAA",""]`）。
+selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAIL**（期望 1、实得 2）。
+
+### 3、★ 一条**必须写清**的读数：官方的 `countΔ:AAA` 1→2 **不是重复块**
+
+首跑时官方 `AAA` 的具名文本计数在第 2/3/4 步由 1 变 2，看着像"多了一枚块"。本批用两个自造探针 `probe-w1aj`／`probe-w1ak` 定位到
+那第二枚命中在**编辑器之外**：`A._row_v0ra3_1 > SPAN._label_v0ra3_131 fade-truncate`，坐标 **x=16 y=216**（侧栏区），
+`crumbCls` 仍是文档页 ⇒ **侧栏大纲**。机理＝块被换成标题档后**侧栏大纲里出现了该块**，换回正文档即消失（与 step 5 计数回 1 吻合）。
+⇒ 台账里写清「**不是重复块**」，否则会被误读成"官方也建块"。
+
+### 4、★ 本批踩到的三处**仪器缺陷**（已登记，修法已落地）
+
+| # | 缺陷 | 后果 | 修法 |
+| --- | --- | --- | --- |
+| 1 | `computedProbes` 探**块行外壳** | 官方外壳字号/字重**恒 16px/400 不变**（样式落在**文本叶**上）⇒ 读成"按了没反应" | 改探文本叶：官方 `[id^="blockrowwrap-"]:not([data-testid]) [data-slate-node="text"]`；本地 `.ProseMirror > p, > h1, > h2, > h3` |
+| 2 | 官方块 id 前缀有**两种** | 探针一度用 `[id^="blockrowwrap-"]` 命中 0（实际是 `blockwrap-`） | `captureBlocks` 两种都认（`observe.mjs:228-231`） |
+| 3 | 自造探针 `probe-w1ag/w1ah/w1ai` 的**落光标点击没生效** | 文本根本没进正文（读数全空） | 必须复用 lab 的 `placeCaretTrailing`（`mode=title-below 528,204`），不能自己点 |
+
+★ 另记两处**工具面**教训（与产品无关）：脚本里**全角引号会炸 `.mjs` 语法**（一律用直角引号或纯 ASCII）；`run` 卡住时**无磁盘痕迹** ⇒
+`lab.mjs` 的 `log()` 现同时追加写 `progress.log`（加性；根因已定位＝**被杀的浏览器会话**，非代码缺陷）。
+
+### 5、★ 一处诚实边界
+
+本 spec **未采 `keys` 档** ⇒ 这三个组合键**是否被消费**在本批**未测**（不写成"与官方一致"）。留待补测。
+
+### 6、门禁与收尾
+
+| 项 | 结果 |
+| --- | --- |
+| `npx tsc --noEmit` | **0 行输出**（0 错） |
+| `npx vitest run` | **270 文件／2189 条全绿** |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| `gap.md` 第 9 行自述数 | 自述 **1548／G1556** ＝ 现跑 **1548／G1556** |
+| 矩阵 | 15 条 spec（既有 14 条判定未变）· `editor.key.turn-into-style` **19 行／7 sev2+／0 declared** |
+| 临时文档 | 两侧各建 1 个临时文档，**已全部软删**（本地 `REMAINING []` 自证；官方 `softDelete ok=true`） |
+
+### 7、仍挂（如实挂账）
+
+- ⚠ **本批只采不修**：G1556 已登记未实现（两面：口径表 ＋ 换档后块数）。
+- ⚠ Wave 1 仍未采：**`⇧⏎` RENAME**（V169 末尾判为"探针作废、语义未定案"）。
+- ⚠ `observe: ['a11y','animation','db']` 三档仍未实现（Wave 0 就挂着）。

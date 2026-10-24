@@ -130,14 +130,15 @@ Source Serif 的 Craft 定制位）仍属不搬运项。
 2. **顶栏**：官方把页面名居中，右侧是 头像 + 共享 + 通知 + 帮助 + 面板开关；本地是面包屑居左。
 3. 编辑器正文行高：官方 UI 阶是 16/19.2（1.2），本地 1.7；截图目测更接近 1.5–1.6，**需像素测量定档，不凭猜改**。
 4. `--highlight-*` 7 色与 5 组 `--editor-gradient-*`：官方 9 色已记录在第一节，但**本地 `--highlight-*` 目前是死 token**（全仓无引用，高亮色实际硬编码在组件里），要先接线再换值。
-5. 三档视口的官方截图只采到 desktop（1910×925）；`viewport.set()` 静默无效，tablet/mobile 需另开窗口尺寸重采。
+5. ~~三档视口的官方截图只采到 desktop（1910×925）；`viewport.set()` 静默无效~~ ⚠️ **已由 §九 取代**：三档矩阵（1440×900 / 768×1024 / 390×844）均已采齐。
 
 
 ## 七、截图留档
 
-`docs/craft-ref/ref-<screen>-<w>.png`（已加入 `.gitignore`：这些图含用户真实工作区内容，只留本地）。
-当前已采：`all-documents`、`tasks`、`calendar`、`connections`、`document`（含右栏插入 tab），均为
-1910×925 视口（Edge 窗口实际内尺寸；`viewport.set(1440,900)` 未生效，三档矩阵待用独立窗口重采）。
+~~`docs/craft-ref/ref-<screen>-<w>.png`~~ ⚠️ **路径与文件名均已作废**：现为 `docs/craft-ref/ref/<screen>-<w>.png`（已 `.gitignore`：
+这些图含用户真实工作区内容，只留本地）。
+~~当前已采：`all-documents`、`tasks`、`calendar`、`connections`、`document`，均为 1910×925 视口~~ ⇒
+**现为 66 张**（desktop 1440×900 × 54 / tablet 768×1024 / mobile 390×844），清单见 `screens.md` §十二。
 本地对照图：`docs/craft-ref/local-*.png` 与 `e2e/visual.spec.ts-snapshots/`。
 
 ## 八、全量重采补充（2026-09-25 13:00 之后）
@@ -148,4 +149,54 @@ Source Serif 的 Craft 定制位）仍属不搬运项。
 - **`tokens.json`**（已 gitignore）：机器可读的逐文件属性值数组，13 文件 / 546 + 220 属性。
 - **`screens.md`**：10 条路由屏 + 弹层 + 12 个设置分区的截图与几何清单，含「编辑器屏侧栏从 y=176 起」「设置弹窗打开时侧栏折叠为 57px 图标栏」两条新事实。
 
-对第六节待办的影响：第 3 条「编辑器正文行高需像素测量定档」现在有了官方依据（`--ui-*-line-height` 与 `--heading/body/caption` 族已全量记录）；第 5 条视口矩阵仍受 `viewport.set()` 无效限制未解决。
+对第六节待办的影响：第 3 条「编辑器正文行高需像素测量定档」现在有了官方依据（`--ui-*-line-height` 与 `--heading/body/caption` 族已全量记录）；
+~~第 5 条视口矩阵仍受 `viewport.set()` 无效限制未解决~~ ⚠️ **已由 §九 解决**（`Emulation.setDeviceMetricsOverride`）。
+
+---
+
+# 九、2026-10-22 ego-browser 复采（视口与 computed style 首次可控）
+
+来源：ego-browser（ego lite 0.6.0.16），已登录的 docs.craft.do 会话。
+本轮 `page.evaluate()` 可用 → 下面全部是**真实 `getComputedStyle`**，不是旧批次那种靠 `elementInfo` 反推的估计值。
+
+## 9.1 根级变量（live 实测）
+
+| 变量 | 值 |
+|---|---|
+| `--base` | `252 253 254` |
+| `--foreground` | `26 28 30` |
+| `--header-height` | `48px` |
+| `--radius-md` | `8px` |
+| 文档根属性 | `data-theme=light`、`data-accent=blue` |
+| 字体族第一顺位 | `Inter` |
+| dpr | 1.25（窗口态）/ 1（`Emulation.setDeviceMetricsOverride` 后） |
+
+## 9.2 布局几何（统一 1440×900 基准，light）
+
+| 元素 | x | y | 宽 | 高 | 字号 / 行高 / 字重 |
+|---|---|---|---|---|---|
+| 顶栏 | 0 | 0 | 1440 | 48 | — |
+| 侧栏 `aside` | 0 | 48 | 288 | 852 | 16px / 19.2px / 400 |
+| 内容区 `main` | 288 | 48 | 1152 | 852 | 16px / 19.2px / 400 |
+| 页标题 `h1` | 358（`tags`/`starred`/`trash` 为 304） | 61 | 视文字 | 26 | 22px / 26.4px / 600 |
+| 编辑器右栏 | — | — | 296 ⚠️ | — | ⚠️ **本行例外**：量于**窗口态 1060×707**（`computed-tokens-20261022.json`），非 1440 基准，不可与上行并比 |
+| 白板内联块 | 469 | 176 | 734 | 412 | canvas |
+| 白板（tablet 768） | 58 | 176 | 588 | 330 | canvas |
+| 白板（mobile 390） | 13 | 176 | 335 | 188 | canvas |
+
+## 9.3 三种集合内联块几何（1440×900）
+
+| 块 | x | y | 宽 | 高 |
+|---|---|---|---|---|
+| 看板 Kanban | 395 | 81 | 866 | 538 |
+| 图库 Gallery | 464 | 627 | 728 | 286 |
+| 表格 Table | 460 | 921 | 736 | 228 |
+
+断点行为（同一文档三块实测）：tablet 768 时 x=61 / 宽 566；mobile 390 时 x=16 / 宽 313。
+即**集合块宽度跟随内容列，不固定**；看板在 mobile 会被压缩到 313px 且需横向滚动。
+
+## 9.4 本轮未覆盖
+
+- 暗色主题下白板 / 集合块的实际取值（本轮暗色只采了 browse / doc / search / settings-appearance 四屏）。
+- 集合详情独立路由（本账号集合均为内联块，无独立路由）。
+- 团队 / 协作态 token（需第二个账号）。

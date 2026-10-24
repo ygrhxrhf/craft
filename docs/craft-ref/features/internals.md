@@ -793,7 +793,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 | 2 | `ci(oo)` | `lF(...,ha.column.right())` | 添加列·右（Mac `⌘⇧⏎`／Win `Ctrl+Shift+⏎`） |
 | 3 | `zr(oo)` | `zA(...,ha.row.above())` | 在前面添加行（Mac `⌘⌥⏎`／Win 同 2） |
 | 4 | `Co(oo)` | `zA(...,ha.row.below())` | 添加行·下（Mac `⌘⏎`／Win `Ctrl+⏎`） |
-| 5 | `qi(oo)` | `N9e` | `Shift+Enter` 显式不拦截（E 项的官方 handler，在表格语境再次出现） |
+| 5 | `qi(oo)` | `N9e` | `Shift+Enter` 显式不拦截（E 项的官方 handler，在表格语境再次出现） | ☆ **第 300 批续批更正（实测推翻本处，见 `interactions.md` V169 与 `gap.md` G1552）**：官方 `Shift+Enter` **不是零效果** —— 四次独立运行一致读到块内 `<br>` **0→1**、块文本出现行内换行、`domBytes` **+231 B**、键事件**未被消费**、**刷新后换行仍在**（⇒ 落进文档模型）。旧读数"零变化／被彻底吞掉"作废。
 | 6 | `mo(oo)` | `Ro(...).coordinateOfCell(s.cell.id)` 后调 `Nsn(...)` | 裸 `Enter`（取当前格坐标再交给 `Nsn`，语义仍未读） |
 | 7 | `qi(f1)` / `mo(f1)` | `H9e(...)` / 单元格内 Tab 族 | `Tab`／`Shift+Tab` 的表格档 |
 

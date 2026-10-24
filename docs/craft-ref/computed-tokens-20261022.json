@@ -1,0 +1,38 @@
+{
+  "dpr": 1.25,
+  "viewport": [
+    1060,
+    707
+  ],
+  "themeAttr": "light",
+  "accentAttr": "blue",
+  "inline": {
+    "base": "252 253 254",
+    "fg": "26 28 30",
+    "radiusMd": "8px",
+    "fontFamily": "\"Inter\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif, \"Pretendard\", -apple-system, blinkmacsystemfont, sans-serif",
+    "headerH": "48px"
+  },
+  "themeVarCounts": {},
+  "geometry": {
+    "sidebar": [
+      0,
+      48,
+      288,
+      659
+    ],
+    "right": [
+      764,
+      47,
+      296,
+      660
+    ],
+    "editable": [
+      300,
+      88,
+      442,
+      253
+    ]
+  },
+  "vars": {}
+}

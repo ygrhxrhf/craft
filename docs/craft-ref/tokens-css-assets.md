@@ -658,3 +658,68 @@ accent 切换块不带 `data-theme` 前缀，共 12 个，列在第五节。
 - `--cjk-sans: "PingFang TC", "Microsoft JhengHei", sans-serif;--cjk-seri` → `--cjk-rounded: "Resource Han Rounded TC";`
 - `--cjk-sans: "PingFang TC", "Microsoft JhengHei", sans-serif;--cjk-seri` → `--cjk-mono: "Noto Sans Mono TC"}.typography-ui-xs-500{font-family:var(--font-family);`
 - `--base: 252 253 254;--base-overlay: rgb(252 252 252 / 100%);--foregrou` → `--cjk-sans), "Pretendard", -apple-system, blinkmacsystemfont, sans-serif;`
+
+---
+
+# 十一、2026-10-22 ego-browser 复采（官方已发版，旧数值过期）
+
+来源：ego-browser（ego lite 0.6.0.16）`page.fetch()` 取回原文，落在 `docs/craft-ref/css-20261022/`。
+**只记数值，不保存第三方源码本体。**
+
+## 11.1 主表哈希变了 —— 旧记录已过期
+
+| 项 | 2026-09-25 记录 | 2026-10-22 实测 | 变化 |
+|---|---|---|---|
+| index.css 文件名 | `index.css.CP00jDAy.css` | **`index.css.CiV2oimr.css`** | 构建哈希变 |
+| 字节 | 296789 | **302319** | +5530 |
+| 唯一自定义属性 | 546 | **544** | -2 |
+| `[data-theme=…]` 出现次数 | 23 | **24** | +1 |
+
+> 旧文 §二 的「23 个主题块」「根级 light 308 / dark 156」等数值**已被本轮取代**，见下。
+> 复刻项目若引用了旧哈希，需一并更新。
+
+## 11.2 主题块分布（本轮精确复算）
+
+`index.css.CiV2oimr.css` 共 **24** 处 `[data-theme=…]`，唯一取值只有 3 个：`light` / `dark` / `spotcolor`。
+
+按规则聚合自定义属性数（同一选择器出现多次时累加）：
+
+| 选择器 | 自定义属性数 |
+|---|---|
+| `:root, [data-theme=light]`（主块，出现 2 次） | 200 ×2 |
+| `[data-theme=dark]`（主块） | 38 |
+| `[data-theme=dark]`（暗色覆盖块） | 116 |
+| `:root, [data-theme=light]`（第三处） | 116 |
+| `[data-theme=dark]`（第二处 38 的重复声明） | 38 |
+| `[data-theme=dark]`（第二处 116 的重复声明） | 56 |
+
+按主题归并：**light ≈ 516 条、dark ≈ 254 条**（含重复声明）。组件级覆盖 6 处（`._popup_` / `._drawerPopup_` /
+`._pill_` / `._glassContainer_` / `._avatarInnerBorder_` / `._innerBox_`），每处 0–2 条。
+
+## 11.3 强调色块（`[data-accent=…]`，12 处 / 6 色）
+
+`blue` / `pink` / `green` / `purple` / `yellow` / `gray`，每色 2 处声明（与旧文 §五 的「12 个」一致）。
+
+## 11.4 本轮 CSS 资产清单（7 个）
+
+| 文件 | 字节 | 唯一自定义属性 | theme 块 | accent 块 | woff2 |
+|---|---|---|---|---|---|
+| `index.css.CiV2oimr.css` | **302319** | **544** | 24 | 12 | 0 |
+| `fontdef.css`（m-plus-rounded-1c） | 308022 | 0 | 0 | 0 | **354** |
+| `vendor-excalidraw.css.tkYuNB5W.css` | 163879 | **221** | 0 | 0 | 4 |
+| `vendor-code-editor.css.DkZwelau.css` | 29193 | 0 | 0 | 0 | 19 |
+| `BlankFont.css.CSdHt10-.css` | 25567 | 0 | 0 | 0 | 0 |
+| `TemplateGalleryV2.css.OMYn221E.css` | 9282 | **12** | 0 | 0 | 0 |
+| `AIChatPopup.css.D9rwJ006.css` | 333 | 0 | 0 | 0 | 0 |
+
+**新增发现**：`TemplateGalleryV2.css.OMYn221E.css`（9282 B，12 个自定义属性）在旧 13 个资产清单里**没有**，
+只在「新建 → 来自模板」的模板库页面加载 → 印证旧文「必须逐屏取并集」的方法论。
+另：旧文记的 6 个字体资产 `fontdef.css` 本轮只见到 1 个（`m-plus-rounded-1c`，308022 B，与旧值一致），
+其余字体资产未在本次会话的加载集中出现。
+
+## 11.5 本轮实测的根 token（live 值）
+
+`--base: 252 253 254`、`--foreground: 26 28 30`、`--radius-md: 8px`、`--header-height: 48px`，
+侧栏 288px、编辑器右栏 296px、字体第一顺位 Inter、dpr 1.25（未覆盖视口时）/ 1（`setDeviceMetricsOverride` 后）。
+
+逐变量分桶另存：`theme-vars-20261022.json`（light 116 / dark 56 / accent 114）、`computed-tokens-20261022.json`。

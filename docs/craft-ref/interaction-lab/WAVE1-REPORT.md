@@ -536,3 +536,55 @@ div._flexRow_1oz2o_1
 | `gap.md` 第 9 行自述数 | 自述 **1550／G1558** ＝ 现跑 **1550／G1558** |
 | 矩阵 | 17 条 spec（既有 16 条判定未变）· `editor.md-rules.inline-mark` **59 行／16 sev2+／0 declared** |
 | 临时文档 | 两侧均 `softDeleteTempDoc ok=true`；残留另补清两张（本批探针所出：官方 `QODER-ILAB-md-inline2`、本地 `QODER-ILAB-md-inlineL1`）⇒ 末次核对官方 `REMAINING` 只剩 2 张 2 周前 `QODER-HARVEST-*`、本地 `REMAINING []` |
+
+## 十三、☆ 续批九（2026-10-24）：**Markdown 分隔线五档** —— 本轮**未能定案**（如实挂账，不写成一致）
+
+净新增 **0 条**（未定案不立账）· 零产品代码批。本节只记**为何本轮采不下来**，避免下一手重跑。
+
+### 1、★ 已经确认的一半：五档在两侧**都真生效**
+
+- 官方（`probe-w1ay`／`w1bh2`）：`..-`／`.--`／`---`／`=--`／`===` 五档逐字输入，**当前块都变成一条空文本的分隔行**（行高 28px），且 `rows` 逐档递增（本轮复现：3→4→5→6→7）。
+- 本地：`src/components/editor/extensions/divider.tsx:83-91` 的 `nodeInputRule` 用 `DIVIDER_PATTERN`（`src/lib/editor/divider-styles.ts:70`）
+  同样收这五档，并把档位落在 `data-style`。
+
+### 2、★★ 卡点：官方侧**档位信号找不到**（本找法已穷举）
+
+| 候选判据 | 实测结果 |
+| --- | --- |
+| 块行的 `data-*` 属性 | 五档**逐字相同**（`probe-w1bi2`：无任何独有 `data-`） |
+| 块行及后代的计算样式 | 五档**逐字相同**（无 border／无背景／无图／无 opacity 差） |
+| 块自己带的自定义属性 | 只有一个公共的 `--bg-color:transparent`（五档一样） |
+| 无状态块菜单里的勾选项 | 本轮未能稳定打开块菜单（`probe-w1bk2` 点到侧栏区域，读到的是“共享”）⇒ **未验** |
+| 像素哈希（CDP 截图） | ★ **不可用**：同一档两次跑给出**不同** md5（`probe-w1bl2` vs `w1bm`：`---` 在两次分别为 `fa3ab064…` 与 `8136d9de…`） |
+| 剪贴板回读（复制为 Markdown） | ★ **不可用**：`navigator.clipboard.readText()` 被平台拒绝（`Control of this task space is with the user`） |
+
+⇒ 本轮结论：**五档在官方 DOM/CSS 上完全不可区分**，而两条能分辨的通路（像素、剪贴板）各自因**不稳定**与**被拒**而不成立。
+★ 按本项目既有纪律：**不把“读不出”写成“两侧一致”**，也不为此新建一条无据的 G 行。本候选**仍挂**。
+
+### 3、☆ 本轮另一个负面结果（有用，可回查）
+
+若未来找到判据，下一手可直接用这两个已证事实：① 五档在官方**都真生效**（不是“只有一档”）；
+② 五档在官方的**可见结果相同**（都是 28px 高的一条线）⇒ 若本地五档可见结果**不同**，那就是一条真差异（反之则是一致）。
+
+### 4、★★ 本轮中途**被迫停止**（如实登记，含未清的临时文档）
+
+时间线：本轮为找判据连跑了 6 个探针（`w1bh2`→`w1bn`），在 `probe-w1bn`（18:51）时
+任务空间的控制权**交回用户**，错误文案逐字：
+`Control of this task space is with the user, either through …`。
+此后的两个收尾脚本（`cleanup-w1bk`、`list-residue4`）**均卡住、`.out.txt` 为 0 字节**，与“空间已归用户”一致。
+
+按 `ego-browser` 的硬规则（本工作目录 `skill-guide.txt`「User control and completion」一节）：
+**“Stop when the user takes control … Do not retry or route around the stop”** ⇒ 本轮**停止浏览器作业**，不重试、不换空间绕行。
+
+**因此未能完成的清理（逐张列出，不淹盖）**：
+
+| 侧 | 文档 | 来源探针 | 状态 |
+| --- | --- | --- | --- |
+| 官方 | `QODER-ILAB-div7` | `probe-w1bj2` | ★ `softDelete ok=false`（当时就没删掉） |
+| 官方 | `QODER-ILAB-divB` | `probe-w1bn` | 脚本在读剪贴板时被迫中断，**未走到删除那一步** |
+| 本地 | `QODER-ILAB-divAL` | `probe-w1bm` | 同上，**无删除步骤** |
+
+已确认删掉的（`softDelete ok=true`）：官方 `QODER-ILAB-div5`／`div6`／`div8`／`div9`／`divA`；本地本找法期间**未新建**临时文档（只用官方侧）。
+
+★ 另：本轮跑出一个卡死的 `ego.mojom.NodeService`（PID **4576**，启动于 18:38），是后续探针卡住的另一成因；
+按既有纪律（**杀进程禁用模糊通配符**）本轮**未杀**，留给下一手按显式 PID 处理。

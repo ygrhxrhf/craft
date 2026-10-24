@@ -235,6 +235,16 @@ export function compare(specId, official, local, spec) {
       push({ facet: 'keys', step: i, label: o.steps[i].label, official: ok, local: lk, delta: null, severity: 2 });
     }
   }
+  // ⑤e 块类型（kinds）：★ 加性档，只在两侧都采到时判。
+  //   为什么必须有它：官方块行 tag 恒为 span（Slate）⇒ 只看 tag 会把官方所有 markdown 转换
+  //   读成"没反应"（实测）。本档把两侧的"类型"归一到同一枚举（para/task/list/item/headingN/divider/code/quote）。
+  for (let i = 0; i < n; i++) {
+    const ok = o.steps[i] && o.steps[i].kinds;
+    const lk = l.steps[i] && l.steps[i].kinds;
+    if (!ok || !lk) continue;
+    const os = JSON.stringify(ok), ls = JSON.stringify(lk);
+    if (os !== ls) push({ facet: 'kinds', step: i, label: o.steps[i].label, official: os, local: ls, delta: null, severity: 2 });
+  }
   // ⑤d 框选（marquee）：★ 加性档，只在两侧都采到时判。
   //   判据口径照 G1138：选中看 role=checkbox 的 aria-checked，**不看** `_isActive_`（静止态也有）。
   for (let i = 0; i < n; i++) {

@@ -182,6 +182,7 @@ export class Target {
     if (set.has('blocks')) out.blocks = snap.blocks;
     if (set.has('breaks')) out.breaks = snap.breaks;
     if (set.has('keys')) out.keys = snap.keys;
+    if (set.has('kinds')) out.kinds = snap.kinds;
     if (set.has('marquee')) out.marquee = snap.marquee;
     if (set.has('attrs')) out.attrs = snap.attrs;
     if (set.has('indent')) out.indent = snap.indent;

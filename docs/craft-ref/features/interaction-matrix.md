@@ -27,6 +27,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
+| `editor.md-rules.block-kind` | differ | 95 | 36 | 21 | 本地 +6/−0 · 官方 +8/−1 |
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 40 | 16 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
@@ -38,6 +39,27 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | --- | --- | --- | --- | --- | --- | --- |
 | `editor.block.indent-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 空列表项里光标 offset 天然差 1 | probe-bullet（本轮实测：官方 childTexts ["•","L1"]；本地 listStyleType:disc） |
 | `editor.block.indent-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
+| `editor.md-rules.block-kind` | countΔ:AAA | 3 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 4 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 5 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 6 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 7 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 8 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 9 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 10 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 11 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 12 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 13 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 14 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 15 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 16 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 17 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | countΔ:AAA | 18 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
+| `editor.md-rules.block-kind` | added-only-local |  |  | Task item checkbox for empty task item | 本地 TipTap 任务块的 checkbox 可及名（`Task item checkbox for <text>／empty task item`）用 visuallyHiddenStyle 画，文本**仍进 innerText**；官方任务块无此串。☆ 属 a11y 面，两侧可及名口径是否等价**本批未采**，故 | node_modules/@tiptap/extension-list/src/task-item/task-item.ts:83-85（getCheckboxLabel 默认串） |
+| `editor.md-rules.block-kind` | added-only-official |  | 1. |  | 官方列表序号（`1.`／`2.`）与侧栏大纲行（`AAA#1`／`QODER-ILAB-md-block-kind#3`）会出现在正文文本流之外；本地列表序号由 CSS counter 画、不进 innerText，且无大纲行 | gap.md G1556 · G866（官方序号画进文本节点） |
+| `editor.md-rules.block-kind` | added-only-official |  | AAA#1 |  | 官方列表序号（`1.`／`2.`）与侧栏大纲行（`AAA#1`／`QODER-ILAB-md-block-kind#3`）会出现在正文文本流之外；本地列表序号由 CSS counter 画、不进 innerText，且无大纲行 | gap.md G1556 · G866（官方序号画进文本节点） |
+| `editor.md-rules.block-kind` | added-only-official |  | QODER-ILAB-md-block-kind#3 |  | 官方列表序号（`1.`／`2.`）与侧栏大纲行（`AAA#1`／`QODER-ILAB-md-block-kind#3`）会出现在正文文本流之外；本地列表序号由 CSS counter 画、不进 innerText，且无大纲行 | gap.md G1556 · G866（官方序号画进文本节点） |
+| `editor.md-rules.block-kind` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方基线里带一枚目录空态提示「使用标题、页面或卡片创建目录。」，本批临时文档本地侧未渲染该提示（本地该串是纯核常量 TOC_PLACEHOLDER）⇒ 与本 spec 主判据无关 | src/lib/editor/official-copy.ts:8（TOC_PLACEHOLDER 逐字） |
 | `editor.slash.open-and-filter` | countΔ:插入 | 1 | 8 | 4 | 菜单项文案与条数不同（官方扁平 8 条含「插入」：插入文件/片段/表格/分隔符/白板/表格集合/画廊集合/看板集合；本地 4 条）—— 与上面两条同源 | probe-verbatim.json · gap.md（本轮新登记） |
 | `editor.slash.open-and-filter` | added-only-local |  |  | 无匹配命令 | 本地 / 菜单的**无匹配文案**是「无匹配命令」；官方过滤后直接把面板收起、不给无匹配文案（G1544 同源） | chk-roster：官方 added=["/wen"]、本地 added=["/wen","无匹配命令"] · gap.md G1544 |
 | `shell.command-palette.toggle-vs-jump` | countΔ:搜索文档与块 | 1 | 0 | 1 | 两侧面板条目集合不同 ⇒ 该具名文案只在本地有 | probe-verbatim.json |
@@ -171,6 +193,47 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 3 | blocks | ["AAA"] | ["AAA",""] |  | 2 |
 | 4 | blocks | ["AAA"] | ["AAA",""] |  | 2 |
 | 5 | blocks | ["AAA"] | ["AAA",""] |  | 2 |
+
+### `editor.md-rules.block-kind` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 1 | blocks | [""] | ["",""] |  | 2 |
+| 2 | blocks | ["AAA"] | ["AAA",""] |  | 2 |
+| 3 | blocks | ["AAA",""] | ["AAA","",""] |  | 2 |
+| 4 | blocks | ["AAA",""] | ["AAA","",""] |  | 2 |
+| 5 | blocks | ["AAA",""] | ["AAA","",""] |  | 2 |
+| 6 | blocks | ["AAA","BBB"] | ["AAA","BBB",""] |  | 2 |
+| 7 | blocks | ["AAA","BBB",""] | ["AAA","BBB","",""] |  | 2 |
+| 8 | blocks | ["AAA","BBB",""] | ["AAA","BBB","",""] |  | 2 |
+| 9 | blocks | ["AAA","BBB",""] | ["AAA","BBB","",""] |  | 2 |
+| 10 | blocks | ["AAA","BBB","CCC"] | ["AAA","BBB","CCC",""] |  | 2 |
+| 11 | blocks | ["AAA","BBB","CCC",""] | ["AAA","BBB","CCC","",""] |  | 2 |
+| 12 | blocks | ["AAA","BBB","CCC",""] | ["AAA","BBB","CCC","",""] |  | 2 |
+| 13 | blocks | ["AAA","BBB","CCC","1."] | ["AAA","BBB","CCC","",""] |  | 2 |
+| 14 | blocks | ["AAA","BBB","CCC","1. EEE"] | ["AAA","BBB","CCC","EEE",""] |  | 2 |
+| 15 | blocks | ["AAA","BBB","CCC","1. EEE","2."] | ["AAA","BBB","CCC","EEE","",""] |  | 2 |
+| 16 | blocks | ["AAA","BBB","CCC","1. EEE",""] | ["AAA","BBB","CCC","EEE","",""] |  | 2 |
+| 17 | blocks | ["AAA","BBB","CCC","1. EEE",""] | ["AAA","BBB","CCC","EEE","",""] |  | 2 |
+| 18 | blocks | ["AAA","BBB","CCC","1. EEE","DDD"] | ["AAA","BBB","CCC","EEE","","DDD"] |  | 2 |
+| 1 | kinds | ["title"] | ["title","para"] |  | 2 |
+| 2 | kinds | ["title"] | ["title","para"] |  | 2 |
+| 3 | kinds | ["title","para"] | ["title","para","para"] |  | 2 |
+| 4 | kinds | ["title","para"] | ["title","para","para"] |  | 2 |
+| 5 | kinds | ["title","strong"] | ["title","heading4","para"] |  | 2 |
+| 6 | kinds | ["title","strong"] | ["title","heading4","para"] |  | 2 |
+| 7 | kinds | ["title","strong","para"] | ["title","heading4","para","para"] |  | 2 |
+| 8 | kinds | ["title","strong","para"] | ["title","heading4","para","para"] |  | 2 |
+| 9 | kinds | ["title","strong","bullet"] | ["title","heading4","bullet","para"] |  | 2 |
+| 10 | kinds | ["title","strong","bullet"] | ["title","heading4","bullet","para"] |  | 2 |
+| 11 | kinds | ["title","strong","bullet","bullet"] | ["title","heading4","bullet","bullet","para"] |  | 2 |
+| 12 | kinds | ["title","strong","bullet","para"] | ["title","heading4","bullet","para","para"] |  | 2 |
+| 13 | kinds | ["title","strong","bullet","numbered"] | ["title","heading4","bullet","numbered","para"] |  | 2 |
+| 14 | kinds | ["title","strong","bullet","numbered"] | ["title","heading4","bullet","numbered","para"] |  | 2 |
+| 15 | kinds | ["title","strong","bullet","numbered","numbered"] | ["title","heading4","bullet","numbered","numbered","para"] |  | 2 |
+| 16 | kinds | ["title","strong","bullet","numbered","para"] | ["title","heading4","bullet","numbered","para","para"] |  | 2 |
+| 17 | kinds | ["title","strong","bullet","numbered","task"] | ["title","heading4","bullet","numbered","task","para"] |  | 2 |
+| 18 | kinds | ["title","strong","bullet","numbered","task"] | ["title","heading4","bullet","numbered","task","para"] |  | 2 |
 
 ### `editor.selection.ctrl-a-ladder` — differ
 
@@ -322,6 +385,16 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.turn-into-style` | official | blocksCount count 1 | PASS | 1 |
 | `editor.key.turn-into-style` | local | text:AAA count 1 | PASS | 1 |
 | `editor.key.turn-into-style` | local | blocksCount count 1 | **FAIL** | 2 |
+| `editor.md-rules.block-kind` | official | text:AAA count 1 | PASS | 1 |
+| `editor.md-rules.block-kind` | official | text:BBB count 1 | PASS | 1 |
+| `editor.md-rules.block-kind` | official | text:CCC count 1 | PASS | 1 |
+| `editor.md-rules.block-kind` | official | text:EEE count 1 | PASS | 1 |
+| `editor.md-rules.block-kind` | official | text:DDD count 1 | PASS | 1 |
+| `editor.md-rules.block-kind` | local | text:AAA count 1 | PASS | 1 |
+| `editor.md-rules.block-kind` | local | text:BBB count 1 | PASS | 1 |
+| `editor.md-rules.block-kind` | local | text:CCC count 1 | PASS | 1 |
+| `editor.md-rules.block-kind` | local | text:EEE count 1 | PASS | 1 |
+| `editor.md-rules.block-kind` | local | text:DDD count 1 | PASS | 1 |
 | `editor.selection.ctrl-a-ladder` | official | blocks equals ["AAA","BBB","CCC"] | PASS | ["AAA","BBB","CCC"] |
 | `editor.selection.ctrl-a-ladder` | official | selection:collapsed equals false | PASS | false |
 | `editor.selection.ctrl-a-ladder` | official | focusInEditor equals true | PASS | true |

@@ -799,6 +799,56 @@ export function captureAll(arg) {
   })();
 
   return {
+    kinds: (() => {
+      // ★ 加性档：块**语义档**面（markdown 输入规则的唯一判据）。
+      //   为什么必须有它：官方块行的 tag **恒为 `span`**（Slate 扁平渲染）⇒ 只看 tag 会把官方
+      //   所有 markdown 转换读成"没反应"（实测 probe-w1an：`# ` 之后官方仍 `span`，只有字号变了）。
+      //   两侧的"类型"信号不同：官方在**后代**上（`data-task-schedule-anchor` 判任务、leaf 的
+      //   字号/字重判标题档、行首记号 `• `／`N. ` 判列表），本地在**标签/祖先**上（`h1..h4`、
+      //   `li` 的父是 UL/OL、`input[type=checkbox]`）。本档把两者归一到**同一枚举**，故可比。
+      //   ☆ 与 `indent` 档同一先例（两侧载体不同、归一到"级"再比）。
+      //   ☆ 诚实边界：官方**折叠块**（`+ `）在本档无可靠信号（与任务块同为 svg=1、无独有 data-*）
+      //     ⇒ 该档两侧都落 `para`，**本档不区分**；已在 spec 注释里登记，不写成"一致"。
+      const root = a.blockRoot ? a.blockRoot : null;
+      const els = root ? flatten(root) : [];
+      const norm = (el) => {
+        if (!el) return null;
+        // 任务：官方是后代锚点，本地是 checkbox 或 li[data-checked]
+        if (el.querySelector && el.querySelector("[data-task-schedule-anchor], [data-task-deadline-anchor]")) return "task";
+        if (el.querySelector && el.querySelector("input[type=checkbox], [role=checkbox]")) return "task";
+        const t = el.tagName.toLowerCase();
+        if (t === "h1") return "title";
+        if (t === "h2") return "subtitle";
+        if (t === "h3") return "heading";
+        if (t === "h4") return "heading4";
+        // 列表：本地看 li 的父容器；官方看行首记号（圆点/序号画进文本节点）
+        const li = el.closest ? el.closest("li") : null;
+        if (li) {
+          const par = li.parentElement;
+          const dt = par && par.getAttribute ? par.getAttribute("data-type") : null;
+          if (dt === "taskList" || (li.getAttribute && li.getAttribute("data-checked") != null)) return "task";
+          if (par && par.tagName === "OL") return "numbered";
+          return "bullet";
+        }
+        const leaf = (el.matches && el.matches('[data-slate-node="text"]')) ? el : (el.querySelector ? el.querySelector('[data-slate-node="text"]') : null);
+        const txt = (el.innerText || "").replace(/\s+/g, " ").trim();
+        // ★ 空列表项的行首记号**后面没有空格**（官方实测 innerText 就是 "•"／"1."）
+        //   ⇒ 判据必须允许"记号后直接结束"，否则空列表项一律落 para（本批踩到）。
+        if (/^[•·●◦▪▫‣⁃](\s|$)/.test(txt)) return "bullet";
+        if (/^\d+\.(\s|$)/.test(txt)) return "numbered";
+        const cs = leaf ? getComputedStyle(leaf) : null;
+        if (cs) {
+          const fs = parseFloat(cs.fontSize);
+          const fw = cs.fontWeight;
+          if (fs >= 23 && fw === "700") return "title";
+          if (fs >= 20 && fw === "700") return "subtitle";
+          if (fs >= 18 && fw === "600") return "heading";
+          if (fs >= 16 && fw === "700") return "strong";
+        }
+        return "para";
+      };
+      return els.map(norm);
+    })(),
     marquee: (() => {
       // ★ 加性档：框选面（矩形 ＋ 选中集）。只在 spec 声明 keys/selection 之外单独要时才有值。
       //   判据口径照 G1138：选中看 role=checkbox 的 aria-checked，**不看** `_isActive_`（静止态也有）。

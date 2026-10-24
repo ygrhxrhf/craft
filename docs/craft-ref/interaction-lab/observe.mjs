@@ -799,6 +799,70 @@ export function captureAll(arg) {
   })();
 
   return {
+    inline: (() => {
+      // ★ 加性档：**行内标记**面（markdown 行内规则的唯一判据）。
+      //   为什么必须有它：行内标记**不改块名册、不改具名文本计数**（`**X**` 与 `X` 在块名册里都只是"有文字"）
+      //   ⇒ 现有各档都读不出"到底转换了没有"。
+      //   ★★ Wave 1 续批八的仪器修（第一版本档**读错过**，如实登记）：
+      //     官方**没有** `<strong>/<em>/<del>/<mark>/<code>/<a>` 标签（Slate 扁平渲染），
+      //     标记载体是 **leaf 的计算样式/属性**（实测 probe-w1be／w1bf／w1bg）：
+      //       粗体 fw=700｜斜体 font-style:italic｜删除线 text-decoration:line-through
+      //       高亮 leaf 背景色非透明｜行内代码 leaf spellcheck="false"＋等宽字族｜链接 leaf 带 text-decoration="underline"
+      //     ⇒ 第一版只数标签，把官方**全部**读成"没反应"。本版改为
+      //     **两侧各按自己的载体读，再归一到同一枚举 `marks`**（与 `indent`／`kinds` 同一先例）。
+      //   ☆ 诚实的另一半：官方**行内记号必须后跟空格才转换**（实测 probe-w1bc：`**X**` 原样不转，
+      //     `**X** ` 才转）⇒ spec 的每一步都显式补一个 Space，否则本档两侧都读成"没反应"。
+      const sel = window.getSelection();
+      const root = a.blockRoot ? a.blockRoot : null;
+      if (!root) return null;
+      const els = flatten(root);
+      const hit = els.find((el) => el && sel && sel.anchorNode && el.contains(sel.anchorNode)) || els[els.length - 1] || null;
+      if (!hit) return null;
+      const isOfficial = a.targetName === 'official';
+      const marks = new Set();
+      const raw = { strong: 0, em: 0, del: 0, mark: 0, code: 0, link: 0 };
+      const styles = {};
+      if (isOfficial) {
+        for (const lf of hit.querySelectorAll('[data-slate-leaf]')) {
+          const c = getComputedStyle(lf);
+          const k = c.fontWeight + '|' + c.textDecorationLine + '|' + c.backgroundColor + '|' + c.fontStyle + '|' + String(lf.getAttribute('spellcheck'));
+          styles[k] = (styles[k] || 0) + 1;
+          if (Number(c.fontWeight) >= 600) { marks.add('bold'); raw.strong += 1; }
+          if (c.fontStyle === 'italic') { marks.add('italic'); raw.em += 1; }
+          if (c.textDecorationLine.indexOf('line-through') >= 0) { marks.add('strike'); raw.del += 1; }
+          // ★ 行内代码的 leaf 带**极淡背景**（rgba(31,34,37,0.03)），与高亮的
+          //   rgba(255,241,0,0.4) 同样是"非透明"；先判代码，已是代码就**不再计高亮**
+          //   （实测第一版误报：官方代码步读成 code+highlight 两枚）。
+          const isCodeLeaf = lf.getAttribute('spellcheck') === 'false' || /mono/i.test(c.fontFamily);
+          if (isCodeLeaf) { marks.add('code'); raw.code += 1; }
+          const bg = c.backgroundColor;
+          if (!isCodeLeaf && bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') { marks.add('highlight'); raw.mark += 1; }
+          if (lf.getAttribute('text-decoration') === 'underline' || c.textDecorationLine.indexOf('underline') >= 0) { marks.add('link'); raw.link += 1; }
+        }
+      } else {
+        const q = (s2) => hit.querySelectorAll(s2).length;
+        raw.strong = q('strong,b'); if (raw.strong) marks.add('bold');
+        raw.em = q('em,i'); if (raw.em) marks.add('italic');
+        raw.del = q('del,s,strike'); if (raw.del) marks.add('strike');
+        raw.mark = q('mark'); if (raw.mark) marks.add('highlight');
+        raw.code = q('code'); if (raw.code) marks.add('code');
+        raw.link = q('a[href]'); if (raw.link) marks.add('link');
+        for (const e of hit.querySelectorAll('*')) {
+          const c = getComputedStyle(e);
+          const k = c.fontWeight + '|' + c.textDecorationLine + '|' + c.backgroundColor + '|' + c.fontStyle;
+          styles[k] = (styles[k] || 0) + 1;
+        }
+      }
+      const leaf = hit.querySelector('[data-slate-node="text"]') || hit;
+      const cs = getComputedStyle(leaf);
+      return {
+        text: (hit.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 24),
+        marks: Array.from(marks).sort(),
+        strong: raw.strong, em: raw.em, del: raw.del, mark: raw.mark, code: raw.code, link: raw.link,
+        leaf: { fw: cs.fontWeight, deco: cs.textDecorationLine, bg: cs.backgroundColor, fs: cs.fontStyle },
+        styles,
+      };
+    })(),
     kinds: (() => {
       // ★ 加性档：块**语义档**面（markdown 输入规则的唯一判据）。
       //   为什么必须有它：官方块行的 tag **恒为 `span`**（Slate 扁平渲染）⇒ 只看 tag 会把官方

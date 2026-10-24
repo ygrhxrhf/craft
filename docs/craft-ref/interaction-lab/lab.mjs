@@ -168,6 +168,9 @@ export class Target {
       stateSelectors,
       attrProbes,
       blockRoot: this.sel(spec, 'blockRoot'),
+      // ★ 目标名：两侧的行内标记载体不同（官方读 leaf 计算样式、本地读标签）
+      //   ⇒ `inline` 档需知道自己在哪一侧，否则官方恒读成“没反应”。
+      targetName: this.name,
       // 焦点宿主：两侧各自的编辑器容器选择器（官方 editor-body / 本地 .ProseMirror）
       focusHost: this.sel(spec, 'editorBody'),
     });
@@ -182,6 +185,7 @@ export class Target {
     if (set.has('blocks')) out.blocks = snap.blocks;
     if (set.has('breaks')) out.breaks = snap.breaks;
     if (set.has('keys')) out.keys = snap.keys;
+    if (set.has('inline')) out.inline = snap.inline;
     if (set.has('kinds')) out.kinds = snap.kinds;
     if (set.has('marquee')) out.marquee = snap.marquee;
     if (set.has('attrs')) out.attrs = snap.attrs;

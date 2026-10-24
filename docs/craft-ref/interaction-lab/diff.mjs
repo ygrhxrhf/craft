@@ -235,6 +235,20 @@ export function compare(specId, official, local, spec) {
       push({ facet: 'keys', step: i, label: o.steps[i].label, official: ok, local: lk, delta: null, severity: 2 });
     }
   }
+  // ⑤f 行内标记（inline）：★ 加性档，只在两侧都采到时判。
+  //   为什么必须有它：行内标记不改块名册、不改文本计数（`**X**` 与 `X` 在名册里都只是"有文字"）
+  //   ⇒ 现有各档都读不出"到底转换了没有"（实测 probe-w1bb：官方六条行内 markdown 全部原样不转换）。
+  for (let i = 0; i < n; i++) {
+    const oi = o.steps[i] && o.steps[i].inline;
+    const li = l.steps[i] && l.steps[i].inline;
+    if (!oi || !li) continue;
+    // ★ 只比**归一后的枚举 `marks`**（两侧载体不同：官方 leaf 计算样式、本地标签）。
+    //   第一版把原始计数也算进去 ⇒ 官方没有标签、计数恒 0，而本地恒 ≥1，
+    //   **即使两边都转换成功**也会报红（假红）。枚举才是可比的那一层。
+    const norm = (x) => JSON.stringify({ marks: x.marks || [], fw: x.leaf.fw, deco: x.leaf.deco, bg: x.leaf.bg, fs: x.leaf.fs });
+    const os = norm(oi), ls = norm(li);
+    if (os !== ls) push({ facet: 'inline', step: i, label: o.steps[i].label, official: os, local: ls, delta: null, severity: 2 });
+  }
   // ⑤e 块类型（kinds）：★ 加性档，只在两侧都采到时判。
   //   为什么必须有它：官方块行 tag 恒为 span（Slate）⇒ 只看 tag 会把官方所有 markdown 转换
   //   读成"没反应"（实测）。本档把两侧的"类型"归一到同一枚举（para/task/list/item/headingN/divider/code/quote）。

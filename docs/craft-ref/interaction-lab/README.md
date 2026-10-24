@@ -36,7 +36,12 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
   selectors: { key: { official, local } },   // 两侧选择器各写一份
   setup:   [ navigate | seedTempDoc | placeCaret | placeCaretTrailing | openPanel | setPreference ],
   steps:   [ key | chord | type | paste | click | clickRef | clickXY | drag | wait ],
-  observe: ['dom','text','state','selection','blocks','attrs','indent','computed','screenshot'],
+  observe: ['dom','text','state','selection','blocks','attrs','indent','computed','screenshot',
+            // ★ Wave 1 后续批逐步新增的**加性**档（不选就不采、选了不影响旧录像）：
+            'keys',      // 按键消费探针（capture/bubble 两处各一个监听）
+            'marquee',   // 框选（拖拽选中的块名册）
+            'kinds',     // 块**语义档**归一枚举（para/title/headingN/strong/bullet/…）
+            'inline'],   // 行内标记归一枚举 marks（bold/italic/strike/highlight/code/link）
   observeTexts:    ['<具名文本>'],           // 进指纹的 counts
   stateSelectors:  ['<selector key>'],       // 进 stateAttrs.named
   attrProbes:      [{ key, selector, attrs }],

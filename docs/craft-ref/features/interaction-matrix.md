@@ -28,6 +28,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.md-rules.block-kind` | differ | 95 | 36 | 21 | 本地 +6/−0 · 官方 +8/−1 |
+| `editor.md-rules.inline-mark` | differ | 59 | 16 | 0 | 本地 +6/−0 · 官方 +6/−0 |
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 40 | 16 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
@@ -235,6 +236,27 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 17 | kinds | ["title","strong","bullet","numbered","task"] | ["title","heading4","bullet","numbered","task","para"] |  | 2 |
 | 18 | kinds | ["title","strong","bullet","numbered","task"] | ["title","heading4","bullet","numbered","task","para"] |  | 2 |
 
+### `editor.md-rules.inline-mark` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 1 | countΔ:**X** | 1 | 0 | -1 | 2 |
+| 5 | countΔ:*Y* | 1 | 0 | -1 | 2 |
+| 9 | countΔ:~~Z~~ | 1 | 0 | -1 | 2 |
+| 13 | countΔ:==W== | 1 | 0 | -1 | 2 |
+| 1 | blocks | ["**X**"] | ["X"] |  | 2 |
+| 5 | blocks | ["X","*Y*"] | ["X","Y"] |  | 2 |
+| 9 | blocks | ["X","Y","~~Z~~"] | ["X","Y","Z"] |  | 2 |
+| 13 | blocks | ["X","Y","Z","==W=="] | ["X","Y","Z","W"] |  | 2 |
+| 17 | blocks | ["X","Y","Z","W","`C`"] | ["X","Y","Z","W","C"] |  | 2 |
+| 21 | blocks | ["X","Y","Z","W","C","[T](https://a.com)"] | ["X","Y","Z","W","C","T"] |  | 2 |
+| 1 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 5 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 9 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["strike"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 13 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 17 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["code"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 21 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["link"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+
 ### `editor.selection.ctrl-a-ladder` — differ
 
 | step | facet | official | local | delta | severity |
@@ -395,6 +417,14 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.md-rules.block-kind` | local | text:CCC count 1 | PASS | 1 |
 | `editor.md-rules.block-kind` | local | text:EEE count 1 | PASS | 1 |
 | `editor.md-rules.block-kind` | local | text:DDD count 1 | PASS | 1 |
+| `editor.md-rules.inline-mark` | official | text:**X** count 0 | PASS | 0 |
+| `editor.md-rules.inline-mark` | official | text:*Y* count 0 | PASS | 0 |
+| `editor.md-rules.inline-mark` | official | text:~~Z~~ count 0 | PASS | 0 |
+| `editor.md-rules.inline-mark` | official | text:==W== count 0 | PASS | 0 |
+| `editor.md-rules.inline-mark` | local | text:**X** count 0 | PASS | 0 |
+| `editor.md-rules.inline-mark` | local | text:*Y* count 0 | PASS | 0 |
+| `editor.md-rules.inline-mark` | local | text:~~Z~~ count 0 | PASS | 0 |
+| `editor.md-rules.inline-mark` | local | text:==W== count 0 | PASS | 0 |
 | `editor.selection.ctrl-a-ladder` | official | blocks equals ["AAA","BBB","CCC"] | PASS | ["AAA","BBB","CCC"] |
 | `editor.selection.ctrl-a-ladder` | official | selection:collapsed equals false | PASS | false |
 | `editor.selection.ctrl-a-ladder` | official | focusInEditor equals true | PASS | true |

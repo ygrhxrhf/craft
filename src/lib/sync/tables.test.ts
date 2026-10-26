@@ -35,7 +35,11 @@ interface Site { file: string; table: string | null; patchKind: 'literal' | 'oth
 // 4 处 `...spread`（CommentSection 两处、SettingsPanels 的 `{...patch}`、favoritePatch），
 // 1 处计算键 `{ [key]: value }`（开关面板——这一路的列名由 G03 那道闸从 `Preferences` 类型现读兜住）。
 // 新增一处判不出来的写法就得先抬这条基线，等于逼人来人工复核。
-const UNRESOLVED_BASELINE = 13;
+// ☆ 13→15（白板删除/恢复入口）：`WhiteboardLifecycleButtons.tsx` 的两处
+//   `patch: whiteboardMetaPatch.delete(...)` / `.restore(...)` 是变量 patch，静态面判不出来。
+//   已人工复核：两处各产 `isDeleted`/`deletedAt`/`updatedAt` 三键，全在 whiteboard 白名单内，
+//   且 `whiteboard-meta.test.ts` 另有一条守卫逐键比对白名单（不必只靠这里的一次性复核）。
+const UNRESOLVED_BASELINE = 15;
 
 /** 服务端写侧把 payload.userId 无条件覆盖成会话 userId 的表（`route.ts:161` 的
  * `USER_ID_TABLES`，用在 `:284`）。这些表的 `userId` 不在 cols 里也不算丢列——列照发，

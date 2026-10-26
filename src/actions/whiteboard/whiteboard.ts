@@ -27,6 +27,10 @@ export interface WhiteboardItem {
   updatedAt: string;
 }
 
+export interface DeletedWhiteboardItem extends WhiteboardItem {
+  deletedAt: string | null;
+}
+
 export async function getWhiteboards(): Promise<WhiteboardItem[]> {
   const userId = await requireUserId();
 
@@ -41,6 +45,28 @@ export async function getWhiteboards(): Promise<WhiteboardItem[]> {
     icon: (w.icon as string) ?? null,
     updatedAt: w.updatedAt as string,
   }));
+}
+
+/**
+ * 白板没有进回收站（回收站只认 `Document` 表），删除后的恢复入口就在白板列表页的
+ * 「最近删除」分档里 —— 所以这里必须能读到墓碑行，否则删掉就再也见不到。
+ */
+export async function getDeletedWhiteboards(): Promise<DeletedWhiteboardItem[]> {
+  const userId = await requireUserId();
+
+  const boards = await (await getTable('Whiteboard'))
+    .where({ userId, isDeleted: true })
+    .all();
+
+  return boards
+    .map((w) => ({
+      id: w.id as string,
+      name: w.name as string,
+      icon: (w.icon as string) ?? null,
+      updatedAt: w.updatedAt as string,
+      deletedAt: (w.deletedAt as string) ?? null,
+    }))
+    .sort((a, b) => (b.deletedAt ?? '').localeCompare(a.deletedAt ?? ''));
 }
 
 export async function getWhiteboard(id: string) {

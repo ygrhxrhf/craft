@@ -3,6 +3,7 @@ import { ViewTransition } from 'react';
 import { auth } from '@/lib/auth/auth';
 import { getWhiteboard } from '@/actions/whiteboard/whiteboard';
 import { Board } from '@/components/whiteboard/Board';
+import { WhiteboardDeleteButton } from '@/components/whiteboard/WhiteboardLifecycleButtons';
 import { WhiteboardBreadcrumb } from './WhiteboardBreadcrumb';
 import { WhiteboardShareButton } from './WhiteboardShareButton';
 
@@ -26,6 +27,7 @@ export default async function WhiteboardPage({ params }: WhiteboardPageProps) {
         <div className="min-w-0 flex-1">
           <WhiteboardBreadcrumb id={board.id} name={board.name} icon={board.icon} />
         </div>
+        <WhiteboardDeleteButton id={board.id} name={board.name} />
         <WhiteboardShareButton whiteboardId={board.id} />
       </div>
       <div className="min-h-0 flex-1">

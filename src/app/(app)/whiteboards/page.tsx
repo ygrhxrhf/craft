@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
-import { getWhiteboards } from '@/actions/whiteboard/whiteboard';
+import { getDeletedWhiteboards, getWhiteboards } from '@/actions/whiteboard/whiteboard';
+import { WhiteboardRestoreButton } from '@/components/whiteboard/WhiteboardLifecycleButtons';
 import { CreateWhiteboardButton } from './CreateWhiteboardButton';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
@@ -10,7 +11,7 @@ export default async function WhiteboardsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
 
-  const boards = await getWhiteboards();
+  const [boards, deleted] = await Promise.all([getWhiteboards(), getDeletedWhiteboards()]);
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -43,6 +44,35 @@ export default async function WhiteboardsPage() {
               </a>
             ))}
           </BrowseGrid>
+        )}
+
+        {/*
+          白板不进回收站（回收站只认 Document 表），删除后的恢复入口就在这一档。
+          ☆ 没有它，删掉的白板既打不开（getWhiteboard 返回 null）也无处恢复。
+        */}
+        {deleted.length > 0 && (
+          <section className="mt-8">
+            <h2 className="mb-3 text-sm font-medium text-muted-foreground">
+              最近删除（{deleted.length}）
+            </h2>
+            <ul className="divide-y divide-border rounded-lg border border-border">
+              {deleted.map((board) => (
+                <li key={board.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <span className="text-xl leading-none">{board.icon ?? '🎨'}</span>
+                  <span className="min-w-0 flex-1 truncate text-sm">{board.name}</span>
+                  {board.deletedAt && (
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {new Date(board.deletedAt).toLocaleDateString('zh-CN', {
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </span>
+                  )}
+                  <WhiteboardRestoreButton id={board.id} />
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
       </AppPageContainer>
     </div>

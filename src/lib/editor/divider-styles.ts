@@ -67,6 +67,13 @@ export const DIVIDER_SIGILS: Record<string, DividerStyle> = Object.fromEntries(
 // metacharacter has to survive escaping; each entry is exercised by name in `divider.test.ts`.
 export const DIVIDER_PATTERN = /^(\.\.-|\.--|---|=--|===|–-|—-|=–|=—)$/;
 
+/**
+ * The line shapes a markdown importer turns into a divider block: the typed sigils plus any
+ * thematic-break run of dashes, asterisks or underscores. The codec's exporter checks against
+ * this same set so it never writes markup that would read back as plain text.
+ */
+export const DIVIDER_MARKUP_PATTERN = /^(\.\.-|\.--|---|=--|===|–-|—-|=–|=—|-{3,}|\*{3,}|_{3,})$/;
+
 /** Whole-line rule markup → style, with the official fallback for a run the table does not name. */
 export function dividerStyleFromMarkup(markup: string): DividerStyle | undefined {
   if (markup in STYLE_BY_MARKUP) return STYLE_BY_MARKUP[markup];

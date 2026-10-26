@@ -700,3 +700,40 @@ div._flexRow_1oz2o_1
 | `ledger-arity-gate` / `ledger-selftally-gate` | **4/4** / **1/1** 全绿（自述 1553／G1561 未变，本批只改一行内容） |
 | 临时文档 | 本批新建的 `divshot`／`divdetail`／`divfiveC`／`divfiveB`／`divfive` **全部 `softDelete ok=true`**；列表屏只剩 `div7`／`divB` 两张旧残留 |
 | 证据留档 | 截图 `C:/Users/zhanh/ego/craft-ilab-20261026/round-72-five.png`（五档同屏，可直接目视比对） |
+
+## 十六、★ 续批十二（2026-10-26）：**清掉 G1561** —— 上一批留的「半件」当场接上（真写入批）
+
+净新增 **0 条**（清 1 条）· **本批动了 `src/`**（与前十一批不同）。台账＝`gap.md` G1561 改判**已清**。
+
+### 1、接线
+
+`document-codec/index.ts` 的 `case 'divider'` 原来与 `horizontalRule` 合并返回 `'---'`，
+现改为读 `node.attrs.style` 走现成的 `dividerMarkupFromStyle()`；无 style 属性时仍写 `'---'`。
+
+### 2、★★ 接线后才暴露的一个回归（差点写进去）
+
+旧档名 `dashed` 的 markdown 形式是 `=-`，而**导入端不认**这个记号
+（`DIVIDER_PATTERN` 里没有它，星号/下划线兜底正则也不含它）⇒ 直接写出会让整块**降级成普通段落**，
+不是"档位丢了"而是"块没了"。
+
+处置：把导入端的判据抽成共用常量 `DIVIDER_MARKUP_PATTERN`（`divider-styles.ts`），
+导出前用它判一次，不保真的档退成默认 `*****`。★ 这里同时消掉一处**双声明**——
+`markdown.ts:197` 原先写着 `DIVIDER_PATTERN.test(...) || /^(-{3,}|\*{3,}|_{3,})$/.test(...)` 两条并列，
+现在两边共用同一个常量，不会再漂。
+
+### 3、验收（先红后绿）
+
+| 项 | 结果 |
+| --- | --- |
+| 单测（红→绿对照） | 接线前：`document-codec/index.test.ts` **2 条 FAIL**（`extraLight -> ---` 读回 `regular`）；接线后 **28/28 全绿** |
+| ★ 端到端 | 浏览器里真建一篇（四档各一枚，从编辑器 `state.doc.toJSON()` 取）⇒ 导出得 `***`／`****`／`*****`／`******` 四行 ⇒ `parseMarkdown` 导回四档**逐枚相同** |
+| 全量 | 272 文件／**2223** 条全绿（上批 2218，+5） |
+| `npx tsc --noEmit` | **0 错** |
+| 台账三闸 | `arity` 4/4 · `selftally` 1/1 · `cleared` 3/3 |
+
+### 4、本批的环境故障（都不是产品缺陷）
+
+- TaskSpace 的本地页 `p2` 失效（`No target with given id found`）⇒ 换页签后重建为 `p4`。
+- `p3` 的 `Emulation.setDeviceMetricsOverride` 超时 ⇒ 关掉重开。
+- 本地文档的 `content` **不会**同步进 Postgres（`DOC_CONTENT_COLS` 按红线不进同步白名单）⇒
+  验证必须从浏览器里的编辑器 JSON 取，不能从库里查；这条已写进 `project-craft-local-env` 记忆。

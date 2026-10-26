@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { serializeDocument } from './index';
+import { dividerStyleFromMarkup } from '@/lib/editor/divider-styles';
+import { parseMarkdown } from '@/lib/import/markdown';
 
 const document = {
   type: 'doc',
@@ -343,5 +345,50 @@ describe('a person mention exports without a page link', () => {
 
   it('keeps the name in the plain-text export', () => {
     expect(serializeDocument(personMentionDoc, 'text')).toContain('张三');
+  });
+});
+
+describe('a divider keeps its weight through a markdown round trip (G1561)', () => {
+  const docOf = (style: string) => ({
+    type: 'doc',
+    content: [{ type: 'divider', attrs: { style } }],
+  });
+
+  it('writes each official style as its own asterisk run, not a bare ---', () => {
+    // The official importer reads a line block's weight off its own markup: 3 + index asterisks.
+    expect(serializeDocument(docOf('extraLight'), 'markdown')).toBe('***');
+    expect(serializeDocument(docOf('light'), 'markdown')).toBe('****');
+    expect(serializeDocument(docOf('regular'), 'markdown')).toBe('*****');
+    expect(serializeDocument(docOf('strong'), 'markdown')).toBe('******');
+  });
+
+  it('round-trips every style back to the same weight', () => {
+    for (const style of ['extraLight', 'light', 'regular', 'strong']) {
+      const markup = serializeDocument(docOf(style), 'markdown');
+      expect(dividerStyleFromMarkup(markup), `${style} -> ${markup}`).toBe(style);
+    }
+  });
+
+  it('keeps a bare hr (no style attribute) on the default rule', () => {
+    expect(serializeDocument({ type: 'doc', content: [{ type: 'horizontalRule' }] }, 'markdown')).toBe('---');
+    expect(serializeDocument({ type: 'doc', content: [{ type: 'divider' }] }, 'markdown')).toBe('---');
+  });
+});
+
+describe('a legacy divider style still round-trips as a divider', () => {
+  it('never writes markup the importer would read as plain text', () => {
+    // `dashed` is a pre-official local style; its own markup (`=-`) is not one the importer
+    // accepts, so exporting it verbatim would turn the block into a paragraph on the way back.
+    const md = serializeDocument({ type: 'doc', content: [{ type: 'divider', attrs: { style: 'dashed' } }] }, 'markdown');
+    const parsed: any = parseMarkdown(md);
+    expect(parsed.content?.[0]?.type, `dashed -> ${md}`).toBe('divider');
+  });
+
+  it('keeps the legacy weight names as dividers too', () => {
+    for (const style of ['thin', 'medium', 'thick']) {
+      const md = serializeDocument({ type: 'doc', content: [{ type: 'divider', attrs: { style } }] }, 'markdown');
+      const parsed: any = parseMarkdown(md);
+      expect(parsed.content?.[0]?.type, `${style} -> ${md}`).toBe('divider');
+    }
   });
 });

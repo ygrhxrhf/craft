@@ -4539,3 +4539,34 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 | `git status --porcelain src e2e` | **空** |
 | `ledger-arity-gate` / `ledger-selftally-gate` | **4/4** / **1/1** 全绿（1553／G1561 未变） |
 | 临时文档 | `divshot`／`divdetail`／`divfiveC`／`divfiveB`／`divfive` 全部 `softDelete ok=true`；列表只剩 `div7`／`divB` 旧残留 |
+
+## V177＝第 302 批（2026-10-26 机器钟 16:4x—16:5x＝**真写入批**＝净新增 0 条＝清 G1561）
+
+**上一批（V175）登记 G1561 时写着「表建好了、导出通路没接」，本批把它接上。**
+
+### 1、交互侧新增
+
+- ★★★★ **G1561 已清**：`document-codec/index.ts` 的 `case 'divider'` 不再与 `horizontalRule` 合并返回 `'---'`，
+  改为读 `node.attrs.style` 走 `dividerMarkupFromStyle()`；无 style 时仍 `'---'`。
+- ★★★★ **端到端证据**：浏览器里真建一篇四档文档（从编辑器 `state.doc.toJSON()` 取，非库里查）⇒
+  导出 `***`／`****`／`*****`／`******` ⇒ `parseMarkdown` 导回四档**逐枚相同**。
+
+### 2、★★ 接线才暴露的回归（如实登记）
+
+`dashed`（旧本地档名）的 markdown 形式 `=-` **导入端不认** ⇒ 直接写会让整块降级成普通段落。
+处置＝把导入端判据抽成共用常量 `DIVIDER_MARKUP_PATTERN` 并让两侧共用；不保真的档退成默认 `*****`。
+★ 顺带消掉 `markdown.ts:197` 那处**双声明**（原先两条正则并列）。
+
+### 3、★ 一条验证纪律
+
+本地文档的 `content` **不进 Postgres**（`DOC_CONTENT_COLS` 按红线不在同步白名单）⇒
+要验导出，只能从浏览器里的编辑器 JSON 取，**不能从库里查**（本批先查库拿到空串，绕了一圈）。
+
+### 4、门禁
+
+| 项 | 结果 |
+| --- | --- |
+| 单测 | 接线前 2 条 FAIL ⇒ 接线后 28/28 全绿（红→绿对照） |
+| 全量 | **272 文件／2223 条全绿**（+5） |
+| `npx tsc --noEmit` | **0 错** |
+| 台账三闸 | arity 4/4 · selftally 1/1 · cleared 3/3 |

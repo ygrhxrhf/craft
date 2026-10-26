@@ -1,3 +1,5 @@
+import { DEFAULT_DIVIDER_STYLE, DIVIDER_MARKUP_PATTERN, dividerMarkupFromStyle } from '@/lib/editor/divider-styles';
+
 export type ExportFormat = 'markdown' | 'html' | 'text' | 'json';
 
 function textContent(node: any): string {
@@ -103,8 +105,19 @@ function renderMarkdown(node: any): string {
     case 'codeBlock':
       return `\`\`\`${node.attrs?.language ?? ''}\n${textContent(node)}\n\`\`\``;
     case 'horizontalRule':
-    case 'divider':
       return '---';
+    case 'divider': {
+      // A line block carries its weight in its own markup (`3 + index` asterisks, G1405), so
+      // writing a bare `---` would drop the style on the way out and read back as `regular`.
+      // Without a style attribute the block is a plain rule, which stays `---`.
+      if (!node.attrs?.style) return '---';
+      const markup = dividerMarkupFromStyle(node.attrs.style);
+      // `dashed` is a pre-official local style whose own markup (`=-`) the importer does not
+      // accept; writing it verbatim would turn the block into a paragraph on the way back, so
+      // it degrades to the default rule instead of silently disappearing. The check is the
+      // importer's own pattern, shared so the two sides cannot drift apart.
+      return DIVIDER_MARKUP_PATTERN.test(markup) ? markup : dividerMarkupFromStyle(DEFAULT_DIVIDER_STYLE);
+    }
     case 'mathBlock':
       return `$$\n${node.attrs?.latex ?? ''}\n$$`;
     case 'columns':

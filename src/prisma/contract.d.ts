@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'2b8e7feeca15fc8349c7685b31393199d7a18fb08d26f2b67b9501c3b00a5540'>;
+  StorageHashBase<'0b0378ba105e999d92934c6d1711195629ebdf9b6e34df22dbd284699ec5f47f'>;
 export type ExecutionHash =
   ExecutionHashBase<'5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b'>;
 export type ProfileHash =
@@ -406,6 +406,7 @@ export type FieldOutputTypes = {
       readonly content: CodecTypes['pg/json@1']['output'];
       readonly plainText: CodecTypes['pg/text@1']['output'];
       readonly wordCount: CodecTypes['pg/int4@1']['output'];
+      readonly meta: CodecTypes['pg/json@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Favorite: {
@@ -685,6 +686,7 @@ export type FieldInputTypes = {
       readonly content: CodecTypes['pg/json@1']['input'];
       readonly plainText: CodecTypes['pg/text@1']['input'];
       readonly wordCount: CodecTypes['pg/int4@1']['input'];
+      readonly meta: CodecTypes['pg/json@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Favorite: {
@@ -933,6 +935,7 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly documentId: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
+      readonly meta: CodecTypes['pg/json@1']['output'] | null;
       readonly plainText: CodecTypes['pg/text@1']['output'];
       readonly title: CodecTypes['pg/text@1']['output'];
       readonly version: CodecTypes['pg/int4@1']['output'];
@@ -1212,6 +1215,7 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly documentId: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
+      readonly meta: CodecTypes['pg/json@1']['input'] | null;
       readonly plainText: CodecTypes['pg/text@1']['input'];
       readonly title: CodecTypes['pg/text@1']['input'];
       readonly version: CodecTypes['pg/int4@1']['input'];
@@ -1480,6 +1484,7 @@ export namespace Models {
     content: CodecTypes['pg/json@1']['output'];
     plainText: CodecTypes['pg/text@1']['output'];
     wordCount: CodecTypes['pg/int4@1']['output'];
+    meta: CodecTypes['pg/json@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     document: public_Document;
     readonly [RelationKeys]?: 'document';
@@ -2928,6 +2933,11 @@ type ContractBase = Omit<
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
                   };
+                };
+                readonly meta: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: true;
                 };
                 readonly createdAt: {
                   readonly nativeType: 'timestamptz';
@@ -5575,6 +5585,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly meta: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -5608,6 +5622,7 @@ type ContractBase = Omit<
                 readonly content: { readonly column: 'content' };
                 readonly plainText: { readonly column: 'plainText' };
                 readonly wordCount: { readonly column: 'wordCount' };
+                readonly meta: { readonly column: 'meta' };
                 readonly createdAt: { readonly column: 'createdAt' };
               };
             };

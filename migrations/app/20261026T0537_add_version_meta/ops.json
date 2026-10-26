@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.document_versions.meta",
+    "label": "Add column \"meta\" to \"document_versions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "meta",
+        "table": "document_versions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"meta\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_versions",
+          "meta"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"meta\"",
+        "sql": "ALTER TABLE \"public\".\"document_versions\" ADD COLUMN \"meta\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"meta\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_versions",
+          "meta"
+        ]
+      }
+    ]
+  }
+]

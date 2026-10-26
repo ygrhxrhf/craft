@@ -106,6 +106,12 @@ export async function restoreVersion(versionId: string) {
   //   「转至已恢复的文档」——有"已恢复的文档"可去，说明恢复留下了独立实体；就地改写会让人留在原页。
   //   于是原文档一字不动，这里按版本内容新建一行（正文随行带走，故走服务端 action，与 create-local
   //   里"带正文的创建仍走服务端"同一口径）。
+  //
+  // 样式取自**那一版自己的 meta**：旧代码从当前文档抄 icon/封面/页宽/页样式，等于恢复正文却留着
+  // 后来的外观。meta 是后加的列，老版本行没有它 —— 那种情况才退回当前文档的值。
+  const snapshotMeta = (v.meta && typeof v.meta === 'object' ? v.meta : {}) as Record<string, unknown>;
+  const styleFrom = { ...(d as Record<string, unknown>), ...snapshotMeta };
+
   const now = new Date().toISOString();
   const restored = await db.orm.public.Document.create({
     id: crypto.randomUUID(),
@@ -113,14 +119,14 @@ export async function restoreVersion(versionId: string) {
     userId: session.user.id,
     parentId: null,
     folderId: d.folderId ?? null,
-    icon: d.icon ?? null,
-    coverImage: d.coverImage ?? null,
-    coverType: d.coverType ?? null,
+    icon: (styleFrom.icon as string | null) ?? null,
+    coverImage: (styleFrom.coverImage as string | null) ?? null,
+    coverType: (styleFrom.coverType as string | null) ?? null,
     content: v.content,
     plainText: v.plainText ?? '',
     wordCount: v.wordCount ?? 0,
-    width: d.width ?? null,
-    pageStyle: d.pageStyle ?? null,
+    width: (styleFrom.width as string | null) ?? null,
+    pageStyle: (styleFrom.pageStyle as unknown) ?? null,
     isTemplate: false,
     isDailyNote: false,
     dailyNoteDate: null,

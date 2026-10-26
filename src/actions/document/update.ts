@@ -5,6 +5,9 @@ import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { DOC_META_COLS } from '@/lib/sync/tables';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
+import { changedFields, shouldSnapshot, versionMeta } from '@/lib/versioning/snapshot';
+
+type Row = Record<string, unknown>;
 
 export async function updateDocument(id: string, data: {
   title?: string;
@@ -25,6 +28,9 @@ export async function updateDocument(id: string, data: {
 
   const db = await getDb();
 
+  // 快照要判「哪几列动了」，所以更新前先留一份。
+  const before = await db.orm.public.Document.first({ id });
+
   // Spec 4.2/5.6: only metadata field changes bump metaUpdatedAt (the document
   // incremental-sync timestamp) and broadcast; content-only saves must not.
   const incoming = Object.keys(data);
@@ -37,28 +43,33 @@ export async function updateDocument(id: string, data: {
   }
   const doc = await db.orm.public.Document.where({ id }).update(payload);
 
-  // Auto version snapshot: at most one per 10 minutes per document
+  // 自动版本快照：改标题或样式当场存一版；只改正文本则每十分钟最多一版
+  // （正文每次按键都在变，逐次存会把历史淹掉）。
   try {
-    const latest = await db.orm.public.DocumentVersion
-      .where({ documentId: id })
-      .orderBy((v: any) => v.version.desc())
-      .limit(1)
-      .all();
-    const last = latest[0] as any;
-    const stale = !last || Date.now() - new Date(last.createdAt).getTime() >= 10 * 60 * 1000;
-    if (stale && data.content !== undefined) {
-      const current = await db.orm.public.Document.first({ id });
-      const c = current as any;
-      if (c) {
-        await db.orm.public.DocumentVersion.create({
-          id: crypto.randomUUID(),
-          documentId: id,
-          version: last ? last.version + 1 : 1,
-          title: c.title,
-          content: c.content,
-          plainText: c.plainText,
-          wordCount: c.wordCount,
-        });
+    const current = await db.orm.public.Document.first({ id });
+    if (before && current) {
+      const after = current as Row;
+      const moved = changedFields(before as Row, after);
+      if (moved.length > 0) {
+        const latest = await db.orm.public.DocumentVersion
+          .where({ documentId: id })
+          .orderBy((v: any) => v.version.desc())
+          .limit(1)
+          .all();
+        const last = latest[0] as Row | undefined;
+        if (shouldSnapshot(moved, (last?.createdAt as string | undefined) ?? null)) {
+          await db.orm.public.DocumentVersion.create({
+            id: crypto.randomUUID(),
+            documentId: id,
+            version: last ? Number(last.version) + 1 : 1,
+            title: after.title as string,
+            // 没有正文的文档也要有版本——就是它的空正文那一版。
+            content: after.content ?? { type: 'doc', content: [] },
+            plainText: (after.plainText as string) ?? '',
+            wordCount: (after.wordCount as number) ?? 0,
+            meta: versionMeta(after),
+          });
+        }
       }
     }
   } catch {

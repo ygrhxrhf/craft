@@ -2195,6 +2195,13 @@
                   "kind": "scalar"
                 }
               },
+              "meta": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "plainText": {
                 "nullable": false,
                 "type": {
@@ -2255,6 +2262,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "meta": {
+                  "column": "meta"
                 },
                 "plainText": {
                   "column": "plainText"
@@ -5113,6 +5123,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "meta": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
                 "plainText": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -6580,7 +6595,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "2b8e7feeca15fc8349c7685b31393199d7a18fb08d26f2b67b9501c3b00a5540"
+    "storageHash": "0b0378ba105e999d92934c6d1711195629ebdf9b6e34df22dbd284699ec5f47f"
   },
   "execution": {
     "executionHash": "5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b",

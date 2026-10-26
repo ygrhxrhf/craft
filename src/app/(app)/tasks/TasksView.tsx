@@ -19,7 +19,8 @@ import {
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
 import { getSyncManager } from '@/lib/sync-core';
 import { currentUserId } from '@/lib/sync-core/current-user';
-import { taskPatchFor } from './tasks-local';
+import { readPendingRows } from '@/components/sync/local-records';
+import { overlayTaskRows, taskPatchFor } from './tasks-local';
 import { applyCompletedFilter, tasksForGroup, withinUpcoming, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
 import { upcomingSections } from '@/lib/task/upcoming-groups';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
@@ -76,9 +77,14 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     if (redirectTo) router.replace(taskGroupHref(redirectTo));
   }, [entryRoute, group, router]);
 
+  /**
+   * 读路径要叠本机未推送意图：`getTasks()` 读的是服务端权威行，断链时 `applyLocal`
+   * 只把 op 留在队列里重试 ⇒ 不叠的话，刚删的任务会画回来、刚建的任务看不见
+   * （文档树／回收站／评论／成员名册同一处置）。
+   */
   const load = useCallback(async () => {
-    const data = await getTasks();
-    setTasks(data);
+    const [data, pending] = await Promise.all([getTasks(), readPendingRows('task')]);
+    setTasks(overlayTaskRows(data, pending));
     setLoading(false);
   }, []);
 
@@ -89,6 +95,18 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
       await load();
     })();
   }, [load]);
+
+  // 本机写／他端推送／入站 ack+pull 触碰 task ⇒ 重读（读路径已叠 pending，见 load）。
+  useEffect(
+    () =>
+      getSyncManager().onStoreChanged((table) => {
+        if (table !== 'task') return;
+        void (async () => {
+          await load();
+        })();
+      }),
+    [load],
+  );
 
   // G160：已完成任务的外观走本机 user 镜像（改设置页 → applyLocal → onStoreChanged('user') 即时生效）
   const appearance = useCompletedTaskAppearance();

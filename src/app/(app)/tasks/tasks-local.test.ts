@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { taskPatchFor, TASK_WS_COLS } from './tasks-local';
+import { overlayTaskRows, taskPatchFor, TASK_WS_COLS } from './tasks-local';
+import type { PendingRow } from '@/components/sync/local-records';
+import type { TaskItem } from '@/actions/task/task';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 
@@ -44,5 +46,83 @@ describe('tasks 本地写 patch', () => {
       taskPatchFor.schedule({ dueDate: null, remindAt: null, recurrence: null, recurrenceEnd: null }, NOW),
     ];
     for (const p of patches) for (const k of Object.keys(p)) expect(allowed.has(k)).toBe(true);
+  });
+});
+
+const task = (over: Partial<TaskItem> & { id: string }): TaskItem => ({
+  title: '任务',
+  isCompleted: false,
+  status: 'todo',
+  cancelledAt: null,
+  dueDate: null,
+  remindAt: null,
+  recurrence: null,
+  recurrenceEnd: null,
+  documentId: null,
+  documentTitle: null,
+  ...over,
+});
+
+const pendingOf = (entries: Array<[string, PendingRow]>) => new Map(entries);
+
+describe('overlayTaskRows：服务端行 + 未推送意图', () => {
+  it('本地删除的 op 让那一行从视图里消失（断链时这正是服务端还在的那一行）', () => {
+    const rows = [task({ id: 'a', title: '甲' }), task({ id: 'b', title: '乙' })];
+    const pending = pendingOf([['a', { op: 'delete', syncTs: NOW }]]);
+
+    expect(overlayTaskRows(rows, pending).map((t) => t.id)).toEqual(['b']);
+  });
+
+  it('本地新建的行出现在视图里，即使服务端还没有它', () => {
+    const pending = pendingOf([
+      ['new', { op: 'upsert', syncTs: NOW, data: { id: 'new', title: '刚建的', createdAt: NOW } }],
+    ]);
+
+    const [only] = overlayTaskRows([], pending);
+    expect(only.id).toBe('new');
+    expect(only.title).toBe('刚建的');
+    expect(only.status).toBe('todo');
+  });
+
+  it('本地改过的标题盖住服务端的旧标题', () => {
+    const rows = [task({ id: 'a', title: '旧标题' })];
+    const pending = pendingOf([['a', { op: 'upsert', syncTs: NOW, data: { title: '新标题' } }]]);
+
+    expect(overlayTaskRows(rows, pending)[0].title).toBe('新标题');
+  });
+
+  it('已取消／已完成的行留在视图里（露不露由「显示已完成」开关决定）', () => {
+    const rows = [
+      task({ id: 'a' }),
+      task({ id: 'b', status: 'done', isCompleted: true }),
+      task({ id: 'c', status: 'cancelled', cancelledAt: NOW }),
+    ];
+
+    expect(overlayTaskRows(rows, new Map()).map((t) => t.id).sort()).toEqual(['a', 'b', 'c']);
+  });
+
+  it('带 deletedAt 的镜像行按墓碑滤掉（外部推送来的软删）', () => {
+    const rows = [task({ id: 'a' }), { ...task({ id: 'b' }), deletedAt: NOW } as TaskItem];
+
+    expect(overlayTaskRows(rows, new Map()).map((t) => t.id)).toEqual(['a']);
+  });
+
+  it('排序重做：pending 在前，与 getTasks 同一口径（本地新行不会落在末尾）', () => {
+    const rows = [task({ id: 'done', status: 'done', isCompleted: true }), task({ id: 'todo' })];
+    const pending = pendingOf([
+      ['fresh', { op: 'upsert', syncTs: NOW, data: { id: 'fresh', title: '新的' } }],
+    ]);
+
+    const live = overlayTaskRows(rows, pending);
+    expect(live.map((t) => t.id)).toEqual(['todo', 'fresh', 'done']);
+  });
+
+  it('pending 载荷缺字段时用骨架补齐，不产出 undefined 列', () => {
+    const pending = pendingOf([['bare', { op: 'upsert', syncTs: NOW, data: { id: 'bare' } }]]);
+
+    const [only] = overlayTaskRows([], pending);
+    expect(only.title).toBe('');
+    expect(only.cancelledAt).toBeNull();
+    expect(only.documentId).toBeNull();
   });
 });

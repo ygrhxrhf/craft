@@ -24,6 +24,7 @@ import {
   captureBlocks,
   captureAttrs,
   captureAll,
+  captureA11y,
   installKeyProbe,
   measureTrailingPoint,
   evalExpect,
@@ -188,6 +189,11 @@ export class Target {
     if (set.has('inline')) out.inline = snap.inline;
     if (set.has('kinds')) out.kinds = snap.kinds;
     if (set.has('marquee')) out.marquee = snap.marquee;
+    if (set.has('a11y')) {
+      // 可达性树**必须走宿主侧 CDP**（`Accessibility.getFullAXTree`），页内 JS 拿不到权威 AX 树。
+      // 收口到编辑器子树：本地侧栏把每篇文档都画成按钮，不收口就只是在比谁文档多。
+      out.a11y = await captureA11y(this.page, this.sel(spec, 'editorBody'));
+    }
     if (set.has('attrs')) out.attrs = snap.attrs;
     if (set.has('indent')) out.indent = snap.indent;
     if (set.has('computed')) {

@@ -789,3 +789,57 @@ div._flexRow_1oz2o_1
 
 本地侧栏累积了 **246 篇**历史测试文档（都是软删前的样本文档）。它们不进 `isDeleted=false`
 的活跃列表，但侧栏仍渲染占位行 ⇒ 已用噪声规则挡住；**未做批量清理**（那是不可逆操作，需单独授权）。
+
+## 十八、★ 续批十四（2026-10-26）：**`a11y` 观测档首次落地** —— 三条可达性差异
+
+净新增 **1 条 spec ＋ 3 条 G（G1562–G1564）** · 零产品代码批。
+
+### 1、这件事为什么等了这么久，又为什么必须做
+
+`observe: ['a11y','animation','db']` 三档从 **Wave 0 就挂在「未实现」**名单上。本批落地了 `a11y`。
+它承载的是**整个产品的一个维度**——读屏用户能不能用——此前一条都没量过；
+唯一相关的是 `block-kind` 里一条「只登记不判定」的偏差（本地 checkbox 的合成英文名）。
+
+### 2、★★ 仪器怎么接的（两处关键取舍）
+
+- 走 **CDP `Accessibility.getFullAXTree`**（浏览器权威 AX 树），不是页内读 `aria-*` 猜。
+- **按编辑器子树收口**：先走 DOM 收该子树全部 `backendNodeId`，再按 `backendDOMNodeId` 过滤 AX 节点。
+  ★ 不收口不行——本地侧栏把**每篇文档都画成按钮**（实测全页 button：官方 **24** / 本地 **375**），
+  不收口就只是在比「谁的文档多」。
+- ★ 踩到并绕过的一枚：`Accessibility.getPartialAXTree` 在 `fetchRelatives:false` 下**只回该节点自己一个**
+  （两侧 `nodes` 都是 1），**不含子树** ⇒ 读不到编辑器内部的控件。改用全树＋DOM 子树过滤。
+- 只留**可操作角色**（button/link/textbox/checkbox/menuitem/tab/combobox…），丢掉
+  generic/StaticText 这类结构节点：两侧渲染框架不同（官方 Slate 扁平 span / 本地 TipTap 树），
+  结构节点数**天然不等**，比它没有意义。角色计数差只记 severity 1（不判定）。
+
+### 3、★★★ 采到的三条差异（同屏：`[ ] Buy milk`）
+
+| # | 面 | 官方 | 本地 |
+| --- | --- | --- | --- |
+| **G1562** | 可编辑区的 AX 角色 | `textbox`（`editable:richtext`／`multiline:true`／`focusable`） | `generic`（只有 `editable:richtext`＋`focusable`）——**两侧都没有可及名** |
+| **G1563** | 任务项勾选框 | ★ **AX 树里根本不存在**（子树 85 个 DOM 节点逐枚核过，零 `checkbox`） | `checkbox`，可及名是 TipTap 合成串 `Task item checkbox for Buy milk` |
+| **G1564** | 任务项的三个动作 | 3 枚**常显** AX `button`：`Calendar Icon`／`Flag Icon`／`Arrow Right Circle Icon` | **0 枚** —— 入口在块 `⋮` 菜单（「提醒我…」「将任务标记为已取消」） |
+
+★ G1563 还牵出一条**连带污染**：那枚合成串进了具名文本计数与文本名册 ⇒ 同一份记录里
+`countΔ:Buy milk` 官方 **1** / 本地 **2**、文本名册多出 `added-only-local: "Task item checkbox for Buy milk"`。
+⇒ 修 `aria-label` 会一并消掉这两条。
+
+### 4、★ 诚实边界
+
+- **没采**「读屏实际播报什么」，只采 AX 树。AX 角色不同 ≠ 播报一定不同，但它是唯一可机读的权威面。
+- G1563 的「更好还是更坏」不一句话判：本地**角色上更像样**、**标签上是机器串**，故只按「两侧不同」记。
+- G1564 官方三枚与本地菜单项**未逐条对应**（`Arrow Right Circle Icon` 对应本地哪一项没验），不写成「一一等价」。
+- `animation`／`db` 两档**仍未实现**。
+
+### 5、验收
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 矩阵 | **20 条 spec**（新增 1 条；`differ` 33 行／19 sev2+） |
+| 两侧记录 | 各 3 步、`errors=0`、selfCheck **2/2** 全 PASS |
+| 台账 | 三闸全绿（自述 **1556／G1564**） |
+| 临时文档 | 两侧均软删 |
+
+★ selfCheck 只放**两侧共有**的量：首版把「编辑器里要有 checkbox」写成断言 ⇒ 官方侧必然 FAIL
+（它本来就没有），等于把真差异伪装成仪器故障。已按 README 纪律撤下。

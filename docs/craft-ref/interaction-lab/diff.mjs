@@ -289,6 +289,32 @@ export function compare(specId, official, local, spec) {
     }
   }
 
+  // ⑧ 可达性树（编辑器子树内，CDP 权威 AX 树）：比**可操作角色 × 可及名**的集合。
+  //   结构节点（generic/StaticText…）已在采集侧丢掉 —— 两侧渲染框架不同，数量天然不等。
+  //   ★ 名字按 set 比、不比条数：条数差异多半来自外壳（本地侧栏把每篇文档画成按钮）。
+  for (let i = 0; i < n; i++) {
+    const oa = o.steps[i] && o.steps[i].a11y;
+    const la = l.steps[i] && l.steps[i].a11y;
+    if (!oa || !la || !oa.found || !la.found) continue;
+    const key = (x) => x.role + '|' + (x.name || '');
+    const oSet = new Set((oa.rows || []).map(key));
+    const lSet = new Set((la.rows || []).map(key));
+    for (const x of [...lSet].filter((v) => !oSet.has(v)).sort()) {
+      push({ facet: 'a11y-only-local', step: i, label: o.steps[i].label, official: null, local: x, delta: null, severity: 2 });
+    }
+    for (const x of [...oSet].filter((v) => !lSet.has(v)).sort()) {
+      push({ facet: 'a11y-only-official', step: i, label: o.steps[i].label, official: x, local: null, delta: null, severity: 2 });
+    }
+    for (const r of new Set([...Object.keys(oa.roles || {}), ...Object.keys(la.roles || {})])) {
+      const ov = (oa.roles || {})[r] || 0;
+      const lv = (la.roles || {})[r] || 0;
+      if (ov !== lv) {
+        // 只记录不判定：两侧框架的原生控件数天然不同（见上），绝对量不参与判定。
+        push({ facet: 'a11yCount:' + r, step: i, label: o.steps[i].label, official: ov, local: lv, delta: lv - ov, severity: 1 });
+      }
+    }
+  }
+
   for (let i = 0; i < n; i++) {
     const os = o.steps[i] && o.steps[i].selection;
     const ls = l.steps[i] && l.steps[i].selection;

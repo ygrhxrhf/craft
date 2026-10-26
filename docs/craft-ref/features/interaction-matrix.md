@@ -17,6 +17,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | spec | 判定 | 差异行 | severity 2+ | 已声明偏差 | 文本名册 +/− |
 | --- | --- | --- | --- | --- | --- |
 | `browse.box-select.drag-marquee` | differ | 22 | 14 | 0 | 本地 +0/−0 · 官方 +1/−0 |
+| `editor.a11y.task-item-checkbox` | differ | 33 | 19 | 0 | 本地 +2/−0 · 官方 +1/−0 |
 | `editor.block.enter-empty-block` | match | 10 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.block.indent-in-list` | differ | 21 | 3 | 2 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.block.indent-plain-paragraph` | differ | 23 | 9 | 0 | 本地 +2/−0 · 官方 +2/−0 |
@@ -101,6 +102,30 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 3 | selection:collapsed |  | false |  | 2 |
 | 3 | selection:anchorOffset |  | 0 |  | 2 |
 | 3 | selection:focusOffset |  | 4 |  | 2 |
+
+### `editor.a11y.task-item-checkbox` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:Buy milk | 1 | 2 | 1 | 2 |
+|  | added-only-local |  | Task item checkbox for Buy milk |  | 2 |
+| 0 | a11y-only-official | button\|Reaction Icon |  |  | 2 |
+| 0 | a11y-only-official | button\|Text Bubble Icon |  |  | 2 |
+| 0 | a11y-only-official | textbox\| |  |  | 2 |
+| 1 | a11y-only-local |  | checkbox\|Task item checkbox for empty task item |  | 2 |
+| 1 | a11y-only-official | button\|Arrow Right Circle Icon |  |  | 2 |
+| 1 | a11y-only-official | button\|Calendar Icon |  |  | 2 |
+| 1 | a11y-only-official | button\|Flag Icon |  |  | 2 |
+| 1 | a11y-only-official | button\|Reaction Icon |  |  | 2 |
+| 1 | a11y-only-official | button\|Text Bubble Icon |  |  | 2 |
+| 1 | a11y-only-official | textbox\| |  |  | 2 |
+| 2 | a11y-only-local |  | checkbox\|Task item checkbox for Buy milk |  | 2 |
+| 2 | a11y-only-official | button\|Arrow Right Circle Icon |  |  | 2 |
+| 2 | a11y-only-official | button\|Calendar Icon |  |  | 2 |
+| 2 | a11y-only-official | button\|Flag Icon |  |  | 2 |
+| 2 | a11y-only-official | button\|Reaction Icon |  |  | 2 |
+| 2 | a11y-only-official | button\|Text Bubble Icon |  |  | 2 |
+| 2 | a11y-only-official | textbox\| |  |  | 2 |
 
 ### `editor.block.indent-in-list` — differ
 
@@ -301,6 +326,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | --- | --- | --- | --- | --- |
 | `browse.box-select.drag-marquee` | official | blocksCount count 0 | PASS | 0 |
 | `browse.box-select.drag-marquee` | local | blocksCount count 0 | PASS | 0 |
+| `editor.a11y.task-item-checkbox` | official | blocks equals ["Buy milk"] | PASS | ["Buy milk"] |
+| `editor.a11y.task-item-checkbox` | official | blocksCount count 1 | PASS | 1 |
+| `editor.a11y.task-item-checkbox` | local | blocks equals ["Buy milk"] | PASS | ["Buy milk"] |
+| `editor.a11y.task-item-checkbox` | local | blocksCount count 1 | PASS | 1 |
 | `editor.block.enter-empty-block` | official | blocksCount count 1 | PASS | 1 |
 | `editor.block.enter-empty-block` | official | blocksCount count 2 | PASS | 2 |
 | `editor.block.enter-empty-block` | official | blocksCount count 3 | PASS | 3 |

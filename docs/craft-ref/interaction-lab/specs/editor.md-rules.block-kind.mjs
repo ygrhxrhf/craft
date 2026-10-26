@@ -100,8 +100,8 @@ export default {
     },
     {
       facet: 'added-only-local',
-      reason: '本地 TipTap 任务块的 checkbox 可及名（`Task item checkbox for <text>／empty task item`）用 visuallyHiddenStyle 画，文本**仍进 innerText**；官方任务块无此串。☆ 属 a11y 面，两侧可及名口径是否等价**本批未采**，故只登记不判定'
-      ,ref: 'node_modules/@tiptap/extension-list/src/task-item/task-item.ts:83-85（getCheckboxLabel 默认串）'
+      reason: '本地 TipTap 任务块的 checkbox 可及名（`Task item checkbox for <text>／empty task item`）用 visuallyHiddenStyle 画，文本**仍进 innerText**；官方任务块无此串。★ 第 304 批已把 a11y 面单独采成账（`gap.md` **G1563**：官方任务项在 AX 树里**没有 checkbox**，本地有且用合成英文串）⇒ 本行仍只降为 severity 0（它不是本 spec 的主判据），但**差异本身已有独立 G 承载**'
+      ,ref: 'node_modules/@tiptap/extension-list/src/task-item/task-item.ts:83-85（getCheckboxLabel 默认串）；gap.md G1563'
     },
     {
       facet: 'added-only-official',

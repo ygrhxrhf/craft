@@ -369,6 +369,73 @@ export function diffTextNodes(before, after, extra) {
   return { added, removed };
 }
 
+/**
+ * **可达性树（宿主侧，走 CDP）**：`Accessibility.getFullAXTree` 是全页权威 AX 树，
+ * 这里按「编辑器子树」收口 —— 先走 DOM 树收该子树全部 `backendNodeId`，再按
+ * `backendDOMNodeId` 过滤 AX 节点。为什么必须收口：本地侧栏把每篇文档都画成按钮
+ * （实测全页 button：官方 24 / 本地 375），不收口就只是在比「谁的侧栏文档多」。
+ *
+ * ★ 为什么不能用 `Accessibility.getPartialAXTree`：实测 `fetchRelatives:false` 只回
+ *   **该节点自己一个**（两侧 nodes 都是 1），不含子树 ⇒ 读不到编辑器内部的控件。
+ *
+ * ☆ 只留**可操作角色**（按钮/链接/输入/勾选/菜单项/标签页/下拉/选项/开关…），
+ *   丢掉 generic/none/StaticText/InlineTextBox/paragraph 这类结构性节点：
+ *   两侧渲染框架不同（官方 Slate 扁平 span、本地 TipTap 树），结构节点数天然不等。
+ */
+const ACTIONABLE_ROLES = [
+  'button', 'link', 'textbox', 'searchbox', 'checkbox', 'radio', 'switch',
+  'menuitem', 'menuitemcheckbox', 'menuitemradio', 'tab', 'combobox', 'option',
+  'listbox', 'treeitem', 'slider', 'spinbutton',
+];
+
+export async function captureA11y(page, selector) {
+  await page.cdp('DOM.enable', {});
+  await page.cdp('Accessibility.enable', {});
+  const doc = await page.cdp('DOM.getDocument', { depth: -1, pierce: true });
+  const q = await page.cdp('DOM.querySelector', { nodeId: doc.root.nodeId, selector });
+  if (!q.nodeId) return { scope: selector, found: false, rows: [], roles: {} };
+
+  const byId = new Map();
+  const index = (n) => {
+    if (!n) return;
+    byId.set(n.nodeId, n);
+    for (const c of n.children || []) index(c);
+    for (const s of n.shadowRoots || []) index(s);
+    if (n.contentDocument) index(n.contentDocument);
+  };
+  index(doc.root);
+
+  const backendIds = new Set();
+  const collect = (n) => {
+    if (!n) return;
+    backendIds.add(n.backendNodeId);
+    for (const c of n.children || []) collect(c);
+    for (const s of n.shadowRoots || []) collect(s);
+  };
+  collect(byId.get(q.nodeId));
+
+  const tree = await page.cdp('Accessibility.getFullAXTree', {});
+  const roleOf = (n) => (n.role && n.role.value) || '';
+  const nameOf = (n) => (n.name && n.name.value) || '';
+  const rows = [];
+  const roles = {};
+  for (const n of tree.nodes || []) {
+    if (n.backendDOMNodeId == null || !backendIds.has(n.backendDOMNodeId)) continue;
+    if (n.ignored) continue;
+    const role = roleOf(n);
+    if (!ACTIONABLE_ROLES.includes(role)) continue;
+    const props = {};
+    for (const p of n.properties || []) {
+      const v = p.value && p.value.value;
+      if (v !== undefined) props[p.name] = v;
+    }
+    rows.push({ role, name: nameOf(n).trim(), checked: props.checked ?? null, expanded: props.expanded ?? null, disabled: props.disabled ?? null, editable: props.editable ?? null });
+    roles[role] = (roles[role] || 0) + 1;
+  }
+  rows.sort((a, b) => (a.role + '|' + a.name).localeCompare(b.role + '|' + b.name));
+  return { scope: selector, found: true, rows, roles, domNodes: backendIds.size };
+}
+
 /** 两个指纹的逐字段差。 */
 export function diffFingerprint(before, after, extra) {
   const rows = [];
@@ -419,6 +486,13 @@ export function evalExpect(expectations, steps) {
     // 块**语义档**归一枚举（`para`/`title`/`bullet`/…）。`kinds` 档在 Wave 1 续批七
     // 只为「采集」而加，**没接进断言** ⇒ 任何 `kinds` 的 expect 都静默取 null（本批踩到）。
     if (facet === 'kinds') return step.kinds ?? null;
+    // 可达性树（编辑器子树）。`a11y:rows` 给 "role|name" 名册、`a11yCount` 给条数、
+    // `a11yRole:<role>` 给某角色条数 —— 三者都只在 spec 声明 observe 含 'a11y' 时有值。
+    if (facet === 'a11y' || facet === 'a11y:rows') {
+      return (step.a11y && step.a11y.rows || []).map((x) => x.role + '|' + (x.name || ''));
+    }
+    if (facet === 'a11yCount') return (step.a11y && step.a11y.rows || []).length;
+    if (facet.startsWith('a11yRole:')) return (step.a11y && step.a11y.roles && step.a11y.roles[facet.slice(9)]) || 0;
     if (facet.startsWith('text:')) return step.fingerprint?.counts?.[facet.slice(5)] ?? 0;
     if (facet.startsWith('selection:')) return step.selection?.[facet.slice(10)] ?? null;
     if (facet.startsWith('state:')) {

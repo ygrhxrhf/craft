@@ -41,6 +41,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
             'keys',      // 按键消费探针（capture/bubble 两处各一个监听）
             'marquee',   // 框选（拖拽选中的块名册）
             'kinds',     // 块**语义档**归一枚举（para/title/headingN/strong/bullet/…）
+            'a11y',      // 可达性树：编辑器子树内的可操作角色×可及名（CDP 权威 AX 树）
             'inline'],   // 行内标记归一枚举 marks（bold/italic/strike/highlight/code/link）
   observeTexts:    ['<具名文本>'],           // 进指纹的 counts
   stateSelectors:  ['<selector key>'],       // 进 stateAttrs.named
@@ -53,7 +54,8 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 ```
 
 `facet` 口径：`text:<名>`（末步或 `at` 步的计数）／`blocks`／`blocksCount`／`dom`／
-`selection:<字段>`／`state:<selector key 或扁平属性名>`／`attr:<key>`／
+`selection:<字段>`／`state:<selector key 或扁平属性名>`／`attr:<key>`／`kinds`／
+`a11y`（=`a11y:rows`，`role|name` 名册）／`a11yCount`／`a11yRole:<role>`／
 `indentLevel`（光标所在块的缩进级数）／`focusInEditor`（焦点是否还在编辑器内）。
 `at` 缺省＝末步；指定值＝ **record 里的 step 下标**（`baseline` 占 **0**，第 1 个动作是 **1**）。
 ★ 这一档极易错一位：写 spec 时按"第几个动作"数会整体偏 1，断言会落在前一步上。

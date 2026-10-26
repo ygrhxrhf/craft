@@ -4602,3 +4602,39 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 | `git status --porcelain src e2e` | **空**（零产品代码改动） |
 | 矩阵 | **19 条 spec**（新增 2 条，均 `match`） |
 | 两侧记录 | 10 步／6 步，`errors=0`；selfCheck 7/7、8/8 全 PASS |
+
+## V179＝第 304 批（2026-10-26 机器钟 17:5x—18:0x＝**零产品代码批**＝净新增 3 条＝G1562—G1564）
+
+**`a11y` 观测档首次落地**——Wave 0 起挂着的三档（a11y/animation/db）里的第一档。
+
+### 1、交互侧新增
+
+- ★★★★★ **G1562 可编辑区的 AX 角色两侧不同**：官方 `textbox`（`editable:richtext`／`multiline:true`），
+  本地 `generic`（只有 `editable:richtext`）——**两侧都没有可及名**。
+- ★★★★★ **G1563 任务项勾选框**：官方在 AX 树里**根本不存在**（子树 85 个 DOM 节点逐枚核过，零 `checkbox`）；
+  本地是 `checkbox`，可及名是 TipTap 合成串 `Task item checkbox for <任务文本>`。
+  ★ 连带污染：该串还进具名文本计数与文本名册（`countΔ:Buy milk` 官方 1 / 本地 2）。
+- ★★★★ **G1564 任务项三动作的 AX 暴露**：官方 3 枚**常显** `button`（Calendar／Flag／Arrow Right Circle），
+  本地 0 枚——本地入口在块 `⋮` 菜单，属「常显按钮 vs 菜单项」的**入口差异**，不是缺功能。
+
+### 2、★ 仪器怎么接的（两个取舍）
+
+- 走 CDP `Accessibility.getFullAXTree`（权威 AX 树），**按编辑器子树收口**（DOM 收 `backendNodeId` → 按 `backendDOMNodeId` 过滤）。
+  不收口就是在比「谁的侧栏文档多」：实测全页 button 官方 **24** / 本地 **375**。
+- ★ `getPartialAXTree` 在 `fetchRelatives:false` 下**只回节点自己一个**、不含子树 ⇒ 用不了。
+- 只留可操作角色，丢 generic/StaticText：两侧框架不同，结构节点数天然不等；角色计数差只记 severity 1。
+
+### 3、★ 一条 selfCheck 纪律的实践
+
+首版把「编辑器里要有 checkbox」写成断言 ⇒ 官方侧必然 FAIL（它本来就没有）——
+那会把**真差异伪装成仪器故障**。按 README「selfCheck 只放两侧共有的量」撤下，
+改为只断言任务文本进块名册。
+
+### 4、门禁
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 矩阵 | **20 条 spec**；新 spec `differ`（33 行／19 sev2+） |
+| 两侧记录 | 3 步、`errors=0`、selfCheck 2/2 |
+| 台账三闸 | 全绿（自述 **1556／G1564**） |

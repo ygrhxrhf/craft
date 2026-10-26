@@ -22,12 +22,14 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.indent-plain-paragraph` | differ | 23 | 9 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.block.move-alt-updown` | differ | 21 | 1 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.block.move-top-bottom` | differ | 21 | 5 | 0 | 本地 +3/−0 · 官方 +3/−0 |
+| `editor.key.backspace-at-block-start` | match | 20 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
+| `editor.key.backspace-in-list` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.ctrl-arrow-word-nav` | differ | 43 | 15 | 0 | 本地 +2/−0 · 官方 +2/−0 |
-| `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +4/−0 · 官方 +4/−0 |
+| `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
-| `editor.md-rules.block-kind` | differ | 95 | 36 | 21 | 本地 +6/−0 · 官方 +8/−1 |
+| `editor.md-rules.block-kind` | differ | 93 | 36 | 19 | 本地 +6/−0 · 官方 +6/−1 |
 | `editor.md-rules.inline-mark` | differ | 59 | 16 | 0 | 本地 +6/−0 · 官方 +6/−0 |
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 40 | 16 | 0 | 本地 +3/−0 · 官方 +3/−0 |
@@ -40,6 +42,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | --- | --- | --- | --- | --- | --- | --- |
 | `editor.block.indent-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 空列表项里光标 offset 天然差 1 | probe-bullet（本轮实测：官方 childTexts ["•","L1"]；本地 listStyleType:disc） |
 | `editor.block.indent-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
+| `editor.key.backspace-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 光标 offset 天然差 1 | probe-bullet；同 editor.block.indent-in-list 的同一声明 |
+| `editor.key.backspace-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
 | `editor.md-rules.block-kind` | countΔ:AAA | 3 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 4 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 5 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
@@ -57,9 +61,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.md-rules.block-kind` | countΔ:AAA | 17 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 18 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | added-only-local |  |  | Task item checkbox for empty task item | 本地 TipTap 任务块的 checkbox 可及名（`Task item checkbox for <text>／empty task item`）用 visuallyHiddenStyle 画，文本**仍进 innerText**；官方任务块无此串。☆ 属 a11y 面，两侧可及名口径是否等价**本批未采**，故 | node_modules/@tiptap/extension-list/src/task-item/task-item.ts:83-85（getCheckboxLabel 默认串） |
-| `editor.md-rules.block-kind` | added-only-official |  | 1. |  | 官方列表序号（`1.`／`2.`）与侧栏大纲行（`AAA#1`／`QODER-ILAB-md-block-kind#3`）会出现在正文文本流之外；本地列表序号由 CSS counter 画、不进 innerText，且无大纲行 | gap.md G1556 · G866（官方序号画进文本节点） |
-| `editor.md-rules.block-kind` | added-only-official |  | AAA#1 |  | 官方列表序号（`1.`／`2.`）与侧栏大纲行（`AAA#1`／`QODER-ILAB-md-block-kind#3`）会出现在正文文本流之外；本地列表序号由 CSS counter 画、不进 innerText，且无大纲行 | gap.md G1556 · G866（官方序号画进文本节点） |
-| `editor.md-rules.block-kind` | added-only-official |  | QODER-ILAB-md-block-kind#3 |  | 官方列表序号（`1.`／`2.`）与侧栏大纲行（`AAA#1`／`QODER-ILAB-md-block-kind#3`）会出现在正文文本流之外；本地列表序号由 CSS counter 画、不进 innerText，且无大纲行 | gap.md G1556 · G866（官方序号画进文本节点） |
+| `editor.md-rules.block-kind` | added-only-official |  | 1. |  | 官方列表序号（`1.`／`2.`）会出现在正文文本流之外，本地列表序号由 CSS counter 画、不进 innerText。☆ 侧栏大纲行原本也在这里表现为 `AAA#1`／`…#3` 这样的**重复文本**条目，第 303 批把名册的重复计数后缀去掉后（重复与否另有 `countΔ:` 精算），该类条目不再单列  | gap.md G1556 · G866（官方序号画进文本节点） |
 | `editor.md-rules.block-kind` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方基线里带一枚目录空态提示「使用标题、页面或卡片创建目录。」，本批临时文档本地侧未渲染该提示（本地该串是纯核常量 TOC_PLACEHOLDER）⇒ 与本 spec 主判据无关 | src/lib/editor/official-copy.ts:8（TOC_PLACEHOLDER 逐字） |
 | `editor.slash.open-and-filter` | countΔ:插入 | 1 | 8 | 4 | 菜单项文案与条数不同（官方扁平 8 条含「插入」：插入文件/片段/表格/分隔符/白板/表格集合/画廊集合/看板集合；本地 4 条）—— 与上面两条同源 | probe-verbatim.json · gap.md（本轮新登记） |
 | `editor.slash.open-and-filter` | added-only-local |  |  | 无匹配命令 | 本地 / 菜单的**无匹配文案**是「无匹配命令」；官方过滤后直接把面板收起、不给无匹配文案（G1544 同源） | chk-roster：官方 added=["/wen"]、本地 added=["/wen","无匹配命令"] · gap.md G1544 |
@@ -363,6 +365,36 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.move-top-bottom` | local | blocks equals ["AAA","BBB","CCC"] | PASS | ["AAA","BBB","CCC"] |
 | `editor.block.move-top-bottom` | local | focusInEditor equals true | PASS | true |
 | `editor.block.move-top-bottom` | local | focusInEditor equals true | PASS | true |
+| `editor.key.backspace-at-block-start` | official | blocksCount count 1 | PASS | 1 |
+| `editor.key.backspace-at-block-start` | official | blocks equals ["AAA","BBB"] | PASS | ["AAA","BBB"] |
+| `editor.key.backspace-at-block-start` | official | blocks equals ["AAABBB"] | PASS | ["AAABBB"] |
+| `editor.key.backspace-at-block-start` | official | blocksCount count 1 | PASS | 1 |
+| `editor.key.backspace-at-block-start` | official | blocks equals ["AAABBB"] | PASS | ["AAABBB"] |
+| `editor.key.backspace-at-block-start` | official | blocks equals ["AAABBB"] | PASS | ["AAABBB"] |
+| `editor.key.backspace-at-block-start` | official | blocksCount count 1 | PASS | 1 |
+| `editor.key.backspace-at-block-start` | local | blocksCount count 1 | PASS | 1 |
+| `editor.key.backspace-at-block-start` | local | blocks equals ["AAA","BBB"] | PASS | ["AAA","BBB"] |
+| `editor.key.backspace-at-block-start` | local | blocks equals ["AAABBB"] | PASS | ["AAABBB"] |
+| `editor.key.backspace-at-block-start` | local | blocksCount count 1 | PASS | 1 |
+| `editor.key.backspace-at-block-start` | local | blocks equals ["AAABBB"] | PASS | ["AAABBB"] |
+| `editor.key.backspace-at-block-start` | local | blocks equals ["AAABBB"] | PASS | ["AAABBB"] |
+| `editor.key.backspace-at-block-start` | local | blocksCount count 1 | PASS | 1 |
+| `editor.key.backspace-in-list` | official | kinds equals ["para"] | PASS | ["para"] |
+| `editor.key.backspace-in-list` | official | kinds contains "bullet" | PASS | ["bullet"] |
+| `editor.key.backspace-in-list` | official | kinds contains "bullet" | PASS | ["bullet"] |
+| `editor.key.backspace-in-list` | official | kinds equals ["para"] | PASS | ["para"] |
+| `editor.key.backspace-in-list` | official | blocks equals ["AAA"] | PASS | ["AAA"] |
+| `editor.key.backspace-in-list` | official | blocksCount count 1 | PASS | 1 |
+| `editor.key.backspace-in-list` | official | blocks equals ["AAA"] | PASS | ["AAA"] |
+| `editor.key.backspace-in-list` | official | kinds equals ["para"] | PASS | ["para"] |
+| `editor.key.backspace-in-list` | local | kinds equals ["para"] | PASS | ["para"] |
+| `editor.key.backspace-in-list` | local | kinds contains "bullet" | PASS | ["bullet"] |
+| `editor.key.backspace-in-list` | local | kinds contains "bullet" | PASS | ["bullet"] |
+| `editor.key.backspace-in-list` | local | kinds equals ["para"] | PASS | ["para"] |
+| `editor.key.backspace-in-list` | local | blocks equals ["AAA"] | PASS | ["AAA"] |
+| `editor.key.backspace-in-list` | local | blocksCount count 1 | PASS | 1 |
+| `editor.key.backspace-in-list` | local | blocks equals ["AAA"] | PASS | ["AAA"] |
+| `editor.key.backspace-in-list` | local | kinds equals ["para"] | PASS | ["para"] |
 | `editor.key.ctrl-arrow-word-nav` | official | blocks equals ["AAA BBB CCC"] | PASS | ["AAA BBB CCC"] |
 | `editor.key.ctrl-arrow-word-nav` | official | blocks equals ["AAA BBB CCC",""] | PASS | ["AAA BBB CCC",""] |
 | `editor.key.ctrl-arrow-word-nav` | official | blocks equals ["AAA BBB CCC","DDD"] | PASS | ["AAA BBB CCC","DDD"] |

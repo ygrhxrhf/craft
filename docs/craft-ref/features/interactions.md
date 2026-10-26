@@ -4570,3 +4570,35 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 | 全量 | **272 文件／2223 条全绿**（+5） |
 | `npx tsc --noEmit` | **0 错** |
 | 台账三闸 | arity 4/4 · selftally 1/1 · cleared 3/3 |
+
+## V178＝第 303 批（2026-10-26 机器钟 17:0x—17:3x＝**零产品代码批**＝净新增 0 条＝Wave 1 最后一块核心面收口）
+
+**Backspace 分派：两侧一致。** 这一族此前从未上屏对拍，`keyboard.md:285` 只有一条「四档」的旧读数。
+
+### 1、交互侧新增
+
+- ★★★★★ **四段逐档对拍全部 `match`**（新增两个 spec）：
+  - `editor.key.backspace-at-block-start`（20 行／**0 sev2+**）＝**合并** `["AAABBB"]`＋光标落交接点 3、
+    **删空前块** `["AAABBB"]`、**首块无动作**（一字不变）——两侧**逐帧逐字相同**。
+  - `editor.key.backspace-in-list`（14 行／**0 sev2+**／2 条已声明偏差）＝**去列表**段：
+    `kinds` 两侧同序列 `para → bullet → bullet → bullet → para → para`，即块首 `Backspace`
+    先把列表项变回段落（**不删字、不合并**），这与 `gap.md` **G578** 的六段链第 ① 段吻合。
+- ★★ **一处静态账的收窄**：`keyboard.md:285` 的「四档」是**屏面读数**，代码面（G578）是**六段链**；
+  本批补上了屏面从未量过的第 ① 段（去列表），**② 减缩进仍不采**（本地缩进本身是 G1545／G1546 的缺口，
+  混采会把两个原因搅在一起）。
+
+### 2、★ 五处仪器缺陷（都真踩到，详见 `interaction-lab/README.md` 第 8–10 条）
+
+`kinds` 没接进断言（静默 null）／文本名册把 `#n` 重复后缀当内容（假红）／
+侧栏「无标题文档」占位串进名册（本地 246 条 vs 官方 0）／`PURE_NOISE` 的 `#d+` 笔误／
+`PAGE_LABEL` 写死导致页签换号即报错。
+★ 影响面已核：唯一受影响的是 `editor.md-rules.block-kind`（93 行／19 条已声明，判定不变），
+其余 15 条 spec 逐字未变。
+
+### 3、门禁
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 矩阵 | **19 条 spec**（新增 2 条，均 `match`） |
+| 两侧记录 | 10 步／6 步，`errors=0`；selfCheck 7/7、8/8 全 PASS |

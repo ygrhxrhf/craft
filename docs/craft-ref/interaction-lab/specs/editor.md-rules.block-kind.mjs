@@ -105,7 +105,7 @@ export default {
     },
     {
       facet: 'added-only-official',
-      reason: '官方列表序号（`1.`／`2.`）与侧栏大纲行（`AAA#1`／`QODER-ILAB-md-block-kind#3`）会出现在正文文本流之外；本地列表序号由 CSS counter 画、不进 innerText，且无大纲行'
+      reason: '官方列表序号（`1.`／`2.`）会出现在正文文本流之外，本地列表序号由 CSS counter 画、不进 innerText。☆ 侧栏大纲行原本也在这里表现为 `AAA#1`／`…#3` 这样的**重复文本**条目，第 303 批把名册的重复计数后缀去掉后（重复与否另有 `countΔ:` 精算），该类条目不再单列 —— 大纲行的证据改由上面的 `countΔ:AAA` 一族承载'
       ,ref: 'gap.md G1556 · G866（官方序号画进文本节点）'
     },
     {

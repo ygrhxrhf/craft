@@ -49,7 +49,7 @@ export const VIEWPORT = { width: 1440, height: 900, deviceScaleFactor: 1, mobile
 /** 复用任务空间（硬规则：一个目标只用一个 TaskSpace）。 */
 export const TASK_SPACE = 'craft assets 20261023 r3';
 /** 靶子 → 该靶子用的 Page label。两侧各持自己的 cookie。 */
-export const PAGE_LABEL = { official: 'p1', local: 'p2' };
+export const PAGE_LABEL = { official: 'p1', local: 'p4' };
 
 export function stamp() {
   const d = new Date();
@@ -512,6 +512,33 @@ export function persist(record, tag) {
 
 // ───────────────────────── 入口函数 ─────────────────────────
 
+/**
+ * 页签标签会漂：标签是建立时分配的（p1/p2/p4/p5…），某个页被关掉重开就会换号，
+ * 而写死的 `PAGE_LABEL` 随即指向一个已关闭的句柄（报 `page p2 was closed`／
+ * `No target with given id found`，实测已绊过两次）。⇒ 先按写死标签试一次，
+ * 探不通就按**靶子 URL 前缀**在现有页里找；都没有才新建。
+ */
+async function resolvePage(task, targetName) {
+  const preferred = PAGE_LABEL[targetName];
+  const base = TARGETS[targetName];
+  const alive = async (page) => {
+    try { await page.evaluate(() => document.readyState); return true; } catch { return false; }
+  };
+
+  if (preferred && (await alive(task.page(preferred)))) return task.page(preferred);
+
+  const tabs = await task.tabs();
+  const match = tabs.find((t) => t.label && String(t.url).startsWith(base));
+  if (match) {
+    console.log('[run] page label drifted: ' + targetName + ' -> ' + match.label);
+    return task.page(match.label);
+  }
+
+  const page = await task.newPage();
+  console.log('[run] page created: ' + targetName + ' -> ' + page.label);
+  return page;
+}
+
 export async function main(opts) {
   const only = (opts && opts.only) !== undefined ? opts.only : ILAB_ONLY;
   const targetsArg = (opts && opts.targets) || ILAB_TARGETS;
@@ -523,7 +550,7 @@ export async function main(opts) {
   const task = await taskSpace(TASK_SPACE);
   const pages = {};
   for (const t of targets) {
-    pages[t] = task.page(PAGE_LABEL[t]);
+    pages[t] = await resolvePage(task, t);
     await pages[t].cdp('Emulation.setDeviceMetricsOverride', VIEWPORT);
   }
 

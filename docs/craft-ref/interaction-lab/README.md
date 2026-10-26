@@ -85,7 +85,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 七条踩过的坑（都改掉了，别再犯）
+## ★ 八条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -121,6 +121,28 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
    处置（`lab.mjs` 的 `navigate` 分支）＝**只吞"导航已提交的超时"**这一种
    （错误文案自陈 `navigation committed`，且 `document.readyState !== 'loading'`），其余错误照旧上抛。
    ☆ 这是**仪器缺陷**，与"官方没这个行为"是两件事——若不修，会把整个 Wave 1 报成"官方不可比"。
+
+8. **文本名册不认重复、侧栏标签不是内容（第 303 批修）**。两处都是**假红**的来源：
+   - `captureTextNodes` 给重复文本加 `#n` 后缀**只是让列表能区分**。差集里它会把
+     「同一标题被画在编辑区＋侧栏＋页签（官方 3 条）」与「只画 1 条（本地 1 条）」判成
+     单侧多出文本。改动＝`diffTextNodes` 比较前**统一剥掉 `#n`**；重复与否另有
+     `countΔ:<text>` 精算，信息不丢。★ 影响面：`editor.md-rules.block-kind` 的两条
+     `AAA#1`／`…#3` 假条目随之消失（19 条已声明，原 21），其余 spec 判定逐字未变。
+   - 本地测试库累积了几百篇历史测试文档 ⇒ 侧栏有 **246 条**「无标题文档」占位串，
+     官方侧为 0 ⇒ 单侧多出。改动＝把该串归为外壳噪声 `<UNTITLED>`（与既有 `页面标题` 同一处置）。
+   ☆ 顺带修掉 `PURE_NOISE` 正则里 `#d+` 应为 `#\d+` 的笔误——它让"纯噪声 + 重复后缀"的条目
+   **永远不会被丢掉**，静默漏网。
+
+9. **`kinds` 档只接了采集、没接断言（第 303 批修）**。`kinds` 在 Wave 1 续批七为采集而加，
+   但 `evalExpect` 的 `actualOf` 里**没有 `kinds` 分支** ⇒ 任何 `facet: 'kinds'` 的 expect
+   都静默取 `null`、恒 FAIL（首跑实测 6/8 FAIL 全是它）。改动＝补一行
+   `if (facet === 'kinds') return step.kinds ?? null;`。
+   ☆ 教训与 `check-tables.mjs` 空转同族：**新加观测档时，要同时检查断言侧认不认它**。
+
+10. **页签标签会漂（第 303 批修）**。标签是建页时分配的，页一关一开就换号；写死的
+   `PAGE_LABEL` 随即指向已关闭的句柄（报 `page p2 was closed`／`No target with given id found`，
+   实测已绊过多次）。改动＝`lab.mjs` 的 `resolvePage()`：先按写死标签探活，探不通就按
+   **靶子 URL 前缀**在现有页里找，都没有才新建。
 
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）

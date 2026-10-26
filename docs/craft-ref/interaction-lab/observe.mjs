@@ -328,6 +328,9 @@ const NOISE_RULES = [
   // 两侧屏上都有圆点（实测 probe-bullet：本地 listStyleType=disc / 官方 textNode `•`）
   // ⇒ chrome 不是内容，只留纯圆点的条目整个丢掉（由 PURE_NOISE 那条路兜底）。
   [/^[•·●◦▪▫‣⁃]+(#\d+)?$/g, ''],
+  // 未命名文档在侧栏里的行标签。本地测试库累积了几百篇历史测试文档 ⇒ 侧栏的占位串数量
+  // 与官方不在一个量级（实测 246 vs 0）⇒ 它是**外壳标签**不是编辑器内容，整条丢掉。
+  [/^无标题文档$/, '<UNTITLED>'],
   // 协作连接横幅（本地 dev 常驻，官方无）
   [/协作连接已断开[^\n]*/g, '<COLLAB_BANNER>'],
 ];
@@ -345,14 +348,18 @@ export function normalizeText(input, extra) {
  * 而不是保留成 `<SAVED>`。理由：`已保存`/`未保存` 的**落定时机**两侧本就不同（任务书明列噪声），
  * 保留占位符仍会在差集里表现为 added-only/removed-only 的假红。
  */
-const PURE_NOISE = /^(<[A-Z_]+>)(#d+)?$/;
+const PURE_NOISE = /^(<[A-Z_]+>)(#\d+)?$/;
 
 /** 文本节点名册的差集：added / removed（归一化 + 丢弃纯噪声）。 */
 export function diffTextNodes(before, after, extra) {
+  // `captureTextNodes` 给重复文本加 `#n` 后缀只为让列表里能区分，**不是内容**。
+  // 名册的职责是"哪些文本在场"；"同一文本出现几次"另有 `countΔ:<text>` 精算。
+  // 不去后缀会把**外壳里同一标题被画在不同处**（官方 编辑区＋侧栏＋页签 = 3 条，
+  // 本地只有 1 条）读成"单侧多出文本" —— 本批实测踩到（`QODER-…#1`）。
   const clean = (list) =>
     new Set(
       (list || [])
-        .map((x) => normalizeText(x, extra))
+        .map((x) => normalizeText(x, extra).replace(/#\d+$/, ''))
         .filter((x) => x && !PURE_NOISE.test(x)),
     );
   const a = clean(before);
@@ -409,6 +416,9 @@ export function evalExpect(expectations, steps) {
     if (facet === 'breaks:totalBr') return step.breaks?.totalBr ?? null;
     if (facet === 'breaks:lines') return step.breaks?.blocks?.map((b) => b.lines) ?? [];
     if (facet === 'blocksCount') return step.blocks?.blocks?.length ?? 0;
+    // 块**语义档**归一枚举（`para`/`title`/`bullet`/…）。`kinds` 档在 Wave 1 续批七
+    // 只为「采集」而加，**没接进断言** ⇒ 任何 `kinds` 的 expect 都静默取 null（本批踩到）。
+    if (facet === 'kinds') return step.kinds ?? null;
     if (facet.startsWith('text:')) return step.fingerprint?.counts?.[facet.slice(5)] ?? 0;
     if (facet.startsWith('selection:')) return step.selection?.[facet.slice(10)] ?? null;
     if (facet.startsWith('state:')) {

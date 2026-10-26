@@ -588,3 +588,65 @@ div._flexRow_1oz2o_1
 
 ★ 另：本轮跑出一个卡死的 `ego.mojom.NodeService`（PID **4576**，启动于 18:38），是后续探针卡住的另一成因；
 按既有纪律（**杀进程禁用模糊通配符**）本轮**未杀**，留给下一手按显式 PID 处理。
+
+## 十四、★ 续批十（2026-10-26）：**分隔线五档定案** —— 换判据面（REST 读回），三枚新账
+
+净新增 **3 条**（G1559—G1561）· 零产品代码批。台账＝`gap.md` 同批三行。
+
+### 1、★★★ 卡点解法：**不读 DOM，读官方 REST**
+
+续批九穷举了 DOM／CSS／像素／剪贴板四条路，全部不成立。本批换面：官方 REST
+（`connect.craft.do/links/11WSzp0AjQN/api/v1`，**就是上一批 `dom-20261023/mcp/` 记下的那条 link**）的
+`GET /blocks?id=<docId>` 直接返回每枚块的 `type` 与 `lineStyle`。
+
+⇒ **八枚独立样本**（`div5`／`div6`／`div8`／`div9`／`divA`／`md-line`／`md-line3`／`md-line4`，全是续批九留下的临时文档）逐字相同：
+
+| 记号（键入） | `lineStyle` | 自带 `markdown` |
+| --- | --- | --- |
+| `..-` | `extraLight` | `***` |
+| `.--` | `light` | `****` |
+| `---` | `regular` | `*****` |
+| `=--` | `strong` | `******` |
+| `===` | **`pageBreak`** | `*******` |
+
+⇒ 星号枚数 ＝ `3 + 档序`，与上一批「档位信号找不到」的结论**不冲突**：DOM 上确实不可区分，**信号在数据面**。
+
+### 2、★★ 三条新账
+
+- **G1559**：第五档官方 REST 叫 **`pageBreak`**、本地存 **`pageSeparator`**。
+  ★ 而官方**编辑器 bundle** 里另有 `Lt.PageSeparator="pageSeparator"`（`static/js/index-BclxLRzw.js`，7 处字面量）
+  ⇒ **三套名字**（编辑器内部 `pageSeparator`／REST 读写 `pageBreak`／插入面板 item 键 `pageBreak`）。
+  ☆ 这正是 G1411「桥面拒绝 `pageSeparator`」的根因面：写侧通路名与 REST 读回名**不是同一个字符串**。
+- **G1560**：粗细口径两侧不同。官方 `BlockRenderer`＝`1/1/1/2/3px` ＋ 逐档 `opacity .08/.15/.24/.4/.5`；
+  本地 `globals.css:921-935`＝`1/2/3/6px` ＋ **无 opacity**，且**第五档在本地没有任何专属规则**（落回基础 `1px`）。
+  ⇒ 本地「常规」是官方的约 4 倍浓度；第五档在官方是**最粗一档**、本地画成**最细一档**。
+- **G1561**：本地导出恒写 `---`（`document-codec/index.ts:106-107`），四档信息导出即丢；
+  而 `dividerMarkupFromStyle()` 这张正确的星号表**建好了却零消费者**（只被自家单测引用）。
+
+### 3、★★ 一条仪器纪律（本批新增，写下来免得下次再花一轮）
+
+本地 `getComputedStyle` 把声明 `6px` 读回 **`5.6px`**——**连合成的 `<div>` 内联 `border-top:6px` 也读 `5.6px`**，
+而根字号 16px、`devicePixelRatio ≈ 1`、`zoom` 1、`visualViewport.scale` 1 全对。
+⇒ 结论：**本机的像素绝对值不可比**（浏览器层取整，不是缩容器的锅——已逐层扫过 13 层祖先，无一有 `zoom`／`transform`／`scale`）。
+☆ 处置：G1560 一律以 **CSSOM 声明值**为据，不拿实测像素判差——这与 README 第 1 条「绝对量不可比」同源。
+
+### 4、★★ 本批踩到的三处环境故障（都不是产品缺陷）
+
+| # | 故障 | 后果 | 处置 |
+| --- | --- | --- | --- |
+| 1 | 上一批的任务空间已**不存在**（`listTaskSpaces()` 返回 `[]`） | 须 `taskSpace()` 重建（同一名字） | 已重建，`spaceId=2` |
+| 2 | 本地 dev server（14:39 启动）的编译 worker 崩了：`/api/auth/*` **整条 500**、`Jest worker encountered 2 child process exceptions` | 本地侧登录进不去 ⇒ 两侧对照做不成 | 经用户同意后重启；重启后 `session=200` |
+| 3 | ★ **我自己造成的**：为清本地 cookie 调了 `Network.clearBrowserCookies`，它作用于**整个浏览器上下文** ⇒ 连 `docs.craft.do` 的登录态一起清掉 | 官方侧**界面**退到「欢迎来到 Craft」登录页 | ★ **权威数据面不受影响**：REST link 自带令牌，`/connection`／`/blocks` 仍 200 ⇒ 本批全部官方证据取自 REST；**官方界面侧的本批补充测量（如 G1560 的屏上像素）因此未做，如实挂起** |
+
+★ 教训：用 CDP 清 cookie 前要先想清楚作用域是**整个 context**而非"当前 origin"；本项目里两侧共用同一个 TaskSpace ⇒ 一清全清。
+（本地侧改走「curl 取 session token → `Network.setCookie` 注入」的定向路线，不再清 context。）
+
+### 5、验收
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| `gap.md` 台账两闸 | `ledger-arity-gate` **4/4**、`ledger-selftally-gate` **1/1** 全绿（自述 1553／G1561 ＝ 现跑逐字相同） |
+| 临时文档 | 本地新建的一枚（`QODER-ILAB-divlocal`）已 `softDelete ok=true`；官方侧本批**未新建**任何文档（读的是续批九的样本） |
+| 官方残留（非本批） | `QODER-ILAB-div7`／`divB` 仍在列表屏；`div5/6/8/9/A` 在**回收站**（`softDelete` 早已生效，只是未永久清除）★ 另：`/documents` 端点**会把回收站内容一并返回**（154→162 条），不能拿它当"未删"的判据 |
+

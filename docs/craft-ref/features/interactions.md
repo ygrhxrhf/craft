@@ -4473,3 +4473,34 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - ⚠ **本批只采不修**：G1558 已登记未实现（触发时点差）。
 - ⚠ Wave 1 仍未采：**`⇧⏎` RENAME**、**Backspace 分派**、**Markdown 分隔线五档**（官方五档已知全部生效，本地也已有实现 ⇒ 可能是 `match`；卡点＝官方 line 块的**档位信号未找到**）。
 - ⚠ `observe: ['a11y','animation','db']` 三档仍未实现（Wave 0 就挂着）。
+
+## V175＝Wave 1·续批十（2026-10-26 机器钟 14:4x—15:4x＝官方 CSS hash 未变 `index.css.CiV2oimr.css`＝**零产品代码批**＝净新增 3 条＝G1559—G1561）
+
+**上一批卡在「分隔线五档在官方 DOM/CSS 上完全不可区分」，本批换判据面把它定案。**
+
+### 1、交互侧新增
+
+- ★★★★★ **官方 `GET /blocks` 直接给出 `lineStyle`**（`connect.craft.do/links/11WSzp0AjQN/api/v1`）：八枚独立样本（续批九留下的 `div5`／`div6`／`div8`／`div9`／`divA`／`md-line`／`md-line3`／`md-line4`）逐字一致 ⇒ `..-`→`extraLight`／`.--`→`light`／`---`→`regular`／`=--`→`strong`／`===`→**`pageBreak`**，且每枚自带 markdown 星号形 `***`…`*******`（枚数＝`3+档序`）。
+- ★★★★ **G1559**＝第五档存储名两侧不同：官方 REST `pageBreak` / 本地 `pageSeparator`；而官方**编辑器 bundle** 里另有 `Lt.PageSeparator="pageSeparator"`（`static/js/index-BclxLRzw.js` 7 处）⇒ **三套名字并存**。这正是 G1411「桥面拒绝 `pageSeparator`」的根因面。
+- ★★★ **G1560**＝粗细口径：官方 `1/1/1/2/3px` ＋ 逐档 `opacity .08/.15/.24/.4/.5`；本地 `1/2/3/6px` ＋ 恒 `opacity:1`，且**第五档在本地无任何专属 CSS 规则**（落回基础 1px）。
+- ★★★ **G1561**＝本地导出恒写 `---`（`document-codec/index.ts:106-107`）⇒ 五档在导出面全丢；`dividerMarkupFromStyle()` 表已建好却**零消费者**。
+
+### 2、★ 仪器纪律新增一条
+
+本地 `getComputedStyle` 把声明 `6px` 读回 **`5.6px`**，连**合成 `<div>` 内联 `border-top:6px`** 也读 `5.6px`，而根字号/`dpr`/`zoom`/`visualViewport.scale` 全为 1，13 层祖先逐层扫过无一有 `zoom`／`transform`／`scale` ⇒ **本机像素绝对值不可比**（浏览器层取整）。⇒ 判差一律用 **CSSOM 声明值**，与 README 第 1 条「绝对量不可比」同源。
+
+### 3、★ 三处环境故障（都不是产品缺陷，如实登记）
+
+- 上一批的 TaskSpace 已不存在（`listTaskSpaces()` ＝ `[]`）⇒ 同名字重建。
+- 本地 dev server（当日 14:39 启动）编译 worker 崩：`/api/auth/*` 整条 **500**（`Jest worker encountered 2 child process exceptions`）⇒ 本地登录进不去。经用户同意后重启，`/api/auth/session` 恢复 200。
+- ★ **我的失误**：为清本地 cookie 调了 `Network.clearBrowserCookies`，它的作用域是**整个浏览器上下文** ⇒ 连 `docs.craft.do` 登录态一并清掉，官方**界面**退到登录页。**数据面不受影响**（REST link 自带令牌，`/connection`／`/blocks` 仍 200）⇒ 本批官方证据全部取自 REST；**官方屏上补充测量因此未做，如实挂起**。教训：两侧共用同一 TaskSpace 时，清 cookie 会一清全清；改走「curl 取 token → `Network.setCookie` 注入」的定向路线。
+
+### 4、门禁
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| `ledger-arity-gate` | **4/4 全绿**（首跑真抓到本批三条新行的表形错位，已修） |
+| `ledger-selftally-gate` | **1/1 全绿**（自述 **1553／G1561** ＝ 现跑逐字相同） |
+| 临时文档 | 本地 `QODER-ILAB-divlocal` `softDelete ok=true`；官方侧本批未新建（读的是续批九样本） |
+| ★ 端点陷阱 | `/documents` **会把回收站内容一并返回**（154→162）⇒ 不能拿它判"未删"；`div5/6/8/9/A` 实为**已在回收站** |

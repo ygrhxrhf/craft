@@ -73,9 +73,13 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const [activeTab, setActiveTab] = useState<RightTabId | null>(null);
   // 添加评论 from the block menu opens the info panel, which holds the composer.
   const commentRequest = useCommentRequestStore((state) => state.request);
-  useEffect(() => {
+  // 请求号变了就打开信息面板。放渲染期按上一值调整（React 规定的「props 变化时调整 state」写法），
+  // 而不是 effect 里同步 setState —— 后者会被 react-hooks/set-state-in-effect 拦下。
+  const [syncedCommentRequest, setSyncedCommentRequest] = useState(commentRequest);
+  if (syncedCommentRequest !== commentRequest) {
+    setSyncedCommentRequest(commentRequest);
     if (commentRequest > 0) setActiveTab('info');
-  }, [commentRequest]);
+  }
   const focusActive = useFocusStore((state) => state.active);
   const focusBinding = KEY_BINDINGS.find((binding) => binding.id === 'TOGGLE_FOCUS_MODE');
   // 键位提示是渲染期读出来的文案，所以平台只能挂载后再猜（G1486）。
@@ -97,7 +101,6 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
    * 离线时改说「未连接到网络」，每日笔记若已把草稿落进本机库则说「离线更新于 HH:MM」。
    */
   const [offline, setOffline] = useState(false);
-  const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
   useEffect(() => {
     const update = () => setOffline(!navigator.onLine);
     update();
@@ -109,23 +112,25 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     };
   }, []);
   // 离线时读一眼本机草稿的落盘时刻（每日笔记那句要它）；失败/没有就退到「未连接到网络」。
+  // 用「带着 key 的结果」而不是每次同步清空 state：在线时 key 不匹配即视为 null，
+  // 因此 effect 里不再有同步 setState（react-hooks/set-state-in-effect）。
+  const draftKey = `${offline}|${doc.id}|${saveState}`;
+  const [draft, setDraft] = useState<{ key: string; at: number | null } | null>(null);
   useEffect(() => {
-    if (!offline) {
-      setDraftSavedAt(null);
-      return;
-    }
+    if (!offline) return;
     let alive = true;
     getDraft(doc.id)
-      .then((draft) => {
-        if (alive) setDraftSavedAt(draft?.savedAt ?? null);
+      .then((next) => {
+        if (alive) setDraft({ key: draftKey, at: next?.savedAt ?? null });
       })
       .catch(() => {
-        if (alive) setDraftSavedAt(null);
+        if (alive) setDraft({ key: draftKey, at: null });
       });
     return () => {
       alive = false;
     };
-  }, [offline, doc.id, saveState]);
+  }, [offline, doc.id, saveState, draftKey]);
+  const draftSavedAt = draft?.key === draftKey ? draft.at : null;
   // G610：打开一篇文档即记一次「上次浏览」（官方 `document_view` 的等价物）——列表档那一列读它。
   //   走内核 applyLocal（元数据列），与页面信息的写入同一条通路。
   useEffect(() => {

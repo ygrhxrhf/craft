@@ -155,14 +155,18 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   }, []);
 
   // profile 是父组件异步取的（`SettingsModal` 的 useEffect）⇒ 初值那一刻它还是 null。
-  // 拿到之后再补一次，否则头像永远停在首字母。
-  useEffect(() => {
-    if (profile?.image) setAvatarUrl(profile.image);
-  }, [profile?.image]);
-
-  useEffect(() => {
-    if (profile?.name) setDisplayName(profile.name);
-  }, [profile?.name]);
+  // 拿到之后再补一次，否则头像永远停在首字母。渲染期按上一值调整，不在 effect 里同步 setState。
+  const profileImage = profile?.image ?? null;
+  const profileName = profile?.name ?? null;
+  const [syncedProfile, setSyncedProfile] = useState({ image: profileImage, name: profileName });
+  if (profileImage !== null && syncedProfile.image !== profileImage) {
+    setSyncedProfile((prev) => ({ ...prev, image: profileImage }));
+    setAvatarUrl(profileImage);
+  }
+  if (profileName !== null && syncedProfile.name !== profileName) {
+    setSyncedProfile((prev) => ({ ...prev, name: profileName }));
+    setDisplayName(profileName);
+  }
 
   const setPref = async (patch: Partial<{
     theme: string;

@@ -43,9 +43,13 @@ export function CommandPalette() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [open]);
 
-  useEffect(() => {
+  // 打开时把外部带进来的 seed 填进输入框。渲染期按上一值调整，不在 effect 里同步 setQuery
+  //（react-hooks/set-state-in-effect）；seed 为空的打开保持原有输入。
+  const [syncedSeed, setSyncedSeed] = useState(seedQuery);
+  if (syncedSeed !== seedQuery) {
+    setSyncedSeed(seedQuery);
     if (isOpen && seedQuery) setQuery(seedQuery);
-  }, [isOpen, seedQuery]);
+  }
 
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current);

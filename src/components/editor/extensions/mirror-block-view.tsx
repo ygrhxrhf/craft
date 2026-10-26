@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
@@ -50,8 +50,12 @@ export function MirrorBlockView({ node, editor, selected, updateAttributes }: No
     }
   }, [editor, sourceDocumentId, sourceBlockId, sourceBlockIndex]);
 
+  // 初值是 loading，真正的读取在 effect 里发起；load 本身不在 effect 体中同步调用
+  //（那会同步 setState 被 react-hooks/set-state-in-effect 拦下），交给异步 IIFE。
   useEffect(() => {
-    void load();
+    void (async () => {
+      await load();
+    })();
   }, [load]);
 
   if (!sourceDocumentId) {
@@ -110,30 +114,29 @@ interface PickedSource {
 
 function MirrorSourcePicker({ onPick }: { onPick: (attributes: PickedSource) => void }) {
   const [query, setQuery] = useState('');
-  const [hits, setHits] = useState<BlockAnchorHit[]>([]);
-  const [loading, setLoading] = useState(false);
-  const latestQuery = useRef(query);
+  // 结果按搜索词记账：换词就自然回到「无结果 / 未落定」，不必在 effect 里同步 setHits([])。
+  const [result, setResult] = useState<{ term: string; hits: BlockAnchorHit[] } | null>(null);
+  const term = query.trim();
+  const hits = result?.term === term ? result.hits : [];
+  const loading = Boolean(term) && result?.term !== term;
 
   useEffect(() => {
-    latestQuery.current = query;
-    const term = query.trim();
-    if (!term) {
-      setHits([]);
-      return;
-    }
+    if (!term) return;
+    let cancelled = false;
     const timer = setTimeout(() => {
-      setLoading(true);
       searchBlockAnchors(term)
-        .then((result) => {
-          if (latestQuery.current === query) setHits(result);
+        .then((next) => {
+          if (!cancelled) setResult({ term, hits: next });
         })
-        .catch(() => setHits([]))
-        .finally(() => {
-          if (latestQuery.current === query) setLoading(false);
+        .catch(() => {
+          if (!cancelled) setResult({ term, hits: [] });
         });
     }, 150);
-    return () => clearTimeout(timer);
-  }, [query]);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [term]);
 
   return (
     <div

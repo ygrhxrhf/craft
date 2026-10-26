@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { MessageSquare, Check, Trash2, X } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
@@ -80,8 +80,9 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   const [hasSelection, setHasSelection] = useState(false);
   const { data: session } = useSession();
   const userId = session?.user?.id;
-  // 离线/加载中 session 可能为空：viewer id 由本地 user 镜像兜底，写入不依赖 session
-  const viewerIdRef = useRef<string | null>(null);
+  // 离线/加载中 session 可能为空：viewer id 由本地 user 镜像兜底，写入不依赖 session。
+  // 必须是 state 而非 ref：表情按钮要按它判断「这枚是不是我加的」⇒ 渲染期读取。
+  const [viewerId, setViewerId] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
     const [pendingThreads, pendingComments, userRows] = await Promise.all([
@@ -89,19 +90,21 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
       readPendingRows('comment'),
       readLocalRecords('user'),
     ]);
-    const viewerId = pickViewerId(userId, userRows);
-    viewerIdRef.current = viewerId;
+    const resolvedViewerId = pickViewerId(userId, userRows);
+    setViewerId(resolvedViewerId);
     let serverThreads: ThreadView[] = [];
     try {
       serverThreads = (await getThreads(documentId)) as ThreadView[];
     } catch {
       // 离线：服务端读不到，退回本地 pending overlay，本地写入仍可见
     }
-    setThreads(toRows(overlayCommentThreads(serverThreads, pendingThreads, pendingComments, viewerId)));
+    setThreads(toRows(overlayCommentThreads(serverThreads, pendingThreads, pendingComments, resolvedViewerId)));
   }, [documentId, userId]);
 
   useEffect(() => {
-    void reload();
+    void (async () => {
+      await reload();
+    })();
   }, [reload]);
 
   useEffect(() => getSyncManager().onStoreChanged((table) => {
@@ -110,10 +113,12 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
 
   // 添加评论 from the block menu opens this composer and names the block it is about.
   const commentRequest = useCommentRequestStore((state) => state.request);
-  useEffect(() => {
-    if (commentRequest === 0) return;
-    setShowComposer(true);
-  }, [commentRequest]);
+  // 请求号变化时在渲染期调整（与 DocumentEditor 同一写法），不在 effect 里同步 setState。
+  const [syncedCommentRequest, setSyncedCommentRequest] = useState(commentRequest);
+  if (syncedCommentRequest !== commentRequest) {
+    setSyncedCommentRequest(commentRequest);
+    if (commentRequest !== 0) setShowComposer(true);
+  }
 
   useEffect(() => {
     if (!editor) return;
@@ -139,7 +144,7 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
       const body = draft.slice(0, 2000);
       // 线程 + 首条回复 → applyLocal（本地 id，先落地再推送）。
       // userId 只作本地乐观标记；服务端会按会话覆盖，缺了也不影响推送。
-      const viewerId = viewerIdRef.current ?? userId ?? null;
+      const actorId = viewerId ?? userId ?? null;
       const threadId = crypto.randomUUID();
       const commentId = crypto.randomUUID();
       await getSyncManager().applyLocal({
@@ -150,7 +155,7 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
       await getSyncManager().applyLocal({
         table: 'comment',
         id: commentId,
-        patch: { threadId, ...(viewerId ? { userId: viewerId } : {}), body },
+        patch: { threadId, ...(actorId ? { userId: actorId } : {}), body },
       });
       editor.chain().focus().setComment(threadId).run();
       setDraft('');
@@ -166,11 +171,11 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
     if (!body) return;
     try {
       const text = body.slice(0, 2000);
-      const viewerId = viewerIdRef.current ?? userId ?? null;
+      const actorId = viewerId ?? userId ?? null;
       await getSyncManager().applyLocal({
         table: 'comment',
         id: crypto.randomUUID(),
-        patch: { threadId, ...(viewerId ? { userId: viewerId } : {}), body: text },
+        patch: { threadId, ...(actorId ? { userId: actorId } : {}), body: text },
       });
       setReplyDrafts((prev) => ({ ...prev, [threadId]: '' }));
       await reload();
@@ -180,11 +185,11 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
   };
 
   const handleReact = async (comment: CommentRow, glyph: string) => {
-    const viewerId = viewerIdRef.current ?? userId ?? null;
-    if (!viewerId) return;
+    const actorId = viewerId ?? userId ?? null;
+    if (!actorId) return;
     if (!navigator.onLine) return;
     const name = session?.user?.name ?? session?.user?.email ?? '';
-    const reactions = toggleReaction(comment.reactions, { glyph, userId: viewerId, name });
+    const reactions = toggleReaction(comment.reactions, { glyph, userId: actorId, name });
     try {
       await getSyncManager().applyLocal({
         table: 'comment',
@@ -343,7 +348,7 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
                 </span>
                 {REACTION_CHOICES.map((glyph) => {
                   const mine = comment.reactions.some(
-                    (reaction) => reaction.userId === (viewerIdRef.current ?? userId) && reaction.glyph === glyph,
+                    (reaction) => reaction.userId === (viewerId ?? userId) && reaction.glyph === glyph,
                   );
                   return (
                     <button

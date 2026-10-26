@@ -26,10 +26,14 @@ export function useCompletedTaskAppearance(): CompletedTaskAppearance {
         if (alive) setAppearance(appearanceFromUserRows(rows, userId));
       });
     void read();
-    return getSyncManager().onStoreChanged((table) => {
+    const unsubscribe = getSyncManager().onStoreChanged((table) => {
       if (table !== 'user') return;
       void read();
     });
+    return () => {
+      alive = false;
+      unsubscribe();
+    };
   }, [userId]);
 
   return appearance;

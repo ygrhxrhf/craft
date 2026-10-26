@@ -86,16 +86,28 @@ function SyncedBoard({ uri, editable }: { uri: string; editable: boolean }) {
  * claim comes from Next.js so the role is decided server-side, never here.
  */
 export function Board({ whiteboardId, shareToken }: BoardProps) {
-  const [grant, setGrant] = useState<ConnectionGrant | null>(null);
-  const [failure, setFailure] = useState<string | null>(null);
+  // 结果按「本次尝试」记账：换白板或重试都会换 key，旧结果自然不再生效，
+  // 不必在 effect 里同步清空（react-hooks/set-state-in-effect）。
+  const attemptKey = `${whiteboardId}|${shareToken ?? ''}`;
   const [attempt, setAttempt] = useState(0);
+  const [result, setResult] = useState<{
+    key: string;
+    attempt: number;
+    grant: ConnectionGrant | null;
+    failure: string | null;
+  } | null>(null);
+
+  const settled = result?.key === attemptKey && result.attempt === attempt ? result : null;
+  const grant = settled?.grant ?? null;
+  const failure = settled?.failure ?? null;
 
   useEffect(() => {
     let cancelled = false;
-    setGrant(null);
-    setFailure(null);
 
     void (async () => {
+      const settle = (next: { grant: ConnectionGrant | null; failure: string | null }) => {
+        if (!cancelled) setResult({ key: attemptKey, attempt, ...next });
+      };
       try {
         const res = await fetch(`/api/whiteboards/${whiteboardId}/collab-token`, {
           method: 'POST',
@@ -105,19 +117,22 @@ export function Board({ whiteboardId, shareToken }: BoardProps) {
         const body = (await res.json().catch(() => ({}))) as Partial<ConnectionGrant> & { error?: string };
         if (cancelled) return;
         if (!res.ok || !body.token) {
-          setFailure(body.error ?? '无法连接同步服务');
+          settle({ grant: null, failure: body.error ?? '无法连接同步服务' });
           return;
         }
-        setGrant({ token: body.token, role: body.role as WhiteboardRole, syncUrl: body.syncUrl as string });
+        settle({
+          grant: { token: body.token, role: body.role as WhiteboardRole, syncUrl: body.syncUrl as string },
+          failure: null,
+        });
       } catch {
-        if (!cancelled) setFailure('无法连接同步服务');
+        settle({ grant: null, failure: '无法连接同步服务' });
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [whiteboardId, shareToken, attempt]);
+  }, [whiteboardId, shareToken, attempt, attemptKey]);
 
   const retry = useCallback(() => setAttempt((value) => value + 1), []);
 

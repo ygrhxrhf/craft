@@ -92,8 +92,10 @@ describe('the account panel can actually change the avatar', () => {
   });
 
   it('re-syncs when the async profile lands', () => {
-    // profile 由父组件异步取 ⇒ 初值那刻是 null，没有这条 effect 头像永远停在首字母。
-    expect(panels).toMatch(/if \(profile\?\.image\) setAvatarUrl\(profile\.image\)/);
+    // profile 由父组件异步取 ⇒ 初值那刻是 null，没有这条补写头像永远停在首字母。
+    // 形态是渲染期按上一值调整（而非 effect + setState，那会被 set-state-in-effect 拦下），
+    // 判据与之一致：profile.image 到了就写进 avatarUrl。
+    expect(panels).toMatch(/if \(profileImage !== null && syncedProfile\.image !== profileImage\)[\s\S]{0,160}setAvatarUrl\(profileImage\)/);
   });
 });
 

@@ -58,7 +58,9 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
   }, [documentId]);
 
   useEffect(() => {
-    void reload();
+    void (async () => {
+      await reload();
+    })();
   }, [reload]);
 
   // G1521：本机增删改／他端推送／入站 ack+pull 触碰 document_member ⇒ 重读名册（同 TrashList.tsx:81）。

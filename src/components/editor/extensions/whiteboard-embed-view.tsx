@@ -25,13 +25,20 @@ interface Grant {
  * server-side; a refusal here just degrades the embed to a link.
  */
 function useBoardUri(whiteboardId: string | null) {
-  const [uri, setUri] = useState<string | null>(null);
-  const [state, setState] = useState<'idle' | 'connecting' | 'ready' | 'denied'>('idle');
+  const [grant, setGrant] = useState<{
+    whiteboardId: string;
+    uri: string | null;
+    state: 'ready' | 'denied';
+  } | null>(null);
+
+  // 「connecting」= 还没拿到这个白板的结果；不在 effect 里同步写 state。
+  const settled = grant?.whiteboardId === whiteboardId ? grant : null;
+  const state = !whiteboardId ? 'idle' : settled ? settled.state : 'connecting';
+  const uri = settled?.uri ?? null;
 
   useEffect(() => {
     if (!whiteboardId) return;
     let cancelled = false;
-    setState('connecting');
     void fetch(`/api/whiteboards/${whiteboardId}/collab-token`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -40,15 +47,18 @@ function useBoardUri(whiteboardId: string | null) {
       .then(async (res) => {
         if (cancelled) return;
         if (!res.ok) {
-          setState('denied');
+          setGrant({ whiteboardId, uri: null, state: 'denied' });
           return;
         }
         const body = (await res.json()) as Grant;
-        setUri(`${body.syncUrl}/sync/${whiteboardId}?token=${encodeURIComponent(body.token)}`);
-        setState('ready');
+        setGrant({
+          whiteboardId,
+          uri: `${body.syncUrl}/sync/${whiteboardId}?token=${encodeURIComponent(body.token)}`,
+          state: 'ready',
+        });
       })
       .catch(() => {
-        if (!cancelled) setState('denied');
+        if (!cancelled) setGrant({ whiteboardId, uri: null, state: 'denied' });
       });
     return () => {
       cancelled = true;

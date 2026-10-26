@@ -63,6 +63,29 @@ export function readShowCompleted(storage: { getItem(key: string): string | null
 
 export function writeShowCompleted(storage: { setItem(key: string, value: string): void }, show: boolean): void {
   storage.setItem(SHOW_COMPLETED_KEY, String(show));
+  showCompletedListeners.forEach((listener) => listener());
+}
+
+const showCompletedListeners = new Set<() => void>();
+
+/**
+ * `useSyncExternalStore` 的订阅面：这枚开关存在本机 localStorage，服务端快照一律 false
+ *（与 SSR 的 HTML 一致），客户端快照读真值。
+ */
+export function subscribeShowCompleted(listener: () => void): () => void {
+  showCompletedListeners.add(listener);
+  return () => {
+    showCompletedListeners.delete(listener);
+  };
+}
+
+export function readShowCompletedNow(): boolean {
+  if (typeof localStorage === 'undefined') return false;
+  return readShowCompleted(localStorage);
+}
+
+export function serverShowCompleted(): boolean {
+  return false;
 }
 
 export function applyCompletedFilter<T extends { isCompleted: boolean; status?: TaskLineStatus | 'doing' }>(

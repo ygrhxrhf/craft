@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { useSession } from 'next-auth/react';
 import { Moon, Sun, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,9 +13,23 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { getSyncManager } from '@/lib/sync-core';
 
+/** 恒为真的客户端快照、恒为假的服务端快照：用来表达「已经挂载到客户端」。 */
+function subscribeMounted(): () => void {
+  return () => {};
+}
+
+function clientMounted(): boolean {
+  return true;
+}
+
+function serverMounted(): boolean {
+  return false;
+}
+
 export function ThemeToggle() {
   const { setTheme, theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  // next-themes 在服务端拿不到主题，首帧图标必须与服务端一致，挂载后才换成真值。
+  const mounted = useSyncExternalStore(subscribeMounted, clientMounted, serverMounted);
   const { data: session } = useSession();
 
   // 主题偏好（user 表）→ applyLocal；本地 setTheme 已乐观生效
@@ -26,8 +40,6 @@ export function ThemeToggle() {
       .applyLocal({ table: 'user', id: userId, patch: { theme: value } })
       .catch(() => {});
   };
-
-  useEffect(() => setMounted(true), []);
 
   if (!mounted) {
     return <Button variant="ghost" size="icon-sm" disabled />;

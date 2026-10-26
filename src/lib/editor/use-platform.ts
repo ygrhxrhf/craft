@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 import { detectPlatform, type Platform } from './keymap';
 
@@ -14,12 +14,23 @@ import { detectPlatform, type Platform } from './keymap';
 export const SERVER_PLATFORM: Platform = 'win';
 
 /**
- * 键位提示该印哪一端的文案。挂载后才是真机那一端；挂载前必须与服务端逐字相同。
+ * 平台不随时间变化，所以没有可订阅的东西；`useSyncExternalStore` 只是让客户端快照
+ * 与首帧服务端快照分离的现成机制（此前用 effect + setState，会被
+ * react-hooks/set-state-in-effect 拦下）。服务端快照固定 `win`，hydrate 之后再拿真机值。
  */
+function subscribe(): () => void {
+  return () => {};
+}
+
+function getSnapshot(): Platform {
+  return detectPlatform();
+}
+
+function getServerSnapshot(): Platform {
+  return SERVER_PLATFORM;
+}
+
+/** 键位提示该印哪一端的文案。挂载后才是真机那一端；挂载前必须与服务端逐字相同。 */
 export function usePlatform(): Platform {
-  const [platform, setPlatform] = useState<Platform>(SERVER_PLATFORM);
-  useEffect(() => {
-    setPlatform(detectPlatform());
-  }, []);
-  return platform;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

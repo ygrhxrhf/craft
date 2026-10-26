@@ -31,7 +31,16 @@ export function WhiteboardShareDialog({ whiteboardId, open, onClose }: Whiteboar
   const [permission, setPermission] = useState<WhiteboardSharePermission | null>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [warning, setWarning] = useState<string | null>(null);
+  // 提示按「本次打开」记账：每次打开换一个 token，上次打开留下的提示自然不再显示，
+  // 不必在 effect 里同步 setWarning(null)（react-hooks/set-state-in-effect）。
+  const [openToken, setOpenToken] = useState(0);
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) setOpenToken((token) => token + 1);
+  }
+  const [warningState, setWarningState] = useState<{ token: number; message: string } | null>(null);
+  const warning = warningState?.token === openToken ? warningState.message : null;
   const [pending, startTransition] = useTransition();
   /** Bumped by every read and every local choice, so a slow read cannot overwrite a click. */
   const revision = useRef(0);
@@ -40,7 +49,6 @@ export function WhiteboardShareDialog({ whiteboardId, open, onClose }: Whiteboar
     if (!open) return;
     let cancelled = false;
     const mine = ++revision.current;
-    setWarning(null);
     getWhiteboardShare(whiteboardId)
       .then((state) => {
         if (cancelled || mine !== revision.current) return;
@@ -62,11 +70,11 @@ export function WhiteboardShareDialog({ whiteboardId, open, onClose }: Whiteboar
         const result = await setWhiteboardShare(whiteboardId, next);
         setUrl(result.url);
         if (!result.disconnected) {
-          setWarning('同步服务未响应，已连接的访客可能需要稍等才会断开');
+          setWarningState({ token: openToken, message: '同步服务未响应，已连接的访客可能需要稍等才会断开' });
         }
       } catch (error) {
         setPermission(permission);
-        setWarning(error instanceof Error ? error.message : '设置失败');
+        setWarningState({ token: openToken, message: error instanceof Error ? error.message : '设置失败' });
       }
     });
   };

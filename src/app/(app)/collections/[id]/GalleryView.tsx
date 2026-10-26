@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Link2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,15 +36,19 @@ function parseValue(raw: unknown): any {
 /** Craft's gallery shows one card per row, using the first image-ish value as the cover. */
 export function GalleryView({ collection, view }: { collection: NonNullable<Collection>; view: View }) {
   const router = useRouter();
+  const configKey = JSON.stringify((view as any).config ?? null);
   const config = parseConfig((view as any).config);
+  const [syncedView, setSyncedView] = useState({ id: view.id, key: configKey });
   const [filters, setFilters] = useState<any[]>(config.filters ?? []);
   const [sorts, setSorts] = useState<any[]>(config.sorts ?? []);
 
-  useEffect(() => {
-    const next = parseConfig((view as any).config);
-    setFilters(next.filters ?? []);
-    setSorts(next.sorts ?? []);
-  }, [view]);
+  // 换视图或视图配置变了 ⇒ 渲染期重设筛选/排序（同 TableView.tsx 的口径）。
+  // 放 effect 里同步 setState 会被 react-hooks/set-state-in-effect 拦下，且级联渲染。
+  if (syncedView.id !== view.id || syncedView.key !== configKey) {
+    setSyncedView({ id: view.id, key: configKey });
+    setFilters(config.filters ?? []);
+    setSorts(config.sorts ?? []);
+  }
 
   const properties = (collection.properties as any[])
     .filter((property) => property.isVisible && property.type !== 'created_at' && property.type !== 'updated_at')

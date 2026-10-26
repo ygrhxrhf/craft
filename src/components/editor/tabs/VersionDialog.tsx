@@ -52,32 +52,41 @@ function formatTime(iso: string): string {
 }
 
 export function VersionDialog({ documentId, open, onOpenChange }: VersionDialogProps) {
-  const [versions, setVersions] = useState<VersionItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [previewText, setPreviewText] = useState<string | null>(null);
-  const [previewId, setPreviewId] = useState<string | null>(null);
+  // 结果按「本次打开」记账：每次打开换一个 token，加载态与预览清空都由 token 派生，
+  // 不必在 effect 里同步 setLoading/setPreview*（react-hooks/set-state-in-effect）。
+  const [openToken, setOpenToken] = useState(0);
+  const [wasOpen, setWasOpen] = useState(false);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) setOpenToken((token) => token + 1);
+  }
+
+  const [batch, setBatch] = useState<{ token: number; versions: VersionItem[] } | null>(null);
+  const [preview, setPreview] = useState<{ token: number; id: string; text: string | null } | null>(null);
   const [restoring, setRestoring] = useState<string | null>(null);
   const router = useRouter();
 
+  const loading = open && batch?.token !== openToken;
+
   useEffect(() => {
     if (!open) return;
-    setLoading(true);
-    setPreviewText(null);
-    setPreviewId(null);
     getVersions(documentId)
-      .then(setVersions)
-      .catch(() => setVersions([]))
-      .finally(() => setLoading(false));
-  }, [open, documentId]);
+      .then((versions) => setBatch({ token: openToken, versions }))
+      .catch(() => setBatch({ token: openToken, versions: [] }));
+  }, [open, openToken, documentId]);
+
+  const versions = batch?.token === openToken ? batch.versions : [];
+  const currentPreview = preview?.token === openToken ? preview : null;
+  const previewId = currentPreview?.id ?? null;
+  const previewText = currentPreview?.text ?? null;
 
   const handlePreview = async (id: string) => {
-    setPreviewId(id);
-    setPreviewText(null);
+    setPreview({ token: openToken, id, text: null });
     try {
       const v = await getVersionContent(id);
-      setPreviewText(v.plainText || '(空白内容)');
+      setPreview({ token: openToken, id, text: v.plainText || '(空白内容)' });
     } catch {
-      setPreviewText('(无法加载预览)');
+      setPreview({ token: openToken, id, text: '(无法加载预览)' });
     }
   };
 

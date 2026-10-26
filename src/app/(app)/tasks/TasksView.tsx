@@ -82,8 +82,12 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     setLoading(false);
   }, []);
 
+  // 首屏加载走异步 IIFE：effect 体里同步调用会 setState 的回调会被
+  // react-hooks/set-state-in-effect 拦下（与 GalleryView / TableView 同一口径）。
   useEffect(() => {
-    load();
+    void (async () => {
+      await load();
+    })();
   }, [load]);
 
   // G160：已完成任务的外观走本机 user 镜像（改设置页 → applyLocal → onStoreChanged('user') 即时生效）

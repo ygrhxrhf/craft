@@ -40,11 +40,16 @@ describe('渲染期不再猜平台（三处调用点全部改走钩子）', () =
   const hook = source('lib/editor/use-platform.ts');
 
   it('钩子先答服务端那一侧，挂载后才换成真机的', () => {
-    expect(aliveLines(hook, 'useState<Platform>(SERVER_PLATFORM)')).toHaveLength(1);
-    expect(aliveLines(hook, 'setPlatform(detectPlatform())')).toHaveLength(1);
+    // 用 useSyncExternalStore 表达「服务端快照 = SERVER_PLATFORM、客户端快照 = detectPlatform()」。
+    // 判据不变：服务端快照必须逐字是 SERVER_PLATFORM，客户端快照才按真机猜。
+    expect(aliveLines(hook, 'function getServerSnapshot()')).toHaveLength(1);
+    expect(aliveLines(hook, 'return SERVER_PLATFORM;')).toHaveLength(1);
+    expect(aliveLines(hook, 'return detectPlatform();')).toHaveLength(1);
+    expect(aliveLines(hook, 'useSyncExternalStore(')).toHaveLength(1);
     // 初值不许直接读真机：那正是本行要拦的事。
     expect(aliveLines(hook, 'useState(() => detectPlatform())')).toHaveLength(0);
-    expect(hook).toContain('useEffect');
+    // 也不许再用 effect + setState 在挂载后猜平台。
+    expect(aliveLines(hook, 'setPlatform(')).toHaveLength(0);
   });
 
   for (const [file, count] of [

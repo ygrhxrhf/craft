@@ -40,9 +40,13 @@ function StoredThemeRestorer() {
     };
     void apply().catch(() => {});
     // ack+pull 之后镜像里才有权威行 ⇒ 跟着 store 变化再读一次（幂等）。
-    return getSyncManager().onStoreChanged((table) => {
+    const unsubscribe = getSyncManager().onStoreChanged((table) => {
       if (table === 'user') void apply().catch(() => {});
     });
+    return () => {
+      alive = false;
+      unsubscribe();
+    };
   }, [status, session?.user?.id, setTheme]);
 
   return null;

@@ -38,11 +38,32 @@ export function resolveViewMode(value: unknown): BrowseViewMode {
  */
 const STORAGE_KEY = 'craft.browse.viewMode';
 
+const listeners = new Set<() => void>();
+
 export function readViewMode(): BrowseViewMode {
   if (typeof localStorage === 'undefined') return DEFAULT_VIEW_MODE;
   return resolveViewMode(localStorage.getItem(STORAGE_KEY));
 }
 
 export function storeViewMode(mode: BrowseViewMode): void {
-  if (typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY, mode);
+  if (typeof localStorage === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, mode);
+  listeners.forEach((listener) => listener());
+}
+
+/**
+ * `useSyncExternalStore` 的订阅面。布局选择存在 localStorage（服务端渲染看不见它），
+ * 用 effect 在挂载后 setState 会被 react-hooks/set-state-in-effect 拦下，且首帧与
+ * 服务端 HTML 不一致；改成外部存储订阅后，服务端快照给默认档、客户端首次快照读真值，
+ * React 自己处理这一帧差异。
+ */
+export function subscribeViewMode(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+export function serverViewMode(): BrowseViewMode {
+  return DEFAULT_VIEW_MODE;
 }

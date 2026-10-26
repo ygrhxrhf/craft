@@ -15,16 +15,20 @@ interface PreviewData {
 }
 
 export function LinkPreviewView({ node, updateAttributes }: NodeViewProps) {
-  const [data, setData] = useState<PreviewData | null>(null);
-  const [loading, setLoading] = useState(false);
+  // 结果按 url 记：换了链接就自然回到"未落定"，不必在 effect 里同步 setLoading(true)
+  // （那会被 react-hooks/set-state-in-effect 拦下）。
+  const [previewed, setPreviewed] = useState<{ url: string; data: PreviewData } | null>(null);
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
 
   const url = node.attrs.url as string;
   const hasMeta = Boolean(node.attrs.title || node.attrs.siteName);
+  const data = previewed?.url === url ? previewed.data : null;
+  const settled = previewed?.url === url || failedUrl === url;
+  const loading = !hasMeta && !settled;
 
   useEffect(() => {
     if (hasMeta) return;
     let cancelled = false;
-    setLoading(true);
     fetch('/api/link-preview', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -33,7 +37,7 @@ export function LinkPreviewView({ node, updateAttributes }: NodeViewProps) {
       .then((res) => res.json())
       .then((d: PreviewData) => {
         if (cancelled) return;
-        setData(d);
+        setPreviewed({ url, data: d });
         updateAttributes({
           title: d.title ?? null,
           description: d.description ?? null,
@@ -42,9 +46,8 @@ export function LinkPreviewView({ node, updateAttributes }: NodeViewProps) {
           siteName: d.siteName ?? null,
         });
       })
-      .catch(() => {})
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+      .catch(() => {
+        if (!cancelled) setFailedUrl(url);
       });
     return () => {
       cancelled = true;

@@ -4504,3 +4504,38 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 | `ledger-selftally-gate` | **1/1 全绿**（自述 **1553／G1561** ＝ 现跑逐字相同） |
 | 临时文档 | 本地 `QODER-ILAB-divlocal` `softDelete ok=true`；官方侧本批未新建（读的是续批九样本） |
 | ★ 端点陷阱 | `/documents` **会把回收站内容一并返回**（154→162）⇒ 不能拿它判"未删"；`div5/6/8/9/A` 实为**已在回收站** |
+
+## V176＝Wave 1·续批十一（2026-10-26 机器钟 16:0x—16:2x＝官方 CSS hash 未变 `index.css.CiV2oimr.css`＝**零产品代码批**＝净新增 0 条＝**改判 G1560**）
+
+**上一条（V175 的 G1560）记错了面——本批上屏实测推翻它。**
+
+### 1、★★★ 真实编辑器五档＝三种图案＋两种实线＋分页
+
+官方**不用 `<hr>`**，每档是一枚 `height="24"` 的 div，`blockrowwrap-<blockId>` 与 REST `lineStyle` 对齐后逐档取证（`md-line3` 与新建样本两轮一致）：
+
+| 档 | class | 形态 |
+| --- | --- | --- |
+| `extraLight` | `sc-nh9tr9-3` | flex 容器 728×24、零 bg 零边框，内部**三枚 3×3 圆点**（`radius:50%`、`rgba(31,34,37,.25)`、间隔 13px）＝「⋯」 |
+| `light` | `sc-nh9tr9-1` | `linear-gradient(...30%, #fff 0%)`＋`background-size:5px 1px`＋`repeat-x`＝**点线** |
+| `regular` | `sc-nh9tr9-0` | 728×1px 实心 `rgba(31,34,37,.5)` |
+| `strong` | `sc-nh9tr9-0` 变体 | 728×2px 实心 `rgb(31,34,37)` |
+| `pageBreak` | `sc-nh9tr9-2` | 自身零可见样式，**把文档劈成两张卡**（截图 `round-72-five.png`：`E` 在第二张卡；祖先类名 `jdQorT`→`fJrHfm` 变了） |
+
+### 2、★★ 为什么上一批错了
+
+续批十的判据取自 `dom-20261023/mcp/mcp-ui-edit-review.txt` —— 那是 Craft 的 **MCP 审阅小组件**的 `BlockRenderer`（简化渲染：只有 borderTopWidth＋opacity）。**小组件 ≠ 真实编辑器**。
+
+★ 方法学教训：**「官方渲染器」有多套**（审阅小组件／导出器／真实编辑器），**不能互抄**；凡「官方怎么画」必须标明取自哪张面，小组件的值只能当线索。
+
+### 3、本地对照
+
+本地五档全落成 `<hr data-style=…>`；`globals.css:921-938` 四档 `1/2/3/6px` **同一种实线**，第五档 `pageSeparator` **无规则**（落回 1px）。
+⇒ 真差异＝**形态本身对不上**：官方前两档是图案、本地是实线；官方第五档是分页、本地是细实线。G1560 严重度 2→**3**、成本 1→**3**。
+
+### 4、门禁
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空** |
+| `ledger-arity-gate` / `ledger-selftally-gate` | **4/4** / **1/1** 全绿（1553／G1561 未变） |
+| 临时文档 | `divshot`／`divdetail`／`divfiveC`／`divfiveB`／`divfive` 全部 `softDelete ok=true`；列表只剩 `div7`／`divB` 旧残留 |

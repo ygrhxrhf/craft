@@ -93,7 +93,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 十二条踩过的坑（都改掉了，别再犯）
+## ★ 十三条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -170,6 +170,14 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
      （实测：记录写完、进程却挂到超时被移到后台）。
    - **建文档与写标题是两次异步落库**：基线步读到的 `title` 还是空串，第 1 步才落定 ⇒
      标题断言要放在后面，别放在基线。
+
+13. **`state:` 档曾"能采能断言、却从不参与判定"（第 311 批修）**。`stateSelectors` 一直能采到
+   具名选择器命中数、也能在 spec 里用 `state:<key>` 断言，但 **differ 从来没比过 `stateAttrs`**
+   ⇒ "弹窗开没开"这类最直观的差异在 verdict 里**是隐形的**（实测：官方 `Ctrl-J` 弹出新建任务弹窗、
+   本地无反应，而判定里当时只剩属性行）。修法＝differ 增 ⑩ 段逐键比 `stateAttrs.named`，severity 2。
+   ☆ 影响面：补上后 `editor.key.find-replace` 多一条 `state:replaceInput`、`editor.animation.slash-menu`
+   多一条，其余 spec 判定未变 —— 说明这个洞此前确实吞掉了真差异，但吞得不多。
+   ☆ 教训：**每加一个采集面，都要同时确认 differ 里有没有对应的比较段**（与第 9 条同族）。
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
 

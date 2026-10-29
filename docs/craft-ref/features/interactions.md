@@ -4802,3 +4802,22 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - ★ 官方 `POST /documents` 回的是块 id，UI 软删要用 `clickableLink` 里的 documentId。
 
 **结论：页面块上的 `⇧⏎` 当前不可达，不写成"一致"。** G750 静态结论保持原样。
+
+## V186＝第 311 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1573）
+
+**表 D（任务视图 23 项）首次上屏**，并同时修掉一处判定盲区。
+
+- ★★★ **G1573 任务屏 `Ctrl-J`**：官方弹「新任务」弹窗（`popup-backdrop` 0→1，含输入框与排期/截止按钮，
+  `Escape` 关回 0），本地**零反应**（domLength 一字不变）。附带：本地任务屏常驻行内输入框
+  「添加任务，按回车确认…」，官方无 ⇒ 入口形态本就不同（行内 vs 弹窗）。
+- ★★★★ **仪器盲区**：`diff.mjs` 此前**从不比较 `stateAttrs`** ⇒ `state:` 档能采能断言、却从不参与两侧判定；
+  "弹窗开没开"这种最直观的差异在 verdict 里是隐形的。已补 ⑩ 段（severity 2）。
+  影响面：find/replace 多一条 `state:replaceInput`、animation 多一条，其余未变。
+
+### 门禁
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空** |
+| 矩阵 | **26 条 spec**；新 spec `differ`（13 行／7 sev2+） |
+| 台账三闸 | 全绿（**1565／G1573**） |

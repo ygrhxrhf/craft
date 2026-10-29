@@ -1101,3 +1101,40 @@ POST /blocks {type:"page", markdown:"PAGEPROBE2", position:{pageId:<doc>, positi
 | 矩阵 | 25 条 spec（不变） |
 | 台账 | 三闸全绿（自述 **1564／G1572**） |
 | 临时文档 | 本批官方建的 `QODER-ILAB-pageblock` 已软删（`del ok=true`） |
+
+## 二十五、★ 续批二十一（2026-10-29）：**表 D 首次上屏** ＋ 修掉一处判定盲区
+
+净新增 **1 条 spec ＋ 1 条 G（G1573）** · 零产品代码批。
+
+### 1、`Ctrl-J`：官方弹窗、本地零反应
+
+任务屏上按 `Ctrl-J`（`OPEN_NEW_TASK_POPUP`）：
+
+| | 官方 | 本地 |
+| --- | --- | --- |
+| `Ctrl-J` 后 `popup-backdrop` | **0 → 1**（含输入框「新任务」＋ `task-popup-schedule-button`／`task-popup-deadline-button`） | **恒 0** |
+| `domLength` 变化 | 184,640 → 196,133 | 413,576 → 413,642（**一字不变**） |
+| `Escape` 之后 | 弹窗 1 → 0（能关） | — |
+
+⇒ **G1573（缺失：键位无绑定）**。★ 附带一条**承载面差异**：本地任务屏**常驻**一枚行内输入框
+（`添加任务，按回车确认…`，`Ctrl-J` 前后都在），官方任务屏没有它、只在弹窗里给输入位
+⇒ 两侧「新建任务」的入口形态本就不同（行内 vs 弹窗）。
+
+### 2、★★ 修掉一处判定盲区：`state:` 档从不参与比较
+
+做这个 spec 时发现：`Ctrl-J` 的**主要差异**（弹窗开没开）在 verdict 里**没有行**——
+因为 **differ 从来没比过 `stateAttrs`**。`stateSelectors` 一直能采、也能在 spec 里断言，
+但那个断言只对**本侧自己**求值（selfCheck），两侧之间无人比。
+
+修法：differ 增 ⑩ 段，逐键比 `stateAttrs.named`、severity 2。★ 影响面已核：
+`editor.key.find-replace` 多一条 `state:replaceInput`（0 vs 1）、`editor.animation.slash-menu` 多一条，
+其余 spec 判定未变 ⇒ 这个洞确实吞过真差异，但吞得不多。
+
+### 3、验收
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 矩阵 | **26 条 spec**（新 spec `differ`：13 行／7 sev2+） |
+| 两侧记录 | 各 3 步、`errors=0`、selfCheck **1/1** PASS |
+| 台账 | 三闸全绿（自述 **1565／G1573**） |

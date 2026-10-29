@@ -18,7 +18,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | --- | --- | --- | --- | --- | --- |
 | `browse.box-select.drag-marquee` | differ | 22 | 14 | 0 | 本地 +0/−0 · 官方 +1/−0 |
 | `editor.a11y.task-item-checkbox` | differ | 33 | 19 | 0 | 本地 +2/−0 · 官方 +1/−0 |
-| `editor.animation.slash-menu` | differ | 37 | 8 | 21 | 本地 +1/−1 · 官方 +21/−0 |
+| `editor.animation.slash-menu` | differ | 38 | 9 | 21 | 本地 +1/−1 · 官方 +21/−0 |
 | `editor.block.enter-empty-block` | match | 10 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.block.indent-in-list` | differ | 21 | 3 | 2 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.block.indent-plain-paragraph` | differ | 23 | 9 | 0 | 本地 +2/−0 · 官方 +2/−0 |
@@ -29,7 +29,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.ctrl-arrow-word-nav` | differ | 43 | 15 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
-| `editor.key.find-replace` | differ | 21 | 10 | 3 | 本地 +10/−1 · 官方 +5/−2 |
+| `editor.key.find-replace` | differ | 22 | 11 | 3 | 本地 +10/−1 · 官方 +5/−2 |
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
@@ -41,6 +41,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
+| `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 
 ## 已声明偏差明细
 
@@ -200,6 +201,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 
 | step | facet | official | local | delta | severity |
 | --- | --- | --- | --- | --- | --- |
+| 3 | state:slashMenu | 1 | 0 | -1 | 2 |
 | 3 | anim-only-local |  | anim\|(anim)\|div\|150 |  | 2 |
 | 3 | anim-only-local |  | trans\|padding-bottom\|div\|150 |  | 2 |
 | 3 | anim-only-local |  | trans\|padding-left\|div\|150 |  | 2 |
@@ -298,6 +300,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 |  | added-only-official | 暂无结果 |  |  | 2 |
 |  | added-only-official | 查找和替换 |  |  | 2 |
 | 2 | attr:replaceInput |  | 替换为…… |  | 2 |
+| 2 | state:replaceInput | 0 | 1 | 1 | 2 |
 
 ### `editor.key.shift-enter-hard-break` — differ
 
@@ -434,6 +437,18 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 11 | selection:collapsed |  | false |  | 2 |
 | 11 | selection:anchorOffset |  | 3 |  | 2 |
 | 11 | selection:focusOffset |  | 3 |  | 2 |
+
+### `shell.tasks.new-task-popup` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 0 | attr:taskInput |  | 添加任务，按回车确认… |  | 2 |
+| 1 | attr:taskInput |  | 添加任务，按回车确认… |  | 2 |
+| 2 | attr:taskInput |  | 添加任务，按回车确认… |  | 2 |
+| 0 | state:taskInput | 0 | 1 | 1 | 2 |
+| 1 | state:newTaskPopup | 1 | 0 | -1 | 2 |
+| 1 | state:taskInput | 0 | 1 | 1 | 2 |
+| 2 | state:taskInput | 0 | 1 | 1 | 2 |
 
 ## spec 自带期望（selfCheck）
 
@@ -653,3 +668,5 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.command-palette.toggle-vs-jump` | official | attr:paletteInput exists null | PASS | "打开" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
+| `shell.tasks.new-task-popup` | official | text:任务 gt 0 | PASS | 1 |
+| `shell.tasks.new-task-popup` | local | text:任务 gt 0 | PASS | 4 |

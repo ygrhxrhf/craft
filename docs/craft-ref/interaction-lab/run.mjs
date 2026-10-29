@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.key.find-replace'], targets: 'both', tag: 'wave1-32' });
+await main({ only: ['shell.tasks.new-task-popup'], targets: 'both', tag: 'wave1-33' });

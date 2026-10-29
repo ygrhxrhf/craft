@@ -289,6 +289,30 @@ export function compare(specId, official, local, spec) {
     }
   }
 
+  // ⑩ 具名选择器**命中数**（`state:<key>`）：两侧都采了才比。
+  //   ★ 为什么必须补：`state:` 档一直能采、也能在 spec 里断言，但 differ **从来没比过它**
+  //     ⇒ "弹窗开没开"这类最直观的差异在判定里是隐形的（第 311 批实测：官方 Ctrl-J 弹出
+  //     新建任务弹窗、本地无反应，而 verdict 里只剩属性行）。
+  for (let i = 0; i < n; i++) {
+    const os = o.steps[i] && o.steps[i].stateAttrs && o.steps[i].stateAttrs.named;
+    const ls = l.steps[i] && l.steps[i].stateAttrs && l.steps[i].stateAttrs.named;
+    if (!os || !ls) continue;
+    for (const k of new Set([...Object.keys(os), ...Object.keys(ls)])) {
+      const ov = os[k];
+      const lv = ls[k];
+      if (ov === lv) continue;
+      push({
+        facet: "state:" + k,
+        step: i,
+        label: o.steps[i].label,
+        official: ov,
+        local: lv,
+        delta: typeof ov === "number" && typeof lv === "number" ? lv - ov : null,
+        severity: 2,
+      });
+    }
+  }
+
   // ⑨ 动效（事件式探针）：比「哪些属性/元素在动 ＋ 各自多久」。
   //   ★ 动画名两侧不可比（官方是构建哈希、本地是语义名）⇒ 采集侧已归一成 (anim)。
   //   ★ 时长取事件 elapsedTime（规范值）⇒ 可直接比，不留容差。

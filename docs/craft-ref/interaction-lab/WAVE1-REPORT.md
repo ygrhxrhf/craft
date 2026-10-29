@@ -3878,3 +3878,52 @@ criterion ② 的"清空"在这种情况下不成立。
 | `git status --porcelain src e2e` | **空** |
 | 台账 | **1611／G1619** |
 | 临时产物 | `QODER-ILAB-editor.table.add-content-key` 由两侧 teardown 软删 |
+
+## 一百一十二、★ 第 400 批（2026-10-29）：**选择态簇四键收口：`Ctrl-⌫` 其实是"清空格"（+2 条 G）· 覆盖率 92/93**
+
+净新增 **2 条 G**（`G1620`／`G1621`）· 零产品代码批 · 新 spec `editor.table.selection-cluster`（两侧 27 步 0 error）。
+
+### 一、用同一把尺把"需选择态"那一簇量完
+
+`G1619` 证明同簇的 `Ctrl-[` 其实是"送达但无作用"。本批把剩下 4 行一次测完，
+**每一步目标键之前都先按 `Ctrl-⏎` 做正对照**（`2×2→3×2`，证键送得到）：
+
+| 键 | 官方 REST 读回 | 结论 |
+| --- | --- | --- |
+| `Ctrl-⌫`（`DELETE_ROWS`） | 行数**仍 3**，但 `[[\"a\",\"b\"],…]` → `[[\"\",\"b\"],…]` | **清空了格内容**，不是删行 |
+| `Alt-→`（`MOVE_COLUMNS_RIGHT`） | 恒 `3×2`、逐格相同 | 送达但无作用 |
+| `Alt-←`（`MOVE_COLUMNS_LEFT`） | 同上 | 送达但无作用 |
+| `Ctrl-Shift-⌫`（`DELETE_COLUMNS`） | 同上 | 送达但无作用 |
+
+⇒ **G1620**：`Ctrl-⌫` 的语义与静态表名（`DELETE_ROWS`）**不符**——它走的是 `CLEAR_CELL_CONTENTS` 那条路。
+`G1577` 当时读 `dRows/dCols`，**"格内容被清空"不在它的量里**，所以读成了 0。这是"读数指标选错"
+而不是"键没生效"的又一种形态。
+⇒ **G1621**：另外三键确为"送达但无作用"，分类改正（不再是"需选择态、进不去"）。
+
+### 二、顺带修掉一个会让读数变假的仪器缺陷
+
+官方页签被关掉后，**同一个标签号会被新开的空白页复用**。`resolvePage` 原来只验"页面没关"
+（`document.readyState`），于是把 `chrome://newtab` 当成官方靶子交出去，`page.fetch` 以
+CORS 失败告终（错误文案里那句 `from chrome://new-tab-page`），record `steps=0`、differ 判
+`uncomparable`——**看起来像"官方挂了"**。已改成**连 URL 一起验**（`location.href.startsWith(base)`）。
+
+### 三、覆盖率收口
+
+| 项 | 数 |
+| --- | --- |
+| 表 A–E 总行数 | 93 |
+| 有 spec 证据 | **92** |
+| 唯一剩余 | `SET_CANCELLED_SLASH`（**Windows 列静态为空**，`keymap.ts` 里 `win: null`） |
+
+⇒ criterion ③ 的"逐一枚举并逐面采"在键盘面**已无可采项**：剩下那 1 行是**平台不存在**，不是没采。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `editor.table.selection-cluster` |
+| 覆盖率 | **92/93**（脚本可复算） |
+| 五道闸 | **14/14 PASS** |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | **1613／G1621** |
+| 临时产物 | 两侧临时文档由 teardown 软删 |

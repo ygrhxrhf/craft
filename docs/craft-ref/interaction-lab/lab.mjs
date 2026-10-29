@@ -1013,8 +1013,20 @@ async function resolvePage(task, targetName) {
   const alive = async (page) => {
     try { await page.evaluate(() => document.readyState); return true; } catch { return false; }
   };
+  // ★ 第 400 批修：`alive` 只证"页面没关"，不证"它是这个靶子"。官方页签被关掉之后
+  //   同一个标签号会被**新开的空白页**（`chrome://newtab`）复用 ⇒ 旧写法会把空白页当成
+  //   官方靶子交给 spec，随后 `page.fetch` 以 CORS 失败告终（`from chrome://new-tab-page`），
+  //   record 里 `steps=0`、differ 判 uncomparable——看起来像"官方挂了"。
+  //   ⇒ 必须**连 URL 一起验**：是靶子才复用。
+  const onTarget = async (page) => {
+    if (!(await alive(page))) return false;
+    try {
+      const href = await page.evaluate(() => location.href);
+      return String(href).startsWith(base);
+    } catch { return false; }
+  };
 
-  if (preferred && (await alive(task.page(preferred)))) return task.page(preferred);
+  if (preferred && (await onTarget(task.page(preferred)))) return task.page(preferred);
 
   const tabs = await task.tabs();
   const match = tabs.find((t) => t.label && String(t.url).startsWith(base));

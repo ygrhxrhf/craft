@@ -38,6 +38,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.insert-block-space` | differ | 20 | 4 | 2 | 本地 +1/−0 · 官方 +2/−1 |
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
+| `editor.key.toggle-all` | differ | 45 | 23 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-extra` | differ | 46 | 21 | 5 | 本地 +1/−0 · 官方 +6/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.url-link` | differ | 20 | 9 | 1 | 本地 +7/−0 · 官方 +1/−0 |
@@ -509,6 +510,34 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 6 | selection:anchorOffset | 1 | 3 |  | 2 |
 | 6 | selection:focusOffset | 1 | 3 |  | 2 |
 
+### `editor.key.toggle-all` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 0 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":"is-empty is-editor-empty","aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 1 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 2 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 3 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 4 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 5 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 6 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 7 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 8 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 9 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 10 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 6 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
+| 7 | blocks | ["HEAD1",""] | ["HEAD1","",""] |  | 2 |
+| 8 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 9 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 10 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 6 | kinds | ["para"] | ["para","para","para"] |  | 2 |
+| 7 | kinds | ["para","para"] | ["para","para","para"] |  | 2 |
+| 8 | kinds | ["para","para"] | ["para","para","para"] |  | 2 |
+| 9 | kinds | ["para","para"] | ["para","para","para"] |  | 2 |
+| 10 | kinds | ["para","para"] | ["para","para","para"] |  | 2 |
+| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 5 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+
 ### `editor.key.turn-into-extra` — differ
 
 | step | facet | official | local | delta | severity |
@@ -889,6 +918,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.shift-enter-hard-break` | local | blocksCount count 2 | PASS | 2 |
 | `editor.key.shift-enter-hard-break` | local | text:AAA count 1 | PASS | 1 |
 | `editor.key.shift-enter-hard-break` | local | text:BBB count 1 | PASS | 1 |
+| `editor.key.toggle-all` | official | text:HEAD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all` | official | text:CHILD1 gt 0 | **FAIL** | 0 |
+| `editor.key.toggle-all` | local | text:HEAD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all` | local | text:CHILD1 gt 0 | **FAIL** | 0 |
 | `editor.key.turn-into-extra` | official | text:ALPHA gt 0 | PASS | 1 |
 | `editor.key.turn-into-extra` | official | blocksCount count 1 | **FAIL** | 0 |
 | `editor.key.turn-into-extra` | local | text:ALPHA gt 0 | PASS | 1 |

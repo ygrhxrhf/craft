@@ -37,6 +37,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.insert-block-space` | differ | 20 | 4 | 2 | 本地 +1/−0 · 官方 +2/−1 |
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
+| `editor.key.turn-into-extra` | differ | 46 | 21 | 5 | 本地 +1/−0 · 官方 +6/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.md-rules.block-kind` | differ | 93 | 36 | 19 | 本地 +6/−0 · 官方 +6/−1 |
 | `editor.md-rules.inline-mark` | differ | 59 | 16 | 0 | 本地 +6/−0 · 官方 +6/−0 |
@@ -92,6 +93,11 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.insert-block-space` | removed-only-official |  | 34 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.list-family` | countΔ:AAA | 2 | 1 | 2 | 本地任务块勾选框的合成可及名含任务文本 ⇒ 同一个词被 count 两次；已由 G1563 单独承载 | gap.md G1563 |
 | `editor.key.list-family` | blocks | 4 | ["1. AAA"] | ["AAA"] | 官方把列表序号画进文本节点（1. AAA），本地由 CSS counter 画、不进 innerText；已由 G866／G1556 承载 | gap.md G866 · G1556；editor.md-rules.block-kind 同一声明 |
+| `editor.key.turn-into-extra` | added-only-official |  | 套用样式 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.turn-into-extra` | added-only-official |  | 自定义 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.turn-into-extra` | added-only-official |  | 自定义背景 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.turn-into-extra` | added-only-official |  | 配置卡片 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.turn-into-extra` | added-only-official |  | 预览 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 3 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 4 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 5 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
@@ -437,6 +443,32 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 6 | selection:anchorOffset | 1 | 3 |  | 2 |
 | 6 | selection:focusOffset | 1 | 3 |  | 2 |
 
+### `editor.key.turn-into-extra` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 4 | countΔ:ALPHA | 2 | 1 | -1 | 2 |
+| 4 | countΔ:卡片 | -1 | 0 | 1 | 2 |
+| 9 | countΔ:卡片 | 1 | 0 | -1 | 2 |
+| 2 | blocks | ["ALPHA"] | ["ALPHA",""] |  | 2 |
+| 3 | blocks | ["ALPHA"] | ["ALPHA",""] |  | 2 |
+| 4 | blocks | ["ALPHA 页面预览将显示在此处。单击以添加内容。"] | ["ALPHA",""] |  | 2 |
+| 5 | blocks | ["ALPHA"] | ["ALPHA",""] |  | 2 |
+| 6 | blocks | ["ALPHA"] | ["ALPHA",""] |  | 2 |
+| 7 | blocks | ["ALPHA"] | ["ALPHA",""] |  | 2 |
+| 8 | blocks | ["ALPHA"] | ["ALPHA",""] |  | 2 |
+| 9 | blocks | ["ALPHA"] | ["ALPHA",""] |  | 2 |
+| 9 | focusInEditor | false | true |  | 2 |
+| 2 | kinds | ["strong"] | ["heading4","para"] |  | 2 |
+| 3 | kinds | ["para"] | ["para","para"] |  | 2 |
+| 4 | kinds | ["para"] | ["para","para"] |  | 2 |
+| 5 | kinds | ["para"] | ["para","para"] |  | 2 |
+| 6 | kinds | ["para"] | ["para","para"] |  | 2 |
+| 7 | kinds | ["para"] | ["para","para"] |  | 2 |
+| 8 | kinds | ["para"] | ["para","para"] |  | 2 |
+| 9 | kinds | ["para"] | ["para","para"] |  | 2 |
+| 9 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+
 ### `editor.key.turn-into-style` — differ
 
 | step | facet | official | local | delta | severity |
@@ -753,6 +785,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.shift-enter-hard-break` | local | blocksCount count 2 | PASS | 2 |
 | `editor.key.shift-enter-hard-break` | local | text:AAA count 1 | PASS | 1 |
 | `editor.key.shift-enter-hard-break` | local | text:BBB count 1 | PASS | 1 |
+| `editor.key.turn-into-extra` | official | text:ALPHA gt 0 | PASS | 1 |
+| `editor.key.turn-into-extra` | official | blocksCount count 1 | **FAIL** | 0 |
+| `editor.key.turn-into-extra` | local | text:ALPHA gt 0 | PASS | 1 |
+| `editor.key.turn-into-extra` | local | blocksCount count 1 | **FAIL** | 0 |
 | `editor.key.turn-into-style` | official | text:AAA count 1 | PASS | 1 |
 | `editor.key.turn-into-style` | official | blocksCount count 1 | PASS | 1 |
 | `editor.key.turn-into-style` | local | text:AAA count 1 | PASS | 1 |

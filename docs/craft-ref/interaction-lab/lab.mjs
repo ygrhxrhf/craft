@@ -728,6 +728,34 @@ async function runStep(target, spec, step, ctx, log) {
       ctx.tableShape = shape;
       break;
     }
+    case 'setOffline': {
+      // 加性（第 391 批）：真的断网／恢复（CDP `Network.emulateNetworkConditions`）。
+      // 为什么需要：离线门禁是"置灰 / 点后弹提示 / 静默"三选一，只有真断网才能分出来；
+      // 而 `navigator.onLine` 与 `fetch` 会跟着变（本批用它做阳性对照，证明断网真的生效了）。
+      await p.cdp('Network.enable', {});
+      await p.cdp('Network.emulateNetworkConditions', {
+        offline: !!step.offline,
+        latency: 0,
+        downloadThroughput: step.offline ? 0 : -1,
+        uploadThroughput: step.offline ? 0 : -1,
+      });
+      log('setOffline ' + !!step.offline);
+      break;
+    }
+    case 'netProbe': {
+      // 阳性对照：断网必须让 `onLine=false` 且 `fetch` 抛错，否则后面读到的"没变化"不作数。
+      const r = await p.evaluate(async () => {
+        const out = { onLine: navigator.onLine };
+        try {
+          const res = await fetch(location.origin + '/favicon.ico', { cache: 'no-store' });
+          out.fetch = res.status;
+        } catch (e) { out.fetch = 'ERR'; }
+        return out;
+      });
+      log('netProbe ' + JSON.stringify(r));
+      ctx.netProbe = r;
+      break;
+    }
     case 'wait':
       await p.waitForTimeout(step.ms);
       break;

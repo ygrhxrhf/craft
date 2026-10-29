@@ -73,6 +73,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
 | `shell.assistant.open` | match | 9 | 0 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
+| `shell.offline.gate` | differ | 78 | 49 | 13 | 本地 +2/−15 · 官方 +6/−16 |
 | `shell.quick-open.alt` | differ | 34 | 2 | 20 | 本地 +1/−1 · 官方 +15/−1 |
 | `shell.quick-open.ctrl-o` | differ | 30 | 7 | 15 | 本地 +1/−0 · 官方 +14/−0 |
 | `shell.shortcuts-panel.key` | differ | 11 | 2 | 1 | 本地 +1/−0 · 官方 +1/−0 |
@@ -268,6 +269,19 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.command-palette.toggle-vs-jump` | removed-only-official |  | 打开 |  | 官方 header 的「打开」标签在 ⌘K 后由 span 变成 input[placeholder="打开"]（同一件事换形态）⇒ 文本名册记为移除；本地无此 header 入口 | probe-takeover.json（官方 ⌘K 后 itemIds=13 仍在 ⇒ 不是整屏接管，是 header 浮层） |
 | `shell.command-palette.toggle-vs-jump` | attr:paletteInput | 1 | 打开 | 搜索文档、内容… | placeholder 不同：官方「打开」（跳转语义）vs 本地「搜索文档、内容…」（搜索语义） | probe-verbatim.json |
 | `shell.command-palette.toggle-vs-jump` | attr:paletteInput | 2 | 打开 | 搜索文档、内容… | placeholder 不同：官方「打开」（跳转语义）vs 本地「搜索文档、内容…」（搜索语义） | probe-verbatim.json |
+| `shell.offline.gate` | removed-only-local |  |  | 1 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 上次浏览 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 分享者 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 创建/共享日期 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 升序 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 名称 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 排序方式 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 新建文件夹 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 新建文档 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 新建白板 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 新建集合 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 最近编辑 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.offline.gate` | removed-only-local |  |  | 降序 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
 | `shell.quick-open.alt` | added-only-official |  | / |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.alt` | added-only-official |  | 2025/5/5 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.alt` | added-only-official |  | 33 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
@@ -1556,6 +1570,60 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 17 | focusInEditor | false | true |  | 2 |
 | 18 | focusInEditor | false | true |  | 2 |
 
+### `shell.offline.gate` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:离线 | 0 | 1 | 1 | 2 |
+| 3 | countΔ:离线 | 0 | 1 | 1 | 2 |
+| 4 | countΔ:新建文档 | 0 | -1 | -1 | 2 |
+| 4 | countΔ:无标题 | 0 | -275 | -275 | 2 |
+| 4 | countΔ:离线 | 0 | -13 | -13 | 2 |
+| 4 | countΔ:网络 | 0 | 2 | 2 | 2 |
+| 5 | countΔ:新建文档 | 0 | -1 | -1 | 2 |
+| 5 | countΔ:无标题 | 0 | -275 | -275 | 2 |
+| 5 | countΔ:离线 | 0 | -13 | -13 | 2 |
+| 5 | countΔ:网络 | 0 | 2 | 2 | 2 |
+| 6 | countΔ:新建文档 | 0 | -1 | -1 | 2 |
+| 6 | countΔ:无标题 | 0 | -275 | -275 | 2 |
+| 6 | countΔ:离线 | 0 | -13 | -13 | 2 |
+| 6 | countΔ:网络 | 0 | 2 | 2 | 2 |
+| 7 | countΔ:新建文档 | 0 | -1 | -1 | 2 |
+| 7 | countΔ:无标题 | -23 | 0 | 23 | 2 |
+|  | added-only-local |  | 无标题 |  | 2 |
+|  | added-only-local |  | 📄 |  | 2 |
+|  | added-only-official | 47 |  |  | 2 |
+|  | added-only-official | ​ |  |  | 2 |
+|  | added-only-official | 共享 |  |  | 2 |
+|  | added-only-official | 刚刚 |  |  | 2 |
+|  | added-only-official | 无标题页面 |  |  | 2 |
+|  | added-only-official | 本文档中的任务将出现在此处。 |  |  | 2 |
+|  | removed-only-official | / |  |  | 2 |
+|  | removed-only-official | 46 |  |  | 2 |
+|  | removed-only-official | AAA |  |  | 2 |
+|  | removed-only-official | ALPHA BETA ALPHA |  |  | 2 |
+|  | removed-only-official | QODER-ILAB-combos |  |  | 2 |
+|  | removed-only-official | QODER-ILAB-editor.key.toggle-all |  |  | 2 |
+|  | removed-only-official | QODER-ILAB-editor.table.cell-clipboard |  |  | 2 |
+|  | removed-only-official | QODER-ILAB-foldtest |  |  | 2 |
+|  | removed-only-official | QODER-ILAB-foldtype |  |  | 2 |
+|  | removed-only-official | QODER-ILAB-foldvisual |  |  | 2 |
+|  | removed-only-official | QODER-ILAB-gcombos |  |  | 2 |
+|  | removed-only-official | QODER-ILAB-linkcard |  |  | 2 |
+|  | removed-only-official | 无标题文档 |  |  | 2 |
+|  | removed-only-official | 获得 Craft Plus |  |  | 2 |
+| 0 | attr:newButton | {"aria-disabled":null,"disabled":null,"_tag":"a"} | {"aria-disabled":null,"disabled":null,"_tag":"button"} |  | 2 |
+| 1 | attr:newButton | {"aria-disabled":null,"disabled":null,"_tag":"a"} | {"aria-disabled":null,"disabled":null,"_tag":"button"} |  | 2 |
+| 2 | attr:newButton | {"aria-disabled":null,"disabled":null,"_tag":"div"} | {"aria-disabled":null,"disabled":null,"_tag":"button"} |  | 2 |
+| 3 | attr:newButton | {"aria-disabled":null,"disabled":null,"_tag":"div"} | {"aria-disabled":null,"disabled":null,"_tag":"button"} |  | 2 |
+| 4 | attr:newButton | {"aria-disabled":null,"disabled":null,"_tag":"div"} |  |  | 2 |
+| 5 | attr:newButton | {"aria-disabled":null,"disabled":null,"_tag":"a"} |  |  | 2 |
+| 6 | attr:newButton | {"aria-disabled":null,"disabled":null,"_tag":"a"} |  |  | 2 |
+| 7 | attr:newButton | {"aria-disabled":null,"disabled":null,"_tag":"a"} | {"aria-disabled":null,"disabled":null,"_tag":"button"} |  | 2 |
+| 4 | state:newButton | 1 | 0 | -1 | 2 |
+| 5 | state:newButton | 1 | 0 | -1 | 2 |
+| 6 | state:newButton | 1 | 0 | -1 | 2 |
+
 ### `shell.quick-open.alt` — differ
 
 | step | facet | official | local | delta | severity |
@@ -1978,6 +2046,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.command-palette.toggle-vs-jump` | official | attr:paletteInput exists null | PASS | "打开" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
+| `shell.offline.gate` | official | text:新建文档 gt 0 | PASS | 1 |
+| `shell.offline.gate` | local | text:新建文档 gt 0 | PASS | 1 |
 | `shell.quick-open.alt` | official | text:QK gt 0 | PASS | 1 |
 | `shell.quick-open.alt` | local | text:QK gt 0 | PASS | 1 |
 | `shell.quick-open.ctrl-o` | official | text:QO gt 0 | PASS | 4 |

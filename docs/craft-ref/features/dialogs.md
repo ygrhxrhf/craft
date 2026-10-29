@@ -59,7 +59,7 @@
 | 动作 | 文案 |
 |---|---|
 | 添加 / 移除表情反应 | `alert.not.connected.to.internet.{adding,removing}.reactions` |
-| 添加评论 | `alert.reconnect.to.the.internet.to.comment` |
+| 添加评论 | `alert.reconnect.to.the.internet.to.comment` ★ **第 391 批补测：断网时按 `Ctrl-Shift-M` 评论面板**照开**、无任何 `alert.reconnect.*` ⇒ 这条门禁不在打开面板步，只可能在提交步（`G1609`）** |
 | 编辑评论 | `alert.reconnect.to.edit.a.comment` |
 | 删除评论 | `alert.reconnect.to.the.internet.to.delete.comment` |
 | 导出文档 | `alert.reconnect.to.the.internet`（「重新连接网络以导出文档」） |
@@ -160,6 +160,6 @@
 
 - 所有 `[0]` 占位符的**实际数值**（提醒上限、字段上限、表格尺寸上限、白板元素上限都由远端配置下发，bundle 无常量）。
 - 每条告警对应的**按钮组**（确认/取消/重试/联系的分布）—— 文案里没有按钮名，需动态采集或在 `commands.*` 里逐条回溯。
-- 离线门禁是"禁用控件"还是"点击后弹提示"—— 两种都可能，未观测。
+- ~~离线门禁是"禁用控件"还是"点击后弹提示"—— 两种都可能，未观测。~~ **✎ 第 391 批已上屏定证（第三种答案）**：用 CDP `Network.emulateNetworkConditions` 真断网（阳性对照：`navigator.onLine` false、`fetch` 抛 `Failed to fetch`），在列表页点「新建文档」——**官方既不置灰、也不弹任何提示，是静默无动作**（`bodyTextLength` 331→331、URL 不变、无 toast、无 `alert.*` 文案）；**本地同条件却整页跳到 `chrome-error://chromewebdata/`**（`6112→96` 字）⇒ 本地把"离线"交给浏览器错误页、官方是"点了没反应"。★ 边界：本批只测「列表页 · 新建文档」这一个动作，`dialogs.md §四` 那十行门禁文案仍逐条未验。详见 `G1608`。
 - `alert.builing.your.presentation` 的入口与产出形态。
 - 演示文稿 / 深层链接 / 空间移动（`alert.space.moved.successfully` + `alert.move.space.to.team.desc` 带 `<strong>` 标签的三个占位符）的完整流程。

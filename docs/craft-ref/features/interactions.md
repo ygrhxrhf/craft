@@ -5038,3 +5038,10 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 
 - 点单元格后 `Ctrl-A` ×2：`[data-selected]`／`[aria-selected]` 恒 0、`active` 是 `BODY`；
   `Alt-↓`／`Ctrl-⌫`／`Ctrl-\'` 后 REST 读回 `r:3 c:2` 一格未变 ⇒ **第五次不得**。
+
+## V209＝第 342 批（2026-10-29＝**零产品代码批**＝净新增 0 条）
+
+- ★★ **`Ctrl-Shift-O`（`OPEN_TASK_LOCATION`）定证**：官方任务屏上弹出的是**文档/位置选择器**——
+  `INPUT` 占位符逐字「打开」，列出「文档」＋各文档名＋「在 zhang's Space 中」；输入后出现「查看更多结果」「按 Enter 键」。
+  ⇒ 它是**给任务选位置**，不是"跳到出处"；之前那条"`url` 不变、是否跳转未证"由此结清。
+- ☆ 这条不出 G：本地任务行整族无作用对象（`G1574`）。

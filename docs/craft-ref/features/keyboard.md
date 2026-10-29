@@ -108,6 +108,8 @@
 
 ★ **第 322 批上屏（组合／区块链接）：**`Ctrl-G` 官方在文本选中态下**落到查找**（名册新增「查找」「暂无结果」），本地零反应；`Ctrl-Shift-K` 官方多块与单词两种选区**都零反应**，本地**弹命令面板**（`CommandPalette.tsx:37` 的 `ctrlKey && key==='k'` 没排除 Shift）。** ⇒ gap `G1579`／`G1580`，矩阵 `editor.key.group-and-blocklink`。
 
+★ **第 342 批定证（表 D `Ctrl-Shift-O`）：**不是"跳到出处"，是**文档/位置选择器**（`INPUT` 占位符「打开」、列「文档」＋文档名；输入后出现「查看更多结果」）⇒ 语义＝**给任务选位置**。** ⇒ 存量清单 B 行最后一枚未定证收口。
+
 ★ **第 333 批上屏（表 C 快速开启另两弦）：**`Ctrl-P` 与 `Ctrl-Shift-O` 在官方**都开出快速开启面板**（`popup-backdrop` 0→1）；本地两条都无反应（`HANDLED` 只含 `TOGGLE_QUICK_OPEN`）。** ⇒ gap `G1589`，矩阵 `shell.quick-open.alt`。
 
 ★ **第 331 批（`Ctrl-G` 的前置找到了）：**官方 `Escape` 进入**块选择态**（`body.block-select`），该态下 `Ctrl-G` **成组**（块名册 `["ALPHA","BETA"]`→`["ALPHA BETA"]`）、`Ctrl-Shift-G` 再改结构；本地无此态、两键皆零变化。`Ctrl-G` 因此是**按态分派**：文本态→查找、块选择态→组合。** ⇒ gap `G1588`（并结掉 `G1579`／`G1583` 的边界），矩阵 `editor.block.selection-mode`。

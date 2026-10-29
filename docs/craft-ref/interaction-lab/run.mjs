@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.page-block.behavior'], targets: 'both', tag: 'wave1-61' });
+await main({ only: ['editor.key.insert-block-space-selected'], targets: 'both', tag: 'wave1-63' });

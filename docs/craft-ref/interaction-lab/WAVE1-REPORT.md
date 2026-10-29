@@ -2058,3 +2058,28 @@ mark 探针按"背景非透明"读成高亮。⇒ `G1582` 的注已就地结掉�
 | `git status --porcelain src e2e` | **空** |
 | 台账 | 不变（**1582／G1590**） |
 | 临时产物 | 探针文档（`QODER-ILAB-toggleprobe`）已 REST 删除（`DEL 200`） |
+
+## 五十七、★ 续批五十（2026-10-29）：**块选择态下 `Space` 插块** —— G1591
+
+净新增 **1 条 G** · 零产品代码批。矩阵新增 spec `editor.key.insert-block-space-selected`。
+
+这是补 **V195 唯一那条"仍真且未入台账"** 的边界（文本编辑态两侧都只打空格；当时写"可能要先有块选择"）。
+
+| 步 | 官方 | 本地 |
+| --- | --- | --- |
+| `ALPHA`／`BETA` 两块 | `["ALPHA","BETA"]` | 同 |
+| `Escape` | 进**块选择态**（`body.block-select`） | 不进任何态 |
+| **`Space`** | **2→3 块**（`["ALPHA","BETA",""]`）⇒ `INSERT_AFTER` 生效 | **仍 2 块** |
+| `Shift-Space` | 没再插（仍 3） | 仍 2 |
+
+⇒ **G1591**：`INSERT_AFTER` 是**按态分派**的——文本态打空格、块选择态插块；本地没有块选择态（`G1588`）。
+★ 边界：`Shift-Space` 本序列没有再插一块，**不写成"官方没有 `INSERT_BEFORE`"**。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `editor.key.insert-block-space-selected`（differ，4 条 sev2／3 条已声明） |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | **1583／G1591** |
+| 临时产物 | 两侧临时文档由 spec teardown 软删（本地首跑 `page.goto` 超时、重跑成功，记录已覆盖） |

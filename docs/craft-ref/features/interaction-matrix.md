@@ -29,6 +29,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.outdent-in-list` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.block.selection-mode` | differ | 49 | 30 | 1 | 本地 +2/−0 · 官方 +2/−1 |
 | `editor.block.ungroup-shape` | differ | 42 | 15 | 7 | 本地 +2/−0 · 官方 +2/−1 |
+| `editor.blockmenu.task-items` | differ | 34 | 16 | 8 | 本地 +2/−0 · 官方 +9/−0 |
 | `editor.key.backspace-at-block-start` | match | 20 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.backspace-in-list` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.comment` | differ | 23 | 7 | 6 | 本地 +1/−0 · 官方 +2/−0 |
@@ -117,6 +118,14 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.ungroup-shape` | focusInEditor | 7 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.block.ungroup-shape` | focusInEditor | 8 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.block.ungroup-shape` | focusInEditor | 9 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.blockmenu.task-items` | added-only-official |  | 删除 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.blockmenu.task-items` | added-only-official |  | 在上方插入区块 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.blockmenu.task-items` | added-only-official |  | 在下方插入区块 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.blockmenu.task-items` | added-only-official |  | 复制区块链接 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.blockmenu.task-items` | added-only-official |  | 提醒我… |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.blockmenu.task-items` | added-only-official |  | 添加表情 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.blockmenu.task-items` | added-only-official |  | 添加评论 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.blockmenu.task-items` | added-only-official |  | 转换为卡片 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.backspace-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 光标 offset 天然差 1 | probe-bullet；同 editor.block.indent-in-list 的同一声明 |
 | `editor.key.backspace-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
 | `editor.key.comment` | selection:focusOffset | 2 | 18 | 1 | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
@@ -462,6 +471,27 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 7 | kinds | ["heading","para"] | ["para","para"] |  | 2 |
 | 8 | kinds | ["heading","para"] | ["para","para"] |  | 2 |
 | 9 | kinds | ["heading","para"] | ["para","para"] |  | 2 |
+
+### `editor.blockmenu.task-items` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:MENUTASK | 1 | 2 | 1 | 2 |
+| 3 | countΔ:MENUTASK | 1 | 2 | 1 | 2 |
+| 4 | countΔ:MENUTASK | 1 | 2 | 1 | 2 |
+| 4 | countΔ:删除 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:在上方插入区块 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:在下方插入区块 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:复制区块链接 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:提醒我… | 1 | 0 | -1 | 2 |
+| 4 | countΔ:添加评论 | 1 | 0 | -1 | 2 |
+|  | added-only-local |  | Task item checkbox for MENUTASK |  | 2 |
+| 4 | focusInEditor | false | true |  | 2 |
+| 0 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 1 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 4 | state:popupBackdrop | 2 | 0 | -2 | 2 |
 
 ### `editor.key.comment` — differ
 
@@ -1325,6 +1355,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.selection-mode` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.block.ungroup-shape` | official | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.block.ungroup-shape` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
+| `editor.blockmenu.task-items` | official | text:MENUTASK gt 0 | PASS | 1 |
+| `editor.blockmenu.task-items` | local | text:MENUTASK gt 0 | PASS | 1 |
 | `editor.key.backspace-at-block-start` | official | blocksCount count 1 | PASS | 1 |
 | `editor.key.backspace-at-block-start` | official | blocks equals ["AAA","BBB"] | PASS | ["AAA","BBB"] |
 | `editor.key.backspace-at-block-start` | official | blocks equals ["AAABBB"] | PASS | ["AAABBB"] |

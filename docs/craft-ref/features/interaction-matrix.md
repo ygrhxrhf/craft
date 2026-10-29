@@ -18,6 +18,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | --- | --- | --- | --- | --- | --- |
 | `browse.box-select.drag-marquee` | differ | 22 | 14 | 0 | 本地 +0/−0 · 官方 +1/−0 |
 | `editor.a11y.task-item-checkbox` | differ | 33 | 19 | 0 | 本地 +2/−0 · 官方 +1/−0 |
+| `editor.animation.slash-menu` | differ | 37 | 8 | 21 | 本地 +1/−1 · 官方 +21/−0 |
 | `editor.block.enter-empty-block` | match | 10 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.block.indent-in-list` | differ | 21 | 3 | 2 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.block.indent-plain-paragraph` | differ | 23 | 9 | 0 | 本地 +2/−0 · 官方 +2/−0 |
@@ -42,6 +43,27 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 
 | spec | facet | step | official | local | 理由 | 出处 |
 | --- | --- | --- | --- | --- | --- | --- |
+| `editor.animation.slash-menu` | added-only-official |  | 列表 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 动作 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 取消样式 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 字体 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 对齐 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 提醒我… |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 插入分隔符 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 插入文件 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 插入片段 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 插入画廊集合 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 插入白板 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 插入看板集合 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 插入表格 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 插入表格集合 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 文字格式 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 文本样式 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 日期和时间 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 缩进 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 装饰 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | added-only-official |  | 颜色 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
+| `editor.animation.slash-menu` | removed-only-local |  |  | 同步中 | 本地列表屏的同步状态串（同步中/保存中）在官方无对应物；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES <SAVING> |
 | `editor.block.indent-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 空列表项里光标 offset 天然差 1 | probe-bullet（本轮实测：官方 childTexts ["•","L1"]；本地 listStyleType:disc） |
 | `editor.block.indent-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
 | `editor.key.backspace-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 光标 offset 天然差 1 | probe-bullet；同 editor.block.indent-in-list 的同一声明 |
@@ -127,6 +149,19 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 2 | a11y-only-official | button\|Reaction Icon |  |  | 2 |
 | 2 | a11y-only-official | button\|Text Bubble Icon |  |  | 2 |
 | 2 | a11y-only-official | textbox\| |  |  | 2 |
+
+### `editor.animation.slash-menu` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 3 | anim-only-local |  | anim\|(anim)\|div\|150 |  | 2 |
+| 3 | anim-only-local |  | trans\|padding-bottom\|div\|150 |  | 2 |
+| 3 | anim-only-local |  | trans\|padding-left\|div\|150 |  | 2 |
+| 3 | anim-only-local |  | trans\|padding-right\|div\|150 |  | 2 |
+| 3 | anim-only-local |  | trans\|padding-top\|div\|150 |  | 2 |
+| 3 | anim-only-local |  | trans\|visibility\|div\|150 |  | 2 |
+| 3 | anim-only-official | anim\|(anim)\|div\|100 |  |  | 2 |
+| 3 | anim-only-official | trans\|opacity\|div\|interrupted |  |  | 2 |
 
 ### `editor.block.indent-in-list` — differ
 
@@ -351,6 +386,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.a11y.task-item-checkbox` | official | blocksCount count 1 | PASS | 1 |
 | `editor.a11y.task-item-checkbox` | local | blocks equals ["Buy milk"] | PASS | ["Buy milk"] |
 | `editor.a11y.task-item-checkbox` | local | blocksCount count 1 | PASS | 1 |
+| `editor.animation.slash-menu` | official | state:slashMenu gt 0 | PASS | 1 |
+| `editor.animation.slash-menu` | official | blocks equals ["/"] | PASS | ["/"] |
+| `editor.animation.slash-menu` | local | state:slashMenu gt 0 | PASS | 1 |
+| `editor.animation.slash-menu` | local | blocks equals ["/"] | PASS | ["/"] |
 | `editor.block.enter-empty-block` | official | blocksCount count 1 | PASS | 1 |
 | `editor.block.enter-empty-block` | official | blocksCount count 2 | PASS | 2 |
 | `editor.block.enter-empty-block` | official | blocksCount count 3 | PASS | 3 |

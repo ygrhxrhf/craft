@@ -4673,3 +4673,38 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 | 矩阵 | **21 条 spec**；新 spec `differ`（27 行／15 sev2+） |
 | 两侧记录 | 6 步、`errors=0`、selfCheck 2/2 |
 | 台账三闸 | 全绿（自述 **1559／G1567**） |
+
+## V181＝第 306 批（2026-10-29＝**零产品代码批**＝净新增 2 条＝G1568—G1569）
+
+**`animation` 观测档首次落地**——Wave 0 起挂着的三档（a11y/animation/db）里的第二档。
+
+### 1、交互侧新增
+
+- ★★★ **G1568 斜线菜单入场动效机制不同**：官方容器**自身零动效**（`animation-name:none`、
+  `transition-duration:0s`），动画落在**内层 div**、**100ms**，另有 `opacity` **150ms** 过渡；
+  本地容器 `animation: enter .15s` ＋ `transition: all .15s`，实测动的是**四边 padding 与 visibility 各 150ms**。
+  ★ 本地这几条 padding 过渡用默认 **`ease`**，不是自家 craft 曲线。
+- ★★ **G1569 退场动效本地缺失**：`Escape` 后本地**零动效事件**；官方观察到 **100ms** 动画一例
+  （★ 不是每次都能采到，组件卸载时可能被中断）。
+- ☆ 两侧动效 **token 完全一致**（`.15s/.2s/.5s`＋同一贝塞尔）＝复证不登记；差异在**属性与承载层**。
+
+### 2、★★ 仪器：从"采样"改成"事件式"（本批最大的工程部分）
+
+第一版用 `document.getAnimations()` 采样，**直接栽了**：本地 `enter` 动画只有 150ms，
+`waitForTimeout(100)`＋一次 `evaluate` 往返就超过它 ⇒ 永远采到空数组，把「有动画」读成「没动画」。
+改为监听 `animationstart/end`＋`transitionrun/end`，时长取 `elapsedTime`。随之修两处：
+
+- **被中断的过渡不触发 `transitionend`** ⇒ 读时"就结算"成 `interrupted` 并**写回缓冲**（否则读 2 时凭空消失）；
+- 动画**落在哪一步**取决于挂载时机 ⇒ 缓冲改**累计**、differ 只比**末步**，消除逐步假红。
+
+☆ 动画名两侧不可比（官方构建哈希 / 本地 `enter`）⇒ 归一成 `(anim)`。
+☆ 新增 `hover` step（悬停是 transition 的主触发通路）与 `保存中/同步中` 噪声规则。
+
+### 3、门禁
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 矩阵 | **22 条 spec**；新 spec `differ`（37 行／8 sev2+／21 已声明） |
+| 两侧记录 | 4 步、`errors=0`、selfCheck 2/2 |
+| 台账三闸 | 全绿（自述 **1561／G1569**） |

@@ -35,13 +35,14 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
   id, wave, surface, target: 'official'|'local'|'both',
   selectors: { key: { official, local } },   // 两侧选择器各写一份
   setup:   [ navigate | seedTempDoc | placeCaret | placeCaretTrailing | openPanel | setPreference ],
-  steps:   [ key | chord | type | paste | click | clickRef | clickXY | drag | wait ],
+  steps:   [ key | chord | type | paste | click | clickRef | clickXY | drag | hover | wait ],
   observe: ['dom','text','state','selection','blocks','attrs','indent','computed','screenshot',
             // ★ Wave 1 后续批逐步新增的**加性**档（不选就不采、选了不影响旧录像）：
             'keys',      // 按键消费探针（capture/bubble 两处各一个监听）
             'marquee',   // 框选（拖拽选中的块名册）
             'kinds',     // 块**语义档**归一枚举（para/title/headingN/strong/bullet/…）
             'a11y',      // 可达性树：编辑器子树内的可操作角色×可及名（CDP 权威 AX 树）
+            'animation', // 动效：动作期间真正发生过的 animation/transition（事件式，含 elapsedTime）
             'inline'],   // 行内标记归一枚举 marks（bold/italic/strike/highlight/code/link）
   observeTexts:    ['<具名文本>'],           // 进指纹的 counts
   stateSelectors:  ['<selector key>'],       // 进 stateAttrs.named
@@ -56,6 +57,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 `facet` 口径：`text:<名>`（末步或 `at` 步的计数）／`blocks`／`blocksCount`／`dom`／
 `selection:<字段>`／`state:<selector key 或扁平属性名>`／`attr:<key>`／`kinds`／
 `a11y`（=`a11y:rows`，`role|name` 名册）／`a11yCount`／`a11yRole:<role>`／
+`animCount`（本步累计的动效条数）／`anim:<kind>|<name>|<tag>`（布尔在场）／
 `indentLevel`（光标所在块的缩进级数）／`focusInEditor`（焦点是否还在编辑器内）。
 `at` 缺省＝末步；指定值＝ **record 里的 step 下标**（`baseline` 占 **0**，第 1 个动作是 **1**）。
 ★ 这一档极易错一位：写 spec 时按"第几个动作"数会整体偏 1，断言会落在前一步上。
@@ -87,7 +89,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 八条踩过的坑（都改掉了，别再犯）
+## ★ 十一条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -146,6 +148,16 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
    实测已绊过多次）。改动＝`lab.mjs` 的 `resolvePage()`：先按写死标签探活，探不通就按
    **靶子 URL 前缀**在现有页里找，都没有才新建。
 
+
+11. **动效必须事件式采集，不能"动作后采样"（第 306 批修）**。`document.getAnimations()` 只在
+   动画**正在跑**时才返回它；本地斜线菜单 `animation: enter .15s` 只有 150ms，而 `waitForTimeout(100)`
+   ＋一次 `page.evaluate` 的往返就已超过它 ⇒ 采到的永远是空数组，把「有动画」读成「没动画」。
+   改为监听 `animationstart/end` 与 `transitionrun/end`，时长取事件的 `elapsedTime`（规范值）。
+   ★ 连带两条：① **被中断的过渡不触发 `transitionend`** ⇒ 读时要把它"就结算"成 `interrupted` 并
+   **写回缓冲**，否则下一次读它就凭空消失（实测：读 1 拿到 5 条、读 2 只剩 1 条）；
+   ② 动效缓冲是**累计**的、differ 只比**末步**——动画落在哪一步取决于挂载时机，逐步比会制造假红
+   （实测同一批事件这回落在第 1 步、下回落在第 2 步）。
+   ☆ 动画名两侧不可比（官方是构建哈希 `jOiMjk1699283064`、本地是 `enter`）⇒ 采集侧已归一成 `(anim)`。
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
 

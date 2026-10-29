@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.paste.plain-text'], targets: 'both', tag: 'wave1-28' });
+await main({ only: ['editor.animation.slash-menu'], targets: 'both', tag: 'wave1-29' });

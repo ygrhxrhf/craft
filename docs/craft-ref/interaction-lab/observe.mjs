@@ -330,6 +330,8 @@ const NOISE_RULES = [
   [/^[•·●◦▪▫‣⁃]+(#\d+)?$/g, ''],
   // 未命名文档在侧栏里的行标签。本地测试库累积了几百篇历史测试文档 ⇒ 侧栏的占位串数量
   // 与官方不在一个量级（实测 246 vs 0）⇒ 它是**外壳标签**不是编辑器内容，整条丢掉。
+  // 本地同步状态串（官方无；同族已有 已保存/未保存 那条）。
+  [/保存中[.…·]*/g, '<SAVING>'],
   [/^无标题文档$/, '<UNTITLED>'],
   // 协作连接横幅（本地 dev 常驻，官方无）
   [/协作连接已断开[^\n]*/g, '<COLLAB_BANNER>'],
@@ -493,6 +495,12 @@ export function evalExpect(expectations, steps) {
     }
     if (facet === 'a11yCount') return (step.a11y && step.a11y.rows || []).length;
     if (facet.startsWith('a11yRole:')) return (step.a11y && step.a11y.roles && step.a11y.roles[facet.slice(9)]) || 0;
+    // 动效（事件式）：`animCount` 给本步结束的动效条数；`anim:<kind>:<name>[:<tag>]` 给布尔在场。
+    if (facet === 'animCount') return ((step.animation && step.animation.events) || []).length;
+    if (facet.startsWith('anim:')) {
+      const want = facet.slice(5);
+      return ((step.animation && step.animation.events) || []).some((x) => (x.kind + '|' + x.name + '|' + x.target).startsWith(want));
+    }
     if (facet.startsWith('text:')) return step.fingerprint?.counts?.[facet.slice(5)] ?? 0;
     if (facet.startsWith('selection:')) return step.selection?.[facet.slice(10)] ?? null;
     if (facet.startsWith('state:')) {
@@ -581,6 +589,80 @@ export function evalExpect(expectations, steps) {
  * 只记带 Ctrl/Alt 的 keydown：typeKeys 会产出大量纯字母 keydown，
  *   与组合键归谁这件事无关，混进来只会淹掉判据。
  */
+/**
+ * **动效探针（页面侧，事件式）**：监听 `animationstart/end` 与 `transitionrun/end`，
+ * 记录**动作期间真正发生过的动效**。
+ *
+ * ★ 为什么不用「动作后采样 `document.getAnimations()`」：短动画会被采样时点漏掉。
+ *   本批实测——本地斜线菜单带 `animation: enter 0.15s`，但 `waitForTimeout(100)` ＋
+ *   `page.evaluate` 的往返已超过 150ms，采到的永远是空数组 ⇒ 会把「有动画」读成「没动画」
+ *   （与 Wave 1 那条「观测不到 ≠ 不存在」同族）。
+ * ☆ 时长取事件的 `elapsedTime`（规范给的精确秒数），不是自己掐表；未结束的动效
+ *   （如官方的无限循环）记在 `running` 里、不带时长。
+ * ☆ 注入式动画名在官方是构建哈希（`jOiMjk1699283064`）、本地是语义名（`enter`）⇒
+ *   **名字两侧不可比**，统一归一成 `(anim)`；可比的只剩「哪个属性在动 ＋ 多久＋ 落在哪种标签上」。
+ */
+export function installAnimProbe() {
+  if (window.__ilabAnimProbe) return 'already';
+  window.__ilabAnimProbe = true;
+  window.__ilabAnims = [];
+  window.__ilabAnimOpen = {};
+  const tagOf = (el) => (el && el.tagName ? el.tagName.toLowerCase() : '(none)');
+  const keyOf = (kind, name, el) => kind + '|' + name + '|' + tagOf(el);
+
+  const start = (kind) => (e) => {
+    const name = kind === 'anim' ? e.animationName : e.propertyName;
+    window.__ilabAnimOpen[keyOf(kind, name, e.target)] = true;
+  };
+  const end = (kind) => (e) => {
+    const name = kind === 'anim' ? e.animationName : e.propertyName;
+    const k = keyOf(kind, name, e.target);
+    const wasOpen = window.__ilabAnimOpen[k];
+    delete window.__ilabAnimOpen[k];
+    if (!wasOpen) return; // 探针装上之前就开始的，不记（否则时长是假数）
+    window.__ilabAnims.push({
+      kind,
+      name: kind === 'anim' ? '(anim)' : name,
+      target: tagOf(e.target),
+      dur: Math.round((e.elapsedTime || 0) * 1000),
+    });
+  };
+  document.addEventListener('animationstart', start('anim'), true);
+  document.addEventListener('animationend', end('anim'), true);
+  document.addEventListener('transitionrun', start('trans'), true);
+  document.addEventListener('transitionend', end('trans'), true);
+  return 'installed';
+}
+
+/** 读走并清空动效日志；`running`＝仍在跑、没有结束事件的动效（同一 key 去重）。 */
+export function readAnims() {
+  const events = (window.__ilabAnims || []).slice();
+  // ★ 本步内**起了但没等到结束**的动效：就结算成 `dur:null` 的一条事件并清空开表。
+  //   不这么做它会跨步泄漏——实测本地菜单的入场过渡在第 1 步结束时仍开着、结束事件落进
+  //   第 2 步的窗口，differ 就会把它们记成「第 2 步本地独有的动效」（首跑踩到）。
+  //   `dur:null` 的含义＝"本步内已开始、读数时尚未结束"，不是"没有动效"。
+  const running = [];
+  for (const k of Object.keys(window.__ilabAnimOpen || {})) {
+    const [kind, name, target] = k.split('|');
+    const ev = { kind, name: kind === 'anim' ? '(anim)' : name, target };
+    running.push(ev);
+    // ★ 写回缓冲：被**打断**的过渡永远不触发 `transitionend`，只在"就结算"这一刻可见。
+    //   不写回的话它会在下一次读时凭空消失（实测：读 1 拿到 5 条、读 2 只剩 1 条）。
+    const synthesized = { ...ev, dur: null, interrupted: true };
+    events.push(synthesized);
+    window.__ilabAnims.push(synthesized);
+  }
+  // ★ 不清空缓冲（累计语义，见 lab.mjs 的注释）；只把"已结算"的开表清掉，
+  //   避免同一条动效被重复结算成 dur:null。
+  window.__ilabAnimOpen = {};
+  return { events, running };
+}
+
+/** 开新一轮观测前清空（`observe` 读完即调）。 */
+export function resetAnims() {
+  window.__ilabAnims = [];
+}
+
 export function installKeyProbe() {
   if (window.__ilabKeyProbe) return 'already';
   window.__ilabKeyProbe = true;

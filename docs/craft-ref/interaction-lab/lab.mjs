@@ -26,6 +26,9 @@ import {
   captureAll,
   captureA11y,
   installKeyProbe,
+  installAnimProbe,
+  readAnims,
+  resetAnims,
   measureTrailingPoint,
   evalExpect,
   normalizeText,
@@ -189,6 +192,14 @@ export class Target {
     if (set.has('inline')) out.inline = snap.inline;
     if (set.has('kinds')) out.kinds = snap.kinds;
     if (set.has('marquee')) out.marquee = snap.marquee;
+    if (set.has('animation')) {
+      // 事件式采集：动作期间真正发生过的动效（采样法会漏掉短动画，见 observe.mjs 的注释）。
+      // ★ **累计**读、不清空：动画在哪一步结束取决于挂载时机，逐步清空会把同一批事件记到
+      //   不同步上（首跑实测：官方入场动画一次落在第 1 步、另一次落在第 2 步）。
+      //   differ 因此只比**末步**的累计清单（见 diff.mjs ⑨）。
+      out.animation = await this.page.evaluate(readAnims);
+      out.animation.cumulative = true;
+    }
     if (set.has('a11y')) {
       // 可达性树**必须走宿主侧 CDP**（`Accessibility.getFullAXTree`），页内 JS 拿不到权威 AX 树。
       // 收口到编辑器子树：本地侧栏把每篇文档都画成按钮，不收口就只是在比谁文档多。
@@ -300,6 +311,11 @@ async function runStep(target, spec, step, ctx, log) {
       break;
     case 'paste':
       await p.keyboard.paste(step.text);
+      break;
+    case 'hover':
+      // 加性 step：悬停是动效（transition）的主触发通路，没有它就只能靠 click，
+      // 而 click 会顺带改变状态、把悬停动效和状态动效混在一起。
+      await p.hover(target.sel(spec, step.selector), { label: step.label || 'hover' });
       break;
     case 'click': {
       await p.click(target.sel(spec, step.selector));
@@ -471,6 +487,10 @@ export async function runOne(spec, targetName, page) {
     // ★ 按键消费探针：只在 spec 声明了 keys 面时才装（加性，不影响既有记录）。
     //   ★ 必须在 runSetup **之后**装：setup 里的 navigate/seedTempDoc 会整页导航，
     //     装在之前的话监听器会被导航清掉 ⇒ keys 名册恒空（wave1-16 首跑实测）。
+    if ((spec.observe || []).includes("animation")) {
+      await target.page.evaluate(installAnimProbe);
+      log("setup installAnimProbe");
+    }
     if ((spec.observe || []).includes("keys")) {
       await target.page.evaluate(installKeyProbe);
       log("setup installKeyProbe");

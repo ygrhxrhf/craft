@@ -289,6 +289,25 @@ export function compare(specId, official, local, spec) {
     }
   }
 
+  // ⑨ 动效（事件式探针）：比「哪些属性/元素在动 ＋ 各自多久」。
+  //   ★ 动画名两侧不可比（官方是构建哈希、本地是语义名）⇒ 采集侧已归一成 (anim)。
+  //   ★ 时长取事件 elapsedTime（规范值）⇒ 可直接比，不留容差。
+  //   ★「仍在跑」的动效只记不判（severity 1）：它取决于该帧恰好在循环哪一段。
+  // ★ 只比**末步**的累计清单：动效缓冲是累计的，中间步的清单会随挂载时机截断
+  //   （同一批事件这次落在第 1 步、下次落在第 2 步），逐步比会制造假红。
+  for (const i of (n > 0 ? [n - 1] : [])) {
+    const oa = o.steps[i] && o.steps[i].animation;
+    const la = l.steps[i] && l.steps[i].animation;
+    if (!oa || !la) continue;
+    const aKey = (x) => x.kind + "|" + x.name + "|" + x.target + "|" + (x.dur == null ? (x.interrupted ? "interrupted" : "?") : x.dur);
+    const oSet = new Set((oa.events || []).map(aKey));
+    const lSet = new Set((la.events || []).map(aKey));
+    for (const x of [...lSet].filter((v) => !oSet.has(v)).sort()) push({ facet: "anim-only-local", step: i, label: o.steps[i].label, official: null, local: x, delta: null, severity: 2 });
+    for (const x of [...oSet].filter((v) => !lSet.has(v)).sort()) push({ facet: "anim-only-official", step: i, label: o.steps[i].label, official: x, local: null, delta: null, severity: 2 });
+    for (const x of (oa.running || [])) push({ facet: "anim-running-official", step: i, label: o.steps[i].label, official: x.kind + "|" + x.name + "|" + x.target, local: null, delta: null, severity: 1 });
+    for (const x of (la.running || [])) push({ facet: "anim-running-local", step: i, label: o.steps[i].label, official: null, local: x.kind + "|" + x.name + "|" + x.target, delta: null, severity: 1 });
+  }
+
   // ⑧ 可达性树（编辑器子树内，CDP 权威 AX 树）：比**可操作角色 × 可及名**的集合。
   //   结构节点（generic/StaticText…）已在采集侧丢掉 —— 两侧渲染框架不同，数量天然不等。
   //   ★ 名字按 set 比、不比条数：条数差异多半来自外壳（本地侧栏把每篇文档画成按钮）。

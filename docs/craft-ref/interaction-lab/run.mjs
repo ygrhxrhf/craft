@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['shell.sidebar-toggle.repro'], targets: 'both', tag: 'wave1-47' });
+await main({ only: ['editor.block.selection-mode'], targets: 'both', tag: 'wave1-49' });

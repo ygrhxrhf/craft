@@ -108,6 +108,8 @@
 
 ★ **第 322 批上屏（组合／区块链接）：**`Ctrl-G` 官方在文本选中态下**落到查找**（名册新增「查找」「暂无结果」），本地零反应；`Ctrl-Shift-K` 官方多块与单词两种选区**都零反应**，本地**弹命令面板**（`CommandPalette.tsx:37` 的 `ctrlKey && key==='k'` 没排除 Shift）。** ⇒ gap `G1579`／`G1580`，矩阵 `editor.key.group-and-blocklink`。
 
+★ **第 331 批（`Ctrl-G` 的前置找到了）：**官方 `Escape` 进入**块选择态**（`body.block-select`），该态下 `Ctrl-G` **成组**（块名册 `["ALPHA","BETA"]`→`["ALPHA BETA"]`）、`Ctrl-Shift-G` 再改结构；本地无此态、两键皆零变化。`Ctrl-G` 因此是**按态分派**：文本态→查找、块选择态→组合。** ⇒ gap `G1588`（并结掉 `G1579`／`G1583` 的边界），矩阵 `editor.block.selection-mode`。
+
 ★ **第 330 批复测（表 C `Ctrl-\`）：**每步 3s、连按四次——本地 `domLength` **奇偶交替**（真切换），官方**四次全等**（无反应）；第 328 批那枚 −506 是渲染抖动，已更正。** ⇒ gap `G1587`，矩阵 `shell.sidebar-toggle.repro`。
 
 ★ **第 329 批上屏（表 A `URL`）:**`Ctrl-K` 官方把焦点交给**链接输入框**（`input.sc-jxjmdu-5.kiqmvz`，与方程**同一组件**）、选中文本被涂成 `rgb(173,208,245)`；本地**弹命令面板**。** ⇒ gap `G1586`（并结掉 `G1582` 注里的存疑），矩阵 `editor.key.url-link`。

@@ -40,6 +40,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.equation` | differ | 17 | 3 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.equation-caret-and-blocklink-entry` | differ | 29 | 7 | 10 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.equation.commit` | differ | 28 | 9 | 5 | 本地 +1/−0 · 官方 +2/−0 |
+| `editor.key.find-clear-then-type` | differ | 42 | 24 | 4 | 本地 +12/−0 · 官方 +4/−2 |
 | `editor.key.find-replace` | differ | 21 | 11 | 2 | 本地 +10/−0 · 官方 +5/−2 |
 | `editor.key.group-and-blocklink` | differ | 47 | 17 | 2 | 本地 +8/−0 · 官方 +4/−2 |
 | `editor.key.home-end-arrows` | match | 14 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
@@ -142,6 +143,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.equation.commit` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.key.equation.commit` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.key.equation.commit` | focusInEditor | 6 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.key.find-clear-then-type` | added-only-official |  | 1 of 1 在页面上 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.find-clear-then-type` | added-only-official |  | 查找 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.find-clear-then-type` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
+| `editor.key.find-clear-then-type` | removed-only-official |  | 目录 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.find-replace` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.find-replace` | removed-only-official |  | 目录 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.group-and-blocklink` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
@@ -602,6 +607,35 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 6 | blocks | ["x 2"] | ["FORMULA"] |  | 2 |
 | 3 | inline | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
 | 4 | inline | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+
+### `editor.key.find-clear-then-type` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 3 | countΔ:ALPHA | 6 | 2 | -4 | 2 |
+| 3 | countΔ:BETA | 3 | 1 | -2 | 2 |
+| 3 | countΔ:结果 | 0 | 1 | 1 | 2 |
+| 4 | countΔ:ALPHA | 6 | 2 | -4 | 2 |
+| 4 | countΔ:BETA | 3 | 1 | -2 | 2 |
+| 4 | countΔ:结果 | 0 | 1 | 1 | 2 |
+| 6 | countΔ:ALPHA | 4 | 2 | -2 | 2 |
+| 6 | countΔ:BETA | 2 | 1 | -1 | 2 |
+| 6 | countΔ:结果 | 0 | 1 | 1 | 2 |
+|  | added-only-local |  | 1 / 1 |  | 2 |
+|  | added-only-local |  | 1 结果 |  | 2 |
+|  | added-only-local |  | Aa |  | 2 |
+|  | added-only-local |  | \| |  | 2 |
+|  | added-only-local |  | 全部替换 |  | 2 |
+|  | added-only-local |  | 在文档中 |  | 2 |
+|  | added-only-local |  | 在页面上 |  | 2 |
+|  | added-only-local |  | 文本 |  | 2 |
+|  | added-only-local |  | 替换 |  | 2 |
+|  | added-only-local |  | 正则 |  | 2 |
+| 2 | attr:findInput | 在页面上查找文本 | 在页面上查找文本 |  | 2 |
+| 3 | attr:findInput | 在页面上查找文本 | 在页面上查找文本 |  | 2 |
+| 4 | attr:findInput | 在页面上查找文本 | 在页面上查找文本 |  | 2 |
+| 5 | attr:findInput | 在页面上查找文本 | 在页面上查找文本 |  | 2 |
+| 6 | attr:findInput | 在页面上查找文本 | 在页面上查找文本 |  | 2 |
 
 ### `editor.key.find-replace` — differ
 
@@ -1268,6 +1302,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.equation-caret-and-blocklink-entry` | local | text:WORDX gt 0 | PASS | 1 |
 | `editor.key.equation.commit` | official | text:FORMULA gt 0 | PASS | 1 |
 | `editor.key.equation.commit` | local | text:FORMULA gt 0 | PASS | 1 |
+| `editor.key.find-clear-then-type` | official | state:findInput gt 0 | **FAIL** | 0 |
+| `editor.key.find-clear-then-type` | official | text:ALPHA gt 0 | PASS | 2 |
+| `editor.key.find-clear-then-type` | local | state:findInput gt 0 | **FAIL** | 0 |
+| `editor.key.find-clear-then-type` | local | text:ALPHA gt 0 | PASS | 2 |
 | `editor.key.find-replace` | official | state:findInput gt 0 | PASS | 1 |
 | `editor.key.find-replace` | official | blocks equals ["ALPHA BETA ALPHA"] | PASS | ["ALPHA BETA ALPHA"] |
 | `editor.key.find-replace` | local | state:findInput gt 0 | PASS | 1 |

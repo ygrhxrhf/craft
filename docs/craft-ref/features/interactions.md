@@ -4970,3 +4970,13 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
   **`Ctrl-G` 按态分派**：文本态→查找、块选择态→组合。
 - ★ 诚实边界：块名册只证"结构变了"，**不证**是组容器还是并块（取消组合后名册出现 `["ALPHA BETA","BETA"]`，
   第二个「BETA」疑似组内嵌套块被重复计入——仪器块抽取没处理组容器）。
+
+## V202＝第 332 批（2026-10-29＝**零产品代码批**＝净新增 0 条，补强 G1588）
+
+- ★ 表格单元格里 `Escape` **同样**进入 `body.block-select`（与正文块一致）——但粒度是**整张表**：
+  该态下 `Alt-↓`（`MOVE_ROWS_DOWN`）行列零变化；`Ctrl-⌫`（`DELETE_ROWS`）**把整张表删掉了**
+  （REST 读回表块 `none`）。
+- ★ 这条把存量清单 A/C 的"卡点"从"没有选择态"改精确为"**有选择态、粒度不对**"。
+- ☆ REST 用法记录：`DELETE /documents` 的字段是 **`documentIds`**（`documents`／`ids`／`idsToDelete` 全报
+  `VALIDATION_ERROR`）；但本批按 200 返回后再读 `/blocks?id=…` 文档**仍在** ⇒ "软删是否真落地"**未证实**，
+  留待下批用 UI 通路复核。

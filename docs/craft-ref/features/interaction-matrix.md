@@ -37,6 +37,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 40 | 16 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
+| `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
 
 ## 已声明偏差明细
@@ -89,6 +90,44 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.md-rules.block-kind` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方基线里带一枚目录空态提示「使用标题、页面或卡片创建目录。」，本批临时文档本地侧未渲染该提示（本地该串是纯核常量 TOC_PLACEHOLDER）⇒ 与本 spec 主判据无关 | src/lib/editor/official-copy.ts:8（TOC_PLACEHOLDER 逐字） |
 | `editor.slash.open-and-filter` | countΔ:插入 | 1 | 8 | 4 | 菜单项文案与条数不同（官方扁平 8 条含「插入」：插入文件/片段/表格/分隔符/白板/表格集合/画廊集合/看板集合；本地 4 条）—— 与上面两条同源 | probe-verbatim.json · gap.md（本轮新登记） |
 | `editor.slash.open-and-filter` | added-only-local |  |  | 无匹配命令 | 本地 / 菜单的**无匹配文案**是「无匹配命令」；官方过滤后直接把面板收起、不给无匹配文案（G1544 同源） | chk-roster：官方 added=["/wen"]、本地 added=["/wen","无匹配命令"] · gap.md G1544 |
+| `local.db.document-row` | added-only-local |  |  | 1 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 上次浏览 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 分享者 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 创建/共享日期 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 升序 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 名称 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 已更新 4秒钟前 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 已移至最近删除 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 排序方式 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 新建文件夹 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 新建文档 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 新建白板 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 新建集合 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 最近编辑 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-local |  |  | 降序 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | / |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | 18 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | 2025/5/5 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | AAA |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | Craft Handbook |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | QODER-HARVEST-C01-W2-BLOCKS |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | QODER-HARVEST-C01-W3-REMIND |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | QODER-ILAB-div7 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | QODER-ILAB-divB |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | Quick Start: get going |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | Watch: how to videos |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | Welcome to Craft |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | 无标题文档 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | 日记 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | added-only-official |  | 获得 Craft Plus |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | removed-only-local |  |  | 📄 | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | removed-only-official |  | 19 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | removed-only-official |  | QODER-ILAB-local.db.document-row |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | removed-only-official |  | ​ |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | removed-only-official |  | 共享 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | removed-only-official |  | 刚刚 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `local.db.document-row` | removed-only-official |  | 目录 |  | 同上 | editor.paste.plain-text 同族噪声 |
 | `shell.command-palette.toggle-vs-jump` | countΔ:搜索文档与块 | 1 | 0 | 1 | 两侧面板条目集合不同 ⇒ 该具名文案只在本地有 | probe-verbatim.json |
 | `shell.command-palette.toggle-vs-jump` | countΔ:操作 | 1 | 0 | 1 | 本地面板有「操作」分组标题，官方跳转面板没有分组标题 | probe-verbatim.json |
 | `shell.command-palette.toggle-vs-jump` | countΔ:搜索文档与块 | 2 | 0 | 1 | 两侧面板条目集合不同 ⇒ 该具名文案只在本地有 | probe-verbatim.json |
@@ -574,6 +613,12 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.slash.open-and-filter` | local | blocks equals ["/"] | PASS | ["/"] |
 | `editor.slash.open-and-filter` | local | blocks equals ["/wen"] | PASS | ["/wen"] |
 | `editor.slash.open-and-filter` | local | blocksCount count 1 | PASS | 1 |
+| `local.db.document-row` | local | db:exists equals true | PASS | true |
+| `local.db.document-row` | local | db:isDeleted equals false | PASS | false |
+| `local.db.document-row` | local | db:title equals "QODER-ILAB-local.db.document-row" | PASS | "QODER-ILAB-local.db.document-row" |
+| `local.db.document-row` | local | blocks equals ["DBCONTENT"] | PASS | ["DBCONTENT"] |
+| `local.db.document-row` | local | db:contentLen equals 0 | PASS | 0 |
+| `local.db.document-row` | local | db:isDeleted equals true | PASS | true |
 | `shell.command-palette.toggle-vs-jump` | official | attr:paletteInput exists null | PASS | "打开" |
 | `shell.command-palette.toggle-vs-jump` | official | attr:paletteInput exists null | PASS | "打开" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |

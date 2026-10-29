@@ -4708,3 +4708,30 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 | 矩阵 | **22 条 spec**；新 spec `differ`（37 行／8 sev2+／21 已声明） |
 | 两侧记录 | 4 步、`errors=0`、selfCheck 2/2 |
 | 台账三闸 | 全绿（自述 **1561／G1569**） |
+
+## V182＝第 307 批（2026-10-29＝**零产品代码批**＝净新增 0 条＝`db` 档落地）
+
+**Wave 0 起挂着的三档（a11y/animation/db）全部落地。**
+
+### 1、`db` 档＝本地侧自证面（单侧，不进两侧 diff）
+
+官方没有可查的库 ⇒ 它回答的是"这个交互在库里留下了什么"。本批新 spec `local.db.document-row`：
+
+- 建完即在库（`exists=true`／`isDeleted=false`）；
+- 打完 `DBCONTENT` 后 **`contentLen` 恒 0** ⇒ 文档内容不进同步白名单（`DOC_CONTENT_COLS`）这条红线的
+  **可观测后果**，写进断言防回归；
+- 走「移至最近删除」后 `isDeleted` **翻 true**、行仍在（软删非物理删）。
+
+### 2、三条纪律（README 第 12 条）
+
+① 库面断言不能进两侧 selfCheck（官方恒 FAIL ⇒ 伪装成仪器故障）⇒ 新增 `spec.selfCheckOnly`；
+② `db-probe` 的 pg 连接必须 `closeDb()` 收尾（否则 Node 事件循环不退出、进程挂到超时）；
+③ 建文档与写标题是两次异步落库 ⇒ 标题断言不能放基线步。
+
+### 3、门禁
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 矩阵 | **23 条 spec**；`local.db.document-row` 判 `match`（38 条已声明＝外壳名册） |
+| selfCheck | 本地 6/6 PASS；官方按设计跳过 |

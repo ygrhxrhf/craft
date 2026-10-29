@@ -15,6 +15,7 @@
  */
 import { mkdirSync, readdirSync, writeFileSync, appendFileSync } from 'node:fs';
 import { softDeleteOfficial, softDeleteLocal } from './soft-delete.mjs';
+import { queryDocDb, closeDb } from './db-probe.mjs';
 import {
   captureFingerprint,
   captureTextNodes,
@@ -192,6 +193,10 @@ export class Target {
     if (set.has('inline')) out.inline = snap.inline;
     if (set.has('kinds')) out.kinds = snap.kinds;
     if (set.has('marquee')) out.marquee = snap.marquee;
+    if (set.has('db')) {
+      // 库面只在**本地**采：官方没有可查的库 ⇒ 它是本地侧的自证面，不进两侧对比。
+      out.db = this.name === 'local' ? await queryDocDb(this.tempDocId) : { skipped: 'official has no queryable db' };
+    }
     if (set.has('animation')) {
       // 事件式采集：动作期间真正发生过的动效（采样法会漏掉短动画，见 observe.mjs 的注释）。
       // ★ **累计**读、不清空：动画在哪一步结束取决于挂载时机，逐步清空会把同一批事件记到
@@ -248,6 +253,8 @@ async function runSetup(target, spec, ctx, log) {
       }
       case 'seedTempDoc': {
         const created = await seedTempDoc(target, spec, s, log);
+        // ★ 记到 Target 上：`observe` 只拿得到 spec，拿不到 ctx。
+        target.tempDocId = created && created.id ? created.id : null;
         ctx.tempDoc = created;
         break;
       }
@@ -312,6 +319,17 @@ async function runStep(target, spec, step, ctx, log) {
     case 'paste':
       await p.keyboard.paste(step.text);
       break;
+    case 'deleteTempDoc': {
+      // 加性 step：走**真实产品路径**删掉本次临时文档，让 db 档能断言"库里 isDeleted 翻了"。
+      // 与 teardown 的 softDeleteTempDoc 同一实现，区别只是发生在步骤里、可被观测到。
+      const doc = ctx.tempDoc;
+      if (!doc || !doc.id) throw new Error('deleteTempDoc: 没有 tempDoc.id');
+      const fn = target.name === 'official' ? softDeleteOfficial : softDeleteLocal;
+      const okDel = await fn(target, { ...doc, title: doc.title || doc.name, listPath: doc.listPath || '/documents' }, log);
+      log('step deleteTempDoc ok=' + okDel);
+      ctx.deletedInStep = true;
+      break;
+    }
     case 'hover':
       // 加性 step：悬停是动效（transition）的主触发通路，没有它就只能靠 click，
       // 而 click 会顺带改变状态、把悬停动效和状态动效混在一起。
@@ -371,6 +389,7 @@ async function runTeardown(target, spec, ctx, log) {
         }
       }
     } else if (t.op === 'softDeleteTempDoc') {
+      if (ctx.deletedInStep) { log('teardown softDeleteTempDoc skip (已在步骤里删过)'); continue; }
       const ok = await softDeleteTempDoc(target, ctx, log);
       log(`teardown softDeleteTempDoc ok=${ok} doc=${ctx.tempDoc?.url || ''}`);
     } else if (t.op === 'key' || t.op === 'chord') {
@@ -510,7 +529,10 @@ export async function runOne(spec, targetName, page) {
 
   // spec 的 expect 对**本侧自己的观测**求值（两侧互比由 differ 负责）
   try {
-    record.selfCheck = evalExpect(spec.expect, record.steps);
+    // ★ 单侧面（例如 `db`）：官方没有可查的库 ⇒ 这些断言只对指定靶子求值。
+    //   否则官方侧必然 FAIL，把"本来就没有这个面"伪装成仪器故障（第 304 批 a11y 踩过同类）。
+    const only = spec.selfCheckOnly;
+    record.selfCheck = only && !only.includes(target.name) ? [] : evalExpect(spec.expect, record.steps);
   } catch (e) {
     record.errors.push({ where: 'expect', message: String((e && e.message) || e).slice(0, 600) });
   }
@@ -598,5 +620,8 @@ export async function main(opts) {
   ensureRunsDir();
   writeFileSync(RUNS + '/' + tag + '-summary.json', JSON.stringify(summary, null, 1), 'utf8');
   console.log('[run] summary -> ' + RUNS + '/' + tag + '-summary.json');
+  // ★ 必须收尾：`db` 档开着 Postgres 连接，不收 Node 的事件循环不退出
+  //   （实测：记录写完、进程却挂到超时被移到后台）。
+  await closeDb();
   return summary;
 }

@@ -15,6 +15,7 @@
 | `run.mjs` | 薄入口：`await main({ only, targets, tag })` |
 | `diff.mjs` | differ：出 `docs/craft-ref/features/interaction-matrix.md` ＋ `runs/latest-diff.json` |
 | `soft-delete.mjs` | 两侧的软删通路（采完必须把临时文档移进最近删除） |
+| `db-probe.mjs` | 本地库面探针（宿主侧直连 Postgres，供 `db` 档；用完必须 `closeDb()`） |
 | `exp-differ.mjs` | **对照实验**：证明 differ 真会红（见下） |
 | `probe-one.mjs` | 单 spec 调试跑（逐段看观测值，不落矩阵） |
 | `specs/*.mjs` | spec 本体 |
@@ -43,7 +44,9 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
             'kinds',     // 块**语义档**归一枚举（para/title/headingN/strong/bullet/…）
             'a11y',      // 可达性树：编辑器子树内的可操作角色×可及名（CDP 权威 AX 树）
             'animation', // 动效：动作期间真正发生过的 animation/transition（事件式，含 elapsedTime）
+            'db',        // 本地库面（**单侧**自证：按临时文档 id 读 documents 行；不进两侧 diff）
             'inline'],   // 行内标记归一枚举 marks（bold/italic/strike/highlight/code/link）
+  selfCheckOnly:   ['local'],                // 可选：单侧面（如 db）的 expect 只对这些靶子求值
   observeTexts:    ['<具名文本>'],           // 进指纹的 counts
   stateSelectors:  ['<selector key>'],       // 进 stateAttrs.named
   attrProbes:      [{ key, selector, attrs }],
@@ -58,6 +61,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 `selection:<字段>`／`state:<selector key 或扁平属性名>`／`attr:<key>`／`kinds`／
 `a11y`（=`a11y:rows`，`role|name` 名册）／`a11yCount`／`a11yRole:<role>`／
 `animCount`（本步累计的动效条数）／`anim:<kind>|<name>|<tag>`（布尔在场）／
+`db:<字段>`（`exists`／`isDeleted`／`title`／`contentLen`…，仅本地侧）／
 `indentLevel`（光标所在块的缩进级数）／`focusInEditor`（焦点是否还在编辑器内）。
 `at` 缺省＝末步；指定值＝ **record 里的 step 下标**（`baseline` 占 **0**，第 1 个动作是 **1**）。
 ★ 这一档极易错一位：写 spec 时按"第几个动作"数会整体偏 1，断言会落在前一步上。
@@ -89,7 +93,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 十一条踩过的坑（都改掉了，别再犯）
+## ★ 十二条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -158,6 +162,14 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
    ② 动效缓冲是**累计**的、differ 只比**末步**——动画落在哪一步取决于挂载时机，逐步比会制造假红
    （实测同一批事件这回落在第 1 步、下回落在第 2 步）。
    ☆ 动画名两侧不可比（官方是构建哈希 `jOiMjk1699283064`、本地是 `enter`）⇒ 采集侧已归一成 `(anim)`。
+
+12. **单侧面（`db`）有三条纪律（第 307 批）**。
+   - **不能进两侧 selfCheck**：官方没有可查的库，把库面断言写进 `expect` 会让官方侧恒 FAIL，
+     等于把"本来就没有这个面"伪装成仪器故障 ⇒ 用 `spec.selfCheckOnly: ['local']`。
+   - **必须收尾关连接**：`db-probe.mjs` 开着 pg 连接，`closeDb()` 不调 Node 事件循环就不退出
+     （实测：记录写完、进程却挂到超时被移到后台）。
+   - **建文档与写标题是两次异步落库**：基线步读到的 `title` 还是空串，第 1 步才落定 ⇒
+     标题断言要放在后面，别放在基线。
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
 

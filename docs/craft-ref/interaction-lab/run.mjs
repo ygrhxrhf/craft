@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.animation.slash-menu'], targets: 'both', tag: 'wave1-29' });
+await main({ only: ['local.db.document-row'], targets: 'both', tag: 'wave1-30' });

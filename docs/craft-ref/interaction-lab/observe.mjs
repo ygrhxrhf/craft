@@ -496,6 +496,9 @@ export function evalExpect(expectations, steps) {
     if (facet === 'a11yCount') return (step.a11y && step.a11y.rows || []).length;
     if (facet.startsWith('a11yRole:')) return (step.a11y && step.a11y.roles && step.a11y.roles[facet.slice(9)]) || 0;
     // 动效（事件式）：`animCount` 给本步结束的动效条数；`anim:<kind>:<name>[:<tag>]` 给布尔在场。
+    // 库面（**本地侧自证**，官方无对应物）：`db:<字段>` 取 documents 行；`db:exists` 布尔。
+    if (facet === 'db' ) return step.db ?? null;
+    if (facet.startsWith('db:')) return step.db ? (step.db[facet.slice(3)] ?? null) : null;
     if (facet === 'animCount') return ((step.animation && step.animation.events) || []).length;
     if (facet.startsWith('anim:')) {
       const want = facet.slice(5);

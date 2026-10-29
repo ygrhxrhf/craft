@@ -5124,3 +5124,9 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - 本地 `POST /api/link-preview` 五个 URL：有 OG 的（MDN／Rust／GitHub）**都能拿到 `description`**，
   `example.com`／`wikipedia.org` 为空 ⇒ **不是"一律抽不到"**，是"只读 meta，有就取"。
 - 差异收窄为"官方能从正文抽摘要、本地只读 meta"；新边界：**没有对同一个有 OG 的 URL 做两侧卡片对照**（官方侧粘贴未落地）。
+
+### V184·补（第 358 批）：官方查找条控件全集
+
+- 官方 `Ctrl-F`：一个输入框（「在页面上查找文本」）＋「查找」按钮＋上/下箭头＋结果计数；
+  `[aria-pressed]`／`role=switch` **命中 0**；那枚 `input[type=checkbox]` 是 **0×0 的辅助节点**。
+- ⇒ 官方查找条没有本地那三组可见开关（`G1571` 边界推进）；标题行右侧"滑杆图标"菜单仍未点开，留待下批。

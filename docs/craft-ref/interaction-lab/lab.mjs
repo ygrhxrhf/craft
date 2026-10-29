@@ -266,7 +266,11 @@ async function runSetup(target, spec, ctx, log) {
           const msg = String((e && e.message) || e);
           const committed = /navigation committed/i.test(msg) || /PageNavigationTimeoutError/i.test(msg);
           const ready = await target.page.evaluate(() => document.readyState);
-          if (!committed || ready === 'loading') throw e;
+          // ★ 第 358 批修：旧写法 `!committed || ready === 'loading'` 会把 ego 自己推荐的
+          //   "已提交、readyState=loading" 这种**正常情况**当成错误重新抛出（本地冷启动实测踩到）。
+          //   新判据只看"是否已提交"；随后补等一次 load（失败也容忍），再继续。
+          if (!committed) throw e;
+          try { await target.page.waitForLoadState?.('load', { timeout: 10000 }); } catch (e2) { /* 容忍 */ }
           log('setup navigate TIMEOUT-TOLERATED readyState=' + ready + ' ' + path);
         }
         await target.page.waitForTimeout(s.settleMs ?? 1200);

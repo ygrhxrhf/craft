@@ -30,6 +30,7 @@ export default {
     editorBody: { official: '[data-testid="editor-body"]', local: '.ProseMirror' },
     titleBlock: { official: '[data-testid="editor-title"]', local: 'input[placeholder="页面标题"]' },
     blockRoot: { official: '[id^="blockrowwrap-"]', local: '.ProseMirror > *' },
+    toggleish: { official: '[data-testid="editor-body"] [class*="toggle"]', local: '.ProseMirror [data-open], .ProseMirror .toggle-summary' },
     dialog: { official: '[role="dialog"]', local: '[role="dialog"]' },
     popupBackdrop: { official: '[data-testid="popup-backdrop"]', local: '[data-testid="popup-backdrop"]' },
   },
@@ -59,7 +60,7 @@ export default {
   observe: ['dom', 'text', 'state', 'blocks', 'kinds', 'attrs'],
   observeTexts: ['HEAD1', 'CHILD1'],
   attrProbes: [{ key: 'block', selector: 'blockRoot', attrs: ['class', 'aria-expanded', 'data-type', 'role'] }],
-  stateSelectors: ['editorBody', 'dialog', 'popupBackdrop'],
+  stateSelectors: ['editorBody', 'dialog', 'popupBackdrop', 'toggleish'],
 
   expect: [
     { facet: 'text:HEAD1', op: 'gt', value: 0, at: 1 },

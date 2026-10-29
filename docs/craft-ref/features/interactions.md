@@ -4893,3 +4893,12 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
   **不排除 Shift**，而 `lib/editor/keymap.ts` 里那套严格的 `matches()` 管不到 window 监听。
 - ☆ 方法：两条都是「同键两侧落点不同」，不是「一侧有没有」——判据写 `state:dialog` 与**名册新增了什么**，
   比"弹层选择器在不在"稳（选择器一侧本就不存在，容易读成"没弹"）。
+
+## V193＝第 323 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1581）
+
+- ★★★ **G1581**：`Ctrl-Shift-E`（输入方程）。官方选中文本后按 ⇒ 焦点从编辑器交给**编辑器外的**
+  `input.sc-jxjmdu-5.kiqmvz`（`inEditor` true→false），`Escape` 再把焦点还给编辑器；本地零反应。
+- ★ 方法：判定不靠"有没有弹层选择器"，靠**焦点去哪了**（`focus.inEditor` + `focus.tag/cls`）——
+  方程输入框挂在 portal 里，用 `[role="dialog"]` 之类找会读成"没反应"。
+- ★ 诚实边界：只证"焦点交给了一枚输入框"；placeholder／值／提交后插入的节点种类都**没读**；
+  "光标态"那一步在官方侧已被输入框接管 ⇒ **不能**当对照。

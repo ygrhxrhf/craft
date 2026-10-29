@@ -106,7 +106,9 @@
 
 ★ **第 321 批上屏（`COMMENT` 一行）：官方选中文本按 `Ctrl-Shift-M` ⇒ `popup-backdrop` 0→1，文本名册新增「输入你的评论」，焦点离开编辑器；本地零反应（`shell-shortcuts.tsx` 显式未绑）。`Escape` 一次**没关掉**该浮层 ⇒ 关闭键未定。** ⇒ gap `G1578`，矩阵 `editor.key.comment`。
 
-★ **第 322 批上屏（组合／区块链接）：**`Ctrl-G` 官方在文本选中态下**落到查找**（名册新增「查找」「暂无结果」），本地零反应；`Ctrl-Shift-K` 官方多块与单词两种选区**都零反应**，本地**弹命令面板**（`CommandPalette.tsx:37` 的 `ctrlKey && key==='k'` 没排除 Shift）。** ⇒ gap `G1579`／`G1580`，矩阵 `editor.key.group-and-blocklink`。块选择态（拖动柄多选）本批未建立，官方「组合」是否另有通路**未证**。
+★ **第 322 批上屏（组合／区块链接）：**`Ctrl-G` 官方在文本选中态下**落到查找**（名册新增「查找」「暂无结果」），本地零反应；`Ctrl-Shift-K` 官方多块与单词两种选区**都零反应**，本地**弹命令面板**（`CommandPalette.tsx:37` 的 `ctrlKey && key==='k'` 没排除 Shift）。** ⇒ gap `G1579`／`G1580`，矩阵 `editor.key.group-and-blocklink`。
+
+★ **第 323 批上屏（输入方程）：**`Ctrl-Shift-E` 官方把焦点交给编辑器外的 `input.sc-jxjmdu-5.kiqmvz`（`Escape` 再还给编辑器），本地零反应。光标态是否也开输入框**未证**（该步已被输入框接管）。** ⇒ gap `G1581`，矩阵 `editor.key.equation`。块选择态（拖动柄多选）本批未建立，官方「组合」是否另有通路**未证**。
 
 ## 表 D · 任务视图 / 合集（`ho`，23 项）
 

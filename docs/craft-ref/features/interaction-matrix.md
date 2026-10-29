@@ -30,6 +30,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.ctrl-arrow-word-nav` | differ | 43 | 15 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
+| `editor.key.equation` | differ | 17 | 3 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.find-replace` | differ | 22 | 11 | 3 | 本地 +10/−1 · 官方 +5/−2 |
 | `editor.key.group-and-blocklink` | differ | 47 | 17 | 2 | 本地 +8/−0 · 官方 +4/−2 |
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
@@ -307,6 +308,14 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 8 | selection:collapsed |  | true |  | 2 |
 | 8 | selection:anchorOffset |  | 1 |  | 2 |
 | 8 | selection:focusOffset |  | 1 |  | 2 |
+
+### `editor.key.equation` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 3 | focusInEditor | false | true |  | 2 |
+| 4 | focusInEditor | false | true |  | 2 |
+| 5 | focusInEditor | false | true |  | 2 |
 
 ### `editor.key.find-replace` — differ
 
@@ -642,6 +651,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.enter-mid-block` | local | text:BBBB count 1 | PASS | 1 |
 | `editor.key.enter-mid-block` | local | selection:collapsed equals true | PASS | true |
 | `editor.key.enter-mid-block` | local | selection:anchorOffset equals 0 | PASS | 0 |
+| `editor.key.equation` | official | blocks equals ["FORMULA"] | PASS | ["FORMULA"] |
+| `editor.key.equation` | local | blocks equals ["FORMULA"] | PASS | ["FORMULA"] |
 | `editor.key.find-replace` | official | state:findInput gt 0 | PASS | 1 |
 | `editor.key.find-replace` | official | blocks equals ["ALPHA BETA ALPHA"] | PASS | ["ALPHA BETA ALPHA"] |
 | `editor.key.find-replace` | local | state:findInput gt 0 | PASS | 1 |

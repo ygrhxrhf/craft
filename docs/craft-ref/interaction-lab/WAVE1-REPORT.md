@@ -2419,3 +2419,32 @@ v1 的问题：造出的折叠块**没有子项**，折叠与否都看不到变�
 | `git status --porcelain src e2e` | **空** |
 | 台账 | 不变（**1585／G1593**） |
 | 临时产物 | 官方探针文档已 REST 删除；本地探针文档走侧栏软删（下批清） |
+
+## 七十一、★ 第 357 批（2026-10-29）：**链接卡摘要边界收窄 —— 本地 5 个 URL 取样（0 条 G）**
+
+净新增 **0 条 G**（`G1567` 的边界补证）· 零产品代码批。
+
+`G1567` 原来只有 1 个 URL（`example.com`）的读数，边界写着"是否本地一律抽不到**未证**"。本批补了 5 个：
+
+| URL | `title` | `description` | 其它 |
+| --- | --- | --- | --- |
+| `example.com` | Example Domain | **null** | favicon |
+| `www.wikipedia.org` | — | — | **只有 `siteName`** |
+| `developer.mozilla.org/…/Fetch_API` | Fetch API - Web APIs \| MDN | ✅ 有 | — |
+| `www.rust-lang.org` | Rust Programming Language | ✅ 有 | image |
+| `github.com/vercel/next.js` | GitHub - vercel/next.js… | ✅ 有 | image |
+
+⇒ **本地不是"一律抽不到"**：只要页面有 OG/meta 就能取到，没有就留空。
+差异的真身因此收窄为一句：**官方能从正文抽摘要，本地只读 meta**（`example.com` 上官方有摘要、本地 `null`）。
+
+★ 新边界（写进 G 行）：**没有对同一个"有 OG"的 URL 做两侧卡片对照**——官方侧这轮想粘 URL 造卡，
+`keyboard.paste` 走宿主剪贴板失败、页内合成 `ClipboardEvent` 也没落地（文档 REST 读回 `[]`）⇒ 官方读数缺位，如实挂账。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 无新 spec（本地侧走 API 探针，官方侧未取到读数） |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | 不变（**1585／G1593**） |
+| 临时产物 | 官方探针文档已 REST 删除 |

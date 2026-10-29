@@ -5118,3 +5118,9 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - 本地表格（真 `<table>` 3×3）点左缘 `x-20`／`x-8`／`Shift+`：高亮恒 3 枚 `TH`、行列不变。
 - 与官方侧（恒 6 枚 `sc-iyeho0-0`）合起来 ⇒ **两侧都没有行/列选中态**，18 条行列键双侧无作用对象。
 - ☆ 本地斜线菜单也要真实按键（`keyboard.type` 带 delay）才触发。
+
+### V180·补（第 357 批）：链接卡摘要边界收窄
+
+- 本地 `POST /api/link-preview` 五个 URL：有 OG 的（MDN／Rust／GitHub）**都能拿到 `description`**，
+  `example.com`／`wikipedia.org` 为空 ⇒ **不是"一律抽不到"**，是"只读 meta，有就取"。
+- 差异收窄为"官方能从正文抽摘要、本地只读 meta"；新边界：**没有对同一个有 OG 的 URL 做两侧卡片对照**（官方侧粘贴未落地）。

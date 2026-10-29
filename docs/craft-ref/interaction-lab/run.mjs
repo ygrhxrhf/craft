@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.key.toggle-all'], targets: 'both', tag: 'wave1-69' });
+await main({ only: ['editor.key.comment.close'], targets: 'both', tag: 'wave1-71' });

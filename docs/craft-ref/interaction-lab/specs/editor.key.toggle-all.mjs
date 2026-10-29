@@ -51,6 +51,10 @@ export default {
     // 本地是**扁平过滤**：直接打过滤词（关键字含 toggle）
     { op: 'typeKeys', text: 'toggle', settleMs: 900, label: 'filter toggle', targets: ['local'] },
     { op: 'clickText', text: '折叠列表', settleMs: 1300, label: 'pick 折叠列表' },
+    // 官方侧：Enter 出块 → Tab 缩成子块 → 打字，制造可折叠的内容
+    { op: 'key', chord: 'Enter', settleMs: 800, label: 'Enter (sibling block)', targets: ['official'] },
+    { op: 'key', chord: 'Tab', settleMs: 800, label: 'Tab (indent → child)', targets: ['official'] },
+    { op: 'type', text: 'CHILD1', settleMs: 800, label: 'type CHILD1', targets: ['official'] },
     { op: 'key', chord: 'Control+Alt+t', settleMs: 1200, label: 'Ctrl-Alt-T #1 (collapse all?)' },
     { op: 'key', chord: 'Control+Alt+t', settleMs: 1200, label: 'Ctrl-Alt-T #2 (expand all?)' },
   ],

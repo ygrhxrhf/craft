@@ -4294,3 +4294,38 @@ G798 记的是源码里 `i ? jsx(nav,{className:Aa.compactNav}) : jsx(nav,{class
 | `git status --porcelain src e2e` | **空** |
 | 台账 | **1614／G1622**；`G1414`／`G1430` 就地改写 |
 | 临时产物 | `QODER-ILAB-feedback`／`inserttab`／`font4` 已删 |
+
+## 一百二十一、★ 第 418–419 批（2026-10-30）：**搜索形态两处更正（G1419）**
+
+净新增 **0 条 G**（`G1419` 就地改写）· 零产品代码批。
+
+### 一、快速开启面板：只有一个分组
+
+`Ctrl-P` 面板在**空查询**与 `Craft`／`QODER`／`HEAD` 三种查询下，结果区顶上始终只有一个
+「**文档**」标题，条目形态是「无标题文档／在 zhang's Space 中」；有查询时底部多出
+「**查看更多结果**」＋「**按 Enter 键**」。
+
+### 二、完整结果页：也只有「搜索结果」一组
+
+在面板里按 Enter ⇒ URL 变 `…/all?q=Craft&scope=ALL`，页面结果区**只有一个标题「搜索结果」**，
+条目是**文档卡 + 每条命中数**：Craft Handbook **50+**、Welcome to Craft **1**、无标题 **3**、
+Watch: how to videos **22**、Quick Start: get going **9**。
+
+⇒ **本 build 在 `scope=ALL` 下不渲染 `document／pages／blocks` 三档**，而是"单一结果列表 ＋ 逐条命中数"。
+静态构造里那三枚分组键仍是盘上事实，但**屏上形态与之不同**——复刻该按屏上做。
+
+★ 边界：三档可能只在**别的 `scope` 取值**或**别的搜索入口**下渲染，本批没有穷举 `scope`。
+
+### 三、顺带清理
+
+清掉 4 篇遗留探针文档，其中一篇是**第 347 批在官方侧建的 11009 字符标题**文档（当时没来得及删）。
+UI 复核 `longTitles 0 / qoder 0`。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 五道闸 | **14/14 PASS** |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | **1614／G1622**；`G1419` 就地改写（两处更正 + 边界） |
+| 临时产物 | `QODER-ILAB-searchpage`／`quickopen` 一类已清；遗留长标题探针文档已删 |

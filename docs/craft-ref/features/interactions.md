@@ -4873,3 +4873,13 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - ★★ 更正两处观测通道：REST 建的文档**能**渲染（须从列表卡点入带 `?s=`）；官方表格是
   `div._root_1ltym_1` 不是 `<table>`，且该类名**侧栏也有**（按类名找会命中侧栏，实测 x=-288）。
 - ☆ 可用通道：块内数 `[contenteditable]`（DOM）＋ `GET /blocks` 读 `rows`（REST 第二证据）。
+
+## V191＝第 321 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1578）
+
+- ★★★ **G1578**：`Ctrl-Shift-M`（`COMMENT`）。官方选中块内文本后按 ⇒ `popup-backdrop` **0→1**、
+  文本名册新增「输入你的评论」、焦点离开编辑器（`inEditor` true→false）；本地**零反应**。
+  这是第一条把「本地缺的不是键、是官方入口形态」变成两侧实测的 spec（`editor.key.comment`）。
+- ★ 诚实边界：官方侧 `Escape` 按一次**没关掉**该浮层（0.9s 后 `popup-backdrop` 仍是 1）⇒
+  关闭键**未定**，不写成「Esc 可关」。
+- ☆ 观测口径：不靠猜弹层选择器，先看**文本名册**新增了什么（`输入你的评论`），
+  再用 `state:popupBackdrop` 复核 —— 发现型 spec 的固定两步（README 坑 15）。

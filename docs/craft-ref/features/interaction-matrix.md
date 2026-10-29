@@ -26,6 +26,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.move-top-bottom` | differ | 21 | 5 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.backspace-at-block-start` | match | 20 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.backspace-in-list` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
+| `editor.key.comment` | differ | 23 | 7 | 6 | 本地 +1/−0 · 官方 +2/−0 |
 | `editor.key.ctrl-arrow-word-nav` | differ | 43 | 15 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
@@ -72,6 +73,12 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.indent-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
 | `editor.key.backspace-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 光标 offset 天然差 1 | probe-bullet；同 editor.block.indent-in-list 的同一声明 |
 | `editor.key.backspace-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
+| `editor.key.comment` | selection:focusOffset | 2 | 18 | 1 | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.comment` | selection:collapsed | 3 | true | false | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.comment` | selection:focusOffset | 3 | 0 | 1 | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.comment` | selection:collapsed | 4 |  | false | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.comment` | selection:anchorOffset | 4 |  | 0 | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.comment` | selection:focusOffset | 4 |  | 1 | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
 | `editor.key.find-replace` | removed-only-local |  |  | 同步中 | 本地同步状态串（同步中）随同步完成而消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES <SAVING> |
 | `editor.key.find-replace` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.find-replace` | removed-only-official |  | 目录 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
@@ -248,6 +255,18 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 6 | selection:focusOffset | 3 | 0 |  | 2 |
 | 7 | selection:anchorOffset | 3 | 0 |  | 2 |
 | 7 | selection:focusOffset | 3 | 0 |  | 2 |
+
+### `editor.key.comment` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 3 | countΔ:评论 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:评论 | 1 | 0 | -1 | 2 |
+|  | added-only-official | 输入你的评论 |  |  | 2 |
+| 3 | focusInEditor | false | true |  | 2 |
+| 4 | focusInEditor | false | true |  | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 
 ### `editor.key.ctrl-arrow-word-nav` — differ
 
@@ -560,6 +579,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.backspace-in-list` | local | blocksCount count 1 | PASS | 1 |
 | `editor.key.backspace-in-list` | local | blocks equals ["AAA"] | PASS | ["AAA"] |
 | `editor.key.backspace-in-list` | local | kinds equals ["para"] | PASS | ["para"] |
+| `editor.key.comment` | official | blocksCount count 1 | PASS | 1 |
+| `editor.key.comment` | official | text:QCOMMENTMARK gt 0 | PASS | 1 |
+| `editor.key.comment` | local | blocksCount count 1 | PASS | 1 |
+| `editor.key.comment` | local | text:QCOMMENTMARK gt 0 | PASS | 1 |
 | `editor.key.ctrl-arrow-word-nav` | official | blocks equals ["AAA BBB CCC"] | PASS | ["AAA BBB CCC"] |
 | `editor.key.ctrl-arrow-word-nav` | official | blocks equals ["AAA BBB CCC",""] | PASS | ["AAA BBB CCC",""] |
 | `editor.key.ctrl-arrow-word-nav` | official | blocks equals ["AAA BBB CCC","DDD"] | PASS | ["AAA BBB CCC","DDD"] |

@@ -1447,3 +1447,37 @@ spec 留到找到两侧共同的「选中行」写法再写。
 | `git status --porcelain src e2e` | **空**（零产品代码改动） |
 | 台账 | 不变（**1569／G1577**） |
 | 临时任务 | `TKNAV1`／`TKNAV2` 已 REST 删除 |
+
+## 三十六、★ 续批三十一（2026-10-29）：**`Ctrl-Shift-M` 评论入口上屏** —— G1578
+
+净新增 **1 条 G** · 零产品代码批。矩阵新增 spec `editor.key.comment`（23 行 / 7 条 sev2 / 6 条已声明）。
+
+这条的起点是本地代码里的一句自陈：`shell-shortcuts.tsx:17-19` 写明 `COMMENT ⌘⇧M` **故意不绑**，
+理由是「waits on an entry point that was never collected」——缺的不是键，是**官方入口长什么样**。
+本批把那个入口采下来了。
+
+| 步 | 官方 | 本地 |
+| --- | --- | --- |
+| 打 `QCOMMENTMARK alpha` | 文本在场 | 文本在场 |
+| `Ctrl-A` 选中 | 选区落在块尾（offset 18） | offset 1（已声明归 `editor.selection.ctrl-a-ladder`） |
+| **`Ctrl-Shift-M`** | `popup-backdrop` **0→1**、名册新增「输入你的评论」、焦点离开编辑器 | **零反应**（`popup-backdrop` 恒 0） |
+| `Escape` | ⚠ 浮层**仍为 1**（一次没关掉） | — |
+
+⇒ **G1578**＝官方有评论入口、本地按键未绑定。★ 两条诚实边界：① `Escape` 一次没关掉，
+关闭键**未定**，不写成"Esc 可关"；② 本地不是漏做，是显式取舍，本条正是它等的那个形态。
+
+### 仪器侧
+
+- 新增 README 坑 15：**发现型 spec 先看文本名册新增了什么，再补 `stateSelectors`**。
+  猜选择器的代价是 `state` 恒为 0，看着像"官方没弹"，其实探针指错了地方。
+- 顺手清掉一条幽灵记录：`shell.tasks.create-and-toggle-done` 的 spec 早已删除，
+  但两次 run 记录还留在 `runs/`，differ 因此一直报一条 `uncomparable`。记录改名为 `.stale`，矩阵已无该行。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `editor.key.comment`（differ，7 条 sev2）；幽灵行已消失 |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 台账 | **1570／G1578** |
+| 临时产物 | 两侧临时文档由 spec teardown 软删；探针任务本批未新建 |

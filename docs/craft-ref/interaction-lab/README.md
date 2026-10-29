@@ -93,7 +93,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 十四条踩过的坑（都改掉了，别再犯）
+## ★ 十五条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -183,6 +183,11 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
    todo 列表** ⇒ 屏上读到「文本还在、没删除线、aria-checked 为 0」时，很容易误判成“官方也没生效”。
    本批第一轮就误判了，靠 **REST 读回 `- [x] TASKKEY`** 才纠正。⇒ 与「观测不到 ≠ 不存在」同族：
    下结论前先问「这个状态在屏幕上长什么样」；能读库/读 API 时用第二方证据交叉核。
+
+15. **发现型 spec 先用文本名册找落点，再补 `stateSelectors`（第 321 批）**。给一个从没采过的弹层
+    写 spec 时，别先猜 DOM 选择器——先只开 `observe: ['text']`，在目标动作后看**文本名册新增了什么**
+    （评论浮层就是这么落出「输入你的评论」的），再从记录里认出载体、把选择器补进 `stateSelectors`
+    复跑一次。猜选择器猜错的代价是：`state` 恒为 0，看起来像"官方没弹"，其实是探针指错了地方。
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
 

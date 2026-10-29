@@ -104,6 +104,8 @@
 
 `TOGGLE_QUICK_OPEN*` 四个 id 并存 = **同一功能四套键位在灰度/浏览器兼容分支间切换**（Safari 保留 ⌘⇧O，⌘K 标 legacy）。⌘K 同时是 `URL` 与 `TOGGLE_QUICK_OPEN_LEGACY` ⇒ **键位按上下文（是否处于编辑器内的文本选区）分派**，不是全局唯一表。
 
+★ **第 321 批上屏（`COMMENT` 一行）：官方选中文本按 `Ctrl-Shift-M` ⇒ `popup-backdrop` 0→1，文本名册新增「输入你的评论」，焦点离开编辑器；本地零反应（`shell-shortcuts.tsx` 显式未绑）。`Escape` 一次**没关掉**该浮层 ⇒ 关闭键未定。** ⇒ gap `G1578`，矩阵 `editor.key.comment`。
+
 ## 表 D · 任务视图 / 合集（`ho`，23 项）
 
 | id | macOS | Windows | 语义 |

@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['shell.tasks.new-task-popup'], targets: 'both', tag: 'wave1-33' });
+await main({ only: ['editor.key.comment'], targets: 'both', tag: 'wave1-34' });

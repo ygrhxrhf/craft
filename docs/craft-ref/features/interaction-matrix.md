@@ -43,6 +43,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.toggle-all` | differ | 71 | 44 | 1 | 本地 +1/−0 · 官方 +2/−0 |
+| `editor.key.toggle-all-v2` | differ | 57 | 35 | 0 | 本地 +4/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-extra` | differ | 46 | 21 | 5 | 本地 +1/−0 · 官方 +6/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.url-link` | differ | 20 | 9 | 1 | 本地 +7/−0 · 官方 +1/−0 |
@@ -630,6 +631,46 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 11 | state:toggleish | 0 | 2 | 2 | 2 |
 | 12 | state:toggleish | 0 | 2 | 2 | 2 |
 
+### `editor.key.toggle-all-v2` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:HEAD1 | 1 | 2 | 1 | 2 |
+| 3 | countΔ:HEAD1 | 1 | 2 | 1 | 2 |
+| 4 | countΔ:HEAD1 | 1 | 2 | 1 | 2 |
+| 5 | countΔ:CHILD1 | 1 | 3 | 2 | 2 |
+| 5 | countΔ:HEAD1 | 1 | 2 | 1 | 2 |
+| 6 | countΔ:CHILD1 | 1 | 3 | 2 | 2 |
+| 6 | countΔ:HEAD1 | 1 | 2 | 1 | 2 |
+| 7 | countΔ:CHILD1 | 1 | 3 | 2 | 2 |
+| 7 | countΔ:HEAD1 | 1 | 2 | 1 | 2 |
+| 8 | countΔ:CHILD1 | 1 | 3 | 2 | 2 |
+| 8 | countΔ:HEAD1 | 1 | 2 | 1 | 2 |
+| 9 | countΔ:CHILD1 | 1 | 3 | 2 | 2 |
+| 9 | countΔ:HEAD1 | 1 | 2 | 1 | 2 |
+| 10 | countΔ:CHILD1 | 1 | 3 | 2 | 2 |
+| 10 | countΔ:HEAD1 | 1 | 2 | 1 | 2 |
+|  | added-only-local |  | Task item checkbox for CHILD1 |  | 2 |
+|  | added-only-local |  | Task item checkbox for HEAD1CHILD1 |  | 2 |
+| 4 | blocks | ["HEAD1",""] | ["HEAD1 Task item checkbox for empty task item"] |  | 2 |
+| 5 | blocks | ["HEAD1","CHILD1"] | ["HEAD1 Task item checkbox for CHILD1 CHILD1"] |  | 2 |
+| 6 | blocks | ["HEAD1","CHILD1"] | ["HEAD1 Task item checkbox for CHILD1 CHILD1"] |  | 2 |
+| 7 | blocks | ["HEAD1","CHILD1"] | ["HEAD1 Task item checkbox for CHILD1 CHILD1"] |  | 2 |
+| 8 | blocks | ["HEAD1","CHILD1"] | ["HEAD1 Task item checkbox for CHILD1 CHILD1"] |  | 2 |
+| 9 | blocks | ["HEAD1","CHILD1"] | ["HEAD1 Task item checkbox for CHILD1 CHILD1"] |  | 2 |
+| 10 | blocks | ["HEAD1","CHILD1"] | ["HEAD1 Task item checkbox for CHILD1 CHILD1"] |  | 2 |
+| 3 | kinds | ["para","task"] | ["task","task"] |  | 2 |
+| 4 | kinds | ["para","task"] | ["task"] |  | 2 |
+| 5 | kinds | ["para","task"] | ["task"] |  | 2 |
+| 6 | kinds | ["task","para"] | ["task"] |  | 2 |
+| 7 | kinds | ["para","para"] | ["task"] |  | 2 |
+| 8 | kinds | ["para","para"] | ["task"] |  | 2 |
+| 9 | kinds | ["para","para"] | ["task"] |  | 2 |
+| 10 | kinds | ["para","para"] | ["task"] |  | 2 |
+| 8 | state:toggleish | 0 | 2 | 2 | 2 |
+| 9 | state:toggleish | 0 | 2 | 2 | 2 |
+| 10 | state:toggleish | 0 | 2 | 2 | 2 |
+
 ### `editor.key.turn-into-extra` — differ
 
 | step | facet | official | local | delta | severity |
@@ -1060,6 +1101,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.shift-enter-hard-break` | local | text:BBB count 1 | PASS | 1 |
 | `editor.key.toggle-all` | official | text:HEAD1 gt 0 | PASS | 1 |
 | `editor.key.toggle-all` | local | text:HEAD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all-v2` | official | text:HEAD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all-v2` | official | text:CHILD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all-v2` | local | text:HEAD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all-v2` | local | text:CHILD1 gt 0 | PASS | 3 |
 | `editor.key.turn-into-extra` | official | text:ALPHA gt 0 | PASS | 1 |
 | `editor.key.turn-into-extra` | official | blocksCount count 1 | **FAIL** | 0 |
 | `editor.key.turn-into-extra` | local | text:ALPHA gt 0 | PASS | 1 |

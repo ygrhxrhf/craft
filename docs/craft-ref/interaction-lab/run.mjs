@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.selection.select-to-top-bottom'], targets: 'both', tag: 'wave1-142' });
+await main({ only: ['editor.table.cell-clipboard'], targets: 'both', tag: 'wave1-144' });

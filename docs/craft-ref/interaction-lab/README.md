@@ -93,7 +93,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 十八条踩过的坑（都改掉了，别再犯）
+## ★ 二十一条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -205,6 +205,24 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
     其实只是编译慢。处置：该 spec 的 `navigate` 步写 `gotoTimeoutMs: 60000`。
     ☆ 别把 dev server 日志里 `Module not found: better-sqlite3` 的 **Warning** 当成根因——那是可选原生依赖的
     预期告警（适配器有内存回退），页面照样能跑。
+
+19. **官方侧"表格里的格"取决于表是**怎么建出来的**（第 383 批）**。斜线菜单建的表渲染成**整表一个**
+    `contenteditable`（打 `AA` → `→` → `BB` 会并成 `"AABB"`，逐格对象根本不存在）；走 REST
+    `POST /blocks {type:'table'}` 建的同一张表才渲染成**逐格** `contenteditable`。
+    ⇒ 要在官方侧逐格操作，只能用新 op `restSeedDoc`（整篇文档走 REST）。两个附带坑：
+    ① `POST /blocks` 写进**UI 建的**文档回 **404**（所以"UI 建文档＋REST 塞表"这条捷径不通）；
+    ② 写完不能 `goto` 同一 URL 重载（编辑器走本地缓存，看不到新块），必须回列表、**点卡片**进入。
+    ☆ 另外官方表格里 `Tab` 会选中**整张表**，换格要用 `→`。
+
+20. **"聚焦"和"点击"要分开（第 382 批）**。任务视图的分组标题是**整行 `<button>`**；`click` 会顺带改状态，
+    于是"点击通路"和"键通路"混在一步、判不清是哪条生效。新增 `focusText`：按文案聚焦页面级按钮、**不点击**。
+    同一坑的变体：官方侧弹出的浮层（「在应用中打开」）会遮住内容区 ⇒ `setup` 也要能 `click` 关它
+    （且浮层只弹一次，**缺失时不判错**，否则第二次跑就红）。
+
+21. **`deviations` 别照抄别处**（第 383 批）。`editor.table.cell-clipboard` 的 `AA`／`BB` 计数**就是测量对象**
+    （剪走／粘贴／清空各让哪些字消失），若顺手抄来"官方侧栏空态提示"那类声明，differ 会把真信号降成
+    severity 0 静默掉——矩阵看起来"更干净"，实际是把结论藏了。写 deviations 前先问一句：
+    **这条偏差会不会正好盖住我要测的那个量？**
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
 

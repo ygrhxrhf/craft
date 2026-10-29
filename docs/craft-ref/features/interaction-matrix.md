@@ -68,6 +68,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 61 | 29 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
+| `editor.table.cell-clipboard` | differ | 72 | 40 | 0 | 本地 +0/−0 · 官方 +0/−2 |
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
 | `shell.assistant.open` | match | 9 | 0 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
@@ -76,6 +77,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.shortcuts-panel.key` | differ | 11 | 2 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.sidebar-toggle.repro` | match | 10 | 0 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
+| `shell.tasks.section-fold-keys` | differ | 41 | 17 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.toggles.family` | differ | 26 | 10 | 2 | 本地 +5/−1 · 官方 +1/−0 |
 
 ## 已声明偏差明细
@@ -1455,6 +1457,51 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 15 | selection:anchorOffset |  | 3 |  | 2 |
 | 15 | selection:focusOffset |  | 3 |  | 2 |
 
+### `editor.table.cell-clipboard` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 4 | countΔ:AA | 0 | 1 | 1 | 2 |
+| 5 | countΔ:AA | 0 | 1 | 1 | 2 |
+| 6 | countΔ:AA | 0 | 1 | 1 | 2 |
+| 6 | countΔ:BB | 0 | 1 | 1 | 2 |
+| 7 | countΔ:AA | 0 | 1 | 1 | 2 |
+| 7 | countΔ:BB | 0 | 1 | 1 | 2 |
+| 8 | countΔ:AA | 0 | 1 | 1 | 2 |
+| 8 | countΔ:BB | 0 | 1 | 1 | 2 |
+| 9 | countΔ:AA | 0 | 1 | 1 | 2 |
+| 9 | countΔ:BB | 0 | 1 | 1 | 2 |
+| 10 | countΔ:AA | 0 | 1 | 1 | 2 |
+| 10 | countΔ:BB | -1 | 0 | 1 | 2 |
+| 11 | countΔ:AA | 0 | 1 | 1 | 2 |
+| 11 | countΔ:BB | -1 | 0 | 1 | 2 |
+| 12 | countΔ:AA | -1 | 1 | 2 | 2 |
+| 12 | countΔ:BB | 0 | 1 | 1 | 2 |
+| 13 | countΔ:AA | -1 | 1 | 2 | 2 |
+| 13 | countΔ:BB | 0 | 1 | 1 | 2 |
+| 14 | countΔ:AA | -1 | 1 | 2 | 2 |
+| 14 | countΔ:BB | 0 | 1 | 1 | 2 |
+| 15 | countΔ:AA | -1 | 0 | 1 | 2 |
+| 15 | countΔ:BB | -1 | 0 | 1 | 2 |
+|  | removed-only-official | AA |  |  | 2 |
+|  | removed-only-official | BB |  |  | 2 |
+| 0 | focusInEditor | false | true |  | 2 |
+| 1 | focusInEditor | false | true |  | 2 |
+| 2 | focusInEditor | false | true |  | 2 |
+| 3 | focusInEditor | false | true |  | 2 |
+| 4 | focusInEditor | false | true |  | 2 |
+| 5 | focusInEditor | false | true |  | 2 |
+| 6 | focusInEditor | false | true |  | 2 |
+| 7 | focusInEditor | false | true |  | 2 |
+| 8 | focusInEditor | false | true |  | 2 |
+| 9 | focusInEditor | false | true |  | 2 |
+| 10 | focusInEditor | false | true |  | 2 |
+| 11 | focusInEditor | false | true |  | 2 |
+| 12 | focusInEditor | false | true |  | 2 |
+| 13 | focusInEditor | false | true |  | 2 |
+| 14 | focusInEditor | false | true |  | 2 |
+| 15 | focusInEditor | false | true |  | 2 |
+
 ### `shell.quick-open.alt` — differ
 
 | step | facet | official | local | delta | severity |
@@ -1492,6 +1539,28 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 1 | state:newTaskPopup | 1 | 0 | -1 | 2 |
 | 1 | state:taskInput | 0 | 1 | 1 | 2 |
 | 2 | state:taskInput | 0 | 1 | 1 | 2 |
+
+### `shell.tasks.section-fold-keys` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:任务 | -3 | 0 | 3 | 2 |
+| 3 | countΔ:任务 | -3 | 0 | 3 | 2 |
+| 6 | countΔ:任务 | -3 | 0 | 3 | 2 |
+| 8 | countΔ:任务 | -3 | 0 | 3 | 2 |
+| 10 | countΔ:任务 | -3 | 0 | 3 | 2 |
+| 0 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 1 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 2 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 3 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 4 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 5 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 6 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 7 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 8 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 9 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 10 | state:sectionRow | 0 | 1 | 1 | 2 |
+| 11 | state:sectionRow | 0 | 1 | 1 | 2 |
 
 ### `shell.toggles.family` — differ
 
@@ -1806,6 +1875,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.slash.open-and-filter` | local | blocks equals ["/"] | PASS | ["/"] |
 | `editor.slash.open-and-filter` | local | blocks equals ["/wen"] | PASS | ["/wen"] |
 | `editor.slash.open-and-filter` | local | blocksCount count 1 | PASS | 1 |
+| `editor.table.cell-clipboard` | official | text:AA gt -1 | PASS | 1 |
+| `editor.table.cell-clipboard` | local | text:AA gt -1 | PASS | 0 |
 | `local.db.document-row` | local | db:exists equals true | PASS | true |
 | `local.db.document-row` | local | db:isDeleted equals false | PASS | false |
 | `local.db.document-row` | local | db:title equals "QODER-ILAB-local.db.document-row" | PASS | "QODER-ILAB-local.db.document-row" |
@@ -1830,5 +1901,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.sidebar-toggle.repro` | local | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | official | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | local | text:任务 gt 0 | PASS | 4 |
+| `shell.tasks.section-fold-keys` | official | text:任务 gt 0 | PASS | 9 |
+| `shell.tasks.section-fold-keys` | local | text:任务 gt 0 | PASS | 4 |
 | `shell.toggles.family` | official | text:SHELL gt 0 | PASS | 1 |
 | `shell.toggles.family` | local | text:SHELL gt 0 | PASS | 1 |

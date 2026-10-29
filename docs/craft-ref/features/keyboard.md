@@ -163,6 +163,7 @@
 
 ★★ 本表末列（Windows 串）**本轮起有注册表级出处**（`ho` 的工厂归属，见 §十三）：`TOGGLE_DONE=YM`→`Ctrl-Alt-T`、`TOGGLE_DONE_SLASH=yae("/")`→`Ctrl-/`、`SET_CANCELLED=lEe`→`Ctrl-Alt-Shift-T`、`SET_CANCELLED_SLASH=QM(zr(code Slash))`→**Windows 无**、`REMIND_IN_ONE_HOUR=JI`→`Ctrl-Alt-R`，与第 81 批屏上串逐条吻合。
 ★ 另需注意：`SECTION_TOGGLE_COLLAPS`／`SECTION_COLLAPSE`／`SECTION_EXPAND` 与 `TOGGLE_STATE`／`CREATE_NEW` 用的是 **`Vn`（只写键条件、四个修饰字段一概不写）** ⇒ 在任务视图里 `space`／`←`／`→` **在任何修饰组合下都命中**（正文同类键用 `mo` 精确匹配），本地若把修饰键写成"必须为假"就与官方不同（gap G749）。
+★ ✎ **表 D 折叠键三条已于屏上验证（第 382 批，`shell.tasks.section-fold-keys`）**：官方分组标题是**内容区整行 `<button>`**（宽 1120／高 40、`id="inbox"`），聚焦它之后 `←` 收起、`→` 展开、`space` 来回切换，**`Ctrl+Space` 与 `Shift+←` 同样命中**（`Vn` 的预测被实测证实），同向键**幂等**；步进 `bodyTextLength`＝`307→254→307→254→307→254→307→254→307`。本地任务屏是**单张平表、无分组标题行** ⇒ 三键无处可落（`grep` 零命中）＝ **G1600**。★ 前置：标题**不是**「今天/明天」字样（那是顶部视图页签，点它＝换视图），且必须先把焦点放到标题按钮上（焦点在 body 时 `space` 落进「添加任务」textarea）。
 
 ## 表 E · 表格（`hnt`，15 项）
 
@@ -182,7 +183,8 @@
 
 行/列操作与表 B 的块移动**共用 ⌥+方向键**，靠上下文区分"当前在表格内"。 ☆ **第 316 批实测（单元格光标下）**：官方 `Ctrl-⏎` **+1 行**、`Ctrl-Shift-⏎` **+1 列**、`Ctrl-Alt-⏎` **+1 列**；`Alt-↑↓←→`／`Ctrl-⌫`／`Ctrl-Shift-⌫`／`Ctrl-[` 本批**读数 0**（多半要先选中行/列，未采到选择态）⇒ 不写成"官方没有"。本地十键**全部无反应**（`gap.md` **G1577**）。★ 顺带定案 `Ctrl-Shift-⏎` 是**加列**：面板印「在前面添加行」与行为不符（G726）。
 
-★★ **Windows 塌键（第 82 批·下半 B/C 结案，见 gap G742／G748 与 `internals.md` §二十七）**：`ADD_ROWS_BEFORE`（`zr`）与 `ADD_COLUMNS_AFTER`（`ci`）的 Windows 匹配式逐字段相同，而表格式键表里 `ci` 那条**注册在前** ⇒ 本表这两行的 Windows 列**不能按字面实现**：`Ctrl-Shift-Enter` 实际只派发到"添加列"，"在前面添加行"在该平台键盘不可达。另 `ot` 里还并存 `ADD_TABLE_COLUMN:ci(oo)`（同串、同语义）⇒ 两条候选都叫"添加列"，结论一致。
+★★ **Windows 塌键（第 82 批·下半 B/C 结案，见 gap G742／G748 与 `internals.md` §二十七）**：`ADD_ROWS_BEFORE`（`zr`）与 `ADD_COLUMNS_AFTER`（`ci`）的 Windows 匹配式逐字段相同，而表格式键表里 `ci` 那条**注册在前** ⇒ 本表这两行的 Windows 列**不能按字面实现**：`Ctrl-Shift-Enter` 实际只派发到"添加列"，"在前面添加行"在该平台键盘不可达。另 `ot` 里还并存 `ADD_TABLE_COLUMN:ci(oo)`（同串、同语义）
+★ ✎ **表 E 收口（第 383 批，`editor.table.cell-clipboard`）**：15 项里**只剩剪贴板族没上过屏**——`CUT`／`COPY`／`PASTE`／`CLEAR_CELL_CONTENTS` 本批在单元格光标下两侧对拍：四步（剪走 → 粘到另一格 → `⌫` 清空）**结果逐字符相同**，但 **`Ctrl-V` 落进非空格时官方整格替换、本地在光标处插入**（格内变 `AABB`）＝ **G1602**。其余 11 项：`Ctrl-⏎` 家族见 `G1576`／`G1577`，`Alt+方向`／`Ctrl-⌫`／`Ctrl-Shift-⌫`／`Ctrl-[` 在单元格光标下**两侧均无反应**（`G1577`）——它们要"行/列选择态"，而该态两侧都进不去（`G1588`：`Escape` 只给整表选择）。⇒ 表 E 至此**无"未采"项**，只剩一个已登记的行为差异与一族两侧皆不可达的键。⇒ 两条候选都叫"添加列"，结论一致。
 
 ## 分派机制（`matcher`/`handler` 列表 —— 决定"同键不同结果"）
 
@@ -325,7 +327,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 ### 未试清单（下一批的最低成本靶子，按能解锁的价值排序）
 
 ~~表 A 的列表家族只试过 `Ctrl-Shift-7` 一条~~ **已清（第 296–301 批＋第 320 批）**：`Ctrl-Shift-6/8/9/\`` 四键**两侧对拍**（`editor.key.list-family`，V183），`-7` 单独在第 74／296 批记过单侧读数。**表 A 现在只剩 `Ctrl-Alt-T`（`TOGGLE_TOGGLES`，存量清单 H，缺稳定可折叠对象）没有两侧判定**。
-~~表 B 的 `FIND`/`REPLACE`、表 D（任务视图 23 项）、表 E（表格 15 项）一条都没在屏幕上按过~~ **已清**（第 321–338 批）：表 B 的查找/替换（`editor.key.find-replace`，V184）、插块两键与 `Esc`（`editor.key.insert-block-space`，V195）、`RENAME` 之外全部上屏；表 D **官方侧已采完**（7 键定论 ＋ 3 键补采，`G1573`／`G1574`；剩 `Ctrl-Shift-O` 的语义未定证）；表 E **入口＋3 条增行增列键**上屏（`G1575`／`G1576`／`G1577`），其余 20 条卡在"行/列选择态"（`G1588` 已证 `Escape` 只给**整表**选择）。
+~~表 B 的 `FIND`/`REPLACE`、表 D（任务视图 23 项）、表 E（表格 15 项）一条都没在屏幕上按过~~ **已清**（第 321–338 批）：表 B 的查找/替换（`editor.key.find-replace`，V184）、插块两键与 `Esc`（`editor.key.insert-block-space`，V195）、`RENAME` 之外全部上屏；表 D **官方侧已采完**（7 键定论 ＋ 3 键补采，`G1573`／`G1574`；剩 `Ctrl-Shift-O` 的语义未定证）；表 E **入口＋3 条增行增列键**上屏（`G1575`／`G1576`／`G1577`），其余 20 条卡在"行/列选择态"（`G1588` 已证 `Escape` 只给**整表**选择）。 ✎ **第 382 批补：表 D 折叠键三行（`SECTION_TOGGLE_COLLAPS`／`SECTION_COLLAPSE`／`SECTION_EXPAND`）已两侧上屏**（`shell.tasks.section-fold-keys`）：官方三键皆生效、`Ctrl+Space`／`Shift+←` 也命中、同向键幂等；本地无分组标题行 ⇒ `G1600`。至此**表 D 只剩 `SET_CANCELLED_SLASH`（Windows 本就无）与 `Ctrl-Shift-O` 语义两条**未定证。
 `Alt-↑/↓`（`MOVE_BLOCK_UP/DOWN`，V26 的第二方对照已印出字形）未做屏上验证——它同时能回答"**移动块算几步撤销**"（A 项遗留）。 ✎ **第 345 批复核：已过期**——`Alt-↑/↓` 已由 V168＋spec `editor.block.move-alt-updown` 上屏（矩阵 differ）。
 
 ## 十、第 74 批补账：新任务弹窗的**命令 id ↔ 动作**映射 ＋ 弹窗内也绑 `UNDO`（静态，`NewTaskPopup-Br4pt8ap.js` @4959）
@@ -489,7 +491,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 - ~~Mac 串完全没与屏上对照；G726 未推进~~ **G726 已裁定**（第 82 批·下半 B，见 gap **G742** 与 `internals.md` §二十七）：两张表格键表里 `ci(oo)`（添加列·右）都排在 `zr(oo)`（在前面添加行）**之前**，而两者 Windows 式逐字段相同 ⇒ **Windows 的 `Ctrl+Shift+Enter` 派发的是"添加列·右"，"在前面添加行"在该平台键盘不可达**；面板把两个标签都印出来是枚举描述符不去重。**Mac 串仍未与屏上对照**（这条没结）。
 - **⤒／⤓ 的字形归属仍是推断**：判据来自 §八 keyboard.md:262 的一条旁证（`Alt-⤒` ↔ `Alt-↖`）。若 ⤒ 实为 ↑，则 文档类"选择到顶部 `CtrlShift⤒`"对应的应是 `SELECT_TO_TOP_MAC`（74）而非 COMMON（72）；顺带：表B 内部 `MOVE_BLOCK_TOP_MAC`（70）与 `SELECT_TO_TOP_MAC`（74）的 Win 串**逐字相同**（都是 `Ctrl-Shift-↑`），面板里没有 `CtrlShift↑` 这一条，故也无法用屏上裁定这处静态表自撞。★★ **第 82 批·下半 C 结案（见 §十三）**：`JX()` 与三处 `Ll ?` 证明 **`*_MAC` 变体只在 Mac 的面板里追加展示** ⇒ 非 Mac 面板没有 `CtrlShift↑` 是设计如此，不是漏采；`SELECT_TO_*_MAC` 与 `MOVE_BLOCK_*_MAC` 的 Windows 串自撞仍是**静态表内部问题**（前者进派发、后者的派发点尚未定位）。
 - **`Ctrl-S`（本地自造的保存）在面板 7 类中仍未出现**，与 keyboard.md:234 那条"官方两个枚举里都没有保存快捷键"一致 ⇒ 本地这一条仍是需要主动决策的偏差，不因面板到手而结案。
-- **键位的实际生效性本轮零条**：89 行全是"官方声明并展示"级证据；§九 的屏上按过并判过的仍只有 9 条，表D／表E 一条都没按过（键盘通路未修）。 ✎ **第 345 批复核：已过期**——表 D 官方侧已采完、表 E 入口与增行增列键已上屏（见存量清单 A–H）。
+- **键位的实际生效性本轮零条**：89 行全是"官方声明并展示"级证据；§九 的屏上按过并判过的仍只有 9 条，表D／表E 一条都没按过（键盘通路未修）。 ✎ **第 345 批复核：已过期**——表 D 官方侧已采完、表 E 入口与增行增列键已上屏（见存量清单 A–H）。 ✎ **第 382 批再复核：表 D 已全上屏**（折叠键三条 `G1600`），表 E 剩 20 条属**两侧皆无作用对象**（`G1588`：`Escape` 只给整表选择，无行/列选择态），非"未采"而是"不可达"。
 - **面板是否随焦点上下文换串未测**：本轮只在"沙盒文档正文 ＋ 面板打开"这一种状态下采；表格内、集合内、任务视图内的同一标签是否会显示不同组合（例如 `CtrlShift⏎` 的两条塌键在表格焦点下是否已被拆开），需要先把光标放进对应上下文再开面板，未做。
 - **"在合集中"段的命令 id 未解**：5 条面板标签只能对到 表E 的同串项，`ho`／`hnt`／`Iu` 三张注册表里都没有"集合行"语义的 id ⇒ 需回 bundle 找第四张注册表（或确认面板这一段来自 i18n 硬编码而非注册表）。
 

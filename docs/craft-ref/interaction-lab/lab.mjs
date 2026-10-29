@@ -50,6 +50,8 @@ export const TARGETS = {
   official: 'https://docs.craft.do',
   local: 'http://localhost:3000',
 };
+/** 官方 REST 桥：只读为主，`restSeedBlock` 会往**临时文档**里塞数据块（第 383 批）。 */
+export const OFFICIAL_API = 'https://connect.craft.do/links/11WSzp0AjQN/api/v1';
 /** 本仓既有的稳定视口；视口覆盖**按会话失效**，每个脚本开头必须重设。 */
 export const VIEWPORT = { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false };
 /** 复用任务空间（硬规则：一个目标只用一个 TaskSpace）。 */
@@ -250,6 +252,13 @@ export class Target {
 
 async function runSetup(target, spec, ctx, log) {
   for (const s of spec.setup || []) {
+    // 加性（第 382 批）：setup 也认 `step.targets`。为什么：本批的任务屏两侧路由完全不同
+    // （官方是 /s/<space>/tasks 绝对 URL，本地是 /tasks），一条 navigate 写两遍必然到不了位；
+    // 而 steps 里早就有 `targets`，setup 没有 ⇒ 只能写死单侧、另一侧跑空。
+    if (s.targets && !s.targets.includes(target.name)) {
+      log('setup SKIP (' + target.name + ') ' + (s.label || s.op));
+      continue;
+    }
     switch (s.op) {
       case 'navigate': {
         // 两侧路由前缀不同：官方空间路由是 /s/<space>/<tab>，没有 /documents。
@@ -308,6 +317,113 @@ async function runSetup(target, spec, ctx, log) {
         await target.page.click(sel);
         await target.page.waitForTimeout(s.settleMs ?? 500);
         log(`setup openPanel ${sel}`);
+        break;
+      }
+      case 'click': {
+        // 加性（第 382 批）：setup 里的点击。用途＝关掉导航后弹出的浮层
+        // （官方任务屏必弹「在应用中打开」），否则浮层遮住内容区、后续按文案定位全落空。
+        // 浮层是**时而出现**的：已在本次会话里关过就不再弹 ⇒ 找不到时只记一行、不判失败。
+        const sel = target.sel(spec, s.selector);
+        const present = await target.page.evaluate(
+          (q) => { const el = document.querySelector(q); if (!el) return false; const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; },
+          sel,
+        );
+        if (!present) { log(`setup click ABSENT ${s.selector}`); break; }
+        await target.page.click(sel);
+        await target.page.waitForTimeout(s.settleMs ?? 600);
+        log(`setup click ${s.selector}`);
+        break;
+      }
+      case 'restSeedDoc': {
+        // 加性（第 383 批）：**整篇文档都用 REST 建**（标题 ＋ 一个数据块），再经列表卡进入。
+        // 为什么不用 `seedTempDoc`：UI 建的文档 `POST /blocks` 回 404（实测），
+        // 而 REST 建的文档能正常塞表；且斜线菜单建的表在官方侧是"整表单块"、拿不到逐格对象。
+        // 只在官方侧有意义 ⇒ spec 用 `targets: ['official']` 门控。
+        if (target.name !== 'official') { log('setup restSeedDoc SKIP (non-official)'); break; }
+        const title = s.title;
+        const mk = await target.page.fetch(OFFICIAL_API + '/documents', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ documents: [{ title }] }), timeout: 25000,
+        });
+        let docId = null;
+        try { docId = JSON.parse(String(mk.body)).items[0].id; } catch (e) { /* 下面判空 */ }
+        if (!docId) throw new Error('restSeedDoc: 建文档失败 status=' + mk.status);
+        if (s.markdown) {
+          const blk = await target.page.fetch(OFFICIAL_API + '/blocks', {
+            method: 'POST', headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ type: s.blockType || 'table', markdown: s.markdown, position: { pageId: docId, position: 'end' } }),
+            timeout: 25000,
+          });
+          log(`setup restSeedDoc block status=${blk.status}`);
+        }
+        target.tempDocId = docId;
+        ctx.tempDoc = { name: s.name || title, title, id: docId, restCreate: true, listPath: '/' };
+        log('setup restSeedDoc doc=' + docId);
+        // 经列表卡进入（卡片 href 自带 `?s=` 签名；直接 goto 编辑器 URL 会 rows=0 —— G1576 批注同源）
+        try { await target.page.goto(target.baseUrl + '/', { waitUntil: 'load', timeout: 20000 }); } catch (e) { /* 已提交即算 */ }
+        await target.page.waitForTimeout(4000);
+        let card = null;
+        for (let i = 0; i < 10 && !card; i++) {
+          card = await target.page.evaluate((t) => {
+            for (const a of document.querySelectorAll('a[href*="/editor/"]')) {
+              if ((a.textContent || '').includes(t)) { const r = a.getBoundingClientRect(); if (r.width < 8) continue; return { x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) }; }
+            }
+            return null;
+          }, title);
+          if (!card) await target.page.waitForTimeout(1500);
+        }
+        if (!card) throw new Error('restSeedDoc: 列表里找不到「' + title + '」');
+        await target.page.mouse.click(card.x, card.y, { label: 'open rest doc card' });
+        await target.page.waitForTimeout(s.settleMs ?? 6500);
+        await target.page.evaluate(() => { const b = document.querySelector('[data-testid="open-in-app-popup-close"]'); if (b) b.click(); });
+        await target.page.waitForTimeout(600);
+        log('setup restSeedDoc opened via card');
+        break;
+      }
+      case 'restSeedBlock': {
+        // 加性（第 383 批）：用官方 REST 桥往**当前临时文档**里塞一个块，然后重载编辑器。
+        // 为什么必须这样：斜线菜单建出来的表格在官方侧**整张表是一个 contenteditable**
+        // （打 AA → → → BB 会并成 "AABB"），拿不到"逐格"的操作对象；
+        // 而 REST 建的同一张表渲染成**逐格 contenteditable**（`round-301` 实测名册 AA/BB/1/2）。
+        // 只对官方侧有意义 ⇒ spec 侧用 `targets: ['official']` 门控。
+        if (target.name !== 'official') { log('setup restSeedBlock SKIP (non-official)'); break; }
+        const docId = target.tempDocId;
+        if (!docId) throw new Error('restSeedBlock: 没有临时文档 id');
+        const url = await target.page.url();
+        const res = await target.page.fetch(OFFICIAL_API + '/blocks', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            type: s.blockType || 'table',
+            markdown: s.markdown,
+            position: { pageId: docId, position: 'end' },
+          }),
+          timeout: 25000,
+        });
+        log(`setup restSeedBlock status=${res.status} doc=${docId}`);
+        await target.page.waitForTimeout(1200);
+        // ★ 不能只 `goto` 同一 URL 重载：官方编辑器走本地缓存/CRDT，重载后**看不到** REST 刚写入的块
+        //   （第 383 批实测：重载后单元格名册只剩标题和空正文）。必须经**列表卡**重新进入文档，
+        //   那条通路会重拉文档（`G1576` 的批注同源：从列表卡点入、href 自动补 `?s=` 签名）。
+        const title = (ctx.tempDoc && ctx.tempDoc.title) || s.title;
+        try { await target.page.goto(target.baseUrl + '/', { waitUntil: 'load', timeout: 20000 }); } catch (e) { /* 已提交即算 */ }
+        await target.page.waitForTimeout(4000);
+        let card = null;
+        for (let i = 0; i < 10 && !card; i++) {
+          card = await target.page.evaluate((t) => {
+            for (const a of document.querySelectorAll('a[href*="/editor/"]')) {
+              if ((a.textContent || '').includes(t)) { const r = a.getBoundingClientRect(); if (r.width < 8) continue; return { x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) }; }
+            }
+            return null;
+          }, title);
+          if (!card) await target.page.waitForTimeout(1500);
+        }
+        if (!card) throw new Error('restSeedBlock: 列表里找不到临时文档卡片「' + title + '」');
+        await target.page.mouse.click(card.x, card.y, { label: 'open temp doc card' });
+        await target.page.waitForTimeout(s.settleMs ?? 6000);
+        await target.page.evaluate(() => { const b = document.querySelector('[data-testid="open-in-app-popup-close"]'); if (b) b.click(); });
+        await target.page.waitForTimeout(600);
+        log('setup restSeedBlock reopened via card ' + title);
         break;
       }
       case 'setPreference': {
@@ -405,6 +521,61 @@ async function runStep(target, spec, step, ctx, log) {
       }, step.text);
       if (!hit) throw new Error('clickText: 菜单里找不到「' + step.text + '」');
       await p.mouse.click(hit.x, hit.y, { label: 'clickText ' + step.text });
+      break;
+    }
+    case 'focusText': {
+      // 加性 op（第 382 批）：按文案**聚焦**页面级按钮，不点击。
+      // 为什么需要：`clickText` 只在菜单容器里找，而「分组标题能否用空格折叠」这类问题
+      // 要先让按钮拿到焦点、再单独按键 —— 点一下会把"点击通路"和"键通路"混在一步。
+      // 只认 `button`／`[role="button"]`，且要求足够宽（页面级行按钮，不是菜单小项）。
+      const focused = await p.evaluate((arg) => {
+        const norm = (s) => (s || '').replace(/\s+/g, '');
+        for (const el of document.querySelectorAll('button,[role="button"]')) {
+          if (!norm(el.innerText).startsWith(norm(arg.text))) continue;
+          const b = el.getBoundingClientRect();
+          if (b.width < arg.minWidth || b.height < 8) continue;
+          if (arg.maxX != null && b.x > arg.maxX) continue;
+          el.focus();
+          if (document.activeElement !== el) continue;
+          return { tag: el.tagName, x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.width) };
+        }
+        return null;
+      }, { text: step.text, minWidth: step.minWidth ?? 200, maxX: step.maxX ?? null });
+      if (!focused) throw new Error('focusText: 找不到可聚焦的「' + step.text + '」');
+      log('focusText ' + JSON.stringify(focused));
+      break;
+    }
+    case 'clickTextIn': {
+      // 加性 op（第 382 批）：在 `step.selector` 命中的元素里，按**文本**点中一个（点中心）。
+      // 为什么需要：表格单元格在两侧都没有稳定属性（官方是一串 `sc-*` 类名的 contenteditable div、
+      // 本地是 `td`），唯一稳定的锚是**格内文本**；而 `clickText` 只在菜单容器里找。
+      const sel = target.sel(spec, step.selector);
+      const hit = await p.evaluate((arg) => {
+        // 归一化要连零宽字符一起去掉：官方单元格里常带 `\u200b` 占位，只去空白会匹配不上。
+        const norm = (s) => (s || '').replace(/[\s\u200b\u00a0]+/g, '');
+        const want = norm(arg.text);
+        let best = null;
+        for (const el of document.querySelectorAll(arg.sel)) {
+          if (norm(el.innerText) !== want) continue;
+          const b = el.getBoundingClientRect();
+          if (b.width < 4 || b.height < 4) continue;
+          // 取**面积最小**的那个：外层可编辑体往往也"文本相等"（它只包着这一格），
+          // 点它的中心会落到格线或相邻格上。
+          const area = b.width * b.height;
+          if (!best || area < best.area) best = { area, x: Math.round(b.x + b.width / 2), y: Math.round(b.y + b.height / 2), tag: el.tagName };
+        }
+        return best;
+      }, { sel, text: step.text });
+      if (!hit) {
+        // 失败时把候选名册打出来：两侧单元格的文本形态（含不可见字符）差异太大，
+        // 只报"找不到"会让人以为文本没进去。
+        const seen = await p.evaluate((arg) => [...document.querySelectorAll(arg.sel)]
+          .map((e) => JSON.stringify((e.innerText || '').slice(0, 8)))
+          .slice(0, 12), { sel });
+        throw new Error('clickTextIn: 「' + sel + '」里找不到「' + step.text + '」；候选=' + seen.join(','));
+      }
+      await p.mouse.click(hit.x, hit.y, { label: 'clickTextIn ' + step.text });
+      log('clickTextIn ' + JSON.stringify(hit));
       break;
     }
     case 'clickXY':

@@ -44,6 +44,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.url-link` | differ | 20 | 9 | 1 | 本地 +7/−0 · 官方 +1/−0 |
 | `editor.md-rules.block-kind` | differ | 93 | 36 | 19 | 本地 +6/−0 · 官方 +6/−1 |
 | `editor.md-rules.inline-mark` | differ | 59 | 16 | 0 | 本地 +6/−0 · 官方 +6/−0 |
+| `editor.paste.html` | match | 8 | 0 | 0 | 本地 +4/−0 · 官方 +4/−0 |
 | `editor.paste.plain-text` | differ | 27 | 15 | 0 | 本地 +2/−0 · 官方 +4/−0 |
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 40 | 16 | 0 | 本地 +3/−0 · 官方 +3/−0 |
@@ -956,6 +957,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.md-rules.inline-mark` | local | text:*Y* count 0 | PASS | 0 |
 | `editor.md-rules.inline-mark` | local | text:~~Z~~ count 0 | PASS | 0 |
 | `editor.md-rules.inline-mark` | local | text:==W== count 0 | PASS | 0 |
+| `editor.paste.html` | official | text:BOLDX gt 0 | PASS | 1 |
+| `editor.paste.html` | official | text:LINKX gt 0 | PASS | 1 |
+| `editor.paste.html` | local | text:BOLDX gt 0 | PASS | 1 |
+| `editor.paste.html` | local | text:LINKX gt 0 | PASS | 1 |
 | `editor.paste.plain-text` | official | text:AAA count 1 | PASS | 1 |
 | `editor.paste.plain-text` | official | text:BBB count 1 | PASS | 1 |
 | `editor.paste.plain-text` | local | text:AAA count 1 | PASS | 1 |

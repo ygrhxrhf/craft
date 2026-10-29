@@ -319,6 +319,22 @@ async function runStep(target, spec, step, ctx, log) {
     case 'paste':
       await p.keyboard.paste(step.text);
       break;
+    case 'pasteHtml': {
+      // 加性 op（第 337 批）：富文本粘贴。`keyboard.paste` 只能塞纯文本，而"粘贴 HTML 会不会保格式"
+      // 恰恰是粘贴面的主干问题 ⇒ 用页内合成 `ClipboardEvent`，同时给 text/html 与 text/plain
+      // （两侧编辑器都读 `clipboardData.getData(...)`）。
+      await p.evaluate((arg) => {
+        const host = document.querySelector(arg.host) || document.activeElement;
+        if (!host) throw new Error('pasteHtml: 没有可粘贴的宿主');
+        host.focus();
+        const dt = new DataTransfer();
+        dt.setData('text/html', arg.html);
+        dt.setData('text/plain', arg.text);
+        const ev = new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true });
+        host.dispatchEvent(ev);
+      }, { host: target.sel(spec, step.host || 'editorBody'), html: step.html, text: step.text || '' });
+      break;
+    }
     case 'deleteTempDoc': {
       // 加性 step：走**真实产品路径**删掉本次临时文档，让 db 档能断言"库里 isDeleted 翻了"。
       // 与 teardown 的 softDeleteTempDoc 同一实现，区别只是发生在步骤里、可被观测到。

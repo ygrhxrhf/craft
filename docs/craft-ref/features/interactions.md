@@ -5011,3 +5011,9 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
   但**紧接着 `Enter` 就把它拆回普通段落**（2→0）；官方走二级菜单那条通路没点出折叠块（边界：可能没点中）。
 - ★ 读数面：`state:toggleish` —— 本地两个节点、官方 `[class*="toggle"]`（**收口到编辑器内**，否则会数到侧栏）。
 - ☆ `Ctrl-Alt-T` 仍无判据：缺"稳定的可折叠对象"。
+
+## V207＝第 337 批（2026-10-29＝**零产品代码批**＝净新增 0 条）
+
+- ★ **富文本粘贴两侧一致**：粘贴 `<b>`＋`<i>`＋`<a>` 的 HTML，两侧都保留 `bold`/`italic`/`link` 三个 mark，
+  矩阵 `match`。⇒ 粘贴面从"只测纯文本"补成"纯文本＋富文本"都上过屏。
+- ☆ 仪器：新增 `pasteHtml`（`DataTransfer`＋合成 `ClipboardEvent`），`keyboard.paste` 只能塞纯文本。

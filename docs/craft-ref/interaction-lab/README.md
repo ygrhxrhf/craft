@@ -93,7 +93,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 十六条踩过的坑（都改掉了，别再犯）
+## ★ 十七条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -194,6 +194,11 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
     里按**去空白后的整段文案**命中，且要求元素够大可点）。同一份 spec 里两侧菜单形状不同时，
     用 `step.targets: ['official'|'local']` 给**只有某一侧才有的前置**分头写；被跳过的步照样写一条
     `skipped` 记录（带观测），differ 按共有 step index 比。
+
+17. **测"富文本粘贴"必须合成 `ClipboardEvent`（第 337 批）**。`keyboard.paste(text)` 只能塞纯文本，
+   测不出"粘贴 HTML 会不会保格式"。新增 `pasteHtml` op：页内 `new DataTransfer()` 同时放 `text/html`
+   与 `text/plain`，再 `dispatchEvent(new ClipboardEvent("paste", {clipboardData, bubbles, cancelable}))`。
+   两侧编辑器都读 `clipboardData.getData(...)`，所以这一条对两边都成立。
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
 

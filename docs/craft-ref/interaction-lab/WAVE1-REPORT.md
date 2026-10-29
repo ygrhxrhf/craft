@@ -1919,3 +1919,28 @@ mark 探针按"背景非透明"读成高亮。⇒ `G1582` 的注已就地结掉�
 | `git status --porcelain src e2e` | **空** |
 | 台账 | **1582／G1590** |
 | 临时产物 | 两侧临时文档由 spec teardown 软删 |
+
+## 五十二、★ 续批四十七（2026-10-29）：**富文本粘贴上屏 —— 两侧一致，0 条 G**
+
+净新增 **0 条 G** · 零产品代码批（仪器加了一个 `pasteHtml` op）。
+
+粘贴面此前只有"纯文本／裸 URL"（`editor.paste.plain-text`）；**带格式的 HTML 粘贴从没对过**。
+
+| 步 | 官方 | 本地 |
+| --- | --- | --- |
+| 打 `HEAD` ＋ `↵` | 在场 | 在场 |
+| 粘贴 `<b>BOLDX</b> <i>ITX</i> <a href=…>LINKX</a>` | 三个词都在；`marks`＝**`["bold","italic","link"]`** | 同左，**逐字相同** |
+
+⇒ **两侧完全一致**，矩阵判 `match`（8 行 / 0 条 sev2）。这条不出 G，但把粘贴面从"只测纯文本"补成了
+"纯文本 ＋ 富文本"两块都上过屏。
+
+★ 仪器：新增 **`pasteHtml`** op（`DataTransfer` ＋ 合成 `ClipboardEvent`），README 坑 17 已记。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `editor.paste.html`（**match**） |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | 不变（**1582／G1590**） |
+| 临时产物 | 两侧临时文档由 spec teardown 软删 |

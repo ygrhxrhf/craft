@@ -744,7 +744,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 | `ArrowDown` | **不跟随**（焦点仍 `文档`，class 保持 `_variantDefault_`） | 选中前移一档（`文档`→`任务`，`rows 17`／`kbd 34`） | keyup 即时点已变 | ✓（本轮阳性对照） |
 | `ArrowUp` | 同上 | 选中后移一档 | 第 84 批上半已证（`合集`→`整理` 一步还原） | ✓ |
 | `ArrowLeft` | 不动 | **不变** | 即时与 520 ms 四点全 `任务` | ✓（第三次复现，由 `~` 升） |
-| `ArrowRight`／`Home`／`End` | — | — | 第 84 批上半的"送达但未注册"（G766）本轮**未重测** | `~` |
+| `ArrowRight`／`Home`／`End` | — | — | 第 84 批上半的"送达但未注册"（G766）本轮**未重测** | `~` | ✎ **第 346 批已采**：spec `editor.key.home-end-arrows` 逐帧读 `focusOffset`——两侧 `Home→0`、`End→6`、`Home` 后 `→/←` 给 `1/0`，**逐字相同**（矩阵 `match`）。
 | `Tab` | 只移焦点（第 84 批上半 V66） | 不变 | V66 | ✓ |
 | `Escape` | — | 关栈顶一层，下层 menu 残留 | V63、G761 | ✓ |
 

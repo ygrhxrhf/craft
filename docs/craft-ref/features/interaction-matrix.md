@@ -34,6 +34,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.equation` | differ | 17 | 3 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.find-replace` | differ | 22 | 11 | 3 | 本地 +10/−1 · 官方 +5/−2 |
 | `editor.key.group-and-blocklink` | differ | 47 | 17 | 2 | 本地 +8/−0 · 官方 +4/−2 |
+| `editor.key.home-end-arrows` | match | 14 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.inline-chord-family` | differ | 124 | 56 | 0 | 本地 +14/−0 · 官方 +8/−0 |
 | `editor.key.insert-block-space` | differ | 20 | 4 | 2 | 本地 +1/−0 · 官方 +2/−1 |
 | `editor.key.insert-block-space-selected` | differ | 21 | 4 | 3 | 本地 +2/−0 · 官方 +3/−1 |
@@ -951,6 +952,16 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.group-and-blocklink` | official | blocksCount count 2 | PASS | 2 |
 | `editor.key.group-and-blocklink` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.key.group-and-blocklink` | local | blocksCount count 2 | PASS | 2 |
+| `editor.key.home-end-arrows` | official | selection:focusOffset equals 6 | PASS | 6 |
+| `editor.key.home-end-arrows` | official | selection:focusOffset equals 0 | PASS | 0 |
+| `editor.key.home-end-arrows` | official | selection:focusOffset equals 6 | PASS | 6 |
+| `editor.key.home-end-arrows` | official | selection:focusOffset equals 1 | PASS | 1 |
+| `editor.key.home-end-arrows` | official | selection:focusOffset equals 0 | PASS | 0 |
+| `editor.key.home-end-arrows` | local | selection:focusOffset equals 6 | PASS | 6 |
+| `editor.key.home-end-arrows` | local | selection:focusOffset equals 0 | PASS | 0 |
+| `editor.key.home-end-arrows` | local | selection:focusOffset equals 6 | PASS | 6 |
+| `editor.key.home-end-arrows` | local | selection:focusOffset equals 1 | PASS | 1 |
+| `editor.key.home-end-arrows` | local | selection:focusOffset equals 0 | PASS | 0 |
 | `editor.key.inline-chord-family` | official | blocksCount count 8 | **FAIL** | 0 |
 | `editor.key.inline-chord-family` | official | text:MK-URL gt 0 | **FAIL** | 0 |
 | `editor.key.inline-chord-family` | local | blocksCount count 8 | **FAIL** | 0 |

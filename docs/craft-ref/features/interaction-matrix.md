@@ -68,8 +68,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 61 | 29 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.slash.align-indent` | differ | 19 | 11 | 0 | 本地 +1/−0 · 官方 +0/−0 |
+| `editor.slash.format-groups` | differ | 45 | 18 | 1 | 本地 +3/−0 · 官方 +1/−0 |
 | `editor.slash.list-submenu` | differ | 23 | 14 | 1 | 本地 +0/−0 · 官方 +1/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
+| `editor.slash.rest-groups` | differ | 67 | 37 | 0 | 本地 +2/−0 · 官方 +1/−0 |
 | `editor.table.cell-clipboard` | differ | 72 | 40 | 0 | 本地 +0/−0 · 官方 +0/−2 |
 | `editor.table.enter-family` | differ | 85 | 47 | 0 | 本地 +2/−0 · 官方 +0/−0 |
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
@@ -215,6 +217,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.schedule.picker-shape` | added-only-official |  | 安排到今天 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.schedule.picker-shape` | added-only-official |  | 安排到明天 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.schedule.picker-shape` | added-only-official |  | 按日期安排… |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.slash.format-groups` | added-only-official |  | /颜色/字体/文字格式 |  | 官方「颜色」「字体」子分组回的是"默认颜色／默认字体"这类**单档占位项**，本地斜杠菜单无对应项（格式类动作都在右侧面板）——与 G1616 同族 | gap.md G1616 |
 | `editor.slash.list-submenu` | added-only-official |  | 1. |  | 官方「列表」组展开后的子项文案（编号列表／待办列表／取消列表格式／无序列表）与本地列表命令文案不同源；这是 G1544／G1613 已登记的产品级差异 | gap.md G1613 |
 | `editor.slash.open-and-filter` | countΔ:插入 | 1 | 8 | 4 | 菜单项文案与条数不同（官方扁平 8 条含「插入」：插入文件/片段/表格/分隔符/白板/表格集合/画廊集合/看板集合；本地 4 条）—— 与上面两条同源 | probe-verbatim.json · gap.md（本轮新登记） |
 | `editor.slash.open-and-filter` | added-only-local |  |  | 无匹配命令 | 本地 / 菜单的**无匹配文案**是「无匹配命令」；官方过滤后直接把面板收起、不给无匹配文案（G1544 同源） | chk-roster：官方 added=["/wen"]、本地 added=["/wen","无匹配命令"] · gap.md G1544 |
@@ -1492,6 +1495,29 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 3 | blocks | [""] | ["/对齐",""] |  | 2 |
 | 3 | kinds | ["para"] | ["para","para"] |  | 2 |
 
+### `editor.slash.format-groups` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 1 | countΔ:字体 | 1 | 0 | -1 | 2 |
+| 1 | countΔ:文字格式 | 1 | 0 | -1 | 2 |
+| 1 | countΔ:颜色 | 1 | 0 | -1 | 2 |
+| 2 | countΔ:颜色 | 2 | 1 | -1 | 2 |
+| 2 | countΔ:默认颜色 | 1 | 0 | -1 | 2 |
+| 3 | countΔ:颜色 | 2 | 1 | -1 | 2 |
+| 3 | countΔ:默认颜色 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:颜色 | 2 | 1 | -1 | 2 |
+| 4 | countΔ:默认颜色 | 1 | 0 | -1 | 2 |
+|  | added-only-local |  | /文字格式 |  | 2 |
+|  | added-only-local |  | /颜色/字体 |  | 2 |
+|  | added-only-local |  | 无匹配命令 |  | 2 |
+| 3 | state:slashMenu | 1 | 0 | -1 | 2 |
+| 4 | state:slashMenu | 1 | 0 | -1 | 2 |
+| 6 | state:slashMenu | 0 | 1 | 1 | 2 |
+| 7 | state:slashMenu | 0 | 1 | 1 | 2 |
+| 11 | state:slashMenu | 0 | 1 | 1 | 2 |
+| 12 | state:slashMenu | 0 | 1 | 1 | 2 |
+
 ### `editor.slash.list-submenu` — differ
 
 | step | facet | official | local | delta | severity |
@@ -1510,6 +1536,48 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 2 | countΔ:有序 | 0 | 1 | 1 | 2 |
 | 3 | blocks | ["1."] | [""] |  | 2 |
 | 3 | kinds | ["numbered"] | ["bullet"] |  | 2 |
+
+### `editor.slash.rest-groups` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 1 | countΔ:代码片段 | 0 | 1 | 1 | 2 |
+| 1 | countΔ:分隔符 | 1 | 0 | -1 | 2 |
+| 1 | countΔ:动作 | 1 | 0 | -1 | 2 |
+| 1 | countΔ:提醒 | 1 | 0 | -1 | 2 |
+| 1 | countΔ:提醒我 | 1 | 0 | -1 | 2 |
+| 1 | countΔ:插入分隔符 | 1 | 0 | -1 | 2 |
+| 1 | countΔ:插入片段 | 1 | 0 | -1 | 2 |
+| 1 | countΔ:装饰 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:分隔符 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:动作 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:提醒 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:提醒我 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:插入分隔符 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:插入片段 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:装饰 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:分隔符 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:动作 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:提醒 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:提醒我 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:插入分隔符 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:插入片段 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:装饰 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:分隔符 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:动作 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:提醒 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:提醒我 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:插入分隔符 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:插入片段 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:装饰 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:分隔符 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:动作 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:提醒 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:提醒我 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:插入分隔符 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:插入片段 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:装饰 | 1 | 0 | -1 | 2 |
+|  | added-only-local |  | 无匹配命令 |  | 2 |
 
 ### `editor.table.cell-clipboard` — differ
 
@@ -2062,6 +2130,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.slash.align-indent` | official | blocksCount count 1 | PASS | 1 |
 | `editor.slash.align-indent` | local | state:slashMenu gt 0 | PASS | 1 |
 | `editor.slash.align-indent` | local | blocksCount count 1 | PASS | 1 |
+| `editor.slash.format-groups` | official | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.format-groups` | official | blocksCount count 1 | PASS | 1 |
+| `editor.slash.format-groups` | local | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.format-groups` | local | blocksCount count 1 | PASS | 1 |
 | `editor.slash.list-submenu` | official | state:slashMenu gt 0 | PASS | 1 |
 | `editor.slash.list-submenu` | official | blocksCount count 1 | PASS | 1 |
 | `editor.slash.list-submenu` | local | state:slashMenu gt 0 | PASS | 1 |
@@ -2074,6 +2146,16 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.slash.open-and-filter` | local | blocks equals ["/"] | PASS | ["/"] |
 | `editor.slash.open-and-filter` | local | blocks equals ["/wen"] | PASS | ["/wen"] |
 | `editor.slash.open-and-filter` | local | blocksCount count 1 | PASS | 1 |
+| `editor.slash.rest-groups` | official | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.rest-groups` | official | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.rest-groups` | official | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.rest-groups` | official | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.rest-groups` | official | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.rest-groups` | local | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.rest-groups` | local | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.rest-groups` | local | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.rest-groups` | local | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.rest-groups` | local | state:slashMenu gt 0 | PASS | 1 |
 | `editor.table.cell-clipboard` | official | text:AA gt -1 | PASS | 1 |
 | `editor.table.cell-clipboard` | local | text:AA gt -1 | PASS | 0 |
 | `editor.table.enter-family` | official | text:a gt 0 | PASS | 10 |

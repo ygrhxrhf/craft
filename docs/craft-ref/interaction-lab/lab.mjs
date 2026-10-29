@@ -756,6 +756,39 @@ async function runStep(target, spec, step, ctx, log) {
       ctx.netProbe = r;
       break;
     }
+    case 'resetSlash': {
+      // 加性（第 396 批）：把"上一轮打进去的 `/xxx`"清掉，并**重新把光标放回块里**。
+      // 为什么必须做成一个原子步骤（G1617 的教训）：清输入本身会改变状态——
+      //   · 连按 Backspace 删空 ⇒ 光标掉出正文块，后续 `blocks.found=0`；
+      //   · Escape 关菜单 + 点块 ⇒ 光标保住了但 `/` 再也不开菜单。
+      // 所以这里做三件事并**验证前提**：删字 → 点最后一块的中部 → 断言焦点在可编辑体内；
+      // 断言失败就报错（宁可红，也不要拿"菜单没开"当"没有子项"）。
+      const sel = spec.selectors || {};
+      const titleSel = target.sel(spec, step.title || 'titleBlock');
+      const blockSel = target.sel(spec, step.blockRoot || 'blockRoot');
+      // ① 清掉斜杠与过滤词：先用全选删（比逐字 Backspace 稳）
+      await p.keyboard.press('Control+a');
+      await p.waitForTimeout(150);
+      await p.keyboard.press('Backspace');
+      await p.waitForTimeout(400);
+      // ② 点最后一块的中部，把光标放回去
+      const pt = await p.evaluate(measureTrailingPoint, { title: titleSel, blockRoot: blockSel });
+      if (!pt) throw new Error('resetSlash: 取不到落点');
+      await p.mouse.click(pt.x, pt.y, { label: 'resetSlash focus body' });
+      await p.waitForTimeout(step.settleMs ?? 500);
+      // ③ 断言：焦点确实在可编辑体内（否则后面读到的"菜单没开"是假阴性）
+      const ok = await p.evaluate(() => {
+        const a = document.activeElement;
+        if (!a) return { ok: false, why: 'no activeElement' };
+        const editable = a.getAttribute && a.getAttribute('contenteditable');
+        const inPM = typeof a.closest === 'function' && a.closest('.ProseMirror');
+        const inBody = typeof a.closest === 'function' && a.closest('[data-testid="editor-body"]');
+        return { ok: editable === 'true' || !!inPM || !!inBody, tag: a.tagName, editable, inPM: !!inPM, inBody: !!inBody };
+      });
+      log('resetSlash mode=' + pt.mode + ' focus=' + JSON.stringify(ok));
+      if (!ok.ok) throw new Error('resetSlash: 光标没回到正文块 — ' + JSON.stringify(ok));
+      break;
+    }
     case 'wait':
       await p.waitForTimeout(step.ms);
       break;

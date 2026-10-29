@@ -2545,3 +2545,31 @@ v1 的问题：造出的折叠块**没有子项**，折叠与否都看不到变�
 
 ⚠ **取数教训**：本地首次访问某路由要现场编译，**15s 的 `goto` 超时不够** ⇒ spec 里把 `gotoTimeoutMs` 提到 **60000** 才稳定。本轮两次 `steps=0` 都是这个原因，**不是**判据错误，也**不是**日志里那条 `better-sqlite3` Module-not-found Warning。
 但这次连 `committed` 都没拿到 ⇒ 属**环境抖动**（本地冷启动/编译慢），不是仪器判据错误；官方侧读数完整。
+
+## 七十五、★ 第 362 批（2026-10-29）：**`Shift-Space` 也要扩选前置 —— G1591 边界解开（0 条新 G）**
+
+净新增 **0 条 G**（同一枚键的边界补全）· 零产品代码批。矩阵新增 spec `editor.block.insert-before-selected`。
+
+| 序列 | 官方块名册 | 本地块名册 |
+| --- | --- | --- |
+| `ALPHA` / `BETA` 两块 | `["ALPHA","BETA"]` | 同 |
+| `Escape` | `block-select` | 不进态 |
+| `Shift-↑` | `block-select` 保持 | 不变 |
+| **`Shift-Space`** | **`["", "ALPHA", "BETA"]`**（空块插在最上方） | `["ALPH"]`（**只打了空格**，块被并成一块） |
+| `Space`（对照） | 不变（3 块） | 不变 |
+
+⇒ **`INSERT_BEFORE` 与 `INSERT_AFTER` 是同一套"按态分派 + 要扩选"的机制**：
+上一批 `Shift-Space` 没插块，不是官方没有这个键，而是**没做 `Shift-↑` 扩选**。
+本地则完全不同——它没有块选择态，`Shift-Space` 只往正文里打空格。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `editor.block.insert-before-selected`（官方 8 步 0 错／本地 8 步 0 错） |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | 不变（**1585／G1593**） |
+| 临时产物 | 两侧临时文档由 spec teardown 软删 |
+
+⚠ 本地首跑 `placeCaretTrailing: 取不到落点`（新文档页尚未编译完），重跑即过——与 README 坑 18 同源，
+已在该 spec 的 `navigate` 上写 `gotoTimeoutMs: 60000`。

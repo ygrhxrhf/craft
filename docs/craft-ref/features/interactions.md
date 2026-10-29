@@ -5147,3 +5147,10 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 
 - 本地 `Shift-↑`／`Ctrl-G`：块名册恒 `["ALPHA","BETA"]`、块 HTML 恒 12 B ⇒ **都不改结构**（无块选择态、无组合绑定）。
 - ☆ 本地 `goto` 15s 超时是**编译慢**，spec 里给 `gotoTimeoutMs: 60000` 才稳；日志里 `better-sqlite3` 的 Module-not-found 是可选依赖的预期告警。
+
+## V216＝第 362 批（2026-10-29＝**零产品代码批**＝净新增 0 条）
+
+- ★★ **`Shift-Space`（`INSERT_BEFORE`）也要"扩选"前置**：`Escape`→`Shift-↑`→`Shift-Space` ⇒
+  官方名册 `["", "ALPHA", "BETA"]`（空块插最上方）；上一批没插只是**没扩选**。
+- ★ 本地同序列：不进块选择态，`Shift-Space` 只往块里打空格（`["ALPHA","BETA"]`→`["ALPH"]`）。
+- ☆ 本地首跑 `placeCaretTrailing` 取不到落点＝新文档页编译未完成，重跑即过（README 坑 18 同源）。

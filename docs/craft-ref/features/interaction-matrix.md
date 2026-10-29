@@ -20,8 +20,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.a11y.task-item-checkbox` | differ | 33 | 19 | 0 | 本地 +2/−0 · 官方 +1/−0 |
 | `editor.animation.slash-menu` | differ | 38 | 9 | 21 | 本地 +1/−1 · 官方 +21/−0 |
 | `editor.block.enter-empty-block` | match | 10 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
+| `editor.block.group-shape` | differ | 28 | 10 | 4 | 本地 +2/−0 · 官方 +2/−1 |
 | `editor.block.indent-in-list` | differ | 21 | 3 | 2 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.block.indent-plain-paragraph` | differ | 23 | 9 | 0 | 本地 +2/−0 · 官方 +2/−0 |
+| `editor.block.insert-before-selected` | differ | 37 | 17 | 4 | 本地 +1/−0 · 官方 +2/−0 |
 | `editor.block.move-alt-updown` | differ | 21 | 1 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.block.move-top-bottom` | differ | 21 | 5 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.block.selection-mode` | differ | 49 | 30 | 1 | 本地 +2/−0 · 官方 +2/−1 |
@@ -34,7 +36,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.equation` | differ | 17 | 3 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.equation.commit` | differ | 28 | 9 | 5 | 本地 +1/−0 · 官方 +2/−0 |
-| `editor.key.find-replace` | differ | 22 | 11 | 3 | 本地 +10/−1 · 官方 +5/−2 |
+| `editor.key.find-replace` | differ | 21 | 11 | 2 | 本地 +10/−0 · 官方 +5/−2 |
 | `editor.key.group-and-blocklink` | differ | 47 | 17 | 2 | 本地 +8/−0 · 官方 +4/−2 |
 | `editor.key.home-end-arrows` | match | 14 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.inline-chord-family` | differ | 124 | 56 | 0 | 本地 +14/−0 · 官方 +8/−0 |
@@ -90,8 +92,16 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.animation.slash-menu` | added-only-official |  | 装饰 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
 | `editor.animation.slash-menu` | added-only-official |  | 颜色 |  | 官方斜线菜单是扁平 20 项、本地是分组长列表 ⇒ 菜单项文案两侧本就不一一对应；该差异已由 gap.md G1544 单独登记，与动效无关 | gap.md G1544；editor.slash.open-and-filter 同一声明 |
 | `editor.animation.slash-menu` | removed-only-local |  |  | 同步中 | 本地列表屏的同步状态串（同步中/保存中）在官方无对应物；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES <SAVING> |
+| `editor.block.group-shape` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
+| `editor.block.group-shape` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.block.group-shape` | focusInEditor | 5 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.block.group-shape` | focusInEditor | 6 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.block.indent-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 空列表项里光标 offset 天然差 1 | probe-bullet（本轮实测：官方 childTexts ["•","L1"]；本地 listStyleType:disc） |
 | `editor.block.indent-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
+| `editor.block.insert-before-selected` | added-only-official |  | ALPHA |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.block.insert-before-selected` | added-only-official |  | BETA |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.block.insert-before-selected` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.block.insert-before-selected` | focusInEditor | 5 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.block.selection-mode` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.backspace-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 光标 offset 天然差 1 | probe-bullet；同 editor.block.indent-in-list 的同一声明 |
 | `editor.key.backspace-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
@@ -110,7 +120,6 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.equation.commit` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.key.equation.commit` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.key.equation.commit` | focusInEditor | 6 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
-| `editor.key.find-replace` | removed-only-local |  |  | 同步中 | 本地同步状态串（同步中）随同步完成而消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES <SAVING> |
 | `editor.key.find-replace` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.find-replace` | removed-only-official |  | 目录 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.group-and-blocklink` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
@@ -294,6 +303,21 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 3 | anim-only-official | anim\|(anim)\|div\|100 |  |  | 2 |
 | 3 | anim-only-official | trans\|opacity\|div\|interrupted |  |  | 2 |
 
+### `editor.block.group-shape` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 6 | countΔ:ALPHA | 2 | 1 | -1 | 2 |
+| 6 | blocks | ["ALPHA BETA"] | ["ALPHA","BETA"] |  | 2 |
+| 6 | kinds | ["para"] | ["para","para"] |  | 2 |
+| 0 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 1 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 5 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 6 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+
 ### `editor.block.indent-in-list` — differ
 
 | step | facet | official | local | delta | severity |
@@ -315,6 +339,28 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 5 | indentLevel | 2 | 0 |  | 2 |
 | 6 | indentLevels | [0,1] | [0,0] |  | 2 |
 | 6 | indentLevel | 1 | 0 |  | 2 |
+
+### `editor.block.insert-before-selected` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 6 | countΔ:ALPHA | 1 | 0 | -1 | 2 |
+| 6 | countΔ:BETA | 1 | 0 | -1 | 2 |
+| 7 | countΔ:ALPHA | 1 | 0 | -1 | 2 |
+| 7 | countΔ:BETA | 1 | 0 | -1 | 2 |
+|  | added-only-local |  | ALPH |  | 2 |
+| 6 | blocks | ["","ALPHA","BETA"] | ["ALPH"] |  | 2 |
+| 7 | blocks | ["","ALPHA","BETA"] | ["ALPH"] |  | 2 |
+| 6 | kinds | ["para","para","para"] | ["para"] |  | 2 |
+| 7 | kinds | ["para","para","para"] | ["para"] |  | 2 |
+| 0 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 1 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 5 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 6 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 7 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 
 ### `editor.block.move-alt-updown` — differ
 
@@ -957,6 +1003,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.enter-empty-block` | local | blocksCount count 3 | PASS | 3 |
 | `editor.block.enter-empty-block` | local | blocks equals ["XY","",""] | PASS | ["XY","",""] |
 | `editor.block.enter-empty-block` | local | text:XY count 1 | PASS | 1 |
+| `editor.block.group-shape` | official | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
+| `editor.block.group-shape` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.block.indent-in-list` | official | blocksCount count 2 | PASS | 2 |
 | `editor.block.indent-in-list` | official | indentLevel count 0 | PASS | 0 |
 | `editor.block.indent-in-list` | official | indentLevel count 1 | PASS | 1 |
@@ -989,6 +1037,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.indent-plain-paragraph` | local | focusInEditor equals true | **FAIL** | false |
 | `editor.block.indent-plain-paragraph` | local | focusInEditor equals true | **FAIL** | false |
 | `editor.block.indent-plain-paragraph` | local | focusInEditor equals true | **FAIL** | false |
+| `editor.block.insert-before-selected` | official | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
+| `editor.block.insert-before-selected` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.block.move-alt-updown` | official | blocksCount count 3 | PASS | 3 |
 | `editor.block.move-alt-updown` | official | blocks equals ["AAA","BBB","CCC"] | PASS | ["AAA","BBB","CCC"] |
 | `editor.block.move-alt-updown` | official | blocks equals ["AAA","BBB","CCC"] | PASS | ["AAA","BBB","CCC"] |

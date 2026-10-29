@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.block.group-shape'], targets: 'local', tag: 'wave1-93' });
+await main({ only: ['editor.block.insert-before-selected'], targets: 'local', tag: 'wave1-95' });

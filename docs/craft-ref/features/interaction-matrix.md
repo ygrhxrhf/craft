@@ -83,6 +83,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.offline.gate` | differ | 78 | 49 | 13 | 本地 +2/−15 · 官方 +6/−16 |
 | `shell.quick-open.alt` | differ | 34 | 2 | 20 | 本地 +1/−1 · 官方 +15/−1 |
 | `shell.quick-open.ctrl-o` | differ | 30 | 7 | 15 | 本地 +1/−0 · 官方 +14/−0 |
+| `shell.shortcuts-panel.help-entry` | differ | 55 | 27 | 8 | 本地 +0/−0 · 官方 +8/−0 |
 | `shell.shortcuts-panel.key` | differ | 11 | 2 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.sidebar-toggle.repro` | match | 10 | 0 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
@@ -326,6 +327,14 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.quick-open.ctrl-o` | added-only-official |  | 日记 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.ctrl-o` | focusInEditor | 2 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `shell.quick-open.ctrl-o` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `shell.shortcuts-panel.help-entry` | added-only-official |  | All changes synced |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
+| `shell.shortcuts-panel.help-entry` | added-only-official |  | Markdown 快捷方式 |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
+| `shell.shortcuts-panel.help-entry` | added-only-official |  | Web 和 Windows 版最新特性 |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
+| `shell.shortcuts-panel.help-entry` | added-only-official |  | 常见问题 |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
+| `shell.shortcuts-panel.help-entry` | added-only-official |  | 快捷键 |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
+| `shell.shortcuts-panel.help-entry` | added-only-official |  | 意见反馈 |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
+| `shell.shortcuts-panel.help-entry` | added-only-official |  | 报告同步 |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
+| `shell.shortcuts-panel.help-entry` | added-only-official |  | 最新特性 |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
 | `shell.shortcuts-panel.key` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 承载；本 spec 只判面板有没有开 | gap.md G1583 |
 | `shell.toggles.family` | added-only-official |  | SHELL |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.toggles.family` | removed-only-local |  |  | 📄 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
@@ -1860,6 +1869,38 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 3 | countΔ:文档 | 13 | 0 | -13 | 2 |
 | 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 
+### `shell.shortcuts-panel.help-entry` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 3 | countΔ:Markdown 快捷方式 | 1 | 0 | -1 | 2 |
+| 3 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:Markdown 快捷方式 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 1 | focusInEditor | false | true |  | 2 |
+| 3 | focusInEditor | false | true |  | 2 |
+| 4 | focusInEditor | false | true |  | 2 |
+| 0 | state:helpButton | 1 | 0 | -1 | 2 |
+| 1 | state:helpButton | 1 | 0 | -1 | 2 |
+| 2 | state:helpButton | 1 | 0 | -1 | 2 |
+| 3 | state:helpButton | 2 | 0 | -2 | 2 |
+| 4 | state:helpButton | 2 | 0 | -2 | 2 |
+| 0 | a11y-only-official | button\|Reaction Icon |  |  | 2 |
+| 0 | a11y-only-official | button\|Text Bubble Icon |  |  | 2 |
+| 0 | a11y-only-official | textbox\| |  |  | 2 |
+| 1 | a11y-only-official | button\|Reaction Icon |  |  | 2 |
+| 1 | a11y-only-official | button\|Text Bubble Icon |  |  | 2 |
+| 1 | a11y-only-official | textbox\| |  |  | 2 |
+| 2 | a11y-only-official | button\|Reaction Icon |  |  | 2 |
+| 2 | a11y-only-official | button\|Text Bubble Icon |  |  | 2 |
+| 2 | a11y-only-official | textbox\| |  |  | 2 |
+| 3 | a11y-only-official | button\|Reaction Icon |  |  | 2 |
+| 3 | a11y-only-official | button\|Text Bubble Icon |  |  | 2 |
+| 3 | a11y-only-official | textbox\| |  |  | 2 |
+| 4 | a11y-only-official | button\|Reaction Icon |  |  | 2 |
+| 4 | a11y-only-official | button\|Text Bubble Icon |  |  | 2 |
+| 4 | a11y-only-official | textbox\| |  |  | 2 |
+
 ### `shell.shortcuts-panel.key` — differ
 
 | step | facet | official | local | delta | severity |
@@ -2299,6 +2340,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.quick-open.alt` | local | text:QK gt 0 | PASS | 1 |
 | `shell.quick-open.ctrl-o` | official | text:QO gt 0 | PASS | 4 |
 | `shell.quick-open.ctrl-o` | local | text:QO gt 0 | PASS | 7 |
+| `shell.shortcuts-panel.help-entry` | official | text:QODER-ILAB-shell.shortcuts-panel.help-entry gt 0 | **FAIL** | 0 |
+| `shell.shortcuts-panel.help-entry` | local | text:QODER-ILAB-shell.shortcuts-panel.help-entry gt 0 | **FAIL** | 0 |
 | `shell.shortcuts-panel.key` | official | text:SHORT gt 0 | PASS | 1 |
 | `shell.shortcuts-panel.key` | local | text:SHORT gt 0 | PASS | 1 |
 | `shell.sidebar-toggle.repro` | official | text:任务 gt 0 | PASS | 1 |

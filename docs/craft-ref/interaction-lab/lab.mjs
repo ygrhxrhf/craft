@@ -670,6 +670,46 @@ async function runStep(target, spec, step, ctx, log) {
       log('clickTextIn ' + JSON.stringify(hit) + ' focus=' + (await where()));
       break;
     }
+    case 'clickOptional': {
+      // 加性（第 401 批）：**同一侧可能根本没有这个控件**时用它。
+      // 为什么不用 `targets` 门控：门控是"我知道这一侧没有"；而这里是**观测对象就是"有没有"**
+      // ——官方有 Help 按钮、本地没有，把本地那一步整段跳过就留不下"本地确实没有"的记录。
+      // ⇒ 缺失时记一行日志并继续，观测照取（文本名册里自然能看到缺了什么）。
+      const sel = target.sel(spec, step.selector);
+      const pt = await p.evaluate((q) => {
+        const el = document.querySelector(q);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        if (r.width <= 0 || r.height <= 0) return null;
+        return { x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) };
+      }, sel);
+      if (!pt) { log('clickOptional ABSENT ' + sel); break; }
+      await p.mouse.click(pt.x, pt.y, { label: 'clickOptional ' + step.selector });
+      log('clickOptional ' + sel);
+      break;
+    }
+    case 'clickTextOptional': {
+      // 同上：按文案点，找不到就记一行继续（用于"这一侧可能没有这个菜单项"）。
+      const hit = await p.evaluate((text) => {
+        const roots = [...document.querySelectorAll('[data-testid="command-menu"],[role="listbox"],[role="menu"],[role="dialog"]')];
+        const scope = roots.length ? roots : [document.body];
+        const norm = (s) => (s || '').replace(/\s+/g, '');
+        for (const r of scope) {
+          for (const el of r.querySelectorAll('button,[role="option"],[role="menuitem"],li,div,span')) {
+            if (el.children.length > 2) continue;
+            if (norm(el.innerText) !== text) continue;
+            const b = el.getBoundingClientRect();
+            if (b.width < 8 || b.height < 8) continue;
+            return { x: Math.round(b.x + b.width / 2), y: Math.round(b.y + b.height / 2) };
+          }
+        }
+        return null;
+      }, step.text);
+      if (!hit) { log('clickTextOptional ABSENT ' + step.text); break; }
+      await p.mouse.click(hit.x, hit.y, { label: 'clickTextOptional ' + step.text });
+      log('clickTextOptional ' + step.text);
+      break;
+    }
     case 'clickXY':
       await p.mouse.click(step.x, step.y, step.label ? { label: step.label } : undefined);
       break;

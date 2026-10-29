@@ -1,5 +1,11 @@
 # Craft.do 任务 / 提醒 / 循环语义（实现级，静态解码）
 
+> ★ **未采面口径（第 398 批统一）**：本文件里所有形如「仍未采到（第 N 批…）」的小节都是**当时的批次快照**，
+> 不是现状。写它们的时候还没有 interaction-lab 的矩阵，很多条目后来已被 spec 采掉或已被证明不可达。
+> **现状只看两处**：① `interaction-lab/WAVE1-REPORT.md` 的「收口审计」与各批验收表；
+> ② `keyboard.md` 表 A–E 的覆盖率普查（93 行里 88 行有 spec 证据，余 5 行在报告里逐条说明了为什么不可达）。
+> 要判断"这一项还需不需要采"，请回 `WAVE1-REPORT.md` 查，不要照抄本文的旧清单。
+
 来源：`_harvest/js/index-DiTmKH3z.js` 的 `B3`、`cYe/dYe`（下一次发生计算）、`zy/cde/dde`（三态与复制）、`rnn`（循环完成再建）、`X7e/Dzt/_zt`（提醒动作分派）、`Ny/gw/gU`（批量 action）、`Fq`（多标签合并）。手法：**从 i18n key 反查代码**（见 `_harvest/findkey.mjs`）。
 
 ## 一、任务三态（`tn`，数值编码）
@@ -291,7 +297,7 @@ if (parsed && !alreadySame && ok) setProperty(parsed);
 - 抑制条件 `i<=9 && i===l || i===0 || l===0 ⇒ []` ⇒ **≤9 的正方形（如 `4x4`）不弹提示**，两个构造器 `H3(i,l)` / `Z3(i,l)` 分别产两种块（推测为普通表 vs 集合/看板式）；
 - 大小写不敏感（`/i`）。⇒ 在快捷面板输入 `12x3` 会得到表格候选，这是一条**只有代码里有的功能**，菜单与文档都不显示。
 
-## 仍未采到
+## 仍未采到 〔历史快照·现行口径见文首〕
 
 - ~~`weekly`/`monthly` 配置的完整字段（`setTaskRepeatWeeklyConfig`、`dynamicDays` 的元素类型只从用法反推）~~ **已结案（§九）**：`weekly.days: string[]`（星期名）、`monthly.{days: number[], dynamicDays: [{type, selector}]}`、`selector ∈ {"first","last",数字}`、**`monthly.days === []` 的语义是「最后一天」而非"未选"**。
 - ~~`repeatPresets` 的**具体预设项**（预设列表在别的 memo 分支里，未定位到数组字面量）~~ **改判（§九）**：预设项**不是代码里的数组字面量**，而是 §八 那组 `tasks.every.*` 文案 + `ann()` 的 `fixed` 分支**动态拼出来的**（`Daily` / `Every N days` / `Weekly on Mondays` / `Monthly on the {序数} day` / `Yearly …` + 工作日档 `tasks.monday.to.friday`）。⇒ 之前"找预设数组"是错方向，**要复现的是标签器**。真身已定位，见 **§10.3 菜单 id 图**：顶层就是 `after` / `every` 二选一（即 `type` 两档），下面才是 `frequency → interval → 子配置`。

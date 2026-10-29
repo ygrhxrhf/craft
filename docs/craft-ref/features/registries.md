@@ -1,5 +1,11 @@
 # Craft.do 权威登记表（枚举 / 动作词表 / 通知类型 / 排序作用域）
 
+> ★ **未采面口径（第 398 批统一）**：本文件里所有形如「仍未采到（第 N 批…）」的小节都是**当时的批次快照**，
+> 不是现状。写它们的时候还没有 interaction-lab 的矩阵，很多条目后来已被 spec 采掉或已被证明不可达。
+> **现状只看两处**：① `interaction-lab/WAVE1-REPORT.md` 的「收口审计」与各批验收表；
+> ② `keyboard.md` 表 A–E 的覆盖率普查（93 行里 88 行有 spec 证据，余 5 行在报告里逐条说明了为什么不可达）。
+> 要判断"这一项还需不需要采"，请回 `WAVE1-REPORT.md` 查，不要照抄本文的旧清单。
+
 来源：`_harvest/mine-enums.mjs` 扫全部 105 个 chunk（TS enum 编译产物 + zod enum + 大写键常量映射），加人工定位的分派 switch。机读全量在 `_harvest/enums.tsv`。
 
 实测计数（`grep -v 'vendor-' enums2.tsv | cut -f4 | sort | uniq -c`）：**共 113 个枚举**，其中**应用侧 88 个** = `index` 65 + `socket.worker` 18 + `AIChatPopup` 3 + `PageCardMixer` 1 + `CodeEditorWrapper` 1；第三方 25 个（`vendor-excalidraw` / `vendor-BZCR0rqu` 等，已从本表排除）。机读全量：`_harvest/enums2.tsv`（列：kind / name / count / file / members=values）。
@@ -160,7 +166,7 @@
 | 代码块主题 | 21 个具名主题（含 craftdark/craftlight/auto） | 无主题选择 | G98 |
 | 档位枚举 | 9 档（含 V2_* 与 Lite） | 无档位概念 | 有意偏差（不做付费墙） |
 
-## 仍未采到
+## 仍未采到 〔历史快照·现行口径见文首〕
 
 - 上述动作词表只覆盖 `document_/folder_/tag_/root_/starred_`；**块级动作**（move/duplicate/turn-into 等）没在这段 switch 里，走的是 `BlocksV2Actions` + 编辑器命令，二者如何对应未追。
 - `Fs` 与 `os` 两套同步状态并存（粗/细），各自服务于哪一层（UI 徽标 vs 传输层）未证。

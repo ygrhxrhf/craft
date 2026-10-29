@@ -1,5 +1,11 @@
 # Craft 数据模型（块 / 集合 / 任务 / 序列化）
 
+> ★ **未采面口径（第 398 批统一）**：本文件里所有形如「仍未采到（第 N 批…）」的小节都是**当时的批次快照**，
+> 不是现状。写它们的时候还没有 interaction-lab 的矩阵，很多条目后来已被 spec 采掉或已被证明不可达。
+> **现状只看两处**：① `interaction-lab/WAVE1-REPORT.md` 的「收口审计」与各批验收表；
+> ② `keyboard.md` 表 A–E 的覆盖率普查（93 行里 88 行有 spec 证据，余 5 行在报告里逐条说明了为什么不可达）。
+> 要判断"这一项还需不需要采"，请回 `WAVE1-REPORT.md` 查，不要照抄本文的旧清单。
+
 证据：`_harvest/js/`（105 个 bundle，含 200 个懒加载 chunk 名单 `all-chunks.txt`）、`_harvest/i18n-zh.tsv`（4019 条官方中文串）、`_harvest/dom-snapshot-*.html`（渲染后 HTML）。
 
 置信：`~` = 静态证据（词表/命令名/chunk 名/文案）支持；`✓` = DOM 屏上实测；`?` = 需动态验证。**块之间的嵌套规则、转换保真、撤销粒度全部是 `?`**（依赖 `_harvest/todo-actions.md` 第 1 批沙盒动作）。
@@ -214,7 +220,7 @@ NH(block) = k4e.includes(block.styleProps.textStyle) || block.subblocks.length >
 `insertNewBlocksToTable · insertNewBlocksToObjectList · mergeTextBlocks · setTextStyle · setListStyle · setImageStyle · setDecorStyle · setLayoutStyle · setTodoState · setBlockColor · setPageBackground · setPageFontStyle · setPageParagraphSpacingType · setPageStylePreset · setLineType · duplicateSubtree · setMediaUploaded · setPluginData · setCoverImage · toggleCoverImageEnabled · setCoverImageUploaded · updateShare · deleteShare · replaceSharesForDocument · undo · redo`
 ⇒ **`undo`/`redo` 是协议级 action**，与 `setTextStyle` 平级，不是纯客户端栈（与 V16"撤销按事务合并"互证：一个事务就是若干这类 action 的数组）。另注意 `setLineType`（分隔符样式三档）、`setPageParagraphSpacingType`、`duplicateSubtree` 是此前任何文档都没记录的 action。
 
-## 仍未采到（模型面）
+## 仍未采到（模型面） 〔历史快照·现行口径见文首〕
 
 1. ~~每个块的**属性全集**（Slate attrs）——需要块级复制/导出 JSON 反推~~ **已结案（§一之六 8）**：块线格式 20 字段（`B1e`）+ 新建默认值（`F1e`，含 11 子字段 `pageStyle` 与 `styleId:"luki"`），直接从代码字面量读到，**不需要剪贴板通路**。仍缺的是 `rawProperties` / `objectData` / `taskData` 三个**容器内部**的字段名（各自有独立解析器，尚未逐个展开）。
 2. ~~嵌套规则与转换保真矩阵 → 待第 1 批沙盒动作~~ **大部分结案（§一之六）**：九值 `textStyle` + 数字序号 `eY()` + 导出映射表（`title→h1 … toggle→h4`、`Video/File→p` 塌缩）+ 类型判定优先级链（`listStyle` 压过 `textStyle`）+ 降级时子块平铺上提（`w$`）。**仍缺**：哪些块类型能进分栏/表格/折叠块的**白名单**（`allowedChildren` 类常量未定位到），以及 `Strong`/`Body`/`Caption` 三档在导出表里没有条目 ⇒ 它们的导出形态仍要靠实际导出物对。
@@ -264,7 +270,7 @@ text | number | checkbox | date | url | person | select | multiSelect
 
 `this.props.isEasterEggOpen && createPortal(<Suspense fallback={null}><EasterEgg/></Suspense>, document.body)` ⇒ 游戏是**根组件上的 body 级 Portal**，由 `webappUiStore.isEasterEggOpen` 驱动；action creator `K1o(t) = {isOpen, type:"openEasterEggAction"}` 在 index 里**没有任何调用者** ⇒ **触发入口仍在别处（未证）**，但状态字段与挂载形态已确定。同族还有 `openPlaygroundAction`、`openFullSearchAction`、`openSharedWithMeAction` ⇒ **四个"隐藏屏"共用一套 store 开关**。
 
-### 仍未采到（§一之七 遗留）
+### 仍未采到（§一之七 遗留） 〔历史快照·现行口径见文首〕
 
 - `email` / `phone` 在 `$Me` 里无分支的**真实原因**（该函数的调用点未定位）。
 - `ZMe` / `VMe` / `WMe`（media / relation / linkToBlock）的**内部结构要求**。
@@ -494,7 +500,7 @@ style:   NLe
 3. **每个 cell 自己有稳定 `id`** ⇒ 单元格可被引用/定位（`复制区块链接`、公式区域引用 `formula.above/below/…` 都需要稳定可寻址单元）。
 ⇒ ~~未展开：`$Le` / `NLe` / `ULe`~~ **第 46 批全部结案（§一之十六）**：行只有 `{id, metadata?}`（**无 height**，猜测证伪），行 metadata 唯一字段 `isHeaderRow`；表 style 三字段 `alternatingRowColor` / `hasColumnsHeader` / `hasRowsHeader`；列 metadata 唯一字段 `width`，且**存成 `{percentage}` 百分比对象**。
 
-## 仍未采到（模型面·第 39 批）
+## 仍未采到（模型面·第 39 批） 〔历史快照·现行口径见文首〕
 
 - `objectList.schema` 的**内部结构**（字段定义列表？含 §一之七 的 13 类型与选项集？`DC` 原样透传，未展开）。
 - `object.properties` 的值形态（`$Me` 校验器期望的 `{fieldId: value}` 形状未在此确认）。
@@ -555,7 +561,7 @@ off 背景 = elevateGrey(theme.background(), isDarkMode, 3)      ← ★ 不是�
 `collection-v2-date-editor` / `collection-v2-select-editor` / `collection-v2-multiselect-editor` / `collection-v2-person-editor`
 ⇒ ① ★ **命名带 `v2`** ⇒ 集合模块重做过一次（与 `plans.md` §五之二 C 的 `upgrade.team.v2.*` 同一现象：**官方在关键子系统上并行留 v2 痕迹**）；② **弹层注册名是字符串常量** ⇒ 存在一个**全局浮层栈 / Esc 路由**，按名字决定"谁响应关闭"，`isDisabled` 控制是否参与 ⇒ 本地做多层弹层时应照抄"具名浮层栈"，而不是各自 `addEventListener('keydown')`。
 
-## 仍未采到（模型面·第 36 批遗留）
+## 仍未采到（模型面·第 36 批遗留） 〔历史快照·现行口径见文首〕
 
 - ~~`w1e(type, props)` 的按类型分支表~~ **第 39 批结案（§一之十一 1–3）**：固定 8 键 + `model` 三分支（媒体四型 / `url` / `code`）、7 处字段改名对照、封面主色是常量 `#f2f2f2` 而媒体主色是算出来的、**同一容器内 date-like 有三套解析器**。
 - ~~`S1e`（`pluginData` 的通用 schema）与 `DU`/`_U`（表格解析器）的内部字段；表格 `tableData` 的单元格模型~~ **第 39 批结案**：`S1e` 见 §一之十一 4（主题是 `pluginName` 白名单插件）、`_U`/`VLe` 见 §一之十二（三张平行数组 + cell 持 `blockId`）。~~仍未展开：`$Le`(行)、`NLe`(表 style)、`ULe`(列 metadata)~~ **第 46 批结案（§一之十六）**；`DU` 仍只见到 `logError` 一个成员（留在未采到）。
@@ -565,7 +571,7 @@ off 背景 = elevateGrey(theme.background(), isDarkMode, 3)      ← ★ 不是�
 - ~~`uT` / `DC`（集合的 schema 存在哪一层）~~ **第 39 批结案（§一之十 2）**：`objectList` 持 `{schema, views[]}`、`object` 持 `{properties, schemas, themeString}`。
 - ~~`SMe` 适配器本体~~ **第 39 批结案（§一之十 1）**：只把 `blocks` 改名成 `subblocks`，其余字段名与 wire 一致 ⇒ §一之九 的前提警告解除。
 
-## 仍未采到（模型面·第 41 批）
+## 仍未采到（模型面·第 41 批） 〔历史快照·现行口径见文首〕
 
 - `$Me` 的**调用点**（本批给出"形状不匹配 ⇒ 它不是单元格写入校验器"的强证据，但没定位它到底管什么）。
 - ~~`media` / `relation` / `number` 三类的录入通路~~ **已结案（§一之十四）**：relation 有独立 `RelationEditor`、number 有独立 `NumberEditor`；`media` 仍无 chunk（转入 §一之十四 未采到）。
@@ -614,7 +620,7 @@ props：`{open, onClose, anchorEl, value, onSave, typingBuffer, placeholder, pro
 - 委托的通用选择器收到的 anchor 是 **ref 对象** `{current: anchorEl}`（可为 `undefined`），不是裸 DOM 元素。
 ⇒ 至此集合族的具名弹层**五个名字齐了**：`collection-v2-{date, select, multiselect, person, relation}-editor`。
 
-## 仍未采到（模型面·第 42 批）
+## 仍未采到（模型面·第 42 批） 〔历史快照·现行口径见文首〕
 
 - `media` 类（图片/文件）单元格的录入通路：磁盘上**没有 `MediaEditor` chunk** ⇒ 疑走 `ImageEditorPopup`（另一族，6 KB），未证。
 - 具名浮层栈 `x(name, onClose, {isDisabled})` 的**实现本体**（栈序、Esc 如何路由到栈顶、`isDisabled` 是否等于出栈）。
@@ -712,7 +718,7 @@ function gr(t, e) { return t === e ? void 0 : (t ?? void 0); }               // 
 - ★ **Mermaid 不是独立块类型**，而是 `type:"code"` 且 `language === "mermaid"` 的特例 ⇒ 插入面板里"Mermaid"是一项，但模型层它就是个代码块；⇒ 与 §一之八"code 与 whiteboard 存 `blob`"合起来看，**Mermaid 走的是代码块的存储通路**。
 - ★ **`gr(t, e)` 是补丁最小化的实现**：新旧相等 ⇒ 返回 `void 0`（即"这个字段不进补丁"），否则 `t ?? void 0` ⇒ 与 §一之九"批量 PUT 与单条 PUT 的归一化差异"是同一条链上的上游。
 
-## 仍未采到（模型面·第 45 批）
+## 仍未采到（模型面·第 45 批） 〔历史快照·现行口径见文首〕
 
 - ~~`Fa` 前段成员与 `S9`/`Xn`/`Nt`/`Ho` 四个白名单对应的枚举体~~ **第 47/49 批结案**：`Fa` 只有 2 值（前段猜测证伪）、`Ho={left,center,right,justify}`、`Nt`＝`listStyle` 五值、`S9`/`Xn` 两套尺寸枚举 —— 且**落点也定了（§一之十九 1）**：`S9` 用于 **`urlStyle`**、`Xn` 用于 **`layoutStyle`**。
 - `s1(...)`（cropMask 的单分量解析器）是 `parseInt` 还是带容错的 `mLe`。
@@ -792,7 +798,7 @@ class n3 extends Error { name = "AssertionError"; ERROR_TYPE = "AssertionError";
 
 ⇒ ★ **块样式上有一组"修饰符"**（经 `_Le` 映射），与 `backgroundColor` 并列成块 style 的两字段。⇒ **修饰符集合的枚举体 `_Le` 未取到**（列在未采到），但它证明：**官方的"块格式"= 背景色 + 一组修饰符**，而不是逐属性铺开。
 
-## 仍未采到（模型面·第 46 批）
+## 仍未采到（模型面·第 46 批） 〔历史快照·现行口径见文首〕
 
 - ~~`bU`（主题色 id → 值的表）~~ **第 47 批结案**；★ **`_Le` 也已结案（第 48 批 §一之十八 1）**：`_Le(t) = t.split("|")` 后读四个单字母旗标 `b/i/s/c` + 五个前缀值项，字段名是 `blockStyleModifiers`（挂在单元格 `style` 上）。
 - ~~`DU`（表格 parser 的上下文对象）~~ **第 48 批结案（§一之十八 2）**：`class DU { blockId, _errors[], errors(), logError(n) → "Error validating: <blockId>: <n>" }`，失败走 `{type:"success"|"failure"}` 判别式不抛错。
@@ -871,7 +877,7 @@ if (o.todoState !== e.todoState) {
 
 ⇒ ★ **`S9` 与 `Xn` 是两套"三档 + 一特殊档"的同构枚举**（`default/small/regular/card` vs `regular/small/card/embed`）⇒ 官方**图片/块的尺寸有两种独立档位域**（一个含 `default`、一个含 `embed`），与 §一之八"块线格式 20 字段"里的尺寸字段对应关系仍未证。
 
-## 仍未采到（模型面·第 47 批）
+## 仍未采到（模型面·第 47 批） 〔历史快照·现行口径见文首〕
 
 - ~~`_R` 是否强制 8 位~~ **第 50 批结案**：`const _R = /^#[0-9A-Fa-f]{8}$/` ⇒ 强制 8 位，§一之十七 1 的 NaN 缺陷候选随之作废。
 - ~~`_Le`（`blockStyleModifiers` 的映射器）~~ **第 48 批结案（§一之十八 1）**：`_Le = t => { const e = t.split("|"); return { isBold, isItalic, isStrike, isCode, font, highlightColor, textColor, align, format } }`。
@@ -936,7 +942,7 @@ const ILe = t => { const e = t.find(n => n.startsWith("font")); return e == null
 - ★ `RLe` 是**第二步**（`font*` 项拆出内部值后再转 CSS），即**两步映射**：串段 `fontXxx` → 内部值（`RLe` switch）→ CSS 关键字（`jLe` switch）。
 - ★ **四值之外直接抛 AssertionError** ⇒ 官方对"字体枚举被扩了"的态度是**立即失败**（与 `j3` 的"未知枚举静默回退"**相反**）⇒ ★ **官方内部对"读值"宽容、对"渲染映射"严格**，两套策略并存 —— 这是个反直觉且重要的复刻口径。
 
-## 仍未采到（模型面·第 48 批）
+## 仍未采到（模型面·第 48 批） 〔历史快照·现行口径见文首〕
 
 - **块级是否也有 `blockStyleModifiers`**（唯一已证的调用方是单元格 `VLe`；字段名暗示块有，但没有第二个调用方证据）。
 - `TLe/ALe/ELe/DLe`（高亮色/文本色/对齐/格式四个前缀项）各自的 mapper —— 高亮与文本色**推测**走 `bU`（hex 对），但未抓到定义。
@@ -1000,7 +1006,7 @@ if (S != null) { if (S === "secondarycolor") m = "themeColor"; else m = Yt(S) ||
 - `lineThemeStyle` 走 `T1e(…) ?? null` ⇒ **完全不同的函数，未知值的处置方式未取到**（列未采到）。
 - ⇒ 这解释了 §一之八 记的 `pageStyle.lineThemeStyle` 与本表的 `lineStyle` 是**两个独立槽位**（一个主题线样式、一个线粗细档）。
 
-## 仍未采到（模型面·第 49 批）
+## 仍未采到（模型面·第 49 批） 〔历史快照·现行口径见文首〕
 
 - ~~`T1e()` 的实现与未知值处置~~ **第 50 批结案（§一之二十 3）**：`lineThemeStyle` 是 `{type, patternSource:{type, color}}` 对象，`T1e` 只对 `type==="washi"` 就地规范化（大写化→`Yt` 转明暗对写回），**未知 type 原样保留**（既不回退也不抛）。
 - ~~`decorations` 对象的形状~~ **第 51 批结案（§一之二十一 4）**：**`{focus?, block?}` 两成员**，写条件 `focus != null || block != null`（更新恒写、新建仅有值才写）；正好对应本地 `focus-style.tsx` / `shaded-style.tsx` 的语义。★ 仍开：`themeInstanceProps` 的成员、`focus`/`block` 各自的形状。
@@ -1086,7 +1092,7 @@ function m0(t) { return C9(t) ? t.toUpperCase() : null; }      // 校验 + 大�
 - `kR(t, map)` ⇒ **任一项映射成 `null` 就整体返回 `null`**（map-or-bail，与 `Is` 的"有值才映射"相反：这是"整批要么全成要么全弃"）。
 - `U1(a, b)` = 递归深度比较（含嵌套数组）；`Gn`/`_u` = 过滤 boolean / 过滤 non-null-non-false；`es()` 返回共享常量空数组 `ZAe`（**避免分配**）。
 
-## 仍未采到（模型面·第 50 批）
+## 仍未采到（模型面·第 50 批） 〔历史快照·现行口径见文首〕
 
 - `Wn` 之外的颜色规范形有没有中间层（`Xt(pair,isDark)` 之上）：**渲染时谁决定 `isDark`**（主题 store？CSS 变量？）。
 - `C9(t)`（`m0` 的校验器，猜测是"像 hex 就 true"）与 `lg()`/`Oce` 的编码侧全貌（§一之十七 遗留）。
@@ -1164,7 +1170,7 @@ const w = t.styleProps.decorations, S = w.focus != null || w.block != null;
 - **链接类型三值 + 未知抛错**：`vJe(t)`：`blockLink` → 保持；`link`/`relation` → `{targetDocumentId:"", targetBlockId:"", updated, isDeleted:false}`；`default: He(t)` ⇒ 又一处渲染/反序列化严格。
 - **反向 switch 也穷尽抛错**：`cst(t)`（left/center/right→`Ho.*`）、`dst(t)`（`system`→`Jt.System` …，`system-serif`→`SystemSerif`），`default: He(t)` ⇒ **读侧 `j3` 宽容、写侧反向 switch 严格**，与 §一之十八 的策略矩阵一致。
 
-## 仍未采到（模型面·第 51 批）
+## 仍未采到（模型面·第 51 批） 〔历史快照·现行口径见文首〕
 
 - **`n` 的确切语义**（新建？脏标记？"是否传默认值"开关？）—— 决定上面"两种形态"的表述精度。
 - `E5()`（color 写侧转换）、`MC()`（highlightColor 写侧逆转换）、`gQ`/`h0e`（lineThemeStyle 写侧链）、`b0e`（run 预处理）。
@@ -1239,7 +1245,7 @@ function k0e(t) { return { enabled: t.enabled,
 
 `y0e`/`C0e`/`x0e`/`w0e`（daily/weekly/monthly/yearly 四档各自的转换器，§10.7/10.8 的写侧）、`V5` 是否确为读写共用、`mVe`/`xVe`（model 与 dailyNoteDate 的转换）。
 
-## 仍未采到（模型面·第 52 批）
+## 仍未采到（模型面·第 52 批） 〔历史快照·现行口径见文首〕
 
 - ~~哪条调用链用 `omitDefault: true`~~ **第 53 批结案（§一之二十三 3）**：唯一观测调用点是「先 `runAttributes=[]` → `YU(w,{omitDefault:!0,omitNonRenderProps:!0})` → `m0e(I)` → `i.set(w.id,…)`」⇒ **疑似按块 id 的索引/快照构造**（组件未展开）。
 - 任务时间两套编码的**调用方仍未取**（哪条请求用 `V5` 版、哪条用毫秒版）；★ **repeat 侧已完成配对**：`SVe↔wVe`（均 `V5`）与 `vVe↔kVe`（均 `getTime()`）——§一之二十四 1。
@@ -1293,7 +1299,7 @@ i.set(w.id, …)                                                           // �
 - ⇒ ★ 这部分解释了"为什么要省略默认值"：**索引/缓存场景要的是差异化的最小载荷**，与 G542 的"传输精简"互补。
 - 本地对照：`grep -rn "omitDefault\|omitNonRenderProps" src` ⇒ 0（第 52 批已核）。
 
-## 仍未采到（模型面·第 53 批）
+## 仍未采到（模型面·第 53 批） 〔历史快照·现行口径见文首〕
 
 - `Lm(date, offset)` 与 `fLe(date)` 的实现（偏移工具本体）与 `Kh()`（`gLe` 的默认值来源）。
 - `m0e()`（把最小化结果再转换一次的函数）与 `i` 是什么 Map（哪个组件的索引）。
@@ -1371,7 +1377,7 @@ const AU = (t, e, n) => { const o = Qo(), s = vi(o, t),       // Qo() = 今天
 - ⇒ `r7(t, start, end, {includeStart, includeEnd})` 是**带端点开关的区间判定工具** ⇒ 本地 `grep -rn "includeEnd\|includeStart" src` ⇒ **0 命中**。
 - 本地对照：`src/lib/utils/daily-note.ts:6` 用 `weekdays[date.getDay()]`（**JS 默认 Sunday=0 直接取星期名**）、`CalendarView.tsx:34` 用 `getDay()` 取当月首日星期（**周起始档位本批未核**）；`grep -rn "0 = Sunday" src` = 1（`recurrence.ts:5` 注释 **0 = Sunday**）⇒ 官方周段用 Monday、本地注释用 Sunday-0 ⇒ **两者不冲突但口径不同，需逐处核**。
 
-## 仍未采到（模型面·第 54 批）
+## 仍未采到（模型面·第 54 批） 〔历史快照·现行口径见文首〕
 
 - ~~`SVe`/`vVe` 分别被谁调用~~ **第 55 批拿到分工线索（§一之二十五 2，标疑似）**：`vVe`（毫秒）在**冲突合并回写**（`i.set(y, vVe(L))`，`L=_0e({clientData,serverData,baseData})`），`SVe`（`V5` 归一）在**线格式读入**处（`t.objectDataRaw`/`t.taskData`）⇒ 疑似「读入归一 / 合并写回毫秒」。★ 仍开：`SVe` 所在函数签名与两处是否同一数据流。
 - `Lm(date, offset)` 偏移工具本体（`V5`/`VE` 都用它）与 `fLe` 之外的 `Yce`/`B1`/`A4`/`vi`/`Qo`/`r7` 日期工具族（`Qo()` 猜测＝今天）。
@@ -1419,7 +1425,7 @@ const D = t.objectDataRaw, _ = t.taskData, j = SVe(_);       // ★ 线格式字
 - 本地：`grep -rn "objectDataRaw\|taskData" src` ⇒ **2 处**，都是**局部变量**（`src/app/(app)/calendar/page.tsx:25` `const [taskData, noteData] = await Promise.all([getTasks(), getDailyNotes()])`、`:26` `setTasks(taskData)`）。
 - ⇒ ★ **同名但完全不是同一物** ⇒ 与 §一之二十一 3（两向字段名不一致）、§一之十八 4（`decorations` 巧合同名是 ProseMirror API）同族 ⇒ **本目录又多一条方法论证据：`grep` 命中也可能与官方字段无关**（反向：`grep` 0 命中可能是换名，`grep` 命中可能是巧合）。
 
-## 仍未采到（模型面·第 55 批）
+## 仍未采到（模型面·第 55 批） 〔历史快照·现行口径见文首〕
 
 - ~~`Pr(new Date)`（`Qo()` 即「今天」的实现）~~ **第 56 批结案（§一之二十六 1）**：`Pr(t)`＝四次 `setX(0)` 到本地零点 ⇒ `Qo()` ＝**本地零点的今天**；连带 `e1e` ⇒ **第三个 URL scheme `day://YYYY.MM.DD`**、`TU` ＝严格日期解析器。★ 仍开：`r7`/`Yce`/`A4`/`vi`（区间判定与最近周一算法）。
 - ~~**`SVe` 所在函数的签名与调用方**~~ **第 56 批确认（§一之二十六）**：它在**线格式→内部模型的读入解析器**里（同函数并读 `objectDataRaw` / `taskData` / `blob`，并分派 `whiteboard`→`sQ` 与 `code`→`textContent`）⇒ **「读入用 `SVe`（`V5` 归一版）」从「疑似」升级为强证据**；两处是否同一数据流仍未证。
@@ -1486,7 +1492,7 @@ function TVe(t, e) {
 - ⇒ ★ 这是**第三处印证 `YU(l)` 不带选项**（⇒ `omitDefault` 默认 false，与 G543 一致）。
 - 本地对照：`grep -rn "traverseSubBlocks\|PreOrder" src` ⇒ **0**（本地复制实现方式未核，列未采到）。
 
-## 仍未采到（模型面·第 56 批）
+## 仍未采到（模型面·第 56 批） 〔历史快照·现行口径见文首〕
 
 - ~~**`m0e()`**~~ **第 57 批结案（§一之二十七 1）**：`m0e` ＝**内存块→线格式的定型函数**（与 `YU` 分工：`YU` 管样式与时间、`m0e` 管块本体）：四个 `JSON.stringify` 字段（`rawProperties`→`properties`、`pageStyle`、`pageStyleProps`、**`style`→`styleAttributes`**）+ `content` + `subBlocks:[]`（恒空）+ 作者/软删标记；**两向字段名五组→七组（新增 `parentId→parentBlock`、`style→styleAttributes`）**。★ 仍开：`created:` 之后的字段表。
 - **`J7()`**（`gQ = t => J7(t)`，pageStyle/themeInstanceProps 的写侧转换）与 `D5` 的完整字段表。
@@ -1554,7 +1560,7 @@ function pk(t, e) { return Math.abs(cLe(t, e) …                   // 日期距
 - ★ **i18n 文案里含内部 scheme 链接**（如 `[balance](craft://credit)` 出现在 `assistant.*` 的值里）⇒ **营销/提示文案可触发内部深链**（本地化串是"可执行"的入口，属采集提示）。
 - 本地对照：`grep -rn "tex://" src` ⇒ 0、`grep -rn "day://" src` ⇒ 0、（`craft://|craftdocs://` 第 56 批已 0）⇒ **四个 scheme 本地全无**。
 
-## 仍未采到（模型面·第 57 批）
+## 仍未采到（模型面·第 57 批） 〔历史快照·现行口径见文首〕
 
 - **`tex://` 与 `craftdocs://users` 的构造点与读入点**：★ **判定消费方已到手（第 58 批 §一之二十八 3）** —— `sGe(t)` 用 `_w.some(n => t.linkURL.startsWith(n))` 在**富文本 run 的 `linkURL` 组装**处把三前缀判为内部深链；★ 仍开：**`tex://` 的渲染（公式块？）与 `craftdocs://users` 的路由读入**、`Cg`/`_5` 的具名调用点。
 - ~~`m0e` 的完整字段表~~ **第 58 批结案（§一之二十八 1）**：共 **11 个字段线上是 `JSON.stringify`**（样式四 + 载荷三 + **`resourceId`/`stamp`/`blob`**）；★ **`blob` 是 JSON 字符串**（不是二进制）。
@@ -1645,7 +1651,7 @@ function lGe(t, e, n, o, s) {
 - `eh(t, e)`：`t.start >= e.start && t.start+t.length <= e.start+e.length` ⇒ **range 包含判定**（右端点 = `start + length` ⇒ run 语义确认）。
 - `yT(t)`/`G5(t)`：`{type:"textSelectionGeom", point}` / `{type:"textSelectionIndexBackwards", index}` ⇒ **选区两形态**（几何点位 / 反向索引）。
 
-## 仍未采到（模型面·第 58 批）
+## 仍未采到（模型面·第 58 批） 〔历史快照·现行口径见文首〕
 
 - ~~**`lGe` 的 else 分支与更下层**~~ **第 59 批结案（§一之二十九 3）**：`o` 为假 ⇒ **Enter 分割链**（`rGe` 从索引切开保 `afterRuns`、`aGe` 三情形 + `keepAllIncomingFormat` + 第三种选区 `textSelectionIndex` + 非文本节点 Enter **抛错**）。★ **第 60 批结案：`o` = `JO(s)` =「块完全为空」⇒ 触发键是 Enter**（§一之三十 1）；仍开：`s` 的含义；`aGe` 中间情形体与 `newBlockLocation` 全部取值；`UE` action 全名；`ol`/`G4` uiAction 族；`zy` 新建空块工厂。
 - `og`/`ir`/`P2`/`fU` 四个 action 的内部签名与**它们是否在 §十三 的 26 项表里**。
@@ -1714,7 +1720,7 @@ function aGe(t, e, n) {                                  // ★ Enter 的三种�
 - ⇒ **run 分割工具 `$8(runs, index)` → `{beforeRuns, afterRuns}`** ⇒ Enter 切块时**run 随索引一分为二**（`rGe` 取后半）。
 - 本地对照：`grep -rn "keepAllIncomingFormat\|beforeRuns\|afterRuns" src` ⇒ **0**、`grep -rn "non-text\|Enter is pressed" src` ⇒ **0**；本地 `'Enter'` 在 `Editor.tsx`/`extensions/*` 只 **3 处** ⇒ **Enter 分割是 TipTap 默认行为，本地没有"三情形 + 格式保留模式 + run 切分"这套显式实现**。
 
-## 仍未采到（模型面·第 59 批）
+## 仍未采到（模型面·第 59 批） 〔历史快照·现行口径见文首〕
 
 - `aGe` 第三种情形（光标在中间 ⇒ 左右都切）的完整体与 `newBlockLocation` 的全部取值（已见 `"before"`，其余未取）。
 - `UE` action 的 `type` 全名；`ol`（uiAction 的"聚焦块+选区"）与 `G4`（redoUiState 生成器）。
@@ -1810,7 +1816,7 @@ eT(t)={shift:1,alt:1, winMatcher:{…}}   Vn(t)={只给 keyCondition ⇒ 不限�
 - `grep -rn "name: '…'" src/components/editor/extensions/*` 得本地节点全集 32 个（`attachment/blockLink/callout/columns/divider/drawing/imageBlock/inlineMath/mathBlock/mention/tableOfContents/toggleBlock/whiteboardEmbed/…`）⇒ **原子内联四类里本地只有 `mention` 与 `inlineMath`/`mathBlock`，缺 `day`（每日笔记日期原子）与 `tag`（标签原子）**；⇒ 连带来看，`JO`/`Jm` 对这两类的特殊处理在本地无从复现。
 - 缩进入口：`FormatTab.tsx:39/40` 是 `liftListItem('listItem')` / `sinkListItem('listItem')` 工具栏按钮 ⇒ **① 无 Tab/Shift+Tab 键位（与 G218 一致）②`listItem` 作用域只动一项 ⇒ 无「连缩进子树整批 ±1」语义**。
 
-## 仍未采到（模型面·第 60 批）
+## 仍未采到（模型面·第 60 批） 〔历史快照·现行口径见文首〕
 
 - `JO` 的 `case "tag"` 之后与 `default` 分支、以及函数尾部（`elementContent` 之外的判据）。
 - `Dsn` 第 6 段 `Ece(h.id, p.id)` 的**应用器**（两个块的文本与 run 具体怎么并、样式谁赢）。
@@ -1894,7 +1900,7 @@ function x0(t,e){ return { store: e.store,
 - `grep -rni "readonly|canEdit|'viewer'" src` ⇒ 本地权限在 **server action 边界**：`src/actions/comment/comment.ts:11` 的 `need: 'viewer'|'commenter'|'editor'`、`requireDocumentAccess(documentId, userId, 'viewer')`（`backlinks.ts:49`、`export.ts:27`、`favorite.ts:9/:32`）、`members.ts:6` 的 `MemberRole` ⇒ **档位名与官方一致，但只在请求侧校验，store 层没有 `fYe` 式白名单**；**编辑器在 viewer 下是否禁用输入本轮未核**（不写成结论）。
 - `grep -rn "inversePatches|patches\b" src/lib src/stores` ⇒ **0**（唯一命中是 `block-anchor.ts:144` 的 `history.replaceState`）⇒ **本地没有 patch 级撤销栈**，撤销完全交给 ProseMirror history ⇒ 无法实现"按 action 撤销/重做"和跨标签页补丁合并。
 
-## 仍未采到（模型面·第 61 批）
+## 仍未采到（模型面·第 61 批） 〔历史快照·现行口径见文首〕
 
 - `fYe` 只读白名单里 `updateRecordObjectProperty` 的确切语义（只读集合属性格能改什么）。
 - `Po(t, [r], n, [], [])` 的形参含义（后两个空数组是什么）与应用器统一返回形态。
@@ -1975,7 +1981,7 @@ startCodeEdit <-Ew(t) {}   stopCodeEdit <-Y0e() {}   toggleBlockEditor <-l3(t,e)
 - 协同：`src/lib/collaboration/presence.ts` + `src/components/editor/collab/CursorLayer.tsx:11/:21/:37`（`PresenceUser`/`clientId`）⇒ **只有光标一件**；`editingBlocks`/`openPages`/`rtcId` 在 `src` **0 命中** ⇒ 缺"谁在编辑哪些块""谁打开了哪些页面"两维。
 - 任务视图：`grep -rn "quickFilter|sort" src/components/tasks src/app/tasks` ⇒ 无命中（路径可能不同名）⇒ **未核，不下结论**，只记"未定位到与官方三态分离对应的实现"。
 
-## 仍未采到（模型面·第 62 批）
+## 仍未采到（模型面·第 62 批） 〔历史快照·现行口径见文首〕
 
 - 13 个 `...t` 展开式构造器的字段全集（要逐个回调用点）。
 - 173 项非文档-store action 的**分派表**（各自 store 的 `case` 表，本批只有构造器）。
@@ -2015,7 +2021,7 @@ startCodeEdit <-Ew(t) {}   stopCodeEdit <-Y0e() {}   toggleBlockEditor <-l3(t,e)
 - ★ **同一招（全量正则枚举 + 本地聚合）连中三次**：§一之三十一（`PT` 88 项，为闭合一个 action 撞开）、§一之三十二（261 构造器，一条正则）、本批（60 张分派表，一条正则）。⇒ **挖协议层时先做"全量枚举"再做"逐个深读"**；反过来的效率低一个量级。
 - ★ 大括号配平计数（不用正则贪婪匹配）是取回整张表的安全做法：`switch(...) {` 起点 + 逐字符深度计数，上限 12000 字符防爆。
 
-## 仍未采到（模型面·第 63 批）
+## 仍未采到（模型面·第 63 批） 〔历史快照·现行口径见文首〕
 
 - 68 项 UI store 表与 66 项外壳表的**完整名单**（本批只取首 6 项与计数）。
 - 各表的 `default` 分支形态差异（`default:true` 与 `default:He(e)` 之外，`default:false` 的 4 张表是"什么都不做"还是别的结果）。
@@ -2064,7 +2070,7 @@ startCodeEdit <-Ew(t) {}   stopCodeEdit <-Y0e() {}   toggleBlockEditor <-l3(t,e)
   - ★ **侧栏自定义**（`setCustomizeLeftSidebarOption{option,isChecked}` + `…OptionsOrder{order}`）⇒ 本地侧栏项目固定、无排序 ⇒ 新缺失格（G600）。
   - ★ **文档内搜索的"当前命中索引"是独立 state**（`setCurrentlyFocusedSearchIndex`）＋ **替换命中集是独立 state**（`updateHighlightedTextReplaceItemsAction`）⇒ 本地无搜索替换（此前只在 G594 层面记"无 action"，本行给出具体行为差）。
 
-## 仍未采到（模型面·第 64 批）
+## 仍未采到（模型面·第 64 批） 〔历史快照·现行口径见文首〕
 
 - ~~22 项任务数据表（@3601025）与 20 项命令 id 表（@807569）的完整名单（前者是映射还是路由需看 default）~~ ⇒ ✎ **第 184 批结案**（G1481/G1482）＝22 项 case 全列在 G1482（upsertDocumentsWithTasks／…Active／…Upcoming／upsertInboxDocument／upsertLogbookDocument／upsertPinnedDocuments／updateContinuationToken／updateOngoingTasksContinuationToken／resetFetchDocumentsWithTasks／updateLoadStatus／setPageInfo／updateTask／createTask／deleteTask／moveTask／reorderTasks／setFilter／setSort／pinDocument／unpinDocument／updateDailyDocumentIds／updateUpcomingTasksContinuationToken）；**路由式**：每 case 委派具名 handler（Wnn…Qnn 22 枚）、**无 default 支**、尾 `return void 0`（未知 type 静默无操作）＝与 `$Je` 的「显式 default 空对象」是两种收尾。
 - `He` 与各 `default` 的实际行为差异（`He(n)` vs `He(e)` 只是形参名不同？）。
@@ -2130,7 +2136,7 @@ $Je = (t, e) => { switch (e.type) {
 - 本地有收藏，但是**独立 server action**：`src/actions/document/favorite.ts:9/:32` 各调 `requireDocumentAccess(documentId, userId, 'viewer')` ⇒ 官方收藏走 `document_star{payload}` 且**记在 space 层的 `isStarred` 布尔**上（`upsertPinnedDocuments`/`pinDocument` 又是任务层的另一套）⇒ ★ **官方"收藏/固定"至少有两处不同实现**（space 的 `isStarred` 与任务 store 的 `pinnedDocuments`），本地若只做一个会漏。
 - 任务剪枝规则（§一之三十五 3）本地**没有对应层**（本地任务查询直读 Prisma，无 continuationToken/游标概念）⇒ 但"带排期/截止的任务不因结果集变化而消失"这条**行为**在本地是自然成立的（每次全量查库），差异在**分页与增量**时才显形 ⇒ 记为"当前不显形、上分页后必显形"的风险项。
 
-## 仍未采到（模型面·第 65 批）
+## 仍未采到（模型面·第 65 批） 〔历史快照·现行口径见文首〕
 
 - `hb` 里 `o` 分支与 `ret` 之后的完整剪枝条件（本批被截断）。
 - `qy(e)`、`Sk`、`ZJe`、`VJe`、`kk` 的实现体（`folder_*` 系列的公共写入器）。
@@ -2234,7 +2240,7 @@ HJe = (t, e) => { let n = {};
 9. ★ **单元格文本→样式的映射是"整格级"**：`OO(t,e)` 产出 `{start:0, length:e, highlightColor: t.highlightColor??void 0, isBold, isItalic, isStrikethrough, isCode}`（`@716164`）——`start` 恒为 0、`length` 是全文长度 ⇒ 至少在这条路径上**表格单元格不支持字符区间级富文本**。~ 未确认：`OO` 可能只服务导出/摘要而非编辑器内渲染，需要屏上或调用点复证。
 10. ★ **记忆化层**：`Ro(t,e)` 以 `` `tableDataWithCaches-${id}` `` 为缓存键（`TQe` 是其别名，`@716164`）⇒ 表格的"带缓存视图"是按 table id 记忆化的独立对象，不是每次重算。
 
-## 仍未采到（模型面·第 69 批刷新）
+## 仍未采到（模型面·第 69 批刷新） 〔历史快照·现行口径见文首〕
 
 - **表格是否另有使用 `column.metadata.width` 的渲染路径**（§一之三十九 6 只证到 `repeat(n,1fr)` 等宽那一路）。
 - **`OO` 的调用点**（整格级样式是渲染事实还是导出事实，§一之三十九 9 标 `~`）。
@@ -2297,7 +2303,7 @@ HJe = (t, e) => { let n = {};
 12. ★ **集合日期格的数据形状**（`DateEditor` chunk）：属性编辑器不认"日期格"，而是**当场合成** `propMeta = {id:"date", name, theme: void 0, origSchema:{type: DATE, config:{}}}` ＋ `value = {type: DATE, theme: void 0, value: <日期|undefined>}` ⇒ ★ **集合里的日期是"临时冒充的动态属性"**，而文档内任务的 `scheduleDate` 是块上的**一等字段**（§11 三族命令）。⇒ 同一个"日期"在两处**根本不是同一类数据**。
 13. ★ **弹层注册标识是字符串常量**：`"collection-v2-date-editor"` 与 `"TasksRepeatConfigCustomPicker"` ⇒ 官方有一张**按名字索引的弹层/键位注册表**（`cY` 退注用 `{isDisabled:true}` 而非卸载）。⇒ 这两个字面量可直接用于 `keyboard.md` 的作用域列。
 
-### 仍未采到（模型面·第 71 批刷新）
+### 仍未采到（模型面·第 71 批刷新） 〔历史快照·现行口径见文首〕
 
 - `type` 缺失时**写侧是否补成 `"flexible"`**（读侧补默认已证，写侧转换器 `wVe`/`kVe` 本批未重读该分支）。
 - `dynamicDays.type` 的取值集（格式化器不读它，只有 `selector` 被消费）。
@@ -2329,7 +2335,7 @@ HJe = (t, e) => { let n = {};
 8. ★ **对账函数 `lj` 的变化判据只比 `dateOffset`**（不比 `enabled`）＋ **两道幂等守卫**（算出的时刻已过 ⇒ return；与既有提醒同 `dueDate` ⇒ return）⇒ ★ 记为**官方侧缺陷候选**：`enabled` 单独翻转静默无副作用；排期改到过去 ⇒ 提醒不更新且无提示。
 9. ~ **块级 `reminder`（`⋯` 菜单与日期弹层两处入口）最终是否也写进 `repeat.reminder`**：本批只读到 `TasksReminderPicker` 走"绝对 `dueDate` ＋ `details`"这条，**未见它写 `dateOffset`** ⇒ 两套形状之间**除 `Lm` 现算外是否有回写通道**未证。
 
-### 仍未采到（模型面·第 72 批刷新）
+### 仍未采到（模型面·第 72 批刷新） 〔历史快照·现行口径见文首〕
 
 - ~~`Lm` / `Pr` / `Gl` / `getNewBlockReminder` 四个函数体~~ ⇒ ★ **第 73 批四取四得**（@104956 / @106407 / @3121990 / @3127430，见 §一之四十三 1/3/7）；★ 其中"合成"一说被**改判**为"时刻加 N 分钟"（§一之四十三 3）。
 - ~~`F` 旗标（`clear-monthly-days` 项出现条件）~~ ⇒ ★ **第 73 批结案：不是旗标**，是局部派生布尔（§一之四十三 13）。`st.flashMessage` 的入队去重（连发同 key 是否覆盖）**仍未采到**。
@@ -2351,7 +2357,7 @@ HJe = (t, e) => { let n = {};
 12. ★ **提醒标题按块类型本地化**（`Lzt`@3127088）＝ File→`model.fileName` 或 key `file.in{0}`；Image→`image.in`；Drawing→`drawing.in`；Video→`video.in`；Table→`table.in`；whiteboard→`whiteboard.in`；其余→块文本（截断规则未读全）。⇒ ★ key 家族 `*.in` ＝"某块里的提醒"。
 13. ★ **`clear-monthly-days`（「取消选择全部」）不是旗标**：出现条件＝局部派生布尔 `已选日号.length>1 || dynamicDays.length>0`（@5430914 年档、@5435110 月档同型），清空动作**一次写两个字段** `{days:[], dynamicDays:[]}` ⇒ 结掉 §一之四十二／V55 的 `F` 旗标挂账（原判"受旗标控制"是**误读局部变量名**）。
 
-### 仍未采到（模型面·第 73 批刷新）
+### 仍未采到（模型面·第 73 批刷新） 〔历史快照·现行口径见文首〕
 
 - ~~`Lzt` 里"其余→块文本"的截断/省略号规则~~ ⇒ ★ **第 74 批结案**：`Lzt` 全体已读（@3126690），**没有截断/省略号逻辑**，真正的形状是**按块型选 6 个 `*.in` i18n 模板**（§一之四十四 6）。`custom` 类型提醒的创建入口（`Tzt`）与 web 可达性**仍未采到**。
 - ~~`QB`／`X7e`／`Dzt`／`_zt` 四个提醒写入器的实现体（**提醒是否进撤销栈**）~~ ⇒ ★ **第 74 批结案**：`QB` 是 `await X7e(...)` 的转发，`X7e`→`Szt`→`q2.setBlockReminder({blockId,documentId,spaceId,title,dueDate,isCompleted,completionDate,deeplinkUrl})`，★ **零 `docDispatch` ⇒ 不进撤销栈**，另有配额门 `Y7e`（数值未知）；`EW`（埋点）与 `Tzt`（custom 写入）仍未读（§一之四十四 1–4、V57 §3）。
@@ -2377,7 +2383,7 @@ HJe = (t, e) => { let n = {};
 13. ★ **编辑埋点绑 `shouldSync`**：`shouldSync && actions.length>0` ⇒ `logGrowthAnalyticsEvent("editDocument", {spaceId, documentId, stringValue1: documentId})`（@6441016）⇒ 与"是否可撤销"**无关**。
 14. ★ **长尾两条**：① 文档已被删 → toast `alert.document.removed`（时长 **2500 ms**）＋ `redirectTo(routeBackToHome)`；② 块三点菜单首项＝`{id:"craftAssistant", analyticsId:"assistant", label:"assistant.assistant", tags:["assistant","summarize","translate","continue","writing","ai"], hidden:!1}`（@3878980）⇒ **菜单项自带搜索标签**，且 `Obe`（该菜单项工厂）的入参含 `blockHasReminder / isTaskBlock / hasTaskSchedule / hasTaskDeadline / setBlockTaskScheduleDate` ⇒ **三点菜单直接感任务三时间**（G 项新线索）。
 
-### 仍未采到（模型面·第 74 批刷新）
+### 仍未采到（模型面·第 74 批刷新） 〔历史快照·现行口径见文首〕
 
 - ★ **提醒配额的具体数值与计数口径**（`Y7e`／`Bx` 未读）；`Tzt`（custom 提醒）的入参形状 ⇒ `type:"custom"` 的完整字段集仍未拿到。
 - `forcedViewOnlyMode` 的定义与置位方；`UO.*` 错误码全集；`insertNewBlocksToTable…` 的完整动作名单。
@@ -2402,7 +2408,7 @@ HJe = (t, e) => { let n = {};
 13. ★ 错误串（新的可采语言包面）：`Could not find this document in the current MCP scope.` ＋ `Hint: run documents list --metadata to see accessible documents and their rootBlockIds.` ⇒ ★ **MCP 有自己的 scope 概念**（不等同整个 space），批处理失败即停（`Stopped after failure; earlier commands were already applied.` ⇒ **分号批处理不是事务**，两条 update 各自成步，实测 `completedAt` 相差 282 ms）。
 14. ★ `reminders list [--status incomplete|completed|upcoming|all]` 存在且 `all` ⇒ 本空间 `No reminders found`，而两个重复任务带 `repeat.reminder` ⇒ **重复内提醒不在提醒列表里**（待定案，见 §三点八六 仍未采到）。
 
-### 仍未采到（模型面·第 75 批刷新）
+### 仍未采到（模型面·第 75 批刷新） 〔历史快照·现行口径见文首〕
 
 - `repeat` 的其余频率子对象形状：`daily`/`monthly`（`days`、`dynamicDays`）/`yearly`（`months`）的**写侧 JSON**、`interval` 字段名与缺省、`monthly` 的 `dynamicDays.type` 取值集 ⇒ ★ 下一批用同一通道可**直接结案**（`tasks add --repeat monthly:1,15` 与 `--repeat yearly` 读回即可）。
 - `block_logbook_` 的粒度：同一母块多次完成是否累积多条？canceled 是否也可能进 logbook（文案说会、实测说不会）？logbook 子页能否被 `blocks delete` 单独删？
@@ -2431,7 +2437,7 @@ HJe = (t, e) => { let n = {};
 10. ★ **块类型能力不对称**（`blocks learn`）：插入 JSON 支持 9 类（`text page code richUrl line table image video file`），更新 JSON 支持 12 类（另加 `drawing whiteboard collection`，★ 并注明 collection 不在 NewBlock 联合里）。共享可选字段 5 个：`indentationLevel (0–5)`、`listStyle`、`decorations`、`color (#RRGGBB)`、`taskInfo`；`listStyle` 五值 `none|bullet|numbered|toggle|task`；`lineStyle` 五值 `strong|regular|light|extraLight|pageBreak`（默认 `regular`）。☆ `pageBreak` 使"分隔线"这一族里含**分页语义**，与 §一之四十五 的 `textStyle:"page"` 同属"块字段承载文档结构"一路。
 11. ★ **`--location` 在任务与文档两侧不同名**：任务写侧 `inbox|dailyNote|document`（默认 `inbox`），文档列表 `unsorted|trash|templates|daily_notes|folder`（★ 蛇形 `daily_notes` vs 驼峰 `dailyNote`）⇒ 官方**同一概念两套拼写**的第三例（另两例：日名 `mon` vs `monday`、`day://` 点分 vs parser 吃 `-`）。
 
-### 仍未采到（模型面·第 76 批刷新）
+### 仍未采到（模型面·第 76 批刷新） 〔历史快照·现行口径见文首〕
 
 - ★ 样式旗标的**落库形状**：`"#light #dark"` 写入后是一个字符串还是拆成两字段；`--theme-color` 与 `--bg-color` 同时给时谁覆盖谁；`--backdrop-type pattern` 的 `pattern` 取值集（`--washi-pattern` 只给了示例）。⇒ 需写入授权。
 - ★ 提醒实体的字段全集与物化：`reminders list` 的行字段（id/时刻/完成位/所属块）、「Save for later」在读侧长什么样、`--no-reminder-time` 后 `--completed` 位是否保留。
@@ -2449,7 +2455,7 @@ HJe = (t, e) => { let n = {};
 5. ★★ **字体族四规范名 ＋ 四别名，映射不规律**：规范名 `system`（默认，系统无衬线）／`system-serif`／`system-rounded`／`system-mono`（代码用等宽）；别名 `sans-serif→system`、`serif→system-serif`、`rounded→system-rounded`、`mono→system-mono`。⇒ ★ 陷阱在 **`sans-serif` 不指向 `system-serif` 而指向 `system`**（别名表不是"去掉前缀"的规律映射）；☆ 且 `explore-themes --type fonts` 的**标题行**写成「Page font families (system, serif, rounded, mono)」＝**把别名集当清单展示**，正文才给规范名 ⇒ 与 §一之四十六 第 1 条（`--siblingId` vs `--targetSiblingId`）、第 11 条（`dailyNote` vs `daily_notes`）同族：**词表的层级在文案里不自洽**。
 6. ★ **官方样式资源的三层分布**（本批第一次看全）：枚举值（`lineStyle`/`listStyle`/`backdrop-type`/`separator`/字体）在契约与代码里；**主题清单在 S3**（page 与 code 两套）；**位图素材走 `blocks search-unsplash`**（外部图库）⇒ 复刻时这三层必须分开处理：前层可硬编码，后两层是**数据源**。
 
-### 仍未采到（模型面·第 76 批·下半刷新）
+### 仍未采到（模型面·第 76 批·下半刷新） 〔历史快照·现行口径见文首〕
 
 - ★ 主题名的落库形状：`--theme-id fire-horse` 写入后读回是 `styling:{themeId}` 还是展开成 backdrop／颜色字段（并顺带结掉 G673 的 `"#light #dark"` 双值问题）⇒ 需写入授权。
 - ★ S3 清单的版本漂移与**分层归属**：约 150 项是否受订阅档位限制（`--theme-id` 给不付费的主题名时报什么）、是否随节日上下架。
@@ -2469,7 +2475,7 @@ HJe = (t, e) => { let n = {};
 7. ★ **`tasks add` 的必旗标是 `--markdown`**（不是 `--title`）；☆ 失败时**回吐完整 flag 表**＝"错误即文档"的设计模式；★ 顺带拿到 `--repeat` 缩写全语法表：`daily`／`weekly`／`weekly:mon,wed,fri`／`monthly`／`monthly:1,15`／`yearly`／`flexible:weekly:mon,fri`（三段式）＋ 全 JSON `{"type":"fixed","frequency":"weekly","weekly":{"days":["monday"]}}`；☆ 另两条成文：`--state done`（不是 `--done true`）、「done/canceled tasks auto-move to logbook」。
 8. ☆ **`blocks add --json` 含坏块的观察**：MCP 返回 `-32603 MCP tool invocation did not complete`，读回 `content:[]` ⇒ 整批未落；★ **但不足以断言原子性**（超时与整批拒绝两种读法都成立）⇒ 待"两条好块"对照实验。
 
-### 仍未采到（模型面·第 77 批刷新）
+### 仍未采到（模型面·第 77 批刷新） 〔历史快照·现行口径见文首〕
 
 - ★ `styling` 的其余字段：`--theme-color` 落成什么键、`--cover-*` 三样、`--backdrop-type gradient` 的 `colors/direction` 串形态、`separatorStyle` 的其余函数名（`line(...)`/`doodle(...)`？）。
 - ★ `interval` 能否经全 JSON 写入；`monthly.dynamicDays` 能否经 JSON 写入（缩写不产生）。
@@ -2525,7 +2531,7 @@ HJe = (t, e) => { let n = {};
 
 6. **任务与提醒的时间字段彼此独立**：块侧只有 `taskInfo:{state, completedAt}`＋`listStyle:"task"`（提醒**不在**块对象里）；提醒是独立实体，有**自己的 id**（本批 `25748609` ≠ 块 id `d891bbe6`），`reminders create` 支持 `--at`（必须 `Z` 或显式偏移）或省略 `--at`＝「稍后保存、不通知」，批量形状 `--reminders '[{"blockId","remindAt"}]'`；`tasks update --state done` **不推进**提醒完成态（`reminders list --status all` 仍 `Incomplete; scheduled for …`）。`documents delete` 后提醒与任务都留在各自索引里，需 `reminders delete --reminder <id>` 单独清理。
 
-### 仍未采到（模型面·第 79 批·下半 B79B 刷新）
+### 仍未采到（模型面·第 79 批·下半 B79B 刷新） 〔历史快照·现行口径见文首〕
 
 - `separatorStyle` 第三个参数的语义（签名／版本／素材哈希）未定，只有 `fire-horse` 一个样本。
 - `backdrop` 的 `direction`、`size` 有无其他取值、`--backdrop-type` 全集（除 `gradient` 外是否有 `image`、`pattern`）未读到；`--backdrop-type pattern` 是否配 `--washi-pattern` 之外另有 pattern 旗标**未确认**。
@@ -3130,7 +3136,7 @@ HJe = (t, e) => { let n = {};
 
 - 38 枚 `fs-*` 里 `fs-mermaid-diagrams`／`fs-excalidraw`／`fs-show-tldraw`／`fs-import-docx`／`fs-export-docx` 都是**灰度中的功能**。⇒ ★★★ 上批"mermaid 档没有 grammar 所以永不高亮"那条现在多一层解释＝**mermaid 块本身就是灰度特性**（不是漏配）。⇒ ☆ 采集纪律级结论＝**"官方没有 X"与"官方有 X 但本账户没被灰度到"是两件事**，判据源就是那两个 `<meta>`。
 
-### 仍未采到（本节）
+### 仍未采到（本节） 〔历史快照·现行口径见文首〕
 
 ① `blockLinkStyle` 两档非默认值的设置方；② `linkType` 全集（本批只看到 `rootBlock`／`block` 两枚字面量）；③ `artificialNewLines` 与 `fixListOrders`／`fixIndentationLevel`／`printFullCss`／`base64Assets` 五枚字段**在 web 构建里由谁置真**（flavour 默认全是 falsy ⇒ 要么有第二份配置源，要么这些是桌面端专用形状）；④ `MarkdownExportApi` 那条通路的触发动作（决定它是"集合导出"还是"单表复制"）。
 

@@ -1,5 +1,7 @@
 # AI 助手 / 接入中心 / 内部深链（`assistant.*` + `imagine.*` + `craft://`）
 
+> ★ **未采面口径（第 398 批统一）**：本文件里「仍未采到」小节都是**批次快照**、不是现状；现状只看 `interaction-lab/WAVE1-REPORT.md` 的收口审计与 `keyboard.md` 表 A–E 的覆盖率普查，别照抄旧清单。
+
 证据来源：`_harvest/js/AIChatPopup-ClUQFRna.js`（动作注册表 + 上下文分组表 + 深链解析）、`useCustomPrompts-D9zcYS-6.js`（4.3 KB 整模块）、`ImagineView-C1NQrx2U.js`、`index-DiTmKH3z.js`（`settings_state` 存取 + i18n 主表）。
 机读产物：`_harvest/ai-quick-actions-zh.tsv`（62 行）、`_harvest/ai-context-groups.raw.txt`、`_harvest/{assistant,imagine,ideastarter}-zh.txt`。
 
@@ -207,7 +209,7 @@ chip 词表全量：`当前文档` / `当前页面`（跨命名空间键 `curren
 
 **旁证与坑**：`js/index` 里 `ideastarter.*` 只有 5 处命中且**全部落在内联英文语言包对象内**，没有独立 chunk ⇒ 组件在主包或共享 AI chunk 里；且该内联英文串有**解码损坏**（省略号变 `鈥`、`we'll` 变 `we鈥檒l`）⇒ 再次验证"**关键文案一律以本地化 JSON 为准，bundle 英文只用于补键名**"。
 
-## 仍未采到（接入与启动器轴） 〔**第 390 批已补三条入口否证**：见本节末〕
+## 仍未采到（接入与启动器轴） 〔历史快照·现行口径见文首；**第 390 批已补三条入口否证**：见本节末〕
 
 - `ideastarter` 的**真实入口位置**（新文档按钮旁？空文档正文里？⌘K？）与是否需要 AI 额度（`assistant` 侧有 credit 门禁，本轴 44 键里没有任何额度或付费文案 ⇒ 疑为免费，未证）。
 - 生成结果的**块结构**（是否真的产出 heading/todo 块，还是纯文本段落）。

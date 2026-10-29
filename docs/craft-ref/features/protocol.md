@@ -1,5 +1,11 @@
 # Craft.do 数据契约与同步状态机（从客户端 schema 源码解码）
 
+> ★ **未采面口径（第 398 批统一）**：本文件里所有形如「仍未采到（第 N 批…）」的小节都是**当时的批次快照**，
+> 不是现状。写它们的时候还没有 interaction-lab 的矩阵，很多条目后来已被 spec 采掉或已被证明不可达。
+> **现状只看两处**：① `interaction-lab/WAVE1-REPORT.md` 的「收口审计」与各批验收表；
+> ② `keyboard.md` 表 A–E 的覆盖率普查（93 行里 88 行有 spec 证据，余 5 行在报告里逐条说明了为什么不可达）。
+> 要判断"这一项还需不需要采"，请回 `WAVE1-REPORT.md` 查，不要照抄本文的旧清单。
+
 来源：`_harvest/js/socket.worker-CMvBLZvP.js`（同步 worker，含未压缩的枚举名）与 `index-DiTmKH3z.js`。提取法：正则匹配 TS `enum` 编译产物 `(e=>(e.X="…",e))(…)` 与 `KNOWN_KEYS` 常量对象。
 
 **边界说明**：这里全部是**客户端源码里的常量与校验函数**，不是抓包结果（CDP `Network` body 在本通路恒被封）。因此"线上协议"一列是推断，标 `~`；枚举值本身是字面证据，标 `✓`（源码原文）。
@@ -206,7 +212,7 @@ false/true 字面串 → CHECKBOX       URL 形态 → URL
 
 **视图配置写库函数**（同文件紧邻处）证实 `protocol.md` §二 的 20 键，并补两条实现规则：`tableConfig`/`galleryConfig`/`kanbanConfig` **为空对象时整键不写**（`PR()` 剪枝），`visibleGalleryFields` 与 `galleryShowsAllFields` 联动决定 `hiddenFields` 是否导出。
 
-## 仍未采到
+## 仍未采到 〔历史快照·现行口径见文首〕
 
 - 每个枚举的**序列化位置**（放在哪个 Yjs shared map / 请求字段里）—— worker 里只读到常量与校验器，未做完整数据流追踪。
 - `filters` / `sortBy` / `groupBy` 三个**内层对象**的字段名：`filters` 已结案（§九：`{propId, type, value}`，`type` 是 19 个线值之一）；`sortBy` 项已结案（`{propId?, direction: "asc"|"desc"}`，见 `DKe`/排序实现）；`groupBy` 项已知 `{propId}`（`EKe` 只用到 propId），**二级分组（`collections.add.subgroup`）如何在 `groupBy` 里表达仍未证**。

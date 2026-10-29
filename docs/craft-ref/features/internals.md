@@ -1,5 +1,11 @@
 # 实现级补充（本批由 bundle 直解，把"必须动态"的几项当场结案）
 
+> ★ **未采面口径（第 398 批统一）**：本文件里所有形如「仍未采到（第 N 批…）」的小节都是**当时的批次快照**，
+> 不是现状。写它们的时候还没有 interaction-lab 的矩阵，很多条目后来已被 spec 采掉或已被证明不可达。
+> **现状只看两处**：① `interaction-lab/WAVE1-REPORT.md` 的「收口审计」与各批验收表；
+> ② `keyboard.md` 表 A–E 的覆盖率普查（93 行里 88 行有 spec 证据，余 5 行在报告里逐条说明了为什么不可达）。
+> 要判断"这一项还需不需要采"，请回 `WAVE1-REPORT.md` 查，不要照抄本文的旧清单。
+
 方法沿用 `keyboard.md` 那批的教训：**先问能否在本地 bundle 上算**。本批扫了 `index-DiTmKH3z.js` / `AIChatPopup` / `FloatingThreadWindow` / `ShareSheet`，结案 4 项、收窄 2 项、新发现 2 轴。
 
 ## 一、块转换不是"改块类型"，是 `setTextStyle` ✓（结案动态队列第一项）
@@ -274,7 +280,7 @@ basePluginData / baseObjectData / baseTaskData = e.oldPluginData|oldObjectData|o
 
 `preferences.offline.mode.*`（`settings.md` §一）负责**开关与放弃确认**；本节负责**上线后怎么并**。⇒ 离线写队列的产物就是 `localSyncIndex` 领先 `lastSyncPatchIndex` 的那段本地改动 ⇒ **冲突不是异常，而是离线编辑的必然路径**（日志级别是 `warn` 不是 `error`）。
 
-## 仍未采到（同步层）
+## 仍未采到（同步层） 〔历史快照·现行口径见文首〕
 
 - 调试面板的**进入方式**（两个 Tab 在 `Settings` 里按什么条件出现：开发者开关？长按版本戳？），未证。
 - `Sub Tier` 的具体档位含义与优先级规则。
@@ -327,7 +333,7 @@ submitResult(c)→ callback({type:"submitted", config: c})
 `description` 缺省 = **i18n 键 `subscription.subscription.fallback.desc`**（★ **命名空间重复两遍** = 又一条"官方 key 命名不规则"实例，与 `alert.could.not add.reaction` 的键名带空格同族）；按钮文案 = **顶层裸键 `upgrade`**（不带命名空间）；按钮规格 = `type: FilledStrong, fluid: true`（★ 付费墙主按钮是**满宽的强填充档**，与其它模态的按钮不同档）。
 ⇒ 另：`LazyMsalProvider.constants` 全文只有一句 `export const msalInstance = new PublicClientApplication(config)` ⇒ **企业 SSO 的 MSAL 实例是模块级单例 + 单独懒加载 chunk**（与 `vendor-azure-msal` 配套），⇒ SSO 的启用成本很低（不加载就不初始化）。
 
-## 仍未采到（机制面·第 41 批续）
+## 仍未采到（机制面·第 41 批续） 〔历史快照·现行口径见文首〕
 
 - `ClipboardBoundary` 里 `stop` 的具体实现（`preventDefault` 还是 `stopPropagation`？两者语义差别很大，未读到函数体）。
 - `RenderOptionsPanel` 的 `configType` **取值集合**（面板到底承载哪几种配置）。
@@ -434,7 +440,7 @@ function S3() {
 
 ⇒ ★ **白板预览的导出分辨率 = 容器 CSS 尺寸 × devicePixelRatio**（`v = min(w*DPR/块宽, h*DPR/块高)` 再 contain），且 **DPR 变化（浏览器缩放 / 换屏）会通过 matchMedia 触发重订阅**。⇒ §25.5 里未解的 `E` 就此结案。
 
-## 仍未采到（机制面·第 43 批）
+## 仍未采到（机制面·第 43 批） 〔历史快照·现行口径见文首〕
 
 - `pEe` 表里 `Arrow*` / `Enter` / `Backspace` / `Home` / `End` 的**真实字形字符**（bundle 文本已 mojibake）。
 - ~~`na(t)` 的实现~~ **已结案（§十四 4）**：`na(t) = typeof t === "string" ? q7(t) : t`，字符串自动降为 `key` 档；另有 `code` / `letter` 两档与 letter 的抛错守卫。
@@ -553,7 +559,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 - ★ **表格档 `overscan: 25`**（同一 chunk 里另有 `overscan:10`、`overscan:5` 两个别处的虚拟化实例 ⇒ **25 是表格专用值，不是全站常数**）。
 - 固定高虚拟化（`estimateSize: () => rowHeight`）+ **自定义 `observeElementOffset`** + 卸载时 `clearTimeout`/`cancelAnimationFrame` 双清理。
 
-## 仍未采到（机制面·第 44 批）
+## 仍未采到（机制面·第 44 批） 〔历史快照·现行口径见文首〕
 
 - `XI` 里 `switch (keyCondition.type)` 的 **`code` / `letter` 两个 case 的具体比较字段**（只读到 `case "key"` 开头）。
 - `Ll` 的判定方式（`navigator.platform` / `userAgentData` / macOS 专测），以及**非 Mac 但没有 `winMatcher` 时静默用 Mac 定义**是否会有 ⌘ 键在 Win 上永不命中的后果。
@@ -575,7 +581,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 9. ★ **删块的级联面**（`M0e`@580871）：`$unset blocks[ids]` ＋ 连带 `$unset blockLinkReferences[ids]` ＋ 收集 `blockLinkData[f]`（条件 `p.sourceBlockId === d && O0e(...)`）；patches 顺序 `blocks → blockLinkReferences → blockLinkData`，inversePatches **反序 add** ⇒ ★ "删一个块"在 store 层天然可能是**几十个 op 的一步撤销**（撤销粒度与 op 数解耦，由 id 决定）。
 10. ★ **store 写入的幂等/stamp 语义**（`Po`@581000）：过滤条件 `localChange ? _ !== t.blocks[_.id] : _.stamp == null || _.stamp !== t.blocks[_.id].stamp`；本地变更时逐块打 `stamp = Bn()`、`documentId`、`updatedMs = Date.now()`、`modifiedByUserId`、`preventUpdateDocumentLastModified`，新块额外 `createdByUserId`/`createdMs`；`r.length === 0` 直接返回空 patches ⇒ ★ **"内容未变 ⇒ 零 patch"** 是官方防抖/去重的落点。
 
-### 仍未采到（机制面·第 70 批刷新）
+### 仍未采到（机制面·第 70 批刷新） 〔历史快照·现行口径见文首〕
 
 - ~~`Le` 喂给 `m8n` 的哪个入参~~ ⇒ **已结案**：`m8n({count: u.length, scrollContainerRef: s, enabled: Le, initialScrollOffset: N, rowHeight: Pe})`（@4858031），`Le = !Se && (Ie || Ee)` ⇒ **`Le` 就是 `enabled`**，且 `Ie`/`Ae` 是**单向棘轮**（见 V53 §7.3）。
 - ~~越过 600 之后用户可感知差异~~ ⇒ **部分结案**：可感知面＝行节点被裁切（`overscan:25`、`ROW_HEIGHT:35` 固定行高）；★ 仍未知的是**功能面**（拖拽/多选/编辑是否在降级后被关闭）。
@@ -594,7 +600,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 7. ★ **提交门控是配置层的合法性**（@5448520，四档真值表见 §一之四十二 3）：与第 3 条的"派生层三道门"是**两层不同的守卫**——面板灰按钮只管"能不能把这份配置写进 `repeat`"，管不了"派生出的提醒是否已过期"。⇒ 复刻时不要只补一层。
 8. ★ **同一份"提醒"在 UI 上有两条独立实现**：`TasksReminderPicker`（块级，绝对 `dueDate` ＋ `details={type:"block",blockId,documentId}`，取消时跳回排期档）与 `TasksRepeatConfigCustomPicker` 内的提醒栅格（重复内，`dateOffset`），各自具名注册。⇒ **两套形状之间除 `Lm` 现算外未见回写通道**（`~`，见 §一之四十二 9）。
 
-### 仍未采到（机制面·第 72 批刷新）
+### 仍未采到（机制面·第 72 批刷新） 〔历史快照·现行口径见文首〕
 
 - ~~`Lm` / `Pr` / `Gl` / `getNewBlockReminder` 函数体~~ ⇒ ★ **第 73 批四取四得**（见 §十七 1/2/3 与 V56 §2/§6）。
 - ~~派生刷新的**触发点清单**：`lj` 由谁调~~ ⇒ ★ **第 73 批已结案**：**4 个调用点**（@3586233 单任务 / @5467531 面板确认 / @5476567 批量 / @6405416 多选批量，见 §十七 8）；★ 仍未知的是 `sp()` 的作用与 `$W` 自己的调用点。
@@ -612,7 +618,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 7. ★ **快选档把"工作时间"编码进常量**：`tomorrow`/`next_week` 都是 **9 点整**（`y0(…,9)`），只有 `20min`/`1hr`/`3hr` 从"现在"起算；`later` 档返回 **`null`** ⇒ ★ 菜单项允许"空值档"（与 V54"「无提醒」行仅在已有提醒时渲染"同族）。⇒ 复刻时这些应当是**一张表**，而不是散在各处的 `if`。
 8. ~ **批量改重复配置时的撤销步归属**：@5476567 是「先 `group{actions:W}` 一次派发，再逐条 `sp(...)` ＋ 逐条 `lj(...)`」⇒ 提醒写入是否共享同一个 `undoRedoPatchId`（§十五 1 的"一步＝一个 id"）取决于 `QB`/`sp` 的实现，本批未读。**A 项新增子问：批量改重复后一次 Ctrl+Z 会不会把 N 条提醒一起带回。**
 
-### 仍未采到（机制面·第 73 批刷新）
+### 仍未采到（机制面·第 73 批刷新） 〔历史快照·现行口径见文首〕
 
 - ~~`QB`／`X7e`／`Dzt`／`_zt`／`EW`／`sp` 六个函数的体 ⇒ 提醒的撤销/协同粒度~~ ⇒ ★ **第 74 批结案（前四个）**：通路是"配额门 → 乐观缓存 → `setBlockReminder`"、★ **全程零 `docDispatch` ⇒ 提醒不在文档撤销栈**（§十八 6）。`EW`（埋点）与 `sp` 仍未读。
 - `custom` 类型提醒的产生方与 web 可达性；`$W` 的调用点清单（它与 `lj` 的先后关系）。
@@ -635,7 +641,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 7. ★★ **缩进几何函数族@600898（导出表首次读全）**：`o$`@604974（`parentId` → 同层表 → `K0e`）、`K0e`@605060（★ 子树＝"紧随其后、`indentLevel` 严格更大的连续段"，本块 `indentLevel` 为 null ⇒ 空）、`nD`@604447（方向扫描，**跳过 null 档**）、`G0e`@604154（`extendWithIndentChildren`＝选区 `flatMap(o$)` 并集后 `gT` 重排 ⇒ **删除/移动/转换靠它级联子树**）、`Aw`（缩进父链递归，`null`/`0` 即止）、`rze`（选区最小档 `Math.min`）、`cze`/`aze`（按下标变体）。⇒ ★ 官方**并存 `parentId` 与 `styleProps.indentLevel` 两套层级信息，"子树"只认后者**。
 8. ★ **两条与屏上判据直接挂钩的新常量**：表格 `As`@630585 的 `50 / 15 / 750`（＋指示条几何）与超限反馈 `m2e`@698700 的 **4e3 ms**；日记 URI `e1e`@106530 的点分格式与 `TU`@106714 的双分隔符解析（★ 写读不对称）。
 
-### 仍未采到（机制面·第 74 批刷新）
+### 仍未采到（机制面·第 74 批刷新） 〔历史快照·现行口径见文首〕
 
 - `arn`（批量完成的 action 生成器）、`y9e`（重复任务下一实例）、`hnn`（延迟毫秒）、`completeInboxTasks`（收件箱旁路落点）⇒ ★ **"批量勾选到底写了哪些 action"仍未逐字**。
 - `Szt` 后半（`setBlockReminder` 返回后的缓存落定与回滚 `OA`）、`Tzt`、`MA` 全体、`Y7e`/`Bx`（**配额数值未知**）、`kzt`/`vzt`（删除两分支）。
@@ -653,7 +659,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 6. ★ **深度截断的第三个序列化开关**：`blocks get` 在 `--depth 2` 下用 `contentPreviewMd`（字符串预览）替代子树，`--depth 3` 才展开 `content` ⇒ 读形状前先确认 depth，否则会把预览字段当成实体字段。
 7. ★ **MCP 有自己的 scope**：错误串 `Could not find this document in the current MCP scope.`（本批对已删除文档的旧 id 实测拿到）⇒ "MCP 可见集合" ≠ 整个 space；采残留时若某 id 报此错，先分清是**已删**还是**不在 scope**。
 
-### 仍未采到（机制面·第 75 批刷新）
+### 仍未采到（机制面·第 75 批刷新） 〔历史快照·现行口径见文首〕
 
 - `craft_write` 的 `repeat`/`reminders`/`comments`/`whiteboards`/`images` 各子命令 flag 全表（本轮只读了 `tasks add --help` 与 `documents --help`）⇒ 下一批可 `--help` 逐条穷尽，**零风险零写入**。
 - 桌面端 MCP 是否与 web 端共用同一 action 层（`_9.applyAction`）⇒ 若是，MCP 写入也应进撤销栈；实测「两条 update 各成一步」只给了时间证据，没给撤销栈证据。
@@ -673,7 +679,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 9. ★★ **发现型动词住在 `craft_write` 命名空间但语义是浏览**（本批先读 `--help` 确认「Browse available …」再调用，返回纯清单、零副作用）：`blocks explore-themes`、`blocks explore-washi`、`blocks search-unsplash`、`folders explore-icons`。⇒ ★ 判"某命令能不能安全跑"要看**语义与 help 自述**，不能看它在读侧还是写侧工具表里；这条把"零写入批次"的可用面又扩了一层。
 10. ★★★ **官方样式资源分三层，其中两层不在代码里** —— 枚举值（`lineStyle`/`listStyle`/`backdrop-type`/`--separator`/字体四档）在契约与代码；**页面主题（约 150 项）与代码主题（19 档）清单「loaded dynamically from S3」**；位图素材走 `blocks search-unsplash` 外部图库。⇒ ★★ **方法学结论：此前 66 批静态 bundle 采集"主题名单采不到"是结构性必然，不是欠账** —— 名单从来不在 bundle 里。⇒ 复刻时三层要分开处理：枚举层可硬编码，后两层必须当**数据源**（含版本漂移与节日上下架）。☆ 另两处命名制差：页面主题用连字符（`fire-horse`）而代码主题全小写无分隔（`githubdark`）；★ 且主题 **id 与显示名可以不同**（`fruitymalistic`→Fruity、`new-years-resolutions`→Fresh Start、`gjjb-craft`→Thinker by GJJB）⇒ 官方另有一层"id/label"双轨，与 §一之四十六 第 1 条的词表不自洽同族。
 
-### 仍未采到（机制面·第 76 批·下半刷新）
+### 仍未采到（机制面·第 76 批·下半刷新） 〔历史快照·现行口径见文首〕
 
 - ★ S3 清单的**取回通路**：是固定 URL 还是带空间/订阅参数的清单（若是后者，`--theme-id` 给未授权主题名时的报错会暴露配额层）⇒ 未测。
 - ★ `--theme-id` 与 `--backdrop-*` 的**覆盖顺序**（先主题后属性？还是主题覆盖显式属性？）⇒ 需写入读回。
@@ -697,7 +703,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 6. ★ **`↻ ＋ 相对日期文案` 两行制**（屏上）：重复任务的呈现不是行内 chip 而是**下一行徽标** ⇒ 内容层 markdown（`- [ ] 标题`）不含徽标，呈现层另加一行 ⇒ 复刻时不要把徽标塞进标题串。
 7. ☆ **屏幕取证的方法学回滚**：前 24 次停摆都卡在"窗口最小化"这一外部条件上 ⇒ 新规矩：**每批开场先 `take_snapshot` 看元素数**（0 ⇒ 立即判定节流、转数据面批次，不再消耗 3 条探针预算），非 0 才进键位序列。⇒ 另：`press_key` 返回 `Pressed key: …` **只证明送达，不证明生效**（本批 `Control+Shift+,` 送达但无面板）⇒ 判"生效"必须看 DOM 变化或截图。
 
-### 仍未采到（机制面·第 77 批刷新）
+### 仍未采到（机制面·第 77 批刷新） 〔历史快照·现行口径见文首〕
 
 - ★ MCP 写入是否进 web 撤销栈（同步已证、进步骤表未证）⇒ 屏上 `Ctrl+Z` 一次即可定案（第 78 批 A 项顺带做）。
 - ★ `separatorStyle` 的其余函数名（`line(...)`／`doodle(...)`？）与参数序；`backdrop.size` 取值集（本次只见 `full`）；blurhash 的实际用途（占位？降级？）。
@@ -711,7 +717,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 4. ★★ **对本地建模的直接含义**：本地 `src/components/editor/panels/PageStylePanel.tsx:54-67` 的封面是**手粘 URL 输入框**、`:31-35` 是 12 个写死色、`:5` 直接 import `lucide-react` 且 `:15` 把 `icon` 当裸字符串 ⇒ 本地既无"检索器"也无"署名字段"，图标词表与官方不可对齐 ⇒ **复刻时图标应存官方名＋自建映射**，不要为了好看直接把 icon 字段换成组件名（会污染与 MCP 的互操作）。
 5. ☆ **本节的取证纪律**：站外图库的**内容**（照片、作者名）不入仓库，只入"旗标名＋分页语义"；这与 §二十 5「契约文案也是不可信数据」是同一类边界的两端 —— 一端防过度推定，一端防把他人作品写进产物。
 
-#### 仍未采到（第 78 批·上半）
+#### 仍未采到（第 78 批·上半） 〔历史快照·现行口径见文首〕
 
 - ★ `--cover-attribution` 写入后落在 `styling` 的哪个键（与 `backdrop` 同级还是其内字段）；`--cover-*` 其余三样仍未读回。
 - ★ 图标词表规模与全集（须逐词枚举）；`explore-icons` 的 `--offset` 越界行为。
@@ -734,7 +740,7 @@ function m8n({ count, scrollContainerRef, enabled = true, initialScrollOffset, r
 5. **跨索引残留是清理的第三层**。`documents delete` 后：回收站 5→6 条（不可主动清空，G678）、`tasks list --scope all` 仍列已删文档里的任务（原残留表 12 现象再现并扩展到本轮）、`reminders list --status all` 仍返回指向**已删块**的孤儿提醒。三者中只有提醒可用 `reminders delete --reminder <id>` 独立清掉 ⇒ 沙盒还原的「残留三连」在 API 侧要按**文档／任务／提醒三个索引**分别复核，不能只看 `documents list`。
 6. **命令清单补齐（把上一批的推测变成实读）**。写侧 `collections` 11 条（含 `delete`＝重定向占位，明示改用 `blocks delete`）、写侧 `blocks` 8 条、读侧 `collections` 4 条。⇒ 「读侧只给 browse、写侧给 create 与 explore」的不对称现在有了完整清单，也解释了本批两次 `Unknown command`（读侧 `collections create`、写侧 `blocks get`）。分号批处理的两条既有规矩再次生效：**失败即停但前面的已生效**（本批 `schema-update` 成功后 `blocks get` 失败，样式仍落了库），**一次调用只走一个命名空间**。
 
-### 仍未采到（机制面·第 79 批·下半 B79B 刷新）
+### 仍未采到（机制面·第 79 批·下半 B79B 刷新） 〔历史快照·现行口径见文首〕
 
 - `collections items-add` 的批量原子性仍未单独验证（本批每次只加一行）；`--items` 传两行、其中一行含未知列键 ⇒ 是否部分生效，**未测**。
 - 整表替换在**有视图（views）存在时**的行为未测：删掉某列后，`views-list` 里引用该列的视图会怎样（本批没建视图）。
@@ -1663,7 +1669,7 @@ p=Q=>{const{docStore:Y,uiStore:X}=Q;return{inCodeEditing:X.codeEditorState!=null
 
 - 本地 `renderMarkdownTable` 的单元格处理＝竖线转义 → 换行摊平 → `trim`，**缺第一步"反斜杠翻倍"**。⇒ 后果＝单元格文本以反斜杠结尾时（`a\`），本地产出＝`a` ＋ 一个反斜杠 ＋ 半角竖线（★ 这里不能照原样写进产物，否则会被表格解析器吃掉，故用文字描述）⇒ 这一对会被下游解析成"转义过的竖线"⇒ **分隔符被吃掉、表格塌一列**；官方产出＝`a` ＋ 两个反斜杠 ＋ 半角竖线＝先字面反斜杠、再转义竖线。⇒ ☆ 建议＝TDD 先行（两个用例：以反斜杠结尾的单元格、含竖线的单元格），补一次 `.replace(/\\/g,"\\\\")` 放在最前面。⇒ ★ 这是本批**不依赖任何未采到的信息**就能修的一条，且官方证据是逐字函数体，等级＝3/3。
 
-### 仍未采到（本节）
+### 仍未采到（本节） 〔历史快照·现行口径见文首〕
 
 ① `ace`／`cce`／`oU` 三张白名单在运行期**是否还有别处追加**（本批只找到一处 `makeUrlControllable` 调用点）；② worker 那份 `Features` 到底有没有调 `initFromQueryString`（定义与预置都找到了，调用点没找到——**没找到不等于没调用**，可能是 `initFromCsvOrArray` 之外的形态）；③ `blockLinkStyle` 的 `pageLink`／`headerLink` 两档**由谁设置**（全仓只有一份 flavour 且默认 `blockLink` ⇒ 必有第二份配置源或运行期改写）；④ `MarkdownExportApi` 那条通路**由哪个用户动作触发**（chunk 只 8,670 字符，消费方未查）；⑤ `vn`（DOM 侧明暗管理器）完整生命周期、与 store 侧 `Xs` 谁驱动谁；⑥ ☆ 屏上三条＝单元格含竖线会不会真的串行／`?dark` 在主 app 是否真的对 flag 层无效／读一次 `luki:enable-fs` meta 的实际内容。
 

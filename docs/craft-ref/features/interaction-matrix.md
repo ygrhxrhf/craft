@@ -31,6 +31,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.find-replace` | differ | 22 | 11 | 3 | 本地 +10/−1 · 官方 +5/−2 |
+| `editor.key.group-and-blocklink` | differ | 47 | 17 | 2 | 本地 +8/−0 · 官方 +4/−2 |
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
@@ -82,6 +83,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.find-replace` | removed-only-local |  |  | 同步中 | 本地同步状态串（同步中）随同步完成而消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES <SAVING> |
 | `editor.key.find-replace` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.find-replace` | removed-only-official |  | 目录 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
+| `editor.key.group-and-blocklink` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
+| `editor.key.group-and-blocklink` | removed-only-official |  | 目录 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.list-family` | countΔ:AAA | 2 | 1 | 2 | 本地任务块勾选框的合成可及名含任务文本 ⇒ 同一个词被 count 两次；已由 G1563 单独承载 | gap.md G1563 |
 | `editor.key.list-family` | blocks | 4 | ["1. AAA"] | ["AAA"] | 官方把列表序号画进文本节点（1. AAA），本地由 CSS counter 画、不进 innerText；已由 G866／G1556 承载 | gap.md G866 · G1556；editor.md-rules.block-kind 同一声明 |
 | `editor.md-rules.block-kind` | countΔ:AAA | 3 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
@@ -320,6 +323,28 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 |  | added-only-official | 查找和替换 |  |  | 2 |
 | 2 | attr:replaceInput |  | 替换为…… |  | 2 |
 | 2 | state:replaceInput | 0 | 1 | 1 | 2 |
+
+### `editor.key.group-and-blocklink` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+|  | added-only-local |  | Esc |  | 2 |
+|  | added-only-local |  | 关闭 |  | 2 |
+|  | added-only-local |  | 搜索文档与块 |  | 2 |
+|  | added-only-local |  | 操作 |  | 2 |
+|  | added-only-local |  | 新建文档 |  | 2 |
+|  | added-only-local |  | 查看所有快捷键 |  | 2 |
+|  | added-only-official | 暂无结果 |  |  | 2 |
+|  | added-only-official | 查找 |  |  | 2 |
+| 5 | focusInEditor | false | true |  | 2 |
+| 6 | focusInEditor | false | true |  | 2 |
+| 7 | focusInEditor | false | true |  | 2 |
+| 11 | focusInEditor | false | true |  | 2 |
+| 8 | state:dialog | 0 | 1 | 1 | 2 |
+| 9 | state:dialog | 0 | 1 | 1 | 2 |
+| 10 | state:dialog | 0 | 1 | 1 | 2 |
+| 12 | state:dialog | 0 | 1 | 1 | 2 |
+| 13 | state:dialog | 0 | 1 | 1 | 2 |
 
 ### `editor.key.shift-enter-hard-break` — differ
 
@@ -621,6 +646,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.find-replace` | official | blocks equals ["ALPHA BETA ALPHA"] | PASS | ["ALPHA BETA ALPHA"] |
 | `editor.key.find-replace` | local | state:findInput gt 0 | PASS | 1 |
 | `editor.key.find-replace` | local | blocks equals ["ALPHA BETA ALPHA"] | PASS | ["ALPHA BETA ALPHA"] |
+| `editor.key.group-and-blocklink` | official | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
+| `editor.key.group-and-blocklink` | official | blocksCount count 2 | PASS | 2 |
+| `editor.key.group-and-blocklink` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
+| `editor.key.group-and-blocklink` | local | blocksCount count 2 | PASS | 2 |
 | `editor.key.list-family` | official | blocks equals ["AAA"] | PASS | ["AAA"] |
 | `editor.key.list-family` | official | blocksCount count 1 | PASS | 1 |
 | `editor.key.list-family` | local | blocks equals ["AAA"] | PASS | ["AAA"] |

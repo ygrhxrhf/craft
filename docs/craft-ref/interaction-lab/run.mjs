@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.key.home-end-arrows'], targets: 'both', tag: 'wave1-65' });
+await main({ only: ['shell.shortcuts-panel.key'], targets: 'both', tag: 'wave1-66' });

@@ -56,6 +56,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.assistant.open` | match | 9 | 0 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
 | `shell.quick-open.alt` | differ | 34 | 2 | 20 | 本地 +1/−1 · 官方 +15/−1 |
+| `shell.shortcuts-panel.key` | differ | 11 | 2 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.sidebar-toggle.repro` | match | 10 | 0 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.toggles.family` | differ | 26 | 10 | 2 | 本地 +5/−1 · 官方 +1/−0 |
@@ -217,6 +218,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.quick-open.alt` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 单独承载；本 spec 只判两条快速开启弦有没有承载面 | gap.md G1583 |
 | `shell.quick-open.alt` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 单独承载；本 spec 只判两条快速开启弦有没有承载面 | gap.md G1583 |
 | `shell.quick-open.alt` | focusInEditor | 5 | false | true | Escape 的焦点差异已由 G1583 单独承载；本 spec 只判两条快速开启弦有没有承载面 | gap.md G1583 |
+| `shell.shortcuts-panel.key` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 承载；本 spec 只判面板有没有开 | gap.md G1583 |
 | `shell.toggles.family` | added-only-official |  | SHELL |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.toggles.family` | removed-only-local |  |  | 📄 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
 
@@ -765,6 +767,13 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 | 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 
+### `shell.shortcuts-panel.key` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:快捷键 | 0 | 3 | 3 | 2 |
+| 2 | state:dialog | 0 | 1 | 1 | 2 |
+
 ### `shell.tasks.new-task-popup` — differ
 
 | step | facet | official | local | delta | severity |
@@ -1064,6 +1073,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
 | `shell.quick-open.alt` | official | text:QK gt 0 | PASS | 1 |
 | `shell.quick-open.alt` | local | text:QK gt 0 | PASS | 1 |
+| `shell.shortcuts-panel.key` | official | text:SHORT gt 0 | PASS | 1 |
+| `shell.shortcuts-panel.key` | local | text:SHORT gt 0 | PASS | 1 |
 | `shell.sidebar-toggle.repro` | official | text:任务 gt 0 | PASS | 1 |
 | `shell.sidebar-toggle.repro` | local | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | official | text:任务 gt 0 | PASS | 1 |

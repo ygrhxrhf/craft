@@ -313,7 +313,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 | `Ctrl+A` → `Delete` | 全选/删除 | 编辑器 | 全选让 DOM 净增 `+14,159 B`（但 `data-selected`/`aria-selected` 计数 0）；删除 1 次 `Ctrl+Z` 精确复原 | ✓ 生效（V50 A） |
 | `Ctrl+Z` | `UNDO` | 编辑器 | 连续 15 步 `176,535 … 155,047`，**块级一步退一整块、打字按字符入栈** | ✓ 生效（V50 A） |
 | `Ctrl-Shift-7` | `TOGGLE_LIST`（列表） | 编辑器**非空块** | `174,482→174,482`、diff `−0 +0` | ~ **本语境未生效**（≠ 官方没有该能力，见下"未试清单"） |
-| `Control+Shift+,` | `TOGGLE_KEY_SHORTCUTS` | **「所有文档」浏览屏** | `130,826→130,826`（`ax.pressKey` 返回 OK） | ~ 浏览屏不生效；与 V7"面板 web 端不可得"同向（★ 编辑器屏本批未重跑） |
+| `Control+Shift+,` | `TOGGLE_KEY_SHORTCUTS` | **「所有文档」浏览屏** | `130,826→130,826`（`ax.pressKey` 返回 OK） | ~ 浏览屏不生效；与 V7"面板 web 端不可得"同向（★ 编辑器屏本批未重跑） | ✎ **第 346 批已采（编辑器语境）**：官方按键**无反应**、本地弹**设置面板（空间设置）**不是快捷键面板 ⇒ `G1592`。
 | `-` + `Space` | markdown 简写建列表 | 编辑器空块 | `ax.pressKey` 逐字节零增量（⇒ **`ax.pressKey` 不投递可打印字符**）；`cua.type('- ')` 字符进了文档但**不转换** | ~ 两条通路都不触发（G617） |
 
 ### 未试清单（下一批的最低成本靶子，按能解锁的价值排序）

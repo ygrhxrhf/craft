@@ -93,7 +93,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 二十一条踩过的坑（都改掉了，别再犯）
+## ★ 二十四条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -223,6 +223,18 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
     （剪走／粘贴／清空各让哪些字消失），若顺手抄来"官方侧栏空态提示"那类声明，differ 会把真信号降成
     severity 0 静默掉——矩阵看起来"更干净"，实际是把结论藏了。写 deviations 前先问一句：
     **这条偏差会不会正好盖住我要测的那个量？**
+
+22. **官方表格只渲染有内容的格（第 389 批）**。插一列空列后 DOM 里仍是 4 个 `contenteditable`
+    （读数一路平），而 REST 已经是 2×3 ⇒ **表格形状必须走 REST 读回**（`restTableState` 步骤 op）。
+    同一族的另一个坑：官方格**第一次点只选中表格块**、光标没进格（`focus.tag === 'body'`），
+    此后按键全部落空 ⇒ `clickTextIn` 现在会**验焦点并补点**，别把"没点到"读成"键没生效"。
+
+23. **判定量要选对，不是越多越好（第 389 批）**。`shell.tasks.row-chords` 起初开 `dom`＋`a11y`，
+    两侧任务屏 DOM 规模差三个数量级（官方 300 字 / 本地 6500 字）⇒ 矩阵里冒出 **6716 行**、6534 条 sev2，
+    真信号被埋掉；只留 `text`＋`state` 后是 78 行 / 26 条 sev2。**开档前先问：这一档会不会淹没结论？**
+
+24. **REST 的 `taskInfo` 按键后要等约 5 秒才落定（第 389 批）**。1.2s 读回仍是旧值 ⇒ 会把"生效"读成"没变"。
+    同理，任务行**点第二下会进编辑态**，编辑态下这些键不生效 ⇒ 改焦前先 `Escape`。
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
 

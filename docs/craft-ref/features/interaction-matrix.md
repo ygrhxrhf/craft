@@ -69,6 +69,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.selection.select-to-top-bottom` | differ | 61 | 29 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
 | `editor.table.cell-clipboard` | differ | 72 | 40 | 0 | 本地 +0/−0 · 官方 +0/−2 |
+| `editor.table.enter-family` | differ | 85 | 47 | 0 | 本地 +2/−0 · 官方 +0/−0 |
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
 | `shell.assistant.open` | match | 9 | 0 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
@@ -77,6 +78,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.shortcuts-panel.key` | differ | 11 | 2 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.sidebar-toggle.repro` | match | 10 | 0 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
+| `shell.tasks.row-chords` | differ | 78 | 26 | 0 | 本地 +0/−0 · 官方 +1/−0 |
 | `shell.tasks.section-fold-keys` | differ | 41 | 17 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.toggles.family` | differ | 26 | 10 | 2 | 本地 +5/−1 · 官方 +1/−0 |
 
@@ -1502,6 +1504,58 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 14 | focusInEditor | false | true |  | 2 |
 | 15 | focusInEditor | false | true |  | 2 |
 
+### `editor.table.enter-family` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 1 | countΔ:1 | 0 | 1 | 1 | 2 |
+| 1 | countΔ:2 | 0 | 1 | 1 | 2 |
+| 1 | countΔ:a | 0 | 7 | 7 | 2 |
+| 1 | countΔ:b | 0 | 1 | 1 | 2 |
+| 4 | countΔ:a | 0 | 1 | 1 | 2 |
+| 5 | countΔ:a | 0 | 1 | 1 | 2 |
+| 6 | countΔ:a | 0 | 1 | 1 | 2 |
+| 6 | countΔ:b | 0 | 1 | 1 | 2 |
+| 7 | countΔ:a | 0 | 1 | 1 | 2 |
+| 7 | countΔ:b | 0 | 1 | 1 | 2 |
+| 8 | countΔ:a | 0 | 1 | 1 | 2 |
+| 8 | countΔ:b | 0 | 1 | 1 | 2 |
+| 9 | countΔ:a | 0 | 1 | 1 | 2 |
+| 9 | countΔ:b | 0 | 1 | 1 | 2 |
+| 10 | countΔ:a | 0 | 1 | 1 | 2 |
+| 10 | countΔ:b | 0 | 1 | 1 | 2 |
+| 11 | countΔ:a | 0 | 1 | 1 | 2 |
+| 11 | countΔ:b | 0 | 1 | 1 | 2 |
+| 12 | countΔ:a | 0 | 1 | 1 | 2 |
+| 12 | countΔ:b | 0 | 1 | 1 | 2 |
+| 13 | countΔ:a | 0 | 1 | 1 | 2 |
+| 13 | countΔ:b | 0 | 1 | 1 | 2 |
+| 14 | countΔ:a | 0 | 1 | 1 | 2 |
+| 14 | countΔ:b | 0 | 1 | 1 | 2 |
+| 15 | countΔ:a | 0 | 1 | 1 | 2 |
+| 15 | countΔ:b | 0 | 1 | 1 | 2 |
+| 16 | countΔ:a | 0 | 1 | 1 | 2 |
+| 16 | countΔ:b | 0 | 1 | 1 | 2 |
+| 17 | countΔ:a | 0 | 1 | 1 | 2 |
+| 17 | countΔ:b | 0 | 1 | 1 | 2 |
+| 18 | countΔ:a | 0 | 1 | 1 | 2 |
+| 18 | countΔ:b | 0 | 1 | 1 | 2 |
+|  | added-only-local |  | a |  | 2 |
+|  | added-only-local |  | b |  | 2 |
+| 0 | focusInEditor | false | true |  | 2 |
+| 1 | focusInEditor | false | true |  | 2 |
+| 2 | focusInEditor | false | true |  | 2 |
+| 3 | focusInEditor | false | true |  | 2 |
+| 4 | focusInEditor | false | true |  | 2 |
+| 5 | focusInEditor | false | true |  | 2 |
+| 6 | focusInEditor | false | true |  | 2 |
+| 8 | focusInEditor | false | true |  | 2 |
+| 9 | focusInEditor | false | true |  | 2 |
+| 10 | focusInEditor | false | true |  | 2 |
+| 16 | focusInEditor | false | true |  | 2 |
+| 17 | focusInEditor | false | true |  | 2 |
+| 18 | focusInEditor | false | true |  | 2 |
+
 ### `shell.quick-open.alt` — differ
 
 | step | facet | official | local | delta | severity |
@@ -1539,6 +1593,37 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 1 | state:newTaskPopup | 1 | 0 | -1 | 2 |
 | 1 | state:taskInput | 0 | 1 | 1 | 2 |
 | 2 | state:taskInput | 0 | 1 | 1 | 2 |
+
+### `shell.tasks.row-chords` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 5 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 6 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 8 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 9 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 11 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 12 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 14 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 15 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 16 | countΔ:今天 | 1 | 0 | -1 | 2 |
+| 17 | countΔ:今天 | 3 | 0 | -3 | 2 |
+| 17 | countΔ:日期 | 1 | 0 | -1 | 2 |
+| 18 | countΔ:今天 | 3 | 0 | -3 | 2 |
+| 18 | countΔ:日期 | 1 | 0 | -1 | 2 |
+| 19 | countΔ:今天 | 4 | 0 | -4 | 2 |
+| 19 | countΔ:日期 | 1 | 0 | -1 | 2 |
+| 20 | countΔ:今天 | 2 | 0 | -2 | 2 |
+| 21 | countΔ:今天 | 2 | 0 | -2 | 2 |
+| 23 | countΔ:今天 | 3 | 0 | -3 | 2 |
+| 23 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 24 | countΔ:今天 | 3 | 0 | -3 | 2 |
+| 24 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 25 | countΔ:今天 | 2 | 0 | -2 | 2 |
+|  | added-only-official | 完成 |  |  | 2 |
 
 ### `shell.tasks.section-fold-keys` — differ
 
@@ -1877,6 +1962,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.slash.open-and-filter` | local | blocksCount count 1 | PASS | 1 |
 | `editor.table.cell-clipboard` | official | text:AA gt -1 | PASS | 1 |
 | `editor.table.cell-clipboard` | local | text:AA gt -1 | PASS | 0 |
+| `editor.table.enter-family` | official | text:a gt 0 | PASS | 10 |
+| `editor.table.enter-family` | local | text:a gt 0 | PASS | 14 |
 | `local.db.document-row` | local | db:exists equals true | PASS | true |
 | `local.db.document-row` | local | db:isDeleted equals false | PASS | false |
 | `local.db.document-row` | local | db:title equals "QODER-ILAB-local.db.document-row" | PASS | "QODER-ILAB-local.db.document-row" |
@@ -1901,6 +1988,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.sidebar-toggle.repro` | local | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | official | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | local | text:任务 gt 0 | PASS | 4 |
+| `shell.tasks.row-chords` | official | text:任务 gt 0 | PASS | 6 |
+| `shell.tasks.row-chords` | local | text:任务 gt 0 | PASS | 4 |
 | `shell.tasks.section-fold-keys` | official | text:任务 gt 0 | PASS | 9 |
 | `shell.tasks.section-fold-keys` | local | text:任务 gt 0 | PASS | 4 |
 | `shell.toggles.family` | official | text:SHELL gt 0 | PASS | 1 |

@@ -164,6 +164,8 @@
 ★★ 本表末列（Windows 串）**本轮起有注册表级出处**（`ho` 的工厂归属，见 §十三）：`TOGGLE_DONE=YM`→`Ctrl-Alt-T`、`TOGGLE_DONE_SLASH=yae("/")`→`Ctrl-/`、`SET_CANCELLED=lEe`→`Ctrl-Alt-Shift-T`、`SET_CANCELLED_SLASH=QM(zr(code Slash))`→**Windows 无**、`REMIND_IN_ONE_HOUR=JI`→`Ctrl-Alt-R`，与第 81 批屏上串逐条吻合。
 ★ 另需注意：`SECTION_TOGGLE_COLLAPS`／`SECTION_COLLAPSE`／`SECTION_EXPAND` 与 `TOGGLE_STATE`／`CREATE_NEW` 用的是 **`Vn`（只写键条件、四个修饰字段一概不写）** ⇒ 在任务视图里 `space`／`←`／`→` **在任何修饰组合下都命中**（正文同类键用 `mo` 精确匹配），本地若把修饰键写成"必须为假"就与官方不同（gap G749）。
 ★ ✎ **表 D 折叠键三条已于屏上验证（第 382 批，`shell.tasks.section-fold-keys`）**：官方分组标题是**内容区整行 `<button>`**（宽 1120／高 40、`id="inbox"`），聚焦它之后 `←` 收起、`→` 展开、`space` 来回切换，**`Ctrl+Space` 与 `Shift+←` 同样命中**（`Vn` 的预测被实测证实），同向键**幂等**；步进 `bodyTextLength`＝`307→254→307→254→307→254→307→254→307`。本地任务屏是**单张平表、无分组标题行** ⇒ 三键无处可落（`grep` 零命中）＝ **G1600**。★ 前置：标题**不是**「今天/明天」字样（那是顶部视图页签，点它＝换视图），且必须先把焦点放到标题按钮上（焦点在 body 时 `space` 落进「添加任务」textarea）。
+★ ✎ **表 D 任务行六键已于屏上验证（第 389 批，`shell.tasks.row-chords`）**——此前它们只有「菜单里有同名项」的证据。官方（点中行拿到焦点后，REST `taskInfo` 读回）：`Ctrl-/` ⇒ `state=done`；`Ctrl-Alt-Shift-T` ⇒ `state=canceled`（markdown 变 `- [ ] ~X~`）；`Ctrl-Alt-S` ⇒ 给无排期任务**写入 `scheduleDate=当天`**；`Ctrl-Shift-S`／`Ctrl-Shift-D` ⇒ 分别弹「日期」／「截止日期」输入框；`Ctrl-Alt-R` ⇒ **零可见变化**（行 HTML 逐字节相同、`reminderDate` 从不出现）＝ **G1604**。本地任务屏**没有任何键盘层**（`keymap.ts` 无这些 id，只有鼠标菜单）⇒ 同一序列 26 步读数恒等 ＝ **G1603**。
+★ ✎ **测这六条键的两个前置坑**（`G1605`）：① 点行第二下会进**编辑态**，编辑态下键不生效 ⇒ 改焦前先 `Escape`；② REST `taskInfo` 按键后约 **5s** 才落定，1.2s 读回会把"生效"读成"没变"。
 
 ## 表 E · 表格（`hnt`，15 项）
 

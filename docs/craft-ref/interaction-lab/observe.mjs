@@ -1207,3 +1207,37 @@ export function captureIndent(arg) {
   }
   return { found: els.length, levels: els.map((el) => varByBlock.get(el) || nestLevelOf(el)), modes: els.map((el) => (varByBlock.has(el) ? 'var' : nestLevelOf(el) ? 'nest' : 'none')), cursorLevel };
 }
+/**
+ * 表格网格（页面侧）：把**表格的几何形状与逐格文本**读成可比的量。
+ * 为什么需要（第 389 批）：表格的 Enter 族键要判的是"新行/新列插在**哪里**"——
+ * 文本计数（`a`/`b` 各出现几次）在"多一列空列"时**完全不变**，读数一路平，
+ * 会把"键生效了"看成"没反应"。两侧 DOM 不同（官方逐格 contenteditable、本地 `<td>`），
+ * 这里只读**行数/列数/每行每格的文本**，因此两侧同形可比。
+ */
+export function captureGrid(arg) {
+  const sel = (arg && arg.table) || 'table';
+  const el = document.querySelector(sel);
+  if (!el) return { exists: false };
+  let rows = [];
+  if (el.tagName.toLowerCase() === 'table') {
+    rows = Array.from(el.rows).map((r) => Array.from(r.cells).map((c) => (c.innerText || '').trim()));
+  } else {
+    // 官方：表不是 <table>，格是一串 contenteditable；按 y 聚行、按 x 排序
+    const cells = Array.from(el.querySelectorAll('[contenteditable="true"]'))
+      .map((c) => {
+        const b = c.getBoundingClientRect();
+        return { x: b.x, y: b.y, t: (c.innerText || '').trim() };
+      })
+      .filter((c) => c.t !== '' || true);
+    const byY = new Map();
+    for (const c of cells) {
+      const k = Math.round(c.y / 4) * 4;
+      if (!byY.has(k)) byY.set(k, []);
+      byY.get(k).push(c);
+    }
+    rows = Array.from(byY.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([, cs]) => cs.sort((a, b) => a.x - b.x).map((c) => c.t));
+  }
+  return { exists: true, r: rows.length, c: rows.length ? Math.max(...rows.map((x) => x.length)) : 0, rows };
+}

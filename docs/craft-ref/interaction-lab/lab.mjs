@@ -25,6 +25,7 @@ import {
   captureBlocks,
   captureAttrs,
   captureHtml,
+  captureGrid,
   captureAll,
   captureA11y,
   installKeyProbe,
@@ -221,6 +222,11 @@ export class Target {
       out.html = await this.page.evaluate(captureHtml, { probes: htmlProbes, limit: spec.htmlLimit || 700 });
     }
     if (set.has('indent')) out.indent = snap.indent;
+    if (set.has('grid')) {
+      // 表格形状（第 389 批）：文本计数看不出"多一列空列"，网格才是表格键的判定量。
+      // spec 用 `gridTable` 指一个**选择器键**；两侧都指向"表格容器的根"。
+      out.grid = await this.page.evaluate(captureGrid, { table: this.sel(spec, spec.gridTable || 'tableRoot') });
+    }
     if (set.has('computed')) {
       // 计算样式与 rect 是另一档（读 getComputedStyle + 布局），单独一次求值；它不参与判定。
       out.computed = await this.page.evaluate(captureComputed, { probes: computedProbes, props: spec.computedProps });
@@ -312,13 +318,84 @@ async function runSetup(target, spec, ctx, log) {
         log('setup placeCaretTrailing mode=' + pt.mode + ' ' + pt.x + ',' + pt.y + ' blocks=' + pt.blockCount);
         break;
       }
+      case 'restTask': {
+        // 加性（第 389 批）：用官方 REST 造**可复现状态**的任务行（表 D 的键要一条干净起点）。
+        // 只在官方侧有意义（本地任务来自本地库，不走这条桥）⇒ spec 用 `targets: ['official']`。
+        if (target.name !== 'official') { log('setup restTask SKIP (non-official)'); break; }
+        for (const tag of s.tags || []) {
+          const mk = await target.page.fetch(OFFICIAL_API + '/tasks', {
+            method: 'POST', headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              tasks: [{
+                markdown: '- [ ] ' + tag,
+                ...(s.scheduleToday ? { taskInfo: { scheduleDate: new Date().toISOString().slice(0, 10) } } : {}),
+                location: { type: 'inbox' },
+              }],
+            }),
+            timeout: 25000,
+          });
+          log(`setup restTask ${tag} status=${mk.status}`);
+        }
+        ctx.restTasks = (s.tags || []).slice();
+        log('setup restTask made ' + JSON.stringify(ctx.restTasks));
+        break;
+      }
+      case 'restTaskState': {
+        // 读回本 spec 造的那几条任务的 `taskInfo`（对账用）：`state`／`scheduleDate`／`reminderDate`…
+        if (target.name !== 'official') { log('restTaskState SKIP (non-official)'); break; }
+        const tags = s.tags || (ctx.restTasks || []);
+        const r = await target.page.fetch(OFFICIAL_API + '/tasks?scope=all', { timeout: 25000 });
+        let items = [];
+        try { items = JSON.parse(String(r.body)).items || []; } catch (e) { /* 留空 */ }
+        const picked = items
+          .filter((t) => tags.some((tag) => String(t.markdown || '').includes(tag)))
+          .map((t) => ({ md: String(t.markdown || '').slice(0, 16), ti: t.taskInfo }));
+        log('restTaskState ' + JSON.stringify(picked));
+        ctx.taskState = picked;
+        break;
+      }
+      case 'restTaskCleanup': {
+        if (target.name !== 'official') { log('restTaskCleanup SKIP (non-official)'); break; }
+        const tags = s.tags || (ctx.restTasks || []);
+        const r = await target.page.fetch(OFFICIAL_API + '/tasks?scope=all', { timeout: 25000 });
+        let items = [];
+        try { items = JSON.parse(String(r.body)).items || []; } catch (e) { /* 留空 */ }
+        const ids = items.filter((t) => tags.some((tag) => String(t.markdown || '').includes(tag))).map((t) => t.id);
+        if (!ids.length) { log('restTaskCleanup none'); break; }
+        const d = await target.page.fetch(OFFICIAL_API + '/tasks', {
+          method: 'DELETE', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ idsToDelete: ids }), timeout: 25000,
+        });
+        log(`restTaskCleanup ${d.status} n=${ids.length}`);
+        break;
+      }
+      case 'clickTextIn': {
+        // setup 版 `clickTextIn`：进屏后先点中某一行（表 D 的键要在**行焦点**上才生效）。
+        const sel = target.sel(spec, s.selector);
+        const hit = await target.page.evaluate((arg) => {
+          const norm = (s) => (s || '').replace(/[\s\u200b\u00a0]+/g, '');
+          let best = null;
+          for (const el of document.querySelectorAll(arg.sel)) {
+            if (norm(el.innerText) !== norm(arg.text)) continue;
+            const b = el.getBoundingClientRect();
+            if (b.width < 4 || b.height < 4) continue;
+            const area = b.width * b.height;
+            if (!best || area < best.area) best = { area, x: Math.round(b.x + b.width / 2), y: Math.round(b.y + b.height / 2) };
+          }
+          return best;
+        }, { sel, text: s.text });
+        if (!hit) { log('setup clickTextIn ABSENT ' + s.text); break; }
+        await target.page.mouse.click(hit.x, hit.y, { label: 'setup click ' + s.text });
+        await target.page.waitForTimeout(s.settleMs ?? 800);
+        log('setup clickTextIn ' + s.text);
+        break;
+      }
       case 'openPanel': {
         const sel = target.sel(spec, s.selector);
         await target.page.click(sel);
         await target.page.waitForTimeout(s.settleMs ?? 500);
         log(`setup openPanel ${sel}`);
-        break;
-      }
+        break;      }
       case 'click': {
         // 加性（第 382 批）：setup 里的点击。用途＝关掉导航后弹出的浮层
         // （官方任务屏必弹「在应用中打开」），否则浮层遮住内容区、后续按文案定位全落空。
@@ -561,11 +638,14 @@ async function runStep(target, spec, step, ctx, log) {
           if (b.width < 4 || b.height < 4) continue;
           // 取**面积最小**的那个：外层可编辑体往往也"文本相等"（它只包着这一格），
           // 点它的中心会落到格线或相邻格上。
+          // ★ `anchor: 'start'`（第 389 批）：官方表格格的 contenteditable 常比可见文字宽得多，
+          //   点几何中心会落进**同一行的相邻格**（实测焦点回到 body）⇒ 需要点文字起点。
           const area = b.width * b.height;
-          if (!best || area < best.area) best = { area, x: Math.round(b.x + b.width / 2), y: Math.round(b.y + b.height / 2), tag: el.tagName };
+          const x = arg.anchor === 'start' ? Math.round(b.x + Math.min(10, b.width / 2)) : Math.round(b.x + b.width / 2);
+          if (!best || area < best.area) best = { area, x, y: Math.round(b.y + b.height / 2), tag: el.tagName };
         }
         return best;
-      }, { sel, text: step.text });
+      }, { sel, text: step.text, anchor: step.anchor });
       if (!hit) {
         // 失败时把候选名册打出来：两侧单元格的文本形态（含不可见字符）差异太大，
         // 只报"找不到"会让人以为文本没进去。
@@ -575,7 +655,19 @@ async function runStep(target, spec, step, ctx, log) {
         throw new Error('clickTextIn: 「' + sel + '」里找不到「' + step.text + '」；候选=' + seen.join(','));
       }
       await p.mouse.click(hit.x, hit.y, { label: 'clickTextIn ' + step.text });
-      log('clickTextIn ' + JSON.stringify(hit));
+      // ★ 点完**验焦点**（第 389 批）：官方表格格第一次点经常只选中表格块、光标没进格
+      //   （读数 `focus.tag === 'body'`），此后按键全部落空。⇒ 焦点不在可编辑体就补点，
+      //   最多 3 次；每一次都记日志，免得把"没点到"当成"键没生效"。
+      const where = () => p.evaluate(() => {
+        const a = document.activeElement;
+        if (!a) return 'none';
+        return a.tagName + (a.getAttribute && (a.getAttribute('contenteditable') === 'true' || a.closest('.ProseMirror')) ? '[edit]' : '');
+      });
+      for (let n = 0; n < 3 && !(await where()).includes('[edit]'); n++) {
+        await p.waitForTimeout(400);
+        await p.mouse.click(hit.x, hit.y, { label: 'clickTextIn ' + step.text + ' retry#' + (n + 2) });
+      }
+      log('clickTextIn ' + JSON.stringify(hit) + ' focus=' + (await where()));
       break;
     }
     case 'clickXY':
@@ -598,6 +690,44 @@ async function runStep(target, spec, step, ctx, log) {
       await p.mouse.move(step.to.x, step.to.y, { steps: step.steps ?? 12 });
       await p.mouse.up();
       break;
+    case 'restTaskState': {
+      // 步骤版读回（第 389 批）：把 REST 里这几条任务的 `taskInfo` 摊成**文本名册**塞进 ctx，
+      // 这样它既能在日志里看，也能被后续观测步的 expect 引用（不额外造观测面）。
+      if (target.name !== 'official') { log('restTaskState step SKIP (non-official)'); break; }
+      const tags = step.tags || (ctx.restTasks || []);
+      const r = await p.fetch(OFFICIAL_API + '/tasks?scope=all', { timeout: 25000 });
+      let items = [];
+      try { items = JSON.parse(String(r.body)).items || []; } catch (e) { /* 留空 */ }
+      const picked = items
+        .filter((t) => tags.some((tag) => String(t.markdown || '').includes(tag)))
+        .map((t) => {
+          const ti = t.taskInfo || {};
+          const flags = ['state', 'scheduleDate', 'reminderDate', 'deadlineDate', 'canceledAt', 'completedAt']
+            .filter((k) => ti[k])
+            .map((k) => k + '=' + String(ti[k]).slice(0, 10))
+            .join(' ');
+          return String(t.markdown || '').replace(/[^A-Za-z0-9]/g, '').slice(0, 6) + ':' + flags;
+        });
+      log('restTaskState ' + JSON.stringify(picked));
+      ctx.taskState = picked;
+      break;
+    }
+    case 'restTableState': {
+      // 第 389 批：读**当前临时文档里那张表**的行列与逐格文本（官方侧表格键的判定量）。
+      // 为什么不能用 DOM：官方表格**只渲染有内容的格**，新插的空列/空行在 DOM 里根本不出现
+      // （实测 2×2 插一列后 DOM 仍 4 格、REST 已是 2×3）⇒ 只有 REST 能看见形状变化。
+      if (target.name !== 'official') { log('restTableState step SKIP (non-official)'); break; }
+      const docId = target.tempDocId;
+      const r = await p.fetch(OFFICIAL_API + '/blocks?id=' + docId, { timeout: 25000 });
+      let shape = { err: r.status };
+      try {
+        const t = (JSON.parse(String(r.body)).content || []).find((b) => b.type === 'table');
+        shape = t ? { r: t.rows.length, c: t.rows[0] ? t.rows[0].length : 0, rows: t.rows.map((row) => row.map((c) => c.value)) } : { none: true };
+      } catch (e) { /* 留 err */ }
+      log('restTableState ' + JSON.stringify(shape));
+      ctx.tableShape = shape;
+      break;
+    }
     case 'wait':
       await p.waitForTimeout(step.ms);
       break;

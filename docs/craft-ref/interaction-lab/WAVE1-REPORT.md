@@ -3373,3 +3373,76 @@ v1 的问题：造出的折叠块**没有子项**，折叠与否都看不到变�
 | `git status --porcelain src e2e` | **空** |
 | 台账 | **1594／G1602**；四道闸 **10/10 PASS** |
 | 临时产物 | 本批 14 篇 `QODER-ILAB-{tableclip,tablekeys,cellfind,restshape,tbl*}*` 已删（`DELETE-DOCS 200`）；探测任务 0 残留 |
+
+## 一百零四、★ 第 389 批（2026-10-29）：**覆盖率扫描 → 表 D 任务行六键 + 表 E Enter 族（+4 条 G）**
+
+净新增 **4 条 G**（`G1603`／`G1604`／`G1606`，外加仪器口径 `G1605`）· 零产品代码批 · 两个新 spec 两侧 0 error。
+
+### 一、先做了一张覆盖率表（这一批的起点）
+
+前面几十批都是"想到一条采一条"。本批改成**可复算的普查**：把 `keyboard.md` 表 A–E 每行的
+Windows 列归一化（`⌘⌥⇧⌃` → `cmd/alt/shift/ctrl`、`⏎` → `enter`、Playwright 的 `Digit1`／`BracketLeft`／
+`Slash` → `1`／`[`／`/`），再对 `specs/*.mjs` 里所有 `chord:` 求交集。
+
+第一版脚本有三个 bug，读数一路错（**记下来，别再犯**）：
+① 把表格单元格按 `/` 切分，把 `Ctrl-/` 自己切坏了；
+② 反引号被当普通字符删掉，`Ctrl-Shift-`` ` `` 永远对不上；
+③ `Slash`／`BracketLeft` 这类 Playwright 键名没换成表里的字形。
+
+修完：**93 行里 84 行有 spec 证据**（占 90%）。剩 9 行：1 行平台无绑定（`SET_CANCELLED_SLASH`）、
+5 行要"行/列选择态"（`G1588` 证两侧都进不去）、3 行是本批补的两族。⇒ **"清单上还有没有没采的"从此可复算，不靠记忆。**
+
+### 二、表 D 任务行六键（`shell.tasks.row-chords`）
+
+| 键 | 官方（REST `taskInfo` 读回） | 本地 |
+| --- | --- | --- |
+| `Ctrl-/` | `state: todo → **done**` | 无变化 |
+| `Ctrl-Alt-Shift-T` | `state: todo → **canceled**`（markdown 变 `- [ ] ~X~`） | 无变化 |
+| `Ctrl-Alt-S` | 无排期任务 → **`scheduleDate=当天`** | 无变化 |
+| `Ctrl-Shift-S` | 弹「**日期**」输入框（backdrop 0→1、焦点进 `INPUT`） | 无变化 |
+| `Ctrl-Shift-D` | 弹「**截止日期**」输入框 | 无变化 |
+| `Ctrl-Alt-R` | **零可见变化**（行 HTML 逐字节相同、REST 无 `reminderDate`） | 无变化 |
+
+阴性对照 `Ctrl-Alt-U`（未绑定）零变化；"点击本身会不会切完成"单独对照过＝不会。⇒ **G1603**（前五条）、**G1604**（`Ctrl-Alt-R` 有键无落点）。
+本地任务屏 26 步读数恒 `6502`、`keymap.ts` 里这些 id 一个都没有 ⇒ 整个键盘层缺失。
+
+**两个前置坑**（写进 `G1605`）：点行**第二下会进编辑态**，编辑态下键不生效 ⇒ 改焦前要 `Escape`；
+REST `taskInfo` 按键后约 **5s** 才落定，1.2s 读回会把"生效"读成"没变"（本批两次假阴性都栽在这里）。
+
+### 三、表 E 的 Enter 族：`Ctrl-Shift-⏎` 不是"加列"（`editor.table.enter-family`）
+
+`G1577` 记的是"三键都**加**行列"，只读了行列**数**、没读**位置**。本批逐格读回：
+
+| 键（光标在 `a` 列） | 起点 `[[a,b],[1,2]]` → | 结论 |
+| --- | --- | --- |
+| `Ctrl-Shift-⏎` | `[[a,"",b],[1,"",2]]` | **在光标列之前插入一列** |
+| `Ctrl-Alt-⏎` | `[["",a,"",b],["",1,"",2]]` | 再插一列（仍在 `a` 之前） |
+| `Ctrl-⏎` | 3 行，新行在 `1` 行**之上** | 加行 |
+| 本地三键 | 3×3 一格未变 | 与 `G1577` 一致 |
+
+⇒ **G1606**：`Ctrl-Shift-⏎` 在屏上派发到的是"**在前面插列**"，既不是 `ADD_ROWS_BEFORE`、也不是
+`ADD_COLUMNS_AFTER`——静态表 `G733` 记的塌键由此**从"数值读数"升到"方向定性"**。
+
+★ 这一夜真正的障碍是**官方表格只渲染有内容的格**：插一列空列后 DOM 仍是 4 个 contenteditable
+（REST 已是 2×3）。所以判定量必须是 REST 形状，不是 DOM ⇒ 新增 `restTableState` 步骤 op。
+
+### 四、仪器增量
+
+`restTask`／`restTaskState`／`restTaskCleanup`（造可复现任务并读回 `taskInfo`）、
+`restSeedDoc`（整篇文档走 REST 建表——UI 建的表在官方侧是"整表单块"）、
+`restTableState`（读表形状）、`grid` 观测档（本地 `<td>` 网格）、
+`clickTextIn` 的 `anchor:'start'` 与**点击后验焦点并补点**（官方格第一次点常只选中表格块）、
+`setup` 支持 `targets`／`click`。
+
+一个教训：`shell.tasks.row-chords` 起初开 `dom`＋`a11y` 档 ⇒ 矩阵里冒出 **6716 行**噪声
+（两侧任务屏 DOM 规模差三个数量级），真信号被埋掉；关掉两档后是 78 行／26 条 sev2。**判定量要选对，不是越多越好。**
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `shell.tasks.row-chords`（26 步两侧 0 error）、`editor.table.enter-family`（19 步两侧 0 error） |
+| 覆盖率 | 表 A–E **84/93** 行有 spec 证据（脚本 `round-307-coverage.mjs`，可复算） |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | **1598／G1606**（+4）；`keyboard.md` 表 D 两条批注 + 表 E 批注更新 |
+| 临时产物 | 9 篇 `QODER-ILAB-*tblenter/domcell/enter-family*` 已删；探测任务 `RC1–3` 已删（0 残留） |

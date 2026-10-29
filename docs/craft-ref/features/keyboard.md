@@ -108,6 +108,8 @@
 
 ★ **第 322 批上屏（组合／区块链接）：**`Ctrl-G` 官方在文本选中态下**落到查找**（名册新增「查找」「暂无结果」），本地零反应；`Ctrl-Shift-K` 官方多块与单词两种选区**都零反应**，本地**弹命令面板**（`CommandPalette.tsx:37` 的 `ctrlKey && key==='k'` 没排除 Shift）。** ⇒ gap `G1579`／`G1580`，矩阵 `editor.key.group-and-blocklink`。
 
+★ **第 324 批上屏（表 A 行内七键）：**官方 `Ctrl-B`／`Ctrl-I`／`Ctrl-Shift--`／`Ctrl-Shift-B`／`Ctrl-Shift-C`／`Ctrl-E` **六条全生效**；本地只 `Ctrl-B`／`Ctrl-I`／`Ctrl-E` 生效——因为本地这三条走的是 **TipTap 默认键位**（strike `Mod-Shift-s`、highlight `Mod-Shift-h`、code `Mod-e`），不是本表。`Ctrl-K` 本地弹命令面板。** ⇒ gap `G1582`，矩阵 `editor.key.inline-chord-family`。
+
 ★ **第 323 批上屏（输入方程）：**`Ctrl-Shift-E` 官方把焦点交给编辑器外的 `input.sc-jxjmdu-5.kiqmvz`（`Escape` 再还给编辑器），本地零反应。光标态是否也开输入框**未证**（该步已被输入框接管）。** ⇒ gap `G1581`，矩阵 `editor.key.equation`。块选择态（拖动柄多选）本批未建立，官方「组合」是否另有通路**未证**。
 
 ## 表 D · 任务视图 / 合集（`ho`，23 项）

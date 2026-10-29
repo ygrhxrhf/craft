@@ -33,6 +33,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.equation` | differ | 17 | 3 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.find-replace` | differ | 22 | 11 | 3 | 本地 +10/−1 · 官方 +5/−2 |
 | `editor.key.group-and-blocklink` | differ | 47 | 17 | 2 | 本地 +8/−0 · 官方 +4/−2 |
+| `editor.key.inline-chord-family` | differ | 124 | 56 | 0 | 本地 +14/−0 · 官方 +8/−0 |
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
@@ -355,6 +356,67 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 12 | state:dialog | 0 | 1 | 1 | 2 |
 | 13 | state:dialog | 0 | 1 | 1 | 2 |
 
+### `editor.key.inline-chord-family` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+|  | added-only-local |  | Esc |  | 2 |
+|  | added-only-local |  | MK-CODE |  | 2 |
+|  | added-only-local |  | MK-HILITE |  | 2 |
+|  | added-only-local |  | MK-STRIKE |  | 2 |
+|  | added-only-local |  | MK-URL |  | 2 |
+|  | added-only-local |  | 关闭 |  | 2 |
+|  | added-only-local |  | 搜索文档与块 |  | 2 |
+|  | added-only-local |  | 操作 |  | 2 |
+|  | added-only-local |  | 新建文档 |  | 2 |
+|  | added-only-local |  | 查看所有快捷键 |  | 2 |
+|  | added-only-official | CODE |  |  | 2 |
+|  | added-only-official | HILITE |  |  | 2 |
+|  | added-only-official | STRIKE |  |  | 2 |
+|  | added-only-official | URL |  |  | 2 |
+| 18 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE",""] |  | 2 |
+| 19 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE",""] |  | 2 |
+| 21 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE",""] |  | 2 |
+| 22 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE",""] |  | 2 |
+| 23 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE",""] |  | 2 |
+| 24 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE",""] |  | 2 |
+| 25 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE",""] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE",""] |  | 2 |
+| 26 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE","MK-CODE2"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE MK-CODE2",""] |  | 2 |
+| 27 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE","MK-CODE2"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE MK-CODE2",""] |  | 2 |
+| 28 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE","MK-CODE2"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE MK-CODE2",""] |  | 2 |
+| 29 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE","MK-CODE2"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE MK-CODE2",""] |  | 2 |
+| 30 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE","MK-CODE2",""] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE MK-CODE2",""] |  | 2 |
+| 31 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE","MK-CODE2","MK-URL"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE MK-CODE2 MK-URL",""] |  | 2 |
+| 32 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE","MK-CODE2","MK-URL"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE MK-CODE2 MK-URL",""] |  | 2 |
+| 33 | blocks | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE","MK-CODE","MK-CODE2","MK-URL"] | ["MK-BOLD","MK-ITALIC","MK-STRIKE","MK-HILITE MK-CODE MK-CODE2 MK-URL",""] |  | 2 |
+| 6 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 7 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 8 | inline | {"marks":["italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 9 | inline | {"marks":["italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 11 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 12 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 13 | inline | {"marks":["strike"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 14 | inline | {"marks":["strike"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 16 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 17 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 18 | inline | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 19 | inline | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 20 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 21 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 22 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 23 | inline | {"marks":["code"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 24 | inline | {"marks":["code"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 25 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 26 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 27 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 28 | inline | {"marks":["code"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","code","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 29 | inline | {"marks":["code"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","code","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 30 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","code","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 31 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","code","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 32 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["bold","code","italic"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 33 | inline | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 33 | state:dialog | 0 | 1 | 1 | 2 |
+
 ### `editor.key.shift-enter-hard-break` — differ
 
 | step | facet | official | local | delta | severity |
@@ -661,6 +723,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.group-and-blocklink` | official | blocksCount count 2 | PASS | 2 |
 | `editor.key.group-and-blocklink` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.key.group-and-blocklink` | local | blocksCount count 2 | PASS | 2 |
+| `editor.key.inline-chord-family` | official | blocksCount count 8 | **FAIL** | 0 |
+| `editor.key.inline-chord-family` | official | text:MK-URL gt 0 | **FAIL** | 0 |
+| `editor.key.inline-chord-family` | local | blocksCount count 8 | **FAIL** | 0 |
+| `editor.key.inline-chord-family` | local | text:MK-URL gt 0 | **FAIL** | 0 |
 | `editor.key.list-family` | official | blocks equals ["AAA"] | PASS | ["AAA"] |
 | `editor.key.list-family` | official | blocksCount count 1 | PASS | 1 |
 | `editor.key.list-family` | local | blocks equals ["AAA"] | PASS | ["AAA"] |

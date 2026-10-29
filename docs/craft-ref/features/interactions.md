@@ -4902,3 +4902,13 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
   方程输入框挂在 portal 里，用 `[role="dialog"]` 之类找会读成"没反应"。
 - ★ 诚实边界：只证"焦点交给了一枚输入框"；placeholder／值／提交后插入的节点种类都**没读**；
   "光标态"那一步在官方侧已被输入框接管 ⇒ **不能**当对照。
+
+## V194＝第 324 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1582）
+
+- ★★★★ **G1582**：表 A 的行内七键首次上屏。官方六条全生效（`Ctrl-B`／`Ctrl-I`／`Ctrl-Shift--`／
+  `Ctrl-Shift-B`／`Ctrl-Shift-C`／`Ctrl-E`），本地只有 `Ctrl-B`／`Ctrl-I`／`Ctrl-E` 生效。
+- ★ 根因：本地行内快捷键来自 **TipTap 扩展默认**（`Mod-Shift-s` 删除线／`Mod-Shift-h` 高亮／`Mod-e` 代码），
+  官方表是 `Ctrl-Shift--`／`Ctrl-Shift-B`／`Ctrl-Shift-C` ⇒ 只有恰好撞上的能用。
+- ★ `Ctrl-K` 本地弹**命令面板**（与 G1580 同根因）；官方读数 `highlight` **存疑**，本批不改判。
+- ☆ 仪器观察（未解释）：本地 `Ctrl-Shift-B` 之后 `Enter` 不再分块，后续三步的文本都并进同一块；
+  「有没有出现某个 mark」的读数不受影响，所以 G1582 的判据仍成立。

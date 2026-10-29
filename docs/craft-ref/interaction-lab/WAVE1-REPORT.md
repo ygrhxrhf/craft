@@ -1540,3 +1540,37 @@ spec 留到找到两侧共同的「选中行」写法再写。
 | `git status --porcelain src e2e` | **空**（零产品代码改动） |
 | 台账 | **1573／G1581** |
 | 临时产物 | 两侧临时文档由 spec teardown 软删 |
+
+## 三十九、★ 续批三十四（2026-10-29）：**表 A 行内七键上屏** —— G1582
+
+净新增 **1 条 G** · 零产品代码批。矩阵新增 spec `editor.key.inline-chord-family`（124 行 / 56 条 sev2）。
+
+这七条键（`Ctrl-B`／`Ctrl-I`／`Ctrl-Shift--`／`Ctrl-Shift-B`／`Ctrl-Shift-C`／`Ctrl-E`／`Ctrl-K`）
+在**静态账里从没上过屏**；此前采过的 `editor.md-rules.inline-mark` 是 **markdown 记号线**，不是快捷键。
+
+| 键 | 官方 | 本地 |
+| --- | --- | --- |
+| `Ctrl-B` 加粗 | `bold` ✓ | `bold` ✓ |
+| `Ctrl-I` 斜体 | `italic` ✓ | `italic` ✓ |
+| `Ctrl-Shift--` 删除线 | `strike` ✓ | **无** |
+| `Ctrl-Shift-B` 高亮 | `highlight` ✓ | **无** |
+| `Ctrl-Shift-C` 代码 | `code` ✓ | **无** |
+| `Ctrl-E` 行内代码 | `code` ✓ | `code` ✓ |
+| `Ctrl-K` 链接 | 读数 `highlight`（**存疑**） | **弹命令面板**（G1580 同根因） |
+
+⇒ **G1582**：本地这三条落空的根因不是"没做"，是**键位表来源不同**——本地全部来自 TipTap 扩展默认
+（`Mod-Shift-s`／`Mod-Shift-h`／`Mod-e`），官方表是 `Ctrl-Shift--`／`Ctrl-Shift-B`／`Ctrl-Shift-C`，
+**只有恰好撞上的三条能用**。
+
+★ 三条诚实边界：① 官方 `Ctrl-K` 读数 `highlight` **存疑**（疑似捕获到上一块的渲染）⇒ 不改判，下批复核；
+② 本地 `Ctrl-Shift-B` 之后 `Enter` 不再分块，后续文本并进同一块（原因未定）；判据只看"有没有出现某个 mark"，
+不受影响；③ 矩阵 56 条 sev2 里大部分是 `styles` 直方图与块文本漂移，不是 56 条产品差异。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `editor.key.inline-chord-family`（differ） |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 台账 | **1574／G1582** |
+| 临时产物 | 两侧临时文档由 spec teardown 软删 |

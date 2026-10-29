@@ -61,6 +61,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.page-block.behavior` | differ | 38 | 20 | 4 | 本地 +1/−0 · 官方 +3/−1 |
 | `editor.paste.html` | match | 10 | 0 | 2 | 本地 +4/−0 · 官方 +5/−1 |
 | `editor.paste.plain-text` | differ | 27 | 15 | 0 | 本地 +2/−0 · 官方 +4/−0 |
+| `editor.reminder.popover-options` | differ | 107 | 96 | 1 | 本地 +87/−0 · 官方 +1/−0 |
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 40 | 16 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
@@ -192,6 +193,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.page-block.behavior` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.paste.html` | added-only-official |  | 33 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.paste.html` | removed-only-official |  | 32 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
+| `editor.reminder.popover-options` | added-only-official |  | REMTASK/ |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.slash.open-and-filter` | countΔ:插入 | 1 | 8 | 4 | 菜单项文案与条数不同（官方扁平 8 条含「插入」：插入文件/片段/表格/分隔符/白板/表格集合/画廊集合/看板集合；本地 4 条）—— 与上面两条同源 | probe-verbatim.json · gap.md（本轮新登记） |
 | `editor.slash.open-and-filter` | added-only-local |  |  | 无匹配命令 | 本地 / 菜单的**无匹配文案**是「无匹配命令」；官方过滤后直接把面板收起、不给无匹配文案（G1544 同源） | chk-roster：官方 added=["/wen"]、本地 added=["/wen","无匹配命令"] · gap.md G1544 |
 | `local.db.document-row` | added-only-local |  |  | 1 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
@@ -1057,6 +1059,107 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 4 | kinds | ["para"] | ["para","para"] |  | 2 |
 | 5 | kinds | ["para"] | ["para","para"] |  | 2 |
 
+### `editor.reminder.popover-options` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:REMTASK | 1 | 2 | 1 | 2 |
+| 3 | countΔ:REMTASK | 1 | 2 | 1 | 2 |
+| 3 | countΔ:提醒我… | 1 | 0 | -1 | 2 |
+| 3 | countΔ:日期和时间 | 1 | 0 | -1 | 2 |
+| 3 | countΔ:计划任务 | 1 | 0 | -1 | 2 |
+| 3 | countΔ:设定截止日期 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:REMTASK | 1 | 2 | 1 | 2 |
+|  | added-only-local |  | / |  | 2 |
+|  | added-only-local |  | @提及 |  | 2 |
+|  | added-only-local |  | AI 生成图像 |  | 2 |
+|  | added-only-local |  | Callout |  | 2 |
+|  | added-only-local |  | REMTASK |  | 2 |
+|  | added-only-local |  | Task item checkbox for REMTASK/ |  | 2 |
+|  | added-only-local |  | 三级标题 |  | 2 |
+|  | added-only-local |  | 上传图片或嵌入图片 |  | 2 |
+|  | added-only-local |  | 上传文件附件 |  | 2 |
+|  | added-only-local |  | 从模板插入 |  | 2 |
+|  | added-only-local |  | 代码块 |  | 2 |
+|  | added-only-local |  | 代码片段（支持语法高亮） |  | 2 |
+|  | added-only-local |  | 信息提示 |  | 2 |
+|  | added-only-local |  | 全部展开 |  | 2 |
+|  | added-only-local |  | 全部收起 |  | 2 |
+|  | added-only-local |  | 公式 |  | 2 |
+|  | added-only-local |  | 分栏 |  | 2 |
+|  | added-only-local |  | 分隔线 - 常规 |  | 2 |
+|  | added-only-local |  | 分隔线 - 极细 |  | 2 |
+|  | added-only-local |  | 分隔线 - 粗 |  | 2 |
+|  | added-only-local |  | 分隔线 - 细 |  | 2 |
+|  | added-only-local |  | 列出文档标题，点击可跳转 |  | 2 |
+|  | added-only-local |  | 列表 |  | 2 |
+|  | added-only-local |  | 副标题 |  | 2 |
+|  | added-only-local |  | 卡片 |  | 2 |
+|  | added-only-local |  | 只读引用另一篇文档里的块 |  | 2 |
+|  | added-only-local |  | 可勾选的任务列表 |  | 2 |
+|  | added-only-local |  | 可展开/折叠的内容 |  | 2 |
+|  | added-only-local |  | 四级标题 |  | 2 |
+|  | added-only-local |  | 图片 |  | 2 |
+|  | added-only-local |  | 图片网格 |  | 2 |
+|  | added-only-local |  | 圆角卡片容器，可容纳多个块 |  | 2 |
+|  | added-only-local |  | 在文档里嵌入一块可缩放的白板 |  | 2 |
+|  | added-only-local |  | 基础块 |  | 2 |
+|  | added-only-local |  | 备注 |  | 2 |
+|  | added-only-local |  | 多图自动布局的网格 |  | 2 |
+|  | added-only-local |  | 大标题 |  | 2 |
+|  | added-only-local |  | 媒体 |  | 2 |
+|  | added-only-local |  | 展开文档中的全部折叠块 |  | 2 |
+|  | added-only-local |  | 嵌入 |  | 2 |
+|  | added-only-local |  | 嵌入 YouTube / Vimeo 视频 |  | 2 |
+|  | added-only-local |  | 嵌在文字里的 LaTeX 公式 |  | 2 |
+|  | added-only-local |  | 布局 |  | 2 |
+|  | added-only-local |  | 引用 |  | 2 |
+|  | added-only-local |  | 引用文本块 |  | 2 |
+|  | added-only-local |  | 待办事项 |  | 2 |
+|  | added-only-local |  | 成功提示 |  | 2 |
+|  | added-only-local |  | 把内容并排分成两栏 |  | 2 |
+|  | added-only-local |  | 折叠列表 |  | 2 |
+|  | added-only-local |  | 提及另一个文档 |  | 2 |
+|  | added-only-local |  | 插入一块可绘制图形与草图的画板 |  | 2 |
+|  | added-only-local |  | 插入表格 |  | 2 |
+|  | added-only-local |  | 收起文档中的全部折叠块 |  | 2 |
+|  | added-only-local |  | 文件附件 |  | 2 |
+|  | added-only-local |  | 文本 |  | 2 |
+|  | added-only-local |  | 无序列表 |  | 2 |
+|  | added-only-local |  | 普通文本段落 |  | 2 |
+|  | added-only-local |  | 最细的水平分隔线 |  | 2 |
+|  | added-only-local |  | 最重的水平分隔线 |  | 2 |
+|  | added-only-local |  | 有序列表 |  | 2 |
+|  | added-only-local |  | 标题 1 |  | 2 |
+|  | added-only-local |  | 标题 2 |  | 2 |
+|  | added-only-local |  | 标题 3 |  | 2 |
+|  | added-only-local |  | 标题 4 |  | 2 |
+|  | added-only-local |  | 水平分隔线（也可输入 --- / ..- / .-- / =-- 直接成档） |  | 2 |
+|  | added-only-local |  | 独立一行的 LaTeX 公式 |  | 2 |
+|  | added-only-local |  | 生成富链接预览卡片 |  | 2 |
+|  | added-only-local |  | 用 AI 生成一张图片插入文档 |  | 2 |
+|  | added-only-local |  | 目录 |  | 2 |
+|  | added-only-local |  | 紫色备注 Callout |  | 2 |
+|  | added-only-local |  | 红色错误 Callout |  | 2 |
+|  | added-only-local |  | 细水平分隔线 |  | 2 |
+|  | added-only-local |  | 绘图 |  | 2 |
+|  | added-only-local |  | 绿色成功 Callout |  | 2 |
+|  | added-only-local |  | 编号列表 |  | 2 |
+|  | added-only-local |  | 网页链接 |  | 2 |
+|  | added-only-local |  | 蓝色信息 Callout |  | 2 |
+|  | added-only-local |  | 行内公式 |  | 2 |
+|  | added-only-local |  | 表格 |  | 2 |
+|  | added-only-local |  | 视频嵌入 |  | 2 |
+|  | added-only-local |  | 警告提示 |  | 2 |
+|  | added-only-local |  | 选择一个模板并把它的内容插到当前位置 |  | 2 |
+|  | added-only-local |  | 错误提示 |  | 2 |
+|  | added-only-local |  | 镜像块 |  | 2 |
+|  | added-only-local |  | 项目符号列表 |  | 2 |
+|  | added-only-local |  | 高级块 |  | 2 |
+|  | added-only-local |  | 黄色警告 Callout |  | 2 |
+| 4 | focusInEditor | false | true |  | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+
 ### `editor.selection.ctrl-a-ladder` — differ
 
 | step | facet | official | local | delta | severity |
@@ -1398,6 +1501,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.paste.plain-text` | official | text:BBB count 1 | PASS | 1 |
 | `editor.paste.plain-text` | local | text:AAA count 1 | PASS | 1 |
 | `editor.paste.plain-text` | local | text:BBB count 1 | PASS | 1 |
+| `editor.reminder.popover-options` | official | text:REMTASK gt 0 | PASS | 1 |
+| `editor.reminder.popover-options` | local | text:REMTASK gt 0 | PASS | 1 |
 | `editor.selection.ctrl-a-ladder` | official | blocks equals ["AAA","BBB","CCC"] | PASS | ["AAA","BBB","CCC"] |
 | `editor.selection.ctrl-a-ladder` | official | selection:collapsed equals false | PASS | false |
 | `editor.selection.ctrl-a-ladder` | official | focusInEditor equals true | PASS | true |

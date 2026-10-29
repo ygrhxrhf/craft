@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.key.find-clear-then-type'], targets: 'both', tag: 'wave1-116' });
+await main({ only: ['editor.reminder.popover-options'], targets: 'local', tag: 'wave1-122' });

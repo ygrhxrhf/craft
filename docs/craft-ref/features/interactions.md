@@ -5276,3 +5276,8 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - `POST /tasks` 只有 **`taskInfo.scheduleDate`（`YYYY-MM-DD`）**有效；顶层 `scheduleDate`／`schedule`／`date` 全被忽略（四变体实测）。
 - 用它能造出 `今天`／`明天` 分组；分组标题是可点 `BUTTON`，**点它就折叠**（3→2）。
 - ⚠ `←/→` 的键位判据**仍未拿到**（点标题不聚焦；补 `focus()` 后视图被切成"未归档"、按钮消失）。
+
+### V226·补二（第 384 批）：`Ctrl-→` 有读数
+
+- `Ctrl-→`（`OPEN_PAGE`）按后任务列表清空、`location` 出现 `leftSidebarTab=Tasks` ⇒ **切侧栏/页面**，不是"打开任务所属文档"。
+- ⚠ `←/→` 仍无读数：分组标题这次**未渲染**（上一批 3 条时有、这批 2 条时没有）⇒ 前置不稳，继续挂账。

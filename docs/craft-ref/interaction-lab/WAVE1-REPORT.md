@@ -2509,3 +2509,39 @@ v1 的问题：造出的折叠块**没有子项**，折叠与否都看不到变�
 | `git status --porcelain src e2e` | **空** |
 | 台账 | 不变（**1585／G1593**） |
 | 临时产物 | 官方探针文档已 REST 删除 |
+
+## 七十四、★ 第 360 批（2026-10-29）：**`Ctrl-G` 到底了——组容器，且复现要 `Shift-↑` 前置（0 条 G）**
+
+净新增 **0 条 G**（`G1588` 的边界补全）· 零产品代码批。矩阵新增 spec `editor.block.group-shape`。
+
+### 复现前置（这条本身是新发现）
+
+| 序列 | `focus.cls` | 块名册 | 块 HTML |
+| --- | --- | --- | --- |
+| `Escape` → `Ctrl-G` | `sc-6feldf-2`（**焦点被别的元件吃掉**） | `["ALPHA","BETA"]` 不变 | 1891 不变 |
+| `Escape` → `Shift-↑` → `Ctrl-G` | `block-select` 仍在 | **`["ALPHA BETA"]`** | 1901 → **2714** |
+
+⇒ 块选择态里**必须先 `Shift-↑` 扩选**，`Ctrl-G` 才真正作用；只按 `Ctrl-G` 时焦点会落到一个 styled div 上，键被吃。
+
+### 是组容器还是并块 —— 结构证据
+
+| | `blockwrap` class | 内层结构 |
+| --- | --- | --- |
+| 组前（1901 B） | `sc-1fwvj4a-0 bbGxin` | `sc-3a69oq-1 dlcJoh` ／ `sc-114ysd4-0 faJrvA` |
+| 组后（2714 B） | `sc-1fwvj4a-0 kzfbSa` | **多套一层** `sc-3a69oq-5 eSXeNl` → `sc-1bk97g8-2 cMomPb` → `span.sc-3a69oq-8 bmIjsF` |
+
+⇒ **是"组容器"**（`+813 B`、多一层嵌套），不是"把两段文字并进同一 span"。`G1588` 的边界由此结清。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `editor.block.group-shape`（官方 7 步 0 错；本地 `page.goto` 超时，记录见下） |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | 不变（**1585／G1593**） |
+| 临时产物 | 两侧临时文档由 spec teardown 软删 |
+
+★ 本地侧最终也拿到了（`wave1-93`，7 步 0 错）：本地球名册恒 `["ALPHA","BETA"]`、块 HTML 恒 **12 B** ⇒ **`Shift-↑` 与 `Ctrl-G` 在本地都不改结构**（本地没有块选择态、`Ctrl-G` 也无组合绑定），与 `G1588` 一致。
+
+⚠ **取数教训**：本地首次访问某路由要现场编译，**15s 的 `goto` 超时不够** ⇒ spec 里把 `gotoTimeoutMs` 提到 **60000** 才稳定。本轮两次 `steps=0` 都是这个原因，**不是**判据错误，也**不是**日志里那条 `better-sqlite3` Module-not-found Warning。
+但这次连 `committed` 都没拿到 ⇒ 属**环境抖动**（本地冷启动/编译慢），不是仪器判据错误；官方侧读数完整。

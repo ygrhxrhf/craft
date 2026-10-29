@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.key.find-replace'], targets: 'both', tag: 'wave1-87' });
+await main({ only: ['editor.block.group-shape'], targets: 'local', tag: 'wave1-93' });

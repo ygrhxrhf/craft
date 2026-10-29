@@ -93,7 +93,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 十七条踩过的坑（都改掉了，别再犯）
+## ★ 十八条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -199,6 +199,12 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
    测不出"粘贴 HTML 会不会保格式"。新增 `pasteHtml` op：页内 `new DataTransfer()` 同时放 `text/html`
    与 `text/plain`，再 `dispatchEvent(new ClipboardEvent("paste", {clipboardData, bubbles, cancelable}))`。
    两侧编辑器都读 `clipboardData.getData(...)`，所以这一条对两边都成立。
+
+18. **本地靶子首次访问某路由要现场编译，`goto` 的 15s 默认超时不够（第 361 批）**。症状是
+    `page.goto timed out after 15000ms`、record `steps=0`、differ 判 `uncomparable`——看起来像"本地挂了"，
+    其实只是编译慢。处置：该 spec 的 `navigate` 步写 `gotoTimeoutMs: 60000`。
+    ☆ 别把 dev server 日志里 `Module not found: better-sqlite3` 的 **Warning** 当成根因——那是可选原生依赖的
+    预期告警（适配器有内存回退），页面照样能跑。
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
 

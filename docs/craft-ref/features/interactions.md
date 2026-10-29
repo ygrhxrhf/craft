@@ -5136,3 +5136,14 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - 查找条内可点控件只有 `Magnifyingglass Icon`／`Arrow Up`／`Arrow Down` 三枚；三枚逐一点过，
   `menu`／`dialog`／`dropdown`／`popover` 全 0 命中 ⇒ **没有选项菜单**。
 - 撤回上一批"标题行滑杆图标里可能有选项"的说法（那是面板外层装饰，不在查找条容器内）。
+
+## V215＝第 360 批（2026-10-29＝**零产品代码批**＝净新增 0 条）
+
+- ★★ **`Ctrl-G` 是"组容器"不是"并块"**：块 HTML 1901→2714 B、`blockwrap` class 变、多套一层嵌套（`html` 档取证）。
+- ★ **复现前置**：块选择态里必须先 `Shift-↑` 扩选再按 `Ctrl-G`；只按 `Ctrl-G` 时焦点落到 styled div、键被吃掉。
+- ☆ 本轮本地侧 `page.goto` 偶发超时（steps=0）＝环境抖动，不是判据错误。
+
+### V215·补（第 361 批）：本地侧同序列读数
+
+- 本地 `Shift-↑`／`Ctrl-G`：块名册恒 `["ALPHA","BETA"]`、块 HTML 恒 12 B ⇒ **都不改结构**（无块选择态、无组合绑定）。
+- ☆ 本地 `goto` 15s 超时是**编译慢**，spec 里给 `gotoTimeoutMs: 60000` 才稳；日志里 `better-sqlite3` 的 Module-not-found 是可选依赖的预期告警。

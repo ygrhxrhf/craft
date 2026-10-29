@@ -6,7 +6,7 @@
 
 | 约束 | 官方值 | 证据键 |
 |---|---|---|
-| 单字段文本长度 | **10000 字符** | `alert.character.limit.reached.subtitle` |
+| 单字段文本长度 | **10000 字符** | `alert.character.limit.reached.subtitle` ★ **第 391 批实测：标题这一档两侧都**不拦**——官方塞 11009 字符、本地 12000 字符都原样保留、零提示（`G1612`）** |
 | 自定义分享路径 | **≥2 字符、<500 字符、不含空格**；需自定义域名；Business 套餐过期即锁 | `alert.error.custom.paths.{too.short,too.long,no.spaces,empty}`、`.available.with.custom.domains`、`.tier.expired` |
 | 提醒数量 | 三档独立上限：总数 / 进行中 / 已完成，均为远端下发的 `[0]` | `alert.max.{x,in.progress,resolved}.reminders`、`alert.cannot.add.more.reminders` |
 | 合集字段数 | `字段数量不能超过 [0] 个` | `collections.error.field.limit`、`alert.field.limit.title` |

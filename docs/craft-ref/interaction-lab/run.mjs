@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.key.inline-chord-family'], targets: 'both', tag: 'wave1-40' });
+await main({ only: ['editor.key.insert-block-space'], targets: 'both', tag: 'wave1-41' });

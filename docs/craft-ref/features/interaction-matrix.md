@@ -73,6 +73,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
 | `editor.slash.rest-groups` | differ | 67 | 37 | 0 | 本地 +2/−0 · 官方 +1/−0 |
 | `editor.slash.text-format-group` | differ | 13 | 3 | 0 | 本地 +2/−0 · 官方 +1/−0 |
+| `editor.table.add-content-key` | differ | 66 | 34 | 0 | 本地 +2/−0 · 官方 +0/−0 |
 | `editor.table.cell-clipboard` | differ | 72 | 40 | 0 | 本地 +0/−0 · 官方 +0/−2 |
 | `editor.table.enter-family` | differ | 85 | 47 | 0 | 本地 +2/−0 · 官方 +0/−0 |
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
@@ -1588,6 +1589,45 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 3 | countΔ:文字格式 | 1 | 0 | -1 | 2 |
 |  | added-only-local |  | 无匹配命令 |  | 2 |
 
+### `editor.table.add-content-key` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 4 | countΔ:a | 0 | 1 | 1 | 2 |
+| 5 | countΔ:a | 0 | 1 | 1 | 2 |
+| 6 | countΔ:a | 0 | 1 | 1 | 2 |
+| 6 | countΔ:b | 0 | 1 | 1 | 2 |
+| 7 | countΔ:a | 0 | 1 | 1 | 2 |
+| 7 | countΔ:b | 0 | 1 | 1 | 2 |
+| 8 | countΔ:a | 0 | 1 | 1 | 2 |
+| 8 | countΔ:b | 0 | 1 | 1 | 2 |
+| 9 | countΔ:a | 0 | 1 | 1 | 2 |
+| 9 | countΔ:b | 0 | 1 | 1 | 2 |
+| 10 | countΔ:a | 0 | 1 | 1 | 2 |
+| 10 | countΔ:b | 0 | 1 | 1 | 2 |
+| 11 | countΔ:a | 0 | 1 | 1 | 2 |
+| 11 | countΔ:b | 0 | 1 | 1 | 2 |
+| 12 | countΔ:a | 0 | 1 | 1 | 2 |
+| 12 | countΔ:b | 0 | 1 | 1 | 2 |
+| 13 | countΔ:a | 0 | 1 | 1 | 2 |
+| 13 | countΔ:b | 0 | 1 | 1 | 2 |
+| 14 | countΔ:a | 0 | 1 | 1 | 2 |
+| 14 | countΔ:b | 0 | 1 | 1 | 2 |
+| 15 | countΔ:a | 0 | 1 | 1 | 2 |
+| 15 | countΔ:b | 0 | 1 | 1 | 2 |
+|  | added-only-local |  | a |  | 2 |
+|  | added-only-local |  | b |  | 2 |
+| 0 | focusInEditor | false | true |  | 2 |
+| 1 | focusInEditor | false | true |  | 2 |
+| 2 | focusInEditor | false | true |  | 2 |
+| 3 | focusInEditor | false | true |  | 2 |
+| 4 | focusInEditor | false | true |  | 2 |
+| 5 | focusInEditor | false | true |  | 2 |
+| 6 | focusInEditor | false | true |  | 2 |
+| 9 | focusInEditor | false | true |  | 2 |
+| 10 | focusInEditor | false | true |  | 2 |
+| 11 | focusInEditor | false | true |  | 2 |
+
 ### `editor.table.cell-clipboard` — differ
 
 | step | facet | official | local | delta | severity |
@@ -2169,6 +2209,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.slash.text-format-group` | official | state:slashMenu gt 0 | PASS | 1 |
 | `editor.slash.text-format-group` | local | state:slashMenu gt 0 | PASS | 1 |
 | `editor.slash.text-format-group` | local | state:slashMenu gt 0 | PASS | 1 |
+| `editor.table.add-content-key` | official | text:a gt 0 | PASS | 10 |
+| `editor.table.add-content-key` | local | text:a gt 0 | PASS | 11 |
 | `editor.table.cell-clipboard` | official | text:AA gt -1 | PASS | 1 |
 | `editor.table.cell-clipboard` | local | text:AA gt -1 | PASS | 0 |
 | `editor.table.enter-family` | official | text:a gt 0 | PASS | 10 |

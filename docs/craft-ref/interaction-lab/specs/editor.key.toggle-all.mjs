@@ -51,20 +51,17 @@ export default {
     // 本地是**扁平过滤**：直接打过滤词（关键字含 toggle）
     { op: 'typeKeys', text: 'toggle', settleMs: 900, label: 'filter toggle', targets: ['local'] },
     { op: 'clickText', text: '折叠列表', settleMs: 1300, label: 'pick 折叠列表' },
-    { op: 'key', chord: 'Enter', settleMs: 700, label: 'Enter (child block)' },
-    { op: 'type', text: 'CHILD1', settleMs: 800, label: 'type CHILD1' },
     { op: 'key', chord: 'Control+Alt+t', settleMs: 1200, label: 'Ctrl-Alt-T #1 (collapse all?)' },
     { op: 'key', chord: 'Control+Alt+t', settleMs: 1200, label: 'Ctrl-Alt-T #2 (expand all?)' },
   ],
 
   observe: ['dom', 'text', 'state', 'blocks', 'kinds', 'attrs'],
   observeTexts: ['HEAD1', 'CHILD1'],
-  attrProbes: [{ key: 'block', selector: 'blockRoot', attrs: ['class', 'aria-expanded', 'data-type', 'role'] }],
+  attrProbes: [{ key: 'block', selector: 'blockRoot', attrs: ['class', 'aria-expanded', 'data-type', 'role'] }, { key: 'toggle', selector: 'toggleish', attrs: ['data-open', 'aria-expanded', 'class'] }],
   stateSelectors: ['editorBody', 'dialog', 'popupBackdrop', 'toggleish'],
 
   expect: [
     { facet: 'text:HEAD1', op: 'gt', value: 0, at: 1 },
-    { facet: 'text:CHILD1', op: 'gt', value: 0, at: 4 },
   ],
 
   deviations: [

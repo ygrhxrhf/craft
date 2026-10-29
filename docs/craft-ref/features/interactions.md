@@ -5017,3 +5017,8 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - ★ **富文本粘贴两侧一致**：粘贴 `<b>`＋`<i>`＋`<a>` 的 HTML，两侧都保留 `bold`/`italic`/`link` 三个 mark，
   矩阵 `match`。⇒ 粘贴面从"只测纯文本"补成"纯文本＋富文本"都上过屏。
 - ☆ 仪器：新增 `pasteHtml`（`DataTransfer`＋合成 `ClipboardEvent`），`keyboard.paste` 只能塞纯文本。
+
+### V206·补（第 338 批）：折叠块第二轮
+
+- 本地新建折叠块默认 `data-open="false"`（收起态）；`Ctrl-Alt-T` 两次后仍 `false` ⇒ **本地无该键**。
+- 官方入口仍未点出折叠块 ⇒ `Ctrl-Alt-T` 继续挂存量清单 H，不做结论。

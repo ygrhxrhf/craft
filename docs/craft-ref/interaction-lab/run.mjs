@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.block.ungroup-shape'], targets: 'official', tag: 'wave1-108' });
+await main({ only: ['editor.key.equation-caret-and-blocklink-entry'], targets: 'local', tag: 'wave1-114' });

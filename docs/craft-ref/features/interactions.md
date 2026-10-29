@@ -5183,3 +5183,10 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - REST 读回：`{"type":"page","textStyle":"h3","markdown":"### ALPHA","content":[{"type":"text","markdown":"BETA"}]}`
   ⇒ **页面块（h3）＋子块**，不是两块平级文本，也没有重复 BETA。
 - ☆ 名册里的 `["ALPHA BETA","BETA"]` 是**仪器口径问题**（标题＋子块被拼进第一条），已写进 `G1594`。
+
+## V220＝第 368 批（2026-10-29＝**零产品代码批**＝净新增 0 条）
+
+- ★ **方程要选区**：光标在词尾、无选中时按 `Ctrl-Shift-E` **不开输入框**（焦点仍在 `div`）⇒ 结掉 `G1581` 的"光标态未证"。
+- ★ **区块链接第二条入口也不通**：直接键入 `[[` 不触发候选（`dialog`/`popup-backdrop` 无新增）；
+  与 `Ctrl-Shift-K` 一起，本会话两条已知入口**都不通**（措辞不写成"官方没有"）。
+- ☆ 仪器提醒：跨 spec 时页面上的弹层**不会自动关**，本轮 `popup-backdrop` 基线读到 1。

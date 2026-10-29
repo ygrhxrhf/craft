@@ -37,6 +37,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.equation` | differ | 17 | 3 | 0 | 本地 +1/−0 · 官方 +1/−0 |
+| `editor.key.equation-caret-and-blocklink-entry` | differ | 29 | 7 | 10 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.equation.commit` | differ | 28 | 9 | 5 | 本地 +1/−0 · 官方 +2/−0 |
 | `editor.key.find-replace` | differ | 21 | 11 | 2 | 本地 +10/−0 · 官方 +5/−2 |
 | `editor.key.group-and-blocklink` | differ | 47 | 17 | 2 | 本地 +8/−0 · 官方 +4/−2 |
@@ -125,6 +126,16 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.comment.close` | focusInEditor | 0 | true | false | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.key.comment.close` | focusInEditor | 1 | true | false | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.key.comment.close` | focusInEditor | 2 | true | false | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.key.equation-caret-and-blocklink-entry` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.key.equation-caret-and-blocklink-entry` | focusInEditor | 5 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.key.equation-caret-and-blocklink-entry` | selection:anchorOffset | 3 | 7 | 2 | 选区落点差异已由 select-all 梯子承载 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.equation-caret-and-blocklink-entry` | selection:focusOffset | 3 | 7 | 2 | 选区落点差异已由 select-all 梯子承载 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.equation-caret-and-blocklink-entry` | selection:collapsed | 4 |  | true | 选区落点差异已由 select-all 梯子承载 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.equation-caret-and-blocklink-entry` | selection:anchorOffset | 4 |  | 7 | 选区落点差异已由 select-all 梯子承载 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.equation-caret-and-blocklink-entry` | selection:focusOffset | 4 |  | 7 | 选区落点差异已由 select-all 梯子承载 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.equation-caret-and-blocklink-entry` | selection:collapsed | 5 |  | true | 选区落点差异已由 select-all 梯子承载 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.equation-caret-and-blocklink-entry` | selection:anchorOffset | 5 |  | 7 | 选区落点差异已由 select-all 梯子承载 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.equation-caret-and-blocklink-entry` | selection:focusOffset | 5 |  | 7 | 选区落点差异已由 select-all 梯子承载 | specs/editor.selection.ctrl-a-ladder.mjs |
 | `editor.key.equation.commit` | added-only-official |  | 2 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.equation.commit` | added-only-official |  | x |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.equation.commit` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
@@ -564,6 +575,18 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 3 | focusInEditor | false | true |  | 2 |
 | 4 | focusInEditor | false | true |  | 2 |
 | 5 | focusInEditor | false | true |  | 2 |
+
+### `editor.key.equation-caret-and-blocklink-entry` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 3 | countΔ:链接 | 0 | 1 | 1 | 2 |
+| 0 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 1 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 5 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 
 ### `editor.key.equation.commit` — differ
 
@@ -1238,6 +1261,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.enter-mid-block` | local | selection:anchorOffset equals 0 | PASS | 0 |
 | `editor.key.equation` | official | blocks equals ["FORMULA"] | PASS | ["FORMULA"] |
 | `editor.key.equation` | local | blocks equals ["FORMULA"] | PASS | ["FORMULA"] |
+| `editor.key.equation-caret-and-blocklink-entry` | official | text:WORDX gt 0 | PASS | 1 |
+| `editor.key.equation-caret-and-blocklink-entry` | local | text:WORDX gt 0 | PASS | 1 |
 | `editor.key.equation.commit` | official | text:FORMULA gt 0 | PASS | 1 |
 | `editor.key.equation.commit` | local | text:FORMULA gt 0 | PASS | 1 |
 | `editor.key.find-replace` | official | state:findInput gt 0 | PASS | 1 |

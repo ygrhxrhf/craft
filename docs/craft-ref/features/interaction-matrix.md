@@ -39,6 +39,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-extra` | differ | 46 | 21 | 5 | 本地 +1/−0 · 官方 +6/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
+| `editor.key.url-link` | differ | 20 | 9 | 1 | 本地 +7/−0 · 官方 +1/−0 |
 | `editor.md-rules.block-kind` | differ | 93 | 36 | 19 | 本地 +6/−0 · 官方 +6/−1 |
 | `editor.md-rules.inline-mark` | differ | 59 | 16 | 0 | 本地 +6/−0 · 官方 +6/−0 |
 | `editor.paste.plain-text` | differ | 27 | 15 | 0 | 本地 +2/−0 · 官方 +4/−0 |
@@ -100,6 +101,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.turn-into-extra` | added-only-official |  | 自定义背景 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.turn-into-extra` | added-only-official |  | 配置卡片 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.turn-into-extra` | added-only-official |  | 预览 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.url-link` | focusInEditor | 4 | true | false | Escape 的焦点差异已由 G1583 单独承载；本 spec 只判 Ctrl-K 有没有承载面 | gap.md G1583 |
 | `editor.md-rules.block-kind` | countΔ:AAA | 3 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 4 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 5 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
@@ -486,6 +488,20 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 4 | blocks | ["AAA"] | ["AAA",""] |  | 2 |
 | 5 | blocks | ["AAA"] | ["AAA",""] |  | 2 |
 
+### `editor.key.url-link` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+|  | added-only-local |  | Esc |  | 2 |
+|  | added-only-local |  | 关闭 |  | 2 |
+|  | added-only-local |  | 搜索文档与块 |  | 2 |
+|  | added-only-local |  | 操作 |  | 2 |
+|  | added-only-local |  | 新建文档 |  | 2 |
+|  | added-only-local |  | 查看所有快捷键 |  | 2 |
+| 3 | inline | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 3 | state:dialog | 0 | 1 | 1 | 2 |
+| 4 | state:dialog | 0 | 1 | 1 | 2 |
+
 ### `editor.md-rules.block-kind` — differ
 
 | step | facet | official | local | delta | severity |
@@ -813,6 +829,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.turn-into-style` | official | blocksCount count 1 | PASS | 1 |
 | `editor.key.turn-into-style` | local | text:AAA count 1 | PASS | 1 |
 | `editor.key.turn-into-style` | local | blocksCount count 1 | **FAIL** | 2 |
+| `editor.key.url-link` | official | text:ANCHOR gt 0 | PASS | 1 |
+| `editor.key.url-link` | official | blocksCount count 1 | PASS | 1 |
+| `editor.key.url-link` | local | text:ANCHOR gt 0 | PASS | 1 |
+| `editor.key.url-link` | local | blocksCount count 1 | PASS | 1 |
 | `editor.md-rules.block-kind` | official | text:AAA count 1 | PASS | 1 |
 | `editor.md-rules.block-kind` | official | text:BBB count 1 | PASS | 1 |
 | `editor.md-rules.block-kind` | official | text:CCC count 1 | PASS | 1 |

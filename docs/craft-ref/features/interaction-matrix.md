@@ -32,6 +32,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.equation` | differ | 17 | 3 | 0 | 本地 +1/−0 · 官方 +1/−0 |
+| `editor.key.equation.commit` | differ | 28 | 9 | 5 | 本地 +1/−0 · 官方 +2/−0 |
 | `editor.key.find-replace` | differ | 22 | 11 | 3 | 本地 +10/−1 · 官方 +5/−2 |
 | `editor.key.group-and-blocklink` | differ | 47 | 17 | 2 | 本地 +8/−0 · 官方 +4/−2 |
 | `editor.key.home-end-arrows` | match | 14 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
@@ -97,6 +98,11 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.comment` | selection:collapsed | 4 |  | false | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
 | `editor.key.comment` | selection:anchorOffset | 4 |  | 0 | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
 | `editor.key.comment` | selection:focusOffset | 4 |  | 1 | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
+| `editor.key.equation.commit` | added-only-official |  | 2 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.equation.commit` | added-only-official |  | x |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.equation.commit` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.key.equation.commit` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.key.equation.commit` | focusInEditor | 6 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.key.find-replace` | removed-only-local |  |  | 同步中 | 本地同步状态串（同步中）随同步完成而消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES <SAVING> |
 | `editor.key.find-replace` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.find-replace` | removed-only-official |  | 目录 |  | 官方侧栏目录区的空态提示（使用标题、页面或卡片创建目录。／目录）随面板重绘出现或消失；已由 G1556 一族的 TOC_PLACEHOLDER 承载 | src/lib/editor/official-copy.ts:8 |
@@ -408,6 +414,20 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 3 | focusInEditor | false | true |  | 2 |
 | 4 | focusInEditor | false | true |  | 2 |
 | 5 | focusInEditor | false | true |  | 2 |
+
+### `editor.key.equation.commit` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 5 | countΔ:FORMULA | 0 | 1 | 1 | 2 |
+| 5 | countΔ:x | 1 | 0 | -1 | 2 |
+| 6 | countΔ:FORMULA | 0 | 1 | 1 | 2 |
+| 6 | countΔ:x | 1 | 0 | -1 | 2 |
+|  | added-only-local |  | FORMULA |  | 2 |
+| 5 | blocks | ["x 2"] | ["FORMULA"] |  | 2 |
+| 6 | blocks | ["x 2"] | ["FORMULA"] |  | 2 |
+| 3 | inline | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+| 4 | inline | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
 
 ### `editor.key.find-replace` — differ
 
@@ -951,6 +971,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.enter-mid-block` | local | selection:anchorOffset equals 0 | PASS | 0 |
 | `editor.key.equation` | official | blocks equals ["FORMULA"] | PASS | ["FORMULA"] |
 | `editor.key.equation` | local | blocks equals ["FORMULA"] | PASS | ["FORMULA"] |
+| `editor.key.equation.commit` | official | text:FORMULA gt 0 | PASS | 1 |
+| `editor.key.equation.commit` | local | text:FORMULA gt 0 | PASS | 1 |
 | `editor.key.find-replace` | official | state:findInput gt 0 | PASS | 1 |
 | `editor.key.find-replace` | official | blocks equals ["ALPHA BETA ALPHA"] | PASS | ["ALPHA BETA ALPHA"] |
 | `editor.key.find-replace` | local | state:findInput gt 0 | PASS | 1 |

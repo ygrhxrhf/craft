@@ -44,7 +44,8 @@ export default {
     // A 段：任务块上按 Ctrl-Alt-T
     { op: 'type', text: 'TASKA', settleMs: 700, label: 'type TASKA' },
     { op: 'key', chord: 'Control+Shift+6', settleMs: 1000, label: 'Ctrl-Shift-6 (TODO_LIST → task block)' },
-    { op: 'key', chord: 'Control+Alt+t', settleMs: 1400, label: 'Ctrl-Alt-T on TASK block' },
+    { op: 'key', chord: 'Control+Alt+t', settleMs: 1400, label: 'Ctrl-Alt-T on TASK block #1' },
+    { op: 'key', chord: 'Control+Alt+t', settleMs: 1600, label: 'Ctrl-Alt-T on TASK block #2' },
 
     // B 段：另起一块，造折叠块后按同一个键
     { op: 'key', chord: 'Enter', settleMs: 600, label: 'Enter (new block)' },

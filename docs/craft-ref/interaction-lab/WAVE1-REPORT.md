@@ -3554,3 +3554,13 @@ REST `taskInfo` 按键后约 **5s** 才落定，1.2s 读回会把"生效"读成"
 | `git status --porcelain src e2e` | **空** |
 | 台账 | **1601／G1609**；`dialogs.md`「仍未采到」第三条就地结案 |
 | 临时产物 | `QODER-ILAB-offcomment` 已删（`CLEANUP 200`）；本地页已恢复（`/documents`，6106 字） |
+
+### 五、同批补测：「标题必填」在 web 版不拦（`G1610`）
+
+`dialogs.md` 的约束表把「标题字段 **必填**」记为 `alert.title.required`。实测：新建文档只往正文打
+`BODYONLY`、标题留空，直接 `history.back()` 离开 —— **零对话框、零 toast、正文里也没有"必填"字样**；
+回到列表后卡片标题显示 **`BODYONLY`**（正文首行兜底），REST 也查得到该文档。
+
+⇒ **`alert.title.required` 是语言包里的一条文案，不是 web 版的拦阻条件**。这条与 `G1608`
+（离线门禁是"静默"而不是"弹提示"）合起来说明：**`dialogs.md` 那批 `alert.*` 文案不能直接当"会发生什么"读**，
+每一条都要上屏确认它在哪一步、以什么形式出现。

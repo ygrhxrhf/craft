@@ -13,7 +13,7 @@
 | 合集行数 | 独立上限 | `alert.row.limit.title` |
 | 表格尺寸 | `已达到表格大小限制（[0] 列，[1] 行）`，并建议「尝试多个较小的表格」 | `alert.table.size.limit.reached`、`alert.try.smaller.tables` |
 | 白板 | 元素数与图片数各自上限（见 `longtail.md` §6） | `whiteboard.{elements,assets}.limit` |
-| 标题字段 | **必填** | `alert.title.required` |
+| 标题字段 | **必填** | `alert.title.required` ★ **第 391 批实测：web 版**不拦**——无标题文档照存，列表卡用正文首行兜底显示（`G1610`）** |
 
 ## 二、删除生命周期（含可逆性分级）
 

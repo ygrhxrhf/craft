@@ -224,8 +224,23 @@ export class Target {
       out.computed = await this.page.evaluate(captureComputed, { probes: computedProbes, props: spec.computedProps });
     }
     if (set.has('screenshot')) {
-      const r = await this.page.cdp('Page.captureScreenshot', { format: 'png' });
-      out.screenshotBytes = Buffer.from(r.data, 'base64').length;
+      try {
+        try { await this.page.cdp('Page.bringToFront', {}); } catch (e) { /* 窗口最小化时也无妨 */ }
+        const r = await this.page.cdp('Page.captureScreenshot', { format: 'png' });
+      const buf = Buffer.from(r.data, 'base64');
+      out.screenshotBytes = buf.length;
+      // ★ 加性（第 351 批）：`spec.saveScreenshots` 把 PNG 落盘，供人**亲眼读**。
+      //   只记字节数等于没看——"折叠块长什么样"这类问题必须看图。
+      if (spec.saveScreenshots) {
+        this.frames = (this.frames || 0) + 1;
+        const name = `${spec.id}-${this.name}-step${this.frames}.png`.replace(/[^\w.-]/g, '_');
+        writeFileSync(RUNS + '/' + name, buf);
+        out.screenshotPath = name;
+        }
+      } catch (e) {
+        // ★ 截图失败**不中断采集**（第 352 批修）：窗口最小化时整轮曾被这一句打死（record steps=0）。
+        out.screenshotError = String((e && e.message) || e).slice(0, 120);
+      }
     }
     return out;
   }

@@ -342,6 +342,29 @@ async function runStep(target, spec, step, ctx, log) {
     case 'clickRef':
       await p.click(step.ref);
       break;
+    case 'clickText': {
+      // 加性 op（第 335 批）：按**文案**点菜单项。CSS 选不了文本，而斜线菜单的项是运行时渲染的，
+      // 官方又是二级菜单（`列表` → `折叠列表`）⇒ 只能按文案命中。
+      // 只在这几个容器里找（避免点到正文里同名的词），且要求元素足够大（真正可点）。
+      const hit = await p.evaluate((text) => {
+        const roots = [...document.querySelectorAll('[data-testid="command-menu"],[role="listbox"],[role="menu"],[role="dialog"]')];
+        const scope = roots.length ? roots : [document.body];
+        const norm = (s) => (s || '').replace(/\s+/g, '');
+        for (const r of scope) {
+          for (const el of r.querySelectorAll('button,[role="option"],[role="menuitem"],li,div,span')) {
+            if (el.children.length > 2) continue;
+            if (norm(el.innerText) !== text) continue;
+            const b = el.getBoundingClientRect();
+            if (b.width < 8 || b.height < 8) continue;
+            return { x: Math.round(b.x + b.width / 2), y: Math.round(b.y + b.height / 2) };
+          }
+        }
+        return null;
+      }, step.text);
+      if (!hit) throw new Error('clickText: 菜单里找不到「' + step.text + '」');
+      await p.mouse.click(hit.x, hit.y, { label: 'clickText ' + step.text });
+      break;
+    }
     case 'clickXY':
       await p.mouse.click(step.x, step.y, step.label ? { label: step.label } : undefined);
       break;
@@ -518,6 +541,14 @@ export async function runOne(spec, targetName, page) {
 
     for (let i = 0; i < (spec.steps || []).length; i++) {
       const step = spec.steps[i];
+      // 加性（第 335 批）：`step.targets` 给「只有某一侧才有的前置」用（例如官方斜线菜单是二级菜单、
+      // 本地是扁平过滤）。跳过的步不写 record ⇒ 两侧步数会不同，differ 按**共有的 step index** 比，
+      // 因此这类 spec 应把两侧步序对齐到同一观测点，别让跳步改变关键步的位置。
+      if (step.targets && !step.targets.includes(target.name)) {
+        log('step SKIP (' + target.name + ') ' + (step.label || step.op));
+        record.steps.push({ index: i + 1, label: 'skipped: ' + (step.label || step.op), skipped: true, ...(await target.observe(spec, spec.observe)) });
+        continue;
+      }
       await runStep(target, spec, step, ctx, log);
       // 动作后**立刻**取一次观测（硬规则 4）
       record.steps.push({ index: i + 1, label: step.label || step.op, ...(await target.observe(spec, spec.observe)) });

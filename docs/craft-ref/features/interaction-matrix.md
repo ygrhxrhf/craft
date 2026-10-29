@@ -38,7 +38,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.insert-block-space` | differ | 20 | 4 | 2 | 本地 +1/−0 · 官方 +2/−1 |
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
-| `editor.key.toggle-all` | differ | 45 | 23 | 0 | 本地 +2/−0 · 官方 +2/−0 |
+| `editor.key.toggle-all` | differ | 59 | 35 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-extra` | differ | 46 | 21 | 5 | 本地 +1/−0 · 官方 +6/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.url-link` | differ | 20 | 9 | 1 | 本地 +7/−0 · 官方 +1/−0 |
@@ -525,18 +525,30 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 8 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
 | 9 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
 | 10 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 6 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
-| 7 | blocks | ["HEAD1",""] | ["HEAD1","",""] |  | 2 |
-| 8 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 11 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 6 | blocks | ["HEAD1/"] | ["HEAD1/toggle"] |  | 2 |
+| 7 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
+| 8 | blocks | ["HEAD1",""] | ["HEAD1","",""] |  | 2 |
 | 9 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
 | 10 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
-| 6 | kinds | ["para"] | ["para","para","para"] |  | 2 |
-| 7 | kinds | ["para","para"] | ["para","para","para"] |  | 2 |
+| 11 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 7 | kinds | ["para"] | ["para","para","para"] |  | 2 |
 | 8 | kinds | ["para","para"] | ["para","para","para"] |  | 2 |
 | 9 | kinds | ["para","para"] | ["para","para","para"] |  | 2 |
 | 10 | kinds | ["para","para"] | ["para","para","para"] |  | 2 |
-| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
-| 5 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 11 | kinds | ["para","para"] | ["para","para","para"] |  | 2 |
+| 0 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 1 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 4 | state:popupBackdrop | 2 | 0 | -2 | 2 |
+| 5 | state:popupBackdrop | 2 | 0 | -2 | 2 |
+| 6 | state:popupBackdrop | 2 | 0 | -2 | 2 |
+| 7 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 8 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 9 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 10 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 11 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 
 ### `editor.key.turn-into-extra` — differ
 

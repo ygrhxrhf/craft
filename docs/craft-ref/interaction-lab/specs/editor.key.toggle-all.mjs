@@ -45,8 +45,11 @@ export default {
     { op: 'key', chord: 'Enter', settleMs: 600, label: 'Enter (block 2)' },
     { op: 'key', chord: 'Backspace', settleMs: 500, label: 'Backspace (back to block 1)' },
     { op: 'type', text: '/', settleMs: 900, label: 'slash menu' },
-    { op: 'type', text: '折叠', settleMs: 900, label: 'filter 折叠' },
-    { op: 'key', chord: 'Enter', settleMs: 1200, label: 'Enter (pick 折叠列表)' },
+    // 官方斜线菜单是**二级菜单**（G1544）：「折叠列表」在「列表」下面
+    { op: 'clickText', text: '列表', settleMs: 1000, label: 'open 列表 submenu', targets: ['official'] },
+    // 本地是**扁平过滤**：直接打过滤词（关键字含 toggle）
+    { op: 'typeKeys', text: 'toggle', settleMs: 900, label: 'filter toggle', targets: ['local'] },
+    { op: 'clickText', text: '折叠列表', settleMs: 1300, label: 'pick 折叠列表' },
     { op: 'key', chord: 'Enter', settleMs: 700, label: 'Enter (child block)' },
     { op: 'type', text: 'CHILD1', settleMs: 800, label: 'type CHILD1' },
     { op: 'key', chord: 'Control+Alt+t', settleMs: 1200, label: 'Ctrl-Alt-T #1 (collapse all?)' },

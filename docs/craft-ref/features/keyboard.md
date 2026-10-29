@@ -19,6 +19,10 @@
 - **`QM(d)`**：把 `winMatcher.keyCondition` 换成永假函数 → **Mac 专用快捷键**。
 - 显示串：`Cae()` 按 meta→ctrl→alt→shift→key 顺序拼，**Mac 用空格分隔**（`⌘ ⇧ K`），**Windows 用 `-`**（`Ctrl-Shift-K`）。标签：⌘/⌃/⌥/⇧ ↔ Win/Ctrl/Alt/Shift。
 
+> ★ **未采面口径（第 347 批定）**：本文件里带「第 N 批」字样的「仍未采到／未试清单」都是**当时的快照**，不是现状。
+> **现行未采面只看** `interaction-lab/WAVE1-REPORT.md` §三十一「存量清单」（A–H，逐条带"卡在哪／下一手"）。
+> 屏上证据的现行载体是 `interaction-lab/specs/*` ＋ `features/interaction-matrix.md`；**表 A–E 每行末尾的 ✎ 才是对该行的最终裁定**。
+
 ## 表 A · 文本样式与格式（块级）
 
 | id | macOS | Windows | 官方中文 |

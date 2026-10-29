@@ -45,7 +45,7 @@ export default {
     { op: 'type', text: 'HEAD1', settleMs: 700, label: 'type HEAD1' },
     { op: 'key', chord: 'Enter', settleMs: 600, label: 'Enter (block 2)' },
     { op: 'key', chord: 'Backspace', settleMs: 500, label: 'Backspace (back to block 1)' },
-    { op: 'type', text: '/', settleMs: 900, label: 'slash menu' },
+    { op: 'typeKeys', text: '/', settleMs: 900, label: 'slash menu' },
     // 官方斜线菜单是**二级菜单**（G1544）：「折叠列表」在「列表」下面
     { op: 'clickText', text: '列表', settleMs: 1000, label: 'open 列表 submenu', targets: ['official'] },
     // 本地是**扁平过滤**：直接打过滤词（关键字含 toggle）

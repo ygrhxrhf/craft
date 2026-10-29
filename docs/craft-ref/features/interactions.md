@@ -5190,3 +5190,9 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - ★ **区块链接第二条入口也不通**：直接键入 `[[` 不触发候选（`dialog`/`popup-backdrop` 无新增）；
   与 `Ctrl-Shift-K` 一起，本会话两条已知入口**都不通**（措辞不写成"官方没有"）。
 - ☆ 仪器提醒：跨 spec 时页面上的弹层**不会自动关**，本轮 `popup-backdrop` 基线读到 1。
+
+## V221＝第 369 批（2026-10-29＝**零产品代码批**＝净新增 0 条）
+
+- ★ **减缩进两侧都生效**：列表二级项按 `Shift-Tab`，`indent.levels` 从 `[0,1]` 退回 `[0,0]`（两侧一致）。
+  报告里"减缩进未采"由此清掉。
+- ☆ 顺带修过期陈述：`keys` 档**早已实现**（`installKeyProbe`／`readKeys`）并被 `ctrl-arrow-word-nav` 使用。

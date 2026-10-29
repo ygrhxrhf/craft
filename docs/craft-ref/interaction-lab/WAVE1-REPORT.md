@@ -417,7 +417,7 @@ div._flexRow_1oz2o_1
 
 ### 5、★ 一处诚实边界
 
-本 spec **未采 `keys` 档** ⇒ 这三个组合键**是否被消费**本批**未测**，不写成"与官方一致"。
+~~本 spec 未采 `keys` 档 ⇒ 这三个组合键是否被消费未测~~ ✎ **已过期**：`keys` 档早已实现（`observe.mjs` 的 `installKeyProbe`／`readKeys`，判据是"冒泡阶段没收到或被 `preventDefault` ＝ 被消费"），且 `editor.key.ctrl-arrow-word-nav` 已在用；本条只保留"本批没采"的历史事实。
 
 ### 6、门禁
 
@@ -2723,6 +2723,31 @@ v1 的问题：造出的折叠块**没有子项**，折叠与否都看不到变�
 | 项 | 结果 |
 | --- | --- |
 | 矩阵 | 新增 `editor.key.equation-caret-and-blocklink-entry`（官方 6 步 0 错） |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | 不变（**1587／G1595**） |
+| 临时产物 | 两侧临时文档由 spec teardown 软删 |
+
+## 八十二、★ 续批六十三（2026-10-29）：**减缩进两侧都生效（0 条 G）**
+
+净新增 **0 条 G** · 零产品代码批。矩阵新增 spec `editor.block.outdent-in-list`。
+
+报告里一直挂着一条"**② 减缩进未采**"（本地缩进是缺口 `G1545`／`G1546`，但官方侧 `Shift-Tab` 从没单独采过）。本批补上：
+
+| 步 | 官方 `indent.levels` | 本地 `indent.levels` |
+| --- | --- | --- |
+| `ITEMA` → 项目符号 → `↵` → `Tab` → `ITEMB` | `[0, 1]`（`modes: ["none","var"]`） | `[0, 1]`（`modes: ["none","nest"]`） |
+| **`Shift-Tab`** | **`[0, 0]`** | **`[0, 0]`** |
+
+⇒ **减缩进两侧都生效**（缩进量从 1 退回 0）。这条不是 G——但它把报告里挂着的"减缩进未采"清掉了。
+
+★ 顺带修一条过期陈述：报告里"本 spec 未采 `keys` 档"**已过期**——`keys` 档早已实现并被使用，
+措辞改成"只保留历史事实"。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `editor.block.outdent-in-list`（官方 7 步 0 错／本地 7 步 0 错） |
 | `git status --porcelain src e2e` | **空** |
 | 台账 | 不变（**1587／G1595**） |
 | 临时产物 | 两侧临时文档由 spec teardown 软删 |

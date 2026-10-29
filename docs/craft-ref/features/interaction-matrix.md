@@ -26,6 +26,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.insert-before-selected` | differ | 37 | 17 | 4 | 本地 +1/−0 · 官方 +2/−0 |
 | `editor.block.move-alt-updown` | differ | 21 | 1 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.block.move-top-bottom` | differ | 21 | 5 | 0 | 本地 +3/−0 · 官方 +3/−0 |
+| `editor.block.outdent-in-list` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.block.selection-mode` | differ | 49 | 30 | 1 | 本地 +2/−0 · 官方 +2/−1 |
 | `editor.block.ungroup-shape` | differ | 42 | 15 | 7 | 本地 +2/−0 · 官方 +2/−1 |
 | `editor.key.backspace-at-block-start` | match | 20 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
@@ -1181,6 +1182,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.move-top-bottom` | local | blocks equals ["AAA","BBB","CCC"] | PASS | ["AAA","BBB","CCC"] |
 | `editor.block.move-top-bottom` | local | focusInEditor equals true | PASS | true |
 | `editor.block.move-top-bottom` | local | focusInEditor equals true | PASS | true |
+| `editor.block.outdent-in-list` | official | blocksCount count 2 | PASS | 2 |
+| `editor.block.outdent-in-list` | local | blocksCount count 2 | PASS | 2 |
 | `editor.block.selection-mode` | official | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.block.selection-mode` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.block.ungroup-shape` | official | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |

@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.key.equation-caret-and-blocklink-entry'], targets: 'local', tag: 'wave1-114' });
+await main({ only: ['editor.block.outdent-in-list'], targets: 'both', tag: 'wave1-115' });

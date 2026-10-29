@@ -29,7 +29,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.outdent-in-list` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.block.selection-mode` | differ | 49 | 30 | 1 | 本地 +2/−0 · 官方 +2/−1 |
 | `editor.block.ungroup-shape` | differ | 42 | 15 | 7 | 本地 +2/−0 · 官方 +2/−1 |
-| `editor.blockmenu.task-items` | differ | 77 | 22 | 41 | 本地 +2/−0 · 官方 +42/−0 |
+| `editor.blockmenu.task-items` | uncomparable | 1 | 1 | 0 |  |
+| `editor.deadline.picker-shape` | differ | 119 | 104 | 5 | 本地 +87/−0 · 官方 +5/−0 |
 | `editor.key.backspace-at-block-start` | match | 20 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.backspace-in-list` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.comment` | differ | 23 | 7 | 6 | 本地 +1/−0 · 官方 +2/−0 |
@@ -118,47 +119,11 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.ungroup-shape` | focusInEditor | 7 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.block.ungroup-shape` | focusInEditor | 8 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.block.ungroup-shape` | focusInEditor | 9 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
-| `editor.blockmenu.task-items` | added-only-official |  | 1 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 10 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 11 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 12 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 13 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 14 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 15 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 16 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 17 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 18 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 19 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 2 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 20 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 21 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 22 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 23 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 24 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 25 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 26 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 27 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 28 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 29 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 3 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 30 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 31 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 4 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 6 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 7 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 8 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 9 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 一 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 三 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 二 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 五 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 六 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 十月 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 取消 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 四 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 应用 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 日 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `editor.blockmenu.task-items` | added-only-official |  | 时间 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.deadline.picker-shape` | added-only-official |  | DLTASK/ |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.deadline.picker-shape` | added-only-official |  | 将截止日期设为下周一 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.deadline.picker-shape` | added-only-official |  | 将截止日期设为今天 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.deadline.picker-shape` | added-only-official |  | 将截止日期设为明天 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.deadline.picker-shape` | added-only-official |  | 按日期设定截止日期… |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.backspace-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 光标 offset 天然差 1 | probe-bullet；同 editor.block.indent-in-list 的同一声明 |
 | `editor.key.backspace-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
 | `editor.key.comment` | selection:focusOffset | 2 | 18 | 1 | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
@@ -505,32 +470,120 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 8 | kinds | ["heading","para"] | ["para","para"] |  | 2 |
 | 9 | kinds | ["heading","para"] | ["para","para"] |  | 2 |
 
-### `editor.blockmenu.task-items` — differ
+### `editor.blockmenu.task-items` — uncomparable
 
 | step | facet | official | local | delta | severity |
 | --- | --- | --- | --- | --- | --- |
-| 2 | countΔ:MENUTASK | 1 | 2 | 1 | 2 |
-| 3 | countΔ:MENUTASK | 1 | 2 | 1 | 2 |
-| 4 | countΔ:MENUTASK | 1 | 2 | 1 | 2 |
-| 4 | countΔ:删除 | 1 | 0 | -1 | 2 |
-| 4 | countΔ:在上方插入区块 | 1 | 0 | -1 | 2 |
-| 4 | countΔ:在下方插入区块 | 1 | 0 | -1 | 2 |
-| 4 | countΔ:复制区块链接 | 1 | 0 | -1 | 2 |
-| 4 | countΔ:提醒我… | 1 | 0 | -1 | 2 |
-| 4 | countΔ:添加评论 | 1 | 0 | -1 | 2 |
-| 5 | countΔ:MENUTASK | 1 | 2 | 1 | 2 |
-| 5 | countΔ:明天 | 1 | 0 | -1 | 2 |
-| 5 | countΔ:自定义… | 1 | 0 | -1 | 2 |
-| 6 | countΔ:MENUTASK | 1 | 2 | 1 | 2 |
-| 6 | countΔ:取消 | 1 | 0 | -1 | 2 |
-| 6 | countΔ:时间 | 1 | 0 | -1 | 2 |
-|  | added-only-local |  | Task item checkbox for MENUTASK |  | 2 |
-| 4 | focusInEditor | false | true |  | 2 |
-| 5 | focusInEditor | false | true |  | 2 |
-| 6 | focusInEditor | false | true |  | 2 |
+|  | precondition | clickText: 菜单里找不到「设定截止日期」 | ok |  | 3 |
+
+### `editor.deadline.picker-shape` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:DLTASK | 1 | 2 | 1 | 2 |
+| 3 | countΔ:DLTASK | 1 | 2 | 1 | 2 |
+| 3 | countΔ:一 | 0 | 7 | 7 | 2 |
+| 3 | countΔ:三 | 0 | 1 | 1 | 2 |
+| 3 | countΔ:取消 | 1 | 0 | -1 | 2 |
+| 3 | countΔ:四 | 0 | 1 | 1 | 2 |
+| 3 | countΔ:截止 | 1 | 0 | -1 | 2 |
+| 3 | countΔ:日 | 2 | 0 | -2 | 2 |
+| 3 | countΔ:时间 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:DLTASK | 1 | 2 | 1 | 2 |
+| 4 | countΔ:一 | 1 | 7 | 6 | 2 |
+| 4 | countΔ:三 | 0 | 1 | 1 | 2 |
+| 4 | countΔ:四 | 0 | 1 | 1 | 2 |
+| 4 | countΔ:截止 | 4 | 0 | -4 | 2 |
+| 4 | countΔ:日 | 5 | 0 | -5 | 2 |
+|  | added-only-local |  | / |  | 2 |
+|  | added-only-local |  | @提及 |  | 2 |
+|  | added-only-local |  | AI 生成图像 |  | 2 |
+|  | added-only-local |  | Callout |  | 2 |
+|  | added-only-local |  | DLTASK |  | 2 |
+|  | added-only-local |  | Task item checkbox for DLTASK/ |  | 2 |
+|  | added-only-local |  | 三级标题 |  | 2 |
+|  | added-only-local |  | 上传图片或嵌入图片 |  | 2 |
+|  | added-only-local |  | 上传文件附件 |  | 2 |
+|  | added-only-local |  | 从模板插入 |  | 2 |
+|  | added-only-local |  | 代码块 |  | 2 |
+|  | added-only-local |  | 代码片段（支持语法高亮） |  | 2 |
+|  | added-only-local |  | 信息提示 |  | 2 |
+|  | added-only-local |  | 全部展开 |  | 2 |
+|  | added-only-local |  | 全部收起 |  | 2 |
+|  | added-only-local |  | 公式 |  | 2 |
+|  | added-only-local |  | 分栏 |  | 2 |
+|  | added-only-local |  | 分隔线 - 常规 |  | 2 |
+|  | added-only-local |  | 分隔线 - 极细 |  | 2 |
+|  | added-only-local |  | 分隔线 - 粗 |  | 2 |
+|  | added-only-local |  | 分隔线 - 细 |  | 2 |
+|  | added-only-local |  | 列出文档标题，点击可跳转 |  | 2 |
+|  | added-only-local |  | 列表 |  | 2 |
+|  | added-only-local |  | 副标题 |  | 2 |
+|  | added-only-local |  | 卡片 |  | 2 |
+|  | added-only-local |  | 只读引用另一篇文档里的块 |  | 2 |
+|  | added-only-local |  | 可勾选的任务列表 |  | 2 |
+|  | added-only-local |  | 可展开/折叠的内容 |  | 2 |
+|  | added-only-local |  | 四级标题 |  | 2 |
+|  | added-only-local |  | 图片 |  | 2 |
+|  | added-only-local |  | 图片网格 |  | 2 |
+|  | added-only-local |  | 圆角卡片容器，可容纳多个块 |  | 2 |
+|  | added-only-local |  | 在文档里嵌入一块可缩放的白板 |  | 2 |
+|  | added-only-local |  | 基础块 |  | 2 |
+|  | added-only-local |  | 备注 |  | 2 |
+|  | added-only-local |  | 多图自动布局的网格 |  | 2 |
+|  | added-only-local |  | 大标题 |  | 2 |
+|  | added-only-local |  | 媒体 |  | 2 |
+|  | added-only-local |  | 展开文档中的全部折叠块 |  | 2 |
+|  | added-only-local |  | 嵌入 |  | 2 |
+|  | added-only-local |  | 嵌入 YouTube / Vimeo 视频 |  | 2 |
+|  | added-only-local |  | 嵌在文字里的 LaTeX 公式 |  | 2 |
+|  | added-only-local |  | 布局 |  | 2 |
+|  | added-only-local |  | 引用 |  | 2 |
+|  | added-only-local |  | 引用文本块 |  | 2 |
+|  | added-only-local |  | 待办事项 |  | 2 |
+|  | added-only-local |  | 成功提示 |  | 2 |
+|  | added-only-local |  | 把内容并排分成两栏 |  | 2 |
+|  | added-only-local |  | 折叠列表 |  | 2 |
+|  | added-only-local |  | 提及另一个文档 |  | 2 |
+|  | added-only-local |  | 插入一块可绘制图形与草图的画板 |  | 2 |
+|  | added-only-local |  | 插入表格 |  | 2 |
+|  | added-only-local |  | 收起文档中的全部折叠块 |  | 2 |
+|  | added-only-local |  | 文件附件 |  | 2 |
+|  | added-only-local |  | 文本 |  | 2 |
+|  | added-only-local |  | 无序列表 |  | 2 |
+|  | added-only-local |  | 普通文本段落 |  | 2 |
+|  | added-only-local |  | 最细的水平分隔线 |  | 2 |
+|  | added-only-local |  | 最重的水平分隔线 |  | 2 |
+|  | added-only-local |  | 有序列表 |  | 2 |
+|  | added-only-local |  | 标题 1 |  | 2 |
+|  | added-only-local |  | 标题 2 |  | 2 |
+|  | added-only-local |  | 标题 3 |  | 2 |
+|  | added-only-local |  | 标题 4 |  | 2 |
+|  | added-only-local |  | 水平分隔线（也可输入 --- / ..- / .-- / =-- 直接成档） |  | 2 |
+|  | added-only-local |  | 独立一行的 LaTeX 公式 |  | 2 |
+|  | added-only-local |  | 生成富链接预览卡片 |  | 2 |
+|  | added-only-local |  | 用 AI 生成一张图片插入文档 |  | 2 |
+|  | added-only-local |  | 目录 |  | 2 |
+|  | added-only-local |  | 紫色备注 Callout |  | 2 |
+|  | added-only-local |  | 红色错误 Callout |  | 2 |
+|  | added-only-local |  | 细水平分隔线 |  | 2 |
+|  | added-only-local |  | 绘图 |  | 2 |
+|  | added-only-local |  | 绿色成功 Callout |  | 2 |
+|  | added-only-local |  | 编号列表 |  | 2 |
+|  | added-only-local |  | 网页链接 |  | 2 |
+|  | added-only-local |  | 蓝色信息 Callout |  | 2 |
+|  | added-only-local |  | 行内公式 |  | 2 |
+|  | added-only-local |  | 表格 |  | 2 |
+|  | added-only-local |  | 视频嵌入 |  | 2 |
+|  | added-only-local |  | 警告提示 |  | 2 |
+|  | added-only-local |  | 选择一个模板并把它的内容插到当前位置 |  | 2 |
+|  | added-only-local |  | 错误提示 |  | 2 |
+|  | added-only-local |  | 镜像块 |  | 2 |
+|  | added-only-local |  | 项目符号列表 |  | 2 |
+|  | added-only-local |  | 高级块 |  | 2 |
+|  | added-only-local |  | 黄色警告 Callout |  | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 | 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
-| 5 | state:popupBackdrop | 1 | 0 | -1 | 2 |
-| 6 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 
 ### `editor.key.comment` — differ
 
@@ -1396,6 +1449,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.ungroup-shape` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.blockmenu.task-items` | official | text:MENUTASK gt 0 | PASS | 1 |
 | `editor.blockmenu.task-items` | local | text:MENUTASK gt 0 | PASS | 1 |
+| `editor.deadline.picker-shape` | official | text:DLTASK gt 0 | PASS | 1 |
+| `editor.deadline.picker-shape` | local | text:DLTASK gt 0 | PASS | 1 |
 | `editor.key.backspace-at-block-start` | official | blocksCount count 1 | PASS | 1 |
 | `editor.key.backspace-at-block-start` | official | blocks equals ["AAA","BBB"] | PASS | ["AAA","BBB"] |
 | `editor.key.backspace-at-block-start` | official | blocks equals ["AAABBB"] | PASS | ["AAABBB"] |

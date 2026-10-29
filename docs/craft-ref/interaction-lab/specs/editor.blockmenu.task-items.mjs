@@ -40,10 +40,12 @@ export default {
     { op: 'key', chord: 'Control+Shift+6', settleMs: 1000, label: 'Ctrl-Shift-6 (task block)' },
     { op: 'hover', selector: 'blockRoot', settleMs: 900, label: 'hover block (reveal ⋯)' },
     { op: 'clickXY', x: 1235, y: 185, settleMs: 1200, label: 'click ⋯ area (right of block)', targets: ['official'] },
+    { op: 'clickText', text: '提醒我…', settleMs: 1500, label: 'pick 提醒我… (block menu)', targets: ['official'] },
   ],
 
   observe: ['dom', 'text', 'state', 'blocks', 'html'],
   observeTexts: [
+    '30 分钟', '1 小时', '1 天', '自定义…', '今天', '明天', '晚上',
     'MENUTASK', '提醒我…', '将任务标记为已完成', '将任务标记为已取消',
     '添加内容', '在上方插入区块', '在下方插入区块', '复制区块链接', '添加评论', '删除',
   ],

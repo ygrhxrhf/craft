@@ -32,6 +32,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.backspace-in-list` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.comment` | differ | 23 | 7 | 6 | 本地 +1/−0 · 官方 +2/−0 |
 | `editor.key.comment.close` | differ | 34 | 16 | 4 | 本地 +0/−0 · 官方 +1/−0 |
+| `editor.key.ctrl-alt-t-dispatch` | differ | 60 | 38 | 0 | 本地 +4/−0 · 官方 +2/−0 |
 | `editor.key.ctrl-arrow-word-nav` | differ | 43 | 15 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
@@ -473,6 +474,49 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 6 | blocks | ["","CMT"] | [""] |  | 2 |
 | 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
 | 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+
+### `editor.key.ctrl-alt-t-dispatch` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:TASKA | 1 | 2 | 1 | 2 |
+| 3 | countΔ:TASKA | 1 | 2 | 1 | 2 |
+| 4 | countΔ:TASKA | 1 | 2 | 1 | 2 |
+| 5 | countΔ:FOLDB | 1 | 2 | 1 | 2 |
+| 5 | countΔ:TASKA | 1 | 2 | 1 | 2 |
+| 6 | countΔ:FOLDB | 1 | 2 | 1 | 2 |
+| 6 | countΔ:TASKA | 1 | 2 | 1 | 2 |
+| 7 | countΔ:FOLDB | 1 | 2 | 1 | 2 |
+| 7 | countΔ:TASKA | 1 | 2 | 1 | 2 |
+| 8 | countΔ:FOLDB | 1 | 2 | 1 | 2 |
+| 8 | countΔ:TASKA | 1 | 2 | 1 | 2 |
+| 9 | countΔ:FOLDB | 1 | 2 | 1 | 2 |
+| 9 | countΔ:TASKA | 1 | 2 | 1 | 2 |
+| 10 | countΔ:FOLDB | 1 | 2 | 1 | 2 |
+| 10 | countΔ:TASKA | 1 | 2 | 1 | 2 |
+|  | added-only-local |  | Task item checkbox for FOLDB |  | 2 |
+|  | added-only-local |  | Task item checkbox for TASKA |  | 2 |
+| 8 | blocks | ["TASKA","FOLDB/"] | ["TASKA","FOLDB/toggle"] |  | 2 |
+| 4 | kinds | ["para","task"] | ["task","task"] |  | 2 |
+| 5 | kinds | ["para","task"] | ["task","task"] |  | 2 |
+| 6 | kinds | ["para","task"] | ["task","task"] |  | 2 |
+| 7 | kinds | ["para","task"] | ["task","task"] |  | 2 |
+| 8 | kinds | ["para","task"] | ["task","task"] |  | 2 |
+| 9 | kinds | ["para","para"] | ["task","task"] |  | 2 |
+| 10 | kinds | ["para","para"] | ["task","task"] |  | 2 |
+| 0 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 1 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 5 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 6 | state:popupBackdrop | 2 | 0 | -2 | 2 |
+| 7 | state:popupBackdrop | 2 | 0 | -2 | 2 |
+| 8 | state:popupBackdrop | 2 | 0 | -2 | 2 |
+| 9 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 9 | state:toggleish | 0 | 2 | 2 | 2 |
+| 10 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 10 | state:toggleish | 0 | 2 | 2 | 2 |
 
 ### `editor.key.ctrl-arrow-word-nav` — differ
 
@@ -1129,6 +1173,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.comment` | local | text:QCOMMENTMARK gt 0 | PASS | 1 |
 | `editor.key.comment.close` | official | text:CMT gt 0 | PASS | 1 |
 | `editor.key.comment.close` | local | text:CMT gt 0 | **FAIL** | 0 |
+| `editor.key.ctrl-alt-t-dispatch` | official | text:TASKA gt 0 | PASS | 1 |
+| `editor.key.ctrl-alt-t-dispatch` | official | text:FOLDB gt 0 | PASS | 1 |
+| `editor.key.ctrl-alt-t-dispatch` | local | text:TASKA gt 0 | PASS | 1 |
+| `editor.key.ctrl-alt-t-dispatch` | local | text:FOLDB gt 0 | PASS | 2 |
 | `editor.key.ctrl-arrow-word-nav` | official | blocks equals ["AAA BBB CCC"] | PASS | ["AAA BBB CCC"] |
 | `editor.key.ctrl-arrow-word-nav` | official | blocks equals ["AAA BBB CCC",""] | PASS | ["AAA BBB CCC",""] |
 | `editor.key.ctrl-arrow-word-nav` | official | blocks equals ["AAA BBB CCC","DDD"] | PASS | ["AAA BBB CCC","DDD"] |

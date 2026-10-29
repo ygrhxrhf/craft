@@ -47,6 +47,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.toggle-all` | differ | 71 | 44 | 1 | 本地 +1/−0 · 官方 +2/−0 |
+| `editor.key.toggle-all-repeat` | differ | 47 | 18 | 1 | 本地 +2/−1 · 官方 +2/−0 |
 | `editor.key.toggle-all-v2` | differ | 57 | 35 | 0 | 本地 +4/−0 · 官方 +2/−0 |
 | `editor.key.toggle-all-v3` | differ | 48 | 19 | 1 | 本地 +2/−0 · 官方 +3/−0 |
 | `editor.key.turn-into-extra` | differ | 46 | 21 | 5 | 本地 +1/−0 · 官方 +6/−0 |
@@ -141,6 +142,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.list-family` | countΔ:AAA | 2 | 1 | 2 | 本地任务块勾选框的合成可及名含任务文本 ⇒ 同一个词被 count 两次；已由 G1563 单独承载 | gap.md G1563 |
 | `editor.key.list-family` | blocks | 4 | ["1. AAA"] | ["AAA"] | 官方把列表序号画进文本节点（1. AAA），本地由 CSS counter 画、不进 innerText；已由 G866／G1556 承载 | gap.md G866 · G1556；editor.md-rules.block-kind 同一声明 |
 | `editor.key.toggle-all` | added-only-official |  | CHILD1 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.toggle-all-repeat` | removed-only-local |  |  | 同步中 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
 | `editor.key.toggle-all-v3` | added-only-official |  | 空折叠块 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.turn-into-extra` | added-only-official |  | 套用样式 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.turn-into-extra` | added-only-official |  | 自定义 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
@@ -751,6 +753,29 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 11 | state:toggleish | 0 | 2 | 2 | 2 |
 | 12 | state:toggleish | 0 | 2 | 2 | 2 |
 
+### `editor.key.toggle-all-repeat` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 9 | countΔ:CHILD1 | 0 | 1 | 1 | 2 |
+| 11 | countΔ:CHILD1 | 0 | 1 | 1 | 2 |
+| 13 | countΔ:CHILD1 | 0 | 1 | 1 | 2 |
+| 4 | blocks | ["HEAD1/"] | ["HEAD1/toggle"] |  | 2 |
+| 5 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
+| 6 | blocks | ["HEAD1",""] | ["HEAD1","",""] |  | 2 |
+| 7 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 8 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 9 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 10 | blocks | ["HEAD1","CHILD1","空折叠块"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 11 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 12 | blocks | ["HEAD1","CHILD1","空折叠块"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 13 | blocks | ["HEAD1","CHILD1"] | ["HEAD1","CHILD1",""] |  | 2 |
+| 8 | focusInEditor | true | false |  | 2 |
+| 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 3 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 5 | state:toggleish | 0 | 2 | 2 | 2 |
+
 ### `editor.key.toggle-all-v2` — differ
 
 | step | facet | official | local | delta | severity |
@@ -1255,6 +1280,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.shift-enter-hard-break` | local | text:BBB count 1 | PASS | 1 |
 | `editor.key.toggle-all` | official | text:HEAD1 gt 0 | PASS | 1 |
 | `editor.key.toggle-all` | local | text:HEAD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all-repeat` | official | text:HEAD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all-repeat` | official | text:CHILD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all-repeat` | local | text:HEAD1 gt 0 | PASS | 1 |
+| `editor.key.toggle-all-repeat` | local | text:CHILD1 gt 0 | PASS | 1 |
 | `editor.key.toggle-all-v2` | official | text:HEAD1 gt 0 | PASS | 1 |
 | `editor.key.toggle-all-v2` | official | text:CHILD1 gt 0 | PASS | 1 |
 | `editor.key.toggle-all-v2` | local | text:HEAD1 gt 0 | PASS | 1 |

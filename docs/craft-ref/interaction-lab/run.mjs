@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.key.ctrl-alt-t-dispatch'], targets: 'official', tag: 'wave1-103' });
+await main({ only: ['editor.key.toggle-all-repeat'], targets: 'local', tag: 'wave1-107' });

@@ -5270,3 +5270,9 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - 表 D 的分组键（`←/→`、`Ctrl-→`、`⌫`）本批**没判**：Inbox 为空 ⇒ 没有可折叠分组行；
   REST 建任务时 `scheduleDate` 被忽略（读回 `null`）⇒ "今天"分组造不出来；`Ctrl-→` 那步还把焦点弄丢了。
 - ☆ 下一步：先搞清"带日期任务"的正确 REST 形状或走 UI 日期弹层，再造分组行。
+
+### V226·补（第 383 批）：排期 REST 形状与分组行
+
+- `POST /tasks` 只有 **`taskInfo.scheduleDate`（`YYYY-MM-DD`）**有效；顶层 `scheduleDate`／`schedule`／`date` 全被忽略（四变体实测）。
+- 用它能造出 `今天`／`明天` 分组；分组标题是可点 `BUTTON`，**点它就折叠**（3→2）。
+- ⚠ `←/→` 的键位判据**仍未拿到**（点标题不聚焦；补 `focus()` 后视图被切成"未归档"、按钮消失）。

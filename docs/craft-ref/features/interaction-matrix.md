@@ -49,6 +49,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.assistant.open` | match | 9 | 0 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
 | `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
+| `shell.toggles.family` | differ | 26 | 10 | 2 | 本地 +5/−1 · 官方 +1/−0 |
 
 ## 已声明偏差明细
 
@@ -174,6 +175,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.command-palette.toggle-vs-jump` | removed-only-official |  | 打开 |  | 官方 header 的「打开」标签在 ⌘K 后由 span 变成 input[placeholder="打开"]（同一件事换形态）⇒ 文本名册记为移除；本地无此 header 入口 | probe-takeover.json（官方 ⌘K 后 itemIds=13 仍在 ⇒ 不是整屏接管，是 header 浮层） |
 | `shell.command-palette.toggle-vs-jump` | attr:paletteInput | 1 | 打开 | 搜索文档、内容… | placeholder 不同：官方「打开」（跳转语义）vs 本地「搜索文档、内容…」（搜索语义） | probe-verbatim.json |
 | `shell.command-palette.toggle-vs-jump` | attr:paletteInput | 2 | 打开 | 搜索文档、内容… | placeholder 不同：官方「打开」（跳转语义）vs 本地「搜索文档、内容…」（搜索语义） | probe-verbatim.json |
+| `shell.toggles.family` | added-only-official |  | SHELL |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.toggles.family` | removed-only-local |  |  | 📄 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
 
 ## 逐行明细（severity ≥ 2）
 
@@ -611,6 +614,21 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 1 | state:taskInput | 0 | 1 | 1 | 2 |
 | 2 | state:taskInput | 0 | 1 | 1 | 2 |
 
+### `shell.toggles.family` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 4 | countΔ:任务 | 0 | -1 | -1 | 2 |
+| 6 | countΔ:SHELL | 1 | 0 | -1 | 2 |
+|  | added-only-local |  | 1 |  | 2 |
+|  | added-only-local |  | 9月26日 周六 |  | 2 |
+|  | added-only-local |  | 打开今天的日记 |  | 2 |
+|  | added-only-local |  | 更早 |  | 2 |
+|  | added-only-local |  | 📅 |  | 2 |
+| 6 | blocks | ["SHELL"] | [] |  | 2 |
+| 6 | focusInEditor | true | false |  | 2 |
+| 6 | state:editorBody | 1 | 0 | -1 | 2 |
+
 ## spec 自带期望（selfCheck）
 
 每侧对**自己的观测**求 `spec.expect`（两侧互比由上表负责，两者是两件事）。
@@ -857,3 +875,5 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
 | `shell.tasks.new-task-popup` | official | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | local | text:任务 gt 0 | PASS | 4 |
+| `shell.toggles.family` | official | text:SHELL gt 0 | PASS | 1 |
+| `shell.toggles.family` | local | text:SHELL gt 0 | PASS | 1 |

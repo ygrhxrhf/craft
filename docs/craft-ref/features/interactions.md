@@ -4855,3 +4855,13 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 | --- | --- |
 | `git status --porcelain src e2e` | **空** |
 | 台账两闸 | 全绿（**1567／G1575**） |
+
+## V189＝第 314 批（2026-10-29＝**零产品代码批**＝净新增 0 条＝更正两处误判）
+
+**上一批（V188）两条结论作废，此处更正：**
+
+- ★★ **REST 建的文档能渲染**：上批说 `rows=0` 不渲染，其实是**打开方式**问题——直接 `goto` 编辑器 URL 缺签名；
+  从**列表卡点入**（href 自动补 `?s=`）后 `rows=1`、内容正常。
+- ★★ **官方表格不是 `<table>`**：是 `div[role="presentation"]._root_1ltym_1`（65 div／8 button），
+  我一路用 `querySelector("table")` 判存在，把已建好的表读成"没有"。本地才是真 `<table>`（3×3）。
+- ☆ 由此确定三条可用路径：REST 建 table（回 200 带 `rows`）／列表卡点入打开／`GET /blocks` 读回 `rows` 当第二证据通道。

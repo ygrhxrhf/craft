@@ -5130,3 +5130,9 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - 官方 `Ctrl-F`：一个输入框（「在页面上查找文本」）＋「查找」按钮＋上/下箭头＋结果计数；
   `[aria-pressed]`／`role=switch` **命中 0**；那枚 `input[type=checkbox]` 是 **0×0 的辅助节点**。
 - ⇒ 官方查找条没有本地那三组可见开关（`G1571` 边界推进）；标题行右侧"滑杆图标"菜单仍未点开，留待下批。
+
+### V184·补二（第 359 批）：官方查找条控件枚举到底
+
+- 查找条内可点控件只有 `Magnifyingglass Icon`／`Arrow Up`／`Arrow Down` 三枚；三枚逐一点过，
+  `menu`／`dialog`／`dropdown`／`popover` 全 0 命中 ⇒ **没有选项菜单**。
+- 撤回上一批"标题行滑杆图标里可能有选项"的说法（那是面板外层装饰，不在查找条容器内）。

@@ -38,12 +38,13 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.insert-block-space` | differ | 20 | 4 | 2 | 本地 +1/−0 · 官方 +2/−1 |
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
-| `editor.key.toggle-all` | differ | 46 | 26 | 0 | 本地 +1/−0 · 官方 +1/−0 |
+| `editor.key.toggle-all` | uncomparable | 1 | 1 | 0 |  |
 | `editor.key.turn-into-extra` | differ | 46 | 21 | 5 | 本地 +1/−0 · 官方 +6/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.url-link` | differ | 20 | 9 | 1 | 本地 +7/−0 · 官方 +1/−0 |
 | `editor.md-rules.block-kind` | differ | 93 | 36 | 19 | 本地 +6/−0 · 官方 +6/−1 |
 | `editor.md-rules.inline-mark` | differ | 59 | 16 | 0 | 本地 +6/−0 · 官方 +6/−0 |
+| `editor.page-block.behavior` | differ | 38 | 20 | 4 | 本地 +1/−0 · 官方 +3/−1 |
 | `editor.paste.html` | match | 10 | 0 | 2 | 本地 +4/−0 · 官方 +5/−1 |
 | `editor.paste.plain-text` | differ | 27 | 15 | 0 | 本地 +2/−0 · 官方 +4/−0 |
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
@@ -127,6 +128,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.md-rules.block-kind` | added-only-local |  |  | Task item checkbox for empty task item | 本地 TipTap 任务块的 checkbox 可及名（`Task item checkbox for <text>／empty task item`）用 visuallyHiddenStyle 画，文本**仍进 innerText**；官方任务块无此串。★ 第 304 批已把 a11y 面单独采成账（`gap.md` | node_modules/@tiptap/extension-list/src/task-item/task-item.ts:83-85（getCheckboxLabel 默认串）；gap.md G1563 |
 | `editor.md-rules.block-kind` | added-only-official |  | 1. |  | 官方列表序号（`1.`／`2.`）会出现在正文文本流之外，本地列表序号由 CSS counter 画、不进 innerText。☆ 侧栏大纲行原本也在这里表现为 `AAA#1`／`…#3` 这样的**重复文本**条目，第 303 批把名册的重复计数后缀去掉后（重复与否另有 `countΔ:` 精算），该类条目不再单列  | gap.md G1556 · G866（官方序号画进文本节点） |
 | `editor.md-rules.block-kind` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方基线里带一枚目录空态提示「使用标题、页面或卡片创建目录。」，本批临时文档本地侧未渲染该提示（本地该串是纯核常量 TOC_PLACEHOLDER）⇒ 与本 spec 主判据无关 | src/lib/editor/official-copy.ts:8（TOC_PLACEHOLDER 逐字） |
+| `editor.page-block.behavior` | added-only-official |  | CHILD |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.page-block.behavior` | added-only-official |  | PGBLKINNER |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.page-block.behavior` | added-only-official |  | 页面预览将显示在此处。单击以添加内容。 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.page-block.behavior` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.paste.html` | added-only-official |  | 33 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.paste.html` | removed-only-official |  | 32 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.slash.open-and-filter` | countΔ:插入 | 1 | 8 | 4 | 菜单项文案与条数不同（官方扁平 8 条含「插入」：插入文件/片段/表格/分隔符/白板/表格集合/画廊集合/看板集合；本地 4 条）—— 与上面两条同源 | probe-verbatim.json · gap.md（本轮新登记） |
@@ -513,36 +518,11 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 6 | selection:anchorOffset | 1 | 3 |  | 2 |
 | 6 | selection:focusOffset | 1 | 3 |  | 2 |
 
-### `editor.key.toggle-all` — differ
+### `editor.key.toggle-all` — uncomparable
 
 | step | facet | official | local | delta | severity |
 | --- | --- | --- | --- | --- | --- |
-| 0 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":"is-empty is-editor-empty","aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 1 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 2 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 3 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 4 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 5 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 6 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 7 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 7 | attr:toggle |  | {"data-open":"false","aria-expanded":null,"class":"my-1","_tag":"div"} |  | 2 |
-| 8 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 8 | attr:toggle |  | {"data-open":"false","aria-expanded":null,"class":"my-1","_tag":"div"} |  | 2 |
-| 9 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
-| 9 | attr:toggle |  | {"data-open":"false","aria-expanded":null,"class":"my-1","_tag":"div"} |  | 2 |
-| 6 | blocks | ["HEAD1/"] | ["HEAD1/toggle"] |  | 2 |
-| 7 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
-| 8 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
-| 9 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
-| 7 | kinds | ["para"] | ["para","para","para"] |  | 2 |
-| 8 | kinds | ["para"] | ["para","para","para"] |  | 2 |
-| 9 | kinds | ["para"] | ["para","para","para"] |  | 2 |
-| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
-| 5 | state:popupBackdrop | 1 | 0 | -1 | 2 |
-| 6 | state:popupBackdrop | 1 | 0 | -1 | 2 |
-| 7 | state:toggleish | 0 | 2 | 2 | 2 |
-| 8 | state:toggleish | 0 | 2 | 2 | 2 |
-| 9 | state:toggleish | 0 | 2 | 2 | 2 |
+|  | precondition | ok | clickText: 菜单里找不到「折叠列表」 |  | 3 |
 
 ### `editor.key.turn-into-extra` — differ
 
@@ -657,6 +637,31 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 13 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["highlight"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
 | 17 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["code"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
 | 21 | inline | {"marks":[],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} | {"marks":["link"],"fw":"400","deco":"none","bg":"rgba(0, 0, 0, 0)","fs":"normal"} |  | 2 |
+
+### `editor.page-block.behavior` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | countΔ:PGBLK | 2 | 1 | -1 | 2 |
+| 3 | countΔ:INNER | 1 | 0 | -1 | 2 |
+| 3 | countΔ:PGBLK | 2 | 1 | -1 | 2 |
+| 4 | countΔ:INNER | 2 | 0 | -2 | 2 |
+| 4 | countΔ:PGBLK | 2 | 1 | -1 | 2 |
+| 5 | countΔ:CHILD | 1 | 0 | -1 | 2 |
+| 5 | countΔ:INNER | 2 | 0 | -2 | 2 |
+| 5 | countΔ:PGBLK | 2 | 1 | -1 | 2 |
+| 6 | countΔ:CHILD | 1 | 0 | -1 | 2 |
+| 6 | countΔ:INNER | 2 | 0 | -2 | 2 |
+| 6 | countΔ:PGBLK | 2 | 1 | -1 | 2 |
+|  | added-only-local |  | PGBLK |  | 2 |
+| 2 | blocks | ["PGBLK 页面预览将显示在此处。单击以添加内容。"] | ["PGBLK"] |  | 2 |
+| 3 | blocks | ["PGBLKINNER 页面预览将显示在此处。单击以添加内容。"] | ["PGBLK"] |  | 2 |
+| 4 | blocks | ["PGBLKINNER 页面预览将显示在此处。单击以添加内容。",""] | ["PGBLK"] |  | 2 |
+| 5 | blocks | ["PGBLKINNER 页面预览将显示在此处。单击以添加内容。","CHILD"] | ["PGBLK"] |  | 2 |
+| 6 | blocks | ["PGBLKINNER 页面预览将显示在此处。单击以添加内容。","CHILD"] | ["PGBLK"] |  | 2 |
+| 4 | kinds | ["para","para"] | ["para"] |  | 2 |
+| 5 | kinds | ["para","para"] | ["para"] |  | 2 |
+| 6 | kinds | ["para","para"] | ["para"] |  | 2 |
 
 ### `editor.paste.plain-text` — differ
 
@@ -956,6 +961,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.md-rules.inline-mark` | local | text:*Y* count 0 | PASS | 0 |
 | `editor.md-rules.inline-mark` | local | text:~~Z~~ count 0 | PASS | 0 |
 | `editor.md-rules.inline-mark` | local | text:==W== count 0 | PASS | 0 |
+| `editor.page-block.behavior` | official | text:PGBLK gt 0 | PASS | 1 |
+| `editor.page-block.behavior` | local | text:PGBLK gt 0 | PASS | 1 |
 | `editor.paste.html` | official | text:BOLDX gt 0 | PASS | 1 |
 | `editor.paste.html` | official | text:LINKX gt 0 | PASS | 1 |
 | `editor.paste.html` | local | text:BOLDX gt 0 | PASS | 1 |

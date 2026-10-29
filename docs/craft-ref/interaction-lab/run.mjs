@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.slash.rest-groups'], targets: 'both', tag: 'wave1-152' });
+await main({ only: ['editor.slash.text-format-group'], targets: 'both', tag: 'wave1-153' });

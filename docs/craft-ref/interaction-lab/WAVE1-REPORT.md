@@ -1138,3 +1138,45 @@ POST /blocks {type:"page", markdown:"PAGEPROBE2", position:{pageId:<doc>, positi
 | 矩阵 | **26 条 spec**（新 spec `differ`：13 行／7 sev2+） |
 | 两侧记录 | 各 3 步、`errors=0`、selfCheck **1/1** PASS |
 | 台账 | 三闸全绿（自述 **1565／G1573**） |
+
+## 二十六、★ 续批二十二（2026-10-29）：**任务行的键盘可达性** —— G1574（无新 spec）
+
+净新增 **1 条 G** · 零产品代码批。
+
+### 1、为什么没有 spec
+
+本该写成 `shell.tasks.create-and-toggle-done`，但两侧「建任务 / 聚焦任务行」的路径不同，同一串步骤折不起来：
+本地任务行点击后 `activeElement` 是 **`body`**，键盘无处作用。先把**已证事实**登记成 G，
+spec 留到找到两侧共同的「选中行」写法再写。
+
+### 2、★★ G1574：本地点不中任务行，键盘整族无从作用
+
+| 步 | 官方 | 本地 |
+| --- | --- | --- |
+| 建任务 | `Ctrl-J` → `textarea[aria-label="新任务"]` 输入 → `Enter`（弹窗保持打开） | 行内输入框「添加任务，按回车确认…」→ `Enter` |
+| 点任务文本后焦点 | `DIV`（可编辑行） | **`BODY`** |
+| 再按 `Ctrl-Alt-T` | **完成**（REST 读回 `- [x] TASKKEY`） | 无变化（仍 `todo`、`aria-checked=false`） |
+
+★ 本地**不是不能完成**：点那枚 `<span role="checkbox" aria-checked>` 就能完成
+（实测 `aria-checked=false` 由 18→17、该任务从 todo 列表消失）⇒ **缺的只是键盘通路**。
+
+### 3、★★ 一条方法学教训（已写进 README 第 14 条）
+
+官方的「完成」会让任务**离开 todo 列表** ⇒ 屏上读到「文本还在、没有删除线、`aria-checked` 为 0」时，
+本批第一轮误判成「官方也没生效」。**靠 REST 读回 `- [x] TASKKEY` 才纠正**。
+⇒ 与「观测不到 ≠ 不存在」同族：结论前先问「这个状态在屏幕上长什么样」。
+
+### 4、顺带记清的 REST 用法（省下一轮摸索）
+
+- `GET /tasks` 必须带 `scope`（`active|upcoming|inbox|logbook|document|all`），否则 400；
+- `DELETE /tasks` 的 body 是 `{"idsToDelete":[…]}`（不是 `ids`）；
+- 官方任务删除走 REST 即可（本批用它清掉了 3 条探针任务）；本地任务行的软删列是 `tasks.deletedAt`。
+
+### 5、验收
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 台账 | 三闸全绿（自述 **1566／G1574**） |
+| 临时数据 | 官方 3 条模拟任务经 REST 删除（`REMAIN 0`）；本地 4 条经 `tasks.deletedAt` 软删（剩 0） |
+

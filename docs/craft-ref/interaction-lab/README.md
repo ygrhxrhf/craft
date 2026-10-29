@@ -93,7 +93,7 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
 - severity **3** ＝前置条件不成立（任一侧 error，或两侧步数不一致）。
 - severity **0** ＝ spec 里 `deviations` 命中的**已声明偏差**：照样列出来，但不参与判定。
 
-## ★ 十三条踩过的坑（都改掉了，别再犯）
+## ★ 十四条踩过的坑（都改掉了，别再犯）
 
 1. **绝对量不可比 ⇒ 旧版三个 spec 全报 differ**。
    旧版拿 `domLength` 两侧互比（官方 121597 vs 本地 60602）⇒ 恒红。
@@ -178,6 +178,11 @@ ego-browser nodejs -e "await import('file:///C:/code/craft/docs/craft-ref/intera
    ☆ 影响面：补上后 `editor.key.find-replace` 多一条 `state:replaceInput`、`editor.animation.slash-menu`
    多一条，其余 spec 判定未变 —— 说明这个洞此前确实吞掉了真差异，但吞得不多。
    ☆ 教训：**每加一个采集面，都要同时确认 differ 里有没有对应的比较段**（与第 9 条同族）。
+
+14. **“状态没变”要先确认这个状态在屏上可见（第 312 批）**。官方把任务标记完成后，该任务会**离开
+   todo 列表** ⇒ 屏上读到「文本还在、没删除线、aria-checked 为 0」时，很容易误判成“官方也没生效”。
+   本批第一轮就误判了，靠 **REST 读回 `- [x] TASKKEY`** 才纠正。⇒ 与「观测不到 ≠ 不存在」同族：
+   下结论前先问「这个状态在屏幕上长什么样」；能读库/读 API 时用第二方证据交叉核。
 
 ## ★ 呈现机制差异 vs 产品级差异（判据，别混用）
 

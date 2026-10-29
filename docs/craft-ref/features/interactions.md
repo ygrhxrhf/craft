@@ -4821,3 +4821,20 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 | `git status --porcelain src e2e` | **空** |
 | 矩阵 | **26 条 spec**；新 spec `differ`（13 行／7 sev2+） |
 | 台账三闸 | 全绿（**1565／G1573**） |
+
+## V187＝第 312 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1574）
+
+**表 D 续：任务行的键盘可达性。**
+
+- ★★★ **G1574**：本地点任务行后 `activeElement` 是 `body` ⇒ 表 D 整族键位（↑/↓ 选行、⏎ 编辑、
+  Space 勾选、`Ctrl-Alt-T` 完成）**没有作用对象**；官方同序列把任务完成掉了（REST 读回 `- [x] TASKKEY`）。
+  ★ 本地不是不能完成：点 `<span role="checkbox">` 即可（18→17 并从 todo 消失），缺的只是键盘通路。
+- ★★ 方法学：官方「完成」会让任务**离开 todo 列表** ⇒ 屏上"没变化"是**假阴性**（首轮误判过，靠 REST 纠正）。
+- ★ 记清 REST：`GET /tasks?scope=all` 必须带 scope；`DELETE /tasks` body 是 `{idsToDelete:[…]}`。
+
+### 门禁
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空** |
+| 台账三闸 | 全绿（**1566／G1574**） |

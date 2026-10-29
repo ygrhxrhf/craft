@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['shell.shortcuts-panel.help-entry'], targets: 'both', tag: 'wave1-156' });
+await main({ only: ['shell.shortcuts-panel.rail-keys'], targets: 'both', tag: 'wave1-157' });

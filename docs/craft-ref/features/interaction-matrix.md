@@ -85,6 +85,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.quick-open.ctrl-o` | differ | 30 | 7 | 15 | 本地 +1/−0 · 官方 +14/−0 |
 | `shell.shortcuts-panel.help-entry` | differ | 55 | 27 | 8 | 本地 +0/−0 · 官方 +8/−0 |
 | `shell.shortcuts-panel.key` | differ | 11 | 2 | 1 | 本地 +1/−0 · 官方 +1/−0 |
+| `shell.shortcuts-panel.rail-keys` | differ | 212 | 158 | 22 | 本地 +0/−0 · 官方 +22/−0 |
 | `shell.sidebar-toggle.repro` | match | 10 | 0 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.tasks.row-chords` | differ | 78 | 26 | 0 | 本地 +0/−0 · 官方 +1/−0 |
@@ -336,6 +337,28 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.shortcuts-panel.help-entry` | added-only-official |  | 报告同步 |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
 | `shell.shortcuts-panel.help-entry` | added-only-official |  | 最新特性 |  | 本地没有帮助菜单与快捷键面板（G771），面板 7 分类名册在本地无对应物 | gap.md G1622／G771 |
 | `shell.shortcuts-panel.key` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 承载；本 spec 只判面板有没有开 | gap.md G1583 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | Alt |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | Ctrl |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | G |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | Shift |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | ↑ |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | ↓ |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | ⤒ |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | ⤓ |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 取消组合 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 合集 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 向上移动 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 向下移动 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 快捷键 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 整理 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 文档 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 移动到底部 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 移动到顶部 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 移动所选区块 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 组合 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 组合与取消组合 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 编辑 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
+| `shell.shortcuts-panel.rail-keys` | added-only-official |  | 通用 |  | 本地没有帮助菜单与快捷键面板（G771／G1622），左栏 7 分类在本地无对应物 | gap.md G859／G1622 |
 | `shell.toggles.family` | added-only-official |  | SHELL |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.toggles.family` | removed-only-local |  |  | 📄 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
 
@@ -1908,6 +1931,169 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 2 | countΔ:快捷键 | 0 | 3 | 3 | 2 |
 | 2 | state:dialog | 0 | 1 | 1 | 2 |
 
+### `shell.shortcuts-panel.rail-keys` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 3 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:取消 | 2 | 0 | -2 | 2 |
+| 4 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:整理 | 2 | 0 | -2 | 2 |
+| 4 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:移动所选区块 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 4 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 5 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 5 | countΔ:取消 | 1 | 0 | -1 | 2 |
+| 5 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 5 | countΔ:快捷键 | 2 | 0 | -2 | 2 |
+| 5 | countΔ:整理 | 1 | 0 | -1 | 2 |
+| 5 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 5 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 5 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 5 | countΔ:通用 | 2 | 0 | -2 | 2 |
+| 6 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 6 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 6 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 6 | countΔ:整理 | 1 | 0 | -1 | 2 |
+| 6 | countΔ:文档 | 2 | 0 | -2 | 2 |
+| 6 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 6 | countΔ:每日笔记 | 1 | 0 | -1 | 2 |
+| 6 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 6 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:任务 | 10 | 0 | -10 | 2 |
+| 7 | countΔ:全局快捷键 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:取消 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:快捷键 | 2 | 0 | -2 | 2 |
+| 7 | countΔ:整理 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 7 | countΔ:编辑 | 2 | 0 | -2 | 2 |
+| 7 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 8 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 8 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 8 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 8 | countΔ:整理 | 1 | 0 | -1 | 2 |
+| 8 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 8 | countΔ:查找 | 5 | 0 | -5 | 2 |
+| 8 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 8 | countΔ:编辑 | 5 | 0 | -5 | 2 |
+| 8 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 9 | countΔ:任务 | 3 | 0 | -3 | 2 |
+| 9 | countΔ:取消 | 2 | 0 | -2 | 2 |
+| 9 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 9 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 9 | countΔ:整理 | 1 | 0 | -1 | 2 |
+| 9 | countΔ:文本样式 | 1 | 0 | -1 | 2 |
+| 9 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 9 | countΔ:样式 | 3 | 0 | -3 | 2 |
+| 9 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 9 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:取消 | 2 | 0 | -2 | 2 |
+| 10 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:整理 | 2 | 0 | -2 | 2 |
+| 10 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:移动所选区块 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 10 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 11 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 11 | countΔ:合集 | 3 | 0 | -3 | 2 |
+| 11 | countΔ:在表格中 | 1 | 0 | -1 | 2 |
+| 11 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 11 | countΔ:整理 | 1 | 0 | -1 | 2 |
+| 11 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 11 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 11 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 11 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 12 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 12 | countΔ:合集 | 3 | 0 | -3 | 2 |
+| 12 | countΔ:在表格中 | 1 | 0 | -1 | 2 |
+| 12 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 12 | countΔ:整理 | 1 | 0 | -1 | 2 |
+| 12 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 12 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 12 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 12 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:取消 | 2 | 0 | -2 | 2 |
+| 13 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:整理 | 2 | 0 | -2 | 2 |
+| 13 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:移动所选区块 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 13 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 14 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 14 | countΔ:取消 | 2 | 0 | -2 | 2 |
+| 14 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 14 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 14 | countΔ:整理 | 2 | 0 | -2 | 2 |
+| 14 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 14 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 14 | countΔ:移动所选区块 | 1 | 0 | -1 | 2 |
+| 14 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 14 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 15 | countΔ:任务 | 1 | 0 | -1 | 2 |
+| 15 | countΔ:取消 | 2 | 0 | -2 | 2 |
+| 15 | countΔ:合集 | 1 | 0 | -1 | 2 |
+| 15 | countΔ:快捷键 | 1 | 0 | -1 | 2 |
+| 15 | countΔ:整理 | 2 | 0 | -2 | 2 |
+| 15 | countΔ:文档 | 1 | 0 | -1 | 2 |
+| 15 | countΔ:样式 | 1 | 0 | -1 | 2 |
+| 15 | countΔ:移动所选区块 | 1 | 0 | -1 | 2 |
+| 15 | countΔ:编辑 | 1 | 0 | -1 | 2 |
+| 15 | countΔ:通用 | 1 | 0 | -1 | 2 |
+| 1 | focusInEditor | false | true |  | 2 |
+| 3 | focusInEditor | false | true |  | 2 |
+| 4 | focusInEditor | false | true |  | 2 |
+| 5 | focusInEditor | false | true |  | 2 |
+| 6 | focusInEditor | false | true |  | 2 |
+| 7 | focusInEditor | false | true |  | 2 |
+| 8 | focusInEditor | false | true |  | 2 |
+| 9 | focusInEditor | false | true |  | 2 |
+| 10 | focusInEditor | false | true |  | 2 |
+| 11 | focusInEditor | false | true |  | 2 |
+| 12 | focusInEditor | false | true |  | 2 |
+| 13 | focusInEditor | false | true |  | 2 |
+| 14 | focusInEditor | false | true |  | 2 |
+| 15 | focusInEditor | false | true |  | 2 |
+| 0 | state:helpButton | 1 | 0 | -1 | 2 |
+| 1 | state:helpButton | 1 | 0 | -1 | 2 |
+| 2 | state:helpButton | 1 | 0 | -1 | 2 |
+| 3 | state:helpButton | 2 | 0 | -2 | 2 |
+| 4 | state:panel | 1 | 0 | -1 | 2 |
+| 4 | state:helpButton | 1 | 0 | -1 | 2 |
+| 5 | state:panel | 1 | 0 | -1 | 2 |
+| 5 | state:helpButton | 1 | 0 | -1 | 2 |
+| 6 | state:panel | 1 | 0 | -1 | 2 |
+| 6 | state:helpButton | 1 | 0 | -1 | 2 |
+| 7 | state:panel | 1 | 0 | -1 | 2 |
+| 7 | state:helpButton | 1 | 0 | -1 | 2 |
+| 8 | state:panel | 1 | 0 | -1 | 2 |
+| 8 | state:helpButton | 1 | 0 | -1 | 2 |
+| 9 | state:panel | 1 | 0 | -1 | 2 |
+| 9 | state:helpButton | 1 | 0 | -1 | 2 |
+| 10 | state:panel | 1 | 0 | -1 | 2 |
+| 10 | state:helpButton | 1 | 0 | -1 | 2 |
+| 11 | state:panel | 1 | 0 | -1 | 2 |
+| 11 | state:helpButton | 1 | 0 | -1 | 2 |
+| 12 | state:panel | 1 | 0 | -1 | 2 |
+| 12 | state:helpButton | 1 | 0 | -1 | 2 |
+| 13 | state:panel | 1 | 0 | -1 | 2 |
+| 13 | state:helpButton | 1 | 0 | -1 | 2 |
+| 14 | state:panel | 1 | 0 | -1 | 2 |
+| 14 | state:helpButton | 1 | 0 | -1 | 2 |
+| 15 | state:panel | 1 | 0 | -1 | 2 |
+| 15 | state:helpButton | 1 | 0 | -1 | 2 |
+
 ### `shell.tasks.new-task-popup` — differ
 
 | step | facet | official | local | delta | severity |
@@ -2344,6 +2530,12 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.shortcuts-panel.help-entry` | local | text:QODER-ILAB-shell.shortcuts-panel.help-entry gt 0 | **FAIL** | 0 |
 | `shell.shortcuts-panel.key` | official | text:SHORT gt 0 | PASS | 1 |
 | `shell.shortcuts-panel.key` | local | text:SHORT gt 0 | PASS | 1 |
+| `shell.shortcuts-panel.rail-keys` | official | text:快捷键 gt 0 | PASS | 1 |
+| `shell.shortcuts-panel.rail-keys` | official | text:每日笔记 gt 0 | PASS | 1 |
+| `shell.shortcuts-panel.rail-keys` | official | text:在表格中 gt 0 | PASS | 1 |
+| `shell.shortcuts-panel.rail-keys` | official | text:移动所选区块 gt 0 | PASS | 1 |
+| `shell.shortcuts-panel.rail-keys` | official | text:在表格中 count 0 | PASS | 0 |
+| `shell.shortcuts-panel.rail-keys` | official | text:移动所选区块 gt 0 | PASS | 1 |
 | `shell.sidebar-toggle.repro` | official | text:任务 gt 0 | PASS | 1 |
 | `shell.sidebar-toggle.repro` | local | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | official | text:任务 gt 0 | PASS | 1 |

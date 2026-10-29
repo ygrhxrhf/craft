@@ -3093,3 +3093,30 @@ v1 的问题：造出的折叠块**没有子项**，折叠与否都看不到变�
 | `git status --porcelain src e2e` | **空** |
 | 台账 | 不变（**1590／G1598**，只扩 `G1589` 的描述） |
 | 临时产物 | 两侧临时文档由 spec teardown 软删 |
+
+## 九十六、★ 续批七十六（2026-10-29）：**选至顶/底的 Windows 串两侧不同** —— G1599
+
+净新增 **1 条 G** · 零产品代码批（扩写已有 spec `editor.selection.select-to-top-bottom`）。
+
+第 379 批审计指出：表 B 的 `SELECT_TO_TOP_MAC`／`BOTTOM_MAC`（`Ctrl-Shift-↑/↓`）**从没按过**。本批补：
+
+| 键 | 本地 | 官方 |
+| --- | --- | --- |
+| `Ctrl-Shift-↑`（光标在 BBB 行尾） | `collapsed:false`，选区 **`"\nBBB"`** | **`collapsed:true`，选区为空** |
+| `Ctrl-Shift-↓` | 扩到 **`"\nCCC"`** | 该步起 `selection` 变 `undefined`（**焦点已离开编辑器**） |
+
+⇒ **G1599**：本地会扩选，官方这条 Windows 串**既不扩选、还把焦点丢了**。
+
+★ 三条诚实边界：① 官方只拿到 `↑` 那步的有效读数，**不能**据此断言 `↓` 也不选；
+② 这组键在官方面板上是**为 Mac 字形 `⌘⇧⤒` 印的**，Windows 列是否本该有它本身就可疑；
+③ 并列的 **COMMON 档（`Ctrl-Shift-Home/End`）官方同样丢焦点**，而本地能扩选到 `AAA\n\nBBB`／`\nCCC`
+—— 两条都写进 G 行，不合并成一条。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | `editor.selection.select-to-top-bottom` 重跑（两侧 16 步 0 错） |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | **1591／G1599** |
+| 临时产物 | 两侧临时文档由 spec teardown 软删 |

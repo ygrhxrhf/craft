@@ -5259,3 +5259,8 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 
 - 本地 `grep contextmenu\|onContextMenu` 在 `src/components/editor/` **零命中**、无表格扩展 ⇒ 右键只弹浏览器默认菜单；
   官方单元格右击同样无菜单（第 318 批）。⇒ 表 E 18 条键按"两侧皆无作用对象"收口。
+
+## V225＝第 381 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1599）
+
+- ★★★ **G1599**：`Ctrl-Shift-↑↓` 本地扩选（`"\nBBB"`／`"\nCCC"`）、官方**不扩且丢焦点**。
+- ☆ 边界：官方只拿到 `↑` 一步有效读数；这组键本是 Mac 字形，Windows 列是否该有它存疑；COMMON 档同理。

@@ -66,7 +66,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.reminder.popover-options` | differ | 107 | 96 | 1 | 本地 +87/−0 · 官方 +1/−0 |
 | `editor.schedule.picker-shape` | differ | 114 | 99 | 5 | 本地 +87/−0 · 官方 +5/−0 |
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
-| `editor.selection.select-to-top-bottom` | differ | 40 | 16 | 0 | 本地 +3/−0 · 官方 +3/−0 |
+| `editor.selection.select-to-top-bottom` | differ | 61 | 29 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
 | `shell.assistant.open` | match | 9 | 0 | 1 | 本地 +1/−0 · 官方 +1/−0 |
@@ -1425,22 +1425,35 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 
 | step | facet | official | local | delta | severity |
 | --- | --- | --- | --- | --- | --- |
-| 8 | focusInEditor | false | true |  | 2 |
 | 9 | focusInEditor | false | true |  | 2 |
 | 10 | focusInEditor | false | true |  | 2 |
 | 11 | focusInEditor | false | true |  | 2 |
-| 8 | selection:collapsed |  | false |  | 2 |
-| 8 | selection:anchorOffset |  | 3 |  | 2 |
-| 8 | selection:focusOffset |  | 0 |  | 2 |
-| 9 | selection:collapsed |  | false |  | 2 |
+| 12 | focusInEditor | false | true |  | 2 |
+| 13 | focusInEditor | false | true |  | 2 |
+| 14 | focusInEditor | false | true |  | 2 |
+| 15 | focusInEditor | false | true |  | 2 |
+| 8 | selection:collapsed | true | false |  | 2 |
+| 9 | selection:collapsed |  | true |  | 2 |
 | 9 | selection:anchorOffset |  | 3 |  | 2 |
 | 9 | selection:focusOffset |  | 3 |  | 2 |
 | 10 | selection:collapsed |  | false |  | 2 |
 | 10 | selection:anchorOffset |  | 3 |  | 2 |
-| 10 | selection:focusOffset |  | 3 |  | 2 |
+| 10 | selection:focusOffset |  | 0 |  | 2 |
 | 11 | selection:collapsed |  | false |  | 2 |
 | 11 | selection:anchorOffset |  | 3 |  | 2 |
 | 11 | selection:focusOffset |  | 3 |  | 2 |
+| 12 | selection:collapsed |  | false |  | 2 |
+| 12 | selection:anchorOffset |  | 3 |  | 2 |
+| 12 | selection:focusOffset |  | 3 |  | 2 |
+| 13 | selection:collapsed |  | false |  | 2 |
+| 13 | selection:anchorOffset |  | 3 |  | 2 |
+| 13 | selection:focusOffset |  | 3 |  | 2 |
+| 14 | selection:collapsed |  | true |  | 2 |
+| 14 | selection:anchorOffset |  | 3 |  | 2 |
+| 14 | selection:focusOffset |  | 3 |  | 2 |
+| 15 | selection:collapsed |  | false |  | 2 |
+| 15 | selection:anchorOffset |  | 3 |  | 2 |
+| 15 | selection:focusOffset |  | 3 |  | 2 |
 
 ### `shell.quick-open.alt` — differ
 

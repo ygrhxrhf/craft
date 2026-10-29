@@ -39,7 +39,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.insert-block-space-selected` | differ | 21 | 4 | 3 | 本地 +2/−0 · 官方 +3/−1 |
 | `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
-| `editor.key.toggle-all` | uncomparable | 1 | 1 | 0 |  |
+| `editor.key.toggle-all` | differ | 48 | 26 | 2 | 本地 +1/−0 · 官方 +2/−1 |
 | `editor.key.turn-into-extra` | differ | 46 | 21 | 5 | 本地 +1/−0 · 官方 +6/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.url-link` | differ | 20 | 9 | 1 | 本地 +7/−0 · 官方 +1/−0 |
@@ -107,6 +107,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.insert-block-space-selected` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 承载；本 spec 只判两键是否插块 | gap.md G1583 |
 | `editor.key.list-family` | countΔ:AAA | 2 | 1 | 2 | 本地任务块勾选框的合成可及名含任务文本 ⇒ 同一个词被 count 两次；已由 G1563 单独承载 | gap.md G1563 |
 | `editor.key.list-family` | blocks | 4 | ["1. AAA"] | ["AAA"] | 官方把列表序号画进文本节点（1. AAA），本地由 CSS counter 画、不进 innerText；已由 G866／G1556 承载 | gap.md G866 · G1556；editor.md-rules.block-kind 同一声明 |
+| `editor.key.toggle-all` | added-only-official |  | 33 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.key.toggle-all` | removed-only-official |  | 32 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
 | `editor.key.turn-into-extra` | added-only-official |  | 套用样式 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.turn-into-extra` | added-only-official |  | 自定义 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.key.turn-into-extra` | added-only-official |  | 自定义背景 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
@@ -531,11 +533,36 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 6 | selection:anchorOffset | 1 | 3 |  | 2 |
 | 6 | selection:focusOffset | 1 | 3 |  | 2 |
 
-### `editor.key.toggle-all` — uncomparable
+### `editor.key.toggle-all` — differ
 
 | step | facet | official | local | delta | severity |
 | --- | --- | --- | --- | --- | --- |
-|  | precondition | ok | clickText: 菜单里找不到「折叠列表」 |  | 3 |
+| 0 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":"is-empty is-editor-empty","aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 1 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 2 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 3 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 4 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 5 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 6 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 7 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 7 | attr:toggle |  | {"data-open":"false","aria-expanded":null,"class":"my-1","_tag":"div"} |  | 2 |
+| 8 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 8 | attr:toggle |  | {"data-open":"false","aria-expanded":null,"class":"my-1","_tag":"div"} |  | 2 |
+| 9 | attr:block | {"class":"_blockOverhang_1oz2o_17","aria-expanded":null,"data-type":null,"role":null,"_tag":"span"} | {"class":null,"aria-expanded":null,"data-type":null,"role":null,"_tag":"p"} |  | 2 |
+| 9 | attr:toggle |  | {"data-open":"false","aria-expanded":null,"class":"my-1","_tag":"div"} |  | 2 |
+| 6 | blocks | ["HEAD1/"] | ["HEAD1/toggle"] |  | 2 |
+| 7 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
+| 8 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
+| 9 | blocks | ["HEAD1"] | ["HEAD1","",""] |  | 2 |
+| 7 | kinds | ["para"] | ["para","para","para"] |  | 2 |
+| 8 | kinds | ["para"] | ["para","para","para"] |  | 2 |
+| 9 | kinds | ["para"] | ["para","para","para"] |  | 2 |
+| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 5 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 6 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 7 | state:toggleish | 0 | 2 | 2 | 2 |
+| 8 | state:toggleish | 0 | 2 | 2 | 2 |
+| 9 | state:toggleish | 0 | 2 | 2 | 2 |
 
 ### `editor.key.turn-into-extra` — differ
 

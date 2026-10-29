@@ -53,4 +53,11 @@ describe('features/*.md 的「仍未采到」标题必须标为历史快照', ()
     }
     expect(missing, `文首缺「未采面口径」⇒ ${missing.join('；')}`).toEqual([]);
   });
+
+  it('gap.md 的「编号说明」自述行只有一行（第 399 批事故：批量改文首时插重了一行）', () => {
+    const text = readFileSync(join(FEATURES, 'gap.md'), 'utf8');
+    const tally = text.split(/\r?\n/).filter((l) => l.startsWith('编号说明：'));
+    // 两行都带自述数时，读者无法判断哪行是现行数；而且第 9 行必须仍是它（selftally 闸按 index 8 读）
+    expect(tally.length, `「编号说明」行数 = ${tally.length}（应恰为 1）`).toBe(1);
+  });
 });

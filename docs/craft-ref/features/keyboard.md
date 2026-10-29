@@ -108,6 +108,8 @@
 
 ★ **第 322 批上屏（组合／区块链接）：**`Ctrl-G` 官方在文本选中态下**落到查找**（名册新增「查找」「暂无结果」），本地零反应；`Ctrl-Shift-K` 官方多块与单词两种选区**都零反应**，本地**弹命令面板**（`CommandPalette.tsx:37` 的 `ctrlKey && key==='k'` 没排除 Shift）。** ⇒ gap `G1579`／`G1580`，矩阵 `editor.key.group-and-blocklink`。
 
+★ **第 327 批上屏（表 C `TOGGLE_ASSISTANT`）：**`Ctrl-Enter` 两侧**都没有任何承载面**（无弹层、无对话框、正文不变）⇒ 官方 **web 端没有 AI 助手入口**，本地 `HANDLED` 里也没有这条 ⇒ 两侧一致，**不成 G**。
+
 ★ **第 326 批上屏（表 A 样式/装饰/卡片六键）：**官方 `Ctrl-Shift-4` 加粗强调（字重 400→700）、`Ctrl-Shift-P` **插出页面块**、`Ctrl-Shift-L` 弹卡片配置面板、`Ctrl-Shift-\`／`Ctrl-Shift-'` 改变块 rect；本地六键**全部零变化**。`Ctrl-Alt-T` 两侧都无变化（测试块不是折叠块）。** ⇒ gap `G1584`（并收窄 `G1408`），矩阵 `editor.key.turn-into-extra`。
 
 ★ **第 325 批上屏（表 B 插块两键 ＋ Esc）：**`Space`／`Shift-Space` 在文本编辑态**两侧都只打空格**（官方表里的 `INSERT_AFTER`／`INSERT_BEFORE` **没触发**——不写成"官方没有"，可能是块选择态才生效，本批未建立）；`Escape` 官方**退一层**（编辑器→`body`；方程输入框→编辑器），本地**原地不动**。** ⇒ gap `G1583`，矩阵 `editor.key.insert-block-space`。

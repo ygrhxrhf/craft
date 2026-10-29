@@ -46,6 +46,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.selection.select-to-top-bottom` | differ | 40 | 16 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
+| `shell.assistant.open` | match | 9 | 0 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
 | `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 
@@ -157,6 +158,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `local.db.document-row` | removed-only-official |  | 共享 |  | 同上 | editor.paste.plain-text 同族噪声 |
 | `local.db.document-row` | removed-only-official |  | 刚刚 |  | 同上 | editor.paste.plain-text 同族噪声 |
 | `local.db.document-row` | removed-only-official |  | 目录 |  | 同上 | editor.paste.plain-text 同族噪声 |
+| `shell.assistant.open` | focusInEditor | 3 | false | true | 第 3 步的焦点差异来自 Escape 的「退一层」（官方把焦点送到 body），已由 G1583 单独承载；本 spec 只判 Ctrl-Enter 有没有承载面 | gap.md G1583 |
 | `shell.command-palette.toggle-vs-jump` | countΔ:搜索文档与块 | 1 | 0 | 1 | 两侧面板条目集合不同 ⇒ 该具名文案只在本地有 | probe-verbatim.json |
 | `shell.command-palette.toggle-vs-jump` | countΔ:操作 | 1 | 0 | 1 | 本地面板有「操作」分组标题，官方跳转面板没有分组标题 | probe-verbatim.json |
 | `shell.command-palette.toggle-vs-jump` | countΔ:搜索文档与块 | 2 | 0 | 1 | 两侧面板条目集合不同 ⇒ 该具名文案只在本地有 | probe-verbatim.json |
@@ -845,6 +847,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `local.db.document-row` | local | blocks equals ["DBCONTENT"] | PASS | ["DBCONTENT"] |
 | `local.db.document-row` | local | db:contentLen equals 0 | PASS | 0 |
 | `local.db.document-row` | local | db:isDeleted equals true | PASS | true |
+| `shell.assistant.open` | official | text:HELLO gt 0 | PASS | 1 |
+| `shell.assistant.open` | official | blocksCount count 1 | PASS | 1 |
+| `shell.assistant.open` | local | text:HELLO gt 0 | PASS | 1 |
+| `shell.assistant.open` | local | blocksCount count 1 | PASS | 1 |
 | `shell.command-palette.toggle-vs-jump` | official | attr:paletteInput exists null | PASS | "打开" |
 | `shell.command-palette.toggle-vs-jump` | official | attr:paletteInput exists null | PASS | "打开" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |

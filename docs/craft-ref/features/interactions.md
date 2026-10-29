@@ -4929,3 +4929,11 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - ★★ **G1408 范围收窄**：`Ctrl-Shift-P` 证明 **UI 键位通路能插页中页** ⇒ 那条"判死"只覆盖
   REST／markdown／`blocks move` 三条造样本通路，不是"页中页不可达"。
 - ☆ `Ctrl-Alt-T`（TOGGLE_TOGGLES）两侧都没变化：测试块不是折叠块，没有可折叠对象 ⇒ 不计入差异。
+
+## V197＝第 327 批（2026-10-29＝**零产品代码批**＝净新增 0 条）
+
+- ★ 表 C 的 `Ctrl-Enter`（`TOGGLE_ASSISTANT`）**两侧都没有承载面**：官方 web 不弹任何面板
+  （`popup-backdrop`／`dialog` 恒 0、正文不变），本地 `shell-shortcuts.tsx` 的 `HANDLED` 也不含这条。
+  ⇒ **两侧一致，不成 G**；这条的价值是**把"官方 web 无 AI 助手入口"从推测变成实测**。
+- ☆ 矩阵里唯一一条 sev2 是第 3 步 `focusInEditor`——那是 **Escape 的"退一层"**（G1583）
+  串进来的，已在本 spec 里声明成偏差，不重复判。

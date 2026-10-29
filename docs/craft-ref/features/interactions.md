@@ -4786,3 +4786,19 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 | `git status --porcelain src e2e` | **空** |
 | 矩阵 | **25 条 spec**；新 spec `differ`（21 行／10 sev2+／3 已声明） |
 | 台账三闸 | 全绿（**1563／G1571**） |
+
+## V185＝第 310 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1572）
+
+**造页面块的四条路都试过了，全部不通 —— 顺带封上第四扇门。**
+
+- ★★★ **G1572**：REST `POST /blocks` 写 `type:"page"` **静默降级成 `text`**（三种载荷变体全试过，
+  读回四枚样本全是 `{"type":"text"}`）⇒ **G1408「页中页判死」的第四条封死通路**。
+- 另三条：Craft Handbook（唯一含页面块的文档）编辑器区 `rows=0` 不渲染（弹层已用
+  `[data-testid="open-in-app-popup-close"]` 关掉）；斜杠菜单无「页面」项（G207：入口在插入面板）；
+  本地无 page 块类型。
+- ★ 记清载荷形状：`POST /blocks` body 是**单个块对象**、`position` 须为对象
+  （`{pageId, position:"end"}`），写成 `{blocks:[…]}`／`targetId` 回 `VALIDATION_ERROR`。
+- ★ 环境：孤儿 `ego-browser.exe`/`ego.exe` 占 state 文件导致全部调用 `EPERM`，按显式 PID 清理后恢复。
+- ★ 官方 `POST /documents` 回的是块 id，UI 软删要用 `clickableLink` 里的 documentId。
+
+**结论：页面块上的 `⇧⏎` 当前不可达，不写成"一致"。** G750 静态结论保持原样。

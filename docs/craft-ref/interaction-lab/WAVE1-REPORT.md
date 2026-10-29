@@ -1047,3 +1047,57 @@ div._flexRow_1oz2o_1
 | 两侧记录 | 各 4 步、`errors=0`、selfCheck **2/2** PASS |
 | 台账 | 三闸全绿（自述 **1563／G1571**） |
 | 静态账 | `keyboard.md:296` 已就地收窄：FIND/REPLACE 已对拍，表 D／E **仍成立** |
+
+## 二十四、★ 续批二十（2026-10-29）：**造页面块的路被封死** —— 一条新账（G1572）
+
+净新增 **1 条 G** · 零产品代码批 · **无新 spec**（样本造不出来）。
+
+### 1、想采什么、为什么没采成
+
+Wave 1 报告仍挂着「`⇧⏎` RENAME（页面块）」。要采它就得先有一枚**页面块**，四条路逐条试过：
+
+| 路 | 结果 |
+| --- | --- |
+| 打开 Craft Handbook（唯一含 15 枚页面块的文档） | 编辑器区 **`rows=0`**：内容根本没渲染（弹层已用 `[data-testid="open-in-app-popup-close"]` 关掉，仍为 0） |
+| 斜杠菜单过滤「表格／页面」 | 官方过滤后只剩「插入表格集合」，无「页面」项（G207 已记：页面入口在**插入面板**不在斜杠菜单） |
+| REST `POST /blocks` 写 `type:"page"` | ★ **静默降级成 `text`**（见下） |
+| 本地造 page 块 | 本地**没有** page 块类型（`grep` 全仓无该节点） |
+
+### 2、★★ G1572：REST 造页面块被静默降级（新账）
+
+三种载荷变体逐条试，全部回 `200` 但落成 `text`：
+
+```
+POST /blocks {type:"page", markdown:"PAGEPROBE2", position:{pageId:<doc>, position:"end"}}
+→ 200 {"items":[{"id":"402079be-…","type":"text","markdown":"PAGEPROBE2"}]}
+```
+
+（另两种：裸 `type:"page"`／改走 `type:"text"`＋`textStyle:"page"` —— 同样落 `text`。）
+
+⇒ 这是 **G1408「页中页判死」的第四条封死通路**：前三条是 `blocks move` 拒文档根块、
+`documents create` 无 `--parent`、markdown 名册无页面块记号；**第四条是 `blocks add` 收下但降级**。
+★ 顺带把载荷形状记清（省下一轮摸索）：body 是**单个块对象**，`position` 必须是对象
+（`{pageId, position:"end"}`）；写成 `{blocks:[…]}` 或 `targetId` 会回 `VALIDATION_ERROR`。
+
+### 3、这一项的处置
+
+「页面块上的 `⇧⏎`」**当前工具链下不可达**（页面块造不出、唯一现成样本不渲染）。
+按项目纪律**不把"采不到"写成"一致"**：G750 的静态结论（`RENAME`＝编辑页面区块）保持原样，
+本项以 G1572 收口，并在任务里留下四条路的结论，避免下一手重走。
+
+### 4、本批另修的两处环境故障
+
+- **孤儿进程占 state 文件**：10:16 那次 `db` spec 跑完后 Node 因 pg 连接不退出（已修），
+  但它的 `ego-browser.exe`(39736)＋`ego.exe`(40508) 一直活着，导致后续所有 ego 调用
+  报 `EPERM: rename space-1.json`。按**显式 PID** 清掉后恢复（未用通配符）。
+- 官方 REST 建的文档：`POST /documents` 回的是**块 id**（`599398c8…`），而 UI 列表用的是
+  `clickableLink` 里的 **documentId**（`e4499ba9…`）⇒ 软删必须用后者，否则"列表里找不到卡片"。
+
+### 5、验收
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 矩阵 | 25 条 spec（不变） |
+| 台账 | 三闸全绿（自述 **1564／G1572**） |
+| 临时文档 | 本批官方建的 `QODER-ILAB-pageblock` 已软删（`del ok=true`） |

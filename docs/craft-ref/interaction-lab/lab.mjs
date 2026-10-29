@@ -436,6 +436,12 @@ async function runTeardown(target, spec, ctx, log) {
       }
     } else if (t.op === 'softDeleteTempDoc') {
       if (ctx.deletedInStep) { log('teardown softDeleteTempDoc skip (已在步骤里删过)'); continue; }
+      // ★ 加性（第 350 批）：`spec.keepTempDoc` —— 需要在**运行结束后**去官方 REST 读回块类型/内容的 spec
+      //   （例如"折叠列表"到底把块改成了什么类型），先把文档留着；调用方负责事后删除。
+      if (spec.keepTempDoc) {
+        log('teardown softDeleteTempDoc KEPT docId=' + (ctx.tempDoc?.id || '') + ' url=' + (ctx.tempDoc?.url || ''));
+        continue;
+      }
       const ok = await softDeleteTempDoc(target, ctx, log);
       log(`teardown softDeleteTempDoc ok=${ok} doc=${ctx.tempDoc?.url || ''}`);
     } else if (t.op === 'key' || t.op === 'chord') {

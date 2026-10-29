@@ -316,8 +316,8 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 
 ### 未试清单（下一批的最低成本靶子，按能解锁的价值排序）
 
-★ **表 A 的列表家族只试过 `Ctrl-Shift-7` 一条**：`TODO_LIST=Ctrl-Shift-6`、`BULLET_LIST=Ctrl-Shift-8`、`NUMBERED_LIST=Ctrl-Shift-9`、`NO_LIST=Ctrl-Shift-` `` ` `` **全部未在任何屏幕按过**。若 `Ctrl-Shift-8` 能建列表，则同时解锁三件事：G617 结案、**B 的"列表档"可测**（V50 只证到缩进档）、**`G579` 的"Enter 与 Backspace 退档顺序相反"可判**。 ☆ **第 308 批已上屏对拍（两侧）**：`Ctrl-Shift-6/8/9/`` ` `` ` 四键逐键实测，`kinds` 两侧**逐键完全一致**（`para → task → bullet → numbered → para`，单块连按验证了「换档是**替换**不是叠加」）⇒ 这条"全部未在任何屏幕按过"的挂账**已清**；唯一读数差是 official 在编号档把序号画进文本（`1. AAA`）而本地不进 innerText —— 已由 **G866／G1556** 承载。见 `interactions.md` **V183**
-表 B 的 `FIND`/`REPLACE`、表 D（任务视图 23 项）、表 E（表格 15 项）**一条都没在屏幕上按过** ⇒ 这三张表目前全是契约级证据。 ☆ **第 309 批：表 B 的 `FIND`／`REPLACE` 已上屏对拍**（`Ctrl-F`／`Ctrl-Shift-F` 两侧）。结论与差异见 `gap.md` **G1570／G1571**：官方两键**分档**（`Ctrl-F` 只开查找框），本地一键摊开查找＋替换两框、且面板另带范围/正则/大小写三组开关。⇒ 本句「一条都没在屏幕上按过」**已对 FIND/REPLACE 失效**；表 D（任务视图 23 项）与表 E（表格 15 项）**仍成立**
+~~表 A 的列表家族只试过 `Ctrl-Shift-7` 一条~~ **已清（第 296–301 批＋第 320 批）**：`Ctrl-Shift-6/8/9/\`` 四键**两侧对拍**（`editor.key.list-family`，V183），`-7` 单独在第 74／296 批记过单侧读数。**表 A 现在只剩 `Ctrl-Alt-T`（`TOGGLE_TOGGLES`，存量清单 H，缺稳定可折叠对象）没有两侧判定**。
+~~表 B 的 `FIND`/`REPLACE`、表 D（任务视图 23 项）、表 E（表格 15 项）一条都没在屏幕上按过~~ **已清**（第 321–338 批）：表 B 的查找/替换（`editor.key.find-replace`，V184）、插块两键与 `Esc`（`editor.key.insert-block-space`，V195）、`RENAME` 之外全部上屏；表 D **官方侧已采完**（7 键定论 ＋ 3 键补采，`G1573`／`G1574`；剩 `Ctrl-Shift-O` 的语义未定证）；表 E **入口＋3 条增行增列键**上屏（`G1575`／`G1576`／`G1577`），其余 20 条卡在"行/列选择态"（`G1588` 已证 `Escape` 只给**整表**选择）。
 `Alt-↑/↓`（`MOVE_BLOCK_UP/DOWN`，V26 的第二方对照已印出字形）未做屏上验证——它同时能回答"**移动块算几步撤销**"（A 项遗留）。
 
 ## 十、第 74 批补账：新任务弹窗的**命令 id ↔ 动作**映射 ＋ 弹窗内也绑 `UNDO`（静态，`NewTaskPopup-Br4pt8ap.js` @4959）
@@ -339,7 +339,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 ## 仍未采到
 - **(第 94 批·上半)** `useCompositeRoot` 主 `onKeyDown` 全文与 `isMainOrientationToEndKey` 调用方；`--active-tab-*` 属性全集；§20.13.3 的屏上判据需窗口可见才能复核。
 
-- ★ **屏上可得性只覆盖 9 条键位**（§九）⇒ 表 A/B/C/D/E 合计 100+ 条里 **约 91% 从未在屏幕上按过**；下一批最低成本靶子是 **`Ctrl-Shift-6 / 8 / 9`（待办 / 项目符号 / 编号）**——列表家族只试过 `Ctrl-Shift-7` 一条，试 8 若成立可同时解锁 G617、B 的列表档、`G579` 的顺序差。
+- ~~屏上可得性只覆盖 9 条键位（§九）⇒ 约 91% 从未在屏幕上按过~~ **已过期**。现口径：**§九 那张表是第 67–68 批的快照**，之后的上屏证据全部落在 `interaction-lab` 的 spec ＋ `interaction-matrix.md`（截至第 338 批 **29+8 条 spec**，其中两侧对拍 30 余条）；按表统计的"已上屏"见本节上方各条 ✎。剩余面上的条目统一收在 `WAVE1-REPORT.md` §三十一「存量清单」（A–H 行）。
 - ~~360 条 `matcher:` 站点各自的命令名与生效上下文~~ **已结案**（见 §模块级归属：445 站点 / 12 模块 / 13 具名上下文；剩 31 个变量名 id 需别名追踪）。
 - ~~`TOGGLE_KEY_SHORTCUTS`（⌘⌥,）弹出的官方快捷键面板截图~~ **面板本身判定为 web 不可得**（`interactions.md` V7 ✓：两种拼法指纹零变化、无 `<kbd>`、无 dialog、⌘K 不列该命令、注册方 `HelpButton` 不在 web DOM）；**但第二方对照已经拿到，走的是另一条路**：文档「信息」页的**「动作」子页签直接把键位印在菜单项右侧**（V26 ✓，见 §八）。⇒ "拿不到官方面板"不再等于"没有交叉验证源"。
 - 键位是否**用户可自定义**：`preferences.keyboard.shortcuts` 说明设置里有"快捷键"一栏，但该项是只读展示还是可改绑未验证。

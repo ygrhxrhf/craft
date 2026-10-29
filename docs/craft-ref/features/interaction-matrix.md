@@ -27,6 +27,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.move-alt-updown` | differ | 21 | 1 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.block.move-top-bottom` | differ | 21 | 5 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.block.selection-mode` | differ | 49 | 30 | 1 | 本地 +2/−0 · 官方 +2/−1 |
+| `editor.block.ungroup-shape` | differ | 42 | 15 | 7 | 本地 +2/−0 · 官方 +2/−1 |
 | `editor.key.backspace-at-block-start` | match | 20 | 0 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.backspace-in-list` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.comment` | differ | 23 | 7 | 6 | 本地 +1/−0 · 官方 +2/−0 |
@@ -103,6 +104,13 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.insert-before-selected` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.block.insert-before-selected` | focusInEditor | 5 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.block.selection-mode` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
+| `editor.block.ungroup-shape` | removed-only-official |  | 使用标题、页面或卡片创建目录。 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
+| `editor.block.ungroup-shape` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.block.ungroup-shape` | focusInEditor | 5 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.block.ungroup-shape` | focusInEditor | 6 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.block.ungroup-shape` | focusInEditor | 7 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.block.ungroup-shape` | focusInEditor | 8 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
+| `editor.block.ungroup-shape` | focusInEditor | 9 | false | true | Escape 的焦点差异已由 G1583 承载 | gap.md G1583 |
 | `editor.key.backspace-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 光标 offset 天然差 1 | probe-bullet；同 editor.block.indent-in-list 的同一声明 |
 | `editor.key.backspace-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
 | `editor.key.comment` | selection:focusOffset | 2 | 18 | 1 | 本 spec 的 Ctrl-A 只为"有选中"这一前置服务；选区落点两侧不同已由 select-all 梯子单独采集与登记，不在这里重复判 | specs/editor.selection.ctrl-a-ladder.mjs |
@@ -412,6 +420,26 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 8 | selection:collapsed |  | true |  | 2 |
 | 8 | selection:anchorOffset |  | 0 |  | 2 |
 | 8 | selection:focusOffset |  | 0 |  | 2 |
+
+### `editor.block.ungroup-shape` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 6 | countΔ:ALPHA | 2 | 1 | -1 | 2 |
+| 7 | countΔ:ALPHA | 2 | 1 | -1 | 2 |
+| 7 | countΔ:BETA | 2 | 1 | -1 | 2 |
+| 8 | countΔ:ALPHA | 2 | 1 | -1 | 2 |
+| 8 | countΔ:BETA | 2 | 1 | -1 | 2 |
+| 9 | countΔ:ALPHA | 2 | 1 | -1 | 2 |
+| 9 | countΔ:BETA | 2 | 1 | -1 | 2 |
+| 6 | blocks | ["ALPHA BETA"] | ["ALPHA","BETA"] |  | 2 |
+| 7 | blocks | ["ALPHA BETA","BETA"] | ["ALPHA","BETA"] |  | 2 |
+| 8 | blocks | ["ALPHA BETA","BETA"] | ["ALPHA","BETA"] |  | 2 |
+| 9 | blocks | ["ALPHA BETA","BETA"] | ["ALPHA","BETA"] |  | 2 |
+| 6 | kinds | ["para"] | ["para","para"] |  | 2 |
+| 7 | kinds | ["heading","para"] | ["para","para"] |  | 2 |
+| 8 | kinds | ["heading","para"] | ["para","para"] |  | 2 |
+| 9 | kinds | ["heading","para"] | ["para","para"] |  | 2 |
 
 ### `editor.key.comment` — differ
 
@@ -1063,6 +1091,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.move-top-bottom` | local | focusInEditor equals true | PASS | true |
 | `editor.block.selection-mode` | official | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.block.selection-mode` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
+| `editor.block.ungroup-shape` | official | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
+| `editor.block.ungroup-shape` | local | blocks equals ["ALPHA","BETA"] | PASS | ["ALPHA","BETA"] |
 | `editor.key.backspace-at-block-start` | official | blocksCount count 1 | PASS | 1 |
 | `editor.key.backspace-at-block-start` | official | blocks equals ["AAA","BBB"] | PASS | ["AAA","BBB"] |
 | `editor.key.backspace-at-block-start` | official | blocks equals ["AAABBB"] | PASS | ["AAABBB"] |

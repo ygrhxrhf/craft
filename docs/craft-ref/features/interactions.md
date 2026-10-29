@@ -5154,3 +5154,9 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
   官方名册 `["", "ALPHA", "BETA"]`（空块插最上方）；上一批没插只是**没扩选**。
 - ★ 本地同序列：不进块选择态，`Shift-Space` 只往块里打空格（`["ALPHA","BETA"]`→`["ALPH"]`）。
 - ☆ 本地首跑 `placeCaretTrailing` 取不到落点＝新文档页编译未完成，重跑即过（README 坑 18 同源）。
+
+## V217＝第 363 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1594）
+
+- ★★★ **G1594**：官方 `Ctrl-Shift-G` 把组拆成 **`["ALPHA BETA","BETA"]`**（2019 B），**再按一次不变**；
+  本地 `Ctrl-G`／`Ctrl-Shift-G` 全程无绑定（HTML 恒 12 B）。
+- ☆ 边界：第二个「BETA」是否真为重复文本未从 DOM 逐字确认，但两轮单变量读数一致。

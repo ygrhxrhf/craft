@@ -2573,3 +2573,31 @@ v1 的问题：造出的折叠块**没有子项**，折叠与否都看不到变�
 
 ⚠ 本地首跑 `placeCaretTrailing: 取不到落点`（新文档页尚未编译完），重跑即过——与 README 坑 18 同源，
 已在该 spec 的 `navigate` 上写 `gotoTimeoutMs: 60000`。
+
+## 七十六、★ 续批五十七（2026-10-29）：**取消组合的真实形状** —— G1594
+
+净新增 **1 条 G** · 零产品代码批。矩阵新增 spec `editor.block.ungroup-shape`。
+
+`G1588` 当年记过 `["ALPHA BETA","BETA"]` 这个"怪形状"，但只敢说"再改结构"。本批用**成对序列**钉死：
+
+| 步（官方） | 块名册 | 块 HTML |
+| --- | --- | --- |
+| 两块 `ALPHA`／`BETA` | `["ALPHA","BETA"]` | 1891 B |
+| `Escape` ＋ `Shift-↑` ＋ **`Ctrl-G`** | **`["ALPHA BETA"]`** | **2714 B** |
+| **`Ctrl-Shift-G`** | **`["ALPHA BETA","BETA"]`** | **2019 B** |
+| 再 `Shift-↑` ＋ `Ctrl-Shift-G` | **仍 `["ALPHA BETA","BETA"]`** | **2019 B 一字不变** |
+
+⇒ **G1594**：官方"取消组合"**不还原**成两块，而是留下"组内容块 ＋ 尾部重复文本块"；**再按一次没有进一步效果**。
+本地同序列全程 `["ALPHA","BETA"]`、HTML 恒 12 B ⇒ `Ctrl-G` 与 `Ctrl-Shift-G` **都无绑定**。
+
+★ 诚实边界：名册里第二个「BETA」是否真是重复文本**未从 DOM 逐字确认**（块名册只给文本拼接）；
+但两轮单变量（`wave1-96`／`wave1-97`）读数**完全一致** ⇒ 不是抖动。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `editor.block.ungroup-shape`（官方 10 步 0 错／本地 10 步 0 错） |
+| `git status --porcelain src e2e` | **空** |
+| 台账 | **1586／G1594** |
+| 临时产物 | 两侧临时文档由 spec teardown 软删 |

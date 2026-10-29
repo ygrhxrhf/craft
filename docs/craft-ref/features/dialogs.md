@@ -11,7 +11,7 @@
 | 提醒数量 | 三档独立上限：总数 / 进行中 / 已完成，均为远端下发的 `[0]` | `alert.max.{x,in.progress,resolved}.reminders`、`alert.cannot.add.more.reminders` |
 | 合集字段数 | `字段数量不能超过 [0] 个` | `collections.error.field.limit`、`alert.field.limit.title` |
 | 合集行数 | 独立上限 | `alert.row.limit.title` |
-| 表格尺寸 | `已达到表格大小限制（[0] 列，[1] 行）`，并建议「尝试多个较小的表格」 | `alert.table.size.limit.reached`、`alert.try.smaller.tables` |
+| 表格尺寸 | `已达到表格大小限制（[0] 列，[1] 行）`，并建议「尝试多个较小的表格」 ★ **第 391 批读到实值：`[0]=15`、`[1]=50`（逐字「已达到表格大小限制（15 列，50 行）」「尝试多个较小的表格吗？」），且是**块内提示**、`role="dialog"` 为 0（`G1611`）** | `alert.table.size.limit.reached`、`alert.try.smaller.tables` |
 | 白板 | 元素数与图片数各自上限（见 `longtail.md` §6） | `whiteboard.{elements,assets}.limit` |
 | 标题字段 | **必填** | `alert.title.required` ★ **第 391 批实测：web 版**不拦**——无标题文档照存，列表卡用正文首行兜底显示（`G1610`）** |
 

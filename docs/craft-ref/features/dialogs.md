@@ -61,7 +61,7 @@
 | 动作 | 文案 |
 |---|---|
 | 添加 / 移除表情反应 | `alert.not.connected.to.internet.{adding,removing}.reactions` |
-| 添加评论 | `alert.reconnect.to.the.internet.to.comment` ★ **第 391 批补测：断网时按 `Ctrl-Shift-M` 评论面板**照开**、无任何 `alert.reconnect.*` ⇒ 这条门禁不在打开面板步，只可能在提交步（`G1609`）** |
+| 添加评论 | `alert.reconnect.to.the.internet.to.comment` ★ **第 391 批补测：断网时按 `Ctrl-Shift-M` 评论面板**照开**、无任何 `alert.reconnect.*` ⇒ 这条门禁不在打开面板步，只可能在提交步（`G1609`）** ★ **第 412 批已测提交步：门禁就在这里**——断网后点发送，正文出现逐字「未连接到网络」＋「重新连接网络以添加评论」（内联文案、非 dialog 非 toast），面板关闭、评论未创建（`G1609`） |
 | 编辑评论 | `alert.reconnect.to.edit.a.comment` |
 | 删除评论 | `alert.reconnect.to.the.internet.to.delete.comment` |
 | 导出文档 | `alert.reconnect.to.the.internet`（「重新连接网络以导出文档」） |

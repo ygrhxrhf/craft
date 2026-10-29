@@ -29,6 +29,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.ctrl-arrow-word-nav` | differ | 43 | 15 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.duplicate-and-undo` | differ | 30 | 12 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.key.enter-mid-block` | match | 14 | 0 | 0 | 本地 +2/−0 · 官方 +2/−0 |
+| `editor.key.list-family` | match | 14 | 0 | 2 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.key.shift-enter-hard-break` | differ | 17 | 3 | 0 | 本地 +2/−0 · 官方 +2/−0 |
 | `editor.key.turn-into-style` | differ | 19 | 7 | 0 | 本地 +1/−0 · 官方 +1/−0 |
 | `editor.md-rules.block-kind` | differ | 93 | 36 | 19 | 本地 +6/−0 · 官方 +6/−1 |
@@ -69,6 +70,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.block.indent-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
 | `editor.key.backspace-in-list` | selection:anchorOffset | 1 | 1 | 0 | 项目符号画法不同（官方文本节点 `•` 占块内偏移 1 / 本地 CSS list-style 不占）⇒ 光标 offset 天然差 1 | probe-bullet；同 editor.block.indent-in-list 的同一声明 |
 | `editor.key.backspace-in-list` | selection:focusOffset | 1 | 1 | 0 | 同上（focusOffset 与 anchorOffset 同源） | probe-bullet |
+| `editor.key.list-family` | countΔ:AAA | 2 | 1 | 2 | 本地任务块勾选框的合成可及名含任务文本 ⇒ 同一个词被 count 两次；已由 G1563 单独承载 | gap.md G1563 |
+| `editor.key.list-family` | blocks | 4 | ["1. AAA"] | ["AAA"] | 官方把列表序号画进文本节点（1. AAA），本地由 CSS counter 画、不进 innerText；已由 G866／G1556 承载 | gap.md G866 · G1556；editor.md-rules.block-kind 同一声明 |
 | `editor.md-rules.block-kind` | countΔ:AAA | 3 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 4 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
 | `editor.md-rules.block-kind` | countΔ:AAA | 5 | 2 | 1 | 官方把块换成标题/列表档后，**侧栏大纲**里出现该块 ⇒ 具名文本计数多 1；本地侧栏无该行。已在 G1556 内用 probe-w1aj／w1ak 定位（x=16 y=216、A._row_v0ra3_1 > SPAN._label_v0ra3_131）⇒ 不是"多建块" | gap.md G1556（侧栏大纲行定位） |
@@ -557,6 +560,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.key.enter-mid-block` | local | text:BBBB count 1 | PASS | 1 |
 | `editor.key.enter-mid-block` | local | selection:collapsed equals true | PASS | true |
 | `editor.key.enter-mid-block` | local | selection:anchorOffset equals 0 | PASS | 0 |
+| `editor.key.list-family` | official | blocks equals ["AAA"] | PASS | ["AAA"] |
+| `editor.key.list-family` | official | blocksCount count 1 | PASS | 1 |
+| `editor.key.list-family` | local | blocks equals ["AAA"] | PASS | ["AAA"] |
+| `editor.key.list-family` | local | blocksCount count 1 | PASS | 1 |
 | `editor.key.shift-enter-hard-break` | official | blocksCount count 2 | PASS | 2 |
 | `editor.key.shift-enter-hard-break` | official | text:AAA count 1 | PASS | 1 |
 | `editor.key.shift-enter-hard-break` | official | text:BBB count 1 | PASS | 1 |

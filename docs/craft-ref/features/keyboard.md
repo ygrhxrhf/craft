@@ -292,7 +292,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 
 ### 未试清单（下一批的最低成本靶子，按能解锁的价值排序）
 
-★ **表 A 的列表家族只试过 `Ctrl-Shift-7` 一条**：`TODO_LIST=Ctrl-Shift-6`、`BULLET_LIST=Ctrl-Shift-8`、`NUMBERED_LIST=Ctrl-Shift-9`、`NO_LIST=Ctrl-Shift-` `` ` `` **全部未在任何屏幕按过**。若 `Ctrl-Shift-8` 能建列表，则同时解锁三件事：G617 结案、**B 的"列表档"可测**（V50 只证到缩进档）、**`G579` 的"Enter 与 Backspace 退档顺序相反"可判**。
+★ **表 A 的列表家族只试过 `Ctrl-Shift-7` 一条**：`TODO_LIST=Ctrl-Shift-6`、`BULLET_LIST=Ctrl-Shift-8`、`NUMBERED_LIST=Ctrl-Shift-9`、`NO_LIST=Ctrl-Shift-` `` ` `` **全部未在任何屏幕按过**。若 `Ctrl-Shift-8` 能建列表，则同时解锁三件事：G617 结案、**B 的"列表档"可测**（V50 只证到缩进档）、**`G579` 的"Enter 与 Backspace 退档顺序相反"可判**。 ☆ **第 308 批已上屏对拍（两侧）**：`Ctrl-Shift-6/8/9/`` ` `` ` 四键逐键实测，`kinds` 两侧**逐键完全一致**（`para → task → bullet → numbered → para`，单块连按验证了「换档是**替换**不是叠加」）⇒ 这条"全部未在任何屏幕按过"的挂账**已清**；唯一读数差是 official 在编号档把序号画进文本（`1. AAA`）而本地不进 innerText —— 已由 **G866／G1556** 承载。见 `interactions.md` **V183**
 表 B 的 `FIND`/`REPLACE`、表 D（任务视图 23 项）、表 E（表格 15 项）**一条都没在屏幕上按过** ⇒ 这三张表目前全是契约级证据。
 `Alt-↑/↓`（`MOVE_BLOCK_UP/DOWN`，V26 的第二方对照已印出字形）未做屏上验证——它同时能回答"**移动块算几步撤销**"（A 项遗留）。
 

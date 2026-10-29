@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['local.db.document-row'], targets: 'both', tag: 'wave1-30' });
+await main({ only: ['editor.key.list-family'], targets: 'both', tag: 'wave1-31' });

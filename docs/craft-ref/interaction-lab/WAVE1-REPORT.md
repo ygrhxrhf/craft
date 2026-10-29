@@ -976,3 +976,41 @@ div._flexRow_1oz2o_1
 | 矩阵 | **23 条 spec**（`local.db.document-row` 判 `match`，38 条已声明偏差＝外壳名册） |
 | selfCheck | 本地 **6/6 PASS**；官方按设计 0 条（skipped） |
 | 三档状态 | `a11y` ✅／`animation` ✅／**`db` ✅** ⇒ Wave 0 挂着的三档**全部落地** |
+
+## 二十二、★ 续批十八（2026-10-29）：**样式槽列表四键** —— 挂了两年的"从未上屏"清掉
+
+净新增 **1 条 spec** · 零产品代码批 · 台账无新 G（判 `match`）。
+
+### 1、为什么这一族一直挂着
+
+`keyboard.md:295` 逐字写着：「表 A 的列表家族**只试过 `Ctrl-Shift-7`** 一条，
+`TODO_LIST=Ctrl-Shift-6`／`BULLET_LIST=-8`／`NUMBERED_LIST=-9`／`NO_LIST=-`` ` `` **全部未在任何屏幕按过**」。
+⇒ 表 A 的列表段此前全是契约级证据。文档还记了它一旦跑通能连带解锁三件事。
+
+### 2、实测：四键两侧**逐键一致**
+
+单块 `AAA` 连按四键，`kinds` 读数：
+
+| 步 | 官方 | 本地 |
+| --- | --- | --- |
+| `Ctrl-Shift-6`（TODO_LIST） | `task` | `task` |
+| `Ctrl-Shift-8`（BULLET_LIST） | `bullet` | `bullet` |
+| `Ctrl-Shift-9`（NUMBERED_LIST） | `numbered` | `numbered` |
+| `Ctrl-Shift-`` ` ``（NO_LIST） | `para` | `para` |
+
+⇒ ① 四键**都生效**且落到同一档；② 连按时是**替换**不是叠加（`task→bullet→numbered` 没有叠成嵌套列表）；
+③ 块数恒 1（换档不拆块）。判定 **`match`**（14 行／0 sev2+／2 条已声明）。
+
+### 3、两条已声明偏差（都不是新差异）
+
+- `countΔ:AAA` 本地 2 / 官方 1 —— 任务块勾选框的合成可及名含任务文本（**G1563**）；
+- 编号档 `blocks` 官方 `1. AAA`、本地 `AAA` —— 官方把序号画进文本节点（**G866／G1556**）。
+
+### 4、验收
+
+| 项 | 结果 |
+| --- | --- |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 矩阵 | **24 条 spec**（新 spec `match`） |
+| 两侧记录 | 各 6 步、`errors=0`、selfCheck **2/2** PASS |
+| 静态账 | `keyboard.md:295` 那条"全部未在任何屏幕按过"已就地标注为**已清** |

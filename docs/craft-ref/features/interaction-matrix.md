@@ -49,6 +49,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
 | `shell.assistant.open` | match | 9 | 0 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
+| `shell.sidebar-toggle.repro` | match | 10 | 0 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.toggles.family` | differ | 26 | 10 | 2 | 本地 +5/−1 · 官方 +1/−0 |
 
@@ -893,6 +894,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.command-palette.toggle-vs-jump` | official | attr:paletteInput exists null | PASS | "打开" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
+| `shell.sidebar-toggle.repro` | official | text:任务 gt 0 | PASS | 1 |
+| `shell.sidebar-toggle.repro` | local | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | official | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | local | text:任务 gt 0 | PASS | 4 |
 | `shell.toggles.family` | official | text:SHELL gt 0 | PASS | 1 |

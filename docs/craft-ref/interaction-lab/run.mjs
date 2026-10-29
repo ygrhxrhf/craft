@@ -1,2 +1,2 @@
 import { main } from './lab.mjs';
-await main({ only: ['editor.key.url-link'], targets: 'both', tag: 'wave1-46' });
+await main({ only: ['shell.sidebar-toggle.repro'], targets: 'both', tag: 'wave1-47' });

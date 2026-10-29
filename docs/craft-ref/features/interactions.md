@@ -4865,3 +4865,11 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
 - ★★ **官方表格不是 `<table>`**：是 `div[role="presentation"]._root_1ltym_1`（65 div／8 button），
   我一路用 `querySelector("table")` 判存在，把已建好的表读成"没有"。本地才是真 `<table>`（3×3）。
 - ☆ 由此确定三条可用路径：REST 建 table（回 200 带 `rows`）／列表卡点入打开／`GET /blocks` 读回 `rows` 当第二证据通道。
+
+## V190＝第 315 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1576）
+
+- ★★★ **G1576**：表格里 `Ctrl-Enter`（`ADD_ROWS_AFTER`）官方**加一行**（REST 读回 3→4、列不变），
+  本地**无反应**（3×3 不变）。这是表 E 15 条里**第一条真正上屏**的键位。
+- ★★ 更正两处观测通道：REST 建的文档**能**渲染（须从列表卡点入带 `?s=`）；官方表格是
+  `div._root_1ltym_1` 不是 `<table>`，且该类名**侧栏也有**（按类名找会命中侧栏，实测 x=-288）。
+- ☆ 可用通道：块内数 `[contenteditable]`（DOM）＋ `GET /blocks` 读 `rows`（REST 第二证据）。

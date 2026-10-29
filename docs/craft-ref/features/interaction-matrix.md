@@ -67,6 +67,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.schedule.picker-shape` | differ | 114 | 99 | 5 | 本地 +87/−0 · 官方 +5/−0 |
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 61 | 29 | 0 | 本地 +3/−0 · 官方 +3/−0 |
+| `editor.slash.align-indent` | differ | 19 | 11 | 0 | 本地 +1/−0 · 官方 +0/−0 |
 | `editor.slash.list-submenu` | differ | 23 | 14 | 1 | 本地 +0/−0 · 官方 +1/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
 | `editor.table.cell-clipboard` | differ | 72 | 40 | 0 | 本地 +0/−0 · 官方 +0/−2 |
@@ -1475,6 +1476,22 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 15 | selection:anchorOffset |  | 3 |  | 2 |
 | 15 | selection:focusOffset |  | 3 |  | 2 |
 
+### `editor.slash.align-indent` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 1 | countΔ:对齐 | 1 | 0 | -1 | 2 |
+| 1 | countΔ:缩进 | 1 | 0 | -1 | 2 |
+| 2 | countΔ:两端 | 1 | 0 | -1 | 2 |
+| 2 | countΔ:右对齐 | 1 | 0 | -1 | 2 |
+| 2 | countΔ:对齐 | 5 | 1 | -4 | 2 |
+| 2 | countΔ:居中 | 1 | 0 | -1 | 2 |
+| 2 | countΔ:左对齐 | 1 | 0 | -1 | 2 |
+| 3 | countΔ:对齐 | 0 | 1 | 1 | 2 |
+|  | added-only-local |  | /对齐 |  | 2 |
+| 3 | blocks | [""] | ["/对齐",""] |  | 2 |
+| 3 | kinds | ["para"] | ["para","para"] |  | 2 |
+
 ### `editor.slash.list-submenu` — differ
 
 | step | facet | official | local | delta | severity |
@@ -2041,6 +2058,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.selection.select-to-top-bottom` | local | text:AAA count 1 | PASS | 1 |
 | `editor.selection.select-to-top-bottom` | local | text:BBB count 1 | PASS | 1 |
 | `editor.selection.select-to-top-bottom` | local | text:CCC count 1 | PASS | 1 |
+| `editor.slash.align-indent` | official | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.align-indent` | official | blocksCount count 1 | PASS | 1 |
+| `editor.slash.align-indent` | local | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.align-indent` | local | blocksCount count 1 | PASS | 1 |
 | `editor.slash.list-submenu` | official | state:slashMenu gt 0 | PASS | 1 |
 | `editor.slash.list-submenu` | official | blocksCount count 1 | PASS | 1 |
 | `editor.slash.list-submenu` | local | state:slashMenu gt 0 | PASS | 1 |

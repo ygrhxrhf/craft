@@ -336,13 +336,13 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 4. ★ 每个 callback 一律 `return {preventDefault:!0, stopPropagation:!0}` ⇒ **弹层上下文完全吃键、不外溢**，与 §九"弹层类上下文自带 Enter/Esc＋方向键"同构。
 5. ★ 交叉线索（键位无关，只记出处）：块三点菜单项工厂 `Obe`@3878980 的首项是 `{id:"craftAssistant", analyticsId:"assistant", label:_e("assistant.assistant"), tags:["assistant","summarize","translate","continue","writing","ai"], hidden:!1}` ⇒ **菜单项自带搜索标签**；同一工厂入参含 `blockHasReminder / isTaskBlock / hasTaskSchedule / hasTaskDeadline / setBlockTaskScheduleDate` ⇒ **三点菜单直接感任务三时间**（G 项的新入口：不用开日期弹层也可能看到三时间的呈现差）。
 
-### 仍未采到（键位面·第 74 批刷新）
+### 仍未采到（键位面·第 74 批刷新） 〔历史快照·现行口径见文首〕
 
 - 首条 `{matcher: xe(et), …}` 里的 `et` 是压缩变量 ⇒ **该键的实际按键未解**（需别名追踪）；`C.UNDO` 在弹窗内的按键与**撤销域**（撤刚建的任务？还是撤编辑器内容？）未证。
 - 五个 `C.*` 命令 id 的**平台按键**仍未拿到 ⇒ 需与 `commands-catalog.md`（189 条）交叉的下一轮静态批。
 - ★ **屏上可得性仍是 §九 的 9 条**，本批**未新增任何屏上键位证据**（连接器停在 turn 守卫，见 V57 §0）。
 
-## 仍未采到
+## 仍未采到 〔历史快照·现行口径见文首〕
 - **(第 94 批·上半)** `useCompositeRoot` 主 `onKeyDown` 全文与 `isMainOrientationToEndKey` 调用方；`--active-tab-*` 属性全集；§20.13.3 的屏上判据需窗口可见才能复核。
 
 - ~~屏上可得性只覆盖 9 条键位（§九）⇒ 约 91% 从未在屏幕上按过~~ **已过期**。现口径：**§九 那张表是第 67–68 批的快照**，之后的上屏证据全部落在 `interaction-lab` 的 spec ＋ `interaction-matrix.md`（截至第 338 批 **29+8 条 spec**，其中两侧对拍 30 余条）；按表统计的"已上屏"见本节上方各条 ✎。剩余面上的条目统一收在 `WAVE1-REPORT.md` §三十一「存量清单」（A–H 行）。
@@ -368,7 +368,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 **结构事实**：分类是**懒渲染**（DOM 里只有当前分类，切标签才重渲染）⇒ "面板只印一次就够"的采集假设不成立，7 类必须逐类切；容器 `DIV._content_hlglt_2._dialog_dm375_1`，键帽组 `SPAN._keys_dm375_124`，单枚 `KBD._key_dm375_124 typography-ui-md-500 no-select`，面板内导航是 `nav[aria-label=快捷键]` ＋ 7 个 `button`（**是 button 不是 tab 角色**）。
 
 **第 83 批·上半 二次复现（✓ 2026-09-28 09:01–09:11，`browser-use` MCP 的 `evaluate_script` ＋ 页内合成点击；本轮新的是机制与通路，不是键位）**：七类按钮文案与顺序、每类分段与键帽串与上表**逐条吻合**（合集 17 行、样式 27 行、任务 15 行、编辑 13 行、通用 7 行、文档 4 行、整理 6 行，分类计数 7／4／15／13／27／6／17 与 §十二 的归并结果逐项相等），原文与解析件已落盘 `_harvest/b83-panel-tab-*.json` 与 `_harvest/b83-panel-tab-*.parsed.txt` ⇒ 第 81 批的屏上串不是采集抖动。★ 本轮新增四条：① **逐类 DOM 长度序列**（`128,349` 基线 → `合集 133,990` → `通用 131,073` → `文档 129,906` → `任务 133,585` → `编辑 132,933` → `样式 138,831` → `整理 130,528` → Esc 后 `128,211`）⇒ 定量证实"分类懒渲染"，且**序列非单调**（切类可以整体变小）；② **`Escape` 只弹一层**——面板关闭后下层帮助菜单**回显**（`opacity:1`、`pointer-events:auto`、rect `482,44 278×204`），本面板自印的 `取消 esc` 由 `~` 升为 ✓；③ **OS 级 `press_key` 并非全废**——它驱动了 `Escape`，只是驱动不了键表注册的 `Ctrl+Shift+,` ⇒ 上表末条"实际生效性仍为 0"的口径不变，但**下一批每条键要先试 `press_key`、失败再用 V63 的合成键兜底**，并标注由哪条通路驱动；④ **帮助菜单六项逐字**（`意见反馈`／`最新特性`／`Web 和 Windows 版最新特性`／`常见问题`／`快捷键`／`Markdown 快捷方式`）⇒「Markdown 快捷方式」是**并列的第二个入口**，不是本面板的一节；★ 尾轮（09:12–09:26）已定其落点＝**站外帮助中心新标签**（`support.craft.do/zh-Hans/write-and-edit/formatting/markdown-shortcuts`，标题「Markdown 快捷键 - Craft Help Center」），应用内**不渲染任何面板**（见 gap **G758**／`interactions.md` **V65**）。☆☆ **同批尾记的判据更正**：上面那条"逐类 DOM 长度序列"**只在同一次页面生命周期内可比** —— 尾轮发现同一张列表屏在零写入条件下会量到 `128,xxx` 与 `181,xxx` 两档基线（差约 5.3 万字节），故跨时刻／跨重载的绝对字节对齐不成立（gap **G760**）。详见 `interactions.md` **V64／V65** 与 gap **G752–G760**。
-**仍未采到（键位面·第 81 批刷新）**
+**仍未采到（键位面·第 81 批刷新）** 〔历史快照·现行口径见文首〕
 - 上表 7 段与 表A–E 的**逐条**对账（本轮只裁了差异项）⇒ 原始串在 `_harvest/b81-panel-all.txt`，纯本地工作
 - ★ 面板上**没有**的键位是否等于"官方无绑定"（面板只 7 类，bundle 注册表里的 261 个 action 构造器远多于此）⇒ 面板是**子集展示**还是**全集**未证；已知候选：`Ctrl+S 保存`（本地自造）在面板任何一类里都没出现
 - G726 的裁定（回主 chunk 重读 `Cae()` 与 `ADD_ROWS_BEFORE` 定义）
@@ -482,7 +482,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 5. **表A 的"官方中文"列有两处需要回改（本轮不改表）**：`TITLE` 与 `HEADING` 都写"标题"（26、28），面板用 标题／副标题／中标题 三档区分 ⇒ 表A 无法从名字反推 1／2／3 各是哪档；`STRONG` 写"强调"（29）而面板写"粗"，与 `BOLD`"加粗"（38）只差一字。其余名字之别（列表／折叠列表、项目符号／无序列表、编号／编号列表、无列表／取消列表格式、行内公式／输入方程、命令菜单／打开斜线菜单）都是同义异名，不改变判定。
 6. **面板标签与 表D／表E 末列的"语义"之别是注解之别**：表D 末列表头是"语义"（本地注解），表A／B／C／E 末列才是"官方中文"（i18n）⇒ 只有后者的名字差异才可能构成 `语义名不同`。本轮三条 `语义名不同` 全部落在 i18n 列（28、29、63）上，不是注解口径之争。
 
-**仍未采到（对账面·第 82 批）**
+**仍未采到（对账面·第 82 批）** 〔历史快照·现行口径见文首〕
 - **面板是否等于键位全集仍未证**：要点 2 列出 12 条"表A–E 有、面板无"，故面板确定是子集；但反过来"bundle 注册表里有、面板与 表A–E 都没有"的集合仍未穷尽（219 枚键帽 ↔ 261 个 action 构造器的比例本身就说明面板不覆盖动作面），本轮只能证"面板 ⊂ 表A–E ∪ 表A–E ⊄ 面板"，两侧的真差集仍未量出。★★ **第 82 批·下半 C 推进**：面板源已找到（§十三），面板＝一份人工挑选清单 ⇒ "面板是子集"由数据形状直接证明；且面板条目还会被 `Ll`／`Hd` 三元与功能开关裁掉（`assistant.assistant` 在源里、屏上没印）⇒ "表A–E 有、面板无"要分成"源里就没有"与"源里有但该设备不渲染"两类。
 - ~~Mac 串完全没与屏上对照；G726 未推进~~ **G726 已裁定**（第 82 批·下半 B，见 gap **G742** 与 `internals.md` §二十七）：两张表格键表里 `ci(oo)`（添加列·右）都排在 `zr(oo)`（在前面添加行）**之前**，而两者 Windows 式逐字段相同 ⇒ **Windows 的 `Ctrl+Shift+Enter` 派发的是"添加列·右"，"在前面添加行"在该平台键盘不可达**；面板把两个标签都印出来是枚举描述符不去重。**Mac 串仍未与屏上对照**（这条没结）。
 - **⤒／⤓ 的字形归属仍是推断**：判据来自 §八 keyboard.md:262 的一条旁证（`Alt-⤒` ↔ `Alt-↖`）。若 ⤒ 实为 ↑，则 文档类"选择到顶部 `CtrlShift⤒`"对应的应是 `SELECT_TO_TOP_MAC`（74）而非 COMMON（72）；顺带：表B 内部 `MOVE_BLOCK_TOP_MAC`（70）与 `SELECT_TO_TOP_MAC`（74）的 Win 串**逐字相同**（都是 `Ctrl-Shift-↑`），面板里没有 `CtrlShift↑` 这一条，故也无法用屏上裁定这处静态表自撞。★★ **第 82 批·下半 C 结案（见 §十三）**：`JX()` 与三处 `Ll ?` 证明 **`*_MAC` 变体只在 Mac 的面板里追加展示** ⇒ 非 Mac 面板没有 `CtrlShift↑` 是设计如此，不是漏采；`SELECT_TO_*_MAC` 与 `MOVE_BLOCK_*_MAC` 的 Windows 串自撞仍是**静态表内部问题**（前者进派发、后者的派发点尚未定位）。
@@ -523,7 +523,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 
 **☆ 面板条目还有第四层裁剪（功能开关，未验证）**：面板源里有 `{getName:s=>s("assistant.assistant"), shortcuts:[ot.TOGGLE_ASSISTANT]}`（`assistant.assistant` ＝ 助手），但第 81 批屏上「编辑」各段没印这一行 ⇒ 属"源里有、渲染没有"，最可能是 AI 档位／账户状态相关。⇒ 用面板判"官方无此绑定"之前，要先排除这一类。
 
-**仍未采到（本节）**
+**仍未采到（本节）** 〔历史快照·现行口径见文首〕
 - 面板源经 `Zp`／变量传入的条目未穷尽（本轮只抓到 57 条 `shortcuts:[…]` 直写项）；「文档」tab 的段 `getTitle` 未读到。
 - `ot.tableShortcuts` 子组成员；`k9t` 的非 Mac 分支读至截断处。
 - `TOGGLE_ASSISTANT` 与 `ADD_TABLE_ROW` 同为 `Co(oo)`（`⌘⏎`／`Ctrl+⏎`）⇒ 表格选区语境谁赢**未裁定**。
@@ -595,7 +595,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 2. **跨段整条重复**：`删除行 = Ctrl ⌫` 在两段各印一次（第 9／17 行）。
 ⇒ ⇒ 面板**不是去重后的全局命令表**，而是"按 section 各自渲染"，同一命令在不同上下文各出现一次。本地若做全局去重就与官方对不上（建议照抄分段、统一文案，登记为有意偏差）。⇒ gap `G768`。
 
-### 仍未采到（第 84 批·下半 刷新）
+### 仍未采到（第 84 批·下半 刷新） 〔历史快照·现行口径见文首〕
 
 - ☆ `意见反馈` 落点未确认（已排除站内 `dialog` 与 `window.open` 两条）。
 - ☆ `Space` 未测；Base UI 按钮 `onKeyUp` 里对 `$a.key === " "` 的专门分支已从 fiber 读到 ⇒ 按一次可双验。 ✎ **第 345 批复核：已过期**——同文件 §17.1 已把面板 `Space` 记 ✓；编辑器内 `Space` 的按态分派见 `G1591`。
@@ -641,7 +641,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 
 三条通路已穷尽：站内弹层＝0（700 ms 内无 `[role=dialog]`）；新标签＝拦截 `window.open` 后 captured＝null；页内导航＝`location.href` 未变、`title` 未变、`body.children` 未增 ⇒ 只剩 `mailto:`／OS 层邮件客户端这类**本连接器观测不到**的候选。⇒ 记"未确认＋不可采原因"，不得写成"官方无此行为"。
 
-### 仍未采到（第 85 批·上半 刷新）
+### 仍未采到（第 85 批·上半 刷新） 〔历史快照·现行口径见文首〕
 
 - ☆ 89 条主行明细与 §十二 表 A–E 的逐条对账（尤其 `样式` 27 命令／80 键帽档内的同键冲突）。
 - ☆ `Space` 重置的机制层原因（`setCategory(0)` 还是重挂载）⇒ 属静态批，读面板组件 handler 源码即可。
@@ -728,7 +728,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 3. **别名行数 6 = 6**，且逐类分布相同（通用 1／任务 2／样式 2／合集 1，文档与编辑 0）。
 ⇒ 结论：**面板键位表已是双源可复现的静态事实**，后续不必再为"要不要重采一遍面板"花浏览器预算；要花的预算只在**键位是否真的生效**（§九 至今仅 9 条按过）与**焦点上下文会不会换串**。
 
-**仍未采到（键帽词表面·第 85 批·下半）**
+**仍未采到（键帽词表面·第 85 批·下半）** 〔历史快照·现行口径见文首〕
 - ☆ `文档` 分类的**小标题段数采到 0**，其余六类为 2／2／5／5／2／2（合计 18）。同一次脚本、同一选择器在其余六类都取到非空 ⇒ 更可能是"该分类真的不分段"，但也可能是该分类用了另一个 class；本轮没有留原始判据（`sectionTitle` 节点数与该分类首层子元素的 class），**标 `~` 未确认**。
 - ☆ **面板↔键位是否随焦点上下文换串**仍未测（§十二 遗留，本轮是纯本地批，无新证据）。
 - ☆ 16.4 的矩阵只覆盖**主行×主行**；"别名行×别名行"的冲突未算（6 条别名太少，且两条 `Ctrl/` 属同一命令在两个分类的重印，不构成新冲突）。
@@ -777,7 +777,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 ★ `文档` 分类的"0 个分段标题"**结案**（G780 → 已证）：同一脚本同一选择器在其余六类都取到非空，且 `文档` 与 `整理` 的骨架 class 逐字相同（dialog 直接子＝`NAV#_sidebar_dm375_26` ＋ `DIV#_main_dm375_37`，行容器＝`DIV#_sections_dm375_82`）⇒ 同结构取到 0 只能是数据里没有 ⇒ 复刻时"分段标题"要当**可选**字段，本地若统一强判非空会渲染出官方没有的空段。
 ☆ **第四口径的用途**：此前所有 `len` 都是整页 `outerHTML.length`（受列表虚拟滚动与相对时间文本干扰，见 G760／G764／G770）。弹层自身长度只随分类变化（14,753–23,678，`样式` 最长），是**弹层内更适合的指纹**；但仍只应在同一生命周期内作相对判据。
 
-**仍未采到（键盘导航面·第 86 批·上半）**
+**仍未采到（键盘导航面·第 86 批·上半）** 〔历史快照·现行口径见文首〕
 - `ArrowRight`／`Home`／`End` 本轮未重测（沿用第 84 批上半的 `~`）。
 - 分类按钮上的**真实 `Tab`/`Shift+Tab` 序列落点**未证（本批焦点由程序放置；坐标点击在本桥后台标签不可用）。
 - `Space` 的生效延迟机制未拆（需要 200／400 ms 定时采样区分"keyup 合成 click"与"React 渲染节流"）。
@@ -829,7 +829,7 @@ srt(t) => Rn(t,"matcher") ? {matcher:t.matcher, handler:t.callback}
 跨一次 `navigate_page(reload)` 前后，`任务` 18,432→19,061、`编辑` 17,780→18,409、`样式` 23,678→24,308、`合集` 18,837→19,466（各约 +629），而 `通用` 15,920／`文档` 14,753／`整理` 15,375 **逐字节恒定**；行数、分段数、键帽数、`contentChildren` 全部相同。⇒ 这不是随机漂移，是**按分类分档的结构性台阶**（高内容四类多出约 629 字节的同一处元素，位于 `_sections_` 内部），但本轮未存 `outerHTML` 故**未定位到那 629 字节**。
 ⇒ 规则：**"绝对字节只在同生命周期内可比"从整页扩展到弹层自身**（承 G760／G764／G770）；面板自检应校验**行数／键帽数／分段数**三个结构量，不要校验字节。
 
-**仍未采到（键盘面板面·第 86 批·下半）**
+**仍未采到（键盘面板面·第 86 批·下半）** 〔历史快照·现行口径见文首〕
 - 焦点上下文换串只测两档（列表／任务视图）；**正文、表格、合集**三档未测。
 - `ArrowRight`／`Home`／`End` 本轮第一轮日志因**帮助菜单懒渲染**（900 ms 取空 `n=0`）而作废 ⇒ **仍未测**，沿用第 84 批上半的 `~`，不得当已测。
 - G790 的 +629 字节未定位（需跨重载前后各存 `dialog.outerHTML` 并 diff）。
@@ -893,7 +893,7 @@ b.shortcuts.map((y,C)=>{
 
 `i ? nav.compactNav + Npe({value:d.id, onValueChange:c, items:[{value,icon,ariaLabel}]}) : nav.sidebar`（同一 `aria-label`）⇒ 官方在某条件下切 **compact（Tabs 型受控）** 与 **sidebar（列表型）** 两种导航。★ 与 G793（窄视口下顶栏帮助按钮不渲染）同属响应式开关家族；`i` 的求值表达式在窗口外 ⇒ **未定位**。本地若只做一态要登记**有意偏差**（原因＝官方二态但单态不影响功能）。
 
-**仍未采到（源码面·第 87 批·下半）**
+**仍未采到（源码面·第 87 批·下半）** 〔历史快照·现行口径见文首〕
 - `Enter` 抑制／`ArrowLeft` 未注册的实现位置（全局键处理器或 `vendor-ds` 按钮）；全包 12 处 `tabIndex` 未逐个看。
 - `i`、`Cae`、`v9t`、`G9t`、`Npe`、`Aa` 的定义未读（窗口不够）；`hlglt`（dialog 外壳）模块未读。
 - G793 的视口门控成因（需用户恢复视口）；★ A–G 效果面仍为零（需第 87 批沙盒授权）。
@@ -953,7 +953,7 @@ $N={keyCondition:{type:"keyCode", keyCode:t=>…}};
 | `"ArrowUp"` 5 处 | 19,570 字形表、2,452,836 图标 switch、**2,630,187＝`MRt` hook**、2,631,302 相邻、5,456,645＝下拉"方向键展开"（`preventDefault, open()`） | 面板纵导航的出处**仍未定位**（面板模块内 0 处 `onKeyDown`） |
 | `onKeyDown` 全包 | **37 处**（偏移清单见 G795／`b87-enter-regions.json`） | 下一步逐个看（候选已收窄） |
 
-**仍未采到（键盘导航面·第 88 批·上半）**
+**仍未采到（键盘导航面·第 88 批·上半）** 〔历史快照·现行口径见文首〕
 - **`Home`／`End` 在面板分类按钮上的实测**（G801 待验，两种候选互斥）＋ 分类按钮的 `role` 未读 ⇒ 需**视口恢复**。
 - `Enter` 抑制的实现位置；面板纵导航的确切出处（37 处 `onKeyDown` 未逐个读）。
 - ☆ 系统 Temp 现有 6 个 bundle 片段（**不入仓库**），用完清理。
@@ -982,7 +982,7 @@ let f = S=>{ I6e.has(S.key) && T6e(d.current), s?.(S) };   // 白名单四键先
 1. **主包层面"唯一列表导航＝DS Menu"** ⇒ 若面板分类按钮（或祖先）带 `role=menuitem`，则实测 `ArrowUp`/`ArrowDown` 生效由 `MRt` 解释、`Home`/`End` 也应生效（G801 的**正面候选**）；若不带，面板纵导航必在其他 chunk（主包已排除）。
 2. **`Enter` 抑制不在主包、也不在面板**（37 处中 2 处的 `Enter` 都是局部组件），`vendor-ds`（181,813 B）**`"Enter"` 字面量 0**（G805）⇒ 候选收窄到三通道：`window.onkeydown=` 赋值式监听／`vendor-react` root listener 的应用侧回调／其他 211 个 app chunk 的懒加载组件。
 
-**仍未采到（37 处分类面·第 88 批·下半）**
+**仍未采到（37 处分类面·第 88 批·下半）** 〔历史快照·现行口径见文首〕
 - `Enter` 抑制的实现位置（三通道候选）；`Home`／`End` 与分类按钮 `role` 的实测（需视口恢复）。
 - 33 处"其余"只做了指纹、未逐个读语义（按需抽读）。
 
@@ -1004,7 +1004,7 @@ let f = S=>{ I6e.has(S.key) && T6e(d.current), s?.(S) };   // 白名单四键先
 
 **建模收获**：`$N={keyCondition:{type:"keyCode", keyCode:t=>…}}` ⇒ 官方键位条件至少有 **`keyCode`（数值区间）型**与 **`code`（`KeyX`/`DigitX`/`BracketLeft`…）型**两种（与 §十三 描述符两段式一致）；本地自定义快捷键若要对齐官方行为，这两类匹配都得支持。
 
-**仍未采到（`Enter` 检查点面·第 89 批·上半）**
+**仍未采到（`Enter` 检查点面·第 89 批·上半）** 〔历史快照·现行口径见文首〕
 - 抑制实现位置（候选 (a) 要读 `role` ⇒ 需视口恢复；(b)／(c) 未查）。
 - ☆ 系统 Temp bundle 片段 9 个，**不入仓库**，用完清理。
 
@@ -1109,7 +1109,7 @@ function bae(t){return Ll?t:t.winMatcher??t}                           // 平台
 
 ⇒ ① §20.4／§20.5 的 **0 是"37 个 `onKeyDown` ±700B 窗口内"的计数**，"主包没有全局键盘监听"**不成立**（分派器本身就是 document 级 capture）；② `.onkeydown=` 赋值式三模式（`window.onkeydown`／`document.onkeydown`／`.onkeydown=`）全包 **0 命中** ⇒ G803 候选 (c) **主包内排除**；③ **新增两条未读的 document 级 handler（#3 `L`、#4 `vqn`）＝ `Enter` 抑制的新候选 (d)／(e)**。
 
-**仍未采到（焦点栈与分派面·第 89 批·下半）**
+**仍未采到（焦点栈与分派面·第 89 批·下半）** 〔历史快照·现行口径见文首〕
 - `Home`／`End`／`ArrowLeft`／`ArrowRight` 在面板的屏上复测（源码预测 no-op）＋ 首/末分类夹紧 no-op ＋ `Ctrl+↑` 宽松匹配也切分类 ⇒ 都要**视口恢复**后一次测完（G801／G809 预测）。
 - 分类按钮的 `role`／tag（G803 候选 (a)）；document 级 handler `L`@4,890,138 与 `vqn`@6,316,375 的函数体（候选 (d)／(e)）；211 个懒 chunk（候选 (b)）。
 - `k9t`（分类清单构造器，箭头函数本轮未定位）；`Lo.migrateValue` 分支；`ot.TOGGLE_KEY_SHORTCUTS` 在命令注册表里的完整修饰式。
@@ -1182,7 +1182,7 @@ function JI(t){…winMatcher:{ctrlKey:!0,shiftKey:!1,altKey:!0,…}}}           
 | `vqn`@6,316,375 | `vqn(t){kae(t.key)&&body.classList.add(wW)…, t.key===Sae&&…}`；`Iqn`＝keyup 反向；`rve()` 复位；`Tqn` 注册＋body class | **打字态/Shift 态 body-class 开关，无 `preventDefault`** ⇒ **(e) 排除** |
 | `vendor-ds` @71,888 | `m=h.key==="Tab"&&!alt&&!ctrl&&!meta` → `preventDefault`＋`TreeWalker(tabIndex>=0)` 首尾互跳；DS 焦点陷阱栈 `Si`（add/remove/pause/resume） | **Tab 焦点陷阱**；全 chunk `keyCode===13`／`key==="Enter"`／`which===13` 均 0 ⇒ **DS 侧 Enter 嫌疑清零** |
 
-**仍未采到（视口与 rail 面·第 90 批·上半）**
+**仍未采到（视口与 rail 面·第 90 批·上半）** 〔历史快照·现行口径见文首〕
 - **视口与截图两个锁等用户**（`resizeTo` 已证无效）⇒ G801／G809 三预测／G793 截图／**Enter 悖论 (f)(g) 复测**全压在这上面。
 - `hn()`（compact/sidebar 条件）**两种搜法均 NOTFOUND**；~~`lEe` 的 winMatcher 尾部截断~~（§20.8 已补全文）；~~`TOGGLE_FOCUS_MODE` 的修饰显示来源未追~~（§20.8 结案＝`yae`）；211 懒 chunk（候选 (b)）未穷尽。
 - ☆ 系统 Temp bundle 片段 12 个（**不入仓库**），用完清理。
@@ -1232,7 +1232,7 @@ v9t=t=>{ if(!Ll)return t;                                 // ★ Win 原样返�
 ⇒ **`keyboard.md:370`（§十二）原注"Mac `⌘ ⌥ ⇧ S` 经 `lEe` 映射成 Win `Ctrl-Alt-S`"自相矛盾**：`lEe` 的 winMatcher 是 Ctrl-Alt-**Shift**、照它屏上应显示四键帽，而实测是三键帽 `CtrlAltS` ⇒ **工厂只能是 `JI`**（⌘⇧⌥↔Ctrl-Alt，Mac 三修饰吻合）⇒ **该行已就地 ✎ 更正**（G822）。
 **通用教训**：屏上串反推工厂必须**逐字段对 `winMatcher`**——`JI` 与 `lEe` 是"同 Mac 串、Win 差一个 Shift"的孪生构造器，只数 Mac 侧修饰数必错。
 
-**仍未采到（显示管线面·第 90 批·下半）**
+**仍未采到（显示管线面·第 90 批·下半）** 〔历史快照·现行口径见文首〕
 - `hn()`（compact/sidebar 条件）两种搜法 NOTFOUND；`SCHEDULE_FOR_TODAY` 的 `JI` 归属＝**由屏上串＋修饰对反推**，`ho` 注册表原文未直读（下一抽定点确认）；211 懒 chunk（候选 (b)）未穷尽。
 - ★ **视口与截图两个锁仍等用户**（G801／G809 三预测／G793 截图／Enter 悖论 (f)(g) 复测）。
 - ☆ 系统 Temp bundle 片段 13 个（**不入仓库**），用完清理。
@@ -1270,7 +1270,7 @@ TOGGLE_DONE:YM(Oo("t")),TOGGLE_DONE_SLASH:yae("/")…
 本体**未定位**：`function hn(`／`hn=()=>`／`hn=t=>`／`as hn` 四搜皆非；`wr as hn`@6,833,180 所在**尾部大别名表动词未裁**（`wr` 本体＝24×24 SVG 图标 @3,587,019，与 `hn()` hook 无关）。
 **方法注（纪律第二次验证）**：**别名表只能读表头动词（`import{`／`export{`），不能按字母猜两侧**——与第 85 批"按加号切键帽数"同型的推断错误，本次在读正文前被拦下。
 
-**仍未采到（注册表与 `hn` 面·第 91 批·上半 → 下半刷新）**
+**仍未采到（注册表与 `hn` 面·第 91 批·上半 → 下半刷新）** 〔历史快照·现行口径见文首〕
 - ~~尾部别名表动词~~（**下半结案＝`export{local as exportName}` @6,828,250**，6.8M 后 `import{`/`from"` 零命中，见 §20.10／G825）；`hn()` 本体＝**只剩 `class hn` 与 `hn=<标识符>` 两形态未搜**（下批一发即裁）。
 - ★ 视口与截图两个锁仍等用户（G801／G809／G793／Enter 悖论 (f)(g)）。
 - ☆ **Temp 原文残留已清 5 个**（本批）；211 懒 chunk（候选 (b)）未穷尽。
@@ -1343,7 +1343,7 @@ keydown 核心两行：`Ua && (!Pr && (Ia || qa) && $a.preventDefault()`，`!Pr 
 
 ⇒ **已加载 app chunk 零命中**；未加载 chunk 不可能在当前会话生效 ⇒ **候选 (b)（"某个懒 chunk 里有全局 Enter 拦截"）在当前会话范围实质关闭**。
 
-**仍未采到（第 92 批·上半）**
+**仍未采到（第 92 批·上半）** 〔历史快照·现行口径见文首〕
 - ★★★ `a6` 的 jsx root 与 Base UI 接线（§20.11.2 最后一问，静态一发即裁）。
 - ★★★ A／B／C／D／E／G 的**按键效果与弹层仍为零条** ⇒ 瓶颈＝**新的沙盒写入授权**（队列 1）。
 - ★ 视口两个锁仍等用户：G801／G809 三预测／G793 截图／**648＜747 应渲染 compactNav 的新预测**／Enter 屏上 (f)(g) 复测。
@@ -1404,7 +1404,7 @@ G9t = t => t.kind==="modifier" ? (Ll && W9t[t.modifier] || t.label)
 
 ⇒ **`Shift+Enter` 添加行**（`qi`＝Shift 装饰 × 严格 Enter）；`nc` 身份未解（候选 `Delete`／`Backspace`）；同段 `w9t=Co(oo)`＝`⌘/Ctrl+Enter`（消费点未读）。
 
-**仍未采到（第 92 批·下半）**
+**仍未采到（第 92 批·下半）** 〔历史快照·现行口径见文首〕
 - ★★★ (h) 假设的关键＝**`TIe`（DS 分段控件）自身的 `Enter`／`Space` 语义未读**；(f) `press_key` 通路仍待屏上。
 - ★ 屏上：`[class*=_compactNav_]` vs `_sidebar_` 一发判 G826；`Nr()`／`z0()` 两旗标身份；`nc` 常量；`Aa.dialog`／`Aa.isCompact` 两 class 字面量；DS Button 上游有没有传 `nativeButton:false`。
 - ☆ A–G 效果面仍零条（写授权未到手）。
@@ -1444,7 +1444,7 @@ mergeProps$2({type: Pr?"button":void 0, …}, Pr?void 0:{role:"button"}, da, xa)
 
 **`TIe` 出处判否（G837）**：该 vendor chunk（3,888,008 B）内 `TIe` **零命中**，export 头＝`export{serialize as $,tinycolor as A,Bm as B,dedent as C,memoize$3 as D,…}` ⇒ 上一步"从别名向后取第一个 `from"`"的定界法不可信 ⇒ **纪律：import／export 别名表必须先定界（向前 `import{`、向后 `}from"`）再取值**（与第 85／91 批同型的第三次失误）。
 
-**仍未采到（20.12.5）**：`TIe` 真实出处；compact 态条目的 `role`／`data-ds`／高亮判据（屏上）；`XM` 之后的键名常量未逐字；A–G 效果面零条（写授权）。 ✎ **第 345 批复核：其中"A–G 效果面零条"已过期**（V183–V209 已覆盖 A–E；G 见存量清单 H）。
+**仍未采到（20.12.5）**：`TIe` 真实出处；compact 态条目的 `role`／`data-ds`／高亮判据（屏上）；`XM` 之后的键名常量未逐字；A–G 效果面零条（写授权）。 ✎ **第 345 批复核：其中"A–G 效果面零条"已过期**（V183–V209 已覆盖 A–E；G 见存量清单 H）。 〔历史快照·现行口径见文首〕
 
 ### 20.12.6 `TIe` 结案＝Base UI `TabsRoot`（分段控件＝Tabs）＋ ✎ G837 更正（✓ 第 93 批·上半 2026-09-28 15:30–15:33，零 UI 交互＝2 次页内 `indexOf`＋vendor 页内缓存回读，**未动页面状态**）
 
@@ -1461,7 +1461,7 @@ mergeProps$2({type: Pr?"button":void 0, …}, Pr?void 0:{role:"button"}, da, xa)
 2. ★ **双态判据修正（仪器事实）**：列表屏（面板未开）跑 `[class*="_sidebar_"]` 命中 **`_sidebar_dpkxs_58`**＝app shell 侧栏（另一个 CSS module），面板 rail 是 **`dm375`** ⇒ 通用判据被污染 ⇒ **正确写法＝`[class*="_sidebar_dm375_"]` vs `[class*="_compactNav_dm375_"]`**（或限定在 `[role=dialog]` 子树内）。同次 `compactNav` 为空**只证明面板没开**，不证明窄视口下不存在该档。
 3. ☆ **视口复核（15:30）**：`648×578`／`mq(747)=true`／`dpr 1.25`／**`visibilityState=hidden`**／顶栏 help 按钮不在 DOM（G793 复现）／`dialog`·`menu`＝0 ⇒ 两个外部锁仍未解；本会话另 **`mcp_list` 查 `craft` 返回 0 个工具 ⇒ 数据面写入通路不可用** ⇒ 沙盒需走屏幕创建 ⇒ 更要等可见性。
 
-**仍未采到（20.12.6–7）**：`TabsList`／`TabsTab` 的 `onKeyDown` 全文（roving 具体动作）；`activateOnFocus` 默认值；`isMainOrientationToEndKey` 调用方；屏上裁定 (f)(i)；A–E／G 沙盒。 ✎ **第 345 批复核：同上一行，"A–E／G 沙盒"已过期**。
+**仍未采到（20.12.6–7）**：`TabsList`／`TabsTab` 的 `onKeyDown` 全文（roving 具体动作）；`activateOnFocus` 默认值；`isMainOrientationToEndKey` 调用方；屏上裁定 (f)(i)；A–E／G 沙盒。 ✎ **第 345 批复核：同上一行，"A–E／G 沙盒"已过期**。 〔历史快照·现行口径见文首〕
 
 ### 20.13 第 94 批·上半：`Tabs` 自动激活结案（Enter 悖论的静态终结）
 
@@ -1498,7 +1498,7 @@ mergeProps$2({type: Pr?"button":void 0, …}, Pr?void 0:{role:"button"}, da, xa)
 
 `useFocusableWhenDisabled`（@991,941 起）：`onKeyDown(pa){Cr&&Ar&&pa.key!=="Tab"&&pa.preventDefault()}` ⇒ **disabled ＋ focusableWhenDisabled 时除 `Tab` 外所有键被 `preventDefault`**，且 `useButton` 的 `onClick` 里 `if(Ar){$a.preventDefault();return}`。⇒ 官方灰态按钮＝**焦点可停、键无反馈、click 被吃**，属 F 权限矩阵的可观测判据。
 
-**仍未采到（§20.13）**：~~`useCompositeRoot` 主 keydown 全文（方向键／Home／End 的拦截与 `stopEventPropagation` 落点）~~ **✎ 第 96 批结案＝§20.14.1／§20.14.2**；~~`isMainOrientationToEndKey` 调用方~~ **✎ 第 96 批结案＝§20.14.3（3 处调用方全在 Floating UI `useListNavigation` 体内，与面板 rail 无关）**；~~`--active-tab-*` 属性全集~~ **✎ 第 96 批结案＝G861（全集 6 个；Craft 主包零引用 `TabsIndicator`，CSS 只消费 left／width／height）**；(f) 屏上 keylogger 复核（等窗口可见）**仍未做**。另新增未采：`uF` 表尾、`cne` 本体、`enableHomeAndEndKeys`／`loopFocus` 的实际传参（G859）。
+**仍未采到（§20.13）**：~~`useCompositeRoot` 主 keydown 全文（方向键／Home／End 的拦截与 `stopEventPropagation` 落点）~~ **✎ 第 96 批结案＝§20.14.1／§20.14.2**；~~`isMainOrientationToEndKey` 调用方~~ **✎ 第 96 批结案＝§20.14.3（3 处调用方全在 Floating UI `useListNavigation` 体内，与面板 rail 无关）**；~~`--active-tab-*` 属性全集~~ **✎ 第 96 批结案＝G861（全集 6 个；Craft 主包零引用 `TabsIndicator`，CSS 只消费 left／width／height）**；(f) 屏上 keylogger 复核（等窗口可见）**仍未做**。另新增未采：`uF` 表尾、`cne` 本体、`enableHomeAndEndKeys`／`loopFocus` 的实际传参（G859）。 〔历史快照·现行口径见文首〕
 ### 20.14 第 96 批·上半：`useCompositeRoot` 主 keydown 全文 ＋ 平台常量表 ＋ 块编辑器三道门 ＋ markdown 快捷输入表 `uF`（✓静，零写入；2026-09-29 09:26–10:20，12 次 `evaluate_script` 页内 `fetch`／`indexOf`，产物走 `filePath` 落盘；原始窗 `_harvest/b96-composite*.json`／`b96-static*.json`／`b96-onkeydown.json`／`b96-css*.json`／`b96-gates.json`）
 
 #### 20.14.1 composite 根的方向键模型（vendor `vendor-BZCR0rqu.js` @1,221,599 起，处理体 @1,222,100–1,225,500）
@@ -1561,7 +1561,7 @@ Home／End 与移动与收尾（逐字形状）：`pa && (Pa.key===HOME ? Va=Za 
 
 偏移（升序）＝1,060,238／1,060,903／2,197,928／2,247,538／2,258,955／2,260,857／2,276,207／2,278,515／2,631,502／2,632,098／2,634,375／2,634,592／2,636,007／3,795,422／3,811,214／**4,091,385**／4,106,936／4,106,951／4,820,898／5,193,724／5,412,164／5,457,081／5,465,249／6,559,643／6,559,770／6,559,897／6,560,054／6,560,181／6,560,308／6,611,839／6,611,966／6,612,093／6,612,250／6,612,377／6,612,504／6,733,728／6,734,923。⇒ **37 处**与第 88 批「主包 37 处」第三次独立复现（口径＝主包内 `onKeyDown` 字面量出现处）。分类（逐窗读内容判的，不是数）：① **唯一的块级主分发器＝4,091,385**（§20.14.5，本轮新结案）；② 团队邀请邮箱行（2,247,538／2,258,955／2,260,857／2,276,207／2,278,515／6,733,728／6,734,923＝7 处，`addRow/updateEmail` 形态，占最大一块）；③ 六位数字验证码输入（6,559,6xx 与 6,611,8xx 两组 × 6 格，`inputMode:"numeric", maxLength:1`）；④ DS Menu 与 sections（2,631,502／2,632,098／2,634,375／2,634,592，`role:"menu"`）＋ 一个 `onKeyDownCapture`（2,636,007）；⑤ 表格（4,106,936／4,106,951＝`onKeyDownBound` 接线处；4,820,898＝带 `data-cell-id` 的单元格）；⑥ URL／链接输入（3,795,422／3,811,214／5,465,249）；⑦ 通用输入与 textarea（1,060,238／1,060,903／5,193,724）；⑧ 下拉与自定义按钮（2,197,928／5,412,164／5,457,081）。⇒ ★ **主包内没有任何"全局键盘抑制"**的结论第四次复现：37 处全是**组件级 prop 接线**，唯一的"整表清空"出现在块级（表格分支）与焦点栈（IME 分支）。
 
-**仍未采到（§20.14）**：`uF` 表尾（窗口截到 `pattern:/^\s*-` 处，之后条目形状待补）；`cne` 定义本体（@3,777,934）与 `allowBlockStyling` 的赋值来源；Craft 是否给 `TabsList`／`CompositeRoot` 传 `enableHomeAndEndKeys` 与 `loopFocus:!1`（G859 冲突未裁）；`TabsTab` 的 `onFocus` 里 `Da.current／Fa.current` 两个 ref 在"指针按下后聚焦"场景下的完整门控链（只读到定义，未读全 `Va(Xa)` 的所有分支）；表D 的「上一个／下一个」两命令在面板里的**键帽印串**对照（需屏上或面板 DOM）；(f) 宽栏真 `button` 上 Enter 是否到达——**依旧需要屏上 keylogger**。
+**仍未采到（§20.14）**：`uF` 表尾（窗口截到 `pattern:/^\s*-` 处，之后条目形状待补）；`cne` 定义本体（@3,777,934）与 `allowBlockStyling` 的赋值来源；Craft 是否给 `TabsList`／`CompositeRoot` 传 `enableHomeAndEndKeys` 与 `loopFocus:!1`（G859 冲突未裁）；`TabsTab` 的 `onFocus` 里 `Da.current／Fa.current` 两个 ref 在"指针按下后聚焦"场景下的完整门控链（只读到定义，未读全 `Va(Xa)` 的所有分支）；表D 的「上一个／下一个」两命令在面板里的**键帽印串**对照（需屏上或面板 DOM）；(f) 宽栏真 `button` 上 Enter 是否到达——**依旧需要屏上 keylogger**。 〔历史快照·现行口径见文首〕
 
 
 ## 20.15 官方 markdown 快捷输入表全量（第 96 批·下半，G854 结案）
@@ -1600,4 +1600,4 @@ Home／End 与移动与收尾（逐字形状）：`pa && (Pa.key===HOME ? Va=Za 
 
 **小结（本表新增的可执行缺口）**：`####`→Strong 与本地 H4 冲突（P1）、`+`→可折叠列表整体缺失（P1）、裸 `x`→待办缺、`\|`→引用块别名缺、`::text::`→高亮别名缺、`$$text$$` 行内/块级判定相反、分隔线 5 档 vs 本地 4 档待实测、`@`/`[[` 页面链接触发器未扫。
 
-**仍未采到（§20.15）**：以上「待实测」全部需要**有绘制面的屏幕＋键盘通道**（本批 G875 已证两桥按键均不落地）；官方文档与 `uF` 表在「引用块 vs callout」术语上的对账；`===` 分页符落到哪个块类型；分隔线五档各自的节点属性。
+**仍未采到（§20.15）**：以上「待实测」全部需要**有绘制面的屏幕＋键盘通道**（本批 G875 已证两桥按键均不落地）；官方文档与 `uF` 表在「引用块 vs callout」术语上的对账；`===` 分页符落到哪个块类型；分隔线五档各自的节点属性。 〔历史快照·现行口径见文首〕

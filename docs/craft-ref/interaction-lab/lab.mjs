@@ -24,6 +24,7 @@ import {
   captureSelection,
   captureBlocks,
   captureAttrs,
+  captureHtml,
   captureAll,
   captureA11y,
   installKeyProbe,
@@ -211,6 +212,12 @@ export class Target {
       out.a11y = await captureA11y(this.page, this.sel(spec, 'editorBody'));
     }
     if (set.has('attrs')) out.attrs = snap.attrs;
+    if (set.has('html')) {
+      const htmlProbes = (spec.htmlProbes || [])
+        .map((p) => ({ key: p.key, selector: this.sel(spec, p.selector) }))
+        .filter((p) => p.selector);
+      out.html = await this.page.evaluate(captureHtml, { probes: htmlProbes, limit: spec.htmlLimit || 700 });
+    }
     if (set.has('indent')) out.indent = snap.indent;
     if (set.has('computed')) {
       // 计算样式与 rect 是另一档（读 getComputedStyle + 布局），单独一次求值；它不参与判定。

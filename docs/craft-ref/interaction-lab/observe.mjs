@@ -118,6 +118,31 @@ export function captureAttrs(arg) {
   return out;
 }
 
+/**
+ * 结构快照（页面侧）：读具名选择器的 **outerHTML**（截断）。
+ * 用途＝"结构变了"这类判断（组容器 vs 并块、折叠块 vs 普通块）——属性探针只能看**命中的那个元素**，
+ * 看不出它内部多/少了什么。第 348 批新增，配 spec 的 `htmlProbes`。
+ */
+export function captureHtml(arg) {
+  const probes = (arg && arg.probes) || [];
+  const limit = (arg && arg.limit) || 700;
+  const out = {};
+  for (const p of probes) {
+    const el = p.selector ? document.querySelector(p.selector) : null;
+    if (!el) {
+      out[p.key] = null;
+      continue;
+    }
+    const html = el.outerHTML.replace(/\s+/g, ' ');
+    out[p.key] = {
+      len: html.length,
+      head: html.slice(0, limit),
+      childTags: Array.from(el.children).map((c) => c.tagName.toLowerCase() + (c.getAttribute('data-type') ? '[' + c.getAttribute('data-type') + ']' : '')),
+    };
+  }
+  return out;
+}
+
 /** 计算样式：对每个选择器取首个命中元素的具名属性。 */
 export function captureComputed(arg) {
   const probes = (arg && arg.probes) || [];

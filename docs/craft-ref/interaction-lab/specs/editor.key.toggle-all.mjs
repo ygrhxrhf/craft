@@ -55,10 +55,11 @@ export default {
     { op: 'key', chord: 'Control+Alt+t', settleMs: 1200, label: 'Ctrl-Alt-T #2 (expand all?)' },
   ],
 
-  observe: ['dom', 'text', 'state', 'blocks', 'kinds', 'attrs'],
+  observe: ['dom', 'text', 'state', 'blocks', 'kinds', 'attrs', 'html'],
   observeTexts: ['HEAD1', 'CHILD1'],
   attrProbes: [{ key: 'block', selector: 'blockRoot', attrs: ['class', 'aria-expanded', 'data-type', 'role'] }, { key: 'toggle', selector: 'toggleish', attrs: ['data-open', 'aria-expanded', 'class'] }],
   stateSelectors: ['editorBody', 'dialog', 'popupBackdrop', 'toggleish'],
+  htmlProbes: [{ key: 'block', selector: 'blockRoot' }],
 
   expect: [
     { facet: 'text:HEAD1', op: 'gt', value: 0, at: 1 },

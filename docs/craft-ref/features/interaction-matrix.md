@@ -67,6 +67,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.schedule.picker-shape` | differ | 114 | 99 | 5 | 本地 +87/−0 · 官方 +5/−0 |
 | `editor.selection.ctrl-a-ladder` | differ | 26 | 8 | 0 | 本地 +3/−0 · 官方 +3/−0 |
 | `editor.selection.select-to-top-bottom` | differ | 61 | 29 | 0 | 本地 +3/−0 · 官方 +3/−0 |
+| `editor.slash.list-submenu` | differ | 23 | 14 | 1 | 本地 +0/−0 · 官方 +1/−0 |
 | `editor.slash.open-and-filter` | match | 8 | 0 | 2 | 本地 +2/−0 · 官方 +1/−0 |
 | `editor.table.cell-clipboard` | differ | 72 | 40 | 0 | 本地 +0/−0 · 官方 +0/−2 |
 | `editor.table.enter-family` | differ | 85 | 47 | 0 | 本地 +2/−0 · 官方 +0/−0 |
@@ -213,6 +214,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.schedule.picker-shape` | added-only-official |  | 安排到今天 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.schedule.picker-shape` | added-only-official |  | 安排到明天 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `editor.schedule.picker-shape` | added-only-official |  | 按日期安排… |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `editor.slash.list-submenu` | added-only-official |  | 1. |  | 官方「列表」组展开后的子项文案（编号列表／待办列表／取消列表格式／无序列表）与本地列表命令文案不同源；这是 G1544／G1613 已登记的产品级差异 | gap.md G1613 |
 | `editor.slash.open-and-filter` | countΔ:插入 | 1 | 8 | 4 | 菜单项文案与条数不同（官方扁平 8 条含「插入」：插入文件/片段/表格/分隔符/白板/表格集合/画廊集合/看板集合；本地 4 条）—— 与上面两条同源 | probe-verbatim.json · gap.md（本轮新登记） |
 | `editor.slash.open-and-filter` | added-only-local |  |  | 无匹配命令 | 本地 / 菜单的**无匹配文案**是「无匹配命令」；官方过滤后直接把面板收起、不给无匹配文案（G1544 同源） | chk-roster：官方 added=["/wen"]、本地 added=["/wen","无匹配命令"] · gap.md G1544 |
 | `local.db.document-row` | added-only-local |  |  | 1 | 外壳（侧栏/标题行）在删除前后的名册变化，两侧组织方式本就不同，与库面判据无关 | editor.paste.plain-text 同族噪声 |
@@ -1473,6 +1475,25 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 15 | selection:anchorOffset |  | 3 |  | 2 |
 | 15 | selection:focusOffset |  | 3 |  | 2 |
 
+### `editor.slash.list-submenu` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 1 | countΔ:全部展开 | 0 | 1 | 1 | 2 |
+| 1 | countΔ:全部收起 | 0 | 1 | 1 | 2 |
+| 1 | countΔ:列表 | 1 | 7 | 6 | 2 |
+| 1 | countΔ:待办 | 0 | 1 | 1 | 2 |
+| 1 | countΔ:折叠 | 0 | 4 | 4 | 2 |
+| 1 | countΔ:无序 | 0 | 1 | 1 | 2 |
+| 1 | countΔ:有序 | 0 | 1 | 1 | 2 |
+| 1 | countΔ:编号 | 0 | 1 | 1 | 2 |
+| 2 | countΔ:列表 | 6 | 8 | 2 | 2 |
+| 2 | countΔ:取消列表格式 | 1 | 0 | -1 | 2 |
+| 2 | countΔ:折叠 | 1 | 2 | 1 | 2 |
+| 2 | countΔ:有序 | 0 | 1 | 1 | 2 |
+| 3 | blocks | ["1."] | [""] |  | 2 |
+| 3 | kinds | ["numbered"] | ["bullet"] |  | 2 |
+
 ### `editor.table.cell-clipboard` — differ
 
 | step | facet | official | local | delta | severity |
@@ -2020,6 +2041,10 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `editor.selection.select-to-top-bottom` | local | text:AAA count 1 | PASS | 1 |
 | `editor.selection.select-to-top-bottom` | local | text:BBB count 1 | PASS | 1 |
 | `editor.selection.select-to-top-bottom` | local | text:CCC count 1 | PASS | 1 |
+| `editor.slash.list-submenu` | official | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.list-submenu` | official | blocksCount count 1 | PASS | 1 |
+| `editor.slash.list-submenu` | local | state:slashMenu gt 0 | PASS | 1 |
+| `editor.slash.list-submenu` | local | blocksCount count 1 | PASS | 1 |
 | `editor.slash.open-and-filter` | official | state:slashMenu gt 0 | PASS | 1 |
 | `editor.slash.open-and-filter` | official | blocks equals ["/"] | PASS | ["/"] |
 | `editor.slash.open-and-filter` | official | blocks equals ["/wen"] | PASS | ["/wen"] |

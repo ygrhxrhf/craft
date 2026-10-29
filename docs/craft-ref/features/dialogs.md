@@ -156,7 +156,7 @@
 
 `not.get.email.notification.settings` / `not.update.email.notification.settings` / `deleting.notification.failed` ⇒ 邮件通知设置是**读 + 写 + 删通知**三个独立可失败操作。
 
-## 仍未采到
+## 仍未采到 〔**历史快照**：需动态采集的面；现行口径见 WAVE1-REPORT〕
 
 - 所有 `[0]` 占位符的**实际数值**（提醒上限、字段上限、表格尺寸上限、白板元素上限都由远端配置下发，bundle 无常量）。
 - 每条告警对应的**按钮组**（确认/取消/重试/联系的分布）—— 文案里没有按钮名，需动态采集或在 `commands.*` 里逐条回溯。

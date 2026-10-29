@@ -4978,5 +4978,7 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
   （REST 读回表块 `none`）。
 - ★ 这条把存量清单 A/C 的"卡点"从"没有选择态"改精确为"**有选择态、粒度不对**"。
 - ☆ REST 用法记录：`DELETE /documents` 的字段是 **`documentIds`**（`documents`／`ids`／`idsToDelete` 全报
-  `VALIDATION_ERROR`）；但本批按 200 返回后再读 `/blocks?id=…` 文档**仍在** ⇒ "软删是否真落地"**未证实**，
-  留待下批用 UI 通路复核。
+  `VALIDATION_ERROR`）。✎ **第 333 批复核：软删确实落地了**——165 篇 `QODER-ILAB-*` 按 200 删除后，
+  **浏览列表里一篇都不剩**（`document.body.innerText` 全页搜 `QODER-ILAB` 零命中）；但 `GET /documents`
+  与 `GET /blocks?id=…` **仍能读到**它们 ⇒ **REST 读面把"最近删除"里的文档一起列出来了**，
+  "读得到"不等于"没删掉"。这条是又一条"看不到≠没有／看得到≠还在"。

@@ -50,6 +50,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `local.db.document-row` | match | 44 | 0 | 38 | 本地 +17/−1 · 官方 +17/−7 |
 | `shell.assistant.open` | match | 9 | 0 | 1 | 本地 +1/−0 · 官方 +1/−0 |
 | `shell.command-palette.toggle-vs-jump` | match | 21 | 0 | 15 | 本地 +5/−0 · 官方 +3/−1 |
+| `shell.quick-open.alt` | differ | 34 | 2 | 20 | 本地 +1/−1 · 官方 +15/−1 |
 | `shell.sidebar-toggle.repro` | match | 10 | 0 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.tasks.new-task-popup` | differ | 13 | 7 | 0 | 本地 +0/−0 · 官方 +0/−0 |
 | `shell.toggles.family` | differ | 26 | 10 | 2 | 本地 +5/−1 · 官方 +1/−0 |
@@ -180,6 +181,26 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.command-palette.toggle-vs-jump` | removed-only-official |  | 打开 |  | 官方 header 的「打开」标签在 ⌘K 后由 span 变成 input[placeholder="打开"]（同一件事换形态）⇒ 文本名册记为移除；本地无此 header 入口 | probe-takeover.json（官方 ⌘K 后 itemIds=13 仍在 ⇒ 不是整屏接管，是 header 浮层） |
 | `shell.command-palette.toggle-vs-jump` | attr:paletteInput | 1 | 打开 | 搜索文档、内容… | placeholder 不同：官方「打开」（跳转语义）vs 本地「搜索文档、内容…」（搜索语义） | probe-verbatim.json |
 | `shell.command-palette.toggle-vs-jump` | attr:paletteInput | 2 | 打开 | 搜索文档、内容… | placeholder 不同：官方「打开」（跳转语义）vs 本地「搜索文档、内容…」（搜索语义） | probe-verbatim.json |
+| `shell.quick-open.alt` | added-only-official |  | / |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | 2025/5/5 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | 33 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | Craft Handbook |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | QODER-HARVEST-C01-W2-BLOCKS |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | QODER-ILAB-div7 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | QODER-ILAB-ins-page |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | Watch: how to videos |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | Welcome to Craft |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | 在zhang's Space中 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | 快照 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | 文档 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | 无标题文档 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | 日记 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | removed-only-local |  |  | 同步中 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
+| `shell.quick-open.alt` | removed-only-official |  | 32 |  | 官方侧栏目录区的空态提示随面板重绘出现或消失；已由 G1556 一族承载 | src/lib/editor/official-copy.ts:8 |
+| `shell.quick-open.alt` | focusInEditor | 2 | false | true | Escape 的焦点差异已由 G1583 单独承载；本 spec 只判两条快速开启弦有没有承载面 | gap.md G1583 |
+| `shell.quick-open.alt` | focusInEditor | 3 | false | true | Escape 的焦点差异已由 G1583 单独承载；本 spec 只判两条快速开启弦有没有承载面 | gap.md G1583 |
+| `shell.quick-open.alt` | focusInEditor | 4 | false | true | Escape 的焦点差异已由 G1583 单独承载；本 spec 只判两条快速开启弦有没有承载面 | gap.md G1583 |
+| `shell.quick-open.alt` | focusInEditor | 5 | false | true | Escape 的焦点差异已由 G1583 单独承载；本 spec 只判两条快速开启弦有没有承载面 | gap.md G1583 |
 | `shell.toggles.family` | added-only-official |  | SHELL |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.toggles.family` | removed-only-local |  |  | 📄 | 本地同步状态串（未保存／同步中）随时机出现消失；属外壳状态不是编辑器内容 | observe.mjs NOISE_RULES |
 
@@ -656,6 +677,13 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | 11 | selection:anchorOffset |  | 3 |  | 2 |
 | 11 | selection:focusOffset |  | 3 |  | 2 |
 
+### `shell.quick-open.alt` — differ
+
+| step | facet | official | local | delta | severity |
+| --- | --- | --- | --- | --- | --- |
+| 2 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+| 4 | state:popupBackdrop | 1 | 0 | -1 | 2 |
+
 ### `shell.tasks.new-task-popup` — differ
 
 | step | facet | official | local | delta | severity |
@@ -933,6 +961,8 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.command-palette.toggle-vs-jump` | official | attr:paletteInput exists null | PASS | "打开" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
 | `shell.command-palette.toggle-vs-jump` | local | attr:paletteInput exists null | PASS | "搜索文档、内容…" |
+| `shell.quick-open.alt` | official | text:QK gt 0 | PASS | 1 |
+| `shell.quick-open.alt` | local | text:QK gt 0 | PASS | 1 |
 | `shell.sidebar-toggle.repro` | official | text:任务 gt 0 | PASS | 1 |
 | `shell.sidebar-toggle.repro` | local | text:任务 gt 0 | PASS | 1 |
 | `shell.tasks.new-task-popup` | official | text:任务 gt 0 | PASS | 1 |

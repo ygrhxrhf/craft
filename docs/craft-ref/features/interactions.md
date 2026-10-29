@@ -4982,3 +4982,9 @@ selfCheck＝官方 **2 PASS**；本地 `text:AAA` **PASS**、`blocksCount` **FAI
   **浏览列表里一篇都不剩**（`document.body.innerText` 全页搜 `QODER-ILAB` 零命中）；但 `GET /documents`
   与 `GET /blocks?id=…` **仍能读到**它们 ⇒ **REST 读面把"最近删除"里的文档一起列出来了**，
   "读得到"不等于"没删掉"。这条是又一条"看不到≠没有／看得到≠还在"。
+
+## V203＝第 333 批（2026-10-29＝**零产品代码批**＝净新增 1 条＝G1589）
+
+- ★★★ **G1589**：官方快速开启**三条弦**（`Ctrl-K`／`Ctrl-P`／`Ctrl-Shift-O`）开同一个面板；
+  本地只有 `Ctrl-K`。`Ctrl-Shift-O` 在 web 端**也有效**（不只是 Safari 会印）。
+- ☆ 方法：两条弦各按一次、每次都用 `Escape` 关回 0 再进下一条 —— 否则第二条的读数会被第一条的弹层掩盖。

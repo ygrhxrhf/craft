@@ -1812,3 +1812,24 @@ mark 探针按"背景非透明"读成高亮。⇒ `G1582` 的注已就地结掉�
 - REST `DELETE /documents`＋`documentIds` **真的把 165 篇探针文档删掉了**（列表页搜不到）。
 - 之前的"没删掉"判断，是把 **REST 读面带回收站** 当成"还在"——已在 `interactions.md` V202 里就地更正。
 - 界面上剩 37 篇「无标题文档」：来源不可证（我们的空壳 vs 用户草稿）⇒ **不碰**。
+
+## 四十八、★ 续批四十三（2026-10-29）：**快速开启另两弦** —— G1589
+
+净新增 **1 条 G** · 零产品代码批。矩阵新增 spec `shell.quick-open.alt`。
+
+| 键 | 官方 | 本地 |
+| --- | --- | --- |
+| `Ctrl-P`（`QUICK_OPEN_ALT`） | `popup-backdrop` 0→1，「文档」「在 zhang's Space 中」「无标题文档…」 | **零反应** |
+| `Ctrl-Shift-O`（`QUICK_OPEN_SAFARI`） | 同样 0→1（**web 端也启用**） | **零反应** |
+
+⇒ **G1589**：官方是**一个面板三条弦**（`Ctrl-K`／`Ctrl-P`／`Ctrl-Shift-O`），本地只有 `Ctrl-K`。
+这条与 `shell.command-palette.toggle-vs-jump` 合起来才是完整形状——那条只按过 `Ctrl-K`。
+
+### 验收
+
+| 项 | 结果 |
+| --- | --- |
+| 矩阵 | 新增 `shell.quick-open.alt`（differ，2 条 sev2、20 条已声明） |
+| `git status --porcelain src e2e` | **空**（零产品代码改动） |
+| 台账 | **1581／G1589** |
+| 临时产物 | 两侧临时文档由 spec teardown 软删 |

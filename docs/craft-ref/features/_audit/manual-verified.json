@@ -1989,6 +1989,1171 @@
       "evidence": [
         "src/components/editor/tabs/InfoTab.tsx:615"
       ]
+    },
+    "G172": {
+      "status": "gap",
+      "note": "标签设置只有未接线的「使用标签」开关，无「隐藏以 # 开头的词语」控件与 # 分词隐藏。",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:311"
+      ]
+    },
+    "G199": {
+      "status": "nonaction",
+      "note": "官方 store action schema（样式维度合并、move 带 documentId）属写侧内部；本地对齐/字体分次写。",
+      "evidence": [
+        "src/actions/document/update.ts:27",
+        "src/lib/editor/block-move.ts:13"
+      ]
+    },
+    "G249": {
+      "status": "aligned",
+      "note": "回收站仅在 selecting 时渲染 role=checkbox 与批量还原，退出即换回 File 图标，与官方条件渲染同形。",
+      "evidence": [
+        "src/components/document/TrashList.tsx:286"
+      ]
+    },
+    "G378": {
+      "status": "aligned",
+      "note": "排期经 applyLocal+flushNow 落本地库并入队，内核不可用时退回 setTaskSchedule 写行；刷新不丢。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:135",
+        "src/actions/task/task.ts:301"
+      ]
+    },
+    "G428": {
+      "status": "partial",
+      "note": "deleteCollection 是软删、条目与值仍留行；但 schema 对 properties/items/values 全用 Cascade，物理删除仍连带销毁。",
+      "evidence": [
+        "src/actions/collection/collection.ts:92",
+        "src/prisma/contract.prisma:179"
+      ]
+    },
+    "G450": {
+      "status": "gap",
+      "note": "镜像清洗用正则整段删 <iframe>，而本地视频/HTML 嵌入正是 iframe ⇒ 镜像与导出里这些块变空。",
+      "evidence": [
+        "src/lib/editor/mirror-html.ts:8",
+        "src/actions/document/mirror.ts:42"
+      ]
+    },
+    "G635": {
+      "status": "partial",
+      "note": "撤销走 TipTap undoRedo 默认（时间窗分组，协作室交 Yjs），无 patchId、不能把跨异步意图并成一步。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342"
+      ]
+    },
+    "G636": {
+      "status": "aligned",
+      "note": "只读由 canEdit→readOnly 透传，服务端 update 按 editor、comment 按 commenter 分别拦截，效果等同白名单。",
+      "evidence": [
+        "src/components/editor/DocumentEditor.tsx:410",
+        "src/actions/comment/comment.ts:15"
+      ]
+    },
+    "G639": {
+      "status": "partial",
+      "note": "块菜单有 7 档提醒预设，任务面板仍是自由 datetime-local；无 15 分钟栅格与默认槽定位。",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:533",
+        "src/app/(app)/tasks/TasksView.tsx:554"
+      ]
+    },
+    "G641": {
+      "status": "partial",
+      "note": "周重复内核存在但屏上无星期多选；days 是 0=周日数字、标签周日打头，官方是周一打头字符串名。",
+      "evidence": [
+        "src/lib/task/recurrence.ts:6",
+        "src/lib/task/recurrence.ts:47"
+      ]
+    },
+    "G666": {
+      "status": "partial",
+      "note": "三档已落（status/cancelledAt/菜单/徽标）；仍保留 doing，导出无官方 [-] 序列化。",
+      "evidence": [
+        "src/prisma/contract.prisma:340",
+        "src/app/(app)/tasks/TasksView.tsx:327"
+      ]
+    },
+    "G668": {
+      "status": "partial",
+      "note": "重复只有 freq/days 的 JSON 串与四档预设，无 type 字段与 fixed/flexible 两档。",
+      "evidence": [
+        "src/prisma/contract.prisma:335",
+        "src/lib/task/recurrence.ts:1"
+      ]
+    },
+    "G695": {
+      "status": "nonaction",
+      "note": "folders explore-icons 的 CLI 查询契约；本地 icon 只是字符串字段＋lucide，无选择器。",
+      "evidence": [
+        "src/components/editor/DocumentEditor.tsx:48"
+      ]
+    },
+    "G697": {
+      "status": "nonaction",
+      "note": "craft_write 与 craft_read 的动词集差异属 MCP 桥；本地 action 按领域分文件。",
+      "evidence": [
+        "src/actions/document/update.ts:1"
+      ]
+    },
+    "G698": {
+      "status": "nonaction",
+      "note": "官方工作区三份无归属文档的清理记账，属采集数据状态，不是本地屏幕行为。",
+      "evidence": []
+    },
+    "G707": {
+      "status": "partial",
+      "note": "本地 washi 是 5 种写死 CSS 渐变，无图片形态与 washi(name) 裸名形态。",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:35",
+        "src/components/editor/themes/page-style.ts:72"
+      ]
+    },
+    "G713": {
+      "status": "aligned",
+      "note": "完成任务只改 isCompleted/status/时间戳，不碰 remindAt，与官方「done 不动提醒」一致。",
+      "evidence": [
+        "src/actions/task/task.ts:232"
+      ]
+    },
+    "G714": {
+      "status": "nonaction",
+      "note": "删文档后 reminders/tasks 残留属 CLI 侧对账读数；本地提醒内嵌任务行，无独立索引。",
+      "evidence": []
+    },
+    "G715": {
+      "status": "nonaction",
+      "note": "reminders create 的 CLI 契约与 help 正文属桥行为；本地无独立 reminders 面。",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:533"
+      ]
+    },
+    "G716": {
+      "status": "nonaction",
+      "note": "collections/blocks 读写动词清单差分属 MCP 桥契约；本地 server action 按功能分文件。",
+      "evidence": [
+        "src/actions/collection/collection.ts:1"
+      ]
+    },
+    "G720": {
+      "status": "partial",
+      "note": "有 /documents/[id] 单文档深链与分享路由；无「显示名--id」/folder 路径与 ?nd= 预分配深链。",
+      "evidence": [
+        "src/app/(app)/documents/[id]/page.tsx:1"
+      ]
+    },
+    "G724": {
+      "status": "partial",
+      "note": "快捷键面板只有 6 组、仅列已绑定项；无官方 7 分类页签、219 键帽与分类计数。",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:11"
+      ]
+    },
+    "G728": {
+      "status": "nonaction",
+      "note": "615 格表在 web 上不降级、不虚拟化的 DOM 测量读数，属仪器读数。",
+      "evidence": []
+    },
+    "G729": {
+      "status": "nonaction",
+      "note": "blocks add --markdown 不解析 GFM 管道表属 MCP 桥契约；本地直写 Prisma。",
+      "evidence": []
+    },
+    "G734": {
+      "status": "nonaction",
+      "note": "blocks learn/--format 取值集与 schema 校验说明属 CLI 契约。",
+      "evidence": []
+    },
+    "G735": {
+      "status": "nonaction",
+      "note": "无参 blocks learn 的 MCP 传输层失败属采集工具约束。",
+      "evidence": []
+    },
+    "G736": {
+      "status": "nonaction",
+      "note": "blocks learn 的主题解析与 text 字段清单属 CLI 契约；本地无 learn 动词。",
+      "evidence": []
+    },
+    "G806": {
+      "status": "nonaction",
+      "note": "DS Menu 四件套是 bundle 内部模块指纹；本地菜单依赖 Base UI 默认键盘行为。",
+      "evidence": [
+        "src/components/ui/dropdown-menu.tsx"
+      ]
+    },
+    "G810": {
+      "status": "nonaction",
+      "note": "shortcutsPanelLastActiveCategory 的 localStorage 载体属 bundle 内部；本地无分类页签。",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx"
+      ]
+    },
+    "G824": {
+      "status": "nonaction",
+      "note": "hn() 使用面与别名表属静态源码面；本地 rail 判定是 matchMedia 钩子。",
+      "evidence": [
+        "src/lib/use-is-mobile.ts:45"
+      ]
+    },
+    "G836": {
+      "status": "nonaction",
+      "note": "ComboboxItem nativeButton 默认值属 vendor 内部；本地 Select 直接用 Base UI。",
+      "evidence": [
+        "src/components/ui/select.tsx"
+      ]
+    },
+    "G842": {
+      "status": "nonaction",
+      "note": "TabsTab 装配与三个 handler 属第三方组件内部；本地 tabs 是 Base UI 薄封装。",
+      "evidence": [
+        "src/components/ui/tabs.tsx:13"
+      ]
+    },
+    "G844": {
+      "status": "nonaction",
+      "note": "Npe 分段控件装配属 bundle 内部；本地无 segmented 组件，只有 Base UI Tabs。",
+      "evidence": [
+        "src/components/ui/tabs.tsx:57"
+      ]
+    },
+    "G845": {
+      "status": "nonaction",
+      "note": "useFocusableWhenDisabled 属 vendor 内部且官方是否启用未证；本地灰态走原生 disabled。",
+      "evidence": [
+        "src/components/ui/button.tsx:54"
+      ]
+    },
+    "G846": {
+      "status": "nonaction",
+      "note": "roving/复合根常量属 vendor 内部；本地 Tabs 选中态用 data-active。",
+      "evidence": [
+        "src/components/ui/tabs.tsx:62"
+      ]
+    },
+    "G857": {
+      "status": "nonaction",
+      "note": "data-composite-item-active 是仪器侧属性语义；本地无该属性。",
+      "evidence": [
+        "src/components/ui/tabs.tsx:62"
+      ]
+    },
+    "G860": {
+      "status": "nonaction",
+      "note": "该函数属 Floating UI 内部；本地命令面板用 cmdk、菜单用 Base UI，无此依赖。",
+      "evidence": [
+        "src/components/ui/command.tsx:4"
+      ]
+    },
+    "G861": {
+      "status": "nonaction",
+      "note": "--active-tab-* 与注水脚本属 vendor 内部；本地指示器用伪元素，不消费这些变量。",
+      "evidence": [
+        "src/components/ui/tabs.tsx:63"
+      ]
+    },
+    "G862": {
+      "status": "gap",
+      "note": "本地无快捷键弹层：快捷键只是设置面板一节（导航 280px），720/560、184px rail、747 compact 档均无。",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:116"
+      ]
+    },
+    "G863": {
+      "status": "nonaction",
+      "note": "分段 tab 的禁用/提亮/焦点环是 vendor CSS 读数；本地等价规则是 data-whatintent 键盘环。",
+      "evidence": [
+        "src/app/globals.css:438"
+      ]
+    },
+    "G864": {
+      "status": "nonaction",
+      "note": "平台常量表属 bundle 内部；本地已有 detectPlatform 按 UA 分 Mac/Win 键帽。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:71"
+      ]
+    },
+    "G875": {
+      "status": "nonaction",
+      "note": "连接器按键不落地属仪器读数；本地键分派在 craft-keymap。",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:148"
+      ]
+    },
+    "G878": {
+      "status": "partial",
+      "note": "25 条触发本地只覆盖少数（删除线/高亮/链接/公式/待办）；####、+折叠、|引用、::、=== 缺。",
+      "evidence": [
+        "src/components/editor/extensions/markdown-shortcuts.ts:110"
+      ]
+    },
+    "G880": {
+      "status": "nonaction",
+      "note": "键盘通道可达是仪器结论；本地键表在 keymap.ts 与 craft-keymap。",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:148"
+      ]
+    },
+    "G885": {
+      "status": "nonaction",
+      "note": "code 代理差异属仪器；本地 Ctrl 系 chord 都在 keymap 表。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:211"
+      ]
+    },
+    "G887": {
+      "status": "partial",
+      "note": "本地 Tab 在任务项内走 sinkListItem，缩进载体是列表层级而非 28px 缩进档。",
+      "evidence": [
+        "src/lib/editor/format-commands.ts:108"
+      ]
+    },
+    "G888": {
+      "status": "nonaction",
+      "note": "官方每块一个 contenteditable 是结构模型；本地 TipTap 单根多节点。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:759"
+      ]
+    },
+    "G889": {
+      "status": "nonaction",
+      "note": "Enter 不转 click 属浏览器/仪器现象；本地分类按钮是原生 button。",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:181"
+      ]
+    },
+    "G892": {
+      "status": "aligned",
+      "note": "本地分类栏＝nav＋原生 button＋aria-current 选中，全部可 Tab 到达、无 roving，与官方 rail 同形。",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:118"
+      ]
+    },
+    "G900": {
+      "status": "aligned",
+      "note": "本地未接管 Backspace，走 ProseMirror 默认合并，块首退格与上块合并。",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:133"
+      ]
+    },
+    "G901": {
+      "status": "partial",
+      "note": "退列表只在 NO_LIST 键与默认 handleBackspace 首项路径生效，没有按块型分派的块首 Backspace。",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:50"
+      ]
+    },
+    "G902": {
+      "status": "nonaction",
+      "note": "读数降级属模型侧；本地 28px 缩进常量与 indentStyle 已写但无调用点。",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:8"
+      ]
+    },
+    "G908": {
+      "status": "aligned",
+      "note": "默认合并后光标落在上块末尾（joinBackward），与官方 anchorOffset 一致。",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:148"
+      ]
+    },
+    "G909": {
+      "status": "gap",
+      "note": "无块级全选绑定，Ctrl+A 交给浏览器选中整个 contenteditable，随后退格清空全篇。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:211"
+      ]
+    },
+    "G910": {
+      "status": "partial",
+      "note": "ProseMirror history 逐事务逆序，步数可能相同，但中间态与官方按块快照还原不同。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342"
+      ]
+    },
+    "G912": {
+      "status": "gap",
+      "note": "无 Tab 缩进绑定；indentStyle 无调用点，格式面板缩进只做列表 sink/lift、不级联子树。",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:20"
+      ]
+    },
+    "G913": {
+      "status": "gap",
+      "note": "Shift+Tab 同样无绑定；缩进双向级联在本地不存在。",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:28"
+      ]
+    },
+    "G922": {
+      "status": "nonaction",
+      "note": "提醒子面板是未采到的仪器结论；本地提醒为 datetime-local 绝对时刻。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:554"
+      ]
+    },
+    "G934": {
+      "status": "aligned",
+      "note": "读侧按 listsTaskFromDocument 过滤回收站文档的任务，软删文档的行不进列表。",
+      "evidence": [
+        "src/actions/task/task.ts:181"
+      ]
+    },
+    "G939": {
+      "status": "gap",
+      "note": "设置分类栏只有 onClick，无方向键导航与 activeIndex 推进。",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:182"
+      ]
+    },
+    "G942": {
+      "status": "aligned",
+      "note": "Escape 挂在 window keydown，焦点在 body 也能关面板，与官方文档级可达一致。",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:99"
+      ]
+    },
+    "G951": {
+      "status": "gap",
+      "note": "提醒只有 datetime-local 绝对时刻，无预设档列表与「取消/应用」两步提交。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:554"
+      ]
+    },
+    "G957": {
+      "status": "partial",
+      "note": "侧栏有 tasks/calendar/inbox/templates/connections；无空间段 /s/…、shared-with-me、starred、folders。",
+      "evidence": [
+        "src/components/sidebar/SidebarNav.tsx:21"
+      ]
+    },
+    "G958": {
+      "status": "aligned",
+      "note": "过滤落在 action 读侧（listsTaskFromDocument），UI 另有 documentTitle 兜底。",
+      "evidence": [
+        "src/lib/task/display.ts:10"
+      ]
+    },
+    "G961": {
+      "status": "nonaction",
+      "note": "官方 cne 分发器属 bundle 内部；本地为 6 条 TipTap InputRule。",
+      "evidence": [
+        "src/components/editor/extensions/markdown-shortcuts.ts:7"
+      ]
+    },
+    "G976": {
+      "status": "nonaction",
+      "note": "官方 window 捕获级 paste 属实现内部；本地仅编辑器 handlePaste。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:526"
+      ]
+    },
+    "G978": {
+      "status": "nonaction",
+      "note": "登录域码面内部串与 i18n 漏网，属 bundle 内部且登录在复刻域外。",
+      "evidence": []
+    },
+    "G979": {
+      "status": "nonaction",
+      "note": "官方六格码面两份重复实现属 bundle 内部；本地 DS 复用方式不同。",
+      "evidence": []
+    },
+    "G982": {
+      "status": "nonaction",
+      "note": "连接器合成拖拽的仪器边界；本地块拖动走 pointer 事件。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:724"
+      ]
+    },
+    "G983": {
+      "status": "partial",
+      "note": "官方拖拽期画整块幽灵副本；本地为 2px dropcursor 竖线＋插入指示条，形态不同。",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:554"
+      ]
+    },
+    "G984": {
+      "status": "nonaction",
+      "note": "官方 dragstart 负载未 stringify 属其内部缺陷；本地 JSON.stringify 用法正确。",
+      "evidence": []
+    },
+    "G991": {
+      "status": "gap",
+      "note": "回收站行不可点击、无打开已删文档的预览或编辑器通路，只有恢复与多选删除。",
+      "evidence": [
+        "src/components/document/TrashList.tsx:282"
+      ]
+    },
+    "G992": {
+      "status": "nonaction",
+      "note": "purge 授权范围纪律条，非产品事实。",
+      "evidence": []
+    },
+    "G996": {
+      "status": "nonaction",
+      "note": "选择模式屏上判据属仪器口径。",
+      "evidence": []
+    },
+    "G998": {
+      "status": "nonaction",
+      "note": "testid/ARIA 仪器事实；本地 e2e 采用 data-testid。",
+      "evidence": []
+    },
+    "G999": {
+      "status": "nonaction",
+      "note": "暗色主题观察、色值未量，属仪器读数。",
+      "evidence": []
+    },
+    "G1003": {
+      "status": "nonaction",
+      "note": "官方确认框零 ARIA 的判据门槛；本地 Dialog 自带 role=dialog。",
+      "evidence": []
+    },
+    "G1005": {
+      "status": "nonaction",
+      "note": "三态全选框坐标随图标漂移，属仪器读数。",
+      "evidence": []
+    },
+    "G1006": {
+      "status": "nonaction",
+      "note": "elementFromPoint 命中节点取证口径，属仪器方法。",
+      "evidence": []
+    },
+    "G1008": {
+      "status": "nonaction",
+      "note": "精确清除的通路顺序与标题前缀闸门协议，属操作协议。",
+      "evidence": []
+    },
+    "G1018": {
+      "status": "nonaction",
+      "note": "官方手柄单例浮层与 pointermove 机制属内部；本地每块渲染手柄。",
+      "evidence": []
+    },
+    "G1019": {
+      "status": "aligned",
+      "note": "本地 drop-band 有 before/after 两档，落点语义与官方中线规则一致。",
+      "evidence": [
+        "src/components/editor/drag-handle/drop-band.ts:21"
+      ]
+    },
+    "G1021": {
+      "status": "nonaction",
+      "note": "撤销回执与模型零变化的判据条，非产品事实。",
+      "evidence": []
+    },
+    "G1022": {
+      "status": "nonaction",
+      "note": "连接器 hover/take_snapshot 工具限制，属工具层。",
+      "evidence": []
+    },
+    "G1023": {
+      "status": "nonaction",
+      "note": "沙盒执行与还原记录，非产品事实。",
+      "evidence": []
+    },
+    "G1031": {
+      "status": "aligned",
+      "note": "侧栏有回收站入口（/trash），可发现性不低于官方。",
+      "evidence": [
+        "src/components/sidebar/SidebarNav.tsx:32"
+      ]
+    },
+    "G1033": {
+      "status": "nonaction",
+      "note": "执行与还原记录＋本地改动记录，非产品事实。",
+      "evidence": []
+    },
+    "G1036": {
+      "status": "nonaction",
+      "note": "官方偶发双对交换未证（第 103 批降级），不作设计依据。",
+      "evidence": []
+    },
+    "G1041": {
+      "status": "nonaction",
+      "note": "沙盒执行与消耗记录，非产品事实。",
+      "evidence": []
+    },
+    "G1045": {
+      "status": "aligned",
+      "note": "本地以 y<=中线判 before，与官方唯一落点规则一致。",
+      "evidence": [
+        "src/components/editor/drag-handle/drop-band.ts:21"
+      ]
+    },
+    "G1048": {
+      "status": "nonaction",
+      "note": "消耗记录，非产品事实。",
+      "evidence": []
+    },
+    "G1051": {
+      "status": "nonaction",
+      "note": "第五次精确清除记录，非产品事实。",
+      "evidence": []
+    },
+    "G1078": {
+      "status": "partial",
+      "note": "本地 AI 动作条是 w-64 双列栅格面板，非官方横向滚动 chip 条。",
+      "evidence": [
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:295"
+      ]
+    },
+    "G1128": {
+      "status": "partial",
+      "note": "本地 checkbox 为单元素 Base UI；选择模式仅回收站，浏览列表无行复选框。",
+      "evidence": [
+        "src/components/ui/checkbox.tsx:9"
+      ]
+    },
+    "G1171": {
+      "status": "aligned",
+      "note": "围栏同样硬编码三个反引号，与官方同一边界。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:105"
+      ]
+    },
+    "G1175": {
+      "status": "nonaction",
+      "note": "官方空串解析路径属 bundle 内部且 UI 不可达；本地 resolveCodeTheme 有 auto 兜底。",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:338"
+      ]
+    },
+    "G1184": {
+      "status": "nonaction",
+      "note": "MCP 回收站写侧报错串属桥契约；本地同类闸门在 document-access 拦 isDeleted。",
+      "evidence": [
+        "src/lib/authz/document-access.ts:25"
+      ]
+    },
+    "G1186": {
+      "status": "nonaction",
+      "note": "blocks add 回包枚举并显式截断，纯 CLI 协议；本地无该动词。",
+      "evidence": []
+    },
+    "G1196": {
+      "status": "nonaction",
+      "note": "官方 CM6 主题色跨档覆盖名单属 bundle 内部；本地 hljs＋CSS 不复刻该层。",
+      "evidence": []
+    },
+    "G1197": {
+      "status": "nonaction",
+      "note": "官方样式表 tag 重复声明属 bundle 冗余；本地有类名唯一性守卫。",
+      "evidence": []
+    },
+    "G1201": {
+      "status": "nonaction",
+      "note": "setFlavour 只重建行内格式器属官方模板层；本地单一 renderMarkdown。",
+      "evidence": []
+    },
+    "G1203": {
+      "status": "nonaction",
+      "note": "handlebars inline 三条规则属模板层；本地表格导出以 textContent 压平。",
+      "evidence": []
+    },
+    "G1214": {
+      "status": "nonaction",
+      "note": "官方序列化器不转义竖线属内部缺陷；本地已转义竖线与反斜杠。",
+      "evidence": []
+    },
+    "G1216": {
+      "status": "nonaction",
+      "note": "CM6 Decorator.high 身份属 bundle 内部；本地 lowlight→hljs class→CSS。",
+      "evidence": []
+    },
+    "G1219": {
+      "status": "nonaction",
+      "note": "setBlockTemplate 的 It 身份属 handlebars 模板层；本地无模板层。",
+      "evidence": []
+    },
+    "G1222": {
+      "status": "nonaction",
+      "note": "全库唯一 flavour 扫描结论属 bundle 内部；本地无 flavour 概念。",
+      "evidence": []
+    },
+    "G1232": {
+      "status": "partial",
+      "note": "代码块末尾单空格已削、<!-- fence 已丢；行内 HTML 解析仍缺（派发表未接线）。",
+      "evidence": [
+        "src/lib/import/markdown.ts:117"
+      ]
+    },
+    "G1234": {
+      "status": "gap",
+      "note": "官方导入把 ` -- ` 改写为破折号；本地 parseInline 无此改写，原样保留。",
+      "evidence": [
+        "src/lib/import/markdown.ts:348"
+      ]
+    },
+    "G1235": {
+      "status": "aligned",
+      "note": "挑选名册 39 档，jsx/tsx/diff 已移除；导入侧 jsx→javascript、tsx→typescript。",
+      "evidence": [
+        "src/lib/editor/code-languages.ts:18"
+      ]
+    },
+    "G1248": {
+      "status": "aligned",
+      "note": "两条搜索均带 isDeleted:false，回收站文档不入结果，与官方默认作用域同向。",
+      "evidence": [
+        "src/actions/document/search.ts:50"
+      ]
+    },
+    "G1255": {
+      "status": "nonaction",
+      "note": "blocks learn 契约文案属 CLI；其中回收站写禁本地同向，④跳过并警告无对应面。",
+      "evidence": []
+    },
+    "G1273": {
+      "status": "nonaction",
+      "note": "裸跑 documents list 含回收站属 CLI 作用域；本地常规列表排除、回收站单查。",
+      "evidence": []
+    },
+    "G1281": {
+      "status": "nonaction",
+      "note": "旗标互斥校验先于取数，属 CLI 契约。",
+      "evidence": []
+    },
+    "G1284": {
+      "status": "nonaction",
+      "note": "search 用 RE2、folders --filter 用 JS 属 CLI 契约；本地无正则检索面。",
+      "evidence": []
+    },
+    "G1289": {
+      "status": "nonaction",
+      "note": "--depth 的簇键语义属 CLI 契约；本地一次取全 content。",
+      "evidence": []
+    },
+    "G1292": {
+      "status": "nonaction",
+      "note": "--regexp 大小写敏感但匹配折叠文本属 CLI 检索契约。",
+      "evidence": []
+    },
+    "G1293": {
+      "status": "nonaction",
+      "note": "--include×--regexp 的 AND 落文档级属 CLI 检索语义。",
+      "evidence": []
+    },
+    "G1294": {
+      "status": "nonaction",
+      "note": "高亮跟随最后生效条件属 CLI 结果渲染。",
+      "evidence": []
+    },
+    "G1295": {
+      "status": "nonaction",
+      "note": "usage 行与 Flags 段枚数比对属纯枚举/仪器读数。",
+      "evidence": []
+    },
+    "G1297": {
+      "status": "nonaction",
+      "note": "--fetch-blocks 半交付属 CLI 契约；本地无对应动词。",
+      "evidence": []
+    },
+    "G1299": {
+      "status": "nonaction",
+      "note": "blocks get 吃非 root id、items 为第三簇键属数据桥形状；本地整树 JSON。",
+      "evidence": []
+    },
+    "G1300": {
+      "status": "nonaction",
+      "note": "--filter 非法式报 JS 语法错属 CLI 契约。",
+      "evidence": []
+    },
+    "G1301": {
+      "status": "nonaction",
+      "note": "--filter 带 i flag 与 --regexp 无 i 构成两套实现，属 CLI 契约。",
+      "evidence": []
+    },
+    "G1303": {
+      "status": "nonaction",
+      "note": "多枚 --regexp 非块级交集属 CLI 驱动层语义。",
+      "evidence": []
+    },
+    "G1304": {
+      "status": "nonaction",
+      "note": "--document×--location 互斥及运行时文案属 CLI 契约。",
+      "evidence": []
+    },
+    "G1305": {
+      "status": "nonaction",
+      "note": "结果序跨批复现属仪器读数、规则未定。",
+      "evidence": []
+    },
+    "G1306": {
+      "status": "nonaction",
+      "note": "加粗集合与条件枚数相关属 CLI 结果渲染。",
+      "evidence": []
+    },
+    "G1308": {
+      "status": "nonaction",
+      "note": "作用域层 AND、驱动层并集属 CLI 检索语义。",
+      "evidence": []
+    },
+    "G1309": {
+      "status": "nonaction",
+      "note": "--depth 是官方 MCP blocks get 的档位；本地无该桥。",
+      "evidence": []
+    },
+    "G1310": {
+      "status": "nonaction",
+      "note": "三条签名属官方 blocks get 的寻址契约；本地走自有 blockId 与页面路由。",
+      "evidence": []
+    },
+    "G1312": {
+      "status": "nonaction",
+      "note": "逐动词 Flags 表只存在于官方 CLI 卡片；本地无 MCP 兼容层。",
+      "evidence": []
+    },
+    "G1314": {
+      "status": "nonaction",
+      "note": "文档内序是 search 回包的仪器读数；本地不暴露块级条目顺序。",
+      "evidence": []
+    },
+    "G1315": {
+      "status": "nonaction",
+      "note": "include 可选、缺省全空间是 CLI 参数语义；本地搜索无该旗标。",
+      "evidence": []
+    },
+    "G1340": {
+      "status": "nonaction",
+      "note": "每篇 5 枚命中位是 MCP 摘录串的截断规则；本地无该桥。",
+      "evidence": []
+    },
+    "G1341": {
+      "status": "nonaction",
+      "note": "每页窗口数否证属 search 回包分组读数；本地结果按篇聚合。",
+      "evidence": []
+    },
+    "G1342": {
+      "status": "nonaction",
+      "note": "DFS 流分组是 search 回包输出结构；本地无此回包。",
+      "evidence": []
+    },
+    "G1343": {
+      "status": "nonaction",
+      "note": "文档标题单独成窗且不占正文名额是回包格式；本地标题另列一栏。",
+      "evidence": []
+    },
+    "G1344": {
+      "status": "nonaction",
+      "note": "篇级命中位与条目级粗段两个 5 是摘录渲染的内部计数。",
+      "evidence": []
+    },
+    "G1345": {
+      "status": "gap",
+      "note": "链接卡显示 title/description，但索引 plainText 取 editor.getText()，外链元数据搜不到。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:572",
+        "src/components/editor/extensions/link-preview.tsx:23"
+      ]
+    },
+    "G1346": {
+      "status": "nonaction",
+      "note": "--include 字面过滤与 --regexp 正则是两枚 CLI 旗标；本地只有单一子串匹配。",
+      "evidence": []
+    },
+    "G1347": {
+      "status": "nonaction",
+      "note": "篇间序键不可证是回包排序读数；本地按 updatedAt 排序。",
+      "evidence": []
+    },
+    "G1348": {
+      "status": "nonaction",
+      "note": "删除动词清单与 Unknown command 文案属官方 MCP 命令树。",
+      "evidence": []
+    },
+    "G1351": {
+      "status": "nonaction",
+      "note": "≤100 前文预算是 MCP 摘录串算法；本地搜索整块截 120 字符。",
+      "evidence": []
+    },
+    "G1352": {
+      "status": "nonaction",
+      "note": "前文截、后文整行打印是同一摘录器的方向不对称；本地无摘录串。",
+      "evidence": []
+    },
+    "G1355": {
+      "status": "nonaction",
+      "note": "并段内每枚命中位各占一格是上色名额规则；本地无高亮。",
+      "evidence": []
+    },
+    "G1357": {
+      "status": "nonaction",
+      "note": "标题作前文的保留量异常属摘录器；本地无摘录。",
+      "evidence": []
+    },
+    "G1358": {
+      "status": "nonaction",
+      "note": "前文五步算法是 MCP 摘录数据层；本地无此输出。",
+      "evidence": []
+    },
+    "G1359": {
+      "status": "nonaction",
+      "note": "caption 前文缺口属官方数据面边角且其后已改判；本地不解析 caption 样式。",
+      "evidence": []
+    },
+    "G1362": {
+      "status": "nonaction",
+      "note": "以命中为锚的流窗口与 Blocks 名单分列是回包结构；本地无窗口概念。",
+      "evidence": []
+    },
+    "G1364": {
+      "status": "nonaction",
+      "note": "跳过空串块、callout caption 按一般规则是摘录器内部行为。",
+      "evidence": []
+    },
+    "G1365": {
+      "status": "nonaction",
+      "note": "p₁≥100 不退化是同一摘录公式的边界档；本地无此公式。",
+      "evidence": []
+    },
+    "G1366": {
+      "status": "nonaction",
+      "note": "「5 枚」按命中次数、Blocks 按块去重是回包两层计数。",
+      "evidence": []
+    },
+    "G1367": {
+      "status": "nonaction",
+      "note": "本行已被第 147 批作废；属官方数据面读数。",
+      "evidence": []
+    },
+    "G1368": {
+      "status": "nonaction",
+      "note": "--fetch-blocks 无可观察产出是官方旗标半交付；本地无该旗标。",
+      "evidence": []
+    },
+    "G1370": {
+      "status": "partial",
+      "note": "本地链接卡存 url/title/description，但描述截 300 字不补省略号，检索串又只带 title。",
+      "evidence": [
+        "src/app/api/link-preview/route.ts:111"
+      ]
+    },
+    "G1371": {
+      "status": "nonaction",
+      "note": "caption 与 callout 双层标签是官方文档模型形状；本地 callout 是独立节点。",
+      "evidence": []
+    },
+    "G1372": {
+      "status": "nonaction",
+      "note": "「丢首词」假设其后被正控制判死；纯仪器推论。",
+      "evidence": []
+    },
+    "G1369": {
+      "status": "nonaction",
+      "note": "块 id 大小写敏感是 MCP 传参照抄要求；本地按 blockId 等值匹配。",
+      "evidence": []
+    },
+    "G1373": {
+      "status": "nonaction",
+      "note": "换行计入 100 预算是受控写入实验的摘录读数；本地无摘录算法。",
+      "evidence": []
+    },
+    "G1377": {
+      "status": "nonaction",
+      "note": "daily_notes 虚拟档为空属官方数据面；本地日记用 isDailyNote 标志＋侧栏入口。",
+      "evidence": []
+    },
+    "G1388": {
+      "status": "nonaction",
+      "note": "MCP 摘录左窗读数；本地搜索只回块文本、超 120 字截断。",
+      "evidence": [
+        "src/actions/document/search.ts:151"
+      ]
+    },
+    "G1390": {
+      "status": "nonaction",
+      "note": "MCP blocks get 字段读数；本地 linkPreview 抓 OG，description 截 300 字。",
+      "evidence": [
+        "src/app/api/link-preview/route.ts:111"
+      ]
+    },
+    "G1393": {
+      "status": "nonaction",
+      "note": "MCP 摘录滑窗规律；本地无命中居中与左右吸附。",
+      "evidence": [
+        "src/actions/document/search.ts:151"
+      ]
+    },
+    "G1394": {
+      "status": "nonaction",
+      "note": "MCP 分号批处理错误前缀；本地删除走单发 action。",
+      "evidence": []
+    },
+    "G1395": {
+      "status": "nonaction",
+      "note": "MCP richUrl 160/162 字段读数；本地 linkPreview description 截 300 字。",
+      "evidence": [
+        "src/app/api/link-preview/route.ts:111"
+      ]
+    },
+    "G1396": {
+      "status": "aligned",
+      "note": "markdown 按星号枚数 3+档序：extraLight ***、light ****，与官方两档一致。",
+      "evidence": [
+        "src/lib/editor/divider-styles.ts:41"
+      ]
+    },
+    "G1398": {
+      "status": "nonaction",
+      "note": "MCP contentPreviewMd 字段；本地浏览行副标题 80 字截断。",
+      "evidence": [
+        "src/lib/browse/row-subtitle.ts:17"
+      ]
+    },
+    "G1399": {
+      "status": "partial",
+      "note": "本地 callout 导出为 > 引用，无 <callout> 标签与行首记号内嵌。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:133"
+      ]
+    },
+    "G1401": {
+      "status": "nonaction",
+      "note": "MCP preview 尾标记读数；本地无 page 预览串。",
+      "evidence": [
+        "src/lib/browse/row-subtitle.ts:17"
+      ]
+    },
+    "G1402": {
+      "status": "nonaction",
+      "note": "桥面 file 块键集；本地附件 attrs 为 url/name/size。",
+      "evidence": [
+        "src/components/editor/extensions/attachment.tsx:23"
+      ]
+    },
+    "G1403": {
+      "status": "partial",
+      "note": "本地 callout 内标题导出成 > ####，无 <callout>#### 标签串。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:139"
+      ]
+    },
+    "G1405": {
+      "status": "aligned",
+      "note": "四档 3/4/5/6 星号与反解已落；pageSeparator 走 ===，与桥面可达集不同。",
+      "evidence": [
+        "src/lib/editor/divider-styles.ts:41"
+      ]
+    },
+    "G1406": {
+      "status": "nonaction",
+      "note": "桥面解析器专属映射；本地 ---→regular，无桥面 ---→extraLight。",
+      "evidence": []
+    },
+    "G1407": {
+      "status": "nonaction",
+      "note": "MCP 批处理把成员级有界错误升 -32603；本地无批处理层。",
+      "evidence": []
+    },
+    "G1408": {
+      "status": "nonaction",
+      "note": "桥面禁根块移动/建页中页；本地以 parentId 建子页。",
+      "evidence": []
+    },
+    "G1409": {
+      "status": "nonaction",
+      "note": "桥面写侧回执 5 枚 + (+N more)；本地 create 回单实体。",
+      "evidence": []
+    },
+    "G1410": {
+      "status": "nonaction",
+      "note": "桥面 documents list 静默吞 --format json；本地列表无旗标。",
+      "evidence": []
+    },
+    "G1411": {
+      "status": "nonaction",
+      "note": "桥面 --json 拒 pageSeparator；本地六档枚举含 pageSeparator。",
+      "evidence": []
+    },
+    "G1412": {
+      "status": "nonaction",
+      "note": "MCP preview 起笔门槛；本地无 page 卡片预览与三根预算。",
+      "evidence": []
+    },
+    "G1417": {
+      "status": "gap",
+      "note": "图片块只有裁剪/缩放；无 6 档长宽比、0.1 就近律与 freeform 回退。",
+      "evidence": [
+        "src/components/editor/extensions/image-block-view.tsx:147"
+      ]
+    },
+    "G1420": {
+      "status": "deliberate",
+      "note": "团队权益名册属付费墙/团队页；本地订阅页仅 Free 占位，付费面不做。",
+      "evidence": [
+        "src/lib/app/settings-sections.ts:44"
+      ]
+    },
+    "G1421": {
+      "status": "deliberate",
+      "note": "单席 Paddle 升级属计费邀请面；本地无席位/Paddle。",
+      "evidence": [
+        "src/lib/app/settings-sections.ts:45"
+      ]
+    },
+    "G1422": {
+      "status": "deliberate",
+      "note": "团队邀请 spinner 属团队付费面；本地团队设置仅占位。",
+      "evidence": [
+        "src/lib/app/settings-sections.ts:45"
+      ]
+    },
+    "G1425": {
+      "status": "nonaction",
+      "note": "官方 i18n 双参兜底属 bundle 内部；本地无键表，文案直写中文。",
+      "evidence": []
+    },
+    "G1427": {
+      "status": "deliberate",
+      "note": "计费周期两按钮与试用徽标属定价付费面；本地订阅仅 Free 占位。",
+      "evidence": [
+        "src/lib/app/settings-sections.ts:44"
+      ]
+    },
+    "G1428": {
+      "status": "nonaction",
+      "note": "country.* 是 i18n 数据表；本地无地区选择器与键表。",
+      "evidence": []
+    },
+    "G1430": {
+      "status": "partial",
+      "note": "官方 17 项，本地 16 项（合集为组标题）且 8 项禁用占位。",
+      "evidence": [
+        "src/components/editor/tabs/InsertTab.tsx:47"
+      ]
+    },
+    "G1431": {
+      "status": "partial",
+      "note": "本地只有 table 块 slash 入口；合集型表格与插入表格均占位，两入口未分。",
+      "evidence": [
+        "src/components/editor/tabs/InsertTab.tsx:63"
+      ]
+    },
+    "G1442": {
+      "status": "nonaction",
+      "note": "官方 ARIA 零 menuitem 是读数；本地菜单走 role=menu/menuitem。",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:447"
+      ]
+    },
+    "G1443": {
+      "status": "nonaction",
+      "note": "仪器与证据账；本地无对应引用面。",
+      "evidence": []
+    },
+    "G1447": {
+      "status": "partial",
+      "note": "快捷键面板 6 组；官方 7 tab，缺 documents/style/organize。",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:12"
+      ]
+    },
+    "G1462": {
+      "status": "nonaction",
+      "note": "官方字体族走 --dc 变量注入；本地 page-style 四族栈表等价，机制不同。",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:19"
+      ]
     }
   }
 }

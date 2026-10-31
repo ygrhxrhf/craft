@@ -8,6 +8,11 @@ import { cn } from 'cn';
 import { useAiBubbleStore } from '@/lib/store/use-ai-bubble-store';
 import { aiBubbleKey, mainBubbleKey } from './keys';
 import { requestImageGen } from '@/components/editor/ai/ImageGenDialog';
+import { toast } from '@/components/ui/toast';
+import { aiWriteMessage } from '@/lib/editor/ai-write-message';
+import { AI_PROMPT_PRESETS, type AiPromptPreset } from '@/lib/editor/ai-prompts';
+import { clearAiHistory, recordAiHistory } from '@/lib/ai/history';
+import { promptDialog } from '@/lib/dialog/show';
 
 interface AiBubbleMenuProps {
   editor: Editor;
@@ -22,10 +27,16 @@ const actions: { id: AiAction; label: string; replace: boolean }[] = [
   { id: 'summarize', label: '总结', replace: true },
 ];
 
+function rememberAi(source: string, text: string): void {
+  if (typeof localStorage === 'undefined') return;
+  recordAiHistory(localStorage, { at: Date.now(), source, result: text });
+}
+
 interface CapturedSelection {
   from: number;
   to: number;
   text: string;
+  action: AiAction;
 }
 
 export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
@@ -35,13 +46,16 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [pendingReplace, setPendingReplace] = useState(false);
+  const [showPrompts, setShowPrompts] = useState(false);
   const capturedRef = useRef<CapturedSelection | null>(null);
+  const pdfInputRef = useRef<HTMLInputElement>(null);
 
   const reset = useCallback(() => {
     setLoading(null);
     setError(null);
     setResult(null);
     setPendingReplace(false);
+    setShowPrompts(false);
   }, []);
 
   // the bubble plugin only re-evaluates shouldShow on selection/doc changes,
@@ -93,7 +107,7 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
       if (!selectedText.trim()) return;
 
       // capture selection before the await; the selection may drift afterwards
-      capturedRef.current = { from, to, text: selectedText };
+      capturedRef.current = { from, to, text: selectedText, action };
       setPendingReplace(replace);
       setLoading(action);
       setError(null);
@@ -110,6 +124,98 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
           return;
         }
         setResult(data.text);
+        rememberAi(action, data.text);
+      } catch {
+        setError('网络错误，请重试');
+      } finally {
+        setLoading(null);
+      }
+    },
+    [editor]
+  );
+
+  const runWebSearch = useCallback(async () => {
+    const { from, to } = editor.state.selection;
+    const query = editor.state.doc.textBetween(from, to, '\n').trim();
+    if (!query) return;
+    capturedRef.current = { from, to, text: query, action: 'rewrite' };
+    setPendingReplace(false);
+    setLoading('rewrite');
+    setError(null);
+    setResult(null);
+    setShowPrompts(false);
+    try {
+      const response = await fetch('/api/ai/tools', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tool: 'web_search', query }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.connectError ? `连接失败：${data.error}` : data.error ?? '联网搜索失败');
+        return;
+      }
+      const results = Array.isArray(data.results) ? data.results : [];
+      const text = results.length
+        ? results.map((item: { title: string; url: string; snippet: string }) => `${item.title}\n${item.url}\n${item.snippet}`).join('\n\n')
+        : '没有找到结果。';
+      setResult(text);
+      rememberAi('联网搜索', text);
+    } catch {
+      setError('连接失败，请检查网络');
+    } finally {
+      setLoading(null);
+    }
+  }, [editor]);
+
+  const runPdf = useCallback(async (file: File, question: string) => {
+    setPendingReplace(false);
+    setLoading('summarize');
+    setError(null);
+    setResult(null);
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      form.append('question', question);
+      const response = await fetch('/api/ai/pdf', { method: 'POST', body: form });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? 'PDF 问答失败');
+        return;
+      }
+      setResult(data.text);
+      rememberAi('PDF 问答', data.text);
+    } catch {
+      setError('网络错误，请重试');
+    } finally {
+      setLoading(null);
+    }
+  }, []);
+
+  const runPrompt = useCallback(
+    async (preset: AiPromptPreset) => {
+      const { from, to } = editor.state.selection;
+      const selectedText = editor.state.doc.textBetween(from, to, '\n');
+      if (!selectedText.trim()) return;
+      capturedRef.current = { from, to, text: selectedText, action: 'rewrite' };
+      setPendingReplace(true);
+      setLoading('rewrite');
+      setError(null);
+      setResult(null);
+      setShowPrompts(false);
+      try {
+        const response = await fetch('/api/ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: preset.prompt, text: selectedText }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          setError(data.error ?? 'AI 请求失败');
+          return;
+        }
+        setResult(data.text);
+        rememberAi(preset.label, data.text);
       } catch {
         setError('网络错误，请重试');
       } finally {
@@ -136,6 +242,20 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
           .insertContentAt(captured.to, ` ${result}`)
           .run();
       }
+      // G50: one visible line describing the write, with the undo action attached
+      // to the same result so the two cannot drift apart.
+      toast.add({
+        id: crypto.randomUUID(),
+        type: 'success',
+        title: aiWriteMessage(captured.action, mode),
+        description: '可撤销',
+        actionProps: {
+          children: '撤销',
+          onClick: () => {
+            editor.chain().focus().undo().run();
+          },
+        },
+      });
       handleClose();
     },
     [editor, result, handleClose]
@@ -156,6 +276,9 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
           <span className="flex items-center gap-1.5 text-meta font-medium text-foreground/40">
             <Sparkles className="size-3.5" />
             AI 助手
+            <span className="rounded bg-foreground/5 px-1.5 py-0.5 text-[10px]">
+              当前选择 {editor.state.selection.to - editor.state.selection.from} 字
+            </span>
           </span>
           <button
             type="button"
@@ -213,6 +336,76 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
               <ImageIcon className="size-3.5 text-muted-foreground" />
               生成图像
             </button>
+            <button
+              type="button"
+              onClick={() => setShowPrompts((value) => !value)}
+              className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4"
+            >
+              <Sparkles className="size-3.5 text-muted-foreground" />
+              提示库
+            </button>
+            <button
+              type="button"
+              disabled={loading !== null}
+              onClick={() => void runWebSearch()}
+              className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+            >
+              <Sparkles className="size-3.5 text-muted-foreground" />
+              联网搜索
+            </button>
+            <input
+              ref={pdfInputRef}
+              type="file"
+              accept="application/pdf"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = '';
+                if (!file) return;
+                void (async () => {
+                  const question = await promptDialog({
+                    title: '询问此 PDF',
+                    placeholder: '输入你的问题',
+                    confirmLabel: '提问',
+                  });
+                  if (question) void runPdf(file, question);
+                })();
+              }}
+            />
+            <button
+              type="button"
+              disabled={loading !== null}
+              onClick={() => pdfInputRef.current?.click()}
+              className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+            >
+              <Sparkles className="size-3.5 text-muted-foreground" />
+              询问 PDF
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof localStorage !== 'undefined') clearAiHistory(localStorage);
+                handleClose();
+              }}
+              className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-ui text-muted-foreground transition-colors duration-150 ease-craft hover:bg-foreground/4"
+            >
+              清除历史
+            </button>
+            {showPrompts && (
+              <div className="mt-1 flex flex-col gap-1">
+                {AI_PROMPT_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    disabled={loading !== null}
+                    onClick={() => void runPrompt(preset)}
+                    className="rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            )}
             {error && <p className="px-1 pt-1.5 text-meta text-destructive">{error}</p>}
           </>
         ) : (

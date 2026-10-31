@@ -36,7 +36,7 @@ test('a non-owner cannot open, collab-connect, or edit another user’s document
     .locator('.ProseMirror .tiptap, [contenteditable="true"]')
     .first()
     .fill('私有内容 P0');
-  await expect(ownerPage.getByText('已保存')).toBeVisible({ timeout: 15_000 });
+  await expect(ownerPage.getByText('所有更改已保存')).toBeVisible({ timeout: 15_000 });
 
   const intruderCtx = await browser.newContext();
   const intruderPage = await intruderCtx.newPage();
@@ -98,7 +98,7 @@ test('the owner can grant read-only access from the info panel', async ({ browse
   await ownerPage.locator('[contenteditable="true"]').first().click();
   await ownerPage.keyboard.type(marker, { delay: 8 });
   await ownerPage.keyboard.press('Control+s');
-  await expect(ownerPage.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(ownerPage.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   const intruderCtx = await browser.newContext();
   const intruderPage = await intruderCtx.newPage();

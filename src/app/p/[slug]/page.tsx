@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
+import { auth } from '@/lib/auth/auth';
 import { getSharedDocument } from '@/actions/document/share';
 import { findShare } from '@/lib/share/resolve';
 import { SharedDocView } from '@/components/share/SharedDocView';
@@ -71,6 +72,8 @@ export default async function PublishPage({ params }: PublishPageProps) {
     }
   }
 
+  const session = await auth();
+
   return (
     <SharedDocView
       documentId={slug}
@@ -83,7 +86,15 @@ export default async function PublishPage({ params }: PublishPageProps) {
       styled
       authorByline={doc.showAuthor ? authorByline(doc.authorName) : null}
       showPageTitle={doc.showPageTitle}
-      header={<PublicDocBanner showWatermark={doc.showWatermark} />}
+      header={
+        <PublicDocBanner
+          showWatermark={doc.showWatermark}
+          identifier={slug}
+          signedIn={Boolean(session?.user?.id)}
+          permission={doc.permission}
+          loginNext={`/p/${slug}`}
+        />
+      }
     />
   );
 }

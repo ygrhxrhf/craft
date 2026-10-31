@@ -70,7 +70,7 @@ test('改档不靠服务端通路也能成立，并且另一台设备的分享�
   await page.waitForURL(/\/documents\//);
   const docUrl = page.url();
   await page.getByPlaceholder('页面标题').fill(`档位 ${stamp}`);
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 30_000 });
 
   // 先正常开一次面板：这一趟要建立 `document_share` 那一行（`getOrCreateShare` 本来就是服务端读）。
   await openSharePanel(page);

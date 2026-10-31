@@ -47,6 +47,8 @@ import { LinkPreview } from './extensions/link-preview';
 import { ImageGallery } from './extensions/image-gallery';
 import { Drawing } from './extensions/drawing';
 import { VideoEmbed } from './extensions/video-embed';
+import { AudioEmbed } from './extensions/audio-embed';
+import { HtmlEmbed } from './extensions/html-embed';
 import { Divider } from './extensions/divider';
 import { CodeBlockView } from './extensions/code-block-view';
 import { ReminderPill } from './extensions/reminder-pill';
@@ -477,6 +479,8 @@ export function Editor({
       ImageGallery,
       Drawing,
       VideoEmbed,
+      AudioEmbed,
+      HtmlEmbed,
       Divider,
       MathBlock,
       InlineMath,
@@ -751,7 +755,7 @@ export function Editor({
   if (locked) {
     return (
       <div className="relative">
-        <CursorLayer editor={editor} awareness={collabAwareness} />
+        <CursorLayer editor={editor} awareness={collabAwareness} documentId={documentId} />
         <EditorContent editor={editor} />
       </div>
     );
@@ -759,7 +763,7 @@ export function Editor({
 
   return (
     <div className="relative">
-      <CursorLayer editor={editor} awareness={collabAwareness} />
+      <CursorLayer editor={editor} awareness={collabAwareness} documentId={documentId} />
       <DragHandle editor={editor} documentId={documentId} />
       <EditorBubbleMenu editor={editor} />
       <AiBubbleMenu editor={editor} />

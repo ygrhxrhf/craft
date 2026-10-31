@@ -29,7 +29,7 @@ import { ShareDialog } from '@/components/share/ShareDialog';
 import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, showsDocumentTitle } from './themes/page-style';
 import type { PageStyle } from './themes/page-style';
 import { getDraft } from '@/lib/offline/draft-store';
-import { offlineSaveLabel } from '@/lib/offline/save-status';
+import { ALL_CHANGES_SAVED, offlineSaveLabel } from '@/lib/offline/save-status';
 import { planTrailingClick } from '@/lib/editor/trailing-click';
 
 const TAB_ORDER = ['insert', 'format', 'style', 'info'] as const;
@@ -247,7 +247,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
                 <>
                   {saveState === 'dirty' && '未保存'}
                   {saveState === 'saving' && '保存中...'}
-                  {saveState === 'saved' && '已保存'}
+                  {saveState === 'saved' && ALL_CHANGES_SAVED}
                   {saveState === 'error' && (
                     <>
                       保存失败

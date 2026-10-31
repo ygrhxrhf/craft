@@ -10,6 +10,7 @@ import { storeDefaultLanguage, storeDefaultTheme } from '@/lib/editor/code-prefe
 import { CODE_THEMES, DEFAULT_CODE_THEME, filterThemes, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
 import { cn } from 'cn';
 import { SearchableSelect } from './searchable-select';
+import { MermaidPreview } from './mermaid-preview';
 
 export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   const [copied, setCopied] = useState(false);
@@ -103,6 +104,9 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
           {copied ? '已复制' : '复制'}
         </button>
       </div>
+      {language === 'mermaid' && (
+        <MermaidPreview source={node.textContent ?? ''} dark={isDark} />
+      )}
       <div
         className={cn('flex', fullscreen && 'min-h-0 flex-1')}
         style={{ background: surface.background, color: surface.foreground }}

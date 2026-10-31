@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react';
 import { untitledFor } from '@/lib/document/untitled-copy';
+import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
 
 interface EditorHeaderProps {
   documentId: string;
@@ -22,6 +23,16 @@ export function EditorHeader({
 }: EditorHeaderProps) {
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [draftTitle, setDraftTitle] = useState(title);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const titleRequest = useTitleRequestStore((state) => state.request);
+
+  // G14 `⇧⏎`: the title input is the page title in this build, so the request
+  // focuses and selects it. DOM-only effect, no state writes.
+  useEffect(() => {
+    if (titleRequest === 0) return;
+    inputRef.current?.focus();
+    inputRef.current?.select();
+  }, [titleRequest]);
 
   // The caller hands down a fresh closure on every render (DocumentEditor passes an
   // inline arrow), so listing `onTitleChange` as a dependency made every unrelated
@@ -79,6 +90,8 @@ export function EditorHeader({
         </div>
 
         <input
+          ref={inputRef}
+          data-document-title
           type="text"
           value={draftTitle ?? ''}
           onChange={(e) => setDraftTitle(e.target.value)}

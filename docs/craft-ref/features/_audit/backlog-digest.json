@@ -1,0 +1,1380 @@
+{
+  "generatedAt": "2026-10-30T01:20:33.930Z",
+  "total": 1614,
+  "status": {
+    "gap": 1053,
+    "unknown": 192,
+    "aligned": 138,
+    "deliberate": 96,
+    "partial": 63,
+    "nonaction": 56,
+    "unreachable": 16
+  },
+  "priority": {
+    "P2": 629,
+    "P?": 427,
+    "P1": 280,
+    "P3": 270,
+    "P0": 8
+  },
+  "statusByPriority": {
+    "P2 / gap": 462,
+    "P? / gap": 229,
+    "P1 / gap": 207,
+    "P3 / gap": 155,
+    "P? / unknown": 110,
+    "P2 / aligned": 52,
+    "P3 / aligned": 39,
+    "P2 / unknown": 36,
+    "P? / deliberate": 33,
+    "P2 / deliberate": 32,
+    "P3 / deliberate": 24,
+    "P3 / unknown": 24,
+    "P1 / aligned": 23,
+    "P? / nonaction": 23,
+    "P2 / partial": 22,
+    "P1 / unknown": 22,
+    "P1 / partial": 19,
+    "P? / aligned": 18,
+    "P2 / nonaction": 18,
+    "P3 / nonaction": 14,
+    "P3 / partial": 10,
+    "P? / partial": 10,
+    "P1 / deliberate": 7,
+    "P2 / unreachable": 7,
+    "P0 / aligned": 6,
+    "P3 / unreachable": 4,
+    "P? / unreachable": 4,
+    "P0 / partial": 2,
+    "P1 / nonaction": 1,
+    "P1 / unreachable": 1
+  },
+  "explicit": {
+    "P0": [
+      {
+        "line": 1128,
+        "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
+        "cols": 7,
+        "id": "G01",
+        "official": "输入 `@` 提及某人（R2 `web.collab.comment.hint.mention`；提及进反向链接与成员）",
+        "local": "☆ ✎ **本行原判据把两码事混写**＝\"可点跳转\"与\"进 `collectLinkedDocIds`\"说的是**页面**提及（`commands.commands.mention.placeholder` 逐字＝「搜索要提及的页面」），人员档没有可跳的页面 ⇒ 判据本批重述（见最后一列）；☆ 本地原状比\"只有壳\"还更空＝`Mention` 节点与 `setMention` 命令都在，但**全仓零调用者**（第 122 批实扫＝grep 只命中节点定义自己，slash「@提及」命令体是空操作 `slash-commands.ts:335-343`）⇒ 本批之前**连页面提及都无法从界面产生**；现已补四段（纯核／数据面／触发器／呈现），逐字落点见台账「二十一」第 1 行",
+        "verdict": "☆ 已清（全层）＝第 122 批（commit 见 §二 末两行）",
+        "score": "3/1",
+        "criteria": "☆ 人员档三条＝① 打 `@` 出**本文档所有者＋成员**候选（☆ 官方查看者档还额外裁剪成\"通过电子邮件邀请的人\"＝`collab.doc.viewer.mention.desc`，本地未按角色裁剪＝**有意偏差候选**，原因见台账「二十一」第 4 行）② 选中后插入**不可点**的人员 chip ③ 导出与重载都不把它变成死链；☆ 原判据的\"进反向链接\"一项**移出**（那是页面档，且 `Editor.tsx:78-81` 天然不收它）",
+        "regression": "★ 用例＝`e2e/mention-user.spec.ts` 四条（第 122 批）＋单测 27 条",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 3,
+          "cost": 1,
+          "raw": "3/1"
+        },
+        "conflict": null,
+        "priority": "P0",
+        "note": "人员提及四段已落地；台账第 122 批记录仍有效。",
+        "evidence": [
+          "src/components/editor/extensions/mention-users.ts",
+          "src/components/editor/extensions/mention-user-suggestion.tsx",
+          "e2e/mention-user.spec.ts"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1129,
+        "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
+        "cols": 7,
+        "id": "G02",
+        "official": "提醒有投递与状态（R5：`reminders.next.reminder.time`、`mark.resolved`、`alert` 系列）",
+        "local": "☆ 已清（第 263 批复核）＝**原判\"无任何定时器/通知/邮件、`task.ts:212-227` 之外无投递代码\"是陈旧账**：投递**是拉取式而非定时器**——`/api/v1/sync` 每次轮询调 `materializeTaskReminders(userId)`，由纯核 `task-reminders.ts`（`REMINDER_LOOKBACK_MS` 24h 上限，防\"离线一周后一次涌出\"）算出到期项，`materialize.ts` 落成 `Notification` 行（`kind:\"taskReminder\"`、`isResolved`／`resolvedAt` 两列），`NotificationBell` 订阅 `onStoreChanged('notification')` 重取；**「已解决」**＝`notification.ts` 写 `resolvedAt`；判据\"到期产生可见提醒（站内通知至少一条通路）＋已解决可点\"**两条都成立**；☆ 一处范围＝**邮件**那档仍无（全仓零发信通路，即 §一 的 G1488 待裁决项）——但本行判据写的是\"站内通知**或**邮件至少一条\"，故按判据记「已清」；☆☆ **真浏览器取证**＝建任务＋设 1 分钟前提醒 ⇒ 等过同步轮询并 reload ⇒ 通知铃内出现该任务标题（探针 `BELL HAS TITLE >>> true`）",
+        "verdict": "已清",
+        "score": "3/2",
+        "criteria": "到期产生可见提醒（站内通知或邮件至少一条通路）+「已解决」可点",
+        "regression": "用例",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 3,
+          "cost": 2,
+          "raw": "3/2"
+        },
+        "conflict": null,
+        "priority": "P0",
+        "note": "站内提醒投递已闭环；邮件档仍缺，单独登记在 G1488。",
+        "evidence": [
+          "src/lib/notification/materialize.ts:31",
+          "src/app/api/v1/sync/route.ts:10",
+          "e2e/reminder-delivery.spec.ts"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1130,
+        "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
+        "cols": 7,
+        "id": "G03",
+        "official": "通知设置三项真实可配（`preferences.*`、通知分区）",
+        "local": "☆ 部分落地（第 231 批复核）＝① **三开关已落库**＝`SettingsPanels.tsx` 走 `setSwitch`→`updatePreferences`（`actions/user/preferences.ts:25` 的 `switchPreferences` 三项＋读写），不再是 `useState` 本地值（行里 `:101` 那条是陈旧坐标）；② **每日邮件那句逐字在**（`GroupDesc`「接收当天所有任务和提醒的摘要。你还将收到今天截止的摘要推送通知。」）；③ 仍缺＝**投递按开关生效**（依赖 G02 的投递通路）；「时间 08:00」是本地静态展示（官方文案里没有可配时刻的键，故**不登记为缺口**） ☆ **已清**（第 279 批收尾）＝第 231 批已复核三条（三开关落库／每日邮件句逐字／投递依赖 G02），本批清掉最后一件**伪造控件**：通知分区「每日电子邮件」下原有一行「时间 08:00」——官方语言包**没有任何可配摘要时刻的键**（只有 `preferences.daily.email` 与其 desc，`feature-catalog.md:5078-5079`），而该行带**按钮式外框＋`ChevronsUpDown` 图标**、看着能点，实测却是个**无处理器／无输入／无 role 的裸 DIV**（探针逐项读回 `{onclick:false,isButton:false,isInput:false,role:null}`）⇒ **欺骗性可供性**，已删除并去掉随之无用的图标 import；保留真开关与其逐字句。**真浏览器取证**＝通知分区 `08:00` 消失、「每日电子邮件」与摘要句仍在、`role=switch` 仍为 **3** 枚（三档开关一个不少）",
+        "verdict": "已清",
+        "score": "3/2",
+        "criteria": "三档开关真实可配且不伪造不存在的设置项",
+        "regression": "用例",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 3,
+          "cost": 2,
+          "raw": "3/2"
+        },
+        "conflict": null,
+        "priority": "P0",
+        "note": "三开关已落库；只有 notifyReminders 驱动投递，notifyComments／notifyDaily 在业务侧无消费点，每日电子邮件无发信通路。",
+        "evidence": [
+          "src/components/settings/SettingsPanels.tsx:598-624",
+          "src/actions/user/preferences.ts:25",
+          "src/lib/notification/materialize.ts:31"
+        ],
+        "baseStatus": "partial"
+      },
+      {
+        "line": 1131,
+        "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
+        "cols": 7,
+        "id": "G04",
+        "official": "分享有链接查看/编辑两档 + 仅协作者 + 请求批准（R14 `collab.access.*`）",
+        "local": "☆ 部分落地（第 264 批）＝**原判\"无 permission 列、`/s/[token]` 恒只读\"是陈旧账**（第 262 批复核已证）：两档＋撤销即时断会话早已落地。**本批补上第三档**：① `permission` 词表加 `'collaborators'`，`ONLY_COLLABORATORS_LABEL='仅限有访问权限的协作者'`（逐字 `collab.access.only.collaborators`）；② 纯核 `tierOpensToLink(permission)`——`view`/`edit` 放行、`collaborators` **不放行**；③ 两处读侧统一用它挡在授权之前：`resolveShareAccess`（collab token 那条）与 `getSharedDocument`（公开页那条）⇒ **链接对第三档不给任何角色**，打开它只能靠 ownership／membership（正是官方该档语义）；④ `ShareDialog` 的 `TIERS` 变三档（Lock 图标）；真浏览器取证＝分享面板渲染三档，第三档逐字「仅限有访问权限的协作者」；☆ **仍缺**＝「请求批准」流（`collab.access.request.approve`「批准」／`.decline`「拒绝」＋viewer 侧「请求编辑」，全仓 `requestAccess`／`access.request` 零命中）⇒ 行内留为待办",
+        "verdict": "部分落地",
+        "score": "3/3",
+        "criteria": "文档分享可设 view/edit，编辑档走同一 collab 鉴权链；撤销即时断会话（照白板 `shareVersion` 范式 `actions/whiteboard/share.ts:16-37`）",
+        "regression": "用例",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 3,
+          "cost": 3,
+          "raw": "3/3"
+        },
+        "conflict": null,
+        "priority": "P0",
+        "note": "view／edit／仅协作者三档已落地；「请求批准」流在 src 零命中。",
+        "evidence": [
+          "src/lib/share/permission.ts:8-27",
+          "src/components/share/ShareDialog.tsx:57-62"
+        ],
+        "baseStatus": "partial"
+      },
+      {
+        "line": 1132,
+        "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
+        "cols": 7,
+        "id": "G05",
+        "official": "发布与分享是两个概念：未发布不应可访问",
+        "local": "☆ **改判：本行系陈旧记录，门已在**（第 229 批复核）＝`getSharedDocument`（`'use server'` 动作层，`share.ts:164`）进门就过 `isOpenableShare`（`lib/share/resolve.ts:16`）＝`!!share?.isPublished` ⇒ **未发布时 `/s/<token>` 与 `/p/<slug>` 两条形状同时不可访问**（行里说\"`/s/` 不校验\"是过时的：那条判据只看了页面文件，没看它调的动作层）。**真浏览器取证**＝新文档拿到 `/s/<token>`、开关未发布 ⇒ 页上逐字 `链接无效或文档已删除`；打开「发布为公开页面」后同一 URL ⇒ 正文与作者署名都在；**用例已存在**＝`e2e/share-publish.spec.ts:39`「an unpublished share reads as invalid on both link shapes, and publishing opens them together」（它自己的注释写着\"此前从没人验过访客看到什么\"）",
+        "verdict": "已清（复核＝早已落地＋有用例）",
+        "score": "3/1",
+        "criteria": "关掉发布后 `/s/` 与 `/p/` 同时不可访问（本批复核＝成立）",
+        "regression": "用例",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 3,
+          "cost": 1,
+          "raw": "3/1"
+        },
+        "conflict": null,
+        "priority": "P0",
+        "evidence": [
+          "src/lib/share/resolve.ts:16",
+          "src/actions/document/share.ts:229",
+          "e2e/share-publish.spec.ts"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1133,
+        "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
+        "cols": 7,
+        "id": "G06",
+        "official": "成员档「可以查看和评论」= 能评论但不能编辑（`collab.access.view.and.comment`）",
+        "local": "☆ **改判：本行系陈旧记录，双档已分开**（第 230 批复核）＝`actions/comment/comment.ts` 的 `assertDocumentAccess(documentId, userId, 'commenter')`（`:27` 新增评论、`:111/:131` 回复与解决）⇒ **viewer 被拒、commenter 可**；行里说\"只要求 viewer 级\"是过时的（那是 `getThreads` 那条**读**路径，`:54` 至今仍 `viewer`——读评论本来就该让 viewer 看）",
+        "verdict": "已清（复核＝早已落地）",
+        "score": "3/2",
+        "criteria": "viewer 评论被拒、commenter 评论可（本批复核＝成立）",
+        "regression": "用例",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 3,
+          "cost": 2,
+          "raw": "3/2"
+        },
+        "conflict": null,
+        "priority": "P0",
+        "evidence": [
+          "src/actions/comment/comment.ts:27",
+          "src/actions/comment/comment.ts:111",
+          "src/actions/comment/comment.ts:131"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1134,
+        "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
+        "cols": 7,
+        "id": "G07",
+        "official": "手柄菜单是块操作主入口（实测官方 6 项 + 「在上方/下方插入区块」，`commands.insert.block.above/below`）",
+        "local": "☆ ✎ 本行原判据的\"官方 6 项\"**是两码事**＝那 6 项来自**信息面板动作区**（G956／G204 那一族），块级 `⋮` 唯一在册读数＝**任务块 8 项**（V43）；本地实现＝`DragHandle.tsx:321-349` 两枚按钮＋3 项菜单（`+`＝`:323`、`⋮`＝`:334`、单块闸＝`:342`；☆ 第 121 批删掉 `menuOpen` 守卫后行号前移 4 行），核在 `drag-handle/block-actions.ts`；☆ ✎ **第 122 批记一笔**＝本行第 120 批把状态注记写进了首格（\"G07 ✎已清…\"），让 G 行计数脚本（首格须逐字是 `G` 加数字）少计一条（1238⇒1237），已把注记搬回「类型」列",
+        "verdict": "☆ 已清（全层）＝第 120 批 `2ddc589` 动作层＋第 121 批 `2714972` UI 层",
+        "score": "2/1",
+        "criteria": "☆ 判据收窄＝\"至少覆盖 V43 里的在上方插入区块／在下方插入区块／删除三条且逐字同名\"（已满足）；☆ 官方普通块项集转台账「十九」第 1 行（仍未采到，需上屏） ✎ **第 422 批：普通块的 `⋯` 菜单在本 build **四条通路全不可达****（1440×900、光标在该块内）：① **右键**块正文 ⇒ `role=menuitem` **0**、`role=menu` **0**；② **悬停块左侧**留白 ⇒ 该区域**没有任何** `button` 命中（把手渲染在 **x=−35**，见 `G1187` 第 408 批读数）；③ **`Shift+F10`` ⇒ 0；④ **`ContextMenu` 键** ⇒ 0。⇒ 菜单项集**无法在本 build 上屏**，与主题面板同一根因（块把手定位缺陷）。**不写成\"官方没有普通块菜单\"**——`G1442` 已记\"展开后零 menuitem 与 9 项文本读得到\"两面并存。",
+        "regression": "★ 用例＝`e2e/drag-handle-menu.spec.ts` 五条（第 121 批）",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 1,
+          "raw": "2/1"
+        },
+        "conflict": null,
+        "priority": "P0",
+        "evidence": [
+          "src/components/editor/drag-handle/block-actions.ts:124",
+          "src/components/editor/drag-handle/block-actions.ts:132",
+          "src/components/editor/drag-handle/DragHandle.tsx"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1135,
+        "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
+        "cols": 7,
+        "id": "G08",
+        "official": "删除他人文档应报错而非静默成功",
+        "local": "☆ **改判：本行系陈旧记录，三个动作都已挡**（第 230 批复核）＝`actions/document/delete.ts` 的 `deleteDocument`／`restoreDocument`／`permanentDeleteDocument` 三处**进门就** `await assertOwned('Document', id, userId, '文档不存在或不属于你')`（`:10/:28/:46`），越权当场抛错 ⇒ 不再\"0 行更新不抛错\"",
+        "verdict": "已清（复核＝早已落地）",
+        "score": "3/1",
+        "criteria": "越权调用抛明确错误（本批复核＝成立）",
+        "regression": "用例",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 3,
+          "cost": 1,
+          "raw": "3/1"
+        },
+        "conflict": null,
+        "priority": "P0",
+        "evidence": [
+          "src/actions/document/delete.ts:11",
+          "src/actions/document/delete.ts:27",
+          "src/actions/document/delete.ts:43"
+        ],
+        "baseStatus": "aligned"
+      }
+    ],
+    "P1": [
+      {
+        "line": 1141,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G11",
+        "official": "专注模式 + 退出快捷键（R17）",
+        "local": "全库无 focus mode（`focusStyle` 只是文字底色 Mark）",
+        "verdict": "☆ 已清（专注模式：入口＋键位＋三块面板收起）＝`use-focus-store` 持旗标，`Sidebar.tsx` 旗标为真时整块不挂载、`DocumentEditor.tsx` 顶栏 `focusActive && 'hidden'`、右侧栏 `!focusActive && …`，**没有任何开合状态被改写**⇒退出即还原（判据\"退出后布局还原\"靠不写恢复步骤来成立）。入口＝顶栏 `aria-label={FOCUS_MODE}` 按钮（此前只有 ⌘/Ctrl+. 键位，键位不是入口）；文案三条逐字进 `src/lib/editor/focus-mode-copy.ts`，含官方那条拼错的键 `commans.exit.focus.mode.shortcut`。单测 `focus-mode-copy.test.ts`（台账比对＋接线），实屏 `e2e/focus-mode.spec.ts`（侧栏按**节点数**断言：折叠态是 `w-0 opacity-0`，用 toBeVisible 会把\"折叠\"误判成\"专注生效\"）。★ 遗留：官方专注模式分三场景（画布/白板/代码，G60），本行只是全局那一档。",
+        "score": "2/2",
+        "criteria": "有开关与快捷键，隐藏侧栏/右栏/顶栏，退出后布局还原",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": "local-says-missing",
+        "priority": "P1",
+        "note": "台账本地列仍写着「全库无 focus mode」，与判定列冲突；现读已落地。",
+        "evidence": [
+          "src/lib/store/use-focus-store.ts",
+          "src/components/editor/shell-shortcuts.tsx:22-27"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1142,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G12",
+        "official": "查找替换（R15 独立快捷键分组 `commands.shortcuts.in.find.and.replace`、`find.*` 14 条）",
+        "local": "无（只有 AI 的替换选区 `AiBubbleMenu.tsx:230`）",
+        "verdict": "缺失",
+        "score": "2/2",
+        "criteria": "全文档查找高亮、逐个/全部替换、命中计数",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": "local-says-missing",
+        "priority": "P1",
+        "note": "台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在。",
+        "evidence": [
+          "src/components/editor/extensions/find-replace.ts",
+          "src/components/editor/find-replace-panel.tsx",
+          "src/lib/store/use-find-replace-store.ts",
+          "e2e/find-replace-case.spec.ts"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1143,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G13",
+        "official": "快捷键面板按 6 个上下文分组 +「查看所有快捷键」命令（R15/R16）；**全表 104 项键位已解出，见 `keyboard.md`**",
+        "local": "☆ **已清**（第 288 批复核＋补强）＝**原判\"无快捷键展示\"整条作废**：① `ShortcutsPanel.tsx` **早已按官方六组渲染**（通用／编辑／表格／任务视图／合集／查找替换，组名取自 `commands.shortcuts.*`），且**只印本地真实绑定**（行来自 `KEY_BINDINGS`＝编辑器派发用的同一张表，注释写明\"列一条本 build 不响应的键，用户一按就是谎\"），三个无绑定的组用一句本地提示占位而非删掉 ⇒ 官方结构可见；② **本批补上第二半**＝官方命令 `commands.open.shortcuts`「查看所有快捷键」（`feature-catalog.md:3051`）此前不在本地命令面板（无词操作组只有「新建文档」）⇒ 补该条，**落点与 `TOGGLE_KEY_SHORTCUTS` 一致**（`openSettings('shortcuts')`），不另造面板。**真浏览器取证**＝⌘K 后该条在场、点击后快捷键面板打开且**六个分组全在**（`[data-testid^=\"shortcuts-group-\"]` 计数 6）",
+        "verdict": "已清",
+        "score": "2/2",
+        "criteria": "设置→键盘快捷键分区渲染本地实际绑定，按官方 6 组分组（**已成立**）；命令面板「查看所有快捷键」指向同一面板（**本批成立**）",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": "local-says-missing",
+        "priority": "P1",
+        "evidence": [
+          "src/components/settings/ShortcutsPanel.tsx",
+          "src/components/search/CommandPalette.tsx:117"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1144,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G14",
+        "official": "块移动与样式槽快捷键（`keyboard.md` 表 A/B：`⌥↑↓↖↘` 移动块、`⌘⌥1-9/0` 样式槽、`⇧⏎` 重命名、`⌘D` 副本、`⌘.` 专注、`⌘\\` 侧栏、`⌘⌥N` 每日笔记、`⌘⇧M` 评论）",
+        "local": "无任何 `addKeyboardShortcuts`（全库仅 font-size 一处 keymap）",
+        "verdict": "缺失",
+        "score": "2/1",
+        "criteria": "**必须建成 `{mac, win}` 双描述符**：官方 `zr` 在 Mac 是 `⌘⌥` 而 Windows 是 `Ctrl-Shift`，`Mod+Shift+Alt` 单一字符串无法表达；本地 ⌘S 需删除或记为有意偏差（官方无保存快捷键）",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 1,
+          "raw": "2/1"
+        },
+        "conflict": "local-says-missing",
+        "priority": "P1",
+        "note": "块移动／样式槽／副本／查找／专注／侧栏／日记／快捷键面板已接；RENAME（Shift+Enter）与 COMMENT（Ctrl+Shift+M）只在键表里有 id，没有处理分支。",
+        "evidence": [
+          "src/components/editor/extensions/craft-keymap.ts:14-140",
+          "src/components/editor/shell-shortcuts.tsx:22-27",
+          "src/lib/editor/keymap.ts:206",
+          "src/lib/editor/keymap.ts:213"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1145,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G15",
+        "official": "任务 Deadline 与 Schedule 是**两套独立属性**（R4）",
+        "local": "只有 `dueDate` + `remindAt`；`TaskSchedule` 是四合一批量入参名，非独立概念（`task.ts:205-210`、`contract.prisma:299-300`）",
+        "verdict": "行为不同",
+        "score": "2/3",
+        "criteria": "两属性独立可设可清，日历分别按二者落点",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 3,
+          "raw": "2/3"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "Task 模型没有独立 schedule 列；任务四档分组实际按 dueDate 切，不是官方的 Schedule 轴。",
+        "evidence": [
+          "src/prisma/contract.prisma:323-340",
+          "src/lib/task/grouping.ts:5-32"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1146,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G16",
+        "official": "折叠块「全部展开/收起」（R8）",
+        "local": "本行系陈旧记录：`extensions/toggle-all.ts` 的 `setOpenOnAllToggles` 遍历全文改 `open`（刻意下钻进已折叠的父块，否则漏掉一半），`toggle-block.tsx` 暴露 `expandAllToggleBlocks`/`collapseAllToggleBlocks`，已接 slash（`slash-commands.ts`）与格式 tab（`FormatTab.tsx:39-40`），实屏 `e2e/editor.spec.ts`",
+        "verdict": "☆ 部分清（遍历已成立，「出现在命令面板」未成立）＝命令面板没有命令注册表（G33），两档命令无处可挂；官方另一条单键「切换所有折叠块」`commands.toggle.all.toggles` 与「切换专注模式」`commands.toggle.focus.mode` 同样等 G33 一起落",
+        "score": "2/1",
+        "criteria": "一条命令遍历 `toggleBlock` 改 open；出现在命令面板",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 1,
+          "raw": "2/1"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "遍历展开/收起已落地；命令面板没有命令注册表，两档命令无处挂。",
+        "evidence": [
+          "src/components/editor/extensions/toggle-all.ts",
+          "src/components/search/CommandPalette.tsx"
+        ],
+        "baseStatus": "partial"
+      },
+      {
+        "line": 1147,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G17",
+        "official": "Mermaid 图表是插入片段之一（轴 C 四类 snippet）",
+        "local": "全库零匹配（含 package.json）",
+        "verdict": "缺失",
+        "score": "2/2",
+        "criteria": "slash「Mermaid 图表」渲染图；导出 md 保留代码围栏",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "mermaid 只作为代码块语言名出现，没有渲染器。",
+        "evidence": [
+          "src/lib/editor/code-languages.ts"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1148,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G18",
+        "official": "备份/历史版本对协作者可用；**版本条目带变更计数与时间分组**（V4 实测：「9月26日周六 22:46, 2 项变更」+ 作者名，按「昨天 / 较早」分组，底部 30/180 天付费墙）",
+        "local": "☆ 部分落地（第 225 批）＝① **协作者可看/可恢复**已清＝`version.ts` 四个函数此前一律 `doc.userId !== session.user.id`（owner-only，`:22,49,77,92`），现统一走 `requireDocumentAccess(…, 'editor')`（新增 `requireEditor` 帮手）；**为何是 editor 而非 viewer**＝`restoreVersion` 会改写正文，属写操作。**真浏览器取证**＝owner 把 PEER 加为「可编辑」→ PEER 打开同一篇 → 动作 tab「查看备份」可开、版本列表在场（`v1 · 10月15日 20:09 / 6 项变更`）——此前这一下抛「未授权」；② 变更计数与今天/昨天/较早分组**已在**（`lib/document/version-groups.ts`＋`VersionDialog`）；③ 仍缺＝**纯改标题/样式不产生快照**（`update.ts` 只在 `content !== undefined` 且 10 分钟窗口落快照）、`Document.version` 从不递增 ⇒ 另立 **G1531**",
+        "verdict": "部分落地",
+        "score": "2/2",
+        "criteria": "editor 可看/可恢复（本批已清）；标题与样式变更也留快照、version 单调递增（G1531）",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "baseStatus": "partial"
+      },
+      {
+        "line": 1149,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G19",
+        "official": "模板：另存 / 从模板新建 / **在文内插入模板片段**（`commands.insert.template.inline`）",
+        "local": "前两个有（`actions/document/template.ts:6`、`TemplateCard.tsx:25`）；本行第三档系陈旧记录＝slash「从模板插入」→ `use-template-picker-store` 开选择器 → `template-picker.tsx` 以 `insertContentAt` 把 `getTemplateContent` 的正文插在当前块位置",
+        "verdict": "☆ 已清（文内插入模板片段已在）＝判据三条各有实屏：`e2e/template-insert.spec.ts`（标题就叫\"the body lands at the caret and the slash query is already gone\"，2026-10-14 复跑绿）。★ 遗留：官方 `commands.insert.template.inline` 与\"从模板新建\"在同一个 slash 条目下二选一，本地是两条 slash，未核。",
+        "score": "2/2",
+        "criteria": "插入命令可选择模板并把内容插进当前块位置",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "evidence": [
+          "e2e/template-insert.spec.ts",
+          "src/actions/document/template.ts:6"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1150,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G20",
+        "official": "日记有模板与起始时间配置、前一天/后一天导航（`daily.*`）",
+        "local": "☆ 已清（第 275 批）＝**原判\"`templateId`＋`startTime` 是死字段、取值但从不使用\"是陈旧账**：两者**早已驱动生成逻辑**——`templateId` 让配置模板的 `content` 成为新日记的初始正文（`daily-notes.ts:73-86`）；`startTime` 平移\"一天\"的边界，`dayWindow`／`shiftDay`／`noteDateKey` 都按它算，`getOrCreateDayNote` 用它定窗口与翻页。**顺带修掉一条真错**＝`/daily-notes` 列表页此前用自己的午夜 `startOfDay` 分组、与 action 的配置日窗**不同源** ⇒ 起始时间非 00:00 时同一条笔记在两处归到不同的天（起始 04:00 且此刻未到 04:00 时，当前那篇落到「昨天」）⇒ 抽纯函数 `dailyNoteBucket`（按窗口起点相差的整日数分档）＋ action 补 `getDailyNoteStartTime()`，页面改用它们",
+        "verdict": "☆ **已清**（第 275 批复核＋补强）＝**原判\"两枚死字段\"是陈旧账，且顺带修掉一条真错**：① `templateId` **早已驱动生成**＝`daily-notes.ts:73-86` 读配置里的模板、按 `isTemplate && !isDeleted` 校验后把其 `content` 作为新日记的初始内容（陈旧模板被忽略，不让设置卡死当天生成）；② `startTime` **早已驱动日窗**＝`dayWindow`／`shiftDay`／`noteDateKey`（`src/lib/utils/daily-note-window.ts`）按它把\"一天\"的边界整体平移，`getOrCreateDayNote` 用它算窗口与前一天/后一天；③ **前一天/后一天导航早已落地**＝`DailyNoteNav.tsx`（编辑器里 `doc.isDailyNote` 时渲染）两个按钮走 `getOrCreateDayNote(±1)`，与\"打开今天\"同路；④ **本批修的真错**＝`/daily-notes` 列表页此前**用自己的午夜 `startOfDay` 分组**，与 action 的配置日窗**不同源** ⇒ 起始时间非 00:00 时同一条笔记在两处被归到不同的天（起始 04:00 且此刻未到 04:00 时，当前那篇会在列表里落到「昨天」）⇒ 抽纯函数 `dailyNoteBucket`（按**窗口起点相差的整日数**分档，非毫秒差）＋ action 新增 `getDailyNoteStartTime()`，页面改用它们、与 `getOrCreateDayNote` 同源",
+        "score": "已清",
+        "criteria": "2/1",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": null,
+          "cost": null,
+          "raw": "已清"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "evidence": [
+          "src/lib/daily/daily-notes.ts:73-86"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1151,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G21",
+        "official": "侧栏一级有独立「连接」屏（✓ 屏上实测；官方有 connections 视图）",
+        "local": "只有 `BacklinksPanel`，无对应路由（路由清单里无 connections）",
+        "verdict": "缺失",
+        "score": "2/2",
+        "criteria": "独立屏列出入站/出站与块级来源",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "没有独立 /connections 路由；反向链接仍在信息页签。",
+        "evidence": [
+          "src/components/editor/tabs/InfoTab.tsx"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1152,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G22",
+        "official": "导出 **7 类**：DOCX / PDF（纸张、页码、水印、深色）/ Markdown / HTML / TextBundle / Plain / zip 整库，另有 **JSON 导出**（`json-export-button`、`image-export-button`、`lib-dropdown--export/load/remove` 库级导入导出）；导入 **5 种来源**：Evernote、Google Docs、Notion、Readwise、Markdown",
+        "local": "有 markdown/html/text/json 四种导出 + 仅 Markdown 导入（`actions/document/export.ts:9`、`actions/document/import.ts:27-70`）→ JSON 其实两边都有（此前\"本地多出 JSON\"的说法作废）",
+        "verdict": "缺失（缺 DOCX/PDF/TextBundle/zip/图片导出/库级导入导出）",
+        "score": "2/3",
+        "criteria": "至少补 PDF 与 DOCX；库级导入导出对齐 `lib-dropdown--*` 三态",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 3,
+          "raw": "2/3"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "只有 markdown/html/text/json 四种导出。",
+        "evidence": [
+          "src/actions/document/export.ts:9"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1153,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G40",
+        "official": "官方块词表含 **`mermaid`、`audio`、`iframe`/`embed`/`html`、`subtitle`**（`model.md` 一、频次证据）",
+        "local": "Mermaid 无（G17）；音频块无；`linkPreview` 只近似 iframe；无独立副标题块",
+        "verdict": "缺失",
+        "score": "2/2",
+        "criteria": "逐类建块并核对官方行为；副标题与 H1–H4 的关系先验证再实现",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1154,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G41",
+        "official": "集合列类型 ≈13 类，各有专用编辑组件（`TextEditor`/`NumberEditor`/`SelectEditor`/`MultiSelectEditor`/`DateEditor`/`PersonEditor`/`PhoneEditor`/`EmailEditor`/`UrlEditor`/`RelationEditor`/`FormulaInput`/`CalculationsRow`/`SidebarAttachments`），并有**汇总行**",
+        "local": "属性类型散在前端 `AddPropertyMenu.tsx:52-127` 无权威枚举；无汇总行/Calculations 概念",
+        "verdict": "行为不同",
+        "score": "2/2",
+        "criteria": "列类型集与官方逐项对齐，汇总行可选",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1155,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G42",
+        "official": "通知走 `/api/ws-noti/v1`，另有 `/api/ws-rtc/v1`（实时通信）",
+        "local": "只有文档协作 ws（Hocuspocus）与 tldraw sync；无通知通道、无 RTC",
+        "verdict": "缺失",
+        "score": "2/3",
+        "criteria": "通知至少站内实时到达（与 G02 提醒投递共用一条通道）",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 3,
+          "raw": "2/3"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "只有文档协作 ws 与 tldraw sync，没有通知通道/RTC。",
+        "evidence": [
+          "src/app/api/collab",
+          "src/app/api/whiteboards"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1156,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G43",
+        "official": "**日历是纵向按日时间轴**：`↑ 显示前几天` + 逐日成节（今天/明天 + 星期）+ 每节 `添加任务`/`创建每日笔记`（V-实测 `dom-route-calendar.html`）",
+        "local": "☆ 已清（日历＝纵向按日时间轴）＝`src/lib/calendar/timeline.ts` 把采集的成节规则逐字写下：锚点起连续七天逐日成节（`9月27日 • 今天 • 星期日`…`10月3日 • 星期六`）→ 本月余日并成一节（表头两行 `10月4日`／`10月31日`）→ 再往后按月各并一节（`十一月`），`↑ 显示前几天` 每次 +3 天、`↓ 显示下个月` 每次 +1 月；`src/components/calendar/CalendarTimeline.tsx` **每一节**都挂 `添加任务`＋`创建每日笔记`（旧实现只在选中的那一日有），今天那一节是卡片＝采集里的 `isCard accentedSidebar`。月格留作次要视图（默认 `view==='timeline'`）。判据核对＝`timeline.test.ts` 10 条逐字对采集、`timeline-copy.test.ts` 7 条对语言包（`calendar.add.task`／`calendar.event.dailynote.create`／`calendar.show.previous.days`／`calendar.show.next.month`／`calendar.show.month`／`再显示 [0] 个`）、`e2e/calendar-timeline.spec.ts` 4 条（七天七节、只有 今天／明天 两档相对标签、逐节两个动作、在「明天」那一节加的任务落在这一节且过 reload、↑ +3 天、↓ +1 月、创建每日笔记进当天档）＝☆ 未观测＝并节（`10月4日 / 10月31日`、`十一月`）里官方怎么排任务与笔记，采集时这两节都是空的＝本地自补\"节内按 dueDate 升序＋笔记超 3 条走 `再显示 [0] 个`\"＝☆ `显示时间轴` 一枚是本地补名（官方只有反方向的 `calendar.show.month`）＝✎ 顺带修掉一处同类布局回归：视图切换最初塞在页头 actions，手机上把「日历」标题挤成半个字（真实视口截图核对后挪进正文行；`responsive.spec.ts` 里\"铃铛不压页头动作／标题可读\"两条正是同一族）＝✎ 本机 webkit 缺失导致 mobile 视觉工程整体跑不动（不只 /calendar），`npx playwright install webkit` 已补，六张 /calendar 基线重拍",
+        "verdict": "行为不同",
+        "score": "2/2",
+        "criteria": "改为按日纵向时间轴，保留\"显示前几天\"与逐日动作；月格若要留则作次要视图",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "evidence": [
+          "src/lib/calendar/timeline.ts"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1157,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G44",
+        "official": "**侧栏「连接」屏 = MCP / API 接入中心**（「你的 MCP 连接 — 让 AI 工具访问你的文档」「你的 API 连接 — 添加你的第一个 API 连接」，`dom-route-connections.html` ✓）",
+        "local": "本地无此路由；`BacklinksPanel` 挂在右栏信息 tab（`actions/document/backlinks.ts:18`），语义完全不同",
+        "verdict": "缺失",
+        "score": "2/3",
+        "criteria": "要么建 `/connections` 集成中心屏，要么显式记为不复刻（需产品决策）",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 3,
+          "raw": "2/3"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "没有 MCP/API 接入中心路由。",
+        "evidence": [
+          "src/app"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1158,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G45",
+        "official": "`/inbox` = **未分类文档收集箱**（页面标题「未分类」，侧栏 `sidebar-inbox` ✓）",
+        "local": "本地无该路由；未归属文档散在 `/documents` 与 `/collections`",
+        "verdict": "☆ 已清（全层）＝`2eac021`＋`e2e/inbox.spec.ts`",
+        "score": "2/2",
+        "criteria": "建 `/inbox`：列出无 folderId/parentId 的文档并可一键归档",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "台账本地列仍写着「本地无该路由」，与判定列冲突；现读已落地。",
+        "evidence": [
+          "e2e/inbox.spec.ts"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1159,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G46",
+        "official": "任务页分组 **未归档 / 今天 / 即将进行 / 所有任务**，空态文案点名 Inbox（`dom-route-tasks.html` ✓）→ 官方\"Schedule\"就是这组分档",
+        "local": "本地 `/tasks` 有截止/提醒/重复编辑（`tasks/page.tsx:286-321`）但**无这四档分组**；`TaskSchedule` 只是批量入参名",
+        "verdict": "☆ 已清（任务页四档分组已落地，本行系陈旧记录）＝`src/lib/task/grouping.ts` 定义 未归档/今天/即将进行/所有任务 四档，「今天」「即将进行」由 schedule 字段（dueDate/remindAt）驱动、以查看者本地时区判定；`TasksView.tsx:22` 接线 `tasksForGroup` + `applyCompletedFilter`；单测 `src/lib/task/grouping.test.ts`、实屏 `e2e/task-groups.spec.ts`。★ 遗留：官方空态文案点名 Inbox 一句未核。★ 交互回归（2026-10-14）：`applyCompletedFilter` 的开关默认关，已完成的一期不进列表——重复任务 rollForward 后屏上只剩新一期，这是设计而非缺陷；`e2e/core.spec.ts` 的 rollForward 用例因此先打开「显示已完成的任务」再断言\"完成的那期留作历史\"，并把删除锚定到已完成那一期（`.first()` 惰性 locator 在两期并存时会指向新一期）。",
+        "score": "2/2",
+        "criteria": "按官方四档分组，且\"今天/即将进行\"由 schedule 字段驱动（配合 G15）",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "四档分组已落地，但「今天/即将进行」按 dueDate 切，不是官方的 schedule 轴。",
+        "evidence": [
+          "src/lib/task/grouping.ts:5-32"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1160,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G47",
+        "official": "文件夹页带**文档计数**（「5 个文档」）与 Plus 限制徽标；星标/标签各有总页与空态文案（`dom-route-folders/starred/tags.html` ✓）",
+        "local": "本地有 `/favorites`、`/trash`、`/collections` 等，但列表项无文档计数徽标，空态文案与官方不一致",
+        "verdict": "☆ 已清（计数与空态逐屏对齐）＝文件夹计数与 `1 个文档`/`[0] 个文档` 已在前批落地；本批补 **`/tags` 标签总页**：`getTagBrowseRows`（标签＋链接，文档由 `getDocuments()` 供，故删除/日记/模板页不进计数）→ `buildTagTree`（计数、两级树、子级只显示自己那一档）→ 页面用 `所有标签`＋`[0] 个标签`＋`[0] 个文档`＋空态 `tags.all.tags.placeholder`；`/tags/[id]` 用 `tags.no.docs.found`；侧栏加 `标签` 入口、编辑器标签芯片改链到总页。`tag-browse.test.ts` 8 例＋`tag-browse-wiring.test.ts`＋e2e `tag-collection.spec.ts` 屏验。★ 未做：Plus 限制徽标（远端配额，本地无对应实体）",
+        "score": "1/1",
+        "criteria": "计数徽标与空态文案逐屏对齐（可直接引用 `feature-catalog.md` 的官方串）",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 1,
+          "cost": 1,
+          "raw": "1/1"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "evidence": [
+          "src/lib/browse/folder-counts.test.ts"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1161,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G48",
+        "official": "URL 形态：`/s/<空间名>--<uuid>/<route>`、`/f/<中文夹名>--<uuid>`、`/editor/d/<doc>[/<block>]`、新建用 `?nd=<新uuid>` 乐观占位",
+        "local": "本地 `/documents/[id]`、`/collections/[id]`、`/s/[token]`、`/p/[slug]`，无空间段、无中文 slug、无乐观占位参数",
+        "verdict": "有意偏差（路由结构不复刻）但**块级深链与乐观新建占位是功能**（见 G32）",
+        "score": "2/2",
+        "criteria": "若要贴近官方：新建后立即给 URL 占位参数避免闪屏；块深链必须稳定",
+        "status": "deliberate",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "baseStatus": "deliberate"
+      },
+      {
+        "line": 1162,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G49",
+        "official": "官方 AI 代理工具面：`blocks_get` / `insert_text` / `view_credits` / **`web_search` / `web_crawl` / `web_ask`**，上下文取 `user_selected_blocks` + `current_page`，并有 `context_badge` 徽标与 `connect_error` 态（`api-contract.md` §四）",
+        "local": "本地只有改写/续写/翻译/总结 + 生图（`AiBubbleMenu.tsx:18-22`），**无联网工具、无上下文徽标、无额度显示**",
+        "verdict": "缺失",
+        "score": "2/2",
+        "criteria": "至少补：选中块作为上下文的可见徽标、额度用量显示、连接失败态；联网工具按产品决策",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "AI 路由只有改写/续写/翻译/总结四个一次性补全，没有工具面、上下文徽标、额度。",
+        "evidence": [
+          "src/app/api/ai/route.ts"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1164,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G51",
+        "official": "排版层级是 **`title` / `subtitle` / `heading` / `strong` / `page` / `body`** 六档语义名（`api-contract.md` §一）",
+        "local": "本地是 `Heading 1–4` + 无 subtitle/strong/page 档（`Editor.tsx:249-251`），目录(TOC)按 1–4 生成",
+        "verdict": "行为不同",
+        "score": "2/2",
+        "criteria": "层级语义重映射；目录生成规则与官方\"标题/页面/卡片三种来源\"对齐（屏上实测空态文案已确认这三类）",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "快捷键样式槽已按 title/subtitle/heading/strong/body 映射；格式面板仍是 H1–H4。",
+        "evidence": [
+          "src/components/editor/extensions/craft-keymap.ts:22-37",
+          "src/components/editor/tabs/FormatTab.tsx"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1165,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G52",
+        "official": "任务状态含 **cancelled**（与 completed 并列），日历默认**只显示 pending**，任务可按**正则**过滤内容；官方块嵌套上限 **10**",
+        "local": "☆ 本行四件事，第 190 批清掉前两件：① **cancelled 档已落地**＝轴在正文与列两处同源（正文 `checked`／`cancelled` 两枚 attr，状态机单源 `src/lib/editor/task-status.ts`＝官方 `h9e` 线值映射与 `cde` 点击循环，含「`Canceled → Unchecked`」那枚反直觉分支；列 `status: todo|doing|done|cancelled` ＋ 与 `completedAt` 并列的 `cancelledAt`＝`contract.prisma:323`，迁移 `20261014T1105_add_task_cancelled_at`）；官方「已取消」行**只加删除线、原地不动**（`interactions.md:1087`）与「已于/完成于」双时间戳（`tasks.md:104`）都在；入口＝键 `SET_CANCELLED`（`⌘⌥⇧T`／`Ctrl-Alt-Shift-T`）＋ Mac-only `SET_CANCELLED_SLASH`（`⌘⌥/`，☆ win 侧 `chordFor` 返回 `null` 而不是发一枚错键）＋拖拽菜单「将任务标记为已取消／取消标记」；② **默认只显示 pending 已落地**＝任务页与日历同一谓词（`grouping.ts:77`），upcoming 分区里取消行不算未完成（`upcoming-groups.ts:201`），开关打开才与完成行一起回来（`api-contract.md:36`），提醒投递与 materialize 同样对取消档闭嘴（☆ 三处都是**只看 `isCompleted` 兜不住**的形状＝取消行没打勾）；③ **未动**＝按正则过滤任务内容全库零匹配；④ **未动**＝无深度上限校验；☆☆ 两处口径必须记下＝本行旧\"本地对照\"里的 `contract.prisma:304` 已随本批漂移到 323 行；而\"嵌套上限 10\"这个数字的出处是 `api-contract.md:22` 那条 API `depth` **显示深度**参数（\"Maximum depth the structure is displayed\"），本台账把它当作编辑面的嵌套上限，做④之前须先确认官方编辑器真的拒绝第 11 层，否则是拿显示参数立判据",
+        "verdict": "部分落地＋③④ 判**不做（有据，第 206 批）**＝①② 已清（第 190 批）；③④ 不是\"还没做\"，是**不该照原判据做**：④ 那个\"10\"的出处是 `api-contract.md:22` 的 `depth` 参数，原文**\"Maximum depth the structure is displayed\"**＝**显示深度**；而官方编辑器真实的轴是 `indentLevel`（`interactions.md` V23：一次 `Tab` 往 `_flexRow` 里插一个 `--indent-w: 28px` 占位 div、块序列是**扁平**的 `currentPage.subblocks`），下界守卫只有 `indentLevel + delta >= 0`、**盘上无任何\"拒绝第 11 层\"的证据** ⇒ 照做就是拿显示参数当编辑面判据（本台账自己禁止的那件事），故**不做**；③ 的出处是 `api-contract.md:37` 的 `contentRegex` **查询参数**（\"only tasks whose content matches the given regular expression\"），盘上**没有**任何\"任务页有正则过滤控件\"的证据 ⇒ 不据此造 UI，**不做**（若将来采到屏上控件或其输入框，再单独立项）；两条裁决的出处已钉成机器闸 `src/lib/block-depth-gate.test.ts`（4 条：`depth` 那条仍逐字带 `displayed` 与 `10`／V23 的 `--indent-w` 与\"缩进**不是嵌套**\"结语仍在／`contentRegex` 那句原文仍在；对照＝把 `displayed` 改成 `enforced`⇒闸逐字红、还原即绿）",
+        "score": "2/2",
+        "criteria": "③④ 判**不做（有据）**＝见判定列（第 206 批）；原备注「③ 补正则过滤档；④ 先核实\"10\"到底是显示深度还是编辑上限，再决定拒绝或降级」已由第 206 批结清",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": "local-says-missing",
+        "priority": "P1",
+        "note": "cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账已判不做。",
+        "evidence": [
+          "src/lib/editor/task-status.ts"
+        ],
+        "baseStatus": "partial"
+      },
+      {
+        "line": 1166,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G53",
+        "official": "块即树节点、**页面 = 有子块的块**，子树序列化成 markdown 字符串（`pageContent`），块带 `children` 计数",
+        "local": "本地页面是独立 `Document` + `parentId` 自树，块内子页与文档子页两套概念并存；无\"块子树 markdown 投影\"",
+        "verdict": "行为不同",
+        "score": "2/3",
+        "criteria": "统一为\"块树 + isPage 派生\"；导出/搜索/AI 读块都复用同一 markdown 投影",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 3,
+          "raw": "2/3"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1167,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G23",
+        "official": "集合公式函数 25 个（`table.formula.*`）、视图可互相转换（`collections.views.turn.into`）",
+        "local": "`lib/collection/formula.ts` 是子集；视图类型有 6 个组件但无「转换为」命令；`CollectionProperty.type` 允许值散在前端无权威枚举（`AddPropertyMenu.tsx:52-127`）",
+        "verdict": "行为不同",
+        "score": "2/2",
+        "criteria": "函数集与官方对齐并各有用例；视图转换保留数据",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1168,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G24",
+        "official": "设置分区真实生效（语言、集成、已发布内容等）",
+        "local": "☆ 部分落地（第 265 批复核）＝**原判\"每分区要么接后端要么移除入口\"这条判据已按官方**（未接的分区**入口已移除**）：`src/lib/app/settings-sections.ts` 是**接线台账**（14 分区各带 `wired` 标志），`SettingsModal.tsx:160` 用它过滤导航（`settingsSection(key)?.wired !== false`）⇒ **未接的 6 个分区（已发布内容／标签／订阅／团队／集成／助手）在导航里根本不出现**；真浏览器取证＝设置导航逐字只列 `空间设置／常规设置（外观／语言／高级设置）／快捷键／账户设置（通知）／关于 Craft`，六个未接分区名**一个都不在**；已接分区里：外观／通知（三开关已落库，第 231 批）／高级（含 G160 完成态外观）／账户／语言（诚实声明\"只有一种语言\"而非假选择器）／关于／快捷键都是真状态；☆ 一处口径＝原判那几条（`SettingsPanels.tsx:227-237` 语言静态 div 等）**坐标陈旧**，且\"移除入口\"正是本行判据允许的两条路之一；☆ 仍缺＝未接分区的**实体**（订阅/团队/集成/助手等要靠各自的后端批次），但本行判据已满足 ⇒ 记「部分落地」",
+        "verdict": "部分落地",
+        "score": "2/2",
+        "criteria": "每分区要么接后端要么移除入口（复刻阶段不允许假界面）",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "baseStatus": "partial"
+      },
+      {
+        "line": 1175,
+        "section": "三、P2（细节与手感）",
+        "cols": 5,
+        "id": "G32",
+        "official": "块级深链：URL 直接带 blockUuid（✓ `…/d/<doc>/<block>?s=…`），`data-block-id` 恒有",
+        "local": "本地 blockId 由**打开的编辑器惰性盖章**（历史记忆里已记），旧文档链接可能指向不到块",
+        "verdict": "行为不同",
+        "score": "2/2",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "块深链已可用，但 blockId 仍是跳到块时惰性盖章，不是官方那种恒有 data-block-id。",
+        "evidence": [
+          "src/lib/editor/block-anchor.ts:111-145",
+          "src/components/editor/extensions/block-id.ts"
+        ],
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1176,
+        "section": "三、P2（细节与手感）",
+        "cols": 5,
+        "id": "G33",
+        "official": "命令菜单 189 条命令全量可搜（R16）",
+        "local": "命令面板只有本地已有动作，条目数远小于官方；无 `commands.*` 命名体系",
+        "verdict": "缺失",
+        "score": "2/2",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P1",
+        "note": "命令面板只有本地已有动作与「查看所有快捷键」，没有 189 条 commands.* 注册表。",
+        "evidence": [
+          "src/components/search/CommandPalette.tsx"
+        ],
+        "baseStatus": "gap"
+      }
+    ],
+    "P2": [
+      {
+        "line": 1163,
+        "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+        "cols": 6,
+        "id": "G50",
+        "official": "代理**每次写操作附一句给用户看的动作说明**（契约原文 \"Optional message to display to the user describing the action\"）",
+        "local": "本地 AI 插入结果无任何动作说明/可审计文案",
+        "verdict": "缺失",
+        "score": "1/1",
+        "criteria": "AI 写入后显示一行动作说明（可撤销提示同源）",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 1,
+          "cost": 1,
+          "raw": "1/1"
+        },
+        "conflict": null,
+        "priority": "P2",
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1174,
+        "section": "三、P2（细节与手感）",
+        "cols": 5,
+        "id": "G31",
+        "official": "分隔线四档＝极细/细/常规/**粗**（R7）",
+        "local": "词汇表已迁到官方四档（`divider-styles.ts`），但 ★ 渲染层没跟上：`globals.css` 只给旧名 thin/medium/thick/dashed 写了规则，四个官方名全部落回基础 `hr` ⇒ 屏上四条一模一样（实屏截图实测到）。",
+        "verdict": "☆ 已清（四档各有宽度＋slash 四条命令）＝① `src/lib/editor/divider-commands.ts` 逐字收 `commands.insert.line.{extralight,light,regular,strong}` 四条，slash 面板由一条「分隔线」改成四条同名命令（各自 `setDivider(style)`），插入面板「插入 线」指向 常规；② `globals.css` 补官方四名的 `border-top` 宽度阶梯 1/2/3/6，旧名一律保留且宽度一字不动（改名不能改旧文档的样子），`light` 是四档里唯一没有旧名对应的一档；③ 单测 `divider-commands.test.ts` 17 条＝台账串逐字比对＋slash 接线＋**从 `globals.css` 抠出宽度断言严格递增**（这一条专为防\"词汇改了渲染没改\"）；实屏 `e2e/editor.spec.ts` 的 INSERTS 逐档断言 `hr[data-type=\"divider\"][data-style=\"X\"]`，四档截图核对宽度肉眼可辨。★ 遗留：`pageSeparator`（`===`）在官方 slash 四条之外，CSS 仍无规则。",
+        "score": "1/1",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 1,
+          "cost": 1,
+          "raw": "1/1"
+        },
+        "conflict": null,
+        "priority": "P2",
+        "evidence": [
+          "src/lib/editor/divider-commands.ts"
+        ],
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1177,
+        "section": "三、P2（细节与手感）",
+        "cols": 5,
+        "id": "G34",
+        "official": "表格部分操作禁止走上下文菜单并给「请使用 [0] 来 [1]」改道提示（R10）",
+        "local": "无该分支（`TableToolbar.tsx` 未实现禁用提示）",
+        "verdict": "缺失",
+        "score": "1/1",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 1,
+          "cost": 1,
+          "raw": "1/1"
+        },
+        "conflict": null,
+        "priority": "P2",
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1178,
+        "section": "三、P2（细节与手感）",
+        "cols": 5,
+        "id": "G35",
+        "official": "白板副本与原件联动、旧版升级迁移（R12）",
+        "local": "tldraw 白板无「副本联动原件」概念",
+        "verdict": "缺失（库为有意偏差）",
+        "score": "1/2",
+        "status": "deliberate",
+        "scoreParsed": {
+          "impact": 1,
+          "cost": 2,
+          "raw": "1/2"
+        },
+        "conflict": null,
+        "priority": "P2",
+        "baseStatus": "deliberate"
+      },
+      {
+        "line": 1179,
+        "section": "三、P2（细节与手感）",
+        "cols": 5,
+        "id": "G36",
+        "official": "离线语义可见：「离线更新于 [0]」、离线禁用表情/评论（R13）",
+        "local": "☆ 部分落地（第 220 批）＝① **离线保存徽标**已清＝纯核 `src/lib/offline/save-status.ts`（`offlineSaveLabel`：在线返回 `null`＝不动徽标；离线非每日笔记⇒「未连接到网络」`alert.not.connected.to.internet`；离线每日笔记且有本机草稿⇒「离线更新于 HH:MM」`daily.updated.offline.x`，逐字取自 `i18n-zh.tsv:200-201,1699`）＋`DocumentEditor.tsx` 接 `online/offline` 事件与 `getDraft` 时刻 ② **离线禁用表情**早已落地（`comments/offline-reaction.ts`，逐字两句）③ 仍缺＝**在线**徽标文案仍是本地「已保存」而非官方「所有更改已保存」（`alert.all.changes.saved`）⇒ 另立 **G1528**；④ **离线禁用评论**本仓**有意不做**（离线优先内核让评论写入断链也留得住＝架构选择，不照抄官方门禁）；**真浏览器取证**＝`ctx.setOffline(true)` 后徽标 `已保存→未连接到网络→已保存`，每日笔记且本机有草稿时逐字 `离线更新于 17:59`",
+        "verdict": "部分落地",
+        "score": "1/2",
+        "status": "partial",
+        "scoreParsed": {
+          "impact": 1,
+          "cost": 2,
+          "raw": "1/2"
+        },
+        "conflict": null,
+        "priority": "P2",
+        "baseStatus": "partial"
+      },
+      {
+        "line": 1180,
+        "section": "三、P2（细节与手感）",
+        "cols": 5,
+        "id": "G37",
+        "official": "移动端抽屉多档吸附（`data-vaul-snap-points` 17 处）",
+        "local": "底部 Sheet 无 snap points",
+        "verdict": "行为不同",
+        "score": "1/2",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 1,
+          "cost": 2,
+          "raw": "1/2"
+        },
+        "conflict": null,
+        "priority": "P2",
+        "baseStatus": "gap"
+      },
+      {
+        "line": 1181,
+        "section": "三、P2（细节与手感）",
+        "cols": 5,
+        "id": "G38",
+        "official": "未发布文档作者/展示控制（`toolbar.author.hidden/shown`）",
+        "local": "☆ 已清（第 219 批）＝官方把它归在发布面板的 `toolbar.visual.options` 五组之一（`publishing.md:58`），默认显示（`:17` 默认值表 `showAuthor: true`）。实现＝① 纯核 `src/lib/share/author-visibility.ts`（开关名「显示作者」`toolbar.show.author`／成对状态句「作者将显示」`toolbar.author.shown`·「不显示作者」`toolbar.author.hidden`／署名模板「来自 [0]」`collab.by.author.capital`，逐字取自 `i18n-zh.tsv:3669-3670,3726,854`；`showsAuthor` 只有显式 `false` 才隐藏＝旧行缺列不会把作者突然藏掉）② 落库列 `document_share.showAuthor`（元数据，**过离线内核**：`tables.ts` 白名单＋`contract.prisma` 加列，迁移 `20261015T0930_add_document_share_show_author` 已 `--advance-ref db` 应用并 psql 复核默认 `true`）③ 面板开关经 `applyLocal` 写（`handleShowAuthorChange`，与发布开关同形；镜像缺行退回新 action `setShareShowAuthor`）④ 公开页（`/p/[slug]` 与 `/s/[token]`）据该列渲不渲染署名；**关掉时不查、不回传作者名**（隐藏了还把名字发给客户端＝没隐藏）。测试＝`author-visibility.test.ts` 5 条＋`share.test.ts` 3 条（含\"关掉时 owner 读取次数＝0\"）＋`share-tier-sync.test.ts` 3 条接线闸；**真浏览器取证**＝面板开关默认开、状态句「作者将显示」→ 关掉后「不显示作者」，公开页署名从有到无，且**全新 context 读服务端**仍为无（＝真落库、非本机镜像假象）",
+        "verdict": "已清",
+        "score": "1/1",
+        "status": "aligned",
+        "scoreParsed": {
+          "impact": 1,
+          "cost": 1,
+          "raw": "1/1"
+        },
+        "conflict": null,
+        "priority": "P2",
+        "baseStatus": "aligned"
+      },
+      {
+        "line": 1182,
+        "section": "三、P2（细节与手感）",
+        "cols": 5,
+        "id": "G39",
+        "official": "AI：提示库、写作风格分析、PDF 问答、AI 额度与清除历史（`assistant.*` 223 条）",
+        "local": "只有改写/续写/翻译/总结 + 生图（`AiBubbleMenu.tsx:18-22`）",
+        "verdict": "缺失",
+        "score": "2/2",
+        "status": "gap",
+        "scoreParsed": {
+          "impact": 2,
+          "cost": 2,
+          "raw": "2/2"
+        },
+        "conflict": null,
+        "priority": "P2",
+        "baseStatus": "gap"
+      }
+    ]
+  },
+  "conflicts": [
+    {
+      "id": "G11",
+      "line": 1141,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "全库无 focus mode（`focusStyle` 只是文字底色 Mark）",
+      "verdict": "☆ 已清（专注模式：入口＋键位＋三块面板收起）＝`use-focus-store` 持旗标，`Sidebar.tsx` 旗标为真时整块不挂载、`DocumentEditor.tsx` 顶栏 `focusActive && 'hidden'`、右侧栏 `!focusActive && …`，**没有任何开合状态被改写**"
+    },
+    {
+      "id": "G12",
+      "line": 1142,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "无（只有 AI 的替换选区 `AiBubbleMenu.tsx:230`）",
+      "verdict": "缺失"
+    },
+    {
+      "id": "G13",
+      "line": 1143,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "☆ **已清**（第 288 批复核＋补强）＝**原判\"无快捷键展示\"整条作废**：① `ShortcutsPanel.tsx` **早已按官方六组渲染**（通用／编辑／表格／任务视图／合集／查找替换，组名取自 `commands.shortcuts.*`），且**只印本地真实绑定**（行来自 `KEY_BINDINGS`＝编辑器派发用的同一张表，注释写明\"列一条本 build 不响应的键，用户一",
+      "verdict": "已清"
+    },
+    {
+      "id": "G14",
+      "line": 1144,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "无任何 `addKeyboardShortcuts`（全库仅 font-size 一处 keymap）",
+      "verdict": "缺失"
+    },
+    {
+      "id": "G52",
+      "line": 1165,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "☆ 本行四件事，第 190 批清掉前两件：① **cancelled 档已落地**＝轴在正文与列两处同源（正文 `checked`／`cancelled` 两枚 attr，状态机单源 `src/lib/editor/task-status.ts`＝官方 `h9e` 线值映射与 `cde` 点击循环，含「`Canceled → Unchecked`」那枚反直觉分支；列 `status: todo|d",
+      "verdict": "部分落地＋③④ 判**不做（有据，第 206 批）**＝①② 已清（第 190 批）；③④ 不是\"还没做\"，是**不该照原判据做**：④ 那个\"10\"的出处是 `api-contract.md:22` 的 `depth` 参数，原文**\"Maximum depth the structure is displayed\""
+    },
+    {
+      "id": "G90",
+      "line": 1234,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "无 error boundary 文案",
+      "verdict": "已清（第 217 批）＝新增根错误边界 `src/app/error.tsx`＋纯判据 `src/lib/errors/lazy-load.ts`（`isLazyLoadError` 认打包器/浏览器实际抛的五种 message；命中走官方逐字两句＋「重新加载页面」，其余走通用句＋「重试」）；☆ **真浏览器取证**＝"
+    },
+    {
+      "id": "G164",
+      "line": 1350,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "账户分区存在；头像与改名无失败句；`dailySummary|每日摘要`、邮件入档零命中 ☆ **部分落地**（第 282 批）＝**改头像本批接真**（★ 实读发现比原判\"无失败句\"更糟：**头像那枚相机按钮根本没有处理器**，是个 inert 控件，且头像只渲染姓名首字母、**从不显示 `User.image`**）。基础设施其实都在：`contract.prisma:8` 有 `User.i",
+      "verdict": "部分落地"
+    },
+    {
+      "id": "G169",
+      "line": 1362,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "无层级标签概念（`TagsSection.tsx` 是文档标签列表，无父子轴）",
+      "verdict": "☆ 已清（校验＋UI＋e2e）＝`src/lib/tag/rules.ts` 把层级定死两档：`splitTagLevels` 解析 `父级/子级`，第二根 `/` 触发 `tags.only.one.child.allowed`、任一侧为空触发 `tags.tags.cannot.contain.delimiter."
+    },
+    {
+      "id": "G170",
+      "line": 1363,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "无任何标签校验；`#` 直接当文本处理",
+      "verdict": "☆ 已清（六条规则＋四态反馈全落地）＝`findTagViolation` 顺序＝hexColor（先于 `#` 剥离，故 `#ccc` 不会伪装成标签）→ 长度（本地项，官方无串）→ emoji → depth → delimiter → 空格标点 → numbers（`allowNumbers` 开关＝官方可切换项"
+    },
+    {
+      "id": "G610",
+      "line": 2215,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "☆ 部分落地（第 261 批）＝① **`lastViewedAt` 列已补**＝此前 `DocumentListView`/`SortableDocGrid` 声明了 `lastViewedAt?: string | null` 但**全仓无此列**（`contract.prisma` 的 Document 无、`getRecentDocuments` 也不 select）⇒ 列表档「上次浏览」",
+      "verdict": "部分落地"
+    },
+    {
+      "id": "G834",
+      "line": 3080,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "本地表格无集合层命令（`src/components/ui/` 无 table 组件，`ls` 已核对）；`grep -rn \"collections.add.a.row\" src` 无对应实现 ⇒ 缺失（长期项，非本轮 P 级）",
+      "verdict": "新线索（工厂实读累计 17 条）＋ `nc` 未解"
+    },
+    {
+      "id": "G1007",
+      "line": 3540,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "☆ 本地无对应物（无批量永久删除通路），故此未采项**不影响复刻进度** **✎ 第 101 批作废＝本地已建该通路（`src/components/document/TrashList.tsx` 多选工具栏＋计数回显确认框，接 `src/actions/document/delete.ts:32`）**",
+      "verdict": "**未采（主动放弃，理由已写）**"
+    },
+    {
+      "id": "G1380",
+      "line": 4692,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "本地无对应面＝纯工具契约面＝不进 §〇 P0",
+      "verdict": "☆ 与 G1379 **分层**＝G1379＝动词名级（同窗他名走有界错误）、本条＝实例级（同动词同篇他块成功）＝⇒ 今后报 `-32603` 要写明落在哪一层＝☆ 判死标准＝另一窗口重打同一 id 1–2 次（通了＝实例级瞬态；恒红＝该实例不可取，改用 `--depth 1 --format json` 与父块遍历两"
+    },
+    {
+      "id": "G1444",
+      "line": 4832,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "☆ 本地无此锚点＝`ctx-move-to` 这一 testid 在 `src/` 里零命中（现算＝`data-testid` 名册里没有它）＝⇒ 复刻时可把它作为「移动」入口的定位锚，并照官方给条件禁用留一档",
+      "verdict": "✓盘上一手（整枚引号 6 处全取词位＋窗口逐字）＝☆ 与在册关系＝**这枚键在 G 行上三把针全 0（裸词 0／独立成词 0／反引号 0）＝此前从未进过任何 G 行**＝而中文值「移动到…」以引号形在成文面已落地 8 处（裸串 15）＝⇒ **值在册、键与锚点层没在册＝不是\"已覆盖\"**（承 `features.md:"
+    }
+  ],
+  "unknownSections": [
+    [
+      "三点一〇八八、第 137 批＝**零依赖只读第七轮（队列①②③④⑤⑥六项",
+      9
+    ],
+    [
+      "三点一一〇九、第 170 批新登记的官方行为（2026-10-06 机器",
+      7
+    ],
+    [
+      "三点一一一一、第 172 批新登记的官方行为（2026-10-08 机器",
+      7
+    ],
+    [
+      "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",
+      6
+    ],
+    [
+      "三点一〇八二、第 131 批＝**零依赖只读六项打完：`--regexp",
+      6
+    ],
+    [
+      "三点一〇八三、第 132 批＝**零依赖只读六项续打：`--filter",
+      6
+    ],
+    [
+      "三点一〇八四、第 133 批＝**零依赖只读第三轮：检索面的两层布尔算子",
+      6
+    ],
+    [
+      "三点九三、第 79 批·下半 B79B（2026-09-28 07:33",
+      5
+    ],
+    [
+      "三点一〇四六、第 100 批·下半〔★★★ **V91 拖拽协议缺的那道",
+      5
+    ],
+    [
+      "三点一〇二一、第 94 批·上半〔零写入·★★**G803 静态结案：C",
+      4
+    ],
+    [
+      "三点一〇三八、第 97 批〔★★★ **G943 裁定＝连接器的按键不自",
+      4
+    ],
+    [
+      "三点一〇四四、第 99 批·尾记〔★★★ **用户点头后执行了那 12 ",
+      4
+    ],
+    [
+      "三点一〇六四、第 114 批〔★★★ **CM6 高亮优先级四层全案结案",
+      4
+    ],
+    [
+      "三点一〇六五、第 115 批〔★★★ **强制明暗那两个开关的键名结案＝",
+      4
+    ],
+    [
+      "★★★ 本轮净新增的八条官方事实",
+      4
+    ],
+    [
+      "三点一〇八九、第 138 批＝**零依赖只读第八轮（队列①②③④⑤五项全",
+      4
+    ],
+    [
+      "三点一〇九二、第 146 批＝**桥在同一会话内自愈 ⇒ 15 发尝试＝",
+      4
+    ],
+    [
+      "三点一〇九三、第 147 批＝**四发只读把上一批刚登记的 G1367 ",
+      4
+    ],
+    [
+      "三点一一〇六、第 167 批新登记的官方行为（2026-10-05 机器",
+      4
+    ],
+    [
+      "三点九五、第 81 批（2026-09-28 08:03–08:18，★",
+      3
+    ]
+  ],
+  "gapSections": [
+    [
+      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
+      76
+    ],
+    [
+      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
+      75
+    ],
+    [
+      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
+      32
+    ],
+    [
+      "P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
+      19
+    ],
+    [
+      "三点一〇三八、第 97 批〔★★★ **G943 裁定＝连接器的按键不自",
+      19
+    ],
+    [
+      "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",
+      18
+    ],
+    [
+      "三点二八、第 23 批（静态：日期解析链 + 同步层 + 只存在于代码里",
+      15
+    ],
+    [
+      "三点四十、第 36 批（块线格式 + 任务 API 契约 + 日历分区，",
+      13
+    ],
+    [
+      "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
+      13
+    ],
+    [
+      "三点一〇六一、第 111 批〔★★★ **两份主题名册互推结案＝同一份数",
+      12
+    ],
+    [
+      "三点一〇六二、第 112 批〔★★★ **代码块主题的\"装配处\"与\"缺省",
+      12
+    ],
+    [
+      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
+      11
+    ],
+    [
+      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
+      11
+    ],
+    [
+      "三点五三、第 44 批（★ UIFocusStack 分发算法 + 键表",
+      11
+    ],
+    [
+      "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",
+      10
+    ],
+    [
+      "三点一五、团队治理与快捷键焦点栈追加（来自 `team.md` 与 `k",
+      10
+    ],
+    [
+      "三点八七、第 76 批（★★ 契约面穷尽：`--help` 逐条读满 `",
+      10
+    ],
+    [
+      "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",
+      10
+    ],
+    [
+      "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
+      10
+    ],
+    [
+      "★★★ 本轮净新增的八条官方事实",
+      10
+    ]
+  ]
+}

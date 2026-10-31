@@ -8,6 +8,8 @@ import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from 
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
+import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
+import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
 
 export const CRAFT_KEYMAP_KEY = new PluginKey('craftKeymap');
 
@@ -23,7 +25,7 @@ export const CRAFT_KEYMAP_KEY = new PluginKey('craftKeymap');
  */
 const STYLE_SLOTS: Record<string, (editor: Editor) => boolean> = {
   // The official hierarchy has no 1–4 ladder, but the export table fixes title→h1,
-  // subtitle→h2, heading→h3, and the local format panel's fourth slot is 小标题 (h4).
+  // subtitle→h2, heading→h3, strong→h4; the format panel now shows those semantic names.
   TITLE: (editor) => editor.chain().focus().setHeading({ level: 1 }).run(),
   SUBTITLE: (editor) => editor.chain().focus().setHeading({ level: 2 }).run(),
   HEADING: (editor) => editor.chain().focus().setHeading({ level: 3 }).run(),
@@ -101,6 +103,27 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
   if (id === 'FIND_PREVIOUS') {
     editor.commands.findRefresh();
     editor.commands.findPrevious();
+    return true;
+  }
+
+  // `⇧⏎` renames the page block. A plain text caret must not claim the key: official Craft
+  // leaves Shift-Enter inert while typing in the body (G615), so the block has to be selected
+  // first. This build has no page-block node (G53/G1408) — the document title input is the page
+  // title, so that is the rename target.
+  if (id === 'RENAME') {
+    const selection = editor.state.selection as { node?: unknown };
+    if (!selection.node) return false;
+    if (typeof document === 'undefined' || !document.querySelector('[data-document-title]')) return false;
+    useTitleRequestStore.getState().ask();
+    return true;
+  }
+
+  // `⌘⇧M` asks for a comment on the block holding the caret. The request store
+  // opens the info panel's composer, the same path the block menu uses (G1470).
+  if (id === 'COMMENT') {
+    const index = topLevelIndexOf(editor.state.doc, editor.state.selection.from);
+    if (index < 0) return false;
+    useCommentRequestStore.getState().ask(editor.state.doc.child(index).textContent);
     return true;
   }
 

@@ -58,14 +58,14 @@ test('任务页设的截止日期能穿过下一次正文保存', async ({ page 
   await editor.click();
   await page.keyboard.type(`[] ${title}`, { delay: 20 });
   await expect(editor.locator('.task-list-item')).toHaveCount(1);
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 20_000 });
 
   // 第二次保存＝旧代码里"再换一枚 uuid"的那一步：正文没加行，只是把同一行改了个字。
   await editor.locator('.task-list-item p').first().click();
   await page.keyboard.press('End');   // ☆ 必须先落到行尾：点击只把光标放在点到的那个字中间，插进标题串里之后这一行就再也按标题找不到了
   await page.keyboard.type(' 贰', { delay: 20 });
   await expect(page.getByRole('status').getByText('未保存')).toBeVisible({ timeout: 5_000 });
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 20_000 });
 
   // ☆ 任务页开在**同一上下文的第二个标签页**，编辑页那一栏自始至终不重载：
   //   把 `page.goto(docUrl)` 放进关键路径会额外制造一次"空正文先落库、真正文后落库"的竞态
@@ -88,7 +88,7 @@ test('任务页设的截止日期能穿过下一次正文保存', async ({ page 
   //   这一动到底存没落库就变成假证。
   const status = page.getByRole('status');
   await expect(status.getByText('未保存')).toBeVisible({ timeout: 5_000 });
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 20_000 });
 
   await openTaskList(tasksTab);
   await expect(row).toHaveCount(1);

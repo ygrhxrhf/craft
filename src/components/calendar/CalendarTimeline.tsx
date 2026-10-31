@@ -113,8 +113,8 @@ function Section({
 }) {
   const isToday = section.kind === 'day' && section.relative === '今天';
   const dayTasks = tasks
-    .filter((task) => task.dueDate && dayInSection(section, new Date(task.dueDate)))
-    .sort((a, b) => new Date(a.dueDate ?? 0).getTime() - new Date(b.dueDate ?? 0).getTime());
+    .filter((task) => task.scheduleDate && dayInSection(section, new Date(task.scheduleDate)))
+    .sort((a, b) => new Date(a.scheduleDate ?? 0).getTime() - new Date(b.scheduleDate ?? 0).getTime());
   const dayNotes = notes.filter(
     (note) => note.dailyNoteDate && dayInSection(section, new Date(note.dailyNoteDate))
   );

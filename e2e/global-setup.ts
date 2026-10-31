@@ -48,7 +48,7 @@ async function register(page: Page) {
 
 /** The editor shows 已保存 once the autosave round-trip lands. */
 async function expectSaved(page: Page) {
-  await page.getByText('已保存').first().waitFor({ timeout: 20_000 });
+  await page.getByText('所有更改已保存').first().waitFor({ timeout: 20_000 });
   await page.waitForTimeout(500);
 }
 

@@ -26,6 +26,7 @@ function task(id: string, dueDate: string | null, createdAt: string | null = nul
     status: 'todo',
     cancelledAt: null,
     dueDate,
+    scheduleDate: dueDate,
     remindAt: null,
     recurrence: null,
     recurrenceEnd: null,

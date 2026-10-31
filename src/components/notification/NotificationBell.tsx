@@ -39,6 +39,16 @@ export function NotificationBell() {
     if (table === 'notification') setRevision((n) => n + 1);
   }), []);
 
+  // G42: the dedicated notification channel. The shared events stream already
+  // wakes the sync manager; this one refreshes the bell even when the poller's
+  // batch only carries notification rows.
+  useEffect(() => {
+    if (typeof EventSource === 'undefined') return;
+    const stream = new EventSource('/api/v1/notifications/stream');
+    stream.onmessage = () => setRevision((n) => n + 1);
+    return () => stream.close();
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     inboxRead

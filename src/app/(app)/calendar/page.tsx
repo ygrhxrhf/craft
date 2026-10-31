@@ -114,11 +114,11 @@ export default function CalendarPage() {
         await manager.applyLocal({
           table: 'task',
           id,
-          patch: taskPatchFor.create({ id, userId, title, dueDate }, new Date().toISOString()),
+          patch: taskPatchFor.create({ id, userId, title, scheduleDate: dueDate }, new Date().toISOString()),
         });
         await manager.flushNow();
       } else {
-        await createTask(title, dueDate);
+        await createTask(title, null, dueDate);
       }
       setTaskTitle('');
       await load();

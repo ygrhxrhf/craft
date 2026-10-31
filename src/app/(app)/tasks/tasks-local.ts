@@ -19,7 +19,7 @@ import { mergePending, type PendingRow } from '@/components/sync/local-records';
  * 但**本地 store 没有这道闸门**，写进去的脏键会直接被离线期的 UI 读到。
  */
 export const TASK_WS_COLS = [
-  'id', 'userId', 'documentId', 'blockId', 'title', 'isCompleted', 'dueDate', 'remindAt',
+  'id', 'userId', 'documentId', 'blockId', 'title', 'isCompleted', 'dueDate', 'scheduleDate', 'remindAt',
   'recurrence', 'recurrenceEnd', 'completedAt', 'cancelledAt', 'status', 'order', 'createdAt', 'updatedAt', 'deletedAt',
 ] as const;
 
@@ -27,7 +27,7 @@ export type TaskPatch = Record<string, unknown>;
 
 export const taskPatchFor = {
   create(
-    input: { id: string; userId: string; title: string; dueDate?: string | null },
+    input: { id: string; userId: string; title: string; dueDate?: string | null; scheduleDate?: string | null },
     now: string,
   ): TaskPatch {
     const patch: TaskPatch = {
@@ -41,12 +41,14 @@ export const taskPatchFor = {
     };
     // 不给 dueDate 写 null 占位：新建未填截止日的任务与"显式清空截止日"在 patch 语义里不该同形。
     if (input.dueDate) patch.dueDate = input.dueDate;
+    if (input.scheduleDate) patch.scheduleDate = input.scheduleDate;
     return patch;
   },
 
   schedule(s: TaskSchedule, now: string): TaskPatch {
     return {
       dueDate: s.dueDate,
+      scheduleDate: s.scheduleDate,
       remindAt: s.remindAt,
       recurrence: s.recurrence,
       recurrenceEnd: s.recurrenceEnd,
@@ -65,6 +67,7 @@ function taskDefaults(id: string, p: PendingRow): TaskItem {
     status: 'todo',
     cancelledAt: null,
     dueDate: null,
+    scheduleDate: null,
     remindAt: null,
     recurrence: null,
     recurrenceEnd: null,

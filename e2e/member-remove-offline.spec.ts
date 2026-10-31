@@ -67,7 +67,7 @@ test('断链时移除协作者仍成立，且刷新后那一行不再回来', as
   await page.waitForURL(/\/documents\//);
   const docUrl = page.url();
   await page.getByPlaceholder('页面标题').fill(`移除成员 ${Date.now()}`);
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 30_000 });
 
   // 邀请 PEER 与 KEEPER（都走内核，但 resolveDocumentMember 那一发是服务端读，此刻链路还通）。
   // ☆ KEEPER 是判据的正控制：移除 PEER 之后，"PEER 不在名册里"只有在名册**已经加载**时才算数，

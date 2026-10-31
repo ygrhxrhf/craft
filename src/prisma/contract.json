@@ -36,6 +36,10 @@
       "model": "Comment",
       "namespace": "public"
     },
+    "connections": {
+      "model": "Connection",
+      "namespace": "public"
+    },
     "daily_notes_config": {
       "model": "DailyNotesConfig",
       "namespace": "public"
@@ -1163,6 +1167,114 @@
               },
               "namespaceId": "public",
               "table": "comment_threads"
+            }
+          },
+          "Connection": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "endpoint": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "kind": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "token": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "endpoint": {
+                  "column": "endpoint"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "kind": {
+                  "column": "kind"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "token": {
+                  "column": "token"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "connections"
             }
           },
           "DailyNotesConfig": {
@@ -3039,6 +3151,13 @@
                   "kind": "scalar"
                 }
               },
+              "scheduleDate": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "status": {
                 "nullable": false,
                 "type": {
@@ -3157,6 +3276,9 @@
                 },
                 "remindAt": {
                   "column": "remindAt"
+                },
+                "scheduleDate": {
+                  "column": "scheduleDate"
                 },
                 "status": {
                   "column": "status"
@@ -3289,6 +3411,21 @@
                 },
                 "to": {
                   "model": "Collection",
+                  "namespace": "public"
+                }
+              },
+              "connections": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "Connection",
                   "namespace": "public"
                 }
               },
@@ -4620,6 +4757,97 @@
                   ],
                   "name": "comments_userId_idx_a489d58a",
                   "prefix": "comments_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "connections": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "endpoint": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": ""
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "kind": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "mcp"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "token": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "connections"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "connections_userId_idx_a489d58a",
+                  "prefix": "connections_userId_idx",
                   "unique": false
                 }
               ],
@@ -6122,6 +6350,11 @@
                   "nativeType": "timestamptz",
                   "nullable": true
                 },
+                "scheduleDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "status": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -6595,10 +6828,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "0b0378ba105e999d92934c6d1711195629ebdf9b6e34df22dbd284699ec5f47f"
+    "storageHash": "bd0e6de84898ccbdafc22218a2c2c4d5b42a3a70723a1cd91dffa59e13b8b8f0"
   },
   "execution": {
-    "executionHash": "5c8999675ae43a5894aad28c1d0f9956b353f9d1be1527412861ed4c07d7274b",
+    "executionHash": "7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b",
     "mutations": {
       "defaults": [
         {
@@ -6792,6 +7025,32 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "comments"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "connections"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "connections"
           }
         },
         {

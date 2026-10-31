@@ -104,6 +104,10 @@ function renderMarkdown(node: any): string {
       return (node.content ?? []).map(renderMarkdown).join('\n').split('\n').map((line: string) => `> ${line}`).join('\n');
     case 'codeBlock':
       return `\`\`\`${node.attrs?.language ?? ''}\n${textContent(node)}\n\`\`\``;
+    case 'audioBlock':
+      return `[音频](${node.attrs?.src ?? ''})`;
+    case 'htmlBlock':
+      return `\`\`\`html\n${node.attrs?.html ?? ''}\n\`\`\``;
     case 'horizontalRule':
       return '---';
     case 'divider': {
@@ -225,6 +229,8 @@ function renderHtml(node: any): string {
     case 'attachment': return `<a href="${escapeHtml(node.attrs?.url ?? '')}" data-type="attachment">📎 ${escapeHtml(node.attrs?.name ?? '附件')}</a>`;
     case 'linkPreview': return `<a href="${escapeHtml(node.attrs?.url ?? '')}" data-type="linkPreview">${escapeHtml(node.attrs?.title || node.attrs?.url || '')}</a>`;
     case 'videoEmbed': return `<iframe src="${escapeHtml(node.attrs?.src ?? '')}" data-type="videoEmbed" allowFullScreen></iframe>`;
+    case 'audioBlock': return `<div data-type="audio-embed"><audio controls src="${escapeHtml(node.attrs?.src ?? '')}"></audio></div>`;
+    case 'htmlBlock': return `<div data-type="html-embed"><iframe sandbox srcdoc="${escapeHtml(node.attrs?.html ?? '')}"></iframe></div>`;
     case 'whiteboardLink': return `<a href="/whiteboards/${escapeHtml(node.attrs?.whiteboardId ?? '')}" data-type="whiteboardLink">🎨 ${escapeHtml(node.attrs?.title ?? '白板')}</a>`;
     case 'whiteboardEmbed': return `<div data-type="whiteboard-embed" data-whiteboard-id="${escapeHtml(node.attrs?.whiteboardId ?? '')}" data-title="${escapeHtml(node.attrs?.title ?? '白板')}">🎨 ${escapeHtml(node.attrs?.title ?? '白板')}</div>`;
     case 'mirrorBlock': return `<div data-type="mirrorBlock"><a href="${escapeHtml(mirrorTargetHref(node))}">镜像：${escapeHtml(node.attrs?.title ?? '未命名')}</a></div>`;

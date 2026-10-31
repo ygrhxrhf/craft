@@ -103,6 +103,8 @@ describe('自动版本快照（改动判据）', () => {
       width: null,
       pageStyle: { theme: 'default' },
     });
+    // G18：快照落库后 Document.version 跟着走。
+    expect(db.documentUpdate).toHaveBeenCalledWith({ version: 1 });
   });
 
   it('只改正文且十分钟窗口未到，不存新版', async () => {
@@ -128,6 +130,7 @@ describe('自动版本快照（改动判据）', () => {
 
     expect(db.versionCreate).toHaveBeenCalledTimes(1);
     expect(db.versionCreate.mock.calls[0]![0]!.version).toBe(4);
+    expect(db.documentUpdate).toHaveBeenCalledWith({ version: 4 });
   });
 
   it('什么都没动就不存版', async () => {

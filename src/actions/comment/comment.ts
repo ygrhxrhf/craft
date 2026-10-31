@@ -5,6 +5,7 @@ import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { notifyCommentRecipients } from '@/lib/notification/comment-notifications';
 
 async function assertDocumentAccess(
   documentId: string,
@@ -42,6 +43,17 @@ export async function createThread(
   });
   // 线程 + 首条回复同批创建 → 合并一次广播
   await emitSyncEventSafe(db, session.user.id, ['comment_thread', 'comment'], threadId);
+  try {
+    await notifyCommentRecipients(db, {
+      documentId,
+      authorId: session.user.id,
+      body,
+      kind: 'thread',
+    });
+  } catch (error) {
+    // A notification failure must not roll back the comment itself.
+    console.error('[comment] notification delivery failed', error);
+  }
   revalidatePath(`/documents/${documentId}`);
   return { threadId };
 }
@@ -118,6 +130,16 @@ export async function addReply(threadId: string, body: string) {
     body: text.slice(0, 2000),
   });
   await emitSyncEventSafe(db, session.user.id, ['comment'], replyId);
+  try {
+    await notifyCommentRecipients(db, {
+      documentId: (thread as { documentId: string }).documentId,
+      authorId: session.user.id,
+      body: text,
+      kind: 'reply',
+    });
+  } catch (error) {
+    console.error('[comment] notification delivery failed', error);
+  }
   revalidatePath(`/documents/${(thread as { documentId: string }).documentId}`);
 }
 

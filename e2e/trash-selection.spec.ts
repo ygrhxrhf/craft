@@ -22,7 +22,7 @@ test('trash selection deletes only the checked documents', async ({ page }) => {
   // The header debounces the title write, and a reload would abort it in flight.
   await page.waitForTimeout(1_500);
   await page.keyboard.press('Control+s');
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   const sidebar = page.locator('aside');
   // The tree refetches on navigation, not on a title write.

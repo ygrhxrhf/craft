@@ -27,6 +27,7 @@ model User {
   tasks         Task[]
   documentMembers DocumentMember[]
   notifications Notification[]
+  connections   Connection[]
 
   @@map("users")
 }
@@ -328,6 +329,8 @@ model Task {
   title       String
   isCompleted Boolean  @default(false)
   dueDate     TimestamptzString?
+  // G15: schedule（计划哪天做）与 deadline（dueDate，最晚必须完成）是两套独立属性。
+  scheduleDate TimestamptzString?
   remindAt    TimestamptzString?
   recurrence  String?
   recurrenceEnd TimestamptzString?
@@ -455,7 +458,7 @@ model DocumentMember {
   id         String   @id @default(uuid())
   documentId String
   userId     String
-  role       String   @default("editor") // "editor" | "commenter" | "viewer"
+  role       String   @default("editor") // "editor" | "commenter" | "viewer" | "requested"（待批准的编辑请求，不授予权限）
   addedBy    String?
   createdAt  TimestamptzString @default(now())
   updatedAt  temporal.updatedAtString()
@@ -466,6 +469,24 @@ model DocumentMember {
   @@unique([documentId, userId])
   @@index([userId])
   @@map("document_members")
+}
+
+// G21/G44: the local MCP/API access centre. This build stores the connection
+// descriptor only; it does not speak either protocol yet.
+model Connection {
+  id        String   @id @default(uuid())
+  userId    String
+  kind      String   @default("mcp") // "mcp" | "api"
+  name      String
+  endpoint  String   @default("")
+  token     String?
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("connections")
 }
 
 // Binary Yjs room state, authoritative while a Hocuspocus room is live.

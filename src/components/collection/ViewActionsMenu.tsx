@@ -7,15 +7,29 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { getSyncManager } from '@/lib/sync-core';
 import { toast } from '@/components/ui/toast';
 import { confirmDialog } from '@/lib/dialog/show';
-import { DELETE_VIEW } from '@/lib/collection/view-menu-copy';
+import { DELETE_VIEW, TURN_VIEW_INTO } from '@/lib/collection/view-menu-copy';
+
+type ViewType = 'table' | 'kanban' | 'calendar' | 'list' | 'gallery' | 'form';
+
+const VIEW_TYPE_LABELS: { type: ViewType; label: string }[] = [
+  { type: 'table', label: '表格' },
+  { type: 'kanban', label: '看板' },
+  { type: 'calendar', label: '日历' },
+  { type: 'list', label: '列表' },
+  { type: 'gallery', label: '画廊' },
+  { type: 'form', label: '表单' },
+];
 
 interface ViewActionsMenuProps {
-  views: { id: string; name: string; isActive: boolean }[];
+  views: { id: string; name: string; isActive: boolean; type: ViewType }[];
   activeViewId: string;
 }
 
@@ -89,6 +103,25 @@ export function ViewActionsMenu({ views, activeViewId }: ViewActionsMenuProps) {
     }
   };
 
+  const handleConvert = async (type: ViewType) => {
+    if (busy || !activeView || type === activeView.type) return;
+    setBusy(true);
+    try {
+      const manager = getSyncManager();
+      await manager.applyLocal({
+        table: 'collection_view',
+        id: activeView.id,
+        patch: { type },
+      });
+      await manager.flushNow();
+      router.refresh();
+    } catch {
+      toast.add({ id: 'view-convert-offline', type: 'warning', title: '需要网络' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -100,6 +133,22 @@ export function ViewActionsMenu({ views, activeViewId }: ViewActionsMenuProps) {
         <MoreHorizontal className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger disabled={busy || !activeView}>
+            {TURN_VIEW_INTO}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            {VIEW_TYPE_LABELS.map((option) => (
+              <DropdownMenuItem
+                key={option.type}
+                disabled={busy || option.type === activeView?.type}
+                onClick={() => void handleConvert(option.type)}
+              >
+                {option.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         <DropdownMenuItem
           variant="destructive"
           disabled={onlyView}

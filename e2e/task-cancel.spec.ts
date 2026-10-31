@@ -79,7 +79,7 @@ async function openBlockMenu(page: Page, index: number) {
 
 /** The body is the truth, so the autosave must land before a reload proves anything. */
 async function waitSaved(page: Page) {
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 20_000 });
   await page.waitForTimeout(1_000);
 }
 

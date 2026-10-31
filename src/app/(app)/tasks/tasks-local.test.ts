@@ -6,10 +6,10 @@ import type { TaskItem } from '@/actions/task/task';
 const NOW = '2026-09-30T00:00:00.000Z';
 
 describe('tasks 本地写 patch', () => {
-  it('白名单与 SYNC_TABLES.task 的 17 列一致', () => {
+  it('白名单与 SYNC_TABLES.task 的 18 列一致', () => {
     expect([...TASK_WS_COLS].sort()).toEqual([
       'blockId', 'cancelledAt', 'completedAt', 'createdAt', 'deletedAt', 'documentId', 'dueDate',
-      'id', 'isCompleted', 'order', 'recurrence', 'recurrenceEnd', 'remindAt',
+      'id', 'isCompleted', 'order', 'recurrence', 'recurrenceEnd', 'remindAt', 'scheduleDate',
       'status', 'title', 'updatedAt', 'userId',
     ]);
   });
@@ -29,10 +29,10 @@ describe('tasks 本地写 patch', () => {
 
   it('改期：只动四个日程列 + updatedAt', () => {
     const p = taskPatchFor.schedule(
-      { dueDate: '2026-10-01T09:00:00.000Z', remindAt: null, recurrence: null, recurrenceEnd: null },
+      { dueDate: '2026-10-01T09:00:00.000Z', scheduleDate: '2026-10-02T09:00:00.000Z', remindAt: null, recurrence: null, recurrenceEnd: null },
       NOW,
     );
-    expect(Object.keys(p).sort()).toEqual(['dueDate', 'recurrence', 'recurrenceEnd', 'remindAt', 'updatedAt']);
+    expect(Object.keys(p).sort()).toEqual(['dueDate', 'recurrence', 'recurrenceEnd', 'remindAt', 'scheduleDate', 'updatedAt']);
   });
 
   it('标题两端去空白（与服务端 createTask 的 trim 同形）', () => {
@@ -43,7 +43,7 @@ describe('tasks 本地写 patch', () => {
     const allowed = new Set<string>(TASK_WS_COLS);
     const patches = [
       taskPatchFor.create({ id: 't1', userId: 'u1', title: 'x' }, NOW),
-      taskPatchFor.schedule({ dueDate: null, remindAt: null, recurrence: null, recurrenceEnd: null }, NOW),
+      taskPatchFor.schedule({ dueDate: null, scheduleDate: null, remindAt: null, recurrence: null, recurrenceEnd: null }, NOW),
     ];
     for (const p of patches) for (const k of Object.keys(p)) expect(allowed.has(k)).toBe(true);
   });
@@ -55,6 +55,7 @@ const task = (over: Partial<TaskItem> & { id: string }): TaskItem => ({
   status: 'todo',
   cancelledAt: null,
   dueDate: null,
+  scheduleDate: null,
   remindAt: null,
   recurrence: null,
   recurrenceEnd: null,

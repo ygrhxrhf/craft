@@ -24,7 +24,7 @@ test('收藏 writes through the offline kernel and reads back on the favorites v
   await page.locator('input[placeholder="页面标题"]').fill(title);
   await page.waitForTimeout(1_500);
   await page.keyboard.press('Control+s');
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   // The tree refetches on navigation, so reload to get the row.
   await page.goto('/documents');

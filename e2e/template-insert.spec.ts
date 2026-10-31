@@ -33,7 +33,7 @@ test('from a template, the body lands at the caret and the slash query is alread
   const editor = page.locator('[contenteditable="true"]').first();
   await editor.click();
   await page.keyboard.type(marker, { delay: 5 });
-  await expect(page.getByRole('status')).toHaveText('已保存', { timeout: 20_000 });
+  await expect(page.getByRole('status')).toHaveText('所有更改已保存', { timeout: 20_000 });
 
   // The button lives under 信息 → 动作, the same sub-page the version-history test walks.
   await page.getByRole('button', { name: '信息', exact: true }).click();

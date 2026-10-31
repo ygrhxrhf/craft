@@ -46,7 +46,7 @@ async function titledDoc(page: Page, title: string) {
   }
   await expect(page).toHaveURL(/\/documents\//);
   await page.getByPlaceholder('页面标题').fill(title);
-  await expect(page.getByText('已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
 }
 
 /** Sends a document from the sidebar tree to the trash. */

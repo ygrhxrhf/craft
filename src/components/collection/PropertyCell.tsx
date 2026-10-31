@@ -60,6 +60,9 @@ export function PropertyCell({ property, value, onChange, item, properties }: Pr
       return <URLCell value={parsed} onChange={onChange} />;
     case 'email':
       return <EmailCell value={parsed} onChange={onChange} />;
+    case 'phone':
+    case 'person':
+      return <TextCell value={parsed} onChange={onChange} />;
     case 'formula':
       return <FormulaCell property={property} item={item} properties={properties} />;
     case 'created_at':

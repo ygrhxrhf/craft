@@ -26,6 +26,8 @@ const PROPERTY_TYPES: { value: string; label: string }[] = [
   { value: 'checkbox', label: '勾选框' },
   { value: 'url', label: '链接' },
   { value: 'email', label: '邮箱' },
+  { value: 'phone', label: '电话' },
+  { value: 'person', label: '人员' },
   { value: 'file', label: '文件' },
   { value: 'relation', label: '关联' },
   { value: 'formula', label: '公式' },

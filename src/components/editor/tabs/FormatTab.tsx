@@ -27,18 +27,19 @@ import {
   type FormatHost,
 } from '@/lib/editor/format-commands';
 import { MIXED_LABEL, type TriState } from '@/lib/editor/format-presence';
+import { TEXT_STYLE_LABELS, headingLabel } from '@/lib/editor/semantic-levels';
 
 interface FormatTabProps {
   editor: Editor;
 }
 
 const textStyles = [
-  { label: '标题 1', action: (e: Editor) => e.chain().focus().toggleHeading({ level: 1 }).run(), check: (e: Editor) => e.isActive('heading', { level: 1 }) },
-  { label: '标题 2', action: (e: Editor) => e.chain().focus().toggleHeading({ level: 2 }).run(), check: (e: Editor) => e.isActive('heading', { level: 2 }) },
-  { label: '副标题', action: (e: Editor) => e.chain().focus().toggleHeading({ level: 3 }).run(), check: (e: Editor) => e.isActive('heading', { level: 3 }) },
-  { label: '小标题', action: (e: Editor) => e.chain().focus().toggleHeading({ level: 4 }).run(), check: (e: Editor) => e.isActive('heading', { level: 4 }) },
-  { label: '正文', action: (e: Editor) => e.chain().focus().setParagraph().run(), check: (e: Editor) => e.isActive('paragraph') },
-  { label: '说明', action: (e: Editor) => e.chain().focus().toggleBlockquote().run(), check: (e: Editor) => e.isActive('blockquote') },
+  { label: headingLabel(1), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 1 }).run(), check: (e: Editor) => e.isActive('heading', { level: 1 }) },
+  { label: headingLabel(2), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 2 }).run(), check: (e: Editor) => e.isActive('heading', { level: 2 }) },
+  { label: headingLabel(3), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 3 }).run(), check: (e: Editor) => e.isActive('heading', { level: 3 }) },
+  { label: headingLabel(4), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 4 }).run(), check: (e: Editor) => e.isActive('heading', { level: 4 }) },
+  { label: TEXT_STYLE_LABELS.body, action: (e: Editor) => e.chain().focus().setParagraph().run(), check: (e: Editor) => e.isActive('paragraph') },
+  { label: TEXT_STYLE_LABELS.caption, action: (e: Editor) => e.chain().focus().toggleBlockquote().run(), check: (e: Editor) => e.isActive('blockquote') },
 ];
 
 const toggleGroupButtons = [

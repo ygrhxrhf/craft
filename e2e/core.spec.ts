@@ -28,7 +28,7 @@ test('create document, edit, and persist content', async ({ page }) => {
   const marker = `E2E 冒烟内容 ${Date.now()}`;
   await editor.click();
   await editor.fill(marker);
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 15_000 });
 
   // 刷新后内容仍在
   await page.reload();
@@ -218,7 +218,7 @@ test('[[^ link addresses a single block and jumps back to it', async ({ page }) 
   const targetId = new URL(page.url()).pathname.split('/').pop()!;
   await target.click();
   await page.keyboard.type(marker, { delay: 8 });
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   const source = await newDocument(page);
   await source.click();
@@ -227,9 +227,13 @@ test('[[^ link addresses a single block and jumps back to it', async ({ page }) 
   await expect(page.getByText('链接到块')).toBeVisible({ timeout: 20_000 });
   await page.locator(`button[data-block-hit-document="${targetId}"]`).first().click();
 
-  const chip = page.locator('[data-block-index]').first();
+  // G32：块一打开就有稳定 id，所以链接存的是 `blockId`（chip 带 `data-block-target`），
+  // 不再是"按位置"的 `data-block-index`——那条位置回退只服务 B3 之前的旧链接。
+  const chip = page.locator('[data-block-target]').first();
   await expect(chip).toBeVisible();
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
+  // B3 之后每个块都带 id，`[data-block-id]`.first() 会命中空块 ⇒ 用 chip 上那枚 id 精确取。
+  const targetBlockId = (await chip.getAttribute('data-block-target'))!;
 
   // G1495：那枚高亮 overlay 自带 1400ms 生命期（`block-anchor.ts:60` 到点就 `remove()`），
   // 而点完 chip 再等 `waitForURL` 才轮到断言 ⇒ dev 按需编译快过 1400ms 时这段窗口整个走完，
@@ -239,14 +243,13 @@ test('[[^ link addresses a single block and jumps back to it', async ({ page }) 
   // ☆ 不许把 `block-anchor.ts` 的 1400ms 调大来"修"这条断言——那是拿产品行为喂测试。
   const flashSeen = page.waitForSelector('.block-anchor-flash', { state: 'attached', timeout: 20_000 });
   await chip.click();
-  // `#i-\d+` alone was a false gate: a push that only lands the fragment leaves the browser
-  // on the *source* document with `#i-0` appended, and everything after this line then
-  // measures the wrong page. The address has to name the linked document to mean a jump.
-  await page.waitForURL(new RegExp(`/documents/${targetId}#i-\\d+`));
+  // 跨文档跳转：地址必须落到**目标文档**的 id 锚点上。id 由 B3 常驻，所以这里直接是 `#b-`，
+  // 不再先经过 `#i-N` 再被编辑器改写。
+  await page.waitForURL(new RegExp(`/documents/${targetId}#b-${targetBlockId}`));
 
   // The jump stamps a stable id through the open editor, so the address bar ends up
   // on the id rather than the positional hint.
-  const anchored = page.locator('[data-block-id]').first();
+  const anchored = page.locator(`[data-block-id="${targetBlockId}"]`);
   await flashSeen;
   await expect(anchored).toHaveText(marker);
   await expect(page).toHaveURL(/#b-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
@@ -270,15 +273,16 @@ test('a block link into the current document still highlights its block', async 
   await page.keyboard.press('Enter');
   // The block roster is read from Postgres, not from the live editor: without this the
   // paragraph being searched has not been persisted yet and the menu has nothing to show.
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
   await page.keyboard.type(`[[${marker}`, { delay: 40 });
 
   await expect(page.getByText('链接到块')).toBeVisible({ timeout: 20_000 });
   await page.locator(`button[data-block-hit-document="${docId}"][data-block-hit-index="0"]`).click();
 
-  const chip = page.locator('[data-block-index]').first();
+  // G32：chip 现在带的是常驻 id（`data-block-target`），不再有位置回退的 `data-block-index`。
+  const chip = page.locator('[data-block-target]').first();
   await expect(chip).toBeVisible();
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   // One document, two blocks: the push only changes the fragment, and `history.pushState`
   // fires no `hashchange` — so the address lands and nothing re-arms the anchor hunt.
@@ -421,7 +425,7 @@ test('镜像 copies another document’s block in read-only form', async ({ page
   const target = await newDocument(page);
   await target.click();
   await page.keyboard.type(marker, { delay: 8 });
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   const source = await newDocument(page);
   await source.click();
@@ -437,7 +441,7 @@ test('镜像 copies another document’s block in read-only form', async ({ page
   // Read-only: the mirrored text is not part of this document’s editable content.
   await expect(page.locator('[contenteditable="true"] > p', { hasText: marker })).toHaveCount(0);
 
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
   await page.reload();
   await expect(page.locator('[data-mirror-block] .mirror-block-body')).toHaveText(marker, {
     timeout: 20_000,
@@ -457,7 +461,7 @@ test('publishing a document serves it at a custom /p address', async ({ page }) 
   // The public page reads Document.content, which the editor writes on a debounce;
   // save now so the published body is the one we just typed.
   await page.keyboard.press('Control+s');
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   await page.getByRole('button', { name: '分享' }).first().click();
   const dialog = page.getByRole('dialog');
@@ -489,7 +493,7 @@ test('sidebar tree items expose a right-click menu', async ({ page }) => {
   // The header debounces the title write, and a reload would abort it in flight.
   await page.waitForTimeout(1_500);
   await page.keyboard.press('Control+s');
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   const sidebar = page.locator('aside');
   // The tree refetches on navigation, not on a title write, so reload to pick the row up.
@@ -524,7 +528,7 @@ test('sidebar tree items expose a right-click menu', async ({ page }) => {
   await expect(page).toHaveURL(new RegExp(`/documents/(?!${parentSlug})[0-9a-f-]+`), {
     timeout: 20_000,
   });
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   // Deleting the document you are reading bounces back to the document list.
   await page.keyboard.press('Control+s');

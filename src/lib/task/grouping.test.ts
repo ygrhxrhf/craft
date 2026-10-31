@@ -11,6 +11,7 @@ const task = (dueDate: string | null): TaskItem => ({
   status: 'todo',
   cancelledAt: null,
   dueDate,
+  scheduleDate: dueDate,
   remindAt: null,
   recurrence: null,
   recurrenceEnd: null,
@@ -103,6 +104,13 @@ describe('bucketOf', () => {
   it('treats missing and unparsable due dates as unscheduled', () => {
     expect(bucketOf(task(null), now)).toBe('unscheduled');
     expect(bucketOf(task('不是时间'), now)).toBe('unscheduled');
+  });
+
+  it('uses schedule, not the deadline, for the group buckets', () => {
+    const deadlineOnly = { ...task(null), dueDate: iso(2026, 9, 9, 18), scheduleDate: null };
+    expect(bucketOf(deadlineOnly, now)).toBe('unscheduled');
+    const scheduledOnly = { ...task(null), dueDate: null, scheduleDate: iso(2026, 9, 9, 18) };
+    expect(bucketOf(scheduledOnly, now)).toBe('today');
   });
 });
 

@@ -15,6 +15,16 @@ export interface PresenceCursor {
 export interface PresenceState {
   user?: PresenceUser;
   cursor?: PresenceCursor | null;
+  editingBlockId?: string | null;
+  openPageId?: string | null;
+}
+
+export interface PeerPresence {
+  clientId: number;
+  user: PresenceUser;
+  cursor: PresenceCursor | null;
+  editingBlockId: string | null;
+  openPageId: string | null;
 }
 
 /**
@@ -41,19 +51,25 @@ export function colorForUserId(userId: string): string {
 }
 
 export function initialPresenceState(user: PresenceUser): PresenceState {
-  return { user, cursor: null };
+  return { user, cursor: null, editingBlockId: null, openPageId: null };
 }
 
 /** Peers = every awareness state except ours, minus users who left without cleanup. */
 export function selectPeers(
   states: Map<number, PresenceState>,
   selfId: number,
-): { clientId: number; user: PresenceUser; cursor: PresenceCursor | null }[] {
-  const peers: { clientId: number; user: PresenceUser; cursor: PresenceCursor | null }[] = [];
+): PeerPresence[] {
+  const peers: PeerPresence[] = [];
 
   states.forEach((state, clientId) => {
     if (clientId === selfId || !state?.user) return;
-    peers.push({ clientId, user: state.user, cursor: state.cursor ?? null });
+    peers.push({
+      clientId,
+      user: state.user,
+      cursor: state.cursor ?? null,
+      editingBlockId: state.editingBlockId ?? null,
+      openPageId: state.openPageId ?? null,
+    });
   });
 
   return peers;
@@ -72,7 +88,20 @@ export function setLocalCursor(
   const next = positions
     ? { anchor: positions.anchor.toJSON(), head: positions.head.toJSON() }
     : null;
-  const current = (awareness.getLocalState() as PresenceState | undefined)?.cursor ?? null;
-  if (JSON.stringify(current ?? null) === JSON.stringify(next ?? null)) return;
-  awareness.setLocalStateField('cursor', next);
+  setLocalPresenceField(awareness, 'cursor', next);
+}
+
+/**
+ * Publishes one awareness dimension, but only when it actually changed.
+ * Used for the RTC dimensions (editing block / open page) as well as the caret:
+ * an unconditional write rebroadcasts to every peer on each keystroke.
+ */
+export function setLocalPresenceField<K extends 'cursor' | 'editingBlockId' | 'openPageId'>(
+  awareness: Awareness,
+  key: K,
+  value: PresenceState[K],
+) {
+  const current = (awareness.getLocalState() as PresenceState | undefined)?.[key] ?? null;
+  if (JSON.stringify(current ?? null) === JSON.stringify(value ?? null)) return;
+  awareness.setLocalStateField(key, value ?? null);
 }

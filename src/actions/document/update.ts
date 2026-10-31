@@ -58,10 +58,11 @@ export async function updateDocument(id: string, data: {
           .all();
         const last = latest[0] as Row | undefined;
         if (shouldSnapshot(moved, (last?.createdAt as string | undefined) ?? null)) {
+          const nextVersion = last ? Number(last.version) + 1 : 1;
           await db.orm.public.DocumentVersion.create({
             id: crypto.randomUUID(),
             documentId: id,
-            version: last ? Number(last.version) + 1 : 1,
+            version: nextVersion,
             title: after.title as string,
             // 没有正文的文档也要有版本——就是它的空正文那一版。
             content: after.content ?? { type: 'doc', content: [] },
@@ -69,6 +70,8 @@ export async function updateDocument(id: string, data: {
             wordCount: (after.wordCount as number) ?? 0,
             meta: versionMeta(after),
           });
+          // G18：版本号必须跟着快照单调递增，否则列表能读到版本、文档自身却永远停在 1。
+          await db.orm.public.Document.where({ id }).update({ version: nextVersion });
         }
       }
     }

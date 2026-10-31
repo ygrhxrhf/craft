@@ -62,7 +62,7 @@ test('评论框挂着时刚邀的协作者当场进 `@` 候选，不必整页重
   await page.getByRole('button', { name: /新建/ }).first().click();
   await page.waitForURL(/\/documents\//);
   await page.getByPlaceholder('页面标题').fill(`评论提及 ${Date.now()}`);
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 30_000 });
 
   // 打开信息面板（成员段与评论段同在这一个面板里）。
   await page.getByRole('button', { name: '信息', exact: true }).click();

@@ -61,14 +61,14 @@ test('reopening a document does not duplicate its blocks', async ({ page }) => {
   const editor = page.locator('.ProseMirror').first();
   await editor.click();
   await page.keyboard.type('重开不重复');
-  await expect(page.getByText('已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
 
   for (let reload = 0; reload < 2; reload += 1) {
     await page.reload();
     await expect(editor).toBeVisible({ timeout: 20_000 });
     await page.waitForTimeout(2_500);
     await expect(editor.locator('> *')).toHaveCount(1);
-    await expect(page.getByText('已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText('所有更改已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
   }
 });
 

@@ -33,6 +33,8 @@ import {
   Sigma,
   Video,
   Presentation,
+  Network,
+  Music,
 } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
 import type { ComponentType } from 'react';
@@ -194,6 +196,25 @@ export const slashCommands: SlashCommand[] = [
         .updateAttributes('codeBlock', {
           language: readDefaultLanguage(),
           themeId: readDefaultTheme(),
+        })
+        .run();
+    },
+  },
+  {
+    name: 'Mermaid 图表',
+    description: '插入 Mermaid 图表',
+    icon: Network,
+    keywords: ['mermaid', 'diagram', 'chart', '图表', '流程图'],
+    category: '高级块',
+    command: (editor, range) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertContent({
+          type: 'codeBlock',
+          attrs: { language: 'mermaid', themeId: readDefaultTheme() },
+          content: [{ type: 'text', text: 'graph TD\n  A[开始] --> B[结束]' }],
         })
         .run();
     },
@@ -489,6 +510,54 @@ export const slashCommands: SlashCommand[] = [
     command: async (editor, range) => {
       editor.chain().focus().deleteRange(range).run();
       const src = await promptDialog({ title: '输入视频 URL', placeholder: 'https://…', confirmLabel: '嵌入' });
+      if (src) {
+        editor.chain().focus().setVideoEmbed({ src }).run();
+      } else {
+        editor.chain().focus().setParagraph().run();
+      }
+    },
+  },
+  {
+    name: '音频',
+    description: '嵌入一段音频',
+    icon: Music,
+    keywords: ['audio', 'music', '音频', '音乐'],
+    category: '嵌入',
+    command: async (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      const src = await promptDialog({ title: '输入音频 URL', placeholder: 'https://…', confirmLabel: '嵌入' });
+      if (src) {
+        editor.chain().focus().setAudioEmbed({ src }).run();
+      } else {
+        editor.chain().focus().setParagraph().run();
+      }
+    },
+  },
+  {
+    name: 'HTML 嵌入',
+    description: '在沙箱里渲染一段 HTML',
+    icon: Code,
+    keywords: ['html', 'embed', 'HTML', '嵌入'],
+    category: '嵌入',
+    command: async (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      const html = await promptDialog({ title: '输入 HTML', placeholder: '<div>…</div>', confirmLabel: '嵌入' });
+      if (html) {
+        editor.chain().focus().setHtmlEmbed({ html }).run();
+      } else {
+        editor.chain().focus().setParagraph().run();
+      }
+    },
+  },
+  {
+    name: '网页嵌入',
+    description: '用 iframe 嵌入一个网页',
+    icon: Globe,
+    keywords: ['embed', 'iframe', '网页', '嵌入'],
+    category: '嵌入',
+    command: async (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      const src = await promptDialog({ title: '输入网页 URL', placeholder: 'https://…', confirmLabel: '嵌入' });
       if (src) {
         editor.chain().focus().setVideoEmbed({ src }).run();
       } else {

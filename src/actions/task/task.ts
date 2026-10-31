@@ -56,6 +56,8 @@ export interface TaskItem {
   status: 'todo' | 'done' | 'cancelled';
   cancelledAt: string | null;
   dueDate: string | null;
+  /** G15: 计划哪天做；与 dueDate（截止）独立。 */
+  scheduleDate: string | null;
   remindAt: string | null;
   recurrence: string | null;
   recurrenceEnd: string | null;
@@ -187,6 +189,7 @@ export async function getTasks(): Promise<TaskItem[]> {
       status: row.status === 'cancelled' || row.status === 'done' ? row.status : 'todo',
       cancelledAt: row.cancelledAt ?? null,
       dueDate: row.dueDate,
+      scheduleDate: row.scheduleDate ?? null,
       remindAt: row.remindAt,
       recurrence: row.recurrence,
       recurrenceEnd: row.recurrenceEnd,
@@ -201,7 +204,7 @@ export async function getTasks(): Promise<TaskItem[]> {
   return items;
 }
 
-export async function createTask(title: string, dueDate?: string | null) {
+export async function createTask(title: string, dueDate?: string | null, scheduleDate?: string | null) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
   if (!title.trim()) throw new Error('标题不能为空');
@@ -212,6 +215,7 @@ export async function createTask(title: string, dueDate?: string | null) {
     userId: session.user.id,
     title: title.trim(),
     dueDate: dueDate ?? null,
+    scheduleDate: scheduleDate ?? null,
   });
   await emitTasks(db, session.user.id, (task as any).id ?? '');
   return task;
@@ -287,6 +291,8 @@ async function rollForward(db: any, task: any, timeZone?: string): Promise<void>
 
 export interface TaskSchedule {
   dueDate: string | null;
+  /** G15: 计划哪天做；与 dueDate（截止）独立。 */
+  scheduleDate: string | null;
   remindAt: string | null;
   recurrence: string | null;
   recurrenceEnd: string | null;
@@ -303,6 +309,7 @@ export async function setTaskSchedule(id: string, schedule: TaskSchedule) {
 
   await db.orm.public.Task.where({ id }).update({
     dueDate: schedule.dueDate,
+    scheduleDate: schedule.scheduleDate,
     remindAt: schedule.remindAt,
     recurrence: schedule.recurrence,
     recurrenceEnd: schedule.recurrenceEnd,

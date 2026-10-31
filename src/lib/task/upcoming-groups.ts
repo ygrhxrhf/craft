@@ -104,8 +104,8 @@ export function compareScheduled(a: ScheduledLike, b: ScheduledLike): number {
 }
 
 function toSchedule(task: TaskItem): Date | null {
-  if (!task.dueDate) return null;
-  const date = new Date(task.dueDate);
+  if (!task.scheduleDate) return null;
+  const date = new Date(task.scheduleDate);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 

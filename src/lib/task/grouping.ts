@@ -20,10 +20,10 @@ export type TaskBucket = 'today' | 'upcoming' | 'unscheduled';
 /** 接下来的 7 天 / 接下来的 30 天 (`calendar.date.next.*`). Counting starts tomorrow. */
 export type UpcomingWindow = 7 | 30 | 'all';
 
-export function withinUpcoming(dueDate: string | null, window: UpcomingWindow, now: Date = new Date()): boolean {
+export function withinUpcoming(scheduleDate: string | null, window: UpcomingWindow, now: Date = new Date()): boolean {
   if (window === 'all') return true;
-  if (!dueDate) return false;
-  const due = new Date(dueDate);
+  if (!scheduleDate) return false;
+  const due = new Date(scheduleDate);
   if (Number.isNaN(due.getTime())) return false;
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate());
@@ -31,9 +31,9 @@ export function withinUpcoming(dueDate: string | null, window: UpcomingWindow, n
   return ahead >= 1 && ahead <= window;
 }
 
-export function bucketOf(task: Pick<TaskItem, 'dueDate'>, now: Date = new Date()): TaskBucket {
-  if (!task.dueDate) return 'unscheduled';
-  const due = new Date(task.dueDate);
+export function bucketOf(task: Pick<TaskItem, 'scheduleDate'>, now: Date = new Date()): TaskBucket {
+  if (!task.scheduleDate) return 'unscheduled';
+  const due = new Date(task.scheduleDate);
   if (Number.isNaN(due.getTime())) return 'unscheduled';
   const dueDay = localDayIndex(due);
   const today = localDayIndex(now);
@@ -111,7 +111,7 @@ export function tasksForGroup(
       return tasks.filter((task) => bucketOf(task, now) === 'today');
     case 'upcoming':
       return tasks.filter(
-        (task) => bucketOf(task, now) === 'upcoming' && withinUpcoming(task.dueDate, window, now),
+        (task) => bucketOf(task, now) === 'upcoming' && withinUpcoming(task.scheduleDate, window, now),
       );
     case 'inbox':
     case 'all':

@@ -51,7 +51,7 @@ test('另一台设备改档时，这一侧开着的分享面板跟着翻新（�
   await page.waitForURL(/\/documents\//);
   const docUrl = page.url();
   await page.getByPlaceholder('页面标题').fill(`实时翻新 ${stamp}`);
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 30_000 });
 
   // 建行并坐实为 view（服务端权威行、本机镜像都到位）。
   await openSharePanel(page);

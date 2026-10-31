@@ -12,19 +12,31 @@ type Token =
  * to survive the reference read instead of collapsing into the `null` that used to abort the
  * whole parse (see `asNumber`, which keeps arithmetic strict exactly as it was).
  */
-type Atom = { kind: 'num'; value: number } | { kind: 'text'; value: string } | { kind: 'empty' };
+type Atom =
+  | { kind: 'num'; value: number }
+  | { kind: 'text'; value: string }
+  | { kind: 'empty' }
+  | { kind: 'range'; values: number[] };
+
+/** G23: the four official range references need the table around the current cell. */
+export interface FormulaGrid {
+  above?: number[];
+  below?: number[];
+  left?: number[];
+  right?: number[];
+}
 
 /**
- * The fourteen functions of `table.formula` (`feature-catalog.md:6857-6881`), each following the
+ * The eighteen functions of `table.formula` (`feature-catalog.md:6857-6891`), each following the
  * verbatim Chinese description next to its key. `null` means "this formula cannot be computed"
  * and surfaces as the caller's error. Where the official description is silent (empty input,
  * ties, an even-sized median) the choice is local and marked.
  *
- * Not implemented: the four range references `above` / `below` / `left` / `right`. They address a
- * grid of cells while this engine is handed a single row, so faking them would answer a question
- * the caller never asked; they fail as unknown names until the engine gets a grid-shaped API.
+ * The four range references `above` / `below` / `left` / `right` need the table around the
+ * current cell; callers pass that as `FormulaGrid`. Without a grid they resolve to `null`
+ * instead of inventing values.
  */
-const FUNCTIONS: Record<string, (args: Atom[]) => number | null> = {
+const FUNCTIONS: Record<string, (args: Atom[], grid?: FormulaGrid) => number | null | Atom> = {
   // Numbers only, filtered — an empty or textual argument is skipped rather than fatal, which is
   // what lets `COUNT({空列})` answer 0 instead of erroring.
   min: (args) => {
@@ -85,10 +97,18 @@ const FUNCTIONS: Record<string, (args: Atom[]) => number | null> = {
     return best;
   },
   // Official: 「返回含有数字、数值表达式或日期的参数的个数」— numbers only.
-  count: (args) => args.filter((arg) => arg.kind === 'num').length,
+  count: (args) => numbersOf(args).length,
   // Official: 「返回不为空的参数的个数」— anything that is not empty.
-  counta: (args) => args.filter((arg) => arg.kind !== 'empty').length,
+  counta: (args) => args.length
+    ? args.reduce((total, arg) => total + (arg.kind === 'range' ? arg.values.length : arg.kind === 'empty' ? 0 : 1), 0)
+    : 0,
   pi: () => Math.PI,
+  // G23: the four range references. They return a range atom so SUM/AVERAGE/COUNT…
+  // can consume the cells; arithmetic on a range is still refused by `asNumber`.
+  above: (_args, grid) => (grid?.above?.length ? { kind: 'range', values: grid.above } : null),
+  below: (_args, grid) => (grid?.below?.length ? { kind: 'range', values: grid.below } : null),
+  left: (_args, grid) => (grid?.left?.length ? { kind: 'range', values: grid.left } : null),
+  right: (_args, grid) => (grid?.right?.length ? { kind: 'range', values: grid.right } : null),
 };
 
 /** The seven bare-name constants of `table.formula`; looked up when a name is not a call. */
@@ -103,7 +123,11 @@ const CONSTANTS: Record<string, number> = {
 };
 
 function numbersOf(args: Atom[]): number[] {
-  return args.filter((arg): arg is { kind: 'num'; value: number } => arg.kind === 'num').map((arg) => arg.value);
+  return args.flatMap((arg) => {
+    if (arg.kind === 'num') return [arg.value];
+    if (arg.kind === 'range') return arg.values;
+    return [];
+  });
 }
 
 function firstNumber(args: Atom[]): number | null {
@@ -122,7 +146,19 @@ function asNumber(atom: Atom | null): number | null {
  * parentheses, the fourteen official functions and the seven official constants. Nothing here
  * reaches `eval`, so a formula authored in a shared collection cannot run code.
  */
-export function evaluateFormula(expression: string, row: Record<string, unknown> = {}): FormulaResult {
+function atomFromFunction(result: number | null | Atom): Atom | null {
+  if (result === null) return null;
+  if (typeof result === 'number') {
+    return Number.isFinite(result) ? { kind: 'num', value: result } : null;
+  }
+  return result;
+}
+
+export function evaluateFormula(
+  expression: string,
+  row: Record<string, unknown> = {},
+  grid?: FormulaGrid,
+): FormulaResult {
   const tokens = tokenize(expression);
   if (!tokens) return { ok: false, error: '无法识别的表达式' };
   if (!tokens.length) return { ok: false, error: '表达式为空' };
@@ -213,8 +249,7 @@ export function evaluateFormula(expression: string, row: Record<string, unknown>
         position += 1; // consume '('
         const args: Atom[] = [];
         if (expect('op', ')')) {
-          const value = fn(args);
-          return value === null || !Number.isFinite(value) ? null : { kind: 'num', value };
+          return atomFromFunction(fn(args, grid));
         }
         for (;;) {
           const arg = parseSum();
@@ -226,8 +261,7 @@ export function evaluateFormula(expression: string, row: Record<string, unknown>
             continue;
           }
           if (!expect('op', ')')) return null;
-          const value = fn(args);
-          return value === null || !Number.isFinite(value) ? null : { kind: 'num', value };
+          return atomFromFunction(fn(args, grid));
         }
       }
       const constant = CONSTANTS[key];

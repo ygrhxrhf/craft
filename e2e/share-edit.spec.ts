@@ -32,7 +32,7 @@ async function createDocument(page: Page, title: string, marker: string): Promis
   const body = page.locator('.ProseMirror').first();
   await body.click();
   await page.keyboard.type(marker);
-  await expect(page.getByText('已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
   return documentId;
 }
 
@@ -169,7 +169,7 @@ test('a signed-in visitor on the edit tier edits live, and taking the tier ends 
   const ownerMarker = `撤销后所有者仍可写${stamp}`;
   await owner.keyboard.type(ownerMarker);
   await expect(owner.getByText(ownerMarker)).toBeVisible();
-  await expect(owner.getByText('已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(owner.getByText('所有更改已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
 
   await visitorCtx.close();
   await ownerCtx.close();

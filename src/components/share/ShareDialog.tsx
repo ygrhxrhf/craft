@@ -31,6 +31,11 @@ import {
   setShareVisualOption,
   setShareExpiry,
 } from '@/actions/document/share';
+import {
+  listAccessRequests,
+  decideAccessRequest,
+  type AccessRequestItem,
+} from '@/actions/document/access-requests';
 import type { DocumentSharePermission } from '@/lib/share/permission';
 import { ONLY_COLLABORATORS_LABEL } from '@/lib/share/permission';
 import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
@@ -88,6 +93,10 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [isPending, startTransition] = useTransition();
   // G139：每个链接写操作有自己的进行时句，写完后换成该操作的结果句（不是通用 spinner）。
   const [linkOp, setLinkOp] = useState<LinkOperation | null>(null);
+  // G04：待批准的编辑请求（requested 成员行），只有所有者能读到。
+  const [accessRequests, setAccessRequests] = useState<AccessRequestItem[]>([]);
+  const [requestBusy, setRequestBusy] = useState<string | null>(null);
+  const [requestError, setRequestError] = useState<string | null>(null);
 
   /**
    * Run a link write with its own named progress line, then announce its result on success.
@@ -174,6 +183,44 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       cancelled = true;
     };
   }, [open, link, documentId, reloadShareFromMirror]);
+
+  // G04：面板每次打开都读一次待批准请求；批准／拒绝后再读一次。
+  const reloadAccessRequests = useCallback(async () => {
+    if (!open) return;
+    try {
+      setAccessRequests(await listAccessRequests(documentId));
+    } catch {
+      setAccessRequests([]);
+    }
+  }, [open, documentId]);
+
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    listAccessRequests(documentId)
+      .then((rows) => {
+        if (!cancelled) setAccessRequests(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setAccessRequests([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, documentId]);
+
+  const handleAccessRequest = async (requesterId: string, approve: boolean) => {
+    setRequestBusy(requesterId);
+    setRequestError(null);
+    try {
+      await decideAccessRequest(documentId, requesterId, approve);
+      await reloadAccessRequests();
+    } catch (err) {
+      setRequestError(err instanceof Error ? err.message : '请求没有更新，请重试');
+    } finally {
+      setRequestBusy(null);
+    }
+  };
 
   // G1509：面板开着时他端改档／本机改档／入站 ack+pull 都会触碰 document_share ⇒ 重读镜像翻新选中态。
   //   只读镜像、不回落 action：这一路是"已建档之后"的翻新，建行那一步归挂载那一趟。
@@ -348,7 +395,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md rounded-xl! p-0">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] max-w-md overflow-y-auto rounded-xl! p-0">
         <DialogTitle className="sr-only">分享文档</DialogTitle>
         <DialogDescription className="sr-only">
           生成此文档的分享链接，并选择查看或编辑档
@@ -385,6 +432,37 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   <Loader2 className="size-3.5 animate-spin" />
                   {linkOperationPending(linkOp)}
                 </p>
+              )}
+              {accessRequests.length > 0 && (
+                <div className="mt-3 rounded-md border border-border px-3 py-2.5">
+                  <p className="text-sm">编辑请求</p>
+                  <ul className="mt-2 space-y-1.5">
+                    {accessRequests.map((request) => (
+                      <li key={request.requesterId} className="flex items-center gap-2">
+                        <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
+                          {request.name || request.email}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={requestBusy === request.requesterId}
+                          onClick={() => void handleAccessRequest(request.requesterId, true)}
+                        >
+                          批准
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          disabled={requestBusy === request.requesterId}
+                          onClick={() => void handleAccessRequest(request.requesterId, false)}
+                        >
+                          拒绝
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                  {requestError && <p className="mt-1.5 text-xs text-destructive">{requestError}</p>}
+                </div>
               )}
               <div className="mt-3 flex flex-col gap-2">
                 {TIERS.map((tier) => {

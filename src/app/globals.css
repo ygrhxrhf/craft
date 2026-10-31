@@ -1268,6 +1268,46 @@
   }
 }
 
+/* RTC roster: who is editing which block / which page (beyond the caret axis). */
+.crafty-collab-roster {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 21;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.crafty-collab-roster__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface, #fff) 82%, transparent);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.crafty-collab-roster__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--cursor-color);
+  flex: none;
+}
+
+.crafty-collab-roster__where {
+  color: var(--muted-foreground, #6b7280);
+}
+
 /* ═══════════════════════════════════════════
    Selection toolbar
    ═══════════════════════════════════════════ */

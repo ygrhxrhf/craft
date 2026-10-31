@@ -36,7 +36,7 @@ test('the inbox collects unfiled documents and files them away', async ({ page }
   // The header debounces the title write, and a reload would abort it in flight.
   await page.waitForTimeout(1_500);
   await page.keyboard.press('Control+s');
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
   await page.goto('/inbox');
   await expect(main.getByText('未分类', { exact: true }).first()).toBeVisible();

@@ -35,8 +35,10 @@ async function createScheduled(page: Page, title: string, due: string | null) {
   await expect(card.getByText(title, { exact: true })).toBeVisible();
   if (!due) return;
   await card.getByLabel('设置提醒与重复').click();
-  await card.getByLabel('截止日期').fill(due);
-  await expect(card.getByLabel('截止日期')).toHaveValue(due);
+  // G46：即将进行按「计划日期」（Schedule 轴）分节，不是「截止日期」（Deadline）。两者是独立
+  // 两轴，只设截止的行没有排期 ⇒ 官方判据 `if (schedule == null) continue` 直接跳过。
+  await card.getByLabel('计划日期').fill(due);
+  await expect(card.getByLabel('计划日期')).toHaveValue(due);
 }
 
 /** 「显示已完成」是一枚设备设置：点在哪个方向取决于上一次进来时它是什么状态，所以一律按目标态掰。 */

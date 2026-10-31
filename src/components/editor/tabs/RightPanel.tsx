@@ -150,7 +150,7 @@ export function RightPanel({
   if (isCompact) {
     return (
       <Sheet open={open} onOpenChange={(next) => (!next ? onClose() : undefined)}>
-        <SheetContent side="bottom" className="h-[60dvh] max-h-[60dvh] gap-0 p-0">
+        <SheetContent side="bottom" snapPoints={[0.35, 0.6, 0.92]} className="h-[60dvh] max-h-[60dvh] gap-0 p-0">
           <SheetTitle className="sr-only">编辑器工具</SheetTitle>
           {body}
         </SheetContent>

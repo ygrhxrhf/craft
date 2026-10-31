@@ -1,19 +1,23 @@
 'use server';
 
-import { auth } from '@/lib/auth/auth';
 import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
-import { getDb } from '@/prisma/db';
 import { serializeDocument } from '@/lib/document-codec';
 import { untitledFor } from '@/lib/document/untitled-copy';
+import { docxFromContent } from '@/lib/export/docx';
+import { pdfFromContent } from '@/lib/export/pdf';
+import { textBundleFromMarkdown } from '@/lib/export/textbundle';
 
-export type ExportFormat = 'markdown' | 'html' | 'text' | 'json';
+export type ExportFormat = 'markdown' | 'html' | 'text' | 'json' | 'docx' | 'pdf' | 'textbundle';
 
 const mimeByFormat: Record<ExportFormat, string> = {
   markdown: 'text/markdown;charset=utf-8',
   html: 'text/html;charset=utf-8',
   text: 'text/plain;charset=utf-8',
   json: 'application/json;charset=utf-8',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  pdf: 'application/pdf',
+  textbundle: 'application/zip',
 };
 
 const extensionByFormat: Record<ExportFormat, string> = {
@@ -21,6 +25,9 @@ const extensionByFormat: Record<ExportFormat, string> = {
   html: 'html',
   text: 'txt',
   json: 'json',
+  docx: 'docx',
+  pdf: 'pdf',
+  textbundle: 'textbundle',
 };
 
 export async function exportDocument(documentId: string, format: ExportFormat) {
@@ -29,11 +36,29 @@ export async function exportDocument(documentId: string, format: ExportFormat) {
   const document = access.document;
 
   const doc = document as { title: string; content: unknown };
-  const body = serializeDocument(doc.content ?? { type: 'doc', content: [] }, format);
+  const title = doc.title || untitledFor('list');
+  const content = doc.content ?? { type: 'doc', content: [] };
+  let body: string;
+  let encoding: 'utf8' | 'base64' = 'utf8';
+
+  if (format === 'docx') {
+    body = (await docxFromContent(title, content)).toString('base64');
+    encoding = 'base64';
+  } else if (format === 'pdf') {
+    body = (await pdfFromContent(title, content)).toString('base64');
+    encoding = 'base64';
+  } else if (format === 'textbundle') {
+    const markdown = serializeDocument(content, 'markdown');
+    body = (await textBundleFromMarkdown(title, markdown)).toString('base64');
+    encoding = 'base64';
+  } else {
+    body = serializeDocument(content, format);
+  }
 
   return {
-    filename: `${doc.title || untitledFor('list')}.${extensionByFormat[format]}`,
+    filename: `${title}.${extensionByFormat[format]}`,
     mime: mimeByFormat[format],
     body,
+    encoding,
   };
 }

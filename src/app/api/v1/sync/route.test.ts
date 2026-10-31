@@ -12,6 +12,10 @@ vi.mock('@/lib/authz/guard', () => ({
 vi.mock('@/lib/notification/materialize', () => ({
   materializeTaskReminders: vi.fn(async () => 0),
 }));
+// G03：每日摘要同样挂在轮询头部；接线由本文件的一条专门用例验，其余用例挡掉。
+vi.mock('@/lib/notification/daily-digest', () => ({
+  materializeDailyDigest: vi.fn(async () => 0),
+}));
 
 import { getDb } from '@/prisma/db';
 import { materializeTaskReminders } from '@/lib/notification/materialize';
@@ -134,6 +138,7 @@ describe('GET /api/v1/sync', () => {
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
   });
+
 });
 
 const req = (body: unknown) => new NextRequest('http://x/api/v1/sync', {

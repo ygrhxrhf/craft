@@ -1,0 +1,238 @@
+{
+  "verifiedAt": "2026-10-30",
+  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。",
+  "rows": {
+    "G01": {
+      "status": "aligned",
+      "priority": "P0",
+      "note": "人员提及四段已落地；台账第 122 批记录仍有效。",
+      "evidence": ["src/components/editor/extensions/mention-users.ts", "src/components/editor/extensions/mention-user-suggestion.tsx", "e2e/mention-user.spec.ts"]
+    },
+    "G02": {
+      "status": "aligned",
+      "priority": "P0",
+      "note": "站内提醒投递已闭环；邮件档仍缺，单独登记在 G1488。",
+      "evidence": ["src/lib/notification/materialize.ts:31", "src/app/api/v1/sync/route.ts:10", "e2e/reminder-delivery.spec.ts"]
+    },
+    "G03": {
+      "status": "partial",
+      "priority": "P0",
+      "note": "三开关已落库；只有 notifyReminders 驱动投递，notifyComments／notifyDaily 在业务侧无消费点，每日电子邮件无发信通路。",
+      "evidence": ["src/components/settings/SettingsPanels.tsx:598-624", "src/actions/user/preferences.ts:25", "src/lib/notification/materialize.ts:31"]
+    },
+    "G04": {
+      "status": "partial",
+      "priority": "P0",
+      "note": "view／edit／仅协作者三档已落地；「请求批准」流在 src 零命中。",
+      "evidence": ["src/lib/share/permission.ts:8-27", "src/components/share/ShareDialog.tsx:57-62"]
+    },
+    "G05": {
+      "status": "aligned",
+      "priority": "P0",
+      "evidence": ["src/lib/share/resolve.ts:16", "src/actions/document/share.ts:229", "e2e/share-publish.spec.ts"]
+    },
+    "G06": {
+      "status": "aligned",
+      "priority": "P0",
+      "evidence": ["src/actions/comment/comment.ts:27", "src/actions/comment/comment.ts:111", "src/actions/comment/comment.ts:131"]
+    },
+    "G07": {
+      "status": "aligned",
+      "priority": "P0",
+      "evidence": ["src/components/editor/drag-handle/block-actions.ts:124", "src/components/editor/drag-handle/block-actions.ts:132", "src/components/editor/drag-handle/DragHandle.tsx"]
+    },
+    "G08": {
+      "status": "aligned",
+      "priority": "P0",
+      "evidence": ["src/actions/document/delete.ts:11", "src/actions/document/delete.ts:27", "src/actions/document/delete.ts:43"]
+    },
+    "G11": {
+      "status": "aligned",
+      "priority": "P1",
+      "note": "台账本地列仍写着「全库无 focus mode」，与判定列冲突；现读已落地。",
+      "evidence": ["src/lib/store/use-focus-store.ts", "src/components/editor/shell-shortcuts.tsx:22-27"]
+    },
+    "G12": {
+      "status": "aligned",
+      "priority": "P1",
+      "note": "台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在。",
+      "evidence": ["src/components/editor/extensions/find-replace.ts", "src/components/editor/find-replace-panel.tsx", "src/lib/store/use-find-replace-store.ts", "e2e/find-replace-case.spec.ts"]
+    },
+    "G13": {
+      "status": "aligned",
+      "priority": "P1",
+      "evidence": ["src/components/settings/ShortcutsPanel.tsx", "src/components/search/CommandPalette.tsx:117"]
+    },
+    "G14": {
+      "status": "partial",
+      "priority": "P1",
+      "note": "块移动／样式槽／副本／查找／专注／侧栏／日记／快捷键面板已接；RENAME（Shift+Enter）与 COMMENT（Ctrl+Shift+M）只在键表里有 id，没有处理分支。",
+      "evidence": ["src/components/editor/extensions/craft-keymap.ts:14-140", "src/components/editor/shell-shortcuts.tsx:22-27", "src/lib/editor/keymap.ts:206", "src/lib/editor/keymap.ts:213"]
+    },
+    "G15": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "Task 模型没有独立 schedule 列；任务四档分组实际按 dueDate 切，不是官方的 Schedule 轴。",
+      "evidence": ["src/prisma/contract.prisma:323-340", "src/lib/task/grouping.ts:5-32"]
+    },
+    "G16": {
+      "status": "partial",
+      "priority": "P1",
+      "note": "遍历展开/收起已落地；命令面板没有命令注册表，两档命令无处挂。",
+      "evidence": ["src/components/editor/extensions/toggle-all.ts", "src/components/search/CommandPalette.tsx"]
+    },
+    "G17": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "mermaid 只作为代码块语言名出现，没有渲染器。",
+      "evidence": ["src/lib/editor/code-languages.ts"]
+    },
+    "G18": {
+      "status": "partial",
+      "priority": "P1"
+    },
+    "G19": {
+      "status": "aligned",
+      "priority": "P1",
+      "evidence": ["e2e/template-insert.spec.ts", "src/actions/document/template.ts:6"]
+    },
+    "G20": {
+      "status": "aligned",
+      "priority": "P1",
+      "evidence": ["src/lib/daily/daily-notes.ts:73-86"]
+    },
+    "G21": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "没有独立 /connections 路由；反向链接仍在信息页签。",
+      "evidence": ["src/components/editor/tabs/InfoTab.tsx"]
+    },
+    "G22": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "只有 markdown/html/text/json 四种导出。",
+      "evidence": ["src/actions/document/export.ts:9"]
+    },
+    "G23": {
+      "status": "gap",
+      "priority": "P1"
+    },
+    "G24": {
+      "status": "partial",
+      "priority": "P1"
+    },
+    "G31": {
+      "status": "aligned",
+      "priority": "P2",
+      "evidence": ["src/lib/editor/divider-commands.ts"]
+    },
+    "G32": {
+      "status": "partial",
+      "priority": "P1",
+      "note": "块深链已可用，但 blockId 仍是跳到块时惰性盖章，不是官方那种恒有 data-block-id。",
+      "evidence": ["src/lib/editor/block-anchor.ts:111-145", "src/components/editor/extensions/block-id.ts"]
+    },
+    "G33": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "命令面板只有本地已有动作与「查看所有快捷键」，没有 189 条 commands.* 注册表。",
+      "evidence": ["src/components/search/CommandPalette.tsx"]
+    },
+    "G34": {
+      "status": "gap",
+      "priority": "P2"
+    },
+    "G35": {
+      "status": "deliberate",
+      "priority": "P2"
+    },
+    "G36": {
+      "status": "partial",
+      "priority": "P2"
+    },
+    "G37": {
+      "status": "gap",
+      "priority": "P2"
+    },
+    "G38": {
+      "status": "aligned",
+      "priority": "P2"
+    },
+    "G39": {
+      "status": "gap",
+      "priority": "P2"
+    },
+    "G40": {
+      "status": "gap",
+      "priority": "P1"
+    },
+    "G41": {
+      "status": "gap",
+      "priority": "P1"
+    },
+    "G42": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "只有文档协作 ws 与 tldraw sync，没有通知通道/RTC。",
+      "evidence": ["src/app/api/collab", "src/app/api/whiteboards"]
+    },
+    "G43": {
+      "status": "aligned",
+      "priority": "P1",
+      "evidence": ["src/lib/calendar/timeline.ts"]
+    },
+    "G44": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "没有 MCP/API 接入中心路由。",
+      "evidence": ["src/app"]
+    },
+    "G45": {
+      "status": "aligned",
+      "priority": "P1",
+      "note": "台账本地列仍写着「本地无该路由」，与判定列冲突；现读已落地。",
+      "evidence": ["e2e/inbox.spec.ts"]
+    },
+    "G46": {
+      "status": "partial",
+      "priority": "P1",
+      "note": "四档分组已落地，但「今天/即将进行」按 dueDate 切，不是官方的 schedule 轴。",
+      "evidence": ["src/lib/task/grouping.ts:5-32"]
+    },
+    "G47": {
+      "status": "aligned",
+      "priority": "P1",
+      "evidence": ["src/lib/browse/folder-counts.test.ts"]
+    },
+    "G48": {
+      "status": "deliberate",
+      "priority": "P1"
+    },
+    "G49": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "AI 路由只有改写/续写/翻译/总结四个一次性补全，没有工具面、上下文徽标、额度。",
+      "evidence": ["src/app/api/ai/route.ts"]
+    },
+    "G50": {
+      "status": "gap",
+      "priority": "P2"
+    },
+    "G51": {
+      "status": "partial",
+      "priority": "P1",
+      "note": "快捷键样式槽已按 title/subtitle/heading/strong/body 映射；格式面板仍是 H1–H4。",
+      "evidence": ["src/components/editor/extensions/craft-keymap.ts:22-37", "src/components/editor/tabs/FormatTab.tsx"]
+    },
+    "G52": {
+      "status": "partial",
+      "priority": "P1",
+      "note": "cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账已判不做。",
+      "evidence": ["src/lib/editor/task-status.ts"]
+    },
+    "G53": {
+      "status": "gap",
+      "priority": "P1"
+    }
+  }
+}

@@ -291,7 +291,7 @@ test('书写方向随正文往返：刷新后属性还在，清掉后刷新也�
   await expect.poll(() => writingOf(page, 0)).toBe('vertical-rl');
 
   // 正文真源是 Yjs：这一笔进了房间，刷新才该读得回来。
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
   await page.reload();
   await expect(page.locator('.ProseMirror > *')).toHaveCount(2);
   await expect.poll(() => writingOf(page, 0), { message: '竖排在往返后丢了属性' }).toBe('vertical-rl');
@@ -302,7 +302,7 @@ test('书写方向随正文往返：刷新后属性还在，清掉后刷新也�
   await segment(page, '从左到右').click();
   await expect.poll(() => writingOf(page, 0)).toBe('horizontal-tb');
 
-  await expect(page.getByText('已保存')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
   await page.reload();
   await expect(page.locator('.ProseMirror > *')).toHaveCount(2);
   await expect

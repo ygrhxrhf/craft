@@ -9,6 +9,7 @@ import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cu
 import { decideLww } from '@/lib/sync/lww';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
 import { materializeTaskReminders } from '@/lib/notification/materialize';
+import { materializeDailyDigest } from '@/lib/notification/daily-digest';
 
 export const dynamic = 'force-dynamic';
 
@@ -89,6 +90,13 @@ export async function GET(req: NextRequest) {
     await materializeTaskReminders(userId);
   } catch (e) {
     console.error('[sync] reminder delivery failed', e);
+  }
+
+  // G03：每日摘要走同一条轮询副作用；邮件通道仍未实现（G1488），这里只落站内行。
+  try {
+    await materializeDailyDigest(userId);
+  } catch (e) {
+    console.error('[sync] daily digest delivery failed', e);
   }
 
   const collected: { table: string; id: string; op: 'upsert' | 'delete'; data?: any; syncTs: string }[] = [];

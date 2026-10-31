@@ -62,7 +62,7 @@ test('离线邀请后刷新页面，`@` 名单里那枚人还在（显示名缓�
   await page.getByRole('button', { name: /新建/ }).first().click();
   await page.waitForURL(/\/documents\//);
   await page.getByPlaceholder('页面标题').fill(`显示名缓存 ${Date.now()}`);
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 30_000 });
 
   // 先掐断增量写：下面那次邀请的成员行会一直留在本机 pending。
   await blockSyncPush(page);

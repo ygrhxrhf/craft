@@ -1,7 +1,12 @@
+import { blockChildCount, isPageNode } from '@/lib/document/page-tree';
+
 export interface ExtractedBlock {
   index: number;
   text: string;
   type: string;
+  /** G53: the same `isPage`/`children` projection export and AI read. */
+  isPage: boolean;
+  children: number;
 }
 
 function nodeText(node: any): string {
@@ -29,7 +34,13 @@ export function extractBlocks(content: unknown): ExtractedBlock[] {
   children.forEach((node, index) => {
     const text = nodeText(node).replace(/\s+/g, ' ').trim();
     if (text) {
-      blocks.push({ index, text, type: node.type ?? 'paragraph' });
+      blocks.push({
+        index,
+        text,
+        type: node.type ?? 'paragraph',
+        isPage: isPageNode(node),
+        children: blockChildCount(node),
+      });
     }
   });
 

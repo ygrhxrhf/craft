@@ -13,6 +13,7 @@ import {
   Inbox,
   LayoutTemplate,
   Trash2,
+  Cable,
 } from 'lucide-react';
 import { cn } from 'cn';
 import { SIDEBAR_INBOX, TAGS_TITLE } from '@/lib/browse/official-copy';
@@ -27,6 +28,7 @@ const navItems = [
   { href: '/tasks', label: '任务', icon: CheckSquare },
   { href: '/calendar', label: '日历', icon: CalendarDays },
   { href: '/templates', label: '模板', icon: LayoutTemplate },
+  { href: '/connections', label: '连接', icon: Cable },
   { href: '/trash', label: '回收站', icon: Trash2 },
 ];
 

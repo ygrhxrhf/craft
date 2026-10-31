@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { BubbleMenu as TiptapBubbleMenu } from '@tiptap/react/menus';
 import type { Editor } from '@tiptap/react';
 import {
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 import { cn } from 'cn';
 import { tableBubbleKey } from '../bubble-menu/keys';
+import { TABLE_CONTEXT_UNAVAILABLE, tableRedirectCopy } from '@/lib/editor/table-context-copy';
 import {
   clearCellContents,
   clearCellStyle,
@@ -73,7 +75,37 @@ function applyCellAttr(editor: Editor, attr: string, value: string | null): void
 }
 
 export function TableToolbar({ editor }: TableToolbarProps) {
+  const [notice, setNotice] = useState<{ x: number; y: number } | null>(null);
+
+  // G34：官方对表格上下文菜单只给了两句限制文案，没有采到具体禁用项名册。
+  // 本地右键表格时不伪装成一份可执行菜单，而是给出同一条禁用提示并把人引到工具栏。
+  useEffect(() => {
+    const dom = editor.view.dom;
+    const onContextMenu = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target?.closest('table')) return;
+      event.preventDefault();
+      setNotice({ x: event.clientX, y: event.clientY });
+    };
+    const onPointerDown = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target?.closest('[data-table-context-notice]')) setNotice(null);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setNotice(null);
+    };
+    dom.addEventListener('contextmenu', onContextMenu);
+    window.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      dom.removeEventListener('contextmenu', onContextMenu);
+      window.removeEventListener('mousedown', onPointerDown);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [editor]);
+
   return (
+    <>
     <TiptapBubbleMenu
       editor={editor}
       pluginKey={tableBubbleKey}
@@ -253,6 +285,30 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         />
       </div>
     </TiptapBubbleMenu>
+    {notice && (
+      <div
+        data-table-context-notice
+        role="dialog"
+        aria-label="表格操作提示"
+        style={{ left: notice.x, top: notice.y }}
+        className="fixed z-50 w-64 rounded-lg border border-border bg-background p-3 text-xs shadow-lg"
+      >
+        <p role="menuitem" aria-disabled="true" className="text-muted-foreground">
+          {TABLE_CONTEXT_UNAVAILABLE}
+        </p>
+        <p className="mt-1.5 text-foreground/70">
+          {tableRedirectCopy('工具栏', '编辑表格')}
+        </p>
+        <button
+          type="button"
+          onClick={() => setNotice(null)}
+          className="mt-2 rounded-md border border-border px-2 py-1 text-[11px] text-foreground/70 hover:bg-muted"
+        >
+          知道了
+        </button>
+      </div>
+    )}
+    </>
   );
 }
 

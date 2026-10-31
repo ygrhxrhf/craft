@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Database, FileText, Keyboard, Plus, Search, Type } from 'lucide-react';
+import { ChevronDown, ChevronUp, Database, FileText, Keyboard, Plus, Search, Terminal, Type } from 'lucide-react';
 import {
   CommandDialog,
   CommandGroup,
@@ -13,12 +13,66 @@ import {
 } from '@/components/ui/command';
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { useSettingsStore } from '@/lib/store/use-settings-store';
+import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
+import { runAllToggles } from '@/lib/editor/toggle-all-command';
+import { slashCommands } from '@/components/editor/slash-menu/slash-commands';
+import { filterCommands, type PaletteCommand } from '@/lib/commands/registry';
+import { OFFICIAL_COMMANDS } from '@/lib/commands/official-catalog';
 import { searchAll } from '@/actions/document/search';
 import type { SearchResultDoc, SearchResultBlock, SearchResultRow } from '@/actions/document/search';
 import { createDocumentLocal } from '@/components/sync/create-local';
+import { exportLibraryZip } from '@/actions/document/export-library';
 import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel, noResultsFor } from '@/lib/search/official-copy';
 import { toast } from '@/components/ui/toast';
 import { useSession } from 'next-auth/react';
+
+async function downloadLibraryArchive() {
+  try {
+    const file = await exportLibraryZip();
+    const bytes = Uint8Array.from(atob(file.base64), (char) => char.charCodeAt(0));
+    const url = URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  } catch {
+    toast.add({ id: 'library-export-failed', type: 'error', title: '资料库导出失败' });
+  }
+}
+
+const implementedCommands: PaletteCommand[] = [
+  ...slashCommands.map((command) => ({
+    id: `insert.${command.name}`,
+    title: command.name,
+    group: '插入',
+    keywords: command.keywords,
+    run: () => {
+      const editor = useActiveEditorStore.getState().editor;
+      if (!editor) return;
+      const { from, to } = editor.state.selection;
+      void command.command(editor, { from, to });
+    },
+  })),
+  {
+    id: 'library.export',
+    title: '导出整个资料库',
+    group: '操作',
+    keywords: ['export', 'zip', '资料库', '导出'],
+    run: () => void downloadLibraryArchive(),
+  },
+];
+
+/** G33: all 189 official ids are searchable; the ones this build has not wired are greyed out. */
+const paletteCommands: PaletteCommand[] = [
+  ...implementedCommands,
+  ...OFFICIAL_COMMANDS.map((command) => ({
+    id: command.id,
+    title: command.title,
+    group: '官方命令',
+    keywords: [command.group],
+  })),
+];
 
 export function CommandPalette() {
   const router = useRouter();
@@ -121,7 +175,22 @@ export function CommandPalette() {
     useSettingsStore.getState().openSettings('shortcuts');
   };
 
+  /** G16：命令面板缺注册表（G33）前的直接落点，与格式页/slash 共用同一组命令。 */
+  const handleAllToggles = (expand: boolean) => {
+    close();
+    setQuery('');
+    runAllToggles(useActiveEditorStore.getState().editor, expand);
+  };
+
   const hasQuery = query.trim().length > 0;
+  const matchingCommands = hasQuery ? filterCommands(paletteCommands, query).slice(0, 8) : [];
+
+  const handleRunCommand = (command: PaletteCommand) => {
+    if (!command.run) return;
+    close();
+    setQuery('');
+    command.run();
+  };
 
   // `browse.search.create.doc` =「创建 [0]」. The row sits above the results and the document is
   // created through the same offline path as 「新建文档」, titled with the query.
@@ -158,6 +227,25 @@ export function CommandPalette() {
           </CommandGroup>
         )}
 
+        {hasQuery && matchingCommands.length > 0 && (
+          <CommandGroup heading="命令">
+            {matchingCommands.map((command) => (
+              <CommandItem
+                key={command.id}
+                value={command.id}
+                disabled={!command.run}
+                onSelect={() => handleRunCommand(command)}
+              >
+                <Terminal className="size-4" />
+                <span>{command.title}</span>
+                {!command.run && (
+                  <span className="ml-auto text-[10px] text-muted-foreground/60">未接入</span>
+                )}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )}
+
         {!hasQuery && (
           <CommandGroup heading="操作">
             <CommandItem onSelect={handleNewDocument}>
@@ -174,6 +262,23 @@ export function CommandPalette() {
             >
               <Keyboard className="size-4" />
               <span>查看所有快捷键</span>
+            </CommandItem>
+            {/* G16：折叠块全部展开/收起。官方两档命令在采集表里；这里直接落到同一命令。 */}
+            <CommandItem
+              value="expand-all-toggles"
+              data-testid="palette-expand-all-toggles"
+              onSelect={() => handleAllToggles(true)}
+            >
+              <ChevronDown className="size-4" />
+              <span>全部展开折叠块</span>
+            </CommandItem>
+            <CommandItem
+              value="collapse-all-toggles"
+              data-testid="palette-collapse-all-toggles"
+              onSelect={() => handleAllToggles(false)}
+            >
+              <ChevronUp className="size-4" />
+              <span>全部收起折叠块</span>
             </CommandItem>
           </CommandGroup>
         )}

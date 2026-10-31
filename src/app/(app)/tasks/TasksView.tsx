@@ -181,7 +181,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   const sectioned =
     group === 'upcoming'
       ? upcomingSections(
-          window === 'all' ? tasks : tasks.filter((task) => withinUpcoming(task.dueDate, window, now)),
+          window === 'all' ? tasks : tasks.filter((task) => withinUpcoming(task.scheduleDate, window, now)),
           showCompleted,
           now,
         )
@@ -446,6 +446,7 @@ function TaskRow({
   const [open, setOpen] = useState(false);
   const schedule = {
     dueDate: task.dueDate,
+    scheduleDate: task.scheduleDate,
     remindAt: task.remindAt,
     recurrence: task.recurrence,
     recurrenceEnd: task.recurrenceEnd,
@@ -498,9 +499,14 @@ function TaskRow({
             <span className="max-w-32 truncate">{task.documentTitle}</span>
           </Link>
         )}
+        {task.scheduleDate && (
+          <span className="shrink-0 text-xs text-muted-foreground">
+            计划 {new Date(task.scheduleDate).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
+          </span>
+        )}
         {task.dueDate && (
           <span className="shrink-0 text-xs text-muted-foreground">
-            {new Date(task.dueDate).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
+            截止 {new Date(task.dueDate).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
           </span>
         )}
 
@@ -526,6 +532,14 @@ function TaskRow({
 
       {open && (
         <div className="grid gap-2 px-3 pb-3 sm:grid-cols-2">
+          <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
+            计划日期
+            <Input
+              type="date"
+              value={toDayInput(task.scheduleDate)}
+              onChange={(event) => update({ scheduleDate: fromDayInput(event.target.value) })}
+            />
+          </label>
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             截止日期
             <Input

@@ -168,7 +168,7 @@ for (const theme of ['light', 'dark'] as const) {
       async function shootDoc(name: string) {
         // The header label flips 已保存 → 保存中... → 已保存 while the autosave and
         // the Yjs attach settle, and the label is wider in one of those states.
-        await expect(page.getByText('已保存', { exact: true })).toBeVisible();
+        await expect(page.getByText('所有更改已保存', { exact: true })).toBeVisible();
         // 已保存 is the *metadata* round-trip, not the body. The editor paints its
         // empty first frame and fills from the doc afterwards, so a shot taken on
         // that frame shows the `输入 / 使用命令…` placeholder -- and on a 1440x900

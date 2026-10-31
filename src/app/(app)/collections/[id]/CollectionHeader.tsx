@@ -109,7 +109,7 @@ export function CollectionHeader({ collection }: CollectionHeaderProps) {
         </Tabs>
         {/* G1538：视图删除。Tab 里塞不下第二个按钮（TabsTrigger 本身就是 button），故单独立一个菜单 */}
         <ViewActionsMenu
-          views={collection.views as { id: string; name: string; isActive: boolean }[]}
+          views={collection.views as { id: string; name: string; isActive: boolean; type: 'table' | 'kanban' | 'calendar' | 'list' | 'gallery' | 'form' }[]}
           activeViewId={activeView?.id ?? ''}
         />
         <div className="flex shrink-0 items-center gap-1">

@@ -62,7 +62,7 @@ test('服务端通路断掉、整页重载之后，分享面板仍从本机镜�
   await page.waitForURL(/\/documents\//);
   const docUrl = page.url();
   await page.getByPlaceholder('页面标题').fill(`镜像读 ${stamp}`);
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 30_000 });
 
   // 正常开一次面板并改到 edit：这一趟既建了服务端那一行，也把档位经 applyLocal 写进本机镜像。
   await openSharePanel(page);

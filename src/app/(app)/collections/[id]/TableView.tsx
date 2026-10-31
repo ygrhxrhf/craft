@@ -16,6 +16,7 @@ import { FilterBar, applyFilters } from '@/components/collection/FilterBar';
 import { SortMenu, applySorts } from '@/components/collection/SortMenu';
 import { GroupMenu, applyGrouping } from '@/components/collection/GroupMenu';
 import type { getCollection } from '@/actions/collection/collection';
+import { summarizeColumn } from '@/lib/collection/summary';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
 type View = NonNullable<Collection>['views'][number];
@@ -201,7 +202,7 @@ export function TableView({ collection, view }: TableViewProps) {
               <Plus className="size-4" />
             </Button>
             <Sheet open={toolsOpen} onOpenChange={setToolsOpen}>
-              <SheetContent side="bottom" className="max-h-[70dvh] gap-0 p-0">
+              <SheetContent side="bottom" snapPoints={[0.4, 0.7, 0.92]} className="max-h-[70dvh] gap-0 p-0">
                 <SheetTitle className="sr-only">视图工具</SheetTitle>
                 <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">{tools}</div>
               </SheetContent>
@@ -279,6 +280,19 @@ export function TableView({ collection, view }: TableViewProps) {
                         </tr>
                       ))}
                     </tbody>
+                    <tfoot>
+                      <tr data-testid="collection-summary-row" className="bg-muted/30 text-muted-foreground">
+                        {visibleProperties.map((property: any) => (
+                          <td
+                            key={property.id}
+                            className="border-r border-border px-[var(--st-cell-padding-x)] py-1 typography-ui-sm-500 first:border-l"
+                          >
+                            {summarizeColumn(property, items.map((item: any) => getCellValue(item, property.id)))}
+                          </td>
+                        ))}
+                        <td className="border-border px-1 py-0" />
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               );
@@ -363,6 +377,20 @@ export function TableView({ collection, view }: TableViewProps) {
                 </tr>
               ))}
             </tbody>
+            <tfoot>
+              <tr data-testid="collection-summary-row" className="bg-muted/30 text-muted-foreground">
+                {reorderEnabled && <td className="border-r border-border" />}
+                {visibleProperties.map((property: any) => (
+                  <td
+                    key={property.id}
+                    className="border-r border-border px-[var(--st-cell-padding-x)] py-1 typography-ui-sm-500 first:border-l"
+                  >
+                    {summarizeColumn(property, processedItems.map((item: any) => getCellValue(item, property.id)))}
+                  </td>
+                ))}
+                <td className="border-border px-1 py-0" />
+              </tr>
+            </tfoot>
           </table>
         )}
       </div>

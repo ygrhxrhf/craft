@@ -52,7 +52,7 @@ test('an unpublished share reads as invalid on both link shapes, and publishing 
   const editor = page.locator('.ProseMirror').first();
   await editor.click();
   await page.keyboard.type(sentinel);
-  await expect(page.getByText('已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
 
   const token = await shareToken(page);
   const visitor = await browser.newContext();

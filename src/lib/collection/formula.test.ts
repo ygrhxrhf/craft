@@ -80,15 +80,25 @@ describe('the official table.formula set', () => {
     expect(evaluateFormula('1 + PI() / PI()')).toEqual({ ok: true, value: 2 });
   });
 
-  it('keeps the no-eval property and the declared deferrals', () => {
+  it('keeps the no-eval property', () => {
     expect(evaluateFormula('Function("return 1")()').ok).toBe(false);
     expect(evaluateFormula('constructor(1)').ok).toBe(false);
     expect(evaluateFormula('window.location').ok).toBe(false);
-    // above/below/left/right address a grid; this engine only ever sees one row, so they stay
-    // failing names rather than a fabricated answer.
-    expect(evaluateFormula('ABOVE()').ok).toBe(false);
-    expect(evaluateFormula('BELOW(1)').ok).toBe(false);
     // A tie resolves to the first value seen — the official description does not say (local).
     expect(evaluateFormula('MODE(1, 1, 2, 2)')).toEqual({ ok: true, value: 1 });
+  });
+
+  it('consumes the four grid range references inside aggregates', () => {
+    const grid = { above: [1, 2, 3], below: [4], left: [5], right: [6, 7] };
+    expect(evaluateFormula('SUM(ABOVE())', {}, grid)).toEqual({ ok: true, value: 6 });
+    expect(evaluateFormula('AVERAGE(RIGHT())', {}, grid)).toEqual({ ok: true, value: 6.5 });
+    expect(evaluateFormula('COUNT(ABOVE())', {}, grid)).toEqual({ ok: true, value: 3 });
+    expect(evaluateFormula('COUNTA(LEFT())', {}, grid)).toEqual({ ok: true, value: 1 });
+    expect(evaluateFormula('SUM(ABOVE()) + SUM(BELOW())', {}, grid)).toEqual({ ok: true, value: 10 });
+  });
+
+  it('does not invent a value for a range without a grid', () => {
+    expect(evaluateFormula('SUM(ABOVE())').ok).toBe(false);
+    expect(evaluateFormula('ABOVE()', {}, { above: [1] }).ok).toBe(false); // a range is not a scalar
   });
 });

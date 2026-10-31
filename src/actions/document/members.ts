@@ -29,6 +29,9 @@ export async function listDocumentMembers(documentId: string): Promise<DocumentM
 
   const items: DocumentMemberItem[] = [];
   for (const row of rows) {
+    // G04：`requested` 是待批准的编辑请求，不是已授予的协作者；它走
+    // listAccessRequests，不能混进成员名册。
+    if (row.role === 'requested') continue;
     const account = await users.first({ id: row.userId as string });
     items.push({
       id: row.id as string,

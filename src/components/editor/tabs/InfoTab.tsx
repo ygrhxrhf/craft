@@ -156,13 +156,35 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
     setBusy(true);
     try {
       const file = await exportDocument(documentId, format);
-      const blob = new Blob([file.body], { type: file.mime });
+      const payload = file.encoding === 'base64'
+        ? Uint8Array.from(atob(file.body), (char) => char.charCodeAt(0))
+        : file.body;
+      const blob = new Blob([payload], { type: file.mime });
       const url = URL.createObjectURL(blob);
       const link = window.document.createElement('a');
       link.href = url;
       link.download = file.filename;
       link.click();
       URL.revokeObjectURL(url);
+      setActionError(null);
+    } catch {
+      setActionError('导出失败');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleExportImage = async () => {
+    setBusy(true);
+    try {
+      const target = window.document.querySelector('.ProseMirror') as HTMLElement | null;
+      if (!target) throw new Error('找不到编辑器');
+      const { toPng } = await import('html-to-image');
+      const dataUrl = await toPng(target, { backgroundColor: '#ffffff', pixelRatio: 2 });
+      const link = window.document.createElement('a');
+      link.href = dataUrl;
+      link.download = `${window.document.title || 'document'}.png`;
+      link.click();
       setActionError(null);
     } catch {
       setActionError('导出失败');
@@ -695,7 +717,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
           {showExport && (
             <div className="mb-2 rounded-lg border border-foreground/10 p-2">
               <div className="mb-1 grid grid-cols-2 gap-1">
-                {(['markdown', 'html', 'text', 'json'] as const).map((format) => (
+                {(['markdown', 'html', 'text', 'json', 'docx', 'pdf', 'textbundle'] as const).map((format) => (
                   <button
                     key={format}
                     type="button"
@@ -703,10 +725,30 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
                     onClick={() => handleExport(format)}
                     className="rounded-md border border-foreground/10 px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4 disabled:opacity-50"
                   >
-                    {format === 'markdown' ? 'Markdown' : format === 'html' ? 'HTML' : format === 'text' ? '纯文本' : 'JSON'}
+                    {format === 'markdown'
+                      ? 'Markdown'
+                      : format === 'html'
+                        ? 'HTML'
+                        : format === 'text'
+                          ? '纯文本'
+                          : format === 'json'
+                            ? 'JSON'
+                            : format === 'docx'
+                              ? 'Word'
+                              : format === 'pdf'
+                                ? 'PDF'
+                                : 'TextBundle'}
                   </button>
                 ))}
               </div>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void handleExportImage()}
+                className="w-full rounded-md border border-foreground/10 px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4 disabled:opacity-50"
+              >
+                图片
+              </button>
             </div>
           )}
           <div className="my-2 h-px bg-border" />

@@ -60,7 +60,7 @@ test('任务行同步 500 时徽标翻成「保存失败」，重试之后行真
   await expect(editor.locator('.task-list-item')).toHaveCount(1);
 
   // 先证明这一条通路本来是通的（否则下面的「失败」是假的——它可能一直在失败）。
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 20_000 });
 
   const failing = { on: true };
   await failActionPosts(page, failing);
@@ -80,11 +80,11 @@ test('任务行同步 500 时徽标翻成「保存失败」，重试之后行真
   //   任务页今晚看不到这一行。
   const status = page.getByRole('status');
   await expect(status.getByText('保存失败')).toBeVisible({ timeout: 20_000 });
-  await expect(page.getByText('已保存')).toHaveCount(0);
+  await expect(page.getByText('所有更改已保存')).toHaveCount(0);
 
   failing.on = false;
   await status.getByRole('button', { name: '重试' }).click();
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 20_000 });
 
   // 重试不是把徽标洗白了事：那一行确实进了 tasks，并被读到第三档那节里。
   // ☆ 顺序要紧：这一行是 cancelled，默认那枚开关（只显示 pending）本来就藏着它。

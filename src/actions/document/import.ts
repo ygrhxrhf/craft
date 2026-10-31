@@ -3,6 +3,7 @@
 import { assertOwned, requireUserId } from '@/lib/authz/guard';
 import { getDb } from '@/prisma/db';
 import { parseMarkdown, titleFromMarkdown } from '@/lib/import/markdown';
+import { htmlToMarkdown, parseArchiveZip, parseEnex, parseReadwiseCsv } from '@/lib/import/sources';
 import { serializeDocument } from '@/lib/document-codec';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
@@ -76,4 +77,34 @@ export async function importMarkdownDocuments(input: {
     created.length ? ['document'] : ['folder'],
     created[created.length - 1]?.id ?? folderId);
   return created;
+}
+
+export interface SourceImportFile {
+  name: string;
+  /** Text for md/html/enex/csv; base64 for zip archives. */
+  text: string;
+}
+
+/** G22: the five import sources all collapse to Markdown files before the same create path. */
+export async function importSourceFiles(input: {
+  files: SourceImportFile[];
+  folderId?: string | null;
+}): Promise<ImportedDocument[]> {
+  const markdown: MarkdownFile[] = [];
+  for (const file of input.files) {
+    const lower = file.name.toLowerCase();
+    if (lower.endsWith('.zip')) {
+      markdown.push(...(await parseArchiveZip(file.text)));
+    } else if (lower.endsWith('.enex')) {
+      markdown.push(...parseEnex(file.text));
+    } else if (lower.endsWith('.csv')) {
+      markdown.push(...parseReadwiseCsv(file.text));
+    } else if (/\.html?$/i.test(lower)) {
+      const text = htmlToMarkdown(file.text);
+      if (text) markdown.push({ name: file.name.replace(/\.html?$/i, '.md'), text });
+    } else {
+      markdown.push(file);
+    }
+  }
+  return importMarkdownDocuments({ files: markdown, folderId: input.folderId });
 }

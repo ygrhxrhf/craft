@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.tasks.scheduleDate",
+    "label": "Add column \"scheduleDate\" to \"tasks\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "scheduleDate",
+        "table": "tasks"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"scheduleDate\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tasks",
+          "scheduleDate"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"scheduleDate\"",
+        "sql": "ALTER TABLE \"public\".\"tasks\" ADD COLUMN \"scheduleDate\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"scheduleDate\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tasks",
+          "scheduleDate"
+        ]
+      }
+    ]
+  }
+]

@@ -39,7 +39,7 @@ async function ensureDocument(page: Page) {
   await page.getByRole('button', { name: /新建/ }).first().click();
   await page.waitForURL(/\/documents\//);
   await page.getByPlaceholder('页面标题').fill(DOC);
-  await expect(page.getByText('已保存').first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 20_000 });
 }
 
 /** One row, one filled 名称 cell -- the default property a new collection ships with. */

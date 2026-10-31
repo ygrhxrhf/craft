@@ -20,15 +20,15 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: '未配置 OPENAI_API_KEY' }, { status: 500 });
   }
 
-  let body: { action?: string; text?: string };
+  let body: { action?: string; prompt?: string; text?: string };
   try {
     body = await req.json();
   } catch {
     return Response.json({ error: '无效请求' }, { status: 400 });
   }
 
-  const { action, text } = body;
-  const systemPrompt = action ? actionPrompts[action] : undefined;
+  const { action, prompt, text } = body;
+  const systemPrompt = prompt?.trim() ? prompt.trim().slice(0, 2000) : action ? actionPrompts[action] : undefined;
   if (!systemPrompt || !text?.trim()) {
     return Response.json({ error: '缺少参数' }, { status: 400 });
   }

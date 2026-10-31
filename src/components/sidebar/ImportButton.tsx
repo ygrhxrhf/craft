@@ -10,13 +10,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { importMarkdownDocuments } from '@/actions/document/import';
+import { importMarkdownDocuments, importSourceFiles } from '@/actions/document/import';
 import { pickTextBundleEntry } from '@/lib/import/markdown';
 import { toast } from '@/components/ui/toast';
 
 interface PendingFile {
   name: string;
   text: string;
+}
+
+async function base64Of(file: File): Promise<string> {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let binary = '';
+  const chunk = 0x8000;
+  for (let index = 0; index < bytes.length; index += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + chunk));
+  }
+  return btoa(binary);
 }
 
 export function ImportButton() {
@@ -36,10 +46,30 @@ export function ImportButton() {
     }
   }
 
+  async function runSource(files: PendingFile[]) {
+    if (!files.length) return;
+    setBusy(true);
+    try {
+      const created = await importSourceFiles({ files });
+      if (created.length) router.push(`/documents/${created[0].id}`);
+    } catch (error) {
+      toast.add({
+        id: 'import-source-failed',
+        type: 'error',
+        title: error instanceof Error ? error.message : '导入失败',
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function readMarkdown(list: FileList | null) {
     if (!list) return;
-    const picked = Array.from(list).filter((file) => /\.(md|markdown|txt)$/i.test(file.name));
-    await run(await Promise.all(picked.map(async (file) => ({ name: file.name, text: await file.text() }))));
+    const picked = Array.from(list).filter((file) => /\.(md|markdown|txt|html?|enex|csv|zip)$/i.test(file.name));
+    await runSource(await Promise.all(picked.map(async (file) => ({
+      name: file.name,
+      text: /\.zip$/i.test(file.name) ? await base64Of(file) : await file.text(),
+    }))));
   }
 
   async function readBundles(list: FileList | null) {
@@ -63,7 +93,7 @@ export function ImportButton() {
         ref={fileRef}
         type="file"
         multiple
-        accept=".md,.markdown,.txt,text/markdown,text/plain"
+        accept=".md,.markdown,.txt,.html,.htm,.enex,.csv,.zip,text/markdown,text/plain,text/html,application/zip"
         className="hidden"
         onChange={(event) => void readMarkdown(event.target.files)}
       />
@@ -93,7 +123,7 @@ export function ImportButton() {
             fileRef.current?.click();
           }}>
             <FileText className="mr-2 size-4" />
-            Markdown 文件…
+            Markdown / HTML / Evernote / Readwise / Notion…
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => {
             if (!navigator.onLine) {

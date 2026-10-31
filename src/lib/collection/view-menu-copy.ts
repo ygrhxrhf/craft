@@ -8,3 +8,7 @@
  */
 export const DELETE_VIEW_KEY = 'collections.delete.view';
 export const DELETE_VIEW = '删除视图';
+
+/** G23: 官方视图类型互转入口。 */
+export const TURN_VIEW_INTO_KEY = 'collections.views.turn.into';
+export const TURN_VIEW_INTO = '将视图转换为';

@@ -111,7 +111,7 @@ test('clicking a row inserts the chip, and the chip is still there after a reloa
 
   await expect(editor.locator('> *').first()).toHaveText('协作者乙');
 
-  await expect(page.getByText('已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('所有更改已保存', { exact: true })).toBeVisible({ timeout: 20_000 });
   await page.reload();
   await expect(editor).toBeVisible();
   await expect(editor.getByText('协作者乙')).toHaveCount(1);

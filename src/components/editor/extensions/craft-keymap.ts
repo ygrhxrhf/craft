@@ -1,5 +1,5 @@
 import { Extension } from '@tiptap/core';
-import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { NodeSelection, Plugin, PluginKey } from '@tiptap/pm/state';
 import { CellSelection } from '@tiptap/pm/tables';
 import type { EditorView } from '@tiptap/pm/view';
 import type { Editor } from '@tiptap/react';
@@ -108,10 +108,9 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
     return true;
   }
 
-  // `⇧⏎` renames the page block. A plain text caret must not claim the key: official Craft
-  // leaves Shift-Enter inert while typing in the body (G615), so the block has to be selected
-  // first. This build has no page-block node (G53/G1408) — the document title input is the page
-  // title, so that is the rename target.
+  // `⇧⏎` renames the page block **when a block is selected**; a plain text caret means the
+  // line-break branch above already claimed it (G1552). This build has no page-block node
+  // (G53/G1408) — the document title input is the page title, so that is the rename target.
   if (id === 'RENAME') {
     const selection = editor.state.selection as { node?: unknown };
     if (!selection.node) return false;
@@ -148,6 +147,20 @@ export const CraftKeymap = Extension.create({
         // focused, and no key ever reaches the handler.
         props: {
           handleKeyDown(view: EditorView, event: KeyboardEvent) {
+            // G1552: Shift-Enter inserts a line break inside the block (four independent official
+            // runs; the older "inert" reading G615 was withdrawn). A selected block still routes
+            // to RENAME below, which is the only other meaning this chord has locally.
+            if (
+              event.key === 'Enter' &&
+              event.shiftKey &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey &&
+              !(view.state.selection instanceof NodeSelection)
+            ) {
+              editor.chain().focus().setHardBreak().run();
+              return true;
+            }
             // Enter adds a row only while cells are selected and no text is being edited (G1478).
             // A caret inside a cell is editing, so Enter there keeps its normal meaning.
             if (

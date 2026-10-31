@@ -21,13 +21,12 @@ async function blankDocument(page: Page) {
 }
 
 /**
- * G615: official Craft's `Shift-Enter` is inert on a document page — measured twice on two
- * blocks with the `<br>` count staying at 0 while a plain `Enter` control still added a block
- * (`gap.md` G615). This build used to insert `<br>` because StarterKit's default HardBreak binds
- * that key. The second half is the same-cell control: if `Enter` also stopped producing blocks,
- * the first assertion would be passing for the wrong reason.
+ * G1552 (which withdrew G615): official Craft's `Shift-Enter` inserts a line break **inside** the
+ * block — four independent runs read `<br>` 0→1 and the block text gained an inline break, with
+ * the key not consumed. Plain `Enter` still splits into a new block; that control keeps the first
+ * assertion from passing for the wrong reason.
  */
-test('Shift+Enter changes nothing while plain Enter still splits the block', async ({ page }) => {
+test('Shift+Enter inserts a line break while plain Enter still splits the block', async ({ page }) => {
   await signIn(page);
   const editor = await blankDocument(page);
   await editor.click();
@@ -36,9 +35,9 @@ test('Shift+Enter changes nothing while plain Enter still splits the block', asy
   await page.keyboard.press('Shift+Enter');
   await page.keyboard.type('def');
 
-  // No hard break was inserted: the two runs of text share one paragraph.
-  await expect(editor.locator('br')).toHaveCount(0);
-  await expect(editor).toContainText('abcdef');
+  // One hard break: the two runs stay inside the same paragraph.
+  await expect(editor.locator('p br')).toHaveCount(1);
+  await expect(editor.locator('p').first()).toContainText('abcdef');
 
   // Control: the key path itself is alive. Paragraph count is the lever — a fresh, unsaved
   // document has no block ids yet, so `[data-block-id]` counts 0 even after a real split.

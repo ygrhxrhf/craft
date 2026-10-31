@@ -1921,12 +1921,11 @@
       ]
     },
     "G1552": {
-      "status": "gap",
-      "note": "Shift-Enter 被 RENAME 占用（选中块时改标题），HardBreak 刻意不绑 ⇒ 无行内换行；官方插 <br> 且不消费键。",
+      "status": "aligned",
+      "note": "Shift-Enter 在块内插行内换行（<br> 0→1），选中块时仍走重命名；真浏览器 e2e 通过。",
       "evidence": [
-        "src/lib/editor/keymap.ts:206",
-        "src/components/editor/extensions/hard-break.ts:4",
-        "src/components/editor/Editor.tsx:315"
+        "src/components/editor/extensions/craft-keymap.ts:151",
+        "e2e/shift-enter.spec.ts:20"
       ]
     },
     "G1553": {
@@ -5747,10 +5746,10 @@
       ]
     },
     "G615": {
-      "status": "gap",
-      "note": "本地 Shift+Enter 不插 br；官方实测插 br，本行前提已被 G1552 推翻",
+      "status": "aligned",
+      "note": "本行前提（官方零变化）已被 G1552 推翻；现本地同样插 <br>，两侧一致。",
       "evidence": [
-        "src/lib/editor/keymap.ts:206"
+        "src/components/editor/extensions/craft-keymap.ts:151"
       ]
     },
     "G616": {

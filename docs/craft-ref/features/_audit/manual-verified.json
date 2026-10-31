@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-10-31",
-  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批（2026-10-31）现读 model.md §一之六 块模型族 8 条 + 信息面板/任务块/集合类型 2 条。",
+  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批（2026-10-31）现读 model.md §一之六 块模型族 8 条 + 信息面板/任务块/集合类型 2 条；第 3 批（2026-10-31）现读集合族 9 条（G283–G285／G287／G299／G394／G427／G439／G451）。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -293,6 +293,60 @@
       "priority": "P1",
       "note": "现读（第 2 批）：本地列类型覆盖官方 13 值里的 11 个（text/number/checkbox/date/url/person/select/multi_select/email/phone/relation），缺 media（本地叫 file）与 linkToBlock；另多出 3 个非官方类型（formula/created_at/updated_at）。命名映射已在 filter-operators.ts:1-10 声明，非台账所说「未对齐」。",
       "evidence": ["src/components/collection/AddPropertyMenu.tsx:20-36", "src/lib/collection/filter-operators.ts:1-22"]
+    },
+    "G283": {
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 3 批）：排序/分组守卫已在（canReorder 要求 sortCount===0 && !grouped，TableView.tsx:125 调用），但**筛选不在判据里**——代码注释明确写了筛选只减少行数、仍允许拖拽并按全集重排（item-reorder.ts:41-51）。官方文案是「已筛选、排序或分组的集合不支持拖放操作」⇒ 差在筛选一路，另两路已对齐。",
+      "evidence": ["src/lib/collection/item-reorder.ts:41-51", "src/app/(app)/collections/[id]/TableView.tsx:124-148"]
+    },
+    "G284": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 3 批）更正本地列：本地**没有删组动作**（全库零命中 deleteGroup／删除分组），GroupMenu 只有「取消分组」＝改 groupBy 配置，从不写任何行值、也不会删记录。台账「删分组会连带删记录」是陈旧读数；真缺口是官方那套「删组＝清该组全部项目的该字段值」没有实现。",
+      "evidence": ["src/components/collection/GroupMenu.tsx:24-33", "src/components/collection/GroupMenu.tsx:65-74"]
+    },
+    "G285": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 3 批）：关联字段只有单向目标（AddPropertyMenu 的 relation 只存 collectionId），RelationCell 只读本行值；全库无 twoWay／related.field／反向关联字段注入 ⇒ 官方「双向」缺失。",
+      "evidence": ["src/components/collection/AddPropertyMenu.tsx:32", "src/components/collection/AddPropertyMenu.tsx:62", "src/components/collection/PropertyCell.tsx:570-580"]
+    },
+    "G287": {
+      "status": "aligned",
+      "priority": "P1",
+      "note": "现读（第 3 批）改判：本地公式已支持方向性区域引用——FormulaGrid 带 above/below/left/right 四向数组（formula.ts:21-26），求值器按当前单元格取邻域，单测直接覆盖四向（formula.test.ts:92）。台账「只支持绝对引用」是旧读数（该能力随复刻任务 G23 落地）。",
+      "evidence": ["src/lib/collection/formula.ts:21-26", "src/lib/collection/formula.test.ts:92-102"]
+    },
+    "G299": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 3 批）更正本地列：本地**不能改字段类型**——updateProperty 的入参只有 name/config/isVisible/width、没有 type（properties.ts:41-58），FieldMenu 只有改名/隐藏/删除。台账「改类型直接清空值」是陈旧读数；真缺口是官方的类型变更 + 尽力转换整条通路都没有。",
+      "evidence": ["src/actions/collection/properties.ts:41-58", "src/components/collection/FieldMenu.tsx:29-32"]
+    },
+    "G394": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 3 批）：确认值表示层不同——列值落 CollectionValue.value Json?，日期以字符串存入、读侧 new Date(value) 转（PropertyCell.tsx:493），全库无 instanceof Date 校验。照搬官方校验器会把本地整列判无效，故不能只补校验、要连表示层一起定。",
+      "evidence": ["src/prisma/contract.prisma:204-220", "src/components/collection/PropertyCell.tsx:489-500"]
+    },
+    "G427": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 3 批）：确认基数不同——CollectionItem.collectionId 是单值外键（contract.prisma:186-190），无多集合归属字段，也无官方 objectData.schemas 那样的数组。表达不出一物多集合。",
+      "evidence": ["src/prisma/contract.prisma:186-200"]
+    },
+    "G439": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 3 批）：确认单元格不可寻址——collection_values 只有 itemId/propertyId，无 blockId 列；可锚定块只有 paragraph/heading（anchors.ts:5）⇒ 单元格既不能深链、也不能被公式单独寻址。台账读数仍准确。",
+      "evidence": ["src/prisma/contract.prisma:204-220", "src/lib/search/anchors.ts:1-9"]
+    },
+    "G451": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 3 批）：确认无类型判别位——CollectionValue.value 是裸 Json?，读侧靠 PropertyCell 的 parseValue 硬转（数字/布尔/数组各判一次），没有官方 {type,theme,value} 这样的判别对象 ⇒ 空值读不出是哪种类型的空。",
+      "evidence": ["src/prisma/contract.prisma:204-220", "src/components/collection/PropertyCell.tsx:81-91"]
     }
   }
 }

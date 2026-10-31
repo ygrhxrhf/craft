@@ -7,8 +7,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { PROPERTY_TYPES } from '@/lib/collection/property-types';
+import { changePropertyType } from '@/actions/collection/properties';
 import { getSyncManager } from '@/lib/sync-core';
 import { confirmDialog, promptDialog } from '@/lib/dialog/show';
 import { readLocalRecords } from '@/components/sync/local-records';
@@ -22,7 +27,7 @@ import {
 } from '@/lib/collection/field-menu-copy';
 
 interface FieldMenuProps {
-  property: { id: string; name: string; isVisible: boolean };
+  property: { id: string; name: string; isVisible: boolean; type?: string };
 }
 
 /**
@@ -82,6 +87,23 @@ export function FieldMenu({ property }: FieldMenuProps) {
     }
   };
 
+  // G299: change the type and convert what the values can become.
+  const handleChangeType = async (type: string, label: string) => {
+    const confirmed = await confirmDialog({
+      title: `更改为${label}`,
+      message: '如果可以转换，修改字段类型将会转换当前值。',
+      confirmLabel: '更改',
+    });
+    if (!confirmed) return;
+    setBusy(true);
+    try {
+      await changePropertyType(property.id, type);
+      await settle();
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleDelete = async () => {
     const confirmed = await confirmDialog({
       title: EDIT_FIELD,
@@ -130,6 +152,19 @@ export function FieldMenu({ property }: FieldMenuProps) {
         <DropdownMenuItem onClick={() => void handleToggleVisible()}>
           {property.isVisible ? HIDE_FIELDS : SHOW_HIDE_FIELDS}
         </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>更改类型</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            {PROPERTY_TYPES.filter((option) => option.value !== property.type).map((option) => (
+              <DropdownMenuItem
+                key={option.value}
+                onClick={() => void handleChangeType(option.value, option.label)}
+              >
+                {option.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         <DropdownMenuItem variant="destructive" onClick={() => void handleDelete()}>
           {DELETE_FIELD}
         </DropdownMenuItem>

@@ -17,23 +17,15 @@ import { getSyncManager } from '@/lib/sync-core';
 import { readLocalRecords } from '@/components/sync/local-records';
 import { evaluateFormula, type FormulaResult } from '@/lib/collection/formula';
 
-const PROPERTY_TYPES: { value: string; label: string }[] = [
-  { value: 'text', label: '文本' },
-  { value: 'number', label: '数字' },
-  { value: 'select', label: '单选' },
-  { value: 'multi_select', label: '多选' },
-  { value: 'date', label: '日期' },
-  { value: 'checkbox', label: '勾选框' },
-  { value: 'url', label: '链接' },
-  { value: 'email', label: '邮箱' },
-  { value: 'phone', label: '电话' },
-  { value: 'person', label: '人员' },
-  { value: 'file', label: '文件' },
-  { value: 'relation', label: '关联' },
-  { value: 'formula', label: '公式' },
+import { PROPERTY_TYPES } from '@/lib/collection/property-types';
+
+/** Local extras that exist next to the official vocabulary (G393). */
+const LOCAL_ONLY_TYPES: { value: string; label: string }[] = [
   { value: 'created_at', label: '创建时间' },
   { value: 'updated_at', label: '更新时间' },
 ];
+
+const PROPERTY_TYPE_OPTIONS = [...PROPERTY_TYPES, ...LOCAL_ONLY_TYPES];
 
 export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
   const router = useRouter();
@@ -123,7 +115,7 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
               aria-label="属性类型"
               className="h-9 rounded-md border border-border bg-background px-2 text-sm"
             >
-              {PROPERTY_TYPES.map((option) => (
+              {PROPERTY_TYPE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>

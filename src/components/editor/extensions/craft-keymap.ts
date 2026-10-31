@@ -5,6 +5,7 @@ import type { EditorView } from '@tiptap/pm/view';
 import type { Editor } from '@tiptap/react';
 
 import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from '@/lib/editor/block-move';
+import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
@@ -62,7 +63,8 @@ function duplicateTopBlock(editor: Editor): boolean {
   const index = topLevelIndexOf(state.doc, state.selection.from);
   if (index < 0) return false;
   const start = topLevelStart(state.doc, index);
-  const child = state.doc.child(index);
+  // G573: the copy gets fresh block ids so both blocks stay independently addressable.
+  const child = cloneWithFreshBlockIds(state.doc.child(index));
   view.dispatch(state.tr.insert(start + child.nodeSize, child));
   return true;
 }

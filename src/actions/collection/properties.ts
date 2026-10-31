@@ -4,6 +4,8 @@ import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { PROPERTY_TYPE_VALUES } from '@/lib/collection/property-types';
+import { convertCellValue } from '@/lib/collection/type-convert';
 
 export async function addProperty(data: {
   collectionId: string;
@@ -119,4 +121,48 @@ export async function reorderProperties(
 
   await emitSyncEventSafe(db, session.user.id, ['collection_property'], collectionId);
   revalidatePath(`/collections/${collectionId}`);
+}
+
+function decodeStored(raw: unknown): unknown {
+  if (typeof raw !== 'string') return raw ?? null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+}
+
+/**
+ * G299：改字段类型时尽力转换现有值（官方「如果可以转换，修改字段类型将会转换当前值。」）。
+ * 转不了的写 null，而不是把整列清空；配置与名称不动。
+ */
+export async function changePropertyType(propertyId: string, type: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const property = await db.orm.public.CollectionProperty.first({ id: propertyId });
+  if (!property) return;
+  const collection = await db.orm.public.Collection.first({ id: (property as any).collectionId });
+  if (!collection || (collection as any).userId !== session.user.id) {
+    throw new Error('集合不存在');
+  }
+
+  const nextType = type.trim();
+  if (!PROPERTY_TYPE_VALUES.has(nextType)) throw new Error('无效的字段类型');
+  if ((property as any).type === nextType) return;
+
+  await db.orm.public.CollectionProperty.where({ id: propertyId }).update({ type: nextType });
+
+  const values = await db.orm.public.CollectionValue.where({ propertyId }).all();
+  for (const row of values) {
+    if ((row as any).deletedAt) continue;
+    const converted = convertCellValue(decodeStored((row as any).value), nextType);
+    await db.orm.public.CollectionValue.where({ id: (row as any).id }).update({
+      value: converted === null || converted === undefined ? null : JSON.stringify(converted),
+    });
+  }
+
+  await emitSyncEventSafe(db, session.user.id, ['collection_property', 'collection_value'], propertyId);
+  revalidatePath(`/collections/${(property as any).collectionId}`);
 }

@@ -481,12 +481,13 @@
       ]
     },
     "G299": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 3 批）更正本地列：本地**不能改字段类型**——updateProperty 的入参只有 name/config/isVisible/width、没有 type（properties.ts:41-58），FieldMenu 只有改名/隐藏/删除。台账「改类型直接清空值」是陈旧读数；真缺口是官方的类型变更 + 尽力转换整条通路都没有。",
+      "note": "字段菜单有「更改类型」：确认句逐字，服务端按目标类型尽力转换现有值，转不了写 null。",
       "evidence": [
-        "src/actions/collection/properties.ts:41-58",
-        "src/components/collection/FieldMenu.tsx:29-32"
+        "src/lib/collection/type-convert.ts:9",
+        "src/actions/collection/properties.ts:120",
+        "src/components/collection/FieldMenu.tsx:88"
       ]
     },
     "G394": {
@@ -1247,11 +1248,11 @@
       ]
     },
     "G573": {
-      "status": "partial",
-      "note": "⌘D 可复制整块（含子块），但直接插入原节点，未重分配 blockId，副本与原块共用 id。",
+      "status": "aligned",
+      "note": "⌘D 复制顶层块时递归重分配 blockId（含嵌套段落），副本与原块可独立寻址。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:60",
-        "src/components/editor/extensions/block-id.ts:18"
+        "src/lib/editor/clone-block.ts:11",
+        "src/components/editor/extensions/craft-keymap.ts:66"
       ]
     },
     "G574": {

@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-10-30",
-  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。",
+  "verifiedAt": "2026-10-31",
+  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批（2026-10-31）现读 model.md §一之六 块模型族 8 条 + 信息面板/任务块/集合类型 2 条。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -233,6 +233,66 @@
     "G53": {
       "status": "gap",
       "priority": "P1"
+    },
+    "G274": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 2 批）：本地无 9 值 textStyle 枚举，编辑器用 Heading 1–4；语义名只有 title/subtitle/heading/strong/body/caption 六个标签（semantic-levels.ts:7-24），PageRegular/PageCard 只在 page-tree.ts 的 isPage 判据里出现，Note 档零命中。",
+      "evidence": ["src/lib/editor/semantic-levels.ts:7-24", "src/lib/document/page-tree.ts:72-78"]
+    },
+    "G275": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 2 批）：无 textStyle→标签的字面量表。导出走 node.type 的 switch（index.ts:88-160），divider 有 pageSeparator 但那是分隔符样式名、不是 textStyle→hr 的导出映射；toggle→h4、Drawing/Whiteboard→div 无对应。",
+      "evidence": ["src/lib/document-codec/index.ts:88-160", "src/lib/editor/divider-styles.ts:11"]
+    },
+    "G276": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 2 批）：`listStyle` 概念全库零命中，没有「listStyle 压过 textStyle」的块类型优先级链；列表与标题在 schema 里是互斥节点，不存在二者并存的判定。",
+      "evidence": ["src/lib/editor/format-presence.ts:92", "src/lib/search/extract.ts:40"]
+    },
+    "G277": {
+      "status": "aligned",
+      "priority": "P1",
+      "note": "现读（第 2 批）改判：本地已实现官方两条任一判据（textStyle ∈ {PageRegular,PageCard} **或** content.length>0），空页面不再被误判。台账「只用有无子块单条判据」是陈旧读数。",
+      "evidence": ["src/lib/document/page-tree.ts:72-78", "src/lib/document/page-tree.test.ts"]
+    },
+    "G278": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 2 批）：无「降级时子块平铺上提」分支。setTextStyle/降级路径在 format-commands.ts 零命中；列表缩进只有 liftListItem/sinkListItem（改列表层级），不是把 subblocks 整批移到自身之后。",
+      "evidence": ["src/lib/editor/format-commands.ts:108-109"]
+    },
+    "G279": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 2 批）：block-move.ts 移动的是「含光标的那一个顶层块」（topLevelIndexOf），无 extendWithIndentChildren／firstLastSelectedIdxInParent／getMinIndentOfSelection，方向不带首/尾锚语义。",
+      "evidence": ["src/lib/editor/block-move.ts:15-78", "src/components/editor/extensions/craft-keymap.ts:42-47"]
+    },
+    "G280": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 2 批）：落点只有 index 一种（buildBlockMove 用 index±1/0/childCount-1），无 afterAnchor/beforeAnchor 的 6 种寻址、无 *Visible 语义 ⇒ 折叠/隐藏块边界处的落点不会越过。",
+      "evidence": ["src/lib/editor/block-move.ts:36-49"]
+    },
+    "G357": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 2 批）：任务块只有一枚提醒 pill（reminder-pill.ts 的 decoration），没有官方那三枚并列时间图标（日历/旗子/提醒）作为三套时间语义的行内入口。",
+      "evidence": ["src/components/editor/extensions/reminder-pill.ts:125-157", "src/components/editor/Editor.tsx:54"]
+    },
+    "G359": {
+      "status": "aligned",
+      "priority": "P1",
+      "note": "现读（第 2 批）改判：本地 InfoTab 已有完整结构——分段「页面信息／动作」、属性三条（已创建/已更新/作者）、动作含 展示/移动/创建副本/收藏文档/查看备份/删除（红色）、位置段、底部「统计 · 这一页」。台账「本地无文档级信息面板」是陈旧读数。",
+      "evidence": ["src/components/editor/tabs/InfoTab.tsx:346-378", "src/components/editor/tabs/InfoTab.tsx:615-707"]
+    },
+    "G393": {
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 2 批）：本地列类型覆盖官方 13 值里的 11 个（text/number/checkbox/date/url/person/select/multi_select/email/phone/relation），缺 media（本地叫 file）与 linkToBlock；另多出 3 个非官方类型（formula/created_at/updated_at）。命名映射已在 filter-operators.ts:1-10 声明，非台账所说「未对齐」。",
+      "evidence": ["src/components/collection/AddPropertyMenu.tsx:20-36", "src/lib/collection/filter-operators.ts:1-22"]
     }
   }
 }

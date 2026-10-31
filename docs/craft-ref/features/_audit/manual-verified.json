@@ -3154,6 +3154,6160 @@
       "evidence": [
         "src/components/editor/themes/page-style.ts:19"
       ]
+    },
+    "G1479": {
+      "status": "aligned",
+      "note": "⌘⌥↑/↓ 置顶/置底已入 keymap（win:null），由 craft-keymap 分派",
+      "evidence": [
+        "src/lib/editor/keymap.ts:203"
+      ]
+    },
+    "G1480": {
+      "status": "nonaction",
+      "note": "官方 yae 工厂修饰字段读法属内部；本地 ⌘. 专注键已绑",
+      "evidence": [
+        "src/lib/editor/keymap.ts:210"
+      ]
+    },
+    "G55": {
+      "status": "gap",
+      "note": "图片直接渲染 src，无 blurhash 模糊占位",
+      "evidence": [
+        "src/components/editor/extensions/image-block-view.tsx:96"
+      ]
+    },
+    "G56": {
+      "status": "partial",
+      "note": "编辑器拖拽走 pointer 阈值；侧栏仍原生 HTML5 draggable，触摸端未分流",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:28"
+      ]
+    },
+    "G57": {
+      "status": "gap",
+      "note": "无 space 实体；侧栏只有 folder 树，缺全部空间/我的空间/迁移团队",
+      "evidence": [
+        "src/components/sidebar/Sidebar.tsx"
+      ]
+    },
+    "G58": {
+      "status": "gap",
+      "note": "评论仅内嵌信息 tab；无侧栏整页与浮动线程窗口",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:40"
+      ]
+    },
+    "G59": {
+      "status": "gap",
+      "note": "无同步日志、性能面板、浏览同步、浏览器兼容检查四块及入口",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx"
+      ]
+    },
+    "G60": {
+      "status": "partial",
+      "note": "只有一个全局专注模式；缺画布/白板/代码三场景与专注工具条",
+      "evidence": [
+        "src/lib/store/use-focus-store.ts:15"
+      ]
+    },
+    "G62": {
+      "status": "partial",
+      "note": "发布设置有四组开关，公开页整页只读；缺块级只读预览与独立发布设置按钮",
+      "evidence": [
+        "src/components/share/ShareDialog.tsx:520"
+      ]
+    },
+    "G64": {
+      "status": "partial",
+      "note": "InfoTab 可导出当前页 PNG；缺字体大小与页面尺寸版式配置",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:177"
+      ]
+    },
+    "G67": {
+      "status": "aligned",
+      "note": "三档统计/showCompleted/插入面板子视图与拖放已落；Plus 付费墙 deliberate",
+      "evidence": [
+        "src/lib/document/page-stats.ts:9"
+      ]
+    },
+    "G68": {
+      "status": "partial",
+      "note": "有中央 keymap 与 6 分组，仅 29 条；表格/任务/合集缺约 75 条",
+      "evidence": [
+        "src/lib/editor/keymap.ts:175"
+      ]
+    },
+    "G69": {
+      "status": "gap",
+      "note": "仍自造 ⌘S 与全局抢 ⌘K；无编辑内 ⌘K 插入链接的上下文分派",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:91"
+      ]
+    },
+    "G70": {
+      "status": "gap",
+      "note": "AI 只有选区改写/续写/翻译/总结；无从零生成六类建议×四进度",
+      "evidence": [
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:27"
+      ]
+    },
+    "G71": {
+      "status": "gap",
+      "note": "发布页无 Analytics：读者数/30 天/阅读时长/来源/设备均无",
+      "evidence": [
+        "src/components/share/ShareDialog.tsx:520"
+      ]
+    },
+    "G72": {
+      "status": "gap",
+      "note": "tldraw 单代白板；无两代格式升级流、副本引用语义与元素/图片上限",
+      "evidence": [
+        "src/components/editor/extensions/whiteboard-embed.tsx"
+      ]
+    },
+    "G73": {
+      "status": "partial",
+      "note": "网页 SW 更新横幅已落；桌面检查/下载/提醒/强制更新无 UI",
+      "evidence": [
+        "src/lib/app/update-banner.ts:12"
+      ]
+    },
+    "G74": {
+      "status": "partial",
+      "note": "Enter/Shift+Enter、: 表情、@、reaction 聚合、已解决开关已落；缺解决操作人。",
+      "evidence": [
+        "src/components/editor/comments/comment-overlay.ts:1",
+        "src/prisma/contract.prisma:422"
+      ]
+    },
+    "G75": {
+      "status": "partial",
+      "note": "有请求编辑与审批队列；缺「想要查看」请求与计数文案",
+      "evidence": [
+        "src/actions/document/access-requests.ts:65"
+      ]
+    },
+    "G76": {
+      "status": "partial",
+      "note": "有 17 类标签词表与 strip；无按标签渲染带样式 run 的解析器",
+      "evidence": [
+        "src/lib/i18n/embedded-tags.ts:68"
+      ]
+    },
+    "G77": {
+      "status": "partial",
+      "note": "个别 1/N 文案分键；无 CLDR 六档复数框架",
+      "evidence": [
+        "src/lib/browse/official-copy.ts:75"
+      ]
+    },
+    "G78": {
+      "status": "aligned",
+      "note": "DailyNoteNav 前一天/后一天与「离线更新于 HH:MM」均已落",
+      "evidence": [
+        "src/components/editor/DailyNoteNav.tsx:12"
+      ]
+    },
+    "G80": {
+      "status": "partial",
+      "note": "15 类含 person/phone；缺 media/linkToBlock，multi_select/file 命名不同",
+      "evidence": [
+        "src/components/collection/AddPropertyMenu.tsx:20"
+      ]
+    },
+    "G81": {
+      "status": "partial",
+      "note": "视图 config 只存 filters/sorts/groupBy；显隐与顺序挂属性行全集合共用",
+      "evidence": [
+        "src/app/(app)/collections/[id]/TableView.tsx:74"
+      ]
+    },
+    "G82": {
+      "status": "partial",
+      "note": "有五态指示；无 11 态机与缓存来源",
+      "evidence": [
+        "src/components/sync/SyncStatusIndicator.tsx:8"
+      ]
+    },
+    "G83": {
+      "status": "nonaction",
+      "note": "官方 BlocksV2 块操作内部契约，非屏幕面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G84": {
+      "status": "partial",
+      "note": "仅排序/分组时禁拖（筛选不拦）；缺标题列类型锁、改类型确认与删组语义",
+      "evidence": [
+        "src/lib/collection/item-reorder.ts:49"
+      ]
+    },
+    "G85": {
+      "status": "partial",
+      "note": "仅链接档=edit 的移除说明落地；缺团队两档、降级自锁、口令互斥、重置旧链",
+      "evidence": [
+        "src/lib/share/member-access-notes.ts:30"
+      ]
+    },
+    "G86": {
+      "status": "partial",
+      "note": "表情离线禁用与草稿已落；缺按动作门禁矩阵与回连三段反馈",
+      "evidence": [
+        "src/lib/offline/save-status.ts:12"
+      ]
+    },
+    "G87": {
+      "status": "partial",
+      "note": "块级改期确认已落；缺任务移动到文档/每日笔记的成功反馈",
+      "evidence": [
+        "src/lib/task/reminder-reschedule.ts:23"
+      ]
+    },
+    "G88": {
+      "status": "aligned",
+      "note": "runBulkAction 逐项尝试，bulkDeleteAlert 区分整体/部分失败",
+      "evidence": [
+        "src/lib/document/bulk-action.ts:39"
+      ]
+    },
+    "G89": {
+      "status": "partial",
+      "note": "单字段 10000 字符上限已落；表格/字段数/提醒/白板元素远端配额无",
+      "evidence": [
+        "src/lib/collection/character-limit.ts:11"
+      ]
+    },
+    "G91": {
+      "status": "partial",
+      "note": "汇总行仅数字求和/其他计数；缺 21 项可选聚合与按类型许可",
+      "evidence": [
+        "src/lib/collection/summary.ts:16"
+      ]
+    },
+    "G92": {
+      "status": "partial",
+      "note": "有「, 」多值连接；无类型推断、percent 语义、precision 与币种",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:81"
+      ]
+    },
+    "G93": {
+      "status": "gap",
+      "note": "Document 仅 isDeleted；无 isArchived、归档动作与归档视图",
+      "evidence": [
+        "src/prisma/contract.prisma:80"
+      ]
+    },
+    "G94": {
+      "status": "partial",
+      "note": "文档树/文件夹有 order；收藏与标签无独立顺序持久化",
+      "evidence": [
+        "src/components/sidebar/DocumentTreeItem.tsx:240"
+      ]
+    },
+    "G95": {
+      "status": "partial",
+      "note": "有通知表与铃铛（四类），缺官方六类",
+      "evidence": [
+        "src/lib/notification/comment-notifications.ts:84"
+      ]
+    },
+    "G96": {
+      "status": "partial",
+      "note": "任务四档已落但 inbox/all 同集；日历按日/月并节，无官方五档语义",
+      "evidence": [
+        "src/lib/task/grouping.ts:103"
+      ]
+    },
+    "G97": {
+      "status": "gap",
+      "note": "AI 只 POST {action,text}；无 space/block/root/scope 富集",
+      "evidence": [
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:116"
+      ]
+    },
+    "G99": {
+      "status": "partial",
+      "note": "右栏 4 tab，Actions/Comments 塞进信息 tab",
+      "evidence": [
+        "src/components/editor/tabs/RightPanel.tsx:15"
+      ]
+    },
+    "G100": {
+      "status": "partial",
+      "note": "查找替换面板在编辑器顶部；无左栏附件/目录/任务常驻 tab",
+      "evidence": [
+        "src/components/editor/find-replace-panel.tsx:21"
+      ]
+    },
+    "G101": {
+      "status": "partial",
+      "note": "四档粗细已落；缺 none 档，分页符插入仍标 missing",
+      "evidence": [
+        "src/lib/editor/divider-styles.ts:6"
+      ]
+    },
+    "G102": {
+      "status": "partial",
+      "note": "仍 inter/serif/mono/rounded 且字体栈写死 Georgia；未改 system-* 系统族",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:13"
+      ]
+    },
+    "G103": {
+      "status": "nonaction",
+      "note": "官方拖拽落点/行为封闭枚举，非屏幕交互面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G104": {
+      "status": "aligned",
+      "note": "19 个操作符+按列类型许可集+空值不对称求值均已落",
+      "evidence": [
+        "src/lib/collection/filter-operators.ts:105"
+      ]
+    },
+    "G105": {
+      "status": "partial",
+      "note": "排序用数字感知 Collator；筛选是表单行，无标题锁首位/格式化搜索",
+      "evidence": [
+        "src/lib/collection/sort-compare.ts:14"
+      ]
+    },
+    "G106": {
+      "status": "partial",
+      "note": "三态与取消→未勾循环已落；缺批量全勾、复制重置，库内仍留 doing",
+      "evidence": [
+        "src/lib/editor/task-status.ts:78"
+      ]
+    },
+    "G107": {
+      "status": "partial",
+      "note": "scheduleDate 与 dueDate 已分离；setter 单条无批量",
+      "evidence": [
+        "src/actions/task/task.ts:301"
+      ]
+    },
+    "G108": {
+      "status": "partial",
+      "note": "有 freq/days/byMonthDay/until；缺 interval、skipWeekends、dynamicDays",
+      "evidence": [
+        "src/lib/task/recurrence.ts:3"
+      ]
+    },
+    "G109": {
+      "status": "partial",
+      "note": "有 rollForward；缺 logbook 归档、assignee 与提醒深链",
+      "evidence": [
+        "src/actions/task/task.ts:262"
+      ]
+    },
+    "G110": {
+      "status": "nonaction",
+      "note": "官方 mergePatchesFromOtherTabs 内部动作；本地走服务端 SSE 拉取",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G111": {
+      "status": "partial",
+      "note": "块菜单 11 项基础动作；缺约 24 项（turnInto/imageTo/previewTo 等）",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:57"
+      ]
+    },
+    "G112": {
+      "status": "gap",
+      "note": "仅有集合导出 CSV；文件块一键转集合未实现",
+      "evidence": [
+        "src/app/(app)/collections/[id]/CollectionHeader.tsx:17"
+      ]
+    },
+    "G113": {
+      "status": "partial",
+      "note": "ilike 子串+分页+块命中；无 regex/相关度/score/规模阈值",
+      "evidence": [
+        "src/actions/document/search.ts:70"
+      ]
+    },
+    "G114": {
+      "status": "partial",
+      "note": "仅 4 条硬编码 AI 动作；无 62 条注册表与 13 个上下文分组",
+      "evidence": [
+        "src/app/api/ai/route.ts:5"
+      ]
+    },
+    "G115": {
+      "status": "partial",
+      "note": "有 web_search/crawl 与 blocks_get/insert_text；无 openAgentType 三态分流",
+      "evidence": [
+        "src/app/api/ai/tools/route.ts:47"
+      ]
+    },
+    "G116": {
+      "status": "gap",
+      "note": "请求体只有 {action,text}；无 document/page 结构化上下文",
+      "evidence": [
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:119"
+      ]
+    },
+    "G118": {
+      "status": "deliberate",
+      "note": "AI 额度驱动的模型档位属付费面；本地单模型",
+      "evidence": [
+        "src/app/api/ai/route.ts:39"
+      ]
+    },
+    "G119": {
+      "status": "partial",
+      "note": "仅 4 条本地预设；缺 35 条模板库、{0} 插槽与 9 语种",
+      "evidence": [
+        "src/lib/editor/ai-prompts.ts:11"
+      ]
+    },
+    "G120": {
+      "status": "gap",
+      "note": "只有常量文案；无提示词持久化、双写迁移与设置面板",
+      "evidence": [
+        "src/lib/app/assistant-settings.ts:9"
+      ]
+    },
+    "G121": {
+      "status": "gap",
+      "note": "无 craft:// scheme 与 stableIdToUuid 跳转",
+      "evidence": [
+        "src/lib/platform.ts:24"
+      ]
+    },
+    "G123": {
+      "status": "gap",
+      "note": "无 AI 对话态；思考耗时、超限专错、清除确认均缺",
+      "evidence": [
+        "src/app/api/ai/route.ts:42"
+      ]
+    },
+    "G125": {
+      "status": "deliberate",
+      "note": "套餐/空间/席位/备份/AI 配额属付费面",
+      "evidence": [
+        "src/lib/plans/quotas.ts:8"
+      ]
+    },
+    "G126": {
+      "status": "deliberate",
+      "note": "14 天 Plus 试用与降级限速属订阅面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G127": {
+      "status": "deliberate",
+      "note": "六项付费墙功能属订阅面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G128": {
+      "status": "deliberate",
+      "note": "取消挽留问卷/优惠码/扣费余额属订阅账单面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G129": {
+      "status": "deliberate",
+      "note": "Stripe/Apple 支付与外部结账属订阅面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G130": {
+      "status": "deliberate",
+      "note": "团队权益/试用席位到期属团队付费面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G132": {
+      "status": "gap",
+      "note": "无 space 实体与成员/owner 治理；降级所有权路径不存在",
+      "evidence": [
+        "src/lib/app/settings-sections.ts:34"
+      ]
+    },
+    "G133": {
+      "status": "deliberate",
+      "note": "团队邀请计费/席位属付费面；本地仅写文档协作者",
+      "evidence": [
+        "src/actions/document/members.ts:91"
+      ]
+    },
+    "G134": {
+      "status": "partial",
+      "note": "有 resolve/unresolve 与删除；重开是按钮非发评论，无 toast/离线门禁",
+      "evidence": [
+        "src/components/editor/comments/CommentSection.tsx:469"
+      ]
+    },
+    "G136": {
+      "status": "partial",
+      "note": "候选仅成员+owner；缺推荐/联系人两源与框内邀人",
+      "evidence": [
+        "src/actions/document/members.ts:58"
+      ]
+    },
+    "G138": {
+      "status": "partial",
+      "note": "有访问请求审批与链接档移除说明；缺整文档作用域确认",
+      "evidence": [
+        "src/actions/document/access-requests.ts:101"
+      ]
+    },
+    "G140": {
+      "status": "gap",
+      "note": "无空间三档离开/移除/删除，也无 show.in.finder 本地落点",
+      "evidence": [
+        "src/components/sidebar/Sidebar.tsx"
+      ]
+    },
+    "G142": {
+      "status": "deliberate",
+      "note": "域名三档只在未接线纯模型；发布面板是静态壳，自定义域属付费面",
+      "evidence": [
+        "src/lib/share/domain-lifecycle.ts:24"
+      ]
+    },
+    "G144": {
+      "status": "partial",
+      "note": "文档协作者可邮箱邀请、编辑请求可批准；发布侧个人邮箱与域名白名单缺",
+      "evidence": [
+        "src/components/share/ShareDialog.tsx:440"
+      ]
+    },
+    "G145": {
+      "status": "gap",
+      "note": "公开页只读；enableObjectLinks 与 showDuplicateAsTemplate 全库零命中",
+      "evidence": [
+        "src/app/p/[slug]/page.tsx:74"
+      ]
+    },
+    "G146": {
+      "status": "gap",
+      "note": "发布面板无标签词可见性开关，hideHashTagWords 零命中",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:291"
+      ]
+    },
+    "G148": {
+      "status": "partial",
+      "note": "全屏、复制、语言与主题选择器已落；无拆分视图与关闭预览",
+      "evidence": [
+        "src/components/editor/extensions/code-block-view.tsx:90"
+      ]
+    },
+    "G149": {
+      "status": "partial",
+      "note": "PDF 导出仅纯文本投影，无纸张/深色/页码/水印；分享卡片无实现",
+      "evidence": [
+        "src/lib/export/pdf.ts:73"
+      ]
+    },
+    "G150": {
+      "status": "partial",
+      "note": "另存为模板已落；无二维码共享与 iOS Workflow 链接",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:196"
+      ]
+    },
+    "G151": {
+      "status": "gap",
+      "note": "无自定义样式实体、图库与文档默认样式",
+      "evidence": [
+        "src/components/editor/tabs/StyleTab.tsx:38"
+      ]
+    },
+    "G152": {
+      "status": "partial",
+      "note": "六档语义名已上屏；缺卡片/页面两档，二至四档映射与官方不同",
+      "evidence": [
+        "src/lib/editor/semantic-levels.ts:7"
+      ]
+    },
+    "G156": {
+      "status": "gap",
+      "note": "图片只有 width 与裁切框，无 size×fit 两轴；封面无多图轮换",
+      "evidence": [
+        "src/components/editor/extensions/image-block.tsx:52"
+      ]
+    },
+    "G157": {
+      "status": "partial",
+      "note": "仅和纸胶带一档；涂鸦/图案/径向/纸与图库浏览缺",
+      "evidence": [
+        "src/components/editor/tabs/StyleTab.tsx:210"
+      ]
+    },
+    "G159": {
+      "status": "partial",
+      "note": "无离线模式开关与「放弃并禁用」路径",
+      "evidence": [
+        "src/components/editor/DocumentEditor.tsx:100"
+      ]
+    },
+    "G161": {
+      "status": "gap",
+      "note": "高级设置仅字体/宽度/完成外观；日期标记、打开方式、重置缓存全缺",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:386"
+      ]
+    },
+    "G162": {
+      "status": "gap",
+      "note": "助手分区只有「助手未启用」一句，无提示库管理与额度说明",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:581"
+      ]
+    },
+    "G163": {
+      "status": "partial",
+      "note": "三档邮件开关已落库；无推送通道与按空间粒度",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:598"
+      ]
+    },
+    "G165": {
+      "status": "deliberate",
+      "note": "团队付费面：空间设置仅名称/图标，无开放私密与成员治理",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:271"
+      ]
+    },
+    "G167": {
+      "status": "partial",
+      "note": "强调色六档已落；界面语言单档，拼写语言在页面样式面板",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:351"
+      ]
+    },
+    "G168": {
+      "status": "deliberate",
+      "note": "团队付费面：发布品牌仅静态壳，无徽标/域名写入/断开",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:578"
+      ]
+    },
+    "G171": {
+      "status": "gap",
+      "note": "无忽略规则实体与增删改；标签设置只有一句说明",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:311"
+      ]
+    },
+    "G173": {
+      "status": "gap",
+      "note": "标签列表无固定/上限/管理入口，标签也不能进集合筛选",
+      "evidence": [
+        "src/app/(app)/tags/page.tsx:70"
+      ]
+    },
+    "G174": {
+      "status": "gap",
+      "note": "「使用标签」开关无处理器，也没有关闭≠删除的确认",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:316"
+      ]
+    },
+    "G175": {
+      "status": "gap",
+      "note": "无降级纯文本、大小写两档、四分组，空态只有一句",
+      "evidence": [
+        "src/app/(app)/tags/page.tsx:59"
+      ]
+    },
+    "G176": {
+      "status": "partial",
+      "note": "网格/列表/瀑布与分区折叠已落；排序非 12 档，分区不可重排或隐藏",
+      "evidence": [
+        "src/lib/browse/view-modes.ts:7"
+      ]
+    },
+    "G177": {
+      "status": "partial",
+      "note": "从模板新建与插入已落；无体积守卫，导入只有两档下拉",
+      "evidence": [
+        "src/components/editor/template-picker.tsx:49"
+      ]
+    },
+    "G178": {
+      "status": "partial",
+      "note": "两段搜索、查看更多、查询词新建已落；无移除最近使用与无词空态",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:290"
+      ]
+    },
+    "G179": {
+      "status": "gap",
+      "note": "无 Space 实体，改名/换图标控件已移除",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:275"
+      ]
+    },
+    "G180": {
+      "status": "nonaction",
+      "note": "i18n 占位符与分段属官方内部机制；本地单语言直拼",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G182": {
+      "status": "deliberate",
+      "note": "团队付费面：团队分区只有「创建新团队」",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:566"
+      ]
+    },
+    "G184": {
+      "status": "partial",
+      "note": "文档协作者增删改与失败句已落；团队动作、空间管理员、徽标双路径缺",
+      "evidence": [
+        "src/components/editor/tabs/MembersSection.tsx:137"
+      ]
+    },
+    "G187": {
+      "status": "partial",
+      "note": "文档邀请按 existing 复用不重复插行；团队邀请无宿主",
+      "evidence": [
+        "src/actions/document/members.ts:107"
+      ]
+    },
+    "G188": {
+      "status": "deliberate",
+      "note": "团队付费面：无试用到期、席位上限与共享空间保留",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:566"
+      ]
+    },
+    "G189": {
+      "status": "nonaction",
+      "note": "焦点栈与传播控制属内部机制；本地已建 keymap 与栈类，未接运行时",
+      "evidence": [
+        "src/lib/editor/key-context-stack.ts:5"
+      ]
+    },
+    "G190": {
+      "status": "nonaction",
+      "note": "块转换走 setTextStyle 属官方实现选择；本地仅「转换为卡片」",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G191": {
+      "status": "nonaction",
+      "note": "内联判别字面量与 shortcuts 数组属内部结构",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G192": {
+      "status": "nonaction",
+      "note": "agentType 五档是内部枚举；本地 /api/ai 单通道",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G193": {
+      "status": "nonaction",
+      "note": "AI 线程按空间存储与 5 分钟复用属内部契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G194": {
+      "status": "nonaction",
+      "note": "受限功能模态是父层注入的组件契约（付费拦截）",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G195": {
+      "status": "nonaction",
+      "note": "命令 id 大表属内部键位层；本地 keymap 已带 id",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G196": {
+      "status": "nonaction",
+      "note": "Mac 专用命令成员属内部枚举；本地已建 *_MAC 且 win:null",
+      "evidence": [
+        "src/lib/editor/keymap.ts:203"
+      ]
+    },
+    "G197": {
+      "status": "gap",
+      "note": "无块组合/取消组合命令与入口",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:83"
+      ]
+    },
+    "G198": {
+      "status": "partial",
+      "note": "全展开/收起、移首尾、评论与页标题重命名已有；缺装饰命令与块级重命名",
+      "evidence": [
+        "src/components/editor/tabs/FormatTab.tsx:45"
+      ]
+    },
+    "G200": {
+      "status": "nonaction",
+      "note": "craftdocs:// 两 scheme 与复用窗口属内部/桥契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G204": {
+      "status": "partial",
+      "note": "信息页拆成两子页签，动作不在首屏；属性/位置/统计同屏",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:84"
+      ]
+    },
+    "G206": {
+      "status": "partial",
+      "note": "面板按官方 16 项结构，其中 8 项仍为禁用占位",
+      "evidence": [
+        "src/components/editor/tabs/InsertTab.tsx:74"
+      ]
+    },
+    "G207": {
+      "status": "gap",
+      "note": "页面、合集、分页符三条入口均为禁用占位，不能建对象",
+      "evidence": [
+        "src/components/editor/tabs/InsertTab.tsx:49"
+      ]
+    },
+    "G208": {
+      "status": "partial",
+      "note": "文本 6 档/内联/列表/对齐/缩进/方向已落；缺页面-卡片分组、装饰、字体段",
+      "evidence": [
+        "src/components/editor/tabs/FormatTab.tsx:179"
+      ]
+    },
+    "G209": {
+      "status": "partial",
+      "note": "缺自定义样式/所有样式/文本颜色/线/涂鸦与多页面色调",
+      "evidence": [
+        "src/components/editor/tabs/StyleTab.tsx:66"
+      ]
+    },
+    "G210": {
+      "status": "partial",
+      "note": "胶带与分隔线材质可达；涂鸦与图库浏览仍缺",
+      "evidence": [
+        "src/components/editor/tabs/StyleTab.tsx:210"
+      ]
+    },
+    "G214": {
+      "status": "gap",
+      "note": "合集组表格/图库/Kanban 三项均禁用，文档内不能建集合对象",
+      "evidence": [
+        "src/components/editor/tabs/InsertTab.tsx:63"
+      ]
+    },
+    "G216": {
+      "status": "gap",
+      "note": "卡片无内容预览图，也无后端渲染服务",
+      "evidence": [
+        "src/components/document/DocumentCard.tsx:20"
+      ]
+    },
+    "G217": {
+      "status": "partial",
+      "note": "软删语义一致；本地多二次确认与 toast，官方静默无确认",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:296"
+      ]
+    },
+    "G218": {
+      "status": "gap",
+      "note": "缩进只对列表项生效，段落不能缩进；--indent-w 未接线",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:9"
+      ]
+    },
+    "G222": {
+      "status": "partial",
+      "note": "本地仅动作页签一个删除，信息页无删除",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:777"
+      ]
+    },
+    "G223": {
+      "status": "gap",
+      "note": "浏览屏无 ⋯ 菜单；排序是独立下拉，导入在侧栏",
+      "evidence": [
+        "src/components/document/SortableDocGrid.tsx:74"
+      ]
+    },
+    "G225": {
+      "status": "partial",
+      "note": "12 项中 9 项已接线，缺组合、取消组合、重命名",
+      "evidence": [
+        "src/lib/document/actions-menu.ts:16"
+      ]
+    },
+    "G229": {
+      "status": "deliberate",
+      "note": "团队付费面：无「移动空间到另一团队」",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:271"
+      ]
+    },
+    "G231": {
+      "status": "partial",
+      "note": "无标题三实体已落；二维码仅文案未接线，每周计划零命中",
+      "evidence": [
+        "src/lib/document/untitled-copy.ts:20"
+      ]
+    },
+    "G235": {
+      "status": "partial",
+      "note": "两段搜索、查看更多、查询词新建均落；无移除最近使用",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:290"
+      ]
+    },
+    "G236": {
+      "status": "partial",
+      "note": "插入模板已落；无模板文件夹、体积上限、来自模板标记",
+      "evidence": [
+        "src/components/editor/template-picker.tsx:49"
+      ]
+    },
+    "G237": {
+      "status": "gap",
+      "note": "列表与卡片无离线徽标，只有编辑器保存句",
+      "evidence": [
+        "src/components/document/DocumentCard.tsx:20"
+      ]
+    },
+    "G238": {
+      "status": "unreachable",
+      "note": "单空间，无切空间入口，故无未保存守卫与无法打开错误屏",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:271"
+      ]
+    },
+    "G239": {
+      "status": "deliberate",
+      "note": "有 Tauri 壳但无跨端打开偏好与 URL scheme；显式不做",
+      "evidence": [
+        "src-tauri/tauri.conf.json"
+      ]
+    },
+    "G241": {
+      "status": "partial",
+      "note": "删文件夹后果句与确认已落；文件夹无 description 字段与入口",
+      "evidence": [
+        "src/lib/folder/delete-copy.ts:5"
+      ]
+    },
+    "G242": {
+      "status": "partial",
+      "note": "回收站 ⋯ 仅「清空」，选择是独立按钮；无排序/导入/导出全量项",
+      "evidence": [
+        "src/components/document/TrashList.tsx:233"
+      ]
+    },
+    "G243": {
+      "status": "aligned",
+      "note": "空态只渲染删除句，30 天保留提示仅非空时出现",
+      "evidence": [
+        "src/components/document/TrashList.tsx:179"
+      ]
+    },
+    "G250": {
+      "status": "partial",
+      "note": "卡头标题/面包屑/已更新已落；无真实内容预览与表格缩略图",
+      "evidence": [
+        "src/components/document/DocumentCard.tsx:20"
+      ]
+    },
+    "G251": {
+      "status": "deliberate",
+      "note": "本地无「获得 Craft Plus」药丸，付费 upsell 面不做",
+      "evidence": [
+        "src/lib/browse/official-copy.ts:41"
+      ]
+    },
+    "G254": {
+      "status": "partial",
+      "note": "有标记已解决与通知 resolve；提醒仍非实体，无进行中/已解决筛选",
+      "evidence": [
+        "src/lib/task/reminder-pill.ts:20"
+      ]
+    },
+    "G255": {
+      "status": "partial",
+      "note": "cancelled 第三态与两时间戳已落；无完成剩余/取消剩余",
+      "evidence": [
+        "src/prisma/contract.prisma:339"
+      ]
+    },
+    "G258": {
+      "status": "nonaction",
+      "note": "monthly.days 空数组语义属内部数据契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G259": {
+      "status": "nonaction",
+      "note": "dynamicDays 二维结构属内部契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G264": {
+      "status": "nonaction",
+      "note": "解析缺省与工厂初始值属两层内部默认",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G265": {
+      "status": "gap",
+      "note": "重复 UI 只有四个频率预设，无 after/every 类型维度",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:561"
+      ]
+    },
+    "G266": {
+      "status": "gap",
+      "note": "无周末两档勾选与 interval 回退，仅整档预设",
+      "evidence": [
+        "src/lib/task/recurrence.ts:64"
+      ]
+    },
+    "G267": {
+      "status": "nonaction",
+      "note": "reminder 形状属官方块线契约；本地存绝对 remindAt",
+      "evidence": [
+        "src/prisma/contract.prisma:334"
+      ]
+    },
+    "G268": {
+      "status": "partial",
+      "note": "三档阈值表已落；实际只接编辑器块把手通用档",
+      "evidence": [
+        "src/lib/dnd/drag-threshold.ts:27"
+      ]
+    },
+    "G271": {
+      "status": "gap",
+      "note": "卡片是纯 Link，无拖拽、无选中集",
+      "evidence": [
+        "src/components/document/DocumentCard.tsx:23"
+      ]
+    },
+    "G272": {
+      "status": "partial",
+      "note": "单一指示线按 visible 清空，无表格专属指示线",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:554"
+      ]
+    },
+    "G273": {
+      "status": "gap",
+      "note": "无虚拟列表：单一行高、全量渲染，无 overscan",
+      "evidence": [
+        "src/components/document/DocumentListView.tsx:187"
+      ]
+    },
+    "G281": {
+      "status": "nonaction",
+      "note": "块线 20 字段属官方存储契约；本地 pageStyle 只在文档级",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:1"
+      ]
+    },
+    "G286": {
+      "status": "gap",
+      "note": "聚合仅数值求和＋非空计数，无 avg/min/max/percent",
+      "evidence": [
+        "src/lib/collection/summary.ts:16"
+      ]
+    },
+    "G288": {
+      "status": "partial",
+      "note": "标题行/列/隔行色三开关已存在；缺表内目录与行数上限报错",
+      "evidence": [
+        "src/components/editor/table/TableToolbar.tsx:189"
+      ]
+    },
+    "G289": {
+      "status": "partial",
+      "note": "画廊卡可跳关联文档，列表/表格行不可；无「移出集合」语义",
+      "evidence": [
+        "src/app/(app)/collections/[id]/GalleryView.tsx:110"
+      ]
+    },
+    "G291": {
+      "status": "partial",
+      "note": "多处已有单复两键，但非系统性，仍有单档处",
+      "evidence": [
+        "src/lib/browse/official-copy.ts:75"
+      ]
+    },
+    "G292": {
+      "status": "nonaction",
+      "note": "双轨插值是官方语料迁移契约；本地只有 [0] 填充器",
+      "evidence": [
+        "src/lib/i18n/interpolation.ts:53"
+      ]
+    },
+    "G293": {
+      "status": "deliberate",
+      "note": "本地只有文档级成员表，无团队/席位模型（付费面）",
+      "evidence": [
+        "src/prisma/contract.prisma:457"
+      ]
+    },
+    "G294": {
+      "status": "deliberate",
+      "note": "团队设置只有「创建新团队」，三模板属团队付费面",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:571"
+      ]
+    },
+    "G295": {
+      "status": "deliberate",
+      "note": "分享页固定「由 Crafty」徽标，无团队去水印开关（付费）",
+      "evidence": [
+        "src/components/share/PublicDocBanner.tsx:28"
+      ]
+    },
+    "G296": {
+      "status": "deliberate",
+      "note": "账单面只有只读 Free，人工改邮箱与富文本渲染属账单面",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:555"
+      ]
+    },
+    "G297": {
+      "status": "gap",
+      "note": "危险区只有一行说明文字，无输入邮箱确认的三态流程",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:546"
+      ]
+    },
+    "G298": {
+      "status": "gap",
+      "note": "分享动作无「离开文档」及其后果确认",
+      "evidence": [
+        "src/actions/document/share.ts:63"
+      ]
+    },
+    "G300": {
+      "status": "gap",
+      "note": "11 条进行时句只作语料常量，全仓零引用",
+      "evidence": [
+        "src/lib/app/pending-states.ts:29"
+      ]
+    },
+    "G301": {
+      "status": "aligned",
+      "note": "离线时表情按钮禁用并给两句专错，明确不入队",
+      "evidence": [
+        "src/components/editor/comments/offline-reaction.ts:6"
+      ]
+    },
+    "G302": {
+      "status": "deliberate",
+      "note": "只有档位与保留期常量，无套餐有效期与域名门禁（付费面）",
+      "evidence": [
+        "src/lib/plans/quotas.ts:17"
+      ]
+    },
+    "G303": {
+      "status": "partial",
+      "note": "chunk 失败与复制失败已有专句；缺带原因兜底句与粘贴失败态",
+      "evidence": [
+        "src/app/error.tsx:22"
+      ]
+    },
+    "G305": {
+      "status": "gap",
+      "note": "全仓无 onboarding/欢迎弹窗，仅一条更新横幅",
+      "evidence": [
+        "src/components/app/UpdateBanner.tsx:13"
+      ]
+    },
+    "G306": {
+      "status": "deliberate",
+      "note": "只有邮箱密码 Credentials；Apple/Google/MS/SSO 属外部身份面",
+      "evidence": [
+        "src/lib/auth/config.ts:6"
+      ]
+    },
+    "G307": {
+      "status": "deliberate",
+      "note": "无发信通路，邮箱只读，五态验证码流程主动不做",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:527"
+      ]
+    },
+    "G308": {
+      "status": "gap",
+      "note": "无按兴趣灌模板文档，插入面板无三步引导任务",
+      "evidence": [
+        "src/components/editor/tabs/InsertTab.tsx:80"
+      ]
+    },
+    "G309": {
+      "status": "deliberate",
+      "note": "只有 Free 一档展示，周套餐与 AI 额度属计费面",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:555"
+      ]
+    },
+    "G310": {
+      "status": "nonaction",
+      "note": "写死版/参数版并存是官方语料现象；本地不按 key 前缀取文案",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G311": {
+      "status": "gap",
+      "note": "无预设样式库，只有 4 字体/6 主题/6 和纸",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:19"
+      ]
+    },
+    "G314": {
+      "status": "deliberate",
+      "note": "价格展示只有 Free，3×3 计费主体矩阵属付费面",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:559"
+      ]
+    },
+    "G316": {
+      "status": "deliberate",
+      "note": "席位与升级前移除成员无宿主，属团队付费面",
+      "evidence": [
+        "src/lib/plans/quotas.ts:12"
+      ]
+    },
+    "G317": {
+      "status": "deliberate",
+      "note": "空间/备份/文件限额只作常量，无执行点（付费配额）",
+      "evidence": [
+        "src/lib/plans/quotas.ts:9"
+      ]
+    },
+    "G318": {
+      "status": "deliberate",
+      "note": "PDF/TextBundle/Markdown 导出本地全免费，付费墙刻意不做",
+      "evidence": [
+        "src/lib/export/pdf.ts:71"
+      ]
+    },
+    "G319": {
+      "status": "deliberate",
+      "note": "AI 无积分/额度概念，助手未启用（订阅属性）",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:581"
+      ]
+    },
+    "G322": {
+      "status": "nonaction",
+      "note": "6 类具名链接标签是官方文案渲染契约；本地文案无内嵌标签",
+      "evidence": [
+        "src/lib/i18n/embedded-tags.ts:13"
+      ]
+    },
+    "G323": {
+      "status": "deliberate",
+      "note": "无席位校验、无区块用量回显条（团队付费面）",
+      "evidence": [
+        "src/lib/plans/quotas.ts:12"
+      ]
+    },
+    "G325": {
+      "status": "deliberate",
+      "note": "只有文档级成员角色，无空间所有权与自我降级（团队面）",
+      "evidence": [
+        "src/prisma/contract.prisma:457"
+      ]
+    },
+    "G326": {
+      "status": "deliberate",
+      "note": "分享是文档链接，无空间邀请与「已发送但无权限」分支",
+      "evidence": [
+        "src/actions/document/share.ts:63"
+      ]
+    },
+    "G327": {
+      "status": "deliberate",
+      "note": "分享链接一次生成后不轮换，无邀请链接管理（团队面）",
+      "evidence": [
+        "src/components/share/ShareDialog.tsx:164"
+      ]
+    },
+    "G329": {
+      "status": "gap",
+      "note": "错误边界只给一句文案＋重试，无结构化崩溃报告表单",
+      "evidence": [
+        "src/app/error.tsx:30"
+      ]
+    },
+    "G330": {
+      "status": "partial",
+      "note": "短链失效有专属页；blockLink 无 documentId 时静默返回",
+      "evidence": [
+        "src/app/s/[token]/page.tsx:23"
+      ]
+    },
+    "G331": {
+      "status": "nonaction",
+      "note": "重复键与中英混排是官方语料不一致清单；本地无消息目录",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G257": {
+      "status": "gap",
+      "note": "列表只显示频率词，周几/日号文案函数未接线",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:479"
+      ]
+    },
+    "G336": {
+      "status": "gap",
+      "note": "斜杠菜单只插固定 3×3，无 NxM 快捷输入",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:229"
+      ]
+    },
+    "G337": {
+      "status": "aligned",
+      "note": "lastViewedAt 走 document 元数据同步列，打开即写，跨设备可见",
+      "evidence": [
+        "src/lib/sync/tables.ts:8"
+      ]
+    },
+    "G338": {
+      "status": "gap",
+      "note": "Folder 无 description 字段与独立更新通路",
+      "evidence": [
+        "src/prisma/contract.prisma:35"
+      ]
+    },
+    "G340": {
+      "status": "nonaction",
+      "note": "Pending/Pending(space) 是官方队列计数命名；本地单一 countPending",
+      "evidence": [
+        "src/lib/sync-core/index.ts:211"
+      ]
+    },
+    "G343": {
+      "status": "aligned",
+      "note": "视图模式存 localStorage；文档 order 走 applyLocal 同步",
+      "evidence": [
+        "src/lib/browse/view-modes.ts:43"
+      ]
+    },
+    "G346": {
+      "status": "gap",
+      "note": "无 UA 兼容检测与可绕过警告，任何浏览器直接进",
+      "evidence": [
+        "src/middleware.ts:33"
+      ]
+    },
+    "G347": {
+      "status": "gap",
+      "note": "图片块无灯箱、无全局 store 与命中预取 chunk",
+      "evidence": [
+        "src/components/editor/extensions/image-block-view.tsx:95"
+      ]
+    },
+    "G348": {
+      "status": "partial",
+      "note": "自然数序＋空值末尾已落；维度四档，缺 Kind/Manual",
+      "evidence": [
+        "src/lib/browse/sort.ts:31"
+      ]
+    },
+    "G349": {
+      "status": "gap",
+      "note": "新建即空文档，无 AI 结构生成弹层与四阶段进度",
+      "evidence": [
+        "src/actions/document/create.ts:62"
+      ]
+    },
+    "G350": {
+      "status": "gap",
+      "note": "AI 只有 spinner，无分类型四段进度文案",
+      "evidence": [
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:308"
+      ]
+    },
+    "G351": {
+      "status": "partial",
+      "note": "有 MCP/API 连接增删，缺权限三档、两种保护与密钥一次性展示",
+      "evidence": [
+        "src/app/(app)/connections/ConnectionsPanel.tsx:21"
+      ]
+    },
+    "G353": {
+      "status": "partial",
+      "note": "结果按文档/块/行三组互斥分桶，无多归属与跨组序号",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:297"
+      ]
+    },
+    "G354": {
+      "status": "gap",
+      "note": "搜索只回文档/块/行，无日期解析结果项",
+      "evidence": [
+        "src/actions/document/search.ts:70"
+      ]
+    },
+    "G355": {
+      "status": "gap",
+      "note": "空查询只给操作组，无最近文档组与截断 20",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:249"
+      ]
+    },
+    "G356": {
+      "status": "partial",
+      "note": "日记标题建库时合成后存字段；未分类用 folderId=null",
+      "evidence": [
+        "src/lib/utils/daily-note.ts:1"
+      ]
+    },
+    "G360": {
+      "status": "partial",
+      "note": "「查看备份」入口已在并可恢复；30–180 天保留期配额属付费面",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:707"
+      ]
+    },
+    "G363": {
+      "status": "gap",
+      "note": "日期字段是原生 type=date；无周一起始、固定 6 行与今天快捷行",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:538"
+      ]
+    },
+    "G364": {
+      "status": "partial",
+      "note": "本地是任务页内联展开面板（非模态），编辑器任务行无日期弹层",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:533"
+      ]
+    },
+    "G366": {
+      "status": "partial",
+      "note": "共享日历已分今天浅色与选中实心两态；任务日期字段未接该组件",
+      "evidence": [
+        "src/components/ui/calendar.tsx:121"
+      ]
+    },
+    "G368": {
+      "status": "gap",
+      "note": "无自然语言日期解析；周视图本身已按周一起始",
+      "evidence": [
+        "src/lib/calendar/week-view.ts:17"
+      ]
+    },
+    "G370": {
+      "status": "partial",
+      "note": "内联面板改日期即提交且不关闭；无 Enter 提交与弹层",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:533"
+      ]
+    },
+    "G371": {
+      "status": "partial",
+      "note": "任务行显示「计划 10月9日」纯文本＋图标按钮，无日历芯片",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:504"
+      ]
+    },
+    "G372": {
+      "status": "partial",
+      "note": "清空靠原生输入置空与属性格 ×，无「清除日期」行",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:540"
+      ]
+    },
+    "G375": {
+      "status": "gap",
+      "note": "计划/截止各一枚原生输入，无共用选择器与初值继承",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:538"
+      ]
+    },
+    "G376": {
+      "status": "partial",
+      "note": "共享日历已区今天与当前值两态，日期字段仍是原生输入",
+      "evidence": [
+        "src/components/ui/calendar.tsx:219"
+      ]
+    },
+    "G383": {
+      "status": "gap",
+      "note": "文档卡是纯链接，无常驻 ⋯ 也无右键七项菜单",
+      "evidence": [
+        "src/components/document/DocumentCard.tsx:23"
+      ]
+    },
+    "G384": {
+      "status": "partial",
+      "note": "块菜单按类型插项，但无代码块九项与卡片右键菜单",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:57"
+      ]
+    },
+    "G385": {
+      "status": "gap",
+      "note": "折叠按钮无 aria-expanded/aria-label，未声明 Expand 次级动作",
+      "evidence": [
+        "src/components/editor/extensions/toggle-block-view.tsx:18"
+      ]
+    },
+    "G388": {
+      "status": "partial",
+      "note": "有「查看更多结果」行与 offset 分页，但只有文档有下一游标",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:357"
+      ]
+    },
+    "G389": {
+      "status": "nonaction",
+      "note": "缓存参数属客户端数据层；本地 200ms 防抖直查",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:108"
+      ]
+    },
+    "G390": {
+      "status": "nonaction",
+      "note": "分组位置属实现分层；本地由 action 一次返回三类桶",
+      "evidence": [
+        "src/actions/document/search.ts:70"
+      ]
+    },
+    "G391": {
+      "status": "gap",
+      "note": "分区可折叠但无 20/25 阈值、无剩余计数折叠行",
+      "evidence": [
+        "src/components/sidebar/SidebarSection.tsx:15"
+      ]
+    },
+    "G395": {
+      "status": "gap",
+      "note": "取值只做 JSON 序列化，无选项集校验；可存集合外值",
+      "evidence": [
+        "src/actions/collection/items.ts:112"
+      ]
+    },
+    "G396": {
+      "status": "gap",
+      "note": "属性菜单只有类型名没有图标；数字无 percent/currency 子格式",
+      "evidence": [
+        "src/components/collection/AddPropertyMenu.tsx:20"
+      ]
+    },
+    "G397": {
+      "status": "gap",
+      "note": "列头没有 draggable，只有行拖拽；无列落点协议",
+      "evidence": [
+        "src/app/(app)/collections/[id]/TableView.tsx:340"
+      ]
+    },
+    "G398": {
+      "status": "nonaction",
+      "note": "官方枚举与校验分支数的事实记录；本地不做选项集校验",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G399": {
+      "status": "nonaction",
+      "note": "四个隐藏屏共用 store 开关是官方内部状态模型",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G403": {
+      "status": "nonaction",
+      "note": "完成时间命名映射属 wire 层；本地只有 completedAt，屏侧一致",
+      "evidence": [
+        "src/prisma/contract.prisma:337"
+      ]
+    },
+    "G405": {
+      "status": "partial",
+      "note": "weekly.days 是 0-6 数字，与官方星期名数组不兼容；界面从不写 days",
+      "evidence": [
+        "src/lib/task/recurrence.ts:6"
+      ]
+    },
+    "G406": {
+      "status": "gap",
+      "note": "只有单值 byMonthDay，无多日号/dynamicDays/skipWeekends",
+      "evidence": [
+        "src/lib/task/recurrence.ts:8"
+      ]
+    },
+    "G409": {
+      "status": "nonaction",
+      "note": "两条写入路径归一化不一致属官方内部；本地各一函数",
+      "evidence": [
+        "src/actions/task/task.ts:301"
+      ]
+    },
+    "G410": {
+      "status": "partial",
+      "note": "只存预设 JSON 文本且严格 typeof；导入官方数据会丢规则",
+      "evidence": [
+        "src/lib/task/recurrence.ts:26"
+      ]
+    },
+    "G413": {
+      "status": "partial",
+      "note": "pageStyle 用 fontPack/theme/washi，与官方 styleId/pageWidthType 无对应",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:1"
+      ]
+    },
+    "G414": {
+      "status": "nonaction",
+      "note": "容差/去重/断言工厂是官方约定层工具；本地各处自写校验",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G415": {
+      "status": "deliberate",
+      "note": "结账五态属付费流程；本地订阅只有静态 Free 卡",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:555"
+      ]
+    },
+    "G416": {
+      "status": "deliberate",
+      "note": "配额恢复倒计时属付费限速；本地只有常量",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:555"
+      ]
+    },
+    "G417": {
+      "status": "deliberate",
+      "note": "折扣三代文案属付费面；本地无折扣子系统",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:555"
+      ]
+    },
+    "G418": {
+      "status": "deliberate",
+      "note": "含税价与税率重算属付费购买页",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:555"
+      ]
+    },
+    "G419": {
+      "status": "deliberate",
+      "note": "空间创建门禁与邀请可见性属付费协作面",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:276"
+      ]
+    },
+    "G420": {
+      "status": "nonaction",
+      "note": "复数键是 i18next 机制；本地只识别 [0] 与 {{name}}",
+      "evidence": [
+        "src/lib/i18n/interpolation.ts:17"
+      ]
+    },
+    "G422": {
+      "status": "deliberate",
+      "note": "团队成员行（停用/待处理邀请/计数）属付费团队面",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:566"
+      ]
+    },
+    "G423": {
+      "status": "deliberate",
+      "note": "团队成员移除与撤销邀请确认属团队面",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:566"
+      ]
+    },
+    "G424": {
+      "status": "deliberate",
+      "note": "订阅守卫与过期文案属付费面；本地无订阅实体",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:555"
+      ]
+    },
+    "G425": {
+      "status": "deliberate",
+      "note": "团队徽标外链属团队设置；本地无徽标配置位",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:566"
+      ]
+    },
+    "G431": {
+      "status": "partial",
+      "note": "标题存 Document.title 独立列，官方是 root 块 content",
+      "evidence": [
+        "src/prisma/contract.prisma:63"
+      ]
+    },
+    "G432": {
+      "status": "nonaction",
+      "note": "官方 subblocks 与线上字段名属 wire 命名层；本地传 TipTap JSON",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G433": {
+      "status": "partial",
+      "note": "图片只有 src/alt；链接预览五字段近似，缺媒体 12 字段包",
+      "evidence": [
+        "src/components/editor/extensions/image-block.tsx:30"
+      ]
+    },
+    "G434": {
+      "status": "nonaction",
+      "note": "本地封面只存 coverImage/coverType，无取色层",
+      "evidence": [
+        "src/prisma/contract.prisma:65"
+      ]
+    },
+    "G435": {
+      "status": "partial",
+      "note": "主题是底色+washi+字体包，无 pluginName/themeAssetId/渐变背景",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:19"
+      ]
+    },
+    "G436": {
+      "status": "nonaction",
+      "note": "date-like 三套解析属官方反序列化内部；本地统一 TimestamptzString",
+      "evidence": [
+        "src/prisma/contract.prisma:331"
+      ]
+    },
+    "G437": {
+      "status": "nonaction",
+      "note": "枚举白名单 helper 是官方约定写法；本地自写 includes 校验",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G444": {
+      "status": "nonaction",
+      "note": "双份合并实现与 stamp 集合属官方协同内核",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G445": {
+      "status": "partial",
+      "note": "有链接预览卡与独立白板块，缺白板=smartLink iframe 的统一外壳",
+      "evidence": [
+        "src/components/editor/extensions/link-preview-view.tsx:52"
+      ]
+    },
+    "G447": {
+      "status": "nonaction",
+      "note": "入站 postMessage 是 iframe↔宿主桥契约；本地零命中",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G449": {
+      "status": "nonaction",
+      "note": "buildLettuce 命名与提亮矩阵属官方内部",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G452": {
+      "status": "partial",
+      "note": "select/多选/日期/关联清空写 null，但文本仍写空串且无 trim",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:314"
+      ]
+    },
+    "G453": {
+      "status": "gap",
+      "note": "只有 relation，无 linkToBlock 单元格与 {name,url} 快照",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:74"
+      ]
+    },
+    "G454": {
+      "status": "partial",
+      "note": "person 走 TextCell 无用户快照；选项无 themeString，多选恒多选",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:65"
+      ]
+    },
+    "G455": {
+      "status": "partial",
+      "note": "勾选框是 16px 方框对勾，非 39×24 圆角开关",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:179"
+      ]
+    },
+    "G456": {
+      "status": "partial",
+      "note": "日期输入自己处理 Esc，其余弹层只点遮罩关闭；无具名浮层栈",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:275"
+      ]
+    },
+    "G457": {
+      "status": "partial",
+      "note": "邮箱/链接用 type=email/url，电话与人员退化 type=text",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:444"
+      ]
+    },
+    "G464": {
+      "status": "partial",
+      "note": "useState 初值只取一次，协同改动后文本/数字/链接会带出旧草稿",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:96"
+      ]
+    },
+    "G465": {
+      "status": "partial",
+      "note": "文本与电话原样提交含空串和空格，普遍无 trim",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:131"
+      ]
+    },
+    "G466": {
+      "status": "gap",
+      "note": "三处 onKeyDown 无 preventDefault/stopPropagation，Enter/Esc 会冒泡",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:132"
+      ]
+    },
+    "G467": {
+      "status": "gap",
+      "note": "onBlur 直接提交，无 document.contains 守卫，卸载 blur 会再写",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:131"
+      ]
+    },
+    "G468": {
+      "status": "partial",
+      "note": "NumberCell 用 type=number 加 parseFloat 且 isNaN→null；无 percent/currency",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:162"
+      ]
+    },
+    "G469": {
+      "status": "gap",
+      "note": "编辑是行内 input，无锚点弹层、无 skidding 与宽度溢出",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:159"
+      ]
+    },
+    "G471": {
+      "status": "nonaction",
+      "note": "注册与渲染解耦是官方浮层 API 形状；本地无注册面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G472": {
+      "status": "partial",
+      "note": "tldraw 快照整体存 attrs，无 meta/assets 分层与预览图档",
+      "evidence": [
+        "src/components/editor/extensions/drawing.tsx:19"
+      ]
+    },
+    "G473": {
+      "status": "gap",
+      "note": "本地无预览容器（活画布），无混色与 3×3 矩阵算法",
+      "evidence": [
+        "src/components/editor/extensions/drawing-view.tsx:74"
+      ]
+    },
+    "G474": {
+      "status": "aligned",
+      "note": "同样三处动态 import('tldraw')，重画布按需加载",
+      "evidence": [
+        "src/components/editor/extensions/drawing-view.tsx:27"
+      ]
+    },
+    "G475": {
+      "status": "partial",
+      "note": "先给按钮、点击后才挂活画布，无 pointer-events:none 的只读预览层",
+      "evidence": [
+        "src/components/editor/extensions/drawing-view.tsx:74"
+      ]
+    },
+    "G478": {
+      "status": "partial",
+      "note": "弹窗走 Base UI 自带 Esc，集合下拉只有点遮罩；无跨层焦点栈",
+      "evidence": [
+        "src/components/ui/dialog.tsx:4"
+      ]
+    },
+    "G479": {
+      "status": "partial",
+      "note": "Base UI 自有嵌套，但无 allowPropagation/aboveId/isDisabled 三态",
+      "evidence": [
+        "src/components/ui/dialog.tsx:19"
+      ]
+    },
+    "G480": {
+      "status": "nonaction",
+      "note": "useLatestRef 是官方实现习语；本地按 effect 依赖注册",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:31"
+      ]
+    },
+    "G482": {
+      "status": "partial",
+      "note": "有 submitted/cancelled/closed 终态桥，但 Esc 与遮罩同归 cancelled",
+      "evidence": [
+        "src/lib/dialog/bridge.ts:14"
+      ]
+    },
+    "G483": {
+      "status": "partial",
+      "note": "行高 35px 与表头 10px 已对齐；无 264 弹层宽与 10px overhang",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:106"
+      ]
+    },
+    "G484": {
+      "status": "gap",
+      "note": "表格全量渲染 processedItems，无 600 格阈值与虚拟化",
+      "evidence": [
+        "src/app/(app)/collections/[id]/TableView.tsx:320"
+      ]
+    },
+    "G485": {
+      "status": "gap",
+      "note": "无导出成图路径，全仓零处 devicePixelRatio",
+      "evidence": [
+        "src/components/editor/extensions/drawing-view.tsx:74"
+      ]
+    },
+    "G486": {
+      "status": "nonaction",
+      "note": "官方具名弹层容器属挂载点治理；本地由 Base UI Portal 自管",
+      "evidence": [
+        "src/components/ui/dialog.tsx:19"
+      ]
+    },
+    "G487": {
+      "status": "partial",
+      "note": "已有关键字形表，缺标点原字符档与官方真实字形",
+      "evidence": [
+        "src/lib/editor/keymap.ts:83"
+      ]
+    },
+    "G488": {
+      "status": "nonaction",
+      "note": "双注册面是官方内部治理；本地单点监听",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:59"
+      ]
+    },
+    "G489": {
+      "status": "partial",
+      "note": "8 处全局 keydown 各自判键，除 InputIntent 记账外全无优先级",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:59"
+      ]
+    },
+    "G490": {
+      "status": "gap",
+      "note": "全仓无 isComposing/keyCode 229 守卫，IME 候选时 Esc/Enter 会误触发",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:132"
+      ]
+    },
+    "G491": {
+      "status": "gap",
+      "note": "无栈顶吞键语义：弹层开着时全局快捷键照常响应",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:59"
+      ]
+    },
+    "G492": {
+      "status": "nonaction",
+      "note": "前缀 id 插位与重复 push 告警是官方栈内部；本地无栈",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G495": {
+      "status": "nonaction",
+      "note": "handler 返回值控制拦截是官方分发契约；本地不消费返回值",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G496": {
+      "status": "nonaction",
+      "note": "keyDefs 可为函数属官方动态绑定；本地只有注册与注销",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G497": {
+      "status": "gap",
+      "note": "无虚拟化（overscan/useVirtualizer 零命中），大表全量 DOM",
+      "evidence": [
+        "src/app/(app)/collections/[id]/TableView.tsx:320"
+      ]
+    },
+    "G498": {
+      "status": "gap",
+      "note": "行高是固定 35px CSS 变量，无 DPR 对齐换算",
+      "evidence": [
+        "src/app/globals.css:2342"
+      ]
+    },
+    "G499": {
+      "status": "unreachable",
+      "note": "越过 600 格的可感知差异需官方侧造 30×30 表实测；本地无虚拟化",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G500": {
+      "status": "partial",
+      "note": "有 system/light/dark 与字体包，无 paragraphSpacingType 与五种卡片主题",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:19"
+      ]
+    },
+    "G501": {
+      "status": "partial",
+      "note": "parseHTML 把缺省 data-open 塌成 false，无从未设过的三态位",
+      "evidence": [
+        "src/components/editor/extensions/toggle-block.tsx:28"
+      ]
+    },
+    "G502": {
+      "status": "aligned",
+      "note": "代码块 language=mermaid 加专用预览，语言菜单排除它，与官方同构",
+      "evidence": [
+        "src/lib/editor/mermaid-surface.ts:2"
+      ]
+    },
+    "G503": {
+      "status": "gap",
+      "note": "图片块只有 src/alt，无 cropMask 竖线串与两套尺寸",
+      "evidence": [
+        "src/components/editor/extensions/image-block.tsx:30"
+      ]
+    },
+    "G504": {
+      "status": "gap",
+      "note": "全仓无 primaryColor，封面只存 URL",
+      "evidence": [
+        "src/prisma/contract.prisma:65"
+      ]
+    },
+    "G505": {
+      "status": "nonaction",
+      "note": "官方统一枚举安全读取＋回退；本地仅局部 includes 白名单",
+      "evidence": [
+        "src/lib/editor/font-size.ts:28"
+      ]
+    },
+    "G506": {
+      "status": "nonaction",
+      "note": "官方生成侧补丁最小化；本地只有入参 undefined 约定",
+      "evidence": [
+        "src/actions/document/update.ts:14"
+      ]
+    },
+    "G507": {
+      "status": "nonaction",
+      "note": "官方默认工厂全 null；本地 pageStyle 是可空 JSON、缺省即继承",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:76"
+      ]
+    },
+    "G508": {
+      "status": "partial",
+      "note": "列可拖拽但宽存 TipTap colwidth（px），无百分比模型",
+      "evidence": [
+        "src/lib/table-utils.ts:117"
+      ]
+    },
+    "G509": {
+      "status": "partial",
+      "note": "工具栏已有标题行/列开关，但靠换 tableHeader 节点类型，非表级布尔",
+      "evidence": [
+        "src/components/editor/table/TableToolbar.tsx:192"
+      ]
+    },
+    "G510": {
+      "status": "partial",
+      "note": "有隔行颜色开关，固定 muted 色，非主题色 id",
+      "evidence": [
+        "src/components/editor/table/TableToolbar.tsx:211"
+      ]
+    },
+    "G511": {
+      "status": "partial",
+      "note": "无块底色/修饰符集合；focus/shaded 属性与 CSS 在但无设置入口",
+      "evidence": [
+        "src/components/editor/extensions/focus-style.tsx:20"
+      ]
+    },
+    "G512": {
+      "status": "nonaction",
+      "note": "官方键缺失与 undefined 双态约定属序列化内部",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G513": {
+      "status": "nonaction",
+      "note": "官方 AssertionError 跨 realm 判定；本地无解析错误分类",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G515": {
+      "status": "nonaction",
+      "note": "官方颜色明暗对打包编码；本地单值＋全局 CSS 变量",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G517": {
+      "status": "partial",
+      "note": "格式面板五档含折叠，但折叠是独立节点，切换靠换节点类型",
+      "evidence": [
+        "src/lib/editor/format-commands.ts:91"
+      ]
+    },
+    "G518": {
+      "status": "partial",
+      "note": "对齐四档＋默认可写；线型只有分隔线四档权重",
+      "evidence": [
+        "src/lib/editor/format-commands.ts:83"
+      ]
+    },
+    "G519": {
+      "status": "nonaction",
+      "note": "两套尺寸枚举落点未证，归静态枚举面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G520": {
+      "status": "nonaction",
+      "note": "官方 8 位 hex 强校验；本地无位数校验",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G521": {
+      "status": "nonaction",
+      "note": "官方行内格式压在样式串；本地用 TipTap marks",
+      "evidence": [
+        "src/components/editor/Editor.tsx:5"
+      ]
+    },
+    "G522": {
+      "status": "nonaction",
+      "note": "官方错误收集器＋success/failure 判别；本地无逐字段记账",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G523": {
+      "status": "nonaction",
+      "note": "字体族穷尽 switch 抛错；本地 fontPacks 四档且无抛错",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:19"
+      ]
+    },
+    "G525": {
+      "status": "nonaction",
+      "note": "官方侧未证边界，归静态源码面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G528": {
+      "status": "nonaction",
+      "note": "旧字段名归一属兼容层；本地 themeColor 只是页面主题变量同名",
+      "evidence": [
+        "src/components/editor/DocumentEditor.tsx:207"
+      ]
+    },
+    "G529": {
+      "status": "nonaction",
+      "note": "null 与 none 是官方线格式约定；本地无三态区分",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G530": {
+      "status": "nonaction",
+      "note": "lineStyle/lineThemeStyle 字段层；本地无 decorations/spacing 字段",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G531": {
+      "status": "nonaction",
+      "note": "G520 更正重复；官方强校验，本地无",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G532": {
+      "status": "partial",
+      "note": "可开单色高亮；另有固定六色渐变 mark，但无任意 colorStops",
+      "evidence": [
+        "src/components/editor/extensions/gradient-highlight.tsx:14"
+      ]
+    },
+    "G533": {
+      "status": "nonaction",
+      "note": "颜色读写三形态属内部编码；本地颜色单值",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G535": {
+      "status": "nonaction",
+      "note": "枚举回退与结构化规范化两策略；本地无分派层",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G537": {
+      "status": "nonaction",
+      "note": "写侧反向改名；本地零命中",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G539": {
+      "status": "nonaction",
+      "note": "run 的 range 读写成对；本地无 runAttributes",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G540": {
+      "status": "partial",
+      "note": "focus/shaded 属性与 CSS 在，无装饰 UI/写条件",
+      "evidence": [
+        "src/app/globals.css:855"
+      ]
+    },
+    "G541": {
+      "status": "nonaction",
+      "note": "布尔按字段编码；本地仅 true 字符串比较",
+      "evidence": [
+        "src/components/editor/extensions/toggle-block.tsx:28"
+      ]
+    },
+    "G543": {
+      "status": "nonaction",
+      "note": "omitDefault 方向更正；本地 codec 无字段级省略",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G547": {
+      "status": "partial",
+      "note": "重复有四种频率，无 skipWeekends/dynamicDays/months",
+      "evidence": [
+        "src/lib/task/recurrence.ts:3"
+      ]
+    },
+    "G548": {
+      "status": "nonaction",
+      "note": "按块最小索引缓存属内部策略",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G549": {
+      "status": "nonaction",
+      "note": "日期宽松解析与去重工具层；本地无同名",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G551": {
+      "status": "nonaction",
+      "note": "布尔四形态读写成对；本地无按字段序列化",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G552": {
+      "status": "nonaction",
+      "note": "渐变写侧线格式；本地无 colorStops",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G553": {
+      "status": "partial",
+      "note": "周起始已是周一；缺日期上下界与区间工具",
+      "evidence": [
+        "src/lib/calendar/week-view.ts:14"
+      ]
+    },
+    "G554": {
+      "status": "nonaction",
+      "note": "日期加减工具族；本地 recurrence 有显式 addDays/addMonths",
+      "evidence": [
+        "src/lib/task/recurrence.ts:200"
+      ]
+    },
+    "G556": {
+      "status": "nonaction",
+      "note": "同名巧合：本地 taskData 是日历页局部变量",
+      "evidence": [
+        "src/app/(app)/calendar/page.tsx:25"
+      ]
+    },
+    "G557": {
+      "status": "nonaction",
+      "note": "日期上下界工具属内部；本地仅 daily-notes 的 setHours",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G559": {
+      "status": "nonaction",
+      "note": "严格日期解析器；本地仅 ISO 正则",
+      "evidence": [
+        "src/lib/task/recurrence.ts:131"
+      ]
+    },
+    "G560": {
+      "status": "nonaction",
+      "note": "lineThemeStyle 对象通道；本地 washi 是字符串 id＋内置表",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:17"
+      ]
+    },
+    "G561": {
+      "status": "nonaction",
+      "note": "primaryColor 6 位独立通道；本地无提取",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G562": {
+      "status": "nonaction",
+      "note": "复制链前序重放 id 策略；本地未核",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G564": {
+      "status": "nonaction",
+      "note": "递归剥空工具；本地写入原样",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G566": {
+      "status": "nonaction",
+      "note": "day:// 属深链契约；本地零命中",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G568": {
+      "status": "nonaction",
+      "note": "fileBlockToStoredBlock 反向定型；本地无",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G569": {
+      "status": "nonaction",
+      "note": "scheme 分类属深链判定；本地零命中",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G571": {
+      "status": "nonaction",
+      "note": "run 工具三件；本地无 run 层",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G575": {
+      "status": "partial",
+      "note": "Enter 分裂由 PM 默认承担；无 keepAllIncomingFormat 与 run 切分",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:151"
+      ]
+    },
+    "G576": {
+      "status": "nonaction",
+      "note": "run 按索引切分；本地无 run 层",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G580": {
+      "status": "gap",
+      "note": "无 day/tag 内联原子，也无光标在原子内让位的守卫",
+      "evidence": [
+        "src/components/editor/Editor.tsx:486"
+      ]
+    },
+    "G582": {
+      "status": "partial",
+      "note": "已有 chord 预设与 Win 回退；Shift+Enter 落到 RENAME，无 eT/Vn 包装器",
+      "evidence": [
+        "src/lib/editor/keymap.ts:60"
+      ]
+    },
+    "G584": {
+      "status": "partial",
+      "note": "权限在 server action 分级；viewer 不能评论，与官方只读白名单不同",
+      "evidence": [
+        "src/actions/comment/comment.ts:28"
+      ]
+    },
+    "G587": {
+      "status": "nonaction",
+      "note": "协议外抛错与脏数据 no-op 属协议面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G592": {
+      "status": "nonaction",
+      "note": "表格 action 字段名契约；本地未建对照",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G595": {
+      "status": "nonaction",
+      "note": "拖拽 active 开关属 action 态；本地拖柄无此态",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G596": {
+      "status": "nonaction",
+      "note": "集合六菜单是 uiAction 名；本地组件菜单无命名层",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G597": {
+      "status": "nonaction",
+      "note": "块类型六份裁剪表属枚举面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G598": {
+      "status": "nonaction",
+      "note": "搜索/活动日志词表枚举；本地无活动日志",
+      "evidence": [
+        "src/lib/search/official-copy.ts:16"
+      ]
+    },
+    "G599": {
+      "status": "nonaction",
+      "note": "计数更正，纯清单",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G600": {
+      "status": "gap",
+      "note": "侧栏导航固定、无自定义/排序",
+      "evidence": [
+        "src/components/sidebar/SidebarNav.tsx:21"
+      ]
+    },
+    "G602": {
+      "status": "partial",
+      "note": "有更新横幅；无彩蛋/调试面板，通知滚动位置未实现",
+      "evidence": [
+        "src/components/app/UpdateBanner.tsx:12"
+      ]
+    },
+    "G603": {
+      "status": "nonaction",
+      "note": "判据更正，纯内部",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G605": {
+      "status": "partial",
+      "note": "getTasks 全量取 200 条，无排期/截止剪枝",
+      "evidence": [
+        "src/actions/task/task.ts:163"
+      ]
+    },
+    "G606": {
+      "status": "nonaction",
+      "note": "第二套蛇形 action 方言；本地收藏单实现",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G607": {
+      "status": "partial",
+      "note": "侧栏拖拽按相邻中点算 order 逐条写，无整批 orderedIds",
+      "evidence": [
+        "src/components/sidebar/DocumentTreeItem.tsx:238"
+      ]
+    },
+    "G612": {
+      "status": "gap",
+      "note": "无 Tab/Shift+Tab 缩进键位；28px 工具未接线",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:8"
+      ]
+    },
+    "G613": {
+      "status": "gap",
+      "note": "本地无缩进键位，无从对照",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:8"
+      ]
+    },
+    "G614": {
+      "status": "gap",
+      "note": "Enter 走 PM 默认分裂，空块不退缩进/格式",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:151"
+      ]
+    },
+    "G615": {
+      "status": "gap",
+      "note": "本地 Shift+Enter 不插 br；官方实测插 br，本行前提已被 G1552 推翻",
+      "evidence": [
+        "src/lib/editor/keymap.ts:206"
+      ]
+    },
+    "G616": {
+      "status": "partial",
+      "note": "非协同用 History 时间窗分组；协同 undoRedo:false",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342"
+      ]
+    },
+    "G617": {
+      "status": "aligned",
+      "note": "两侧都建列表；本地 - 与 Ctrl-Shift-7 通路均在位",
+      "evidence": [
+        "src/lib/editor/keymap.ts:183"
+      ]
+    },
+    "G618": {
+      "status": "gap",
+      "note": "Ctrl+A 走 PM 文本全选；块选中只有 NodeSelection，无每块 chrome",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:242"
+      ]
+    },
+    "G619": {
+      "status": "partial",
+      "note": "仅 PM joinBackward：合并/删空块默认等价，缩进档确定缺",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:148"
+      ]
+    },
+    "G620": {
+      "status": "aligned",
+      "note": "走 ProseMirror 默认 joinBackward，合并后光标落上块末尾，无自定义 Backspace 覆盖",
+      "evidence": [
+        "src/components/editor/Editor.tsx:313"
+      ]
+    },
+    "G622": {
+      "status": "partial",
+      "note": "侧栏删除已有确认框，但文案是「移至最近删除」而非官方「删除 N 个项目/无法撤销」",
+      "evidence": [
+        "src/lib/browse/trash-subcopy.ts:31"
+      ]
+    },
+    "G623": {
+      "status": "gap",
+      "note": "浏览屏只有视图切换与排序，无多选/批量删除；仅回收站有批量通路",
+      "evidence": [
+        "src/components/document/TrashList.tsx:202"
+      ]
+    },
+    "G625": {
+      "status": "aligned",
+      "note": "信息面板统计已是五字段，数据源齐；仅阅读时间用分钟而非秒",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:516"
+      ]
+    },
+    "G626": {
+      "status": "partial",
+      "note": "目录以斜杠命令块存在且空态文案一致，但信息面板没有独立「目录」分区",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:450"
+      ]
+    },
+    "G627": {
+      "status": "partial",
+      "note": "Tab 只在列表项内由 TipTap 绑定；无块级子树级联与非列表块缩进",
+      "evidence": [
+        "src/lib/editor/format-commands.ts:108"
+      ]
+    },
+    "G628": {
+      "status": "partial",
+      "note": "PM 默认 Backspace 覆盖列表退档/空块删除/文本合并；无块级缩进档与装饰清理",
+      "evidence": [
+        "src/components/editor/Editor.tsx:313"
+      ]
+    },
+    "G629": {
+      "status": "partial",
+      "note": "PM 默认 Enter 切块，空列表项可退出列表；缺缩进→列表→装饰逐级退格式",
+      "evidence": [
+        "src/components/editor/Editor.tsx:313"
+      ]
+    },
+    "G630": {
+      "status": "gap",
+      "note": "只有文字颜色 mark 与未接线的 focus/shaded 属性，无块级装饰三字段入口",
+      "evidence": [
+        "src/lib/editor/decorations.ts:27"
+      ]
+    },
+    "G631": {
+      "status": "partial",
+      "note": "TipTap 原生 CellSelection 支持拖选与合并；缺 single/full/empty 三构造器",
+      "evidence": [
+        "src/components/editor/table/TableToolbar.tsx:228"
+      ]
+    },
+    "G632": {
+      "status": "partial",
+      "note": "PM 基础键位已把 Delete 绑到 joinForward；无空块删并选下块两档",
+      "evidence": [
+        "src/components/editor/Editor.tsx:313"
+      ]
+    },
+    "G633": {
+      "status": "gap",
+      "note": "Esc 只用于取消编辑/关弹层，无「单元格→光标→整块」的选区降级阶梯",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:223"
+      ]
+    },
+    "G634": {
+      "status": "gap",
+      "note": "文档表格走 TipTap 原生 table 全量 DOM，无行虚拟化、600 格降级与固定行高",
+      "evidence": [
+        "src/components/editor/table/TableToolbar.tsx:115"
+      ]
+    },
+    "G637": {
+      "status": "partial",
+      "note": "重复规则无 type 维度，只按 dueDate/remindAt 向后推，实际只实现 fixed 一侧",
+      "evidence": [
+        "src/lib/task/recurrence.ts:3"
+      ]
+    },
+    "G638": {
+      "status": "gap",
+      "note": "RecurrenceRule 无 interval 字段，四档预设均为间隔 1",
+      "evidence": [
+        "src/lib/task/recurrence.ts:3"
+      ]
+    },
+    "G640": {
+      "status": "partial",
+      "note": "本地多出 until/recurrenceEnd 结束链并暴露到 UI 与数据库，属本地超集",
+      "evidence": [
+        "src/lib/task/recurrence.ts:10"
+      ]
+    },
+    "G642": {
+      "status": "partial",
+      "note": "集合日期格有编辑暂存，但无显式「应用」按钮与弹层定位；文档任务日期直接提交",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:195"
+      ]
+    },
+    "G644": {
+      "status": "partial",
+      "note": "按排期/提醒提前量相对重算；缺墙钟当日分钟语义、enabled 位与过去时刻守卫",
+      "evidence": [
+        "src/actions/task/task.ts:265"
+      ]
+    },
+    "G645": {
+      "status": "gap",
+      "note": "rollForward 新建任务时写 documentId/blockId 为 null，与来源文档/块断链",
+      "evidence": [
+        "src/actions/task/task.ts:276"
+      ]
+    },
+    "G646": {
+      "status": "gap",
+      "note": "重复只有四选一原生 select，无 weekly/monthly/weekly 字段级合法性校验",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:561"
+      ]
+    },
+    "G648": {
+      "status": "partial",
+      "note": "只有一根 datetime-local + 清空即取消；无块级绝对提醒与 dateOffset 两条独立 UI",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:551"
+      ]
+    },
+    "G649": {
+      "status": "partial",
+      "note": "有 Notification 实体与 SSE/轮询，但它是任务提醒，不是可空 dueDate 的一等提醒",
+      "evidence": [
+        "src/prisma/contract.prisma:356"
+      ]
+    },
+    "G652": {
+      "status": "partial",
+      "note": "选重复只写 recurrence，排期为空仍允许保存；无官方「补今天零点」缺省规则",
+      "evidence": [
+        "src/actions/task/task.ts:310"
+      ]
+    },
+    "G654": {
+      "status": "partial",
+      "note": "撤销交给 ProseMirror history，按事务/相邻输入归并；无 undoRedoPatch 槽位",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342"
+      ]
+    },
+    "G657": {
+      "status": "gap",
+      "note": "任务勾选与 rollForward 都在服务端，客户端撤销栈没有这一步",
+      "evidence": [
+        "src/actions/task/task.ts:252"
+      ]
+    },
+    "G658": {
+      "status": "aligned",
+      "note": "图片粘贴/附件上传成功后才插节点，失败不落内容；撤销一次即移除",
+      "evidence": [
+        "src/components/editor/Editor.tsx:526"
+      ]
+    },
+    "G659": {
+      "status": "gap",
+      "note": "表格无 50 行/15 列/750 格上限校验，也无超限 toast",
+      "evidence": [
+        "src/components/editor/table/TableToolbar.tsx:138"
+      ]
+    },
+    "G660": {
+      "status": "gap",
+      "note": "仅有未被引用的缩进宽度助手；无 indentLevel 属性与子树并集语义",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:26"
+      ]
+    },
+    "G661": {
+      "status": "gap",
+      "note": "日记按 dailyNoteDate 列与路由取数，无 day://YYYY.MM.DD 深链",
+      "evidence": [
+        "src/actions/daily-notes/daily-notes.ts:12"
+      ]
+    },
+    "G663": {
+      "status": "partial",
+      "note": "从 dueDate 起算、落点沿原序列推进，只有 fixed 一侧",
+      "evidence": [
+        "src/actions/task/task.ts:265"
+      ]
+    },
+    "G664": {
+      "status": "gap",
+      "note": "只有会前移的 dueDate 指针，没有不前移的 repeat.startDate 锚",
+      "evidence": [
+        "src/prisma/contract.prisma:335"
+      ]
+    },
+    "G667": {
+      "status": "gap",
+      "note": "提醒只有可空绝对时刻列，无当日分钟 dateOffset 与 enabled 位",
+      "evidence": [
+        "src/prisma/contract.prisma:334"
+      ]
+    },
+    "G669": {
+      "status": "partial",
+      "note": "dueDate/remindAt 为 timestamptz（含时分），并多出 recurrenceEnd",
+      "evidence": [
+        "src/prisma/contract.prisma:331"
+      ]
+    },
+    "G671": {
+      "status": "partial",
+      "note": "软删、还原、手动清空均已有；缺 30 天到期自动清除",
+      "evidence": [
+        "src/components/document/TrashList.tsx:102"
+      ]
+    },
+    "G672": {
+      "status": "nonaction",
+      "note": "--position 是 MCP 块定位旗标契约；本地无对应 CLI",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G673": {
+      "status": "partial",
+      "note": "页面样式仅 fontPack/theme/washi 三字段，无 18 个正交旗标模型",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:1"
+      ]
+    },
+    "G674": {
+      "status": "partial",
+      "note": "导入器支持 > 引用与缩进列表，但不认 <callout> 与行首 + 的 toggle 语法",
+      "evidence": [
+        "src/lib/import/markdown.ts:236"
+      ]
+    },
+    "G675": {
+      "status": "gap",
+      "note": "提醒必须有 remindAt 才会物化，无「无时刻、稍后再说」态",
+      "evidence": [
+        "src/lib/notification/materialize.ts:33"
+      ]
+    },
+    "G676": {
+      "status": "partial",
+      "note": "类型表已含 15 档（超集），但用 snake_case，且无 20 列上限与保留名",
+      "evidence": [
+        "src/components/collection/AddPropertyMenu.tsx:20"
+      ]
+    },
+    "G677": {
+      "status": "partial",
+      "note": "CollectionItem 有 documentId，行可挂文档；但 addItem 不建文档，无行内正文块通路",
+      "evidence": [
+        "src/prisma/contract.prisma:190"
+      ]
+    },
+    "G678": {
+      "status": "nonaction",
+      "note": "blocks delete 的回收站/级联约束是 MCP 契约；本地已有软删回收站",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G679": {
+      "status": "partial",
+      "note": "移动把 parentId/folderId/order 混在一个 patch，无互斥与日记不可移动守卫",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:269"
+      ]
+    },
+    "G680": {
+      "status": "nonaction",
+      "note": "单命令批量是 MCP 性能路径；本地逐条 server action",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G681": {
+      "status": "nonaction",
+      "note": "blocks learn 的 9 类可插入/12 类可更新是契约能力表",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G682": {
+      "status": "partial",
+      "note": "主题六档硬编码、每档一色；官方约 130–150 项且动态加载",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:15"
+      ]
+    },
+    "G683": {
+      "status": "partial",
+      "note": "washi 是六条 CSS 渐变，官方是可平铺图案；无 separator/lineStyle",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:35"
+      ]
+    },
+    "G684": {
+      "status": "aligned",
+      "note": "已有 18 个官方第三方主题 + auto，另多 craft 两档；代码块可选主题",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:280"
+      ]
+    },
+    "G686": {
+      "status": "partial",
+      "note": "样式只有 fontPack/theme/washi，无 textColor/backgroundColor/backdrop 属性包",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:1"
+      ]
+    },
+    "G687": {
+      "status": "partial",
+      "note": "可表达四频率与 monthly day 列表，无 type/startDate/reminder/skipWeekends/interval",
+      "evidence": [
+        "src/lib/task/recurrence.ts:3"
+      ]
+    },
+    "G689": {
+      "status": "partial",
+      "note": "Notification 有未解决/已解决两态，但无「无时刻」态，也不是与任务解耦的提醒实体",
+      "evidence": [
+        "src/actions/notification/notification.ts:10"
+      ]
+    },
+    "G690": {
+      "status": "gap",
+      "note": "addProperty 读全量后直接 create，无 20 列上限与错误码",
+      "evidence": [
+        "src/actions/collection/properties.ts:23"
+      ]
+    },
+    "G691": {
+      "status": "partial",
+      "note": "集合名在 Collection.name，行标题借 documentId 的文档标题，无自定义行标题列名",
+      "evidence": [
+        "src/prisma/contract.prisma:144"
+      ]
+    },
+    "G693": {
+      "status": "nonaction",
+      "note": "单命令批量原子性仍是未定案的仪器读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G694": {
+      "status": "gap",
+      "note": "Unsplash 仅作为插入项的 missing 占位，无检索、分页与署名",
+      "evidence": [
+        "src/components/editor/tabs/InsertTab.tsx:53"
+      ]
+    },
+    "G696": {
+      "status": "nonaction",
+      "note": "explore-*/search-* 动词可达性是取证方法学",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G699": {
+      "status": "nonaction",
+      "note": "blocks add --json 保序与原子性是 MCP 仪器读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G700": {
+      "status": "partial",
+      "note": "封面有图片/颜色两态，无 themeColor/backgroundColor 双字段与署名",
+      "evidence": [
+        "src/components/editor/tabs/StyleTab.tsx:74"
+      ]
+    },
+    "G702": {
+      "status": "nonaction",
+      "note": "reminders update 旗标名是 CLI 契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G703": {
+      "status": "partial",
+      "note": "Notification 同时保留 remindAt 与 resolvedAt，标题取任务标题而非块文本",
+      "evidence": [
+        "src/actions/notification/notification.ts:35"
+      ]
+    },
+    "G704": {
+      "status": "nonaction",
+      "note": "三层错误形状是 MCP 契约；本地静默 return 只是改进方向",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G705": {
+      "status": "nonaction",
+      "note": "样式旗标只在页根生效、块级静默丢弃是连接器行为",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G706": {
+      "status": "gap",
+      "note": "无 backdrop 通道、渐变方向与铺满尺寸；StyleTab 背景色只是封面颜色",
+      "evidence": [
+        "src/components/editor/tabs/StyleTab.tsx:87"
+      ]
+    },
+    "G708": {
+      "status": "partial",
+      "note": "主题只是一个色值，不会一次写 fontFamily/textColor/backgroundColor/themeId/separatorStyle",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:26"
+      ]
+    },
+    "G709": {
+      "status": "nonaction",
+      "note": "官方 washi 6 图案与 130 条页主题是枚举/词表",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G710": {
+      "status": "partial",
+      "note": "可增删改属性，但逐条操作、删除仅软删自身；无整表替换语义",
+      "evidence": [
+        "src/actions/collection/properties.ts:68"
+      ]
+    },
+    "G711": {
+      "status": "nonaction",
+      "note": "--items 空串键与 items-get 视图不一致是仪器读法问题",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G712": {
+      "status": "nonaction",
+      "note": "items-get --format 只吃 text/markdown 是 CLI 序列化限制",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G717": {
+      "status": "gap",
+      "note": "没有 web→桌面「在应用中打开？」提示层，无交接浮层与记住选择",
+      "evidence": [
+        "src/components/sidebar/Sidebar.tsx:21"
+      ]
+    },
+    "G718": {
+      "status": "nonaction",
+      "note": "官方连接器键盘事件未进页面是取证通路缺陷",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G719": {
+      "status": "partial",
+      "note": "浏览屏已有三档切换；缺进入文档后侧栏入口换组与批量选择态",
+      "evidence": [
+        "src/lib/browse/view-modes.ts:5"
+      ]
+    },
+    "G721": {
+      "status": "nonaction",
+      "note": "「在应用中打开」浮层遮挡点击是官方 web 端几何问题",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G722": {
+      "status": "nonaction",
+      "note": "备用桥 tab id 过期是连接器故障",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G725": {
+      "status": "gap",
+      "note": "键位表无 GROUP/UNGROUP，编辑器也没有分组/取消分组能力",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:26"
+      ]
+    },
+    "G726": {
+      "status": "nonaction",
+      "note": "表格快捷键面板 Windows 串与反编译 Mac 列冲突属官方自证矛盾",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G727": {
+      "status": "gap",
+      "note": "本地无任务类键位；计划/截止只在单一内联面板，非三个独立入口",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G730": {
+      "status": "nonaction",
+      "note": "官方 CLI/回收站宿主守卫属桥契约；本地软删无跨索引残留",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G731": {
+      "status": "nonaction",
+      "note": "沙盒孤儿任务清账，采集卫生问题",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G732": {
+      "status": "aligned",
+      "note": "chordFor 已实现平台位选择：Mac 用主描述符，非 Mac 取 win 否则回落",
+      "evidence": [
+        "src/lib/editor/keymap.ts:60"
+      ]
+    },
+    "G737": {
+      "status": "nonaction",
+      "note": "press_key 与合成事件的取证通路差异，属仪器结论",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G738": {
+      "status": "gap",
+      "note": "快捷键面板无分类导航，打开固定落到设置分区，无上次分类记忆",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:38"
+      ]
+    },
+    "G739": {
+      "status": "aligned",
+      "note": "已有 UA 平台判定与平台位选择，不再用 metaKey||ctrlKey 折叠",
+      "evidence": [
+        "src/lib/editor/keymap.ts:71"
+      ]
+    },
+    "G740": {
+      "status": "nonaction",
+      "note": "官方 winMatcher 全量枚举；本地只按 NO_LIST 特例落了 Backquote",
+      "evidence": [
+        "src/lib/editor/keymap.ts:186"
+      ]
+    },
+    "G741": {
+      "status": "aligned",
+      "note": "Mac 专用已建模为 win:null：不打印也不匹配",
+      "evidence": [
+        "src/lib/editor/keymap.ts:193"
+      ]
+    },
+    "G743": {
+      "status": "partial",
+      "note": "本地同键同实现，无 handler 级平台分支；官方是两平台两套行为",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:70"
+      ]
+    },
+    "G744": {
+      "status": "aligned",
+      "note": "匹配已支持 code（物理键）与 key（逻辑键）两路",
+      "evidence": [
+        "src/lib/editor/keymap.ts:147"
+      ]
+    },
+    "G745": {
+      "status": "partial",
+      "note": "本地是六组平铺设置页，官方是 7 分类/18 段的可折叠面板",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:12"
+      ]
+    },
+    "G746": {
+      "status": "partial",
+      "note": "本地按平台裁显示（win:null 不打印），但无 Safari 等浏览器级条件",
+      "evidence": [
+        "src/lib/editor/keymap.ts:113"
+      ]
+    },
+    "G747": {
+      "status": "partial",
+      "note": "本地 29 行描述符子集，官方为 66 项且含完整工厂归属",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G749": {
+      "status": "gap",
+      "note": "任务注册表无对应：本地任务视图没有任何键位绑定",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G750": {
+      "status": "aligned",
+      "note": "RENAME 文案已更正为「编辑页面区块」",
+      "evidence": [
+        "src/lib/editor/keymap.ts:206"
+      ]
+    },
+    "G751": {
+      "status": "nonaction",
+      "note": "官方源里有、渲染没有的功能档位条件，属采集盲区",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G752": {
+      "status": "gap",
+      "note": "Esc 由各弹层自挂 window 监听，一次关掉整层，无逐层回退",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:96"
+      ]
+    },
+    "G753": {
+      "status": "nonaction",
+      "note": "键位送达通路的取证口径，属仪器结论",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G755": {
+      "status": "partial",
+      "note": "有面板与 kbd 行，但无 7 钮分类栏与分类/段标题层级",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:38"
+      ]
+    },
+    "G756": {
+      "status": "gap",
+      "note": "无分类态可持久；面板随设置分区打开，重载后无上次分类",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:34"
+      ]
+    },
+    "G758": {
+      "status": "aligned",
+      "note": "「Markdown 快捷方式」已作站外帮助中心外链，非应用内面板",
+      "evidence": [
+        "src/lib/app/help-menu.ts:37"
+      ]
+    },
+    "G759": {
+      "status": "aligned",
+      "note": "帮助按钮有中文本地化 aria-label=帮助",
+      "evidence": [
+        "src/components/app/HelpMenu.tsx:45"
+      ]
+    },
+    "G765": {
+      "status": "aligned",
+      "note": "帮助菜单六项齐全，三外链带 noopener，落点与官方一致",
+      "evidence": [
+        "src/lib/app/help-menu.ts:31"
+      ]
+    },
+    "G767": {
+      "status": "partial",
+      "note": "本地一行一枚 kbd、无双行别名结构",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:50"
+      ]
+    },
+    "G771": {
+      "status": "partial",
+      "note": "本地六组、行数远少于官方 7 分类 95 行，无主行/别名计数口径",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:41"
+      ]
+    },
+    "G775": {
+      "status": "aligned",
+      "note": "Chord 恒为单主键+修饰，无序列键，与官方同形",
+      "evidence": [
+        "src/lib/editor/keymap.ts:16"
+      ]
+    },
+    "G776": {
+      "status": "partial",
+      "note": "本地整串渲染进一枚 kbd，未按逐枚键帽拆 span.keys",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:57"
+      ]
+    },
+    "G778": {
+      "status": "nonaction",
+      "note": "官方面板内组合冲突统计属数据面；本地无冲突检测面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G780": {
+      "status": "nonaction",
+      "note": "判据限定（文档分类段标题为空），不改官方行为结论",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G781": {
+      "status": "nonaction",
+      "note": "两次采集互证面板键位表，属采集闭合",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G782": {
+      "status": "gap",
+      "note": "本地分类按钮无 Space 激活焦点项语义，也无焦点/选中分离",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:179"
+      ]
+    },
+    "G784": {
+      "status": "gap",
+      "note": "本地导航按钮不处理方向键，焦点与选中不分家",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:179"
+      ]
+    },
+    "G785": {
+      "status": "gap",
+      "note": "本地面板无分类栏，左右键行为无从对齐",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:179"
+      ]
+    },
+    "G786": {
+      "status": "partial",
+      "note": "本地每段必印 h3；官方允许段无标题",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:45"
+      ]
+    },
+    "G788": {
+      "status": "aligned",
+      "note": "键帽来自静态绑定表，不读路由/焦点上下文",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:42"
+      ]
+    },
+    "G789": {
+      "status": "gap",
+      "note": "本地无分类激活通路，Space 生效时刻无可对齐",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:179"
+      ]
+    },
+    "G790": {
+      "status": "nonaction",
+      "note": "弹层字节台阶未复现，属仪器测量",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G791": {
+      "status": "gap",
+      "note": "本地弹层各自独立关闭，无「关一层露一层」的栈语义",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:99"
+      ]
+    },
+    "G794": {
+      "status": "aligned",
+      "note": "本地菜单走 Base UI，Esc 可关栈顶",
+      "evidence": [
+        "src/components/ui/dropdown-menu.tsx:4"
+      ]
+    },
+    "G795": {
+      "status": "nonaction",
+      "note": "官方面板渲染源码定位属内部机制",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G796": {
+      "status": "nonaction",
+      "note": "改判仪器效应，撤回两种序列化风格",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G797": {
+      "status": "nonaction",
+      "note": "别名行由描述符平台过滤产生，属源码机制",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G798": {
+      "status": "gap",
+      "note": "本地设置面板无 746/747 双态导航；747 断点只用于壳层",
+      "evidence": [
+        "src/lib/use-is-mobile.ts:6"
+      ]
+    },
+    "G799": {
+      "status": "partial",
+      "note": "本地无面板导航 aria-label，别名行也不存在",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:38"
+      ]
+    },
+    "G800": {
+      "status": "aligned",
+      "note": "菜单方向键/Home/End 导航委托 Base UI Menu",
+      "evidence": [
+        "src/components/ui/dropdown-menu.tsx:4"
+      ]
+    },
+    "G801": {
+      "status": "gap",
+      "note": "本地分类按钮无 role=menuitem，也无 Home/End 处理",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:179"
+      ]
+    },
+    "G1622": {
+      "status": "partial",
+      "note": "本地六组静态分组，非官方 7 分类名册；「在表格中」组为空",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:12"
+      ]
+    },
+    "G803": {
+      "status": "nonaction",
+      "note": "Enter 抑制的候选排查属静态源码排除法",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G804": {
+      "status": "nonaction",
+      "note": "37 处 onKeyDown 指纹分类属官方内部枚举",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G805": {
+      "status": "nonaction",
+      "note": "vendor 内 Enter 处理排除，采集结论",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G808": {
+      "status": "nonaction",
+      "note": "keyCode 条件型的存在性结论属内部描述符机制",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G809": {
+      "status": "partial",
+      "note": "有键上下文栈类但未接线，面板纵导航与 pushIntoFocus 皆无",
+      "evidence": [
+        "src/lib/editor/key-context-stack.ts:21"
+      ]
+    },
+    "G811": {
+      "status": "partial",
+      "note": "平台双份/显式不绑/严格修饰已建模；缺 letter 与数字断言两档",
+      "evidence": [
+        "src/lib/editor/keymap.ts:137"
+      ]
+    },
+    "G812": {
+      "status": "partial",
+      "note": "栈语义有纯实现，无 44 处注册点与全局分派底座",
+      "evidence": [
+        "src/lib/editor/key-context-stack.ts:21"
+      ]
+    },
+    "G813": {
+      "status": "nonaction",
+      "note": "更正 document 级监听计数，属口径修正",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G814": {
+      "status": "gap",
+      "note": "本地无分类 rail，也无点击直连选中的双态结构",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:38"
+      ]
+    },
+    "G815": {
+      "status": "nonaction",
+      "note": "排除 document 级两处 handler，属静态排查结论",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G816": {
+      "status": "partial",
+      "note": "Base UI 弹层自带焦点陷阱；自绘设置弹窗无 Tab 圈内循环",
+      "evidence": [
+        "src/components/ui/dialog.tsx:2"
+      ]
+    },
+    "G817": {
+      "status": "partial",
+      "note": "本地分组是硬编码六组，未按 7 分类/段建模",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:12"
+      ]
+    },
+    "G818": {
+      "status": "partial",
+      "note": "官方键表片段部分已落，任务与物理码族不全",
+      "evidence": [
+        "src/lib/editor/keymap.ts:209"
+      ]
+    },
+    "G820": {
+      "status": "aligned",
+      "note": "单字符型已落：Mac ⌘+字符 / Win Ctrl+字符",
+      "evidence": [
+        "src/lib/editor/keymap.ts:210"
+      ]
+    },
+    "G822": {
+      "status": "nonaction",
+      "note": "修饰对全文与文档内错账更正，属台账修错",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G823": {
+      "status": "nonaction",
+      "note": "任务注册表逐字枚举；本地任务键缺失另记 G749",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G825": {
+      "status": "nonaction",
+      "note": "尾部 export 别名表动词结案属 bundle 内部结构",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G826": {
+      "status": "nonaction",
+      "note": "hn 即 747 媒体查询；本地已另建同名断点",
+      "evidence": [
+        "src/lib/use-is-mobile.ts:6"
+      ]
+    },
+    "G828": {
+      "status": "nonaction",
+      "note": "已加载 chunk 的 Enter 扫描属采集排除结论",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G830": {
+      "status": "nonaction",
+      "note": "Base UI Button 传 render 时的 Enter 语义属库内部机制",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G837": {
+      "status": "nonaction",
+      "note": "TIe 出处判否与方法纪律属 bundle 取证",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G841": {
+      "status": "nonaction",
+      "note": "视口/连接器环境锁未解属取证环境",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G843": {
+      "status": "partial",
+      "note": "本地 Tabs 未传 activateOnFocus，为手动激活",
+      "evidence": [
+        "src/components/ui/tabs.tsx:46"
+      ]
+    },
+    "G847": {
+      "status": "partial",
+      "note": "本地指示条是 CSS after 淡入，无脚本测量的滑动定位",
+      "evidence": [
+        "src/components/ui/tabs.tsx:63"
+      ]
+    },
+    "G848": {
+      "status": "nonaction",
+      "note": "浏览器连接器通路形态属桥契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G850": {
+      "status": "nonaction",
+      "note": "合成键与可信键的边界属采集方法",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G851": {
+      "status": "nonaction",
+      "note": "官方帮助站卡片跳转与方法学边界",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G852": {
+      "status": "nonaction",
+      "note": "官方帮助站 IA 与本地路由清单属通路/清单",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G853": {
+      "status": "nonaction",
+      "note": "文档站控件名表只证官方文档声明",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G855": {
+      "status": "gap",
+      "note": "设置导航为普通按钮，无 aria-selected、无方向键/Home-End 纵导航",
+      "evidence": [
+        "src/components/settings/SettingsModal.tsx:179"
+      ]
+    },
+    "G856": {
+      "status": "nonaction",
+      "note": "Base UI 复合组件 stopEventPropagation 属库内部机制",
+      "evidence": [
+        "src/components/ui/dropdown-menu.tsx"
+      ]
+    },
+    "G858": {
+      "status": "nonaction",
+      "note": "官方 roving tabindex 与旧屏上读数冲突，待裁定",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G865": {
+      "status": "partial",
+      "note": "组合期按键由 ProseMirror 兜住；表格单元格内未禁用 markdown 输入规则",
+      "evidence": [
+        "src/components/editor/extensions/markdown-shortcuts.ts:110"
+      ]
+    },
+    "G866": {
+      "status": "partial",
+      "note": "另有多条输入规则；缺 [x×]、+ 折叠、| 等",
+      "evidence": [
+        "src/components/editor/extensions/markdown-shortcuts.ts:110"
+      ]
+    },
+    "G867": {
+      "status": "partial",
+      "note": "只读由角色/分享档派生，无 forcedViewOnly 独立来源",
+      "evidence": [
+        "src/components/editor/DocumentEditor.tsx:60"
+      ]
+    },
+    "G868": {
+      "status": "aligned",
+      "note": "断点已用 747px 并加 1023 紧凑档，旧 767 单档说法过时",
+      "evidence": [
+        "src/lib/use-is-mobile.ts:6"
+      ]
+    },
+    "G869": {
+      "status": "nonaction",
+      "note": "CLI 删除/移动语义（硬删、rootBlockId 还原）属官方契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G870": {
+      "status": "nonaction",
+      "note": "通路读数与残留登记，宽 0 时 mq 作废",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G871": {
+      "status": "nonaction",
+      "note": "帮助站路由被登录态抢回 app，属通路改判",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G872": {
+      "status": "nonaction",
+      "note": "两条 MCP 桥非同一浏览器，属通路拓扑",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G873": {
+      "status": "nonaction",
+      "note": "桥 B 能截图能点、读不到 DOM，属仪器能力面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G874": {
+      "status": "nonaction",
+      "note": "ref→坐标映射不可信，属取证纪律",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G876": {
+      "status": "nonaction",
+      "note": "合成 pointer 序列可开浮层，属手法",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G877": {
+      "status": "partial",
+      "note": "本地帮助菜单固定 6 项且含快捷键，与 compact 5 项不同",
+      "evidence": [
+        "src/lib/app/help-menu.ts:31"
+      ]
+    },
+    "G879": {
+      "status": "nonaction",
+      "note": "帮助站仅经应用内按钮可达，属通路边界",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G882": {
+      "status": "nonaction",
+      "note": "方向键等 code 正常，属仪器结论",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G883": {
+      "status": "partial",
+      "note": "本地帮助菜单恒 6 项，不随窄视口裁项",
+      "evidence": [
+        "src/lib/app/help-menu.ts:31"
+      ]
+    },
+    "G884": {
+      "status": "nonaction",
+      "note": "截图落盘尺寸属仪器",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G886": {
+      "status": "nonaction",
+      "note": "行为取证协议与仪器有效性自证属方法学",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G890": {
+      "status": "nonaction",
+      "note": "press_key 事件带 text、不带虚拟键码，属通路边界",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G891": {
+      "status": "partial",
+      "note": "官方桌面 8 项；本地 6 项，缺 Sync Status 与报告同步",
+      "evidence": [
+        "src/lib/app/help-menu.ts:31"
+      ]
+    },
+    "G893": {
+      "status": "nonaction",
+      "note": "bringToFront 为程序侧前台开关，属仪器手法",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G894": {
+      "status": "nonaction",
+      "note": "合成 pointer 不执行默认动作，属手法边界",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G895": {
+      "status": "aligned",
+      "note": "已摘掉 Shift-Enter 硬换行，不插 br，与官方零效果一致",
+      "evidence": [
+        "src/components/editor/extensions/hard-break.ts:18"
+      ]
+    },
+    "G896": {
+      "status": "partial",
+      "note": "Enter 拆行同型，task-id 插件补新 id；本地无 indentationLevel 字段",
+      "evidence": [
+        "src/components/editor/extensions/task-id.ts:38"
+      ]
+    },
+    "G897": {
+      "status": "aligned",
+      "note": "协作态由 Yjs 撤销并随同步回写；单机态撤销后保存，效果同官方",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342"
+      ]
+    },
+    "G898": {
+      "status": "nonaction",
+      "note": "官方 indentationLevel 自身不对称属数据面观察",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G899": {
+      "status": "nonaction",
+      "note": "该条已被 G906 作废",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G903": {
+      "status": "nonaction",
+      "note": "行为指纹须含结构侧读数的纪律属方法学",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G904": {
+      "status": "nonaction",
+      "note": "documents delete 只认 rootBlockId 属 CLI 契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G905": {
+      "status": "gap",
+      "note": "本地无块级缩进命令：格式面板缩进只是 listItem 的 sink/lift",
+      "evidence": [
+        "src/lib/editor/format-commands.ts:107"
+      ]
+    },
+    "G906": {
+      "status": "nonaction",
+      "note": "自我推翻：任务块 Tab 实际缩进，原块型差分不成立",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G907": {
+      "status": "gap",
+      "note": "块首 Backspace 三档退档序本地不存在",
+      "evidence": [
+        "src/lib/editor/format-commands.ts:107"
+      ]
+    },
+    "G911": {
+      "status": "nonaction",
+      "note": "blocks add 多块与 rootBlockId 契约属写侧契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G914": {
+      "status": "aligned",
+      "note": "本地无装饰档，块首 Backspace 走默认合并且保留加粗",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:147"
+      ]
+    },
+    "G915": {
+      "status": "nonaction",
+      "note": "跨块型不可直接比的判据补注属方法学",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G916": {
+      "status": "nonaction",
+      "note": "沙盒删除与回收站计数复核属数据面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G920": {
+      "status": "nonaction",
+      "note": "字母 chord 可达性分档；本地同键只开不关",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:54"
+      ]
+    },
+    "G923": {
+      "status": "nonaction",
+      "note": "沙盒还原复核属数据面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G924": {
+      "status": "gap",
+      "note": "本地快捷键面板按分组滚动，无分类按钮可读 aria-selected",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:41"
+      ]
+    },
+    "G925": {
+      "status": "gap",
+      "note": "本地无分类选中态与上次分类持久化",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:41"
+      ]
+    },
+    "G926": {
+      "status": "gap",
+      "note": "本地无分类 rail，方向键改选中、夹紧不环绕均未实现",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:41"
+      ]
+    },
+    "G928": {
+      "status": "nonaction",
+      "note": "hasFocus/rangeCount 对面板类键非必要，属仪器口径修正",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G930": {
+      "status": "nonaction",
+      "note": "官方写侧无分享动词，本地有 server action，属通路差",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G931": {
+      "status": "partial",
+      "note": "分享弹层有链接/复制/档位，缺邀请邮箱输入与「邀请协作」文案",
+      "evidence": [
+        "src/components/share/ShareDialog.tsx:400"
+      ]
+    },
+    "G932": {
+      "status": "partial",
+      "note": "三档齐全；本地编辑档要求登录，官方编辑档对匿名开放",
+      "evidence": [
+        "src/lib/share/permission.ts:33"
+      ]
+    },
+    "G933": {
+      "status": "partial",
+      "note": "档位选择以按钮高亮表达，无触发器文本回显所选档",
+      "evidence": [
+        "src/components/share/ShareDialog.tsx:476"
+      ]
+    },
+    "G935": {
+      "status": "nonaction",
+      "note": "官方复制实现未定位；本地用 writeText，仅记录不判缺陷",
+      "evidence": [
+        "src/components/share/ShareDialog.tsx:388"
+      ]
+    },
+    "G936": {
+      "status": "nonaction",
+      "note": "自我纠正：复制链接可用性不由档位门控",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G938": {
+      "status": "nonaction",
+      "note": "分析端点携带会话令牌的隐私观察，不升为缺陷",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G940": {
+      "status": "nonaction",
+      "note": "原生激活类结论须含 activeElement 前提，属判据门槛",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G941": {
+      "status": "gap",
+      "note": "本地无 7 枚常聚焦分类按钮，Tab 走完整 rail 无从对照",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:41"
+      ]
+    },
+    "G943": {
+      "status": "nonaction",
+      "note": "press_key 后绘制面恢复的两解释未裁",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G944": {
+      "status": "nonaction",
+      "note": "连接器按键不自唤绘制面，送达闸门不是 visibilityState",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G945": {
+      "status": "nonaction",
+      "note": "press_key 键名白名单，裸修饰键不可用",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G946": {
+      "status": "nonaction",
+      "note": "默认动作三档：焦点移动执行、激活不执行、手按都执行",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G947": {
+      "status": "gap",
+      "note": "本地快捷键面板无分类 rail，Enter/Space 原生激活无对应物",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:41"
+      ]
+    },
+    "G948": {
+      "status": "gap",
+      "note": "本地无分类 rail，Home/End/横轴键与 Tab 行为无对照",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:41"
+      ]
+    },
+    "G949": {
+      "status": "deliberate",
+      "note": "官方备份预览为付费档；本地自建免费版本历史，不追付费墙",
+      "evidence": [
+        "src/components/editor/tabs/VersionDialog.tsx:127"
+      ]
+    },
+    "G950": {
+      "status": "partial",
+      "note": "本地帮助菜单 6 项固定，不随档位/页面态增减",
+      "evidence": [
+        "src/lib/app/help-menu.ts:31"
+      ]
+    },
+    "G952": {
+      "status": "nonaction",
+      "note": "编辑焦点只能由可信 click 取得，属仪器判据",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G953": {
+      "status": "gap",
+      "note": "有 28px/8 档常量但无运行时命令，Tab 未绑定",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:1"
+      ]
+    },
+    "G954": {
+      "status": "aligned",
+      "note": "本地无装饰档，块首 Backspace 合并保留加粗，与官方一致",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:147"
+      ]
+    },
+    "G955": {
+      "status": "gap",
+      "note": "无 /shared-with-me 路由与侧栏入口，整屏缺失",
+      "evidence": [
+        "src/components/sidebar/SidebarNav.tsx:22"
+      ]
+    },
+    "G956": {
+      "status": "partial",
+      "note": "六项动作与四标签齐全，且无跨文档保持",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:615"
+      ]
+    },
+    "G959": {
+      "status": "partial",
+      "note": "设置内已有快捷键面板（6 组 29 条），非缺失；规模不同",
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx:41"
+      ]
+    },
+    "G960": {
+      "status": "nonaction",
+      "note": "盘上副本 mojibake 使偏移不通用，属资料卫生",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G962": {
+      "status": "partial",
+      "note": "只读仅 editable:!locked 一处，无键定义闸门与派发白名单",
+      "evidence": [
+        "src/components/editor/Editor.tsx:519"
+      ]
+    },
+    "G963": {
+      "status": "aligned",
+      "note": "已有五档线型与输入规则，触发写法与官方表不同",
+      "evidence": [
+        "src/lib/editor/divider-styles.ts:33"
+      ]
+    },
+    "G964": {
+      "status": "nonaction",
+      "note": "快捷键面板类名与 CSS 缺文件属官方内部实现",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G965": {
+      "status": "nonaction",
+      "note": "官方 JS 资产名册与可判定口径属纯清单",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G966": {
+      "status": "gap",
+      "note": "本地 keydown 分散在各菜单，无焦点栈与栈顶吞传播，叠层可多族同响",
+      "evidence": [
+        "src/components/editor/slash-menu/SlashCommandExtension.ts:85"
+      ]
+    },
+    "G967": {
+      "status": "deliberate",
+      "note": "本地自有账号体系，无邮箱一次性验证码入口，OTP 面不复刻",
+      "evidence": [
+        "src/lib/auth/auth.ts"
+      ]
+    },
+    "G968": {
+      "status": "nonaction",
+      "note": "官方 inputMode 计数更正与 helper 表枚举",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G969": {
+      "status": "nonaction",
+      "note": "官方六格 OTP 契约与几何规格；本地无此屏",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G970": {
+      "status": "nonaction",
+      "note": "官方 CSS 层声明与本地清单属内部结构",
+      "evidence": [
+        "src/app/globals.css:419"
+      ]
+    },
+    "G971": {
+      "status": "partial",
+      "note": "本地仍单 --foreground＋alpha，无 20 档通道 token",
+      "evidence": [
+        "src/app/globals.css:72"
+      ]
+    },
+    "G972": {
+      "status": "partial",
+      "note": "本地按钮六变体，rail 选中靠类名，无官方 Active 一等变体",
+      "evidence": [
+        "src/components/ui/button.tsx:15"
+      ]
+    },
+    "G973": {
+      "status": "partial",
+      "note": "快捷键面落在设置面板，非官方独立 dialog 几何",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:639"
+      ]
+    },
+    "G974": {
+      "status": "aligned",
+      "note": "sm~xl 与 full 五档齐全且逐字相同",
+      "evidence": [
+        "src/app/globals.css:52"
+      ]
+    },
+    "G975": {
+      "status": "deliberate",
+      "note": "六位码三条分流属 OTP 面，本地认证不走此路",
+      "evidence": [
+        "src/lib/auth/auth.ts"
+      ]
+    },
+    "G977": {
+      "status": "nonaction",
+      "note": "官方自研清理信号属内部实现，本地 useEffect/destroy 等价",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G981": {
+      "status": "aligned",
+      "note": "单 tr delete+insert，blockId 随切片保留，一次拖拽即一步撤销",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:300"
+      ]
+    },
+    "G985": {
+      "status": "partial",
+      "note": "服务端建后跳转，无 ?nd= 预生成 id 的首屏不闪优化",
+      "evidence": [
+        "src/app/(app)/documents/[id]/page.tsx:14"
+      ]
+    },
+    "G986": {
+      "status": "partial",
+      "note": "自绘手柄高 24、偏移 -26px，握把无 aria-label",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:426"
+      ]
+    },
+    "G987": {
+      "status": "nonaction",
+      "note": "判废的合成拖拽轮与手法教训",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G988": {
+      "status": "partial",
+      "note": "拖完 view.focus() 抢焦点，官方案后 rangeCount 0",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:306"
+      ]
+    },
+    "G989": {
+      "status": "nonaction",
+      "note": "沙盒残留复核记录",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G990": {
+      "status": "partial",
+      "note": "回收站行不可点开、带恢复按钮；官方行本身是文档链接",
+      "evidence": [
+        "src/components/document/TrashList.tsx:310"
+      ]
+    },
+    "G993": {
+      "status": "partial",
+      "note": "已有 ⋯ 菜单含清空；「选择」是并列平铺按钮，不在菜单内",
+      "evidence": [
+        "src/components/document/TrashList.tsx:237"
+      ]
+    },
+    "G995": {
+      "status": "partial",
+      "note": "进入选择态零选中，官方进入即默认选 1 项",
+      "evidence": [
+        "src/components/document/TrashList.tsx:75"
+      ]
+    },
+    "G997": {
+      "status": "partial",
+      "note": "回收站行仅标题＋删除日期，无正文摘要卡片",
+      "evidence": [
+        "src/components/document/TrashList.tsx:304"
+      ]
+    },
+    "G1000": {
+      "status": "nonaction",
+      "note": "官方永久清除执行记录与判据；本地另有 emptyTrash 通路",
+      "evidence": [
+        "src/actions/document/delete.ts:64"
+      ]
+    },
+    "G1001": {
+      "status": "gap",
+      "note": "永久删只删 Document，Task 外键 SetNull，任务行不随文档消失",
+      "evidence": [
+        "src/actions/document/delete.ts:48"
+      ]
+    },
+    "G1002": {
+      "status": "partial",
+      "note": "回收站确认框已用官方两句式含条数；其余三处无计数",
+      "evidence": [
+        "src/components/document/TrashList.tsx:332"
+      ]
+    },
+    "G1009": {
+      "status": "aligned",
+      "note": "两段式 18 档已落：alpha 与不透明逐档，六色齐备",
+      "evidence": [
+        "src/app/globals.css:1473"
+      ]
+    },
+    "G1010": {
+      "status": "partial",
+      "note": "前景仍单 token，无 --foreground-0~900 二十档",
+      "evidence": [
+        "src/app/globals.css:72"
+      ]
+    },
+    "G1012": {
+      "status": "partial",
+      "note": "本地 6 variant × 8 size，官方 21 variant × 3 size",
+      "evidence": [
+        "src/components/ui/button.tsx:13"
+      ]
+    },
+    "G1013": {
+      "status": "partial",
+      "note": "以 border 与 Tailwind 色板作底/边，官方 inset shadow＋通道色",
+      "evidence": [
+        "src/components/ui/button.tsx:10"
+      ]
+    },
+    "G1014": {
+      "status": "partial",
+      "note": "单道 disabled:opacity-50，无 isStatic 第二档",
+      "evidence": [
+        "src/components/ui/button.tsx:10"
+      ]
+    },
+    "G1015": {
+      "status": "aligned",
+      "note": "六套 accent 两跳别名重指与基色三元组已落地",
+      "evidence": [
+        "src/app/globals.css:1675"
+      ]
+    },
+    "G1017": {
+      "status": "nonaction",
+      "note": "资料卫生与枚举法留档",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1026": {
+      "status": "gap",
+      "note": "无 Alt+↑/↓/⤒/⤓ 移块命令，ArrowUp 仅菜单导航",
+      "evidence": [
+        "src/components/editor/slash-menu/SlashCommandExtension.ts:85"
+      ]
+    },
+    "G1028": {
+      "status": "partial",
+      "note": "⋯ 菜单只有清空一项，选择为平铺按钮；官方菜单两项",
+      "evidence": [
+        "src/components/document/TrashList.tsx:252"
+      ]
+    },
+    "G1034": {
+      "status": "aligned",
+      "note": "按 50% 中线判 before，三档落点与官方一致",
+      "evidence": [
+        "src/components/editor/drag-handle/drop-band.ts:21"
+      ]
+    },
+    "G1039": {
+      "status": "nonaction",
+      "note": "视口漂移与坐标纪律属采集工具经验",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1042": {
+      "status": "aligned",
+      "note": "用 <= 中线，正中点归 before，与官方八点结论一致",
+      "evidence": [
+        "src/components/editor/drag-handle/drop-band.ts:21"
+      ]
+    },
+    "G1047": {
+      "status": "nonaction",
+      "note": "沙盒清除与还原记录",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1052": {
+      "status": "aligned",
+      "note": "命中带已扩到下一行 top，8px 尾沟槽归上行",
+      "evidence": [
+        "src/components/editor/drag-handle/drop-band.ts:19"
+      ]
+    },
+    "G1053": {
+      "status": "aligned",
+      "note": "首块上方夹紧到最前；末块尾沟槽外返回空",
+      "evidence": [
+        "src/components/editor/drag-handle/drop-band.ts:11"
+      ]
+    },
+    "G1054": {
+      "status": "nonaction",
+      "note": "drag 事件 target 恒为容器的机制观测；本地同为容器自算",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:265"
+      ]
+    },
+    "G1057": {
+      "status": "nonaction",
+      "note": "沙盒执行与还原记录",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1058": {
+      "status": "nonaction",
+      "note": "图像坐标换算式复验记录",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1060": {
+      "status": "aligned",
+      "note": "四语义色与暗档重指已落地，独立于强调六色",
+      "evidence": [
+        "src/app/globals.css:1813"
+      ]
+    },
+    "G1061": {
+      "status": "aligned",
+      "note": "暗档按档重指六套 accent 上段与四语义色",
+      "evidence": [
+        "src/app/globals.css:1611"
+      ]
+    },
+    "G1062": {
+      "status": "partial",
+      "note": "已 18px 圆形、1.5px 边、三变量；选中色用 primary 而非 accent",
+      "evidence": [
+        "src/components/ui/checkbox.tsx:15"
+      ]
+    },
+    "G1063": {
+      "status": "partial",
+      "note": "触摸档已落；鼠标按下仍只有 translate-y-px",
+      "evidence": [
+        "src/app/globals.css:467"
+      ]
+    },
+    "G1064": {
+      "status": "partial",
+      "note": "焦点环已 intent 门控并去正文环；Action 无环例外未分",
+      "evidence": [
+        "src/app/globals.css:438"
+      ]
+    },
+    "G1065": {
+      "status": "aligned",
+      "note": "已用 :has() 按有无 header 定位搜索框并补 scroll padding",
+      "evidence": [
+        "src/app/globals.css:1837"
+      ]
+    },
+    "G1066": {
+      "status": "aligned",
+      "note": "已有 :root,.token-scope 子树作用域与两段派生",
+      "evidence": [
+        "src/app/globals.css:1472"
+      ]
+    },
+    "G1069": {
+      "status": "nonaction",
+      "note": "官方 13 份 CSS 名册；本地按需构建分包",
+      "evidence": [
+        "src/app/layout.tsx:3"
+      ]
+    },
+    "G1070": {
+      "status": "nonaction",
+      "note": "vendor-code-editor 实为 KaTeX；版本不同属记录",
+      "evidence": [
+        "package.json:80"
+      ]
+    },
+    "G1073": {
+      "status": "nonaction",
+      "note": "AdobeBlank 为字形探测字体，已被 G1084 改判",
+      "evidence": [
+        "src/lib/editor/glyph-probe.ts:15"
+      ]
+    },
+    "G1075": {
+      "status": "aligned",
+      "note": "21 个 --st-* 与七档 z 阶梯已落地并被消费",
+      "evidence": [
+        "src/app/globals.css:2342"
+      ]
+    },
+    "G1076": {
+      "status": "nonaction",
+      "note": "仅 CSS 静态候选、未上屏",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1077": {
+      "status": "partial",
+      "note": "任务卡用 opacity 叠加显形，非官方 idle/active 两态互换",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:519"
+      ]
+    },
+    "G1079": {
+      "status": "aligned",
+      "note": "已落具名容器与 @container 断点",
+      "evidence": [
+        "src/app/globals.css:2305"
+      ]
+    },
+    "G1080": {
+      "status": "nonaction",
+      "note": "what-input 库身份与写入函数属官方内部；本地已自写等价",
+      "evidence": [
+        "src/lib/input-intent.ts:23"
+      ]
+    },
+    "G1081": {
+      "status": "partial",
+      "note": "以 hover 变体＋intent 焦点规则近似，非四档伪类编译层",
+      "evidence": [
+        "src/app/globals.css:13"
+      ]
+    },
+    "G1082": {
+      "status": "aligned",
+      "note": "双属性并存，表单控件内键盘冻结 intent",
+      "evidence": [
+        "src/lib/input-intent.ts:68"
+      ]
+    },
+    "G1083": {
+      "status": "nonaction",
+      "note": "官方宿主内联注入 --st-*；本地只读 var",
+      "evidence": [
+        "src/app/globals.css:2336"
+      ]
+    },
+    "G1084": {
+      "status": "partial",
+      "note": "已落纯函数与测试，尚未接入渲染调用点",
+      "evidence": [
+        "src/lib/editor/glyph-probe.ts:41"
+      ]
+    },
+    "G1086": {
+      "status": "aligned",
+      "note": "39 项三元组名册与官方逐项一致，另有搜索选择器",
+      "evidence": [
+        "src/lib/editor/code-languages.ts:16"
+      ]
+    },
+    "G1089": {
+      "status": "aligned",
+      "note": "30 条 heading token 与 allcaps 变体、桥接类均已落地",
+      "evidence": [
+        "src/app/globals.css:2129"
+      ]
+    },
+    "G1090": {
+      "status": "aligned",
+      "note": "六套基色明暗 12 组三元组与 18 档别名块已逐字落地",
+      "evidence": [
+        "src/app/globals.css:1675"
+      ]
+    },
+    "G1091": {
+      "status": "partial",
+      "note": "已有四种排序；官方维度与类名表不同",
+      "evidence": [
+        "src/components/document/DocumentListView.tsx:109"
+      ]
+    },
+    "G1092": {
+      "status": "aligned",
+      "note": "四族 token＋31 个桥接类已落地",
+      "evidence": [
+        "src/app/globals.css:1980"
+      ]
+    },
+    "G1093": {
+      "status": "aligned",
+      "note": "已有 21 键主题、搜索选择器与全屏模式",
+      "evidence": [
+        "src/components/editor/extensions/code-block-view.tsx:72"
+      ]
+    },
+    "G1094": {
+      "status": "aligned",
+      "note": "--code-* 复刻 craftlight/dark，主题色随主题走",
+      "evidence": [
+        "src/app/globals.css:190"
+      ]
+    },
+    "G1095": {
+      "status": "partial",
+      "note": "font-mono 栈以 Roboto Mono 打头但未加载，实际回落系统等宽",
+      "evidence": [
+        "src/app/globals.css:19"
+      ]
+    },
+    "G1096": {
+      "status": "aligned",
+      "note": "按容器宽算列、268px 上限、gap 20/8，逐字对齐",
+      "evidence": [
+        "src/components/app/BrowseGrid.tsx:48"
+      ]
+    },
+    "G1097": {
+      "status": "aligned",
+      "note": "六套 -550~-900 明暗两段逐档值已落地",
+      "evidence": [
+        "src/app/globals.css:1619"
+      ]
+    },
+    "G1099": {
+      "status": "aligned",
+      "note": "input 与 intent 分开更新，move 只改 intent，可长期背离",
+      "evidence": [
+        "src/components/providers/InputIntentProvider.tsx:55"
+      ]
+    },
+    "G1102": {
+      "status": "aligned",
+      "note": "写 data-whatelement/whatclasses，focusout 清诊断",
+      "evidence": [
+        "src/lib/input-intent.ts:85"
+      ]
+    },
+    "G1105": {
+      "status": "partial",
+      "note": "已拆 storedLangCode/langCode 两拼写；块体仍只有 node text",
+      "evidence": [
+        "src/lib/editor/code-languages.ts:18"
+      ]
+    },
+    "G1106": {
+      "status": "partial",
+      "note": "无语言时存空串并回落占位符，官方是省略 language 键",
+      "evidence": [
+        "src/components/editor/extensions/code-block-view.tsx:18"
+      ]
+    },
+    "G1107": {
+      "status": "partial",
+      "note": "官方 theme 不是块字段；本地放块属性 themeId，属已声明偏差",
+      "evidence": [
+        "src/components/editor/Editor.tsx:417"
+      ]
+    },
+    "G1109": {
+      "status": "deliberate",
+      "note": "官方 7 位十六进制色值缺陷；本地单一 token 集，有意不复现",
+      "evidence": [
+        "src/app/globals.css:189"
+      ]
+    },
+    "G1110": {
+      "status": "partial",
+      "note": "焦点环已 outline 1px、offset -1px，但颜色取 accent",
+      "evidence": [
+        "src/app/globals.css:438"
+      ]
+    },
+    "G1113": {
+      "status": "partial",
+      "note": "列表档已建；仍无虚拟滚动",
+      "evidence": [
+        "src/components/document/DocumentListView.tsx:83"
+      ]
+    },
+    "G1114": {
+      "status": "aligned",
+      "note": "表头量宽写 --col-* 变量并挂 ResizeObserver",
+      "evidence": [
+        "src/components/document/DocumentListView.tsx:61"
+      ]
+    },
+    "G1115": {
+      "status": "partial",
+      "note": "槽位类改成 app-col-*，列头可排序；缺「与我共享」变体",
+      "evidence": [
+        "src/lib/browse/list-columns.ts:22"
+      ]
+    },
+    "G1116": {
+      "status": "partial",
+      "note": "复选框仍是 focus-visible ring-3，不是具名 focusRing 子元素",
+      "evidence": [
+        "src/components/ui/checkbox.tsx:15"
+      ]
+    },
+    "G1117": {
+      "status": "aligned",
+      "note": "typography-* 令牌已落地并被表头、行标题显式复用",
+      "evidence": [
+        "src/app/globals.css:2213"
+      ]
+    },
+    "G1119": {
+      "status": "aligned",
+      "note": "已有三档布局切换，容器与 testid 与官方同形",
+      "evidence": [
+        "src/components/document/ViewModeSwitcher.tsx:31"
+      ]
+    },
+    "G1120": {
+      "status": "partial",
+      "note": "主题存块属性；官方键路径是 pluginData 内 themeId",
+      "evidence": [
+        "src/components/editor/Editor.tsx:417"
+      ]
+    },
+    "G1121": {
+      "status": "partial",
+      "note": "无 plugin 列，主题随 content JSON 落库",
+      "evidence": [
+        "src/components/editor/extensions/code-block-view.tsx:83"
+      ]
+    },
+    "G1122": {
+      "status": "partial",
+      "note": "编辑态是组件内 state 与全屏开关，无全局当前编辑块",
+      "evidence": [
+        "src/components/editor/extensions/code-block-view.tsx:16"
+      ]
+    },
+    "G1123": {
+      "status": "partial",
+      "note": "列表行已渲染，但行壳无 data-item-id 与虚拟化",
+      "evidence": [
+        "src/components/document/DocumentListView.tsx:161"
+      ]
+    },
+    "G1124": {
+      "status": "aligned",
+      "note": "具名容器与 768/1024 两档按容器宽生效",
+      "evidence": [
+        "src/app/globals.css:2305"
+      ]
+    },
+    "G1125": {
+      "status": "aligned",
+      "note": "隐藏列 offsetWidth 为 0 时写 0px，112px 兜底同样不生效",
+      "evidence": [
+        "src/lib/browse/list-columns.ts:55"
+      ]
+    },
+    "G1126": {
+      "status": "partial",
+      "note": "网格按容器宽算列、卡宽封顶 268，单套公式",
+      "evidence": [
+        "src/lib/browse/grid.ts:18"
+      ]
+    },
+    "G1127": {
+      "status": "aligned",
+      "note": "卡片焦点环已是独立子元素，聚焦显示 3px 边框",
+      "evidence": [
+        "src/components/document/DocumentCard.tsx:29"
+      ]
+    },
+    "G1129": {
+      "status": "gap",
+      "note": "无框选：浏览屏没有选择模式状态，也没有 pointerdown 起手判定",
+      "evidence": [
+        "src/components/document/SortableDocGrid.tsx:57"
+      ]
+    },
+    "G1130": {
+      "status": "aligned",
+      "note": "闸门两属性均以 initial 起手，与官方一致",
+      "evidence": [
+        "src/lib/input-intent.ts:22"
+      ]
+    },
+    "G1131": {
+      "status": "aligned",
+      "note": "表单控件内按键只改 whatinput 不改 whatintent",
+      "evidence": [
+        "src/lib/input-intent.ts:60"
+      ]
+    },
+    "G1132": {
+      "status": "partial",
+      "note": "只在移动端有「打开导航」按钮，桌面首枚 Tab 落点是侧栏链接",
+      "evidence": [
+        "src/components/sidebar/Sidebar.tsx:78"
+      ]
+    },
+    "G1135": {
+      "status": "gap",
+      "note": "无框选命中判定器；严格矩形相交与 5px 起手阈值缺失",
+      "evidence": [
+        "src/components/document/DocumentListView.tsx:161"
+      ]
+    },
+    "G1136": {
+      "status": "gap",
+      "note": "三档视图有，但没有按型制分派的命中模型",
+      "evidence": [
+        "src/components/document/SortableDocGrid.tsx:108"
+      ]
+    },
+    "G1137": {
+      "status": "gap",
+      "note": "卡片外壳只有 class，没有 data-item-id 寻址约定",
+      "evidence": [
+        "src/components/document/DocumentCard.tsx:23"
+      ]
+    },
+    "G1139": {
+      "status": "aligned",
+      "note": "21 档主题名册与标签、keywords、isDark 均照抄官方",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:279"
+      ]
+    },
+    "G1140": {
+      "status": "partial",
+      "note": "主题面板是文字＋搜索，无逐档预览与懒加载预览 chunk",
+      "evidence": [
+        "src/components/editor/extensions/code-block-view.tsx:72"
+      ]
+    },
+    "G1144": {
+      "status": "deliberate",
+      "note": "官方 3 档 isDark 与工厂字面量错配；本地有意不复现",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:280"
+      ]
+    },
+    "G1145": {
+      "status": "aligned",
+      "note": "settings 键按可选建模，缺省键不补邻近值",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:13"
+      ]
+    },
+    "G1146": {
+      "status": "aligned",
+      "note": "gutterBorder 三态逐档照录",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:119"
+      ]
+    },
+    "G1147": {
+      "status": "aligned",
+      "note": "tokyonight 两档无 fontFamily、craftlight/githublight 无 caret，均照录",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:207"
+      ]
+    },
+    "G1152": {
+      "status": "partial",
+      "note": "读回恒带 language（可空串）与 themeId；官方未设主题时不带主题键",
+      "evidence": [
+        "src/components/editor/extensions/code-block-view.tsx:18"
+      ]
+    },
+    "G1154": {
+      "status": "nonaction",
+      "note": "多块只回首个 id 属 CLI 回包契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1155": {
+      "status": "nonaction",
+      "note": "「trash 文档可读」是桥层口径，本地读回不分 trashed",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1160": {
+      "status": "aligned",
+      "note": "缺键就不写样式、靠继承，与官方一致",
+      "evidence": [
+        "src/components/editor/extensions/code-block-view.tsx:117"
+      ]
+    },
+    "G1161": {
+      "status": "partial",
+      "note": "两 token 有定义，但无活跃行高亮，gutter 是静态渲染",
+      "evidence": [
+        "src/app/globals.css:192"
+      ]
+    },
+    "G1162": {
+      "status": "partial",
+      "note": "无 CM6 基准主题兜底层，暗档靠 .dark 整块重指",
+      "evidence": [
+        "src/app/globals.css:380"
+      ]
+    },
+    "G1165": {
+      "status": "aligned",
+      "note": "展示序 auto→craftdark→craftlight→其余按 id 升序",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:279"
+      ]
+    },
+    "G1166": {
+      "status": "partial",
+      "note": "两条默认档已实现，但落 localStorage；官方是账户级偏好",
+      "evidence": [
+        "src/lib/editor/code-preferences.ts:51"
+      ]
+    },
+    "G1167": {
+      "status": "aligned",
+      "note": "文字菜单＋搜索，keywords 走数组精确成员",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:317"
+      ]
+    },
+    "G1172": {
+      "status": "gap",
+      "note": "导出直接拼字符串，没有三令牌层",
+      "evidence": [
+        "src/lib/document-codec/index.ts:105"
+      ]
+    },
+    "G1173": {
+      "status": "partial",
+      "note": "导入 $$ 产 mathBlock 节点；官方落成 code 块＋math_formula 语言",
+      "evidence": [
+        "src/lib/import/markdown.ts:168"
+      ]
+    },
+    "G1174": {
+      "status": "aligned",
+      "note": "语言别名表已照录，未知语言落 other",
+      "evidence": [
+        "src/lib/import/markdown.ts:18"
+      ]
+    },
+    "G1176": {
+      "status": "aligned",
+      "note": "代码面 14px/24px、gutter 36.8px 下限已落地",
+      "evidence": [
+        "src/app/globals.css:562"
+      ]
+    },
+    "G1179": {
+      "status": "partial",
+      "note": "grammar 覆盖已建模，但 basicSetup 裁剪与特性开关两道闸门没有",
+      "evidence": [
+        "src/lib/editor/grammar-coverage.ts:17"
+      ]
+    },
+    "G1180": {
+      "status": "partial",
+      "note": "未注册语言不高亮，由 lowlight 覆盖表决定，不自动顶替",
+      "evidence": [
+        "src/lib/editor/grammar-coverage.ts:17"
+      ]
+    },
+    "G1183": {
+      "status": "nonaction",
+      "note": "create 回两枚 id 属协议层，本地单 id",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1192": {
+      "status": "nonaction",
+      "note": "CM6 四层优先级属官方内部；本地 hljs 八组互不重叠",
+      "evidence": [
+        "src/app/globals.css:577"
+      ]
+    },
+    "G1207": {
+      "status": "nonaction",
+      "note": "paper colorMode 属官方页面样式域，本地无此轴",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1210": {
+      "status": "nonaction",
+      "note": "特性开关由服务端 meta 注入，本地无灰度层",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1211": {
+      "status": "nonaction",
+      "note": "38 枚开关名册属官方清单，本地无灰度层",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1212": {
+      "status": "nonaction",
+      "note": "自标 _killMe 的远端覆盖通路属官方债务",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1213": {
+      "status": "nonaction",
+      "note": "两条亮度阈值本地无对应面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1220": {
+      "status": "nonaction",
+      "note": "flavour 跨调用快照属官方模板层",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1221": {
+      "status": "partial",
+      "note": "块链导出统一 [标题](链接)，无 pageLink/headerLink 分档",
+      "evidence": [
+        "src/lib/document-codec/index.ts:62"
+      ]
+    },
+    "G1223": {
+      "status": "partial",
+      "note": "color-scheme 已覆盖；仍缺 theme-color meta",
+      "evidence": [
+        "src/app/globals.css:1818"
+      ]
+    },
+    "G1228": {
+      "status": "gap",
+      "note": "导入把 -／+／* 一律读成无序列表，折叠块无导入入口",
+      "evidence": [
+        "src/lib/import/markdown.ts:256"
+      ]
+    },
+    "G1229": {
+      "status": "aligned",
+      "note": "分隔线已按官方记号表改判：--- 为 regular，含 pageSeparator",
+      "evidence": [
+        "src/lib/editor/divider-styles.ts:33"
+      ]
+    },
+    "G1231": {
+      "status": "gap",
+      "note": "导入器无 html_block/aside 块级分支",
+      "evidence": [
+        "src/lib/import/markdown.ts:134"
+      ]
+    },
+    "G1233": {
+      "status": "partial",
+      "note": "行内标签白名单已成表；导入进度面仍无",
+      "evidence": [
+        "src/lib/import/inline-html.ts:20"
+      ]
+    },
+    "G1241": {
+      "status": "partial",
+      "note": "导入图片只产 src/alt 两字段，无 uploaded、aspectRatio",
+      "evidence": [
+        "src/lib/import/markdown.ts:251"
+      ]
+    },
+    "G1243": {
+      "status": "gap",
+      "note": "本地用 callout 块表达提示，无 aside 装饰位与 emoji 取图标判据",
+      "evidence": [
+        "src/components/editor/extensions/callout-view.tsx:9"
+      ]
+    },
+    "G1244": {
+      "status": "nonaction",
+      "note": "四枚导入旗标属官方配置事实，本地无配置层",
+      "evidence": [
+        "src/lib/import/markdown.ts:104"
+      ]
+    },
+    "G1245": {
+      "status": "partial",
+      "note": "fence 已按 <!-- 丢弃整块；html_block 支路不存在",
+      "evidence": [
+        "src/lib/import/markdown.ts:159"
+      ]
+    },
+    "G1247": {
+      "status": "aligned",
+      "note": "分隔线已补三属性与六档图案",
+      "evidence": [
+        "src/components/editor/extensions/divider.tsx:41"
+      ]
+    },
+    "G1250": {
+      "status": "nonaction",
+      "note": "line 契约与 washi 旗标两套声明属桥层",
+      "evidence": [
+        "src/lib/editor/divider-styles.ts:6"
+      ]
+    },
+    "G1262": {
+      "status": "nonaction",
+      "note": "双 id 体系属官方协议；本地单 id",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1266": {
+      "status": "unreachable",
+      "note": "官方 MCP 写侧造不出白板，屏上不可达；本地白板面完整",
+      "evidence": [
+        "src/app/(app)/whiteboards/page.tsx:18"
+      ]
+    },
+    "G1280": {
+      "status": "gap",
+      "note": "Document 只有 userId 与两个时间戳，无 createdBy/lastModifiedBy",
+      "evidence": [
+        "prisma/schema.prisma:72"
+      ]
+    },
+    "G1285": {
+      "status": "nonaction",
+      "note": "旗标只回计数属官方契约层",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1286": {
+      "status": "partial",
+      "note": "已有块级命中，但无块 id、命中高亮与逐命中时间戳",
+      "evidence": [
+        "src/actions/document/search.ts:139"
+      ]
+    },
+    "G1291": {
+      "status": "partial",
+      "note": "四档字体有，id 是 inter/serif/mono/rounded，官方用 system-* 名",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:13"
+      ]
+    },
+    "G1296": {
+      "status": "nonaction",
+      "note": "未声明旗标被静默容忍属 CLI 契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1311": {
+      "status": "nonaction",
+      "note": "CLI 游标契约（>50 直接子块才发游标）属桥契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1316": {
+      "status": "nonaction",
+      "note": "--id 与位置参数同语义属命令行契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1318": {
+      "status": "nonaction",
+      "note": "RE2 与 JS 正则两方言属桥契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1322": {
+      "status": "nonaction",
+      "note": "--date 四档解析与报错属桥契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1323": {
+      "status": "nonaction",
+      "note": "空标题≠空页是桥输出读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1324": {
+      "status": "nonaction",
+      "note": "官方检索匹配面为小写折叠文本属桥内部",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1328": {
+      "status": "nonaction",
+      "note": "限定单篇不改变条目结构＝桥窗口规则",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1330": {
+      "status": "nonaction",
+      "note": "官方文档序与条目数无关属桥读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1331": {
+      "status": "nonaction",
+      "note": "三条沙盒残留全在回收站，是账户卫生读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1337": {
+      "status": "nonaction",
+      "note": "search 整体忽略 --offset 是桥旗标行为",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1338": {
+      "status": "nonaction",
+      "note": "卡片子页不可作 --document 寻址＝桥寻址契约",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1374": {
+      "status": "nonaction",
+      "note": "写侧 -32603 靠读回判定属 MCP 工具面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1375": {
+      "status": "nonaction",
+      "note": "裸跑 documents list 含回收站＝桥合集读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1376": {
+      "status": "nonaction",
+      "note": "templates 档只含用户模板属桥档位语义",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1379": {
+      "status": "nonaction",
+      "note": "动词名级 -32603 是工具契约第三档",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1389": {
+      "status": "nonaction",
+      "note": "同形 -32603 可跨窗口自愈属桥契约读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1391": {
+      "status": "nonaction",
+      "note": "官方路由 19 条具名注册表属枚举",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1392": {
+      "status": "nonaction",
+      "note": "按需 CSS 只挂不卸属构建/仪器读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1397": {
+      "status": "partial",
+      "note": "卡片摘要取自 og 并截 300、逐卡抓取；官方是 160 上限共享快照",
+      "evidence": [
+        "src/app/api/link-preview/route.ts:111"
+      ]
+    },
+    "G1400": {
+      "status": "partial",
+      "note": "只有列表行 plainText 摘要，无 3 枚/304 字符双预算",
+      "evidence": [
+        "src/components/document/DocumentListView.tsx:178"
+      ]
+    },
+    "G1404": {
+      "status": "nonaction",
+      "note": "无参 -32603 复打即通＝桥第四档",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1414": {
+      "status": "gap",
+      "note": "本地只有反馈说明文字，无 13 键弹窗、评分与匿名邮箱字段",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:678"
+      ]
+    },
+    "G1415": {
+      "status": "gap",
+      "note": "公式块只有 LaTeX 文本框，无函数表空态与缺函数反馈入口",
+      "evidence": [
+        "src/components/editor/extensions/math-block-view.tsx:9"
+      ]
+    },
+    "G1416": {
+      "status": "nonaction",
+      "note": "topApi.sendTranslations 是 Web→桌面桥",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1418": {
+      "status": "aligned",
+      "note": "已有正则、区分大小写、范围三档",
+      "evidence": [
+        "src/components/editor/find-replace-panel.tsx:134"
+      ]
+    },
+    "G1424": {
+      "status": "nonaction",
+      "note": "星期文案单数→复数 switch 属 i18n 枚举",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1429": {
+      "status": "aligned",
+      "note": "右栏四页签 插入/格式/样式/信息，与官方名册同枚数同序",
+      "evidence": [
+        "src/components/editor/DocumentEditor.tsx:35"
+      ]
+    },
+    "G1432": {
+      "status": "partial",
+      "note": "第三档写「中标题」，官方同档在屏上显示「标题」",
+      "evidence": [
+        "src/lib/editor/semantic-levels.ts:12"
+      ]
+    },
+    "G1434": {
+      "status": "partial",
+      "note": "材质词表含和纸/胶带/涂鸦，写入侧只支持 line/washi",
+      "evidence": [
+        "src/lib/editor/separator-material.ts:19"
+      ]
+    },
+    "G1435": {
+      "status": "partial",
+      "note": "有文本/字号/行内/列表/对齐/缩进/方向/折叠/颜色，缺分组与装饰",
+      "evidence": [
+        "src/components/editor/tabs/FormatTab.tsx:183"
+      ]
+    },
+    "G1438": {
+      "status": "partial",
+      "note": "块内 + 是真 button 且带 aria-label，与官方零内容热区相反",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:437"
+      ]
+    },
+    "G1439": {
+      "status": "partial",
+      "note": "本地已 11 项（多出移动四枚），官方 9 项",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:74"
+      ]
+    },
+    "G1441": {
+      "status": "partial",
+      "note": "已是内核＋按块类型注入两层，但内核多出四枚移动项",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:87"
+      ]
+    },
+    "G1445": {
+      "status": "partial",
+      "note": "发布是单枚开关，可关掉代替取消发布，无危险档与第二入口",
+      "evidence": [
+        "src/components/share/ShareDialog.tsx:496"
+      ]
+    },
+    "G1446": {
+      "status": "partial",
+      "note": "点收藏只改图标态，无 info 档 toast 与 1500ms 时长",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:243"
+      ]
+    },
+    "G1448": {
+      "status": "aligned",
+      "note": "看板空态逐字用 kanban_no_group_property",
+      "evidence": [
+        "src/app/(app)/collections/[id]/KanbanView.tsx:110"
+      ]
+    },
+    "G1449": {
+      "status": "nonaction",
+      "note": "同词多档是清点口径，属仪器面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1450": {
+      "status": "nonaction",
+      "note": "weeklyPlan 三形零命中属检索仪器读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1451": {
+      "status": "gap",
+      "note": "无文档级 ⋯ 五分组弹层，只有移动端面板溢出菜单与分享入口",
+      "evidence": [
+        "src/components/editor/DocumentEditor.tsx:296"
+      ]
+    },
+    "G1452": {
+      "status": "gap",
+      "note": "侧栏只有文档/文件夹两段，无「显示」分组与自定义入口",
+      "evidence": [
+        "src/components/sidebar/Sidebar.tsx:25"
+      ]
+    },
+    "G1453": {
+      "status": "partial",
+      "note": "两层层级已在，但「展示」落在动作页签、内层段序不同",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:337"
+      ]
+    },
+    "G1454": {
+      "status": "partial",
+      "note": "统计五读数齐，但页面信息缺统计图标与「动作」段",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:515"
+      ]
+    },
+    "G1455": {
+      "status": "partial",
+      "note": "动作页缺组合/取消组合/重命名，且不随选块分档",
+      "evidence": [
+        "src/lib/document/actions-menu.ts:22"
+      ]
+    },
+    "G1456": {
+      "status": "partial",
+      "note": "两枚时间同一 relativeTime 通路，未复制官方的中英并存分裂",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:369"
+      ]
+    },
+    "G1457": {
+      "status": "partial",
+      "note": "样式页有颜色/背景/文档颜色/封面/字体/宽页，缺所有样式与分隔符三档",
+      "evidence": [
+        "src/components/editor/tabs/StyleTab.tsx:187"
+      ]
+    },
+    "G1458": {
+      "status": "gap",
+      "note": "无 CJK 四轴，只有一条写死 serif 栈",
+      "evidence": [
+        "src/app/globals.css:22"
+      ]
+    },
+    "G1459": {
+      "status": "nonaction",
+      "note": "四轴定义×消费计数是官方 CSS 仪器读数",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1461": {
+      "status": "gap",
+      "note": "白板用 tldraw 且无图片导出，不存在按 DOM 类名回读暗档",
+      "evidence": [
+        "src/components/whiteboard/Board.tsx:5"
+      ]
+    },
+    "G1463": {
+      "status": "partial",
+      "note": "有 .dark 与页面色调两轴，但无 data-color-scheme 与暗色派生计算",
+      "evidence": [
+        "src/app/globals.css:5"
+      ]
+    },
+    "G1465": {
+      "status": "nonaction",
+      "note": "按字段类型切懒加载 chunk 属构建内部分包",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1466": {
+      "status": "partial",
+      "note": "七档逐字在册，但留着以后用/自定义 无承载面而置灰",
+      "evidence": [
+        "src/lib/task/remind-presets.ts:27"
+      ]
+    },
+    "G1467": {
+      "status": "partial",
+      "note": "弹层按可用高度 max-h 自动滚动，非官方定高裁切",
+      "evidence": [
+        "src/components/ui/dropdown-menu.tsx:43"
+      ]
+    },
+    "G1468": {
+      "status": "aligned",
+      "note": "pill 是 button、文案「今天, 18:12」、三动作浮层",
+      "evidence": [
+        "src/components/editor/extensions/reminder-pill.ts:155"
+      ]
+    },
+    "G1469": {
+      "status": "partial",
+      "note": "撤销交 undoRedo（协作时关），块菜单无多块选择",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342"
+      ]
+    },
+    "G1470": {
+      "status": "partial",
+      "note": "弹层无官方 6 组/5 分隔线几何，分隔线只在子菜单内",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:457"
+      ]
+    },
+    "G1471": {
+      "status": "partial",
+      "note": "单枚真手柄（悬停显隐），无零内容热区对",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:427"
+      ]
+    },
+    "G1472": {
+      "status": "partial",
+      "note": "同时只留一枚手柄、无 sticky 多枚并存",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:421"
+      ]
+    },
+    "G1473": {
+      "status": "partial",
+      "note": "子菜单箭头走 Radix 默认、无 aria-label",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:509"
+      ]
+    },
+    "G1490": {
+      "status": "nonaction",
+      "note": "测试超时预算属仪器账；配置已落 20s/30s",
+      "evidence": [
+        "vitest.config.ts:21"
+      ]
+    },
+    "G1493": {
+      "status": "nonaction",
+      "note": "_harvest 仍被忽略（行号 75，台账写的 71 有误）",
+      "evidence": [
+        ".gitignore:75"
+      ]
+    },
+    "G1512": {
+      "status": "partial",
+      "note": "只有 not_found 上屏，stale 仅 console.warn",
+      "evidence": [
+        "src/components/sync/SyncBoot.tsx:44"
+      ]
+    },
+    "G1525": {
+      "status": "nonaction",
+      "note": "台账闸自身口径错属仪器面",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1528": {
+      "status": "aligned",
+      "note": "在线徽标现走官方逐字「所有更改已保存」",
+      "evidence": [
+        "src/lib/offline/save-status.ts:16"
+      ]
+    },
+    "G1529": {
+      "status": "gap",
+      "note": "任务页无「移到文档/每日笔记」入口",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx"
+      ]
+    },
+    "G1530": {
+      "status": "partial",
+      "note": "有查看/编辑/仅协作者与口令、到期，但无降级自锁确认与前链接失效",
+      "evidence": [
+        "src/components/share/ShareDialog.tsx:61"
+      ]
+    },
+    "G1531": {
+      "status": "aligned",
+      "note": "标题/图标/样式改动即快照，Document.version 随快照单调递增",
+      "evidence": [
+        "src/actions/document/update.ts:66"
+      ]
+    },
+    "G1532": {
+      "status": "partial",
+      "note": "10000 字符硬上限只接在合集字段单元格",
+      "evidence": [
+        "src/lib/collection/character-limit.ts:11"
+      ]
+    },
+    "G1533": {
+      "status": "partial",
+      "note": "网页版横幅已做，桌面检查/下载/立即更新/提醒档仍无宿主",
+      "evidence": [
+        "src/lib/app/update-banner.ts:12"
+      ]
+    },
+    "G1541": {
+      "status": "aligned",
+      "note": "白板名输入框 onBlur 走 applyLocal 改名，功能在位",
+      "evidence": [
+        "src/app/(app)/whiteboards/[id]/WhiteboardBreadcrumb.tsx:16"
+      ]
+    },
+    "G1543": {
+      "status": "partial",
+      "note": "本地 Ctrl-K 开真命令面板，官方式是「跳转到」面板",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:214"
+      ]
+    },
+    "G1544": {
+      "status": "partial",
+      "note": "/ 菜单是分组带副标题长列表，官方是扁平 20 枚分组入口",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:64"
+      ]
+    },
+    "G1545": {
+      "status": "gap",
+      "note": "编辑器无 Tab 绑定，段落缩进纯核无调用方",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:21"
+      ]
+    },
+    "G1546": {
+      "status": "gap",
+      "note": "列表 Tab 只调 sinkListItem，无前兄弟项即返回 false，二次 Tab 失焦",
+      "evidence": [
+        "node_modules/@tiptap/extension-list/src/item/list-item.ts:202"
+      ]
+    },
+    "G1547": {
+      "status": "gap",
+      "note": "indentStyle 定义了 0 档不输出属性，但从未挂到块上",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:26"
+      ]
+    },
+    "G1548": {
+      "status": "partial",
+      "note": "Alt-↑↓ 仍被派给换块序；官方是移光标",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:41"
+      ]
+    },
+    "G1549": {
+      "status": "partial",
+      "note": "Alt-Home/End 走搬块；官方块序不动",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:44"
+      ]
+    },
+    "G1550": {
+      "status": "partial",
+      "note": "全仓无 block-select；Ctrl-A 只有文本全选一档",
+      "evidence": [
+        "src/lib/editor/keymap.ts:218"
+      ]
+    },
+    "G1551": {
+      "status": "partial",
+      "note": "Ctrl-D 复制顶块正确，但选区留编辑器内为折叠光标",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:59"
+      ]
+    },
+    "G1556": {
+      "status": "partial",
+      "note": "Ctrl-Shift-1..5 有绑定，但落到 h1–h4 档位而非官方字号/字重口径",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:29"
+      ]
+    },
+    "G1557": {
+      "status": "partial",
+      "note": "标题/列表/任务四档一致；#### 落 h4，官方落强调档",
+      "evidence": [
+        "src/components/editor/extensions/markdown-shortcuts.ts:107"
+      ]
+    },
+    "G1558": {
+      "status": "partial",
+      "note": "六档行内标记两侧一致；本地以 $ 收尾即转换，官方等空格",
+      "evidence": [
+        "src/components/editor/extensions/markdown-shortcuts.ts:13"
+      ]
+    },
+    "G1559": {
+      "status": "nonaction",
+      "note": "仅存储/REST 枚举名之差，屏幕无差别",
+      "evidence": [
+        "src/lib/editor/divider-styles.ts:11"
+      ]
+    },
+    "G1562": {
+      "status": "gap",
+      "note": "编辑器根只有 class/spellcheck，无 role=textbox 与 aria-multiline",
+      "evidence": [
+        "src/components/editor/Editor.tsx:520"
+      ]
+    },
+    "G1563": {
+      "status": "partial",
+      "note": "暴露 checkbox，但用 TipTap 英文合成标签；官方 AX 树无 checkbox",
+      "evidence": [
+        "node_modules/@tiptap/extension-list/src/task-item/task-item.ts:84"
+      ]
+    },
+    "G1564": {
+      "status": "partial",
+      "note": "任务动作落在块 ⋮ 菜单，非常显 AX 按钮",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:90"
+      ]
+    },
+    "G1565": {
+      "status": "partial",
+      "note": "ProseMirror 文档恒含至少一枚段落，无官方零块态",
+      "evidence": [
+        "src/components/editor/Editor.tsx:329"
+      ]
+    },
+    "G1566": {
+      "status": "partial",
+      "note": "trailingNode 的 notAfter 只列三族列表，linkPreview 不在豁免名单",
+      "evidence": [
+        "src/components/editor/Editor.tsx:329"
+      ]
+    },
+    "G1567": {
+      "status": "partial",
+      "note": "卡片只取 og/twitter/meta description，无正文摘要兜底",
+      "evidence": [
+        "src/app/api/link-preview/route.ts:95"
+      ]
+    },
+    "G1568": {
+      "status": "partial",
+      "note": "入场动画在菜单容器上，官方是内层 100ms 动画＋容器透明度",
+      "evidence": [
+        "src/components/editor/slash-menu/SlashCommandMenu.tsx:63"
+      ]
+    },
+    "G1569": {
+      "status": "gap",
+      "note": "菜单是条件渲染，关闭即卸载，无退场动画",
+      "evidence": [
+        "src/components/editor/slash-menu/SlashCommandMenu.tsx:63"
+      ]
+    },
+    "G1570": {
+      "status": "partial",
+      "note": "查找与替换两键同分支、一次摊开两框；官方 Ctrl-F 只开查找",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:94"
+      ]
+    },
+    "G1571": {
+      "status": "partial",
+      "note": "本地面板多范围、文本/正则、Aa 三组 toggle 与计数条",
+      "evidence": [
+        "src/components/editor/find-replace-panel.tsx:139"
+      ]
+    },
+    "G1572": {
+      "status": "nonaction",
+      "note": "官方 REST 把 page 静默降级为 text，本地无 page 节点",
+      "evidence": [
+        "src/components/editor/Editor.tsx:313"
+      ]
+    },
+    "G1573": {
+      "status": "partial",
+      "note": "Ctrl-J 无绑定，但任务屏常驻行内输入框",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:206"
+      ]
+    },
+    "G1574": {
+      "status": "gap",
+      "note": "任务行不可聚焦，键盘族无作用对象",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:515"
+      ]
+    },
+    "G1575": {
+      "status": "partial",
+      "note": "斜杠菜单只一条「表格」，默认 3×3；无 9 档尺寸二级菜单",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:222"
+      ]
+    },
+    "G1576": {
+      "status": "gap",
+      "note": "只有单元格选区下 Enter 加行；Ctrl-Enter 无绑定",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:151"
+      ]
+    },
+    "G1577": {
+      "status": "gap",
+      "note": "表 E 十键在 keymap 与 craft-keymap 均无分支，整族未实现",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:151"
+      ]
+    },
+    "G1578": {
+      "status": "partial",
+      "note": "COMMENT 已接线，打开信息面板评论框；非官方选区浮层",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:123"
+      ]
+    },
+    "G1579": {
+      "status": "partial",
+      "note": "Ctrl-G 现绑 FIND_NEXT；无成组命令",
+      "evidence": [
+        "src/lib/editor/keymap.ts:219"
+      ]
+    },
+    "G1580": {
+      "status": "partial",
+      "note": "命令面板门控不排 Shift；块链接有能力但无该键接线",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:91"
+      ]
+    },
+    "G1581": {
+      "status": "gap",
+      "note": "数学扩展在仓内，但 keymap 无方程键位",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G1582": {
+      "status": "partial",
+      "note": "走 TipTap 默认 Mod-Shift-s/h/e，与官方表不符",
+      "evidence": [
+        "node_modules/@tiptap/extension-strike/src/strike.ts:113"
+      ]
+    },
+    "G1583": {
+      "status": "gap",
+      "note": "键位表无 CANCEL/Escape，未命中一律返回 false",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:130"
+      ]
+    },
+    "G1584": {
+      "status": "partial",
+      "note": "Ctrl-Shift-4 只落 h4；PAGE/CARD/DECOR 六键其余五条无分支",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:26"
+      ]
+    },
+    "G1585": {
+      "status": "partial",
+      "note": "本地 Ctrl-Alt-N 真跳 /daily-notes，官方本会话无响应",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:56"
+      ]
+    },
+    "G1586": {
+      "status": "partial",
+      "note": "Ctrl-K 被命令面板抢走；本地无链接输入浮层",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:91"
+      ]
+    },
+    "G1587": {
+      "status": "partial",
+      "note": "本地 Ctrl-\\ 真切侧栏，官方 web 本会话无响应",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:53"
+      ]
+    },
+    "G1588": {
+      "status": "gap",
+      "note": "全仓无 block-select，也无 GROUP/UNGROUP 命令",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:70"
+      ]
+    },
+    "G1589": {
+      "status": "partial",
+      "note": "只收 TOGGLE_QUICK_OPEN（Ctrl-K），Ctrl-P 与 Ctrl-Shift-O 无分支",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:21"
+      ]
+    },
+    "G1590": {
+      "status": "partial",
+      "note": "折叠块能造且可点开合；Enter 无专门处置",
+      "evidence": [
+        "src/components/editor/extensions/toggle-block-view.tsx:16"
+      ]
+    },
+    "G1591": {
+      "status": "gap",
+      "note": "无块选择态，Space 在编辑器层不接键",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G1592": {
+      "status": "partial",
+      "note": "Ctrl-Shift-, 打开设置面板并选 shortcuts 页，非独立面板",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:54"
+      ]
+    },
+    "G1593": {
+      "status": "partial",
+      "note": "Ctrl-Alt-T 无绑定；全部展开/收起只在斜杠命令与命令面板",
+      "evidence": [
+        "src/components/editor/extensions/toggle-all.ts:1"
+      ]
+    },
+    "G1594": {
+      "status": "gap",
+      "note": "无成组/取消组能力，两键均无分支",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G1595": {
+      "status": "aligned",
+      "note": "编辑器内的任务块对 Ctrl-Alt-T 同样无响应，两侧一致",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:133"
+      ]
+    },
+    "G1596": {
+      "status": "partial",
+      "note": "提醒我…只在任务块 ⋮ 菜单，斜杠菜单无该项",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:90"
+      ]
+    },
+    "G1597": {
+      "status": "gap",
+      "note": "两处命令表均无截止日期，任务块 attrs 也无该列",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:57"
+      ]
+    },
+    "G1598": {
+      "status": "gap",
+      "note": "斜杠菜单、块菜单、keymap 三处均无计划任务/排期",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:57"
+      ]
+    },
+    "G1599": {
+      "status": "partial",
+      "note": "表内无 Shift+Arrow 行，落 PM 默认扩选；官方不扩且焦点离开",
+      "evidence": [
+        "src/lib/editor/keymap.ts:196"
+      ]
+    },
+    "G1600": {
+      "status": "gap",
+      "note": "任务屏是视图页签加平表，无分组标题行",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:222"
+      ]
+    },
+    "G1602": {
+      "status": "partial",
+      "note": "handlePaste 只特判图片与裸 URL，表格粘贴不整格替换",
+      "evidence": [
+        "src/components/editor/Editor.tsx:526"
+      ]
+    },
+    "G1603": {
+      "status": "gap",
+      "note": "keymap 无任务命令，任务屏只有输入框的 Enter",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G1604": {
+      "status": "unreachable",
+      "note": "官方键有效但无可见落点，本地无绑定，两侧无变化",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G1606": {
+      "status": "gap",
+      "note": "只有 CellSelection+Enter 加行；插列不存在",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:151"
+      ]
+    },
+    "G1608": {
+      "status": "partial",
+      "note": "有离线本地写队列与离线徽标，但断网导航无门禁",
+      "evidence": [
+        "src/components/sync/create-local.ts:16"
+      ]
+    },
+    "G1609": {
+      "status": "partial",
+      "note": "评论提交走本地队列，离线静默入队；无「未连接」门禁文案",
+      "evidence": [
+        "src/components/editor/comments/CommentSection.tsx:175"
+      ]
+    },
+    "G1610": {
+      "status": "aligned",
+      "note": "标题输入无必填校验，空标题照存",
+      "evidence": [
+        "src/components/editor/EditorHeader.tsx:94"
+      ]
+    },
+    "G1611": {
+      "status": "gap",
+      "note": "表格扩展无 15×50 上限，也无超限内联提示",
+      "evidence": [
+        "src/components/editor/Editor.tsx:429"
+      ]
+    },
+    "G1612": {
+      "status": "aligned",
+      "note": "标题 input 无 maxLength，超长原样保留",
+      "evidence": [
+        "src/components/editor/EditorHeader.tsx:94"
+      ]
+    },
+    "G1613": {
+      "status": "partial",
+      "note": "本地是分类标题加平铺命令的一段结构，无二段分组菜单",
+      "evidence": [
+        "src/components/editor/slash-menu/SlashCommandMenu.tsx:65"
+      ]
+    },
+    "G1614": {
+      "status": "gap",
+      "note": "无表格/画廊/看板集合插入；白板只有一份且落成只读预览卡",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:568"
+      ]
+    },
+    "G1615": {
+      "status": "partial",
+      "note": "过滤「列表」得 4 条、首项无序；官方 5 条、首项编号",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:111"
+      ]
+    },
+    "G1616": {
+      "status": "partial",
+      "note": "对齐/缩进只在右侧格式面板，斜杠菜单无同名命令",
+      "evidence": [
+        "src/lib/editor/format-commands.ts:83"
+      ]
+    },
+    "G1617": {
+      "status": "partial",
+      "note": "命令表无颜色/文字格式/字体项，过滤得 0 候选",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:594"
+      ]
+    },
+    "G1618": {
+      "status": "aligned",
+      "note": "五个分组词在本地同样 0 候选，屏幕结果一致",
+      "evidence": [
+        "src/components/editor/slash-menu/slash-commands.ts:599"
+      ]
+    },
+    "G1619": {
+      "status": "aligned",
+      "note": "官方该键送达但零作用，本地未接键，两侧表格形状不变",
+      "evidence": [
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G1620": {
+      "status": "gap",
+      "note": "Ctrl-⌫ 在表格内无绑定；官方语义是清空格内容",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:151"
+      ]
+    },
+    "G1621": {
+      "status": "aligned",
+      "note": "官方 Alt-←/→ 与 Ctrl-Shift-⌫ 送达无作用，本地未接键，两侧无变化",
+      "evidence": [
+        "src/lib/editor/keymap.ts:196"
+      ]
     }
   }
 }

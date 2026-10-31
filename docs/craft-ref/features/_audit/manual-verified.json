@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-10-31",
-  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批（2026-10-31）现读 model.md §一之六 块模型族 8 条 + 信息面板/任务块/集合类型 2 条；第 3 批（2026-10-31）现读集合族 9 条（G283–G285／G287／G299／G394／G427／G439／G451）。",
+  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批（2026-10-31）现读 model.md §一之六 块模型族 8 条 + 信息面板/任务块/集合类型 2 条；第 3 批（2026-10-31）现读集合族 9 条（G283–G285／G287／G299／G394／G427／G439／G451）；第 4 批（2026-10-31）现读任务时间语义族 11 条（G252／G253／G256／G260／G261／G263／G332–G334／G404／G411）。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -347,6 +347,72 @@
       "priority": "P1",
       "note": "现读（第 3 批）：确认无类型判别位——CollectionValue.value 是裸 Json?，读侧靠 PropertyCell 的 parseValue 硬转（数字/布尔/数组各判一次），没有官方 {type,theme,value} 这样的判别对象 ⇒ 空值读不出是哪种类型的空。",
       "evidence": ["src/prisma/contract.prisma:204-220", "src/components/collection/PropertyCell.tsx:81-91"]
+    },
+    "G252": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 4 批）：提醒只落在 taskItem 上——taskItemTarget 找不到 taskItem 节点就返回 null（block-actions.ts:283-298），普通段落块无提醒入口。官方文案本身已在（reminder-reschedule.ts:11-12 逐字「此区块有一个即将到期的提醒。」），但用途是任务改期确认，不是块级提醒；区块深链提醒缺失。",
+      "evidence": ["src/components/editor/drag-handle/block-actions.ts:283-298", "src/lib/task/reminder-reschedule.ts:11-17"]
+    },
+    "G253": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 4 批）更正本地列：字段语义**已分离**（D1 已落 scheduleDate/dueDate 两列，tasks/TasksView 各自读写），不是台账写的「合并成一个 dueDate」。真缺口是**命令面全空**——official-catalog 里 schedule 与 deadline 两组 id 都在（且官方不对称本身已被记录：schedule 有 `commands.task.schedule.x` 动态短语、deadline 没有 .x），但 registry 两组都未接入。",
+      "evidence": ["src/lib/commands/official-catalog.ts:820-882", "src/actions/task/task.ts:58-60", "src/app/(app)/tasks/TasksView.tsx:537-550"]
+    },
+    "G256": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 4 批）：重复规则只有 freq/days/byMonthDay/until 四字段（recurrence.ts:3-11），无 flexible/fixed 锚点、无切换器 ⇒ 只有「从上次完成起算」一条路径。",
+      "evidence": ["src/lib/task/recurrence.ts:1-40"]
+    },
+    "G260": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 4 批）：无序列批量操作——完成/取消/删除/移动剩余内容四条与批量改期在 src 零命中；reminder 的 reschedule 是单条提醒改期（reminder-reschedule.ts），不是序列批量。",
+      "evidence": ["src/lib/task/reminder-reschedule.ts:23-28", "src/app/(app)/tasks/TasksView.tsx:520-560"]
+    },
+    "G261": {
+      "status": "aligned",
+      "priority": "P1",
+      "note": "现读（第 4 批）改判：三态与双时间戳都已落地——Task.status 有 cancelled 与 cancelledAt、completedAt 并列（contract.prisma:337-340），task-status.ts 按官方 tn 映射（Unchecked→todo/Checked→completed/Canceled→cancelled，含 Canceled→Unchecked 反直觉分支）；命令面 SET_CANCELLED 两族键已接。台账「只有 checked/unchecked 二态」是 G52 落地前的旧读数。",
+      "evidence": ["src/prisma/contract.prisma:337-340", "src/lib/editor/task-status.ts:1-35"]
+    },
+    "G263": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 4 批）：任务屏无「固定文档」区（pin/unpin/pin.existing/tap.to.pin 全组零命中），也无子任务层级与「带任务的文档」分组；只有四档时间分组（grouping.ts）。",
+      "evidence": ["src/lib/task/grouping.ts:5-32", "src/app/(app)/tasks/TasksView.tsx:180-190"]
+    },
+    "G332": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 4 批）：无自然语言日期解析——依赖里没有 chrono（package.json 零命中），tasks 面只有原生 date/datetime-local 输入 + fromDayInput/fromMomentInput 两个 ISO 转换器，无严格格式档、无 locale 路由、无 GB 分支。",
+      "evidence": ["src/app/(app)/tasks/TasksView.tsx:421-432", "package.json"]
+    },
+    "G333": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 4 批）更正本地列：解析器本身不存在（见 G332），所以不是「无条件写入解析结果」；清空会写回 null、日期也做了本地零点归一（fromDayInput 用 `T00:00:00`）。**真差异只剩采纳守卫**——过去的日期照收，没有「只收晚于现在或今天」的拦截。",
+      "evidence": ["src/app/(app)/tasks/TasksView.tsx:421-429"]
+    },
+    "G334": {
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 4 批）更正本地列：两个字段与两个独立输入已存在（D1：计划日期 / 截止日期各一格，TasksView.tsx:537-550），不是「只写一个字段」。差的是官方快捷菜单那层：`schedule_<date>` / `deadline_<date>` 两个并列候选、各自 icon 与埋点、必须显式选一族——本地是展开面板里的两格原生日期输入。",
+      "evidence": ["src/app/(app)/tasks/TasksView.tsx:537-550", "src/lib/commands/official-catalog.ts:820-882"]
+    },
+    "G404": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 4 批）：RecurrenceRule 无 interval 字段（recurrence.ts:3-11），解析器还会丢弃未知字段 ⇒ 只能每 1 天/周/月/年，官方的「每 N 单位」与「往小选时重置为 1」保护都缺。台账读数仍准确。",
+      "evidence": ["src/lib/task/recurrence.ts:3-11"]
+    },
+    "G411": {
+      "status": "gap",
+      "priority": "P1",
+      "note": "现读（第 4 批）：提醒时刻是原生 `<Input type=\"datetime-local\">`（TasksView.tsx:551-558），不是官方那条 96 档/15 分钟步长的全天菜单；无「不提醒」行的条件渲染，remindAt 存绝对 ISO 时间戳。台账读数仍准确（只是行号从 page.tsx 漂到 TasksView.tsx）。",
+      "evidence": ["src/app/(app)/tasks/TasksView.tsx:551-558"]
     }
   }
 }

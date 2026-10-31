@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-31T05:49:41.896Z",
+  "generatedAt": "2026-10-31T06:19:14.488Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1057,
-    "unknown": 192,
-    "aligned": 138,
+    "gap": 1054,
+    "unknown": 193,
+    "aligned": 140,
     "deliberate": 96,
     "partial": 59,
     "nonaction": 56,
@@ -20,7 +20,7 @@
   "statusByPriority": {
     "P2 / gap": 463,
     "P? / gap": 229,
-    "P1 / gap": 210,
+    "P1 / gap": 207,
     "P3 / gap": 155,
     "P? / unknown": 110,
     "P2 / aligned": 52,
@@ -28,12 +28,12 @@
     "P2 / unknown": 36,
     "P? / deliberate": 33,
     "P2 / deliberate": 32,
+    "P1 / aligned": 25,
     "P3 / deliberate": 24,
     "P3 / unknown": 24,
-    "P1 / aligned": 23,
+    "P1 / unknown": 23,
     "P? / nonaction": 23,
     "P2 / partial": 22,
-    "P1 / unknown": 22,
     "P? / aligned": 18,
     "P2 / nonaction": 18,
     "P1 / partial": 15,
@@ -49,105 +49,8 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 12,
-  "conflictRows": [
-    {
-      "id": "G11",
-      "line": 1141,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "全库无 focus mode（`focusStyle` 只是文字底色 Mark）",
-      "verdict": "☆ 已清（专注模式：入口＋键位＋三块面板收起）＝`use-focus-store` 持旗标，`Sidebar.tsx` 旗标为真时整块不挂载、`DocumentEditor.tsx` 顶栏 `focusActive && 'hidden'`"
-    },
-    {
-      "id": "G13",
-      "line": 1143,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "☆ **已清**（第 288 批复核＋补强）＝**原判\"无快捷键展示\"整条作废**：① `ShortcutsPanel.tsx` **早已按官方六组渲染**（通用／编辑／表格／任务视图／合集／查找替换，组名取自 `commands.shortcuts.*`），且**只印本地真实绑定**（行来自 `KEY_BINDING",
-      "verdict": "已清"
-    },
-    {
-      "id": "G52",
-      "line": 1165,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "☆ 本行四件事，第 190 批清掉前两件：① **cancelled 档已落地**＝轴在正文与列两处同源（正文 `checked`／`cancelled` 两枚 attr，状态机单源 `src/lib/editor/task-status.ts`＝官方 `h9e` 线值映射与 `cde` 点击循环，含「`Cancele",
-      "verdict": "部分落地＋③④ 判**不做（有据，第 206 批）**＝①② 已清（第 190 批）；③④ 不是\"还没做\"，是**不该照原判据做**：④ 那个\"10\"的出处是 `api-contract.md:22` 的 `depth` 参数，原文**\"M"
-    },
-    {
-      "id": "G90",
-      "line": 1234,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "无 error boundary 文案",
-      "verdict": "已清（第 217 批）＝新增根错误边界 `src/app/error.tsx`＋纯判据 `src/lib/errors/lazy-load.ts`（`isLazyLoadError` 认打包器/浏览器实际抛的五种 message；命中走官方"
-    },
-    {
-      "id": "G164",
-      "line": 1350,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "账户分区存在；头像与改名无失败句；`dailySummary|每日摘要`、邮件入档零命中 ☆ **部分落地**（第 282 批）＝**改头像本批接真**（★ 实读发现比原判\"无失败句\"更糟：**头像那枚相机按钮根本没有处理器**，是个 inert 控件，且头像只渲染姓名首字母、**从不显示 `User.image`**",
-      "verdict": "部分落地"
-    },
-    {
-      "id": "G169",
-      "line": 1362,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "无层级标签概念（`TagsSection.tsx` 是文档标签列表，无父子轴）",
-      "verdict": "☆ 已清（校验＋UI＋e2e）＝`src/lib/tag/rules.ts` 把层级定死两档：`splitTagLevels` 解析 `父级/子级`，第二根 `/` 触发 `tags.only.one.child.allowed`、任一侧为"
-    },
-    {
-      "id": "G170",
-      "line": 1363,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "无任何标签校验；`#` 直接当文本处理",
-      "verdict": "☆ 已清（六条规则＋四态反馈全落地）＝`findTagViolation` 顺序＝hexColor（先于 `#` 剥离，故 `#ccc` 不会伪装成标签）→ 长度（本地项，官方无串）→ emoji → depth → delimiter →"
-    },
-    {
-      "id": "G610",
-      "line": 2215,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "☆ 部分落地（第 261 批）＝① **`lastViewedAt` 列已补**＝此前 `DocumentListView`/`SortableDocGrid` 声明了 `lastViewedAt?: string | null` 但**全仓无此列**（`contract.prisma` 的 Document 无、`g",
-      "verdict": "部分落地"
-    },
-    {
-      "id": "G834",
-      "line": 3080,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "本地表格无集合层命令（`src/components/ui/` 无 table 组件，`ls` 已核对）；`grep -rn \"collections.add.a.row\" src` 无对应实现 ⇒ 缺失（长期项，非本轮 P 级）",
-      "verdict": "新线索（工厂实读累计 17 条）＋ `nc` 未解"
-    },
-    {
-      "id": "G1007",
-      "line": 3540,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "☆ 本地无对应物（无批量永久删除通路），故此未采项**不影响复刻进度** **✎ 第 101 批作废＝本地已建该通路（`src/components/document/TrashList.tsx` 多选工具栏＋计数回显确认框，接 `src/actions/document/delete.ts:32`）**",
-      "verdict": "**未采（主动放弃，理由已写）**"
-    },
-    {
-      "id": "G1380",
-      "line": 4692,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "本地无对应面＝纯工具契约面＝不进 §〇 P0",
-      "verdict": "☆ 与 G1379 **分层**＝G1379＝动词名级（同窗他名走有界错误）、本条＝实例级（同动词同篇他块成功）＝⇒ 今后报 `-32603` 要写明落在哪一层＝☆ 判死标准＝另一窗口重打同一 id 1–2 次（通了＝实例级瞬态；恒红＝该实"
-    },
-    {
-      "id": "G1444",
-      "line": 4832,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "☆ 本地无此锚点＝`ctx-move-to` 这一 testid 在 `src/` 里零命中（现算＝`data-testid` 名册里没有它）＝⇒ 复刻时可把它作为「移动」入口的定位锚，并照官方给条件禁用留一档",
-      "verdict": "✓盘上一手（整枚引号 6 处全取词位＋窗口逐字）＝☆ 与在册关系＝**这枚键在 G 行上三把针全 0（裸词 0／独立成词 0／反引号 0）＝此前从未进过任何 G 行**＝而中文值「移动到…」以引号形在成文面已落地 8 处（裸串 15）＝⇒ "
-    }
-  ],
+  "conflicts": 0,
+  "conflictRows": [],
   "sectionRows": [
     {
       "name": "八十四、第 184 批新登记的官方行为（2026-10-09 本机钟 11:2x 开批＝纯盘上静态批＝工单三族＋记账两枚＝本线零发送零桥零屏幕零写入零网络⇒ `manifest.jsonl` 行数不变＝净新增 9 条＝G1475—G1483＝☆ 全部读数落在 `_harvest/js/` 的 105 份官方包体（主包 `index-DiTmKH3z.js` 6,864,717 B／6,844,206 字符，mtime 2026-09-30）＝★ **包体字节漂移**：历批 87—96 的 `len 6,841,180`（b87 快照）与本批现量 6,844,206 差 **+3,026**，那批的 @offset 锚的是**当时的干净原件面**（Temp 原件，91 批已清、只在 b87—b96 的 json 快照转义面存续）＝✎ **同批后段翻案（11:4x）**：漂移成因判死＝**盘上 `js/` 拷贝的编码损伤**（真符号 ⌃⌥⇧⌘ 在盘上 0 枚、`鈥`361／`鈱`7／`鈬`3＝UTF-8 被 GBK 误读的在册家族；ASCII 面逐字相同＝非官方换构建）＝+3,026 是乱码展开的累计、不是代码插入；⇒ 采集线规矩改写＝**从 `_harvest/js/` 逐字引用非 ASCII 一律不可信**（与 i18n-zh.tsv 同族），ASCII 针与偏移不受影响；本批 @offset 全部是**现字节面**的字符坐标）",
@@ -1068,13 +971,14 @@
     {
       "line": 1096,
       "section": "八十四、第 184 批新登记的官方行为（2026-10-09 本机钟 11:2x 开批＝纯盘上静态批＝工单三族＋记账两枚＝本线零发送零桥零屏幕零写入零网络⇒ `manifest.jsonl` 行数不变＝净新增 9 条＝G1475—G1483＝☆ 全部读数落在 `_harvest/js/` 的 105 份官方包体（主包 `index-DiTmKH3z.js` 6,864,717 B／6,844,206 字符，mtime 2026-09-30）＝★ **包体字节漂移**：历批 87—96 的 `len 6,841,180`（b87 快照）与本批现量 6,844,206 差 **+3,026**，那批的 @offset 锚的是**当时的干净原件面**（Temp 原件，91 批已清、只在 b87—b96 的 json 快照转义面存续）＝✎ **同批后段翻案（11:4x）**：漂移成因判死＝**盘上 `js/` 拷贝的编码损伤**（真符号 ⌃⌥⇧⌘ 在盘上 0 枚、`鈥`361／`鈱`7／`鈬`3＝UTF-8 被 GBK 误读的在册家族；ASCII 面逐字相同＝非官方换构建）＝+3,026 是乱码展开的累计、不是代码插入；⇒ 采集线规矩改写＝**从 `_harvest/js/` 逐字引用非 ASCII 一律不可信**（与 i18n-zh.tsv 同族），ASCII 针与偏移不受影响；本批 @offset 全部是**现字节面**的字符坐标）",
-      "cols": 5,
+      "cols": 6,
       "id": "G1476",
       "official": "★★ **`hn()` 本体定位＝移动端断点钩子，G803 族挂账的\"compact/sidebar 条件\"结案**＝词边界后 `hn=` 全包唯一实存 @592205＝`hn=V0e(zo)`，`V0e=t=>()=>md(t)`、`md`＝matchMedia 订阅 hook（`useMemo(()=>matchMedia(t))+useState`）、`zo`＝`(max-width: 747px)`＝`$0e-1`、**断点常量 `$0e=748`**；41 处调用全在弹层/选择器组件里取 `=hn()` ⇒ `hn()`＝「是否窄于 748px」布尔，与压缩侧栏无关",
-      "local": "本地断点两档＝`use-is-mobile.ts` `MOBILE_QUERY (max-width: 767px)`／`COMPACT_QUERY (max-width: 1023px)` ⇒ 官方单断点 748 vs 本地两断点 767/1023＝**数值不同构**（复刻像素级要跟 748）",
+      "local": "✎ 现读（2026-10-31）更正：移动断点钩子已有：useIsMobile 用 747px 查询驱动移动壳，另有 1023 紧凑档给侧栏。",
       "verdict": "结案（错账翻转：历批只搜 `function hn(`／`class hn` 两形、漏了 thunk 赋值形 `hn=V0e(zo)`＝词边界针没撒够）",
       "score": "P1",
-      "status": "gap",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本地断点两档＝`use-is-mobile.ts` `MOBILE_QUERY (max-width: 767px)`／`COMPACT_QUERY (max-width: 1023px)` ⇒ 官方单断点 748 vs 本地两断点 767/1023＝**数值不同构**（复刻像素级要跟 748）",
+      "status": "unknown",
       "scoreParsed": {
         "impact": 3,
         "cost": null,
@@ -1375,17 +1279,17 @@
       "cols": 6,
       "id": "G11",
       "official": "专注模式 + 退出快捷键（R17）",
-      "local": "全库无 focus mode（`focusStyle` 只是文字底色 Mark）",
+      "local": "✎ 现读（2026-10-31）更正：台账本地列仍写着「全库无 focus mode」，与判定列冲突；现读已落地。",
       "verdict": "☆ 已清（专注模式：入口＋键位＋三块面板收起）＝`use-focus-store` 持旗标，`Sidebar.tsx` 旗标为真时整块不挂载、`DocumentEditor.tsx` 顶栏 `focusActive && 'hidden'`、右侧栏 `!focusActive && …`，**没有任何开合状态被改写**⇒退出即还原（判据\"退出后布局还原\"靠不写恢复步骤来成立）。入口＝顶栏 `aria-label={FOCUS_MODE}` 按钮（此前只有 ⌘/Ctrl+. 键位，键位不是入口）；文案三条逐字进 `src/lib/editor/focus-mode-copy.ts`，含官方那条拼错的键 `commans.exit.focus.mode.shortcut`。单测 `focus-mode-copy.test.ts`（台账比对＋接线），实屏 `e2e/focus-mode.spec.ts`（侧栏按**节点数**断言：折叠态是 `w-0 opacity-0`，用 toBeVisible 会把\"折叠\"误判成\"专注生效\"）。★ 遗留：官方专注模式分三场景（画布/白板/代码，G60），本行只是全局那一档。",
       "score": "2/2",
-      "criteria": "有开关与快捷键，隐藏侧栏/右栏/顶栏，退出后布局还原",
+      "criteria": "有开关与快捷键，隐藏侧栏/右栏/顶栏，退出后布局还原  ☆ 原判（2026-10-31 现读后作废）＝全库无 focus mode（`focusStyle` 只是文字底色 Mark）",
       "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P1"
     },
     {
@@ -1394,10 +1298,10 @@
       "cols": 6,
       "id": "G12",
       "official": "查找替换（R15 独立快捷键分组 `commands.shortcuts.in.find.and.replace`、`find.*` 14 条）",
-      "local": "无（只有 AI 的替换选区 `AiBubbleMenu.tsx:230`）",
+      "local": "✎ 现读（2026-10-31）更正：台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在。",
       "verdict": "缺失",
       "score": "2/2",
-      "criteria": "全文档查找高亮、逐个/全部替换、命中计数",
+      "criteria": "全文档查找高亮、逐个/全部替换、命中计数  ☆ 原判（2026-10-31 现读后作废）＝无（只有 AI 的替换选区 `AiBubbleMenu.tsx:230`）",
       "status": "gap",
       "scoreParsed": {
         "impact": 2,
@@ -1413,17 +1317,17 @@
       "cols": 6,
       "id": "G13",
       "official": "快捷键面板按 6 个上下文分组 +「查看所有快捷键」命令（R15/R16）；**全表 104 项键位已解出，见 `keyboard.md`**",
-      "local": "☆ **已清**（第 288 批复核＋补强）＝**原判\"无快捷键展示\"整条作废**：① `ShortcutsPanel.tsx` **早已按官方六组渲染**（通用／编辑／表格／任务视图／合集／查找替换，组名取自 `commands.shortcuts.*`），且**只印本地真实绑定**（行来自 `KEY_BINDINGS`＝编辑器派发用的同一张表，注释写明\"列一条本 build 不响应的键，用户一按就是谎\"），三个无绑定的组用一句本地提示占位而非删掉 ⇒ 官方结构可见；② **本批补上第二半**＝官方命令 `commands.open.shortcuts`「查看所有快捷键」（`feature-catalog.md:3051`）此前不在本地命令面板（无词操作组只有「新建文档」）⇒ 补该条，**落点与 `TOGGLE_KEY_SHORTCUTS` 一致**（`openSettings('shortcuts')`），不另造面板。**真浏览器取证**＝⌘K 后该条在场、点击后快捷键面板打开且**六个分组全在**（`[data-testid^=\"shortcuts-group-\"]` 计数 6）",
+      "local": "✎ 现读（2026-10-31）更正：快捷键面板已按官方六组渲染且只印本地真实绑定；命令面板「查看所有快捷键」指向同一面板。",
       "verdict": "已清",
       "score": "2/2",
-      "criteria": "设置→键盘快捷键分区渲染本地实际绑定，按官方 6 组分组（**已成立**）；命令面板「查看所有快捷键」指向同一面板（**本批成立**）",
+      "criteria": "设置→键盘快捷键分区渲染本地实际绑定，按官方 6 组分组（**已成立**）；命令面板「查看所有快捷键」指向同一面板（**本批成立**）  ☆ 原判（2026-10-31 现读后作废）＝☆ **已清**（第 288 批复核＋补强）＝**原判\"无快捷键展示\"整条作废**：① `ShortcutsPanel.tsx` **早已按官方六组渲染**（通用／编辑／表格／任务视图／合集／查找替换，组名取自 `commands.shortcuts.*`），且**只印本地真实绑定**（行来自 `KEY_BINDINGS`＝编辑器派发用的同一张表，注释写明\"列一条本 build 不响应的键，用户一按就是谎\"），三个无绑定的组用一句本地提示占位而非删掉 ⇒ 官方结构可见；② **本批补上第二半**＝官方命令 `commands.open.shortcuts`「查看所有快捷键」（`feature-catalog.md:3051`）此前不在本地命令面板（无词操作组只有「新建文档」）⇒ 补该条，**落点与 `TOGGLE_KEY_SHORTCUTS` 一致**（`openSettings('shortcuts')`），不另造面板。**真浏览器取证**＝⌘K 后该条在场、点击后快捷键面板打开且**六个分组全在**（`[data-testid^=\"shortcuts-group-\"]` 计数 6）",
       "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P1"
     },
     {
@@ -1432,11 +1336,11 @@
       "cols": 6,
       "id": "G14",
       "official": "块移动与样式槽快捷键（`keyboard.md` 表 A/B：`⌥↑↓↖↘` 移动块、`⌘⌥1-9/0` 样式槽、`⇧⏎` 重命名、`⌘D` 副本、`⌘.` 专注、`⌘\\` 侧栏、`⌘⌥N` 每日笔记、`⌘⇧M` 评论）",
-      "local": "无任何 `addKeyboardShortcuts`（全库仅 font-size 一处 keymap）",
+      "local": "✎ 现读（2026-10-31）更正：块移动／样式槽／副本／查找／专注／侧栏／日记／快捷键面板已接；RENAME（Shift+Enter）与 COMMENT（Ctrl+Shift+M）只在键表里有 id，没有处理分支。",
       "verdict": "缺失",
       "score": "2/1",
-      "criteria": "**必须建成 `{mac, win}` 双描述符**：官方 `zr` 在 Mac 是 `⌘⌥` 而 Windows 是 `Ctrl-Shift`，`Mod+Shift+Alt` 单一字符串无法表达；本地 ⌘S 需删除或记为有意偏差（官方无保存快捷键）",
-      "status": "gap",
+      "criteria": "**必须建成 `{mac, win}` 双描述符**：官方 `zr` 在 Mac 是 `⌘⌥` 而 Windows 是 `Ctrl-Shift`，`Mod+Shift+Alt` 单一字符串无法表达；本地 ⌘S 需删除或记为有意偏差（官方无保存快捷键）  ☆ 原判（2026-10-31 现读后作废）＝无任何 `addKeyboardShortcuts`（全库仅 font-size 一处 keymap）",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
@@ -1831,17 +1735,17 @@
       "cols": 6,
       "id": "G52",
       "official": "任务状态含 **cancelled**（与 completed 并列），日历默认**只显示 pending**，任务可按**正则**过滤内容；官方块嵌套上限 **10**",
-      "local": "☆ 本行四件事，第 190 批清掉前两件：① **cancelled 档已落地**＝轴在正文与列两处同源（正文 `checked`／`cancelled` 两枚 attr，状态机单源 `src/lib/editor/task-status.ts`＝官方 `h9e` 线值映射与 `cde` 点击循环，含「`Canceled → Unchecked`」那枚反直觉分支；列 `status: todo|doing|done|cancelled` ＋ 与 `completedAt` 并列的 `cancelledAt`＝`contract.prisma:323`，迁移 `20261014T1105_add_task_cancelled_at`）；官方「已取消」行**只加删除线、原地不动**（`interactions.md:1087`）与「已于/完成于」双时间戳（`tasks.md:104`）都在；入口＝键 `SET_CANCELLED`（`⌘⌥⇧T`／`Ctrl-Alt-Shift-T`）＋ Mac-only `SET_CANCELLED_SLASH`（`⌘⌥/`，☆ win 侧 `chordFor` 返回 `null` 而不是发一枚错键）＋拖拽菜单「将任务标记为已取消／取消标记」；② **默认只显示 pending 已落地**＝任务页与日历同一谓词（`grouping.ts:77`），upcoming 分区里取消行不算未完成（`upcoming-groups.ts:201`），开关打开才与完成行一起回来（`api-contract.md:36`），提醒投递与 materialize 同样对取消档闭嘴（☆ 三处都是**只看 `isCompleted` 兜不住**的形状＝取消行没打勾）；③ **未动**＝按正则过滤任务内容全库零匹配；④ **未动**＝无深度上限校验；☆☆ 两处口径必须记下＝本行旧\"本地对照\"里的 `contract.prisma:304` 已随本批漂移到 323 行；而\"嵌套上限 10\"这个数字的出处是 `api-contract.md:22` 那条 API `depth` **显示深度**参数（\"Maximum depth the structure is displayed\"），本台账把它当作编辑面的嵌套上限，做④之前须先确认官方编辑器真的拒绝第 11 层，否则是拿显示参数立判据",
+      "local": "✎ 现读（2026-10-31）更正：cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账已判不做。",
       "verdict": "部分落地＋③④ 判**不做（有据，第 206 批）**＝①② 已清（第 190 批）；③④ 不是\"还没做\"，是**不该照原判据做**：④ 那个\"10\"的出处是 `api-contract.md:22` 的 `depth` 参数，原文**\"Maximum depth the structure is displayed\"**＝**显示深度**；而官方编辑器真实的轴是 `indentLevel`（`interactions.md` V23：一次 `Tab` 往 `_flexRow` 里插一个 `--indent-w: 28px` 占位 div、块序列是**扁平**的 `currentPage.subblocks`），下界守卫只有 `indentLevel + delta >= 0`、**盘上无任何\"拒绝第 11 层\"的证据** ⇒ 照做就是拿显示参数当编辑面判据（本台账自己禁止的那件事），故**不做**；③ 的出处是 `api-contract.md:37` 的 `contentRegex` **查询参数**（\"only tasks whose content matches the given regular expression\"），盘上**没有**任何\"任务页有正则过滤控件\"的证据 ⇒ 不据此造 UI，**不做**（若将来采到屏上控件或其输入框，再单独立项）；两条裁决的出处已钉成机器闸 `src/lib/block-depth-gate.test.ts`（4 条：`depth` 那条仍逐字带 `displayed` 与 `10`／V23 的 `--indent-w` 与\"缩进**不是嵌套**\"结语仍在／`contentRegex` 那句原文仍在；对照＝把 `displayed` 改成 `enforced`⇒闸逐字红、还原即绿）",
       "score": "2/2",
-      "criteria": "③④ 判**不做（有据）**＝见判定列（第 206 批）；原备注「③ 补正则过滤档；④ 先核实\"10\"到底是显示深度还是编辑上限，再决定拒绝或降级」已由第 206 批结清",
+      "criteria": "③④ 判**不做（有据）**＝见判定列（第 206 批）；原备注「③ 补正则过滤档；④ 先核实\"10\"到底是显示深度还是编辑上限，再决定拒绝或降级」已由第 206 批结清  ☆ 原判（2026-10-31 现读后作废）＝☆ 本行四件事，第 190 批清掉前两件：① **cancelled 档已落地**＝轴在正文与列两处同源（正文 `checked`／`cancelled` 两枚 attr，状态机单源 `src/lib/editor/task-status.ts`＝官方 `h9e` 线值映射与 `cde` 点击循环，含「`Canceled → Unchecked`」那枚反直觉分支；列 `status: todo|doing|done|cancelled` ＋ 与 `completedAt` 并列的 `cancelledAt`＝`contract.prisma:323`，迁移 `20261014T1105_add_task_cancelled_at`）；官方「已取消」行**只加删除线、原地不动**（`interactions.md:1087`）与「已于/完成于」双时间戳（`tasks.md:104`）都在；入口＝键 `SET_CANCELLED`（`⌘⌥⇧T`／`Ctrl-Alt-Shift-T`）＋ Mac-only `SET_CANCELLED_SLASH`（`⌘⌥/`，☆ win 侧 `chordFor` 返回 `null` 而不是发一枚错键）＋拖拽菜单「将任务标记为已取消／取消标记」；② **默认只显示 pending 已落地**＝任务页与日历同一谓词（`grouping.ts:77`），upcoming 分区里取消行不算未完成（`upcoming-groups.ts:201`），开关打开才与完成行一起回来（`api-contract.md:36`），提醒投递与 materialize 同样对取消档闭嘴（☆ 三处都是**只看 `isCompleted` 兜不住**的形状＝取消行没打勾）；③ **未动**＝按正则过滤任务内容全库零匹配；④ **未动**＝无深度上限校验；☆☆ 两处口径必须记下＝本行旧\"本地对照\"里的 `contract.prisma:304` 已随本批漂移到 323 行；而\"嵌套上限 10\"这个数字的出处是 `api-contract.md:22` 那条 API `depth` **显示深度**参数（\"Maximum depth the structure is displayed\"），本台账把它当作编辑面的嵌套上限，做④之前须先确认官方编辑器真的拒绝第 11 层，否则是拿显示参数立判据",
       "status": "partial",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P1"
     },
     {
@@ -2714,19 +2618,20 @@
     {
       "line": 1234,
       "section": "三点七、P2 追加（来自 `dialogs.md` 与 `protocol.md`，静态证据）",
-      "cols": 5,
+      "cols": 6,
       "id": "G90",
       "official": "懒加载 chunk 失败有专门 UI（`alert.lazy.load.*`「某些功能无法加载」）",
-      "local": "无 error boundary 文案",
+      "local": "✎ 现读（2026-10-31）更正：根错误边界与懒加载失败判据已建（第 217 批）：isLazyLoadError 认打包器/浏览器两类错误。",
       "verdict": "已清（第 217 批）＝新增根错误边界 `src/app/error.tsx`＋纯判据 `src/lib/errors/lazy-load.ts`（`isLazyLoadError` 认打包器/浏览器实际抛的五种 message；命中走官方逐字两句＋「重新加载页面」，其余走通用句＋「重试」）；☆ **真浏览器取证**＝先让客户端 booted、再掐 `/_next/static/chunks/**`、然后**点侧栏「日历」做客户端跳转** ⇒ 屏上逐字渲染「某些功能无法加载／请检查你的网络连接或重新加载页面。／重新加载页面」（`lazy=1 desc=1 generic=0`）；☆ 两发失败尝试的教训＝整页 `page.goto`（初次脚本加载）测不出来：chunk 拉不到时客户端根本没起来，边界无从渲染；☆ `npm run build` 也跑过（exit 0）＝这个边界进得了生产构建（原差异类型＝缺失）",
       "score": "1/1",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝无 error boundary 文案",
       "status": "aligned",
       "scoreParsed": {
         "impact": 1,
         "cost": 1,
         "raw": "1/1"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P3"
     },
     {
@@ -3290,12 +3195,13 @@
     {
       "line": 1277,
       "section": "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静态契约证据）",
-      "cols": 5,
+      "cols": 6,
       "id": "G122",
       "official": "Imagine 接入中心的**三维实体**：权限 `read-only|write-only|read-write`（落库 `details.tools={type:\"preset\",presets:[…]}`）× 保护 `public|key|password` × 作用域 `全部文档|选定文档|每日笔记和任务`；密钥**只显示一次**；硬上限 **10 个 API**；成功/失败各 8 条专属文案（§十）",
-      "local": "无 `/connections` 路由（G44 只记了\"屏不存在\"，本行记其数据契约）；后端无 API/MCP 连接实体",
+      "local": "✎ 现读（2026-10-31）更正：/connections 有连接 CRUD（kind/name/endpoint/token，token 只回 hasToken）；缺权限×保护×作用域三轴、密钥一次性显示与上限。",
       "verdict": "缺失",
       "score": "3/3",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝无 `/connections` 路由（G44 只记了\"屏不存在\"，本行记其数据契约）；后端无 API/MCP 连接实体",
       "status": "gap",
       "scoreParsed": {
         "impact": 3,
@@ -4046,19 +3952,20 @@
     {
       "line": 1350,
       "section": "三点一三、设置与账户追加（来自 `settings.md`，静态证据 + 本地逐行核对）",
-      "cols": 5,
+      "cols": 6,
       "id": "G164",
       "official": "账户面：分体姓名（`family.name` 姓）、姓名对外可见的解释句、改名/改头像各配**进行时+成功+失败**三件套、删除账户确认「永久删除你的所有文档。此操作无法撤消。」、更改邮箱、退出登录、**「邮件发送至 Craft」**（专属入档邮箱）（§六）",
-      "local": "账户分区存在；头像与改名无失败句；`dailySummary|每日摘要`、邮件入档零命中 ☆ **部分落地**（第 282 批）＝**改头像本批接真**（★ 实读发现比原判\"无失败句\"更糟：**头像那枚相机按钮根本没有处理器**，是个 inert 控件，且头像只渲染姓名首字母、**从不显示 `User.image`**）。基础设施其实都在：`contract.prisma:8` 有 `User.image`、`SYNC_TABLES` 的 `user` 白名单含 `image`、`uploadFile`（`lib/upload-client.ts`）可用、`applyLocal({table:'user'})` 已在偏好里用着 ⇒ 缺的只是接线。本批：① `getProfile()` 补回 `image`；② 面板渲染 `image`（无则退首字母）、相机按钮开文件选择→`uploadFile`→`applyLocal` 写 `image`、失败给一句并把乐观值撤回；③ **一处坑**＝`profile` 由父组件异步取（`SettingsModal` 的 useEffect），`useState` 初值那刻还是 null ⇒ 补一条 effect 在 profile 落地后补写，否则头像永远停在首字母（首版实测：库里已存 `image`、屏上仍是首字母）。**真浏览器取证**＝上传 1×1 PNG ⇒ `POST /api/files` 成功、库中 `image` 落成 `/api/files/<uuid>.png`（**过 applyLocal 的 2s 去抖后**）、重开面板 `<img src=\"/api/files/…\">` `complete:true`；**仍未做**＝`dailySummary`／邮件入档那一档（本行其余项）；☆ 第 283 批续清**改名**＝名称行右侧那枚铅笔此前是**裸 `<EditIcon />`**（不是按钮、无处理，看着能点却什么都不做）⇒ 改成真按钮走 `promptDialog` 收名字 → `applyLocal(table:'user')` 写 `name`（空串/未改按\"没改\"处理、失败撤回并给一句）；**真浏览器取证**＝点铅笔 ⇒ 对话框「更改名称／取消／保存」⇒ 输入新名保存 ⇒ 库中 `name` 落成新值、面板同步显示（`user.name` 在 sync 白名单，故过离线内核）；两档（改头像／改名）**均已接真**；☆ 第 285 批再清**邮箱行**＝「电子邮件」右侧也曾有一枚裸铅笔图标，但本地**没有任何改邮箱能力**（全仓零 `changeEmail`／`updateEmail`／`verifyEmail`），且 `email` 被 spec 5.1 **明确排除在 sync 白名单外** ⇒ 无宿主可写，按同一把尺**移除**、邮箱只作只读展示（真浏览器取证：账户面板只剩 1 枚铅笔＝名称那枚真按钮、邮箱地址仍逐字显示）",
+      "local": "✎ 现读（2026-10-31）更正：账户分区在，改头像已接真上传通道；仍缺改名/改头像的失败句与「邮件发送至 Craft」入档。",
       "verdict": "部分落地",
       "score": "1/2",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝账户分区存在；头像与改名无失败句；`dailySummary|每日摘要`、邮件入档零命中 ☆ **部分落地**（第 282 批）＝**改头像本批接真**（★ 实读发现比原判\"无失败句\"更糟：**头像那枚相机按钮根本没有处理器**，是个 inert 控件，且头像只渲染姓名首字母、**从不显示 `User.image`**）。基础设施其实都在：`contract.prisma:8` 有 `User.image`、`SYNC_TABLES` 的 `user` 白名单含 `image`、`uploadFile`（`lib/upload-client.ts`）可用、`applyLocal({table:'user'})` 已在偏好里用着 ⇒ 缺的只是接线。本批：① `getProfile()` 补回 `image`；② 面板渲染 `image`（无则退首字母）、相机按钮开文件选择→`uploadFile`→`applyLocal` 写 `image`、失败给一句并把乐观值撤回；③ **一处坑**＝`profile` 由父组件异步取（`SettingsModal` 的 useEffect），`useState` 初值那刻还是 null ⇒ 补一条 effect 在 profile 落地后补写，否则头像永远停在首字母（首版实测：库里已存 `image`、屏上仍是首字母）。**真浏览器取证**＝上传 1×1 PNG ⇒ `POST /api/files` 成功、库中 `image` 落成 `/api/files/<uuid>.png`（**过 applyLocal 的 2s 去抖后**）、重开面板 `<img src=\"/api/files/…\">` `complete:true`；**仍未做**＝`dailySummary`／邮件入档那一档（本行其余项）；☆ 第 283 批续清**改名**＝名称行右侧那枚铅笔此前是**裸 `<EditIcon />`**（不是按钮、无处理，看着能点却什么都不做）⇒ 改成真按钮走 `promptDialog` 收名字 → `applyLocal(table:'user')` 写 `name`（空串/未改按\"没改\"处理、失败撤回并给一句）；**真浏览器取证**＝点铅笔 ⇒ 对话框「更改名称／取消／保存」⇒ 输入新名保存 ⇒ 库中 `name` 落成新值、面板同步显示（`user.name` 在 sync 白名单，故过离线内核）；两档（改头像／改名）**均已接真**；☆ 第 285 批再清**邮箱行**＝「电子邮件」右侧也曾有一枚裸铅笔图标，但本地**没有任何改邮箱能力**（全仓零 `changeEmail`／`updateEmail`／`verifyEmail`），且 `email` 被 spec 5.1 **明确排除在 sync 白名单外** ⇒ 无宿主可写，按同一把尺**移除**、邮箱只作只读展示（真浏览器取证：账户面板只剩 1 枚铅笔＝名称那枚真按钮、邮箱地址仍逐字显示）",
       "status": "partial",
       "scoreParsed": {
         "impact": 1,
         "cost": 2,
         "raw": "1/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P3"
     },
     {
@@ -4136,37 +4043,39 @@
     {
       "line": 1362,
       "section": "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，静态证据）",
-      "cols": 5,
+      "cols": 6,
       "id": "G169",
       "official": "**标签是两级树**：`#父级/子级`，且**仅允许一个 `/`**（第三级非法）（`tags-browse.md` §一）",
-      "local": "无层级标签概念（`TagsSection.tsx` 是文档标签列表，无父子轴）",
+      "local": "✎ 现读（2026-10-31）更正：层级标签已落：splitTagLevels 解析父级/子级，第二个 / 触发「只能一个层级」校验。",
       "verdict": "☆ 已清（校验＋UI＋e2e）＝`src/lib/tag/rules.ts` 把层级定死两档：`splitTagLevels` 解析 `父级/子级`，第二根 `/` 触发 `tags.only.one.child.allowed`、任一侧为空触发 `tags.tags.cannot.contain.delimiter.char`；`TagsSection` 输入实时呈现，e2e `tag-validation.spec.ts` 屏验，串由 `official-copy.test.ts` 逐条对账",
       "score": "2/2",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝无层级标签概念（`TagsSection.tsx` 是文档标签列表，无父子轴）",
       "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
       "line": 1363,
       "section": "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，静态证据）",
-      "cols": 5,
+      "cols": 6,
       "id": "G170",
       "official": "**6 条字符校验规则**成表可实现：禁空格标点、禁 emoji、禁分隔符、纯数字标签需放行、**内置\"十六进制颜色值不算标签\"规则**（`#ff0000`/`#ccc`）、以及 valid/invalid/重复输入/继续输入四种反馈态（§二）",
-      "local": "无任何标签校验；`#` 直接当文本处理",
+      "local": "✎ 现读（2026-10-31）更正：六条字符校验与四态反馈已落；hexColor 规则先于 # 剥离，故 #ccc 不会伪装成标签。",
       "verdict": "☆ 已清（六条规则＋四态反馈全落地）＝`findTagViolation` 顺序＝hexColor（先于 `#` 剥离，故 `#ccc` 不会伪装成标签）→ 长度（本地项，官方无串）→ emoji → depth → delimiter → 空格标点 → numbers（`allowNumbers` 开关＝官方可切换项）；`tagFeedback` 出 valid/current/typing/invalid 四态并接进 `TagsSection`（`data-tag-feedback`），两条提交路径都拦非法草稿；`rules.test.ts` 18 例＋`rules-wiring.test.ts` 接线例＋e2e 屏验七例与提交后重载持久。★ 遗留：新标签名写入仍走 `attachTag` Server Action（红线③，离线建标签未通，另计一批）",
       "score": "2/2",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝无任何标签校验；`#` 直接当文本处理",
       "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -4910,13 +4819,14 @@
     {
       "line": 1464,
       "section": "三点二〇、第 1 批沙盒写入实测（块行为与撤销，动态 V15–V21）",
-      "cols": 5,
+      "cols": 6,
       "id": "G212",
       "official": "**统计·这一页四项且为派生态**：区块**把空块也计入**、字数、字符数（\"不包括空格\"）、阅读时间格式 **`0s`**；随撤销实时刷新（V19）",
-      "local": "只有 `wordCount` 一项（`InfoTab.tsx:264-265`），口径是 `characterCount.characters()`；无区块数/阅读时间/不含空格字符数（与 G67、G201 同源，本行补\"空块计入\"这条判据）",
+      "local": "✎ 现读（2026-10-31）更正：指标派生、区块按 doc.childCount（空块计入）已对齐；阅读时间固定「N 分钟」，官方 V19 是 0s 秒级格式。",
       "verdict": "缺失",
       "score": "3/1",
-      "status": "gap",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝只有 `wordCount` 一项（`InfoTab.tsx:264-265`），口径是 `characterCount.characters()`；无区块数/阅读时间/不含空格字符数（与 G67、G201 同源，本行补\"空块计入\"这条判据）",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 3,
         "cost": 1,
@@ -11354,12 +11264,13 @@
     {
       "line": 2095,
       "section": "三点六八、第 58 批（★★★ `lGe` 逐级退出格式降级链 + `m0e` 11 个 JSON 字段 + scheme 判定，`model.md` §一之二十八）",
-      "cols": 5,
+      "cols": 6,
       "id": "G570",
       "official": "★★★ **`lGe` ＝ 逐级退出格式的降级链（本轮最重要的交互发现）**：**① `indentLevel > 0` ⇒ `og(ids,-1)` 减缩进；② 否则 `listStyle !== none` ⇒ `ir(ids, Nt.None)` 去列表；③ 否则 `decorations.block/ || focus/ || color != null` ⇒ `P2(ids,{block:0,focus:0})` + `fU(ids,null)` 清装饰与颜色**；返回**三元组 `{docActions, uiActions, redoUiState}`** ⇒ **\"Esc/Shift+Tab 退一档\"的官方优先级实现**；★ **`decorations` 值是数字档位**（`{block:0,focus:0}` 而非布尔）（§一之二十八 4）",
-      "local": "**三处全无对应**（已实跑）：**① `grep \"'Tab'\" src/components/editor` 只命中菜单**（`emoji-suggestion.tsx:112`、`slash-menu/SlashCommandExtension.ts:91`）⇒ **正文无 Tab 缩进键位**（与 G218 同源）；**② Shift+Tab 只是工具栏按钮**（`tabs/FormatTab.tsx:39/40` `liftListItem`/`sinkListItem('listItem')`）⇒ **只作用列表、无键盘、无优先级链**；**③ `grep \"'Escape'\" src/components/editor` 5 处全是菜单/弹层关闭**（`AiBubbleMenu.tsx:80`、`block-link-menu.tsx:130`、math 等）⇒ **无\"逐级清格式\"**",
+      "local": "✎ 现读（2026-10-31）更正：三级退格式链未实现：空列表项 Enter 只由默认行为退出列表，无缩进→列表→装饰的优先级。",
       "verdict": "**缺失（交互逻辑核心）**",
       "score": "3/1",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝**三处全无对应**（已实跑）：**① `grep \"'Tab'\" src/components/editor` 只命中菜单**（`emoji-suggestion.tsx:112`、`slash-menu/SlashCommandExtension.ts:91`）⇒ **正文无 Tab 缩进键位**（与 G218 同源）；**② Shift+Tab 只是工具栏按钮**（`tabs/FormatTab.tsx:39/40` `liftListItem`/`sinkListItem('listItem')`）⇒ **只作用列表、无键盘、无优先级链**；**③ `grep \"'Escape'\" src/components/editor` 5 处全是菜单/弹层关闭**（`AiBubbleMenu.tsx:80`、`block-link-menu.tsx:130`、math 等）⇒ **无\"逐级清格式\"**",
       "status": "gap",
       "scoreParsed": {
         "impact": 3,
@@ -11426,12 +11337,13 @@
     {
       "line": 2104,
       "section": "三点六九、第 59 批（★ 15 个 action 构造器 + 复制链闭环 + **更正 `lGe` 触发键归因**，`model.md` §一之二十九）",
-      "cols": 5,
+      "cols": 6,
       "id": "G574",
       "official": "★★ **【更正 G570】`lGe` 不是 Shift+Tab —— 它有两条分支**：`o` 真 ⇒ **三段退格式链**（上批事实保留）、`o` 假 ⇒ **Enter 分割链**（`rGe` 从索引切开保后半 run、`aGe` 三情形 `before`/`后`/中间）⇒ **「疑为 Shift+Tab / Esc 类退一档」的触发键归因撤回**，降级链事实不变、**触发键待补**（`o` 真名与调用方未取）（§一之二十九 3）",
-      "local": "本地两条分支**都没有显式实现**：`grep \"'Enter'\" src/components/editor/Editor.tsx src/components/editor/extensions/*.tsx` ⇒ **仅 3 处** ⇒ Enter 分割是 TipTap 默认行为；退格式链三处无对应（G570 实跑：Tab 只在菜单、Shift+Tab 只是工具栏按钮、Escape 只关菜单）",
+      "local": "✎ 现读（2026-10-31）更正：非空块 Enter 分割由 TipTap 默认 splitBlock 提供，块类型与 marks 保留，与官方三情形等价。",
       "verdict": "**结论更正**（归因撤回）+ 缺失",
       "score": "3/1",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本地两条分支**都没有显式实现**：`grep \"'Enter'\" src/components/editor/Editor.tsx src/components/editor/extensions/*.tsx` ⇒ **仅 3 处** ⇒ Enter 分割是 TipTap 默认行为；退格式链三处无对应（G570 实跑：Tab 只在菜单、Shift+Tab 只是工具栏按钮、Escape 只关菜单）",
       "status": "gap",
       "scoreParsed": {
         "impact": 3,
@@ -11912,12 +11824,13 @@
     {
       "line": 2196,
       "section": "三点七四、第 64 批（★★★ UI store 65 ＋ 外壳 store 63 分派表全文；★ 更正第 63 批计数 68/66→65/63；★★ 判据\"有无 `default:He`\"区分分派器与映射表，`model.md` §一之三十四）",
-      "cols": 5,
+      "cols": 6,
       "id": "G601",
       "official": "★★★ **`stopTextEdit` 与 `restoreTextEdit` 成对 ⇒ \"退出编辑\"是可恢复的**（§一之三十二 5 的 `backupSelection` 消费方在此）；★ **权限三项住在 UI store**（`setDocumentAccess`/`setDocumentAccessSignature`/`setForcedViewOnlyModeAction`）⇒ 权限是\"界面可见态\"而非数据态，解释了 §一之三十一 只读白名单为何在 store 层；★ **文档内搜索四态**：`setIsDocumentSearchOpen` + `setDocumentSearchString` + **`setCurrentlyFocusedSearchIndex`** + **`updateHighlightedTextReplaceItemsAction`** ⇒ 官方**有替换**且\"当前命中\"与\"命中集\"是两份独立 state",
-      "local": "本地 `grep -rn \"canEdit\" src/components/editor/DocumentEditor.tsx` ⇒ 权限只有一个派生布尔（:47）且**只作为 props 传递、不是 state**（G588 已证）；文档内搜索/替换：本批**未检索**，不下结论 ⇒ 但\"退出编辑可恢复\"这一条本地必然无（TipTap 无对应概念，见 G591 实跑）",
+      "local": "✎ 现读（2026-10-31）更正：查找替换已有 query/current/matches 四态；权限仍是派生布尔，且无 stopTextEdit/restore 成对。",
       "verdict": "缺失（编辑态可恢复性）",
       "score": "3/2",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本地 `grep -rn \"canEdit\" src/components/editor/DocumentEditor.tsx` ⇒ 权限只有一个派生布尔（:47）且**只作为 props 传递、不是 state**（G588 已证）；文档内搜索/替换：本批**未检索**，不下结论 ⇒ 但\"退出编辑可恢复\"这一条本地必然无（TipTap 无对应概念，见 G591 实跑）",
       "status": "gap",
       "scoreParsed": {
         "impact": 3,
@@ -12074,19 +11987,20 @@
     {
       "line": 2215,
       "section": "三点七六、第 66 批（★★★ `$Je` 蛇形方言 16 项全集 ＋ `HJe` 批量归一应用器 ＋ 三种兜底形态与判据最终版，`model.md` §一之三十六）",
-      "cols": 5,
+      "cols": 6,
       "id": "G610",
       "official": "★★ **收藏/归档是文档对象上的布尔字段**（`document_star/unstar`、`document_archive/unarchive` 四 case 全部落到同一个写入器 `Sk(spaceId, docId, {isStarred|isArchived:bool})`）＋ **文档带 `lastViewed`**（`document_view` 经 `bD(旧,新)` 合并）＋ **文件夹有软删标志 `isDeleted`**（`document_move` 遍历 folders 时跳过）",
-      "local": "☆ 部分落地（第 261 批）＝① **`lastViewedAt` 列已补**＝此前 `DocumentListView`/`SortableDocGrid` 声明了 `lastViewedAt?: string | null` 但**全仓无此列**（`contract.prisma` 的 Document 无、`getRecentDocuments` 也不 select）⇒ 列表档「上次浏览」列**永远空**；本批加 `Document.lastViewedAt TimestamptzString?`（additive 迁移 `20261015T1957_add_document_last_viewed_at`）＋进 `DOC_META_COLS` 白名单＋两处查询投影＋`DocumentEditor` 打开即 `applyLocal({lastViewedAt})`（官方 `document_view` 的等价物）；真浏览器取证＝打开一篇后回列表档「上次浏览」列有相对时间、DB 该列非空；② **仍缺**＝官方\"收藏/固定**两处不同实现**\"（space 层 `isStarred` 布尔 vs 任务 store 的 `pinDocument`/`upsertPinnedDocuments`）的可见性差异未对齐（本地只有一处 server action）；`isDeleted` 本地已有（folder 同列）⇒ 无缺口",
+      "local": "✎ 现读（2026-10-31）更正：lastViewedAt 列已补（第 261 批）；收藏/归档布尔字段与统一写入器仍缺。",
       "verdict": "部分落地",
       "score": "2/1",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝☆ 部分落地（第 261 批）＝① **`lastViewedAt` 列已补**＝此前 `DocumentListView`/`SortableDocGrid` 声明了 `lastViewedAt?: string | null` 但**全仓无此列**（`contract.prisma` 的 Document 无、`getRecentDocuments` 也不 select）⇒ 列表档「上次浏览」列**永远空**；本批加 `Document.lastViewedAt TimestamptzString?`（additive 迁移 `20261015T1957_add_document_last_viewed_at`）＋进 `DOC_META_COLS` 白名单＋两处查询投影＋`DocumentEditor` 打开即 `applyLocal({lastViewedAt})`（官方 `document_view` 的等价物）；真浏览器取证＝打开一篇后回列表档「上次浏览」列有相对时间、DB 该列非空；② **仍缺**＝官方\"收藏/固定**两处不同实现**\"（space 层 `isStarred` 布尔 vs 任务 store 的 `pinDocument`/`upsertPinnedDocuments`）的可见性差异未对齐（本地只有一处 server action）；`isDeleted` 本地已有（folder 同列）⇒ 无缺口",
       "status": "partial",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -16124,19 +16038,20 @@
     {
       "line": 3080,
       "section": "三点一〇一八、第 92 批·下半〔零写入·**`a6`＝Base UI Button 薄封装结案（`nativeButton` 语义）＋ rail 双态的屏上判据（CSS module class 表）＋ Assistant 分类可见性判据结案**〕（2026-09-28 14:41–14:52，★★★ G827 的最后一问裁掉、Enter 悖论出口收窄到两条、G803 第六次更新；2 次 `evaluate_script` 页内 fetch＋`indexOf`（bundle 已缓存在页内，第二次零下载），**零 UI 交互、未动页面状态**；原始表 `_harvest/b92-lower.json`）",
-      "cols": 5,
+      "cols": 6,
       "id": "G834",
       "official": "★ **表格／集合命令键位注册表 `u8` 片段逐字（表D 工厂实读＋6 条）**：`u8={addRow:{getName:t=>t(\"collections.add.a.row\"),shortcut:qi(oo)},duplicate:{getName:t=>t(\"collections.duplicate.row\"),shortcut:Co(Oo(\"d\"))},selectAll:{getName:t=>t(\"collections.select.all.rows\"),shortcut:Co(Oo(\"a\"))},clear:{getName:t=>t(\"collections.clear.cell.value\"),shortcut:Vn(nc)},delete:{getName:t=>t(\"table.delete.row\"),shortcut:Co(nc)}}`，同段还有 `w9t=Co(oo)` ⇒ **`Shift+Enter` 添加行**（`qi`=Shift 装饰）、**`⌘/Ctrl+D` 重复行**、**`⌘/Ctrl+A` 全选行**（在单元格上下文内覆盖系统全选）、**`nc` 裸键清除／`⌘/Ctrl+nc` 删行**；★ `nc` 身份未解（候选 `Delete`／`Backspace`，`oo`＝Enter 同型常量表待读）",
-      "local": "本地表格无集合层命令（`src/components/ui/` 无 table 组件，`ls` 已核对）；`grep -rn \"collections.add.a.row\" src` 无对应实现 ⇒ 缺失（长期项，非本轮 P 级）",
+      "local": "✎ 现读（2026-10-31）更正：本地表格无集合层命令：无 table 组件，collections.add.a.row 零命中，表格仍走 StarterKit。",
       "verdict": "新线索（工厂实读累计 17 条）＋ `nc` 未解",
       "score": "P2",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本地表格无集合层命令（`src/components/ui/` 无 table 组件，`ls` 已核对）；`grep -rn \"collections.add.a.row\" src` 无对应实现 ⇒ 缺失（长期项，非本轮 P 级）",
       "status": "partial",
       "scoreParsed": {
         "impact": 2,
         "cost": null,
         "raw": "P2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -19239,19 +19154,20 @@
     {
       "line": 3540,
       "section": "三点一〇四四、第 99 批·尾记〔★★★ **用户点头后执行了那 12 条具名沙盒的永久清除＝\"精确范围破坏\"在官方通路上跑通（3 条无标题一条没碰）** ＋ ★★★ **永久删除会连带抹掉嵌在被删文档里的任务行（`tasks list --scope all` 14 → 9）** ⇒ 与 G671／G934\"软删保留任务行\"合成一套完整对照 ＋ ★★ **一次\"假阴性静默失效\"＝破坏性确认框零 ARIA，唯一信号是新增文案「删除 12 个项目」** ⇒ 判\"确认框开没开\"严禁按 `role` 判 ＋ ★★ **一条我主动判为不采的项＝确认框按钮的 class 族**（屏上只剩非授权项 ⇒ 误点代价不可逆，宁可不采）〕（2026-09-30 00:0x–00:2x 本地＝UTC 16:0x–16:2x，**写入批＝12 条永久删除、不可逆、已按具名范围逐条复核**；1 张前态截图＋1 张后态截图，两张都核看过）",
-      "cols": 5,
+      "cols": 6,
       "id": "G1007",
       "official": "★★ **一条我主动判为\"不采\"的项（安全决定，如实登记）**＝本轮可以**再开一次确认框**去读它的按钮 class 族（选 1 项 → 开框 → 点「取消」），但执行后屏上**只剩 3 条非授权文档** ⇒ 任何一次误点（打偏 154px 宽的「删除」按钮、或坐标漂移）代价**不可逆** ⇒ **判为不采**；⇒ 遗留问题＝\"这套回收站确认框与 G622 那套浏览屏确认框是否同一 DOM 代\"未裁（文案骨架同族已证，class 族未读）**✎ 第 101 批已采到并结案＝「删除」按钮 class＝`sc-wrwa8u-4 bdLahy sc-1bl4h28-1 kvoRFL FilledDanger`＝styled-components 族＋语义后缀，与工具栏危险按钮的 CSS Modules 族 `_variantPlainDanger_1bml7_165` **不同体系**；本轮是在\"1 项\"规模下顺带读到的（开框→读→落刀），误点代价面＝1 条具名项，见 G1029**",
-      "local": "☆ 本地无对应物（无批量永久删除通路），故此未采项**不影响复刻进度** **✎ 第 101 批作废＝本地已建该通路（`src/components/document/TrashList.tsx` 多选工具栏＋计数回显确认框，接 `src/actions/document/delete.ts:32`）**",
+      "local": "✎ 现读（2026-10-31）更正：本地已建批量永久删除通路（第 101 批）：TrashList 多选工具栏 + 计数回显确认框。",
       "verdict": "**未采（主动放弃，理由已写）**",
       "other4": "P3",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝☆ 本地无对应物（无批量永久删除通路），故此未采项**不影响复刻进度** **✎ 第 101 批作废＝本地已建该通路（`src/components/document/TrashList.tsx` 多选工具栏＋计数回显确认框，接 `src/actions/document/delete.ts:32`）**",
       "status": "aligned",
       "scoreParsed": {
         "impact": null,
         "cost": null,
         "raw": ""
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P?"
     },
     {
@@ -26000,19 +25916,20 @@
     {
       "line": 4692,
       "section": "三点一〇九八、第 156 批新登记的官方行为（2026-10-04 17:0x–17:1x 本地＝桥健康窗口＝8 发新探针用满即停手＋判据强制的 1 次同参复打与 1 次失败后对照＝零写入零屏幕 ⇒ `manifest.jsonl` 160 行不变＝净新增 **2 条**＝G1380–G1381＝☆ 另＝起草时有两条\"想登记\"被 grep 在册挡回＝见台账「五十六」自纠行）",
-      "cols": 5,
+      "cols": 6,
       "id": "G1380",
       "official": "★★★ **`-32603` 还有第三档＝实例级＝一枚\"历批明明读得通\"的块此刻读不通**＝`blocks get 669fd545… --depth 1` 首发 ✗、同参复打 ✗＝而**同一窗口内**同篇另一枚块 `blocks get 7e3b6872…` ✓、失败**之后**的对照 `connection info` ✓（17:12:49）＝☆ 该 id 不是生面孔＝在册 `longtail.md` 第 137 批那节写明当时 `blocks get 669fd545…` 全文\"一字未少\"＝⇒ 失败既不是\"旗标形状\"（同旗标另一枚成功）也不是\"整条凉了\"（对照通过）＝剩下候选＝(a) 该实例此刻不可读（可自愈？）vs (b) 服务端对这篇的块级缓存／渲染路径抖动",
-      "local": "本地无对应面＝纯工具契约面＝不进 §〇 P0",
+      "local": "✎ 现读（2026-10-31）更正：MCP blocks get 的 -32603 分层属外部工具契约面；本地无 MCP 桥，不进复刻面。",
       "verdict": "☆ 与 G1379 **分层**＝G1379＝动词名级（同窗他名走有界错误）、本条＝实例级（同动词同篇他块成功）＝⇒ 今后报 `-32603` 要写明落在哪一层＝☆ 判死标准＝另一窗口重打同一 id 1–2 次（通了＝实例级瞬态；恒红＝该实例不可取，改用 `--depth 1 --format json` 与父块遍历两条替代通路）＝☆ 本批未越 8 发新探针额度去试第 11 发（✎ **第 157 批改判**＝这枚块 id 换窗口之后**一发即通**、全文与历批在册逐字一致＝⇒ 实例级 `-32603` 属**可恢复档**＝\"该实例不可取\"那一支被否证＝☆ 处方因此定型＝实例级＝换窗口重打同一 id（对照 G1379 动词名级＝复打毫无意义）＝见台账「五十七」与 `internals.md` §八十八）",
       "score": "★★★",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本地无对应面＝纯工具契约面＝不进 §〇 P0",
       "status": "partial",
       "scoreParsed": {
         "impact": null,
         "cost": null,
         "raw": "★★★"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P?"
     },
     {
@@ -26072,12 +25989,13 @@
     {
       "line": 4706,
       "section": "三点一一〇〇、第 161 批新登记的官方行为（2026-10-05 机器钟 16:11:35 开批＝落盘机器钟 17:38＝**纯盘上批**＝桥三面同红（调用面报注册级缺席＋清单面 `mcp_list keyword=craft` 回 `{\"tools\":[],\"total\":0}`＋会话 server 名册内无 `craft` 条目）＝乙档处方＝未复打、未换桥、未改配置、未新建会话＝屏上 `list_pages` 只有 `about:blank`＝零 MCP 成功发次＝零写入零屏幕 ⇒ `manifest.jsonl` 160 行不变＝净新增 **2 条**＝G1384–G1385＝☆ 另＝三处历批行末带证据 ✎（G965 口径边界／G1382 挂账结案／G1383 面限定收窄）＝仪器＝`_harvest/b161-theme-apply.mjs`／`b161-theme-writer.mjs`／`b161-chunk-roster.mjs`＋本批复测四件 `b161-disk-check.mjs`／`b161-probe2.mjs`／`b161-probe4.mjs`／`b161-roster-final.mjs`＝☆ 复测把草稿三处读数改判＝见 `internals.md` §九十二第 3 节）",
-      "cols": 5,
+      "cols": 6,
       "id": "G1384",
       "official": "★★★ **主题与强调色是靠一个运行期 effect 写进 `<html>` 的＝没有首屏内联脚本＝⇒ G1382 那条兜底规则的服务窗口只有\"首帧到 effect 之间\"**＝写入侧逐字（主包 `index-DiTmKH3z.js`＝锚串＝`document.documentElement.dataset.theme`＝偏移 **6,821,769**＝☆ 锚串与偏移成对写，孤立偏移不可复核）＝`r=()=>{document.documentElement.classList.add(\"no-transitions\"),document.documentElement.dataset.theme=o,document.documentElement.dataset.accent=s,document.documentElement.dataset.pointer=i,l?document.documentElement.dataset.scrollbar=\"persistent\":delete document.documentElement.dataset.scrollbar,...}` ⇒ ★ **一次写四根属性＋先挂 `no-transitions` 类**（防首帧配色切换被过渡拖成可见跳色）＝☆ `removeAttribute(\"data-theme\")` 形全 105 份 JS **0 处**、`setAttribute(\"data-theme\"...)` 形亦 **0 处**＝只有 `dataset.theme=` 这一条通路＝★★ 稳态实态的第二条独立通路到手＝历批屏上留下的 **155 份 DOM 快照**里可读开标签 **147 份全部带 `data-theme`**（值一律 `light`＝当时账号是亮档）＝且 **155 份的 `head` 内含 `data-theme` 字样的内联 script＝0 份**＝☆ 兄弟属性**逐枚带成员数**（147 份里出现 147 次的八枚＝`lang`／`style`／`data-theme`／`data-accent`／`data-whatinput`／`data-whatintent`／`data-pointer`／`class`；只在部分快照出现的两枚＝`data-whatelement` **71 份**／`data-whatclasses` **25 份**＝随焦点移动、与主题无关）＝☆ **本面判不了的那一半要写明白**＝快照是采集当时的稳态 dump＝只能证\"稳态带属性\"与\"head 无内联脚本\"＝若官方经由**外部** head 脚本打标（其内容不含该字样）则盘上无从判＝留屏上一发（队列⑬）",
-      "local": "本地＝`src/components/theme/ThemeProvider.tsx:5-12`（next-themes `attribute=\"class\"`＋`defaultTheme=\"system\"`＋`enableSystem`）＝⇒ **三件不同**＝① 本地挂的是 **class**、官方挂的是 **`data-theme` 属性**；② 本地没有 `no-transitions` 这类\"首帧抑制过渡\"的动作；③ 本地也没有字面兜底档（`src` 内 `prefers-color-scheme` 0 处＝G1382 已记）＝☆ 本地 `--accent`／`--pointer` 无对应轴（承 G1206 的本地三件缺）",
+      "local": "✎ 现读（2026-10-31）更正：主题挂 class 而非 data-theme；有 accent 与禁过渡，但无 pointer/scrollbar 属性轴。",
       "verdict": "行为不同（挂载载体 class vs 属性）＋ 缺失（首帧抑制过渡／兄弟属性轴）＋ ⚠ 首帧态待屏上",
       "score": "3/1",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本地＝`src/components/theme/ThemeProvider.tsx:5-12`（next-themes `attribute=\"class\"`＋`defaultTheme=\"system\"`＋`enableSystem`）＝⇒ **三件不同**＝① 本地挂的是 **class**、官方挂的是 **`data-theme` 属性**；② 本地没有 `no-transitions` 这类\"首帧抑制过渡\"的动作；③ 本地也没有字面兜底档（`src` 内 `prefers-color-scheme` 0 处＝G1382 已记）＝☆ 本地 `--accent`／`--pointer` 无对应轴（承 G1206 的本地三件缺）",
       "status": "gap",
       "scoreParsed": {
         "impact": 3,
@@ -27152,19 +27070,20 @@
     {
       "line": 4832,
       "section": "三点一一一四、第 175 批新登记的官方行为（2026-10-09 机器钟 05:3x 开批＝纯盘上批＝本线零发送零桥零屏幕零写入⇒ `manifest.jsonl` 行数不变＝净新增 10 条＝G1443—G1452＝★ 主件＝观测会话指出「无点」不能当档 b 的筛法＝28 枚逐枚过三件后的落账＝☆ 其中 G1443／G1449 是证据账本身、G1450 是有界负结论）",
-      "cols": 5,
+      "cols": 6,
       "id": "G1444",
       "official": "★★★★ **「移动到…」在 bundle 里是一个带稳定 testid 的右键菜单项**＝整枚引号 `\"moveto\"` 命中 6 处**全在取词位**（`index-DiTmKH3z` 5 处＋`MoveToFolderDialog-B1IJuJnb` 1 处）＝逐字窗口＝`:\"move-to\",\"data-testid\":\"ctx-move-to\",text:h(\"moveto\"),onClick:()=>R(),disabled:x}]}`＝⇒ 三件到手＝① 该项的 test 锚点＝`ctx-move-to`（与 id `move-to` 并列，`ctx-move-to` 全 chunk 命中 3 处）② 它**可被 disabled**（`disabled:x`＝条件态真实存在）③ 承载它的组件文件＝`MoveToFolderDialog`＝☆ 键面另一笔＝`moveto` 是**无点**键（首段尺把它当命名空间＝G1443 的诊断那半），值＝语言包现取「移动到…」",
-      "local": "☆ 本地无此锚点＝`ctx-move-to` 这一 testid 在 `src/` 里零命中（现算＝`data-testid` 名册里没有它）＝⇒ 复刻时可把它作为「移动」入口的定位锚，并照官方给条件禁用留一档",
+      "local": "✎ 现读（2026-10-31）更正：本地有「移动到…」入口（信息面板），但无 ctx-move-to 稳定 testid 锚点。",
       "verdict": "✓盘上一手（整枚引号 6 处全取词位＋窗口逐字）＝☆ 与在册关系＝**这枚键在 G 行上三把针全 0（裸词 0／独立成词 0／反引号 0）＝此前从未进过任何 G 行**＝而中文值「移动到…」以引号形在成文面已落地 8 处（裸串 15）＝⇒ **值在册、键与锚点层没在册＝不是\"已覆盖\"**（承 `features.md:38`）",
       "score": "1/1",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝☆ 本地无此锚点＝`ctx-move-to` 这一 testid 在 `src/` 里零命中（现算＝`data-testid` 名册里没有它）＝⇒ 复刻时可把它作为「移动」入口的定位锚，并照官方给条件禁用留一档",
       "status": "aligned",
       "scoreParsed": {
         "impact": 1,
         "cost": 1,
         "raw": "1/1"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P3"
     },
     {

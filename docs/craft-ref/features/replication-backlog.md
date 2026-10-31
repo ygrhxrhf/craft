@@ -60,10 +60,10 @@
 
 | G号 | 状态 | 影响/成本 | 官方行为（摘要） | 本地现状（摘要） | 下一步／证据 |
 | --- | --- | --- | --- | --- | --- |
-| G11 | 已对齐 | 2/2 | 专注模式 + 退出快捷键（R17） | ⚠ 全库无 focus mode（focusStyle 只是文字底色 Mark） | 台账本地列仍写着「全库无 focus mode」，与判定列冲突；现读已落地；`src/lib/store/use-focus-store.ts`、`src/components/editor/shell-shortcuts.tsx:22-27` |
-| G12 | 已对齐 | 2/2 | 查找替换（R15 独立快捷键分组 commands.shortcuts.in.find.and.replace、find.* 1 | ⚠ 无（只有 AI 的替换选区 AiBubbleMenu.tsx:230） | 台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在；`src/components/editor/extensions/find-replace.ts`、`src/components/editor/find-replace-panel.tsx`、`src/lib/store/use-find-replace-store.ts`、`e2e/find-replace-case.spec.ts` |
-| G13 | 已对齐 | 2/2 | 快捷键面板按 6 个上下文分组 +「查看所有快捷键」命令（R15/R16）；全表 104 项键位已解出，见 keyboard.m | ⚠ 已清（第 288 批复核＋补强）＝原判"无快捷键展示"整条作废：① ShortcutsPanel.tsx 早已按官方六组渲染（通 | 无需动作；抽检证据见台账行；`src/components/settings/ShortcutsPanel.tsx`、`src/components/search/CommandPalette.tsx:117` |
-| G14 | 部分落地 | 2/1 | 块移动与样式槽快捷键（keyboard.md 表 A/B：⌥↑↓↖↘ 移动块、⌘⌥1-9/0 样式槽、⇧⏎ 重命名、⌘D 副本、 | ⚠ 无任何 addKeyboardShortcuts（全库仅 font-size 一处 keymap） | 块移动／样式槽／副本／查找／专注／侧栏／日记／快捷键面板已接；RENAME（Shift+Enter）与 COMMENT（Ctrl+Shift+M）只在键表里有 id，没有处理分支；`src/components/editor/extensions/craft-keymap.ts:14-140`、`src/components/editor/shell-shortcuts.tsx:22-27`、`src/lib/editor/keymap.ts:206`、`src/lib/editor/keymap.ts:213` |
+| G11 | 已对齐 | 2/2 | 专注模式 + 退出快捷键（R17） | 现读（2026-10-31）更正：台账本地列仍写着「全库无 focus mode」，与判定列冲突；现读已落地。 | 台账本地列仍写着「全库无 focus mode」，与判定列冲突；现读已落地；`src/lib/store/use-focus-store.ts`、`src/components/editor/shell-shortcuts.tsx:22-27` |
+| G12 | 已对齐 | 2/2 | 查找替换（R15 独立快捷键分组 commands.shortcuts.in.find.and.replace、find.* 1 | 现读（2026-10-31）更正：台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在。 | 台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在；`src/components/editor/extensions/find-replace.ts`、`src/components/editor/find-replace-panel.tsx`、`src/lib/store/use-find-replace-store.ts`、`e2e/find-replace-case.spec.ts` |
+| G13 | 已对齐 | 2/2 | 快捷键面板按 6 个上下文分组 +「查看所有快捷键」命令（R15/R16）；全表 104 项键位已解出，见 keyboard.m | 现读（2026-10-31）更正：快捷键面板已按官方六组渲染且只印本地真实绑定；命令面板「查看所有快捷键」指向同一面板。 | 快捷键面板已按官方六组渲染且只印本地真实绑定；命令面板「查看所有快捷键」指向同一面板；`src/components/settings/ShortcutsPanel.tsx`、`src/components/search/CommandPalette.tsx` |
+| G14 | 部分落地 | 2/1 | 块移动与样式槽快捷键（keyboard.md 表 A/B：⌥↑↓↖↘ 移动块、⌘⌥1-9/0 样式槽、⇧⏎ 重命名、⌘D 副本、 | 现读（2026-10-31）更正：块移动／样式槽／副本／查找／专注／侧栏／日记／快捷键面板已接；RENAME（Shift+Ent | 块移动／样式槽／副本／查找／专注／侧栏／日记／快捷键面板已接；RENAME（Shift+Enter）与 COMMENT（Ctrl+Shift+M）只在键表里有 id，没有处理分支；`src/components/editor/extensions/craft-keymap.ts:14-140`、`src/components/editor/shell-shortcuts.tsx:22-27`、`src/lib/editor/keymap.ts:206`、`src/lib/editor/keymap.ts:213` |
 | G15 | 未动 | 2/3 | 任务 Deadline 与 Schedule 是两套独立属性（R4） | 只有 dueDate + remindAt；TaskSchedule 是四合一批量入参名，非独立概念（task.ts:205-2 | Task 模型没有独立 schedule 列；任务四档分组实际按 dueDate 切，不是官方的 Schedule 轴；`src/prisma/contract.prisma:323-340`、`src/lib/task/grouping.ts:5-32` |
 | G16 | 部分落地 | 2/1 | 折叠块「全部展开/收起」（R8） | 本行系陈旧记录：extensions/toggle-all.ts 的 setOpenOnAllToggles 遍历全文改 ope | 遍历展开/收起已落地；命令面板没有命令注册表，两档命令无处挂；`src/components/editor/extensions/toggle-all.ts`、`src/components/search/CommandPalette.tsx` |
 | G17 | 未动 | 2/2 | Mermaid 图表是插入片段之一（轴 C 四类 snippet） | 全库零匹配（含 package.json） | mermaid 只作为代码块语言名出现，没有渲染器；`src/lib/editor/code-languages.ts` |
@@ -83,7 +83,7 @@
 | G48 | 有意偏差 | 2/2 | URL 形态：/s/<空间名>--<uuid>/<route>、/f/<中文夹名>--<uuid>、/editor/d/<doc | 本地 /documents/[id]、/collections/[id]、/s/[token]、/p/[slug]，无空间段、无 | 不做（有意偏差），不进复刻 backlog |
 | G49 | 未动 | 2/2 | 官方 AI 代理工具面：blocks_get / insert_text / view_credits / web_search | 本地只有改写/续写/翻译/总结 + 生图（AiBubbleMenu.tsx:18-22），无联网工具、无上下文徽标、无额度显示 | AI 路由只有改写/续写/翻译/总结四个一次性补全，没有工具面、上下文徽标、额度；`src/app/api/ai/route.ts` |
 | G51 | 部分落地 | 2/2 | 排版层级是 title / subtitle / heading / strong / page / body 六档语义名（ap | 本地是 Heading 1–4 + 无 subtitle/strong/page 档（Editor.tsx:249-251），目 | 快捷键样式槽已按 title/subtitle/heading/strong/body 映射；格式面板仍是 H1–H4；`src/components/editor/extensions/craft-keymap.ts:22-37`、`src/components/editor/tabs/FormatTab.tsx` |
-| G52 | 部分落地 | 2/2 | 任务状态含 cancelled（与 completed 并列），日历默认只显示 pending，任务可按正则过滤内容；官方块嵌套 | ⚠ 本行四件事，第 190 批清掉前两件：① cancelled 档已落地＝轴在正文与列两处同源（正文 checked／cancel | cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账已判不做；`src/lib/editor/task-status.ts` |
+| G52 | 部分落地 | 2/2 | 任务状态含 cancelled（与 completed 并列），日历默认只显示 pending，任务可按正则过滤内容；官方块嵌套 | 现读（2026-10-31）更正：cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账 | cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账已判不做；`src/lib/editor/task-status.ts` |
 | G53 | 未动 | 2/3 | 块即树节点、页面 = 有子块的块，子树序列化成 markdown 字符串（pageContent），块带 children 计数 | 本地页面是独立 Document + parentId 自树，块内子页与文档子页两套概念并存；无"块子树 markdown 投影 | 补实现；先现读确认前置 |
 | G23 | 未动 | 2/2 | 集合公式函数 25 个（table.formula.*）、视图可互相转换（collections.views.turn.into | lib/collection/formula.ts 是子集；视图类型有 6 个组件但无「转换为」命令；CollectionPro | 补实现；先现读确认前置 |
 | G24 | 部分落地 | 2/2 | 设置分区真实生效（语言、集成、已发布内容等） | 部分落地（第 265 批复核）＝原判"每分区要么接后端要么移除入口"这条判据已按官方（未接的分区入口已移除）：src/lib/a | 补剩余部分；先按现读确认边界 |
@@ -132,20 +132,7 @@
 
 | G号 | 行 | 当前状态 | 冲突 | 本地列摘要 |
 | --- | --- | --- | --- | --- |
-| G11 | 1141 | 已对齐 | local-says-missing | 全库无 focus mode（focusStyle 只是文字底色 Mark） |
-| G12 | 1142 | 已对齐 | local-says-missing | 无（只有 AI 的替换选区 AiBubbleMenu.tsx:230） |
-| G13 | 1143 | 已对齐 | local-says-missing | 已清（第 288 批复核＋补强）＝原判"无快捷键展示"整条作废：① ShortcutsPanel.tsx 早已按官方六组 |
-| G14 | 1144 | 部分落地 | local-says-missing | 无任何 addKeyboardShortcuts（全库仅 font-size 一处 keymap） |
-| G52 | 1165 | 部分落地 | local-says-missing | 本行四件事，第 190 批清掉前两件：① cancelled 档已落地＝轴在正文与列两处同源（正文 checked／ca |
-| G90 | 1234 | 已对齐 | local-says-missing | 无 error boundary 文案 |
-| G164 | 1350 | 部分落地 | local-says-missing | 账户分区存在；头像与改名无失败句；dailySummary\|每日摘要、邮件入档零命中 ☆ 部分落地（第 282 批）＝改 |
-| G169 | 1362 | 已对齐 | local-says-missing | 无层级标签概念（TagsSection.tsx 是文档标签列表，无父子轴） |
-| G170 | 1363 | 已对齐 | local-says-missing | 无任何标签校验；# 直接当文本处理 |
-| G610 | 2215 | 部分落地 | local-says-missing | 部分落地（第 261 批）＝① lastViewedAt 列已补＝此前 DocumentListView/Sortabl |
-| G834 | 3080 | 部分落地 | local-says-missing | 本地表格无集合层命令（src/components/ui/ 无 table 组件，ls 已核对）；grep -rn "c |
-| G1007 | 3540 | 已对齐 | local-says-missing | 本地无对应物（无批量永久删除通路），故此未采项不影响复刻进度 ✎ 第 101 批作废＝本地已建该通路（src/compo |
-| G1380 | 4692 | 部分落地 | local-says-missing | 本地无对应面＝纯工具契约面＝不进 §〇 P0 |
-| G1444 | 4832 | 已对齐 | local-says-missing | 本地无此锚点＝ctx-move-to 这一 testid 在 src/ 里零命中（现算＝data-testid 名册里没 |
+
 
 ## 十、待重扫
 
@@ -159,25 +146,25 @@
 | 条数 | 节 |
 | --- | --- |
 | 76 | 三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第 |
-| 72 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
+| 70 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
 | 32 | 三点七、P2 追加（来自 dialogs.md 与 protoco |
 | 19 | P1（高频交互缺口，官方有明确入口且用户能逐项比对） |
 | 19 | 三点一〇三八、第 97 批〔★★★ G943 裁定＝连接器的按键不自 |
 | 18 | 三点一〇六十、第 110 批〔★★★ 代码块主题的作用域结案＝块级， |
 | 15 | 三点二八、第 23 批（静态：日期解析链 + 同步层 + 只存在于代码里 |
 | 13 | 三点四十、第 36 批（块线格式 + 任务 API 契约 + 日历分区， |
-| 13 | 三点五一、第 42 批（集合输入层 + 白板预览本体，model.md |
-| 12 | 三点一〇六一、第 111 批〔★★★ 两份主题名册互推结案＝同一份数 |
+| 12 | 三点五一、第 42 批（集合输入层 + 白板预览本体，model.md |
 | 12 | 三点一〇六二、第 112 批〔★★★ 代码块主题的"装配处"与"缺省 |
 | 11 | 三点六、P2 追加（来自 longtail.md 与 keyboa |
 | 11 | 三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe |
 | 11 | 三点五三、第 44 批（★ UIFocusStack 分发算法 + 键表 |
-| 10 | 三点八、AI 助手与接入中心追加（来自 assistant.md，静 |
-| 10 | 三点一五、团队治理与快捷键焦点栈追加（来自 team.md 与 k |
 | 10 | 三点八七、第 76 批（★★ 契约面穷尽：--help 逐条读满  |
 | 10 | 三点一〇二四、第 96 批·上半〔★★行为级仍未解锁（视口第 8 次 |
 | 10 | 三点一〇五九、第 109 批〔★★★ 代码块的写侧字段结案＝typ |
-| 10 | 本轮净新增的八条官方事实 |
+| 9 | 三点五、P2 追加（来自 modules.md 模块清单，静态证据） |
+| 9 | 三点八、AI 助手与接入中心追加（来自 assistant.md，静 |
+| 9 | 三点一三、设置与账户追加（来自 settings.md，静态证据 + |
+| 9 | 三点一〇五七、第 107 批〔★★★ [data-what*]  |
 
 ## 十一、不进复刻 backlog
 

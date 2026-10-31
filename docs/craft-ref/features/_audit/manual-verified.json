@@ -1,91 +1,147 @@
 {
   "verifiedAt": "2026-10-31",
-  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批（2026-10-31）现读 model.md §一之六 块模型族 8 条 + 信息面板/任务块/集合类型 2 条；第 3 批（2026-10-31）现读集合族 9 条（G283–G285／G287／G299／G394／G427／G439／G451）；第 4 批（2026-10-31）现读任务时间语义族 11 条（G252／G253／G256／G260／G261／G263／G332–G334／G404／G411）。",
+  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批现读 10 条（块模型族）、第 3 批 9 条（集合族）、第 4 批 11 条（任务时间语义）、第 5 批 176 条（其余全部 P1 gap/partial：bundle/桥契约记非交互面、付费面记有意偏差）。",
   "rows": {
     "G01": {
       "status": "aligned",
       "priority": "P0",
       "note": "人员提及四段已落地；台账第 122 批记录仍有效。",
-      "evidence": ["src/components/editor/extensions/mention-users.ts", "src/components/editor/extensions/mention-user-suggestion.tsx", "e2e/mention-user.spec.ts"]
+      "evidence": [
+        "src/components/editor/extensions/mention-users.ts",
+        "src/components/editor/extensions/mention-user-suggestion.tsx",
+        "e2e/mention-user.spec.ts"
+      ]
     },
     "G02": {
       "status": "aligned",
       "priority": "P0",
       "note": "站内提醒投递已闭环；邮件档仍缺，单独登记在 G1488。",
-      "evidence": ["src/lib/notification/materialize.ts:31", "src/app/api/v1/sync/route.ts:10", "e2e/reminder-delivery.spec.ts"]
+      "evidence": [
+        "src/lib/notification/materialize.ts:31",
+        "src/app/api/v1/sync/route.ts:10",
+        "e2e/reminder-delivery.spec.ts"
+      ]
     },
     "G03": {
       "status": "partial",
       "priority": "P0",
       "note": "三开关已落库；只有 notifyReminders 驱动投递，notifyComments／notifyDaily 在业务侧无消费点，每日电子邮件无发信通路。",
-      "evidence": ["src/components/settings/SettingsPanels.tsx:598-624", "src/actions/user/preferences.ts:25", "src/lib/notification/materialize.ts:31"]
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:598-624",
+        "src/actions/user/preferences.ts:25",
+        "src/lib/notification/materialize.ts:31"
+      ]
     },
     "G04": {
       "status": "partial",
       "priority": "P0",
       "note": "view／edit／仅协作者三档已落地；「请求批准」流在 src 零命中。",
-      "evidence": ["src/lib/share/permission.ts:8-27", "src/components/share/ShareDialog.tsx:57-62"]
+      "evidence": [
+        "src/lib/share/permission.ts:8-27",
+        "src/components/share/ShareDialog.tsx:57-62"
+      ]
     },
     "G05": {
       "status": "aligned",
       "priority": "P0",
-      "evidence": ["src/lib/share/resolve.ts:16", "src/actions/document/share.ts:229", "e2e/share-publish.spec.ts"]
+      "evidence": [
+        "src/lib/share/resolve.ts:16",
+        "src/actions/document/share.ts:229",
+        "e2e/share-publish.spec.ts"
+      ]
     },
     "G06": {
       "status": "aligned",
       "priority": "P0",
-      "evidence": ["src/actions/comment/comment.ts:27", "src/actions/comment/comment.ts:111", "src/actions/comment/comment.ts:131"]
+      "evidence": [
+        "src/actions/comment/comment.ts:27",
+        "src/actions/comment/comment.ts:111",
+        "src/actions/comment/comment.ts:131"
+      ]
     },
     "G07": {
       "status": "aligned",
       "priority": "P0",
-      "evidence": ["src/components/editor/drag-handle/block-actions.ts:124", "src/components/editor/drag-handle/block-actions.ts:132", "src/components/editor/drag-handle/DragHandle.tsx"]
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:124",
+        "src/components/editor/drag-handle/block-actions.ts:132",
+        "src/components/editor/drag-handle/DragHandle.tsx"
+      ]
     },
     "G08": {
       "status": "aligned",
       "priority": "P0",
-      "evidence": ["src/actions/document/delete.ts:11", "src/actions/document/delete.ts:27", "src/actions/document/delete.ts:43"]
+      "evidence": [
+        "src/actions/document/delete.ts:11",
+        "src/actions/document/delete.ts:27",
+        "src/actions/document/delete.ts:43"
+      ]
     },
     "G11": {
       "status": "aligned",
       "priority": "P1",
       "note": "台账本地列仍写着「全库无 focus mode」，与判定列冲突；现读已落地。",
-      "evidence": ["src/lib/store/use-focus-store.ts", "src/components/editor/shell-shortcuts.tsx:22-27"]
+      "evidence": [
+        "src/lib/store/use-focus-store.ts",
+        "src/components/editor/shell-shortcuts.tsx:22-27"
+      ]
     },
     "G12": {
       "status": "aligned",
       "priority": "P1",
       "note": "台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在。",
-      "evidence": ["src/components/editor/extensions/find-replace.ts", "src/components/editor/find-replace-panel.tsx", "src/lib/store/use-find-replace-store.ts", "e2e/find-replace-case.spec.ts"]
+      "evidence": [
+        "src/components/editor/extensions/find-replace.ts",
+        "src/components/editor/find-replace-panel.tsx",
+        "src/lib/store/use-find-replace-store.ts",
+        "e2e/find-replace-case.spec.ts"
+      ]
     },
     "G13": {
       "status": "aligned",
       "priority": "P1",
-      "evidence": ["src/components/settings/ShortcutsPanel.tsx", "src/components/search/CommandPalette.tsx:117"]
+      "evidence": [
+        "src/components/settings/ShortcutsPanel.tsx",
+        "src/components/search/CommandPalette.tsx"
+      ],
+      "note": "快捷键面板已按官方六组渲染且只印本地真实绑定；命令面板「查看所有快捷键」指向同一面板。"
     },
     "G14": {
       "status": "partial",
       "priority": "P1",
       "note": "块移动／样式槽／副本／查找／专注／侧栏／日记／快捷键面板已接；RENAME（Shift+Enter）与 COMMENT（Ctrl+Shift+M）只在键表里有 id，没有处理分支。",
-      "evidence": ["src/components/editor/extensions/craft-keymap.ts:14-140", "src/components/editor/shell-shortcuts.tsx:22-27", "src/lib/editor/keymap.ts:206", "src/lib/editor/keymap.ts:213"]
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:14-140",
+        "src/components/editor/shell-shortcuts.tsx:22-27",
+        "src/lib/editor/keymap.ts:206",
+        "src/lib/editor/keymap.ts:213"
+      ]
     },
     "G15": {
       "status": "gap",
       "priority": "P1",
       "note": "Task 模型没有独立 schedule 列；任务四档分组实际按 dueDate 切，不是官方的 Schedule 轴。",
-      "evidence": ["src/prisma/contract.prisma:323-340", "src/lib/task/grouping.ts:5-32"]
+      "evidence": [
+        "src/prisma/contract.prisma:323-340",
+        "src/lib/task/grouping.ts:5-32"
+      ]
     },
     "G16": {
       "status": "partial",
       "priority": "P1",
       "note": "遍历展开/收起已落地；命令面板没有命令注册表，两档命令无处挂。",
-      "evidence": ["src/components/editor/extensions/toggle-all.ts", "src/components/search/CommandPalette.tsx"]
+      "evidence": [
+        "src/components/editor/extensions/toggle-all.ts",
+        "src/components/search/CommandPalette.tsx"
+      ]
     },
     "G17": {
       "status": "gap",
       "priority": "P1",
       "note": "mermaid 只作为代码块语言名出现，没有渲染器。",
-      "evidence": ["src/lib/editor/code-languages.ts"]
+      "evidence": [
+        "src/lib/editor/code-languages.ts"
+      ]
     },
     "G18": {
       "status": "partial",
@@ -94,24 +150,33 @@
     "G19": {
       "status": "aligned",
       "priority": "P1",
-      "evidence": ["e2e/template-insert.spec.ts", "src/actions/document/template.ts:6"]
+      "evidence": [
+        "e2e/template-insert.spec.ts",
+        "src/actions/document/template.ts:6"
+      ]
     },
     "G20": {
       "status": "aligned",
       "priority": "P1",
-      "evidence": ["src/lib/daily/daily-notes.ts:73-86"]
+      "evidence": [
+        "src/lib/daily/daily-notes.ts:73-86"
+      ]
     },
     "G21": {
       "status": "gap",
       "priority": "P1",
       "note": "没有独立 /connections 路由；反向链接仍在信息页签。",
-      "evidence": ["src/components/editor/tabs/InfoTab.tsx"]
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx"
+      ]
     },
     "G22": {
       "status": "gap",
       "priority": "P1",
       "note": "只有 markdown/html/text/json 四种导出。",
-      "evidence": ["src/actions/document/export.ts:9"]
+      "evidence": [
+        "src/actions/document/export.ts:9"
+      ]
     },
     "G23": {
       "status": "gap",
@@ -124,19 +189,26 @@
     "G31": {
       "status": "aligned",
       "priority": "P2",
-      "evidence": ["src/lib/editor/divider-commands.ts"]
+      "evidence": [
+        "src/lib/editor/divider-commands.ts"
+      ]
     },
     "G32": {
       "status": "partial",
       "priority": "P1",
       "note": "块深链已可用，但 blockId 仍是跳到块时惰性盖章，不是官方那种恒有 data-block-id。",
-      "evidence": ["src/lib/editor/block-anchor.ts:111-145", "src/components/editor/extensions/block-id.ts"]
+      "evidence": [
+        "src/lib/editor/block-anchor.ts:111-145",
+        "src/components/editor/extensions/block-id.ts"
+      ]
     },
     "G33": {
       "status": "gap",
       "priority": "P1",
       "note": "命令面板只有本地已有动作与「查看所有快捷键」，没有 189 条 commands.* 注册表。",
-      "evidence": ["src/components/search/CommandPalette.tsx"]
+      "evidence": [
+        "src/components/search/CommandPalette.tsx"
+      ]
     },
     "G34": {
       "status": "gap",
@@ -174,35 +246,48 @@
       "status": "gap",
       "priority": "P1",
       "note": "只有文档协作 ws 与 tldraw sync，没有通知通道/RTC。",
-      "evidence": ["src/app/api/collab", "src/app/api/whiteboards"]
+      "evidence": [
+        "src/app/api/collab",
+        "src/app/api/whiteboards"
+      ]
     },
     "G43": {
       "status": "aligned",
       "priority": "P1",
-      "evidence": ["src/lib/calendar/timeline.ts"]
+      "evidence": [
+        "src/lib/calendar/timeline.ts"
+      ]
     },
     "G44": {
       "status": "gap",
       "priority": "P1",
       "note": "没有 MCP/API 接入中心路由。",
-      "evidence": ["src/app"]
+      "evidence": [
+        "src/app"
+      ]
     },
     "G45": {
       "status": "aligned",
       "priority": "P1",
       "note": "台账本地列仍写着「本地无该路由」，与判定列冲突；现读已落地。",
-      "evidence": ["e2e/inbox.spec.ts"]
+      "evidence": [
+        "e2e/inbox.spec.ts"
+      ]
     },
     "G46": {
       "status": "partial",
       "priority": "P1",
       "note": "四档分组已落地，但「今天/即将进行」按 dueDate 切，不是官方的 schedule 轴。",
-      "evidence": ["src/lib/task/grouping.ts:5-32"]
+      "evidence": [
+        "src/lib/task/grouping.ts:5-32"
+      ]
     },
     "G47": {
       "status": "aligned",
       "priority": "P1",
-      "evidence": ["src/lib/browse/folder-counts.test.ts"]
+      "evidence": [
+        "src/lib/browse/folder-counts.test.ts"
+      ]
     },
     "G48": {
       "status": "deliberate",
@@ -212,7 +297,9 @@
       "status": "gap",
       "priority": "P1",
       "note": "AI 路由只有改写/续写/翻译/总结四个一次性补全，没有工具面、上下文徽标、额度。",
-      "evidence": ["src/app/api/ai/route.ts"]
+      "evidence": [
+        "src/app/api/ai/route.ts"
+      ]
     },
     "G50": {
       "status": "gap",
@@ -222,13 +309,18 @@
       "status": "partial",
       "priority": "P1",
       "note": "快捷键样式槽已按 title/subtitle/heading/strong/body 映射；格式面板仍是 H1–H4。",
-      "evidence": ["src/components/editor/extensions/craft-keymap.ts:22-37", "src/components/editor/tabs/FormatTab.tsx"]
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:22-37",
+        "src/components/editor/tabs/FormatTab.tsx"
+      ]
     },
     "G52": {
       "status": "partial",
       "priority": "P1",
       "note": "cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账已判不做。",
-      "evidence": ["src/lib/editor/task-status.ts"]
+      "evidence": [
+        "src/lib/editor/task-status.ts"
+      ]
     },
     "G53": {
       "status": "gap",
@@ -238,181 +330,1665 @@
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 2 批）：本地无 9 值 textStyle 枚举，编辑器用 Heading 1–4；语义名只有 title/subtitle/heading/strong/body/caption 六个标签（semantic-levels.ts:7-24），PageRegular/PageCard 只在 page-tree.ts 的 isPage 判据里出现，Note 档零命中。",
-      "evidence": ["src/lib/editor/semantic-levels.ts:7-24", "src/lib/document/page-tree.ts:72-78"]
+      "evidence": [
+        "src/lib/editor/semantic-levels.ts:7-24",
+        "src/lib/document/page-tree.ts:72-78"
+      ]
     },
     "G275": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 2 批）：无 textStyle→标签的字面量表。导出走 node.type 的 switch（index.ts:88-160），divider 有 pageSeparator 但那是分隔符样式名、不是 textStyle→hr 的导出映射；toggle→h4、Drawing/Whiteboard→div 无对应。",
-      "evidence": ["src/lib/document-codec/index.ts:88-160", "src/lib/editor/divider-styles.ts:11"]
+      "evidence": [
+        "src/lib/document-codec/index.ts:88-160",
+        "src/lib/editor/divider-styles.ts:11"
+      ]
     },
     "G276": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 2 批）：`listStyle` 概念全库零命中，没有「listStyle 压过 textStyle」的块类型优先级链；列表与标题在 schema 里是互斥节点，不存在二者并存的判定。",
-      "evidence": ["src/lib/editor/format-presence.ts:92", "src/lib/search/extract.ts:40"]
+      "evidence": [
+        "src/lib/editor/format-presence.ts:92",
+        "src/lib/search/extract.ts:40"
+      ]
     },
     "G277": {
       "status": "aligned",
       "priority": "P1",
       "note": "现读（第 2 批）改判：本地已实现官方两条任一判据（textStyle ∈ {PageRegular,PageCard} **或** content.length>0），空页面不再被误判。台账「只用有无子块单条判据」是陈旧读数。",
-      "evidence": ["src/lib/document/page-tree.ts:72-78", "src/lib/document/page-tree.test.ts"]
+      "evidence": [
+        "src/lib/document/page-tree.ts:72-78",
+        "src/lib/document/page-tree.test.ts"
+      ]
     },
     "G278": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 2 批）：无「降级时子块平铺上提」分支。setTextStyle/降级路径在 format-commands.ts 零命中；列表缩进只有 liftListItem/sinkListItem（改列表层级），不是把 subblocks 整批移到自身之后。",
-      "evidence": ["src/lib/editor/format-commands.ts:108-109"]
+      "evidence": [
+        "src/lib/editor/format-commands.ts:108-109"
+      ]
     },
     "G279": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 2 批）：block-move.ts 移动的是「含光标的那一个顶层块」（topLevelIndexOf），无 extendWithIndentChildren／firstLastSelectedIdxInParent／getMinIndentOfSelection，方向不带首/尾锚语义。",
-      "evidence": ["src/lib/editor/block-move.ts:15-78", "src/components/editor/extensions/craft-keymap.ts:42-47"]
+      "evidence": [
+        "src/lib/editor/block-move.ts:15-78",
+        "src/components/editor/extensions/craft-keymap.ts:42-47"
+      ]
     },
     "G280": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 2 批）：落点只有 index 一种（buildBlockMove 用 index±1/0/childCount-1），无 afterAnchor/beforeAnchor 的 6 种寻址、无 *Visible 语义 ⇒ 折叠/隐藏块边界处的落点不会越过。",
-      "evidence": ["src/lib/editor/block-move.ts:36-49"]
+      "evidence": [
+        "src/lib/editor/block-move.ts:36-49"
+      ]
     },
     "G357": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 2 批）：任务块只有一枚提醒 pill（reminder-pill.ts 的 decoration），没有官方那三枚并列时间图标（日历/旗子/提醒）作为三套时间语义的行内入口。",
-      "evidence": ["src/components/editor/extensions/reminder-pill.ts:125-157", "src/components/editor/Editor.tsx:54"]
+      "evidence": [
+        "src/components/editor/extensions/reminder-pill.ts:125-157",
+        "src/components/editor/Editor.tsx:54"
+      ]
     },
     "G359": {
       "status": "aligned",
       "priority": "P1",
       "note": "现读（第 2 批）改判：本地 InfoTab 已有完整结构——分段「页面信息／动作」、属性三条（已创建/已更新/作者）、动作含 展示/移动/创建副本/收藏文档/查看备份/删除（红色）、位置段、底部「统计 · 这一页」。台账「本地无文档级信息面板」是陈旧读数。",
-      "evidence": ["src/components/editor/tabs/InfoTab.tsx:346-378", "src/components/editor/tabs/InfoTab.tsx:615-707"]
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:346-378",
+        "src/components/editor/tabs/InfoTab.tsx:615-707"
+      ]
     },
     "G393": {
       "status": "partial",
       "priority": "P1",
       "note": "现读（第 2 批）：本地列类型覆盖官方 13 值里的 11 个（text/number/checkbox/date/url/person/select/multi_select/email/phone/relation），缺 media（本地叫 file）与 linkToBlock；另多出 3 个非官方类型（formula/created_at/updated_at）。命名映射已在 filter-operators.ts:1-10 声明，非台账所说「未对齐」。",
-      "evidence": ["src/components/collection/AddPropertyMenu.tsx:20-36", "src/lib/collection/filter-operators.ts:1-22"]
+      "evidence": [
+        "src/components/collection/AddPropertyMenu.tsx:20-36",
+        "src/lib/collection/filter-operators.ts:1-22"
+      ]
     },
     "G283": {
       "status": "partial",
       "priority": "P1",
       "note": "现读（第 3 批）：排序/分组守卫已在（canReorder 要求 sortCount===0 && !grouped，TableView.tsx:125 调用），但**筛选不在判据里**——代码注释明确写了筛选只减少行数、仍允许拖拽并按全集重排（item-reorder.ts:41-51）。官方文案是「已筛选、排序或分组的集合不支持拖放操作」⇒ 差在筛选一路，另两路已对齐。",
-      "evidence": ["src/lib/collection/item-reorder.ts:41-51", "src/app/(app)/collections/[id]/TableView.tsx:124-148"]
+      "evidence": [
+        "src/lib/collection/item-reorder.ts:41-51",
+        "src/app/(app)/collections/[id]/TableView.tsx:124-148"
+      ]
     },
     "G284": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 3 批）更正本地列：本地**没有删组动作**（全库零命中 deleteGroup／删除分组），GroupMenu 只有「取消分组」＝改 groupBy 配置，从不写任何行值、也不会删记录。台账「删分组会连带删记录」是陈旧读数；真缺口是官方那套「删组＝清该组全部项目的该字段值」没有实现。",
-      "evidence": ["src/components/collection/GroupMenu.tsx:24-33", "src/components/collection/GroupMenu.tsx:65-74"]
+      "evidence": [
+        "src/components/collection/GroupMenu.tsx:24-33",
+        "src/components/collection/GroupMenu.tsx:65-74"
+      ]
     },
     "G285": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 3 批）：关联字段只有单向目标（AddPropertyMenu 的 relation 只存 collectionId），RelationCell 只读本行值；全库无 twoWay／related.field／反向关联字段注入 ⇒ 官方「双向」缺失。",
-      "evidence": ["src/components/collection/AddPropertyMenu.tsx:32", "src/components/collection/AddPropertyMenu.tsx:62", "src/components/collection/PropertyCell.tsx:570-580"]
+      "evidence": [
+        "src/components/collection/AddPropertyMenu.tsx:32",
+        "src/components/collection/AddPropertyMenu.tsx:62",
+        "src/components/collection/PropertyCell.tsx:570-580"
+      ]
     },
     "G287": {
       "status": "aligned",
       "priority": "P1",
       "note": "现读（第 3 批）改判：本地公式已支持方向性区域引用——FormulaGrid 带 above/below/left/right 四向数组（formula.ts:21-26），求值器按当前单元格取邻域，单测直接覆盖四向（formula.test.ts:92）。台账「只支持绝对引用」是旧读数（该能力随复刻任务 G23 落地）。",
-      "evidence": ["src/lib/collection/formula.ts:21-26", "src/lib/collection/formula.test.ts:92-102"]
+      "evidence": [
+        "src/lib/collection/formula.ts:21-26",
+        "src/lib/collection/formula.test.ts:92-102"
+      ]
     },
     "G299": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 3 批）更正本地列：本地**不能改字段类型**——updateProperty 的入参只有 name/config/isVisible/width、没有 type（properties.ts:41-58），FieldMenu 只有改名/隐藏/删除。台账「改类型直接清空值」是陈旧读数；真缺口是官方的类型变更 + 尽力转换整条通路都没有。",
-      "evidence": ["src/actions/collection/properties.ts:41-58", "src/components/collection/FieldMenu.tsx:29-32"]
+      "evidence": [
+        "src/actions/collection/properties.ts:41-58",
+        "src/components/collection/FieldMenu.tsx:29-32"
+      ]
     },
     "G394": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 3 批）：确认值表示层不同——列值落 CollectionValue.value Json?，日期以字符串存入、读侧 new Date(value) 转（PropertyCell.tsx:493），全库无 instanceof Date 校验。照搬官方校验器会把本地整列判无效，故不能只补校验、要连表示层一起定。",
-      "evidence": ["src/prisma/contract.prisma:204-220", "src/components/collection/PropertyCell.tsx:489-500"]
+      "evidence": [
+        "src/prisma/contract.prisma:204-220",
+        "src/components/collection/PropertyCell.tsx:489-500"
+      ]
     },
     "G427": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 3 批）：确认基数不同——CollectionItem.collectionId 是单值外键（contract.prisma:186-190），无多集合归属字段，也无官方 objectData.schemas 那样的数组。表达不出一物多集合。",
-      "evidence": ["src/prisma/contract.prisma:186-200"]
+      "evidence": [
+        "src/prisma/contract.prisma:186-200"
+      ]
     },
     "G439": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 3 批）：确认单元格不可寻址——collection_values 只有 itemId/propertyId，无 blockId 列；可锚定块只有 paragraph/heading（anchors.ts:5）⇒ 单元格既不能深链、也不能被公式单独寻址。台账读数仍准确。",
-      "evidence": ["src/prisma/contract.prisma:204-220", "src/lib/search/anchors.ts:1-9"]
+      "evidence": [
+        "src/prisma/contract.prisma:204-220",
+        "src/lib/search/anchors.ts:1-9"
+      ]
     },
     "G451": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 3 批）：确认无类型判别位——CollectionValue.value 是裸 Json?，读侧靠 PropertyCell 的 parseValue 硬转（数字/布尔/数组各判一次），没有官方 {type,theme,value} 这样的判别对象 ⇒ 空值读不出是哪种类型的空。",
-      "evidence": ["src/prisma/contract.prisma:204-220", "src/components/collection/PropertyCell.tsx:81-91"]
+      "evidence": [
+        "src/prisma/contract.prisma:204-220",
+        "src/components/collection/PropertyCell.tsx:81-91"
+      ]
     },
     "G252": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 4 批）：提醒只落在 taskItem 上——taskItemTarget 找不到 taskItem 节点就返回 null（block-actions.ts:283-298），普通段落块无提醒入口。官方文案本身已在（reminder-reschedule.ts:11-12 逐字「此区块有一个即将到期的提醒。」），但用途是任务改期确认，不是块级提醒；区块深链提醒缺失。",
-      "evidence": ["src/components/editor/drag-handle/block-actions.ts:283-298", "src/lib/task/reminder-reschedule.ts:11-17"]
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:283-298",
+        "src/lib/task/reminder-reschedule.ts:11-17"
+      ]
     },
     "G253": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 4 批）更正本地列：字段语义**已分离**（D1 已落 scheduleDate/dueDate 两列，tasks/TasksView 各自读写），不是台账写的「合并成一个 dueDate」。真缺口是**命令面全空**——official-catalog 里 schedule 与 deadline 两组 id 都在（且官方不对称本身已被记录：schedule 有 `commands.task.schedule.x` 动态短语、deadline 没有 .x），但 registry 两组都未接入。",
-      "evidence": ["src/lib/commands/official-catalog.ts:820-882", "src/actions/task/task.ts:58-60", "src/app/(app)/tasks/TasksView.tsx:537-550"]
+      "evidence": [
+        "src/lib/commands/official-catalog.ts:820-882",
+        "src/actions/task/task.ts:58-60",
+        "src/app/(app)/tasks/TasksView.tsx:537-550"
+      ]
     },
     "G256": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 4 批）：重复规则只有 freq/days/byMonthDay/until 四字段（recurrence.ts:3-11），无 flexible/fixed 锚点、无切换器 ⇒ 只有「从上次完成起算」一条路径。",
-      "evidence": ["src/lib/task/recurrence.ts:1-40"]
+      "evidence": [
+        "src/lib/task/recurrence.ts:1-40"
+      ]
     },
     "G260": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 4 批）：无序列批量操作——完成/取消/删除/移动剩余内容四条与批量改期在 src 零命中；reminder 的 reschedule 是单条提醒改期（reminder-reschedule.ts），不是序列批量。",
-      "evidence": ["src/lib/task/reminder-reschedule.ts:23-28", "src/app/(app)/tasks/TasksView.tsx:520-560"]
+      "evidence": [
+        "src/lib/task/reminder-reschedule.ts:23-28",
+        "src/app/(app)/tasks/TasksView.tsx:520-560"
+      ]
     },
     "G261": {
       "status": "aligned",
       "priority": "P1",
       "note": "现读（第 4 批）改判：三态与双时间戳都已落地——Task.status 有 cancelled 与 cancelledAt、completedAt 并列（contract.prisma:337-340），task-status.ts 按官方 tn 映射（Unchecked→todo/Checked→completed/Canceled→cancelled，含 Canceled→Unchecked 反直觉分支）；命令面 SET_CANCELLED 两族键已接。台账「只有 checked/unchecked 二态」是 G52 落地前的旧读数。",
-      "evidence": ["src/prisma/contract.prisma:337-340", "src/lib/editor/task-status.ts:1-35"]
+      "evidence": [
+        "src/prisma/contract.prisma:337-340",
+        "src/lib/editor/task-status.ts:1-35"
+      ]
     },
     "G263": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 4 批）：任务屏无「固定文档」区（pin/unpin/pin.existing/tap.to.pin 全组零命中），也无子任务层级与「带任务的文档」分组；只有四档时间分组（grouping.ts）。",
-      "evidence": ["src/lib/task/grouping.ts:5-32", "src/app/(app)/tasks/TasksView.tsx:180-190"]
+      "evidence": [
+        "src/lib/task/grouping.ts:5-32",
+        "src/app/(app)/tasks/TasksView.tsx:180-190"
+      ]
     },
     "G332": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 4 批）：无自然语言日期解析——依赖里没有 chrono（package.json 零命中），tasks 面只有原生 date/datetime-local 输入 + fromDayInput/fromMomentInput 两个 ISO 转换器，无严格格式档、无 locale 路由、无 GB 分支。",
-      "evidence": ["src/app/(app)/tasks/TasksView.tsx:421-432", "package.json"]
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:421-432",
+        "package.json"
+      ]
     },
     "G333": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 4 批）更正本地列：解析器本身不存在（见 G332），所以不是「无条件写入解析结果」；清空会写回 null、日期也做了本地零点归一（fromDayInput 用 `T00:00:00`）。**真差异只剩采纳守卫**——过去的日期照收，没有「只收晚于现在或今天」的拦截。",
-      "evidence": ["src/app/(app)/tasks/TasksView.tsx:421-429"]
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:421-429"
+      ]
     },
     "G334": {
       "status": "partial",
       "priority": "P1",
       "note": "现读（第 4 批）更正本地列：两个字段与两个独立输入已存在（D1：计划日期 / 截止日期各一格，TasksView.tsx:537-550），不是「只写一个字段」。差的是官方快捷菜单那层：`schedule_<date>` / `deadline_<date>` 两个并列候选、各自 icon 与埋点、必须显式选一族——本地是展开面板里的两格原生日期输入。",
-      "evidence": ["src/app/(app)/tasks/TasksView.tsx:537-550", "src/lib/commands/official-catalog.ts:820-882"]
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:537-550",
+        "src/lib/commands/official-catalog.ts:820-882"
+      ]
     },
     "G404": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 4 批）：RecurrenceRule 无 interval 字段（recurrence.ts:3-11），解析器还会丢弃未知字段 ⇒ 只能每 1 天/周/月/年，官方的「每 N 单位」与「往小选时重置为 1」保护都缺。台账读数仍准确。",
-      "evidence": ["src/lib/task/recurrence.ts:3-11"]
+      "evidence": [
+        "src/lib/task/recurrence.ts:3-11"
+      ]
     },
     "G411": {
       "status": "gap",
       "priority": "P1",
       "note": "现读（第 4 批）：提醒时刻是原生 `<Input type=\"datetime-local\">`（TasksView.tsx:551-558），不是官方那条 96 档/15 分钟步长的全天菜单；无「不提醒」行的条件渲染，remindAt 存绝对 ISO 时间戳。台账读数仍准确（只是行号从 page.tsx 漂到 TasksView.tsx）。",
-      "evidence": ["src/app/(app)/tasks/TasksView.tsx:551-558"]
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:551-558"
+      ]
+    },
+    "G1476": {
+      "status": "aligned",
+      "note": "移动断点钩子已有：useIsMobile 用 747px 查询驱动移动壳，另有 1023 紧凑档给侧栏。",
+      "evidence": [
+        "src/lib/use-is-mobile.ts:6",
+        "src/lib/use-is-mobile.ts:45"
+      ]
+    },
+    "G1477": {
+      "status": "aligned",
+      "note": "KeyBinding.win 支持显式 null＝官方 QM 恒假匹配器；SET_CANCELLED_SLASH 的 win:null，chordFor 返回空，Windows 不绑不显示。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:193",
+        "src/lib/editor/keymap.ts:60"
+      ]
+    },
+    "G1478": {
+      "status": "gap",
+      "note": "无焦点栈／上下文夺键层：ShellShortcuts 只处理 4 个全局键，助手与表格行键未注册，官方那套撞键裁定无从对应。",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:21"
+      ]
+    },
+    "G1481": {
+      "status": "nonaction",
+      "note": "官方 spaces 离线重放折叠器属 bundle 内部；本地是 sync-core 表级队列，非屏幕交互面。",
+      "evidence": [
+        "src/lib/sync-core/queue.ts:31"
+      ]
+    },
+    "G1482": {
+      "status": "nonaction",
+      "note": "官方任务 22-case change 分派器属 bundle 内部；本地任务走 server action 直写 Prisma，无此分派层。",
+      "evidence": [
+        "src/actions/task/task.ts:163"
+      ]
+    },
+    "G1483": {
+      "status": "nonaction",
+      "note": "官方插件外观归一化器属 bundle 内部；本地无 pluginConfigurationData，卡片块只有自有 attrs。",
+      "evidence": [
+        "src/components/editor/extensions/card-block.tsx:13"
+      ]
+    },
+    "G117": {
+      "status": "deliberate",
+      "note": "仅助手设置留「查看 AI 额度」文案键，无请求数/积分计量与触顶拦截；AI 额度按付费口径不做。",
+      "evidence": [
+        "src/lib/app/assistant-settings.ts:21"
+      ]
+    },
+    "G122": {
+      "status": "partial",
+      "note": "/connections 有连接 CRUD（kind/name/endpoint/token，token 只回 hasToken）；缺权限×保护×作用域三轴、密钥一次性显示与上限。",
+      "evidence": [
+        "src/app/(app)/connections/ConnectionsPanel.tsx:76",
+        "src/actions/connection/connection.ts:43",
+        "src/prisma/contract.prisma:476"
+      ]
+    },
+    "G124": {
+      "status": "deliberate",
+      "note": "只有 lib/plans 的配额文案与上限常量，无按空间区块计数与 Free/Plus 门禁；套餐配额不做。",
+      "evidence": [
+        "src/lib/plans/quotas.ts:28",
+        "src/lib/plans/quotas.ts:38"
+      ]
+    },
+    "G131": {
+      "status": "partial",
+      "note": "文档级角色 owner/editor/commenter/viewer 已落；缺官方 5 档访问级别与空间级角色。",
+      "evidence": [
+        "src/lib/authz/resource.ts:1",
+        "src/lib/share/permission.ts:11",
+        "src/prisma/contract.prisma:461"
+      ]
+    },
+    "G137": {
+      "status": "partial",
+      "note": "评论/提及/回复三类通知与铃铛、单向已解决已落；缺已读/未读可逆、全部已读、删除确认。",
+      "evidence": [
+        "src/lib/notification/comment-notifications.ts:37",
+        "src/components/notification/NotificationBell.tsx:71",
+        "src/actions/notification/notification.ts:25"
+      ]
+    },
+    "G141": {
+      "status": "partial",
+      "note": "13 项发布设置已落 7 项（作者/标题/目录/演示/水印/SEO/口令）；缺评论级别、对象链接、模板副本、邮箱访问、默认域名等 6 项。",
+      "evidence": [
+        "src/prisma/contract.prisma:387",
+        "src/prisma/contract.prisma:396"
+      ]
+    },
+    "G166": {
+      "status": "gap",
+      "note": "设置是单级全局，通知面板已删掉按空间覆盖的假入口；无个人→团队→空间三层作用域。",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:631"
+      ]
+    },
+    "G181": {
+      "status": "deliberate",
+      "note": "仅「我的订阅」占位（Free），无到期态与恢复流程；订阅生命周期按付费口径不做。",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:555",
+        "src/lib/app/settings-sections.ts:44"
+      ]
+    },
+    "G183": {
+      "status": "partial",
+      "note": "有域名四态状态机与 DNS 文案常量（仅测试消费），无域名设置面板、DNS 记录表与落库。",
+      "evidence": [
+        "src/lib/share/domain-lifecycle.ts:24",
+        "src/lib/share/domain-lifecycle.ts:30"
+      ]
+    },
+    "G185": {
+      "status": "deliberate",
+      "note": "无 business/family/team 实体与三条创建分支，设置里只有无处理器的「创建新团队」；团队付费管理不做。",
+      "evidence": [
+        "src/lib/app/settings-sections.ts:45",
+        "src/components/settings/SettingsPanels.tsx:566"
+      ]
+    },
+    "G186": {
+      "status": "deliberate",
+      "note": "无发票表、循环折扣与账单邮箱；订阅面板只有 Free 占位，账单按付费口径不做。",
+      "evidence": [
+        "src/lib/app/settings-sections.ts:44",
+        "src/components/settings/SettingsPanels.tsx:555"
+      ]
+    },
+    "G201": {
+      "status": "aligned",
+      "note": "「统计 · 这一页」五项齐备（字/字符/不含空格/区块/阅读时间），另有选择与完整文档范围。",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:515",
+        "src/lib/document/page-stats.ts:70"
+      ]
+    },
+    "G211": {
+      "status": "partial",
+      "note": "撤销用 TipTap/Yjs 栈、焦点外不触发；但代码块与公式不是独立内嵌编辑器，缺官方那层隔离。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342",
+        "src/components/editor/extensions/code-block-view.tsx:5",
+        "src/components/editor/extensions/math-block-view.tsx:23"
+      ]
+    },
+    "G212": {
+      "status": "partial",
+      "note": "指标派生、区块按 doc.childCount（空块计入）已对齐；阅读时间固定「N 分钟」，官方 V19 是 0s 秒级格式。",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:520",
+        "src/lib/document/page-stats.ts:39"
+      ]
+    },
+    "G226": {
+      "status": "deliberate",
+      "note": "已发布内容面板是静态样例，无 analytics 路由；官方分析屏是 Plus 付费墙，按付费口径不做。",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:291",
+        "src/lib/app/settings-sections.ts:36"
+      ]
+    },
+    "G227": {
+      "status": "gap",
+      "note": "登录只有 NextAuth Credentials，无第三方 IdP、授权页或「Sign in with Craft」弹窗完成态。",
+      "evidence": [
+        "src/lib/auth/config.ts:7"
+      ]
+    },
+    "G228": {
+      "status": "gap",
+      "note": "权限只到文档级 DocumentMember，无团队空间访客概念与「访客可写全空间」后果警告。",
+      "evidence": [
+        "src/lib/authz/resource.ts:1",
+        "src/lib/authz/document-access.ts:14"
+      ]
+    },
+    "G270": {
+      "status": "gap",
+      "note": "任务视图无拖拽排序也无 reorder action；不存在半区插入、同组抑制与指示线判定。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx",
+        "src/actions/task/task.ts:163"
+      ]
+    },
+    "G282": {
+      "status": "partial",
+      "note": "已有分隔线三档、封面开关、顶层块复制；缺段落间距、页面样式预设、对象列表插入；undo/redo 是客户端栈非协议 action。",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:197",
+        "src/components/editor/tabs/StyleTab.tsx:74",
+        "src/components/editor/extensions/craft-keymap.ts:60"
+      ]
+    },
+    "G313": {
+      "status": "deliberate",
+      "note": "无免费额度 10+2×周 或区块上限模型；配额按付费口径不做。",
+      "evidence": [
+        "src/lib/plans/quotas.ts:8",
+        "src/lib/plans/quotas.ts:23"
+      ]
+    },
+    "G315": {
+      "status": "deliberate",
+      "note": "无团队升级 v2 流程，设置里只有「创建新团队」空按钮；团队付费管理不做。",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:566",
+        "src/lib/app/settings-sections.ts:45"
+      ]
+    },
+    "G320": {
+      "status": "partial",
+      "note": "已录 17 种内嵌标签词表与 strip 辅助，但无按标签渲染富文本的消费方。",
+      "evidence": [
+        "src/lib/i18n/embedded-tags.ts:8",
+        "src/lib/i18n/embedded-tags.ts:68"
+      ]
+    },
+    "G321": {
+      "status": "partial",
+      "note": "六种插值约定已能识别，实际只实现 [0] 位置填充，{{name}}/{0}/<0> 无渲染。",
+      "evidence": [
+        "src/lib/i18n/interpolation.ts:25",
+        "src/lib/i18n/interpolation.ts:53"
+      ]
+    },
+    "G324": {
+      "status": "gap",
+      "note": "只有文档级角色，无空间级 owner/member 两档与访客第四轴。",
+      "evidence": [
+        "src/lib/authz/resource.ts:1",
+        "src/lib/authz/document-access.ts:27"
+      ]
+    },
+    "G328": {
+      "status": "gap",
+      "note": "Prisma 无 Space 模型、actions 无 space 目录，故无空间删除路径与「永久删除不进回收站」语义。",
+      "evidence": [
+        "src/prisma/contract.prisma",
+        "src/actions/document/delete.ts:41"
+      ]
+    },
+    "G339": {
+      "status": "partial",
+      "note": "同步有 synced/syncing/offline/degraded/error 五档，offline 与实时断线分开；缺 loading_cache/connecting/unknown。",
+      "evidence": [
+        "src/lib/sync-core/types.ts:27",
+        "src/components/sync/SyncStatusIndicator.tsx:14"
+      ]
+    },
+    "G341": {
+      "status": "gap",
+      "note": "无冲突事件与冲突日志：陈旧写入被 LWW 拒只有 console.warn 与一次性 toast，无 conflict 分类。",
+      "evidence": [
+        "src/lib/sync/lww.ts:3",
+        "src/components/sync/SyncBoot.tsx:45"
+      ]
+    },
+    "G342": {
+      "status": "partial",
+      "note": "同步分两路：各表行级 LWW + 整篇 Yjs 正文；缺 Blocks/Indices/Sub Tier 分层与 patch 双轨。",
+      "evidence": [
+        "src/lib/sync/tables.ts:33",
+        "src/lib/collaboration/use-collab-session.ts:61"
+      ]
+    },
+    "G344": {
+      "status": "gap",
+      "note": "搜索是单个 server action searchAll(query,offset)，无 terms 数组、scope 与四端点，也不做高亮。",
+      "evidence": [
+        "src/actions/document/search.ts:70",
+        "src/components/search/CommandPalette.tsx:127"
+      ]
+    },
+    "G352": {
+      "status": "gap",
+      "note": "单查询串、单响应 {documents,blocks,rows}；无 .items/.results 字段分野与 404 NotFound 分支。",
+      "evidence": [
+        "src/actions/document/search.ts:20",
+        "src/actions/document/search.ts:70"
+      ]
+    },
+    "G361": {
+      "status": "gap",
+      "note": "无日期弹层与「日期」输入框：任务行只有原生 date/datetime-local，全仓无自然语言日期解析器。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:538"
+      ]
+    },
+    "G362": {
+      "status": "gap",
+      "note": "提醒/重复是任务面板独立字段，可脱离日期存在；无网格下方「提醒我…」+ 与「重复…」› 两条子行。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:554",
+        "src/app/(app)/tasks/TasksView.tsx:560"
+      ]
+    },
+    "G365": {
+      "status": "gap",
+      "note": "无自然语言解析，因此没有「日历跳转 + 深色实心格」反馈；日期只能从原生选择器取。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:538",
+        "src/app/(app)/calendar/page.tsx:172"
+      ]
+    },
+    "G369": {
+      "status": "gap",
+      "note": "无解析器也无过去日期守卫：date 输入接受任意日期，过去日期只标 overdue 仍可保存。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:423",
+        "src/lib/task/grouping.ts:41"
+      ]
+    },
+    "G373": {
+      "status": "gap",
+      "note": "「提醒我…」仍是相对偏移预设；任务面板只有 datetime-local 直改，无日期+时间设定态与默认 17:00。",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:52",
+        "src/lib/task/remind-presets.ts:27"
+      ]
+    },
+    "G374": {
+      "status": "partial",
+      "note": "只有每天/每周/每月/每年四条静态预设；缺工作日/自定义两项，也无带已提交日期的动态文案。",
+      "evidence": [
+        "src/lib/task/recurrence.ts:64",
+        "src/app/(app)/tasks/TasksView.tsx:567"
+      ]
+    },
+    "G381": {
+      "status": "partial",
+      "note": "撤销已落服务端，但粒度由 UndoManager 500ms 窗口合并，无「换行不与上段合并」的结构边界。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342"
+      ]
+    },
+    "G382": {
+      "status": "aligned",
+      "note": "协作态撤销走 Yjs UndoManager，undo 产生普通 Yjs 更新经 Hocuspocus 落库，重开仍是撤销后内容。",
+      "evidence": [
+        "src/collab/persist.mjs:110",
+        "src/components/editor/Editor.tsx:515",
+        "src/components/editor/DocumentEditor.tsx:418"
+      ]
+    },
+    "G387": {
+      "status": "partial",
+      "note": "结果只有文档/区块/集合行三类加「创建」一行；缺 date/mention/folder/space 与 loadingMore 态。",
+      "evidence": [
+        "src/actions/document/search.ts:11",
+        "src/components/search/CommandPalette.tsx:195"
+      ]
+    },
+    "G400": {
+      "status": "gap",
+      "note": "整棵 TipTap JSON 存 Document.content 单列，无 pluginData/objectData/blob 容器与位置不变量校验。",
+      "evidence": [
+        "src/prisma/contract.prisma:67",
+        "src/collab/persist.mjs:145"
+      ]
+    },
+    "G401": {
+      "status": "gap",
+      "note": "无 V5/VE 挂钟编码：日期输入存本地午夜瞬时，跨时区会漂日；全仓无 getTimezoneOffset 换算。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:423",
+        "src/prisma/contract.prisma:331"
+      ]
+    },
+    "G402": {
+      "status": "partial",
+      "note": "只落两种口径：日期输入存本地午夜瞬时、completedAt 存真实瞬时；无 repeat.startDate 与 dateOffset。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:423",
+        "src/actions/task/task.ts:243",
+        "src/lib/task/recurrence.ts:3"
+      ]
+    },
+    "G408": {
+      "status": "gap",
+      "note": "无子任务关系：Task 只有 documentId/blockId，全仓无 subTask/rootTaskBlockId，也没有返回子任务的端点。",
+      "evidence": [
+        "src/prisma/contract.prisma:324",
+        "src/prisma/contract.prisma:327"
+      ]
+    },
+    "G421": {
+      "status": "gap",
+      "note": "无团队实体，团队面板仅「创建新团队」占位；角色只有文档级三档，无 admin/member。",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:566",
+        "src/prisma/contract.prisma:461"
+      ]
+    },
+    "G440": {
+      "status": "gap",
+      "note": "无块级冲突合并：写库整行覆盖，同步靠 updatedAt LWW 拒旧；无索引比较与 conflict 事件。",
+      "evidence": [
+        "src/lib/sync/lww.ts:3",
+        "src/actions/document/update.ts:44"
+      ]
+    },
+    "G441": {
+      "status": "gap",
+      "note": "无 base 快照协议：队列只带新 data+syncTs，无四类旧值字典；Document 只有一个 updatedAt。",
+      "evidence": [
+        "src/lib/sync-core/types.ts:22",
+        "src/prisma/contract.prisma:95"
+      ]
+    },
+    "G442": {
+      "status": "gap",
+      "note": "五类合并器均无；正文只靠 Yjs CRDT 整篇合并，冲突没有逐槽合并与回退。",
+      "evidence": [
+        "src/lib/collaboration/use-collab-session.ts:61",
+        "src/collab/persist.mjs:58"
+      ]
+    },
+    "G443": {
+      "status": "aligned",
+      "note": "协作态 UndoManager 只跟踪本地 ySync origin，远端更新不进撤销栈；非协作态用 ProseMirror 本地 history。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342",
+        "src/components/editor/Editor.tsx:515"
+      ]
+    },
+    "G448": {
+      "status": "gap",
+      "note": "嵌入白板直接挂只读 tldraw 活实例，无导出成图三态、contain 尺寸与重绘门控。",
+      "evidence": [
+        "src/components/editor/extensions/whiteboard-embed-view.tsx:15",
+        "src/components/editor/extensions/whiteboard-embed-view.tsx:141"
+      ]
+    },
+    "G461": {
+      "status": "partial",
+      "note": "拖拽全手写并带阈值表（触摸 150ms/桌面 8px），但无 HTML5/Touch backend 抽象与懒加载 chunk。",
+      "evidence": [
+        "src/lib/dnd/drag-threshold.ts:27",
+        "src/components/editor/drag-handle/DragHandle.tsx:369"
+      ]
+    },
+    "G463": {
+      "status": "deliberate",
+      "note": "只有自有账号（NextAuth Credentials），无 MSAL/Azure；企业 SSO 属付费企业档，刻意不做。",
+      "evidence": [
+        "src/lib/auth/config.ts:2"
+      ]
+    },
+    "G470": {
+      "status": "partial",
+      "note": "relation 有目标集合配置且空值落 null，但值是纯 id 数组；缺 {type,objectListId,items} 负载与 theme。",
+      "evidence": [
+        "src/components/collection/PropertyCell.tsx:579",
+        "src/components/collection/AddPropertyMenu.tsx:62"
+      ]
+    },
+    "G476": {
+      "status": "nonaction",
+      "note": "官方 chunk 顶部 _sentryDebugIds IIFE 属构建期可观测性仪器，不是屏幕交互面；本地只有 console.error。",
+      "evidence": [
+        "src/app/error.tsx:25"
+      ]
+    },
+    "G481": {
+      "status": "partial",
+      "note": "键表已平台双写且精确匹配修饰键；缺 keyCondition 不约束修饰键的变体，Esc 关闭仍散在组件内。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:60",
+        "src/lib/editor/keymap.ts:172"
+      ]
+    },
+    "G493": {
+      "status": "partial",
+      "note": "已有 key/code 两档且 code 优先；缺官方第三档 letter 与「单 ASCII 字母」抛错守卫。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:21",
+        "src/lib/editor/keymap.ts:147"
+      ]
+    },
+    "G494": {
+      "status": "partial",
+      "note": "平台选路已实现（win 缺省回退 Mac、null 显式不绑）；无「声明了才比较」的修饰键语义。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:60",
+        "src/lib/editor/keymap.ts:141"
+      ]
+    },
+    "G516": {
+      "status": "partial",
+      "note": "三值状态、取消→未选的点击循环、完成/取消双时间戳均已实现；缺批量聚合（任一未选→整批设已选）。",
+      "evidence": [
+        "src/prisma/contract.prisma:340",
+        "src/lib/editor/task-status.ts:78",
+        "src/actions/task/task.ts:242"
+      ]
+    },
+    "G524": {
+      "status": "nonaction",
+      "note": "官方读值宽容/渲染严格的分层属序列化约定；本地逐字段宽容读取、渲染静默回退，非屏幕面。",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:76"
+      ]
+    },
+    "G526": {
+      "status": "nonaction",
+      "note": "官方块样式 10 字段白名单属序列化字段表；本地样式走 TipTap 属性/marks，无该字段层。",
+      "evidence": [
+        "src/lib/editor/format-commands.ts:83"
+      ]
+    },
+    "G527": {
+      "status": "nonaction",
+      "note": "官方 _runAttributes run 数组是行内样式的序列化表示；本地用 TipTap marks 表达范围样式。",
+      "evidence": [
+        "src/components/editor/extensions/gradient-highlight.tsx:14"
+      ]
+    },
+    "G536": {
+      "status": "nonaction",
+      "note": "omitDefault 是官方写侧序列化开关；本地 codec 全量导出 TipTap JSON，无字段级省略档位。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:264"
+      ]
+    },
+    "G538": {
+      "status": "nonaction",
+      "note": "两向字段名映射属官方线格式；本地用 TipTap JSON 字段名，无该映射表。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:264"
+      ]
+    },
+    "G542": {
+      "status": "nonaction",
+      "note": "omitDefault/omitNonRenderProps 两开关属官方序列化内部；本地无字段省略与剥离审计字段的档位。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:264"
+      ]
+    },
+    "G544": {
+      "status": "nonaction",
+      "note": "任务是两套写侧时间编码属序列化细节；本地统一 toISOString()。",
+      "evidence": [
+        "src/actions/task/task.ts:273"
+      ]
+    },
+    "G545": {
+      "status": "partial",
+      "note": "已有四频与 days/byMonthDay/until 并按时区推进；缺 interval/startDate/dynamicDays/selector，字段名不同。",
+      "evidence": [
+        "src/lib/task/recurrence.ts:3",
+        "src/lib/task/recurrence.ts:26"
+      ]
+    },
+    "G546": {
+      "status": "nonaction",
+      "note": "V5/VE 日历归一对属官方时间编码内部；本地任务用 ISO 瞬时、重复用 Intl 墙钟推进。",
+      "evidence": [
+        "src/lib/task/recurrence.ts:107"
+      ]
+    },
+    "G550": {
+      "status": "nonaction",
+      "note": "wVe/kVe 的 V5 与毫秒两版属官方序列化分版；本地只有 ISO 一套。",
+      "evidence": [
+        "src/actions/task/task.ts:284"
+      ]
+    },
+    "G555": {
+      "status": "nonaction",
+      "note": "SVe/vVe 调用点分工是官方 bundle 内部线索；本地无三方合并，时间统一 ISO。",
+      "evidence": [
+        "src/actions/task/task.ts:284"
+      ]
+    },
+    "G558": {
+      "status": "gap",
+      "note": "每日笔记走 /documents/:id 路由与前后一天按钮，无 day://YYYY.MM.DD 生成/解析；craft:// 等深链亦无入口。",
+      "evidence": [
+        "src/components/editor/DailyNoteNav.tsx:21",
+        "src/components/editor/shell-shortcuts.tsx:56"
+      ]
+    },
+    "G563": {
+      "status": "nonaction",
+      "note": "m0e 内存块→线格式定型属官方序列化层；本地仅在导出分支 JSON.stringify。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:264"
+      ]
+    },
+    "G565": {
+      "status": "gap",
+      "note": "tex://、day://、craftdocs://users、craft:// 四 scheme 本地均无生成/解析；链接校验只放行 http/https。",
+      "evidence": [
+        "src/lib/url-guard.ts:45"
+      ]
+    },
+    "G567": {
+      "status": "nonaction",
+      "note": "m0e 的 11 个 JSON 字符串字段属官方线格式；本地无 objectData/taskData/blob 字段层。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:264"
+      ]
+    },
+    "G570": {
+      "status": "partial",
+      "note": "三级退格式链未实现：空列表项 Enter 只由默认行为退出列表，无缩进→列表→装饰的优先级。",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:148",
+        "src/components/editor/Editor.tsx:328"
+      ]
+    },
+    "G572": {
+      "status": "nonaction",
+      "note": "15 个 action 构造器属官方协议层；本地用 TipTap 命令与 server action 直改 Prisma。",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:70"
+      ]
+    },
+    "G573": {
+      "status": "partial",
+      "note": "⌘D 可复制整块（含子块），但直接插入原节点，未重分配 blockId，副本与原块共用 id。",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:60",
+        "src/components/editor/extensions/block-id.ts:18"
+      ]
+    },
+    "G574": {
+      "status": "aligned",
+      "note": "非空块 Enter 分割由 TipTap 默认 splitBlock 提供，块类型与 marks 保留，与官方三情形等价。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:313"
+      ]
+    },
+    "G577": {
+      "status": "partial",
+      "note": "空块 Enter 无退格式分支：普通空块只再分一块，空列表项由默认行为退出列表；无缩进/装饰清退。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:328",
+        "src/components/editor/extensions/craft-keymap.ts:148"
+      ]
+    },
+    "G578": {
+      "status": "partial",
+      "note": "Backspace 合并/删空块由默认 joinBackward 承担；无去列表→减缩进→清装饰的优先级链。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:313",
+        "src/components/editor/extensions/craft-keymap.ts:148"
+      ]
+    },
+    "G581": {
+      "status": "partial",
+      "note": "列表项 Tab/Shift-Tab 由默认 sink/lift（含子树、到顶停）；普通段落无缩进层级。",
+      "evidence": [
+        "src/lib/editor/format-commands.ts:107"
+      ]
+    },
+    "G583": {
+      "status": "nonaction",
+      "note": "88 项 action 分派表属官方协议层；本地无 action 名单与补丁记录，直改 Prisma。",
+      "evidence": [
+        "src/actions/task/task.ts:242"
+      ]
+    },
+    "G585": {
+      "status": "partial",
+      "note": "基础合并由默认 joinBackward 提供；官方四条样式胜负、run 两步拼接与静默 no-op 均无。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:313"
+      ]
+    },
+    "G586": {
+      "status": "partial",
+      "note": "撤销/重做可用（单机 ProseMirror history，协同 Yjs UndoManager）；无 patches/inversePatches 补丁栈。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:342",
+        "src/components/editor/Editor.tsx:515"
+      ]
+    },
+    "G588": {
+      "status": "partial",
+      "note": "角色含 editor/commenter/viewer，评论接口要求 commenter；编辑面只有 canEdit 一个布尔，缺 canView/canComment 分离。",
+      "evidence": [
+        "src/components/editor/DocumentEditor.tsx:60",
+        "src/actions/comment/comment.ts:28"
+      ]
+    },
+    "G589": {
+      "status": "nonaction",
+      "note": "选区九形态是官方 action 判别联合；本地由 ProseMirror Text/Node/CellSelection 承担。",
+      "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:3"
+      ]
+    },
+    "G590": {
+      "status": "gap",
+      "note": "落点只有顶层块索引与 URL hash；无表格四族 maxRow/maxCol 钳制与 AnchorVisible 双寻址。",
+      "evidence": [
+        "src/lib/editor/block-anchor.ts:4",
+        "src/components/editor/table/TableToolbar.tsx:154"
+      ]
+    },
+    "G591": {
+      "status": "gap",
+      "note": "无 action 状态机；空块自动清理与 backupSelection 选区备份均无，拖拽走 DOM dragStateRef。",
+      "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:55"
+      ]
+    },
+    "G593": {
+      "status": "partial",
+      "note": "awareness 已有光标/编辑块/打开页面三维，但后两维各为单值且无 updatedAt；无复合 group action。",
+      "evidence": [
+        "src/lib/collaboration/presence.ts:18",
+        "src/components/editor/collab/CursorLayer.tsx:110"
+      ]
+    },
+    "G594": {
+      "status": "gap",
+      "note": "无 action 分派表；写侧 server action 直改 Prisma、读侧 React state，撤销交 ProseMirror。",
+      "evidence": [
+        "src/actions/task/task.ts:301",
+        "src/components/editor/Editor.tsx:519"
+      ]
+    },
+    "G601": {
+      "status": "partial",
+      "note": "查找替换已有 query/current/matches 四态；权限仍是派生布尔，且无 stopTextEdit/restore 成对。",
+      "evidence": [
+        "src/lib/store/use-find-replace-store.ts:14",
+        "src/components/editor/DocumentEditor.tsx:60"
+      ]
+    },
+    "G604": {
+      "status": "gap",
+      "note": "任务查询直读 Prisma、一次 limit 200；无游标/continuationToken/loadStatus，也无 moveTask/reorderTasks。",
+      "evidence": [
+        "src/actions/task/task.ts:168"
+      ]
+    },
+    "G608": {
+      "status": "gap",
+      "note": "无 action 层与批量 change 归一；协同靠 Hocuspocus/ProseMirror 事务合并，无按序快照重放。",
+      "evidence": [
+        "src/lib/sync-core/queue.ts:24"
+      ]
+    },
+    "G624": {
+      "status": "partial",
+      "note": "快捷键面板已有且 Ctrl+Shift+, 由外壳全局绑定；官方该键在浏览屏无效，本地未做作用域区分。",
+      "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:54",
+        "src/components/settings/ShortcutsPanel.tsx:34"
+      ]
+    },
+    "G643": {
+      "status": "gap",
+      "note": "重复/提醒展开面板无键盘处理：无 Escape 收起、无 Enter 提交、无灰按钮门控。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:206",
+        "src/app/(app)/tasks/TasksView.tsx:513"
+      ]
+    },
+    "G647": {
+      "status": "gap",
+      "note": "toast 基建已有且他处在用，提醒/任务面未接入；改提醒没有 3 秒「下次提醒时间」播报。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:556",
+        "src/components/ui/toast.tsx:10"
+      ]
+    },
+    "G651": {
+      "status": "partial",
+      "note": "块菜单已有 20 分/1/3 小时/明天/下周快选；但下周是同日+7 天，「留着以后用」被禁用。",
+      "evidence": [
+        "src/lib/task/remind-presets.ts:27",
+        "src/lib/task/remind-presets.ts:52"
+      ]
+    },
+    "G653": {
+      "status": "partial",
+      "note": "重复按 0=周日展开，仅单一起点；无官方 monday-first 第二制与加减天方向断言。",
+      "evidence": [
+        "src/lib/task/recurrence.ts:5",
+        "src/lib/task/recurrence.ts:47"
+      ]
+    },
+    "G655": {
+      "status": "partial",
+      "note": "只读已有 readOnly+协同两来源，与官方同构；无撤销步骤表与索引空洞即停。",
+      "evidence": [
+        "src/components/editor/Editor.tsx:174"
+      ]
+    },
+    "G670": {
+      "status": "nonaction",
+      "note": "问的是 MCP tasks add --location document 的插入序；本地无 MCP 面，任务 order 恒 0、按 createdAt 排。",
+      "evidence": [
+        "src/actions/task/task.ts:213"
+      ]
+    },
+    "G685": {
+      "status": "partial",
+      "note": "四档字体已实现，但 id 为 inter/serif/mono/rounded；无 system/system-serif/system-rounded 规范名与别名映射。",
+      "evidence": [
+        "src/components/editor/themes/page-style.ts:13",
+        "src/components/editor/themes/page-style.ts:19"
+      ]
+    },
+    "G688": {
+      "status": "nonaction",
+      "note": "问的是 MCP tasks list 的 repeat 渲染串；本地只有频率徽标，无 fixed/flexible 段。",
+      "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:477"
+      ]
+    },
+    "G692": {
+      "status": "nonaction",
+      "note": "问的是 MCP tasks add 旗标表；本地无 CLI，写侧入参仍是 isCompleted/status 双写。",
+      "evidence": [
+        "src/actions/task/task.ts:54"
+      ]
+    },
+    "G777": {
+      "status": "gap",
+      "note": "官方 Ctrl+K=样式·链接、Ctrl+J=任务·新任务；本地同键开搜索面板与 AI 气泡，键义冲突。",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:91",
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:81"
+      ]
+    },
+    "G802": {
+      "status": "nonaction",
+      "note": "官方 bundle 键名/字形常量与匹配链属内部；本地 keymap 已另实现 code 匹配与显示表。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:83"
+      ]
+    },
+    "G821": {
+      "status": "nonaction",
+      "note": "官方描述符→显示串管线属 bundle 内部；本地 displayFor 仅按序拼接。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:113"
+      ]
+    },
+    "G827": {
+      "status": "nonaction",
+      "note": "官方 Base UI useButton 内部真值表；本地 Button 同用 @base-ui/react/button。",
+      "evidence": [
+        "src/components/ui/button.tsx:1"
+      ]
+    },
+    "G829": {
+      "status": "nonaction",
+      "note": "官方 a6 封装与 nativeButton 接线属 bundle 内部；本地 Button 未传 nativeButton。",
+      "evidence": [
+        "src/components/ui/button.tsx:1"
+      ]
+    },
+    "G831": {
+      "status": "nonaction",
+      "note": "官方 compact 分段控件与 CSS module 属 bundle 内部；本地无 segmented 组件。",
+      "evidence": [
+        "src/components/ui/tabs.tsx:3"
+      ]
+    },
+    "G832": {
+      "status": "nonaction",
+      "note": "官方 keycap 标签函数与修饰符表属 bundle 内部；本地 displayFor 已有 Mac 符号与 esc 特例。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:91"
+      ]
+    },
+    "G835": {
+      "status": "nonaction",
+      "note": "官方 useButton 全文属 vendor 内部；本地 Enter 走原生按钮路径。",
+      "evidence": [
+        "src/components/ui/button.tsx:1"
+      ]
+    },
+    "G838": {
+      "status": "nonaction",
+      "note": "官方 TIe 别名指向 Base UI TabsRoot，属 bundle 内部；本地 tabs.tsx 同源。",
+      "evidence": [
+        "src/components/ui/tabs.tsx:3"
+      ]
+    },
+    "G839": {
+      "status": "nonaction",
+      "note": "官方跨 chunk 别名纪律更正，属 bundle 内部；本地无 bundle 对账问题。",
+      "evidence": [
+        "docs/craft-ref/features/gap.md:3117"
+      ]
+    },
+    "G1141": {
+      "status": "aligned",
+      "note": "代码主题名册 21 条（auto+20），形状 id/label/keywords/isDark/surface，与官方选择器名册同构。",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:279"
+      ]
+    },
+    "G1143": {
+      "status": "aligned",
+      "note": "20 档 background 全落库；底色按字符串存，无三位十六进制解析风险。",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:28",
+        "src/lib/editor/code-themes.ts:124"
+      ]
+    },
+    "G1148": {
+      "status": "nonaction",
+      "note": "官方 MCP explore-themes 19 档属桥面；本地无 MCP，UI 名册为 21 档。",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:279"
+      ]
+    },
+    "G1149": {
+      "status": "nonaction",
+      "note": "MCP --theme-id 属桥契约；本地无 MCP 写面，代码块 themeId 直绑 20 档名册。",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:279",
+        "src/components/editor/extensions/code-block-view.tsx:83"
+      ]
+    },
+    "G1150": {
+      "status": "nonaction",
+      "note": "blocks update --json 写 theme 的通路属 MCP 桥；本地按节点 themeId 经 updateAttributes 落库。",
+      "evidence": [
+        "src/components/editor/extensions/code-block-view.tsx:83"
+      ]
+    },
+    "G1163": {
+      "status": "partial",
+      "note": "20 档名册与容器色已齐；token 配色只有 craftlight/craftdark 两档，余 18 档无逐档 tag 色板。",
+      "evidence": [
+        "src/lib/editor/code-themes.ts:279",
+        "src/app/globals.css:577"
+      ]
+    },
+    "G1181": {
+      "status": "nonaction",
+      "note": "官方屏/MCP 两套回收站 id 不同步属实测缺陷；本地回收站单一口径，无 MCP 第二套。",
+      "evidence": [
+        "src/actions/document/get.ts:123",
+        "src/actions/document/delete.ts:55"
+      ]
+    },
+    "G1195": {
+      "status": "partial",
+      "note": "craft 两档无 link 色与官方一致；官方 6 档「下划线无颜色」依赖第三方 token 色板，本地未实现。",
+      "evidence": [
+        "src/lib/editor/code-token-palette.test.ts:65"
+      ]
+    },
+    "G1200": {
+      "status": "partial",
+      "note": "三空格缩进、大写 - [X]、:: 高亮已落地；#### 前缀（pageCard/pageRegular/strong）仍未接。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:55",
+        "src/lib/document-codec/flavour.ts:42"
+      ]
+    },
+    "G1205": {
+      "status": "partial",
+      "note": "本地仍把 system 当第三值入库；官方是二值枚举 + system→删键，读侧缺省归一已一致。",
+      "evidence": [
+        "src/actions/user/preferences.ts:7",
+        "src/lib/theme-resolution.ts:36"
+      ]
+    },
+    "G1206": {
+      "status": "partial",
+      "note": "URL 覆写、启动读回存储值、system 解析已接；缺特性开关顶层与 resolvedColorScheme 派生字段。",
+      "evidence": [
+        "src/components/theme/ThemeProvider.tsx:65",
+        "src/lib/theme-resolution.ts:58"
+      ]
+    },
+    "G1209": {
+      "status": "nonaction",
+      "note": "官方特性开关键与 URL 白名单属 bundle 内部；本地只有 app 级 ?dark/?light 覆写。",
+      "evidence": [
+        "src/lib/theme-resolution.ts:16"
+      ]
+    },
+    "G1224": {
+      "status": "partial",
+      "note": "启动经本地镜像读回 user.theme、缺省归一 system；写侧仍存 system 第三值，未做官方删键。",
+      "evidence": [
+        "src/components/theme/ThemeProvider.tsx:39",
+        "src/actions/user/preferences.ts:7"
+      ]
+    },
+    "G1236": {
+      "status": "partial",
+      "note": "六枚行内标签分派表已落（含静默 default），但无消费者；HTML 导入走 turndown→markdown。",
+      "evidence": [
+        "src/lib/import/inline-html.ts:20",
+        "src/lib/import/sources.ts:12"
+      ]
+    },
+    "G1238": {
+      "status": "partial",
+      "note": "行内 $…$/$$…$$ 已解析为 inlineMath，非官方 tex:// 链接装饰；导入侧硬/软换行不可分。",
+      "evidence": [
+        "src/lib/import/markdown.ts:367",
+        "src/components/editor/extensions/hard-break.ts:19"
+      ]
+    },
+    "G1240": {
+      "status": "partial",
+      "note": "全连字符对齐行、<br> 占位往返、尾部换行削除已落；缺首行全空删除、单元格递归块解析与 uuid pluginData。",
+      "evidence": [
+        "src/lib/import/table.ts:39",
+        "src/lib/import/markdown.ts:215"
+      ]
+    },
+    "G1267": {
+      "status": "gap",
+      "note": "块级 indentationLevel/taskInfo/decorations/color、styling.backdrop、pageWidth 均无；本地用 CSS 变量与别的表示。",
+      "evidence": [
+        "src/lib/editor/block-indent.ts:9",
+        "src/lib/editor/task-status.ts:21"
+      ]
+    },
+    "G1268": {
+      "status": "nonaction",
+      "note": "MCP documents list 日期旗标属外部桥；本地无 MCP，文档列表只按 updatedAt 排序。",
+      "evidence": [
+        "src/actions/document/get.ts:113"
+      ]
+    },
+    "G1269": {
+      "status": "nonaction",
+      "note": "六枚日期旗标的值解析与静默回退属官方 CLI；本地无该输入面。",
+      "evidence": [
+        "src/actions/document/get.ts:113"
+      ]
+    },
+    "G1271": {
+      "status": "nonaction",
+      "note": "folders list --no-id 的输出格式自述属 CLI；本地返回对象，界面本就不渲染 id。",
+      "evidence": [
+        "src/actions/folder/get.ts:6"
+      ]
+    },
+    "G1278": {
+      "status": "nonaction",
+      "note": "Unsplash --page 分页属 MCP 桥；本地只有命令名册条目，未接入搜索/分页。",
+      "evidence": [
+        "src/lib/commands/official-catalog.ts:305"
+      ]
+    },
+    "G1283": {
+      "status": "nonaction",
+      "note": "旗标别名、--depth 值域与 --format 枚举皆 CLI 契约；本地无 MCP 旗标层。",
+      "evidence": [
+        "src/actions/folder/get.ts:6"
+      ]
+    },
+    "G1290": {
+      "status": "nonaction",
+      "note": "itemsPreviewMd 是 MCP 读回的集合预览串；本地集合是关系表，无这段标签流词表。",
+      "evidence": [
+        "prisma/schema.prisma:144"
+      ]
+    },
+    "G1298": {
+      "status": "nonaction",
+      "note": "search 静默截断与 --cursor 无生产者属桥读数；本地搜索显式 nextOffset 分页。",
+      "evidence": [
+        "src/actions/document/search.ts:171"
+      ]
+    },
+    "G1307": {
+      "status": "nonaction",
+      "note": "--depth 三档改变的是 MCP 回包簇键；本地无深度参数，正文按 JSON 整存。",
+      "evidence": [
+        "src/lib/document-codec/index.ts:263"
+      ]
+    },
+    "G1317": {
+      "status": "nonaction",
+      "note": "RE2 拒/JS 执行的双引擎探针属 search --regexp；本地搜索用 SQL ILIKE，无 regexp 面。",
+      "evidence": [
+        "src/actions/document/search.ts:91"
+      ]
+    },
+    "G1319": {
+      "status": "nonaction",
+      "note": "加粗按条目命中序列截断属 MCP 结果渲染；本地结果纯文本，无命中加粗层。",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:325"
+      ]
+    },
+    "G1320": {
+      "status": "nonaction",
+      "note": "文档序随查询集与打分重排属 MCP 搜索；本地固定按 updatedAt desc。",
+      "evidence": [
+        "src/actions/document/search.ts:84"
+      ]
+    },
+    "G1321": {
+      "status": "nonaction",
+      "note": "条目/块数反向变化属官方检索预算；本地每文档 3 块、总 12 块截断，无评分。",
+      "evidence": [
+        "src/actions/document/search.ts:146"
+      ]
+    },
+    "G1325": {
+      "status": "nonaction",
+      "note": "K=5 加粗上界属 MCP 结果渲染；本地搜索结果不标粗。",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:325"
+      ]
+    },
+    "G1326": {
+      "status": "nonaction",
+      "note": "跨调用加粗浮动属 MCP 显示层；本地纯文本渲染。",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:325"
+      ]
+    },
+    "G1327": {
+      "status": "nonaction",
+      "note": "条目=命中窗口属 MCP 回包结构；本地按块聚合，不是窗口模型。",
+      "evidence": [
+        "src/actions/document/search.ts:146"
+      ]
+    },
+    "G1329": {
+      "status": "nonaction",
+      "note": "条目内上限 5、回包级上限未证属 MCP 预算；本地按页 20 条 + nextOffset 分页。",
+      "evidence": [
+        "src/actions/document/search.ts:171"
+      ]
+    },
+    "G1332": {
+      "status": "nonaction",
+      "note": "MCP search 窗口聚合规律；本地无 MCP 桥，屏幕搜索按文档/块平铺。",
+      "evidence": [
+        "src/actions/document/search.ts:139"
+      ]
+    },
+    "G1333": {
+      "status": "nonaction",
+      "note": "MCP 摘录窗口规律；本地只回块文本、超 120 字硬截断加省略号。",
+      "evidence": [
+        "src/actions/document/search.ts:151"
+      ]
+    },
+    "G1334": {
+      "status": "nonaction",
+      "note": "MCP 回包里标题与正文不并窗；本地标题进 documents、正文进 blocks，本就分列。",
+      "evidence": [
+        "src/actions/document/search.ts:127"
+      ]
+    },
+    "G1335": {
+      "status": "nonaction",
+      "note": "MCP 回包预算/文档集规律；本地另有 12 条块命中上限，不复刻该预算。",
+      "evidence": [
+        "src/actions/document/search.ts:153"
+      ]
+    },
+    "G1336": {
+      "status": "nonaction",
+      "note": "MCP 每页 ≤2 窗的候选单位；本地每篇最多 3 条块命中。",
+      "evidence": [
+        "src/actions/document/search.ts:146"
+      ]
+    },
+    "G1339": {
+      "status": "nonaction",
+      "note": "MCP 加粗=命中区间合并；本地搜索结果不渲染高亮。",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:316"
+      ]
+    },
+    "G1349": {
+      "status": "nonaction",
+      "note": "仪器判据（...≠截断）；本地无 MCP 回包与采样面。",
+      "evidence": [
+        "src/actions/document/search.ts:151"
+      ]
+    },
+    "G1350": {
+      "status": "nonaction",
+      "note": "MCP 摘录走小写索引副本、标题走原文；本地无摘录串与高亮。",
+      "evidence": [
+        "src/actions/document/search.ts:144"
+      ]
+    },
+    "G1353": {
+      "status": "nonaction",
+      "note": "MCP 摘录行=块内行；本地无摘录渲染。",
+      "evidence": [
+        "src/components/search/CommandPalette.tsx:316"
+      ]
+    },
+    "G1356": {
+      "status": "nonaction",
+      "note": "--fetch-blocks 只回 Hydrated 计数；本地无该旗标。",
+      "evidence": [
+        "src/actions/document/search.ts:164"
+      ]
+    },
+    "G1378": {
+      "status": "nonaction",
+      "note": "官方 CLI documents list --folder 递归失败；本地文件夹展开是自写实现，不适用。",
+      "evidence": [
+        "src/lib/browse/folder-counts.ts:3"
+      ]
+    },
+    "G1382": {
+      "status": "partial",
+      "note": "亮档默认一致、系统暗能出暗；缺官方第三条不靠打标的 CSS 字面色兜底。",
+      "evidence": [
+        "src/app/globals.css:68",
+        "src/components/theme/ThemeProvider.tsx:90"
+      ]
+    },
+    "G1383": {
+      "status": "partial",
+      "note": "卡片底与页面底已分开；缺官方那根由外壳/专注模式注入、可覆写的 --card-background 轴。",
+      "evidence": [
+        "src/app/globals.css:75",
+        "src/components/editor/extensions/link-preview-view.tsx:71"
+      ]
+    },
+    "G1384": {
+      "status": "partial",
+      "note": "主题挂 class 而非 data-theme；有 accent 与禁过渡，但无 pointer/scrollbar 属性轴。",
+      "evidence": [
+        "src/components/theme/ThemeProvider.tsx:90",
+        "src/lib/accent.ts:29"
+      ]
+    },
+    "G1385": {
+      "status": "nonaction",
+      "note": "官方 preload 名册/覆盖率统计；本地自写组件树无 chunk 概念。",
+      "evidence": [
+        "src/app/layout.tsx:4"
+      ]
+    },
+    "G1386": {
+      "status": "nonaction",
+      "note": "官方按需 CSS 分包名册；本地单一 globals.css 全量载入。",
+      "evidence": [
+        "src/app/layout.tsx:4"
+      ]
+    },
+    "G1426": {
+      "status": "deliberate",
+      "note": "团队欢迎弹窗属团队/付费面：团队设置 wired:false，只剩「创建新团队」占位，不做团队管理。",
+      "evidence": [
+        "src/lib/app/settings-sections.ts:45",
+        "src/components/settings/SettingsPanels.tsx:571"
+      ]
+    },
+    "G1436": {
+      "status": "partial",
+      "note": "有颜色（背景/文档颜色）与封面两组；缺 Original、所有样式、文本颜色。",
+      "evidence": [
+        "src/components/editor/tabs/StyleTab.tsx:66",
+        "src/components/editor/tabs/StyleTab.tsx:117"
+      ]
+    },
+    "G1437": {
+      "status": "partial",
+      "note": "有协作者（成员）组；全仓无「最近使用」分组或文案。",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:401",
+        "src/components/editor/tabs/MembersSection.tsx:161"
+      ]
+    },
+    "G1511": {
+      "status": "gap",
+      "note": "服务端每笔 applied 都重打 metaUpdatedAt=serverNow，再按 tCli>tSrv 判 stale ⇒ 同设备连写第二笔被前一笔判旧；官方认设备时间戳。",
+      "evidence": [
+        "src/app/api/v1/sync/route.ts:282",
+        "src/lib/sync/lww.ts:9"
+      ]
+    },
+    "G1516": {
+      "status": "partial",
+      "note": "内核与 UI 已共用同一句柄、浏览器 idb 同库；但 sqlite 仍写死 :memory:，桌面关掉再开不留。",
+      "evidence": [
+        "src/lib/sync-core/index.ts:447",
+        "src/lib/sync-core/adapter-sqlite.ts:34"
+      ]
+    },
+    "G1552": {
+      "status": "gap",
+      "note": "Shift-Enter 被 RENAME 占用（选中块时改标题），HardBreak 刻意不绑 ⇒ 无行内换行；官方插 <br> 且不消费键。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:206",
+        "src/components/editor/extensions/hard-break.ts:4",
+        "src/components/editor/Editor.tsx:315"
+      ]
+    },
+    "G1553": {
+      "status": "gap",
+      "note": "无 Mod+←/→ 绑定，词级导航落浏览器默认：落词首而非词尾、可跨块、键不被消费。",
+      "evidence": [
+        "src/lib/editor/keymap.ts:86",
+        "src/lib/editor/keymap.ts:196"
+      ]
+    },
+    "G1554": {
+      "status": "gap",
+      "note": "四条 SELECT_TO_* 均未注册；Ctrl+Shift+Home/End 落浏览器文本选区，官方进块选区态。",
+      "evidence": [
+        "src/lib/editor/keymap.test.ts:114",
+        "src/lib/editor/keymap.ts:198"
+      ]
+    },
+    "G1555": {
+      "status": "gap",
+      "note": "浏览屏是纯 Link 卡片，无 data-item-id/勾选框/矩形层；回收站勾选由按钮开启，不是拖拽框选。",
+      "evidence": [
+        "src/components/document/DocumentCard.tsx:23",
+        "src/components/document/TrashList.tsx:264"
+      ]
+    },
+    "G1560": {
+      "status": "gap",
+      "note": "五档枚举在，但渲染为 1/2/3/6px 实线；官方 extraLight 三点、light 点线、pageSeparator 真分页。",
+      "evidence": [
+        "src/app/globals.css:921",
+        "src/lib/editor/divider-styles.ts:6"
+      ]
+    },
+    "G90": {
+      "note": "根错误边界与懒加载失败判据已建（第 217 批）：isLazyLoadError 认打包器/浏览器两类错误。",
+      "evidence": [
+        "src/app/error.tsx",
+        "src/lib/errors/lazy-load.ts"
+      ]
+    },
+    "G164": {
+      "status": "partial",
+      "note": "账户分区在，改头像已接真上传通道；仍缺改名/改头像的失败句与「邮件发送至 Craft」入档。",
+      "evidence": [
+        "src/components/settings/SettingsPanels.tsx:197",
+        "src/components/settings/SettingsPanels.tsx:478"
+      ]
+    },
+    "G169": {
+      "note": "层级标签已落：splitTagLevels 解析父级/子级，第二个 / 触发「只能一个层级」校验。",
+      "evidence": [
+        "src/lib/tag/rules.ts"
+      ]
+    },
+    "G170": {
+      "note": "六条字符校验与四态反馈已落；hexColor 规则先于 # 剥离，故 #ccc 不会伪装成标签。",
+      "evidence": [
+        "src/lib/tag/rules.ts"
+      ]
+    },
+    "G610": {
+      "note": "lastViewedAt 列已补（第 261 批）；收藏/归档布尔字段与统一写入器仍缺。",
+      "evidence": [
+        "src/prisma/contract.prisma",
+        "src/components/document/DocumentCard.tsx"
+      ]
+    },
+    "G834": {
+      "note": "本地表格无集合层命令：无 table 组件，collections.add.a.row 零命中，表格仍走 StarterKit。",
+      "evidence": [
+        "src/components/editor/table/TableToolbar.tsx",
+        "src/lib/commands/official-catalog.ts"
+      ]
+    },
+    "G1007": {
+      "note": "本地已建批量永久删除通路（第 101 批）：TrashList 多选工具栏 + 计数回显确认框。",
+      "evidence": [
+        "src/components/document/TrashList.tsx:76",
+        "src/actions/document/delete.ts:32"
+      ]
+    },
+    "G1380": {
+      "status": "nonaction",
+      "note": "MCP blocks get 的 -32603 分层属外部工具契约面；本地无 MCP 桥，不进复刻面。",
+      "evidence": [
+        "docs/craft-ref/features/gap.md"
+      ]
+    },
+    "G1444": {
+      "status": "partial",
+      "note": "本地有「移动到…」入口（信息面板），但无 ctx-move-to 稳定 testid 锚点。",
+      "evidence": [
+        "src/components/editor/tabs/InfoTab.tsx:615"
+      ]
     }
   }
 }

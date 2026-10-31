@@ -29,6 +29,7 @@ import { overlayTaskRows, taskPatchFor } from './tasks-local';
 import { applyCompletedFilter, tasksForGroup, withinUpcoming, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
 import { upcomingSections } from '@/lib/task/upcoming-groups';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
+import { TaskDatePopover } from '@/components/task/TaskDatePopover';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
 import {
   SET_AS_DEFAULT_VIEW,
@@ -505,16 +506,16 @@ function TaskRow({
             <span className="max-w-32 truncate">{task.documentTitle}</span>
           </Link>
         )}
-        {task.scheduleDate && (
-          <span className="shrink-0 text-xs text-muted-foreground">
-            计划 {new Date(task.scheduleDate).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
-          </span>
-        )}
-        {task.dueDate && (
-          <span className="shrink-0 text-xs text-muted-foreground">
-            截止 {new Date(task.dueDate).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
-          </span>
-        )}
+        <TaskDatePopover
+          kind="schedule"
+          value={task.scheduleDate}
+          onChange={(value) => update({ scheduleDate: value })}
+        />
+        <TaskDatePopover
+          kind="deadline"
+          value={task.dueDate}
+          onChange={(value) => update({ dueDate: value })}
+        />
 
         <button
           onClick={() => setOpen((value) => !value)}
@@ -538,22 +539,6 @@ function TaskRow({
 
       {open && (
         <div className="grid gap-2 px-3 pb-3 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
-            计划日期
-            <Input
-              type="date"
-              value={toDayInput(task.scheduleDate)}
-              onChange={(event) => update({ scheduleDate: fromDayInput(event.target.value) })}
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
-            截止日期
-            <Input
-              type="date"
-              value={toDayInput(task.dueDate)}
-              onChange={(event) => update({ dueDate: fromDayInput(event.target.value) })}
-            />
-          </label>
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             提醒时间
             <Input

@@ -582,29 +582,30 @@
       ]
     },
     "G332": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 4 批）：无自然语言日期解析——依赖里没有 chrono（package.json 零命中），tasks 面只有原生 date/datetime-local 输入 + fromDayInput/fromMomentInput 两个 ISO 转换器，无严格格式档、无 locale 路由、无 GB 分支。",
+      "note": "两档解析已落：严格年月日（含 . 与 /）优先，失败再走中文相对短语与英文 today/tomorrow；仍缺七套 locale 路由与 GB 分支。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:421-432",
-        "package.json"
+        "src/lib/task/date-parse.ts:62",
+        "src/lib/task/date-parse.test.ts:18"
       ]
     },
     "G333": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 4 批）更正本地列：解析器本身不存在（见 G332），所以不是「无条件写入解析结果」；清空会写回 null、日期也做了本地零点归一（fromDayInput 用 `T00:00:00`）。**真差异只剩采纳守卫**——过去的日期照收，没有「只收晚于现在或今天」的拦截。",
+      "note": "采纳守卫三档齐：只收今天或未来、同日跳过写入、清空置 null，提交统一到本地零点。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:421-429"
+        "src/lib/task/date-parse.ts:141",
+        "src/lib/task/date-parse.test.ts:93"
       ]
     },
     "G334": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 4 批）更正本地列：两个字段与两个独立输入已存在（D1：计划日期 / 截止日期各一格，TasksView.tsx:537-550），不是「只写一个字段」。差的是官方快捷菜单那层：`schedule_<date>` / `deadline_<date>` 两个并列候选、各自 icon 与埋点、必须显式选一族——本地是展开面板里的两格原生日期输入。",
+      "note": "计划与截止各一枚独立 chip（日历/旗子图标），各自打开自己的日期弹层，必须显式选一族。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:537-550",
-        "src/lib/commands/official-catalog.ts:820-882"
+        "src/components/task/TaskDatePopover.tsx:104",
+        "src/app/(app)/tasks/TasksView.tsx:506"
       ]
     },
     "G404": {
@@ -911,10 +912,10 @@
       ]
     },
     "G361": {
-      "status": "gap",
-      "note": "无日期弹层与「日期」输入框：任务行只有原生 date/datetime-local，全仓无自然语言日期解析器。",
+      "status": "aligned",
+      "note": "日期输入口移到弹层顶部的「日期」框里，任务行内不再解析日期文本。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:538"
+        "src/components/task/TaskDatePopover.tsx:126"
       ]
     },
     "G362": {
@@ -926,19 +927,18 @@
       ]
     },
     "G365": {
-      "status": "gap",
-      "note": "无自然语言解析，因此没有「日历跳转 + 深色实心格」反馈；日期只能从原生选择器取。",
+      "status": "aligned",
+      "note": "输入可解析的未来日期时日历自动跳到该月并选中该日；不可解析或过去则不动。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:538",
-        "src/app/(app)/calendar/page.tsx:172"
+        "src/components/task/TaskDatePopover.tsx:76"
       ]
     },
     "G369": {
-      "status": "gap",
-      "note": "无解析器也无过去日期守卫：date 输入接受任意日期，过去日期只标 overdue 仍可保存。",
+      "status": "aligned",
+      "note": "过去日期静默拒绝：不预览、不跳月、Enter 不写回，也不给错误提示。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:423",
-        "src/lib/task/grouping.ts:41"
+        "src/lib/task/date-parse.ts:152",
+        "e2e/task-date-popover.spec.ts:60"
       ]
     },
     "G373": {

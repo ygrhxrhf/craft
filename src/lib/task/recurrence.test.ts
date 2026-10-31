@@ -117,3 +117,39 @@ describe('nextOccurrence', () => {
     expect(next.getUTCDate()).toBe(8);
   });
 });
+
+// G404: every N units; G256: fixed advances on the schedule, flexible on completion.
+describe('interval and anchor', () => {
+  it('advances daily rules by interval days', () => {
+    const next = nextOccurrence('{"freq":"daily","interval":3}', new Date('2026-03-10T09:00:00Z'), 'UTC');
+    expect(iso(next!)).toBe('2026-03-13T09:00:00.000Z');
+  });
+
+  it('skips whole weeks for a weekly interval', () => {
+    // 2026-03-10 is a Tuesday; every 2 weeks on Monday lands on 2026-03-23.
+    const next = nextOccurrence('{"freq":"weekly","days":[1],"interval":2}', new Date('2026-03-10T09:00:00Z'), 'UTC');
+    expect(iso(next!)).toBe('2026-03-23T09:00:00.000Z');
+  });
+
+  it('advances monthly rules by interval months and clamps the day', () => {
+    const next = nextOccurrence(
+      '{"freq":"monthly","byMonthDay":31,"interval":2}',
+      new Date('2026-01-31T09:00:00Z'),
+      'UTC',
+    );
+    expect(iso(next!)).toBe('2026-03-31T09:00:00.000Z');
+  });
+
+  it('rejects an out-of-range interval', () => {
+    expect(parseRecurrence('{"freq":"daily","interval":32}')).toBeNull();
+    expect(parseRecurrence('{"freq":"weekly","interval":0}')).toBeNull();
+    expect(parseRecurrence('{"freq":"daily","interval":31}')?.interval).toBe(31);
+  });
+
+  it('keeps the anchor when present and describes it', () => {
+    expect(parseRecurrence('{"freq":"daily","type":"flexible"}')?.type).toBe('flexible');
+    expect(describeRecurrence('{"freq":"daily","type":"flexible"}')).toBe('每天重复（完成时起算）');
+    expect(describeRecurrence('{"freq":"weekly","days":[5],"interval":2}')).toBe('每 2 周：周五');
+    expect(parseRecurrence('{"freq":"daily","type":"weekly"}')).toBeNull();
+  });
+});

@@ -5,6 +5,7 @@ import {
   WORDS_PER_MINUTE,
   charactersExcludingSpaces,
   pageStats,
+  readingLabel,
   readingMinutes,
   statsInputFor,
   statsTitle,
@@ -37,6 +38,15 @@ describe('the reading time', () => {
     expect(readingMinutes(400)).toBe(2);
     expect(readingMinutes(1000)).toBe(5);
   });
+
+  // G212: the official panel prints a second-grained figure (`0s`), not "0 分钟".
+  it('prints seconds under a minute and minutes above it', () => {
+    expect(readingLabel(0)).toBe('0s');
+    expect(readingLabel(10)).toBe('3s');
+    expect(readingLabel(200)).toBe('1m');
+    expect(readingLabel(250)).toBe('1m 15s');
+    expect(readingLabel(400)).toBe('2m');
+  });
 });
 
 describe('the five figures (G377)', () => {
@@ -47,6 +57,8 @@ describe('the five figures (G377)', () => {
       charactersNoSpaces: 3,
       blocks: 7,
       readingMinutes: 2,
+      readingSeconds: 120,
+      readingLabel: '2m',
     });
   });
 

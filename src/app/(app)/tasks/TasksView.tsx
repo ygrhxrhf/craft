@@ -8,7 +8,12 @@ import { Bell, CalendarClock, CheckSquare, FileText, Plus, Trash2 } from 'lucide
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from 'cn';
-import { RECURRENCE_PRESETS } from '@/lib/task/recurrence';
+import {
+  INTERVAL_MAX,
+  RECURRENCE_PRESETS,
+  clampInterval,
+  parseRecurrence,
+} from '@/lib/task/recurrence';
 import {
   createTask,
   deleteTask,
@@ -444,6 +449,7 @@ function TaskRow({
   appearance: 'faded' | 'strike' | 'none';
 }) {
   const [open, setOpen] = useState(false);
+  const rule = parseRecurrence(task.recurrence);
   const schedule = {
     dueDate: task.dueDate,
     scheduleDate: task.scheduleDate,
@@ -572,6 +578,39 @@ function TaskRow({
             </select>
           </label>
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
+            每 N 个单位
+            <Input
+              type="number"
+              min={1}
+              max={rule ? INTERVAL_MAX[rule.freq] : 1}
+              disabled={!rule}
+              value={rule?.interval ?? 1}
+              onChange={(event) =>
+                update({
+                  recurrence: rule
+                    ? patchRule(task.recurrence, {
+                        interval: clampInterval(rule.freq, Number(event.target.value)),
+                      })
+                    : task.recurrence,
+                })
+              }
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
+            重复依据
+            <select
+              value={rule?.type ?? 'fixed'}
+              disabled={!rule}
+              onChange={(event) =>
+                update({ recurrence: patchRule(task.recurrence, { type: event.target.value }) })
+              }
+              className="h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground disabled:opacity-50"
+            >
+              <option value="fixed">按计划日</option>
+              <option value="flexible">相对于完成</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             重复结束于
             <Input
               type="date"
@@ -592,4 +631,17 @@ function parseFrequency(raw: string | null): string {
   } catch {
     return '';
   }
+}
+
+/** Patch one field of the stored rule without dropping the others (G404/G256). */
+function patchRule(raw: string | null, patch: Record<string, unknown>): string | null {
+  if (!raw) return null;
+  let rule: Record<string, unknown> = {};
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') rule = parsed as Record<string, unknown>;
+  } catch {
+    rule = {};
+  }
+  return JSON.stringify({ ...rule, ...patch });
 }

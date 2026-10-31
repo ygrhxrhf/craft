@@ -41,6 +41,24 @@ export function readingMinutes(wordCount: number): number {
   return Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE));
 }
 
+/**
+ * G212: the official figure is second-grained — an empty page prints `0s`, not "0 分钟".
+ * Seconds come from the same 200 wpm rate so the two readings never disagree.
+ */
+export function readingSeconds(wordCount: number): number {
+  if (wordCount <= 0) return 0;
+  return Math.round((wordCount / WORDS_PER_MINUTE) * 60);
+}
+
+/** `0s` / `45s` / `2m` / `2m 30s` — the official unit switch at one minute. */
+export function readingLabel(wordCount: number): string {
+  const seconds = readingSeconds(wordCount);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const rest = seconds % 60;
+  return rest === 0 ? `${minutes}m` : `${minutes}m ${rest}s`;
+}
+
 export interface PageStats {
   words: number;
   /** 字符数：**含**空格（G377 五项里的第二项）。 */
@@ -49,6 +67,9 @@ export interface PageStats {
   charactersNoSpaces: number;
   blocks: number;
   readingMinutes: number;
+  /** G212: the second-grained figure the official panel prints. */
+  readingSeconds: number;
+  readingLabel: string;
 }
 
 /** Assemble the five figures (G377). `blocks` is counted by the caller, which has the document. */
@@ -63,6 +84,8 @@ export function pageStats(input: {
     charactersNoSpaces: charactersExcludingSpaces(input.plainText),
     blocks: input.blockCount,
     readingMinutes: readingMinutes(input.wordCount),
+    readingSeconds: readingSeconds(input.wordCount),
+    readingLabel: readingLabel(input.wordCount),
   };
 }
 

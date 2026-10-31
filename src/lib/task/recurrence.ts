@@ -1,13 +1,39 @@
 export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
+export type RecurrenceAnchor = 'fixed' | 'flexible';
+
 export interface RecurrenceRule {
   freq: RecurrenceFrequency;
+  /**
+   * G256: `fixed` advances from the scheduled date (the official default label set),
+   * `flexible` advances from the moment the task is completed. Absent means `fixed` —
+   * the behaviour every rule written before this field existed already had.
+   */
+  type?: RecurrenceAnchor;
+  /** G404: every N units; absent means 1. */
+  interval?: number;
   /** Weekly: 0 = Sunday through 6 = Saturday. */
   days?: number[];
   /** Monthly: 1 to 31, clamped to the length of the target month. */
   byMonthDay?: number;
   /** Inclusive upper bound, ISO date or datetime. */
   until?: string;
+}
+
+/** G404: the official per-frequency ceiling for `interval`. */
+export const INTERVAL_MAX: Record<RecurrenceFrequency, number> = {
+  daily: 31,
+  weekly: 52,
+  monthly: 12,
+  yearly: 10,
+};
+
+/** Changing frequency resets an out-of-range interval to 1, as the official picker does. */
+export function clampInterval(freq: RecurrenceFrequency, interval: number | undefined): number {
+  if (interval === undefined) return 1;
+  const max = INTERVAL_MAX[freq];
+  if (!Number.isInteger(interval) || interval < 1 || interval > max) return 1;
+  return interval;
 }
 
 const FREQUENCIES: RecurrenceFrequency[] = ['daily', 'weekly', 'monthly', 'yearly'];
@@ -32,8 +58,16 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
     return null;
   }
   if (rule.until !== undefined && typeof rule.until !== 'string') return null;
+  if (rule.type !== undefined && rule.type !== 'fixed' && rule.type !== 'flexible') return null;
+  if (rule.interval !== undefined) {
+    const interval = rule.interval as number;
+    if (typeof interval !== 'number' || !Number.isInteger(interval)) return null;
+    if (interval < 1 || interval > INTERVAL_MAX[rule.freq as RecurrenceFrequency]) return null;
+  }
 
   const result: RecurrenceRule = { freq: rule.freq as RecurrenceFrequency };
+  if (rule.type === 'fixed' || rule.type === 'flexible') result.type = rule.type;
+  if (rule.interval !== undefined) result.interval = rule.interval as number;
   if (Array.isArray(rule.days)) result.days = rule.days as number[];
   if (rule.byMonthDay !== undefined) result.byMonthDay = rule.byMonthDay as number;
   if (typeof rule.until === 'string') result.until = rule.until;
@@ -49,15 +83,24 @@ const WEEKDAY_LABELS = ['周日', '周一', '周二', '周三', '周四', '周�
 export function describeRecurrence(raw: string | null | undefined): string | null {
   const rule = parseRecurrence(raw);
   if (!rule) return null;
-  if (rule.freq === 'weekly') {
-    if (!rule.days?.length) return '每周重复';
-    return `每周：${rule.days.map((day) => WEEKDAY_LABELS[day] ?? '').filter(Boolean).join('、')}`;
+  const step = rule.interval ?? 1;
+  const anchor = rule.type === 'flexible' ? '（完成时起算）' : '';
+  const every =
+    rule.freq === 'daily'
+      ? step > 1 ? `每 ${step} 天` : '每天'
+      : rule.freq === 'weekly'
+        ? step > 1 ? `每 ${step} 周` : '每周'
+        : rule.freq === 'monthly'
+          ? step > 1 ? `每 ${step} 个月` : '每月'
+          : step > 1 ? `每 ${step} 年` : '每年';
+
+  if (rule.freq === 'weekly' && rule.days?.length) {
+    return `${every}：${rule.days.map((day) => WEEKDAY_LABELS[day] ?? '').filter(Boolean).join('、')}${anchor}`;
   }
-  if (rule.freq === 'monthly') {
-    return rule.byMonthDay ? `每月 ${rule.byMonthDay} 日重复` : '每月重复';
+  if (rule.freq === 'monthly' && rule.byMonthDay) {
+    return `${every} ${rule.byMonthDay} 日重复${anchor}`;
   }
-  if (rule.freq === 'yearly') return '每年重复';
-  return '每天重复';
+  return `${every}重复${anchor}`;
 }
 
 /** The preset rules the task scheduler offers; the value is the stored JSON text. */
@@ -148,13 +191,16 @@ export function nextOccurrence(
   if (!rule) return null;
 
   const base = wallOf(from, timeZone);
+  const step = rule.interval ?? 1;
   let candidate: WallClock | null = null;
 
   if (rule.freq === 'daily') {
-    candidate = addDays(base, 1);
+    candidate = addDays(base, step);
   } else if (rule.freq === 'weekly') {
     const wanted = rule.days?.length ? new Set(rule.days) : new Set([weekdayOf(base, timeZone)]);
-    for (let offset = 1; offset <= 8; offset += 1) {
+    // "Every N weeks" skips whole weeks: with N=2 the next hit is in week 2, not this week.
+    const first = (step - 1) * 7 + 1;
+    for (let offset = first; offset <= first + 6; offset += 1) {
       const probe = addDays(base, offset);
       if (wanted.has(weekdayOf(probe, timeZone))) {
         candidate = probe;
@@ -163,8 +209,8 @@ export function nextOccurrence(
     }
   } else if (rule.freq === 'monthly') {
     const wanted = rule.byMonthDay ?? base.day;
-    for (let offset = 1; offset <= 24; offset += 1) {
-      const probe = addMonths(base, offset);
+    for (let index = 1; index <= 24; index += 1) {
+      const probe = addMonths(base, index * step);
       probe.day = clampDay(probe.year, probe.month, wanted);
       const instant = wallToInstant(probe, timeZone);
       if (instant > from.getTime()) {
@@ -173,8 +219,8 @@ export function nextOccurrence(
       }
     }
   } else {
-    for (let offset = 1; offset <= 4; offset += 1) {
-      const probe = { ...base, year: base.year + offset };
+    for (let index = 1; index <= 4; index += 1) {
+      const probe = { ...base, year: base.year + index * step };
       probe.day = clampDay(probe.year, probe.month, probe.day);
       if (wallToInstant(probe, timeZone) > from.getTime()) {
         candidate = probe;

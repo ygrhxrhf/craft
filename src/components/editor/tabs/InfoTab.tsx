@@ -517,7 +517,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
               <div>{stats.characters.toLocaleString()} 字符</div>
               <div>{stats.charactersNoSpaces.toLocaleString()} 字符（不包括空格）</div>
               <div>{stats.blocks.toLocaleString()} 区块</div>
-              <div>{stats.readingMinutes.toLocaleString()} 分钟阅读</div>
+              <div>{stats.readingLabel} 阅读</div>
             </div>
           </section>
 

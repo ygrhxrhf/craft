@@ -544,11 +544,13 @@
       ]
     },
     "G256": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 4 批）：重复规则只有 freq/days/byMonthDay/until 四字段（recurrence.ts:3-11），无 flexible/fixed 锚点、无切换器 ⇒ 只有「从上次完成起算」一条路径。",
+      "note": "重复规则有 fixed/flexible 两档：fixed 按计划日、flexible 从完成时刻起算；任务面板可选，absent 视为 fixed。",
       "evidence": [
-        "src/lib/task/recurrence.ts:1-40"
+        "src/lib/task/recurrence.ts:4",
+        "src/actions/task/task.ts:275",
+        "src/app/(app)/tasks/TasksView.tsx:573"
       ]
     },
     "G260": {
@@ -605,11 +607,12 @@
       ]
     },
     "G404": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 4 批）：RecurrenceRule 无 interval 字段（recurrence.ts:3-11），解析器还会丢弃未知字段 ⇒ 只能每 1 天/周/月/年，官方的「每 N 单位」与「往小选时重置为 1」保护都缺。台账读数仍准确。",
+      "note": "interval 字段已落，按频率上限 31/52/12/10 校验，越界复位为 1；日/周/月/年推进都按 N 单位。",
       "evidence": [
-        "src/lib/task/recurrence.ts:3-11"
+        "src/lib/task/recurrence.ts:22",
+        "src/lib/task/recurrence.ts:176"
       ]
     },
     "G411": {
@@ -771,11 +774,11 @@
       ]
     },
     "G212": {
-      "status": "partial",
-      "note": "指标派生、区块按 doc.childCount（空块计入）已对齐；阅读时间固定「N 分钟」，官方 V19 是 0s 秒级格式。",
+      "status": "aligned",
+      "note": "统计五项齐备；阅读时间改为秒级 `0s`/`45s`/`2m`，区块含空块、随更新刷新。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:520",
-        "src/lib/document/page-stats.ts:39"
+        "src/lib/document/page-stats.ts:39",
+        "src/components/editor/tabs/InfoTab.tsx:520"
       ]
     },
     "G226": {
@@ -2868,11 +2871,11 @@
       "evidence": []
     },
     "G1345": {
-      "status": "gap",
-      "note": "链接卡显示 title/description，但索引 plainText 取 editor.getText()，外链元数据搜不到。",
+      "status": "aligned",
+      "note": "富链接的 title 与 description 都进检索索引，仅凭卡片摘要也能命中。",
       "evidence": [
-        "src/components/editor/Editor.tsx:572",
-        "src/components/editor/extensions/link-preview.tsx:23"
+        "src/lib/search/extract.ts:11",
+        "src/lib/search/extract.test.ts:12"
       ]
     },
     "G1346": {

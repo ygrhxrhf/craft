@@ -260,10 +260,13 @@ export async function toggleTask(id: string, timeZone?: string) {
  * clearing itself, so the completed one stays as history.
  */
 async function rollForward(db: any, task: any, timeZone?: string): Promise<void> {
-  if (!parseRecurrence(task.recurrence)) return;
+  const rule = parseRecurrence(task.recurrence);
+  if (!rule) return;
 
   const base = task.dueDate ?? task.remindAt;
-  const from = base ? new Date(base) : new Date();
+  // G256: `flexible` counts from the moment of completion; `fixed` (and any rule
+  // written before the field existed) walks the original schedule.
+  const from = rule.type === 'flexible' ? new Date() : base ? new Date(base) : new Date();
   const upcoming = nextOccurrence(task.recurrence, from, timeZone);
   if (!upcoming) return;
 

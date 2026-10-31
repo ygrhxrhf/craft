@@ -2750,6 +2750,13 @@
                   "kind": "scalar"
                 }
               },
+              "readAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "remindAt": {
                 "nullable": true,
                 "type": {
@@ -2859,6 +2866,9 @@
                 },
                 "kind": {
                   "column": "kind"
+                },
+                "readAt": {
+                  "column": "readAt"
                 },
                 "remindAt": {
                   "column": "remindAt"
@@ -5987,6 +5997,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "readAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "remindAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
@@ -6828,7 +6843,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "bd0e6de84898ccbdafc22218a2c2c4d5b42a3a70723a1cd91dffa59e13b8b8f0"
+    "storageHash": "f9a343758e9ea2d004796891353bb8a48c8fab8c56a375845fba52c55d157cb5"
   },
   "execution": {
     "executionHash": "7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b",

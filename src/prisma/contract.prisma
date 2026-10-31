@@ -361,6 +361,9 @@ model Notification {
   documentId  String?
   title       String
   remindAt    TimestamptzString?
+  // G137: read and resolved are different axes — a notification can be read but not dismissed,
+  // and marking it unread again must be possible.
+  readAt      TimestamptzString?
   isResolved  Boolean  @default(false)
   resolvedAt  TimestamptzString?
   createdAt   TimestamptzString @default(now())

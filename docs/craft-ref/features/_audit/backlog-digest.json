@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-31T09:23:55.517Z",
+  "generatedAt": "2026-10-31T09:26:28.034Z",
   "total": 1614,
   "status": {
     "nonaction": 503,
-    "partial": 408,
-    "aligned": 289,
+    "partial": 407,
+    "aligned": 290,
     "gap": 236,
     "deliberate": 158,
     "unreachable": 20
@@ -28,9 +28,9 @@
     "P3 / partial": 70,
     "P2 / deliberate": 66,
     "P3 / nonaction": 66,
-    "P1 / aligned": 59,
+    "P1 / aligned": 60,
     "P1 / gap": 59,
-    "P1 / partial": 59,
+    "P1 / partial": 58,
     "P3 / aligned": 58,
     "P3 / gap": 40,
     "P? / deliberate": 40,
@@ -1192,10 +1192,6 @@
       8
     ],
     [
-      "三点一〇、协同与权限追加（来自 `collab.md`，静态证据）",
-      7
-    ],
-    [
       "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
       7
     ],
@@ -1205,6 +1201,10 @@
     ],
     [
       "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
+      7
+    ],
+    [
+      "三点五三、第 44 批（★ UIFocusStack 分发算法 + 键表",
       7
     ]
   ]

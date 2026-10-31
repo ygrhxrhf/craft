@@ -49,3 +49,21 @@ describe('unreadReminders', () => {
     expect(unreadReminders(rows)).toHaveLength(1);
   });
 });
+
+// G137: read and resolved are different axes — a read row stays in the list.
+describe('read state', () => {
+  it('keeps read rows and reports their readAt', () => {
+    const rows = [
+      { id: 'n1', title: '未读', readAt: null },
+      { id: 'n2', title: '已读', readAt: '2026-10-31T09:00:00.000Z' },
+    ];
+    const inbox = unreadReminders(rows);
+    expect(inbox.map((row) => row.id)).toEqual(['n1', 'n2']);
+    expect(inbox[1].readAt).toBe('2026-10-31T09:00:00.000Z');
+    expect(inbox[0].readAt).toBeNull();
+  });
+
+  it('defaults kind when the payload omits it', () => {
+    expect(unreadReminders([{ id: 'n1', title: '甲' }])[0].kind).toBe('taskReminder');
+  });
+});

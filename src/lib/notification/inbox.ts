@@ -3,8 +3,11 @@ import { reminderInstant } from './task-reminders';
 export interface InboxRow {
   id: string;
   title: string;
+  kind: string;
   remindAt: string | null;
   documentId: string | null;
+  /** G137: null means unread. Read and resolved are separate axes. */
+  readAt: string | null;
 }
 
 /**
@@ -28,8 +31,10 @@ export function unreadReminders(rows: Iterable<Record<string, unknown>>): InboxR
     inbox.push({
       id: row.id,
       title: typeof row.title === 'string' ? row.title : '',
+      kind: typeof row.kind === 'string' ? row.kind : 'taskReminder',
       remindAt: typeof row.remindAt === 'string' ? row.remindAt : null,
       documentId: typeof row.documentId === 'string' ? row.documentId : null,
+      readAt: typeof row.readAt === 'string' ? row.readAt : null,
     });
   }
 

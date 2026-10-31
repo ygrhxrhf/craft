@@ -701,12 +701,12 @@
       ]
     },
     "G137": {
-      "status": "partial",
-      "note": "评论/提及/回复三类通知与铃铛、单向已解决已落；缺已读/未读可逆、全部已读、删除确认。",
+      "status": "aligned",
+      "note": "通知中心三件齐：提及/评论/回复触发（comment-notifications）、已读可逆与「全部标为已读」（readAt 列）、删除需确认。",
       "evidence": [
-        "src/lib/notification/comment-notifications.ts:37",
-        "src/components/notification/NotificationBell.tsx:71",
-        "src/actions/notification/notification.ts:25"
+        "src/actions/notification/notification.ts:60",
+        "src/components/notification/NotificationBell.tsx:96",
+        "src/prisma/contract.prisma:364"
       ]
     },
     "G141": {

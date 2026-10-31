@@ -33,3 +33,55 @@ export function indentUp(level: number): number {
 export function indentDown(level: number): number {
   return Math.max(0, Math.trunc(level) - 1);
 }
+
+/** Clamp a level into 0…MAX_INDENT_LEVEL; anything non-finite reads as 0. */
+export function clampIndent(level: unknown): number {
+  const value = typeof level === 'number' && Number.isFinite(level) ? Math.trunc(level) : 0;
+  return Math.min(MAX_INDENT_LEVEL, Math.max(0, value));
+}
+
+/** The blocks a Tab press can indent: plain paragraphs and headings (G581). */
+export const INDENTABLE_TYPES = ['paragraph', 'heading'] as const;
+
+export interface IndentTarget {
+  index: number;
+  pos: number;
+  level: number;
+  attrs: Record<string, unknown>;
+}
+
+function indexAt(doc: { childCount: number; child: (index: number) => { nodeSize: number } }, pos: number): number {
+  if (doc.childCount === 0) return -1;
+  let offset = 0;
+  for (let index = 0; index < doc.childCount; index += 1) {
+    const size = doc.child(index).nodeSize;
+    if (pos < offset + size) return index;
+    offset += size;
+  }
+  return doc.childCount - 1;
+}
+
+/**
+ * Top-level blocks touched by a selection. `to - 1` keeps a caret that sits at the very start of
+ * the next block from pulling that block in.
+ */
+export function indentTargets(
+  doc: { childCount: number; child: (index: number) => any },
+  from: number,
+  to: number,
+): IndentTarget[] {
+  const start = indexAt(doc, from);
+  const end = indexAt(doc, Math.max(from, to - 1));
+  if (start < 0 || end < 0) return [];
+
+  const targets: IndentTarget[] = [];
+  let pos = 0;
+  for (let index = 0; index < doc.childCount; index += 1) {
+    const node = doc.child(index);
+    if (index >= start && index <= end && (INDENTABLE_TYPES as readonly string[]).includes(node.type.name)) {
+      targets.push({ index, pos, level: clampIndent(node.attrs?.indent), attrs: node.attrs ?? {} });
+    }
+    pos += node.nodeSize;
+  }
+  return targets;
+}

@@ -1953,11 +1953,11 @@
       ]
     },
     "G1560": {
-      "status": "gap",
-      "note": "五档枚举在，但渲染为 1/2/3/6px 实线；官方 extraLight 三点、light 点线、pageSeparator 真分页。",
+      "status": "aligned",
+      "note": "五档按采集形态重写：极细三点省略号、细点线、常规 1px 实线、粗 3px 实线、pageSeparator 真分页；旧名宽度不变。",
       "evidence": [
         "src/app/globals.css:921",
-        "src/lib/editor/divider-styles.ts:6"
+        "src/lib/editor/divider-commands.test.ts:76"
       ]
     },
     "G90": {
@@ -2404,17 +2404,18 @@
       ]
     },
     "G912": {
-      "status": "gap",
-      "note": "无 Tab 缩进绑定；indentStyle 无调用点，格式面板缩进只做列表 sink/lift、不级联子树。",
+      "status": "aligned",
+      "note": "Tab 缩进已落地，作用对象是选区覆盖的顶层段落/标题，上限 8 档。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:20"
+        "src/components/editor/extensions/block-indent.ts:52",
+        "src/lib/editor/block-indent.ts:48"
       ]
     },
     "G913": {
-      "status": "gap",
-      "note": "Shift+Tab 同样无绑定；缩进双向级联在本地不存在。",
+      "status": "aligned",
+      "note": "Shift+Tab 已绑定同一实现，逐档回退、0 档不输出属性。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:28"
+        "src/components/editor/extensions/block-indent.ts:53"
       ]
     },
     "G922": {
@@ -4064,10 +4065,11 @@
       ]
     },
     "G218": {
-      "status": "gap",
-      "note": "缩进只对列表项生效，段落不能缩进；--indent-w 未接线",
+      "status": "aligned",
+      "note": "段落与标题可缩进（Tab/Shift-Tab，28px/档），0 档不输出 --indent-w。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:9"
+        "src/components/editor/extensions/block-indent.ts:22",
+        "src/app/globals.css:940"
       ]
     },
     "G222": {
@@ -5723,10 +5725,10 @@
       ]
     },
     "G612": {
-      "status": "gap",
-      "note": "无 Tab/Shift+Tab 缩进键位；28px 工具未接线",
+      "status": "aligned",
+      "note": "Tab/Shift+Tab 键位已接：顶层段落与标题按 28px/档缩进，列表项仍交列表扩展。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:8"
+        "src/components/editor/extensions/block-indent.ts:51"
       ]
     },
     "G613": {
@@ -7053,10 +7055,11 @@
       ]
     },
     "G905": {
-      "status": "gap",
-      "note": "本地无块级缩进命令：格式面板缩进只是 listItem 的 sink/lift",
+      "status": "partial",
+      "note": "Tab/Shift+Tab 已能缩进块；格式面板两个缩进按钮仍只对 listItem 做 sink/lift。",
       "evidence": [
-        "src/lib/editor/format-commands.ts:107"
+        "src/lib/editor/format-commands.ts:108",
+        "src/components/editor/extensions/block-indent.ts:51"
       ]
     },
     "G906": {
@@ -8866,10 +8869,10 @@
       ]
     },
     "G1545": {
-      "status": "gap",
-      "note": "编辑器无 Tab 绑定，段落缩进纯核无调用方",
+      "status": "aligned",
+      "note": "编辑器已有 Tab 绑定（BlockIndent），段落缩进不再是死代码。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:21"
+        "src/components/editor/extensions/block-indent.ts:38"
       ]
     },
     "G1546": {
@@ -8880,10 +8883,10 @@
       ]
     },
     "G1547": {
-      "status": "gap",
-      "note": "indentStyle 定义了 0 档不输出属性，但从未挂到块上",
+      "status": "aligned",
+      "note": "indentStyle 的 0 档省略语义已由 renderHTML 落到块属性上。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:26"
+        "src/components/editor/extensions/block-indent.ts:29"
       ]
     },
     "G1548": {

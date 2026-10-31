@@ -61,20 +61,33 @@ describe('四档命令已接进 slash 与插入面板', () => {
 });
 
 /**
- * 词汇迁移过一次而渲染层没跟上，就是这条的存在理由：四档在 CSS 里各有规则、宽度严格递增，
- * 否则「分隔线 - 粗」与「极细」在屏上是同一条线（实屏截图实测到过一次）。
+ * G1560 取代了 G31 的「四档粗细」模型：官方五档是**图案＋分页**——
+ * 极细＝三点省略号、细＝点线、常规＝细实线、粗＝粗实线、pageSeparator＝真分页。
+ * 旧测试按宽度递增断言（1/2/3/6）已作废。
  */
-describe('四档在渲染层真的画出四种宽度（G31 的另一半）', () => {
-  it.each(DIVIDER_INSERT_COMMANDS.map((c) => [c.label, c.style] as const))(
-    '%s 有实线规则',
-    (_label, style) => {
-      expect(dividerWidth(style)).not.toBeNull();
-    },
-  );
+describe('五档在渲染层画出各自的形态（G1560）', () => {
+  const ruleFor = (style: string) => {
+    const rule = css.match(new RegExp(`hr\\[data-style="${style}"\\][^{]*\\{([^}]*)\\}`));
+    return rule?.[1] ?? '';
+  };
 
-  it('宽度按 极细 < 细 < 常规 < 粗 严格递增', () => {
-    const widths = DIVIDER_INSERT_COMMANDS.map((c) => dividerWidth(c.style));
-    expect(widths).toEqual([1, 2, 3, 6]);
+  it('极细是三点省略号，不是实线', () => {
+    expect(ruleFor('extraLight')).toContain('radial-gradient');
+    expect(dividerWidth('extraLight')).toBeNull();
+  });
+
+  it('细是点线', () => {
+    expect(ruleFor('light')).toContain('dotted');
+    expect(dividerWidth('light')).toBeNull();
+  });
+
+  it('常规与粗是实线且粗更宽', () => {
+    expect(dividerWidth('regular')).toBe(1);
+    expect(dividerWidth('strong')).toBe(3);
+  });
+
+  it('pageSeparator 是真分页', () => {
+    expect(ruleFor('pageSeparator')).toContain('page-break-after: always');
   });
 
   it('旧名保留且宽度不变（改名不能改旧文档的样子）', () => {

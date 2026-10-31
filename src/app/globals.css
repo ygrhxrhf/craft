@@ -918,24 +918,54 @@
      （thin/medium/thick/dashed，`divider-styles.ts` 的 LEGACY 表），旧名一律保留且
      宽度一字不动——改名不能改变已写好的文档长什么样。⇒ 阶梯是 1/2/3/6，
      其中 常规=旧 medium、粗=旧 thick，`light` 是四档里唯一没有旧名对应的一档。 */
-  hr[data-style="extraLight"],
+  /* G1560：官方五档不是「粗细」，而是「图案＋分页」——
+     极细＝三点省略号、细＝点线、常规＝细实线、粗＝粗实线、pageSeparator＝真分页。
+     旧名（thin/medium/thick/dashed）保留原宽度，旧文档渲染一字不变。 */
+  hr[data-style="extraLight"] {
+    border: 0;
+    width: 3.5em;
+    height: 0.5em;
+    margin-inline: auto;
+    background-image: radial-gradient(circle, var(--border) 0.12em, transparent 0.13em);
+    background-size: 1.1em 0.5em;
+    background-repeat: repeat-x;
+    background-position: center;
+  }
+  hr[data-style="light"] {
+    border: none;
+    border-top: 2px dotted var(--border);
+  }
+  hr[data-style="regular"] {
+    border-top: 1px solid var(--border);
+  }
+  hr[data-style="strong"] {
+    border-top: 3px solid var(--border);
+  }
+  hr[data-style="pageSeparator"] {
+    border: none;
+    border-top: 1px dashed var(--border-strong, var(--border));
+    margin-block: 2em;
+    break-after: page;
+    page-break-after: always;
+  }
   hr[data-style="thin"] {
     border-top: 1px solid var(--border);
   }
-  hr[data-style="light"] {
-    border-top: 2px solid var(--border);
-  }
-  hr[data-style="regular"],
   hr[data-style="medium"] {
     border-top: 3px solid var(--border);
   }
-  hr[data-style="strong"],
   hr[data-style="thick"] {
     border-top: 6px solid var(--border);
   }
   hr[data-style="dashed"] {
     border: none;
     border-top: 2px dashed var(--border);
+  }
+
+  /* ── 块缩进（G581/G912）──
+     Tab/Shift-Tab 给顶层段落与标题写 `data-indent`，宽度由 `--indent-w` 给（0 档不输出属性）。 */
+  .ProseMirror [data-indent] {
+    padding-left: var(--indent-w, 0px);
   }
 
   /* ── 和纸分隔线（G1247）──

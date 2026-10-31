@@ -50,6 +50,7 @@ import { VideoEmbed } from './extensions/video-embed';
 import { AudioEmbed } from './extensions/audio-embed';
 import { HtmlEmbed } from './extensions/html-embed';
 import { Divider } from './extensions/divider';
+import { BlockIndent } from './extensions/block-indent';
 import { CodeBlockView } from './extensions/code-block-view';
 import { ReminderPill } from './extensions/reminder-pill';
 import { MathBlock } from './extensions/math-block';
@@ -482,6 +483,7 @@ export function Editor({
       AudioEmbed,
       HtmlEmbed,
       Divider,
+      BlockIndent,
       MathBlock,
       InlineMath,
       Mention,

@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { GripVertical, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
 import { useIsMobile } from '@/lib/use-is-mobile';
-import { addItem, deleteItem, setItemValue } from '@/actions/collection/items';
+import { addItem, clearGroupValues, deleteItem, setItemValue } from '@/actions/collection/items';
+import { confirmDialog } from '@/lib/dialog/show';
 import { getSyncManager } from '@/lib/sync-core';
 import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-reorder';
 import { useRouter } from 'next/navigation';
@@ -111,6 +112,23 @@ export function TableView({ collection, view }: TableViewProps) {
     router.refresh();
   };
 
+  // G284：删分组＝清该组的值，项目本身不删（官方确认句逐字）。
+  const handleDeleteGroup = async (
+    propertyId: string,
+    groupKey: string,
+    label: string,
+    count: number,
+  ) => {
+    const ok = await confirmDialog({
+      title: '删除分组',
+      message: `这将删除 ${count} 个项目中的“${label}”值。项目本身不会被删除。`,
+      confirmLabel: '删除',
+    });
+    if (!ok) return;
+    await clearGroupValues(collection.id, propertyId, groupKey);
+    router.refresh();
+  };
+
   const handleAddItem = async () => {
     await addItem(collection.id);
     router.refresh();
@@ -121,8 +139,12 @@ export function TableView({ collection, view }: TableViewProps) {
     return v?.value ?? null;
   };
 
-  // G1539：条目拖拽重排。带排序或分组时屏上顺序由它们决定，order 改了也看不见 ⇒ 那时不给拖。
-  const reorderEnabled = canReorder({ sortCount: sorts.length, grouped: Boolean(groupBy) });
+  // G1539/G283：带筛选、排序或分组时屏上顺序不由 order 决定 ⇒ 三态任一激活都不给拖。
+  const reorderEnabled = canReorder({
+    sortCount: sorts.length,
+    grouped: Boolean(groupBy),
+    filterCount: filters.length,
+  });
   const [dragId, setDragId] = useState<string | null>(null);
 
   // 手柄的可及名要能认出是哪一行 ⇒ 取第一个可见字段的值当行标签
@@ -230,8 +252,20 @@ export function TableView({ collection, view }: TableViewProps) {
 
               return (
                 <div key={groupKey}>
-                  <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
-                    {groupLabel} ({items.length})
+                  <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                    <span>
+                      {groupLabel} ({items.length})
+                    </span>
+                    {property && ['select', 'multi_select'].includes(property.type) && groupKey !== '__ungrouped__' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-1.5 text-ui font-normal text-muted-foreground hover:text-destructive"
+                        onClick={() => void handleDeleteGroup(property.id, groupKey, groupLabel, items.length)}
+                      >
+                        删除分组
+                      </Button>
+                    )}
                   </h3>
                   <table className="w-full border-collapse">
                     <thead className="sticky top-0 z-[var(--st-z-sticky-header)] bg-muted/50 max-md:bg-muted">

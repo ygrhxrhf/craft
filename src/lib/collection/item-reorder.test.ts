@@ -60,6 +60,9 @@ describe('collection row reorder (G1539)', () => {
     expect(canReorder({ sortCount: 0, grouped: false })).toBe(true);
     expect(canReorder({ sortCount: 1, grouped: false })).toBe(false);
     expect(canReorder({ sortCount: 0, grouped: true })).toBe(false);
+    // G283: the official copy bans drag on filtered *or* sorted *or* grouped collections.
+    expect(canReorder({ sortCount: 0, grouped: false, filterCount: 1 })).toBe(false);
+    expect(canReorder({ sortCount: 1, grouped: true, filterCount: 2 })).toBe(false);
   });
 });
 

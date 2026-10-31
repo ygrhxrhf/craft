@@ -444,21 +444,21 @@
       ]
     },
     "G283": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 3 批）：排序/分组守卫已在（canReorder 要求 sortCount===0 && !grouped，TableView.tsx:125 调用），但**筛选不在判据里**——代码注释明确写了筛选只减少行数、仍允许拖拽并按全集重排（item-reorder.ts:41-51）。官方文案是「已筛选、排序或分组的集合不支持拖放操作」⇒ 差在筛选一路，另两路已对齐。",
+      "note": "筛选、排序、分组任一激活都不给拖（canReorder 三态齐）；确认句子逐字来自官方文案。",
       "evidence": [
-        "src/lib/collection/item-reorder.ts:41-51",
-        "src/app/(app)/collections/[id]/TableView.tsx:124-148"
+        "src/lib/collection/item-reorder.ts:49",
+        "src/app/(app)/collections/[id]/TableView.tsx:129"
       ]
     },
     "G284": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 3 批）更正本地列：本地**没有删组动作**（全库零命中 deleteGroup／删除分组），GroupMenu 只有「取消分组」＝改 groupBy 配置，从不写任何行值、也不会删记录。台账「删分组会连带删记录」是陈旧读数；真缺口是官方那套「删组＝清该组全部项目的该字段值」没有实现。",
+      "note": "分组标题旁有「删除分组」：确认句逐字，执行只清该组的值（多选摘键、摘空写 null），不删行。",
       "evidence": [
-        "src/components/collection/GroupMenu.tsx:24-33",
-        "src/components/collection/GroupMenu.tsx:65-74"
+        "src/actions/collection/items.ts:146",
+        "src/app/(app)/collections/[id]/TableView.tsx:240"
       ]
     },
     "G285": {

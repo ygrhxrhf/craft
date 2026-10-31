@@ -123,3 +123,61 @@ export async function setItemValue(
   await emitSyncEventSafe(db, session.user.id, ['collection_value'], itemId);
   revalidatePath(`/collections/${(item as any).collectionId}`);
 }
+
+function parseStoredValue(raw: unknown): unknown {
+  if (typeof raw !== 'string') return raw ?? null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+}
+
+/**
+ * G284：删分组＝清字段值，不删行。官方文案「这将删除 [1] 个项目中的"[0]"值。项目本身不会被删除。」
+ * 单选命中组键，多选从数组里摘掉该键（摘空写 null）；检查框按布尔组键处理。
+ */
+export async function clearGroupValues(collectionId: string, propertyId: string, groupKey: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const collection = await db.orm.public.Collection.first({ id: collectionId });
+  if (!collection || (collection as any).userId !== session.user.id) {
+    throw new Error('集合不存在');
+  }
+  const property = await db.orm.public.CollectionProperty.first({ id: propertyId });
+  if (!property || (property as any).collectionId !== collectionId) {
+    throw new Error('属性不存在');
+  }
+
+  const values = await db.orm.public.CollectionValue.where({ propertyId }).all();
+  let cleared = 0;
+  for (const row of values) {
+    if ((row as any).deletedAt) continue;
+    const parsed = parseStoredValue((row as any).value);
+    if (parsed === null || parsed === undefined) continue;
+
+    let next: unknown;
+    if (Array.isArray(parsed)) {
+      if (!parsed.includes(groupKey)) continue;
+      const rest = parsed.filter((entry) => entry !== groupKey);
+      next = rest.length ? rest : null;
+    } else if (parsed === groupKey) {
+      next = null;
+    } else {
+      continue;
+    }
+
+    await db.orm.public.CollectionValue.where({ id: (row as any).id }).update({
+      value: next === null ? null : JSON.stringify(next),
+    });
+    cleared += 1;
+  }
+
+  if (cleared > 0) {
+    await emitSyncEventSafe(db, session.user.id, ['collection_value'], collectionId);
+    revalidatePath(`/collections/${collectionId}`);
+  }
+  return cleared;
+}

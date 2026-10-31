@@ -39,15 +39,19 @@ export function orderPatches(before: OrderedRow[], after: OrderedRow[]): { id: s
 }
 
 /**
- * 拖动生效的前置条件：视图带排序或分组时，屏上顺序由它们决定，`order` 改了也看不见
- * ⇒ 这种视图上不提供拖拽（宁可没有，也不要"拖了没反应"）。
+ * 拖动生效的前置条件：视图带**筛选、排序或分组**任一时都不提供拖拽。
  *
- * ☆ 筛选**不**在这个判据里：筛选只减少屏上行数，不改顺序的来源。但筛选下拖拽必须按
- *   **全集**重排（见 `planReorder`）——若拿筛选后的子集去 `renumber`，可见行会被压成
- *   0..k-1，与留在集合里的隐藏行撞号，清掉筛选后顺序就不再是用户拖出来的那个。
+ * 官方文案：`collections.drag.drop.not.available.desc`「已筛选、排序或分组的集合不支持拖放操作」
+ * （`features.md` §五之三，`gap.md` G283）。旧实现只拦排序与分组、放行筛选，与官方相反。
+ *
+ * `planReorder` 仍按全集重排——即使将来放宽判据，这条也不能退化。
  */
-export function canReorder(options: { sortCount: number; grouped: boolean }): boolean {
-  return options.sortCount === 0 && !options.grouped;
+export function canReorder(options: {
+  sortCount: number;
+  grouped: boolean;
+  filterCount?: number;
+}): boolean {
+  return options.sortCount === 0 && !options.grouped && (options.filterCount ?? 0) === 0;
 }
 
 /**

@@ -23,22 +23,21 @@
       ]
     },
     "G03": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P0",
-      "note": "三开关已落库；只有 notifyReminders 驱动投递，notifyComments／notifyDaily 在业务侧无消费点，每日电子邮件无发信通路。",
+      "note": "三开关均已消费：notifyReminders 门控投递、notifyComments 门控评论/提及、notifyDaily 门控站内每日摘要（邮件仍归 G1488）。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:598-624",
-        "src/actions/user/preferences.ts:25",
-        "src/lib/notification/materialize.ts:31"
+        "src/lib/notification/comment-notifications.ts:78",
+        "src/lib/notification/daily-digest.ts:45"
       ]
     },
     "G04": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P0",
-      "note": "view／edit／仅协作者三档已落地；「请求批准」流在 src 零命中。",
+      "note": "请求批准流已落：viewer 可请求编辑，owner 在分享面板批准/拒绝，批准把 requested 行转 editor。",
       "evidence": [
-        "src/lib/share/permission.ts:8-27",
-        "src/components/share/ShareDialog.tsx:57-62"
+        "src/actions/document/access-requests.ts:65",
+        "src/components/share/RequestEditAccess.tsx:42"
       ]
     },
     "G05": {
@@ -107,45 +106,48 @@
       "note": "快捷键面板已按官方六组渲染且只印本地真实绑定；命令面板「查看所有快捷键」指向同一面板。"
     },
     "G14": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "块移动／样式槽／副本／查找／专注／侧栏／日记／快捷键面板已接；RENAME（Shift+Enter）与 COMMENT（Ctrl+Shift+M）只在键表里有 id，没有处理分支。",
+      "note": "RENAME 与 COMMENT 两个处理分支已接（选中块时 Shift+Enter 改标题、Ctrl+Shift+M 开评论入口）。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:14-140",
-        "src/components/editor/shell-shortcuts.tsx:22-27",
-        "src/lib/editor/keymap.ts:206",
-        "src/lib/editor/keymap.ts:213"
+        "src/components/editor/extensions/craft-keymap.ts:113",
+        "src/components/editor/extensions/craft-keymap.ts:123"
       ]
     },
     "G15": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "Task 模型没有独立 schedule 列；任务四档分组实际按 dueDate 切，不是官方的 Schedule 轴。",
+      "note": "Task 已有独立 scheduleDate 列与迁移，任务页按计划日期分组，dueDate 仍是截止。",
       "evidence": [
-        "src/prisma/contract.prisma:323-340",
-        "src/lib/task/grouping.ts:5-32"
+        "src/prisma/contract.prisma:333",
+        "src/actions/task/task.ts:60"
       ]
     },
     "G16": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "遍历展开/收起已落地；命令面板没有命令注册表，两档命令无处挂。",
+      "note": "「全部展开／全部收起」两档已注册进命令面板，执行后遍历全文改 open。",
       "evidence": [
-        "src/components/editor/extensions/toggle-all.ts",
+        "src/lib/editor/toggle-all-command.ts",
         "src/components/search/CommandPalette.tsx"
       ]
     },
     "G17": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "mermaid 只作为代码块语言名出现，没有渲染器。",
+      "note": "Mermaid 渲染器与斜杠入口已落，导出仍保留代码围栏。",
       "evidence": [
-        "src/lib/editor/code-languages.ts"
+        "src/components/editor/extensions/mermaid-preview.tsx"
       ]
     },
     "G18": {
-      "status": "partial",
-      "priority": "P1"
+      "status": "aligned",
+      "priority": "P1",
+      "note": "标题与样式变更也落版本快照，Document.version 随快照单调递增。",
+      "evidence": [
+        "src/lib/versioning/snapshot.ts:3",
+        "src/actions/document/update.ts:8"
+      ]
     },
     "G19": {
       "status": "aligned",
@@ -163,28 +165,39 @@
       ]
     },
     "G21": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "没有独立 /connections 路由；反向链接仍在信息页签。",
+      "note": "侧栏一级「连接」屏已建（/connections），列出并新增 MCP/API 连接。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx"
+        "src/app/(app)/connections/page.tsx",
+        "src/components/sidebar/SidebarNav.tsx"
       ]
     },
     "G22": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "只有 markdown/html/text/json 四种导出。",
+      "note": "导出补 DOCX/PDF/TextBundle/整库 zip/图片，导入补 Markdown/HTML/Evernote/Readwise/Notion 五源。",
       "evidence": [
-        "src/actions/document/export.ts:9"
+        "src/lib/export/docx.ts",
+        "src/lib/import/sources.ts"
       ]
     },
     "G23": {
-      "status": "gap",
-      "priority": "P1"
+      "status": "partial",
+      "priority": "P1",
+      "note": "公式 21 个函数（官方 25）与六类视图互转已落；仍缺 4 个官方函数，属性类型枚举未收口。",
+      "evidence": [
+        "src/lib/collection/formula.ts:39",
+        "src/components/collection/ViewActionsMenu.tsx:138"
+      ]
     },
     "G24": {
       "status": "partial",
-      "priority": "P1"
+      "priority": "P1",
+      "note": "未接的分区入口已移除；语言/集成/已发布内容仍有静态壳，未全部接后端。",
+      "evidence": [
+        "src/lib/app/settings-sections.ts:34"
+      ]
     },
     "G31": {
       "status": "aligned",
@@ -194,20 +207,20 @@
       ]
     },
     "G32": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "块深链已可用，但 blockId 仍是跳到块时惰性盖章，不是官方那种恒有 data-block-id。",
+      "note": "blockId 已常驻：打开文档即给顶层块盖章，深链与刷新后稳定。",
       "evidence": [
-        "src/lib/editor/block-anchor.ts:111-145",
-        "src/components/editor/extensions/block-id.ts"
+        "src/components/editor/extensions/block-id.ts:18"
       ]
     },
     "G33": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "命令面板只有本地已有动作与「查看所有快捷键」，没有 189 条 commands.* 注册表。",
+      "note": "189 条官方命令已进注册表全量可搜，未接入的执行器置灰标「未接入」。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx"
+        "src/lib/commands/official-catalog.ts",
+        "src/lib/commands/registry.ts"
       ]
     },
     "G34": {
@@ -235,20 +248,30 @@
       "priority": "P2"
     },
     "G40": {
-      "status": "gap",
-      "priority": "P1"
+      "status": "aligned",
+      "priority": "P1",
+      "note": "音频块、iframe/网页嵌入、HTML 沙箱嵌入、副标题（h2）与 Mermaid 均已接。",
+      "evidence": [
+        "src/components/editor/extensions/audio-embed.tsx",
+        "src/components/editor/extensions/html-embed.tsx"
+      ]
     },
     "G41": {
-      "status": "gap",
-      "priority": "P1"
+      "status": "partial",
+      "priority": "P1",
+      "note": "列类型共 15 档（含 person/phone）且表格已有汇总行；仍缺 media（本地叫 file）与 linkToBlock 两种官方类型。",
+      "evidence": [
+        "src/components/collection/AddPropertyMenu.tsx:20",
+        "src/lib/collection/summary.ts:16"
+      ]
     },
     "G42": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "只有文档协作 ws 与 tldraw sync，没有通知通道/RTC。",
+      "note": "通知通道 /api/v1/notifications/stream 已接；RTC 三维（光标/编辑块/打开页面）走 awareness。",
       "evidence": [
-        "src/app/api/collab",
-        "src/app/api/whiteboards"
+        "src/app/api/v1/notifications/stream/route.ts",
+        "src/lib/collaboration/presence.ts:18"
       ]
     },
     "G43": {
@@ -259,11 +282,11 @@
       ]
     },
     "G44": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "没有 MCP/API 接入中心路由。",
+      "note": "连接屏即 MCP/API 接入中心，两段文案与添加入口均落。",
       "evidence": [
-        "src/app"
+        "src/app/(app)/connections/ConnectionsPanel.tsx:21"
       ]
     },
     "G45": {
@@ -275,11 +298,12 @@
       ]
     },
     "G46": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "四档分组已落地，但「今天/即将进行」按 dueDate 切，不是官方的 schedule 轴。",
+      "note": "任务页四档分组已按 scheduleDate（计划日期）切，不再是 dueDate 轴。",
       "evidence": [
-        "src/lib/task/grouping.ts:5-32"
+        "src/lib/task/grouping.ts:23",
+        "src/lib/task/upcoming-groups.ts"
       ]
     },
     "G47": {
@@ -294,11 +318,12 @@
       "priority": "P1"
     },
     "G49": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "AI 路由只有改写/续写/翻译/总结四个一次性补全，没有工具面、上下文徽标、额度。",
+      "note": "web_search/web_ask/web_crawl/blocks_get/insert_text 均接工具面，上下文徽标与 connect_error 已落；view_credits 按项目自用不做。",
       "evidence": [
-        "src/app/api/ai/route.ts"
+        "src/lib/ai/tools.ts",
+        "src/app/api/ai/tools/route.ts:47"
       ]
     },
     "G50": {
@@ -308,23 +333,27 @@
     "G51": {
       "status": "partial",
       "priority": "P1",
-      "note": "快捷键样式槽已按 title/subtitle/heading/strong/body 映射；格式面板仍是 H1–H4。",
+      "note": "格式面板已按 title/subtitle/heading/strong/body/caption 语义名显示，TOC 同源；仍缺 page/card 两档。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:22-37",
-        "src/components/editor/tabs/FormatTab.tsx"
+        "src/components/editor/tabs/FormatTab.tsx:30",
+        "src/lib/editor/semantic-levels.ts:7"
       ]
     },
     "G52": {
-      "status": "partial",
-      "priority": "P1",
-      "note": "cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账已判不做。",
+      "status": "deliberate",
+      "note": "cancelled 第三态与默认只显示 pending 已落地；剩余两项（按正则过滤内容、块嵌套上限 10）第 206 批已判不做——前者出处是 API 查询参数、后者是显示深度参数。",
       "evidence": [
-        "src/lib/editor/task-status.ts"
+        "src/lib/editor/task-status.ts:78",
+        "src/lib/block-depth-gate.test.ts"
       ]
     },
     "G53": {
-      "status": "gap",
-      "priority": "P1"
+      "status": "aligned",
+      "priority": "P1",
+      "note": "page-tree 投影层已建（isPage/children/pageContentMarkdown），导出/搜索/AI 复用同一投影。",
+      "evidence": [
+        "src/lib/document/page-tree.ts:72"
+      ]
     },
     "G274": {
       "status": "gap",

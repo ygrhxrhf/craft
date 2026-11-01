@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isEmptyBlock, mergeCaretIndex, nextBackspaceStep, nextFormatStep } from './format-downgrade';
+import { hasDecoration, isEmptyBlock, mergeCaretIndex, nextBackspaceStep, nextFormatStep } from './format-downgrade';
 
 // G570: the three-step chain, in order, first applicable step wins.
 describe('the format downgrade chain', () => {
@@ -75,5 +75,25 @@ describe('the Backspace chain', () => {
   it('lands the merge caret at the previous block end', () => {
     expect(mergeCaretIndex(7)).toBe(7);
     expect(mergeCaretIndex(null)).toBe(-1);
+  });
+});
+
+// G570: the third chain step consumes a decoration — locally the focus colour or the block colour.
+describe('the decoration test (G570)', () => {
+  it('is false with neither attribute', () => {
+    expect(hasDecoration({})).toBe(false);
+    expect(hasDecoration(null)).toBe(false);
+    expect(hasDecoration({ focusColor: null, backgroundColor: null })).toBe(false);
+  });
+
+  it('is true with either attribute set', () => {
+    expect(hasDecoration({ focusColor: 'red' })).toBe(true);
+    expect(hasDecoration({ backgroundColor: '#fff' })).toBe(true);
+  });
+
+  it('drives the chain\u2019s third step', () => {
+    expect(nextFormatStep({ indentLevel: 0, inList: false, decorated: hasDecoration({ focusColor: 'blue' }) })).toBe(
+      'decoration',
+    );
   });
 });

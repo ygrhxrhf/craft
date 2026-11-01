@@ -1288,10 +1288,12 @@
     },
     "G570": {
       "status": "partial",
-      "note": "逐级降级链的优先级已建模并接入 Enter：缩进→列表→装饰，第一步适用即止；装饰档本地无对应属性，仍记 partial。",
+      "priority": "P1",
+      "note": "现读（第 66 批）：降级链**第三段（清装饰）接进真实键位**——新增 `hasDecoration`（本地装饰＝`focusColor` 或 `backgroundColor` 两属性任一有值，对应官方 `decorations.block/focus` 两档），Enter 与 Backspace 两条链都改为读真实属性（此前写死 `decorated: false`，第三段永不触发），命中 `decoration` 时同时清两个属性。单测 16 条。仍缺＝装饰档官方是数字档位（`{block:0,focus:0}`）本地是字符串颜色，故记 partial。",
       "evidence": [
-        "src/lib/editor/format-downgrade.ts:28",
-        "src/components/editor/extensions/craft-keymap.ts:215"
+        "src/lib/editor/format-downgrade.ts:36",
+        "src/components/editor/extensions/craft-keymap.ts:270",
+        "src/lib/editor/format-downgrade.test.ts:71"
       ]
     },
     "G572": {

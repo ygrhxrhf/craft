@@ -73,6 +73,7 @@
 | 63 | `013f4a9` | G282（partial） | 段落间距与页面样式预设两个 action 落进 PageStyle |
 | 64 | `80dc572` | G593（partial） | 复数维度接真实 presence 发布路径（editingBlocks + 共用时间戳） |
 | 65 | — | G591（partial） | 编辑状态机接真实子编辑器（行内公式的开/合走 startCodeEdit/stopCodeEdit） |
+| 66 | — | G570（partial） | 降级链第三段（清装饰）接真实键位（hasDecoration 读 focusColor/backgroundColor） |
 
 **剩余 53 条**（gap 0 / partial 53）。☆ 口径更正：本表此前的"剩余 N 条"逐批递减是**错的**——它按"我改了哪些行"减，但**记为 partial 的行在台账里仍是待办**（纯核已落、真实消费点未接），`ledger-backlog.csv` 的 `P1 && (gap||partial)` 才是权威口径。按它实算：**P1 可动行 53 条，全部是 partial、gap 已清零**。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2769 测试、tsc 0 错。
 

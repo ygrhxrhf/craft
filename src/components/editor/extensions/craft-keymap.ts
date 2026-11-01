@@ -8,7 +8,7 @@ import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from 
 import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
 import { buildDowngradeFlatten } from '@/lib/editor/downgrade-command';
 import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
-import { nextFormatStep, nextBackspaceStep, isEmptyBlock } from '@/lib/editor/format-downgrade';
+import { nextFormatStep, nextBackspaceStep, isEmptyBlock, hasDecoration } from '@/lib/editor/format-downgrade';
 import { mergeStyleWinner } from '@/lib/editor/merge-text-blocks';
 import { requestLink } from '@/lib/store/use-link-request-store';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
@@ -269,7 +269,8 @@ export const CraftKeymap = Extension.create({
                 const step = nextFormatStep({
                   indentLevel: Number($from.parent.attrs?.indent ?? 0),
                   inList: listDepthOf($from) > 0,
-                  decorated: false,
+                  // G570: the third step clears a decoration (focus colour / block colour).
+                  decorated: hasDecoration($from.parent.attrs as Record<string, unknown>),
                 });
                 if (step === 'indent') {
                   editor.chain().focus().updateAttributes($from.parent.type.name, {
@@ -279,6 +280,15 @@ export const CraftKeymap = Extension.create({
                 }
                 if (step === 'list') {
                   editor.chain().focus().liftListItem('listItem').run();
+                  return true;
+                }
+                if (step === 'decoration') {
+                  // G570: clear both decoration attributes — the "block" and "focus" slots.
+                  editor
+                    .chain()
+                    .focus()
+                    .updateAttributes($from.parent.type.name, { focusColor: null, backgroundColor: null })
+                    .run();
                   return true;
                 }
               }
@@ -314,7 +324,7 @@ export const CraftKeymap = Extension.create({
                   block: {
                     indentLevel: Number($from.parent.attrs?.indent ?? 0),
                     inList: listDepthOf($from) > 0,
-                    decorated: false,
+                    decorated: hasDecoration($from.parent.attrs as Record<string, unknown>),
                   },
                   blockEmpty: isEmptyBlock({
                     textLength: $from.parent.textContent.length,
@@ -332,6 +342,14 @@ export const CraftKeymap = Extension.create({
                   return editor.chain().focus().updateAttributes($from.parent.type.name, {
                     indent: Math.max(0, Number($from.parent.attrs?.indent ?? 0) - 1),
                   }).run();
+                }
+                if (step === 'decoration') {
+                  // G570: the third step clears both decoration attributes.
+                  return editor
+                    .chain()
+                    .focus()
+                    .updateAttributes($from.parent.type.name, { focusColor: null, backgroundColor: null })
+                    .run();
                 }
                 // G578 step 5: a previous block that is an **empty text block** is removed
                 // outright — ProseMirror's joinBackward would instead merge into it and leave the

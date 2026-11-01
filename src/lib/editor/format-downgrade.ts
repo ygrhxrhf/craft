@@ -34,9 +34,17 @@ export function nextFormatStep(state: BlockFormatState): FormatStep | null {
 }
 
 /**
- * G577: whether a block counts as "completely empty". Text content is not enough on its own — an
- * atomic inline (mention, emoji, inline math) also makes the block non-empty.
+ * G570: the official decoration step clears a **numeric** decoration level
+ * (`{block:0, focus:0}`) plus a colour. Locally the decoration is carried by two attributes —
+ * `focusColor` (the "focus" decoration) and `backgroundColor` (the "block" decoration) — so this
+ * reports whether either is set, which is what the chain's third step consumes.
  */
+export function hasDecoration(attrs: { focusColor?: unknown; backgroundColor?: unknown } | null | undefined): boolean {
+  if (!attrs) return false;
+  const focus = attrs.focusColor;
+  const block = attrs.backgroundColor;
+  return Boolean((typeof focus === 'string' && focus) || (typeof block === 'string' && block));
+}
 export function isEmptyBlock(input: {
   textLength: number;
   atomicInlines: number;

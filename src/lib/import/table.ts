@@ -44,6 +44,11 @@ export function isAlignmentRow(cells: readonly string[]): boolean {
   });
 }
 
+/** G1240: whether a header row has any non-blank cell (an all-blank header is dropped). */
+export function hasHeaderContent(cells: readonly string[]): boolean {
+  return cells.some((cell) => cell.trim() !== '');
+}
+
 /** Swap `<br>` for the placeholder, so the cell parser does not treat it as markup. */
 export function hideCellBreaks(cell: string): string {
   return cell.replace(/<br\s*\/?>/gi, CELL_BREAK_PLACEHOLDER);

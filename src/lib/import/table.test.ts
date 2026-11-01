@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
+import { hasHeaderContent,
   CELL_BREAK_PLACEHOLDER,
   hideCellBreaks,
   isAlignmentRow,
@@ -83,5 +83,18 @@ describe('the full cell pipeline', () => {
   it('hides, restores and trims in one step', () => {
     expect(prepareCell('a<br>b\r\n')).toBe('a\nb');
     expect(prepareCell('plain')).toBe('plain');
+  });
+});
+
+// G1240: the header row is dropped when it has no non-blank cell.
+describe('table header handling', () => {
+  it('keeps a header row that has content', () => {
+    expect(hasHeaderContent(['A', 'B'])).toBe(true);
+    expect(hasHeaderContent(['A', ''])).toBe(true);
+  });
+
+  it('drops a header row that is entirely blank', () => {
+    expect(hasHeaderContent(['', '  '])).toBe(false);
+    expect(hasHeaderContent([])).toBe(false);
   });
 });

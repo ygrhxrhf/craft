@@ -1618,11 +1618,11 @@
       ]
     },
     "G1236": {
-      "status": "partial",
-      "note": "六枚行内标签分派表已落（含静默 default），但无消费者；HTML 导入走 turndown→markdown。",
+      "status": "aligned",
+      "note": "行内 HTML 分派表接入导入器：strong/em/s/a/mark 各自产标记，span 保留文本不装饰，其余静默丢弃；highlight 用明暗双值字面量。",
       "evidence": [
-        "src/lib/import/inline-html.ts:20",
-        "src/lib/import/sources.ts:12"
+        "src/lib/import/markdown.ts:319",
+        "src/lib/import/markdown.ts:377"
       ]
     },
     "G1238": {
@@ -1635,10 +1635,10 @@
     },
     "G1240": {
       "status": "partial",
-      "note": "全连字符对齐行、<br> 占位往返、尾部换行削除已落；缺首行全空删除、单元格递归块解析与 uuid pluginData。",
+      "note": "三段判据已在（全连字符行丢弃、<br> 占位往返、结尾换行削除），本次补「首行全空则整行删掉」；三组 uuid pluginData 与递归块解析仍未做。",
       "evidence": [
-        "src/lib/import/table.ts:39",
-        "src/lib/import/markdown.ts:215"
+        "src/lib/import/table.ts:26",
+        "src/lib/import/markdown.ts:216"
       ]
     },
     "G1267": {

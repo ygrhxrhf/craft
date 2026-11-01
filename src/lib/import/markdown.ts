@@ -1,5 +1,6 @@
 import { DEFAULT_DIVIDER_STYLE, DIVIDER_MARKUP_PATTERN, dividerStyleFromMarkup } from '@/lib/editor/divider-styles';
-import { isAlignmentRow, prepareCell, splitRow } from '@/lib/import/table';
+import { hasHeaderContent, isAlignmentRow, prepareCell, splitRow } from '@/lib/import/table';
+import { DEFAULT_HIGHLIGHT_COLOR } from '@/lib/import/inline-html';
 
 export interface PmNode {
   type: string;
@@ -219,9 +220,13 @@ function parseBlocks(lines: string[]): PmNode[] {
           rows.push(splitRow(lines[index]));
           index += 1;
         }
+        // G1240: a header row with no non-blank cell is dropped entirely rather than rendered
+        // as an empty first row.
+        const hasHeader = hasHeaderContent(rows[0] ?? []);
+        const dataRows = hasHeader ? rows : rows.slice(1);
         blocks.push({
           type: 'table',
-          content: rows.map((cells) => ({
+          content: dataRows.map((cells) => ({
             type: 'tableRow',
             content: cells.map((cell) => ({
               type: 'tableCell',
@@ -343,7 +348,33 @@ function parseList(lines: string[]): PmNode {
 }
 
 const INLINE =
-  /(`[^`]+`)|\$\$([^$\n]+)\$\$|\$([^$\n]+)\$|(\*\*[\s\S]+?\*\*(?!\*))|(~~[\s\S]+?~~)|((?<!\*)\*(?!\s)[^*\n]+?\*(?!\*))|((?<!_)_(?!_)[^_\n]+?_(?!_))|(\[[^\]]*\]\([^)\s]+\))|(!\[[^\]]*\]\([^)\s]+\))/;
+  /(`[^`]+`)|\$\$([^$\n]+)\$\$|\$([^$\n]+)\$|(<(?:strong|em|s|span|mark|a)\b[^>]*>[\s\S]*?<\/(?:strong|em|s|span|mark|a)>)|\*\*[\s\S]+?\*\*(?!\*)|(~~[\s\S]+?~~)|((?<!\*)\*(?!\s)[^*\n]+?\*(?!\*))|((?<!_)_(?!_)[^_\n]+?_(?!_))|(\[[^\]]*\]\([^)\s]+\))|(!\[[^\]]*\]\([^)\s]+\))/;
+
+/**
+ * G1236: an inline HTML tag maps onto a local mark through the collected table. `span` is
+ * recognised but decorates nothing; any other tag is dropped silently, exactly as the official
+ * dispatch does (its `default:` is a `continue`).
+ */
+function inlineHtmlMark(tag: string, attrs: string): { type: string; attrs?: Record<string, unknown> } | null {
+  switch (tag.toLowerCase()) {
+    case 'strong':
+      return { type: 'bold' };
+    case 'em':
+      return { type: 'italic' };
+    case 's':
+      return { type: 'strike' };
+    case 'mark':
+      return { type: 'highlight', attrs: { color: DEFAULT_HIGHLIGHT_COLOR } };
+    case 'a': {
+      const href = /href\s*=\s*["']([^"']*)["']/i.exec(attrs)?.[1] ?? '';
+      return { type: 'link', attrs: { href } };
+    }
+    case 'span':
+      return null;
+    default:
+      return null;
+  }
+}
 
 function parseInline(text: string): PmNode[] {
   const nodes: PmNode[] = [];
@@ -367,6 +398,13 @@ function parseInline(text: string): PmNode[] {
       nodes.push({ type: 'inlineMath', attrs: { latex: token.slice(2, -2) } });
     } else if (token.startsWith('$')) {
       nodes.push({ type: 'inlineMath', attrs: { latex: token.slice(1, -1) } });
+    } else if (token.startsWith('<')) {
+      // G1236: `<strong>…</strong>` and friends become the same marks the punctuation forms do.
+      const html = /^<([a-zA-Z]+)\b([^>]*)>([\s\S]*)<\/\1>$/.exec(token);
+      const mark = html ? inlineHtmlMark(html[1], html[2]) : null;
+      const inner = html?.[3] ?? '';
+      if (mark) addMark(parseInline(inner), mark, nodes);
+      else pushText(nodes, inner);
     } else if (token.startsWith('**')) {
       addMark(parseInline(token.slice(2, -2)), { type: 'bold' }, nodes);
     } else if (token.startsWith('~~')) {

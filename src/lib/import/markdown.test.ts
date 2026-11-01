@@ -280,3 +280,35 @@ describe('re-importing what the Craft-shaped exporter writes', () => {
     expect(list.content[1].attrs?.checked).toBe(false);
   });
 });
+
+// G1236: inline HTML maps onto the same marks the punctuation forms produce.
+describe('inline HTML tags', () => {
+  const first = (md: string) => {
+    const doc = parseMarkdown(md);
+    return (doc.content?.[0]?.content ?? []) as any[];
+  };
+
+  it('maps strong/em/s onto bold/italic/strike', () => {
+    expect(first('<strong>a</strong>')[0].marks?.[0].type).toBe('bold');
+    expect(first('<em>b</em>')[0].marks?.[0].type).toBe('italic');
+    expect(first('<s>c</s>')[0].marks?.[0].type).toBe('strike');
+  });
+
+  it('maps a link and reads its href', () => {
+    const node = first('<a href="https://example.com">x</a>')[0];
+    expect(node.marks?.[0]).toMatchObject({ type: 'link', attrs: { href: 'https://example.com' } });
+  });
+
+  it('gives a highlight its dual light/dark literal', () => {
+    expect(first('<mark>h</mark>')[0].marks?.[0]).toMatchObject({
+      type: 'highlight',
+      attrs: { color: '#fff100 #fff432' },
+    });
+  });
+
+  it('keeps a span\'s text but decorates nothing', () => {
+    const nodes = first('<span>plain</span>');
+    expect(nodes[0].marks ?? []).toEqual([]);
+    expect(nodes[0].text).toBe('plain');
+  });
+});

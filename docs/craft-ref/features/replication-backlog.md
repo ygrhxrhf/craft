@@ -85,8 +85,8 @@
 | G51 | 已对齐 | 2/2 | 排版层级是 title / subtitle / heading / strong / page / body 六档语义名（ap | 本地是 Heading 1–4 + 无 subtitle/strong/page 档（Editor.tsx:249-251），目 | 六档语义名齐（title/subtitle/heading/strong/page/body），格式面板新增「页面」档，导出映射不变；`src/lib/editor/semantic-levels.ts:9`、`src/components/editor/tabs/FormatTab.tsx:41` |
 | G52 | 有意偏差 | 2/2 | 任务状态含 cancelled（与 completed 并列），日历默认只显示 pending，任务可按正则过滤内容；官方块嵌套 | 现读（2026-10-31）更正：cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账 | cancelled 第三态与默认只显示 pending 已落地；剩余两项（按正则过滤内容、块嵌套上限 10）第 206 批已判不做——前者出处是 API 查询参数、后者是显示深度参数；`src/lib/editor/task-status.ts:78`、`src/lib/block-depth-gate.test.ts` |
 | G53 | 已对齐 | 2/3 | 块即树节点、页面 = 有子块的块，子树序列化成 markdown 字符串（pageContent），块带 children 计数 | 本地页面是独立 Document + parentId 自树，块内子页与文档子页两套概念并存；无"块子树 markdown 投影 | page-tree 投影层已建（isPage/children/pageContentMarkdown），导出/搜索/AI 复用同一投影；`src/lib/document/page-tree.ts:72` |
-| G23 | 部分落地 | 2/2 | 集合公式函数 25 个（table.formula.*）、视图可互相转换（collections.views.turn.into | lib/collection/formula.ts 是子集；视图类型有 6 个组件但无「转换为」命令；CollectionPro | 公式 21 个函数（官方 25）与六类视图互转已落；仍缺 4 个官方函数，属性类型枚举未收口；`src/lib/collection/formula.ts:39`、`src/components/collection/ViewActionsMenu.tsx:138` |
-| G24 | 部分落地 | 2/2 | 设置分区真实生效（语言、集成、已发布内容等） | 部分落地（第 265 批复核）＝原判"每分区要么接后端要么移除入口"这条判据已按官方（未接的分区入口已移除）：src/lib/a | 未接的分区入口已移除；语言/集成/已发布内容仍有静态壳，未全部接后端；`src/lib/app/settings-sections.ts:34` |
+| G23 | 已对齐 | 2/2 | 集合公式函数 25 个（table.formula.*）、视图可互相转换（collections.views.turn.into | lib/collection/formula.ts 是子集；视图类型有 6 个组件但无「转换为」命令；CollectionPro | 现读（第 32 批）：公式函数集已齐官方 25 键——src/lib/collection/formula.ts 的 FUNCTIONS 18 个（含 above/below/left/right 四向区域引用）＋ CO；`src/lib/collection/formula.ts:39`、`src/lib/collection/property-types.ts:9`、`src/components/collection/ViewActionsMenu.tsx:106` |
+| G24 | 已对齐 | 2/2 | 设置分区真实生效（语言、集成、已发布内容等） | 部分落地（第 265 批复核）＝原判"每分区要么接后端要么移除入口"这条判据已按官方（未接的分区入口已移除）：src/lib/a | 现读（第 32 批）：本行判据＝「每分区要么接后端、要么移除入口，不留假开关」，已满足——src/lib/app/settings-sections.ts 是接线台账（14 分区各带 wired 标志），Settings；`src/lib/app/settings-sections.ts:33`、`src/components/settings/SettingsModal.tsx:160`、`src/components/settings/settings-nav.test.ts:16` |
 | G32 | 已对齐 | 2/2 | 块级深链：URL 直接带 blockUuid（✓ …/d/<doc>/<block>?s=…），data-block-id 恒有 | 本地 blockId 由打开的编辑器惰性盖章（历史记忆里已记），旧文档链接可能指向不到块 | blockId 已常驻：打开文档即给顶层块盖章，深链与刷新后稳定；`src/components/editor/extensions/block-id.ts:18` |
 | G33 | 已对齐 | 2/2 | 命令菜单 189 条命令全量可搜（R16） | 命令面板只有本地已有动作，条目数远小于官方；无 commands.* 命名体系 | 189 条官方命令已进注册表全量可搜，未接入的执行器置灰标「未接入」；`src/lib/commands/official-catalog.ts`、`src/lib/commands/registry.ts` |
 
@@ -146,7 +146,7 @@
 | 条数 | 节 |
 | --- | --- |
 | 59 | 三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第 |
-| 35 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
+| 33 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
 | 27 | 三点七、P2 追加（来自 dialogs.md 与 protoco |
 | 12 | 三点一〇六十、第 110 批〔★★★ 代码块主题的作用域结案＝块级， |
 | 11 | 三点一〇三八、第 97 批〔★★★ G943 裁定＝连接器的按键不自 |

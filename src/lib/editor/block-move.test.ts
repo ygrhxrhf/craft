@@ -128,3 +128,55 @@ describe('moving a block', () => {
     expect(result.doc.child(1).textContent).toBe('正文');
   });
 });
+
+describe('moving an indented block carries its children (G279)', () => {
+  const schema2 = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: { group: 'block', content: 'text*', attrs: { indent: { default: 0 } } },
+      text: {},
+    },
+  });
+  const ip = (text: string, indent = 0): Node =>
+    schema2.nodes.paragraph.create({ indent }, schema2.text(text));
+  const idoc = (...blocks: Node[]): Node => schema2.nodes.doc.create(null, blocks);
+  const texts = (root: Node): string[] => {
+    const out: string[] = [];
+    for (let i = 0; i < root.childCount; i += 1) out.push(root.child(i).textContent);
+    return out;
+  };
+  const indents = (root: Node): number[] => {
+    const out: number[] = [];
+    for (let i = 0; i < root.childCount; i += 1) out.push(root.child(i).attrs.indent as number);
+    return out;
+  };
+
+  it('moves the parent with its indented children as one unit', () => {
+    // 甲 / 乙(0) with 乙a(1), 乙b(2) children / 丙(0)
+    const root = idoc(ip('甲'), ip('乙'), ip('乙a', 1), ip('乙b', 2), ip('丙'));
+    const state = EditorState.create({ schema: schema2, doc: root, selection: TextSelection.create(root, 4) });
+    const tr = buildBlockMove(state, 'down')!;
+    const next = state.apply(tr);
+    // 乙's whole run (乙,乙a,乙b) swaps with 丙 — the children ride along.
+    expect(texts(next.doc)).toEqual(['甲', '丙', '乙', '乙a', '乙b']);
+    expect(indents(next.doc)).toEqual([0, 0, 0, 1, 2]);
+  });
+
+  it('a deeper block still carries only its own deeper descendants', () => {
+    // 甲 / 乙(0) 乙a(1) 乙b(2) / 丙(0) — moving 乙a up should swap only against 乙.
+    const root = idoc(ip('甲'), ip('乙'), ip('乙a', 1), ip('乙b', 2), ip('丙'));
+    const state = EditorState.create({ schema: schema2, doc: root, selection: TextSelection.create(root, 7) });
+    const tr = buildBlockMove(state, 'up')!;
+    const next = state.apply(tr);
+    expect(texts(next.doc)).toEqual(['甲', '乙a', '乙b', '乙', '丙']);
+  });
+
+  it('refuses when the unit is already at the edge', () => {
+    const root = idoc(ip('甲'), ip('乙'), ip('乙a', 1));
+    const state = EditorState.create({ schema: schema2, doc: root, selection: TextSelection.create(root, 4) });
+    // 乙's run already reaches the document end, so there is nothing below to swap with.
+    expect(buildBlockMove(state, 'down')).toBeNull();
+    // But moving it up is fine — 甲 is above it.
+    expect(buildBlockMove(state, 'up')).not.toBeNull();
+  });
+});

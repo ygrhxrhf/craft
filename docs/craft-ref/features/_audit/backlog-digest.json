@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-01T11:46:10.875Z",
+  "generatedAt": "2026-11-01T12:04:11.233Z",
   "total": 1614,
   "status": {
     "nonaction": 508,
     "partial": 374,
-    "aligned": 346,
-    "gap": 208,
+    "aligned": 350,
+    "gap": 204,
     "deliberate": 158,
     "unreachable": 20
   },
@@ -20,7 +20,7 @@
     "P2 / partial": 199,
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
-    "P1 / aligned": 115,
+    "P1 / aligned": 119,
     "P2 / gap": 103,
     "P1 / nonaction": 87,
     "P2 / aligned": 86,
@@ -33,8 +33,8 @@
     "P? / deliberate": 40,
     "P3 / gap": 39,
     "P? / gap": 34,
-    "P1 / gap": 32,
     "P3 / deliberate": 32,
+    "P1 / gap": 28,
     "P1 / partial": 25,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
@@ -878,7 +878,7 @@
         "verdict": "行为不同",
         "score": "2/2",
         "criteria": "函数集与官方对齐并各有用例；视图转换保留数据",
-        "status": "partial",
+        "status": "aligned",
         "scoreParsed": {
           "impact": 2,
           "cost": 2,
@@ -886,10 +886,11 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "公式 21 个函数（官方 25）与六类视图互转已落；仍缺 4 个官方函数，属性类型枚举未收口。",
+        "note": "现读（第 32 批）：公式函数集已齐官方 25 键——`src/lib/collection/formula.ts` 的 FUNCTIONS 18 个（含 above/below/left/right 四向区域引用）＋ CONSTANTS 7 个（E/LN10/LN2/LOG10E/LOG2E/SQRT1_2/SQRT2），逐条对 `feature-catalog.md:6867-6891`；视图互转已落（`ViewActionsMenu.tsx:106` 六类视图「将视图转换为」）；属性类型枚举已收口（`property-types.ts` 官方 13 值 + 本地 3 派生）。",
         "evidence": [
           "src/lib/collection/formula.ts:39",
-          "src/components/collection/ViewActionsMenu.tsx:138"
+          "src/lib/collection/property-types.ts:9",
+          "src/components/collection/ViewActionsMenu.tsx:106"
         ],
         "baseStatus": "gap"
       },
@@ -903,7 +904,7 @@
         "verdict": "部分落地",
         "score": "2/2",
         "criteria": "每分区要么接后端要么移除入口（复刻阶段不允许假界面）",
-        "status": "partial",
+        "status": "aligned",
         "scoreParsed": {
           "impact": 2,
           "cost": 2,
@@ -911,9 +912,11 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "未接的分区入口已移除；语言/集成/已发布内容仍有静态壳，未全部接后端。",
+        "note": "现读（第 32 批）：本行判据＝「每分区要么接后端、要么移除入口，不留假开关」，已满足——`src/lib/app/settings-sections.ts` 是接线台账（14 分区各带 wired 标志），`SettingsModal.tsx:160` 用它过滤导航 ⇒ 未接的 6 个分区（已发布内容／标签／订阅／团队／集成／助手）在导航里根本不出现；已接分区都是真状态。未接分区的**实体**（订阅/团队/集成/助手）属各自的后端批次，登记在 J 族各行，不在本行判据内。",
         "evidence": [
-          "src/lib/app/settings-sections.ts:34"
+          "src/lib/app/settings-sections.ts:33",
+          "src/components/settings/SettingsModal.tsx:160",
+          "src/components/settings/settings-nav.test.ts:16"
         ],
         "baseStatus": "partial"
       },
@@ -1133,7 +1136,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      35
+      33
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",

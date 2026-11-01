@@ -6,6 +6,7 @@ import type { Editor } from '@tiptap/react';
 
 import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from '@/lib/editor/block-move';
 import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
+import { buildDowngradeFlatten } from '@/lib/editor/downgrade-command';
 import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
 import { nextFormatStep } from '@/lib/editor/format-downgrade';
 import { requestLink } from '@/lib/store/use-link-request-store';
@@ -34,7 +35,15 @@ const STYLE_SLOTS: Record<string, (editor: Editor) => boolean> = {
   SUBTITLE: (editor) => editor.chain().focus().setHeading({ level: 2 }).run(),
   HEADING: (editor) => editor.chain().focus().setHeading({ level: 3 }).run(),
   STRONG: (editor) => editor.chain().focus().setHeading({ level: 4 }).run(),
-  BODY: (editor) => editor.chain().focus().setParagraph().run(),
+  // G278: dropping to Body flattens the block's indented children up to its level — the downgrade
+  // is a real un-nesting, not just a style swap. The flatten runs first so the style change lands
+  // on a document whose indent attributes are already final.
+  BODY: (editor) => {
+    const index = topLevelIndexOf(editor.state.doc, editor.state.selection.from);
+    const flatten = buildDowngradeFlatten(editor.state, index);
+    if (flatten) editor.view.dispatch(flatten);
+    return editor.chain().focus().setParagraph().run();
+  },
   TODO_LIST: (editor) => editor.chain().focus().toggleTaskList().run(),
   TOGGLE_LIST: (editor) => editor.chain().focus().setToggleBlock().run(),
   BULLET_LIST: (editor) => editor.chain().focus().toggleBulletList().run(),

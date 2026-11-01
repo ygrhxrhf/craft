@@ -1,6 +1,19 @@
 export type RowBox = { top: number; bottom: number };
 export type DropTarget = { index: number; before: boolean };
 
+/** A row that may be folded away (G280): the drag layer only ever lands on visible rows. */
+export type MaybeVisibleRow = RowBox & { visible?: boolean };
+
+/**
+ * The rows a drop can land between — hidden (folded) rows are skipped, which is the local form of
+ * the official `*Visible` addressing pair (`drop-address.ts`). A folded block's children are nested
+ * inside it in the document, so they never appear as siblings here; filtering by the flag keeps
+ * that intent explicit for callers that do carry hidden rows.
+ */
+export function visibleRows<T extends MaybeVisibleRow>(rows: T[]): T[] {
+  return rows.filter((row) => row.visible !== false);
+}
+
 /**
  * Rows are hit as `[top, nextTop)` — the gutter under a row belongs to it — and a
  * drop above the first row clamps to the front, while one below the last row's

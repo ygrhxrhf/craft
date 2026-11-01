@@ -14,7 +14,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { dropTargetFor } from './drop-band';
+import { dropTargetFor, visibleRows } from './drop-band';
 import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
 import { isInstantPreset } from '@/lib/task/remind-presets';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
@@ -265,14 +265,18 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
   const computeDropTarget = useCallback(
     (clientY: number): { el: HTMLElement; pos: number; before: boolean } | null => {
       const dom = editor.view.dom as HTMLElement;
-      const children = Array.from(dom.children) as HTMLElement[];
-      const rows = children.map((child) => {
-        const rect = child.getBoundingClientRect();
-        return { top: rect.top, bottom: rect.bottom };
-      });
-      const slot = dropTargetFor(clientY, rows);
+      // G280: the row list is the *visible* siblings — a folded block's children are nested inside
+      // it, so they never surface here; filtering by offsetParent keeps the intent explicit for any
+      // block the DOM has hidden without removing.
+      const children = visibleRows(
+        (Array.from(dom.children) as HTMLElement[]).map((child) => {
+          const rect = child.getBoundingClientRect();
+          return { el: child, top: rect.top, bottom: rect.bottom, visible: rect.height > 0 };
+        }),
+      );
+      const slot = dropTargetFor(clientY, children);
       if (!slot) return null;
-      const child = children[slot.index];
+      const child = children[slot.index].el;
       const range = getTopLevelRange(child);
       if (!range) return null;
       return {

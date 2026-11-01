@@ -183,20 +183,23 @@
       ]
     },
     "G23": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "公式 21 个函数（官方 25）与六类视图互转已落；仍缺 4 个官方函数，属性类型枚举未收口。",
+      "note": "现读（第 32 批）：公式函数集已齐官方 25 键——`src/lib/collection/formula.ts` 的 FUNCTIONS 18 个（含 above/below/left/right 四向区域引用）＋ CONSTANTS 7 个（E/LN10/LN2/LOG10E/LOG2E/SQRT1_2/SQRT2），逐条对 `feature-catalog.md:6867-6891`；视图互转已落（`ViewActionsMenu.tsx:106` 六类视图「将视图转换为」）；属性类型枚举已收口（`property-types.ts` 官方 13 值 + 本地 3 派生）。",
       "evidence": [
         "src/lib/collection/formula.ts:39",
-        "src/components/collection/ViewActionsMenu.tsx:138"
+        "src/lib/collection/property-types.ts:9",
+        "src/components/collection/ViewActionsMenu.tsx:106"
       ]
     },
     "G24": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "未接的分区入口已移除；语言/集成/已发布内容仍有静态壳，未全部接后端。",
+      "note": "现读（第 32 批）：本行判据＝「每分区要么接后端、要么移除入口，不留假开关」，已满足——`src/lib/app/settings-sections.ts` 是接线台账（14 分区各带 wired 标志），`SettingsModal.tsx:160` 用它过滤导航 ⇒ 未接的 6 个分区（已发布内容／标签／订阅／团队／集成／助手）在导航里根本不出现；已接分区都是真状态。未接分区的**实体**（订阅/团队/集成/助手）属各自的后端批次，登记在 J 族各行，不在本行判据内。",
       "evidence": [
-        "src/lib/app/settings-sections.ts:34"
+        "src/lib/app/settings-sections.ts:33",
+        "src/components/settings/SettingsModal.tsx:160",
+        "src/components/settings/settings-nav.test.ts:16"
       ]
     },
     "G31": {
@@ -391,28 +394,33 @@
       ]
     },
     "G278": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 2 批）：无「降级时子块平铺上提」分支。setTextStyle/降级路径在 format-commands.ts 零命中；列表缩进只有 liftListItem/sinkListItem（改列表层级），不是把 subblocks 整批移到自身之后。",
+      "note": "现读（第 32 批）：降级＝样式降级 + 子块平铺上提，已落。纯核 `src/lib/editor/downgrade-flatten.ts` 把缩进更深的连续后继兄弟提到降级块的层级（顺序不变、不删不留嵌套）；ProseMirror 侧 `src/lib/editor/downgrade-command.ts` 只改 indent 属性，接在 `craft-keymap.ts` 的 BODY 档（降为正文前先平铺）。单测覆盖：子块上提、同级兄弟截断、无子块为 null、不动样式。",
       "evidence": [
-        "src/lib/editor/format-commands.ts:108-109"
+        "src/lib/editor/downgrade-flatten.ts:37",
+        "src/lib/editor/downgrade-command.ts:27",
+        "src/components/editor/extensions/craft-keymap.ts:36"
       ]
     },
     "G279": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 2 批）：block-move.ts 移动的是「含光标的那一个顶层块」（topLevelIndexOf），无 extendWithIndentChildren／firstLastSelectedIdxInParent／getMinIndentOfSelection，方向不带首/尾锚语义。",
+      "note": "现读（第 32 批）：移动单位＝含缩进子块的整块，已落。`src/lib/editor/indent-run.ts` 的 `indentRunOf` 就是 `extendWithIndentChildren`（从锚块起到第一个不更深的后继兄弟）；`selectionRunOf` 对 `firstLastSelectedIdxInParent` 的首/尾锚。`block-move.ts` 改成按整块区间重排，单测证明父块带着 1/2 级子块一起与邻居交换、光标落在嵌套子块上时只带自己的子树。",
       "evidence": [
-        "src/lib/editor/block-move.ts:15-78",
-        "src/components/editor/extensions/craft-keymap.ts:42-47"
+        "src/lib/editor/indent-run.ts:20",
+        "src/lib/editor/block-move.ts:60",
+        "src/lib/editor/block-move.test.ts:150"
       ]
     },
     "G280": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 2 批）：落点只有 index 一种（buildBlockMove 用 index±1/0/childCount-1），无 afterAnchor/beforeAnchor 的 6 种寻址、无 *Visible 语义 ⇒ 折叠/隐藏块边界处的落点不会越过。",
+      "note": "现读（第 32 批）：落点九族具名寻址已落纯核——`src/lib/editor/drop-address.ts` 收 10 种地址（表格四族含 maxRow/maxCol 构造期钳制、afterAnchor/beforeAnchor 及其 *Visible 孪生、indexInParent、intoObjectList），解析成 sibling 位或 tableCell 落点；`*Visible` 支越过折叠/隐藏块（单测直接钉住两套寻址在折叠态分歧）。拖拽层 `drop-band.ts` 加 `visibleRows` 并接进 `DragHandle.computeDropTarget`。仍缺＝表格四族接到真实的表内拖拽（本地点内表格拖拽走 TableToolbar，未走本寻址）。",
       "evidence": [
-        "src/lib/editor/block-move.ts:36-49"
+        "src/lib/editor/drop-address.ts:41",
+        "src/components/editor/drag-handle/drop-band.ts:12",
+        "src/components/editor/drag-handle/DragHandle.tsx:268"
       ]
     },
     "G357": {
@@ -1316,11 +1324,12 @@
       ]
     },
     "G590": {
-      "status": "gap",
-      "note": "落点只有顶层块索引与 URL hash；无表格四族 maxRow/maxCol 钳制与 AnchorVisible 双寻址。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 32 批）：九族落点里「具名 + 钳制 + 双寻址」三件已落（见 G280 的 `drop-address.ts`）——表格四族构造期带 maxRow/maxCol 并在解析时夹回界内，Anchor 与 AnchorVisible 并存。仍缺＝`maxRow/maxCol` 未接到表内插入路径、URL hash 锚点仍是索引方案（`block-anchor.ts`）。",
       "evidence": [
-        "src/lib/editor/block-anchor.ts:4",
-        "src/components/editor/table/TableToolbar.tsx:154"
+        "src/lib/editor/drop-address.ts:96",
+        "src/lib/editor/drop-address.test.ts:78"
       ]
     },
     "G591": {

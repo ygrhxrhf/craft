@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dropTargetFor } from './drop-band';
+import { dropTargetFor, visibleRows } from './drop-band';
 
 // Row geometry read from the official editor: six single-line blocks, row height
 // 28 and pitch 36, so each row is followed by an 8px gutter.
@@ -36,5 +36,20 @@ describe('dropTargetFor', () => {
 
   it('has no slot without rows', () => {
     expect(dropTargetFor(200, [])).toBeNull();
+  });
+});
+
+describe('visibleRows (G280)', () => {
+  it('drops rows flagged hidden so a folded block is skipped', () => {
+    const rows = [
+      { top: 0, bottom: 28, visible: true },
+      { top: 36, bottom: 64, visible: false },
+      { top: 72, bottom: 100, visible: true },
+    ];
+    expect(visibleRows(rows).map((r) => r.top)).toEqual([0, 72]);
+  });
+
+  it('keeps every row when visibility is not annotated', () => {
+    expect(visibleRows(rows)).toEqual(rows);
   });
 });

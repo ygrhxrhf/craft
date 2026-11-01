@@ -1412,13 +1412,13 @@
       ]
     },
     "G593": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 64 批）：复数维度**接进真实 presence 发布路径**——`CursorLayer` 的 `publish()` 现在同时发单数 `editingBlockId` 与复数 `editingBlocks`（本地一次编辑一块，数组持一枚 id），`setLocalPresenceField` 允许这两个复数键并让单/复数**共用同一时间戳**（同一件事的两种写法）。单测 18 条。仍缺＝官方 `group(t,e){actions}` 复合动作与 `rtcId` 会话身份本地无对应，故记 partial。",
+      "note": "现读（第 94 批）改判 aligned：三件都落——① **复合动作 `group(t,e){actions}`**：`patch-stack.ts` 加 `groupActions`（正向按序拼接、逆向**反序**拼接，正是官方那句的本地实现）与 `pushGroup`（整组**只占一步**），配上已接的 `isUndoableAction`/`canUndoAt` 即\"撤销粒度机制层\"；② **协同三维**：光标（`cursor`）＋ 谁在编辑哪些块（`editingBlocks` 复数数组）＋ 谁打开了哪些页面（`openPages` 复数数组），三件各自带 `updatedAt` 且有陈旧判定（`selectPeers` 的 `staleAfterMs`），`CursorLayer` 真实发布这三维。单测 11 条（patch-stack）+ 18 条（presence）。",
       "evidence": [
-        "src/components/editor/collab/CursorLayer.tsx:110",
+        "src/lib/editor/patch-stack.ts:95",
         "src/lib/collaboration/presence.ts:25",
-        "src/lib/collaboration/presence.ts:133"
+        "src/components/editor/collab/CursorLayer.tsx:110"
       ]
     },
     "G594": {

@@ -83,3 +83,33 @@ export function canRedoAt(patches: Record<number, unknown>, patchIndex: number):
 export function mergePatchesFromOtherTabs(stack: PatchStack, incoming: PatchStack): PatchStack {
   return pushStep(stack, { patches: incoming.patches, inversePatches: incoming.inversePatches });
 }
+
+/**
+ * G593: `group(t, e) { actions }` — the official build wraps several actions into one. It is the
+ * mechanism layer behind the undo granularity the ledger measures ("3 actions need 4 Ctrl+Z"): the
+ * group is one step on the stack, so undoing it walks its sub-steps in reverse.
+ */
+export interface ActionGroup {
+  /** The sub-steps, in the order they were applied. */
+  steps: { patches: Patch[]; inversePatches: Patch[] }[];
+}
+
+/**
+ * Collapse a group into one step. Forward patches concatenate in order; inverse patches concatenate
+ * in **reverse** (so undoing the group undoes its last sub-step first) — the same asymmetry
+ * `pushStep` uses, applied across the group's members.
+ */
+export function groupActions(group: ActionGroup): { patches: Patch[]; inversePatches: Patch[] } {
+  const patches: Patch[] = [];
+  const inversePatches: Patch[] = [];
+  for (const step of group.steps) patches.push(...step.patches);
+  for (let index = group.steps.length - 1; index >= 0; index -= 1) {
+    inversePatches.push(...group.steps[index].inversePatches);
+  }
+  return { patches, inversePatches };
+}
+
+/** Push a whole group as **one** undo step. */
+export function pushGroup(stack: PatchStack, group: ActionGroup): PatchStack {
+  return pushStep(stack, groupActions(group));
+}

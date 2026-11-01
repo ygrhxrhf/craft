@@ -4,10 +4,12 @@ import {
   canRedoAt,
   canUndoAt,
   emptyStack,
+  groupActions,
   isUndoableAction,
   mergePatchesFromOtherTabs,
   popRedo,
   popUndo,
+  pushGroup,
   pushStep,
   type Patch,
   type PatchStack,
@@ -81,5 +83,34 @@ describe('cross-tab patch merge (G586)', () => {
     const merged = mergePatchesFromOtherTabs(mine, theirs);
     expect(merged.patches.map((x) => x.path)).toEqual(['a', 'b']);
     expect(merged.inversePatches.map((x) => x.path)).toEqual(['b', 'a']);
+  });
+});
+
+// G593: `group(t, e) { actions }` — several actions wrapped into one undo step.
+describe('the compound action group (G593)', () => {
+  it('concatenates forward patches in order and inverse patches in reverse', () => {
+    const grouped = groupActions({
+      steps: [
+        { patches: [p('a', 1, 0)], inversePatches: [p('a', 0, 1)] },
+        { patches: [p('b', 2, 1)], inversePatches: [p('b', 1, 2)] },
+      ],
+    });
+    expect(grouped.patches.map((x) => x.path)).toEqual(['a', 'b']);
+    // Undo the group walks its sub-steps backwards.
+    expect(grouped.inversePatches.map((x) => x.path)).toEqual(['b', 'a']);
+  });
+
+  it('a whole group is one step on the stack', () => {
+    const stack = pushGroup(emptyStack(), {
+      steps: [
+        { patches: [p('a', 1, 0)], inversePatches: [p('a', 0, 1)] },
+        { patches: [p('b', 2, 1)], inversePatches: [p('b', 1, 2)] },
+      ],
+    });
+    expect(stack.patches).toHaveLength(2); // two patches…
+    expect(stack.inversePatches).toHaveLength(2);
+    // …but one undo pops the whole group's inverse.
+    const undo = popUndo(stack)!;
+    expect(undo.step[0].path).toBe('b');
   });
 });

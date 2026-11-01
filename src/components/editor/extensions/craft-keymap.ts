@@ -323,8 +323,20 @@ export const CraftKeymap = Extension.create({
                     indent: Math.max(0, Number($from.parent.attrs?.indent ?? 0) - 1),
                   }).run();
                 }
-                // The block-level steps (delete-previous / merge-into-previous / select-previous)
-                // are left to ProseMirror's joinBackward, which already does them.
+                // G578 step 5: a previous block that is an **empty text block** is removed
+                // outright — ProseMirror's joinBackward would instead merge into it and leave the
+                // caret in an empty block, which is not what the official chain does.
+                if (step === 'delete-previous') {
+                  const index = topLevelIndexOf(view.state.doc, view.state.selection.from);
+                  if (index > 0) {
+                    const prev = view.state.doc.child(index - 1);
+                    const prevStart = topLevelStart(view.state.doc, index - 1);
+                    view.dispatch(view.state.tr.delete(prevStart, prevStart + prev.nodeSize));
+                    return true;
+                  }
+                }
+                // The remaining block-level steps (merge-into-previous / select-previous) are left
+                // to ProseMirror's joinBackward, which already does them.
               }
             }
             const binding = KEY_BINDINGS.find((candidate) =>

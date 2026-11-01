@@ -1349,10 +1349,11 @@
     "G585": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 33 批）：`mergeTextBlocks` 的四条样式胜负判定已落纯核 `src/lib/editor/merge-text-blocks.ts`——① 前块 textContent==null ⇒ 后块赢；② 后块有子块且前块没有 ⇒ 后块赢；③ 前块有文本/是列表项/有子块 ⇒ 前块赢；④ 其余 ⇒ 后块赢；四条按序短路（单测逐条钉住）。另补三类静默 no-op 前置（缺块/非文本/父块不可合并 ⇒ `InconsistentDocument`）。仍缺＝未接进真实 `joinBackward`（本地合并仍由 ProseMirror 默认行为决定），故记 partial。",
+      "note": "现读（第 52 批）：合并规则**接进真实 Backspace 路径**——`craft-keymap.ts` 的六段链在 `step === \"delete-previous\"` 时**显式删掉那个空的前块**（官方 `KYe` 那条\"前块是空文本块 ⇒ 删前块\"）；此前 joinBackward 会并进去、留一个空块，与官方不同。样式胜负四条的纯核（merge-text-blocks.ts）仍在，`merge-into-previous` 那一步仍交 joinBackward（本地等价物）。仍缺＝合并后样式仍由 ProseMirror 决定而非官方四条判定、`InconsistentDocument` 日志无宿主，故记 partial。",
       "evidence": [
-        "src/lib/editor/merge-text-blocks.ts:33",
-        "src/lib/editor/merge-text-blocks.test.ts:13"
+        "src/components/editor/extensions/craft-keymap.ts:319",
+        "src/lib/editor/merge-text-blocks.ts:30",
+        "src/lib/editor/format-downgrade.ts:78"
       ]
     },
     "G586": {

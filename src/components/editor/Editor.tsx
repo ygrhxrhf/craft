@@ -102,8 +102,8 @@ function collectLinkedDocIds(content: unknown): string[] {
   return [...ids];
 }
 
-function collectTaskItems(content: unknown): { taskId: string; title: string; isCompleted: boolean; remindAt: string | null; cancelled: boolean; cancelledAt: string | null }[] {
-  const tasks: { taskId: string; title: string; isCompleted: boolean; remindAt: string | null; cancelled: boolean; cancelledAt: string | null }[] = [];
+function collectTaskItems(content: unknown): { taskId: string; title: string; isCompleted: boolean; remindAt: string | null; scheduleDate: string | null; dueDate: string | null; cancelled: boolean; cancelledAt: string | null }[] {
+  const tasks: { taskId: string; title: string; isCompleted: boolean; remindAt: string | null; scheduleDate: string | null; dueDate: string | null; cancelled: boolean; cancelledAt: string | null }[] = [];
   const walk = (node: any) => {
     if (!node || typeof node !== 'object') return;
     if (node.type === 'taskItem' && Array.isArray(node.content)) {
@@ -121,6 +121,9 @@ function collectTaskItems(content: unknown): { taskId: string; title: string; is
           title,
           isCompleted: !!node.attrs.checked,
           remindAt: typeof node.attrs?.remindAt === 'string' ? node.attrs.remindAt : null,
+          // G357: the other two time semantics ride the task item as well.
+          scheduleDate: typeof node.attrs?.scheduleDate === 'string' ? node.attrs.scheduleDate : null,
+          dueDate: typeof node.attrs?.dueDate === 'string' ? node.attrs.dueDate : null,
           cancelled: !!node.attrs?.cancelled,
           cancelledAt: typeof node.attrs?.cancelledAt === 'string' ? node.attrs.cancelledAt : null,
         });

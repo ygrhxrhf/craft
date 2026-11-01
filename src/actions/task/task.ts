@@ -88,6 +88,10 @@ export async function syncDocumentTasks(
     title: string;
     isCompleted: boolean;
     remindAt?: string | null;
+    // G357: the two other time semantics ride the task item too, so the document's date fields
+    // persist into the task row alongside the reminder.
+    scheduleDate?: string | null;
+    dueDate?: string | null;
     cancelled?: boolean;
     cancelledAt?: string | null;
   }[]
@@ -121,7 +125,9 @@ export async function syncDocumentTasks(
         (match as any).isCompleted !== cols.isCompleted ||
         (match as any).status !== cols.status ||
         ((match as any).cancelledAt ?? null) !== cols.cancelledAt ||
-        ((match as any).remindAt ?? null) !== (task.remindAt ?? null)
+        ((match as any).remindAt ?? null) !== (task.remindAt ?? null) ||
+        ((match as any).scheduleDate ?? null) !== (task.scheduleDate ?? null) ||
+        ((match as any).dueDate ?? null) !== (task.dueDate ?? null)
       ) {
         // 命中墓碑行且 block 重新出现 → 清墓碑复活（恢复"任务重新可见"语义）
         await db.orm.public.Task.where({ id: (match as any).id }).update({
@@ -129,6 +135,8 @@ export async function syncDocumentTasks(
           title: task.title,
           ...cols,
           remindAt: task.remindAt ?? null,
+          scheduleDate: task.scheduleDate ?? null,
+          dueDate: task.dueDate ?? null,
         });
         mutated = true;
       }
@@ -141,6 +149,8 @@ export async function syncDocumentTasks(
         title: task.title,
         ...cols,
         remindAt: task.remindAt ?? null,
+        scheduleDate: task.scheduleDate ?? null,
+        dueDate: task.dueDate ?? null,
       });
       mutated = true;
     }

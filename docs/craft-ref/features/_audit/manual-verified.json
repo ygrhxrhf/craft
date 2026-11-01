@@ -427,11 +427,11 @@
     "G357": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 80 批）：三枚时间图标**可点可写**——`setTaskDateField(state, dispatch, index, field, iso)` 写任务的 `scheduleDate`/`dueDate` 属性；图标 widget 改成一枚 `<button>`，点击开一枚「今天/明天/清除」日菜单（`openDayMenu`），选完即写、清除即摘（图标随之消失）。⇒ 三套时间语义在文档内各有自己的入口且都能改。单测 992 条（editor+task）。仍缺＝`syncDocumentTasks` 仍只带 `remindAt`（两枚日期未同步到任务表），故记 partial。",
+      "note": "现读（第 81 批）：两枚日期**贯通到任务表**——`syncDocumentTasks` 收 `scheduleDate`/`dueDate`（建/改/变更判定三处都带），`collectTaskItems` 从 taskItem 属性收集这两个字段。⇒ 文档内点图标改日期 → 保存 → 任务表落库，`getTasks` 读回（任务屏三入口同源）。单测 392 条（task+editor）。仍缺＝图标仍是 emoji（官方是图标组件）、无 96 档时间菜单（G411 的 `time-menu` 纯核未接），故记 partial。",
       "evidence": [
-        "src/components/editor/extensions/reminder-pill.ts:100",
-        "src/components/editor/drag-handle/block-actions.ts:398",
-        "src/lib/task/time-icons.ts:40"
+        "src/actions/task/task.ts:84",
+        "src/components/editor/Editor.tsx:105",
+        "src/components/editor/extensions/reminder-pill.ts:100"
       ]
     },
     "G359": {

@@ -87,6 +87,8 @@
 | 77 | — | G1240（partial） | 表格导出与导入三段判据对偶（格内换行写 <br>） |
 | 78 | — | G601（partial） | stopTextEdit/restore 接第二个真实子编辑器（块级公式） |
 | 79 | — | G357（partial） | 三枚时间图标落到文档内任务块（scheduleDate/dueDate 属性 + 图标 widget） |
+| 80 | — | G357（partial） | 三枚时间图标可点可写（日菜单 今天/明天/清除） |
+| 81 | — | G357（partial） | 两枚日期贯通到任务表（syncDocumentTasks 收 scheduleDate/dueDate） |
 
 **剩余 53 条**（gap 0 / partial 53）。☆ 口径更正：本表此前的"剩余 N 条"逐批递减是**错的**——它按"我改了哪些行"减，但**记为 partial 的行在台账里仍是待办**（纯核已落、真实消费点未接），`ledger-backlog.csv` 的 `P1 && (gap||partial)` 才是权威口径。按它实算：**P1 可动行 53 条，全部是 partial、gap 已清零**。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2769 测试、tsc 0 错。
 

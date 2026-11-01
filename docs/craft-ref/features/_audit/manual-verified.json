@@ -723,10 +723,12 @@
     },
     "G141": {
       "status": "partial",
-      "note": "13 项发布设置已落 7 项（作者/标题/目录/演示/水印/SEO/口令）；缺评论级别、对象链接、模板副本、邮箱访问、默认域名等 6 项。",
+      "priority": "P1",
+      "note": "现读（第 41 批）：13 字段发布设置对象已集中一处 `src/lib/share/publish-settings.ts`——13 项键名与权威默认值逐字取自 `publishing.md` §一（commentLevel:\"add\" / defaultDomain:undefined 等），`WIRED_PUBLISH_FIELDS` 标出已落库的 7 项（本地列名 showPageTitle↔showTitle、passcode↔passwordProtected 两处差异由 `officialFieldName` 映射），`readPublishSettings` 缺格补默认值。单测钉住 13 项数、逐字默认值、7+6 拆分、两处列名映射。仍缺＝6 项无列（commentLevel/enableObjectLinks/showDuplicateAsTemplate/emailBasedAccessEnabled/defaultDomain/hideHashTagWords），扩列需迁移，故记 partial。",
       "evidence": [
-        "src/prisma/contract.prisma:387",
-        "src/prisma/contract.prisma:396"
+        "src/lib/share/publish-settings.ts:31",
+        "src/lib/share/publish-settings.ts:66",
+        "src/lib/share/publish-settings.test.ts:19"
       ]
     },
     "G166": {
@@ -810,11 +812,13 @@
       ]
     },
     "G228": {
-      "status": "gap",
-      "note": "权限只到文档级 DocumentMember，无团队空间访客概念与「访客可写全空间」后果警告。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 41 批）：访客邀请警告已落 `src/lib/share/guest-warning.ts`——`guest.warning.desc` 逐字取自 `_harvest/i18n-zh.tsv:1890`（「…访客可以访问整个空间并更新任何文档。」），`needsGuestWarning` 判据＝**\"是否非成员\"决定要不要拦**（guest 出确认框、teamMember 不出）。单测钉住逐字文案与判据，并断言后果句含\"整个空间\"。仍缺＝本地无团队实体（G421），邀请入口是文档级协作者，无\"团队内 vs 非成员\"这条轴的真实数据，故记 partial。",
       "evidence": [
-        "src/lib/authz/resource.ts:1",
-        "src/lib/authz/document-access.ts:14"
+        "src/lib/share/guest-warning.ts:15",
+        "src/lib/share/guest-warning.ts:24",
+        "src/lib/share/guest-warning.test.ts:13"
       ]
     },
     "G270": {
@@ -1380,10 +1384,12 @@
     },
     "G601": {
       "status": "partial",
-      "note": "查找替换已有 query/current/matches 四态；权限仍是派生布尔，且无 stopTextEdit/restore 成对。",
+      "priority": "P1",
+      "note": "现读（第 41 批）：`stopTextEdit`/`restoreTextEdit` 成对与两个独立开关已落纯核 `src/lib/editor/text-edit-state.ts`——`startTextEdit` 进入时记备份选区，`stopTextEdit{allowToBeRemovedWhenEmpty, backupSelection}` 出编辑态并按**两个独立开关**决定\"空块删不删\"与\"备份留不留\"（不是同一个决定的两种说法），`restoreTextEdit` 回到编辑态并把备份选区还回去（无备份则不发明位置）。单测 7 条钉住两个开关的正交性。仍缺＝TipTap 侧未接这对动作（本地靠默认行为），故记 partial。",
       "evidence": [
-        "src/lib/store/use-find-replace-store.ts:14",
-        "src/components/editor/DocumentEditor.tsx:60"
+        "src/lib/editor/text-edit-state.ts:38",
+        "src/lib/editor/text-edit-state.ts:63",
+        "src/lib/editor/text-edit-state.test.ts:17"
       ]
     },
     "G604": {

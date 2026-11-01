@@ -17,6 +17,7 @@ import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
 import { useFocusStore } from '@/lib/store/use-focus-store';
 import { EXIT_FOCUS_MODE_PREFIX, FOCUS_MODE } from '@/lib/editor/focus-mode-copy';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
+import { capabilitiesFor } from '@/lib/authz/permission-axes';
 import { KEY_BINDINGS, displayFor } from '@/lib/editor/keymap';
 import { usePlatform } from '@/lib/editor/use-platform';
 import {
@@ -57,7 +58,9 @@ interface DocumentEditorProps {
 }
 
 export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditorProps) {
-  const canEdit = role === 'owner' || role === 'editor';
+  // G588: the three capability keys come from the role, each independent — `commenter` can comment
+  // without editing, which a single `canEdit` boolean could not express.
+  const { canEdit, canComment } = capabilitiesFor(role);
   const isOwner = role === 'owner';
   const isMobile = useIsMobile();
   const isCompact = useIsCompact();
@@ -449,6 +452,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
           wordCount={wordCount}
           isOwner={isOwner}
           canEdit={canEdit}
+          canComment={canComment}
           onUpdate={handleUpdate}
         />
       )}

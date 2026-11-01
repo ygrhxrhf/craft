@@ -38,6 +38,8 @@ interface ThreadRow {
 interface CommentSectionProps {
   documentId: string;
   editor: Editor | null;
+  /** G588: a viewer can read threads but not compose — the comment capability is its own key. */
+  canComment?: boolean;
 }
 
 function toRows(threads: ThreadView[]): ThreadRow[] {
@@ -56,7 +58,7 @@ function toRows(threads: ThreadView[]): ThreadRow[] {
   }));
 }
 
-export function CommentSection({ documentId, editor }: CommentSectionProps) {
+export function CommentSection({ documentId, editor, canComment = true }: CommentSectionProps) {
   const [threads, setThreads] = useState<ThreadRow[]>([]);
   const [draft, setDraft] = useState('');
   const [draftCaret, setDraftCaret] = useState(0);
@@ -251,7 +253,7 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
         评论 ({openThreads.length})
       </h4>
 
-      {hasSelection && !showComposer && (
+      {hasSelection && canComment && !showComposer && (
         <button
           type="button"
           onClick={() => setShowComposer(true)}
@@ -260,7 +262,7 @@ export function CommentSection({ documentId, editor }: CommentSectionProps) {
           评论所选文本
         </button>
       )}
-      {showComposer && (
+      {showComposer && canComment && (
         <div className="mb-2 rounded-md border border-foreground/10 p-2">
           <textarea
             value={draft}

@@ -55,6 +55,8 @@ interface InfoTabProps {
   editor: import('@tiptap/react').Editor | null;
   wordCount: number;
   isOwner: boolean;
+  /** G588: whether the actor may comment (a viewer can read threads but not compose). */
+  canComment?: boolean;
   onClose: () => void;
 }
 
@@ -79,7 +81,7 @@ interface DocItem {
   parentId: string | null;
 }
 
-export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: InfoTabProps) {
+export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = true, onClose }: InfoTabProps) {
   const router = useRouter();
   const [subTab, setSubTab] = useState<'info' | 'actions'>('info');
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
@@ -551,7 +553,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
             </div>
           </section>
 
-          <CommentSection documentId={documentId} editor={editor} />
+          <CommentSection documentId={documentId} editor={editor} canComment={canComment} />
         </div>
       ) : (
         <div className="space-y-1">

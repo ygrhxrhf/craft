@@ -865,11 +865,12 @@
       ]
     },
     "G324": {
-      "status": "gap",
-      "note": "只有文档级角色，无空间级 owner/member 两档与访客第四轴。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 38 批）：空间级角色轴已落纯核 `src/lib/authz/space-role.ts`——owner/member/guest 三档 + 两能力（改设置／邀成员），owner 两项皆真、member 与 guest 皆假，正是官方那两句「可以更改设置并邀请新成员」vs「无法更改设置或邀请新成员」（逐字取自 `_harvest/i18n-zh.tsv:977,979`）；`TwoAxisPermission` 把空间轴与文档轴摆在一起、**互不推导**。仍缺＝本地无空间实体，空间角色无落库来源与界面消费点，故记 partial。",
       "evidence": [
-        "src/lib/authz/resource.ts:1",
-        "src/lib/authz/document-access.ts:27"
+        "src/lib/authz/space-role.ts:26",
+        "src/lib/authz/permission-axes.test.ts:62"
       ]
     },
     "G328": {
@@ -1325,10 +1326,12 @@
     },
     "G588": {
       "status": "partial",
-      "note": "角色含 editor/commenter/viewer，评论接口要求 commenter；编辑面只有 canEdit 一个布尔，缺 canView/canComment 分离。",
+      "priority": "P1",
+      "note": "现读（第 38 批）：权限三键 + 独立只读位已落并接进真实渲染链——`src/lib/authz/permission-axes.ts` 的 `capabilitiesFor(role)` 把角色拆成 canView/canComment/canEdit 三键（commenter 可评不可编、viewer 只看、未知角色三键全假），`effectivePermission` 把 `forcedReadOnly` 作为**独立一维**叠加（只压 readOnly、不改能力键）。DocumentEditor 改用 `capabilitiesFor(role)`，并把 `canComment` 沿 RightPanel→InfoTab→CommentSection 一路接下去，CommentSection 的「评论所选文本」与编辑框按 `canComment` 闸门 ⇒ **commenter 与 viewer 在评论面终于不同**（此前都 readOnly）。仍缺＝canView 无独立消费点、`setForcedViewOnlyMode` 无置位来源（第二只读来源仍只有协同态），故记 partial。",
       "evidence": [
-        "src/components/editor/DocumentEditor.tsx:60",
-        "src/actions/comment/comment.ts:28"
+        "src/lib/authz/permission-axes.ts:30",
+        "src/components/editor/DocumentEditor.tsx:62",
+        "src/components/editor/comments/CommentSection.tsx:255"
       ]
     },
     "G589": {

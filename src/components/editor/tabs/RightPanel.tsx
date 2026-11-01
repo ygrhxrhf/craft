@@ -40,6 +40,8 @@ interface RightPanelProps {
   /** Only the owner manages collaborators, and only editors see the styling tabs. */
   isOwner: boolean;
   canEdit: boolean;
+  /** G588: whether the actor may comment — a viewer can read threads but not compose. */
+  canComment?: boolean;
   onUpdate: (data: {
     title?: string;
     icon?: string | null;
@@ -66,6 +68,7 @@ export function RightPanel({
   wordCount,
   isOwner,
   canEdit,
+  canComment = true,
   onUpdate,
 }: RightPanelProps) {
   const isCompact = useIsCompact();
@@ -136,6 +139,7 @@ export function RightPanel({
                 editor={editor}
                 wordCount={wordCount}
                 isOwner={isOwner}
+                canComment={canComment}
                 onClose={onClose}
               />
             )}

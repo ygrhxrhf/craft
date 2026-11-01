@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-01T13:49:07.178Z",
+  "generatedAt": "2026-11-01T13:54:10.196Z",
   "total": 1614,
   "status": {
     "nonaction": 508,
-    "partial": 400,
-    "aligned": 350,
-    "gap": 178,
+    "partial": 401,
+    "aligned": 351,
+    "gap": 176,
     "deliberate": 158,
     "unreachable": 20
   },
@@ -20,7 +20,7 @@
     "P2 / partial": 199,
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
-    "P1 / aligned": 119,
+    "P1 / aligned": 120,
     "P2 / gap": 103,
     "P1 / nonaction": 87,
     "P2 / aligned": 86,
@@ -30,7 +30,7 @@
     "P2 / deliberate": 66,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
-    "P1 / partial": 51,
+    "P1 / partial": 52,
     "P? / deliberate": 40,
     "P3 / gap": 39,
     "P? / gap": 34,
@@ -40,7 +40,6 @@
     "P0 / aligned": 8,
     "P3 / unreachable": 4,
     "P? / unreachable": 4,
-    "P1 / gap": 2,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1137,7 +1136,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      33
+      32
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",

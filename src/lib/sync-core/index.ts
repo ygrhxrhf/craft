@@ -3,6 +3,7 @@
 import { createIdbStore } from './adapter-idb';
 import { createSqliteStore } from './adapter-sqlite';
 import { createQueue, type Queue } from './queue';
+import { shouldOverwriteLocal } from './stale-arbiter';
 import { createReconciler, SyncAuthError, type Reconciler } from './reconciler';
 import { createBroadcaster, type Broadcaster } from './broadcast';
 import type { SyncStore } from './store';
@@ -319,6 +320,8 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
   // G1506：覆盖只让界面"看起来变回了原样"，本人那一笔到底有没有落地，界面此前一句不说
   // （丢列＝出不了设备、派生失败＝徽标说谎、这一枚＝动作凭空蒸发，同一族失真的第三个身位）。
   // ⇒ 明细同时发给 UI 订阅者，由 `rejection-copy` 决定说什么。
+  // G1511（选项②）：一个 `stale` 拒绝若**本机还有同记录的更晚意图在途**，就不盖回本地——
+  // 那一笔才是本机最新想做的，服务端重打时间戳造成的"先到先落把后一笔判旧"不该把用户的动作吃掉。
   const handleRejected = (rejected: SyncRejection[]): void => {
     if (!rejected.length) return;
     // G341：冲突是一等日志分类——被拒的 `stale` 就是一次冲突（本地这版与已落库的版本打架）。
@@ -330,7 +333,29 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
       }
     }
     for (const cb of rejectedSubs) cb(rejected);
-    void store.applyRemote(rejected).then(emitTouched).catch(() => {});
+    // 覆盖本地前先查在途意图：查不到（store 未 init / 读失败）就按老路盖回，不因新判据丢权威值。
+    void store
+      .peekBatch(Number.MAX_SAFE_INTEGER, '9999-12-31T23:59:59.999Z')
+      .then((pendingOps) => {
+        const pending = pendingOps.map((op) => ({
+          table: op.table,
+          recordId: op.recordId,
+          syncTs: op.payload.syncTs,
+        }));
+        const toApply = rejected.filter((row) =>
+          shouldOverwriteLocal({
+            rejected: { table: row.table, id: row.id, reason: row.reason },
+            rejectedSyncTs: row.syncTs,
+            pending,
+          }),
+        );
+        if (!toApply.length) return;
+        return store.applyRemote(toApply).then(emitTouched);
+      })
+      .catch(() => {
+        // 读在途意图失败 ⇒ 退回老行为（整批盖回），宁可暂时按权威值也不静默丢更新。
+        void store.applyRemote(rejected).then(emitTouched).catch(() => {});
+      });
   };
 
   const queue: Queue = deps.makeQueue

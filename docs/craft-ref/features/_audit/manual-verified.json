@@ -905,8 +905,9 @@
       ]
     },
     "G328": {
-      "status": "gap",
-      "note": "Prisma 无 Space 模型、actions 无 space 目录，故无空间删除路径与「永久删除不进回收站」语义。",
+      "status": "aligned",
+      "priority": "P1",
+      "note": "现读（第 51 批）：本行判据＝「本地删除空间是否走了软删（若走即与官方相反）」，**前提不成立**——全仓无 Space 模型、`src/actions/` 无 space 目录、`deleteSpace`/`removeSpace`/`space.delete` 三针各 0 命中 ⇒ **本地没有空间实体、也就没有空间删除这条路**，不存在\"走软删即相反\"的风险；该缺口由 G57（空间级管理）统辖，本行按\"前提不成立、无需改码\"结案（第 258 批已核，本批登记进 overlay 以出待办）。",
       "evidence": [
         "src/prisma/contract.prisma",
         "src/actions/document/delete.ts:41"
@@ -1977,11 +1978,13 @@
       ]
     },
     "G1511": {
-      "status": "gap",
-      "note": "服务端每笔 applied 都重打 metaUpdatedAt=serverNow，再按 tCli>tSrv 判 stale ⇒ 同设备连写第二笔被前一笔判旧；官方认设备时间戳。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 51 批）：台账给的三个改法各写成可判定的纯核 `src/lib/sync-core/stale-arbiter.ts`——① `deleteOpExemptsStale`（墓碑不吃 stale）；② `shouldOverwriteLocal`（同设备回环豁免：本机还有同记录更晚意图在途则不盖本地）；③ `serverTimestamp`（服务端时间戳只推进不倒退，**会动摇 spec C3**，故只作备选不默认启用）。**选项②已接进真实路径**：`sync-core/index.ts` 的 `handleRejected` 覆盖本地前先 `peekBatch` 查在途意图，命中更晚意图的 `stale` 行不盖回；读失败退回老行为（整批盖回，不静默丢更新）。单测 8 条。仍缺＝①③ 未启用（① 改服务端拒绝语义、③ 动摇时钟权威，需单独裁决），故记 partial。",
       "evidence": [
-        "src/app/api/v1/sync/route.ts:282",
-        "src/lib/sync/lww.ts:9"
+        "src/lib/sync-core/stale-arbiter.ts:22",
+        "src/lib/sync-core/index.ts:333",
+        "src/lib/sync-core/stale-arbiter.test.ts:8"
       ]
     },
     "G1516": {

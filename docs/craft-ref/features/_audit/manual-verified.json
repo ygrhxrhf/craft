@@ -549,12 +549,12 @@
       ]
     },
     "G253": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 46 批）：两组命令的结构与那处**不对称**已落 `src/lib/task/task-commands.ts`——schedule 组 5 条（含 `commands.task.schedule.x`「安排到 [0]」动态短语）、deadline 组 6 条（无 .x）；`hasDynamicCommand`/`isAsymmetric` 两条判据把\"schedule 有动态短语、deadline 没有\"钉住（日后有人顺手给 deadline 加 .x 会红）。单测 3 条。仍缺＝两组命令未接进命令注册表（本地命令面全空），故记 partial。",
+      "note": "现读（第 91 批）改判 aligned：两组命令**接进真实键位分派**——`applyKeymapAction` 收 `commands.task.schedule*` / `commands.task.deadline*`：`.clear` 清该字段，固定短语（`.for.today`/`.for.tomorrow`/`.next.monday`）算出目标日并写 `scheduleDate`/`dueDate`（经 `setTaskDateField`）；两组**不对称**（schedule 多 `.x` 动态短语）由 `task-commands.ts` 的 `isAsymmetric` 钉住。单测 3 条（task-commands）。",
       "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:145",
         "src/lib/task/task-commands.ts:23",
-        "src/lib/task/task-commands.ts:55",
         "src/lib/task/task-commands.test.ts:12"
       ]
     },

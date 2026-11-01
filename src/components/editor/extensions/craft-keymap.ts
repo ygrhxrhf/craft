@@ -13,6 +13,8 @@ import { nextFormatStep, nextBackspaceStep, isEmptyBlock, hasDecoration } from '
 import { mergeStyleWinner } from '@/lib/editor/merge-text-blocks';
 import { requestLink } from '@/lib/store/use-link-request-store';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
+import { setTaskDateField } from '@/components/editor/drag-handle/block-actions';
+import { localDayInstant } from '@/lib/task/wall-clock';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
@@ -139,6 +141,30 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
     const index = topLevelIndexOf(editor.state.doc, editor.state.selection.from);
     if (index < 0) return false;
     useCommentRequestStore.getState().ask(editor.state.doc.child(index).textContent);
+    return true;
+  }
+
+  // G253: the task schedule / deadline command groups. Each writes the task item's date field;
+  // `.clear` nulls it. The groups are parallel but asymmetric — only `schedule` has the dynamic
+  // `.x` phrase (handled by the command palette's dynamic slot, not here).
+  if (id.startsWith('commands.task.schedule') || id.startsWith('commands.task.deadline')) {
+    const field = id.startsWith('commands.task.schedule') ? 'scheduleDate' : 'dueDate';
+    const index = topLevelIndexOf(editor.state.doc, editor.state.selection.from);
+    if (index < 0) return false;
+    if (id.endsWith('.clear')) {
+      setTaskDateField(editor.state, editor.view.dispatch, index, field, null);
+      return true;
+    }
+    // The fixed-phrase commands land on a concrete day.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const offset = id.endsWith('.for.tomorrow')
+      ? 1
+      : id.endsWith('.next.monday')
+        ? (8 - today.getDay()) % 7 || 7
+        : 0;
+    const target = new Date(today.getTime() + offset * 86_400_000);
+    setTaskDateField(editor.state, editor.view.dispatch, index, field, localDayInstant(target));
     return true;
   }
 

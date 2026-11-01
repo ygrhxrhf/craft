@@ -425,3 +425,42 @@ describe('the JSON export projects the four payload containers (G400)', () => {
     expect(JSON.parse(json).content[0].blob).toBe('let a = 1');
   });
 });
+
+describe('the markdown table round-trips the import criteria (G1240)', () => {
+  it('writes an in-cell newline as <br>, which the importer turns back into a newline', () => {
+    const doc = {
+      type: 'doc',
+      content: [
+        {
+          type: 'table',
+          content: [
+            { type: 'tableRow', content: [{ type: 'tableCell', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'a\nb' }] }] }] },
+            { type: 'tableRow', content: [{ type: 'tableCell', content: [{ type: 'paragraph', content: [{ type: 'text', text: '1' }] }] }] },
+          ],
+        },
+      ],
+    };
+    const md = serializeDocument(doc, 'markdown');
+    // No raw newline inside the row — the row stays one line.
+    expect(md.split('\n')[0]).toContain('<br>');
+    const parsed: any = parseMarkdown(md);
+    expect(parsed.content?.[0]?.type).toBe('table');
+  });
+
+  it('writes a hyphens-only divider the alignment-row test recognises', () => {
+    const doc = {
+      type: 'doc',
+      content: [
+        {
+          type: 'table',
+          content: [
+            { type: 'tableRow', content: [{ type: 'tableCell', content: [{ type: 'paragraph', content: [{ type: 'text', text: '名称' }] }] }] },
+            { type: 'tableRow', content: [{ type: 'tableCell', content: [{ type: 'paragraph', content: [{ type: 'text', text: '苹果' }] }] }] },
+          ],
+        },
+      ],
+    };
+    const md = serializeDocument(doc, 'markdown');
+    expect(md.split('\n')[1]).toBe('| --- |');
+  });
+});

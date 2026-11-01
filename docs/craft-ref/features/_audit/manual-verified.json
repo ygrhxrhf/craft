@@ -1724,11 +1724,11 @@
     "G1240": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 36 批）：三段判据里最后一段补完——单元格正文改由 `parseCellBlocks` **递归成自己的块文档**（取首块、空体回退空段落，注入 parseBlocks 避免循环依赖），表格块带 `attrs.pluginData` 三组预生成 uuid（`mintTableIds` 的 rows/columns/cells），行列与单元格各带 id。仍缺＝导出侧的分隔行仍是硬造 `---`（未与导入的三段判据完全对偶），故记 partial。",
+      "note": "现读（第 77 批）：导出侧与三段判据**对偶**——`renderMarkdownTable` 现在 ① 先双写反斜杠再转义竖线（与导入同序）、② **格内换行写成 `<br>`**（导入侧会把它还原成真换行；此前写成空格，往返丢换行）、③ 分隔行仍是纯连字符（正是 `isAlignmentRow` 认的那一档）。单测 32 条（含两条往返）。仍缺＝三组 uuid pluginData 与递归块解析只在导入侧落（导出侧未回写），故记 partial。",
       "evidence": [
-        "src/lib/import/table.ts:74",
-        "src/lib/import/table.ts:96",
-        "src/lib/import/markdown.ts:226"
+        "src/lib/document-codec/index.ts:179",
+        "src/lib/import/table.ts:26",
+        "src/lib/document-codec/index.test.ts:430"
       ]
     },
     "G1267": {

@@ -177,11 +177,20 @@ function renderMarkdown(node: any): string {
 }
 
 function renderMarkdownTable(node: any): string {
-  // Backslashes must be doubled before pipes are escaped, otherwise a trailing
-  // backslash swallows the delimiter that follows it.
+  // G1240: the export side has to round-trip the importer's three judgements —
+  // ① backslashes doubled before pipes are escaped (otherwise a trailing backslash swallows the
+  //    delimiter that follows it);
+  // ② an in-cell newline is written as `<br>` because that is what the importer turns back into a
+  //    newline (writing a raw newline would split the row instead);
+  // ③ the divider is hyphens-only, which is exactly what `isAlignmentRow` recognises on the way
+  //    back in.
   const rows = (node.content ?? []).map((row: any) =>
     (row.content ?? []).map((cell: any) =>
-      textContent(cell).replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n+/g, ' ').trim()));
+      textContent(cell)
+        .replace(/\\/g, '\\\\')
+        .replace(/\|/g, '\\|')
+        .replace(/\r?\n/g, '<br>')
+        .trim()));
   if (rows.length === 0) return '';
 
   const [head, ...body] = rows;

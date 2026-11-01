@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-01T13:44:28.133Z",
+  "generatedAt": "2026-11-01T13:49:06.971Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1042,
+    "gap": 1041,
     "unknown": 198,
     "aligned": 143,
     "deliberate": 96,
-    "partial": 63,
+    "partial": 64,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -20,7 +20,7 @@
   "statusByPriority": {
     "P2 / gap": 461,
     "P? / gap": 226,
-    "P1 / gap": 201,
+    "P1 / gap": 200,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P2 / aligned": 52,
@@ -34,7 +34,7 @@
     "P1 / unknown": 23,
     "P? / nonaction": 23,
     "P2 / partial": 22,
-    "P1 / partial": 19,
+    "P1 / partial": 20,
     "P? / aligned": 19,
     "P2 / nonaction": 18,
     "P3 / nonaction": 14,
@@ -11724,10 +11724,10 @@
       "cols": 5,
       "id": "G594",
       "official": "★★★★ **action 分派不是一张表而是 60 张**（全文正则 + 大括号配平，≥4 case 才计）：最大三张 ＝ **文档 store 88（`default:He(e)`）／UI-选区 store 65（@6377790，首项 `setSelection,toggleSelection,startTextEdit,stopTextEdit,setSelectionDraggingActive,selectAll`）／应用外壳 store 63（@6686072，通知/侧栏/快捷筛选）**；⇒ **\"261 构造器 vs 88 分派\"的缺口结案：分属不同 store，不是缺失**",
-      "local": "⇒ ★ 计数第 64 批改正为 65/63（初记 68/66）。无对应层（见 G583 实跑：本地无 action 协议、`inversePatches`/`patches` 在 `src/lib src/stores` 0 命中）⇒ 本地是 server action 直改 Prisma ＋ 客户端 React state 两条路，**没有集中路由表**",
-      "verdict": "缺失（整层路由）",
+      "local": "✎ 现读（2026-11-01）更正：分派表抽象已落 `src/lib/editor/action-dispatch.ts`（DispatchTable id→handler + dispatch 未注册返回 null + DispatchRegistry 按表名查，单测 4 条）；本地写侧仍是 server action 直改 Prisma、读侧 React state，无集中路由表的真实调用点",
+      "verdict": "部分落地",
       "score": "3/4",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 3,
         "cost": 4,

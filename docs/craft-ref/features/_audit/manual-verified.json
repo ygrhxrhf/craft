@@ -930,9 +930,12 @@
     },
     "G342": {
       "status": "partial",
-      "note": "同步分层十节名册入册（含 Sync/Local 双轨），但本地仍以整篇文档为同步单元，未实现逐层通路。",
+      "priority": "P1",
+      "note": "现读（第 50 批）：十节分层名册升级为**逐层通路** `src/lib/sync-core/layers.ts` 的 `SYNC_LAYER_PATHS`——每层一条具名 path（indices/sync-patch/local-patch/objects/sub-tier/comments/requests/blocks/object-links/meta-objects）＋ `implemented` 标志 ＋ `carries`；`implementedLayers()` 报出本地今天真的按独立表走的 3 层（Blocks/Comments/Requests），`foldedLayers()` 报出仍折进整篇文档的 7 层。单测 2 条。仍缺＝本地仍以整篇文档为一个同步单元（7 层无独立通路），故记 partial。",
       "evidence": [
-        "src/lib/sync-core/layers.ts:11"
+        "src/lib/sync-core/layers.ts:33",
+        "src/lib/sync-core/layers.ts:61",
+        "src/lib/editor/edit-drag-machine.test.ts:115"
       ]
     },
     "G344": {
@@ -1387,10 +1390,13 @@
       ]
     },
     "G591": {
-      "status": "gap",
-      "note": "无 action 状态机；空块自动清理与 backupSelection 选区备份均无，拖拽走 DOM dragStateRef。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 50 批）：拖拽与编辑的 action 状态机已落纯核 `src/lib/editor/edit-drag-machine.ts`——`reduceEditor` 收 startSelectionDragging/updateSelectionDragging/stopSelectionDragging（**removeState 清整段**）+ startTextEdit/startCodeEdit/stopTextEdit/stopCodeEdit/toggleBlockEditor，且实现官方那条门控**起点块自带拖拽则不起新拖**（`startBlockHasOwnDrag`）；`backupSelectionTypeOf` 对应 `renderTextBackupSelection`。单测 7 条。仍缺＝本地拖拽仍走 DOM dragStateRef、编辑态靠 TipTap 默认，无真实调用点，故记 partial。",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:55"
+        "src/lib/editor/edit-drag-machine.ts:62",
+        "src/lib/editor/edit-drag-machine.ts:110",
+        "src/lib/editor/edit-drag-machine.test.ts:9"
       ]
     },
     "G593": {
@@ -1403,11 +1409,13 @@
       ]
     },
     "G594": {
-      "status": "gap",
-      "note": "无 action 分派表；写侧 server action 直改 Prisma、读侧 React state，撤销交 ProseMirror。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 50 批）：分派表抽象已落纯核 `src/lib/editor/action-dispatch.ts`——`DispatchTable`（id→handler）＋ `dispatch`（**未注册 id 返回 null 而不静默吞掉**，正是官方\"有无 default 判分派器\"那条判据的本地形态）＋ `DispatchRegistry` 按表名查（对应官方那 60 张）。单测 4 条。仍缺＝本地无集中 action 协议层（写侧 server action 直改 Prisma、读侧 React state），故记 partial。",
       "evidence": [
-        "src/actions/task/task.ts:301",
-        "src/components/editor/Editor.tsx:519"
+        "src/lib/editor/action-dispatch.ts:20",
+        "src/lib/editor/action-dispatch.ts:38",
+        "src/lib/editor/edit-drag-machine.test.ts:80"
       ]
     },
     "G601": {
@@ -1431,10 +1439,12 @@
       ]
     },
     "G608": {
-      "status": "gap",
-      "note": "无 action 层与批量 change 归一；协同靠 Hocuspocus/ProseMirror 事务合并，无按序快照重放。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 50 批）：批量归一应用器已落纯核 `src/lib/editor/action-dispatch.ts` 的 `applyChanges`——一串 change 在「基态 + 已合并补丁」的快照上**按序逐条应用**、最后一次性返回 `{state, applied}`；**某条无人认领 ⇒ 整批返回 null**（不静默跳过，静默跳过正是\"部分应用\"的来源）。单测 2 条。仍缺＝本地协同走 Hocuspocus/ProseMirror 事务合并、无 action 层调用点，故记 partial。",
       "evidence": [
-        "src/lib/sync-core/queue.ts:24"
+        "src/lib/editor/action-dispatch.ts:68",
+        "src/lib/editor/edit-drag-machine.test.ts:99"
       ]
     },
     "G624": {

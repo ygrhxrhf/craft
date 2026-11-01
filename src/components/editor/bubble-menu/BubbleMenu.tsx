@@ -15,6 +15,8 @@ import {
 import { cn } from 'cn';
 import { AiToolbar } from '../ai/AiToolbar';
 import { useAiBubbleStore } from '@/lib/store/use-ai-bubble-store';
+import { useEffect } from 'react';
+import { subscribeLinkRequests } from '@/lib/store/use-link-request-store';
 import { mainBubbleKey } from './keys';
 
 interface EditorBubbleMenuProps {
@@ -22,6 +24,25 @@ interface EditorBubbleMenuProps {
 }
 
 export function EditorBubbleMenu({ editor }: EditorBubbleMenuProps) {
+  // G777: Mod+K inside the editor asks for the link box; the box itself lives on the link button.
+  const openLinkBox = async () => {
+    const previousUrl = editor.getAttributes('link').href;
+    const url = await promptDialog({
+      title: '链接',
+      defaultValue: previousUrl,
+      placeholder: 'https://…',
+      confirmLabel: '保存',
+    });
+    if (url === null) return;
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
+    }
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  };
+
+  useEffect(() => subscribeLinkRequests(() => void openLinkBox()), [editor]);
+
   return (
     <TiptapBubbleMenu
       editor={editor}
@@ -74,16 +95,7 @@ export function EditorBubbleMenu({ editor }: EditorBubbleMenuProps) {
         <BubbleMenuButton
           label="链接"
           active={editor.isActive('link')}
-          onClick={async () => {
-            const previousUrl = editor.getAttributes('link').href;
-            const url = await promptDialog({ title: '链接', defaultValue: previousUrl, placeholder: 'https://…', confirmLabel: '保存' });
-            if (url === null) return;
-            if (url === '') {
-              editor.chain().focus().extendMarkRange('link').unsetLink().run();
-              return;
-            }
-            editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-          }}
+          onClick={() => void openLinkBox()}
         >
           <Link className="size-4" />
         </BubbleMenuButton>

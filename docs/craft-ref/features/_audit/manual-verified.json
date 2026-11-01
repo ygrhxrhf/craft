@@ -840,10 +840,9 @@
     },
     "G320": {
       "status": "partial",
-      "note": "已录 17 种内嵌标签词表与 strip 辅助，但无按标签渲染富文本的消费方。",
+      "note": "内嵌标签渲染器已落（标签→样式段/链接段/换行段，未知标签丢标记留文本）；尚未接进全部 53 条键的渲染位。",
       "evidence": [
-        "src/lib/i18n/embedded-tags.ts:8",
-        "src/lib/i18n/embedded-tags.ts:68"
+        "src/lib/i18n/embedded-tags.ts:75"
       ]
     },
     "G321": {
@@ -1448,11 +1447,11 @@
       ]
     },
     "G777": {
-      "status": "gap",
-      "note": "官方 Ctrl+K=样式·链接、Ctrl+J=任务·新任务；本地同键开搜索面板与 AI 气泡，键义冲突。",
+      "status": "aligned",
+      "note": "编辑器内 Mod+K 改绑「插入链接」（requestLink → 气泡菜单链接框），不再被命令面板抢键；浏览屏仍归命令面板。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:91",
-        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:81"
+        "src/components/editor/extensions/craft-keymap.ts:157",
+        "src/lib/store/use-link-request-store.ts:16"
       ]
     },
     "G802": {
@@ -1627,10 +1626,9 @@
     },
     "G1238": {
       "status": "partial",
-      "note": "行内 $…$/$$…$$ 已解析为 inlineMath，非官方 tex:// 链接装饰；导入侧硬/软换行不可分。",
+      "note": "行内 run 装饰形状入册（数学＝tex:// 链接、代码＝isCode、换行两档不可区分）；本地仍是独立 inlineMath 节点，未改存储。",
       "evidence": [
-        "src/lib/import/markdown.ts:367",
-        "src/components/editor/extensions/hard-break.ts:19"
+        "src/lib/import/inline-runs.ts:22"
       ]
     },
     "G1240": {

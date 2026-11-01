@@ -7,6 +7,7 @@ import type { Editor } from '@tiptap/react';
 import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from '@/lib/editor/block-move';
 import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
 import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
+import { requestLink } from '@/lib/store/use-link-request-store';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
@@ -148,6 +149,18 @@ export const CraftKeymap = Extension.create({
         // focused, and no key ever reaches the handler.
         props: {
           handleKeyDown(view: EditorView, event: KeyboardEvent) {
+            // G777: inside the editor Mod+K inserts a link — it must not fall through to the
+            // shell's command palette, which owns the same chord on the browse screens.
+            if (
+              (event.key === 'k' || event.key === 'K') &&
+              (event.metaKey || event.ctrlKey) &&
+              !event.altKey &&
+              !event.shiftKey
+            ) {
+              event.preventDefault();
+              requestLink();
+              return true;
+            }
             // G1554: Mod+Shift+Home/End enters **block selection** (the first/last top-level
             // block becomes a node selection and focus leaves the editor), rather than selecting
             // text to the document edge.

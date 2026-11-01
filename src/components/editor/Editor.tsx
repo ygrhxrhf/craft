@@ -1,5 +1,6 @@
 'use client';
 
+import { craftHrefTarget } from '@/lib/links/craft-schemes';
 import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
 import type { Editor as TiptapEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -524,6 +525,18 @@ export function Editor({
         class: 'prose prose-sm max-w-none focus:outline-none',
         spellcheck: spelling ? 'true' : 'false',
         ...(spelling && spellingLang ? { lang: spellingLang } : {}),
+      },
+      handleClick: (view, _pos, event) => {
+        // G558/G565: a `day://YYYY.MM.DD` link opens that daily note. Other craft schemes
+        // (`tex://`, `craftdocs://`, `craft://`) have no local route yet, so they stay inert
+        // rather than being swallowed silently.
+        const anchor = (event.target as HTMLElement | null)?.closest?.('a');
+        const href = anchor?.getAttribute('href') ?? '';
+        const target = craftHrefTarget(href);
+        if (!target) return false;
+        event.preventDefault();
+        window.location.assign(target);
+        return true;
       },
       handlePaste: (view, event) => {        const files = Array.from(event.clipboardData?.files ?? []).filter((f) =>
           f.type.startsWith('image/')

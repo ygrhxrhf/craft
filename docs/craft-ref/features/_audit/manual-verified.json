@@ -1203,11 +1203,11 @@
       ]
     },
     "G558": {
-      "status": "gap",
-      "note": "每日笔记走 /documents/:id 路由与前后一天按钮，无 day://YYYY.MM.DD 生成/解析；craft:// 等深链亦无入口。",
+      "status": "aligned",
+      "note": "day://YYYY.MM.DD 生成与解析已落（点分隔两位零填充），编辑器内点击跳 /daily-notes?date=…。",
       "evidence": [
-        "src/components/editor/DailyNoteNav.tsx:21",
-        "src/components/editor/shell-shortcuts.tsx:56"
+        "src/lib/links/craft-schemes.ts:33",
+        "src/components/editor/Editor.tsx:531"
       ]
     },
     "G563": {
@@ -1218,10 +1218,10 @@
       ]
     },
     "G565": {
-      "status": "gap",
-      "note": "tex://、day://、craftdocs://users、craft:// 四 scheme 本地均无生成/解析；链接校验只放行 http/https。",
+      "status": "aligned",
+      "note": "四个 scheme 权威清单入册并可判别（tex/day/craftdocs/craft）；仅 day:// 有本地路由，其余按「无路由不吞键」处理。",
       "evidence": [
-        "src/lib/url-guard.ts:45"
+        "src/lib/links/craft-schemes.ts:9"
       ]
     },
     "G567": {

@@ -299,6 +299,9 @@ async function rollForward(db: any, task: any, timeZone?: string): Promise<void>
     remindAt,
     recurrence: task.recurrence,
     recurrenceEnd: task.recurrenceEnd,
+    // G260: the next occurrence joins the same series as the task it came from (a task with no
+    // series starts one, using its own id as the series key).
+    seriesId: (task as { seriesId?: string | null }).seriesId ?? task.id,
     order: task.order,
   });
 }
@@ -375,4 +378,49 @@ export async function reorderTasks(blockId: string, afterBlockId: string | null)
     await db.orm.public.Task.where({ id }).update({ order: index, updatedAt: now });
   }
   await emitTasks(db, session.user.id, blockId);
+}
+
+/**
+ * G260: the series batch operations. "Remaining" = the not-yet-done, not-yet-cancelled occurrences
+ * of the same series that come after this one. Each op touches only those rows.
+ */
+export async function applySeriesOp(
+  taskId: string,
+  op: 'complete' | 'cancel' | 'delete' | 'move' | 'reschedule',
+  payload?: { moveToSeriesId?: string; rescheduleDays?: number },
+): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const from = await db.orm.public.Task.first({ id: taskId });
+  if (!from || (from as any).userId !== session.user.id) throw new Error('任务不存在');
+
+  const seriesId = (from as any).seriesId ?? taskId;
+  const rows = await db.orm.public.Task
+    .where({ userId: session.user.id, seriesId, deletedAt: null })
+    .all();
+  const remaining = rows.filter((row: any) => String(row.id) !== taskId && !row.isCompleted && row.status !== 'cancelled');
+
+  const now = new Date().toISOString();
+  for (const row of remaining) {
+    const r = row as any;
+    if (op === 'complete') {
+      await db.orm.public.Task.where({ id: r.id }).update({ isCompleted: true, status: 'done', completedAt: now, updatedAt: now });
+    } else if (op === 'cancel') {
+      await db.orm.public.Task.where({ id: r.id }).update({ isCompleted: false, status: 'cancelled', cancelledAt: now, updatedAt: now });
+    } else if (op === 'delete') {
+      await db.orm.public.Task.where({ id: r.id }).update({ deletedAt: now, updatedAt: now });
+    } else if (op === 'move') {
+      const target = payload?.moveToSeriesId ?? null;
+      if (target) await db.orm.public.Task.where({ id: r.id }).update({ seriesId: target, updatedAt: now });
+    } else if (op === 'reschedule') {
+      const days = payload?.rescheduleDays ?? 0;
+      if (days && r.dueDate) {
+        const next = new Date(new Date(r.dueDate).getTime() + days * 86_400_000).toISOString();
+        await db.orm.public.Task.where({ id: r.id }).update({ dueDate: next, updatedAt: now });
+      }
+    }
+  }
+  await emitTasks(db, session.user.id, taskId);
 }

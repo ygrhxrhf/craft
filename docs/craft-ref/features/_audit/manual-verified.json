@@ -569,13 +569,13 @@
       ]
     },
     "G260": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 46 批）：序列批量操作五条与\"剩余\"判据已落 `src/lib/task/series-ops.ts`——五条键逐字（完成剩余/取消剩余/删除剩余/将剩余内容移至…/重新安排任务，取自 harvest:3264-3334），`remainingItems` 按 rootTaskBlockId 圈同序列、取 occurrenceIndex 更大且未完成未取消的项，`hasRemaining` 决定菜单是否露出。单测 3 条。仍缺＝未接进任务行菜单（本地对序列只能逐次操作），故记 partial。",
+      "note": "现读（第 93 批）改判 aligned：序列批量操作**落库并上屏**——`Task` 加 `seriesId` 列（迁移 `add_task_series_id`，additive，已 apply；`task` 同步白名单补齐），完成再建的下一条继承同 `seriesId`（无则用自己 id 起一条）；新增 `applySeriesOp(taskId, op, payload)` 支持完成/取消/删除/移动/改期五种，只动同序列里\"该条之后、未完成未取消\"的项；`TaskRow` 的重复面板加「重复序列」一行，五枚按钮逐字（完成剩余/取消剩余/删除剩余/将剩余内容移至…/重新安排任务）。单测 3 条（series-ops）。",
       "evidence": [
-        "src/lib/task/series-ops.ts:20",
-        "src/lib/task/series-ops.ts:46",
-        "src/lib/task/task-commands.test.ts:73"
+        "src/prisma/contract.prisma:341",
+        "src/actions/task/task.ts:372",
+        "src/app/(app)/tasks/TasksView.tsx:718"
       ]
     },
     "G261": {

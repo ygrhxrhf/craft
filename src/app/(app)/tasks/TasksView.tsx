@@ -14,8 +14,9 @@ import {
   clampInterval,
   parseRecurrence,
 } from '@/lib/task/recurrence';
-import { createTask, deleteTask, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
+import { applySeriesOp, createTask, deleteTask, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
 import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
+import { SERIES_OPS } from '@/lib/task/series-ops';
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
 import { getSyncManager } from '@/lib/sync-core';
 import { currentUserId } from '@/lib/sync-core/current-user';
@@ -719,6 +720,36 @@ function TaskRow({
               onChange={(event) => update({ recurrenceEnd: fromDayInput(event.target.value) })}
             />
           </label>
+          {/* G260: the series batch operations — only a recurring task has "remaining" items. */}
+          {task.recurrence && (
+            <div className="sm:col-span-2" data-testid="series-ops">
+              <div className="mb-1 text-[11px] text-muted-foreground">重复序列</div>
+              <div className="flex flex-wrap gap-1.5">
+                {SERIES_OPS.map((op) => (
+                  <button
+                    key={op.id}
+                    type="button"
+                    onClick={() => {
+                      const mapped =
+                        op.id === 'completeRemaining'
+                          ? 'complete'
+                          : op.id === 'cancelRemaining'
+                            ? 'cancel'
+                            : op.id === 'deleteRemaining'
+                              ? 'delete'
+                              : op.id === 'moveRemaining'
+                                ? 'move'
+                                : 'reschedule';
+                      void applySeriesOp(task.id, mapped as never, { rescheduleDays: 1 });
+                    }}
+                    className="rounded-md border border-border px-2 py-1 text-[11px] text-foreground/75 transition-colors hover:bg-foreground/4"
+                  >
+                    {op.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

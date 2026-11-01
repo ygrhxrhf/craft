@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'31d233f1070ee773e774e25926bf993d51edce2ed2c24084ca83ab9abe3a3679'>;
+  StorageHashBase<'49439db899d72c5e3038a243cb2e4710faac8f9cd343a6b9adfd8d0320f3e332'>;
 export type ExecutionHash =
   ExecutionHashBase<'7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b'>;
 export type ProfileHash =
@@ -492,6 +492,7 @@ export type FieldOutputTypes = {
       readonly remindAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly recurrence: CodecTypes['pg/text@1']['output'] | null;
       readonly recurrenceEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly seriesId: CodecTypes['pg/text@1']['output'] | null;
       readonly completedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly cancelledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly status: CodecTypes['pg/text@1']['output'];
@@ -794,6 +795,7 @@ export type FieldInputTypes = {
       readonly remindAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly recurrence: CodecTypes['pg/text@1']['input'] | null;
       readonly recurrenceEnd: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly seriesId: CodecTypes['pg/text@1']['input'] | null;
       readonly completedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly cancelledAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly status: CodecTypes['pg/text@1']['input'];
@@ -1099,6 +1101,7 @@ export type StorageColumnTypes = {
       readonly recurrenceEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly remindAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly scheduleDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly seriesId: CodecTypes['pg/text@1']['output'] | null;
       readonly status: CodecTypes['pg/text@1']['output'];
       readonly title: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1401,6 +1404,7 @@ export type StorageColumnInputTypes = {
       readonly recurrenceEnd: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly remindAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly scheduleDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly seriesId: CodecTypes['pg/text@1']['input'] | null;
       readonly status: CodecTypes['pg/text@1']['input'];
       readonly title: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1730,6 +1734,7 @@ export namespace Models {
     remindAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     recurrence: CodecTypes['pg/text@1']['output'] | null;
     recurrenceEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    seriesId: CodecTypes['pg/text@1']['output'] | null;
     completedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     cancelledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     status: CodecTypes['pg/text@1']['output'];
@@ -3994,6 +3999,11 @@ type ContractBase = Omit<
                 readonly recurrenceEnd: {
                   readonly nativeType: 'timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly seriesId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                 };
                 readonly completedAt: {
@@ -6536,6 +6546,10 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly seriesId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly completedAt: {
                 readonly nullable: true;
                 readonly type: {
@@ -6629,6 +6643,7 @@ type ContractBase = Omit<
                 readonly remindAt: { readonly column: 'remindAt' };
                 readonly recurrence: { readonly column: 'recurrence' };
                 readonly recurrenceEnd: { readonly column: 'recurrenceEnd' };
+                readonly seriesId: { readonly column: 'seriesId' };
                 readonly completedAt: { readonly column: 'completedAt' };
                 readonly cancelledAt: { readonly column: 'cancelledAt' };
                 readonly status: { readonly column: 'status' };

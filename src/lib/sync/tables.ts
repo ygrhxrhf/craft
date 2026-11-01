@@ -38,7 +38,7 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'favorite', model: 'Favorite', cols: ['id','userId','documentId','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // G1513：task 的单点动作＝改排期 {dueDate,remindAt,recurrence,recurrenceEnd}／删除（patch:null）；
   // 离线新建（taskPatchFor.create）一定带 title（哪怕空串）⇒ title 把改排期在陈旧行上的铸壳挡住。
-  { table: 'task', model: 'Task', cols: ['id','userId','documentId','blockId','title','isCompleted','dueDate','scheduleDate','remindAt','recurrence','recurrenceEnd','completedAt','cancelledAt','status','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['title'] },
+  { table: 'task', model: 'Task', cols: ['id','userId','documentId','blockId','title','isCompleted','dueDate','scheduleDate','remindAt','recurrence','recurrenceEnd','seriesId','completedAt','cancelledAt','status','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['title'] },
   { table: 'daily_notes_config', model: 'DailyNotesConfig', cols: ['id','userId','folderId','templateId','startTime','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'user', model: 'User', cols: ['id','name','image','theme','editorFont','editorWidth','completedTaskAppearance','notifyComments','notifyReminders','notifyDaily','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'collection', model: 'Collection', cols: ['id','name','icon','description','order','folderId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },

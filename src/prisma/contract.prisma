@@ -338,6 +338,9 @@ model Task {
   remindAt    TimestamptzString?
   recurrence  String?
   recurrenceEnd TimestamptzString?
+  // G260：重复序列的批量操作要按序列圈定「剩余」项。官方靠 `rootTaskBlockId` 圈同一条序列；
+  //   本地每次完成再建一条新任务行，故用一个 `seriesId` 把它们串起来（首条自己也是 root）。
+  seriesId    String?
   completedAt TimestamptzString?
   // 官方取消与完成各记一个时间戳（`tasks.canceled.on`／`tasks.completed.on`＝tasks.md:104）
   cancelledAt TimestamptzString?

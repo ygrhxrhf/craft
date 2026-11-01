@@ -455,3 +455,20 @@ export function applyBlockAction(
       break;
   }
 }
+
+/**
+ * G357: set a task item's schedule (calendar) or deadline (flag) date. Both ride the task item as
+ * attributes next to `remindAt`, so the row's three time icons read the same source the task sync
+ * projects. `null` clears the field (the icon then disappears).
+ */
+export function setTaskDateField(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  field: 'scheduleDate' | 'dueDate',
+  iso: string | null,
+) {
+  const target = taskItemTarget(state, index);
+  if (!target) return;
+  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, [field]: iso }));
+}

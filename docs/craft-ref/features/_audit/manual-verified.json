@@ -427,10 +427,10 @@
     "G357": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 79 批）：三枚时间图标**落到文档内的任务块**——`TaskItem` 加 `scheduleDate`/`dueDate` 两属性（`data-schedule-date`/`data-due-date`），`reminder-pill.ts` 的 decoration 在任务行末尾为有值的那两枚各加一枚图标 widget（📅 日历 / 🚩 旗子，title 用 `iconSentence` 的整句），与原有提醒 pill 并列 ⇒ 三套时间语义在行内**各有自己的入口**。单测 375 条（editor + task 套件）。仍缺＝本地写入路径未把 schedule/deadline 同步到文档属性（`syncDocumentTasks` 仍只带 remindAt），故记 partial。",
+      "note": "现读（第 80 批）：三枚时间图标**可点可写**——`setTaskDateField(state, dispatch, index, field, iso)` 写任务的 `scheduleDate`/`dueDate` 属性；图标 widget 改成一枚 `<button>`，点击开一枚「今天/明天/清除」日菜单（`openDayMenu`），选完即写、清除即摘（图标随之消失）。⇒ 三套时间语义在文档内各有自己的入口且都能改。单测 992 条（editor+task）。仍缺＝`syncDocumentTasks` 仍只带 `remindAt`（两枚日期未同步到任务表），故记 partial。",
       "evidence": [
-        "src/components/editor/Editor.tsx:393",
         "src/components/editor/extensions/reminder-pill.ts:100",
+        "src/components/editor/drag-handle/block-actions.ts:398",
         "src/lib/task/time-icons.ts:40"
       ]
     },

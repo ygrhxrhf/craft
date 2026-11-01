@@ -12,7 +12,7 @@ import {
   needsRescheduleConfirm,
 } from '@/lib/task/reminder-reschedule';
 import { confirmDialog } from '@/lib/dialog/show';
-import { clearTaskReminder, setTaskReminder, taskItemTarget } from '@/components/editor/drag-handle/block-actions';
+import { clearTaskReminder, setTaskDateField, setTaskReminder, taskItemTarget } from '@/components/editor/drag-handle/block-actions';
 import { iconSentence } from '@/lib/task/time-icons';
 
 export const REMINDER_PILL_KEY = new PluginKey('reminderPill');
@@ -41,19 +41,53 @@ function placeMenu(anchor: HTMLElement, menu: HTMLElement) {
 }
 
 /** G357: the calendar (schedule) and flag (deadline) icons shown beside the reminder pill. */
-function timeIcon(kind: 'schedule' | 'deadline', iso: string): HTMLElement {
+function timeIcon(kind: 'schedule' | 'deadline', iso: string, view: EditorView, pos: number): HTMLElement {
   const at = new Date(iso);
-  const label = Number.isNaN(at.getTime())
-    ? ''
-    : kind === 'schedule'
-      ? iconSentence('schedule', `${at.getMonth() + 1}/${at.getDate()}`)
-      : iconSentence('deadline', `${at.getMonth() + 1}/${at.getDate()}`);
-  const span = document.createElement('span');
+  const dateText = Number.isNaN(at.getTime()) ? '' : `${at.getMonth() + 1}/${at.getDate()}`;
+  const label = dateText ? iconSentence(kind, dateText) : '';
+  const span = document.createElement('button');
+  span.type = 'button';
   span.className = `task-time-icon task-time-icon-${kind}`;
   span.dataset.timeIcon = kind;
   span.textContent = kind === 'schedule' ? '📅' : '🚩';
   if (label) span.title = label;
+  // Clicking opens the same day-menu the other entry points use; picking a day writes the field.
+  span.addEventListener('mousedown', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openDayMenu(span, view, pos, kind === 'schedule' ? 'scheduleDate' : 'dueDate');
+  });
   return span;
+}
+
+/** A tiny day menu: 今天 / 明天 / 清除. Enough to set and clear the two date fields. */
+function openDayMenu(
+  anchor: HTMLElement,
+  view: EditorView,
+  pos: number,
+  field: 'scheduleDate' | 'dueDate',
+) {
+  closeReminderMenu();
+  const menu = document.createElement('div');
+  menu.className = 'reminder-menu';
+  menu.dataset.reminderMenu = '';
+
+  const pick = (iso: string | null) => {
+    const index = blockIndexAt(view, pos);
+    if (index >= 0) setTaskDateField(view.state, view.dispatch, index, field, iso);
+    closeReminderMenu();
+  };
+  const startOfDay = (offset: number) => {
+    const at = new Date();
+    at.setDate(at.getDate() + offset);
+    at.setHours(0, 0, 0, 0);
+    return at.toISOString();
+  };
+
+  menu.appendChild(menuItem('今天', () => pick(startOfDay(0))));
+  menu.appendChild(menuItem('明天', () => pick(startOfDay(1))));
+  menu.appendChild(menuItem('清除', () => pick(null)));
+  placeMenu(anchor, menu);
 }
 
 function menuItem(label: string, onPick: () => void): HTMLButtonElement {  const item = document.createElement('button');
@@ -166,7 +200,7 @@ export const ReminderPill = Extension.create({
                 widgets.push(
                   Decoration.widget(
                     pos + node.nodeSize - 1,
-                    () => timeIcon('schedule', schedule),
+                    (widgetView) => timeIcon('schedule', schedule, widgetView, pos),
                     { side: -1 },
                   ),
                 );
@@ -176,7 +210,7 @@ export const ReminderPill = Extension.create({
                 widgets.push(
                   Decoration.widget(
                     pos + node.nodeSize - 1,
-                    () => timeIcon('deadline', due),
+                    (widgetView) => timeIcon('deadline', due, widgetView, pos),
                     { side: -1 },
                   ),
                 );

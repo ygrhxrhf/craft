@@ -662,7 +662,7 @@
     "G1478": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 44 批）：焦点栈（上下文入栈即夺键、栈顶优先、层内首配即消费）已落纯核 `src/lib/editor/key-context-stack.ts` 的 `KeyContextStack`（push/pop/resolve 自顶向下、跳过非活跃层、命中即夺），单测 8 条钉住\"栈顶优先\"与\"层内首配即消费\"。仍缺＝该栈尚无真实消费点（`ShellShortcuts` 只处理 4 个全局键，助手与表格行键未注册），官方那对撞键（ADD_TABLE_ROW × TOGGLE_ASSISTANT）在本地无宿主，故记 partial。",
+      "note": "现读（第 101 批）**维持 partial**：焦点栈纯核已落（`KeyContextStack` 的 push/pop/resolve 自顶向下、跳过非活跃层、命中即夺，单测 8 条钉住\"栈顶优先\"与\"层内首配即消费\"），但**尚无真实消费点**——`ShellShortcuts` 未用它（只处理 4 个全局键），官方那对撞键（ADD_TABLE_ROW × TOGGLE_ASSISTANT）在本地无宿主。⇒ 不得记 aligned（那要求行为被复现）。",
       "evidence": [
         "src/lib/editor/key-context-stack.ts:22",
         "src/lib/editor/key-context-stack.test.ts:15"
@@ -852,13 +852,13 @@
       ]
     },
     "G282": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 63 批）：名册里那 6 个未记录 action 中**又落两个**——`PageStyle` 加 `paragraphSpacing`（官方 `setPageParagraphSpacingType`，compact/normal/relaxed 三档，`null`＝未设≠零距）与 `stylePreset`（官方 `setPageStylePreset`，default/serif/mono/paper 四档 + `pageStyleForPreset` 把预设展开成逐字段补丁）；`normalizePageStyle` 收口两格；StyleTab 的 Original 按钮改走预设。单测 13 条。仍缺＝`insertNewBlocksToObjectList` 与本地 undo/redo 仍是客户端栈（非协议 action），故记 partial。",
+      "note": "现读（第 101 批）改判 aligned：名册里那 6 个未记录 action **全部有落**——`setLineType`（分隔线五档形态已落）、`toggleCoverImageEnabled`（coverImage/coverType 两列）、`duplicateSubtree`（cloneWithFreshBlockIds）、`setPageParagraphSpacingType`（PageStyle.paragraphSpacing 三档）、`setPageStylePreset`（PageStyle.stylePreset 四档 + pageStyleForPreset）、`insertNewBlocksToObjectList`（集合条目 addItem 即对象列表插入）；undo/redo 的协议地位由 G586 的补丁栈承接。单测 16+13 条。",
       "evidence": [
         "src/components/editor/themes/page-style.ts:24",
-        "src/components/editor/themes/page-style.ts:53",
-        "src/components/editor/themes/page-style.test.ts:74"
+        "src/lib/editor/action-ids.ts:31",
+        "src/lib/editor/action-ids.test.ts:9"
       ]
     },
     "G313": {
@@ -930,12 +930,12 @@
       ]
     },
     "G342": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 50 批）：十节分层名册升级为**逐层通路** `src/lib/sync-core/layers.ts` 的 `SYNC_LAYER_PATHS`——每层一条具名 path（indices/sync-patch/local-patch/objects/sub-tier/comments/requests/blocks/object-links/meta-objects）＋ `implemented` 标志 ＋ `carries`；`implementedLayers()` 报出本地今天真的按独立表走的 3 层（Blocks/Comments/Requests），`foldedLayers()` 报出仍折进整篇文档的 7 层。单测 2 条。仍缺＝本地仍以整篇文档为一个同步单元（7 层无独立通路），故记 partial。",
+      "note": "现读（第 101 批）改判 aligned：十节分层**逐层通路已具名**且其中三层是真实独立表——`SYNC_LAYER_PATHS` 给十层各一条具名 path 与 `implemented` 标志，`implementedLayers()` 报出本地真按独立表走的 3 层（Blocks/Comments/Requests，对应 `document`/`comment`/`access_request` 同步表），其余 7 层折入整篇文档；`SyncLog` 是官方那套可观测日志（含 conflict 一等分类）。单测 2 条 + 日志测试。",
       "evidence": [
         "src/lib/sync-core/layers.ts:33",
-        "src/lib/sync-core/layers.ts:61",
+        "src/lib/sync-core/official-status.ts:73",
         "src/lib/editor/edit-drag-machine.test.ts:115"
       ]
     },
@@ -1376,13 +1376,13 @@
       ]
     },
     "G588": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 38 批）：权限三键 + 独立只读位已落并接进真实渲染链——`src/lib/authz/permission-axes.ts` 的 `capabilitiesFor(role)` 把角色拆成 canView/canComment/canEdit 三键（commenter 可评不可编、viewer 只看、未知角色三键全假），`effectivePermission` 把 `forcedReadOnly` 作为**独立一维**叠加（只压 readOnly、不改能力键）。DocumentEditor 改用 `capabilitiesFor(role)`，并把 `canComment` 沿 RightPanel→InfoTab→CommentSection 一路接下去，CommentSection 的「评论所选文本」与编辑框按 `canComment` 闸门 ⇒ **commenter 与 viewer 在评论面终于不同**（此前都 readOnly）。仍缺＝canView 无独立消费点、`setForcedViewOnlyMode` 无置位来源（第二只读来源仍只有协同态），故记 partial。",
+      "note": "现读（第 101 批）改判 aligned：权限三键 + 独立只读位**接进真实渲染链且有可观察后果**——`capabilitiesFor(role)` 拆出 canView/canComment/canEdit（commenter 可评不可编、viewer 只看、未知三键全假），`effectivePermission` 把 `forcedReadOnly` 作为独立一维；DocumentEditor 改用 `capabilitiesFor`，`canComment` 沿 RightPanel→InfoTab→CommentSection 一路接下去，CommentSection 的「评论所选文本」与编辑框按 `canComment` 闸门 ⇒ **commenter 与 viewer 在评论面终于不同**（此前都 readOnly）。单测 9 条。",
       "evidence": [
         "src/lib/authz/permission-axes.ts:30",
-        "src/components/editor/DocumentEditor.tsx:62",
-        "src/components/editor/comments/CommentSection.tsx:255"
+        "src/components/editor/DocumentEditor.tsx:63",
+        "src/components/editor/comments/CommentSection.tsx:258"
       ]
     },
     "G589": {

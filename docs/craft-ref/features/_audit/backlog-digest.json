@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-01T17:33:05.305Z",
+  "generatedAt": "2026-11-01T17:35:29.466Z",
   "total": 1614,
   "status": {
     "nonaction": 510,
-    "aligned": 384,
-    "partial": 366,
+    "aligned": 387,
+    "partial": 363,
     "gap": 176,
     "deliberate": 158,
     "unreachable": 20
@@ -20,7 +20,7 @@
     "P2 / partial": 199,
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
-    "P1 / aligned": 153,
+    "P1 / aligned": 156,
     "P2 / gap": 103,
     "P1 / nonaction": 89,
     "P2 / aligned": 86,
@@ -35,7 +35,7 @@
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
-    "P1 / partial": 17,
+    "P1 / partial": 14,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
     "P3 / unreachable": 4,
@@ -1140,7 +1140,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      25
+      24
     ],
     [
       "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",
@@ -1203,11 +1203,11 @@
       6
     ],
     [
-      "三点二八、第 23 批（静态：日期解析链 + 同步层 + 只存在于代码里",
+      "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
       6
     ],
     [
-      "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
+      "三点八二、第 71 批（★ 静态补账：任务三时间动线 G 项结案 ⇒ 重",
       6
     ]
   ]

@@ -547,13 +547,13 @@
       ]
     },
     "G253": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 4 批）更正本地列：字段语义**已分离**（D1 已落 scheduleDate/dueDate 两列，tasks/TasksView 各自读写），不是台账写的「合并成一个 dueDate」。真缺口是**命令面全空**——official-catalog 里 schedule 与 deadline 两组 id 都在（且官方不对称本身已被记录：schedule 有 `commands.task.schedule.x` 动态短语、deadline 没有 .x），但 registry 两组都未接入。",
+      "note": "现读（第 46 批）：两组命令的结构与那处**不对称**已落 `src/lib/task/task-commands.ts`——schedule 组 5 条（含 `commands.task.schedule.x`「安排到 [0]」动态短语）、deadline 组 6 条（无 .x）；`hasDynamicCommand`/`isAsymmetric` 两条判据把\"schedule 有动态短语、deadline 没有\"钉住（日后有人顺手给 deadline 加 .x 会红）。单测 3 条。仍缺＝两组命令未接进命令注册表（本地命令面全空），故记 partial。",
       "evidence": [
-        "src/lib/commands/official-catalog.ts:820-882",
-        "src/actions/task/task.ts:58-60",
-        "src/app/(app)/tasks/TasksView.tsx:537-550"
+        "src/lib/task/task-commands.ts:23",
+        "src/lib/task/task-commands.ts:55",
+        "src/lib/task/task-commands.test.ts:12"
       ]
     },
     "G256": {
@@ -567,12 +567,13 @@
       ]
     },
     "G260": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 4 批）：无序列批量操作——完成/取消/删除/移动剩余内容四条与批量改期在 src 零命中；reminder 的 reschedule 是单条提醒改期（reminder-reschedule.ts），不是序列批量。",
+      "note": "现读（第 46 批）：序列批量操作五条与\"剩余\"判据已落 `src/lib/task/series-ops.ts`——五条键逐字（完成剩余/取消剩余/删除剩余/将剩余内容移至…/重新安排任务，取自 harvest:3264-3334），`remainingItems` 按 rootTaskBlockId 圈同序列、取 occurrenceIndex 更大且未完成未取消的项，`hasRemaining` 决定菜单是否露出。单测 3 条。仍缺＝未接进任务行菜单（本地对序列只能逐次操作），故记 partial。",
       "evidence": [
-        "src/lib/task/reminder-reschedule.ts:23-28",
-        "src/app/(app)/tasks/TasksView.tsx:520-560"
+        "src/lib/task/series-ops.ts:20",
+        "src/lib/task/series-ops.ts:46",
+        "src/lib/task/task-commands.test.ts:73"
       ]
     },
     "G261": {
@@ -630,11 +631,13 @@
       ]
     },
     "G411": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 4 批）：提醒时刻是原生 `<Input type=\"datetime-local\">`（TasksView.tsx:551-558），不是官方那条 96 档/15 分钟步长的全天菜单；无「不提醒」行的条件渲染，remindAt 存绝对 ISO 时间戳。台账读数仍准确（只是行号从 page.tsx 漂到 TasksView.tsx）。",
+      "note": "现读（第 46 批）：96 档 15 分钟步长的全天菜单已落纯核 `src/lib/task/time-menu.ts`——`timeSlots()` 生成 96 档（00:00…23:45）、`slotIndexForTime` 向下取整到当前档（打开即滚到当前时刻所在格）、`instantForSlot` 折算回当天绝对时刻、`clearedReminder` 是官方 `u(null)` 的清空形态 `{enabled:false,dateOffset:undefined}`、`showsClearRow` 判\"不提醒\"行只在当前已设提醒时出现。单测 5 条。仍缺＝TasksView 仍是原生 `<Input type=\"datetime-local\">`，菜单组件未接，故记 partial。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:551-558"
+        "src/lib/task/time-menu.ts:22",
+        "src/lib/task/time-menu.ts:45",
+        "src/lib/task/task-commands.test.ts:39"
       ]
     },
     "G1476": {

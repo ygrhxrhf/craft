@@ -151,3 +151,34 @@ describe('setLocalCursor', () => {
     expect(awareness.setLocalStateField).not.toHaveBeenCalled();
   });
 });
+
+describe('the plural RTC dimensions (G593)', () => {
+  const user = { id: 'u2', name: '李四', color: '#4a7de0' };
+
+  it('surfaces the plural editing/open dimensions', () => {
+    const states = new Map([
+      [2, { user, editingBlocks: ['b1', 'b2'], openPages: ['p1', 'p2'] }],
+    ]);
+    const peer = selectPeers(states, 1)[0];
+    expect(peer.editingBlocks).toEqual(['b1', 'b2']);
+    expect(peer.openPages).toEqual(['p1', 'p2']);
+    // The singular field is the first of the plural one.
+    expect(peer.editingBlockId).toBe('b1');
+    expect(peer.openPageId).toBe('p1');
+  });
+
+  it('falls back to the singular field when only that is published', () => {
+    const states = new Map([[2, { user, editingBlockId: 'b9' }]]);
+    expect(selectPeers(states, 1)[0].editingBlocks).toEqual(['b9']);
+  });
+
+  it('drops a stale plural dimension entirely', () => {
+    const now = 1_000_000;
+    const states = new Map([
+      [2, { user, editingBlocks: ['b1', 'b2'], editingBlockUpdatedAt: now - 60_000 }],
+    ]);
+    const peer = selectPeers(states, 1, { now, staleAfterMs: 30_000 })[0];
+    expect(peer.editingBlocks).toEqual([]);
+    expect(peer.editingBlockId).toBeNull();
+  });
+});

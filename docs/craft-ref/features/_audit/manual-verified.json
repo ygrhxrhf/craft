@@ -1405,10 +1405,11 @@
     "G593": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 39 批）：协同三维的**陈旧判定**已补——`src/lib/collaboration/presence.ts` 的两维 RTC 字段各带 `updatedAt`（`editingBlockUpdatedAt`/`openPageUpdatedAt`，`setLocalPresenceField` 写入时打时间戳、清空时置 null），`selectPeers` 收 `{now, staleAfterMs}` 并把超窗的 RTC 值丢弃（无时间戳的旧客户端视为新鲜）。单测钉住「fresh 保留 / stale 丢弃 / 无戳视新鲜 / 写时打戳 / 清空置 null」。仍缺＝官方 `group(t,e){actions}` 复合动作与 `rtcId` 会话身份在本地无对应，故记 partial。",
+      "note": "现读（第 59 批）：协同三维的**复数形态**已落——`PresenceState` 加 `editingBlocks`/`openPages` 两个数组（官方 `editingBlocks`/`openPages`），`selectPeers` 的 `PeerPresence` 同时给复数与单数（单数＝复数首项，客户端只发单数时回落成 `[singular]`），两维各带 `updatedAt` 且超窗整维丢弃（前批已落）。单测 18 条（含复数三例）。仍缺＝官方 `group(t,e){actions}` 复合动作与 `rtcId` 会话身份本地无对应，故记 partial。",
       "evidence": [
-        "src/lib/collaboration/presence.ts:63",
-        "src/lib/collaboration/presence.test.ts:61"
+        "src/lib/collaboration/presence.ts:25",
+        "src/lib/collaboration/presence.ts:107",
+        "src/lib/collaboration/presence.test.ts:92"
       ]
     },
     "G594": {

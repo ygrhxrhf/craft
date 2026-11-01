@@ -15,13 +15,17 @@ export interface PresenceCursor {
 export interface PresenceState {
   user?: PresenceUser;
   cursor?: PresenceCursor | null;
+  /** G593: single-valued, kept for the local one-block-at-a-time edit model. */
   editingBlockId?: string | null;
   openPageId?: string | null;
   /**
-   * G593: the official RTC dimensions carry an `updatedAt` so a stale value can be told from a
-   * fresh one. A peer that stopped editing without a clean `null` write (tab killed) leaves its
-   * last `editingBlockId` behind; the timestamp is what lets a reader age it out.
+   * G593: the official dimensions are **plural** (`editingBlocks` / `openPages`) and carry an
+   * `updatedAt`. A client can be editing several blocks or have several pages open at once, so the
+   * singular field is a projection of this array. The timestamp lets a reader age out a value left
+   * behind by a client that vanished without a clean write.
    */
+  editingBlocks?: string[] | null;
+  openPages?: string[] | null;
   editingBlockUpdatedAt?: number | null;
   openPageUpdatedAt?: number | null;
 }
@@ -32,6 +36,9 @@ export interface PeerPresence {
   cursor: PresenceCursor | null;
   editingBlockId: string | null;
   openPageId: string | null;
+  /** The full plural dimensions (G593), each already aged against the staleness window. */
+  editingBlocks: string[];
+  openPages: string[];
   editingBlockUpdatedAt: number | null;
   openPageUpdatedAt: number | null;
 }
@@ -65,6 +72,8 @@ export function initialPresenceState(user: PresenceUser): PresenceState {
     cursor: null,
     editingBlockId: null,
     openPageId: null,
+    editingBlocks: null,
+    openPages: null,
     editingBlockUpdatedAt: null,
     openPageUpdatedAt: null,
   };
@@ -84,20 +93,34 @@ export function selectPeers(
     if (clientId === selfId || !state?.user) return;
     const editingBlockUpdatedAt = state.editingBlockUpdatedAt ?? null;
     const openPageUpdatedAt = state.openPageUpdatedAt ?? null;
+    // G593: an RTC value older than the window is dropped — a peer that vanished without a clean
+    // `null` write must not keep showing as "editing block 9" forever.
+    const editingFresh = isFresh(editingBlockUpdatedAt, now, staleAfterMs);
+    const openFresh = isFresh(openPageUpdatedAt, now, staleAfterMs);
+    // The plural dimensions fall back to the singular field, so a client that only publishes the
+    // singular shape still shows up.
+    const editingBlocks = editingFresh ? pluralOf(state.editingBlocks, state.editingBlockId) : [];
+    const openPages = openFresh ? pluralOf(state.openPages, state.openPageId) : [];
     peers.push({
       clientId,
       user: state.user,
       cursor: state.cursor ?? null,
-      // G593: an RTC value older than the window is dropped — a peer that vanished without a clean
-      // `null` write must not keep showing as "editing block 9" forever.
-      editingBlockId: isFresh(editingBlockUpdatedAt, now, staleAfterMs) ? state.editingBlockId ?? null : null,
-      openPageId: isFresh(openPageUpdatedAt, now, staleAfterMs) ? state.openPageId ?? null : null,
+      editingBlockId: editingBlocks[0] ?? null,
+      openPageId: openPages[0] ?? null,
+      editingBlocks,
+      openPages,
       editingBlockUpdatedAt,
       openPageUpdatedAt,
     });
   });
 
   return peers;
+}
+
+/** The plural dimension, falling back to the singular field when the array is absent. */
+function pluralOf(plural: string[] | null | undefined, singular: string | null | undefined): string[] {
+  if (Array.isArray(plural)) return plural.filter((id): id is string => typeof id === 'string' && id.length > 0);
+  return singular ? [singular] : [];
 }
 
 /** Default staleness window for the RTC dimensions (official carries `updatedAt` for this). */

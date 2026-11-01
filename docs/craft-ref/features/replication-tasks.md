@@ -65,9 +65,10 @@
 | 54 | `2149bc9` | G585（partial） | 合并样式胜负接真实合并路径（前块赢时重设合并块节点类型） |
 | 56 | `5dc9cc5` | G427、G428（partial） | 一物多集合落库（schemas 列 + 迁移）；删集合只清归属 |
 | 57 | `82c8f6b` | G451（partial） | 带类型判别对象接真实写入路径（setItemValue 存 {type,theme,value}） |
-| 58 | — | G439（partial） | 单元格稳定 id 落进 schema 与导入路径（rowId/cellId） |
+| 58 | `4910079` | G439（partial） | 单元格稳定 id 落进 schema 与导入路径（rowId/cellId） |
+| 59 | — | G593（partial） | presence 复数维度（editingBlocks/openPages）+ 单数回落 |
 
-**剩余 46 条**（gap 17 / partial 29）。☆ 口径：**记为 partial 的行仍算待办**——纯核已落、真实消费点未接；按 `ledger-backlog.csv` 的 `P1 && (gap||partial)` 实算。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2755 测试、tsc 0 错。
+**剩余 45 条**（gap 17 / partial 28）。☆ 口径：**记为 partial 的行仍算待办**——纯核已落、真实消费点未接；按 `ledger-backlog.csv` 的 `P1 && (gap||partial)` 实算。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2758 测试、tsc 0 错。
 
 **下一批计划**：G586/G282（协议撤销栈接真实调用点）→ G280（落点九族接拖拽层）→ G608（表头/任务合并器补全）→ G601（stopTextEdit 接真实编辑路径）。
 

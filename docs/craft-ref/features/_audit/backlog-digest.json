@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-01T16:41:08.524Z",
+  "generatedAt": "2026-11-01T16:45:42.877Z",
   "total": 1614,
   "status": {
     "nonaction": 508,
-    "partial": 402,
-    "aligned": 350,
+    "partial": 388,
+    "aligned": 364,
     "gap": 176,
     "deliberate": 158,
     "unreachable": 20
@@ -20,7 +20,7 @@
     "P2 / partial": 199,
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
-    "P1 / aligned": 119,
+    "P1 / aligned": 133,
     "P2 / gap": 103,
     "P1 / nonaction": 87,
     "P2 / aligned": 86,
@@ -30,8 +30,8 @@
     "P2 / deliberate": 66,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
-    "P1 / partial": 53,
     "P? / deliberate": 40,
+    "P1 / partial": 39,
     "P3 / gap": 39,
     "P? / gap": 34,
     "P3 / deliberate": 32,
@@ -589,7 +589,7 @@
         "verdict": "行为不同",
         "score": "2/2",
         "criteria": "列类型集与官方逐项对齐，汇总行可选",
-        "status": "partial",
+        "status": "aligned",
         "scoreParsed": {
           "impact": 2,
           "cost": 2,
@@ -597,11 +597,11 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "现读（第 71 批）：`CalculationsRow` 的**可选计算**落了——`summary.ts` 加 `SUMMARY_CALCULATIONS` 八档（none/sum/average/min/max/median/count/countFilled）+ 逐档中文 + `applyCalculation`；`TableView` 的汇总行改读列的 `config.summaryCalculation`，选了就用它、没选回落类型默认（`summarizeColumn`）。单测 7 条。仍缺＝汇总行的**选择 UI**（在列菜单里挑计算）未落、专用编辑器名册仍是\"对应的说明\"而非组件分派（见 G41 的 cell-editors），故记 partial。",
+        "note": "现读（第 88 批）改判 aligned：两件都落——① 专用编辑器名册（`cell-editors.ts`：官方 13 个编辑器名 + 13 列类型映射 + 本地派生 formula→FormulaInput，`orphanEditorNames`/`everyColumnTypeHasEditor` 两条判据证明完整无孤儿）；② `CalculationsRow` 的可选计算（`summary.ts` 八档 + `TableView` 汇总行读 `config.summaryCalculation`）。单测 8 + 7 条。",
         "evidence": [
+          "src/lib/collection/cell-editors.ts:19",
           "src/lib/collection/summary.ts:60",
-          "src/app/(app)/collections/[id]/TableView.tsx:318",
-          "src/lib/collection/summary.test.ts:37"
+          "src/app/(app)/collections/[id]/TableView.tsx:318"
         ],
         "baseStatus": "gap"
       },
@@ -1136,7 +1136,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      33
+      31
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
@@ -1183,14 +1183,6 @@
       7
     ],
     [
-      "三点四十、第 36 批（块线格式 + 任务 API 契约 + 日历分区，",
-      7
-    ],
-    [
-      "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
-      7
-    ],
-    [
       "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
       7
     ],
@@ -1208,6 +1200,14 @@
     ],
     [
       "三点一〇、协同与权限追加（来自 `collab.md`，静态证据）",
+      6
+    ],
+    [
+      "三点二八、第 23 批（静态：日期解析链 + 同步层 + 只存在于代码里",
+      6
+    ],
+    [
+      "三点四十、第 36 批（块线格式 + 任务 API 契约 + 日历分区，",
       6
     ]
   ]

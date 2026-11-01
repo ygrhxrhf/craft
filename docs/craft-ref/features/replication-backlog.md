@@ -73,7 +73,7 @@
 | G21 | 已对齐 | 2/2 | 侧栏一级有独立「连接」屏（✓ 屏上实测；官方有 connections 视图） | 现读（2026-10-31）更正：侧栏一级「连接」屏已建（/connections），列出并新增 MCP/API 连接。 | 侧栏一级「连接」屏已建（/connections），列出并新增 MCP/API 连接；`src/app/(app)/connections/page.tsx`、`src/components/sidebar/SidebarNav.tsx` |
 | G22 | 已对齐 | 2/3 | 导出 7 类：DOCX / PDF（纸张、页码、水印、深色）/ Markdown / HTML / TextBundle / P | 有 markdown/html/text/json 四种导出 + 仅 Markdown 导入（actions/document/ | 导出补 DOCX/PDF/TextBundle/整库 zip/图片，导入补 Markdown/HTML/Evernote/Readwise/Notion 五源；`src/lib/export/docx.ts`、`src/lib/import/sources.ts` |
 | G40 | 已对齐 | 2/2 | 官方块词表含 mermaid、audio、iframe/embed/html、subtitle（model.md 一、频次证据） | Mermaid 无（G17）；音频块无；linkPreview 只近似 iframe；无独立副标题块 | 音频块、iframe/网页嵌入、HTML 沙箱嵌入、副标题（h2）与 Mermaid 均已接；`src/components/editor/extensions/audio-embed.tsx`、`src/components/editor/extensions/html-embed.tsx` |
-| G41 | 部分落地 | 2/2 | 集合列类型 ≈13 类，各有专用编辑组件（TextEditor/NumberEditor/SelectEditor/MultiS | 属性类型散在前端 AddPropertyMenu.tsx:52-127 无权威枚举；无汇总行/Calculations 概念 | 现读（第 71 批）：CalculationsRow 的可选计算落了——summary.ts 加 SUMMARY_CALCULATIONS 八档（none/sum/average/min/max/median/count；`src/lib/collection/summary.ts:60`、`src/app/(app)/collections/[id]/TableView.tsx:318`、`src/lib/collection/summary.test.ts:37` |
+| G41 | 已对齐 | 2/2 | 集合列类型 ≈13 类，各有专用编辑组件（TextEditor/NumberEditor/SelectEditor/MultiS | 属性类型散在前端 AddPropertyMenu.tsx:52-127 无权威枚举；无汇总行/Calculations 概念 | 现读（第 88 批）改判 aligned：两件都落——① 专用编辑器名册（cell-editors.ts：官方 13 个编辑器名 + 13 列类型映射 + 本地派生 formula→FormulaInput，orphan；`src/lib/collection/cell-editors.ts:19`、`src/lib/collection/summary.ts:60`、`src/app/(app)/collections/[id]/TableView.tsx:318` |
 | G42 | 已对齐 | 2/3 | 通知走 /api/ws-noti/v1，另有 /api/ws-rtc/v1（实时通信） | 现读（2026-10-31）更正：通知通道 /api/v1/notifications/stream 已接；RTC 三维（光标/ | 通知通道 /api/v1/notifications/stream 已接；RTC 三维（光标/编辑块/打开页面）走 awareness；`src/app/api/v1/notifications/stream/route.ts`、`src/lib/collaboration/presence.ts:18` |
 | G43 | 已对齐 | 2/2 | 日历是纵向按日时间轴：↑ 显示前几天 + 逐日成节（今天/明天 + 星期）+ 每节 添加任务/创建每日笔记（V-实测 dom-r | 已清（日历＝纵向按日时间轴）＝src/lib/calendar/timeline.ts 把采集的成节规则逐字写下：锚点起连续七天 | 无需动作；抽检证据见台账行；`src/lib/calendar/timeline.ts` |
 | G44 | 已对齐 | 2/3 | 侧栏「连接」屏 = MCP / API 接入中心（「你的 MCP 连接 — 让 AI 工具访问你的文档」「你的 API 连接 — | 现读（2026-10-31）更正：连接屏即 MCP/API 接入中心，两段文案与添加入口均落。 | 连接屏即 MCP/API 接入中心，两段文案与添加入口均落；`src/app/(app)/connections/ConnectionsPanel.tsx:21` |
@@ -146,7 +146,7 @@
 | 条数 | 节 |
 | --- | --- |
 | 59 | 三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第 |
-| 33 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
+| 31 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
 | 27 | 三点七、P2 追加（来自 dialogs.md 与 protoco |
 | 12 | 三点一〇六十、第 110 批〔★★★ 代码块主题的作用域结案＝块级， |
 | 11 | 三点一〇三八、第 97 批〔★★★ G943 裁定＝连接器的按键不自 |
@@ -158,13 +158,13 @@
 | 8 | 三点八、AI 助手与接入中心追加（来自 assistant.md，静 |
 | 7 | 三点一一、发布与共享控制中心追加（来自 publishing.md， |
 | 7 | 三点一三、设置与账户追加（来自 settings.md，静态证据 + |
-| 7 | 三点四十、第 36 批（块线格式 + 任务 API 契约 + 日历分区， |
-| 7 | 三点四八、第 41 批（集合单元格十个按类型编辑器，model.md |
 | 7 | 三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe |
 | 7 | 三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP  |
 | 7 | 三点一〇五九、第 109 批〔★★★ 代码块的写侧字段结案＝typ |
 | 7 | 三点一一一九、第 181 批新登记的官方行为（2026-10-09 05 |
 | 6 | 三点一〇、协同与权限追加（来自 collab.md，静态证据） |
+| 6 | 三点二八、第 23 批（静态：日期解析链 + 同步层 + 只存在于代码里 |
+| 6 | 三点四十、第 36 批（块线格式 + 任务 API 契约 + 日历分区， |
 
 ## 十一、不进复刻 backlog
 

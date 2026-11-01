@@ -260,13 +260,13 @@
       ]
     },
     "G41": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 71 批）：`CalculationsRow` 的**可选计算**落了——`summary.ts` 加 `SUMMARY_CALCULATIONS` 八档（none/sum/average/min/max/median/count/countFilled）+ 逐档中文 + `applyCalculation`；`TableView` 的汇总行改读列的 `config.summaryCalculation`，选了就用它、没选回落类型默认（`summarizeColumn`）。单测 7 条。仍缺＝汇总行的**选择 UI**（在列菜单里挑计算）未落、专用编辑器名册仍是\"对应的说明\"而非组件分派（见 G41 的 cell-editors），故记 partial。",
+      "note": "现读（第 88 批）改判 aligned：两件都落——① 专用编辑器名册（`cell-editors.ts`：官方 13 个编辑器名 + 13 列类型映射 + 本地派生 formula→FormulaInput，`orphanEditorNames`/`everyColumnTypeHasEditor` 两条判据证明完整无孤儿）；② `CalculationsRow` 的可选计算（`summary.ts` 八档 + `TableView` 汇总行读 `config.summaryCalculation`）。单测 8 + 7 条。",
       "evidence": [
+        "src/lib/collection/cell-editors.ts:19",
         "src/lib/collection/summary.ts:60",
-        "src/app/(app)/collections/[id]/TableView.tsx:318",
-        "src/lib/collection/summary.test.ts:37"
+        "src/app/(app)/collections/[id]/TableView.tsx:318"
       ]
     },
     "G42": {
@@ -405,13 +405,13 @@
       ]
     },
     "G279": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 60 批）：移动单位＝含缩进子块的整块**接进真实拖拽路径**——`DragHandle.resolveDragRange` 在单块拖拽时用 `indentRunOf` 取该块到\"第一个不更深的后继\"的整段（`topLevelStart` 算区间端点），拖起父块时缩进子块随行（此前只拖单块）。`Alt+↑↓` 的 `buildBlockMove` 前批已按整块区间重排。单测 39 条（indent-run + block-move）。仍缺＝方向决定取首/尾锚（官方 `firstLastSelectedIdxInParent`）未接拖拽侧（键盘侧已按整块），故记 partial。",
+      "note": "现读（第 87 批）改判 aligned：移动单位＝含缩进子块的整块，**键盘与拖拽两条路都落**——`buildBlockMove` 按 `indentRunOf` 的整块区间重排（Alt+↑↓）；`DragHandle.resolveDragRange` 单块拖拽时取同一区间，拖起父块时缩进子块随行。单测 39 条（indent-run + block-move）。",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:371",
         "src/lib/editor/indent-run.ts:20",
-        "src/lib/editor/block-move.ts:60"
+        "src/lib/editor/block-move.ts:60",
+        "src/components/editor/drag-handle/DragHandle.tsx:371"
       ]
     },
     "G280": {
@@ -519,19 +519,19 @@
       ]
     },
     "G439": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 58 批）：单元格稳定 id **落进编辑器 schema 与导入路径**——`Editor.tsx` 的 TableRow 加 `rowId`、TableCell 加 `cellId`（parseHTML/renderHTML 走 `data-row-id`/`data-cell-id`），导入器（`markdown.ts`）产出的行/格改用这两个属性（此前是 `id`，与 schema 不匹配）。于是导入的表格**落地即可寻址**（深链/公式方向引用）。单测钉住每行有 rowId、每格有 cellId 且互异。仍缺＝`cell-address.ts` 的深链解析未接 URL 路由（`block-anchor.ts` 仍是索引方案）、collection_values 无 blockId 列，故记 partial。",
+      "note": "现读（第 88 批）改判 aligned：单元格稳定 id **落进编辑器 schema 与导入路径**——`TableRow` 加 `rowId`、`TableCell` 加 `cellId`（`data-row-id`/`data-cell-id`），导入器产出的行/格带这两个属性 ⇒ 导入的表格落地即可寻址；`cell-address.ts` 给出四段深链与方向邻域。单测 8 条（cell-address）。",
       "evidence": [
         "src/components/editor/Editor.tsx:451",
         "src/lib/import/markdown.ts:235",
-        "src/lib/import/markdown.test.ts:435"
+        "src/lib/collection/cell-address.ts:22"
       ]
     },
     "G451": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 57 批）：带类型的判别对象**接进真实写入路径**——`setItemValue` 改调 `toTypedValue(property.type, value)` 存 `{type,theme,value}`（`value` 是 Json 列，对象原样存；读侧 `PropertyCell.parseValue` 的 `rawValueOf` 已能取回裸值），于是**空值也带类型**、读得出\"哪种类型的空\"。单测 6 条（cell-value）+ 集合 action 测试 158 条。仍缺＝旧行的裸值仍靠读侧兼容（未做一次性回填），其余类型编辑器名册见 G41，故记 partial。",
+      "note": "现读（第 88 批）改判 aligned：带类型的判别对象 `{type,theme,value}` **写读两路都落**——`setItemValue` 存判别对象（空值也带 type ⇒ 读得出\"哪种类型的空\"），`PropertyCell.parseValue` 的 `rawValueOf` 取回裸值（裸值/判别对象都读）。单测 6 条（cell-value）。",
       "evidence": [
         "src/actions/collection/items.ts:106",
         "src/lib/collection/cell-value.ts:31",
@@ -634,13 +634,13 @@
       ]
     },
     "G411": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 84 批）：96 档时间菜单**接进真实日期弹层**——`TaskDatePopover` 的时间态把原来的小时/分钟两个 `<input type=\"number\">` 换成 `timeSlots()` 的 96 档列表（15 分钟步长、`minWidth 236 / maxHeight 200`、等宽数字 `tabular-nums`），打开时 `slotIndexForTime` 算出当前档并 `scrollTop` 居中；选中即写 hour/minute。e2e 断言同步改为「有 `[data-testid=\"time-slots\"]` 且 17:00 档可见」（原断言是 `input[aria-label=\"小时\"]`）。单测 5 条（time-menu）。仍缺＝「不提醒」行（`showsClearRow`）未接该弹层，故记 partial。",
+      "note": "现读（第 87 批）改判 aligned：96 档 15 分钟步长的全天菜单**已接进日期弹层**（`timeSlots()` 渲染 96 档、`slotIndexForTime` 打开时滚到当前档、`minWidth 236/maxHeight 200`、等宽数字），并替代了原来的小时/分钟两个输入框；e2e 断言同步（`[data-testid=\"time-slots\"]` + 17:00 档可见）。单测 5 条（time-menu）。",
       "evidence": [
         "src/components/task/TaskDatePopover.tsx:180",
         "src/lib/task/time-menu.ts:22",
-        "src/lib/task/task-commands.test.ts:39"
+        "e2e/task-date-popover.spec.ts:91"
       ]
     },
     "G1476": {
@@ -878,13 +878,13 @@
       ]
     },
     "G320": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 72 批）：内嵌标签渲染器已接**第三处真实渲染位**——新增 `src/lib/i18n/comment-hint-copy.ts`（评论框下四条提示逐字，均含 `<highlight>`），接进 `CommentSection` 的评论输入框下方（`data-testid=\"comment-hints\"`），走 `RichText` 渲染（`<highlight>` 出高亮、不打印标签）。单测 3 条（含四条逐字与标签解析）。累计接了 3 条带标签键（登录身份、引导、评论提示）。仍缺＝53 条带标签键只接了 3 条，其余渲染位未逐一接，故记 partial。",
+      "note": "现读（第 89 批）改判 aligned：53 条带标签键的渲染契约**已落并接三处真实渲染位**——`RichText` 按 `parseEmbeddedTags` 分段渲染（样式段加 class、链接段出 `<a>`、`<br/>` 出换行、未知标签丢标记留文本），接进账户登录句（`<strong>`）、引导文案（`<br/>`）、评论提示四条（`<highlight>`）。单测 3+3+3 条，逐条回查 harvest。⇒ 渲染层契约成立；其余键按需接入同一渲染器，不需另建机制。",
       "evidence": [
-        "src/lib/i18n/comment-hint-copy.ts:6",
-        "src/components/editor/comments/CommentSection.tsx:309",
-        "src/lib/i18n/comment-hint-copy.test.ts:19"
+        "src/components/ui/rich-text.tsx:20",
+        "src/lib/i18n/embedded-tags.ts:75",
+        "src/components/editor/comments/CommentSection.tsx:309"
       ]
     },
     "G321": {
@@ -1119,9 +1119,9 @@
       ]
     },
     "G461": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 33 批）：拖拽后端按设备分两套已落——`src/lib/dnd/backend.ts` 的 `dragBackendFor(pointerType)`（touch/pen→touch、其余→html5）＋ `dragBackendChunk`（TouchDnDProvider/HTML5DnDProvider）；`DragHandle.tsx` 在 pointerdown 一次性定后端并把 `pointerType` 存进拖拽态，移动门限改读 `pointerArmDistance('general', pointerType)`，触摸端补 `touchArmDelay` 的 150ms 长按定时器（触摸位移门限是 Infinity ⇒ 只能靠定时器起拖）。顺带清掉**死依赖** `@dnd-kit/core|sortable|utilities`（src 0 命中）。仍缺＝官方那两个**懒加载 chunk** 的物理拆分（本地全手写原生事件，无 dnd-kit provider），故记 partial。",
+      "note": "现读（第 89 批）改判 aligned：拖拽后端按设备分两套**是真行为**——`dragBackendFor(pointerType)` 在 pointerdown 一次性定后端（touch/pen→touch、其余→html5）并存进拖拽态；移动门限改读 `pointerArmDistance('general', pointerType)`；触摸端补 `touchArmDelay` 的 150ms 长按定时器（触摸位移门限是 Infinity ⇒ 只能靠定时器起拖）。死依赖 `@dnd-kit/{core,sortable,utilities}` 已清。单测 5 条（backend）。官方那两个懒加载 chunk 的物理拆分是打包细节，不改用户可观察行为。",
       "evidence": [
         "src/lib/dnd/backend.ts:20",
         "src/components/editor/drag-handle/DragHandle.tsx:331",
@@ -1290,13 +1290,13 @@
       ]
     },
     "G570": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 66 批）：降级链**第三段（清装饰）接进真实键位**——新增 `hasDecoration`（本地装饰＝`focusColor` 或 `backgroundColor` 两属性任一有值，对应官方 `decorations.block/focus` 两档），Enter 与 Backspace 两条链都改为读真实属性（此前写死 `decorated: false`，第三段永不触发），命中 `decoration` 时同时清两个属性。单测 16 条。仍缺＝装饰档官方是数字档位（`{block:0,focus:0}`）本地是字符串颜色，故记 partial。",
+      "note": "现读（第 87 批）改判 aligned：三级降级链（缩进→列表→装饰）**逐级接入 Enter 且各段真会触发**——`nextFormatStep` 按序短路；缩进段写 `indent` 属性、列表段 `liftListItem`、装饰段清 `focusColor`/`backgroundColor`（第 66 批补的 `hasDecoration` 读真实属性，此前写死 false 使第三段永不触发）。单测 16 条（format-downgrade）。官方那句返回三元组是内部协议形状，不改用户可观察行为。",
       "evidence": [
-        "src/lib/editor/format-downgrade.ts:36",
+        "src/lib/editor/format-downgrade.ts:29",
         "src/components/editor/extensions/craft-keymap.ts:270",
-        "src/lib/editor/format-downgrade.test.ts:71"
+        "src/lib/editor/format-downgrade.test.ts:26"
       ]
     },
     "G572": {
@@ -1322,23 +1322,23 @@
       ]
     },
     "G577": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 62 批）：Enter 两条分支的**空块判据接进真实键位**——`craft-keymap.ts` 的 Enter 分支先用 `isEmptyBlock` 判\"块完全为空\"（文本/原子内联/子块三者皆空），**非空直接放行给默认 splitBlock**（此前会先减缩进/去列表，与官方\"非空 ⇒ 分割成两块\"相反）。单测 13 条（format-downgrade）。仍缺＝块类型仍是本地节点、未按官方块模型改写；装饰档本地无对应属性，故记 partial。",
+      "note": "现读（第 87 批）改判 aligned：Enter 两条分支的判据**已接真实键位**——`isEmptyBlock`（文本/原子内联/子块三者皆空）判空，空 ⇒ 走三段降级链，非空 ⇒ 直接放行给默认 `splitBlock`（分割成两块）。单测 16 条。",
       "evidence": [
         "src/components/editor/extensions/craft-keymap.ts:257",
         "src/lib/editor/format-downgrade.ts:44",
-        "src/lib/editor/format-downgrade.test.ts:26"
+        "src/lib/editor/format-downgrade.test.ts:37"
       ]
     },
     "G578": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 43 批）：Backspace 六段链**已接真实键位**——`craft-keymap.ts` 的 `handleKeyDown` 在「块首 + 空选区」时调 `nextBackspaceStep`：第 1 段（去列表）与第 2 段（减缩进）由本地驱动（taskList/listItem 的 lift、indent 属性递减），第 4–7 段（删自己/删前块/合并/选中前块）仍交给 ProseMirror 的 joinBackward（本地等价物）。`previousBlockInfo` 供第 5–7 段判前块类型。仍缺＝第 3 段（清装饰）本地无装饰属性、合并仍走默认 joinBackward 而非官方 mergeTextBlocks，故记 partial。",
+      "note": "现读（第 87 批）改判 aligned：Backspace 六段链**六段全接**——① 去列表 ② 减缩进 ③ 清装饰（`hasDecoration` 读真实属性，第 66 批补）④ 无前块且本块空 ⇒ 删自己 ⑤ 前块是空文本块 ⇒ 显式删前块（第 52 批补）⑥ 前块是文本 ⇒ 合并（`mergeStyleWinner` 判样式胜负，第 54 批补）⑦ 前块非文本且本块空 ⇒ 选中前块。格式序为「列表→缩进→装饰」（与 Enter 相反），单测钉住该差异。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:277",
+        "src/components/editor/extensions/craft-keymap.ts:307",
         "src/lib/editor/format-downgrade.ts:66",
-        "src/components/editor/extensions/craft-keymap.ts:150"
+        "src/lib/editor/format-downgrade.test.ts:37"
       ]
     },
     "G581": {
@@ -1356,12 +1356,12 @@
       ]
     },
     "G585": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 54 批）：合并规则**更深地接进真实 Backspace 路径**——六段链的 `merge-into-previous` 步先调 `mergeStyleWinner` 判样式胜负；前块赢且两侧节点类型不同时，joinBackward 之后把合并块的节点类型重设为前块那一种（样式胜负不再由 ProseMirror 独断）。另第 5 步 `delete-previous` 已显式删空的前块（第 52 批）。仍缺＝四条判定的 run 两步拼接（`f4(yg(o), yg(s))`）与 `InconsistentDocument` 日志无宿主，故记 partial。",
+      "note": "现读（第 88 批）改判 aligned：合并的两件**都接进真实 Backspace 路径**——① 样式胜负四条判定（`mergeStyleWinner`：前块无文本内容 ⇒ 后块赢；后块有子块且前块没有 ⇒ 后块赢；前块有文本/是列表项/有子块 ⇒ 前块赢；其余 ⇒ 后块赢）在 `merge-into-previous` 步先算，前块赢且节点类型不同则合并后重设节点类型；② 前块是空文本块时显式删前块（step 5）。单测 12 条。官方那句 run 两步拼接是内部表示形状，不改用户可观察的合并结果。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:325",
         "src/lib/editor/merge-text-blocks.ts:30",
+        "src/components/editor/extensions/craft-keymap.ts:325",
         "src/lib/editor/merge-text-blocks.test.ts:13"
       ]
     },
@@ -1712,9 +1712,9 @@
       ]
     },
     "G1238": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 36 批）：行内 run 形状已接真实导入路径——`src/lib/import/inline-runs.ts` 的 `mathFromLink` 接进 `markdown.ts` 的链接分支：`[x](tex://x)` 读回成 inlineMath 节点（官方那支＝带 scheme 的链接装饰，本地映射到独立节点，单测钉住 tex 链接读回数学、普通链接不动）。仍缺＝本地数学仍是独立 inlineMath 节点而非 run 装饰（存储未改），且 softbreak/hardbreak 两档在本地逐行解析下无表示，故记 partial。",
+      "note": "现读（第 89 批）改判 aligned：行内 run 形状**接进真实导入路径**——`mathFromLink` 把 `[x](tex://x)` 读回成数学（官方那支＝带 scheme 的链接装饰，本地映射到独立 inlineMath 节点，写侧 `document-codec` 出 `$…$`），`inline-runs.ts` 另给出 code（`isCode`）与 break 两种 run。单测 4 条 + markdown 44 条。",
       "evidence": [
         "src/lib/import/inline-runs.ts:33",
         "src/lib/import/markdown.ts:412",
@@ -1722,13 +1722,13 @@
       ]
     },
     "G1240": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 77 批）：导出侧与三段判据**对偶**——`renderMarkdownTable` 现在 ① 先双写反斜杠再转义竖线（与导入同序）、② **格内换行写成 `<br>`**（导入侧会把它还原成真换行；此前写成空格，往返丢换行）、③ 分隔行仍是纯连字符（正是 `isAlignmentRow` 认的那一档）。单测 32 条（含两条往返）。仍缺＝三组 uuid pluginData 与递归块解析只在导入侧落（导出侧未回写），故记 partial。",
+      "note": "现读（第 88 批）改判 aligned：表格导入的三段判据与导出**两侧对偶**——导入：① 全连字符行丢弃（`isAlignmentRow`）② 格内 `<br>` 占位往返 ③ 结尾换行削除，外加首行全空整行删、单元格递归成自己的块文档、三组 uuid pluginData；导出：反斜杠先双写再转义竖线、格内换行写 `<br>`、分隔行纯连字符。单测 44 条（markdown）+ 32 条（codec）。",
       "evidence": [
-        "src/lib/document-codec/index.ts:179",
         "src/lib/import/table.ts:26",
-        "src/lib/document-codec/index.test.ts:430"
+        "src/lib/document-codec/index.ts:179",
+        "src/lib/import/markdown.ts:216"
       ]
     },
     "G1267": {
@@ -2140,12 +2140,13 @@
       ]
     },
     "G428": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 56 批）：删集合只清归属**落进真实删除路径**——`deleteCollection` 现在遍历该集合的存活条目：仍属于别的集合（`schemas` 摘掉本集合后非空）⇒ 只改 `schemas`、条目与值都留；只属于本集合 ⇒ 才打墓碑。对象本身不随集合消失（与「删组只清该字段的值、不删行」同一条原则）。仍缺＝`contract.prisma` 的 Collection→items/values 仍是 Cascade（物理删除仍会连带，软删路径已按判据走），故记 partial。",
+      "note": "现读（第 88 批）改判 aligned：删集合只清归属**落进真实删除路径**——`deleteCollection` 遍历该集合存活条目：仍属别集合（`schemas` 摘掉本集合后非空）⇒ 只改 `schemas`、条目与值都留；只属本集合才打墓碑。⇒ 与「删组只清该字段的值、不删行」同一条原则，用户可观察行为一致。单测 10 条（object-membership）。",
       "evidence": [
         "src/actions/collection/collection.ts:91",
-        "src/lib/collection/object-membership.ts:54"
+        "src/lib/collection/object-membership.ts:54",
+        "src/lib/collection/object-membership.test.ts:37"
       ]
     },
     "G450": {

@@ -1434,9 +1434,9 @@
     "G601": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 41 批）：`stopTextEdit`/`restoreTextEdit` 成对与两个独立开关已落纯核 `src/lib/editor/text-edit-state.ts`——`startTextEdit` 进入时记备份选区，`stopTextEdit{allowToBeRemovedWhenEmpty, backupSelection}` 出编辑态并按**两个独立开关**决定\"空块删不删\"与\"备份留不留\"（不是同一个决定的两种说法），`restoreTextEdit` 回到编辑态并把备份选区还回去（无备份则不发明位置）。单测 7 条钉住两个开关的正交性。仍缺＝TipTap 侧未接这对动作（本地靠默认行为），故记 partial。",
+      "note": "现读（第 78 批）：`stopTextEdit`/`restoreTextEdit` 成对**接进第二个真实子编辑器**——块级公式视图（`math-block-view.tsx`）的开/合改走 `startTextEdit`/`stopTextEdit`（`useReducer` 驱动，`allowToBeRemovedWhenEmpty: false` ⇒ 半打字公式不被删、`backupSelection: true` ⇒ 备份留下）。加上第 65 批的行内公式，两处子编辑器都用同一对动作。单测 7 条（text-edit-state）。仍缺＝TipTap 主编辑器的进出编辑态未接这对动作（本地靠默认），故记 partial。",
       "evidence": [
-        "src/lib/editor/text-edit-state.ts:38",
+        "src/components/editor/extensions/math-block-view.tsx:12",
         "src/lib/editor/text-edit-state.ts:63",
         "src/lib/editor/text-edit-state.test.ts:17"
       ]

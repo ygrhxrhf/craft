@@ -85,6 +85,7 @@
 | 75 | — | G285（partial） | 双向关联开关上屏（AddPropertyMenu 写 config.twoWay） |
 | 76 | — | G122（partial） | 连接三轴落库并上屏（迁移 add_connection_axes + 三个选择器） |
 | 77 | — | G1240（partial） | 表格导出与导入三段判据对偶（格内换行写 <br>） |
+| 78 | — | G601（partial） | stopTextEdit/restore 接第二个真实子编辑器（块级公式） |
 
 **剩余 53 条**（gap 0 / partial 53）。☆ 口径更正：本表此前的"剩余 N 条"逐批递减是**错的**——它按"我改了哪些行"减，但**记为 partial 的行在台账里仍是待办**（纯核已落、真实消费点未接），`ledger-backlog.csv` 的 `P1 && (gap||partial)` 才是权威口径。按它实算：**P1 可动行 53 条，全部是 partial、gap 已清零**。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2769 测试、tsc 0 错。
 

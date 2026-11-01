@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { dropTargetFor, visibleRows } from './drop-band';
+import { resolveDropAddress } from '@/lib/editor/drop-address';
 import { indentRunOf } from '@/lib/editor/indent-run';
 import { topLevelStart } from '@/lib/editor/block-move';
 import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
@@ -272,23 +273,40 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     (clientY: number): { el: HTMLElement; pos: number; before: boolean } | null => {
       const dom = editor.view.dom as HTMLElement;
       // G280: the row list is the *visible* siblings. A folded block's children are nested inside
-      // it, so they never surface as rows here; `visibleRows` is the local form of the official
-      // `*Visible` addressing pair — a drop lands on a visible row, never inside a fold.
-      const children = visibleRows(
-        (Array.from(dom.children) as HTMLElement[]).map((child) => {
-          const rect = child.getBoundingClientRect();
-          return { el: child, top: rect.top, bottom: rect.bottom, visible: rect.height > 0 };
-        }),
-      );
+      // it, so they never surface as rows here. Each row is addressed by its **index** and its
+      // visibility, and the drop side picks the `beforeAnchorVisible` / `afterAnchorVisible` family
+      // — the local form of the official `*Visible` pair (a drop clears a fold, never lands inside).
+      const rows = Array.from(dom.children).map((child, index) => {
+        const rect = (child as HTMLElement).getBoundingClientRect();
+        return { el: child as HTMLElement, index, top: rect.top, bottom: rect.bottom, visible: rect.height > 0 };
+      });
+      const children = visibleRows(rows);
       const slot = dropTargetFor(clientY, children);
       if (!slot) return null;
       const child = children[slot.index].el;
       const range = getTopLevelRange(child);
       if (!range) return null;
+      // Resolve the landing through the address layer so the Visible semantics live in one place.
+      const anchorIndex = rows.find((row) => row.el === child)?.index ?? 0;
+      const address = {
+        kind: slot.before ? ('beforeAnchorVisible' as const) : ('afterAnchorVisible' as const),
+        anchorBlockId: String(anchorIndex),
+      };
+      const landing = resolveDropAddress(
+        address,
+        rows.map((row) => ({ blockId: String(row.index), visible: row.visible, parentId: 'root' })),
+      );
+      // The address layer answers with the visible-order position; convert back to a `before` flag
+      // against the anchor. A refusal (fold boundary with no visible neighbour) keeps the band's
+      // own answer rather than dropping the interaction.
+      const before =
+        landing?.at === 'sibling' && landing.index !== anchorIndex
+          ? landing.index < anchorIndex
+          : slot.before;
       return {
         el: child,
-        pos: slot.before ? range.from : range.to,
-        before: slot.before,
+        pos: before ? range.from : range.to,
+        before,
       };
     },
     [editor, getTopLevelRange]

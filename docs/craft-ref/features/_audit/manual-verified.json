@@ -417,11 +417,11 @@
     "G280": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 32 批）：落点九族具名寻址已落纯核——`src/lib/editor/drop-address.ts` 收 10 种地址（表格四族含 maxRow/maxCol 构造期钳制、afterAnchor/beforeAnchor 及其 *Visible 孪生、indexInParent、intoObjectList），解析成 sibling 位或 tableCell 落点；`*Visible` 支越过折叠/隐藏块（单测直接钉住两套寻址在折叠态分歧）。拖拽层 `drop-band.ts` 加 `visibleRows` 并接进 `DragHandle.computeDropTarget`。仍缺＝表格四族接到真实的表内拖拽（本地点内表格拖拽走 TableToolbar，未走本寻址）。",
+      "note": "现读（第 70 批）：`*Visible` 双寻址**接进真实拖拽落点计算**——`DragHandle.computeDropTarget` 现在按落点侧构造 `beforeAnchorVisible`/`afterAnchorVisible` 地址（锚＝该行的 DOM 序号、行带 visible 标志），过 `resolveDropAddress` 解析出可见序落点，再折回 before 标志（解析不出来则保留 band 自身答案，不吞交互）。`drop-band.ts` 的 `visibleRows` 仍做前置过滤。单测 789 条。仍缺＝表格四族（above/below/left/right 含 maxRow/maxCol）未接到表内拖拽（见 G590 的 `table-landing`，Toolbar 未改），`indexInParent`/`intoObjectList` 无宿主，故记 partial。",
       "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:271",
         "src/lib/editor/drop-address.ts:41",
-        "src/components/editor/drag-handle/drop-band.ts:12",
-        "src/components/editor/drag-handle/DragHandle.tsx:268"
+        "src/lib/editor/drop-address.test.ts:31"
       ]
     },
     "G357": {

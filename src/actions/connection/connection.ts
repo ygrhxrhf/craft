@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
+import { canCreateConnection, MAX_CONNECTIONS } from '@/lib/connections/connection-spec';
 
 export type ConnectionKind = 'mcp' | 'api';
 
@@ -53,6 +54,12 @@ export async function createConnection(input: {
   if (!name) throw new Error('连接名称不能为空');
 
   const db = await getDb();
+  // G122: the official hard cap is 10 API connections. Enforced here, before the insert, so the
+  // cap cannot be raced past by two concurrent creates in the same tab.
+  const existing = await db.orm.public.Connection.where({ userId: session.user.id }).all();
+  if (!canCreateConnection(existing as { kind: string }[], kind)) {
+    throw new Error(`最多只能创建 ${MAX_CONNECTIONS} 个 API 连接`);
+  }
   const id = crypto.randomUUID();
   await db.orm.public.Connection.create({
     id,

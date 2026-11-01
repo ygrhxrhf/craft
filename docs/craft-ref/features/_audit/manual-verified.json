@@ -427,10 +427,10 @@
     "G357": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 49 批）：三枚并列时间图标已落 `src/lib/task/time-icons.ts`——日历（计划日期，`tasks.scheduled.for`「预定于 [0]」）/ 旗子（截止日期，`tasks.deadline.set.for`「截止日期为 [0]」）/ 提醒（无整句，只有「提醒我…」）；`iconSentence` 填日期、`litIcons` 只点亮有值的那几枚、`alwaysVisible` 三枚恒在（布局稳定）。单测 4 条。仍缺＝任务块行内仍只有一枚提醒 pill，三枚图标 UI 未落，故记 partial。",
+      "note": "现读（第 73 批）：三套时间语义在**任务屏**上已是三个独立入口——`TasksView` 每行两枚 `TaskDatePopover`（kind=schedule「计划」/ kind=deadline「截止」）＋ 一枚「设置提醒与重复」按钮，三者各自读写 `scheduleDate`/`dueDate`/`remindAt`（不是一枚日期框切换）。`src/lib/task/time-icons.ts` 另给出三枚图标的语义与整句（`tasks.scheduled.for`/`tasks.deadline.set.for`/提醒无整句）。单测 4 条（time-icons）。仍缺＝**文档内的任务块**仍只有一枚提醒 pill，三枚并列图标未落到块级，故记 partial。",
       "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:508",
         "src/lib/task/time-icons.ts:23",
-        "src/lib/task/time-icons.ts:40",
         "src/lib/task/reminder-entity.test.ts:57"
       ]
     },

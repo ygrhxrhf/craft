@@ -5,6 +5,7 @@ import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { toTypedValue } from '@/lib/collection/cell-value';
+import { addMembership } from '@/lib/collection/object-membership';
 
 export async function addItem(collectionId: string) {
   const session = await auth();
@@ -24,6 +25,9 @@ export async function addItem(collectionId: string) {
   await db.orm.public.CollectionItem.create({
     id: itemId,
     collectionId,
+    // G427: a new item starts with its primary collection in the membership array, so a later
+    // "add to another collection" only appends to `schemas` instead of backfilling from null.
+    schemas: [collectionId],
     order: maxOrder + 1,
   });
 
@@ -187,4 +191,46 @@ export async function clearGroupValues(collectionId: string, propertyId: string,
     revalidatePath(`/collections/${collectionId}`);
   }
   return cleared;
+}
+
+/**
+ * G427: put an existing item into another collection too — the item keeps its row and values, and
+ * the second collection is appended to its membership array. Nothing is copied, so editing the
+ * item from either collection edits the same record.
+ */
+export async function addItemToCollection(itemId: string, collectionId: string): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const item = await db.orm.public.CollectionItem.first({ id: itemId });
+  if (!item) throw new Error('项目不存在');
+
+  const target = await db.orm.public.Collection.first({ id: collectionId });
+  if (!target || (target as any).userId !== session.user.id) throw new Error('集合不存在');
+
+  const row = item as Record<string, unknown>;
+  const current = normalizeSchemas(row.schemas, String(row.collectionId ?? ''));
+  const membership = addMembership({ schemas: current, objectSchemaId: null }, collectionId);
+
+  await db.orm.public.CollectionItem.where({ id: itemId }).update({
+    schemas: membership.schemas,
+    updatedAt: new Date().toISOString(),
+  });
+  await emitSyncEventSafe(db, session.user.id, ['collection_item'], itemId);
+  revalidatePath(`/collections/${collectionId}`);
+}
+
+/** G427: a row's membership array; a missing/invalid value reads as the single `collectionId`. */
+function normalizeSchemas(raw: unknown, fallback?: string): string[] {
+  if (Array.isArray(raw)) return raw.filter((value): value is string => typeof value === 'string');
+  if (typeof raw === 'string' && raw) {
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed.filter((value): value is string => typeof value === 'string');
+    } catch {
+      // fall through to the fallback
+    }
+  }
+  return fallback ? [fallback] : [];
 }

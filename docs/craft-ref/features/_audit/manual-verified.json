@@ -511,11 +511,11 @@
     "G427": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 56 批）：一物多集合**落库**——`CollectionItem` 加 `schemas Json?` 列（迁移 `20261101T1412_add_collection_item_schemas`，additive `ADD COLUMN schemas json`，已 apply 到本机库），`collectionId` 保留为\"主集合\"（读侧排序与既有路径不变）；`src/lib/sync/tables.ts` 的 collection_item 白名单加 `schemas`（否则整页同步失败）；`normalizeSchemas` 读侧把数组/JSON 串/缺值（回退主集合）归一。单测 3 条。仍缺＝写入路径未把新归属写进 `schemas`（只有删集合时摘项），`belongsToSchema` 宽松匹配尚未接读侧过滤，故记 partial。",
+      "note": "现读（第 68 批）：一物多集合的**写入路径**也落了——`addItem` 新建条目时 `schemas: [collectionId]`（主集合先入数组，日后追加只 append）；新增 `addItemToCollection(itemId, collectionId)` 把**已有条目**放进另一个集合（只改 `schemas` 数组、不复制行/值 ⇒ 两边编辑同一条记录）。单测 10 条（object-membership）。仍缺＝`belongsToSchema` 的宽松匹配尚未接读侧过滤（列表仍按单值 collectionId 取行），故记 partial。",
       "evidence": [
-        "src/prisma/contract.prisma:190",
-        "src/lib/sync/tables.ts:45",
-        "src/lib/collection/object-membership.test.ts:57"
+        "src/actions/collection/items.ts:24",
+        "src/actions/collection/items.ts:180",
+        "src/lib/collection/object-membership.ts:31"
       ]
     },
     "G439": {

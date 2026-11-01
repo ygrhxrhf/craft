@@ -8,10 +8,12 @@ import { createBroadcaster, type Broadcaster } from './broadcast';
 import type { SyncStore } from './store';
 import type { SyncRecord, SyncRejection } from './types';
 import type { SyncStatus } from './types';
+import { SyncLog, officialSyncState, type OfficialSyncState, type SyncPhase } from './official-status';
 import { storageBackend } from '@/lib/platform';
 import { unknownPayloadKeys } from '@/lib/sync/tables';
 
 export type { SyncStatus };
+export type { OfficialSyncState };
 
 const DEBOUNCE = 2000;      // spec：applyLocal → flush 去抖
 const FLUSH_AT = 50;        // spec：pending 达阈值立即 flush
@@ -40,6 +42,10 @@ export interface SyncManager {
    */
   readyStore(): Promise<SyncStore>;
   status(): SyncStatus;
+  /** G339：派生出的官方七档状态（含 loading_cache / connecting）。 */
+  officialState(): OfficialSyncState;
+  /** G341：诊断日志（含 conflict 分类）。 */
+  log(): SyncLog;
   pendingCount(): Promise<number>;
   subscribe(cb: (s: SyncStatus, pending: number) => void): () => void; // 指示器订阅
   onStoreChanged(cb: (table: string) => void): () => void;            // UI 树刷新订阅
@@ -149,6 +155,10 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
 
   function notifyAll(): void {
     for (const cb of statusSubs) cb(status, cachedPending);
+  }
+
+  function officialState(): OfficialSyncState {
+    return officialSyncState(status, phase);
   }
 
   function setStatus(s: SyncStatus): void {
@@ -311,6 +321,14 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
   // ⇒ 明细同时发给 UI 订阅者，由 `rejection-copy` 决定说什么。
   const handleRejected = (rejected: SyncRejection[]): void => {
     if (!rejected.length) return;
+    // G341：冲突是一等日志分类——被拒的 `stale` 就是一次冲突（本地这版与已落库的版本打架）。
+    for (const row of rejected) {
+      if (row.reason === 'stale') {
+        syncLog.add('conflict', `${row.table}/${row.id}`);
+      } else if (row.reason === 'not_found') {
+        syncLog.add('network', `${row.table}/${row.id} not_found`);
+      }
+    }
     for (const cb of rejectedSubs) cb(rejected);
     void store.applyRemote(rejected).then(emitTouched).catch(() => {});
   };
@@ -340,11 +358,18 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     });
   }
 
+  // G339：官方七档状态。本地只存五档 + 启动相位，官方名由此派生（唯一翻译处）。
+  let phase: SyncPhase = 'starting';
+  // G341：诊断日志（内存环形），冲突是一等分类。
+  const syncLog = new SyncLog();
+
   function boot(): Promise<void> {
     // 硬规则 6：boot 幂等——重复调用返回同一 promise，broadcaster.start 只发生一次
     if (bootPromise) return bootPromise;
     bootPromise = (async () => {
+      phase = 'loading_cache';
       await store.init();
+      phase = 'live';
       // I7：30 天全量对账——墓碑 30d 已清（spec 6.4），超龄的增量游标不可信，
       // boot 时改走 {full:true}（含首次全量、lastPullAt 缺失/超龄/不可解析）
       const cursor = await store.getCursor();
@@ -449,6 +474,8 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
       return base;
     },
     status: () => status,
+    officialState,
+    log: () => syncLog,
     pendingCount: () => queue.pendingCount(),
     subscribe(cb) {
       statusSubs.add(cb);

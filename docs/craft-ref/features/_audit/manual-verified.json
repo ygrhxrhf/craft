@@ -871,19 +871,19 @@
       ]
     },
     "G339": {
-      "status": "partial",
-      "note": "同步有 synced/syncing/offline/degraded/error 五档，offline 与实时断线分开；缺 loading_cache/connecting/unknown。",
+      "status": "aligned",
+      "note": "官方七档由本地五档 + 启动相位派生（connecting/loading_cache 单列，degraded→disconnected），manager.officialState() 暴露唯一翻译处。",
       "evidence": [
-        "src/lib/sync-core/types.ts:27",
-        "src/components/sync/SyncStatusIndicator.tsx:14"
+        "src/lib/sync-core/official-status.ts:24",
+        "src/lib/sync-core/index.ts:158"
       ]
     },
     "G341": {
-      "status": "gap",
-      "note": "无冲突事件与冲突日志：陈旧写入被 LWW 拒只有 console.warn 与一次性 toast，无 conflict 分类。",
+      "status": "aligned",
+      "note": "conflict 成为一等日志分类：被拒的 stale 记 conflict、not_found 记 network，SyncLog 环形缓冲可查（manager.log()）。",
       "evidence": [
-        "src/lib/sync/lww.ts:3",
-        "src/components/sync/SyncBoot.tsx:45"
+        "src/lib/sync-core/official-status.ts:73",
+        "src/lib/sync-core/index.ts:312"
       ]
     },
     "G342": {
@@ -1943,11 +1943,12 @@
       ]
     },
     "G1555": {
-      "status": "gap",
-      "note": "浏览屏是纯 Link 卡片，无 data-item-id/勾选框/矩形层；回收站勾选由按钮开启，不是拖拽框选。",
+      "status": "aligned",
+      "note": "浏览屏加拖拽框选：卡片带 data-item-id，MarqueeLayer 画固定层矩形（严格相交 + 5px 起手阈值），命中集写在容器的 data-marquee-selected。",
       "evidence": [
-        "src/components/document/DocumentCard.tsx:23",
-        "src/components/document/TrashList.tsx:264"
+        "src/lib/browse/marquee.ts:26",
+        "src/components/document/MarqueeLayer.tsx:20",
+        "src/components/document/DocumentCard.tsx:24"
       ]
     },
     "G1560": {

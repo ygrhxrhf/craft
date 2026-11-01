@@ -22,6 +22,7 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
   return (
     <Link
       href={`/documents/${doc.id}`}
+      data-item-id={doc.id}
       className="group relative block rounded-lg px-1.5 pt-1.5 pb-0 transition-colors duration-300 hover:bg-foreground/[0.03]"
     >
       {/* The card's focus ring is a real child element, not an outline (G1127): it can carry its

@@ -1,8 +1,9 @@
 'use client';
 
-import { useSyncExternalStore, useState } from 'react';
+import { useRef, useSyncExternalStore, useState } from 'react';
 
 import { BrowseGrid } from '@/components/app/BrowseGrid';
+import { MarqueeLayer } from '@/components/document/MarqueeLayer';
 import { DocumentCard } from '@/components/document/DocumentCard';
 import { DocumentListView } from '@/components/document/DocumentListView';
 import { ViewModeSwitcher } from '@/components/document/ViewModeSwitcher';
@@ -51,6 +52,8 @@ interface SortableDoc {
  */
 export function SortableDocGrid({ documents }: { documents: SortableDoc[] }) {
   const [spec, setSpec] = useState<SortSpec>(DEFAULT_SORT);
+  // G1555：框选层要一个容器句柄来收集卡片矩形。
+  const containerRef = useRef<HTMLDivElement | null>(null);
   // G247：列表档的列头排序是**另一套四档**（名称/上次浏览/已更新/已创建），与 ⋯ 菜单那套
   //   （name/shared/sharedBy/lastViewed）不同源，故单独持一份，互不覆盖。
   const [browseSort, setBrowseSort] = useState<BrowseSortSpec>(DEFAULT_BROWSE_SORT_SPEC);
@@ -64,6 +67,7 @@ export function SortableDocGrid({ documents }: { documents: SortableDoc[] }) {
   return (
     <>
       <div
+        ref={containerRef}
         className="mb-3 flex flex-wrap items-center gap-2"
         data-testid="browse-sort"
         aria-label={LAYOUT_ENTRY_LABEL}
@@ -126,6 +130,8 @@ export function SortableDocGrid({ documents }: { documents: SortableDoc[] }) {
           ))}
         </BrowseGrid>
       )}
+      {/* G1555：浏览屏框选层（覆盖在内容区之上，pointer-events: none）。 */}
+      <MarqueeLayer containerRef={containerRef} />
     </>
   );
 }

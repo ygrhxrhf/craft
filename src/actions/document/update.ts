@@ -4,6 +4,7 @@ import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { DOC_META_COLS } from '@/lib/sync/tables';
+import { checkPayloadPlacement } from '@/lib/document-codec/block-payload';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
 import { changedFields, shouldSnapshot, versionMeta } from '@/lib/versioning/snapshot';
 
@@ -59,17 +60,24 @@ export async function updateDocument(id: string, data: {
         const last = latest[0] as Row | undefined;
         if (shouldSnapshot(moved, (last?.createdAt as string | undefined) ?? null)) {
           const nextVersion = last ? Number(last.version) + 1 : 1;
+          const snapshotContent = after.content ?? { type: 'doc', content: [] };
           await db.orm.public.DocumentVersion.create({
             id: crypto.randomUUID(),
             documentId: id,
             version: nextVersion,
             title: after.title as string,
             // 没有正文的文档也要有版本——就是它的空正文那一版。
-            content: after.content ?? { type: 'doc', content: [] },
+            content: snapshotContent,
             plainText: (after.plainText as string) ?? '',
             wordCount: (after.wordCount as number) ?? 0,
             meta: versionMeta(after),
           });
+          // G400: a block whose structured payload landed in the wrong container is reported rather
+          // than silently snapshotted — the official build logs the same condition.
+          const misplaced = misplacedPayloads(snapshotContent);
+          if (misplaced.length) {
+            console.warn('[document-codec] unexpected payload placement', misplaced.join(', '));
+          }
           // G18：版本号必须跟着快照单调递增，否则列表能读到版本、文档自身却永远停在 1。
           await db.orm.public.Document.where({ id }).update({ version: nextVersion });
         }
@@ -90,4 +98,27 @@ export async function updateDocument(id: string, data: {
   }
 
   return doc;
+}
+
+/**
+ * G400: walk a document's JSON and report blocks whose structured payload sits in a container their
+ * type does not allow (the official build logs `Unexpected <container> data for block type …`).
+ * Local blocks keep their payload inline, so the check reads the projected containers if present.
+ */
+function misplacedPayloads(content: unknown): string[] {
+  const problems: string[] = [];
+  const walk = (node: any) => {
+    if (!node || typeof node !== 'object') return;
+    if (typeof node.type === 'string' && node.type !== 'doc' && node.type !== 'text') {
+      const check = checkPayloadPlacement(node.type, {
+        pluginData: node.pluginData,
+        objectData: node.objectData,
+        blob: node.blob,
+      });
+      if (!check.ok) problems.push(check.error);
+    }
+    if (Array.isArray(node.content)) node.content.forEach(walk);
+  };
+  walk(content);
+  return problems;
 }

@@ -20,6 +20,7 @@ import {
   clearCellContents,
   clearCellStyle,
   evalFormulas,
+  insertTableAxis,
   moveTableAxis,
   resetColumnSizes,
   sortTable,
@@ -115,13 +116,13 @@ export function TableToolbar({ editor }: TableToolbarProps) {
       <div className="flex flex-wrap items-center gap-0.5 rounded-md bg-[rgb(250,250,250)] p-1 shadow-md transition-colors duration-150 ease-craft dark:bg-[#242424]">
         <ToolButton
           title="左侧插入列"
-          onClick={() => editor.chain().focus().addColumnBefore().run()}
+          onClick={() => insertTableAxis(editor, 'column', 'before')}
         >
           <MoveLeft className="size-4" />
         </ToolButton>
         <ToolButton
           title="右侧插入列"
-          onClick={() => editor.chain().focus().addColumnAfter().run()}
+          onClick={() => insertTableAxis(editor, 'column', 'after')}
         >
           <MoveRight className="size-4" />
         </ToolButton>
@@ -137,7 +138,7 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         </ToolButton>
         <ToolButton
           title="上方插入行"
-          onClick={() => editor.chain().focus().addRowBefore().run()}
+          onClick={() => insertTableAxis(editor, 'row', 'before')}
         >
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(90deg)' }}>
             <path d="M10 5v14" />
@@ -147,7 +148,7 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         </ToolButton>
         <ToolButton
           title="下方插入行"
-          onClick={() => editor.chain().focus().addRowAfter().run()}
+          onClick={() => insertTableAxis(editor, 'row', 'after')}
         >
           <MoveDown className="size-4" />
         </ToolButton>

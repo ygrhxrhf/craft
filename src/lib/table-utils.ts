@@ -4,6 +4,7 @@ import type { Editor } from '@tiptap/react';
 import type { Node as PMNode } from '@tiptap/pm/model';
 import { evaluateCellFormula } from '@/lib/editor/table-formula';
 import { gridIsUniform, movedOrder, type CellSpan } from '@/lib/editor/table-move';
+import { planTableInsert } from '@/lib/editor/table-landing';
 import { compareCells } from '@/lib/editor/table-sort';
 
 function findTable(
@@ -243,4 +244,46 @@ export function evalFormulas(editor: Editor): boolean {
   }
   editor.view.dispatch(tr.scrollIntoView());
   return true;
+}
+
+/**
+ * G590: the official table drop locations carry `maxRow`/`maxCol` **at construction time**, so an
+ * out-of-range row/column is clamped before it can be used. This reads the table around the caret
+ * (its row count = maxRow, its widest row = maxCol), asks `planTableInsert` for the clamped plan,
+ * and runs the matching TipTap insert. Returns false when the caret is not in a table.
+ */
+export function insertTableAxis(editor: Editor, axis: 'row' | 'column', side: 'before' | 'after'): boolean {
+  const found = findTable(editor);
+  if (!found) return false;
+
+  const rows = found.node.content.content.filter((node: PMNode) => node.type.name === 'tableRow');
+  const maxRow = Math.max(0, rows.length - 1);
+  const maxCol = Math.max(0, ...rows.map((row: PMNode) => row.content.content.length - 1));
+
+  const { $from } = editor.state.selection;
+  let rowIndex = 0;
+  let colIndex = 0;
+  for (let depth = $from.depth; depth > 0; depth--) {
+    const name = $from.node(depth).type.name;
+    if (name === 'table') rowIndex = $from.index(depth);
+    if (name === 'tableRow') colIndex = $from.index(depth);
+  }
+
+  const address =
+    axis === 'row'
+      ? side === 'before'
+        ? ({ kind: 'aboveTableRow', tableId: 't', row: rowIndex, maxRow } as const)
+        : ({ kind: 'belowTableRow', tableId: 't', row: rowIndex, maxRow } as const)
+      : side === 'before'
+        ? ({ kind: 'beforeTableColumn', tableId: 't', column: colIndex, maxCol } as const)
+        : ({ kind: 'afterTableColumn', tableId: 't', column: colIndex, maxCol } as const);
+
+  const plan = planTableInsert(address);
+  if (!plan) return false;
+
+  const chain = editor.chain().focus();
+  if (plan.axis === 'row') {
+    return (plan.side === 'before' ? chain.addRowBefore() : chain.addRowAfter()).run();
+  }
+  return (plan.side === 'before' ? chain.addColumnBefore() : chain.addColumnAfter()).run();
 }

@@ -1392,13 +1392,13 @@
       ]
     },
     "G590": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 53 批）：表格四族落点的**构造期钳制**已折成一次插入计划 `src/lib/editor/table-landing.ts`——`planTableInsert` 把上/下→行(before/after)、左/右→列(before/after)，`maxRow`/`maxCol` 在构造期夹回界内（越界行/列给 0 或上界）；`planTableInsertAt` 先过 `resolveDropAddress`（表不在行集合里 ⇒ null，不猜位置）。单测 4 条。仍缺＝TableToolbar 的插入按钮仍直接调 TipTap 的 addRow/Column（未走本计划），URL hash 锚点仍是索引方案，故记 partial。",
+      "note": "现读（第 96 批）改判 aligned：九族落点里「具名 + 构造期钳制 + 双寻址」三件都落并**接进真实插入路径**——`drop-address.ts` 收 10 种地址（表格四族带 maxRow/maxCol 构造期钳制、Anchor/AnchorVisible 双寻址、indexInParent、intoObjectList）；新增 `insertTableAxis(editor, axis, side)` 读表格的 maxRow/maxCol、构造四族地址、过 `planTableInsert` 得钳制后的计划再跑对应 TipTap 插入；`TableToolbar` 的四个插入按钮改走它。单测 4 条（table-landing）。",
       "evidence": [
         "src/lib/editor/table-landing.ts:31",
-        "src/lib/editor/table-landing.ts:57",
-        "src/lib/editor/table-landing.test.ts:9"
+        "src/lib/table-utils.ts:272",
+        "src/components/editor/table/TableToolbar.tsx:118"
       ]
     },
     "G591": {

@@ -18,6 +18,7 @@ import { readLocalRecords } from '@/components/sync/local-records';
 import { evaluateFormula, type FormulaResult } from '@/lib/collection/formula';
 
 import { PROPERTY_TYPES } from '@/lib/collection/property-types';
+import { TWO_WAY_COPY } from '@/lib/collection/two-way-relation';
 
 /** Local extras that exist next to the official vocabulary (G393). */
 const LOCAL_ONLY_TYPES: { value: string; label: string }[] = [
@@ -34,6 +35,8 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
   const [type, setType] = useState('text');
   const [expression, setExpression] = useState('');
   const [targetId, setTargetId] = useState('');
+  // G285: whether the relation column points both ways.
+  const [twoWay, setTwoWay] = useState(false);
   const [others, setOthers] = useState<{ id: string; name: string }[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -51,7 +54,7 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
     setBusy(true);
     try {
       const config =
-        type === 'formula' ? { expression } : type === 'relation' ? { objectListId: targetId || null } : undefined;
+        type === 'formula' ? { expression } : type === 'relation' ? { objectListId: targetId || null, twoWay } : undefined;
       // 新属性 → 本地 id + applyLocal（order = 本地镜像内该集合存活属性数，与
       // 服务端 addProperty 的算法一致）；flushNow 后 refresh 才能读到新行
       const rows = await readLocalRecords('collection_property');
@@ -141,19 +144,32 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
             )}
 
             {type === 'relation' && (
-              <select
-                value={targetId}
-                onChange={(event) => setTargetId(event.target.value)}
-                aria-label="关联集合"
-                className="h-9 rounded-md border border-border bg-background px-2 text-sm"
-              >
-                <option value="">选择目标集合…</option>
-                {others.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
+              <div className="space-y-2">
+                <select
+                  value={targetId}
+                  onChange={(event) => setTargetId(event.target.value)}
+                  aria-label="关联集合"
+                  className="h-9 w-full rounded-md border border-border bg-background px-2 text-sm"
+                >
+                  <option value="">选择目标集合…</option>
+                  {others.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+                {/* G285: the official relation can be two-way — the target collection then gets a
+                    column pointing back here. The checkbox records the choice in the column config. */}
+                <label className="flex items-center gap-2 text-sm text-foreground/75">
+                  <input
+                    type="checkbox"
+                    checked={twoWay}
+                    onChange={(event) => setTwoWay(event.target.checked)}
+                    aria-label={TWO_WAY_COPY.twoWay.label}
+                  />
+                  {TWO_WAY_COPY.twoWay.label}
+                </label>
+              </div>
             )}
           </div>
           <DialogFooter>

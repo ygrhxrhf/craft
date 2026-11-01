@@ -473,9 +473,9 @@
     "G285": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 48 批）：双向关联的形状已落纯核 `src/lib/collection/two-way-relation.ts`——五条文案逐字（related.collection/related.field/two.way「双向」/add.item.to.x/choose.collection）＋`backColumnOf` 推导反向列（属于目标集合、反指本集合、twoWay 同真）＋`relationWrite`/`relationRemove` 两向写入/两向摘除（单向只改本侧）。单测 4 条。仍缺＝关联列仍是单向落库（AddPropertyMenu 只存 collectionId）、反向列未注入、RelationCell 只读本行值，故记 partial。",
+      "note": "现读（第 75 批）：双向开关**上屏**——`AddPropertyMenu` 的关联列多一枚「双向」勾选（`TWO_WAY_COPY.twoWay.label` 逐字），勾上后写进列 config 的 `twoWay`（`{objectListId, twoWay}`），与 `two-way-relation.ts` 的 `backColumnOf`/`relationWrite` 纯核配套。单测 4 条（two-way-relation）。仍缺＝反向列未真的注入目标集合、`RelationCell` 写入仍只改本行值（两向写入无宿主），故记 partial。",
       "evidence": [
-        "src/lib/collection/two-way-relation.ts:18",
+        "src/components/collection/AddPropertyMenu.tsx:36",
         "src/lib/collection/two-way-relation.ts:41",
         "src/lib/team/team-roles.test.ts:120"
       ]

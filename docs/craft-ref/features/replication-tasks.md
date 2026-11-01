@@ -82,6 +82,7 @@
 | 72 | — | G320（partial） | 评论提示四条（含 <highlight>）接 CommentSection，走 RichText |
 | 73 | — | G357（复核） | 任务屏三入口已落，块级三图标仍缺 |
 | 74 | — | G166（partial） | 适用范围标注上屏（高级设置顶部那句） |
+| 75 | — | G285（partial） | 双向关联开关上屏（AddPropertyMenu 写 config.twoWay） |
 
 **剩余 53 条**（gap 0 / partial 53）。☆ 口径更正：本表此前的"剩余 N 条"逐批递减是**错的**——它按"我改了哪些行"减，但**记为 partial 的行在台账里仍是待办**（纯核已落、真实消费点未接），`ledger-backlog.csv` 的 `P1 && (gap||partial)` 才是权威口径。按它实算：**P1 可动行 53 条，全部是 partial、gap 已清零**。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2769 测试、tsc 0 错。
 

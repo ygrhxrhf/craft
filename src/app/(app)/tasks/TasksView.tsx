@@ -510,6 +510,8 @@ function TaskRow({
           kind="schedule"
           value={task.scheduleDate}
           onChange={(value) => update({ scheduleDate: value })}
+          reminder={{ value: task.remindAt, onChange: (value) => update({ remindAt: value }) }}
+          recurrence={{ value: task.recurrence, onChange: (value) => update({ recurrence: value }) }}
         />
         <TaskDatePopover
           kind="deadline"

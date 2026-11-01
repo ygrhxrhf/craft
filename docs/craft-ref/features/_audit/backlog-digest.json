@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-10-31T10:07:35.539Z",
+  "generatedAt": "2026-11-01T08:27:35.346Z",
   "total": 1614,
   "status": {
     "nonaction": 503,
     "partial": 406,
-    "aligned": 299,
-    "gap": 228,
+    "aligned": 301,
+    "gap": 226,
     "deliberate": 158,
     "unreachable": 20
   },
@@ -25,13 +25,13 @@
     "P1 / nonaction": 82,
     "P? / partial": 80,
     "P? / aligned": 78,
+    "P1 / aligned": 70,
     "P3 / partial": 70,
-    "P1 / aligned": 68,
     "P2 / deliberate": 66,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
     "P1 / partial": 57,
-    "P1 / gap": 52,
+    "P1 / gap": 50,
     "P? / deliberate": 40,
     "P3 / gap": 39,
     "P? / gap": 34,
@@ -1196,15 +1196,15 @@
       7
     ],
     [
-      "三点三四、第 28–31 批（V38–V41 任务时间语义动线，动态）",
-      7
-    ],
-    [
       "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
       7
     ],
     [
       "三点五三、第 44 批（★ UIFocusStack 分发算法 + 键表",
+      7
+    ],
+    [
+      "三点八二、第 71 批（★ 静态补账：任务三时间动线 G 项结案 ⇒ 重",
       7
     ]
   ]

@@ -275,7 +275,7 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     expect(n!.tsCol).toBe('updatedAt');
     expect(n!.cols).toEqual([
       'id', 'userId', 'kind', 'taskId', 'documentId', 'title',
-      'remindAt', 'isResolved', 'resolvedAt', 'createdAt', 'updatedAt',
+      'remindAt', 'readAt', 'isResolved', 'resolvedAt', 'createdAt', 'updatedAt',
     ]);
     expect(n!.id({ id: 'ntf-1' })).toBe('ntf-1');
   });

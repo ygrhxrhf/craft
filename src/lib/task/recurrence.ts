@@ -112,6 +112,38 @@ export const RECURRENCE_PRESETS: { label: string; value: string | null }[] = [
   { label: '每年', value: '{"freq":"yearly"}' },
 ];
 
+/**
+ * G374: the repeat sub-menu labels carry the date being scheduled —
+ * 「每天」/「每个工作日（周一至周五）」/「每周 (周五)」/「每月 (9.)」/「每年 (10月9日)」.
+ * Without a date the labels fall back to the plain frequency names.
+ */
+export function recurrencePresetsFor(date: Date | null): { label: string; value: string }[] {
+  const weekday = date ? (date.getDay() + 6) % 7 : null; // Monday = 0
+  const monthDay = date ? date.getDate() : null;
+  const month = date ? date.getMonth() + 1 : null;
+  const weekdayLabel = weekday === null ? null : '一二三四五六日'[weekday];
+
+  return [
+    { label: '每天', value: JSON.stringify({ freq: 'daily' }) },
+    {
+      label: '每个工作日（周一至周五）',
+      value: JSON.stringify({ freq: 'weekly', days: [1, 2, 3, 4, 5] }),
+    },
+    {
+      label: weekdayLabel ? `每周 (周${weekdayLabel})` : '每周',
+      value: JSON.stringify(weekday === null ? { freq: 'weekly' } : { freq: 'weekly', days: [(weekday + 1) % 7] }),
+    },
+    {
+      label: monthDay ? `每月 (${monthDay}.)` : '每月',
+      value: JSON.stringify(monthDay ? { freq: 'monthly', byMonthDay: monthDay } : { freq: 'monthly' }),
+    },
+    {
+      label: date ? `每年 (${month}月${monthDay}日)` : '每年',
+      value: JSON.stringify({ freq: 'yearly' }),
+    },
+  ];
+}
+
 interface WallClock {
   year: number;
   month: number;

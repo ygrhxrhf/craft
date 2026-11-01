@@ -919,11 +919,11 @@
       ]
     },
     "G362": {
-      "status": "gap",
-      "note": "提醒/重复是任务面板独立字段，可脱离日期存在；无网格下方「提醒我…」+ 与「重复…」› 两条子行。",
+      "status": "aligned",
+      "note": "提醒与重复成为日期弹层网格下方的两条子行（右 + / 右 ›），从属于所选日期。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:554",
-        "src/app/(app)/tasks/TasksView.tsx:560"
+        "src/components/task/TaskDatePopover.tsx:219",
+        "src/components/task/TaskDatePopover.tsx:232"
       ]
     },
     "G365": {
@@ -942,19 +942,19 @@
       ]
     },
     "G373": {
-      "status": "gap",
-      "note": "「提醒我…」仍是相对偏移预设；任务面板只有 datetime-local 直改，无日期+时间设定态与默认 17:00。",
+      "status": "aligned",
+      "note": "「提醒我…」把弹层切成「时间」设定态：日期框与「今天」行消失，时间步进默认 17:00，取消/应用。",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:52",
-        "src/lib/task/remind-presets.ts:27"
+        "src/components/task/TaskDatePopover.tsx:172",
+        "e2e/task-date-popover.spec.ts:88"
       ]
     },
     "G374": {
       "status": "partial",
-      "note": "只有每天/每周/每月/每年四条静态预设；缺工作日/自定义两项，也无带已提交日期的动态文案。",
+      "note": "重复子菜单按所选日期生成 5 条带参数预设（工作日/每周 (周X)/每月 (N.)/每年 (M月D日)）；仍缺「自定义…」入口。",
       "evidence": [
         "src/lib/task/recurrence.ts:64",
-        "src/app/(app)/tasks/TasksView.tsx:567"
+        "src/components/task/TaskDatePopover.tsx:247"
       ]
     },
     "G381": {

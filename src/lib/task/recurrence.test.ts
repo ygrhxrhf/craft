@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RECURRENCE_PRESETS, describeRecurrence, nextOccurrence, parseRecurrence } from './recurrence';
+import { RECURRENCE_PRESETS, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor } from './recurrence';
 
 const iso = (date: Date) => date.toISOString();
 
@@ -151,5 +151,30 @@ describe('interval and anchor', () => {
     expect(describeRecurrence('{"freq":"daily","type":"flexible"}')).toBe('每天重复（完成时起算）');
     expect(describeRecurrence('{"freq":"weekly","days":[5],"interval":2}')).toBe('每 2 周：周五');
     expect(parseRecurrence('{"freq":"daily","type":"weekly"}')).toBeNull();
+  });
+});
+
+// G374: the repeat sub-menu labels carry the date being scheduled.
+describe('date-aware repeat presets', () => {
+  it('prints the weekday and month day the date implies', () => {
+    // 2026-03-10 is a Tuesday, the 10th.
+    const labels = recurrencePresetsFor(new Date(2026, 2, 10)).map((preset) => preset.label);
+    expect(labels).toEqual([
+      '每天',
+      '每个工作日（周一至周五）',
+      '每周 (周二)',
+      '每月 (10.)',
+      '每年 (3月10日)',
+    ]);
+  });
+
+  it('falls back to plain frequency names without a date', () => {
+    const labels = recurrencePresetsFor(null).map((preset) => preset.label);
+    expect(labels).toEqual(['每天', '每个工作日（周一至周五）', '每周', '每月', '每年']);
+  });
+
+  it('stores the weekday in the rule when a date is given', () => {
+    const weekly = recurrencePresetsFor(new Date(2026, 2, 10)).find((p) => p.label.startsWith('每周'));
+    expect(JSON.parse(weekly!.value)).toEqual({ freq: 'weekly', days: [2] });
   });
 });

@@ -56,6 +56,22 @@ describe('selectPeers', () => {
     expect(peers[1].editingBlockId).toBeNull();
     expect(peers[1].openPageId).toBeNull();
   });
+
+  it('ages out a stale RTC value using its updatedAt (G593)', () => {
+    const now = 1_000_000;
+    const states = new Map([
+      [2, { user, editingBlockId: 'blk-9', editingBlockUpdatedAt: now - 5_000 }],
+      [3, { user, editingBlockId: 'blk-9', editingBlockUpdatedAt: now - 60_000 }],
+    ]);
+    const peers = selectPeers(states, 1, { now, staleAfterMs: 30_000 });
+    expect(peers.find((p) => p.clientId === 2)!.editingBlockId).toBe('blk-9'); // fresh
+    expect(peers.find((p) => p.clientId === 3)!.editingBlockId).toBeNull(); // stale, dropped
+  });
+
+  it('treats a value with no timestamp as fresh (older clients)', () => {
+    const states = new Map([[2, { user, editingBlockId: 'blk-9' }]]);
+    expect(selectPeers(states, 1, { now: 1_000_000, staleAfterMs: 1 })[0].editingBlockId).toBe('blk-9');
+  });
 });
 
 describe('setLocalPresenceField', () => {
@@ -74,6 +90,21 @@ describe('setLocalPresenceField', () => {
     const awareness = fakeAwareness({ editingBlockId: null });
     setLocalPresenceField(awareness, 'editingBlockId', 'blk-1');
     expect(awareness.setLocalStateField).toHaveBeenCalledWith('editingBlockId', 'blk-1');
+  });
+
+  it('stamps the RTC dimensions with updatedAt (G593)', () => {
+    const awareness = fakeAwareness({ editingBlockId: null });
+    setLocalPresenceField(awareness, 'editingBlockId', 'blk-1');
+    expect(awareness.setLocalStateField).toHaveBeenCalledWith('editingBlockUpdatedAt', expect.any(Number));
+    const awareness2 = fakeAwareness({ openPageId: null });
+    setLocalPresenceField(awareness2, 'openPageId', 'doc-1');
+    expect(awareness2.setLocalStateField).toHaveBeenCalledWith('openPageUpdatedAt', expect.any(Number));
+  });
+
+  it('clears the timestamp when the RTC value is cleared', () => {
+    const awareness = fakeAwareness({ editingBlockId: 'blk-1', editingBlockUpdatedAt: 123 });
+    setLocalPresenceField(awareness, 'editingBlockId', null);
+    expect(awareness.setLocalStateField).toHaveBeenCalledWith('editingBlockUpdatedAt', null);
   });
 
   it('skips the write when the value is unchanged', () => {

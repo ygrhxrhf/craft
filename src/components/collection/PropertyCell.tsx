@@ -2,6 +2,7 @@
 
 import { buildRelationValue, relationItems, relationTargetId } from '@/lib/collection/relation-value';
 import { normalizeDateValue } from '@/lib/collection/date-value';
+import { rawValueOf } from '@/lib/collection/cell-value';
 import { useState, useRef, useEffect } from 'react';
 import { Check, X, ChevronDown, Calendar as CalendarIcon, Link2, Paperclip } from 'lucide-react';
 import { cn } from 'cn';
@@ -36,9 +37,12 @@ interface PropertyCellProps {
 
 function parseValue(raw: any): any {
   if (raw == null || raw === '') return null;
+  // G451: a typed cell value `{type, theme, value}` reads back as its bare `value`; a legacy bare
+  // value passes through unchanged.
+  if (typeof raw === 'object') return rawValueOf(raw);
   if (typeof raw !== 'string') return raw;
   try {
-    return JSON.parse(raw);
+    return rawValueOf(JSON.parse(raw));
   } catch {
     return raw;
   }

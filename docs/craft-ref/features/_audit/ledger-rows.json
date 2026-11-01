@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-01T12:55:01.626Z",
+  "generatedAt": "2026-11-01T13:03:33.885Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1045,
+    "gap": 1044,
     "unknown": 198,
     "aligned": 143,
     "deliberate": 96,
-    "partial": 60,
+    "partial": 61,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -20,7 +20,7 @@
   "statusByPriority": {
     "P2 / gap": 461,
     "P? / gap": 226,
-    "P1 / gap": 204,
+    "P1 / gap": 203,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P2 / aligned": 52,
@@ -36,7 +36,7 @@
     "P2 / partial": 22,
     "P? / aligned": 19,
     "P2 / nonaction": 18,
-    "P1 / partial": 16,
+    "P1 / partial": 17,
     "P3 / nonaction": 14,
     "P3 / partial": 10,
     "P? / partial": 10,
@@ -11905,10 +11905,10 @@
       "cols": 5,
       "id": "G604",
       "official": "★★ **任务是一层独立的分页文档缓存（22 项）**：6 个 upsert（`DocumentsWithTasks`/`ActiveTasks`/`UpcomingTasks`/`InboxDocument`/`LogbookDocument`/`PinnedDocuments`）＋ **3 个独立游标** `updateContinuationToken`/`…OngoingTasks…`/`…UpcomingTasks…` ＋ `updateLoadStatus`/`setPageInfo`/`resetFetchDocumentsWithTasks` ＋ 任务写侧 6（★ `moveTask{blockId, documentId}` 跨文档移动、★ `reorderTasks{blockId, afterBlockId}` **相对定位非索引**）＋ `setFilter`/`setSort` ＋ `pinDocument`/`unpinDocument` ＋ `updateDailyDocumentIds{map}`",
-      "local": "本地任务查询直读 Prisma（无游标、无 `continuationToken` 概念，见 G556 侧证据）⇒ **分页与增量刷新整层缺失**；`reorderTasks` 的\"插到某任务之后\"在本地无对应（本地无任务排序 action）",
-      "verdict": "缺失（分页层）",
+      "local": "✎ 现读（2026-11-01）更正：分页层纯核已落 `src/lib/task/task-paging.ts`（三个独立游标 advanceCursor 各动一条／loadStatus 三档 + pageInfo／reorderAfter 相对定位非索引），单测 9 条；`getTasks` 仍一次 limit 200 直读 Prisma，分页状态暂无调用点",
+      "verdict": "部分落地（分页层）",
       "score": "3/3",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 3,
         "cost": 3,

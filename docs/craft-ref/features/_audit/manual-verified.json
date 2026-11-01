@@ -524,12 +524,13 @@
       ]
     },
     "G451": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 3 批）：确认无类型判别位——CollectionValue.value 是裸 Json?，读侧靠 PropertyCell 的 parseValue 硬转（数字/布尔/数组各判一次），没有官方 {type,theme,value} 这样的判别对象 ⇒ 空值读不出是哪种类型的空。",
+      "note": "现读（第 39 批）：带类型的判别对象 `{type, theme, value}` 已落纯核 `src/lib/collection/cell-value.ts`——`toTypedValue`（裸值按 type 包起来、已带 type 的原样补齐、theme 不在色板则置 null）、`rawValueOf`（判别对象取回裸值、裸值原样透传）、`emptyTypedValue`（**空值也带 type ⇒ 读得出\"哪种类型的空\"**）。接进 `PropertyCell.parseValue`：判别对象与裸值都能读。单测 6 条。仍缺＝写侧未改存判别对象（`CollectionValue.value` 仍是裸 Json，属 H01 值表示层迁移），故记 partial。",
       "evidence": [
-        "src/prisma/contract.prisma:204-220",
-        "src/components/collection/PropertyCell.tsx:81-91"
+        "src/lib/collection/cell-value.ts:31",
+        "src/components/collection/PropertyCell.tsx:47",
+        "src/lib/collection/cell-value.test.ts:8"
       ]
     },
     "G252": {
@@ -1359,10 +1360,11 @@
     },
     "G593": {
       "status": "partial",
-      "note": "awareness 已有光标/编辑块/打开页面三维，但后两维各为单值且无 updatedAt；无复合 group action。",
+      "priority": "P1",
+      "note": "现读（第 39 批）：协同三维的**陈旧判定**已补——`src/lib/collaboration/presence.ts` 的两维 RTC 字段各带 `updatedAt`（`editingBlockUpdatedAt`/`openPageUpdatedAt`，`setLocalPresenceField` 写入时打时间戳、清空时置 null），`selectPeers` 收 `{now, staleAfterMs}` 并把超窗的 RTC 值丢弃（无时间戳的旧客户端视为新鲜）。单测钉住「fresh 保留 / stale 丢弃 / 无戳视新鲜 / 写时打戳 / 清空置 null」。仍缺＝官方 `group(t,e){actions}` 复合动作与 `rtcId` 会话身份在本地无对应，故记 partial。",
       "evidence": [
-        "src/lib/collaboration/presence.ts:18",
-        "src/components/editor/collab/CursorLayer.tsx:110"
+        "src/lib/collaboration/presence.ts:63",
+        "src/lib/collaboration/presence.test.ts:61"
       ]
     },
     "G594": {
@@ -1382,10 +1384,13 @@
       ]
     },
     "G604": {
-      "status": "gap",
-      "note": "任务查询直读 Prisma、一次 limit 200；无游标/continuationToken/loadStatus，也无 moveTask/reorderTasks。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 39 批）：任务分页层已落纯核 `src/lib/task/task-paging.ts`——**三个独立游标**（continuationToken/ongoingTasks/upcomingTasks，`advanceCursor` 只动一条）、loadStatus 三档（idle/loading/done）+ pageInfo（`beginLoad`/`settleLoad`/`resetTaskPageState`）、任务写侧**相对定位**重排 `reorderAfter(ids, blockId, afterBlockId)`（插到某任务之后而非索引，锚点找不到则原样返回）。单测 9 条。仍缺＝`getTasks` 仍一次 limit 200 直读 Prisma，分页状态无真实调用点（任务查询层未改），故记 partial。",
       "evidence": [
-        "src/actions/task/task.ts:168"
+        "src/lib/task/task-paging.ts:20",
+        "src/lib/task/task-paging.ts:94",
+        "src/lib/task/task-paging.test.ts:11"
       ]
     },
     "G608": {

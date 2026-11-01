@@ -1376,11 +1376,11 @@
       ]
     },
     "G624": {
-      "status": "partial",
-      "note": "快捷键面板已有且 Ctrl+Shift+, 由外壳全局绑定；官方该键在浏览屏无效，本地未做作用域区分。",
+      "status": "aligned",
+      "note": "「显示快捷键」键位限定在文档编辑器内（/documents/<id>），浏览屏按下不再响应；其余外壳键位仍全局。",
       "evidence": [
-        "src/components/editor/shell-shortcuts.tsx:54",
-        "src/components/settings/ShortcutsPanel.tsx:34"
+        "src/lib/editor/shell-scope.ts:16",
+        "src/components/editor/shell-shortcuts.tsx:41"
       ]
     },
     "G643": {

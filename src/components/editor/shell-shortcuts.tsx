@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
+import { shellShortcutAllowed } from '@/lib/editor/shell-scope';
 import { useFocusStore } from '@/lib/store/use-focus-store';
 import { useSettingsStore } from '@/lib/store/use-settings-store';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
@@ -27,6 +28,7 @@ const HANDLED = new Set([
 
 export function ShellShortcuts() {
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const platform = detectPlatform();
@@ -34,6 +36,8 @@ export function ShellShortcuts() {
     const onKeyDown = (event: KeyboardEvent) => {
       const binding = KEY_BINDINGS.find((candidate) => {
         if (!HANDLED.has(candidate.id)) return false;
+        // G624: the shortcut panel is editor-only; on browse screens the key does nothing.
+        if (!shellShortcutAllowed(candidate.id, pathname)) return false;
         return matches(
           {
             metaKey: event.metaKey,
@@ -58,7 +62,7 @@ export function ShellShortcuts() {
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [router]);
+  }, [router, pathname]);
 
   return null;
 }

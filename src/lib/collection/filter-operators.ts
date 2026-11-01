@@ -20,6 +20,8 @@ export type LocalColumnType =
   | 'url'
   | 'email'
   | 'file'
+  | 'media'
+  | 'linkToBlock'
   | 'relation'
   | 'formula'
   | 'created_at'
@@ -107,6 +109,9 @@ export const OPERATORS_BY_TYPE: Record<LocalColumnType, readonly string[]> = {
   url: TEXT_TIER,
   email: TEXT_TIER,
   file: MEDIA_TIER,
+  // G393: official spellings are also accepted so a value written by the bridge reads back.
+  media: MEDIA_TIER,
+  linkToBlock: TEXT_TIER,
   number: NUMBER_TIER,
   select: SELECT_TIER,
   multi_select: SELECT_TIER,

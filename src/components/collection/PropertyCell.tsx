@@ -57,6 +57,7 @@ export function PropertyCell({ property, value, onChange, item, properties }: Pr
     case 'select':
       return <SelectCell property={property} value={parsed} onChange={onChange} />;
     case 'multi_select':
+    case 'multiSelect':
       return <MultiSelectCell property={property} value={parsed} onChange={onChange} />;
     case 'url':
       return <URLCell value={parsed} onChange={onChange} />;
@@ -73,6 +74,12 @@ export function PropertyCell({ property, value, onChange, item, properties }: Pr
       return <TimestampCell value={item?.updatedAt} />;
     case 'file':
       return <FileCell value={parsed} onChange={onChange} />;
+    // G393: `media` is the official name for the local `file` column.
+    case 'media':
+      return <FileCell value={parsed} onChange={onChange} />;
+    // G393: `linkToBlock` points at a block, so it edits like a text reference.
+    case 'linkToBlock':
+      return <TextCell value={parsed} onChange={onChange} />;
     case 'relation':
       return <RelationCell property={property} value={parsed} onChange={onChange} />;
     default:

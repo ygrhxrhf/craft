@@ -259,10 +259,10 @@
     "G41": {
       "status": "partial",
       "priority": "P1",
-      "note": "列类型共 15 档（含 person/phone）且表格已有汇总行；仍缺 media（本地叫 file）与 linkToBlock 两种官方类型。",
+      "note": "列类型枚举收口（13 官方值 + formula）且 media/linkToBlock 有编辑器；仍缺官方那套专用编辑器名册与 CalculationsRow（汇总行已在别处）。",
       "evidence": [
-        "src/components/collection/AddPropertyMenu.tsx:20",
-        "src/lib/collection/summary.ts:16"
+        "src/lib/collection/property-types.ts:60",
+        "src/components/collection/PropertyCell.tsx:74"
       ]
     },
     "G42": {
@@ -434,12 +434,12 @@
       ]
     },
     "G393": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 2 批）：本地列类型覆盖官方 13 值里的 11 个（text/number/checkbox/date/url/person/select/multi_select/email/phone/relation），缺 media（本地叫 file）与 linkToBlock；另多出 3 个非官方类型（formula/created_at/updated_at）。命名映射已在 filter-operators.ts:1-10 声明，非台账所说「未对齐」。",
+      "note": "十三值官方枚举入册（含 media/linkToBlock），两组改名成对互译；新建列写官方名，旧名读侧兼容。",
       "evidence": [
-        "src/components/collection/AddPropertyMenu.tsx:20-36",
-        "src/lib/collection/filter-operators.ts:1-22"
+        "src/lib/collection/property-types.ts:9",
+        "src/lib/collection/property-types.ts:42"
       ]
     },
     "G283": {
@@ -888,10 +888,9 @@
     },
     "G342": {
       "status": "partial",
-      "note": "同步分两路：各表行级 LWW + 整篇 Yjs 正文；缺 Blocks/Indices/Sub Tier 分层与 patch 双轨。",
+      "note": "同步分层十节名册入册（含 Sync/Local 双轨），但本地仍以整篇文档为同步单元，未实现逐层通路。",
       "evidence": [
-        "src/lib/sync/tables.ts:33",
-        "src/lib/collaboration/use-collab-session.ts:61"
+        "src/lib/sync-core/layers.ts:11"
       ]
     },
     "G344": {
@@ -998,12 +997,11 @@
       ]
     },
     "G402": {
-      "status": "partial",
-      "note": "只落两种口径：日期输入存本地午夜瞬时、completedAt 存真实瞬时；无 repeat.startDate 与 dateOffset。",
+      "status": "aligned",
+      "note": "三种时间口径成为具名编码：day（schedule/deadline 走本地零点）、instant（完成/重复起点）、dayMinutes（提醒偏移 0–1439），编码函数单一入口。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:423",
-        "src/actions/task/task.ts:243",
-        "src/lib/task/recurrence.ts:3"
+        "src/lib/task/time-encoding.ts:26",
+        "src/lib/task/time-encoding.ts:40"
       ]
     },
     "G408": {

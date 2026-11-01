@@ -487,6 +487,11 @@ model Connection {
   name      String
   endpoint  String   @default("")
   token     String?
+  // G122: the three axes of the access centre — permission / protection / scope. Stored as their
+  // enum strings; the defaults match the official ones (read-write / public / all documents).
+  permission String  @default("read-write") // "read-only" | "write-only" | "read-write"
+  protection String  @default("public")     // "public" | "key" | "password"
+  scope      String  @default("all-documents") // "all-documents" | "selected-documents" | "daily-notes-and-tasks"
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 

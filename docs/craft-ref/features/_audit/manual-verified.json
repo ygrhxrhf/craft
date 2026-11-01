@@ -699,11 +699,11 @@
     "G122": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 44 批）：三维实体与两条硬规则已落 `src/lib/connections/connection-spec.ts`——权限（read-only/write-only/read-write，落库形态 `details.tools={type:\"preset\",presets:[…]}`）、保护（public/key/password）、作用域（全部/选定/每日笔记和任务）三轴枚举齐备；**10 个 API 硬上限**已接进真实创建路径（`connection.ts` 的 `createConnection` 建前查 `canCreateConnection`，MCP 连接不计入）；**密钥只显示一次**的形状＝`connectionForRead` 只回 `hasToken`。单测 6 条 + action 测试 4 条。仍缺＝三轴未落库（Connection 只有 kind/name/endpoint/token）、失败文案未落，故记 partial。",
+      "note": "现读（第 76 批）：三轴**落库并上屏**——`Connection` 加 `permission`/`protection`/`scope` 三列（迁移 `add_connection_axes`，三个 additive `ADD COLUMN … DEFAULT`，已 apply），`createConnection` 收三轴（无效值回落官方默认）、`listConnections` 回读，`ConnectionsPanel` 加三个选择器（选项来自 `connection-spec.ts` 的三组枚举）。10 上限与密钥一次性（`hasToken`）前批已落。单测 6 条（connection-spec）+ action 测试 4 条。仍缺＝成功/失败各 8 条专属文案未落，故记 partial。",
       "evidence": [
-        "src/lib/connections/connection-spec.ts:24",
+        "src/prisma/contract.prisma:488",
         "src/actions/connection/connection.ts:56",
-        "src/lib/connections/connection-spec.test.ts:31"
+        "src/app/(app)/connections/ConnectionsPanel.tsx:100"
       ]
     },
     "G124": {

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "column.public.connections.permission",
+    "label": "Add column \"permission\" to \"connections\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "permission",
+        "table": "connections"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"permission\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "connections",
+          "permission"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"permission\"",
+        "sql": "ALTER TABLE \"public\".\"connections\" ADD COLUMN \"permission\" text DEFAULT 'read-write' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"permission\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "connections",
+          "permission"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.connections.protection",
+    "label": "Add column \"protection\" to \"connections\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "protection",
+        "table": "connections"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"protection\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "connections",
+          "protection"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"protection\"",
+        "sql": "ALTER TABLE \"public\".\"connections\" ADD COLUMN \"protection\" text DEFAULT 'public' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"protection\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "connections",
+          "protection"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.connections.scope",
+    "label": "Add column \"scope\" to \"connections\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "scope",
+        "table": "connections"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"scope\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "connections",
+          "scope"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"scope\"",
+        "sql": "ALTER TABLE \"public\".\"connections\" ADD COLUMN \"scope\" text DEFAULT 'all-documents' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"scope\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "connections",
+          "scope"
+        ]
+      }
+    ]
+  }
+]

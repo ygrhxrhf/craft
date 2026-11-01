@@ -6,6 +6,7 @@ import { Cable, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createConnection, deleteConnection, type ConnectionItem, type ConnectionKind } from '@/actions/connection/connection';
+import { CONNECTION_PERMISSIONS, CONNECTION_PROTECTIONS, CONNECTION_SCOPES } from '@/lib/connections/connection-spec';
 
 const COPY = {
   mcp: {
@@ -25,6 +26,10 @@ export function ConnectionsPanel({ initial }: { initial: ConnectionItem[] }) {
   const [name, setName] = useState('');
   const [endpoint, setEndpoint] = useState('');
   const [token, setToken] = useState('');
+  // G122: the three access-centre axes.
+  const [permission, setPermission] = useState<string>('read-write');
+  const [protection, setProtection] = useState<string>('public');
+  const [scope, setScope] = useState<string>('all-documents');
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -33,7 +38,7 @@ export function ConnectionsPanel({ initial }: { initial: ConnectionItem[] }) {
     setError(null);
     startTransition(async () => {
       try {
-        const created = await createConnection({ kind, name, endpoint, token });
+        const created = await createConnection({ kind, name, endpoint, token, permission, protection, scope });
         setItems((current) => [created, ...current]);
         setName('');
         setEndpoint('');
@@ -95,6 +100,46 @@ export function ConnectionsPanel({ initial }: { initial: ConnectionItem[] }) {
           <label className="flex flex-col gap-1 text-xs text-muted-foreground sm:col-span-2">
             令牌（可选）
             <Input type="password" value={token} onChange={(event) => setToken(event.target.value)} placeholder="••••" />
+          </label>
+          {/* G122: the three access-centre axes, each with its official choices. */}
+          <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+            权限
+            <select
+              value={permission}
+              onChange={(event) => setPermission(event.target.value)}
+              aria-label="权限"
+              className="h-9 rounded-md border border-border bg-background px-2 text-sm"
+            >
+              {CONNECTION_PERMISSIONS.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+            保护
+            <select
+              value={protection}
+              onChange={(event) => setProtection(event.target.value)}
+              aria-label="保护"
+              className="h-9 rounded-md border border-border bg-background px-2 text-sm"
+            >
+              {CONNECTION_PROTECTIONS.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-xs text-muted-foreground sm:col-span-2">
+            作用域
+            <select
+              value={scope}
+              onChange={(event) => setScope(event.target.value)}
+              aria-label="作用域"
+              className="h-9 rounded-md border border-border bg-background px-2 text-sm"
+            >
+              {CONNECTION_SCOPES.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
           </label>
         </div>
         <div className="mt-3 flex items-center gap-2">

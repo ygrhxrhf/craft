@@ -1216,6 +1216,27 @@
                   "kind": "scalar"
                 }
               },
+              "permission": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "protection": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "scope": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "token": {
                 "nullable": true,
                 "type": {
@@ -1272,6 +1293,15 @@
                 },
                 "name": {
                   "column": "name"
+                },
+                "permission": {
+                  "column": "permission"
+                },
+                "protection": {
+                  "column": "protection"
+                },
+                "scope": {
+                  "column": "scope"
                 },
                 "token": {
                   "column": "token"
@@ -4831,6 +4861,33 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "permission": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "read-write"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "protection": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "public"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "scope": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "all-documents"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "token": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -6858,7 +6915,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "368beaa9a20ff8ca06dd841c51a8dc67adb3eb30f953d5e1487e6bbe815cfe53"
+    "storageHash": "3545490dee39559b3e767f7179ac55fe31edd6349bf715e3c096672c33a4f922"
   },
   "execution": {
     "executionHash": "7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b",

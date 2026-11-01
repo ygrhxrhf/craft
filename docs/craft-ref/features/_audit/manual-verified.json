@@ -405,13 +405,13 @@
       ]
     },
     "G279": {
-      "status": "aligned",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 32 批）：移动单位＝含缩进子块的整块，已落。`src/lib/editor/indent-run.ts` 的 `indentRunOf` 就是 `extendWithIndentChildren`（从锚块起到第一个不更深的后继兄弟）；`selectionRunOf` 对 `firstLastSelectedIdxInParent` 的首/尾锚。`block-move.ts` 改成按整块区间重排，单测证明父块带着 1/2 级子块一起与邻居交换、光标落在嵌套子块上时只带自己的子树。",
+      "note": "现读（第 60 批）：移动单位＝含缩进子块的整块**接进真实拖拽路径**——`DragHandle.resolveDragRange` 在单块拖拽时用 `indentRunOf` 取该块到\"第一个不更深的后继\"的整段（`topLevelStart` 算区间端点），拖起父块时缩进子块随行（此前只拖单块）。`Alt+↑↓` 的 `buildBlockMove` 前批已按整块区间重排。单测 39 条（indent-run + block-move）。仍缺＝方向决定取首/尾锚（官方 `firstLastSelectedIdxInParent`）未接拖拽侧（键盘侧已按整块），故记 partial。",
       "evidence": [
+        "src/components/editor/drag-handle/DragHandle.tsx:371",
         "src/lib/editor/indent-run.ts:20",
-        "src/lib/editor/block-move.ts:60",
-        "src/lib/editor/block-move.test.ts:150"
+        "src/lib/editor/block-move.ts:60"
       ]
     },
     "G280": {

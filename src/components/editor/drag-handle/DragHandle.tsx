@@ -15,6 +15,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { dropTargetFor, visibleRows } from './drop-band';
+import { indentRunOf } from '@/lib/editor/indent-run';
+import { topLevelStart } from '@/lib/editor/block-move';
 import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
 import { isInstantPreset } from '@/lib/task/remind-presets';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
@@ -365,6 +367,30 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
             }
           }
           return { from, to, els };
+        }
+
+        // G279: the unit that moves is the block **with its indented children** — the run from this
+        // block to the first following sibling that is not deeper. `indentRunOf` is that rule; the
+        // dragged range then spans the whole run so the children ride along.
+        const doc = state.doc;
+        const startIndex = Array.prototype.indexOf.call(editor.view.dom.children, blockEl);
+        if (startIndex >= 0) {
+          const indents = Array.from({ length: doc.childCount }, (_, i) => {
+            const raw = doc.child(i).attrs?.indent;
+            return typeof raw === 'number' && Number.isFinite(raw) ? raw : 0;
+          });
+          const run = indentRunOf(indents, startIndex);
+          if (run.end > run.start + 1) {
+            const runFrom = topLevelStart(doc, run.start);
+            const runTo = topLevelStart(doc, run.end - 1) + doc.child(run.end - 1).nodeSize;
+            const dom = editor.view.dom as HTMLElement;
+            const els: HTMLElement[] = [];
+            for (let i = run.start; i < run.end; i += 1) {
+              const el = dom.children[i] as HTMLElement | undefined;
+              if (el) els.push(el);
+            }
+            return { from: runFrom, to: runTo, els };
+          }
         }
 
         return { ...base, els: [blockEl] };

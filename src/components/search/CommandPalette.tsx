@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, ChevronUp, Database, FileText, Keyboard, Plus, Search, Terminal, Type } from 'lucide-react';
+import {ChevronDown, ChevronUp, Database, FileText, Keyboard, Plus, Search, Terminal, Type, Folder} from 'lucide-react';
 import {
   CommandDialog,
   CommandGroup,
@@ -82,6 +82,7 @@ export function CommandPalette() {
   const [docs, setDocs] = useState<SearchResultDoc[]>([]);
   const [blocks, setBlocks] = useState<SearchResultBlock[]>([]);
   const [rows, setRows] = useState<SearchResultRow[]>([]);
+  const [folders, setFolders] = useState<{ id: string; title: string }[]>([]);
   const [nextOffset, setNextOffset] = useState<number | null>(null);
   const [searching, setSearching] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -128,6 +129,7 @@ export function CommandPalette() {
         setDocs(result.documents);
         setBlocks(result.blocks);
         setRows(result.rows);
+        setFolders(result.folders ?? []);
         setNextOffset(result.nextOffset);
       } finally {
         setSearching(false);
@@ -286,12 +288,30 @@ export function CommandPalette() {
         {/* G235：空态是显式分支，不是 `CommandEmpty`。结果项里永远有一条「创建 [0]」，
             它的 value 含查询词、于是自己命中自己 ⇒ 列表从不"空"，`CommandEmpty` 永不渲染，
             官方那句「未找到 [0] 的结果」就永远出不来（探针实测：搜不存在的词只剩创建行）。 */}
-        {hasQuery && searching && docs.length === 0 && blocks.length === 0 && rows.length === 0 && (
+        {hasQuery && searching && docs.length === 0 && folders.length === 0 && blocks.length === 0 && rows.length === 0 && (
           <div className="py-6 text-center text-ui text-foreground/40">{SEARCHING_OTHER_MATCHES}</div>
         )}
 
         {hasQuery && !searching && docs.length === 0 && blocks.length === 0 && rows.length === 0 && (
           <div className="py-6 text-center text-ui text-foreground/40">{noResultsFor(query.trim())}</div>
+        )}
+
+        {folders.length > 0 && (
+          <CommandGroup heading="文件夹">
+            {folders.map((folder) => (
+              <CommandItem
+                key={`folder-${folder.id}`}
+                value={`folder-${folder.id}-${folder.title}`}
+                onSelect={() => {
+                  close();
+                  router.push(`/folders/${folder.id}`);
+                }}
+              >
+                <Folder className="size-4" />
+                <span className="truncate">{folder.title}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
         )}
 
         {docs.length > 0 && (

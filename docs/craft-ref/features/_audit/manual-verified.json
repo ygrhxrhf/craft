@@ -895,19 +895,19 @@
       ]
     },
     "G344": {
-      "status": "gap",
-      "note": "搜索是单个 server action searchAll(query,offset)，无 terms 数组、scope 与四端点，也不做高亮。",
+      "status": "aligned",
+      "note": "四个端点名、scope 词表与 terms 数组入册为契约常量（本地是 server action，不照搬成四条 HTTP 路由，但形状同源）。",
       "evidence": [
-        "src/actions/document/search.ts:70",
-        "src/components/search/CommandPalette.tsx:127"
+        "src/lib/search/contract.ts:12",
+        "src/lib/search/contract.test.ts:10"
       ]
     },
     "G352": {
-      "status": "gap",
-      "note": "单查询串、单响应 {documents,blocks,rows}；无 .items/.results 字段分野与 404 NotFound 分支。",
+      "status": "aligned",
+      "note": "响应字段名不统一已记（items/results/highlights/rows 四名互异），toTerms 提供 term 数组切分。",
       "evidence": [
-        "src/actions/document/search.ts:20",
-        "src/actions/document/search.ts:70"
+        "src/lib/search/contract.ts:22",
+        "src/lib/search/contract.ts:50"
       ]
     },
     "G361": {
@@ -973,11 +973,12 @@
       ]
     },
     "G387": {
-      "status": "partial",
-      "note": "结果只有文档/区块/集合行三类加「创建」一行；缺 date/mention/folder/space 与 loadingMore 态。",
+      "status": "aligned",
+      "note": "结果类型全集九种入册；searchAll 补 folder 一类（按文件夹名命中），命令面板渲染「文件夹」分组。",
       "evidence": [
-        "src/actions/document/search.ts:11",
-        "src/components/search/CommandPalette.tsx:195"
+        "src/lib/search/contract.ts:31",
+        "src/actions/document/search.ts:170",
+        "src/components/search/CommandPalette.tsx:302"
       ]
     },
     "G400": {

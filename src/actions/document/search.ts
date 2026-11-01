@@ -24,8 +24,15 @@ export interface SearchResultRow {
   text: string;
 }
 
+export interface SearchResultFolder {
+  id: string;
+  title: string;
+}
+
 export interface SearchResult {
   documents: SearchResultDoc[];
+  /** G387: folder hits are their own kind in the official result list. */
+  folders: SearchResultFolder[];
   blocks: SearchResultBlock[];
   rows: SearchResultRow[];
   nextOffset: number | null;
@@ -72,7 +79,7 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
   if (!session?.user?.id) throw new Error('未授权');
 
   const q = query.trim();
-  if (!q) return { documents: [], blocks: [], rows: [], nextOffset: null };
+  if (!q) return { documents: [], folders: [], blocks: [], rows: [], nextOffset: null };
 
   const db = await getDb();
   const uid = session.user.id;
@@ -168,7 +175,14 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
 
   const hasMore = titleMatches.length === PAGE_SIZE || contentMatches.length === PAGE_SIZE;
 
-  return { documents, blocks, rows, nextOffset: hasMore ? offset + PAGE_SIZE : null };
+  const folderRows = await db.orm.public.Folder
+    .where({ userId: uid, deletedAt: null })
+    .where((f: any) => f.name.ilike(pattern))
+    .limit(5)
+    .all();
+  const folders: SearchResultFolder[] = folderRows.map((f: any) => ({ id: f.id, title: f.name }));
+
+  return { documents, folders, blocks, rows, nextOffset: hasMore ? offset + PAGE_SIZE : null };
 }
 
 /** Collection rows are searched by their stored cell text. */

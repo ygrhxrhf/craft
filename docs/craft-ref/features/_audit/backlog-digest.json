@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-01T10:34:23.689Z",
+  "generatedAt": "2026-11-01T10:40:00.888Z",
   "total": 1614,
   "status": {
     "nonaction": 503,
-    "partial": 393,
-    "aligned": 325,
-    "gap": 215,
+    "partial": 392,
+    "aligned": 328,
+    "gap": 213,
     "deliberate": 158,
     "unreachable": 20
   },
@@ -21,7 +21,7 @@
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
     "P2 / gap": 103,
-    "P1 / aligned": 94,
+    "P1 / aligned": 97,
     "P2 / aligned": 86,
     "P1 / nonaction": 82,
     "P? / partial": 80,
@@ -30,10 +30,10 @@
     "P2 / deliberate": 66,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
-    "P1 / partial": 44,
+    "P1 / partial": 43,
     "P? / deliberate": 40,
-    "P1 / gap": 39,
     "P3 / gap": 39,
+    "P1 / gap": 37,
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
@@ -1188,10 +1188,6 @@
       7
     ],
     [
-      "三点二八、第 23 批（静态：日期解析链 + 同步层 + 只存在于代码里",
-      7
-    ],
-    [
       "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
       7
     ],
@@ -1205,6 +1201,10 @@
     ],
     [
       "三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP ",
+      7
+    ],
+    [
+      "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
       7
     ]
   ]

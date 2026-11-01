@@ -206,7 +206,8 @@ type BatchResult = {
 // payload 的 userId 无条件覆盖为会话用户（不取客户端值，防跨用户改写/转移行）。
 const USER_ID_TABLES = new Set([
   'document', 'folder', 'tag', 'favorite', 'task',
-  'daily_notes_config', 'collection', 'comment', 'notification', 'block_reminder', 'whiteboard',
+  'daily_notes_config', 'collection', 'comment', 'notification', 'block_reminder',
+  'team_member', 'space_member', 'whiteboard',
 ]);
 
 // R-19：唯一键表在「按 pk 定位不到、但唯一键撞上存量（含墓碑）行」时盲 create 会抛

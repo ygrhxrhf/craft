@@ -1,0 +1,809 @@
+[
+  {
+    "id": "table.space_members",
+    "label": "Create table \"space_members\"",
+    "summary": "Creates table \"space_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "space_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"space_members\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_members\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"space_members\"",
+        "sql": "CREATE TABLE \"public\".\"space_members\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"joined\" bool DEFAULT true NOT NULL,\n  \"role\" text DEFAULT 'member' NOT NULL,\n  \"spaceId\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"space_members\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_members\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.spaces",
+    "label": "Create table \"spaces\"",
+    "summary": "Creates table \"spaces\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "spaces"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"spaces\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"spaces\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"spaces\"",
+        "sql": "CREATE TABLE \"public\".\"spaces\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"icon\" text,\n  \"id\" text NOT NULL,\n  \"name\" text DEFAULT '我的空间' NOT NULL,\n  \"ownerId\" text NOT NULL,\n  \"settings\" json,\n  \"teamId\" text,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"spaces\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"spaces\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.team_members",
+    "label": "Create table \"team_members\"",
+    "summary": "Creates table \"team_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "team_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"team_members\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"team_members\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"team_members\"",
+        "sql": "CREATE TABLE \"public\".\"team_members\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"role\" text DEFAULT 'member' NOT NULL,\n  \"state\" text DEFAULT 'active' NOT NULL,\n  \"teamId\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"team_members\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"team_members\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.teams",
+    "label": "Create table \"teams\"",
+    "summary": "Creates table \"teams\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "teams"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"teams\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"teams\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"teams\"",
+        "sql": "CREATE TABLE \"public\".\"teams\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text DEFAULT '我的团队' NOT NULL,\n  \"ownerId\" text NOT NULL,\n  \"settings\" json,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"teams\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"teams\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.space_members.space_members_spaceId_userId_key",
+    "label": "Add unique constraint on \"space_members\" (spaceId, userId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "space_members_spaceId_userId_key",
+        "table": "space_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"space_members_spaceId_userId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_members_spaceId_userId_key",
+          "public",
+          "\"public\".\"space_members\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"space_members_spaceId_userId_key\"",
+        "sql": "ALTER TABLE \"public\".\"space_members\" ADD CONSTRAINT \"space_members_spaceId_userId_key\" UNIQUE (\"spaceId\", \"userId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"space_members_spaceId_userId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_members_spaceId_userId_key",
+          "public",
+          "\"public\".\"space_members\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.team_members.team_members_teamId_userId_key",
+    "label": "Add unique constraint on \"team_members\" (teamId, userId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "team_members_teamId_userId_key",
+        "table": "team_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"team_members_teamId_userId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "team_members_teamId_userId_key",
+          "public",
+          "\"public\".\"team_members\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"team_members_teamId_userId_key\"",
+        "sql": "ALTER TABLE \"public\".\"team_members\" ADD CONSTRAINT \"team_members_teamId_userId_key\" UNIQUE (\"teamId\", \"userId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"team_members_teamId_userId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "team_members_teamId_userId_key",
+          "public",
+          "\"public\".\"team_members\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.space_members.space_members_spaceId_idx_bb21015f",
+    "label": "Create index \"space_members_spaceId_idx_bb21015f\" on \"space_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "space_members_spaceId_idx_bb21015f",
+        "table": "space_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"space_members_spaceId_idx_bb21015f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_members_spaceId_idx_bb21015f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"space_members_spaceId_idx_bb21015f\"",
+        "sql": "CREATE INDEX \"space_members_spaceId_idx_bb21015f\" ON \"public\".\"space_members\" (\"spaceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"space_members_spaceId_idx_bb21015f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_members_spaceId_idx_bb21015f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.space_members.space_members_userId_idx_a489d58a",
+    "label": "Create index \"space_members_userId_idx_a489d58a\" on \"space_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "space_members_userId_idx_a489d58a",
+        "table": "space_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"space_members_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_members_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"space_members_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"space_members_userId_idx_a489d58a\" ON \"public\".\"space_members\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"space_members_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_members_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.spaces.spaces_ownerId_idx_e2d0c1ef",
+    "label": "Create index \"spaces_ownerId_idx_e2d0c1ef\" on \"spaces\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "spaces_ownerId_idx_e2d0c1ef",
+        "table": "spaces"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"spaces_ownerId_idx_e2d0c1ef\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"spaces_ownerId_idx_e2d0c1ef\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"spaces_ownerId_idx_e2d0c1ef\"",
+        "sql": "CREATE INDEX \"spaces_ownerId_idx_e2d0c1ef\" ON \"public\".\"spaces\" (\"ownerId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"spaces_ownerId_idx_e2d0c1ef\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"spaces_ownerId_idx_e2d0c1ef\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.spaces.spaces_teamId_idx_f2b72ab3",
+    "label": "Create index \"spaces_teamId_idx_f2b72ab3\" on \"spaces\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "spaces_teamId_idx_f2b72ab3",
+        "table": "spaces"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"spaces_teamId_idx_f2b72ab3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"spaces_teamId_idx_f2b72ab3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"spaces_teamId_idx_f2b72ab3\"",
+        "sql": "CREATE INDEX \"spaces_teamId_idx_f2b72ab3\" ON \"public\".\"spaces\" (\"teamId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"spaces_teamId_idx_f2b72ab3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"spaces_teamId_idx_f2b72ab3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.team_members.team_members_teamId_idx_f2b72ab3",
+    "label": "Create index \"team_members_teamId_idx_f2b72ab3\" on \"team_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "team_members_teamId_idx_f2b72ab3",
+        "table": "team_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"team_members_teamId_idx_f2b72ab3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"team_members_teamId_idx_f2b72ab3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"team_members_teamId_idx_f2b72ab3\"",
+        "sql": "CREATE INDEX \"team_members_teamId_idx_f2b72ab3\" ON \"public\".\"team_members\" (\"teamId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"team_members_teamId_idx_f2b72ab3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"team_members_teamId_idx_f2b72ab3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.team_members.team_members_userId_idx_a489d58a",
+    "label": "Create index \"team_members_userId_idx_a489d58a\" on \"team_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "team_members_userId_idx_a489d58a",
+        "table": "team_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"team_members_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"team_members_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"team_members_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"team_members_userId_idx_a489d58a\" ON \"public\".\"team_members\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"team_members_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"team_members_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.teams.teams_ownerId_idx_e2d0c1ef",
+    "label": "Create index \"teams_ownerId_idx_e2d0c1ef\" on \"teams\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "teams_ownerId_idx_e2d0c1ef",
+        "table": "teams"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"teams_ownerId_idx_e2d0c1ef\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"teams_ownerId_idx_e2d0c1ef\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"teams_ownerId_idx_e2d0c1ef\"",
+        "sql": "CREATE INDEX \"teams_ownerId_idx_e2d0c1ef\" ON \"public\".\"teams\" (\"ownerId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"teams_ownerId_idx_e2d0c1ef\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"teams_ownerId_idx_e2d0c1ef\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.space_members.space_members_spaceId_fkey",
+    "label": "Add foreign key \"space_members_spaceId_fkey\" on \"space_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "space_members_spaceId_fkey",
+        "table": "space_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"space_members_spaceId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_members_spaceId_fkey",
+          "public",
+          "\"public\".\"space_members\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"space_members_spaceId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"space_members\"\nADD CONSTRAINT \"space_members_spaceId_fkey\"\nFOREIGN KEY (\"spaceId\")\nREFERENCES \"public\".\"spaces\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"space_members_spaceId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_members_spaceId_fkey",
+          "public",
+          "\"public\".\"space_members\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.space_members.space_members_userId_fkey",
+    "label": "Add foreign key \"space_members_userId_fkey\" on \"space_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "space_members_userId_fkey",
+        "table": "space_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"space_members_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_members_userId_fkey",
+          "public",
+          "\"public\".\"space_members\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"space_members_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"space_members\"\nADD CONSTRAINT \"space_members_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"space_members_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_members_userId_fkey",
+          "public",
+          "\"public\".\"space_members\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.spaces.spaces_teamId_fkey",
+    "label": "Add foreign key \"spaces_teamId_fkey\" on \"spaces\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "spaces_teamId_fkey",
+        "table": "spaces"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"spaces_teamId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "spaces_teamId_fkey",
+          "public",
+          "\"public\".\"spaces\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"spaces_teamId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"spaces\"\nADD CONSTRAINT \"spaces_teamId_fkey\"\nFOREIGN KEY (\"teamId\")\nREFERENCES \"public\".\"teams\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"spaces_teamId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "spaces_teamId_fkey",
+          "public",
+          "\"public\".\"spaces\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.spaces.spaces_ownerId_fkey",
+    "label": "Add foreign key \"spaces_ownerId_fkey\" on \"spaces\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "spaces_ownerId_fkey",
+        "table": "spaces"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"spaces_ownerId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "spaces_ownerId_fkey",
+          "public",
+          "\"public\".\"spaces\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"spaces_ownerId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"spaces\"\nADD CONSTRAINT \"spaces_ownerId_fkey\"\nFOREIGN KEY (\"ownerId\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"spaces_ownerId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "spaces_ownerId_fkey",
+          "public",
+          "\"public\".\"spaces\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.team_members.team_members_teamId_fkey",
+    "label": "Add foreign key \"team_members_teamId_fkey\" on \"team_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "team_members_teamId_fkey",
+        "table": "team_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"team_members_teamId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "team_members_teamId_fkey",
+          "public",
+          "\"public\".\"team_members\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"team_members_teamId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"team_members\"\nADD CONSTRAINT \"team_members_teamId_fkey\"\nFOREIGN KEY (\"teamId\")\nREFERENCES \"public\".\"teams\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"team_members_teamId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "team_members_teamId_fkey",
+          "public",
+          "\"public\".\"team_members\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.team_members.team_members_userId_fkey",
+    "label": "Add foreign key \"team_members_userId_fkey\" on \"team_members\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "team_members_userId_fkey",
+        "table": "team_members"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"team_members_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "team_members_userId_fkey",
+          "public",
+          "\"public\".\"team_members\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"team_members_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"team_members\"\nADD CONSTRAINT \"team_members_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"team_members_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "team_members_userId_fkey",
+          "public",
+          "\"public\".\"team_members\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.teams.teams_ownerId_fkey",
+    "label": "Add foreign key \"teams_ownerId_fkey\" on \"teams\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "teams_ownerId_fkey",
+        "table": "teams"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"teams_ownerId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "teams_ownerId_fkey",
+          "public",
+          "\"public\".\"teams\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"teams_ownerId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"teams\"\nADD CONSTRAINT \"teams_ownerId_fkey\"\nFOREIGN KEY (\"ownerId\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"teams_ownerId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "teams_ownerId_fkey",
+          "public",
+          "\"public\".\"teams\""
+        ]
+      }
+    ]
+  }
+]

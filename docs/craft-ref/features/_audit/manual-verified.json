@@ -748,13 +748,13 @@
       ]
     },
     "G166": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 74 批）：三层作用域的**适用范围标注已上屏**——高级设置分区顶部加一句 `SCOPE_COPY.personal.label`「这些设置适用于你个人空间中发布的所有内容。」（`data-testid=\"settings-scope-note\"`），把\"本地是单级全局\"这件事明说，而不是暗示一个并不存在的三层覆盖（台账建议的\"先做作用域标注而不落三层存储\"）。取值链纯核（空间→团队→个人）与团队那句含 `[0]` 的文案仍在 `settings-scope.ts`，单测 5 条。仍缺＝本地无团队/空间实体，三层无真实落库来源，故记 partial。",
+      "note": "三层作用域有真实落库来源：Space.settings/Team.settings 两枚 Json 列 + resolveSettingWithScope 逐层回落并报来源层；面板按有无团队说对应那句。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:403",
-        "src/lib/app/settings-scope.ts:24",
-        "src/lib/editor/action-ids.test.ts:47"
+        "src/actions/space/space.ts",
+        "src/lib/app/settings-scope.ts",
+        "src/components/settings/SettingsPanels.tsx"
       ]
     },
     "G181": {
@@ -836,13 +836,13 @@
       ]
     },
     "G228": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 41 批）：访客邀请警告已落 `src/lib/share/guest-warning.ts`——`guest.warning.desc` 逐字取自 `_harvest/i18n-zh.tsv:1890`（「…访客可以访问整个空间并更新任何文档。」），`needsGuestWarning` 判据＝**\"是否非成员\"决定要不要拦**（guest 出确认框、teamMember 不出）。单测钉住逐字文案与判据，并断言后果句含\"整个空间\"。仍缺＝本地无团队实体（G421），邀请入口是文档级协作者，无\"团队内 vs 非成员\"这条轴的真实数据，故记 partial。",
+      "note": "访客邀请真流程：space-invite 入口（owner 能力门）+ guestWarningFor 判非成员 + guest.warning.desc 确认框 + inviteSpaceMember 落 SpaceMember。",
       "evidence": [
-        "src/lib/share/guest-warning.ts:15",
-        "src/lib/share/guest-warning.ts:24",
-        "src/lib/share/guest-warning.test.ts:13"
+        "src/actions/space/space.ts",
+        "src/lib/share/guest-warning.ts",
+        "src/actions/space/space.test.ts"
       ]
     },
     "G270": {
@@ -900,12 +900,13 @@
       ]
     },
     "G324": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 38 批）：空间级角色轴已落纯核 `src/lib/authz/space-role.ts`——owner/member/guest 三档 + 两能力（改设置／邀成员），owner 两项皆真、member 与 guest 皆假，正是官方那两句「可以更改设置并邀请新成员」vs「无法更改设置或邀请新成员」（逐字取自 `_harvest/i18n-zh.tsv:977,979`）；`TwoAxisPermission` 把空间轴与文档轴摆在一起、**互不推导**。仍缺＝本地无空间实体，空间角色无落库来源与界面消费点，故记 partial。",
+      "note": "空间级权限轴真实体：Space/SpaceMember 两表 + getSpaceContext 报角色与两能力（owner 真/member·guest 假）+ setSpaceName 按能力拦；与文档级互不推导。",
       "evidence": [
-        "src/lib/authz/space-role.ts:26",
-        "src/lib/authz/permission-axes.test.ts:62"
+        "src/prisma/contract.prisma",
+        "src/actions/space/space.ts",
+        "src/lib/authz/space-role.ts"
       ]
     },
     "G328": {
@@ -1069,13 +1070,13 @@
       ]
     },
     "G421": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 48 批）：团队两档权限已落纯核 `src/lib/team/team-roles.ts`——权限档只有 admin/member 两档（`TEAM_PERMISSION_ROLES`）、生命周期态 active/deactivated/pending 是**另一轴**；两档说明逐字取自 harvest:3614-3617；`adminsOf`/`hasAdmin` 允许**多个管理员**，`changeMemberRole` 是**逐成员**改档，`canSeeSpace(joined)` 把\"成员可见空间由是否已加入决定\"落到判据（与角色无关）。单测 5 条。仍缺＝本地无团队实体（团队面板仅占位），故记 partial。",
+      "note": "团队层角色真实体：Team/TeamMember 两表 + 两档 role/三态 state 两轴 + adminsOf 允许多人 + changeTeamRole 逐成员（仅管理员）。",
       "evidence": [
-        "src/lib/team/team-roles.ts:22",
-        "src/lib/team/team-roles.ts:58",
-        "src/lib/team/team-roles.test.ts:18"
+        "src/prisma/contract.prisma",
+        "src/actions/space/space.ts",
+        "src/lib/team/team-roles.ts"
       ]
     },
     "G440": {

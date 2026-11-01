@@ -16,12 +16,24 @@ import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
 import { getSyncManager } from '@/lib/sync-core';
 import { uploadFile } from '@/lib/upload-client';
-import { promptDialog } from '@/lib/dialog/show';
+import { promptDialog, confirmDialog } from '@/lib/dialog/show';
 import { ACCENTS as ACCENT_KEYS, pickAccent, readAccent, type Accent } from '@/lib/accent';
 import { Switch } from '@/components/ui/switch';
 import { RichText } from '@/components/ui/rich-text';
 import { loggedInAsText } from '@/lib/i18n/account-copy';
 import { SCOPE_COPY } from '@/lib/app/settings-scope';
+import {
+  changeTeamRole,
+  createTeam,
+  getSpaceContext,
+  getTeamContext,
+  guestWarningFor,
+  inviteSpaceMember,
+  setSpaceName,
+  type SpaceSummary,
+  type TeamSummary,
+} from '@/actions/space/space';
+import { GUEST_WARNING_CONFIRM, GUEST_WARNING_DESC } from '@/lib/share/guest-warning';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
 import { cn } from 'cn';
 import {
@@ -150,6 +162,15 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [savingSwitch, setSavingSwitch] = useState(false);
   const [switchError, setSwitchError] = useState<string | null>(null);
+  // G324/G166：空间与团队实体（本批新落库）。
+  const [space, setSpace] = useState<SpaceSummary | null>(null);
+  const [team, setTeam] = useState<TeamSummary | null>(null);
+  const [spaceError, setSpaceError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getSpaceContext().then(setSpace).catch(() => setSpace(null));
+    getTeamContext().then(setTeam).catch(() => setTeam(null));
+  }, []);
 
   useEffect(() => {
     getPreferences()
@@ -274,20 +295,94 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     case 'space':
       return (
         <div className="space-y-6">
+          {spaceError && (
+            <p role="status" className="text-[12px] text-destructive">
+              {spaceError}
+            </p>
+          )}
           <div className="flex justify-center pt-6">
-            {/* G179：这里原有两枚**无宿主**的假控件——「更换空间图标」相机按钮（无 onClick）
-                与「空间名称」右侧的裸 `<EditIcon />`（不是按钮）。本地没有 `Space` 实体：
-                空间名由用户 `name` 派生、图标是固定渐变，两者都没有可写入的地方 ⇒ 删掉，
-                不画一个不存在的设置。（G164 的账户改名/改头像**有** `user.name`／`image` 列，
-                故那两处是"接线"、这里只能是"移除"——同一条判据，两种结论。） */}
             <SpaceIcon className="size-32 rounded-[28px] text-5xl" />
           </div>
+          {/* G324：空间现在是真实体——名字可改（owner 才有能力，`capabilities.canChangeSettings`），
+              且给出调用者在这个空间里的角色与那句官方说明。此前这里是只读的派生名。 */}
           <RowCard className="flex items-center justify-between px-4 py-3">
-            <div>
+            <div className="min-w-0">
               <div className="text-xs text-foreground/55">空间名称</div>
-              <div className="mt-1 text-[15px]">{spaceName}</div>
+              <div className="mt-1 truncate text-[15px]">{space?.name ?? spaceName}</div>
             </div>
+            {space?.capabilities.canChangeSettings ? (
+              <button
+                type="button"
+                aria-label="重命名空间"
+                data-testid="space-rename"
+                onClick={() => {
+                  void promptDialog({
+                    title: '空间名称',
+                    defaultValue: space.name,
+                    confirmLabel: '保存',
+                  }).then(async (next) => {
+                    if (!next) return;
+                    setSpaceError(null);
+                    try {
+                      setSpace(await setSpaceName(next));
+                    } catch {
+                      setSpaceError('没有改成空间名称，请重试');
+                    }
+                  });
+                }}
+                className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-foreground/4 hover:text-foreground"
+              >
+                <Pencil className="size-4" />
+              </button>
+            ) : null}
           </RowCard>
+          {space && (
+            <RowCard className="px-4 py-3">
+              <div className="text-xs text-foreground/55">你的空间角色</div>
+              <div className="mt-1 text-[15px]">
+                {space.role === 'owner' ? '所有者' : space.role === 'guest' ? '访客' : '成员'}
+              </div>
+              {/* G324：官方那句角色说明逐字（guest 档是本地词）。 */}
+              <p className="mt-1 text-[12px] text-foreground/55">{space.roleDescription}</p>
+            </RowCard>
+          )}
+          {/* G228：邀成员——owner 才有能力（`canInviteMembers`）。非成员＝访客 ⇒ 先出后果确认框
+              （`guest.warning.desc` 逐字），确认后才落库。 */}
+          {space?.capabilities.canInviteMembers && (
+            <RowCard className="px-4 py-3">
+              <button
+                type="button"
+                data-testid="space-invite"
+                onClick={() => {
+                  void promptDialog({
+                    title: '邀请成员',
+                    placeholder: '对方的登录邮箱',
+                    confirmLabel: '下一步',
+                  }).then(async (email) => {
+                    if (!email) return;
+                    setSpaceError(null);
+                    try {
+                      if (await guestWarningFor(email)) {
+                        const ok = await confirmDialog({
+                          title: '邀请非团队成员',
+                          message: GUEST_WARNING_DESC,
+                          confirmLabel: GUEST_WARNING_CONFIRM,
+                        });
+                        if (!ok) return;
+                      }
+                      setSpace(await inviteSpaceMember({ email, role: 'guest' }));
+                    } catch {
+                      setSpaceError('没有邀请成功，请重试');
+                    }
+                  });
+                }}
+                className="flex items-center gap-2 text-[13px] font-medium text-(--craft-accent)"
+              >
+                <SquarePlus className="size-4" />
+                邀请新成员
+              </button>
+            </RowCard>
+          )}
         </div>
       );
 
@@ -400,11 +495,10 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       ];
       return (
         <div className="space-y-4">
-          {/* G166: the official build annotates which scope a settings group applies to. Locally
-              settings are one global level, so the panel says that plainly instead of implying a
-              three-layer override it does not have. */}
+          {/* G166：官方按作用域标注一句。本批已落空间/团队实体 ⇒ 有团队时三层是真存在的
+              （空间可覆盖团队、团队可覆盖个人），按当前所处的层说对应那句；无团队时只有个人层。 */}
           <p className="px-1 text-xs text-foreground/55" data-testid="settings-scope-note">
-            {SCOPE_COPY.personal.label}
+            {space?.teamId ? SCOPE_COPY.override.label : SCOPE_COPY.personal.label}
           </p>
           <RowCard className="px-4 py-3">
             <div className="text-[13px] font-medium">编辑器字体</div>
@@ -581,13 +675,68 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       );
 
     case 'team':
+      // G421：团队现在是真实体——建团队／列出成员与两档权限／逐成员改档。此前这里只有一枚
+      // 「创建新团队」按钮，点了什么都不发生（无团队表可落）。
+      if (!team) {
+        return (
+          <RowCard className="px-4 py-3">
+            <button
+              type="button"
+              onClick={() => {
+                void promptDialog({ title: '团队名称', confirmLabel: '创建' }).then(async (name) => {
+                  if (!name) return;
+                  try {
+                    setTeam(await createTeam(name));
+                  } catch {
+                    setSpaceError('没有创建团队，请重试');
+                  }
+                });
+              }}
+              className="flex items-center gap-2 text-[13px] font-medium text-(--craft-accent)"
+            >
+              <SquarePlus className="size-4" />
+              创建新团队
+            </button>
+          </RowCard>
+        );
+      }
       return (
-        <RowCard className="px-4 py-3">
-          <button type="button" className="flex items-center gap-2 text-[13px] font-medium text-(--craft-accent)">
-            <SquarePlus className="size-4" />
-            创建新团队
-          </button>
-        </RowCard>
+        <div className="space-y-3">
+          <div className="text-[15px] font-semibold">{team.name}</div>
+          {team.members.map((member) => (
+            <RowCard key={member.userId} className="px-4 py-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="truncate text-[13px] font-medium">{member.name}</div>
+                  <p className="mt-0.5 text-[12px] text-foreground/55">{member.subtitle}</p>
+                </div>
+                {/* G421：两档（admin/member），逐成员切换。管理员可多人 ⇒ 不限制唯一。 */}
+                <div className="flex shrink-0 gap-1">
+                  {(['admin', 'member'] as const).map((role) => (
+                    <button
+                      key={role}
+                      type="button"
+                      aria-pressed={member.role === role}
+                      onClick={() => {
+                        void changeTeamRole(member.userId, role).then(setTeam).catch(() => {
+                          setSpaceError('没有改成员角色，请重试');
+                        });
+                      }}
+                      className={cn(
+                        'rounded-md px-2 py-1 text-[12px]',
+                        member.role === role
+                          ? 'bg-(--craft-accent) text-white'
+                          : 'text-muted-foreground hover:bg-foreground/4',
+                      )}
+                    >
+                      {role === 'admin' ? '管理员' : '成员'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </RowCard>
+          ))}
+        </div>
       );
 
     case 'integrations':

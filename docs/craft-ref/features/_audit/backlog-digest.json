@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-01T18:49:47.586Z",
+  "generatedAt": "2026-11-01T19:03:02.706Z",
   "total": 1614,
   "status": {
     "nonaction": 510,
-    "aligned": 394,
-    "partial": 356,
+    "aligned": 398,
+    "partial": 352,
     "gap": 176,
     "deliberate": 158,
     "unreachable": 20
@@ -19,8 +19,8 @@
   "statusByPriority": {
     "P2 / partial": 199,
     "P? / nonaction": 191,
+    "P1 / aligned": 167,
     "P2 / nonaction": 164,
-    "P1 / aligned": 163,
     "P2 / gap": 103,
     "P1 / nonaction": 89,
     "P2 / aligned": 86,
@@ -37,9 +37,9 @@
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
-    "P1 / partial": 7,
     "P3 / unreachable": 4,
     "P? / unreachable": 4,
+    "P1 / partial": 3,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1140,7 +1140,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      23
+      22
     ],
     [
       "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",
@@ -1175,10 +1175,6 @@
       7
     ],
     [
-      "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
-      7
-    ],
-    [
       "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
       7
     ],
@@ -1200,6 +1196,10 @@
     ],
     [
       "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
+      6
+    ],
+    [
+      "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
       6
     ],
     [

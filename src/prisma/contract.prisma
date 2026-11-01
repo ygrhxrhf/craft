@@ -29,8 +29,91 @@ model User {
   notifications Notification[]
   blockReminders BlockReminder[]
   connections   Connection[]
+  spaceMembers  SpaceMember[]
+  ownedTeams    Team[]
+  teamMemberships TeamMember[]
+  ownedSpaces   Space[]
 
   @@map("users")
+}
+
+// G324/G421/G166：空间/团队实体。此前本地无这两张表，于是"空间级角色"（owner/member/guest）、
+// "团队两档权限"（admin/member，可多管理员）、"设置三层作用域"（个人→团队→空间）都无处落库，
+// 只能停在纯核。这三条官方事实要求真有一个可归属、可授权的空间对象，故补上。
+model Team {
+  id        String   @id @default(uuid())
+  name      String   @default("我的团队")
+  // G421：团队级设置默认（三层作用域的第二层）。键值对，空间可覆盖。
+  settings  Json?
+  ownerId   String
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  owner     User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members   TeamMember[]
+  spaces    Space[]
+
+  @@index([ownerId])
+  @@map("teams")
+}
+
+// G421：团队权限两档（admin/member）＋生命周期态（active/deactivated/pending）是**两轴**。
+// 管理员可多人（判据是"至少一个"而非"恰好一个"）。
+model TeamMember {
+  id        String   @id @default(uuid())
+  teamId    String
+  userId    String
+  role      String   @default("member") // "admin" | "member"
+  state     String   @default("active") // "active" | "deactivated" | "pending"
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([userId])
+  @@map("team_members")
+}
+
+// G324：空间级角色 owner/member/guest——只管两件事（改设置／邀成员），与文档级是两套独立轴。
+// G166：`settings` 是空间级设置覆盖（三层作用域的第三层）。团队归属为可空（个人空间无团队）。
+model Space {
+  id        String   @id @default(uuid())
+  name      String   @default("我的空间")
+  icon      String?
+  settings  Json?
+  teamId    String?
+  ownerId   String
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  team      Team?         @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  owner     User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members   SpaceMember[]
+
+  @@index([ownerId])
+  @@index([teamId])
+  @@map("spaces")
+}
+
+// G324/G228：空间成员三档（owner/member/guest）。`joined` 记录"是否已加入"——G421 的
+// "成员可见空间由是否已加入决定"落到这一枚（未加入的空间看不到，无论角色）。
+model SpaceMember {
+  id        String   @id @default(uuid())
+  spaceId   String
+  userId    String
+  role      String   @default("member") // "owner" | "member" | "guest"
+  joined    Boolean  @default(true)
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  space     Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([spaceId, userId])
+  @@index([userId])
+  @@map("space_members")
 }
 
 model Folder {

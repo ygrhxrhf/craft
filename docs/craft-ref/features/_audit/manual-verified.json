@@ -1051,11 +1051,11 @@
       ]
     },
     "G448": {
-      "status": "gap",
-      "note": "嵌入白板直接挂只读 tldraw 活实例，无导出成图三态、contain 尺寸与重绘门控。",
+      "status": "aligned",
+      "note": "文档内白板改为「导出成图」三态预览（loading/ready/error）：导出参数固定 32/false/isDark、等比 contain、四重重绘门控 + 300ms 防抖；活画布只用于导出后隐藏。",
       "evidence": [
-        "src/components/editor/extensions/whiteboard-embed-view.tsx:15",
-        "src/components/editor/extensions/whiteboard-embed-view.tsx:141"
+        "src/lib/editor/whiteboard-preview.ts:11",
+        "src/components/editor/extensions/whiteboard-preview-image.tsx:20"
       ]
     },
     "G461": {

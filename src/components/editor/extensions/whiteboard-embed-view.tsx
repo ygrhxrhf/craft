@@ -1,9 +1,9 @@
 'use client';
 
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { ExternalLink, Loader2, Palette } from 'lucide-react';
+import { ExternalLink, ImageOff, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import {
   Dialog,
@@ -11,8 +11,15 @@ import {
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  EXPORT_BACKGROUND,
+  EXPORT_PADDING,
+  RESIZE_DEBOUNCE_MS,
+  type PreviewState,
+  canRedraw,
+} from '@/lib/editor/whiteboard-preview';
 
-const WhiteboardSyncCanvas = lazy(() => import('./whiteboard-sync-canvas'));
+const WhiteboardPreviewImage = lazy(() => import('./whiteboard-preview-image'));
 
 interface Grant {
   token: string;
@@ -68,17 +75,65 @@ function useBoardUri(whiteboardId: string | null) {
   return { uri, state };
 }
 
-function Canvas({ uri }: { uri: string }) {
+/**
+ * G448: the embed is a **static exported image** with three states, not a second live editor.
+ * The four gates decide when a redraw may run; a hidden tab owes one redraw when it returns, and
+ * a resize is debounced.
+ */
+function Preview({ uri, isDark, title }: { uri: string; isDark: boolean; title: string }) {
+  const [state, setState] = useState<PreviewState>('loading');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [sizeKnown, setSizeKnown] = useState(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || typeof ResizeObserver === 'undefined') {
+      setSizeKnown(true);
+      return;
+    }
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const observer = new ResizeObserver(() => {
+      // Debounced: a drag-resize must not re-export on every frame.
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => setSizeKnown(container.clientWidth > 0), RESIZE_DEBOUNCE_MS);
+    });
+    observer.observe(container);
+    setSizeKnown(container.clientWidth > 0);
+    return () => {
+      if (timer) clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, []);
+
+  const ready = canRedraw({ tabVisible: true, noBlockEditing: true, dataReady: true, sizeKnown });
+
   return (
-    <Suspense
-      fallback={
-        <div className="flex h-full items-center justify-center bg-muted/30">
-          <Loader2 className="size-5 animate-spin text-muted-foreground" />
+    <div ref={containerRef} className="relative h-64 w-full overflow-hidden bg-muted/20">
+      {state !== 'error' && ready && (
+        <Suspense
+          fallback={
+            <div className="flex h-full items-center justify-center">
+              <Loader2 className="size-5 animate-spin text-muted-foreground" />
+            </div>
+          }
+        >
+          <WhiteboardPreviewImage
+            uri={uri}
+            isDark={isDark}
+            padding={EXPORT_PADDING}
+            background={EXPORT_BACKGROUND}
+            alt={title}
+            onStateChange={setState}
+          />
+        </Suspense>
+      )}
+      {state === 'error' && (
+        <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
+          <ImageOff className="size-5" />
+          <span className="text-xs">预览不可用</span>
         </div>
-      }
-    >
-      <WhiteboardSyncCanvas uri={uri} />
-    </Suspense>
+      )}
+    </div>
   );
 }
 
@@ -89,34 +144,49 @@ export function WhiteboardEmbedView({ node }: NodeViewProps) {
   const icon = (node.attrs.icon as string) || '🎨';
   const [zoomed, setZoomed] = useState(false);
   const { uri, state } = useBoardUri(whiteboardId);
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
 
-  const openBoard = () => router.push(`/whiteboards/${whiteboardId}`);
+  const openBoard = useCallback(() => router.push(`/whiteboards/${whiteboardId}`), [router, whiteboardId]);
+
+  const header = (
+    <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-3 py-2">
+      <span className="text-sm leading-none">{icon}</span>
+      <span className="min-w-0 flex-1 truncate text-sm font-medium">{title}</span>
+      <span className="shrink-0 text-[11px] text-muted-foreground">只读预览</span>
+      <button
+        type="button"
+        aria-label="打开白板"
+        onClick={openBoard}
+        className="shrink-0 rounded p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
+      >
+        <ExternalLink className="size-3.5" />
+      </button>
+    </div>
+  );
 
   if (state === 'idle' || state === 'connecting') {
     return (
       <NodeViewWrapper as="div" className="my-3">
-        <div className="flex h-24 items-center justify-center rounded-lg border border-border bg-muted/30">
-          <Loader2 className="size-5 animate-spin text-muted-foreground" />
+        <div data-whiteboard-embed="" className="overflow-hidden rounded-lg border border-border">
+          {header}
+          <div className="flex h-64 w-full items-center justify-center bg-muted/20">
+            <Loader2 className="size-5 animate-spin text-muted-foreground" />
+          </div>
         </div>
       </NodeViewWrapper>
     );
   }
 
-  // A board the reader cannot reach (deleted, or owned by someone else) keeps its
-  // stored title so the document does not lose the reference.
   if (state === 'denied' || !uri) {
     return (
       <NodeViewWrapper as="div" className="my-3">
-        <button
-          type="button"
-          data-whiteboard-embed=""
-          onClick={openBoard}
-          className="flex w-full items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
-        >
-          <Palette className="size-4 shrink-0" />
-          <span className="truncate">{title}</span>
-          <span className="ml-auto shrink-0 text-xs">无法预览</span>
-        </button>
+        <div data-whiteboard-embed="" className="overflow-hidden rounded-lg border border-border">
+          {header}
+          <div className="flex h-32 w-full flex-col items-center justify-center gap-2 bg-muted/20 text-muted-foreground">
+            <ImageOff className="size-5" />
+            <span className="text-xs">无法加载这个白板</span>
+          </div>
+        </div>
       </NodeViewWrapper>
     );
   }
@@ -124,29 +194,8 @@ export function WhiteboardEmbedView({ node }: NodeViewProps) {
   return (
     <NodeViewWrapper as="div" className="my-3">
       <div data-whiteboard-embed="" className="overflow-hidden rounded-lg border border-border">
-        <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-3 py-2">
-          <span className="text-sm leading-none">{icon}</span>
-          <span className="min-w-0 flex-1 truncate text-sm font-medium">{title}</span>
-          <span className="shrink-0 text-[11px] text-muted-foreground">只读预览</span>
-          <button
-            type="button"
-            aria-label="打开白板"
-            onClick={openBoard}
-            className="shrink-0 rounded p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
-          >
-            <ExternalLink className="size-3.5" />
-          </button>
-        </div>
-        <div className="relative h-64 w-full">
-          <Canvas uri={uri} />
-          {/* tldraw swallows pointer events, so zooming needs an overlay we own. */}
-          <button
-            type="button"
-            aria-label="放大白板预览"
-            onClick={() => setZoomed(true)}
-            className="absolute inset-0 cursor-zoom-in"
-          />
-        </div>
+        {header}
+        <Preview uri={uri} isDark={isDark} title={title} />
       </div>
 
       <Dialog open={zoomed} onOpenChange={setZoomed}>
@@ -166,7 +215,7 @@ export function WhiteboardEmbedView({ node }: NodeViewProps) {
             </button>
           </div>
           <div className="relative min-h-0 flex-1">
-            <Canvas uri={uri} />
+            <Preview uri={uri} isDark={isDark} title={title} />
           </div>
         </DialogContent>
       </Dialog>

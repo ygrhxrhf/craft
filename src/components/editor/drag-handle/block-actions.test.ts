@@ -9,6 +9,8 @@ import {
   setBlockEmoji,
   clearTaskReminder,
   setTaskReminder,
+  setBlockReminder,
+  clearBlockReminder,
   setTaskCancelled,
   toggleTaskCancelledAtSelection,
   taskItemTarget,
@@ -25,7 +27,7 @@ import {
 const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
-    paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null }, emoji: { default: null } } },
+    paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null }, emoji: { default: null }, remindAt: { default: null } } },
     cardBlock: { content: 'block+', group: 'block' },
     taskItem: {
       content: 'text*',
@@ -150,9 +152,11 @@ describe('blockMenuItems', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).not.toContain('toggle-open');
   });
 
-  it('offers 提醒我… only on a task item', () => {
+  it('offers 提醒我… on a task item or any anchorable block (G252)', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).not.toContain('remind');
     expect(blockMenuItems({ canDelete: true, isTask: true }).map((item) => item.id)).toContain('remind');
+    // G252: a plain paragraph/heading block can carry a reminder too.
+    expect(blockMenuItems({ canDelete: true, canRemind: true }).map((item) => item.id)).toContain('remind');
   });
 
   it('withholds 删除 from the only block in the document', () => {
@@ -386,6 +390,58 @@ describe('setTaskReminder', () => {
   });
 });
 
+// G252 —— 提醒可挂在任意区块上，不只任务块。段落／标题块有 blockId 时能挂提醒，走自己那张表。
+describe('setBlockReminder / clearBlockReminder（G252）', () => {
+  const withBlockId = (id: string | null) =>
+    EditorState.create({
+      schema,
+      doc: schema.nodes.doc.create(null, [
+        schema.nodes.paragraph.create({ blockId: id }, schema.text('一段普通正文')),
+      ]),
+    });
+
+  it('writes the resolved instant onto an anchorable block that has a blockId', () => {
+    const state = withBlockId('blk-1');
+    const now = new Date('2026-10-13T10:00:00Z');
+    const next = runState(state, (d) => setBlockReminder(state, d, 0, 'in1hour', now));
+    expect(next.doc.child(0).attrs.remindAt).toBe('2026-10-13T11:00:00.000Z');
+  });
+
+  it('refuses a block with no blockId — a reminder must be addressable to jump back to', () => {
+    const state = withBlockId(null);
+    expect(() => run(state, (d) => setBlockReminder(state, d, 0, 'in1hour', new Date()))).toThrow(
+      'the action dispatched nothing',
+    );
+  });
+
+  it('refuses the two presets that have no host instead of wiping the reminder', () => {
+    const state = withBlockId('blk-1');
+    const now = new Date('2026-10-13T10:00:00Z');
+    const set = runState(state, (d) => setBlockReminder(state, d, 0, 'in1hour', now));
+    for (const preset of ['saveForLater', 'custom'] as const) {
+      expect(() => run(set, (d) => setBlockReminder(set, d, 0, preset, now))).toThrow(
+        'the action dispatched nothing',
+      );
+      expect(set.doc.child(0).attrs.remindAt).toBe('2026-10-13T11:00:00.000Z');
+    }
+  });
+
+  it('clears a reminder that was set', () => {
+    const state = withBlockId('blk-1');
+    const set = runState(state, (d) => setBlockReminder(state, d, 0, 'in1hour', new Date()));
+    const cleared = runState(set, (d) => clearBlockReminder(set, d, 0));
+    expect(cleared.doc.child(0).attrs.remindAt).toBeNull();
+  });
+
+  it('does nothing to a task item (that shape belongs to setTaskReminder)', () => {
+    const doc = schema.nodes.doc.create(null, [schema.nodes.taskItem.create(null, schema.text('买牛奶'))]);
+    const state = EditorState.create({ schema, doc });
+    expect(() => run(state, (d) => setBlockReminder(state, d, 0, 'in20min', new Date()))).toThrow(
+      'the action dispatched nothing',
+    );
+  });
+});
+
 describe('the move entries', () => {
   it('moves the addressed block up one', () => {
     const state = stateWith(['甲', '乙', '丙']);
@@ -603,12 +659,17 @@ describe('取消＝同一枚轴上的第三档（G52）', () => {
     ]);
   });
 
-  it('菜单：任务块两枚齐全，普通块一枚都没有，已取消时标签翻成「取消标记」', () => {
+  it('菜单：任务块两枚齐全，普通块只有提醒（G252），已取消时标签翻成「取消标记」', () => {
     const plain = blockMenuItems({ canDelete: true }).map((item) => item.id);
     expect(plain).not.toContain('set-cancelled');
     expect(plain).not.toContain('remind');
 
-    const ids = blockMenuItems({ canDelete: true, isTask: true }).map((item) => item.id);
+    // G252：可寻址的普通块（段落／标题）能挂提醒，但拿不到取消这一档（那是任务行专属）。
+    const anchorable = blockMenuItems({ canDelete: true, canRemind: true }).map((item) => item.id);
+    expect(anchorable).toContain('remind');
+    expect(anchorable).not.toContain('set-cancelled');
+
+    const ids = blockMenuItems({ canDelete: true, isTask: true, canRemind: true }).map((item) => item.id);
     expect(ids).toContain('remind');
     expect(ids).toContain('set-cancelled');
 

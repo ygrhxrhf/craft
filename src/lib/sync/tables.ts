@@ -55,7 +55,10 @@ export const SYNC_TABLES: TableDef[] = [
   // document_member：contract 有 updatedAt、无 deletedAt（移除仍是服务端硬删，不走墓碑）
   { table: 'document_member', model: 'DocumentMember', cols: ['id','documentId','userId','role','addedBy','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // notification：服务端生成的提醒，tsCol=updatedAt（contract 已有该列，解决时 bump）
-  { table: 'notification', model: 'Notification', cols: ['id','userId','kind','taskId','documentId','title','remindAt','readAt','isResolved','resolvedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  { table: 'notification', model: 'Notification', cols: ['id','userId','kind','taskId','blockId','documentId','title','remindAt','readAt','isResolved','resolvedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  // G252：非任务块的提醒自己一张表（任务块的提醒随 `Task.remindAt`）。单点动作＝resolve/unresolve
+  // {isCompleted,completionDate}；离线新建一定带 documentId + blockId + remindAt ⇒ 三枚合取才 create。
+  { table: 'block_reminder', model: 'BlockReminder', cols: ['id','userId','documentId','blockId','title','remindAt','isCompleted','completionDate','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['documentId', 'blockId', 'remindAt'] },
   // whiteboard：spec 5.1 白板 payload 排除 data（内容走独立通道），tsCol=metaUpdatedAt
   // G1513：whiteboard 目前**没有**内核新建通路（`createWhiteboard` 是服务端 action，不走 applyLocal），
   // 唯一内核写＝面包屑改名 {name} ⇒ 要求 name 与 isDeleted 两枚（改名只带 name）把陈旧白板行上的

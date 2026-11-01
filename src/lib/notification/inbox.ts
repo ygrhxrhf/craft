@@ -6,6 +6,8 @@ export interface InboxRow {
   kind: string;
   remindAt: string | null;
   documentId: string | null;
+  /** G252: set on a block reminder — the block to jump back to when the row is opened. */
+  blockId: string | null;
   /** G137: null means unread. Read and resolved are separate axes. */
   readAt: string | null;
 }
@@ -34,6 +36,7 @@ export function unreadReminders(rows: Iterable<Record<string, unknown>>): InboxR
       kind: typeof row.kind === 'string' ? row.kind : 'taskReminder',
       remindAt: typeof row.remindAt === 'string' ? row.remindAt : null,
       documentId: typeof row.documentId === 'string' ? row.documentId : null,
+      blockId: typeof row.blockId === 'string' ? row.blockId : null,
       readAt: typeof row.readAt === 'string' ? row.readAt : null,
     });
   }

@@ -195,7 +195,7 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     // G1513：闸从 document 一表推广到"有真建行通路且单点动作会铸壳"的六表。
     const gated = SYNC_TABLES.filter(d => (d.createRequires?.length ?? 0) > 0);
     expect(gated.map(d => d.table)).toEqual(
-      ['document', 'folder', 'task', 'comment', 'comment_thread', 'whiteboard'],
+      ['document', 'folder', 'task', 'comment', 'comment_thread', 'block_reminder', 'whiteboard'],
     );
     // 反面：这几枚**不许**配闸——它们的单点动作（收藏）或复合键写入（打标）本就是建行语义，
     // 配了就会把正常操作判成 not_found。
@@ -274,10 +274,24 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     expect(n!.model).toBe('Notification');
     expect(n!.tsCol).toBe('updatedAt');
     expect(n!.cols).toEqual([
-      'id', 'userId', 'kind', 'taskId', 'documentId', 'title',
+      'id', 'userId', 'kind', 'taskId', 'blockId', 'documentId', 'title',
       'remindAt', 'readAt', 'isResolved', 'resolvedAt', 'createdAt', 'updatedAt',
     ]);
     expect(n!.id({ id: 'ntf-1' })).toBe('ntf-1');
+  });
+
+  it('☆ G252：注册 block_reminder 表（非任务块的提醒自己一张表）', () => {
+    const r = SYNC_TABLES.find((d) => d.table === 'block_reminder');
+    expect(r).toBeDefined();
+    expect(r!.model).toBe('BlockReminder');
+    expect(r!.tsCol).toBe('updatedAt');
+    expect(r!.cols).toEqual([
+      'id', 'userId', 'documentId', 'blockId', 'title', 'remindAt',
+      'isCompleted', 'completionDate', 'deletedAt', 'createdAt', 'updatedAt',
+    ]);
+    // 离线新建一定带齐这三枚 ⇒ 三枚合取才认定是新建，挡住 resolve 在陈旧行上铸壳。
+    expect(r!.createRequires).toEqual(['documentId', 'blockId', 'remindAt']);
+    expect(r!.id({ id: 'br-1' })).toBe('br-1');
   });
 
   it('folder cols 包含 id（spec 5.1 全列，payload data 需带 id）', () => {

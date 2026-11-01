@@ -4,7 +4,7 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import type { EditorView } from '@tiptap/pm/view';
 
 import { REMINDER_ACTIONS, reminderPillLabel } from '@/lib/task/reminder-pill';
-import { REMIND_PRESETS, isInstantPreset } from '@/lib/task/remind-presets';
+import { REMIND_PRESETS, isInstantPreset, type RemindPresetId } from '@/lib/task/remind-presets';
 import {
   RESCHEDULE_CONFIRM_LABEL,
   RESCHEDULE_REMINDER_DESC,
@@ -12,10 +12,43 @@ import {
   needsRescheduleConfirm,
 } from '@/lib/task/reminder-reschedule';
 import { confirmDialog } from '@/lib/dialog/show';
-import { clearTaskReminder, setTaskDateField, setTaskReminder, taskItemTarget } from '@/components/editor/drag-handle/block-actions';
+import {
+  anchorableBlockTarget,
+  clearBlockReminder,
+  clearTaskReminder,
+  setBlockReminder,
+  setTaskDateField,
+  setTaskReminder,
+  taskItemTarget,
+} from '@/components/editor/drag-handle/block-actions';
 import { iconSentence } from '@/lib/task/time-icons';
+import { ANCHORABLE_TYPES } from '@/lib/search/anchors';
+
+const ANCHORABLE = new Set(ANCHORABLE_TYPES);
 
 export const REMINDER_PILL_KEY = new PluginKey('reminderPill');
+
+/** G252: the reminder currently on a top-level block, whichever shape carries it. */
+function reminderAtOf(view: EditorView, index: number): unknown {
+  const task = taskItemTarget(view.state, index);
+  if (task) return task.node.attrs.remindAt;
+  return anchorableBlockTarget(view.state, index)?.node.attrs.remindAt;
+}
+
+/** G252: clear the block's reminder, dispatching to the setter that owns its shape. */
+function clearReminderAt(view: EditorView, index: number) {
+  if (taskItemTarget(view.state, index)) clearTaskReminder(view.state, view.dispatch, index);
+  else clearBlockReminder(view.state, view.dispatch, index);
+}
+
+/** G252: set a reminder preset on the block, task or not. */
+function setReminderAt(view: EditorView, index: number, preset: RemindPresetId) {
+  if (taskItemTarget(view.state, index)) {
+    setTaskReminder(view.state, view.dispatch, index, preset, new Date());
+  } else {
+    setBlockReminder(view.state, view.dispatch, index, preset, new Date());
+  }
+}
 
 /** The index of the top-level block a position falls in. */
 function blockIndexAt(view: EditorView, pos: number): number {
@@ -124,7 +157,7 @@ function openReminderMenu(anchor: HTMLElement, view: EditorView, pos: number) {
       menuItem(action.label, () => {
         if (action.id === 'reschedule') {
           closeReminderMenu();
-          const current = taskItemTarget(view.state, blockIndexAt(view, pos))?.node.attrs.remindAt;
+          const current = reminderAtOf(view, blockIndexAt(view, pos));
           if (needsRescheduleConfirm(current)) {
             void confirmDialog({
               title: RESCHEDULE_REMINDER_TITLE,
@@ -138,7 +171,7 @@ function openReminderMenu(anchor: HTMLElement, view: EditorView, pos: number) {
           openPresetMenu(anchor, view, pos);
           return;
         }
-        run(() => clearTaskReminder(view.state, view.dispatch, blockIndexAt(view, pos)));
+        run(() => clearReminderAt(view, blockIndexAt(view, pos)));
       }),
     );
   }
@@ -152,7 +185,7 @@ function openPresetMenu(anchor: HTMLElement, view: EditorView, pos: number) {
   for (const preset of REMIND_PRESETS) {
     const item = menuItem(preset.label, () => {
       const index = blockIndexAt(view, pos);
-      if (index >= 0) setTaskReminder(view.state, view.dispatch, index, preset.id, new Date());
+      if (index >= 0) setReminderAt(view, index, preset.id);
       closeReminderMenu();
     });
     // 与块菜单同一口径：没有承载面的两档灰掉，不装作能用（`setTaskReminder` 也已拒发事务）。
@@ -215,6 +248,12 @@ export const ReminderPill = Extension.create({
                   ),
                 );
               }
+            });
+            // G252：提醒 pill 现在挂在**任何带 remindAt 的块**上，不只 taskItem。管理动作按顶层块寻址
+            // （`blockIndexAt`），所以 pill 只画在两类节点上：任意深度的 `taskItem`（`taskItemTarget`
+            // 会找光标所在那一行），以及**顶层**的可寻址块（段落／标题）。嵌套段落里的提醒在正文里
+            // 存着，但本仓没有按嵌套块寻址的管理入口，不画 pill 免得点下去没反应。
+            const paintPill = (node: any, pos: number) => {
               const remindAt = node.attrs.remindAt;
               if (typeof remindAt !== 'string' || !remindAt) return;
               const at = new Date(remindAt);
@@ -239,7 +278,19 @@ export const ReminderPill = Extension.create({
                   { side: 1 },
                 ),
               );
-            });
+            };
+            const walk = (node: any, pos: number, topLevel: boolean) => {
+              const isTask = node.type?.name === 'taskItem';
+              const isTopAnchorable = topLevel && ANCHORABLE.has(node.type?.name);
+              if (isTask || isTopAnchorable) paintPill(node, pos);
+              if (!Array.isArray(node.content)) return;
+              let offset = pos + 1;
+              for (const child of node.content) {
+                walk(child, offset, false);
+                offset += child.nodeSize;
+              }
+            };
+            walk(state.doc, -1, false);
             return DecorationSet.create(state.doc, widgets);
           },
         },

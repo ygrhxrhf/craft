@@ -11,8 +11,11 @@ import { getDb } from '@/prisma/db';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import {
   REMINDER_LOOKBACK_MS,
+  blockNotificationKey,
+  dueBlockReminders,
   dueReminders,
   notificationKey,
+  type BlockReminderCandidate,
   type ReminderCandidate,
 } from './task-reminders';
 
@@ -30,6 +33,19 @@ export async function materializeTaskReminders(
   // The settings switch gates delivery: off means nothing is generated at all.
   if (!user || user.notifyReminders !== true) return 0;
 
+  const created = await materializeTaskRows(db, userId, now);
+  created.push(...(await materializeBlockRows(db, userId, now)));
+
+  // 落库后广播，其他设备经 meta → pull 秒级看到新提醒。
+  // 游标 id 取本批最后一条：pull 按 (syncTs, id) 续传，广播只是唤醒。
+  if (created.length > 0) {
+    await emitSyncEventSafe(db, userId, ['notification'], created[created.length - 1]);
+  }
+
+  return created.length;
+}
+
+async function materializeTaskRows(db: any, userId: string, now: number): Promise<string[]> {
   const rows: ReminderCandidate[] = await db.orm.public.Task
     .where((d: any) => d.userId.eq(userId))
     .where((d: any) => d.isCompleted.eq(false))
@@ -40,7 +56,7 @@ export async function materializeTaskReminders(
   // 已取消的任务同样退出投递（G52）。走 JS 侧过滤而不是再叠一条列谓词：`isCompleted.eq(false)`
   // 已经在筛"未勾选"，而取消行恰好也是未勾选，把它写进查询里＝在 SQL 里再表达一遍三档状态机。
   const candidates = rows.filter((task) => task.status !== 'cancelled');
-  if (candidates.length === 0) return 0;
+  if (candidates.length === 0) return [];
 
   const notified: Record<string, unknown>[] = await db.orm.public.Notification
     .where((d: any) => d.taskId.in(candidates.map((task) => task.id)))
@@ -76,11 +92,65 @@ export async function materializeTaskReminders(
     });
     created.push(id);
   }
-  // 落库后广播，其他设备经 meta → pull 秒级看到新提醒。
-  // 游标 id 取本批最后一条：pull 按 (syncTs, id) 续传，广播只是唤醒。
-  if (created.length > 0) {
-    await emitSyncEventSafe(db, userId, ['notification'], created[created.length - 1]);
-  }
+  return created;
+}
 
-  return pending.length;
+/**
+ * G252 —— 非任务块的提醒走同一条投递窗口。候选来自 `BlockReminder` 投影（正文里 `remindAt`
+ * 的账），落成的通知带 `blockId`，于是点开时能靠 `buildDynamicDeeplinkToBlock` 跳回那一块。
+ */
+async function materializeBlockRows(db: any, userId: string, now: number): Promise<string[]> {
+  const rows: Record<string, unknown>[] = await db.orm.public.BlockReminder
+    .where({ userId, isCompleted: false, deletedAt: null })
+    .where((d: any) => d.remindAt.gte(new Date(now - REMINDER_LOOKBACK_MS)))
+    .where((d: any) => d.remindAt.lte(new Date(now)))
+    .select('id', 'blockId', 'documentId', 'title', 'remindAt', 'isCompleted')
+    .all();
+  const candidates: BlockReminderCandidate[] = rows
+    .filter((row) => typeof row.blockId === 'string' && typeof row.documentId === 'string')
+    .map((row) => ({
+      blockId: String(row.blockId),
+      documentId: String(row.documentId),
+      title: typeof row.title === 'string' ? row.title : '',
+      remindAt: String(row.remindAt),
+      isCompleted: row.isCompleted === true,
+    }));
+  if (candidates.length === 0) return [];
+
+  const notified: Record<string, unknown>[] = await db.orm.public.Notification
+    .where((d: any) => d.blockId.in(candidates.map((block) => block.blockId)))
+    .select('blockId', 'remindAt')
+    .all();
+  const keys = notified
+    .filter((row) => row.blockId !== null && row.remindAt !== null)
+    .map((row) => blockNotificationKey(String(row.blockId), String(row.remindAt)));
+
+  const pending = dueBlockReminders(candidates, keys, now);
+
+  const documentIds = [...new Set(pending.map((row) => row.documentId))];
+  const documents: Record<string, unknown>[] = documentIds.length
+    ? await db.orm.public.Document
+        .where((d: any) => d.id.in(documentIds))
+        .select('id', 'isDeleted')
+        .all()
+    : [];
+  const trashed = new Set(documents.filter((doc) => doc.isDeleted === true).map((doc) => String(doc.id)));
+
+  const created: string[] = [];
+  for (const due of pending) {
+    if (trashed.has(due.documentId)) continue;
+    const id = crypto.randomUUID();
+    await db.orm.public.Notification.create({
+      id,
+      userId,
+      kind: 'blockReminder',
+      taskId: null,
+      blockId: due.blockId,
+      documentId: due.documentId,
+      title: due.title,
+      remindAt: due.remindAt,
+    });
+    created.push(id);
+  }
+  return created;
 }

@@ -205,7 +205,7 @@ type BatchResult = {
 // payload 的 userId 无条件覆盖为会话用户（不取客户端值，防跨用户改写/转移行）。
 const USER_ID_TABLES = new Set([
   'document', 'folder', 'tag', 'favorite', 'task',
-  'daily_notes_config', 'collection', 'comment', 'notification', 'whiteboard',
+  'daily_notes_config', 'collection', 'comment', 'notification', 'block_reminder', 'whiteboard',
 ]);
 
 // R-19：唯一键表在「按 pk 定位不到、但唯一键撞上存量（含墓碑）行」时盲 create 会抛
@@ -222,6 +222,12 @@ const UNIQUE_KEY_LOCATORS: Record<
     (key.itemId == null || key.propertyId == null)
       ? null
       : { itemId: key.itemId, propertyId: key.propertyId },
+  // G252：`(blockId, remindAt)` 是唯一键——换设备用新 uuid 推同一枚块同一时刻的提醒会撞约束，
+  // 按这对键回读存量行再跑同一条 decideLww，而不是盲 create 抛 500 把整批打成毒批次。
+  block_reminder: (key, userId) =>
+    (key.blockId == null || key.remindAt == null)
+      ? null
+      : { blockId: key.blockId, remindAt: key.remindAt, userId },
 };
 
 export async function POST(req: NextRequest) {

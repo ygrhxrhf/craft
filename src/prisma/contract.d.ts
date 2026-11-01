@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'49439db899d72c5e3038a243cb2e4710faac8f9cd343a6b9adfd8d0320f3e332'>;
+  StorageHashBase<'d05d8075f6fdb949add0b0e744e13faf695bff5c6498f728fc1cb6f5cf5abaf1'>;
 export type ExecutionHash =
-  ExecutionHashBase<'7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b'>;
+  ExecutionHashBase<'6b3dc323707598562c57c0ee7431fde167974a2b181cd238db1212d10650eb8d'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -249,6 +249,19 @@ export type FieldOutputTypes = {
       readonly sourceBlockId: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly BlockReminder: {
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly userId: CodecTypes['pg/text@1']['output'];
+      readonly documentId: CodecTypes['pg/text@1']['output'];
+      readonly blockId: CodecTypes['pg/text@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly remindAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly isCompleted: CodecTypes['pg/bool@1']['output'];
+      readonly completionDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Collection: {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -455,6 +468,7 @@ export type FieldOutputTypes = {
       readonly userId: CodecTypes['pg/text@1']['output'];
       readonly kind: CodecTypes['pg/text@1']['output'];
       readonly taskId: CodecTypes['pg/text@1']['output'] | null;
+      readonly blockId: CodecTypes['pg/text@1']['output'] | null;
       readonly documentId: CodecTypes['pg/text@1']['output'] | null;
       readonly title: CodecTypes['pg/text@1']['output'];
       readonly remindAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -551,6 +565,19 @@ export type FieldInputTypes = {
       readonly linkedDocumentId: CodecTypes['pg/text@1']['input'];
       readonly sourceBlockId: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly BlockReminder: {
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly userId: CodecTypes['pg/text@1']['input'];
+      readonly documentId: CodecTypes['pg/text@1']['input'];
+      readonly blockId: CodecTypes['pg/text@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly remindAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly isCompleted: CodecTypes['pg/bool@1']['input'];
+      readonly completionDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Collection: {
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -758,6 +785,7 @@ export type FieldInputTypes = {
       readonly userId: CodecTypes['pg/text@1']['input'];
       readonly kind: CodecTypes['pg/text@1']['input'];
       readonly taskId: CodecTypes['pg/text@1']['input'] | null;
+      readonly blockId: CodecTypes['pg/text@1']['input'] | null;
       readonly documentId: CodecTypes['pg/text@1']['input'] | null;
       readonly title: CodecTypes['pg/text@1']['input'];
       readonly remindAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -854,6 +882,19 @@ export type StorageColumnTypes = {
       readonly linkedDocumentId: CodecTypes['pg/text@1']['output'];
       readonly sourceBlockId: CodecTypes['pg/text@1']['output'] | null;
       readonly sourceDocumentId: CodecTypes['pg/text@1']['output'];
+    };
+    readonly block_reminders: {
+      readonly blockId: CodecTypes['pg/text@1']['output'];
+      readonly completionDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly documentId: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly isCompleted: CodecTypes['pg/bool@1']['output'];
+      readonly remindAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly userId: CodecTypes['pg/text@1']['output'];
     };
     readonly collection_items: {
       readonly collectionId: CodecTypes['pg/text@1']['output'];
@@ -1057,6 +1098,7 @@ export type StorageColumnTypes = {
       readonly userId: CodecTypes['pg/text@1']['output'];
     };
     readonly notifications: {
+      readonly blockId: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly documentId: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
@@ -1157,6 +1199,19 @@ export type StorageColumnInputTypes = {
       readonly linkedDocumentId: CodecTypes['pg/text@1']['input'];
       readonly sourceBlockId: CodecTypes['pg/text@1']['input'] | null;
       readonly sourceDocumentId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly block_reminders: {
+      readonly blockId: CodecTypes['pg/text@1']['input'];
+      readonly completionDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly documentId: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly isCompleted: CodecTypes['pg/bool@1']['input'];
+      readonly remindAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly userId: CodecTypes['pg/text@1']['input'];
     };
     readonly collection_items: {
       readonly collectionId: CodecTypes['pg/text@1']['input'];
@@ -1360,6 +1415,7 @@ export type StorageColumnInputTypes = {
       readonly userId: CodecTypes['pg/text@1']['input'];
     };
     readonly notifications: {
+      readonly blockId: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly documentId: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -1469,6 +1525,7 @@ export namespace Models {
     completedTaskAppearance: CodecTypes['pg/text@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    blockReminders: public_BlockReminder[];
     collections: public_Collection[];
     connections: public_Connection[];
     dailyNotesConfig: public_DailyNotesConfig | null;
@@ -1481,6 +1538,7 @@ export namespace Models {
     tasks: public_Task[];
     whiteboards: public_Whiteboard[];
     readonly [RelationKeys]?:
+      | 'blockReminders'
       | 'collections'
       | 'connections'
       | 'dailyNotesConfig'
@@ -1541,6 +1599,7 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     metaUpdatedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     backlinks: public_Backlink[];
+    blockReminders: public_BlockReminder[];
     children: public_Document[];
     collabState: public_YjsDocumentState | null;
     favorites: public_Favorite[];
@@ -1556,6 +1615,7 @@ export namespace Models {
     versions: public_DocumentVersion[];
     readonly [RelationKeys]?:
       | 'backlinks'
+      | 'blockReminders'
       | 'children'
       | 'collabState'
       | 'favorites'
@@ -1747,11 +1807,28 @@ export namespace Models {
     user: public_User;
     readonly [RelationKeys]?: 'document' | 'notifications' | 'user';
   };
+  export type public_BlockReminder = {
+    id: CodecTypes['pg/text@1']['output'];
+    userId: CodecTypes['pg/text@1']['output'];
+    documentId: CodecTypes['pg/text@1']['output'];
+    blockId: CodecTypes['pg/text@1']['output'];
+    title: CodecTypes['pg/text@1']['output'];
+    remindAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    isCompleted: CodecTypes['pg/bool@1']['output'];
+    completionDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    document: public_Document;
+    user: public_User;
+    readonly [RelationKeys]?: 'document' | 'user';
+  };
   export type public_Notification = {
     id: CodecTypes['pg/text@1']['output'];
     userId: CodecTypes['pg/text@1']['output'];
     kind: CodecTypes['pg/text@1']['output'];
     taskId: CodecTypes['pg/text@1']['output'] | null;
+    blockId: CodecTypes['pg/text@1']['output'] | null;
     documentId: CodecTypes['pg/text@1']['output'] | null;
     title: CodecTypes['pg/text@1']['output'];
     remindAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -1893,6 +1970,7 @@ export declare const models: {
     Favorite: Models.public_Favorite;
     Backlink: Models.public_Backlink;
     Task: Models.public_Task;
+    BlockReminder: Models.public_BlockReminder;
     Notification: Models.public_Notification;
     DocumentShare: Models.public_DocumentShare;
     DailyNotesConfig: Models.public_DailyNotesConfig;
@@ -1988,6 +2066,118 @@ type ContractBase = Omit<
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'backlinks';
                     readonly columns: readonly ['linkedDocumentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'documents';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly block_reminders: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly userId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly documentId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly blockId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly title: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly remindAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+                readonly isCompleted: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly completionDate: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly deletedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['blockId', 'remindAt'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'block_reminders_userId_isCompleted_idx_6840072e';
+                  readonly prefix: 'block_reminders_userId_isCompleted_idx';
+                  readonly columns: readonly ['userId', 'isCompleted'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'block_reminders_userId_idx_a489d58a';
+                  readonly prefix: 'block_reminders_userId_idx';
+                  readonly columns: readonly ['userId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'block_reminders_documentId_idx_825ef746';
+                  readonly prefix: 'block_reminders_documentId_idx';
+                  readonly columns: readonly ['documentId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'block_reminders';
+                    readonly columns: readonly ['userId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'block_reminders';
+                    readonly columns: readonly ['documentId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
@@ -3714,6 +3904,11 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                 };
+                readonly blockId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
                 readonly documentId: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -4461,6 +4656,10 @@ type ContractBase = Omit<
     readonly favorites: { readonly namespace: 'public' & NamespaceId; readonly model: 'Favorite' };
     readonly backlinks: { readonly namespace: 'public' & NamespaceId; readonly model: 'Backlink' };
     readonly tasks: { readonly namespace: 'public' & NamespaceId; readonly model: 'Task' };
+    readonly block_reminders: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'BlockReminder';
+    };
     readonly notifications: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Notification';
@@ -4560,6 +4759,109 @@ type ContractBase = Omit<
                 readonly linkedDocumentId: { readonly column: 'linkedDocumentId' };
                 readonly sourceBlockId: { readonly column: 'sourceBlockId' };
                 readonly createdAt: { readonly column: 'createdAt' };
+              };
+            };
+          };
+          readonly BlockReminder: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly documentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly blockId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly remindAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly isCompleted: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly completionDate: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly deletedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly document: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Document';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['documentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'block_reminders';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly userId: { readonly column: 'userId' };
+                readonly documentId: { readonly column: 'documentId' };
+                readonly blockId: { readonly column: 'blockId' };
+                readonly title: { readonly column: 'title' };
+                readonly remindAt: { readonly column: 'remindAt' };
+                readonly isCompleted: { readonly column: 'isCompleted' };
+                readonly completionDate: { readonly column: 'completionDate' };
+                readonly deletedAt: { readonly column: 'deletedAt' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
           };
@@ -5498,6 +5800,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['linkedDocumentId'];
                 };
               };
+              readonly blockReminders: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'BlockReminder';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['documentId'];
+                };
+              };
               readonly children: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -6273,6 +6586,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly blockId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly documentId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -6361,6 +6678,7 @@ type ContractBase = Omit<
                 readonly userId: { readonly column: 'userId' };
                 readonly kind: { readonly column: 'kind' };
                 readonly taskId: { readonly column: 'taskId' };
+                readonly blockId: { readonly column: 'blockId' };
                 readonly documentId: { readonly column: 'documentId' };
                 readonly title: { readonly column: 'title' };
                 readonly remindAt: { readonly column: 'remindAt' };
@@ -6720,6 +7038,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly blockReminders: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'BlockReminder';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
               readonly collections: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -7064,6 +7393,23 @@ type ContractBase = Omit<
             readonly column: 'id';
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'block_reminders';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'block_reminders';
+            readonly column: 'updatedAt';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
+          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
         },
         {
           readonly ref: {

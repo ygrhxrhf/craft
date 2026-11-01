@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Bell } from 'lucide-react';
 import {
   listNotifications,
@@ -32,6 +33,7 @@ function formatReminder(remindAt: string | null): string {
 }
 
 export function NotificationBell() {
+  const router = useRouter();
   // Rows stay server-generated (materialize + resolve), but they now ride the
   // sync stream: another device's reminder lands as a 'notification' store
   // change and this re-pulls the inbox instead of waiting for tab focus.
@@ -114,6 +116,16 @@ export function NotificationBell() {
     });
   };
 
+  // G252: a block reminder carries the block it hangs off, so opening the row lands on that
+  // document with the block addressed (`#b-<blockId>`), which the editor already scrolls to.
+  const openTarget = (item: InboxRow) => {
+    if (!item.documentId) return;
+    setOpen(false);
+    router.push(
+      item.blockId ? `/documents/${item.documentId}#b-${item.blockId}` : `/documents/${item.documentId}`,
+    );
+  };
+
   const markAllRead = () => {
     const stamp = new Date().toISOString();
     setItems((current) => current.map((row) => (row.readAt ? row : { ...row, readAt: stamp })));
@@ -179,7 +191,14 @@ export function NotificationBell() {
                       )}
                     />
                     <div className="min-w-0">
-                      <p className="truncate text-[13px]">{item.title}</p>
+                      <button
+                        type="button"
+                        onClick={() => openTarget(item)}
+                        disabled={!item.documentId}
+                        className="block max-w-full truncate text-left text-[13px] disabled:cursor-default"
+                      >
+                        {item.title}
+                      </button>
                       <p className="text-[11px] text-muted-foreground">{formatReminder(item.remindAt)}</p>
                     </div>
                   </div>

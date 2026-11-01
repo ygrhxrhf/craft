@@ -27,6 +27,7 @@ model User {
   tasks         Task[]
   documentMembers DocumentMember[]
   notifications Notification[]
+  blockReminders BlockReminder[]
   connections   Connection[]
 
   @@map("users")
@@ -112,6 +113,7 @@ model Document {
   members       DocumentMember[]
   collabState   YjsDocumentState?
   notifications Notification[]
+  blockReminders BlockReminder[]
 
   @@index([userId])
   @@index([folderId])
@@ -360,11 +362,41 @@ model Task {
   @@map("tasks")
 }
 
+// G252：提醒可挂在**任意区块**上，不只任务块。任务块的提醒随 `Task.remindAt` 走（列已存在），
+// 而普通段落／标题块的提醒没有任务行可依，于是自己一张表：`(documentId, blockId)` 是它在正文里的
+// 地址，`remindAt` 是唯一的时间轴，`isCompleted`/`completionDate` 就是官方那对 resolve/unresolve
+// （`reminder-entity.ts` 的 `Reminder` 形状）。正文里的 `remindAt` 属性是真源，这张表是投影。
+model BlockReminder {
+  id             String   @id @default(uuid())
+  userId         String
+  documentId     String
+  blockId        String
+  title          String
+  remindAt       TimestamptzString
+  isCompleted    Boolean  @default(false)
+  completionDate TimestamptzString?
+  // 与 `Task` 同一套软删：正文里那一行不再带 remindAt 时，这里打墓碑而不是硬删，
+  // 让别的设备经同一条游标看到"这枚提醒没了"。
+  deletedAt      TimestamptzString?
+  createdAt      TimestamptzString @default(now())
+  updatedAt      temporal.updatedAtString()
+
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([blockId, remindAt])
+  @@index([userId, isCompleted])
+  @@map("block_reminders")
+}
+
 model Notification {
   id          String   @id @default(uuid())
   userId      String
   kind        String   @default("taskReminder") // "taskReminder"
   taskId      String?
+  // G252: a reminder can hang off **any block**, not just a task item — so a non-task reminder
+  // records the block id (and the document it lives in) instead of a task row.
+  blockId     String?
   documentId  String?
   title       String
   remindAt    TimestamptzString?

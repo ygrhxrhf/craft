@@ -18,7 +18,7 @@ import { dropTargetFor, visibleRows } from './drop-band';
 import { resolveDropAddress } from '@/lib/editor/drop-address';
 import { indentRunOf } from '@/lib/editor/indent-run';
 import { topLevelStart } from '@/lib/editor/block-move';
-import { applyBlockAction, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
+import { applyBlockAction, anchorableBlockTarget, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setBlockReminder, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
 import { isInstantPreset } from '@/lib/task/remind-presets';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
 import { DIVIDER_STYLE_CHOICES, type DividerStyle } from '@/lib/editor/divider-styles';
@@ -127,6 +127,17 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     [editor, indexOfBlock],
   );
 
+  // G252：非任务块（段落／标题）也能挂提醒。`canRemind` 决定「提醒我…」这一枚出不出——
+  // 任务块与可寻址块都算，其余块（分隔线、图片等）不给。
+  const canRemindBlock = useCallback(
+    (blockEl: HTMLElement) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return false;
+      return taskItemTarget(editor.state, index) !== null || anchorableBlockTarget(editor.state, index) !== null;
+    },
+    [editor, indexOfBlock],
+  );
+
   const isCalloutBlock = useCallback(
     (blockEl: HTMLElement) => {
       const index = indexOfBlock(blockEl);
@@ -184,7 +195,13 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     (blockEl: HTMLElement, preset: RemindPresetId) => {
       const index = indexOfBlock(blockEl);
       if (index < 0) return;
-      setTaskReminder(editor.state, editor.view.dispatch, index, preset, new Date());
+      // G252：任务块走 `setTaskReminder`（提醒随任务行投影走），其余可寻址块走 `setBlockReminder`
+      // （提醒自己一张表）。两路写的是同一枚 `remindAt` 属性，读方不同。
+      if (taskItemTarget(editor.state, index)) {
+        setTaskReminder(editor.state, editor.view.dispatch, index, preset, new Date());
+      } else {
+        setBlockReminder(editor.state, editor.view.dispatch, index, preset, new Date());
+      }
     },
     [editor, indexOfBlock],
   );
@@ -533,6 +550,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                 canDelete: editor.state.doc.childCount > 1,
                 isTask: taskTargetOf(handle.blockEl) !== null,
                 taskCancelled: taskTargetOf(handle.blockEl)?.node.attrs.cancelled === true,
+                canRemind: canRemindBlock(handle.blockEl),
                 ...toggleState(handle.blockEl),
                 isDivider: isDividerBlock(handle.blockEl),
                 isCallout: isCalloutBlock(handle.blockEl),

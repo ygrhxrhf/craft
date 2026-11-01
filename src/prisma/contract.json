@@ -8,6 +8,10 @@
       "model": "Backlink",
       "namespace": "public"
     },
+    "block_reminders": {
+      "model": "BlockReminder",
+      "namespace": "public"
+    },
     "collection_items": {
       "model": "CollectionItem",
       "namespace": "public"
@@ -197,6 +201,160 @@
               },
               "namespaceId": "public",
               "table": "backlinks"
+            }
+          },
+          "BlockReminder": {
+            "fields": {
+              "blockId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "completionDate": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "deletedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "documentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "isCompleted": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "remindAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "document": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "documentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Document",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "blockId": {
+                  "column": "blockId"
+                },
+                "completionDate": {
+                  "column": "completionDate"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "deletedAt": {
+                  "column": "deletedAt"
+                },
+                "documentId": {
+                  "column": "documentId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isCompleted": {
+                  "column": "isCompleted"
+                },
+                "remindAt": {
+                  "column": "remindAt"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "block_reminders"
             }
           },
           "Collection": {
@@ -1616,6 +1774,21 @@
                   "namespace": "public"
                 }
               },
+              "blockReminders": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "documentId"
+                  ]
+                },
+                "to": {
+                  "model": "BlockReminder",
+                  "namespace": "public"
+                }
+              },
               "children": {
                 "cardinality": "1:N",
                 "on": {
@@ -2815,6 +2988,13 @@
           },
           "Notification": {
             "fields": {
+              "blockId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -2952,6 +3132,9 @@
             },
             "storage": {
               "fields": {
+                "blockId": {
+                  "column": "blockId"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -3519,6 +3702,21 @@
               }
             },
             "relations": {
+              "blockReminders": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "BlockReminder",
+                  "namespace": "public"
+                }
+              },
               "collections": {
                 "cardinality": "1:N",
                 "on": {
@@ -4112,6 +4310,149 @@
                   "columns": [
                     "sourceDocumentId",
                     "linkedDocumentId"
+                  ]
+                }
+              ]
+            },
+            "block_reminders": {
+              "columns": {
+                "blockId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "completionDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "deletedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "documentId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "isCompleted": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "remindAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "block_reminders"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "documentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "block_reminders"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "documents"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "documentId"
+                  ],
+                  "name": "block_reminders_documentId_idx_825ef746",
+                  "prefix": "block_reminders_documentId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "block_reminders_userId_idx_a489d58a",
+                  "prefix": "block_reminders_userId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId",
+                    "isCompleted"
+                  ],
+                  "name": "block_reminders_userId_isCompleted_idx_6840072e",
+                  "prefix": "block_reminders_userId_isCompleted_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "blockId",
+                    "remindAt"
                   ]
                 }
               ]
@@ -6152,6 +6493,11 @@
             },
             "notifications": {
               "columns": {
+                "blockId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "default": {
@@ -7040,10 +7386,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "49439db899d72c5e3038a243cb2e4710faac8f9cd343a6b9adfd8d0320f3e332"
+    "storageHash": "d05d8075f6fdb949add0b0e744e13faf695bff5c6498f728fc1cb6f5cf5abaf1"
   },
   "execution": {
-    "executionHash": "7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b",
+    "executionHash": "6b3dc323707598562c57c0ee7431fde167974a2b181cd238db1212d10650eb8d",
     "mutations": {
       "defaults": [
         {
@@ -7055,6 +7401,32 @@
             "column": "id",
             "namespace": "public",
             "table": "backlinks"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "block_reminders"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "block_reminders"
           }
         },
         {

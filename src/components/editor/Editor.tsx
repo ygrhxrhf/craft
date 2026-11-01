@@ -25,6 +25,7 @@ import { updateDocument } from '@/actions/document/update';
 import { uploadFile } from '@/lib/upload-client';
 import { syncBacklinks } from '@/actions/document/backlinks';
 import { syncDocumentTasks } from '@/actions/task/task';
+import { syncDocumentBlockReminders } from '@/actions/notification/block-reminders';
 import { pmNodeText } from '@/lib/search/extract';
 import { ALIGNABLE_TYPES } from '@/lib/editor/format-presence';
 import { useCompletedTaskAppearance } from '@/components/task/use-completed-appearance';
@@ -59,6 +60,7 @@ import { InlineMath } from './extensions/math-inline';
 import { Mention } from './extensions/mention';
 import { BlockLink } from './extensions/block-link';
 import { BlockId } from './extensions/block-id';
+import { BlockReminderAttr } from './extensions/block-reminder';
 import { TaskItemId } from './extensions/task-id';
 import { BlockEmoji } from './extensions/block-emoji';
 import { MirrorBlock } from './extensions/mirror-block';
@@ -139,6 +141,28 @@ function collectTaskItems(content: unknown): { taskId: string; title: string; is
 
 export type SaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'error';
 
+/**
+ * G252 —— 非任务块的提醒投影输入。与 `collectTaskItems` 分开走：任务块的 `remindAt` 随任务行投影
+ * （`Task.remindAt`），普通段落／标题块没有任务行可依，得靠自己的 `(documentId, blockId)` 地址。
+ * 判据＝块上有 `blockId`（深链要它寻址）与 `remindAt`（时间），缺任一枚就跳过。
+ */
+function collectBlockReminders(content: unknown): { blockId: string; title: string; remindAt: string }[] {
+  const reminders: { blockId: string; title: string; remindAt: string }[] = [];
+  const walk = (node: any) => {
+    if (!node || typeof node !== 'object') return;
+    const attrs = node.attrs ?? {};
+    if (
+      node.type !== 'taskItem' &&
+      typeof attrs.blockId === 'string' && attrs.blockId &&
+      typeof attrs.remindAt === 'string' && attrs.remindAt
+    ) {
+      reminders.push({ blockId: attrs.blockId, title: pmNodeText(node).trim(), remindAt: attrs.remindAt });
+    }
+    if (Array.isArray(node.content)) node.content.forEach(walk);
+  };
+  if (content && typeof content === 'object' && 'type' in (content as object)) walk(content);
+  return reminders;
+}
 interface EditorProps {
   documentId: string;
   initialContent?: any;
@@ -209,6 +233,7 @@ export function Editor({
     const results = await Promise.allSettled([
       syncBacklinks(documentId, collectLinkedDocIds(content)),
       syncDocumentTasks(documentId, collectTaskItems(content)),
+      syncDocumentBlockReminders(documentId, collectBlockReminders(content)),
     ]);
     const failed = results.filter((one): one is PromiseRejectedResult => one.status === 'rejected');
     for (const failure of failed) console.error('[save] 派生表同步失败', failure.reason);
@@ -532,6 +557,7 @@ export function Editor({
       Mention,
       BlockLink,
       BlockId,
+      BlockReminderAttr,
       TaskItemId,
       BlockEmoji,
       MirrorBlock.configure({ hostDocumentId: documentId }),

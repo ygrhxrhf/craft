@@ -2,6 +2,7 @@ import type { EditorState, Transaction } from '@tiptap/pm/state';
 import type { Node } from '@tiptap/pm/model';
 import { TextSelection } from '@tiptap/pm/state';
 import { BLOCK_HASH_PREFIX } from '@/lib/editor/block-anchor';
+import { ANCHORABLE_TYPES } from '@/lib/search/anchors';
 import { REMIND_PRESETS, isInstantPreset, remindInstantFor, type RemindPresetId } from '@/lib/task/remind-presets';
 import { applyCancelled } from '@/lib/editor/task-status';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
@@ -58,6 +59,7 @@ export function blockMenuItems({
   canDelete,
   isTask,
   taskCancelled,
+  canRemind,
   isToggle,
   toggleOpen,
   isDivider,
@@ -66,6 +68,8 @@ export function blockMenuItems({
   canDelete: boolean;
   isTask?: boolean;
   taskCancelled?: boolean;
+  /** G252: any anchorable block can carry a reminder, not only a task item. */
+  canRemind?: boolean;
   isToggle?: boolean;
   toggleOpen?: boolean;
   isDivider?: boolean;
@@ -84,10 +88,10 @@ export function blockMenuItems({
     { id: 'add-comment', label: '添加评论' },
     { id: 'add-emoji', label: '添加表情' },
   ];
+  // G252：提醒在**任意可寻址块**上都能挂（不只是任务块），所以这一枚由 `canRemind` 决定，
+  // 不再绑在 `isTask` 上；任务块本身一定可挂，`isTask` 也算数。`set-cancelled` 才是任务块专属。
+  if (canRemind || isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
   if (isTask) {
-    // 取消是同一枚轴上的第三档（`SET_CANCELLED`），所以它与「提醒我…」一起只出现在任务块上；
-    // 已在取消档时这一枚就是反向的「取消标记」，与「展开／收起」同一族的两用条目。
-    items.splice(2, 0, { id: 'remind', label: '提醒我…' });
     items.splice(3, 0, {
       id: 'set-cancelled',
       label: taskCancelled ? '取消标记' : '将任务标记为已取消',
@@ -386,6 +390,54 @@ export function setTaskReminder(
       remindAt: instant.toISOString(),
     }),
   );
+}
+
+/**
+ * G252 —— 非任务块的提醒目标：可寻址块（`paragraph`／`heading`）的顶层节点。任务块走
+ * `taskItemTarget`，两者互斥（`taskItem` 不在 `ANCHORABLE_TYPES` 里）。
+ * 判据是块上已有 `blockId`——深链要它寻址，没有 id 的块不给挂提醒（免得落一枚指不回去的提醒）。
+ */
+export function anchorableBlockTarget(state: EditorState, index: number): { pos: number; node: Node } | null {
+  if (index < 0 || index >= state.doc.childCount) return null;
+  const child = state.doc.child(index);
+  if (!ANCHORABLE_TYPES.includes(child.type.name)) return null;
+  if (typeof child.attrs.blockId !== 'string' || !child.attrs.blockId) return null;
+  return { pos: blockBounds(state, index).before, node: child };
+}
+
+/**
+ * G252 —— 在非任务块上设提醒。与 `setTaskReminder` 同一套七档预设、同一枚 `remindAt` 属性，
+ * 只是作用在可寻址块而不是任务行上。同样：没有承载面的两档不发事务（不静默抹掉已有提醒）。
+ */
+export function setBlockReminder(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  preset: RemindPresetId,
+  now: Date,
+) {
+  const target = anchorableBlockTarget(state, index);
+  if (!target) return;
+  if (!isInstantPreset(preset)) return;
+  const instant = remindInstantFor(preset, now);
+  if (!instant) return;
+  dispatch(
+    state.tr.setNodeMarkup(target.pos, undefined, {
+      ...target.node.attrs,
+      remindAt: instant.toISOString(),
+    }),
+  );
+}
+
+/** G252 —— 清掉非任务块的提醒（与 `clearTaskReminder` 对称）。 */
+export function clearBlockReminder(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+) {
+  const target = anchorableBlockTarget(state, index);
+  if (!target || !target.node.attrs.remindAt) return;
+  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, remindAt: null }));
 }
 
 function locationOrigin(): string {

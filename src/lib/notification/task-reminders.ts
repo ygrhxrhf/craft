@@ -29,6 +29,60 @@ export interface DueReminder {
 }
 
 /**
+ * G252 —— 非任务块提醒的候选形状。与 `ReminderCandidate` 同构，但键是 `(documentId, blockId)`
+ * 而不是 taskId：任务行有 pk，普通块只有正文里的地址。
+ */
+export interface BlockReminderCandidate {
+  blockId: string;
+  documentId: string;
+  title: string;
+  remindAt: string;
+  isCompleted: boolean;
+}
+
+export interface DueBlockReminder {
+  blockId: string;
+  documentId: string;
+  title: string;
+  remindAt: string;
+}
+
+/** 块提醒的实例身份：同一枚块改期＝新提醒。 */
+export function blockNotificationKey(blockId: string, remindAt: string): string {
+  const at = reminderInstant(remindAt);
+  return `${blockId}|${Number.isNaN(at) ? remindAt : at}`;
+}
+
+/**
+ * 与 `dueReminders` 同一套窗口与去重判据，只是键换成块地址、完成态换成 `isCompleted`
+ * （非任务块没有"取消"这一档，`resolve` 就是它的终态）。
+ */
+export function dueBlockReminders(
+  candidates: readonly BlockReminderCandidate[],
+  notifiedKeys: Iterable<string>,
+  now: number,
+): DueBlockReminder[] {
+  const notified = new Set(notifiedKeys);
+  const due: DueBlockReminder[] = [];
+
+  for (const block of candidates) {
+    if (block.isCompleted || !block.remindAt) continue;
+    const at = reminderInstant(block.remindAt);
+    if (Number.isNaN(at) || at > now || now - at > REMINDER_LOOKBACK_MS) continue;
+    if (notified.has(blockNotificationKey(block.blockId, block.remindAt))) continue;
+
+    due.push({
+      blockId: block.blockId,
+      documentId: block.documentId,
+      title: block.title,
+      remindAt: block.remindAt,
+    });
+  }
+
+  return due;
+}
+
+/**
  * Postgres returns a `timestamptz` as "2026-10-02 18:06:49.485+08" rather than
  * the ISO string that was written, so `Date.parse` gets a second chance with the
  * space swapped for a `T`. Kept local rather than imported: the only other

@@ -14,7 +14,7 @@ export async function listNotifications(): Promise<InboxRow[]> {
   const rows: Record<string, unknown>[] = await db.orm.public.Notification
     .where((d: any) => d.userId.eq(userId))
     .where((d: any) => d.isResolved.eq(false))
-    .select('id', 'title', 'kind', 'remindAt', 'documentId', 'readAt')
+    .select('id', 'title', 'kind', 'remindAt', 'documentId', 'blockId', 'readAt')
     .all();
 
   // Sorting stays in `unreadReminders`, which knows both time spellings the

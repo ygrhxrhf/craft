@@ -1,0 +1,284 @@
+[
+  {
+    "id": "table.block_reminders",
+    "label": "Create table \"block_reminders\"",
+    "summary": "Creates table \"block_reminders\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "block_reminders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"block_reminders\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"block_reminders\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"block_reminders\"",
+        "sql": "CREATE TABLE \"public\".\"block_reminders\" (\n  \"blockId\" text NOT NULL,\n  \"completionDate\" timestamptz,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"documentId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"isCompleted\" bool DEFAULT false NOT NULL,\n  \"remindAt\" timestamptz NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"block_reminders\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"block_reminders\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.block_reminders.block_reminders_blockId_remindAt_key",
+    "label": "Add unique constraint on \"block_reminders\" (blockId, remindAt)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "block_reminders_blockId_remindAt_key",
+        "table": "block_reminders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"block_reminders_blockId_remindAt_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "block_reminders_blockId_remindAt_key",
+          "public",
+          "\"public\".\"block_reminders\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"block_reminders_blockId_remindAt_key\"",
+        "sql": "ALTER TABLE \"public\".\"block_reminders\" ADD CONSTRAINT \"block_reminders_blockId_remindAt_key\" UNIQUE (\"blockId\", \"remindAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"block_reminders_blockId_remindAt_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "block_reminders_blockId_remindAt_key",
+          "public",
+          "\"public\".\"block_reminders\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.block_reminders.block_reminders_documentId_idx_825ef746",
+    "label": "Create index \"block_reminders_documentId_idx_825ef746\" on \"block_reminders\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "block_reminders_documentId_idx_825ef746",
+        "table": "block_reminders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"block_reminders_documentId_idx_825ef746\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"block_reminders_documentId_idx_825ef746\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"block_reminders_documentId_idx_825ef746\"",
+        "sql": "CREATE INDEX \"block_reminders_documentId_idx_825ef746\" ON \"public\".\"block_reminders\" (\"documentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"block_reminders_documentId_idx_825ef746\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"block_reminders_documentId_idx_825ef746\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.block_reminders.block_reminders_userId_idx_a489d58a",
+    "label": "Create index \"block_reminders_userId_idx_a489d58a\" on \"block_reminders\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "block_reminders_userId_idx_a489d58a",
+        "table": "block_reminders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"block_reminders_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"block_reminders_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"block_reminders_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"block_reminders_userId_idx_a489d58a\" ON \"public\".\"block_reminders\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"block_reminders_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"block_reminders_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.block_reminders.block_reminders_userId_isCompleted_idx_6840072e",
+    "label": "Create index \"block_reminders_userId_isCompleted_idx_6840072e\" on \"block_reminders\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "block_reminders_userId_isCompleted_idx_6840072e",
+        "table": "block_reminders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"block_reminders_userId_isCompleted_idx_6840072e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"block_reminders_userId_isCompleted_idx_6840072e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"block_reminders_userId_isCompleted_idx_6840072e\"",
+        "sql": "CREATE INDEX \"block_reminders_userId_isCompleted_idx_6840072e\" ON \"public\".\"block_reminders\" (\"userId\", \"isCompleted\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"block_reminders_userId_isCompleted_idx_6840072e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"block_reminders_userId_isCompleted_idx_6840072e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.block_reminders.block_reminders_userId_fkey",
+    "label": "Add foreign key \"block_reminders_userId_fkey\" on \"block_reminders\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "block_reminders_userId_fkey",
+        "table": "block_reminders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"block_reminders_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "block_reminders_userId_fkey",
+          "public",
+          "\"public\".\"block_reminders\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"block_reminders_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"block_reminders\"\nADD CONSTRAINT \"block_reminders_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"block_reminders_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "block_reminders_userId_fkey",
+          "public",
+          "\"public\".\"block_reminders\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.block_reminders.block_reminders_documentId_fkey",
+    "label": "Add foreign key \"block_reminders_documentId_fkey\" on \"block_reminders\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "block_reminders_documentId_fkey",
+        "table": "block_reminders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"block_reminders_documentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "block_reminders_documentId_fkey",
+          "public",
+          "\"public\".\"block_reminders\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"block_reminders_documentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"block_reminders\"\nADD CONSTRAINT \"block_reminders_documentId_fkey\"\nFOREIGN KEY (\"documentId\")\nREFERENCES \"public\".\"documents\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"block_reminders_documentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "block_reminders_documentId_fkey",
+          "public",
+          "\"public\".\"block_reminders\""
+        ]
+      }
+    ]
+  }
+]

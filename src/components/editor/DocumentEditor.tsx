@@ -350,6 +350,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               ['--editor-measure' as string]: measure,
               maxWidth: 'var(--editor-max-w, var(--editor-measure))',
               backgroundColor: themeColor,
+              color: pageStyle.textColor,
               fontFamily: getFontStack(pageStyle.fontPack),
             }}
             /**

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { ThemeProvider as NextThemesProvider, useTheme } from 'next-themes';
 import { applyAccent, readAccent } from '@/lib/accent';
 import { readUrlOverride, resolveScheme, storedThemeChoice, type ResolvedScheme } from '@/lib/theme-resolution';
+import { applyThemeAxes, themeAxes } from '@/lib/theme/theme-axes';
 import { readLocalRecords } from '@/components/sync/local-records';
 import { getSyncManager } from '@/lib/sync-core';
 import { useSession } from 'next-auth/react';
@@ -12,6 +13,27 @@ function AccentRestorer() {
   useEffect(() => {
     const stored = readAccent();
     if (stored) applyAccent(stored);
+  }, []);
+  return null;
+}
+
+/**
+ * G1384: the two input-media axes the official effect writes next to the scheme. They are derived
+ * from media queries and kept in sync while the window is open, so CSS can key on
+ * `[data-pointer]` / `[data-scrollbar]` instead of guessing.
+ */
+function ThemeAxesWriter() {
+  useEffect(() => {
+    const coarse = window.matchMedia('(pointer: coarse)');
+    const persistentScrollbar = window.matchMedia('(scrollbar-gutter: stable)');
+    const sync = () =>
+      applyThemeAxes(
+        document.documentElement,
+        themeAxes({ coarsePointer: coarse.matches, persistentScrollbar: persistentScrollbar.matches }),
+      );
+    sync();
+    coarse.addEventListener('change', sync);
+    return () => coarse.removeEventListener('change', sync);
   }, []);
   return null;
 }
@@ -94,6 +116,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       forcedTheme={forced}
     >
       <AccentRestorer />
+      <ThemeAxesWriter />
       <StoredThemeRestorer />
       {children}
     </NextThemesProvider>

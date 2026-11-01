@@ -58,3 +58,13 @@ describe('font ids', () => {
     expect(normalizePageStyle({ fontPack: 'inter' }).fontPack).toBe('system');
   });
 });
+
+// G1436: the page text colour is part of the page style and validated on read.
+describe('the page text colour', () => {
+  it('accepts a six-digit hex and drops anything else', () => {
+    expect(normalizePageStyle({ textColor: '#2563eb' }).textColor).toBe('#2563eb');
+    expect(normalizePageStyle({ textColor: 'red' }).textColor).toBeUndefined();
+    expect(normalizePageStyle({ textColor: '#25f' }).textColor).toBeUndefined();
+    expect(normalizePageStyle({}).textColor).toBeUndefined();
+  });
+});

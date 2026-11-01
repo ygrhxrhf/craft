@@ -51,7 +51,7 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
     setBusy(true);
     try {
       const config =
-        type === 'formula' ? { expression } : type === 'relation' ? { collectionId: targetId || null } : undefined;
+        type === 'formula' ? { expression } : type === 'relation' ? { objectListId: targetId || null } : undefined;
       // 新属性 → 本地 id + applyLocal（order = 本地镜像内该集合存活属性数，与
       // 服务端 addProperty 的算法一致）；flushNow 后 refresh 才能读到新行
       const rows = await readLocalRecords('collection_property');

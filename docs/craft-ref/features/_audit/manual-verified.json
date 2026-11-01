@@ -1077,11 +1077,12 @@
       ]
     },
     "G470": {
-      "status": "partial",
-      "note": "relation 有目标集合配置且空值落 null，但值是纯 id 数组；缺 {type,objectListId,items} 负载与 theme。",
+      "status": "aligned",
+      "note": "relation 值改为官方判别对象 {type,objectListId,items}，目标集合取自 config.objectListId（兼容旧 collectionId 与裸数组）；空选清为 null；筛选读侧兼容两种形状。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:579",
-        "src/components/collection/AddPropertyMenu.tsx:62"
+        "src/lib/collection/relation-value.ts:22",
+        "src/components/collection/PropertyCell.tsx:578",
+        "src/lib/collection/filter-operators.ts:186"
       ]
     },
     "G476": {
@@ -1857,11 +1858,11 @@
       ]
     },
     "G1384": {
-      "status": "partial",
-      "note": "主题挂 class 而非 data-theme；有 accent 与禁过渡，但无 pointer/scrollbar 属性轴。",
+      "status": "aligned",
+      "note": "补齐运行期写入的两条输入轴：data-pointer / data-scrollbar（关闭时删属性），随媒体查询同步；颜色仍由 next-themes class + accent 承担，禁过渡在 provider 上。",
       "evidence": [
-        "src/components/theme/ThemeProvider.tsx:90",
-        "src/lib/accent.ts:29"
+        "src/lib/theme/theme-axes.ts:24",
+        "src/components/theme/ThemeProvider.tsx:20"
       ]
     },
     "G1385": {
@@ -1887,11 +1888,11 @@
       ]
     },
     "G1436": {
-      "status": "partial",
-      "note": "有颜色（背景/文档颜色）与封面两组；缺 Original、所有样式、文本颜色。",
+      "status": "aligned",
+      "note": "样式页签补 Original 重置与「文本颜色」一组（写入 pageStyle.textColor 并真正应用到页面容器）；封面组已在。",
       "evidence": [
-        "src/components/editor/tabs/StyleTab.tsx:66",
-        "src/components/editor/tabs/StyleTab.tsx:117"
+        "src/components/editor/tabs/StyleTab.tsx:64",
+        "src/components/editor/DocumentEditor.tsx:353"
       ]
     },
     "G1437": {

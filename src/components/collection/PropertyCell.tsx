@@ -1,5 +1,6 @@
 'use client';
 
+import { buildRelationValue, relationItems, relationTargetId } from '@/lib/collection/relation-value';
 import { normalizeDateValue } from '@/lib/collection/date-value';
 import { useState, useRef, useEffect } from 'react';
 import { Check, X, ChevronDown, Calendar as CalendarIcon, Link2, Paperclip } from 'lucide-react';
@@ -578,8 +579,9 @@ function RelationCell({
   value: any;
   onChange: (v: any) => void;
 }) {
-  const targetId = readConfig(property.config)?.collectionId ?? null;
-  const selected: string[] = Array.isArray(value) ? value : [];
+  // G470: the target lives in `config.objectListId` (legacy `collectionId` still read).
+  const targetId = relationTargetId(property.config);
+  const selected: string[] = relationItems(value);
   const [options, setOptions] = useState<{ id: string; label: string }[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -610,7 +612,8 @@ function RelationCell({
 
   const toggle = (id: string) => {
     const next = selected.includes(id) ? selected.filter((entry) => entry !== id) : [...selected, id];
-    onChange(next.length ? next : null);
+    // G470: store the official discriminated shape; an emptied cell clears to null.
+    onChange(buildRelationValue(targetId, next));
   };
 
   return (

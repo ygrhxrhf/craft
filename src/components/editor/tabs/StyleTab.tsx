@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { Editor } from '@tiptap/react';
 import { cn } from 'cn';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, RotateCcw } from 'lucide-react';
 import {
   DEFAULT_SPELLING_LANG,
   SPELLING_LANGUAGES,
@@ -53,6 +53,10 @@ export function StyleTab({
   onUpdate,
 }: StyleTabProps) {
   const [coverUrlInput, setCoverUrlInput] = useState('');
+  // G1436: the text-colour row.
+  const textColor = pageStyle.textColor ?? null;
+  const setTextColor = (next: string | null) => onUpdate({ pageStylePatch: { textColor: next ?? undefined } });
+  const textColors = ['#111827', '#dc2626', '#ea580c', '#16a34a', '#2563eb', '#7c3aed'];
   const [coverInputOpen, setCoverInputOpen] = useState(false);
 
   const setPageStyle = (patch: Partial<PageStyle>) => {
@@ -61,6 +65,18 @@ export function StyleTab({
 
   return (
     <div className="space-y-5 p-3">
+      {/* G1436: 「Original」 — one click back to the untouched page style. */}
+      <section>
+        <button
+          type="button"
+          className="flex w-full items-center justify-between rounded-md border border-foreground/10 px-2 py-1.5 text-ui text-foreground/70 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground"
+          onClick={() => onUpdate({ pageStylePatch: { fontPack: 'system', theme: 'default', washi: 'none' } })}
+        >
+          <span>Original</span>
+          <RotateCcw className="size-3.5" />
+        </button>
+      </section>
+
       {/* Color section */}
       <section>
         <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">颜色</h4>
@@ -88,6 +104,25 @@ export function StyleTab({
                 onClick={() => onUpdate({ coverImage: color, coverType: 'color' })}
               />
             ))}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-ui">文本颜色</span>
+            <div className="flex items-center gap-1">
+              {textColors.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  aria-label={`文本颜色 ${color}`}
+                  className={cn(
+                    'size-5 rounded-md border border-foreground/10 transition-transform hover:scale-110',
+                    textColor === color && 'ring-2 ring-craft-accent'
+                  )}
+                  style={{ backgroundColor: color }}
+                  onClick={() => setTextColor(textColor === color ? null : color)}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center justify-between">

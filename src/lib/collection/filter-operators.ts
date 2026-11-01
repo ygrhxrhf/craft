@@ -185,6 +185,11 @@ function toOperandArray(operand: unknown): string[] | null {
 
 function toValueArray(value: unknown): string[] {
   if (Array.isArray(value)) return value.map(String);
+  // G470: a relation cell stores `{type, objectListId, items}`; filter on the item ids.
+  if (value && typeof value === 'object') {
+    const items = (value as { items?: unknown }).items;
+    if (Array.isArray(items)) return items.map(String);
+  }
   if (value == null) return [];
   return [String(value)];
 }

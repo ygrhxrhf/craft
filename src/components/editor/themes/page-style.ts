@@ -8,6 +8,8 @@ export interface PageStyle {
   spelling?: boolean;
   /** The language the spell checker uses. Only meaningful while `spelling` is on. */
   spellingLang?: string;
+  /** G1436: the page text colour; absent means the theme default. */
+  textColor?: string;
 }
 
 /**
@@ -104,6 +106,7 @@ export function normalizePageStyle(value: unknown): PageStyle {
     showTitle: typeof v.showTitle === 'boolean' ? v.showTitle : undefined,
     spelling: typeof v.spelling === 'boolean' ? v.spelling : undefined,
     spellingLang: typeof v.spellingLang === 'string' ? v.spellingLang : undefined,
+    textColor: typeof v.textColor === 'string' && /^#[0-9a-f]{6}$/i.test(v.textColor) ? v.textColor : undefined,
   };
 }
 

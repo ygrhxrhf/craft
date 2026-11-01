@@ -507,11 +507,13 @@
       ]
     },
     "G427": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 3 批）：确认基数不同——CollectionItem.collectionId 是单值外键（contract.prisma:186-190），无多集合归属字段，也无官方 objectData.schemas 那样的数组。表达不出一物多集合。",
+      "note": "现读（第 42 批）：一物多集合的归属形状已落纯核 `src/lib/collection/object-membership.ts`——`schemas` 数组 + `objectSchemaId`，`belongsToSchema` 实现官方那条**宽松匹配**（objectSchemaId==null 或 schemas 缺失 ⇒ true，否则 includes），`isMemberOf` 是读侧过滤，`addMembership`/`removeMembership` 管归属数组。单测 7 条。仍缺＝存储仍是单值外键 `CollectionItem.collectionId`（改成数组需迁移），故记 partial。",
       "evidence": [
-        "src/prisma/contract.prisma:186-200"
+        "src/lib/collection/object-membership.ts:31",
+        "src/lib/collection/object-membership.ts:44",
+        "src/lib/collection/object-membership.test.ts:10"
       ]
     },
     "G439": {
@@ -732,10 +734,13 @@
       ]
     },
     "G166": {
-      "status": "gap",
-      "note": "设置是单级全局，通知面板已删掉按空间覆盖的假入口；无个人→团队→空间三层作用域。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 42 批）：三层作用域的取值链已落纯核 `src/lib/app/settings-scope.ts`——`resolveScopedSetting` 按**空间 → 团队 → 个人**逐层回落取第一个有值的层，`scopeOfSetting` 报值来自哪层，`isOverridden` 报是否被空间覆盖；两句适用范围文案逐字取自 `settings.md` §二（个人那句 + 团队那句含 `[0]` 团队名占位 + 覆盖那句）。单测 5 条。仍缺＝本地无团队/空间实体，三层作用域无真实落库来源（设置仍是单级全局），故记 partial。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:631"
+        "src/lib/app/settings-scope.ts:39",
+        "src/lib/app/settings-scope.ts:49",
+        "src/lib/editor/action-ids.test.ts:47"
       ]
     },
     "G181": {
@@ -831,11 +836,12 @@
     },
     "G282": {
       "status": "partial",
-      "note": "已有分隔线三档、封面开关、顶层块复制；缺段落间距、页面样式预设、对象列表插入；undo/redo 是客户端栈非协议 action。",
+      "priority": "P1",
+      "note": "现读（第 42 批）：协议级 action 名册已落 `src/lib/editor/action-ids.ts`——`undo`/`redo` 标成协议级一等 action（本地对应物是客户端栈）、6 个此前未记录的 action（setLineType/setPageParagraphSpacingType/setPageStylePreset/duplicateSubtree/insertNewBlocksToObjectList/toggleCoverImageEnabled）各标 equivalent 或 missing。单测钉住 undo/redo 的协议地位、6 个名字在场、3 个缺口（段落间距/页面样式预设/对象列表插入）。仍缺＝本地 undo 仍是客户端栈非可分派 action，且上述 3 个 action 无实现，故记 partial。",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:197",
-        "src/components/editor/tabs/StyleTab.tsx:74",
-        "src/components/editor/extensions/craft-keymap.ts:60"
+        "src/lib/editor/action-ids.ts:31",
+        "src/lib/editor/action-ids.ts:46",
+        "src/lib/editor/action-ids.test.ts:9"
       ]
     },
     "G313": {
@@ -2088,10 +2094,11 @@
     },
     "G428": {
       "status": "partial",
-      "note": "deleteCollection 是软删、条目与值仍留行；但 schema 对 properties/items/values 全用 Cascade，物理删除仍连带销毁。",
+      "priority": "P1",
+      "note": "现读（第 42 批）：删除只清归属的语义已落 `src/lib/collection/object-membership.ts` 的 `removeMembership`——从归属数组里**只摘掉这一项**、对象本身不动（与「删组只清该字段的值、不删行」是同一条原则）。单测钉住\"删 s1 后仍属于 s2\"。仍缺＝`contract.prisma` 的 Collection→properties/items/values 仍是 Cascade 物理删除（本地删集合走软删 `isDeleted`，但 schema 层的 Cascade 仍在，物理删除仍会连带销毁），故记 partial。",
       "evidence": [
-        "src/actions/collection/collection.ts:92",
-        "src/prisma/contract.prisma:179"
+        "src/lib/collection/object-membership.ts:54",
+        "src/lib/collection/object-membership.test.ts:37"
       ]
     },
     "G450": {

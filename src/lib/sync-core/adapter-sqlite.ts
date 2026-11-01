@@ -1,5 +1,6 @@
 import type { SyncStore, PendingOp } from './store';
 import type { SyncRecord, Cursor } from './types';
+import { resolveSqlitePath } from './sqlite-path';
 
 const CURSOR_KEY = 'cursor';
 
@@ -31,7 +32,7 @@ export function createSqliteStore(dbPath?: string): SqliteSyncStore {
       // @ts-ignore - better-sqlite3 可选依赖，无类型声明时忽略
       const mod: any = await import('better-sqlite3' as string);
       const Database = mod.default ?? mod;
-      const instance = new Database(dbPath ?? ':memory:');
+      const instance = new Database(resolveSqlitePath(dbPath));
       // 6.4 本地库损坏检测
       try {
         const row: any = instance.prepare('PRAGMA integrity_check').get();
@@ -42,7 +43,7 @@ export function createSqliteStore(dbPath?: string): SqliteSyncStore {
         try {
           instance.close();
         } catch {}
-        const fresh = new Database(dbPath ?? ':memory:');
+        const fresh = new Database(resolveSqlitePath(dbPath));
         db = fresh;
         createTables(fresh);
         return;

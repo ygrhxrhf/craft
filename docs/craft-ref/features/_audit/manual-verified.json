@@ -1899,11 +1899,11 @@
       ]
     },
     "G1516": {
-      "status": "partial",
-      "note": "内核与 UI 已共用同一句柄、浏览器 idb 同库；但 sqlite 仍写死 :memory:，桌面关掉再开不留。",
+      "status": "aligned",
+      "note": "桌面库不再写死 :memory:：resolveSqlitePath 优先显式路径、其次平台数据目录（CRAFTY_DATA_DIR/APPDATA/XDG/HOME），仅无目录时才落内存；读侧早已共享门面。",
       "evidence": [
-        "src/lib/sync-core/index.ts:447",
-        "src/lib/sync-core/adapter-sqlite.ts:34"
+        "src/lib/sync-core/sqlite-path.ts:33",
+        "src/lib/sync-core/adapter-sqlite.ts:35"
       ]
     },
     "G1552": {

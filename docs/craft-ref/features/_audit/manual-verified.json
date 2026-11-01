@@ -736,11 +736,11 @@
     "G141": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 41 批）：13 字段发布设置对象已集中一处 `src/lib/share/publish-settings.ts`——13 项键名与权威默认值逐字取自 `publishing.md` §一（commentLevel:\"add\" / defaultDomain:undefined 等），`WIRED_PUBLISH_FIELDS` 标出已落库的 7 项（本地列名 showPageTitle↔showTitle、passcode↔passwordProtected 两处差异由 `officialFieldName` 映射），`readPublishSettings` 缺格补默认值。单测钉住 13 项数、逐字默认值、7+6 拆分、两处列名映射。仍缺＝6 项无列（commentLevel/enableObjectLinks/showDuplicateAsTemplate/emailBasedAccessEnabled/defaultDomain/hideHashTagWords），扩列需迁移，故记 partial。",
+      "note": "现读（第 82 批）：13 项**全部落库并上屏**——`DocumentShare` 补最后 6 列（`commentLevel`/`enableObjectLinks`/`showDuplicateAsTemplate`/`emailBasedAccessEnabled`/`hideHashTagWords`/`defaultDomain`，迁移 `add_publish_settings`，6 个 additive ADD COLUMN，已 apply）；`document_share` 同步白名单补齐这 6 列（否则整页同步失败）；`stateOf`/`ShareState`/`DocumentShareView`/`shareViewFromRow` 四处都带上；`setShareVisualOption` 的键扩到 4 个新布尔；`ShareDialog` 加 4 枚开关。⇒ 13 项里 12 项有列有 UI，`defaultDomain` 有列（域名面板属 G183）。仍缺＝`commentLevel` 的三档选择器 UI 未落、域名面板未落，故记 partial。",
       "evidence": [
-        "src/lib/share/publish-settings.ts:31",
-        "src/lib/share/publish-settings.ts:66",
-        "src/lib/share/publish-settings.test.ts:19"
+        "src/prisma/contract.prisma:400",
+        "src/actions/document/share.ts:40",
+        "src/components/share/ShareDialog.tsx:558"
       ]
     },
     "G166": {

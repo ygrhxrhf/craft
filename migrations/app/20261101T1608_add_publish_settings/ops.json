@@ -1,0 +1,254 @@
+[
+  {
+    "id": "column.public.document_shares.commentLevel",
+    "label": "Add column \"commentLevel\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "commentLevel",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"commentLevel\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "commentLevel"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"commentLevel\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"commentLevel\" text DEFAULT 'add' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"commentLevel\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "commentLevel"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.defaultDomain",
+    "label": "Add column \"defaultDomain\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "defaultDomain",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"defaultDomain\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "defaultDomain"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"defaultDomain\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"defaultDomain\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"defaultDomain\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "defaultDomain"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.emailBasedAccessEnabled",
+    "label": "Add column \"emailBasedAccessEnabled\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "emailBasedAccessEnabled",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"emailBasedAccessEnabled\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "emailBasedAccessEnabled"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"emailBasedAccessEnabled\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"emailBasedAccessEnabled\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"emailBasedAccessEnabled\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "emailBasedAccessEnabled"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.enableObjectLinks",
+    "label": "Add column \"enableObjectLinks\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "enableObjectLinks",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"enableObjectLinks\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "enableObjectLinks"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"enableObjectLinks\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"enableObjectLinks\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"enableObjectLinks\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "enableObjectLinks"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.hideHashTagWords",
+    "label": "Add column \"hideHashTagWords\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "hideHashTagWords",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"hideHashTagWords\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "hideHashTagWords"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"hideHashTagWords\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"hideHashTagWords\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"hideHashTagWords\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "hideHashTagWords"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.showDuplicateAsTemplate",
+    "label": "Add column \"showDuplicateAsTemplate\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showDuplicateAsTemplate",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showDuplicateAsTemplate\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "showDuplicateAsTemplate"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showDuplicateAsTemplate\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"showDuplicateAsTemplate\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showDuplicateAsTemplate\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "showDuplicateAsTemplate"
+        ]
+      }
+    ]
+  }
+]

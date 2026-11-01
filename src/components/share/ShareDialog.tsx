@@ -134,7 +134,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       if (typeof view.showAuthor === 'boolean') setShowAuthor(view.showAuthor);
       setVisuals((prev) => {
         const next = { ...prev };
-        for (const key of ['showPageTitle', 'hideTableOfContents', 'hidePresentationMode', 'showWatermark', 'enableSeo'] as const) {
+        for (const key of ['showPageTitle', 'hideTableOfContents', 'hidePresentationMode', 'showWatermark', 'enableSeo', 'enableObjectLinks', 'showDuplicateAsTemplate', 'emailBasedAccessEnabled', 'hideHashTagWords'] as const) {
           const value = view[key];
           if (typeof value === 'boolean') next[key] = value;
         }
@@ -295,7 +295,17 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   };
 
   const handleVisualOption = (
-    key: 'showPageTitle' | 'hideTableOfContents' | 'hidePresentationMode' | 'showWatermark' | 'enableSeo',
+    key:
+      | 'showPageTitle'
+      | 'hideTableOfContents'
+      | 'hidePresentationMode'
+      | 'showWatermark'
+      | 'enableSeo'
+      // G141: the four later boolean publish settings.
+      | 'enableObjectLinks'
+      | 'showDuplicateAsTemplate'
+      | 'emailBasedAccessEnabled'
+      | 'hideHashTagWords',
     checked: boolean,
   ) => {
     setVisuals((prev) => ({ ...prev, [key]: checked }));
@@ -557,6 +567,24 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   aria-label="启用搜索引擎索引"
                 />
               </div>
+              {/* G141: the four later boolean publish settings of the official 13. */}
+              {(
+                [
+                  ['enableObjectLinks', '允许访问者跟随区块链接'],
+                  ['showDuplicateAsTemplate', '允许访问者复制为模板'],
+                  ['emailBasedAccessEnabled', '启用基于邮箱的访问限制'],
+                  ['hideHashTagWords', '在公开页隐藏 # 标签词'],
+                ] as const
+              ).map(([key, label]) => (
+                <div key={key} className="mt-3 flex items-start justify-between gap-3 rounded-md border border-border px-3 py-2.5">
+                  <p className="text-sm">{label}</p>
+                  <Switch
+                    checked={visuals[key]}
+                    onCheckedChange={(next) => handleVisualOption(key, next)}
+                    aria-label={label}
+                  />
+                </div>
+              ))}
               {/* G1535：链接到期是独立一轴（官方 expiration.date／expire.on [0]／expire.never）。 */}
               <div className="mt-3 rounded-md border border-border px-3 py-2.5">
                 <div className="flex items-center justify-between">

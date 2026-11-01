@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'3545490dee39559b3e767f7179ac55fe31edd6349bf715e3c096672c33a4f922'>;
+  StorageHashBase<'31d233f1070ee773e774e25926bf993d51edce2ed2c24084ca83ab9abe3a3679'>;
 export type ExecutionHash =
   ExecutionHashBase<'7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b'>;
 export type ProfileHash =
@@ -400,6 +400,12 @@ export type FieldOutputTypes = {
       readonly showWatermark: CodecTypes['pg/bool@1']['output'];
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly enableSeo: CodecTypes['pg/bool@1']['output'];
+      readonly commentLevel: CodecTypes['pg/text@1']['output'];
+      readonly enableObjectLinks: CodecTypes['pg/bool@1']['output'];
+      readonly showDuplicateAsTemplate: CodecTypes['pg/bool@1']['output'];
+      readonly emailBasedAccessEnabled: CodecTypes['pg/bool@1']['output'];
+      readonly hideHashTagWords: CodecTypes['pg/bool@1']['output'];
+      readonly defaultDomain: CodecTypes['pg/text@1']['output'] | null;
       readonly shareVersion: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -696,6 +702,12 @@ export type FieldInputTypes = {
       readonly showWatermark: CodecTypes['pg/bool@1']['input'];
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly enableSeo: CodecTypes['pg/bool@1']['input'];
+      readonly commentLevel: CodecTypes['pg/text@1']['input'];
+      readonly enableObjectLinks: CodecTypes['pg/bool@1']['input'];
+      readonly showDuplicateAsTemplate: CodecTypes['pg/bool@1']['input'];
+      readonly emailBasedAccessEnabled: CodecTypes['pg/bool@1']['input'];
+      readonly hideHashTagWords: CodecTypes['pg/bool@1']['input'];
+      readonly defaultDomain: CodecTypes['pg/text@1']['input'] | null;
       readonly shareVersion: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -950,11 +962,16 @@ export type StorageColumnTypes = {
       readonly userId: CodecTypes['pg/text@1']['output'];
     };
     readonly document_shares: {
+      readonly commentLevel: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly defaultDomain: CodecTypes['pg/text@1']['output'] | null;
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly documentId: CodecTypes['pg/text@1']['output'];
+      readonly emailBasedAccessEnabled: CodecTypes['pg/bool@1']['output'];
+      readonly enableObjectLinks: CodecTypes['pg/bool@1']['output'];
       readonly enableSeo: CodecTypes['pg/bool@1']['output'];
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly hideHashTagWords: CodecTypes['pg/bool@1']['output'];
       readonly hidePresentationMode: CodecTypes['pg/bool@1']['output'];
       readonly hideTableOfContents: CodecTypes['pg/bool@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
@@ -963,6 +980,7 @@ export type StorageColumnTypes = {
       readonly permission: CodecTypes['pg/text@1']['output'];
       readonly shareVersion: CodecTypes['pg/int4@1']['output'];
       readonly showAuthor: CodecTypes['pg/bool@1']['output'];
+      readonly showDuplicateAsTemplate: CodecTypes['pg/bool@1']['output'];
       readonly showPageTitle: CodecTypes['pg/bool@1']['output'];
       readonly showWatermark: CodecTypes['pg/bool@1']['output'];
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
@@ -1246,11 +1264,16 @@ export type StorageColumnInputTypes = {
       readonly userId: CodecTypes['pg/text@1']['input'];
     };
     readonly document_shares: {
+      readonly commentLevel: CodecTypes['pg/text@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly defaultDomain: CodecTypes['pg/text@1']['input'] | null;
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly documentId: CodecTypes['pg/text@1']['input'];
+      readonly emailBasedAccessEnabled: CodecTypes['pg/bool@1']['input'];
+      readonly enableObjectLinks: CodecTypes['pg/bool@1']['input'];
       readonly enableSeo: CodecTypes['pg/bool@1']['input'];
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly hideHashTagWords: CodecTypes['pg/bool@1']['input'];
       readonly hidePresentationMode: CodecTypes['pg/bool@1']['input'];
       readonly hideTableOfContents: CodecTypes['pg/bool@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -1259,6 +1282,7 @@ export type StorageColumnInputTypes = {
       readonly permission: CodecTypes['pg/text@1']['input'];
       readonly shareVersion: CodecTypes['pg/int4@1']['input'];
       readonly showAuthor: CodecTypes['pg/bool@1']['input'];
+      readonly showDuplicateAsTemplate: CodecTypes['pg/bool@1']['input'];
       readonly showPageTitle: CodecTypes['pg/bool@1']['input'];
       readonly showWatermark: CodecTypes['pg/bool@1']['input'];
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
@@ -1751,6 +1775,12 @@ export namespace Models {
     showWatermark: CodecTypes['pg/bool@1']['output'];
     expiresAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     enableSeo: CodecTypes['pg/bool@1']['output'];
+    commentLevel: CodecTypes['pg/text@1']['output'];
+    enableObjectLinks: CodecTypes['pg/bool@1']['output'];
+    showDuplicateAsTemplate: CodecTypes['pg/bool@1']['output'];
+    emailBasedAccessEnabled: CodecTypes['pg/bool@1']['output'];
+    hideHashTagWords: CodecTypes['pg/bool@1']['output'];
+    defaultDomain: CodecTypes['pg/text@1']['output'] | null;
     shareVersion: CodecTypes['pg/int4@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2956,6 +2986,56 @@ type ContractBase = Omit<
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/bool@1', false>;
                   };
+                };
+                readonly commentLevel: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'add'>;
+                  };
+                };
+                readonly enableObjectLinks: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly showDuplicateAsTemplate: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly emailBasedAccessEnabled: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly hideHashTagWords: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly defaultDomain: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                 };
                 readonly shareVersion: {
                   readonly nativeType: 'int4';
@@ -5718,6 +5798,30 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly commentLevel: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly enableObjectLinks: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly showDuplicateAsTemplate: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly emailBasedAccessEnabled: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly hideHashTagWords: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly defaultDomain: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly shareVersion: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -5776,6 +5880,12 @@ type ContractBase = Omit<
                 readonly showWatermark: { readonly column: 'showWatermark' };
                 readonly expiresAt: { readonly column: 'expiresAt' };
                 readonly enableSeo: { readonly column: 'enableSeo' };
+                readonly commentLevel: { readonly column: 'commentLevel' };
+                readonly enableObjectLinks: { readonly column: 'enableObjectLinks' };
+                readonly showDuplicateAsTemplate: { readonly column: 'showDuplicateAsTemplate' };
+                readonly emailBasedAccessEnabled: { readonly column: 'emailBasedAccessEnabled' };
+                readonly hideHashTagWords: { readonly column: 'hideHashTagWords' };
+                readonly defaultDomain: { readonly column: 'defaultDomain' };
                 readonly shareVersion: { readonly column: 'shareVersion' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };

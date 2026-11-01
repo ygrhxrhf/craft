@@ -401,6 +401,13 @@ model DocumentShare {
   expiresAt            TimestamptzString?
   // G143/G85：搜索引擎索引（官方 enableSeo 默认 false；与口令保护互斥，口令一设即失效）。
   enableSeo            Boolean @default(false)
+  // G141: the remaining publish-settings fields of the official 13. Defaults are the official ones.
+  commentLevel             String  @default("add") // "add" | "view" | "none"
+  enableObjectLinks        Boolean @default(false)
+  showDuplicateAsTemplate  Boolean @default(false)
+  emailBasedAccessEnabled  Boolean @default(false)
+  hideHashTagWords         Boolean @default(false)
+  defaultDomain            String? // null = unset (the official default is `undefined`)
   shareVersion Int      @default(0)
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()

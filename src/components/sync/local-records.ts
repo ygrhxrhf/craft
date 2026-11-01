@@ -125,6 +125,13 @@ export interface DocumentShareView {
   enableSeo?: boolean;
   /** G1535：链接到期（ISO 日期或 null＝永不过期）。 */
   expiresAt?: string | null;
+  /** G141：其余发布设置（缺列＝旧镜像行，按官方默认）。 */
+  commentLevel?: string;
+  enableObjectLinks?: boolean;
+  showDuplicateAsTemplate?: boolean;
+  emailBasedAccessEnabled?: boolean;
+  hideHashTagWords?: boolean;
+  defaultDomain?: string | null;
   shareVersion?: number;
 }
 
@@ -148,6 +155,13 @@ export function shareViewFromRow(id: string, data: Record<string, unknown>): Doc
     showWatermark: typeof data.showWatermark === 'boolean' ? data.showWatermark : undefined,
     enableSeo: typeof data.enableSeo === 'boolean' ? data.enableSeo : undefined,
     expiresAt: data.expiresAt === undefined ? undefined : typeof data.expiresAt === 'string' ? data.expiresAt : null,
+    // G141：其余发布设置。
+    commentLevel: typeof data.commentLevel === 'string' ? data.commentLevel : undefined,
+    enableObjectLinks: typeof data.enableObjectLinks === 'boolean' ? data.enableObjectLinks : undefined,
+    showDuplicateAsTemplate: typeof data.showDuplicateAsTemplate === 'boolean' ? data.showDuplicateAsTemplate : undefined,
+    emailBasedAccessEnabled: typeof data.emailBasedAccessEnabled === 'boolean' ? data.emailBasedAccessEnabled : undefined,
+    hideHashTagWords: typeof data.hideHashTagWords === 'boolean' ? data.hideHashTagWords : undefined,
+    defaultDomain: data.defaultDomain === undefined ? undefined : typeof data.defaultDomain === 'string' ? data.defaultDomain : null,
     shareVersion: typeof data.shareVersion === 'number' ? data.shareVersion : undefined,
   };
 }

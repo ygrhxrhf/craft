@@ -2017,10 +2017,24 @@
           },
           "DocumentShare": {
             "fields": {
+              "commentLevel": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "defaultDomain": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -2038,6 +2052,20 @@
                   "kind": "scalar"
                 }
               },
+              "emailBasedAccessEnabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "enableObjectLinks": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "enableSeo": {
                 "nullable": false,
                 "type": {
@@ -2049,6 +2077,13 @@
                 "nullable": true,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "hideHashTagWords": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
                   "kind": "scalar"
                 }
               },
@@ -2102,6 +2137,13 @@
                 }
               },
               "showAuthor": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "showDuplicateAsTemplate": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/bool@1",
@@ -2164,8 +2206,14 @@
             },
             "storage": {
               "fields": {
+                "commentLevel": {
+                  "column": "commentLevel"
+                },
                 "createdAt": {
                   "column": "createdAt"
+                },
+                "defaultDomain": {
+                  "column": "defaultDomain"
                 },
                 "deletedAt": {
                   "column": "deletedAt"
@@ -2173,11 +2221,20 @@
                 "documentId": {
                   "column": "documentId"
                 },
+                "emailBasedAccessEnabled": {
+                  "column": "emailBasedAccessEnabled"
+                },
+                "enableObjectLinks": {
+                  "column": "enableObjectLinks"
+                },
                 "enableSeo": {
                   "column": "enableSeo"
                 },
                 "expiresAt": {
                   "column": "expiresAt"
+                },
+                "hideHashTagWords": {
+                  "column": "hideHashTagWords"
                 },
                 "hidePresentationMode": {
                   "column": "hidePresentationMode"
@@ -2202,6 +2259,9 @@
                 },
                 "showAuthor": {
                   "column": "showAuthor"
+                },
+                "showDuplicateAsTemplate": {
+                  "column": "showDuplicateAsTemplate"
                 },
                 "showPageTitle": {
                   "column": "showPageTitle"
@@ -5135,6 +5195,15 @@
             },
             "document_shares": {
               "columns": {
+                "commentLevel": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "add"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "default": {
@@ -5144,6 +5213,11 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
+                "defaultDomain": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "deletedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
@@ -5152,6 +5226,24 @@
                 "documentId": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
+                  "nullable": false
+                },
+                "emailBasedAccessEnabled": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "enableObjectLinks": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
                   "nullable": false
                 },
                 "enableSeo": {
@@ -5167,6 +5259,15 @@
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
                   "nullable": true
+                },
+                "hideHashTagWords": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
                 },
                 "hidePresentationMode": {
                   "codecId": "pg/bool@1",
@@ -5228,6 +5329,15 @@
                   "default": {
                     "kind": "literal",
                     "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "showDuplicateAsTemplate": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
                   },
                   "nativeType": "bool",
                   "nullable": false
@@ -6915,7 +7025,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "3545490dee39559b3e767f7179ac55fe31edd6349bf715e3c096672c33a4f922"
+    "storageHash": "31d233f1070ee773e774e25926bf993d51edce2ed2c24084ca83ab9abe3a3679"
   },
   "execution": {
     "executionHash": "7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b",

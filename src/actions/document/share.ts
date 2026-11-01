@@ -30,6 +30,13 @@ export interface ShareState {
   enableSeo: boolean;
   /** G1535：链接到期（ISO 日期或 null＝永不过期）。 */
   expiresAt: string | null;
+  /** G141: the remaining publish settings of the official 13. */
+  commentLevel: string;
+  enableObjectLinks: boolean;
+  showDuplicateAsTemplate: boolean;
+  emailBasedAccessEnabled: boolean;
+  hideHashTagWords: boolean;
+  defaultDomain: string | null;
   /**
    * 档位每改一次就 +1，访客那条按旧档授权的连接据此被判为过期。客户端改档走 `applyLocal`，
    * 它拿得到这一枚才可能算出「比服务端已知的那次更大」的下一个数（G1491）。
@@ -52,6 +59,13 @@ function stateOf(s: any): ShareState {
     showWatermark: s.showWatermark !== false,
     enableSeo: s.enableSeo === true,
     expiresAt: s.expiresAt ? String(s.expiresAt) : null,
+    // G141: the remaining publish settings.
+    commentLevel: typeof s.commentLevel === 'string' ? s.commentLevel : 'add',
+    enableObjectLinks: s.enableObjectLinks === true,
+    showDuplicateAsTemplate: s.showDuplicateAsTemplate === true,
+    emailBasedAccessEnabled: s.emailBasedAccessEnabled === true,
+    hideHashTagWords: s.hideHashTagWords === true,
+    defaultDomain: typeof s.defaultDomain === 'string' && s.defaultDomain ? s.defaultDomain : null,
     shareVersion: s.shareVersion ?? 0,
   };
 }
@@ -148,7 +162,17 @@ export async function setShareExpiry(documentId: string, expiresAt: string | nul
 /** G1534：visual.options 四组的开关（镜像没有那一行时的回退路；有行走 `applyLocal`）。 */
 export async function setShareVisualOption(
   documentId: string,
-  key: 'showPageTitle' | 'hideTableOfContents' | 'hidePresentationMode' | 'showWatermark' | 'enableSeo',
+  key:
+    | 'showPageTitle'
+    | 'hideTableOfContents'
+    | 'hidePresentationMode'
+    | 'showWatermark'
+    | 'enableSeo'
+    // G141: the boolean publish settings added later.
+    | 'enableObjectLinks'
+    | 'showDuplicateAsTemplate'
+    | 'emailBasedAccessEnabled'
+    | 'hideHashTagWords',
   value: boolean,
 ) {
   const session = await auth();

@@ -17,6 +17,10 @@ const {
   getTeamContext,
   createTeam,
   changeTeamRole,
+  getDomainContext,
+  declareDomain,
+  resolveDomainVerification,
+  disconnectDomain,
 } = await import('./space');
 
 let db: Awaited<ReturnType<typeof getDb>>;
@@ -127,5 +131,46 @@ describe('team context (G421)', () => {
   it('refuses a non-admin trying to change roles', async () => {
     session.userId = otherId;
     await expect(changeTeamRole(ownerId, 'member')).rejects.toThrow('只有管理员可以改成员角色');
+  });
+});
+
+describe('custom domain lifecycle (G183)', () => {
+  it('declaring an external domain moves unset → declared and mints DNS rows', async () => {
+    session.userId = ownerId;
+    const next = await declareDomain({ domain: 'example.com', tier: 'external' });
+    expect(next.state).toBe('declared');
+    expect(next.domain).toBe('example.com');
+    // 外部域要展示 DNS 记录表（名称/主机、值/指向）。
+    expect(next.dnsRecords).toHaveLength(1);
+    expect(next.dnsRecords[0].name).toBe('@');
+  });
+
+  it('verify-ok moves declared → verified', async () => {
+    session.userId = ownerId;
+    const next = await resolveDomainVerification(true);
+    expect(next.state).toBe('verified');
+  });
+
+  it('verify-fail returns to declared so the user can retry', async () => {
+    session.userId = ownerId;
+    // 先回到 declared（再声明一次不适用，verified 不是 declare 的合法源）——用一个新团队走一遍。
+    const t = await getTeamContext();
+    await db.orm.public.Team.where({ id: t!.id }).update({ domainState: 'declared' });
+    const next = await resolveDomainVerification(false);
+    expect(next.state).toBe('declared');
+  });
+
+  it('disconnect falls back to craft.me and clears the domain', async () => {
+    session.userId = ownerId;
+    const next = await disconnectDomain();
+    expect(next.state).toBe('disconnected');
+    expect(next.domain).toBeNull();
+    expect(next.dnsRecords).toEqual([]);
+  });
+
+  it('getDomainContext reads the stored state', async () => {
+    session.userId = ownerId;
+    const ctx = await getDomainContext();
+    expect(ctx?.state).toBe('disconnected');
   });
 });

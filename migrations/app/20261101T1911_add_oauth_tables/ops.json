@@ -1,0 +1,245 @@
+[
+  {
+    "id": "table.oauth_clients",
+    "label": "Create table \"oauth_clients\"",
+    "summary": "Creates table \"oauth_clients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "oauth_clients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"oauth_clients\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oauth_clients\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"oauth_clients\"",
+        "sql": "CREATE TABLE \"public\".\"oauth_clients\" (\n  \"clientId\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"redirectUris\" json NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"oauth_clients\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oauth_clients\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.oauth_codes",
+    "label": "Create table \"oauth_codes\"",
+    "summary": "Creates table \"oauth_codes\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "oauth_codes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"oauth_codes\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oauth_codes\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"oauth_codes\"",
+        "sql": "CREATE TABLE \"public\".\"oauth_codes\" (\n  \"clientId\" text NOT NULL,\n  \"code\" text NOT NULL,\n  \"consumedAt\" timestamptz,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"redirectUri\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"oauth_codes\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oauth_codes\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.oauth_clients.oauth_clients_clientId_key",
+    "label": "Add unique constraint on \"oauth_clients\" (clientId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "oauth_clients_clientId_key",
+        "table": "oauth_clients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"oauth_clients_clientId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oauth_clients_clientId_key",
+          "public",
+          "\"public\".\"oauth_clients\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"oauth_clients_clientId_key\"",
+        "sql": "ALTER TABLE \"public\".\"oauth_clients\" ADD CONSTRAINT \"oauth_clients_clientId_key\" UNIQUE (\"clientId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"oauth_clients_clientId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oauth_clients_clientId_key",
+          "public",
+          "\"public\".\"oauth_clients\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.oauth_codes.oauth_codes_code_key",
+    "label": "Add unique constraint on \"oauth_codes\" (code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "oauth_codes_code_key",
+        "table": "oauth_codes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"oauth_codes_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oauth_codes_code_key",
+          "public",
+          "\"public\".\"oauth_codes\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"oauth_codes_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"oauth_codes\" ADD CONSTRAINT \"oauth_codes_code_key\" UNIQUE (\"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"oauth_codes_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oauth_codes_code_key",
+          "public",
+          "\"public\".\"oauth_codes\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.oauth_codes.oauth_codes_userId_idx_a489d58a",
+    "label": "Create index \"oauth_codes_userId_idx_a489d58a\" on \"oauth_codes\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "oauth_codes_userId_idx_a489d58a",
+        "table": "oauth_codes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"oauth_codes_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oauth_codes_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"oauth_codes_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"oauth_codes_userId_idx_a489d58a\" ON \"public\".\"oauth_codes\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"oauth_codes_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"oauth_codes_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.oauth_codes.oauth_codes_userId_fkey",
+    "label": "Add foreign key \"oauth_codes_userId_fkey\" on \"oauth_codes\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "oauth_codes_userId_fkey",
+        "table": "oauth_codes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"oauth_codes_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oauth_codes_userId_fkey",
+          "public",
+          "\"public\".\"oauth_codes\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"oauth_codes_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"oauth_codes\"\nADD CONSTRAINT \"oauth_codes_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"oauth_codes_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "oauth_codes_userId_fkey",
+          "public",
+          "\"public\".\"oauth_codes\""
+        ]
+      }
+    ]
+  }
+]

@@ -718,14 +718,14 @@
       ]
     },
     "G131": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "访问级别五档已接真实面板（DocumentShare.permission 扩到五档、ShareDialog 五档渲染、写入归一、读侧迁移）；仍缺空间级角色轴（G324）。",
+      "note": "三轴齐：文档级角色（capabilitiesFor/effectivePermission）、空间级角色（SpaceMember.role + spaceCapabilitiesFor）、访问级别五档（DocumentShare.permission + ShareDialog）；三轴互不推导。",
       "evidence": [
+        "src/lib/authz/permission-axes.ts",
+        "src/lib/authz/space-role.ts",
         "src/lib/share/permission.ts",
-        "src/lib/share/access-levels.ts",
-        "src/components/share/ShareDialog.tsx",
-        "src/lib/share/permission.test.ts"
+        "src/components/share/ShareDialog.tsx"
       ]
     },
     "G137": {
@@ -766,13 +766,13 @@
       ]
     },
     "G183": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 45 批）：DNS 记录表与四态生命周期已补进 `src/lib/share/domain-lifecycle.ts`——DNS 表三标签（「DNS 记录」/「名称 / 主机」/「值 / 指向」）＋「我已添加 DNS 记录」动作＋两句页面标题＋「未找到此域名的 DNS 配置」失败句，全部逐字取自 `_harvest/i18n-zh.tsv:3545-3551`；`nextDomainState` 走四态（unset→declared→verified/disconnected，验证失败回 declared、不适用转换不动）。单测并入 cell-editors.test.ts。仍缺＝无域名设置面板与落库（无域名列），故记 partial。",
+      "note": "域名四态真流程：Team 四列 + declareDomain/resolveDomainVerification/disconnectDomain 走 nextDomainState；面板渲染真实域名与 DNS 记录表。",
       "evidence": [
-        "src/lib/share/domain-lifecycle.ts:71",
-        "src/lib/share/domain-lifecycle.ts:103",
-        "src/lib/collection/cell-editors.test.ts:48"
+        "src/actions/space/space.ts",
+        "src/lib/share/domain-lifecycle.ts",
+        "src/components/settings/SettingsPanels.tsx"
       ]
     },
     "G185": {
@@ -826,13 +826,14 @@
       ]
     },
     "G227": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 48 批）：Sign in with Craft 完成态文案已落 `src/lib/auth/sign-in-copy.ts`——`login.auth.success.close`「你现在可以关闭此窗口了。」逐字（harvest:2130），两种问候 `login.auth.greeting.welcome`「欢迎，[0]」/ `.sorry`「很抱歉，[0]」（harvest:2127-2128），`signInGreeting` 按成败分支且空名返回 null（不发明半句）。单测 3 条。仍缺＝本地无第三方 IdP 与授权弹窗（只有 NextAuth Credentials），故记 partial。",
+      "note": "Sign in with Craft OAuth 真流程：OAuthClient/OAuthCode 两表 + /authorize 授权页 + 一次性码 + /api/v1/oauth/token 换身份；完成态与两种问候逐字。",
       "evidence": [
-        "src/lib/auth/sign-in-copy.ts:15",
-        "src/lib/auth/sign-in-copy.ts:28",
-        "src/lib/team/team-roles.test.ts:79"
+        "src/actions/auth/oauth.ts",
+        "src/app/authorize/page.tsx",
+        "src/components/auth/AuthorizePanel.tsx",
+        "src/actions/auth/oauth.test.ts"
       ]
     },
     "G228": {

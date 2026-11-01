@@ -1,0 +1,170 @@
+[
+  {
+    "id": "column.public.teams.dnsRecords",
+    "label": "Add column \"dnsRecords\" to \"teams\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "dnsRecords",
+        "table": "teams"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"dnsRecords\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "teams",
+          "dnsRecords"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"dnsRecords\"",
+        "sql": "ALTER TABLE \"public\".\"teams\" ADD COLUMN \"dnsRecords\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"dnsRecords\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "teams",
+          "dnsRecords"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.teams.domain",
+    "label": "Add column \"domain\" to \"teams\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "domain",
+        "table": "teams"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"domain\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "teams",
+          "domain"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"domain\"",
+        "sql": "ALTER TABLE \"public\".\"teams\" ADD COLUMN \"domain\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"domain\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "teams",
+          "domain"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.teams.domainState",
+    "label": "Add column \"domainState\" to \"teams\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "domainState",
+        "table": "teams"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"domainState\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "teams",
+          "domainState"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"domainState\"",
+        "sql": "ALTER TABLE \"public\".\"teams\" ADD COLUMN \"domainState\" text DEFAULT 'unset' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"domainState\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "teams",
+          "domainState"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.teams.domainTier",
+    "label": "Add column \"domainTier\" to \"teams\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "domainTier",
+        "table": "teams"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"domainTier\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "teams",
+          "domainTier"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"domainTier\"",
+        "sql": "ALTER TABLE \"public\".\"teams\" ADD COLUMN \"domainTier\" text DEFAULT 'defaultCraft' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"domainTier\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "teams",
+          "domainTier"
+        ]
+      }
+    ]
+  }
+]

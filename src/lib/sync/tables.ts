@@ -60,7 +60,7 @@ export const SYNC_TABLES: TableDef[] = [
   // {isCompleted,completionDate}；离线新建一定带 documentId + blockId + remindAt ⇒ 三枚合取才 create。
   { table: 'block_reminder', model: 'BlockReminder', cols: ['id','userId','documentId','blockId','title','remindAt','isCompleted','completionDate','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['documentId', 'blockId', 'remindAt'] },
   // G324/G421/G166：空间/团队四表。空间成员与团队成员的复合键各自 (spaceId,userId)／(teamId,userId)。
-  { table: 'team', model: 'Team', cols: ['id','name','settings','ownerId','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  { table: 'team', model: 'Team', cols: ['id','name','settings','domain','domainState','domainTier','dnsRecords','ownerId','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'team_member', model: 'TeamMember', cols: ['id','teamId','userId','role','state','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['teamId', 'userId'] },
   { table: 'space', model: 'Space', cols: ['id','name','icon','settings','teamId','ownerId','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'space_member', model: 'SpaceMember', cols: ['id','spaceId','userId','role','joined','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['spaceId', 'userId'] },

@@ -25,15 +25,33 @@ import { SCOPE_COPY } from '@/lib/app/settings-scope';
 import {
   changeTeamRole,
   createTeam,
+  declareDomain,
+  disconnectDomain,
+  getDomainContext,
   getSpaceContext,
   getTeamContext,
   guestWarningFor,
   inviteSpaceMember,
+  resolveDomainVerification,
   setSpaceName,
+  type DomainContext,
   type SpaceSummary,
   type TeamSummary,
 } from '@/actions/space/space';
 import { GUEST_WARNING_CONFIRM, GUEST_WARNING_DESC } from '@/lib/share/guest-warning';
+import {
+  DISCONNECT_CONFIRM,
+  DISCONNECT_DESC,
+  DNS_RECORD_TABLE,
+} from '@/lib/share/domain-lifecycle';
+
+/** G183：四态的中文名（面板展示用）。 */
+const DOMAIN_STATE_LABELS = {
+  unset: '未设置',
+  declared: '等待验证',
+  verified: '已验证',
+  disconnected: '已断开',
+} as const;
 import type { SettingsSection } from '@/lib/store/use-settings-store';
 import { cn } from 'cn';
 import {
@@ -166,10 +184,14 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const [space, setSpace] = useState<SpaceSummary | null>(null);
   const [team, setTeam] = useState<TeamSummary | null>(null);
   const [spaceError, setSpaceError] = useState<string | null>(null);
+  // G183：自定义域名四态。
+  const [domain, setDomain] = useState<DomainContext | null>(null);
+  const [domainError, setDomainError] = useState<string | null>(null);
 
   useEffect(() => {
     getSpaceContext().then(setSpace).catch(() => setSpace(null));
     getTeamContext().then(setTeam).catch(() => setTeam(null));
+    getDomainContext().then(setDomain).catch(() => setDomain(null));
   }, []);
 
   useEffect(() => {
@@ -396,12 +418,108 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
             </div>
             <EditIcon />
           </RowCard>
-          <RowCard className="flex items-center justify-between px-4 py-3">
-            <div>
-              <div className="text-xs text-foreground/55">自定义域名</div>
-              <div className="mt-1 text-[15px] text-foreground/55">未设置</div>
+          <RowCard className="px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="min-w-0">
+                <div className="text-xs text-foreground/55">自定义域名</div>
+                {/* G183：四态生命周期（未设置→已声明→已验证／已断开），域名有真列可落。 */}
+                <div className="mt-1 truncate text-[15px]">
+                  {domain?.domain ?? (domain?.state === 'disconnected' ? '已断开 · craft.me' : '未设置')}
+                </div>
+                {domain && domain.state !== 'unset' && (
+                  <p className="mt-0.5 text-[12px] text-foreground/55">{DOMAIN_STATE_LABELS[domain.state]}</p>
+                )}
+              </div>
+              <div className="flex shrink-0 gap-1">
+                {(!domain || domain.state === 'unset' || domain.state === 'disconnected') && (
+                  <button
+                    type="button"
+                    data-testid="domain-declare"
+                    onClick={() => {
+                      void promptDialog({
+                        title: '自定义域名',
+                        placeholder: 'example.com',
+                        confirmLabel: '我已添加 DNS 记录',
+                      }).then(async (name) => {
+                        if (!name) return;
+                        setDomainError(null);
+                        try {
+                          setDomain(await declareDomain({ domain: name, tier: 'external' }));
+                        } catch {
+                          setDomainError('没有设置域名，请先创建团队');
+                        }
+                      });
+                    }}
+                    className="rounded-md px-2 py-1 text-[12px] text-(--craft-accent) hover:bg-foreground/4"
+                  >
+                    设置域名
+                  </button>
+                )}
+                {domain?.state === 'declared' && (
+                  <button
+                    type="button"
+                    data-testid="domain-verify"
+                    onClick={() => {
+                      void resolveDomainVerification(true).then(setDomain).catch(() => {
+                        setDomainError('验证失败，请重试');
+                      });
+                    }}
+                    className="rounded-md px-2 py-1 text-[12px] text-(--craft-accent) hover:bg-foreground/4"
+                  >
+                    验证 DNS
+                  </button>
+                )}
+                {domain && domain.state !== 'unset' && domain.state !== 'disconnected' && (
+                  <button
+                    type="button"
+                    data-testid="domain-disconnect"
+                    onClick={() => {
+                      void confirmDialog({
+                        title: '断开自定义域名',
+                        // G183：换 Craft 域会让所有现有外链失效——那句后果写在确认长文里。
+                        message: `${DISCONNECT_DESC}${DISCONNECT_CONFIRM}`,
+                        confirmLabel: '断开',
+                      }).then(async (ok) => {
+                        if (!ok) return;
+                        setDomain(await disconnectDomain());
+                      });
+                    }}
+                    className="rounded-md px-2 py-1 text-[12px] text-destructive hover:bg-foreground/4"
+                  >
+                    断开
+                  </button>
+                )}
+              </div>
             </div>
-            <EditIcon />
+            {/* G183：外部域展示 DNS 记录表（名称/主机、值/指向）。 */}
+            {domain?.tier === 'external' && domain.dnsRecords.length > 0 && (
+              <div className="mt-3 rounded-lg border border-border">
+                <div className="border-b border-border px-3 py-1.5 text-[12px] font-medium">
+                  {DNS_RECORD_TABLE.title}
+                </div>
+                <table className="w-full text-[12px]">
+                  <thead>
+                    <tr className="text-foreground/55">
+                      <th className="px-3 py-1 text-left font-normal">{DNS_RECORD_TABLE.nameColumn}</th>
+                      <th className="px-3 py-1 text-left font-normal">{DNS_RECORD_TABLE.valueColumn}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {domain.dnsRecords.map((row) => (
+                      <tr key={row.name} className="border-t border-border">
+                        <td className="px-3 py-1">{row.name}</td>
+                        <td className="px-3 py-1 font-mono">{row.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {domainError && (
+              <p role="status" className="mt-2 text-[12px] text-destructive">
+                {domainError}
+              </p>
+            )}
           </RowCard>
         </div>
       );

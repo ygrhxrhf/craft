@@ -17,6 +17,13 @@ import {
 } from '@/lib/team/team-roles';
 import { needsGuestWarning } from '@/lib/share/guest-warning';
 import { resolveScopedSetting, scopeOfSetting, type SettingsScope } from '@/lib/app/settings-scope';
+import {
+  nextDomainState,
+  tierEmailConflict,
+  type DnsRecord,
+  type DomainState,
+  type DomainTier,
+} from '@/lib/share/domain-lifecycle';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // 过滤回调收到的是 emitted types 没有命名的列代理。
@@ -280,4 +287,104 @@ export async function resolveSettingWithScope(
     personal: undefined as Record<string, unknown> | undefined,
   };
   return { value: resolveScopedSetting(settings, key), scope: scopeOfSetting(settings, key) };
+}
+
+/* ---------- G183：自定义域名四态生命周期 ---------- */
+
+export interface DomainContext {
+  /** 当前域名（未设置时 null）。 */
+  domain: string | null;
+  /** 四态：unset / declared / verified / disconnected。 */
+  state: DomainState;
+  /** 域名档：defaultCraft / customCraft / external。 */
+  tier: DomainTier;
+  /** 外部域要展示的 DNS 记录（名称/主机、值/指向）。 */
+  dnsRecords: DnsRecord[];
+  /** 该档与邮箱访问是否冲突（外部域 × 邮箱访问）——冲突时面板把原因作文字附上。 */
+  emailConflict: string | null;
+}
+
+async function requireTeam() {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+  const db = await getDb();
+  const team = await db.orm.public.Team.first({ ownerId: session.user.id });
+  if (!team) throw new Error('请先创建团队');
+  return { userId: session.user.id, db, team };
+}
+
+function domainOf(team: Record<string, unknown>): DomainContext {
+  const tier = (team.domainTier as DomainTier) ?? 'defaultCraft';
+  const state = (team.domainState as DomainState) ?? 'unset';
+  return {
+    domain: (team.domain as string | null) ?? null,
+    state,
+    tier,
+    dnsRecords: Array.isArray(team.dnsRecords) ? (team.dnsRecords as DnsRecord[]) : [],
+    emailConflict: tierEmailConflict(tier, false),
+  };
+}
+
+/** G183：读当前域名与四态。 */
+export async function getDomainContext(): Promise<DomainContext | null> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+  const db = await getDb();
+  const team = await db.orm.public.Team.first({ ownerId: session.user.id });
+  return team ? domainOf(team as Record<string, unknown>) : null;
+}
+
+/**
+ * G183 —— 声明"我已添加 DNS 记录"：`unset`/`disconnected` → `declared`，并为外部域铸出那两行
+ * DNS 记录（名称/主机、值/指向）。走 `nextDomainState` 的四态机。
+ */
+export async function declareDomain(input: {
+  domain: string;
+  tier: DomainTier;
+}): Promise<DomainContext> {
+  const { userId, db, team } = await requireTeam();
+  const next = nextDomainState((team as any).domainState as DomainState, 'declare');
+  const dnsRecords: DnsRecord[] =
+    input.tier === 'external'
+      ? [{ name: '@', value: `verify.craft.me/${crypto.randomUUID().slice(0, 8)}` }]
+      : [];
+  await db.orm.public.Team.where({ id: String((team as any).id) }).update({
+    domain: input.domain.trim() || null,
+    domainTier: input.tier,
+    domainState: next,
+    dnsRecords,
+  });
+  await emitSyncEventSafe(db, userId, ['team'], String((team as any).id));
+  return domainOf({
+    ...(team as Record<string, unknown>),
+    domain: input.domain,
+    domainTier: input.tier,
+    domainState: next,
+    dnsRecords,
+  });
+}
+
+/** 验证探测落定：`declared` → `verified`（成功）或留在 `declared`（找不到配置）。 */
+export async function resolveDomainVerification(ok: boolean): Promise<DomainContext> {
+  const { userId, db, team } = await requireTeam();
+  const next = nextDomainState((team as any).domainState as DomainState, ok ? 'verify-ok' : 'verify-fail');
+  await db.orm.public.Team.where({ id: String((team as any).id) }).update({ domainState: next });
+  await emitSyncEventSafe(db, userId, ['team'], String((team as any).id));
+  return domainOf({ ...(team as Record<string, unknown>), domainState: next });
+}
+
+/**
+ * G183 —— 断开：任意活态 → `disconnected`，域名回落 craft.me（`hostAfterDisconnect`）。
+ * 换 Craft 域会让所有现有外链失效——那句后果在确认框里（客户端调）。
+ */
+export async function disconnectDomain(): Promise<DomainContext> {
+  const { userId, db, team } = await requireTeam();
+  const next = nextDomainState((team as any).domainState as DomainState, 'disconnect');
+  await db.orm.public.Team.where({ id: String((team as any).id) }).update({
+    domainState: next,
+    domain: null,
+    dnsRecords: [],
+  });
+  await emitSyncEventSafe(db, userId, ['team'], String((team as any).id));
+  return domainOf({ ...(team as Record<string, unknown>), domainState: next, domain: null, dnsRecords: [] });
 }

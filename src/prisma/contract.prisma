@@ -33,8 +33,39 @@ model User {
   ownedTeams    Team[]
   teamMemberships TeamMember[]
   ownedSpaces   Space[]
+  oauthCodes    OAuthCode[]
 
   @@map("users")
+}
+
+// G227：Sign in with Craft——Craft 作为外部站点的身份提供方。外部站点先在 `OAuthClient` 注册
+// （clientId + 允许的回调地址），用户授权后这里落一枚一次性授权码，站点拿码换身份。
+model OAuthClient {
+  id            String   @id @default(uuid())
+  clientId      String   @unique
+  name          String
+  redirectUris  Json
+  createdAt     TimestamptzString @default(now())
+  updatedAt     temporal.updatedAtString()
+
+  @@map("oauth_clients")
+}
+
+// G227：一次性授权码。`consumedAt` 非空即已用过（换过一次就不再有效）。
+model OAuthCode {
+  id           String   @id @default(uuid())
+  code         String   @unique
+  clientId     String
+  userId       String
+  redirectUri  String
+  consumedAt   TimestamptzString?
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("oauth_codes")
 }
 
 // G324/G421/G166：空间/团队实体。此前本地无这两张表，于是"空间级角色"（owner/member/guest）、
@@ -45,6 +76,12 @@ model Team {
   name      String   @default("我的团队")
   // G421：团队级设置默认（三层作用域的第二层）。键值对，空间可覆盖。
   settings  Json?
+  // G183：自定义域名的四态生命周期（unset→declared→verified/disconnected）＋外部域那两张
+  // DNS 记录（名称/主机、值/指向）＋域名档（defaultCraft/customCraft/external）。
+  domain      String?
+  domainState String   @default("unset") // "unset" | "declared" | "verified" | "disconnected"
+  domainTier  String   @default("defaultCraft") // "defaultCraft" | "customCraft" | "external"
+  dnsRecords  Json?
   ownerId   String
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()

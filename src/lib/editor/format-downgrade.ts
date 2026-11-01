@@ -46,3 +46,65 @@ export function isEmptyBlock(input: {
   if (input.textLength > 0) return false;
   return input.atomicInlines === 0;
 }
+
+/**
+ * G578: Backspace's **six-step chain** (`Dsn`). It walks the same three format steps Enter does
+ * (list → indent → decoration), and only when none applies does it move to the block itself:
+ *
+ *   1. leave the list
+ *   2. reduce indentation
+ *   3. clear decorations and colour
+ *   4. no previous block and this block is empty → delete self, clear the selection
+ *   5. the previous block is an empty text block → delete the previous block
+ *   6. the previous block is text → merge this block into it (caret lands at the previous end)
+ *   7. the previous block is non-text and this block is empty → delete self, select the previous
+ *
+ * The local editor has the first three as `nextFormatStep`; steps 4–7 are what the ledger records as
+ * missing (local merge is ProseMirror's `joinBackward`, which does none of them). Modelling the
+ * whole chain here is what lets the caller drive it explicitly instead of inheriting the default.
+ */
+export type BackspaceStep =
+  | 'list'
+  | 'indent'
+  | 'decoration'
+  | 'delete-self'
+  | 'delete-previous'
+  | 'merge-into-previous'
+  | 'select-previous';
+
+export interface BackspaceContext {
+  /** Format state of the block the caret is in. */
+  block: BlockFormatState;
+  /** Whether the block is completely empty (`isEmptyBlock`). */
+  blockEmpty: boolean;
+  /** Whether a previous sibling block exists. */
+  hasPrevious: boolean;
+  /** The previous block's kind, when one exists. */
+  previous?: { isText: boolean; empty: boolean };
+}
+
+/** The first Backspace step that applies, in the official order. */
+export function nextBackspaceStep(ctx: BackspaceContext): BackspaceStep | null {
+  // Steps 1–3: the format chain — but Backspace's order is **list → indent → decoration**, the
+  // reverse of Enter's (`Dsn` vs `lGe` in the ledger). Only the last step is shared.
+  if (ctx.block.inList) return 'list';
+  if (ctx.block.indentLevel > 0) return 'indent';
+  if (ctx.block.decorated) return 'decoration';
+
+  // Step 4: no previous block at all — an empty block is deleted, a non-empty one does nothing.
+  if (!ctx.hasPrevious) return ctx.blockEmpty ? 'delete-self' : null;
+
+  const previous = ctx.previous ?? { isText: true, empty: false };
+  // Step 5: the previous block is an empty text block — remove it.
+  if (previous.isText && previous.empty) return 'delete-previous';
+  // Step 6: the previous block is text — merge into it, caret at the previous block's end.
+  if (previous.isText) return 'merge-into-previous';
+  // Step 7: the previous block is non-text and this block is empty — delete self, select previous.
+  if (ctx.blockEmpty) return 'select-previous';
+  return null;
+}
+
+/** The redo caret landing for a merge: the previous block's end (`textSelectionIndex`). */
+export function mergeCaretIndex(previousTextLength: number | null | undefined): number {
+  return typeof previousTextLength === 'number' ? previousTextLength : -1;
+}

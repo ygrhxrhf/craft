@@ -848,9 +848,12 @@
     },
     "G320": {
       "status": "partial",
-      "note": "内嵌标签渲染器已落（标签→样式段/链接段/换行段，未知标签丢标记留文本）；尚未接进全部 53 条键的渲染位。",
+      "priority": "P1",
+      "note": "现读（第 37 批）：内嵌标签渲染器已接**真实渲染位**——新增 `src/components/ui/rich-text.tsx`（按 `parseEmbeddedTags` 的分段渲染：样式段加 class、链接段出 `<a>`、`<br/>` 出换行），接进账户面板那句带 `<strong>` 的官方文案（`src/lib/i18n/account-copy.ts` 的 `loggedInAsText`，逐字取自 `_harvest/i18n-zh.tsv:667`）。单测钉住模板逐字与 harvest 一致、`[0]` 填邮箱、`<strong>` 解析成 bold 段而非漏出标签；`rich-text.test.ts` 钉住接线。仍缺＝53 条带标签键只接了 1 条，其余渲染位未逐一接，故记 partial。",
       "evidence": [
-        "src/lib/i18n/embedded-tags.ts:75"
+        "src/components/ui/rich-text.tsx:20",
+        "src/lib/i18n/account-copy.ts:6",
+        "src/lib/i18n/account-copy.test.ts:15"
       ]
     },
     "G321": {
@@ -1281,9 +1284,11 @@
     },
     "G578": {
       "status": "partial",
-      "note": "Backspace 六段链只落了前两段（去列表、减缩进）与默认合并；「前块为空则删前块」与 redo 光标落点未做。",
+      "priority": "P1",
+      "note": "现读（第 37 批）：Backspace 六段链已建模为纯核 `src/lib/editor/format-downgrade.ts` 的 `nextBackspaceStep`——① 去列表 ② 减缩进 ③ 清装饰（★ 注意 Backspace 的格式序是「列表→缩进→装饰」，与 Enter 的「缩进→列表→装饰」相反，单测钉住这一处差异）④ 无前块且本块空 ⇒ 删自己 ⑤ 前块是空文本块 ⇒ 删前块 ⑥ 前块是文本 ⇒ 合并（光标落前块末尾，`mergeCaretIndex`）⑦ 前块非文本且本块空 ⇒ 删自己选中前块。仍缺＝未接真实 Backspace 键位（本地合并仍由 ProseMirror joinBackward 决定），故记 partial。",
       "evidence": [
-        "src/lib/editor/format-downgrade.ts:28"
+        "src/lib/editor/format-downgrade.ts:66",
+        "src/lib/editor/format-downgrade.test.ts:37"
       ]
     },
     "G581": {
@@ -1311,10 +1316,11 @@
     },
     "G586": {
       "status": "partial",
-      "note": "撤销/重做可用（单机 ProseMirror history，协同 Yjs UndoManager）；无 patches/inversePatches 补丁栈。",
+      "priority": "P1",
+      "note": "现读（第 37 批）：补丁双栈已落纯核 `src/lib/editor/patch-stack.ts`——`pushStep`（正向 patches 顺序追加、逆向 inversePatches **反序前置**，这就是 LIFO 生效的唯一实现处）、`popUndo`/`popRedo`、`isUndoableAction`（G655：undo/redo 自身不进步骤表）、`canUndoAt`/`canRedoAt`（索引空洞处就地停）、`mergePatchesFromOtherTabs`（★ 官方「同浏览器跨标签页补丁合并」这一动作类型）。单测 9 条。仍缺＝本地撤销仍走 ProseMirror history / Yjs UndoManager，没有补丁栈的真实调用点，故记 partial。",
       "evidence": [
-        "src/components/editor/Editor.tsx:342",
-        "src/components/editor/Editor.tsx:515"
+        "src/lib/editor/patch-stack.ts:36",
+        "src/lib/editor/patch-stack.test.ts:18"
       ]
     },
     "G588": {
@@ -1426,9 +1432,11 @@
     },
     "G655": {
       "status": "partial",
-      "note": "只读已有 readOnly+协同两来源，与官方同构；无撤销步骤表与索引空洞即停。",
+      "priority": "P1",
+      "note": "现读（第 37 批）：两条「撤销的撤销」已落纯核（见 G586 的 `patch-stack.ts`）——`isUndoableAction` 判「整体就是 undo/redo ⇒ undoable:false」，`canUndoAt`/`canRedoAt` 是 hasOwnProperty 判据（索引空洞处就地停，不跳洞）。另本行「两个只读来源」F 项早已同构（`locked = readOnly || collabReadOnly`，Editor.tsx:147）。仍缺＝无撤销步骤表与索引空洞这一可诊断形态，故记 partial。",
       "evidence": [
-        "src/components/editor/Editor.tsx:174"
+        "src/lib/editor/patch-stack.ts:69",
+        "src/lib/editor/patch-stack.test.ts:50"
       ]
     },
     "G670": {

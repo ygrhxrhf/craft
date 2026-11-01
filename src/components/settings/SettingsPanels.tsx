@@ -19,6 +19,8 @@ import { uploadFile } from '@/lib/upload-client';
 import { promptDialog } from '@/lib/dialog/show';
 import { ACCENTS as ACCENT_KEYS, pickAccent, readAccent, type Accent } from '@/lib/accent';
 import { Switch } from '@/components/ui/switch';
+import { RichText } from '@/components/ui/rich-text';
+import { loggedInAsText } from '@/lib/i18n/account-copy';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
 import { cn } from 'cn';
 import {
@@ -522,6 +524,14 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                   <div className="text-xs text-foreground/55">电子邮件</div>
                   <div className="mt-1 text-[15px]">{profile?.email || '—'}</div>
                   <div className="mt-1 text-xs text-foreground/55">你用于此帐户的电子邮件地址。</div>
+                  {/* G320：官方那句带 `<strong>` 标签（`blockdetails.you.are.logged.in.as.strong`），
+                      走 RichText 渲染而不是把标签原样打印出来。 */}
+                  {profile?.email ? (
+                    <RichText
+                      value={loggedInAsText(profile.email)}
+                      className="mt-1 block text-xs text-foreground/55"
+                    />
+                  ) : null}
                 </div>
                 {/* G164：这里原有第三枚裸铅笔图标（EditIcon）——同样"不是按钮"，且本地
                     **没有任何改邮箱能力**（全仓零 `changeEmail`／`updateEmail`／`verifyEmail`），

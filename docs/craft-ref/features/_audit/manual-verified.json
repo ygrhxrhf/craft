@@ -880,11 +880,11 @@
     "G320": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 55 批）：内嵌标签渲染器已接**第二个真实渲染位**——新增 `src/lib/i18n/onboarding-copy.ts`（`onboarding.welcome.to.craft` 三句逐字，其中 desc 含自闭合 `<br/>`）接进 `documents/page.tsx` 的最近编辑空态，走 `RichText` 渲染（`<br/>` 出换行、不打印标签）。单测钉住三句逐字与 `<br/>` 解析成 break 段。仍缺＝53 条带标签键只接了 2 条，其余渲染位未逐一接，故记 partial。",
+      "note": "现读（第 72 批）：内嵌标签渲染器已接**第三处真实渲染位**——新增 `src/lib/i18n/comment-hint-copy.ts`（评论框下四条提示逐字，均含 `<highlight>`），接进 `CommentSection` 的评论输入框下方（`data-testid=\"comment-hints\"`），走 `RichText` 渲染（`<highlight>` 出高亮、不打印标签）。单测 3 条（含四条逐字与标签解析）。累计接了 3 条带标签键（登录身份、引导、评论提示）。仍缺＝53 条带标签键只接了 3 条，其余渲染位未逐一接，故记 partial。",
       "evidence": [
-        "src/lib/i18n/onboarding-copy.ts:6",
-        "src/app/(app)/documents/page.tsx:66",
-        "src/lib/i18n/onboarding-copy.test.ts:19"
+        "src/lib/i18n/comment-hint-copy.ts:6",
+        "src/components/editor/comments/CommentSection.tsx:309",
+        "src/lib/i18n/comment-hint-copy.test.ts:19"
       ]
     },
     "G321": {

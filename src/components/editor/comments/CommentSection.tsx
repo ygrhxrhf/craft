@@ -10,6 +10,8 @@ import { readPendingRows, readLocalRecords } from '@/components/sync/local-recor
 import { overlayCommentThreads, pickViewerId, type ThreadView } from './comment-overlay';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { composerKey } from './composer-keys';
+import { RichText } from '@/components/ui/rich-text';
+import { COMMENT_HINT_MENTION, COMMENT_HINT_NEW_LINE, COMMENT_HINT_SEND, commentHintEmoji } from '@/lib/i18n/comment-hint-copy';
 import { EmojiSuggest } from './EmojiSuggest';
 import { MentionSuggest } from './MentionSuggest';
 import { groupReactions, reactionSentence } from './reaction-copy';
@@ -310,6 +312,26 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
               setDraftCaret(next.caret);
             }}
           />
+          {/* G320: the four official hints carry `<highlight>` tags — rendered via RichText so the
+              tags become highlights rather than leaking into the UI. */}
+          <div className="mt-1.5 space-y-0.5" data-testid="comment-hints">
+            <RichText
+              value={commentHintEmoji(':')}
+              className="block text-[11px] leading-4 text-foreground/45"
+            />
+            <RichText
+              value={COMMENT_HINT_MENTION.template}
+              className="block text-[11px] leading-4 text-foreground/45"
+            />
+            <RichText
+              value={COMMENT_HINT_NEW_LINE.template}
+              className="block text-[11px] leading-4 text-foreground/45"
+            />
+            <RichText
+              value={COMMENT_HINT_SEND.template}
+              className="block text-[11px] leading-4 text-foreground/45"
+            />
+          </div>
           <div className="flex justify-end gap-1">
             <button
               type="button"

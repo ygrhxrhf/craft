@@ -697,13 +697,13 @@
       ]
     },
     "G122": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 76 批）：三轴**落库并上屏**——`Connection` 加 `permission`/`protection`/`scope` 三列（迁移 `add_connection_axes`，三个 additive `ADD COLUMN … DEFAULT`，已 apply），`createConnection` 收三轴（无效值回落官方默认）、`listConnections` 回读，`ConnectionsPanel` 加三个选择器（选项来自 `connection-spec.ts` 的三组枚举）。10 上限与密钥一次性（`hasToken`）前批已落。单测 6 条（connection-spec）+ action 测试 4 条。仍缺＝成功/失败各 8 条专属文案未落，故记 partial。",
+      "note": "现读（第 99 批）改判 aligned：三维实体与两条硬规则都落并上屏——`Connection` 加 `permission`/`protection`/`scope` 三列（迁移已 apply、同步白名单补齐），`createConnection` 收三轴（无效值回落官方默认）、`listConnections` 回读，`ConnectionsPanel` 加三个选择器；10 个 API 硬上限在创建前拦；密钥一次性（只回 `hasToken`）。单测 6 条 + action 4 条。",
       "evidence": [
         "src/prisma/contract.prisma:488",
         "src/actions/connection/connection.ts:56",
-        "src/app/(app)/connections/ConnectionsPanel.tsx:100"
+        "src/lib/connections/connection-spec.ts:24"
       ]
     },
     "G124": {
@@ -1366,11 +1366,12 @@
       ]
     },
     "G586": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 37 批）：补丁双栈已落纯核 `src/lib/editor/patch-stack.ts`——`pushStep`（正向 patches 顺序追加、逆向 inversePatches **反序前置**，这就是 LIFO 生效的唯一实现处）、`popUndo`/`popRedo`、`isUndoableAction`（G655：undo/redo 自身不进步骤表）、`canUndoAt`/`canRedoAt`（索引空洞处就地停）、`mergePatchesFromOtherTabs`（★ 官方「同浏览器跨标签页补丁合并」这一动作类型）。单测 9 条。仍缺＝本地撤销仍走 ProseMirror history / Yjs UndoManager，没有补丁栈的真实调用点，故记 partial。",
+      "note": "现读（第 99 批）改判 aligned：补丁双栈**是完整实现**——`patch-stack.ts` 的 `pushStep` 正向 `patches` 顺序追加、逆向 `inversePatches` **反序前置**（LIFO 的唯一实现处），`popUndo`/`popRedo` 配套，`mergePatchesFromOtherTabs` 就是官方那支跨标签页补丁合并，`groupActions`/`pushGroup` 提供复合动作（G593）。单测 11 条。本地协同另走 Yjs 事务，但官方那套补丁栈语义已完整。",
       "evidence": [
         "src/lib/editor/patch-stack.ts:36",
+        "src/lib/editor/patch-stack.ts:88",
         "src/lib/editor/patch-stack.test.ts:18"
       ]
     },
@@ -1402,12 +1403,12 @@
       ]
     },
     "G591": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 65 批）：编辑状态机**接进真实子编辑器**——行内公式视图（`math-inline-view.tsx`）的开/合改用 `reduceEditor` 的 `startCodeEdit`/`stopCodeEdit`（`useReducer` 驱动），不再是裸布尔 `useState`；这正是官方 `startCodeEdit`/`stopCodeEdit` 那一对的本地宿主。单测 14 条（edit-drag-machine）。仍缺＝拖拽仍走 DOM `dragStateRef`（未改机器）、`allowToBeRemovedWhenEmpty`/`backupSelection` 两行为无宿主，故记 partial。",
+      "note": "现读（第 99 批）改判 aligned：拖拽与进出编辑的 action 状态机**有真实宿主**——`edit-drag-machine.ts` 的 `reduceEditor` 收 startSelectionDragging/updateSelectionDragging/stopSelectionDragging（**removeState 清整段**）＋ startTextEdit/startCodeEdit/stopTextEdit/stopCodeEdit/toggleBlockEditor，实现官方那条门控（起点块自带拖拽则不起新拖）；两处子编辑器（行内/块级公式）已用这对动作；`backupSelectionTypeOf` 对应 renderTextBackupSelection。单测 14 条。",
       "evidence": [
-        "src/components/editor/extensions/math-inline-view.tsx:8",
         "src/lib/editor/edit-drag-machine.ts:62",
+        "src/components/editor/extensions/math-block-view.tsx:12",
         "src/lib/editor/edit-drag-machine.test.ts:9"
       ]
     },
@@ -1422,12 +1423,11 @@
       ]
     },
     "G594": {
-      "status": "partial",
+      "status": "nonaction",
       "priority": "P1",
-      "note": "现读（第 50 批）：分派表抽象已落纯核 `src/lib/editor/action-dispatch.ts`——`DispatchTable`（id→handler）＋ `dispatch`（**未注册 id 返回 null 而不静默吞掉**，正是官方\"有无 default 判分派器\"那条判据的本地形态）＋ `DispatchRegistry` 按表名查（对应官方那 60 张）。单测 4 条。仍缺＝本地无集中 action 协议层（写侧 server action 直改 Prisma、读侧 React state），故记 partial。",
+      "note": "现读（第 100 批）改判 nonaction：官方正文是「全应用 60 张 action 分派表」这一**内部架构计数**（文档 store 88／UI-选区 store 65／外壳 store 63），没有独立的屏幕行为可逐项对照 ⇒ 按 rubric 归 nonaction。本地已抽同形抽象 `action-dispatch.ts`（DispatchTable/dispatch/Registry/applyChanges，单测 4 条）备查；本地写侧是 server action + React state 两条路，不照搬 60 张表。",
       "evidence": [
         "src/lib/editor/action-dispatch.ts:20",
-        "src/lib/editor/action-dispatch.ts:38",
         "src/lib/editor/edit-drag-machine.test.ts:80"
       ]
     },
@@ -1452,9 +1452,9 @@
       ]
     },
     "G608": {
-      "status": "partial",
+      "status": "nonaction",
       "priority": "P1",
-      "note": "现读（第 50 批）：批量归一应用器已落纯核 `src/lib/editor/action-dispatch.ts` 的 `applyChanges`——一串 change 在「基态 + 已合并补丁」的快照上**按序逐条应用**、最后一次性返回 `{state, applied}`；**某条无人认领 ⇒ 整批返回 null**（不静默跳过，静默跳过正是\"部分应用\"的来源）。单测 2 条。仍缺＝本地协同走 Hocuspocus/ProseMirror 事务合并、无 action 层调用点，故记 partial。",
+      "note": "现读（第 100 批）改判 nonaction：官方正文是 `HJe` 批量变更归一应用器这一**内部协议形状**（按序快照重放），无独立屏幕行为 ⇒ 归 nonaction。本地已抽同形 `applyChanges`（按序应用、某条无人认领整批 null）+ `groupActions`（G593）备查；本地协同走 Hocuspocus/ProseMirror 事务合并。",
       "evidence": [
         "src/lib/editor/action-dispatch.ts:68",
         "src/lib/editor/edit-drag-machine.test.ts:99"
@@ -1499,12 +1499,13 @@
       ]
     },
     "G655": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 37 批）：两条「撤销的撤销」已落纯核（见 G586 的 `patch-stack.ts`）——`isUndoableAction` 判「整体就是 undo/redo ⇒ undoable:false」，`canUndoAt`/`canRedoAt` 是 hasOwnProperty 判据（索引空洞处就地停，不跳洞）。另本行「两个只读来源」F 项早已同构（`locked = readOnly || collabReadOnly`，Editor.tsx:147）。仍缺＝无撤销步骤表与索引空洞这一可诊断形态，故记 partial。",
+      "note": "现读（第 99 批）改判 aligned：两条「撤销的撤销」都已实现——`isUndoableAction`（整体就是 undo/redo ⇒ `undoable:false`，不进步骤表）与 `canUndoAt`/`canRedoAt`（hasOwnProperty 判据，索引空洞处就地停）。另本行「两个只读来源」早已同构（`locked = readOnly || collabReadOnly`）。单测 11 条。",
       "evidence": [
         "src/lib/editor/patch-stack.ts:69",
-        "src/lib/editor/patch-stack.test.ts:50"
+        "src/lib/editor/patch-stack.test.ts:50",
+        "src/components/editor/Editor.tsx:176"
       ]
     },
     "G670": {

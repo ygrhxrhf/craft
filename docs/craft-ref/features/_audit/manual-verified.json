@@ -427,11 +427,11 @@
     "G357": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 73 批）：三套时间语义在**任务屏**上已是三个独立入口——`TasksView` 每行两枚 `TaskDatePopover`（kind=schedule「计划」/ kind=deadline「截止」）＋ 一枚「设置提醒与重复」按钮，三者各自读写 `scheduleDate`/`dueDate`/`remindAt`（不是一枚日期框切换）。`src/lib/task/time-icons.ts` 另给出三枚图标的语义与整句（`tasks.scheduled.for`/`tasks.deadline.set.for`/提醒无整句）。单测 4 条（time-icons）。仍缺＝**文档内的任务块**仍只有一枚提醒 pill，三枚并列图标未落到块级，故记 partial。",
+      "note": "现读（第 79 批）：三枚时间图标**落到文档内的任务块**——`TaskItem` 加 `scheduleDate`/`dueDate` 两属性（`data-schedule-date`/`data-due-date`），`reminder-pill.ts` 的 decoration 在任务行末尾为有值的那两枚各加一枚图标 widget（📅 日历 / 🚩 旗子，title 用 `iconSentence` 的整句），与原有提醒 pill 并列 ⇒ 三套时间语义在行内**各有自己的入口**。单测 375 条（editor + task 套件）。仍缺＝本地写入路径未把 schedule/deadline 同步到文档属性（`syncDocumentTasks` 仍只带 remindAt），故记 partial。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:508",
-        "src/lib/task/time-icons.ts:23",
-        "src/lib/task/reminder-entity.test.ts:57"
+        "src/components/editor/Editor.tsx:393",
+        "src/components/editor/extensions/reminder-pill.ts:100",
+        "src/lib/task/time-icons.ts:40"
       ]
     },
     "G359": {

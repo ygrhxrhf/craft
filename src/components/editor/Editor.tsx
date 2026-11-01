@@ -390,6 +390,22 @@ export function Editor({
                 ? { 'data-cancelled-at': attributes.cancelledAt }
                 : {},
             },
+            // G357: the two other time semantics ride the task item next to `remindAt`, so the row
+            // can show the calendar (schedule) and flag (deadline) icons beside the reminder pill.
+            scheduleDate: {
+              default: null,
+              parseHTML: (element) => element.getAttribute('data-schedule-date'),
+              renderHTML: (attributes) => attributes.scheduleDate
+                ? { 'data-schedule-date': attributes.scheduleDate }
+                : {},
+            },
+            dueDate: {
+              default: null,
+              parseHTML: (element) => element.getAttribute('data-due-date'),
+              renderHTML: (attributes) => attributes.dueDate
+                ? { 'data-due-date': attributes.dueDate }
+                : {},
+            },
           };
         },
       }).configure({

@@ -13,6 +13,7 @@ import {
 } from '@/lib/task/reminder-reschedule';
 import { confirmDialog } from '@/lib/dialog/show';
 import { clearTaskReminder, setTaskReminder, taskItemTarget } from '@/components/editor/drag-handle/block-actions';
+import { iconSentence } from '@/lib/task/time-icons';
 
 export const REMINDER_PILL_KEY = new PluginKey('reminderPill');
 
@@ -39,8 +40,23 @@ function placeMenu(anchor: HTMLElement, menu: HTMLElement) {
   document.body.appendChild(menu);
 }
 
-function menuItem(label: string, onPick: () => void): HTMLButtonElement {
-  const item = document.createElement('button');
+/** G357: the calendar (schedule) and flag (deadline) icons shown beside the reminder pill. */
+function timeIcon(kind: 'schedule' | 'deadline', iso: string): HTMLElement {
+  const at = new Date(iso);
+  const label = Number.isNaN(at.getTime())
+    ? ''
+    : kind === 'schedule'
+      ? iconSentence('schedule', `${at.getMonth() + 1}/${at.getDate()}`)
+      : iconSentence('deadline', `${at.getMonth() + 1}/${at.getDate()}`);
+  const span = document.createElement('span');
+  span.className = `task-time-icon task-time-icon-${kind}`;
+  span.dataset.timeIcon = kind;
+  span.textContent = kind === 'schedule' ? '📅' : '🚩';
+  if (label) span.title = label;
+  return span;
+}
+
+function menuItem(label: string, onPick: () => void): HTMLButtonElement {  const item = document.createElement('button');
   item.type = 'button';
   item.className = 'reminder-menu-item';
   item.textContent = label;
@@ -142,6 +158,29 @@ export const ReminderPill = Extension.create({
             const now = new Date();
             state.doc.descendants((node, pos) => {
               if (node.type.name !== 'taskItem') return;
+              // G357: the schedule (calendar) and deadline (flag) icons ride the row beside the
+              // reminder pill, so the three time semantics each have their own in-document entry
+              // rather than one shared date box.
+              const schedule = node.attrs.scheduleDate;
+              if (typeof schedule === 'string' && schedule) {
+                widgets.push(
+                  Decoration.widget(
+                    pos + node.nodeSize - 1,
+                    () => timeIcon('schedule', schedule),
+                    { side: -1 },
+                  ),
+                );
+              }
+              const due = node.attrs.dueDate;
+              if (typeof due === 'string' && due) {
+                widgets.push(
+                  Decoration.widget(
+                    pos + node.nodeSize - 1,
+                    () => timeIcon('deadline', due),
+                    { side: -1 },
+                  ),
+                );
+              }
               const remindAt = node.attrs.remindAt;
               if (typeof remindAt !== 'string' || !remindAt) return;
               const at = new Date(remindAt);

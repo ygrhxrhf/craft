@@ -80,6 +80,33 @@ function isWeekdayNumber(value: unknown): boolean {
 
 const WEEKDAY_LABELS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
+/**
+ * G653: two week-start conventions are in play. The stored `days` array keeps the official
+ * Sunday-first numbering (`sunday:0 … saturday:6`), while the **calendar grid and the weekday
+ * picker** start on Monday. These two helpers are the only place the two are converted, so a
+ * stored day never gets read as the wrong weekday.
+ */
+export const SUNDAY_FIRST = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+export const MONDAY_FIRST = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+
+/** A Sunday-first index → its Monday-first column (Mon 0 … Sun 6). */
+export function toMondayFirst(sundayFirst: number): number {
+  return (sundayFirst + 6) % 7;
+}
+
+/** A Monday-first column → the stored Sunday-first index. */
+export function fromMondayFirst(mondayFirst: number): number {
+  return (mondayFirst + 1) % 7;
+}
+
+/** The Monday that opens the week containing `date`, at local midnight. */
+export function startOfWeekMonday(date: Date): Date {
+  const copy = new Date(date);
+  copy.setHours(0, 0, 0, 0);
+  copy.setDate(copy.getDate() - toMondayFirst(copy.getDay()));
+  return copy;
+}
+
 export function describeRecurrence(raw: string | null | undefined): string | null {
   const rule = parseRecurrence(raw);
   if (!rule) return null;

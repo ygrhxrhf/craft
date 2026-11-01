@@ -1116,12 +1116,11 @@
       ]
     },
     "G516": {
-      "status": "partial",
-      "note": "三值状态、取消→未选的点击循环、完成/取消双时间戳均已实现；缺批量聚合（任一未选→整批设已选）。",
+      "status": "aligned",
+      "note": "todoState 三值数字枚举（Unchecked0/Checked1/Canceled2）与本地字符串态互译成对，未知值读作 todo。",
       "evidence": [
-        "src/prisma/contract.prisma:340",
-        "src/lib/editor/task-status.ts:78",
-        "src/actions/task/task.ts:242"
+        "src/lib/editor/task-status.ts:44",
+        "src/lib/editor/task-status.test.ts:120"
       ]
     },
     "G524": {
@@ -1407,11 +1406,11 @@
       ]
     },
     "G653": {
-      "status": "partial",
-      "note": "重复按 0=周日展开，仅单一起点；无官方 monday-first 第二制与加减天方向断言。",
+      "status": "aligned",
+      "note": "两制周起已建模：存储用官方 Sunday-first，网格/选择器用 Monday-first，toMondayFirst/fromMondayFirst 单点互转，并给 startOfWeekMonday。",
       "evidence": [
-        "src/lib/task/recurrence.ts:5",
-        "src/lib/task/recurrence.ts:47"
+        "src/lib/task/recurrence.ts:81",
+        "src/lib/task/recurrence.test.ts:200"
       ]
     },
     "G655": {

@@ -35,6 +35,24 @@ export interface TaskAttrs {
 export const CANCELLED_LABEL = '已取消';
 export const CANCELLED_ON_TEXT = '已于 [0] 取消';
 
+/**
+ * G516: the official wire value is a three-value numeric enum — `Unchecked:0 / Checked:1 /
+ * Canceled:2`. The local column keeps the string spelling (`todo`/`done`/`cancelled`); this pair
+ * is the translation the codec uses so the two representations cannot drift apart.
+ */
+export const TODO_STATE = { Unchecked: 0, Checked: 1, Canceled: 2 } as const;
+
+export function todoStateOf(status: TaskLineStatus): number {
+  if (status === 'cancelled') return TODO_STATE.Canceled;
+  return status === 'done' ? TODO_STATE.Checked : TODO_STATE.Unchecked;
+}
+
+export function statusFromTodoState(state: unknown): TaskLineStatus {
+  if (state === TODO_STATE.Canceled) return 'cancelled';
+  if (state === TODO_STATE.Checked) return 'done';
+  return 'todo';
+}
+
 export function taskLineStatus(attrs: Pick<TaskAttrs, 'checked' | 'cancelled'>): TaskLineStatus {
   if (attrs.cancelled) return 'cancelled';
   return attrs.checked ? 'done' : 'todo';

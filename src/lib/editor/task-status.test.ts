@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
+import { TODO_STATE, statusFromTodoState, todoStateOf,
   applyCancelled,
   applyChecked,
   applyToggled,
@@ -114,5 +114,23 @@ describe('官方文案', () => {
     expect(CANCELLED_ON_TEXT).toBe('已于 [0] 取消'); // tasks.canceled.on
     expect(cancelledOnText('10 月 14 日')).toBe('已于 10 月 14 日 取消');
     expect(cancelledOnText('10 月 14 日')).not.toContain('[0]');
+  });
+});
+
+// G516: the wire enum is numeric (0/1/2) while the local column is a string.
+describe('the todoState numeric enum', () => {
+  it('translates both ways', () => {
+    expect([TODO_STATE.Unchecked, TODO_STATE.Checked, TODO_STATE.Canceled]).toEqual([0, 1, 2]);
+    expect(todoStateOf('todo')).toBe(0);
+    expect(todoStateOf('done')).toBe(1);
+    expect(todoStateOf('cancelled')).toBe(2);
+    expect(statusFromTodoState(2)).toBe('cancelled');
+    expect(statusFromTodoState(1)).toBe('done');
+    expect(statusFromTodoState(0)).toBe('todo');
+  });
+
+  it('reads an unknown wire value as todo', () => {
+    expect(statusFromTodoState(9)).toBe('todo');
+    expect(statusFromTodoState(undefined)).toBe('todo');
   });
 });

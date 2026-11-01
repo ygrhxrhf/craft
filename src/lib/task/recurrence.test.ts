@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RECURRENCE_PRESETS, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor } from './recurrence';
+import { MONDAY_FIRST, SUNDAY_FIRST, fromMondayFirst, startOfWeekMonday, toMondayFirst, RECURRENCE_PRESETS, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor } from './recurrence';
 
 const iso = (date: Date) => date.toISOString();
 
@@ -176,5 +176,31 @@ describe('date-aware repeat presets', () => {
   it('stores the weekday in the rule when a date is given', () => {
     const weekly = recurrencePresetsFor(new Date(2026, 2, 10)).find((p) => p.label.startsWith('每周'));
     expect(JSON.parse(weekly!.value)).toEqual({ freq: 'weekly', days: [2] });
+  });
+});
+
+// G653: the stored numbering is Sunday-first, the grid is Monday-first.
+describe('the two week-start conventions', () => {
+  it('converts an index both ways', () => {
+    expect(toMondayFirst(0)).toBe(6); // Sunday → last column
+    expect(toMondayFirst(1)).toBe(0); // Monday → first column
+    expect(fromMondayFirst(0)).toBe(1);
+    expect(fromMondayFirst(6)).toBe(0);
+    expect(fromMondayFirst(toMondayFirst(4))).toBe(4);
+  });
+
+  it('names the two orders', () => {
+    expect(SUNDAY_FIRST[0]).toBe('sunday');
+    expect(MONDAY_FIRST[0]).toBe('monday');
+    expect(MONDAY_FIRST[6]).toBe('sunday');
+  });
+
+  it('finds the Monday that opens a week', () => {
+    // 2026-03-10 is a Tuesday → the Monday is the 9th.
+    expect(startOfWeekMonday(new Date(2026, 2, 10)).getDate()).toBe(9);
+    // A Monday is its own week start.
+    expect(startOfWeekMonday(new Date(2026, 2, 9)).getDate()).toBe(9);
+    // Sunday belongs to the week that started six days earlier.
+    expect(startOfWeekMonday(new Date(2026, 2, 15)).getDate()).toBe(9);
   });
 });

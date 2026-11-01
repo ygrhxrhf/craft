@@ -796,12 +796,12 @@
       ]
     },
     "G211": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 40 批）：撤销的**焦点门控**与**子编辑器隔离**已落纯核 `src/lib/editor/undo-gate.ts`——`undoDisposition(focus)` 三档（正文⇒撤销文档／子编辑器⇒delegate 文档不动／焦点在外⇒ignore，对应官方实测\"连按 7 次零变化\"），`undoStepsFor` 把\"一次打字会话（不论几字符）＝1 步、结构动作＝1 步、不可撤销＝0 步\"写出来。单测 6 条。仍缺＝本地代码/公式/Mermaid 块不是独立内嵌编辑器（无自己的撤销栈），故 delegate 无真实宿主；TipTap history 仍是编辑器级全局栈，故记 partial。",
+      "note": "现读（第 98 批）改判 aligned：撤销的**焦点门控与子编辑器隔离**都接进真实键位——`craft-keymap.ts` 的 handleKeyDown 在 Ctrl/Cmd+Z 时先看焦点：落在 `input`/`textarea`/`[data-sub-editor]`（即行内/块级公式的子编辑器）⇒ 返回 false 交子编辑器自己的栈，文档不撤销（官方 V16 那条）；焦点在正文 ⇒ 走文档 history；焦点完全在编辑器外时 PM 本就不收键（官方\"连按 7 次零变化\"）。三段判据在 `undo-gate.ts` 有单测。",
       "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:210",
         "src/lib/editor/undo-gate.ts:31",
-        "src/lib/editor/undo-gate.ts:57",
         "src/lib/editor/undo-gate.test.ts:8"
       ]
     },

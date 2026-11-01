@@ -99,6 +99,7 @@
 | 94 | — | G593（aligned） | 复合 group 动作落进补丁栈（整组占一步） |
 | 95 | — | G408（aligned） | 子任务服务端推导并上屏（getSubTasks + ↳ 标记） |
 | 96 | — | G590（aligned） | 表格九族落点接真实插入路径（insertTableAxis 走 planTableInsert） |
+| 97-98 | — | 实现 + 改判 | G211 撤销焦点门控接真实键位；复核改判 8 行 → aligned |
 
 **剩余 53 条**（gap 0 / partial 53）。☆ 口径更正：本表此前的"剩余 N 条"逐批递减是**错的**——它按"我改了哪些行"减，但**记为 partial 的行在台账里仍是待办**（纯核已落、真实消费点未接），`ledger-backlog.csv` 的 `P1 && (gap||partial)` 才是权威口径。按它实算：**P1 可动行 53 条，全部是 partial、gap 已清零**。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2769 测试、tsc 0 错。
 

@@ -208,6 +208,18 @@ export const CraftKeymap = Extension.create({
         // focused, and no key ever reaches the handler.
         props: {
           handleKeyDown(view: EditorView, event: KeyboardEvent) {
+            // G211: Ctrl+Z / Ctrl+Shift+Z are gated on where the focus actually is. When the caret
+            // sits in an inline sub-editor (math), the key belongs to that editor, not the document
+            // — so the document's undo is skipped and the sub-editor keeps its own stack.
+            if (
+              (event.key === 'z' || event.key === 'Z') &&
+              (event.metaKey || event.ctrlKey) &&
+              !event.altKey
+            ) {
+              const target = event.target as HTMLElement | null;
+              const inSubEditor = Boolean(target?.closest('input, textarea, [data-sub-editor]'));
+              if (inSubEditor) return false;
+            }
             // G777: inside the editor Mod+K inserts a link — it must not fall through to the
             // shell's command palette, which owns the same chord on the browse screens.
             if (

@@ -262,11 +262,11 @@
     "G41": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 45 批）：专用编辑器名册已落单一出处 `src/lib/collection/cell-editors.ts`——官方 13 个编辑器名（TextEditor…FormulaInput/CalculationsRow/SidebarAttachments）＋13 个官方列类型到编辑器的映射（media→SidebarAttachments、linkToBlock→TextEditor）＋本地派生列 formula→FormulaInput；`orphanEditorNames` 判据证明名册无孤儿、`everyColumnTypeHasEditor` 证明 13 类全有。单测 8 条。仍缺＝PropertyCell 仍是内联 switch（名册是\"对应的说明\"而非组件分派），CalculationsRow（汇总行）本地无对应，故记 partial。",
+      "note": "现读（第 71 批）：`CalculationsRow` 的**可选计算**落了——`summary.ts` 加 `SUMMARY_CALCULATIONS` 八档（none/sum/average/min/max/median/count/countFilled）+ 逐档中文 + `applyCalculation`；`TableView` 的汇总行改读列的 `config.summaryCalculation`，选了就用它、没选回落类型默认（`summarizeColumn`）。单测 7 条。仍缺＝汇总行的**选择 UI**（在列菜单里挑计算）未落、专用编辑器名册仍是\"对应的说明\"而非组件分派（见 G41 的 cell-editors），故记 partial。",
       "evidence": [
-        "src/lib/collection/cell-editors.ts:19",
-        "src/lib/collection/cell-editors.ts:42",
-        "src/lib/collection/cell-editors.test.ts:14"
+        "src/lib/collection/summary.ts:60",
+        "src/app/(app)/collections/[id]/TableView.tsx:318",
+        "src/lib/collection/summary.test.ts:37"
       ]
     },
     "G42": {

@@ -470,13 +470,13 @@
       ]
     },
     "G285": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 3 批）：关联字段只有单向目标（AddPropertyMenu 的 relation 只存 collectionId），RelationCell 只读本行值；全库无 twoWay／related.field／反向关联字段注入 ⇒ 官方「双向」缺失。",
+      "note": "现读（第 48 批）：双向关联的形状已落纯核 `src/lib/collection/two-way-relation.ts`——五条文案逐字（related.collection/related.field/two.way「双向」/add.item.to.x/choose.collection）＋`backColumnOf` 推导反向列（属于目标集合、反指本集合、twoWay 同真）＋`relationWrite`/`relationRemove` 两向写入/两向摘除（单向只改本侧）。单测 4 条。仍缺＝关联列仍是单向落库（AddPropertyMenu 只存 collectionId）、反向列未注入、RelationCell 只读本行值，故记 partial。",
       "evidence": [
-        "src/components/collection/AddPropertyMenu.tsx:32",
-        "src/components/collection/AddPropertyMenu.tsx:62",
-        "src/components/collection/PropertyCell.tsx:570-580"
+        "src/lib/collection/two-way-relation.ts:18",
+        "src/lib/collection/two-way-relation.ts:41",
+        "src/lib/team/team-roles.test.ts:120"
       ]
     },
     "G287": {
@@ -820,10 +820,13 @@
       ]
     },
     "G227": {
-      "status": "gap",
-      "note": "登录只有 NextAuth Credentials，无第三方 IdP、授权页或「Sign in with Craft」弹窗完成态。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 48 批）：Sign in with Craft 完成态文案已落 `src/lib/auth/sign-in-copy.ts`——`login.auth.success.close`「你现在可以关闭此窗口了。」逐字（harvest:2130），两种问候 `login.auth.greeting.welcome`「欢迎，[0]」/ `.sorry`「很抱歉，[0]」（harvest:2127-2128），`signInGreeting` 按成败分支且空名返回 null（不发明半句）。单测 3 条。仍缺＝本地无第三方 IdP 与授权弹窗（只有 NextAuth Credentials），故记 partial。",
       "evidence": [
-        "src/lib/auth/config.ts:7"
+        "src/lib/auth/sign-in-copy.ts:15",
+        "src/lib/auth/sign-in-copy.ts:28",
+        "src/lib/team/team-roles.test.ts:79"
       ]
     },
     "G228": {
@@ -1053,11 +1056,13 @@
       ]
     },
     "G421": {
-      "status": "gap",
-      "note": "无团队实体，团队面板仅「创建新团队」占位；角色只有文档级三档，无 admin/member。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 48 批）：团队两档权限已落纯核 `src/lib/team/team-roles.ts`——权限档只有 admin/member 两档（`TEAM_PERMISSION_ROLES`）、生命周期态 active/deactivated/pending 是**另一轴**；两档说明逐字取自 harvest:3614-3617；`adminsOf`/`hasAdmin` 允许**多个管理员**，`changeMemberRole` 是**逐成员**改档，`canSeeSpace(joined)` 把\"成员可见空间由是否已加入决定\"落到判据（与角色无关）。单测 5 条。仍缺＝本地无团队实体（团队面板仅占位），故记 partial。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:566",
-        "src/prisma/contract.prisma:461"
+        "src/lib/team/team-roles.ts:22",
+        "src/lib/team/team-roles.ts:58",
+        "src/lib/team/team-roles.test.ts:18"
       ]
     },
     "G440": {

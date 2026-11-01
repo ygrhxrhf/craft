@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-01T13:36:57.375Z",
+  "generatedAt": "2026-11-01T13:41:44.843Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1043,
+    "gap": 1042,
     "unknown": 198,
     "aligned": 143,
     "deliberate": 96,
-    "partial": 62,
+    "partial": 63,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -20,7 +20,7 @@
   "statusByPriority": {
     "P2 / gap": 461,
     "P? / gap": 226,
-    "P1 / gap": 202,
+    "P1 / gap": 201,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P2 / aligned": 52,
@@ -34,8 +34,8 @@
     "P1 / unknown": 23,
     "P? / nonaction": 23,
     "P2 / partial": 22,
+    "P1 / partial": 19,
     "P? / aligned": 19,
-    "P1 / partial": 18,
     "P2 / nonaction": 18,
     "P3 / nonaction": 14,
     "P3 / partial": 10,
@@ -5113,10 +5113,10 @@
       "cols": 5,
       "id": "G227",
       "official": "**Sign in with Craft**：Craft 作为外部站点的身份提供方，弹窗式 OAuth 完成态（`login.auth.success.close`「你现在可以关闭此窗口了。」）+ \"欢迎 / 很抱歉\"两种问候",
-      "local": "无第三方登录/被登录面（`src` 无 oauth 相关）",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-01）更正：完成态文案与两种问候已落 `src/lib/auth/sign-in-copy.ts`（三句逐字 harvest:2127-2130，signInGreeting 按成败分支、空名返回 null），单测 3 条；本地仍只有 NextAuth Credentials，无第三方 IdP 与授权弹窗",
+      "verdict": "部分落地",
       "score": "3/3",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 3,
         "cost": 3,

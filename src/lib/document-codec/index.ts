@@ -1,4 +1,5 @@
 import { DEFAULT_FLAVOUR } from './flavour';
+import { projectPayload } from './block-payload';
 import { EXPORT_TAG_BY_STYLE, textStyleForHeadingLevel } from '@/lib/editor/text-style';
 import { DEFAULT_DIVIDER_STYLE, DIVIDER_MARKUP_PATTERN, dividerMarkupFromStyle } from '@/lib/editor/divider-styles';
 
@@ -269,8 +270,52 @@ function renderText(node: any): string[] {
 }
 
 export function serializeDocument(document: unknown, format: ExportFormat): string {
-  if (format === 'json') return JSON.stringify(document, null, 2);
+  if (format === 'json') return JSON.stringify(projectDocumentContainers(document), null, 2);
   if (format === 'markdown') return renderMarkdown(document).trim();
   if (format === 'html') return renderHtml(document).trim();
   return renderText(document).join('\n').trim();
+}
+
+/**
+ * G400: the JSON export projects each block into the four official payload containers instead of
+ * dumping the raw TipTap node. A block's `content` stays the node list (text lives there); its
+ * structured payload is routed by type to `pluginData` / `objectData` / `blob`. A block whose
+ * payload lands in the wrong container is rejected, naming the official error.
+ */
+function projectDocumentContainers(document: unknown): unknown {
+  const node = document as { type?: string; content?: unknown[]; attrs?: Record<string, unknown> };
+  if (!node || typeof node !== 'object') return document;
+  const walk = (current: any): any => {
+    if (!current || typeof current !== 'object') return current;
+    const children = Array.isArray(current.content) ? current.content.map(walk) : current.content;
+    if (!current.type || current.type === 'text') return { ...current, content: children };
+    const projection = projectPayload({
+      type: current.type,
+      payload: payloadOf(current),
+      text: undefined,
+    });
+    return {
+      ...current,
+      content: children,
+      pluginData: projection.pluginData,
+      objectData: projection.objectData,
+      blob: projection.blob,
+    };
+  };
+  return walk(node);
+}
+
+/** The structured payload a local node carries, if any (table rows, code text, whiteboard data). */
+function payloadOf(node: any): unknown {
+  switch (node.type) {
+    case 'table':
+      return node.content ?? null;
+    case 'codeBlock':
+      return node.content?.[0]?.text ?? '';
+    case 'whiteboard':
+    case 'whiteboardEmbed':
+      return node.attrs?.data ?? null;
+    default:
+      return undefined;
+  }
 }

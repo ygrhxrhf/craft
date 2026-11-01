@@ -987,11 +987,13 @@
       ]
     },
     "G400": {
-      "status": "gap",
-      "note": "整棵 TipTap JSON 存 Document.content 单列，无 pluginData/objectData/blob 容器与位置不变量校验。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 34 批）：块负载四容器与位置门禁已落编解码层——`src/lib/document-codec/block-payload.ts` 定义四容器（content/pluginData/objectData/blob）、按类型归位（table→pluginData、object/objectList→objectData、codeBlock/whiteboard→blob、其余→content）＋读侧位置门禁 `checkPayloadPlacement`（放错容器按官方文案报 `Unexpected <container> data for block type <type>`）。JSON 导出改走 `projectDocumentContainers`，逐块投影出三个结构化容器（真实消费者，单测钉住 table→pluginData、codeBlock→blob）。仍缺＝不迁库（本地仍整棵 TipTap JSON 存 Document.content 单列），容器是导出/读侧的投影而非存储分层，故记 partial。",
       "evidence": [
-        "src/prisma/contract.prisma:67",
-        "src/collab/persist.mjs:145"
+        "src/lib/document-codec/block-payload.ts:33",
+        "src/lib/document-codec/index.ts:278",
+        "src/lib/document-codec/block-payload.test.ts:12"
       ]
     },
     "G401": {

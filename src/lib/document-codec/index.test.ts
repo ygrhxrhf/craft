@@ -392,3 +392,36 @@ describe('a legacy divider style still round-trips as a divider', () => {
     }
   });
 });
+
+describe('the JSON export projects the four payload containers (G400)', () => {
+  it('routes a table payload into pluginData and keeps text in content', () => {
+    const json = serializeDocument(
+      {
+        type: 'doc',
+        content: [
+          {
+            type: 'table',
+            content: [{ type: 'tableRow', content: [{ type: 'tableCell', content: [{ type: 'paragraph' }] }] }],
+          },
+          { type: 'paragraph', content: [{ type: 'text', text: '正文' }] },
+        ],
+      },
+      'json',
+    );
+    const parsed = JSON.parse(json);
+    expect(parsed.content[0].pluginData).toBeTruthy();
+    expect(parsed.content[0].objectData).toBeNull();
+    expect(parsed.content[0].blob).toBeNull();
+    // A text block has no structured payload anywhere.
+    expect(parsed.content[1].pluginData).toBeNull();
+    expect(parsed.content[1].content[0].text).toBe('正文');
+  });
+
+  it('routes a code body into blob', () => {
+    const json = serializeDocument(
+      { type: 'doc', content: [{ type: 'codeBlock', content: [{ type: 'text', text: 'let a = 1' }] }] },
+      'json',
+    );
+    expect(JSON.parse(json).content[0].blob).toBe('let a = 1');
+  });
+});

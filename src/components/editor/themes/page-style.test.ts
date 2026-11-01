@@ -5,6 +5,7 @@ import { canonicalFontId,
   SPELLING_LANGUAGES,
   filterSpellingLanguages,
   normalizePageStyle,
+  pageStyleForPreset,
   showsDocumentTitle,
 } from './page-style';
 
@@ -66,5 +67,36 @@ describe('the page text colour', () => {
     expect(normalizePageStyle({ textColor: 'red' }).textColor).toBeUndefined();
     expect(normalizePageStyle({ textColor: '#25f' }).textColor).toBeUndefined();
     expect(normalizePageStyle({}).textColor).toBeUndefined();
+  });
+});
+
+/**
+ * G282: the two page-style actions the ledger recorded as missing — a paragraph spacing preset and
+ * a named page-style preset.
+ */
+describe('the page paragraph spacing and style preset (G282)', () => {
+  it('normalises a known paragraph spacing value', () => {
+    expect(normalizePageStyle({ paragraphSpacing: 'compact' }).paragraphSpacing).toBe('compact');
+    expect(normalizePageStyle({ paragraphSpacing: 'relaxed' }).paragraphSpacing).toBe('relaxed');
+  });
+
+  it('drops an unknown spacing value rather than keeping it', () => {
+    expect(normalizePageStyle({ paragraphSpacing: 'huge' }).paragraphSpacing).toBeUndefined();
+  });
+
+  it('keeps null distinct from a real preset (null = not set)', () => {
+    // `null` reads as "not set, follow the document"; it is not a zero-spacing preset.
+    expect(normalizePageStyle({ paragraphSpacing: null }).paragraphSpacing).toBeUndefined();
+  });
+
+  it('applies a page style preset as a patch of the individual fields', () => {
+    expect(pageStyleForPreset('serif')).toMatchObject({ fontPack: 'system-serif', stylePreset: 'serif' });
+    expect(pageStyleForPreset('mono')).toMatchObject({ fontPack: 'system-mono', stylePreset: 'mono' });
+    expect(pageStyleForPreset('default')).toMatchObject({ fontPack: 'system', washi: 'none', stylePreset: 'default' });
+  });
+
+  it('normalises a known style preset and drops an unknown one', () => {
+    expect(normalizePageStyle({ stylePreset: 'paper' }).stylePreset).toBe('paper');
+    expect(normalizePageStyle({ stylePreset: 'nope' }).stylePreset).toBeUndefined();
   });
 });

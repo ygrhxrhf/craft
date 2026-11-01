@@ -854,11 +854,11 @@
     "G282": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 42 批）：协议级 action 名册已落 `src/lib/editor/action-ids.ts`——`undo`/`redo` 标成协议级一等 action（本地对应物是客户端栈）、6 个此前未记录的 action（setLineType/setPageParagraphSpacingType/setPageStylePreset/duplicateSubtree/insertNewBlocksToObjectList/toggleCoverImageEnabled）各标 equivalent 或 missing。单测钉住 undo/redo 的协议地位、6 个名字在场、3 个缺口（段落间距/页面样式预设/对象列表插入）。仍缺＝本地 undo 仍是客户端栈非可分派 action，且上述 3 个 action 无实现，故记 partial。",
+      "note": "现读（第 63 批）：名册里那 6 个未记录 action 中**又落两个**——`PageStyle` 加 `paragraphSpacing`（官方 `setPageParagraphSpacingType`，compact/normal/relaxed 三档，`null`＝未设≠零距）与 `stylePreset`（官方 `setPageStylePreset`，default/serif/mono/paper 四档 + `pageStyleForPreset` 把预设展开成逐字段补丁）；`normalizePageStyle` 收口两格；StyleTab 的 Original 按钮改走预设。单测 13 条。仍缺＝`insertNewBlocksToObjectList` 与本地 undo/redo 仍是客户端栈（非协议 action），故记 partial。",
       "evidence": [
-        "src/lib/editor/action-ids.ts:31",
-        "src/lib/editor/action-ids.ts:46",
-        "src/lib/editor/action-ids.test.ts:9"
+        "src/components/editor/themes/page-style.ts:24",
+        "src/components/editor/themes/page-style.ts:53",
+        "src/components/editor/themes/page-style.test.ts:74"
       ]
     },
     "G313": {

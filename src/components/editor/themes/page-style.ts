@@ -10,6 +10,41 @@ export interface PageStyle {
   spellingLang?: string;
   /** G1436: the page text colour; absent means the theme default. */
   textColor?: string;
+  /**
+   * G282: `setPageParagraphSpacingType` — the paragraph spacing preset. `null`/absent means
+   * "not set, follow the document", which is **not** the same as a zero-spacing preset.
+   */
+  paragraphSpacing?: ParagraphSpacingType | null;
+  /**
+   * G282: `setPageStylePreset` — a named page-style preset. Applying one fills the individual
+   * fields; `null`/absent means no preset has been applied.
+   */
+  stylePreset?: PageStylePresetId | null;
+}
+
+/** G282: the paragraph spacing presets. */
+export type ParagraphSpacingType = 'compact' | 'normal' | 'relaxed';
+
+export const PARAGRAPH_SPACING_TYPES: readonly ParagraphSpacingType[] = ['compact', 'normal', 'relaxed'];
+
+/** G282: the page style presets. */
+export type PageStylePresetId = 'default' | 'serif' | 'mono' | 'paper';
+
+export const PAGE_STYLE_PRESETS: readonly PageStylePresetId[] = ['default', 'serif', 'mono', 'paper'];
+
+/** Applying a preset produces the page-style patch it stands for (fills the individual fields). */
+export function pageStyleForPreset(preset: PageStylePresetId): Partial<PageStyle> {
+  switch (preset) {
+    case 'serif':
+      return { fontPack: 'system-serif', theme: 'default', washi: 'none', stylePreset: 'serif' };
+    case 'mono':
+      return { fontPack: 'system-mono', theme: 'default', washi: 'none', stylePreset: 'mono' };
+    case 'paper':
+      return { fontPack: 'system', theme: 'default', washi: 'sunset', stylePreset: 'paper' };
+    case 'default':
+    default:
+      return { fontPack: 'system', theme: 'default', washi: 'none', stylePreset: 'default' };
+  }
 }
 
 /**
@@ -107,7 +142,18 @@ export function normalizePageStyle(value: unknown): PageStyle {
     spelling: typeof v.spelling === 'boolean' ? v.spelling : undefined,
     spellingLang: typeof v.spellingLang === 'string' ? v.spellingLang : undefined,
     textColor: typeof v.textColor === 'string' && /^#[0-9a-f]{6}$/i.test(v.textColor) ? v.textColor : undefined,
+    // G282: `null` means "not set, follow the document" — kept distinct from a real preset value.
+    paragraphSpacing: isParagraphSpacingType(v.paragraphSpacing) ? v.paragraphSpacing : undefined,
+    stylePreset: isPageStylePreset(v.stylePreset) ? v.stylePreset : undefined,
   };
+}
+
+function isParagraphSpacingType(value: unknown): value is ParagraphSpacingType {
+  return typeof value === 'string' && (PARAGRAPH_SPACING_TYPES as readonly string[]).includes(value);
+}
+
+function isPageStylePreset(value: unknown): value is PageStylePresetId {
+  return typeof value === 'string' && (PAGE_STYLE_PRESETS as readonly string[]).includes(value);
 }
 
 /** The title shows unless the page explicitly hides it. */

@@ -70,7 +70,7 @@ export function StyleTab({
         <button
           type="button"
           className="flex w-full items-center justify-between rounded-md border border-foreground/10 px-2 py-1.5 text-ui text-foreground/70 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground"
-          onClick={() => onUpdate({ pageStylePatch: { fontPack: 'system', theme: 'default', washi: 'none' } })}
+          onClick={() => onUpdate({ pageStylePatch: { fontPack: 'system', theme: 'default', washi: 'none', stylePreset: 'default' } })}
         >
           <span>Original</span>
           <RotateCcw className="size-3.5" />

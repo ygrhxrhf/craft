@@ -1552,7 +1552,7 @@
 | G271 | **拖未选中的卡片会在 `onDragStart` 即时改写选中集**（`selectSingle`），不是落点后才改 | 本地选中集在 drop 时才更新 | 行为不同 | 1/1 |
 | G272 | **指示线分类型独立组件 + 0px 主动清空**：表格有专属 `_tableDropIndicator_`（`top` 未设则整节点不渲染）、`v7n = t => t!=="0px" ? t : ""`、选中环靠 `selectionRingHidden` **切 class 常驻显隐** | 本地单一指示线组件、选中环靠挂载卸载 | 缺失（实现策略） | 1/2 |
 | G273 | **虚拟列表：分组标题行高独立常数、`overscan: 2`、滚动用 rAF + 150ms 防抖双路更新** | 本地虚拟列表行高统一、无二次精算 | 行为不同 | 2/1 |
-| G274 | **`textStyle` 是 9 值、层级序号由 `eY()` 给出**：Title=1 / Subtitle=2 / Heading=3 / Strong=4 / Body=5 / Caption=6，`PageRegular`/`PageCard`/`Note` 落 default→5；**`Note` 在 UI 与对外字符串表里都不存在**（内部遗留值）（`model.md` §一之六 1） | 本地层级是自定义 1-6 映射，未覆盖 9 值、无 `Note` 容错 | 缺失（枚举不全） | 3/1 |
+| G274 | **`textStyle` 是 9 值、层级序号由 `eY()` 给出**：Title=1 / Subtitle=2 / Heading=3 / Strong=4 / Body=5 / Caption=6，`PageRegular`/`PageCard`/`Note` 落 default→5；**`Note` 在 UI 与对外字符串表里都不存在**（内部遗留值）（`model.md` §一之六 1） | ✎ 现读（2026-11-01）更正：textStyle 九值入册（Title1/Subtitle2/Heading3/Strong4/Body5/Caption6，PageRegular/PageCard/Note 落 5），Note 只读不供。 | 缺失（枚举不全） | 3/1 | ☆ 原判（2026-11-01 现读后作废）＝本地层级是自定义 1-6 映射，未覆盖 9 值、无 `Note` 容错 
 | G275 | **导出映射表是字面量可抄**：`title→h1 subtitle→h2 heading→h3 toggle→h4`、`focus→blockquote`、`PageSeparator→hr`、`Video/File→p`（**塌成段落**）、`Drawing/Whiteboard→div`（§一之六 2） | 本地导出映射靠推测，与官方逐格不一致 | 行为不同（可直接照抄） | 3/1 |
 | G276 | **块类型判定有优先级链，且 `listStyle` 压过 `textStyle`**：一个"项目符号 + Heading"的块官方判为 `listItem` 而非 `heading`（§一之六 3） | 本地按 textStyle 优先判 | **行为不同**（可直接判定要改） | 3/1 |
 | G277 | **"页面"判据是两条任一**：`textStyle ∈ {PageRegular, PageCard}` **或** `subblocks.length > 0` ⇒ **尚无子块的空页面也算页面**（§一之六 4，修正此前"有子块即页面"的单条判据） | 本地只用"有无子块"单条判据 ⇒ 空页面被误判为普通块 | 行为不同 | 3/1 |

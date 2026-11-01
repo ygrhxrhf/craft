@@ -356,30 +356,29 @@
       ]
     },
     "G274": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 2 批）：本地无 9 值 textStyle 枚举，编辑器用 Heading 1–4；语义名只有 title/subtitle/heading/strong/body/caption 六个标签（semantic-levels.ts:7-24），PageRegular/PageCard 只在 page-tree.ts 的 isPage 判据里出现，Note 档零命中。",
+      "note": "textStyle 九值入册（Title1/Subtitle2/Heading3/Strong4/Body5/Caption6，PageRegular/PageCard/Note 落 5），Note 只读不供。",
       "evidence": [
-        "src/lib/editor/semantic-levels.ts:7-24",
-        "src/lib/document/page-tree.ts:72-78"
+        "src/lib/editor/text-style.ts:22",
+        "src/lib/editor/text-style.ts:55"
       ]
     },
     "G275": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 2 批）：无 textStyle→标签的字面量表。导出走 node.type 的 switch（index.ts:88-160），divider 有 pageSeparator 但那是分隔符样式名、不是 textStyle→hr 的导出映射；toggle→h4、Drawing/Whiteboard→div 无对应。",
+      "note": "导出映射表按官方字面量落地（title→h1…strong→h4，toggle→h4、focus→blockquote、PageSeparator→hr、Video/File→p、Drawing/Whiteboard→div），markdown 标题导出走该表。",
       "evidence": [
-        "src/lib/document-codec/index.ts:88-160",
-        "src/lib/editor/divider-styles.ts:11"
+        "src/lib/editor/text-style.ts:83",
+        "src/lib/document-codec/index.ts:97"
       ]
     },
     "G276": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 2 批）：`listStyle` 概念全库零命中，没有「listStyle 压过 textStyle」的块类型优先级链；列表与标题在 schema 里是互斥节点，不存在二者并存的判定。",
+      "note": "块类型判定改为优先级链：任务→列表→listStyle→textStyle→段落，「项目符号 + Heading」判为 listItem。",
       "evidence": [
-        "src/lib/editor/format-presence.ts:92",
-        "src/lib/search/extract.ts:40"
+        "src/lib/editor/text-style.ts:110"
       ]
     },
     "G277": {

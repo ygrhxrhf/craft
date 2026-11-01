@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-01T09:38:15.255Z",
+  "generatedAt": "2026-11-01T09:41:14.453Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 1046,
@@ -5938,12 +5938,13 @@
     {
       "line": 1555,
       "section": "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` 文案级，动线待验）",
-      "cols": 5,
+      "cols": 6,
       "id": "G274",
       "official": "**`textStyle` 是 9 值、层级序号由 `eY()` 给出**：Title=1 / Subtitle=2 / Heading=3 / Strong=4 / Body=5 / Caption=6，`PageRegular`/`PageCard`/`Note` 落 default→5；**`Note` 在 UI 与对外字符串表里都不存在**（内部遗留值）（`model.md` §一之六 1）",
-      "local": "本地层级是自定义 1-6 映射，未覆盖 9 值、无 `Note` 容错",
+      "local": "✎ 现读（2026-11-01）更正：textStyle 九值入册（Title1/Subtitle2/Heading3/Strong4/Body5/Caption6，PageRegular/PageCard/Note 落 5），Note 只读不供。",
       "verdict": "缺失（枚举不全）",
       "score": "3/1",
+      "extra5": "☆ 原判（2026-11-01 现读后作废）＝本地层级是自定义 1-6 映射，未覆盖 9 值、无 `Note` 容错",
       "status": "gap",
       "scoreParsed": {
         "impact": 3,

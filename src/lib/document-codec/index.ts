@@ -1,3 +1,4 @@
+import { EXPORT_TAG_BY_STYLE, textStyleForHeadingLevel } from '@/lib/editor/text-style';
 import { DEFAULT_DIVIDER_STYLE, DIVIDER_MARKUP_PATTERN, dividerMarkupFromStyle } from '@/lib/editor/divider-styles';
 
 export type ExportFormat = 'markdown' | 'html' | 'text' | 'json';
@@ -94,8 +95,12 @@ function renderMarkdown(node: any): string {
       return (node.content ?? []).map(renderMarkdown).filter(Boolean).join('\n\n');
     case 'paragraph':
       return (node.content ?? []).map(renderInlineMarkdown).join('');
-    case 'heading':
-      return `${'#'.repeat(node.attrs?.level ?? 1)} ${(node.content ?? []).map(renderInlineMarkdown).join('')}`;
+    case 'heading': {
+      // G275: the tag comes from the official export table, not from the level directly.
+      const level = node.attrs?.level ?? 1;
+      const tag = EXPORT_TAG_BY_STYLE[textStyleForHeadingLevel(level)];
+      return `${'#'.repeat(Number(tag.slice(1)))} ${(node.content ?? []).map(renderInlineMarkdown).join('')}`;
+    }
     case 'bulletList':
     case 'orderedList':
     case 'taskList':

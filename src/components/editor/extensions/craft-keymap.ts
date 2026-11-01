@@ -2,6 +2,7 @@ import { Extension } from '@tiptap/core';
 import { NodeSelection, Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
 import { CellSelection } from '@tiptap/pm/tables';
 import type { EditorView } from '@tiptap/pm/view';
+import { closeHistory } from '@tiptap/pm/history';
 import type { Editor } from '@tiptap/react';
 
 import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from '@/lib/editor/block-move';
@@ -289,6 +290,28 @@ export const CraftKeymap = Extension.create({
                     .focus()
                     .updateAttributes($from.parent.type.name, { focusColor: null, backgroundColor: null })
                     .run();
+                  return true;
+                }
+              }
+            }
+            // G381: a plain Enter that **splits** a block closes the undo group, so the newline
+            // does not merge with the typing that follows it. Locally the history is ProseMirror's
+            // time-window group (500ms); without this boundary `输入 → Enter → 输入` collapses into
+            // one step, while the official build keeps the split as its own boundary.
+            if (
+              event.key === 'Enter' &&
+              !event.shiftKey &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey &&
+              view.state.selection.empty &&
+              !(view.state.selection instanceof CellSelection)
+            ) {
+              const { $from } = view.state.selection;
+              if ($from.parent.isTextblock && !isEmptyBlock({ textLength: $from.parent.textContent.length, atomicInlines: 0, childBlocks: 0 })) {
+                const split = editor.chain().focus().splitBlock().run();
+                if (split) {
+                  view.dispatch(closeHistory(view.state.tr));
                   return true;
                 }
               }

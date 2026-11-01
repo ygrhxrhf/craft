@@ -1002,9 +1002,12 @@
     },
     "G381": {
       "status": "partial",
-      "note": "撤销已落服务端，但粒度由 UndoManager 500ms 窗口合并，无「换行不与上段合并」的结构边界。",
+      "priority": "P1",
+      "note": "现读（第 69 批）：撤销粒度的**结构边界**已接——`craft-keymap.ts` 的普通 Enter（**分割块**那一步）在 `splitBlock` 之后 `closeHistory(tr)` 关闭当前撤销组，于是换行不与它后面的输入合并（此前 Tiptap 默认 500ms 时间窗会把\"输入→换行→输入\"并成一步；官方换行不单独成步、但也不与上一段合并）。空块的 Enter 仍走三段降级链（G577），两者互不吞。单测 789 条（editor 套件）。仍缺＝本地仍用 ProseMirror 时间窗而非官方补丁栈（G586），粒度只在结构边界处对齐，故记 partial。",
       "evidence": [
-        "src/components/editor/Editor.tsx:342"
+        "src/components/editor/extensions/craft-keymap.ts:297",
+        "src/lib/editor/patch-stack.ts:36",
+        "src/lib/editor/patch-stack.test.ts:18"
       ]
     },
     "G382": {

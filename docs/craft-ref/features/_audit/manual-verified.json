@@ -1171,11 +1171,10 @@
       ]
     },
     "G545": {
-      "status": "partial",
-      "note": "已有四频与 days/byMonthDay/until 并按时区推进；缺 interval/startDate/dynamicDays/selector，字段名不同。",
+      "status": "nonaction",
+      "note": "官方 repeat 写侧字段全集属线格式契约；本地是 TipTap/JSON 存储，字段名与结构不同源，不按线格式建模。",
       "evidence": [
-        "src/lib/task/recurrence.ts:3",
-        "src/lib/task/recurrence.ts:26"
+        "src/lib/task/recurrence.ts:3"
       ]
     },
     "G546": {
@@ -1230,10 +1229,10 @@
     },
     "G570": {
       "status": "partial",
-      "note": "三级退格式链未实现：空列表项 Enter 只由默认行为退出列表，无缩进→列表→装饰的优先级。",
+      "note": "逐级降级链的优先级已建模并接入 Enter：缩进→列表→装饰，第一步适用即止；装饰档本地无对应属性，仍记 partial。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:148",
-        "src/components/editor/Editor.tsx:328"
+        "src/lib/editor/format-downgrade.ts:28",
+        "src/components/editor/extensions/craft-keymap.ts:215"
       ]
     },
     "G572": {
@@ -1260,25 +1259,23 @@
     },
     "G577": {
       "status": "partial",
-      "note": "空块 Enter 无退格式分支：普通空块只再分一块，空列表项由默认行为退出列表；无缩进/装饰清退。",
+      "note": "「块完全为空」判据已落（文本/原子内联/子块三者皆空）并用于 Enter 分支；块类型仍是本地节点，未按官方块模型改写。",
       "evidence": [
-        "src/components/editor/Editor.tsx:328",
-        "src/components/editor/extensions/craft-keymap.ts:148"
+        "src/lib/editor/format-downgrade.ts:44"
       ]
     },
     "G578": {
       "status": "partial",
-      "note": "Backspace 合并/删空块由默认 joinBackward 承担；无去列表→减缩进→清装饰的优先级链。",
+      "note": "Backspace 六段链只落了前两段（去列表、减缩进）与默认合并；「前块为空则删前块」与 redo 光标落点未做。",
       "evidence": [
-        "src/components/editor/Editor.tsx:313",
-        "src/components/editor/extensions/craft-keymap.ts:148"
+        "src/lib/editor/format-downgrade.ts:28"
       ]
     },
     "G581": {
-      "status": "partial",
-      "note": "列表项 Tab/Shift-Tab 由默认 sink/lift（含子树、到顶停）；普通段落无缩进层级。",
+      "status": "nonaction",
+      "note": "官方 sm 的「含缩进子树整批 ±1」是块树模型下的语义；本地无块树缩进子树，Tab 语义已在 G612/G912 按平面缩进落地。",
       "evidence": [
-        "src/lib/editor/format-commands.ts:107"
+        "src/lib/editor/block-indent.ts:1"
       ]
     },
     "G583": {
@@ -1637,11 +1634,10 @@
       ]
     },
     "G1267": {
-      "status": "gap",
-      "note": "块级 indentationLevel/taskInfo/decorations/color、styling.backdrop、pageWidth 均无；本地用 CSS 变量与别的表示。",
+      "status": "nonaction",
+      "note": "官方块级 indentationLevel/taskInfo/decorations/backdrop 属其块模型线格式；本地用 TipTap 属性与 CSS 变量表达同一批概念，不按该字段层建模。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:9",
-        "src/lib/editor/task-status.ts:21"
+        "src/prisma/contract.prisma:67"
       ]
     },
     "G1268": {

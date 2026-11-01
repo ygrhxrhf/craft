@@ -7,6 +7,7 @@ import type { Editor } from '@tiptap/react';
 import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from '@/lib/editor/block-move';
 import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
 import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
+import { nextFormatStep } from '@/lib/editor/format-downgrade';
 import { requestLink } from '@/lib/store/use-link-request-store';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
@@ -136,6 +137,15 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
   return false;
 }
 
+/** How deep the caret sits inside list items (0 when not in a list). */
+function listDepthOf(resolved: { depth: number; node: (depth: number) => { type: { name: string } } }): number {
+  let depth = 0;
+  for (let level = resolved.depth; level > 0; level -= 1) {
+    if (resolved.node(level).type.name === 'listItem') depth += 1;
+  }
+  return depth;
+}
+
 export const CraftKeymap = Extension.create({
   name: 'craftKeymap',
 
@@ -211,6 +221,36 @@ export const CraftKeymap = Extension.create({
             ) {
               editor.chain().focus().setHardBreak().run();
               return true;
+            }
+            // G570/G577/G578: Enter on an **empty** block steps one format level down before it
+            // splits — indent → list → decoration. Only when nothing is left to step down from
+            // does the default split run.
+            if (
+              event.key === 'Enter' &&
+              !event.shiftKey &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey &&
+              view.state.selection.empty
+            ) {
+              const { $from } = view.state.selection;
+              if ($from.parent.isTextblock) {
+                const step = nextFormatStep({
+                  indentLevel: Number($from.parent.attrs?.indent ?? 0),
+                  inList: listDepthOf($from) > 0,
+                  decorated: false,
+                });
+                if (step === 'indent') {
+                  editor.chain().focus().updateAttributes($from.parent.type.name, {
+                    indent: Math.max(0, Number($from.parent.attrs?.indent ?? 0) - 1),
+                  }).run();
+                  return true;
+                }
+                if (step === 'list') {
+                  editor.chain().focus().liftListItem('listItem').run();
+                  return true;
+                }
+              }
             }
             // Enter adds a row only while cells are selected and no text is being edited (G1478).
             // A caret inside a cell is editing, so Enter there keeps its normal meaning.

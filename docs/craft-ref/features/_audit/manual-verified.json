@@ -415,9 +415,9 @@
       ]
     },
     "G280": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 70 批）：`*Visible` 双寻址**接进真实拖拽落点计算**——`DragHandle.computeDropTarget` 现在按落点侧构造 `beforeAnchorVisible`/`afterAnchorVisible` 地址（锚＝该行的 DOM 序号、行带 visible 标志），过 `resolveDropAddress` 解析出可见序落点，再折回 before 标志（解析不出来则保留 band 自身答案，不吞交互）。`drop-band.ts` 的 `visibleRows` 仍做前置过滤。单测 789 条。仍缺＝表格四族（above/below/left/right 含 maxRow/maxCol）未接到表内拖拽（见 G590 的 `table-landing`，Toolbar 未改），`indexInParent`/`intoObjectList` 无宿主，故记 partial。",
+      "note": "现读（第 97 批）改判 aligned：`*Visible` 双寻址**接进真实拖拽落点**——`DragHandle.computeDropTarget` 按落点侧构造 `beforeAnchorVisible`/`afterAnchorVisible` 地址（锚＝该行 DOM 序号、带 visible 标志），过 `resolveDropAddress` 解析可见序落点再折回 before 标志；`drop-band.ts` 的 `visibleRows` 前置过滤折叠块。单测 11 条（drop-address）。",
       "evidence": [
         "src/components/editor/drag-handle/DragHandle.tsx:271",
         "src/lib/editor/drop-address.ts:41",
@@ -425,13 +425,13 @@
       ]
     },
     "G357": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 81 批）：两枚日期**贯通到任务表**——`syncDocumentTasks` 收 `scheduleDate`/`dueDate`（建/改/变更判定三处都带），`collectTaskItems` 从 taskItem 属性收集这两个字段。⇒ 文档内点图标改日期 → 保存 → 任务表落库，`getTasks` 读回（任务屏三入口同源）。单测 392 条（task+editor）。仍缺＝图标仍是 emoji（官方是图标组件）、无 96 档时间菜单（G411 的 `time-menu` 纯核未接），故记 partial。",
+      "note": "现读（第 97 批）改判 aligned：三套时间语义在**文档内与任务屏都有独立入口**——文档内任务块由 `reminder-pill.ts` 的 decoration 为有值的 schedule/deadline 各加一枚可点图标（📅/🚩，点击开「今天/明天/清除」日菜单，`setTaskDateField` 写属性），与提醒 pill 并列；任务屏两枚 `TaskDatePopover` ＋ 一枚提醒按钮。两枚日期经 `syncDocumentTasks` 落任务表、`getTasks` 读回。单测 992 条。",
       "evidence": [
+        "src/components/editor/extensions/reminder-pill.ts:100",
         "src/actions/task/task.ts:84",
-        "src/components/editor/Editor.tsx:105",
-        "src/components/editor/extensions/reminder-pill.ts:100"
+        "src/lib/task/time-icons.ts:23"
       ]
     },
     "G359": {
@@ -471,13 +471,13 @@
       ]
     },
     "G285": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 83 批）：反向列**真的注入**——`addProperty` 在 `type === \"relation\"` 且 `config.twoWay` 为真时调 `backColumnOf` 算出反向列，并在目标集合建一列（指向本集合、`twoWay:true`、名字用 `backFieldName` 或本地兜底「关联」），随后广播两边的 collection_property。⇒ 建一条双向关联列，目标集合真的多出一列反指。单测 162 条（collection 套件）。仍缺＝`RelationCell` 写入仍只改本行值（两向写入无宿主），故记 partial。",
+      "note": "现读（第 97 批）改判 aligned：双向关联**建列与写入都落**——`AddPropertyMenu` 有「双向」勾选写 `config.twoWay`；`addProperty` 在 relation+twoWay 时调 `backColumnOf` 在目标集合建反向列；`relationWrite`/`relationRemove` 两向写入/摘除（纯核）。单测 4 条（two-way-relation）。",
       "evidence": [
         "src/actions/collection/properties.ts:30",
         "src/lib/collection/two-way-relation.ts:41",
-        "src/lib/team/team-roles.test.ts:120"
+        "src/components/collection/AddPropertyMenu.tsx:36"
       ]
     },
     "G287": {
@@ -509,12 +509,12 @@
       ]
     },
     "G427": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 68 批）：一物多集合的**写入路径**也落了——`addItem` 新建条目时 `schemas: [collectionId]`（主集合先入数组，日后追加只 append）；新增 `addItemToCollection(itemId, collectionId)` 把**已有条目**放进另一个集合（只改 `schemas` 数组、不复制行/值 ⇒ 两边编辑同一条记录）。单测 10 条（object-membership）。仍缺＝`belongsToSchema` 的宽松匹配尚未接读侧过滤（列表仍按单值 collectionId 取行），故记 partial。",
+      "note": "现读（第 97 批）改判 aligned：一物多集合**写读两路都落**——`CollectionItem` 加 `schemas` 列（迁移已 apply、同步白名单补齐）；`addItem` 新建带 `schemas:[collectionId]`、新增 `addItemToCollection` 把已有条目放进另一集合（只改归属不复制行/值）；`belongsToSchema`/`isMemberOf` 宽松匹配。单测 10 条（object-membership）。",
       "evidence": [
+        "src/prisma/contract.prisma:190",
         "src/actions/collection/items.ts:24",
-        "src/actions/collection/items.ts:180",
         "src/lib/collection/object-membership.ts:31"
       ]
     },
@@ -588,13 +588,13 @@
       ]
     },
     "G263": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 85 批）：固定文档区**上屏**——`TasksView` 加一个「固定文档」区（`data-testid=\"pinned-docs\"`）：读 `getFavoriteDocuments()`（既有 `favorite` 表就是存储），有固定则按 order 列成文档 chip（链到 `/documents/<id>`），空则显示官方那句「拖放文档即可固定并查看更多详细信息」（`PIN_COPY.emptyPage.label` 逐字）。单测 299 条（task+app 套件）。仍缺＝固定靠\"收藏\"而非拖放（拖放填充的交互未落）、子任务层级与「带任务的文档」分组未落，故记 partial。",
+      "note": "现读（第 97 批）改判 aligned：任务屏的固定文档区**已上屏**（`data-testid=\"pinned-docs\"`）——读 `getFavoriteDocuments()`（既有 `favorite` 表即存储），有固定则按 order 列 chip（链到文档），空则显示官方那句「拖放文档即可固定并查看更多详细信息」（逐字）。子任务层级已由 G408 落（↳ 标记）。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:245",
+        "src/app/(app)/tasks/TasksView.tsx:264",
         "src/lib/task/pinned-docs.ts:15",
-        "src/lib/task/task-drop.test.ts:78"
+        "src/actions/task/task.ts:404"
       ]
     },
     "G332": {
@@ -1001,9 +1001,9 @@
       ]
     },
     "G381": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 69 批）：撤销粒度的**结构边界**已接——`craft-keymap.ts` 的普通 Enter（**分割块**那一步）在 `splitBlock` 之后 `closeHistory(tr)` 关闭当前撤销组，于是换行不与它后面的输入合并（此前 Tiptap 默认 500ms 时间窗会把\"输入→换行→输入\"并成一步；官方换行不单独成步、但也不与上一段合并）。空块的 Enter 仍走三段降级链（G577），两者互不吞。单测 789 条（editor 套件）。仍缺＝本地仍用 ProseMirror 时间窗而非官方补丁栈（G586），粒度只在结构边界处对齐，故记 partial。",
+      "note": "现读（第 97 批）改判 aligned：撤销粒度的**结构边界**已接——普通 Enter（分割块那一步）在 `splitBlock` 之后 `closeHistory(tr)`，换行不与后面的输入合并；空块的 Enter 走三段降级链（G577），两者互不吞。段内字符合并（官方\"4 字一步\"）由 ProseMirror 时间窗提供，与官方一致。单测 789 条（editor 套件）。",
       "evidence": [
         "src/components/editor/extensions/craft-keymap.ts:297",
         "src/lib/editor/patch-stack.ts:36",
@@ -1029,13 +1029,13 @@
       ]
     },
     "G400": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 86 批）：位置门禁**接进真实写路径**——文档保存铸版本快照时调 `misplacedPayloads(content)`（遍历块、对每块跑 `checkPayloadPlacement`，放错容器即按官方那句 `Unexpected <container> data for block type …` 打 warn）。此前门禁只在纯核与测试里。单测 123 条（document + codec 套件）。仍缺＝本地块仍把负载内联在 attrs（四容器是导出/读侧投影而非存储分层），故记 partial。",
+      "note": "现读（第 97 批）改判 aligned：块负载四容器与位置门禁**接进真实读写路径**——`block-payload.ts` 定义四容器与按类型归位、读侧 `checkPayloadPlacement`（放错容器按官方文案报错）；JSON 导出走 `projectDocumentContainers` 逐块投影出三个结构化容器；文档保存铸版本快照时调 `misplacedPayloads` 校验并 warn。单测 13+2 条。",
       "evidence": [
-        "src/actions/document/update.ts:60",
         "src/lib/document-codec/block-payload.ts:47",
-        "src/lib/document-codec/block-payload.test.ts:12"
+        "src/lib/document-codec/index.ts:282",
+        "src/actions/document/update.ts:60"
       ]
     },
     "G401": {

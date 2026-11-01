@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-01T17:25:03.888Z",
+  "generatedAt": "2026-11-01T17:26:45.973Z",
   "total": 1614,
   "status": {
     "nonaction": 508,
-    "partial": 380,
-    "aligned": 372,
+    "aligned": 379,
+    "partial": 373,
     "gap": 176,
     "deliberate": 158,
     "unreachable": 20
@@ -20,7 +20,7 @@
     "P2 / partial": 199,
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
-    "P1 / aligned": 141,
+    "P1 / aligned": 148,
     "P2 / gap": 103,
     "P1 / nonaction": 87,
     "P2 / aligned": 86,
@@ -34,7 +34,7 @@
     "P3 / gap": 39,
     "P? / gap": 34,
     "P3 / deliberate": 32,
-    "P1 / partial": 31,
+    "P1 / partial": 24,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
@@ -1135,12 +1135,12 @@
       59
     ],
     [
-      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      28
-    ],
-    [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
       27
+    ],
+    [
+      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
+      25
     ],
     [
       "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",

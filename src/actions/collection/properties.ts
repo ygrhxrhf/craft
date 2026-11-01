@@ -6,6 +6,8 @@ import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { PROPERTY_TYPE_VALUES } from '@/lib/collection/property-types';
 import { convertCellValue } from '@/lib/collection/type-convert';
+import { backColumnOf } from '@/lib/collection/two-way-relation';
+import { relationTargetId } from '@/lib/collection/relation-value';
 
 export async function addProperty(data: {
   collectionId: string;
@@ -35,6 +37,34 @@ export async function addProperty(data: {
     order: properties.length,
     isVisible: true,
   });
+
+  // G285: a two-way relation also creates the **back column** on the target collection — one
+  // pointing here — so both sides see each other. Only for a configured relation with `twoWay`.
+  const back = data.type === 'relation' ? backColumnOf({
+    collectionId: data.collectionId,
+    targetCollectionId: relationTargetId(data.config ? JSON.stringify(data.config) : null) ?? '',
+    twoWay: Boolean((data.config as { twoWay?: unknown } | undefined)?.twoWay),
+    backFieldName: (data.config as { backFieldName?: string } | undefined)?.backFieldName ?? null,
+  }) : null;
+  if (back) {
+    const target = await db.orm.public.Collection.first({ id: back.collectionId });
+    if (target && (target as any).userId === session.user.id) {
+      const targetProps = await db.orm.public.CollectionProperty
+        .where({ collectionId: back.collectionId })
+        .all();
+      await db.orm.public.CollectionProperty.create({
+        id: crypto.randomUUID(),
+        collectionId: back.collectionId,
+        name: back.backFieldName ?? '关联',
+        type: 'relation',
+        config: JSON.stringify({ objectListId: data.collectionId, twoWay: true }),
+        order: targetProps.length,
+        isVisible: true,
+      });
+      await emitSyncEventSafe(db, session.user.id, ['collection_property'], back.collectionId);
+      revalidatePath(`/collections/${back.collectionId}`);
+    }
+  }
 
   await emitSyncEventSafe(db, session.user.id, ['collection_property'], data.collectionId);
   revalidatePath(`/collections/${data.collectionId}`);

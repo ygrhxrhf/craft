@@ -473,9 +473,9 @@
     "G285": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 75 批）：双向开关**上屏**——`AddPropertyMenu` 的关联列多一枚「双向」勾选（`TWO_WAY_COPY.twoWay.label` 逐字），勾上后写进列 config 的 `twoWay`（`{objectListId, twoWay}`），与 `two-way-relation.ts` 的 `backColumnOf`/`relationWrite` 纯核配套。单测 4 条（two-way-relation）。仍缺＝反向列未真的注入目标集合、`RelationCell` 写入仍只改本行值（两向写入无宿主），故记 partial。",
+      "note": "现读（第 83 批）：反向列**真的注入**——`addProperty` 在 `type === \"relation\"` 且 `config.twoWay` 为真时调 `backColumnOf` 算出反向列，并在目标集合建一列（指向本集合、`twoWay:true`、名字用 `backFieldName` 或本地兜底「关联」），随后广播两边的 collection_property。⇒ 建一条双向关联列，目标集合真的多出一列反指。单测 162 条（collection 套件）。仍缺＝`RelationCell` 写入仍只改本行值（两向写入无宿主），故记 partial。",
       "evidence": [
-        "src/components/collection/AddPropertyMenu.tsx:36",
+        "src/actions/collection/properties.ts:30",
         "src/lib/collection/two-way-relation.ts:41",
         "src/lib/team/team-roles.test.ts:120"
       ]

@@ -90,6 +90,7 @@
 | 80 | — | G357（partial） | 三枚时间图标可点可写（日菜单 今天/明天/清除） |
 | 81 | — | G357（partial） | 两枚日期贯通到任务表（syncDocumentTasks 收 scheduleDate/dueDate） |
 | 82 | — | G141（partial） | 13 项发布设置全落库（迁移 add_publish_settings + 4 枚新开关） |
+| 83 | — | G285（partial） | 双向关联的反向列真的注入目标集合（addProperty 建反指列） |
 
 **剩余 53 条**（gap 0 / partial 53）。☆ 口径更正：本表此前的"剩余 N 条"逐批递减是**错的**——它按"我改了哪些行"减，但**记为 partial 的行在台账里仍是待办**（纯核已落、真实消费点未接），`ledger-backlog.csv` 的 `P1 && (gap||partial)` 才是权威口径。按它实算：**P1 可动行 53 条，全部是 partial、gap 已清零**。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2769 测试、tsc 0 错。
 

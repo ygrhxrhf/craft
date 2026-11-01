@@ -590,10 +590,10 @@
     "G263": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 47 批）：固定文档区已落 `src/lib/task/pinned-docs.ts`——七条文案逐字（固定文档/取消固定文档/固定现有文档/点按即可固定现有文档/拖放文档即可固定并查看更多详细信息/显示固定内容，取自 harvest:3325-3360）＋`tasks.subtasks`「子任务」与 `tasks.docs.with.tasks`「带任务的文档」两个分组名；`pinnedInOrder` 按 order 排序、`showsEmptyState` 触发空态、`togglePinned` 固定/取消固定。单测 4 条。仍缺＝任务屏无固定区 UI 与落库，故记 partial。",
+      "note": "现读（第 85 批）：固定文档区**上屏**——`TasksView` 加一个「固定文档」区（`data-testid=\"pinned-docs\"`）：读 `getFavoriteDocuments()`（既有 `favorite` 表就是存储），有固定则按 order 列成文档 chip（链到 `/documents/<id>`），空则显示官方那句「拖放文档即可固定并查看更多详细信息」（`PIN_COPY.emptyPage.label` 逐字）。单测 299 条（task+app 套件）。仍缺＝固定靠\"收藏\"而非拖放（拖放填充的交互未落）、子任务层级与「带任务的文档」分组未落，故记 partial。",
       "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:245",
         "src/lib/task/pinned-docs.ts:15",
-        "src/lib/task/pinned-docs.ts:39",
         "src/lib/task/task-drop.test.ts:78"
       ]
     },

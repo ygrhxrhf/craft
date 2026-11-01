@@ -25,6 +25,8 @@ export const DOCS_WITH_TASKS_LABEL = { key: 'tasks.docs.with.tasks', label: '带
 
 export interface PinnedDocument {
   documentId: string;
+  /** The document's title, for the pinned chip (absent when only the id is known). */
+  title?: string;
   /** 固定顺序（0 基，越小越靠前）。 */
   order: number;
 }

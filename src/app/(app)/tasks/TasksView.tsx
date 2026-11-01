@@ -49,6 +49,8 @@ import { useCompletedTaskAppearance } from '@/components/task/use-completed-appe
 import { CancelledBadge } from '@/components/task/cancelled-badge';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
+import { getFavoriteDocuments } from '@/actions/document/get';
+import { PIN_COPY, pinnedInOrder, type PinnedDocument } from '@/lib/task/pinned-docs';
 
 /** `/tasks` is the inbox view. `/tasks/today` and `/tasks/upcoming` are local paths —
  *  the ledger only records `/tasks/inbox` and `/tasks/all`. */
@@ -68,6 +70,8 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   const [adding, setAdding] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
   const [window, setWindow] = useState<UpcomingWindow>('all');
+  // G263: pinned documents (the `favorite` rows for this user).
+  const [pinned, setPinned] = useState<PinnedDocument[]>([]);
 
   /**
    * G262「设置为默认视图」：把当前视图记为默认。`/tasks`（收件箱路由）落地时若不是默认档，
@@ -94,6 +98,14 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     const [data, pending] = await Promise.all([getTasks(), readPendingRows('task')]);
     setTasks(overlayTaskRows(data, pending));
     setLoading(false);
+  }, []);
+
+  // G263: the pinned area reads the favourite rows (id + title), in their stored order.
+  useEffect(() => {
+    void (async () => {
+      const docs = await getFavoriteDocuments().catch(() => []);
+      setPinned(docs.map((doc, index) => ({ documentId: doc.id, title: doc.title, order: index })));
+    })();
   }, []);
 
   // 首屏加载走异步 IIFE：effect 体里同步调用会 setState 的回调会被
@@ -244,6 +256,29 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
           </Link>
         ))}
       </nav>
+      {/* G263: the pinned-documents area. A document is pinned by favouriting it (the existing
+          `favorite` table is the store), and the empty state says how to fill it. */}
+      <section className="px-4 pt-3" data-testid="pinned-docs">
+        <h2 className="mb-2 text-xs font-medium text-muted-foreground">{PIN_COPY.pin.label}</h2>
+        {pinned.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
+            {PIN_COPY.emptyPage.label}
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {pinnedInOrder(pinned).map((doc) => (
+              <Link
+                key={doc.documentId}
+                href={`/documents/${doc.documentId}`}
+                className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-foreground/4 hover:text-foreground"
+              >
+                <FileText className="size-3.5" />
+                <span className="max-w-40 truncate">{doc.title}</span>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
       <div className="flex items-center justify-between px-4 pt-3">
         {group === 'upcoming' ? (
           <div className="flex gap-1 text-sm">

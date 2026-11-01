@@ -70,3 +70,46 @@ export function trimTrailingNewline(cell: string): string {
 export function prepareCell(cell: string): string {
   return trimTrailingNewline(restoreCellBreaks(hideCellBreaks(cell)));
 }
+
+/**
+ * G1240: the cell body is parsed as its **own document** and only the first block is taken; a body
+ * that parses to nothing falls back to an empty paragraph. This is what lets a cell hold a heading,
+ * a list, or any block the block parser understands — not just inline text.
+ *
+ * `parse` is injected so this module stays free of the block parser (which imports this one). A cell
+ * whose body is blank yields an empty paragraph rather than vanishing.
+ */
+export function parseCellBlocks<T>(
+  cell: string,
+  parse: (text: string) => T[],
+): T[] {
+  const body = prepareCell(cell);
+  if (!body.trim()) return [{ type: 'paragraph' } as unknown as T];
+  const blocks = parse(body);
+  return blocks.length ? [blocks[0]] : [{ type: 'paragraph' } as unknown as T];
+}
+
+/**
+ * G1240: the table block carries three pre-generated uuid groups in `pluginData` — `rows`,
+ * `columns`, `cells` — so every row/column/cell has a stable id from the moment it is created,
+ * rather than being minted lazily on first edit.
+ */
+export interface TableIds {
+  rows: string[];
+  columns: string[];
+  cells: string[][];
+}
+
+export function mintTableIds(
+  rowCount: number,
+  columnCount: number,
+  mint: () => string,
+): TableIds {
+  const rows = Array.from({ length: Math.max(0, rowCount) }, () => mint());
+  const columns = Array.from({ length: Math.max(0, columnCount) }, () => mint());
+  const cells = Array.from({ length: rows.length }, () =>
+    Array.from({ length: columns.length }, () => mint()),
+  );
+  return { rows, columns, cells };
+}
+

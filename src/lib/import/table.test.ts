@@ -4,6 +4,8 @@ import { hasHeaderContent,
   CELL_BREAK_PLACEHOLDER,
   hideCellBreaks,
   isAlignmentRow,
+  mintTableIds,
+  parseCellBlocks,
   prepareCell,
   restoreCellBreaks,
   splitRow,
@@ -96,5 +98,32 @@ describe('table header handling', () => {
   it('drops a header row that is entirely blank', () => {
     expect(hasHeaderContent(['', '  '])).toBe(false);
     expect(hasHeaderContent([])).toBe(false);
+  });
+});
+
+describe('cell blocks and the three uuid groups (G1240)', () => {
+  const fakeParse = (text: string) =>
+    text.startsWith('# ') ? [{ type: 'heading' }, { type: 'paragraph' }] : [{ type: 'paragraph', text }];
+
+  it('takes only the first block of a cell body', () => {
+    expect(parseCellBlocks('# 标题\n正文', fakeParse)).toEqual([{ type: 'heading' }]);
+  });
+
+  it('falls back to an empty paragraph when the body is blank', () => {
+    expect(parseCellBlocks('   ', fakeParse)).toEqual([{ type: 'paragraph' }]);
+  });
+
+  it('parses the body through the injected block parser', () => {
+    expect(parseCellBlocks('苹果', fakeParse)).toEqual([{ type: 'paragraph', text: '苹果' }]);
+  });
+
+  it('mints rows, columns and cells as three id groups', () => {
+    let n = 0;
+    const ids = mintTableIds(2, 3, () => `id${n++}`);
+    expect(ids.rows).toEqual(['id0', 'id1']);
+    expect(ids.columns).toEqual(['id2', 'id3', 'id4']);
+    expect(ids.cells).toHaveLength(2);
+    expect(ids.cells[0]).toHaveLength(3);
+    expect(ids.cells[1][2]).toBe('id10');
   });
 });

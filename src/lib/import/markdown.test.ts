@@ -312,3 +312,16 @@ describe('inline HTML tags', () => {
     expect(nodes[0].text).toBe('plain');
   });
 });
+
+describe('inline math as a tex:// link run (G1238)', () => {
+  it('reads a tex:// link back as inline math', () => {
+    const [para] = blocks('前 [x^2](tex://x^2) 后');
+    const math = para.content.find((n: any) => n.type === 'inlineMath');
+    expect(math?.attrs?.latex).toBe('x^2');
+  });
+
+  it('leaves an ordinary link alone', () => {
+    const [para] = blocks('[站点](https://example.com)');
+    expect(para.content[0].marks?.[0]).toMatchObject({ type: 'link', attrs: { href: 'https://example.com' } });
+  });
+});

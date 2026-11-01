@@ -1,6 +1,7 @@
 import { DEFAULT_DIVIDER_STYLE, DIVIDER_MARKUP_PATTERN, dividerStyleFromMarkup } from '@/lib/editor/divider-styles';
-import { hasHeaderContent, isAlignmentRow, prepareCell, splitRow } from '@/lib/import/table';
+import { hasHeaderContent, isAlignmentRow, mintTableIds, parseCellBlocks, splitRow } from '@/lib/import/table';
 import { DEFAULT_HIGHLIGHT_COLOR } from '@/lib/import/inline-html';
+import { mathFromLink } from '@/lib/import/inline-runs';
 
 export interface PmNode {
   type: string;
@@ -224,13 +225,20 @@ function parseBlocks(lines: string[]): PmNode[] {
         // as an empty first row.
         const hasHeader = hasHeaderContent(rows[0] ?? []);
         const dataRows = hasHeader ? rows : rows.slice(1);
+        // G1240: every cell is parsed as its own block document (first block wins), and the table
+        // carries three pre-generated uuid groups so rows/columns/cells are addressable at birth.
+        const columnCount = Math.max(0, ...dataRows.map((cells) => cells.length));
+        const ids = mintTableIds(dataRows.length, columnCount, () => crypto.randomUUID());
         blocks.push({
           type: 'table',
-          content: dataRows.map((cells) => ({
+          attrs: { pluginData: ids },
+          content: dataRows.map((cells, rowIndex) => ({
             type: 'tableRow',
-            content: cells.map((cell) => ({
+            attrs: { id: ids.rows[rowIndex] },
+            content: cells.map((cell, colIndex) => ({
               type: 'tableCell',
-              content: [{ type: 'paragraph', content: parseInline(prepareCell(cell)) }],
+              attrs: { id: ids.cells[rowIndex]?.[colIndex] ?? null },
+              content: parseCellBlocks<PmNode>(cell, (text) => parseBlocks(text.split('\n'))),
             })),
           })),
         });
@@ -411,7 +419,15 @@ function parseInline(text: string): PmNode[] {
       addMark(parseInline(token.slice(2, -2)), { type: 'strike' }, nodes);
     } else if (token.startsWith('[')) {
       const link = /^\[([^\]]*)\]\(([^)\s]+)\)$/.exec(token);
-      addMark(parseInline(link?.[1] ?? ''), { type: 'link', attrs: { href: link?.[2] ?? '' } }, nodes);
+      const href = link?.[2] ?? '';
+      // G1238: the official importer stores inline math as a `tex://` link run, so a link whose URL
+      // carries that scheme reads back as math rather than as a link.
+      const latex = mathFromLink(href);
+      if (latex !== null) {
+        nodes.push({ type: 'inlineMath', attrs: { latex } });
+      } else {
+        addMark(parseInline(link?.[1] ?? ''), { type: 'link', attrs: { href } }, nodes);
+      }
     } else if (token.startsWith('![')) {
       const alt = /^!\[([^\]]*)\]/.exec(token)?.[1] ?? '';
       if (alt) pushText(nodes, alt);

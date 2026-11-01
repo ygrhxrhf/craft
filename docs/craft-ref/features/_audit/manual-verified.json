@@ -1637,17 +1637,22 @@
     },
     "G1238": {
       "status": "partial",
-      "note": "行内 run 装饰形状入册（数学＝tex:// 链接、代码＝isCode、换行两档不可区分）；本地仍是独立 inlineMath 节点，未改存储。",
+      "priority": "P1",
+      "note": "现读（第 36 批）：行内 run 形状已接真实导入路径——`src/lib/import/inline-runs.ts` 的 `mathFromLink` 接进 `markdown.ts` 的链接分支：`[x](tex://x)` 读回成 inlineMath 节点（官方那支＝带 scheme 的链接装饰，本地映射到独立节点，单测钉住 tex 链接读回数学、普通链接不动）。仍缺＝本地数学仍是独立 inlineMath 节点而非 run 装饰（存储未改），且 softbreak/hardbreak 两档在本地逐行解析下无表示，故记 partial。",
       "evidence": [
-        "src/lib/import/inline-runs.ts:22"
+        "src/lib/import/inline-runs.ts:33",
+        "src/lib/import/markdown.ts:412",
+        "src/lib/import/markdown.test.ts:431"
       ]
     },
     "G1240": {
       "status": "partial",
-      "note": "三段判据已在（全连字符行丢弃、<br> 占位往返、结尾换行削除），本次补「首行全空则整行删掉」；三组 uuid pluginData 与递归块解析仍未做。",
+      "priority": "P1",
+      "note": "现读（第 36 批）：三段判据里最后一段补完——单元格正文改由 `parseCellBlocks` **递归成自己的块文档**（取首块、空体回退空段落，注入 parseBlocks 避免循环依赖），表格块带 `attrs.pluginData` 三组预生成 uuid（`mintTableIds` 的 rows/columns/cells），行列与单元格各带 id。仍缺＝导出侧的分隔行仍是硬造 `---`（未与导入的三段判据完全对偶），故记 partial。",
       "evidence": [
-        "src/lib/import/table.ts:26",
-        "src/lib/import/markdown.ts:216"
+        "src/lib/import/table.ts:74",
+        "src/lib/import/table.ts:96",
+        "src/lib/import/markdown.ts:226"
       ]
     },
     "G1267": {

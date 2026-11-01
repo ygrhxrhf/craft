@@ -1055,13 +1055,13 @@
       ]
     },
     "G408": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 47 批）：子任务的服务端推导形状已落纯核 `src/lib/task/subtasks.ts`——`deriveSubtasks` 按块序推导（缩进更深的后继即子任务，与 indent-run 同一套整块边界），产出官方那支 `{rootTaskBlockId, subTaskBlocks[]}`，`subtaskMap` 建客户端消费的 Map，`parentOf` 反查父任务；**无 parentTaskId**（推导而非存储，与官方一致）。单测 3 条。仍缺＝无服务端端点与 Task 侧落库（Task 仍只有 blockId/documentId），故记 partial。",
+      "note": "现读（第 95 批）改判 aligned：子任务**服务端推导**并上屏——新增 `getSubTasks()` 返回官方那支 `{subTasks:[{rootTaskBlockId, subTaskBlocks[]}]}`：按文档分组、从文档 content 解出每个 taskItem 的嵌套深度、按序+深度调 `deriveSubtasks` 推导（**无 parentTaskId**，与官方一致）；`TasksView` 读回建成 `Map<子块, 根块>`，子任务行显示「↳」标记（`data-testid=\"subtask-marker\"`）。单测 3 条（subtasks）。",
       "evidence": [
+        "src/actions/task/task.ts:404",
         "src/lib/task/subtasks.ts:27",
-        "src/lib/task/subtasks.ts:44",
-        "src/lib/task/task-drop.test.ts:50"
+        "src/app/(app)/tasks/TasksView.tsx:88"
       ]
     },
     "G421": {

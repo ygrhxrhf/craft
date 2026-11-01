@@ -14,7 +14,7 @@ import {
   clampInterval,
   parseRecurrence,
 } from '@/lib/task/recurrence';
-import { applySeriesOp, createTask, deleteTask, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
+import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
 import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
 import { SERIES_OPS } from '@/lib/task/series-ops';
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
@@ -68,6 +68,8 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   const [window, setWindow] = useState<UpcomingWindow>('all');
   // G263: pinned documents (the `favorite` rows for this user).
   const [pinned, setPinned] = useState<PinnedDocument[]>([]);
+  // G408: derived subtask groups (root block id → its subtask block ids).
+  const [subtaskParent, setSubtaskParent] = useState<Map<string, string>>(new Map());
 
   /**
    * G262「设置为默认视图」：把当前视图记为默认。`/tasks`（收件箱路由）落地时若不是默认档，
@@ -101,6 +103,19 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     void (async () => {
       const docs = await getFavoriteDocuments().catch(() => []);
       setPinned(docs.map((doc, index) => ({ documentId: doc.id, title: doc.title, order: index })));
+    })();
+  }, []);
+
+  // G408: the subtask map is derived server-side (root block id → subtask block ids); the row
+  // shows a "子任务" marker for a task that has any.
+  useEffect(() => {
+    void (async () => {
+      const { subTasks } = await getSubTasks().catch(() => ({ subTasks: [] }));
+      const map = new Map<string, string>();
+      for (const group of subTasks) {
+        for (const child of group.subTaskBlocks) map.set(child, group.rootTaskBlockId);
+      }
+      setSubtaskParent(map);
     })();
   }, []);
 
@@ -323,6 +338,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                     onToggle={handleToggle}
                     onDelete={handleDelete}
                     onSchedule={handleSchedule} appearance={appearance}
+                    subtaskParent={subtaskParent}
                   />
                 </section>
               ))
@@ -346,6 +362,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   onToggle={handleToggle}
                   onDelete={handleDelete}
                   onSchedule={handleSchedule} appearance={appearance}
+                  subtaskParent={subtaskParent}
                 />
               )}
             </section>
@@ -360,6 +377,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   onToggle={handleToggle}
                   onDelete={handleDelete}
                   onSchedule={handleSchedule} appearance={appearance}
+                  subtaskParent={subtaskParent}
                 />
               </section>
             )}
@@ -373,6 +391,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   onToggle={handleToggle}
                   onDelete={handleDelete}
                   onSchedule={handleSchedule} appearance={appearance}
+                  subtaskParent={subtaskParent}
                 />
               </section>
             )}
@@ -409,12 +428,14 @@ function TaskList({
   onDelete,
   onSchedule,
   appearance,
+  subtaskParent,
 }: {
   items: TaskItem[];
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onSchedule: (id: string, schedule: TaskSchedule) => Promise<void>;
   appearance: 'faded' | 'strike' | 'none';
+  subtaskParent: Map<string, string>;
 }) {
   // G270: dragging a task row lands by **half region** (left half inserts before, right half
   // after) and suppresses the indicator in the three cases the official build does. The reorder
@@ -486,6 +507,7 @@ function TaskList({
             onDelete={onDelete}
             onSchedule={onSchedule}
             appearance={appearance}
+            isSubtask={subtaskParent.has(task.id)}
           />
         </div>
       ))}
@@ -533,12 +555,15 @@ function TaskRow({
   onDelete,
   onSchedule,
   appearance,
+  isSubtask = false,
 }: {
   task: TaskItem;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onSchedule: (id: string, schedule: TaskSchedule) => Promise<void>;
   appearance: 'faded' | 'strike' | 'none';
+  /** G408: whether this task is a subtask of another (derived server-side). */
+  isSubtask?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rule = parseRecurrence(task.recurrence);
@@ -564,6 +589,7 @@ function TaskRow({
             (task.isCompleted || task.status === 'cancelled') && completedTaskClasses(appearance)
           )}
         >
+          {isSubtask && <span className="mr-1.5 text-xs text-muted-foreground" data-testid="subtask-marker">↳</span>}
           {task.title}
           {task.dueDate && isOverdue(task.dueDate, task.isCompleted || task.status === 'cancelled') && (
             <span className="ml-2 text-xs text-destructive">{overdueLabel(task.dueDate)}</span>

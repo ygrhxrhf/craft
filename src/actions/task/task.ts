@@ -9,6 +9,7 @@ import { listsTaskFromDocument } from '@/lib/task/display';
 import { applyToggled, taskLineStatus, type TaskAttrs } from '@/lib/editor/task-status';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { reorderAfter } from '@/lib/task/task-paging';
+import { deriveSubtasks } from '@/lib/task/subtasks';
 
 // I2：任务表用 updatedAt 自动 bump（无需 metaUpdatedAt），落库后广播即可；
 // 失败不阻断业务（与 updateDocument 的 emit 姿态一致）。
@@ -423,4 +424,70 @@ export async function applySeriesOp(
     }
   }
   await emitTasks(db, session.user.id, taskId);
+}
+
+/**
+ * G408: the subtask relation is **derived server-side**, not stored as a parent pointer. The
+ * official endpoint returns `{subTasks: [{rootTaskBlockId, subTaskBlocks[]}]}` and the client builds
+ * a Map. Locally the document's block tree carries the nesting, so the groups are read from the
+ * task rows' document order + depth (a task whose block is nested under another task's block).
+ */
+
+/**
+ * G408: the subtask relation is **derived server-side**, not stored as a parent pointer. The
+ * official endpoint returns `{subTasks: [{rootTaskBlockId, subTaskBlocks[]}]}` and the client builds
+ * a Map. Locally the nesting lives in the document's block tree, so each task's depth is read from
+ * the document content (the task item's nesting level) and the groups are derived from order+depth.
+ */
+export async function getSubTasks(): Promise<{ subTasks: { rootTaskBlockId: string; subTaskBlocks: string[] }[] }> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const tasks = await db.orm.public.Task
+    .where({ userId: session.user.id, deletedAt: null })
+    .all();
+
+  const subTasks: { rootTaskBlockId: string; subTaskBlocks: string[] }[] = [];
+  const byDoc = new Map<string, Record<string, unknown>[]>();
+  for (const task of tasks as Record<string, unknown>[]) {
+    const documentId = typeof task.documentId === 'string' ? task.documentId : '';
+    if (!documentId) continue;
+    const list = byDoc.get(documentId) ?? [];
+    list.push(task);
+    byDoc.set(documentId, list);
+  }
+
+  for (const [documentId, rows] of byDoc) {
+    const doc = await db.orm.public.Document.first({ id: documentId });
+    const content = (doc as { content?: unknown } | null)?.content;
+    const depths = taskDepthsFromContent(content);
+    const ordered = rows
+      .map((row) => ({
+        blockId: String(row.blockId ?? ''),
+        documentId,
+        indent: depths.get(String(row.blockId ?? '')) ?? 0,
+      }))
+      .filter((row) => row.blockId)
+      .sort((a, b) => (depths.get(a.blockId) ?? 0) - (depths.get(b.blockId) ?? 0) || a.blockId.localeCompare(b.blockId));
+    subTasks.push(...deriveSubtasks(ordered));
+  }
+  return { subTasks };
+}
+
+/** Each task item's nesting depth in the document, keyed by its `blockId`. */
+function taskDepthsFromContent(content: unknown): Map<string, number> {
+  const out = new Map<string, number>();
+  const walk = (node: any, depth: number) => {
+    if (!node || typeof node !== 'object') return;
+    if (node.type === 'taskItem' && typeof node.attrs?.blockId === 'string') {
+      out.set(node.attrs.blockId, depth);
+    }
+    if (Array.isArray(node.content)) {
+      const next = node.type === 'taskList' || node.type === 'taskItem' ? depth + 1 : depth;
+      for (const child of node.content) walk(child, next);
+    }
+  };
+  walk(content, 0);
+  return out;
 }

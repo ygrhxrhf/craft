@@ -269,9 +269,9 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
   const computeDropTarget = useCallback(
     (clientY: number): { el: HTMLElement; pos: number; before: boolean } | null => {
       const dom = editor.view.dom as HTMLElement;
-      // G280: the row list is the *visible* siblings — a folded block's children are nested inside
-      // it, so they never surface here; filtering by offsetParent keeps the intent explicit for any
-      // block the DOM has hidden without removing.
+      // G280: the row list is the *visible* siblings. A folded block's children are nested inside
+      // it, so they never surface as rows here; `visibleRows` is the local form of the official
+      // `*Visible` addressing pair — a drop lands on a visible row, never inside a fold.
       const children = visibleRows(
         (Array.from(dom.children) as HTMLElement[]).map((child) => {
           const rect = child.getBoundingClientRect();

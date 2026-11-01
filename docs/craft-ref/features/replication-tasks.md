@@ -61,7 +61,8 @@
 | 50 | `2214377` | G342、G591、G594、G608（partial） | 同步十层逐层通路；拖拽/编辑 action 状态机；分派表抽象与批量归一应用器 |
 | 51 | `3d2a30b` | G1511（partial）、G328（结案） | 同设备 stale 竞态的选项②接真实路径；G328 按"前提不成立"结案 |
 | 52 | `a392367` | G585（partial） | 合并规则接真实 Backspace 路径（delete-previous 显式删空前块） |
-| 53 | — | G590（partial） | 表格四族落点折成插入计划（构造期钳制 maxRow/maxCol） |
+| 53 | `f0ee17d` | G590（partial） | 表格四族落点折成插入计划（构造期钳制 maxRow/maxCol） |
+| 54 | — | G585（partial） | 合并样式胜负接真实合并路径（前块赢时重设合并块节点类型） |
 
 **剩余 49 条**（gap 17 / partial 32）。☆ 口径：**记为 partial 的行仍算待办**——纯核已落、真实消费点未接；按 `ledger-backlog.csv` 的 `P1 && (gap||partial)` 实算。每批收口都跑全量单测 + 五道闸，当前 354 文件 / 2749 测试、tsc 0 错。
 

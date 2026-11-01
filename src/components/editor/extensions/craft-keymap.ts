@@ -9,6 +9,7 @@ import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
 import { buildDowngradeFlatten } from '@/lib/editor/downgrade-command';
 import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
 import { nextFormatStep, nextBackspaceStep, isEmptyBlock } from '@/lib/editor/format-downgrade';
+import { mergeStyleWinner } from '@/lib/editor/merge-text-blocks';
 import { requestLink } from '@/lib/store/use-link-request-store';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
@@ -335,8 +336,48 @@ export const CraftKeymap = Extension.create({
                     return true;
                   }
                 }
-                // The remaining block-level steps (merge-into-previous / select-previous) are left
-                // to ProseMirror's joinBackward, which already does them.
+                // G578 step 6: merge into a previous text block. The official rule picks which
+                // side's style survives (G585's four-way winner); locally the merge itself is
+                // ProseMirror's joinBackward, and the winner decides whether the merged block
+                // keeps this block's style or the previous one's.
+                if (step === 'merge-into-previous') {
+                  const index = topLevelIndexOf(view.state.doc, view.state.selection.from);
+                  if (index > 0) {
+                    const prev = view.state.doc.child(index - 1);
+                    const current = view.state.doc.child(index);
+                    const winner = mergeStyleWinner(
+                      {
+                        textContent: prev.textContent,
+                        isListItem: prev.type.name === 'listItem' || prev.type.name === 'taskItem',
+                        childBlocks: prev.childCount,
+                      },
+                      {
+                        textContent: current.textContent,
+                        isListItem: current.type.name === 'listItem' || current.type.name === 'taskItem',
+                        childBlocks: current.childCount,
+                      },
+                    );
+                    const join = editor.chain().focus().joinBackward();
+                    // The previous block wins ⇒ after joining, re-assert its node type so the
+                    // merged block carries the winning style rather than whatever joinBackward left.
+                    if (winner === 'previous' && prev.type.name !== current.type.name) {
+                      const prevStart = topLevelStart(view.state.doc, index - 1);
+                      const applied = join.run();
+                      if (applied) {
+                        const merged = view.state.doc.nodeAt(prevStart);
+                        if (merged && merged.type.name !== prev.type.name) {
+                          view.dispatch(
+                            view.state.tr.setNodeMarkup(prevStart, prev.type, prev.attrs),
+                          );
+                        }
+                      }
+                      return applied;
+                    }
+                    return join.run();
+                  }
+                }
+                // The remaining block-level step (select-previous) is left to ProseMirror's
+                // joinBackward, which already does it.
               }
             }
             const binding = KEY_BINDINGS.find((candidate) =>

@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { toTypedValue } from '@/lib/collection/cell-value';
 
 export async function addItem(collectionId: string) {
   const session = await auth();
@@ -107,16 +108,22 @@ export async function setItemValue(
     .where({ itemId, propertyId })
     .all();
 
+  // G451: store the typed discriminant `{type, theme, value}` so a null still says which type of
+  // empty it is. The column is Json, so the object is stored as-is (JSON.stringify keeps the shape
+  // the read side's `rawValueOf` expects).
+  const typed = toTypedValue(String((property as any).type ?? 'text'), value);
+  const stored = typed.value != null ? JSON.stringify(typed) : null;
+
   if (existing.length > 0) {
     await db.orm.public.CollectionValue.where({ id: (existing[0] as any).id }).update({
-      value: value != null ? JSON.stringify(value) : null,
+      value: stored,
     });
   } else {
     await db.orm.public.CollectionValue.create({
       id: crypto.randomUUID(),
       itemId,
       propertyId,
-      value: value != null ? JSON.stringify(value) : null,
+      value: stored,
     });
   }
 

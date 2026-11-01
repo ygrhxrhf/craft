@@ -531,11 +531,11 @@
     "G451": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 39 批）：带类型的判别对象 `{type, theme, value}` 已落纯核 `src/lib/collection/cell-value.ts`——`toTypedValue`（裸值按 type 包起来、已带 type 的原样补齐、theme 不在色板则置 null）、`rawValueOf`（判别对象取回裸值、裸值原样透传）、`emptyTypedValue`（**空值也带 type ⇒ 读得出\"哪种类型的空\"**）。接进 `PropertyCell.parseValue`：判别对象与裸值都能读。单测 6 条。仍缺＝写侧未改存判别对象（`CollectionValue.value` 仍是裸 Json，属 H01 值表示层迁移），故记 partial。",
+      "note": "现读（第 57 批）：带类型的判别对象**接进真实写入路径**——`setItemValue` 改调 `toTypedValue(property.type, value)` 存 `{type,theme,value}`（`value` 是 Json 列，对象原样存；读侧 `PropertyCell.parseValue` 的 `rawValueOf` 已能取回裸值），于是**空值也带类型**、读得出\"哪种类型的空\"。单测 6 条（cell-value）+ 集合 action 测试 158 条。仍缺＝旧行的裸值仍靠读侧兼容（未做一次性回填），其余类型编辑器名册见 G41，故记 partial。",
       "evidence": [
+        "src/actions/collection/items.ts:106",
         "src/lib/collection/cell-value.ts:31",
-        "src/components/collection/PropertyCell.tsx:47",
-        "src/lib/collection/cell-value.test.ts:8"
+        "src/components/collection/PropertyCell.tsx:47"
       ]
     },
     "G252": {

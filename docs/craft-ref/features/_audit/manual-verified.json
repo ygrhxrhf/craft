@@ -425,12 +425,13 @@
       ]
     },
     "G357": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 2 批）：任务块只有一枚提醒 pill（reminder-pill.ts 的 decoration），没有官方那三枚并列时间图标（日历/旗子/提醒）作为三套时间语义的行内入口。",
+      "note": "现读（第 49 批）：三枚并列时间图标已落 `src/lib/task/time-icons.ts`——日历（计划日期，`tasks.scheduled.for`「预定于 [0]」）/ 旗子（截止日期，`tasks.deadline.set.for`「截止日期为 [0]」）/ 提醒（无整句，只有「提醒我…」）；`iconSentence` 填日期、`litIcons` 只点亮有值的那几枚、`alwaysVisible` 三枚恒在（布局稳定）。单测 4 条。仍缺＝任务块行内仍只有一枚提醒 pill，三枚图标 UI 未落，故记 partial。",
       "evidence": [
-        "src/components/editor/extensions/reminder-pill.ts:125-157",
-        "src/components/editor/Editor.tsx:54"
+        "src/lib/task/time-icons.ts:23",
+        "src/lib/task/time-icons.ts:40",
+        "src/lib/task/reminder-entity.test.ts:57"
       ]
     },
     "G359": {
@@ -538,12 +539,13 @@
       ]
     },
     "G252": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 4 批）：提醒只落在 taskItem 上——taskItemTarget 找不到 taskItem 节点就返回 null（block-actions.ts:283-298），普通段落块无提醒入口。官方文案本身已在（reminder-reschedule.ts:11-12 逐字「此区块有一个即将到期的提醒。」），但用途是任务改期确认，不是块级提醒；区块深链提醒缺失。",
+      "note": "现读（第 49 批）：块提醒的富集与深链已落纯核 `src/lib/task/reminder-entity.ts`——`enrichReminder` 实现官方 `X7e` 四步（块提醒补 `buildDynamicDeeplinkToBlock({blockId,documentId,spaceId,editingAllowed:true})`、日程型走第二分支、两者都不是 ⇒ 返回 `unknown` 与 `\"Unknown reminder type\"` warn 而不抛错）；resolve/unresolve 一等动作（isCompleted + completionDate）；临时提醒 id 前缀 `new_reminder_` 可识别。单测 7 条。仍缺＝提醒仍只绑 taskItem（普通段落块无提醒入口）、块提醒深链无消费点，故记 partial。",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:283-298",
-        "src/lib/task/reminder-reschedule.ts:11-17"
+        "src/lib/task/reminder-entity.ts:36",
+        "src/lib/task/reminder-entity.ts:65",
+        "src/lib/task/reminder-entity.test.ts:14"
       ]
     },
     "G253": {

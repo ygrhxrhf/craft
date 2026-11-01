@@ -1385,10 +1385,11 @@
     "G590": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 32 批）：九族落点里「具名 + 钳制 + 双寻址」三件已落（见 G280 的 `drop-address.ts`）——表格四族构造期带 maxRow/maxCol 并在解析时夹回界内，Anchor 与 AnchorVisible 并存。仍缺＝`maxRow/maxCol` 未接到表内插入路径、URL hash 锚点仍是索引方案（`block-anchor.ts`）。",
+      "note": "现读（第 53 批）：表格四族落点的**构造期钳制**已折成一次插入计划 `src/lib/editor/table-landing.ts`——`planTableInsert` 把上/下→行(before/after)、左/右→列(before/after)，`maxRow`/`maxCol` 在构造期夹回界内（越界行/列给 0 或上界）；`planTableInsertAt` 先过 `resolveDropAddress`（表不在行集合里 ⇒ null，不猜位置）。单测 4 条。仍缺＝TableToolbar 的插入按钮仍直接调 TipTap 的 addRow/Column（未走本计划），URL hash 锚点仍是索引方案，故记 partial。",
       "evidence": [
-        "src/lib/editor/drop-address.ts:96",
-        "src/lib/editor/drop-address.test.ts:78"
+        "src/lib/editor/table-landing.ts:31",
+        "src/lib/editor/table-landing.ts:57",
+        "src/lib/editor/table-landing.test.ts:9"
       ]
     },
     "G591": {

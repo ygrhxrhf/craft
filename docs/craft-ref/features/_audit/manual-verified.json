@@ -1399,10 +1399,10 @@
     "G591": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 50 批）：拖拽与编辑的 action 状态机已落纯核 `src/lib/editor/edit-drag-machine.ts`——`reduceEditor` 收 startSelectionDragging/updateSelectionDragging/stopSelectionDragging（**removeState 清整段**）+ startTextEdit/startCodeEdit/stopTextEdit/stopCodeEdit/toggleBlockEditor，且实现官方那条门控**起点块自带拖拽则不起新拖**（`startBlockHasOwnDrag`）；`backupSelectionTypeOf` 对应 `renderTextBackupSelection`。单测 7 条。仍缺＝本地拖拽仍走 DOM dragStateRef、编辑态靠 TipTap 默认，无真实调用点，故记 partial。",
+      "note": "现读（第 65 批）：编辑状态机**接进真实子编辑器**——行内公式视图（`math-inline-view.tsx`）的开/合改用 `reduceEditor` 的 `startCodeEdit`/`stopCodeEdit`（`useReducer` 驱动），不再是裸布尔 `useState`；这正是官方 `startCodeEdit`/`stopCodeEdit` 那一对的本地宿主。单测 14 条（edit-drag-machine）。仍缺＝拖拽仍走 DOM `dragStateRef`（未改机器）、`allowToBeRemovedWhenEmpty`/`backupSelection` 两行为无宿主，故记 partial。",
       "evidence": [
+        "src/components/editor/extensions/math-inline-view.tsx:8",
         "src/lib/editor/edit-drag-machine.ts:62",
-        "src/lib/editor/edit-drag-machine.ts:110",
         "src/lib/editor/edit-drag-machine.test.ts:9"
       ]
     },

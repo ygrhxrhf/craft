@@ -1,5 +1,6 @@
 'use client';
 
+import { normalizeDateValue } from '@/lib/collection/date-value';
 import { useState, useRef, useEffect } from 'react';
 import { Check, X, ChevronDown, Calendar as CalendarIcon, Link2, Paperclip } from 'lucide-react';
 import { cn } from 'cn';
@@ -217,9 +218,10 @@ function DateCell({ value, onChange }: { value: any; onChange: (v: any) => void 
           type="date"
           value={text}
           onChange={e => setText(e.target.value)}
-          onBlur={() => { setEditing(false); onChange(text || null); }}
+          onBlur={() => { setEditing(false); onChange(normalizeDateValue(text)); }}
           onKeyDown={e => {
-            if (e.key === 'Enter') { setEditing(false); onChange(text || null); }
+            // G394: the date column stores a validated instant, never a half-typed string.
+            if (e.key === 'Enter') { setEditing(false); onChange(normalizeDateValue(text)); }
             if (e.key === 'Escape') { setEditing(false); }
           }}
           className="w-full min-w-0 flex-1 rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui outline-none focus-visible:ring-2 focus-visible:ring-ring/50"

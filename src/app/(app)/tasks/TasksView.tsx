@@ -30,6 +30,7 @@ import { applyCompletedFilter, tasksForGroup, withinUpcoming, type TaskGroup, ty
 import { upcomingSections } from '@/lib/task/upcoming-groups';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TaskDatePopover } from '@/components/task/TaskDatePopover';
+import { fromDayInputValue, toDayInputValue } from '@/lib/task/wall-clock';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
 import {
   SET_AS_DEFAULT_VIEW,
@@ -407,10 +408,8 @@ const FREQUENCY_LABELS: Record<string, string> = {
 };
 
 function toDayInput(value: string | null): string {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  // G401: the day shown is the local calendar day the stored instant represents.
+  return toDayInputValue(value);
 }
 
 function toMomentInput(value: string | null): string {
@@ -425,9 +424,8 @@ function pad(value: number): string {
 }
 
 function fromDayInput(value: string): string | null {
-  if (!value) return null;
-  const date = new Date(`${value}T00:00:00`);
-  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+  // G401: a day input stores the UTC instant of local midnight, not of the input's own zone.
+  return fromDayInputValue(value);
 }
 
 function fromMomentInput(value: string): string | null {

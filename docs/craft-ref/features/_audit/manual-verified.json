@@ -491,12 +491,12 @@
       ]
     },
     "G394": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 3 批）：确认值表示层不同——列值落 CollectionValue.value Json?，日期以字符串存入、读侧 new Date(value) 转（PropertyCell.tsx:493），全库无 instanceof Date 校验。照搬官方校验器会把本地整列判无效，故不能只补校验、要连表示层一起定。",
+      "note": "日期列边界校验已落：normalizeDateValue 只接受可解析的日期（Date 或 ISO 串），其余写 null；日期格写入走该校验。",
       "evidence": [
-        "src/prisma/contract.prisma:204-220",
-        "src/components/collection/PropertyCell.tsx:489-500"
+        "src/lib/collection/date-value.ts:9",
+        "src/components/collection/PropertyCell.tsx:220"
       ]
     },
     "G427": {
@@ -990,11 +990,11 @@
       ]
     },
     "G401": {
-      "status": "gap",
-      "note": "无 V5/VE 挂钟编码：日期输入存本地午夜瞬时，跨时区会漂日；全仓无 getTimezoneOffset 换算。",
+      "status": "aligned",
+      "note": "date-only 统一走「本地零点瞬时」对：写出 localDayInstant、读回 fromLocalDayInstant，日输入与展示都经它，跨时区不漂日。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:423",
-        "src/prisma/contract.prisma:331"
+        "src/lib/task/wall-clock.ts:11",
+        "src/app/(app)/tasks/TasksView.tsx:410"
       ]
     },
     "G402": {

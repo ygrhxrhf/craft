@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { convertCellValue } from './type-convert';
+import { isValidDateValue, normalizeDateValue } from './date-value';
 
 // G299：能转就转，转不了才清空（官方「如果可以转换，修改字段类型将会转换当前值。」）
 describe('converting a cell value to another field type', () => {
@@ -42,5 +43,21 @@ describe('converting a cell value to another field type', () => {
       expect(convertCellValue('', target)).toBeNull();
       expect(convertCellValue(null, target)).toBeNull();
     }
+  });
+});
+
+// G394: the date column refuses values that are not dates instead of storing broken strings.
+describe('date value validation', () => {
+  it('accepts a Date and an ISO string', () => {
+    expect(normalizeDateValue(new Date('2026-03-10T00:00:00.000Z'))).toBe('2026-03-10T00:00:00.000Z');
+    expect(normalizeDateValue('2026-03-10T00:00:00.000Z')).toBe('2026-03-10T00:00:00.000Z');
+  });
+
+  it('refuses a value that is not a date', () => {
+    expect(normalizeDateValue('下周')).toBeNull();
+    expect(normalizeDateValue(42)).toBeNull();
+    expect(normalizeDateValue(new Date('nope'))).toBeNull();
+    expect(isValidDateValue('nope')).toBe(false);
+    expect(isValidDateValue(null)).toBe(false);
   });
 });

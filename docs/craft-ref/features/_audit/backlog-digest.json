@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-01T09:29:55.211Z",
+  "generatedAt": "2026-11-01T09:34:07.927Z",
   "total": 1614,
   "status": {
     "nonaction": 503,
     "partial": 404,
-    "aligned": 303,
-    "gap": 226,
+    "aligned": 305,
+    "gap": 224,
     "deliberate": 158,
     "unreachable": 20
   },
@@ -25,13 +25,13 @@
     "P1 / nonaction": 82,
     "P? / partial": 80,
     "P? / aligned": 78,
-    "P1 / aligned": 72,
+    "P1 / aligned": 74,
     "P3 / partial": 70,
     "P2 / deliberate": 66,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
     "P1 / partial": 55,
-    "P1 / gap": 50,
+    "P1 / gap": 48,
     "P? / deliberate": 40,
     "P3 / gap": 39,
     "P? / gap": 34,
@@ -1164,10 +1164,6 @@
       9
     ],
     [
-      "三点四十、第 36 批（块线格式 + 任务 API 契约 + 日历分区，",
-      9
-    ],
-    [
       "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
       9
     ],
@@ -1177,6 +1173,10 @@
     ],
     [
       "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",
+      8
+    ],
+    [
+      "三点四十、第 36 批（块线格式 + 任务 API 契约 + 日历分区，",
       8
     ],
     [

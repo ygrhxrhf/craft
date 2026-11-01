@@ -21,6 +21,7 @@ import { ACCENTS as ACCENT_KEYS, pickAccent, readAccent, type Accent } from '@/l
 import { Switch } from '@/components/ui/switch';
 import { RichText } from '@/components/ui/rich-text';
 import { loggedInAsText } from '@/lib/i18n/account-copy';
+import { SCOPE_COPY } from '@/lib/app/settings-scope';
 import type { SettingsSection } from '@/lib/store/use-settings-store';
 import { cn } from 'cn';
 import {
@@ -399,6 +400,12 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       ];
       return (
         <div className="space-y-4">
+          {/* G166: the official build annotates which scope a settings group applies to. Locally
+              settings are one global level, so the panel says that plainly instead of implying a
+              three-layer override it does not have. */}
+          <p className="px-1 text-xs text-foreground/55" data-testid="settings-scope-note">
+            {SCOPE_COPY.personal.label}
+          </p>
           <RowCard className="px-4 py-3">
             <div className="text-[13px] font-medium">编辑器字体</div>
             <div className="mt-2 flex flex-wrap gap-2">

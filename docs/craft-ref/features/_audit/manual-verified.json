@@ -746,10 +746,10 @@
     "G166": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 42 批）：三层作用域的取值链已落纯核 `src/lib/app/settings-scope.ts`——`resolveScopedSetting` 按**空间 → 团队 → 个人**逐层回落取第一个有值的层，`scopeOfSetting` 报值来自哪层，`isOverridden` 报是否被空间覆盖；两句适用范围文案逐字取自 `settings.md` §二（个人那句 + 团队那句含 `[0]` 团队名占位 + 覆盖那句）。单测 5 条。仍缺＝本地无团队/空间实体，三层作用域无真实落库来源（设置仍是单级全局），故记 partial。",
+      "note": "现读（第 74 批）：三层作用域的**适用范围标注已上屏**——高级设置分区顶部加一句 `SCOPE_COPY.personal.label`「这些设置适用于你个人空间中发布的所有内容。」（`data-testid=\"settings-scope-note\"`），把\"本地是单级全局\"这件事明说，而不是暗示一个并不存在的三层覆盖（台账建议的\"先做作用域标注而不落三层存储\"）。取值链纯核（空间→团队→个人）与团队那句含 `[0]` 的文案仍在 `settings-scope.ts`，单测 5 条。仍缺＝本地无团队/空间实体，三层无真实落库来源，故记 partial。",
       "evidence": [
-        "src/lib/app/settings-scope.ts:39",
-        "src/lib/app/settings-scope.ts:49",
+        "src/components/settings/SettingsPanels.tsx:403",
+        "src/lib/app/settings-scope.ts:24",
         "src/lib/editor/action-ids.test.ts:47"
       ]
     },

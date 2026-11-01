@@ -1318,9 +1318,12 @@
     },
     "G577": {
       "status": "partial",
-      "note": "「块完全为空」判据已落（文本/原子内联/子块三者皆空）并用于 Enter 分支；块类型仍是本地节点，未按官方块模型改写。",
+      "priority": "P1",
+      "note": "现读（第 62 批）：Enter 两条分支的**空块判据接进真实键位**——`craft-keymap.ts` 的 Enter 分支先用 `isEmptyBlock` 判\"块完全为空\"（文本/原子内联/子块三者皆空），**非空直接放行给默认 splitBlock**（此前会先减缩进/去列表，与官方\"非空 ⇒ 分割成两块\"相反）。单测 13 条（format-downgrade）。仍缺＝块类型仍是本地节点、未按官方块模型改写；装饰档本地无对应属性，故记 partial。",
       "evidence": [
-        "src/lib/editor/format-downgrade.ts:44"
+        "src/components/editor/extensions/craft-keymap.ts:257",
+        "src/lib/editor/format-downgrade.ts:44",
+        "src/lib/editor/format-downgrade.test.ts:26"
       ]
     },
     "G578": {

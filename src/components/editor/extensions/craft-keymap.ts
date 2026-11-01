@@ -257,6 +257,15 @@ export const CraftKeymap = Extension.create({
             ) {
               const { $from } = view.state.selection;
               if ($from.parent.isTextblock) {
+                // G577: Enter's two branches are named by emptiness — an **empty** block walks the
+                // three-step format chain; a non-empty one splits into two blocks. Without this
+                // guard a paragraph with text would step its indent down instead of splitting.
+                const empty = isEmptyBlock({
+                  textLength: $from.parent.textContent.length,
+                  atomicInlines: 0,
+                  childBlocks: 0,
+                });
+                if (!empty) return false;
                 const step = nextFormatStep({
                   indentLevel: Number($from.parent.attrs?.indent ?? 0),
                   inList: listDepthOf($from) > 0,

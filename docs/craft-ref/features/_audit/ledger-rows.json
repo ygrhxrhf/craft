@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-01T12:22:38.026Z",
+  "generatedAt": "2026-11-01T12:35:39.274Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1046,
+    "gap": 1045,
     "unknown": 198,
     "aligned": 143,
     "deliberate": 96,
-    "partial": 59,
+    "partial": 60,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -20,7 +20,7 @@
   "statusByPriority": {
     "P2 / gap": 461,
     "P? / gap": 226,
-    "P1 / gap": 205,
+    "P1 / gap": 204,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P2 / aligned": 52,
@@ -36,7 +36,7 @@
     "P2 / partial": 22,
     "P? / aligned": 19,
     "P2 / nonaction": 18,
-    "P1 / partial": 15,
+    "P1 / partial": 16,
     "P3 / nonaction": 14,
     "P3 / partial": 10,
     "P? / partial": 10,
@@ -8985,10 +8985,10 @@
       "cols": 5,
       "id": "G442",
       "official": "★ **五类数据各有独立合并器、且是\"可选增强\"**：子块列表 `e$(client,server,base)→{mergedBlockIds}`、表格 `P0e(…,mergedBlockIds)`（**要吃刚合完的子块结果**；数据非法则 `logger().error(\"TableConflictResolution\",\"Invalid table data\")` 并整槽回退 `{}`）、记录 `D0e(…, objectListSchema)`（★ **要额外吃父 `objectList` 的当前 schema**，因字段定义本身可能同时被改）、表头 `E0e`、任务 `_0e`→`vVe`。最终**逐槽回退服务端原值**（`mergedBlockIds ?? b.subblocks`、`si(o.get(id)) ?? b.pluginData`…）（§十一 3）",
-      "local": "无对应实现",
-      "verdict": "缺失（可按类渐进：先只合子块不会破坏不变量）",
+      "local": "✎ 现读（2026-11-01）更正：五类合并器纯核已落 `src/lib/sync-core/conflict-merge.ts`（mergeSlot 逐槽回退／mergeBlockIds／mergeObjectList 吃父 schema／mergeTable 吃 mergedBlockIds），单测 12 条；本地正文仍靠 Yjs CRDT 整篇合并，逐槽合并暂无调用点（旧读作废）",
+      "verdict": "部分落地",
       "score": "3/3",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 3,
         "cost": 3,

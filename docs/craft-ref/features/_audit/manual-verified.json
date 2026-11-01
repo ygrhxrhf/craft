@@ -1029,27 +1029,30 @@
       ]
     },
     "G440": {
-      "status": "gap",
-      "note": "无块级冲突合并：写库整行覆盖，同步靠 updatedAt LWW 拒旧；无索引比较与 conflict 事件。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 35 批）：冲突判据＝索引比较已落纯核 `src/lib/sync-core/conflict-criterion.ts`——`decideConflict` 就是官方那句 `blocks.length>0 && localSyncIndex>lastSyncPatchIndex`（两条件合取），另落 `isEmptyPatch`（空补丁直接采用）与 `CONFLICT_LOG_LEVEL='warn'`（不是 error），单测逐条钉住。仍缺＝本地同步是整篇文档一个单元、无 patch 索引，故这条判据尚无真实调用点，记 partial。",
       "evidence": [
-        "src/lib/sync/lww.ts:3",
-        "src/actions/document/update.ts:44"
+        "src/lib/sync-core/conflict-criterion.ts:26",
+        "src/lib/sync-core/conflict-criterion.test.ts:5"
       ]
     },
     "G441": {
-      "status": "gap",
-      "note": "无 base 快照协议：队列只带新 data+syncTs，无四类旧值字典；Document 只有一个 updatedAt。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 35 批）：base 快照协议形状已落纯核 `src/lib/sync-core/conflict-base.ts`——四个以 id 为键的字典（docIdTree/oldPluginData/oldObjectData/oldTaskData）、缺省 token 字面量 `\"init\"`、`normalizeBase` 归一、`isDegenerateBase`（首次同步四字典全空 ⇒ 退化为\"服务端为准 + 本地非空保留\"）、`oldValueOf` 用 hasOwnProperty 区分\"服务端没说过\"与\"旧值是空的\"。仍缺＝本地写库协议没有\"旧值\"层（Document 单 updatedAt），服务端未随补丁下发基线 ⇒ 无真实调用点，记 partial。",
       "evidence": [
-        "src/lib/sync-core/types.ts:22",
-        "src/prisma/contract.prisma:95"
+        "src/lib/sync-core/conflict-base.ts:31",
+        "src/lib/sync-core/conflict-base.test.ts:11"
       ]
     },
     "G442": {
-      "status": "gap",
-      "note": "五类合并器均无；正文只靠 Yjs CRDT 整篇合并，冲突没有逐槽合并与回退。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 35 批）：五类合并器与逐槽回退已落纯核 `src/lib/sync-core/conflict-merge.ts`——`mergeSlot`（合不出来/抛异常一律回退服务端原值）、`mergeBlockIds`（子块列表，有 base 保双边新增、无 base 退化服务端为准+本地非空保留）、`mergeObjectList`（★ 吃父 objectList 的当前 schema，schema 里没有的字段丢弃，id 不丢）、`mergeTable`（★ 吃 mergedBlockIds 重排行序；数据非法回退 `{}`）。单测 12 条。仍缺＝本地正文靠 Yjs CRDT 整篇合并、无逐槽合并的调用点（表头/任务两支未单独建），记 partial。",
       "evidence": [
-        "src/lib/collaboration/use-collab-session.ts:61",
-        "src/collab/persist.mjs:58"
+        "src/lib/sync-core/conflict-merge.ts:36",
+        "src/lib/sync-core/conflict-merge.test.ts:5"
       ]
     },
     "G443": {

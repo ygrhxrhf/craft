@@ -586,12 +586,13 @@
       ]
     },
     "G263": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 4 批）：任务屏无「固定文档」区（pin/unpin/pin.existing/tap.to.pin 全组零命中），也无子任务层级与「带任务的文档」分组；只有四档时间分组（grouping.ts）。",
+      "note": "现读（第 47 批）：固定文档区已落 `src/lib/task/pinned-docs.ts`——七条文案逐字（固定文档/取消固定文档/固定现有文档/点按即可固定现有文档/拖放文档即可固定并查看更多详细信息/显示固定内容，取自 harvest:3325-3360）＋`tasks.subtasks`「子任务」与 `tasks.docs.with.tasks`「带任务的文档」两个分组名；`pinnedInOrder` 按 order 排序、`showsEmptyState` 触发空态、`togglePinned` 固定/取消固定。单测 4 条。仍缺＝任务屏无固定区 UI 与落库，故记 partial。",
       "evidence": [
-        "src/lib/task/grouping.ts:5-32",
-        "src/app/(app)/tasks/TasksView.tsx:180-190"
+        "src/lib/task/pinned-docs.ts:15",
+        "src/lib/task/pinned-docs.ts:39",
+        "src/lib/task/task-drop.test.ts:78"
       ]
     },
     "G332": {
@@ -836,11 +837,13 @@
       ]
     },
     "G270": {
-      "status": "gap",
-      "note": "任务视图无拖拽排序也无 reorder action；不存在半区插入、同组抑制与指示线判定。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 47 批）：半区落点与三抑制已落纯核 `src/lib/task/task-drop.ts`——`insertIndexFor(side, index)` 就是官方那句 `side===\"left\"?C:C+1`，`sideFor` 以格中线为界（中线归右），`shouldSuppressIndicator` 实现三种抑制（悬自身／目标位在组内／相邻位在组内）。单测 6 条。仍缺＝任务视图尚无拖拽排序（无 reorder action、无指示线渲染），故记 partial。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx",
-        "src/actions/task/task.ts:163"
+        "src/lib/task/task-drop.ts:18",
+        "src/lib/task/task-drop.ts:46",
+        "src/lib/task/task-drop.test.ts:11"
       ]
     },
     "G282": {
@@ -1040,11 +1043,13 @@
       ]
     },
     "G408": {
-      "status": "gap",
-      "note": "无子任务关系：Task 只有 documentId/blockId，全仓无 subTask/rootTaskBlockId，也没有返回子任务的端点。",
+      "status": "partial",
+      "priority": "P1",
+      "note": "现读（第 47 批）：子任务的服务端推导形状已落纯核 `src/lib/task/subtasks.ts`——`deriveSubtasks` 按块序推导（缩进更深的后继即子任务，与 indent-run 同一套整块边界），产出官方那支 `{rootTaskBlockId, subTaskBlocks[]}`，`subtaskMap` 建客户端消费的 Map，`parentOf` 反查父任务；**无 parentTaskId**（推导而非存储，与官方一致）。单测 3 条。仍缺＝无服务端端点与 Task 侧落库（Task 仍只有 blockId/documentId），故记 partial。",
       "evidence": [
-        "src/prisma/contract.prisma:324",
-        "src/prisma/contract.prisma:327"
+        "src/lib/task/subtasks.ts:27",
+        "src/lib/task/subtasks.ts:44",
+        "src/lib/task/task-drop.test.ts:50"
       ]
     },
     "G421": {

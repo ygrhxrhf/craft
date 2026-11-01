@@ -1382,26 +1382,24 @@
       ]
     },
     "G643": {
-      "status": "gap",
-      "note": "重复/提醒展开面板无键盘处理：无 Escape 收起、无 Enter 提交、无灰按钮门控。",
+      "status": "aligned",
+      "note": "任务展开面板成为具名键位作用域：Escape 收起（三级降级的最内层），stopPropagation 不误伤上层。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:206",
-        "src/app/(app)/tasks/TasksView.tsx:513"
+        "src/app/(app)/tasks/TasksView.tsx:557"
       ]
     },
     "G647": {
-      "status": "gap",
-      "note": "toast 基建已有且他处在用，提醒/任务面未接入；改提醒没有 3 秒「下次提醒时间」播报。",
+      "status": "aligned",
+      "note": "改提醒播报 3 秒 info toast：标题「已更改提醒」、副标题是改后的下次提醒时间（今天/明天/月日 + 时刻）。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:556",
-        "src/components/ui/toast.tsx:10"
+        "src/lib/task/reminder-toast.ts:12",
+        "src/app/(app)/tasks/TasksView.tsx:512"
       ]
     },
     "G651": {
-      "status": "partial",
-      "note": "块菜单已有 20 分/1/3 小时/明天/下周快选；但下周是同日+7 天，「留着以后用」被禁用。",
+      "status": "aligned",
+      "note": "提醒快选锚点修正：下周＝下周一 09:00（原为同日+7 天），日粒度档统一 09:00；「稍后」清空档已有。",
       "evidence": [
-        "src/lib/task/remind-presets.ts:27",
         "src/lib/task/remind-presets.ts:52"
       ]
     },

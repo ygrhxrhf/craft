@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-01T10:53:52.366Z",
+  "generatedAt": "2026-11-01T11:00:44.763Z",
   "total": 1614,
   "status": {
     "nonaction": 503,
-    "partial": 387,
-    "aligned": 333,
-    "gap": 213,
+    "partial": 386,
+    "aligned": 336,
+    "gap": 211,
     "deliberate": 158,
     "unreachable": 20
   },
@@ -20,8 +20,8 @@
     "P2 / partial": 199,
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
+    "P1 / aligned": 105,
     "P2 / gap": 103,
-    "P1 / aligned": 102,
     "P2 / aligned": 86,
     "P1 / nonaction": 82,
     "P? / partial": 80,
@@ -32,8 +32,8 @@
     "P3 / aligned": 59,
     "P? / deliberate": 40,
     "P3 / gap": 39,
-    "P1 / partial": 38,
-    "P1 / gap": 37,
+    "P1 / partial": 37,
+    "P1 / gap": 35,
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
@@ -1192,10 +1192,6 @@
       7
     ],
     [
-      "三点八二、第 71 批（★ 静态补账：任务三时间动线 G 项结案 ⇒ 重",
-      7
-    ],
-    [
       "三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP ",
       7
     ],
@@ -1205,6 +1201,10 @@
     ],
     [
       "三点一〇六二、第 112 批〔★★★ **代码块主题的\"装配处\"与\"缺省",
+      7
+    ],
+    [
+      "三点一一一九、第 181 批新登记的官方行为（2026-10-09 05",
       7
     ]
   ]

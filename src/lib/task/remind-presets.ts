@@ -48,10 +48,16 @@ function startOfNextDay(now: Date): Date {
   return next;
 }
 
-/** The same weekday next week, at 09:00 local. */
+/**
+ * G651: `next_week` is **next Monday** at 09:00 (`y0(A4(Qo()), 9)`), not the same weekday a week
+ * later — the official quick picks anchor on the week, and every day-granularity pick lands at
+ * 09:00 local.
+ */
 function startOfNextWeek(now: Date): Date {
   const next = new Date(now);
-  next.setDate(next.getDate() + 7);
+  // Monday-based week offset: Monday 0 … Sunday 6.
+  const mondayOffset = (next.getDay() + 6) % 7;
+  next.setDate(next.getDate() + (7 - mondayOffset));
   next.setHours(9, 0, 0, 0);
   return next;
 }

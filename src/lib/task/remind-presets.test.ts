@@ -63,9 +63,12 @@ describe('the computed instants', () => {
     expect(tomorrow?.getMinutes()).toBe(0);
   });
 
-  it('lands next week seven days out at 09:00 local', () => {
+  // G651: the official quick pick anchors on next Monday, not the same weekday +7.
+  it('lands on the coming Monday at 09:00 local', () => {
+    // 2026-10-14 is a Wednesday → next Monday is the 19th.
     const nextWeek = remindInstantFor('nextWeek', now);
-    expect(nextWeek?.getDate()).toBe(21);
+    expect(nextWeek?.getDate()).toBe(19);
+    expect(nextWeek?.getDay()).toBe(1);
     expect(nextWeek?.getHours()).toBe(9);
   });
 

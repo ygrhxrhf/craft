@@ -30,6 +30,7 @@ import { applyCompletedFilter, tasksForGroup, withinUpcoming, type TaskGroup, ty
 import { upcomingSections } from '@/lib/task/upcoming-groups';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TaskDatePopover } from '@/components/task/TaskDatePopover';
+import { REMINDER_CHANGED_TITLE, REMINDER_TOAST_DURATION_MS, nextReminderText } from '@/lib/task/reminder-toast';
 import { fromDayInputValue, toDayInputValue } from '@/lib/task/wall-clock';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
 import {
@@ -508,7 +509,20 @@ function TaskRow({
           kind="schedule"
           value={task.scheduleDate}
           onChange={(value) => update({ scheduleDate: value })}
-          reminder={{ value: task.remindAt, onChange: (value) => update({ remindAt: value }) }}
+          reminder={{
+            value: task.remindAt,
+            onChange: (value) => {
+              update({ remindAt: value });
+              // G647: changing a reminder flashes a 3s info toast carrying the new moment.
+              toast.add({
+                id: `reminder-${task.id}`,
+                type: 'info',
+                title: REMINDER_CHANGED_TITLE,
+                description: nextReminderText(value),
+                timeout: REMINDER_TOAST_DURATION_MS,
+              });
+            },
+          }}
           recurrence={{ value: task.recurrence, onChange: (value) => update({ recurrence: value }) }}
         />
         <TaskDatePopover
@@ -538,7 +552,17 @@ function TaskRow({
       </div>
 
       {open && (
-        <div className="grid gap-2 px-3 pb-3 sm:grid-cols-2">
+        <div
+          className="grid gap-2 px-3 pb-3 sm:grid-cols-2"
+          // G643: the panel is a named key scope — Escape closes it (the innermost of the three
+          // levels: submenu → popover → panel), Enter commits while a field is focused.
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.stopPropagation();
+              setOpen(false);
+            }
+          }}
+        >
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             提醒时间
             <Input

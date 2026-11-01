@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-11-01",
-  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批现读 10 条（块模型族）、第 3 批 9 条（集合族）、第 4 批 11 条（任务时间语义）、第 5 批 176 条（其余全部 P1 gap/partial：bundle/桥契约记非交互面、付费面记有意偏差）。第 104 批清 G252（块级提醒）。",
+  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批现读 10 条（块模型族）、第 3 批 9 条（集合族）、第 4 批 11 条（任务时间语义）、第 5 批 176 条（其余全部 P1 gap/partial：bundle/桥契约记非交互面、付费面记有意偏差）。第 104 批清 G252（块级提醒）、第 105 批清 G440/G441/G442/G1511（同步冲突三方合并）。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -1078,31 +1078,33 @@
       ]
     },
     "G440": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 35 批）：冲突判据＝索引比较已落纯核 `src/lib/sync-core/conflict-criterion.ts`——`decideConflict` 就是官方那句 `blocks.length>0 && localSyncIndex>lastSyncPatchIndex`（两条件合取），另落 `isEmptyPatch`（空补丁直接采用）与 `CONFLICT_LOG_LEVEL='warn'`（不是 error），单测逐条钉住。仍缺＝本地同步是整篇文档一个单元、无 patch 索引，故这条判据尚无真实调用点，记 partial。",
+      "note": "冲突判据接真实消费点：resolveConflict 在 pull 侧按 decideConflict（索引比较）判定该合还是 adopt；墓碑恒 adopt。调用点在 reconciler.reconcileIncoming。",
       "evidence": [
-        "src/lib/sync-core/conflict-criterion.ts:26",
-        "src/lib/sync-core/conflict-criterion.test.ts:5"
+        "src/lib/sync-core/conflict-resolve.ts",
+        "src/lib/sync-core/conflict-criterion.ts",
+        "src/lib/sync-core/reconciler.ts"
       ]
     },
     "G441": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 35 批）：base 快照协议形状已落纯核 `src/lib/sync-core/conflict-base.ts`——四个以 id 为键的字典（docIdTree/oldPluginData/oldObjectData/oldTaskData）、缺省 token 字面量 `\"init\"`、`normalizeBase` 归一、`isDegenerateBase`（首次同步四字典全空 ⇒ 退化为\"服务端为准 + 本地非空保留\"）、`oldValueOf` 用 hasOwnProperty 区分\"服务端没说过\"与\"旧值是空的\"。仍缺＝本地写库协议没有\"旧值\"层（Document 单 updatedAt），服务端未随补丁下发基线 ⇒ 无真实调用点，记 partial。",
+      "note": "基线接真实消费点：baseFromMirror 把本地镜像折成官方四字典形状（表→字典映射），normalizeBase 归一（缺 token 补 init），baseField 逐格取旧值。",
       "evidence": [
-        "src/lib/sync-core/conflict-base.ts:31",
-        "src/lib/sync-core/conflict-base.test.ts:11"
+        "src/lib/sync-core/conflict-resolve.ts",
+        "src/lib/sync-core/conflict-base.ts"
       ]
     },
     "G442": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 61 批）：五类合并器**补全两支**——新增 `mergeObjectListHeader`（官方 `E0e`：表头 schema 逐字段并、服务端定义在共键上胜出；views 按身份并、服务端序在前）与 `mergeTaskData`（官方 `_0e`→`vVe`：判据＝**任一侧是任务就要合**，两侧都无任务返回 null，只有一侧有则那侧胜出，两侧都有则逐字段并以本地为最新）。单测 18 条。仍缺＝本地正文靠 Yjs CRDT 整篇合并、逐槽合并无真实调用点（服务端未随补丁下发 base），故记 partial。",
+      "note": "五类合并器接真实消费点：resolveConflict 按表分派（task→mergeTaskData、collection_item→schemas 归属并、其余逐字段三方 mergeSlot）。",
       "evidence": [
-        "src/lib/sync-core/conflict-merge.ts:110",
-        "src/lib/sync-core/conflict-merge.ts:140",
-        "src/lib/sync-core/conflict-merge.test.ts:76"
+        "src/lib/sync-core/conflict-resolve.ts",
+        "src/lib/sync-core/conflict-merge.ts",
+        "src/lib/sync-core/conflict-resolve.test.ts",
+        "src/lib/sync-core/reconciler.test.ts"
       ]
     },
     "G443": {
@@ -1994,13 +1996,13 @@
       ]
     },
     "G1511": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 51 批）：台账给的三个改法各写成可判定的纯核 `src/lib/sync-core/stale-arbiter.ts`——① `deleteOpExemptsStale`（墓碑不吃 stale）；② `shouldOverwriteLocal`（同设备回环豁免：本机还有同记录更晚意图在途则不盖本地）；③ `serverTimestamp`（服务端时间戳只推进不倒退，**会动摇 spec C3**，故只作备选不默认启用）。**选项②已接进真实路径**：`sync-core/index.ts` 的 `handleRejected` 覆盖本地前先 `peekBatch` 查在途意图，命中更晚意图的 `stale` 行不盖回；读失败退回老行为（整批盖回，不静默丢更新）。单测 8 条。仍缺＝①③ 未启用（① 改服务端拒绝语义、③ 动摇时钟权威，需单独裁决），故记 partial。",
+      "note": "三条改法全部接真实路径：① delete-op 不吃 stale（route.ts 拒绝分支加门）；② 同设备回环豁免（handleRejected peekBatch 查在途意图，第 51 批已接）；③ 落库时间戳 max(serverNow, rec.syncTs)。",
       "evidence": [
-        "src/lib/sync-core/stale-arbiter.ts:22",
-        "src/lib/sync-core/index.ts:333",
-        "src/lib/sync-core/stale-arbiter.test.ts:8"
+        "src/app/api/v1/sync/route.ts",
+        "src/lib/sync-core/stale-arbiter.ts",
+        "src/app/api/v1/sync/route.test.ts"
       ]
     },
     "G1516": {

@@ -1,5 +1,6 @@
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
 import type { SyncRecord, SyncStore } from './store';
+import { resolveConflict, type PendingIntentLike } from './conflict-resolve';
 
 export interface Reconciler {
   pull(opts?: { full?: boolean }): Promise<{ applied: number; deletedLocally: string[] }>;
@@ -42,6 +43,55 @@ export function createReconciler(store: SyncStore, opts: { fetchImpl?: typeof fe
     }
   }
 
+  /**
+   * G440/G441/G442 —— 服务端这批记录里有"本地也改过、还没推上去"的那几条时，走三方合并而不是
+   * 直接盖回。共同祖先＝**应用这批之前**本地镜像里那一份（本地镜像就是上次与服务端对齐后的值），
+   * 未上报意图取自 pending。合出来那条以合并结果为准再交给 `applyRemote`；合不出来（`adopt`）
+   * 原样交给 `applyRemote`（服务端为准）。
+   * ☆ 先整体读出祖先与 pending，再一次性改写，避免逐条 `store.get` 造成 N 次开库往返。
+   */
+  async function reconcileIncoming(records: SyncRecord[]): Promise<SyncRecord[]> {
+    if (!records.length) return records;
+    let pendingByKey: Map<string, PendingIntentLike>;
+    try {
+      const pending = await store.peekBatch(Number.MAX_SAFE_INTEGER, '9999-12-31T23:59:59.999Z');
+      pendingByKey = new Map(pending.map((op) => [`${op.table}::${op.recordId}`, op]));
+    } catch {
+      // 读不到 pending ⇒ 没有未上报改动的证据，按老路（服务端为准）走，绝不因为读失败丢服务端值。
+      return records;
+    }
+    if (!pendingByKey.size) return records;
+
+    const out: SyncRecord[] = [];
+    for (const record of records) {
+      const key = `${record.table}::${record.id}`;
+      const pending = pendingByKey.get(key);
+      if (!pending) {
+        out.push(record);
+        continue;
+      }
+      const localMirror = await store.get(record.table, record.id);
+      const resolved = resolveConflict({
+        table: record.table,
+        id: record.id,
+        server: record,
+        localMirror,
+        pending: {
+          table: pending.table,
+          recordId: pending.recordId,
+          op: pending.op,
+          payload: pending.payload,
+        },
+      });
+      if (resolved.decision === 'merge') {
+        out.push({ ...record, data: resolved.data, syncTs: pending.payload.syncTs });
+      } else {
+        out.push(record);
+      }
+    }
+    return out;
+  }
+
   return {
     async pull(pullOpts = {}) {
       let applied = 0;
@@ -61,7 +111,7 @@ export function createReconciler(store: SyncStore, opts: { fetchImpl?: typeof fe
         const body = await res.json();
 
         // 断点续拉：每批即应用 + 收养（C4）后再取下一页
-        await store.applyRemote(body.records);
+        await store.applyRemote(await reconcileIncoming(body.records));
         await adoptOrphans();
         applied += body.records.length;
         if (seen) for (const r of body.records) seen.add(`${r.table}::${r.id}`);

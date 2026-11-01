@@ -7,6 +7,7 @@ import { getDb } from '@/prisma/db';
 import { SYNC_TABLES } from '@/lib/sync/tables';
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
 import { decideLww } from '@/lib/sync/lww';
+import { deleteOpExemptsStale, serverTimestamp } from '@/lib/sync-core/stale-arbiter';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
 import { materializeTaskReminders } from '@/lib/notification/materialize';
 import { materializeDailyDigest } from '@/lib/notification/daily-digest';
@@ -285,7 +286,10 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
     const rejected: any[] = [];
     const touchedTables = new Set<string>();
     let maxCursor: Cursor = { ts: '1970-01-01T00:00:00.000Z', id: '' };
-    const serverNow = () => new Date().toISOString(); // spec C3：服务端时钟无条件覆盖
+    // spec C3 的原始前提是"服务端时钟无条件覆盖"；G1511③ 把它放宽成 `max(serverNow, rec.syncTs)`：
+    // 服务端仍不信任客户端钟（不拿更早的时间戳盖掉此刻），但**不把客户端更新的时间戳往回拖**，
+    // 否则同设备在去抖窗口里连发的两笔会被先到先落的那笔重打时间戳、把后一笔判旧而吞掉。
+    const serverNow = () => new Date().toISOString();
 
     for (const rec of records) {
       const def = SYNC_TABLES.find(d => d.table === rec.table)!; // 上游已整批校验
@@ -327,14 +331,20 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
       const tSrv = current ? new Date(current[def.tsCol]).toISOString() : null;
       const decision = decideLww(rec.op, rec.syncTs, tSrv);
 
-      if (decision === 'reject') {
+      // G1511①：墓碑不吃 stale——`delete`-op 的语义是"从此刻起不存在"，不跟内容时间戳比大小。
+      // 一台设备在去抖窗口里"改名 → 删除"两笔连发时，若服务端把先到的改名那笔重打成"此刻"，
+      // 后一笔删除就会因 `tCli <= tSrv` 被判旧而**删不掉**（动作被自己另一笔吞掉）。
+      if (decision === 'reject' && !deleteOpExemptsStale(rec.op, 'stale')) {
         rejected.push({
           table: rec.table, id: pk, op: current?.deletedAt ? 'delete' : 'upsert',
           data: pickCols(def, current), syncTs: tSrv!, reason: 'stale',
         });
         continue;
       }
-      const ts = serverNow();
+      // G1511③：落库时间戳取 `max(serverNow, rec.syncTs)`——服务端认这台设备自己给的时间戳，
+      // 不把它往回拖。官方那句"同一台设备上刚敲下的那一下与紧接着的第二下不会互相吞"就是这个意思：
+      // 先到先落的那笔不该把自己的时间戳抬到"此刻"、从而把同设备后一笔判旧。
+      const ts = serverTimestamp(serverNow(), rec.syncTs);
       // 撞唯一键改写存量行时，applied/cursor 报存量行真实 pk（与 GET 侧 def.id 同源）
       let appliedId = pk;
       if (rec.op === 'delete') {

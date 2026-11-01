@@ -144,4 +144,44 @@ describe('reconciler.pull', () => {
     await expect(e401.pull()).rejects.toBeInstanceOf(SyncAuthError);
     expect(await store.getKv('lastPullAt')).toBeNull();
   });
+
+  // ---- G440/G441/G442：pull 时对"本地也改过、还没推上去"的那几条走三方合并 ----
+
+  it('G440/G442：本地有未上报改动且服务端落后 ⇒ 三方合并（两侧改的不同格都保留）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    // 祖先：本地镜像里那一份（title 与 icon 都是对齐时的值）
+    await store.applyRemote([
+      { table: 'document', id: 'd1', op: 'upsert', data: { title: '原标题', icon: '📄' }, syncTs: '2026-11-01T09:00:00.000Z' },
+    ]);
+    // 本地刚改了 title，还没推上去（syncTs 比服务端这批新 ⇒ 服务端落后）
+    await store.enqueue({
+      table: 'document', recordId: 'd1', op: 'upsert',
+      payload: { data: { title: '本地标题', icon: '📄' }, syncTs: '2026-11-01T10:00:02.000Z' },
+      createdAt: '2026-11-01T10:00:02.000Z',
+    });
+    // 服务端这批改了 icon
+    const fetchImpl = vi.fn(async () => ok({
+      records: [{ table: 'document', id: 'd1', op: 'upsert', data: { title: '原标题', icon: '⭐' }, syncTs: '2026-11-01T10:00:01.000Z' }],
+      cursor: '2026-11-01T10:00:01.000Z|d1', hasMore: false,
+    }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await r.pull();
+    const row = await store.get('document', 'd1');
+    // 本地改的 title 保住、服务端改的 icon 也保住
+    expect(row?.data).toMatchObject({ title: '本地标题', icon: '⭐' });
+  });
+
+  it('G440：没有未上报改动时照旧服务端为准（不无谓合并）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.applyRemote([
+      { table: 'document', id: 'd1', op: 'upsert', data: { title: '原标题' }, syncTs: '2026-11-01T09:00:00.000Z' },
+    ]);
+    const fetchImpl = vi.fn(async () => ok({
+      records: [{ table: 'document', id: 'd1', op: 'upsert', data: { title: '服务端标题' }, syncTs: '2026-11-01T10:00:01.000Z' }],
+      cursor: '2026-11-01T10:00:01.000Z|d1', hasMore: false,
+    }));
+    const r = createReconciler(store, { fetchImpl: fetchImpl as any });
+    await r.pull();
+    expect((await store.get('document', 'd1'))?.data).toMatchObject({ title: '服务端标题' });
+  });
 });

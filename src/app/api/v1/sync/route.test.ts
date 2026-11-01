@@ -589,6 +589,50 @@ describe('POST /api/v1/sync', () => {
     expect(body.rejected[0].reason).toBe('stale');
     expect(body.rejected[0].data.title).toBe('server-newer');
   });
+
+  // G1511①：墓碑不吃 stale——同一台设备"改名 → 删除"两笔连发时，先到先落的改名把那行时间戳
+  // 抬到"此刻"，后一笔删除若仍比时间戳就会删不掉（动作被自己另一笔吞掉）。
+  it('G1511①：delete-op 的陈旧拒绝改判为接受（墓碑不吃 stale）', async () => {
+    const update = vi.fn(async () => ({}));
+    // 存量行的时间戳比客户端的删除那笔新 ⇒ 走 decideLww 会判 reject
+    const rows = [{ id: 'del-me', title: 'server-newer',
+      updatedAt: '2026-09-28T11:00:00.000Z', metaUpdatedAt: '2026-09-28T11:00:00.000Z',
+      deletedAt: null }];
+    const chain = { where: () => chain, first: async ({ id }: any) => rows.find(r => r.id === id) ?? null, update, create: vi.fn() };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [
+      { table: 'document', id: 'del-me', op: 'delete', syncTs: '2026-09-28T10:00:00.000Z' },
+    ] }));
+    const body = await res.json();
+    expect(body.rejected).toHaveLength(0);
+    expect(body.applied).toHaveLength(1);
+    expect(update).toHaveBeenCalled();
+  });
+
+  // G1511③：落库时间戳只推进不倒退——客户端那笔比服务端此刻新时，取客户端的时间戳，
+  // 免得服务端把时间戳往回拖、把同设备后一笔判旧。
+  it('G1511③：客户端 syncTs 更新时，落库时间戳取 max(serverNow, rec.syncTs)', async () => {
+    const update = vi.fn(async () => ({}));
+    const rows = [{ id: 'fut', title: 'old',
+      updatedAt: '2026-09-28T10:00:00.000Z', metaUpdatedAt: '2026-09-28T10:00:00.000Z',
+      deletedAt: null }];
+    const chain = { where: () => chain, first: async ({ id }: any) => rows.find(r => r.id === id) ?? null, update, create: vi.fn() };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const future = '2099-01-01T00:00:00.000Z';
+    const res = await POST(req({ records: [
+      { table: 'document', id: 'fut', op: 'upsert', data: { title: 'new' }, syncTs: future },
+    ] }));
+    const body = await res.json();
+    expect(body.applied).toHaveLength(1);
+    // 落库那笔的 metaUpdatedAt 就是客户端给的那枚（服务端没有把它拖回"此刻"）
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ metaUpdatedAt: future }));
+  });
 });
 
 /**

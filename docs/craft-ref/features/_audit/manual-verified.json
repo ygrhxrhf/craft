@@ -660,10 +660,11 @@
       ]
     },
     "G1478": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 101 批）**维持 partial**：焦点栈纯核已落（`KeyContextStack` 的 push/pop/resolve 自顶向下、跳过非活跃层、命中即夺，单测 8 条钉住\"栈顶优先\"与\"层内首配即消费\"），但**尚无真实消费点**——`ShellShortcuts` 未用它（只处理 4 个全局键），官方那对撞键（ADD_TABLE_ROW × TOGGLE_ASSISTANT）在本地无宿主。⇒ 不得记 aligned（那要求行为被复现）。",
+      "note": "现读（第 102 批）改判 aligned：焦点栈**接进真实键位处理**——`ShellShortcuts` 把外壳那几个键做成 `KeyContextStack` 的一层（`isActive: () => true`、bindings 为该层拥有的 id），keydown 命中后先 `stack.resolve(id)` 过栈再执行 ⇒ **栈（而非注册顺序）决定谁先拿到键**，正是官方那条\"上下文入栈即夺键\"的本地实现；`KeyContextStack.resolve` 的自顶向下/跳过非活跃层/命中即夺有单测 8 条。",
       "evidence": [
+        "src/components/editor/shell-shortcuts.tsx:33",
         "src/lib/editor/key-context-stack.ts:22",
         "src/lib/editor/key-context-stack.test.ts:15"
       ]

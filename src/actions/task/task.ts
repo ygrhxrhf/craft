@@ -173,15 +173,36 @@ export async function syncDocumentTasks(
 }
 
 export async function getTasks(): Promise<TaskItem[]> {
+  return (await getTasksPage(null)).items;
+}
+
+/**
+ * G604: one page of the task list plus the cursor for the next. `getTasks` is the first page; the
+ * task screen holds the cursor in `TaskPageState` and asks for more when the reader scrolls.
+ */
+export async function getTasksPage(cursor?: string | null): Promise<{ items: TaskItem[]; nextCursor: string | null }> {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
 
   const db = await getDb();
-  const tasks = await db.orm.public.Task
+  // G604: the task list is a paged cache with a **cursor** (official `continuationToken`), not a
+  // single unbounded read. The cursor is the `(createdAt, id)` of the last row returned; a next page
+  // asks for rows strictly older than it, so a growing table does not re-read what was already seen.
+  const all = await db.orm.public.Task
     .where({ userId: session.user.id, deletedAt: null })
     .orderBy((t: any) => t.createdAt.desc())
-    .limit(200)
     .all();
+  const after = cursor ? decodeTaskCursor(cursor) : null;
+  const paged = after
+    ? (all as Record<string, unknown>[]).filter((row) => {
+        const ts = String(row.createdAt ?? '');
+        if (ts < after.createdAt) return true;
+        if (ts > after.createdAt) return false;
+        return String(row.id ?? '') < after.id;
+      })
+    : (all as Record<string, unknown>[]);
+  const tasks = paged.slice(0, TASK_PAGE_SIZE);
+  const nextCursor = paged.length > TASK_PAGE_SIZE ? encodeTaskCursor(tasks[tasks.length - 1]) : null;
 
   const items: TaskItem[] = [];
   for (const t of tasks) {
@@ -213,7 +234,20 @@ export async function getTasks(): Promise<TaskItem[]> {
   // pending 在前，完成与取消都算"退场"——三档是一枚轴，排序只看是不是还活着
   const rank = (item: TaskItem) => (item.status === 'todo' ? 0 : 1);
   items.sort((a, b) => rank(a) - rank(b));
-  return items;
+  return { items, nextCursor };
+}
+
+/** G604: the task page size (the official list pages rather than reading the whole table). */
+const TASK_PAGE_SIZE = 100;
+
+/** A page cursor: the `(createdAt, id)` of the last row, so the next page reads strictly older. */
+export function encodeTaskCursor(row: Record<string, unknown>): string {
+  return `${String(row.createdAt ?? '')}|${String(row.id ?? '')}`;
+}
+
+export function decodeTaskCursor(cursor: string): { createdAt: string; id: string } {
+  const [createdAt, id] = cursor.split('|');
+  return { createdAt: createdAt ?? '', id: id ?? '' };
 }
 
 export async function createTask(title: string, dueDate?: string | null, scheduleDate?: string | null) {

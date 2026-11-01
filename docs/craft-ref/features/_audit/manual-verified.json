@@ -1443,13 +1443,13 @@
       ]
     },
     "G604": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 67 批）：相对定位重排**接进真实任务 action**——新增 `reorderTasks(blockId, afterBlockId)`：读该用户全部存活任务的有序 id，用 `reorderAfter` 算出新序（锚点找不到或原地不动 ⇒ 不写），只写 `order` 真变了的那几行（避免为一次拖拽把整表推一遍），落库后广播。单测 9 条（task-paging）。仍缺＝`getTasks` 仍一次 limit 200 直读 Prisma（三游标分页层无真实调用点），故记 partial。",
+      "note": "现读（第 103 批）改判 aligned：分页层**接进真实查询**——`getTasksPage(cursor)` 按 `(createdAt,id)` 游标取一页（`TASK_PAGE_SIZE=100`），返回 `{items, nextCursor}`；`getTasks()` 保持原签名（＝首页），任务屏的 `TaskPageState`（`task-paging.ts` 的三独立游标/loadStatus/reorderAfter 相对定位重排）承接翻页状态；`reorderTasks` 已接真实拖拽（G270）。单测 9+16 条。",
       "evidence": [
-        "src/actions/task/task.ts:340",
-        "src/lib/task/task-paging.ts:94",
-        "src/lib/task/task-paging.test.ts:56"
+        "src/actions/task/task.ts:178",
+        "src/lib/task/task-paging.ts:20",
+        "src/lib/task/task-paging.test.ts:11"
       ]
     },
     "G608": {

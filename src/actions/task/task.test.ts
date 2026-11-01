@@ -310,3 +310,18 @@ describe('读侧三档排序（G52）', () => {
     expect(dead).toMatchObject({ status: 'cancelled', cancelledAt: CANCEL_AT, isCompleted: false });
   });
 });
+
+describe('task page cursors (G604)', () => {
+  it('round-trips a (createdAt, id) cursor', async () => {
+    const { encodeTaskCursor, decodeTaskCursor } = await import('./task');
+    const cursor = encodeTaskCursor({ createdAt: '2026-01-01T00:00:00.000Z', id: 'abc' });
+    expect(cursor).toBe('2026-01-01T00:00:00.000Z|abc');
+    expect(decodeTaskCursor(cursor)).toEqual({ createdAt: '2026-01-01T00:00:00.000Z', id: 'abc' });
+  });
+
+  it('getTasks is the first page and getTasksPage accepts a cursor', async () => {
+    const mod = await import('./task');
+    expect(typeof mod.getTasks).toBe('function');
+    expect(typeof mod.getTasksPage).toBe('function');
+  });
+});

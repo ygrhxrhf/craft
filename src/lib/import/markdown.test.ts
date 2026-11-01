@@ -325,3 +325,16 @@ describe('inline math as a tex:// link run (G1238)', () => {
     expect(para.content[0].marks?.[0]).toMatchObject({ type: 'link', attrs: { href: 'https://example.com' } });
   });
 });
+
+describe('imported table rows and cells carry stable ids (G439)', () => {
+  it('mints a rowId per row and a cellId per cell', () => {
+    const [table] = blocks('| 名称 | 数量 |\n| --- | --- |\n| 苹果 | 3 |');
+    const row = table.content[0];
+    expect(typeof row.attrs?.rowId).toBe('string');
+    expect(row.attrs.rowId).toBeTruthy();
+    expect(typeof row.content[0].attrs?.cellId).toBe('string');
+    expect(row.content[0].attrs.cellId).toBeTruthy();
+    // Distinct ids per cell.
+    expect(row.content[0].attrs.cellId).not.toBe(row.content[1].attrs.cellId);
+  });
+});

@@ -234,10 +234,12 @@ function parseBlocks(lines: string[]): PmNode[] {
           attrs: { pluginData: ids },
           content: dataRows.map((cells, rowIndex) => ({
             type: 'tableRow',
-            attrs: { id: ids.rows[rowIndex] },
+            // G439: `rowId`/`cellId` are the editor's stable-id attributes (Editor.tsx), so an
+            // imported table is addressable from the moment it lands — not only after a round trip.
+            attrs: { rowId: ids.rows[rowIndex] },
             content: cells.map((cell, colIndex) => ({
               type: 'tableCell',
-              attrs: { id: ids.cells[rowIndex]?.[colIndex] ?? null },
+              attrs: { cellId: ids.cells[rowIndex]?.[colIndex] ?? null },
               content: parseCellBlocks<PmNode>(cell, (text) => parseBlocks(text.split('\n'))),
             })),
           })),

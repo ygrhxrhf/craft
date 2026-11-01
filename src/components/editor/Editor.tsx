@@ -444,11 +444,34 @@ export function Editor({
       }).configure({
         resizable: true,
       }),
-      TableRow,
+      TableRow.extend({
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            // G439: a stable row id, minted on first parse, so a cell can be deep-linked and a
+            // formula's directional reference can address it. The official cell carries
+            // `{id, rowId, columnId, blockId}`; locally the row and cell ids are the two we need.
+            rowId: {
+              default: null,
+              parseHTML: (element) => element.getAttribute('data-row-id'),
+              renderHTML: (attributes) =>
+                attributes.rowId ? { 'data-row-id': String(attributes.rowId) } : {},
+            },
+          };
+        },
+      }),
       TableCell.extend({
         addAttributes() {
           return {
             ...this.parent?.(),
+            // G439: a stable cell id (official `VLe`'s `cellId`), so a cell is addressable across
+            // the persistence layer rather than only positionally.
+            cellId: {
+              default: null,
+              parseHTML: (element) => element.getAttribute('data-cell-id'),
+              renderHTML: (attributes) =>
+                attributes.cellId ? { 'data-cell-id': String(attributes.cellId) } : {},
+            },
             backgroundColor: {
               default: null,
               parseHTML: (element) =>

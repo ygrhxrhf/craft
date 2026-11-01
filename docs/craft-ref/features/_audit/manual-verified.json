@@ -521,11 +521,11 @@
     "G439": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 40 批）：单元格可寻址性已落纯核 `src/lib/collection/cell-address.ts`——四段地址（tableId/rowId/columnId/cellId）＋深链生成/解析（`#c-<四段 __ 分隔>`，缺段退回 null ⇒ 不会退化成\"只指到表格块\"的粗粒度）＋方向邻域 `neighborCells`（上/下/左/右，越界给空数组，与 formula 的 FormulaGrid 同语义）。单测 8 条。仍缺＝存储未改（cell 仍内联 paragraph、无跨持久层稳定 id，可锚定块仍只有 paragraph/heading），故记 partial。",
+      "note": "现读（第 58 批）：单元格稳定 id **落进编辑器 schema 与导入路径**——`Editor.tsx` 的 TableRow 加 `rowId`、TableCell 加 `cellId`（parseHTML/renderHTML 走 `data-row-id`/`data-cell-id`），导入器（`markdown.ts`）产出的行/格改用这两个属性（此前是 `id`，与 schema 不匹配）。于是导入的表格**落地即可寻址**（深链/公式方向引用）。单测钉住每行有 rowId、每格有 cellId 且互异。仍缺＝`cell-address.ts` 的深链解析未接 URL 路由（`block-anchor.ts` 仍是索引方案）、collection_values 无 blockId 列，故记 partial。",
       "evidence": [
-        "src/lib/collection/cell-address.ts:22",
-        "src/lib/collection/cell-address.ts:62",
-        "src/lib/collection/cell-address.test.ts:9"
+        "src/components/editor/Editor.tsx:451",
+        "src/lib/import/markdown.ts:235",
+        "src/lib/import/markdown.test.ts:435"
       ]
     },
     "G451": {

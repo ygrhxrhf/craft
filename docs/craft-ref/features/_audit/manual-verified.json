@@ -636,10 +636,10 @@
     "G411": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 46 批）：96 档 15 分钟步长的全天菜单已落纯核 `src/lib/task/time-menu.ts`——`timeSlots()` 生成 96 档（00:00…23:45）、`slotIndexForTime` 向下取整到当前档（打开即滚到当前时刻所在格）、`instantForSlot` 折算回当天绝对时刻、`clearedReminder` 是官方 `u(null)` 的清空形态 `{enabled:false,dateOffset:undefined}`、`showsClearRow` 判\"不提醒\"行只在当前已设提醒时出现。单测 5 条。仍缺＝TasksView 仍是原生 `<Input type=\"datetime-local\">`，菜单组件未接，故记 partial。",
+      "note": "现读（第 84 批）：96 档时间菜单**接进真实日期弹层**——`TaskDatePopover` 的时间态把原来的小时/分钟两个 `<input type=\"number\">` 换成 `timeSlots()` 的 96 档列表（15 分钟步长、`minWidth 236 / maxHeight 200`、等宽数字 `tabular-nums`），打开时 `slotIndexForTime` 算出当前档并 `scrollTop` 居中；选中即写 hour/minute。e2e 断言同步改为「有 `[data-testid=\"time-slots\"]` 且 17:00 档可见」（原断言是 `input[aria-label=\"小时\"]`）。单测 5 条（time-menu）。仍缺＝「不提醒」行（`showsClearRow`）未接该弹层，故记 partial。",
       "evidence": [
+        "src/components/task/TaskDatePopover.tsx:180",
         "src/lib/task/time-menu.ts:22",
-        "src/lib/task/time-menu.ts:45",
         "src/lib/task/task-commands.test.ts:39"
       ]
     },

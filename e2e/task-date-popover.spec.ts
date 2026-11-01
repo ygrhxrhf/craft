@@ -85,10 +85,12 @@ test('the date popover carries reminder and repeat sub-rows', async ({ page }) =
   // The commit reloads the task list; let the row settle before the sub-rows.
   await page.waitForTimeout(1500);
 
-  // Reminder opens a time state: the date box and the 今天 row are gone (G373).
+  // Reminder opens a time state: the date box and the 今天 row are gone (G373), and the time is
+  // now the official 96-slot list (G411) rather than an hour/minute input pair.
   await page.getByRole('button', { name: /提醒我/ }).click();
   await expect(panel.locator('input[aria-label="日期"]')).toHaveCount(0);
-  await expect(panel.locator('input[aria-label="小时"]')).toBeVisible();
+  await expect(panel.locator('[data-testid="time-slots"]')).toBeVisible();
+  await expect(panel.getByRole('button', { name: '17:00' })).toBeVisible();
 
   // Close, then reopen for the repeat sub-row (G374 offers date-aware labels).
   await page.getByRole('heading', { name: '任务收件箱' }).click();

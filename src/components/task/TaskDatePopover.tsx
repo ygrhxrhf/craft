@@ -13,6 +13,8 @@ import {
   startOfLocalDay,
 } from '@/lib/task/date-parse';
 import { describeRecurrence, recurrencePresetsFor } from '@/lib/task/recurrence';
+import { slotIndexForTime, timeSlots } from '@/lib/task/time-menu';
+import { cn } from 'cn';
 
 interface TaskDatePopoverProps {
   kind: 'schedule' | 'deadline';
@@ -63,6 +65,8 @@ export function TaskDatePopover({
 }: TaskDatePopoverProps) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<'date' | 'time'>('date');
+  // G411: the 96-slot list opens scrolled to the current slot.
+  const slotListRef = useRef<HTMLDivElement>(null);
   const [submenu, setSubmenu] = useState<'none' | 'repeat'>('none');
   // G374: the custom knobs open under the repeat list, so they need their own flag — inside the
   // repeat branch the submenu value is narrowed to 'repeat'.
@@ -134,6 +138,14 @@ export function TaskDatePopover({
     setHour(existing ? base.getHours() : 17);
     setMinute(existing ? base.getMinutes() : 0);
     setMode('time');
+    // G411: scroll the 96-slot list to the current slot once it has rendered.
+    window.requestAnimationFrame(() => {
+      const list = slotListRef.current;
+      if (!list) return;
+      const index = slotIndexForTime(existing ?? base);
+      const row = list.children[index] as HTMLElement | undefined;
+      if (row) list.scrollTop = Math.max(0, row.offsetTop - list.clientHeight / 2);
+    });
   };
 
   const applyTime = () => {
@@ -179,27 +191,33 @@ export function TaskDatePopover({
           {mode === 'time' ? (
             <div className="space-y-2 p-1">
               <p className="text-xs font-medium text-muted-foreground">时间</p>
-              <div className="flex items-center gap-1">
-                <Input
-                  type="number"
-                  min={0}
-                  max={23}
-                  aria-label="小时"
-                  value={hour}
-                  onChange={(event) => setHour(Math.min(23, Math.max(0, Number(event.target.value))))}
-                  className="h-8 w-16"
-                />
-                <span className="text-sm text-muted-foreground">:</span>
-                <Input
-                  type="number"
-                  min={0}
-                  max={59}
-                  step={5}
-                  aria-label="分钟"
-                  value={minute}
-                  onChange={(event) => setMinute(Math.min(59, Math.max(0, Number(event.target.value))))}
-                  className="h-8 w-16"
-                />
+              {/* G411: the official moment menu is a 96-slot, 15-minute-step day list that opens
+                  scrolled to the current slot. Slots are the only way to pick a time here. */}
+              <div
+                ref={slotListRef}
+                className="max-h-[200px] overflow-y-auto rounded-md border border-border/60"
+                data-testid="time-slots"
+                style={{ minWidth: 236 }}
+              >
+                {timeSlots().map((slot) => {
+                  const selected = slot.minutes === hour * 60 + minute;
+                  return (
+                    <button
+                      key={slot.index}
+                      type="button"
+                      onClick={() => {
+                        setHour(Math.floor(slot.minutes / 60));
+                        setMinute(slot.minutes % 60);
+                      }}
+                      className={cn(
+                        'block w-full px-2 py-1 text-left text-xs tabular-nums transition-colors',
+                        selected ? 'bg-foreground/8 font-medium' : 'hover:bg-muted',
+                      )}
+                    >
+                      {slot.label}
+                    </button>
+                  );
+                })}
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={() => setMode('date')}>

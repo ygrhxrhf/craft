@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-01T16:45:42.877Z",
+  "generatedAt": "2026-11-01T16:49:12.178Z",
   "total": 1614,
   "status": {
     "nonaction": 508,
-    "partial": 388,
-    "aligned": 364,
+    "partial": 386,
+    "aligned": 366,
     "gap": 176,
     "deliberate": 158,
     "unreachable": 20
@@ -20,7 +20,7 @@
     "P2 / partial": 199,
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
-    "P1 / aligned": 133,
+    "P1 / aligned": 135,
     "P2 / gap": 103,
     "P1 / nonaction": 87,
     "P2 / aligned": 86,
@@ -31,8 +31,8 @@
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
     "P? / deliberate": 40,
-    "P1 / partial": 39,
     "P3 / gap": 39,
+    "P1 / partial": 37,
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
@@ -1175,10 +1175,6 @@
       8
     ],
     [
-      "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
-      7
-    ],
-    [
       "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
       7
     ],
@@ -1200,6 +1196,10 @@
     ],
     [
       "三点一〇、协同与权限追加（来自 `collab.md`，静态证据）",
+      6
+    ],
+    [
+      "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
       6
     ],
     [

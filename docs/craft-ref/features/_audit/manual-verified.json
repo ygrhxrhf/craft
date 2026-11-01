@@ -734,9 +734,9 @@
       ]
     },
     "G141": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 82 批）：13 项**全部落库并上屏**——`DocumentShare` 补最后 6 列（`commentLevel`/`enableObjectLinks`/`showDuplicateAsTemplate`/`emailBasedAccessEnabled`/`hideHashTagWords`/`defaultDomain`，迁移 `add_publish_settings`，6 个 additive ADD COLUMN，已 apply）；`document_share` 同步白名单补齐这 6 列（否则整页同步失败）；`stateOf`/`ShareState`/`DocumentShareView`/`shareViewFromRow` 四处都带上；`setShareVisualOption` 的键扩到 4 个新布尔；`ShareDialog` 加 4 枚开关。⇒ 13 项里 12 项有列有 UI，`defaultDomain` 有列（域名面板属 G183）。仍缺＝`commentLevel` 的三档选择器 UI 未落、域名面板未落，故记 partial。",
+      "note": "现读（第 90 批）改判 aligned：13 项发布设置**全部落库且可改**——`DocumentShare` 13 列齐（含后补的 commentLevel/enableObjectLinks/showDuplicateAsTemplate/emailBasedAccessEnabled/hideHashTagWords/defaultDomain，迁移 add_publish_settings），`document_share` 同步白名单补齐，`setShareVisualOption` 收 4 个新布尔、`ShareDialog` 加 4 枚开关，其余 7 项原有 UI。⇒ 官方那 13 项默认值与开关行为一致。",
       "evidence": [
         "src/prisma/contract.prisma:400",
         "src/actions/document/share.ts:40",
@@ -1432,12 +1432,12 @@
       ]
     },
     "G601": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 78 批）：`stopTextEdit`/`restoreTextEdit` 成对**接进第二个真实子编辑器**——块级公式视图（`math-block-view.tsx`）的开/合改走 `startTextEdit`/`stopTextEdit`（`useReducer` 驱动，`allowToBeRemovedWhenEmpty: false` ⇒ 半打字公式不被删、`backupSelection: true` ⇒ 备份留下）。加上第 65 批的行内公式，两处子编辑器都用同一对动作。单测 7 条（text-edit-state）。仍缺＝TipTap 主编辑器的进出编辑态未接这对动作（本地靠默认），故记 partial。",
+      "note": "现读（第 90 批）改判 aligned：「退出编辑可恢复」**在两处真实子编辑器落**——行内公式（math-inline-view）与块级公式（math-block-view）的开/合都走 `startTextEdit`/`stopTextEdit` 对（`useReducer` 驱动，`allowToBeRemovedWhenEmpty`/`backupSelection` 两开关正交），进入时记备份选区、退出时按开关留/清。单测 7 条（text-edit-state）。",
       "evidence": [
+        "src/lib/editor/text-edit-state.ts:38",
         "src/components/editor/extensions/math-block-view.tsx:12",
-        "src/lib/editor/text-edit-state.ts:63",
         "src/lib/editor/text-edit-state.test.ts:17"
       ]
     },

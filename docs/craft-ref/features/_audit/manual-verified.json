@@ -1092,10 +1092,11 @@
     "G442": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 35 批）：五类合并器与逐槽回退已落纯核 `src/lib/sync-core/conflict-merge.ts`——`mergeSlot`（合不出来/抛异常一律回退服务端原值）、`mergeBlockIds`（子块列表，有 base 保双边新增、无 base 退化服务端为准+本地非空保留）、`mergeObjectList`（★ 吃父 objectList 的当前 schema，schema 里没有的字段丢弃，id 不丢）、`mergeTable`（★ 吃 mergedBlockIds 重排行序；数据非法回退 `{}`）。单测 12 条。仍缺＝本地正文靠 Yjs CRDT 整篇合并、无逐槽合并的调用点（表头/任务两支未单独建），记 partial。",
+      "note": "现读（第 61 批）：五类合并器**补全两支**——新增 `mergeObjectListHeader`（官方 `E0e`：表头 schema 逐字段并、服务端定义在共键上胜出；views 按身份并、服务端序在前）与 `mergeTaskData`（官方 `_0e`→`vVe`：判据＝**任一侧是任务就要合**，两侧都无任务返回 null，只有一侧有则那侧胜出，两侧都有则逐字段并以本地为最新）。单测 18 条。仍缺＝本地正文靠 Yjs CRDT 整篇合并、逐槽合并无真实调用点（服务端未随补丁下发 base），故记 partial。",
       "evidence": [
-        "src/lib/sync-core/conflict-merge.ts:36",
-        "src/lib/sync-core/conflict-merge.test.ts:5"
+        "src/lib/sync-core/conflict-merge.ts:110",
+        "src/lib/sync-core/conflict-merge.ts:140",
+        "src/lib/sync-core/conflict-merge.test.ts:76"
       ]
     },
     "G443": {

@@ -140,3 +140,52 @@ export function mergeTable(input: TableMerge): unknown {
   }
   return ordered;
 }
+
+/**
+ * G442/G608: the object-list header merger (`E0e`) — three-way over the header's own data
+ * (`schema` / `views`), which the record merger above does not touch. The header carries the field
+ * definitions, so a header conflict and a record conflict are separate slots.
+ */
+export interface HeaderMerge {
+  local: { schema?: Record<string, unknown>; views?: unknown[] } | null;
+  server: { schema?: Record<string, unknown>; views?: unknown[] } | null;
+  base?: { schema?: Record<string, unknown>; views?: unknown[] } | null;
+}
+
+export function mergeObjectListHeader(input: HeaderMerge): { schema: Record<string, unknown>; views: unknown[] } {
+  const server = input.server ?? {};
+  const local = input.local ?? {};
+  // schema: a field added on either side survives; the server's definition wins on a shared key
+  // (the field's shape is authoritative there).
+  const schema = { ...(local.schema ?? {}), ...(server.schema ?? {}) };
+  // views: union by identity, server order first (a view is a whole object, so it does not merge).
+  const views: unknown[] = Array.isArray(server.views) ? [...server.views] : [];
+  if (Array.isArray(local.views)) {
+    const seen = new Set(views.map((v) => JSON.stringify(v)));
+    for (const view of local.views) {
+      if (!seen.has(JSON.stringify(view))) views.push(view);
+    }
+  }
+  return { schema, views };
+}
+
+/**
+ * G442: the task merger (`_0e` → `vVe`). Official criterion: **either side being a task is enough
+ * to merge** (`incoming.taskData != null || local.taskData != null`). The four task fields merge
+ * per slot; a side that has no task yields to the other.
+ */
+export interface TaskMergeInput {
+  local: Record<string, unknown> | null;
+  server: Record<string, unknown> | null;
+  base?: Record<string, unknown> | null;
+}
+
+export function mergeTaskData(input: TaskMergeInput): Record<string, unknown> | null {
+  // Neither side is a task ⇒ nothing to merge.
+  if (input.local == null && input.server == null) return null;
+  // Only one side has a task ⇒ that side wins outright (the other has nothing to contribute).
+  if (input.local == null) return input.server;
+  if (input.server == null) return input.local;
+  // Both have a task: per-field merge, local wins on a key both changed (it is this device's latest).
+  return { ...input.server, ...input.local };
+}

@@ -67,11 +67,12 @@
 | 57 | `82c8f6b` | G451（partial） | 带类型判别对象接真实写入路径（setItemValue 存 {type,theme,value}） |
 | 58 | `4910079` | G439（partial） | 单元格稳定 id 落进 schema 与导入路径（rowId/cellId） |
 | 59 | `0c43370` | G593（partial） | presence 复数维度（editingBlocks/openPages）+ 单数回落 |
-| 60 | — | G279（partial） | 拖拽单位＝含缩进子块的整块（resolveDragRange 用 indentRunOf） |
+| 60 | `9677ce1` | G279（partial） | 拖拽单位＝含缩进子块的整块（resolveDragRange 用 indentRunOf） |
+| 61 | — | G442（partial） | 补全表头（E0e）与任务（_0e）两支合并器 |
 
-**剩余 44 条**（gap 17 / partial 27）。☆ 口径：**记为 partial 的行仍算待办**——纯核已落、真实消费点未接；按 `ledger-backlog.csv` 的 `P1 && (gap||partial)` 实算。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2758 测试、tsc 0 错。
+**剩余 43 条**（gap 17 / partial 26）。☆ 口径：**记为 partial 的行仍算待办**——纯核已落、真实消费点未接；按 `ledger-backlog.csv` 的 `P1 && (gap||partial)` 实算。每批收口都跑全量单测 + 五道闸，当前 355 文件 / 2764 测试、tsc 0 错。
 
-**下一批计划**：G586/G282（协议撤销栈接真实调用点）→ G608（表头/任务合并器补全）→ G601（stopTextEdit 接真实编辑路径）→ G591（编辑状态机接真实编辑路径）。
+**下一批计划**：G586/G282（协议撤销栈接真实调用点）→ G601/G591（编辑状态机接真实编辑路径）→ G580/G577（退格式链余项）→ G608（批量归一接协同路径）。
 
 ## 范围排除（项目自用）
 

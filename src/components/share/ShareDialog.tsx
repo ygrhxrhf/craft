@@ -37,7 +37,8 @@ import {
   type AccessRequestItem,
 } from '@/actions/document/access-requests';
 import type { DocumentSharePermission } from '@/lib/share/permission';
-import { ONLY_COLLABORATORS_LABEL } from '@/lib/share/permission';
+import { ONLY_COLLABORATORS_LABEL, normalizeSharePermission } from '@/lib/share/permission';
+import { ACCESS_LEVEL_COPY } from '@/lib/share/access-levels';
 import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
 import { VISUAL_OPTIONS, visualOptionStatus } from '@/lib/share/visual-options';
 import { SEO_DESC, expiryLabel } from '@/lib/share/publishing-options';
@@ -58,11 +59,13 @@ interface ShareDialogProps {
 }
 
 const TIERS: { value: DocumentSharePermission; label: string; hint: string; icon: typeof Eye }[] = [
-  { value: 'view', label: '查看', hint: '拿到链接的人可以查看，不能修改', icon: Eye },
-  { value: 'edit', label: '编辑', hint: '登录用户可以协作编辑；匿名访客只读', icon: PencilLine },
-  // G04：官方第三档（`collab.access.only.collaborators`）——链接本身不给任何角色，只有已被
-  //   授权为协作者的人能打开。
+  // G131：官方五档（从最闭到最开），逐字取自 `collab.access.*`。「可评论」是独立一档，
+  // 不是从"可编辑"里减出来的开关——`viewAndComment` 可评不可编、`linkView` 只看不可评。
   { value: 'collaborators', label: ONLY_COLLABORATORS_LABEL, hint: '链接不再放行，仅协作者可打开', icon: Lock },
+  { value: 'viewAndComment', label: ACCESS_LEVEL_COPY.viewAndComment.label, hint: '登录的协作者可查看和评论，不能修改', icon: Eye },
+  { value: 'editAndComment', label: ACCESS_LEVEL_COPY.editAndComment.label, hint: '登录的协作者可协作编辑和评论', icon: PencilLine },
+  { value: 'linkView', label: ACCESS_LEVEL_COPY.linkView.label, hint: '拿到链接的人都可以查看', icon: Eye },
+  { value: 'linkEdit', label: ACCESS_LEVEL_COPY.linkEdit.label, hint: '登录用户可以协作编辑；匿名访客只读', icon: PencilLine },
 ];
 
 export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
@@ -140,7 +143,10 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
         }
         return next;
       });
-      if (view.permission === 'view' || view.permission === 'edit') setPermission(view.permission);
+      if (view.permission !== undefined) {
+        const normalized = normalizeSharePermission(view.permission);
+        if (normalized) setPermission(normalized);
+      }
       if (typeof view.shareVersion === 'number') setServerVersion(view.shareVersion);
       if (typeof view.hasPasscode === 'boolean') setHasPasscode(view.hasPasscode);
       // ☆ 镜像里的到期是完整 ISO 时间戳，而 `type="date"` 只认 `YYYY-MM-DD` ⇒ 截前 10 位，
@@ -707,9 +713,11 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                 )}
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                {permission === 'edit'
+                {permission === 'linkEdit' || permission === 'editAndComment'
                   ? '拥有链接的登录用户可以协作编辑，匿名访客只能查看'
-                  : '任何拥有链接的人都只能查看该文档'}
+                  : permission === 'collaborators'
+                    ? '链接不再放行，只有已被授权的协作者能打开'
+                    : '任何拥有链接的人都只能查看该文档'}
               </p>
             </>
           )}

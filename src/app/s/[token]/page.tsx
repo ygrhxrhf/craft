@@ -7,6 +7,7 @@ import { PasscodeGate } from '@/components/share/PasscodeGate';
 import { shareCookieName, verifyShareCookie } from '@/lib/share-passcode';
 import { findShare } from '@/lib/share/resolve';
 import { authorByline } from '@/lib/share/author-visibility';
+import { normalizeSharePermission } from '@/lib/share/permission';
 
 interface SharedPageProps {
   params: Promise<{ token: string }>;
@@ -40,7 +41,10 @@ export default async function SharedPage({ params }: SharedPageProps) {
   // role when the editor asks for a connection claim, so a visitor the link does not
   // authorize stays read-only no matter what this branch renders.
   const session = await auth();
-  const collaborative = doc.permission === 'edit' && Boolean(session?.user?.id);
+  // G131：可协作编辑的档是 linkEdit（旧值 edit 归一而来）与 editAndComment——两者都给登录访客
+  // 编辑权；linkView/viewAndComment 只读。角色最终由服务端在连接声明时裁定，这里只是意图。
+  const tier = normalizeSharePermission(doc.permission);
+  const collaborative = (tier === 'linkEdit' || tier === 'editAndComment') && Boolean(session?.user?.id);
 
   return (
     <SharedDocView

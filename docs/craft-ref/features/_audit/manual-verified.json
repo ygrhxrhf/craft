@@ -720,11 +720,12 @@
     "G131": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 40 批）：五档访问级别已落纯核 `src/lib/share/access-levels.ts`——五档（collaborators/viewAndComment/editAndComment/linkView/linkEdit）＋官方逐字中文（取自 `_harvest/i18n-zh.tsv:843-850`）＋「档位 → 三键（看/评/编）+ viaLink」映射，**「可评论」是独立一档而非评论开关**（viewAndComment 可评不可编、linkView 只看不可评）。单测钉住五档顺序、逐字文案与三键分档。仍缺＝分享面板仍是三档（`document_share.permission` 单列只存 view/edit/collaborators，扩到五档需迁移），空间级角色见 G324 的独立轴，故记 partial。",
+      "note": "访问级别五档已接真实面板（DocumentShare.permission 扩到五档、ShareDialog 五档渲染、写入归一、读侧迁移）；仍缺空间级角色轴（G324）。",
       "evidence": [
-        "src/lib/share/access-levels.ts:20",
-        "src/lib/share/access-levels.ts:47",
-        "src/lib/collection/cell-address.test.ts:47"
+        "src/lib/share/permission.ts",
+        "src/lib/share/access-levels.ts",
+        "src/components/share/ShareDialog.tsx",
+        "src/lib/share/permission.test.ts"
       ]
     },
     "G137": {

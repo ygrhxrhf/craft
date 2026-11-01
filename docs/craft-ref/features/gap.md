@@ -1295,7 +1295,7 @@
 
 | # | 官方事实（证据） | 本地现状 | 类型 | 影响/成本 |
 |---|---|---|---|---|
-| G131 | 权限是**三轴**：文档级角色 `owner\|editor\|viewer` × 空间级角色 `owner\|member\|guest` × 访问级别 5 档（仅协作者/可看可评/可编可评/链接可看/链接可编）；**"可评论"是独立一档**而非评论开关（`collab.md` §一） | `contract.prisma:383` 只有**一根轴** `role: "editor"\|​"commenter"\|viewer`（默认 editor）：**无 `owner`**、**无空间级角色**、多了官方没有的 `commenter` 角色档 | 结构不同 | 3/3 |
+| G131 | 权限是**三轴**：文档级角色 `owner\|editor\|viewer` × 空间级角色 `owner\|member\|guest` × 访问级别 5 档（仅协作者/可看可评/可编可评/链接可看/链接可编）；**"可评论"是独立一档**而非评论开关（`collab.md` §一） | ✎ 现读（2026-11-01）更正：① 文档级角色＝`owner`（`Document.userId`）／`editor`／`viewer`／`commenter`（`DocumentMember.role`），按档判定；② **访问级别五档已接真实面板**——`DocumentShare.permission` 从旧三档扩到官方五档（`collaborators`／`viewAndComment`／`editAndComment`／`linkView`／`linkEdit`），`ShareDialog` 五档渲染、`setSharePermission` 写入归一、读侧 `normalizeSharePermission` 把旧值迁过来；`tierOpensToLink`/`shareWriteRole` 只认两个链接档（"可评论"是独立档）。仍缺＝空间级角色那一轴（见 G324）。 | 部分落地（第 106 批） | 3/3 |
 | G132 | 空间成员语义：`member` 对**内容全权**（可访问整个空间并更新任何文档）、对**治理无权**（不能改设置/邀人）；`owner` 可**主动降级自己**并有确认三连（§六） | 无空间实体与治理动作，因此也没有"降级所有权"这条路径 | 缺失 | 2/3 |
 | G133 | **团队邀请是计费事件**：同一段说明的付费版比免费版多一句「这是一个计费事件。」；受邀者获得**整个团队**的完全成员权限并看到所有公共空间（§一） | 邀请只写 `DocumentMember`（`actions/document/members.ts`），无席位/计费概念 | 缺失 | 2/2 |
 | G134 | **重新打开话题的触发器是"提交一条新评论"**（占位文案变为「输入你的评论以重新打开」），resolve/unresolve 各有 toast；删除评论串**必须联网**（`reconnect.to.delete`）；编辑正文与更新状态是**两次写**（`failed.to.edit` vs `failed.to.update`）（§二） | `actions/comment/comment.ts` + `comments/CommentSection.tsx` 存在，但无 unresolve-需写评论、无离线删除门禁、无 resolve toast（未逐行读，按官方规格对账为缺失） | 行为不同 | 2/2 |

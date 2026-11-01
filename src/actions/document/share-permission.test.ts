@@ -58,12 +58,13 @@ afterAll(async () => {
 });
 
 describe('setSharePermission', () => {
-  it('puts the link on the edit tier', async () => {
+  it('puts the link on the edit tier (old `edit` lands as the canonical `linkEdit`)', async () => {
     await setSharePermission(documentId, 'edit');
-    expect(await currentShare()).toMatchObject({ permission: 'edit' });
+    expect(await currentShare()).toMatchObject({ permission: 'linkEdit' });
   });
 
   it('starts a link on the view tier without touching the column default', async () => {
+    // 列默认值仍是 'view'（旧值），读侧归一到 linkView。
     expect(await currentShare()).toMatchObject({ permission: 'view', shareVersion: 0 });
   });
 
@@ -72,13 +73,18 @@ describe('setSharePermission', () => {
     expect(await currentShare()).toMatchObject({ shareVersion: 1 });
 
     await setSharePermission(documentId, 'view');
-    expect(await currentShare()).toMatchObject({ permission: 'view', shareVersion: 2 });
+    expect(await currentShare()).toMatchObject({ permission: 'linkView', shareVersion: 2 });
   });
 
   it('leaves the counter alone when the owner re-picks the tier that is already live', async () => {
     await setSharePermission(documentId, 'edit');
     await setSharePermission(documentId, 'edit');
-    expect(await currentShare()).toMatchObject({ permission: 'edit', shareVersion: 1 });
+    expect(await currentShare()).toMatchObject({ permission: 'linkEdit', shareVersion: 1 });
+  });
+
+  it('accepts one of the five canonical tiers directly', async () => {
+    await setSharePermission(documentId, 'viewAndComment');
+    expect(await currentShare()).toMatchObject({ permission: 'viewAndComment', shareVersion: 1 });
   });
 
   it('refuses a tier a document link does not have', async () => {

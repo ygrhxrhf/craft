@@ -3,7 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { normalizeShareSlug } from '@/lib/share/slug';
-import { isSharePermission, tierOpensToLink, type DocumentSharePermission } from '@/lib/share/permission';
+import { isSharePermission, normalizeSharePermission, tierOpensToLink, type DocumentSharePermission } from '@/lib/share/permission';
 import { findShare, isOpenableShare } from '@/lib/share/resolve';
 import { isExpired } from '@/lib/share/publishing-options';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
@@ -51,7 +51,8 @@ function stateOf(s: any): ShareState {
     slug: s.slug ?? null,
     isPublished: s.isPublished,
     hasPasscode: !!s.passcode,
-    permission: s.permission,
+    // G131：旧行存的是三档（view/edit/collaborators）⇒ 读侧归一到五档（view→linkView、edit→linkEdit）。
+    permission: normalizeSharePermission(s.permission) ?? 'collaborators',
     showAuthor: s.showAuthor !== false,
     showPageTitle: s.showPageTitle !== false,
     hideTableOfContents: s.hideTableOfContents === true,
@@ -126,18 +127,21 @@ export async function setSharePublished(documentId: string, isPublished: boolean
 export async function setSharePermission(documentId: string, permission: unknown): Promise<ShareState> {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
-  if (!isSharePermission(permission)) throw new Error('无效的分享权限');
+  // G131：写入归一到五档——旧三档（view/edit）也接受并落成规范值（linkView/linkEdit），
+  // 免得一枚陈旧镜像回放时整批 400。
+  const tier = normalizeSharePermission(permission);
+  if (!tier) throw new Error('无效的分享权限');
 
   const db = await getDb();
   const doc = await db.orm.public.Document.first({ id: documentId });
   if (!doc || doc.userId !== session.user.id) throw new Error('未授权');
 
   const state = await getOrCreateShare(documentId);
-  if (state.permission === permission) return state;
+  if (state.permission === tier) return state;
 
   const rows = await db.orm.public.DocumentShare.where({ documentId }).limit(1).all();
   const shareVersion = (rows[0]?.shareVersion ?? 0) + 1;
-  await db.orm.public.DocumentShare.where({ documentId }).update({ permission, shareVersion });
+  await db.orm.public.DocumentShare.where({ documentId }).update({ permission: tier, shareVersion });
   // ☆ 这一枚此前没有（其余三处都有）＝他端不会被通知这次改档，只能等下一次自己进面板时重读
   //   （G1491）。它现在只服务"本地镜像里还没有这一行"那一档回退，走的就是同一条广播。
   await emitShare(db, session.user.id, documentId);
@@ -284,7 +288,8 @@ export async function getSharedDocument(identifier: string) {
     updatedAt: d.updatedAt,
     plainText: d.plainText,
     isPublished: s.isPublished,
-    permission: s.permission,
+    // G131：同上——公开页读到的也是归一后的五档。
+    permission: normalizeSharePermission(s.permission) ?? 'collaborators',
     passcodeProtected: !!s.passcode,
     showAuthor: s.showAuthor !== false,
     authorName,

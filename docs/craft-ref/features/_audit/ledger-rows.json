@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-01T18:33:37.557Z",
+  "generatedAt": "2026-11-01T18:49:47.374Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1038,
+    "gap": 1037,
     "unknown": 198,
     "aligned": 148,
     "deliberate": 96,
-    "partial": 62,
+    "partial": 63,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -20,7 +20,7 @@
   "statusByPriority": {
     "P2 / gap": 461,
     "P? / gap": 226,
-    "P1 / gap": 197,
+    "P1 / gap": 196,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P2 / aligned": 52,
@@ -34,8 +34,8 @@
     "P1 / unknown": 23,
     "P? / nonaction": 23,
     "P2 / partial": 22,
+    "P1 / partial": 19,
     "P? / aligned": 19,
-    "P1 / partial": 18,
     "P2 / nonaction": 18,
     "P3 / nonaction": 14,
     "P3 / partial": 10,
@@ -3374,10 +3374,10 @@
       "cols": 5,
       "id": "G131",
       "official": "权限是**三轴**：文档级角色 `owner|editor|viewer` × 空间级角色 `owner|member|guest` × 访问级别 5 档（仅协作者/可看可评/可编可评/链接可看/链接可编）；**\"可评论\"是独立一档**而非评论开关（`collab.md` §一）",
-      "local": "`contract.prisma:383` 只有**一根轴** `role: \"editor\"|​\"commenter\"|viewer`（默认 editor）：**无 `owner`**、**无空间级角色**、多了官方没有的 `commenter` 角色档",
-      "verdict": "结构不同",
+      "local": "✎ 现读（2026-11-01）更正：① 文档级角色＝`owner`（`Document.userId`）／`editor`／`viewer`／`commenter`（`DocumentMember.role`），按档判定；② **访问级别五档已接真实面板**——`DocumentShare.permission` 从旧三档扩到官方五档（`collaborators`／`viewAndComment`／`editAndComment`／`linkView`／`linkEdit`），`ShareDialog` 五档渲染、`setSharePermission` 写入归一、读侧 `normalizeSharePermission` 把旧值迁过来；`tierOpensToLink`/`shareWriteRole` 只认两个链接档（\"可评论\"是独立档）。仍缺＝空间级角色那一轴（见 G324）。",
+      "verdict": "部分落地（第 106 批）",
       "score": "3/3",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 3,
         "cost": 3,

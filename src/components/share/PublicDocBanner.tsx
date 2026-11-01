@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
 import { RequestEditAccess } from './RequestEditAccess';
+import { normalizeSharePermission } from '@/lib/share/permission';
 
 export function PublicDocBanner({
   collaborative = false,
@@ -21,6 +22,9 @@ export function PublicDocBanner({
   permission?: string;
   loginNext?: string;
 }) {
+  // G131：五档里只有 linkView（旧值 view 归一而来）是"可看不可编"的链接档，请求编辑那枚才对；
+  // linkEdit 已是可编辑，其余档（协作者/可评论）走登录提示。
+  const tier = normalizeSharePermission(permission);
   return (
     <footer className="sticky bottom-0 flex items-center justify-between border-t border-border bg-background/90 px-6 py-3 backdrop-blur-sm">
       {showWatermark ? (
@@ -32,7 +36,7 @@ export function PublicDocBanner({
         <span className="text-meta text-foreground/40">{collaborative ? '可编辑视图' : '只读视图'}</span>
       )}
       {!collaborative && (
-        permission === 'view' && signedIn && identifier ? (
+        tier === 'linkView' && signedIn && identifier ? (
           <RequestEditAccess identifier={identifier} />
         ) : (
           <Link
@@ -40,7 +44,7 @@ export function PublicDocBanner({
             className="flex items-center gap-1.5 rounded-md px-2 py-1 text-meta text-foreground/40 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground/85"
           >
             <LogIn className="size-3.5" />
-            {permission === 'view' ? '登录后请求编辑' : '登录后编辑'}
+            {tier === 'linkView' ? '登录后请求编辑' : '登录后编辑'}
           </Link>
         )
       )}

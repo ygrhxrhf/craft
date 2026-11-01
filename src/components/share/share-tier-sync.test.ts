@@ -92,7 +92,7 @@ describe('分享档位走离线内核（G1491）', () => {
     const src = read(ACTIONS);
     // ☆ 按**出现顺序**判、不要求相邻：`showAuthor`（G38）后来插进了这三枚之间，
     //   旧写法锚的是"hasPasscode 紧挨 permission 紧挨 shareVersion"，一插就假红。
-    const order = [/hasPasscode:\s*!!s\.passcode/, /permission:\s*s\.permission/, /shareVersion:/];
+    const order = [/hasPasscode:\s*!!s\.passcode/, /permission:\s*normalizeSharePermission\(s\.permission\)/, /shareVersion:/];
     let cursor = 0;
     for (const re of order) {
       const at = src.slice(cursor).search(re);

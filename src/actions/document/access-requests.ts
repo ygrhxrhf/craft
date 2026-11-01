@@ -13,6 +13,7 @@ import { getDb } from '@/prisma/db';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { findShare, isOpenableShare } from '@/lib/share/resolve';
 import { tierOpensToLink } from '@/lib/share/permission';
+import { normalizeSharePermission } from '@/lib/share/permission';
 import { isExpired } from '@/lib/share/publishing-options';
 
 export type RequestEditAccessStatus =
@@ -78,8 +79,10 @@ export async function requestEditAccess(identifier: string): Promise<{ status: R
   if (!document || document.isDeleted === true) return { status: 'unavailable' };
 
   if (document.userId === userId) return { status: 'owner' };
-  if (share.permission === 'edit') return { status: 'already-editor' };
-
+  // G131：五档里只有 linkView（旧值 view 归一）是"可看不可编"的链接档 ⇒ 请求编辑才有意义；
+  // linkEdit 已是编辑档 ⇒ 直接告诉他已是编辑者。
+  const tier = normalizeSharePermission(share.permission);
+  if (tier === 'linkEdit') return { status: 'already-editor' };
   const existing = await db.orm.public.DocumentMember.first({ documentId, userId });
   if (existing) {
     if (existing.role === 'requested') return { status: 'pending' };

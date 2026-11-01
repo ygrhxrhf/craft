@@ -1300,10 +1300,11 @@
     "G578": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 37 批）：Backspace 六段链已建模为纯核 `src/lib/editor/format-downgrade.ts` 的 `nextBackspaceStep`——① 去列表 ② 减缩进 ③ 清装饰（★ 注意 Backspace 的格式序是「列表→缩进→装饰」，与 Enter 的「缩进→列表→装饰」相反，单测钉住这一处差异）④ 无前块且本块空 ⇒ 删自己 ⑤ 前块是空文本块 ⇒ 删前块 ⑥ 前块是文本 ⇒ 合并（光标落前块末尾，`mergeCaretIndex`）⑦ 前块非文本且本块空 ⇒ 删自己选中前块。仍缺＝未接真实 Backspace 键位（本地合并仍由 ProseMirror joinBackward 决定），故记 partial。",
+      "note": "现读（第 43 批）：Backspace 六段链**已接真实键位**——`craft-keymap.ts` 的 `handleKeyDown` 在「块首 + 空选区」时调 `nextBackspaceStep`：第 1 段（去列表）与第 2 段（减缩进）由本地驱动（taskList/listItem 的 lift、indent 属性递减），第 4–7 段（删自己/删前块/合并/选中前块）仍交给 ProseMirror 的 joinBackward（本地等价物）。`previousBlockInfo` 供第 5–7 段判前块类型。仍缺＝第 3 段（清装饰）本地无装饰属性、合并仍走默认 joinBackward 而非官方 mergeTextBlocks，故记 partial。",
       "evidence": [
+        "src/components/editor/extensions/craft-keymap.ts:277",
         "src/lib/editor/format-downgrade.ts:66",
-        "src/lib/editor/format-downgrade.test.ts:37"
+        "src/components/editor/extensions/craft-keymap.ts:150"
       ]
     },
     "G581": {

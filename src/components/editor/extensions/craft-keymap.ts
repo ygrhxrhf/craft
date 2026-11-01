@@ -8,7 +8,7 @@ import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from 
 import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
 import { buildDowngradeFlatten } from '@/lib/editor/downgrade-command';
 import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
-import { nextFormatStep } from '@/lib/editor/format-downgrade';
+import { nextFormatStep, nextBackspaceStep, isEmptyBlock } from '@/lib/editor/format-downgrade';
 import { requestLink } from '@/lib/store/use-link-request-store';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
@@ -155,6 +155,18 @@ function listDepthOf(resolved: { depth: number; node: (depth: number) => { type:
   return depth;
 }
 
+/** The previous top-level block's kind, for the Backspace chain's steps 5–7 (G578). */
+function previousBlockInfo(
+  state: { doc: { childCount: number; child: (i: number) => { type: { name: string }; textContent: string } } },
+  $from: { depth: number; before: (depth: number) => number },
+): { isText: boolean; empty: boolean } | undefined {
+  const index = topLevelIndexOf(state.doc as never, $from.before($from.depth));
+  if (index <= 0) return undefined;
+  const previous = state.doc.child(index - 1);
+  const isText = previous.type.name === 'paragraph' || previous.type.name === 'heading';
+  return { isText, empty: isText && previous.textContent.length === 0 };
+}
+
 export const CraftKeymap = Extension.create({
   name: 'craftKeymap',
 
@@ -273,6 +285,47 @@ export const CraftKeymap = Extension.create({
             ) {
               editor.chain().focus().addRowAfter().run();
               return true;
+            }
+            // G578/G585: Backspace at the very start of a block walks the official six-step chain
+            // (list → indent → decoration, then the four block-level steps). Only the first two
+            // format steps are drivable here; the rest fall through to ProseMirror's own
+            // joinBackward, which is the local equivalent of the merge steps.
+            if (
+              event.key === 'Backspace' &&
+              !event.shiftKey &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey &&
+              view.state.selection.empty
+            ) {
+              const { $from } = view.state.selection;
+              if ($from.parentOffset === 0 && $from.parent.isTextblock) {
+                const step = nextBackspaceStep({
+                  block: {
+                    indentLevel: Number($from.parent.attrs?.indent ?? 0),
+                    inList: listDepthOf($from) > 0,
+                    decorated: false,
+                  },
+                  blockEmpty: isEmptyBlock({
+                    textLength: $from.parent.textContent.length,
+                    atomicInlines: 0,
+                    childBlocks: $from.parent.childCount,
+                  }),
+                  hasPrevious: topLevelIndexOf(view.state.doc, view.state.selection.from) > 0,
+                  previous: previousBlockInfo(view.state, $from),
+                });
+                if (step === 'list') {
+                  if (editor.isActive('taskList')) return editor.chain().focus().liftListItem('taskItem').run();
+                  return editor.chain().focus().liftListItem('listItem').run();
+                }
+                if (step === 'indent') {
+                  return editor.chain().focus().updateAttributes($from.parent.type.name, {
+                    indent: Math.max(0, Number($from.parent.attrs?.indent ?? 0) - 1),
+                  }).run();
+                }
+                // The block-level steps (delete-previous / merge-into-previous / select-previous)
+                // are left to ProseMirror's joinBackward, which already does them.
+              }
             }
             const binding = KEY_BINDINGS.find((candidate) =>
               matches(

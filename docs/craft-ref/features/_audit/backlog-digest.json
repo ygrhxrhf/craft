@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-01T13:26:51.575Z",
+  "generatedAt": "2026-11-01T13:30:31.014Z",
   "total": 1614,
   "status": {
     "nonaction": 508,
@@ -598,10 +598,11 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "列类型枚举收口（13 官方值 + formula）且 media/linkToBlock 有编辑器；仍缺官方那套专用编辑器名册与 CalculationsRow（汇总行已在别处）。",
+        "note": "现读（第 45 批）：专用编辑器名册已落单一出处 `src/lib/collection/cell-editors.ts`——官方 13 个编辑器名（TextEditor…FormulaInput/CalculationsRow/SidebarAttachments）＋13 个官方列类型到编辑器的映射（media→SidebarAttachments、linkToBlock→TextEditor）＋本地派生列 formula→FormulaInput；`orphanEditorNames` 判据证明名册无孤儿、`everyColumnTypeHasEditor` 证明 13 类全有。单测 8 条。仍缺＝PropertyCell 仍是内联 switch（名册是\"对应的说明\"而非组件分派），CalculationsRow（汇总行）本地无对应，故记 partial。",
         "evidence": [
-          "src/lib/collection/property-types.ts:60",
-          "src/components/collection/PropertyCell.tsx:74"
+          "src/lib/collection/cell-editors.ts:19",
+          "src/lib/collection/cell-editors.ts:42",
+          "src/lib/collection/cell-editors.test.ts:14"
         ],
         "baseStatus": "gap"
       },

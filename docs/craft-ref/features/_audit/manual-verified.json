@@ -262,10 +262,11 @@
     "G41": {
       "status": "partial",
       "priority": "P1",
-      "note": "列类型枚举收口（13 官方值 + formula）且 media/linkToBlock 有编辑器；仍缺官方那套专用编辑器名册与 CalculationsRow（汇总行已在别处）。",
+      "note": "现读（第 45 批）：专用编辑器名册已落单一出处 `src/lib/collection/cell-editors.ts`——官方 13 个编辑器名（TextEditor…FormulaInput/CalculationsRow/SidebarAttachments）＋13 个官方列类型到编辑器的映射（media→SidebarAttachments、linkToBlock→TextEditor）＋本地派生列 formula→FormulaInput；`orphanEditorNames` 判据证明名册无孤儿、`everyColumnTypeHasEditor` 证明 13 类全有。单测 8 条。仍缺＝PropertyCell 仍是内联 switch（名册是\"对应的说明\"而非组件分派），CalculationsRow（汇总行）本地无对应，故记 partial。",
       "evidence": [
-        "src/lib/collection/property-types.ts:60",
-        "src/components/collection/PropertyCell.tsx:74"
+        "src/lib/collection/cell-editors.ts:19",
+        "src/lib/collection/cell-editors.ts:42",
+        "src/lib/collection/cell-editors.test.ts:14"
       ]
     },
     "G42": {
@@ -756,10 +757,12 @@
     },
     "G183": {
       "status": "partial",
-      "note": "有域名四态状态机与 DNS 文案常量（仅测试消费），无域名设置面板、DNS 记录表与落库。",
+      "priority": "P1",
+      "note": "现读（第 45 批）：DNS 记录表与四态生命周期已补进 `src/lib/share/domain-lifecycle.ts`——DNS 表三标签（「DNS 记录」/「名称 / 主机」/「值 / 指向」）＋「我已添加 DNS 记录」动作＋两句页面标题＋「未找到此域名的 DNS 配置」失败句，全部逐字取自 `_harvest/i18n-zh.tsv:3545-3551`；`nextDomainState` 走四态（unset→declared→verified/disconnected，验证失败回 declared、不适用转换不动）。单测并入 cell-editors.test.ts。仍缺＝无域名设置面板与落库（无域名列），故记 partial。",
       "evidence": [
-        "src/lib/share/domain-lifecycle.ts:24",
-        "src/lib/share/domain-lifecycle.ts:30"
+        "src/lib/share/domain-lifecycle.ts:71",
+        "src/lib/share/domain-lifecycle.ts:103",
+        "src/lib/collection/cell-editors.test.ts:48"
       ]
     },
     "G185": {

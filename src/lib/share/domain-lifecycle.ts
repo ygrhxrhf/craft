@@ -68,3 +68,55 @@ export function tierEmailConflict(tier: DomainTier, emailAccess: boolean): strin
 export function hostAfterDisconnect(): string {
   return DOMAIN_TIERS.defaultCraft.host;
 }
+
+/**
+ * G183: the DNS record table the external-domain page shows, with its two column headers and the
+ * "I've added the DNS records" action — all verbatim from `_harvest/i18n-zh.tsv:3545-3551`.
+ */
+export const DNS_RECORD_TABLE = {
+  title: 'DNS 记录',
+  titleKey: 'teamsettings.external.domain.dns.record',
+  nameColumn: '名称 / 主机',
+  nameColumnKey: 'teamsettings.external.domain.name.host',
+  valueColumn: '值 / 指向',
+  valueColumnKey: 'teamsettings.external.domain.value.points.to',
+  addedAction: '我已添加 DNS 记录',
+  addedActionKey: 'teamsettings.external.domain.added.dns.records',
+} as const;
+
+/** The two page titles the external-domain page carries. */
+export const DOMAIN_PAGE_TITLES = {
+  active: { key: 'teamsettings.external.domain.title.active', label: '外部域名详情' },
+  modify: { key: 'teamsettings.external.domain.title.modify', label: '修改你的域名 DNS 设置' },
+} as const;
+
+/** The "no DNS config found" copy (a distinct failure from the two-state error). */
+export const NO_DNS_FOUND = '未找到此域名的 DNS 配置。请在此处联系我们。';
+export const NO_DNS_FOUND_KEY = 'teamsettings.external.domain.no.dns.found';
+
+/** One row of the DNS table: what the user must add at their registrar. */
+export interface DnsRecord {
+  name: string;
+  value: string;
+}
+
+/**
+ * G183: the four-state lifecycle transitions. `declared` (the user says the records are in) moves
+ * to `verifying`; the probe then lands on `verified` or back to `declared` (not found). Disconnect
+ * from any live state falls back to `unset` with the craft.me host.
+ */
+export type DomainTransition = 'declare' | 'verify-ok' | 'verify-fail' | 'disconnect';
+
+export function nextDomainState(state: DomainState, transition: DomainTransition): DomainState {
+  switch (transition) {
+    case 'declare':
+      return state === 'unset' || state === 'disconnected' ? 'declared' : state;
+    case 'verify-ok':
+      return state === 'declared' ? 'verified' : state;
+    case 'verify-fail':
+      // A failed probe returns to `declared` so the user can fix the records and retry.
+      return state === 'declared' ? 'declared' : state;
+    case 'disconnect':
+      return state === 'unset' ? 'unset' : 'disconnected';
+  }
+}

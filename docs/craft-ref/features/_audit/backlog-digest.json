@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-01T11:32:17.121Z",
+  "generatedAt": "2026-11-01T11:35:15.071Z",
   "total": 1614,
   "status": {
-    "nonaction": 506,
-    "partial": 378,
-    "aligned": 343,
+    "nonaction": 508,
+    "partial": 375,
+    "aligned": 344,
     "gap": 209,
     "deliberate": 158,
     "unreachable": 20
@@ -20,10 +20,10 @@
     "P2 / partial": 199,
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
-    "P1 / aligned": 112,
+    "P1 / aligned": 113,
     "P2 / gap": 103,
+    "P1 / nonaction": 87,
     "P2 / aligned": 86,
-    "P1 / nonaction": 85,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P3 / partial": 70,
@@ -35,7 +35,7 @@
     "P? / gap": 34,
     "P1 / gap": 33,
     "P3 / deliberate": 32,
-    "P1 / partial": 29,
+    "P1 / partial": 26,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
@@ -1200,12 +1200,12 @@
       7
     ],
     [
-      "三点一〇六二、第 112 批〔★★★ **代码块主题的\"装配处\"与\"缺省",
+      "三点一一一九、第 181 批新登记的官方行为（2026-10-09 05",
       7
     ],
     [
-      "三点一一一九、第 181 批新登记的官方行为（2026-10-09 05",
-      7
+      "三点一〇、协同与权限追加（来自 `collab.md`，静态证据）",
+      6
     ]
   ]
 }

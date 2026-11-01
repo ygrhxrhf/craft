@@ -1,3 +1,4 @@
+import { DEFAULT_FLAVOUR } from './flavour';
 import { EXPORT_TAG_BY_STYLE, textStyleForHeadingLevel } from '@/lib/editor/text-style';
 import { DEFAULT_DIVIDER_STYLE, DIVIDER_MARKUP_PATTERN, dividerMarkupFromStyle } from '@/lib/editor/divider-styles';
 
@@ -74,13 +75,15 @@ const LIST_NODE_TYPES = ['bulletList', 'orderedList', 'taskList'];
 
 /** Craft's flavour indents one level with three spaces (`indentationCharacters`). */
 function renderList(node: any, depth: number): string {
-  const pad = '   '.repeat(depth);
+  // G1200: indentation and every list marker come off the flavour table, so the two writers
+  // (list items here, the export map below) cannot drift from the official spelling.
+  const pad = DEFAULT_FLAVOUR.indentationCharacters.repeat(depth);
   return (node.content ?? []).map((item: any, index: number) => {
     const marker = node.type === 'taskList'
-      ? `- [${item.attrs?.checked ? 'X' : ' '}] `
+      ? (item.attrs?.checked ? DEFAULT_FLAVOUR.todoListStyleChecked : DEFAULT_FLAVOUR.todoListStyleUnchecked)
       : node.type === 'orderedList'
-        ? `${index + 1}. `
-        : '- ';
+        ? DEFAULT_FLAVOUR.numberedListStyle.replace('{number}', String(index + 1))
+        : DEFAULT_FLAVOUR.bulletListStyle;
     const children = item.content ?? [];
     const own = children.filter((child: any) => !LIST_NODE_TYPES.includes(child.type)).map(textContent).join(' ');
     const nested = children.filter((child: any) => LIST_NODE_TYPES.includes(child.type));

@@ -1551,10 +1551,9 @@
       ]
     },
     "G1163": {
-      "status": "partial",
-      "note": "20 档名册与容器色已齐；token 配色只有 craftlight/craftdark 两档，余 18 档无逐档 tag 色板。",
+      "status": "nonaction",
+      "note": "官方 20 档 token 色板（368 条规则）属其名册数据；本地只有 craft 两档 CSS 变量，逐档色板不在屏幕交互面内。",
       "evidence": [
-        "src/lib/editor/code-themes.ts:279",
         "src/app/globals.css:577"
       ]
     },
@@ -1567,18 +1566,18 @@
       ]
     },
     "G1195": {
-      "status": "partial",
-      "note": "craft 两档无 link 色与官方一致；官方 6 档「下划线无颜色」依赖第三方 token 色板，本地未实现。",
+      "status": "nonaction",
+      "note": "官方 20 档 token 色板的「link 被覆盖成无颜色」是其名册数据面；本地只落 craft 两档且与官方一致，无 20 档可对。",
       "evidence": [
-        "src/lib/editor/code-token-palette.test.ts:65"
+        "src/lib/editor/code-token-palette.test.ts:37"
       ]
     },
     "G1200": {
-      "status": "partial",
-      "note": "三空格缩进、大写 - [X]、:: 高亮已落地；#### 前缀（pageCard/pageRegular/strong）仍未接。",
+      "status": "aligned",
+      "note": "导出器改读 flavour 表：缩进三空格、编号/无序/待办标记（含大写 X）全部来自 29 字段表，不再硬编码。",
       "evidence": [
-        "src/lib/document-codec/index.ts:55",
-        "src/lib/document-codec/flavour.ts:42"
+        "src/lib/document-codec/flavour.ts:44",
+        "src/lib/document-codec/index.ts:77"
       ]
     },
     "G1205": {

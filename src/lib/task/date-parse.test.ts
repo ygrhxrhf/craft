@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
+import { parseDateIn,
   adoptDateExpression,
   isPastLocalDay,
   isSameLocalDay,
@@ -116,5 +116,32 @@ describe('the write guard', () => {
       action: 'skip',
       value: current,
     });
+  });
+});
+
+// G332: the parser routes on the app language; `en` + forceGB reads day-first.
+describe('locale routing', () => {
+  it('reads a bare numeric pair month-first, except en+GB', () => {
+    const monthFirst = parseDateIn('03/10', now, { locale: 'en' });
+    expect(monthFirst.ok && [monthFirst.date.getMonth() + 1, monthFirst.date.getDate()]).toEqual([3, 10]);
+
+    const dayFirst = parseDateIn('03/10', now, { locale: 'en', forceGB: true });
+    expect(dayFirst.ok && [dayFirst.date.getMonth() + 1, dayFirst.date.getDate()]).toEqual([10, 3]);
+  });
+
+  it('resolves English weekday phrases under en', () => {
+    const result = parseDateIn('next friday', now, { locale: 'en' });
+    expect(result.ok && [result.date.getMonth() + 1, result.date.getDate()]).toEqual([3, 20]);
+  });
+
+  it('resolves Chinese phrases under zh-Hans', () => {
+    const result = parseDateIn('下周五', now, { locale: 'zh-Hans' });
+    expect(result.ok && [result.date.getMonth() + 1, result.date.getDate()]).toEqual([3, 20]);
+  });
+
+  it('normalizes regional tags onto the seven routes', () => {
+    // zh-TW routes to zh-Hant, which shares the Chinese phrase set.
+    const result = parseDateIn('明天', now, { locale: 'zh-TW' });
+    expect(result.ok && result.date.getDate()).toBe(11);
   });
 });

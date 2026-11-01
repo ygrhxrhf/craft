@@ -581,12 +581,12 @@
       ]
     },
     "G332": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "两档解析已落：严格年月日（含 . 与 /）优先，失败再走中文相对短语与英文 today/tomorrow；仍缺七套 locale 路由与 GB 分支。",
+      "note": "解析器加 locale 路由（七套归一到 zh-Hans/zh-Hant/ja/de/es/fr/en）与 en+forceGB 日先分支；弹层按 documentElement.lang 路由。",
       "evidence": [
-        "src/lib/task/date-parse.ts:62",
-        "src/lib/task/date-parse.test.ts:18"
+        "src/lib/task/date-parse.ts:118",
+        "src/components/task/TaskDatePopover.tsx:100"
       ]
     },
     "G333": {
@@ -1928,19 +1928,18 @@
       ]
     },
     "G1553": {
-      "status": "gap",
-      "note": "无 Mod+←/→ 绑定，词级导航落浏览器默认：落词首而非词尾、可跨块、键不被消费。",
+      "status": "aligned",
+      "note": "Mod+←/→ 词级导航自实现：向前落词尾、不跨块、键被消费（handleKeyDown 返回 true）。",
       "evidence": [
-        "src/lib/editor/keymap.ts:86",
-        "src/lib/editor/keymap.ts:196"
+        "src/lib/editor/word-nav.ts:22",
+        "src/components/editor/extensions/craft-keymap.ts:167"
       ]
     },
     "G1554": {
-      "status": "gap",
-      "note": "四条 SELECT_TO_* 均未注册；Ctrl+Shift+Home/End 落浏览器文本选区，官方进块选区态。",
+      "status": "aligned",
+      "note": "Mod+Shift+Home/End 进块选区：首/末顶层块成 NodeSelection 且焦点离开编辑器。",
       "evidence": [
-        "src/lib/editor/keymap.test.ts:114",
-        "src/lib/editor/keymap.ts:198"
+        "src/components/editor/extensions/craft-keymap.ts:152"
       ]
     },
     "G1555": {

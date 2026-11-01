@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import {
   adoptDateExpression,
   isPastLocalDay,
-  parseDateExpression,
+  parseDateIn,
   startOfLocalDay,
 } from '@/lib/task/date-parse';
 import { describeRecurrence, recurrencePresetsFor } from '@/lib/task/recurrence';
@@ -96,7 +96,8 @@ export function TaskDatePopover({
 
   const handleText = (raw: string) => {
     setText(raw);
-    const parsed = parseDateExpression(raw);
+    // G332: route on the document language; GB is not selected locally (no region switch yet).
+    const parsed = parseDateIn(raw, new Date(), { locale: document.documentElement.lang || 'zh-Hans' });
     if (parsed.ok && !isPastLocalDay(parsed.date)) {
       setPreview(parsed.date);
       setMonth(parsed.date);

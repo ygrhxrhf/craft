@@ -1,11 +1,12 @@
 import { Extension } from '@tiptap/core';
-import { NodeSelection, Plugin, PluginKey } from '@tiptap/pm/state';
+import { NodeSelection, Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
 import { CellSelection } from '@tiptap/pm/tables';
 import type { EditorView } from '@tiptap/pm/view';
 import type { Editor } from '@tiptap/react';
 
 import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from '@/lib/editor/block-move';
 import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
+import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
@@ -147,6 +148,43 @@ export const CraftKeymap = Extension.create({
         // focused, and no key ever reaches the handler.
         props: {
           handleKeyDown(view: EditorView, event: KeyboardEvent) {
+            // G1554: Mod+Shift+Home/End enters **block selection** (the first/last top-level
+            // block becomes a node selection and focus leaves the editor), rather than selecting
+            // text to the document edge.
+            if (
+              (event.key === 'Home' || event.key === 'End') &&
+              event.shiftKey &&
+              (event.metaKey || event.ctrlKey) &&
+              !event.altKey
+            ) {
+              const doc = view.state.doc;
+              const index = event.key === 'Home' ? 0 : doc.childCount - 1;
+              if (index >= 0) {
+                const pos = event.key === 'Home' ? 0 : topLevelStart(doc, index);
+                view.dispatch(view.state.tr.setSelection(NodeSelection.create(doc, pos)));
+                (view.dom as HTMLElement).blur?.();
+                return true;
+              }
+            }
+            // G1553: Mod+←/→ is word-level navigation, lands on the word *end* going forward,
+            // never leaves the block, and — unlike the browser default — consumes the key.
+            if (
+              event.key === 'ArrowLeft' || event.key === 'ArrowRight'
+            ) {
+              const isMod = event.metaKey || event.ctrlKey;
+              if (isMod && !event.shiftKey && !event.altKey && view.state.selection.empty) {
+                const { $from } = view.state.selection;
+                if ($from.parent.isTextblock) {
+                  const text = $from.parent.textContent;
+                  const offset = $from.parentOffset;
+                  const target =
+                    event.key === 'ArrowRight' ? nextWordOffset(text, offset) : prevWordOffset(text, offset);
+                  const start = $from.start();
+                  view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, start + target)));
+                  return true;
+                }
+              }
+            }
             // G1552: Shift-Enter inserts a line break inside the block (four independent official
             // runs; the older "inert" reading G615 was withdrawn). A selected block still routes
             // to RENAME below, which is the only other meaning this chord has locally.

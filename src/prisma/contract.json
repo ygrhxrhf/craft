@@ -442,6 +442,13 @@
                   "kind": "scalar"
                 }
               },
+              "schemas": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
@@ -518,6 +525,9 @@
                 },
                 "order": {
                   "column": "order"
+                },
+                "schemas": {
+                  "column": "schemas"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -4046,6 +4056,11 @@
                   "nativeType": "float8",
                   "nullable": false
                 },
+                "schemas": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
@@ -6843,7 +6858,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f9a343758e9ea2d004796891353bb8a48c8fab8c56a375845fba52c55d157cb5"
+    "storageHash": "368beaa9a20ff8ca06dd841c51a8dc67adb3eb30f953d5e1487e6bbe815cfe53"
   },
   "execution": {
     "executionHash": "7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b",

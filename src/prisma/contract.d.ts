@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f9a343758e9ea2d004796891353bb8a48c8fab8c56a375845fba52c55d157cb5'>;
+  StorageHashBase<'368beaa9a20ff8ca06dd841c51a8dc67adb3eb30f953d5e1487e6bbe815cfe53'>;
 export type ExecutionHash =
   ExecutionHashBase<'7b3ef9eafdfe7bf63edfb8cfe1e138857b67c4781c59234e31e865dd670cb05b'>;
 export type ProfileHash =
@@ -267,6 +267,7 @@ export type FieldOutputTypes = {
       readonly collectionId: CodecTypes['pg/text@1']['output'];
       readonly order: CodecTypes['pg/float8@1']['output'];
       readonly documentId: CodecTypes['pg/text@1']['output'] | null;
+      readonly schemas: CodecTypes['pg/json@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -559,6 +560,7 @@ export type FieldInputTypes = {
       readonly collectionId: CodecTypes['pg/text@1']['input'];
       readonly order: CodecTypes['pg/float8@1']['input'];
       readonly documentId: CodecTypes['pg/text@1']['input'] | null;
+      readonly schemas: CodecTypes['pg/json@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -840,6 +842,7 @@ export type StorageColumnTypes = {
       readonly documentId: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly order: CodecTypes['pg/float8@1']['output'];
+      readonly schemas: CodecTypes['pg/json@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly collection_properties: {
@@ -1132,6 +1135,7 @@ export type StorageColumnInputTypes = {
       readonly documentId: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly order: CodecTypes['pg/float8@1']['input'];
+      readonly schemas: CodecTypes['pg/json@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly collection_properties: {
@@ -1579,6 +1583,7 @@ export namespace Models {
     collectionId: CodecTypes['pg/text@1']['output'];
     order: CodecTypes['pg/float8@1']['output'];
     documentId: CodecTypes['pg/text@1']['output'] | null;
+    schemas: CodecTypes['pg/json@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -1966,6 +1971,11 @@ type ContractBase = Omit<
                 readonly documentId: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly schemas: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
                   readonly nullable: true;
                 };
                 readonly createdAt: {
@@ -4569,6 +4579,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly schemas: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -4636,6 +4650,7 @@ type ContractBase = Omit<
                 readonly collectionId: { readonly column: 'collectionId' };
                 readonly order: { readonly column: 'order' };
                 readonly documentId: { readonly column: 'documentId' };
+                readonly schemas: { readonly column: 'schemas' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly deletedAt: { readonly column: 'deletedAt' };

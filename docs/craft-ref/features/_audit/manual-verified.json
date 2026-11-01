@@ -511,11 +511,11 @@
     "G427": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 42 批）：一物多集合的归属形状已落纯核 `src/lib/collection/object-membership.ts`——`schemas` 数组 + `objectSchemaId`，`belongsToSchema` 实现官方那条**宽松匹配**（objectSchemaId==null 或 schemas 缺失 ⇒ true，否则 includes），`isMemberOf` 是读侧过滤，`addMembership`/`removeMembership` 管归属数组。单测 7 条。仍缺＝存储仍是单值外键 `CollectionItem.collectionId`（改成数组需迁移），故记 partial。",
+      "note": "现读（第 56 批）：一物多集合**落库**——`CollectionItem` 加 `schemas Json?` 列（迁移 `20261101T1412_add_collection_item_schemas`，additive `ADD COLUMN schemas json`，已 apply 到本机库），`collectionId` 保留为\"主集合\"（读侧排序与既有路径不变）；`src/lib/sync/tables.ts` 的 collection_item 白名单加 `schemas`（否则整页同步失败）；`normalizeSchemas` 读侧把数组/JSON 串/缺值（回退主集合）归一。单测 3 条。仍缺＝写入路径未把新归属写进 `schemas`（只有删集合时摘项），`belongsToSchema` 宽松匹配尚未接读侧过滤，故记 partial。",
       "evidence": [
-        "src/lib/collection/object-membership.ts:31",
-        "src/lib/collection/object-membership.ts:44",
-        "src/lib/collection/object-membership.test.ts:10"
+        "src/prisma/contract.prisma:190",
+        "src/lib/sync/tables.ts:45",
+        "src/lib/collection/object-membership.test.ts:57"
       ]
     },
     "G439": {
@@ -2132,10 +2132,10 @@
     "G428": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 42 批）：删除只清归属的语义已落 `src/lib/collection/object-membership.ts` 的 `removeMembership`——从归属数组里**只摘掉这一项**、对象本身不动（与「删组只清该字段的值、不删行」是同一条原则）。单测钉住\"删 s1 后仍属于 s2\"。仍缺＝`contract.prisma` 的 Collection→properties/items/values 仍是 Cascade 物理删除（本地删集合走软删 `isDeleted`，但 schema 层的 Cascade 仍在，物理删除仍会连带销毁），故记 partial。",
+      "note": "现读（第 56 批）：删集合只清归属**落进真实删除路径**——`deleteCollection` 现在遍历该集合的存活条目：仍属于别的集合（`schemas` 摘掉本集合后非空）⇒ 只改 `schemas`、条目与值都留；只属于本集合 ⇒ 才打墓碑。对象本身不随集合消失（与「删组只清该字段的值、不删行」同一条原则）。仍缺＝`contract.prisma` 的 Collection→items/values 仍是 Cascade（物理删除仍会连带，软删路径已按判据走），故记 partial。",
       "evidence": [
-        "src/lib/collection/object-membership.ts:54",
-        "src/lib/collection/object-membership.test.ts:37"
+        "src/actions/collection/collection.ts:91",
+        "src/lib/collection/object-membership.ts:54"
       ]
     },
     "G450": {

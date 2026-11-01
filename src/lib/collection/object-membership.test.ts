@@ -55,3 +55,33 @@ describe('deleting a collection clears the membership only (G428)', () => {
     expect(addMembership(membership, 's2').schemas).toEqual(['s1', 's2']);
   });
 });
+
+describe('normalising a stored membership column (G427)', () => {
+  // The stored value is JSON: an array, a JSON string, or absent (legacy rows).
+  const norm = (raw: unknown, fallback?: string): string[] => {
+    if (Array.isArray(raw)) return raw.filter((v): v is string => typeof v === 'string');
+    if (typeof raw === 'string' && raw) {
+      try {
+        const parsed: unknown = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed.filter((v): v is string => typeof v === 'string');
+      } catch {
+        /* fall through */
+      }
+    }
+    return fallback ? [fallback] : [];
+  };
+
+  it('reads an array as-is', () => {
+    expect(norm(['s1', 's2'])).toEqual(['s1', 's2']);
+  });
+
+  it('reads a JSON string', () => {
+    expect(norm('["s1","s2"]')).toEqual(['s1', 's2']);
+  });
+
+  it('falls back to the primary collection for a legacy row', () => {
+    expect(norm(null, 'c1')).toEqual(['c1']);
+    expect(norm(undefined, 'c1')).toEqual(['c1']);
+    expect(norm('not json', 'c1')).toEqual(['c1']);
+  });
+});

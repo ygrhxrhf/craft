@@ -188,6 +188,10 @@ model CollectionItem {
   collectionId String
   order        Float    @default(0)
   documentId   String?
+  // G427/G428：一个记录对象可同时属于多个集合——官方 `objectData.schemas` 是数组，
+  //   `collectionId` 保留为"主集合"（读侧排序与既有路径不变），`schemas` 记全部归属。
+  //   删集合只从 `schemas` 里摘一项，对象本身不动（与「删组只清该字段的值、不删行」同一条原则）。
+  schemas      Json?
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
   deletedAt    TimestamptzString?

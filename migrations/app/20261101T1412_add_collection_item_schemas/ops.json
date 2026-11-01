@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.collection_items.schemas",
+    "label": "Add column \"schemas\" to \"collection_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "schemas",
+        "table": "collection_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"schemas\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "collection_items",
+          "schemas"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"schemas\"",
+        "sql": "ALTER TABLE \"public\".\"collection_items\" ADD COLUMN \"schemas\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"schemas\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "collection_items",
+          "schemas"
+        ]
+      }
+    ]
+  }
+]

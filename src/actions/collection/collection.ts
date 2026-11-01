@@ -1,5 +1,6 @@
 'use server';
 
+import { removeMembership } from '@/lib/collection/object-membership';
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
@@ -92,9 +93,48 @@ export async function deleteCollection(id: string) {
     isDeleted: true,
     deletedAt: new Date(),
   });
-  await emitCollections(db, session.user.id, ['collection'], id);
+
+  // G428: deleting a collection clears the membership only — an item that also belongs to another
+  // collection keeps its row (and its values), just without this collection in its `schemas`.
+  // Rows whose only membership was this one are tombstoned like before.
+  const items = await db.orm.public.CollectionItem.where({ collectionId: id, deletedAt: null }).all();
+  const now = new Date().toISOString();
+  for (const item of items) {
+    const row = item as Record<string, unknown>;
+    const membership = removeMembership(
+      { schemas: normalizeSchemas(row.schemas), objectSchemaId: null },
+      id,
+    );
+    if (membership.schemas.length > 0) {
+      await db.orm.public.CollectionItem.where({ id: String(row.id) }).update({
+        schemas: membership.schemas,
+        updatedAt: now,
+      });
+    } else {
+      await db.orm.public.CollectionItem.where({ id: String(row.id) }).update({
+        deletedAt: now,
+        updatedAt: now,
+      });
+    }
+  }
+
+  await emitCollections(db, session.user.id, ['collection', 'collection_item'], id);
 
   revalidatePath('/collections');
+}
+
+/** G427: a row's membership array; a missing/invalid value reads as the single `collectionId`. */
+function normalizeSchemas(raw: unknown, fallback?: string): string[] {
+  if (Array.isArray(raw)) return raw.filter((value): value is string => typeof value === 'string');
+  if (typeof raw === 'string' && raw) {
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed.filter((value): value is string => typeof value === 'string');
+    } catch {
+      // fall through to the fallback
+    }
+  }
+  return fallback ? [fallback] : [];
 }
 
 export async function getCollection(id: string) {

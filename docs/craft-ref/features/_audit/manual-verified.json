@@ -880,11 +880,11 @@
     "G320": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 37 批）：内嵌标签渲染器已接**真实渲染位**——新增 `src/components/ui/rich-text.tsx`（按 `parseEmbeddedTags` 的分段渲染：样式段加 class、链接段出 `<a>`、`<br/>` 出换行），接进账户面板那句带 `<strong>` 的官方文案（`src/lib/i18n/account-copy.ts` 的 `loggedInAsText`，逐字取自 `_harvest/i18n-zh.tsv:667`）。单测钉住模板逐字与 harvest 一致、`[0]` 填邮箱、`<strong>` 解析成 bold 段而非漏出标签；`rich-text.test.ts` 钉住接线。仍缺＝53 条带标签键只接了 1 条，其余渲染位未逐一接，故记 partial。",
+      "note": "现读（第 55 批）：内嵌标签渲染器已接**第二个真实渲染位**——新增 `src/lib/i18n/onboarding-copy.ts`（`onboarding.welcome.to.craft` 三句逐字，其中 desc 含自闭合 `<br/>`）接进 `documents/page.tsx` 的最近编辑空态，走 `RichText` 渲染（`<br/>` 出换行、不打印标签）。单测钉住三句逐字与 `<br/>` 解析成 break 段。仍缺＝53 条带标签键只接了 2 条，其余渲染位未逐一接，故记 partial。",
       "evidence": [
-        "src/components/ui/rich-text.tsx:20",
-        "src/lib/i18n/account-copy.ts:6",
-        "src/lib/i18n/account-copy.test.ts:15"
+        "src/lib/i18n/onboarding-copy.ts:6",
+        "src/app/(app)/documents/page.tsx:66",
+        "src/lib/i18n/onboarding-copy.test.ts:19"
       ]
     },
     "G321": {

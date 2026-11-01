@@ -10,6 +10,8 @@ import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { SortableDocGrid } from '@/components/document/SortableDocGrid';
+import { RichText } from '@/components/ui/rich-text';
+import { ONBOARDING_DESC, ONBOARDING_DESC2, ONBOARDING_WELCOME } from '@/lib/i18n/onboarding-copy';
 
 export default async function DocumentsPage() {
   const session = await auth();
@@ -62,9 +64,14 @@ export default async function DocumentsPage() {
             <SortableDocGrid documents={recentDocs} />
           ) : (
             <div className="rounded-lg border border-dashed border-border p-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                还没有文档，点击左上角 + 创建第一个文档
-              </p>
+              {/* G320：官方那句带 `<br/>`（`onboarding.welcome.to.craft.desc`），走 RichText
+                  渲染而不是把标签原样打印出来。 */}
+              <p className="text-lg font-medium">{ONBOARDING_WELCOME}</p>
+              <RichText
+                value={ONBOARDING_DESC}
+                className="mt-1 block text-sm text-muted-foreground"
+              />
+              <p className="mt-1 text-xs text-muted-foreground/70">{ONBOARDING_DESC2}</p>
             </div>
           )}
         </section>

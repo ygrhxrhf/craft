@@ -1441,11 +1441,11 @@
     "G604": {
       "status": "partial",
       "priority": "P1",
-      "note": "现读（第 39 批）：任务分页层已落纯核 `src/lib/task/task-paging.ts`——**三个独立游标**（continuationToken/ongoingTasks/upcomingTasks，`advanceCursor` 只动一条）、loadStatus 三档（idle/loading/done）+ pageInfo（`beginLoad`/`settleLoad`/`resetTaskPageState`）、任务写侧**相对定位**重排 `reorderAfter(ids, blockId, afterBlockId)`（插到某任务之后而非索引，锚点找不到则原样返回）。单测 9 条。仍缺＝`getTasks` 仍一次 limit 200 直读 Prisma，分页状态无真实调用点（任务查询层未改），故记 partial。",
+      "note": "现读（第 67 批）：相对定位重排**接进真实任务 action**——新增 `reorderTasks(blockId, afterBlockId)`：读该用户全部存活任务的有序 id，用 `reorderAfter` 算出新序（锚点找不到或原地不动 ⇒ 不写），只写 `order` 真变了的那几行（避免为一次拖拽把整表推一遍），落库后广播。单测 9 条（task-paging）。仍缺＝`getTasks` 仍一次 limit 200 直读 Prisma（三游标分页层无真实调用点），故记 partial。",
       "evidence": [
-        "src/lib/task/task-paging.ts:20",
+        "src/actions/task/task.ts:340",
         "src/lib/task/task-paging.ts:94",
-        "src/lib/task/task-paging.test.ts:11"
+        "src/lib/task/task-paging.test.ts:56"
       ]
     },
     "G608": {

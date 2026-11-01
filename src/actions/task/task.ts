@@ -8,6 +8,7 @@ import { nextOccurrence, parseRecurrence } from '@/lib/task/recurrence';
 import { listsTaskFromDocument } from '@/lib/task/display';
 import { applyToggled, taskLineStatus, type TaskAttrs } from '@/lib/editor/task-status';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { reorderAfter } from '@/lib/task/task-paging';
 
 // I2：任务表用 updatedAt 自动 bump（无需 metaUpdatedAt），落库后广播即可；
 // 失败不阻断业务（与 updateDocument 的 emit 姿态一致）。
@@ -333,4 +334,35 @@ export async function deleteTask(id: string) {
     updatedAt: new Date().toISOString(),
   });
   await emitTasks(db, session.user.id, id);
+}
+
+/**
+ * G604: relative-position reordering — "put this task after that one", not "put it at index N".
+ * An index is stale the moment a concurrent write lands; a relative anchor is not. The anchor's
+ * own order is read, the moved task takes a value just after it, and the rest are renumbered.
+ */
+export async function reorderTasks(blockId: string, afterBlockId: string | null): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const rows = await db.orm.public.Task
+    .where({ userId: session.user.id, deletedAt: null })
+    .orderBy((t: any) => t.order.asc())
+    .all();
+  const ids = rows.map((row: any) => String(row.id));
+  if (!ids.includes(blockId)) throw new Error('任务不存在');
+
+  const next = reorderAfter(ids, blockId, afterBlockId);
+  // Nothing moved (unknown anchor / already in place) ⇒ no write.
+  if (next.join(',') === ids.join(',')) return;
+
+  const now = new Date().toISOString();
+  for (let index = 0; index < next.length; index += 1) {
+    const id = next[index];
+    const current = rows.find((row: any) => String(row.id) === id) as any;
+    if (current && Number(current.order) === index) continue;
+    await db.orm.public.Task.where({ id }).update({ order: index, updatedAt: now });
+  }
+  await emitTasks(db, session.user.id, blockId);
 }

@@ -7,6 +7,11 @@ export type FindScope = 'doc' | 'page';
 
 interface FindReplaceState {
   open: boolean;
+  /**
+   * G1570 —— 查找面板分两档：`⌘F` 只开查找框，`⌘⇧F` 才补出「替换为……」与替换按钮。
+   * 官方 `Ctrl-F` 之后 `findInput:1 / replaceInput:0`，`Ctrl-Shift-F` 才两框齐 ⇒ 这一枚就是那两档的开关。
+   */
+  showReplace: boolean;
   query: string;
   replacement: string;
   mode: FindMode;
@@ -23,6 +28,8 @@ interface FindReplaceState {
    */
   caseSensitive: boolean;
   setOpen: (open: boolean) => void;
+  /** G1570: which tier the panel opens in (`false` = find only, `true` = find + replace). */
+  openWith: (showReplace: boolean) => void;
   setQuery: (query: string) => void;
   setReplacement: (replacement: string) => void;
   setMode: (mode: FindMode) => void;
@@ -34,6 +41,7 @@ interface FindReplaceState {
 
 export const useFindReplaceStore = create<FindReplaceState>((set) => ({
   open: false,
+  showReplace: false,
   query: '',
   replacement: '',
   mode: 'text',
@@ -43,6 +51,9 @@ export const useFindReplaceStore = create<FindReplaceState>((set) => ({
   invalid: false,
   caseSensitive: false,
   setOpen: (open) => set({ open, ...(open ? {} : { matches: [], current: -1 }) }),
+  // G1570: opening via `⌘⇧F` also unrolls the replacement field; opening via `⌘F` does not.
+  openWith: (showReplace) =>
+    set({ open: true, showReplace, ...(showReplace ? {} : {}) }),
   setQuery: (query) => set({ query }),
   setReplacement: (replacement) => set({ replacement }),
   setMode: (mode) => set({ mode }),

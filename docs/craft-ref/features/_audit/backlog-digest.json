@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-01T19:15:32.213Z",
+  "generatedAt": "2026-11-01T23:25:41.542Z",
   "total": 1614,
   "status": {
     "nonaction": 510,
-    "aligned": 401,
-    "partial": 349,
-    "gap": 176,
+    "aligned": 405,
+    "partial": 348,
+    "gap": 173,
     "deliberate": 158,
     "unreachable": 20
   },
@@ -17,13 +17,13 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / partial": 199,
+    "P2 / partial": 198,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 164,
-    "P2 / gap": 103,
+    "P2 / gap": 100,
+    "P2 / aligned": 90,
     "P1 / nonaction": 89,
-    "P2 / aligned": 86,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P3 / partial": 70,
@@ -1131,7 +1131,7 @@
   "gapSections": [
     [
       "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      59
+      58
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
@@ -1158,15 +1158,15 @@
       9
     ],
     [
-      "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
-      9
-    ],
-    [
       "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
       9
     ],
     [
       "三点五、P2 追加（来自 `modules.md` 模块清单，静态证据）",
+      8
+    ],
+    [
+      "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
       8
     ],
     [

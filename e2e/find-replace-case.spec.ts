@@ -50,3 +50,34 @@ test('the case-sensitive toggle narrows and widens the count as expected', async
   await expect(page.getByTestId('find-replace-case')).toHaveAttribute('aria-pressed', 'false');
   await expect(panel.getByTestId('find-replace-count')).toHaveText('4 结果');
 });
+
+/**
+ * G1570: the panel has two tiers. `Ctrl-F` opens it with the query field alone; `Ctrl-Shift-F`
+ * unrolls the replacement row. The official reading is `findInput:1 / replaceInput:0` after `Ctrl-F`
+ * and both fields after `Ctrl-Shift-F`, so the assertion is on the replacement row's presence.
+ */
+test('Ctrl-F opens find-only; Ctrl-Shift-F unrolls the replacement row', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/documents');
+  await page.getByRole('button', { name: /新建/ }).first().click();
+  await page.waitForURL(/\/documents\//);
+  const editor = page.locator('[contenteditable="true"]').first();
+  await editor.click();
+  await page.keyboard.type('hello', { delay: 4 });
+
+  await page.keyboard.press('Control+f');
+  const panel = page.getByTestId('find-replace-panel');
+  await expect(panel).toBeVisible();
+  // Find-only tier: the query field is there, the replacement row is not.
+  await expect(panel.getByTestId('find-replace-query')).toBeVisible();
+  await expect(panel.getByTestId('find-replace-replacement-row')).toHaveCount(0);
+
+  // Close, then open the replace tier. Focus has to be back in the editor for the editor keymap
+  // to see the chord at all (Escape returns focus to the page, not necessarily the editable).
+  await page.keyboard.press('Escape');
+  await expect(panel).toHaveCount(0);
+  await editor.click();
+  await page.keyboard.press('Control+Shift+f');
+  await expect(panel).toBeVisible();
+  await expect(panel.getByTestId('find-replace-replacement-row')).toBeVisible();
+});

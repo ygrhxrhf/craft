@@ -657,7 +657,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
           <button
             type="button"
             onClick={() => {
-              useFindReplaceStore.getState().setOpen(true);
+              // G1570: 「在页面中查找」是查找那一档（不带替换框），与 ⌘F 同档。
+              useFindReplaceStore.getState().openWith(false);
               onClose();
             }}
             className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"

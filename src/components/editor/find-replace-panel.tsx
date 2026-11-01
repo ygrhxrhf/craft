@@ -20,6 +20,7 @@ import { formatResultCount } from '@/lib/find/matcher';
  */
 export function FindReplacePanel({ editor }: { editor: Editor | null }) {
   const open = useFindReplaceStore((state) => state.open);
+  const showReplace = useFindReplaceStore((state) => state.showReplace);
   const query = useFindReplaceStore((state) => state.query);
   const replacement = useFindReplaceStore((state) => state.replacement);
   const mode = useFindReplaceStore((state) => state.mode);
@@ -177,35 +178,39 @@ export function FindReplacePanel({ editor }: { editor: Editor | null }) {
         </span>
       </div>
 
-      <div className="flex items-center gap-2">
-        <input
-          data-testid="find-replace-replacement"
-          className="h-8 min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring"
-          placeholder="替换为……"
-          value={replacement}
-          onChange={(event) => useFindReplaceStore.getState().setReplacement(event.target.value)}
-          onKeyDown={onKeyDown}
-          aria-label="替换为"
-        />
-        <button
-          type="button"
-          data-testid="find-replace-one"
-          disabled={matches.length === 0 || !editor}
-          onClick={() => editor?.commands.findReplaceCurrent(replacement)}
-          className="rounded border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-40"
-        >
-          替换
-        </button>
-        <button
-          type="button"
-          data-testid="find-replace-all"
-          disabled={matches.length === 0 || !editor}
-          onClick={() => editor?.commands.findReplaceAll(replacement)}
-          className="rounded border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-40"
-        >
-          全部替换
-        </button>
-      </div>
+      {/* G1570: the replacement row only exists on the `⌘⇧F` tier — `⌘F` leaves the panel at
+          `replaceInput:0`, which is what the official screen shows. */}
+      {showReplace && (
+        <div className="flex items-center gap-2" data-testid="find-replace-replacement-row">
+          <input
+            data-testid="find-replace-replacement"
+            className="h-8 min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring"
+            placeholder="替换为……"
+            value={replacement}
+            onChange={(event) => useFindReplaceStore.getState().setReplacement(event.target.value)}
+            onKeyDown={onKeyDown}
+            aria-label="替换为"
+          />
+          <button
+            type="button"
+            data-testid="find-replace-one"
+            disabled={matches.length === 0 || !editor}
+            onClick={() => editor?.commands.findReplaceCurrent(replacement)}
+            className="rounded border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-40"
+          >
+            替换
+          </button>
+          <button
+            type="button"
+            data-testid="find-replace-all"
+            disabled={matches.length === 0 || !editor}
+            onClick={() => editor?.commands.findReplaceAll(replacement)}
+            className="rounded border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-40"
+          >
+            全部替换
+          </button>
+        </div>
+      )}
     </div>
   );
 }

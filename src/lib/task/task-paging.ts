@@ -96,3 +96,20 @@ export function reorderAfter(ids: string[], blockId: string, afterBlockId: strin
   if (at < 0) return ids;
   return [...without.slice(0, at + 1), blockId, ...without.slice(at + 1)];
 }
+
+/** G604：任务分页的每页条数（官方列表分页，不是一次读全表）。 */
+export const TASK_PAGE_SIZE = 100;
+
+/**
+ * G604 的游标编解码。☆ 放在这里而不是 `actions/task/task.ts`：那个文件是 `'use server'`，
+ * **只允许导出 async 函数**——两枚同步导出会让整个模块编译失败（`Server Actions must be async
+ * functions`），而那正是"编辑页 500、内容区空白"的成因（单测用 mock 跑不到编译期这道闸）。
+ */
+export function encodeTaskCursor(row: Record<string, unknown>): string {
+  return `${String(row.createdAt ?? '')}|${String(row.id ?? '')}`;
+}
+
+export function decodeTaskCursor(cursor: string): { createdAt: string; id: string } {
+  const [createdAt, id] = cursor.split('|');
+  return { createdAt: createdAt ?? '', id: id ?? '' };
+}

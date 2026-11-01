@@ -313,7 +313,9 @@ describe('读侧三档排序（G52）', () => {
 
 describe('task page cursors (G604)', () => {
   it('round-trips a (createdAt, id) cursor', async () => {
-    const { encodeTaskCursor, decodeTaskCursor } = await import('./task');
+    // G604 的编解码住在纯核里：`actions/task/task.ts` 是 `'use server'`，只许导出 async 函数，
+    // 两枚同步导出会让整个模块编译失败（`Server Actions must be async functions`）。
+    const { encodeTaskCursor, decodeTaskCursor } = await import('@/lib/task/task-paging');
     const cursor = encodeTaskCursor({ createdAt: '2026-01-01T00:00:00.000Z', id: 'abc' });
     expect(cursor).toBe('2026-01-01T00:00:00.000Z|abc');
     expect(decodeTaskCursor(cursor)).toEqual({ createdAt: '2026-01-01T00:00:00.000Z', id: 'abc' });

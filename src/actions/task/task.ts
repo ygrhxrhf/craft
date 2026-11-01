@@ -8,7 +8,7 @@ import { nextOccurrence, parseRecurrence } from '@/lib/task/recurrence';
 import { listsTaskFromDocument } from '@/lib/task/display';
 import { applyToggled, taskLineStatus, type TaskAttrs } from '@/lib/editor/task-status';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
-import { reorderAfter } from '@/lib/task/task-paging';
+import { reorderAfter, encodeTaskCursor, decodeTaskCursor, TASK_PAGE_SIZE } from '@/lib/task/task-paging';
 import { deriveSubtasks } from '@/lib/task/subtasks';
 
 // I2：任务表用 updatedAt 自动 bump（无需 metaUpdatedAt），落库后广播即可；
@@ -238,17 +238,6 @@ export async function getTasksPage(cursor?: string | null): Promise<{ items: Tas
 }
 
 /** G604: the task page size (the official list pages rather than reading the whole table). */
-const TASK_PAGE_SIZE = 100;
-
-/** A page cursor: the `(createdAt, id)` of the last row, so the next page reads strictly older. */
-export function encodeTaskCursor(row: Record<string, unknown>): string {
-  return `${String(row.createdAt ?? '')}|${String(row.id ?? '')}`;
-}
-
-export function decodeTaskCursor(cursor: string): { createdAt: string; id: string } {
-  const [createdAt, id] = cursor.split('|');
-  return { createdAt: createdAt ?? '', id: id ?? '' };
-}
 
 export async function createTask(title: string, dueDate?: string | null, scheduleDate?: string | null) {
   const session = await auth();

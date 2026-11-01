@@ -16,6 +16,7 @@ import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/
 import { setTaskDateField } from '@/components/editor/drag-handle/block-actions';
 import { localDayInstant } from '@/lib/task/wall-clock';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
+import { isImeComposing } from '@/lib/editor/ime-guard';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
@@ -104,13 +105,16 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
     return toggleTaskCancelledAtSelection(editor.state, editor.view.dispatch, new Date());
   }
 
-  // The four find chords: `⌘F` / `⌘⇧F` open the one panel (the local panel always carries both
-  // fields, so the two chords land in the same place — the official split between "find" and
-  // "find and replace" is not reproduced here), while `⌘G` / `⌘⇧G` walk the matches. They are
-  // consumed even when nothing matched: leaving the key to the browser would raise the browser's
-  // own find bar, which is not what the key means in this app.
-  if (id === 'FIND_IN_PAGE' || id === 'REPLACE_IN_PAGE') {
-    useFindReplaceStore.getState().setOpen(true);
+  // The four find chords: `⌘F` opens the panel in **find-only** tier, `⌘⇧F` unrolls the replacement
+  // field too (G1570 — the official split: `Ctrl-F` leaves `replaceInput:0`, `Ctrl-Shift-F` shows
+  // it). `⌘G` / `⌘⇧G` walk the matches. They are consumed even when nothing matched: leaving the key
+  // to the browser would raise the browser's own find bar, which is not what the key means here.
+  if (id === 'FIND_IN_PAGE') {
+    useFindReplaceStore.getState().openWith(false);
+    return true;
+  }
+  if (id === 'REPLACE_IN_PAGE') {
+    useFindReplaceStore.getState().openWith(true);
     return true;
   }
   if (id === 'FIND_NEXT') {
@@ -208,6 +212,10 @@ export const CraftKeymap = Extension.create({
         // focused, and no key ever reaches the handler.
         props: {
           handleKeyDown(view: EditorView, event: KeyboardEvent) {
+            // G490: while an IME is composing (`keyCode 229` / `isComposing`), the official build
+            // skips the **whole** dispatch — the candidate window owns Esc/Enter. Without this the
+            // local editor would close a popup or split a block mid-composition.
+            if (isImeComposing(event)) return false;
             // G211: Ctrl+Z / Ctrl+Shift+Z are gated on where the focus actually is. When the caret
             // sits in an inline sub-editor (math), the key belongs to that editor, not the document
             // — so the document's undo is skipped and the sub-editor keeps its own stack.

@@ -131,4 +131,18 @@ describe('the blocks a Tab press touches', () => {
     const doc = schema.node('doc', null, [schema.node('paragraph', { indent: 3 }, [schema.text('x')])]);
     expect(indentTargets(doc, 2, 2)[0]).toMatchObject({ index: 0, level: 3 });
   });
+
+  // G613: Shift-Tab (and Tab) touch **only** the addressed block — a following sibling keeps its
+  // own indent. The official screen shows the same: the child's 28px stays put when the parent
+  // steps down, because the step is a flat per-block change, not a subtree cascade.
+  it('G613: never cascades to the following sibling', () => {
+    const doc = schema.node('doc', null, [
+      schema.node('paragraph', { indent: 1 }, [schema.text('parent')]),
+      schema.node('paragraph', { indent: 1 }, [schema.text('child')]),
+    ]);
+    const targets = indentTargets(doc, 2, 2);
+    expect(targets.map((target) => target.index)).toEqual([0]);
+    // The following block is not among the targets, so its level is untouched by the caller.
+    expect(targets).toHaveLength(1);
+  });
 });

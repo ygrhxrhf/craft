@@ -5130,10 +5130,12 @@
       ]
     },
     "G466": {
-      "status": "gap",
-      "note": "三处 onKeyDown 无 preventDefault/stopPropagation，Enter/Esc 会冒泡",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "单元格 Enter/Escape 截事件：新增 cell-key.ts 的 cellKeyAction，PropertyCell 三处 onKeyDown 统一走它。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:132"
+        "src/lib/collection/cell-key.ts",
+        "src/components/collection/PropertyCell.tsx"
       ]
     },
     "G467": {
@@ -5270,10 +5272,13 @@
       ]
     },
     "G490": {
-      "status": "gap",
-      "note": "全仓无 isComposing/keyCode 229 守卫，IME 候选时 Esc/Enter 会误触发",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "IME 组合中跳过整条分发：新增 ime-guard.ts 的 isImeComposing，接进编辑器键位层与外壳层入口。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:132"
+        "src/lib/editor/ime-guard.ts",
+        "src/components/editor/extensions/craft-keymap.ts",
+        "src/components/editor/shell-shortcuts.tsx"
       ]
     },
     "G491": {
@@ -5830,10 +5835,12 @@
       ]
     },
     "G613": {
-      "status": "gap",
-      "note": "本地无缩进键位，无从对照",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Shift+Tab 不带动子树——行为本已对齐（indentTargets 只改目标块）；新增单测钉住不级联。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:8"
+        "src/lib/editor/block-indent.ts",
+        "src/lib/editor/block-indent.test.ts"
       ]
     },
     "G614": {
@@ -9100,10 +9107,13 @@
       ]
     },
     "G1570": {
-      "status": "partial",
-      "note": "查找与替换两键同分支、一次摊开两框；官方 Ctrl-F 只开查找",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "查找两档：showReplace/openWith + 面板替换行门控；e2e 两条证明 Ctrl-F 无替换行、Ctrl-Shift-F 有。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:94"
+        "src/lib/store/use-find-replace-store.ts",
+        "src/components/editor/find-replace-panel.tsx",
+        "e2e/find-replace-case.spec.ts"
       ]
     },
     "G1571": {

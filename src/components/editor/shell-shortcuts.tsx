@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { shellShortcutAllowed } from '@/lib/editor/shell-scope';
+import { isImeComposing } from '@/lib/editor/ime-guard';
 import { useFocusStore } from '@/lib/store/use-focus-store';
 import { useSettingsStore } from '@/lib/store/use-settings-store';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
@@ -46,6 +47,9 @@ export function ShellShortcuts() {
     stack.push(shellLayer);
 
     const onKeyDown = (event: KeyboardEvent) => {
+      // G490: an IME composing (`keyCode 229`) swallows the whole dispatch — the candidate window
+      // owns Esc/Enter, so the shell must not act on them either.
+      if (isImeComposing(event)) return;
       const binding = KEY_BINDINGS.find((candidate) => {
         if (!HANDLED.has(candidate.id)) return false;
         // G624: the shortcut panel is editor-only; on browse screens the key does nothing.

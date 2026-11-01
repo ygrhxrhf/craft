@@ -3,6 +3,7 @@
 import { buildRelationValue, relationItems, relationTargetId } from '@/lib/collection/relation-value';
 import { normalizeDateValue } from '@/lib/collection/date-value';
 import { rawValueOf } from '@/lib/collection/cell-value';
+import { cellKeyAction } from '@/lib/collection/cell-key';
 import { useState, useRef, useEffect } from 'react';
 import { Check, X, ChevronDown, Calendar as CalendarIcon, Link2, Paperclip } from 'lucide-react';
 import { cn } from 'cn';
@@ -143,8 +144,15 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
       }}
       onBlur={() => { setEditing(false); onChange(text); }}
       onKeyDown={e => {
-        if (e.key === 'Enter') { setEditing(false); onChange(text); }
-        if (e.key === 'Escape') { setText(value ?? ''); setEditing(false); }
+        // G466: Enter commits and the event is stopped — otherwise it bubbles into the block-level
+        // Enter (split/new block) when the cell is rendered inside the editor. Shift-Enter is left
+        // alone (it keeps its own meaning). IME composition is ignored entirely.
+        const action = cellKeyAction(e);
+        if (action === 'none') return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (action === 'commit') { setEditing(false); onChange(text); }
+        else { setText(value ?? ''); setEditing(false); }
       }}
       className="w-full rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
     />
@@ -177,8 +185,12 @@ function NumberCell({ value, onChange }: { value: any; onChange: (v: any) => voi
       onChange={e => setText(e.target.value)}
       onBlur={() => { setEditing(false); const n = parseFloat(text); onChange(isNaN(n) ? null : n); }}
       onKeyDown={e => {
-        if (e.key === 'Enter') { const n = parseFloat(text); onChange(isNaN(n) ? null : n); setEditing(false); }
-        if (e.key === 'Escape') { setText(value != null ? String(value) : ''); setEditing(false); }
+        const action = cellKeyAction(e);
+        if (action === 'none') return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (action === 'commit') { const n = parseFloat(text); onChange(isNaN(n) ? null : n); setEditing(false); }
+        else { setText(value != null ? String(value) : ''); setEditing(false); }
       }}
       className="w-full rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
     />
@@ -232,9 +244,13 @@ function DateCell({ value, onChange }: { value: any; onChange: (v: any) => void 
           onChange={e => setText(e.target.value)}
           onBlur={() => { setEditing(false); onChange(normalizeDateValue(text)); }}
           onKeyDown={e => {
+            const action = cellKeyAction(e);
+            if (action === 'none') return;
+            e.preventDefault();
+            e.stopPropagation();
             // G394: the date column stores a validated instant, never a half-typed string.
-            if (e.key === 'Enter') { setEditing(false); onChange(normalizeDateValue(text)); }
-            if (e.key === 'Escape') { setEditing(false); }
+            if (action === 'commit') { setEditing(false); onChange(normalizeDateValue(text)); }
+            else setEditing(false);
           }}
           className="w-full min-w-0 flex-1 rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         />

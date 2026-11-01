@@ -195,7 +195,7 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     // G1513：闸从 document 一表推广到"有真建行通路且单点动作会铸壳"的六表。
     const gated = SYNC_TABLES.filter(d => (d.createRequires?.length ?? 0) > 0);
     expect(gated.map(d => d.table)).toEqual(
-      ['document', 'folder', 'task', 'comment', 'comment_thread', 'block_reminder', 'team_member', 'space_member', 'whiteboard'],
+      ['document', 'folder', 'task', 'comment', 'comment_thread', 'block_reminder', 'whiteboard'],
     );
     // 反面：这几枚**不许**配闸——它们的单点动作（收藏）或复合键写入（打标）本就是建行语义，
     // 配了就会把正常操作判成 not_found。

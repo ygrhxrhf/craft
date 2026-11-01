@@ -107,7 +107,11 @@ export function CursorLayer({ editor, awareness, documentId }: CursorLayerProps)
         anchor: editor.utils.createMappablePosition(anchor),
         head: editor.utils.createMappablePosition(head),
       });
-      setLocalPresenceField(awareness, 'editingBlockId', resolveEditingBlockId(editor));
+      // G593: publish both the plural dimension (official `editingBlocks`) and the singular one
+      // (kept for older peers). Today a client edits one block at a time, so the array holds one id.
+      const editingBlockId = resolveEditingBlockId(editor);
+      setLocalPresenceField(awareness, 'editingBlockId', editingBlockId);
+      setLocalPresenceField(awareness, 'editingBlocks', editingBlockId ? [editingBlockId] : null);
     };
 
     const onTransaction = () => {

@@ -153,7 +153,7 @@ export function setLocalCursor(
  * Used for the RTC dimensions (editing block / open page) as well as the caret:
  * an unconditional write rebroadcasts to every peer on each keystroke.
  */
-export function setLocalPresenceField<K extends 'cursor' | 'editingBlockId' | 'openPageId'>(
+export function setLocalPresenceField<K extends 'cursor' | 'editingBlockId' | 'openPageId' | 'editingBlocks' | 'openPages'>(
   awareness: Awareness,
   key: K,
   value: PresenceState[K],
@@ -162,10 +162,11 @@ export function setLocalPresenceField<K extends 'cursor' | 'editingBlockId' | 'o
   if (JSON.stringify(current ?? null) === JSON.stringify(value ?? null)) return;
   awareness.setLocalStateField(key, value ?? null);
   // G593: the two RTC dimensions carry an `updatedAt` alongside the value, so a peer can age out
-  // a stale one. `cursor` is exempt — it is refreshed by movement, not by a wall clock.
-  if (key === 'editingBlockId') {
+  // a stale one. `cursor` is exempt — it is refreshed by movement, not by a wall clock. The plural
+  // and singular forms share one timestamp (they describe the same edit).
+  if (key === 'editingBlockId' || key === 'editingBlocks') {
     awareness.setLocalStateField('editingBlockUpdatedAt', value == null ? null : Date.now());
-  } else if (key === 'openPageId') {
+  } else if (key === 'openPageId' || key === 'openPages') {
     awareness.setLocalStateField('openPageUpdatedAt', value == null ? null : Date.now());
   }
 }

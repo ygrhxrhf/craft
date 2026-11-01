@@ -14,7 +14,7 @@ import { saveAsTemplate } from '@/actions/document/template';
 import { toggleFavoriteLocal, resolveFavoriteState } from '@/lib/favorite/toggle-local';
 import { createDocument } from '@/actions/document/create';
 import { getFolders } from '@/actions/folder/get';
-import { getDocument, getDocuments, getSubpageStats, type SubpageStats } from '@/actions/document/get';
+import { getDocument, getDocuments, getRecentDocuments, getSubpageStats, type SubpageStats } from '@/actions/document/get';
 import { relativeTime } from '@/lib/document/relative-time';
 import { pageStats, statsInputFor, statsTitle, STATS_SCOPES, STATS_SCOPE_LABELS, type StatsScope } from '@/lib/document/page-stats';
 import { LOCATION_TITLE, locationPathLabel, type PathNode } from '@/lib/document/location-path';
@@ -93,6 +93,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
   const [moving, setMoving] = useState(false);
   const [folders, setFolders] = useState<FolderItem[]>([]);
   const [docs, setDocs] = useState<DocItem[]>([]);
+  const [recentDocs, setRecentDocs] = useState<{ id: string; title: string }[]>([]);
   // 「位置」段自己取数：移动菜单的 docs 特意过滤掉本文档，而面包屑要看它自己的
   // parentId / folderId；菜单数据也只有点开菜单才加载，位置段却是常驻的。
   const [locDocs, setLocDocs] = useState<PathNode[]>([]);
@@ -139,6 +140,16 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
 
   useEffect(() => {
     let alive = true;
+    getRecentDocuments(6)
+      .then((rows) => {
+        if (!alive) return;
+        setRecentDocs(
+          (rows as { id: string; title: string }[])
+            .filter((row) => row.id !== documentId)
+            .slice(0, 5),
+        );
+      })
+      .catch(() => {});
     Promise.all([getDocuments(), getFolders()])
       .then(([docRows, folderRows]) => {
         if (!alive) return;
@@ -399,6 +410,25 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, onClose }: Inf
 
           {/* Collaborators */}
           <MembersSection documentId={documentId} canManage={isOwner} />
+
+          {/* G1437: 「最近使用」— the same group the official info pane carries next to members. */}
+          {recentDocs.length > 0 && (
+            <section>
+              <h3 className="mb-2 text-ui font-medium text-foreground/70">最近使用</h3>
+              <div className="space-y-0.5">
+                {recentDocs.map((doc) => (
+                  <Link
+                    key={doc.id}
+                    href={`/documents/${doc.id}`}
+                    className="flex items-center gap-2 rounded px-1 py-1 text-ui text-muted-foreground transition-colors hover:bg-foreground/4 hover:text-foreground"
+                  >
+                    <FileText className="size-3.5 shrink-0" />
+                    <span className="truncate">{doc.title || untitledFor('list')}</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Backlinks — three sorts plus expand/collapse all (G63), with its own loading line. */}
           {!backlinksLoaded ? (

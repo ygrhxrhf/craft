@@ -1895,11 +1895,11 @@
       ]
     },
     "G1437": {
-      "status": "partial",
-      "note": "有协作者（成员）组；全仓无「最近使用」分组或文案。",
+      "status": "aligned",
+      "note": "信息页签补上「最近使用」分组：取最近文档（排除当前页）列前 5 条，标题走共享的 untitledFor 文案。",
       "evidence": [
         "src/components/editor/tabs/InfoTab.tsx:401",
-        "src/components/editor/tabs/MembersSection.tsx:161"
+        "src/actions/document/get.ts:228"
       ]
     },
     "G1511": {

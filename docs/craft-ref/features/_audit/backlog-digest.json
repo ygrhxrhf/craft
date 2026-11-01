@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-01T09:55:31.117Z",
+  "generatedAt": "2026-11-01T10:02:08.931Z",
   "total": 1614,
   "status": {
     "nonaction": 503,
-    "partial": 399,
-    "aligned": 315,
+    "partial": 398,
+    "aligned": 316,
     "gap": 219,
     "deliberate": 158,
     "unreachable": 20
@@ -22,7 +22,7 @@
     "P2 / nonaction": 164,
     "P2 / gap": 103,
     "P2 / aligned": 86,
-    "P1 / aligned": 84,
+    "P1 / aligned": 85,
     "P1 / nonaction": 82,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -30,7 +30,7 @@
     "P2 / deliberate": 66,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
-    "P1 / partial": 50,
+    "P1 / partial": 49,
     "P1 / gap": 43,
     "P? / deliberate": 40,
     "P3 / gap": 39,
@@ -1184,10 +1184,6 @@
       8
     ],
     [
-      "三点一一一二、第 173 批新登记的官方行为（2026-10-09 机器",
-      8
-    ],
-    [
       "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
       7
     ],
@@ -1205,6 +1201,10 @@
     ],
     [
       "三点八二、第 71 批（★ 静态补账：任务三时间动线 G 项结案 ⇒ 重",
+      7
+    ],
+    [
+      "三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP ",
       7
     ]
   ]

@@ -1092,27 +1092,27 @@
       ]
     },
     "G481": {
-      "status": "partial",
-      "note": "键表已平台双写且精确匹配修饰键；缺 keyCondition 不约束修饰键的变体，Esc 关闭仍散在组件内。",
+      "status": "aligned",
+      "note": "平台双写已有（mac/win/win:null），本次补「声明才比较」：anyModifiers + matchesIgnoringModifiers 表达 Vn 形态，精确匹配仍为默认。",
       "evidence": [
-        "src/lib/editor/keymap.ts:60",
-        "src/lib/editor/keymap.ts:172"
+        "src/lib/editor/keymap.ts:150",
+        "src/lib/editor/keymap.ts:163"
       ]
     },
     "G493": {
-      "status": "partial",
-      "note": "已有 key/code 两档且 code 优先；缺官方第三档 letter 与「单 ASCII 字母」抛错守卫。",
+      "status": "aligned",
+      "note": "键条件三档齐：key（字符）/ code（物理键位）/ letter（单个 ASCII 字母，带官方逐字抛错守卫）。",
       "evidence": [
-        "src/lib/editor/keymap.ts:21",
-        "src/lib/editor/keymap.ts:147"
+        "src/lib/editor/keymap.ts:30",
+        "src/lib/editor/keymap.ts:41"
       ]
     },
     "G494": {
-      "status": "partial",
-      "note": "平台选路已实现（win 缺省回退 Mac、null 显式不绑）；无「声明了才比较」的修饰键语义。",
+      "status": "aligned",
+      "note": "修饰键两档语义到位：默认四门精确比较，Vn 形态（声明才比较）由 anyModifiers 提供；平台选路沿用 bae 的 winMatcher 回落。",
       "evidence": [
-        "src/lib/editor/keymap.ts:60",
-        "src/lib/editor/keymap.ts:141"
+        "src/lib/editor/keymap.ts:63",
+        "src/lib/editor/keymap.test.ts:220"
       ]
     },
     "G516": {

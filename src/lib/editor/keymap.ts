@@ -22,6 +22,25 @@ export interface Chord {
   key?: string;
   /** `event.code` — the physical key, for the `Vr` matchers that ignore the layout. */
   code?: string;
+  /**
+   * G493: the third addressing tier — a single ASCII letter, matched against the character the
+   * key produces. It is the official `letter()` form and carries the same guard: anything that is
+   * not one ASCII letter is a mistake, because a non-letter physical key belongs in `code`.
+   */
+  letter?: string;
+}
+
+/**
+ * G493: `letter()` refuses anything but a single ASCII letter. The official message is kept
+ * verbatim so a wrong descriptor fails the same way on both sides.
+ */
+export function letterChord(letter: string): string {
+  if (!/^[A-Za-z]$/.test(letter)) {
+    throw new Error(
+      `Expected a single ASCII letter, received "${letter}". For non-letter physical keys, use code() instead.`,
+    );
+  }
+  return letter;
 }
 
 export interface KeyBinding {
@@ -145,8 +164,26 @@ export function matches(combo: KeyCombo, binding: KeyBinding, platform: Platform
   // A `code` matcher asks about the physical key; otherwise the character decides, and a
   // layout-shifted letter must not be accepted on the strength of its old label.
   if (chord.code) return chord.code === combo.code;
+  if (chord.letter !== undefined) return chord.letter.toLowerCase() === combo.key.toLowerCase();
   if (chord.key === undefined) return false;
   return chord.key.toLowerCase() === combo.key.toLowerCase();
+}
+
+/**
+ * G481/G494: the official `Vn(t)` form declares no modifiers at all, so **any** combination hits
+ * it (`Ctrl+Esc` closes just like `Esc`). `mo(t)` is the explicit no-modifier form. Locally every
+ * `Chord` names its four modifier booleans, so these two helpers build the "declared only" pair
+ * without loosening the default exact match.
+ */
+export function anyModifiers(key: string, code?: string): Chord {
+  return { metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, key, ...(code ? { code } : {}) };
+}
+
+/** Whether a chord is the "declared only" form: it matches regardless of modifiers. */
+export function matchesIgnoringModifiers(chord: Chord, combo: KeyCombo): boolean {
+  if (chord.code) return chord.code === combo.code;
+  if (chord.letter !== undefined) return chord.letter.toLowerCase() === combo.key.toLowerCase();
+  return chord.key !== undefined && chord.key.toLowerCase() === combo.key.toLowerCase();
 }
 
 function chord(

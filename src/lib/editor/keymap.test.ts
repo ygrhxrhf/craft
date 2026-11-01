@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
+import { anyModifiers, letterChord, matchesIgnoringModifiers,
   KEY_BINDINGS,
   chordFor,
   detectPlatform,
@@ -214,5 +214,39 @@ describe('identity of every row', () => {
 
   it('uses the corrected label for ⇧⏎ — the language pack has no 「重命名」 key (G750)', () => {
     expect(by('RENAME').label).toBe('编辑页面区块');
+  });
+});
+
+// G493: the third addressing tier is a single ASCII letter, with the official guard.
+describe('the letter addressing tier', () => {
+  it('accepts one ASCII letter and rejects anything else', () => {
+    expect(letterChord('j')).toBe('j');
+    expect(() => letterChord('Enter')).toThrow(/Expected a single ASCII letter/);
+    expect(() => letterChord('1')).toThrow(/Expected a single ASCII letter/);
+  });
+
+  it('matches a letter chord against the produced character', () => {
+    const binding = {
+      id: 'X',
+      label: 'X',
+      group: 'general' as const,
+      mac: { metaKey: true, ctrlKey: false, altKey: false, shiftKey: false, letter: 'j' },
+    };
+    expect(matches({ metaKey: true, ctrlKey: false, altKey: false, shiftKey: false, key: 'j', code: 'KeyJ' }, binding, 'mac')).toBe(true);
+    expect(matches({ metaKey: true, ctrlKey: false, altKey: false, shiftKey: false, key: 'k', code: 'KeyK' }, binding, 'mac')).toBe(false);
+  });
+});
+
+// G481/G494: the "declared only" form ignores modifiers; the exact form does not.
+describe('declared-modifier matching', () => {
+  const escapeChord = anyModifiers('Escape');
+
+  it('hits regardless of which modifiers are held', () => {
+    expect(matchesIgnoringModifiers(escapeChord, { metaKey: false, ctrlKey: true, altKey: false, shiftKey: false, key: 'Escape', code: 'Escape' })).toBe(true);
+    expect(matchesIgnoringModifiers(escapeChord, { metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, key: 'Escape', code: 'Escape' })).toBe(true);
+  });
+
+  it('still requires the right key', () => {
+    expect(matchesIgnoringModifiers(escapeChord, { metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, key: 'Enter', code: 'Enter' })).toBe(false);
   });
 });

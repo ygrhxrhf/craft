@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-01T10:50:38.118Z",
+  "generatedAt": "2026-11-01T10:53:52.366Z",
   "total": 1614,
   "status": {
     "nonaction": 503,
-    "partial": 390,
-    "aligned": 330,
+    "partial": 387,
+    "aligned": 333,
     "gap": 213,
     "deliberate": 158,
     "unreachable": 20
@@ -21,7 +21,7 @@
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
     "P2 / gap": 103,
-    "P1 / aligned": 99,
+    "P1 / aligned": 102,
     "P2 / aligned": 86,
     "P1 / nonaction": 82,
     "P? / partial": 80,
@@ -30,9 +30,9 @@
     "P2 / deliberate": 66,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
-    "P1 / partial": 41,
     "P? / deliberate": 40,
     "P3 / gap": 39,
+    "P1 / partial": 38,
     "P1 / gap": 37,
     "P? / gap": 34,
     "P3 / deliberate": 32,
@@ -1172,10 +1172,6 @@
       8
     ],
     [
-      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
-      8
-    ],
-    [
       "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
       7
     ],
@@ -1192,7 +1188,7 @@
       7
     ],
     [
-      "三点五三、第 44 批（★ UIFocusStack 分发算法 + 键表",
+      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
       7
     ],
     [
@@ -1205,6 +1201,10 @@
     ],
     [
       "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
+      7
+    ],
+    [
+      "三点一〇六二、第 112 批〔★★★ **代码块主题的\"装配处\"与\"缺省",
       7
     ]
   ]

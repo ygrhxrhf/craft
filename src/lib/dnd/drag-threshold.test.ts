@@ -103,8 +103,10 @@ describe('the editor handle reads the general threshold', () => {
     expect(source).toContain("from '@/lib/dnd/drag-threshold'");
   });
 
-  it('gates on the general pointer distance, not a hard-coded 4', () => {
-    expect(source).toContain('DRAG_THRESHOLDS.general.pointerDistance');
+  it('gates on the general threshold through the shared helper, not a hard-coded 4', () => {
+    // G461: the gate now comes from `pointerArmDistance('general', …)` so the same call decides
+    // both the backend and the distance; the reading still has to be the general column.
+    expect(source).toContain("pointerArmDistance('general'");
     expect(source).not.toMatch(/if \(dist < 4\)/);
   });
 });

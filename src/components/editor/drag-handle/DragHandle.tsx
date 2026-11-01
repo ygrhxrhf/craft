@@ -25,7 +25,8 @@ import {
   type SeparatorMaterial,
 } from '@/lib/editor/separator-material';
 import { WASHI_SEPARATOR } from '@/lib/editor/washi-patterns';
-import { DRAG_THRESHOLDS } from '@/lib/dnd/drag-threshold';
+import { pointerArmDistance, touchArmDelay } from '@/lib/dnd/drag-threshold';
+import { dragBackendFor, type DragBackend } from '@/lib/dnd/backend';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
@@ -56,6 +57,9 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     startX: number;
     startY: number;
     pointerId: number;
+    /** G461: the pointer that started this drag, which fixes the backend for its whole life. */
+    pointerType: string;
+    backend: DragBackend;
     range: DragRange | null;
   } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -333,6 +337,8 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
         startX: e.clientX,
         startY: e.clientY,
         pointerId: e.pointerId,
+        pointerType: e.pointerType,
+        backend: dragBackendFor(e.pointerType),
         range: null,
       };
 
@@ -368,9 +374,12 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
         const st = dragStateRef.current;
         if (!st) return;
         if (!st.range) {
-          // G268：通用档＝指针位移 8px 起拖。触摸端的"长按 150ms"档需要计时器，本把手是
-          //   悬停才出现的（`mousemove` 驱动），触摸根本到不了这里，故触摸端沿用同一枚位移门限。
-          const armAt = DRAG_THRESHOLDS.general.pointerDistance;
+          // G461: which backend drives the drag is decided once, at pointer-down, from the pointer
+          // that started it — a touch drag reads the hold column, a mouse drag the movement column
+          // (G268). Reading the distance from the same helper the backend picks keeps the two from
+          // drifting apart. A touch pointer's movement gate is Infinity, so it never arms here; the
+          // hold timer below does.
+          const armAt = pointerArmDistance('general', st.pointerType);
           const dist = Math.hypot(ev.clientX - st.startX, ev.clientY - st.startY);
           if (dist < armAt) return;
           st.range = resolveDragRange();
@@ -418,6 +427,23 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
 
       window.addEventListener('pointermove', handlePointerMove);
       window.addEventListener('pointerup', handlePointerUp);
+
+      // G461: a touch pointer has no movement gate (`pointerArmDistance` is Infinity), so the hold
+      // is what arms it — the Touch backend's own activation. The timer fires only while the finger
+      // is still down and no range has been taken yet; a move past the tolerance clears it.
+      const holdDelay = touchArmDelay('general', e.pointerType);
+      const holdTimer =
+        holdDelay > 0
+          ? window.setTimeout(() => {
+              const st = dragStateRef.current;
+              if (!st || st.range) return;
+              st.range = resolveDragRange();
+            }, holdDelay)
+          : null;
+      if (holdTimer !== null) {
+        const clearHold = () => window.clearTimeout(holdTimer);
+        window.addEventListener('pointerup', clearHold, { once: true });
+      }
     },
     [handle, editor, getTopLevelRange, computeDropTarget, performMove, selectBlock]
   );

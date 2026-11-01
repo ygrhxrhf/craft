@@ -848,11 +848,11 @@
       ]
     },
     "G321": {
-      "status": "partial",
-      "note": "六种插值约定已能识别，实际只实现 [0] 位置填充，{{name}}/{0}/<0> 无渲染。",
+      "status": "aligned",
+      "note": "六种约定已按种类分开处理：位置 [N] 与具名 {{name}} 有填充器（未知名保持原样），{0}/标签/数字 children/字面量按原样透传。",
       "evidence": [
-        "src/lib/i18n/interpolation.ts:25",
-        "src/lib/i18n/interpolation.ts:53"
+        "src/lib/i18n/interpolation.ts:74",
+        "src/lib/i18n/interpolation.test.ts:44"
       ]
     },
     "G324": {
@@ -1430,11 +1430,11 @@
       ]
     },
     "G685": {
-      "status": "partial",
-      "note": "四档字体已实现，但 id 为 inter/serif/mono/rounded；无 system/system-serif/system-rounded 规范名与别名映射。",
+      "status": "aligned",
+      "note": "字体族改用官方规范名 system/system-serif/system-rounded/system-mono，四别名按官方不规则表映射（sans-serif→system），读侧归一、写侧只存规范名。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:13",
-        "src/components/editor/themes/page-style.ts:19"
+        "src/components/editor/themes/page-style.ts:21",
+        "src/components/editor/themes/page-style.ts:40"
       ]
     },
     "G688": {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { fillPositional, interpolationKinds, mixesSyntaxes } from './interpolation';
+import { fillNamed, fillPositional, interpolate, interpolationKinds, mixesSyntaxes } from './interpolation';
 
 /**
  * The six interpolation conventions (G229 / G321): positional, named, prompt slot, wrapping tag,
@@ -65,5 +65,24 @@ describe('filling positional slots', () => {
 
   it('does not touch a literal bracketed word', () => {
     expect(fillPositional('[team] 与 [0]', ['甲'])).toBe('[team] 与 甲');
+  });
+});
+
+// G321: the two forms a plain string carries, plus the pass-through for the other four.
+describe('filling the two string forms', () => {
+  it('fills named slots and leaves an unknown name visible', () => {
+    expect(fillNamed('已删除 {{deletedCount}} 项', { deletedCount: 3 })).toBe('已删除 3 项');
+    expect(fillNamed('你的方案是 {{plan}}', {})).toBe('你的方案是 {{plan}}');
+  });
+
+  it('applies positional then named in one pass', () => {
+    expect(interpolate('[0] 属于 {{space}}', { positional: ['文档'], named: { space: '工作区' } })).toBe(
+      '文档 属于 工作区',
+    );
+  });
+
+  it('leaves prompt slots and tags alone', () => {
+    expect(interpolate('总结 {0} 的内容', { positional: ['甲'] })).toBe('总结 {0} 的内容');
+    expect(interpolate('请阅读 <b>条款</b>', {})).toBe('请阅读 <b>条款</b>');
   });
 });

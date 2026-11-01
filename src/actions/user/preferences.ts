@@ -3,9 +3,11 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { canonicalFontId } from '@/components/editor/themes/page-style';
 
 const themeValues = new Set(['light', 'dark', 'system']);
-const fontValues = new Set(['inter', 'serif', 'mono', 'rounded']);
+// G685: canonical names plus the legacy aliases; the stored value is canonicalised below.
+const fontValues = new Set(['system', 'system-serif', 'system-mono', 'system-rounded', 'inter', 'serif', 'mono', 'rounded', 'sans-serif']);
 const widthValues = new Set(['narrow', 'default', 'wide']);
 // G160：已完成任务的外观三档（官方 preferences.advanced.completed.task.appearance.*＝淡化/删除线/无）
 const completedAppearanceValues = new Set(['faded', 'strike', 'none']);
@@ -19,7 +21,8 @@ function validate(kind: string, value: string): string {
         ? completedAppearanceValues
         : widthValues;
   if (!allowed.has(value)) throw new Error('无效的偏好值');
-  return value;
+  // G685: store the canonical font name; the legacy aliases are accepted but not persisted.
+  return kind === 'editorFont' ? canonicalFontId(value) : value;
 }
 
 const switchPreferences = ['notifyComments', 'notifyReminders', 'notifyDaily'] as const;

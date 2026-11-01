@@ -10,18 +10,39 @@ export interface PageStyle {
   spellingLang?: string;
 }
 
-export type FontPackId = 'inter' | 'serif' | 'mono' | 'rounded';
+/**
+ * G685: the official names are `system` / `system-serif` / `system-rounded` / `system-mono`, and
+ * the legacy aliases map **irregularly** — `sans-serif` points at `system`, not `system-serif`.
+ * Both spellings are accepted on read; the canonical name is what gets written.
+ */
+export type FontPackId = 'system' | 'system-serif' | 'system-mono' | 'system-rounded';
 
-export type PageThemeId = 'default' | 'cream' | 'mint' | 'sky' | 'lavender' | 'peach';
+const FONT_ALIASES: Record<string, FontPackId> = {
+  system: 'system',
+  'sans-serif': 'system',
+  inter: 'system',
+  'system-serif': 'system-serif',
+  serif: 'system-serif',
+  'system-rounded': 'system-rounded',
+  rounded: 'system-rounded',
+  'system-mono': 'system-mono',
+  mono: 'system-mono',
+};
+
+export function canonicalFontId(value: unknown): FontPackId {
+  return typeof value === 'string' && value in FONT_ALIASES ? FONT_ALIASES[value] : 'system';
+}
+
+export const fontPacks: { id: FontPackId; label: string; stack: string }[] = [
+  { id: 'system', label: '默认', stack: 'var(--font-sans), system-ui, sans-serif' },
+  { id: 'system-serif', label: '衬线', stack: 'Georgia, "Times New Roman", "Songti SC", serif' },
+  { id: 'system-mono', label: '等宽', stack: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' },
+  { id: 'system-rounded', label: '圆体', stack: 'ui-rounded, "Hiragino Maru Gothic ProN", Quicksand, sans-serif' },
+];
 
 export type WashiId = 'none' | 'sunset' | 'ocean' | 'forest' | 'candy' | 'aurora';
 
-export const fontPacks: { id: FontPackId; label: string; stack: string }[] = [
-  { id: 'inter', label: '默认', stack: 'var(--font-sans), system-ui, sans-serif' },
-  { id: 'serif', label: '衬线', stack: 'Georgia, "Times New Roman", "Songti SC", serif' },
-  { id: 'mono', label: '等宽', stack: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' },
-  { id: 'rounded', label: '圆体', stack: 'ui-rounded, "Hiragino Maru Gothic ProN", Quicksand, sans-serif' },
-];
+export type PageThemeId = 'default' | 'cream' | 'mint' | 'sky' | 'lavender' | 'peach';
 
 export const pageThemes: { id: PageThemeId; label: string; color: string }[] = [
   { id: 'default', label: '默认', color: 'transparent' },
@@ -77,7 +98,7 @@ export function normalizePageStyle(value: unknown): PageStyle {
   if (!value || typeof value !== 'object') return {};
   const v = value as Record<string, unknown>;
   return {
-    fontPack: typeof v.fontPack === 'string' ? (v.fontPack as FontPackId) : undefined,
+    fontPack: v.fontPack === undefined ? undefined : canonicalFontId(v.fontPack),
     theme: typeof v.theme === 'string' ? (v.theme as PageThemeId) : undefined,
     washi: typeof v.washi === 'string' ? (v.washi as WashiId) : undefined,
     showTitle: typeof v.showTitle === 'boolean' ? v.showTitle : undefined,

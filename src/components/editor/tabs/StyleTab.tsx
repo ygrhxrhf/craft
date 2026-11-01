@@ -192,7 +192,7 @@ export function StyleTab({
               type="button"
               className={cn(
                 'flex-1 rounded-lg border border-foreground/10 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
-                (pageStyle.fontPack ?? 'inter') === font.id && 'border-craft-accent bg-craft-accent/12 text-craft-accent'
+                (pageStyle.fontPack ?? 'system') === font.id && 'border-craft-accent bg-craft-accent/12 text-craft-accent'
               )}
               style={{ fontFamily: font.stack }}
               onClick={() => setPageStyle({ fontPack: font.id })}

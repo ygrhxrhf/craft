@@ -385,10 +385,10 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
 
     case 'advanced': {
       const fontOptions = [
-        { value: 'inter', label: 'Inter（默认）' },
-        { value: 'serif', label: '衬线' },
-        { value: 'mono', label: '等宽' },
-        { value: 'rounded', label: '圆体' },
+        { value: 'system', label: '默认' },
+        { value: 'system-serif', label: '衬线' },
+        { value: 'system-mono', label: '等宽' },
+        { value: 'system-rounded', label: '圆体' },
       ];
       const widthOptions = [
         { value: 'narrow', label: '窄' },

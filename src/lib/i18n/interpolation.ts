@@ -55,6 +55,30 @@ export function fillPositional(template: string, values: readonly string[]): str
 }
 
 /**
+ * G321 form 2: `{{plan}}` is the legacy named form. Unfilled names are left as written —
+ * unlike a positional slot, a name still says which value the string wanted.
+ */
+export function fillNamed(template: string, values: Record<string, string | number>): string {
+  return template.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/g, (match, name: string) =>
+    name in values ? String(values[name]) : match,
+  );
+}
+
+/**
+ * The two forms a plain string can carry: positional `[N]` and named `{{name}}`. The other four
+ * are not text substitutions — `{0}` is an AI prompt slot, `<tag>…</tag>` and `<0></0>` are
+ * rendered by the component that owns the string, and a literal word carries no slot at all.
+ */
+export function interpolate(
+  template: string,
+  values: { positional?: readonly string[]; named?: Record<string, string | number> },
+): string {
+  let out = values.positional ? fillPositional(template, values.positional) : template;
+  if (values.named) out = fillNamed(out, values.named);
+  return out;
+}
+
+/**
  * Whether a string mixes syntaxes. Mixing is the failure the ledger warns about: a named slot left
  * unfilled prints its parameter name to the user.
  */

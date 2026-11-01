@@ -515,12 +515,13 @@
       ]
     },
     "G439": {
-      "status": "gap",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 3 批）：确认单元格不可寻址——collection_values 只有 itemId/propertyId，无 blockId 列；可锚定块只有 paragraph/heading（anchors.ts:5）⇒ 单元格既不能深链、也不能被公式单独寻址。台账读数仍准确。",
+      "note": "现读（第 40 批）：单元格可寻址性已落纯核 `src/lib/collection/cell-address.ts`——四段地址（tableId/rowId/columnId/cellId）＋深链生成/解析（`#c-<四段 __ 分隔>`，缺段退回 null ⇒ 不会退化成\"只指到表格块\"的粗粒度）＋方向邻域 `neighborCells`（上/下/左/右，越界给空数组，与 formula 的 FormulaGrid 同语义）。单测 8 条。仍缺＝存储未改（cell 仍内联 paragraph、无跨持久层稳定 id，可锚定块仍只有 paragraph/heading），故记 partial。",
       "evidence": [
-        "src/prisma/contract.prisma:204-220",
-        "src/lib/search/anchors.ts:1-9"
+        "src/lib/collection/cell-address.ts:22",
+        "src/lib/collection/cell-address.ts:62",
+        "src/lib/collection/cell-address.test.ts:9"
       ]
     },
     "G451": {
@@ -703,11 +704,12 @@
     },
     "G131": {
       "status": "partial",
-      "note": "文档级角色 owner/editor/commenter/viewer 已落；缺官方 5 档访问级别与空间级角色。",
+      "priority": "P1",
+      "note": "现读（第 40 批）：五档访问级别已落纯核 `src/lib/share/access-levels.ts`——五档（collaborators/viewAndComment/editAndComment/linkView/linkEdit）＋官方逐字中文（取自 `_harvest/i18n-zh.tsv:843-850`）＋「档位 → 三键（看/评/编）+ viaLink」映射，**「可评论」是独立一档而非评论开关**（viewAndComment 可评不可编、linkView 只看不可评）。单测钉住五档顺序、逐字文案与三键分档。仍缺＝分享面板仍是三档（`document_share.permission` 单列只存 view/edit/collaborators，扩到五档需迁移），空间级角色见 G324 的独立轴，故记 partial。",
       "evidence": [
-        "src/lib/authz/resource.ts:1",
-        "src/lib/share/permission.ts:11",
-        "src/prisma/contract.prisma:461"
+        "src/lib/share/access-levels.ts:20",
+        "src/lib/share/access-levels.ts:47",
+        "src/lib/collection/cell-address.test.ts:47"
       ]
     },
     "G137": {
@@ -776,11 +778,12 @@
     },
     "G211": {
       "status": "partial",
-      "note": "撤销用 TipTap/Yjs 栈、焦点外不触发；但代码块与公式不是独立内嵌编辑器，缺官方那层隔离。",
+      "priority": "P1",
+      "note": "现读（第 40 批）：撤销的**焦点门控**与**子编辑器隔离**已落纯核 `src/lib/editor/undo-gate.ts`——`undoDisposition(focus)` 三档（正文⇒撤销文档／子编辑器⇒delegate 文档不动／焦点在外⇒ignore，对应官方实测\"连按 7 次零变化\"），`undoStepsFor` 把\"一次打字会话（不论几字符）＝1 步、结构动作＝1 步、不可撤销＝0 步\"写出来。单测 6 条。仍缺＝本地代码/公式/Mermaid 块不是独立内嵌编辑器（无自己的撤销栈），故 delegate 无真实宿主；TipTap history 仍是编辑器级全局栈，故记 partial。",
       "evidence": [
-        "src/components/editor/Editor.tsx:342",
-        "src/components/editor/extensions/code-block-view.tsx:5",
-        "src/components/editor/extensions/math-block-view.tsx:23"
+        "src/lib/editor/undo-gate.ts:31",
+        "src/lib/editor/undo-gate.ts:57",
+        "src/lib/editor/undo-gate.test.ts:8"
       ]
     },
     "G212": {

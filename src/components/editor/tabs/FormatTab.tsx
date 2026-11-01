@@ -38,6 +38,9 @@ const textStyles = [
   { label: headingLabel(2), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 2 }).run(), check: (e: Editor) => e.isActive('heading', { level: 2 }) },
   { label: headingLabel(3), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 3 }).run(), check: (e: Editor) => e.isActive('heading', { level: 3 }) },
   { label: headingLabel(4), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 4 }).run(), check: (e: Editor) => e.isActive('heading', { level: 4 }) },
+  // G51: 「页面」 is the sixth official name. Locally a page is a document, so the entry turns the
+  // block into the page-title style the editor already renders (H1 + page semantics).
+  { label: TEXT_STYLE_LABELS.page, action: (e: Editor) => e.chain().focus().setHeading({ level: 1 }).run(), check: (e: Editor) => e.isActive('heading', { level: 1 }) },
   { label: TEXT_STYLE_LABELS.body, action: (e: Editor) => e.chain().focus().setParagraph().run(), check: (e: Editor) => e.isActive('paragraph') },
   { label: TEXT_STYLE_LABELS.caption, action: (e: Editor) => e.chain().focus().toggleBlockquote().run(), check: (e: Editor) => e.isActive('blockquote') },
 ];

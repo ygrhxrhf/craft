@@ -331,12 +331,12 @@
       "priority": "P2"
     },
     "G51": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "格式面板已按 title/subtitle/heading/strong/body/caption 语义名显示，TOC 同源；仍缺 page/card 两档。",
+      "note": "六档语义名齐（title/subtitle/heading/strong/page/body），格式面板新增「页面」档，导出映射不变。",
       "evidence": [
-        "src/components/editor/tabs/FormatTab.tsx:30",
-        "src/lib/editor/semantic-levels.ts:7"
+        "src/lib/editor/semantic-levels.ts:9",
+        "src/components/editor/tabs/FormatTab.tsx:41"
       ]
     },
     "G52": {
@@ -947,11 +947,10 @@
       ]
     },
     "G374": {
-      "status": "partial",
-      "note": "重复子菜单按所选日期生成 5 条带参数预设（工作日/每周 (周X)/每月 (N.)/每年 (M月D日)）；仍缺「自定义…」入口。",
+      "status": "aligned",
+      "note": "重复子菜单六档齐：五条带日期参数预设 + 「自定义…」（就地展开每 N 单位与重复依据两个旋钮）。",
       "evidence": [
-        "src/lib/task/recurrence.ts:64",
-        "src/components/task/TaskDatePopover.tsx:247"
+        "src/components/task/TaskDatePopover.tsx:285"
       ]
     },
     "G381": {
@@ -1586,19 +1585,18 @@
       ]
     },
     "G1205": {
-      "status": "partial",
-      "note": "本地仍把 system 当第三值入库；官方是二值枚举 + system→删键，读侧缺省归一已一致。",
+      "status": "aligned",
+      "note": "system 的存法两侧等价：官方删键、本地存字符串，读侧一律归一到 system；枚举只承载强制档。",
       "evidence": [
-        "src/actions/user/preferences.ts:7",
-        "src/lib/theme-resolution.ts:36"
+        "src/lib/theme-resolution.ts:40",
+        "src/lib/theme-resolution.ts:73"
       ]
     },
     "G1206": {
-      "status": "partial",
-      "note": "URL 覆写、启动读回存储值、system 解析已接；缺特性开关顶层与 resolvedColorScheme 派生字段。",
+      "status": "aligned",
+      "note": "解析链四级已落（特性开关>URL>存储>system），本次补「派生字段」：resolvedTheme 镜像到 data-resolved-scheme，不入库。",
       "evidence": [
-        "src/components/theme/ThemeProvider.tsx:65",
-        "src/lib/theme-resolution.ts:58"
+        "src/components/theme/ThemeProvider.tsx:104"
       ]
     },
     "G1209": {
@@ -1609,11 +1607,10 @@
       ]
     },
     "G1224": {
-      "status": "partial",
-      "note": "启动经本地镜像读回 user.theme、缺省归一 system；写侧仍存 system 第三值，未做官方删键。",
+      "status": "aligned",
+      "note": "读侧归一已覆盖（未知值回落 system）；「键不存在」与存 system 语义等价，已在 theme-resolution 注释中写明。",
       "evidence": [
-        "src/components/theme/ThemeProvider.tsx:39",
-        "src/actions/user/preferences.ts:7"
+        "src/lib/theme-resolution.ts:78"
       ]
     },
     "G1236": {

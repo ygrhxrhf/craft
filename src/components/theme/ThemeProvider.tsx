@@ -104,6 +104,24 @@ function useUrlSchemeOverride(): ResolvedScheme | undefined {
   return forced;
 }
 
+/**
+ * G1206: the official resolution leaves a **derived** scheme on the element that is never stored —
+ * the panel and CSS read it instead of re-deriving. Locally next-themes owns the class, so the
+ * same derived value is mirrored onto `data-resolved-scheme`.
+ */
+function ResolvedSchemeWriter() {
+  const { resolvedTheme } = useTheme();
+  useEffect(() => {
+    const root = document.documentElement;
+    if (resolvedTheme === 'light' || resolvedTheme === 'dark') {
+      root.dataset.resolvedScheme = resolvedTheme;
+    } else {
+      delete root.dataset.resolvedScheme;
+    }
+  }, [resolvedTheme]);
+  return null;
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const forced = useUrlSchemeOverride();
 
@@ -117,6 +135,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     >
       <AccentRestorer />
       <ThemeAxesWriter />
+      <ResolvedSchemeWriter />
       <StoredThemeRestorer />
       {children}
     </NextThemesProvider>

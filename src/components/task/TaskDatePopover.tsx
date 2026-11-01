@@ -23,6 +23,18 @@ interface TaskDatePopoverProps {
   recurrence?: { value: string | null; onChange: (value: string | null) => void };
 }
 
+/** Merge one field into the stored rule without dropping the others. */
+function patchRule(raw: string | null, patch: Record<string, unknown>): string {
+  let rule: Record<string, unknown> = {};
+  try {
+    const parsed: unknown = raw ? JSON.parse(raw) : null;
+    if (parsed && typeof parsed === 'object') rule = parsed as Record<string, unknown>;
+  } catch {
+    rule = {};
+  }
+  return JSON.stringify({ ...rule, ...patch });
+}
+
 function formatDay(value: string): string {
   return new Date(value).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
 }
@@ -52,6 +64,9 @@ export function TaskDatePopover({
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<'date' | 'time'>('date');
   const [submenu, setSubmenu] = useState<'none' | 'repeat'>('none');
+  // G374: the custom knobs open under the repeat list, so they need their own flag — inside the
+  // repeat branch the submenu value is narrowed to 'repeat'.
+  const [customOpen, setCustomOpen] = useState(false);
   const [text, setText] = useState('');
   const [hour, setHour] = useState(17);
   const [minute, setMinute] = useState(0);
@@ -286,6 +301,49 @@ export function TaskDatePopover({
                           {preset.label}
                         </button>
                       ))}
+                      {/* G374: the sixth official entry. Locally it reveals the two custom knobs
+                          (every-N interval and the anchor) rather than opening a separate screen. */}
+                      <button
+                        type="button"
+                        data-testid="repeat-custom"
+                        onClick={() => setCustomOpen((current) => !current)}
+                        className="flex w-full items-center justify-between rounded px-1 py-1 text-left text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <span>自定义…</span>
+                        <span aria-hidden="true">›</span>
+                      </button>
+                      {customOpen && (
+                        <div className="mt-1 space-y-1 rounded-md border border-border/60 p-1">
+                          <label className="flex items-center justify-between gap-2 px-1 text-xs text-muted-foreground">
+                            每 N 个单位
+                            <input
+                              type="number"
+                              min={1}
+                              aria-label="重复间隔"
+                              className="h-6 w-14 rounded border border-border bg-background px-1 text-xs"
+                              defaultValue={1}
+                              onChange={(event) => {
+                                const interval = Math.max(1, Number(event.target.value) || 1);
+                                recurrence.onChange(patchRule(recurrence.value, { interval }));
+                              }}
+                            />
+                          </label>
+                          <label className="flex items-center justify-between gap-2 px-1 text-xs text-muted-foreground">
+                            重复依据
+                            <select
+                              aria-label="重复依据"
+                              className="h-6 rounded border border-border bg-background px-1 text-xs"
+                              defaultValue="fixed"
+                              onChange={(event) =>
+                                recurrence.onChange(patchRule(recurrence.value, { type: event.target.value }))
+                              }
+                            >
+                              <option value="fixed">按计划日</option>
+                              <option value="flexible">相对于完成</option>
+                            </select>
+                          </label>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

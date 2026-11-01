@@ -8,6 +8,8 @@ describe('semantic text levels (G51)', () => {
       subtitle: '副标题',
       heading: '中标题',
       strong: '小标题',
+      // G51: the sixth official name the panel lists.
+      page: '页面',
       body: '正文',
       caption: '说明',
     });

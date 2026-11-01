@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-01T11:18:52.042Z",
+  "generatedAt": "2026-11-01T11:27:27.888Z",
   "total": 1614,
   "status": {
     "nonaction": 503,
-    "partial": 385,
-    "aligned": 338,
+    "partial": 380,
+    "aligned": 343,
     "gap": 210,
     "deliberate": 158,
     "unreachable": 20
@@ -20,7 +20,7 @@
     "P2 / partial": 199,
     "P? / nonaction": 191,
     "P2 / nonaction": 164,
-    "P1 / aligned": 107,
+    "P1 / aligned": 112,
     "P2 / gap": 103,
     "P2 / aligned": 86,
     "P1 / nonaction": 82,
@@ -32,10 +32,10 @@
     "P3 / aligned": 59,
     "P? / deliberate": 40,
     "P3 / gap": 39,
-    "P1 / partial": 36,
     "P1 / gap": 34,
     "P? / gap": 34,
     "P3 / deliberate": 32,
+    "P1 / partial": 31,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
@@ -804,7 +804,7 @@
         "verdict": "行为不同",
         "score": "2/2",
         "criteria": "层级语义重映射；目录生成规则与官方\"标题/页面/卡片三种来源\"对齐（屏上实测空态文案已确认这三类）",
-        "status": "partial",
+        "status": "aligned",
         "scoreParsed": {
           "impact": 2,
           "cost": 2,
@@ -812,10 +812,10 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "格式面板已按 title/subtitle/heading/strong/body/caption 语义名显示，TOC 同源；仍缺 page/card 两档。",
+        "note": "六档语义名齐（title/subtitle/heading/strong/page/body），格式面板新增「页面」档，导出映射不变。",
         "evidence": [
-          "src/components/editor/tabs/FormatTab.tsx:30",
-          "src/lib/editor/semantic-levels.ts:7"
+          "src/lib/editor/semantic-levels.ts:9",
+          "src/components/editor/tabs/FormatTab.tsx:41"
         ],
         "baseStatus": "gap"
       },

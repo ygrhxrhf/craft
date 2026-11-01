@@ -14,13 +14,8 @@ import {
   clampInterval,
   parseRecurrence,
 } from '@/lib/task/recurrence';
-import {
-  createTask,
-  deleteTask,
-  getTasks,
-  setTaskSchedule,
-  toggleTask,
-} from '@/actions/task/task';
+import { createTask, deleteTask, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
+import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
 import { getSyncManager } from '@/lib/sync-core';
 import { currentUserId } from '@/lib/sync-core/current-user';
@@ -420,17 +415,78 @@ function TaskList({
   onSchedule: (id: string, schedule: TaskSchedule) => Promise<void>;
   appearance: 'faded' | 'strike' | 'none';
 }) {
+  // G270: dragging a task row lands by **half region** (left half inserts before, right half
+  // after) and suppresses the indicator in the three cases the official build does. The reorder
+  // itself is relative-position (`reorderTasks(blockId, afterBlockId)`).
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const [dropBefore, setDropBefore] = useState(true);
+
+  const ids = items.map((task) => task.id);
+
+  const onDragOverRow = (event: React.DragEvent, targetId: string) => {
+    if (!draggingId) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const side = sideFor(event.clientX, { left: rect.left, right: rect.right });
+    const targetIndex = ids.indexOf(targetId);
+    const neighbors = [ids[targetIndex - 1] ?? null, ids[targetIndex + 1] ?? null];
+    const suppress = shouldSuppressIndicator({
+      draggingId,
+      targetId,
+      draggedGroup: [draggingId],
+      targetNeighbors: neighbors,
+    });
+    if (suppress) {
+      setDropTargetId(null);
+      return;
+    }
+    setDropTargetId(targetId);
+    setDropBefore(side === 'left');
+  };
+
+  const onDropRow = async () => {
+    const dragged = draggingId;
+    const target = dropTargetId;
+    setDraggingId(null);
+    setDropTargetId(null);
+    if (!dragged || !target || dragged === target) return;
+    // Relative anchor: "after X" for a right-half drop, "after the row before X" for a left-half.
+    const afterBlockId = dropBefore ? (ids[ids.indexOf(target) - 1] ?? null) : target;
+    await reorderTasks(dragged, afterBlockId).catch(() => {});
+  };
+
   return (
     <div className="flex flex-col">
       {items.map((task) => (
-        <TaskRow
+        <div
           key={task.id}
-          task={task}
-          onToggle={onToggle}
-          onDelete={onDelete}
-          onSchedule={onSchedule}
-          appearance={appearance}
-        />
+          draggable
+          onDragStart={() => setDraggingId(task.id)}
+          onDragEnd={() => {
+            setDraggingId(null);
+            setDropTargetId(null);
+          }}
+          onDragOver={(event) => {
+            event.preventDefault();
+            onDragOverRow(event, task.id);
+          }}
+          onDrop={(event) => {
+            event.preventDefault();
+            void onDropRow();
+          }}
+          className={cn(
+            dropTargetId === task.id && 'border-t-2 border-foreground/40',
+            draggingId === task.id && 'opacity-40',
+          )}
+        >
+          <TaskRow
+            task={task}
+            onToggle={onToggle}
+            onDelete={onDelete}
+            onSchedule={onSchedule}
+            appearance={appearance}
+          />
+        </div>
       ))}
     </div>
   );

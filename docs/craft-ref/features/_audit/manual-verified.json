@@ -842,12 +842,12 @@
       ]
     },
     "G270": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 47 批）：半区落点与三抑制已落纯核 `src/lib/task/task-drop.ts`——`insertIndexFor(side, index)` 就是官方那句 `side===\"left\"?C:C+1`，`sideFor` 以格中线为界（中线归右），`shouldSuppressIndicator` 实现三种抑制（悬自身／目标位在组内／相邻位在组内）。单测 6 条。仍缺＝任务视图尚无拖拽排序（无 reorder action、无指示线渲染），故记 partial。",
+      "note": "现读（第 92 批）改判 aligned：半区落点与三抑制**接进真实任务拖拽**——`TaskList` 的每行 `draggable`，`onDragOver` 用 `sideFor` 按格中线判左/右半区，`shouldSuppressIndicator` 抑制三种情况（悬自身／目标在拖组内／相邻在拖组内），落点折算成**相对锚点**调 `reorderTasks(blockId, afterBlockId)`（右半区＝插到目标之后、左半区＝插到目标之前那行之后）。单测 6 条（task-drop）。",
       "evidence": [
+        "src/app/(app)/tasks/TasksView.tsx:414",
         "src/lib/task/task-drop.ts:18",
-        "src/lib/task/task-drop.ts:46",
         "src/lib/task/task-drop.test.ts:11"
       ]
     },

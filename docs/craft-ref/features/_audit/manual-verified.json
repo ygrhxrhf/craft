@@ -1841,18 +1841,18 @@
       ]
     },
     "G1382": {
-      "status": "partial",
-      "note": "亮档默认一致、系统暗能出暗；缺官方第三条不靠打标的 CSS 字面色兜底。",
+      "status": "aligned",
+      "note": "补第三条兜底规则：@media (prefers-color-scheme: dark) 下 html:not(.dark):not(.light) 用字面色兜底，覆盖「首帧到主题 effect」的白屏窗口；根上同时声明 color-scheme: light dark。",
       "evidence": [
-        "src/app/globals.css:68",
-        "src/components/theme/ThemeProvider.tsx:90"
+        "src/app/globals.css:2395",
+        "src/lib/theme/theme-css.test.ts:19"
       ]
     },
     "G1383": {
-      "status": "partial",
-      "note": "卡片底与页面底已分开；缺官方那根由外壳/专注模式注入、可覆写的 --card-background 轴。",
+      "status": "aligned",
+      "note": "卡片底改为独立 token --card-background（亮档声明、暗档重指），链接预览外壳消费它，不再借用浮层 token。",
       "evidence": [
-        "src/app/globals.css:75",
+        "src/app/globals.css:52",
         "src/components/editor/extensions/link-preview-view.tsx:71"
       ]
     },

@@ -69,6 +69,7 @@ export function LinkPreviewView({ node, updateAttributes }: NodeViewProps) {
         target="_blank"
         rel="noopener noreferrer"
         className="flex overflow-hidden rounded-lg border border-foreground/8 transition-colors duration-150 ease-craft hover:bg-foreground/4"
+        style={{ backgroundColor: 'var(--card-background)' }}
       >
         {image && (
           // eslint-disable-next-line @next/next/no-img-element

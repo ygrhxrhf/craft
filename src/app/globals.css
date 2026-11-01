@@ -49,6 +49,9 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* G1383: the card layer is its own token, not an alias of the overlay layer. It is declared
+     here (light) and re-pointed in `.dark`, and the shell/focus mode may override it. */
+  --card-background: var(--card);
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -66,6 +69,7 @@
    Craft Design System — Light Theme
    ═══════════════════════════════════════════ */
 :root {
+  color-scheme: light dark;
   /* Base — craft.do `[data-theme=light]`: --base 252 253 254, --foreground 26 28 30.
      Neutral-cool, not the marketing site's warm paper white. */
   --background: oklch(0.9936 0.0017 247.8);
@@ -281,6 +285,8 @@
   --foreground: oklch(0.9821 0 0);
 
   --card: oklch(0.2562 0 0);
+  /* G1383: the card layer follows the theme here rather than riding the overlay token. */
+  --card-background: var(--card);
   --card-foreground: oklch(0.9821 0 0);
   --popover: oklch(0.2562 0 0);
   --popover-foreground: oklch(0.9821 0 0);
@@ -2392,4 +2398,19 @@
   --st-header-bg: var(--st-page-bg, #fff);
   --st-cell-bg: var(--st-page-bg, #fff);
   --st-border-color: var(--border);
+}
+
+/* ═══════════════════════════════════════════
+   G1382 — the untagged fallback
+   The theme is written onto <html> by a runtime effect, so between the first paint and that
+   effect the page carries neither `.dark` nor `.light`. The official sheet covers that window
+   with a literal-colour fallback under `prefers-color-scheme: dark`; without it a dark-mode
+   visitor sees a white flash on every load.
+   ═══════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  html:not(.dark):not(.light) {
+    color-scheme: dark;
+    background-color: oklch(0.235 0 0);
+    color: oklch(0.9821 0 0);
+  }
 }

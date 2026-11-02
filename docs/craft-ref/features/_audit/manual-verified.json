@@ -3818,10 +3818,13 @@
       ]
     },
     "G134": {
-      "status": "partial",
-      "note": "有 resolve/unresolve 与删除；重开是按钮非发评论，无 toast/离线门禁",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "已解决串用「输入你的评论以重新打开」占位，回复即重开；resolve/unresolve 各有逐字 toast。",
       "evidence": [
-        "src/components/editor/comments/CommentSection.tsx:469"
+        "src/lib/comment/thread-copy.ts",
+        "src/components/editor/comments/CommentSection.tsx:230",
+        "src/lib/comment/thread-copy.test.ts"
       ]
     },
     "G136": {

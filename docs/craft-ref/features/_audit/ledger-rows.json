@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T08:13:14.475Z",
+  "generatedAt": "2026-11-02T08:16:58.746Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 960,
-    "aligned": 223,
+    "gap": 959,
+    "aligned": 224,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 388,
+    "P2 / gap": 387,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 120,
+    "P2 / aligned": 121,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -3461,10 +3461,10 @@
       "cols": 5,
       "id": "G134",
       "official": "**重新打开话题的触发器是\"提交一条新评论\"**（占位文案变为「输入你的评论以重新打开」），resolve/unresolve 各有 toast；删除评论串**必须联网**（`reconnect.to.delete`）；编辑正文与更新状态是**两次写**（`failed.to.edit` vs `failed.to.update`）（§二）",
-      "local": "`actions/comment/comment.ts` + `comments/CommentSection.tsx` 存在，但无 unresolve-需写评论、无离线删除门禁、无 resolve toast（未逐行读，按官方规格对账为缺失）",
-      "verdict": "行为不同",
+      "local": "`actions/comment/comment.ts` + `comments/CommentSection.tsx` 存在，但无 unresolve-需写评论、无离线删除门禁、无 resolve toast（未逐行读，按官方规格对账为缺失） ✎ 现读（2026-11-02）：已解决串的回复框占位改为「输入你的评论以重新打开」，提交回复在同一路径把 `resolved` 翻回 false；resolve/unresolve 成功后各弹一句逐字 toast（`thread-copy.ts`）。本地无\"删除整条评论串\"入口，编辑正文也走同一条离线写路径 ⇒ 后两项 N/A。单测 2 条。",
+      "verdict": "☆ 已清（第 159 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

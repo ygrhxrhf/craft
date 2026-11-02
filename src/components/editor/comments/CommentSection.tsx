@@ -18,6 +18,8 @@ import { groupReactions, reactionSentence } from './reaction-copy';
 import { toggleReaction, type Reaction } from './reactions';
 import { offlineReactionMessage } from './offline-reaction';
 import { commentSubmitAllowed, offlineCommentMessage } from '@/lib/comment/offline-comment';
+import { THREAD_RESOLVED_TOAST, THREAD_UNRESOLVED_TOAST, TYPE_TO_UNRESOLVE } from '@/lib/comment/thread-copy';
+import { toast } from '@/components/ui/toast';
 import { resolvedByText, resolvedToggleHint, resolvedToggleLabel } from '@/lib/comment/resolved-toggle';
 
 const REACTION_CHOICES = ['👍', '❤️', '😄', '🎉'];
@@ -197,6 +199,8 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
   const handleReply = async (threadId: string) => {
     const body = replyDrafts[threadId]?.trim();
     if (!body) return;
+    // G134: replying to a resolved thread reopens it.
+    const wasResolved = Boolean(threads.find((thread) => thread.id === threadId)?.resolved);
     // G1609：回复走同一道提交门，同样用内联文案。
     if (!commentSubmitAllowed(navigator.onLine)) {
       setOfflineNotice(offlineCommentMessage());
@@ -212,6 +216,14 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
         patch: { threadId, ...(actorId ? { userId: actorId } : {}), body: text },
       });
       setReplyDrafts((prev) => ({ ...prev, [threadId]: '' }));
+      if (wasResolved) {
+        await getSyncManager().applyLocal({
+          table: 'comment_thread',
+          id: threadId,
+          patch: { resolved: false },
+        });
+        toast.add({ id: `thread-resolve-${threadId}`, type: 'success', title: THREAD_UNRESOLVED_TOAST });
+      }
       await reload();
     } catch {
       // 提交失败保持草稿
@@ -244,6 +256,11 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
         patch: { resolved },
       });
       await reload();
+      toast.add({
+        id: `thread-resolve-${threadId}`,
+        type: 'success',
+        title: resolved ? THREAD_RESOLVED_TOAST : THREAD_UNRESOLVED_TOAST,
+      });
     } catch {
       // 状态更新失败保持原状
     }
@@ -469,7 +486,7 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
                   event.preventDefault();
                   void handleReply(thread.id);
                 }}
-                placeholder="回复..."
+                placeholder={thread.resolved ? TYPE_TO_UNRESOLVE : '回复...'}
                 className="flex-1 rounded-md border border-foreground/10 bg-transparent px-2 py-1 text-meta outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               />
               <button

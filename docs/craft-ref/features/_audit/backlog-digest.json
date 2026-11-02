@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T09:24:04.088Z",
+  "generatedAt": "2026-11-02T09:32:16.489Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 496,
-    "partial": 279,
+    "aligned": 498,
+    "partial": 277,
     "deliberate": 165,
     "gap": 142,
     "unreachable": 20
@@ -18,10 +18,10 @@
   },
   "statusByPriority": {
     "P? / nonaction": 191,
-    "P2 / aligned": 181,
+    "P2 / aligned": 183,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 129,
+    "P2 / partial": 127,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1164,6 +1164,14 @@
       "conflict": "local-says-missing",
       "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderId`、删除走软删 `deleteDocument`。入口以直接按钮呈现（浏览屏 ",
       "verdict": "☆ 已清（第 154 批）"
+    },
+    {
+      "id": "G1223",
+      "line": 3904,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本轮实扫＝`src/app/layout.tsx` 与 `src/app/globals.css` **都没有** `color-scheme` 与 `theme-color` 的处理 ⇒ ★ 新 gap 行（本地两条都缺，且都是一行改动的量级）⇒ ✎ **第 116 批实测否证了这条判据的一半**＝\"`grep` 零命中\"推不出\"行为上没有\"（next-themes 初始化脚本逐字 `d.sty",
+      "verdict": "☆ 已清（第 171 批）"
     },
     {
       "id": "G1574",

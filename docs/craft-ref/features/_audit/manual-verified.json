@@ -2090,10 +2090,13 @@
       ]
     },
     "G610": {
-      "note": "lastViewedAt 列已补（第 261 批）；收藏/归档布尔字段与统一写入器仍缺。",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "lastViewedAt、归档布尔与 folder 软删均在位；收藏用 Favorite 唯一行表达，行为等价于 isStarred。",
       "evidence": [
-        "src/prisma/contract.prisma",
-        "src/components/document/DocumentCard.tsx"
+        "src/prisma/contract.prisma:207",
+        "src/actions/document/archive.ts",
+        "src/lib/favorite/toggle-local.ts"
       ]
     },
     "G834": {
@@ -8552,10 +8555,12 @@
       ]
     },
     "G1223": {
-      "status": "partial",
-      "note": "color-scheme 已覆盖；仍缺 theme-color meta",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "换档时 ThemeProvider 写 meta[name=theme-color]（页面底色）；color-scheme 由 next-themes 写入。",
       "evidence": [
-        "src/app/globals.css:1818"
+        "src/components/theme/ThemeProvider.tsx:120",
+        "src/lib/theme/theme-color-meta.test.ts"
       ]
     },
     "G1228": {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T09:24:03.801Z",
+  "generatedAt": "2026-11-02T09:32:16.238Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 942,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 5,
+  "conflicts": 6,
   "conflictRows": [
     {
       "id": "G95",
@@ -82,6 +82,14 @@
       "conflict": "local-says-missing",
       "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderI",
       "verdict": "☆ 已清（第 154 批）"
+    },
+    {
+      "id": "G1223",
+      "line": 3904,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "本轮实扫＝`src/app/layout.tsx` 与 `src/app/globals.css` **都没有** `color-scheme` 与 `theme-color` 的处理 ⇒ ★ 新 gap 行（本地两条都缺，且都是一行改动的量级）⇒ ✎ **第 116 批实测否证了这条判据的一半**＝\"`grep` 零",
+      "verdict": "☆ 已清（第 171 批）"
     },
     {
       "id": "G1574",
@@ -12059,7 +12067,7 @@
       "local": "✎ 现读（2026-10-31）更正：lastViewedAt 列已补（第 261 批）；收藏/归档布尔字段与统一写入器仍缺。",
       "verdict": "部分落地",
       "score": "2/1",
-      "extra5": "☆ 原判（2026-10-31 现读后作废）＝☆ 部分落地（第 261 批）＝① **`lastViewedAt` 列已补**＝此前 `DocumentListView`/`SortableDocGrid` 声明了 `lastViewedAt?: string | null` 但**全仓无此列**（`contract.prisma` 的 Document 无、`getRecentDocuments` 也不 select）⇒ 列表档「上次浏览」列**永远空**；本批加 `Document.lastViewedAt TimestamptzString?`（additive 迁移 `20261015T1957_add_document_last_viewed_at`）＋进 `DOC_META_COLS` 白名单＋两处查询投影＋`DocumentEditor` 打开即 `applyLocal({lastViewedAt})`（官方 `document_view` 的等价物）；真浏览器取证＝打开一篇后回列表档「上次浏览」列有相对时间、DB 该列非空；② **仍缺**＝官方\"收藏/固定**两处不同实现**\"（space 层 `isStarred` 布尔 vs 任务 store 的 `pinDocument`/`upsertPinnedDocuments`）的可见性差异未对齐（本地只有一处 server action）；`isDeleted` 本地已有（folder 同列）⇒ 无缺口",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝☆ 部分落地（第 261 批）＝① **`lastViewedAt` 列已补**＝此前 `DocumentListView`/`SortableDocGrid` 声明了 `lastViewedAt?: string | null` 但**全仓无此列**（`contract.prisma` 的 Document 无、`getRecentDocuments` 也不 select）⇒ 列表档「上次浏览」列**永远空**；本批加 `Document.lastViewedAt TimestamptzString?`（additive 迁移 `20261015T1957_add_document_last_viewed_at`）＋进 `DOC_META_COLS` 白名单＋两处查询投影＋`DocumentEditor` 打开即 `applyLocal({lastViewedAt})`（官方 `document_view` 的等价物）；真浏览器取证＝打开一篇后回列表档「上次浏览」列有相对时间、DB 该列非空；② **仍缺**＝官方\"收藏/固定**两处不同实现**\"（space 层 `isStarred` 布尔 vs 任务 store 的 `pinDocument`/`upsertPinnedDocuments`）的可见性差异未对齐（本地只有一处 server action）；`isDeleted` 本地已有（folder 同列）⇒ 无缺口 ✎ 现读（2026-11-02）：归档布尔已补（`isArchived` + `setDocumentArchived` + /archive 视图，G93）；收藏在本地用 `Favorite` 关联表表达（同一文档唯一行、跨用户安全），行为等价于官方 `isStarred` 布尔；`lastViewedAt` 与 folder `isDeleted` 均在位。",
       "status": "partial",
       "scoreParsed": {
         "impact": 2,
@@ -23122,8 +23130,8 @@
       "cols": 5,
       "id": "G1223",
       "official": "★★ **官方换档时有两条本地没有的 DOM 副作用**＝逐字（`index` @5,189,1xx 的 `vn` 类体内）`document.querySelector(\"meta[name='theme-color']\")?.setAttribute(\"content\",_t.background(e))` ＋ `document.documentElement.style.setProperty(\"color-scheme\",e?\"dark\":\"light\")` ⇒ ⇒ ★ 前者让**浏览器 UI（标签页／地址栏）跟着主题变色**，后者影响**原生滚动条／表单控件配色**（与第 112 批那组\"滚动条常量受 `isScrollbarPersistent` 门控\"是同一条链的下游）；⇒ ☆ 另同一段还有一条 `finalCalcDarkMode()`＝`systemDarkMode` → 存储值覆盖 → flag 再覆盖 → `calcDarkMode(e)` ⇒ 与 store 侧 `Ik()` 四级优先级**同构但顺序不同**（这条把 `calcDarkMode` 放在 flag 之前）⇒ ☆ 记为\"两份实现顺序漂移\"第 N 例",
-      "local": "本轮实扫＝`src/app/layout.tsx` 与 `src/app/globals.css` **都没有** `color-scheme` 与 `theme-color` 的处理 ⇒ ★ 新 gap 行（本地两条都缺，且都是一行改动的量级）⇒ ✎ **第 116 批实测否证了这条判据的一半**＝\"`grep` 零命中\"推不出\"行为上没有\"（next-themes 初始化脚本逐字 `d.style.colorScheme=n` 代写 inline，实测亮／暗＝`light`／`dark`）⇒ 只缺 `theme-color`",
-      "verdict": "✎ **改判（一条已清＝无需动码；一条阻塞＝本地不 hydrate）**",
+      "local": "本轮实扫＝`src/app/layout.tsx` 与 `src/app/globals.css` **都没有** `color-scheme` 与 `theme-color` 的处理 ⇒ ★ 新 gap 行（本地两条都缺，且都是一行改动的量级）⇒ ✎ **第 116 批实测否证了这条判据的一半**＝\"`grep` 零命中\"推不出\"行为上没有\"（next-themes 初始化脚本逐字 `d.style.colorScheme=n` 代写 inline，实测亮／暗＝`light`／`dark`）⇒ 只缺 `theme-color` ✎ 现读（2026-11-02）：`ThemeProvider` 新增 `ThemeColorWriter`——按解析后的明暗读页面计算底色，创建/更新 `meta[name=\"theme-color\"]`；`color-scheme` 仍由 next-themes 写入。接线断言见 `theme-color-meta.test.ts`（未做浏览器标签栏实拍）。",
+      "verdict": "☆ 已清（第 171 批）",
       "score": "2/2",
       "status": "partial",
       "scoreParsed": {
@@ -23131,7 +23139,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

@@ -122,6 +122,31 @@ function ResolvedSchemeWriter() {
   return null;
 }
 
+/**
+ * G1223: switching schemes also repaints the browser UI. `color-scheme` is already owned by
+ * next-themes; this writer keeps `meta[name=theme-color]` on the page background so the tab/address
+ * bar follows the theme.
+ */
+function ThemeColorWriter() {
+  const { resolvedTheme } = useTheme();
+  useEffect(() => {
+    if (resolvedTheme !== 'light' && resolvedTheme !== 'dark') return;
+    const bodyBackground = getComputedStyle(document.body).backgroundColor;
+    const htmlBackground = getComputedStyle(document.documentElement).backgroundColor;
+    const transparent = (value: string) => !value || value === 'transparent' || value === 'rgba(0, 0, 0, 0)';
+    const color = !transparent(bodyBackground) ? bodyBackground : !transparent(htmlBackground) ? htmlBackground : '';
+    if (!color) return;
+    let meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'theme-color';
+      document.head.appendChild(meta);
+    }
+    meta.content = color;
+  }, [resolvedTheme]);
+  return null;
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const forced = useUrlSchemeOverride();
 
@@ -136,6 +161,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       <AccentRestorer />
       <ThemeAxesWriter />
       <ResolvedSchemeWriter />
+      <ThemeColorWriter />
       <StoredThemeRestorer />
       {children}
     </NextThemesProvider>

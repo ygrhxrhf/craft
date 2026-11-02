@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T05:35:42.819Z",
+  "generatedAt": "2026-11-02T05:40:13.603Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 1007,
     "unknown": 198,
-    "aligned": 179,
+    "aligned": 180,
     "deliberate": 97,
-    "partial": 61,
+    "partial": 60,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -23,7 +23,7 @@
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 76,
+    "P2 / aligned": 77,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 38,
@@ -32,8 +32,8 @@
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
-    "P2 / partial": 23,
     "P? / nonaction": 23,
+    "P2 / partial": 22,
     "P? / aligned": 19,
     "P2 / nonaction": 18,
     "P1 / partial": 16,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 2,
+  "conflicts": 1,
   "conflictRows": [
     {
       "id": "G112",
@@ -58,14 +58,6 @@
       "conflict": "local-says-missing",
       "local": "无 ✎ 现读（2026-11-02）更正：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"sta",
       "verdict": "☆ 已清（第 128 批）"
-    },
-    {
-      "id": "G384",
-      "line": 1711,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "本地若做单一共享菜单 ✎ 现读（2026-11-02）更正：**已按对象分档**。通用菜单本就按块类型插专属项（任务/折叠/分隔线/Callout），本批补上**代码块那套九项名册**（`CODE_BLOCK_MENU`：语言/主题/全屏模式/提醒我…/在上方插入区块/在下方插入区块/复制代码/复制区块链接/删除，逐字",
-      "verdict": "部分落地（分档已落，卡片右键未做）"
     }
   ],
   "sectionRows": [
@@ -7957,16 +7949,16 @@
       "cols": 5,
       "id": "G384",
       "official": "**\"更多\"菜单在官方有三套不同项集**：顶栏 `⋯` 11 项（V31）/ 任务块行 `⋯` 8 项（V43）/ 卡片右键 7 项（V48）＝✎ 第 174 批改判＝**现为五套**（＋普通文本块 9 项 G1439／代码块 9 项 G1440）＝判据＝项集枚数类主张随新名册必须重数成员⇒ 不能共用一份菜单配置",
-      "local": "本地若做单一共享菜单 ✎ 现读（2026-11-02）更正：**已按对象分档**。通用菜单本就按块类型插专属项（任务/折叠/分隔线/Callout），本批补上**代码块那套九项名册**（`CODE_BLOCK_MENU`：语言/主题/全屏模式/提醒我…/在上方插入区块/在下方插入区块/复制代码/复制区块链接/删除，逐字按序，`isCodeBlock` 时整份替换通用名册而不是叠加）；「复制代码」写剪贴板、「全屏模式」走代码块自己的全屏态（冒泡事件接进 NodeView）。单测 3 条。★ 卡片右键那 7 项仍是缺口（卡片块没有右键菜单），故本行记\"分档已落、卡片档未做\"。",
-      "verdict": "部分落地（分档已落，卡片右键未做）",
+      "local": "本地若做单一共享菜单 ✎ 现读（2026-11-02）更正：**已按对象分档**。通用菜单本就按块类型插专属项（任务/折叠/分隔线/Callout），本批补上**代码块那套九项名册**（`CODE_BLOCK_MENU`：语言/主题/全屏模式/提醒我…/在上方插入区块/在下方插入区块/复制代码/复制区块链接/删除，逐字按序，`isCodeBlock` 时整份替换通用名册而不是叠加）；「复制代码」写剪贴板、「全屏模式」走代码块自己的全屏态（冒泡事件接进 NodeView）。单测 3 条。★ 卡片右键那 7 项本批补齐：`lib/document/card-menu.ts`（七项名册：在新标签页中打开／复制链接／收藏／创建副本／移至／──／删除，删除前一条分隔线且红字；「收藏」标签随状态翻转）＋ `DocumentCardMenu` 组件挂在卡片右键上（卡片无常驻 `⋯`，与官方一致）。单测 6 条 ⇒ **五套名册各自独立**：顶栏 11／任务行 8／卡片 7／普通文本块 9／代码块 9。",
+      "verdict": "☆ 已清（第 129 批）",
       "score": "2/1",
-      "status": "partial",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {

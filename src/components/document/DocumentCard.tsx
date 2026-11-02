@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { File } from 'lucide-react';
+import { useState } from 'react';
 import { cn } from 'cn';
 import { cardHead } from '@/lib/document/card-head';
+import { DocumentCardMenu } from './DocumentCardMenu';
 
 interface DocumentCardProps {
   document: {
@@ -18,13 +20,20 @@ interface DocumentCardProps {
 
 export function DocumentCard({ document: doc }: DocumentCardProps) {
   const head = cardHead({ title: doc.title, updatedAt: doc.updatedAt, breadcrumb: doc.breadcrumb });
+  // G384/G1439：卡片没有常驻 `⋯`，入口只有右键（7 项）。
+  const [menuAt, setMenuAt] = useState<{ x: number; y: number } | null>(null);
 
   return (
-    <Link
-      href={`/documents/${doc.id}`}
-      data-item-id={doc.id}
-      className="group relative block rounded-lg px-1.5 pt-1.5 pb-0 transition-colors duration-300 hover:bg-foreground/[0.03]"
-    >
+    <>
+      <Link
+        href={`/documents/${doc.id}`}
+        data-item-id={doc.id}
+        onContextMenu={(event) => {
+          event.preventDefault();
+          setMenuAt({ x: event.clientX, y: event.clientY });
+        }}
+        className="group relative block rounded-lg px-1.5 pt-1.5 pb-0 transition-colors duration-300 hover:bg-foreground/[0.03]"
+      >
       {/* The card's focus ring is a real child element, not an outline (G1127): it can carry its
           own z-index and is hidden until the card is focused. */}
       <span
@@ -66,6 +75,13 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
           <span className="text-ui font-medium text-foreground/70">打开</span>
         </div>
       </div>
-    </Link>
+      </Link>
+      <DocumentCardMenu
+        documentId={doc.id}
+        title={doc.title}
+        at={menuAt}
+        onClose={() => setMenuAt(null)}
+      />
+    </>
   );
 }

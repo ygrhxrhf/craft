@@ -4820,13 +4820,15 @@
       ]
     },
     "G384": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "块菜单已按对象分档：补代码块九项名册（逐字按序，替换而非叠加）+ 复制代码 + 全屏模式接线；卡片右键那 7 项仍未做。",
+      "note": "五套菜单名册各自独立：顶栏 11／任务行 8／卡片 7（本批补齐 card-menu.ts + DocumentCardMenu 右键）／普通文本块 9／代码块 9（第 125 批）。",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts",
-        "src/components/editor/drag-handle/block-actions.test.ts",
-        "src/components/editor/extensions/code-block-view.tsx"
+        "src/lib/document/card-menu.ts",
+        "src/components/document/DocumentCardMenu.tsx",
+        "src/components/document/DocumentCard.tsx",
+        "src/lib/editor/document-menu.ts",
+        "src/components/editor/drag-handle/block-actions.ts"
       ]
     },
     "G385": {

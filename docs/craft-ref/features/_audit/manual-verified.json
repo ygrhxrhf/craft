@@ -2190,11 +2190,13 @@
       ]
     },
     "G641": {
-      "status": "partial",
-      "note": "周重复内核存在但屏上无星期多选；days 是 0=周日数字、标签周日打头，官方是周一打头字符串名。",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "weekly.days 读写已是官方星期名数组，内部 0–6；可见周序按 MONDAY_FIRST，无周日打头的星期条。",
       "evidence": [
-        "src/lib/task/recurrence.ts:6",
-        "src/lib/task/recurrence.ts:47"
+        "src/lib/task/recurrence.ts:116",
+        "src/lib/task/recurrence.ts:154",
+        "src/lib/task/recurrence.test.ts"
       ]
     },
     "G666": {
@@ -2206,11 +2208,13 @@
       ]
     },
     "G668": {
-      "status": "partial",
-      "note": "重复只有 freq/days 的 JSON 串与四档预设，无 type 字段与 fixed/flexible 两档。",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "写侧规则恒带 type:\"fixed\"（预设、面板、repeatRuleFor），读侧缺省按 fixed；无 CLI 缩写入口。",
       "evidence": [
-        "src/prisma/contract.prisma:335",
-        "src/lib/task/recurrence.ts:1"
+        "src/lib/task/recurrence.ts:198",
+        "src/lib/task/repeat-validity.ts:71",
+        "src/lib/task/recurrence.test.ts"
       ]
     },
     "G695": {
@@ -5627,10 +5631,14 @@
       ]
     },
     "G547": {
-      "status": "partial",
-      "note": "重复有四种频率，无 skipWeekends/dynamicDays/months",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "skipWeekends 进模型：只在 daily/monthly 保留，命中周末顺延周一；自定义面板可勾选，取消即删键。",
       "evidence": [
-        "src/lib/task/recurrence.ts:3"
+        "src/lib/task/recurrence.ts:20",
+        "src/lib/task/recurrence.ts:382",
+        "src/components/task/TaskDatePopover.tsx:367",
+        "src/lib/task/recurrence.test.ts"
       ]
     },
     "G548": {
@@ -6106,10 +6114,14 @@
       ]
     },
     "G652": {
-      "status": "partial",
-      "note": "选重复只写 recurrence，排期为空仍允许保存；无官方「补今天零点」缺省规则",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "设置重复且排期为空时同一次 patch 补今天零点；客户端 update 与服务端 setTaskSchedule 共用 scheduleWithRecurrence。",
       "evidence": [
-        "src/actions/task/task.ts:310"
+        "src/lib/task/recurrence.ts:98",
+        "src/app/(app)/tasks/TasksView.tsx:585",
+        "src/actions/task/task.ts:354",
+        "src/lib/task/recurrence.test.ts"
       ]
     },
     "G654": {

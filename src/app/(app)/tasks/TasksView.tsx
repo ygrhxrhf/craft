@@ -12,6 +12,7 @@ import {
   INTERVAL_MAX,
   clampInterval,
   parseRecurrence,
+  scheduleWithRecurrence,
 } from '@/lib/task/recurrence';
 import { repeatRuleFor } from '@/lib/task/repeat-validity';
 import { REMIND_PRESETS, isInstantPreset, remindInstantFor } from '@/lib/task/remind-presets';
@@ -578,7 +579,12 @@ function TaskRow({
   };
 
   const update = (patch: Partial<TaskSchedule>) => {
-    void onSchedule(task.id, { ...schedule, ...patch });
+    const next = { ...schedule, ...patch };
+    // G652: setting a repeat refreshes the schedule in the same patch when it was empty.
+    if ('recurrence' in patch) {
+      next.scheduleDate = scheduleWithRecurrence(next.recurrence, next.scheduleDate, new Date());
+    }
+    void onSchedule(task.id, next);
   };
 
   return (

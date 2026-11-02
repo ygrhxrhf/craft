@@ -49,16 +49,21 @@ describe('repeatRuleFor (G646: picking a frequency fills the minimum valid sub-f
   const today = new Date('2026-11-02T09:00:00Z'); // 本地时区 2026-11-02：周一（getDay=1）、日号 2、月 11
 
   it('daily carries no sub-fields', () => {
-    expect(JSON.parse(repeatRuleFor('daily', today))).toEqual({ freq: 'daily' });
+    expect(JSON.parse(repeatRuleFor('daily', today))).toEqual({ freq: 'daily', type: 'fixed' });
   });
 
   it('weekly carries the day the picker was opened on', () => {
     // G405: weekly days are stored as the official weekday-name array.
-    expect(JSON.parse(repeatRuleFor('weekly', today))).toEqual({ freq: 'weekly', days: ['monday'] });
+    // G668: the write side always carries an explicit anchor (default fixed).
+    expect(JSON.parse(repeatRuleFor('weekly', today))).toEqual({ freq: 'weekly', type: 'fixed', days: ['monday'] });
   });
 
   it('monthly carries today’s day-of-month', () => {
-    expect(JSON.parse(repeatRuleFor('monthly', today))).toEqual({ freq: 'monthly', byMonthDay: today.getDate() });
+    expect(JSON.parse(repeatRuleFor('monthly', today))).toEqual({
+      freq: 'monthly',
+      type: 'fixed',
+      byMonthDay: today.getDate(),
+    });
   });
 
   it('yearly carries both a day and a month, so the truth table can never be violated', () => {

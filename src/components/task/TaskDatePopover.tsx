@@ -12,7 +12,7 @@ import {
   parseDateIn,
   startOfLocalDay,
 } from '@/lib/task/date-parse';
-import { describeRecurrence, recurrencePresetsFor } from '@/lib/task/recurrence';
+import { describeRecurrence, parseRecurrence, recurrencePresetsFor } from '@/lib/task/recurrence';
 import { slotIndexForTime, timeSlots } from '@/lib/task/time-menu';
 import { cn } from 'cn';
 
@@ -25,7 +25,7 @@ interface TaskDatePopoverProps {
   recurrence?: { value: string | null; onChange: (value: string | null) => void };
 }
 
-/** Merge one field into the stored rule without dropping the others. */
+/** Merge one field into the stored rule without dropping the others; false removes the key. */
 function patchRule(raw: string | null, patch: Record<string, unknown>): string {
   let rule: Record<string, unknown> = {};
   try {
@@ -34,7 +34,11 @@ function patchRule(raw: string | null, patch: Record<string, unknown>): string {
   } catch {
     rule = {};
   }
-  return JSON.stringify({ ...rule, ...patch });
+  for (const [key, value] of Object.entries(patch)) {
+    if (value === undefined || value === false) delete rule[key];
+    else rule[key] = value;
+  }
+  return JSON.stringify(rule);
 }
 
 function formatDay(value: string): string {
@@ -360,6 +364,24 @@ export function TaskDatePopover({
                               <option value="flexible">相对于完成</option>
                             </select>
                           </label>
+                          {/* G547: 「跳过周末」只属于 daily／monthly 两档（官方字段集如此）。 */}
+                          {(() => {
+                            const rule = parseRecurrence(recurrence.value);
+                            if (!rule || (rule.freq !== 'daily' && rule.freq !== 'monthly')) return null;
+                            return (
+                              <label className="flex items-center justify-between gap-2 px-1 text-xs text-muted-foreground">
+                                跳过周末
+                                <input
+                                  type="checkbox"
+                                  aria-label="跳过周末"
+                                  checked={rule.skipWeekends === true}
+                                  onChange={(event) =>
+                                    recurrence.onChange(patchRule(recurrence.value, { skipWeekends: event.target.checked }))
+                                  }
+                                />
+                              </label>
+                            );
+                          })()}
                         </div>
                       )}
                     </div>

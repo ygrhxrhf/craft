@@ -16,6 +16,8 @@ export interface RecurrenceRule {
   days?: number[];
   /** Monthly: 1 to 31, clamped to the length of the target month. */
   byMonthDay?: number;
+  /** G547: daily/monthly only — skip Saturday and Sunday occurrences. Absent means no. */
+  skipWeekends?: boolean;
   /** Inclusive upper bound, ISO date or datetime. */
   until?: string;
 }
@@ -67,6 +69,7 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
     return null;
   }
   if (rule.until !== undefined && typeof rule.until !== 'string') return null;
+  if (rule.skipWeekends !== undefined && typeof rule.skipWeekends !== 'boolean') return null;
   if (rule.type !== undefined && rule.type !== 'fixed' && rule.type !== 'flexible') return null;
   if (rule.interval !== undefined) {
     const interval = rule.interval as number;
@@ -80,11 +83,31 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
   if (Array.isArray(rule.days)) result.days = rule.days as number[];
   if (rule.byMonthDay !== undefined) result.byMonthDay = rule.byMonthDay as number;
   if (typeof rule.until === 'string') result.until = rule.until;
+  // G547: the field only exists on daily/monthly; anywhere else it is dropped ("有才写").
+  if (rule.skipWeekends === true && (rule.freq === 'daily' || rule.freq === 'monthly')) {
+    result.skipWeekends = true;
+  }
   return result;
 }
 
-/** G405：官方星期名（小写、全名）。 */
-export const OFFICIAL_WEEKDAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+/**
+ * G652 —— 官方不允许"有重复但无排期"的中间态：设置重复且排期为空时，同一次 patch 把排期写成
+ * 今天零点（客户端本地日）。`recurrence` 为 null 时排期原样保留（`repeat==null || schedule!=null
+ * ? schedule : today`）。
+ */
+export function scheduleWithRecurrence(
+  recurrence: string | null | undefined,
+  scheduleDate: string | null | undefined,
+  today: Date,
+): string | null {
+  if (recurrence == null) return scheduleDate ?? null;
+  if (scheduleDate != null) return scheduleDate;
+  const local = new Date(today);
+  local.setHours(0, 0, 0, 0);
+  return local.toISOString();
+}
+
+/** G405：官方星期名（小写、全名）。 */export const OFFICIAL_WEEKDAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
 /**
  * G405 —— 归一星期数组：名字映射成 0–6，数字原样保留，**其余元素静默丢弃**
@@ -174,10 +197,10 @@ export function describeRecurrence(raw: string | null | undefined): string | nul
 /** The preset rules the task scheduler offers; the value is the stored JSON text. */
 export const RECURRENCE_PRESETS: { label: string; value: string | null }[] = [
   { label: '不重复', value: null },
-  { label: '每天', value: '{"freq":"daily"}' },
-  { label: '每周', value: '{"freq":"weekly"}' },
-  { label: '每月', value: '{"freq":"monthly"}' },
-  { label: '每年', value: '{"freq":"yearly"}' },
+  { label: '每天', value: '{"freq":"daily","type":"fixed"}' },
+  { label: '每周', value: '{"freq":"weekly","type":"fixed"}' },
+  { label: '每月', value: '{"freq":"monthly","type":"fixed"}' },
+  { label: '每年', value: '{"freq":"yearly","type":"fixed"}' },
 ];
 
 /**
@@ -192,24 +215,30 @@ export function recurrencePresetsFor(date: Date | null): { label: string; value:
   const weekdayLabel = weekday === null ? null : '一二三四五六日'[weekday];
 
   return [
-    { label: '每天', value: JSON.stringify({ freq: 'daily' }) },
+    { label: '每天', value: JSON.stringify({ freq: 'daily', type: 'fixed' }) },
     {
       label: '每个工作日（周一至周五）',
-      value: JSON.stringify({ freq: 'weekly', days: serializeWeekdays([1, 2, 3, 4, 5]) }),
+      value: JSON.stringify({ freq: 'weekly', type: 'fixed', days: serializeWeekdays([1, 2, 3, 4, 5]) }),
     },
     {
       label: weekdayLabel ? `每周 (周${weekdayLabel})` : '每周',
       value: JSON.stringify(
-        weekday === null ? { freq: 'weekly' } : { freq: 'weekly', days: serializeWeekdays([(weekday + 1) % 7]) },
+        weekday === null
+          ? { freq: 'weekly', type: 'fixed' }
+          : { freq: 'weekly', type: 'fixed', days: serializeWeekdays([(weekday + 1) % 7]) },
       ),
     },
     {
       label: monthDay ? `每月 (${monthDay}.)` : '每月',
-      value: JSON.stringify(monthDay ? { freq: 'monthly', byMonthDay: monthDay } : { freq: 'monthly' }),
+      value: JSON.stringify(
+        monthDay
+          ? { freq: 'monthly', type: 'fixed', byMonthDay: monthDay }
+          : { freq: 'monthly', type: 'fixed' },
+      ),
     },
     {
       label: date ? `每年 (${month}月${monthDay}日)` : '每年',
-      value: JSON.stringify({ freq: 'yearly' }),
+      value: JSON.stringify({ freq: 'yearly', type: 'fixed' }),
     },
   ];
 }
@@ -332,6 +361,10 @@ export function nextOccurrence(
   }
 
   if (!candidate) return null;
+  // G547: "周末除外" — a weekend hit rolls forward to Monday.
+  if (rule.skipWeekends && (rule.freq === 'daily' || rule.freq === 'monthly')) {
+    candidate = skipWeekend(candidate, timeZone);
+  }
   const instant = wallToInstant(candidate, timeZone);
   if (instant <= from.getTime()) return null;
 
@@ -343,6 +376,17 @@ export function nextOccurrence(
 
 function weekdayOf(wall: WallClock, timeZone: string): number {
   return new Date(wallToInstant(wall, timeZone)).getUTCDay();
+}
+
+/** G547: roll a Saturday/Sunday candidate forward to Monday, keeping the wall clock. */
+function skipWeekend(wall: WallClock, timeZone: string): WallClock {
+  let next = wall;
+  for (let guard = 0; guard < 7; guard += 1) {
+    const day = weekdayOf(next, timeZone);
+    if (day !== 0 && day !== 6) break;
+    next = addDays(next, 1);
+  }
+  return next;
 }
 
 function addDays(wall: WallClock, days: number): WallClock {

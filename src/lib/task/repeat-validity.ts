@@ -68,15 +68,16 @@ export function repeatRuleFor(freq: RepeatFrequency, today: Date): string {
   const month = today.getMonth() + 1; // 1–12
   switch (freq) {
     case 'daily':
-      return JSON.stringify({ freq: 'daily' });
+      // G668: rules always carry an explicit anchor; absent means fixed on the official write side.
+      return JSON.stringify({ freq: 'daily', type: 'fixed' });
     case 'weekly':
       // G405：weekly 的 `days` 写成官方形（星期名），读侧两种形都收。
-      return JSON.stringify({ freq: 'weekly', days: serializeWeekdays([weekday]) });
+      return JSON.stringify({ freq: 'weekly', type: 'fixed', days: serializeWeekdays([weekday]) });
     case 'monthly':
-      return JSON.stringify({ freq: 'monthly', byMonthDay: dayOfMonth });
+      return JSON.stringify({ freq: 'monthly', type: 'fixed', byMonthDay: dayOfMonth });
     case 'yearly':
       // 年档在本地承载为"每年 + 月 + 日"：`byMonthDay` 带日，`days` 位放月号（0–11 不用，
       // 这里用 1–12 的月号），与 G646 的"days 与 months 都非空"同形。
-      return JSON.stringify({ freq: 'yearly', days: [dayOfMonth], months: [month] });
+      return JSON.stringify({ freq: 'yearly', type: 'fixed', days: [dayOfMonth], months: [month] });
   }
 }

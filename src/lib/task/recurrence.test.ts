@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MONDAY_FIRST, SUNDAY_FIRST, fromMondayFirst, startOfWeekMonday, toMondayFirst, RECURRENCE_PRESETS, normalizeWeekdays, serializeWeekdays, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor } from './recurrence';
+import { MONDAY_FIRST, SUNDAY_FIRST, fromMondayFirst, startOfWeekMonday, toMondayFirst, RECURRENCE_PRESETS, normalizeWeekdays, serializeWeekdays, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor, scheduleWithRecurrence } from './recurrence';
 
 const iso = (date: Date) => date.toISOString();
 
@@ -176,7 +176,8 @@ describe('date-aware repeat presets', () => {
   it('stores the weekday in the rule when a date is given', () => {
     const weekly = recurrencePresetsFor(new Date(2026, 2, 10)).find((p) => p.label.startsWith('每周'));
     // G405: the stored form is the official weekday-name array, not a number.
-    expect(JSON.parse(weekly!.value)).toEqual({ freq: 'weekly', days: ['tuesday'] });
+    // G668: the anchor is written explicitly (fixed) rather than left absent.
+    expect(JSON.parse(weekly!.value)).toEqual({ freq: 'weekly', type: 'fixed', days: ['tuesday'] });
   });
 });
 
@@ -237,5 +238,67 @@ describe('weekly.days 的官方形（G405）', () => {
   it('does not apply weekday normalisation to yearly days (those are day-of-month)', () => {
     // G646 的 yearly 把日号放在 `days`：15 不是星期，不能被丢成空数组。
     expect(parseRecurrence('{"freq":"yearly","days":[15],"months":[3]}')?.days).toEqual([15]);
+  });
+});
+
+// G547 —— 「跳过周末」只在 daily／monthly 的字段集里；命中周末就顺延到周一。
+describe('skipWeekends (G547)', () => {
+  it('reads the flag only on daily and monthly', () => {
+    expect(parseRecurrence('{"freq":"daily","skipWeekends":true}')?.skipWeekends).toBe(true);
+    expect(parseRecurrence('{"freq":"monthly","skipWeekends":true}')?.skipWeekends).toBe(true);
+    expect(parseRecurrence('{"freq":"weekly","skipWeekends":true}')?.skipWeekends).toBeUndefined();
+    expect(parseRecurrence('{"freq":"yearly","skipWeekends":true}')?.skipWeekends).toBeUndefined();
+    expect(parseRecurrence('{"freq":"daily","skipWeekends":"yes"}')).toBeNull();
+  });
+
+  it('rolls a weekend daily hit to Monday', () => {
+    // Friday 2026-03-06 09:00 UTC; the plain next hit is Saturday, the skipping one is Monday.
+    const from = new Date('2026-03-06T09:00:00Z');
+    expect(iso(nextOccurrence('{"freq":"daily"}', from, 'UTC')!)).toBe('2026-03-07T09:00:00.000Z');
+    expect(iso(nextOccurrence('{"freq":"daily","skipWeekends":true}', from, 'UTC')!)).toBe(
+      '2026-03-09T09:00:00.000Z'
+    );
+  });
+
+  it('rolls a weekend monthly hit to Monday', () => {
+    // From 1 March the next monthly hit is 4 April 2026, a Saturday.
+    const from = new Date('2026-03-01T09:00:00Z');
+    expect(iso(nextOccurrence('{"freq":"monthly","byMonthDay":4}', from, 'UTC')!)).toBe(
+      '2026-04-04T09:00:00.000Z'
+    );
+    expect(iso(nextOccurrence('{"freq":"monthly","byMonthDay":4,"skipWeekends":true}', from, 'UTC')!)).toBe(
+      '2026-04-06T09:00:00.000Z'
+    );
+  });
+});
+
+// G652 —— 有重复就不能没有排期：同一次 patch 补今天零点。
+describe('scheduleWithRecurrence (G652)', () => {
+  const today = new Date(2026, 10, 2, 15, 30); // local 2026-11-02
+
+  it('fills today local midnight when a repeat has no schedule', () => {
+    const filled = scheduleWithRecurrence('{"freq":"daily"}', null, today);
+    const parsed = new Date(filled!);
+    expect([parsed.getFullYear(), parsed.getMonth(), parsed.getDate()]).toEqual([2026, 10, 2]);
+    expect([parsed.getHours(), parsed.getMinutes(), parsed.getSeconds()]).toEqual([0, 0, 0]);
+  });
+
+  it('keeps an existing schedule and leaves a null repeat alone', () => {
+    expect(scheduleWithRecurrence('{"freq":"daily"}', '2026-12-01T00:00:00.000Z', today)).toBe(
+      '2026-12-01T00:00:00.000Z'
+    );
+    expect(scheduleWithRecurrence(null, null, today)).toBeNull();
+    expect(scheduleWithRecurrence(null, '2026-12-01T00:00:00.000Z', today)).toBe(
+      '2026-12-01T00:00:00.000Z'
+    );
+  });
+});
+
+// G668 —— 写侧的规则带显式锚，默认 fixed。
+describe('explicit anchor on write (G668)', () => {
+  it('every preset carries type fixed', () => {
+    for (const preset of recurrencePresetsFor(new Date(2026, 2, 10)).slice(1)) {
+      expect(JSON.parse(preset.value).type).toBe('fixed');
+    }
   });
 });

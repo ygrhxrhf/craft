@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth/auth';
 import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
-import { nextOccurrence, parseRecurrence } from '@/lib/task/recurrence';
+import { nextOccurrence, parseRecurrence, scheduleWithRecurrence } from '@/lib/task/recurrence';
 import { listsTaskFromDocument } from '@/lib/task/display';
 import { applyToggled, taskLineStatus, type TaskAttrs } from '@/lib/editor/task-status';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
@@ -350,7 +350,8 @@ export async function setTaskSchedule(id: string, schedule: TaskSchedule) {
 
   await db.orm.public.Task.where({ id }).update({
     dueDate: schedule.dueDate,
-    scheduleDate: schedule.scheduleDate,
+    // G652: a repeat with no schedule fills today's local midnight instead of staying dateless.
+    scheduleDate: scheduleWithRecurrence(schedule.recurrence, schedule.scheduleDate, new Date()),
     remindAt: schedule.remindAt,
     recurrence: schedule.recurrence,
     recurrenceEnd: schedule.recurrenceEnd,

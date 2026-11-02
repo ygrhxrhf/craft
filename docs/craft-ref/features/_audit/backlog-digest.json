@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T06:16:49.291Z",
+  "generatedAt": "2026-11-02T06:22:34.199Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 440,
-    "partial": 320,
+    "aligned": 444,
+    "partial": 316,
     "gap": 163,
     "deliberate": 159,
     "unreachable": 20
@@ -19,9 +19,9 @@
   "statusByPriority": {
     "P? / nonaction": 191,
     "P1 / aligned": 170,
-    "P2 / partial": 170,
     "P2 / nonaction": 166,
-    "P2 / aligned": 125,
+    "P2 / partial": 166,
+    "P2 / aligned": 129,
     "P2 / gap": 90,
     "P1 / nonaction": 89,
     "P? / partial": 80,
@@ -1183,10 +1183,6 @@
       7
     ],
     [
-      "三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP ",
-      7
-    ],
-    [
       "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
       7
     ],
@@ -1196,6 +1192,10 @@
     ],
     [
       "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
+      6
+    ],
+    [
+      "三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP ",
       6
     ],
     [

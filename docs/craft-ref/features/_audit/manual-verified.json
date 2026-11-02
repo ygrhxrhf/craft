@@ -6434,9 +6434,10 @@
     },
     "G679": {
       "status": "partial",
-      "note": "移动把 parentId/folderId/order 混在一个 patch，无互斥与日记不可移动守卫",
+      "note": "第 188 批：落点互斥解析 + 日记不可移动守卫 + 移动前回退快照已入纯核，浏览屏批量移动接线；卡片菜单/侧栏拖拽仍直写",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:269"
+        "src/lib/document/move.ts:1",
+        "src/components/document/SortableDocGrid.tsx:154"
       ]
     },
     "G680": {

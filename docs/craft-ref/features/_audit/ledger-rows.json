@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T15:16:47.117Z",
+  "generatedAt": "2026-11-02T15:24:01.292Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 924,
@@ -13316,8 +13316,8 @@
       "cols": 5,
       "id": "G679",
       "official": "★★ **`documents move` 的三条约束**：`--folder` 与 `--destination`（`unsorted|templates`）**互斥且必选一**；删除与还原都不在 move 语义里（删＝`documents delete`，还原＝`move --destination unsorted`）；★ **Daily notes cannot be moved**；☆ 还有一条官方自证式要求「移动前先记录当前位置，以便回退」",
-      "local": "本地 `src/actions/document/move.ts:9-21` 的 `moveDocument(id, {parentId, folderId, order})` ⇒ ★ 三种落点混在一个 PATCH 里、**没有互斥校验**，也没有 `unsorted/templates` 虚拟落点；本轮实跑 `grep -rn -iE \"dailyNote|daily_note\" src/actions src/app` 的日记侧 ⇒ 无\"不可移动\"守卫；权限位是 `'editor'`（`:15`），与 §F 只读态矩阵同一条线",
-      "verdict": "语义差（落点模型）＋缺失（日记不可移动守卫）",
+      "local": "本地 `src/actions/document/move.ts:9-21` 的 `moveDocument(id, {parentId, folderId, order})` ⇒ ★ 三种落点混在一个 PATCH 里、**没有互斥校验**，也没有 `unsorted/templates` 虚拟落点；本轮实跑 `grep -rn -iE \"dailyNote|daily_note\" src/actions src/app` 的日记侧 ⇒ 无\"不可移动\"守卫；权限位是 `'editor'`（`:15`），与 §F 只读态矩阵同一条线 ☆ 原判作废（第 188 批现读）：旧证据里的 `src/actions/document/move.ts` 已不存在，落点模型改由 `src/lib/document/move.ts` 承载——`parseMoveRequest` 拒多落点/无落点/未知虚拟落点，`planMove` 挡下每日笔记并产出 unsorted＝`{folderId:null,parentId:null,isTemplate:false}`／templates＝`{isTemplate:true}`，`previous` 快照交给 `applyMove` 在写失败时还原；浏览屏批量移动已走 `applyMoveRow`，卡片菜单与侧栏拖拽仍直写 patch",
+      "verdict": "缺失（局部）",
       "score": "2/1",
       "status": "partial",
       "scoreParsed": {

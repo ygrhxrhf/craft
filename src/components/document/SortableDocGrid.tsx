@@ -18,6 +18,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { isDocumentFavorite } from '@/actions/document/favorite';
 import { deleteDocument } from '@/actions/document/delete';
 import { toggleFavoriteLocal } from '@/lib/favorite/toggle-local';
+import { applyMoveRow } from '@/lib/document/move';
 import {
   enterSelection,
   selectionLabel,
@@ -57,6 +58,8 @@ interface SortableDoc {
   lastViewedAt?: string | null;
   /** G223: 每日笔记可以整类隐藏（⋯ → 显示每日笔记）。 */
   isDailyNote?: boolean;
+  /** G679: 移动要先知道现在的归属，才能算落点与回退快照。 */
+  folderId?: string | null;
   /** G248: carried through to the list row's content-summary subtitle. */
   plainText?: string | null;
   /** G250: the card head's location breadcrumb, already joined by the page. */
@@ -152,8 +155,26 @@ export function SortableDocGrid({
     setSelectionBusy(true);
     try {
       const manager = getSyncManager();
+      let skipped = 0;
       for (const id of ids) {
-        await manager.applyLocal({ table: 'document', id, patch: { folderId } });
+        const row = documents.find((doc) => doc.id === id);
+        const moved = await applyMoveRow(manager, {
+          id,
+          current: {
+            folderId: row?.folderId ?? null,
+            parentId: null,
+            isDailyNote: row?.isDailyNote === true,
+          },
+          folderId,
+        });
+        if (moved === 'daily-note') skipped += 1;
+      }
+      if (skipped > 0) {
+        toast.add({
+          id: 'browse-move-daily-note',
+          type: 'warning',
+          title: `每日笔记不能被移动（跳过 ${skipped} 项）`,
+        });
       }
       await manager.flushNow();
       stopSelecting();

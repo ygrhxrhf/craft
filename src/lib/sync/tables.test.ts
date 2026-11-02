@@ -39,7 +39,10 @@ interface Site { file: string; table: string | null; patchKind: 'literal' | 'oth
 //   `patch: whiteboardMetaPatch.delete(...)` / `.restore(...)` 是变量 patch，静态面判不出来。
 //   已人工复核：两处各产 `isDeleted`/`deletedAt`/`updatedAt` 三键，全在 whiteboard 白名单内，
 //   且 `whiteboard-meta.test.ts` 另有一条守卫逐键比对白名单（不必只靠这里的一次性复核）。
-const UNRESOLVED_BASELINE = 15;
+// ☆ 15→16（第 188 批 G679）：`src/lib/document/move.ts` 的 `applyMove` 写的是 `patch: plan.patch`
+//   ⇒ 静态面判不出来。已人工复核：四种落点的键只可能是 `folderId`/`parentId`/`isTemplate`，
+//   且 `move.test.ts` 另有一条守卫逐键比对 `DOC_META_COLS`（不靠这里的一次性复核）。
+const UNRESOLVED_BASELINE = 16;
 
 /** 服务端写侧把 payload.userId 无条件覆盖成会话 userId 的表（`route.ts:161` 的
  * `USER_ID_TABLES`，用在 `:284`）。这些表的 `userId` 不在 cols 里也不算丢列——列照发，

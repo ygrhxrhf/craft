@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getSyncManager } from '@/lib/sync-core';
 import { Editor, type SaveState } from './Editor';
 import { EditorHeader } from './EditorHeader';
+import { DocumentActionsMenu } from './DocumentActionsMenu';
+import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { DailyNoteNav } from './DailyNoteNav';
 import { RightPanel, type RightTabId } from './tabs/RightPanel';
 import { Breadcrumb } from './Breadcrumb';
@@ -319,6 +321,20 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               </DropdownMenu>
             )}
             <div className="mx-0.5 h-4 w-px bg-border" />
+            {/* G1451：文档级 `⋯` —— 官方那五分组弹层（页面样式／查找·目录／视图／移至／撤销重做）。
+                「视图」是全屏资料的一栏切换，本仓落到右侧面板的对应页签。 */}
+            <DocumentActionsMenu
+              onPageStyle={() => setActiveTab('style')}
+              onFindInPage={() => useFindReplaceStore.getState().openWith(false)}
+              onTableOfContents={() => setActiveTab('info')}
+              onMoveTo={() => setActiveTab('info')}
+              onUndo={() => editor?.chain().focus().undo().run()}
+              onViewTab={(tab) =>
+                // 视图那四枚在本仓都落到右侧面板：页面信息/任务/附件/评论都住在「信息」页签里
+                // （评论区就在该面板内），所以一次切换即可。
+                setActiveTab(tab === 'tasks' || tab === 'attachments' ? 'info' : 'info')
+              }
+            />
             {isOwner && !isMobile && (
               <button
                 onClick={() => setShareOpen(true)}

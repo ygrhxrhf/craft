@@ -8773,10 +8773,14 @@
       ]
     },
     "G1451": {
-      "status": "gap",
-      "note": "无文档级 ⋯ 五分组弹层，只有移动端面板溢出菜单与分享入口",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "文档级 ⋯ 五分组弹层：document-menu.ts（五组逐字 + 视图四枚 + 几何）与 DocumentActionsMenu 组件；视图不关弹层换栏，注入位保留不画空行。",
       "evidence": [
-        "src/components/editor/DocumentEditor.tsx:296"
+        "src/lib/editor/document-menu.ts",
+        "src/lib/editor/document-menu.test.ts",
+        "src/components/editor/DocumentActionsMenu.tsx",
+        "src/components/editor/DocumentEditor.tsx"
       ]
     },
     "G1452": {

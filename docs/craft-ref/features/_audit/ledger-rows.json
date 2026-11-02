@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T03:53:35.027Z",
+  "generatedAt": "2026-11-02T04:05:20.820Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1013,
+    "gap": 1012,
     "unknown": 198,
-    "aligned": 174,
+    "aligned": 175,
     "deliberate": 97,
     "partial": 60,
     "nonaction": 56,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 441,
+    "P2 / gap": 440,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 71,
+    "P2 / aligned": 72,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 38,
@@ -27235,9 +27235,9 @@
       "id": "G1451",
       "official": "★★★★★ **文档级 `⋯` 弹层的分组 id 名册到手＝5 个分组＋10 枚项的「id＋取词键」逐枚对应＝并给出该弹层的几何参数**＝主 chunk 组件 `hOn`（props＝`{docId, spaceId}`）里普通态那一段逐字（偏移 5669129 起、整段 ASCII 可引）＝`U=G2(Gn([!l&&{id:\"styleSection\",actions:[{id:\"pageStyle\",text:b(\"page.style\"),onClick:()=>{s([BC(!0),z5(Cs.PageStyle)])}}]},{id:\"navigationSection\",actions:[{id:\"findInPage\",text:b(\"commands.search.inpage\"),onClick:$},{id:\"tableOfContents\",text:b(\"table.of.contents\"),onClick:W}]},{id:\"viewSection\",actions:[{id:\"view\",text:b(\"view\"),onClick:z,preventCloseOnClick:!0,rightContent:G}]},{id:\"documentActionsSection\",actions:[Lie(I),{id:\"moveTo\",text:b(\"commands.move.to\"),onClick:xOn}]},{id:\"documentManagementSection\",actions:[{id:\"undo\",text:b(\"undo.redo\"),onClick:Z},...w.map(Lie)]}]),V)`＝⇒ 五件可读＝① 首段带**条件前缀 `!l`**（`l`＝一枚 store 选择器＝本尺未定位到它答什么、不落条件结论）② `documentActionsSection` 的第一枚是**运行时注入**（`Lie(I)`＝把一个 action 对象映射成菜单项的函数）、第二枚才是 `moveTo`＝③ `documentManagementSection` 末位是 `...w.map(Lie)`（`w`＝`mSe({docId,spaceId,docModel,currentPageBlock})` 返回的 `actions`＝**该弹层的项集有一部分是按当前上下文动态给的**，固定名册只能给到骨架）④ `viewSection` 那枚带 `preventCloseOnClick:!0`＋`rightContent:G`（＝点开不关弹层、右侧一枚图标）⑤ 两处 `header`/`text` 分级见 G1452＝☆ 点「视图」换栏＝`m` 为真时整份换成 `{id:\"documentInfoSection\",actions:[{id:\"pageInfo\",text:b(\"blockdetails.sidebar.pageinfo\")},{id:\"tasks\",text:b(\"tasks\")},{id:\"attachments\",text:b(\"attachments\")},{id:\"comments\",text:b(\"comments\")}]}`、弹层 `contentKey` 由 `MobileContextMenu` 换成 `MobileContextMenuViewTab`、栏首 `header:b(\"view\")` ＋一枚关闭钮＝☆ 四枚项走**两枝不同的开栏通路**＝`pageInfo`/`comments` → `N`（`$=>{s([h7(!0),z5($)])}`，目标 `Cs.Info`/`Cs.Comments`）／`tasks`/`attachments` → `B`（`$=>{i([sc(!0)]),s([sD($)])}`，目标 `C0.Tasks`/`C0.Attachments`）＝☆ 几何＝`sections:A,placement:\"bottom-end\",width:216,displayMode:\"desktop\"`＝☆ 语言包逐枚现取（键→值）＝`page.style`「页面样式」／`commands.search.inpage`「在页面中查找」／`table.of.contents`「目录」／`view`「视图」／`commands.move.to`**「移至」**／`undo.redo`「撤销/重做」／`blockdetails.sidebar.pageinfo`「页面信息」／`tasks`「任务」／`attachments`「附件」／`comments`「评论」＝☆ **文档级这一枚「移至」与块级 G1444 那枚「移动到…」是两枚不同的键**（`moveto` vs `commands.move.to`）＝不是同一标签的两种写法",
       "local": "☆ 本地文档级弹层无这套分组 id／无 `preventCloseOnClick` 形／无「视图」二栏切换＝⇒ 复刻可直接按 5 分组＋项 id 建模（宽度 216 与 `bottom-end` 给了几何锚点），并**预留\"注入位\"那一档**（`Lie(I)` 与 `...w.map(Lie)`＝骨架之外的项由上下文给）",
-      "verdict": "✓盘上一手（整段 ASCII 逐字＋6 枚分组 id 全 chunk 各命中 1 处＋语言包逐枚取值）＝☆ 与在册关系＝**6 枚分组 id 在 23 份成文面命中全 0**（`documentInfoSection`／`styleSection`／`navigationSection`／`viewSection`／`documentActionsSection`／`documentManagementSection`＝`b175-assert2.mjs` ③）＝`attachments` 这枚键自身三把针全 0＝☆ 与第 174 批的分层关系＝G1439—G1441 册的是**块级** `⋯`（公共内核 5 枚＋按块类型注入），本行册的是**文档级** `⋯`＝两层不互斥、也不得互相代偿＝☆ 与第 173 批页签层（G1429 右侧栏四页）关系＝本行的 `documentInfoSection` 四项（页面信息／任务／附件／评论）＝**另一组页目标识**（`Cs.Info`／`C0.Tasks`／`C0.Attachments`／`Cs.Comments`），与 G1429 那四页不是同一套名册＝两处并存、都要落",
+      "verdict": "✓盘上一手（整段 ASCII 逐字＋6 枚分组 id 全 chunk 各命中 1 处＋语言包逐枚取值）＝☆ 与在册关系＝**6 枚分组 id 在 23 份成文面命中全 0**（`documentInfoSection`／`styleSection`／`navigationSection`／`viewSection`／`documentActionsSection`／`documentManagementSection`＝`b175-assert2.mjs` ③）＝`attachments` 这枚键自身三把针全 0＝☆ 与第 174 批的分层关系＝G1439—G1441 册的是**块级** `⋯`（公共内核 5 枚＋按块类型注入），本行册的是**文档级** `⋯`＝两层不互斥、也不得互相代偿＝☆ 与第 173 批页签层（G1429 右侧栏四页）关系＝本行的 `documentInfoSection` 四项（页面信息／任务／附件／评论）＝**另一组页目标识**（`Cs.Info`／`C0.Tasks`／`C0.Attachments`／`Cs.Comments`），与 G1429 那四页不是同一套名册＝两处并存、都要落 ✎ 现读（2026-11-02）更正：**五分组弹层已建**。新增纯核 `src/lib/editor/document-menu.ts`（`DOCUMENT_MENU_SECTIONS` 五组逐字：pageStyle／findInPage·tableOfContents／view／moveTo／undo；`DOCUMENT_VIEW_ITEMS` 四枚；几何 `bottom-end`＋`width:216`）与组件 `DocumentActionsMenu`（挂进文档顶栏）：① 「视图」点开**不关弹层**、整份换成那四枚；② 文档级「移至」用 `commands.move.to`（与块级 `moveto` 是两枚键，测试钉住）；③ 两个**上下文注入位**保留在数据里但静态名册不画空行。单测 7 条。 ☆ 已清（第 122 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

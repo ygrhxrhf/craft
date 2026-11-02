@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   Calendar, User, Play, Folder, Copy, Star, Clock, Trash2,
   FileText, LayoutTemplate, Download, Search, ArrowUp, ArrowDown, ChevronsUp, ChevronsDown,
-  MessageSquare, ChevronRight, FoldVertical, UnfoldVertical, LogOut, Type, Scan,
+  MessageSquare, ChevronRight, FoldVertical, UnfoldVertical, LogOut, Type, Scan, Group, Ungroup,
 } from 'lucide-react';
 import { cn } from 'cn';
 import { NodeSelection } from '@tiptap/pm/state';
@@ -42,6 +42,7 @@ import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
+import { applyGroup, applyUngroup, canGroup, canUngroup } from '@/lib/editor/block-group';
 import { TOC_EMPTY_COPY, TOC_TITLE, extractToc, type TocEntry } from '@/lib/editor/toc';
 import {
   DEFAULT_SHARE_IMAGE_FONT,
@@ -74,6 +75,17 @@ function moveSelection(editor: Editor | null, target: MoveTarget) {
   if (!editor) return;
   const tr = buildBlockMove(editor.state, target);
   if (tr) editor.view.dispatch(tr);
+}
+
+/** G197：组合与取消组合都走块级事务，卡片是本地唯一的块容器。 */
+function groupSelection(editor: Editor | null) {
+  if (!editor) return;
+  applyGroup(editor.state, editor.view.dispatch);
+}
+
+function ungroupSelection(editor: Editor | null) {
+  if (!editor) return;
+  applyUngroup(editor.state, editor.view.dispatch);
 }
 
 interface InfoTabProps {
@@ -839,6 +851,25 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
               <span>{label}</span>
             </button>
           ))}
+          {/* G197：组合＝把选区触及的块包进卡片；取消组合＝把卡片拆回顶层。 */}
+          <button
+            type="button"
+            onClick={() => groupSelection(editor)}
+            disabled={!editor || !canGroup(editor.state)}
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+          >
+            <Group className="size-3.5 text-muted-foreground" />
+            <span>组合</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => ungroupSelection(editor)}
+            disabled={!editor || !canUngroup(editor.state)}
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+          >
+            <Ungroup className="size-3.5 text-muted-foreground" />
+            <span>取消组合</span>
+          </button>
           <button
             type="button"
             onClick={handleDuplicate}

@@ -4168,10 +4168,12 @@
       ]
     },
     "G197": {
-      "status": "gap",
-      "note": "无块组合/取消组合命令与入口",
+      "status": "aligned",
+      "note": "第 183 批：组合/取消组合两条块级命令落地（容器＝cardBlock），信息页动作两枚按钮接线",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:83"
+        "src/lib/editor/block-group.ts:1",
+        "src/components/editor/tabs/InfoTab.tsx:81",
+        "src/lib/document/actions-menu.ts:24"
       ]
     },
     "G198": {
@@ -4287,9 +4289,10 @@
     },
     "G225": {
       "status": "partial",
-      "note": "12 项中 9 项已接线，缺组合、取消组合、重命名",
+      "note": "第 183 批：12 项中 11 项已接线，只缺重命名；键位字形仍未印",
       "evidence": [
-        "src/lib/document/actions-menu.ts:16"
+        "src/lib/document/actions-menu.ts:16",
+        "src/components/editor/tabs/InfoTab.tsx:857"
       ]
     },
     "G229": {

@@ -37,13 +37,9 @@ describe('the twelve entries', () => {
 
 describe('the local gap', () => {
   it('lists the entries this build lacks', () => {
-    // findInPage, quickOpen and the four moves have local surfaces now; the four that stay
-    // missing have no local action at all (comment from this tab, group, ungroup, rename).
-    expect(missingActions().map((e) => e.id)).toEqual([
-      'group',
-      'ungroup',
-      'rename',
-    ]);
+    // findInPage, quickOpen, the four moves and 组合/取消组合 (G197) have local surfaces now;
+    // 重命名 is the one entry with no local action yet.
+    expect(missingActions().map((e) => e.id)).toEqual(['rename']);
   });
 
   it('marks duplicate and delete as already present', () => {

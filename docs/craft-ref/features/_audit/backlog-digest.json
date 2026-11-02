@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T02:57:37.750Z",
+  "generatedAt": "2026-11-02T03:04:10.907Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 417,
-    "partial": 337,
+    "aligned": 419,
+    "partial": 334,
     "gap": 170,
-    "deliberate": 158,
+    "deliberate": 159,
     "unreachable": 20
   },
   "priority": {
@@ -18,16 +18,16 @@
   },
   "statusByPriority": {
     "P? / nonaction": 191,
-    "P2 / partial": 187,
+    "P2 / partial": 184,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / aligned": 102,
+    "P2 / aligned": 104,
     "P2 / gap": 97,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P3 / partial": 70,
-    "P2 / deliberate": 66,
+    "P2 / deliberate": 67,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
     "P? / deliberate": 40,
@@ -1186,10 +1186,6 @@
       7
     ],
     [
-      "三点一一一九、第 181 批新登记的官方行为（2026-10-09 05",
-      7
-    ],
-    [
       "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
       6
     ],
@@ -1202,11 +1198,15 @@
       6
     ],
     [
-      "三点八二、第 71 批（★ 静态补账：任务三时间动线 G 项结案 ⇒ 重",
+      "三点八七、第 76 批（★★ 契约面穷尽：`--help` 逐条读满 `",
       6
     ],
     [
-      "三点八七、第 76 批（★★ 契约面穷尽：`--help` 逐条读满 `",
+      "三点一〇六二、第 112 批〔★★★ **代码块主题的\"装配处\"与\"缺省",
+      6
+    ],
+    [
+      "三点一一一二、第 173 批新登记的官方行为（2026-10-09 机器",
       6
     ]
   ]

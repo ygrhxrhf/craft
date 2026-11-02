@@ -5452,10 +5452,12 @@
       ]
     },
     "G518": {
-      "status": "partial",
-      "note": "对齐四档＋默认可写；线型只有分隔线四档权重",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "对齐四档已落（ALIGNMENT_CONTROLS + 格式面板 + 斜杠菜单「对齐」组）；线型四档 x1e 是官方块样式序列化字段枚举，归 nonaction（与 G526/G527 同族）。",
       "evidence": [
-        "src/lib/editor/format-commands.ts:83"
+        "src/lib/editor/format-commands.ts",
+        "src/components/editor/slash-menu/slash-commands.ts"
       ]
     },
     "G519": {
@@ -6007,10 +6009,11 @@
       ]
     },
     "G640": {
-      "status": "partial",
-      "note": "本地多出 until/recurrenceEnd 结束链并暴露到 UI 与数据库，属本地超集",
+      "status": "deliberate",
+      "priority": "P2",
+      "note": "官方无\"结束条件\"档，本地有意保留 until 超集（UI+DB 两层）；砍掉只会让功能变少且不影响官方七档行为 ⇒ 记有意偏差。",
       "evidence": [
-        "src/lib/task/recurrence.ts:10"
+        "src/lib/task/recurrence.ts"
       ]
     },
     "G642": {
@@ -8872,10 +8875,11 @@
       ]
     },
     "G1469": {
-      "status": "partial",
-      "note": "撤销交 undoRedo（协作时关），块菜单无多块选择",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "删除粒度已证：一次删除两块＝一笔事务一条 step ⇒ 一发 undo 整块还原；屏幕键位段另见块选区族。",
       "evidence": [
-        "src/components/editor/Editor.tsx:342"
+        "src/lib/editor/cross-block-delete.test.ts"
       ]
     },
     "G1470": {

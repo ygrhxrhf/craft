@@ -7,6 +7,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 const { getDb } = await import('@/prisma/db');
 const {
   notifyCommentRecipients,
+  notifyThreadResolved,
   mentionHandles,
   mentionsUser,
   commentNotificationTitle,
@@ -133,6 +134,14 @@ describe('notifyCommentRecipients', () => {
     })).toBe(1);
     const [row] = await notificationsFor(ownerId);
     expect(row.title).toBe('评论者 在「评论通知样本」中提到了你');
+    expect(row.kind).toBe('comment_mention');
+  });
+
+  it('delivers resolve events as their own kind', async () => {
+    expect(await notifyThreadResolved(db, { documentId, resolverId: authorId })).toBe(1);
+    const [row] = await notificationsFor(ownerId);
+    expect(row.kind).toBe('comment_resolved');
+    expect(row.title).toBe('评论者 解决了「评论通知样本」中的评论');
   });
 
   it('uses the reply wording for replies', async () => {

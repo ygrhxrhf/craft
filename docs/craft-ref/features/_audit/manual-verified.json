@@ -3568,10 +3568,13 @@
       ]
     },
     "G95": {
-      "status": "partial",
-      "note": "有通知表与铃铛（四类），缺官方六类",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "通知 kind 对齐：comment_mention/comment/comment_resolved/document_access_request 已落；block_mention/share_page_comment 本仓无输入面。",
       "evidence": [
-        "src/lib/notification/comment-notifications.ts:84"
+        "src/lib/notification/comment-notifications.ts:84",
+        "src/actions/document/access-requests.ts:60",
+        "src/lib/notification/comment-notifications.test.ts"
       ]
     },
     "G96": {

@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T08:04:35.147Z",
+  "generatedAt": "2026-11-02T08:08:56.568Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 476,
-    "partial": 289,
+    "aligned": 477,
+    "partial": 288,
     "deliberate": 165,
     "gap": 152,
     "unreachable": 20
@@ -20,8 +20,8 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / aligned": 161,
-    "P2 / partial": 139,
+    "P2 / aligned": 162,
+    "P2 / partial": 138,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P2 / gap": 79,
@@ -1134,6 +1134,14 @@
   },
   "conflicts": [
     {
+      "id": "G95",
+      "line": 1241,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "✎ 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否 @ 分成 `comment_mention`／`comment`；解决线程发 `comment_resolved`；编辑请求发 `document_access_request`；`block_mention`（@区块/文档）与 `share_page_comment`（公开",
+      "verdict": "☆ 已清（第 157 批）"
+    },
+    {
       "id": "G112",
       "line": 1262,
       "status": "aligned",
@@ -1166,7 +1174,7 @@
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
-      21
+      20
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",

@@ -5,7 +5,7 @@ import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
-import { notifyCommentRecipients } from '@/lib/notification/comment-notifications';
+import { notifyCommentRecipients, notifyThreadResolved } from '@/lib/notification/comment-notifications';
 
 async function assertDocumentAccess(
   documentId: string,
@@ -161,6 +161,12 @@ export async function setThreadResolved(threadId: string, resolved: boolean) {
     resolvedAt: resolved ? new Date().toISOString() : null,
   });
   await emitSyncEventSafe(db, session.user.id, ['comment_thread'], threadId);
+  if (resolved) {
+    await notifyThreadResolved(db, {
+      documentId: (thread as { documentId: string }).documentId,
+      resolverId: session.user.id,
+    }).catch((error) => console.error('[comment] resolve notification failed', error));
+  }
 }
 
 export async function deleteComment(commentId: string) {

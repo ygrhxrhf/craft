@@ -55,7 +55,7 @@ async function notifyOwnerOfRequest(db: any, document: any, requesterId: string)
   await db.orm.public.Notification.create({
     id,
     userId: document.userId,
-    kind: 'accessRequest',
+    kind: 'document_access_request',
     documentId: String(document.id),
     title: `${name} 请求编辑「${String(document.title ?? '无标题')}」`,
     remindAt: nowIso(),

@@ -104,7 +104,7 @@ describe('requestEditAccess', () => {
     const notifications = await db.orm.public.Notification.where({ userId: ownerId }).all() as Record<string, unknown>[];
     expect(notifications).toHaveLength(1);
     expect(notifications[0]).toMatchObject({
-      kind: 'accessRequest',
+      kind: 'document_access_request',
       documentId,
       title: '申请者 请求编辑「请求批准样本」',
     });

@@ -78,16 +78,18 @@ export async function notifyCommentRecipients(
       if (!user || user.notifyComments !== true) continue;
 
       const id = crypto.randomUUID();
+      const mentioned = mentionsUser(input.body, user);
       await db.orm.public.Notification.create({
         id,
         userId,
-        kind: 'comment',
+        // G95: @-mention and plain comment are two different notification kinds.
+        kind: mentioned ? 'comment_mention' : 'comment',
         documentId: input.documentId,
         title: commentNotificationTitle({
           authorName,
           documentTitle: String(document.title ?? ''),
           kind: input.kind,
-          mentioned: mentionsUser(input.body, user),
+          mentioned,
         }),
         remindAt: new Date().toISOString(),
       });
@@ -95,6 +97,53 @@ export async function notifyCommentRecipients(
       created += 1;
     } catch (error) {
       console.error('[comment] notification delivery failed', error);
+    }
+  }
+  return created;
+}
+
+/**
+ * G95: resolving a thread is its own notification kind (`comment_resolved`), not a comment event.
+ */
+export async function notifyThreadResolved(
+  db: any,
+  input: { documentId: string; resolverId: string },
+): Promise<number> {
+  const document = await db.orm.public.Document.first({ id: input.documentId });
+  if (!document || document.isDeleted === true) return 0;
+
+  const members: Record<string, unknown>[] = await db.orm.public.DocumentMember
+    .where({ documentId: input.documentId })
+    .all();
+
+  const recipientIds = new Set<string>();
+  recipientIds.add(String(document.userId));
+  for (const member of members) recipientIds.add(String(member.userId));
+  recipientIds.delete(input.resolverId);
+
+  const resolver = await db.orm.public.User.first({ id: input.resolverId });
+  const resolverName = typeof resolver?.name === 'string' && resolver.name.trim()
+    ? resolver.name.trim()
+    : '有人';
+
+  let created = 0;
+  for (const userId of recipientIds) {
+    try {
+      const user = await db.orm.public.User.first({ id: userId });
+      if (!user || user.notifyComments !== true) continue;
+      const id = crypto.randomUUID();
+      await db.orm.public.Notification.create({
+        id,
+        userId,
+        kind: 'comment_resolved',
+        documentId: input.documentId,
+        title: `${resolverName} 解决了「${String(document.title ?? '无标题')}」中的评论`,
+        remindAt: new Date().toISOString(),
+      });
+      await emitSyncEventSafe(db, userId, ['notification'], id);
+      created += 1;
+    } catch (error) {
+      console.error('[comment] resolve notification failed', error);
     }
   }
   return created;

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T08:04:34.845Z",
+  "generatedAt": "2026-11-02T08:08:56.272Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 962,
-    "aligned": 221,
+    "gap": 961,
+    "aligned": 222,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 390,
+    "P2 / gap": 389,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 118,
+    "P2 / aligned": 119,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -49,8 +49,16 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 3,
+  "conflicts": 4,
   "conflictRows": [
+    {
+      "id": "G95",
+      "line": 1241,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "✎ 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否 @ 分成 `comment_mention`／`comment`；解决线程发 `comment_resolved`；编辑请求发 `document_access_request`；`block_m",
+      "verdict": "☆ 已清（第 157 批）"
+    },
     {
       "id": "G112",
       "line": 1262,
@@ -2746,17 +2754,17 @@
       "cols": 6,
       "id": "G95",
       "official": "通知类型是**封闭 6 集**：`comment_mention` `comment` `comment_resolved` `block_mention` `share_page_comment` `document_access_request` ⇒ @文档 与 @人 是两类通知",
-      "local": "✎ 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否 @ 分成 `comment_mention`／`comment`；解决线程发 `comment_resolved`；编辑请求发 `document_access_request`；`block_mention`（@区块/文档）与 `share_page_comment`（公开页评论）本仓无对应输入面（提及仅人员、公开页只读）⇒ N/A。单测覆盖 kind 与解决事件。",
+      "verdict": "☆ 已清（第 157 批）",
       "score": "2/2",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝无通知模型、无通知中心（`src` 下无任何 notif 文件）",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

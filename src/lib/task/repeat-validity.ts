@@ -12,7 +12,7 @@
  * 具体日子也能提交，与官方相反。
  */
 
-import { serializeWeekdays } from './recurrence';
+import { localDateString, serializeWeekdays } from './recurrence';
 
 export type RepeatFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
@@ -63,21 +63,22 @@ export function flexibleDraftValid(): boolean {
  * 返回写进 `recurrence` 列的 JSON 串（与既有格式一致：`{freq, days?, byMonthDay?}`）。
  */
 export function repeatRuleFor(freq: RepeatFrequency, today: Date): string {
+  const startDate = localDateString(today);
   const weekday = today.getDay(); // 0=周日 … 6=周六
   const dayOfMonth = today.getDate();
   const month = today.getMonth() + 1; // 1–12
   switch (freq) {
     case 'daily':
       // G668: rules always carry an explicit anchor; absent means fixed on the official write side.
-      return JSON.stringify({ freq: 'daily', type: 'fixed' });
+      return JSON.stringify({ freq: 'daily', type: 'fixed', startDate });
     case 'weekly':
       // G405：weekly 的 `days` 写成官方形（星期名），读侧两种形都收。
-      return JSON.stringify({ freq: 'weekly', type: 'fixed', days: serializeWeekdays([weekday]) });
+      return JSON.stringify({ freq: 'weekly', type: 'fixed', startDate, days: serializeWeekdays([weekday]) });
     case 'monthly':
-      return JSON.stringify({ freq: 'monthly', type: 'fixed', byMonthDay: dayOfMonth });
+      return JSON.stringify({ freq: 'monthly', type: 'fixed', startDate, byMonthDay: dayOfMonth });
     case 'yearly':
       // 年档在本地承载为"每年 + 月 + 日"：`byMonthDay` 带日，`days` 位放月号（0–11 不用，
       // 这里用 1–12 的月号），与 G646 的"days 与 months 都非空"同形。
-      return JSON.stringify({ freq: 'yearly', type: 'fixed', days: [dayOfMonth], months: [month] });
+      return JSON.stringify({ freq: 'yearly', type: 'fixed', startDate, days: [dayOfMonth], months: [month] });
   }
 }

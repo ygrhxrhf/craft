@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MONDAY_FIRST, SUNDAY_FIRST, fromMondayFirst, startOfWeekMonday, toMondayFirst, RECURRENCE_PRESETS, normalizeWeekdays, serializeWeekdays, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor, scheduleWithRecurrence } from './recurrence';
+import { MONDAY_FIRST, SUNDAY_FIRST, fromMondayFirst, startOfWeekMonday, toMondayFirst, RECURRENCE_PRESETS, normalizeWeekdays, serializeWeekdays, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor, scheduleWithRecurrence, localDateString } from './recurrence';
 
 const iso = (date: Date) => date.toISOString();
 
@@ -177,7 +177,7 @@ describe('date-aware repeat presets', () => {
     const weekly = recurrencePresetsFor(new Date(2026, 2, 10)).find((p) => p.label.startsWith('每周'));
     // G405: the stored form is the official weekday-name array, not a number.
     // G668: the anchor is written explicitly (fixed) rather than left absent.
-    expect(JSON.parse(weekly!.value)).toEqual({ freq: 'weekly', type: 'fixed', days: ['tuesday'] });
+    expect(JSON.parse(weekly!.value)).toEqual({ freq: 'weekly', type: 'fixed', days: ['tuesday'], startDate: '2026-03-10' });
   });
 });
 
@@ -307,5 +307,17 @@ describe('explicit anchor on write (G668)', () => {
     for (const preset of recurrencePresetsFor(new Date(2026, 2, 10), 'flexible').slice(1)) {
       expect(JSON.parse(preset.value).type).toBe('flexible');
     }
+  });
+});
+
+// G664: the repeat carries its creation day; completing an occurrence only moves scheduleDate.
+describe('repeat.startDate (G664)', () => {
+  it('keeps startDate through parse/serialize', () => {
+    const rule = parseRecurrence('{"freq":"weekly","startDate":"2026-09-28","days":["monday"]}');
+    expect(rule?.startDate).toBe('2026-09-28');
+  });
+
+  it('writes the local day when the rule is created', () => {
+    expect(localDateString(new Date(2026, 8, 28))).toBe('2026-09-28');
   });
 });

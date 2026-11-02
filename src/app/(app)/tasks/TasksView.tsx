@@ -15,6 +15,7 @@ import {
   scheduleWithRecurrence,
 } from '@/lib/task/recurrence';
 import { repeatRuleFor } from '@/lib/task/repeat-validity';
+import { defaultReminderForRepeat } from '@/lib/task/repeat-reminder';
 import { REMIND_PRESETS, isInstantPreset, remindInstantFor } from '@/lib/task/remind-presets';
 import { REMIND_OFFSET_TIERS, remindAtFromOffset, remindOffsetLabel } from '@/lib/task/remind-offset';
 import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
@@ -583,6 +584,8 @@ function TaskRow({
     // G652: setting a repeat refreshes the schedule in the same patch when it was empty.
     if ('recurrence' in patch) {
       next.scheduleDate = scheduleWithRecurrence(next.recurrence, next.scheduleDate, new Date());
+      // G667: a new repeat also gets the default 09:00 reminder on that day.
+      if (next.recurrence) next.remindAt = defaultReminderForRepeat(next.scheduleDate, next.remindAt);
     }
     void onSchedule(task.id, next);
   };

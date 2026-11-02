@@ -5,6 +5,7 @@ import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { nextOccurrence, parseRecurrence, scheduleWithRecurrence } from '@/lib/task/recurrence';
+import { defaultReminderForRepeat } from '@/lib/task/repeat-reminder';
 import { listsTaskFromDocument } from '@/lib/task/display';
 import { applyToggled, taskLineStatus, type TaskAttrs } from '@/lib/editor/task-status';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
@@ -348,11 +349,17 @@ export async function setTaskSchedule(id: string, schedule: TaskSchedule) {
 
   if (schedule.recurrence && !parseRecurrence(schedule.recurrence)) throw new Error('重复规则无法识别');
 
+  // G652: a repeat with no schedule fills today's local midnight instead of staying dateless.
+  const scheduleDate = scheduleWithRecurrence(schedule.recurrence, schedule.scheduleDate, new Date());
+  // G667: a repeat with no reminder defaults to 09:00 on that day — only when the repeat is new,
+  // so clearing a reminder later is not undone by the next save.
+  const isNewRepeat = Boolean(schedule.recurrence) && !Boolean((task as any).recurrence);
+  const remindAt = isNewRepeat ? defaultReminderForRepeat(scheduleDate, schedule.remindAt) : schedule.remindAt;
+
   await db.orm.public.Task.where({ id }).update({
     dueDate: schedule.dueDate,
-    // G652: a repeat with no schedule fills today's local midnight instead of staying dateless.
-    scheduleDate: scheduleWithRecurrence(schedule.recurrence, schedule.scheduleDate, new Date()),
-    remindAt: schedule.remindAt,
+    scheduleDate,
+    remindAt,
     recurrence: schedule.recurrence,
     recurrenceEnd: schedule.recurrenceEnd,
   });

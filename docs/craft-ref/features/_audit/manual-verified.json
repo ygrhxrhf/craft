@@ -6252,17 +6252,24 @@
       ]
     },
     "G664": {
-      "status": "gap",
-      "note": "只有会前移的 dueDate 指针，没有不前移的 repeat.startDate 锚",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "规则带 startDate 锚（创建日），parse 保留，完成一期只移动 scheduleDate。",
       "evidence": [
-        "src/prisma/contract.prisma:335"
+        "src/lib/task/recurrence.ts:24",
+        "src/lib/task/recurrence.ts:249",
+        "src/lib/task/recurrence.test.ts"
       ]
     },
     "G667": {
-      "status": "gap",
-      "note": "提醒只有可空绝对时刻列，无当日分钟 dateOffset 与 enabled 位",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "新建重复且无提醒时写当日 09:00（偏移 540）；只在从无重复转有重复时补。",
       "evidence": [
-        "src/prisma/contract.prisma:334"
+        "src/lib/task/repeat-reminder.ts",
+        "src/app/(app)/tasks/TasksView.tsx:585",
+        "src/actions/task/task.ts:354",
+        "src/lib/task/repeat-reminder.test.ts"
       ]
     },
     "G669": {

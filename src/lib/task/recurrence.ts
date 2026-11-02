@@ -18,6 +18,11 @@ export interface RecurrenceRule {
   byMonthDay?: number;
   /** G547: daily/monthly only — skip Saturday and Sunday occurrences. Absent means no. */
   skipWeekends?: boolean;
+  /**
+   * G664: the sequence's creation day (`YYYY-MM-DD`). It never advances when an occurrence is
+   * completed — only `scheduleDate` moves forward.
+   */
+  startDate?: string;
   /** Inclusive upper bound, ISO date or datetime. */
   until?: string;
 }
@@ -69,6 +74,7 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
     return null;
   }
   if (rule.until !== undefined && typeof rule.until !== 'string') return null;
+  if (rule.startDate !== undefined && typeof rule.startDate !== 'string') return null;
   if (rule.skipWeekends !== undefined && typeof rule.skipWeekends !== 'boolean') return null;
   if (rule.type !== undefined && rule.type !== 'fixed' && rule.type !== 'flexible') return null;
   if (rule.interval !== undefined) {
@@ -83,6 +89,7 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
   if (Array.isArray(rule.days)) result.days = rule.days as number[];
   if (rule.byMonthDay !== undefined) result.byMonthDay = rule.byMonthDay as number;
   if (typeof rule.until === 'string') result.until = rule.until;
+  if (typeof rule.startDate === 'string') result.startDate = rule.startDate;
   // G547: the field only exists on daily/monthly; anywhere else it is dropped ("有才写").
   if (rule.skipWeekends === true && (rule.freq === 'daily' || rule.freq === 'monthly')) {
     result.skipWeekends = true;
@@ -105,6 +112,13 @@ export function scheduleWithRecurrence(
   const local = new Date(today);
   local.setHours(0, 0, 0, 0);
   return local.toISOString();
+}
+
+/** G664: the local calendar day as `YYYY-MM-DD`. */
+export function localDateString(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
 }
 
 /** G405：官方星期名（小写、全名）。 */export const OFFICIAL_WEEKDAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
@@ -212,36 +226,37 @@ export function recurrencePresetsFor(
   date: Date | null,
   anchor: 'fixed' | 'flexible' = 'fixed',
 ): { label: string; value: string }[] {
+  const startDate = localDateString(date ?? new Date());
   const weekday = date ? (date.getDay() + 6) % 7 : null; // Monday = 0
   const monthDay = date ? date.getDate() : null;
   const month = date ? date.getMonth() + 1 : null;
   const weekdayLabel = weekday === null ? null : '一二三四五六日'[weekday];
 
   return [
-    { label: '每天', value: JSON.stringify({ freq: 'daily', type: anchor }) },
+    { label: '每天', value: JSON.stringify({ freq: 'daily', type: anchor, startDate }) },
     {
       label: '每个工作日（周一至周五）',
-      value: JSON.stringify({ freq: 'weekly', type: anchor, days: serializeWeekdays([1, 2, 3, 4, 5]) }),
+      value: JSON.stringify({ freq: 'weekly', type: anchor, days: serializeWeekdays([1, 2, 3, 4, 5]), startDate }),
     },
     {
       label: weekdayLabel ? `每周 (周${weekdayLabel})` : '每周',
       value: JSON.stringify(
         weekday === null
-          ? { freq: 'weekly', type: anchor }
-          : { freq: 'weekly', type: anchor, days: serializeWeekdays([(weekday + 1) % 7]) },
+          ? { freq: 'weekly', type: anchor, startDate }
+          : { freq: 'weekly', type: anchor, days: serializeWeekdays([(weekday + 1) % 7]), startDate },
       ),
     },
     {
       label: monthDay ? `每月 (${monthDay}.)` : '每月',
       value: JSON.stringify(
         monthDay
-          ? { freq: 'monthly', type: anchor, byMonthDay: monthDay }
-          : { freq: 'monthly', type: anchor },
+          ? { freq: 'monthly', type: anchor, byMonthDay: monthDay, startDate }
+          : { freq: 'monthly', type: anchor, startDate },
       ),
     },
     {
       label: date ? `每年 (${month}月${monthDay}日)` : '每年',
-      value: JSON.stringify({ freq: 'yearly', type: anchor }),
+      value: JSON.stringify({ freq: 'yearly', type: anchor, startDate }),
     },
   ];
 }

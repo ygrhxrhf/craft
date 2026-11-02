@@ -19,6 +19,14 @@ import { cn } from 'cn';
 import { tableBubbleKey } from '../bubble-menu/keys';
 import { TABLE_CONTEXT_UNAVAILABLE, tableRedirectCopy } from '@/lib/editor/table-context-copy';
 import {
+  ALT_OFF,
+  DEFAULT_ALT_COLOR_ID,
+  altColorValue,
+  nextAltColorId,
+  readAlternating,
+} from '@/lib/editor/table-alternating';
+import type { PageThemeId } from '../themes/page-style';
+import {
   clearCellContents,
   clearCellStyle,
   evalFormulas,
@@ -62,13 +70,14 @@ function checkHeaderColumn(editor: Editor): boolean {
   return false;
 }
 
-function isAlternating(editor: Editor): boolean {
+/** G510：隔行颜色的值是主题色 id；`null`＝关闭。 */
+function alternatingColor(editor: Editor): PageThemeId | null {
   const { $from } = editor.state.selection;
   for (let d = $from.depth; d > 0; d--) {
     const node = $from.node(d);
-    if (node.type.name === 'table') return node.attrs.alternating === true;
+    if (node.type.name === 'table') return readAlternating(node.attrs.alternating as string | null);
   }
-  return false;
+  return null;
 }
 
 function checkHeaderRow(editor: Editor): boolean {
@@ -231,14 +240,17 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         </ToolButton>
         <ToolButton
           title="隔行颜色"
-          active={isAlternating(editor)}
-          onClick={() =>
+          active={alternatingColor(editor) !== null}
+          onClick={() => {
+            const current = alternatingColor(editor);
             editor
               .chain()
               .focus()
-              .updateAttributes('table', { alternating: !isAlternating(editor) })
-              .run()
-          }
+              .updateAttributes('table', {
+                alternating: current === null ? DEFAULT_ALT_COLOR_ID : ALT_OFF,
+              })
+              .run();
+          }}
         >
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 6h18" />
@@ -246,6 +258,25 @@ export function TableToolbar({ editor }: TableToolbarProps) {
             <path d="M3 18h18" />
           </svg>
         </ToolButton>
+        {alternatingColor(editor) !== null && (
+          <ToolButton
+            title={`隔行色档：${alternatingColor(editor)}（点切换）`}
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .updateAttributes('table', {
+                  alternating: nextAltColorId(alternatingColor(editor)),
+                })
+                .run()
+            }
+          >
+            <span
+              className="size-4 rounded-full border border-foreground/20"
+              style={{ backgroundColor: altColorValue(alternatingColor(editor)) ?? undefined }}
+            />
+          </ToolButton>
+        )}
         <ToolButton
           title="合并单元格"
           onClick={() => editor.chain().focus().mergeCells().run()}

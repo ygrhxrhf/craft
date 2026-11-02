@@ -45,6 +45,7 @@ import { Callout } from './extensions/callout';
 import { ToggleBlock } from './extensions/toggle-block';
 import { GradientHighlight } from './extensions/gradient-highlight';
 import { FocusStyle } from './extensions/focus-style';
+import { altColorValue, readAlternating } from '@/lib/editor/table-alternating';
 import { ShadedStyle } from './extensions/shaded-style';
 import { BlockFont } from './extensions/block-font';
 import { ImageBlock } from './extensions/image-block';
@@ -493,12 +494,19 @@ export function Editor({
         addAttributes() {
           return {
             ...this.parent?.(),
-            // 隔行颜色 (table.row.color.alternating). Absent means off.
+            // 隔行颜色 (table.row.color.alternating). G510: the value is a theme colour id, not a
+            // flag — `null` means off, and the old `"true"` rows read as the default colour.
             alternating: {
-              default: false,
-              parseHTML: (element) => element.getAttribute('data-alternating') === 'true',
-              renderHTML: (attributes) =>
-                attributes.alternating ? { 'data-alternating': 'true' } : {},
+              default: null,
+              parseHTML: (element) => readAlternating(element.getAttribute('data-alternating')),
+              renderHTML: (attributes) => {
+                const color = altColorValue(attributes.alternating);
+                if (!color) return {};
+                return {
+                  'data-alternating': attributes.alternating,
+                  style: `--alt-row-bg:${color}`,
+                };
+              },
             },
           };
         },

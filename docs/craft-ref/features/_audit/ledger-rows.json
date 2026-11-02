@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T13:17:31.922Z",
+  "generatedAt": "2026-11-02T13:39:02.933Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 928,
-    "aligned": 255,
+    "gap": 927,
+    "aligned": 256,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 357,
+    "P2 / gap": 356,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 154,
-    "P2 / aligned": 151,
+    "P2 / aligned": 152,
     "P? / unknown": 112,
     "P1 / aligned": 40,
     "P2 / deliberate": 39,
@@ -10267,10 +10267,10 @@
       "cols": 5,
       "id": "G510",
       "official": "★ **隔行颜色**：表 style 三字段之一 `alternatingRowColor`，**值是主题色 id**（经 `bU` 查表解析，与 `backgroundColor` 同一套），不是十六进制（§一之十六 1）",
-      "local": "`grep -rn \"alternating|zebra|evenRow\" src` ⇒ **0 命中** ⇒ 本地表格无隔行配色",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-02）：`table` 的 `alternating` 属性改存**主题色 id**（词表＝`pageThemes`，与文档颜色同一张表），`lib/editor/table-alternating.ts` 负责读旧值／循环取色／id→底色；渲染写 `data-alternating=\"<id>\"` + `--alt-row-bg`，CSS 只吃变量；工具栏「隔行颜色」管开关，多出一枚色档按钮切档 ☆ 已清（第 182 批）",
+      "verdict": "对齐",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

@@ -799,9 +799,10 @@
     font-weight: 600;
   }
 
-  /* 隔行颜色: even body rows only, so a header row stays the header colour. */
-  table[data-alternating='true'] tr:nth-child(even) td {
-    background: color-mix(in srgb, var(--muted) 55%, transparent);
+  /* 隔行颜色: even body rows only, so a header row stays the header colour.
+     G510 — the colour is a theme id, resolved to `--alt-row-bg` by the table's own attributes. */
+  table[data-alternating] tr:nth-child(even) td {
+    background: var(--alt-row-bg, color-mix(in srgb, var(--muted) 55%, transparent));
   }
 
   .selectedCell {

@@ -5592,10 +5592,13 @@
       ]
     },
     "G510": {
-      "status": "partial",
-      "note": "有隔行颜色开关，固定 muted 色，非主题色 id",
+      "status": "aligned",
+      "note": "第 182 批：隔行颜色改存主题色 id（pageThemes 同一张表），开关＋色档切换两枚控件",
       "evidence": [
-        "src/components/editor/table/TableToolbar.tsx:211"
+        "src/lib/editor/table-alternating.ts:1",
+        "src/components/editor/Editor.tsx:497",
+        "src/components/editor/table/TableToolbar.tsx:65",
+        "src/app/globals.css:802"
       ]
     },
     "G511": {

@@ -7,6 +7,7 @@ import { Crop, ImagePlus, Link2, Loader2, Minus, Plus } from 'lucide-react';
 import { uploadFile } from '@/lib/upload-client';
 import { promptDialog } from '@/lib/dialog/show';
 import { frameStyle, moveFrame, readImageFrame, zoomFrame, type ImageFrame } from '@/lib/editor/image-frame';
+import { primaryColorFromInt, samplePrimaryColor } from '@/lib/editor/image-primary-color';
 import { useLightboxStore } from '@/lib/store/use-lightbox-store';
 
 export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
@@ -18,6 +19,8 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
   const src = node.attrs.src as string | null;
   const alt = node.attrs.alt as string;
   const caption = node.attrs.caption as string;
+  // G504：主色整型存库，没采样到时吃官方那枚默认底色。
+  const primaryColor = primaryColorFromInt(node.attrs.primaryColor);
   const frame = readImageFrame(node.attrs);
   const [framing, setFraming] = useState(false);
   const drag = useRef<{ x: number; y: number; frame: ImageFrame } | null>(null);
@@ -92,12 +95,18 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
                 <div className="size-6 animate-pulse rounded-full bg-muted-foreground/20" />
               </div>
             )}
-            <div ref={frameBox} className="h-72 overflow-hidden rounded-lg">
+            <div ref={frameBox} className="h-72 overflow-hidden rounded-lg" style={{ backgroundColor: primaryColor }}>
               <img
                 src={src}
                 alt={alt || ''}
                 draggable={false}
-                onLoad={() => setLoaded(true)}
+                onLoad={(event) => {
+                  setLoaded(true);
+                  if (node.attrs.primaryColor == null) {
+                    const sampled = samplePrimaryColor(event.currentTarget);
+                    if (sampled !== null) updateAttributes({ primaryColor: sampled });
+                  }
+                }}
                 // G347：点图进灯箱——把图丢进**全局 store 字段**，灯箱自己从字段渲染
                 // （不是本组件的局部态，所以跨屏也能唤起）。裁剪态下不抢点击。
                 onClick={() => {

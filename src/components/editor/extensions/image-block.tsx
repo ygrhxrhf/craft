@@ -49,6 +49,18 @@ export const ImageBlock = Node.create({
           return { 'data-caption': attributes.caption };
         },
       },
+      // G504：主色按整型存，显示时才转 hex。
+      primaryColor: {
+        default: null,
+        parseHTML: (element) => {
+          const raw = Number(element.getAttribute('data-primary-color'));
+          return Number.isInteger(raw) && raw >= 0 && raw <= 0xffffff ? raw : null;
+        },
+        renderHTML: (attributes) => {
+          if (attributes.primaryColor == null) return {};
+          return { 'data-primary-color': String(attributes.primaryColor) };
+        },
+      },
       width: {
         default: '100%',
         parseHTML: (element) => element.getAttribute('data-width') || '100%',

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T15:24:01.292Z",
+  "generatedAt": "2026-11-02T15:31:18.415Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 924,
-    "aligned": 259,
+    "gap": 923,
+    "aligned": 260,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 353,
+    "P2 / gap": 352,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 155,
+    "P2 / aligned": 156,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -10159,10 +10159,10 @@
       "cols": 5,
       "id": "G504",
       "official": "★ **`primaryColor` 是整型存储**，读取 `\"#\" + c.toString(16)`；默认主色常量 **`#f2f2f2`**（§一之十五 5）",
-      "local": "`grep -rn \"primaryColor\" src` ⇒ **0 命中** ⇒ 本地没有主色提取/存储",
-      "verdict": "缺失；⚠ **官方写法是缺陷候选**：`toString(16)` 不补前导零 ⇒ R 高位为 0 时会得到 4 位 hex（**静态推断，未实测**）⇒ 本地实现必须 `padStart(6,\"0\")`",
+      "local": "✎ 现读（2026-11-02）：`lib/editor/image-primary-color.ts` 按官方形状落——存 24 位整型、默认常量 `#f2f2f2`（0xf2f2f2）、`imageBlock` 新增 `primaryColor` 属性（`data-primary-color`），图片载入时把图缩到 1×1 采样平均色写回，未采样前那枚默认底色就是块背景 ⇒ ⚠ **官方写法是缺陷候选**：`toString(16)` 不补前导零 ⇒ R 高位为 0 时官方会得到 4 位 hex（**静态推断，未实测**），本地一律 `padStart(6,'0')`，并由单测钉住 `0x0a1b2c → #0a1b2c` ☆ 已清（第 189 批）",
+      "verdict": "对齐",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

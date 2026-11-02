@@ -5560,10 +5560,12 @@
       ]
     },
     "G504": {
-      "status": "gap",
-      "note": "全仓无 primaryColor，封面只存 URL",
+      "status": "aligned",
+      "note": "第 189 批：primaryColor 整型存储 + 1×1 采样回写 + 未采样吃 #f2f2f2；读取补前导零（官方写法是缺陷候选）",
       "evidence": [
-        "src/prisma/contract.prisma:65"
+        "src/lib/editor/image-primary-color.ts:1",
+        "src/components/editor/extensions/image-block.tsx:53",
+        "src/components/editor/extensions/image-block-view.tsx:99"
       ]
     },
     "G505": {

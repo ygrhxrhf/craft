@@ -4588,9 +4588,13 @@
       ]
     },
     "G303": {
-      "status": "partial",
-      "note": "chunk 失败与复制失败已有专句；缺带原因兜底句与粘贴失败态",
+      "status": "aligned",
+      "note": "第 180 批：兜底句带原因插值 + 复制链接失败专句（五处）+ 粘贴失败态；chunk 失败态原有",
       "evidence": [
+        "src/lib/errors/alert-copy.ts:1",
+        "src/lib/document/bulk-action.ts:28",
+        "src/components/editor/Editor.tsx:696",
+        "src/components/share/ShareDialog.tsx:426",
         "src/app/error.tsx:22"
       ]
     },

@@ -16,7 +16,7 @@ describe('runBulkAction', () => {
     });
     expect(attempted).toEqual(['a', 'b', 'c']);
     expect(outcome.succeeded).toEqual(['a', 'c']);
-    expect(outcome.failed).toEqual([{ id: 'b', message: '不属于你' }]);
+    expect(outcome.failed).toEqual([{ id: 'b', message: '操作失败 不属于你' }]);
   });
 
   it('reports a clean run as no failures', async () => {
@@ -30,6 +30,14 @@ describe('runBulkAction', () => {
       throw 'boom';
     });
     expect(outcome.failed).toEqual([{ id: 'a', message: '操作失败' }]);
+  });
+
+  // G303: the official fallback sentence carries the reason in its `[0]` slot.
+  it('prints the reason the official slot asks for', async () => {
+    const outcome = await runBulkAction(['a'], async () => {
+      throw new Error('网络不可用');
+    });
+    expect(outcome.failed).toEqual([{ id: 'a', message: '操作失败 网络不可用' }]);
   });
 });
 

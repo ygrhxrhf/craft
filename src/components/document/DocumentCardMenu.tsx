@@ -15,6 +15,7 @@ import { resolveFavoriteState, toggleFavoriteLocal } from '@/lib/favorite/toggle
 import { getSyncManager } from '@/lib/sync-core';
 import { confirmDialog } from '@/lib/dialog/show';
 import { toast } from '@/components/ui/toast';
+import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { cn } from 'cn';
 
 interface DocumentCardMenuProps {
@@ -73,7 +74,7 @@ export function DocumentCardMenu({ documentId, title, at, onClose }: DocumentCar
           await navigator.clipboard.writeText(`${window.location.origin}/documents/${documentId}`);
           toast.add({ title: '已复制链接', type: 'success' });
         } catch {
-          toast.add({ title: '复制失败', type: 'error' });
+          toast.add({ title: COPY_LINK_FAILED, type: 'error' });
         }
         onClose();
         return;

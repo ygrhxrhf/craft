@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Check, Copy, PencilLine, Eye, Link2Off } from 'lucide-react';
 import { getWhiteboardShare, setWhiteboardShare } from '@/actions/whiteboard/share';
 import type { WhiteboardSharePermission } from '@/lib/whiteboard-sharing/access';
+import { toast } from '@/components/ui/toast';
+import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { cn } from 'cn';
 
 interface WhiteboardShareDialogProps {
@@ -81,9 +83,13 @@ export function WhiteboardShareDialog({ whiteboardId, open, onClose }: Whiteboar
 
   const copy = async () => {
     if (!url) return;
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.add({ id: 'whiteboard-copy-link-failed', type: 'error', title: COPY_LINK_FAILED });
+    }
   };
 
   const activeHint = permission === null

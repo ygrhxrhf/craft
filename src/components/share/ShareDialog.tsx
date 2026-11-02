@@ -48,6 +48,7 @@ import {
   type LinkOperation,
 } from '@/lib/share/link-operation-copy';
 import { toast } from '@/components/ui/toast';
+import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { confirmDialog } from '@/lib/dialog/show';
 import { PASSWORD_XOR_EMAIL, PREVIOUS_LINK_INACTIVE, SHARE_ERROR } from '@/lib/share/share-guards';
 import { cn } from 'cn';
@@ -416,10 +417,13 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   };
 
   const handleCopy = async () => {
-    if (link) {
+    if (!link) return;
+    try {
       await navigator.clipboard.writeText(link);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.add({ id: 'share-copy-link-failed', type: 'error', title: COPY_LINK_FAILED });
     }
   };
 

@@ -1,6 +1,8 @@
 'use client';
 
 import { craftHrefTarget } from '@/lib/links/craft-schemes';
+import { toast } from '@/components/ui/toast';
+import { PASTE_FAILED } from '@/lib/errors/alert-copy';
 import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
 import type { Editor as TiptapEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -690,7 +692,8 @@ export function Editor({
                 )
               );
             } catch {
-              // upload failure: skip this image
+              // G303: a paste that cannot land says so — `alert.failed.to.paste`.
+              toast.add({ id: 'paste-failed', type: 'error', title: PASTE_FAILED });
             }
           }
         })();

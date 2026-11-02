@@ -32,6 +32,7 @@ import { pointerArmDistance, touchArmDelay } from '@/lib/dnd/drag-threshold';
 import { dragBackendFor, type DragBackend } from '@/lib/dnd/backend';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
+import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 
 interface HandlePosition {
@@ -229,7 +230,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
         const link = blockLinkFor(state, view.dispatch, index, documentId, () => crypto.randomUUID());
         void navigator.clipboard.writeText(link).then(
           () => toast.add({ title: '已复制区块链接', type: 'success' }),
-          () => toast.add({ title: '复制失败', type: 'error' }),
+          () => toast.add({ title: COPY_LINK_FAILED, type: 'error' }),
         );
         return;
       }

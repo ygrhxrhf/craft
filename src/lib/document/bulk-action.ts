@@ -8,6 +8,7 @@ import {
   COULD_NOT_DELETE_DOCUMENT,
   COULD_NOT_RESTORE_FROM_TRASH,
 } from '@/lib/browse/trash-subcopy';
+import { operationFailed } from '@/lib/errors/alert-copy';
 
 export interface BulkOutcome {
   succeeded: string[];
@@ -25,7 +26,7 @@ export async function runBulkAction(
       await action(id);
       succeeded.push(id);
     } catch (error) {
-      failed.push({ id, message: error instanceof Error ? error.message : '操作失败' });
+      failed.push({ id, message: operationFailed(error instanceof Error ? error.message : null) });
     }
   }
   return { succeeded, failed };

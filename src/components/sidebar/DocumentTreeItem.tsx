@@ -8,6 +8,7 @@ import { cn } from 'cn';
 import { createDocument } from '@/actions/document/create';
 import { setDocumentArchived } from '@/actions/document/archive';
 import { toast } from '@/components/ui/toast';
+import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { getSyncManager } from '@/lib/sync-core';
 import { createDocumentLocal } from '@/components/sync/create-local';
 import { resolveFavoriteState, toggleFavoriteLocal } from '@/lib/favorite/toggle-local';
@@ -131,7 +132,11 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   }
 
   async function copyLink() {
-    await navigator.clipboard.writeText(`${window.location.origin}/documents/${doc.id}`);
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/documents/${doc.id}`);
+    } catch {
+      toast.add({ id: 'tree-copy-link-failed', type: 'error', title: COPY_LINK_FAILED });
+    }
   }
 
   async function moveToTrash() {

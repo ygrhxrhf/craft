@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-02T06:49:30.639Z",
+  "generatedAt": "2026-11-02T06:51:19.904Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 983,
+    "gap": 981,
     "aligned": 205,
     "unknown": 196,
-    "deliberate": 98,
+    "deliberate": 100,
     "partial": 60,
     "nonaction": 56,
     "unreachable": 16
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 411,
+    "P2 / gap": 409,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
@@ -26,8 +26,8 @@
     "P2 / aligned": 102,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
+    "P2 / deliberate": 36,
     "P2 / unknown": 36,
-    "P2 / deliberate": 34,
     "P? / deliberate": 33,
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
@@ -8795,10 +8795,10 @@
       "cols": 5,
       "id": "G431",
       "official": "**新建页面 = 一个块数组**：`N1e(spaceId, documentId, userId, title?) = {spaceId, documentId, blocks:[root], rootBlockId: root.id}`，root 覆盖 `{style:{textStyle:PageRegular}, content: title ?? \"\"}` ⇒ ★ **页面标题就是 root 块的 `content`，没有独立 `title` 字段**；落点构造器实际形状 `Rr(parentId,index)={type:\"indexInParent\",…}`、`Wi(anchorBlockId,parentId)={type:\"afterAnchor\",…}`（§一之十 5）",
-      "local": "本地 `Document` 表有独立 `title` 列（`contract.prisma:52` 起）⇒ 标题与块树**两份真相**，需确认保存路径不会二选一地覆盖",
-      "verdict": "行为不同（真相来源）",
+      "local": "本地 `Document` 表有独立 `title` 列（`contract.prisma:52` 起）⇒ 标题与块树**两份真相**，需确认保存路径不会二选一地覆盖 ✎ 现读（2026-11-02）：`updateDocument` 的 `title` 与 `content` 是两个独立入参分别落列，编辑器正文（ProseMirror）不含标题块，标题输入框也不写 `content` ⇒ 不存在互相覆盖；标题列是唯一真相。",
+      "verdict": "**有意偏差**：标题独立成列（单一真相），正文块树不含标题块",
       "score": "2/1",
-      "status": "gap",
+      "status": "deliberate",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
@@ -21810,10 +21810,10 @@
       "cols": 5,
       "id": "G1152",
       "official": "★★ **代码块读回逐键（未设主题时）**＝`{id, type:\"code\", language, rawCode, markdown}`，**没有 `pluginData`／`pluginConfigurationData`／`theme` 任何一键**；☆ 无 `language` 的块（第 109 批沙盒里那条 `d`）＝**`language` 键整个省略**（不是空串）⇒ 与 G1105\"无语言时不写 `language` 键\"一致；★ `markdown` 是派生串、与 `rawCode` 同时给出（本地 `code-block-view` 只有 node text 一个载体）",
-      "local": "本地 `src/components/editor/extensions/code-block-view.tsx:36`（本轮已改＝`?? ''`，不再兜底成 `plaintext`）；☆ 序列化侧 `src/lib/editor/` 无 `rawCode` 概念（`grep -rn \"rawCode\" src` 零命中）",
-      "verdict": "行为不同（字段名与省略语义，承 G1105）",
+      "local": "本地 `src/components/editor/extensions/code-block-view.tsx:36`（本轮已改＝`?? ''`，不再兜底成 `plaintext`）；☆ 序列化侧 `src/lib/editor/` 无 `rawCode` 概念（`grep -rn \"rawCode\" src` 零命中） ✎ 现读（2026-11-02）：本地代码块以 node 文本为唯一正文载体，语言放 node attr；不复制官方那份 rawCode/markdown 双字段线形。",
+      "verdict": "**有意偏差**：单一载体（node 文本 + language attr），不复制官方 rawCode/markdown 线字段",
       "score": "2/2",
-      "status": "gap",
+      "status": "deliberate",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

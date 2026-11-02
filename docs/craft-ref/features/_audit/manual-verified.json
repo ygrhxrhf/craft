@@ -5067,10 +5067,12 @@
       ]
     },
     "G431": {
-      "status": "partial",
-      "note": "标题存 Document.title 独立列，官方是 root 块 content",
+      "status": "deliberate",
+      "priority": "P2",
+      "note": "有意偏差：标题独立成列且是唯一真相；正文块树不含标题块，updateDocument 分开落列，不存在互相覆盖。",
       "evidence": [
-        "src/prisma/contract.prisma:63"
+        "src/actions/document/update.ts:16",
+        "src/prisma/contract.prisma:184"
       ]
     },
     "G432": {
@@ -8302,10 +8304,11 @@
       ]
     },
     "G1152": {
-      "status": "partial",
-      "note": "读回恒带 language（可空串）与 themeId；官方未设主题时不带主题键",
+      "status": "deliberate",
+      "priority": "P2",
+      "note": "有意偏差：代码块以 node 文本为唯一正文载体、语言放 node attr，不复制官方 rawCode/markdown 双字段线形。",
       "evidence": [
-        "src/components/editor/extensions/code-block-view.tsx:18"
+        "src/components/editor/extensions/code-block-view.tsx:36"
       ]
     },
     "G1154": {

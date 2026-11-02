@@ -38,6 +38,21 @@ export function tableSizeLimitTitle(): string {
 export const TABLE_SIZE_LIMIT_SUBTITLE = '尝试多个较小的表格吗？';
 export const TABLE_SIZE_LIMIT_DURATION = 4000;
 
+/** G288：`table.error.row.limit`「你不能添加多于 [0] 行。」——加行越线时官方说的是这一句。 */
+export const ROW_LIMIT_TEMPLATE = '你不能添加多于 [0] 行。';
+
+export function rowLimitMessage(max: number = MAX_TABLE_ROWS): string {
+  return ROW_LIMIT_TEMPLATE.replace('[0]', String(max));
+}
+
+/**
+ * 这次增长该说哪一句：只有**行数**越过 50 行上限时用官方的行上限句，
+ * 列数或总格数越线仍用合并的「已达到表格大小限制…」。
+ */
+export function tableLimitToastTitle(axis: 'row' | 'column', rows: number): string {
+  return axis === 'row' && rows > MAX_TABLE_ROWS ? rowLimitMessage() : tableSizeLimitTitle();
+}
+
 /** 超限时返回 toast 主句，未超限返回 `null`。 */
 export function tableSizeLimitMessage(rows: number, columns: number): string | null {
   return tableSizeAllowed(rows, columns) ? null : tableSizeLimitTitle();

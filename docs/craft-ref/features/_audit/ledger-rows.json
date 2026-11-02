@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T14:02:20.039Z",
+  "generatedAt": "2026-11-02T14:22:35.842Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 924,
@@ -6251,8 +6251,8 @@
       "cols": 5,
       "id": "G288",
       "official": "**表格块另有 4 项独立能力**：`row.color.alternating` 隔行颜色 · `header.row` 与 `header.column` **两个独立开关** · `of.contents`「目录」（表内 TOC） · `error.row.limit`「你不能添加多于 [0] 行。」（远端配额）",
-      "local": "本地只有单一\"显示表头\"开关，无隔行色/TOC/行上限",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-02）：四项里三项已在——① 隔行颜色存主题色 id（第 182 批）；② 标题行与标题列是两枚独立开关（`toggleHeaderRow` / `toggleHeaderColumn`）；③ 加行越 50 行上限时报官方句 `table.error.row.limit`「你不能添加多于 50 行。」，列/总格越线仍报合并句（第 186 批）；仍缺 **表内「目录」**，且其语义在采集面只有一条标签、无动线证据",
+      "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",
       "scoreParsed": {

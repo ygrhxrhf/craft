@@ -24,7 +24,7 @@ import {
   TABLE_SIZE_LIMIT_DURATION,
   TABLE_SIZE_LIMIT_SUBTITLE,
   tableSizeAllowed,
-  tableSizeLimitTitle,
+  tableLimitToastTitle,
 } from '@/lib/collection/limits';
 import { toast } from '@/components/ui/toast';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
@@ -427,7 +427,7 @@ export const CraftKeymap = Extension.create({
                   toast.add({
                     id: 'table-size-limit',
                     type: 'error',
-                    title: tableSizeLimitTitle(),
+                    title: tableLimitToastTitle(tableAxis === 'row' ? 'row' : 'column', rows),
                     description: TABLE_SIZE_LIMIT_SUBTITLE,
                     timeout: TABLE_SIZE_LIMIT_DURATION,
                   });
@@ -479,7 +479,7 @@ export const CraftKeymap = Extension.create({
                 toast.add({
                   id: 'table-size-limit',
                   type: 'error',
-                  title: tableSizeLimitTitle(),
+                  title: tableLimitToastTitle('row', dimensions.rows + 1),
                   description: TABLE_SIZE_LIMIT_SUBTITLE,
                   timeout: TABLE_SIZE_LIMIT_DURATION,
                 });

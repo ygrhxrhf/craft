@@ -4494,9 +4494,11 @@
     },
     "G288": {
       "status": "partial",
-      "note": "标题行/列/隔行色三开关已存在；缺表内目录与行数上限报错",
+      "note": "第 186 批：标题行/列两开关 + 隔行色（主题色 id）+ 官方行上限句已落；仍缺表内「目录」",
       "evidence": [
-        "src/components/editor/table/TableToolbar.tsx:189"
+        "src/lib/collection/limits.ts:42",
+        "src/lib/table-utils.ts:276",
+        "src/components/editor/table/TableToolbar.tsx:224"
       ]
     },
     "G289": {

@@ -6,10 +6,13 @@ import {
   MAX_TABLE_CELLS,
   MAX_TABLE_COLS,
   MAX_TABLE_ROWS,
+  ROW_LIMIT_TEMPLATE,
   TABLE_SIZE_LIMIT_DURATION,
   TABLE_SIZE_LIMIT_SUBTITLE,
   canAddColumn,
   exceedsVirtualTableThreshold,
+  rowLimitMessage,
+  tableLimitToastTitle,
   tableSizeAllowed,
   tableSizeLimitMessage,
 } from './limits';
@@ -68,5 +71,19 @@ describe('virtual table threshold', () => {
     expect(exceedsVirtualTableThreshold(100, 6)).toBe(false);
     expect(exceedsVirtualTableThreshold(101, 6)).toBe(true);
     expect(exceedsVirtualTableThreshold(700, 0)).toBe(false);
+  });
+});
+
+// G288: adding a row past the ceiling says the official row sentence, not the combined one.
+describe('the row ceiling sentence', () => {
+  it('fills the [0] slot with the 50-row cap', () => {
+    expect(rowLimitMessage()).toBe('你不能添加多于 50 行。');
+    expect(ROW_LIMIT_TEMPLATE).toBe('你不能添加多于 [0] 行。');
+  });
+
+  it('routes the toast by which axis crossed the line', () => {
+    expect(tableLimitToastTitle('row', MAX_TABLE_ROWS + 1)).toBe('你不能添加多于 50 行。');
+    expect(tableLimitToastTitle('column', MAX_TABLE_ROWS + 1)).toBe('已达到表格大小限制（15 列，50 行）');
+    expect(tableLimitToastTitle('row', 16)).toBe('已达到表格大小限制（15 列，50 行）');
   });
 });

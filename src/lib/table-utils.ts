@@ -10,7 +10,7 @@ import {
   TABLE_SIZE_LIMIT_DURATION,
   TABLE_SIZE_LIMIT_SUBTITLE,
   tableSizeAllowed,
-  tableSizeLimitTitle,
+  tableLimitToastTitle,
 } from '@/lib/collection/limits';
 import { toast } from '@/components/ui/toast';
 
@@ -273,7 +273,7 @@ function refuseIfTableWouldGrowPastLimit(editor: Editor, axis: 'row' | 'column')
   toast.add({
     id: 'table-size-limit',
     type: 'error',
-    title: tableSizeLimitTitle(),
+    title: tableLimitToastTitle(axis, rows),
     description: TABLE_SIZE_LIMIT_SUBTITLE,
     timeout: TABLE_SIZE_LIMIT_DURATION,
   });

@@ -15,6 +15,7 @@ import {
 } from '@/lib/task/recurrence';
 import { repeatRuleFor } from '@/lib/task/repeat-validity';
 import { REMIND_PRESETS, isInstantPreset, remindInstantFor } from '@/lib/task/remind-presets';
+import { REMIND_OFFSET_TIERS, remindAtFromOffset, remindOffsetLabel } from '@/lib/task/remind-offset';
 import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
 import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
 import { SERIES_OPS } from '@/lib/task/series-ops';
@@ -690,6 +691,30 @@ function TaskRow({
               onChange={(event) => update({ remindAt: fromMomentInput(event.target.value) })}
             />
           </label>
+          {/* G648：重复任务的那条提醒走**第二套 UI**——`dateOffset` 96 档（相对排期日提前多久），
+              与上面那根绝对时刻是**两个不同的字段**。选了档位就按排期日换算成绝对时刻落库。 */}
+          {rule?.freq && task.scheduleDate && (
+            <label className="flex flex-col gap-1 text-[11px] text-muted-foreground" data-testid="task-remind-offset">
+              重复内提醒
+              <select
+                value=""
+                onChange={(event) => {
+                  const minutes = Number(event.target.value);
+                  if (!Number.isFinite(minutes)) return;
+                  const at = remindAtFromOffset(task.scheduleDate as string, minutes);
+                  if (at) update({ remindAt: at });
+                }}
+                className="h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground"
+              >
+                <option value="">选择提前量</option>
+                {REMIND_OFFSET_TIERS.filter((m) => m > 0).map((minutes) => (
+                  <option key={minutes} value={minutes}>
+                    {remindOffsetLabel(minutes)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             重复
             <select

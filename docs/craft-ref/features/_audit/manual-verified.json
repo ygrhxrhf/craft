@@ -6057,10 +6057,13 @@
       ]
     },
     "G648": {
-      "status": "partial",
-      "note": "只有一根 datetime-local + 清空即取消；无块级绝对提醒与 dateOffset 两条独立 UI",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "提醒两条 UI 分开：块级绝对提醒（remindAt）+ 重复内提醒（dateOffset 96 档，remind-offset.ts），有重复且有排期日时多出「重复内提醒」一行。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:551"
+        "src/lib/task/remind-offset.ts",
+        "src/lib/task/remind-offset.test.ts",
+        "src/app/(app)/tasks/TasksView.tsx"
       ]
     },
     "G649": {

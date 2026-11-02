@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T05:02:52.766Z",
+  "generatedAt": "2026-11-02T05:17:48.400Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1009,
+    "gap": 1008,
     "unknown": 198,
-    "aligned": 177,
+    "aligned": 178,
     "deliberate": 97,
     "partial": 61,
     "nonaction": 56,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 437,
+    "P2 / gap": 436,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 74,
+    "P2 / aligned": 75,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 38,
@@ -12710,10 +12710,10 @@
       "cols": 5,
       "id": "G648",
       "official": "★ **提醒有两条独立注册通路的两套 UI**（★ 注册类别要分清：`zd(name, bindings)` ＝**键位作用域**，`$i(name, onClose)`／`cY(name, onClose, {isDisabled})` ＝**具名弹层**）：`$i(\"TasksReminderPicker\", o)`（@5417600，具名弹层）与 `zd(\"TasksRepeatConfigCustomPicker\", [...])`（@5449250，键位作用域）＋ 集合侧 `\"collection-v2-date-editor\"`（V54 §7，具名弹层）⇒ ★ 官方提醒**有两条独立 UI**：**块级提醒走绝对 `dueDate` ＋ `details`**，**重复内提醒走 `dateOffset` 96 档**，二者形状不同、组件不同、注册名不同；且 `TasksReminderPicker` 的取消分支 `if (!y) { onReminderChange?.(null); onPickSchedule(); return }` ⇒ **取消提醒会把用户退回\"选排期\"档**（\"提醒为空 ⇒ 必须先有排期\"是代码级的状态机边）",
-      "local": "本地只有**一根裸时间戳** `remindAt`（无 `enabled`、无 `details`、无块绑定的提醒对象，见 G644 的 grep 结果）⇒ 不存在\"两条提醒 UI\"的结构差；`src/app/(app)/tasks/page.tsx:295-299` 的 `<Input type=\"datetime-local\">` 是唯一入口，取消＝清空字符串，**没有任何档间跳转**",
-      "verdict": "结构差（单入口 vs 双形状）",
+      "local": "本地只有**一根裸时间戳** `remindAt`（无 `enabled`、无 `details`、无块绑定的提醒对象，见 G644 的 grep 结果）⇒ 不存在\"两条提醒 UI\"的结构差；`src/app/(app)/tasks/page.tsx:295-299` 的 `<Input type=\"datetime-local\">` 是唯一入口，取消＝清空字符串，**没有任何档间跳转** ✎ 现读（2026-11-02）更正：**两条 UI 已分开**。① 块级绝对提醒＝`remindAt`（datetime-local，已在）；② 重复内提醒＝新增 `src/lib/task/remind-offset.ts` 的 **`dateOffset` 96 档**（15 分钟一档、0–23:45；`REMIND_OFFSET_TIERS`／`remindOffsetLabel`「准时／提前 N 小时 M 分钟」／`remindAtFromOffset` 按排期日换算），任务面板在**有重复且有排期日**时多出「重复内提醒」一行（`data-testid=\"task-remind-offset\"`）——两套输入形状不同，落库仍归一到一个绝对时刻供投递侧用。单测 10 条。",
+      "verdict": "☆ 已清（第 127 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

@@ -6,9 +6,11 @@ import { cn } from 'cn';
 import { Plus, Minus, RotateCcw } from 'lucide-react';
 import {
   DEFAULT_SPELLING_LANG,
+  PAGE_STYLE_PRESETS,
   SPELLING_LANGUAGES,
   filterSpellingLanguages,
   fontPacks,
+  pageStyleForPreset,
   pageThemes,
   showsDocumentTitle,
   washiTapes,
@@ -75,6 +77,27 @@ export function StyleTab({
           <span>Original</span>
           <RotateCcw className="size-3.5" />
         </button>
+      </section>
+
+      {/* G1457：官方样式页 20 项里的「所有样式」一栏——四个具名整页样式预设。 */}
+      <section>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">所有样式</h4>
+        <div className="grid grid-cols-2 gap-1.5">
+          {PAGE_STYLE_PRESETS.map((preset) => (
+            <button
+              key={preset}
+              type="button"
+              data-testid={`page-style-preset-${preset}`}
+              className={cn(
+                'rounded-lg border border-foreground/10 px-2 py-1.5 text-meta capitalize transition-colors duration-150 ease-craft hover:bg-foreground/4',
+                pageStyle.stylePreset === preset && 'border-craft-accent bg-craft-accent/12 text-craft-accent',
+              )}
+              onClick={() => setPageStyle(pageStyleForPreset(preset))}
+            >
+              {preset}
+            </button>
+          ))}
+        </div>
       </section>
 
       {/* Color section */}

@@ -8822,10 +8822,12 @@
       ]
     },
     "G1457": {
-      "status": "partial",
-      "note": "样式页有颜色/背景/文档颜色/封面/字体/宽页，缺所有样式与分隔符三档",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "样式页补「所有样式」四枚整页预设；其余栏（Original/颜色/背景/文档颜色/文本颜色/封面/封面图片/字体/Washi/高级·宽页）都已在仓。分隔符样式作用在块上，由块菜单承载。",
       "evidence": [
-        "src/components/editor/tabs/StyleTab.tsx:187"
+        "src/components/editor/tabs/StyleTab.tsx",
+        "src/components/editor/themes/page-style.ts"
       ]
     },
     "G1458": {

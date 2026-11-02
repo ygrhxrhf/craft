@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T04:05:20.820Z",
+  "generatedAt": "2026-11-02T04:18:52.402Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1012,
+    "gap": 1011,
     "unknown": 198,
-    "aligned": 175,
+    "aligned": 176,
     "deliberate": 97,
     "partial": 60,
     "nonaction": 56,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 440,
+    "P2 / gap": 439,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 72,
+    "P2 / aligned": 73,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 38,
@@ -27344,9 +27344,9 @@
       "id": "G1457",
       "official": "★★★★ **样式页签补齐至 20 项＝与在册 `LineType` 6 档／`FontFamilyId` 4 档作差＝分隔符三档是复证、名层新落是五枚**＝屏侧（C 00:15Z 逐字）＝名册＝`Original`／`所有样式`／`颜色`／`背景`／`文档颜色`／`文本颜色`／`封面`／`封面图片`／`分隔符样式`／`线`／`和纸胶带`／`涂鸦`／`字体`／`默认`／`Serif`／`Mono`／`Round`／`高级`／`宽页`＋一枚**无文本按钮**＝☆ 撞键面（整枚引号／G 行反引号）＝`style.all.styles` 2／1｜`style.color` 10／**0**｜`style.backdrop` 5／**0**｜`style.document.color` 4／1｜`table.text.color` 6／**0**｜`style.cover`＋`collections.cover` 6／1｜`cover.image` 2／**0**｜`style.separator.style` 5／1｜`style.line` 4／2｜`style.washi.tape` 5／2｜`style.doodle` 4／2｜`style.font` 9／1｜`style.font.serif`＋`style.font.serif.long` 11／1｜`…mono(.long)` 11／1｜`…round(.long)` 11／1｜`style.advanced` 2／**0**｜`style.wide.page` 2／**0**＝☆ 与在册作差＝**分隔符三档（线／和纸胶带／涂鸦）不是历批没量到的一族**＝`registries.md:51` 在册 `LineType` 6 档（`none extraLight light regular strong pageSeparator`，并标明\"可见档位是 4 档\"）＝`model.md:215` 已写 `setLineType`（分隔符样式三档）＝`styles.md:31` 已列 `washi`／`washi.tape`／`washi.gallery`／`doodle` 素材族＝`styles.md:48` 那行已在册 `separator.style`／`separator.strong`／`line` 与 LineType 6 的一致性＝⇒ 本批这三档是**屏侧第二面复证**（键与档早已在册）；字体四档（默认／Serif／Mono／Round）与在册 `FontFamilyId` 4 对齐＝也是复证＝☆ 真增量＝名层五枚（`style.color`／`style.backdrop`／`table.text.color`／`cover.image`／`style.advanced`／`style.wide.page`＝其中 `style.advanced` 与 `style.wide.page` 连中文值带引号形都没落过）＋`Original` 这枚**语言包里按值取不到**（成文面裸串 4 处＝它是档名不是译文）",
       "local": "☆ 本地样式面板缺「自定义侧边栏」之外这几档：宽页／高级／封面图片／文本颜色 未见对应＝⇒ 复刻按 20 项这一层建模时，注意 `style.font.*` 与 `*.long` 是**同族两枚键**（短名与长名各一枚）",
-      "verdict": "✓屏侧（一手＝C 逐字）＋✓盘上一手（21 枚键逐枚撞语言包／G 行／三处在册档位表）＝☆ C 自己的声明照原样登记＝**这轮没读到 disabled 标志＝只说明\"当前 AX 面未给 disabled\"，不得判\"功能永久可用／不可用\"**＝☆ 一枚无文本按钮＝不臆补（未读到文案即不写文案）＝☆ 结案一条在册开口＝`gap.md:943` 那句「① 样式页签被截断的那段＝本批只落到\"分隔符样式\"组、后面档位不落」自此结掉",
+      "verdict": "✓屏侧（一手＝C 逐字）＋✓盘上一手（21 枚键逐枚撞语言包／G 行／三处在册档位表）＝☆ C 自己的声明照原样登记＝**这轮没读到 disabled 标志＝只说明\"当前 AX 面未给 disabled\"，不得判\"功能永久可用／不可用\"**＝☆ 一枚无文本按钮＝不臆补（未读到文案即不写文案）＝☆ 结案一条在册开口＝`gap.md:943` 那句「① 样式页签被截断的那段＝本批只落到\"分隔符样式\"组、后面档位不落」自此结掉 ✎ 现读（2026-11-02）更正：**「所有样式」已补**。样式页签加一栏四枚具名整页样式预设（`page-style-preset-*`，走 `pageStyleForPreset`）；其余栏（Original／颜色／背景／文档颜色／文本颜色／封面／封面图片／字体四档／Washi 胶带／高级·宽页）**都已在本仓落地**——台账 local 列的\"缺这几档\"是陈旧读数。「分隔符样式」那栏作用在**块**上（分隔线），不进页面级样式页签，由块菜单的「分隔符样式」承载。 ☆ 已清（第 123 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

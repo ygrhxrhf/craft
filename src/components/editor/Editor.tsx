@@ -358,7 +358,7 @@ export function Editor({
         // block isn't a paragraph, so wrapping the tail blocks in a list left a stray
         // empty line (G1485). A list item already holds a paragraph, so the caret is
         // reachable without it — Enter on an empty item still exits the list.
-        trailingNode: { notAfter: ['bulletList', 'orderedList', 'taskList'] },
+        trailingNode: { notAfter: ['bulletList', 'orderedList', 'taskList', 'linkPreview'] },
         link: {
           openOnClick: false,
           HTMLAttributes: {
@@ -385,6 +385,18 @@ export function Editor({
       }),
       ReminderPill,
       TaskItem.extend({
+        // G1563: the official AX tree has no checkbox at all. Local keeps it on purpose (a screen
+        // reader should learn the row is checkable); the label uses the task text instead of
+        // TipTap's English synthetic string.
+        addOptions(): any {
+          return {
+            ...(this.parent?.() as any),
+            a11y: {
+              checkboxLabel: (node: { textContent: string }, checked: boolean) =>
+                `${checked ? '已完成' : '未完成'}：${node.textContent || '任务'}`,
+            },
+          };
+        },
         addAttributes() {
           return {
             ...this.parent?.(),

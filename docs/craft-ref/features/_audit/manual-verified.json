@@ -4776,10 +4776,12 @@
       ]
     },
     "G368": {
-      "status": "gap",
-      "note": "无自然语言日期解析；周视图本身已按周一起始",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "日期解析按周一起始：下周五 = 到下一个周一 + 周一基偏移，中英文两条路径一致，2026-03-20 用例锁定。",
       "evidence": [
-        "src/lib/calendar/week-view.ts:17"
+        "src/lib/task/date-parse.ts:54",
+        "src/lib/task/date-parse.test.ts:46"
       ]
     },
     "G370": {
@@ -9163,10 +9165,11 @@
       ]
     },
     "G1563": {
-      "status": "partial",
-      "note": "暴露 checkbox，但用 TipTap 英文合成标签；官方 AX 树无 checkbox",
+      "status": "deliberate",
+      "priority": "P2",
+      "note": "有意偏差：本地保留任务勾选框（可勾选语义对读屏有用），可及名改为中文任务文本；官方 AX 树无 checkbox。",
       "evidence": [
-        "node_modules/@tiptap/extension-list/src/task-item/task-item.ts:84"
+        "src/components/editor/Editor.tsx:387"
       ]
     },
     "G1564": {
@@ -9185,10 +9188,11 @@
       ]
     },
     "G1566": {
-      "status": "partial",
-      "note": "trailingNode 的 notAfter 只列三族列表，linkPreview 不在豁免名单",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "trailingNode.notAfter 增列 linkPreview：末块是链接卡时不再补空段落。",
       "evidence": [
-        "src/components/editor/Editor.tsx:329"
+        "src/components/editor/Editor.tsx:361"
       ]
     },
     "G1567": {

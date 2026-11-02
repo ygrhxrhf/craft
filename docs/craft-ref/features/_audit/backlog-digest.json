@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T10:51:04.519Z",
+  "generatedAt": "2026-11-02T11:18:51.901Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 504,
-    "partial": 275,
+    "aligned": 507,
+    "partial": 276,
     "deliberate": 165,
-    "gap": 138,
+    "gap": 134,
     "unreachable": 20
   },
   "priority": {
@@ -17,18 +17,18 @@
     "P0": 8
   },
   "statusByPriority": {
+    "P2 / aligned": 192,
     "P? / nonaction": 191,
-    "P2 / aligned": 189,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 125,
+    "P2 / partial": 126,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P2 / deliberate": 73,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
-    "P2 / gap": 65,
+    "P2 / gap": 61,
     "P3 / aligned": 59,
     "P? / deliberate": 40,
     "P3 / gap": 39,
@@ -974,11 +974,11 @@
         "cols": 6,
         "id": "G50",
         "official": "代理**每次写操作附一句给用户看的动作说明**（契约原文 \"Optional message to display to the user describing the action\"）",
-        "local": "本地 AI 插入结果无任何动作说明/可审计文案",
-        "verdict": "缺失",
+        "local": "✎ 现读（2026-11-02）：`AiBubbleMenu.tsx` 每次落笔后弹一条 toast——`aiWriteMessage(action, mode)` 说明写了什么，同一 toast 带「撤销」动作，两条不会漂移 ☆ 已清（第 177 批）",
+        "verdict": "对齐",
         "score": "1/1",
         "criteria": "AI 写入后显示一行动作说明（可撤销提示同源）",
-        "status": "gap",
+        "status": "aligned",
         "scoreParsed": {
           "impact": 1,
           "cost": 1,
@@ -986,7 +986,12 @@
         },
         "conflict": null,
         "priority": "P2",
-        "baseStatus": "gap"
+        "note": "第 177 批现读：AI 每次落笔后 toast 说明动作（aiWriteMessage）并带撤销动作",
+        "evidence": [
+          "src/lib/editor/ai-write-message.ts:19",
+          "src/components/editor/bubble-menu/AiBubbleMenu.tsx:250"
+        ],
+        "baseStatus": "aligned"
       },
       {
         "line": 1174,
@@ -1016,10 +1021,10 @@
         "cols": 5,
         "id": "G34",
         "official": "表格部分操作禁止走上下文菜单并给「请使用 [0] 来 [1]」改道提示（R10）",
-        "local": "无该分支（`TableToolbar.tsx` 未实现禁用提示）",
-        "verdict": "缺失",
+        "local": "✎ 现读（2026-11-02）：`TableToolbar.tsx` 在编辑器上监听 `contextmenu`，表内右键弹提示窗——首行 `TABLE_CONTEXT_UNAVAILABLE`、次行 `tableRedirectCopy('工具栏', '编辑表格')`（`table-context-copy.ts` 逐字取官方两句） ☆ 已清（第 177 批）",
+        "verdict": "对齐",
         "score": "1/1",
-        "status": "gap",
+        "status": "aligned",
         "scoreParsed": {
           "impact": 1,
           "cost": 1,
@@ -1027,7 +1032,12 @@
         },
         "conflict": null,
         "priority": "P2",
-        "baseStatus": "gap"
+        "note": "第 177 批现读：TableToolbar 表内右键弹「这些操作无法通过上下文菜单执行。」+「请使用工具栏来编辑表格」改道提示",
+        "evidence": [
+          "src/lib/editor/table-context-copy.ts:1",
+          "src/components/editor/table/TableToolbar.tsx:118"
+        ],
+        "baseStatus": "aligned"
       },
       {
         "line": 1178,
@@ -1079,10 +1089,10 @@
         "cols": 5,
         "id": "G37",
         "official": "移动端抽屉多档吸附（`data-vaul-snap-points` 17 处）",
-        "local": "底部 Sheet 无 snap points",
-        "verdict": "行为不同",
+        "local": "✎ 现读（2026-11-02）：`ui/sheet.tsx` 支持 `snapPoints`（规范化/最近档/拖拽吸附，`lib/ui/snap-points.ts` 单测覆盖），表格视图与右侧栏两处底部 Sheet 传入 3 档 ☆ 已清（第 177 批）",
+        "verdict": "对齐",
         "score": "1/2",
-        "status": "gap",
+        "status": "aligned",
         "scoreParsed": {
           "impact": 1,
           "cost": 2,
@@ -1090,7 +1100,14 @@
         },
         "conflict": null,
         "priority": "P2",
-        "baseStatus": "gap"
+        "note": "第 177 批现读：Sheet 支持 snapPoints（规范化/最近档/拖拽吸附），表格视图与右侧栏两处底部 Sheet 已传三档",
+        "evidence": [
+          "src/lib/ui/snap-points.ts:1",
+          "src/components/ui/sheet.tsx:45",
+          "src/app/(app)/collections/[id]/TableView.tsx:252",
+          "src/components/editor/tabs/RightPanel.tsx:159"
+        ],
+        "baseStatus": "aligned"
       },
       {
         "line": 1181,
@@ -1117,10 +1134,10 @@
         "cols": 5,
         "id": "G39",
         "official": "AI：提示库、写作风格分析、PDF 问答、AI 额度与清除历史（`assistant.*` 223 条）",
-        "local": "只有改写/续写/翻译/总结 + 生图（`AiBubbleMenu.tsx:18-22`）",
-        "verdict": "缺失",
+        "local": "✎ 现读（2026-11-02）：已有改写/续写/翻译/总结、生图、提示库（`ai-prompts.ts`，含「分析写作风格」）、联网搜索、PDF 问答；仍缺 AI 额度与清除历史两项（设置侧零命中）",
+        "verdict": "局部",
         "score": "2/2",
-        "status": "gap",
+        "status": "partial",
         "scoreParsed": {
           "impact": 2,
           "cost": 2,
@@ -1128,6 +1145,11 @@
         },
         "conflict": null,
         "priority": "P2",
+        "note": "第 177 批现读：提示库/写作风格分析/PDF 问答/联网搜索已有；仍缺 AI 额度与清除历史",
+        "evidence": [
+          "src/lib/editor/ai-prompts.ts:14",
+          "src/components/editor/bubble-menu/AiBubbleMenu.tsx:345"
+        ],
         "baseStatus": "gap"
       }
     ]

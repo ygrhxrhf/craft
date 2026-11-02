@@ -11,7 +11,9 @@ describe('export resolution (G485)', () => {
 
   it('uses devicePixelRatio for the image export', () => {
     expect(source).toContain('window.devicePixelRatio');
-    expect(source).toMatch(/pixelRatio\s*\}\)/);
+    // The option block also carries the G64 canvas width/height now, so the closing brace is
+    // no longer on the same line as `pixelRatio`.
+    expect(source).toMatch(/pixelRatio[,\s]/);
     expect(source).not.toContain('pixelRatio: 2');
   });
 });

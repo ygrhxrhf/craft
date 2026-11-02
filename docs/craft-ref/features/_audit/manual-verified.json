@@ -227,8 +227,13 @@
       ]
     },
     "G34": {
-      "status": "gap",
-      "priority": "P2"
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 177 批现读：TableToolbar 表内右键弹「这些操作无法通过上下文菜单执行。」+「请使用工具栏来编辑表格」改道提示",
+      "evidence": [
+        "src/lib/editor/table-context-copy.ts:1",
+        "src/components/editor/table/TableToolbar.tsx:118"
+      ]
     },
     "G35": {
       "status": "deliberate",
@@ -245,16 +250,28 @@
       ]
     },
     "G37": {
-      "status": "gap",
-      "priority": "P2"
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 177 批现读：Sheet 支持 snapPoints（规范化/最近档/拖拽吸附），表格视图与右侧栏两处底部 Sheet 已传三档",
+      "evidence": [
+        "src/lib/ui/snap-points.ts:1",
+        "src/components/ui/sheet.tsx:45",
+        "src/app/(app)/collections/[id]/TableView.tsx:252",
+        "src/components/editor/tabs/RightPanel.tsx:159"
+      ]
     },
     "G38": {
       "status": "aligned",
       "priority": "P2"
     },
     "G39": {
-      "status": "gap",
-      "priority": "P2"
+      "status": "partial",
+      "priority": "P2",
+      "note": "第 177 批现读：提示库/写作风格分析/PDF 问答/联网搜索已有；仍缺 AI 额度与清除历史",
+      "evidence": [
+        "src/lib/editor/ai-prompts.ts:14",
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:345"
+      ]
     },
     "G40": {
       "status": "aligned",
@@ -337,8 +354,13 @@
       ]
     },
     "G50": {
-      "status": "gap",
-      "priority": "P2"
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 177 批现读：AI 每次落笔后 toast 说明动作（aiWriteMessage）并带撤销动作",
+      "evidence": [
+        "src/lib/editor/ai-write-message.ts:19",
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:250"
+      ]
     },
     "G51": {
       "status": "aligned",
@@ -3365,9 +3387,10 @@
     },
     "G64": {
       "status": "partial",
-      "note": "InfoTab 可导出当前页 PNG；缺字体大小与页面尺寸版式配置",
+      "note": "第 177 批补字体大小（大/标准/小）与页面大小（适应/横排/竖排/正方形）；仍缺私密链接评论开关",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:177"
+        "src/lib/editor/share-image-config.ts:1",
+        "src/components/editor/tabs/InfoTab.tsx:237"
       ]
     },
     "G67": {
@@ -3379,9 +3402,10 @@
     },
     "G68": {
       "status": "partial",
-      "note": "有中央 keymap 与 6 分组，仅 29 条；表格/任务/合集缺约 75 条",
+      "note": "第 177 批现读：中央 keymap 已落（双描述符/六分组/统一分派），绑定 29 条；表格/任务/合集约 75 条仍缺",
       "evidence": [
-        "src/lib/editor/keymap.ts:175"
+        "src/lib/editor/keymap.ts:175",
+        "src/components/editor/extensions/craft-keymap.ts:631"
       ]
     },
     "G69": {

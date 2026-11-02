@@ -37,6 +37,18 @@ import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
 import { TOC_EMPTY_COPY, TOC_TITLE, extractToc, type TocEntry } from '@/lib/editor/toc';
 import {
+  DEFAULT_SHARE_IMAGE_FONT,
+  DEFAULT_SHARE_IMAGE_SIZE,
+  SHARE_IMAGE_FONT_OPTIONS,
+  SHARE_IMAGE_FONT_SCALE,
+  SHARE_IMAGE_FONT_SECTION,
+  SHARE_IMAGE_SIZE_OPTIONS,
+  SHARE_IMAGE_SIZE_SECTION,
+  shareImageCanvas,
+  type ShareImageFontSize,
+  type ShareImagePageSize,
+} from '@/lib/editor/share-image-config';
+import {
   BACKLINK_SORTS,
   BACKLINK_SORT_LABELS,
   BACKLINKS_LOADING,
@@ -135,6 +147,9 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
   const hasBlockSelection = editor ? editor.state.selection instanceof NodeSelection : false;
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  // G64: 分享卡片图片的字体与页面尺寸。
+  const [imageFont, setImageFont] = useState<ShareImageFontSize>(DEFAULT_SHARE_IMAGE_FONT);
+  const [imageSize, setImageSize] = useState<ShareImagePageSize>(DEFAULT_SHARE_IMAGE_SIZE);
   // The property rows read the document's own timestamps and author (G202) rather than fixed strings.
   const [meta, setMeta] = useState<{ createdAt: string; updatedAt: string; authorName: string | null } | null>(null);
   const [statsScope, setStatsScope] = useState<StatsScope>('page');
@@ -221,14 +236,26 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
 
   const handleExportImage = async () => {
     setBusy(true);
+    const root = window.document.documentElement;
+    const previousFontSize = root.style.fontSize;
     try {
       const target = window.document.querySelector('.ProseMirror') as HTMLElement | null;
       if (!target) throw new Error('找不到编辑器');
       const { toPng } = await import('html-to-image');
+      // G64: prose sizes are rem-based, so the font preset is applied to `<html>` for the capture
+      // and restored immediately after. Page presets only add canvas room; content is never cropped.
+      root.style.fontSize = `${Math.round(16 * SHARE_IMAGE_FONT_SCALE[imageFont])}px`;
+      const rect = target.getBoundingClientRect();
+      const canvas = shareImageCanvas(imageSize, rect.width, Math.max(target.scrollHeight, rect.height));
       // G485: export resolution is the container's CSS size × devicePixelRatio, so a 2× screen
       // gets a 2× image and a 1× screen is not falsely upscaled.
       const pixelRatio = window.devicePixelRatio || 1;
-      const dataUrl = await toPng(target, { backgroundColor: '#ffffff', pixelRatio });
+      const dataUrl = await toPng(target, {
+        backgroundColor: '#ffffff',
+        pixelRatio,
+        width: canvas.width,
+        height: canvas.height,
+      });
       const link = window.document.createElement('a');
       link.href = dataUrl;
       link.download = `${window.document.title || 'document'}.png`;
@@ -237,6 +264,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
     } catch {
       setActionError('导出失败');
     } finally {
+      root.style.fontSize = previousFontSize;
       setBusy(false);
     }
   };
@@ -906,6 +934,51 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
               >
                 图片
               </button>
+              {/* G64: 分享卡片图片的两段配置（字体大小 / 页面大小）。 */}
+              <div className="mt-2 space-y-2 border-t border-foreground/10 pt-2">
+                <div>
+                  <p className="mb-1 text-[11px] text-muted-foreground">{SHARE_IMAGE_FONT_SECTION.label}</p>
+                  <div className="grid grid-cols-3 gap-1">
+                    {SHARE_IMAGE_FONT_OPTIONS.map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        aria-pressed={imageFont === option.id}
+                        onClick={() => setImageFont(option.id)}
+                        className={cn(
+                          'rounded-md border px-1 py-1 text-meta transition-colors',
+                          imageFont === option.id
+                            ? 'border-craft-accent bg-craft-accent/10 text-foreground'
+                            : 'border-foreground/10 text-foreground/55 hover:bg-foreground/4'
+                        )}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="mb-1 text-[11px] text-muted-foreground">{SHARE_IMAGE_SIZE_SECTION.label}</p>
+                  <div className="grid grid-cols-4 gap-1">
+                    {SHARE_IMAGE_SIZE_OPTIONS.map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        aria-pressed={imageSize === option.id}
+                        onClick={() => setImageSize(option.id)}
+                        className={cn(
+                          'rounded-md border px-1 py-1 text-[11px] transition-colors',
+                          imageSize === option.id
+                            ? 'border-craft-accent bg-craft-accent/10 text-foreground'
+                            : 'border-foreground/10 text-foreground/55 hover:bg-foreground/4'
+                        )}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
               {exporting && (
                 <p role="status" aria-live="polite" className="mt-1.5 text-meta text-muted-foreground">
                   {pendingLabel('exportingDocuments')}

@@ -61,9 +61,9 @@ describe('拒绝回路的接线（G1506）', () => {
     expect(boot).toMatch(/toast\.add\(\{[^}]*copy\.description/);
   });
 
-  it('☆ 只有 not_found 上屏：LWW 竞态只留 console（服务端每落一笔重打 serverNow，去抖窗口内的下一笔天生更旧＝给竞态弹「保存失败」会把正常写入说成失败）', () => {
-    expect(boot).toMatch(/some\(.*reason === 'not_found'/);
-    const staleBranch = boot.slice(boot.indexOf("reason === 'not_found'"));
-    expect(staleBranch.slice(0, 400)).toContain('console.warn');
+  it('两枚 reason 都上屏：G1511 之后 stale 是真实失败，不再是去抖窗口的正常第二笔', () => {
+    expect(boot).toContain('rejectionCopy');
+    expect(boot).toMatch(/toast\.add\(\{[^}]*copy\.description/);
+    expect(boot).not.toContain('[sync] 本机改动比服务端旧');
   });
 });

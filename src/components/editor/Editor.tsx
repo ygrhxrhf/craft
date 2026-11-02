@@ -605,6 +605,10 @@ export function Editor({
     editorProps: {
       attributes: {
         class: 'prose prose-sm max-w-none focus:outline-none',
+        // G1562: the official editable region is a multiline textbox in the AX tree; without
+        // these it reads as a generic node.
+        role: 'textbox',
+        'aria-multiline': 'true',
         spellcheck: spelling ? 'true' : 'false',
         ...(spelling && spellingLang ? { lang: spellingLang } : {}),
       },

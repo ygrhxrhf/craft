@@ -9018,10 +9018,13 @@
       ]
     },
     "G1512": {
-      "status": "partial",
-      "note": "只有 not_found 上屏，stale 仅 console.warn",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "G1511 已清后 stale 是真实失败：not_found 与 stale 走同一条 toast 通路，竞态句上屏。",
       "evidence": [
-        "src/components/sync/SyncBoot.tsx:44"
+        "src/components/sync/SyncBoot.tsx:40",
+        "src/lib/sync/rejection-copy.ts:31",
+        "src/lib/sync/rejection-copy.test.ts"
       ]
     },
     "G1525": {
@@ -9172,10 +9175,12 @@
       ]
     },
     "G1562": {
-      "status": "gap",
-      "note": "编辑器根只有 class/spellcheck，无 role=textbox 与 aria-multiline",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "ProseMirror 根补 role=textbox 与 aria-multiline=true，AX 树读作多行文本框。",
       "evidence": [
-        "src/components/editor/Editor.tsx:520"
+        "src/components/editor/Editor.tsx:607",
+        "src/components/editor/editor-a11y.test.ts"
       ]
     },
     "G1563": {

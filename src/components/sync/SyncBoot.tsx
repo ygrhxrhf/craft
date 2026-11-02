@@ -35,17 +35,9 @@ export function SyncBoot() {
   // boot() 是否已真正执行过：决定再次登录走 resume 还是 boot
   const booted = useRef(false);
 
-  // G1506：服务端拒收本机那一笔 ⇒ 屏上得说一句（此前只盖权威值、一句不说，
-  // 「点了恢复，什么都没发生」）。两枚 reason 分开放：
-  //   not_found＝这行不存在／不归你，动作凭空蒸发 ⇒ 可见失败；
-  //   stale＝LWW 竞态 ⇒ 只留 console。服务端每落一笔都重打 serverNow，本机去抖窗口里
-  //   的下一笔天生"比服务端旧"，给竞态弹「保存失败」会把正常写入说成失败（敞口另记）。
+  // G1506/G1512：服务端拒收本机那一笔 ⇒ 屏上必须说一句。G1511 把"同设备第二笔被判旧"的
+  // 假阳性修掉之后，`stale` 已是真实的写入失败，与 `not_found` 走同一条 toast 通路。
   useEffect(() => getSyncManager().onRejected((rejected) => {
-    if (!rejected.some(r => r.reason === 'not_found')) {
-      console.warn('[sync] 本机改动比服务端旧，已按权威值显示',
-        rejected.map(r => `${r.table}:${r.id}`));
-      return;
-    }
     const copy = rejectionCopy(rejected);
     if (copy) toast.add({ title: copy.title, description: copy.description, type: 'error' });
   }), []);

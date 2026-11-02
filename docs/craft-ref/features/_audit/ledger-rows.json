@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T06:40:36.545Z",
+  "generatedAt": "2026-11-02T06:42:54.775Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 987,
-    "aligned": 201,
+    "gap": 986,
+    "aligned": 202,
     "unknown": 196,
     "deliberate": 98,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 415,
+    "P2 / gap": 414,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 98,
+    "P2 / aligned": 99,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 36,
@@ -7409,10 +7409,10 @@
       "cols": 5,
       "id": "G354",
       "official": "**搜索框输入可解析成日期的串就追加一条 `{type:\"date\"}` 结果**（§9.3 `yit()`，复用异步 chrono 链、失败静默空数组）",
-      "local": "本地搜索无日期结果项",
-      "verdict": "缺失",
+      "local": "本地已在命令面板追加日期结果 ✎ 现读（2026-11-02）更正：`CommandPalette` 用 `parseDateExpression` 判查询串，能解析就在「创建」之上多一行日期结果（`data-testid=\"palette-date-result\"`），选中打开/创建该日每日笔记；解析失败不显示该行（等价\"静默空数组\"）。接线断言见 `CommandPalette.date.test.ts`。",
+      "verdict": "☆ 已清（第 136 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

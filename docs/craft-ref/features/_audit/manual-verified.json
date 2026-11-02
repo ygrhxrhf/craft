@@ -4744,10 +4744,13 @@
       ]
     },
     "G354": {
-      "status": "gap",
-      "note": "搜索只回文档/块/行，无日期解析结果项",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "命令面板把可解析为日期的查询串渲染成一条日期结果，选中打开该日每日笔记；解析失败不显示。",
       "evidence": [
-        "src/actions/document/search.ts:70"
+        "src/components/search/CommandPalette.tsx:225",
+        "src/components/search/CommandPalette.tsx:321",
+        "src/components/search/CommandPalette.date.test.ts"
       ]
     },
     "G355": {

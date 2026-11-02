@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {ChevronDown, ChevronUp, Database, FileText, Keyboard, Plus, Search, Terminal, Type, Folder} from 'lucide-react';
+import {ChevronDown, ChevronUp, Database, FileText, Keyboard, Plus, Search, Terminal, Type, Folder, Calendar} from 'lucide-react';
 import {
   CommandDialog,
   CommandGroup,
@@ -22,6 +22,8 @@ import { searchAll } from '@/actions/document/search';
 import { cumulativeOffsets, groupResults } from '@/lib/search/result-groups';
 import type { SearchResultDoc, SearchResultBlock, SearchResultRow } from '@/actions/document/search';
 import { createDocumentLocal } from '@/components/sync/create-local';
+import { parseDateExpression } from '@/lib/task/date-parse';
+import { getOrCreateDayNote } from '@/actions/daily-notes/daily-notes';
 import { exportLibraryZip } from '@/actions/document/export-library';
 import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel, noResultsFor } from '@/lib/search/official-copy';
 import {
@@ -212,6 +214,20 @@ export function CommandPalette() {
   };
 
   const hasQuery = query.trim().length > 0;
+  // G354: a query that parses as a date gets one extra `type:"date"` result. The official parser
+  // is async chrono; local parsing is synchronous, so no extra round trip is visible.
+  const parsedDate = useMemo(() => {
+    if (!hasQuery) return null;
+    const result = parseDateExpression(query.trim());
+    return result.ok ? result.date : null;
+  }, [hasQuery, query]);
+
+  const handleOpenDate = async (date: Date) => {
+    close();
+    setQuery('');
+    const note = await getOrCreateDayNote(date);
+    router.push(`/documents/${note.id}`);
+  };
 
   /**
    * G353：结果按**多归属**分桶 + 预计算跨组累计 offset。官方那支 `bit()` 是"匹配到就 push、
@@ -296,6 +312,26 @@ export function CommandPalette() {
                 </button>
               </CommandItem>
             ))}
+          </CommandGroup>
+        )}
+
+        {parsedDate && (
+          <CommandGroup>
+            <CommandItem
+              data-testid="palette-date-result"
+              value={`date-${parsedDate.toISOString()}`}
+              onSelect={() => void handleOpenDate(parsedDate)}
+            >
+              <Calendar className="size-4" />
+              <span>
+                {parsedDate.toLocaleDateString('zh-CN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  weekday: 'long',
+                })}
+              </span>
+            </CommandItem>
           </CommandGroup>
         )}
 

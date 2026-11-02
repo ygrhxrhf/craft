@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T04:28:24.813Z",
+  "generatedAt": "2026-11-02T04:56:26.719Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
@@ -1126,7 +1126,16 @@
       }
     ]
   },
-  "conflicts": [],
+  "conflicts": [
+    {
+      "id": "G384",
+      "line": 1711,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "本地若做单一共享菜单 ✎ 现读（2026-11-02）更正：**已按对象分档**。通用菜单本就按块类型插专属项（任务/折叠/分隔线/Callout），本批补上**代码块那套九项名册**（`CODE_BLOCK_MENU`：语言/主题/全屏模式/提醒我…/在上方插入区块/在下方插入区块/复制代码/复制区块链接/删除，逐字按序，`isCodeBlock` 时整份替换通用名册而不是叠加）；「复制代码」写",
+      "verdict": "部分落地（分档已落，卡片右键未做）"
+    }
+  ],
   "unknownSections": [],
   "gapSections": [
     [

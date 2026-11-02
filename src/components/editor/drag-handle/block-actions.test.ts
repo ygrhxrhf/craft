@@ -735,3 +735,32 @@ describe('setTaskReminderAt / setBlockReminderAt（G1466）', () => {
     );
   });
 });
+
+// G384/G1440 —— 代码块有自己那份九项名册，不与通用菜单共用配置。
+describe('代码块九项名册（G1440）', () => {
+  it('lists exactly the nine official entries, in order', () => {
+    expect(blockMenuItems({ canDelete: true, isCodeBlock: true }).map((item) => item.label)).toEqual([
+      '语言',
+      '主题',
+      '全屏模式',
+      '提醒我…',
+      '在上方插入区块',
+      '在下方插入区块',
+      '复制代码',
+      '复制区块链接',
+      '删除',
+    ]);
+  });
+
+  it('drops 删除 when the block is the only one', () => {
+    const labels = blockMenuItems({ canDelete: false, isCodeBlock: true }).map((item) => item.label);
+    expect(labels).toHaveLength(8);
+    expect(labels).not.toContain('删除');
+  });
+
+  it('does not fall back to the generic roster (no 转换为卡片 / 添加表情)', () => {
+    const labels = blockMenuItems({ canDelete: true, isCodeBlock: true }).map((item) => item.label);
+    expect(labels).not.toContain('转换为卡片');
+    expect(labels).not.toContain('添加表情');
+  });
+});

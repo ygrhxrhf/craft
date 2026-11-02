@@ -163,6 +163,15 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     [editor, indexOfBlock],
   );
 
+  // G384/G1440：代码块走它自己那份九项名册。
+  const isCodeBlock = useCallback(
+    (blockEl: HTMLElement) => {
+      const index = indexOfBlock(blockEl);
+      return index >= 0 && editor.state.doc.child(index).type.name === 'codeBlock';
+    },
+    [editor, indexOfBlock],
+  );
+
   const restyleDivider = useCallback(
     (blockEl: HTMLElement, style: DividerStyle) => {
       const index = indexOfBlock(blockEl);
@@ -222,6 +231,21 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
           () => toast.add({ title: '已复制区块链接', type: 'success' }),
           () => toast.add({ title: '复制失败', type: 'error' }),
         );
+        return;
+      }
+      // G1440：代码块的「复制代码」——把那枚块自己的文本写进剪贴板。
+      if (id === 'code-copy') {
+        const text = state.doc.child(index).textContent;
+        void navigator.clipboard.writeText(text).then(
+          () => toast.add({ title: '已复制代码', type: 'success' }),
+          () => toast.add({ title: '复制失败', type: 'error' }),
+        );
+        return;
+      }
+      // 「全屏模式」走代码块自己的全屏视图：向它的 NodeView 发一个事件（组件内监听）。
+      if (id === 'code-fullscreen') {
+        const node = blockEl;
+        node.dispatchEvent(new CustomEvent('craft-code-fullscreen', { bubbles: true }));
         return;
       }
       applyBlockAction(state, view.dispatch, index, id);
@@ -554,6 +578,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                 ...toggleState(handle.blockEl),
                 isDivider: isDividerBlock(handle.blockEl),
                 isCallout: isCalloutBlock(handle.blockEl),
+                isCodeBlock: isCodeBlock(handle.blockEl),
               }).map((item) =>
                 item.id === 'callout-type' ? (
                   <DropdownMenuSub key={item.id}>

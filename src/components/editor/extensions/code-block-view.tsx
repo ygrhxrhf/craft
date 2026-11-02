@@ -3,7 +3,7 @@
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { Check, Copy, Maximize2, Minimize2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CODE_LANGUAGES, filterLanguages } from '@/lib/editor/code-languages';
 import { appearsInLanguageMenu } from '@/lib/editor/mermaid-surface';
 import { storeDefaultLanguage, storeDefaultTheme } from '@/lib/editor/code-preferences';
@@ -48,6 +48,17 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
       // Clipboard permission denied; the selection is still there for a manual copy.
     }
   };
+
+  // G1440：块级 `⋯` 菜单的「全屏模式」一枚——菜单在另一棵树里，所以用一次冒泡事件把它接过来。
+  // 事件名带 `craft-` 前缀，避免与浏览器/框架的内建事件撞名。
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const onFullscreen = () => setFullscreen((prev) => !prev);
+    el.addEventListener('craft-code-fullscreen', onFullscreen as EventListener);
+    return () => el.removeEventListener('craft-code-fullscreen', onFullscreen as EventListener);
+  }, []);
 
   return (
     <NodeViewWrapper

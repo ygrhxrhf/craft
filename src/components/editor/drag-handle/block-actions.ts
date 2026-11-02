@@ -31,6 +31,10 @@ export type BlockActionId =
   | 'add-content'
   | 'divider-style'
   | 'callout-type'
+  | 'code-language'
+  | 'code-theme'
+  | 'code-fullscreen'
+  | 'code-copy'
   | 'delete';
 
 const MOVE_TARGETS: Record<string, MoveTarget> = {
@@ -55,6 +59,26 @@ export const REMIND_MENU = REMIND_PRESETS;
 /** The short row the 添加表情 entry offers. Picking the current one again clears it. */
 export const BLOCK_EMOJIS = ['👍', '❤️', '😄', '🎉', '🔥', '👀'] as const;
 
+/**
+ * G1440 —— 代码块的块级 `⋯` 菜单是**逐字 9 项、按此序**（官方 `blockdetails.*` 那族专属项
+ * ＋ `commands.*` 公共项）：`语言`／`主题`／`全屏模式`／`提醒我…`／`在上方插入区块`／
+ * `在下方插入区块`／`复制代码`／`复制区块链接`／`删除`。
+ *
+ * ⇒ 这是 G384 那条"块级菜单＝**一枚公共内核＋按块类型注入的专属项**"的直接证据：
+ * 专属项（语言/主题/全屏/复制代码）来自 `blockdetails.*`，其余五枚是公共内核。
+ */
+export const CODE_BLOCK_MENU: readonly { id: BlockActionId; label: string }[] = [
+  { id: 'code-language', label: '语言' },
+  { id: 'code-theme', label: '主题' },
+  { id: 'code-fullscreen', label: '全屏模式' },
+  { id: 'remind', label: '提醒我…' },
+  { id: 'insert-above', label: '在上方插入区块' },
+  { id: 'insert-below', label: '在下方插入区块' },
+  { id: 'code-copy', label: '复制代码' },
+  { id: 'copy-link', label: '复制区块链接' },
+  { id: 'delete', label: '删除' },
+] as const;
+
 export function blockMenuItems({
   canDelete,
   isTask,
@@ -64,6 +88,7 @@ export function blockMenuItems({
   toggleOpen,
   isDivider,
   isCallout,
+  isCodeBlock,
 }: {
   canDelete: boolean;
   isTask?: boolean;
@@ -74,7 +99,13 @@ export function blockMenuItems({
   toggleOpen?: boolean;
   isDivider?: boolean;
   isCallout?: boolean;
+  /** G384/G1440: a code block has its own nine-item roster, not the generic one. */
+  isCodeBlock?: boolean;
 }): BlockAction[] {
+  // 代码块走它自己那份名册（9 项、逐字按序）——这正是 G384 说的"不能共用一份菜单配置"。
+  if (isCodeBlock) {
+    return CODE_BLOCK_MENU.filter((item) => item.id !== 'delete' || canDelete).map((item) => ({ ...item }));
+  }
   const items: BlockAction[] = [
     { id: 'add-content', label: '添加内容' },
     { id: 'insert-above', label: '在上方插入区块' },
@@ -524,6 +555,16 @@ export function applyBlockAction(
       break;
     case 'callout-type':
       // The kind is chosen from the submenu, which calls setCalloutType itself.
+      break;
+    case 'code-language':
+    case 'code-theme':
+      // 语言/主题从子菜单选（与 callout-type 同形），点条目不做事。
+      break;
+    case 'code-fullscreen':
+      // 由调用点开代码块的全屏视图（需要 DOM 与组件状态，不在这里做）。
+      break;
+    case 'code-copy':
+      // 由调用点读代码文本写剪贴板。
       break;
     case 'copy-link':
       // The link needs the document id and the clipboard, neither of which the editor state

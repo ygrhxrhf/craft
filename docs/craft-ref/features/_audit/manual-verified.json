@@ -4816,9 +4816,12 @@
     },
     "G384": {
       "status": "partial",
-      "note": "块菜单按类型插项，但无代码块九项与卡片右键菜单",
+      "priority": "P2",
+      "note": "块菜单已按对象分档：补代码块九项名册（逐字按序，替换而非叠加）+ 复制代码 + 全屏模式接线；卡片右键那 7 项仍未做。",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:57"
+        "src/components/editor/drag-handle/block-actions.ts",
+        "src/components/editor/drag-handle/block-actions.test.ts",
+        "src/components/editor/extensions/code-block-view.tsx"
       ]
     },
     "G385": {

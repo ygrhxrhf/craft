@@ -49,3 +49,27 @@ export function offlineBadgeLabel(state: OfflineBadgeState): string | null {
       return null;
   }
 }
+
+export interface BadgeDocInput {
+  offline: boolean;
+  /** This document has an op waiting in the local push queue. */
+  hasPendingWrite: boolean;
+  /** The document's `updatedAt` inside the local mirror, when the mirror has it. */
+  mirrorUpdatedAt?: string | null;
+  /** The `updatedAt` the list row itself renders (the server's copy). */
+  listedUpdatedAt: string;
+}
+
+/**
+ * 「打开以同步」是第三态：本地镜像已经比列表里那份新，但这次写已经推送过了（不在队列里）。
+ * 两件事合成一枚判据，所以这里按镜像时间比，而不是只看队列。
+ */
+export function offlineBadgeForDoc(input: BadgeDocInput): OfflineBadgeState {
+  const mirrorIsAhead =
+    Boolean(input.mirrorUpdatedAt) && String(input.mirrorUpdatedAt) > input.listedUpdatedAt;
+  return offlineBadgeState({
+    offline: input.offline,
+    hasPendingWrite: input.hasPendingWrite,
+    opensToSync: mirrorIsAhead,
+  });
+}

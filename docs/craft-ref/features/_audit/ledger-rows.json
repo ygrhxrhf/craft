@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T13:08:19.046Z",
+  "generatedAt": "2026-11-02T13:17:31.922Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 929,
-    "aligned": 254,
+    "gap": 928,
+    "aligned": 255,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 358,
+    "P2 / gap": 357,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 154,
-    "P2 / aligned": 150,
+    "P2 / aligned": 151,
     "P? / unknown": 112,
     "P1 / aligned": 40,
     "P2 / deliberate": 39,
@@ -5350,10 +5350,10 @@
       "cols": 5,
       "id": "G237",
       "official": "**列表里的离线徽标有三态**：已离线编辑 / 已编辑·打开以同步 / 打开以同步",
-      "local": "本地离线只有 `settings.md` 记的开关，列表侧无徽标",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-02）：纯核 `lib/sync/offline-badge.ts` 三态＋逐字三句已在，第 181 批挂上屏——`components/sync/OfflineBadge.tsx` 读推送队列与本地镜像时间戳，浏览列表行与侧栏树行各挂一枚 ☆ 已清（第 181 批）",
+      "verdict": "对齐",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

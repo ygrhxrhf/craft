@@ -1,9 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
   BADGE_EDITED_OFFLINE,
   BADGE_EDITED_OPEN_TO_SYNC,
   BADGE_OPEN_TO_SYNC,
+  offlineBadgeForDoc,
   offlineBadgeLabel,
   offlineBadgeState,
 } from './offline-badge';
@@ -49,5 +53,48 @@ describe('the labels', () => {
 
   it('keeps the middle string verbatim, separator and all', () => {
     expect(BADGE_EDITED_OPEN_TO_SYNC).toBe('已编辑 · 打开以同步');
+  });
+});
+
+// G237：第三态「打开以同步」＝本地镜像已比列表那份新，但写已推送（不在队列里）。
+describe('the per-row inputs', () => {
+  it('reads the queue first, then the mirror timestamp', () => {
+    expect(
+      offlineBadgeForDoc({ offline: true, hasPendingWrite: true, listedUpdatedAt: '2026-01-01T00:00:00.000Z' }),
+    ).toBe('editedOffline');
+    expect(
+      offlineBadgeForDoc({ offline: false, hasPendingWrite: true, listedUpdatedAt: '2026-01-01T00:00:00.000Z' }),
+    ).toBe('editedOpenToSync');
+    expect(
+      offlineBadgeForDoc({
+        offline: false,
+        hasPendingWrite: false,
+        mirrorUpdatedAt: '2026-02-01T00:00:00.000Z',
+        listedUpdatedAt: '2026-01-01T00:00:00.000Z',
+      }),
+    ).toBe('openToSync');
+    expect(
+      offlineBadgeForDoc({
+        offline: false,
+        hasPendingWrite: false,
+        mirrorUpdatedAt: '2026-01-01T00:00:00.000Z',
+        listedUpdatedAt: '2026-01-01T00:00:00.000Z',
+      }),
+    ).toBe('none');
+    expect(
+      offlineBadgeForDoc({ offline: false, hasPendingWrite: false, listedUpdatedAt: '2026-01-01T00:00:00.000Z' }),
+    ).toBe('none');
+  });
+});
+
+describe('the badge is hung on both lists', () => {
+  const source = (rel: string) => readFileSync(join(process.cwd(), 'src', rel), 'utf8');
+
+  it('renders inside the browse list row and the sidebar tree row', () => {
+    for (const file of ['components/document/DocumentListView.tsx', 'components/sidebar/DocumentTreeItem.tsx']) {
+      const src = source(file);
+      expect(src, file).toContain("import { OfflineBadge } from '@/components/sync/OfflineBadge'");
+      expect(src, file).toMatch(/<OfflineBadge\s+documentId=/);
+    }
   });
 });

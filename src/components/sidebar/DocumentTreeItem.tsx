@@ -9,6 +9,7 @@ import { createDocument } from '@/actions/document/create';
 import { setDocumentArchived } from '@/actions/document/archive';
 import { toast } from '@/components/ui/toast';
 import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
+import { OfflineBadge } from '@/components/sync/OfflineBadge';
 import { getSyncManager } from '@/lib/sync-core';
 import { createDocumentLocal } from '@/components/sync/create-local';
 import { resolveFavoriteState, toggleFavoriteLocal } from '@/lib/favorite/toggle-local';
@@ -337,7 +338,11 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
           className="min-w-0 flex-1 rounded border border-input bg-background px-1 text-[13px] outline-none focus:border-ring"
         />
       ) : (
-        <span className="truncate">{doc.title || untitledFor('list')}</span>
+        <>
+          <span className="truncate">{doc.title || untitledFor('list')}</span>
+          {/* G237：侧栏这一行也挂同一枚离线徽标。 */}
+          <OfflineBadge documentId={doc.id} listedUpdatedAt={doc.updatedAt} />
+        </>
       )}
     </>
   );

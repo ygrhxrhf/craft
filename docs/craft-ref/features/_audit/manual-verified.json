@@ -4324,10 +4324,13 @@
       ]
     },
     "G237": {
-      "status": "gap",
-      "note": "列表与卡片无离线徽标，只有编辑器保存句",
+      "status": "aligned",
+      "note": "第 181 批：三态徽标挂上浏览列表行与侧栏树行（队列 + 镜像时间戳判据）",
       "evidence": [
-        "src/components/document/DocumentCard.tsx:20"
+        "src/lib/sync/offline-badge.ts:1",
+        "src/components/sync/OfflineBadge.tsx:1",
+        "src/components/document/DocumentListView.tsx:182",
+        "src/components/sidebar/DocumentTreeItem.tsx:344"
       ]
     },
     "G238": {

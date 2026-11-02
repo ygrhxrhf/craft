@@ -16,6 +16,7 @@ import {
 } from '@/lib/browse/list-columns';
 import { relativeTime } from '@/lib/document/relative-time';
 import { rowSubtitle } from '@/lib/browse/row-subtitle';
+import { OfflineBadge } from '@/components/sync/OfflineBadge';
 import {
   ariaSortValue,
   nextSortSpec,
@@ -177,6 +178,8 @@ export function DocumentListView({
               <span className="truncate text-meta text-foreground/45">
                 {rowSubtitle({ plainText: doc.plainText })}
               </span>
+              {/* G237：本地比列表那份新时挂离线徽标（三态）。 */}
+              <OfflineBadge documentId={doc.id} listedUpdatedAt={doc.updatedAt} className="self-start" />
             </div>
           </div>
           <div

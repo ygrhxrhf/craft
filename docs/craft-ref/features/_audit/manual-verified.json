@@ -4437,10 +4437,13 @@
       ]
     },
     "G298": {
-      "status": "gap",
-      "note": "分享动作无「离开文档」及其后果确认",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "离开共享文档：leave-document.ts 单/复/成败四句逐字 + 服务端 leaveDocument（只删自己那行）+ 非所有者入口带后果确认框。",
       "evidence": [
-        "src/actions/document/share.ts:63"
+        "src/lib/share/leave-document.ts",
+        "src/actions/document/members.ts",
+        "src/components/editor/tabs/InfoTab.tsx"
       ]
     },
     "G300": {
@@ -4696,10 +4699,13 @@
       ]
     },
     "G353": {
-      "status": "partial",
-      "note": "结果按文档/块/行三组互斥分桶，无多归属与跨组序号",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "结果分组多归属 + 跨组累计 offset：新增 result-groups.ts，CommandPalette 用它做分组唯一来源。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:297"
+        "src/lib/search/result-groups.ts",
+        "src/components/search/CommandPalette.tsx",
+        "src/lib/search/result-groups.test.ts"
       ]
     },
     "G354": {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {ChevronDown, ChevronUp, Database, FileText, Keyboard, Plus, Search, Terminal, Type, Folder} from 'lucide-react';
 import {
@@ -19,6 +19,7 @@ import { slashCommands } from '@/components/editor/slash-menu/slash-commands';
 import { filterCommands, type PaletteCommand } from '@/lib/commands/registry';
 import { OFFICIAL_COMMANDS } from '@/lib/commands/official-catalog';
 import { searchAll } from '@/actions/document/search';
+import { cumulativeOffsets, groupResults } from '@/lib/search/result-groups';
 import type { SearchResultDoc, SearchResultBlock, SearchResultRow } from '@/actions/document/search';
 import { createDocumentLocal } from '@/components/sync/create-local';
 import { exportLibraryZip } from '@/actions/document/export-library';
@@ -185,6 +186,36 @@ export function CommandPalette() {
   };
 
   const hasQuery = query.trim().length > 0;
+
+  /**
+   * G353：结果按**多归属**分桶 + 预计算跨组累计 offset。官方那支 `bit()` 是"匹配到就 push、
+   * 不 break"⇒ 同一条结果可同时出现在两个组里。本地这里把"同一篇文档既命中标题、其正文块又命中"
+   * 这一情形落成真多归属：那条文档结果同时进「文档」与「块内容」两组，`cumulativeOffsets` 给键盘
+   * ↑/↓ 提供拍平序。
+   */
+  const resultGroups = useMemo(() => {
+    const docsWithBlockHits = new Set(blocks.map((b) => b.documentId));
+    const items = [
+      ...docs.map((doc) => ({
+        facets: docsWithBlockHits.has(doc.id) ? ['docs', 'blocks'] : ['docs'],
+      })),
+      ...blocks.map(() => ({ facets: ['blocks'] })),
+      ...rows.map(() => ({ facets: ['rows'] })),
+    ];
+    return groupResults(items, [
+      { key: 'docs', label: DOCS_HEADING },
+      { key: 'blocks', label: BLOCKS_HEADING },
+      { key: 'rows', label: ROWS_HEADING },
+    ]);
+  }, [docs, blocks, rows]);
+  // 拍平序的组起点：键盘 ↑/↓ 拿到拍平序号后，用它定位落在第几组。
+  const groupOffsets = useMemo(() => cumulativeOffsets(resultGroups), [resultGroups]);
+  // 拍平后的总条数＝最后一组的起点 + 该组条数；也用作"有没有结果"的判据。
+  const totalResultCount =
+    groupOffsets.length === 0
+      ? 0
+      : groupOffsets[groupOffsets.length - 1] + resultGroups[resultGroups.length - 1].members.length;
+  const groupOf = (key: string) => resultGroups.find((group) => group.key === key);
   const matchingCommands = hasQuery ? filterCommands(paletteCommands, query).slice(0, 8) : [];
 
   const handleRunCommand = (command: PaletteCommand) => {
@@ -292,7 +323,7 @@ export function CommandPalette() {
           <div className="py-6 text-center text-ui text-foreground/40">{SEARCHING_OTHER_MATCHES}</div>
         )}
 
-        {hasQuery && !searching && docs.length === 0 && blocks.length === 0 && rows.length === 0 && (
+        {hasQuery && !searching && totalResultCount === 0 && (
           <div className="py-6 text-center text-ui text-foreground/40">{noResultsFor(query.trim())}</div>
         )}
 
@@ -314,8 +345,8 @@ export function CommandPalette() {
           </CommandGroup>
         )}
 
-        {docs.length > 0 && (
-          <CommandGroup heading={DOCS_HEADING}>
+        {groupOf('docs')!.members.length > 0 && (
+          <CommandGroup heading={groupOf('docs')!.label}>
             {docs.map((doc) => (
               <CommandItem key={`doc-${doc.id}`} value={`doc-${doc.id}-${doc.title}`} onSelect={() => handleOpenDocument(doc.id)}>
                 {doc.icon ? (
@@ -329,10 +360,10 @@ export function CommandPalette() {
           </CommandGroup>
         )}
 
-        {blocks.length > 0 && (
+        {groupOf('blocks')!.members.length > 0 && (
           <>
             <CommandSeparator />
-            <CommandGroup heading={BLOCKS_HEADING}>
+            <CommandGroup heading={groupOf('blocks')!.label}>
               {blocks.map((block, i) => (
                 <CommandItem
                   key={`block-${i}`}
@@ -349,10 +380,10 @@ export function CommandPalette() {
             </CommandGroup>
           </>
         )}
-        {rows.length > 0 && (
+        {groupOf('rows')!.members.length > 0 && (
           <>
             <CommandSeparator />
-            <CommandGroup heading={ROWS_HEADING}>
+            <CommandGroup heading={groupOf('rows')!.label}>
               {rows.map((row, i) => (
                 <CommandItem
                   key={`row-${row.itemId}-${i}`}

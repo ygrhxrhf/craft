@@ -20,6 +20,10 @@ function tableOf(rows: () => Record<string, unknown>[]) {
       rows().find((row) => matches(row, filter)) ?? null,
     where: (filter: Record<string, unknown>) => ({
       all: async () => rows().filter((row) => matches(row, filter)),
+      delete: async () => {
+        const all = rows();
+        for (let i = all.length - 1; i >= 0; i -= 1) if (matches(all[i], filter)) all.splice(i, 1);
+      },
     }),
   };
 }
@@ -105,5 +109,29 @@ describe('listMentionCandidates', () => {
   it('refuses a signed-in-less caller', async () => {
     store.userId = '';
     await expect(listMentionCandidates('doc-1')).rejects.toBeInstanceOf(AuthorizationError);
+  });
+});
+
+describe('leaveDocument (G298)', () => {
+  it('removes the caller’s own member row and reports it', async () => {
+    const { leaveDocument } = await import('@/actions/document/members');
+    store.userId = 'u-editor';
+    expect(store.members.some((m) => m.userId === 'u-editor' && m.documentId === 'doc-1')).toBe(true);
+    expect(await leaveDocument('doc-1')).toBe(true);
+    expect(store.members.some((m) => m.userId === 'u-editor' && m.documentId === 'doc-1')).toBe(false);
+  });
+
+  it('is idempotent — no row of my own ⇒ false, no throw', async () => {
+    const { leaveDocument } = await import('@/actions/document/members');
+    store.userId = 'u-outsider';
+    expect(await leaveDocument('doc-1')).toBe(false);
+  });
+
+  it('never removes another person’s row', async () => {
+    const { leaveDocument } = await import('@/actions/document/members');
+    store.userId = 'u-editor';
+    await leaveDocument('doc-1');
+    // 别人的行原样还在。
+    expect(store.members.some((m) => m.userId === 'u-nameless' && m.documentId === 'doc-1')).toBe(true);
   });
 });

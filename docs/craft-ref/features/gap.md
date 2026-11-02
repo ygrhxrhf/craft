@@ -1576,7 +1576,7 @@
 | G295 | **分享页品牌水印是团队级开关**：`share.page.branding.enabled` / `.disabled` ⇒ 去水印挂在团队套餐上而非单文档 | 本地无该层级开关 | 缺失 | 2/1 |
 | G296 | **改账单邮箱是人工流程（24 小时 SLA）**：`billing.billingemail.part1/part3` + `billing.change.email`「请求更改…」⇒ 界面只有"请求"没有输入框；另 `billing.recurring.coupon.flat` 文案里**直接内嵌 `<code>` 标签** ⇒ 渲染端要允许 HTML 或有 sanitize 通路 | 本地假设可直接编辑，且文案按纯文本渲染 | 行为不同 | 1/1 |
 | G297 | **危险操作有"输入式确认"这一档**：`alert.account.delete.message.personal.only`「…要继续，**请输入你的电子邮件地址**：」+ `…otherspaces`（列出受影响空间清单）+ `…confirmation`（个人空间版）⇒ 三态文案 + 输入匹配才解锁提交（`dialogs.md` §8.2） | 本地只有"点确认按钮"一档 | 缺失 | 2/1 |
-| G298 | **离开共享文档是独立确认、且明写后果**：`alert.leave.document` / `alert.confirm.leave.documents`（单复两键）「你可能无法再访问它/它们。」+ 成败两键（`dialogs.md` §8.3） | 本地离开共享文档无确认、无后果句 | 缺失 | 2/1 |
+| G298 | **离开共享文档是独立确认、且明写后果**：`alert.leave.document` / `alert.confirm.leave.documents`（单复两键）「你可能无法再访问它/它们。」+ 成败两键（`dialogs.md` §8.3） | ✎ 现读（2026-11-02）更正：**已补**。新增纯核 `src/lib/share/leave-document.ts`（单/复两句逐字、`leaveConfirmMessage` 按数填 `[0]`、失败两句）；服务端加 `leaveDocument(documentId)`（删**调用者自己**那一行，幂等；绝不删别人的行）；信息面板「动作」区在**非所有者**时出现「离开文档」，先弹带后果句的确认框（「你可能无法再访问它。」）、确认后才执行、失败出官方那两句 toast。单测 7+3 条。 | ☆ 已清（第 113 批） | 2/1 |
 | G299 | **字段类型变更会尝试转换现有值**：`alert.field.type.changing.desc.updated`「**如果可以转换**，修改字段类型将会转换当前值。」⇒ 尽力转换而非清空（不能转时的行为仍未采）（`dialogs.md` §8.4） | 本地改字段类型直接清空值 | **行为不同**（破坏性） | 3/1 |
 | G300 | **异步 pending 态全集是 11 条进行时句**：创建文档/文件夹/链接、删除账户/文档(单复)/邀请(单复)/导出文档/更新空间头像/更新用户（`dialogs.md` §8.5）⇒ **导出与头像更新也有独立 loading 态** | 本地只有删除有 pending 态 | 缺失 | 2/1 |
 | G301 | ★ **表情反应明确禁离线**：`alert.not.connected.to.internet.{adding,removing}reactions` 两条专错 ⇒ **离线写队列不是"所有操作都能排队"**（与 §四 离线状态机的默认假设冲突）（`dialogs.md` §8.6） | 本地离线时所有写操作一律入队 | **行为不同**（要加白名单反例） | 2/1 |
@@ -1647,7 +1647,7 @@
 | # | 官方事实（证据） | 本地现状 | 差异类型 | 影响/成本 |
 |---|---|---|---|---|
 | G352 | **搜索是 4 个 PUT 端点、`terms` 为数组、`scope` 随请求上行、且响应字段名不统一**（`tags-browse.md` §9.1）：`/search`→`.items`、`/document-highlights`→`.items`（唯一带 404 NotFound）、`/search-block`→**`.results`**、`/tag-stats`→`.items`；`limit` 只在非 null 时才进 body ⇒ **省略即由服务端决定默认值** | 本地单端点、单查询串、统一取 `results` | 缺失 + 行为不同 | 3/2 |
-| G353 | **结果分组是客户端按谓词"多归属"分桶 + 预计算跨组累计 offset 供方向键导航**（§9.2 `bit()`：匹配到就 push、**不 break**）⇒ 同一条结果可同时出现在两个组里，键盘 ↑/↓ 走的是拍平后的序号；谓词签名含 `query` ⇒ 分组可依赖查询串本身 | 本地分组是互斥划分（第一个匹配即归组） | 行为不同 | 2/1 |
+| G353 | **结果分组是客户端按谓词"多归属"分桶 + 预计算跨组累计 offset 供方向键导航**（§9.2 `bit()`：匹配到就 push、**不 break**）⇒ 同一条结果可同时出现在两个组里，键盘 ↑/↓ 走的是拍平后的序号；谓词签名含 `query` ⇒ 分组可依赖查询串本身 | ✎ 现读（2026-11-02）更正：**多归属 + 跨组 offset 已落**。新增纯核 `src/lib/search/result-groups.ts` 的 `groupResults`（按 `facets` 多归属分桶，同一项可进两组）、`cumulativeOffsets`（每组起点＝前几组成员数之和）、`flattenGroups`／`groupAtFlatIndex`（拍平序与反查）；`CommandPalette` 用它做分组的唯一来源——"同一篇文档既命中标题、其正文块又命中"落成真多归属（该文档同时进「文档」与「块内容」两组），空态判据也改读拍平总数。单测 8 条。 | ☆ 已清（第 113 批） | 2/1 |
 | G354 | **搜索框输入可解析成日期的串就追加一条 `{type:"date"}` 结果**（§9.3 `yit()`，复用异步 chrono 链、失败静默空数组） | 本地搜索无日期结果项 | 缺失 | 2/1 |
 | G355 | **「最近文档」组 = 排除当前正在看的文档 + 服务端风格比较器 `getDocumentSortFunction(Updated, Ascending)` + 截断 20 条**（§9.4）；★ 同时**作废**此前"`git=20` 是查看更多阈值"的候选结论（该阈值仍未定位，见 `tags-browse.md` 未采到第 10 条） | 本地搜索面板的最近文档包含当前文档、无截断 | 行为不同 | 1/1 |
 | G356 | **每日笔记文档的标题是派生值**（§9.5：`dailyNoteDate` + locale 现场合成，取不到才回退 `title`）；未分类文件夹用**哨兵 id**（`folderId === dl`）而非真实 id，与 `craft://folder/unsorted` 保留字互证 | 本地把每日笔记标题当普通字段存 | 行为不同 | 2/1 |

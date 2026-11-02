@@ -116,3 +116,17 @@ export async function resolveDocumentMember(input: {
     existing: Boolean(existing),
   };
 }
+
+/**
+ * G298 —— **成员自己离开共享文档**。与"所有者移除协作者"是两件事：这里调用者移除的是**自己**
+ * 那一行。所有者不能离开自己的文档（他是 `Document.userId`，没有成员行可删）⇒ 拒绝。
+ * 返回是否真的删掉了一行（没在名册里 ⇒ 无操作，不报错——幂等）。
+ */
+export async function leaveDocument(documentId: string): Promise<boolean> {
+  const userId = await requireUserId();
+  const members = await getTable('DocumentMember');
+  const mine = await members.first({ documentId, userId });
+  if (!mine) return false;
+  await members.where({ id: mine.id as string }).delete();
+  return true;
+}

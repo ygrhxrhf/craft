@@ -6,9 +6,12 @@ import { useRouter } from 'next/navigation';
 import {
   Calendar, User, Play, Folder, Copy, Star, Clock, Trash2,
   FileText, LayoutTemplate, Download, Search, ArrowUp, ArrowDown, ChevronsUp, ChevronsDown,
-  MessageSquare, ChevronRight, FoldVertical, UnfoldVertical,
+  MessageSquare, ChevronRight, FoldVertical, UnfoldVertical, LogOut,
 } from 'lucide-react';
 import { cn } from 'cn';
+import { confirmDialog } from '@/lib/dialog/show';
+import { leaveDocument } from '@/actions/document/members';
+import { LEAVE_CONFIRM, LEAVE_DOCUMENT_SINGULAR, LEAVE_FAILED_DESC, LEAVE_FAILED_TITLE } from '@/lib/share/leave-document';
 import { getBacklinks } from '@/actions/document/backlinks';
 import { saveAsTemplate } from '@/actions/document/template';
 import { toggleFavoriteLocal, resolveFavoriteState } from '@/lib/favorite/toggle-local';
@@ -739,6 +742,33 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             <Clock className="size-3.5 text-muted-foreground" />
             <span>查看备份</span>
           </button>
+          {/* G298：**非所有者**才有"离开文档"——成员离开的是自己那一行，所有者没有成员行可删。
+              官方把它做成带后果句的独立确认（「你可能无法再访问它。」），不是直接执行。 */}
+          {!isOwner && (
+            <button
+              type="button"
+              data-testid="leave-document"
+              onClick={async () => {
+                const confirmed = await confirmDialog({
+                  title: LEAVE_DOCUMENT_SINGULAR,
+                  confirmLabel: LEAVE_CONFIRM,
+                });
+                if (!confirmed) return;
+                try {
+                  await leaveDocument(documentId);
+                  onClose();
+                  router.push('/documents');
+                } catch {
+                  // G298 失败态：官方那两句（标题 + 描述）——这里合成一条 toast。
+                  toast.add({ id: 'leave-failed', type: 'error', title: LEAVE_FAILED_TITLE, description: LEAVE_FAILED_DESC });
+                }
+              }}
+              className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui text-destructive transition-colors hover:bg-foreground/4"
+            >
+              <LogOut className="size-3.5" />
+              <span>离开文档</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setShowExport((prev) => !prev)}

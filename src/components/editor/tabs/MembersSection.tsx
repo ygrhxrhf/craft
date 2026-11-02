@@ -14,6 +14,7 @@ import { overlayMemberRows } from '@/components/sync/member-rows';
 import { rememberUserDisplay } from '@/components/sync/user-display';
 import { persistUserDisplay } from '@/components/sync/user-display-persist';
 import { memberRemovalNote } from '@/lib/share/member-access-notes';
+import { SHARE_ERROR } from '@/lib/share/share-guards';
 import { confirmDialog } from '@/lib/dialog/show';
 
 interface MemberRow {
@@ -110,7 +111,7 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
       };
       setMembers((prev) => [...prev.filter((m) => m.id !== row.id), row]);
     } catch (err) {
-      message(err, '添加协作者失败');
+      message(err, SHARE_ERROR.addPermission);
     } finally {
       setBusy(false);
     }
@@ -130,7 +131,7 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
       if (previous) {
         setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, role: previous } : m)));
       }
-      message(err, '权限更新失败');
+      message(err, SHARE_ERROR.changePermission);
     }
   };
 
@@ -152,7 +153,7 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
       await getSyncManager().applyLocal({ table: 'document_member', id, patch: null });
     } catch (err) {
       setMembers(previous);
-      message(err, '移除协作者失败');
+      message(err, SHARE_ERROR.deletePermission);
     }
   };
 

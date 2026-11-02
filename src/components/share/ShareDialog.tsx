@@ -48,6 +48,8 @@ import {
   type LinkOperation,
 } from '@/lib/share/link-operation-copy';
 import { toast } from '@/components/ui/toast';
+import { confirmDialog } from '@/lib/dialog/show';
+import { PASSWORD_XOR_EMAIL, PREVIOUS_LINK_INACTIVE, SHARE_ERROR } from '@/lib/share/share-guards';
 import { cn } from 'cn';
 import { getSyncManager } from '@/lib/sync-core';
 import { findDocumentShare, findDocumentShareId } from '@/components/sync/local-records';
@@ -108,13 +110,15 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
    * into a single commit, so the in-flight line would never reach the DOM. The urgent update lands
    * first, the transition carries the write.
    */
-  const runLinkOp = (op: LinkOperation, work: () => Promise<void>) => {
+  const runLinkOp = (op: LinkOperation, work: () => Promise<void>, failureTitle?: string) => {
     setLinkOp(op);
     startTransition(async () => {
       try {
         await work();
         const done = linkOperationDone(op);
         if (done) toast.add({ id: `link-op-${op}`, type: 'success', title: done });
+      } catch {
+        if (failureTitle) toast.add({ id: `link-op-${op}-error`, type: 'error', title: failureTitle });
       } finally {
         setLinkOp(null);
       }
@@ -314,6 +318,11 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       | 'hideHashTagWords',
     checked: boolean,
   ) => {
+    // G1530: the two access restrictions cannot be on at the same time.
+    if (key === 'emailBasedAccessEnabled' && checked && hasPasscode) {
+      toast.add({ id: 'password-xor', type: 'warning', title: PASSWORD_XOR_EMAIL });
+      return;
+    }
     setVisuals((prev) => ({ ...prev, [key]: checked }));
     startTransition(async () => {
       const shareId = await findDocumentShareId(documentId);
@@ -361,7 +370,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
         setServerVersion(result.shareVersion);
       } catch {
         setPermission(previous);
-        setTierError('档位没有保存，请重试');
+        setTierError(SHARE_ERROR.changePermission);
       }
     });
   };
@@ -371,6 +380,11 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   //   从"可判"降级成"要人工复核"。
   const handleEnablePasscode = () => {
     if (!passcode.trim()) return;
+    // G1530: email-based access and passcode protection are mutually exclusive.
+    if (visuals.emailBasedAccessEnabled) {
+      toast.add({ id: 'password-xor', type: 'warning', title: PASSWORD_XOR_EMAIL });
+      return;
+    }
     runLinkOp('updatingPassword', async () => {
       const shareId = await findDocumentShareId(documentId);
       const value = passcode.trim();
@@ -409,6 +423,28 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     }
   };
 
+  // G1530: rotating the token invalidates the previous link; the official sentence is the toast.
+  const handleResetLink = async () => {
+    const ok = await confirmDialog({
+      title: '重置链接',
+      message: PREVIOUS_LINK_INACTIVE,
+      confirmLabel: '重置',
+    });
+    if (!ok) return;
+    const nextToken = crypto.randomUUID();
+    const shareId = await findDocumentShareId(documentId);
+    if (shareId) {
+      await getSyncManager().applyLocal({
+        table: 'document_share',
+        id: shareId,
+        patch: { token: nextToken },
+      });
+    }
+    setToken(nextToken);
+    setLink(`${window.location.origin}/s/${nextToken}`);
+    toast.add({ id: 'share-link-reset', type: 'info', title: PREVIOUS_LINK_INACTIVE });
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-h-[calc(100dvh-2rem)] max-w-md overflow-y-auto rounded-xl! p-0">
@@ -436,6 +472,9 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                 <Button size="sm" variant="outline" onClick={handleCopy}>
                   {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
                   {copied ? '已复制' : '复制'}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => void handleResetLink()} aria-label="重置链接">
+                  重置
                 </Button>
               </div>
               {/* G139：写操作进行时按操作命名（正在更新链接／正在更新密码／正在移除链接）。 */}
@@ -647,6 +686,11 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   <KeyRound className="size-4 text-muted-foreground" />
                   <span className="text-sm">口令保护</span>
                 </div>
+                {visuals.emailBasedAccessEnabled && (
+                  <p className="mt-1 text-xs text-destructive" data-testid="password-xor-notice">
+                    {PASSWORD_XOR_EMAIL}
+                  </p>
+                )}
                 {hasPasscode ? (
                   <div className="mt-2">
                     <div className="flex items-center justify-between">
@@ -674,13 +718,14 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                         }}
                         placeholder="输入新口令"
                         aria-label="更改访问口令"
+                        disabled={visuals.emailBasedAccessEnabled}
                         className="h-8 min-w-0 flex-1 rounded-md border border-input bg-transparent px-2 text-xs outline-none transition-colors focus:border-ring"
                       />
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={handleEnablePasscode}
-                        disabled={!passcode.trim()}
+                        disabled={!passcode.trim() || visuals.emailBasedAccessEnabled}
                         className="h-8 shrink-0 text-xs"
                       >
                         更改密码
@@ -698,13 +743,14 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                       }}
                       placeholder="设置访问口令"
                       aria-label="设置访问口令"
+                      disabled={visuals.emailBasedAccessEnabled}
                       className="h-8 min-w-0 flex-1 rounded-md border border-input bg-transparent px-2 text-xs outline-none transition-colors focus:border-ring"
                     />
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={handleEnablePasscode}
-                      disabled={!passcode.trim()}
+                      disabled={!passcode.trim() || visuals.emailBasedAccessEnabled}
                       className="h-8 shrink-0 text-xs"
                     >
                       启用

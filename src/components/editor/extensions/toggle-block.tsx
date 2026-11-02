@@ -2,6 +2,7 @@ import { Node, mergeAttributes } from '@tiptap/react';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { ToggleBlockView } from './toggle-block-view';
 import { TOGGLE_NODE, setOpenOnAllToggles } from './toggle-all';
+import { parseWireFlag, serializeWireFlag, type TriStateFlag } from '@/lib/editor/wire-flag';
 
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {
@@ -24,11 +25,13 @@ export const ToggleBlock = Node.create({
   addAttributes() {
     return {
       open: {
-        default: false,
-        parseHTML: (element) => element.getAttribute('data-open') === 'true',
-        renderHTML: (attributes) => ({
-          'data-open': attributes.open,
-        }),
+        // G501: absent is its own state — a toggle that was never set is not the same as closed.
+        default: null,
+        parseHTML: (element) => parseWireFlag(element.getAttribute('data-open')),
+        renderHTML: (attributes) => {
+          const flag = serializeWireFlag(attributes.open as TriStateFlag);
+          return flag === undefined ? {} : { 'data-open': flag };
+        },
       },
     };
   },

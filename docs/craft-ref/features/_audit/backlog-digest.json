@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T06:56:58.017Z",
+  "generatedAt": "2026-11-02T07:03:07.583Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 460,
-    "partial": 300,
+    "aligned": 462,
+    "partial": 298,
     "deliberate": 162,
     "gap": 160,
     "unreachable": 20
@@ -20,8 +20,8 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 150,
-    "P2 / aligned": 145,
+    "P2 / partial": 148,
+    "P2 / aligned": 147,
     "P1 / nonaction": 89,
     "P2 / gap": 87,
     "P? / partial": 80,

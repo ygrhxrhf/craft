@@ -5425,10 +5425,13 @@
       ]
     },
     "G501": {
-      "status": "partial",
-      "note": "parseHTML 把缺省 data-open 塌成 false，无从未设过的三态位",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "三态布尔线编码器落地（1/0、true/false、数字 0/1，缺省 null），toggle.open 不再把未设塌成 false。",
       "evidence": [
-        "src/components/editor/extensions/toggle-block.tsx:28"
+        "src/lib/editor/wire-flag.ts",
+        "src/components/editor/extensions/toggle-block.tsx:29",
+        "src/lib/editor/wire-flag.test.ts"
       ]
     },
     "G502": {
@@ -9081,10 +9084,14 @@
       ]
     },
     "G1530": {
-      "status": "partial",
-      "note": "有查看/编辑/仅协作者与口令、到期，但无降级自锁确认与前链接失效",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "口令×邮件 XOR、重置链接失效句、三种失败分类已接；移除全部访问与降级自锁在本地无宿主。",
       "evidence": [
-        "src/components/share/ShareDialog.tsx:61"
+        "src/lib/share/share-guards.ts",
+        "src/components/share/ShareDialog.tsx:412",
+        "src/components/editor/tabs/MembersSection.tsx:112",
+        "src/lib/share/share-guards.test.ts"
       ]
     },
     "G1531": {

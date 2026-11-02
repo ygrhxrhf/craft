@@ -6,7 +6,7 @@ import { ChevronRight } from 'lucide-react';
 import { cn } from 'cn';
 
 export function ToggleBlockView({ node, updateAttributes }: NodeViewProps) {
-  const isOpen = node.attrs.open;
+  const isOpen = node.attrs.open === true;
 
   const toggle = () => {
     updateAttributes({ open: !isOpen });

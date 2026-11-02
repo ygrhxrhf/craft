@@ -94,14 +94,14 @@
 
 | G号 | 状态 | 影响/成本 | 官方行为（摘要） | 本地现状（摘要） | 下一步／证据 |
 | --- | --- | --- | --- | --- | --- |
-| G50 | 未动 | 1/1 | 代理每次写操作附一句给用户看的动作说明（契约原文 "Optional message to display to the use | 本地 AI 插入结果无任何动作说明/可审计文案 | 补实现；先现读确认前置 |
+| G50 | 已对齐 | 1/1 | 代理每次写操作附一句给用户看的动作说明（契约原文 "Optional message to display to the use | 现读（2026-11-02）：AiBubbleMenu.tsx 每次落笔后弹一条 toast——aiWriteMessage(a | 第 177 批现读：AI 每次落笔后 toast 说明动作（aiWriteMessage）并带撤销动作；`src/lib/editor/ai-write-message.ts:19`、`src/components/editor/bubble-menu/AiBubbleMenu.tsx:250` |
 | G31 | 已对齐 | 1/1 | 分隔线四档＝极细/细/常规/粗（R7） | 词汇表已迁到官方四档（divider-styles.ts），但 ★ 渲染层没跟上：globals.css 只给旧名 thin/m | 无需动作；抽检证据见台账行；`src/lib/editor/divider-commands.ts` |
-| G34 | 未动 | 1/1 | 表格部分操作禁止走上下文菜单并给「请使用 [0] 来 [1]」改道提示（R10） | 无该分支（TableToolbar.tsx 未实现禁用提示） | 补实现；先现读确认前置 |
+| G34 | 已对齐 | 1/1 | 表格部分操作禁止走上下文菜单并给「请使用 [0] 来 [1]」改道提示（R10） | 现读（2026-11-02）：TableToolbar.tsx 在编辑器上监听 contextmenu，表内右键弹提示窗——首行 | 第 177 批现读：TableToolbar 表内右键弹「这些操作无法通过上下文菜单执行。」+「请使用工具栏来编辑表格」改道提示；`src/lib/editor/table-context-copy.ts:1`、`src/components/editor/table/TableToolbar.tsx:118` |
 | G35 | 有意偏差 | 1/2 | 白板副本与原件联动、旧版升级迁移（R12） | tldraw 白板无「副本联动原件」概念 | 不做（有意偏差），不进复刻 backlog |
 | G36 | 已对齐 | 1/2 | 离线语义可见：「离线更新于 [0]」、离线禁用表情/评论（R13） | 部分落地（第 220 批）＝① 离线保存徽标已清＝纯核 src/lib/offline/save-status.ts（offli | 离线徽标三态与离线表情门禁已落；在线文案归 G1528，离线评论门禁为有意偏差；`src/lib/offline/save-status.ts`、`src/components/editor/DocumentEditor.tsx:105`、`src/components/editor/comments/offline-reaction.ts` |
-| G37 | 未动 | 1/2 | 移动端抽屉多档吸附（data-vaul-snap-points 17 处） | 底部 Sheet 无 snap points | 补实现；先现读确认前置 |
+| G37 | 已对齐 | 1/2 | 移动端抽屉多档吸附（data-vaul-snap-points 17 处） | 现读（2026-11-02）：ui/sheet.tsx 支持 snapPoints（规范化/最近档/拖拽吸附，lib/ui/sn | 第 177 批现读：Sheet 支持 snapPoints（规范化/最近档/拖拽吸附），表格视图与右侧栏两处底部 Sheet 已传三档；`src/lib/ui/snap-points.ts:1`、`src/components/ui/sheet.tsx:45`、`src/app/(app)/collections/[id]/TableView.tsx:252`、`src/components/editor/tabs/RightPanel.tsx:159` |
 | G38 | 已对齐 | 1/1 | 未发布文档作者/展示控制（toolbar.author.hidden/shown） | 已清（第 219 批）＝官方把它归在发布面板的 toolbar.visual.options 五组之一（publishing.m | 无需动作；抽检证据见台账行 |
-| G39 | 未动 | 2/2 | AI：提示库、写作风格分析、PDF 问答、AI 额度与清除历史（assistant.* 223 条） | 只有改写/续写/翻译/总结 + 生图（AiBubbleMenu.tsx:18-22） | 补实现；先现读确认前置 |
+| G39 | 部分落地 | 2/2 | AI：提示库、写作风格分析、PDF 问答、AI 额度与清除历史（assistant.* 223 条） | 现读（2026-11-02）：已有改写/续写/翻译/总结、生图、提示库（ai-prompts.ts，含「分析写作风格」）、联网搜 | 第 177 批现读：提示库/写作风格分析/PDF 问答/联网搜索已有；仍缺 AI 额度与清除历史；`src/lib/editor/ai-prompts.ts:14`、`src/components/editor/bubble-menu/AiBubbleMenu.tsx:345` |
 
 ## 七、建议批次
 
@@ -161,9 +161,9 @@
 | 8 | 三点五、P2 追加（来自 modules.md 模块清单，静态证据） |
 | 7 | 三点八、AI 助手与接入中心追加（来自 assistant.md，静 |
 | 7 | 三点一〇五九、第 109 批〔★★★ 代码块的写侧字段结案＝typ |
-| 6 | 三点一一、发布与共享控制中心追加（来自 publishing.md， |
 | 6 | 三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe |
 | 6 | 三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D / |
+| 5 | 三点一一、发布与共享控制中心追加（来自 publishing.md， |
 | 5 | 三点四八、第 41 批（集合单元格十个按类型编辑器，model.md |
 | 5 | 三点八七、第 76 批（★★ 契约面穷尽：--help 逐条读满  |
 | 5 | 三点一〇二四、第 96 批·上半〔★★行为级仍未解锁（视口第 8 次 |

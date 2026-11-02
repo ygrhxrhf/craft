@@ -29,6 +29,13 @@ import { pendingLabel } from '@/lib/app/pending-states';
 import { toast } from '@/components/ui/toast';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
+import {
+  DEFAULT_PDF_EXPORT_OPTIONS,
+  PDF_PAPER_LABEL,
+  PDF_PAPER_OPTIONS,
+  PDF_TOGGLE_OPTIONS,
+  type PdfExportOptions,
+} from '@/lib/export/pdf-options';
 import { getSyncManager } from '@/lib/sync-core';
 import { findDocumentShareId } from '@/components/sync/local-records';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
@@ -150,6 +157,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
   // G64: 分享卡片图片的字体与页面尺寸。
   const [imageFont, setImageFont] = useState<ShareImageFontSize>(DEFAULT_SHARE_IMAGE_FONT);
   const [imageSize, setImageSize] = useState<ShareImagePageSize>(DEFAULT_SHARE_IMAGE_SIZE);
+  // G149: PDF 导出的纸张 / 深色 / 页码 / 水印。
+  const [pdfOptions, setPdfOptions] = useState<PdfExportOptions>(DEFAULT_PDF_EXPORT_OPTIONS);
   // The property rows read the document's own timestamps and author (G202) rather than fixed strings.
   const [meta, setMeta] = useState<{ createdAt: string; updatedAt: string; authorName: string | null } | null>(null);
   const [statsScope, setStatsScope] = useState<StatsScope>('page');
@@ -214,7 +223,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
     setBusy(true);
     setExporting(true);
     try {
-      const file = await exportDocument(documentId, format);
+      const file = await exportDocument(documentId, format, format === 'pdf' ? pdfOptions : undefined);
       const payload = file.encoding === 'base64'
         ? Uint8Array.from(atob(file.body), (char) => char.charCodeAt(0))
         : file.body;
@@ -925,6 +934,51 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
                                 : 'TextBundle'}
                   </button>
                 ))}
+              </div>
+              {/* G149: PDF 纸张三档 + 深色 / 页码 / 水印。 */}
+              <div className="mb-2 space-y-1.5" data-testid="pdf-export-options">
+                <p className="text-[11px] text-muted-foreground">{PDF_PAPER_LABEL}</p>
+                <div className="grid grid-cols-3 gap-1">
+                  {PDF_PAPER_OPTIONS.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      aria-pressed={pdfOptions.paper === option.id}
+                      onClick={() => setPdfOptions((current) => ({ ...current, paper: option.id }))}
+                      className={cn(
+                        'rounded-md border px-1 py-1 text-meta transition-colors',
+                        pdfOptions.paper === option.id
+                          ? 'border-craft-accent bg-craft-accent/10 text-foreground'
+                          : 'border-foreground/10 text-foreground/55 hover:bg-foreground/4'
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {PDF_TOGGLE_OPTIONS.map((option) => {
+                    const on = pdfOptions[option.id];
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        role="switch"
+                        aria-checked={on}
+                        aria-label={option.label}
+                        onClick={() => setPdfOptions((current) => ({ ...current, [option.id]: !on }))}
+                        className={cn(
+                          'rounded-md border px-1.5 py-1 text-[11px] transition-colors',
+                          on
+                            ? 'border-craft-accent bg-craft-accent/10 text-foreground'
+                            : 'border-foreground/10 text-foreground/55 hover:bg-foreground/4'
+                        )}
+                      >
+                        {option.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               <button
                 type="button"

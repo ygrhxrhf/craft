@@ -1,6 +1,13 @@
 import { existsSync, readFileSync } from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
-import { PDFDocument, StandardFonts, rgb, type PDFFont } from 'pdf-lib';
+import { PDFDocument, StandardFonts, degrees, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
+
+import {
+  DEFAULT_PDF_EXPORT_OPTIONS,
+  PDF_PAPER_SIZES,
+  normalizePdfOptions,
+  type PdfExportOptions,
+} from './pdf-options';
 
 interface ContentNode {
   type?: string;
@@ -68,7 +75,12 @@ function wrapLine(text: string, font: PDFFont, size: number, maxWidth: number): 
 }
 
 /** G22: a plain PDF projection with a system CJK font when one is available. */
-export async function pdfFromContent(title: string, content: unknown): Promise<Buffer> {
+export async function pdfFromContent(
+  title: string,
+  content: unknown,
+  optionsInput?: Partial<PdfExportOptions> | null,
+): Promise<Buffer> {
+  const options = normalizePdfOptions(optionsInput ?? DEFAULT_PDF_EXPORT_OPTIONS);
   const pdf = await PDFDocument.create();
   pdf.registerFontkit(fontkit);
 
@@ -88,20 +100,76 @@ export async function pdfFromContent(title: string, content: unknown): Promise<B
   const size = 12;
   const lineHeight = 18;
   const margin = 50;
-  const pageWidth = 595;
-  const pageHeight = 842;
+  const portrait = options.paper === 'dynamic' ? PDF_PAPER_SIZES.a4 : PDF_PAPER_SIZES[options.paper];
+  const pageWidth = portrait.width;
   const maxWidth = pageWidth - margin * 2;
   const lines = textBlocks.flatMap((line) => wrapLine(line, font, size, maxWidth));
 
-  let page = pdf.addPage([pageWidth, pageHeight]);
-  let y = pageHeight - margin;
-  for (const line of lines) {
-    if (y < margin) {
-      page = pdf.addPage([pageWidth, pageHeight]);
-      y = pageHeight - margin;
+  const ink = options.dark ? rgb(0.9, 0.9, 0.9) : rgb(0.1, 0.1, 0.1);
+  const paperColor = options.dark ? rgb(0.07, 0.07, 0.08) : rgb(1, 1, 1);
+  const muted = options.dark ? rgb(0.6, 0.6, 0.62) : rgb(0.55, 0.55, 0.55);
+
+  const pages: PDFPage[] = [];
+  const newPage = (pageHeight: number) => {
+    const page = pdf.addPage([pageWidth, pageHeight]);
+    page.drawRectangle({ x: 0, y: 0, width: pageWidth, height: pageHeight, color: paperColor });
+    pages.push(page);
+    return page;
+  };
+
+  if (options.paper === 'dynamic') {
+    // G149 动态：一整页，高度随正文增长（不低于 A4）。
+    const pageHeight = Math.max(portrait.height, margin * 2 + Math.max(1, lines.length) * lineHeight);
+    const page = newPage(pageHeight);
+    let y = pageHeight - margin;
+    for (const line of lines) {
+      page.drawText(line, { x: margin, y, size, font, color: ink });
+      y -= lineHeight;
     }
-    page.drawText(line, { x: margin, y, size, font, color: rgb(0.1, 0.1, 0.1) });
-    y -= lineHeight;
+  } else {
+    const pageHeight = portrait.height;
+    let page = newPage(pageHeight);
+    let y = pageHeight - margin;
+    for (const line of lines) {
+      if (y < margin) {
+        page = newPage(pageHeight);
+        y = pageHeight - margin;
+      }
+      page.drawText(line, { x: margin, y, size, font, color: ink });
+      y -= lineHeight;
+    }
   }
+
+  if (options.watermark && title.trim()) {
+    const mark = title.trim().slice(0, 40);
+    for (const page of pages) {
+      const { width, height } = page.getSize();
+      page.drawText(mark, {
+        x: margin,
+        y: height / 2,
+        size: 48,
+        font,
+        color: muted,
+        opacity: 0.08,
+        rotate: degrees(35),
+      });
+    }
+  }
+
+  if (options.pageNumbers) {
+    pages.forEach((page, index) => {
+      const { width } = page.getSize();
+      const label = `${index + 1} / ${pages.length}`;
+      const textWidth = font.widthOfTextAtSize(label, 9);
+      page.drawText(label, {
+        x: (width - textWidth) / 2,
+        y: margin / 2,
+        size: 9,
+        font,
+        color: muted,
+      });
+    });
+  }
+
   return Buffer.from(await pdf.save());
 }

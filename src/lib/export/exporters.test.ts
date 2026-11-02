@@ -25,6 +25,23 @@ describe('DOCX / TextBundle exporters (G22)', () => {
     expect(buffer.length).toBeGreaterThan(500);
   });
 
+  // G149: 动态纸张是一整页、高度随正文增长；其余三档都在固定纸上分页。
+  it('honours the paper, page-number and watermark options', async () => {
+    const { PDFDocument } = await import('pdf-lib');
+    const a4 = await PDFDocument.load(await pdfFromContent('文档', content));
+    expect(a4.getPage(0).getSize()).toEqual({ width: 595, height: 842 });
+
+    const letter = await PDFDocument.load(await pdfFromContent('文档', content, { paper: 'usletter' }));
+    expect(letter.getPage(0).getSize()).toEqual({ width: 612, height: 792 });
+
+    const dynamic = await PDFDocument.load(
+      await pdfFromContent('文档', content, { paper: 'dynamic', dark: true, pageNumbers: true, watermark: true }),
+    );
+    expect(dynamic.getPageCount()).toBe(1);
+    expect(dynamic.getPage(0).getSize().height).toBeGreaterThanOrEqual(842);
+    expect(dynamic.getPage(0).getSize().width).toBe(595);
+  });
+
   it('writes a TextBundle with text.markdown and info.json', async () => {
     const buffer = await textBundleFromMarkdown('文档', '# 标题\n\n正文');
     const zip = await JSZip.loadAsync(buffer);

@@ -6,6 +6,7 @@ import { serializeDocument } from '@/lib/document-codec';
 import { untitledFor } from '@/lib/document/untitled-copy';
 import { docxFromContent } from '@/lib/export/docx';
 import { pdfFromContent } from '@/lib/export/pdf';
+import type { PdfExportOptions } from '@/lib/export/pdf-options';
 import { textBundleFromMarkdown } from '@/lib/export/textbundle';
 
 export type ExportFormat = 'markdown' | 'html' | 'text' | 'json' | 'docx' | 'pdf' | 'textbundle';
@@ -30,7 +31,11 @@ const extensionByFormat: Record<ExportFormat, string> = {
   textbundle: 'textbundle',
 };
 
-export async function exportDocument(documentId: string, format: ExportFormat) {
+export async function exportDocument(
+  documentId: string,
+  format: ExportFormat,
+  pdfOptions?: Partial<PdfExportOptions>,
+) {
   const userId = await requireUserId();
   const access = await requireDocumentAccess(documentId, userId, 'viewer');
   const document = access.document;
@@ -45,7 +50,7 @@ export async function exportDocument(documentId: string, format: ExportFormat) {
     body = (await docxFromContent(title, content)).toString('base64');
     encoding = 'base64';
   } else if (format === 'pdf') {
-    body = (await pdfFromContent(title, content)).toString('base64');
+    body = (await pdfFromContent(title, content, pdfOptions)).toString('base64');
     encoding = 'base64';
   } else if (format === 'textbundle') {
     const markdown = serializeDocument(content, 'markdown');

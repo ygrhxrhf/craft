@@ -3678,23 +3678,26 @@
     },
     "G106": {
       "status": "partial",
-      "note": "三态与取消→未勾循环已落；缺批量全勾、复制重置，库内仍留 doing",
+      "note": "第 178 批现读：三态（todo/done/cancelled + cancelledAt）与取消→未勾循环已落；缺批量全勾与复制重置",
       "evidence": [
-        "src/lib/editor/task-status.ts:78"
+        "src/actions/task/task.ts:278",
+        "src/prisma/contract.prisma:470"
       ]
     },
     "G107": {
       "status": "partial",
-      "note": "scheduleDate 与 dueDate 已分离；setter 单条无批量",
+      "note": "第 178 批现读：scheduleDate 与 dueDate 已分离；setter 单条，无 blockIds[] 批量",
       "evidence": [
-        "src/actions/task/task.ts:301"
+        "src/actions/task/task.ts:301",
+        "src/lib/task/grouping.ts:34"
       ]
     },
     "G108": {
       "status": "partial",
-      "note": "有 freq/days/byMonthDay/until；缺 interval、skipWeekends、dynamicDays",
+      "note": "第 178 批现读：freq/days/byMonthDay/until/interval（按频率上限）+ skipWeekends 已有；缺 dynamicDays 相对日",
       "evidence": [
-        "src/lib/task/recurrence.ts:3"
+        "src/lib/task/recurrence.ts:30",
+        "src/lib/task/recurrence.ts:94"
       ]
     },
     "G109": {
@@ -3916,10 +3919,14 @@
       ]
     },
     "G149": {
-      "status": "partial",
-      "note": "PDF 导出仅纯文本投影，无纸张/深色/页码/水印；分享卡片无实现",
+      "status": "aligned",
+      "note": "第 178 批：PDF 纸张 A4/信纸/动态 + 深色 + 页码 + 水印；分享卡片 3 档字体 × 4 档页面（第 177 批）",
       "evidence": [
-        "src/lib/export/pdf.ts:73"
+        "src/lib/export/pdf-options.ts:1",
+        "src/lib/export/pdf.ts:73",
+        "src/actions/document/export.ts:37",
+        "src/components/editor/tabs/InfoTab.tsx:939",
+        "src/lib/editor/share-image-config.ts:1"
       ]
     },
     "G150": {

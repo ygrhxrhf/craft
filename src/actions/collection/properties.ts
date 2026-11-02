@@ -8,6 +8,7 @@ import { PROPERTY_TYPE_VALUES } from '@/lib/collection/property-types';
 import { convertCellValue } from '@/lib/collection/type-convert';
 import { backColumnOf } from '@/lib/collection/two-way-relation';
 import { relationTargetId } from '@/lib/collection/relation-value';
+import { COLLECTION_COLUMN_LIMIT_MESSAGE, canAddColumn } from '@/lib/collection/limits';
 
 export async function addProperty(data: {
   collectionId: string;
@@ -27,6 +28,9 @@ export async function addProperty(data: {
   const properties = await db.orm.public.CollectionProperty
     .where({ collectionId: data.collectionId })
     .all();
+
+  // G690：20 列上限是校验层拒绝，标题列不计入。
+  if (!canAddColumn(properties.length)) throw new Error(COLLECTION_COLUMN_LIMIT_MESSAGE);
 
   await db.orm.public.CollectionProperty.create({
     id: crypto.randomUUID(),
@@ -52,6 +56,9 @@ export async function addProperty(data: {
       const targetProps = await db.orm.public.CollectionProperty
         .where({ collectionId: back.collectionId })
         .all();
+      if (!canAddColumn(targetProps.length)) {
+        throw new Error(COLLECTION_COLUMN_LIMIT_MESSAGE);
+      }
       await db.orm.public.CollectionProperty.create({
         id: crypto.randomUUID(),
         collectionId: back.collectionId,

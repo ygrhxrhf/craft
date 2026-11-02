@@ -24,6 +24,7 @@ import {
   type NumberFormat,
 } from '@/lib/collection/property-types';
 import { TWO_WAY_COPY } from '@/lib/collection/two-way-relation';
+import { COLLECTION_COLUMN_LIMIT_MESSAGE, canAddColumn } from '@/lib/collection/limits';
 import { FieldIcon, FieldTypeIcon } from './FieldIcon';
 
 /** Local extras that exist next to the official vocabulary (G393). */
@@ -46,6 +47,7 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
   const [twoWay, setTwoWay] = useState(false);
   const [others, setOthers] = useState<{ id: string; name: string }[]>([]);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || type !== 'relation') return;
@@ -76,6 +78,11 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
         !r.data?.deletedAt &&
         r.data?.collectionId === collectionId
       ).length;
+      // G690：20 列上限在界面这一层先拦一次，错误句与校验层逐字一致。
+      if (!canAddColumn(order)) {
+        setError(COLLECTION_COLUMN_LIMIT_MESSAGE);
+        return;
+      }
       const manager = getSyncManager();
       await manager.applyLocal({
         table: 'collection_property',
@@ -92,6 +99,7 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
       await manager.flushNow();
       setOpen(false);
       setName('');
+      setError(null);
       setNumberFormat(DEFAULT_NUMBER_FORMAT);
       setExpression('');
       setTargetId('');
@@ -113,7 +121,7 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
         属性
       </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={(next) => { setOpen(next); if (next) setError(null); }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>新属性</DialogTitle>
@@ -224,6 +232,11 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
               </div>
             )}
           </div>
+          {error && (
+            <p role="alert" className="text-xs text-destructive">
+              {error}
+            </p>
+          )}
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOpen(false)}>
               取消

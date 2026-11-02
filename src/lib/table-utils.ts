@@ -6,6 +6,13 @@ import { evaluateCellFormula } from '@/lib/editor/table-formula';
 import { gridIsUniform, movedOrder, type CellSpan } from '@/lib/editor/table-move';
 import { planTableInsert } from '@/lib/editor/table-landing';
 import { compareCells } from '@/lib/editor/table-sort';
+import {
+  TABLE_SIZE_LIMIT_DURATION,
+  TABLE_SIZE_LIMIT_SUBTITLE,
+  tableSizeAllowed,
+  tableSizeLimitTitle,
+} from '@/lib/collection/limits';
+import { toast } from '@/components/ui/toast';
 
 function findTable(
   editor: Editor
@@ -246,6 +253,33 @@ export function evalFormulas(editor: Editor): boolean {
   return true;
 }
 
+export function tableDimensions(editor: Editor): { rows: number; columns: number } | null {
+  const found = findTable(editor);
+  if (!found) return null;
+  const rows = found.node.content.content.filter((node: PMNode) => node.type.name === 'tableRow');
+  return {
+    rows: rows.length,
+    columns: Math.max(0, ...rows.map((row: PMNode) => row.content.content.length)),
+  };
+}
+
+/** G659：按轴加一格后是否会越过 50 行 / 15 列 / 750 格；超限时弹出官方那对文案。 */
+function refuseIfTableWouldGrowPastLimit(editor: Editor, axis: 'row' | 'column'): boolean {
+  const dimensions = tableDimensions(editor);
+  if (!dimensions) return false;
+  const rows = axis === 'row' ? dimensions.rows + 1 : dimensions.rows;
+  const columns = axis === 'column' ? dimensions.columns + 1 : dimensions.columns;
+  if (tableSizeAllowed(rows, columns)) return false;
+  toast.add({
+    id: 'table-size-limit',
+    type: 'error',
+    title: tableSizeLimitTitle(),
+    description: TABLE_SIZE_LIMIT_SUBTITLE,
+    timeout: TABLE_SIZE_LIMIT_DURATION,
+  });
+  return true;
+}
+
 /**
  * G590: the official table drop locations carry `maxRow`/`maxCol` **at construction time**, so an
  * out-of-range row/column is clamped before it can be used. This reads the table around the caret
@@ -253,12 +287,13 @@ export function evalFormulas(editor: Editor): boolean {
  * and runs the matching TipTap insert. Returns false when the caret is not in a table.
  */
 export function insertTableAxis(editor: Editor, axis: 'row' | 'column', side: 'before' | 'after'): boolean {
-  const found = findTable(editor);
-  if (!found) return false;
+  const dimensions = tableDimensions(editor);
+  if (!dimensions) return false;
+  // G659: the 50/15/750 ceiling is enforced before the insert, not after.
+  if (refuseIfTableWouldGrowPastLimit(editor, axis)) return false;
 
-  const rows = found.node.content.content.filter((node: PMNode) => node.type.name === 'tableRow');
-  const maxRow = Math.max(0, rows.length - 1);
-  const maxCol = Math.max(0, ...rows.map((row: PMNode) => row.content.content.length - 1));
+  const maxRow = Math.max(0, dimensions.rows - 1);
+  const maxCol = Math.max(0, dimensions.columns - 1);
 
   const { $from } = editor.state.selection;
   let rowIndex = 0;

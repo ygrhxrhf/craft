@@ -18,6 +18,14 @@ import { localDayInstant } from '@/lib/task/wall-clock';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { isImeComposing } from '@/lib/editor/ime-guard';
 import { deleteStepFor } from '@/lib/editor/forward-delete';
+import { tableDimensions } from '@/lib/table-utils';
+import {
+  TABLE_SIZE_LIMIT_DURATION,
+  TABLE_SIZE_LIMIT_SUBTITLE,
+  tableSizeAllowed,
+  tableSizeLimitTitle,
+} from '@/lib/collection/limits';
+import { toast } from '@/components/ui/toast';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
@@ -373,6 +381,18 @@ export const CraftKeymap = Extension.create({
               !event.altKey &&
               view.state.selection instanceof CellSelection
             ) {
+              // G659: Enter adds a row only while the table is still under 50 rows / 750 cells.
+              const dimensions = tableDimensions(editor);
+              if (dimensions && !tableSizeAllowed(dimensions.rows + 1, dimensions.columns)) {
+                toast.add({
+                  id: 'table-size-limit',
+                  type: 'error',
+                  title: tableSizeLimitTitle(),
+                  description: TABLE_SIZE_LIMIT_SUBTITLE,
+                  timeout: TABLE_SIZE_LIMIT_DURATION,
+                });
+                return true;
+              }
               editor.chain().focus().addRowAfter().run();
               return true;
             }

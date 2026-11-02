@@ -5112,10 +5112,13 @@
       ]
     },
     "G452": {
-      "status": "partial",
-      "note": "select/多选/日期/关联清空写 null，但文本仍写空串且无 trim",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "写库边界统一收敛空值：空串、空数组、items 为空的关联对象都落 null，不再出现 []/{} 两种空形态。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:314"
+        "src/lib/collection/cell-edit.ts",
+        "src/actions/collection/items.ts:125",
+        "src/lib/collection/cell-edit.test.ts"
       ]
     },
     "G453": {
@@ -5154,17 +5157,22 @@
       ]
     },
     "G464": {
-      "status": "partial",
-      "note": "useState 初值只取一次，协同改动后文本/数字/链接会带出旧草稿",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "五个编辑单元格都在打开上升沿从当前 value 重取草稿，编辑期间不随远端值覆盖。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:96"
+        "src/components/collection/PropertyCell.tsx:110",
+        "src/lib/collection/cell-edit.ts:51"
       ]
     },
     "G465": {
-      "status": "partial",
-      "note": "文本与电话原样提交含空串和空格，普遍无 trim",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "text/url/email 的 blur 与 Enter 提交都先 trim，空串与纯空格一律 null。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:131"
+        "src/lib/collection/cell-edit.ts:13",
+        "src/components/collection/PropertyCell.tsx:147",
+        "src/lib/collection/cell-edit.test.ts"
       ]
     },
     "G466": {
@@ -5184,10 +5192,13 @@
       ]
     },
     "G468": {
-      "status": "partial",
-      "note": "NumberCell 用 type=number 加 parseFloat 且 isNaN→null；无 percent/currency",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "percent 双向换算：显示/草稿乘 100（toPrecision(10)），输入剥千分位与 %/$/¥ 后按档除 100；输入框恒 text + inputMode。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:162"
+        "src/lib/collection/cell-edit.ts:30",
+        "src/components/collection/PropertyCell.tsx:165",
+        "src/lib/collection/cell-edit.test.ts"
       ]
     },
     "G469": {
@@ -6123,10 +6134,14 @@
       ]
     },
     "G659": {
-      "status": "gap",
-      "note": "表格无 50 行/15 列/750 格上限校验，也无超限 toast",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "表格 50 行/15 列/750 格硬上限：加行加列与 CellSelection+Enter 插入前检查，超限弹官方 error toast（15 列/50 行、4s）且不执行。",
       "evidence": [
-        "src/components/editor/table/TableToolbar.tsx:138"
+        "src/lib/collection/limits.ts",
+        "src/lib/table-utils.ts:289",
+        "src/components/editor/extensions/craft-keymap.ts:386",
+        "src/lib/collection/limits.test.ts"
       ]
     },
     "G660": {
@@ -6291,10 +6306,14 @@
       ]
     },
     "G690": {
-      "status": "gap",
-      "note": "addProperty 读全量后直接 create，无 20 列上限与错误码",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "集合 20 列上限（标题列不计）在 addProperty 与新增属性界面层都拦，错误句逐字为 Validation failed: properties: ...。",
       "evidence": [
-        "src/actions/collection/properties.ts:23"
+        "src/lib/collection/limits.ts:17",
+        "src/actions/collection/properties.ts:33",
+        "src/components/collection/AddPropertyMenu.tsx:82",
+        "src/lib/collection/limits.test.ts"
       ]
     },
     "G691": {

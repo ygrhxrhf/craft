@@ -5,6 +5,7 @@ import { normalizeDateValue } from '@/lib/collection/date-value';
 import { rawValueOf } from '@/lib/collection/cell-value';
 import { DEFAULT_NUMBER_FORMAT, formatNumber as formatNumberFor, isNumberFormat, type NumberFormat } from '@/lib/collection/property-types';
 import { cellKeyAction } from '@/lib/collection/cell-key';
+import { draftTextFor, normalizeTextCommit, parseNumberInput } from '@/lib/collection/cell-edit';
 import { useState, useRef, useEffect } from 'react';
 import { Check, X, ChevronDown, Calendar as CalendarIcon, Link2, Paperclip } from 'lucide-react';
 import { cn } from 'cn';
@@ -119,7 +120,7 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
 
   if (!editing) {
     return (
-      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => setEditing(true)}>
+      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
         <span className="typography-ui-sm-500">{value || <span className="text-muted-foreground/50">-</span>}</span>
       </div>
     );
@@ -144,7 +145,7 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
         setLimitHit(false);
         setText(next);
       }}
-      onBlur={() => { setEditing(false); onChange(text); }}
+      onBlur={() => { setEditing(false); onChange(normalizeTextCommit(text)); }}
       onKeyDown={e => {
         // G466: Enter commits and the event is stopped — otherwise it bubbles into the block-level
         // Enter (split/new block) when the cell is rendered inside the editor. Shift-Enter is left
@@ -153,7 +154,7 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
         if (action === 'none') return;
         e.preventDefault();
         e.stopPropagation();
-        if (action === 'commit') { setEditing(false); onChange(text); }
+        if (action === 'commit') { setEditing(false); onChange(normalizeTextCommit(text)); }
         else { setText(value ?? ''); setEditing(false); }
       }}
       className="w-full rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
@@ -164,7 +165,7 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
 // ─── Number ──────────────────────────────────────────
 function NumberCell({ value, onChange, format }: { value: any; onChange: (v: any) => void; format: NumberFormat }) {
   const [editing, setEditing] = useState(false);
-  const [text, setText] = useState(value != null ? String(value) : '');
+  const [text, setText] = useState(() => draftTextFor(value, format));
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -173,7 +174,7 @@ function NumberCell({ value, onChange, format }: { value: any; onChange: (v: any
 
   if (!editing) {
     return (
-      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => setEditing(true)}>
+      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(draftTextFor(value, format)); setEditing(true); }}>
         <span className="text-ui tabular-nums">{value != null ? formatNumberFor(value, format) : <span className="text-muted-foreground/50">-</span>}</span>
       </div>
     );
@@ -182,17 +183,20 @@ function NumberCell({ value, onChange, format }: { value: any; onChange: (v: any
   return (
     <input
       ref={ref}
-      type="number"
+      // G468: 官方输入框恒为 text + inputMode，不用 type=number——否则 `1,234`／`12%`／`$12`
+      // 会被浏览器直接判非法而读成空串。
+      type="text"
+      inputMode="decimal"
       value={text}
       onChange={e => setText(e.target.value)}
-      onBlur={() => { setEditing(false); const n = parseFloat(text); onChange(isNaN(n) ? null : n); }}
+      onBlur={() => { setEditing(false); onChange(parseNumberInput(text, format)); }}
       onKeyDown={e => {
         const action = cellKeyAction(e);
         if (action === 'none') return;
         e.preventDefault();
         e.stopPropagation();
-        if (action === 'commit') { const n = parseFloat(text); onChange(isNaN(n) ? null : n); setEditing(false); }
-        else { setText(value != null ? String(value) : ''); setEditing(false); }
+        if (action === 'commit') { onChange(parseNumberInput(text, format)); setEditing(false); }
+        else { setText(draftTextFor(value, format)); setEditing(false); }
       }}
       className="w-full rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
     />
@@ -423,7 +427,7 @@ function URLCell({ value, onChange }: { value: any; onChange: (v: any) => void }
 
   if (!editing) {
     return (
-      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => setEditing(true)}>
+      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
         {value ? (
           <a
             href={String(value)}
@@ -447,9 +451,9 @@ function URLCell({ value, onChange }: { value: any; onChange: (v: any) => void }
       type="url"
       value={text}
       onChange={e => setText(e.target.value)}
-      onBlur={() => { setEditing(false); onChange(text || null); }}
+      onBlur={() => { setEditing(false); onChange(normalizeTextCommit(text)); }}
       onKeyDown={e => {
-        if (e.key === 'Enter') { setEditing(false); onChange(text || null); }
+        if (e.key === 'Enter') { setEditing(false); onChange(normalizeTextCommit(text)); }
         if (e.key === 'Escape') { setText(value ?? ''); setEditing(false); }
       }}
       className="w-full rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
@@ -469,7 +473,7 @@ function EmailCell({ value, onChange }: { value: any; onChange: (v: any) => void
 
   if (!editing) {
     return (
-      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => setEditing(true)}>
+      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
         {value ? (
           <a
             href={`mailto:${String(value)}`}
@@ -491,9 +495,9 @@ function EmailCell({ value, onChange }: { value: any; onChange: (v: any) => void
       type="email"
       value={text}
       onChange={e => setText(e.target.value)}
-      onBlur={() => { setEditing(false); onChange(text || null); }}
+      onBlur={() => { setEditing(false); onChange(normalizeTextCommit(text)); }}
       onKeyDown={e => {
-        if (e.key === 'Enter') { setEditing(false); onChange(text || null); }
+        if (e.key === 'Enter') { setEditing(false); onChange(normalizeTextCommit(text)); }
         if (e.key === 'Escape') { setText(value ?? ''); setEditing(false); }
       }}
       className="w-full rounded-md border border-craft-accent bg-background px-1 py-0.5 text-ui outline-none focus-visible:ring-2 focus-visible:ring-ring/50"

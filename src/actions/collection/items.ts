@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { toTypedValue } from '@/lib/collection/cell-value';
 import { validateMultiSelect, validateSelect } from '@/lib/collection/value-validation';
+import { normalizeCellValue } from '@/lib/collection/cell-edit';
 import { addMembership } from '@/lib/collection/object-membership';
 
 export async function addItem(collectionId: string) {
@@ -119,12 +120,17 @@ export async function setItemValue(
   // G395: select／multiSelect 先过一遍"每个元素都得在选项集内"的校验——**一个越界值就把整格判否**，
   // 不是过滤掉坏值后照样存（那样脏值会被静默吞掉）。
   const propType = String((property as any).type ?? 'text');
-  if (propType === 'select' || propType === 'multi_select') {
+  const isMulti = propType === 'multi_select' || propType === 'multiSelect';
+  // G452：空只有一种形态——空串／纯空格、空数组、items 为空的关联对象都先收敛成 null。
+  const normalizedValue = normalizeCellValue(value);
+  if (propType === 'select' || isMulti) {
     const optionIds = readOptionIds((property as any).config);
-    const check = propType === 'select' ? validateSelect({ optionIds, value }) : validateMultiSelect({ optionIds, value });
+    const check = isMulti
+      ? validateMultiSelect({ optionIds, value: normalizedValue })
+      : validateSelect({ optionIds, value: normalizedValue });
     if (!check.ok) throw new Error('选项不在该字段的候选项内');
   }
-  const typed = toTypedValue(propType, value);
+  const typed = toTypedValue(propType, normalizedValue);
   const stored = typed.value != null ? JSON.stringify(typed) : null;
 
   if (existing.length > 0) {

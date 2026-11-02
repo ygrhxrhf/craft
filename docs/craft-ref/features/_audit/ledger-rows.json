@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T09:12:29.610Z",
+  "generatedAt": "2026-11-02T09:17:40.633Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 945,
-    "aligned": 238,
+    "gap": 944,
+    "aligned": 239,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 373,
+    "P2 / gap": 372,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 135,
+    "P2 / aligned": 136,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -28824,10 +28824,10 @@
       "cols": 5,
       "id": "G1546",
       "official": "缩进在**列表项**上可连续到 2 级以上（官方实测 `--indent-w` 28→56→84px 三级；G218）",
-      "local": "**行为不同**＝本地 `Tab` 在列表项上**只能进一级**：第二次 `Tab` 不再是缩进、而是把焦点送出编辑器（`activeElement` → `nextjs-portal`）。根因＝`@tiptap/extension-list` 的 `ListItem` 自带 `Tab: () => sinkListItem()`（`node_modules/@tiptap/extension-list/src/item/list-item.ts` 末尾），而 `sinkListItem` 在没有**前一个兄弟列表项**时返回 false（本 spec 的场景：光标在列表项 L2 上、其父项 L1 已是它的上一级 ⇒ 无处再 sink）⇒ 该键**不被消费**，落回浏览器默认的 Tab 焦点移动。判据逐字＝`interaction-matrix.md` `editor.block.indent-in-list`（官方第 6 步 `indentLevels [0,2]`/`indentLevel 2`/`focusInEditor true`；本地 `[0,1]`/`1`/`false`）",
-      "verdict": "行为不同",
+      "local": "**行为不同**＝本地 `Tab` 在列表项上**只能进一级**：第二次 `Tab` 不再是缩进、而是把焦点送出编辑器（`activeElement` → `nextjs-portal`）。根因＝`@tiptap/extension-list` 的 `ListItem` 自带 `Tab: () => sinkListItem()`（`node_modules/@tiptap/extension-list/src/item/list-item.ts` 末尾），而 `sinkListItem` 在没有**前一个兄弟列表项**时返回 false（本 spec 的场景：光标在列表项 L2 上、其父项 L1 已是它的上一级 ⇒ 无处再 sink）⇒ 该键**不被消费**，落回浏览器默认的 Tab 焦点移动。判据逐字＝`interaction-matrix.md` `editor.block.indent-in-list`（官方第 6 步 `indentLevels [0,2]`/`indentLevel 2`/`focusInEditor true`；本地 `[0,1]`/`1`/`false`） ✎ 现读（2026-11-02）：列表项内的 Tab 不再落回浏览器焦点——改为给该文本块逐级加平铺缩进（28→56→84px，`block-indent.ts` 的 list 分支）；Shift-Tab 在 0 档仍交回列表扩展做 lift。接线断言见 `list-indent-wiring.test.ts`。",
+      "verdict": "☆ 已清（第 168 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

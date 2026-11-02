@@ -9209,10 +9209,12 @@
       ]
     },
     "G1546": {
-      "status": "gap",
-      "note": "列表 Tab 只调 sinkListItem，无前兄弟项即返回 false，二次 Tab 失焦",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "列表项内 Tab 逐级平铺缩进（28/56/84），不再退出编辑器；Shift-Tab 0 档交回列表 lift。",
       "evidence": [
-        "node_modules/@tiptap/extension-list/src/item/list-item.ts:202"
+        "src/components/editor/extensions/block-indent.ts:43",
+        "src/lib/editor/list-indent-wiring.test.ts"
       ]
     },
     "G1547": {

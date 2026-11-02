@@ -35,10 +35,16 @@ import {
   Presentation,
   Network,
   Music,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  Palette,
 } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
 import type { ComponentType } from 'react';
 import { readDefaultLanguage, readDefaultTheme } from '@/lib/editor/code-preferences';
+import { ALIGNMENT_CONTROLS } from '@/lib/editor/format-commands';
 import { promptDialog } from '@/lib/dialog/show';
 import { uploadFile } from '@/lib/upload-client';
 import { createWhiteboard } from '@/actions/whiteboard/whiteboard';
@@ -590,6 +596,50 @@ export const slashCommands: SlashCommand[] = [
     },
   },
 ];
+
+/**
+ * G1616 —— 斜杠菜单的「对齐」组：官方过滤「对齐」回**四项**（居中对齐／两端对齐／右对齐／左对齐）。
+ * 本地这四档能力本就在（`ALIGNMENT_CONTROLS`，右侧格式面板用），只是斜杠菜单没有入口 ⇒ 这里从
+ * 那张表派生，避免两份名册各写一遍。★ 官方回的是 4 项，「默认」第五档不在斜杠组里，故只取有
+ * `value` 的四档。对齐是**属性**不是块型——按 Enter 后块型仍是段落。
+ */
+const ALIGN_SLASH_ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  left: AlignLeft,
+  center: AlignCenter,
+  right: AlignRight,
+  justify: AlignJustify,
+};
+
+for (const control of ALIGNMENT_CONTROLS) {
+  if (control.value === null) continue;
+  slashCommands.push({
+    name: control.label,
+    description: `将当前块${control.label}`,
+    icon: ALIGN_SLASH_ICONS[control.value] ?? AlignLeft,
+    // 官方那四项的名字都要能被「对齐」这一个词筛出来。
+    keywords: ['align', 'alignment', '对齐', control.label],
+    category: '对齐',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).setTextAlign(control.value!).run();
+    },
+  });
+}
+
+/**
+ * G1617 —— `/颜色` 在官方回**一项**「默认颜色」（`style.color.default`），是"单档占位项"：
+ * 它就是清掉文字颜色的那一档。本地颜色只在右侧格式面板的色板里，斜杠菜单没有入口 ⇒ 补这一项。
+ * 过滤词「颜色」要能筛到它，故 keywords 含「颜色」。
+ */
+slashCommands.push({
+  name: '默认颜色',
+  description: '清除文字颜色，恢复默认',
+  icon: Palette,
+  keywords: ['color', 'default', '颜色', '默认颜色', '清除颜色'],
+  category: '颜色',
+  command: (editor, range) => {
+    editor.chain().focus().deleteRange(range).unsetColor().run();
+  },
+});
 
 export function filterCommands(query: string): SlashCommand[] {
   const lowerQuery = query.toLowerCase().trim();

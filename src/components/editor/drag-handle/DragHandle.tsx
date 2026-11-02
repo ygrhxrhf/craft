@@ -18,8 +18,8 @@ import { dropTargetFor, visibleRows } from './drop-band';
 import { resolveDropAddress } from '@/lib/editor/drop-address';
 import { indentRunOf } from '@/lib/editor/indent-run';
 import { topLevelStart } from '@/lib/editor/block-move';
-import { applyBlockAction, anchorableBlockTarget, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setBlockReminder, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, taskItemTarget, type BlockActionId } from './block-actions';
-import { isInstantPreset } from '@/lib/task/remind-presets';
+import { applyBlockAction, anchorableBlockTarget, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setBlockReminder, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, setTaskReminderAt, setBlockReminderAt, taskItemTarget, type BlockActionId } from './block-actions';
+import { promptDialog } from '@/lib/dialog/show';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
 import { DIVIDER_STYLE_CHOICES, type DividerStyle } from '@/lib/editor/divider-styles';
 import {
@@ -618,12 +618,42 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                       {REMIND_MENU.map((preset) => (
                         <DropdownMenuItem
                           key={preset.id}
-                          // ☆ 七档里有**两档在本仓没有承载面**：`留着以后用` 要一个"以后"桶、
-                          // `自定义…` 要一个自定义选择器，两样都没有对应列。此前它们照旧可点、
-                          // 点下去还会把已有提醒抹掉（见 `setTaskReminder`）⇒ 现按"没列就不装作能用"
-                          // 灰掉，与 G03／G179 那几批同一判据。
-                          disabled={!isInstantPreset(preset.id)}
-                          onClick={() => remindBlock(handle.blockEl, preset.id)}
+                          // ☆ 第 120 批后七档**全部有承载面**：五个即时档走 `remindBlock`；
+                          // 「自定义…」开一个日期时间对话框写显式时刻；「留着以后用」＝把这枚提醒
+                          // 收起来（清 `remindAt`），与官方"进以后桶"同义——本仓没有独立的桶列，
+                          // 清掉就是它在这台设备上的等价落点。
+                          disabled={false}
+                          onClick={() => {
+                            if (preset.id === 'custom') {
+                              const now = new Date();
+                              const local = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                              void promptDialog({
+                                title: '自定义提醒时间',
+                                defaultValue: local,
+                                placeholder: 'YYYY-MM-DDTHH:mm',
+                                confirmLabel: '确定',
+                              }).then((value) => {
+                                if (!value) return;
+                                const at = new Date(value);
+                                if (Number.isNaN(at.getTime())) return;
+                                const index = indexOfBlock(handle.blockEl);
+                                if (index < 0) return;
+                                if (taskItemTarget(editor.state, index)) {
+                                  setTaskReminderAt(editor.state, editor.view.dispatch, index, at.toISOString());
+                                } else {
+                                  setBlockReminderAt(editor.state, editor.view.dispatch, index, at.toISOString());
+                                }
+                              });
+                              return;
+                            }
+                            if (preset.id === 'saveForLater') {
+                              const index = indexOfBlock(handle.blockEl);
+                              if (index < 0) return;
+                              setTaskReminderAt(editor.state, editor.view.dispatch, index, null);
+                              return;
+                            }
+                            remindBlock(handle.blockEl, preset.id);
+                          }}
                         >
                           {preset.label}
                         </DropdownMenuItem>

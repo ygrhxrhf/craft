@@ -11,6 +11,8 @@ import {
   setTaskReminder,
   setBlockReminder,
   clearBlockReminder,
+  setBlockReminderAt,
+  setTaskReminderAt,
   setTaskCancelled,
   toggleTaskCancelledAtSelection,
   taskItemTarget,
@@ -695,5 +697,41 @@ describe('取消＝同一枚轴上的第三档（G52）', () => {
 
     const cleared = runState(next, (d) => clearTaskReminder(next, d, 1));
     expect(cleared.doc.child(1).child(1).attrs.remindAt).toBeNull();
+  });
+});
+
+// G1466 —— 自定义档写显式时刻、留着以后用清掉提醒，两者都走"显式 iso"入口。
+describe('setTaskReminderAt / setBlockReminderAt（G1466）', () => {
+  it('writes an explicit instant onto a task item', () => {
+    const doc = schema.nodes.doc.create(null, [schema.nodes.taskItem.create(null, schema.text('买牛奶'))]);
+    const state = EditorState.create({ schema, doc });
+    const next = runState(state, (d) => setTaskReminderAt(state, d, 0, '2026-12-01T09:00:00.000Z'));
+    expect(next.doc.child(0).attrs.remindAt).toBe('2026-12-01T09:00:00.000Z');
+  });
+
+  it('clears the reminder when given null (the 「留着以后用」 branch)', () => {
+    const doc = schema.nodes.doc.create(null, [
+      schema.nodes.taskItem.create({ remindAt: '2026-12-01T09:00:00.000Z' }, schema.text('买牛奶')),
+    ]);
+    const state = EditorState.create({ schema, doc });
+    const next = runState(state, (d) => setTaskReminderAt(state, d, 0, null));
+    expect(next.doc.child(0).attrs.remindAt).toBeNull();
+  });
+
+  it('writes an explicit instant onto an anchorable block that has a blockId', () => {
+    const doc = schema.nodes.doc.create(null, [
+      schema.nodes.paragraph.create({ blockId: 'blk-1' }, schema.text('一段正文')),
+    ]);
+    const state = EditorState.create({ schema, doc });
+    const next = runState(state, (d) => setBlockReminderAt(state, d, 0, '2026-12-01T09:00:00.000Z'));
+    expect(next.doc.child(0).attrs.remindAt).toBe('2026-12-01T09:00:00.000Z');
+  });
+
+  it('refuses a block with no blockId, same as the preset path', () => {
+    const doc = schema.nodes.doc.create(null, [schema.nodes.paragraph.create(null, schema.text('正文'))]);
+    const state = EditorState.create({ schema, doc });
+    expect(() => run(state, (d) => setBlockReminderAt(state, d, 0, '2026-12-01T09:00:00.000Z'))).toThrow(
+      'the action dispatched nothing',
+    );
   });
 });

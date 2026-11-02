@@ -369,6 +369,33 @@ export function setTaskCancelled(
   dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, ...attrs }));
 }
 
+/**
+ * G1466 —— 用一个**显式时刻**写提醒（「自定义…」走这里）。与 `setTaskReminder` 分开：
+ * 后者吃预设 id，这一支吃已经算好的 ISO 串（自定义选择器给的就是它）。
+ */
+export function setTaskReminderAt(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  iso: string | null,
+) {
+  const target = taskItemTarget(state, index);
+  if (!target) return;
+  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, remindAt: iso }));
+}
+
+/** G1466 —— 非任务块上的显式时刻提醒（「自定义…」的块那一支）。 */
+export function setBlockReminderAt(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  iso: string | null,
+) {
+  const target = anchorableBlockTarget(state, index);
+  if (!target) return;
+  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, remindAt: iso }));
+}
+
 export function setTaskReminder(
   state: EditorState,
   dispatch: (tr: Transaction) => void,

@@ -8860,10 +8860,13 @@
       ]
     },
     "G1466": {
-      "status": "partial",
-      "note": "七档逐字在册，但留着以后用/自定义 无承载面而置灰",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "七档全部有承载面：新增 setTaskReminderAt/setBlockReminderAt 显式时刻入口；「自定义…」开日期时间对话框、「留着以后用」清 remindAt（本仓无独立以后桶）。两处菜单不再灰任何一档。",
       "evidence": [
-        "src/lib/task/remind-presets.ts:27"
+        "src/components/editor/drag-handle/block-actions.ts",
+        "src/components/editor/drag-handle/DragHandle.tsx",
+        "src/components/editor/extensions/reminder-pill.ts"
       ]
     },
     "G1467": {

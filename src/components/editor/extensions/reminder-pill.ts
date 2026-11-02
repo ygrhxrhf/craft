@@ -4,21 +4,23 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import type { EditorView } from '@tiptap/pm/view';
 
 import { REMINDER_ACTIONS, reminderPillLabel } from '@/lib/task/reminder-pill';
-import { REMIND_PRESETS, isInstantPreset, type RemindPresetId } from '@/lib/task/remind-presets';
+import { REMIND_PRESETS, type RemindPresetId } from '@/lib/task/remind-presets';
 import {
   RESCHEDULE_CONFIRM_LABEL,
   RESCHEDULE_REMINDER_DESC,
   RESCHEDULE_REMINDER_TITLE,
   needsRescheduleConfirm,
 } from '@/lib/task/reminder-reschedule';
-import { confirmDialog } from '@/lib/dialog/show';
+import { confirmDialog, promptDialog } from '@/lib/dialog/show';
 import {
   anchorableBlockTarget,
   clearBlockReminder,
   clearTaskReminder,
   setBlockReminder,
+  setBlockReminderAt,
   setTaskDateField,
   setTaskReminder,
+  setTaskReminderAt,
   taskItemTarget,
 } from '@/components/editor/drag-handle/block-actions';
 import { iconSentence } from '@/lib/task/time-icons';
@@ -41,13 +43,24 @@ function clearReminderAt(view: EditorView, index: number) {
   else clearBlockReminder(view.state, view.dispatch, index);
 }
 
-/** G252: set a reminder preset on the block, task or not. */
-function setReminderAt(view: EditorView, index: number, preset: RemindPresetId) {
-  if (taskItemTarget(view.state, index)) {
-    setTaskReminder(view.state, view.dispatch, index, preset, new Date());
-  } else {
-    setBlockReminder(view.state, view.dispatch, index, preset, new Date());
+/**
+ * G252／G1466: 在块上写提醒。`iso` 传入时用**显式时刻**（自定义档或清空一档），
+ * 否则按预设 id 算（五个即时档）。
+ */
+function setReminderAt(
+  view: EditorView,
+  index: number,
+  preset: RemindPresetId,
+  iso?: string | null,
+) {
+  const isTask = taskItemTarget(view.state, index) !== null;
+  if (iso !== undefined) {
+    if (isTask) setTaskReminderAt(view.state, view.dispatch, index, iso);
+    else setBlockReminderAt(view.state, view.dispatch, index, iso);
+    return;
   }
+  if (isTask) setTaskReminder(view.state, view.dispatch, index, preset, new Date());
+  else setBlockReminder(view.state, view.dispatch, index, preset, new Date());
 }
 
 /** The index of the top-level block a position falls in. */
@@ -185,15 +198,27 @@ function openPresetMenu(anchor: HTMLElement, view: EditorView, pos: number) {
   for (const preset of REMIND_PRESETS) {
     const item = menuItem(preset.label, () => {
       const index = blockIndexAt(view, pos);
-      if (index >= 0) setReminderAt(view, index, preset.id);
-      closeReminderMenu();
+      if (index < 0) return;
+      if (preset.id === 'custom') {
+        // G1466：自定义档开一个日期时间对话框，写显式时刻。
+        const now = new Date();
+        const local = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        void promptDialog({ title: '自定义提醒时间', defaultValue: local, confirmLabel: '确定' }).then((value) => {
+          if (!value) return;
+          const at = new Date(String(value));
+          if (Number.isNaN(at.getTime())) return;
+          setReminderAt(view, index, 'custom', at.toISOString());
+        });
+        return;
+      }
+      if (preset.id === 'saveForLater') {
+        // 「留着以后用」＝把这枚提醒收起来（清 remindAt），本仓没有独立的"以后桶"。
+        setReminderAt(view, index, 'saveForLater', null);
+        return;
+      }
+      setReminderAt(view, index, preset.id);
     });
-    // 与块菜单同一口径：没有承载面的两档灰掉，不装作能用（`setTaskReminder` 也已拒发事务）。
-    if (!isInstantPreset(preset.id)) {
-      item.disabled = true;
-      item.style.opacity = '0.5';
-      item.style.cursor = 'default';
-    }
+    // 第 120 批后七档全部有承载面，不再灰任何一档。
     menu.appendChild(item);
   }
   placeMenu(anchor, menu);

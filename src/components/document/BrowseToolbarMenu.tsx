@@ -1,6 +1,5 @@
 'use client';
 
-import { Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, MoreHorizontal } from 'lucide-react';
 
@@ -8,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -119,7 +119,7 @@ export function BrowseToolbarMenu({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           {TOOLBAR_MENU_GROUPS.map((group, index) => (
-            <Fragment key={group.title ?? group.entries[0]?.id}>
+            <DropdownMenuGroup key={group.title ?? group.entries[0]?.id}>
               {index > 0 && <DropdownMenuSeparator />}
               {group.title && <DropdownMenuLabel>{group.title}</DropdownMenuLabel>}
               {group.title === '排序方式'
@@ -134,7 +134,7 @@ export function BrowseToolbarMenu({
                     </DropdownMenuItem>
                   ))
                 : group.entries.map((entry) => renderEntry(entry))}
-            </Fragment>
+            </DropdownMenuGroup>
           ))}
         </DropdownMenuContent>
       </DropdownMenu>

@@ -83,4 +83,15 @@ describe('the menu is wired into the browse toolbar', () => {
     expect(menu).toContain('exportLibraryTextBundleZip');
     expect(menu).toContain('showDailyNotes');
   });
+
+  // 真浏览器里踩过一次：Base UI 的 GroupLabel 必须在 Menu.Group 内，裸放标签整块弹层直接崩。
+  it('wraps every group label inside a menu group', () => {
+    const groupAt = menu.indexOf('<DropdownMenuGroup');
+    const labelAt = menu.indexOf('<DropdownMenuLabel');
+    expect(groupAt).toBeGreaterThan(-1);
+    expect(labelAt).toBeGreaterThan(-1);
+    expect(groupAt).toBeLessThan(labelAt);
+    expect(menu).toContain('{group.title && <DropdownMenuLabel>');
+    expect(menu).not.toContain('<Fragment key={group.title');
+  });
 });

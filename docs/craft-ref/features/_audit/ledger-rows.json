@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T06:35:02.354Z",
+  "generatedAt": "2026-11-02T06:37:51.882Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 988,
-    "aligned": 200,
+    "gap": 987,
+    "aligned": 201,
     "unknown": 196,
     "deliberate": 98,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 416,
+    "P2 / gap": 415,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 97,
+    "P2 / aligned": 98,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 36,
@@ -26899,10 +26899,10 @@
       "cols": 5,
       "id": "G1432",
       "official": "★★★★★ **格式页签的文本样式六档里「标题」真的出现两次＝官方短标签档、不是转写错**＝`style.text.*` 名册逐字＝`style.text.title`＝标题、`style.text.heading`＝中标题、**`style.text.heading.short`＝标题**（与 title 同字）、`style.text.strong`＝小标题、`style.text.subtitle`＝副标题、`style.text.body`＝正文、`style.text.caption`＝说明＝⇒ 屏上序列「标题／副标题／标题／小标题／正文／说明」里的第二个「标题」＝`heading` 走的是 `.short` 档",
-      "local": "`styles.md` §一在册那张\"语义档位\"表只登了 title／heading／strong 三档命名＝**没登 `.short` 这枚撞名**＝本地若把\"中标题\"直接当界面文案就会与官方界面不一致＝✎ 已增补 `styles.md` §一",
-      "verdict": "✓盘上一手（键值逐字）＋屏侧独立第二面（C 的\"重复\"恰好被键面解释）＝☆ 判据＝**别把别人转述里的\"重复\"当错字，先查是不是官方的短标签档**",
+      "local": "`styles.md` §一在册那张\"语义档位\"表只登了 title／heading／strong 三档命名＝**没登 `.short` 这枚撞名**＝本地若把\"中标题\"直接当界面文案就会与官方界面不一致＝✎ 已增补 `styles.md` §一 ✎ 现读（2026-11-02）：格式页签第三项改用 `PANEL_HEADING_SHORT_LABEL`（「标题」），与第一项同字；`TEXT_STYLE_LABELS.heading` 仍是编辑器语义用的「中标题」。页面档按 G51 保留。单测 1 条。",
+      "verdict": "☆ 已清（第 134 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

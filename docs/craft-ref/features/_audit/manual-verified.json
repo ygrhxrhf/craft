@@ -8770,10 +8770,13 @@
       ]
     },
     "G1432": {
-      "status": "partial",
-      "note": "第三档写「中标题」，官方同档在屏上显示「标题」",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "格式页签第三项用 heading.short 的「标题」，与第一项同字；中标题仍用于编辑器语义。",
       "evidence": [
-        "src/lib/editor/semantic-levels.ts:12"
+        "src/lib/editor/semantic-levels.ts:24",
+        "src/components/editor/tabs/FormatTab.tsx:41",
+        "src/lib/editor/semantic-levels.test.ts"
       ]
     },
     "G1434": {

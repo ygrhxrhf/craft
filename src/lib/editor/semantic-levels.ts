@@ -16,6 +16,13 @@ export const TEXT_STYLE_LABELS = {
   caption: '说明',
 } as const;
 
+/**
+ * G1432: the panel's third entry renders `style.text.heading.short` — also 「标题」, the same word
+ * as the first entry. Kept separate from TEXT_STYLE_LABELS so the long name (`中标题`) stays the
+ * one used by editor semantics.
+ */
+export const PANEL_HEADING_SHORT_LABEL = '标题';
+
 export type TextStyleKey = keyof typeof TEXT_STYLE_LABELS;
 
 /** Heading level ↔ official semantic name. */

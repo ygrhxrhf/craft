@@ -27,7 +27,7 @@ import {
   type FormatHost,
 } from '@/lib/editor/format-commands';
 import { MIXED_LABEL, type TriState } from '@/lib/editor/format-presence';
-import { TEXT_STYLE_LABELS, headingLabel } from '@/lib/editor/semantic-levels';
+import { PANEL_HEADING_SHORT_LABEL, TEXT_STYLE_LABELS, headingLabel } from '@/lib/editor/semantic-levels';
 
 interface FormatTabProps {
   editor: Editor;
@@ -36,7 +36,9 @@ interface FormatTabProps {
 const textStyles = [
   { label: headingLabel(1), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 1 }).run(), check: (e: Editor) => e.isActive('heading', { level: 1 }) },
   { label: headingLabel(2), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 2 }).run(), check: (e: Editor) => e.isActive('heading', { level: 2 }) },
-  { label: headingLabel(3), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 3 }).run(), check: (e: Editor) => e.isActive('heading', { level: 3 }) },
+  // G1432: the official panel's third entry uses `style.text.heading.short` — also 「标题」,
+  // duplicating the first entry on purpose. Do not "fix" the duplicate.
+  { label: PANEL_HEADING_SHORT_LABEL, action: (e: Editor) => e.chain().focus().toggleHeading({ level: 3 }).run(), check: (e: Editor) => e.isActive('heading', { level: 3 }) },
   { label: headingLabel(4), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 4 }).run(), check: (e: Editor) => e.isActive('heading', { level: 4 }) },
   // G51: 「页面」 is the sixth official name. Locally a page is a document, so the entry turns the
   // block into the page-title style the editor already renders (H1 + page semantics).

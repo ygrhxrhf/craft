@@ -7,6 +7,7 @@ import { Crop, ImagePlus, Link2, Loader2, Minus, Plus } from 'lucide-react';
 import { uploadFile } from '@/lib/upload-client';
 import { promptDialog } from '@/lib/dialog/show';
 import { frameStyle, moveFrame, readImageFrame, zoomFrame, type ImageFrame } from '@/lib/editor/image-frame';
+import { useLightboxStore } from '@/lib/store/use-lightbox-store';
 
 export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
   const [loaded, setLoaded] = useState(false);
@@ -97,6 +98,12 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
                 alt={alt || ''}
                 draggable={false}
                 onLoad={() => setLoaded(true)}
+                // G347：点图进灯箱——把图丢进**全局 store 字段**，灯箱自己从字段渲染
+                // （不是本组件的局部态，所以跨屏也能唤起）。裁剪态下不抢点击。
+                onClick={() => {
+                  if (framing || !src) return;
+                  useLightboxStore.getState().open(src, [src]);
+                }}
                 onPointerDown={(event) => {
                   if (!framing) return;
                   drag.current = { x: event.clientX, y: event.clientY, frame };

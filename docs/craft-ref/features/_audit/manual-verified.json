@@ -4667,10 +4667,13 @@
       ]
     },
     "G347": {
-      "status": "gap",
-      "note": "图片块无灯箱、无全局 store 与命中预取 chunk",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "图片灯箱改成全局 store 字段驱动（src/gallery/index + loader 预取），Lightbox 只读字段渲染，挂一次；图片块点击丢地址进 store。",
       "evidence": [
-        "src/components/editor/extensions/image-block-view.tsx:95"
+        "src/lib/store/use-lightbox-store.ts",
+        "src/components/editor/lightbox/Lightbox.tsx",
+        "src/components/editor/extensions/image-block-view.tsx"
       ]
     },
     "G348": {

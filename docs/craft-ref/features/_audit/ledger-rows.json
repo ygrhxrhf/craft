@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T03:07:44.352Z",
+  "generatedAt": "2026-11-02T03:10:51.766Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1015,
+    "gap": 1014,
     "unknown": 198,
-    "aligned": 172,
+    "aligned": 173,
     "deliberate": 97,
     "partial": 60,
     "nonaction": 56,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 443,
+    "P2 / gap": 442,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 69,
+    "P2 / aligned": 70,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 38,
@@ -7274,10 +7274,10 @@
       "cols": 5,
       "id": "G347",
       "official": "**图片灯箱是全局 store 字段驱动 + 命中即预取 chunk**（§22.4：selector `t.craftLightboxData`，`useEffect` 里 `preload()`），灯箱自身无任何 i18n 键",
-      "local": "本地灯箱是组件局部态",
-      "verdict": "行为不同（影响能否跨屏唤起）",
+      "local": "本地灯箱是组件局部态 ✎ 现读（2026-11-02）更正：**已改成全局 store 字段驱动**。新增 `src/lib/store/use-lightbox-store.ts`（`src`／`gallery`／`index` 三字段＋`open/close/next/prev`，第一次 `open` 时调 `loader` ＝ 官方\"命中即预取 chunk\"的对应物）；`Lightbox.tsx` 只读这几个字段渲染（自身无 i18n 键，与官方一致），挂一次在编辑器里；图片块点击把地址丢进 store ⇒ 任何组件都能唤起、跨屏可用（`data-testid=\"image-lightbox\"`）。单测 6 条。",
+      "verdict": "☆ 已清（第 119 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

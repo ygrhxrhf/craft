@@ -33,6 +33,7 @@ import { useCompletedTaskAppearance } from '@/components/task/use-completed-appe
 import { EditorBubbleMenu } from './bubble-menu/BubbleMenu';
 import { AiBubbleMenu } from './bubble-menu/AiBubbleMenu';
 import { ImageGenDialogHost } from './ai/ImageGenDialog';
+import { Lightbox } from './lightbox/Lightbox';
 import { TableToolbar } from './table/TableToolbar';
 import { DragHandle } from './drag-handle/DragHandle';
 import { SlashCommand } from './slash-menu/SlashCommandExtension';
@@ -890,6 +891,8 @@ export function Editor({
         </p>
       )}
       <EditorContent editor={editor} />
+      {/* G347：灯箱只挂一次，读全局 store 字段 —— 任何图片块把地址丢进去即可开。 */}
+      <Lightbox />
       <ImageGenDialogHost editor={editor} />
     </div>
   );

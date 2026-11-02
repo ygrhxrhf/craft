@@ -1631,7 +1631,7 @@
 | G344 | **搜索是 4 个服务端 PUT 端点、入参为词项数组与作用域**（`longtail.md` §22.3）：`/search-flexi/space/v1/search` `{spaceId, scope, terms}`、`/document-highlights` `{spaceId, documentId, terms}`（401/403→AccessDenied、404→NotFound）+ `tagStats` / `searchBlock`；**高亮是按文档二次请求取的** | 本地单端点单 query 串，高亮前端自己算 | 缺失 | 3/2 |
 | G345 | **内置关卡制小游戏 CRAFT BREAKER**（§22.1）：独立 lazy chunk + 独立 CSS，WebGL 渲染（`u_time`/`u_resolution`/`u_barrel` + 波形参数）、CRT 开关机转场、事件 `ball_launch`/`wall_hit`/`paddle_hit`/`brick_destroy`/`ball_drop`/`level_complete`、操作为鼠标或 ←/→ + 空格 + ESC，文案全大写硬编码 | 本地无 | 缺失（**有意偏差候选**：非核心功能，入口亦未证，暂不实现） | 1/3 |
 | G346 | **浏览器不兼容是可绕过警告**（§22.2）：`browser.not.compatible` + `browse.best.experience.browsers` + `use.craft.anyways`（强行继续）+ `not.show.this.again`（持久化关闭） | 本地无兼容检测 | 缺失 | 1/1 |
-| G347 | **图片灯箱是全局 store 字段驱动 + 命中即预取 chunk**（§22.4：selector `t.craftLightboxData`，`useEffect` 里 `preload()`），灯箱自身无任何 i18n 键 | 本地灯箱是组件局部态 | 行为不同（影响能否跨屏唤起） | 2/1 |
+| G347 | **图片灯箱是全局 store 字段驱动 + 命中即预取 chunk**（§22.4：selector `t.craftLightboxData`，`useEffect` 里 `preload()`），灯箱自身无任何 i18n 键 | 本地灯箱是组件局部态 ✎ 现读（2026-11-02）更正：**已改成全局 store 字段驱动**。新增 `src/lib/store/use-lightbox-store.ts`（`src`／`gallery`／`index` 三字段＋`open/close/next/prev`，第一次 `open` 时调 `loader` ＝ 官方"命中即预取 chunk"的对应物）；`Lightbox.tsx` 只读这几个字段渲染（自身无 i18n 键，与官方一致），挂一次在编辑器里；图片块点击把地址丢进 store ⇒ 任何组件都能唤起、跨屏可用（`data-testid="image-lightbox"`）。单测 6 条。 | ☆ 已清（第 119 批） | 2/1 |
 | G348 | **浏览排序有 6 档且比较器有规则**（`js/index` `us` 枚举）：`Name`/`Updated`/`Created`/`LastViewed`/`Kind`/`Manual`；比较前先 `空值恒排末尾`，再 `localeCompare(undefined,{numeric:true,sensitivity:"base"})` ⇒ **自然数序（Doc2<Doc10）+ 忽略大小写与音标** | 本地排序 3 档、字典序 | 行为不同 | 2/1 |
 
 ### 三点二九、第 24 批（`ideastarter.*` 空白页 AI 启动器，静态）

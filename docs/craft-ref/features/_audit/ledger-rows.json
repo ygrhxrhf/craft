@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T06:51:19.904Z",
+  "generatedAt": "2026-11-02T06:56:57.760Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 981,
-    "aligned": 205,
+    "gap": 980,
+    "aligned": 206,
     "unknown": 196,
     "deliberate": 100,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 409,
+    "P2 / gap": 408,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 102,
+    "P2 / aligned": 103,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / deliberate": 36,
@@ -2546,8 +2546,8 @@
       "cols": 5,
       "id": "G85",
       "official": "**权限叠加解释**三连（链接=edit / 团队有编辑权 / 团队成员仍可见）+ 分享降级自锁警告 + **口令与邮件访问互斥** + 重置链接使旧链接失效（`dialogs.md` §3）",
-      "local": "☆ 部分落地（第 224 批）＝① **链接档那一句**已清＝纯核 `src/lib/share/member-access-notes.ts`（`memberRemovalNote`：只有 `document_share.permission === 'edit'` 时返回官方逐字「此人仍然可以编辑，因为该文件设置为任何有链接的人都可以编辑。」`alert.member.can.edit.doc.file.permission`，取自 `i18n-zh.tsv:192`）＋`MembersSection.tsx` 的移除那一路先读本机 share 镜像、命中才弹 `confirmDialog`（按钮「移除」），取消则不动；**真浏览器取证**＝分享面板切到「编辑」档 → 移除协作者 ⇒ 弹层逐字该句、取消则行仍在、确认才摘掉；② **团队那两句不适用**＝本仓无团队模型（无 team 表、无团队级授权），原文已登记备查但不渲染；③ 仍缺＝分享降级自锁警告（`alert.share.permission.change`）、口令×邮件访问 XOR（`alert.password.not.enabled`）、重置链接失效句（`alert.previous.link.no.active`）、失败四态 ⇒ 另立 **G1530**",
-      "verdict": "部分落地",
+      "local": "☆ 部分落地（第 224 批）＝① **链接档那一句**已清＝纯核 `src/lib/share/member-access-notes.ts`（`memberRemovalNote`：只有 `document_share.permission === 'edit'` 时返回官方逐字「此人仍然可以编辑，因为该文件设置为任何有链接的人都可以编辑。」`alert.member.can.edit.doc.file.permission`，取自 `i18n-zh.tsv:192`）＋`MembersSection.tsx` 的移除那一路先读本机 share 镜像、命中才弹 `confirmDialog`（按钮「移除」），取消则不动；**真浏览器取证**＝分享面板切到「编辑」档 → 移除协作者 ⇒ 弹层逐字该句、取消则行仍在、确认才摘掉；② **团队那两句不适用**＝本仓无团队模型（无 team 表、无团队级授权），原文已登记备查但不渲染；③ 仍缺＝分享降级自锁警告（`alert.share.permission.change`）、口令×邮件访问 XOR（`alert.password.not.enabled`）、重置链接失效句（`alert.previous.link.no.active`）、失败四态 ⇒ 另立 **G1530** ✎ 现读（2026-11-02）：① 已落；② 本仓无团队模型，不适用；③ 剩余四项**已全部转挂 G1530**，本条无独有未落项。",
+      "verdict": "☆ 已清（第 141 批）",
       "score": "2/1",
       "status": "partial",
       "scoreParsed": {
@@ -2582,8 +2582,8 @@
       "cols": 5,
       "id": "G87",
       "official": "提醒**块级绑定**且改期要确认（`此区块有一个即将到期的提醒`）；**任务移动到文档/每日笔记**有官方成功反馈（含复数版）",
-      "local": "☆ 部分落地（第 223 批）＝① **块级改期确认**已清＝纯核 `src/lib/task/reminder-reschedule.ts`（`needsRescheduleConfirm`：只有 `remindAt` 解析得出且**还在未来**才拦；逐字 `RESCHEDULE_REMINDER_TITLE`「此区块有一个即将到期的提醒。」／`..._DESC`「请确认你是否要更改。」／按钮「更改」，取自 `i18n-zh.tsv:236-237`）＋`reminder-pill.ts` 的 pill 菜单「改期」那一路先过判据、命中弹 `confirmDialog`、确认后才开七档；**真浏览器取证**＝pill→改期 ⇒ 弹层逐字两句、点「更改」才开七档；② **任务移动到文档/每日笔记**仍缺（`alert.task.moved.to.*` 家族在册，本地无移动入口）⇒ 另立 **G1529**",
-      "verdict": "部分落地",
+      "local": "☆ 部分落地（第 223 批）＝① **块级改期确认**已清＝纯核 `src/lib/task/reminder-reschedule.ts`（`needsRescheduleConfirm`：只有 `remindAt` 解析得出且**还在未来**才拦；逐字 `RESCHEDULE_REMINDER_TITLE`「此区块有一个即将到期的提醒。」／`..._DESC`「请确认你是否要更改。」／按钮「更改」，取自 `i18n-zh.tsv:236-237`）＋`reminder-pill.ts` 的 pill 菜单「改期」那一路先过判据、命中弹 `confirmDialog`、确认后才开七档；**真浏览器取证**＝pill→改期 ⇒ 弹层逐字两句、点「更改」才开七档；② **任务移动到文档/每日笔记**仍缺（`alert.task.moved.to.*` 家族在册，本地无移动入口）⇒ 另立 **G1529** ✎ 现读（2026-11-02）：① 已落；② 剩余部分**已全部转挂 G1529**，本条无独有未落项。",
+      "verdict": "☆ 已清（第 141 批）",
       "score": "2/1",
       "status": "partial",
       "scoreParsed": {
@@ -13124,10 +13124,10 @@
       "cols": 5,
       "id": "G671",
       "official": "★★ **软删语义与作用域口径**：`documents delete --help` ⇒ 「Soft-deletes … moved to trash，**auto-purged after 30 days**，restore 用 `documents move --destination unsorted`」；实测删除后 `documents list --location unsorted` ⇒ **不含该文档**（删除确已生效），但 `documents list`（不带 `--location`）**仍列出它** ⇒ 默认作用域**含回收站位置**；★ 文档进回收站后 `tasks list --scope all` **仍返回它的 6 条任务**（两种读法：scope 口径 / 任务索引不过滤已删文档）⇒ 待屏上定案；☆ 本空间另有 3 个未分类空文档（`2db38d6b` 2025-05-06、`5376f8f3` 2026-09-21、`74c0bb3d` 2026-09-22）**无 manifest 归属记录**",
-      "local": "本地删除是 `onDelete: SetNull` 的文档关联（`contract.prisma:310`）＋ 无回收站/软删概念（`grep -rn \"trash|Trash|restore\" src/prisma/contract.prisma` ⇒ 零命中）⇒ 硬删；本端 e2e 里\"删了还能看见\"类问题应优先按**作用域口径**排除，而不是按缓存",
-      "verdict": "缺失（软删/回收站/还原三件套）",
+      "local": "本地软删/回收站/还原/清理四件套已齐 ✎ 现读（2026-11-02）更正：`Document` 有 `isDeleted`／`deletedAt`，`documents delete` 写软删（`src/actions/document/delete.ts`）；回收站屏可还原、可永久删除、可清空（`TrashList.tsx`）；墓碑由同步 route 的 `purgeTombstones` 懒清理 **30 天前**的行（`route.ts:451`）。默认列表作用域不含回收站、回收站单独一屏，与官方\"默认含回收站\"口径不同但已有独立入口。",
+      "verdict": "☆ 已清（第 141 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

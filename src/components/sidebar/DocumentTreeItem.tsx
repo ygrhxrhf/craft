@@ -23,6 +23,7 @@ import {
   sidebarDragState,
 } from '@/lib/dnd/sidebar-drag';
 import { pressStartsDrag } from '@/lib/dnd/activation-guard';
+import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -227,6 +228,8 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
       };
       setExpanded(true);
     } else {
+      // G607: same-layer reorder writes the whole sibling list's order (0…n-1), like the official
+      // batch `orderedIds`, instead of giving the dragged row a midpoint decimal.
       const siblings = allDocuments
         .filter(
           d =>
@@ -235,17 +238,27 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
             d.id !== payload.documentId
         )
         .sort((a, b) => a.order - b.order);
-      const idx = siblings.findIndex(d => d.id === doc.id);
-      if (idx < 0) return;
-      const order =
-        currentZone === 'before'
-          ? idx > 0
-            ? (siblings[idx - 1].order + doc.order) / 2
-            : doc.order - 1
-          : idx < siblings.length - 1
-            ? (doc.order + siblings[idx + 1].order) / 2
-            : doc.order + 1;
-      data = { parentId: doc.parentId, folderId: doc.folderId, order };
+      const ids = orderAfterDrop(
+        siblings.map((sibling) => ({ id: sibling.id, order: sibling.order })),
+        payload.documentId,
+        doc.id,
+        currentZone,
+      );
+      if (ids.length === 0) return;
+      try {
+        const manager = getSyncManager();
+        for (const patch of orderPatches(ids)) {
+          await manager.applyLocal({
+            table: 'document',
+            id: patch.id,
+            patch: { parentId: doc.parentId, folderId: doc.folderId, order: patch.order },
+          });
+        }
+        bumpTree();
+      } catch (err) {
+        console.error('移动文档失败', err);
+      }
+      return;
     }
 
     try {

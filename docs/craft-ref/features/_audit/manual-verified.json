@@ -3493,10 +3493,12 @@
       ]
     },
     "G85": {
-      "status": "partial",
-      "note": "仅链接档=edit 的移除说明落地；缺团队两档、降级自锁、口令互斥、重置旧链",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "链接档叠加解释已落；团队两句无宿主不适用；剩余四项已全部转挂 G1530。",
       "evidence": [
-        "src/lib/share/member-access-notes.ts:30"
+        "src/lib/share/member-access-notes.ts:30",
+        "src/components/editor/tabs/MembersSection.tsx:142"
       ]
     },
     "G86": {
@@ -3507,10 +3509,12 @@
       ]
     },
     "G87": {
-      "status": "partial",
-      "note": "块级改期确认已落；缺任务移动到文档/每日笔记的成功反馈",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "块级改期确认已落；任务移动反馈整块转挂 G1529。",
       "evidence": [
-        "src/lib/task/reminder-reschedule.ts:23"
+        "src/lib/task/reminder-reschedule.ts:11",
+        "src/components/editor/extensions/reminder-pill.ts:174"
       ]
     },
     "G88": {
@@ -5912,9 +5916,12 @@
     },
     "G607": {
       "status": "partial",
-      "note": "侧栏拖拽按相邻中点算 order 逐条写，无整批 orderedIds",
+      "priority": "P2",
+      "note": "同层拖拽改为整批顺序（0…n-1）落库，已覆盖子文档/文件夹层；星标区、标签区与 tag_pin 本仓无宿主，仍缺。",
       "evidence": [
-        "src/components/sidebar/DocumentTreeItem.tsx:238"
+        "src/lib/document/sibling-order.ts",
+        "src/components/sidebar/DocumentTreeItem.tsx:229",
+        "src/lib/document/sibling-order.test.ts"
       ]
     },
     "G612": {
@@ -6232,10 +6239,14 @@
       ]
     },
     "G671": {
-      "status": "partial",
-      "note": "软删、还原、手动清空均已有；缺 30 天到期自动清除",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "软删/回收站/还原/永久删除/30 天懒清理四件套已齐；回收站是独立屏，默认列表不含它。",
       "evidence": [
-        "src/components/document/TrashList.tsx:102"
+        "src/prisma/contract.prisma:163",
+        "src/actions/document/delete.ts:18",
+        "src/app/api/v1/sync/route.ts:451",
+        "src/components/document/TrashList.tsx"
       ]
     },
     "G672": {

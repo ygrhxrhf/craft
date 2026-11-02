@@ -5702,10 +5702,11 @@
       ]
     },
     "G575": {
-      "status": "partial",
-      "note": "Enter 分裂由 PM 默认承担；无 keepAllIncomingFormat 与 run 切分",
+      "status": "nonaction",
+      "priority": "P2",
+      "note": "Enter 分割三事实（keepAllIncomingFormat / textSelectionIndex / 非文本 throw）都是官方 action 层内部形状，与 G589/G594/G608 同族。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:151"
+        "src/components/editor/extensions/craft-keymap.ts"
       ]
     },
     "G576": {
@@ -5949,17 +5950,23 @@
       ]
     },
     "G631": {
-      "status": "partial",
-      "note": "TipTap 原生 CellSelection 支持拖选与合并；缺 single/full/empty 三构造器",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "表格单元格选区三态：新增 cell-selection.ts 的 cellSelectionKind/toggleInTableCellSelection，TableToolbar 读三态驱动按钮。",
       "evidence": [
-        "src/components/editor/table/TableToolbar.tsx:228"
+        "src/lib/editor/cell-selection.ts",
+        "src/components/editor/table/TableToolbar.tsx",
+        "src/lib/editor/cell-selection.test.ts"
       ]
     },
     "G632": {
-      "status": "partial",
-      "note": "PM 基础键位已把 Delete 绑到 joinForward；无空块删并选下块两档",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Delete 残缺镜像：新增 forward-delete.ts 的 deleteStepFor（两档、无格式退档），接进 craft-keymap 的 Delete 分支。",
       "evidence": [
-        "src/components/editor/Editor.tsx:313"
+        "src/lib/editor/forward-delete.ts",
+        "src/components/editor/extensions/craft-keymap.ts",
+        "src/lib/editor/forward-delete.test.ts"
       ]
     },
     "G633": {
@@ -9072,10 +9079,11 @@
       ]
     },
     "G1565": {
-      "status": "partial",
-      "note": "ProseMirror 文档恒含至少一枚段落，无官方零块态",
+      "status": "nonaction",
+      "priority": "P2",
+      "note": "零块态是 ProseMirror 的 block+ 结构约束（官方是自有块树），屏幕侧两边都是空编辑器 ⇒ 架构差异，与 G53/G517 同族。",
       "evidence": [
-        "src/components/editor/Editor.tsx:329"
+        "src/components/editor/Editor.tsx"
       ]
     },
     "G1566": {

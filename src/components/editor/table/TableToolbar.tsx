@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BubbleMenu as TiptapBubbleMenu } from '@tiptap/react/menus';
 import type { Editor } from '@tiptap/react';
+import { CellSelection } from '@tiptap/pm/tables';
+import { makeCellSelection } from '@/lib/editor/cell-selection';
 import {
   ArrowDownAZ,
   ArrowUpAZ,
@@ -30,8 +32,17 @@ interface TableToolbarProps {
   editor: Editor;
 }
 
-function hasTableCellAncestor(editor: Editor): boolean {
-  const { $from } = editor.state.selection;
+/** G631: 表内总格数（含表头），用来判别 single 与 full。 */
+function countTableCells(editor: Editor): number {
+  let total = 0;
+  editor.state.doc.descendants((node) => {
+    if (node.type.name === 'tableCell' || node.type.name === 'tableHeader') total += 1;
+    return true;
+  });
+  return total;
+}
+
+function hasTableCellAncestor(editor: Editor): boolean {  const { $from } = editor.state.selection;
   for (let d = $from.depth; d > 0; d--) {
     const name = $from.node(d).type.name;
     if (name === 'tableCell' || name === 'tableHeader') return true;
@@ -77,6 +88,15 @@ function applyCellAttr(editor: Editor, attr: string, value: string | null): void
 
 export function TableToolbar({ editor }: TableToolbarProps) {
   const [notice, setNotice] = useState<{ x: number; y: number } | null>(null);
+
+  // G631：把 TipTap 的 CellSelection 读成官方那三态之一（single/full/empty），好让工具栏知道
+  // "当前是选中一格、整表、还是没选"。非 CellSelection 时 `selectedCells()` 回空数组 ⇒ empty。
+  const selection = editor.state.selection;
+  const cellSelection = useMemo(() => {
+    let selected = 0;
+    if (selection instanceof CellSelection) selection.forEachCell(() => { selected += 1; });
+    return makeCellSelection(selected, countTableCells(editor));
+  }, [editor, selection]);
 
   // G34：官方对表格上下文菜单只给了两句限制文案，没有采到具体禁用项名册。
   // 本地右键表格时不伪装成一份可执行菜单，而是给出同一条禁用提示并把人引到工具栏。
@@ -128,6 +148,8 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         </ToolButton>
         <ToolButton
           title="删除所选列"
+          // G631：只有真的选中了格（single/full）才亮起——empty 是一等空态，不是 null。
+          active={cellSelection.kind !== 'empty'}
           onClick={() => editor.chain().focus().deleteColumn().run()}
         >
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

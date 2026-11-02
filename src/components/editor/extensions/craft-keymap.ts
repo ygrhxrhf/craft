@@ -17,6 +17,7 @@ import { setTaskDateField } from '@/components/editor/drag-handle/block-actions'
 import { localDayInstant } from '@/lib/task/wall-clock';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { isImeComposing } from '@/lib/editor/ime-guard';
+import { deleteStepFor } from '@/lib/editor/forward-delete';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
@@ -374,6 +375,45 @@ export const CraftKeymap = Extension.create({
             ) {
               editor.chain().focus().addRowAfter().run();
               return true;
+            }
+            // G632: `Delete` (⌦) is Backspace's **stunted mirror** — same "caret at block end"
+            // gate, but only two steps (empty block ⇒ delete self + select next; next is text ⇒
+            // join forward) and **no** list/indent/decoration chain (that is Backspace's alone).
+            if (
+              event.key === 'Delete' &&
+              !event.shiftKey &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey &&
+              view.state.selection.empty
+            ) {
+              const { $from } = view.state.selection;
+              if ($from.parent.isTextblock) {
+                const index = topLevelIndexOf(view.state.doc, view.state.selection.from);
+                const hasNext = index >= 0 && index < view.state.doc.childCount - 1;
+                const next = hasNext ? view.state.doc.child(index + 1) : null;
+                const step = deleteStepFor({
+                  collapsed: true,
+                  atBlockEnd: $from.parentOffset === $from.parent.content.size,
+                  blockEmpty: $from.parent.content.size === 0,
+                  nextIsText: next?.type.name === 'paragraph' || next?.type.name === 'heading',
+                  hasNext,
+                });
+                if (step === 'delete-self') {
+                  const start = topLevelStart(view.state.doc, index);
+                  const self = view.state.doc.child(index);
+                  // 删掉自己后，下一块正好落在 `start` 处 ⇒ 节点选区就建在 `start`（官方那档的
+                  // "删自己并把选区落到下一块"）。
+                  const tr = view.state.tr.delete(start, start + self.nodeSize);
+                  const next = tr.doc.nodeAt(start);
+                  if (next) tr.setSelection(NodeSelection.create(tr.doc, start));
+                  view.dispatch(tr.scrollIntoView());
+                  return true;
+                }
+                if (step === 'join-forward') {
+                  return editor.chain().focus().joinForward().run();
+                }
+              }
             }
             // G578/G585: Backspace at the very start of a block walks the official six-step chain
             // (list → indent → decoration, then the four block-level steps). Only the first two

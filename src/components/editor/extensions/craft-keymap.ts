@@ -409,7 +409,7 @@ export const CraftKeymap = Extension.create({
                   editor
                     .chain()
                     .focus()
-                    .updateAttributes($from.parent.type.name, { focusColor: null, backgroundColor: null })
+                    .updateAttributes($from.parent.type.name, { focusColor: null, backgroundColor: null, textColor: null })
                     .run();
                   return true;
                 }
@@ -569,7 +569,7 @@ export const CraftKeymap = Extension.create({
                   return editor
                     .chain()
                     .focus()
-                    .updateAttributes($from.parent.type.name, { focusColor: null, backgroundColor: null })
+                    .updateAttributes($from.parent.type.name, { focusColor: null, backgroundColor: null, textColor: null })
                     .run();
                 }
                 // G578 step 5: a previous block that is an **empty text block** is removed

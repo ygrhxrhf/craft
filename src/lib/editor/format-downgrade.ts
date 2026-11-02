@@ -35,15 +35,20 @@ export function nextFormatStep(state: BlockFormatState): FormatStep | null {
 
 /**
  * G570: the official decoration step clears a **numeric** decoration level
- * (`{block:0, focus:0}`) plus a colour. Locally the decoration is carried by two attributes —
- * `focusColor` (the "focus" decoration) and `backgroundColor` (the "block" decoration) — so this
- * reports whether either is set, which is what the chain's third step consumes.
+ * (`{block:0, focus:0}`) plus a colour. Locally the decoration is carried by three attributes —
+ * `focusColor` (the "focus" decoration), `backgroundColor` (the "block" decoration) and `textColor`
+ * — so this reports whether any is set, which is what the chain's third step consumes.
  */
-export function hasDecoration(attrs: { focusColor?: unknown; backgroundColor?: unknown } | null | undefined): boolean {
+export function hasDecoration(attrs: { focusColor?: unknown; backgroundColor?: unknown; textColor?: unknown } | null | undefined): boolean {
   if (!attrs) return false;
   const focus = attrs.focusColor;
   const block = attrs.backgroundColor;
-  return Boolean((typeof focus === 'string' && focus) || (typeof block === 'string' && block));
+  const text = attrs.textColor;
+  return Boolean(
+    (typeof focus === 'string' && focus) ||
+      (typeof block === 'string' && block) ||
+      (typeof text === 'string' && text),
+  );
 }
 export function isEmptyBlock(input: {
   textLength: number;

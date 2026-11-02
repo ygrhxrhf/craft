@@ -27,6 +27,24 @@ export const FocusStyle = Extension.create({
               return { 'data-focus-color': attributes.focusColor };
             },
           },
+          // G630: the other two decoration slots — the block background and the block text colour.
+          // Leaving one level clears all three at once (see the Backspace downgrade in the keymap).
+          backgroundColor: {
+            default: null,
+            parseHTML: (element) => element.style.backgroundColor || null,
+            renderHTML: (attributes) => {
+              if (!attributes.backgroundColor) return {};
+              return { style: `background-color: ${attributes.backgroundColor}` };
+            },
+          },
+          textColor: {
+            default: null,
+            parseHTML: (element) => element.style.color || null,
+            renderHTML: (attributes) => {
+              if (!attributes.textColor) return {};
+              return { style: `color: ${attributes.textColor}` };
+            },
+          },
         },
       },
     ];

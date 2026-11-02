@@ -6101,10 +6101,14 @@
       ]
     },
     "G630": {
-      "status": "gap",
-      "note": "只有文字颜色 mark 与未接线的 focus/shaded 属性，无块级装饰三字段入口",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "块级装饰三槽（focus/backgroundColor/textColor）已成模型字段，退档一次全清，hasDecoration 三槽任一即真。",
       "evidence": [
-        "src/lib/editor/decorations.ts:27"
+        "src/components/editor/extensions/focus-style.tsx:22",
+        "src/components/editor/extensions/craft-keymap.ts:412",
+        "src/lib/editor/format-downgrade.ts:42",
+        "src/lib/editor/decorations-model.test.ts"
       ]
     },
     "G631": {

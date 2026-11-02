@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T09:50:01.985Z",
+  "generatedAt": "2026-11-02T10:07:42.146Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 939,
-    "aligned": 244,
+    "gap": 938,
+    "aligned": 245,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 367,
+    "P2 / gap": 366,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 141,
+    "P2 / aligned": 142,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -12434,10 +12434,10 @@
       "cols": 5,
       "id": "G630",
       "official": "★ **块级\"装饰\"是三个字段的组合，退档一次全清**：`styleProps.decorations.block` / `.focus` / `color` → `[P2({block:0,focus:0}), fU(null)]`（`decorations` 是对象不是位掩码；`color` 用 `null` 表\"无\"）",
-      "local": "`grep -rn \"backgroundColor|textColor|highlight|isFocus\" src/components/editor/extensions` ⇒ 只命中 `card-block-view.tsx:14` 的容器 `backgroundColor` 与 `markdown-shortcuts.ts:32,44` 的 **mark 级** `highlight` ⇒ 本地**没有块级 decoration / focus / color 字段面**，因此\"装饰档\"在本地无可退之物",
-      "verdict": "本地缺失（模型字段面）",
+      "local": "`grep -rn \"backgroundColor|textColor|highlight|isFocus\" src/components/editor/extensions` ⇒ 只命中 `card-block-view.tsx:14` 的容器 `backgroundColor` 与 `markdown-shortcuts.ts:32,44` 的 **mark 级** `highlight` ⇒ 本地**没有块级 decoration / focus / color 字段面**，因此\"装饰档\"在本地无可退之物 ✎ 现读（2026-11-02）：`FocusStyle` 的全局属性已含三槽——`focusColor`（data-focus-color）、`backgroundColor`（style background-color）、`textColor`（style color），覆盖段落/标题/引用/代码/列表/提示/折叠块；退档时三槽一次清空（`craft-keymap.ts` 两处 `{focusColor:null,backgroundColor:null,textColor:null}`），`hasDecoration` 三槽任一非空即为有装饰。单测见 `decorations-model.test.ts` 与 `format-downgrade.test.ts`。",
+      "verdict": "☆ 已清（第 174 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

@@ -89,6 +89,8 @@ describe('the decoration test (G570)', () => {
   it('is true with either attribute set', () => {
     expect(hasDecoration({ focusColor: 'red' })).toBe(true);
     expect(hasDecoration({ backgroundColor: '#fff' })).toBe(true);
+    // G630: the block text colour is the third slot and counts as a decoration too.
+    expect(hasDecoration({ textColor: '#111' })).toBe(true);
   });
 
   it('drives the chain\u2019s third step', () => {

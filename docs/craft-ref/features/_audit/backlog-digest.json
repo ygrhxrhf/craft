@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T09:50:02.255Z",
+  "generatedAt": "2026-11-02T10:07:42.503Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 501,
+    "aligned": 502,
     "partial": 276,
     "deliberate": 165,
-    "gap": 140,
+    "gap": 139,
     "unreachable": 20
   },
   "priority": {
@@ -18,7 +18,7 @@
   },
   "statusByPriority": {
     "P? / nonaction": 191,
-    "P2 / aligned": 186,
+    "P2 / aligned": 187,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
     "P2 / partial": 126,
@@ -27,7 +27,7 @@
     "P? / aligned": 78,
     "P2 / deliberate": 73,
     "P3 / partial": 70,
-    "P2 / gap": 67,
+    "P2 / gap": 66,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
     "P? / deliberate": 40,
@@ -1229,10 +1229,6 @@
       7
     ],
     [
-      "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
-      7
-    ],
-    [
       "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
       7
     ],
@@ -1242,6 +1238,10 @@
     ],
     [
       "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
+      6
+    ],
+    [
+      "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
       6
     ],
     [

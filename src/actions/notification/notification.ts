@@ -22,6 +22,30 @@ export async function listNotifications(): Promise<InboxRow[]> {
   return unreadReminders(rows);
 }
 
+/** G254: the bell's 「已解决」 view — resolved reminders, newest resolution first. */
+export async function listResolvedNotifications(): Promise<InboxRow[]> {
+  const userId = await requireUserId();
+
+  const db = await getDb();
+  const rows: Record<string, unknown>[] = await db.orm.public.Notification
+    .where((d: any) => d.userId.eq(userId))
+    .where((d: any) => d.isResolved.eq(true))
+    .select('id', 'title', 'kind', 'remindAt', 'documentId', 'blockId', 'resolvedAt')
+    .all();
+
+  return rows
+    .map((row) => ({
+      id: String(row.id),
+      title: typeof row.title === 'string' ? row.title : '',
+      kind: typeof row.kind === 'string' ? row.kind : 'taskReminder',
+      remindAt: typeof row.remindAt === 'string' ? row.remindAt : null,
+      documentId: typeof row.documentId === 'string' ? row.documentId : null,
+      blockId: typeof row.blockId === 'string' ? row.blockId : null,
+      readAt: typeof row.resolvedAt === 'string' ? row.resolvedAt : null,
+    }))
+    .sort((a, b) => (b.readAt ?? '').localeCompare(a.readAt ?? ''));
+}
+
 export async function resolveNotification(id: string) {
   const userId = await requireUserId();
 

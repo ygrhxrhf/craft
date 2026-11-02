@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Bell } from 'lucide-react';
 import {
   listNotifications,
+  listResolvedNotifications,
   markAllNotificationsRead,
   resolveNotification,
   setNotificationRead,
@@ -42,6 +43,9 @@ export function NotificationBell() {
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // G254: reminder has a resolved state with its own view.
+  const [view, setView] = useState<'open' | 'resolved'>('open');
+  const [resolvedItems, setResolvedItems] = useState<InboxRow[]>([]);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => getSyncManager().onStoreChanged((table) => {
@@ -76,6 +80,24 @@ export function NotificationBell() {
   }, [revision]);
 
   const visible = items.filter((item) => !dismissed.includes(item.id));
+
+  // G254: the 「已解决」 view pulls resolved rows on demand and refreshes with the inbox revision.
+  useEffect(() => {
+    if (!open || view !== 'resolved') return;
+    let cancelled = false;
+    listResolvedNotifications()
+      .then((rows) => {
+        if (!cancelled) setResolvedItems(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setResolvedItems([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, view, revision]);
+
+  const listed = view === 'resolved' ? resolvedItems : visible;
 
   const resolve = (id: string) => {
     setDismissed((current) => [...current, id]);
@@ -164,7 +186,31 @@ export function NotificationBell() {
           className="absolute right-0 top-full z-50 mt-1 w-72 rounded-xl border border-border bg-background p-2 shadow-lg"
           aria-label="通知列表"
         >
-          {visible.length > 0 && unreadCount > 0 && (
+          <div className="mb-1 flex gap-1 border-b border-border/60 px-1 pb-1">
+            <button
+              type="button"
+              aria-pressed={view === 'open'}
+              onClick={() => setView('open')}
+              className={cn(
+                'rounded px-2 py-0.5 text-[12px]',
+                view === 'open' ? 'bg-foreground/8 text-foreground' : 'text-muted-foreground',
+              )}
+            >
+              进行中
+            </button>
+            <button
+              type="button"
+              aria-pressed={view === 'resolved'}
+              onClick={() => setView('resolved')}
+              className={cn(
+                'rounded px-2 py-0.5 text-[12px]',
+                view === 'resolved' ? 'bg-foreground/8 text-foreground' : 'text-muted-foreground',
+              )}
+            >
+              已解决
+            </button>
+          </div>
+          {view === 'open' && visible.length > 0 && unreadCount > 0 && (
             <div className="flex justify-end px-2 pb-1">
               <button
                 type="button"
@@ -176,11 +222,13 @@ export function NotificationBell() {
               </button>
             </div>
           )}
-          {visible.length === 0 ? (
-            <p className="px-2 py-3 text-xs text-muted-foreground">暂无通知。</p>
+          {listed.length === 0 ? (
+            <p className="px-2 py-3 text-xs text-muted-foreground">
+              {view === 'resolved' ? '暂无已解决的通知。' : '暂无通知。'}
+            </p>
           ) : (
             <ul className="space-y-1">
-              {visible.map((item) => (
+              {listed.map((item) => (
                 <li key={item.id} className="flex items-start justify-between gap-2 px-2 py-1.5">
                   <div className="flex min-w-0 items-start gap-1.5">
                     <span
@@ -203,22 +251,28 @@ export function NotificationBell() {
                     </div>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleRead(item.id, item.readAt === null)}
-                      disabled={isPending}
-                      className="text-[12px] text-muted-foreground disabled:opacity-50"
-                    >
-                      {item.readAt ? '标为未读' : '标为已读'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void remove(item.id)}
-                      disabled={isPending}
-                      className="text-[12px] text-(--craft-accent) disabled:opacity-50"
-                    >
-                      删除
-                    </button>
+                    {view === 'open' ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => toggleRead(item.id, item.readAt === null)}
+                          disabled={isPending}
+                          className="text-[12px] text-muted-foreground disabled:opacity-50"
+                        >
+                          {item.readAt ? '标为未读' : '标为已读'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => void remove(item.id)}
+                          disabled={isPending}
+                          className="text-[12px] text-(--craft-accent) disabled:opacity-50"
+                        >
+                          删除
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-[12px] text-muted-foreground">已解决</span>
+                    )}
                   </div>
                 </li>
               ))}

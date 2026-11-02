@@ -4316,10 +4316,13 @@
       ]
     },
     "G254": {
-      "status": "partial",
-      "note": "有标记已解决与通知 resolve；提醒仍非实体，无进行中/已解决筛选",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "提醒是 Notification 实体；铃铛有进行中/已解决两视图，服务端有 resolved 列表与标记已解决动作。",
       "evidence": [
-        "src/lib/task/reminder-pill.ts:20"
+        "src/actions/notification/notification.ts:30",
+        "src/components/notification/NotificationBell.tsx:80",
+        "src/lib/notification/resolved-view.test.ts"
       ]
     },
     "G255": {

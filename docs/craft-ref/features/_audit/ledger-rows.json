@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:58:24.837Z",
+  "generatedAt": "2026-11-02T08:04:34.845Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 963,
-    "aligned": 220,
+    "gap": 962,
+    "aligned": 221,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 391,
+    "P2 / gap": 390,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 117,
+    "P2 / aligned": 118,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -5624,10 +5624,10 @@
       "cols": 5,
       "id": "G254",
       "official": "**提醒自身有完成态与两个筛选视图**：`commands.reminder.mark.resolved` + `.show.in.progress` + `.show.resolved`（⇒ 提醒是实体，不是定时器）；且**动词族最多**（add/create/edit/remove/remind.me/remind.me.3.dots/mobile.remind 七条）",
-      "local": "本地提醒只有一个 `remindAt` 时间戳，无 resolve 态",
-      "verdict": "缺失",
+      "local": "本地提醒是 `Notification` 实体（有 `isResolved`/`resolvedAt`） ✎ 现读（2026-11-02）：铃铛面板新增「进行中／已解决」两视图；服务端新增 `listResolvedNotifications`（`isResolved=true`，按解决时间倒序），「标记已解决」沿用既有 action；创建/编辑/移除提醒由 pill 菜单覆盖。",
+      "verdict": "☆ 已清（第 156 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

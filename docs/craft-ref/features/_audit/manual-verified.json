@@ -8795,9 +8795,10 @@
     },
     "G1453": {
       "status": "partial",
-      "note": "两层层级已在，但「展示」落在动作页签、内层段序不同",
+      "priority": "P2",
+      "note": "两层层级本已成立（顶层两枚子页签 + 内层段）；剩余差异是段序与「展示」段未落（本地展示设置落在样式页签）。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:337"
+        "src/components/editor/tabs/InfoTab.tsx"
       ]
     },
     "G1454": {

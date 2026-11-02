@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T07:13:57.701Z",
+  "generatedAt": "2026-11-02T07:15:45.809Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
     "aligned": 465,
-    "partial": 296,
-    "deliberate": 162,
-    "gap": 159,
+    "partial": 295,
+    "deliberate": 164,
+    "gap": 158,
     "unreachable": 20
   },
   "priority": {
@@ -21,12 +21,12 @@
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
     "P2 / aligned": 150,
-    "P2 / partial": 146,
+    "P2 / partial": 145,
     "P1 / nonaction": 89,
-    "P2 / gap": 86,
+    "P2 / gap": 85,
     "P? / partial": 80,
     "P? / aligned": 78,
-    "P2 / deliberate": 70,
+    "P2 / deliberate": 72,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
@@ -1221,7 +1221,7 @@
       5
     ],
     [
-      "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
+      "三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP ",
       5
     ]
   ]

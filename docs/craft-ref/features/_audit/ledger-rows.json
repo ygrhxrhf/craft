@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-02T07:13:57.449Z",
+  "generatedAt": "2026-11-02T07:15:45.517Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 975,
+    "gap": 974,
     "aligned": 211,
-    "unknown": 196,
-    "deliberate": 100,
+    "unknown": 195,
+    "deliberate": 102,
     "partial": 60,
     "nonaction": 56,
     "unreachable": 16
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 403,
+    "P2 / gap": 402,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
@@ -26,8 +26,8 @@
     "P2 / aligned": 108,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
-    "P2 / deliberate": 36,
-    "P2 / unknown": 36,
+    "P2 / deliberate": 38,
+    "P2 / unknown": 35,
     "P? / deliberate": 33,
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
@@ -9138,10 +9138,10 @@
       "cols": 5,
       "id": "G450",
       "official": "★ **本地镜像/导出通道会静默丢弃所有 iframe**：`src/lib/editor/mirror-html.ts:8` 用正则整段删除 `<iframe>…</iframe>`，而官方把白板/链接预览归为 iframe 类嵌入（G445）⇒ **若沿用官方的 embed 实现，本地导出与镜像里这些块会变空**",
-      "local": "同左（已定位到行号）；`mirror-html.test.ts:12` 断言的正是\"iframe 被剥掉\"",
-      "verdict": "**本地缺陷**（与官方模型冲突的既有清洗规则）",
+      "local": "同左（已定位到行号）；`mirror-html.test.ts:12` 断言的正是\"iframe 被剥掉\" ✎ 现读（2026-11-02）：本地嵌入用类型化节点（白板/链接预览）而不是原始 iframe，镜像与导出只处理这些节点；对**原始 HTML iframe** 的剥离是安全选择。",
+      "verdict": "**有意偏差**：白板/预览走类型化节点；镜像/导出清洗原始 iframe 作为 XSS 防线",
       "score": "2/1",
-      "status": "unknown",
+      "status": "deliberate",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
@@ -9588,10 +9588,10 @@
       "cols": 5,
       "id": "G475",
       "official": "★ **预览层完全不吃鼠标事件**：styled `pointer-events:none; position:absolute; inset:0` + `canvas{object-fit:contain}`，且 ready 态 `forceMount` ⇒ **点击白板必然落到下层块**（进入编辑/聚焦），不会落在画布上（§25.6）",
-      "local": "本地在文档内**挂活实例**（`src/components/editor/extensions/whiteboard-embed-view.tsx` / `drawing-view.tsx`）⇒ 点击被画布吃掉；`pointer-events-none` 在本地只用于覆盖层（`CursorLayer.tsx:192`、`DragHandle.tsx:299`）",
-      "verdict": "行为不同",
+      "local": "本地在文档内**挂活实例**（`src/components/editor/extensions/whiteboard-embed-view.tsx` / `drawing-view.tsx`）⇒ 点击被画布吃掉；`pointer-events-none` 在本地只用于覆盖层（`CursorLayer.tsx:192`、`DragHandle.tsx:299`） ✎ 现读（2026-11-02）：本地刻意在文档内挂可交互画布（点进去就能画），与官方\"预览层不吃事件、点击落到块上\"是两种产品选择。",
+      "verdict": "**有意偏差**：文档内嵌活实例（可直接编辑画布），不是 pointer-events:none 的静态预览",
       "score": "2/1",
-      "status": "gap",
+      "status": "deliberate",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

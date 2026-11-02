@@ -2165,11 +2165,12 @@
       ]
     },
     "G450": {
-      "status": "gap",
-      "note": "镜像清洗用正则整段删 <iframe>，而本地视频/HTML 嵌入正是 iframe ⇒ 镜像与导出里这些块变空。",
+      "status": "deliberate",
+      "priority": "P2",
+      "note": "有意偏差：嵌入用类型化节点；镜像/导出剥离原始 iframe 是 XSS 防线。",
       "evidence": [
         "src/lib/editor/mirror-html.ts:8",
-        "src/actions/document/mirror.ts:42"
+        "src/lib/editor/mirror-html.test.ts"
       ]
     },
     "G635": {
@@ -5284,10 +5285,12 @@
       ]
     },
     "G475": {
-      "status": "partial",
-      "note": "先给按钮、点击后才挂活画布，无 pointer-events:none 的只读预览层",
+      "status": "deliberate",
+      "priority": "P2",
+      "note": "有意偏差：文档内嵌可交互白板活实例，点击落在画布上。",
       "evidence": [
-        "src/components/editor/extensions/drawing-view.tsx:74"
+        "src/components/editor/extensions/whiteboard-embed-view.tsx",
+        "src/components/editor/extensions/drawing-view.tsx"
       ]
     },
     "G478": {

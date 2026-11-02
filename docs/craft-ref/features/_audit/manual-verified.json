@@ -4483,10 +4483,13 @@
       ]
     },
     "G286": {
-      "status": "gap",
-      "note": "聚合仅数值求和＋非空计数，无 avg/min/max/percent",
+      "status": "aligned",
+      "note": "第 184 批：聚合 21 项按类型限集；计算行显隐落进视图 config showSummaryRow，两张表 tfoot 一起收起",
       "evidence": [
-        "src/lib/collection/summary.ts:16"
+        "src/lib/collection/summary.ts:110",
+        "src/lib/collection/summary-row.ts:1",
+        "src/app/(app)/collections/[id]/TableView.tsx:90",
+        "src/app/(app)/collections/[id]/TableView.tsx:599"
       ]
     },
     "G288": {
@@ -4875,7 +4878,7 @@
       "status": "partial",
       "note": "「查看备份」入口已在并可恢复；30–180 天保留期配额属付费面",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:707"
+        "src/components/editor/tabs/InfoTab.tsx:905"
       ]
     },
     "G363": {
@@ -4952,10 +4955,12 @@
       ]
     },
     "G383": {
-      "status": "gap",
-      "note": "文档卡是纯链接，无常驻 ⋯ 也无右键七项菜单",
+      "status": "aligned",
+      "note": "第 184 批现读：卡片只有右键入口（无常驻 ⋯），七项菜单齐（新标签/复制链接/收藏/副本/移至/分隔/删除红）",
       "evidence": [
-        "src/components/document/DocumentCard.tsx:23"
+        "src/components/document/DocumentCard.tsx:41",
+        "src/lib/document/card-menu.ts:1",
+        "src/components/document/DocumentCardMenu.tsx:60"
       ]
     },
     "G384": {

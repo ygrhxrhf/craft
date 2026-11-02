@@ -19,6 +19,11 @@ import { SortMenu, applySorts } from '@/components/collection/SortMenu';
 import { GroupMenu, applyGrouping } from '@/components/collection/GroupMenu';
 import type { getCollection } from '@/actions/collection/collection';
 import type { AggregationId } from '@/lib/collection/summary';
+import {
+  calculationRowToggle,
+  readShowCalculationRow,
+  withShowCalculationRow,
+} from '@/lib/collection/summary-row';
 import { filterChipText, groupChipText, sortChipText, withTitleFirst } from '@/lib/collection/view-chips';
 import { OPERATORS } from '@/lib/collection/filter-operators';
 
@@ -36,6 +41,8 @@ export function TableView({ collection, view }: TableViewProps) {
   const [toolsOpen, setToolsOpen] = useState(false);
   const configKey = JSON.stringify((view as any).config ?? null);
   const initialConfig = parseConfig((view as any).config);
+  // G286：计算行整行可显隐，缺省显示。
+  const [showSummary, setShowSummary] = useState(() => readShowCalculationRow(initialConfig));
   const [syncedView, setSyncedView] = useState({ id: view.id, key: configKey });
   /**
    * 本机写过的 config key（尾部即最新一次）。`persistConfig` 写完就 `router.refresh()`，
@@ -66,6 +73,7 @@ export function TableView({ collection, view }: TableViewProps) {
     setFilters(config.filters ?? []);
     setSorts(config.sorts ?? []);
     setGroupBy(config.groupBy ?? null);
+    setShowSummary(readShowCalculationRow(config));
   }
 
   /**
@@ -75,8 +83,11 @@ export function TableView({ collection, view }: TableViewProps) {
    */
   const configWriteChain = useRef<Promise<void>>(Promise.resolve());
 
-  const persistConfig = (next: { filters: any[]; sorts: any[]; groupBy: string | null }) => {
-    const key = JSON.stringify(next);
+  const persistConfig = (
+    next: { filters: any[]; sorts: any[]; groupBy: string | null },
+    showOverride?: boolean,
+  ) => {
+    const key = JSON.stringify(withShowCalculationRow(next, showOverride ?? showSummary));
     setWrittenConfigKeys((keys) => [...keys, key].slice(-8));
     configWriteChain.current = configWriteChain.current
       .then(async () => {
@@ -425,6 +436,7 @@ export function TableView({ collection, view }: TableViewProps) {
                         </tr>
                       ))}
                     </tbody>
+                    {showSummary && (
                     <tfoot>
                       <tr data-testid="collection-summary-row" className="bg-muted/30 text-muted-foreground">
                         {visibleProperties.map((property: any) => (
@@ -444,6 +456,7 @@ export function TableView({ collection, view }: TableViewProps) {
                         <td className="border-border px-1 py-0" />
                       </tr>
                     </tfoot>
+                    )}
                   </table>
                 </div>
               );
@@ -548,6 +561,7 @@ export function TableView({ collection, view }: TableViewProps) {
                 </tr>
               ))}
             </tbody>
+            {showSummary && (
             <tfoot>
               <tr data-testid="collection-summary-row" className="bg-muted/30 text-muted-foreground">
                 {reorderEnabled && <td className="border-r border-border" />}
@@ -568,14 +582,29 @@ export function TableView({ collection, view }: TableViewProps) {
                 <td className="border-border px-1 py-0" />
               </tr>
             </tfoot>
+            )}
           </table>
         )}
       </div>
 
-      <div className="border-t border-border p-2">
+      <div className="border-t border-border p-2 flex items-center gap-2">
         <Button variant="ghost" size="sm" onClick={handleAddItem}>
           <Plus className="mr-2 size-4" />
           新建
+        </Button>
+        {/* G286：计算行可整行收起。 */}
+        <Button
+          variant="ghost"
+          size="sm"
+          data-testid="calculation-row-toggle"
+          aria-pressed={!showSummary}
+          onClick={() => {
+            const next = !showSummary;
+            setShowSummary(next);
+            void persistConfig({ filters, sorts, groupBy }, next);
+          }}
+        >
+          {calculationRowToggle(showSummary).label}
         </Button>
       </div>
     </div>

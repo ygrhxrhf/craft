@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Bell, CalendarClock, CheckSquare, FileText, Plus, Trash2 } from 'lucide-react';
+import { Bell, CalendarClock, CheckSquare, ChevronRight, FileText, Plus, Trash2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from 'cn';
@@ -35,6 +35,7 @@ import { fromDayInputValue, toDayInputValue, localDayInstant } from '@/lib/task/
 import { taskDateOptions } from '@/lib/task/task-date-menu';
 import { isNewTaskShortcut } from '@/lib/task/new-task-shortcut';
 import { taskRowKeyAction } from '@/lib/task/task-row-key';
+import { applySectionAction, sectionKeyAction } from '@/lib/task/section-key';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
 import {
   SET_AS_DEFAULT_VIEW,
@@ -73,6 +74,11 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   const [adding, setAdding] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
   const [window, setWindow] = useState<UpcomingWindow>('all');
+  // G1600: the group's section header collapses its rows.
+  const [collapsed, setCollapsed] = useState(false);
+  useEffect(() => {
+    setCollapsed(false);
+  }, [group]);
   // G263: pinned documents (the `favorite` rows for this user).
   const [pinned, setPinned] = useState<PinnedDocument[]>([]);
   // G408: derived subtask groups (root block id → its subtask block ids).
@@ -345,6 +351,25 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
           </div>
         )}
       </section>
+      {/* G1600: the group title is one full-width button; ← / → / Space collapse, expand or toggle. */}
+      <button
+        type="button"
+        id={`task-section-${group}`}
+        aria-expanded={!collapsed}
+        onClick={() => setCollapsed((value) => !value)}
+        onKeyDown={(event) => {
+          const action = sectionKeyAction(event);
+          if (!action) return;
+          event.preventDefault();
+          setCollapsed((value) => applySectionAction(value, action));
+        }}
+        className="flex w-full items-center gap-2 border-b border-border px-4 py-2 text-left text-sm font-medium text-foreground transition-colors hover:bg-foreground/4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      >
+        <ChevronRight className={cn('size-4 transition-transform', !collapsed && 'rotate-90')} />
+        {TASK_GROUP_LABELS[group]}
+      </button>
+      {!collapsed && (
+        <div>
       <div className="flex items-center justify-between px-4 pt-3">
         {group === 'upcoming' ? (
           <div className="flex gap-1 text-sm">
@@ -453,6 +478,8 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
           </>
         )}
       </AppPageContainer>
+        </div>
+      )}
 
       {quickOpen && (
         <div

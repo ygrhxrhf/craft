@@ -9592,10 +9592,13 @@
       ]
     },
     "G1600": {
-      "status": "gap",
-      "note": "任务屏是视图页签加平表，无分组标题行",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "任务分组标题为整行按钮（aria-expanded）；←/→/Space 折叠展开切换，修饰键不参与、同向幂等。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:222"
+        "src/lib/task/section-key.ts",
+        "src/app/(app)/tasks/TasksView.tsx:371",
+        "src/lib/task/section-key.test.ts"
       ]
     },
     "G1602": {

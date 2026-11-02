@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T09:35:08.051Z",
+  "generatedAt": "2026-11-02T09:44:55.990Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 941,
-    "aligned": 242,
+    "gap": 940,
+    "aligned": 243,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 369,
+    "P2 / gap": 368,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 139,
+    "P2 / aligned": 140,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -29814,10 +29814,10 @@
       "cols": 5,
       "id": "G1600",
       "official": "★★★ **任务视图的分组标题是内容区整行 `<button>`**（官方宽 1120／高 40、`id=\"inbox\"`），**表 D 三条折叠键全部落在它身上**：`←` `SECTION_COLLAPSE`、`→` `SECTION_EXPAND`、`space` `SECTION_TOGGLE_COLLAPS`；且按 `Vn`（只写键条件、四个修饰字段不写）⇒ **`Ctrl+Space`、`Shift+←` 同样命中**（本批实测两键都能折叠），同向键**幂等**（连按两次不再变）",
-      "local": "本地任务屏是**单张平表**（`h1 任务收件箱` ＋ 一个 `<section>`，`data-testid` 只有 `task-groups` 四个视图页签）——**没有分组标题行**、`aria-expanded` 全 0 ⇒ 三条键无处可落；`grep -rn \"aria-expanded\" \"src/app/(app)/tasks\"` 零命中",
-      "verdict": "缺失",
+      "local": "本地任务屏是**单张平表**（`h1 任务收件箱` ＋ 一个 `<section>`，`data-testid` 只有 `task-groups` 四个视图页签）——**没有分组标题行**、`aria-expanded` 全 0 ⇒ 三条键无处可落；`grep -rn \"aria-expanded\" \"src/app/(app)/tasks\"` 零命中 ✎ 现读（2026-11-02）：任务屏新增整行分组标题按钮（`id=task-section-<group>`、`aria-expanded`），← 折叠／→ 展开／Space 切换，修饰键不参与判定（Ctrl+Space、Shift+← 同样命中），同向键幂等；折叠后隐藏工具条与任务列表。纯核 `section-key.ts` 单测 3 条。",
+      "verdict": "☆ 已清（第 172 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

@@ -6022,10 +6022,11 @@
       ]
     },
     "G642": {
-      "status": "partial",
-      "note": "集合日期格有编辑暂存，但无显式「应用」按钮与弹层定位；文档任务日期直接提交",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "集合日期格补显式「应用」按钮（暂存→点应用才落库），与官方\"集合日期格有独立提交态\"同形；文档任务侧仍即改即提交。抽象层（propMeta 复用壳）不做。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:195"
+        "src/components/collection/PropertyCell.tsx"
       ]
     },
     "G644": {

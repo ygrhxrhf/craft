@@ -270,6 +270,21 @@ function DateCell({ value, onChange }: { value: any; onChange: (v: any) => void 
             <X className="size-3.5" />
           </button>
         )}
+        {/* G642：集合日期格是"当场合成的假属性"，官方给它一枚显式**「应用」**按钮——
+            选好的日子先在层里暂存，点「应用」才落库。本地此前只有 blur/Enter 直接提交。 */}
+        <button
+          type="button"
+          data-testid="cell-date-apply"
+          aria-label="应用"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            setEditing(false);
+            onChange(normalizeDateValue(text));
+          }}
+          className="shrink-0 rounded border border-border px-1.5 py-0.5 text-meta text-foreground/70 transition-colors hover:bg-foreground/4"
+        >
+          应用
+        </button>
       </div>
     </div>
   );

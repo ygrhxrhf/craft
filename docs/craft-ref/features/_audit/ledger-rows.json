@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T03:10:51.766Z",
+  "generatedAt": "2026-11-02T03:35:54.439Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1014,
+    "gap": 1013,
     "unknown": 198,
-    "aligned": 173,
+    "aligned": 174,
     "deliberate": 97,
     "partial": 60,
     "nonaction": 56,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 442,
+    "P2 / gap": 441,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 70,
+    "P2 / aligned": 71,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 38,
@@ -12594,9 +12594,9 @@
       "id": "G642",
       "official": "★ **同一族日期在两个宿主里是两类数据、两套提交态**：① 文档内任务 = 块上一等字段（`Owe` props 里 `scheduleDate` / `reminder` / `repeatConfig` 三槽并列），Enter 即提交（V38 ✓实测）；② 集合日期格 = **当场合成的假属性**（`js/DateEditor-Dg3OWyqW.js` 壳内 `propMeta={id:\"date\", name, theme:undefined, origSchema:{type:hL.DATE, config:{}}}` 复用通用属性编辑器 `tl`）并显式 `showApplyButton:true`、`placementOffset:4`、`onSave=f=>r(f??null)`，注册名 `cY(\"collection-v2-date-editor\", onClose, {isDisabled:!open})`（退注不卸载）",
       "local": "`grep -rn \"应用|showApply|type=\\\"time\\\"|inputMode\" src/components src/lib` ⇒ 唯一命中 `src/components/share/PasscodeGate.tsx:54`（`inputMode=\"text\"`，与日期无关）⇒ ★ **本地全站没有\"弹层级暂存＋应用\"这一层**：集合侧日期格（`src/components/collection/PropertyCell.tsx`，其 `Escape` 站点见第 70 批 G633 的 :111,145,198,363,407）与文档侧都是**改动即写库**；也无\"临时造 propMeta 复用通用编辑器\"的抽象（本地属性编辑器按类型分实现）",
-      "verdict": "本地缺失（提交态层＋抽象层）",
+      "verdict": "本地缺失（提交态层＋抽象层） ✎ 现读（2026-11-02）更正：**提交态层已补**。集合日期格加了一枚显式「应用」按钮（`data-testid=\"cell-date-apply\"`）：选好的日子先在格内暂存，点「应用」才落库——与官方\"集合日期格是当场合成的假属性、有独立提交态\"同一形状；文档内任务那侧仍是\"Enter／即改即提交\"（官方那半本来就如此）。★ 抽象层（临时造 `propMeta` 复用通用编辑器）仍不做：本地属性编辑器按类型分实现，硬造一层复用壳只会多一层间接。 ☆ 已清（提交态半，第 120 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

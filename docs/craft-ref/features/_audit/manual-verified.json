@@ -8564,10 +8564,12 @@
       ]
     },
     "G1228": {
-      "status": "gap",
-      "note": "导入把 -／+／* 一律读成无序列表，折叠块无导入入口",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Markdown 导入行首 + 落 toggleBlock（含缩进子行），-／* 仍为项目符号。",
       "evidence": [
-        "src/lib/import/markdown.ts:256"
+        "src/lib/import/markdown.ts:270",
+        "src/lib/import/markdown.test.ts"
       ]
     },
     "G1229": {

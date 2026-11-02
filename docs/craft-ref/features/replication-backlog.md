@@ -137,6 +137,7 @@
 | G300 | 1581 | 已对齐 | local-says-missing | 本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：PENDING_STATES 逐字 11 条；已接「正在 |
 | G623 | 2242 | 已对齐 | local-says-missing | 本地已补批量选择模式 ✎ 现读（2026-11-02）更正：SortableDocGrid 工具栏有「选择」；进入后卡片 |
 | G1223 | 3904 | 已对齐 | local-says-missing | 本轮实扫＝src/app/layout.tsx 与 src/app/globals.css 都没有 color-sche |
+| G1228 | 3936 | 已对齐 | local-says-missing | grep -n toggle src/lib/import/markdown.ts ⇒ 0 命中＝本地把 -／+／* 一 |
 | G1574 | 5552 | 已对齐 | local-says-missing | 本地对照＝任务行未设可聚焦属性（点击后 activeElement 是 body）；完成态载体是 span[role=" |
 
 ## 十、待重扫
@@ -168,8 +169,8 @@
 | 5 | 三点八七、第 76 批（★★ 契约面穷尽：--help 逐条读满  |
 | 5 | 三点一〇二四、第 96 批·上半〔★★行为级仍未解锁（视口第 8 次 |
 | 5 | 三点一〇六二、第 112 批〔★★★ 代码块主题的"装配处"与"缺省 |
-| 5 | 三点一〇六七、第 117 批〔★★★ 盘上＋本地实施混合批＝第一次把 |
 | 5 | 三点一一一二、第 173 批新登记的官方行为（2026-10-09 机器 |
+| 5 | 三点一一一四、第 175 批新登记的官方行为（2026-10-09 机器 |
 
 ## 十一、不进复刻 backlog
 

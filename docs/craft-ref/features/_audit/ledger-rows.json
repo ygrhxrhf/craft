@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T09:32:16.238Z",
+  "generatedAt": "2026-11-02T09:35:08.051Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 942,
-    "aligned": 241,
+    "gap": 941,
+    "aligned": 242,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 370,
+    "P2 / gap": 369,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 138,
+    "P2 / aligned": 139,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 6,
+  "conflicts": 7,
   "conflictRows": [
     {
       "id": "G95",
@@ -89,6 +89,14 @@
       "status": "partial",
       "conflict": "local-says-missing",
       "local": "本轮实扫＝`src/app/layout.tsx` 与 `src/app/globals.css` **都没有** `color-scheme` 与 `theme-color` 的处理 ⇒ ★ 新 gap 行（本地两条都缺，且都是一行改动的量级）⇒ ✎ **第 116 批实测否证了这条判据的一半**＝\"`grep` 零",
+      "verdict": "☆ 已清（第 171 批）"
+    },
+    {
+      "id": "G1228",
+      "line": 3936,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "`grep -n toggle src/lib/import/markdown.ts` ⇒ **0 命中**＝本地把 `-`／`+`／`*` 一律读成 `bulletList`；本地 toggle 节点是另一个东西（`src/lib/document-codec/index.ts` 的 `toggleBlock`），*",
       "verdict": "☆ 已清（第 171 批）"
     },
     {
@@ -23220,16 +23228,16 @@
       "cols": 5,
       "id": "G1228",
       "criteria": "★★ **列表种类判据＝逐字 `OJ=t=>{if(t.type.startsWith(\"bullet_list_\"))return t.markup===\"+\"?\"toggle\":\"bullet\";if(t.type.startsWith(\"ordered_list_\"))return\"numbered\";if(t.type.startsWith(\"todo_list_\"))return\"todo\"}`** ⇒ ★★★ 用 **`+` 号弹出来的项目符号＝toggle（可折叠）列表**＝第 114 批 flavour 里 `toggleListStyle:\"+ \"` 那条的**导入侧反向判据**（此前只有写侧一个字符串常量，现在有了\"怎么认出来\"）；⇒ 四档词表＝`toggle`／`bullet`／`numbered`／`todo`（不是 `ordered`／`taskList`）",
-      "local": "`grep -n toggle src/lib/import/markdown.ts` ⇒ **0 命中**＝本地把 `-`／`+`／`*` 一律读成 `bulletList`；本地 toggle 节点是另一个东西（`src/lib/document-codec/index.ts` 的 `toggleBlock`），**导入侧无入口**",
-      "verdict": "☆ 盘上逐字（✓）＋本地实扫（✓）；☆ 未做屏上往返（拿 `+ 项` 导官方看是否真变折叠）⇒ 转第 118 批队列",
+      "local": "`grep -n toggle src/lib/import/markdown.ts` ⇒ **0 命中**＝本地把 `-`／`+`／`*` 一律读成 `bulletList`；本地 toggle 节点是另一个东西（`src/lib/document-codec/index.ts` 的 `toggleBlock`），**导入侧无入口** ✎ 现读（2026-11-02）：G674 的 Markdown 导入已加行首 `+ ` → `toggleBlock` 分支（缩进子行收进折叠块内容）；`-`／`*` 仍按项目符号解析 ⇒ `+` 与 `-` 在导入侧已是两种列表。",
+      "verdict": "☆ 已清（第 171 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

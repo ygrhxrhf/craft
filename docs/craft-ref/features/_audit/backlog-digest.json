@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T09:32:16.489Z",
+  "generatedAt": "2026-11-02T09:35:08.339Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 498,
+    "aligned": 499,
     "partial": 277,
     "deliberate": 165,
-    "gap": 142,
+    "gap": 141,
     "unreachable": 20
   },
   "priority": {
@@ -18,7 +18,7 @@
   },
   "statusByPriority": {
     "P? / nonaction": 191,
-    "P2 / aligned": 183,
+    "P2 / aligned": 184,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
     "P2 / partial": 127,
@@ -27,7 +27,7 @@
     "P? / aligned": 78,
     "P2 / deliberate": 73,
     "P3 / partial": 70,
-    "P2 / gap": 69,
+    "P2 / gap": 68,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
     "P? / deliberate": 40,
@@ -1174,6 +1174,14 @@
       "verdict": "☆ 已清（第 171 批）"
     },
     {
+      "id": "G1228",
+      "line": 3936,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "`grep -n toggle src/lib/import/markdown.ts` ⇒ **0 命中**＝本地把 `-`／`+`／`*` 一律读成 `bulletList`；本地 toggle 节点是另一个东西（`src/lib/document-codec/index.ts` 的 `toggleBlock`），**导入侧无入口** ✎ 现读（2026-11-02）：G674 的 Markdo",
+      "verdict": "☆ 已清（第 171 批）"
+    },
+    {
       "id": "G1574",
       "line": 5552,
       "status": "aligned",
@@ -1257,11 +1265,11 @@
       5
     ],
     [
-      "三点一〇六七、第 117 批〔★★★ **盘上＋本地实施混合批＝第一次把",
+      "三点一一一二、第 173 批新登记的官方行为（2026-10-09 机器",
       5
     ],
     [
-      "三点一一一二、第 173 批新登记的官方行为（2026-10-09 机器",
+      "三点一一一四、第 175 批新登记的官方行为（2026-10-09 机器",
       5
     ]
   ]

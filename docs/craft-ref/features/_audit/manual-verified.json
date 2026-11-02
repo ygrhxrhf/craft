@@ -4232,10 +4232,13 @@
       ]
     },
     "G235": {
-      "status": "partial",
-      "note": "两段搜索、查看更多、查询词新建均落；无移除最近使用",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "两段式/续页/用查询词新建/有词空态均已落；最近使用列表及其移除动作本批补齐。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:290"
+        "src/lib/search/recents.ts:8",
+        "src/components/search/CommandPalette.tsx:277",
+        "src/lib/search/recents.test.ts"
       ]
     },
     "G236": {

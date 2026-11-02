@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T06:37:51.882Z",
+  "generatedAt": "2026-11-02T06:40:36.545Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 987,
@@ -5266,8 +5266,8 @@
       "cols": 5,
       "id": "G235",
       "official": "**搜索是两段式且可\"搜不到就建\"**：`searching.for.other.matches`「正在搜索其他匹配项」+ `see.more.results` + `show.x.more` + `search.create.doc`「创建 [0]」+ 空态分\"有词/无词\"两句 + `remove.from.recents`「从最近使用中移除」",
-      "local": "☆ **部分落地**（第 269 批）＝**原判\"本地只有一轮命中、无查看更多、无用查询词新建\"整条作废（全是陈旧账）**，逐项实读：① **两段式已落地**＝`CommandPalette` 有 `searching` 态渲染 `SEARCHING_OTHER_MATCHES`、`nextOffset !== null` 时渲染 `SEE_MORE_RESULTS` 并可续页（`loadMore` 按 offset 追加去重）；② **用查询词新建已落地**＝`createDocLabel(query)` 渲染「创建 [0]」并走 `createDocumentLocal`（离线内核路径）；③ **有词空态本批接真**＝原写死「未找到与 \"x\" 相关的结果」改为官方 `noResultsFor(query)`（逐字「未找到 [0] 的结果」，键 `browse.no.results.found.for`）；④ **一处真错当场修**＝该空态原用 `CommandEmpty` 渲染，而结果里**永远有一条「创建 [0]」**、其 value 含查询词于是自己命中自己 ⇒ 列表从不\"空\"、`CommandEmpty` **永不渲染**，官方那句根本出不来（探针实测：搜不存在的词，面板只剩创建行、无任何空态句）⇒ 改为显式条件分支；☆ 一处**行内陈旧账更正**＝本行把 `show.x.more` 记作搜索串，但 `tags-browse.md` §10.4 已定案它**不属于搜索面板**（是侧栏折叠行的\"展开\"文案，与 `tasks.show.less` 成对），故本地 `showMoreLabel` 无搜索侧消费者是**正确**的、非缺口；☆ **仍未接**＝`remove.from.recents`「从最近使用中移除」（本地无\"最近使用\"列表可移除；`/recent` 是文档卡片网格、非可移除的最近列表）；「无词空态」那句官方另有一枚 `browse.no.results.found`，但本地空查询走的是启动器操作列表、不存在该态，故只接有词那句",
-      "verdict": "部分落地",
+      "local": "☆ **部分落地**（第 269 批）＝**原判\"本地只有一轮命中、无查看更多、无用查询词新建\"整条作废（全是陈旧账）**，逐项实读：① **两段式已落地**＝`CommandPalette` 有 `searching` 态渲染 `SEARCHING_OTHER_MATCHES`、`nextOffset !== null` 时渲染 `SEE_MORE_RESULTS` 并可续页（`loadMore` 按 offset 追加去重）；② **用查询词新建已落地**＝`createDocLabel(query)` 渲染「创建 [0]」并走 `createDocumentLocal`（离线内核路径）；③ **有词空态本批接真**＝原写死「未找到与 \"x\" 相关的结果」改为官方 `noResultsFor(query)`（逐字「未找到 [0] 的结果」，键 `browse.no.results.found.for`）；④ **一处真错当场修**＝该空态原用 `CommandEmpty` 渲染，而结果里**永远有一条「创建 [0]」**、其 value 含查询词于是自己命中自己 ⇒ 列表从不\"空\"、`CommandEmpty` **永不渲染**，官方那句根本出不来（探针实测：搜不存在的词，面板只剩创建行、无任何空态句）⇒ 改为显式条件分支；☆ 一处**行内陈旧账更正**＝本行把 `show.x.more` 记作搜索串，但 `tags-browse.md` §10.4 已定案它**不属于搜索面板**（是侧栏折叠行的\"展开\"文案，与 `tasks.show.less` 成对），故本地 `showMoreLabel` 无搜索侧消费者是**正确**的、非缺口；☆ **仍未接**＝`remove.from.recents`「从最近使用中移除」（本地无\"最近使用\"列表可移除；`/recent` 是文档卡片网格、非可移除的最近列表）；「无词空态」那句官方另有一枚 `browse.no.results.found`，但本地空查询走的是启动器操作列表、不存在该态，故只接有词那句；⑤ 现读（2026-11-02）：`remove.from.recents` 已接——搜索面板空查询时渲染持久化的「最近使用」列表（`src/lib/search/recents.ts`），每项带「从最近使用中移除」按钮，最多 8 条、重开前移。",
+      "verdict": "☆ 已清（第 135 批）",
       "score": "2/2",
       "status": "partial",
       "scoreParsed": {

@@ -24,6 +24,14 @@ import type { SearchResultDoc, SearchResultBlock, SearchResultRow } from '@/acti
 import { createDocumentLocal } from '@/components/sync/create-local';
 import { exportLibraryZip } from '@/actions/document/export-library';
 import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel, noResultsFor } from '@/lib/search/official-copy';
+import {
+  REMOVE_FROM_RECENTS,
+  forgetRecent,
+  loadRecents,
+  rememberRecent,
+  saveRecents,
+  type RecentDocument,
+} from '@/lib/search/recents';
 import { toast } from '@/components/ui/toast';
 import { useSession } from 'next-auth/react';
 
@@ -86,6 +94,11 @@ export function CommandPalette() {
   const [folders, setFolders] = useState<{ id: string; title: string }[]>([]);
   const [nextOffset, setNextOffset] = useState<number | null>(null);
   const [searching, setSearching] = useState(false);
+  // G235: the panel's 「最近使用」 list, persisted per browser.
+  const [recents, setRecents] = useState<RecentDocument[]>([]);
+  useEffect(() => {
+    setRecents(loadRecents(typeof window === 'undefined' ? undefined : window.localStorage));
+  }, []);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -157,10 +170,23 @@ export function CommandPalette() {
     }
   };
 
-  const handleOpenDocument = (id: string) => {
+  const handleOpenDocument = (id: string, title?: string) => {
+    setRecents((current) => {
+      const next = rememberRecent(current, { id, title: title || current.find((item) => item.id === id)?.title || '未命名' });
+      saveRecents(typeof window === 'undefined' ? undefined : window.localStorage, next);
+      return next;
+    });
     close();
     setQuery('');
     router.push(`/documents/${id}`);
+  };
+
+  const handleForgetRecent = (id: string) => {
+    setRecents((current) => {
+      const next = forgetRecent(current, id);
+      saveRecents(typeof window === 'undefined' ? undefined : window.localStorage, next);
+      return next;
+    });
   };
 
   const handleNewDocument = async () => {
@@ -247,6 +273,32 @@ export function CommandPalette() {
       <CommandInput value={query} onValueChange={setQuery} placeholder="搜索文档、内容…" />
 
       <CommandList>
+        {!hasQuery && recents.length > 0 && (
+          <CommandGroup heading="最近使用" data-testid="search-recents">
+            {recents.map((recent) => (
+              <CommandItem
+                key={recent.id}
+                value={`recent-${recent.id}`}
+                onSelect={() => handleOpenDocument(recent.id, recent.title)}
+              >
+                <FileText className="size-4" />
+                <span className="min-w-0 flex-1 truncate">{recent.title}</span>
+                <button
+                  type="button"
+                  aria-label={REMOVE_FROM_RECENTS}
+                  className="rounded p-0.5 text-muted-foreground/60 hover:text-foreground"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleForgetRecent(recent.id);
+                  }}
+                >
+                  ×
+                </button>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )}
+
         {hasQuery && (
           <CommandGroup>
             <CommandItem
@@ -348,7 +400,7 @@ export function CommandPalette() {
         {groupOf('docs')!.members.length > 0 && (
           <CommandGroup heading={groupOf('docs')!.label}>
             {docs.map((doc) => (
-              <CommandItem key={`doc-${doc.id}`} value={`doc-${doc.id}-${doc.title}`} onSelect={() => handleOpenDocument(doc.id)}>
+              <CommandItem key={`doc-${doc.id}`} value={`doc-${doc.id}-${doc.title}`} onSelect={() => handleOpenDocument(doc.id, doc.title)}>
                 {doc.icon ? (
                   <span className="text-base leading-none">{doc.icon}</span>
                 ) : (

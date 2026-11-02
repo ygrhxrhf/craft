@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T10:07:42.503Z",
+  "generatedAt": "2026-11-02T10:27:22.167Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 502,
-    "partial": 276,
+    "aligned": 503,
+    "partial": 275,
     "deliberate": 165,
     "gap": 139,
     "unreachable": 20
@@ -18,10 +18,10 @@
   },
   "statusByPriority": {
     "P? / nonaction": 191,
-    "P2 / aligned": 187,
+    "P2 / aligned": 188,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 126,
+    "P2 / partial": 125,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1245,10 +1245,6 @@
       6
     ],
     [
-      "三点一九、右侧栏三面板实屏对照（动态 V10–V12，插入 / 格式 /",
-      5
-    ],
-    [
       "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
       5
     ],
@@ -1270,6 +1266,10 @@
     ],
     [
       "三点一一一四、第 175 批新登记的官方行为（2026-10-09 机器",
+      5
+    ],
+    [
+      "三点一一一九、第 181 批新登记的官方行为（2026-10-09 05",
       5
     ]
   ]

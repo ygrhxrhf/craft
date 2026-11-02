@@ -1,6 +1,8 @@
 import { Extension } from '@tiptap/react';
 
-export type ShadeColor = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' | 'gray';
+import { DECORATED_TYPES } from '@/lib/editor/format-commands';
+
+export type ShadeColor = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' | 'pink';
 
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {
@@ -17,7 +19,7 @@ export const ShadedStyle = Extension.create({
   addGlobalAttributes() {
     return [
       {
-        types: ['paragraph', 'heading', 'blockquote', 'codeBlock', 'bulletList', 'orderedList', 'taskList', 'callout', 'toggleBlock'],
+        types: [...DECORATED_TYPES],
         attributes: {
           shadedColor: {
             default: null,
@@ -33,18 +35,19 @@ export const ShadedStyle = Extension.create({
   },
 
   addCommands() {
-    return {
-      setShadedStyle:
-        (color) =>
-        ({ commands }) => {
-          return commands.updateAttributes(this.name, { shadedColor: color });
-        },
+    // 同 FocusStyle：属性在块类型上，命令名不是节点名，逐类型写才是真的写进去。
+    const apply = (color: ShadeColor | null) =>
+      ({ commands }: { commands: { updateAttributes: (type: string, attrs: Record<string, unknown>) => boolean } }) => {
+        let updated = false;
+        for (const type of DECORATED_TYPES) {
+          updated = commands.updateAttributes(type, { shadedColor: color }) || updated;
+        }
+        return updated;
+      };
 
-      unsetShadedStyle:
-        () =>
-        ({ commands }) => {
-          return commands.resetAttributes(this.name, 'shadedColor');
-        },
+    return {
+      setShadedStyle: (color) => apply(color),
+      unsetShadedStyle: () => apply(null),
     };
   },
 });

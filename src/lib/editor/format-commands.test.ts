@@ -7,15 +7,24 @@ import { EditorState, TextSelection } from '@tiptap/pm/state';
 
 import {
   ALIGNMENT_CONTROLS,
+  DECORATION_KEYS,
+  DECORATION_SWATCHES,
   DIRECTION_CONTROLS,
+  FONT_CONTROLS,
+  FONT_TITLE,
+  GROUPING_CONTROLS,
+  GROUPING_TITLE,
   GROUP_KEYS,
   INDENT_CONTROLS,
   INLINE_MARK_CONTROLS,
   LIST_CONTROLS,
   alignMixed,
   alignState,
+  applyDecoration,
+  decorationAt,
   directionMixed,
   directionState,
+  groupingAt,
   listMixed,
   listState,
   type FormatCommands,
@@ -39,9 +48,16 @@ const everyControl = [
   ...INDENT_CONTROLS.map((c) => [c.key, c.label] as const),
   ...DIRECTION_CONTROLS.map((c) => [c.key, c.label] as const),
   ...INLINE_MARK_CONTROLS.map((c) => [c.key, c.label] as const),
+  ...GROUPING_CONTROLS.map((c) => [c.key, c.label] as const),
+  ...FONT_CONTROLS.map((c) => [c.key, c.label] as const),
   [GROUP_KEYS.align, GROUP_KEYS.alignLabel] as const,
   [GROUP_KEYS.indent, GROUP_KEYS.indentLabel] as const,
   [GROUP_KEYS.direction, GROUP_KEYS.directionLabel] as const,
+  [GROUPING_TITLE.key, GROUPING_TITLE.label] as const,
+  [DECORATION_KEYS.title.key, DECORATION_KEYS.title.label] as const,
+  [DECORATION_KEYS.focus.key, DECORATION_KEYS.focus.label] as const,
+  [DECORATION_KEYS.block.key, DECORATION_KEYS.block.label] as const,
+  [FONT_TITLE.key, FONT_TITLE.label] as const,
 ];
 
 describe('the control labels are the ledger’s own sentences', () => {
@@ -78,7 +94,36 @@ describe('the control labels are the ledger’s own sentences', () => {
 const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
-    paragraph: { group: 'block', content: 'text*', attrs: { textAlign: { default: null }, writingDirection: { default: null } } },
+    paragraph: {
+      group: 'block',
+      content: 'text*',
+      attrs: {
+        textAlign: { default: null },
+        writingDirection: { default: null },
+        focusColor: { default: null },
+        shadedColor: { default: null },
+        blockFont: { default: null },
+      },
+    },
+    heading: {
+      group: 'block',
+      content: 'text*',
+      attrs: {
+        level: { default: 1 },
+        focusColor: { default: null },
+        shadedColor: { default: null },
+        blockFont: { default: null },
+      },
+    },
+    cardBlock: {
+      group: 'block',
+      content: 'block+',
+      attrs: {
+        focusColor: { default: null },
+        shadedColor: { default: null },
+        blockFont: { default: null },
+      },
+    },
     bulletList: { group: 'block', content: 'listItem+' },
     listItem: { group: 'block', content: 'paragraph block*' },
     text: { marks: 'bold' },
@@ -156,6 +201,26 @@ function fakeHost(state = textState('alpha')) {
     },
     setWritingDirection: (mode: string) => {
       calls.push(`setWritingDirection(${mode})`);
+      return chain;
+    },
+    setHeading: (attributes: { level: number }) => {
+      calls.push(`setHeading(${attributes.level})`);
+      return chain;
+    },
+    setCardBlock: () => {
+      calls.push('setCardBlock');
+      return chain;
+    },
+    setFocusStyle: (color: string | null) => {
+      calls.push(`setFocusStyle(${color})`);
+      return chain;
+    },
+    setShadedStyle: (color: string | null) => {
+      calls.push(`setShadedStyle(${color})`);
+      return chain;
+    },
+    setBlockFont: (id: string | null) => {
+      calls.push(`setBlockFont(${id})`);
       return chain;
     },
   } as FormatCommands;
@@ -298,6 +363,74 @@ describe('the mixed indicator lights no segment', () => {
   });
 });
 
+describe('G208 分组、装饰与字体', () => {
+  it('routes 分组 to the page-heading and the card wrapper', () => {
+    const page = fakeHost();
+    GROUPING_CONTROLS[0].apply(page.host);
+    expect(page.calls).toEqual(['focus', 'setHeading(1)', 'run']);
+
+    const card = fakeHost();
+    GROUPING_CONTROLS[1].apply(card.host);
+    expect(card.calls).toEqual(['focus', 'setCardBlock', 'run']);
+  });
+
+  it('writes focus and block decorations through the family that owns each swatch', () => {
+    for (const swatch of DECORATION_SWATCHES) {
+      const { host, calls } = fakeHost();
+      applyDecoration(host, swatch.kind, swatch.color);
+      expect(calls, `${swatch.kind} ${swatch.color}`).toEqual([
+        'focus',
+        swatch.kind === 'focus' ? `setFocusStyle(${swatch.color})` : `setShadedStyle(${swatch.color})`,
+        'run',
+      ]);
+    }
+  });
+
+  it('clears a decoration with a null colour', () => {
+    const focus = fakeHost();
+    applyDecoration(focus.host, 'focus', null);
+    expect(focus.calls).toEqual(['focus', 'setFocusStyle(null)', 'run']);
+
+    const block = fakeHost();
+    applyDecoration(block.host, 'block', null);
+    expect(block.calls).toEqual(['focus', 'setShadedStyle(null)', 'run']);
+  });
+
+  it('routes every font档位 through setBlockFont, 默认字体 included', () => {
+    for (const control of FONT_CONTROLS) {
+      const { host, calls } = fakeHost();
+      control.apply(host);
+      expect(calls, control.label).toEqual(['focus', `setBlockFont(${control.id})`, 'run']);
+    }
+  });
+
+  it('reads the decoration and font off the block under the caret', () => {
+    const decorated = schema.nodes.heading.create(
+      { level: 2, focusColor: 'red', shadedColor: 'blue', blockFont: 'system-mono' },
+      schema.text('alpha'),
+    );
+    const doc = schema.nodes.doc.create(null, [decorated]);
+    const state = EditorState.create({ doc, selection: TextSelection.create(doc, 1, 1) });
+    expect(decorationAt(state)).toEqual({ focus: 'red', block: 'blue', font: 'system-mono' });
+    expect(decorationAt(textState('plain'))).toEqual({ focus: null, block: null, font: null });
+  });
+
+  it('lights 页面 on an H1 and 卡片 inside a card', () => {
+    const h1 = schema.nodes.heading.create({ level: 1 }, schema.text('title'));
+    const h1Doc = schema.nodes.doc.create(null, [h1]);
+    expect(groupingAt(EditorState.create({ doc: h1Doc, selection: TextSelection.create(h1Doc, 1, 1) }))).toBe('page');
+
+    const card = schema.nodes.cardBlock.create(
+      null,
+      schema.nodes.paragraph.create(null, schema.text('inside')),
+    );
+    const cardDoc = schema.nodes.doc.create(null, [card]);
+    expect(groupingAt(EditorState.create({ doc: cardDoc, selection: TextSelection.create(cardDoc, 2, 2) }))).toBe('card');
+
+    expect(groupingAt(textState('plain'))).toBeNull();
+  });
+});
+
 describe('面板接线（屏上的字必须来自这张表）', () => {
   const source = (rel: string) => readFileSync(join(process.cwd(), 'src', rel), 'utf8');
   const panel = source('components/editor/tabs/FormatTab.tsx');
@@ -317,9 +450,16 @@ describe('面板接线（屏上的字必须来自这张表）', () => {
     ...INDENT_CONTROLS.map((c) => c.label),
     ...DIRECTION_CONTROLS.map((c) => c.label),
     ...INLINE_MARK_CONTROLS.map((c) => c.label),
+    ...GROUPING_CONTROLS.map((c) => c.label),
+    ...FONT_CONTROLS.map((c) => c.label),
     GROUP_KEYS.alignLabel,
     GROUP_KEYS.indentLabel,
     GROUP_KEYS.directionLabel,
+    GROUPING_TITLE.label,
+    DECORATION_KEYS.title.label,
+    DECORATION_KEYS.focus.label,
+    DECORATION_KEYS.block.label,
+    FONT_TITLE.label,
     MIXED_LABEL,
   ];
 
@@ -336,7 +476,11 @@ describe('面板接线（屏上的字必须来自这张表）', () => {
       wired(panel, name, 2);
     }
     for (const helper of ['alignState', 'listState', 'directionState', 'markState']) wired(panel, helper, 2);
-    wired(panel, 'control.apply(host)', 5);
+    wired(panel, 'control.apply(host)', 7);
+    for (const table of ['GROUPING_CONTROLS', 'FONT_CONTROLS', 'DECORATION_SWATCHES', 'DECORATION_KEYS', 'GROUPING_TITLE', 'FONT_TITLE']) {
+      expect(panel, table).toContain(table);
+    }
+    wired(panel, 'applyDecoration(host', 2);
   });
 
   it('redraws on selection changes, or the档位 would be read off a stale selection', () => {

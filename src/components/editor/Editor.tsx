@@ -44,6 +44,7 @@ import { ToggleBlock } from './extensions/toggle-block';
 import { GradientHighlight } from './extensions/gradient-highlight';
 import { FocusStyle } from './extensions/focus-style';
 import { ShadedStyle } from './extensions/shaded-style';
+import { BlockFont } from './extensions/block-font';
 import { ImageBlock } from './extensions/image-block';
 import { Attachment } from './extensions/attachment';
 import { OfficialHardBreak } from './extensions/hard-break';
@@ -556,6 +557,7 @@ export function Editor({
       GradientHighlight,
       FocusStyle,
       ShadedStyle,
+      BlockFont,
       ImageBlock,
       Attachment,
       LinkPreview,

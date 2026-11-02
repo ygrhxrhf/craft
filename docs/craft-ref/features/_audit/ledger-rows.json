@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T10:07:42.146Z",
+  "generatedAt": "2026-11-02T10:27:21.798Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 938,
-    "aligned": 245,
+    "gap": 937,
+    "aligned": 246,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 366,
+    "P2 / gap": 365,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 142,
+    "P2 / aligned": 143,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -4826,10 +4826,10 @@
       "cols": 5,
       "id": "G208",
       "official": "**格式面板五段（V22 更正后）**：文本 6 档（槽位 class `sc-aqusau-2…7`，**第 1 与第 3 档都渲染成「标题」**，第 3 档是 `heading`（中标题）用短标签 `style.text.heading.short`）→ 分组（页面 / 卡片）→ 内联三行**纯图标**（`B` `I` `S` `</>` ｜ 待办 折叠 无序 有序 ｜ 缩进← 缩进→ 左 中 右 两端）→ 装饰（焦点 / 块）→ 颜色 / 字体；**当前块所属档以蓝色描边高亮 ⇒ 面板是选择感知的**",
-      "local": "`FormatTab.tsx:16-43` 的按钮集合与官方**几乎一一对应**（层级 6 档、内联 4、列表 4、缩进 2、对齐**只有 3 档，缺「两端对齐」**），真正缺的是：分组（页面/卡片）、装饰（焦点/块）、字体段、当前档高亮。**本行原判定（\"官方面板不含内联格式\"）方向反了，按 V22 更正**",
-      "verdict": "缺失（局部）",
+      "local": "✎ 现读（2026-11-02）：`FormatTab.tsx` 五段齐全——文本 7 档（含「页面」）→ 分组（页面＝H1 标题样式、卡片＝`cardBlock` 容器）→ 内联 4 ｜ 列表 5 ｜ 缩进 2 ｜ 对齐 5（含「两端对齐」）｜ 方向 2 → 装饰（焦点 `data-focus-color` / 块 `data-shaded-color`，各七色＋清除）→ 颜色 / 字体（System · Serif · Round · Mono ＋默认）；当前档用蓝色描边高亮，`selectionUpdate` 重算。**本行原判定（\"官方面板不含内联格式\"）方向反了，按 V22 更正** ☆ 已清（第 175 批）",
+      "verdict": "对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

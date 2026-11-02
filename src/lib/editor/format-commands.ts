@@ -47,6 +47,11 @@ export interface FormatCommands extends FormatChain {
   liftListItem(type: string): FormatChain;
   sinkListItem(type: string): FormatChain;
   setWritingDirection(mode: WritingMode): FormatChain;
+  setHeading(attributes: { level: number }): FormatChain;
+  setCardBlock(attributes: Record<string, unknown>): FormatChain;
+  setFocusStyle(color: string | null): FormatChain;
+  setShadedStyle(color: string | null): FormatChain;
+  setBlockFont(id: BlockFontId | null): FormatChain;
 }
 
 export interface FormatHost {
@@ -135,6 +140,125 @@ export const GROUP_KEYS = {
   indentLabel: '缩进',
   listLabel: '列表',
 } as const;
+
+/**
+ * G208「分组（页面 / 卡片）」：官方把这两枚放在文本档位之后。本地「页面」沿用 G51 的语义——
+ * 一篇页面就是文档标题样式（H1），「卡片」走已有的 `cardBlock` 容器。
+ */
+export const GROUPING_TITLE = { key: 'style.textstyles.groups', label: '分组' } as const;
+
+export const GROUPING_CONTROLS: readonly FormatControl[] = [
+  { key: 'style.text.page', label: '页面', apply: (h) => h.chain().focus().setHeading({ level: 1 }).run() },
+  { key: 'style.text.card', label: '卡片', apply: (h) => h.chain().focus().setCardBlock({}).run() },
+];
+
+/** 装饰两族：焦点是左侧色条（`data-focus-color`），块是底色（`data-shaded-color`），两族共用七色。 */
+export type DecorationKind = 'focus' | 'block';
+
+export type DecorationColorName = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' | 'pink';
+
+export interface DecorationColor {
+  kind: DecorationKind;
+  color: DecorationColorName;
+  label: string;
+}
+
+export const DECORATION_KEYS = {
+  title: { key: 'style.decorations', label: '装饰' },
+  focus: { key: 'style.decoration.focus', label: '焦点' },
+  block: { key: 'style.decoration.block', label: '块' },
+} as const;
+
+const DECORATION_COLORS = [
+  ['red', '红'],
+  ['orange', '橙'],
+  ['yellow', '黄'],
+  ['green', '绿'],
+  ['blue', '蓝'],
+  ['purple', '紫'],
+  ['pink', '粉'],
+] as const;
+
+export const DECORATION_SWATCHES: readonly DecorationColor[] = [
+  ...DECORATION_COLORS.map(([color, label]) => ({ kind: 'focus' as const, color, label })),
+  ...DECORATION_COLORS.map(([color, label]) => ({ kind: 'block' as const, color, label })),
+];
+
+/**
+ * G208 的第三段：颜色之后是字体。官方 `style.font` 一族四档具名字体（System / Serif / Round /
+ * Mono）＋「默认字体」清空档；本地沿用页面字体同样的四套栈，只是作用在选中块上。
+ */
+export type BlockFontId = 'system' | 'system-serif' | 'system-rounded' | 'system-mono';
+
+export interface FontControl extends FormatControl {
+  /** `null`＝清掉属性，回到默认字体。 */
+  id: BlockFontId | null;
+}
+
+export const FONT_TITLE = { key: 'style.font', label: '字体' } as const;
+
+export const FONT_CONTROLS: readonly FontControl[] = [
+  { id: null, key: 'style.font.default', label: '默认字体', apply: (h) => h.chain().focus().setBlockFont(null).run() },
+  { id: 'system', key: 'style.font.system', label: 'System', apply: (h) => h.chain().focus().setBlockFont('system').run() },
+  { id: 'system-serif', key: 'style.font.serif', label: 'Serif', apply: (h) => h.chain().focus().setBlockFont('system-serif').run() },
+  { id: 'system-rounded', key: 'style.font.round', label: 'Round', apply: (h) => h.chain().focus().setBlockFont('system-rounded').run() },
+  { id: 'system-mono', key: 'style.font.mono', label: 'Mono', apply: (h) => h.chain().focus().setBlockFont('system-mono').run() },
+];
+
+/** 三类属性挂在同一批块类型上（与 FocusStyle / ShadedStyle / BlockFont 一致）。 */
+export const DECORATED_TYPES = [
+  'paragraph',
+  'heading',
+  'blockquote',
+  'codeBlock',
+  'bulletList',
+  'orderedList',
+  'taskList',
+  'callout',
+  'toggleBlock',
+  'cardBlock',
+] as const;
+
+/** 装饰档的落笔：焦点走 `setFocusStyle`，块走 `setShadedStyle`；`null` 即清除。 */
+export function applyDecoration(host: FormatHost, kind: DecorationKind, color: DecorationColorName | null): void {
+  const chain = host.chain().focus();
+  if (kind === 'focus') chain.setFocusStyle(color).run();
+  else chain.setShadedStyle(color).run();
+}
+
+export interface BlockDecorationState {
+  focus: string | null;
+  block: string | null;
+  font: BlockFontId | null;
+}
+
+/** 选区起点所在块的装饰与字体；没有装饰属性时为全 `null`。 */
+export function decorationAt(state: EditorState): BlockDecorationState {
+  const { $from } = state.selection;
+  for (let depth = $from.depth; depth > 0; depth -= 1) {
+    const node = $from.node(depth);
+    if ((DECORATED_TYPES as readonly string[]).includes(node.type.name)) {
+      return {
+        focus: (node.attrs.focusColor as string | null) ?? null,
+        block: (node.attrs.shadedColor as string | null) ?? null,
+        font: (node.attrs.blockFont as BlockFontId | null) ?? null,
+      };
+    }
+  }
+  return { focus: null, block: null, font: null };
+}
+
+/** 分组档是否点亮：卡片容器优先，其次是页面标题（H1）。 */
+export function groupingAt(state: EditorState): 'page' | 'card' | null {
+  const { $from } = state.selection;
+  let page = false;
+  for (let depth = $from.depth; depth > 0; depth -= 1) {
+    const node = $from.node(depth);
+    if (node.type.name === 'cardBlock') return 'card';
+    if (node.type.name === 'heading' && node.attrs.level === 1) page = true;
+  }
+  return page ? 'page' : null;
+}
 
 export function markState(state: EditorState, mark: string): TriState {
   return inlineMarkState(state, mark);

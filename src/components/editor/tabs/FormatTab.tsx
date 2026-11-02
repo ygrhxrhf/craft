@@ -11,15 +11,24 @@ import { useEffect, useReducer } from 'react';
 import { cn } from 'cn';
 import {
   ALIGNMENT_CONTROLS,
+  DECORATION_KEYS,
+  DECORATION_SWATCHES,
   DIRECTION_CONTROLS,
+  FONT_CONTROLS,
+  FONT_TITLE,
+  GROUPING_CONTROLS,
+  GROUPING_TITLE,
   GROUP_KEYS,
   INDENT_CONTROLS,
   INLINE_MARK_CONTROLS,
   LIST_CONTROLS,
   alignMixed,
   alignState,
+  applyDecoration,
+  decorationAt,
   directionMixed,
   directionState,
+  groupingAt,
   listMixed,
   listState,
   markState,
@@ -28,6 +37,7 @@ import {
 } from '@/lib/editor/format-commands';
 import { MIXED_LABEL, type TriState } from '@/lib/editor/format-presence';
 import { PANEL_HEADING_SHORT_LABEL, TEXT_STYLE_LABELS, headingLabel } from '@/lib/editor/semantic-levels';
+import { getFontStack } from '../themes/page-style';
 
 interface FormatTabProps {
   editor: Editor;
@@ -176,6 +186,8 @@ export function FormatTab({ editor }: FormatTabProps) {
   const alignGroupMixed = alignMixed(state);
   const listGroupMixed = listMixed(state);
   const directionGroupMixed = directionMixed(state);
+  const decorations = decorationAt(state);
+  const grouping = groupingAt(state);
 
   return (
     <div className="space-y-4 p-3">
@@ -190,10 +202,35 @@ export function FormatTab({ editor }: FormatTabProps) {
               onClick={() => style.action(editor)}
               className={cn(
                 'rounded-md border border-foreground/8 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
-                style.check(editor) ? 'bg-foreground/8 text-foreground' : 'bg-card text-foreground/55'
+                style.check(editor)
+                  ? 'border-craft-accent bg-craft-accent/10 text-foreground ring-1 ring-craft-accent'
+                  : 'bg-card text-foreground/55'
               )}
             >
               {style.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* G208: 分组（页面 / 卡片） */}
+      <section>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">{GROUPING_TITLE.label}</h4>
+        <div className="grid grid-cols-2 gap-1">
+          {GROUPING_CONTROLS.map((control) => (
+            <button
+              key={control.label}
+              type="button"
+              aria-pressed={grouping === (control.key === 'style.text.card' ? 'card' : 'page')}
+              onClick={() => control.apply(host)}
+              className={cn(
+                'rounded-md border border-foreground/8 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
+                grouping === (control.key === 'style.text.card' ? 'card' : 'page')
+                  ? 'border-craft-accent bg-craft-accent/10 text-foreground ring-1 ring-craft-accent'
+                  : 'bg-card text-foreground/55'
+              )}
+            >
+              {control.label}
             </button>
           ))}
         </div>
@@ -346,6 +383,76 @@ export function FormatTab({ editor }: FormatTabProps) {
               style={{ backgroundColor: color }}
               onClick={() => editor.chain().focus().setColor(color).run()}
             />
+          ))}
+        </div>
+      </section>
+      {/* G208: 装饰（焦点 / 块）——两族各七色，另有一枚清除。 */}
+      <section>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">{DECORATION_KEYS.title.label}</h4>
+        <div className="space-y-2">
+          {(['focus', 'block'] as const).map((kind) => {
+            const active = decorations[kind];
+            return (
+              <div key={kind} className="flex items-center justify-between gap-2">
+                <span className="shrink-0 text-meta text-foreground/55">{DECORATION_KEYS[kind].label}</span>
+                <div className="flex flex-wrap items-center justify-end gap-1">
+                  {DECORATION_SWATCHES.filter((swatch) => swatch.kind === kind).map((swatch) => (
+                    <button
+                      key={swatch.color}
+                      type="button"
+                      title={swatch.label}
+                      aria-label={`${DECORATION_KEYS[kind].label} ${swatch.label}`}
+                      aria-pressed={active === swatch.color}
+                      onClick={() => applyDecoration(host, kind, swatch.color)}
+                      className={cn(
+                        'size-5 rounded-full border border-foreground/10 transition-transform hover:scale-110',
+                        active === swatch.color && 'ring-2 ring-craft-accent ring-offset-1'
+                      )}
+                      style={{
+                        backgroundColor: `var(--${kind === 'focus' ? 'focus' : 'highlight'}-${swatch.color})`,
+                      }}
+                    />
+                  ))}
+                  <button
+                    type="button"
+                    title={`清除${DECORATION_KEYS[kind].label}`}
+                    aria-label={`清除${DECORATION_KEYS[kind].label}`}
+                    aria-pressed={active === null}
+                    onClick={() => applyDecoration(host, kind, null)}
+                    className={cn(
+                      'flex size-5 items-center justify-center rounded-full border border-dashed border-foreground/30 text-[10px] text-foreground/55',
+                      active === null && 'border-solid border-craft-accent text-craft-accent'
+                    )}
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* G208: 字体段——四档具名字体与默认字体。 */}
+      <section>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">{FONT_TITLE.label}</h4>
+        <div className="grid grid-cols-5 gap-1">
+          {FONT_CONTROLS.map((control) => (
+            <button
+              key={control.label}
+              type="button"
+              aria-pressed={decorations.font === control.id}
+              onClick={() => control.apply(host)}
+              style={{ fontFamily: control.id ? getFontStack(control.id) : undefined }}
+              className={cn(
+                'rounded-md border px-1 py-1.5 text-[11px] transition-colors duration-150 ease-craft hover:bg-foreground/4',
+                decorations.font === control.id
+                  ? 'border-craft-accent bg-craft-accent/10 text-foreground ring-1 ring-craft-accent'
+                  : 'border-foreground/8 bg-card text-foreground/55'
+              )}
+            >
+              {control.label}
+            </button>
           ))}
         </div>
       </section>

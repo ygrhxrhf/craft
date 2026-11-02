@@ -4178,10 +4178,15 @@
       ]
     },
     "G208": {
-      "status": "partial",
-      "note": "文本 6 档/内联/列表/对齐/缩进/方向已落；缺页面-卡片分组、装饰、字体段",
+      "status": "aligned",
+      "note": "第 175 批补分组（页面/卡片）、装饰（焦点/块七色+清除）、字体段（System/Serif/Round/Mono+默认）与蓝色描边高亮；五段齐全",
       "evidence": [
-        "src/components/editor/tabs/FormatTab.tsx:179"
+        "src/lib/editor/format-commands.ts:150",
+        "src/components/editor/tabs/FormatTab.tsx:218",
+        "src/components/editor/extensions/block-font.tsx:1",
+        "src/components/editor/extensions/focus-style.tsx:53",
+        "src/components/editor/extensions/shaded-style.tsx:41",
+        "src/app/globals.css:879"
       ]
     },
     "G209": {

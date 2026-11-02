@@ -1,6 +1,8 @@
 import { Extension } from '@tiptap/react';
 
-export type FocusColor = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' | 'gray';
+import { DECORATED_TYPES } from '@/lib/editor/format-commands';
+
+export type FocusColor = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' | 'pink';
 
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {
@@ -17,7 +19,7 @@ export const FocusStyle = Extension.create({
   addGlobalAttributes() {
     return [
       {
-        types: ['paragraph', 'heading', 'blockquote', 'codeBlock', 'bulletList', 'orderedList', 'taskList', 'callout', 'toggleBlock'],
+        types: [...DECORATED_TYPES],
         attributes: {
           focusColor: {
             default: null,
@@ -51,18 +53,20 @@ export const FocusStyle = Extension.create({
   },
 
   addCommands() {
-    return {
-      setFocusStyle:
-        (color) =>
-        ({ commands }) => {
-          return commands.updateAttributes(this.name, { focusColor: color });
-        },
+    // 全局属性挂在块类型上，`updateAttributes(this.name, …)` 里的 `focusStyle` 不是节点名，
+    // 那条命令实际是空转（面板第 175 批接上装饰段时才暴露）；改为逐块类型写。
+    const apply = (color: FocusColor | null) =>
+      ({ commands }: { commands: { updateAttributes: (type: string, attrs: Record<string, unknown>) => boolean } }) => {
+        let updated = false;
+        for (const type of DECORATED_TYPES) {
+          updated = commands.updateAttributes(type, { focusColor: color }) || updated;
+        }
+        return updated;
+      };
 
-      unsetFocusStyle:
-        () =>
-        ({ commands }) => {
-          return commands.resetAttributes(this.name, 'focusColor');
-        },
+    return {
+      setFocusStyle: (color) => apply(color),
+      unsetFocusStyle: () => apply(null),
     };
   },
 });

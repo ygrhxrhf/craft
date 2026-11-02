@@ -875,6 +875,12 @@
   [data-shaded-color="purple"] { background: var(--highlight-purple); border-radius: 6px; padding: 4px 8px; }
   [data-shaded-color="pink"]   { background: var(--highlight-pink); border-radius: 6px; padding: 4px 8px; }
 
+  /* ── Block font (G208 font section) ── */
+  [data-block-font="system"]         { font-family: var(--font-sans), system-ui, sans-serif; }
+  [data-block-font="system-serif"]   { font-family: Georgia, "Times New Roman", "Songti SC", serif; }
+  [data-block-font="system-rounded"] { font-family: ui-rounded, "Hiragino Maru Gothic ProN", Quicksand, sans-serif; }
+  [data-block-font="system-mono"]    { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
   /* ── Gradient Highlight (text mark) ── */
   [data-gradient="purple"] {
     background: linear-gradient(135deg, oklch(0.7 0.2 295), oklch(0.6 0.24 295));

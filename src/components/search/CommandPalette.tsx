@@ -105,7 +105,9 @@ export function CommandPalette() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      // G1580: only the plain Ctrl/⌘-K opens the palette; Ctrl-Shift-K belongs to block links and
+      // must not be swallowed here.
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         open();
       }

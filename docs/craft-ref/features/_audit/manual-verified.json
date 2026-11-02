@@ -9431,10 +9431,12 @@
       ]
     },
     "G1580": {
-      "status": "partial",
-      "note": "命令面板门控不排 Shift；块链接有能力但无该键接线",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "命令面板忽略 Shift/Alt 修饰，Ctrl-Shift-K 不再弹面板，与官方零反应一致。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:91"
+        "src/components/search/CommandPalette.tsx:108",
+        "src/lib/editor/palette-link-shortcut.test.ts"
       ]
     },
     "G1581": {
@@ -9475,10 +9477,12 @@
       ]
     },
     "G1586": {
-      "status": "partial",
-      "note": "Ctrl-K 被命令面板抢走；本地无链接输入浮层",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "编辑器内 Ctrl/⌘-K 有选区时弹 URL 输入并 setLink，阻止冒泡到命令面板；入口为对话框。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:91"
+        "src/components/editor/extensions/craft-keymap.ts:230",
+        "src/lib/editor/palette-link-shortcut.test.ts"
       ]
     },
     "G1587": {

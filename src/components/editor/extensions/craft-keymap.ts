@@ -228,6 +228,24 @@ export const CraftKeymap = Extension.create({
             // skips the **whole** dispatch — the candidate window owns Esc/Enter. Without this the
             // local editor would close a popup or split a block mid-composition.
             if (isImeComposing(event)) return false;
+            // G1586: Ctrl/⌘-K over a selection opens the link input instead of the command palette.
+            if (
+              (event.key === 'k' || event.key === 'K') &&
+              (event.metaKey || event.ctrlKey) &&
+              !event.shiftKey &&
+              !event.altKey
+            ) {
+              const { from, to } = view.state.selection;
+              if (from !== to) {
+                event.preventDefault();
+                event.stopPropagation();
+                void promptDialog({ title: 'URL', placeholder: 'https://…', confirmLabel: '设置' }).then((href) => {
+                  if (href == null || !href.trim()) return;
+                  editor.chain().focus().setLink({ href: href.trim() }).run();
+                });
+                return true;
+              }
+            }
             // G1578: Ctrl/⌘-Shift-M comments on the selection; the composer lives in the info panel.
             if (
               (event.key === 'm' || event.key === 'M') &&

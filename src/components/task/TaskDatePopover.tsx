@@ -76,6 +76,9 @@ export function TaskDatePopover({
   // G374: the custom knobs open under the repeat list, so they need their own flag — inside the
   // repeat branch the submenu value is narrowed to 'repeat'.
   const [customOpen, setCustomOpen] = useState(false);
+  // G265: anchor (fixed/flexible) is a dimension level with the frequency, chosen first.
+  const [repeatAnchor, setRepeatAnchor] = useState<'fixed' | 'flexible'>('fixed');
+  const [repeatStep, setRepeatStep] = useState<'anchor' | 'frequency'>('frequency');
   const [text, setText] = useState('');
   const [hour, setHour] = useState(17);
   const [minute, setMinute] = useState(0);
@@ -295,14 +298,60 @@ export function TaskDatePopover({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setSubmenu((current) => (current === 'repeat' ? 'none' : 'repeat'))}
+                    onClick={() =>
+                      setSubmenu((current) => {
+                        if (current === 'repeat') return 'none';
+                        const rule = parseRecurrence(recurrence.value);
+                        setRepeatAnchor(rule?.type ?? 'fixed');
+                        setRepeatStep(rule ? 'frequency' : 'anchor');
+                        return 'repeat';
+                      })
+                    }
                     className="flex w-full items-center justify-between rounded px-1 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
                   >
                     <span>{recurrence.value ? describeRecurrence(recurrence.value) : '重复…'}</span>
                     <span aria-hidden="true">›</span>
                   </button>
-                  {submenu === 'repeat' && (
+                  {submenu === 'repeat' && repeatStep === 'anchor' && (
+                    <div className="mt-1 rounded-md border border-border/60 p-1" data-testid="repeat-anchor-step">
+                      <p className="px-1 py-0.5 text-[11px] text-muted-foreground">重复依据</p>
+                      <button
+                        type="button"
+                        data-testid="repeat-anchor-fixed"
+                        onClick={() => {
+                          setRepeatAnchor('fixed');
+                          setRepeatStep('frequency');
+                          recurrence.onChange(patchRule(recurrence.value, { type: 'fixed' }));
+                        }}
+                        className="flex w-full rounded px-1 py-1 text-left text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        按计划日
+                      </button>
+                      <button
+                        type="button"
+                        data-testid="repeat-anchor-flexible"
+                        onClick={() => {
+                          setRepeatAnchor('flexible');
+                          setRepeatStep('frequency');
+                          recurrence.onChange(patchRule(recurrence.value, { type: 'flexible' }));
+                        }}
+                        className="flex w-full rounded px-1 py-1 text-left text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        相对于完成
+                      </button>
+                    </div>
+                  )}
+                  {submenu === 'repeat' && repeatStep === 'frequency' && (
                     <div className="mt-1 rounded-md border border-border/60 p-1">
+                      <button
+                        type="button"
+                        data-testid="repeat-anchor-back"
+                        onClick={() => setRepeatStep('anchor')}
+                        className="flex w-full items-center justify-between rounded px-1 py-1 text-left text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <span>重复依据：{repeatAnchor === 'fixed' ? '按计划日' : '相对于完成'}</span>
+                        <span aria-hidden="true">›</span>
+                      </button>
                       <button
                         type="button"
                         onClick={() => {
@@ -313,7 +362,7 @@ export function TaskDatePopover({
                       >
                         不重复
                       </button>
-                      {recurrencePresetsFor(value ? new Date(value) : null).map((preset) => (
+                      {recurrencePresetsFor(value ? new Date(value) : null, repeatAnchor).map((preset) => (
                         <button
                           key={preset.label}
                           type="button"
@@ -358,10 +407,12 @@ export function TaskDatePopover({
                             <select
                               aria-label="重复依据"
                               className="h-6 rounded border border-border bg-background px-1 text-xs"
-                              defaultValue="fixed"
-                              onChange={(event) =>
-                                recurrence.onChange(patchRule(recurrence.value, { type: event.target.value }))
-                              }
+                              value={repeatAnchor}
+                              onChange={(event) => {
+                                const next = event.target.value === 'flexible' ? 'flexible' : 'fixed';
+                                setRepeatAnchor(next);
+                                recurrence.onChange(patchRule(recurrence.value, { type: next }));
+                              }}
                             >
                               <option value="fixed">按计划日</option>
                               <option value="flexible">相对于完成</option>

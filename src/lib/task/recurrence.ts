@@ -208,37 +208,40 @@ export const RECURRENCE_PRESETS: { label: string; value: string | null }[] = [
  * 「每天」/「每个工作日（周一至周五）」/「每周 (周五)」/「每月 (9.)」/「每年 (10月9日)」.
  * Without a date the labels fall back to the plain frequency names.
  */
-export function recurrencePresetsFor(date: Date | null): { label: string; value: string }[] {
+export function recurrencePresetsFor(
+  date: Date | null,
+  anchor: 'fixed' | 'flexible' = 'fixed',
+): { label: string; value: string }[] {
   const weekday = date ? (date.getDay() + 6) % 7 : null; // Monday = 0
   const monthDay = date ? date.getDate() : null;
   const month = date ? date.getMonth() + 1 : null;
   const weekdayLabel = weekday === null ? null : '一二三四五六日'[weekday];
 
   return [
-    { label: '每天', value: JSON.stringify({ freq: 'daily', type: 'fixed' }) },
+    { label: '每天', value: JSON.stringify({ freq: 'daily', type: anchor }) },
     {
       label: '每个工作日（周一至周五）',
-      value: JSON.stringify({ freq: 'weekly', type: 'fixed', days: serializeWeekdays([1, 2, 3, 4, 5]) }),
+      value: JSON.stringify({ freq: 'weekly', type: anchor, days: serializeWeekdays([1, 2, 3, 4, 5]) }),
     },
     {
       label: weekdayLabel ? `每周 (周${weekdayLabel})` : '每周',
       value: JSON.stringify(
         weekday === null
-          ? { freq: 'weekly', type: 'fixed' }
-          : { freq: 'weekly', type: 'fixed', days: serializeWeekdays([(weekday + 1) % 7]) },
+          ? { freq: 'weekly', type: anchor }
+          : { freq: 'weekly', type: anchor, days: serializeWeekdays([(weekday + 1) % 7]) },
       ),
     },
     {
       label: monthDay ? `每月 (${monthDay}.)` : '每月',
       value: JSON.stringify(
         monthDay
-          ? { freq: 'monthly', type: 'fixed', byMonthDay: monthDay }
-          : { freq: 'monthly', type: 'fixed' },
+          ? { freq: 'monthly', type: anchor, byMonthDay: monthDay }
+          : { freq: 'monthly', type: anchor },
       ),
     },
     {
       label: date ? `每年 (${month}月${monthDay}日)` : '每年',
-      value: JSON.stringify({ freq: 'yearly', type: 'fixed' }),
+      value: JSON.stringify({ freq: 'yearly', type: anchor }),
     },
   ];
 }

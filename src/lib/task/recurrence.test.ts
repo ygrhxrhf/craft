@@ -301,4 +301,11 @@ describe('explicit anchor on write (G668)', () => {
       expect(JSON.parse(preset.value).type).toBe('fixed');
     }
   });
+
+  // G265: the anchor is a level above the frequency, so presets carry whichever anchor was chosen.
+  it('carries the chosen anchor into every preset', () => {
+    for (const preset of recurrencePresetsFor(new Date(2026, 2, 10), 'flexible').slice(1)) {
+      expect(JSON.parse(preset.value).type).toBe('flexible');
+    }
+  });
 });

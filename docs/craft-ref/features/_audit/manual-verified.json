@@ -4344,10 +4344,13 @@
       ]
     },
     "G265": {
-      "status": "gap",
-      "note": "重复 UI 只有四个频率预设，无 after/every 类型维度",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "重复子菜单先选锚（按计划日/相对于完成）再选频率；预设携带所选锚，自定义区可改。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:561"
+        "src/lib/task/recurrence.ts:211",
+        "src/components/task/TaskDatePopover.tsx:310",
+        "src/lib/task/recurrence.test.ts"
       ]
     },
     "G266": {

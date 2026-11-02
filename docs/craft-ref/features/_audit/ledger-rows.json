@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:03:07.277Z",
+  "generatedAt": "2026-11-02T07:06:44.694Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 978,
-    "aligned": 208,
+    "gap": 977,
+    "aligned": 209,
     "unknown": 196,
     "deliberate": 100,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 406,
+    "P2 / gap": 405,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 105,
+    "P2 / aligned": 106,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / deliberate": 36,
@@ -5788,10 +5788,10 @@
       "cols": 5,
       "id": "G265",
       "official": "**`type` 是与频率/间隔平级的独立维度**：组件 props 里有专门的 `setRepeatType`，顶层菜单 `repeatFrequencies` 就是 `after` / `every` 二选一，选完才进 `frequency → interval → 子配置`",
-      "local": "本地把\"相对于完成\"做成了频率的子选项（层级错位）",
-      "verdict": "行为不同",
+      "local": "本地已把锚提到频率之前 ✎ 现读（2026-11-02）更正：重复子菜单先出「重复依据」（按计划日／相对于完成），选完才进频率列表；`recurrencePresetsFor(date, anchor)` 把所选锚写进每条规则（默认 fixed 不变）；自定义区仍可改锚并即时 patch `type`。单测 1 条。",
+      "verdict": "☆ 已清（第 143 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T07:03:07.583Z",
+  "generatedAt": "2026-11-02T07:06:44.954Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 462,
+    "aligned": 463,
     "partial": 298,
     "deliberate": 162,
-    "gap": 160,
+    "gap": 159,
     "unreachable": 20
   },
   "priority": {
@@ -20,10 +20,10 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
+    "P2 / aligned": 148,
     "P2 / partial": 148,
-    "P2 / aligned": 147,
     "P1 / nonaction": 89,
-    "P2 / gap": 87,
+    "P2 / gap": 86,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P2 / deliberate": 70,
@@ -1154,7 +1154,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      21
+      20
     ],
     [
       "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",

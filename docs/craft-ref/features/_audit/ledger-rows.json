@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:35:05.088Z",
+  "generatedAt": "2026-11-02T07:36:22.411Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 968,
-    "aligned": 216,
+    "gap": 967,
+    "aligned": 217,
     "unknown": 195,
     "deliberate": 103,
     "partial": 60,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 396,
+    "P2 / gap": 395,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 113,
+    "P2 / aligned": 114,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -2463,10 +2463,10 @@
       "cols": 5,
       "id": "G80",
       "official": "列类型权威枚举 **13 项**：`text number checkbox date url person select multiSelect media relation linkToBlock email phone`（`protocol.md` §一）",
-      "local": "`AddPropertyMenu.tsx:19-33` 是另外 13 项：缺 `person/phone/linkToBlock/media`，多 `formula/created_at/updated_at/file`；**`multi_select` vs 官方 `multiSelect`、`file` vs `media` 命名不一致**",
-      "verdict": "缺失 + 命名不一致",
+      "local": "`AddPropertyMenu.tsx:19-33` 是另外 13 项：缺 `person/phone/linkToBlock/media`，多 `formula/created_at/updated_at/file`；**`multi_select` vs 官方 `multiSelect`、`file` vs `media` 命名不一致** ✎ 现读（2026-11-02）：菜单已用官方 13 项与官方拼写（`multiSelect`/`media`，G393），另加本地派生类型 `formula`/`created_at`/`updated_at`（作为额外项，不替换官方项）；`person`/`phone`/`linkToBlock`/`media` 均已在。",
+      "verdict": "☆ 已清（第 152 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

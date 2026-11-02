@@ -1221,7 +1221,7 @@
 
 | # | 官方事实（文案/枚举证据） | 本地现状 | 类型 | 影响/成本 |
 |---|---|---|---|---|
-| G80 | 列类型权威枚举 **13 项**：`text number checkbox date url person select multiSelect media relation linkToBlock email phone`（`protocol.md` §一） | `AddPropertyMenu.tsx:19-33` 是另外 13 项：缺 `person/phone/linkToBlock/media`，多 `formula/created_at/updated_at/file`；**`multi_select` vs 官方 `multiSelect`、`file` vs `media` 命名不一致** | 缺失 + 命名不一致 | 2/2 |
+| G80 | 列类型权威枚举 **13 项**：`text number checkbox date url person select multiSelect media relation linkToBlock email phone`（`protocol.md` §一） | `AddPropertyMenu.tsx:19-33` 是另外 13 项：缺 `person/phone/linkToBlock/media`，多 `formula/created_at/updated_at/file`；**`multi_select` vs 官方 `multiSelect`、`file` vs `media` 命名不一致** ✎ 现读（2026-11-02）：菜单已用官方 13 项与官方拼写（`multiSelect`/`media`，G393），另加本地派生类型 `formula`/`created_at`/`updated_at`（作为额外项，不替换官方项）；`person`/`phone`/`linkToBlock`/`media` 均已在。 | ☆ 已清（第 152 批） | 2/2 |
 | G81 | 视图持久化 **20 键**（`STORED_VIEW_KNOWN_KEYS`，`protocol.md` §二），且字段可见性/顺序是**每视图一套**（`hiddenProperties`/`customPropertyOrder`） | `TableView.tsx:30-46` 只有 `{filters, sorts, groupBy}` 三键；可见性与顺序挂在属性行上（全合集共用） | 结构性缺失 | 2/3 |
 | G82 | 同步状态机 11 态，**`connected` ≠ `synced`**，worker 生命周期显式（`creating_worker/worker_ready/terminated`）；文档加载区分 `loadedFromCache` / `loadedFromServer`（§三） | Hocuspocus 事件直连 UI，无"已连接但未同步"与"缓存来源"表达 | 行为不同 | 2/2 |
 | G83 | 块操作四类 `insert / delete / **move** / noop`（`BlocksV2Actions`，§四）⇒ move 是一等操作，撤销粒度天然独立 | 整篇 `content` JSON 覆盖写，无 move 语义 | 缺失 | 2/3 |

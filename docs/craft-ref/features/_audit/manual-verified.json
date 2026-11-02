@@ -3456,10 +3456,12 @@
       ]
     },
     "G80": {
-      "status": "partial",
-      "note": "15 类含 person/phone；缺 media/linkToBlock，multi_select/file 命名不同",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "新增属性菜单用官方 13 项与官方拼写，另加 formula/created_at/updated_at 三个本地派生类型。",
       "evidence": [
-        "src/components/collection/AddPropertyMenu.tsx:20"
+        "src/lib/collection/property-types.ts:9",
+        "src/components/collection/AddPropertyMenu.tsx:29"
       ]
     },
     "G81": {

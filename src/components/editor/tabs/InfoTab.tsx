@@ -26,7 +26,6 @@ import { pageStats, statsInputFor, statsTitle, STATS_SCOPES, STATS_SCOPE_LABELS,
 import { LOCATION_TITLE, locationPathLabel, type PathNode } from '@/lib/document/location-path';
 import { MOVE_TO, UNSORTED_TITLE } from '@/lib/browse/official-copy';
 import { pendingLabel } from '@/lib/app/pending-states';
-import { MOVED_TO_RECENTLY_DELETED } from '@/lib/browse/trash-subcopy';
 import { toast } from '@/components/ui/toast';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
@@ -349,7 +348,6 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
       });
       router.refresh();
       router.push('/documents');
-      toast.add({ id: 'moved-to-trash', type: 'success', title: MOVED_TO_RECENTLY_DELETED });
     } catch {
       setActionError('删除失败');
       setBusy(false);

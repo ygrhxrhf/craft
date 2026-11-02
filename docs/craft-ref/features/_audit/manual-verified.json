@@ -4191,10 +4191,12 @@
       ]
     },
     "G217": {
-      "status": "partial",
-      "note": "软删语义一致；本地多二次确认与 toast，官方静默无确认",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "信息页动作段「删除」静默软删、无确认无 toast、立即回到文档列表；回收站可恢复。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:296"
+        "src/components/editor/tabs/InfoTab.tsx:341",
+        "src/actions/document/delete.ts"
       ]
     },
     "G218": {

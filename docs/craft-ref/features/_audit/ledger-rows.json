@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:36:22.411Z",
+  "generatedAt": "2026-11-02T07:39:52.748Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 967,
-    "aligned": 217,
+    "gap": 966,
+    "aligned": 218,
     "unknown": 195,
     "deliberate": 103,
     "partial": 60,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 395,
+    "P2 / gap": 394,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 114,
+    "P2 / aligned": 115,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -4950,10 +4950,10 @@
       "cols": 5,
       "id": "G217",
       "official": "**信息页「删除」（`动作` 段第 6 项）＝**静默软删**：无二次确认、无 toast、点完立刻跳回「所有文档」，列表里该卡片**消失**，但 `GET /blocks?id=` 仍回 **200 且块数不变** ⇒ 语义＝**移入最近删除**（不是真删）**（第 406 批定证，含入口与开面板手法）：① 入口＝顶栏 `[aria-label=\"Sidebar Right Icon\"]` → 右栏 `插入／格式／样式／信息` 四页签 → 点「信息」；② ★ **必须\"先在 1440 开右栏、再放大到 1920\"**——1440 下「信息」页签在 x≈1587 超出视口点不中；③ 点「删除」后 `dialogs:[]`、`toasts:[]`、URL 变成 `…/all`、`blocks` 仍 1 条、列表卡片消失。★ 旧批那条\"硬重载后卡片仍在\"与本次不符（本次卡片确实消失），以本次为准；仍缺\"最近删除里能不能看到/恢复\"这一步",
-      "local": "本地：文档软删走 `deletedAt`＋列表过滤（`src/actions/document/delete.ts`），**但入口在侧栏行菜单、不在信息面板**；本地右侧栏无「信息」页签",
-      "verdict": "行为不同（入口与确认形态不同；软删语义两侧一致）",
+      "local": "本地：文档软删走 `deletedAt`＋列表过滤（`src/actions/document/delete.ts`），入口在信息页动作段 ✎ 现读（2026-11-02）：`InfoTab` 动作段「删除」直接 `applyLocal` 软删并 `router.push('/documents')`，**不弹确认、不发 toast**，与官方静默形态一致；回收站能看到并恢复（G671）。",
+      "verdict": "☆ 已清（第 153 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

@@ -1650,7 +1650,7 @@
 | G353 | **结果分组是客户端按谓词"多归属"分桶 + 预计算跨组累计 offset 供方向键导航**（§9.2 `bit()`：匹配到就 push、**不 break**）⇒ 同一条结果可同时出现在两个组里，键盘 ↑/↓ 走的是拍平后的序号；谓词签名含 `query` ⇒ 分组可依赖查询串本身 | ✎ 现读（2026-11-02）更正：**多归属 + 跨组 offset 已落**。新增纯核 `src/lib/search/result-groups.ts` 的 `groupResults`（按 `facets` 多归属分桶，同一项可进两组）、`cumulativeOffsets`（每组起点＝前几组成员数之和）、`flattenGroups`／`groupAtFlatIndex`（拍平序与反查）；`CommandPalette` 用它做分组的唯一来源——"同一篇文档既命中标题、其正文块又命中"落成真多归属（该文档同时进「文档」与「块内容」两组），空态判据也改读拍平总数。单测 8 条。 | ☆ 已清（第 113 批） | 2/1 |
 | G354 | **搜索框输入可解析成日期的串就追加一条 `{type:"date"}` 结果**（§9.3 `yit()`，复用异步 chrono 链、失败静默空数组） | 本地已在命令面板追加日期结果 ✎ 现读（2026-11-02）更正：`CommandPalette` 用 `parseDateExpression` 判查询串，能解析就在「创建」之上多一行日期结果（`data-testid="palette-date-result"`），选中打开/创建该日每日笔记；解析失败不显示该行（等价"静默空数组"）。接线断言见 `CommandPalette.date.test.ts`。 | ☆ 已清（第 136 批） | 2/1 |
 | G355 | **「最近文档」组 = 排除当前正在看的文档 + 服务端风格比较器 `getDocumentSortFunction(Updated, Ascending)` + 截断 20 条**（§9.4）；★ 同时**作废**此前"`git=20` 是查看更多阈值"的候选结论（该阈值仍未定位，见 `tags-browse.md` 未采到第 10 条） | 本地搜索面板的最近文档包含当前文档、无截断 | 行为不同 | 1/1 |
-| G356 | **每日笔记文档的标题是派生值**（§9.5：`dailyNoteDate` + locale 现场合成，取不到才回退 `title`）；未分类文件夹用**哨兵 id**（`folderId === dl`）而非真实 id，与 `craft://folder/unsorted` 保留字互证 | 本地把每日笔记标题当普通字段存 | 行为不同 | 2/1 |
+| G356 | **每日笔记文档的标题是派生值**（§9.5：`dailyNoteDate` + locale 现场合成，取不到才回退 `title`）；未分类文件夹用**哨兵 id**（`folderId === dl`）而非真实 id，与 `craft://folder/unsorted` 保留字互证 | 本地已改为派生标题 ✎ 现读（2026-11-02）更正：`dailyNoteDisplayTitle` 在渲染时由 `dailyNoteDate` 现场合成（`dailyNoteTitle`，跨年带年份），取不到日期才回退存下的 `title`；每日笔记列表已接。未分类用「无 folderId / 真实父链」表达，与官方哨兵 id 是同一语义的不同内部表示，不产生屏上差异。单测 3 条。 | ☆ 已清（第 144 批） | 2/1 |
 
 ### 三点三一、第 26 批（V33 首个动态观测：任务块三时间图标 + 信息面板）
 

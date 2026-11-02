@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CalendarDays } from 'lucide-react';
 import { cn } from 'cn';
 import type { DailyNoteItem } from '@/actions/daily-notes/daily-notes';
+import { dailyNoteDisplayTitle } from '@/lib/utils/daily-note';
 
 interface DailyNotesListProps {
   groups: { label: string; notes: DailyNoteItem[] }[];
@@ -36,7 +37,7 @@ export function DailyNotesList({ groups }: DailyNotesListProps) {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline justify-between gap-2">
                       <span className="truncate text-body font-medium">
-                        {note.title}
+                        {dailyNoteDisplayTitle({ isDailyNote: true, dailyNoteDate: note.dailyNoteDate, title: note.title })}
                       </span>
                     </div>
                     {note.plainText && (

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:06:44.694Z",
+  "generatedAt": "2026-11-02T07:09:58.156Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 977,
-    "aligned": 209,
+    "gap": 976,
+    "aligned": 210,
     "unknown": 196,
     "deliberate": 100,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 405,
+    "P2 / gap": 404,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 106,
+    "P2 / aligned": 107,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / deliberate": 36,
@@ -7445,10 +7445,10 @@
       "cols": 5,
       "id": "G356",
       "official": "**每日笔记文档的标题是派生值**（§9.5：`dailyNoteDate` + locale 现场合成，取不到才回退 `title`）；未分类文件夹用**哨兵 id**（`folderId === dl`）而非真实 id，与 `craft://folder/unsorted` 保留字互证",
-      "local": "本地把每日笔记标题当普通字段存",
-      "verdict": "行为不同",
+      "local": "本地已改为派生标题 ✎ 现读（2026-11-02）更正：`dailyNoteDisplayTitle` 在渲染时由 `dailyNoteDate` 现场合成（`dailyNoteTitle`，跨年带年份），取不到日期才回退存下的 `title`；每日笔记列表已接。未分类用「无 folderId / 真实父链」表达，与官方哨兵 id 是同一语义的不同内部表示，不产生屏上差异。单测 3 条。",
+      "verdict": "☆ 已清（第 144 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

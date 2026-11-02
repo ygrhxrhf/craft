@@ -4768,10 +4768,13 @@
       ]
     },
     "G356": {
-      "status": "partial",
-      "note": "日记标题建库时合成后存字段；未分类用 folderId=null",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "每日笔记标题改为渲染时由 dailyNoteDate 派生，取不到才回退 title；未分类用无 folderId/真实父链表达。",
       "evidence": [
-        "src/lib/utils/daily-note.ts:1"
+        "src/lib/utils/daily-note.ts:14",
+        "src/app/(app)/daily-notes/DailyNotesList.tsx:39",
+        "src/lib/utils/daily-note.test.ts"
       ]
     },
     "G360": {

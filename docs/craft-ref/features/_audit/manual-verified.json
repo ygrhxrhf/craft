@@ -4487,10 +4487,15 @@
       ]
     },
     "G300": {
-      "status": "gap",
-      "note": "11 条进行时句只作语料常量，全仓零引用",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "有宿主的 5 条 pending 句已接（新建文档/文件夹、删除文档单复、导出、更新用户）；其余动作本仓无宿主。",
       "evidence": [
-        "src/lib/app/pending-states.ts:29"
+        "src/lib/app/pending-states.ts",
+        "src/components/document/QuickActions.tsx:28",
+        "src/components/editor/tabs/InfoTab.tsx:223",
+        "src/components/document/TrashList.tsx:114",
+        "src/components/settings/SettingsPanels.tsx:283"
       ]
     },
     "G301": {

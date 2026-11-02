@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T07:15:45.809Z",
+  "generatedAt": "2026-11-02T07:20:50.070Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 465,
+    "aligned": 466,
     "partial": 295,
     "deliberate": 164,
-    "gap": 158,
+    "gap": 157,
     "unreachable": 20
   },
   "priority": {
@@ -20,10 +20,10 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / aligned": 150,
+    "P2 / aligned": 151,
     "P2 / partial": 145,
     "P1 / nonaction": 89,
-    "P2 / gap": 85,
+    "P2 / gap": 84,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P2 / deliberate": 72,
@@ -1140,6 +1140,14 @@
       "conflict": "local-says-missing",
       "local": "无 ✎ 现读（2026-11-02）更正：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"start\"/\"success\"`）；② 解析＝`lib/collection/csv",
       "verdict": "☆ 已清（第 128 批）"
+    },
+    {
+      "id": "G300",
+      "line": 1581,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。链接创建、账户删除、邀请单复、空间头像在本仓无对应动作（无链接/空间/团队/账户",
+      "verdict": "☆ 已清（第 147 批）"
     }
   ],
   "unknownSections": [],
@@ -1154,7 +1162,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      19
+      18
     ],
     [
       "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",

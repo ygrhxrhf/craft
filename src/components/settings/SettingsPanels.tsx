@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { getPreferences, updatePreferences } from '@/actions/user/preferences';
 import { APP_VERSION } from '@/lib/app/app-version';
+import { pendingLabel } from '@/lib/app/pending-states';
 import { NOTIFICATION_EVENTS } from '@/lib/app/notification-settings';
 import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
@@ -176,6 +177,8 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const [accent, setAccent] = useState<Accent>(() => readAccent() ?? 'blue');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(profile?.image ?? null);
   const [displayName, setDisplayName] = useState<string | null>(profile?.name ?? null);
+  // G300: saving the profile name has its own progress sentence.
+  const [savingProfile, setSavingProfile] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [savingSwitch, setSavingSwitch] = useState(false);
@@ -283,11 +286,14 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     const previous = displayName;
     setDisplayName(trimmed);
     setSwitchError(null);
+    setSavingProfile(true);
     try {
       await getSyncManager().applyLocal({ table: 'user', id: userId, patch: { name: trimmed } });
     } catch (error) {
       setDisplayName(previous);
       setSwitchError(error instanceof Error ? error.message : '名称更新失败');
+    } finally {
+      setSavingProfile(false);
     }
   };
 
@@ -724,6 +730,11 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                 <div>
                   <div className="text-xs text-foreground/55">名称</div>
                   <div className="mt-1 text-[15px]">{displayName || '未设置'}</div>
+                  {savingProfile && (
+                    <div role="status" aria-live="polite" className="mt-1 text-xs text-foreground/55">
+                      {pendingLabel('updatingUser')}
+                    </div>
+                  )}
                   <div className="mt-1 text-xs text-foreground/55">
                     你的姓名在你通过共享链接和电子邮件与他人共享的文档中可见。
                   </div>

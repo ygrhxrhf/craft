@@ -31,6 +31,7 @@ import {
 } from '@/lib/browse/trash-subcopy';
 import { useRouter } from 'next/navigation';
 import { untitledFor } from '@/lib/document/untitled-copy';
+import { pendingLabel } from '@/lib/app/pending-states';
 
 interface TrashDoc {
   id: string;
@@ -77,6 +78,8 @@ export function TrashList({ documents }: TrashListProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [emptyConfirmOpen, setEmptyConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  // G300: permanent deletion has its own progress sentence (single vs plural).
+  const [busyLabel, setBusyLabel] = useState<string | null>(null);
 
   // 首屏 / router.refresh 后的新 prop 行：只做本地 overlay（不发服务端 action，离线安全）
   useEffect(() => {
@@ -111,6 +114,7 @@ export function TrashList({ documents }: TrashListProps) {
 
   async function handleEmptyTrash() {
     setBusy(true);
+    setBusyLabel(pendingLabel('deletingDocuments'));
     try {
       await emptyTrash();
       setEmptyConfirmOpen(false);
@@ -123,6 +127,7 @@ export function TrashList({ documents }: TrashListProps) {
       });
     } finally {
       setBusy(false);
+      setBusyLabel(null);
     }
   }
 
@@ -150,9 +155,11 @@ export function TrashList({ documents }: TrashListProps) {
   async function runSelected(
     action: (id: string) => Promise<void>,
     alert: (failedCount: number, totalCount: number) => string | null,
+    progressLabel?: string,
   ) {
     const ids = [...selected];
     setBusy(true);
+    setBusyLabel(progressLabel ?? null);
     try {
       // Partial success: every selected document is attempted, and the alert names how many
       // failed instead of stopping at the first rejection.
@@ -169,6 +176,7 @@ export function TrashList({ documents }: TrashListProps) {
       }
     } finally {
       setBusy(false);
+      setBusyLabel(null);
       setConfirmOpen(false);
       exitSelection();
       router.refresh();
@@ -194,6 +202,11 @@ export function TrashList({ documents }: TrashListProps) {
       {/* The 30-day line is conditional: the official screen only shows it once the trash has
           something in it, not in the empty state. */}
       <p className="text-meta text-foreground/55">{TRASH_DISCLAIMER}</p>
+      {busyLabel && (
+        <p role="status" aria-live="polite" className="text-meta text-muted-foreground">
+          {busyLabel}
+        </p>
+      )}
       <div className="flex items-center gap-2">
         <div className="flex-1" />
         {selecting ? (
@@ -345,7 +358,7 @@ export function TrashList({ documents }: TrashListProps) {
               variant="destructive"
               size="sm"
               disabled={busy}
-              onClick={() => runSelected(permanentDeleteDocument, bulkDeleteAlert)}
+              onClick={() => runSelected(permanentDeleteDocument, bulkDeleteAlert, pendingLabel(selected.size > 1 ? 'deletingDocuments' : 'deletingDocument'))}
             >
               {busy ? '删除中…' : '删除'}
             </Button>

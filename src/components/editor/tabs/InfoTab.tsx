@@ -25,6 +25,7 @@ import { relativeTime } from '@/lib/document/relative-time';
 import { pageStats, statsInputFor, statsTitle, STATS_SCOPES, STATS_SCOPE_LABELS, type StatsScope } from '@/lib/document/page-stats';
 import { LOCATION_TITLE, locationPathLabel, type PathNode } from '@/lib/document/location-path';
 import { MOVE_TO, UNSORTED_TITLE } from '@/lib/browse/official-copy';
+import { pendingLabel } from '@/lib/app/pending-states';
 import { MOVED_TO_RECENTLY_DELETED } from '@/lib/browse/trash-subcopy';
 import { toast } from '@/components/ui/toast';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
@@ -128,6 +129,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
   const [locationLoaded, setLocationLoaded] = useState(false);
   const [locationTick, setLocationTick] = useState(0);
   const [busy, setBusy] = useState(false);
+  // G300: exporting has its own progress sentence even though the action looks quick.
+  const [exporting, setExporting] = useState(false);
   // G1455：「动作」页的 12 项按"有没有选中块"分档禁用——无选区时只有「在页面中查找」「快速开启」
   // 两枚可点，其余 10 枚置灰（官方那屏的实测读数）。
   const hasBlockSelection = editor ? editor.state.selection instanceof NodeSelection : false;
@@ -195,6 +198,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
 
   const handleExport = async (format: ExportFormat) => {
     setBusy(true);
+    setExporting(true);
     try {
       const file = await exportDocument(documentId, format);
       const payload = file.encoding === 'base64'
@@ -212,6 +216,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
       setActionError('导出失败');
     } finally {
       setBusy(false);
+      setExporting(false);
     }
   };
 
@@ -900,6 +905,11 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
               >
                 图片
               </button>
+              {exporting && (
+                <p role="status" aria-live="polite" className="mt-1.5 text-meta text-muted-foreground">
+                  {pendingLabel('exportingDocuments')}
+                </p>
+              )}
             </div>
           )}
           <div className="my-2 h-px bg-border" />

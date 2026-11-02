@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:15:45.517Z",
+  "generatedAt": "2026-11-02T07:20:49.797Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 974,
-    "aligned": 211,
+    "gap": 973,
+    "aligned": 212,
     "unknown": 195,
     "deliberate": 102,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 402,
+    "P2 / gap": 401,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 108,
+    "P2 / aligned": 109,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / deliberate": 38,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 1,
+  "conflicts": 2,
   "conflictRows": [
     {
       "id": "G112",
@@ -58,6 +58,14 @@
       "conflict": "local-says-missing",
       "local": "无 ✎ 现读（2026-11-02）更正：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"sta",
       "verdict": "☆ 已清（第 128 批）"
+    },
+    {
+      "id": "G300",
+      "line": 1581,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。",
+      "verdict": "☆ 已清（第 147 批）"
     }
   ],
   "sectionRows": [
@@ -6419,16 +6427,16 @@
       "cols": 5,
       "id": "G300",
       "official": "**异步 pending 态全集是 11 条进行时句**：创建文档/文件夹/链接、删除账户/文档(单复)/邀请(单复)/导出文档/更新空间头像/更新用户（`dialogs.md` §8.5）⇒ **导出与头像更新也有独立 loading 态**",
-      "local": "本地只有删除有 pending 态",
-      "verdict": "缺失",
+      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。链接创建、账户删除、邀请单复、空间头像在本仓无对应动作（无链接/空间/团队/账户删除面）⇒ N/A。",
+      "verdict": "☆ 已清（第 147 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

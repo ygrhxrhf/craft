@@ -31,7 +31,10 @@ import { upcomingSections } from '@/lib/task/upcoming-groups';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TaskDatePopover } from '@/components/task/TaskDatePopover';
 import { REMINDER_CHANGED_TITLE, REMINDER_TOAST_DURATION_MS, nextReminderText } from '@/lib/task/reminder-toast';
-import { fromDayInputValue, toDayInputValue } from '@/lib/task/wall-clock';
+import { fromDayInputValue, toDayInputValue, localDayInstant } from '@/lib/task/wall-clock';
+import { taskDateOptions } from '@/lib/task/task-date-menu';
+import { isNewTaskShortcut } from '@/lib/task/new-task-shortcut';
+import { taskRowKeyAction } from '@/lib/task/task-row-key';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
 import {
   SET_AS_DEFAULT_VIEW,
@@ -185,6 +188,44 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     } finally {
       setAdding(false);
     }
+  };
+
+  // G1573: Ctrl/⌘-J opens the standalone 「新任务」 popup (input + schedule/deadline buttons).
+  const [quickOpen, setQuickOpen] = useState(false);
+  const [quickTitle, setQuickTitle] = useState('');
+  const [quickSchedule, setQuickSchedule] = useState<string | null>(null);
+  const [quickDue, setQuickDue] = useState<string | null>(null);
+  const [quickPicker, setQuickPicker] = useState<'schedule' | 'deadline' | null>(null);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (isNewTaskShortcut(event)) {
+        event.preventDefault();
+        setQuickOpen(true);
+        return;
+      }
+      if (event.key === 'Escape') setQuickOpen(false);
+    };
+    globalThis.addEventListener('keydown', onKey);
+    return () => globalThis.removeEventListener('keydown', onKey);
+  }, []);
+
+  const handleQuickCreate = async () => {
+    const title = quickTitle.trim();
+    if (!title) return;
+    const id = crypto.randomUUID();
+    const now = new Date().toISOString();
+    await writeTask(
+      id,
+      (userId) => taskPatchFor.create({ id, userId, title, dueDate: quickDue, scheduleDate: quickSchedule }, now),
+      () => createTask(title),
+    );
+    setQuickOpen(false);
+    setQuickTitle('');
+    setQuickSchedule(null);
+    setQuickDue(null);
+    await load();
+    router.refresh();
   };
 
   // toggle 保持 Server Action：它除改四列外还有两条服务端派生
@@ -402,6 +443,76 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
           </>
         )}
       </AppPageContainer>
+
+      {quickOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-start justify-center bg-black/20 p-4 pt-24"
+          role="dialog"
+          aria-label="新任务"
+          data-testid="task-quick-popup"
+          onClick={() => setQuickOpen(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-xl border border-border bg-background p-3 shadow-lg"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <Input
+              autoFocus
+              value={quickTitle}
+              onChange={(event) => setQuickTitle(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') void handleQuickCreate();
+              }}
+              placeholder="新任务"
+              aria-label="新任务"
+            />
+            <div className="mt-2 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setQuickPicker((current) => (current === 'schedule' ? null : 'schedule'))}
+                className="rounded-md border border-border px-2 py-1 text-xs text-foreground/70 hover:bg-foreground/4"
+                aria-label="计划任务"
+              >
+                计划{quickSchedule ? `：${toDayInputValue(quickSchedule)}` : ''}
+              </button>
+              <button
+                type="button"
+                onClick={() => setQuickPicker((current) => (current === 'deadline' ? null : 'deadline'))}
+                className="rounded-md border border-border px-2 py-1 text-xs text-foreground/70 hover:bg-foreground/4"
+                aria-label="设定截止日期"
+              >
+                截止{quickDue ? `：${toDayInputValue(quickDue)}` : ''}
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleQuickCreate()}
+                className="ml-auto rounded-md bg-primary px-3 py-1 text-xs text-primary-foreground"
+              >
+                添加
+              </button>
+            </div>
+            {quickPicker && (
+              <div className="mt-2 flex flex-col rounded-md border border-border/60 p-1">
+                {taskDateOptions(quickPicker).map((option) => (
+                  <button
+                    key={option.key}
+                    type="button"
+                    onClick={() => {
+                      const value = localDayInstant(option.date);
+                      if (quickPicker === 'schedule') setQuickSchedule(value);
+                      else setQuickDue(value);
+                      setQuickPicker(null);
+                    }}
+                    className="rounded px-2 py-1 text-left text-xs hover:bg-foreground/4"
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -592,7 +703,19 @@ function TaskRow({
 
   return (
     <div className="border-b border-border/40 last:border-0">
-      <div className="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/60">
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={task.title}
+        onKeyDown={(event) => {
+          // G1574: the row is focusable; Space / Ctrl-Alt-T toggle it.
+          if (taskRowKeyAction(event) === 'toggle') {
+            event.preventDefault();
+            onToggle(task.id);
+          }
+        }}
+        className="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      >
         <Checkbox checked={task.isCompleted} onCheckedChange={() => onToggle(task.id)} />
         <span
           className={cn(

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T08:43:11.516Z",
+  "generatedAt": "2026-11-02T08:51:09.967Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 486,
-    "partial": 285,
+    "aligned": 488,
+    "partial": 284,
     "deliberate": 165,
-    "gap": 146,
+    "gap": 145,
     "unreachable": 20
   },
   "priority": {
@@ -18,15 +18,15 @@
   },
   "statusByPriority": {
     "P? / nonaction": 191,
-    "P2 / aligned": 171,
+    "P2 / aligned": 173,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 135,
+    "P2 / partial": 134,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
-    "P2 / gap": 73,
     "P2 / deliberate": 73,
+    "P2 / gap": 72,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
@@ -1164,13 +1164,21 @@
       "conflict": "local-says-missing",
       "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderId`、删除走软删 `deleteDocument`。入口以直接按钮呈现（浏览屏 ",
       "verdict": "☆ 已清（第 154 批）"
+    },
+    {
+      "id": "G1574",
+      "line": 5552,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地对照＝任务行未设可聚焦属性（点击后 `activeElement` 是 `body`）；完成态载体是 `span[role=\"checkbox\"][aria-checked]`（base-ui checkbox），鼠标可点、键盘无绑定 ✎ 现读（2026-11-02）：任务行容器已改 `role=\"button\" tabIndex=0`，聚焦后 `Space` 或 `Ctrl/⌘-Alt-T`",
+      "verdict": "☆ 已清（第 163 批）"
     }
   ],
   "unknownSections": [],
   "gapSections": [
     [
       "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      44
+      42
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",

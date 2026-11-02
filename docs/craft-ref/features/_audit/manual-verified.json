@@ -9360,17 +9360,23 @@
       ]
     },
     "G1573": {
-      "status": "partial",
-      "note": "Ctrl-J 无绑定，但任务屏常驻行内输入框",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "任务屏 Ctrl/⌘-J 打开独立新任务弹层（输入＋计划/截止按钮，Esc 关闭）；行内输入仍保留。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:206"
+        "src/lib/task/new-task-shortcut.ts",
+        "src/app/(app)/tasks/TasksView.tsx:186",
+        "src/lib/task/new-task-shortcut.test.ts"
       ]
     },
     "G1574": {
-      "status": "gap",
-      "note": "任务行不可聚焦，键盘族无作用对象",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "任务行 role=button/tabIndex=0，Space 与 Ctrl/⌘-Alt-T 勾选完成。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:515"
+        "src/lib/task/task-row-key.ts",
+        "src/app/(app)/tasks/TasksView.tsx:705",
+        "src/lib/task/task-row-key.test.ts"
       ]
     },
     "G1575": {

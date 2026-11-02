@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T08:43:11.231Z",
+  "generatedAt": "2026-11-02T08:51:09.686Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 952,
-    "aligned": 231,
+    "gap": 950,
+    "aligned": 233,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 380,
+    "P2 / gap": 378,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 128,
+    "P2 / aligned": 130,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 4,
+  "conflicts": 5,
   "conflictRows": [
     {
       "id": "G95",
@@ -82,6 +82,14 @@
       "conflict": "local-says-missing",
       "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderI",
       "verdict": "☆ 已清（第 154 批）"
+    },
+    {
+      "id": "G1574",
+      "line": 5552,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地对照＝任务行未设可聚焦属性（点击后 `activeElement` 是 `body`）；完成态载体是 `span[role=\"checkbox\"][aria-checked]`（base-ui checkbox），鼠标可点、键盘无绑定 ✎ 现读（2026-11-02）：任务行容器已改 `role=\"button\" ",
+      "verdict": "☆ 已清（第 163 批）"
     }
   ],
   "sectionRows": [
@@ -29304,10 +29312,10 @@
       "cols": 5,
       "id": "G1573",
       "official": "★★★ **任务屏 `Ctrl-J`（`OPEN_NEW_TASK_POPUP`）：官方弹独立「新任务」弹窗，本地**没有任何绑定**（按下去屏上零变化）**（第 311 批，表 D 首次上屏）：官方按后 `popup-backdrop` **0→1**（内含输入框 `新任务` ＋ `task-popup-schedule-button`／`task-popup-deadline-button`），`Escape` 关回 **1→0**；本地同一序列 `newTaskPopup` 恒 0、`domLength` 一字不变（413576→413642→413642）。★ 附带一条**承载面差异**：本地任务屏**常驻**一枚行内输入框（placeholder「添加任务，按回车确认…」，`Ctrl-J` 前后都在），官方任务屏没有该输入框、只在弹窗里给输入位 ⇒ 两侧「新建任务」的入口形态本就不同（行内 vs 弹窗）。★ 诚实边界：本批只测「按 `Ctrl-J` 有没有反应」与两个承载面的在场与否，**未**逐条比对弹窗内部的字段（排期／截止／提醒等，G727 已记官方弹窗有五枚命令 id）",
-      "local": "本地对照＝`src/components/editor/extensions/craft-keymap.ts` 未注册 `OPEN_NEW_TASK_POPUP`（全仓 grep 无该 id 的键位接线）；本地任务屏用行内输入框",
-      "verdict": "缺失（键位无绑定）",
+      "local": "本地对照＝`src/components/editor/extensions/craft-keymap.ts` 未注册 `OPEN_NEW_TASK_POPUP`（全仓 grep 无该 id 的键位接线）；本地任务屏用行内输入框 ✎ 现读（2026-11-02）：任务屏已绑 Ctrl/⌘-J 打开独立「新任务」弹层（输入框＋计划/截止两枚按钮，Esc 关闭），选中日期后随创建一起落库；行内输入框仍保留。纯核 `new-task-shortcut.ts` 单测 2 条。",
+      "verdict": "☆ 已清（第 163 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -29322,16 +29330,16 @@
       "cols": 5,
       "id": "G1574",
       "official": "★★★ **任务行的**键盘可达性**两侧不同：本地点任务行后焦点落在 `body`，表 D 的整族键位（`↑/↓` 选行、`⏎` 编辑、`Space` 勾选、`Ctrl-Alt-T` 完成）**没有作用对象**；官方同一序列把任务完成掉了**（第 312 批，`Ctrl-Alt-T` 逐句实测）：官方建一条 `TASKKEY` → 点任务文本（焦点落 `DIV`）→ `Ctrl-Alt-T` ⇒ **REST 读回 `- [x] TASKKEY`**（任务确实变成完成态）；本地同序列后任务仍是 `todo`、`aria-checked` 仍 `false`、`document.activeElement.tagName === \"BODY\"`。★ 本地**不是不能完成**：点那枚 `<span role=\"checkbox\" aria-checked>` 就能完成（实测列表 `aria-checked=false` 由 18→17、该任务从 todo 列表消失）⇒ 缺的只是**键盘通路**。★★ 一条方法学教训：官方的\"完成\"会让任务**离开 todo 列表** ⇒ 屏幕上\"没变化\"是**假阴性**，本批第一轮就误判过一次，靠 REST 读回才纠正 ✎ **第 319 批补强**：官方任务行实测是**可聚焦的 `div[role=\"button\"]`**（点击后 `document.activeElement` 即它），且 `Space` 能把它切成完成态（REST 读回 `state:\"done\"`／markdown 变 `- [x]`；连按两下才落定，第一下把焦点交回 `body`）⇒ 两侧差别不只是\"能不能点中\"，是**本地根本不给行 `role`/`tabindex`**。 ✎ **第 386 批补 `DELETE` 一族（表 D 的 `⌫`／`del`）**：官方任务屏上——点行后焦点是 **`div[role=\"button\"]`**，此时按 **`⌫` 任务仍在**（REST 读回三条不变）；**再点一次进编辑态（焦点 `TEXTAREA`）后按 `Delete`，任务消失**（读回剩两条）⇒ **删除要先进编辑态**，不是行级快捷键。★ 边界：`⌫` 那次没删掉，**不能**断言\"行上 ⌫ 无效\"（可能与\"第一下被吃\"同族，本批没复测第二下）。",
-      "local": "本地对照＝任务行未设可聚焦属性（点击后 `activeElement` 是 `body`）；完成态载体是 `span[role=\"checkbox\"][aria-checked]`（base-ui checkbox），鼠标可点、键盘无绑定",
-      "verdict": "行为不同（键盘可达性）",
+      "local": "本地对照＝任务行未设可聚焦属性（点击后 `activeElement` 是 `body`）；完成态载体是 `span[role=\"checkbox\"][aria-checked]`（base-ui checkbox），鼠标可点、键盘无绑定 ✎ 现读（2026-11-02）：任务行容器已改 `role=\"button\" tabIndex=0`，聚焦后 `Space` 或 `Ctrl/⌘-Alt-T` 把任务勾成完成态（`task-row-key.ts` 判定）。单测 3 条。",
+      "verdict": "☆ 已清（第 163 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

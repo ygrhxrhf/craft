@@ -35,6 +35,7 @@ import type { PageStyle } from './themes/page-style';
 import { getDraft } from '@/lib/offline/draft-store';
 import { ALL_CHANGES_SAVED, offlineSaveLabel } from '@/lib/offline/save-status';
 import { planTrailingClick } from '@/lib/editor/trailing-click';
+import { TaskDateQuickMenu } from '@/components/editor/TaskDateQuickMenu';
 
 const TAB_ORDER = ['insert', 'format', 'style', 'info'] as const;
 const TAB_ICONS = { insert: LayoutGrid, format: Type, style: Palette, info: Info };
@@ -482,6 +483,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
       )}
 
       <ShareDialog documentId={doc.id} open={shareOpen} onClose={() => setShareOpen(false)} />
+      <TaskDateQuickMenu />
     </div>
   );
 }

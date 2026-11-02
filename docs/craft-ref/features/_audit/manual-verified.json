@@ -9538,17 +9538,25 @@
       ]
     },
     "G1597": {
-      "status": "gap",
-      "note": "两处命令表均无截止日期，任务块 attrs 也无该列",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "斜线菜单「设定截止日期」打开四档面板并写 taskItem.dueDate。",
       "evidence": [
-        "src/components/editor/slash-menu/slash-commands.ts:57"
+        "src/lib/task/task-date-menu.ts",
+        "src/components/editor/TaskDateQuickMenu.tsx",
+        "src/components/editor/slash-menu/slash-commands.ts:603",
+        "src/lib/task/task-date-menu.test.ts"
       ]
     },
     "G1598": {
-      "status": "gap",
-      "note": "斜杠菜单、块菜单、keymap 三处均无计划任务/排期",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "斜线菜单「计划任务」同构四档面板并写 taskItem.scheduleDate。",
       "evidence": [
-        "src/components/editor/slash-menu/slash-commands.ts:57"
+        "src/lib/task/task-date-menu.ts",
+        "src/components/editor/TaskDateQuickMenu.tsx",
+        "src/components/editor/slash-menu/slash-commands.ts:614",
+        "src/lib/task/task-date-menu.test.ts"
       ]
     },
     "G1599": {

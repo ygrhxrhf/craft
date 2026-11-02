@@ -27,6 +27,8 @@ import {
   LayoutTemplate,
   Columns2,
   Copy,
+  Flag,
+  CalendarDays,
   Globe,
   Sparkles,
   PenLine,
@@ -59,6 +61,8 @@ export interface SlashCommand {
   category: string;
   command: (editor: Editor, range: { from: number; to: number }) => void;
 }
+
+import { useTaskDateMenuStore } from '@/lib/store/use-task-date-menu-store';
 
 export const slashCommands: SlashCommand[] = [
   // ── 基础块 ──
@@ -593,6 +597,28 @@ export const slashCommands: SlashCommand[] = [
       } catch (err) {
         alert(err instanceof Error ? err.message : '创建白板失败');
       }
+    },
+  },
+  {
+    name: '设定截止日期',
+    description: '设定任务块的截止日期',
+    icon: Flag,
+    keywords: ['deadline', 'due', '截止', '截止日期'],
+    category: '高级块',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      useTaskDateMenuStore.getState().open('deadline');
+    },
+  },
+  {
+    name: '计划任务',
+    description: '给任务块安排一个计划日期',
+    icon: CalendarDays,
+    keywords: ['schedule', 'plan', '计划', '计划任务', '排期'],
+    category: '高级块',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      useTaskDateMenuStore.getState().open('schedule');
     },
   },
 ];

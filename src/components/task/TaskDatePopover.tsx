@@ -14,6 +14,7 @@ import {
 } from '@/lib/task/date-parse';
 import { describeRecurrence, parseRecurrence, recurrencePresetsFor } from '@/lib/task/recurrence';
 import { slotIndexForTime, timeSlots } from '@/lib/task/time-menu';
+import { scheduleChipLabel } from '@/lib/task/schedule-chip';
 import { cn } from 'cn';
 
 interface TaskDatePopoverProps {
@@ -163,7 +164,9 @@ export function TaskDatePopover({
 
   const Icon = kind === 'schedule' ? CalendarDays : Flag;
   const label = kind === 'schedule' ? '计划' : '截止';
-  const display = value ? formatDay(value) : null;
+  // G371: the schedule trigger is the icon plus the short date alone (no 「计划」 prefix, no year).
+  const display = kind === 'schedule' ? scheduleChipLabel(value) : value ? formatDay(value) : null;
+  const triggerText = display ? (kind === 'schedule' ? display : `${label} ${display}`) : label;
   const hasExtras = kind === 'schedule' && Boolean(reminder && recurrence);
 
   return (
@@ -181,7 +184,7 @@ export function TaskDatePopover({
         }
       >
         <Icon className="size-3.5" />
-        {display ? `${label} ${display}` : label}
+        {triggerText}
       </button>
 
       {open && position && (

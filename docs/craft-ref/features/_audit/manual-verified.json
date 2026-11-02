@@ -4814,10 +4814,13 @@
       ]
     },
     "G371": {
-      "status": "partial",
-      "note": "任务行显示「计划 10月9日」纯文本＋图标按钮，无日历芯片",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "schedule 触发器即芯片：有值显示日历图标+月日短日期（无年份），未设只剩图标。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:504"
+        "src/lib/task/schedule-chip.ts",
+        "src/components/task/TaskDatePopover.tsx:165",
+        "src/lib/task/schedule-chip.test.ts"
       ]
     },
     "G372": {

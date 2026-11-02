@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T06:42:54.775Z",
+  "generatedAt": "2026-11-02T06:45:08.030Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 986,
-    "aligned": 202,
+    "gap": 985,
+    "aligned": 203,
     "unknown": 196,
     "deliberate": 98,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 414,
+    "P2 / gap": 413,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 99,
+    "P2 / aligned": 100,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 36,
@@ -7715,10 +7715,10 @@
       "cols": 5,
       "id": "G371",
       "official": "**schedule 芯片形态 = 日历图标 + 中文短日期「10月9日」（无年份），且芯片占据原图标位**（V38 ①）⇒ 图标行是\"未设=图标 / 已设=图标+日期\"两副面孔",
-      "local": "本地任务行不显示日期芯片",
-      "verdict": "缺失",
+      "local": "本地任务行的 schedule 触发器即芯片 ✎ 现读（2026-11-02）更正：`TaskDatePopover` 的 schedule 档有值时只显示「日历图标 + 短日期」（`scheduleChipLabel`，月日、无年份、无「计划」前缀），未设时只剩图标（悬停才显形）；deadline 档保持「截止 + 日期」。单测 2 条。",
+      "verdict": "☆ 已清（第 137 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

@@ -35,6 +35,7 @@ import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
+import { TOC_EMPTY_COPY, TOC_TITLE, extractToc, type TocEntry } from '@/lib/editor/toc';
 import {
   BACKLINK_SORTS,
   BACKLINK_SORT_LABELS,
@@ -108,6 +109,21 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
   // 「位置」段自己取数：移动菜单的 docs 特意过滤掉本文档，而面包屑要看它自己的
   // parentId / folderId；菜单数据也只有点开菜单才加载，位置段却是常驻的。
   const [locDocs, setLocDocs] = useState<PathNode[]>([]);
+  // G626: the info panel's top section is a live table of contents; empty docs get the guide copy.
+  const [toc, setToc] = useState<TocEntry[]>([]);
+
+  useEffect(() => {
+    if (!editor) {
+      setToc([]);
+      return;
+    }
+    const refresh = () => setToc(extractToc(editor.state.doc as never));
+    refresh();
+    editor.on('update', refresh);
+    return () => {
+      editor.off('update', refresh);
+    };
+  }, [editor]);
   const [locFolders, setLocFolders] = useState<FolderItem[]>([]);
   const [locationLoaded, setLocationLoaded] = useState(false);
   const [locationTick, setLocationTick] = useState(0);
@@ -384,6 +400,34 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
 
       {subTab === 'info' ? (
         <div className="space-y-4">
+          {/* G626: TOC is a first-class section at the top; an empty doc shows the guide sentence
+              instead of hiding the section. */}
+          <section data-testid="info-toc">
+            <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">
+              {TOC_TITLE}
+            </h4>
+            {toc.length === 0 ? (
+              <p className="text-ui text-foreground/50">{TOC_EMPTY_COPY}</p>
+            ) : (
+              <ul className="space-y-1">
+                {toc.map((entry, index) => (
+                  <li key={`${entry.pos}-${index}`}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        editor?.chain().focus().setTextSelection(entry.pos + 1).scrollIntoView().run();
+                      }}
+                      className="w-full truncate rounded px-1 py-0.5 text-left text-ui text-foreground/75 hover:bg-foreground/4 hover:text-foreground"
+                      style={{ paddingLeft: `${(Math.max(1, entry.level) - 1) * 12 + 4}px` }}
+                    >
+                      {entry.text}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
           {/* Properties */}
           <section>
             <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">属性</h4>

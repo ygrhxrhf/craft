@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T06:45:08.030Z",
+  "generatedAt": "2026-11-02T06:47:29.499Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 985,
-    "aligned": 203,
+    "gap": 984,
+    "aligned": 204,
     "unknown": 196,
     "deliberate": 98,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 413,
+    "P2 / gap": 412,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 100,
+    "P2 / aligned": 101,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 36,
@@ -12314,10 +12314,10 @@
       "cols": 5,
       "id": "G626",
       "official": "★ **信息面板顶部有独立「目录」分区**，空文档态出文案 **「使用标题、页面或卡片创建目录。」** ⇒ 目录（TOC）是信息面板的一等分区，且**空态有引导文案**而不是隐藏分区",
-      "local": "`grep -rn \"目录\" src/components/editor/tabs/InfoTab.tsx` ⇒ 只有 `:297` 的 `📄 独立文档（根目录）`（移动目标选择器的选项文案），**信息面板没有目录/TOC 分区**；★ 本地\"空态隐藏分区 vs 官方空态给引导文案\"是通盘风格差（与 G622 的文案缺口同源）",
-      "verdict": "本地缺失",
+      "local": "本地已补目录分区 ✎ 现读（2026-11-02）更正：`InfoTab` 的「页面信息」第一段就是「目录」（`data-testid=\"info-toc\"`）；标题按层级缩进、点击跳到文档内位置；没有标题时显示官方引导句 `TOC_EMPTY_COPY`（逐字）。提取器 `src/lib/editor/toc.ts` 纯核可测。单测 3 条。",
+      "verdict": "☆ 已清（第 138 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

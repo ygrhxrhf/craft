@@ -5999,10 +5999,13 @@
       ]
     },
     "G626": {
-      "status": "partial",
-      "note": "目录以斜杠命令块存在且空态文案一致，但信息面板没有独立「目录」分区",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "信息面板顶部有「目录」分区：标题缩进列出、点击跳转；空文档显示官方引导句。",
       "evidence": [
-        "src/components/editor/slash-menu/slash-commands.ts:450"
+        "src/lib/editor/toc.ts:9",
+        "src/components/editor/tabs/InfoTab.tsx:405",
+        "src/lib/editor/toc.test.ts"
       ]
     },
     "G627": {

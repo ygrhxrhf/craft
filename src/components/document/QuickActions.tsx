@@ -15,6 +15,9 @@ export function QuickActions() {
   const [busy, setBusy] = useState<'doc' | 'folder' | null>(null);
 
   async function handleNewDoc() {
+    // G1608: offline the official build does not create anything and shows nothing — the click
+    // simply has no effect (no disabled state, no toast, no navigation).
+    if (!navigator.onLine) return;
     setBusy('doc');
     try {
       const id = await createDocumentLocal({ userId: session?.user?.id });
@@ -25,6 +28,7 @@ export function QuickActions() {
   }
 
   async function handleNewFolder() {
+    if (!navigator.onLine) return;
     setBusy('folder');
     try {
       await createFolderLocal({ userId: session?.user?.id, name: UNTITLED_FOLDER });

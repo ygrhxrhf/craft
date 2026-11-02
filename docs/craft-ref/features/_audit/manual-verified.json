@@ -9617,10 +9617,12 @@
       ]
     },
     "G1608": {
-      "status": "partial",
-      "note": "有离线本地写队列与离线徽标，但断网导航无门禁",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "离线点新建文档/文件夹静默早退：不置灰、不弹提示、不跳转，不再进浏览器错误页。",
       "evidence": [
-        "src/components/sync/create-local.ts:16"
+        "src/components/document/QuickActions.tsx:19",
+        "src/lib/app/offline-gate.test.ts"
       ]
     },
     "G1609": {

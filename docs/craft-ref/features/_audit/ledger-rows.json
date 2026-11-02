@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T08:59:31.770Z",
+  "generatedAt": "2026-11-02T09:03:19.744Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 948,
-    "aligned": 235,
+    "gap": 947,
+    "aligned": 236,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 376,
+    "P2 / gap": 375,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 132,
+    "P2 / aligned": 133,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -29942,10 +29942,10 @@
       "cols": 5,
       "id": "G1608",
       "official": "★★★★ **离线门禁是\"第三种答案\"——官方**静默无动作**，本地**整页跳到浏览器错误页****（第 391 批，`shell.offline.gate`，CDP 真断网）：阳性对照先行（`navigator.onLine` true→**false**→true、`fetch` 200→**ERR**→200）；断网后点「新建文档」，官方 `bodyTextLength` **1003→1003**、URL 不变、无 toast、按钮**没有** `disabled`／`aria-disabled` ⇒ **既不置灰也不弹提示，是\"点了没反应\"**；恢复联网后再点同一按钮**能建出文档**（1003→149、URL 进 `/editor/d/…`）⇒ 按钮本身可用、差异确实来自断网。**本地：断网点同一按钮，页面在点击那一步就变成 `chrome-error://chromewebdata/`（6118→96 字）**",
-      "local": "本地没有\"离线\"这一层概念：断网即交给浏览器错误页，既不置灰也不给文案（`dialogs.md §四` 那十行 `alert.reconnect.*` 一条都没落地）",
-      "verdict": "行为不同",
+      "local": "本地没有\"离线\"这一层概念：断网即交给浏览器错误页，既不置灰也不给文案（`dialogs.md §四` 那十行 `alert.reconnect.*` 一条都没落地） ✎ 现读（2026-11-02）：「新建文档／新建文件夹」在离线时静默早退——不置灰、不弹提示、不跳转（与官方\"点了没反应\"一致），不再落到浏览器错误页。接线断言见 `offline-gate.test.ts`。",
+      "verdict": "☆ 已清（第 165 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

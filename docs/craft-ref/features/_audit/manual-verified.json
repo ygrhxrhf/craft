@@ -9590,10 +9590,13 @@
       ]
     },
     "G1603": {
-      "status": "gap",
-      "note": "keymap 无任务命令，任务屏只有输入框的 Enter",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "任务行五条键：Ctrl-/ 完成、Ctrl-Alt-Shift-T 取消、Ctrl-Shift-S/D 日期输入、Ctrl-Alt-S 排期今天。",
       "evidence": [
-        "src/lib/editor/keymap.ts:172"
+        "src/lib/task/task-row-key.ts",
+        "src/app/(app)/tasks/TasksView.tsx:700",
+        "src/lib/task/task-row-key.test.ts"
       ]
     },
     "G1604": {
@@ -9604,10 +9607,13 @@
       ]
     },
     "G1606": {
-      "status": "gap",
-      "note": "只有 CellSelection+Enter 加行；插列不存在",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "表格三键方向：Ctrl-Shift-Enter 后插列、Ctrl-Alt-Enter 前插列、Ctrl-Enter 下方加行。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:151"
+        "src/lib/editor/table-shortcuts.ts",
+        "src/components/editor/extensions/craft-keymap.ts:230",
+        "src/lib/editor/table-shortcuts.test.ts"
       ]
     },
     "G1608": {

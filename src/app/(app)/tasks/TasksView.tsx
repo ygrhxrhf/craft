@@ -236,6 +236,16 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     await load();
   };
 
+  const handleCancel = async (id: string) => {
+    const now = new Date().toISOString();
+    await getSyncManager().applyLocal({
+      table: 'task',
+      id,
+      patch: { isCompleted: false, status: 'cancelled', cancelledAt: now, updatedAt: now },
+    });
+    await load();
+  };
+
   const handleSchedule = async (id: string, schedule: TaskSchedule) => {
     const now = new Date().toISOString();
     await writeTask(id, () => taskPatchFor.schedule(schedule, now), () => setTaskSchedule(id, schedule));
@@ -382,7 +392,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                     items={section.blocks}
                     onToggle={handleToggle}
                     onDelete={handleDelete}
-                    onSchedule={handleSchedule} appearance={appearance}
+                    onCancel={handleCancel} onSchedule={handleSchedule} appearance={appearance}
                     subtaskParent={subtaskParent}
                   />
                 </section>
@@ -406,7 +416,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   items={active}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onSchedule={handleSchedule} appearance={appearance}
+                  onCancel={handleCancel} onSchedule={handleSchedule} appearance={appearance}
                   subtaskParent={subtaskParent}
                 />
               )}
@@ -421,7 +431,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   items={completed}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onSchedule={handleSchedule} appearance={appearance}
+                  onCancel={handleCancel} onSchedule={handleSchedule} appearance={appearance}
                   subtaskParent={subtaskParent}
                 />
               </section>
@@ -435,7 +445,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   items={cancelled}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onSchedule={handleSchedule} appearance={appearance}
+                  onCancel={handleCancel} onSchedule={handleSchedule} appearance={appearance}
                   subtaskParent={subtaskParent}
                 />
               </section>
@@ -541,6 +551,7 @@ function TaskList({
   items,
   onToggle,
   onDelete,
+  onCancel,
   onSchedule,
   appearance,
   subtaskParent,
@@ -548,6 +559,7 @@ function TaskList({
   items: TaskItem[];
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onCancel: (id: string) => void;
   onSchedule: (id: string, schedule: TaskSchedule) => Promise<void>;
   appearance: 'faded' | 'strike' | 'none';
   subtaskParent: Map<string, string>;
@@ -620,6 +632,7 @@ function TaskList({
             task={task}
             onToggle={onToggle}
             onDelete={onDelete}
+            onCancel={onCancel}
             onSchedule={onSchedule}
             appearance={appearance}
             isSubtask={subtaskParent.has(task.id)}
@@ -668,6 +681,7 @@ function TaskRow({
   task,
   onToggle,
   onDelete,
+  onCancel,
   onSchedule,
   appearance,
   isSubtask = false,
@@ -675,12 +689,14 @@ function TaskRow({
   task: TaskItem;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onCancel: (id: string) => void;
   onSchedule: (id: string, schedule: TaskSchedule) => Promise<void>;
   appearance: 'faded' | 'strike' | 'none';
   /** G408: whether this task is a subtask of another (derived server-side). */
   isSubtask?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [dateMenu, setDateMenu] = useState<'date' | 'deadline' | null>(null);
   const rule = parseRecurrence(task.recurrence);
   const schedule = {
     dueDate: task.dueDate,
@@ -708,11 +724,17 @@ function TaskRow({
         tabIndex={0}
         aria-label={task.title}
         onKeyDown={(event) => {
-          // G1574: the row is focusable; Space / Ctrl-Alt-T toggle it.
-          if (taskRowKeyAction(event) === 'toggle') {
-            event.preventDefault();
-            onToggle(task.id);
+          // G1574/G1603: the row is focusable; the table-D chords act on it.
+          const action = taskRowKeyAction(event);
+          if (!action) return;
+          event.preventDefault();
+          if (action === 'toggle') return onToggle(task.id);
+          if (action === 'cancel') return onCancel(task.id);
+          if (action === 'schedule-today') {
+            update({ scheduleDate: localDayInstant(new Date()) });
+            return;
           }
+          setDateMenu(action);
         }}
         className="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
       >
@@ -802,6 +824,23 @@ function TaskRow({
           <Trash2 className="size-4" />
         </button>
       </div>
+
+      {dateMenu && (
+        <div className="px-3 pb-2">
+          <Input
+            type="date"
+            autoFocus
+            aria-label={dateMenu === 'date' ? '日期' : '截止日期'}
+            defaultValue={toDayInputValue(dateMenu === 'date' ? task.scheduleDate : task.dueDate)}
+            onBlur={() => setDateMenu(null)}
+            onChange={(event) => {
+              const value = fromDayInputValue(event.target.value);
+              update(dateMenu === 'date' ? { scheduleDate: value } : { dueDate: value });
+              setDateMenu(null);
+            }}
+          />
+        </div>
+      )}
 
       {open && (
         <div

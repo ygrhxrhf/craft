@@ -388,7 +388,7 @@ export const CraftKeymap = Extension.create({
               const dimensions = tableDimensions(editor);
               if (dimensions) {
                 const rows = tableAxis === 'row' ? dimensions.rows + 1 : dimensions.rows;
-                const columns = tableAxis === 'column' ? dimensions.columns + 1 : dimensions.columns;
+                const columns = tableAxis === 'row' ? dimensions.columns : dimensions.columns + 1;
                 if (!tableSizeAllowed(rows, columns)) {
                   toast.add({
                     id: 'table-size-limit',
@@ -402,7 +402,9 @@ export const CraftKeymap = Extension.create({
               }
               const ran = tableAxis === 'row'
                 ? editor.chain().focus().addRowAfter().run()
-                : editor.chain().focus().addColumnAfter().run();
+                : tableAxis === 'column-before'
+                  ? editor.chain().focus().addColumnBefore().run()
+                  : editor.chain().focus().addColumnAfter().run();
               if (ran) return true;
             }
             // G381: a plain Enter that **splits** a block closes the undo group, so the newline

@@ -10,7 +10,7 @@ describe('table shortcut axes (G1576/G1577)', () => {
     expect(tableAxisForShortcut({ key: 'Enter', ctrlKey: true })).toBe('row');
     expect(tableAxisForShortcut({ key: 'Enter', metaKey: true })).toBe('row');
     expect(tableAxisForShortcut({ key: 'Enter', ctrlKey: true, shiftKey: true })).toBe('column');
-    expect(tableAxisForShortcut({ key: 'Enter', ctrlKey: true, altKey: true })).toBe('column');
+    expect(tableAxisForShortcut({ key: 'Enter', ctrlKey: true, altKey: true })).toBe('column-before');
   });
 
   it('ignores other keys and modifier-free Enter', () => {
@@ -26,5 +26,6 @@ describe('table shortcut axes (G1576/G1577)', () => {
     expect(source).toContain('tableAxisForShortcut');
     expect(source).toContain('addRowAfter');
     expect(source).toContain('addColumnAfter');
+    expect(source).toContain('addColumnBefore');
   });
 });

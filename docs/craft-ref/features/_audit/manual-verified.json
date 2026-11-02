@@ -8414,10 +8414,13 @@
       ]
     },
     "G1173": {
-      "status": "partial",
-      "note": "导入 $$ 产 mathBlock 节点；官方落成 code 块＋math_formula 语言",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "导入已处理 17209 块级与 $…$ 行内公式（mathBlock 节点 + tex:// 回读），不再退化为段落；节点表示与官方代码块方案不同。",
       "evidence": [
-        "src/lib/import/markdown.ts:168"
+        "src/lib/import/markdown.ts:123",
+        "src/lib/import/markdown.ts:401",
+        "src/lib/import/markdown.test.ts"
       ]
     },
     "G1174": {

@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T07:33:08.531Z",
+  "generatedAt": "2026-11-02T07:35:05.362Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 469,
-    "partial": 293,
+    "aligned": 470,
+    "partial": 292,
     "deliberate": 165,
     "gap": 155,
     "unreachable": 20
@@ -20,8 +20,8 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / aligned": 154,
-    "P2 / partial": 143,
+    "P2 / aligned": 155,
+    "P2 / partial": 142,
     "P1 / nonaction": 89,
     "P2 / gap": 82,
     "P? / partial": 80,
@@ -1205,10 +1205,6 @@
       6
     ],
     [
-      "三点一〇六二、第 112 批〔★★★ **代码块主题的\"装配处\"与\"缺省",
-      6
-    ],
-    [
       "三点一〇、协同与权限追加（来自 `collab.md`，静态证据）",
       5
     ],
@@ -1230,6 +1226,10 @@
     ],
     [
       "三点八七、第 76 批（★★ 契约面穷尽：`--help` 逐条读满 `",
+      5
+    ],
+    [
+      "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",
       5
     ]
   ]

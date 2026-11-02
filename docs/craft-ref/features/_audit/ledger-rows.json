@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:33:08.232Z",
+  "generatedAt": "2026-11-02T07:35:05.088Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 969,
-    "aligned": 215,
+    "gap": 968,
+    "aligned": 216,
     "unknown": 195,
     "deliberate": 103,
     "partial": 60,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 397,
+    "P2 / gap": 396,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 112,
+    "P2 / aligned": 113,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -22196,10 +22196,10 @@
       "cols": 5,
       "id": "G1173",
       "official": "★★ **导入侧 `math_block` 落成代码块＝与导出的 `$$` 分支互为逆运算**＝逐字 `else if(i.type===\"math_block\"){const l={id:this.importM.uuid(),type:\"code\",content:i.content,properties:{language:\"math_formula\"}};this.blocks.push(l)}`（主包 @2,348,264，紧邻一条 `Unrecognized markdown-it token type: …` 日志）⇒ ★ 公式在**导入侧也是\"代码块＋`math_formula` 语言\"**（与 §一之六十五／G1094 的\"公式不是独立块类型\"第三次同证）；⇒ ★★★ **本地往返断链**＝本地导入器**没有** `$$`／`math_block` 分支（`src/lib/import/markdown.ts` 块级分支只有 fence `:34`、heading `:51`、rule `:62`、quote `:68`、image `:81`、list `:88`；`INLINE` 正则 `:171-172` 也无数学档）⇒ **官方导出的 `.md` 导进本地会把公式变成普通段落**，而本地只在编辑器内输入时识别（`src/components/editor/extensions/markdown-shortcuts.ts:76-83` 块级、`:89-96` 行内）⇒ 本地\"读得进官方\"的又一处缺口（与 §一之六十五 缩进那条同形）",
-      "local": "`src/lib/import/markdown.ts:34,51,62,68,81,88,171-172`；`src/components/editor/extensions/markdown-shortcuts.ts:76-83,89-96`",
-      "verdict": "**缺失（导入侧承重）**",
+      "local": "`src/lib/import/markdown.ts:34,51,62,68,81,88,171-172`；`src/components/editor/extensions/markdown-shortcuts.ts:76-83,89-96` ✎ 现读（2026-11-02）更正：导入器已有 `$$` 块级分支（`DISPLAY_MATH` → `mathBlock`）与行内 `$…$` 分支（`INLINE` 数学档 + `tex://` 链接回读），官方 `.md` 里的公式不再退化成普通段落；表示法用本地 `mathBlock` 节点而非官方\"代码块+`math_formula`\"，属实现层差异。",
+      "verdict": "☆ 已清（第 151 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

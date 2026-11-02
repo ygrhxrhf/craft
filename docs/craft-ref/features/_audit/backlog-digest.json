@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T09:07:04.182Z",
+  "generatedAt": "2026-11-02T09:12:30.202Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 492,
-    "partial": 282,
+    "aligned": 493,
+    "partial": 281,
     "deliberate": 165,
     "gap": 143,
     "unreachable": 20
@@ -18,10 +18,10 @@
   },
   "statusByPriority": {
     "P? / nonaction": 191,
-    "P2 / aligned": 177,
+    "P2 / aligned": 178,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 132,
+    "P2 / partial": 131,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1229,10 +1229,6 @@
       6
     ],
     [
-      "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
-      5
-    ],
-    [
       "三点一九、右侧栏三面板实屏对照（动态 V10–V12，插入 / 格式 /",
       5
     ],
@@ -1254,6 +1250,10 @@
     ],
     [
       "三点一〇六七、第 117 批〔★★★ **盘上＋本地实施混合批＝第一次把",
+      5
+    ],
+    [
+      "三点一一一二、第 173 批新登记的官方行为（2026-10-09 机器",
       5
     ]
   ]

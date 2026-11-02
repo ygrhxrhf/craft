@@ -3968,10 +3968,14 @@
       ]
     },
     "G167": {
-      "status": "partial",
-      "note": "强调色六档已落；界面语言单档，拼写语言在页面样式面板",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "强调色六档已落（data-accent + 色板 + ThemeProvider）；拼写语言为每页独立设置，界面语言为陈述项。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:351"
+        "src/lib/accent.ts",
+        "src/components/settings/SettingsPanels.tsx:584",
+        "src/components/editor/tabs/StyleTab.tsx:335",
+        "src/lib/accent.test.ts"
       ]
     },
     "G168": {

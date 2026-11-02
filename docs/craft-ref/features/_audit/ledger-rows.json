@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T09:07:03.901Z",
+  "generatedAt": "2026-11-02T09:12:29.610Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 946,
-    "aligned": 237,
+    "gap": 945,
+    "aligned": 238,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 374,
+    "P2 / gap": 373,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 134,
+    "P2 / aligned": 135,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -4068,10 +4068,10 @@
       "cols": 5,
       "id": "G167",
       "official": "**强调色是可选项**（`appearance.accent.color` + 描述），且 token 侧确有 6 组 `[data-accent=…]` 覆盖块互证 ✓；界面语言与**拼写检查语言是两个独立设置**（§五）",
-      "local": "`accentColor` 零命中（主题只有明暗）；`spellcheck` 零命中；语言只有一处",
-      "verdict": "缺失",
+      "local": "`accentColor` 零命中（主题只有明暗）；`spellcheck` 零命中；语言只有一处 ✎ 现读（2026-11-02）：强调色已落 `src/lib/accent.ts`（六档 `data-accent`＋设置面板色板＋`ThemeProvider` 启动应用，localStorage 持久化）；拼写检查语言是每页样式里的独立设置（`pageStyle.spellingLang`，含默认档），界面语言是设置页的陈述项——两者已分开。单测 `accent.test.ts` 覆盖 channel 接线。",
+      "verdict": "☆ 已清（第 167 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

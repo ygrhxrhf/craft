@@ -1,0 +1,30 @@
+import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+import { tableAxisForShortcut } from './table-shortcuts';
+
+// G1576/G1577: the three measured table keys.
+describe('table shortcut axes (G1576/G1577)', () => {
+  it('maps Ctrl-Enter to a row and Shift/Alt variants to a column', () => {
+    expect(tableAxisForShortcut({ key: 'Enter', ctrlKey: true })).toBe('row');
+    expect(tableAxisForShortcut({ key: 'Enter', metaKey: true })).toBe('row');
+    expect(tableAxisForShortcut({ key: 'Enter', ctrlKey: true, shiftKey: true })).toBe('column');
+    expect(tableAxisForShortcut({ key: 'Enter', ctrlKey: true, altKey: true })).toBe('column');
+  });
+
+  it('ignores other keys and modifier-free Enter', () => {
+    expect(tableAxisForShortcut({ key: 'Enter' })).toBeNull();
+    expect(tableAxisForShortcut({ key: 'a', ctrlKey: true })).toBeNull();
+  });
+
+  it('is wired into the editor keymap', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src', 'components', 'editor', 'extensions', 'craft-keymap.ts'),
+      'utf8',
+    );
+    expect(source).toContain('tableAxisForShortcut');
+    expect(source).toContain('addRowAfter');
+    expect(source).toContain('addColumnAfter');
+  });
+});

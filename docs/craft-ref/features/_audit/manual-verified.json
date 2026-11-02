@@ -9381,24 +9381,32 @@
       ]
     },
     "G1576": {
-      "status": "gap",
-      "note": "只有单元格选区下 Enter 加行；Ctrl-Enter 无绑定",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Ctrl/⌘-Enter 在表格单元格内新增一行（插入前过 50 行/750 格上限）。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:151"
+        "src/lib/editor/table-shortcuts.ts",
+        "src/components/editor/extensions/craft-keymap.ts:230",
+        "src/lib/editor/table-shortcuts.test.ts"
       ]
     },
     "G1577": {
-      "status": "gap",
-      "note": "表 E 十键在 keymap 与 craft-keymap 均无分支，整族未实现",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "三枚实测生效键：Ctrl-Enter 加行、Ctrl-Shift/Alt-Enter 加列；其余七键需行列选择态，本地无该对象。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:151"
+        "src/lib/editor/table-shortcuts.ts",
+        "src/components/editor/extensions/craft-keymap.ts:230"
       ]
     },
     "G1578": {
-      "status": "partial",
-      "note": "COMMENT 已接线，打开信息面板评论框；非官方选区浮层",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Ctrl/⌘-Shift-M 对选区发起评论请求并打开信息面板评论输入（入口为面板内而非悬浮层）。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:123"
+        "src/components/editor/extensions/craft-keymap.ts:233",
+        "src/lib/store/use-right-panel-store.ts",
+        "src/components/editor/DocumentEditor.tsx:86"
       ]
     },
     "G1579": {
@@ -9416,10 +9424,12 @@
       ]
     },
     "G1581": {
-      "status": "gap",
-      "note": "数学扩展在仓内，但 keymap 无方程键位",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Ctrl/⌘-Shift-E 对有选区的文本弹方程输入并用 setInlineMath 替换；光标态不触发。",
       "evidence": [
-        "src/lib/editor/keymap.ts:172"
+        "src/components/editor/extensions/craft-keymap.ts:249",
+        "src/lib/editor/selection-shortcuts.test.ts"
       ]
     },
     "G1582": {

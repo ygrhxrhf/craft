@@ -19,6 +19,7 @@ import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
 import { useFocusStore } from '@/lib/store/use-focus-store';
 import { EXIT_FOCUS_MODE_PREFIX, FOCUS_MODE } from '@/lib/editor/focus-mode-copy';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
+import { useRightPanelStore } from '@/lib/store/use-right-panel-store';
 import { capabilitiesFor } from '@/lib/authz/permission-axes';
 import { KEY_BINDINGS, displayFor } from '@/lib/editor/keymap';
 import { usePlatform } from '@/lib/editor/use-platform';
@@ -84,6 +85,13 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   if (syncedCommentRequest !== commentRequest) {
     setSyncedCommentRequest(commentRequest);
     if (commentRequest > 0) setActiveTab('info');
+  }
+  // G1578：Ctrl-Shift-M 走同一条渲染期请求通道打开评论所在的信息面板。
+  const panelRequest = useRightPanelStore((state) => state.request);
+  const [syncedPanelRequest, setSyncedPanelRequest] = useState(panelRequest);
+  if (syncedPanelRequest !== panelRequest) {
+    setSyncedPanelRequest(panelRequest);
+    if (panelRequest > 0) setActiveTab(useRightPanelStore.getState().tab);
   }
   const focusActive = useFocusStore((state) => state.active);
   const focusBinding = KEY_BINDINGS.find((binding) => binding.id === 'TOGGLE_FOCUS_MODE');

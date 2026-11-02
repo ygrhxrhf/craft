@@ -19,6 +19,7 @@ import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { isImeComposing } from '@/lib/editor/ime-guard';
 import { deleteStepFor } from '@/lib/editor/forward-delete';
 import { tableDimensions } from '@/lib/table-utils';
+import { tableAxisForShortcut } from '@/lib/editor/table-shortcuts';
 import {
   TABLE_SIZE_LIMIT_DURATION,
   TABLE_SIZE_LIMIT_SUBTITLE,
@@ -28,6 +29,8 @@ import {
 import { toast } from '@/components/ui/toast';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
+import { useRightPanelStore } from '@/lib/store/use-right-panel-store';
+import { promptDialog } from '@/lib/dialog/show';
 import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
 
 export const CRAFT_KEYMAP_KEY = new PluginKey('craftKeymap');
@@ -225,6 +228,35 @@ export const CraftKeymap = Extension.create({
             // skips the **whole** dispatch — the candidate window owns Esc/Enter. Without this the
             // local editor would close a popup or split a block mid-composition.
             if (isImeComposing(event)) return false;
+            // G1578: Ctrl/⌘-Shift-M comments on the selection; the composer lives in the info panel.
+            if (
+              (event.key === 'm' || event.key === 'M') &&
+              (event.metaKey || event.ctrlKey) &&
+              event.shiftKey &&
+              !event.altKey
+            ) {
+              const { from, to } = view.state.selection;
+              if (from === to) return false;
+              const selected = view.state.doc.textBetween(from, to, ' ');
+              useCommentRequestStore.getState().ask(selected.slice(0, 500));
+              useRightPanelStore.getState().open('info');
+              return true;
+            }
+            // G1581: Ctrl/⌘-Shift-E turns the selection into an inline equation.
+            if (
+              (event.key === 'e' || event.key === 'E') &&
+              (event.metaKey || event.ctrlKey) &&
+              event.shiftKey &&
+              !event.altKey
+            ) {
+              const { from, to } = view.state.selection;
+              if (from === to) return false;
+              void promptDialog({ title: '输入方程', placeholder: 'x^2', confirmLabel: '插入' }).then((latex) => {
+                if (latex == null || !latex.trim()) return;
+                editor.chain().focus().setInlineMath({ latex: latex.trim() }).run();
+              });
+              return true;
+            }
             // G211: Ctrl+Z / Ctrl+Shift+Z are gated on where the focus actually is. When the caret
             // sits in an inline sub-editor (math), the key belongs to that editor, not the document
             // — so the document's undo is skipped and the sub-editor keeps its own stack.
@@ -348,6 +380,30 @@ export const CraftKeymap = Extension.create({
                   return true;
                 }
               }
+            }
+            // G1576/G1577: with the caret in a table cell, Ctrl-Enter adds a row and
+            // Ctrl-Shift-Enter / Ctrl-Alt-Enter add a column (the measured keys of table E).
+            const tableAxis = editor.isActive('table') ? tableAxisForShortcut(event) : null;
+            if (tableAxis) {
+              const dimensions = tableDimensions(editor);
+              if (dimensions) {
+                const rows = tableAxis === 'row' ? dimensions.rows + 1 : dimensions.rows;
+                const columns = tableAxis === 'column' ? dimensions.columns + 1 : dimensions.columns;
+                if (!tableSizeAllowed(rows, columns)) {
+                  toast.add({
+                    id: 'table-size-limit',
+                    type: 'error',
+                    title: tableSizeLimitTitle(),
+                    description: TABLE_SIZE_LIMIT_SUBTITLE,
+                    timeout: TABLE_SIZE_LIMIT_DURATION,
+                  });
+                  return true;
+                }
+              }
+              const ran = tableAxis === 'row'
+                ? editor.chain().focus().addRowAfter().run()
+                : editor.chain().focus().addColumnAfter().run();
+              if (ran) return true;
             }
             // G381: a plain Enter that **splits** a block closes the undo group, so the newline
             // does not merge with the typing that follows it. Locally the history is ProseMirror's

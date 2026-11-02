@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T09:03:19.744Z",
+  "generatedAt": "2026-11-02T09:07:03.901Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 947,
-    "aligned": 236,
+    "gap": 946,
+    "aligned": 237,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 375,
+    "P2 / gap": 374,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 133,
+    "P2 / aligned": 134,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -29222,10 +29222,10 @@
       "cols": 5,
       "id": "G1568",
       "official": "★★★ **斜线菜单的入场动效两侧机制不同：官方是「内层 div 上的 100ms 动画 ＋ 容器 150ms 的 opacity 过渡」，本地是「容器的 `enter` 动画 150ms ＋ 四边 padding 与 visibility 各 150ms 的过渡」**（第 306 批，首次落地 `animation` 观测档，事件式探针 `animationstart/end`＋`transitionrun/end` 取 `elapsedTime`）：官方菜单**容器自身零动效**（实测 `animation-name:none`／`transition-duration:0s`），入场动画落在**内层 div**（事件 target＝`div`，时长 100ms），同期还有一个 `opacity` 150ms 过渡；本地容器直接 `animation: enter .15s`＋`transition: all .15s`，实测动的是 `padding-top/right/bottom/left` 与 `visibility`（各 150ms）。★ 另一处口径差：本地这四条 padding 过渡的缓动是 **`ease`**，不是它自己的 token `cubic-bezier(.4,0,.2,1)`（`globals.css:240` 与官方同值）；而官方的过渡用的正是 craft 曲线。☆ 两侧 token 层**完全一致**（`.15s/.2s/.5s`＋同一贝塞尔，`tokens.md:91`），差异在**落到哪些属性、由哪一层承担**",
-      "local": "本地对照＝菜单容器 `animation: enter .15s`＋`transition: all .15s`（`slash-menu` 组件）；padding/visibility 过渡的缓动取默认 `ease`",
-      "verdict": "行为不同（动效属性与承载层）",
+      "local": "本地对照＝菜单容器 `animation: enter .15s`＋`transition: all .15s`（`slash-menu` 组件）；padding/visibility 过渡的缓动取默认 `ease` ✎ 现读（2026-11-02）：容器改为只带 `transition-opacity duration-150`（零 animation），入场 `animate-in fade-in-0 duration-100` 落到内层 div，与官方\"内层 100ms 动画＋容器 150ms opacity\"同构。接线断言见 `slash-menu-motion.test.ts`。",
+      "verdict": "☆ 已清（第 166 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

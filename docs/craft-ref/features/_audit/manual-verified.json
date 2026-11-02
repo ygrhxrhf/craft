@@ -9322,10 +9322,12 @@
       ]
     },
     "G1568": {
-      "status": "partial",
-      "note": "入场动画在菜单容器上，官方是内层 100ms 动画＋容器透明度",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "斜线菜单容器只做 150ms opacity，入场 100ms 动画移到内层 div。",
       "evidence": [
-        "src/components/editor/slash-menu/SlashCommandMenu.tsx:63"
+        "src/components/editor/slash-menu/SlashCommandMenu.tsx:63",
+        "src/lib/editor/slash-menu-motion.test.ts"
       ]
     },
     "G1569": {

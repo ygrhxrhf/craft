@@ -40,7 +40,7 @@ export function SlashCommandMenu({ commands, selectedIndex, editor, range }: Sla
         ref={containerRef}
         role="listbox"
         aria-label="插入命令"
-        className="rounded-lg bg-popover p-3 shadow-lg animate-in fade-in-0 zoom-in-95 duration-150"
+        className="rounded-lg bg-popover p-3 shadow-lg transition-opacity duration-150"
       >
         <p className="text-sm text-muted-foreground">无匹配命令</p>
       </div>
@@ -60,9 +60,12 @@ export function SlashCommandMenu({ commands, selectedIndex, editor, range }: Sla
       ref={containerRef}
       role="listbox"
       aria-label="插入命令"
-      className="max-h-80 w-72 overflow-y-auto rounded-lg bg-popover p-1.5 shadow-lg animate-in fade-in-0 zoom-in-95 duration-150"
+      className="max-h-80 w-72 overflow-y-auto rounded-lg bg-popover p-1.5 shadow-lg transition-opacity duration-150"
     >
-      {Object.entries(grouped).map(([category, items]) => (
+      {/* G1568: the entrance animation lives on this inner div (100ms); the container only
+          carries the 150ms opacity transition, as the official build does. */}
+      <div className="animate-in fade-in-0 duration-100" data-testid="slash-menu-inner">
+        {Object.entries(grouped).map(([category, items]) => (
         <div key={category}>
           <div className="px-2 py-1.5 text-caption font-semibold uppercase tracking-wider text-foreground/40">
             {category}
@@ -98,6 +101,7 @@ export function SlashCommandMenu({ commands, selectedIndex, editor, range }: Sla
           })}
         </div>
       ))}
+      </div>
     </div>
   );
 }

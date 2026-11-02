@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T01:28:49.673Z",
+  "generatedAt": "2026-11-02T01:41:58.822Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 1022,
@@ -2335,8 +2335,8 @@
       "cols": 5,
       "id": "G74",
       "official": "评论交互文案级规格：**Enter 发送 / Shift+Enter 换行 / `:` 表情补全 / `@` 提及**；reaction 有 1/2/N 聚合句式；解决状态显示操作人；**分享权限是整篇文档级**（§9）",
-      "local": "☆ 部分落地（第 232 批）＝① 键位约定、`:` 表情、`@` 提及、reaction 三档句式**早已落地**（`composer-keys.ts`／`EmojiSuggest`／`MentionSuggest`／`reaction-copy` 族，行里\"无 reaction/无键位\"是陈旧坐标）；② 本批补上**已解决区的开关两套文案**＝纯核 `src/lib/comment/resolved-toggle.ts`（`SHOW_RESOLVED`「显示已解决」／`SHOW_RESOLVED_THREADS`「显示已解决的主题」／`HIDE_RESOLVED`「隐藏已解决」／`HIDE_RESOLVED_THREADS`「隐藏已解决的评论串」，逐字取自 `i18n-zh.tsv:883-884,944-945`，即 `collab.md:26` 的 R26\"短标签＋长说明两套\"）＋`CommentSection.tsx` 的已解决 `<details>` 用短标签当标题、长说明当 tooltip，展开时两套同时翻转；**真浏览器取证**＝收起时 `显示已解决 (1)`＋tooltip `显示已解决的主题`，展开后 `隐藏已解决 (1)`＋`隐藏已解决的评论串`；③ 仍缺＝**解决状态显示操作人**（`CommentThread` 无 `resolvedBy` 列）、**分享权限整篇文档级警告**（另见 G1524 族）⇒ 登记为待办",
-      "verdict": "部分落地",
+      "local": "☆ 部分落地（第 232 批）＝① 键位约定、`:` 表情、`@` 提及、reaction 三档句式**早已落地**（`composer-keys.ts`／`EmojiSuggest`／`MentionSuggest`／`reaction-copy` 族，行里\"无 reaction/无键位\"是陈旧坐标）；② 本批补上**已解决区的开关两套文案**＝纯核 `src/lib/comment/resolved-toggle.ts`（`SHOW_RESOLVED`「显示已解决」／`SHOW_RESOLVED_THREADS`「显示已解决的主题」／`HIDE_RESOLVED`「隐藏已解决」／`HIDE_RESOLVED_THREADS`「隐藏已解决的评论串」，逐字取自 `i18n-zh.tsv:883-884,944-945`，即 `collab.md:26` 的 R26\"短标签＋长说明两套\"）＋`CommentSection.tsx` 的已解决 `<details>` 用短标签当标题、长说明当 tooltip，展开时两套同时翻转；**真浏览器取证**＝收起时 `显示已解决 (1)`＋tooltip `显示已解决的主题`，展开后 `隐藏已解决 (1)`＋`隐藏已解决的评论串`；③ 仍缺＝**解决状态显示操作人**（`CommentThread` 无 `resolvedBy` 列）、**分享权限整篇文档级警告**（另见 G1524 族）⇒ 登记为待办 ✎ 现读（2026-11-02）更正：**\"解决操作人\"已补**——`CommentThread` 加 `resolvedBy`/`resolvedAt` 两列（迁移 `add_comment_thread_resolver`），`setThreadResolved` 在解决时写、取消时清；已解决区每行显示 `resolvedByText(name)`「`[0]`标记为已解决」（官方键 `web.collab.x.resolved`，拿不到名字则不发明半句）；同步白名单补两列。分享权限整篇文档级警告另见 G1524。",
+      "verdict": "☆ 已清（第 114 批）",
       "score": "2/1",
       "status": "partial",
       "scoreParsed": {

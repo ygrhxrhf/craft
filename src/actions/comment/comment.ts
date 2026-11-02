@@ -96,6 +96,8 @@ export async function getThreads(documentId: string) {
     blockId: row.blockId,
     blockText: row.blockText,
     resolved: row.resolved,
+    // G74：已解决区要显示**是谁解决的**（官方 `web.collab.x.resolved`）。
+    resolvedBy: row.resolvedBy ?? null,
     createdAt: row.createdAt,
     deletedAt: null,
     comments: (byThread.get(row.id) ?? []).map((c: any) => ({
@@ -152,7 +154,12 @@ export async function setThreadResolved(threadId: string, resolved: boolean) {
   if (!thread) throw new Error('评论不存在');
   await assertDocumentAccess((thread as { documentId: string }).documentId, session.user.id, 'commenter');
 
-  await db.orm.public.CommentThread.where({ id: threadId }).update({ resolved });
+  await db.orm.public.CommentThread.where({ id: threadId }).update({
+    resolved,
+    // G74：解决时记下操作人与时刻；取消解决时两枚都清掉（"谁解决的"只在已解决态成立）。
+    resolvedBy: resolved ? session.user.id : null,
+    resolvedAt: resolved ? new Date().toISOString() : null,
+  });
   await emitSyncEventSafe(db, session.user.id, ['comment_thread'], threadId);
 }
 

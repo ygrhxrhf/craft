@@ -18,6 +18,7 @@ const thread = (id: string, comments: ReturnType<typeof comment>[], extra: Parti
   blockId: null,
   blockText: '选区',
   resolved: false,
+  resolvedBy: null,
   createdAt: '2026-10-13T00:00:00.000Z',
   deletedAt: null,
   comments,

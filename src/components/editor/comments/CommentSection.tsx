@@ -17,7 +17,7 @@ import { MentionSuggest } from './MentionSuggest';
 import { groupReactions, reactionSentence } from './reaction-copy';
 import { toggleReaction, type Reaction } from './reactions';
 import { offlineReactionMessage } from './offline-reaction';
-import { resolvedToggleHint, resolvedToggleLabel } from '@/lib/comment/resolved-toggle';
+import { resolvedByText, resolvedToggleHint, resolvedToggleLabel } from '@/lib/comment/resolved-toggle';
 
 const REACTION_CHOICES = ['👍', '❤️', '😄', '🎉'];
 
@@ -34,6 +34,8 @@ interface ThreadRow {
   id: string;
   blockText: string;
   resolved: boolean;
+  /** G74: who resolved it (null when unresolved or unknown). */
+  resolvedBy: string | null;
   comments: CommentRow[];
 }
 
@@ -49,6 +51,7 @@ function toRows(threads: ThreadView[]): ThreadRow[] {
     id: thread.id,
     blockText: thread.blockText,
     resolved: thread.resolved,
+    resolvedBy: thread.resolvedBy,
     comments: thread.comments.map((comment) => ({
       id: comment.id,
       userId: comment.userId,
@@ -87,6 +90,8 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
   // 离线/加载中 session 可能为空：viewer id 由本地 user 镜像兜底，写入不依赖 session。
   // 必须是 state 而非 ref：表情按钮要按它判断「这枚是不是我加的」⇒ 渲染期读取。
   const [viewerId, setViewerId] = useState<string | null>(null);
+  // G74：解决者的显示名（userId → name），用于已解决区那句「[0]标记为已解决」。
+  const [userNameById, setUserNameById] = useState<Map<string, string>>(new Map());
 
   const reload = useCallback(async () => {
     const [pendingThreads, pendingComments, userRows] = await Promise.all([
@@ -96,6 +101,14 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
     ]);
     const resolvedViewerId = pickViewerId(userId, userRows);
     setViewerId(resolvedViewerId);
+    // G74：解决者显示名——从本机 user 镜像取（离线也拿得到）。
+    const names = new Map<string, string>();
+    for (const row of userRows as Record<string, unknown>[]) {
+      const id = typeof row.id === 'string' ? row.id : '';
+      const name = typeof row.name === 'string' && row.name ? row.name : '';
+      if (id && name) names.set(id, name);
+    }
+    setUserNameById(names);
     let serverThreads: ThreadView[] = [];
     try {
       serverThreads = (await getThreads(documentId)) as ThreadView[];
@@ -482,22 +495,29 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
             >
               {`${resolvedToggleLabel(showResolved)} (${resolvedThreads.length})`}
             </summary>
-            {resolvedThreads.map((thread) => (
-              <div
-                key={thread.id}
-                className="mt-1 flex items-center justify-between rounded-md border border-foreground/10 p-2 opacity-60"
-              >
-                <span className="line-clamp-1 text-meta">{thread.comments[0]?.body}</span>
-                <button
-                  type="button"
-                  title="重新打开"
-                  onClick={() => void handleResolve(thread.id, false)}
-                  className="p-1 text-foreground/40 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground/85"
+            {resolvedThreads.map((thread) => {
+              // G74：官方已解决区显示「[0]标记为已解决」——拿不到名字就不发明半句。
+              const by = resolvedByText(thread.resolvedBy ? userNameById.get(thread.resolvedBy) : null);
+              return (
+                <div
+                  key={thread.id}
+                  className="mt-1 flex items-center justify-between rounded-md border border-foreground/10 p-2 opacity-60"
                 >
-                  <X className="size-3.5" />
-                </button>
-              </div>
-            ))}
+                  <div className="min-w-0">
+                    <span className="line-clamp-1 text-meta">{thread.comments[0]?.body}</span>
+                    {by && <p className="text-[11px] text-foreground/40">{by}</p>}
+                  </div>
+                  <button
+                    type="button"
+                    title="重新打开"
+                    onClick={() => void handleResolve(thread.id, false)}
+                    className="p-1 text-foreground/40 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground/85"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </div>
+              );
+            })}
           </details>
         )}
       </div>

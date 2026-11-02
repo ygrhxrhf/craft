@@ -5,6 +5,7 @@ import {
   HIDE_RESOLVED_THREADS,
   SHOW_RESOLVED,
   SHOW_RESOLVED_THREADS,
+  resolvedByText,
   resolvedToggleHint,
   resolvedToggleLabel,
 } from './resolved-toggle';
@@ -30,5 +31,17 @@ describe('已解决开关的两套文案（G74）', () => {
     expect(resolvedToggleHint(true)).toBe('隐藏已解决的评论串');
     expect(resolvedToggleHint(false)).toBe('显示已解决的主题');
     expect(resolvedToggleHint(false)).not.toBe(SHOW_RESOLVED);
+  });
+});
+
+describe('resolvedByText (G74)', () => {
+  it('names who resolved the thread, verbatim from web.collab.x.resolved', () => {
+    expect(resolvedByText('张三')).toBe('张三标记为已解决');
+  });
+
+  it('returns null when the name is unknown — never invents half a sentence', () => {
+    expect(resolvedByText(null)).toBeNull();
+    expect(resolvedByText(undefined)).toBeNull();
+    expect(resolvedByText('   ')).toBeNull();
   });
 });

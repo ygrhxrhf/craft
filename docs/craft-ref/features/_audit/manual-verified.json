@@ -3406,11 +3406,14 @@
       ]
     },
     "G74": {
-      "status": "partial",
-      "note": "Enter/Shift+Enter、: 表情、@、reaction 聚合、已解决开关已落；缺解决操作人。",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "评论解决操作人：CommentThread 加 resolvedBy/resolvedAt 两列 + setThreadResolved 写入 + 已解决区显示「[0]标记为已解决」（web.collab.x.resolved）。",
       "evidence": [
-        "src/components/editor/comments/comment-overlay.ts:1",
-        "src/prisma/contract.prisma:422"
+        "src/prisma/contract.prisma",
+        "src/actions/comment/comment.ts",
+        "src/lib/comment/resolved-toggle.ts",
+        "src/components/editor/comments/CommentSection.tsx"
       ]
     },
     "G75": {

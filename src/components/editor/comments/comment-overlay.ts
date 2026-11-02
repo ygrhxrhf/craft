@@ -18,6 +18,8 @@ export interface ThreadView {
   blockId: string | null;
   blockText: string;
   resolved: boolean;
+  /** G74: who resolved it — the resolved section shows 「[0]标记为已解决」. */
+  resolvedBy: string | null;
   createdAt: string;
   deletedAt: string | null;
   comments: CommentView[];
@@ -76,6 +78,7 @@ export function overlayCommentThreads(
     blockId: strOrNull(pending.data?.blockId),
     blockText: str(pending.data?.blockText),
     resolved: pending.data?.resolved === true,
+    resolvedBy: strOrNull(pending.data?.resolvedBy),
     createdAt: pending.syncTs,
     deletedAt: null,
     comments: [],

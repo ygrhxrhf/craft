@@ -594,6 +594,9 @@ model CommentThread {
   blockId      String?
   blockText    String   @default("")
   resolved     Boolean  @default(false)
+  // G74：已解决区要显示**是谁解决的**（官方 `web.collab.x.resolved`「[0]标记为已解决」）。
+  resolvedBy   String?
+  resolvedAt   TimestamptzString?
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
   deletedAt    TimestamptzString?

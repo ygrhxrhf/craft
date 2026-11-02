@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.comment_threads.resolvedAt",
+    "label": "Add column \"resolvedAt\" to \"comment_threads\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "resolvedAt",
+        "table": "comment_threads"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"resolvedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "comment_threads",
+          "resolvedAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"resolvedAt\"",
+        "sql": "ALTER TABLE \"public\".\"comment_threads\" ADD COLUMN \"resolvedAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"resolvedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "comment_threads",
+          "resolvedAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.comment_threads.resolvedBy",
+    "label": "Add column \"resolvedBy\" to \"comment_threads\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "resolvedBy",
+        "table": "comment_threads"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"resolvedBy\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "comment_threads",
+          "resolvedBy"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"resolvedBy\"",
+        "sql": "ALTER TABLE \"public\".\"comment_threads\" ADD COLUMN \"resolvedBy\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"resolvedBy\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "comment_threads",
+          "resolvedBy"
+        ]
+      }
+    ]
+  }
+]

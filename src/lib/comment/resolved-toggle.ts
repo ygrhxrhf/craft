@@ -24,3 +24,16 @@ export function resolvedToggleLabel(showing: boolean): string {
 export function resolvedToggleHint(showing: boolean): string {
   return showing ? HIDE_RESOLVED_THREADS : SHOW_RESOLVED_THREADS;
 }
+
+/**
+ * G74 —— 已解决区要显示**是谁解决的**。官方键 `web.collab.x.resolved`「`[0]`标记为已解决」
+ * （`_harvest/i18n-zh.tsv:3926`），`[0]` 是解决者的显示名。拿不到名字（老数据没写 `resolvedBy`、
+ * 或账号已删）⇒ 返回 `null`，**不发明半句**（与 `signInGreeting` 同一条判据）。
+ */
+export const RESOLVED_BY_KEY = 'web.collab.x.resolved';
+
+export function resolvedByText(name: string | null | undefined): string | null {
+  const trimmed = name?.trim();
+  if (!trimmed) return null;
+  return `${trimmed}标记为已解决`;
+}

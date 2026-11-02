@@ -50,7 +50,7 @@ export const SYNC_TABLES: TableDef[] = [
   // 一定带 threadId ⇒ threadId 把加表情/删除在陈旧行上的铸壳挡住。
   { table: 'comment', model: 'Comment', cols: ['id','threadId','userId','body','reactions','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['threadId'] },
   // G1513：comment_thread 的单点动作＝解决 {resolved}／删除 {deletedAt}；离线新建一定带 documentId。
-  { table: 'comment_thread', model: 'CommentThread', cols: ['id','documentId','blockId','blockText','resolved','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['documentId'] },
+  { table: 'comment_thread', model: 'CommentThread', cols: ['id','documentId','blockId','blockText','resolved','resolvedBy','resolvedAt','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['documentId'] },
   { table: 'document_share', model: 'DocumentShare', cols: ['id','documentId','token','slug','passcode','isPublished','permission','showAuthor','showPageTitle','hideTableOfContents','hidePresentationMode','showWatermark','enableSeo','expiresAt','commentLevel','enableObjectLinks','showDuplicateAsTemplate','emailBasedAccessEnabled','hideHashTagWords','defaultDomain','shareVersion','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // document_member：contract 有 updatedAt、无 deletedAt（移除仍是服务端硬删，不走墓碑）
   { table: 'document_member', model: 'DocumentMember', cols: ['id','documentId','userId','role','addedBy','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },

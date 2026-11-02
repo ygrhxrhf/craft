@@ -52,6 +52,71 @@ export function columnsFromProperties(
 }
 
 /**
+ * G112 —— **CSV → 表格**的解析（RFC 4180）。与上面的序列化对称：
+ *   - 双引号包住含分隔符/换行/引号的原样字段，内部 `"` 双写；
+ *   - 行尾 `\r\n` 或 `\n` 都认；文件末尾的空行不算一行；
+ *   - 返回「表头 + 数据行」的二维字符串表，第一行是表头。
+ *
+ * 纯函数：不碰 DOM、不碰网络，于是"这个文件解析出来是什么"能被单测钉死。
+ */
+export function parseCsv(text: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = '';
+  let inQuotes = false;
+  let i = 0;
+  const src = text.replace(/^\uFEFF/, ''); // 去掉 BOM
+
+  while (i < src.length) {
+    const ch = src[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (src[i + 1] === '"') {
+          field += '"';
+          i += 2;
+          continue;
+        }
+        inQuotes = false;
+        i += 1;
+        continue;
+      }
+      field += ch;
+      i += 1;
+      continue;
+    }
+    if (ch === '"') {
+      inQuotes = true;
+      i += 1;
+      continue;
+    }
+    if (ch === ',') {
+      row.push(field);
+      field = '';
+      i += 1;
+      continue;
+    }
+    if (ch === '\r' || ch === '\n') {
+      row.push(field);
+      field = '';
+      rows.push(row);
+      row = [];
+      // `\r\n` 当作一个换行。
+      i += ch === '\r' && src[i + 1] === '\n' ? 2 : 1;
+      continue;
+    }
+    field += ch;
+    i += 1;
+  }
+  // 最后一段（没有以换行结尾时）。
+  if (field !== '' || row.length > 0) {
+    row.push(field);
+    rows.push(row);
+  }
+  // 丢掉纯空行（末尾那一行空串）。
+  return rows.filter((r) => !(r.length === 1 && r[0] === ''));
+}
+
+/**
  * 把「一行条目 + 它的值数组」压成 CSV 行：值的 key 是属性 id。
  * 同属性多值（多选/关系）用 `; ` 连接，与集合单元格的显示一致。
  */

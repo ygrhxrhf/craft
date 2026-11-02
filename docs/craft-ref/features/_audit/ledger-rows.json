@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T05:17:48.400Z",
+  "generatedAt": "2026-11-02T05:35:42.819Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1008,
+    "gap": 1007,
     "unknown": 198,
-    "aligned": 178,
+    "aligned": 179,
     "deliberate": 97,
     "partial": 61,
     "nonaction": 56,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 436,
+    "P2 / gap": 435,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 75,
+    "P2 / aligned": 76,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 38,
@@ -49,8 +49,16 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 1,
+  "conflicts": 2,
   "conflictRows": [
+    {
+      "id": "G112",
+      "line": 1262,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "无 ✎ 现读（2026-11-02）更正：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"sta",
+      "verdict": "☆ 已清（第 128 批）"
+    },
     {
       "id": "G384",
       "line": 1711,
@@ -3039,16 +3047,16 @@
       "cols": 5,
       "id": "G112",
       "official": "**CSV 文件块一键转集合**：`isCsvFileBlock` 守卫 + 集合名取文件名去扩展 + 正文走 `proxyUrl` 代理 + 埋点带 `state:\"start\"` 阶段",
-      "local": "无",
-      "verdict": "缺失",
+      "local": "无 ✎ 现读（2026-11-02）更正：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"start\"/\"success\"`）；② 解析＝`lib/collection/csv.ts` 的 `parseCsv`（RFC 4180：引号内逗号/换行/双写引号、BOM、LF 与 CRLF）；③ 落库＝`createCollectionFromCsv`（表头→属性列、每行→条目+每列值、默认属性改造成表头首列不留孤儿）；④ 入口＝附件块在 `isCsvFileBlock` 时出现「转为集合」（`data-testid=\"csv-to-collection\"`），完成后跳新集合。单测 14 条。",
+      "verdict": "☆ 已清（第 128 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

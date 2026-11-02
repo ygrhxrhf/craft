@@ -3655,10 +3655,15 @@
       ]
     },
     "G112": {
-      "status": "gap",
-      "note": "仅有集合导出 CSV；文件块一键转集合未实现",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "CSV 文件块一键转集合：csv-file.ts 守卫/取名/代理位/埋点 + parseCsv + createCollectionFromCsv + 附件块的「转为集合」入口。",
       "evidence": [
-        "src/app/(app)/collections/[id]/CollectionHeader.tsx:17"
+        "src/lib/collection/csv-file.ts",
+        "src/lib/collection/csv.ts",
+        "src/actions/collection/collection.ts",
+        "src/components/editor/extensions/attachment-view.tsx",
+        "src/lib/collection/csv-file.test.ts"
       ]
     },
     "G113": {

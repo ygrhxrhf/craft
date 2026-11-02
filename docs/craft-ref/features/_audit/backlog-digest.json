@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-02T05:17:48.624Z",
+  "generatedAt": "2026-11-02T05:35:43.114Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 427,
+    "aligned": 428,
     "partial": 328,
-    "gap": 168,
+    "gap": 167,
     "deliberate": 159,
     "unreachable": 20
   },
@@ -21,8 +21,8 @@
     "P2 / partial": 178,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / aligned": 112,
-    "P2 / gap": 95,
+    "P2 / aligned": 113,
+    "P2 / gap": 94,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1128,6 +1128,14 @@
   },
   "conflicts": [
     {
+      "id": "G112",
+      "line": 1262,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "无 ✎ 现读（2026-11-02）更正：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"start\"/\"success\"`）；② 解析＝`lib/collection/csv",
+      "verdict": "☆ 已清（第 128 批）"
+    },
+    {
       "id": "G384",
       "line": 1711,
       "status": "partial",
@@ -1144,7 +1152,7 @@
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
-      27
+      26
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",

@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { parseCsv } from '@/lib/collection/csv';
 
 // I2：集合系列表用 updatedAt 自动 bump，落库后广播即可；失败不阻断业务。
 const emitCollections = emitSyncEventSafe;
@@ -260,4 +261,76 @@ export async function getCollections() {
     });
   }
   return result;
+}
+
+/**
+ * G112 —— **CSV 文件块一键转集合**。
+ *
+ * 守卫与取名在纯核 `lib/collection/csv-file.ts`（`isCsvFileBlock`／`collectionNameFromFile`），
+ * 解析在 `lib/collection/csv.ts` 的 `parseCsv`。这里只做落库：
+ *   - 表头 → 属性列（默认那枚「名称」改成表头第一枚，避免留下一枚孤儿属性）；
+ *   - 每个数据行 → 一个条目 + 每列一枚值。
+ */
+export async function createCollectionFromCsv(name: string, csvText: string) {
+  const parsed = parseCsv(csvText);
+  if (parsed.length === 0) throw new Error('这个 CSV 里没有内容');
+  const header = parsed[0].map((h, i) => (h.trim() ? h.trim() : `列 ${i + 1}`));
+  const rows = parsed.slice(1);
+  if (rows.length === 0) throw new Error('这个 CSV 只有表头');
+
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+  const db = await getDb();
+
+  const { id: collectionId } = await createCollection({ name });
+
+  // 默认属性改造成表头第一列，其余按顺序补——不留孤儿列。
+  const existing: Record<string, unknown>[] = await db.orm.public.CollectionProperty
+    .where({ collectionId })
+    .all();
+  const first = existing[0];
+  if (first) {
+    await db.orm.public.CollectionProperty.where({ id: String(first.id) }).update({ name: header[0] });
+  }
+  const propertyIds: string[] = first ? [String(first.id)] : [];
+  for (let col = 1; col < header.length; col += 1) {
+    const propertyId = crypto.randomUUID();
+    await db.orm.public.CollectionProperty.create({
+      id: propertyId,
+      collectionId,
+      name: header[col],
+      type: 'text',
+      order: col,
+      isVisible: true,
+    });
+    propertyIds.push(propertyId);
+  }
+
+  for (let r = 0; r < rows.length; r += 1) {
+    const itemId = crypto.randomUUID();
+    await db.orm.public.CollectionItem.create({
+      id: itemId,
+      collectionId,
+      order: r,
+      // G427：新条目一出生就带自己的主集合，后续"加入另一个集合"只追加。
+      schemas: [collectionId],
+    });
+    const cells = rows[r];
+    for (let col = 0; col < propertyIds.length; col += 1) {
+      const text = (cells[col] ?? '').trim();
+      if (!text) continue;
+      await db.orm.public.CollectionValue.create({
+        id: crypto.randomUUID(),
+        itemId,
+        propertyId: propertyIds[col],
+        // G451：带类型判别对象，与单元格写入同一形状。
+        value: { type: 'text', value: text },
+      });
+    }
+  }
+
+  await emitCollections(db, session.user.id, ['collection_property', 'collection_item', 'collection_value'], collectionId);
+  revalidatePath('/collections');
+  revalidatePath(`/collections/${collectionId}`);
+  return { id: collectionId, rowCount: rows.length };
 }

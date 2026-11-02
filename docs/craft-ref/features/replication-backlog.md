@@ -98,7 +98,7 @@
 | G31 | 已对齐 | 1/1 | 分隔线四档＝极细/细/常规/粗（R7） | 词汇表已迁到官方四档（divider-styles.ts），但 ★ 渲染层没跟上：globals.css 只给旧名 thin/m | 无需动作；抽检证据见台账行；`src/lib/editor/divider-commands.ts` |
 | G34 | 未动 | 1/1 | 表格部分操作禁止走上下文菜单并给「请使用 [0] 来 [1]」改道提示（R10） | 无该分支（TableToolbar.tsx 未实现禁用提示） | 补实现；先现读确认前置 |
 | G35 | 有意偏差 | 1/2 | 白板副本与原件联动、旧版升级迁移（R12） | tldraw 白板无「副本联动原件」概念 | 不做（有意偏差），不进复刻 backlog |
-| G36 | 部分落地 | 1/2 | 离线语义可见：「离线更新于 [0]」、离线禁用表情/评论（R13） | 部分落地（第 220 批）＝① 离线保存徽标已清＝纯核 src/lib/offline/save-status.ts（offli | 补剩余部分；先按现读确认边界 |
+| G36 | 已对齐 | 1/2 | 离线语义可见：「离线更新于 [0]」、离线禁用表情/评论（R13） | 部分落地（第 220 批）＝① 离线保存徽标已清＝纯核 src/lib/offline/save-status.ts（offli | 离线徽标三态与离线表情门禁已落；在线文案归 G1528，离线评论门禁为有意偏差；`src/lib/offline/save-status.ts`、`src/components/editor/DocumentEditor.tsx:105`、`src/components/editor/comments/offline-reaction.ts` |
 | G37 | 未动 | 1/2 | 移动端抽屉多档吸附（data-vaul-snap-points 17 处） | 底部 Sheet 无 snap points | 补实现；先现读确认前置 |
 | G38 | 已对齐 | 1/1 | 未发布文档作者/展示控制（toolbar.author.hidden/shown） | 已清（第 219 批）＝官方把它归在发布面板的 toolbar.visual.options 五组之一（publishing.m | 无需动作；抽检证据见台账行 |
 | G39 | 未动 | 2/2 | AI：提示库、写作风格分析、PDF 问答、AI 额度与清除历史（assistant.* 223 条） | 只有改写/续写/翻译/总结 + 生图（AiBubbleMenu.tsx:18-22） | 补实现；先现读确认前置 |
@@ -146,7 +146,7 @@
 | 条数 | 节 |
 | --- | --- |
 | 51 | 三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第 |
-| 26 | 三点七、P2 追加（来自 dialogs.md 与 protoco |
+| 24 | 三点七、P2 追加（来自 dialogs.md 与 protoco |
 | 21 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
 | 12 | 三点一〇六十、第 110 批〔★★★ 代码块主题的作用域结案＝块级， |
 | 11 | 三点一〇三八、第 97 批〔★★★ G943 裁定＝连接器的按键不自 |

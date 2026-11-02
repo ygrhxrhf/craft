@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T06:27:04.418Z",
+  "generatedAt": "2026-11-02T06:31:44.930Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 446,
-    "partial": 314,
+    "aligned": 449,
+    "partial": 311,
     "gap": 162,
     "deliberate": 160,
     "unreachable": 20
@@ -20,8 +20,8 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 164,
-    "P2 / aligned": 131,
+    "P2 / partial": 161,
+    "P2 / aligned": 134,
     "P1 / nonaction": 89,
     "P2 / gap": 89,
     "P? / partial": 80,
@@ -1054,10 +1054,10 @@
         "cols": 5,
         "id": "G36",
         "official": "离线语义可见：「离线更新于 [0]」、离线禁用表情/评论（R13）",
-        "local": "☆ 部分落地（第 220 批）＝① **离线保存徽标**已清＝纯核 `src/lib/offline/save-status.ts`（`offlineSaveLabel`：在线返回 `null`＝不动徽标；离线非每日笔记⇒「未连接到网络」`alert.not.connected.to.internet`；离线每日笔记且有本机草稿⇒「离线更新于 HH:MM」`daily.updated.offline.x`，逐字取自 `i18n-zh.tsv:200-201,1699`）＋`DocumentEditor.tsx` 接 `online/offline` 事件与 `getDraft` 时刻 ② **离线禁用表情**早已落地（`comments/offline-reaction.ts`，逐字两句）③ 仍缺＝**在线**徽标文案仍是本地「已保存」而非官方「所有更改已保存」（`alert.all.changes.saved`）⇒ 另立 **G1528**；④ **离线禁用评论**本仓**有意不做**（离线优先内核让评论写入断链也留得住＝架构选择，不照抄官方门禁）；**真浏览器取证**＝`ctx.setOffline(true)` 后徽标 `已保存→未连接到网络→已保存`，每日笔记且本机有草稿时逐字 `离线更新于 17:59`",
-        "verdict": "部分落地",
+        "local": "☆ 部分落地（第 220 批）＝① **离线保存徽标**已清＝纯核 `src/lib/offline/save-status.ts`（`offlineSaveLabel`：在线返回 `null`＝不动徽标；离线非每日笔记⇒「未连接到网络」`alert.not.connected.to.internet`；离线每日笔记且有本机草稿⇒「离线更新于 HH:MM」`daily.updated.offline.x`，逐字取自 `i18n-zh.tsv:200-201,1699`）＋`DocumentEditor.tsx` 接 `online/offline` 事件与 `getDraft` 时刻 ② **离线禁用表情**早已落地（`comments/offline-reaction.ts`，逐字两句）③ 在线徽标另立 **G1528**（已单独挂账）④ **离线禁用评论**本仓**有意不做**（离线优先内核让评论写入断链也留得住＝架构选择，不照抄官方门禁）；**真浏览器取证**＝`ctx.setOffline(true)` 后徽标 `已保存→未连接到网络→已保存`，每日笔记且本机有草稿时逐字 `离线更新于 17:59` ✎ 现读（2026-11-02）：本条已无未落项（在线文案归 G1528、评论门禁为有意偏差）。",
+        "verdict": "☆ 已清（第 132 批）",
         "score": "1/2",
-        "status": "partial",
+        "status": "aligned",
         "scoreParsed": {
           "impact": 1,
           "cost": 2,
@@ -1065,6 +1065,12 @@
         },
         "conflict": null,
         "priority": "P2",
+        "note": "离线徽标三态与离线表情门禁已落；在线文案归 G1528，离线评论门禁为有意偏差。",
+        "evidence": [
+          "src/lib/offline/save-status.ts",
+          "src/components/editor/DocumentEditor.tsx:105",
+          "src/components/editor/comments/offline-reaction.ts"
+        ],
         "baseStatus": "partial"
       },
       {
@@ -1144,7 +1150,7 @@
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
-      26
+      24
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",

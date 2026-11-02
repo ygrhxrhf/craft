@@ -235,8 +235,14 @@
       "priority": "P2"
     },
     "G36": {
-      "status": "partial",
-      "priority": "P2"
+      "status": "aligned",
+      "priority": "P2",
+      "note": "离线徽标三态与离线表情门禁已落；在线文案归 G1528，离线评论门禁为有意偏差。",
+      "evidence": [
+        "src/lib/offline/save-status.ts",
+        "src/components/editor/DocumentEditor.tsx:105",
+        "src/components/editor/comments/offline-reaction.ts"
+      ]
     },
     "G37": {
       "status": "gap",
@@ -3477,10 +3483,13 @@
       ]
     },
     "G84": {
-      "status": "partial",
-      "note": "仅排序/分组时禁拖（筛选不拦）；缺标题列类型锁、改类型确认与删组语义",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "五条守卫均已对上：标题无类型菜单、改类型二次确认、删组只清值、项目删除独立、筛选/排序/分组任一激活禁拖。",
       "evidence": [
-        "src/lib/collection/item-reorder.ts:49"
+        "src/lib/collection/item-reorder.ts:49",
+        "src/app/(app)/collections/[id]/TableView.tsx:117",
+        "src/components/collection/FieldMenu.tsx:91"
       ]
     },
     "G85": {
@@ -3519,10 +3528,15 @@
       ]
     },
     "G91": {
-      "status": "partial",
-      "note": "汇总行仅数字求和/其他计数；缺 21 项可选聚合与按类型许可",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "21 项聚合与按类型许可集落地；汇总格可选可清除，百分比分母为总行数，空集不显示 0。",
       "evidence": [
-        "src/lib/collection/summary.ts:16"
+        "src/lib/collection/summary.ts:110",
+        "src/lib/collection/summary.ts:139",
+        "src/components/collection/SummaryCell.tsx",
+        "src/app/(app)/collections/[id]/TableView.tsx:340",
+        "src/lib/collection/summary.test.ts"
       ]
     },
     "G92": {

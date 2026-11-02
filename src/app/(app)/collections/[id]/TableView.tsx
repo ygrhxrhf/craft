@@ -11,29 +11,15 @@ import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { PropertyCell } from '@/components/collection/PropertyCell';
+import { SummaryCell, aggregationFromConfig } from '@/components/collection/SummaryCell';
 import { FieldMenu } from '@/components/collection/FieldMenu';
 import { HideOrderFieldsMenu } from '@/components/collection/HideOrderFieldsMenu';
 import { FilterBar, applyFilters } from '@/components/collection/FilterBar';
 import { SortMenu, applySorts } from '@/components/collection/SortMenu';
 import { GroupMenu, applyGrouping } from '@/components/collection/GroupMenu';
 import type { getCollection } from '@/actions/collection/collection';
-import { applyCalculation, summarizeColumn, type SummaryCalculation } from '@/lib/collection/summary';
+import type { AggregationId } from '@/lib/collection/summary';
 
-/** G41: the calculation a column's config picks, if any. */
-function summaryCalculationOf(property: { config?: unknown }): SummaryCalculation | null {
-  const config = property?.config;
-  const parsed = typeof config === 'string' ? safeParse(config) : config;
-  const value = (parsed as { summaryCalculation?: unknown } | null)?.summaryCalculation;
-  return typeof value === 'string' ? (value as SummaryCalculation) : null;
-}
-
-function safeParse(value: string): unknown {
-  try {
-    return JSON.parse(value);
-  } catch {
-    return null;
-  }
-}
 type Collection = Awaited<ReturnType<typeof getCollection>>;
 type View = NonNullable<Collection>['views'][number];
 
@@ -146,6 +132,21 @@ export function TableView({ collection, view }: TableViewProps) {
 
   const handleAddItem = async () => {
     await addItem(collection.id);
+    router.refresh();
+  };
+
+  /** G91：汇总格的选择写进列 config；「默认」= 删掉该键。 */
+  const handleSummaryPick = async (property: { id: string; config?: unknown }, next: AggregationId | null) => {
+    const config = { ...parseConfig(typeof property.config === 'string' ? property.config : null) };
+    if (next) config.summaryCalculation = next;
+    else delete config.summaryCalculation;
+    const manager = getSyncManager();
+    await manager.applyLocal({
+      table: 'collection_property',
+      id: property.id,
+      patch: { config: JSON.stringify(config) },
+    });
+    await manager.flushNow();
     router.refresh();
   };
 
@@ -336,15 +337,13 @@ export function TableView({ collection, view }: TableViewProps) {
                             key={property.id}
                             className="border-r border-border px-[var(--st-cell-padding-x)] py-1 typography-ui-sm-500 first:border-l"
                           >
-                            {(() => {
-                              // G41: a column may pick its own summary calculation (the official
-                              // `CalculationsRow`); without one it falls back to the type default.
-                              const calc = summaryCalculationOf(property);
-                              const values = items.map((item: any) => getCellValue(item, property.id));
-                              return calc && calc !== 'none'
-                                ? applyCalculation(calc, values)
-                                : summarizeColumn(property, values);
-                            })()}
+                            <SummaryCell
+                              type={property.type}
+                              current={aggregationFromConfig(property.config)}
+                              values={items.map((item: any) => getCellValue(item, property.id))}
+                              rowCount={collection.items.length}
+                              onPick={(next) => void handleSummaryPick(property, next)}
+                            />
                           </td>
                         ))}
                         <td className="border-border px-1 py-0" />
@@ -442,7 +441,13 @@ export function TableView({ collection, view }: TableViewProps) {
                     key={property.id}
                     className="border-r border-border px-[var(--st-cell-padding-x)] py-1 typography-ui-sm-500 first:border-l"
                   >
-                    {summarizeColumn(property, processedItems.map((item: any) => getCellValue(item, property.id)))}
+                    <SummaryCell
+                      type={property.type}
+                      current={aggregationFromConfig(property.config)}
+                      values={processedItems.map((item: any) => getCellValue(item, property.id))}
+                      rowCount={collection.items.length}
+                      onPick={(next) => void handleSummaryPick(property, next)}
+                    />
                   </td>
                 ))}
                 <td className="border-border px-1 py-0" />

@@ -14,6 +14,7 @@ import { actionEnabled } from '@/lib/editor/action-availability';
 import { confirmDialog } from '@/lib/dialog/show';
 import { leaveDocument } from '@/actions/document/members';
 import { LEAVE_CONFIRM, LEAVE_DOCUMENT_SINGULAR, LEAVE_FAILED_DESC, LEAVE_FAILED_TITLE } from '@/lib/share/leave-document';
+import type { PageStyle } from '@/components/editor/themes/page-style';
 import { getBacklinks } from '@/actions/document/backlinks';
 import { saveAsTemplate } from '@/actions/document/template';
 import { toggleFavoriteLocal, resolveFavoriteState } from '@/lib/favorite/toggle-local';
@@ -62,6 +63,9 @@ interface InfoTabProps {
   isOwner: boolean;
   /** G588: whether the actor may comment (a viewer can read threads but not compose). */
   canComment?: boolean;
+  /** G1453: 页面信息里的「展示」段读写页面显示设置（与样式页签同一份 pageStyle）。 */
+  pageStyle?: PageStyle;
+  onPageStylePatch?: (patch: Partial<PageStyle>) => void;
   onClose: () => void;
 }
 
@@ -86,7 +90,7 @@ interface DocItem {
   parentId: string | null;
 }
 
-export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = true, onClose }: InfoTabProps) {
+export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = true, pageStyle, onPageStylePatch, onClose }: InfoTabProps) {
   const router = useRouter();
   const [subTab, setSubTab] = useState<'info' | 'actions'>('info');
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
@@ -401,6 +405,36 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
               </div>
             </div>
           </section>
+
+          {/* G1453：官方「页面信息」的第二段是「展示」——页面自己的显示开关。
+              本地这份读写与样式页签同一份 `pageStyle`，所以两边永远一致。 */}
+          {pageStyle && onPageStylePatch && (
+            <section data-testid="info-present-section">
+              <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">展示</h4>
+              <div className="space-y-1">
+                <label className="flex items-center justify-between rounded-md px-1 py-1 text-ui">
+                  <span>显示文档标题</span>
+                  <input
+                    type="checkbox"
+                    data-testid="info-show-title"
+                    checked={pageStyle.showTitle !== false}
+                    onChange={(event) => onPageStylePatch({ showTitle: event.target.checked })}
+                    className="size-4 accent-(--craft-accent)"
+                  />
+                </label>
+                <label className="flex items-center justify-between rounded-md px-1 py-1 text-ui">
+                  <span>拼写检查</span>
+                  <input
+                    type="checkbox"
+                    data-testid="info-spelling"
+                    checked={pageStyle.spelling === true}
+                    onChange={(event) => onPageStylePatch({ spelling: event.target.checked })}
+                    className="size-4 accent-(--craft-accent)"
+                  />
+                </label>
+              </div>
+            </section>
+          )}
 
           {/* Location — the document's folder or ancestry (G203), 未分类 when it has neither */}
           {locationLoaded && (

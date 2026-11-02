@@ -8804,11 +8804,13 @@
       ]
     },
     "G1453": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "两层层级本已成立（顶层两枚子页签 + 内层段）；剩余差异是段序与「展示」段未落（本地展示设置落在样式页签）。",
+      "note": "两层层级 + 段序与官方一致：页面信息内 属性→展示→位置→统计；本批补「展示」段（显示文档标题／拼写检查，读写同一份 pageStyle）。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx"
+        "src/components/editor/tabs/InfoTab.tsx",
+        "src/components/editor/tabs/RightPanel.tsx",
+        "src/components/editor/themes/page-style.ts"
       ]
     },
     "G1454": {

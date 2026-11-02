@@ -140,6 +140,8 @@ export function RightPanel({
                 wordCount={wordCount}
                 isOwner={isOwner}
                 canComment={canComment}
+                pageStyle={pageStyle}
+                onPageStylePatch={(patch) => onUpdate({ pageStylePatch: patch })}
                 onClose={onClose}
               />
             )}

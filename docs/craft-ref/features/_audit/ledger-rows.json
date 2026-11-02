@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T11:44:13.472Z",
+  "generatedAt": "2026-11-02T11:58:11.447Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 932,
-    "aligned": 251,
+    "gap": 931,
+    "aligned": 252,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 361,
+    "P2 / gap": 360,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 154,
-    "P2 / aligned": 147,
+    "P2 / aligned": 148,
     "P? / unknown": 112,
     "P1 / aligned": 40,
     "P2 / deliberate": 39,
@@ -3738,11 +3738,11 @@
       "cols": 6,
       "id": "G148",
       "official": "代码块详情含**拆分视图、全屏、关闭预览、复制、编辑**，以及**可搜索的语言选择器与主题选择器**（`search.languages` / `search.themes`）（§六）",
-      "local": "✎ 现读（2026-10-31）更正：全屏、复制、语言与主题选择器已落；无拆分视图与关闭预览",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-02）：五项齐——拆分视图（预览/源码左右各半）、全屏（Esc 退出）、关闭预览、复制、编辑；语言与主题均为带搜索框的选择器 ☆ 已清（第 179 批）",
+      "verdict": "对齐",
       "score": "2/2",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝无拆分视图/全屏；语言与主题选择器不可搜索",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

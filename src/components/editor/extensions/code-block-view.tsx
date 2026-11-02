@@ -2,10 +2,11 @@
 
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { Check, Copy, Maximize2, Minimize2 } from 'lucide-react';
+import { Check, Copy, Columns2, EyeOff, Maximize2, Minimize2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { CODE_LANGUAGES, filterLanguages } from '@/lib/editor/code-languages';
 import { appearsInLanguageMenu } from '@/lib/editor/mermaid-surface';
+import { CODE_CLOSE_PREVIEW, CODE_SPLIT_VIEW, hasCodePreview } from '@/lib/editor/code-block-detail';
 import { storeDefaultLanguage, storeDefaultTheme } from '@/lib/editor/code-preferences';
 import { CODE_THEMES, DEFAULT_CODE_THEME, filterThemes, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
 import { cn } from 'cn';
@@ -15,7 +16,12 @@ import { MermaidPreview } from './mermaid-preview';
 export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
   const [copied, setCopied] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  // G148: 拆分视图（预览与源码左右并排）与关闭预览。
+  const [split, setSplit] = useState(false);
+  const [previewClosed, setPreviewClosed] = useState(false);
   const language = (node.attrs.language as string) ?? '';
+  const previewable = hasCodePreview(language);
+  const showPreview = previewable && !previewClosed;
   const themeId = (node.attrs.themeId as string) ?? DEFAULT_CODE_THEME;
   // `auto` reads the app's own light/dark state, which the `.dark` class carries.
   const isDark =
@@ -95,45 +101,87 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
             storeDefaultTheme(next);
           }}
         />
-        <button
-          type="button"
-          onClick={() => setFullscreen((value) => !value)}
-          aria-label="全屏模式"
-          aria-pressed={fullscreen}
-          className="ml-auto inline-flex items-center gap-1 rounded px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-          {fullscreen ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
-          全屏模式
-        </button>
-        <button
-          type="button"
-          onClick={copy}
-          aria-label="复制代码"
-          className="inline-flex items-center gap-1 rounded px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-          {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-          {copied ? '已复制' : '复制'}
-        </button>
-      </div>
-      {language === 'mermaid' && (
-        <MermaidPreview source={node.textContent ?? ''} dark={isDark} />
-      )}
-      <div
-        className={cn('flex', fullscreen && 'min-h-0 flex-1')}
-        style={{ background: surface.background, color: surface.foreground }}
-      >
-        <div
-          aria-hidden
-          className="code-gutter shrink-0 select-none py-3 text-right font-mono"
-          style={{ color: surface.gutterForeground }}
-        >
-          {Array.from({ length: lineCount }, (_, index) => (
-            <div key={index}>{index + 1}</div>
-          ))}
+        <div className="ml-auto flex items-center gap-1">
+          {previewable && (
+            <>
+              <button
+                type="button"
+                onClick={() => setSplit((value) => !value)}
+                aria-label={CODE_SPLIT_VIEW.label}
+                aria-pressed={split}
+                className={cn(
+                  'inline-flex items-center gap-1 rounded px-1.5 py-1 text-xs transition-colors hover:bg-muted hover:text-foreground',
+                  split ? 'text-foreground' : 'text-muted-foreground',
+                )}
+              >
+                <Columns2 className="size-3.5" />
+                {CODE_SPLIT_VIEW.label}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewClosed((value) => !value)}
+                aria-label={CODE_CLOSE_PREVIEW.label}
+                aria-pressed={previewClosed}
+                className={cn(
+                  'inline-flex items-center gap-1 rounded px-1.5 py-1 text-xs transition-colors hover:bg-muted hover:text-foreground',
+                  previewClosed ? 'text-foreground' : 'text-muted-foreground',
+                )}
+              >
+                <EyeOff className="size-3.5" />
+                {CODE_CLOSE_PREVIEW.label}
+              </button>
+            </>
+          )}
+          <button
+            type="button"
+            onClick={() => setFullscreen((value) => !value)}
+            aria-label="全屏模式"
+            aria-pressed={fullscreen}
+            className="inline-flex items-center gap-1 rounded px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            {fullscreen ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
+            全屏模式
+          </button>
+          <button
+            type="button"
+            onClick={copy}
+            aria-label="复制代码"
+            className="inline-flex items-center gap-1 rounded px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+            {copied ? '已复制' : '复制'}
+          </button>
         </div>
-        <pre className="min-w-0 flex-1 overflow-x-auto py-3 pr-3 font-mono">
-          <NodeViewContent<'code'> as="code" />
-        </pre>
+      </div>
+      <div
+        className={cn(
+          'flex',
+          fullscreen && 'min-h-0 flex-1',
+          split && showPreview ? 'flex-row' : 'flex-col',
+        )}
+      >
+        {showPreview && (
+          <div className={cn('min-w-0', split && 'w-1/2 border-r border-border')}>
+            <MermaidPreview source={node.textContent ?? ''} dark={isDark} />
+          </div>
+        )}
+        <div
+          className={cn('flex min-w-0', fullscreen && 'min-h-0 flex-1', split && showPreview && 'w-1/2 flex-1')}
+          style={{ background: surface.background, color: surface.foreground }}
+        >
+          <div
+            aria-hidden
+            className="code-gutter shrink-0 select-none py-3 text-right font-mono"
+            style={{ color: surface.gutterForeground }}
+          >
+            {Array.from({ length: lineCount }, (_, index) => (
+              <div key={index}>{index + 1}</div>
+            ))}
+          </div>
+          <pre className="min-w-0 flex-1 overflow-x-auto py-3 pr-3 font-mono">
+            <NodeViewContent<'code'> as="code" />
+          </pre>
+        </div>
       </div>
     </NodeViewWrapper>
   );

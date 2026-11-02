@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T11:44:14.041Z",
+  "generatedAt": "2026-11-02T11:58:11.777Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 508,
-    "partial": 275,
+    "aligned": 509,
+    "partial": 274,
     "deliberate": 165,
     "gap": 134,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 193,
+    "P2 / aligned": 194,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 125,
+    "P2 / partial": 124,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1263,10 +1263,6 @@
       6
     ],
     [
-      "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
-      5
-    ],
-    [
       "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
       5
     ],
@@ -1293,6 +1289,10 @@
     [
       "三点一一一九、第 181 批新登记的官方行为（2026-10-09 05",
       5
+    ],
+    [
+      "三点一〇、协同与权限追加（来自 `collab.md`，静态证据）",
+      4
     ]
   ]
 }

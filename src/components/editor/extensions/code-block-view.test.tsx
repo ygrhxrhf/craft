@@ -29,6 +29,15 @@ describe('代码块的语言与主题选择器＝带搜索框的菜单，展示�
     expect(source).toContain('fixed inset-4');
   });
 
+  it('只有带预览的块才有拆分视图与关闭预览（G148）', () => {
+    const mermaid = render('mermaid', 'auto', 'graph TD; A-->B');
+    expect(mermaid).toContain('aria-label="拆分视图"');
+    expect(mermaid).toContain('aria-label="关闭预览"');
+    const python = render('python');
+    expect(python).not.toContain('aria-label="拆分视图"');
+    expect(python).not.toContain('aria-label="关闭预览"');
+  });
+
   it('两个选择器都带官方搜索占位（搜索语言／搜索主题）', () => {
     // The search box renders only while the menu is open, so the closed markup cannot show it.
     const source = readFileSync(fileURLToPath(new URL('./code-block-view.tsx', import.meta.url)), 'utf8');

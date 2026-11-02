@@ -3912,9 +3912,10 @@
       ]
     },
     "G148": {
-      "status": "partial",
-      "note": "全屏、复制、语言与主题选择器已落；无拆分视图与关闭预览",
+      "status": "aligned",
+      "note": "第 179 批补拆分视图与关闭预览；全屏/复制/可搜索语言与主题选择器原有",
       "evidence": [
+        "src/lib/editor/code-block-detail.ts:1",
         "src/components/editor/extensions/code-block-view.tsx:90"
       ]
     },

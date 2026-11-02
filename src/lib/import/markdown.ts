@@ -248,6 +248,47 @@ function parseBlocks(lines: string[]): PmNode[] {
       }
     }
 
+    // G674: three Craft-specific extensions ride on plain Markdown — `<callout>…</callout>`
+    // becomes a callout block, a line starting `+ ` becomes a toggle, `>` stays a quote.
+    const calloutOpen = /^<callout(?:\s+type="([^"]+)")?\s*>$/i.exec(line.trim());
+    if (calloutOpen) {
+      const allowed = new Set(['info', 'warning', 'error', 'success', 'note']);
+      const type = (calloutOpen[1] ?? 'info').toLowerCase();
+      const body: string[] = [];
+      index += 1;
+      while (index < lines.length && !/^\s*<\/callout>\s*$/i.test(lines[index])) {
+        body.push(lines[index]);
+        index += 1;
+      }
+      index += 1;
+      blocks.push({
+        type: 'callout',
+        attrs: { type: allowed.has(type) ? type : 'info' },
+        content: body.length ? parseBlocks(body) : [{ type: 'paragraph' }],
+      });
+      continue;
+    }
+
+    if (/^\+\s+/.test(line)) {
+      const firstLine = line.replace(/^\+\s+/, '');
+      const nested: string[] = [];
+      index += 1;
+      // G674: child rows must be indented under the toggle; they become its content.
+      while (index < lines.length && /^\s{2,}\S/.test(lines[index])) {
+        nested.push(lines[index].replace(/^\s{2}/, ''));
+        index += 1;
+      }
+      blocks.push({
+        type: 'toggleBlock',
+        attrs: { open: false },
+        content: [
+          { type: 'paragraph', content: parseInline(firstLine) },
+          ...(nested.length ? parseBlocks(nested) : []),
+        ],
+      });
+      continue;
+    }
+
     if (/^>\s?/.test(line)) {
       const body: string[] = [];
       while (index < lines.length && /^>\s?/.test(lines[index])) {

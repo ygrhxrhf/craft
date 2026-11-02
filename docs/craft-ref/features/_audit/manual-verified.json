@@ -6290,10 +6290,12 @@
       ]
     },
     "G674": {
-      "status": "partial",
-      "note": "导入器支持 > 引用与缩进列表，但不认 <callout> 与行首 + 的 toggle 语法",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "导入面接 <callout> 与行首 + toggle（含缩进子行）；> 引用既有；CLI 输入契约 N/A。",
       "evidence": [
-        "src/lib/import/markdown.ts:236"
+        "src/lib/import/markdown.ts:251",
+        "src/lib/import/markdown.test.ts"
       ]
     },
     "G675": {

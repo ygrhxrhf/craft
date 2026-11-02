@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:26:25.322Z",
+  "generatedAt": "2026-11-02T07:33:08.232Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 970,
-    "aligned": 214,
+    "gap": 969,
+    "aligned": 215,
     "unknown": 195,
     "deliberate": 103,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 398,
+    "P2 / gap": 397,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
+    "P2 / aligned": 112,
     "P? / unknown": 112,
-    "P2 / aligned": 111,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
     "P3 / aligned": 39,
@@ -13186,10 +13186,10 @@
       "cols": 5,
       "id": "G674",
       "official": "★★ **官方 markdown 有三条自定义扩展语法**（写在 `blocks add --help` 里）：`<callout>…</callout>`＝提示块、行首 `+ `＝`listStyle=toggle` 的普通文本块、`>`＝引用；★ 并给出**折叠子级规则**「子行必须缩进在 toggle 之下，同级的普通文本会生成**空 toggle**」，还给了改写示例（`+ Packing list` / 缩进 `- Passport`）；☆ 另一条输入净化契约：「不要把文档标题重复写进正文，`documents create` 已经建了标题」＋ 换行规则「用真实换行符；`\\n\\n` 双转义可作段落间隔、单个 `\\n` 仍是文本、避免双转义」",
-      "local": "本地 markdown 入口只认标准语法＋缩进嵌套：`src/lib/import/markdown.ts:113-168`（`indent` 驱动 `build()` 造嵌套列表）、`:188-197` 行内只处理 `` ` ``、`**`、`~~`、`[]`、`![]`；本轮实跑 `grep -rn -iE \"callout|toggle|checkbox\" src/lib/import/` ⇒ 仅 `markdown.test.ts:39` 一句「keeps task checkboxes」⇒ **`<callout>` 与 `+ toggle` 两条扩展无解析分支**，虽然编辑器侧确有 `callout`/`toggleBlock` 节点（`src/components/editor/extensions/focus-style.tsx:20` 的节点名单）",
-      "verdict": "缺失（导入面）",
+      "local": "本地 markdown 入口已接两条扩展 ✎ 现读（2026-11-02）更正：`parseMarkdown` 新增 `<callout type=\"…\">…</callout>` 分支（未知 type 落 info）与行首 `+ ` 的 toggle 分支（缩进子行收进 toggle 内容，`- Passport` 成嵌套列表）；`>` 仍走既有引用分支。标题去重/换行转义是官方 CLI 的输入契约，本仓导入以文件名为题、正文原样解析 ⇒ N/A。单测 4 条。",
+      "verdict": "☆ 已清（第 150 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

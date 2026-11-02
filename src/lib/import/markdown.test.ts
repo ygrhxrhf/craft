@@ -338,3 +338,37 @@ describe('imported table rows and cells carry stable ids (G439)', () => {
     expect(row.content[0].attrs.cellId).not.toBe(row.content[1].attrs.cellId);
   });
 });
+
+// G674: Craft's three custom Markdown extensions.
+describe('Craft-specific Markdown extensions (G674)', () => {
+  it('turns <callout> into a callout block carrying its type', () => {
+    const [block] = blocks('<callout type="warning">\n小心\n</callout>');
+    expect(block.type).toBe('callout');
+    expect(block.attrs.type).toBe('warning');
+  });
+
+  it('falls back to the info callout for an unknown type', () => {
+    const [block] = blocks('<callout type="nope">\n内容\n</callout>');
+    expect(block.type).toBe('callout');
+    expect(block.attrs.type).toBe('info');
+  });
+
+  it('turns a line starting with + into a toggle block', () => {
+    const [block] = blocks('+ 折叠内容');
+    expect(block.type).toBe('toggleBlock');
+    expect(block.attrs.open).toBe(false);
+    expect(block.content[0].content[0].text).toBe('折叠内容');
+  });
+
+  it('nests indented child rows inside the toggle', () => {
+    const [block] = blocks('+ Packing list\n  - Passport');
+    expect(block.type).toBe('toggleBlock');
+    expect(block.content).toHaveLength(2);
+    expect(block.content[1].type).toBe('bulletList');
+  });
+
+  it('leaves > as a blockquote', () => {
+    const [block] = blocks('> 引用');
+    expect(block.type).toBe('blockquote');
+  });
+});

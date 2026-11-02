@@ -3914,10 +3914,12 @@
       ]
     },
     "G159": {
-      "status": "partial",
-      "note": "无离线模式开关与「放弃并禁用」路径",
+      "status": "deliberate",
+      "priority": "P2",
+      "note": "有意偏差：本仓离线优先，始终可离线编辑；不提供会丢弃本机队列的离线模式开关。",
       "evidence": [
-        "src/components/editor/DocumentEditor.tsx:100"
+        "src/lib/sync-core/index.ts",
+        "src/lib/offline/save-status.ts"
       ]
     },
     "G161": {
@@ -4470,10 +4472,12 @@
       ]
     },
     "G297": {
-      "status": "gap",
-      "note": "危险区只有一行说明文字，无输入邮箱确认的三态流程",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "输入式确认唯一宿主（账户删除）本仓不存在；其余危险操作官方也用按钮确认，已对齐。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:546"
+        "src/components/document/TrashList.tsx:79",
+        "src/lib/browse/trash-subcopy.ts"
       ]
     },
     "G298": {

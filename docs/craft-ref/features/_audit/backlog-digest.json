@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T07:20:50.070Z",
+  "generatedAt": "2026-11-02T07:22:38.951Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 466,
-    "partial": 295,
-    "deliberate": 164,
-    "gap": 157,
+    "aligned": 467,
+    "partial": 294,
+    "deliberate": 165,
+    "gap": 156,
     "unreachable": 20
   },
   "priority": {
@@ -20,13 +20,13 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / aligned": 151,
-    "P2 / partial": 145,
+    "P2 / aligned": 152,
+    "P2 / partial": 144,
     "P1 / nonaction": 89,
-    "P2 / gap": 84,
+    "P2 / gap": 83,
     "P? / partial": 80,
     "P? / aligned": 78,
-    "P2 / deliberate": 72,
+    "P2 / deliberate": 73,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
@@ -1162,7 +1162,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      18
+      17
     ],
     [
       "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",
@@ -1205,10 +1205,6 @@
       6
     ],
     [
-      "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
-      6
-    ],
-    [
       "三点八七、第 76 批（★★ 契约面穷尽：`--help` 逐条读满 `",
       6
     ],
@@ -1218,6 +1214,10 @@
     ],
     [
       "三点一〇、协同与权限追加（来自 `collab.md`，静态证据）",
+      5
+    ],
+    [
+      "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
       5
     ],
     [

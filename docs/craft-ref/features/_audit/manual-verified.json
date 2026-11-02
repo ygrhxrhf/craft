@@ -4682,10 +4682,13 @@
       ]
     },
     "G348": {
-      "status": "partial",
-      "note": "自然数序＋空值末尾已落；维度四档，缺 Kind/Manual",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "六档词表与统一比较器落地：空值恒排末尾、自然数序、忽略大小写与音标；列表排序委托同一比较器，菜单仍保持官方面板的四项。",
       "evidence": [
-        "src/lib/browse/sort.ts:31"
+        "src/lib/browse/sort-tiers.ts",
+        "src/lib/browse/list-sort.ts:104",
+        "src/lib/browse/sort-tiers.test.ts"
       ]
     },
     "G349": {
@@ -4867,17 +4870,25 @@
       ]
     },
     "G395": {
-      "status": "gap",
-      "note": "取值只做 JSON 序列化，无选项集校验；可存集合外值",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "select/multiSelect 写库前校验每个元素都在字段选项集内，一个越界值整格判否；选项集取自列 config。",
       "evidence": [
-        "src/actions/collection/items.ts:112"
+        "src/lib/collection/value-validation.ts",
+        "src/actions/collection/items.ts:124",
+        "src/lib/collection/value-validation.test.ts"
       ]
     },
     "G396": {
-      "status": "gap",
-      "note": "属性菜单只有类型名没有图标；数字无 percent/currency 子格式",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "数字三档子格式（数字/百分比/货币）可选并写入 config.numberFormat，单元格按该键渲染；新增/改字段菜单按官方图标名列类型。",
       "evidence": [
-        "src/components/collection/AddPropertyMenu.tsx:20"
+        "src/lib/collection/property-types.ts:95",
+        "src/components/collection/FieldMenu.tsx:213",
+        "src/components/collection/AddPropertyMenu.tsx:132",
+        "src/components/collection/FieldIcon.tsx",
+        "src/lib/collection/property-types.test.ts"
       ]
     },
     "G397": {
@@ -4909,10 +4920,13 @@
       ]
     },
     "G405": {
-      "status": "partial",
-      "note": "weekly.days 是 0-6 数字，与官方星期名数组不兼容；界面从不写 days",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "weekly.days 读写都用官方星期名数组：读侧名字映射 0–6、其余静默丢弃，写侧 serializeWeekdays；weekly 之外的 days 不按星期归一。",
       "evidence": [
-        "src/lib/task/recurrence.ts:6"
+        "src/lib/task/recurrence.ts:114",
+        "src/lib/task/repeat-validity.ts",
+        "src/lib/task/recurrence.test.ts"
       ]
     },
     "G406": {

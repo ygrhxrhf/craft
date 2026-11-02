@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Check } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { PROPERTY_TYPES } from '@/lib/collection/property-types';
+import {
+  DEFAULT_NUMBER_FORMAT,
+  NUMBER_FORMATS,
+  PROPERTY_TYPES,
+  isNumberFormat,
+  type NumberFormat,
+} from '@/lib/collection/property-types';
+import { FieldIcon, FieldTypeIcon } from './FieldIcon';
 import { changePropertyType } from '@/actions/collection/properties';
 import { getSyncManager } from '@/lib/sync-core';
 import { confirmDialog, promptDialog } from '@/lib/dialog/show';
@@ -27,7 +34,20 @@ import {
 } from '@/lib/collection/field-menu-copy';
 
 interface FieldMenuProps {
-  property: { id: string; name: string; isVisible: boolean; type?: string };
+  property: { id: string; name: string; isVisible: boolean; type?: string; config?: string | null };
+}
+
+/** `config` 列是 JSON 串（老行可能是对象）；解析失败按空对象处理，保留其余键。 */
+function parseFieldConfig(config: unknown): Record<string, unknown> {
+  if (!config) return {};
+  if (typeof config === 'object') return config as Record<string, unknown>;
+  if (typeof config !== 'string') return {};
+  try {
+    const parsed = JSON.parse(config);
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : {};
+  } catch {
+    return {};
+  }
 }
 
 /**
@@ -104,6 +124,28 @@ export function FieldMenu({ property }: FieldMenuProps) {
     }
   };
 
+  // G396: 数字字段的三档显示子格式，写进列 config 的 `numberFormat`（显示侧 PropertyCell 读同一键）。
+  const currentNumberFormat: NumberFormat = (() => {
+    const value = parseFieldConfig(property.config).numberFormat;
+    return isNumberFormat(value) ? value : DEFAULT_NUMBER_FORMAT;
+  })();
+
+  const handleNumberFormat = async (format: NumberFormat) => {
+    if (format === currentNumberFormat) return;
+    setBusy(true);
+    try {
+      const next = { ...parseFieldConfig(property.config), numberFormat: format };
+      await getSyncManager().applyLocal({
+        table: 'collection_property',
+        id: property.id,
+        patch: { config: JSON.stringify(next) },
+      });
+      await settle();
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleDelete = async () => {
     const confirmed = await confirmDialog({
       title: EDIT_FIELD,
@@ -160,11 +202,26 @@ export function FieldMenu({ property }: FieldMenuProps) {
                 key={option.value}
                 onClick={() => void handleChangeType(option.value, option.label)}
               >
+                <FieldTypeIcon type={option.value} className="size-4" />
                 {option.label}
               </DropdownMenuItem>
             ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        {property.type === 'number' && (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>数字格式</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              {NUMBER_FORMATS.map((format) => (
+                <DropdownMenuItem key={format.value} onClick={() => void handleNumberFormat(format.value)}>
+                  <FieldIcon name={format.icon} className="size-4" />
+                  <span className="flex-1">{format.label}</span>
+                  {currentNumberFormat === format.value ? <Check className="size-3.5" /> : null}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        )}
         <DropdownMenuItem variant="destructive" onClick={() => void handleDelete()}>
           {DELETE_FIELD}
         </DropdownMenuItem>

@@ -85,3 +85,73 @@ export const PROPERTY_TYPES: readonly { value: string; label: string }[] = [
 ];
 
 export const PROPERTY_TYPE_VALUES = new Set(PROPERTY_TYPES.map((type) => type.value));
+
+/**
+ * G396 —— 数字字段有**三档显示子格式**：数字 / `percent` / `currency`，各带一枚图标
+ * （`hashtag` / `percentage` / `money`）。
+ */
+export type NumberFormat = 'number' | 'percent' | 'currency';
+
+export const NUMBER_FORMATS: readonly { value: NumberFormat; label: string; icon: string }[] = [
+  { value: 'number', label: '数字', icon: 'hashtag' },
+  { value: 'percent', label: '百分比', icon: 'percentage' },
+  { value: 'currency', label: '货币', icon: 'money' },
+] as const;
+
+/** 数字字段的默认子格式。 */
+export const DEFAULT_NUMBER_FORMAT: NumberFormat = 'number';
+
+export function isNumberFormat(value: unknown): value is NumberFormat {
+  return value === 'number' || value === 'percent' || value === 'currency';
+}
+
+/**
+ * G396 —— **每个字段类型都有自己的图标**（官方那几张）：
+ * `email→envelope`、`phone→phone`、`person→at-sign`、未知→`objects-placeholder`。
+ * 其余类型在官方名册里没有单独点名，这里只保证"有图标可画"：给了 fallback，不发明新名字。
+ */
+export const FIELD_TYPE_ICONS: Record<string, string> = {
+  email: 'envelope',
+  phone: 'phone',
+  person: 'at-sign',
+  text: 'text',
+  number: 'hashtag',
+  checkbox: 'checkbox',
+  date: 'calendar',
+  url: 'link',
+  select: 'chevron-down',
+  multiSelect: 'list',
+  media: 'image',
+  relation: 'arrow-right-left',
+  linkToBlock: 'link-2',
+  formula: 'sigma',
+  created_at: 'calendar-clock',
+  updated_at: 'clock',
+};
+
+export const UNKNOWN_FIELD_ICON = 'objects-placeholder';
+
+/** 字段类型 → 图标名；未知类型给 `objects-placeholder`（不返回空串，调用点总有一枚可画）。 */
+export function fieldIconFor(type: unknown): string {
+  if (typeof type !== 'string') return UNKNOWN_FIELD_ICON;
+  return FIELD_TYPE_ICONS[type] ?? UNKNOWN_FIELD_ICON;
+}
+
+/**
+ * G396 —— 按子格式渲染数字：`percent` 加百分号（值 0.5 ⇒ 50%），`currency` 加货币符号
+ * （本地用 `¥`，与产品语言一致），`number` 原样（带千分位）。
+ * 非数字给空串（不印 `NaN`）。
+ */
+export function formatNumber(value: unknown, format: NumberFormat = DEFAULT_NUMBER_FORMAT): string {
+  if (value === null || value === undefined || value === '') return '';
+  const n = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(n)) return '';
+  if (format === 'percent') {
+    const pct = n * 100;
+    return `${pct.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`;
+  }
+  if (format === 'currency') {
+    return `¥${n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+  }
+  return n.toLocaleString(undefined, { maximumFractionDigits: 10 });
+}

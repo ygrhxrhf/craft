@@ -17,8 +17,14 @@ import { getSyncManager } from '@/lib/sync-core';
 import { readLocalRecords } from '@/components/sync/local-records';
 import { evaluateFormula, type FormulaResult } from '@/lib/collection/formula';
 
-import { PROPERTY_TYPES } from '@/lib/collection/property-types';
+import {
+  DEFAULT_NUMBER_FORMAT,
+  NUMBER_FORMATS,
+  PROPERTY_TYPES,
+  type NumberFormat,
+} from '@/lib/collection/property-types';
 import { TWO_WAY_COPY } from '@/lib/collection/two-way-relation';
+import { FieldIcon, FieldTypeIcon } from './FieldIcon';
 
 /** Local extras that exist next to the official vocabulary (G393). */
 const LOCAL_ONLY_TYPES: { value: string; label: string }[] = [
@@ -33,6 +39,7 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [type, setType] = useState('text');
+  const [numberFormat, setNumberFormat] = useState<NumberFormat>(DEFAULT_NUMBER_FORMAT);
   const [expression, setExpression] = useState('');
   const [targetId, setTargetId] = useState('');
   // G285: whether the relation column points both ways.
@@ -54,7 +61,13 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
     setBusy(true);
     try {
       const config =
-        type === 'formula' ? { expression } : type === 'relation' ? { objectListId: targetId || null, twoWay } : undefined;
+        type === 'formula'
+          ? { expression }
+          : type === 'relation'
+            ? { objectListId: targetId || null, twoWay }
+            : type === 'number'
+              ? { numberFormat }
+              : undefined;
       // 新属性 → 本地 id + applyLocal（order = 本地镜像内该集合存活属性数，与
       // 服务端 addProperty 的算法一致）；flushNow 后 refresh 才能读到新行
       const rows = await readLocalRecords('collection_property');
@@ -79,6 +92,7 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
       await manager.flushNow();
       setOpen(false);
       setName('');
+      setNumberFormat(DEFAULT_NUMBER_FORMAT);
       setExpression('');
       setTargetId('');
       router.refresh();
@@ -112,18 +126,56 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
               placeholder="属性名称"
               aria-label="属性名称"
             />
-            <select
-              value={type}
-              onChange={(event) => setType(event.target.value)}
+            {/* G396: 每个类型都有自己的图标——官方名册里点过名的照抄，其余给一个可画的兜底。 */}
+            <div
+              role="radiogroup"
               aria-label="属性类型"
-              className="h-9 rounded-md border border-border bg-background px-2 text-sm"
+              className="grid max-h-56 grid-cols-2 gap-1 overflow-y-auto rounded-md border border-border p-1"
             >
-              {PROPERTY_TYPE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              {PROPERTY_TYPE_OPTIONS.map((option) => {
+                const active = type === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setType(option.value)}
+                    className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors ${
+                      active ? 'bg-foreground/10 font-medium' : 'hover:bg-foreground/5'
+                    }`}
+                  >
+                    <FieldTypeIcon type={option.value} className="size-4 shrink-0 text-muted-foreground" />
+                    <span className="truncate">{option.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {type === 'number' && (
+              <div role="radiogroup" aria-label="数字格式" className="flex gap-1">
+                {NUMBER_FORMATS.map((format) => {
+                  const active = numberFormat === format.value;
+                  return (
+                    <button
+                      key={format.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      onClick={() => setNumberFormat(format.value)}
+                      className={`flex flex-1 items-center justify-center gap-1.5 rounded-md border px-2 py-1.5 text-xs transition-colors ${
+                        active
+                          ? 'border-foreground/30 bg-foreground/10 font-medium'
+                          : 'border-border hover:bg-foreground/5'
+                      }`}
+                    >
+                      <FieldIcon name={format.icon} className="size-3.5" />
+                      {format.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             {type === 'formula' && (
               <div className="flex flex-col gap-1">

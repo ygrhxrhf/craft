@@ -3,6 +3,7 @@
 import { buildRelationValue, relationItems, relationTargetId } from '@/lib/collection/relation-value';
 import { normalizeDateValue } from '@/lib/collection/date-value';
 import { rawValueOf } from '@/lib/collection/cell-value';
+import { DEFAULT_NUMBER_FORMAT, formatNumber as formatNumberFor, isNumberFormat, type NumberFormat } from '@/lib/collection/property-types';
 import { cellKeyAction } from '@/lib/collection/cell-key';
 import { useState, useRef, useEffect } from 'react';
 import { Check, X, ChevronDown, Calendar as CalendarIcon, Link2, Paperclip } from 'lucide-react';
@@ -54,7 +55,8 @@ export function PropertyCell({ property, value, onChange, item, properties }: Pr
 
   switch (property.type) {
     case 'number':
-      return <NumberCell value={parsed} onChange={onChange} />;
+      // G396：数字字段的三档显示子格式（数字／百分比／货币）从字段 config 读。
+      return <NumberCell value={parsed} onChange={onChange} format={readNumberFormat(property.config)} />;
     case 'checkbox':
       return <CheckboxCell value={parsed} onChange={onChange} />;
     case 'date':
@@ -160,7 +162,7 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
 }
 
 // ─── Number ──────────────────────────────────────────
-function NumberCell({ value, onChange }: { value: any; onChange: (v: any) => void }) {
+function NumberCell({ value, onChange, format }: { value: any; onChange: (v: any) => void; format: NumberFormat }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value != null ? String(value) : '');
   const ref = useRef<HTMLInputElement>(null);
@@ -172,7 +174,7 @@ function NumberCell({ value, onChange }: { value: any; onChange: (v: any) => voi
   if (!editing) {
     return (
       <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => setEditing(true)}>
-        <span className="text-ui tabular-nums">{value != null ? String(value) : <span className="text-muted-foreground/50">-</span>}</span>
+        <span className="text-ui tabular-nums">{value != null ? formatNumberFor(value, format) : <span className="text-muted-foreground/50">-</span>}</span>
       </div>
     );
   }
@@ -716,6 +718,12 @@ function readConfig(config: string | null): Record<string, any> | null {
   } catch {
     return null;
   }
+}
+
+/** G396：从字段 config 读数字子格式；读不到给默认档（数字）。 */
+function readNumberFormat(config: string | null): NumberFormat {
+  const raw = readConfig(config)?.numberFormat;
+  return isNumberFormat(raw) ? raw : DEFAULT_NUMBER_FORMAT;
 }
 
 function getSelectOptions(config: string | null): SelectOption[] {

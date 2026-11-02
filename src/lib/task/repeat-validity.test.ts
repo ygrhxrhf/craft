@@ -53,7 +53,8 @@ describe('repeatRuleFor (G646: picking a frequency fills the minimum valid sub-f
   });
 
   it('weekly carries the day the picker was opened on', () => {
-    expect(JSON.parse(repeatRuleFor('weekly', today))).toEqual({ freq: 'weekly', days: [today.getDay()] });
+    // G405: weekly days are stored as the official weekday-name array.
+    expect(JSON.parse(repeatRuleFor('weekly', today))).toEqual({ freq: 'weekly', days: ['monday'] });
   });
 
   it('monthly carries today’s day-of-month', () => {

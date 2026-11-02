@@ -11,6 +11,7 @@
  */
 
 import type { BrowseSortOption } from './toolbar-menu';
+import { compareByTier, type BrowseSortTier, type TierSortable } from './sort-tiers';
 
 export type SortDirection = 'ascending' | 'descending';
 
@@ -75,6 +76,9 @@ export interface SortableRow {
   updatedAt: string;
   createdAt?: string | null;
   lastViewedAt?: string | null;
+  /** G348：Kind／Manual 两档在数据层可用（菜单不列）。 */
+  kind?: string | null;
+  order?: number | null;
 }
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -92,16 +96,30 @@ function valueFor(row: SortableRow, option: BrowseSortOption): string {
   }
 }
 
-/** Compare two rows under a spec. Empty values sort last in ascending order. */
+/**
+ * Compare two rows under a spec. 规则只有一套：`sort-tiers.ts` 的 `compareByTier`
+ * （G348：空值恒排末尾 + `localeCompare(numeric, base)`）。这里只把行形状喂给它，
+ * 不再自己写一遍比较逻辑。
+ */
 export function compareBrowseRows(a: SortableRow, b: SortableRow, spec: BrowseSortSpec): number {
-  const left = valueFor(a, spec.option);
-  const right = valueFor(b, spec.option);
-  let order: number;
-  if (!left && right) order = 1;
-  else if (left && !right) order = -1;
-  else order = collator.compare(left, right);
-  if (order === 0) return 0;
-  return spec.direction === 'ascending' ? order : -order;
+  const tier: BrowseSortTier =
+    spec.option === 'lastViewed'
+      ? 'lastViewed'
+      : spec.option === 'created'
+        ? 'created'
+        : spec.option === 'updated'
+          ? 'updated'
+          : 'name';
+  // `lastViewed`／`created` 在本地有回退（缺值读更新时间），先算好再交给比较器。
+  const toTierRow = (row: SortableRow): TierSortable => ({
+    title: row.title,
+    updatedAt: row.updatedAt,
+    createdAt: row.createdAt ?? row.updatedAt,
+    lastViewedAt: row.lastViewedAt ?? row.updatedAt,
+    kind: row.kind ?? null,
+    order: row.order ?? null,
+  });
+  return compareByTier(toTierRow(a), toTierRow(b), tier, spec.direction);
 }
 
 /** Sort a copy; the caller's array is never mutated. */

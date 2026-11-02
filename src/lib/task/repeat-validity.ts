@@ -12,6 +12,8 @@
  * 具体日子也能提交，与官方相反。
  */
 
+import { serializeWeekdays } from './recurrence';
+
 export type RepeatFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 export interface RepeatDraft {
@@ -68,7 +70,8 @@ export function repeatRuleFor(freq: RepeatFrequency, today: Date): string {
     case 'daily':
       return JSON.stringify({ freq: 'daily' });
     case 'weekly':
-      return JSON.stringify({ freq: 'weekly', days: [weekday] });
+      // G405：weekly 的 `days` 写成官方形（星期名），读侧两种形都收。
+      return JSON.stringify({ freq: 'weekly', days: serializeWeekdays([weekday]) });
     case 'monthly':
       return JSON.stringify({ freq: 'monthly', byMonthDay: dayOfMonth });
     case 'yearly':

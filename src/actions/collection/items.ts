@@ -5,6 +5,7 @@ import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { toTypedValue } from '@/lib/collection/cell-value';
+import { validateMultiSelect, validateSelect } from '@/lib/collection/value-validation';
 import { addMembership } from '@/lib/collection/object-membership';
 
 export async function addItem(collectionId: string) {
@@ -115,7 +116,15 @@ export async function setItemValue(
   // G451: store the typed discriminant `{type, theme, value}` so a null still says which type of
   // empty it is. The column is Json, so the object is stored as-is (JSON.stringify keeps the shape
   // the read side's `rawValueOf` expects).
-  const typed = toTypedValue(String((property as any).type ?? 'text'), value);
+  // G395: select／multiSelect 先过一遍"每个元素都得在选项集内"的校验——**一个越界值就把整格判否**，
+  // 不是过滤掉坏值后照样存（那样脏值会被静默吞掉）。
+  const propType = String((property as any).type ?? 'text');
+  if (propType === 'select' || propType === 'multi_select') {
+    const optionIds = readOptionIds((property as any).config);
+    const check = propType === 'select' ? validateSelect({ optionIds, value }) : validateMultiSelect({ optionIds, value });
+    if (!check.ok) throw new Error('选项不在该字段的候选项内');
+  }
+  const typed = toTypedValue(propType, value);
   const stored = typed.value != null ? JSON.stringify(typed) : null;
 
   if (existing.length > 0) {
@@ -133,6 +142,17 @@ export async function setItemValue(
 
   await emitSyncEventSafe(db, session.user.id, ['collection_value'], itemId);
   revalidatePath(`/collections/${(item as any).collectionId}`);
+}
+
+/** 从属性行的 `config`（JSON 串或对象）里取选项 id 集；取不到给空集（空集下任何值都判否）。 */
+function readOptionIds(config: unknown): string[] {
+  let parsed: unknown = config;
+  if (typeof config === 'string') {
+    try { parsed = JSON.parse(config); } catch { return []; }
+  }
+  const options = (parsed as { options?: unknown })?.options;
+  if (!Array.isArray(options)) return [];
+  return options.map((o) => String((o as { id?: unknown })?.id ?? '')).filter(Boolean);
 }
 
 function parseStoredValue(raw: unknown): unknown {

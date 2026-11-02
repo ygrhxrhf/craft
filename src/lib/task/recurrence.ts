@@ -52,7 +52,16 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
   if (typeof rule.freq !== 'string' || !FREQUENCIES.includes(rule.freq as RecurrenceFrequency)) return null;
 
   if (rule.days !== undefined) {
-    if (!Array.isArray(rule.days) || !rule.days.every((day) => isWeekdayNumber(day))) return null;
+    if (!Array.isArray(rule.days)) return null;
+    // G405：官方存的是**星期名小写全字符串数组**（["sunday"…"saturday"]），读侧按
+    // `typeof === "string"` 过滤 ⇒ **非字符串元素被静默丢弃**（不是整条判废）。
+    // 本地写入形是数字 0–6，两种都收：名字映射成数字，其余元素丢掉。
+    // 只有 weekly 的 `days` 是星期；yearly 的 `days` 是日号（G646），不能按星期归一。
+    if (rule.freq === 'weekly') {
+      const normalized = normalizeWeekdays(rule.days);
+      if (normalized.length === 0 && rule.days.length > 0) return null;
+      rule.days = normalized;
+    }
   }
   if (rule.byMonthDay !== undefined && !(Number.isInteger(rule.byMonthDay) && (rule.byMonthDay as number) >= 1 && (rule.byMonthDay as number) <= 31)) {
     return null;
@@ -74,8 +83,40 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
   return result;
 }
 
+/** G405：官方星期名（小写、全名）。 */
+export const OFFICIAL_WEEKDAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+
+/**
+ * G405 —— 归一星期数组：名字映射成 0–6，数字原样保留，**其余元素静默丢弃**
+ * （官方读侧 `typeof === "string"` 过滤的等价行为）。
+ */
+export function normalizeWeekdays(values: readonly unknown[]): number[] {
+  const out: number[] = [];
+  for (const value of values) {
+    if (typeof value === 'string') {
+      const index = (OFFICIAL_WEEKDAY_NAMES as readonly string[]).indexOf(value.toLowerCase());
+      if (index >= 0) out.push(index);
+      continue;
+    }
+    if (isWeekdayNumber(value)) out.push(value as number);
+  }
+  return [...new Set(out)].sort((a, b) => a - b);
+}
+
 function isWeekdayNumber(value: unknown): boolean {
   return Number.isInteger(value) && (value as number) >= 0 && (value as number) <= 6;
+}
+
+/**
+ * G405 —— 写侧用官方形：星期名小写全字符串数组。内部逻辑只认 0–6，两个形只在读写边界转换；
+ * 非法的数字被丢掉（与读侧"静默丢弃"同一个兜底）。
+ */
+export function serializeWeekdays(days: readonly unknown[]): string[] {
+  const out: string[] = [];
+  for (const day of days) {
+    if (isWeekdayNumber(day)) out.push(OFFICIAL_WEEKDAY_NAMES[day as number]);
+  }
+  return [...new Set(out)];
 }
 
 const WEEKDAY_LABELS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -154,11 +195,13 @@ export function recurrencePresetsFor(date: Date | null): { label: string; value:
     { label: '每天', value: JSON.stringify({ freq: 'daily' }) },
     {
       label: '每个工作日（周一至周五）',
-      value: JSON.stringify({ freq: 'weekly', days: [1, 2, 3, 4, 5] }),
+      value: JSON.stringify({ freq: 'weekly', days: serializeWeekdays([1, 2, 3, 4, 5]) }),
     },
     {
       label: weekdayLabel ? `每周 (周${weekdayLabel})` : '每周',
-      value: JSON.stringify(weekday === null ? { freq: 'weekly' } : { freq: 'weekly', days: [(weekday + 1) % 7] }),
+      value: JSON.stringify(
+        weekday === null ? { freq: 'weekly' } : { freq: 'weekly', days: serializeWeekdays([(weekday + 1) % 7]) },
+      ),
     },
     {
       label: monthDay ? `每月 (${monthDay}.)` : '每月',

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MONDAY_FIRST, SUNDAY_FIRST, fromMondayFirst, startOfWeekMonday, toMondayFirst, RECURRENCE_PRESETS, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor } from './recurrence';
+import { MONDAY_FIRST, SUNDAY_FIRST, fromMondayFirst, startOfWeekMonday, toMondayFirst, RECURRENCE_PRESETS, normalizeWeekdays, serializeWeekdays, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor } from './recurrence';
 
 const iso = (date: Date) => date.toISOString();
 
@@ -175,7 +175,8 @@ describe('date-aware repeat presets', () => {
 
   it('stores the weekday in the rule when a date is given', () => {
     const weekly = recurrencePresetsFor(new Date(2026, 2, 10)).find((p) => p.label.startsWith('每周'));
-    expect(JSON.parse(weekly!.value)).toEqual({ freq: 'weekly', days: [2] });
+    // G405: the stored form is the official weekday-name array, not a number.
+    expect(JSON.parse(weekly!.value)).toEqual({ freq: 'weekly', days: ['tuesday'] });
   });
 });
 
@@ -202,5 +203,39 @@ describe('the two week-start conventions', () => {
     expect(startOfWeekMonday(new Date(2026, 2, 9)).getDate()).toBe(9);
     // Sunday belongs to the week that started six days earlier.
     expect(startOfWeekMonday(new Date(2026, 2, 15)).getDate()).toBe(9);
+  });
+});
+
+// G405 —— 官方 weekly.days 是星期名小写全字符串数组；读侧按 typeof === "string" 过滤。
+describe('weekly.days 的官方形（G405）', () => {
+  it('maps lowercase weekday names onto 0–6', () => {
+    expect(normalizeWeekdays(['monday', 'thursday'])).toEqual([1, 4]);
+    expect(normalizeWeekdays(['sunday'])).toEqual([0]);
+  });
+
+  it('keeps numeric values (local write shape) and sorts + dedupes', () => {
+    expect(normalizeWeekdays([4, 1, 4])).toEqual([1, 4]);
+  });
+
+  it('silently drops elements that are neither a known name nor a number', () => {
+    expect(normalizeWeekdays(['monday', 'funday', {}, null, 3])).toEqual([1, 3]);
+  });
+
+  it('parseRecurrence accepts a name array and yields numbers', () => {
+    expect(parseRecurrence('{"freq":"weekly","days":["monday","friday"]}')?.days).toEqual([1, 5]);
+  });
+
+  it('parseRecurrence rejects an all-invalid days array', () => {
+    expect(parseRecurrence('{"freq":"weekly","days":["funday"]}')).toBeNull();
+  });
+
+  it('writes the official name array back', () => {
+    expect(serializeWeekdays([1, 5])).toEqual(['monday', 'friday']);
+    expect(serializeWeekdays([0, 0])).toEqual(['sunday']);
+  });
+
+  it('does not apply weekday normalisation to yearly days (those are day-of-month)', () => {
+    // G646 的 yearly 把日号放在 `days`：15 不是星期，不能被丢成空数组。
+    expect(parseRecurrence('{"freq":"yearly","days":[15],"months":[3]}')?.days).toEqual([15]);
   });
 });

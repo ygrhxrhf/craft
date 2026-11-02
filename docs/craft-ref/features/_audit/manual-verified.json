@@ -4789,10 +4789,13 @@
       ]
     },
     "G366": {
-      "status": "partial",
-      "note": "共享日历已分今天浅色与选中实心两态；任务日期字段未接该组件",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "今日=浅蓝底（选中别日时仍保留），选中/预览日=近黑实心反白字，两种语义分离。",
       "evidence": [
-        "src/components/ui/calendar.tsx:121"
+        "src/components/ui/calendar.tsx:213",
+        "src/components/ui/calendar.tsx:212",
+        "src/components/ui/calendar.test.ts"
       ]
     },
     "G368": {

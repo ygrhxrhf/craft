@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T06:47:29.499Z",
+  "generatedAt": "2026-11-02T06:49:30.639Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 984,
-    "aligned": 204,
+    "gap": 983,
+    "aligned": 205,
     "unknown": 196,
     "deliberate": 98,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 412,
+    "P2 / gap": 411,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 101,
+    "P2 / aligned": 102,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 36,
@@ -7625,10 +7625,10 @@
       "cols": 5,
       "id": "G366",
       "official": "**日历有两种高亮语义**：浅蓝底 = 今天；**近黑实心 + 白字 = 当前解析/选中预览日**（V35 ③ 与 V34 对照）",
-      "local": "本地只有一种选中态",
-      "verdict": "缺失",
+      "local": "本地两种语义已分开 ✎ 现读（2026-11-02）更正：`ui/calendar.tsx` 的今日态是 `bg-craft-accent/10` 浅蓝底（且选中别的日子时仍保留）；单日选中态改为 `bg-foreground + text-background` 近黑实心反白字，不再与今日共用蓝色。接线断言见 `calendar.test.ts`。",
+      "verdict": "☆ 已清（第 139 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

@@ -27,6 +27,7 @@ import { syncBacklinks } from '@/actions/document/backlinks';
 import { syncDocumentTasks } from '@/actions/task/task';
 import { syncDocumentBlockReminders } from '@/actions/notification/block-reminders';
 import { pmNodeText } from '@/lib/search/extract';
+import { shouldReplaceCellOnPaste } from '@/lib/editor/cell-paste';
 import { ALIGNABLE_TYPES } from '@/lib/editor/format-presence';
 import { useCompletedTaskAppearance } from '@/components/task/use-completed-appearance';
 import { EditorBubbleMenu } from './bubble-menu/BubbleMenu';
@@ -611,7 +612,36 @@ export function Editor({
         );
         if (files.length === 0) {
           const text = event.clipboardData?.getData('text/plain')?.trim() ?? '';
-          const { from, to, empty } = view.state.selection;
+          // G1602: inside a **non-empty** table cell, a paste replaces the whole cell (the official
+          // treats the cell as an overwritable field, not as prose you insert into). Locally the
+          // default was "insert at the caret", so `AA` + `BB` ended up as `AABB`.
+          const { $from } = view.state.selection;
+          let cellDepth = -1;
+          for (let depth = $from.depth; depth > 0; depth -= 1) {
+            const name = $from.node(depth).type.name;
+            if (name === 'tableCell' || name === 'tableHeader') {
+              cellDepth = depth;
+              break;
+            }
+          }
+          if (cellDepth > 0) {
+            const cell = $from.node(cellDepth);
+            if (
+              shouldReplaceCellOnPaste({
+                inCell: true,
+                cellNonEmpty: cell.textContent.length > 0 || cell.childCount > 1 || (cell.firstChild?.content.size ?? 0) > 0,
+                clipboardText: text,
+              })
+            ) {
+              event.preventDefault();
+              const cellPos = $from.before(cellDepth);
+              const tr = view.state.tr.delete(cellPos + 1, cellPos + cell.nodeSize - 1);
+              if (text) tr.insertText(text, cellPos + 1);
+              view.dispatch(tr);
+              return true;
+            }
+          }
+          const { empty } = view.state.selection;
           if (
             empty &&
             view.state.schema.nodes.linkPreview &&

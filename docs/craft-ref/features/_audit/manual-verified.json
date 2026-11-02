@@ -6721,10 +6721,12 @@
       ]
     },
     "G798": {
-      "status": "gap",
-      "note": "本地设置面板无 746/747 双态导航；747 断点只用于壳层",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "快捷键面板双态：按 747px（MOBILE_QUERY）分 sidebar（全显）与 compact（tablist 一次一组）。",
       "evidence": [
-        "src/lib/use-is-mobile.ts:6"
+        "src/components/settings/ShortcutsPanel.tsx",
+        "src/lib/use-is-mobile.ts"
       ]
     },
     "G799": {
@@ -9344,10 +9346,13 @@
       ]
     },
     "G1602": {
-      "status": "partial",
-      "note": "handlePaste 只特判图片与裸 URL，表格粘贴不整格替换",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "表格格粘贴整格替换：新增 cell-paste.ts 的 shouldReplaceCellOnPaste，接进 Editor.tsx 的 handlePaste（先删格内容再插入）。",
       "evidence": [
-        "src/components/editor/Editor.tsx:526"
+        "src/lib/editor/cell-paste.ts",
+        "src/components/editor/Editor.tsx",
+        "src/lib/editor/cell-paste.test.ts"
       ]
     },
     "G1603": {
@@ -9379,10 +9384,13 @@
       ]
     },
     "G1609": {
-      "status": "partial",
-      "note": "评论提交走本地队列，离线静默入队；无「未连接」门禁文案",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "离线评论：入口恒开、提交才拦、拦截句逐字内联显示（非 toast/非弹窗）；与本地表情离线拒绝同口径。",
       "evidence": [
-        "src/components/editor/comments/CommentSection.tsx:175"
+        "src/lib/comment/offline-comment.ts",
+        "src/components/editor/comments/CommentSection.tsx",
+        "src/lib/comment/offline-comment.test.ts"
       ]
     },
     "G1610": {

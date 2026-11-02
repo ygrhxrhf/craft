@@ -17,6 +17,7 @@ import { MentionSuggest } from './MentionSuggest';
 import { groupReactions, reactionSentence } from './reaction-copy';
 import { toggleReaction, type Reaction } from './reactions';
 import { offlineReactionMessage } from './offline-reaction';
+import { commentSubmitAllowed, offlineCommentMessage } from '@/lib/comment/offline-comment';
 import { resolvedByText, resolvedToggleHint, resolvedToggleLabel } from '@/lib/comment/resolved-toggle';
 
 const REACTION_CHOICES = ['👍', '❤️', '😄', '🎉'];
@@ -71,6 +72,8 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
   const [replyCarets, setReplyCarets] = useState<Record<string, number>>({});
   const [showComposer, setShowComposer] = useState(false);
   const [offline, setOffline] = useState(false);
+  // G1609：离线提交被拦时那句内联文案（不是 toast、不是弹窗）。
+  const [offlineNotice, setOfflineNotice] = useState<string | null>(null);
   // G74：已解决区默认收起；展开时标签翻成「隐藏已解决」（官方短标签＋长说明两套）。
   const [showResolved, setShowResolved] = useState(false);
 
@@ -149,6 +152,14 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
 
   const handleCreate = async () => {
     if (!editor || !draft.trim()) return;
+    // G1609: the composer opens offline (the entry is never gated); **submitting** is where the
+    // gate sits. ★ The official shows the sentence **inline next to the body**, not as a toast and
+    // not as a dialog (`dialogs:[]` / `toasts:[]` stayed empty through the whole probe).
+    if (!commentSubmitAllowed(navigator.onLine)) {
+      setOfflineNotice(offlineCommentMessage());
+      return;
+    }
+    setOfflineNotice(null);
     const { from, to } = editor.state.selection;
 
     // 找到选区起点所在最底层 block 作为锚点
@@ -186,6 +197,12 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
   const handleReply = async (threadId: string) => {
     const body = replyDrafts[threadId]?.trim();
     if (!body) return;
+    // G1609：回复走同一道提交门，同样用内联文案。
+    if (!commentSubmitAllowed(navigator.onLine)) {
+      setOfflineNotice(offlineCommentMessage());
+      return;
+    }
+    setOfflineNotice(null);
     try {
       const text = body.slice(0, 2000);
       const actorId = viewerId ?? userId ?? null;
@@ -279,6 +296,12 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
       )}
       {showComposer && canComment && (
         <div className="mb-2 rounded-md border border-foreground/10 p-2">
+          {/* G1609：离线提交被拦的那句挂在正文侧（内联），不是 toast、不是弹窗。 */}
+          {offlineNotice && (
+            <p role="status" data-testid="comment-offline-notice" className="mb-1 text-[12px] text-destructive">
+              {offlineNotice}
+            </p>
+          )}
           <textarea
             value={draft}
             onChange={(event) => {

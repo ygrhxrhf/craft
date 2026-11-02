@@ -3634,10 +3634,14 @@
       ]
     },
     "G105": {
-      "status": "partial",
-      "note": "排序用数字感知 Collator；筛选是表单行，无标题锁首位/格式化搜索",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "三种规则芯片文案与可移除芯片已落；标题列固定首位；排序比较器已数字感知且空值恒前。",
       "evidence": [
-        "src/lib/collection/sort-compare.ts:14"
+        "src/lib/collection/view-chips.ts",
+        "src/app/(app)/collections/[id]/TableView.tsx:300",
+        "src/lib/collection/sort-compare.ts",
+        "src/lib/collection/view-chips.test.ts"
       ]
     },
     "G106": {

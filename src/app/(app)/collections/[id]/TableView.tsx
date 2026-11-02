@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
-import { ExternalLink, FolderMinus, GripVertical, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
+import { ExternalLink, FolderMinus, GripVertical, Plus, SlidersHorizontal, Trash2, X } from 'lucide-react';
 import { useIsMobile } from '@/lib/use-is-mobile';
 import { addItem, clearGroupValues, deleteItem, removeItemFromCollection, setItemValue } from '@/actions/collection/items';
 import { confirmDialog } from '@/lib/dialog/show';
@@ -19,6 +19,8 @@ import { SortMenu, applySorts } from '@/components/collection/SortMenu';
 import { GroupMenu, applyGrouping } from '@/components/collection/GroupMenu';
 import type { getCollection } from '@/actions/collection/collection';
 import type { AggregationId } from '@/lib/collection/summary';
+import { filterChipText, groupChipText, sortChipText, withTitleFirst } from '@/lib/collection/view-chips';
+import { OPERATORS } from '@/lib/collection/filter-operators';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
 type View = NonNullable<Collection>['views'][number];
@@ -93,9 +95,10 @@ export function TableView({ collection, view }: TableViewProps) {
     return configWriteChain.current;
   };
 
-  const visibleProperties = collection.properties
-    .filter((p: any) => p.isVisible)
-    .sort((a: any, b: any) => a.order - b.order);
+  // G105: the title column (first text property) is always first when fields are merged.
+  const visibleProperties = withTitleFirst(
+    collection.properties.filter((p: any) => p.isVisible),
+  );
 
   // Apply filters, sorts, and grouping
   let processedItems = collection.items;
@@ -256,6 +259,72 @@ export function TableView({ collection, view }: TableViewProps) {
           tools
         )}
       </div>
+
+      {(filters.length > 0 || sorts.length > 0 || groupBy) && (
+        <div
+          className="flex flex-wrap gap-1.5 border-b border-border px-[var(--editor-pad-x)] py-1.5"
+          data-testid="collection-view-chips"
+        >
+          {filters.map((filter: any) => {
+            const property = collection.properties.find((p: any) => p.id === filter.propertyId);
+            const definition = OPERATORS[filter.operator as keyof typeof OPERATORS];
+            return (
+              <button
+                key={filter.id}
+                type="button"
+                aria-label="移除筛选"
+                onClick={() => {
+                  const next = filters.filter((f: any) => f.id !== filter.id);
+                  setFilters(next);
+                  void persistConfig({ filters: next, sorts, groupBy });
+                }}
+                className="flex items-center gap-1 rounded-full border border-border bg-foreground/4 px-2 py-0.5 text-[11px] text-foreground/70 hover:bg-foreground/8"
+              >
+                {filterChipText(
+                  property?.name ?? '',
+                  definition?.label ?? filter.operator,
+                  filter.value,
+                  definition?.takesValue ?? true,
+                )}
+                <X className="size-3" />
+              </button>
+            );
+          })}
+          {sorts.map((sort: any) => {
+            const property = collection.properties.find((p: any) => p.id === sort.propertyId);
+            return (
+              <button
+                key={sort.id}
+                type="button"
+                aria-label="移除排序"
+                onClick={() => {
+                  const next = sorts.filter((s: any) => s.id !== sort.id);
+                  setSorts(next);
+                  void persistConfig({ filters, sorts: next, groupBy });
+                }}
+                className="flex items-center gap-1 rounded-full border border-border bg-foreground/4 px-2 py-0.5 text-[11px] text-foreground/70 hover:bg-foreground/8"
+              >
+                {sortChipText(property?.name ?? '', sort.direction)}
+                <X className="size-3" />
+              </button>
+            );
+          })}
+          {groupBy && (
+            <button
+              type="button"
+              aria-label="移除分组"
+              onClick={() => {
+                setGroupBy(null);
+                void persistConfig({ filters, sorts, groupBy: null });
+              }}
+              className="flex items-center gap-1 rounded-full border border-border bg-foreground/4 px-2 py-0.5 text-[11px] text-foreground/70 hover:bg-foreground/8"
+            >
+              {groupChipText(collection.properties.find((p: any) => p.id === groupBy)?.name ?? '')}
+              <X className="size-3" />
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="flex-1 overflow-auto">
         {groupBy ? (

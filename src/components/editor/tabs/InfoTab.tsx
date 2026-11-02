@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   Calendar, User, Play, Folder, Copy, Star, Clock, Trash2,
   FileText, LayoutTemplate, Download, Search, ArrowUp, ArrowDown, ChevronsUp, ChevronsDown,
-  MessageSquare, ChevronRight, FoldVertical, UnfoldVertical, LogOut,
+  MessageSquare, ChevronRight, FoldVertical, UnfoldVertical, LogOut, Type, Scan,
 } from 'lucide-react';
 import { cn } from 'cn';
 import { NodeSelection } from '@tiptap/pm/state';
@@ -535,7 +535,11 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
           {/* Stats */}
           <section>
             <div className="mb-2 flex items-center justify-between">
-              <h4 className="text-caption font-medium uppercase tracking-wider text-foreground/40">
+              <h4 className="flex items-center gap-1.5 text-caption font-medium uppercase tracking-wider text-foreground/40">
+                {/* G1454：官方统计段带三枚图标——富文本／纯文本／Viewfinder（圈定范围）。 */}
+                <FileText className="size-3" data-testid="stats-icon-rich" />
+                <Type className="size-3" data-testid="stats-icon-plain" />
+                <Scan className="size-3" data-testid="stats-icon-viewfinder" />
                 {statsTitle(statsScope)}
               </h4>
               <select

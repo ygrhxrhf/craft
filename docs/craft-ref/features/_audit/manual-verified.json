@@ -8798,10 +8798,11 @@
       ]
     },
     "G1454": {
-      "status": "partial",
-      "note": "统计五读数齐，但页面信息缺统计图标与「动作」段",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "统计段补三枚图标（富文本/纯文本/Viewfinder）；五读数与属性段本就齐。「动作」六枚在本仓落在动作子页签（G1453 的层级差），非缺项。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:515"
+        "src/components/editor/tabs/InfoTab.tsx"
       ]
     },
     "G1455": {

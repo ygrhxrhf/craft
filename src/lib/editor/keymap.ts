@@ -129,10 +129,14 @@ function keyName(chord: Chord): string {
   return KEY_NAMES[value] ?? value;
 }
 
-export function displayFor(binding: KeyBinding, platform: Platform): string {
+/**
+ * 键帽逐枚：官方面板把修饰键与字母各自装进一枚 `<kbd>`（`_key_` span），所以显示层要的是
+ * 一串键帽而不是一根串好的字符串。Mac 用空格分隔、Windows 用连字符，是 `displayFor` 的事。
+ */
+export function capParts(binding: KeyBinding, platform: Platform): string[] {
   const chord = chordFor(binding, platform);
   // A key that is deliberately unbound on this platform has nothing to print.
-  if (!chord) return '';
+  if (!chord) return [];
   const flags = [chord.metaKey, chord.ctrlKey, chord.altKey, chord.shiftKey];
   const labels = platform === 'mac' ? MAC_LABELS : WIN_LABELS;
   const parts: string[] = [];
@@ -141,7 +145,11 @@ export function displayFor(binding: KeyBinding, platform: Platform): string {
   });
   const key = keyName(chord);
   if (key) parts.push(key);
-  return parts.join(platform === 'mac' ? ' ' : '-');
+  return parts;
+}
+
+export function displayFor(binding: KeyBinding, platform: Platform): string {
+  return capParts(binding, platform).join(platform === 'mac' ? ' ' : '-');
 }
 
 export interface KeyCombo {

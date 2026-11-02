@@ -52,15 +52,16 @@ describe('渲染期不再猜平台（三处调用点全部改走钩子）', () =
     expect(aliveLines(hook, 'setPlatform(')).toHaveLength(0);
   });
 
-  for (const [file, count] of [
-    ['components/editor/DocumentEditor.tsx', 2],
-    ['components/settings/ShortcutsPanel.tsx', 1],
+  // 键位显示层的两个出口都吃钩子的平台值：整串提示用 `displayFor`，逐枚键帽用 `capParts`。
+  for (const [file, helper, count] of [
+    ['components/editor/DocumentEditor.tsx', 'displayFor(', 2],
+    ['components/settings/ShortcutsPanel.tsx', 'capParts(', 1],
   ] as const) {
     const src = source(file);
     it(`${file} 的 ${count} 处键位提示都吃钩子，不吃裸判定`, () => {
       expect(aliveLines(src, 'usePlatform()'), `${file} 没挂上钩子`).toHaveLength(1);
       expect(aliveLines(src, 'detectPlatform()'), `${file} 还在渲染期猜平台`).toHaveLength(0);
-      expect(aliveLines(src, 'displayFor('), `${file} 的 displayFor 调用数变了`).toHaveLength(count);
+      expect(aliveLines(src, helper), `${file} 的 ${helper} 调用数变了`).toHaveLength(count);
     });
   }
 

@@ -6802,9 +6802,11 @@
     },
     "G755": {
       "status": "partial",
-      "note": "有面板与 kbd 行，但无 7 钮分类栏与分类/段标题层级",
+      "note": "第 187 批：面板两层结构（7 钮分类栏 + 分类/段标题）与逐枚键帽已对齐；名册行数（29 vs 89）与别名行仍缺",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:38"
+        "src/lib/editor/shortcut-panel.ts:1",
+        "src/components/settings/ShortcutsPanel.tsx:1",
+        "src/lib/editor/keymap.ts:136"
       ]
     },
     "G756": {
@@ -6844,9 +6846,10 @@
     },
     "G771": {
       "status": "partial",
-      "note": "本地六组、行数远少于官方 7 分类 95 行，无主行/别名计数口径",
+      "note": "第 187 批：7 分类 + 18 段名册已按官方顺序落数据层并单测；行数/别名行/键帽数三口径仍不齐",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:41"
+        "src/lib/editor/shortcut-panel.ts:1",
+        "src/lib/editor/shortcut-panel.test.ts:1"
       ]
     },
     "G775": {
@@ -7000,9 +7003,10 @@
     },
     "G1622": {
       "status": "partial",
-      "note": "本地六组静态分组，非官方 7 分类名册；「在表格中」组为空",
+      "note": "第 187 批：7 类名册与「在表格中」段位已进数据层；表格四条键不在 KEY_BINDINGS，该段仍空",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:12"
+        "src/lib/editor/shortcut-panel.ts:32",
+        "src/lib/editor/shortcut-panel.ts:92"
       ]
     },
     "G803": {

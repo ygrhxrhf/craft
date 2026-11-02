@@ -7,7 +7,7 @@ import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { toTypedValue } from '@/lib/collection/cell-value';
 import { validateMultiSelect, validateSelect } from '@/lib/collection/value-validation';
 import { normalizeCellValue } from '@/lib/collection/cell-edit';
-import { addMembership } from '@/lib/collection/object-membership';
+import { addMembership, removeMembership } from '@/lib/collection/object-membership';
 
 export async function addItem(collectionId: string) {
   const session = await auth();
@@ -247,9 +247,41 @@ export async function addItemToCollection(itemId: string, collectionId: string):
   revalidatePath(`/collections/${collectionId}`);
 }
 
+/**
+ * G289：把一行移出某个集合（官方 `move.out.item.beta`）。只摘归属、不删对象：
+ * 还有别的集合就换主集合继续存在；这是最后一项归属时才随行删除。
+ */
+export async function removeItemFromCollection(itemId: string, collectionId: string): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const item = await db.orm.public.CollectionItem.first({ id: itemId });
+  if (!item) throw new Error('项目不存在');
+  const collection = await db.orm.public.Collection.first({ id: collectionId });
+  if (!collection || (collection as any).userId !== session.user.id) throw new Error('集合不存在');
+
+  const row = item as Record<string, unknown>;
+  const current = normalizeSchemas(row.schemas, String(row.collectionId ?? ''));
+  const next = removeMembership({ schemas: current, objectSchemaId: null }, collectionId).schemas;
+
+  if (next.length === 0) {
+    await deleteItem(itemId);
+    return;
+  }
+
+  const primary = String(row.collectionId ?? '');
+  await db.orm.public.CollectionItem.where({ id: itemId }).update({
+    schemas: next,
+    collectionId: primary === collectionId ? next[0] : primary,
+    updatedAt: new Date().toISOString(),
+  });
+  await emitSyncEventSafe(db, session.user.id, ['collection_item'], itemId);
+  revalidatePath(`/collections/${collectionId}`);
+}
+
 /** G427: a row's membership array; a missing/invalid value reads as the single `collectionId`. */
-function normalizeSchemas(raw: unknown, fallback?: string): string[] {
-  if (Array.isArray(raw)) return raw.filter((value): value is string => typeof value === 'string');
+function normalizeSchemas(raw: unknown, fallback?: string): string[] {  if (Array.isArray(raw)) return raw.filter((value): value is string => typeof value === 'string');
   if (typeof raw === 'string' && raw) {
     try {
       const parsed: unknown = JSON.parse(raw);

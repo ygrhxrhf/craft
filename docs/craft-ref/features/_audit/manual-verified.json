@@ -4417,10 +4417,13 @@
       ]
     },
     "G289": {
-      "status": "partial",
-      "note": "画廊卡可跳关联文档，列表/表格行不可；无「移出集合」语义",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "集合行尾提供「导航至区块」与「移出行（测试版）」；移出只摘归属，最后一项才删行。",
       "evidence": [
-        "src/app/(app)/collections/[id]/GalleryView.tsx:110"
+        "src/app/(app)/collections/[id]/TableView.tsx:331",
+        "src/actions/collection/items.ts:250",
+        "src/lib/collection/row-actions-wiring.test.ts"
       ]
     },
     "G291": {

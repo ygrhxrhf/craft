@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:09:58.156Z",
+  "generatedAt": "2026-11-02T07:13:57.449Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 976,
-    "aligned": 210,
+    "gap": 975,
+    "aligned": 211,
     "unknown": 196,
     "deliberate": 100,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 404,
+    "P2 / gap": 403,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 107,
+    "P2 / aligned": 108,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / deliberate": 36,
@@ -6221,10 +6221,10 @@
       "cols": 5,
       "id": "G289",
       "official": "**集合行可\"进入\"其对应块，且\"移出集合\"是 beta 功能**：`navigate.into.block`「导航至区块」+ `move.out.item.beta`/`move.out.row`「移出行（测试版）」",
-      "local": "本地集合行只展开不导航，无移出语义",
-      "verdict": "缺失",
+      "local": "本地集合行已补两个动作 ✎ 现读（2026-11-02）更正：表格行尾按钮「导航至区块」（有 `documentId` 时跳文档）与「移出行（测试版）」；服务端 `removeItemFromCollection` 只摘 `schemas` 归属，主集合换成下一个归属，最后一项才随行删除。接线断言见 `row-actions-wiring.test.ts`。",
+      "verdict": "☆ 已清（第 145 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
-import { GripVertical, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
+import { ExternalLink, FolderMinus, GripVertical, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
 import { useIsMobile } from '@/lib/use-is-mobile';
-import { addItem, clearGroupValues, deleteItem, setItemValue } from '@/actions/collection/items';
+import { addItem, clearGroupValues, deleteItem, removeItemFromCollection, setItemValue } from '@/actions/collection/items';
 import { confirmDialog } from '@/lib/dialog/show';
 import { getSyncManager } from '@/lib/sync-core';
 import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-reorder';
@@ -110,6 +110,12 @@ export function TableView({ collection, view }: TableViewProps) {
 
   const handleDeleteItem = async (itemId: string) => {
     await deleteItem(itemId);
+    router.refresh();
+  };
+
+  // G289: 「移出集合」只摘归属；最后一项归属时才随行删除（服务端判定）。
+  const handleMoveOut = async (itemId: string) => {
+    await removeItemFromCollection(itemId, collection.id);
     router.refresh();
   };
 
@@ -318,6 +324,26 @@ export function TableView({ collection, view }: TableViewProps) {
                             </td>
                           ))}
                           <td className="border-b border-border px-1 py-0">
+                            {item.documentId && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-label="导航至区块" title="导航至区块"
+                                className="opacity-0 group-hover:opacity-100"
+                                onClick={() => router.push(`/documents/${item.documentId}`)}
+                              >
+                                <ExternalLink className="size-4 text-muted-foreground" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              aria-label="移出行（测试版）" title="移出行（测试版）"
+                              className="opacity-0 group-hover:opacity-100"
+                              onClick={() => void handleMoveOut(item.id)}
+                            >
+                              <FolderMinus className="size-4 text-muted-foreground" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -421,6 +447,26 @@ export function TableView({ collection, view }: TableViewProps) {
                     </td>
                   ))}
                   <td className="border-b border-border px-1 py-0">
+                    {item.documentId && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        aria-label="导航至区块" title="导航至区块"
+                        className="opacity-0 group-hover:opacity-100"
+                        onClick={() => router.push(`/documents/${item.documentId}`)}
+                      >
+                        <ExternalLink className="size-4 text-muted-foreground" />
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label="移出行（测试版）" title="移出行（测试版）"
+                      className="opacity-0 group-hover:opacity-100"
+                      onClick={() => void handleMoveOut(item.id)}
+                    >
+                      <FolderMinus className="size-4 text-muted-foreground" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"

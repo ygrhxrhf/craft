@@ -4768,10 +4768,12 @@
       ]
     },
     "G370": {
-      "status": "partial",
-      "note": "内联面板改日期即提交且不关闭；无 Enter 提交与弹层",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "提醒/重复面板常驻不关（只由按钮或 Escape 关闭），补上「提醒我…」五档快捷行与「清除 日期」行。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:533"
+        "src/app/(app)/tasks/TasksView.tsx",
+        "src/lib/task/remind-presets.ts"
       ]
     },
     "G371": {

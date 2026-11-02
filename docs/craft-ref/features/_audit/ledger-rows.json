@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-02T03:04:10.543Z",
+  "generatedAt": "2026-11-02T03:07:44.352Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 1016,
+    "gap": 1015,
     "unknown": 198,
-    "aligned": 171,
+    "aligned": 172,
     "deliberate": 97,
     "partial": 60,
     "nonaction": 56,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 444,
+    "P2 / gap": 443,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 68,
+    "P2 / aligned": 69,
     "P1 / aligned": 39,
     "P3 / aligned": 39,
     "P2 / unknown": 38,
@@ -7688,10 +7688,10 @@
       "cols": 5,
       "id": "G370",
       "official": "**Enter 即提交但不关弹层**，提交后 `提醒我…`/`重复…`/`清除 日期` 立即可用 ⇒ 弹层是\"一次会话内连续配置\"的面板（V38 ①②）",
-      "local": "本地选完日期即关闭",
-      "verdict": "行为不同",
+      "local": "本地选完日期即关闭 ✎ 现读（2026-11-02）更正：**已落**。任务行的「设置提醒与重复」面板本就是常驻展开块（只有再点按钮或 `Escape` 才关），编辑字段即时提交、**不关面板**；本批补上官方那两枚常驻快捷行——「提醒我…」用七档里可落地的五档直接写 `remindAt`（`data-testid=\"task-remind-*\"`），「清除 日期」一次清空 `remindAt`/`dueDate`/`scheduleDate`（`data-testid=\"task-clear-dates\"`）⇒ 提交后这两行立即可用。",
+      "verdict": "☆ 已清（第 118 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

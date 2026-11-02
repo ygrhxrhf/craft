@@ -14,6 +14,7 @@ import {
   parseRecurrence,
 } from '@/lib/task/recurrence';
 import { repeatRuleFor } from '@/lib/task/repeat-validity';
+import { REMIND_PRESETS, isInstantPreset, remindInstantFor } from '@/lib/task/remind-presets';
 import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
 import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
 import { SERIES_OPS } from '@/lib/task/series-ops';
@@ -750,6 +751,33 @@ function TaskRow({
               onChange={(event) => update({ recurrenceEnd: fromDayInput(event.target.value) })}
             />
           </label>
+          {/* G370：面板是"一次会话内连续配置"的面——提交不关它，且两个快捷行常驻：
+              「提醒我…」用官方那七档里的可落档位直接写 `remindAt`；「清除 日期」一次清掉三个时间字段。 */}
+          <div className="flex flex-wrap items-center gap-1.5 sm:col-span-2">
+            <span className="text-[11px] text-muted-foreground">提醒我…</span>
+            {REMIND_PRESETS.filter((preset) => isInstantPreset(preset.id)).map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                data-testid={`task-remind-${preset.id}`}
+                onClick={() => {
+                  const at = remindInstantFor(preset.id, new Date());
+                  if (at) update({ remindAt: at.toISOString() });
+                }}
+                className="rounded-full border border-border px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-foreground/4 hover:text-foreground"
+              >
+                {preset.label}
+              </button>
+            ))}
+            <button
+              type="button"
+              data-testid="task-clear-dates"
+              onClick={() => update({ remindAt: null, dueDate: null, scheduleDate: null })}
+              className="ml-auto rounded-full px-2 py-0.5 text-[11px] text-(--craft-accent) hover:bg-foreground/4"
+            >
+              清除 日期
+            </button>
+          </div>
           {/* G260: the series batch operations — only a recurring task has "remaining" items. */}
           {task.recurrence && (
             <div className="sm:col-span-2" data-testid="series-ops">

@@ -226,7 +226,10 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
       const target = window.document.querySelector('.ProseMirror') as HTMLElement | null;
       if (!target) throw new Error('找不到编辑器');
       const { toPng } = await import('html-to-image');
-      const dataUrl = await toPng(target, { backgroundColor: '#ffffff', pixelRatio: 2 });
+      // G485: export resolution is the container's CSS size × devicePixelRatio, so a 2× screen
+      // gets a 2× image and a 1× screen is not falsely upscaled.
+      const pixelRatio = window.devicePixelRatio || 1;
+      const dataUrl = await toPng(target, { backgroundColor: '#ffffff', pixelRatio });
       const link = window.document.createElement('a');
       link.href = dataUrl;
       link.download = `${window.document.title || 'document'}.png`;

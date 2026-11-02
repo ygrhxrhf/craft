@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T07:22:38.951Z",
+  "generatedAt": "2026-11-02T07:26:25.728Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 467,
+    "aligned": 468,
     "partial": 294,
     "deliberate": 165,
-    "gap": 156,
+    "gap": 155,
     "unreachable": 20
   },
   "priority": {
@@ -20,10 +20,10 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / aligned": 152,
+    "P2 / aligned": 153,
     "P2 / partial": 144,
     "P1 / nonaction": 89,
-    "P2 / gap": 83,
+    "P2 / gap": 82,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P2 / deliberate": 73,
@@ -1189,10 +1189,6 @@
       7
     ],
     [
-      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
-      7
-    ],
-    [
       "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
       7
     ],
@@ -1202,6 +1198,10 @@
     ],
     [
       "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
+      6
+    ],
+    [
+      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
       6
     ],
     [

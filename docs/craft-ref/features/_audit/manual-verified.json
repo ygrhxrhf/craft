@@ -5345,10 +5345,12 @@
       ]
     },
     "G485": {
-      "status": "gap",
-      "note": "无导出成图路径，全仓零处 devicePixelRatio",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "导出成图按 window.devicePixelRatio 出图（每次导出现读）；无常驻预览层故不需监听。",
       "evidence": [
-        "src/components/editor/extensions/drawing-view.tsx:74"
+        "src/components/editor/tabs/InfoTab.tsx:227",
+        "src/lib/editor/export-dpr.test.ts"
       ]
     },
     "G486": {

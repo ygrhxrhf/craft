@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T07:22:38.640Z",
+  "generatedAt": "2026-11-02T07:26:25.322Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 971,
-    "aligned": 213,
+    "gap": 970,
+    "aligned": 214,
     "unknown": 195,
     "deliberate": 103,
     "partial": 60,
@@ -18,12 +18,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 399,
+    "P2 / gap": 398,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
     "P? / unknown": 112,
-    "P2 / aligned": 110,
+    "P2 / aligned": 111,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
     "P3 / aligned": 39,
@@ -9777,10 +9777,10 @@
       "cols": 5,
       "id": "G485",
       "official": "★ **白板/嵌入物导出分辨率 = 容器 CSS 尺寸 × `window.devicePixelRatio`**，且 DPR 用 **`matchMedia('(resolution: Ndppx), (-webkit-device-pixel-ratio: N)')` 跟随变化**、监听经 `AbortController.signal` 注册并 `cleanupAll()`（§十三 7 ⇒ 结案 §25.5 未解的 `E`）",
-      "local": "`grep -rn \"devicePixelRatio\" src` ⇒ **0 命中** ⇒ 本地若做\"导出成图\"式预览会按 1× 出图，**高 DPR 屏上直接发糊**；本地 tldraw 是活实例所以暂时看不见",
-      "verdict": "缺失（结案一条遗留）",
+      "local": "本地导出成图已按当前 DPR 出图 ✎ 现读（2026-11-02）更正：信息面板「图片」导出改用 `window.devicePixelRatio || 1` 作为 `pixelRatio`（每次导出现读，天然跟随时点；本地没有常驻预览层，故不需要 matchMedia 监听）。接线断言见 `export-dpr.test.ts`。",
+      "verdict": "☆ 已清（第 149 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

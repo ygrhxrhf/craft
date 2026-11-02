@@ -6035,10 +6035,13 @@
       ]
     },
     "G646": {
-      "status": "gap",
-      "note": "重复只有四选一原生 select，无 weekly/monthly/weekly 字段级合法性校验",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "重复四档合法性真值表：新增 repeat-validity.ts 的 repeatDraftValid（照抄官方 && / || 不对称）+ repeatRuleFor（选档就地补足合法子项），任务页重复下拉改用。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:561"
+        "src/lib/task/repeat-validity.ts",
+        "src/lib/task/repeat-validity.test.ts",
+        "src/app/(app)/tasks/TasksView.tsx"
       ]
     },
     "G648": {
@@ -8789,10 +8792,13 @@
       ]
     },
     "G1455": {
-      "status": "partial",
-      "note": "动作页缺组合/取消组合/重命名，且不随选块分档",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "动作页 12 项按有无选中块分档禁用：新增 action-availability.ts（两枚免选区项恒可用、其余 10 枚要选区），InfoTab 动作区接线。",
       "evidence": [
-        "src/lib/document/actions-menu.ts:22"
+        "src/lib/editor/action-availability.ts",
+        "src/lib/editor/action-availability.test.ts",
+        "src/components/editor/tabs/InfoTab.tsx"
       ]
     },
     "G1456": {

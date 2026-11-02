@@ -10,10 +10,10 @@ import { Input } from '@/components/ui/input';
 import { cn } from 'cn';
 import {
   INTERVAL_MAX,
-  RECURRENCE_PRESETS,
   clampInterval,
   parseRecurrence,
 } from '@/lib/task/recurrence';
+import { repeatRuleFor } from '@/lib/task/repeat-validity';
 import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
 import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
 import { SERIES_OPS } from '@/lib/task/series-ops';
@@ -692,16 +692,20 @@ function TaskRow({
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             重复
             <select
-              value={task.recurrence ?? ''}
-              onChange={(event) => update({ recurrence: event.target.value || null })}
+              value={rule?.freq ?? ''}
+              onChange={(event) => {
+                // G646：选档时**就地补足最小合法子项**（周档带当天、月档带今日日号、年档带月+日），
+                // 于是写进 `recurrence` 的规则恒过那四档真值表 —— 官方选完「每周」也自带当天。
+                const freq = event.target.value as '' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+                update({ recurrence: freq ? repeatRuleFor(freq, new Date()) : null });
+              }}
               className="h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground"
             >
               <option value="">不重复</option>
-              {RECURRENCE_PRESETS.filter((preset) => preset.value).map((preset) => (
-                <option key={preset.label} value={preset.value!}>
-                  {preset.label}
-                </option>
-              ))}
+              <option value="daily">每天</option>
+              <option value="weekly">每周</option>
+              <option value="monthly">每月</option>
+              <option value="yearly">每年</option>
             </select>
           </label>
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">

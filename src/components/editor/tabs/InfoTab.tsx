@@ -9,6 +9,8 @@ import {
   MessageSquare, ChevronRight, FoldVertical, UnfoldVertical, LogOut,
 } from 'lucide-react';
 import { cn } from 'cn';
+import { NodeSelection } from '@tiptap/pm/state';
+import { actionEnabled } from '@/lib/editor/action-availability';
 import { confirmDialog } from '@/lib/dialog/show';
 import { leaveDocument } from '@/actions/document/members';
 import { LEAVE_CONFIRM, LEAVE_DOCUMENT_SINGULAR, LEAVE_FAILED_DESC, LEAVE_FAILED_TITLE } from '@/lib/share/leave-document';
@@ -106,6 +108,9 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
   const [locationLoaded, setLocationLoaded] = useState(false);
   const [locationTick, setLocationTick] = useState(0);
   const [busy, setBusy] = useState(false);
+  // G1455：「动作」页的 12 项按"有没有选中块"分档禁用——无选区时只有「在页面中查找」「快速开启」
+  // 两枚可点，其余 10 枚置灰（官方那屏的实测读数）。
+  const hasBlockSelection = editor ? editor.state.selection instanceof NodeSelection : false;
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showExport, setShowExport] = useState(false);
   // The property rows read the document's own timestamps and author (G202) rather than fixed strings.
@@ -675,7 +680,8 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
               setSubTab('info');
               useCommentRequestStore.getState().ask();
             }}
-            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
+            disabled={!actionEnabled('addComment', hasBlockSelection)}
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
           >
             <MessageSquare className="size-3.5 text-muted-foreground" />
             <span>添加评论</span>
@@ -700,7 +706,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             <button
               key={target}
               type="button"
-              disabled={!editor}
+              disabled={!actionEnabled('moveUp', hasBlockSelection)}
               onClick={() => moveSelection(editor, target)}
               className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
             >
@@ -711,7 +717,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
           <button
             type="button"
             onClick={handleDuplicate}
-            disabled={busy}
+            disabled={busy || !actionEnabled('duplicate', hasBlockSelection)}
             className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
           >
             <Copy className="size-3.5 text-muted-foreground" />

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T08:16:58.746Z",
+  "generatedAt": "2026-11-02T08:25:18.659Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 959,
-    "aligned": 224,
+    "gap": 958,
+    "aligned": 225,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 387,
+    "P2 / gap": 386,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 121,
+    "P2 / aligned": 122,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -2717,10 +2717,10 @@
       "cols": 5,
       "id": "G93",
       "official": "**归档是独立于删除的一维**：`isArchived` 与 `isDeleted` 并存，动作 `document_archive` / `document_unarchive`（`registries.md` §三）",
-      "local": "`src/prisma/contract.prisma` 全文只有 `isDeleted`（第 35/71/131/222 行），**无 `isArchived` 字段**，无归档动作与归档视图",
-      "verdict": "缺失（需 contract 变更）",
+      "local": "本地已落归档维度 ✎ 现读（2026-11-02）：`Document.isArchived`（迁移 `add_document_archive`，同步白名单补列）；`setDocumentArchived` 写布尔并广播；侧栏行菜单「归档」；`/archive` 归档视图列出归档文档并可「取消归档」；普通列表（文档树/最近/收藏）过滤 `isArchived`。DB 测试 2 条。",
+      "verdict": "☆ 已清（第 160 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

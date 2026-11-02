@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { ChevronRight, File } from 'lucide-react';
 import { cn } from 'cn';
 import { createDocument } from '@/actions/document/create';
+import { setDocumentArchived } from '@/actions/document/archive';
 import { toast } from '@/components/ui/toast';
 import { getSyncManager } from '@/lib/sync-core';
 import { createDocumentLocal } from '@/components/sync/create-local';
@@ -374,6 +375,13 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
               {favorite ? '取消收藏' : '添加到收藏'}
             </ContextMenuItem>
             <ContextMenuItem onClick={() => void copyLink()}>复制链接</ContextMenuItem>
+            <ContextMenuItem
+              onClick={() => {
+                void setDocumentArchived(doc.id, true).then(() => bumpTree());
+              }}
+            >
+              归档
+            </ContextMenuItem>
             <ContextMenuSeparator />
             <ContextMenuItem variant="destructive" onClick={() => void moveToTrash()}>
               {moveToTrashMenuTitle(doc.title || untitledFor('list'))}

@@ -3554,10 +3554,15 @@
       ]
     },
     "G93": {
-      "status": "gap",
-      "note": "Document 仅 isDeleted；无 isArchived、归档动作与归档视图",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Document.isArchived + setDocumentArchived + 侧栏归档 + /archive 视图（可取消归档）；普通列表过滤归档项。",
       "evidence": [
-        "src/prisma/contract.prisma:80"
+        "src/prisma/contract.prisma:202",
+        "src/actions/document/archive.ts",
+        "src/app/(app)/archive/page.tsx",
+        "src/components/document/ArchiveList.tsx",
+        "src/actions/document/archive.test.ts"
       ]
     },
     "G94": {

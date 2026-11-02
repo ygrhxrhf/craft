@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  Archive,
   Star,
   Tags,
   Clock,
@@ -30,6 +31,7 @@ const navItems = [
   { href: '/templates', label: '模板', icon: LayoutTemplate },
   { href: '/connections', label: '连接', icon: Cable },
   { href: '/trash', label: '回收站', icon: Trash2 },
+  { href: '/archive', label: '归档', icon: Archive },
 ];
 
 export function SidebarNav() {

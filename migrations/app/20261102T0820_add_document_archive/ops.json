@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.documents.isArchived",
+    "label": "Add column \"isArchived\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "isArchived",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"isArchived\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "isArchived"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"isArchived\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"isArchived\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"isArchived\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "isArchived"
+        ]
+      }
+    ]
+  }
+]

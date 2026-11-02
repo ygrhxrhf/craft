@@ -199,6 +199,8 @@ model Document {
 
   isTemplate    Boolean   @default(false)
   isDeleted     Boolean   @default(false)
+  // G93: archived documents leave the normal lists but stay addressable from the archive view.
+  isArchived    Boolean   @default(false)
   deletedAt     TimestamptzString?
 
   isDailyNote   Boolean   @default(false)

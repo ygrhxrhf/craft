@@ -108,7 +108,7 @@ export async function getDocuments() {
   // against 42,340 bytes for every column the tree actually renders. Latency was measured and
   // discarded -- the same statement swung 130–1,302ms run to run, so only the byte count argues.
   const result = await db.orm.public.Document
-    .where({ userId: session.user.id, isDeleted: false, isDailyNote: false, isTemplate: false })
+    .where({ userId: session.user.id, isDeleted: false, isArchived: false, isDailyNote: false, isTemplate: false })
     .select('id', 'title', 'icon', 'parentId', 'folderId', 'isDeleted', 'isDailyNote', 'updatedAt', 'order')
     .orderBy((m: any) => m.updatedAt.desc())
     .all();
@@ -166,9 +166,9 @@ export async function getFavoriteDocuments() {
     // `isDeleted` is read to filter and then dropped: the card below never sees it.
     const doc = await db.orm.public.Document
       .where({ id: (fav as { documentId: string }).documentId })
-      .select('id', 'title', 'icon', 'updatedAt', 'isDeleted')
-      .first() as { id: string; title: string; icon: string | null; updatedAt: string; isDeleted: boolean } | null;
-    if (doc && !doc.isDeleted) {
+      .select('id', 'title', 'icon', 'updatedAt', 'isDeleted', 'isArchived')
+      .first() as { id: string; title: string; icon: string | null; updatedAt: string; isDeleted: boolean; isArchived: boolean } | null;
+    if (doc && !doc.isDeleted && !doc.isArchived) {
       docs.push({ id: doc.id, title: doc.title, icon: doc.icon, updatedAt: doc.updatedAt });
     }
   }
@@ -246,7 +246,7 @@ export async function getRecentDocuments(limit = 20) {
   const docs: RecentDoc[] = [];
 
   const own = await db.orm.public.Document
-    .where({ userId: session.user.id, isDeleted: false })
+    .where({ userId: session.user.id, isDeleted: false, isArchived: false })
     .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'plainText', 'lastViewedAt', 'folderId', 'parentId')
     .orderBy((m: any) => m.updatedAt.desc())
     .all();
@@ -264,13 +264,13 @@ export async function getRecentDocuments(limit = 20) {
     // `userId` and `isDeleted` are read to filter and then dropped.
     const doc = await db.orm.public.Document
       .where({ id: (grant as { documentId: string }).documentId })
-      .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'userId', 'isDeleted', 'plainText', 'lastViewedAt', 'folderId', 'parentId')
+      .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'userId', 'isDeleted', 'isArchived', 'plainText', 'lastViewedAt', 'folderId', 'parentId')
       .first() as {
         id: string; title: string; icon: string | null; updatedAt: string; createdAt: string;
-        userId: string; isDeleted: boolean; plainText: string; lastViewedAt: string | null;
+        userId: string; isDeleted: boolean; isArchived: boolean; plainText: string; lastViewedAt: string | null;
         folderId: string | null; parentId: string | null;
       } | null;
-    if (!doc || doc.isDeleted) continue;
+    if (!doc || doc.isDeleted || doc.isArchived) continue;
     if (doc.userId === session.user.id) continue;
     docs.push({
       id: doc.id,
@@ -288,4 +288,19 @@ export async function getRecentDocuments(limit = 20) {
 
   docs.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
   return docs.slice(0, limit);
+}
+
+/** G93: the archive view — archived documents, newest archive-relevant update first. */
+export async function getArchivedDocuments() {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const docs = await db.orm.public.Document
+    .where({ userId: session.user.id, isDeleted: false, isArchived: true })
+    .select('id', 'title', 'icon', 'updatedAt')
+    .orderBy((m: any) => m.updatedAt.desc())
+    .all();
+
+  return docs as Array<{ id: string; title: string; icon: string | null; updatedAt: string }>;
 }

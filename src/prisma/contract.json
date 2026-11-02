@@ -1696,6 +1696,13 @@
                   "kind": "scalar"
                 }
               },
+              "isArchived": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "isDailyNote": {
                 "nullable": false,
                 "type": {
@@ -2067,6 +2074,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "isArchived": {
+                  "column": "isArchived"
                 },
                 "isDailyNote": {
                   "column": "isDailyNote"
@@ -6869,6 +6879,15 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "isArchived": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "isDailyNote": {
                   "codecId": "pg/bool@1",
                   "default": {
@@ -8813,7 +8832,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d0aae764fce61369b8894038490e844f5e67b0fe2f311255af6a413e2568cd39"
+    "storageHash": "62c3132b216c21d2ecb4eca11f038e05d00807247f86bd85a2fe637b8de66700"
   },
   "execution": {
     "executionHash": "d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32",

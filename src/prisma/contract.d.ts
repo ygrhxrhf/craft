@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d0aae764fce61369b8894038490e844f5e67b0fe2f311255af6a413e2568cd39'>;
+  StorageHashBase<'62c3132b216c21d2ecb4eca11f038e05d00807247f86bd85a2fe637b8de66700'>;
 export type ExecutionHash =
   ExecutionHashBase<'d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32'>;
 export type ProfileHash =
@@ -380,6 +380,7 @@ export type FieldOutputTypes = {
       readonly pageStyle: CodecTypes['pg/json@1']['output'] | null;
       readonly isTemplate: CodecTypes['pg/bool@1']['output'];
       readonly isDeleted: CodecTypes['pg/bool@1']['output'];
+      readonly isArchived: CodecTypes['pg/bool@1']['output'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly isDailyNote: CodecTypes['pg/bool@1']['output'];
       readonly dailyNoteDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -757,6 +758,7 @@ export type FieldInputTypes = {
       readonly pageStyle: CodecTypes['pg/json@1']['input'] | null;
       readonly isTemplate: CodecTypes['pg/bool@1']['input'];
       readonly isDeleted: CodecTypes['pg/bool@1']['input'];
+      readonly isArchived: CodecTypes['pg/bool@1']['input'];
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly isDailyNote: CodecTypes['pg/bool@1']['input'];
       readonly dailyNoteDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -1182,6 +1184,7 @@ export type StorageColumnTypes = {
       readonly font: CodecTypes['pg/text@1']['output'] | null;
       readonly icon: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
+      readonly isArchived: CodecTypes['pg/bool@1']['output'];
       readonly isDailyNote: CodecTypes['pg/bool@1']['output'];
       readonly isDeleted: CodecTypes['pg/bool@1']['output'];
       readonly isTemplate: CodecTypes['pg/bool@1']['output'];
@@ -1559,6 +1562,7 @@ export type StorageColumnInputTypes = {
       readonly font: CodecTypes['pg/text@1']['input'] | null;
       readonly icon: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
+      readonly isArchived: CodecTypes['pg/bool@1']['input'];
       readonly isDailyNote: CodecTypes['pg/bool@1']['input'];
       readonly isDeleted: CodecTypes['pg/bool@1']['input'];
       readonly isTemplate: CodecTypes['pg/bool@1']['input'];
@@ -1913,6 +1917,7 @@ export namespace Models {
     pageStyle: CodecTypes['pg/json@1']['output'] | null;
     isTemplate: CodecTypes['pg/bool@1']['output'];
     isDeleted: CodecTypes['pg/bool@1']['output'];
+    isArchived: CodecTypes['pg/bool@1']['output'];
     deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     isDailyNote: CodecTypes['pg/bool@1']['output'];
     dailyNoteDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -3877,6 +3882,15 @@ type ContractBase = Omit<
                   };
                 };
                 readonly isDeleted: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly isArchived: {
                   readonly nativeType: 'bool';
                   readonly codecId: 'pg/bool@1';
                   readonly nullable: false;
@@ -6573,6 +6587,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly isArchived: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly deletedAt: {
                 readonly nullable: true;
                 readonly type: {
@@ -6817,6 +6835,7 @@ type ContractBase = Omit<
                 readonly pageStyle: { readonly column: 'pageStyle' };
                 readonly isTemplate: { readonly column: 'isTemplate' };
                 readonly isDeleted: { readonly column: 'isDeleted' };
+                readonly isArchived: { readonly column: 'isArchived' };
                 readonly deletedAt: { readonly column: 'deletedAt' };
                 readonly isDailyNote: { readonly column: 'isDailyNote' };
                 readonly dailyNoteDate: { readonly column: 'dailyNoteDate' };

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T09:44:55.990Z",
+  "generatedAt": "2026-11-02T09:50:01.985Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 940,
-    "aligned": 243,
+    "gap": 939,
+    "aligned": 244,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 368,
+    "P2 / gap": 367,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 140,
+    "P2 / aligned": 141,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -29436,10 +29436,10 @@
       "cols": 5,
       "id": "G1579",
       "official": "★★★ **`Ctrl-G`（面板「整理」段的「组合」）：官方在**文本选中态**下落到**查找**，本地**零反应****（第 322 批，`editor.key.group-and-blocklink` 两侧各 14 步）：两侧各建 `ALPHA`／`BETA` 两块 → `Ctrl-A` → `Ctrl-G` ⇒ 官方文本名册新增 **「查找」「暂无结果」**（查找面板被唤起、焦点离开编辑器 `inEditor` true→false），**没有**成组；本地同序列零新增、块名册仍 `[ALPHA, BETA]`。★ 诚实边界（**第 331 批已解开**）：当时没建立块选择态，所以没断言「官方没有组合」——只断言「文本选中态下 `Ctrl-G` 走的是查找」。✎ **第 331 批复核**：`Escape` 即可进入**块选择态**（`body.block-select`），该态下 `Ctrl-G` **确实改变块结构**（`[\"ALPHA\",\"BETA\"]`→`[\"ALPHA BETA\"]`，见 `G1588`）⇒ `Ctrl-G` 是**按态分派**的：文本态走查找、块选择态走组合；本地**两态都没有**；面板把 `Ctrl-G` 同时印给「组合」与「查找下一个」，是 G726 那类面板冲突的又一例",
-      "local": "本地对照＝`craft-keymap.ts` 无 GROUP 分支，也没有 FIND_NEXT 分支（表 B 已记本地 FIND_NEXT 缺失）",
-      "verdict": "行为不同（同键落点不同）",
+      "local": "本地对照＝`craft-keymap.ts` 无 GROUP 分支，也没有 FIND_NEXT 分支（表 B 已记本地 FIND_NEXT 缺失） ✎ 现读（2026-11-02）：文本选中态已按官方分派——`Ctrl/⌘-G` 打开查找面板（`openWith(false)`，阻止冒泡）；块选择态本地仍不存在（由 G1588 单独承载），故\"块选择态下组合\"这一半 N/A。接线断言见 `palette-link-shortcut.test.ts`。",
+      "verdict": "☆ 已清（第 173 批）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

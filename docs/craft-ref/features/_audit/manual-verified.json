@@ -9431,10 +9431,12 @@
       ]
     },
     "G1579": {
-      "status": "partial",
-      "note": "Ctrl-G 现绑 FIND_NEXT；无成组命令",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "文本选中态 Ctrl/⌘-G 打开查找面板；块选择态本地不存在，另一半 N/A。",
       "evidence": [
-        "src/lib/editor/keymap.ts:219"
+        "src/components/editor/extensions/craft-keymap.ts:249",
+        "src/lib/editor/palette-link-shortcut.test.ts"
       ]
     },
     "G1580": {

@@ -228,6 +228,22 @@ export const CraftKeymap = Extension.create({
             // skips the **whole** dispatch — the candidate window owns Esc/Enter. Without this the
             // local editor would close a popup or split a block mid-composition.
             if (isImeComposing(event)) return false;
+            // G1579: Ctrl/⌘-G with a text selection opens the find panel (the block-select state,
+            // which is where the same chord groups blocks, does not exist locally — see G1588).
+            if (
+              (event.key === 'g' || event.key === 'G') &&
+              (event.metaKey || event.ctrlKey) &&
+              !event.shiftKey &&
+              !event.altKey
+            ) {
+              const { from, to } = view.state.selection;
+              if (from !== to) {
+                event.preventDefault();
+                event.stopPropagation();
+                useFindReplaceStore.getState().openWith(false);
+                return true;
+              }
+            }
             // G1586: Ctrl/⌘-K over a selection opens the link input instead of the command palette.
             if (
               (event.key === 'k' || event.key === 'K') &&

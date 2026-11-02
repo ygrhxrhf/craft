@@ -21,4 +21,8 @@ describe('palette vs link shortcut (G1580/G1586)', () => {
     expect(keymap).toContain("setLink({ href: href.trim() })");
     expect(keymap).toMatch(/from !== to[\s\S]{0,200}stopPropagation/);
   });
+
+  it('opens the find panel for Ctrl-G over a selection (G1579)', () => {
+    expect(keymap).toMatch(/useFindReplaceStore\.getState\(\)\.openWith\(false\)/);
+  });
 });

@@ -25,6 +25,7 @@ import { createDocumentLocal } from '@/components/sync/create-local';
 import { parseDateExpression } from '@/lib/task/date-parse';
 import { getOrCreateDayNote } from '@/actions/daily-notes/daily-notes';
 import { exportLibraryZip } from '@/actions/document/export-library';
+import { downloadBase64File } from '@/lib/download/base64-file';
 import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel, noResultsFor } from '@/lib/search/official-copy';
 import {
   REMOVE_FROM_RECENTS,
@@ -40,13 +41,7 @@ import { useSession } from 'next-auth/react';
 async function downloadLibraryArchive() {
   try {
     const file = await exportLibraryZip();
-    const bytes = Uint8Array.from(atob(file.base64), (char) => char.charCodeAt(0));
-    const url = URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = file.filename;
-    link.click();
-    URL.revokeObjectURL(url);
+    downloadBase64File(file.filename, file.base64, 'application/zip');
   } catch {
     toast.add({ id: 'library-export-failed', type: 'error', title: '资料库导出失败' });
   }

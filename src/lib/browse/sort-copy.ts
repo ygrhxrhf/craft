@@ -9,6 +9,8 @@ export const SORT_DIMENSION_LABELS: Record<SortDimension, string> = {
   shared: '创建/共享日期',
   sharedBy: '分享者',
   lastViewed: '上次浏览',
+  created: '创建日期',
+  updated: '更新日期',
 };
 
 export const SORT_DIMENSION_KEYS: Record<SortDimension, string> = {
@@ -16,6 +18,8 @@ export const SORT_DIMENSION_KEYS: Record<SortDimension, string> = {
   shared: 'browse.sort.date.created.shared',
   sharedBy: 'browse.sort.shared.by',
   lastViewed: 'browse.sort.last.viewed',
+  created: 'browse.sort.date.created',
+  updated: 'browse.sort.date.updated',
 };
 
 export const SORT_DIRECTION_LABELS: Record<SortDirection, string> = {

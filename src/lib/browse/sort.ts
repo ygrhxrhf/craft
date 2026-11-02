@@ -5,7 +5,7 @@
  * be tested without a DOM.
  */
 
-export const SORT_DIMENSIONS = ['name', 'shared', 'sharedBy', 'lastViewed'] as const;
+export const SORT_DIMENSIONS = ['name', 'shared', 'sharedBy', 'lastViewed', 'created', 'updated'] as const;
 export type SortDimension = (typeof SORT_DIMENSIONS)[number];
 
 export const SORT_DIRECTIONS = ['ascending', 'descending'] as const;
@@ -35,6 +35,7 @@ const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'bas
 export interface SortableDoc {
   title: string;
   updatedAt: string;
+  createdAt?: string | null;
   lastViewedAt?: string | null;
   shared?: boolean;
   sharedBy?: string | null;
@@ -50,6 +51,10 @@ function valueFor(doc: SortableDoc, dimension: SortDimension): string | boolean 
       return doc.sharedBy ?? '';
     case 'lastViewed':
       return doc.lastViewedAt ?? doc.updatedAt;
+    case 'created':
+      return doc.createdAt ?? '';
+    case 'updated':
+      return doc.updatedAt;
   }
 }
 

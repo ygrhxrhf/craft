@@ -241,13 +241,14 @@ export async function getRecentDocuments(limit = 20) {
     lastViewedAt: string | null;
     folderId: string | null;
     parentId: string | null;
+    isDailyNote: boolean;
   };
 
   const docs: RecentDoc[] = [];
 
   const own = await db.orm.public.Document
     .where({ userId: session.user.id, isDeleted: false, isArchived: false })
-    .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'plainText', 'lastViewedAt', 'folderId', 'parentId')
+    .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'plainText', 'lastViewedAt', 'folderId', 'parentId', 'isDailyNote')
     .orderBy((m: any) => m.updatedAt.desc())
     .all();
 
@@ -264,11 +265,11 @@ export async function getRecentDocuments(limit = 20) {
     // `userId` and `isDeleted` are read to filter and then dropped.
     const doc = await db.orm.public.Document
       .where({ id: (grant as { documentId: string }).documentId })
-      .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'userId', 'isDeleted', 'isArchived', 'plainText', 'lastViewedAt', 'folderId', 'parentId')
+      .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'userId', 'isDeleted', 'isArchived', 'plainText', 'lastViewedAt', 'folderId', 'parentId', 'isDailyNote')
       .first() as {
         id: string; title: string; icon: string | null; updatedAt: string; createdAt: string;
         userId: string; isDeleted: boolean; isArchived: boolean; plainText: string; lastViewedAt: string | null;
-        folderId: string | null; parentId: string | null;
+        folderId: string | null; parentId: string | null; isDailyNote: boolean;
       } | null;
     if (!doc || doc.isDeleted || doc.isArchived) continue;
     if (doc.userId === session.user.id) continue;
@@ -283,6 +284,7 @@ export async function getRecentDocuments(limit = 20) {
       folderId: doc.folderId ?? null,
       parentId: doc.parentId ?? null,
       role: (grant as { role: string }).role,
+      isDailyNote: doc.isDailyNote === true,
     });
   }
 

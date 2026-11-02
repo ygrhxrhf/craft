@@ -10,6 +10,7 @@ import { MarqueeLayer } from '@/components/document/MarqueeLayer';
 import { DocumentCard } from '@/components/document/DocumentCard';
 import { DocumentListView } from '@/components/document/DocumentListView';
 import { ViewModeSwitcher } from '@/components/document/ViewModeSwitcher';
+import { BrowseToolbarMenu } from '@/components/document/BrowseToolbarMenu';
 import { Button } from '@/components/ui/button';
 import { confirmDialog } from '@/lib/dialog/show';
 import { toast } from '@/components/ui/toast';
@@ -22,17 +23,22 @@ import {
   selectionLabel,
   toggleSelection,
 } from '@/lib/browse/selection';
-import { DEFAULT_SORT, sortDocs, type SortSpec } from '@/lib/browse/sort';
+import { sortDocs } from '@/lib/browse/sort';
 import {
   DEFAULT_BROWSE_SORT_SPEC,
   type BrowseSortSpec,
 } from '@/lib/browse/list-sort';
 import {
-  SORT_BY_LABEL,
-  SORT_DIMENSION_LABELS,
-  SORT_DIRECTION_LABELS,
-} from '@/lib/browse/sort-copy';
-import { SORT_DIMENSIONS, SORT_DIRECTIONS } from '@/lib/browse/sort';
+  DEFAULT_BROWSE_SORT,
+  sortSpecForChoice,
+  type BrowseSortOption,
+} from '@/lib/browse/toolbar-menu';
+import {
+  readShowDailyNotes,
+  serverShowDailyNotes,
+  storeShowDailyNotes,
+  subscribeShowDailyNotes,
+} from '@/lib/browse/daily-notes-visibility';
 import {
   LAYOUT_ENTRY_LABEL,
   readViewMode,
@@ -49,6 +55,8 @@ interface SortableDoc {
   updatedAt: string;
   createdAt?: string | null;
   lastViewedAt?: string | null;
+  /** G223: 每日笔记可以整类隐藏（⋯ → 显示每日笔记）。 */
+  isDailyNote?: boolean;
   /** G248: carried through to the list row's content-summary subtitle. */
   plainText?: string | null;
   /** G250: the card head's location breadcrumb, already joined by the page. */
@@ -74,7 +82,8 @@ export function SortableDocGrid({
 }) {
   const router = useRouter();
   const { data: session } = useSession();
-  const [spec, setSpec] = useState<SortSpec>(DEFAULT_SORT);
+  // G223: this screen's four orders, default 更新日期. The list view keeps its own four columns.
+  const [sortChoice, setSortChoice] = useState<BrowseSortOption>(DEFAULT_BROWSE_SORT);
   // G623: batch selection mode. Entering auto-selects the first card.
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -82,10 +91,16 @@ export function SortableDocGrid({
   // G1555：框选层要一个容器句柄来收集卡片矩形。
   const containerRef = useRef<HTMLDivElement | null>(null);
   // G247：列表档的列头排序是**另一套四档**（名称/上次浏览/已更新/已创建），与 ⋯ 菜单那套
-  //   （name/shared/sharedBy/lastViewed）不同源，故单独持一份，互不覆盖。
+  //   （name/lastViewed/created/updated）不同源，故单独持一份，互不覆盖。
   const [browseSort, setBrowseSort] = useState<BrowseSortSpec>(DEFAULT_BROWSE_SORT_SPEC);
   const viewMode = useSyncExternalStore(subscribeViewMode, readViewMode, serverViewMode);
-  const sorted = sortDocs(documents, spec);
+  const showDailyNotes = useSyncExternalStore(
+    subscribeShowDailyNotes,
+    readShowDailyNotes,
+    serverShowDailyNotes,
+  );
+  const visibleDocs = showDailyNotes ? documents : documents.filter((doc) => !doc.isDailyNote);
+  const sorted = sortDocs(visibleDocs, sortSpecForChoice(sortChoice));
 
   function pickMode(mode: BrowseViewMode) {
     storeViewMode(mode);
@@ -194,43 +209,15 @@ export function SortableDocGrid({
         data-testid="browse-sort"
         aria-label={LAYOUT_ENTRY_LABEL}
       >
-        <label className="text-sm text-muted-foreground" htmlFor="browse-sort-dimension">
-          {SORT_BY_LABEL}
-        </label>
-        <select
-          id="browse-sort-dimension"
-          value={spec.dimension}
-          onChange={(event) =>
-            setSpec((current) => ({ ...current, dimension: event.target.value as SortSpec['dimension'] }))
-          }
-          className="h-8 rounded-md border border-border bg-background px-2 text-sm text-foreground"
-        >
-          {SORT_DIMENSIONS.map((dimension) => (
-            <option key={dimension} value={dimension}>
-              {SORT_DIMENSION_LABELS[dimension]}
-            </option>
-          ))}
-        </select>
-        <select
-          aria-label="排序方向"
-          value={spec.direction}
-          onChange={(event) =>
-            setSpec((current) => ({ ...current, direction: event.target.value as SortSpec['direction'] }))
-          }
-          className="h-8 rounded-md border border-border bg-background px-2 text-sm text-foreground"
-        >
-          {SORT_DIRECTIONS.map((direction) => (
-            <option key={direction} value={direction}>
-              {SORT_DIRECTION_LABELS[direction]}
-            </option>
-          ))}
-        </select>
-
-        <Button variant="ghost" size="sm" onClick={startSelecting} data-testid="browse-enter-selection">
-          选择
-        </Button>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-1">
           <ViewModeSwitcher value={viewMode} onChange={pickMode} />
+          <BrowseToolbarMenu
+            sortChoice={sortChoice}
+            onSortChange={setSortChoice}
+            showDailyNotes={showDailyNotes}
+            onToggleDailyNotes={() => storeShowDailyNotes(!showDailyNotes)}
+            onSelect={startSelecting}
+          />
         </div>
       </div>
       )}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildLibraryArchive } from './library-archive';
+import { buildLibraryArchive, buildTextBundleArchive } from './library-archive';
 
 const paragraph = (text: string) => ({
   type: 'doc',
@@ -33,5 +33,27 @@ describe('library archive projection (G53)', () => {
   it('skips deleted documents and falls back to a README when empty', async () => {
     const zip = buildLibraryArchive([rows[4]!]);
     expect(Object.keys(zip.files)).toEqual(['README.md']);
+  });
+});
+
+describe('library archive as TextBundle folders (G223)', () => {
+  it('writes one .textbundle per top-level page with text.markdown and info.json', async () => {
+    const zip = buildTextBundleArchive(rows);
+    const folder = Object.keys(zip.files).find(
+      (name) => name.startsWith('根页-') && name.endsWith('.textbundle/'),
+    );
+    expect(folder).toBeTruthy();
+
+    const markdown = await zip.file(`${folder}text.markdown`)!.async('string');
+    expect(markdown).toContain('根正文');
+    expect(markdown).toContain('孙正文');
+
+    const info = JSON.parse(await zip.file(`${folder}info.json`)!.async('string'));
+    expect(info).toMatchObject({ version: 2, type: 'net.daringfireball.markdown', title: '根页' });
+  });
+
+  it('skips deleted documents and falls back when empty', () => {
+    const zip = buildTextBundleArchive([rows[4]!]);
+    expect(Object.keys(zip.files)).toEqual(['README.txt']);
   });
 });

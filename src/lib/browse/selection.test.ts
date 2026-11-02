@@ -28,7 +28,12 @@ describe('browse batch selection (G623)', () => {
       join(process.cwd(), 'src', 'components', 'document', 'SortableDocGrid.tsx'),
       'utf8',
     );
-    expect(grid).toContain('browse-enter-selection');
+    // G223 moved the 选择 entry into the toolbar's ⋯ menu.
+    const toolbar = readFileSync(
+      join(process.cwd(), 'src', 'components', 'document', 'BrowseToolbarMenu.tsx'),
+      'utf8',
+    );
+    expect(toolbar).toContain('browse-enter-selection');
     expect(grid).toContain('browse-selection-bar');
     expect(grid).toContain('enterSelection(');
 

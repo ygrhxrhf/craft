@@ -17,8 +17,10 @@ const doc = (over: Partial<SortableDoc> & { title: string }): SortableDoc => ({
 });
 
 describe('the official sort enum', () => {
-  it('is four dimensions crossed with two directions', () => {
-    expect([...SORT_DIMENSIONS]).toEqual(['name', 'shared', 'sharedBy', 'lastViewed']);
+  it('crosses every dimension with two directions', () => {
+    // G1091's four (name/shared/sharedBy/lastViewed) plus the two the all-documents toolbar
+    // adds for this screen (created/updated, G223).
+    expect([...SORT_DIMENSIONS]).toEqual(['name', 'shared', 'sharedBy', 'lastViewed', 'created', 'updated']);
     expect([...SORT_DIRECTIONS]).toEqual(['ascending', 'descending']);
   });
 
@@ -55,6 +57,15 @@ describe('ordering', () => {
     const viewed = doc({ title: 'x', lastViewedAt: '2026-02-01T00:00:00.000Z' });
     const rows = sortDocs([a, b, viewed], { dimension: 'lastViewed', direction: 'descending' });
     expect(rows[0].title).toBe('x');
+  });
+
+  it('sorts the toolbar’s 创建日期 / 更新日期 orders', () => {
+    const older = doc({ title: 'old', createdAt: '2025-01-01T00:00:00.000Z', updatedAt: '2026-05-01T00:00:00.000Z' });
+    const newer = doc({ title: 'new', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-04-01T00:00:00.000Z' });
+    expect(sortDocs([older, newer], { dimension: 'created', direction: 'descending' }).map((d) => d.title))
+      .toEqual(['new', 'old']);
+    expect(sortDocs([older, newer], { dimension: 'updated', direction: 'descending' }).map((d) => d.title))
+      .toEqual(['old', 'new']);
   });
 
   it('puts unshared before shared ascending', () => {

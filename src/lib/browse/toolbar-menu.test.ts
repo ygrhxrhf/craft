@@ -1,9 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
   BROWSE_SORT_CHOICES,
   DEFAULT_BROWSE_SORT,
   TOOLBAR_MENU_GROUPS,
+  sortChoiceForSpec,
+  sortSpecForChoice,
   toolbarMenuEntries,
 } from './toolbar-menu';
 
@@ -40,5 +44,43 @@ describe('the menu structure', () => {
     for (const id of ['select', 'showDailyNotes', 'import', 'spaceSettings']) {
       expect(ids, id).toContain(id);
     }
+  });
+});
+
+describe('the four orders drive the shared comparator', () => {
+  it('maps each choice onto a spec, names ascending and dates newest first', () => {
+    expect(sortSpecForChoice('name')).toEqual({ dimension: 'name', direction: 'ascending' });
+    expect(sortSpecForChoice('lastViewed')).toEqual({ dimension: 'lastViewed', direction: 'descending' });
+    expect(sortSpecForChoice('created')).toEqual({ dimension: 'created', direction: 'descending' });
+    expect(sortSpecForChoice('updated')).toEqual({ dimension: 'updated', direction: 'descending' });
+  });
+
+  it('folds a shared spec back onto this screen’s four orders', () => {
+    expect(sortChoiceForSpec({ dimension: 'created', direction: 'ascending' })).toBe('created');
+    // 分享者 is a general-vocabulary dimension this screen does not offer.
+    expect(sortChoiceForSpec({ dimension: 'sharedBy', direction: 'ascending' })).toBe(DEFAULT_BROWSE_SORT);
+  });
+});
+
+describe('the menu is wired into the browse toolbar', () => {
+  const grid = readFileSync(join(process.cwd(), 'src/components/document/SortableDocGrid.tsx'), 'utf8');
+  const menu = readFileSync(join(process.cwd(), 'src/components/document/BrowseToolbarMenu.tsx'), 'utf8');
+
+  it('renders the real menu instead of the old sort selects', () => {
+    expect(grid).toContain('<BrowseToolbarMenu');
+    expect(grid).not.toContain('SORT_DIMENSIONS');
+    expect(menu).toContain('TOOLBAR_MENU_GROUPS');
+    expect(menu).toContain('BROWSE_SORT_CHOICES');
+  });
+
+  it('keeps the selection entry the selection tests look for', () => {
+    expect(menu).toContain('data-testid="browse-enter-selection"');
+    expect(grid).toContain('browse-selection-bar');
+  });
+
+  it('wires both export entries and the daily-note switch', () => {
+    expect(menu).toContain('exportLibraryZip');
+    expect(menu).toContain('exportLibraryTextBundleZip');
+    expect(menu).toContain('showDailyNotes');
   });
 });

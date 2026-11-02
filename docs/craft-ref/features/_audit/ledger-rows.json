@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T10:27:21.798Z",
+  "generatedAt": "2026-11-02T10:51:04.214Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 937,
-    "aligned": 246,
+    "gap": 936,
+    "aligned": 247,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,11 +18,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 365,
+    "P2 / gap": 364,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
-    "P2 / aligned": 143,
+    "P2 / aligned": 144,
     "P? / unknown": 112,
     "P1 / aligned": 39,
     "P2 / deliberate": 39,
@@ -5098,10 +5098,10 @@
       "cols": 5,
       "id": "G223",
       "official": "**所有文档屏工具栏 ⋯ 菜单 7 组 11 项**：选择 / 排序方式（**此屏只有 4 档**：名称·上次浏览·创建日期·更新日期，默认 ✓ 更新日期）/ 显示每日笔记 / 导入 / 导出为 Markdown / 导出为 TextBundle / 空间设置（V28）",
-      "local": "本地浏览屏无这个 ⋯ 菜单：导入挂在 `ImportButton.tsx`（侧栏），排序档位少于 4 档且无\"上次浏览\"，**无\"选择\"、无\"显示每日笔记\"开关、无 TextBundle 导出**（全库 `TextBundle` 只在导入侧命中）",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-02）：`BrowseToolbarMenu.tsx` 按 `toolbar-menu.ts` 的七组结构渲染 ⋯——选择进批量模式；排序四档（名称/上次浏览/创建日期/更新日期，默认更新日期）真正驱动 `sortDocs`；显示每日笔记带 ✓ 并持久化（`daily-notes-visibility.ts`）；导入复用两枚文件挑选器（`use-import-sources.tsx`）；导出 Markdown 走 `exportLibraryZip`、TextBundle 新增 `exportLibraryTextBundleZip`（每页一个 `.textbundle` 文件夹）；空间设置跳 `/settings` ☆ 已清（第 176 批）",
+      "verdict": "对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

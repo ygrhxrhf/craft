@@ -4242,10 +4242,15 @@
       ]
     },
     "G223": {
-      "status": "gap",
-      "note": "浏览屏无 ⋯ 菜单；排序是独立下拉，导入在侧栏",
+      "status": "aligned",
+      "note": "第 176 批落 ⋯ 菜单七组：选择/四档排序/显示每日笔记/导入/Markdown 导出/TextBundle 导出/空间设置",
       "evidence": [
-        "src/components/document/SortableDocGrid.tsx:74"
+        "src/components/document/BrowseToolbarMenu.tsx:1",
+        "src/lib/browse/toolbar-menu.ts:1",
+        "src/lib/browse/daily-notes-visibility.ts:1",
+        "src/components/document/SortableDocGrid.tsx:214",
+        "src/actions/document/export-library.ts:21",
+        "src/lib/document/library-archive.ts:41"
       ]
     },
     "G225": {

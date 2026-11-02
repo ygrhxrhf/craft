@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { File } from 'lucide-react';
+import { Check, File } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from 'cn';
 import { cardHead } from '@/lib/document/card-head';
@@ -16,9 +16,13 @@ interface DocumentCardProps {
     /** G250: the card head's location breadcrumb, already joined by the caller. */
     breadcrumb?: string | null;
   };
+  /** G623: batch selection mode — the card shows a checkbox instead of navigating on click. */
+  selectable?: boolean;
+  selected?: boolean;
+  onToggleSelect?: (id: string) => void;
 }
 
-export function DocumentCard({ document: doc }: DocumentCardProps) {
+export function DocumentCard({ document: doc, selectable = false, selected = false, onToggleSelect }: DocumentCardProps) {
   const head = cardHead({ title: doc.title, updatedAt: doc.updatedAt, breadcrumb: doc.breadcrumb });
   // G384/G1439：卡片没有常驻 `⋯`，入口只有右键（7 项）。
   const [menuAt, setMenuAt] = useState<{ x: number; y: number } | null>(null);
@@ -28,12 +32,29 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
       <Link
         href={`/documents/${doc.id}`}
         data-item-id={doc.id}
+        aria-selected={selectable ? selected : undefined}
+        onClick={(event) => {
+          if (!selectable) return;
+          event.preventDefault();
+          onToggleSelect?.(doc.id);
+        }}
         onContextMenu={(event) => {
           event.preventDefault();
           setMenuAt({ x: event.clientX, y: event.clientY });
         }}
         className="group relative block rounded-lg px-1.5 pt-1.5 pb-0 transition-colors duration-300 hover:bg-foreground/[0.03]"
       >
+      {selectable && (
+        <span
+          aria-hidden
+          className={cn(
+            'absolute left-2 top-2 z-[2] flex size-4 items-center justify-center rounded border',
+            selected ? 'border-craft-accent bg-craft-accent text-white' : 'border-foreground/30 bg-background',
+          )}
+        >
+          {selected && <Check className="size-3" />}
+        </span>
+      )}
       {/* The card's focus ring is a real child element, not an outline (G1127): it can carry its
           own z-index and is hidden until the card is focused. */}
       <span

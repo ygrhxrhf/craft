@@ -134,6 +134,7 @@
 | --- | --- | --- | --- | --- |
 | G112 | 1262 | 已对齐 | local-says-missing | 无 ✎ 现读（2026-11-02）更正：已实现。① 守卫与取名＝lib/collection/csv-file.ts（ |
 | G300 | 1581 | 已对齐 | local-says-missing | 本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：PENDING_STATES 逐字 11 条；已接「正在 |
+| G623 | 2242 | 已对齐 | local-says-missing | 本地已补批量选择模式 ✎ 现读（2026-11-02）更正：SortableDocGrid 工具栏有「选择」；进入后卡片 |
 
 ## 十、待重扫
 

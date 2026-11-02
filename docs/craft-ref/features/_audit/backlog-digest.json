@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T07:39:53.033Z",
+  "generatedAt": "2026-11-02T07:50:49.948Z",
   "total": 1614,
   "status": {
     "nonaction": 512,
-    "aligned": 472,
+    "aligned": 473,
     "partial": 290,
     "deliberate": 165,
-    "gap": 155,
+    "gap": 154,
     "unreachable": 20
   },
   "priority": {
@@ -20,10 +20,10 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / aligned": 157,
+    "P2 / aligned": 158,
     "P2 / partial": 140,
     "P1 / nonaction": 89,
-    "P2 / gap": 82,
+    "P2 / gap": 81,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P2 / deliberate": 73,
@@ -1148,6 +1148,14 @@
       "conflict": "local-says-missing",
       "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。链接创建、账户删除、邀请单复、空间头像在本仓无对应动作（无链接/空间/团队/账户",
       "verdict": "☆ 已清（第 147 批）"
+    },
+    {
+      "id": "G623",
+      "line": 2242,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderId`、删除走软删 `deleteDocument`。入口以直接按钮呈现（浏览屏 ",
+      "verdict": "☆ 已清（第 154 批）"
     }
   ],
   "unknownSections": [],

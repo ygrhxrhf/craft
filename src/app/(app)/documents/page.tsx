@@ -61,7 +61,7 @@ export default async function DocumentsPage() {
         <section>
           <h2 className="mb-3 text-lg font-medium">最近编辑</h2>
           {recentDocs.length > 0 ? (
-            <SortableDocGrid documents={recentDocs} />
+            <SortableDocGrid documents={recentDocs} folders={folderNodes} />
           ) : (
             <div className="rounded-lg border border-dashed border-border p-8 text-center">
               {/* G320：官方那句带 `<br/>`（`onboarding.welcome.to.craft.desc`），走 RichText

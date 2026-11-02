@@ -6027,10 +6027,14 @@
       ]
     },
     "G623": {
-      "status": "gap",
-      "note": "浏览屏只有视图切换与排序，无多选/批量删除；仅回收站有批量通路",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "浏览屏批量选择：进入即选首张，卡片复选框，工具栏已选N项+星标/移动/删除；入口为直接按钮（⋯菜单另见 G223）。",
       "evidence": [
-        "src/components/document/TrashList.tsx:202"
+        "src/lib/browse/selection.ts",
+        "src/components/document/SortableDocGrid.tsx:95",
+        "src/components/document/DocumentCard.tsx:21",
+        "src/lib/browse/selection.test.ts"
       ]
     },
     "G625": {

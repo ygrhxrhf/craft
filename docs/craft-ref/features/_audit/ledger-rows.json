@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-02T07:39:52.748Z",
+  "generatedAt": "2026-11-02T07:50:49.677Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 966,
+    "gap": 965,
     "aligned": 218,
     "unknown": 195,
     "deliberate": 103,
-    "partial": 60,
+    "partial": 61,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 394,
+    "P2 / gap": 393,
     "P? / gap": 226,
     "P1 / gap": 192,
     "P3 / gap": 154,
@@ -32,8 +32,8 @@
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
+    "P2 / partial": 23,
     "P? / nonaction": 23,
-    "P2 / partial": 22,
     "P? / aligned": 19,
     "P2 / nonaction": 18,
     "P1 / partial": 16,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 2,
+  "conflicts": 3,
   "conflictRows": [
     {
       "id": "G112",
@@ -66,6 +66,14 @@
       "conflict": "local-says-missing",
       "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。",
       "verdict": "☆ 已清（第 147 批）"
+    },
+    {
+      "id": "G623",
+      "line": 2242,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderI",
+      "verdict": "☆ 已清（第 154 批）"
     }
   ],
   "sectionRows": [
@@ -12268,16 +12276,16 @@
       "cols": 5,
       "id": "G623",
       "official": "★ **浏览屏有批量选择模式**：⋯ 菜单第 1 项即「选择」，进入后卡片渲染复选框（`_selectionCheckbox_dhebv_367`）、工具栏换成「已选 N 项」+ 星 + 文件夹 + 垃圾桶，且**进入模式即自动选中首张卡**（本批实测）",
-      "local": "本轮 `grep -rni \"selectionMode|selectMode|batchDelete|bulkDelete|已选\" src` ⇒ **0 命中** ⇒ 本地完全没有批量选择/批量删除面（与 G221/G233/G245 的\"两条删除路径\"缺口同源，本批补上\"进入即选中\"这条交互细节）",
-      "verdict": "本地缺失",
+      "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderId`、删除走软删 `deleteDocument`。入口以直接按钮呈现（浏览屏 ⋯ 菜单本仓仍未做，另见 G223）。纯核 `selection.ts` 单测 4 条。",
+      "verdict": "☆ 已清（第 154 批）",
       "score": "2/1",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

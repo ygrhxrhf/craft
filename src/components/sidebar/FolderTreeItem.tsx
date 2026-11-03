@@ -16,6 +16,7 @@ import {
   DELETE_FOLDER_SUBTITLE,
 } from '@/lib/folder/delete-copy';
 import { confirmDialog, promptDialog } from '@/lib/dialog/show';
+import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -256,20 +257,27 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
           };
           setExpanded(true);
         } else {
+          // G607/G338：同层重排与文档树同一口径——整批写 0…n-1，而不是给被拖行算中点。
           const siblings = allFolders
             .filter(f => f.parentId === folder.parentId && f.id !== draggedFolderId)
             .sort((a, b) => a.order - b.order);
-          const idx = siblings.findIndex(f => f.id === folder.id);
-          if (idx < 0) return;
-          const order =
-            currentZone === 'before'
-              ? idx > 0
-                ? (siblings[idx - 1].order + folder.order) / 2
-                : folder.order - 1
-              : idx < siblings.length - 1
-                ? (folder.order + siblings[idx + 1].order) / 2
-                : folder.order + 1;
-          data = { parentId: folder.parentId, order };
+          const ids = orderAfterDrop(
+            siblings.map(f => ({ id: f.id, order: f.order })),
+            draggedFolderId,
+            folder.id,
+            currentZone,
+          );
+          if (ids.length === 0) return;
+          const manager = getSyncManager();
+          for (const patch of orderPatches(ids)) {
+            await manager.applyLocal({
+              table: 'folder',
+              id: patch.id,
+              patch: { parentId: folder.parentId, order: patch.order },
+            });
+          }
+          bumpTree();
+          return;
         }
         await getSyncManager().applyLocal({
           table: 'folder',

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T02:13:41.346Z",
+  "generatedAt": "2026-11-03T02:15:43.539Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 916,
@@ -7169,7 +7169,7 @@
       "cols": 5,
       "id": "G338",
       "official": "**文件夹 icon 与 description 各是独立 mutation 事件**（`Folder icon` / `Folder description`）⇒ 与文档\"文件夹有 description 字段\"的文案级证据升级为协议级；另有 `Folder pinned doc` / `Subfolder reorder` / `Root reorder` / `Starred reorder` 四条结构事件",
-      "local": "本地文件夹无 description 独立更新通路，顺序事件未按容器分 ⇒ ✎ 现读（2026-11-02 第 203 批）：`Folder.description` 列已加（迁移 `20261103T0157_add_folder_description`，同步白名单同步补）并接上独立的「编辑描述」菜单（只写 description）；「设置图标」同样只写 icon（官方 `Folder icon` / `Folder description` 两条独立 mutation 对上）；仍缺：文件夹区的整批重排（`folder_reorder`/`subfolder_reorder`）、固定文档事件",
+      "local": "本地文件夹无 description 独立更新通路，顺序事件未按容器分 ⇒ ✎ 现读（2026-11-02 第 203 批）：`Folder.description` 列已加（迁移 `20261103T0157_add_folder_description`，同步白名单同步补）并接上独立的「编辑描述」菜单（只写 description）；「设置图标」同样只写 icon（官方 `Folder icon` / `Folder description` 两条独立 mutation 对上）；仍缺：固定文档事件 ⇒ ✎ 再读（2026-11-02 第 206 批）：文件夹区同层重排已按整批写（`folder_reorder`/`subfolder_reorder` 同一函数），只剩固定文档事件",
       "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",
@@ -12020,7 +12020,7 @@
       "local": "✎ 现读（2026-10-31）更正：侧栏拖拽按相邻中点算 order 逐条写，无整批 orderedIds",
       "verdict": "缺失（排序面）",
       "score": "2/2",
-      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本轮实跑：`grep -rn \"reorder|orderedIds\" src` ⇒ 本地仅有 `src/lib/authz/folder-tree.ts` 的父链校验与导入路径，**无任何\"提交完整顺序\"的排序 action**；标签置顶本地无对应 ⇒ ★ 官方\"重排一律整批提交\"在四处独立出现（`setRowsOrder`/`reorderTasks`/`tag_reorder`/`root_reorder`）⇒ 高度一致的产品决策 ✎ 现读（2026-11-02 第 191 批）：**文档树同层拖拽已按整批顺序落库**（`lib/document/sibling-order.ts` 的 `orderAfterDrop`＋`orderPatches(0…n-1)`，`DocumentTreeItem.tsx` 逐条 patch 该批 id）；仍缺：文件夹树拖拽只写 `parentId/folderId`（无整批 order）、星标区与标签区无拖拽重排、标签无置顶（`tag_pin`）",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本轮实跑：`grep -rn \"reorder|orderedIds\" src` ⇒ 本地仅有 `src/lib/authz/folder-tree.ts` 的父链校验与导入路径，**无任何\"提交完整顺序\"的排序 action**；标签置顶本地无对应 ⇒ ★ 官方\"重排一律整批提交\"在四处独立出现（`setRowsOrder`/`reorderTasks`/`tag_reorder`/`root_reorder`）⇒ 高度一致的产品决策 ✎ 现读（2026-11-02 第 191 批）：**文档树同层拖拽已按整批顺序落库**（`lib/document/sibling-order.ts` 的 `orderAfterDrop`＋`orderPatches(0…n-1)`，`DocumentTreeItem.tsx` 逐条 patch 该批 id）；仍缺：星标区与标签区无拖拽重排、标签无置顶（`tag_pin`）⇒ ✎ 再读（2026-11-02 第 206 批）：文件夹同层重排也改整批写 0…n-1（`orderAfterDrop`＋`orderPatches`，写 `folder` 表），根区/子文件夹两层同一函数",
       "status": "gap",
       "scoreParsed": {
         "impact": 2,

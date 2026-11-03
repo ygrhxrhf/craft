@@ -2,7 +2,7 @@
 
 import { assertOwned, requireUserId } from '@/lib/authz/guard';
 import { getDb } from '@/prisma/db';
-import { parseMarkdown, titleFromMarkdown } from '@/lib/import/markdown';
+import { parseMarkdownWithIcon, titleFromMarkdown } from '@/lib/import/markdown';
 import { htmlToMarkdown, parseArchiveZip, parseEnex, parseReadwiseCsv } from '@/lib/import/sources';
 import { serializeDocument } from '@/lib/document-codec';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
@@ -56,13 +56,14 @@ export async function importMarkdownDocuments(input: {
 
   const created: ImportedDocument[] = [];
   for (const file of files) {
-    const content = parseMarkdown(file.text);
+    const { content, icon } = parseMarkdownWithIcon(file.text);
     const title = file.name.replace(/\.(markdown|md|txt)$/i, '').trim() || titleFromMarkdown(file.text);
     const document = await db.orm.public.Document.create({
       id: crypto.randomUUID(),
       title: title.slice(0, 80),
       userId,
       folderId,
+      icon,
       content,
       plainText: serializeDocument(content, 'text'),
       // No DB default on metaUpdatedAt; without it new rows never enter the

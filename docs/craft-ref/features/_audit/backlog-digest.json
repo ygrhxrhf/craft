@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T08:21:17.678Z",
+  "generatedAt": "2026-11-03T08:30:39.203Z",
   "total": 1614,
   "status": {
-    "aligned": 578,
+    "aligned": 579,
     "nonaction": 512,
-    "partial": 233,
+    "partial": 232,
     "deliberate": 165,
     "gap": 106,
     "unreachable": 20
@@ -17,12 +17,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 263,
+    "P2 / aligned": 264,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
     "P1 / nonaction": 89,
-    "P2 / partial": 83,
+    "P2 / partial": 82,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P2 / deliberate": 73,
@@ -1227,6 +1227,14 @@
       "conflict": "local-says-missing",
       "local": "`grep -n toggle src/lib/import/markdown.ts` ⇒ **0 命中**＝本地把 `-`／`+`／`*` 一律读成 `bulletList`；本地 toggle 节点是另一个东西（`src/lib/document-codec/index.ts` 的 `toggleBlock`），**导入侧无入口** ✎ 现读（2026-11-02）：G674 的 Markdo",
       "verdict": "☆ 已清（第 171 批）"
+    },
+    {
+      "id": "G1231",
+      "line": 3940,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "✎ 现读（2026-11-03 第 259 批）：HTML 块导入与注释丢弃已在；本批补上「emoji-only 首块→页面图标」（`splitLeadingEmojiIcon` 取无标记单文本 emoji 段落作 `Document.icon` 并从正文移除）；aside 开合标签驱动的装饰位仍未做（本地没有 aside 图标概念）",
+      "verdict": "缺失（局部）"
     },
     {
       "id": "G1574",

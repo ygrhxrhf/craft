@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { serializeDocument } from '../document-codec';
-import { parseMarkdown, pickTextBundleEntry, titleFromMarkdown } from './markdown';
+import { parseMarkdown, parseMarkdownWithIcon, pickTextBundleEntry, titleFromMarkdown } from './markdown';
 
 const blocks = (source: string): any[] => parseMarkdown(source).content ?? [];
 
@@ -405,5 +405,33 @@ describe('Craft-specific Markdown extensions (G674)', () => {
   it('leaves > as a blockquote', () => {
     const [block] = blocks('> 引用');
     expect(block.type).toBe('blockquote');
+  });
+});
+
+describe('the leading emoji page icon (G1231)', () => {
+  it('takes an emoji-only first block as the icon and removes that block', () => {
+    const { content, icon } = parseMarkdownWithIcon('😀\n\n正文');
+    expect(icon).toBe('😀');
+    expect(content.content).toEqual([
+      { type: 'paragraph', content: [{ type: 'text', text: '正文' }] },
+    ]);
+  });
+
+  it('accepts a variation selector', () => {
+    expect(parseMarkdownWithIcon('☕️\n\n正文').icon).toBe('☕️');
+  });
+
+  it('leaves an emoji that shares its block with text alone', () => {
+    const { content, icon } = parseMarkdownWithIcon('😀 你好');
+    expect(icon).toBeNull();
+    expect(content.content?.[0].content?.[0].text).toBe('😀 你好');
+  });
+
+  it('leaves a marked emoji alone', () => {
+    expect(parseMarkdownWithIcon('**😀**').icon).toBeNull();
+  });
+
+  it('keeps one empty paragraph when the emoji was the whole document', () => {
+    expect(parseMarkdownWithIcon('😀').content).toEqual({ type: 'doc', content: [{ type: 'paragraph' }] });
   });
 });

@@ -2839,10 +2839,12 @@
       "evidence": []
     },
     "G1232": {
-      "status": "partial",
-      "note": "代码块末尾单空格已削、<!-- fence 已丢；行内 HTML 解析仍缺（派发表未接线）。",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "<!-- fence 丢弃、末尾单空格削一格、行内 HTML 派发表与块级 HTML 收束均在。",
       "evidence": [
-        "src/lib/import/markdown.ts:117"
+        "src/lib/import/markdown.ts:117",
+        "src/lib/import/markdown.ts:492"
       ]
     },
     "G1234": {
@@ -8782,10 +8784,10 @@
     "G1231": {
       "status": "partial",
       "priority": "P2",
-      "note": "HTML 块导入与注释丢弃已落；仍欠 aside 开合标签的装饰位与 emoji-only 首块图标提取",
+      "note": "HTML 块与注释已在；本批补 emoji-only 首块→页面图标；aside 装饰位仍缺。",
       "evidence": [
-        "src/lib/import/markdown.ts:170",
-        "src/lib/import/markdown.ts:180"
+        "src/lib/import/markdown.ts:147",
+        "src/actions/document/import.ts:59"
       ]
     },
     "G1233": {

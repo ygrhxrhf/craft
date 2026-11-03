@@ -135,9 +135,34 @@ const DISPLAY_MATH = /^\$\$/;
  * block for: headings, lists, tasks, quotes, code, rules, images and inline marks.
  */
 export function parseMarkdown(source: string): PmNode {
+  return parseMarkdownWithIcon(source).content;
+}
+
+const LEADING_EMOJI = /^\s*(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)\s*$/u;
+
+/**
+ * G1231：官方把「首块只有一枚 emoji」认成页面图标并从正文拿走。只认无标记的单文本段落；
+ * 其余形状（多字符、带格式）保持原样，避免把正常正文误当图标。
+ */
+export function splitLeadingEmojiIcon(doc: PmNode): { content: PmNode; icon: string | null } {
+  const blocks = doc.content ?? [];
+  const first = blocks[0];
+  if (first?.type !== 'paragraph' || first.content?.length !== 1) return { content: doc, icon: null };
+  const only = first.content[0];
+  if (only.type !== 'text' || !only.text || only.marks?.length) return { content: doc, icon: null };
+  const match = LEADING_EMOJI.exec(only.text);
+  if (!match) return { content: doc, icon: null };
+  return {
+    content: { ...doc, content: blocks.length > 1 ? blocks.slice(1) : [{ type: 'paragraph' }] },
+    icon: match[1],
+  };
+}
+
+export function parseMarkdownWithIcon(source: string): { content: PmNode; icon: string | null } {
   const lines = source.replace(/\r\n?/g, '\n').split('\n');
   const content = parseBlocks(lines);
-  return { type: 'doc', content: content.length ? content : [{ type: 'paragraph' }] };
+  const doc = { type: 'doc', content: content.length ? content : [{ type: 'paragraph' }] };
+  return splitLeadingEmojiIcon(doc);
 }
 
 function parseBlocks(lines: string[]): PmNode[] {

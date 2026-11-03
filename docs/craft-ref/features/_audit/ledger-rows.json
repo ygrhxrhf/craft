@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T03:10:19.453Z",
+  "generatedAt": "2026-11-03T03:16:24.065Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 910,
-    "aligned": 271,
+    "gap": 909,
+    "aligned": 272,
     "unknown": 196,
     "deliberate": 103,
     "partial": 62,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 339,
+    "P2 / gap": 338,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 167,
+    "P2 / aligned": 168,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -27634,10 +27634,10 @@
       "cols": 5,
       "id": "G1470",
       "official": "★★★★ **两枚块级 `⋯` 弹层的逐项几何与图标名册到手**（`G1439`／`G1440` 只落了项名与序、这两格历批没几何）＝① 文本块那枚逐行 y（CSS px）＝`添加内容` 335／`添加表情` 387／`添加评论` 419／`转换为卡片` 454／`提醒我…` 503／`在上方插入区块` 552／`在下方插入区块` 598／`复制区块链接` 633／`删除` 682＝**6 组／5 枚分隔线**（分隔线在读数里表现为 y=453／502／551／632／681 的零文本子元素）＝☆ 且 `提醒我…` 那枚**行末带子菜单箭头 `>`**（这一枚是 `G1466` 那 7 档的入口）＝② 代码块那枚逐组高＝组① `语言`／`主题`／`全屏模式` 112、组② `提醒我…` 48、组③ 上下插入 80、组④ `复制代码`／`复制区块链接` 80、组⑤ `删除` 48＝**5 组／4 分隔线**＝⇒ 同 9 项而分组不同（6/5 对 5/4）＝\"9 项\"不是一项结构常量＝★★ 图标 aria-label 逐枚＝`Alarm Icon`／`Above Selection Icon`／`Doc On Clipboard Icon`／`Trash Icon`／`Chevron Left Forwardslash Cevron Right Icon`（错拼那枚另落 `G1473`）＋浮标那组 `Reaction Icon`／`Plus Bubble Icon`／`Arrow Right Circle Icon`／`Text Bubble Icon`＝☆ 本线在册复查＝这九枚里 **`Above Selection Icon`／`Doc On Clipboard Icon`／`Alarm Icon`／`Reaction Icon`／`Plus Bubble Icon`／`Arrow Right Circle Icon`／`Text Bubble Icon` 七枚历批零命中**＝本行是第一枚（`Trash Icon` 历批在册）＝★★★ **`menuitem` 0 枚＝自绘面板档**＝与回收站右上 `browse-sort-button` 那形（`[role=menu]`＋`role=group:2`＋`menuitem:2`＝`G993`）同为 `⋯` 外形而 ARIA 档不同＝⇒ 在册那条两档律（`internals.md` §三十六／`interactions.md:3781`）第一次在**块级菜单**上现场读 `role` 复证＝`G1439` 那句「未现场读 role 之前不得据字形推 ARIA 档」自此可收",
-      "local": "本地 3 项弹层无分组、无分隔线、无图标 aria-label（`block-actions.ts:17`）＝⇒ 差 6 枚项＋一整族图标＋\"按块类型换分组\"这条律＝☆ 本地弹层是 ⇒ ✎ 现读（2026-11-02 第 207 批）：项名册早已是公共内核＋按块类型注入；第 207 批补齐**逐项图标与 aria-label**（`BLOCK_ACTION_ICONS`）；仍缺 6 组/5 分隔线那份分组律否进 a11y 快照未测（官方自绘弹层不进＝按 `G993` 口径这条会影响自动化定位器）",
+      "local": "本地 3 项弹层无分组、无分隔线、无图标 aria-label（`block-actions.ts:17`）＝⇒ 差 6 枚项＋一整族图标＋\"按块类型换分组\"这条律＝☆ 本地弹层是 ⇒ ✎ 现读（2026-11-02 第 207 批）：项名册早已是公共内核＋按块类型注入；第 207 批补齐**逐项图标与 aria-label**（`BLOCK_ACTION_ICONS`）；第 218 批补齐**分组与分隔线**（文本菜单 6 组/5 分隔线、代码菜单 5 组/4 分隔线，项序按官方逐行 y）⇒ 分组律已对齐（自绘弹层仍不进 a11y 快照＝按 `G993` 口径）",
       "verdict": "屏侧一手（逐字回读取证线记录面）＝☆ 限定＝y 与高都出自同一次展开态的单一快照、未做第二次独立复现（历批\"弹层几何要复现两次\"的口径本批未达）⇒ 分列保守按 2/1",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

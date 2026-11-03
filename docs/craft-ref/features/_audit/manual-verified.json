@@ -9208,11 +9208,13 @@
       ]
     },
     "G1470": {
-      "status": "partial",
-      "note": "第 207 批：逐项图标与 aria-label 已补；仍无官方 6 组/5 分隔线几何",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "块级 ⋯ 菜单补齐官方分组：文本 6 组/5 分隔线、代码 5 组/4 分隔线，项序按官方 y；逐项图标与 aria-label 已在第 207 批",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:36",
-        "src/components/editor/drag-handle/DragHandle.tsx:608"
+        "src/components/editor/drag-handle/block-actions.ts:72",
+        "src/components/editor/drag-handle/block-actions.ts:97",
+        "src/components/editor/drag-handle/DragHandle.tsx:620"
       ]
     },
     "G1471": {

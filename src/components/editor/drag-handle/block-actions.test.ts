@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import { describe, expect, it } from 'vitest';
 import { Schema } from '@tiptap/pm/model';
 import { EditorState, TextSelection } from '@tiptap/pm/state';
@@ -18,6 +20,7 @@ import {
   taskItemTarget,
   blockLinkFor,
   blockMenuItems,
+  CODE_BLOCK_MENU,
   deleteBlock,
   insertBlockAbove,
   insertBlockBelow,
@@ -105,6 +108,9 @@ describe('blockMenuItems', () => {
   it('offers the Craft block actions, delete last', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).toEqual([
       'add-content',
+      'add-emoji',
+      'add-comment',
+      'convert-card',
       'insert-above',
       'insert-below',
       'move-up',
@@ -112,9 +118,6 @@ describe('blockMenuItems', () => {
       'move-top',
       'move-bottom',
       'copy-link',
-      'convert-card',
-      'add-comment',
-      'add-emoji',
       'delete',
     ]);
   });
@@ -122,6 +125,9 @@ describe('blockMenuItems', () => {
   it('labels every entry with the wording Craft shows', () => {
     expect(blockMenuItems({ canDelete: true }).map((item) => item.label)).toEqual([
       '添加内容',
+      '添加表情',
+      '添加评论',
+      '转换为卡片',
       '在上方插入区块',
       '在下方插入区块',
       '上移',
@@ -129,11 +135,17 @@ describe('blockMenuItems', () => {
       '移至顶部',
       '移至底部',
       '复制区块链接',
-      '转换为卡片',
-      '添加评论',
-      '添加表情',
       '删除',
     ]);
+  });
+
+  it('splits the text menu into six groups and the code menu into five (G1470)', () => {
+    const separators = (items: { group?: number }[]) =>
+      items.filter((item, index, all) => index > 0 && all[index - 1].group !== item.group).length;
+    expect(separators(blockMenuItems({ canDelete: true, canRemind: true }))).toBe(5);
+    expect(separators([...CODE_BLOCK_MENU])).toBe(4);
+    const source = readFileSync(new URL('./DragHandle.tsx', import.meta.url), 'utf8');
+    expect(source).toContain('items[index - 1].group !== item.group');
   });
 
   it('offers 提示类型 only on a callout', () => {
@@ -166,6 +178,9 @@ describe('blockMenuItems', () => {
     // would surface as an uncaught error instead of doing nothing visible.
     expect(blockMenuItems({ canDelete: false }).map((item) => item.id)).toEqual([
       'add-content',
+      'add-emoji',
+      'add-comment',
+      'convert-card',
       'insert-above',
       'insert-below',
       'move-up',
@@ -173,9 +188,6 @@ describe('blockMenuItems', () => {
       'move-top',
       'move-bottom',
       'copy-link',
-      'convert-card',
-      'add-comment',
-      'add-emoji',
     ]);
   });
 

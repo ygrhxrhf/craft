@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import type { Editor } from '@tiptap/react';
 import {
@@ -615,8 +615,10 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                 isDivider: isDividerBlock(handle.blockEl),
                 isCallout: isCalloutBlock(handle.blockEl),
                 isCodeBlock: isCodeBlock(handle.blockEl),
-              }).map((item) =>
-                item.id === 'callout-type' ? (
+              }).map((item, index, items) => (
+                <Fragment key={item.id}>
+                  {index > 0 && items[index - 1].group !== item.group && <DropdownMenuSeparator />}
+                  {item.id === 'callout-type' ? (
                   <DropdownMenuSub key={item.id}>
                     <DropdownMenuSubTrigger aria-label={item.label}>
                       <BlockActionIcon id={item.id} />{item.label}
@@ -738,8 +740,9 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                     <BlockActionIcon id={item.id} />
                     {item.label}
                   </DropdownMenuItem>
-                ),
-              )}
+                )}
+                </Fragment>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

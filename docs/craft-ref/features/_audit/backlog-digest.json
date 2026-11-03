@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T03:10:19.966Z",
+  "generatedAt": "2026-11-03T03:16:24.284Z",
   "total": 1614,
   "status": {
-    "aligned": 531,
+    "aligned": 532,
     "nonaction": 512,
-    "partial": 271,
+    "partial": 270,
     "deliberate": 165,
     "gap": 115,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 216,
+    "P2 / aligned": 217,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 121,
+    "P2 / partial": 120,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,

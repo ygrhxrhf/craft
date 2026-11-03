@@ -47,6 +47,8 @@ const MOVE_TARGETS: Record<string, MoveTarget> = {
 export interface BlockAction {
   id: BlockActionId;
   label: string;
+  /** G1470: entries sharing a group sit together; a separator sits between groups. */
+  group?: number;
 }
 
 /**
@@ -67,16 +69,16 @@ export const BLOCK_EMOJIS = ['👍', '❤️', '😄', '🎉', '🔥', '👀'] a
  * ⇒ 这是 G384 那条"块级菜单＝**一枚公共内核＋按块类型注入的专属项**"的直接证据：
  * 专属项（语言/主题/全屏/复制代码）来自 `blockdetails.*`，其余五枚是公共内核。
  */
-export const CODE_BLOCK_MENU: readonly { id: BlockActionId; label: string }[] = [
-  { id: 'code-language', label: '语言' },
-  { id: 'code-theme', label: '主题' },
-  { id: 'code-fullscreen', label: '全屏模式' },
-  { id: 'remind', label: '提醒我…' },
-  { id: 'insert-above', label: '在上方插入区块' },
-  { id: 'insert-below', label: '在下方插入区块' },
-  { id: 'code-copy', label: '复制代码' },
-  { id: 'copy-link', label: '复制区块链接' },
-  { id: 'delete', label: '删除' },
+export const CODE_BLOCK_MENU: readonly BlockAction[] = [
+  { id: 'code-language', label: '语言', group: 1 },
+  { id: 'code-theme', label: '主题', group: 1 },
+  { id: 'code-fullscreen', label: '全屏模式', group: 1 },
+  { id: 'remind', label: '提醒我…', group: 2 },
+  { id: 'insert-above', label: '在上方插入区块', group: 3 },
+  { id: 'insert-below', label: '在下方插入区块', group: 3 },
+  { id: 'code-copy', label: '复制代码', group: 4 },
+  { id: 'copy-link', label: '复制区块链接', group: 4 },
+  { id: 'delete', label: '删除', group: 5 },
 ] as const;
 
 export function blockMenuItems({
@@ -107,31 +109,34 @@ export function blockMenuItems({
     return CODE_BLOCK_MENU.filter((item) => item.id !== 'delete' || canDelete).map((item) => ({ ...item }));
   }
   const items: BlockAction[] = [
-    { id: 'add-content', label: '添加内容' },
-    { id: 'insert-above', label: '在上方插入区块' },
-    { id: 'insert-below', label: '在下方插入区块' },
-    { id: 'move-up', label: '上移' },
-    { id: 'move-down', label: '下移' },
-    { id: 'move-top', label: '移至顶部' },
-    { id: 'move-bottom', label: '移至底部' },
-    { id: 'copy-link', label: '复制区块链接' },
-    { id: 'convert-card', label: '转换为卡片' },
-    { id: 'add-comment', label: '添加评论' },
-    { id: 'add-emoji', label: '添加表情' },
+    { id: 'add-content', label: '添加内容', group: 1 },
+    { id: 'add-emoji', label: '添加表情', group: 1 },
+    { id: 'add-comment', label: '添加评论', group: 1 },
+    { id: 'convert-card', label: '转换为卡片', group: 2 },
   ];
   // G252：提醒在**任意可寻址块**上都能挂（不只是任务块），所以这一枚由 `canRemind` 决定，
   // 不再绑在 `isTask` 上；任务块本身一定可挂，`isTask` 也算数。`set-cancelled` 才是任务块专属。
-  if (canRemind || isTask) items.splice(2, 0, { id: 'remind', label: '提醒我…' });
+  if (canRemind || isTask) items.push({ id: 'remind', label: '提醒我…', group: 3 });
   if (isTask) {
-    items.splice(3, 0, {
+    items.push({
       id: 'set-cancelled',
       label: taskCancelled ? '取消标记' : '将任务标记为已取消',
+      group: 3,
     });
   }
-  if (isToggle) items.splice(2, 0, { id: 'toggle-open', label: toggleOpen ? '收起' : '展开' });
-  if (isDivider) items.splice(2, 0, { id: 'divider-style', label: '分隔符样式' });
-  if (isCallout) items.splice(2, 0, { id: 'callout-type', label: '提示类型' });
-  if (canDelete) items.push({ id: 'delete', label: '删除' });
+  if (isToggle) items.push({ id: 'toggle-open', label: toggleOpen ? '收起' : '展开', group: 3 });
+  if (isDivider) items.push({ id: 'divider-style', label: '分隔符样式', group: 3 });
+  if (isCallout) items.push({ id: 'callout-type', label: '提示类型', group: 3 });
+  items.push(
+    { id: 'insert-above', label: '在上方插入区块', group: 4 },
+    { id: 'insert-below', label: '在下方插入区块', group: 4 },
+    { id: 'move-up', label: '上移', group: 4 },
+    { id: 'move-down', label: '下移', group: 4 },
+    { id: 'move-top', label: '移至顶部', group: 4 },
+    { id: 'move-bottom', label: '移至底部', group: 4 },
+    { id: 'copy-link', label: '复制区块链接', group: 5 },
+  );
+  if (canDelete) items.push({ id: 'delete', label: '删除', group: 6 });
   return items;
 }
 

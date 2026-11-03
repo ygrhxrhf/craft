@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T03:52:56.316Z",
+  "generatedAt": "2026-11-03T03:59:49.466Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 902,
-    "aligned": 278,
+    "gap": 900,
+    "aligned": 280,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 331,
+    "P2 / gap": 329,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 174,
+    "P2 / aligned": 176,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -22118,10 +22118,10 @@
       "cols": 5,
       "id": "G1166",
       "official": "★★★ **主题其实有两层持久化＝块级 override ＋ 账户级默认**（★ 本批新发现，改本地建模口径）＝挑选面板逐项的 `onClick` 逐字 `()=>{St.store(v.id), s(v)}` ⇒ **每次点主题都写一条账户级偏好**；两条偏好的定义逐字（主包 @646,001）＝`MGe=new Lo(\"codeEditorDefaultTheme\",\"auto\",t=>typeof t==\"string\")` 与 `rD=new Lo(\"codeEditorDefaultLanguage\",\"javascript\",t=>typeof t==\"string\"&&!PGe.includes(t))`，且 `PGe=[\"mermaid\",\"math_formula\",\"stex\"]`；⇒ ★ **两条校验器宽严不同**＝主题**只验\"是字符串\"（不验名册 ⇒ 任意／未知串可入库，之后靠 `lt()` 兜底成 `auto`）**，语言**显式排除三档伪语言**（⇒ 默认语言永远不会是 `mermaid`／`math_formula`／`stex`）；⇒ ★★ 与第 110 批的结论合起来＝**\"主题落在哪\"有三个答案**：块级＝`pluginData.pluginConfigurationData.themeId`、账户默认＝`codeEditorDefaultTheme`、实际渲染＝`De(S.id,isDarkMode)`（`S` 恒为名册条目）",
-      "local": "本地持久偏好**只有三条**（`src/actions/user/preferences.ts:6-8` 的 `themeValues`／`fontValues`／`widthValues` 白名单，表列 `prisma/schema.prisma:19-21` `theme`／`editorFont`／`editorWidth`）⇒ 缺 `codeEditorDefaultTheme`／`codeEditorDefaultLanguage` 两条；☆ 且 `grep -rn \"localStorage｜sessionStorage\" src` **0 命中**（★ grep 竖线在表内按规矩写作全角）⇒ 本地**没有任何客户端偏好层**（官方这两条是 `Lo`＝本地存储类），落点只能选服务端列",
-      "verdict": "缺失（两条默认档）",
+      "local": "本地持久偏好**只有三条**（`src/actions/user/preferences.ts:6-8` 的 `themeValues`／`fontValues`／`widthValues` 白名单，表列 `prisma/schema.prisma:19-21` `theme`／`editorFont`／`editorWidth`）⇒ 缺 `codeEditorDefaultTheme`／`codeEditorDefaultLanguage` 两条；☆ 且 `grep -rn \"localStorage｜sessionStorage\" src` **0 命中**（★ grep 竖线在表内按规矩写作全角）⇒ 本地**没有任何客户端偏好层**（官方这两条是 `Lo`＝本地存储类），落点只能选服务端列；✎ 现读（2026-11-03 第 227 批）：两条账户级默认已落——`lib/editor/code-preferences.ts` 用同两枚键（`codeEditorDefaultTheme`／`codeEditorDefaultLanguage`）落本地存储，主题校验只验字符串、语言显式排除 mermaid/math_formula/stex，块级 `themeId` attr 与账户默认并存",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -23470,10 +23470,10 @@
       "cols": 5,
       "id": "G1241",
       "official": "★★ **图片块的导入形状＝七个字段、其中三处冗余、一个硬编码常量**（@2,344,321）＝`type:\"image\"`，`content`＝`attrGet(\"src\")`，`properties`＝`altText`（＝token 文本）／`uploaded`（★ **恒为 `true`**）／`url`／`rawUrl`／`fileName`（☆ **三个都等于 src**）＋`aspectRatio`＝★ **常量 1.5**（与真实图片比例无关）",
-      "local": "本地＝`src/lib/import/markdown.ts:203` 只产`{type:'imageBlock', attrs:{src, alt}}` ⇒ ☆ **块类型名不同**（`imageBlock` vs 官方 `image`）、字段数 2 vs 7、没有 `uploaded`／`aspectRatio` 概念",
-      "verdict": "**缺失**（5 个字段＋1 个常量）；☆ 但先要裁：本地是否要\"导入即视为已上传\"这层语义",
+      "local": "本地＝`src/lib/import/markdown.ts:203` 只产`{type:'imageBlock', attrs:{src, alt}}` ⇒ ☆ **块类型名不同**（`imageBlock` vs 官方 `image`）、字段数 2 vs 7、没有 `uploaded`／`aspectRatio` 概念。✎ 现读（2026-11-03 第 227 批）：已落——导入产出七字段（uploaded 恒 true、aspectRatio 恒 1.5、url/rawUrl/fileName 三处等于 src），`imageBlock` 节点带同名五枚 attrs 并序列化为 data-*；块类型名仍用本地 `imageBlock`（官方 `image`）",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

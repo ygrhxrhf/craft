@@ -49,6 +49,36 @@ export const ImageBlock = Node.create({
           return { 'data-caption': attributes.caption };
         },
       },
+      // G1241：导入形状的五个伴生字段。官方恒写 uploaded=true、aspectRatio=1.5（与真实比例
+      // 无关），且 url/rawUrl/fileName 三处都等于 src；本地照收集值落，渲染不使用它们。
+      uploaded: {
+        default: true,
+        parseHTML: (element) => element.getAttribute('data-uploaded') !== 'false',
+        renderHTML: (attributes) => ({ 'data-uploaded': attributes.uploaded === false ? 'false' : 'true' }),
+      },
+      url: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('data-url'),
+        renderHTML: (attributes) => (attributes.url ? { 'data-url': attributes.url } : {}),
+      },
+      rawUrl: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('data-raw-url'),
+        renderHTML: (attributes) => (attributes.rawUrl ? { 'data-raw-url': attributes.rawUrl } : {}),
+      },
+      fileName: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('data-file-name'),
+        renderHTML: (attributes) => (attributes.fileName ? { 'data-file-name': attributes.fileName } : {}),
+      },
+      aspectRatio: {
+        default: 1.5,
+        parseHTML: (element) => {
+          const raw = Number(element.getAttribute('data-aspect-ratio'));
+          return Number.isFinite(raw) && raw > 0 ? raw : 1.5;
+        },
+        renderHTML: (attributes) => ({ 'data-aspect-ratio': String(attributes.aspectRatio ?? 1.5) }),
+      },
       // G504：主色按整型存，显示时才转 hex。
       primaryColor: {
         default: null,

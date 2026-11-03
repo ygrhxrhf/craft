@@ -304,7 +304,20 @@ function parseBlocks(lines: string[]): PmNode[] {
 
     const image = /^!\[([^\]]*)\]\(([^)\s]+)\)\s*$/.exec(line.trim());
     if (image) {
-      blocks.push({ type: 'imageBlock', attrs: { src: image[2], alt: image[1] || null } });
+      blocks.push({
+        type: 'imageBlock',
+        // G1241：官方导入形状七个字段——uploaded 恒 true、aspectRatio 恒 1.5，
+        // url/rawUrl/fileName 三处都等于 src。
+        attrs: {
+          src: image[2],
+          alt: image[1] || null,
+          uploaded: true,
+          url: image[2],
+          rawUrl: image[2],
+          fileName: image[2],
+          aspectRatio: 1.5,
+        },
+      });
       index += 1;
       continue;
     }

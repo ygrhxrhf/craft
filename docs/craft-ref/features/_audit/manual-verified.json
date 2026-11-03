@@ -8581,10 +8581,12 @@
       ]
     },
     "G1166": {
-      "status": "partial",
-      "note": "两条默认档已实现，但落 localStorage；官方是账户级偏好",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "代码块主题/语言两条账户默认按官方键名与校验器落本地存储，块级 themeId 与默认并存",
       "evidence": [
-        "src/lib/editor/code-preferences.ts:51"
+        "src/lib/editor/code-preferences.ts:1",
+        "src/components/editor/extensions/code-block-view.tsx:86"
       ]
     },
     "G1167": {
@@ -8742,10 +8744,12 @@
       ]
     },
     "G1241": {
-      "status": "partial",
-      "note": "导入图片只产 src/alt 两字段，无 uploaded、aspectRatio",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Markdown 导入图片块七字段齐（uploaded=true、aspectRatio=1.5、url/rawUrl/fileName=src），节点以同名 attrs 承载",
       "evidence": [
-        "src/lib/import/markdown.ts:251"
+        "src/lib/import/markdown.ts:309",
+        "src/components/editor/extensions/image-block.tsx:54"
       ]
     },
     "G1243": {

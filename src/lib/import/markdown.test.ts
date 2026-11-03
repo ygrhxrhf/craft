@@ -127,7 +127,15 @@ describe('parseMarkdown blocks', () => {
   it('lifts a lone image into an image block', () => {
     expect(blocks('![封面](https://example.com/a.png)')[0]).toMatchObject({
       type: 'imageBlock',
-      attrs: { src: 'https://example.com/a.png', alt: '封面' },
+      attrs: {
+        src: 'https://example.com/a.png',
+        alt: '封面',
+        uploaded: true,
+        url: 'https://example.com/a.png',
+        rawUrl: 'https://example.com/a.png',
+        fileName: 'https://example.com/a.png',
+        aspectRatio: 1.5,
+      },
     });
   });
 

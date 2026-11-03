@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T04:04:15.030Z",
+  "generatedAt": "2026-11-03T04:05:45.240Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 899,
@@ -11,8 +11,8 @@
     "unreachable": 16
   },
   "priorityDistribution": {
-    "P2": 629,
-    "P?": 428,
+    "P2": 630,
+    "P?": 427,
     "P1": 279,
     "P3": 270,
     "P0": 8
@@ -21,7 +21,7 @@
     "P2 / gap": 328,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 176,
+    "P2 / aligned": 177,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -34,7 +34,7 @@
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
     "P? / nonaction": 23,
-    "P? / aligned": 20,
+    "P? / aligned": 19,
     "P2 / nonaction": 18,
     "P1 / partial": 16,
     "P3 / nonaction": 14,
@@ -27006,21 +27006,20 @@
     {
       "line": 4815,
       "section": "三点一一一二、第 173 批新登记的官方行为（2026-10-09 机器钟 01:3x 开批＝纯盘上＋转述批＝本线零发送零桥零屏幕零写入⇒ `manifest.jsonl` 行数不变＝净新增 10 条＝★ 主件＝右侧栏的**页签层**与分隔符的**第二根轴**＝☆ 同时把两枚\"转述里的可疑\"用语言包一发判死）",
-      "cols": 6,
+      "cols": 5,
       "id": "G1435",
       "official": "★★★ **格式页签其余组＝分组／字符样式／缩进／对齐／装饰五组**＝分组（页面／卡片）·粗体／斜体／删除线／代码／待办／项目符号列表／编号列表·减少缩进／增加缩进·左对齐／居中／右对齐／两端对齐·装饰（焦点／块／颜色）＝键面逐枚对上＝`style.indent.in`＝增加缩进、`style.indent.out`＝减少缩进、`style.text.align.justify`＝两端对齐、`style.decoration.focus`＝焦点、`style.decoration.block`＝块、`style.decorations`＝装饰（这六枚在成文面零命中）",
       "local": "本地格式组若缺\"装饰\"这组或对齐全缺一档＝按键面补名目即可（文案已在一面）；✎ 现读（2026-11-03 第 228 批）：五组全在且已渲染——分组（页面/卡片）、字符样式（粗/斜/删除线/代码/待办/项目符号/编号）、缩进两档、对齐四档（含两端对齐）、装饰（焦点/块两族七色＋清除）；`FormatTab` 逐组挂载 ⇒ 已对齐",
-      "verdict": "屏侧（二手）＋键面逐枚（一手）＝☆ 条件结论（当轮多数按钮 disabled 属焦点态，不代表缺项）",
-      "score": "已对齐",
-      "extra5": "2/2",
+      "verdict": "屏侧（二手）＋键面逐枚（一手）＝☆ 条件结论（当轮多数按钮 disabled 属焦点态，不代表缺项）；已对齐",
+      "score": "2/2",
       "status": "aligned",
       "scoreParsed": {
-        "impact": null,
-        "cost": null,
-        "raw": "已对齐"
+        "impact": 2,
+        "cost": 2,
+        "raw": "2/2"
       },
       "conflict": null,
-      "priority": "P?"
+      "priority": "P2"
     },
     {
       "line": 4816,

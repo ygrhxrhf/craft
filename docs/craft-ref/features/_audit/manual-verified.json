@@ -8736,10 +8736,12 @@
       ]
     },
     "G1231": {
-      "status": "gap",
-      "note": "导入器无 html_block/aside 块级分支",
+      "status": "partial",
+      "priority": "P2",
+      "note": "HTML 块导入与注释丢弃已落；仍欠 aside 开合标签的装饰位与 emoji-only 首块图标提取",
       "evidence": [
-        "src/lib/import/markdown.ts:134"
+        "src/lib/import/markdown.ts:170",
+        "src/lib/import/markdown.ts:180"
       ]
     },
     "G1233": {
@@ -8773,10 +8775,12 @@
       ]
     },
     "G1245": {
-      "status": "partial",
-      "note": "fence 已按 <!-- 丢弃整块；html_block 支路不存在",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "以 <!-- 开头的 fence 与 HTML 块整块丢弃，裸注释行及其后续一并丢弃；埋点面本地不适用",
       "evidence": [
-        "src/lib/import/markdown.ts:159"
+        "src/lib/import/markdown.ts:158",
+        "src/lib/import/markdown.ts:190"
       ]
     },
     "G1247": {

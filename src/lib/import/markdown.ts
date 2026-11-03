@@ -120,7 +120,14 @@ function trimOneTrailingSpace(text: string): string {
   return text.endsWith(' ') ? text.slice(0, -1) : text;
 }
 
-/** Craft exports display math fenced on its own lines, and the shape is also accepted inline. */const DISPLAY_MATH = /^\$\$/;
+/** Craft exports display math fenced on its own lines, and the shape is also accepted inline. *//** G1231: tags that open a raw HTML block on import; inline tags stay in the paragraph path. */
+const HTML_BLOCK_TAGS = new Set([
+  'div', 'section', 'aside', 'article', 'header', 'footer', 'main', 'nav',
+  'table', 'thead', 'tbody', 'tr', 'td', 'th', 'figure', 'figcaption',
+  'iframe', 'video', 'audio', 'ul', 'ol', 'li', 'p',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre', 'details', 'summary',
+]);
+const DISPLAY_MATH = /^\$\$/;
 
 /**
  * Converts Markdown (or the `text.md` of a Text Bundle) into the same node JSON
@@ -280,6 +287,30 @@ function parseBlocks(lines: string[]): PmNode[] {
         attrs: { type: allowed.has(type) ? type : 'info' },
         content: body.length ? parseBlocks(body) : [{ type: 'paragraph' }],
       });
+      continue;
+    }
+
+    // G1245: a bare HTML comment is a discard gate — it never becomes text.
+    if (line.trimStart().startsWith('<!--')) {
+      while (index < lines.length && !lines[index].includes('-->')) index += 1;
+      if (index < lines.length) index += 1;
+      continue;
+    }
+
+    // G1231: a raw block-level HTML run imports as one `htmlBlock`; a blank line ends it.
+    // Inline tags (`<strong>`, `<a>`, `<span>`…) stay in the paragraph path — only block tags
+    // open a raw HTML block.
+    const htmlTag = /^<\/?([a-zA-Z][\w:-]*)/.exec(line.trim());
+    if (htmlTag && HTML_BLOCK_TAGS.has(htmlTag[1].toLowerCase())) {
+      const html: string[] = [];
+      while (index < lines.length && lines[index].trim()) {
+        html.push(lines[index]);
+        index += 1;
+      }
+      const source = html.join('\n');
+      if (!source.trimStart().startsWith('<!--')) {
+        blocks.push({ type: 'htmlBlock', attrs: { html: source } });
+      }
       continue;
     }
 

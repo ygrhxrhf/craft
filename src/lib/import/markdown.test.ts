@@ -150,6 +150,22 @@ describe('parseMarkdown blocks', () => {
     });
   });
 
+  it('imports a raw HTML run as one htmlBlock (G1231)', () => {
+    expect(blocks('<div class="x">\n  <span>hi</span>\n</div>')[0]).toMatchObject({
+      type: 'htmlBlock',
+      attrs: { html: '<div class="x">\n  <span>hi</span>\n</div>' },
+    });
+  });
+
+  it('drops HTML comments whole instead of importing them (G1245)', () => {
+    expect(blocks('<!-- 丢弃这段 -->\n正文')).toEqual([
+      { type: 'paragraph', content: [{ type: 'text', text: '正文' }] },
+    ]);
+    expect(blocks('```html\n<!-- 注释开头的代码块整块丢弃 -->\n```\n正文')).toEqual([
+      { type: 'paragraph', content: [{ type: 'text', text: '正文' }] },
+    ]);
+  });
+
   it('always returns a document with at least one block', () => {
     expect(parseMarkdown('').content).toEqual([{ type: 'paragraph' }]);
   });

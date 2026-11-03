@@ -9690,11 +9690,15 @@
       ]
     },
     "G1584": {
-      "status": "partial",
-      "note": "Ctrl-Shift-4 只落 h4；PAGE/CARD/DECOR 六键其余五条无分支",
+      "status": "aligned",
+      "note": "五键均已绑定：PAGE 插页面预览原子块（文案逐字同官方，点开建子页）、CARD 弹「配置卡片」面板（五条文案同官方）、FOCUS_DECOR/BLOCK_DECOR 切换 focusColor/shadedColor、STRONG 落 h4（粗体＋字号上档）。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:26"
-      ]
+        "src/components/editor/extensions/craft-keymap.ts:140",
+        "src/components/editor/CardConfigHost.tsx",
+        "src/components/editor/extensions/page-block.tsx",
+        "src/components/editor/Editor.tsx:607"
+      ],
+      "priority": "P2"
     },
     "G1585": {
       "status": "aligned",

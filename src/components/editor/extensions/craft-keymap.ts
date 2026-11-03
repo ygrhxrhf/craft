@@ -10,6 +10,8 @@ import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
 import { buildDowngradeFlatten } from '@/lib/editor/downgrade-command';
 import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
 import { nextFormatStep, nextBackspaceStep, isEmptyBlock, hasDecoration } from '@/lib/editor/format-downgrade';
+import { decorationAt } from '@/lib/editor/format-commands';
+import { toggledDecoration } from '@/lib/editor/style-keys';
 import { mergeStyleWinner } from '@/lib/editor/merge-text-blocks';
 import { requestLink } from '@/lib/store/use-link-request-store';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
@@ -33,6 +35,7 @@ import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useRightPanelStore } from '@/lib/store/use-right-panel-store';
 import { promptDialog } from '@/lib/dialog/show';
 import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
+import { useCardConfigStore } from '@/lib/store/use-card-config-store';
 
 export const CRAFT_KEYMAP_KEY = new PluginKey('craftKeymap');
 
@@ -132,6 +135,30 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
   }
 
   if (id === 'DUPLICATE') return duplicateTopBlock(editor);
+
+  // G1584：页面块是子文档的指针；键位只插占位预览，点它才建子页（page-block-view）。
+  if (id === 'PAGE') return editor.chain().focus().setPageBlock().run();
+
+  // G1584：`Ctrl-Shift-L` 打开「配置卡片」面板，宿主在 Editor 里。
+  if (id === 'CARD') {
+    const index = topLevelIndexOf(editor.state.doc, editor.state.selection.from);
+    if (index < 0) return false;
+    useCardConfigStore.getState().ask(index);
+    return true;
+  }
+
+  // G1584：两枚装饰键在「无装饰」与第一档颜色之间切换。官方只读到块 rect 位移，
+  // 本地落在已有的 focusColor／shadedColor 上（面板与 CSS 是同一套属性）。
+  if (id === 'FOCUS_DECOR' || id === 'BLOCK_DECOR') {
+    const kind = id === 'FOCUS_DECOR' ? 'focus' : 'block';
+    const decorations = decorationAt(editor.state);
+    const current = kind === 'focus' ? decorations.focus : decorations.block;
+    const next = toggledDecoration(current);
+    const chain = editor.chain().focus();
+    if (kind === 'focus') chain.setFocusStyle(next).run();
+    else chain.setShadedStyle(next).run();
+    return true;
+  }
 
   // 两枚「标记取消」是同一命令的第二条通路（Mac `⌘⌥⇧T` 与 `⌘⌥/`），分派到同一处。
   if (id === 'SET_CANCELLED' || id === 'SET_CANCELLED_SLASH') {

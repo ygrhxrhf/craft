@@ -224,6 +224,9 @@ export const KEY_BINDINGS: KeyBinding[] = [
   { id: 'HEADING', label: '标题', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '3', 'Digit3'), win: chord({ ctrlKey: true, shiftKey: true }, '3', 'Digit3') },
   { id: 'STRONG', label: '强调', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '4', 'Digit4'), win: chord({ ctrlKey: true, shiftKey: true }, '4', 'Digit4') },
   { id: 'BODY', label: '正文', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '5', 'Digit5'), win: chord({ ctrlKey: true, shiftKey: true }, '5', 'Digit5') },
+  // G1584：页面与卡片插在样式槽中间（官方面板行序），不是数字槽的延续。
+  { id: 'PAGE', label: '页面', group: 'editing', mac: chord({ metaKey: true, shiftKey: true }, 'p', 'KeyP'), win: chord({ ctrlKey: true, shiftKey: true }, 'p', 'KeyP') },
+  { id: 'CARD', label: '卡片', group: 'editing', mac: chord({ metaKey: true, shiftKey: true }, 'l', 'KeyL'), win: chord({ ctrlKey: true, shiftKey: true }, 'l', 'KeyL') },
   { id: 'TODO_LIST', label: '待办', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '6', 'Digit6'), win: chord({ ctrlKey: true, shiftKey: true }, '6', 'Digit6') },
   { id: 'TOGGLE_LIST', label: '列表', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '7', 'Digit7'), win: chord({ ctrlKey: true, shiftKey: true }, '7', 'Digit7') },
   { id: 'TOGGLE_TOGGLES', label: '切换所有折叠块', group: 'editing', mac: chord({ metaKey: true, altKey: true }, 't', 'KeyT'), win: chord({ ctrlKey: true, altKey: true }, 't', 'KeyT') },
@@ -235,6 +238,9 @@ export const KEY_BINDINGS: KeyBinding[] = [
   { id: 'BULLET_LIST', label: '项目符号', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '8', 'Digit8'), win: chord({ ctrlKey: true, shiftKey: true }, '8', 'Digit8') },
   { id: 'NUMBERED_LIST', label: '编号', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '9', 'Digit9'), win: chord({ ctrlKey: true, shiftKey: true }, '9', 'Digit9') },
   { id: 'NO_LIST', label: '无列表', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '0', 'Digit0'), win: chord({ ctrlKey: true, shiftKey: true }, '`', 'Backquote') },
+  // G1584：两枚装饰键，官方名「聚焦装饰」「区块装饰」。
+  { id: 'FOCUS_DECOR', label: '聚焦装饰', group: 'editing', mac: chord({ metaKey: true, shiftKey: true }, '\\', 'Backslash'), win: chord({ ctrlKey: true, shiftKey: true }, '\\', 'Backslash') },
+  { id: 'BLOCK_DECOR', label: '区块装饰', group: 'editing', mac: chord({ metaKey: true, shiftKey: true }, "'", 'Quote'), win: chord({ ctrlKey: true, shiftKey: true }, "'", 'Quote') },
 
   // 表 A 的两枚「标记取消」（keyboard.md:116-117）。它们收在编辑组：官方表 D 把它们列在
   // 「任务」大类，但那是*全局*命令面板的分类，本地这套分组名来自面板的**上下文**六档，

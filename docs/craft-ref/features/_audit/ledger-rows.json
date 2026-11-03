@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T07:33:45.794Z",
+  "generatedAt": "2026-11-03T07:44:02.420Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 875,
-    "aligned": 304,
+    "gap": 874,
+    "aligned": 305,
     "unknown": 196,
     "deliberate": 103,
     "partial": 64,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 304,
+    "P2 / gap": 303,
     "P? / gap": 226,
-    "P2 / aligned": 200,
+    "P2 / aligned": 201,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -29558,10 +29558,10 @@
       "cols": 5,
       "id": "G1584",
       "official": "★★★★ **表 A 的样式/装饰/卡片六键在本地**整族无反应**，官方逐键都有可测变化**（第 326 批，`editor.key.turn-into-extra` 两侧各 10 步，逐键单变量、每条之间 `Ctrl-Shift-5` 复位）：官方读数——`Ctrl-Shift-4`（STRONG）字重 **400→700**、字号 15→16px；`Ctrl-Shift-P`（PAGE）**真的插出页面块**（名册新增「页面预览将显示在此处。单击以添加内容。」）；`Ctrl-Shift-L`（CARD）弹**卡片配置面板**（`popup-backdrop` 0→1，文案「配置卡片」「套用样式」「预览」「自定义背景」「自定义」，焦点离开编辑器）；`Ctrl-Shift-\\`（FOCUS_DECOR）块 rect.x **472→488**；`Ctrl-Shift-'`（BLOCK_DECOR）rect.x→494／y→186。本地同序列**六条全部零变化**（`computed` 与 rect 一字不动、无面板）。★ 边界：`Ctrl-Alt-T`（TOGGLE_TOGGLES）**两侧都没变化**——本批测试块不是折叠块，没有可折叠对象 ⇒ 这条**不算进本差异**，留待折叠块上下文再采",
-      "local": "本地对照＝`craft-keymap.ts` 无 STRONG/PAGE/CARD/DECOR 分支；本地块类型里也没有 page 块（G1408 一族的\"本地根本没有\"）",
-      "verdict": "缺失（键位未绑定）",
+      "local": "本地对照＝五枚键位已绑：`PAGE` 插页面预览原子块（文案逐字同官方，点开才建子页；本地无页中页块参见 G1408）／`CARD` 弹「配置卡片」面板（五条文案逐字同官方，套用样式写 `cardBlock.bgColor`）／`FOCUS_DECOR` 与 `BLOCK_DECOR` 在无装饰与首档红之间切换（`focusColor`／`shadedColor`，CSS 给左色条与底色，块 rect 随之位移）；`STRONG` 仍落 h4（粗体＋字号上档）。`Ctrl-Alt-T` 边界沿用原文（测试块不是折叠块）",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

@@ -36,6 +36,7 @@ import { useCompletedTaskAppearance } from '@/components/task/use-completed-appe
 import { EditorBubbleMenu } from './bubble-menu/BubbleMenu';
 import { AiBubbleMenu } from './bubble-menu/AiBubbleMenu';
 import { RemindMenuHost } from './RemindMenuHost';
+import { CardConfigHost } from './CardConfigHost';
 import { ImageGenDialogHost } from './ai/ImageGenDialog';
 import { Lightbox } from './lightbox/Lightbox';
 import { TableToolbar } from './table/TableToolbar';
@@ -83,6 +84,7 @@ import { WhiteboardLink } from './extensions/whiteboard-link';
 import { WhiteboardEmbed } from './extensions/whiteboard-embed';
 import { SidebarDrop } from './extensions/sidebar-drop';
 import { CardBlock } from './extensions/card-block';
+import { PageBlock } from './extensions/page-block';
 import { CommentMark } from './extensions/comment-mark';
 import { FindReplace } from './extensions/find-replace';
 import { CraftKeymap } from './extensions/craft-keymap';
@@ -602,6 +604,7 @@ export function Editor({
       WhiteboardEmbed,
       SidebarDrop,
       CardBlock,
+      PageBlock.configure({ hostDocumentId: documentId }),
       MarkdownShortcuts,
       SlashCommand,
       FindReplace,
@@ -921,6 +924,7 @@ export function Editor({
       <EditorBubbleMenu editor={editor} />
       <AiBubbleMenu editor={editor} documentId={documentId} />
       <RemindMenuHost editor={editor} />
+      <CardConfigHost editor={editor} />
       <TableToolbar editor={editor} />
       {collaborative && (collabState === 'error' || collabState === 'offline') && (
         <p

@@ -180,6 +180,9 @@ function renderMarkdown(node: any): string {
     case 'mirrorBlock':
       // A mirror is a pointer, so the export keeps the source address.
       return `> 镜像：[${node.attrs?.title || '未命名'}](${mirrorTargetHref(node)})`;
+    case 'pageBlock':
+      // G1584：页面块也是指针，导出成指向子文档的链接。
+      return `[页面：${node.attrs?.title || '未命名'}](/documents/${node.attrs?.documentId ?? ''})`;
     case 'drawing':
       return '_(手绘板)_';
     default:
@@ -263,6 +266,7 @@ function renderHtml(node: any): string {
     case 'whiteboardLink': return `<a href="/whiteboards/${escapeHtml(node.attrs?.whiteboardId ?? '')}" data-type="whiteboardLink">🎨 ${escapeHtml(node.attrs?.title ?? '白板')}</a>`;
     case 'whiteboardEmbed': return `<div data-type="whiteboard-embed" data-whiteboard-id="${escapeHtml(node.attrs?.whiteboardId ?? '')}" data-title="${escapeHtml(node.attrs?.title ?? '白板')}">🎨 ${escapeHtml(node.attrs?.title ?? '白板')}</div>`;
     case 'mirrorBlock': return `<div data-type="mirrorBlock"><a href="${escapeHtml(mirrorTargetHref(node))}">镜像：${escapeHtml(node.attrs?.title ?? '未命名')}</a></div>`;
+    case 'pageBlock': return `<div data-type="pageBlock"><a href="/documents/${escapeHtml(node.attrs?.documentId ?? '')}">页面：${escapeHtml(node.attrs?.title || '未命名')}</a></div>`;
     case 'mention':
     case 'blockLink': return isPersonMention(node)
       ? `<span data-type="mention">@${escapeHtml(node.attrs?.title ?? '')}</span>`

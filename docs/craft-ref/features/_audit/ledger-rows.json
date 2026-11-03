@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T01:40:38.029Z",
+  "generatedAt": "2026-11-03T01:47:23.463Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 917,
-    "aligned": 266,
+    "gap": 916,
+    "aligned": 267,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 346,
+    "P2 / gap": 345,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 162,
+    "P2 / aligned": 163,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -7835,10 +7835,10 @@
       "cols": 5,
       "id": "G375",
       "official": "**deadline 与 schedule 共用同一个日期选择器组件**（结构逐项相同，含 `提醒我…`/`重复…`），且 **deadline 打开时初值继承已提交的 schedule**（月份与深色选中日都是它）（V40）⇒ 提醒可挂任一族",
-      "local": "本地两族各自实现一套选择器，提醒只能挂一个字段",
-      "verdict": "缺失（组件复用）",
+      "local": "本地两族各自实现一套选择器，提醒只能挂一个字段 ⇒ ✎ 现读（2026-11-02 第 200 批）：两族**本来就是同一个组件**（`TaskDatePopover` 的 `kind: 'schedule' | 'deadline'`），两枚入口分别传各自 onChange；第 200 批把「提醒我/重复」两行对两族都打开（`hasExtras` 不再限 schedule），并给截止一侧传 `inheritFrom={scheduleDate}`——打开时月份与深色选中日继承已提交的计划日 ☆ 已清（第 200 批）",
+      "verdict": "对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

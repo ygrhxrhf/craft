@@ -4963,10 +4963,12 @@
       ]
     },
     "G375": {
-      "status": "gap",
-      "note": "计划/截止各一枚原生输入，无共用选择器与初值继承",
+      "status": "aligned",
+      "note": "第 200 批：两族共用 TaskDatePopover；提醒/重复对两族开放；截止初值继承已提交的计划日",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:538"
+        "src/components/task/TaskDatePopover.tsx:21",
+        "src/components/task/TaskDatePopover.tsx:180",
+        "src/app/(app)/tasks/TasksView.tsx:830"
       ]
     },
     "G376": {

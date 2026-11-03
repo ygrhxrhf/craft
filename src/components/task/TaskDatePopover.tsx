@@ -21,6 +21,11 @@ interface TaskDatePopoverProps {
   kind: 'schedule' | 'deadline';
   value: string | null;
   onChange: (value: string | null) => void;
+  /**
+   * G375：截止日期打开时以**已提交的计划日**为初值（月份与选中日同它），
+   * 与官方"deadline 初值继承 schedule"一致；本字段一旦自己有了值就用自己的。
+   */
+  inheritFrom?: string | null;
   /** G362/G373: reminder and repeat hang off the date, as two sub-rows. */
   reminder?: { value: string | null; onChange: (value: string | null) => void };
   recurrence?: { value: string | null; onChange: (value: string | null) => void };
@@ -65,6 +70,7 @@ export function TaskDatePopover({
   kind,
   value,
   onChange,
+  inheritFrom,
   reminder,
   recurrence,
 }: TaskDatePopoverProps) {
@@ -82,7 +88,7 @@ export function TaskDatePopover({
   const [text, setText] = useState('');
   const [hour, setHour] = useState(17);
   const [minute, setMinute] = useState(0);
-  const [month, setMonth] = useState<Date>(() => (value ? new Date(value) : new Date()));
+  const [month, setMonth] = useState<Date>(() => (value ?? inheritFrom ? new Date((value ?? inheritFrom)!) : new Date()));
   const [preview, setPreview] = useState<Date | null>(null);
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -93,7 +99,7 @@ export function TaskDatePopover({
     setMode('date');
     setSubmenu('none');
     setText(value ? formatDay(value) : '');
-    setMonth(value ? new Date(value) : new Date());
+    setMonth(value ?? inheritFrom ? new Date((value ?? inheritFrom)!) : new Date());
     setPreview(null);
 
     const onPointerDown = (event: MouseEvent) => {
@@ -158,7 +164,7 @@ export function TaskDatePopover({
 
   const applyTime = () => {
     if (!reminder) return;
-    const day = value ? new Date(value) : startOfLocalDay(new Date());
+    const day = value ?? inheritFrom ? new Date((value ?? inheritFrom)!) : startOfLocalDay(new Date());
     const at = new Date(day);
     at.setHours(hour, minute, 0, 0);
     reminder.onChange(at.toISOString());
@@ -170,7 +176,8 @@ export function TaskDatePopover({
   // G371: the schedule trigger is the icon plus the short date alone (no 「计划」 prefix, no year).
   const display = kind === 'schedule' ? scheduleChipLabel(value) : value ? formatDay(value) : null;
   const triggerText = display ? (kind === 'schedule' ? display : `${label} ${display}`) : label;
-  const hasExtras = kind === 'schedule' && Boolean(reminder && recurrence);
+  // G375：两族共用一个选择器——提醒/重复两行对截止日期也开放。
+  const hasExtras = Boolean(reminder && recurrence);
 
   return (
     <div className="shrink-0">
@@ -256,7 +263,7 @@ export function TaskDatePopover({
               />
               <Calendar
                 mode="single"
-                selected={preview ?? (value ? new Date(value) : undefined)}
+                selected={preview ?? (value ?? inheritFrom ? new Date((value ?? inheritFrom)!) : undefined)}
                 month={month}
                 onMonthChange={setMonth}
                 onSelect={(date) => {
@@ -362,7 +369,7 @@ export function TaskDatePopover({
                       >
                         不重复
                       </button>
-                      {recurrencePresetsFor(value ? new Date(value) : null, repeatAnchor).map((preset) => (
+                      {recurrencePresetsFor(value ?? inheritFrom ? new Date((value ?? inheritFrom)!) : null, repeatAnchor).map((preset) => (
                         <button
                           key={preset.label}
                           type="button"

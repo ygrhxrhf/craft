@@ -829,7 +829,22 @@ function TaskRow({
         <TaskDatePopover
           kind="deadline"
           value={task.dueDate}
+          inheritFrom={task.scheduleDate}
           onChange={(value) => update({ dueDate: value })}
+          reminder={{
+            value: task.remindAt,
+            onChange: (value) => {
+              update({ remindAt: value });
+              toast.add({
+                id: `reminder-${task.id}`,
+                type: 'info',
+                title: REMINDER_CHANGED_TITLE,
+                description: nextReminderText(value),
+                timeout: REMINDER_TOAST_DURATION_MS,
+              });
+            },
+          }}
+          recurrence={{ value: task.recurrence, onChange: (value) => update({ recurrence: value }) }}
         />
 
         <button

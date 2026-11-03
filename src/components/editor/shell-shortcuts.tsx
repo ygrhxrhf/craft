@@ -7,7 +7,6 @@ import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { shellShortcutAllowed } from '@/lib/editor/shell-scope';
 import { isImeComposing } from '@/lib/editor/ime-guard';
 import { useFocusStore } from '@/lib/store/use-focus-store';
-import { useSettingsStore } from '@/lib/store/use-settings-store';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { KeyContextStack, type KeyLayer } from '@/lib/editor/key-context-stack';
 
@@ -24,7 +23,6 @@ import { KeyContextStack, type KeyLayer } from '@/lib/editor/key-context-stack';
 const HANDLED = new Set([
   'TOGGLE_LEFT_SIDEBAR',
   'OPEN_DAILY_NOTE',
-  'TOGGLE_KEY_SHORTCUTS',
   'TOGGLE_FOCUS_MODE',
 ]);
 
@@ -73,7 +71,6 @@ export function ShellShortcuts() {
 
       event.preventDefault();
       if (binding.id === 'TOGGLE_LEFT_SIDEBAR') useSidebarStore.getState().toggle();
-      else if (binding.id === 'TOGGLE_KEY_SHORTCUTS') useSettingsStore.getState().openSettings('shortcuts');
       else if (binding.id === 'TOGGLE_FOCUS_MODE') useFocusStore.getState().toggle();
       else router.push('/daily-notes');
     };

@@ -9735,10 +9735,13 @@
       ]
     },
     "G1592": {
-      "status": "partial",
-      "note": "Ctrl-Shift-, 打开设置面板并选 shortcuts 页，非独立面板",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Ctrl-Shift-, 不再被 shell 接管（与官方一致无反应）；绑定仍在表内，面板经帮助菜单/命令面板进入",
       "evidence": [
-        "src/components/editor/shell-shortcuts.tsx:54"
+        "src/components/editor/shell-shortcuts.tsx:24",
+        "src/lib/editor/keymap.ts:256",
+        "src/lib/editor/shortcut-key-inert.test.ts:1"
       ]
     },
     "G1593": {

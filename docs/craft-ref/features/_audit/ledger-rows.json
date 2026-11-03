@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T06:34:15.841Z",
+  "generatedAt": "2026-11-03T06:40:17.289Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 887,
-    "aligned": 293,
+    "gap": 886,
+    "aligned": 294,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 316,
+    "P2 / gap": 315,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 189,
+    "P2 / aligned": 190,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -29686,10 +29686,10 @@
       "cols": 5,
       "id": "G1592",
       "official": "★★★ **`Ctrl-Shift-,`（`TOGGLE_KEY_SHORTCUTS`）：官方按键**没有反应**，本地弹的是**设置面板**（不是快捷键面板）**（第 346 批，`shell.shortcuts-panel.key`，编辑器语境首次按）：本地按 ⇒ `role=\"dialog\"` 0→1，对话框里是**「空间设置」**（`useSettingsStore.openSettings('shortcuts')` 打开设置面板并选中 shortcuts 页）；官方同键 ⇒ `dialog`／`popup-backdrop` 恒 0、正文一字不变——与第 67 批\"浏览屏按 `Ctrl-Shift-,` 零增量\"同向。★ 三方合起来才完整：**官方的快捷键面板存在**（第 81 批经**帮助菜单点击**采过七类），但**它不挂在任何键盘通路上**；本地有键盘通路，但打开的是**设置面板**的 shortcuts 页，**不是独立面板**。⇒ 两个\"都有\"的东西不是同一个东西",
-      "local": "本地对照＝`src/components/editor/shell-shortcuts.tsx:54`（`openSettings('shortcuts')`，开设置面板）",
-      "verdict": "行为不同（一侧无响应／另一侧是设置面板）",
+      "local": "本地对照＝`src/components/editor/shell-shortcuts.tsx:54`（`openSettings('shortcuts')`，开设置面板）；✎ 现读（2026-11-03 第 244 批）：已对齐 — shell 的 `HANDLED` 移除 `TOGGLE_KEY_SHORTCUTS`、分支删除，该键在编辑器里不再打开任何面板（浏览器实测：按下前后 `role=dialog` 均 0）；键位仍留在绑定表供面板展示，快捷键面板仍由帮助菜单与命令面板进入",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

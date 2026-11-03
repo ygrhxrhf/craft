@@ -64,6 +64,7 @@ export interface SlashCommand {
 }
 
 import { useTaskDateMenuStore } from '@/lib/store/use-task-date-menu-store';
+import { useRemindRequestStore } from '@/lib/store/use-remind-request-store';
 
 export const slashCommands: SlashCommand[] = [
   // ── 基础块 ──
@@ -260,6 +261,18 @@ export const slashCommands: SlashCommand[] = [
     category: '高级块',
     command: (editor, range) => {
       editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    },
+  },
+  {
+    // G1596：官方斜线菜单含「提醒我…」，本地此前只在块 ⋯ 菜单里。
+    name: '提醒我…',
+    description: '为当前区块设置提醒',
+    icon: AlertCircle,
+    keywords: ['remind', 'reminder', '提醒', '提醒我'],
+    category: '高级块',
+    command: (_editor, range) => {
+      _editor.chain().focus().deleteRange(range).run();
+      useRemindRequestStore.getState().ask();
     },
   },
   {

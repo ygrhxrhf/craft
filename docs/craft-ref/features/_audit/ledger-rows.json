@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T07:11:18.370Z",
+  "generatedAt": "2026-11-03T07:16:02.171Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 882,
-    "aligned": 298,
+    "gap": 881,
+    "aligned": 299,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 311,
+    "P2 / gap": 310,
     "P? / gap": 226,
-    "P2 / aligned": 194,
+    "P2 / aligned": 195,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -29766,10 +29766,10 @@
       "cols": 5,
       "id": "G1596",
       "official": "★★★ **「提醒我…」的入口位置两侧不同：官方在斜线菜单、本地只在块三点菜单**：官方 `/` 菜单含「提醒我…」项、本地没有（第 371 批，`editor.reminder.popover-options` 两侧同序列）：两侧都打 `REMTASK` ＋ `Ctrl-Shift-6` 变任务块后按 `/` 开菜单 ⇒ **官方名册「提醒我…」计数 1**（与「计划任务」「设定截止日期」「日期和时间」并列），**本地恒 0**（`spot-check`：本地斜线命令表里只有 callout 的 keywords 带「提醒」二字，没有提醒命令）。★ 官方侧点选后**只关菜单、无选项浮层**（`popup-backdrop` 无新增）⇒ 它是\"不带参数的速记命令\"，不是选项面板。✎ **第 372 批查本地源码定案（本条收窄）**：本地**有**这个入口，只是**不在斜线菜单**——`src/components/editor/drag-handle/block-actions.ts:90` 在**任务块**的块三点菜单里插入 `{ id: 'remind', label: '提醒我…' }`，注释写明「只对任务项提供」。⇒ 本条**不是\"本地缺功能\"** ✎ **第 373 批补上另一半**：官方**块三点菜单里也有「提醒我…」**（官方侧逐项名册：`提醒我…`／`在上方插入区块`／`在下方插入区块`／`复制区块链接`／`添加评论`／`删除` 各 1）；本地块菜单同样有（`block-actions.ts:90`）。⇒ **最终结论：块菜单两侧一致，差异只在\"斜线菜单\"这一条通路**（官方有、本地没有）",
-      "local": "本地对照＝`src/components/editor/slash-menu/slash-commands.ts` 无提醒命令（仅 callout keywords 含\"提醒\"）",
-      "verdict": "行为不同（仅斜线菜单缺）",
+      "local": "本地对照＝`src/components/editor/slash-menu/slash-commands.ts` 无提醒命令（仅 callout keywords 含\"提醒\"） ；✎ 现读（2026-11-03 第 250 批）：已对齐 — 斜线菜单「高级块」新增「提醒我…」，选中后打开唯一的提醒选择器（7 档；`留着以后用`/`自定义…` 无本地承载面按禁用渲染），瞬时档写 `remindAt`；浏览器实测「1小时后」写 `data-remind-at` 且选择器关闭",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

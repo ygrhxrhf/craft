@@ -9780,10 +9780,13 @@
       ]
     },
     "G1596": {
-      "status": "partial",
-      "note": "提醒我…只在任务块 ⋮ 菜单，斜杠菜单无该项",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "斜杠菜单含「提醒我…」，打开 7 档选择器；瞬时档写 remindAt，两档无承载面禁用",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:90"
+        "src/components/editor/slash-menu/slash-commands.ts:266",
+        "src/components/editor/RemindMenuHost.tsx:1",
+        "src/lib/store/use-remind-request-store.ts:1"
       ]
     },
     "G1597": {

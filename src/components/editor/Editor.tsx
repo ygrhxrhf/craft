@@ -35,6 +35,7 @@ import { ALIGNABLE_TYPES } from '@/lib/editor/format-presence';
 import { useCompletedTaskAppearance } from '@/components/task/use-completed-appearance';
 import { EditorBubbleMenu } from './bubble-menu/BubbleMenu';
 import { AiBubbleMenu } from './bubble-menu/AiBubbleMenu';
+import { RemindMenuHost } from './RemindMenuHost';
 import { ImageGenDialogHost } from './ai/ImageGenDialog';
 import { Lightbox } from './lightbox/Lightbox';
 import { TableToolbar } from './table/TableToolbar';
@@ -919,6 +920,7 @@ export function Editor({
       <DragHandle editor={editor} documentId={documentId} />
       <EditorBubbleMenu editor={editor} />
       <AiBubbleMenu editor={editor} documentId={documentId} />
+      <RemindMenuHost editor={editor} />
       <TableToolbar editor={editor} />
       {collaborative && (collabState === 'error' || collabState === 'offline') && (
         <p

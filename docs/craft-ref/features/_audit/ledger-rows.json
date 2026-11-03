@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T01:59:36.592Z",
+  "generatedAt": "2026-11-03T02:11:19.207Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 916,
@@ -27418,7 +27418,7 @@
       "cols": 5,
       "id": "G1458",
       "official": "★★★★★ **CJK 兜底不是一枚栈、是\"四轴 × 四语区\"的一张表＝20 条声明逐字到手**＝`index.css` @14,088—14,950 一整片（本批逐字切片＝`_harvest/b177-slice.txt`）＝① `:root{}` 里四枚同名占位（逐字 `--cjk-sans: \"CJK Fallback Placeholder\"` ＋ `--cjk-serif`／`--cjk-rounded`／`--cjk-mono` 同值）② 四枚块各重写四轴＝`html[lang=ja]{--cjk-sans: \"Hiragino Sans\", \"Yu Gothic UI\", sans-serif;--cjk-serif: \"Source Han Serif JP\";--cjk-rounded: \"M PLUS Rounded 1c\";--cjk-mono: \"Noto Sans Mono JP\"}`／`html[lang=ko]{…\"Pretendard\"…\"Source Han Serif KR\"…\"Nanum Square Round\"…\"Jetendard\"}`／`html[lang=zh-Hans]{…\"PingFang SC\", \"Microsoft YaHei\", sans-serif…\"Source Han Serif SC\"…\"Resource Han Rounded SC\"…\"Noto Sans Mono SC\"}`／`html[lang=zh-Hant]{…\"PingFang TC\", \"Microsoft JhengHei\", sans-serif…\"Source Han Serif TC\"…\"Resource Han Rounded TC\"…\"Noto Sans Mono TC\"}`＝☆ 载体实测＝**属性选择器 `html[lang=…]`（13 份里 `[lang` 4 枚），不是 `:lang()` 伪类（`:lang(` 全库 0 枚）**＝⇒ 分派依赖 `<html>` 上真写着 `lang` 属性，本地 `<html lang=\"zh-CN\">` 写死那一处对不上这四种取值（`zh-CN` 不匹配 `zh-Hans`）",
-      "local": "☆ 本地无这四轴（现算＝`grep -r -- --cjk src` 0 份；`grep -r -- PingFang src` 0 份）＝本地 sans 走 `next/font` 的 `--font-sans`（`src/app/layout.tsx:2,8`）、serif 走写死栈（`src/app/globals.css:14`＝`Georgia, Times New Roman, Noto Serif SC, Songti SC`）＝☆ 一枚同族不同物＝本地 `src/components/editor/themes/page-style.ts:17` 的 rounded 栈里有 `\"Hiragino Maru Gothic ProN\"`＝官方把 `Hiragino Sans` 放在 **ja 档的 sans 轴**、本地把 Maru Gothic 放在 **rounded 轴且不随语言变**＝⇒ 复刻要对账的是\"四轴 × 四区\"这张表，不是一条全局栈",
+      "local": "☆ 本地原本没有这四轴（`grep -r -- --cjk src` 0 份、`grep -r -- PingFang src` 0 份）⇒ ✎ 现读（2026-11-02 第 204 批）：四轴 × 四语区 20 条已落 `globals.css`（`:root` 四枚占位 ＋ `html[lang=ja|ko|zh-Hans|zh-Hant]` 各四轴；`<html lang>` 改 `zh-Hans` 与官方取值对齐），字体包与 `data-block-font` 四条栈都挂到对应轴",
       "verdict": "✓盘上一手（逐字切片＋20 条定义按括号配平逐枚定到直属选择器）＝☆ **逐字限定＝这 20 条出自 `index.css` 那一份\"转义串写形\"的盘上字节（该份内含反斜杠+引号 288 枚、真换行 0 枚、整份是单行）＝本行引的是解码后形＝解码与\"@偏移定位\"的规矩见 internals §一百零九⑦**＝☆ 与在册关系＝**G1072 那笔\"真字体名单结案\"量的是 `@font-face` 那一层**（21 family／429 face＝与本批 454 枚分解逐枚相加闭合＝见 internals §一百零九③）＝**本行补的是它没写的那一半＝系统栈兜底按 `html[lang=…]` 分派的那一层**＝☆ 同批拦下两枚复证不新开位＝`--cjk-*` 的存在 styles.md:793 已提到（只说位置、没有名册）、`system-rounded` 六份成文面已在册（枚举层在册、CSS 落点层没在册＝见 G1462）＝✎ **第 178 批·屏侧独立合验到手（只合验码点串、不合验字符总数）**＝取证线 C 在两屏都读到该占位串并给了 24 枚码点（U+0043 U+004A U+004B U+0020 U+0046…U+0072）＝**与本线解码后现算逐枚相同**（`_harvest/b178-check.txt` ②）＝⇒ \"这是一枚合法占位符、不是坏字\"这件事现在有两脸独立证据＝☆ 而对方那句\"这段共 183 字符\"与本线两把尺**都不合**＝盘上转义形 174／解码形 166（偏移 @14,086—@14,260）＝候选＝对方量的是 CSSOM 重序列化形（会补空格）或含前后文｜**未证**＝⇒ 判据＝**两脸合验要挑与通路无关的量（码点序列），通路相关的量（字符总数／序列化空白／缩进）天然不可互抄**",
       "score": "2/1",
       "status": "gap",

@@ -73,10 +73,10 @@ export function canonicalFontId(value: unknown): FontPackId {
 }
 
 export const fontPacks: { id: FontPackId; label: string; stack: string }[] = [
-  { id: 'system', label: '默认', stack: 'var(--font-sans), system-ui, sans-serif' },
-  { id: 'system-serif', label: '衬线', stack: 'Georgia, "Times New Roman", "Songti SC", serif' },
-  { id: 'system-mono', label: '等宽', stack: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' },
-  { id: 'system-rounded', label: '圆体', stack: 'ui-rounded, "Hiragino Maru Gothic ProN", Quicksand, sans-serif' },
+  { id: 'system', label: '默认', stack: 'var(--font-sans), var(--cjk-sans), system-ui, sans-serif' },
+  { id: 'system-serif', label: '衬线', stack: 'Georgia, "Times New Roman", "Songti SC", var(--cjk-serif), serif' },
+  { id: 'system-mono', label: '等宽', stack: 'ui-monospace, SFMono-Regular, Menlo, Consolas, var(--cjk-mono), monospace' },
+  { id: 'system-rounded', label: '圆体', stack: 'ui-rounded, "Hiragino Maru Gothic ProN", Quicksand, var(--cjk-rounded), sans-serif' },
 ];
 
 export type WashiId = 'none' | 'sunset' | 'ocean' | 'forest' | 'candy' | 'aurora';

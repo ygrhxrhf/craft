@@ -9119,10 +9119,12 @@
       ]
     },
     "G1458": {
-      "status": "gap",
-      "note": "无 CJK 四轴，只有一条写死 serif 栈",
+      "status": "aligned",
+      "note": "第 204 批：四轴 × 四语区 20 条已落 globals.css，html lang=zh-Hans，字体包与块字体四条栈挂到对应轴",
       "evidence": [
-        "src/app/globals.css:22"
+        "src/app/globals.css:2426",
+        "src/app/layout.tsx:39",
+        "src/components/editor/themes/page-style.ts:76"
       ]
     },
     "G1459": {

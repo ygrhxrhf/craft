@@ -36,7 +36,7 @@ const storageFlag = `window.__STORAGE_CONFIG__=${JSON.stringify({ directUpload: 
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="zh-CN" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="zh-Hans" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="flex h-full flex-col">
         <Providers>{children}</Providers>
         <UpdateBanner />

@@ -23,12 +23,19 @@ describe('the craft:// scheme (G121)', () => {
 
   it('maps to local routes, leaving credit unrouted', () => {
     expect(craftSchemeRoute('craft://doc/abc')).toBe('/documents/abc');
+    expect(craftSchemeRoute('craft://folder/f1')).toBe('/folders/f1');
     expect(craftSchemeRoute('craft://folder/starred')).toBe('/favorites');
     expect(craftSchemeRoute('craft://folder/all-docs')).toBe('/documents');
     expect(craftSchemeRoute('craft://tasks/upcoming')).toBe('/tasks/upcoming');
     expect(craftSchemeRoute('craft://tags')).toBe('/tags');
     expect(craftSchemeRoute('craft://credit')).toBeNull();
     expect(internalRoute({ kind: 'tasks', view: 'all' })).toBe('/tasks/all');
+  });
+
+  it('lands folder links on a page that reads the folder by id', () => {
+    const page = readFileSync(join(process.cwd(), 'src/app/(app)/folders/[id]/page.tsx'), 'utf8');
+    expect(page).toContain('getFolderPage(id)');
+    expect(page).toContain('notFound()');
   });
 
   it('is handled by the editor link click', () => {

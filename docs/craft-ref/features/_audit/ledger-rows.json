@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T07:53:19.262Z",
+  "generatedAt": "2026-11-03T08:03:43.162Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 872,
-    "aligned": 306,
+    "gap": 871,
+    "aligned": 307,
     "unknown": 196,
     "deliberate": 103,
     "partial": 65,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 301,
+    "P2 / gap": 300,
     "P? / gap": 226,
-    "P2 / aligned": 202,
+    "P2 / aligned": 203,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -3282,10 +3282,10 @@
       "cols": 5,
       "id": "G121",
       "official": "内部 URL scheme `craft://`：`doc/{id}`、`folder/{id}` 与 **三个保留字** `folder/{unsorted,starred,all-docs}`、`tasks/{inbox,today,upcoming,all}`、`tags`、`calendar`、`credit`；id 经 `stableIdToUuid` 映射后跳转（§十一）",
-      "local": "`craft://`、`deepLink` 在 `src` 零命中 → 无内部可寻址层，提醒跳转与额度文案无处落地 ⇒ ✎ 现读（2026-11-02 第 214 批）：`lib/links/internal-scheme.ts` 解析 doc/folder/三个保留字/tasks 四档/tags/calendar，编辑器点链接即跳本地路由；`credit` 无本地计费页回 null（不假装能跳）、`folder/{id}` 暂无独立路由落到所有文档屏 ⇒ 原判「零命中」作废",
-      "verdict": "缺失（局部）",
+      "local": "✎ 现读（2026-11-03 第 256 批）：`lib/links/internal-scheme.ts` 解析 doc／folder／三个保留字／tasks 四档／tags／calendar；本次补上 `folder/{id}` 的真实落点 `/folders/[id]`（`getFolderPage` 读文件夹、直属子文件夹与文档，非本人或已删 `notFound()`），编辑器内点链接即跳本地路由；`credit` 无计费页仍回 `null`（有意不留假入口）。本地 id 本身是 uuid，`stableIdToUuid` 无需再映射",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

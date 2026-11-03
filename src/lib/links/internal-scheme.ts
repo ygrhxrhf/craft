@@ -45,7 +45,7 @@ export function internalRoute(target: InternalTarget): string | null {
     case 'doc':
       return `/documents/${target.id}`;
     case 'folder':
-      return '/documents';
+      return `/folders/${target.id}`;
     case 'folder-reserved':
       return target.name === 'starred' ? '/favorites' : '/documents';
     case 'tasks':

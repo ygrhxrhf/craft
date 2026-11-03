@@ -3822,10 +3822,13 @@
       ]
     },
     "G121": {
-      "status": "partial",
-      "note": "无 craft:// scheme 与 stableIdToUuid 跳转",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "craft:// 全族可解析；folder/{id} 新增 /folders/[id] 落点；credit 无计费页，有意回 null。",
       "evidence": [
-        "src/lib/platform.ts:24"
+        "src/lib/links/internal-scheme.ts:47",
+        "src/app/(app)/folders/[id]/page.tsx",
+        "src/actions/folder/get.ts"
       ]
     },
     "G123": {

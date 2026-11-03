@@ -43,7 +43,7 @@ describe('gap.md 一致面闸：正文写过「清 Gx」的行必须回填判定
     expect(verdicts(text).size, '一行 G 行都没解析到＝表格形状变了').toBeGreaterThan(1400);
   });
 
-  it('每一条被"清"过的 G 号，判定格里都有 `已清`／`不做`／`部分落地`', () => {
+  it('每一条被"清"过的 G 号，判定格里都有终态（`已清`／`不做`／`部分落地`／`已对齐`）', () => {
     const rows = verdicts(text);
     const cleared = new Set([...text.matchAll(/清 G(\d+)/g)].map((m) => m[1]));
     const stale: string[] = [];
@@ -56,7 +56,9 @@ describe('gap.md 一致面闸：正文写过「清 Gx」的行必须回填判定
       // §一 那批老行（G01…G99 时代）的第 3 格放的是**差异类型**（缺失／行为不同／只有壳／有意偏差），
       // 不是状态 ⇒ 它们的"清了没有"由 §〇·一 那张 P0 台账另记，这里跳过（第 209 批首跑把它们误报成漏项）。
       if (/^(缺失|行为不同|只有壳|有意偏差)/.test(verdict)) continue;
-      if (!/已清|不做|部分落地/.test(verdict)) {
+      // ☆ `已对齐` 同样是终态（第 277 批：G268 转 aligned 后被本闸当成"没回填"）——
+      //   这条闸要抓的是"正文说清了、行里还挂着未完成的判定"，对齐显然不是未完成。
+      if (!/已清|不做|部分落地|已对齐/.test(verdict)) {
         stale.push(`G${id}：判定格仍写着「${verdict.slice(0, 40)}…」`);
       }
     }

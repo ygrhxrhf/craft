@@ -112,3 +112,32 @@ describe('the editor handle reads the eager threshold', () => {
     expect(source).not.toMatch(/if \(dist < 4\)/);
   });
 });
+
+/**
+ * G268: the sidebar tree rows are the official 「主拖拽通路」, so they must clear the `general`
+ * gate through the arm. Each row is a real HTML5 drag source, but the arm state is per-press, so
+ * the wiring is pinned statically and the gate itself is proven live in drag-arm.test.ts.
+ */
+describe('the sidebar drag path reads the general threshold (G268)', () => {
+  const treeFiles = [
+    'src/components/sidebar/DocumentTreeItem.tsx',
+    'src/components/sidebar/FolderTreeItem.tsx',
+    'src/components/sidebar/WhiteboardTree.tsx',
+  ];
+
+  it.each(treeFiles)('%s arms through the general gate', (file) => {
+    const src = readFileSync(join(process.cwd(), file), 'utf8');
+    expect(src).toContain("useDragArm('general')");
+    expect(src).toContain('dragArm.onPointerDown');
+    expect(src).toContain('dragArm.onPointerMove');
+    expect(src).toContain('dragArm.track(e.clientX, e.clientY)');
+    expect(src).toContain('if (!dragArm.isArmed())');
+  });
+
+  it('computes its gate from the table instead of re-deriving the numbers', () => {
+    const arm = readFileSync(join(process.cwd(), 'src/lib/dnd/drag-arm.ts'), 'utf8');
+    expect(arm).toContain('DRAG_THRESHOLDS[config]');
+    const hook = readFileSync(join(process.cwd(), 'src/lib/dnd/use-drag-arm.ts'), 'utf8');
+    expect(hook).toContain('createDragArm(config)');
+  });
+});

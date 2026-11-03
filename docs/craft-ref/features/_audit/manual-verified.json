@@ -4536,11 +4536,16 @@
       ]
     },
     "G268": {
-      "status": "partial",
-      "note": "第 209 批：三档表齐——块把手读 handle、看板卡片长按 150ms 起拖；general 由浏览器默认承担",
+      "status": "aligned",
+      "note": "第 277 批：三档阈值各自都有了消费方。承第 209/191 批（handle 档给块把手、board 档给看板卡片），本批把 general 档接到侧栏三棵树的行（文档／文件夹／白板＝官方那句「主拖拽通路」）＝纯核 drag-arm.ts 把数值表读成一道门（鼠标看位移、触摸看长按、board 不分设备、handle 按下即武装；越过门槛后锁定到松手才复位），dragstart 里没武装就 preventDefault。浏览器实点（合成 pointerdown／pointermove＋dragstart）：不动被拦、3px 被拦、12px 放行且带上 documentId、松手后重按又要重来、触摸漂移 60px 不放行、恰好 8px 放行、对角 5px 不放行、白板行（a 载体）同档生效。★ 触摸那一档的边界值在隐藏页量不准（setTimeout 被节流到约 1s），145／140ms 这条线由 drag-arm.test.ts 钉住，浏览器只证「漂移不等于长按」这一定性 split。",
       "evidence": [
+        "src/lib/dnd/drag-arm.ts:22",
+        "src/lib/dnd/drag-arm.ts:66",
+        "src/lib/dnd/use-drag-arm.ts:19",
+        "src/components/sidebar/DocumentTreeItem.tsx:186",
+        "src/components/sidebar/FolderTreeItem.tsx:170",
+        "src/components/sidebar/WhiteboardTree.tsx:36",
         "src/lib/dnd/drag-threshold.ts:27",
-        "src/components/editor/drag-handle/DragHandle.tsx:469",
         "src/lib/collection/kanban-drag.ts:1"
       ]
     },

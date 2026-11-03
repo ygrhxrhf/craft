@@ -13,6 +13,7 @@ import {
   sidebarDragState,
 } from '@/lib/dnd/sidebar-drag';
 import { pressStartsDrag } from '@/lib/dnd/activation-guard';
+import { useDragArm } from '@/lib/dnd/use-drag-arm';
 import { LOADING } from '@/lib/browse/official-copy';
 
 interface WhiteboardTreeItemProps {
@@ -21,9 +22,19 @@ interface WhiteboardTreeItemProps {
 }
 
 function WhiteboardTreeItem({ board, isActive }: WhiteboardTreeItemProps) {
+  // G268：白板行和文档/文件夹行同属官方「主拖拽通路」＝general 档。
+  const dragArm = useDragArm('general');
+
   function handleDragStart(e: React.DragEvent) {
     // G269：落在表单控件或链接上的按下永不起拖（点击让给控件）。
     if (!pressStartsDrag(e.target as Element | null, 'general', e.currentTarget as Element)) {
+      e.preventDefault();
+      return;
+    }
+    // G268：general 档——指针没走够 8px（触摸没按满 150ms）就不起拖。
+    // 浏览器自己的起拖门更松，所以先把 dragstart 现场坐标算进去，免得差几 px 被拦下后接不上。
+    dragArm.track(e.clientX, e.clientY);
+    if (!dragArm.isArmed()) {
       e.preventDefault();
       return;
     }
@@ -42,12 +53,16 @@ function WhiteboardTreeItem({ board, isActive }: WhiteboardTreeItemProps) {
 
   function handleDragEnd() {
     sidebarDragState.payload = null;
+    dragArm.reset();
   }
 
   return (
     <Link
       href={`/whiteboards/${board.id}`}
       draggable
+      onPointerDown={dragArm.onPointerDown}
+      onPointerMove={dragArm.onPointerMove}
+      onPointerUp={dragArm.onPointerUp}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={cn(

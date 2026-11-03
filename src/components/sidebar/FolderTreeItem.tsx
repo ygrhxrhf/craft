@@ -10,6 +10,7 @@ import { createDocumentLocal } from '@/components/sync/create-local';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { SIDEBAR_DOC_MIME, sidebarDragState } from '@/lib/dnd/sidebar-drag';
 import { pressStartsDrag } from '@/lib/dnd/activation-guard';
+import { useDragArm } from '@/lib/dnd/use-drag-arm';
 import { formatDocCount } from '@/lib/browse/official-copy';
 import {
   DELETE_FOLDER_LABEL,
@@ -61,6 +62,8 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
   const [draftName, setDraftName] = useState(folder.name);
   const expandTimerRef = useRef<number | null>(null);
   const bumpTree = useSidebarStore((s) => s.bumpTree);
+  // G268：文件夹行与文档行同属官方「主拖拽通路」＝general 档。
+  const dragArm = useDragArm('general');
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -162,6 +165,13 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
       e.preventDefault();
       return;
     }
+    // G268：general 档——指针没走够 8px（触摸没按满 150ms）就不起拖。
+    // 浏览器自己的起拖门更松，所以先把 dragstart 现场坐标算进去，免得差几 px 被拦下后接不上。
+    dragArm.track(e.clientX, e.clientY);
+    if (!dragArm.isArmed()) {
+      e.preventDefault();
+      return;
+    }
     const payload = { kind: 'sidebar-item' as const, type: 'folder' as const, folderId: folder.id, title: folder.name };
     sidebarDragState.payload = payload;
     e.dataTransfer.effectAllowed = 'move';
@@ -171,6 +181,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
 
   function handleDragEnd() {
     sidebarDragState.payload = null;
+    dragArm.reset();
     setZone(null);
     if (expandTimerRef.current) {
       window.clearTimeout(expandTimerRef.current);
@@ -369,6 +380,9 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
       className={rowClass}
       style={rowStyle}
       draggable
+      onPointerDown={dragArm.onPointerDown}
+      onPointerMove={dragArm.onPointerMove}
+      onPointerUp={dragArm.onPointerUp}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}

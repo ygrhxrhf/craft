@@ -26,6 +26,7 @@ import {
   sidebarDragState,
 } from '@/lib/dnd/sidebar-drag';
 import { pressStartsDrag } from '@/lib/dnd/activation-guard';
+import { useDragArm } from '@/lib/dnd/use-drag-arm';
 import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
 import {
   ContextMenu,
@@ -65,6 +66,8 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   const router = useRouter();
   const { data: session } = useSession();
   const bumpTree = useSidebarStore((s) => s.bumpTree);
+  // G268：侧栏树行是官方的「主拖拽通路」＝general 档（指针 8px / 触摸长按 150ms）。
+  const dragArm = useDragArm('general');
 
   const children = allDocuments
     .filter(d => d.parentId === doc.id)
@@ -177,6 +180,14 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
       e.preventDefault();
       return;
     }
+    // G268：general 档——指针没走够 8px（触摸没按满 150ms）就不起拖。
+    // 浏览器自己的起拖门比这一档更松，所以先把 dragstart 现场坐标算进去，免得差 3px 的
+    // 那一小段被 preventDefault 掉之后再也接不上。
+    dragArm.track(e.clientX, e.clientY);
+    if (!dragArm.isArmed()) {
+      e.preventDefault();
+      return;
+    }
     const payload = { kind: 'sidebar-item' as const, type: 'doc' as const, documentId: doc.id, title: doc.title };
     sidebarDragState.payload = payload;
     e.dataTransfer.effectAllowed = 'move';
@@ -186,6 +197,7 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
 
   function handleDragEnd() {
     sidebarDragState.payload = null;
+    dragArm.reset();
     setZone(null);
   }
 
@@ -356,6 +368,9 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
       className={rowClass}
       style={rowStyle}
       draggable
+      onPointerDown={dragArm.onPointerDown}
+      onPointerMove={dragArm.onPointerMove}
+      onPointerUp={dragArm.onPointerUp}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}

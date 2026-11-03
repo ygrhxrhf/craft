@@ -127,7 +127,8 @@ interface DocItem {
 
 export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = true, pageStyle, onPageStylePatch, onClose }: InfoTabProps) {
   const router = useRouter();
-  const [subTab, setSubTab] = useState<'info' | 'actions'>('info');
+  // G204：官方是单列到底，不再有「页面信息／动作」两个子页签；setSubTab 仅供旧跳转收敛。
+  const [, setSubTab] = useState<'info' | 'actions'>('info');
   // G225：官方动作项里有五项印键位字形；本地绑定表是唯一来源。
   const shortcutGlyph = (id: string) => {
     const binding = KEY_BINDINGS.find((candidate) => candidate.id === id);
@@ -438,32 +439,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
 
   return (
     <div className="p-3">
-      {/* Sub-tab switcher */}
-      <div className="mb-4 flex rounded-lg border border-foreground/8 bg-foreground/4 p-0.5">
-        <button
-          type="button"
-          onClick={() => setSubTab('info')}
-          className={cn(
-            'flex-1 rounded-md px-3 py-1.5 text-meta font-medium transition-colors duration-150 ease-craft',
-            subTab === 'info' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/55 hover:text-foreground/85'
-          )}
-        >
-          页面信息
-        </button>
-        <button
-          type="button"
-          onClick={() => setSubTab('actions')}
-          className={cn(
-            'flex-1 rounded-md px-3 py-1.5 text-meta font-medium transition-colors duration-150 ease-craft',
-            subTab === 'actions' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/55 hover:text-foreground/85'
-          )}
-        >
-          动作
-        </button>
-      </div>
-
-      {subTab === 'info' ? (
-        <div className="space-y-4">
+      <div className="space-y-4">
           {/* G626: TOC is a first-class section at the top; an empty doc shows the guide sentence
               instead of hiding the section. */}
           <section data-testid="info-toc">
@@ -544,183 +520,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             </section>
           )}
 
-          {/* Location — the document's folder or ancestry (G203), 未分类 when it has neither */}
-          {locationLoaded && (
-            <section>
-              <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">
-                {LOCATION_TITLE}
-              </h4>
-              <div className="flex items-center gap-2.5 text-ui text-muted-foreground">
-                <Folder className="size-3.5" />
-                <span className="truncate">{locationLabel}</span>
-              </div>
-              {/* G236：从模板新建的文档带「来自模板」标记。 */}
-              {pageStyle?.fromTemplate && (
-                <div
-                  data-testid="from-template"
-                  className="mt-1.5 flex items-center gap-2.5 text-ui text-muted-foreground"
-                >
-                  <LayoutTemplate className="size-3.5" />
-                  <span>{FROM_TEMPLATE_LABEL}</span>
-                </div>
-              )}
-            </section>
-          )}
-
-          {/* Tags */}
-          <TagsSection documentId={documentId} />
-
-          {/* Collaborators */}
-          <MembersSection documentId={documentId} canManage={isOwner} />
-
-          {/* G1437: 「最近使用」— the same group the official info pane carries next to members. */}
-          {recentDocs.length > 0 && (
-            <section>
-              <h3 className="mb-2 text-ui font-medium text-foreground/70">最近使用</h3>
-              <div className="space-y-0.5">
-                {recentDocs.map((doc) => (
-                  <Link
-                    key={doc.id}
-                    href={`/documents/${doc.id}`}
-                    className="flex items-center gap-2 rounded px-1 py-1 text-ui text-muted-foreground transition-colors hover:bg-foreground/4 hover:text-foreground"
-                  >
-                    <FileText className="size-3.5 shrink-0" />
-                    <span className="truncate">{doc.title || untitledFor('list')}</span>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Backlinks — three sorts plus expand/collapse all (G63), with its own loading line. */}
-          {!backlinksLoaded ? (
-            <p className="text-ui text-foreground/40" role="status" aria-live="polite">
-              {BACKLINKS_LOADING}
-            </p>
-          ) : backlinks.length > 0 && (
-            <section>
-              <div className="mb-2 flex items-center justify-between">
-                <h4 className="text-caption font-medium uppercase tracking-wider text-foreground/40">
-                  @链接到此页面 ({backlinks.length})
-                </h4>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    aria-label="全部展开"
-                    title="全部展开"
-                    onClick={() => setCollapsedLinks(new Set())}
-                    className="rounded p-0.5 text-foreground/40 hover:text-foreground/85"
-                  >
-                    <UnfoldVertical className="size-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="全部折叠"
-                    title="全部折叠"
-                    onClick={() => setCollapsedLinks(new Set(backlinks.map((link) => link.id)))}
-                    className="rounded p-0.5 text-foreground/40 hover:text-foreground/85"
-                  >
-                    <FoldVertical className="size-3.5" />
-                  </button>
-                </div>
-              </div>
-              <select
-                aria-label="反向链接排序"
-                value={backlinkSort}
-                onChange={(event) => setBacklinkSort(event.target.value as BacklinkSort)}
-                className="mb-1 w-full rounded bg-transparent text-meta text-foreground/55 outline-none hover:text-foreground/85"
-              >
-                {BACKLINK_SORTS.map((option) => (
-                  <option key={option} value={option}>
-                    {BACKLINK_SORT_LABELS[option]}
-                  </option>
-                ))}
-              </select>
-              <div className="space-y-1">
-                {sortBacklinks(
-                  backlinks.map((link) => ({
-                    sourceDocumentId: link.id,
-                    sourceTitle: link.title,
-                    sourceIcon: link.icon,
-                    createdAt: link.createdAt,
-                    linkCount: link.linkCount,
-                  })),
-                  backlinkSort,
-                ).map((link) => {
-                  const collapsed = collapsedLinks.has(link.sourceDocumentId);
-                  return (
-                    <div key={link.sourceDocumentId}>
-                      <div className="flex items-center gap-1 rounded-md px-1 py-1 text-ui hover:bg-foreground/4">
-                        <button
-                          type="button"
-                          aria-label={collapsed ? '展开' : '折叠'}
-                          aria-expanded={!collapsed}
-                          onClick={() =>
-                            setCollapsedLinks((prev) => {
-                              const next = new Set(prev);
-                              if (next.has(link.sourceDocumentId)) next.delete(link.sourceDocumentId);
-                              else next.add(link.sourceDocumentId);
-                              return next;
-                            })
-                          }
-                          className="rounded p-0.5 text-foreground/40"
-                        >
-                          <ChevronRight className={cn('size-3.5 transition-transform', !collapsed && 'rotate-90')} />
-                        </button>
-                        <Link href={`/documents/${link.sourceDocumentId}`} className="flex min-w-0 flex-1 items-center gap-2">
-                          <FileText className="size-3.5 shrink-0 text-muted-foreground" />
-                          <span className="truncate">{link.sourceIcon} {link.sourceTitle || untitledFor('list')}</span>
-                        </Link>
-                      </div>
-                      {!collapsed && (
-                        <div className="ml-6 px-2 pb-1 text-meta text-foreground/40">
-                          {link.linkCount ?? 1} 个链接
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          )}
-
-          {/* Stats */}
-          <section>
-            <div className="mb-2 flex items-center justify-between">
-              <h4 className="flex items-center gap-1.5 text-caption font-medium uppercase tracking-wider text-foreground/40">
-                {/* G1454：官方统计段带三枚图标——富文本／纯文本／Viewfinder（圈定范围）。 */}
-                <FileText className="size-3" data-testid="stats-icon-rich" />
-                <Type className="size-3" data-testid="stats-icon-plain" />
-                <Scan className="size-3" data-testid="stats-icon-viewfinder" />
-                {statsTitle(statsScope)}
-              </h4>
-              <select
-                aria-label="统计范围"
-                value={statsScope}
-                onChange={(event) => setStatsScope(event.target.value as StatsScope)}
-                className="rounded bg-transparent text-meta text-foreground/55 outline-none hover:text-foreground/85"
-              >
-                {STATS_SCOPES.map((scope) => (
-                  <option key={scope} value={scope}>
-                    {STATS_SCOPE_LABELS[scope]}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-1 text-ui text-muted-foreground">
-              {/* G377：官方「统计」区是五项（字数／字符数／不包括空格／区块／阅读时间）。 */}
-              <div>{stats.words.toLocaleString()} 字</div>
-              <div>{stats.characters.toLocaleString()} 字符</div>
-              <div>{stats.charactersNoSpaces.toLocaleString()} 字符（不包括空格）</div>
-              <div>{stats.blocks.toLocaleString()} 区块</div>
-              <div>{stats.readingLabel} 阅读</div>
-            </div>
-          </section>
-
-          <CommentSection documentId={documentId} editor={editor} canComment={canComment} />
-        </div>
-      ) : (
-        <div className="space-y-1">
+      <div className="space-y-1">
           {actionError && (
             <div className="rounded-md bg-destructive/10 px-2 py-1.5 text-meta text-destructive">
               {actionError}
@@ -1136,7 +936,183 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             </button>
           )}
         </div>
-      )}
+
+          {/* Location — the document's folder or ancestry (G203), 未分类 when it has neither */}
+          {locationLoaded && (
+            <section>
+              <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">
+                {LOCATION_TITLE}
+              </h4>
+              <div className="flex items-center gap-2.5 text-ui text-muted-foreground">
+                <Folder className="size-3.5" />
+                <span className="truncate">{locationLabel}</span>
+              </div>
+              {/* G236：从模板新建的文档带「来自模板」标记。 */}
+              {pageStyle?.fromTemplate && (
+                <div
+                  data-testid="from-template"
+                  className="mt-1.5 flex items-center gap-2.5 text-ui text-muted-foreground"
+                >
+                  <LayoutTemplate className="size-3.5" />
+                  <span>{FROM_TEMPLATE_LABEL}</span>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Tags */}
+          <TagsSection documentId={documentId} />
+
+          {/* Collaborators */}
+          <MembersSection documentId={documentId} canManage={isOwner} />
+
+          {/* G1437: 「最近使用」— the same group the official info pane carries next to members. */}
+          {recentDocs.length > 0 && (
+            <section>
+              <h3 className="mb-2 text-ui font-medium text-foreground/70">最近使用</h3>
+              <div className="space-y-0.5">
+                {recentDocs.map((doc) => (
+                  <Link
+                    key={doc.id}
+                    href={`/documents/${doc.id}`}
+                    className="flex items-center gap-2 rounded px-1 py-1 text-ui text-muted-foreground transition-colors hover:bg-foreground/4 hover:text-foreground"
+                  >
+                    <FileText className="size-3.5 shrink-0" />
+                    <span className="truncate">{doc.title || untitledFor('list')}</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Backlinks — three sorts plus expand/collapse all (G63), with its own loading line. */}
+          {!backlinksLoaded ? (
+            <p className="text-ui text-foreground/40" role="status" aria-live="polite">
+              {BACKLINKS_LOADING}
+            </p>
+          ) : backlinks.length > 0 && (
+            <section>
+              <div className="mb-2 flex items-center justify-between">
+                <h4 className="text-caption font-medium uppercase tracking-wider text-foreground/40">
+                  @链接到此页面 ({backlinks.length})
+                </h4>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    aria-label="全部展开"
+                    title="全部展开"
+                    onClick={() => setCollapsedLinks(new Set())}
+                    className="rounded p-0.5 text-foreground/40 hover:text-foreground/85"
+                  >
+                    <UnfoldVertical className="size-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="全部折叠"
+                    title="全部折叠"
+                    onClick={() => setCollapsedLinks(new Set(backlinks.map((link) => link.id)))}
+                    className="rounded p-0.5 text-foreground/40 hover:text-foreground/85"
+                  >
+                    <FoldVertical className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+              <select
+                aria-label="反向链接排序"
+                value={backlinkSort}
+                onChange={(event) => setBacklinkSort(event.target.value as BacklinkSort)}
+                className="mb-1 w-full rounded bg-transparent text-meta text-foreground/55 outline-none hover:text-foreground/85"
+              >
+                {BACKLINK_SORTS.map((option) => (
+                  <option key={option} value={option}>
+                    {BACKLINK_SORT_LABELS[option]}
+                  </option>
+                ))}
+              </select>
+              <div className="space-y-1">
+                {sortBacklinks(
+                  backlinks.map((link) => ({
+                    sourceDocumentId: link.id,
+                    sourceTitle: link.title,
+                    sourceIcon: link.icon,
+                    createdAt: link.createdAt,
+                    linkCount: link.linkCount,
+                  })),
+                  backlinkSort,
+                ).map((link) => {
+                  const collapsed = collapsedLinks.has(link.sourceDocumentId);
+                  return (
+                    <div key={link.sourceDocumentId}>
+                      <div className="flex items-center gap-1 rounded-md px-1 py-1 text-ui hover:bg-foreground/4">
+                        <button
+                          type="button"
+                          aria-label={collapsed ? '展开' : '折叠'}
+                          aria-expanded={!collapsed}
+                          onClick={() =>
+                            setCollapsedLinks((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(link.sourceDocumentId)) next.delete(link.sourceDocumentId);
+                              else next.add(link.sourceDocumentId);
+                              return next;
+                            })
+                          }
+                          className="rounded p-0.5 text-foreground/40"
+                        >
+                          <ChevronRight className={cn('size-3.5 transition-transform', !collapsed && 'rotate-90')} />
+                        </button>
+                        <Link href={`/documents/${link.sourceDocumentId}`} className="flex min-w-0 flex-1 items-center gap-2">
+                          <FileText className="size-3.5 shrink-0 text-muted-foreground" />
+                          <span className="truncate">{link.sourceIcon} {link.sourceTitle || untitledFor('list')}</span>
+                        </Link>
+                      </div>
+                      {!collapsed && (
+                        <div className="ml-6 px-2 pb-1 text-meta text-foreground/40">
+                          {link.linkCount ?? 1} 个链接
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* Stats */}
+          <section>
+            <div className="mb-2 flex items-center justify-between">
+              <h4 className="flex items-center gap-1.5 text-caption font-medium uppercase tracking-wider text-foreground/40">
+                {/* G1454：官方统计段带三枚图标——富文本／纯文本／Viewfinder（圈定范围）。 */}
+                <FileText className="size-3" data-testid="stats-icon-rich" />
+                <Type className="size-3" data-testid="stats-icon-plain" />
+                <Scan className="size-3" data-testid="stats-icon-viewfinder" />
+                {statsTitle(statsScope)}
+              </h4>
+              <select
+                aria-label="统计范围"
+                value={statsScope}
+                onChange={(event) => setStatsScope(event.target.value as StatsScope)}
+                className="rounded bg-transparent text-meta text-foreground/55 outline-none hover:text-foreground/85"
+              >
+                {STATS_SCOPES.map((scope) => (
+                  <option key={scope} value={scope}>
+                    {STATS_SCOPE_LABELS[scope]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1 text-ui text-muted-foreground">
+              {/* G377：官方「统计」区是五项（字数／字符数／不包括空格／区块／阅读时间）。 */}
+              <div>{stats.words.toLocaleString()} 字</div>
+              <div>{stats.characters.toLocaleString()} 字符</div>
+              <div>{stats.charactersNoSpaces.toLocaleString()} 字符（不包括空格）</div>
+              <div>{stats.blocks.toLocaleString()} 区块</div>
+              <div>{stats.readingLabel} 阅读</div>
+            </div>
+          </section>
+
+          <CommentSection documentId={documentId} editor={editor} canComment={canComment} />
+        </div>
+
 
       <VersionDialog
         documentId={documentId}

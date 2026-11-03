@@ -4234,10 +4234,13 @@
       ]
     },
     "G204": {
-      "status": "partial",
-      "note": "信息页拆成两子页签，动作不在首屏；属性/位置/统计同屏",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "信息页改单列：无子页签，属性→动作(12)→位置→统计同屏；浏览器实测通过",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:84"
+        "src/components/editor/tabs/InfoTab.tsx:438",
+        "src/components/editor/tabs/InfoTab.tsx:524",
+        "src/components/editor/tabs/InfoTab.tsx:940"
       ]
     },
     "G206": {

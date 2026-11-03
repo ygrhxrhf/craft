@@ -1,12 +1,11 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { getFavoriteDocuments } from '@/actions/document/get';
-import { DocumentCard } from '@/components/document/DocumentCard';
+import { StarredGrid } from '@/components/document/StarredGrid';
 import { STARRED_EMPTY, STARRED_PRIVACY } from '@/lib/browse/official-copy';
 import { Star } from 'lucide-react';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
-import { BrowseGrid } from '@/components/app/BrowseGrid';
 
 export default async function FavoritesPage() {
   const session = await auth();
@@ -20,11 +19,7 @@ export default async function FavoritesPage() {
       <AppPageContainer>
         <p className="mb-4 text-sm text-muted-foreground">{STARRED_PRIVACY}</p>
         {favoriteDocs.length > 0 ? (
-          <BrowseGrid>
-            {favoriteDocs.map(doc => (
-              <DocumentCard key={doc.id} document={doc} />
-            ))}
-          </BrowseGrid>
+          <StarredGrid documents={favoriteDocs} />
         ) : (
           <div className="rounded-lg border border-dashed border-border p-8 text-center">
             <Star className="mx-auto mb-2 size-8 text-muted-foreground" />

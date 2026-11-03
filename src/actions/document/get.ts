@@ -155,6 +155,8 @@ export async function getFavoriteDocuments() {
     title: string;
     icon: string | null;
     updatedAt: string;
+    /** G94：收藏行自己的 id —— 重排要写 `favorite.order`，卡片的文档 id 不是这一行的主键。 */
+    favoriteId: string;
   }> = [];
 
   const favorites = await db.orm.public.Favorite
@@ -169,7 +171,13 @@ export async function getFavoriteDocuments() {
       .select('id', 'title', 'icon', 'updatedAt', 'isDeleted', 'isArchived')
       .first() as { id: string; title: string; icon: string | null; updatedAt: string; isDeleted: boolean; isArchived: boolean } | null;
     if (doc && !doc.isDeleted && !doc.isArchived) {
-      docs.push({ id: doc.id, title: doc.title, icon: doc.icon, updatedAt: doc.updatedAt });
+      docs.push({
+        id: doc.id,
+        title: doc.title,
+        icon: doc.icon,
+        updatedAt: doc.updatedAt,
+        favoriteId: String((fav as { id: string }).id),
+      });
     }
   }
 

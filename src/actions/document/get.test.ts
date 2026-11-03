@@ -183,7 +183,7 @@ describe('the other document list reads', () => {
   it('getFavoriteDocuments returns only what the card renders', async () => {
     const rows = await getFavoriteDocuments();
     expect(rows.map((r) => (r as { id: string }).id)).toContain(documentId);
-    expect(keys(rows)).toEqual(rows.map(() => ['icon', 'id', 'title', 'updatedAt'].sort()));
+    expect(keys(rows)).toEqual(rows.map(() => ['favoriteId', 'icon', 'id', 'title', 'updatedAt'].sort()));
   });
 
   it('getRecentDocuments returns the columns the card and list render, plus the role it stamps on', async () => {

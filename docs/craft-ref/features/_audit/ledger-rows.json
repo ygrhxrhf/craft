@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T01:51:03.489Z",
+  "generatedAt": "2026-11-03T01:55:21.303Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 916,
@@ -2759,8 +2759,8 @@
       "cols": 6,
       "id": "G94",
       "official": "**五种重排作用域各自独立**：`root_reorder` / `starred_reorder` / `folder_reorder` / `subfolder_reorder` / `tag_reorder`",
-      "local": "✎ 现读（2026-10-31）更正：文档树/文件夹有 order；收藏与标签无独立顺序持久化",
-      "verdict": "缺失；且这是拖拽落点判定的官方分类骨架，动态批次可据此逐项验",
+      "local": "✎ 现读（2026-10-31）更正：文档树/文件夹有 order；收藏与标签无独立顺序持久化 ⇒ ✎ 再读（2026-11-02 第 202 批）：**收藏区顺序已独立**——`Favorite.order` 落库、页按它读；第 202 批补上拖拽重排（`StarredGrid`，整批写 0…n-1，与侧栏同一口径）；标签仍无 `order` 列（`Tag` 模型没有这一格），`tag_reorder` 与标签置顶仍缺；根区/子文件夹两层在侧栏已共用整批写",
+      "verdict": "缺失（局部）",
       "score": "2/2",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝只有 folder 内 `itemOrder`；顶层/收藏/标签顺序无独立持久化",
       "status": "gap",

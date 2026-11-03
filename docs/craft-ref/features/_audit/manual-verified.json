@@ -3605,8 +3605,10 @@
     },
     "G94": {
       "status": "partial",
-      "note": "文档树/文件夹有 order；收藏与标签无独立顺序持久化",
+      "note": "第 202 批：收藏区独立顺序（Favorite.order）与拖拽整批重排已落；标签仍无 order 列，tag_reorder/tag_pin 缺",
       "evidence": [
+        "src/components/document/StarredGrid.tsx:1",
+        "src/actions/document/get.ts:179",
         "src/components/sidebar/DocumentTreeItem.tsx:240"
       ]
     },

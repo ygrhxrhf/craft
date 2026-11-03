@@ -3800,7 +3800,8 @@
       ]
     },
     "G121": {
-      "status": "gap",
+      "status": "partial",
+      "note": "第 214 批：craft:// 解析与编辑器跳转已落（doc/folder 保留字/tasks/tags/calendar）；credit 无落点、folder id 落所有文档",
       "note": "无 craft:// scheme 与 stableIdToUuid 跳转",
       "evidence": [
         "src/lib/platform.ts:24"

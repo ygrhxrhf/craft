@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T02:38:49.657Z",
+  "generatedAt": "2026-11-03T02:41:03.115Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 913,
@@ -3250,8 +3250,8 @@
       "cols": 5,
       "id": "G121",
       "official": "内部 URL scheme `craft://`：`doc/{id}`、`folder/{id}` 与 **三个保留字** `folder/{unsorted,starred,all-docs}`、`tasks/{inbox,today,upcoming,all}`、`tags`、`calendar`、`credit`；id 经 `stableIdToUuid` 映射后跳转（§十一）",
-      "local": "`craft://`、`deepLink` 在 `src` 零命中 → 无内部可寻址层，提醒跳转与额度文案无处落地",
-      "verdict": "缺失",
+      "local": "`craft://`、`deepLink` 在 `src` 零命中 → 无内部可寻址层，提醒跳转与额度文案无处落地 ⇒ ✎ 现读（2026-11-02 第 214 批）：`lib/links/internal-scheme.ts` 解析 doc/folder/三个保留字/tasks 四档/tags/calendar，编辑器点链接即跳本地路由；`credit` 无本地计费页回 null（不假装能跳）、`folder/{id}` 暂无独立路由落到所有文档屏 ⇒ 原判「零命中」作废",
+      "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",
       "scoreParsed": {

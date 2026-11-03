@@ -1,6 +1,7 @@
 'use client';
 
 import { craftHrefTarget } from '@/lib/links/craft-schemes';
+import { craftSchemeRoute } from '@/lib/links/internal-scheme';
 import { toast } from '@/components/ui/toast';
 import { PASTE_FAILED } from '@/lib/errors/alert-copy';
 import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
@@ -630,6 +631,13 @@ export function Editor({
         // rather than being swallowed silently.
         const anchor = (event.target as HTMLElement | null)?.closest?.('a');
         const href = anchor?.getAttribute('href') ?? '';
+        // G121：`craft://` 内部寻址（文档/文件夹保留字/任务视图/标签/日历）。
+        const internal = craftSchemeRoute(href);
+        if (internal) {
+          event.preventDefault();
+          window.location.assign(internal);
+          return true;
+        }
         const target = craftHrefTarget(href);
         if (!target) return false;
         event.preventDefault();

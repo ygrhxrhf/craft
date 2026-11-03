@@ -3610,12 +3610,14 @@
       ]
     },
     "G94": {
-      "status": "partial",
-      "note": "第 202 批：收藏区独立顺序（Favorite.order）与拖拽整批重排已落；标签仍无 order 列，tag_reorder/tag_pin 缺",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "五种重排作用域独立：根/文件夹整批写、收藏 202 批已落、标签新增 order 列与 /tags 拖拽整批写。",
       "evidence": [
-        "src/components/document/StarredGrid.tsx:1",
-        "src/actions/document/get.ts:179",
-        "src/components/sidebar/DocumentTreeItem.tsx:240"
+        "src/prisma/contract.prisma:416",
+        "src/lib/sync/tables.ts:36",
+        "src/components/browse/TagTreeList.tsx",
+        "src/lib/browse/tag-browse.ts:58"
       ]
     },
     "G95": {

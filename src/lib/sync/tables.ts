@@ -33,7 +33,7 @@ export const SYNC_TABLES: TableDef[] = [
   // 移入回收站 {isDeleted,deletedAt}／拖动 {parentId,order}；离线新建（create-local.ts）带 name
   // 与 isDeleted:false ⇒ 两枚合取把三个单点动作在陈旧行上的"铸壳"全挡住。
   { table: 'folder', model: 'Folder', cols: ['id','name','icon','description','order','parentId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['name', 'isDeleted'] },
-  { table: 'tag', model: 'Tag', cols: ['id','name','color','userId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  { table: 'tag', model: 'Tag', cols: ['id','name','color','order','userId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'document_tag', model: 'DocumentTag', cols: ['documentId','tagId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => `${r.documentId}__${r.tagId}` },
   { table: 'favorite', model: 'Favorite', cols: ['id','userId','documentId','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // G1513：task 的单点动作＝改排期 {dueDate,remindAt,recurrence,recurrenceEnd}／删除（patch:null）；

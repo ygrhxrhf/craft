@@ -172,13 +172,17 @@ describe('读侧墓碑过滤（C-1）', () => {
         deletedAt: '2026-09-28T00:00:00.000Z',
       },
     ];
+    const query = (cond: Record<string, unknown>) => ({
+      all: async () => rows.filter((row) => matchRow(row, cond)),
+      orderBy: () => ({
+        all: async () => rows.filter((row) => matchRow(row, cond)),
+      }),
+    });
     (getDb as any).mockResolvedValue({
       orm: {
         public: {
           Tag: {
-            where: (cond: Record<string, unknown>) => ({
-              all: async () => rows.filter((row) => matchRow(row, cond)),
-            }),
+            where: query,
           },
         },
       },

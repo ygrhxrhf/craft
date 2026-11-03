@@ -12,6 +12,8 @@ export interface TagBrowseTag {
   id: string;
   name: string;
   color: string;
+  /** G94 `tag_reorder`：整批写入的 0…n-1 顺序；缺省按 0 处理。 */
+  order?: number;
 }
 
 export interface TagBrowseLink {
@@ -52,8 +54,16 @@ function byCountThenName(a: TagBrowseGroup, b: TagBrowseGroup): number {
   return a.name.localeCompare(b.name, 'zh-CN');
 }
 
+/** G94：拖过的标签按 `order` 排；全是默认 0 时退回原来的篇数/名称序。 */
+function byOrderThenCount(a: TagBrowseGroup, b: TagBrowseGroup): number {
+  const ao = a.order ?? 0;
+  const bo = b.order ?? 0;
+  if (ao !== bo) return ao - bo;
+  return byCountThenName(a, b);
+}
+
 function sortGroup(group: TagBrowseGroup): TagBrowseGroup {
-  return { ...group, children: group.children.slice().sort(byCountThenName) };
+  return { ...group, children: group.children.slice().sort(byOrderThenCount) };
 }
 
 export function buildTagTree(
@@ -96,7 +106,7 @@ export function buildTagTree(
     roots.push(group);
   }
 
-  const sortedRoots = roots.map(sortGroup).sort(byCountThenName);
+  const sortedRoots = roots.map(sortGroup).sort(byOrderThenCount);
   const byId = new Map<string, TagBrowseGroup>();
   for (const group of sortedRoots) {
     byId.set(group.id, group);

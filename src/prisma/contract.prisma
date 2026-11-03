@@ -417,6 +417,8 @@ model Tag {
   id        String   @id @default(uuid())
   name      String
   color     String   @default("#6366f1")
+  // G94 `tag_reorder`：标签区自己的整批顺序（与根区/收藏/文件夹同一条 0…n-1 口径）。
+  order     Float    @default(0)
   userId    String
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()

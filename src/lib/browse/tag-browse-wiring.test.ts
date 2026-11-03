@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 
 const listPage = read('../../app/(app)/tags/page.tsx');
+const tagTreeList = read('../../components/browse/TagTreeList.tsx');
 const detailPage = read('../../app/(app)/tags/[id]/page.tsx');
 const sidebar = read('../../components/sidebar/SidebarNav.tsx');
 const header = read('../../components/app/AppPageHeader.tsx');
@@ -13,7 +14,7 @@ const editorTags = read('../../components/editor/tabs/TagsSection.tsx');
 describe('the tags collection is wired to the official copy (G47)', () => {
   it('lists every tag with its document count through the shared tree', () => {
     expect(listPage).toContain('buildTagTree(tags, links, documents)');
-    expect(listPage).toContain('{formatDocCount(group.documentCount)}');
+    expect(tagTreeList).toContain('{formatDocCount(group.documentCount)}');
     expect(listPage).toContain('{ALL_TAGS}');
     expect(listPage).toContain('title={TAGS_TITLE}');
   });

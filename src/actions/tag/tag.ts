@@ -10,13 +10,16 @@ export interface TagRecord {
   id: string;
   name: string;
   color: string;
+  order?: number;
   documentCount?: number;
 }
 
 export async function getTags(): Promise<TagRecord[]> {
   const userId = await requireUserId();
   const db = await getDb();
-  const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null }).all()) as (TagRecord & {
+  const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null })
+    .orderBy((m: { order: { asc: () => unknown } }) => m.order.asc())
+    .all()) as (TagRecord & {
     documents?: unknown[];
   })[];
 
@@ -50,7 +53,9 @@ export async function getTagBrowseRows(): Promise<{
 }> {
   const userId = await requireUserId();
   const db = await getDb();
-  const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null }).all()) as TagRecord[];
+  const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null })
+    .orderBy((m: { order: { asc: () => unknown } }) => m.order.asc())
+    .all()) as TagRecord[];
   const owned = new Set(tags.map((tag) => tag.id));
   const rows = (await db.orm.public.DocumentTag.where({ deletedAt: null }).all()) as {
     tagId: string;
@@ -85,6 +90,8 @@ async function findOrCreateTag(userId: string, name: string, color?: string) {
     userId,
     name: normalized,
     color: normalizeTagColor(color),
+    // 新标签排到已有顺序之后；整批重排会把它改回 0…n-1。
+    order: Date.now(),
   })) as TagRecord;
 
   await emitSyncEventSafe(db, userId, ['tag'], created.id);

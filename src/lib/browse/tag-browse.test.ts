@@ -102,3 +102,38 @@ describe('buildTagTree', () => {
     expect(tree.tagCount).toBe(0);
   });
 });
+
+describe('the tag order (G94 tag_reorder)', () => {
+  it('sorts roots by their stored order before the count/name tiebreak', () => {
+    const tree = buildTagTree(
+      [
+        { id: 'a', name: '甲', color: '#111111', order: 2 },
+        { id: 'b', name: '乙', color: '#222222', order: 0 },
+        { id: 'c', name: '丙', color: '#333333', order: 1 },
+      ],
+      [
+        { tagId: 'a', documentId: 'd1' },
+        { tagId: 'a', documentId: 'd2' },
+        { tagId: 'a', documentId: 'd3' },
+      ],
+      [doc('d1', '2026-01-01'), doc('d2', '2026-01-02'), doc('d3', '2026-01-03')],
+    );
+    expect(tree.groups.map((group) => group.name)).toEqual(['乙', '丙', '甲']);
+  });
+
+  it('keeps the old count order while every order is the default 0', () => {
+    const tree = buildTagTree(
+      [
+        { id: 'a', name: '甲', color: '#111111' },
+        { id: 'b', name: '乙', color: '#222222' },
+      ],
+      [
+        { tagId: 'b', documentId: 'd1' },
+        { tagId: 'b', documentId: 'd2' },
+        { tagId: 'a', documentId: 'd3' },
+      ],
+      [doc('d1', '2026-01-01'), doc('d2', '2026-01-02'), doc('d3', '2026-01-03')],
+    );
+    expect(tree.groups.map((group) => group.name)).toEqual(['乙', '甲']);
+  });
+});

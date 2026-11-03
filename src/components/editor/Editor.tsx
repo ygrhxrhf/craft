@@ -623,6 +623,23 @@ export function Editor({
         : []),
     ],
     content: collaborative ? '' : initialContent || '',
+    // G1558: official markdown marks convert on the space *after* the closing marker; StarterKit's
+    // bold/italic/code/strike/highlight rules convert at the marker itself, and TipTap 3 gates rules
+    // per extension with this allowlist only. Those five are left out here and their space-triggered
+    // replacements live in MarkdownShortcuts — every other rule provider is named so its behaviour
+    // stays as collected (block rules are already space-triggered).
+    enableInputRules: [
+      'heading',
+      'bulletList',
+      'orderedList',
+      'blockquote',
+      'taskItem',
+      'codeBlock',
+      'divider',
+      'typography',
+      'link',
+      'markdownShortcuts',
+    ],
     editable: !locked,
     editorProps: {
       attributes: {

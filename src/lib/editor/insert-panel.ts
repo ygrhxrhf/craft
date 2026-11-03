@@ -29,12 +29,16 @@ export interface MarkdownShortcut {
 }
 
 /**
- * The rules `markdown-shortcuts.ts` installs, in the order it installs them. Kept here as data so
- * the panel and the test can both read one list.
+ * One row per thing this build can produce by typing markdown (`markdown-shortcuts.ts` plus the
+ * space-triggered table in `markdown-mark-rules.ts`). Listing a rule the editor does not fire would
+ * be a lie the moment the user tries it — that is the invariant the test keeps.
  */
 export const MARKDOWN_SHORTCUTS: readonly MarkdownShortcut[] = [
   // G1557：`#### ` 是粗体（Strong），不是四级标题。
   { syntax: '#### 文本', label: '粗体' },
+  { syntax: '**文本**', label: '粗体' },
+  { syntax: '*文本*', label: '斜体' },
+  { syntax: '`文本`', label: '行内代码' },
   { syntax: '~~文本~~', label: '删除线' },
   { syntax: '==文本==', label: '高亮' },
   { syntax: '[文本](链接)', label: '链接' },

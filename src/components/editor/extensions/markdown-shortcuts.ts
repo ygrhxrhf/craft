@@ -1,6 +1,8 @@
 import { Extension } from '@tiptap/react';
 import { InputRule, nodeInputRule } from '@tiptap/core';
 
+import { SPACE_MARK_RULES } from '@/lib/editor/markdown-mark-rules';
+
 export const MarkdownShortcuts = Extension.create({
   name: 'markdownShortcuts',
   // TipTap flattens input rules by extension priority, and Heading generates one rule per enabled
@@ -28,65 +30,26 @@ export const MarkdownShortcuts = Extension.create({
       );
     }
 
-    // Strikethrough: ~~text~~
-    if (this.editor.schema.marks.strikethrough) {
+    // G1558: the inline marks convert on the space *after* the closing marker. StarterKit's own mark
+    // rules fire at the marker, and TipTap 3 gates rules with an allowlist only (`enableInputRules`),
+    // so Editor.tsx leaves bold/italic/code/strike/highlight out and these rules take their place.
+    for (const rule of SPACE_MARK_RULES) {
+      const type = this.editor.schema.marks[rule.mark];
+      if (!type) continue;
       rules.push(
         new InputRule({
-          find: /~~(.+?)~~$/,
+          find: rule.find,
           handler: ({ state, range, match }) => {
-            const { tr } = state;
-            const text = match[1];
-
-            tr.replaceWith(
-              range.from,
-              range.to,
-              state.schema.text(text, [
-                state.schema.marks.strikethrough.create(),
-              ])
-            );
-          },
-        })
-      );
-    }
-
-    // Highlight: ==text==
-    if (this.editor.schema.marks.highlight) {
-      rules.push(
-        new InputRule({
-          find: /==(.+?)==$/,
-          handler: ({ state, range, match }) => {
-            const { tr } = state;
-            const text = match[1];
-
-            tr.replaceWith(
-              range.from,
-              range.to,
-              state.schema.text(text, [
-                state.schema.marks.highlight.create(),
-              ])
-            );
-          },
-        })
-      );
-    }
-
-    // Link: [text](url)
-    if (this.editor.schema.marks.link) {
-      rules.push(
-        new InputRule({
-          find: /\[(.+?)\]\((.+?)\)$/,
-          handler: ({ state, range, match }) => {
-            const { tr } = state;
-            const text = match[1];
-            const url = match[2];
-
-            tr.replaceWith(
-              range.from,
-              range.to,
-              state.schema.text(text, [
-                state.schema.marks.link.create({ href: url }),
-              ])
-            );
+            const { tr, schema } = state;
+            const marks =
+              rule.hrefGroup === undefined
+                ? [type.create()]
+                : [type.create({ href: match[rule.hrefGroup] })];
+            // The typed space survives; only the markers go away.
+            tr.replaceWith(range.from, range.to, [
+              schema.text(match[rule.textGroup], marks),
+              schema.text(' '),
+            ]);
           },
         })
       );

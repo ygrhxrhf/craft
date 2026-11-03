@@ -9522,10 +9522,13 @@
       ]
     },
     "G1558": {
-      "status": "partial",
-      "note": "六档行内标记两侧一致；本地以 $ 收尾即转换，官方等空格",
+      "status": "aligned",
+      "note": "第 271 批：六档行内标记改到官方的空格触发——八条规则进纯核 markdown-mark-rules.ts（记号＋尾随空格才转、空格留着、行中不转），StarterKit 的 bold/italic/code/strike/highlight 五条收尾字符规则用 enableInputRules 允许名单点名排除（其余十个规则提供方逐枚列入）。顺带纠出 strikethrough 死码（本仓标记名是 strike）。浏览器经 PM handleTextInput 逐档取证，块档与 typography/divider 全部复测未受影响。",
       "evidence": [
-        "src/components/editor/extensions/markdown-shortcuts.ts:13"
+        "src/lib/editor/markdown-mark-rules.ts:1",
+        "src/components/editor/extensions/markdown-shortcuts.ts:36",
+        "src/components/editor/Editor.tsx:631",
+        "src/lib/editor/markdown-mark-rules.test.ts:1"
       ]
     },
     "G1559": {

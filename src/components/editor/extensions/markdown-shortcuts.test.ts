@@ -46,3 +46,46 @@ describe('the #### rule (G1557)', () => {
     expect(source).toContain('priority: 1000,');
   });
 });
+
+/**
+ * G1558: inline marks convert on the trailing space. TipTap 3 has no per-extension rule switch —
+ * `enableInputRules` is an allowlist of extension names — so the five StarterKit mark extensions have
+ * to be absent from it, and every other rule provider in the editor has to be present or its
+ * markdown entry would silently stop working.
+ */
+describe('the inline marks are space-triggered (G1558)', () => {
+  const editor = readFileSync(join(process.cwd(), 'src/components/editor/Editor.tsx'), 'utf8');
+  const allowlist = editor.slice(
+    editor.indexOf('enableInputRules: ['),
+    editor.indexOf(']', editor.indexOf('enableInputRules: [')),
+  );
+
+  it('builds its rules from the shared rule table', () => {
+    expect(source).toContain("from '@/lib/editor/markdown-mark-rules'");
+    expect(source).toContain('for (const rule of SPACE_MARK_RULES)');
+    expect(source).not.toContain('schema.marks.strikethrough');
+  });
+
+  it('drops the five mark extensions from the allowlist', () => {
+    for (const mark of ['bold', 'italic', 'code', 'strike', 'highlight']) {
+      expect(allowlist, `${mark} would keep its marker-triggered rule`).not.toContain(`'${mark}'`);
+    }
+  });
+
+  it('keeps every other rule provider named in the allowlist', () => {
+    for (const name of [
+      'markdownShortcuts',
+      'heading',
+      'bulletList',
+      'orderedList',
+      'blockquote',
+      'taskItem',
+      'codeBlock',
+      'divider',
+      'typography',
+      'link',
+    ]) {
+      expect(allowlist, `missing ${name}`).toContain(`'${name}'`);
+    }
+  });
+});

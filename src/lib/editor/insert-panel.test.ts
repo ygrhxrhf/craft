@@ -33,19 +33,40 @@ describe('the insert panel sub-views', () => {
  * 用户一敲就是谎言。本测试把表钉在 `markdown-shortcuts.ts` 的输入规则数量上。
  */
 describe('the cheat-sheet lists the rules this build actually fires', () => {
-  it('has one row per input rule in the extension', () => {
-    const source = readFileSync(
-      join(process.cwd(), 'src/components/editor/extensions/markdown-shortcuts.ts'),
-      'utf8',
-    );
-    const rules = source.match(/find:\s*\//g) ?? [];
-    expect(rules.length).toBe(7);
-    expect(MARKDOWN_SHORTCUTS.length).toBe(rules.length);
+  const extensionSource = readFileSync(
+    join(process.cwd(), 'src/components/editor/extensions/markdown-shortcuts.ts'),
+    'utf8',
+  );
+  const markRuleSource = readFileSync(
+    join(process.cwd(), 'src/lib/editor/markdown-mark-rules.ts'),
+    'utf8',
+  );
+
+  it('has one row per firing rule, counting the two-module total', () => {
+    // The inline marks live in the shared rule table (G1558); the rest of the rules are in the
+    // extension itself. The sheet merges the two `**`/`__` spellings of bold into its 粗体 rows.
+    const rules =
+      (extensionSource.match(/find:\s*\//g) ?? []).length +
+      (markRuleSource.match(/find:\s*\//g) ?? []).length;
+    expect(rules).toBe(12);
+    expect(MARKDOWN_SHORTCUTS.length).toBeLessThanOrEqual(rules);
+    expect(MARKDOWN_SHORTCUTS.length).toBe(10);
   });
 
-  it('covers strong, strikethrough, highlight, link, both formulas and the task box', () => {
+  it('covers strong, italic, inline code, strikethrough, highlight, link, both formulas and the task box', () => {
     const labels = MARKDOWN_SHORTCUTS.map((row) => row.label);
-    expect(labels).toEqual(['粗体', '删除线', '高亮', '链接', '块级公式', '行内公式', '待办事项']);
+    expect(labels).toEqual([
+      '粗体',
+      '粗体',
+      '斜体',
+      '行内代码',
+      '删除线',
+      '高亮',
+      '链接',
+      '块级公式',
+      '行内公式',
+      '待办事项',
+    ]);
   });
 });
 

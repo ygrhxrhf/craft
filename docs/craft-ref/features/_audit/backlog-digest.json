@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T11:36:19.467Z",
+  "generatedAt": "2026-11-03T12:04:23.826Z",
   "total": 1614,
   "status": {
-    "aligned": 590,
+    "aligned": 591,
     "nonaction": 512,
-    "partial": 228,
+    "partial": 227,
     "deliberate": 165,
     "gap": 99,
     "unreachable": 20
@@ -17,14 +17,14 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 275,
+    "P2 / aligned": 276,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
     "P1 / nonaction": 89,
     "P? / partial": 80,
-    "P2 / partial": 78,
     "P? / aligned": 78,
+    "P2 / partial": 77,
     "P2 / deliberate": 73,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
@@ -1260,15 +1260,15 @@
       12
     ],
     [
-      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      12
-    ],
-    [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
       11
     ],
     [
       "三点一〇三八、第 97 批〔★★★ **G943 裁定＝连接器的按键不自",
+      11
+    ],
+    [
+      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
       11
     ],
     [

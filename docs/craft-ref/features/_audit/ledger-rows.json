@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T11:36:19.069Z",
+  "generatedAt": "2026-11-03T12:04:23.533Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 859,
-    "aligned": 319,
+    "gap": 858,
+    "aligned": 320,
     "unknown": 194,
     "deliberate": 105,
     "partial": 65,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 288,
+    "P2 / gap": 287,
     "P? / gap": 226,
-    "P2 / aligned": 215,
+    "P2 / aligned": 216,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -29088,10 +29088,10 @@
       "cols": 5,
       "id": "G1558",
       "official": "★★★ **Markdown 行内标记（粗体/斜体/删除线/代码/高亮/链接）两侧**语义一致**，但**触发时点不同**：本地在收尾记号那一刻就转换，官方要等**后跟的那个空格**才转**（本批新增加性档 `inline`，`runs/wave1-24-*`，两侧 23 步 0 error、selfCheck 两侧 4/4 PASS）：逐字输入六条行内记号串各跟一个空格，两侧的行内标记枚举（`inline.marks`，两侧归一到同一枚举）均为：`**X** `→`bold`、`*Y* `→`italic`、`~~Z~~ `→`strike`、`==W== `→`highlight`、`` `C` ``→`code`、`[T](url) `→`link`——**六档逐对全同**。★★ 真差异只在“何时”：同一条记号在**收尾记号那一步**，本地已经建好标记（`blocks` 名册里 `**X**` 已变 `X`、`inline.marks=[bold]`）而官方还是原样（`**X**`、`marks=[]`）；到**紧接着的空格那一步**两侧才赶齐。⇒ 与 `editor.md-rules.block-kind`（G1557）**同一口径**：官方的 markdown 规则都是“**空格触发**”，本地的 `InputRule` 是“**收尾字符触发**”。differ＝`editor.md-rules.inline-mark` **59 行／16 sev2+／0 declared deviations**（全部 sev2+ 可归结为这一个根因：6 步 `blocks`、 6 步 `inline`、 4 步 `countΔ` 各差一步）",
-      "local": "**行为不同（触发时点：收尾字符 vs 空格）**＝本地规则表在 `src/components/editor/extensions/markdown-shortcuts.ts:13/34/55`（三条 `InputRule`，`find` 均以 `$` 收尾：`/~~(.+?)~~$/`、`/==(.+?)==$/`、`/\\[(.+?)\\]\\((.+?)\\)$/`）＋ `@tiptap/starter-kit` 自带的 `**`／`*`／`` ` `` 三条；官方方格同 `editor.md-rules.block-kind`（`# `／`- `／`1. ` 都靠尾空格）。☆ 同批修掉两枚仪器缺陷（均为本档首跑暴露，如实登记）：① `inline` 档第一版**只数 `strong/em/del/mark/code/a` 标签**，而官方是 Slate 扁平渲染、**没有这些标签**（载体是 leaf 计算样式：粗体 `fw=700`｜斜体 `font-style:italic`｜删除线 `line-through`｜高亮背景非透明｜代码 `spellcheck=\"false\"`｜链接 `text-decoration=\"underline\"`）⇒ 把官方**全部**读成“没反应”；修法＝两侧各按自己的载体读、归一到同一枚举 `marks`（官方另对 `spellcheck=\"false\"` 的 leaf 不再计高亮，避免一枚代码读成两枚）；② spec **漏了触发用的空格**（第一版只打记号、官方根本没触发规则）⇒ 每步补一个 `Space`。☆ 同批另探明：官方**中间位置**的记号不转换（`a **X** b` 原样）⇒ 规则只在**行尾记号 + 空格**上走（与本地 `$` 收尾同属“行尾”语义，差别仅在是否需空格）",
-      "verdict": "行为不同（触发时点）",
+      "local": "**行为不同（触发时点：收尾字符 vs 空格）**＝本地规则表在 `src/components/editor/extensions/markdown-shortcuts.ts:13/34/55`（三条 `InputRule`，`find` 均以 `$` 收尾：`/~~(.+?)~~$/`、`/==(.+?)==$/`、`/\\[(.+?)\\]\\((.+?)\\)$/`）＋ `@tiptap/starter-kit` 自带的 `**`／`*`／`` ` `` 三条；官方方格同 `editor.md-rules.block-kind`（`# `／`- `／`1. ` 都靠尾空格）。☆ 同批修掉两枚仪器缺陷（均为本档首跑暴露，如实登记）：① `inline` 档第一版**只数 `strong/em/del/mark/code/a` 标签**，而官方是 Slate 扁平渲染、**没有这些标签**（载体是 leaf 计算样式：粗体 `fw=700`｜斜体 `font-style:italic`｜删除线 `line-through`｜高亮背景非透明｜代码 `spellcheck=\"false\"`｜链接 `text-decoration=\"underline\"`）⇒ 把官方**全部**读成“没反应”；修法＝两侧各按自己的载体读、归一到同一枚举 `marks`（官方另对 `spellcheck=\"false\"` 的 leaf 不再计高亮，避免一枚代码读成两枚）；② spec **漏了触发用的空格**（第一版只打记号、官方根本没触发规则）⇒ 每步补一个 `Space`。☆ 同批另探明：官方**中间位置**的记号不转换（`a **X** b` 原样）⇒ 规则只在**行尾记号 + 空格**上走（与本地 `$` 收尾同属“行尾”语义，差别仅在是否需空格）＝ ✎ 现读（2026-11-03 第 271 批）＝**触发时点已改成官方的「空格触发」**。六档全部重写为\"记号＋尾随空格\"才转换：纯核 `src/lib/editor/markdown-mark-rules.ts` 的八条 `SPACE_MARK_RULES`＝`**X**␣`／`__X__␣`→bold、`*Y*␣`／`_Y_␣`→italic、`` `C`␣ ``→code、`~~Z~~␣`→strike、`==W==␣`→highlight、`[T](u)␣`→link，转换后**那个空格留着**、只吃掉记号；`` (?<=^|\\s) `` 的左视保留官方\"行中不转\"的读法（`a **X** b` 原样）。★ StarterKit 的五条标记规则在收尾字符那一步就会抢跑，而 TipTap 3 只有 `enableInputRules` 这一枚**允许名单**（没有 per-extension 开关）⇒ `Editor.tsx` 把 bold／italic／code／strike／highlight 五档点名排除，其余十个规则提供方（heading／bulletList／orderedList／blockquote／taskItem／codeBlock／divider／typography／link／markdownShortcuts）逐枚列入，行内转换改由 `MarkdownShortcuts`（`priority: 1000`）供。★ 同批纠出一条死码：原 `markdown-shortcuts.ts` 的删除线那条用 `schema.marks.strikethrough` 取标记，而本仓 schema 里该标记名是 **`strike`** ⇒ 那条规则一直没注册，屏幕上的删除线靠 StarterKit 的收尾字符规则在跑。☆ 真浏览器取证（:3000，经 ProseMirror `handleTextInput` 逐条走规则管线）：`**X*` 再按 `*` ⇒ **不转换**（marks 空、文本原样 `**X*`）；`**X**`＋空格 ⇒ `bold`、文本 `X `；`*Y* `⇒italic、`` `C` ``＋空格⇒code、`~~Z~~ `⇒strike、`==W== `⇒highlight、`[T](https://craft.do) `⇒link（href 逐字对）；`a **X** b`＋空格 ⇒ 原样。块档逐条复测没被名单动到：`# `⇒h1、`## `⇒h2、`### `⇒h3、`#### `⇒bold stored mark（G1557 判定不变）、`- `与`+ `⇒bulletList、`1. `⇒orderedList、`> `⇒blockquote、`[] `⇒taskList、``` ```js ```＋空格⇒codeBlock、`---`⇒分隔线、`a-`＋`-`⇒`a—`（typography 仍在）。单测＝`src/lib/editor/markdown-mark-rules.test.ts` 13 条（六档落点／无空格不转／行中不转／两星优先单星／空格留着／名册覆盖六个标记）＋`markdown-shortcuts.test.ts`（名单含十档且不含五档标记、规则取自共享表）＋`insert-panel.test.ts`（\"快捷方式\"小抄 10 行逐条对本地真会触发的规则——斜体与行内代码本来就真会触发、原先少列，同批补齐）。",
+      "verdict": "已对齐（第 271 批；六档改为空格触发，逐档浏览器取证）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

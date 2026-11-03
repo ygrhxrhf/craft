@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T12:35:19.828Z",
+  "generatedAt": "2026-11-03T12:46:17.301Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 857,
-    "aligned": 321,
+    "gap": 856,
+    "aligned": 322,
     "unknown": 194,
     "deliberate": 105,
     "partial": 65,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 286,
+    "P2 / gap": 285,
     "P? / gap": 226,
-    "P2 / aligned": 217,
+    "P2 / aligned": 218,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -12177,10 +12177,10 @@
       "cols": 5,
       "id": "G614",
       "official": "★★★ **Enter 打真空块＝逐级退格式，屏幕上第一档退的是缩进且不新建块**：`Enter`（光标在有文本块尾）⇒ 新建真空块（`+2,115 B`）；再 `Enter` ⇒ **不新增块**，而是该块 `ind=28px→0`（**`−62 B`＝正好一个缩进占位 div**）⇒ §一之三十 的 `lGe` 空块分支**在屏上成立**",
-      "local": "本地 `Enter` 走 TipTap/ProseMirror 默认（`StarterKit.configure` 未覆写 `paragraph`/`listItem` 的 Enter 键位，`Editor.tsx:244-266`）⇒ **默认只分裂新块、不退格式**；★ 空块退档逻辑**本地完全没有**",
-      "verdict": "**缺失（空块逐级退格式）**",
+      "local": "✎ 现读（2026-11-03 第 273 批）＝**原判是陈旧读数**：空块逐级退格式这条链早在 G570/G577/G578 那批就落进编辑器了——纯核 `src/lib/editor/format-downgrade.ts` 的 `nextFormatStep`（①`indentLevel>0`→退缩进 ②否则在列表里→去列表 ③否则带装饰/颜色→清装饰）＋消费点 `src/components/editor/extensions/craft-keymap.ts:546-591`（Enter 且选区 collapsed 且**块为空**才走链；链走完没有档可退 ⇒ `return false` 交回 ProseMirror 默认分裂）。本地缩进档位宽度 `INDENT_STEP_PX = 28`（`src/lib/editor/block-indent.ts:8`）与官方那枚 `ind=28px` 同值。☆ 真浏览器取证（:3000，逐档单变量，读 `doc.childCount` 与块 attrs）：**档一**＝空段 `indent=1` 按 Enter ⇒ `indent` 1→0、**块数 4 不变**（正是官方\"不新增块、第一档退缩进\"）；再按一次 ⇒ 已无档可退，块数 4→5（新建真空块）；**档二**＝空列表项按 Enter ⇒ `bulletList` 变顶层 `paragraph`、块数 2 不变；**档三**＝带 `focusColor: blue` 的空段按 Enter ⇒ 装饰清掉、块数 2 不变；**对照**＝有文本的块（`AAA`）在块尾按 Enter ⇒ 分裂成 `AAA` ＋空块（块数 1→2），与官方第一句一致。测试文档已还原（`identical:true`、19 块）。判定档的口径＝本行判的是**可观察行为**（空块 Enter 先退档、退完才建块），本地载体是 PM 事务＋`data-indent` 而非官方的占位 div 字节数，这条差异按 G570 的既有口径不另立账",
+      "verdict": "已清（第 273 批；原判为陈旧读数，三档＋对照全部浏览器实点）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

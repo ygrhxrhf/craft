@@ -6185,10 +6185,13 @@
       ]
     },
     "G614": {
-      "status": "gap",
-      "note": "Enter 走 PM 默认分裂，空块不退缩进/格式",
+      "status": "aligned",
+      "note": "第 273 批改判（陈旧读数）：空块 Enter 的三级退格式链早已落地（nextFormatStep 纯核＋craft-keymap 的 Enter 消费点，退完档才交回 PM 默认分裂），缩进档宽 28px 与官方同值。浏览器逐档实点：空段 indent 1→0 且块数不变；再按才新建块；空列表项→去列表块数不变；带 focusColor 空段→清装饰块数不变；有文本块 Enter 照常分裂。测试文档已还原。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:151"
+        "src/lib/editor/format-downgrade.ts:29",
+        "src/components/editor/extensions/craft-keymap.ts:546",
+        "src/lib/editor/block-indent.ts:8",
+        "src/lib/editor/format-downgrade.test.ts:1"
       ]
     },
     "G615": {

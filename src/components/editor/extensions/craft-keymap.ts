@@ -18,7 +18,7 @@ import { localDayInstant } from '@/lib/task/wall-clock';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { isImeComposing } from '@/lib/editor/ime-guard';
 import { deleteStepFor } from '@/lib/editor/forward-delete';
-import { tableDimensions } from '@/lib/table-utils';
+import { tableDimensions, clearCellContents } from '@/lib/table-utils';
 import { tableAxisForShortcut } from '@/lib/editor/table-shortcuts';
 import {
   TABLE_SIZE_LIMIT_DURATION,
@@ -486,6 +486,18 @@ export const CraftKeymap = Extension.create({
                 return true;
               }
               editor.chain().focus().addRowAfter().run();
+              return true;
+            }
+            // G1620: Ctrl/⌘-Backspace inside a table cell clears the cell's content — the
+            // official DELETE_ROWS binding is "empty this cell", not "delete the row".
+            if (
+              event.key === 'Backspace' &&
+              (event.metaKey || event.ctrlKey) &&
+              !event.shiftKey &&
+              !event.altKey &&
+              editor.isActive('table') &&
+              clearCellContents(editor)
+            ) {
               return true;
             }
             // G632: `Delete` (⌦) is Backspace's **stunted mirror** — same "caret at block end"

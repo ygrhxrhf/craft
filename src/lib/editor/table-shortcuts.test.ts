@@ -28,4 +28,16 @@ describe('table shortcut axes (G1576/G1577)', () => {
     expect(source).toContain('addColumnAfter');
     expect(source).toContain('addColumnBefore');
   });
+
+  // G1620: the measured Ctrl-⌫ inside a cell is "clear the cell", not "delete the row".
+  it('binds Mod-Backspace in a table cell to clearing the cell', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src', 'components', 'editor', 'extensions', 'craft-keymap.ts'),
+      'utf8',
+    );
+    expect(source).toContain("event.key === 'Backspace'");
+    expect(source).toContain('(event.metaKey || event.ctrlKey)');
+    expect(source).toContain("editor.isActive('table')");
+    expect(source).toContain('clearCellContents(editor)');
+  });
 });

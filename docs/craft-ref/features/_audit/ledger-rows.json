@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T03:46:03.057Z",
+  "generatedAt": "2026-11-03T03:52:56.316Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 903,
-    "aligned": 277,
+    "gap": 902,
+    "aligned": 278,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 332,
+    "P2 / gap": 331,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 173,
+    "P2 / aligned": 174,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -30183,10 +30183,10 @@
       "cols": 5,
       "id": "G1620",
       "official": "★★★★ **`DELETE_ROWS`（`Ctrl-⌫`）在官方**不是删行，是清空格内容**——这推翻 `G1577` 的\"零反应\"读数**（第 400 批，`editor.table.selection-cluster`，**带正对照**）：同一格先按 `Ctrl-⏎`（REST `2×2→3×2`，证键送得到、格焦点是真的），再按 `Ctrl-⌫` ⇒ 行数**仍是 3**、但 **`a` 格变空**（`[[\"a\",\"b\"],…]` → `[[\"\",\"b\"],…]`）。⇒ 该键＝**CLEAR_CELL_CONTENTS 那一路**（与 `G1601` 的单元 `⌫` 同效），不是\"删掉整行\"；`G1577` 当时读的是 `dRows/dCols`，**单元格清空不在它的量里**，所以读成 0",
-      "local": "本地 `Ctrl-⌫` 在表格内无效（`G1577` 同批读数，本批未复测）",
-      "verdict": "行为不同（键的语义与静态表名不符）",
+      "local": "本地 `Ctrl-⌫` 在表格内无效（`G1577` 同批读数）⇒ ✎ 现读（2026-11-03 第 226 批）：已实现 — 单元格内 Ctrl/⌘-Backspace 绑到 `clearCellContents`（清格内容、不删行）；真浏览器验：格内 `ABC` 按后变空、表格结构保留、行数不变",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

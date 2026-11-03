@@ -9892,10 +9892,12 @@
       ]
     },
     "G1620": {
-      "status": "gap",
-      "note": "Ctrl-⌫ 在表格内无绑定；官方语义是清空格内容",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "表格单元格内 Ctrl/⌘-Backspace 清空该格内容而不删行；浏览器实测通过",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:151"
+        "src/components/editor/extensions/craft-keymap.ts:491",
+        "src/lib/table-utils.ts:81"
       ]
     },
     "G1621": {

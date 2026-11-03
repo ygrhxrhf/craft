@@ -3793,15 +3793,19 @@
       ]
     },
     "G120": {
-      "status": "gap",
-      "note": "只有常量文案；无提示词持久化、双写迁移与设置面板",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "自定义提示：20 条/1000 字符上限、超限 error toast 4 秒、长度静默截断、prompts/promptObjects 双写与读时迁移、per-user 且不进文档载荷",
       "evidence": [
-        "src/lib/app/assistant-settings.ts:9"
+        "src/lib/editor/custom-prompts.ts:1",
+        "src/actions/user/custom-prompts.ts:1",
+        "src/components/settings/AssistantPanel.tsx:22",
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:424",
+        "src/lib/sync/tables.ts:44"
       ]
     },
     "G121": {
       "status": "partial",
-      "note": "第 214 批：craft:// 解析与编辑器跳转已落（doc/folder 保留字/tasks/tags/calendar）；credit 无落点、folder id 落所有文档",
       "note": "无 craft:// scheme 与 stableIdToUuid 跳转",
       "evidence": [
         "src/lib/platform.ts:24"

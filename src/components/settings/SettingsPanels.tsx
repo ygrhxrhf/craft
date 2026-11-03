@@ -62,6 +62,7 @@ import {
   COMPLETED_TASK_APPEARANCES,
 } from '@/lib/task/completed-appearance';
 import { ShortcutsPanel } from './ShortcutsPanel';
+import { AssistantPanel } from './AssistantPanel';
 
 interface PanelProps {
   section: SettingsSection;
@@ -874,7 +875,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       );
 
     case 'assistant':
-      return <RowCard className="px-4 py-3 text-[13px] text-foreground/55">助手未启用。</RowCard>;
+      return <AssistantPanel />;
 
     case 'notifications':
       return (

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T02:41:03.115Z",
+  "generatedAt": "2026-11-03T02:48:36.147Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 913,
-    "aligned": 268,
+    "gap": 912,
+    "aligned": 269,
     "unknown": 196,
     "deliberate": 103,
     "partial": 62,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 342,
+    "P2 / gap": 341,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 164,
+    "P2 / aligned": 165,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -3232,10 +3232,10 @@
       "cols": 5,
       "id": "G120",
       "official": "自定义提示系统契约完整：**20 条上限 / 单条 1000 字符**，条数超限弹 4 秒 error toast、长度超限**静默 `substring` 截断**；存 `settings_state` 的 `{prompts, promptObjects}` **双写**并有读时迁移与形状校验；按 userId 归属、不进文档同步（§九）",
-      "local": "完全没有用户提示词持久化（`promptObjects/customPrompt` 零命中）",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-03 第 215 批）：已实现 — `lib/editor/custom-prompts.ts` 定 20 条/1000 字符上限（保存时静默 `substring`）；设置页「已保存的提示」面板可增删（第 21 条弹 4 秒 error toast）、AI 提示库并入自定义项；`User.prompts`/`User.promptObjects` 双写，读时以对象列表为准并从字符串列表迁移；随 user 设置同步，文档载荷不含",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T02:41:03.359Z",
+  "generatedAt": "2026-11-03T02:48:36.390Z",
   "total": 1614,
   "status": {
-    "aligned": 528,
+    "aligned": 529,
     "nonaction": 512,
     "partial": 273,
     "deliberate": 165,
-    "gap": 116,
+    "gap": 115,
     "unreachable": 20
   },
   "priority": {
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 213,
+    "P2 / aligned": 214,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
@@ -29,7 +29,7 @@
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
-    "P2 / gap": 43,
+    "P2 / gap": 42,
     "P? / deliberate": 40,
     "P3 / gap": 39,
     "P? / gap": 34,
@@ -1247,12 +1247,12 @@
       7
     ],
     [
-      "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",
+      "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
       7
     ],
     [
-      "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
-      7
+      "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",
+      6
     ],
     [
       "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",

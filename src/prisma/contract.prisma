@@ -14,6 +14,10 @@ model User {
   notifyDaily      Boolean @default(true)
   // G160：已完成任务的外观三档（官方 preferences.advanced.completed.task.appearance.*＝淡化/删除线/无）
   completedTaskAppearance String @default("strike") // "faded" | "strike" | "none"
+  // G120：用户自定义提示词。官方 settings_state 里 `prompts`（字符串列表，旧形状）与
+  // `promptObjects`（对象列表，新形状）双写；读时以对象列表为准、字符串列表兜底迁移。
+  prompts       Json?
+  promptObjects Json?
   createdAt     TimestamptzString @default(now())
   updatedAt     temporal.updatedAtString()
 

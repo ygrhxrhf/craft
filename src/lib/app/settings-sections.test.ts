@@ -31,7 +31,7 @@ describe('the sections', () => {
   });
 
   it('marks the wired ones', () => {
-    for (const id of ['space', 'appearance', 'language', 'advanced', 'account', 'notifications', 'shortcuts', 'about'] as const) {
+    for (const id of ['space', 'appearance', 'language', 'advanced', 'account', 'notifications', 'shortcuts', 'about', 'assistant'] as const) {
       expect(settingsSection(id)?.wired, id).toBe(true);
     }
   });
@@ -39,7 +39,7 @@ describe('the sections', () => {
   it('lists the shells the ledger names', () => {
     const unwired = unwiredSections().map((s) => s.id);
     // These five are the ones the ledger records as static.
-    for (const id of ['published', 'tags', 'subscription', 'team', 'integrations', 'assistant'] as const) {
+    for (const id of ['published', 'tags', 'subscription', 'team', 'integrations'] as const) {
       expect(unwired, id).toContain(id);
     }
   });

@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'50eec0623a669005e4d5bb21f73836c2d0b44adeace9c2111972238ae843d4f5'>;
+  StorageHashBase<'95ba9546b2426c2b966209310566077bb802a0a34aa72dc120d8fb1b12aeb402'>;
 export type ExecutionHash =
   ExecutionHashBase<'d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32'>;
 export type ProfileHash =
@@ -590,6 +590,8 @@ export type FieldOutputTypes = {
       readonly notifyReminders: CodecTypes['pg/bool@1']['output'];
       readonly notifyDaily: CodecTypes['pg/bool@1']['output'];
       readonly completedTaskAppearance: CodecTypes['pg/text@1']['output'];
+      readonly prompts: CodecTypes['pg/json@1']['output'] | null;
+      readonly promptObjects: CodecTypes['pg/json@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -969,6 +971,8 @@ export type FieldInputTypes = {
       readonly notifyReminders: CodecTypes['pg/bool@1']['input'];
       readonly notifyDaily: CodecTypes['pg/bool@1']['input'];
       readonly completedTaskAppearance: CodecTypes['pg/text@1']['input'];
+      readonly prompts: CodecTypes['pg/json@1']['input'] | null;
+      readonly promptObjects: CodecTypes['pg/json@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -1348,6 +1352,8 @@ export type StorageColumnTypes = {
       readonly notifyDaily: CodecTypes['pg/bool@1']['output'];
       readonly notifyReminders: CodecTypes['pg/bool@1']['output'];
       readonly password: CodecTypes['pg/text@1']['output'];
+      readonly promptObjects: CodecTypes['pg/json@1']['output'] | null;
+      readonly prompts: CodecTypes['pg/json@1']['output'] | null;
       readonly theme: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -1727,6 +1733,8 @@ export type StorageColumnInputTypes = {
       readonly notifyDaily: CodecTypes['pg/bool@1']['input'];
       readonly notifyReminders: CodecTypes['pg/bool@1']['input'];
       readonly password: CodecTypes['pg/text@1']['input'];
+      readonly promptObjects: CodecTypes['pg/json@1']['input'] | null;
+      readonly prompts: CodecTypes['pg/json@1']['input'] | null;
       readonly theme: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -1771,6 +1779,8 @@ export namespace Models {
     notifyReminders: CodecTypes['pg/bool@1']['output'];
     notifyDaily: CodecTypes['pg/bool@1']['output'];
     completedTaskAppearance: CodecTypes['pg/text@1']['output'];
+    prompts: CodecTypes['pg/json@1']['output'] | null;
+    promptObjects: CodecTypes['pg/json@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     blockReminders: public_BlockReminder[];
@@ -5234,6 +5244,16 @@ type ContractBase = Omit<
                     readonly value: DefaultLiteralValue<'pg/text@1', 'strike'>;
                   };
                 };
+                readonly prompts: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: true;
+                };
+                readonly promptObjects: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: true;
+                };
                 readonly createdAt: {
                   readonly nativeType: 'timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
@@ -8348,6 +8368,14 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly prompts: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
+              readonly promptObjects: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -8560,6 +8588,8 @@ type ContractBase = Omit<
                 readonly notifyReminders: { readonly column: 'notifyReminders' };
                 readonly notifyDaily: { readonly column: 'notifyDaily' };
                 readonly completedTaskAppearance: { readonly column: 'completedTaskAppearance' };
+                readonly prompts: { readonly column: 'prompts' };
+                readonly promptObjects: { readonly column: 'promptObjects' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };

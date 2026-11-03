@@ -4454,6 +4454,20 @@
                   "kind": "scalar"
                 }
               },
+              "promptObjects": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "prompts": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "theme": {
                 "nullable": false,
                 "type": {
@@ -4764,6 +4778,12 @@
                 },
                 "password": {
                   "column": "password"
+                },
+                "promptObjects": {
+                  "column": "promptObjects"
+                },
+                "prompts": {
+                  "column": "prompts"
                 },
                 "theme": {
                   "column": "theme"
@@ -8577,6 +8597,16 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "promptObjects": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
+                "prompts": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
                 "theme": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -8847,7 +8877,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "50eec0623a669005e4d5bb21f73836c2d0b44adeace9c2111972238ae843d4f5"
+    "storageHash": "95ba9546b2426c2b966209310566077bb802a0a34aa72dc120d8fb1b12aeb402"
   },
   "execution": {
     "executionHash": "d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32",

@@ -11,6 +11,8 @@ import { requestImageGen } from '@/components/editor/ai/ImageGenDialog';
 import { toast } from '@/components/ui/toast';
 import { aiWriteMessage } from '@/lib/editor/ai-write-message';
 import { AI_PROMPT_PRESETS, type AiPromptPreset } from '@/lib/editor/ai-prompts';
+import type { CustomPrompt } from '@/lib/editor/custom-prompts';
+import { getCustomPrompts } from '@/actions/user/custom-prompts';
 import { clearAiHistory, recordAiHistory } from '@/lib/ai/history';
 import { promptDialog } from '@/lib/dialog/show';
 
@@ -47,6 +49,7 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
   const [result, setResult] = useState<string | null>(null);
   const [pendingReplace, setPendingReplace] = useState(false);
   const [showPrompts, setShowPrompts] = useState(false);
+  const [customPrompts, setCustomPrompts] = useState<CustomPrompt[]>([]);
   const capturedRef = useRef<CapturedSelection | null>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
 
@@ -99,6 +102,20 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [editor, handleClose]);
+
+  // G120：提示库展开时读一次用户自己保存的提示（per-user，设置在设置页维护）。
+  useEffect(() => {
+    if (!showPrompts) return;
+    let alive = true;
+    void getCustomPrompts()
+      .then((next) => {
+        if (alive) setCustomPrompts(next);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [showPrompts]);
 
   const runAction = useCallback(
     async (action: AiAction, replace: boolean) => {
@@ -402,6 +419,20 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
                     className="rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
                   >
                     {preset.label}
+                  </button>
+                ))}
+                {customPrompts.map((item) => (
+                  <button
+                    key={`custom-${item.id}`}
+                    type="button"
+                    title={item.prompt}
+                    disabled={loading !== null}
+                    onClick={() =>
+                      void runPrompt({ id: item.id, label: item.prompt, prompt: item.prompt })
+                    }
+                    className="line-clamp-2 rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+                  >
+                    {item.prompt}
                   </button>
                 ))}
               </div>

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.users.promptObjects",
+    "label": "Add column \"promptObjects\" to \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "promptObjects",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"promptObjects\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "promptObjects"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"promptObjects\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD COLUMN \"promptObjects\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"promptObjects\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "promptObjects"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.users.prompts",
+    "label": "Add column \"prompts\" to \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "prompts",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"prompts\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "prompts"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"prompts\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD COLUMN \"prompts\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"prompts\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "prompts"
+        ]
+      }
+    ]
+  }
+]

@@ -40,7 +40,8 @@ export const SYNC_TABLES: TableDef[] = [
   // 离线新建（taskPatchFor.create）一定带 title（哪怕空串）⇒ title 把改排期在陈旧行上的铸壳挡住。
   { table: 'task', model: 'Task', cols: ['id','userId','documentId','blockId','title','isCompleted','dueDate','scheduleDate','remindAt','recurrence','recurrenceEnd','seriesId','completedAt','cancelledAt','status','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['title'] },
   { table: 'daily_notes_config', model: 'DailyNotesConfig', cols: ['id','userId','folderId','templateId','startTime','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
-  { table: 'user', model: 'User', cols: ['id','name','image','theme','editorFont','editorWidth','completedTaskAppearance','notifyComments','notifyReminders','notifyDaily','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  // G120：自定义提示词是 per-user 设置（官方 settings_state），随 user 设置行同步，不进文档载荷。
+  { table: 'user', model: 'User', cols: ['id','name','image','theme','editorFont','editorWidth','completedTaskAppearance','notifyComments','notifyReminders','notifyDaily','prompts','promptObjects','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'collection', model: 'Collection', cols: ['id','name','icon','description','order','folderId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'collection_item', model: 'CollectionItem', cols: ['id','collectionId','order','documentId','schemas','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'collection_property', model: 'CollectionProperty', cols: ['id','collectionId','name','type','config','order','isVisible','width','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },

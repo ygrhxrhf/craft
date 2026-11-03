@@ -44,7 +44,7 @@ export const SETTINGS_SECTIONS: readonly SettingsSection[] = [
   { id: 'subscription', label: '订阅', wired: false },
   { id: 'team', label: '团队', wired: false },
   { id: 'integrations', label: '集成', wired: false },
-  { id: 'assistant', label: '助手', wired: false },
+  { id: 'assistant', label: '助手', wired: true },
   { id: 'notifications', label: '通知', wired: true },
   { id: 'shortcuts', label: '键盘快捷键', wired: true },
   { id: 'about', label: '关于', wired: true },

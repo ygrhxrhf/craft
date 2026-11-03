@@ -101,6 +101,12 @@ function duplicateTopBlock(editor: Editor): boolean {
   // G573: the copy gets fresh block ids so both blocks stay independently addressable.
   const child = cloneWithFreshBlockIds(state.doc.child(index));
   view.dispatch(state.tr.insert(start + child.nodeSize, child));
+  // G1551: the official build hands focus to the body and enters the block-select state right
+  // after the duplicate — the local equivalent is a node selection on the new block, blurred.
+  const after = view.state;
+  const duplicateStart = topLevelStart(after.doc, index + 1);
+  view.dispatch(after.tr.setSelection(NodeSelection.create(after.doc, duplicateStart)));
+  view.dom.blur();
   return true;
 }
 

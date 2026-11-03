@@ -9488,10 +9488,11 @@
       ]
     },
     "G1551": {
-      "status": "partial",
-      "note": "Ctrl-D 复制顶块正确，但选区留编辑器内为折叠光标",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Ctrl-D 后新副本进入 NodeSelection 且编辑器失焦，与官方的块选区态同形。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:59"
+        "src/components/editor/extensions/craft-keymap.ts:108"
       ]
     },
     "G1556": {

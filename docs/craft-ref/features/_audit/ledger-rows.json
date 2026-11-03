@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T09:01:20.060Z",
+  "generatedAt": "2026-11-03T09:07:45.251Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 864,
-    "aligned": 315,
+    "gap": 863,
+    "aligned": 316,
     "unknown": 194,
     "deliberate": 105,
     "partial": 64,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 293,
+    "P2 / gap": 292,
     "P? / gap": 226,
-    "P2 / aligned": 211,
+    "P2 / aligned": 212,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -28962,10 +28962,10 @@
       "cols": 5,
       "id": "G1551",
       "official": "★ **`⌘D`/`Ctrl-D` 创建副本之后，官方把焦点交给 `body` 并进入块选区态**（官方逐字＝`wave1-10-editor.key.duplicate-and-undo-official.json`：step 6 `Ctrl-D` 后 `selection.present=false`、`focus.tag=\"body\"`、`focus.cls=\"noshift nodrag block-select nocmd\"`、`inEditor=false`；step 7 撤销、step 8 重做全程如此）",
-      "local": "**行为不同**＝本地同三步全程留在 `.ProseMirror` 内、保持折叠文本光标（`inEditor=true`、`anchorOffset=1`）。★ **本条不是\"画法差异\"**（`deviations` 只留给同一件事的两种画法，如项目符号）：两侧落到的是**两个不同状态**，它直接改变**下一个键**的语义（官方块选区上 `⌥↑` 才是\"移动所选区块\"）⇒ 如实登记。☆ 本 spec 的**主判据（块序与撤销/重做粒度）两侧一致**：`A/B/C → A/B/C/C → A/B/C → A/B/C/C` 逐帧相同",
-      "verdict": "行为不同",
+      "local": "✎ 现读（2026-11-03 第 266 批）：`Ctrl-D` 复制顶块后不再把焦点留在折叠文本光标上 —— 新副本被选成 `NodeSelection`（块选区态）且编辑器失焦（`view.dom.blur()`），与官方「焦点交给 body、进入块选区态」同一状态；撤销/重做粒度未动",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

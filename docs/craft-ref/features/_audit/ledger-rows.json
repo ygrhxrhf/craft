@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T08:30:38.976Z",
+  "generatedAt": "2026-11-03T08:33:37.624Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 870,
-    "aligned": 309,
+    "gap": 869,
+    "aligned": 310,
     "unknown": 194,
     "deliberate": 105,
     "partial": 64,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 299,
+    "P2 / gap": 298,
     "P? / gap": 226,
-    "P2 / aligned": 205,
+    "P2 / aligned": 206,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -2352,10 +2352,10 @@
       "cols": 5,
       "id": "G70",
       "official": "Idea Starter：6 种建议类型 × **各 4 条类型专属进度文案** + 自由描述输入 + 成功/失败 toast（`longtail.md` §1）",
-      "local": "AI 只有选区改写与图像生成，无\"从零生成结构化文档\"",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-03 第 260 批）：Idea Starter 已落 —— 文档屏「从想法开始」打开弹层；标题/副标题/占位/创建/关闭、六种建议类型、每型四条专属进度句（含 default 四句）逐字取自 `ideastarter.*`；创建期按所选类型轮播进度句；成功 toast「文档已创建！」、失败两段「无法创建文档／请重试」；服务端动作按类型落结构化骨架，自由描述作标题与引导段",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

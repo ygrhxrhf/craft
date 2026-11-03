@@ -3424,10 +3424,14 @@
       ]
     },
     "G70": {
-      "status": "gap",
-      "note": "AI 只有选区改写/续写/翻译/总结；无从零生成六类建议×四进度",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Idea Starter 弹层、六型四条进度句、创建/关闭/成功/失败文案与服务端骨架创建均已落。",
       "evidence": [
-        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:27"
+        "src/lib/ai/idea-starter.ts",
+        "src/components/ai/IdeaStarterDialog.tsx",
+        "src/actions/ai/idea-starter.ts",
+        "src/components/document/QuickActions.tsx"
       ]
     },
     "G71": {

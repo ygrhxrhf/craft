@@ -4440,10 +4440,13 @@
       ]
     },
     "G255": {
-      "status": "partial",
-      "note": "cancelled 第三态与两时间戳已落；无完成剩余/取消剩余",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "重复序列五条批量操作已接线；完成/取消各记时间戳，取消为独立第三态",
       "evidence": [
-        "src/prisma/contract.prisma:339"
+        "src/lib/task/series-ops.ts:22",
+        "src/actions/task/task.ts:419",
+        "src/app/(app)/tasks/TasksView.tsx:1052"
       ]
     },
     "G258": {

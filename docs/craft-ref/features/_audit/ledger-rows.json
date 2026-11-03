@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T03:43:19.525Z",
+  "generatedAt": "2026-11-03T03:46:03.057Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 904,
-    "aligned": 276,
+    "gap": 903,
+    "aligned": 277,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 333,
+    "P2 / gap": 332,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 172,
+    "P2 / aligned": 173,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -5682,10 +5682,10 @@
       "cols": 5,
       "id": "G255",
       "official": "**重复序列可整体处置**：`tasks.complete.remaining`「完成剩余」/ `tasks.cancel.remaining`「取消剩余」；取消与完成**各记时间戳**（`tasks.canceled.on` / `tasks.completed.on`），且 `tasks.cancelled` 是独立第三态",
-      "local": "本地循环任务只能逐次完成，无\"取消剩余\"，无 cancelled 态落库",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-03 第 225 批）：已实现 — `SERIES_OPS` 五条（完成/取消/删除/移动/改期）挂在任务日期弹层的「重复序列」区；`applySeriesOp` 对同 `seriesId` 的剩余行批量写 `done`＋`completedAt` 或 `cancelled`＋`cancelledAt`（cancelled 是独立第三态，见 G106）⇒ 已对齐",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

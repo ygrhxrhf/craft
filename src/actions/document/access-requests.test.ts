@@ -11,6 +11,7 @@ vi.mock('@/lib/auth/auth', () => ({ auth: async () => ({ user: { id: session.use
 const { getDb } = await import('@/prisma/db');
 const {
   requestEditAccess,
+  requestViewAccess,
   listAccessRequests,
   decideAccessRequest,
 } = await import('./access-requests');
@@ -178,5 +179,59 @@ describe('owner decisions', () => {
     await requestEditAccess(shareToken);
     await expect(decideAccessRequest(documentId, requesterId, true)).rejects.toThrow('未授权');
     expect(await memberRow()).toMatchObject({ role: 'requested' });
+  });
+});
+
+// G75：链接不给任何角色时，查看者可以发起「想要查看」；同一条待处理队列按 role 值区分。
+describe('requestViewAccess (G75)', () => {
+  beforeEach(async () => {
+    await db.orm.public.DocumentShare.where({ documentId }).update({ permission: 'collaborators' });
+  });
+
+  it('creates a requested_view row and notifies the owner with the collected sentence', async () => {
+    await expect(requestViewAccess(shareToken)).resolves.toEqual({ status: 'requested' });
+    expect(await memberRow()).toMatchObject({ role: 'requested_view' });
+
+    const notifications = await db.orm.public.Notification.where({ userId: ownerId }).all() as Record<string, unknown>[];
+    expect(notifications).toHaveLength(1);
+    expect(notifications[0]).toMatchObject({
+      kind: 'document_access_request',
+      documentId,
+      title: '申请者 想要查看文档“请求批准样本”',
+    });
+  });
+
+  it('lands in the same pending queue, labelled as a view request', async () => {
+    await requestViewAccess(shareToken);
+    session.userId = ownerId;
+    const rows = await listAccessRequests(documentId);
+    expect(rows).toEqual([expect.objectContaining({ requesterId, kind: 'view' })]);
+  });
+
+  it('approves into viewer, not editor', async () => {
+    await requestViewAccess(shareToken);
+    session.userId = ownerId;
+    await expect(decideAccessRequest(documentId, requesterId, true)).resolves.toEqual({ status: 'approved' });
+    expect(await memberRow()).toMatchObject({ role: 'viewer' });
+    const requesterNotifications = await db.orm.public.Notification.where({ userId: requesterId }).all() as Record<string, unknown>[];
+    expect(requesterNotifications[0]).toMatchObject({ kind: 'accessApproved' });
+    expect(String(requesterNotifications[0].title)).toContain('查看请求已批准');
+  });
+
+  it('is unnecessary when the link already lets anyone view', async () => {
+    await db.orm.public.DocumentShare.where({ documentId }).update({ permission: 'linkView' });
+    await expect(requestViewAccess(shareToken)).resolves.toEqual({ status: 'already-member' });
+    expect(await memberRow()).toBeNull();
+  });
+});
+
+// 页面接线：关闭档位下要露出标题与「想要查看」，而不是一句"页面不存在"。
+describe('the public page gate', () => {
+  it('renders the gate with the view-request entry', async () => {
+    const { readFileSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const page = readFileSync(join(process.cwd(), 'src/app/p/[slug]/page.tsx'), 'utf8');
+    expect(page).toContain('getShareGate(slug)');
+    expect(page).toContain('<RequestViewAccess identifier={slug} />');
   });
 });

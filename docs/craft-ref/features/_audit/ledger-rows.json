@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T01:17:04.001Z",
+  "generatedAt": "2026-11-03T01:23:28.177Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 921,
-    "aligned": 262,
+    "gap": 920,
+    "aligned": 263,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 350,
+    "P2 / gap": 349,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 158,
+    "P2 / aligned": 159,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -2410,11 +2410,11 @@
       "cols": 6,
       "id": "G75",
       "official": "**访问请求流**：viewer 可发起「想要编辑 / 想要查看文档\"[1]\"」请求（§9）",
-      "local": "✎ 现读（2026-10-31）更正：有请求编辑与审批队列；缺「想要查看」请求与计数文案",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-10-31）更正：有请求编辑与审批队列；缺「想要查看」请求与计数文案 ⇒ ✎ 再读（2026-11-02 第 195 批）：两条请求都已落——`requestViewAccess` 用 role `requested_view` 走同一条待处理队列（不建新表），批准落 `viewer`；公开页在\"链接不给任何角色\"的档位下渲染访问门禁（`collab.request.access.to.document` ＋ 副句），业主侧队列按 kind 标「想要查看／想要编辑」并显示条数 ☆ 已清（第 195 批）",
+      "verdict": "对齐",
       "score": "2/2",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝无",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

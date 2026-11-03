@@ -1,11 +1,13 @@
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
 import { auth } from '@/lib/auth/auth';
-import { getSharedDocument } from '@/actions/document/share';
+import { getSharedDocument, getShareGate } from '@/actions/document/share';
 import { findShare } from '@/lib/share/resolve';
 import { SharedDocView } from '@/components/share/SharedDocView';
 import { PublicDocBanner } from '@/components/share/PublicDocBanner';
 import { PasscodeGate } from '@/components/share/PasscodeGate';
+import { RequestViewAccess } from '@/components/share/RequestViewAccess';
+import { REQUEST_ACCESS_SUBTITLE, REQUEST_ACCESS_TITLE } from '@/lib/share/request-access-copy';
 import { shareCookieName, verifyShareCookie } from '@/lib/share-passcode';
 import { seoEffective } from '@/lib/share/publishing-options';
 import { UNTITLED_DOCUMENT } from '@/lib/document/untitled-copy';
@@ -53,6 +55,23 @@ export default async function PublishPage({ params }: PublishPageProps) {
   const doc = await getSharedDocument(slug);
 
   if (!doc || !doc.isPublished) {
+    // G75：链接本身不给角色时（仅限协作者等），仍把标题露出来，并给一枚「想要查看」。
+    const gate = await getShareGate(slug);
+    if (gate?.requiresRequest) {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-background p-6">
+          <div className="w-full max-w-sm rounded-xl border border-border p-6 text-center">
+            <div className="text-3xl leading-none">{gate.icon ?? '📄'}</div>
+            <h1 className="mt-3 text-lg font-medium text-foreground">{REQUEST_ACCESS_TITLE}</h1>
+            <p className="mt-1 text-ui text-foreground/70">{gate.title || '无标题文档'}</p>
+            <p className="mt-1 text-meta text-foreground/50">{REQUEST_ACCESS_SUBTITLE}</p>
+            <div className="mt-4 flex justify-center">
+              <RequestViewAccess identifier={slug} />
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <p className="text-ui text-foreground/40">页面不存在或未发布</p>

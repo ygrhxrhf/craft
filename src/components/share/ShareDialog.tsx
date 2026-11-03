@@ -49,6 +49,7 @@ import {
 } from '@/lib/share/link-operation-copy';
 import { toast } from '@/components/ui/toast';
 import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
+import { EDIT_REQUEST_LABEL, VIEW_REQUEST_LABEL, ACCESS_REQUESTS_HEADING } from '@/lib/share/request-access-copy';
 import { confirmDialog } from '@/lib/dialog/show';
 import { PASSWORD_XOR_EMAIL, PREVIOUS_LINK_INACTIVE, SHARE_ERROR } from '@/lib/share/share-guards';
 import { cn } from 'cn';
@@ -494,12 +495,16 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
               )}
               {accessRequests.length > 0 && (
                 <div className="mt-3 rounded-md border border-border px-3 py-2.5">
-                  <p className="text-sm">编辑请求</p>
+                  <p className="text-sm">{ACCESS_REQUESTS_HEADING} · {accessRequests.length}</p>
                   <ul className="mt-2 space-y-1.5">
                     {accessRequests.map((request) => (
                       <li key={request.requesterId} className="flex items-center gap-2">
                         <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
                           {request.name || request.email}
+                        </span>
+                        {/* G75：同一队列里区分「想要查看」与「想要编辑」。 */}
+                        <span className="shrink-0 rounded bg-foreground/8 px-1.5 py-0.5 text-[10px] text-foreground/55">
+                          {request.kind === 'view' ? VIEW_REQUEST_LABEL : EDIT_REQUEST_LABEL}
                         </span>
                         <Button
                           size="sm"

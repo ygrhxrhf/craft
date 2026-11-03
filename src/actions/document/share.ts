@@ -301,3 +301,25 @@ export async function getSharedDocument(identifier: string) {
     expiresAt: s.expiresAt ? String(s.expiresAt) : null,
   };
 }
+
+/**
+ * G75：公开页在"链接不给任何角色"的档位下要能显示标题与「想要查看」入口，而不是一句
+ * "页面不存在"。这里只回**可以公开的元数据**：标题、图标、档位、是否需要请求；正文一律不给。
+ */
+export async function getShareGate(identifier: string) {
+  const db = await getDb();
+  const share = await findShare(identifier);
+  if (!isOpenableShare(share)) return null;
+  const s = share as { documentId: string; permission: unknown; expiresAt?: unknown; passcode?: unknown };
+  if (isExpired(s.expiresAt ? String(s.expiresAt) : null)) return null;
+  const doc = await db.orm.public.Document.first({ id: s.documentId });
+  if (!doc || (doc as { isDeleted?: boolean }).isDeleted) return null;
+  const tier = normalizeSharePermission(s.permission) ?? 'collaborators';
+  return {
+    title: String((doc as { title?: unknown }).title ?? ''),
+    icon: ((doc as { icon?: string | null }).icon ?? null) as string | null,
+    permission: tier,
+    passcodeProtected: !!s.passcode,
+    requiresRequest: !tierOpensToLink(tier),
+  };
+}

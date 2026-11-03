@@ -3455,10 +3455,14 @@
       ]
     },
     "G75": {
-      "status": "partial",
-      "note": "有请求编辑与审批队列；缺「想要查看」请求与计数文案",
+      "status": "aligned",
+      "note": "第 195 批：想要查看请求（role requested_view）、公开页访问门禁、同队列 kind 标注与条数、批准落 viewer",
       "evidence": [
-        "src/actions/document/access-requests.ts:65"
+        "src/actions/document/access-requests.ts:122",
+        "src/actions/document/share.ts:309",
+        "src/app/p/[slug]/page.tsx:59",
+        "src/components/share/RequestViewAccess.tsx:1",
+        "src/lib/share/request-access-copy.ts:1"
       ]
     },
     "G76": {

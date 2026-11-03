@@ -5543,10 +5543,11 @@
       ]
     },
     "G497": {
-      "status": "gap",
-      "note": "无虚拟化（overscan/useVirtualizer 零命中），大表全量 DOM",
+      "status": "partial",
+      "note": "第 212 批：窗口虚拟化（表格档 overscan 25、rAF+150ms）已落；缺 latch 永不复位与 estimateSize/observe 参数",
       "evidence": [
-        "src/app/(app)/collections/[id]/TableView.tsx:320"
+        "src/lib/collection/virtual-rows.ts:1",
+        "src/app/(app)/collections/[id]/TableView.tsx:184"
       ]
     },
     "G498": {
@@ -5565,7 +5566,7 @@
     },
     "G500": {
       "status": "partial",
-      "note": "有 system/light/dark 与字体包，无 paragraphSpacingType 与五种卡片主题",
+      "note": "第 212 批现读：paragraphSpacing 三档已存在（官方两档 dynamic/fix，名不同）；字体四档 id 已对齐；仍缺五种卡片主题白名单",
       "evidence": [
         "src/components/editor/themes/page-style.ts:19"
       ]
@@ -5588,9 +5589,10 @@
       ]
     },
     "G503": {
-      "status": "gap",
-      "note": "图片块只有 src/alt，无 cropMask 竖线串与两套尺寸",
+      "status": "partial",
+      "note": "第 212 批现读：图片块有取景框 posX/posY/scale，但不是 cropMask 的 x|y|w|h 串，也无处理后/原始两套尺寸",
       "evidence": [
+        "src/lib/editor/image-frame.ts:1",
         "src/components/editor/extensions/image-block.tsx:30"
       ]
     },
@@ -5626,7 +5628,7 @@
     },
     "G508": {
       "status": "partial",
-      "note": "列可拖拽但宽存 TipTap colwidth（px），无百分比模型",
+      "note": "第 212 批现读：colwidth 已在 table-utils 出现（重置列宽），存储仍是 TipTap 的 px 数组，无百分比模型",
       "evidence": [
         "src/lib/table-utils.ts:117"
       ]

@@ -9,6 +9,8 @@
 export const ROW_HEIGHT = 36;
 export const GROUP_HEADER_HEIGHT = 40;
 export const OVERSCAN = 2;
+/** G497：表格那一档的 overscan 是 25（同 chunk 另有 10/5，不是全站常数）。 */
+export const TABLE_OVERSCAN = 25;
 export const SCROLL_DEBOUNCE_MS = 150;
 
 export interface RowWindow {

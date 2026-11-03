@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { OVERSCAN, ROW_HEIGHT, visibleRowWindow } from './virtual-rows';
+import { OVERSCAN, ROW_HEIGHT, TABLE_OVERSCAN, visibleRowWindow } from './virtual-rows';
 
 describe('the virtual row window (G484 / G273)', () => {
   it('keeps two extra rows on each side', () => {
@@ -52,5 +52,17 @@ describe('the table view wires the window (G484)', () => {
     expect(view).toContain('renderedItems.map((item: any) => (');
     expect(view).toContain('rowWindow.topPad');
     expect(view).toContain('rowWindow.bottomPad');
+  });
+});
+
+describe('the table overscan matches the collected table tier (G497)', () => {
+  const tableView = readFileSync(
+    join(process.cwd(), 'src/app/(app)/collections/[id]/TableView.tsx'),
+    'utf8',
+  );
+
+  it('uses 25 rows of overscan on the collection table, not the generic 2', () => {
+    expect(TABLE_OVERSCAN).toBe(25);
+    expect(tableView).toContain('overscan: TABLE_OVERSCAN');
   });
 });

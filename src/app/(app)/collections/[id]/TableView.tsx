@@ -9,7 +9,7 @@ import { confirmDialog } from '@/lib/dialog/show';
 import { getSyncManager } from '@/lib/sync-core';
 import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-reorder';
 import { exceedsVirtualTableThreshold } from '@/lib/collection/limits';
-import { visibleRowWindow, scheduleScrollUpdate } from '@/lib/collection/virtual-rows';
+import { TABLE_OVERSCAN, visibleRowWindow, scheduleScrollUpdate } from '@/lib/collection/virtual-rows';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { PropertyCell } from '@/components/collection/PropertyCell';
@@ -181,7 +181,7 @@ export function TableView({ collection, view }: TableViewProps) {
   const groupedItems = applyGrouping(processedItems, groupBy, collection.properties);
   const virtualized = !groupBy && exceedsVirtualTableThreshold(processedItems.length, visibleProperties.length);
   const rowWindow = virtualized
-    ? visibleRowWindow({ scrollTop, viewportHeight, rowCount: processedItems.length })
+    ? visibleRowWindow({ scrollTop, viewportHeight, rowCount: processedItems.length, overscan: TABLE_OVERSCAN })
     : null;
   const renderedItems = rowWindow ? processedItems.slice(rowWindow.start, rowWindow.end) : processedItems;
 

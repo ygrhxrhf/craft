@@ -3,6 +3,10 @@ import { InputRule, nodeInputRule } from '@tiptap/core';
 
 export const MarkdownShortcuts = Extension.create({
   name: 'markdownShortcuts',
+  // TipTap flattens input rules by extension priority, and Heading generates one rule per enabled
+  // level — with level 4 on, its own `/^####\s$/` rule would win the tie and turn `#### ` into a
+  // fourth-level heading. G1557: the official `#### ` is the Strong style slot, so this rule runs first.
+  priority: 1000,
 
   addInputRules() {
     const rules: InputRule[] = [];

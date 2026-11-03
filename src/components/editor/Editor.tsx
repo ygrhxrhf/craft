@@ -360,8 +360,10 @@ export function Editor({
         // for the `---` input rule and produce a second, featureless node.
         horizontalRule: false,
         heading: {
-          // G1557：官方标题只到 ###；`#### ` 是 Strong（粗体），由 MarkdownShortcuts 接管。
-          levels: [1, 2, 3],
+          // h1–h4 are the four official style slots (title/subtitle/heading/strong), so
+          // `Ctrl-Shift-4` needs level 4 in the schema. The `#### ` markdown entry stays
+          // MarkdownShortcuts' (Strong = bold text, G1557) — that extension runs first by priority.
+          levels: [1, 2, 3, 4],
         },
         underline: {},
         // StarterKit's TrailingNode appends an empty paragraph whenever the doc's last

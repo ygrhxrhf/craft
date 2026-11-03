@@ -34,12 +34,15 @@ describe('the #### rule (G1557)', () => {
     expect(source).toContain('tr.addStoredMark(');
   });
 
-  it('limits headings to ### in the editor configuration', () => {
+  it('keeps the #### entry ahead of the generated heading rule', () => {
+    // Level 4 is in the schema because `Ctrl-Shift-4` (the Strong slot) needs it, so Heading's own
+    // `/^####\s$/` rule exists too — this extension has to win it.
     const editor = readFileSync(
       join(process.cwd(), 'src/components/editor/Editor.tsx'),
       'utf8',
     );
-    expect(editor).toContain('levels: [1, 2, 3],');
+    expect(editor).toContain('levels: [1, 2, 3, 4],');
     expect(editor).toContain("'linkPreview', 'heading']");
+    expect(source).toContain('priority: 1000,');
   });
 });

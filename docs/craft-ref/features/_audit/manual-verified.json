@@ -9501,20 +9501,24 @@
       ]
     },
     "G1556": {
-      "status": "partial",
-      "note": "Ctrl-Shift-1..5 有绑定，但落到 h1–h4 档位而非官方字号/字重口径",
+      "status": "aligned",
+      "note": "第 270 批：五档型制逐档改成实测官方值（正文 15/400/23、TITLE 23/700/28、SUBTITLE 20/700/24、HEADING 18/600/22、STRONG h4 16/700），浏览器逐键读 computed style 与官方逐字相同；换档不补尾随空段（childCount 恒 1）。同批修回被裁掉的 STRONG 键槽（heading levels 放回含 4，#### 仍靠 priority 抢在自动规则前，handleTextInput 亲验得 paragraph＋stored bold）。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:29"
+        "src/app/globals.css:494",
+        "src/components/editor/extensions/craft-keymap.ts:60",
+        "src/components/editor/Editor.tsx:366",
+        "src/lib/editor/document-type-scale.test.ts:1"
       ]
     },
     "G1557": {
       "status": "aligned",
       "priority": "P2",
-      "note": "#### 转 Strong（非四级标题）；标题只到 ###；heading 后不再补空段，块数两侧一致",
+      "note": "#### 转 Strong（删标记＋stored bold，不是四级标题）——levels 现为 [1,2,3,4]（G1556 的 STRONG 槽需要 h4），本条靠 MarkdownShortcuts.priority 1000 抢在 Heading 自动生成的规则前；heading 后不再补空段，块数两侧一致。",
       "evidence": [
-        "src/components/editor/extensions/markdown-shortcuts.ts:15",
-        "src/components/editor/Editor.tsx:359",
-        "src/components/editor/Editor.tsx:368"
+        "src/components/editor/extensions/markdown-shortcuts.ts:9",
+        "src/components/editor/extensions/markdown-shortcuts.ts:19",
+        "src/components/editor/Editor.tsx:366",
+        "src/components/editor/Editor.tsx:373"
       ]
     },
     "G1558": {

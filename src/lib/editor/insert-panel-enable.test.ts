@@ -27,8 +27,14 @@ describe('the insert panel enables buildable entries', () => {
     expect(slash).toContain("setDivider('pageSeparator')");
   });
 
+  it('inserts a page through the page block command', () => {
+    expect(insertTab).toContain("setPageBlock()");
+    expect(insertTab).toContain("{ label: '页面', icon: FileText");
+    expect(insertTab).not.toContain("{ label: '页面', missing: true }");
+  });
+
   it('keeps the genuinely unbuildable objects disabled', () => {
-    for (const label of ['页面', '插入 Unsplash 图片', '表格', '图库', 'Kanban']) {
+    for (const label of ['插入 Unsplash 图片', '表格', '图库', 'Kanban']) {
       expect(insertTab, label).toContain(`{ label: '${label}', missing: true }`);
     }
   });

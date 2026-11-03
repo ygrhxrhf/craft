@@ -2,7 +2,7 @@
 
 import type { Editor } from '@tiptap/react';
 import { useState } from 'react';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, FileText } from 'lucide-react';
 import { cn } from 'cn';
 import { slashCommands } from '../slash-menu/slash-commands';
 import { SIDEBAR_SLASH_COMMAND_MIME } from '@/lib/dnd/sidebar-drag';
@@ -38,15 +38,18 @@ interface PanelItem {
   label: string;
   /** Slash command whose name differs from the official label. */
   command?: string;
+  /** Direct insert when the object has no slash command (the page block, G207). */
+  onInsert?: (editor: Editor) => void;
   /** This build cannot create it yet. */
   missing?: boolean;
   /** Official-only note printed under the label. */
   hint?: string;
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
 const UNTITLED_ITEMS: PanelItem[] = [
   { label: '文本', command: '文本' },
-  { label: '页面', missing: true },
+  { label: '页面', icon: FileText, onInsert: (editor) => editor.chain().focus().setPageBlock().run() },
   { label: '卡片', command: '卡片' },
   { label: '文件附件', command: '文件附件' },
   { label: '图片', command: '图片' },
@@ -162,27 +165,37 @@ export function InsertTab({ editor }: InsertTabProps) {
           <div className="space-y-2">
             {group.items.map((item) => {
               const cmd = findCommand(item);
-              const unavailable = item.missing || !cmd;
+              const unavailable = item.missing || (!cmd && !item.onInsert);
+              const draggable = !unavailable && !!cmd;
+              const Icon = item.icon ?? cmd?.icon;
               return (
                 <button
                   key={item.label}
                   type="button"
-                  draggable={!unavailable}
-                  onDragStart={unavailable ? undefined : (e) => handleDragStart(e, cmd!)}
-                  onDragEnd={unavailable ? undefined : handleDragEnd}
-                  onClick={unavailable ? undefined : () => handleInsert(cmd!)}
+                  draggable={draggable}
+                  onDragStart={draggable ? (e) => handleDragStart(e, cmd!) : undefined}
+                  onDragEnd={draggable ? handleDragEnd : undefined}
+                  onClick={
+                    unavailable
+                      ? undefined
+                      : cmd
+                        ? () => handleInsert(cmd)
+                        : () => item.onInsert!(editor)
+                  }
                   disabled={unavailable}
                   className={cn(
                     'group flex w-full items-center gap-2.5 rounded-lg border border-border/70 bg-card px-2.5 py-2',
                     'text-[13px] text-foreground shadow-xxs transition-colors',
                     unavailable
                       ? 'cursor-not-allowed opacity-50'
-                      : 'hover:bg-muted cursor-grab active:cursor-grabbing'
+                      : draggable
+                        ? 'hover:bg-muted cursor-grab active:cursor-grabbing'
+                        : 'hover:bg-muted'
                   )}
                 >
                   <span className="flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-background">
-                    {cmd ? (
-                      <cmd.icon className="size-3.5 text-muted-foreground" />
+                    {Icon ? (
+                      <Icon className="size-3.5 text-muted-foreground" />
                     ) : (
                       <GripVertical className="size-3.5 text-muted-foreground/40" />
                     )}
@@ -198,7 +211,7 @@ export function InsertTab({ editor }: InsertTabProps) {
                       <span className="block text-[10px] text-muted-foreground/60">{item.hint}</span>
                     )}
                   </span>
-                  {!unavailable && <GripVertical className="size-4 shrink-0 text-muted-foreground/40" />}
+                  {draggable && <GripVertical className="size-4 shrink-0 text-muted-foreground/40" />}
                 </button>
               );
             })}

@@ -3984,10 +3984,13 @@
       ]
     },
     "G152": {
-      "status": "partial",
-      "note": "六档语义名已上屏；缺卡片/页面两档，二至四档映射与官方不同",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "八档语义名与映射齐：标题/副标题/中标题/小标题→H1–H4，正文→段落、说明→引用、页面/卡片→分组控件。",
       "evidence": [
-        "src/lib/editor/semantic-levels.ts:7"
+        "src/lib/editor/semantic-levels.ts:7",
+        "src/components/editor/tabs/FormatTab.tsx:46",
+        "src/lib/editor/format-commands.ts:150"
       ]
     },
     "G156": {
@@ -4261,9 +4264,11 @@
     },
     "G207": {
       "status": "gap",
-      "note": "页面、合集、分页符三条入口均为禁用占位，不能建对象",
+      "priority": "P2",
+      "note": "页面与分页符入口已可用；合集（新建 collection）仍缺，本地无 collection 块节点（G214）。",
       "evidence": [
-        "src/components/editor/tabs/InsertTab.tsx:49"
+        "src/components/editor/tabs/InsertTab.tsx:52",
+        "src/components/editor/slash-menu/slash-commands.ts:279"
       ]
     },
     "G208": {
@@ -4287,9 +4292,10 @@
     },
     "G210": {
       "status": "partial",
-      "note": "胶带与分隔线材质可达；涂鸦与图库浏览仍缺",
+      "priority": "P2",
+      "note": "胶带段标题已用官方串「和纸胶带」；分隔符三种样式与和纸图库浏览仍缺。",
       "evidence": [
-        "src/components/editor/tabs/StyleTab.tsx:210"
+        "src/components/editor/tabs/StyleTab.tsx:344"
       ]
     },
     "G214": {

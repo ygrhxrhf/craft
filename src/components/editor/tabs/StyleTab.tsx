@@ -341,7 +341,7 @@ export function StyleTab({
 
       {/* Washi */}
       <section>
-        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">Washi 胶带</h4>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">和纸胶带</h4>
         <div className="grid grid-cols-5 gap-1.5">
           {washiTapes.map((tape) => (
             <button

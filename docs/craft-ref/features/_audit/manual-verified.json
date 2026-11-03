@@ -5469,10 +5469,13 @@
       ]
     },
     "G479": {
-      "status": "partial",
-      "note": "Base UI 自有嵌套，但无 allowPropagation/aboveId/isDisabled 三态",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "焦点栈三态（allowPropagation/aboveId/disabled）实现并有单测；设置与命令式弹层已注册，Esc 实测关闭",
       "evidence": [
-        "src/components/ui/dialog.tsx:19"
+        "src/lib/focus/focus-stack.ts:1",
+        "src/components/focus/FocusStackBridge.tsx:1",
+        "src/components/settings/SettingsModal.tsx:92"
       ]
     },
     "G480": {
@@ -5552,10 +5555,12 @@
       ]
     },
     "G491": {
-      "status": "gap",
-      "note": "无栈顶吞键语义：弹层开着时全局快捷键照常响应",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "断链规则实现：命中只跑第一条 keyDef；未命中且不允许传播则停；不干扰文本输入",
       "evidence": [
-        "src/components/editor/shell-shortcuts.tsx:59"
+        "src/lib/focus/focus-stack.ts:60",
+        "src/lib/focus/focus-stack.test.ts:1"
       ]
     },
     "G492": {

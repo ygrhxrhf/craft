@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T05:46:08.855Z",
+  "generatedAt": "2026-11-03T05:55:06.522Z",
   "total": 1614,
   "status": {
-    "aligned": 552,
+    "aligned": 554,
     "nonaction": 512,
-    "partial": 256,
+    "partial": 255,
     "deliberate": 165,
-    "gap": 109,
+    "gap": 108,
     "unreachable": 20
   },
   "priority": {
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 237,
+    "P2 / aligned": 239,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 106,
+    "P2 / partial": 105,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -31,7 +31,7 @@
     "P3 / aligned": 59,
     "P? / deliberate": 40,
     "P3 / gap": 39,
-    "P2 / gap": 36,
+    "P2 / gap": 35,
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
@@ -1180,6 +1180,14 @@
       "verdict": "☆ 已清（第 147 批）"
     },
     {
+      "id": "G491",
+      "line": 1927,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "无该语义（5 处监听彼此独立，各自判键）⇒ 本地\"多层弹层 + 全局快捷键\"必然互相干扰（与 G456/G471/G478 同一根因，本批给出算法）；✎ 现读（2026-11-03 第 238 批）：已实现 — `dispatch` 逐层自顶向下，命中只跑第一条 keyDef 并停；未命中且 `allowPropagation=false` 也停（不触碰默认行为，输入不受影响）；9 例单测覆盖",
+      "verdict": "已对齐"
+    },
+    {
       "id": "G623",
       "line": 2243,
       "status": "aligned",
@@ -1267,10 +1275,6 @@
       5
     ],
     [
-      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
-      5
-    ],
-    [
       "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",
       5
     ],
@@ -1300,6 +1304,10 @@
     ],
     [
       "三点一九、右侧栏三面板实屏对照（动态 V10–V12，插入 / 格式 /",
+      4
+    ],
+    [
+      "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
       4
     ]
   ]

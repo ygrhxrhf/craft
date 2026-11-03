@@ -8,6 +8,7 @@ import { SyncStatusIndicator } from '@/components/sync/SyncStatusIndicator';
 import { InputIntentProvider } from '@/components/providers/InputIntentProvider';
 import { Toaster } from '@/components/ui/toast';
 import { VersionIntroCarousel } from '@/components/onboarding/VersionIntroCarousel';
+import { FocusStackBridge } from '@/components/focus/FocusStackBridge';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         {children}
         <Toaster />
         <VersionIntroCarousel />
+        <FocusStackBridge />
         <DialogHost />
         <SyncBoot />
         <SyncStatusIndicator />

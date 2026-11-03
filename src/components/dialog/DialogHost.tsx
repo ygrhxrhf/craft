@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { escapeKeyDef, focusStack } from '@/lib/focus/focus-stack';
 import {
   useDialogStore,
   type DialogConfig,
@@ -29,6 +30,14 @@ export function DialogHost() {
   const config = useDialogStore((state) => state.config);
   const cancel = useDialogStore((state) => state.cancel);
   const submitResult = useDialogStore((state) => state.submitResult);
+
+  // G479：命令式弹层也向全局焦点栈登记；Esc 由栈顶一项处理，Base UI 的默认关闭被
+  // 这一层接管（命中即 preventDefault），不会双触发。
+  useEffect(() => {
+    if (!open) return;
+    focusStack.push({ id: 'imperative-dialog', keyDefs: [escapeKeyDef(cancel)] });
+    return () => focusStack.remove('imperative-dialog');
+  }, [open, cancel]);
 
   // 关掉即整棵子树卸载 ⇒ 草稿不跨次残留，初值由 `useState` 从 config 取，无需 effect 补水。
   if (!config) return null;

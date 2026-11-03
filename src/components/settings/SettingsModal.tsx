@@ -23,6 +23,7 @@ import { useSettingsStore, type SettingsSection } from '@/lib/store/use-settings
 import { settingsSection } from '@/lib/app/settings-sections';
 import { getProfile } from '@/actions/user/profile';
 import { SettingsPanel } from './SettingsPanels';
+import { escapeKeyDef, focusStack } from '@/lib/focus/focus-stack';
 import { cn } from 'cn';
 
 interface NavItem {
@@ -93,13 +94,11 @@ export function SettingsModal() {
       .catch(() => setProfile(null));
   }, [open]);
 
+  // G479：Esc 走全局焦点栈的一套注册（不再自己挂 window 监听）。
   useEffect(() => {
     if (!open) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') close();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    focusStack.push({ id: 'settings', keyDefs: [escapeKeyDef(close)] });
+    return () => focusStack.remove('settings');
   }, [open, close]);
 
   if (!open) return null;

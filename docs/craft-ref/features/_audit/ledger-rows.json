@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T05:46:08.538Z",
+  "generatedAt": "2026-11-03T05:55:06.252Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 892,
-    "aligned": 288,
+    "gap": 890,
+    "aligned": 290,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 321,
+    "P2 / gap": 319,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 184,
+    "P2 / aligned": 186,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 8,
+  "conflicts": 9,
   "conflictRows": [
     {
       "id": "G95",
@@ -74,6 +74,14 @@
       "conflict": "local-says-missing",
       "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。",
       "verdict": "☆ 已清（第 147 批）"
+    },
+    {
+      "id": "G491",
+      "line": 1927,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "无该语义（5 处监听彼此独立，各自判键）⇒ 本地\"多层弹层 + 全局快捷键\"必然互相干扰（与 G456/G471/G478 同一根因，本批给出算法）；✎ 现读（2026-11-03 第 238 批）：已实现 — `dispatch` 逐层自顶向下，命中只跑第一条 keyDef 并停；未命中且 `allowPropaga",
+      "verdict": "已对齐"
     },
     {
       "id": "G623",
@@ -2474,11 +2482,11 @@
       "cols": 6,
       "id": "G78",
       "official": "每日笔记有 `前一天/后一天` 翻页与 **`离线更新于 [0]`** 显式离线条目标记（§7）",
-      "local": "✎ 现读（2026-10-31）更正：DailyNoteNav 前一天/后一天与「离线更新于 HH:MM」均已落",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-10-31）更正：DailyNoteNav 前一天/后一天与「离线更新于 HH:MM」均已落；✎ 现读（2026-11-03 第 238 批）：已实现 — `FocusStack` 三态齐（`allowPropagation` 默认 false、`aboveId` 插入、`disabled` 跳过），`FocusStackBridge` 在 document capture 分发；设置面板与命令式弹层已注册，浏览器实测 Esc 关设置",
+      "verdict": "已对齐",
       "score": "2/1",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝无每日笔记页；离线草稿只在编辑器内提示",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
@@ -9933,16 +9941,16 @@
       "cols": 5,
       "id": "G491",
       "official": "★ **断链规则是 `if (hit || !allowPropagation) break`** ⇒ 栈顶项**即便没命中也会吃掉这条键**（`allowPropagation` 默认 false），下面所有弹层与全局绑定都收不到；命中时**一项内只跑第一条 keyDef**（`break`）（§十四 2 条 2）",
-      "local": "无该语义（5 处监听彼此独立，各自判键）⇒ 本地\"多层弹层 + 全局快捷键\"必然互相干扰（与 G456/G471/G478 同一根因，本批给出算法）",
-      "verdict": "缺失",
+      "local": "无该语义（5 处监听彼此独立，各自判键）⇒ 本地\"多层弹层 + 全局快捷键\"必然互相干扰（与 G456/G471/G478 同一根因，本批给出算法）；✎ 现读（2026-11-03 第 238 批）：已实现 — `dispatch` 逐层自顶向下，命中只跑第一条 keyDef 并停；未命中且 `allowPropagation=false` 也停（不触碰默认行为，输入不受影响）；9 例单测覆盖",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

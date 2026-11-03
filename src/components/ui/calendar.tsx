@@ -30,6 +30,9 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      // G363：中文 locale 的周从周一起，且网格固定 6 行（上下月补位在首/末行）。
+      weekStartsOn={1}
+      fixedWeeks
       className={cn(
         "group/calendar bg-background p-2 [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,

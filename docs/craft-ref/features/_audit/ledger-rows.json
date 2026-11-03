@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-02T15:31:18.415Z",
+  "generatedAt": "2026-11-03T00:50:30.008Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 923,
-    "aligned": 260,
+    "gap": 922,
+    "aligned": 261,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 352,
+    "P2 / gap": 351,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 156,
+    "P2 / aligned": 157,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -7619,10 +7619,10 @@
       "cols": 5,
       "id": "G363",
       "official": "**日历控件细节**：周一起始（中文 locale）、6 行网格含上下月灰色补位、今天浅蓝底高亮、月份头有 `‹` **圆形靶心按钮** `›` 三控件、网格上方一行「今天」快捷项（V34 ②④⑤）",
-      "local": "本地用原生 `<input type=date>`，无快捷行与靶心",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-02）：日历页用的是 `react-day-picker` 网格——`weekStartsOn={1}` ＋ `fixedWeeks`（恒 6 行、上下月补位灰格），今天浅蓝底（`bg-craft-accent/10`）、选中态 `bg-foreground text-background`，月份头是 `‹`/`›` 圆形按钮；第 190 批补上网格上方那行「今天」（语言包 `date.today`） ☆ 已清（第 190 批）",
+      "verdict": "对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

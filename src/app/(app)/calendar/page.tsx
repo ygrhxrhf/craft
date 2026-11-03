@@ -23,6 +23,7 @@ import { completedTaskClasses } from '@/lib/task/completed-appearance';
 import { applyCompletedFilter } from '@/lib/task/grouping';
 import { agendaDays, revealPreviousDays } from '@/lib/calendar/previous-days';
 import { dayInSpan, spanOf, type CalendarSpan } from '@/lib/calendar/week-view';
+import { TODAY_LABEL } from '@/lib/calendar/month-grid';
 import { SHOW_MONTH_VIEW } from '@/lib/calendar/timeline-copy';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 
@@ -167,6 +168,19 @@ export default function CalendarPage() {
         ) : (
           <div className="flex flex-col gap-6 lg:flex-row">
             <div className="shrink-0 rounded-lg border border-border p-3">
+              {/* G363：网格上方一行「今天」快捷项。 */}
+              <button
+                type="button"
+                data-testid="calendar-today"
+                onClick={() => {
+                  setSelected(today);
+                  setMonth(today);
+                  setEarlierDays(0);
+                }}
+                className="mb-2 w-full rounded-md px-2 py-1 text-left text-[13px] text-foreground/70 transition-colors hover:bg-foreground/4 hover:text-foreground"
+              >
+                {TODAY_LABEL}
+              </button>
               <Calendar
                 mode="single"
                 selected={selected}

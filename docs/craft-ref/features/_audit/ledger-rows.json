@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T05:55:06.252Z",
+  "generatedAt": "2026-11-03T06:00:17.616Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 890,
@@ -7581,7 +7581,7 @@
       "cols": 5,
       "id": "G360",
       "official": "★ **「查看备份」是文档级一等动作入口**（V33 ④ 实见按钮），与 `plans.md` 的 30–180 天备份配额构成完整功能（配额 + 入口）",
-      "local": "✎ 现读（2026-11-02）：入口已在——信息页「动作」段有「查看备份」一枚，进 `VersionDialog` 看/还原历史版本；缺的是套餐侧的 30–180 天备份配额说明与 enforcement",
+      "local": "✎ 现读（2026-11-02）：入口已在——信息页「动作」段有「查看备份」一枚，进 `VersionDialog` 看/还原历史版本；✎ 现读（2026-11-03 第 239 批）：已落 — `lib/document/backup-retention.ts` 定 Free 30／Plus 180／Family 180 天窗口与官方句「目前显示 [0] 天。」，`VersionDialog` 按窗口过滤并显示该句（浏览器实测「目前显示 30 天。」）；套餐升级 UI 属订阅壳，不在本条",
       "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",

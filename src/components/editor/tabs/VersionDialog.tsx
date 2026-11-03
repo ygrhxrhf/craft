@@ -25,6 +25,11 @@ import {
   type VersionItem,
 } from '@/actions/version';
 import {
+  CURRENT_BACKUP_PLAN,
+  backupWindowSentence,
+  versionsInWindow,
+} from '@/lib/document/backup-retention';
+import {
   VERSION_BUCKETS,
   VERSION_BUCKET_LABELS,
   changeCountLabel,
@@ -75,7 +80,11 @@ export function VersionDialog({ documentId, open, onOpenChange }: VersionDialogP
       .catch(() => setBatch({ token: openToken, versions: [] }));
   }, [open, openToken, documentId]);
 
-  const versions = batch?.token === openToken ? batch.versions : [];
+  // G360：备份只看套餐窗口内的版本（Free 30 天 / Plus Family 180 天）。
+  const versions = versionsInWindow(
+    batch?.token === openToken ? batch.versions : [],
+    CURRENT_BACKUP_PLAN,
+  );
   const currentPreview = preview?.token === openToken ? preview : null;
   const previewId = currentPreview?.id ?? null;
   const previewText = currentPreview?.text ?? null;
@@ -129,6 +138,9 @@ export function VersionDialog({ documentId, open, onOpenChange }: VersionDialogP
           <DialogDescription>
             每次编辑超过 10 分钟间隔会自动保存一个版本
           </DialogDescription>
+          <p className="text-meta text-foreground/45" data-testid="backup-window">
+            {backupWindowSentence(CURRENT_BACKUP_PLAN)}
+          </p>
         </DialogHeader>
         <div className="flex min-h-0 flex-1 gap-3 overflow-hidden">
           <div className="min-h-0 w-44 shrink-0 space-y-1 overflow-y-auto pr-1">

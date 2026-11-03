@@ -4244,10 +4244,14 @@
       ]
     },
     "G206": {
-      "status": "partial",
-      "note": "面板按官方 16 项结构，其中 8 项仍为禁用占位",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "插入面板名册/结构与官方一致；Mermaid、分页符已可建，其余 6 项禁用占位（G207/G214）",
       "evidence": [
-        "src/components/editor/tabs/InsertTab.tsx:74"
+        "src/components/editor/tabs/InsertTab.tsx:56",
+        "src/components/editor/tabs/InsertTab.tsx:70",
+        "src/components/editor/slash-menu/slash-commands.ts:266",
+        "src/lib/editor/insert-panel-enable.test.ts:1"
       ]
     },
     "G207": {

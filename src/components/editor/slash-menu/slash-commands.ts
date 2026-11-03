@@ -263,6 +263,16 @@ export const slashCommands: SlashCommand[] = [
     },
   },
   {
+    name: '插入分页符',
+    description: '分页符',
+    icon: Minus,
+    keywords: ['page break', '分页符', '分页'],
+    category: '高级块',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).setDivider('pageSeparator').run();
+    },
+  },
+  {
     name: '分隔线 - 极细',
     description: '最细的水平分隔线',
     icon: Minus,

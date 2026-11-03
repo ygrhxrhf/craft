@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T06:06:41.735Z",
+  "generatedAt": "2026-11-03T06:13:21.642Z",
   "total": 1614,
   "status": {
-    "aligned": 556,
+    "aligned": 557,
     "nonaction": 512,
-    "partial": 253,
+    "partial": 252,
     "deliberate": 165,
     "gap": 108,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 241,
+    "P2 / aligned": 242,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 103,
+    "P2 / partial": 102,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1303,11 +1303,11 @@
       4
     ],
     [
-      "三点一九、右侧栏三面板实屏对照（动态 V10–V12，插入 / 格式 /",
+      "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
       4
     ],
     [
-      "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
+      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
       4
     ]
   ]

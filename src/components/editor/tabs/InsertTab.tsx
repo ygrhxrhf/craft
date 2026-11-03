@@ -53,7 +53,7 @@ const UNTITLED_ITEMS: PanelItem[] = [
   { label: '插入 Unsplash 图片', missing: true },
   { label: '代码块', command: '代码块' },
   { label: '公式（TeX）', command: '公式' },
-  { label: 'Mermaid 图表', missing: true },
+  { label: 'Mermaid 图表', command: 'Mermaid 图表' },
   { label: '白板', command: '白板' },
 ];
 
@@ -67,7 +67,7 @@ const COLLECTION_ITEMS: PanelItem[] = [
 
 const TAIL_ITEMS: PanelItem[] = [
   { label: '插入 线', command: '分隔线 - 常规' },
-  { label: '插入分页符', missing: true },
+  { label: '插入分页符', command: '插入分页符' },
   { label: '插入表格', missing: true, hint: '插入一个包含所选行数和列数的表格。' },
 ];
 

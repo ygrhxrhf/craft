@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T03:20:29.227Z",
+  "generatedAt": "2026-11-03T03:25:19.169Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 908,
+    "gap": 907,
     "aligned": 273,
     "unknown": 196,
     "deliberate": 103,
-    "partial": 62,
+    "partial": 63,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 337,
+    "P2 / gap": 336,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P2 / aligned": 169,
@@ -29,8 +29,8 @@
     "P3 / aligned": 39,
     "P2 / unknown": 36,
     "P? / deliberate": 33,
+    "P2 / partial": 25,
     "P3 / unknown": 25,
-    "P2 / partial": 24,
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
     "P? / nonaction": 23,
@@ -3993,10 +3993,10 @@
       "cols": 5,
       "id": "G162",
       "official": "助手设置含**每用户 × 每空间禁用**（两句都强调\"不影响其他成员\"）、设置内直接增删已保存提示、**额度上限说明句「最多可保存 [0] 条提示词，每条最多 [1] 个字符」**（与代码常量 20/1000 对上 ✓）、查看 AI 额度入口（§三）",
-      "local": "有「助手」分区，但无空间级禁用、无提示库管理、无额度说明与入口",
-      "verdict": "只有壳",
+      "local": "✎ 现读（2026-11-03 第 215/220 批）：用户级「启用助手」与按空间禁用两轴已实现（`assistantEnabled` + `assistantDisabledSpaces`；设置页两枚开关、服务端 AI 路由 403 门禁、文案逐字取 catalog）；设置内可增删已保存提示并显示 20/1000 限额说明；仍缺「查看 AI 助手额度」入口（本地无额度/计费屏，`craft://credit` 按 G121 有意落空）",
+      "verdict": "缺失（局部）",
       "score": "2/2",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

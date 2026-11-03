@@ -4370,6 +4370,20 @@
           },
           "User": {
             "fields": {
+              "assistantDisabledSpaces": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "assistantEnabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "completedTaskAppearance": {
                 "nullable": false,
                 "type": {
@@ -4743,6 +4757,12 @@
             },
             "storage": {
               "fields": {
+                "assistantDisabledSpaces": {
+                  "column": "assistantDisabledSpaces"
+                },
+                "assistantEnabled": {
+                  "column": "assistantEnabled"
+                },
                 "completedTaskAppearance": {
                   "column": "completedTaskAppearance"
                 },
@@ -8509,6 +8529,20 @@
             },
             "users": {
               "columns": {
+                "assistantDisabledSpaces": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
+                "assistantEnabled": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "completedTaskAppearance": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -8877,7 +8911,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "95ba9546b2426c2b966209310566077bb802a0a34aa72dc120d8fb1b12aeb402"
+    "storageHash": "36d374b237927c1a3e204ef0017372973f4a2c617b426a19539464c539a85a56"
   },
   "execution": {
     "executionHash": "d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32",

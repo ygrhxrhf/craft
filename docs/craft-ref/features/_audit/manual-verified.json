@@ -4014,10 +4014,15 @@
       ]
     },
     "G162": {
-      "status": "gap",
-      "note": "助手分区只有「助手未启用」一句，无提示库管理与额度说明",
+      "status": "partial",
+      "priority": "P2",
+      "note": "助手两轴禁用（用户级/按空间）与提示库管理、限额说明已落并接服务端门禁；仅差额度入口（本地无计费屏）",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:581"
+        "src/lib/ai/assistant-access.ts:1",
+        "src/actions/user/assistant.ts:1",
+        "src/components/settings/AssistantPanel.tsx:1",
+        "src/app/api/ai/route.ts:23",
+        "src/lib/sync/tables.ts:44"
       ]
     },
     "G163": {

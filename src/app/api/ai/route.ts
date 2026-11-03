@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { parseAiContext, renderContextPrompt } from '@/lib/ai/context';
+import { ASSISTANT_DISABLED } from '@/lib/ai/assistant-access';
+import { assistantAvailableForUser } from '@/actions/user/assistant';
 import OpenAI from 'openai';
 
 const actionPrompts: Record<string, string> = {
@@ -14,6 +16,10 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) {
     return Response.json({ error: '未授权' }, { status: 401 });
+  }
+  // G162: the two disable axes (user-level and per-space) gate the assistant here.
+  if (!(await assistantAvailableForUser())) {
+    return Response.json({ error: ASSISTANT_DISABLED }, { status: 403 });
   }
 
   const apiKey = process.env['OPENAI_API_KEY'];

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.users.assistantDisabledSpaces",
+    "label": "Add column \"assistantDisabledSpaces\" to \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "assistantDisabledSpaces",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"assistantDisabledSpaces\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "assistantDisabledSpaces"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"assistantDisabledSpaces\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD COLUMN \"assistantDisabledSpaces\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"assistantDisabledSpaces\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "assistantDisabledSpaces"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.users.assistantEnabled",
+    "label": "Add column \"assistantEnabled\" to \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "assistantEnabled",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"assistantEnabled\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "assistantEnabled"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"assistantEnabled\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD COLUMN \"assistantEnabled\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"assistantEnabled\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "assistantEnabled"
+        ]
+      }
+    ]
+  }
+]

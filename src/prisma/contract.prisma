@@ -18,6 +18,10 @@ model User {
   // `promptObjects`（对象列表，新形状）双写；读时以对象列表为准、字符串列表兜底迁移。
   prompts       Json?
   promptObjects Json?
+  // G162：助手开关两轴——用户级 `assistantEnabled`；按空间禁用只记在本人名下
+  // （`assistantDisabledSpaces` 是 spaceId 列表），所以不影响同一空间的其他成员。
+  assistantEnabled       Boolean @default(true)
+  assistantDisabledSpaces Json?
   createdAt     TimestamptzString @default(now())
   updatedAt     temporal.updatedAtString()
 

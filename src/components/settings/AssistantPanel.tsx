@@ -3,11 +3,20 @@
 import { useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { toast } from '@/components/ui/toast';
+import { getCustomPrompts, deleteCustomPrompt, saveCustomPrompt } from '@/actions/user/custom-prompts';
 import {
-  deleteCustomPrompt,
-  getCustomPrompts,
-  saveCustomPrompt,
-} from '@/actions/user/custom-prompts';
+  getAssistantSettings,
+  setAssistantEnabled,
+  setSpaceAssistantEnabled,
+  type AssistantSettings,
+} from '@/actions/user/assistant';
+import { Switch } from '@/components/ui/switch';
+import {
+  ASSISTANT_DISABLED,
+  ENABLE_ASSISTANT,
+  ENABLE_ASSISTANT_DESC,
+  SPACE_ASSISTANT_DESC,
+} from '@/lib/ai/assistant-access';
 import { operationFailed } from '@/lib/errors/alert-copy';
 import {
   CREATE_CUSTOM_PROMPT,
@@ -24,6 +33,41 @@ export function AssistantPanel() {
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [settings, setSettings] = useState<AssistantSettings | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    void getAssistantSettings()
+      .then((next) => {
+        if (alive) setSettings(next);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const toggleUser = async (enabled: boolean) => {
+    setBusy(true);
+    try {
+      setSettings(await setAssistantEnabled(enabled));
+    } catch {
+      toast.add({ type: 'error', title: operationFailed(null) });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggleSpace = async (enabled: boolean) => {
+    setBusy(true);
+    try {
+      setSettings(await setSpaceAssistantEnabled(enabled));
+    } catch {
+      toast.add({ type: 'error', title: operationFailed(null) });
+    } finally {
+      setBusy(false);
+    }
+  };
 
   useEffect(() => {
     let alive = true;
@@ -76,6 +120,41 @@ export function AssistantPanel() {
 
   return (
     <div className="space-y-6" data-testid="assistant-settings">
+      <div>
+        <div className="flex items-center justify-between gap-4 rounded-xl bg-foreground/4 px-4 py-3">
+          <div className="min-w-0">
+            <div className="text-[13px] font-medium">{ENABLE_ASSISTANT}</div>
+            <p className="mt-0.5 text-[12px] leading-relaxed text-foreground/55">
+              {ENABLE_ASSISTANT_DESC}
+            </p>
+          </div>
+          <Switch
+            checked={settings?.enabled ?? true}
+            disabled={busy || settings === null}
+            onCheckedChange={(next) => void toggleUser(next === true)}
+            className="data-checked:bg-(--craft-accent)"
+          />
+        </div>
+        {settings && !settings.enabled && (
+          <p role="status" className="mt-2 text-[12px] text-muted-foreground">
+            {ASSISTANT_DISABLED}
+          </p>
+        )}
+
+        <p className="mt-4 text-[13px] leading-relaxed text-foreground/55">
+          {SPACE_ASSISTANT_DESC}
+        </p>
+        <div className="mt-2 flex items-center justify-between gap-4 rounded-xl bg-foreground/4 px-4 py-3">
+          <div className="text-[13px] font-medium">此空间</div>
+          <Switch
+            checked={settings?.spaceEnabled ?? true}
+            disabled={busy || settings === null || !settings.enabled}
+            onCheckedChange={(next) => void toggleSpace(next === true)}
+            className="data-checked:bg-(--craft-accent)"
+          />
+        </div>
+      </div>
+
       <div>
         <h3 className="text-[15px] font-semibold">{SAVED_PROMPTS_TITLE}</h3>
         <p className="mt-1 text-[13px] text-foreground/55">{customPromptLimitDesc()}</p>

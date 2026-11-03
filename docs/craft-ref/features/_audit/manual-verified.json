@@ -4333,9 +4333,13 @@
       ]
     },
     "G236": {
-      "status": "partial",
-      "note": "插入模板已落；无模板文件夹、体积上限、来自模板标记",
+      "status": "aligned",
+      "note": "第 199 批：体积上限（官方句）与「来自模板」标记落地；插入 picker 原有；模板库是 /templates 路由（载体差异已声明）",
       "evidence": [
+        "src/lib/document/template-limits.ts:1",
+        "src/actions/document/template.ts:18",
+        "src/actions/document/create.ts:67",
+        "src/components/editor/tabs/InfoTab.tsx:553",
         "src/components/editor/template-picker.tsx:49"
       ]
     },

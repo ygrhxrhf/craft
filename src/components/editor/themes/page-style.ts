@@ -20,6 +20,8 @@ export interface PageStyle {
    * fields; `null`/absent means no preset has been applied.
    */
   stylePreset?: PageStylePresetId | null;
+  /** G236: which template this document was created from (「来自模板」的来源标记). */
+  fromTemplate?: string;
 }
 
 /** G282: the paragraph spacing presets. */
@@ -145,6 +147,7 @@ export function normalizePageStyle(value: unknown): PageStyle {
     // G282: `null` means "not set, follow the document" — kept distinct from a real preset value.
     paragraphSpacing: isParagraphSpacingType(v.paragraphSpacing) ? v.paragraphSpacing : undefined,
     stylePreset: isPageStylePreset(v.stylePreset) ? v.stylePreset : undefined,
+    fromTemplate: typeof v.fromTemplate === 'string' ? v.fromTemplate : undefined,
   };
 }
 

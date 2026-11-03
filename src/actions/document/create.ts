@@ -59,6 +59,14 @@ export async function createDocument(input: {
   // New rows must carry metaUpdatedAt or they never enter the incremental-sync
   // stream (document tsCol is metaUpdatedAt and has no DB default).
   const now = new Date().toISOString();
+  // G236：从模板新建时在页面样式里留一枚「来自模板」的来源标记（模板 id）。
+  const basePageStyle = sourceDoc ? (sourceDoc.pageStyle ?? null) : null;
+  const pageStyle = input.useTemplateId
+    ? {
+        ...(basePageStyle && typeof basePageStyle === 'object' ? basePageStyle : {}),
+        fromTemplate: input.useTemplateId,
+      }
+    : basePageStyle;
   const doc = await db.orm.public.Document.create({
     id: crypto.randomUUID(),
     title,
@@ -71,7 +79,7 @@ export async function createDocument(input: {
     content: sourceDoc ? (sourceDoc.content ?? null) : null,
     plainText: sourceDoc ? sourceDoc.plainText : '',
     width: sourceDoc?.width ?? null,
-    pageStyle: sourceDoc ? (sourceDoc.pageStyle ?? null) : null,
+    pageStyle,
     isTemplate: input.isTemplate ?? false,
     isDailyNote: false,
     dailyNoteDate: input.dailyNoteDate ?? null,

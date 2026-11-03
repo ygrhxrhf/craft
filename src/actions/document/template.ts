@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
+import { TEMPLATE_TOO_LARGE, templateTooLarge } from '@/lib/document/template-limits';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { untitledFor } from '@/lib/document/untitled-copy';
 
@@ -13,6 +14,8 @@ export async function saveAsTemplate(documentId: string) {
   const doc = await db.orm.public.Document.first({ id: documentId });
   if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
   const d = doc as any;
+  // G236：体积上限——超了就用官方那句拒绝，别先建出一份"模板"再事后清理。
+  if (templateTooLarge(d.content, d.plainText ?? '')) throw new Error(TEMPLATE_TOO_LARGE);
 
   const metaTs = new Date().toISOString();
   const copy = await db.orm.public.Document.create({

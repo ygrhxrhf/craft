@@ -24,6 +24,7 @@ import { getDocument, getDocuments, getRecentDocuments, getSubpageStats, type Su
 import { relativeTime } from '@/lib/document/relative-time';
 import { pageStats, statsInputFor, statsTitle, STATS_SCOPES, STATS_SCOPE_LABELS, type StatsScope } from '@/lib/document/page-stats';
 import { LOCATION_TITLE, locationPathLabel, type PathNode } from '@/lib/document/location-path';
+import { FROM_TEMPLATE_LABEL } from '@/lib/document/template-limits';
 import { MOVE_TO, UNSORTED_TITLE } from '@/lib/browse/official-copy';
 import { pendingLabel } from '@/lib/app/pending-states';
 import { toast } from '@/components/ui/toast';
@@ -295,8 +296,9 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
       await saveAsTemplate(documentId);
       setTemplateSaved(true);
       setTimeout(() => setTemplateSaved(false), 2000);
-    } catch {
-      alert('另存为模板失败');
+    } catch (error) {
+      // G236：体积超限时服务端抛的就是官方那句，原样显示；其余仍是本地兜底。
+      alert(error instanceof Error ? error.message : '另存为模板失败');
     }
   };
 
@@ -545,6 +547,16 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
                 <Folder className="size-3.5" />
                 <span className="truncate">{locationLabel}</span>
               </div>
+              {/* G236：从模板新建的文档带「来自模板」标记。 */}
+              {pageStyle?.fromTemplate && (
+                <div
+                  data-testid="from-template"
+                  className="mt-1.5 flex items-center gap-2.5 text-ui text-muted-foreground"
+                >
+                  <LayoutTemplate className="size-3.5" />
+                  <span>{FROM_TEMPLATE_LABEL}</span>
+                </div>
+              )}
             </section>
           )}
 

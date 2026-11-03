@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T01:35:14.907Z",
+  "generatedAt": "2026-11-03T01:40:38.029Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 918,
-    "aligned": 265,
+    "gap": 917,
+    "aligned": 266,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 347,
+    "P2 / gap": 346,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 161,
+    "P2 / aligned": 162,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -5332,10 +5332,10 @@
       "cols": 5,
       "id": "G236",
       "official": "**模板子系统 9 句**：模板来源是**一个特殊文件夹**（`browse.custom.templates.desc`）、模板既能\"新建文档\"也能**\"插入当前文档\"**（`templates.inserting`）、有**体积上限**（`templates.doc.too.large`）、`from.template`「来自模板」是文档上的来源标记",
-      "local": "本地 `InfoTab` 有「另存为模板」，但**无模板文件夹、无\"插入模板\"、无体积上限、无来源标记**",
-      "verdict": "缺失",
+      "local": "本地 `InfoTab` 有「另存为模板」，但**无模板文件夹、无\"插入模板\"、无体积上限、无来源标记** ⇒ ✎ 现读（2026-11-02 第 199 批）：模板库是独立的 `/templates` 路由（侧栏「模板」入口；官方是特殊文件夹，载体不同**已声明**）；「插入模板」picker 早已有；第 199 批补上体积上限（`template-limits.ts`，超限抛官方句 `browse.templates.doc.too.large`）与「来自模板」来源标记（`pageStyle.fromTemplate`，从模板新建时写入，信息页显示 `browse.from.template`） ☆ 已清（第 199 批）",
+      "verdict": "对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

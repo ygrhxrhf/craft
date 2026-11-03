@@ -9755,10 +9755,12 @@
       ]
     },
     "G1589": {
-      "status": "partial",
-      "note": "只收 TOGGLE_QUICK_OPEN（Ctrl-K），Ctrl-P 与 Ctrl-Shift-O 无分支",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "快速开启四条弦（Ctrl-K/O/P/Shift-O）都开同一面板；键位走中央表匹配。",
       "evidence": [
-        "src/components/editor/shell-shortcuts.tsx:21"
+        "src/lib/editor/keymap.ts:273",
+        "src/components/search/CommandPalette.tsx:104"
       ]
     },
     "G1590": {

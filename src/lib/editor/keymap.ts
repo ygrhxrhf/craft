@@ -268,6 +268,10 @@ export const KEY_BINDINGS: KeyBinding[] = [
   { id: 'TOGGLE_KEY_SHORTCUTS', label: '显示快捷键', group: 'general', mac: chord({ metaKey: true, altKey: true }, ',', 'Comma'), win: chord({ ctrlKey: true, shiftKey: true }, ',', 'Comma') },
   { id: 'OPEN_DAILY_NOTE', label: '打开每日笔记', group: 'general', mac: chord({ metaKey: true, altKey: true }, 'n', 'KeyN'), win: chord({ ctrlKey: true, altKey: true }, 'n', 'KeyN') },
   { id: 'COMMENT', label: '添加评论', group: 'general', mac: chord({ metaKey: true, shiftKey: true }, 'm', 'KeyM'), win: chord({ ctrlKey: true, shiftKey: true }, 'm', 'KeyM') },
+  // G1589：快速开启是同一个面板的四条弦（⌘K 已在面板里直连；这里补另外三条）。
+  { id: 'TOGGLE_QUICK_OPEN', label: '快速开启', group: 'general', mac: chord({ metaKey: true }, 'o', 'KeyO'), win: chord({ ctrlKey: true }, 'o', 'KeyO') },
+  { id: 'TOGGLE_QUICK_OPEN_ALT', label: '快速开启', group: 'general', mac: chord({ metaKey: true }, 'p', 'KeyP'), win: chord({ ctrlKey: true }, 'p', 'KeyP') },
+  { id: 'TOGGLE_QUICK_OPEN_SAFARI', label: '快速开启', group: 'general', mac: chord({ metaKey: true, shiftKey: true }, 'o', 'KeyO'), win: chord({ ctrlKey: true, shiftKey: true }, 'o', 'KeyO') },
 
   // 表 B 的查找四键。它们分在 `findReplace` 组：`⌘G` 与编辑组的 `⌘G`（组合）同键不同上下文，
   // 正是「同组内不可撞」这道闸刻意按组分家的原因。Find 与 Replace 面板已实现，所以这四行是

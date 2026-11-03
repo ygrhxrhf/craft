@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { useRouter } from 'next/navigation';
 import {ChevronDown, ChevronUp, Database, FileText, Keyboard, Plus, Search, Terminal, Type, Folder, Calendar} from 'lucide-react';
 import {
@@ -99,10 +100,38 @@ export function CommandPalette() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    const platform = detectPlatform();
+    const quickOpenIds = new Set([
+      'TOGGLE_QUICK_OPEN',
+      'TOGGLE_QUICK_OPEN_ALT',
+      'TOGGLE_QUICK_OPEN_SAFARI',
+    ]);
     const handleKeyDown = (e: KeyboardEvent) => {
       // G1580: only the plain Ctrl/⌘-K opens the palette; Ctrl-Shift-K belongs to block links and
       // must not be swallowed here.
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        open();
+        return;
+      }
+      // G1589: ⌘O / ⌘P / ⌘⇧O are the same panel — the official build has four chords, not one.
+      const alt = KEY_BINDINGS.find(
+        (binding) =>
+          quickOpenIds.has(binding.id) &&
+          matches(
+            {
+              metaKey: e.metaKey,
+              ctrlKey: e.ctrlKey,
+              altKey: e.altKey,
+              shiftKey: e.shiftKey,
+              key: e.key,
+              code: e.code,
+            },
+            binding,
+            platform,
+          ),
+      );
+      if (alt) {
         e.preventDefault();
         open();
       }

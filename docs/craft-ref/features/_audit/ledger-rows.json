@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T08:46:35.797Z",
+  "generatedAt": "2026-11-03T08:49:17.540Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 867,
-    "aligned": 312,
+    "gap": 866,
+    "aligned": 313,
     "unknown": 194,
     "deliberate": 105,
     "partial": 64,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 296,
+    "P2 / gap": 295,
     "P? / gap": 226,
-    "P2 / aligned": 208,
+    "P2 / aligned": 209,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -29648,10 +29648,10 @@
       "cols": 5,
       "id": "G1589",
       "official": "★★★ **快速开启有**三条绑定**，本地只有一条**：官方 `Ctrl-P`（`TOGGLE_QUICK_OPEN_ALT`）与 `Ctrl-Shift-O`（`TOGGLE_QUICK_OPEN_SAFARI`）**都开出同一个快速开启面板**，本地这两条**都没有反应**（第 333 批，`shell.quick-open.alt` 两侧各 6 步）：官方按 `Ctrl-P` ⇒ `popup-backdrop` 0→1、名册新增「文档」「在 zhang's Space 中」「无标题文档…」、焦点离开编辑器，`Escape` 关回 0；再按 `Ctrl-Shift-O` ⇒ 同样 0→1（⇒ **web 端 `_SAFARI` 分支同样启用**，不只是 Safari 会印）。本地同序列两条都零反应（`popup-backdrop` 恒 0、名册只多一个「未保存」）。★ 与 `shell.command-palette.toggle-vs-jump` 合起来：官方是**一个面板三条弦**（`Ctrl-K`／`Ctrl-P`／`Ctrl-Shift-O`），本地是**只有 `Ctrl-K`** ✎ **第 380 批补第四条**：`Ctrl-O`（`TOGGLE_QUICK_OPEN`，面板印「快速开启 CtrlO 或者 CtrlP」）官方**同样弹面板**（`popup-backdrop` 0→1、`文档` 计数 3→16），本地**零反应** ⇒ 官方侧是**四条弦**（`Ctrl-K`／`Ctrl-O`／`Ctrl-P`／`Ctrl-Shift-O`）、本地仍只有 `Ctrl-K`",
-      "local": "本地对照＝`src/components/editor/shell-shortcuts.tsx:20-25` 的 `HANDLED` 只含 `TOGGLE_QUICK_OPEN`；`_ALT`／`_SAFARI` 无分支",
-      "verdict": "缺失（键位未绑定）",
+      "local": "✎ 现读（2026-11-03 第 263 批）：四条弦都开同一个面板 —— `Ctrl-K` 在面板里直连；本批补 `Ctrl-O`／`Ctrl-P`／`Ctrl-Shift-O` 三行键位，面板用 `KEY_BINDINGS` + `matches` 统一匹配（不再手写字符判断），四个组合都会 preventDefault 后打开",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

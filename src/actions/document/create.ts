@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
+import { resetTaskState } from '@/lib/document/duplicate-reset';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export async function createDocument(input: {
@@ -76,7 +77,8 @@ export async function createDocument(input: {
     icon: sourceDoc ? sourceDoc.icon : null,
     coverImage: sourceDoc?.coverImage ?? null,
     coverType: sourceDoc?.coverType ?? null,
-    content: sourceDoc ? (sourceDoc.content ?? null) : null,
+    // G106：副本里的任务强制回 Unchecked（取消态也清掉）。
+    content: sourceDoc ? (creatingCopy ? resetTaskState(sourceDoc.content ?? null) : (sourceDoc.content ?? null)) : null,
     plainText: sourceDoc ? sourceDoc.plainText : '',
     width: sourceDoc?.width ?? null,
     pageStyle,

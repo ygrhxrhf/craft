@@ -13,6 +13,8 @@ import {
   startOfLocalDay,
 } from '@/lib/task/date-parse';
 import { describeRecurrence, parseRecurrence, recurrencePresetsFor } from '@/lib/task/recurrence';
+import { ruleWithAnchor } from '@/lib/task/recurrence-picker';
+import { RecurrenceRuleEditor } from '@/components/task/RecurrenceRuleEditor';
 import { slotIndexForTime, timeSlots } from '@/lib/task/time-menu';
 import { scheduleChipLabel } from '@/lib/task/schedule-chip';
 import { cn } from 'cn';
@@ -316,7 +318,7 @@ export function TaskDatePopover({
                     }
                     className="flex w-full items-center justify-between rounded px-1 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
                   >
-                    <span>{recurrence.value ? describeRecurrence(recurrence.value) : '重复…'}</span>
+                    <span>{(recurrence.value && describeRecurrence(recurrence.value)) || '重复…'}</span>
                     <span aria-hidden="true">›</span>
                   </button>
                   {submenu === 'repeat' && repeatStep === 'anchor' && (
@@ -328,7 +330,7 @@ export function TaskDatePopover({
                         onClick={() => {
                           setRepeatAnchor('fixed');
                           setRepeatStep('frequency');
-                          recurrence.onChange(patchRule(recurrence.value, { type: 'fixed' }));
+                          recurrence.onChange(ruleWithAnchor(recurrence.value, 'fixed'));
                         }}
                         className="flex w-full rounded px-1 py-1 text-left text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
                       >
@@ -340,7 +342,7 @@ export function TaskDatePopover({
                         onClick={() => {
                           setRepeatAnchor('flexible');
                           setRepeatStep('frequency');
-                          recurrence.onChange(patchRule(recurrence.value, { type: 'flexible' }));
+                          recurrence.onChange(ruleWithAnchor(recurrence.value, 'flexible'));
                         }}
                         className="flex w-full rounded px-1 py-1 text-left text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
                       >
@@ -425,6 +427,12 @@ export function TaskDatePopover({
                               <option value="flexible">相对于完成</option>
                             </select>
                           </label>
+                          {/* G406/G405: the axes the official 「自定义…」 screen carries — frequency,
+                              day/month pickers and the relative-day list. */}
+                          <RecurrenceRuleEditor
+                            raw={recurrence.value ?? null}
+                            onChange={(next) => recurrence.onChange(next)}
+                          />
                           {/* G547: 「跳过周末」只属于 daily／monthly 两档（官方字段集如此）。 */}
                           {(() => {
                             const rule = parseRecurrence(recurrence.value);

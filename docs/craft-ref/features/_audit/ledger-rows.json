@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T12:46:17.301Z",
+  "generatedAt": "2026-11-03T13:18:13.610Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 856,
-    "aligned": 322,
+    "gap": 855,
+    "aligned": 323,
     "unknown": 194,
     "deliberate": 105,
     "partial": 65,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 285,
+    "P2 / gap": 284,
     "P? / gap": 226,
-    "P2 / aligned": 218,
+    "P2 / aligned": 219,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -8425,10 +8425,10 @@
       "cols": 5,
       "id": "G406",
       "official": "`monthly` 有 **`days: number[]`（多日号）+ `dynamicDays: {selector,type}[]`（相对日：`{selector:\"last\",type:\"day\"}`＝月末、`{type:星期名, selector:first|last|数字}`＝\"最后一个周五\"）+ `skipWeekends`**；`yearly` 有 `months[]`+`days[]`+`dynamicDays[]`（`model.md` §一之八、`tasks.md` §9.3）",
-      "local": "本地只有单值 `byMonthDay?: number`（月末靠 clamp 近似）⇒ **\"每月 3 日和 15 日\"、\"每月最后一个周五\"两种表达不存在** ⇒ ✎ 现读（2026-11-02 第 192 批）：模型已扩——monthly 的 `days: number[]`（多日号 1–31，与 weekly 的星期轴同键不同义）＋ `dynamicDays: [{type:'day'|星期名, selector:'first'|'last'|1–5}]`（月末/第一个/最后一个/第 N 个周X，5 个不存在的月份跳过），`describeRecurrence` 出「每月 3 日、15 日重复」「每月 最后一个周五重复」；`skipWeekends` 原已支持。✎ 现读（2026-11-03 第 224 批）：yearly 的 `months[]`／`days[]`／`dynamicDays[]` 已落（跨年扫描取最早一次，描述如「每年 3、9 月 10 日重复」）；仍缺选择器 UI（日期弹层目前只给预设）",
-      "verdict": "缺失（局部）",
+      "local": "本地只有单值 `byMonthDay?: number`（月末靠 clamp 近似）⇒ **\"每月 3 日和 15 日\"、\"每月最后一个周五\"两种表达不存在** ⇒ ✎ 现读（2026-11-02 第 192 批）：模型已扩——monthly 的 `days: number[]`（多日号 1–31，与 weekly 的星期轴同键不同义）＋ `dynamicDays: [{type:'day'|星期名, selector:'first'|'last'|1–5}]`（月末/第一个/最后一个/第 N 个周X，5 个不存在的月份跳过），`describeRecurrence` 出「每月 3 日、15 日重复」「每月 最后一个周五重复」；`skipWeekends` 原已支持。✎ 现读（2026-11-03 第 224 批）：yearly 的 `months[]`／`days[]`／`dynamicDays[]` 已落（跨年扫描取最早一次，描述如「每年 3、9 月 10 日重复」）⇒ ✎ 现读（2026-11-03 第 274 批）：**选择器 UI 本批补齐**＝`src/components/task/RecurrenceRuleEditor.tsx`（挂在 重复… → 重复依据 → 自定义… 抽屉里）＋纯核写手 `src/lib/task/recurrence-picker.ts`：四档频率（每天／每周／每月／每年）、周一开头的星期多选（weekly 的 `days`）、1–31 日号多选（monthly／yearly 的 `days`）、1–12 月多选（yearly 的 `months`）、相对日轴（档位列 第一个／第二个…／最后一个 ＋ 目标 日／周一…周日 ⇒ `dynamicDays`），每枚芯片都是开关、再点一次移除，底部逐字回显 `describeRecurrence` 的规则句。★ 同批修掉一处**旧缺陷**：两枚「重复依据」按钮此前用 `patchRule(value,{type})` 写回，在还没有规则的段上会存下 `{\"type\":\"fixed\"}` 这种**没有 `freq` 的半截规则** ⇒ `parseRecurrence` 判无效 ⇒ 行上的「重复…」标签直接空白；现改走 `ruleWithAnchor`（一定带 `freq`），行标签也加了 `|| '重复…'` 兜底。☆ 真浏览器取证（:3000，新建一条任务后逐枚点）：每月 → 3 → 15 ⇒ 「每月 3 日、15 日重复」；档位列选「最后一个」＋目标点周五 ⇒ 「每月 3 日、15 日、最后一个周五重复」，并出现可移除的芯片「最后一个周五 ×」；关弹层后 `tasks.recurrence` 落库为 `{\"freq\":\"monthly\",\"type\":\"fixed\",\"days\":[3],\"dynamicDays\":[{\"type\":\"friday\",\"selector\":\"last\"}]}`（15 是随后被我再点掉的，正说明芯片是双向开关），行上计划芯片露出「每月」；两条验证任务已用行上的 删除任务 清掉（`tasks` 里 2 行 `deletedAt` 已置）。单测＝`src/lib/task/recurrence-picker.test.ts` 15 条（名册／周一开头／日号与月份轴／相对日增删／换频率重置与保留 anchor／`byMonthDay` 退役／半截规则不再产生／接线）。",
+      "verdict": "已清（第 274 批；三轴写手齐了，附带修掉无 `freq` 的半截规则）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

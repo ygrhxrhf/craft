@@ -215,7 +215,7 @@ export function serializeWeekdays(days: readonly unknown[]): string[] {
   return [...new Set(out)];
 }
 
-const WEEKDAY_LABELS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+export const WEEKDAY_LABELS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
 /**
  * G653: two week-start conventions are in play. The stored `days` array keeps the official

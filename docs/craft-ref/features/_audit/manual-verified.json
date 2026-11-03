@@ -5182,12 +5182,14 @@
       ]
     },
     "G406": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "monthly/yearly 的 days/dynamicDays/months 均已落并有跨年推进；仍差规则选择器 UI",
+      "note": "第 274 批：重复规则选择器 UI 补齐——四档频率、周一开头星期多选、1–31 日号多选、1–12 月多选、相对日轴（第一…最后 × 日/周一…周日）写进 dynamicDays；芯片双向开关，底部逐字回显 describeRecurrence。同批修掉「重复依据」按钮写出无 freq 半截规则导致行标签空白的旧缺陷（改走 ruleWithAnchor ＋ 标签兜底）。浏览器实点：每月 3、15 日＋最后一个周五 ⇒ 规则句与落库 JSON 都对；两条验证任务已删。",
       "evidence": [
-        "src/lib/task/recurrence.ts:25",
-        "src/lib/task/recurrence.ts:470"
+        "src/lib/task/recurrence-picker.ts:1",
+        "src/components/task/RecurrenceRuleEditor.tsx:1",
+        "src/components/task/TaskDatePopover.tsx:333",
+        "src/lib/task/recurrence-picker.test.ts:1"
       ]
     },
     "G409": {

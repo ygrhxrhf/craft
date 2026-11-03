@@ -6525,10 +6525,14 @@
       ]
     },
     "G683": {
-      "status": "partial",
-      "note": "washi 是六条 CSS 渐变，官方是可平铺图案；无 separator/lineStyle",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "六档 washi 图案与 separator/pattern/color 三旗标齐，divider 实际渲染纹理，块菜单可达",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:35"
+        "src/lib/editor/washi-patterns.ts:17",
+        "src/lib/editor/separator-material.ts:30",
+        "src/components/editor/extensions/divider.tsx:39",
+        "src/app/globals.css:989"
       ]
     },
     "G684": {
@@ -9812,10 +9816,13 @@
       ]
     },
     "G1611": {
-      "status": "gap",
-      "note": "表格扩展无 15×50 上限，也无超限内联提示",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "表格 15×50×750 三上限在插入前拦截，超限用官方两句文案 4 秒提示（行轴用行上限句）",
       "evidence": [
-        "src/components/editor/Editor.tsx:429"
+        "src/lib/collection/limits.ts:23",
+        "src/lib/table-utils.ts:272",
+        "src/components/editor/extensions/craft-keymap.ts:426"
       ]
     },
     "G1612": {

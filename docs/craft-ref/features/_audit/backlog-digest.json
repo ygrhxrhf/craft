@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T03:32:37.943Z",
+  "generatedAt": "2026-11-03T03:34:52.175Z",
   "total": 1614,
   "status": {
-    "aligned": 534,
+    "aligned": 536,
     "nonaction": 512,
-    "partial": 270,
+    "partial": 269,
     "deliberate": 165,
-    "gap": 113,
+    "gap": 112,
     "unreachable": 20
   },
   "priority": {
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 219,
+    "P2 / aligned": 221,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 120,
+    "P2 / partial": 119,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -29,9 +29,9 @@
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
-    "P2 / gap": 40,
     "P? / deliberate": 40,
     "P3 / gap": 39,
+    "P2 / gap": 39,
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
@@ -1210,13 +1210,21 @@
       "conflict": "local-says-missing",
       "local": "本地对照＝任务行未设可聚焦属性（点击后 `activeElement` 是 `body`）；完成态载体是 `span[role=\"checkbox\"][aria-checked]`（base-ui checkbox），鼠标可点、键盘无绑定 ✎ 现读（2026-11-02）：任务行容器已改 `role=\"button\" tabIndex=0`，聚焦后 `Space` 或 `Ctrl/⌘-Alt-T`",
       "verdict": "☆ 已清（第 163 批）"
+    },
+    {
+      "id": "G1611",
+      "line": 5591,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地：无上限提示（`G1577` 记本地表格键整族无绑定 ⇒ 连\"加到上限\"这条通路都走不到）。✎ 现读（2026-11-03 第 222 批）：已实现 — `lib/collection/limits.ts` 定 15 列／50 行／750 格三条件，`table-utils.insertTableAxis` 与 `craft-keymap` 在插入前拦截，超限弹官方句「已达到表格大小限制（15",
+      "verdict": "已对齐"
     }
   ],
   "unknownSections": [],
   "gapSections": [
     [
       "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      33
+      32
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",

@@ -139,6 +139,7 @@
 | G1223 | 3905 | 已对齐 | local-says-missing | 本轮实扫＝src/app/layout.tsx 与 src/app/globals.css 都没有 color-sche |
 | G1228 | 3937 | 已对齐 | local-says-missing | grep -n toggle src/lib/import/markdown.ts ⇒ 0 命中＝本地把 -／+／* 一 |
 | G1574 | 5553 | 已对齐 | local-says-missing | 本地对照＝任务行未设可聚焦属性（点击后 activeElement 是 body）；完成态载体是 span[role=" |
+| G1611 | 5591 | 已对齐 | local-says-missing | 本地：无上限提示（G1577 记本地表格键整族无绑定 ⇒ 连"加到上限"这条通路都走不到）。✎ 现读（2026-11-0 |
 
 ## 十、待重扫
 
@@ -151,7 +152,7 @@
 
 | 条数 | 节 |
 | --- | --- |
-| 33 | 三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第 |
+| 32 | 三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第 |
 | 15 | 三点七、P2 追加（来自 dialogs.md 与 protoco |
 | 14 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
 | 12 | 三点一〇六十、第 110 批〔★★★ 代码块主题的作用域结案＝块级， |

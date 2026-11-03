@@ -4918,10 +4918,14 @@
       ]
     },
     "G349": {
-      "status": "gap",
-      "note": "新建即空文档，无 AI 结构生成弹层与四阶段进度",
+      "status": "aligned",
+      "note": "第 272 批：空白页自动开 Idea Starter 弹层（按库里正文判空、等编辑器就绪再挂），结构就地写进当前这篇；七类＝六种建议＋隐形 default；标题两态逐字（正在创建文档／正在创建[0]→类型名）；即时生成也跑满四段进度（ideaProgressRunMs 兜最短时长）。浏览器实测：URL 不变、正文落骨架、toast「文档已创建！」。",
       "evidence": [
-        "src/actions/document/create.ts:62"
+        "src/components/editor/DocumentEditor.tsx:129",
+        "src/components/editor/DocumentEditor.tsx:259",
+        "src/lib/ai/idea-starter.ts:71",
+        "src/lib/ai/idea-starter.ts:89",
+        "src/lib/ai/idea-starter.test.ts:1"
       ]
     },
     "G350": {

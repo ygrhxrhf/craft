@@ -10,11 +10,11 @@ const TYPES: readonly IdeaType[] = ['guide', 'list', 'meeting', 'project', 'trav
 
 /** G70：Idea Starter 的创建步——类型决定骨架，自由描述作标题与引导段。 */
 export async function createIdeaDocument(input: {
-  type: IdeaType;
+  type: IdeaType | null;
   description: string;
 }): Promise<{ id: string; title: string }> {
   const userId = await requireUserId();
-  if (!TYPES.includes(input.type)) throw new Error('未知的建议类型');
+  if (input.type !== null && !TYPES.includes(input.type)) throw new Error('未知的建议类型');
 
   const description = input.description.slice(0, 500);
   const content = ideaSkeleton(input.type, description);

@@ -10,8 +10,10 @@ describe('collection row actions (G289)', () => {
   );
 
   it('opens the row document when it has one', () => {
-    expect(table).toContain('aria-label="导航至区块"');
+    // G677 changed the label: every row now opens a page, creating one when absent.
+    expect(table).toContain('aria-label="打开页面"');
     expect(table).toContain('/documents/${item.documentId}');
+    expect(table).toContain('const openRowPage = async');
   });
 
   it('moves the row out through the membership action', () => {

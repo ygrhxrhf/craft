@@ -5,6 +5,9 @@ import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { ExternalLink, FolderMinus, GripVertical, Plus, SlidersHorizontal, Trash2, X } from 'lucide-react';
 import { useIsMobile } from '@/lib/use-is-mobile';
 import { addItem, clearGroupValues, deleteItem, removeItemFromCollection, setItemValue } from '@/actions/collection/items';
+import { createDocument } from '@/actions/document/create';
+import { toast } from '@/components/ui/toast';
+import { operationFailed } from '@/lib/errors/alert-copy';
 import { confirmDialog } from '@/lib/dialog/show';
 import { getSyncManager } from '@/lib/sync-core';
 import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-reorder';
@@ -261,6 +264,30 @@ export function TableView({ collection, view }: TableViewProps) {
     return text.length > 24 ? `${text.slice(0, 24)}…` : text;
   };
 
+  // G677：行＝页面。已有 documentId 直接进入；没有时新建一篇文档并把行指过去，
+  // 正文改走文档/块编辑通路（不是把内容塞进集合值）。
+  const openRowPage = async (item: any) => {
+    if (item.documentId) {
+      router.push(`/documents/${item.documentId}`);
+      return;
+    }
+    const raw = visibleProperties[0] ? getCellValue(item, visibleProperties[0].id) : null;
+    const title = raw === null || raw === undefined || raw === '' ? '' : String(raw).slice(0, 80);
+    try {
+      const doc = await createDocument({ title });
+      const manager = getSyncManager();
+      await manager.applyLocal({
+        table: 'collection_item',
+        id: item.id,
+        patch: { documentId: doc.id },
+      });
+      await manager.flushNow();
+      router.push(`/documents/${doc.id}`);
+    } catch {
+      toast.add({ type: 'error', title: operationFailed(null) });
+    }
+  };
+
   const handleDrop = async (targetId: string) => {
     const sourceId = dragId;
     setDragId(null);
@@ -493,17 +520,15 @@ export function TableView({ collection, view }: TableViewProps) {
                             </td>
                           ))}
                           <td className="border-b border-border px-1 py-0">
-                            {item.documentId && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                aria-label="导航至区块" title="导航至区块"
-                                className="opacity-0 group-hover:opacity-100"
-                                onClick={() => router.push(`/documents/${item.documentId}`)}
-                              >
-                                <ExternalLink className="size-4 text-muted-foreground" />
-                              </Button>
-                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              aria-label="打开页面" title="打开页面"
+                              className="opacity-0 group-hover:opacity-100"
+                              onClick={() => void openRowPage(item)}
+                            >
+                              <ExternalLink className="size-4 text-muted-foreground" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -627,17 +652,15 @@ export function TableView({ collection, view }: TableViewProps) {
                     </td>
                   ))}
                   <td className="border-b border-border px-1 py-0">
-                    {item.documentId && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="导航至区块" title="导航至区块"
-                        className="opacity-0 group-hover:opacity-100"
-                        onClick={() => router.push(`/documents/${item.documentId}`)}
-                      >
-                        <ExternalLink className="size-4 text-muted-foreground" />
-                      </Button>
-                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label="打开页面" title="打开页面"
+                      className="opacity-0 group-hover:opacity-100"
+                      onClick={() => void openRowPage(item)}
+                    >
+                      <ExternalLink className="size-4 text-muted-foreground" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"

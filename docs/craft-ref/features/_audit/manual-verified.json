@@ -6504,10 +6504,13 @@
       ]
     },
     "G677": {
-      "status": "partial",
-      "note": "CollectionItem 有 documentId，行可挂文档；但 addItem 不建文档，无行内正文块通路",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "集合行「打开页面」：无文档时新建文档并回写 documentId，正文走文档/块编辑通路",
       "evidence": [
-        "src/prisma/contract.prisma:190"
+        "src/app/(app)/collections/[id]/TableView.tsx:255",
+        "src/app/(app)/collections/[id]/TableView.tsx:498",
+        "src/lib/collection/row-page.test.ts:1"
       ]
     },
     "G678": {

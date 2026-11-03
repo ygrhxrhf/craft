@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T06:00:17.616Z",
+  "generatedAt": "2026-11-03T06:06:41.474Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 890,
-    "aligned": 290,
+    "gap": 889,
+    "aligned": 291,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 319,
+    "P2 / gap": 318,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 186,
+    "P2 / aligned": 187,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -13296,10 +13296,10 @@
       "cols": 5,
       "id": "G677",
       "official": "★★ **集合行的正文走块 API，不走行 API**：`collections items-add --help` 的 Advanced content 段写明「Collection items **are page blocks**。先建行，再用 `blocks add --id <item-id>` 往里加正文；★ 不要为属于行内的正文另建集合行」；行的标题列有两种写法（显式列名旗标 vs `--items` 里顶层 `title`），**跳过标题值则行显示 `(untitled)`**；属性名匹配用**显示名**而非 schema key（`--\"Story Points\" 5`），且大小写不敏感",
-      "local": "本地 `CollectionItem` 有 `documentId String?`（`contract.prisma:170`）⇒ ★ \"行＝文档/页\"的**形状方向一致**；但本轮实跑 `grep -rn -iE \"item.documentId|CollectionItem\" src/actions/collection` ⇒ 命中只有 `src/actions/collection/items.ts:18/22/38/51/61/68` 的行 CRUD ⇒ **没有\"往行内加正文块\"的通路**，值也只走 `CollectionValue`（`contract.prisma:182-195`）",
-      "verdict": "缺失（行内正文通路）＋形状方向一致（可对齐）",
+      "local": "本地 `CollectionItem` 有 `documentId String?`（`contract.prisma:170`）⇒ ★ \"行＝文档/页\"的**形状方向一致**；但本轮实跑 `grep -rn -iE \"item.documentId|CollectionItem\" src/actions/collection` ⇒ 命中只有 `src/actions/collection/items.ts:18/22/38/51/61/68` 的行 CRUD ⇒ **没有\"往行内加正文块\"的通路**，值也只走 `CollectionValue`（`contract.prisma:182-195`）；✎ 现读（2026-11-03 第 240 批）：已对齐 — 每行「打开页面」：已有 `documentId` 直接进文档；没有时新建一篇文档（标题取首列值）并把 `collection_item.documentId` 指过去，正文走文档/块编辑通路（浏览器实测新建并跳转、行已关联）",
+      "verdict": "已对齐",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

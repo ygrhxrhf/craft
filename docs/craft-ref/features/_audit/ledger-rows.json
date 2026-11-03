@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T03:34:51.904Z",
+  "generatedAt": "2026-11-03T03:39:36.193Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 905,
@@ -2730,7 +2730,7 @@
       "cols": 6,
       "id": "G92",
       "official": "**单元格文本↔值的双向序列化规范**（`protocol.md` §八）：多值用 `\", \"` 连接、percent 无 `%` 时除以 100、checkbox 走 true/false 白名单、date 非法静默丢弃、未知类型不写；字符串→列类型推断 `ZZe`（空/数字/布尔字面串/URL/邮箱/日期/电话）；数字格式四态 `plain-text|number|percentage|currency` × precision **0–5**，默认 USD 与 2 位",
-      "local": "✎ 现读（2026-10-31）更正：有「, 」多值连接；无类型推断、percent 语义、precision 与币种 ⇒ ✎ 再读（2026-11-02 第 193 批）：percent（输入 12% 与 12 都落 0.12，显示 0.5 ⇒ 50%）、currency（`¥` + 2 位以内小数）与数字精度（`maximumFractionDigits`）已在 `cell-edit.ts` / `property-types.ts`；复选框 true/false 白名单与非法日期静默丢弃在 `lib/collection/coerce.ts` 并接到 `setItemValue` 写入前。仍缺**字符串→列类型推断**（空/数字/布尔/URL/邮箱/日期/电话），本地面无\"按内容猜列型\"的入口",
+      "local": "✎ 现读（2026-10-31）更正：有「, 」多值连接；无类型推断、percent 语义、precision 与币种 ⇒ ✎ 再读（2026-11-02 第 193 批）：percent（输入 12% 与 12 都落 0.12，显示 0.5 ⇒ 50%）、currency（`¥` + 2 位以内小数）与数字精度（`maximumFractionDigits`）已在 `cell-edit.ts` / `property-types.ts`；复选框 true/false 白名单与非法日期静默丢弃在 `lib/collection/coerce.ts` 并接到 `setItemValue` 写入前。✎ 现读（2026-11-03 第 223 批）：**字符串→列类型推断**已落——`lib/collection/infer-type.ts` 按空/数字/布尔/URL/邮箱/日期/电话七类逐值判定（整列一致才定类型，`2026-02-31` 判 text 不误落电话），CSV 导入据此建列并写带类型判别值；导入因此成为\"按内容猜列型\"的入口",
       "verdict": "缺失（局部）",
       "score": "2/2",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝无类型推断、无 percent 语义、无 precision 档位与币种",

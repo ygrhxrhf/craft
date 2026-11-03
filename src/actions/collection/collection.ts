@@ -3,6 +3,8 @@
 import { removeMembership } from '@/lib/collection/object-membership';
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
+import { inferColumnType, coerceInferredCell } from '@/lib/collection/infer-type';
+import { toTypedValue } from '@/lib/collection/cell-value';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { parseCsv } from '@/lib/collection/csv';
@@ -277,6 +279,8 @@ export async function createCollectionFromCsv(name: string, csvText: string) {
   const header = parsed[0].map((h, i) => (h.trim() ? h.trim() : `列 ${i + 1}`));
   const rows = parsed.slice(1);
   if (rows.length === 0) throw new Error('这个 CSV 只有表头');
+  // G92: typing comes from the values themselves — a column is only typed when all of them agree.
+  const columnTypes = header.map((_, col) => inferColumnType(rows.map((row) => row[col] ?? '')));
 
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
@@ -290,7 +294,10 @@ export async function createCollectionFromCsv(name: string, csvText: string) {
     .all();
   const first = existing[0];
   if (first) {
-    await db.orm.public.CollectionProperty.where({ id: String(first.id) }).update({ name: header[0] });
+    await db.orm.public.CollectionProperty.where({ id: String(first.id) }).update({
+      name: header[0],
+      type: columnTypes[0],
+    });
   }
   const propertyIds: string[] = first ? [String(first.id)] : [];
   for (let col = 1; col < header.length; col += 1) {
@@ -299,7 +306,7 @@ export async function createCollectionFromCsv(name: string, csvText: string) {
       id: propertyId,
       collectionId,
       name: header[col],
-      type: 'text',
+      type: columnTypes[col],
       order: col,
       isVisible: true,
     });
@@ -317,14 +324,14 @@ export async function createCollectionFromCsv(name: string, csvText: string) {
     });
     const cells = rows[r];
     for (let col = 0; col < propertyIds.length; col += 1) {
-      const text = (cells[col] ?? '').trim();
-      if (!text) continue;
+      const coerced = coerceInferredCell(columnTypes[col], cells[col] ?? '');
+      if (!coerced.ok) continue;
       await db.orm.public.CollectionValue.create({
         id: crypto.randomUUID(),
         itemId,
         propertyId: propertyIds[col],
-        // G451：带类型判别对象，与单元格写入同一形状。
-        value: { type: 'text', value: text },
+        // G451：带类型判别对象，与单元格写入同一形状；G92：类型来自整列推断。
+        value: toTypedValue(columnTypes[col], coerced.value),
       });
     }
   }

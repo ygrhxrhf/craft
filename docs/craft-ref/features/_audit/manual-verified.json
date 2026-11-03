@@ -3583,12 +3583,14 @@
       ]
     },
     "G92": {
-      "status": "partial",
-      "note": "第 193 批：percent/货币/精度已在渲染与解析层；复选框白名单与非法日期丢弃接到写入前。仍缺字符串→列类型推断",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "单元格文本↔值规范齐：多值连接、percent/currency/精度、勾选/日期白名单、字符串→列类型七类推断（CSV 导入承载）",
       "evidence": [
-        "src/lib/collection/coerce.ts:1",
-        "src/actions/collection/items.ts:129",
-        "src/lib/collection/property-types.ts:145"
+        "src/lib/collection/infer-type.ts:1",
+        "src/lib/collection/coerce.ts:12",
+        "src/actions/collection/collection.ts:283",
+        "src/actions/collection/collection.ts:334"
       ]
     },
     "G93": {

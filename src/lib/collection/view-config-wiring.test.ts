@@ -13,8 +13,11 @@ describe('the collection view config is wired to the offline kernel', () => {
     expect(tableView).toContain('getSyncManager');
     expect(tableView).toContain("table: 'collection_view'");
     expect(tableView).toContain('patch: { config: key }');
-    // G286: the payload carries the calculation-row flag too, so serialising it is the wired path.
-    expect(tableView).toContain('const key = JSON.stringify(withShowCalculationRow(next,');
+    // G286/G81: the payload carries the calculation-row flag and the per-view field lists.
+    expect(tableView).toContain('const key = JSON.stringify(');
+    expect(tableView).toContain('withShowCalculationRow(');
+    expect(tableView).toContain('hiddenProperties: [...fields.hidden]');
+    expect(tableView).toContain('customPropertyOrder: [...fields.order]');
     expect(tableView).toContain('await manager.flushNow()');
     expect(tableView).toContain('router.refresh()');
   });

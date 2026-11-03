@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T01:07:29.482Z",
+  "generatedAt": "2026-11-03T01:17:04.001Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 921,
@@ -2521,8 +2521,8 @@
       "cols": 5,
       "id": "G81",
       "official": "视图持久化 **20 键**（`STORED_VIEW_KNOWN_KEYS`，`protocol.md` §二），且字段可见性/顺序是**每视图一套**（`hiddenProperties`/`customPropertyOrder`）",
-      "local": "`TableView.tsx:30-46` 只有 `{filters, sorts, groupBy}` 三键；可见性与顺序挂在属性行上（全合集共用）",
-      "verdict": "结构性缺失",
+      "local": "`TableView.tsx:30-46` 只有 `{filters, sorts, groupBy}` 三键；可见性与顺序挂在属性行上（全合集共用） ⇒ ✎ 现读（2026-11-02 第 194 批）：视图 config 已到 6 键（`filters`／`sorts`／`groupBy`／`showSummaryRow`／`hiddenProperties`／`customPropertyOrder`），**字段可见性与顺序改由本视图持有**（`lib/collection/view-fields.ts`，面板动作只改视图 config），真浏览器核对：隐藏列立刻消失、刷新后仍隐藏、取消隐藏复原；离官方 20 键还差约 14 枚",
+      "verdict": "缺失（局部）",
       "score": "2/3",
       "status": "gap",
       "scoreParsed": {

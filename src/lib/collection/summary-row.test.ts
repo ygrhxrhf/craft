@@ -57,7 +57,8 @@ describe('the calculation row switch (G286)', () => {
       'utf8',
     );
     expect(view).toContain('readShowCalculationRow(initialConfig)');
-    expect(view).toContain('withShowCalculationRow(next, showOverride ?? showSummary)');
+    expect(view).toContain('withShowCalculationRow(');
+    expect(view).toContain('showOverride ?? showSummary');
     expect(view).toContain('calculationRowToggle(showSummary).label');
     // 分组与不分组两张表都要跟着收起
     expect(view.match(/\{showSummary && \(/g)).toHaveLength(2);

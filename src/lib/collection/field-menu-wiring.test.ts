@@ -51,15 +51,20 @@ describe('the collection field menu is wired to the official keys (G1537)', () =
 
   it('mounts both surfaces on the table view', () => {
     expect(table).toContain('<FieldMenu property={property} />');
-    expect(table).toContain('<HideOrderFieldsMenu properties={collection.properties as any} />');
+    // G81：面板改成受控——列序/可见性来自视图 config，动作回给表格视图。
+    expect(table).toContain('<HideOrderFieldsMenu');
+    expect(table).toContain('rows={menuRows}');
     // 两处列头（分组/未分组）都要有，少一处就会有一半视图点不到
     expect(table.match(/<FieldMenu property=\{property\} \/>/g)).toHaveLength(2);
   });
 
-  it('orders fields through the same kernel table, and says so with the official panel title', () => {
+  it('orders fields per view through the view config, and says so with the official panel title', () => {
     expect(panel).toContain('{HIDE_ORDER_FIELDS}');
-    expect(panel).toContain('patch: { order: row.order }');
-    expect(panel).toContain('patch: { isVisible: nextVisible }');
+    expect(panel).toContain('onToggle(row.id)');
+    expect(panel).toContain('onMove(row.id, -1)');
+    expect(panel).not.toContain("table: 'collection_property'");
+    expect(table).toContain('hiddenProperties: [...fields.hidden]');
+    expect(table).toContain('customPropertyOrder: [...fields.order]');
     expect(HIDE_ORDER_FIELDS).toBe('隐藏和排序字段');
   });
 });

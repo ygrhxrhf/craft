@@ -24,6 +24,13 @@ import {
   readShowCalculationRow,
   withShowCalculationRow,
 } from '@/lib/collection/summary-row';
+import {
+  fieldsForView,
+  moveField,
+  readViewFields,
+  toggleFieldHidden,
+  type ViewFields,
+} from '@/lib/collection/view-fields';
 import { filterChipText, groupChipText, sortChipText, withTitleFirst } from '@/lib/collection/view-chips';
 import { OPERATORS } from '@/lib/collection/filter-operators';
 
@@ -43,6 +50,8 @@ export function TableView({ collection, view }: TableViewProps) {
   const initialConfig = parseConfig((view as any).config);
   // G286：计算行整行可显隐，缺省显示。
   const [showSummary, setShowSummary] = useState(() => readShowCalculationRow(initialConfig));
+  // G81：字段可见性与顺序是每视图一套。
+  const [viewFields, setViewFields] = useState<ViewFields>(() => readViewFields(initialConfig));
   const [syncedView, setSyncedView] = useState({ id: view.id, key: configKey });
   /**
    * 本机写过的 config key（尾部即最新一次）。`persistConfig` 写完就 `router.refresh()`，
@@ -74,6 +83,7 @@ export function TableView({ collection, view }: TableViewProps) {
     setSorts(config.sorts ?? []);
     setGroupBy(config.groupBy ?? null);
     setShowSummary(readShowCalculationRow(config));
+    setViewFields(readViewFields(config));
   }
 
   /**
@@ -84,10 +94,22 @@ export function TableView({ collection, view }: TableViewProps) {
   const configWriteChain = useRef<Promise<void>>(Promise.resolve());
 
   const persistConfig = (
-    next: { filters: any[]; sorts: any[]; groupBy: string | null },
+    next: { filters: any[]; sorts: any[]; groupBy: string | null; fields?: ViewFields },
     showOverride?: boolean,
   ) => {
-    const key = JSON.stringify(withShowCalculationRow(next, showOverride ?? showSummary));
+    const fields = next.fields ?? viewFields;
+    const key = JSON.stringify(
+      withShowCalculationRow(
+        {
+          filters: next.filters,
+          sorts: next.sorts,
+          groupBy: next.groupBy,
+          hiddenProperties: [...fields.hidden],
+          customPropertyOrder: [...fields.order],
+        },
+        showOverride ?? showSummary,
+      ),
+    );
     setWrittenConfigKeys((keys) => [...keys, key].slice(-8));
     configWriteChain.current = configWriteChain.current
       .then(async () => {
@@ -107,9 +129,44 @@ export function TableView({ collection, view }: TableViewProps) {
   };
 
   // G105: the title column (first text property) is always first when fields are merged.
+  // G81：列序先吃本视图的 customPropertyOrder / hiddenProperties，再回落到属性行的 order。
   const visibleProperties = withTitleFirst(
-    collection.properties.filter((p: any) => p.isVisible),
+    fieldsForView(collection.properties as any[], viewFields) as any[],
   );
+
+  // 面板里列的是**全部字段**（含本视图隐藏的），顺序与屏上一致，供取消隐藏与上/下移。
+  const menuRows = (() => {
+    const rank = new Map(viewFields.order.map((id, index) => [id, index]));
+    return [...(collection.properties as any[])]
+      .slice()
+      .sort((left, right) => {
+        const leftRank = rank.get(left.id);
+        const rightRank = rank.get(right.id);
+        if (leftRank !== undefined && rightRank !== undefined) return leftRank - rightRank;
+        if (leftRank !== undefined) return -1;
+        if (rightRank !== undefined) return 1;
+        return left.order - right.order;
+      })
+      .map((property) => ({
+        id: property.id as string,
+        name: property.name as string,
+        isVisible: property.isVisible === true,
+        order: property.order as number,
+      }));
+  })();
+
+  const toggleField = (id: string) => {
+    const next = toggleFieldHidden(viewFields, id);
+    setViewFields(next);
+    void persistConfig({ filters, sorts, groupBy, fields: next });
+  };
+
+  const moveFieldBy = (id: string, delta: -1 | 1) => {
+    const next = moveField(viewFields, visibleProperties.map((property: any) => property.id), id, delta);
+    if (next === viewFields) return;
+    setViewFields(next);
+    void persistConfig({ filters, sorts, groupBy, fields: next });
+  };
 
   // Apply filters, sorts, and grouping
   let processedItems = collection.items;
@@ -243,7 +300,12 @@ export function TableView({ collection, view }: TableViewProps) {
         }}
       />
       {/* G1537：官方把「隐藏和排序字段」放在视图工具条上，与筛选/排序/分组同一排 */}
-      <HideOrderFieldsMenu properties={collection.properties as any} />
+      <HideOrderFieldsMenu
+        rows={menuRows}
+        hidden={viewFields.hidden}
+        onToggle={toggleField}
+        onMove={moveFieldBy}
+      />
     </>
   );
 

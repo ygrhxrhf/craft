@@ -3493,9 +3493,12 @@
     },
     "G81": {
       "status": "partial",
-      "note": "视图 config 只存 filters/sorts/groupBy；显隐与顺序挂属性行全集合共用",
+      "note": "第 194 批：视图 config 6 键，字段显隐/顺序已按视图存（hiddenProperties/customPropertyOrder）；离 20 键还差约 14 枚",
       "evidence": [
-        "src/app/(app)/collections/[id]/TableView.tsx:74"
+        "src/lib/collection/view-fields.ts:1",
+        "src/app/(app)/collections/[id]/TableView.tsx:107",
+        "src/app/(app)/collections/[id]/TableView.tsx:132",
+        "src/components/collection/HideOrderFieldsMenu.tsx:1"
       ]
     },
     "G82": {

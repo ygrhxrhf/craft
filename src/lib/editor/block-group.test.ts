@@ -5,7 +5,7 @@ import { Node as ProseNode, Schema } from '@tiptap/pm/model';
 import { EditorState, TextSelection } from '@tiptap/pm/state';
 import { describe, expect, it } from 'vitest';
 
-import { applyGroup, applyUngroup, canGroup, canUngroup } from './block-group';
+import { applyGroup, applyGroupIndices, applyUngroup, canGroup, canUngroup } from './block-group';
 
 /** 本地卡片容器（`cardBlock`）的最小复刻，用来在不启动编辑器的情况下证明组合规则。 */
 const cardSchema = new Schema({
@@ -95,5 +95,30 @@ describe('面板接线', () => {
     expect(panel).toContain('ungroupSelection(editor)');
     expect(panel).toContain('canGroup(editor.state)');
     expect(panel).toContain('canUngroup(editor.state)');
+  });
+});
+
+describe('块选择态的成组（G1588）', () => {
+  it('wraps an explicit index list into one card', () => {
+    const doc = docOf(p('一'), p('二'), p('三'));
+    const state = stateOf(doc, 1);
+    const dispatched: ProseNode[] = [];
+    expect(
+      applyGroupIndices(state, (tr) => {
+        dispatched.push(tr.doc);
+      }, [0, 1]),
+    ).toBe(true);
+    const result = dispatched[0]!;
+    expect(result.childCount).toBe(2);
+    expect(result.child(0).type.name).toBe('cardBlock');
+    expect(result.child(0).childCount).toBe(2);
+    expect(result.child(1).textContent).toBe('三');
+  });
+
+  it('refuses a single index and an out-of-range one', () => {
+    const doc = docOf(p('一'), p('二'));
+    const state = stateOf(doc, 1);
+    expect(applyGroupIndices(state, undefined, [0])).toBe(false);
+    expect(applyGroupIndices(state, undefined, [0, 9])).toBe(false);
   });
 });

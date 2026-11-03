@@ -9749,10 +9749,13 @@
       ]
     },
     "G1588": {
-      "status": "gap",
-      "note": "全仓无 block-select，也无 GROUP/UNGROUP 命令",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "块选择态（NodeSelection）与 Ctrl-G 成组已落；载体与官方类名不同但形状一致。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:70"
+        "src/components/editor/extensions/craft-keymap.ts:369",
+        "src/components/editor/extensions/craft-keymap.ts:142",
+        "src/lib/editor/block-group.ts:55"
       ]
     },
     "G1589": {
@@ -9803,10 +9806,12 @@
       ]
     },
     "G1594": {
-      "status": "gap",
-      "note": "无成组/取消组能力，两键均无分支",
+      "status": "partial",
+      "priority": "P2",
+      "note": "Ctrl-Shift-G 已绑且幂等；但本地取消组把子块提到顶层，官方留下「块＋子块」。",
       "evidence": [
-        "src/lib/editor/keymap.ts:172"
+        "src/components/editor/extensions/craft-keymap.ts:143",
+        "src/lib/editor/block-group.ts:69"
       ]
     },
     "G1595": {

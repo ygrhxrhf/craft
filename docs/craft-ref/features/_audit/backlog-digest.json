@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T08:53:05.007Z",
+  "generatedAt": "2026-11-03T09:01:20.303Z",
   "total": 1614,
   "status": {
-    "aligned": 584,
+    "aligned": 585,
     "nonaction": 512,
-    "partial": 229,
+    "partial": 230,
     "deliberate": 165,
-    "gap": 104,
+    "gap": 102,
     "unreachable": 20
   },
   "priority": {
@@ -17,13 +17,13 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 269,
+    "P2 / aligned": 270,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
     "P1 / nonaction": 89,
+    "P2 / partial": 80,
     "P? / partial": 80,
-    "P2 / partial": 79,
     "P? / aligned": 78,
     "P2 / deliberate": 73,
     "P3 / partial": 70,
@@ -33,7 +33,7 @@
     "P3 / gap": 39,
     "P? / gap": 34,
     "P3 / deliberate": 32,
-    "P2 / gap": 31,
+    "P2 / gap": 29,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
@@ -1257,7 +1257,7 @@
   "gapSections": [
     [
       "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      16
+      15
     ],
     [
       "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",

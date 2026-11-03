@@ -12,6 +12,8 @@ import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
 import { nextFormatStep, nextBackspaceStep, isEmptyBlock, hasDecoration } from '@/lib/editor/format-downgrade';
 import { decorationAt } from '@/lib/editor/format-commands';
 import { toggledDecoration } from '@/lib/editor/style-keys';
+import { applyGroup, applyGroupIndices, applyUngroup } from '@/lib/editor/block-group';
+import { useBlockSelectStore } from '@/lib/store/use-block-select-store';
 import { mergeStyleWinner } from '@/lib/editor/merge-text-blocks';
 import { requestLink } from '@/lib/store/use-link-request-store';
 import { toggleTaskCancelledAtSelection } from '@/components/editor/drag-handle/block-actions';
@@ -135,6 +137,19 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
   }
 
   if (id === 'DUPLICATE') return duplicateTopBlock(editor);
+
+  // G1588 / G1594: 组合与取消组合。组合＝把选中的顶层块包进卡片；取消组合＝把卡片子块提回顶层
+  // （官方取消组合留的是「块＋子块」，本地按 G197 的卡片模型提回顶层）。
+  if (id === 'GROUP_BLOCKS') {
+    const selection = useBlockSelectStore.getState();
+    if (selection.active && selection.indices.length > 1) {
+      const grouped = applyGroupIndices(editor.state, editor.view.dispatch, selection.indices);
+      selection.clear();
+      return grouped;
+    }
+    return applyGroup(editor.state, editor.view.dispatch);
+  }
+  if (id === 'UNGROUP_BLOCKS') return applyUngroup(editor.state, editor.view.dispatch);
 
   // G1584：页面块是子文档的指针；键位只插占位预览，点它才建子页（page-block-view）。
   if (id === 'PAGE') return editor.chain().focus().setPageBlock().run();
@@ -285,7 +300,10 @@ export const CraftKeymap = Extension.create({
               !event.altKey
             ) {
               const { from, to } = view.state.selection;
-              if (from !== to) {
+              // G1588: the block-select state is a node selection, and that is where the same
+              // chord groups blocks — so the find panel only claims *text* selections.
+              const isTextSelection = !(view.state.selection instanceof NodeSelection);
+              if (from !== to && isTextSelection) {
                 event.preventDefault();
                 event.stopPropagation();
                 useFindReplaceStore.getState().openWith(false);
@@ -375,6 +393,7 @@ export const CraftKeymap = Extension.create({
               const state = view.state;
               if (state.selection instanceof NodeSelection) {
                 event.preventDefault();
+                useBlockSelectStore.getState().clear();
                 view.dom.blur();
                 return true;
               }
@@ -382,10 +401,34 @@ export const CraftKeymap = Extension.create({
               if (index >= 0) {
                 const start = topLevelStart(state.doc, index);
                 view.dispatch(state.tr.setSelection(NodeSelection.create(state.doc, start)));
+                // G1588: the block-select state remembers which block the ladder started from.
+                useBlockSelectStore.getState().begin(index);
                 event.preventDefault();
                 return true;
               }
               return false;
+            }
+            // G1588: `Shift-↑/↓` extends the block selection (the official ladder needs the
+            // expansion before `Ctrl-G` can merge anything).
+            if (
+              event.shiftKey &&
+              (event.key === 'ArrowUp' || event.key === 'ArrowDown') &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey
+            ) {
+              const selection = useBlockSelectStore.getState();
+              if (selection.active && selection.indices.length > 0) {
+                const anchor = selection.indices[selection.indices.length - 1];
+                const next = event.key === 'ArrowUp' ? anchor - 1 : anchor + 1;
+                if (next >= 0 && next < view.state.doc.childCount) {
+                  selection.extend(next);
+                  const start = topLevelStart(view.state.doc, next);
+                  view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, start)));
+                  event.preventDefault();
+                  return true;
+                }
+              }
             }
             // G1550: Ctrl/⌘-A is a two-step ladder — first select the current block's text,
             // then (on the same chord again) turn that block into a node selection.

@@ -65,6 +65,24 @@ export function applyGroup(state: EditorState, dispatch?: (tr: Transaction) => v
   return true;
 }
 
+/** G1588：块选择态里选中的下标集合 → 一次性包进卡片（跨态的成组入口）。 */
+export function applyGroupIndices(
+  state: EditorState,
+  dispatch: ((tr: Transaction) => void) | undefined,
+  indices: readonly number[],
+): boolean {
+  const card = state.schema.nodes[CARD];
+  if (!card) return false;
+  const sorted = [...new Set(indices)].sort((a, b) => a - b).filter((index) => index >= 0 && index < state.doc.childCount);
+  if (sorted.length < 2) return false;
+  const nodes: Node[] = sorted.map((index) => state.doc.child(index));
+  const start = positionOfIndex(state.doc, sorted[0]);
+  const end = start + nodes.reduce((size, node) => size + node.nodeSize, 0);
+  if (!dispatch) return true;
+  dispatch(state.tr.replaceWith(start, end, card.create(null, nodes)));
+  return true;
+}
+
 /** 取消组合：把光标所在卡片的子块提回顶层，卡片本身消失。 */
 export function applyUngroup(state: EditorState, dispatch?: (tr: Transaction) => void): boolean {
   const { $from } = state.selection;

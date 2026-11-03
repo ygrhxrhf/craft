@@ -118,6 +118,8 @@ export const BINDING_SECTIONS: Readonly<Record<string, PanelSectionId | null>> =
   MOVE_BLOCK_TOP_MAC: 'organize-move',
   MOVE_BLOCK_BOTTOM_MAC: 'organize-move',
   DUPLICATE: 'editing-selection',
+  GROUP_BLOCKS: 'organize-group',
+  UNGROUP_BLOCKS: 'organize-group',
   RENAME: 'editing-selection',
   TOGGLE_LEFT_SIDEBAR: 'general-view',
   TOGGLE_FOCUS_MODE: 'general-view',

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T08:49:17.540Z",
+  "generatedAt": "2026-11-03T08:53:04.749Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 866,
-    "aligned": 313,
+    "gap": 865,
+    "aligned": 314,
     "unknown": 194,
     "deliberate": 105,
     "partial": 64,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 295,
+    "P2 / gap": 294,
     "P? / gap": 226,
-    "P2 / aligned": 209,
+    "P2 / aligned": 210,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -29540,10 +29540,10 @@
       "cols": 5,
       "id": "G1583",
       "official": "★★★ **`Escape`（`CANCEL`）的\"退一层\"：官方**逐层退出**，本地**原地不动****（第 325 批，`editor.key.insert-block-space` 两侧各 7 步，与第 323 批的方程读数合起来看）：官方在文本编辑态按 `Escape` ⇒ 焦点从编辑器 `div[contenteditable]` 落到 **`body`**（`inEditor` true→false）；而方程输入框开着时按 `Escape` ⇒ 焦点从 `input` **回到编辑器**（第 323 批 `wave1-39` 第 6 步）⇒ 两次合起来＝**官方 Esc 是\"退一层\"**（子编辑器→编辑器→body）。本地同一序列 `Escape` 后 `inEditor` **恒 true**（焦点与选区 `offset 16` 都留在编辑器里）⇒ 本地编辑器层面 Esc **无动作**。✎ **第 331 批补证**：官方焦点落到的 `body` 带 **`block-select`** class（`body.nodrag.noshift.nocmd.block-select`）⇒ 这个\"退一层\"不是单纯失焦，是**进入块选择态**（见 `G1588`）。★ 诚实边界：本批只测\"焦点在哪\"，未测 `Escape` 对弹层/斜线菜单的影响（那些已由各自 spec 覆盖：弹层类 Esc 关一层）；本地\"无动作\"只在**文本编辑态**成立",
-      "local": "本地对照＝编辑器层无 Esc 处置（`craft-keymap.ts` 无 CANCEL 分支）；焦点留在 `.ProseMirror`",
-      "verdict": "行为不同（焦点层级）",
+      "local": "✎ 现读（2026-11-03 第 263 批）：编辑器层补上「退一层」——文本光标按 `Escape` ⇒ 当前顶层块进入块选择态（`NodeSelection`，DOM 出现 `.ProseMirror-selectednode`），再按一次 ⇒ 编辑器失焦、焦点回 `body`；带修饰键的 Esc 不接管。弹层/斜线菜单的 Esc 仍由各自处理器先吃掉",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

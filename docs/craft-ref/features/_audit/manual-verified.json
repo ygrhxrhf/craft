@@ -9703,10 +9703,11 @@
       ]
     },
     "G1583": {
-      "status": "gap",
-      "note": "键位表无 CANCEL/Escape，未命中一律返回 false",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Escape 分层退出：文本光标→块选择，第二次→失焦到 body；浏览器实测 selectednode 1→0、active BODY。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:130"
+        "src/components/editor/extensions/craft-keymap.ts:369"
       ]
     },
     "G1584": {

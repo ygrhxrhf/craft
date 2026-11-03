@@ -363,6 +363,30 @@ export const CraftKeymap = Extension.create({
               requestLink();
               return true;
             }
+            // G1583: Escape steps out one layer. Text caret → select the block it sits in
+            // (the local block-select state); a block selection → leave the editor entirely.
+            if (
+              event.key === 'Escape' &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey &&
+              !event.shiftKey
+            ) {
+              const state = view.state;
+              if (state.selection instanceof NodeSelection) {
+                event.preventDefault();
+                view.dom.blur();
+                return true;
+              }
+              const index = topLevelIndexOf(state.doc, state.selection.from);
+              if (index >= 0) {
+                const start = topLevelStart(state.doc, index);
+                view.dispatch(state.tr.setSelection(NodeSelection.create(state.doc, start)));
+                event.preventDefault();
+                return true;
+              }
+              return false;
+            }
             // G1550: Ctrl/⌘-A is a two-step ladder — first select the current block's text,
             // then (on the same chord again) turn that block into a node selection.
             if (

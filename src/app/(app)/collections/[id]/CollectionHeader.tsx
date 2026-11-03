@@ -18,6 +18,7 @@ import { columnsFromProperties, rowsFromItems, toCsv } from '@/lib/collection/cs
 import { getSyncManager } from '@/lib/sync-core';
 import { confirmDialog, promptDialog } from '@/lib/dialog/show';
 import { useRouter } from 'next/navigation';
+import { normalizeTitleColumn } from '@/lib/collection/title-column';
 import type { getCollection } from '@/actions/collection/collection';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
@@ -47,6 +48,25 @@ export function CollectionHeader({ collection }: CollectionHeaderProps) {
     await manager.applyLocal({ table: 'collection', id: collection.id, patch: { name: trimmed } });
     await manager.flushNow();
     setName(trimmed);
+    router.refresh();
+  };
+
+  const handleRenameTitleColumn = async () => {
+    const next = await promptDialog({
+      title: '重命名标题列',
+      defaultValue: normalizeTitleColumn(collection.titleColumn),
+      confirmLabel: '保存',
+    });
+    if (next === null) return;
+    const trimmed = normalizeTitleColumn(next);
+    if (trimmed === normalizeTitleColumn(collection.titleColumn)) return;
+    const manager = getSyncManager();
+    await manager.applyLocal({
+      table: 'collection',
+      id: collection.id,
+      patch: { titleColumn: trimmed },
+    });
+    await manager.flushNow();
     router.refresh();
   };
 
@@ -130,6 +150,10 @@ export function CollectionHeader({ collection }: CollectionHeaderProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={handleRename}>重命名</DropdownMenuItem>
+              {/* G691：行标题列的名字（官方 `--title <columnName>`，默认 `Title`），与集合名分开。 */}
+              <DropdownMenuItem onClick={() => void handleRenameTitleColumn()}>
+                重命名标题列
+              </DropdownMenuItem>
               <DropdownMenuItem variant="destructive" onClick={handleDelete}>
                 删除集合
               </DropdownMenuItem>

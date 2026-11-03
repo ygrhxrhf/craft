@@ -278,6 +278,8 @@ model Collection {
   name        String   @default("未命名集合")
   icon        String?
   description String?
+  // G691：行标题列的名字（官方 `collections create --title <columnName>`，默认 `Title`）。
+  titleColumn String   @default("Title")
   order       Float    @default(0)
   folderId    String?
   userId      String

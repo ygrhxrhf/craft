@@ -10,6 +10,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-reorder';
 import { exceedsVirtualTableThreshold } from '@/lib/collection/limits';
 import { TABLE_OVERSCAN, visibleRowWindow, scheduleScrollUpdate } from '@/lib/collection/virtual-rows';
+import { titleColumnLabel } from '@/lib/collection/title-column';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { PropertyCell } from '@/components/collection/PropertyCell';
@@ -456,13 +457,17 @@ export function TableView({ collection, view }: TableViewProps) {
                   <table className="w-full border-collapse">
                     <thead className="sticky top-0 z-[var(--st-z-sticky-header)] bg-muted/50 max-md:bg-muted">
                       <tr>
-                        {visibleProperties.map((property: any) => (
+                        {visibleProperties.map((property: any, index: number) => (
                           <th
                             key={property.id}
                             className="border-b border-r border-border px-[var(--st-cell-padding-x)] py-[var(--st-cell-padding-y)] text-left typography-caption-md-500 text-muted-foreground first:border-l first:max-md:sticky first:max-md:left-0 first:max-md:z-[var(--st-z-sticky-header-index)] first:max-md:bg-muted"
                           >
                             <span className="flex items-center gap-1">
-                              <span className="min-w-0 truncate">{property.name}</span>
+                              <span className="min-w-0 truncate">
+                                {index === 0
+                                  ? titleColumnLabel(collection.titleColumn, property.type) || property.name
+                                  : property.name}
+                              </span>
                               <FieldMenu property={property} />
                             </span>
                           </th>
@@ -551,13 +556,17 @@ export function TableView({ collection, view }: TableViewProps) {
             <thead className="sticky top-0 z-[var(--st-z-sticky-header)] bg-muted/50 max-md:bg-muted">
               <tr>
                 {reorderEnabled && <th className="w-6 border-b border-r border-border px-0 py-0" />}
-                {visibleProperties.map((property: any) => (
+                {visibleProperties.map((property: any, index: number) => (
                   <th
                     key={property.id}
                     className="border-b border-r border-border px-[var(--st-cell-padding-x)] py-[var(--st-cell-padding-y)] text-left typography-caption-md-500 text-muted-foreground first:border-l first:max-md:sticky first:max-md:left-0 first:max-md:z-[var(--st-z-sticky-header-index)] first:max-md:bg-muted"
                   >
                     <span className="flex items-center gap-1">
-                      <span className="min-w-0 truncate">{property.name}</span>
+                      <span className="min-w-0 truncate">
+                        {index === 0
+                          ? titleColumnLabel(collection.titleColumn, property.type) || property.name
+                          : property.name}
+                      </span>
                       <FieldMenu property={property} />
                     </span>
                   </th>

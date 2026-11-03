@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T03:25:19.417Z",
+  "generatedAt": "2026-11-03T03:32:37.943Z",
   "total": 1614,
   "status": {
-    "aligned": 533,
+    "aligned": 534,
     "nonaction": 512,
-    "partial": 271,
+    "partial": 270,
     "deliberate": 165,
     "gap": 113,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 218,
+    "P2 / aligned": 219,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 121,
+    "P2 / partial": 120,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1263,10 +1263,6 @@
       5
     ],
     [
-      "三点八七、第 76 批（★★ 契约面穷尽：`--help` 逐条读满 `",
-      5
-    ],
-    [
       "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",
       5
     ],
@@ -1292,6 +1288,10 @@
     ],
     [
       "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
+      4
+    ],
+    [
+      "三点一二、样式面板与装饰追加（来自 `styles.md`，静态证据 +",
       4
     ]
   ]

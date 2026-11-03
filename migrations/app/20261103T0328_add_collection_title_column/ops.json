@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.collections.titleColumn",
+    "label": "Add column \"titleColumn\" to \"collections\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "titleColumn",
+        "table": "collections"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"titleColumn\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "collections",
+          "titleColumn"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"titleColumn\"",
+        "sql": "ALTER TABLE \"public\".\"collections\" ADD COLUMN \"titleColumn\" text DEFAULT 'Title' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"titleColumn\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "collections",
+          "titleColumn"
+        ]
+      }
+    ]
+  }
+]

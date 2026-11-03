@@ -6494,11 +6494,13 @@
       ]
     },
     "G679": {
-      "status": "partial",
-      "note": "第 188 批：落点互斥解析 + 日记不可移动守卫 + 移动前回退快照已入纯核，浏览屏批量移动接线；卡片菜单/侧栏拖拽仍直写",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "三条移动约束+回退快照均由 lib/document/move.ts 落成并有 13 例测试；本地无 CLI，等价面为浏览屏批量移动/回收站还原/模板标记",
       "evidence": [
         "src/lib/document/move.ts:1",
-        "src/components/document/SortableDocGrid.tsx:154"
+        "src/lib/document/move.test.ts:15",
+        "src/components/document/SortableDocGrid.tsx:161"
       ]
     },
     "G680": {
@@ -6570,9 +6572,13 @@
     },
     "G691": {
       "status": "partial",
-      "note": "集合名在 Collection.name，行标题借 documentId 的文档标题，无自定义行标题列名",
+      "priority": "P2",
+      "note": "行标题列名可自定义（titleColumn 默认 Title，集合 ⋯ 菜单重命名，表头首列显示）；仍差\"集合作为文档内块 + position\"这一层",
       "evidence": [
-        "src/prisma/contract.prisma:144"
+        "src/prisma/contract.prisma:282",
+        "src/lib/collection/title-column.ts:1",
+        "src/app/(app)/collections/[id]/CollectionHeader.tsx:54",
+        "src/app/(app)/collections/[id]/TableView.tsx:468"
       ]
     },
     "G693": {

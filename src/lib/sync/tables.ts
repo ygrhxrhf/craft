@@ -42,7 +42,7 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'daily_notes_config', model: 'DailyNotesConfig', cols: ['id','userId','folderId','templateId','startTime','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // G120/G162：自定义提示词与助手开关都是 per-user 设置（官方 settings_state），随 user 设置行同步，不进文档载荷。
   { table: 'user', model: 'User', cols: ['id','name','image','theme','editorFont','editorWidth','completedTaskAppearance','notifyComments','notifyReminders','notifyDaily','prompts','promptObjects','assistantEnabled','assistantDisabledSpaces','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
-  { table: 'collection', model: 'Collection', cols: ['id','name','icon','description','order','folderId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  { table: 'collection', model: 'Collection', cols: ['id','name','icon','description','titleColumn','order','folderId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'collection_item', model: 'CollectionItem', cols: ['id','collectionId','order','documentId','schemas','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'collection_property', model: 'CollectionProperty', cols: ['id','collectionId','name','type','config','order','isVisible','width','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'collection_value', model: 'CollectionValue', cols: ['id','itemId','propertyId','value','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },

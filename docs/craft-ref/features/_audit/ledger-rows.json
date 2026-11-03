@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T03:25:19.169Z",
+  "generatedAt": "2026-11-03T03:32:37.705Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 907,
@@ -13316,8 +13316,8 @@
       "cols": 5,
       "id": "G679",
       "official": "★★ **`documents move` 的三条约束**：`--folder` 与 `--destination`（`unsorted|templates`）**互斥且必选一**；删除与还原都不在 move 语义里（删＝`documents delete`，还原＝`move --destination unsorted`）；★ **Daily notes cannot be moved**；☆ 还有一条官方自证式要求「移动前先记录当前位置，以便回退」",
-      "local": "本地 `src/actions/document/move.ts:9-21` 的 `moveDocument(id, {parentId, folderId, order})` ⇒ ★ 三种落点混在一个 PATCH 里、**没有互斥校验**，也没有 `unsorted/templates` 虚拟落点；本轮实跑 `grep -rn -iE \"dailyNote|daily_note\" src/actions src/app` 的日记侧 ⇒ 无\"不可移动\"守卫；权限位是 `'editor'`（`:15`），与 §F 只读态矩阵同一条线 ☆ 原判作废（第 188 批现读）：旧证据里的 `src/actions/document/move.ts` 已不存在，落点模型改由 `src/lib/document/move.ts` 承载——`parseMoveRequest` 拒多落点/无落点/未知虚拟落点，`planMove` 挡下每日笔记并产出 unsorted＝`{folderId:null,parentId:null,isTemplate:false}`／templates＝`{isTemplate:true}`，`previous` 快照交给 `applyMove` 在写失败时还原；浏览屏批量移动已走 `applyMoveRow`，卡片菜单与侧栏拖拽仍直写 patch",
-      "verdict": "缺失（局部）",
+      "local": "本地 `src/actions/document/move.ts:9-21` 的 `moveDocument(id, {parentId, folderId, order})` ⇒ ★ 三种落点混在一个 PATCH 里、**没有互斥校验**，也没有 `unsorted/templates` 虚拟落点；本轮实跑 `grep -rn -iE \"dailyNote|daily_note\" src/actions src/app` 的日记侧 ⇒ 无\"不可移动\"守卫；权限位是 `'editor'`（`:15`），与 §F 只读态矩阵同一条线 ☆ 原判作废（第 188 批现读）：旧证据里的 `src/actions/document/move.ts` 已不存在，落点模型改由 `src/lib/document/move.ts` 承载——`parseMoveRequest` 拒多落点/无落点/未知虚拟落点，`planMove` 挡下每日笔记并产出 unsorted＝`{folderId:null,parentId:null,isTemplate:false}`／templates＝`{isTemplate:true}`，`previous` 快照交给 `applyMove` 在写失败时还原；浏览屏批量移动已走 `applyMoveRow`，卡片菜单与侧栏拖拽仍直写 patch；✎ 现读（2026-11-03 第 221 批）：三条约束与回退快照均已落并有测试（`move.test.ts` 含互斥/虚拟落点/日记守卫/回滚 13 例）；本地无 CLI，等价面＝浏览屏批量移动 `applyMoveRow`＋回收站还原＋模板标记 ⇒ 已对齐",
+      "verdict": "已对齐",
       "score": "2/1",
       "status": "partial",
       "scoreParsed": {
@@ -13533,8 +13533,8 @@
       "cols": 5,
       "id": "G691",
       "official": "★★ **`collections create` 的 `--title` 不是集合名**：`--name` 才是集合名，★ `--title <columnName>` 是**行标题列的名字**（默认 `Title`），并警告「不要把行标题建成常规列，否则行显示 `(untitled)` 且名字被塞进侧列」；☆ 集合必带 `--document <rootBlockId>`（即集合是**插进某篇文档的块**），`--position start|end` 默认 end",
-      "local": "本地 `Collection.name`（`contract.prisma:125` 默认「未命名集合」）＋ 行标题走 `CollectionItem.documentId` 关联的文档标题（`:170`）⇒ ★ 方向一致（行＝文档），但**没有\"标题列名可自定义\"这一层**",
-      "verdict": "缺失（标题列命名）＋形状方向一致",
+      "local": "本地 `Collection.name`（默认「未命名集合」）＋ 行标题走 `CollectionItem.documentId` 关联的文档标题 ⇒ ★ 方向一致（行＝文档）；✎ 现读（2026-11-03 第 221 批）：**标题列名可自定义**已落——`Collection.titleColumn` 默认 `Title`，集合 ⋯ 菜单「重命名标题列」写入，表头首列（首个文本属性）显示该名；仍差官方「集合是插进文档的块」（`--document <rootBlockId>` 与 `--position start|end`）这一层",
+      "verdict": "缺失（文档内嵌）",
       "score": "2/1",
       "status": "gap",
       "scoreParsed": {

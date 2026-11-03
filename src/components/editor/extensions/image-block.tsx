@@ -20,6 +20,12 @@ declare module '@tiptap/react' {
   }
 }
 
+
+function readNumber(raw: string | null): number | null {
+  const value = Number(raw);
+  return raw !== null && raw !== '' && Number.isFinite(value) ? value : null;
+}
+
 export const ImageBlock = Node.create({
   name: 'imageBlock',
   group: 'block',
@@ -89,6 +95,30 @@ export const ImageBlock = Node.create({
         default: 'fill',
         parseHTML: (element) => (element.getAttribute('data-image-fit') === 'fit' ? 'fit' : 'fill'),
         renderHTML: (attributes) => ({ 'data-image-fit': attributes.imageFit === 'fit' ? 'fit' : 'fill' }),
+      },
+      // G503：裁剪矩形序列化成竖线字符串（全有或全无），并并列保存处理后/原始两套尺寸。
+      cropMask: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('data-crop-mask'),
+        renderHTML: (attributes) => (attributes.cropMask ? { 'data-crop-mask': attributes.cropMask } : {}),
+      },
+      imageWidth: {
+        default: null,
+        parseHTML: (element) => readNumber(element.getAttribute('data-image-width')),
+        renderHTML: (attributes) =>
+          typeof attributes.imageWidth === 'number' ? { 'data-image-width': String(attributes.imageWidth) } : {},
+      },
+      rawAspectRatio: {
+        default: null,
+        parseHTML: (element) => readNumber(element.getAttribute('data-raw-aspect-ratio')),
+        renderHTML: (attributes) =>
+          typeof attributes.rawAspectRatio === 'number' ? { 'data-raw-aspect-ratio': String(attributes.rawAspectRatio) } : {},
+      },
+      rawImageWidth: {
+        default: null,
+        parseHTML: (element) => readNumber(element.getAttribute('data-raw-image-width')),
+        renderHTML: (attributes) =>
+          typeof attributes.rawImageWidth === 'number' ? { 'data-raw-image-width': String(attributes.rawImageWidth) } : {},
       },
       // G504：主色按整型存，显示时才转 hex。
       primaryColor: {

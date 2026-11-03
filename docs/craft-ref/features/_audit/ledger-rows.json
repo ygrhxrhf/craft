@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T06:44:17.011Z",
+  "generatedAt": "2026-11-03T06:48:22.814Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 884,
@@ -10157,7 +10157,7 @@
       "cols": 5,
       "id": "G503",
       "official": "★ **`cropMask` 序列化成 `\"x|y|w|h\"` 竖线字符串**，解析**全有或全无**（任一分量非法 ⇒ 整块 mask 为 `null`，不部分接受）；封面同时存**处理后**与**原始**两套尺寸（`aspectRatio/imageWidth` 与 `rawAspectRatio/rawImageWidth`）（§一之十五 4/6）",
-      "local": "`grep -rn \"cropMask|aspectRatio\" src` ⇒ **0 命中** ⇒ 本地既无裁剪框、也不区分\"用户裁过的尺寸\"与\"原图尺寸\"",
+      "local": "`grep -rn \"cropMask|aspectRatio\" src` ⇒ **0 命中** ⇒ 本地既无裁剪框、也不区分\"用户裁过的尺寸\"与\"原图尺寸\"；✎ 现读（2026-11-03 第 246 批）：图片块已按同形补齐——`cropMask` 用竖线串、解析全有或全无，节点并列保存处理后/原始两套尺寸，帧变化时写 mask；封面侧的裁剪框仍未做",
       "verdict": "缺失",
       "score": "2/2",
       "status": "gap",

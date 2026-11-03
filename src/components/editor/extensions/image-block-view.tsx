@@ -8,6 +8,7 @@ import { Crop, ImagePlus, Link2, Loader2, Minus, Plus } from 'lucide-react';
 import { uploadFile } from '@/lib/upload-client';
 import { promptDialog } from '@/lib/dialog/show';
 import { frameStyle, moveFrame, readImageFrame, zoomFrame, type ImageFrame } from '@/lib/editor/image-frame';
+import { cropMaskForFrame } from '@/lib/editor/image-crop';
 import { primaryColorFromInt, samplePrimaryColor } from '@/lib/editor/image-primary-color';
 import { useLightboxStore } from '@/lib/store/use-lightbox-store';
 
@@ -31,7 +32,13 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
   const frameBox = useRef<HTMLDivElement>(null);
 
   const writeFrame = (next: ImageFrame) => {
-    updateAttributes({ posX: next.x, posY: next.y, scale: next.scale });
+    updateAttributes({
+      posX: next.x,
+      posY: next.y,
+      scale: next.scale,
+      // G503：帧变化时同步裁剪矩形的竖线字符串。
+      cropMask: cropMaskForFrame(next),
+    });
   };
 
   const handleFile = async (file: File) => {
@@ -111,8 +118,19 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
                 draggable={false}
                 onLoad={(event) => {
                   setLoaded(true);
+                  const img = event.currentTarget;
+                  // G503：首次加载记录原始尺寸；处理后尺寸先与原始一致（等比例裁剪不改变比例）。
+                  if (node.attrs.rawImageWidth == null && img.naturalWidth > 0) {
+                    const rawAspectRatio = img.naturalHeight > 0 ? img.naturalWidth / img.naturalHeight : null;
+                    updateAttributes({
+                      rawImageWidth: img.naturalWidth,
+                      rawAspectRatio,
+                      imageWidth: node.attrs.imageWidth ?? img.naturalWidth,
+                      aspectRatio: node.attrs.aspectRatio ?? rawAspectRatio,
+                    });
+                  }
                   if (node.attrs.primaryColor == null) {
-                    const sampled = samplePrimaryColor(event.currentTarget);
+                    const sampled = samplePrimaryColor(img);
                     if (sampled !== null) updateAttributes({ primaryColor: sampled });
                   }
                 }}

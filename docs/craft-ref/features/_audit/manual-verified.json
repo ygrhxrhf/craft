@@ -5642,10 +5642,12 @@
     },
     "G503": {
       "status": "partial",
-      "note": "第 212 批现读：图片块有取景框 posX/posY/scale，但不是 cropMask 的 x|y|w|h 串，也无处理后/原始两套尺寸",
+      "priority": "P2",
+      "note": "图片块的 cropMask 竖线串（全有或全无）与处理后/原始双尺寸已落；封面侧裁剪仍缺",
       "evidence": [
-        "src/lib/editor/image-frame.ts:1",
-        "src/components/editor/extensions/image-block.tsx:30"
+        "src/lib/editor/image-crop.ts:1",
+        "src/components/editor/extensions/image-block.tsx:100",
+        "src/components/editor/extensions/image-block-view.tsx:30"
       ]
     },
     "G504": {

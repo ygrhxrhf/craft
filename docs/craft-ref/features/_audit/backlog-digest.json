@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T06:44:17.259Z",
+  "generatedAt": "2026-11-03T06:48:23.063Z",
   "total": 1614,
   "status": {
     "aligned": 562,
@@ -1186,6 +1186,14 @@
       "conflict": "local-says-missing",
       "local": "无该语义（5 处监听彼此独立，各自判键）⇒ 本地\"多层弹层 + 全局快捷键\"必然互相干扰（与 G456/G471/G478 同一根因，本批给出算法）；✎ 现读（2026-11-03 第 238 批）：已实现 — `dispatch` 逐层自顶向下，命中只跑第一条 keyDef 并停；未命中且 `allowPropagation=false` 也停（不触碰默认行为，输入不受影响）；9 例单测覆盖",
       "verdict": "已对齐"
+    },
+    {
+      "id": "G503",
+      "line": 1946,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "`grep -rn \"cropMask|aspectRatio\" src` ⇒ **0 命中** ⇒ 本地既无裁剪框、也不区分\"用户裁过的尺寸\"与\"原图尺寸\"；✎ 现读（2026-11-03 第 246 批）：图片块已按同形补齐——`cropMask` 用竖线串、解析全有或全无，节点并列保存处理后/原始两套尺寸，帧变化时写 mask；封面侧的裁剪框仍未做",
+      "verdict": "缺失"
     },
     {
       "id": "G623",

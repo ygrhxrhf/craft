@@ -4489,10 +4489,11 @@
       ]
     },
     "G273": {
-      "status": "gap",
-      "note": "无虚拟列表：单一行高、全量渲染，无 overscan",
+      "status": "partial",
+      "note": "第 208 批：集合表格窗口渲染（overscan 2、rAF+150ms、两种行高常数）；文档列表等仍全量",
       "evidence": [
-        "src/components/document/DocumentListView.tsx:187"
+        "src/lib/collection/virtual-rows.ts:10",
+        "src/app/(app)/collections/[id]/TableView.tsx:402"
       ]
     },
     "G281": {
@@ -5456,10 +5457,11 @@
       ]
     },
     "G484": {
-      "status": "gap",
-      "note": "表格全量渲染 processedItems，无 600 格阈值与虚拟化",
+      "status": "aligned",
+      "note": "第 208 批：600 格阈值（行×可见列）+ 窗口渲染 + 上下占位行；rAF+150ms 滚动更新",
       "evidence": [
-        "src/app/(app)/collections/[id]/TableView.tsx:320"
+        "src/lib/collection/virtual-rows.ts:1",
+        "src/app/(app)/collections/[id]/TableView.tsx:402"
       ]
     },
     "G485": {

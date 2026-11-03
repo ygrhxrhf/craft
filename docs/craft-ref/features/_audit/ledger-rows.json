@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T02:18:34.864Z",
+  "generatedAt": "2026-11-03T02:21:55.478Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 916,
-    "aligned": 267,
+    "gap": 915,
+    "aligned": 268,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 345,
+    "P2 / gap": 344,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 163,
+    "P2 / aligned": 164,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -5980,8 +5980,8 @@
       "cols": 5,
       "id": "G273",
       "official": "**虚拟列表：分组标题行高独立常数、`overscan: 2`、滚动用 rAF + 150ms 防抖双路更新**",
-      "local": "本地虚拟列表行高统一、无二次精算",
-      "verdict": "行为不同",
+      "local": "本地虚拟列表行高统一、无二次精算 ⇒ ✎ 现读（2026-11-02 第 208 批）：集合表格已按窗口渲染，`ROW_HEIGHT=36` 与 `GROUP_HEADER_HEIGHT=40` 两枚常数分列、`overscan=2`、滚动走 rAF + 150ms；文档列表/回收站等仍全量渲染",
+      "verdict": "缺失（局部）",
       "score": "2/1",
       "status": "gap",
       "scoreParsed": {
@@ -9799,10 +9799,10 @@
       "cols": 5,
       "id": "G484",
       "official": "★ **表格降级阈值是「单元格数」而不是行数**：`const p8n = 600; h8n(t) = t.rowCount * t.visibleColumnCount > p8n` ⇒ ★ **用「可见列」计数，隐藏列不计入**；判据之后紧跟 `m8n({count, scroll…})` 虚拟化辅助（§十三 6）",
-      "local": "`grep -n \"virtuoso|react-window|virtual\" package.json` ⇒ **0 命中** ⇒ 本地集合表格**全量渲染**，无任何虚拟化或降级分支",
-      "verdict": "缺失",
+      "local": "`grep -n \"virtuoso|react-window|virtual\" package.json` ⇒ **0 命中** ⇒ 本地集合表格**全量渲染**，无任何虚拟化或降级分支 ⇒ ✎ 现读（2026-11-02 第 208 批）：`lib/collection/virtual-rows.ts` 按 600 格阈值切窗口（`visibleRowWindow`：行高 36、overscan 2、上下占位行），TableView 只在不分组且越线时渲染 `slice(start,end)`，滚动用 rAF + 150ms 双路更新 ☆ 已清（第 208 批）",
+      "verdict": "对齐",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

@@ -8,6 +8,8 @@ import { addItem, clearGroupValues, deleteItem, removeItemFromCollection, setIte
 import { confirmDialog } from '@/lib/dialog/show';
 import { getSyncManager } from '@/lib/sync-core';
 import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-reorder';
+import { exceedsVirtualTableThreshold } from '@/lib/collection/limits';
+import { visibleRowWindow, scheduleScrollUpdate } from '@/lib/collection/virtual-rows';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { PropertyCell } from '@/components/collection/PropertyCell';
@@ -92,6 +94,10 @@ export function TableView({ collection, view }: TableViewProps) {
    * 刷新后屏上退回旧值。串起来写，最后落地的一定是用户最后那次编辑。
    */
   const configWriteChain = useRef<Promise<void>>(Promise.resolve());
+  // G484：大表格按窗口渲染（行数 × 可见列 > 600 才启用）。
+  const [scrollTop, setScrollTop] = useState(0);
+  const [viewportHeight, setViewportHeight] = useState(600);
+  const cancelScrollUpdate = useRef<(() => void) | null>(null);
 
   const persistConfig = (
     next: { filters: any[]; sorts: any[]; groupBy: string | null; fields?: ViewFields },
@@ -173,6 +179,11 @@ export function TableView({ collection, view }: TableViewProps) {
   processedItems = applyFilters(processedItems, filters, collection.properties);
   processedItems = applySorts(processedItems, sorts, collection.properties);
   const groupedItems = applyGrouping(processedItems, groupBy, collection.properties);
+  const virtualized = !groupBy && exceedsVirtualTableThreshold(processedItems.length, visibleProperties.length);
+  const rowWindow = virtualized
+    ? visibleRowWindow({ scrollTop, viewportHeight, rowCount: processedItems.length })
+    : null;
+  const renderedItems = rowWindow ? processedItems.slice(rowWindow.start, rowWindow.end) : processedItems;
 
   const handleSetValue = async (itemId: string, propertyId: string, value: any) => {
     await setItemValue(itemId, propertyId, value);
@@ -399,7 +410,18 @@ export function TableView({ collection, view }: TableViewProps) {
         </div>
       )}
 
-      <div className="flex-1 overflow-auto">
+      <div
+        className="flex-1 overflow-auto"
+        onScroll={(event) => {
+          if (!virtualized) return;
+          const el = event.currentTarget;
+          cancelScrollUpdate.current?.();
+          cancelScrollUpdate.current = scheduleScrollUpdate(() => {
+            setScrollTop(el.scrollTop);
+            setViewportHeight(el.clientHeight);
+          });
+        }}
+      >
         {groupBy ? (
           <div className="space-y-4 p-4">
             {Array.from(groupedItems.entries()).map(([groupKey, items]) => {
@@ -544,7 +566,12 @@ export function TableView({ collection, view }: TableViewProps) {
               </tr>
             </thead>
             <tbody>
-              {processedItems.map((item: any) => (
+              {rowWindow && rowWindow.topPad > 0 && (
+                <tr aria-hidden>
+                  <td colSpan={visibleProperties.length + 2} style={{ height: rowWindow.topPad, padding: 0, border: 0 }} />
+                </tr>
+              )}
+              {renderedItems.map((item: any) => (
                 <tr
                   key={item.id}
                   data-row-id={String(item.id)}
@@ -622,6 +649,11 @@ export function TableView({ collection, view }: TableViewProps) {
                   </td>
                 </tr>
               ))}
+              {rowWindow && rowWindow.bottomPad > 0 && (
+                <tr aria-hidden>
+                  <td colSpan={visibleProperties.length + 2} style={{ height: rowWindow.bottomPad, padding: 0, border: 0 }} />
+                </tr>
+              )}
             </tbody>
             {showSummary && (
             <tfoot>

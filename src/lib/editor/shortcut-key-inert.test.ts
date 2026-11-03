@@ -12,6 +12,10 @@ describe('the shortcuts-panel key stays inert (G1592)', () => {
   it('is no longer handled by the shell dispatcher', () => {
     const shell = read('../../components/editor/shell-shortcuts.tsx');
     expect(shell).not.toContain("'TOGGLE_KEY_SHORTCUTS'");
+    // G1585/G1587: the web build measures these as inert as well.
+    expect(shell).not.toContain("'TOGGLE_LEFT_SIDEBAR'");
+    expect(shell).not.toContain("'OPEN_DAILY_NOTE'");
+    expect(shell).toContain("HANDLED = new Set(['TOGGLE_FOCUS_MODE'])");
   });
 
   it('is still listed in the binding table', () => {

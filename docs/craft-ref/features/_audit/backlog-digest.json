@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T06:40:17.563Z",
+  "generatedAt": "2026-11-03T06:44:17.259Z",
   "total": 1614,
   "status": {
-    "aligned": 560,
+    "aligned": 562,
     "nonaction": 512,
-    "partial": 250,
+    "partial": 248,
     "deliberate": 165,
     "gap": 107,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 245,
+    "P2 / aligned": 247,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 100,
+    "P2 / partial": 98,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1232,7 +1232,7 @@
   "gapSections": [
     [
       "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      27
+      25
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",

@@ -7,7 +7,6 @@ import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { shellShortcutAllowed } from '@/lib/editor/shell-scope';
 import { isImeComposing } from '@/lib/editor/ime-guard';
 import { useFocusStore } from '@/lib/store/use-focus-store';
-import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { KeyContextStack, type KeyLayer } from '@/lib/editor/key-context-stack';
 
 /**
@@ -15,19 +14,14 @@ import { KeyContextStack, type KeyLayer } from '@/lib/editor/key-context-stack';
  * stack's resident dispatcher, not in the editor — so they listen on `window` and are deliberately
  * claimed *after* the editor layer, which returns false for the ids it does not own.
  *
- * Only chords whose local target exists today are listed: `⌘.` opens focus mode (G11), `⌘\` folds
- * the sidebar, `⌘⌥,` opens the shortcuts panel (G13), `⌘⌥N` opens the daily note. `COMMENT ⌘⇧M`
- * waits on an entry point that was never collected — listing it without an action would bind a
- * key that does nothing.
+ * Only chords with a measured action are handled: `⌘.` opens focus mode (G11). The official web
+ * build measures `⌘\` / `⌘⌥,` / `⌘⌥N` as inert (G1587/G1592/G1585), so those stay listed in the
+ * binding table but are not claimed here. `COMMENT ⌘⇧M` still waits on an entry point that was
+ * never collected.
  */
-const HANDLED = new Set([
-  'TOGGLE_LEFT_SIDEBAR',
-  'OPEN_DAILY_NOTE',
-  'TOGGLE_FOCUS_MODE',
-]);
+const HANDLED = new Set(['TOGGLE_FOCUS_MODE']);
 
 export function ShellShortcuts() {
-  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -70,14 +64,12 @@ export function ShellShortcuts() {
       if (stack.resolve(binding.id)?.binding !== binding.id) return;
 
       event.preventDefault();
-      if (binding.id === 'TOGGLE_LEFT_SIDEBAR') useSidebarStore.getState().toggle();
-      else if (binding.id === 'TOGGLE_FOCUS_MODE') useFocusStore.getState().toggle();
-      else router.push('/daily-notes');
+      useFocusStore.getState().toggle();
     };
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [router, pathname]);
+  }, [pathname]);
 
   return null;
 }

@@ -9684,10 +9684,12 @@
       ]
     },
     "G1585": {
-      "status": "partial",
-      "note": "本地 Ctrl-Alt-N 真跳 /daily-notes，官方本会话无响应",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Ctrl-Alt-N 与官方 web 一致保持惰性；绑定仍在表内",
       "evidence": [
-        "src/components/editor/shell-shortcuts.tsx:56"
+        "src/components/editor/shell-shortcuts.tsx:19",
+        "src/lib/editor/keymap.ts:260"
       ]
     },
     "G1586": {
@@ -9700,10 +9702,12 @@
       ]
     },
     "G1587": {
-      "status": "partial",
-      "note": "本地 Ctrl-\\ 真切侧栏，官方 web 本会话无响应",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Ctrl-\\ 与官方 web 一致保持惰性；绑定仍在表内",
       "evidence": [
-        "src/components/editor/shell-shortcuts.tsx:53"
+        "src/components/editor/shell-shortcuts.tsx:19",
+        "src/lib/editor/keymap.ts:254"
       ]
     },
     "G1588": {

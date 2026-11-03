@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T06:40:17.289Z",
+  "generatedAt": "2026-11-03T06:44:17.011Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 886,
-    "aligned": 294,
+    "gap": 884,
+    "aligned": 296,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 315,
+    "P2 / gap": 313,
     "P? / gap": 226,
+    "P2 / aligned": 192,
     "P1 / gap": 191,
-    "P2 / aligned": 190,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -29560,10 +29560,10 @@
       "cols": 5,
       "id": "G1585",
       "official": "★★★ **`Ctrl-Alt-N`（`OPEN_DAILY_NOTE` 每日笔记）：本地**真的换页**，官方 web **原地不动****（第 328 批，`shell.toggles.family` 两侧各 7 步）：本地按后 `location.href` 变成 **`http://localhost:3000/daily-notes`**（`fingerprint.url` 逐字可查）；官方同一序列 `url` **一直停在那篇临时文档**（`…/editor/d/…?s=…`），`domLength` 与正文一字不变、无弹层。★ 诚实边界：Windows 上 `Ctrl+Alt` 是 AltGr 语义，本地是按 `keyboard` 事件的 ctrlKey+altKey 匹配到的，**官方可能是没收到这个组合**（而非没有该命令）⇒ 本条的措辞是\"本会话这一按键通路官方没响应\"，**不写成\"官方没有每日笔记\"**（其桌面端有）。★ 同批的侧栏两键：`Ctrl-\\` 官方 dom −506 后**第二次按没有回到基线**、本地来回切换；`Ctrl-.` 专注模式两侧都生效（本地侧栏整块被收起，dom 375k→40k）。侧栏那条**未复测**，暂不登记",
-      "local": "本地对照＝`src/components/editor/shell-shortcuts.tsx` 的 `OPEN_DAILY_NOTE` 分支（`router.push` 到 `/daily-notes`）",
-      "verdict": "行为不同（一侧无响应）",
+      "local": "本地对照＝`src/components/editor/shell-shortcuts.tsx` 的 `OPEN_DAILY_NOTE` 分支（`router.push` 到 `/daily-notes`）；✎ 现读（2026-11-03 第 245 批）：已对齐 — shell 不再接管 `OPEN_DAILY_NOTE`（从 `HANDLED` 与分支移除），编辑器里按 Ctrl/⌘-Alt-N 原地不动（浏览器实测 URL 不变）；绑定仍留在表内供面板展示",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -29596,10 +29596,10 @@
       "cols": 5,
       "id": "G1587",
       "official": "★★★ **`Ctrl-\\`（`TOGGLE_LEFT_SIDEBAR`）：本地**来回切换**，官方 web **按四次 dom 恒定**（无反应）**（第 330 批，`shell.sidebar-toggle.repro`，每步 3s settle、连按四次）：本地 `domLength` **奇偶交替** 374936 → **374883** → **375070** → **374883** → **375070**（收起/展开各一档，稳定复现）；官方同序列 123083 → 123089 之后**四次全等**（123089／123089／123089／123089），正文长度与「任务」「新建文档」计数一字不变。★ **第二证据（矩形而非 dom 规模）**：官方侧栏容器 `div._sidebarGroupsContainer_1n6cb_` 恒为 **268×556.8 @x=10**（按 `Ctrl+\\` 前后逐字相同）；本地 `nav` 侧栏 **287.2×412 @x=0**，第一次按后**整块消失**（量到的含「任务」元素退化成 1440×900 的整页容器 ⇒ 侧栏已不可见），第二次按回到 287.2×412 ⇒ 确系真切换。 ★ 同时纠正上一批的读数：第 328 批记的\"官方第一次 −506\"是**侧栏在文档页里的渲染抖动**（settle 只有 1.2s），**不是这条键的效果** ⇒ 那条已就地改成\"未登记、待复测\"，本批复测即本条",
-      "local": "本地对照＝`src/components/editor/shell-shortcuts.tsx` 的 `TOGGLE_LEFT_SIDEBAR` 分支（切 `useSidebarStore`）；官方 web 在本会话的编辑器页里对该键无响应",
-      "verdict": "行为不同（一侧无响应）",
+      "local": "本地对照＝`src/components/editor/shell-shortcuts.tsx` 的 `TOGGLE_LEFT_SIDEBAR` 分支（切 `useSidebarStore`）；官方 web 在本会话的编辑器页里对该键无响应；✎ 现读（2026-11-03 第 245 批）：已对齐 — shell 不再接管 `TOGGLE_LEFT_SIDEBAR`（从 `HANDLED` 与分支移除），按 Ctrl/⌘-\\ 侧栏状态不变（浏览器实测）；绑定仍留在表内供面板展示",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

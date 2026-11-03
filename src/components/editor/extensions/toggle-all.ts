@@ -45,3 +45,30 @@ export function nextOpenForAllToggles(state: EditorState): boolean | null {
   });
   return found ? anyClosed : null;
 }
+
+/**
+ * G1590: pressing Enter with the caret in a toggle's summary must add a child block
+ * inside the toggle, not split the summary out and dissolve the toggle.
+ */
+export function toggleSummaryTarget(state: EditorState): {
+  togglePos: number;
+  insertPos: number;
+  selectPos: number;
+} | null {
+  const { $from } = state.selection;
+  if (!$from.parent.isTextblock) return null;
+  for (let depth = $from.depth; depth > 0; depth -= 1) {
+    const node = $from.node(depth);
+    if (node.type.name !== TOGGLE_NODE) continue;
+    const start = $from.before(depth);
+    const first = node.firstChild;
+    if (!first) return null;
+    const summaryEnd = start + 1 + first.nodeSize;
+    if ($from.pos < summaryEnd && $from.pos >= start + 1) {
+      const insertPos = start + node.nodeSize - 1;
+      return { togglePos: start, insertPos, selectPos: insertPos + 1 };
+    }
+    return null;
+  }
+  return null;
+}

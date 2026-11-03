@@ -9732,10 +9732,12 @@
       ]
     },
     "G1590": {
-      "status": "partial",
-      "note": "折叠块能造且可点开合；Enter 无专门处置",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "折叠块可由斜杠造出；摘要内 Enter 追加子块并展开折叠块，不再拆散",
       "evidence": [
-        "src/components/editor/extensions/toggle-block-view.tsx:16"
+        "src/components/editor/extensions/toggle-all.ts:1",
+        "src/components/editor/extensions/craft-keymap.ts:493"
       ]
     },
     "G1591": {

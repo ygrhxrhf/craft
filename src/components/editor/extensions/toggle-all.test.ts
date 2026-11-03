@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Schema, type Node } from '@tiptap/pm/model';
-import { EditorState } from '@tiptap/pm/state';
-import { TOGGLE_NODE, nextOpenForAllToggles, setOpenOnAllToggles } from './toggle-all';
+import { EditorState, TextSelection } from '@tiptap/pm/state';
+import { TOGGLE_NODE, nextOpenForAllToggles, setOpenOnAllToggles, toggleSummaryTarget } from './toggle-all';
 
 // A real ProseMirror schema, not a hand-rolled tree: positions are what the
 // traversal gets wrong, and only a real doc computes them.
@@ -145,5 +145,34 @@ describe('the toggle-all key target (G1593)', () => {
     expect(keymap).toContain("win: chord({ ctrlKey: true, altKey: true }, 't', 'KeyT')");
     expect(craft).toContain('nextOpenForAllToggles(view.state)');
     expect(craft).toContain('setOpenOnAllToggles(view.state, tr, next)');
+  });
+});
+
+describe('Enter inside a toggle summary (G1590)', () => {
+  it('targets the toggle instead of splitting the summary out', () => {
+    const base = stateOf([toggle(false, [para('标题')])]);
+    // Caret inside the summary paragraph (doc start + toggle open + paragraph open).
+    const state = base.apply(base.tr.setSelection(TextSelection.create(base.doc, 3)));
+    const target = toggleSummaryTarget(state);
+    expect(target).not.toBeNull();
+    expect(target?.togglePos).toBe(0);
+    const paragraph = state.schema.nodes.paragraph.create();
+    const tr = state.tr.insert(target!.insertPos, paragraph);
+    const next = state.apply(tr);
+    expect(next.doc.child(0).type.name).toBe(TOGGLE_NODE);
+    expect(next.doc.child(0).childCount).toBe(2);
+  });
+
+  it('does nothing when the caret is outside a toggle', () => {
+    const base = stateOf([para('普通')]);
+    const state = base.apply(base.tr.setSelection(TextSelection.create(base.doc, 2)));
+    expect(toggleSummaryTarget(state)).toBeNull();
+  });
+
+  it('is wired into the editor keymap', () => {
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    const craft = readFileSync('src/components/editor/extensions/craft-keymap.ts', 'utf8');
+    expect(craft).toContain('toggleSummaryTarget(view.state)');
+    expect(craft).toContain('open: true');
   });
 });

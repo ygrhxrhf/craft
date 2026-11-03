@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T07:16:02.171Z",
+  "generatedAt": "2026-11-03T07:21:24.464Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 881,
-    "aligned": 299,
+    "gap": 880,
+    "aligned": 300,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 310,
+    "P2 / gap": 309,
     "P? / gap": 226,
-    "P2 / aligned": 195,
+    "P2 / aligned": 196,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -29658,10 +29658,10 @@
       "cols": 5,
       "id": "G1590",
       "official": "★★★ **折叠块的**造法**两侧不同，且本地**造出来后被 `Enter` 弄丢**：官方那条通路没走通、本地走通了但一按 `Enter` 就没了**（第 336 批，`editor.key.toggle-all`，`state:toggleish` 逐帧）：本地斜线菜单 `/` ＋过滤 `toggle` ＋点「折叠列表」⇒ 编辑器内 `[data-open]`／`.toggle-summary` **0→2**（**折叠块真造出来了**）；紧接着按 `Enter`（想进子块）⇒ 同一条计数 **2→0**，块名册里 `HEAD1` 仍是普通段落、后面输入的 `CHILD1` 落在独立块里 ⇒ **折叠块被 `Enter` 拆回去了**。官方同一序列：编辑器内 `[class*=\"toggle\"]` **恒 0**（斜线菜单走的是**二级** `列表 → 折叠列表`，`clickText` 点到了菜单项、正文里的 `/` 也被清掉，但没出现折叠块节点）。★ 三条诚实边界：① 官方可能是**入口没点中**（二级菜单项在点击瞬间被重绘，或文案不是「折叠列表」四个字）⇒ **不写成\"官方没有折叠块\"**；② 本地\"`Enter` 弄丢折叠块\"只测了**一次**，未复测；③ `Ctrl-Alt-T` 因此**仍无判据**（可折叠对象没建立起来）",
-      "local": "本地对照＝`src/components/editor/extensions/toggle-block-view.tsx:16`（`NodeViewWrapper … data-open`）＋`:30`（`.toggle-summary`）⇒ 两个节点就是折叠块本身",
-      "verdict": "行为不同（本地造出来会被 Enter 拆掉）",
+      "local": "本地对照＝`src/components/editor/extensions/toggle-block-view.tsx:16`（`NodeViewWrapper … data-open`）＋`:30`（`.toggle-summary`）⇒ 两个节点就是折叠块本身；✎ 现读（2026-11-03 第 251 批）：已对齐 — 斜杠「折叠列表」可造出折叠块；摘要内按 Enter 不再拆摘要，改为在折叠块内追加子块并把折叠块展开（`toggleSummaryTarget`）；浏览器实测 Enter 后 `data-open=true`、折叠块仍 1 个、子块数增加",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

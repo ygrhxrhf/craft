@@ -19,7 +19,7 @@ import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { isImeComposing } from '@/lib/editor/ime-guard';
 import { deleteStepFor } from '@/lib/editor/forward-delete';
 import { tableDimensions, clearCellContents } from '@/lib/table-utils';
-import { nextOpenForAllToggles, setOpenOnAllToggles } from './toggle-all';
+import { nextOpenForAllToggles, setOpenOnAllToggles, toggleSummaryTarget } from './toggle-all';
 import { tableAxisForShortcut } from '@/lib/editor/table-shortcuts';
 import {
   TABLE_SIZE_LIMIT_DURATION,
@@ -488,6 +488,36 @@ export const CraftKeymap = Extension.create({
               }
               editor.chain().focus().addRowAfter().run();
               return true;
+            }
+            // G1590: Enter in a toggle's summary adds the first child block instead of splitting
+            // the summary and dissolving the toggle; a closed toggle opens so the caret is visible.
+            if (
+              event.key === 'Enter' &&
+              !event.shiftKey &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey &&
+              view.state.selection.empty
+            ) {
+              const target = toggleSummaryTarget(view.state);
+              if (target) {
+                const toggle = view.state.doc.nodeAt(target.togglePos);
+                if (toggle) {
+                  view.dispatch(
+                    view.state.tr.setNodeMarkup(target.togglePos, undefined, {
+                      ...toggle.attrs,
+                      open: true,
+                    }),
+                  );
+                }
+                const tr = view.state.tr.insert(
+                  target.insertPos,
+                  view.state.schema.nodes.paragraph.create(),
+                );
+                tr.setSelection(TextSelection.create(tr.doc, target.selectPos)).scrollIntoView();
+                view.dispatch(tr);
+                return true;
+              }
             }
             // G1593: Ctrl/⌘-Alt-T toggles every toggle block. When the document has none the
             // key stays inert, which is why the official binding does not change state every press.

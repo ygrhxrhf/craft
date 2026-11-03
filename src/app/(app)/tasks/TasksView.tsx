@@ -36,6 +36,7 @@ import { taskDateOptions } from '@/lib/task/task-date-menu';
 import { isNewTaskShortcut } from '@/lib/task/new-task-shortcut';
 import { taskRowKeyAction } from '@/lib/task/task-row-key';
 import { applySectionAction, sectionKeyAction } from '@/lib/task/section-key';
+import { bulkCheckLabel, bulkCheckTargets } from '@/lib/task/bulk-check';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
 import {
   SET_AS_DEFAULT_VIEW,
@@ -243,6 +244,21 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     await load();
   };
 
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const handleBulkCheck = async () => {
+    const targets = bulkCheckTargets(visible);
+    if (targets.length === 0 || bulkBusy) return;
+    setBulkBusy(true);
+    try {
+      for (const task of targets) {
+        await toggleTask(task.id, Intl.DateTimeFormat().resolvedOptions().timeZone);
+      }
+      await load();
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
   const handleCancel = async (id: string) => {
     const now = new Date().toISOString();
     await getSyncManager().applyLocal({
@@ -388,6 +404,16 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
           </div>
         ) : (
           <span />
+        )}
+        {visible.some((task) => task.status !== 'cancelled') && (
+          <button
+            type="button"
+            onClick={() => void handleBulkCheck()}
+            disabled={bulkBusy}
+            className="ml-2 shrink-0 rounded px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-foreground disabled:opacity-50"
+          >
+            {bulkCheckLabel(visible)}
+          </button>
         )}
         <ShowCompletedToggle onChange={setShowCompleted} />
         <button

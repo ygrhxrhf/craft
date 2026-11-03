@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T03:02:38.929Z",
+  "generatedAt": "2026-11-03T03:10:19.453Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 911,
-    "aligned": 270,
+    "gap": 910,
+    "aligned": 271,
     "unknown": 196,
     "deliberate": 103,
     "partial": 62,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 340,
+    "P2 / gap": 339,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 166,
+    "P2 / aligned": 167,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -2978,10 +2978,10 @@
       "cols": 5,
       "id": "G106",
       "official": "任务是**三态**（`tn`: Unchecked=0 / Checked=1 / **Canceled=2**），切换语义明确（Canceled 再点回 Unchecked，不是回完成），批量是\"有任一未勾→全勾\"，复制时强制重置为 Unchecked（`tasks.md` §一）",
-      "local": "✎ 现读（2026-11-02）：三态已落——`Task.status` 含 `cancelled` 且有 `cancelledAt` 列，正文取消标记投影为 `status=cancelled`，取消项再勾选直接回 done（不经过 todo）；仍缺批量「任一未勾→全勾」；复制强制重置已落（第 205 批：`duplicate-reset.ts` 在 `duplicateFrom` 副本里把 taskItem 的 checked/cancelled 重置，源文档不动）",
-      "verdict": "缺失（局部）",
+      "local": "✎ 现读（2026-11-03 第 217 批）：三态已落——`Task.status` 含 `cancelled` 且有 `cancelledAt` 列，正文取消标记投影为 `status=cancelled`，取消项再勾选直接回 done（不经过 todo）；批量「任一未勾→全勾」已实现（`lib/task/bulk-check.ts`，全勾后反向为全取消、已取消行不参与，任务屏工具条承载）；复制强制重置已落（第 205 批：`duplicate-reset.ts` 在 `duplicateFrom` 副本里把 taskItem 的 checked/cancelled 重置，源文档不动）",
+      "verdict": "已对齐",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

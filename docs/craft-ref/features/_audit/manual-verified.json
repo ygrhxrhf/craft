@@ -3694,11 +3694,13 @@
       ]
     },
     "G106": {
-      "status": "partial",
-      "note": "第 178 批现读：三态（todo/done/cancelled + cancelledAt）与取消→未勾循环已落；缺批量全勾与复制重置",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "任务三态与批量勾选齐：任一未勾→全勾，全勾→全取消，已取消行不参与；复制副本强制重置",
       "evidence": [
-        "src/actions/task/task.ts:278",
-        "src/prisma/contract.prisma:470"
+        "src/lib/task/bulk-check.ts:18",
+        "src/app/(app)/tasks/TasksView.tsx:248",
+        "src/app/(app)/tasks/TasksView.tsx:415"
       ]
     },
     "G107": {

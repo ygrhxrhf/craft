@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { serializeDocument } from './index';
+import { blockLinkHref, serializeDocument } from './index';
 import { dividerStyleFromMarkup } from '@/lib/editor/divider-styles';
 import { parseMarkdown } from '@/lib/import/markdown';
 
@@ -483,5 +483,23 @@ describe('the markdown table round-trips the import criteria (G1240)', () => {
     };
     const md = serializeDocument(doc, 'markdown');
     expect(md.split('\n')[1]).toBe('| --- |');
+  });
+});
+
+describe('blockLinkStyle flavours (G1221)', () => {
+  const link = { type: 'blockLink', attrs: { documentId: 'd-1', blockId: 'b-2', title: '目标' } };
+
+  it('pageLink points at the document root, headerLink/blockLink keep the block anchor', () => {
+    expect(blockLinkHref(link, 'blockLink')).toBe('/documents/d-1#b-b-2');
+    expect(blockLinkHref(link, 'pageLink')).toBe('/documents/d-1');
+    expect(blockLinkHref(link, 'headerLink')).toBe('/documents/d-1#b-b-2');
+  });
+
+  it('the default flavour leaves the anchor in place', () => {
+    const md = serializeDocument(
+      { type: 'doc', content: [{ type: 'paragraph', content: [link] }] },
+      'markdown',
+    );
+    expect(md).toBe('[目标](/documents/d-1#b-b-2)');
   });
 });

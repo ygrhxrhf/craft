@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T04:53:04.217Z",
+  "generatedAt": "2026-11-03T05:03:36.386Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 898,
-    "aligned": 283,
+    "gap": 897,
+    "aligned": 284,
     "unknown": 195,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 327,
+    "P2 / gap": 326,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 179,
+    "P2 / aligned": 180,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -23110,10 +23110,10 @@
       "cols": 5,
       "id": "G1221",
       "official": "★★ **`flavourInfo` 消费点结案（上批\"只拿到值没拿到消费点\"三条清账）**＝全 chunk 扫到 7 枚被读字段＝`blockLinkStyle`（★ 三分支逐字：`===\"pageLink\"&&(e.linkType=\"rootBlock\")`、`===\"headerLink\"&&e.linkType===\"block\"&&(e.linkType=\"block\")`，默认档 `\"blockLink\"` ⇒ 不改写 `linkType`）、`artificialNewLines`（`===!0` 时给**空文本块填一个空格**并补一条覆盖全文的 `_runAttributes`）、`fixListOrders`（传进 `this.fixListOrders(h.subBlocks,…)`）、`fixIndentationLevel`（`===!0 && this.fixIndentationLevel(h.subBlocks)`）、`printFullCss`（`===!0 && this.setBlockModelExportClasses(h)`）、`base64Assets`（决定资产条目走 base64 还是落文件，逐字 `isBase64:this.flavourInfo.base64Assets`）、`indentationCharacters`；⇒ ⇒ ★ 三条含义＝① 那 9 枚\"看起来像导出选项\"的字段其实**都住在同一份 flavour 里**（＝偏好与格式档混装一个对象）；② `blockLinkStyle` 是**唯一能改写块链语义**的字段 ⇒ 官方\"块链\"有三种落 markdown 形态；③ `artificialNewLines` 是**第二条\"导出器造内容\"**（第一条见上批 UUID）⇒ 导出改写入参的行为不止一处",
-      "local": "本轮实扫＝本地块链导出只有 `src/lib/document-codec/index.ts:52-54` 一条（`mention`／`blockLink` 统一成 `[…](…)`）⇒ ☆ 差一条：本地没有 `pageLink`／`headerLink` 分档",
-      "verdict": "结案（协议层）",
+      "local": "本轮实扫＝本地块链导出只有 `src/lib/document-codec/index.ts:52-54` 一条（`mention`／`blockLink` 统一成 `[…](…)`）⇒ ✎ 现读（2026-11-03 第 231 批）：已对齐 — `blockLinkHref` 落三档：`pageLink` 去块锚、`headerLink`／`blockLink` 保留；markdown 导出默认走 flavour 的 `blockLink`，三条分支有单测",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

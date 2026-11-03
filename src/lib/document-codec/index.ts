@@ -31,6 +31,16 @@ function blockTargetHref(node: any): string {
   return base;
 }
 
+/**
+ * G1221: `blockLinkStyle` 是官方 flavour 里**唯一能改写块链语义**的字段——
+ * `pageLink` 只指向文档根（去掉块锚），`headerLink`/`blockLink` 保留块锚。
+ */
+export function blockLinkHref(node: any, style: string): string {
+  const href = blockTargetHref(node);
+  if (style === 'pageLink') return href.split('#')[0];
+  return href;
+}
+
 function mirrorTargetHref(node: any): string {
   return blockTargetHref({
     attrs: {
@@ -64,7 +74,7 @@ function renderInlineMarkdown(node: any): string {
   if (node.type === 'inlineMath') return `$${node.attrs?.latex ?? ''}$`;
   if (node.type === 'mention' || node.type === 'blockLink') {
     if (isPersonMention(node)) return `@${node.attrs?.title ?? ''}`;
-    return `[${node.attrs?.title ?? '链接'}](${blockTargetHref(node)})`;
+    return `[${node.attrs?.title ?? '链接'}](${blockLinkHref(node, DEFAULT_FLAVOUR.blockLinkStyle)})`;
   }
   if (node.type === 'whiteboardLink') {
     return `[白板：${node.attrs?.title ?? ''}](/whiteboards/${node.attrs?.whiteboardId ?? ''})`;

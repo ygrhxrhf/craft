@@ -8701,10 +8701,13 @@
       ]
     },
     "G1221": {
-      "status": "partial",
-      "note": "块链导出统一 [标题](链接)，无 pageLink/headerLink 分档",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "blockLinkStyle 三档（pageLink 去锚 / headerLink、blockLink 保留）已落并接入 markdown 导出，默认 blockLink",
       "evidence": [
-        "src/lib/document-codec/index.ts:62"
+        "src/lib/document-codec/index.ts:38",
+        "src/lib/document-codec/index.ts:74",
+        "src/lib/document-codec/index.test.ts:150"
       ]
     },
     "G1223": {

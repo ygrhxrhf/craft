@@ -105,6 +105,26 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
 
   const target = MOVE_TARGETS[id];
   if (target) {
+    // G1548/G1549: with a plain caret these keys move the caret, not the block. Only a block
+    // selection (NodeSelection) gives them the "move this block" meaning.
+    if (!(editor.state.selection instanceof NodeSelection)) {
+      const state = editor.state;
+      const doc = state.doc;
+      const sel = state.selection;
+      const index = topLevelIndexOf(doc, sel.from);
+      if (index < 0) return false;
+      const nextIndex =
+        target === 'up' ? Math.max(0, index - 1)
+          : target === 'down' ? Math.min(doc.childCount - 1, index + 1)
+            : target === 'top' ? 0
+              : doc.childCount - 1;
+      if (nextIndex === index) return false;
+      const pos = topLevelStart(doc, nextIndex) + 1;
+      editor.view.dispatch(
+        state.tr.setSelection(TextSelection.create(doc, Math.min(pos, doc.content.size))).scrollIntoView(),
+      );
+      return true;
+    }
     const tr = buildBlockMove(editor.state, target);
     if (!tr) return false;
     editor.view.dispatch(tr);
@@ -314,6 +334,55 @@ export const CraftKeymap = Extension.create({
             ) {
               event.preventDefault();
               requestLink();
+              return true;
+            }
+            // G1550: Ctrl/⌘-A is a two-step ladder — first select the current block's text,
+            // then (on the same chord again) turn that block into a node selection.
+            if (
+              (event.key === 'a' || event.key === 'A') &&
+              (event.metaKey || event.ctrlKey) &&
+              !event.shiftKey &&
+              !event.altKey
+            ) {
+              const state = view.state;
+              const doc = state.doc;
+              if (!(state.selection instanceof NodeSelection)) {
+                const index = topLevelIndexOf(doc, state.selection.from);
+                if (index >= 0) {
+                  const node = doc.child(index);
+                  const start = topLevelStart(doc, index);
+                  if (node.isTextblock) {
+                    const textFrom = start + 1;
+                    const textTo = start + 1 + node.content.size;
+                    const alreadyText =
+                      state.selection.from === textFrom && state.selection.to === textTo;
+                    if (!alreadyText && node.content.size > 0) {
+                      view.dispatch(
+                        state.tr.setSelection(TextSelection.create(doc, textFrom, textTo)).scrollIntoView(),
+                      );
+                      return true;
+                    }
+                  }
+                  view.dispatch(state.tr.setSelection(NodeSelection.create(doc, start)));
+                  return true;
+                }
+              }
+            }
+            // G1591: Space on a block selection inserts a block after it (text carets keep the
+            // space character, as in the text-editing state).
+            if (
+              (event.key === ' ' || event.key === 'Spacebar') &&
+              !event.shiftKey &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey &&
+              view.state.selection instanceof NodeSelection
+            ) {
+              const sel = view.state.selection as NodeSelection;
+              const paragraph = view.state.schema.nodes.paragraph.create();
+              const tr = view.state.tr.insert(sel.to, paragraph);
+              tr.setSelection(TextSelection.create(tr.doc, sel.to + 1)).scrollIntoView();
+              view.dispatch(tr);
               return true;
             }
             // G1554: Mod+Shift+Home/End enters **block selection** (the first/last top-level

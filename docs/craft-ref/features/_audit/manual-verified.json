@@ -9441,24 +9441,30 @@
       ]
     },
     "G1548": {
-      "status": "partial",
-      "note": "Alt-↑↓ 仍被派给换块序；官方是移光标",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "光标态 Alt-↑/↓ 只移动光标，NodeSelection 才移动块；浏览器实测不换序",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:41"
+        "src/components/editor/extensions/craft-keymap.ts:102",
+        "src/lib/editor/block-selection-keys.test.ts:1"
       ]
     },
     "G1549": {
-      "status": "partial",
-      "note": "Alt-Home/End 走搬块；官方块序不动",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "光标态 Alt-Home/End 只移动光标，不改块序",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:44"
+        "src/components/editor/extensions/craft-keymap.ts:102",
+        "src/lib/editor/block-selection-keys.test.ts:1"
       ]
     },
     "G1550": {
-      "status": "partial",
-      "note": "全仓无 block-select；Ctrl-A 只有文本全选一档",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Ctrl-A 两档：块文本 → NodeSelection；浏览器实测",
       "evidence": [
-        "src/lib/editor/keymap.ts:218"
+        "src/components/editor/extensions/craft-keymap.ts:102",
+        "src/lib/editor/block-selection-keys.test.ts:1"
       ]
     },
     "G1551": {
@@ -9741,10 +9747,12 @@
       ]
     },
     "G1591": {
-      "status": "gap",
-      "note": "无块选择态，Space 在编辑器层不接键",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "NodeSelection 上 Space 插块（2→3）；文本态仍是空格",
       "evidence": [
-        "src/lib/editor/keymap.ts:172"
+        "src/components/editor/extensions/craft-keymap.ts:102",
+        "src/lib/editor/block-selection-keys.test.ts:1"
       ]
     },
     "G1592": {

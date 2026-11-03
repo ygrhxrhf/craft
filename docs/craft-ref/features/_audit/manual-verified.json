@@ -4668,10 +4668,13 @@
       ]
     },
     "G305": {
-      "status": "gap",
-      "note": "全仓无 onboarding/欢迎弹窗，仅一条更新横幅",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "版本化更新轮播：五版 22 屏逐字数据，按已见版本增量展示，关闭记录最新版本",
       "evidence": [
-        "src/components/app/UpdateBanner.tsx:13"
+        "src/lib/onboarding/versioned-intro.ts:1",
+        "src/components/onboarding/VersionIntroCarousel.tsx:1",
+        "src/components/providers/Providers.tsx:18"
       ]
     },
     "G306": {

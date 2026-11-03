@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T05:38:45.359Z",
+  "generatedAt": "2026-11-03T05:46:08.538Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 893,
-    "aligned": 287,
+    "gap": 892,
+    "aligned": 288,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 322,
+    "P2 / gap": 321,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 183,
+    "P2 / aligned": 184,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -6565,10 +6565,10 @@
       "cols": 5,
       "id": "G305",
       "official": "**onboarding 是\"版本化更新轮播\"系统，不是线性教程**：`onboarding.v3.intro.{1-4}` / `v326.intro.{1,4,5,clipper,weekly}` / `v330.intro.{1-4}`，**版本号直接进 key 名、旧版不删**，每版 4-5 屏 `{n}.title`+`{n}.content`（`longtail.md` §19.1）",
-      "local": "本地只有一个静态欢迎弹窗",
-      "verdict": "缺失（整块）",
+      "local": "✎ 现读（2026-11-03 第 237 批）：已对齐 — `lib/onboarding/versioned-intro.ts` 收 v3／v319／v326／v330／v350 五版共 22 屏（标题＋正文逐字取自语言包），`VersionIntroCarousel` 只在「设备已见版本」之后的新版本上出现，关闭时写 `craft.intro.seen.version`；浏览器实测：清空键后弹首屏「为你焕新」、关闭写 v350、刷新不再出现",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

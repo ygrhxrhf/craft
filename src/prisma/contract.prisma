@@ -198,6 +198,13 @@ model Document {
   // G156：封面支持多图与随机轮换；`coverImage` 仍是首图/当前图。
   coverImages   Json?
   coverShuffle  Boolean @default(false)
+  // G503：封面的裁剪帧（posX/posY/scale）、掩码竖线串与处理后/原始两套尺寸。
+  coverFrame       Json?
+  coverCropMask    String?
+  coverWidth       Float?
+  coverAspect      Float?
+  coverRawWidth    Float?
+  coverRawAspect   Float?
   content       Json?
   plainText     String    @default("")
   order         Float     @default(0)

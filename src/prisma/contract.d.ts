@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'da995c0c19e139e6d1f89563c917eae71461ffacbf1223fe796f9cb2297f980a'>;
+  StorageHashBase<'077d6fd86f3039b9f2685ec460bd99f31429456a1ed5fa5a60959e8056e17219'>;
 export type ExecutionHash =
   ExecutionHashBase<'d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32'>;
 export type ProfileHash =
@@ -372,6 +372,12 @@ export type FieldOutputTypes = {
       readonly coverType: CodecTypes['pg/text@1']['output'] | null;
       readonly coverImages: CodecTypes['pg/json@1']['output'] | null;
       readonly coverShuffle: CodecTypes['pg/bool@1']['output'];
+      readonly coverFrame: CodecTypes['pg/json@1']['output'] | null;
+      readonly coverCropMask: CodecTypes['pg/text@1']['output'] | null;
+      readonly coverWidth: CodecTypes['pg/float8@1']['output'] | null;
+      readonly coverAspect: CodecTypes['pg/float8@1']['output'] | null;
+      readonly coverRawWidth: CodecTypes['pg/float8@1']['output'] | null;
+      readonly coverRawAspect: CodecTypes['pg/float8@1']['output'] | null;
       readonly content: CodecTypes['pg/json@1']['output'] | null;
       readonly plainText: CodecTypes['pg/text@1']['output'];
       readonly order: CodecTypes['pg/float8@1']['output'];
@@ -758,6 +764,12 @@ export type FieldInputTypes = {
       readonly coverType: CodecTypes['pg/text@1']['input'] | null;
       readonly coverImages: CodecTypes['pg/json@1']['input'] | null;
       readonly coverShuffle: CodecTypes['pg/bool@1']['input'];
+      readonly coverFrame: CodecTypes['pg/json@1']['input'] | null;
+      readonly coverCropMask: CodecTypes['pg/text@1']['input'] | null;
+      readonly coverWidth: CodecTypes['pg/float8@1']['input'] | null;
+      readonly coverAspect: CodecTypes['pg/float8@1']['input'] | null;
+      readonly coverRawWidth: CodecTypes['pg/float8@1']['input'] | null;
+      readonly coverRawAspect: CodecTypes['pg/float8@1']['input'] | null;
       readonly content: CodecTypes['pg/json@1']['input'] | null;
       readonly plainText: CodecTypes['pg/text@1']['input'];
       readonly order: CodecTypes['pg/float8@1']['input'];
@@ -1192,10 +1204,16 @@ export type StorageColumnTypes = {
     readonly documents: {
       readonly charCount: CodecTypes['pg/int4@1']['output'];
       readonly content: CodecTypes['pg/json@1']['output'] | null;
+      readonly coverAspect: CodecTypes['pg/float8@1']['output'] | null;
+      readonly coverCropMask: CodecTypes['pg/text@1']['output'] | null;
+      readonly coverFrame: CodecTypes['pg/json@1']['output'] | null;
       readonly coverImage: CodecTypes['pg/text@1']['output'] | null;
       readonly coverImages: CodecTypes['pg/json@1']['output'] | null;
+      readonly coverRawAspect: CodecTypes['pg/float8@1']['output'] | null;
+      readonly coverRawWidth: CodecTypes['pg/float8@1']['output'] | null;
       readonly coverShuffle: CodecTypes['pg/bool@1']['output'];
       readonly coverType: CodecTypes['pg/text@1']['output'] | null;
+      readonly coverWidth: CodecTypes['pg/float8@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly dailyNoteDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -1578,10 +1596,16 @@ export type StorageColumnInputTypes = {
     readonly documents: {
       readonly charCount: CodecTypes['pg/int4@1']['input'];
       readonly content: CodecTypes['pg/json@1']['input'] | null;
+      readonly coverAspect: CodecTypes['pg/float8@1']['input'] | null;
+      readonly coverCropMask: CodecTypes['pg/text@1']['input'] | null;
+      readonly coverFrame: CodecTypes['pg/json@1']['input'] | null;
       readonly coverImage: CodecTypes['pg/text@1']['input'] | null;
       readonly coverImages: CodecTypes['pg/json@1']['input'] | null;
+      readonly coverRawAspect: CodecTypes['pg/float8@1']['input'] | null;
+      readonly coverRawWidth: CodecTypes['pg/float8@1']['input'] | null;
       readonly coverShuffle: CodecTypes['pg/bool@1']['input'];
       readonly coverType: CodecTypes['pg/text@1']['input'] | null;
+      readonly coverWidth: CodecTypes['pg/float8@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly dailyNoteDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -1945,6 +1969,12 @@ export namespace Models {
     coverType: CodecTypes['pg/text@1']['output'] | null;
     coverImages: CodecTypes['pg/json@1']['output'] | null;
     coverShuffle: CodecTypes['pg/bool@1']['output'];
+    coverFrame: CodecTypes['pg/json@1']['output'] | null;
+    coverCropMask: CodecTypes['pg/text@1']['output'] | null;
+    coverWidth: CodecTypes['pg/float8@1']['output'] | null;
+    coverAspect: CodecTypes['pg/float8@1']['output'] | null;
+    coverRawWidth: CodecTypes['pg/float8@1']['output'] | null;
+    coverRawAspect: CodecTypes['pg/float8@1']['output'] | null;
     content: CodecTypes['pg/json@1']['output'] | null;
     plainText: CodecTypes['pg/text@1']['output'];
     order: CodecTypes['pg/float8@1']['output'];
@@ -3881,6 +3911,36 @@ type ContractBase = Omit<
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/bool@1', false>;
                   };
+                };
+                readonly coverFrame: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: true;
+                };
+                readonly coverCropMask: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly coverWidth: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: true;
+                };
+                readonly coverAspect: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: true;
+                };
+                readonly coverRawWidth: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: true;
+                };
+                readonly coverRawAspect: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: true;
                 };
                 readonly content: {
                   readonly nativeType: 'json';
@@ -6648,6 +6708,30 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly coverFrame: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
+              readonly coverCropMask: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly coverWidth: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly coverAspect: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly coverRawWidth: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly coverRawAspect: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
               readonly content: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
@@ -6931,6 +7015,12 @@ type ContractBase = Omit<
                 readonly coverType: { readonly column: 'coverType' };
                 readonly coverImages: { readonly column: 'coverImages' };
                 readonly coverShuffle: { readonly column: 'coverShuffle' };
+                readonly coverFrame: { readonly column: 'coverFrame' };
+                readonly coverCropMask: { readonly column: 'coverCropMask' };
+                readonly coverWidth: { readonly column: 'coverWidth' };
+                readonly coverAspect: { readonly column: 'coverAspect' };
+                readonly coverRawWidth: { readonly column: 'coverRawWidth' };
+                readonly coverRawAspect: { readonly column: 'coverRawAspect' };
                 readonly content: { readonly column: 'content' };
                 readonly plainText: { readonly column: 'plainText' };
                 readonly order: { readonly column: 'order' };

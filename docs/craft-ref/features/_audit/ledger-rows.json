@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T07:21:24.464Z",
+  "generatedAt": "2026-11-03T07:27:55.291Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 880,
+    "gap": 879,
     "aligned": 300,
     "unknown": 196,
     "deliberate": 103,
-    "partial": 63,
+    "partial": 64,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 309,
+    "P2 / gap": 308,
     "P? / gap": 226,
     "P2 / aligned": 196,
     "P1 / gap": 191,
@@ -29,7 +29,7 @@
     "P3 / aligned": 39,
     "P2 / unknown": 36,
     "P? / deliberate": 33,
-    "P2 / partial": 25,
+    "P2 / partial": 26,
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 10,
+  "conflicts": 11,
   "conflictRows": [
     {
       "id": "G95",
@@ -89,6 +89,14 @@
       "status": "aligned",
       "conflict": "local-says-missing",
       "local": "无该语义（5 处监听彼此独立，各自判键）⇒ 本地\"多层弹层 + 全局快捷键\"必然互相干扰（与 G456/G471/G478 同一根因，本批给出算法）；✎ 现读（2026-11-03 第 238 批）：已实现 — `dispatch` 逐层自顶向下，命中只跑第一条 keyDef 并停；未命中且 `allowPropaga",
+      "verdict": "已对齐"
+    },
+    {
+      "id": "G503",
+      "line": 1946,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "`grep -rn \"cropMask|aspectRatio\" src` ⇒ **0 命中** ⇒ 本地既无裁剪框、也不区分\"用户裁过的尺寸\"与\"原图尺寸\"；✎ 现读（2026-11-03 第 246 批）：图片块已按同形补齐——`cropMask` 用竖线串、解析全有或全无，节点并列保存处理后/原始两套尺寸，帧变化",
       "verdict": "已对齐"
     },
     {
@@ -10166,15 +10174,15 @@
       "id": "G503",
       "official": "★ **`cropMask` 序列化成 `\"x|y|w|h\"` 竖线字符串**，解析**全有或全无**（任一分量非法 ⇒ 整块 mask 为 `null`，不部分接受）；封面同时存**处理后**与**原始**两套尺寸（`aspectRatio/imageWidth` 与 `rawAspectRatio/rawImageWidth`）（§一之十五 4/6）",
       "local": "`grep -rn \"cropMask|aspectRatio\" src` ⇒ **0 命中** ⇒ 本地既无裁剪框、也不区分\"用户裁过的尺寸\"与\"原图尺寸\"；✎ 现读（2026-11-03 第 246 批）：图片块已按同形补齐——`cropMask` 用竖线串、解析全有或全无，节点并列保存处理后/原始两套尺寸，帧变化时写 mask；封面侧的裁剪框仍未做",
-      "verdict": "缺失",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

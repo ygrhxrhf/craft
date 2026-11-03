@@ -1,0 +1,254 @@
+[
+  {
+    "id": "column.public.documents.coverAspect",
+    "label": "Add column \"coverAspect\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "coverAspect",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"coverAspect\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverAspect"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"coverAspect\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"coverAspect\" float8"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"coverAspect\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverAspect"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.documents.coverCropMask",
+    "label": "Add column \"coverCropMask\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "coverCropMask",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"coverCropMask\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverCropMask"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"coverCropMask\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"coverCropMask\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"coverCropMask\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverCropMask"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.documents.coverFrame",
+    "label": "Add column \"coverFrame\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "coverFrame",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"coverFrame\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverFrame"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"coverFrame\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"coverFrame\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"coverFrame\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverFrame"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.documents.coverRawAspect",
+    "label": "Add column \"coverRawAspect\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "coverRawAspect",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"coverRawAspect\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverRawAspect"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"coverRawAspect\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"coverRawAspect\" float8"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"coverRawAspect\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverRawAspect"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.documents.coverRawWidth",
+    "label": "Add column \"coverRawWidth\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "coverRawWidth",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"coverRawWidth\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverRawWidth"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"coverRawWidth\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"coverRawWidth\" float8"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"coverRawWidth\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverRawWidth"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.documents.coverWidth",
+    "label": "Add column \"coverWidth\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "coverWidth",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"coverWidth\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverWidth"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"coverWidth\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"coverWidth\" float8"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"coverWidth\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverWidth"
+        ]
+      }
+    ]
+  }
+]

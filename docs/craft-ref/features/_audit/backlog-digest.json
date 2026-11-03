@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T07:21:24.703Z",
+  "generatedAt": "2026-11-03T07:27:55.560Z",
   "total": 1614,
   "status": {
-    "aligned": 567,
+    "aligned": 568,
     "nonaction": 512,
-    "partial": 243,
+    "partial": 242,
     "deliberate": 165,
     "gap": 107,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 252,
+    "P2 / aligned": 253,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 93,
+    "P2 / partial": 92,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1198,10 +1198,10 @@
     {
       "id": "G503",
       "line": 1946,
-      "status": "partial",
+      "status": "aligned",
       "conflict": "local-says-missing",
       "local": "`grep -rn \"cropMask|aspectRatio\" src` ⇒ **0 命中** ⇒ 本地既无裁剪框、也不区分\"用户裁过的尺寸\"与\"原图尺寸\"；✎ 现读（2026-11-03 第 246 批）：图片块已按同形补齐——`cropMask` 用竖线串、解析全有或全无，节点并列保存处理后/原始两套尺寸，帧变化时写 mask；封面侧的裁剪框仍未做",
-      "verdict": "缺失"
+      "verdict": "已对齐"
     },
     {
       "id": "G623",

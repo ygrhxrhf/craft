@@ -19,6 +19,8 @@ import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
 import { useFocusStore } from '@/lib/store/use-focus-store';
 import { EXIT_FOCUS_MODE_PREFIX, FOCUS_MODE } from '@/lib/editor/focus-mode-copy';
 import { normalizeCoverImages, pickCoverImage } from '@/lib/document/cover-rotation';
+import { DEFAULT_FRAME, frameStyle, moveFrame, readImageFrame, zoomFrame, type ImageFrame } from '@/lib/editor/image-frame';
+import { cropMaskForFrame } from '@/lib/editor/image-crop';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useRightPanelStore } from '@/lib/store/use-right-panel-store';
 import { capabilitiesFor } from '@/lib/authz/permission-axes';
@@ -58,6 +60,12 @@ interface DocumentEditorProps {
     coverType: string | null;
     coverImages?: unknown;
     coverShuffle?: boolean;
+    coverFrame?: unknown;
+    coverCropMask?: string | null;
+    coverWidth?: number | null;
+    coverAspect?: number | null;
+    coverRawWidth?: number | null;
+    coverRawAspect?: number | null;
     width: string | null;
     pageStyle: unknown;
     content: any;
@@ -80,6 +88,11 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const [coverImage, setCoverImage] = useState(doc.coverImage);
   const [coverImages, setCoverImages] = useState<string[]>(() => normalizeCoverImages(doc.coverImages));
   const [coverShuffle, setCoverShuffle] = useState(doc.coverShuffle === true);
+  // G503：封面裁剪帧与处理后/原始两套尺寸。
+  const [coverFrame, setCoverFrame] = useState<ImageFrame>(() => readImageFrame((doc.coverFrame ?? DEFAULT_FRAME) as any));
+  const coverFrameRef = useRef(coverFrame);
+  coverFrameRef.current = coverFrame;
+  const coverDragRef = useRef<{ x: number; y: number; frame: ImageFrame } | null>(null);
   const [coverType, setCoverType] = useState(doc.coverType);
   const [width, setWidth] = useState(doc.width ?? 'default');
   const [pageStyle, setPageStyle] = useState<PageStyle>(() => normalizePageStyle(doc.pageStyle));
@@ -192,6 +205,12 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     coverType?: string | null;
     coverImages?: string[];
     coverShuffle?: boolean;
+    coverFrame?: ImageFrame;
+    coverCropMask?: string | null;
+    coverWidth?: number | null;
+    coverAspect?: number | null;
+    coverRawWidth?: number | null;
+    coverRawAspect?: number | null;
     width?: string | null;
     pageStylePatch?: Partial<PageStyle>;
   }) => {
@@ -201,6 +220,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     if (data.coverImage !== undefined) setCoverImage(data.coverImage);
     if (data.coverImages !== undefined) setCoverImages(data.coverImages);
     if (data.coverShuffle !== undefined) setCoverShuffle(data.coverShuffle);
+    if (data.coverFrame !== undefined) setCoverFrame(data.coverFrame);
     if (data.coverType !== undefined) setCoverType(data.coverType);
     if (data.width !== undefined) setWidth(data.width ?? 'default');
     const { pageStylePatch, ...rest } = data;
@@ -442,9 +462,48 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               />
             )}
             {isImageCover && (
-              <div className="mb-6 h-48 w-full overflow-hidden rounded-lg">
+              <div
+                className="mb-6 h-48 w-full touch-none overflow-hidden rounded-lg"
+                onPointerDown={(event) => {
+                  if (!canEdit) return;
+                  coverDragRef.current = { x: event.clientX, y: event.clientY, frame: coverFrameRef.current };
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  const start = coverDragRef.current;
+                  if (!start) return;
+                  const box = event.currentTarget.getBoundingClientRect();
+                  setCoverFrame(
+                    moveFrame(start.frame, event.clientX - start.x, event.clientY - start.y, box.width, box.height),
+                  );
+                }}
+                onPointerUp={() => {
+                  if (!coverDragRef.current) return;
+                  coverDragRef.current = null;
+                  const next = coverFrameRef.current;
+                  void handleUpdate({ coverFrame: next, coverCropMask: cropMaskForFrame(next) });
+                }}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={displayCover!} alt="Cover" className="h-full w-full object-cover" />
+                <img
+                  src={displayCover!}
+                  alt="Cover"
+                  draggable={false}
+                  onLoad={(event) => {
+                    const img = event.currentTarget;
+                    if (doc.coverRawWidth == null && img.naturalWidth > 0) {
+                      const rawAspect = img.naturalHeight > 0 ? img.naturalWidth / img.naturalHeight : null;
+                      void handleUpdate({
+                        coverRawWidth: img.naturalWidth,
+                        coverRawAspect: rawAspect,
+                        coverWidth: doc.coverWidth ?? img.naturalWidth,
+                        coverAspect: doc.coverAspect ?? rawAspect,
+                      });
+                    }
+                  }}
+                  className="h-full w-full object-cover"
+                  style={frameStyle(coverFrame)}
+                />
               </div>
             )}
 
@@ -492,6 +551,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
           coverType={coverType}
           coverImages={coverImages}
           coverShuffle={coverShuffle}
+          coverFrame={coverFrame}
           width={width}
           pageStyle={pageStyle}
           wordCount={wordCount}

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import type { Editor } from '@tiptap/react';
 import { cn } from 'cn';
+import { readImageFrame, zoomFrame, DEFAULT_FRAME } from '@/lib/editor/image-frame';
+import { cropMaskForFrame } from '@/lib/editor/image-crop';
 import { Plus, Minus, RotateCcw } from 'lucide-react';
 import {
   DEFAULT_SPELLING_LANG,
@@ -27,6 +29,7 @@ interface StyleTabProps {
   coverType: string | null;
   coverImages: string[];
   coverShuffle: boolean;
+  coverFrame: { x: number; y: number; scale: number };
   width: string | null;
   pageStyle: PageStyle;
   onUpdate: (data: {
@@ -36,6 +39,8 @@ interface StyleTabProps {
     coverType?: string | null;
     coverImages?: string[];
     coverShuffle?: boolean;
+    coverFrame?: { x: number; y: number; scale: number };
+    coverCropMask?: string | null;
     width?: string | null;
     pageStylePatch?: Partial<PageStyle>;
   }) => void;
@@ -56,6 +61,7 @@ export function StyleTab({
   coverType,
   coverImages,
   coverShuffle,
+  coverFrame,
   width,
   pageStyle,
   onUpdate,
@@ -254,6 +260,34 @@ export function StyleTab({
               />
               随机轮换
             </label>
+          </div>
+        )}
+        {coverImage && (
+          // G503：封面裁剪——拖拽在封面本体上，这里给放大/缩小/复位三枚。
+          <div className="mt-2 flex items-center gap-1.5" data-testid="cover-crop">
+            {([
+              ['放大', 1],
+              ['缩小', -1],
+            ] as const).map(([label, direction]) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => {
+                  const next = zoomFrame(readImageFrame((coverFrame ?? DEFAULT_FRAME) as any), direction);
+                  onUpdate({ coverFrame: next, coverCropMask: cropMaskForFrame(next) });
+                }}
+                className="rounded-md border border-foreground/10 px-2 py-1 text-meta text-foreground/70 transition-colors hover:bg-foreground/4"
+              >
+                {label}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => onUpdate({ coverFrame: DEFAULT_FRAME, coverCropMask: cropMaskForFrame(DEFAULT_FRAME) })}
+              className="rounded-md border border-foreground/10 px-2 py-1 text-meta text-foreground/70 transition-colors hover:bg-foreground/4"
+            >
+              复位
+            </button>
           </div>
         )}
       </section>

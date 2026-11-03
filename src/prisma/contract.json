@@ -1643,6 +1643,27 @@
                   "kind": "scalar"
                 }
               },
+              "coverAspect": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "coverCropMask": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "coverFrame": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "coverImage": {
                 "nullable": true,
                 "type": {
@@ -1657,6 +1678,20 @@
                   "kind": "scalar"
                 }
               },
+              "coverRawAspect": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "coverRawWidth": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
               "coverShuffle": {
                 "nullable": false,
                 "type": {
@@ -1668,6 +1703,13 @@
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "coverWidth": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
                   "kind": "scalar"
                 }
               },
@@ -2072,17 +2114,35 @@
                 "content": {
                   "column": "content"
                 },
+                "coverAspect": {
+                  "column": "coverAspect"
+                },
+                "coverCropMask": {
+                  "column": "coverCropMask"
+                },
+                "coverFrame": {
+                  "column": "coverFrame"
+                },
                 "coverImage": {
                   "column": "coverImage"
                 },
                 "coverImages": {
                   "column": "coverImages"
                 },
+                "coverRawAspect": {
+                  "column": "coverRawAspect"
+                },
+                "coverRawWidth": {
+                  "column": "coverRawWidth"
+                },
                 "coverShuffle": {
                   "column": "coverShuffle"
                 },
                 "coverType": {
                   "column": "coverType"
+                },
+                "coverWidth": {
+                  "column": "coverWidth"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -6919,6 +6979,21 @@
                   "nativeType": "json",
                   "nullable": true
                 },
+                "coverAspect": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "coverCropMask": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "coverFrame": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
                 "coverImage": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -6927,6 +7002,16 @@
                 "coverImages": {
                   "codecId": "pg/json@1",
                   "nativeType": "json",
+                  "nullable": true
+                },
+                "coverRawAspect": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "coverRawWidth": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
                   "nullable": true
                 },
                 "coverShuffle": {
@@ -6941,6 +7026,11 @@
                 "coverType": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
+                  "nullable": true
+                },
+                "coverWidth": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
                   "nullable": true
                 },
                 "createdAt": {
@@ -8964,7 +9054,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "da995c0c19e139e6d1f89563c917eae71461ffacbf1223fe796f9cb2297f980a"
+    "storageHash": "077d6fd86f3039b9f2685ec460bd99f31429456a1ed5fa5a60959e8056e17219"
   },
   "execution": {
     "executionHash": "d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32",

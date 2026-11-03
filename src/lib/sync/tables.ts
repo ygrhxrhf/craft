@@ -3,7 +3,7 @@
 // - user：仅同步设置类字段（spec 5.1「仅」），email/password/createdAt 不入 payload
 // - collection 五表 / comment / comment_thread / document_share：按同模式补全（全列白名单）
 export const DOC_META_COLS = [
-  'title', 'icon', 'coverImage', 'coverType', 'coverImages', 'coverShuffle', 'font', 'width', 'pageStyle',
+  'title', 'icon', 'coverImage', 'coverType', 'coverImages', 'coverShuffle', 'coverFrame', 'coverCropMask', 'coverWidth', 'coverAspect', 'coverRawWidth', 'coverRawAspect', 'font', 'width', 'pageStyle',
   'parentId', 'folderId', 'order', 'isDeleted', 'deletedAt',
   'isDailyNote', 'dailyNoteDate', 'isTemplate', 'lastViewedAt', 'metaUpdatedAt', 'isArchived',
 ] as const;

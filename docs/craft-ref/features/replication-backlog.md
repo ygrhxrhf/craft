@@ -137,7 +137,7 @@
 | G112 | 1263 | 已对齐 | local-says-missing | 无 ✎ 现读（2026-11-02）更正：已实现。① 守卫与取名＝lib/collection/csv-file.ts（ |
 | G300 | 1582 | 已对齐 | local-says-missing | 本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：PENDING_STATES 逐字 11 条；已接「正在 |
 | G491 | 1927 | 已对齐 | local-says-missing | 无该语义（5 处监听彼此独立，各自判键）⇒ 本地"多层弹层 + 全局快捷键"必然互相干扰（与 G456/G471/G47 |
-| G503 | 1946 | 部分落地 | local-says-missing | grep -rn "cropMask\|aspectRatio" src ⇒ 0 命中 ⇒ 本地既无裁剪框、也不区分"用户 |
+| G503 | 1946 | 已对齐 | local-says-missing | grep -rn "cropMask\|aspectRatio" src ⇒ 0 命中 ⇒ 本地既无裁剪框、也不区分"用户 |
 | G623 | 2243 | 已对齐 | local-says-missing | 本地已补批量选择模式 ✎ 现读（2026-11-02）更正：SortableDocGrid 工具栏有「选择」；进入后卡片 |
 | G1223 | 3905 | 已对齐 | local-says-missing | 本轮实扫＝src/app/layout.tsx 与 src/app/globals.css 都没有 color-sche |
 | G1228 | 3937 | 已对齐 | local-says-missing | grep -n toggle src/lib/import/markdown.ts ⇒ 0 命中＝本地把 -／+／* 一 |

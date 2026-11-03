@@ -36,6 +36,7 @@ interface RightPanelProps {
   coverType: string | null;
   coverImages: string[];
   coverShuffle: boolean;
+  coverFrame: { x: number; y: number; scale: number };
   width: string | null;
   pageStyle: PageStyle;
   wordCount: number;
@@ -51,6 +52,8 @@ interface RightPanelProps {
     coverType?: string | null;
     coverImages?: string[];
     coverShuffle?: boolean;
+    coverFrame?: { x: number; y: number; scale: number };
+    coverCropMask?: string | null;
     width?: string | null;
     pageStylePatch?: Partial<PageStyle>;
   }) => void;
@@ -69,6 +72,7 @@ export function RightPanel({
   coverType,
   coverImages,
   coverShuffle,
+  coverFrame,
   width,
   pageStyle,
   wordCount,
@@ -136,6 +140,7 @@ export function RightPanel({
                 coverType={coverType}
                 coverImages={coverImages}
                 coverShuffle={coverShuffle}
+                coverFrame={coverFrame}
                 width={width}
                 pageStyle={pageStyle}
                 onUpdate={onUpdate}

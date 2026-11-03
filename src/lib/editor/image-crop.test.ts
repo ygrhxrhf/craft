@@ -36,5 +36,13 @@ describe('the crop mask wire shape (G503)', () => {
     expect(block).toContain('rawImageWidth');
     expect(view).toContain('cropMask: cropMaskForFrame(next)');
     expect(view).toContain('rawAspectRatio');
+    // G503 cover side: the document cover persists the frame, mask and raw/processed sizes.
+    const editor = read('../../components/editor/DocumentEditor.tsx');
+    const style = read('../../components/editor/tabs/StyleTab.tsx');
+    expect(editor).toContain('coverFrame={coverFrame}');
+    expect(editor).toContain('cropMaskForFrame(next)');
+    expect(editor).toContain('coverRawWidth');
+    expect(style).toContain('data-testid="cover-crop"');
+    expect(style).toContain('cropMaskForFrame(next)');
   });
 });

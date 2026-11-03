@@ -5644,13 +5644,13 @@
       ]
     },
     "G503": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "图片块的 cropMask 竖线串（全有或全无）与处理后/原始双尺寸已落；封面侧裁剪仍缺",
+      "note": "cropMask 竖线串全有或全无；图片块与封面均存处理后/原始双尺寸；封面可拖拽/缩放并落 mask",
       "evidence": [
         "src/lib/editor/image-crop.ts:1",
-        "src/components/editor/extensions/image-block.tsx:100",
-        "src/components/editor/extensions/image-block-view.tsx:30"
+        "src/components/editor/DocumentEditor.tsx:230",
+        "src/components/editor/tabs/StyleTab.tsx:260"
       ]
     },
     "G504": {

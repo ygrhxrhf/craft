@@ -9264,10 +9264,12 @@
       ]
     },
     "G1529": {
-      "status": "gap",
-      "note": "任务页无「移到文档/每日笔记」入口",
+      "status": "aligned",
+      "note": "第 213 批：任务行「移至」菜单（每日笔记/最近文档），任务投影成 taskItem 插入目标正文；成功/失败用官方句",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx"
+        "src/lib/task/move-copy.ts:1",
+        "src/actions/task/move.ts:1",
+        "src/components/task/TaskMoveMenu.tsx:1"
       ]
     },
     "G1530": {

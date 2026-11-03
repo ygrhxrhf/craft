@@ -49,6 +49,7 @@ import { isOverdue, overdueLabel } from '@/lib/task/overdue';
 import { CANCELLED_LABEL } from '@/lib/editor/task-status';
 import { completedTaskClasses } from '@/lib/task/completed-appearance';
 import { toast } from '@/components/ui/toast';
+import { TaskMoveMenu } from '@/components/task/TaskMoveMenu';
 import { useCompletedTaskAppearance } from '@/components/task/use-completed-appearance';
 import { CancelledBadge } from '@/components/task/cancelled-badge';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
@@ -858,6 +859,8 @@ function TaskRow({
         >
           <CalendarClock className="size-4" />
         </button>
+        {/* G1529：移至每日笔记 / 某篇文档（已在文档里的任务不搬）。 */}
+        <TaskMoveMenu taskId={task.id} disabled={Boolean(task.documentId)} />
         <button
           onClick={() => onDelete(task.id)}
           className="shrink-0 rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"

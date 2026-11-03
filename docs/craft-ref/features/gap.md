@@ -1189,7 +1189,7 @@
 | G55 | blurhash worker：图片先显示模糊占位再换清晰图 | 图片直接加载，无 blurhash | 缺失 | 1/2 |
 | G56 | 桌面 HTML5 backend 与移动 Touch backend 两套 DnD 分流（`HTML5DnDProvider`/`TouchDnDProvider`） | 单一拖拽实现，触摸端未分流 | 行为不同 | 2/2 |
 | G57 | 空间级管理：全部空间侧栏、我的空间、空间迁移到团队（`AllSpacesSidebar`/`MySpaces`/`SpacesClientMini`/`MoveSpaceToTeamPopupContent`） | 无空间概念，只有 folder 树 | 缺失 | 2/3 |
-| G58 | 评论两种形态：侧栏整页 + **浮动线程窗口**（`SideMenuCommentsPage`/`FloatingThreadWindow`） | 评论只内嵌在信息 tab | 缺失 | 2/2 |
+| G58 | 评论两种形态：侧栏整页 + **浮动线程窗口**（`SideMenuCommentsPage`/`FloatingThreadWindow`） | ✎ 现读（2026-11-02 第 196 批）：两种形态都在——信息页是整页列表（含回复/表情/解决）；**浮动线程窗口**（`FloatingThreadWindow.tsx`）在点正文 `[data-thread-id]` 高亮时弹出，显示该线程全部评论、可标记/取消解决、Esc 关一层。窗口内不提供撰写（回复仍走面板），这是本批声明的作用域 ☆ 已清（第 196 批） | 对齐 | 2/2 |
 | G59 | 可观测性 UI 四块：同步日志、性能面板、浏览同步、浏览器兼容检查（`SyncLogTab`/`PerformanceTab`/`BrowseSyncTab`/`IncompatibleBrowserCheck`，对应 i18n `diagnostics.*`、`error.report.*`） | 完全没有 | 缺失 | 1/3 |
 | G60 | 专注模式**分三个场景**：画布 / 白板 / 代码各一个 + 专注工具条（`ExcalidrawFocusMode`/`WhiteboardFocusMode`/`CodeEditorFocusMode`/`FocusModeToolbar`） | ✎ 现读（2026-10-31）更正：只有一个全局专注模式；缺画布/白板/代码三场景与专注工具条 | 缺失 | 2/2 | ☆ 原判（2026-10-31 现读后作废）＝无（G11 的细化：不是一键全局） 
 | G61 | 图标体系：**官方 3004 个图标，其中 3003 个带检索 tags**，名称清单已本地解析为 `_harvest/icon-names.tsv`（`name<TAB>tags`，不含 SVG 正文，SVG 受版权保护不入库）；按需加载为 9 个单图标 chunk + `icons/n/all.json` 清单 | lucide + 自绘近似 | 有意偏差（现已可按官方名称逐项对齐图标语义；前缀分布：square 97 / arrow 97 / circle 81 / user 63 / face 46 / text 44 / window 44 / folder 42 / chart 41 / table 41） | 1/2 |

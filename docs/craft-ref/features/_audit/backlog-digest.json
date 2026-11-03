@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T01:23:28.418Z",
+  "generatedAt": "2026-11-03T01:28:21.118Z",
   "total": 1614,
   "status": {
-    "aligned": 519,
+    "aligned": 520,
     "nonaction": 512,
     "partial": 271,
     "deliberate": 165,
-    "gap": 127,
+    "gap": 126,
     "unreachable": 20
   },
   "priority": {
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 204,
+    "P2 / aligned": 205,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
@@ -29,7 +29,7 @@
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
-    "P2 / gap": 54,
+    "P2 / gap": 53,
     "P? / deliberate": 40,
     "P3 / gap": 39,
     "P? / gap": 34,
@@ -1239,12 +1239,12 @@
       9
     ],
     [
-      "三点五、P2 追加（来自 `modules.md` 模块清单，静态证据）",
+      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
       8
     ],
     [
-      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
-      8
+      "三点五、P2 追加（来自 `modules.md` 模块清单，静态证据）",
+      7
     ],
     [
       "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",

@@ -36,6 +36,7 @@ import { getDraft } from '@/lib/offline/draft-store';
 import { ALL_CHANGES_SAVED, offlineSaveLabel } from '@/lib/offline/save-status';
 import { planTrailingClick } from '@/lib/editor/trailing-click';
 import { TaskDateQuickMenu } from '@/components/editor/TaskDateQuickMenu';
+import { FloatingThreadWindow } from '@/components/editor/comments/FloatingThreadWindow';
 
 const TAB_ORDER = ['insert', 'format', 'style', 'info'] as const;
 const TAB_ICONS = { insert: LayoutGrid, format: Type, style: Palette, info: Info };
@@ -483,6 +484,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
       )}
 
       <ShareDialog documentId={doc.id} open={shareOpen} onClose={() => setShareOpen(false)} />
+      {/* G58：点正文评论高亮弹出的浮动线程窗口。 */}
+      <FloatingThreadWindow documentId={doc.id} />
       <TaskDateQuickMenu />
     </div>
   );

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T01:23:28.177Z",
+  "generatedAt": "2026-11-03T01:28:20.868Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 920,
-    "aligned": 263,
+    "gap": 919,
+    "aligned": 264,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 349,
+    "P2 / gap": 348,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 159,
+    "P2 / aligned": 160,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -2102,10 +2102,10 @@
       "cols": 5,
       "id": "G58",
       "official": "评论两种形态：侧栏整页 + **浮动线程窗口**（`SideMenuCommentsPage`/`FloatingThreadWindow`）",
-      "local": "评论只内嵌在信息 tab",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-02 第 196 批）：两种形态都在——信息页是整页列表（含回复/表情/解决）；**浮动线程窗口**（`FloatingThreadWindow.tsx`）在点正文 `[data-thread-id]` 高亮时弹出，显示该线程全部评论、可标记/取消解决、Esc 关一层。窗口内不提供撰写（回复仍走面板），这是本批声明的作用域 ☆ 已清（第 196 批）",
+      "verdict": "对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

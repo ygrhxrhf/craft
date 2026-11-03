@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T06:53:48.888Z",
+  "generatedAt": "2026-11-03T07:03:30.211Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 883,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 9,
+  "conflicts": 10,
   "conflictRows": [
     {
       "id": "G95",
@@ -58,6 +58,14 @@
       "conflict": "local-says-missing",
       "local": "✎ 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否 @ 分成 `comment_mention`／`comment`；解决线程发 `comment_resolved`；编辑请求发 `document_access_request`；`block_m",
       "verdict": "☆ 已清（第 157 批）"
+    },
+    {
+      "id": "G96",
+      "line": 1243,
+      "status": "partial",
+      "conflict": "local-says-missing",
+      "local": "`src/app/(app)/tasks/page.tsx` 单页无档位；日历页无五档分节语义 ⇒ ✎ 现读（2026-11-02）：四档列表已落——`/tasks`（inbox）/`/tasks/today`/`/tasks/upcoming`/`/tasks/all` 各有路由，`TasksView` 顶部四枚组切",
+      "verdict": "已对齐"
     },
     {
       "id": "G112",
@@ -2813,8 +2821,8 @@
       "cols": 5,
       "id": "G96",
       "official": "任务列表视图权威四档 `inbox / today / upcoming / all`（zod `listType`，AI 缺省补 `all`）+ 日历分节五档 `ongoing/day/remainingDaysInMonth/month/later`（含\"ongoing 段含过去未完成项、过去段只放已完成/已取消\"的语义）",
-      "local": "`src/app/(app)/tasks/page.tsx` 单页无档位；日历页无五档分节语义 ⇒ ✎ 现读（2026-11-02）：四档列表已落——`/tasks`（inbox）/`/tasks/today`/`/tasks/upcoming`/`/tasks/all` 各有路由，`TasksView` 顶部四枚组切换，upcoming 另有 7/30/all 窗口；日历仍只有 `day`/`range` 两型分节，缺 ongoing/remainingDaysInMonth/month/later 五档语义 ⇒ ✎ 再读（2026-11-02 第 210 批）：**ongoing 语义已落**——过去未完成/未取消的任务收进「进行中」一节（`ongoingTasks`），过去的日期节只留已完成/已取消（`pastDayKeeps`）；day / remainingDaysInMonth（本地 `range` 并节）/ month 原已有 ⇒ 只剩 `later` 这一档未命名",
-      "verdict": "缺失（局部）",
+      "local": "`src/app/(app)/tasks/page.tsx` 单页无档位；日历页无五档分节语义 ⇒ ✎ 现读（2026-11-02）：四档列表已落——`/tasks`（inbox）/`/tasks/today`/`/tasks/upcoming`/`/tasks/all` 各有路由，`TasksView` 顶部四枚组切换，upcoming 另有 7/30/all 窗口；日历仍只有 `day`/`range` 两型分节，缺 ongoing/remainingDaysInMonth/month/later 五档语义 ⇒ ✎ 再读（2026-11-02 第 210 批）：**ongoing 语义已落**——过去未完成/未取消的任务收进「进行中」一节（`ongoingTasks`），过去的日期节只留已完成/已取消（`pastDayKeeps`）；day / remainingDaysInMonth（本地 `range` 并节）/ month 原已有 ⇒ ✎ 现读（2026-11-03 第 248 批）：「之后」一节已落——加载月份之后的任务收进 `later` 分节（标题取 `calendar.date.later`「之后」，无此类任务时不渲染）；浏览器实测 2027-02 任务出现在「之后」节 ⇒ 五档语义齐",
+      "verdict": "已对齐",
       "score": "2/2",
       "status": "partial",
       "scoreParsed": {
@@ -2822,7 +2830,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

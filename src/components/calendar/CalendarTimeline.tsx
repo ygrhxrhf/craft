@@ -16,6 +16,9 @@ import {
   ONGOING_TITLE,
   dateLabel,
   dayInSection,
+  sectionSpan,
+  addDays,
+  LATER_TITLE,
   isPastDay,
   ongoingTasks,
   pastDayKeeps,
@@ -56,6 +59,13 @@ export function CalendarTimeline({
   onCreateNote,
 }: CalendarTimelineProps) {
   const sections = timelineSections({ anchor, today, earlierDays, laterMonths });
+  // G96：加载月份之后的任务收进「之后」一节；没有这类任务时不渲染。
+  const lastSection = sections[sections.length - 1];
+  const laterStart = lastSection ? addDays(sectionSpan(lastSection).end, 1) : today;
+  const laterSection = { kind: 'later' as const, key: 'later', start: laterStart, label: LATER_TITLE };
+  const hasLaterTasks = tasks.some(
+    (task) => task.scheduleDate && dayInSection(laterSection as never, new Date(task.scheduleDate)),
+  );
   // G96：过去未完成的任务收进「进行中」，过去的日期节只留已完成/已取消。
   const ongoing = ongoingTasks(tasks, today);
   const [openForm, setOpenForm] = useState<string | null>(null);
@@ -76,6 +86,25 @@ export function CalendarTimeline({
             <CalendarTaskRow key={task.id} task={task} onToggle={onToggleTask} />
           ))}
         </section>
+      )}
+      {hasLaterTasks && (
+        <Section
+          key="later"
+          section={laterSection as never}
+          tasks={tasks}
+          notes={notes}
+          today={today}
+          formOpen={openForm === 'later'}
+          onToggleForm={() =>
+            setOpenForm((open) => (open === 'later' ? null : 'later'))
+          }
+          onToggleTask={onToggleTask}
+          onAddTask={async (title) => {
+            await onAddTask(sectionActionDate(laterSection as never), title);
+            setOpenForm(null);
+          }}
+          onCreateNote={() => onCreateNote(sectionActionDate(laterSection as never))}
+        />
       )}
       {sections.map((section) => (
         <Section

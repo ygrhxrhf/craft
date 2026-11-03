@@ -3628,12 +3628,13 @@
       ]
     },
     "G96": {
-      "status": "partial",
-      "note": "第 210 批：四档列表 + 日历 day/remaining/month 原有；新增 ongoing（过去未完成）与过去日只留已完成的语义；later 档未命名",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "任务四档列表齐；日历五档分节齐（ongoing/day/remainingDaysInMonth/month/later），「之后」按远未来任务出现",
       "evidence": [
-        "src/lib/calendar/timeline.ts:173",
+        "src/lib/calendar/timeline.ts:1",
         "src/components/calendar/CalendarTimeline.tsx:60",
-        "src/lib/task/grouping.ts:103"
+        "src/app/(app)/tasks/TasksView.tsx:63"
       ]
     },
     "G97": {

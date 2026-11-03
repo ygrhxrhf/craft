@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T06:53:49.182Z",
+  "generatedAt": "2026-11-03T07:03:30.491Z",
   "total": 1614,
   "status": {
-    "aligned": 563,
+    "aligned": 564,
     "nonaction": 512,
-    "partial": 247,
+    "partial": 246,
     "deliberate": 165,
     "gap": 107,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 248,
+    "P2 / aligned": 249,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 97,
+    "P2 / partial": 96,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1164,6 +1164,14 @@
       "verdict": "☆ 已清（第 157 批）"
     },
     {
+      "id": "G96",
+      "line": 1243,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "`src/app/(app)/tasks/page.tsx` 单页无档位；日历页无五档分节语义 ⇒ ✎ 现读（2026-11-02）：四档列表已落——`/tasks`（inbox）/`/tasks/today`/`/tasks/upcoming`/`/tasks/all` 各有路由，`TasksView` 顶部四枚组切换，upcoming 另有 7/30/all 窗口；日历仍只有 `day`/`r",
+      "verdict": "已对齐"
+    },
+    {
       "id": "G112",
       "line": 1263,
       "status": "aligned",
@@ -1244,7 +1252,7 @@
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
-      13
+      12
     ],
     [
       "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",

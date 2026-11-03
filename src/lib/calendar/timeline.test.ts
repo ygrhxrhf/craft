@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -9,6 +11,7 @@ import {
   relativeDayLabel,
   sectionActionDate,
   timelineSections,
+  sectionSpan,
   weekdayLabel,
   type TimelineSection,
 } from './timeline';
@@ -19,7 +22,7 @@ const CAPTURE_DAY = new Date(2026, 8, 27);
 /** The header the official DOM shows for a day section: `9月27日 • 今天 • 星期日`. */
 function header(section: TimelineSection): string {
   if (section.kind === 'range') return `${dateLabel(section.start)} / ${dateLabel(section.end)}`;
-  if (section.kind === 'month') return section.label;
+  if (section.kind === 'month' || section.kind === 'later') return section.label;
   return [dateLabel(section.date), section.relative, weekdayLabel(section.date)]
     .filter(Boolean)
     .join(' • ');
@@ -135,5 +138,25 @@ describe('an anchor that runs past the end of its month', () => {
     ]);
     expect(relativeDayLabel(new Date(2026, 9, 28), new Date(2026, 9, 27))).toBe('明天');
     expect(relativeDayLabel(new Date(2026, 9, 26), new Date(2026, 9, 27))).toBeNull();
+  });
+});
+
+describe('the later section (G96)', () => {
+  it('covers everything after the loaded months', () => {
+    const day = new Date(2027, 0, 5);
+    const section = { kind: 'later' as const, key: 'later', start: new Date(2026, 11, 1), label: '之后' };
+    expect(sectionSpan(section).start).toEqual(new Date(2026, 11, 1));
+    expect(dayInSection(section, day)).toBe(true);
+    expect(dayInSection(section, new Date(2026, 10, 30))).toBe(false);
+  });
+
+  it('is rendered by the timeline only when far-future tasks exist', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src/components/calendar/CalendarTimeline.tsx'),
+      'utf8',
+    );
+    expect(source).toContain('hasLaterTasks &&');
+    expect(source).toContain('LATER_TITLE');
+    expect(source).toContain('calendar-section-${section.kind}');
   });
 });

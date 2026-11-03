@@ -35,7 +35,19 @@ export type TimelineMonthSection = {
   label: string;
 };
 
-export type TimelineSection = TimelineDaySection | TimelineRangeSection | TimelineMonthSection;
+export type TimelineLaterSection = {
+  kind: 'later';
+  key: string;
+  /** First day after the loaded months — everything scheduled from here is 「之后」. */
+  start: Date;
+  label: string;
+};
+
+export type TimelineSection =
+  | TimelineDaySection
+  | TimelineRangeSection
+  | TimelineMonthSection
+  | TimelineLaterSection;
 
 const CHINESE_MONTH_NUMBERS = [
   '一',
@@ -149,6 +161,7 @@ function daySection(date: Date, today: Date): TimelineDaySection {
 export function sectionSpan(section: TimelineSection): { start: Date; end: Date } {
   if (section.kind === 'day') return { start: section.date, end: section.date };
   if (section.kind === 'range') return { start: section.start, end: section.end };
+  if (section.kind === 'later') return { start: section.start, end: new Date(9999, 11, 31) };
   return { start: section.date, end: endOfMonth(section.date) };
 }
 
@@ -160,6 +173,10 @@ export function sectionActionDate(section: TimelineSection): Date {
 /** G96：`进行中` 这一节的标题（语言包 `in.progress`）。 */
 export const ONGOING_TITLE = '进行中';
 export const ONGOING_KEY = 'in.progress';
+
+/** G96：`之后` 这一节的标题（语言包 `calendar.date.later`）。 */
+export const LATER_TITLE = '之后';
+export const LATER_KEY = 'calendar.date.later';
 
 export interface ScheduledTaskLike {
   scheduleDate?: string | null;

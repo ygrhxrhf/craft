@@ -71,7 +71,8 @@ describe('the timeline is the page, the month grid is the other view', () => {
   it('gives every section the two per-day actions rather than only the selected day', () => {
     // 采集里 9 节各有 添加任务／创建每日笔记；旧实现只在选中的那一节提供。
     const sections = timeline.match(/<Section\b/g) ?? [];
-    expect(sections).toHaveLength(1);
+    // G96 added the conditional 「之后」 section; both calls carry the actions.
+    expect(sections).toHaveLength(2);
     expect(timeline).toContain('onAddTask(sectionActionDate(section), title)');
     expect(timeline).toContain('onCreateNote(sectionActionDate(section))');
   });

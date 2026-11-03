@@ -6,6 +6,7 @@ import {
   Heading4,
   List,
   ListOrdered,
+  ListX,
   CheckSquare,
   ChevronRight,
   FoldVertical,
@@ -118,6 +119,46 @@ export const slashCommands: SlashCommand[] = [
   },
 
   // ── 列表 ──
+  // G1615：官方「列表」组逐字五项、按此序：编号列表／待办列表／取消列表格式／无序列表／折叠列表。
+  // 首项默认落 `numbered`（不是本地的 bullet）。
+  {
+    name: '编号列表',
+    description: '编号列表',
+    icon: ListOrdered,
+    keywords: ['numbered', 'ordered', 'list', '列表', '编号'],
+    category: '列表',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).toggleOrderedList().run();
+    },
+  },
+  {
+    name: '待办列表',
+    description: '可勾选的任务列表',
+    icon: CheckSquare,
+    keywords: ['todo', 'task', 'checkbox', '待办', '任务', '清单'],
+    category: '列表',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).toggleTaskList().run();
+    },
+  },
+  {
+    name: '取消列表格式',
+    description: '把当前块恢复为普通文本',
+    icon: ListX,
+    keywords: ['clear list', 'remove list', '取消列表', '列表格式'],
+    category: '列表',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      if (editor.isActive('taskList')) editor.chain().focus().toggleTaskList().run();
+      if (editor.isActive('toggleBlock')) editor.chain().focus().unsetToggleBlock().run();
+      // 嵌套列表要逐层提出，`liftListItem` 一次只降一层。
+      let guard = 0;
+      while ((editor.isActive('bulletList') || editor.isActive('orderedList')) && guard < 10) {
+        editor.chain().focus().liftListItem('listItem').run();
+        guard += 1;
+      }
+    },
+  },
   {
     name: '无序列表',
     description: '项目符号列表',
@@ -126,26 +167,6 @@ export const slashCommands: SlashCommand[] = [
     category: '列表',
     command: (editor, range) => {
       editor.chain().focus().deleteRange(range).toggleBulletList().run();
-    },
-  },
-  {
-    name: '有序列表',
-    description: '编号列表',
-    icon: ListOrdered,
-    keywords: ['numbered', 'ordered', 'list', '有序', '编号'],
-    category: '列表',
-    command: (editor, range) => {
-      editor.chain().focus().deleteRange(range).toggleOrderedList().run();
-    },
-  },
-  {
-    name: '待办事项',
-    description: '可勾选的任务列表',
-    icon: CheckSquare,
-    keywords: ['todo', 'task', 'checkbox', '待办', '任务', '清单'],
-    category: '列表',
-    command: (editor, range) => {
-      editor.chain().focus().deleteRange(range).toggleTaskList().run();
     },
   },
   {
@@ -158,12 +179,14 @@ export const slashCommands: SlashCommand[] = [
       editor.chain().focus().deleteRange(range).setToggleBlock().run();
     },
   },
+
+  // ── 折叠操作（G1615：不属于「列表」组，官方列表组只有五项） ──
   {
     name: '全部展开',
     description: '展开文档中的全部折叠块',
     icon: UnfoldVertical,
     keywords: ['expand all', '全部展开', '展开所有折叠块'],
-    category: '列表',
+    category: '折叠操作',
     command: (editor, range) => {
       editor.chain().focus().deleteRange(range).expandAllToggleBlocks().run();
     },
@@ -173,7 +196,7 @@ export const slashCommands: SlashCommand[] = [
     description: '收起文档中的全部折叠块',
     icon: FoldVertical,
     keywords: ['collapse all', '全部收起', '收起所有折叠块'],
-    category: '列表',
+    category: '折叠操作',
     command: (editor, range) => {
       editor.chain().focus().deleteRange(range).collapseAllToggleBlocks().run();
     },

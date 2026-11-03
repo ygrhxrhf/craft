@@ -9877,10 +9877,13 @@
       ]
     },
     "G1615": {
-      "status": "partial",
-      "note": "过滤「列表」得 4 条、首项无序；官方 5 条、首项编号",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "斜杠「列表」组五项按官方序，首项落 numbered；新增取消列表格式；展开/收起移出该组",
       "evidence": [
-        "src/components/editor/slash-menu/slash-commands.ts:111"
+        "src/components/editor/slash-menu/slash-commands.ts:122",
+        "src/components/editor/slash-menu/slash-commands.ts:145",
+        "src/lib/editor/slash-list-group.test.ts:1"
       ]
     },
     "G1616": {

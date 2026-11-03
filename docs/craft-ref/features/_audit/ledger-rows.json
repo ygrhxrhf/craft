@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T05:26:51.124Z",
+  "generatedAt": "2026-11-03T05:33:46.150Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 895,
-    "aligned": 285,
+    "gap": 894,
+    "aligned": 286,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 324,
+    "P2 / gap": 323,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 181,
+    "P2 / aligned": 182,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -5142,10 +5142,10 @@
       "cols": 5,
       "id": "G225",
       "official": "**信息页「动作」子页签 12 项**（在页面中查找 / 快速开启 / 添加评论 / 向上·向下·顶部·底部移动 / 组合·取消组合 / 重命名 / 创建副本 / 删除，其中 5 项印键位字形）（V26）",
-      "local": "✎ 现读（2026-11-02）：12 项里 11 项已在页（含第 183 批补的组合/取消组合），并按官方用 `actionEnabled` 分档禁用；仍缺 重命名，且未印键位字形",
-      "verdict": "缺失（局部）",
+      "local": "✎ 现读（2026-11-02）：12 项里 11 项已在页（含第 183 批补的组合/取消组合），并按官方用 `actionEnabled` 分档禁用；✎ 现读（2026-11-03 第 235 批）：已对齐 — 「重命名」已补（走 `useTitleRequestStore` 聚焦文档标题），五枚键位字形从 `KEY_BINDINGS` 印出（页内查找 Ctrl-F／上移 Alt-↑／下移 Alt-↓／顶部 Alt-↖／底部 Alt-↘）；浏览器实测",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   Calendar, User, Play, Folder, Copy, Star, Clock, Trash2,
   FileText, LayoutTemplate, Download, Search, ArrowUp, ArrowDown, ChevronsUp, ChevronsDown,
-  MessageSquare, ChevronRight, FoldVertical, UnfoldVertical, LogOut, Type, Scan, Group, Ungroup,
+  MessageSquare, ChevronRight, FoldVertical, UnfoldVertical, LogOut, Type, Scan, Group, Ungroup, Pencil,
 } from 'lucide-react';
 import { cn } from 'cn';
 import { NodeSelection } from '@tiptap/pm/state';
@@ -38,6 +38,8 @@ import {
   type PdfExportOptions,
 } from '@/lib/export/pdf-options';
 import { getSyncManager } from '@/lib/sync-core';
+import { KEY_BINDINGS, detectPlatform, displayFor } from '@/lib/editor/keymap';
+import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
 import { findDocumentShareId } from '@/components/sync/local-records';
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
@@ -126,6 +128,11 @@ interface DocItem {
 export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = true, pageStyle, onPageStylePatch, onClose }: InfoTabProps) {
   const router = useRouter();
   const [subTab, setSubTab] = useState<'info' | 'actions'>('info');
+  // G225：官方动作项里有五项印键位字形；本地绑定表是唯一来源。
+  const shortcutGlyph = (id: string) => {
+    const binding = KEY_BINDINGS.find((candidate) => candidate.id === id);
+    return binding ? displayFor(binding, detectPlatform()) : '';
+  };
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
   const [backlinksLoaded, setBacklinksLoaded] = useState(false);
   const [backlinkSort, setBacklinkSort] = useState<BacklinkSort>('alphabetical');
@@ -822,6 +829,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
           >
             <Search className="size-3.5 text-muted-foreground" />
             <span>在页面中查找</span>
+            <kbd className="ml-auto text-[10px] text-foreground/40">{shortcutGlyph('FIND_IN_PAGE')}</kbd>
           </button>
           <button
             type="button"
@@ -846,12 +854,23 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             <FileText className="size-3.5 text-muted-foreground" />
             <span>快速开启</span>
           </button>
+          <button
+            type="button"
+            onClick={() => {
+              useTitleRequestStore.getState().ask();
+              onClose();
+            }}
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
+          >
+            <Pencil className="size-3.5 text-muted-foreground" />
+            <span>重命名</span>
+          </button>
           {([
-            ['up', '上移', ArrowUp],
-            ['down', '下移', ArrowDown],
-            ['top', '移至顶部', ChevronsUp],
-            ['bottom', '移至底部', ChevronsDown],
-          ] as const).map(([target, label, Icon]) => (
+            ['up', '上移', ArrowUp, 'MOVE_BLOCK_UP'],
+            ['down', '下移', ArrowDown, 'MOVE_BLOCK_DOWN'],
+            ['top', '移至顶部', ChevronsUp, 'MOVE_BLOCK_TOP'],
+            ['bottom', '移至底部', ChevronsDown, 'MOVE_BLOCK_BOTTOM'],
+          ] as const).map(([target, label, Icon, bindingId]) => (
             <button
               key={target}
               type="button"
@@ -861,6 +880,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             >
               <Icon className="size-3.5 text-muted-foreground" />
               <span>{label}</span>
+              <kbd className="ml-auto text-[10px] text-foreground/40">{shortcutGlyph(bindingId)}</kbd>
             </button>
           ))}
           {/* G197：组合＝把选区触及的块包进卡片；取消组合＝把卡片拆回顶层。 */}

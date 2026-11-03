@@ -4331,11 +4331,13 @@
       ]
     },
     "G225": {
-      "status": "partial",
-      "note": "第 183 批：12 项中 11 项已接线，只缺重命名；键位字形仍未印",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "信息页动作 12 项齐（补重命名，聚焦标题），五枚键位字形从绑定表印出",
       "evidence": [
-        "src/lib/document/actions-menu.ts:16",
-        "src/components/editor/tabs/InfoTab.tsx:857"
+        "src/components/editor/tabs/InfoTab.tsx:129",
+        "src/components/editor/tabs/InfoTab.tsx:838",
+        "src/lib/editor/info-actions.test.ts:1"
       ]
     },
     "G229": {

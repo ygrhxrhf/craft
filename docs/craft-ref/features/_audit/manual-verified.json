@@ -9697,9 +9697,9 @@
       ]
     },
     "G1582": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "三条官方行内键位已接入中央表并分派；浏览器复验待做。",
+      "note": "三条官方行内键位接入中央表并分派；浏览器实测三键各生成对应标记。",
       "evidence": [
         "src/lib/editor/keymap.ts:264",
         "src/components/editor/extensions/craft-keymap.ts:148"

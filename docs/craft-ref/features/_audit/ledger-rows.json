@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T10:08:22.740Z",
+  "generatedAt": "2026-11-03T10:14:15.401Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 862,
@@ -29522,8 +29522,8 @@
       "cols": 5,
       "id": "G1582",
       "official": "★★★★ **行内格式快捷键：本地跑的是 **TipTap 默认键位**，不是官方那张表**——删除线／高亮／「代码（⇧⌘C）」三条**左右落空****（第 324 批，`editor.key.inline-chord-family` 两侧各 34 步，逐键独占一块）：官方（Windows 列）`Ctrl-B`→`bold`、`Ctrl-I`→`italic`、`Ctrl-Shift--`→`strike`、`Ctrl-Shift-B`→`highlight`、`Ctrl-Shift-C`→`code`、`Ctrl-E`→`code` **六条全部生效**；本地同序列只有 `Ctrl-B`／`Ctrl-I`／`Ctrl-E` 生效，`Ctrl-Shift--`／`Ctrl-Shift-B`／`Ctrl-Shift-C` **块内 `marks` 一枚不动**。★ 根因已逐条对到包上：本地这三条全走 TipTap 扩展自带键位——`extension-strike`＝`Mod-Shift-s`、`extension-highlight`＝`Mod-Shift-h`、`extension-code`＝`Mod-e`（`extension-bold`＝`Mod-b`）⇒ **只有恰好撞上的那三条能用**，官方表里的三条落空。★ 一条同根因的加证：`Ctrl-K` 在本地弹**命令面板**（与 `G1580` 同一个 `CommandPalette.tsx:37` 门控），官方侧本批读数是 `highlight`（**存疑**）✎ **第 329 批复核结论**：那枚读数**是真的**——`Ctrl-K` 打开链接输入框时，被选中的文本底色被涂成 `rgb(173, 208, 245)`，mark 探针按\"背景非透明\"读成 `highlight`（见 `G1586`）⇒ 「疑似伪影」的猜测作废",
-      "local": "✎ 现读（2026-11-03 第 267 批）：`Ctrl-Shift--`／`Ctrl-Shift-B`／`Ctrl-Shift-C` 已进中央键位表（`STRIKE_INLINE`／`HIGHLIGHT_INLINE`／`CODE_INLINE`，面板归「文字格式」）并分派到 toggleStrike／toggleHighlight／toggleCode；`Ctrl-E`（代码）与 `Ctrl-B`／`Ctrl-I` 原本就与官方一致。★ 尚未在浏览器里对官方序列复验，故保持 partial",
-      "verdict": "行为不同（键位表来自两套来源；本批已接管三条，待复验）",
+      "local": "✎ 现读（2026-11-03 第 268 批）：`Ctrl-Shift--`／`Ctrl-Shift-B`／`Ctrl-Shift-C` 已进中央键位表（`STRIKE_INLINE`／`HIGHLIGHT_INLINE`／`CODE_INLINE`，面板归「文字格式」），分派到 toggleStrike／toggleHighlight／toggleCode；浏览器实测：对同一段选中文字三键各生成一枚 `s`／`mark`／`code` 标记，撤销后正文复原。`Ctrl-E`（代码）与 `Ctrl-B`／`Ctrl-I` 原本即一致",
+      "verdict": "已对齐",
       "score": "2/2",
       "status": "aligned",
       "scoreParsed": {

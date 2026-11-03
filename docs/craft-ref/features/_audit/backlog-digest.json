@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T02:15:43.782Z",
+  "generatedAt": "2026-11-03T02:18:35.131Z",
   "total": 1614,
   "status": {
-    "aligned": 524,
+    "aligned": 525,
     "nonaction": 512,
-    "partial": 271,
+    "partial": 270,
     "deliberate": 165,
     "gap": 122,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 209,
+    "P2 / aligned": 210,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 121,
+    "P2 / partial": 120,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1287,11 +1287,11 @@
       5
     ],
     [
-      "三点一一一九、第 181 批新登记的官方行为（2026-10-09 05",
-      5
+      "三点一〇、协同与权限追加（来自 `collab.md`，静态证据）",
+      4
     ],
     [
-      "三点一〇、协同与权限追加（来自 `collab.md`，静态证据）",
+      "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
       4
     ]
   ]

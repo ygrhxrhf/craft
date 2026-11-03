@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import type { Editor } from '@tiptap/react';
-import { GripVertical, MoreHorizontal, Plus } from 'lucide-react';
+import {
+  ArrowDown, ArrowUp, Ban, Bell, ChevronDown, ChevronRight, ChevronUp, Code, Copy, CreditCard,
+  GripVertical, Info, Link2, Maximize2, MessageSquare, Minus, MoreHorizontal, Palette, Plus, Smile, Trash2,
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +31,36 @@ import {
   type SeparatorMaterial,
 } from '@/lib/editor/separator-material';
 import { WASHI_SEPARATOR } from '@/lib/editor/washi-patterns';
+
+/** G1470：块菜单每一项都带图标（官方那族逐项图标）。 */
+const BLOCK_ACTION_ICONS: Record<BlockActionId, React.ComponentType<{ className?: string }>> = {
+  'add-content': Plus,
+  'add-emoji': Smile,
+  'add-comment': MessageSquare,
+  'convert-card': CreditCard,
+  remind: Bell,
+  'set-cancelled': Ban,
+  'insert-above': ArrowUp,
+  'insert-below': ArrowDown,
+  'move-up': ChevronUp,
+  'move-down': ChevronDown,
+  'move-top': ChevronUp,
+  'move-bottom': ChevronDown,
+  'copy-link': Link2,
+  'toggle-open': ChevronRight,
+  'divider-style': Minus,
+  'callout-type': Info,
+  'code-language': Code,
+  'code-theme': Palette,
+  'code-fullscreen': Maximize2,
+  'code-copy': Copy,
+  delete: Trash2,
+};
+
+function BlockActionIcon({ id }: { id: BlockActionId }) {
+  const Icon = BLOCK_ACTION_ICONS[id] ?? Info;
+  return <Icon className="mr-2 size-4 text-muted-foreground" />;
+}
 import { pointerArmDistance, touchArmDelay } from '@/lib/dnd/drag-threshold';
 import { dragBackendFor, type DragBackend } from '@/lib/dnd/backend';
 import type { RemindPresetId } from '@/lib/task/remind-presets';
@@ -572,7 +605,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
             >
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
+            <DropdownMenuContent align="start" className="max-h-[70vh] overflow-y-auto">
               {blockMenuItems({
                 canDelete: editor.state.doc.childCount > 1,
                 isTask: taskTargetOf(handle.blockEl) !== null,
@@ -585,7 +618,9 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
               }).map((item) =>
                 item.id === 'callout-type' ? (
                   <DropdownMenuSub key={item.id}>
-                    <DropdownMenuSubTrigger>{item.label}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger aria-label={item.label}>
+                      <BlockActionIcon id={item.id} />{item.label}
+                    </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                       {CALLOUT_CHOICES.map((choice) => (
                         <DropdownMenuItem
@@ -599,7 +634,9 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                   </DropdownMenuSub>
                 ) : item.id === 'divider-style' ? (
                   <DropdownMenuSub key={item.id}>
-                    <DropdownMenuSubTrigger>{item.label}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger aria-label={item.label}>
+                      <BlockActionIcon id={item.id} />{item.label}
+                    </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                       {DIVIDER_STYLE_CHOICES.map((choice) => (
                         <DropdownMenuItem
@@ -627,7 +664,9 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                   </DropdownMenuSub>
                 ) : item.id === 'add-emoji' ? (
                   <DropdownMenuSub key={item.id}>
-                    <DropdownMenuSubTrigger>{item.label}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger aria-label={item.label}>
+                      <BlockActionIcon id={item.id} />{item.label}
+                    </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                       {BLOCK_EMOJIS.map((emoji) => (
                         <DropdownMenuItem
@@ -641,7 +680,9 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                   </DropdownMenuSub>
                 ) : item.id === 'remind' ? (
                   <DropdownMenuSub key={item.id}>
-                    <DropdownMenuSubTrigger>{item.label}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger aria-label={item.label}>
+                      <BlockActionIcon id={item.id} />{item.label}
+                    </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                       {REMIND_MENU.map((preset) => (
                         <DropdownMenuItem
@@ -691,8 +732,10 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                 ) : (
                   <DropdownMenuItem
                     key={item.id}
+                    aria-label={item.label}
                     onClick={() => runBlockAction(handle.blockEl, item.id)}
                   >
+                    <BlockActionIcon id={item.id} />
                     {item.label}
                   </DropdownMenuItem>
                 ),

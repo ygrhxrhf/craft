@@ -82,6 +82,24 @@ describe('nextOccurrence', () => {
     expect(iso(nextOccurrence(rule, new Date('2024-01-31T09:00:00Z'))!)).toBe('2024-02-29T09:00:00.000Z');
   });
 
+  it('yearly fires in the listed months and days', () => {
+    const rule = '{"freq":"yearly","months":[3,9],"days":[10]}';
+    expect(iso(nextOccurrence(rule, new Date('2026-03-10T09:00:00Z'))!)).toBe(
+      '2026-09-10T09:00:00.000Z'
+    );
+    expect(iso(nextOccurrence(rule, new Date('2026-09-10T09:00:00Z'))!)).toBe(
+      '2027-03-10T09:00:00.000Z'
+    );
+    expect(describeRecurrence(rule)).toBe('每年 3、9 月 10 日重复');
+  });
+
+  it('yearly resolves a relative day inside a chosen month', () => {
+    const rule = '{"freq":"yearly","months":[11],"dynamicDays":[{"type":"friday","selector":"last"}]}';
+    expect(iso(nextOccurrence(rule, new Date('2026-01-01T09:00:00Z'))!)).toBe(
+      '2026-11-27T09:00:00.000Z'
+    );
+  });
+
   it('yearly handles the leap day', () => {
     expect(iso(nextOccurrence('{"freq":"yearly"}', new Date('2024-02-29T09:00:00Z'))!)).toBe(
       '2025-02-28T09:00:00.000Z'

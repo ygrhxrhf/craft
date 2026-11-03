@@ -3714,11 +3714,12 @@
       ]
     },
     "G108": {
-      "status": "partial",
-      "note": "第 178 批现读：freq/days/byMonthDay/until/interval（按频率上限）+ skipWeekends 已有；缺 dynamicDays 相对日",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "循环规则结构齐：频率/间隔上限（31/52/12/10）、skipWeekends、dynamicDays、有界推进；recurrence 以 JSON 文本存储但读写均结构化",
       "evidence": [
-        "src/lib/task/recurrence.ts:30",
-        "src/lib/task/recurrence.ts:94"
+        "src/lib/task/recurrence.ts:1",
+        "src/lib/task/recurrence.ts:427"
       ]
     },
     "G109": {
@@ -5127,11 +5128,11 @@
     },
     "G406": {
       "status": "partial",
-      "note": "第 192 批：monthly 多日号 + dynamicDays（月末/首个/末个/第N个周X）已入模型与推进；缺 yearly months[] 与选择器 UI",
+      "priority": "P2",
+      "note": "monthly/yearly 的 days/dynamicDays/months 均已落并有跨年推进；仍差规则选择器 UI",
       "evidence": [
-        "src/lib/task/recurrence.ts:27",
-        "src/lib/task/recurrence.ts:265",
-        "src/lib/task/recurrence.ts:392"
+        "src/lib/task/recurrence.ts:25",
+        "src/lib/task/recurrence.ts:470"
       ]
     },
     "G409": {

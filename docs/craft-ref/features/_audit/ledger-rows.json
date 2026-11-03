@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T03:39:36.193Z",
+  "generatedAt": "2026-11-03T03:43:19.525Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 905,
-    "aligned": 275,
+    "gap": 904,
+    "aligned": 276,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 334,
+    "P2 / gap": 333,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 171,
+    "P2 / aligned": 172,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -3022,10 +3022,10 @@
       "cols": 5,
       "id": "G108",
       "official": "循环配置是**结构化对象** `{frequency: daily|weekly|monthly|yearly, interval: 1..B3[f]}`，**间隔上限按频率为 31/52/12/10**；`daily.skipWeekends` 跳过周末；`monthly/yearly` 支持 `dynamicDays`（相对日，过滤回目标月、空则回退当天）；下一次发生是**带最大尝试次数的推进循环**（`tasks.md` §三）",
-      "local": "✎ 现读（2026-11-02）：已有 freq/days/byMonthDay/until/interval（按频率上限 31/52/12/10，超限归 1）与 daily/monthly 的 skipWeekends；仍缺 `dynamicDays` 相对日；`recurrence` 仍以不透明 String 存库",
+      "local": "✎ 现读（2026-11-02）：已有 freq/days/byMonthDay/until/interval（按频率上限 31/52/12/10，超限归 1）与 daily/monthly 的 skipWeekends；✎ 现读（2026-11-03 第 224 批）：`dynamicDays` 相对日与有界推进循环已在（G406），`recurrence` 以 JSON 文本存 String 列、读写都过 `parseRecurrence`（结构等价）⇒ 已对齐",
       "verdict": "缺失（局部） + 结构不同",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -8401,7 +8401,7 @@
       "cols": 5,
       "id": "G406",
       "official": "`monthly` 有 **`days: number[]`（多日号）+ `dynamicDays: {selector,type}[]`（相对日：`{selector:\"last\",type:\"day\"}`＝月末、`{type:星期名, selector:first|last|数字}`＝\"最后一个周五\"）+ `skipWeekends`**；`yearly` 有 `months[]`+`days[]`+`dynamicDays[]`（`model.md` §一之八、`tasks.md` §9.3）",
-      "local": "本地只有单值 `byMonthDay?: number`（月末靠 clamp 近似）⇒ **\"每月 3 日和 15 日\"、\"每月最后一个周五\"两种表达不存在** ⇒ ✎ 现读（2026-11-02 第 192 批）：模型已扩——monthly 的 `days: number[]`（多日号 1–31，与 weekly 的星期轴同键不同义）＋ `dynamicDays: [{type:'day'|星期名, selector:'first'|'last'|1–5}]`（月末/第一个/最后一个/第 N 个周X，5 个不存在的月份跳过），`describeRecurrence` 出「每月 3 日、15 日重复」「每月 最后一个周五重复」；`skipWeekends` 原已支持。仍缺：yearly 的 `months[]` 与选择器 UI（日期弹层目前只给预设）",
+      "local": "本地只有单值 `byMonthDay?: number`（月末靠 clamp 近似）⇒ **\"每月 3 日和 15 日\"、\"每月最后一个周五\"两种表达不存在** ⇒ ✎ 现读（2026-11-02 第 192 批）：模型已扩——monthly 的 `days: number[]`（多日号 1–31，与 weekly 的星期轴同键不同义）＋ `dynamicDays: [{type:'day'|星期名, selector:'first'|'last'|1–5}]`（月末/第一个/最后一个/第 N 个周X，5 个不存在的月份跳过），`describeRecurrence` 出「每月 3 日、15 日重复」「每月 最后一个周五重复」；`skipWeekends` 原已支持。✎ 现读（2026-11-03 第 224 批）：yearly 的 `months[]`／`days[]`／`dynamicDays[]` 已落（跨年扫描取最早一次，描述如「每年 3、9 月 10 日重复」）；仍缺选择器 UI（日期弹层目前只给预设）",
       "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",

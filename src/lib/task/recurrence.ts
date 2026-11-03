@@ -20,6 +20,8 @@ export interface RecurrenceRule {
   days?: number[];
   /** Monthly: 1 to 31, clamped to the length of the target month. */
   byMonthDay?: number;
+  /** G406: yearly — the months (1–12) the rule fires in. Absent keeps the start month. */
+  months?: number[];
   /**
    * G406: relative days. `{type:'day', selector:'last'}` = 月末；`{type:'friday', selector:'last'}`
    * = 最后一个周五；`selector` 还可以是 `first` 或 1–5（第 N 个）。
@@ -99,8 +101,8 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
       if (normalized.length === 0 && rule.days.length > 0) return null;
       rule.days = normalized;
     }
-    // G406：monthly 的 `days` 是**日号**（多日号），只留 1–31 的整数。
-    if (rule.freq === 'monthly') {
+    // G406：monthly 与 yearly 的 `days` 都是**日号**，只留 1–31 的整数。
+    if (rule.freq === 'monthly' || rule.freq === 'yearly') {
       const rawDays = rule.days as unknown[];
       const days = (rawDays as unknown[]).filter(
         (value): value is number => Number.isInteger(value) && (value as number) >= 1 && (value as number) <= 31,
@@ -108,6 +110,15 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
       if (days.length === 0 && rawDays.length > 0) return null;
       rule.days = days;
     }
+  }
+  if (rule.months !== undefined) {
+    if (!Array.isArray(rule.months)) return null;
+    const rawMonths = rule.months as unknown[];
+    const months = rawMonths.filter(
+      (value): value is number => Number.isInteger(value) && (value as number) >= 1 && (value as number) <= 12,
+    );
+    if (months.length === 0 && rawMonths.length > 0) return null;
+    rule.months = months;
   }
   if (rule.dynamicDays !== undefined) {
     if (!Array.isArray(rule.dynamicDays)) return null;
@@ -134,6 +145,8 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
   if (Array.isArray(rule.days)) result.days = rule.days as number[];
   if (Array.isArray(rule.dynamicDays)) result.dynamicDays = rule.dynamicDays as DynamicDay[];
   if (rule.byMonthDay !== undefined) result.byMonthDay = rule.byMonthDay as number;
+  // G406: `months` belongs to yearly; on any other frequency it is dropped ("有才写").
+  if (rule.freq === 'yearly' && Array.isArray(rule.months)) result.months = rule.months as number[];
   if (typeof rule.until === 'string') result.until = rule.until;
   if (typeof rule.startDate === 'string') result.startDate = rule.startDate;
   // G547: the field only exists on daily/monthly; anywhere else it is dropped ("有才写").
@@ -248,15 +261,18 @@ export function describeRecurrence(raw: string | null | undefined): string | nul
   if (rule.freq === 'weekly' && rule.days?.length) {
     return `${every}：${rule.days.map((day) => WEEKDAY_LABELS[day] ?? '').filter(Boolean).join('、')}${anchor}`;
   }
-  if (rule.freq === 'monthly') {
+  if (rule.freq === 'monthly' || rule.freq === 'yearly') {
     const parts: string[] = [];
+    if (rule.freq === 'yearly' && rule.months?.length) {
+      parts.push(`${rule.months.slice().sort((a, b) => a - b).join('、')} 月`);
+    }
     if (rule.days?.length) {
       parts.push(`${rule.days.slice().sort((a, b) => a - b).join(' 日、')} 日`);
     } else if (rule.byMonthDay) {
       parts.push(`${rule.byMonthDay} 日`);
     }
     for (const entry of rule.dynamicDays ?? []) parts.push(dynamicDayLabel(entry));
-    if (parts.length) return `${every} ${parts.join('、')}重复${anchor}`;
+    if (parts.length) return `${every} ${parts.join(rule.freq === 'yearly' ? ' ' : '、')}重复${anchor}`;
   }
   return `${every}重复${anchor}`;
 }
@@ -475,12 +491,38 @@ export function nextOccurrence(
       }
     }
   } else {
-    for (let index = 1; index <= 4; index += 1) {
-      const probe = { ...base, year: base.year + index * step };
-      probe.day = clampDay(probe.year, probe.month, probe.day);
-      if (wallToInstant(probe, timeZone) > from.getTime()) {
-        candidate = probe;
-        break;
+    // G406：yearly 可带 `months`／`days`／`dynamicDays`；都没写时沿用起算日。
+    const months = rule.months?.length
+      ? [...rule.months].sort((a, b) => a - b)
+      : [base.month];
+    outerYear: for (let index = 0; index <= 4; index += 1) {
+      const year = base.year + index * step;
+      for (const month of months) {
+        const days = new Set<number>();
+        if (rule.days?.length) {
+          for (const day of rule.days) days.add(clampDay(year, month, day));
+        } else if (rule.dynamicDays?.length) {
+          for (const entry of rule.dynamicDays) {
+            const resolved = resolveDynamicDay(entry, year, month);
+            if (resolved !== null) days.add(resolved);
+          }
+        } else {
+          days.add(clampDay(year, month, base.day));
+        }
+        for (const day of [...days].sort((a, b) => a - b)) {
+          const probe = {
+            year,
+            month,
+            day,
+            hour: base.hour,
+            minute: base.minute,
+            second: base.second,
+          };
+          if (wallToInstant(probe, timeZone) > from.getTime()) {
+            candidate = probe;
+            break outerYear;
+          }
+        }
       }
     }
   }

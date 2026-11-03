@@ -3719,10 +3719,12 @@
       ]
     },
     "G107": {
-      "status": "partial",
-      "note": "第 178 批现读：scheduleDate 与 dueDate 已分离；setter 单条，无 blockIds[] 批量",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "schedule/deadline 两维分离；批量 setTasksSchedule 与 setTasksDeadline 均收 ids[]。",
       "evidence": [
-        "src/actions/task/task.ts:301",
+        "src/actions/task/task.ts:343",
+        "src/actions/task/task.ts:369",
         "src/lib/task/grouping.ts:34"
       ]
     },

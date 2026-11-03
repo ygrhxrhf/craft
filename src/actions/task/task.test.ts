@@ -15,7 +15,7 @@ vi.mock('@/lib/authz/document-access', () => ({
 }));
 
 import { getDb } from '@/prisma/db';
-import { getTasks, syncDocumentTasks, createTask, toggleTask } from './task';
+import { getTasks, syncDocumentTasks, createTask, toggleTask, setTasksSchedule, setTasksDeadline } from './task';
 
 type Row = Record<string, unknown>;
 type Log = { updates: { conds: Row[]; data: Row }[]; creates: Row[] };
@@ -325,5 +325,45 @@ describe('task page cursors (G604)', () => {
     const mod = await import('./task');
     expect(typeof mod.getTasks).toBe('function');
     expect(typeof mod.getTasksPage).toBe('function');
+  });
+});
+
+describe('batch schedule / deadline setters (G107)', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const rows = (): Row[] => [
+    { ...liveTask, id: 'a', scheduleDate: null },
+    { ...liveTask, id: 'b', scheduleDate: null },
+  ];
+
+  it('writes the same schedule to every id and emits once per task', async () => {
+    const log = setupDb(rows());
+    await setTasksSchedule(['a', 'b'], {
+      dueDate: null,
+      scheduleDate: '2026-11-04T00:00:00.000Z',
+      remindAt: null,
+      recurrence: null,
+      recurrenceEnd: null,
+    });
+    expect(log.updates.map((update) => update.conds)).toEqual([[{ id: 'a' }], [{ id: 'b' }]]);
+    for (const update of log.updates) {
+      expect(update.data).toMatchObject({
+        dueDate: null,
+        scheduleDate: '2026-11-04T00:00:00.000Z',
+        remindAt: null,
+      });
+    }
+    expect((log as any).emit).toHaveBeenCalledTimes(2);
+  });
+
+  it('writes only the deadline for the batch path', async () => {
+    const log = setupDb(rows());
+    await setTasksDeadline(['a', 'b'], '2026-11-10T00:00:00.000Z');
+    expect(log.updates).toHaveLength(2);
+    for (const update of log.updates) {
+      expect(update.data).toMatchObject({ dueDate: '2026-11-10T00:00:00.000Z' });
+      expect(update.data).not.toHaveProperty('scheduleDate');
+      expect(update.data).not.toHaveProperty('remindAt');
+    }
   });
 });

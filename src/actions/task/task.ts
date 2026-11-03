@@ -366,6 +366,24 @@ export async function setTaskSchedule(id: string, schedule: TaskSchedule) {
   await emitTasks(db, userId, id);
 }
 
+/** G107：官方 setter 收 `blockIds[]` 批量；计划与截止各有一条批量入口。 */
+export async function setTasksSchedule(ids: string[], schedule: TaskSchedule) {
+  for (const id of ids) await setTaskSchedule(id, schedule);
+}
+
+/** G107：截止是独立维度 —— 批量只写 `dueDate`，不会顺手改计划/提醒。 */
+export async function setTasksDeadline(ids: string[], dueDate: string | null) {
+  const userId = await requireUserId();
+  const db = await getDb();
+  const now = new Date().toISOString();
+  for (const id of ids) {
+    const task = await db.orm.public.Task.first({ id });
+    if (!task || (task as any).userId !== userId) throw new Error('未授权');
+    await db.orm.public.Task.where({ id }).update({ dueDate, updatedAt: now });
+    await emitTasks(db, userId, id);
+  }
+}
+
 export async function deleteTask(id: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');

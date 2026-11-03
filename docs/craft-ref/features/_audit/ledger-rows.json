@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T08:41:08.755Z",
+  "generatedAt": "2026-11-03T08:46:35.797Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 868,
-    "aligned": 311,
+    "gap": 867,
+    "aligned": 312,
     "unknown": 194,
     "deliberate": 105,
     "partial": 64,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 297,
+    "P2 / gap": 296,
     "P? / gap": 226,
-    "P2 / aligned": 207,
+    "P2 / aligned": 208,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -3028,10 +3028,10 @@
       "cols": 5,
       "id": "G107",
       "official": "**schedule 与 deadline 是两个独立维度**（`setTaskSchedule` / `setTaskDeadline`，且都收 `blockIds[]` 批量）（`tasks.md` §二）",
-      "local": "✎ 现读（2026-11-02）：`dueDate`（截止）与 `scheduleDate`（计划）已分离，任务分组读 `scheduleDate`、日期弹层可分别设；setter 仍是单条，无 `blockIds[]` 批量",
-      "verdict": "缺失（局部）",
+      "local": "✎ 现读（2026-11-03 第 262 批）：计划与截止早已分离（`scheduleDate` 供分组、`dueDate` 供截止），本批补批量入口 —— `setTasksSchedule(ids[], schedule)` 与 `setTasksDeadline(ids[], dueDate)`；后者只写截止，不动计划/提醒。单条 setter 保留给行内编辑",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

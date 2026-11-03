@@ -12,6 +12,8 @@ export async function getFolders() {
     id: string;
     name: string;
     icon: string | null;
+    /** G338：文件夹描述（独立字段，独立 mutation）。 */
+    description: string | null;
     parentId: string | null;
     order: number;
     isDeleted: boolean;

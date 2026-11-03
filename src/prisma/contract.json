@@ -2852,6 +2852,13 @@
                   "kind": "scalar"
                 }
               },
+              "description": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "icon": {
                 "nullable": true,
                 "type": {
@@ -3010,6 +3017,9 @@
                 },
                 "deletedAt": {
                   "column": "deletedAt"
+                },
+                "description": {
+                  "column": "description"
                 },
                 "icon": {
                   "column": "icon"
@@ -7229,6 +7239,11 @@
                   "nativeType": "timestamptz",
                   "nullable": true
                 },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "icon": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -8832,7 +8847,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "62c3132b216c21d2ecb4eca11f038e05d00807247f86bd85a2fe637b8de66700"
+    "storageHash": "50eec0623a669005e4d5bb21f73836c2d0b44adeace9c2111972238ae843d4f5"
   },
   "execution": {
     "executionHash": "d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32",

@@ -15,7 +15,7 @@ import {
   DELETE_FOLDER_LABEL,
   DELETE_FOLDER_SUBTITLE,
 } from '@/lib/folder/delete-copy';
-import { confirmDialog } from '@/lib/dialog/show';
+import { confirmDialog, promptDialog } from '@/lib/dialog/show';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -66,6 +66,38 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
   function startRename() {
     setDraftName(folder.name);
     setRenaming(true);
+  }
+
+  /** G338：图标也是独立 mutation（官方 `Folder icon`），只写 `icon` 一列。 */
+  async function editIcon() {
+    const next = await promptDialog({
+      title: '设置文件夹图标',
+      placeholder: '粘贴一个 emoji，留空则移除',
+      confirmLabel: '保存',
+    });
+    if (next === null) return;
+    await getSyncManager().applyLocal({
+      table: 'folder',
+      id: folder.id,
+      patch: { icon: next.trim() || null },
+    });
+    bumpTree();
+  }
+
+  /** G338：描述是独立 mutation，只写 `description` 一列，不动 name/icon。 */
+  async function editDescription() {
+    const next = await promptDialog({
+      title: '编辑文件夹描述',
+      placeholder: '写一句描述…',
+      confirmLabel: '保存',
+    });
+    if (next === null) return;
+    await getSyncManager().applyLocal({
+      table: 'folder',
+      id: folder.id,
+      patch: { description: next.trim() || null },
+    });
+    bumpTree();
   }
 
   async function commitRename() {
@@ -351,6 +383,8 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
           </ContextMenuTrigger>
           <ContextMenuContent>
             <ContextMenuItem onClick={startRename}>重命名</ContextMenuItem>
+            <ContextMenuItem onClick={() => void editIcon()}>设置图标</ContextMenuItem>
+            <ContextMenuItem onClick={() => void editDescription()}>编辑描述</ContextMenuItem>
             <ContextMenuItem onClick={() => void createDocumentInFolder()}>
               新建文档
             </ContextMenuItem>

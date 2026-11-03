@@ -15,6 +15,8 @@ export interface Folder {
   id: string;
   name: string;
   icon: string | null;
+  /** G338：文件夹描述。 */
+  description?: string | null;
   parentId: string | null;
   order: number;
   isDeleted: boolean;

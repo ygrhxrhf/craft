@@ -32,7 +32,7 @@ export const SYNC_TABLES: TableDef[] = [
   // 取键判据＝"离线新建一定带、而该表任一单点动作一定不带"。folder 的单点动作＝改名 {name}／
   // 移入回收站 {isDeleted,deletedAt}／拖动 {parentId,order}；离线新建（create-local.ts）带 name
   // 与 isDeleted:false ⇒ 两枚合取把三个单点动作在陈旧行上的"铸壳"全挡住。
-  { table: 'folder', model: 'Folder', cols: ['id','name','icon','order','parentId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['name', 'isDeleted'] },
+  { table: 'folder', model: 'Folder', cols: ['id','name','icon','description','order','parentId','userId','isDeleted','deletedAt','createdAt','updatedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['name', 'isDeleted'] },
   { table: 'tag', model: 'Tag', cols: ['id','name','color','userId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'document_tag', model: 'DocumentTag', cols: ['documentId','tagId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => `${r.documentId}__${r.tagId}` },
   { table: 'favorite', model: 'Favorite', cols: ['id','userId','documentId','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },

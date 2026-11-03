@@ -4791,10 +4791,13 @@
       ]
     },
     "G338": {
-      "status": "gap",
-      "note": "Folder 无 description 字段与独立更新通路",
+      "status": "partial",
+      "note": "第 203 批：description 列（含迁移）与「编辑描述」「设置图标」两条独立 mutation 已落；文件夹重排与固定文档事件仍缺",
       "evidence": [
-        "src/prisma/contract.prisma:35"
+        "src/prisma/contract.prisma:161",
+        "src/components/sidebar/FolderTreeItem.tsx:72",
+        "src/lib/sync/tables.ts:35",
+        "migrations/app/20261103T0157_add_folder_description"
       ]
     },
     "G340": {

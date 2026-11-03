@@ -157,6 +157,8 @@ model Folder {
   id        String    @id @default(uuid())
   name      String    @default("未命名文件夹")
   icon      String?
+  /// G338：文件夹描述是独立字段（`Folder description` 是独立 mutation）。
+  description String?
   order     Float     @default(0)
   parentId  String?
   userId    String

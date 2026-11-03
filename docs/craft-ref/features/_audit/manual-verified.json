@@ -5858,10 +5858,12 @@
       ]
     },
     "G553": {
-      "status": "partial",
-      "note": "周起始已是周一；缺日期上下界与区间工具",
+      "status": "aligned",
+      "note": "第 211 批：周一起始原有；补 withinRange（含端点开关，时间轴/周月跨度共用）与 nearestDay（每日笔记归日）",
       "evidence": [
-        "src/lib/calendar/week-view.ts:14"
+        "src/lib/temporal/range.ts:1",
+        "src/lib/calendar/timeline.ts:198",
+        "src/actions/daily-notes/daily-notes.ts:71"
       ]
     },
     "G554": {

@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T02:28:11.278Z",
+  "generatedAt": "2026-11-03T02:33:30.923Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 914,
+    "gap": 913,
     "aligned": 268,
-    "unknown": 195,
+    "unknown": 196,
     "deliberate": 103,
     "partial": 62,
     "nonaction": 56,
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 343,
+    "P2 / gap": 342,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P2 / aligned": 164,
@@ -27,7 +27,7 @@
     "P1 / aligned": 40,
     "P2 / deliberate": 39,
     "P3 / aligned": 39,
-    "P2 / unknown": 35,
+    "P2 / unknown": 36,
     "P? / deliberate": 33,
     "P3 / unknown": 25,
     "P2 / partial": 24,
@@ -11041,10 +11041,10 @@
       "cols": 5,
       "id": "G553",
       "official": "★ **`fLe` 就近归日**（跨过当日中点 `(今日0点+次日0点)/2` ⇒ 归次日）+ ★ **官方日历周起始是 Monday**（`AU` 里 `o.getDay()===1 ? o : B1(Yce(o),1)`）+ 区间判定工具 `r7(t,start,end,{includeStart,includeEnd})`（§一之二十四 4）⇒ **与动态实测「中文 locale 周一起始、`下周五→2026-10-09`」静态互相印证**",
-      "local": "`grep -rn \"includeEnd|includeStart\" src` ⇒ **0 命中**（无带端点开关的区间工具）；`daily-note.ts:6` 用 `weekdays[date.getDay()]`（**JS 默认 Sunday=0 直接取名**）、`CalendarView.tsx:34` 用 `getDay()` 取当月首日（**周起始档位本批未核**）；`recurrence.ts:5` 注释 **0 = Sunday** ⇒ 官方周段 Monday / 本地注释 Sunday-0，**口径不同但不冲突，需逐处核**",
-      "verdict": "缺失（工具层）+ 未核（周起始档位）",
+      "local": "`grep -rn \"includeEnd|includeStart\" src` ⇒ **0 命中**（无带端点开关的区间工具）；`daily-note.ts:6` 用 `weekdays[date.getDay()]`（**JS 默认 Sunday=0 直接取名**）、`CalendarView.tsx:34` 用 `getDay()` 取当月首日（**周起始档位本批未核**）；`recurrence.ts:5` 注释 **0 = Sunday** ⇒ ✎ 现读（2026-11-02 第 211 批）：周起始本已是周一（`week-view.ts` 与 date-parse 的 `mondayOffset`）；第 211 批补上带端点开关的区间工具 `withinRange`（时间轴与周/月跨度共用）与 `nearestDay` 就近归日（每日笔记传入时刻时先归日）  —— 本地 `recurrence.ts:5` 的 0 = Sunday 注释与官方周段 Monday 口径不同但不冲突",
+      "verdict": "对齐",
       "score": "2/1",
-      "status": "gap",
+      "status": "unknown",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,

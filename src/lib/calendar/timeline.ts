@@ -6,6 +6,8 @@
  * 与 `创建每日笔记`。
  */
 
+import { withinRange } from '@/lib/temporal/range';
+
 /** 官方逐日成节的天数：采集里 9月27日…10月3日 恰好七节，之后才是并节。 */
 export const TIMELINE_DAY_RUN = 7;
 
@@ -192,6 +194,6 @@ export function isPastDay(day: Date, today: Date): boolean {
 
 export function dayInSection(section: TimelineSection, day: Date): boolean {
   const { start, end } = sectionSpan(section);
-  const value = startOfDay(day).getTime();
-  return value >= start.getTime() && value <= end.getTime();
+  // G553：区间判定走带端点开关的共用工具（这里两端都闭）。
+  return withinRange(startOfDay(day), start, end);
 }

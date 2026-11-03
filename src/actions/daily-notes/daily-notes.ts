@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
+import { nearestDay } from '@/lib/temporal/range';
 import { dailyNoteTitle } from '@/lib/utils/daily-note';
 import { dayWindow, shiftDay } from '@/lib/utils/daily-note-window';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
@@ -66,7 +67,8 @@ export async function getOrCreateDayNote(step: -1 | 0 | 1 | Date = 0) {
   // previous day's note. Read the config first so the day window is the configured one.
   const config = await db.orm.public.DailyNotesConfig.first({ userId: uid });
   const startTime = config ? ((config as any).startTime as string | null) : null;
-  const target = step instanceof Date ? step : step === 0 ? now : shiftDay(now, step, startTime);
+  // G553：传进来的时刻先就近归日（过中点算次日），与官方 fLe 一致。
+  const target = step instanceof Date ? nearestDay(step) : step === 0 ? now : shiftDay(now, step, startTime);
   const { start, end } = dayWindow(target, startTime);
   const startIso = start.toISOString();
   const endIso = end.toISOString();

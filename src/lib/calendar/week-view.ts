@@ -1,3 +1,5 @@
+import { withinRange } from '@/lib/temporal/range';
+
 /**
  * 显示周视图 / 显示月视图 (`calendar.show.week` / `calendar.show.month`). The week runs Monday to
  * Sunday, matching the weekday order the catalog lists, and the month is every day of the selected
@@ -21,6 +23,6 @@ export function spanOf(selected: Date, span: CalendarSpan): { start: Date; end: 
 
 /** Whether a calendar day falls inside the span, compared by its own date rather than the instant. */
 export function dayInSpan(day: Date, span: { start: Date; end: Date }): boolean {
-  const value = new Date(day.getFullYear(), day.getMonth(), day.getDate()).getTime();
-  return value >= span.start.getTime() && value <= span.end.getTime();
+  // G553：两端都闭的区间判定，与时间轴同一枚工具。
+  return withinRange(new Date(day.getFullYear(), day.getMonth(), day.getDate()), span.start, span.end);
 }

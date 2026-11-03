@@ -195,6 +195,9 @@ model Document {
   icon          String?
   coverImage    String?
   coverType     String?
+  // G156：封面支持多图与随机轮换；`coverImage` 仍是首图/当前图。
+  coverImages   Json?
+  coverShuffle  Boolean @default(false)
   content       Json?
   plainText     String    @default("")
   order         Float     @default(0)

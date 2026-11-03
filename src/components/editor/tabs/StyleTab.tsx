@@ -25,6 +25,8 @@ interface StyleTabProps {
   icon: string | null;
   coverImage: string | null;
   coverType: string | null;
+  coverImages: string[];
+  coverShuffle: boolean;
   width: string | null;
   pageStyle: PageStyle;
   onUpdate: (data: {
@@ -32,6 +34,8 @@ interface StyleTabProps {
     icon?: string | null;
     coverImage?: string | null;
     coverType?: string | null;
+    coverImages?: string[];
+    coverShuffle?: boolean;
     width?: string | null;
     pageStylePatch?: Partial<PageStyle>;
   }) => void;
@@ -50,11 +54,15 @@ export function StyleTab({
   icon,
   coverImage,
   coverType,
+  coverImages,
+  coverShuffle,
   width,
   pageStyle,
   onUpdate,
 }: StyleTabProps) {
   const [coverUrlInput, setCoverUrlInput] = useState('');
+  // G156：封面图集（逗号分隔）与随机轮换开关。
+  const [coverSetInput, setCoverSetInput] = useState(() => coverImages.join(', '));
   // G1436: the text-colour row.
   const textColor = pageStyle.textColor ?? null;
   const setTextColor = (next: string | null) => onUpdate({ pageStylePatch: { textColor: next ?? undefined } });
@@ -211,6 +219,42 @@ export function StyleTab({
           >
             <Minus className="size-3" /> 移除封面
           </button>
+        )}
+        {coverImage && (
+          <div className="mt-2 space-y-1.5" data-testid="cover-rotation">
+            <div className="flex gap-1.5">
+              <input
+                value={coverSetInput}
+                onChange={(event) => setCoverSetInput(event.target.value)}
+                placeholder="封面图集（逗号分隔）"
+                aria-label="封面图集"
+                className="min-w-0 flex-1 rounded-md border border-foreground/10 bg-background px-2 py-1 text-meta outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  onUpdate({
+                    coverImages: coverSetInput
+                      .split(',')
+                      .map((url) => url.trim())
+                      .filter(Boolean),
+                  })
+                }
+                className="rounded-lg bg-craft-accent px-2.5 py-1 text-ui text-white transition-colors duration-150 ease-craft hover:bg-craft-accent-hover"
+              >
+                保存图集
+              </button>
+            </div>
+            <label className="flex items-center gap-2 text-ui text-foreground/70">
+              <input
+                type="checkbox"
+                checked={coverShuffle}
+                onChange={(event) => onUpdate({ coverShuffle: event.target.checked })}
+                className="size-4 accent-(--craft-accent)"
+              />
+              随机轮换
+            </label>
+          </div>
         )}
       </section>
 

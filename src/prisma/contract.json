@@ -1650,6 +1650,20 @@
                   "kind": "scalar"
                 }
               },
+              "coverImages": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "coverShuffle": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "coverType": {
                 "nullable": true,
                 "type": {
@@ -2060,6 +2074,12 @@
                 },
                 "coverImage": {
                   "column": "coverImage"
+                },
+                "coverImages": {
+                  "column": "coverImages"
+                },
+                "coverShuffle": {
+                  "column": "coverShuffle"
                 },
                 "coverType": {
                   "column": "coverType"
@@ -6904,6 +6924,20 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "coverImages": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
+                "coverShuffle": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "coverType": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -8930,7 +8964,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "43243b37083d4aa99e64c08764dde6c6ba190dbaefb29763d18ec398e304d8f7"
+    "storageHash": "da995c0c19e139e6d1f89563c917eae71461ffacbf1223fe796f9cb2297f980a"
   },
   "execution": {
     "executionHash": "d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32",

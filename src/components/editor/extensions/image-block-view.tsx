@@ -1,6 +1,7 @@
 'use client';
 
 import { NodeViewWrapper } from '@tiptap/react';
+import { cn } from 'cn';
 import type { NodeViewProps } from '@tiptap/react';
 import { useRef, useState } from 'react';
 import { Crop, ImagePlus, Link2, Loader2, Minus, Plus } from 'lucide-react';
@@ -17,6 +18,9 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const src = node.attrs.src as string | null;
+  // G156：两根轴。auto 保持阅读列宽，large 铺满；fill 裁切填充，fit 完整显示。
+  const imageSize = node.attrs.imageSize === 'large' ? 'large' : 'auto';
+  const imageFit = node.attrs.imageFit === 'fit' ? 'fit' : 'fill';
   const alt = node.attrs.alt as string;
   const caption = node.attrs.caption as string;
   // G504：主色整型存库，没采样到时吃官方那枚默认底色。
@@ -53,7 +57,12 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
   };
 
   return (
-    <NodeViewWrapper as="div" className="my-4">
+    <NodeViewWrapper
+      as="div"
+      className={cn('my-4', imageSize === 'large' ? 'w-full' : 'mx-auto max-w-[720px]')}
+      data-image-size={imageSize}
+      data-image-fit={imageFit}
+    >
       <figure
         className={`group relative rounded-lg transition-colors ${
           dragOver ? 'ring-2 ring-primary ring-offset-2' : ''
@@ -136,7 +145,7 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
                   drag.current = null;
                 }}
                 style={frameStyle(frame)}
-                className={`h-full w-full object-cover transition-opacity ${
+                className={`h-full w-full ${imageFit === 'fit' ? 'object-contain' : 'object-cover'} transition-opacity ${
                   loaded ? 'opacity-100' : 'opacity-0'
                 } ${framing ? 'cursor-grab' : ''}`}
               />

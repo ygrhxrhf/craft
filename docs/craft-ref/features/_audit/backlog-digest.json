@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T06:13:21.642Z",
+  "generatedAt": "2026-11-03T06:28:49.125Z",
   "total": 1614,
   "status": {
-    "aligned": 557,
+    "aligned": 558,
     "nonaction": 512,
     "partial": 252,
     "deliberate": 165,
-    "gap": 108,
+    "gap": 107,
     "unreachable": 20
   },
   "priority": {
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 242,
+    "P2 / aligned": 243,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
@@ -31,7 +31,7 @@
     "P3 / aligned": 59,
     "P? / deliberate": 40,
     "P3 / gap": 39,
-    "P2 / gap": 35,
+    "P2 / gap": 34,
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
@@ -1295,10 +1295,6 @@
       4
     ],
     [
-      "三点一二、样式面板与装饰追加（来自 `styles.md`，静态证据 +",
-      4
-    ],
-    [
       "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
       4
     ],
@@ -1308,6 +1304,10 @@
     ],
     [
       "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
+      4
+    ],
+    [
+      "三点八五、第 74 批（★★★ 静态补账：撤销计步器的生成/消费 ＋ 提",
       4
     ]
   ]

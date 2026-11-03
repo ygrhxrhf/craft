@@ -189,8 +189,58 @@ export function FormatTab({ editor }: FormatTabProps) {
   const decorations = decorationAt(state);
   const grouping = groupingAt(state);
 
+  const imageAttrs = editor.getAttributes('imageBlock') as {
+    imageSize?: string;
+    imageFit?: string;
+  };
+
   return (
     <div className="space-y-4 p-3">
+      {/* G156：图片样式两根轴——尺寸 auto|large × 填充 fill|fit。 */}
+      {editor.isActive('imageBlock') && (
+        <section data-testid="image-style">
+          <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">图片</h4>
+          <div className="mb-1 text-meta text-foreground/45">尺寸</div>
+          <div className="grid grid-cols-2 gap-1">
+            {([['auto', '自动'], ['large', '大图']] as const).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={(imageAttrs.imageSize ?? 'auto') === value}
+                onClick={() => editor.chain().focus().updateAttributes('imageBlock', { imageSize: value }).run()}
+                className={cn(
+                  'rounded-md border border-foreground/8 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
+                  (imageAttrs.imageSize ?? 'auto') === value
+                    ? 'border-craft-accent bg-craft-accent/10 text-foreground ring-1 ring-craft-accent'
+                    : 'bg-card text-foreground/55'
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="mt-2 mb-1 text-meta text-foreground/45">填充</div>
+          <div className="grid grid-cols-2 gap-1">
+            {([['fill', '填充'], ['fit', '适应']] as const).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={(imageAttrs.imageFit ?? 'fill') === value}
+                onClick={() => editor.chain().focus().updateAttributes('imageBlock', { imageFit: value }).run()}
+                className={cn(
+                  'rounded-md border border-foreground/8 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
+                  (imageAttrs.imageFit ?? 'fill') === value
+                    ? 'border-craft-accent bg-craft-accent/10 text-foreground ring-1 ring-craft-accent'
+                    : 'bg-card text-foreground/55'
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Text styles */}
       <section>
         <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">文本</h4>

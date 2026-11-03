@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T06:13:21.387Z",
+  "generatedAt": "2026-11-03T06:28:48.830Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 889,
-    "aligned": 291,
+    "gap": 888,
+    "aligned": 292,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 318,
+    "P2 / gap": 317,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 187,
+    "P2 / aligned": 188,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -3900,10 +3900,10 @@
       "cols": 5,
       "id": "G156",
       "official": "图片样式是**两根轴**（`image.size` auto|large × `image.fit` fill|fit）而非 4 个互斥档位；封面支持 `number.of.images` + `shuffle` 随机轮换（§五/§六）",
-      "local": "4 个档位分散在块菜单，无轴结构；`object-fit` 只出现在 `globals.css` 的重置里；无多图/随机封面",
-      "verdict": "行为不同",
+      "local": "✎ 现读（2026-11-03 第 242 批）：已对齐 — 图片块新增两根轴 `imageSize`（auto/large）与 `imageFit`（fill/fit），格式页签出现「图片」段（浏览器实测：点「大图／适应」后节点 data 属性变 large/fit）；封面新增 `coverImages`＋`coverShuffle` 两列，样式页签可编辑图集并开随机轮换，加载时按开关抽一张（浏览器实测：保存图集与勾选落库）",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

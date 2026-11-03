@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getSyncManager } from '@/lib/sync-core';
 import { Editor, type SaveState } from './Editor';
 import { EditorHeader } from './EditorHeader';
@@ -18,6 +18,7 @@ import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
 import { useFocusStore } from '@/lib/store/use-focus-store';
 import { EXIT_FOCUS_MODE_PREFIX, FOCUS_MODE } from '@/lib/editor/focus-mode-copy';
+import { normalizeCoverImages, pickCoverImage } from '@/lib/document/cover-rotation';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
 import { useRightPanelStore } from '@/lib/store/use-right-panel-store';
 import { capabilitiesFor } from '@/lib/authz/permission-axes';
@@ -55,6 +56,8 @@ interface DocumentEditorProps {
     icon: string | null;
     coverImage: string | null;
     coverType: string | null;
+    coverImages?: unknown;
+    coverShuffle?: boolean;
     width: string | null;
     pageStyle: unknown;
     content: any;
@@ -75,6 +78,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const [title, setTitle] = useState(doc.title);
   const [icon, setIcon] = useState(doc.icon);
   const [coverImage, setCoverImage] = useState(doc.coverImage);
+  const [coverImages, setCoverImages] = useState<string[]>(() => normalizeCoverImages(doc.coverImages));
+  const [coverShuffle, setCoverShuffle] = useState(doc.coverShuffle === true);
   const [coverType, setCoverType] = useState(doc.coverType);
   const [width, setWidth] = useState(doc.width ?? 'default');
   const [pageStyle, setPageStyle] = useState<PageStyle>(() => normalizePageStyle(doc.pageStyle));
@@ -185,6 +190,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     icon?: string | null;
     coverImage?: string | null;
     coverType?: string | null;
+    coverImages?: string[];
+    coverShuffle?: boolean;
     width?: string | null;
     pageStylePatch?: Partial<PageStyle>;
   }) => {
@@ -192,6 +199,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     if (data.title !== undefined) setTitle(data.title);
     if (data.icon !== undefined) setIcon(data.icon);
     if (data.coverImage !== undefined) setCoverImage(data.coverImage);
+    if (data.coverImages !== undefined) setCoverImages(data.coverImages);
+    if (data.coverShuffle !== undefined) setCoverShuffle(data.coverShuffle);
     if (data.coverType !== undefined) setCoverType(data.coverType);
     if (data.width !== undefined) setWidth(data.width ?? 'default');
     const { pageStylePatch, ...rest } = data;
@@ -223,8 +232,13 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const themeColor = getThemeColor(pageStyle.theme);
   const washiGradient = getWashiGradient(pageStyle.washi);
 
-  const isColorCover = coverType === 'color' && coverImage;
-  const isImageCover = coverType === 'image' && coverImage;
+  // G156：随机封面每次加载在 coverImages 里挑一张；关掉时用 coverImage。
+  const displayCover = useMemo(
+    () => pickCoverImage(coverImage, coverImages, coverShuffle),
+    [coverImage, coverImages, coverShuffle],
+  );
+  const isColorCover = coverType === 'color' && displayCover;
+  const isImageCover = coverType === 'image' && displayCover;
 
   return (
     <div className="flex h-full flex-1 overflow-hidden">
@@ -424,13 +438,13 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             {isColorCover && (
               <div
                 className="mb-6 h-48 w-full rounded-lg"
-                style={{ backgroundColor: coverImage! }}
+                style={{ backgroundColor: displayCover! }}
               />
             )}
             {isImageCover && (
               <div className="mb-6 h-48 w-full overflow-hidden rounded-lg">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={coverImage!} alt="Cover" className="h-full w-full object-cover" />
+                <img src={displayCover!} alt="Cover" className="h-full w-full object-cover" />
               </div>
             )}
 
@@ -476,6 +490,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
           icon={icon}
           coverImage={coverImage}
           coverType={coverType}
+          coverImages={coverImages}
+          coverShuffle={coverShuffle}
           width={width}
           pageStyle={pageStyle}
           wordCount={wordCount}

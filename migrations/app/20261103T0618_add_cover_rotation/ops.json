@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.documents.coverImages",
+    "label": "Add column \"coverImages\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "coverImages",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"coverImages\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverImages"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"coverImages\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"coverImages\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"coverImages\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverImages"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.documents.coverShuffle",
+    "label": "Add column \"coverShuffle\" to \"documents\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "coverShuffle",
+        "table": "documents"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"coverShuffle\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverShuffle"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"coverShuffle\"",
+        "sql": "ALTER TABLE \"public\".\"documents\" ADD COLUMN \"coverShuffle\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"coverShuffle\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "documents",
+          "coverShuffle"
+        ]
+      }
+    ]
+  }
+]

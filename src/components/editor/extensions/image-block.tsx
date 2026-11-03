@@ -79,6 +79,17 @@ export const ImageBlock = Node.create({
         },
         renderHTML: (attributes) => ({ 'data-aspect-ratio': String(attributes.aspectRatio ?? 1.5) }),
       },
+      // G156：图片样式是两根轴——尺寸 auto|large × 填充 fill|fit。
+      imageSize: {
+        default: 'auto',
+        parseHTML: (element) => (element.getAttribute('data-image-size') === 'large' ? 'large' : 'auto'),
+        renderHTML: (attributes) => ({ 'data-image-size': attributes.imageSize === 'large' ? 'large' : 'auto' }),
+      },
+      imageFit: {
+        default: 'fill',
+        parseHTML: (element) => (element.getAttribute('data-image-fit') === 'fit' ? 'fit' : 'fill'),
+        renderHTML: (attributes) => ({ 'data-image-fit': attributes.imageFit === 'fit' ? 'fit' : 'fill' }),
+      },
       // G504：主色按整型存，显示时才转 hex。
       primaryColor: {
         default: null,

@@ -19,6 +19,7 @@ import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { isImeComposing } from '@/lib/editor/ime-guard';
 import { deleteStepFor } from '@/lib/editor/forward-delete';
 import { tableDimensions, clearCellContents } from '@/lib/table-utils';
+import { nextOpenForAllToggles, setOpenOnAllToggles } from './toggle-all';
 import { tableAxisForShortcut } from '@/lib/editor/table-shortcuts';
 import {
   TABLE_SIZE_LIMIT_DURATION,
@@ -487,6 +488,21 @@ export const CraftKeymap = Extension.create({
               }
               editor.chain().focus().addRowAfter().run();
               return true;
+            }
+            // G1593: Ctrl/⌘-Alt-T toggles every toggle block. When the document has none the
+            // key stays inert, which is why the official binding does not change state every press.
+            if (
+              event.key.toLowerCase() === 't' &&
+              (event.metaKey || event.ctrlKey) &&
+              event.altKey &&
+              !event.shiftKey
+            ) {
+              const next = nextOpenForAllToggles(view.state);
+              if (next !== null) {
+                const tr = view.state.tr;
+                if (setOpenOnAllToggles(view.state, tr, next) > 0) view.dispatch(tr.scrollIntoView());
+                return true;
+              }
             }
             // G1620: Ctrl/⌘-Backspace inside a table cell clears the cell's content — the
             // official DELETE_ROWS binding is "empty this cell", not "delete the row".

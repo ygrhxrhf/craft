@@ -100,6 +100,7 @@ export const BINDING_SECTIONS: Readonly<Record<string, PanelSectionId | null>> =
   BULLET_LIST: 'style-list',
   NUMBERED_LIST: 'style-list',
   NO_LIST: 'style-list',
+  TOGGLE_TOGGLES: 'editing-other',
   SET_CANCELLED: 'tasks-global',
   SET_CANCELLED_SLASH: 'tasks-global',
   MOVE_BLOCK_UP: 'organize-move',

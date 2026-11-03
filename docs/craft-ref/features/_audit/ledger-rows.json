@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T06:28:48.830Z",
+  "generatedAt": "2026-11-03T06:34:15.841Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 888,
-    "aligned": 292,
+    "gap": 887,
+    "aligned": 293,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 317,
+    "P2 / gap": 316,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 188,
+    "P2 / aligned": 189,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -29704,10 +29704,10 @@
       "cols": 5,
       "id": "G1593",
       "official": "★★★ **`Ctrl-Alt-T`（`TOGGLE_TOGGLES`）：官方**能改变折叠态**（但非每按必变），本地**从不改变****（第 352 批，`editor.key.toggle-all-v3`，先造\"折叠块＋缩进子块\"、再看子块 `CHILD1` 的文本计数）：官方两轮读数——`wave1-77`：`1`(按一次不变) → 点块左▶**塌成 0** → `1` → `0` → `1`（**交替折叠/展开**）；`wave1-84`：`1`(不变) → 点▶**0** → `1` → `1` → `1`（**只变了那一次**）。本地同序列 `CHILD1` 恒 `1`、`data-open` 恒 `false` ⇒ **键无绑定**（与 `G1590` 同源）。★ 三条边界：① 官方**第一次按不生效**（与任务行\"第一下被吃\"同族，疑似焦点预热）；② 官方**不是每按必变**（两轮在 #3 上分叉）✎ **第 366 批查清是前置问题**：必须先**点一下折叠块本体**让它成为当前对象；只在光标留在子块里连按四次，`CHILD1` **恒 1**（一次都不折，`wave1-104`）；点过本体之后连按四次得到 **`0→1→0→1→0` 的稳定交替**（`wave1-105`）⇒ **键是逐次生效的，\"不稳定\"来自没选中对象**；③ 折叠的**直接通路是点块左侧 ▶ 三角**（截图 `editor.key.toggle-all-v3-official-step11.png`：点后子块整条消失），键盘只是其中一条、且不稳",
-      "local": "本地对照＝`craft-keymap.ts` 无 `TOGGLE_TOGGLES` 分支；折叠块 `data-open` 恒 `false`",
-      "verdict": "行为不同（一侧可折叠、一侧恒无效果）",
+      "local": "本地对照＝`craft-keymap.ts` 无 `TOGGLE_TOGGLES` 分支；折叠块 `data-open` 恒 `false`；✎ 现读（2026-11-03 第 243 批）：已实现 — Ctrl/⌘-Alt-T 绑到 `TOGGLE_TOGGLES`：有任一折叠即全展开、全展开则全收起，无折叠块时保持惰性；键位表新增该行（mac ⌥⌘T／win Ctrl-Alt-T）；浏览器实测两块恒 false → 按键后 [true,true] → 再按收起",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

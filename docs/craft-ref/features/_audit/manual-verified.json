@@ -9742,10 +9742,13 @@
       ]
     },
     "G1593": {
-      "status": "partial",
-      "note": "Ctrl-Alt-T 无绑定；全部展开/收起只在斜杠命令与命令面板",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "Ctrl-Alt-T 切换所有折叠块：任一关闭→全开，全开→全关，无折叠块时惰性；键位表已登记",
       "evidence": [
-        "src/components/editor/extensions/toggle-all.ts:1"
+        "src/components/editor/extensions/toggle-all.ts:1",
+        "src/components/editor/extensions/craft-keymap.ts:493",
+        "src/lib/editor/keymap.ts:229"
       ]
     },
     "G1594": {

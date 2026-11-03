@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Schema, type Node } from '@tiptap/pm/model';
 import { EditorState } from '@tiptap/pm/state';
-import { TOGGLE_NODE, setOpenOnAllToggles } from './toggle-all';
+import { TOGGLE_NODE, nextOpenForAllToggles, setOpenOnAllToggles } from './toggle-all';
 
 // A real ProseMirror schema, not a hand-rolled tree: positions are what the
 // traversal gets wrong, and only a real doc computes them.
@@ -119,5 +119,31 @@ describe('setOpenOnAllToggles', () => {
     expect(next.doc.child(0).childCount).toBe(1);
     expect(next.doc.child(0).textContent).toBe('甲');
     expect(next.doc.child(1).textContent).toBe('尾');
+  });
+});
+
+describe('the toggle-all key target (G1593)', () => {
+  it('opens everything when any toggle is closed', () => {
+    const state = stateOf([toggle(true, [para('甲')]), toggle(false, [para('乙')])]);
+    expect(nextOpenForAllToggles(state)).toBe(true);
+  });
+
+  it('closes everything once all toggles are open', () => {
+    const state = stateOf([toggle(true, [para('甲')]), toggle(true, [para('乙')])]);
+    expect(nextOpenForAllToggles(state)).toBe(false);
+  });
+
+  it('stays inert when the document has no toggles', () => {
+    expect(nextOpenForAllToggles(stateOf([para('甲')]))).toBeNull();
+  });
+
+  it('is bound to Ctrl-Alt-T and wired into the editor keymap', () => {
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    const keymap = readFileSync('src/lib/editor/keymap.ts', 'utf8');
+    const craft = readFileSync('src/components/editor/extensions/craft-keymap.ts', 'utf8');
+    expect(keymap).toContain("id: 'TOGGLE_TOGGLES'");
+    expect(keymap).toContain("win: chord({ ctrlKey: true, altKey: true }, 't', 'KeyT')");
+    expect(craft).toContain('nextOpenForAllToggles(view.state)');
+    expect(craft).toContain('setOpenOnAllToggles(view.state, tr, next)');
   });
 });

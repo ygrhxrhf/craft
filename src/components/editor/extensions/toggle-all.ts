@@ -27,3 +27,21 @@ export function setOpenOnAllToggles(
   });
   return changed;
 }
+
+/**
+ * The state a "toggle all toggles" press should land on: open everything when any toggle is
+ * closed, close everything once they are all open, and null when the document has no toggles
+ * (the key then stays inert — the official binding does not fire on every press).
+ */
+export function nextOpenForAllToggles(state: EditorState): boolean | null {
+  let found = false;
+  let anyClosed = false;
+  state.doc.descendants((node) => {
+    if (node.type.name === TOGGLE_NODE) {
+      found = true;
+      if (node.attrs.open !== true) anyClosed = true;
+    }
+    return true;
+  });
+  return found ? anyClosed : null;
+}

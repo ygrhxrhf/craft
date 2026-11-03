@@ -226,6 +226,7 @@ export const KEY_BINDINGS: KeyBinding[] = [
   { id: 'BODY', label: '正文', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '5', 'Digit5'), win: chord({ ctrlKey: true, shiftKey: true }, '5', 'Digit5') },
   { id: 'TODO_LIST', label: '待办', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '6', 'Digit6'), win: chord({ ctrlKey: true, shiftKey: true }, '6', 'Digit6') },
   { id: 'TOGGLE_LIST', label: '列表', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '7', 'Digit7'), win: chord({ ctrlKey: true, shiftKey: true }, '7', 'Digit7') },
+  { id: 'TOGGLE_TOGGLES', label: '切换所有折叠块', group: 'editing', mac: chord({ metaKey: true, altKey: true }, 't', 'KeyT'), win: chord({ ctrlKey: true, altKey: true }, 't', 'KeyT') },
   { id: 'BULLET_LIST', label: '项目符号', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '8', 'Digit8'), win: chord({ ctrlKey: true, shiftKey: true }, '8', 'Digit8') },
   { id: 'NUMBERED_LIST', label: '编号', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '9', 'Digit9'), win: chord({ ctrlKey: true, shiftKey: true }, '9', 'Digit9') },
   { id: 'NO_LIST', label: '无列表', group: 'editing', mac: chord({ metaKey: true, altKey: true }, '0', 'Digit0'), win: chord({ ctrlKey: true, shiftKey: true }, '`', 'Backquote') },

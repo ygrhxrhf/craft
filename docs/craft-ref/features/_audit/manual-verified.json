@@ -3189,10 +3189,13 @@
       ]
     },
     "G1403": {
-      "status": "partial",
-      "note": "本地 callout 内标题导出成 > ####，无 <callout>#### 标签串。",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "callout 的 markdown 形改为 <callout> 包裹行首记号（单行 inline/多行展开），导入支持单行形；官方样例逐字复现",
       "evidence": [
-        "src/lib/document-codec/index.ts:139"
+        "src/lib/document-codec/index.ts:142",
+        "src/lib/import/markdown.ts:252",
+        "src/lib/document-codec/index.test.ts:120"
       ]
     },
     "G1405": {

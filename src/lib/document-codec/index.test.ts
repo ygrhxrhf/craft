@@ -114,8 +114,29 @@ const richDoc = {
 describe('rich blocks survive export', () => {
   it('keeps callout and card text in markdown', () => {
     const md = serializeDocument(richDoc, 'markdown');
-    expect(md).toContain('> 注意电量');
+    // G1403：callout 走 `<callout>` 包裹，不是 `> ` 引用。
+    expect(md).toContain('<callout type="warning">注意电量</callout>');
     expect(md).toContain('卡片内文');
+  });
+
+  it('writes the official inline callout shape verbatim (G1403)', () => {
+    const doc = {
+      type: 'doc',
+      content: [
+        {
+          type: 'callout',
+          attrs: { type: 'info' },
+          content: [
+            {
+              type: 'heading',
+              attrs: { level: 4 },
+              content: [{ type: 'text', text: 'On iOS :' }],
+            },
+          ],
+        },
+      ],
+    };
+    expect(serializeDocument(doc, 'markdown')).toBe('<callout>#### On iOS :</callout>');
   });
 
   it('renders a real markdown table', () => {

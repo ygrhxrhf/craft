@@ -139,14 +139,15 @@ function renderMarkdown(node: any): string {
         .map((column: any) => (column.content ?? []).map(renderMarkdown).filter(Boolean).join('\n\n'))
         .filter(Boolean)
         .join('\n\n');
-    case 'callout':
-      return (node.content ?? [])
-        .map(renderMarkdown)
-        .filter(Boolean)
-        .join('\n')
-        .split('\n')
-        .map((line: string) => `> ${line}`)
-        .join('\n');
+    case 'callout': {
+      // G1403：官方 markdown 是 `<callout>` 包住**原本的行首记号**（如 `<callout>#### On iOS :</callout>`），
+      // 不是 `> ` 引用；色位不入串。单行内容保持单行，多行才展开。
+      const inner = (node.content ?? []).map(renderMarkdown).filter(Boolean).join('\n');
+      const type = node.attrs?.type && node.attrs.type !== 'info' ? ` type="${node.attrs.type}"` : '';
+      return inner.includes('\n')
+        ? `<callout${type}>\n${inner}\n</callout>`
+        : `<callout${type}>${inner}</callout>`;
+    }
     case 'cardBlock':
     case 'toggleBlock':
       return (node.content ?? []).map(renderMarkdown).filter(Boolean).join('\n\n');

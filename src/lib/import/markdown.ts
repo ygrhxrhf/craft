@@ -250,6 +250,20 @@ function parseBlocks(lines: string[]): PmNode[] {
 
     // G674: three Craft-specific extensions ride on plain Markdown — `<callout>…</callout>`
     // becomes a callout block, a line starting `+ ` becomes a toggle, `>` stays a quote.
+    // G1403：官方单行形 `<callout>#### On iOS :</callout>` 也要能读回（行首记号随内容保留）。
+    const calloutInline = /^<callout(?:\s+type="([^"]+)")?\s*>(.*)<\/callout>$/i.exec(line.trim());
+    if (calloutInline) {
+      const allowed = new Set(['info', 'warning', 'error', 'success', 'note']);
+      const clType = (calloutInline[1] ?? 'info').toLowerCase();
+      blocks.push({
+        type: 'callout',
+        attrs: { type: allowed.has(clType) ? clType : 'info' },
+        content: calloutInline[2].trim() ? parseBlocks([calloutInline[2]]) : [{ type: 'paragraph' }],
+      });
+      index += 1;
+      continue;
+    }
+
     const calloutOpen = /^<callout(?:\s+type="([^"]+)")?\s*>$/i.exec(line.trim());
     if (calloutOpen) {
       const allowed = new Set(['info', 'warning', 'error', 'success', 'note']);

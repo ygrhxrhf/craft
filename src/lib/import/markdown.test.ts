@@ -139,6 +139,17 @@ describe('parseMarkdown blocks', () => {
     });
   });
 
+  it('reads the official inline callout shape (G1403)', () => {
+    expect(blocks('<callout>#### On iOS :</callout>')[0]).toMatchObject({
+      type: 'callout',
+      attrs: { type: 'info' },
+    });
+    expect(blocks('<callout type="warning">注意电量</callout>')[0]).toMatchObject({
+      type: 'callout',
+      attrs: { type: 'warning' },
+    });
+  });
+
   it('always returns a document with at least one block', () => {
     expect(parseMarkdown('').content).toEqual([{ type: 'paragraph' }]);
   });

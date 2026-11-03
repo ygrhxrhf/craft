@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Pin, PinOff } from 'lucide-react';
 
 import { getSyncManager } from '@/lib/sync-core';
 import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
@@ -39,6 +40,11 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
   const [items, setItems] = useState(groups);
   const [dragging, setDragging] = useState<number | null>(null);
 
+  // router.refresh() 之后服务端重排的结果要回到本地列表（置顶切换会改变顺序）。
+  useEffect(() => {
+    setItems(groups);
+  }, [groups]);
+
   const commitOrder = async (next: TagBrowseGroup[]) => {
     setItems(next);
     const patches = orderPatches(next.map((group) => group.id));
@@ -68,6 +74,14 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
     if (next.length === items.length) await commitOrder(next);
   };
 
+  /** G607 `tag_pin` / `tag_unpin`：置顶是标签自己的布尔位，不依赖整批顺序。 */
+  const togglePin = async (group: TagBrowseGroup) => {
+    const manager = getSyncManager();
+    await manager.applyLocal({ table: 'tag', id: group.id, patch: { pinned: !group.pinned } });
+    await manager.flushNow();
+    router.refresh();
+  };
+
   return (
     <ul className="flex flex-col gap-0.5">
       {items.map((group, index) => (
@@ -85,7 +99,20 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
           }}
           className={dragging === index ? 'opacity-50' : undefined}
         >
-          <TagRow group={group} />
+          <div className="flex items-center gap-1">
+            <div className="min-w-0 flex-1">
+              <TagRow group={group} />
+            </div>
+            <button
+              type="button"
+              aria-label={group.pinned ? '取消固定' : '固定'}
+              title={group.pinned ? '取消固定' : '固定'}
+              onClick={() => void togglePin(group)}
+              className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-foreground"
+            >
+              {group.pinned ? <Pin className="size-3.5" /> : <PinOff className="size-3.5" />}
+            </button>
+          </div>
           {group.children.length > 0 && (
             <ul className="ml-5 border-l border-border/60 pl-2">
               {group.children.map((child) => (

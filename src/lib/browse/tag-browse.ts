@@ -14,6 +14,8 @@ export interface TagBrowseTag {
   color: string;
   /** G94 `tag_reorder`：整批写入的 0…n-1 顺序；缺省按 0 处理。 */
   order?: number;
+  /** G607 `tag_pin`：置顶标签排在整批顺序之前。 */
+  pinned?: boolean;
 }
 
 export interface TagBrowseLink {
@@ -54,8 +56,9 @@ function byCountThenName(a: TagBrowseGroup, b: TagBrowseGroup): number {
   return a.name.localeCompare(b.name, 'zh-CN');
 }
 
-/** G94：拖过的标签按 `order` 排；全是默认 0 时退回原来的篇数/名称序。 */
+/** G94：拖过的标签按 `order` 排；全是默认 0 时退回原来的篇数/名称序。G607：置顶永远在前。 */
 function byOrderThenCount(a: TagBrowseGroup, b: TagBrowseGroup): number {
+  if (Boolean(a.pinned) !== Boolean(b.pinned)) return a.pinned ? -1 : 1;
   const ao = a.order ?? 0;
   const bo = b.order ?? 0;
   if (ao !== bo) return ao - bo;

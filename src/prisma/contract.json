@@ -3868,6 +3868,13 @@
                   "kind": "scalar"
                 }
               },
+              "pinned": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
@@ -3935,6 +3942,9 @@
                 },
                 "order": {
                   "column": "order"
+                },
+                "pinned": {
+                  "column": "pinned"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -8210,6 +8220,15 @@
                   "nativeType": "float8",
                   "nullable": false
                 },
+                "pinned": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
@@ -9073,7 +9092,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "21b916cf122af802519a957f2cd0621be38ad8b5b4c73dffd63dcb14d8e36058"
+    "storageHash": "fea70330558ce9de70d9bc650709da70aff718e1063e847dc778e204a326e1b8"
   },
   "execution": {
     "executionHash": "d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32",

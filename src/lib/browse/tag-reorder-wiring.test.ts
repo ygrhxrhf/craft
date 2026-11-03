@@ -17,11 +17,16 @@ describe('the tag reorder wiring (G94)', () => {
     expect(list).toContain('orderAfterDrop(');
   });
 
+  it('pins and unpins a tag through the same table', () => {
+    expect(list).toContain("patch: { pinned: !group.pinned }");
+    expect(list).toContain("group.pinned ? '取消固定' : '固定'");
+  });
+
   it('renders the tree through the client list', () => {
     expect(page).toContain('<TagTreeList groups={tree.groups} />');
   });
 
   it('keeps the order column in the tag sync whitelist', () => {
-    expect(tables).toContain("'name','color','order','userId'");
+    expect(tables).toContain("'color','order','pinned','userId'");
   });
 });

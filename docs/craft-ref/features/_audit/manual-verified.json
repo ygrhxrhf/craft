@@ -6147,13 +6147,14 @@
       ]
     },
     "G607": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "第 191 批现读：文档树同层拖拽按整批顺序（0…n-1）落库；文件夹树仍逐条写 parentId/folderId，星标/标签区与 tag_pin 本仓无宿主。",
+      "note": "五种重排作用域均整批写完整顺序；标签固定/取消固定已落 Tag.pinned 并置顶排序。",
       "evidence": [
         "src/lib/document/sibling-order.ts",
-        "src/components/sidebar/DocumentTreeItem.tsx:229",
-        "src/lib/document/sibling-order.test.ts"
+        "src/components/browse/TagTreeList.tsx",
+        "src/lib/browse/tag-browse.ts:58",
+        "src/prisma/contract.prisma:416"
       ]
     },
     "G612": {

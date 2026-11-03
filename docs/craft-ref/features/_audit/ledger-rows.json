@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T08:33:37.624Z",
+  "generatedAt": "2026-11-03T08:41:08.755Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 869,
-    "aligned": 310,
+    "gap": 868,
+    "aligned": 311,
     "unknown": 194,
     "deliberate": 105,
     "partial": 64,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 298,
+    "P2 / gap": 297,
     "P? / gap": 226,
-    "P2 / aligned": 206,
+    "P2 / aligned": 207,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -12049,11 +12049,11 @@
       "cols": 6,
       "id": "G607",
       "official": "★★★ **侧栏有五个独立的整批排序 action**（`root_reorder`/`starred_reorder`/`folder_reorder`/`subfolder_reorder`/`tag_reorder`，全部提交 `payload.orderedIds` **完整新顺序**而非 swap），且 **`tag_pin`/`tag_unpin` ⇒ 标签可置顶** ⇒ 可排序对象**不止文档列表**，星标区与标签区各自独立",
-      "local": "✎ 现读（2026-10-31）更正：侧栏拖拽按相邻中点算 order 逐条写，无整批 orderedIds",
-      "verdict": "缺失（排序面）",
+      "local": "✎ 现读（2026-11-03 第 261 批）：五种作用域都按「完整新顺序」整批写 0…n-1 —— `root_reorder`／`folder_reorder`／`subfolder_reorder` 走侧栏 `orderAfterDrop`＋`orderPatches`，`starred_reorder` 走 `favorite.order`（第 202 批），`tag_reorder` 走 `tag.order`（第 258 批）；本批补 `tag_pin`／`tag_unpin`：`Tag.pinned` 新列（迁移 `20261103T0838_add_tag_pin`）、`/tags` 每行一枚固定/取消固定，置顶标签排在最前",
+      "verdict": "已对齐",
       "score": "2/2",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝本轮实跑：`grep -rn \"reorder|orderedIds\" src` ⇒ 本地仅有 `src/lib/authz/folder-tree.ts` 的父链校验与导入路径，**无任何\"提交完整顺序\"的排序 action**；标签置顶本地无对应 ⇒ ★ 官方\"重排一律整批提交\"在四处独立出现（`setRowsOrder`/`reorderTasks`/`tag_reorder`/`root_reorder`）⇒ 高度一致的产品决策 ✎ 现读（2026-11-02 第 191 批）：**文档树同层拖拽已按整批顺序落库**（`lib/document/sibling-order.ts` 的 `orderAfterDrop`＋`orderPatches(0…n-1)`，`DocumentTreeItem.tsx` 逐条 patch 该批 id）；仍缺：星标区与标签区无拖拽重排、标签无置顶（`tag_pin`）⇒ ✎ 再读（2026-11-02 第 206 批）：文件夹同层重排也改整批写 0…n-1（`orderAfterDrop`＋`orderPatches`，写 `folder` 表），根区/子文件夹两层同一函数",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

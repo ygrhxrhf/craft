@@ -419,6 +419,8 @@ model Tag {
   color     String   @default("#6366f1")
   // G94 `tag_reorder`：标签区自己的整批顺序（与根区/收藏/文件夹同一条 0…n-1 口径）。
   order     Float    @default(0)
+  // G607 `tag_pin` / `tag_unpin`：置顶标签排在顺序之前。
+  pinned    Boolean  @default(false)
   userId    String
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()

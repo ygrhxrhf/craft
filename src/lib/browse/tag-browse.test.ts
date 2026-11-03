@@ -137,3 +137,17 @@ describe('the tag order (G94 tag_reorder)', () => {
     expect(tree.groups.map((group) => group.name)).toEqual(['乙', '甲']);
   });
 });
+
+describe('pinned tags (G607)', () => {
+  it('puts a pinned tag ahead of a lower order', () => {
+    const tree = buildTagTree(
+      [
+        { id: 'a', name: '甲', color: '#111111', order: 0 },
+        { id: 'b', name: '乙', color: '#222222', order: 5, pinned: true },
+      ],
+      [],
+      [],
+    );
+    expect(tree.groups.map((group) => group.name)).toEqual(['乙', '甲']);
+  });
+});

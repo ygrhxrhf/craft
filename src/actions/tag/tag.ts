@@ -11,6 +11,7 @@ export interface TagRecord {
   name: string;
   color: string;
   order?: number;
+  pinned?: boolean;
   documentCount?: number;
 }
 

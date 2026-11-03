@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.folders.pinnedDocumentIds",
+    "label": "Add column \"pinnedDocumentIds\" to \"folders\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "pinnedDocumentIds",
+        "table": "folders"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"pinnedDocumentIds\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "folders",
+          "pinnedDocumentIds"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"pinnedDocumentIds\"",
+        "sql": "ALTER TABLE \"public\".\"folders\" ADD COLUMN \"pinnedDocumentIds\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"pinnedDocumentIds\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "folders",
+          "pinnedDocumentIds"
+        ]
+      }
+    ]
+  }
+]

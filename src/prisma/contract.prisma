@@ -167,6 +167,9 @@ model Folder {
   icon      String?
   /// G338：文件夹描述是独立字段（`Folder description` 是独立 mutation）。
   description String?
+  /// G338：官方 `folder_set_pinned`（`Folder pinned doc` 事件）写 `pinnedDocumentIds`——
+  /// 数组但只放 0 或 1 个（单选）；取消固定写空数组，不是删属性。
+  pinnedDocumentIds Json?
   order     Float     @default(0)
   parentId  String?
   userId    String

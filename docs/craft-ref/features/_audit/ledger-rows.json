@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T13:30:58.279Z",
+  "generatedAt": "2026-11-03T14:38:56.066Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 854,
+    "gap": 853,
     "aligned": 324,
     "unknown": 194,
     "deliberate": 105,
-    "partial": 65,
+    "partial": 66,
     "nonaction": 56,
     "unreachable": 16
   },
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 283,
+    "P2 / gap": 282,
     "P? / gap": 226,
     "P2 / aligned": 220,
     "P1 / gap": 191,
@@ -29,7 +29,7 @@
     "P3 / aligned": 39,
     "P2 / unknown": 34,
     "P? / deliberate": 33,
-    "P2 / partial": 27,
+    "P2 / partial": 28,
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
@@ -7201,10 +7201,10 @@
       "cols": 5,
       "id": "G338",
       "official": "**文件夹 icon 与 description 各是独立 mutation 事件**（`Folder icon` / `Folder description`）⇒ 与文档\"文件夹有 description 字段\"的文案级证据升级为协议级；另有 `Folder pinned doc` / `Subfolder reorder` / `Root reorder` / `Starred reorder` 四条结构事件",
-      "local": "本地文件夹无 description 独立更新通路，顺序事件未按容器分 ⇒ ✎ 现读（2026-11-02 第 203 批）：`Folder.description` 列已加（迁移 `20261103T0157_add_folder_description`，同步白名单同步补）并接上独立的「编辑描述」菜单（只写 description）；「设置图标」同样只写 icon（官方 `Folder icon` / `Folder description` 两条独立 mutation 对上）；仍缺：固定文档事件 ⇒ ✎ 再读（2026-11-02 第 206 批）：文件夹区同层重排已按整批写（`folder_reorder`/`subfolder_reorder` 同一函数），只剩固定文档事件",
-      "verdict": "缺失（局部）",
+      "local": "本地文件夹无 description 独立更新通路，顺序事件未按容器分 ⇒ ✎ 现读（2026-11-02 第 203 批）：`Folder.description` 列已加（迁移 `20261103T0157_add_folder_description`，同步白名单同步补）并接上独立的「编辑描述」菜单（只写 description）；「设置图标」同样只写 icon（官方 `Folder icon` / `Folder description` 两条独立 mutation 对上）；仍缺：固定文档事件 ⇒ ✎ 再读（2026-11-02 第 206 批）：文件夹区同层重排已按整批写（`folder_reorder`/`subfolder_reorder` 同一函数），只剩固定文档事件 ⇒ ✎ 现读（2026-11-03 第 276 批）：`Folder.pinnedDocumentIds`（json 列，迁移 `20261103T1350_add_folder_pinned_document_ids` ＋ 同步白名单）把 `folder_set_pinned`／`Folder pinned doc` 事件落地，写侧逐字照官方形状＝**数组只放 0 或 1 个**（取消固定写 `[]`，不是删属性）；入口是文件夹屏上那段 `browse.drop.here.to.pin.document`「拖放到此处以固定文档」拖放区（`PIN_ON_DROP` 语义＝固定**不改**文档自己的 `folderId`），槽位已满再拖进来即换掉。浏览器实点：拖入 ⇒ 卡片＋链到该文档、库里 `[\"792befd4…\"]` 而该文档 `folderId` 仍为空；再拖另一枚 ⇒ 仍只一枚；点「取消固定」⇒ 回空态那句、库里 `[]`",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

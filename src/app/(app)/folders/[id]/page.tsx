@@ -8,6 +8,7 @@ import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { DocumentCard } from '@/components/document/DocumentCard';
+import { FolderPinnedSection } from '@/components/folder/FolderPinnedSection';
 
 interface FolderRouteProps {
   params: Promise<{ id: string }>;
@@ -22,12 +23,15 @@ export default async function FolderRoute({ params }: FolderRouteProps) {
   const page = await getFolderPage(id);
   if (!page) notFound();
 
-  const { folder, children, documents } = page;
+  const { folder, children, documents, pinned } = page;
 
   return (
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title={folder.name} />
       <AppPageContainer>
+        {/* G338：官方 `Folder pinned doc` 事件的落点——一个槽位，拖放即固定。 */}
+        <FolderPinnedSection folderId={folder.id} pinned={pinned} />
+
         {children.length > 0 && (
           <section className="mb-8">
             <h2 className="mb-3 text-lg font-medium">文件夹</h2>

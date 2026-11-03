@@ -4867,13 +4867,17 @@
       ]
     },
     "G338": {
-      "status": "partial",
-      "note": "第 203 批：description 列（含迁移）与「编辑描述」「设置图标」两条独立 mutation 已落；文件夹重排与固定文档事件仍缺",
+      "status": "aligned",
+      "note": "第 276 批补齐最后一条：官方 `folder_set_pinned`／`Folder pinned doc` 事件落成本地 `Folder.pinnedDocumentIds`（json 列＋迁移＋同步白名单），写侧逐字照官方形状＝数组只放 0 或 1 个、取消固定写空数组而不是删属性；入口是文件夹屏上 `browse.drop.here.to.pin.document`「拖放到此处以固定文档」的拖放区（`PIN_ON_DROP`＝固定不动文档自己的 folderId，槽位已满再拖即换）。浏览器实点四步：拖入→卡片＋链接、库里是一枚只含该文档 id 的数组且该文档 folderId 仍空；再拖另一枚→仍只一枚；点「取消固定」→回空态那句、库里是空数组；控制台无报错。description／icon／四条重排作用域承第 203/206 批。",
       "evidence": [
-        "src/prisma/contract.prisma:161",
-        "src/components/sidebar/FolderTreeItem.tsx:72",
+        "src/lib/folder/pinned-doc.ts:12",
+        "src/lib/folder/pin-local.ts:9",
+        "src/components/folder/FolderPinnedSection.tsx:46",
+        "src/app/(app)/folders/[id]/page.tsx:33",
+        "src/actions/folder/get.ts:77",
+        "src/prisma/contract.prisma:172",
         "src/lib/sync/tables.ts:35",
-        "migrations/app/20261103T0157_add_folder_description"
+        "migrations/app/20261103T1350_add_folder_pinned_document_ids"
       ]
     },
     "G340": {

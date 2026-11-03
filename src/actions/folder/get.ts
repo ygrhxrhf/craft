@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
+import { parsePinnedDocumentIds } from '@/lib/folder/pinned-doc';
 
 export async function getFolders() {
   const session = await auth();
@@ -73,5 +74,19 @@ export async function getFolderPage(id: string) {
     .all();
   for (const doc of docRows) documents.push(doc as DocRow);
 
-  return { folder, children, documents };
+  // G338：官方 `Folder pinned doc` 事件写进 `pinnedDocumentIds` 的那一枚（数组只放 0/1 个）。
+  // 固定不改变文档自己的所在文件夹，所以这一枚可能不在上面的 documents 里。
+  const pinnedId = parsePinnedDocumentIds(
+    (folder as { pinnedDocumentIds?: unknown }).pinnedDocumentIds
+  )[0];
+  let pinned: DocRow | null = null;
+  if (pinnedId) {
+    const row = await db.orm.public.Document.first({ id: pinnedId });
+    const doc = row as DocRow & { userId: string; isDeleted: boolean } | null;
+    if (doc && doc.userId === session.user.id && !doc.isDeleted) {
+      pinned = { id: doc.id, title: doc.title, icon: doc.icon, updatedAt: doc.updatedAt };
+    }
+  }
+
+  return { folder, children, documents, pinned };
 }

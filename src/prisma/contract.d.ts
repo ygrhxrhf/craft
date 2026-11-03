@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'fea70330558ce9de70d9bc650709da70aff718e1063e847dc778e204a326e1b8'>;
+  StorageHashBase<'014b0070093120244dd4539997489b5bf794564e996340d05bb7e2a84a2a0021'>;
 export type ExecutionHash =
   ExecutionHashBase<'d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32'>;
 export type ProfileHash =
@@ -468,6 +468,7 @@ export type FieldOutputTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly icon: CodecTypes['pg/text@1']['output'] | null;
       readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly pinnedDocumentIds: CodecTypes['pg/json@1']['output'] | null;
       readonly order: CodecTypes['pg/float8@1']['output'];
       readonly parentId: CodecTypes['pg/text@1']['output'] | null;
       readonly userId: CodecTypes['pg/text@1']['output'];
@@ -862,6 +863,7 @@ export type FieldInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly icon: CodecTypes['pg/text@1']['input'] | null;
       readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly pinnedDocumentIds: CodecTypes['pg/json@1']['input'] | null;
       readonly order: CodecTypes['pg/float8@1']['input'];
       readonly parentId: CodecTypes['pg/text@1']['input'] | null;
       readonly userId: CodecTypes['pg/text@1']['input'];
@@ -1261,6 +1263,7 @@ export type StorageColumnTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly order: CodecTypes['pg/float8@1']['output'];
       readonly parentId: CodecTypes['pg/text@1']['output'] | null;
+      readonly pinnedDocumentIds: CodecTypes['pg/json@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/text@1']['output'];
     };
@@ -1655,6 +1658,7 @@ export type StorageColumnInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly order: CodecTypes['pg/float8@1']['input'];
       readonly parentId: CodecTypes['pg/text@1']['input'] | null;
+      readonly pinnedDocumentIds: CodecTypes['pg/json@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/text@1']['input'];
     };
@@ -1953,6 +1957,7 @@ export namespace Models {
     name: CodecTypes['pg/text@1']['output'];
     icon: CodecTypes['pg/text@1']['output'] | null;
     description: CodecTypes['pg/text@1']['output'] | null;
+    pinnedDocumentIds: CodecTypes['pg/json@1']['output'] | null;
     order: CodecTypes['pg/float8@1']['output'];
     parentId: CodecTypes['pg/text@1']['output'] | null;
     userId: CodecTypes['pg/text@1']['output'];
@@ -4283,6 +4288,11 @@ type ContractBase = Omit<
                 readonly description: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly pinnedDocumentIds: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
                   readonly nullable: true;
                 };
                 readonly order: {
@@ -7538,6 +7548,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly pinnedDocumentIds: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
               readonly order: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
@@ -7651,6 +7665,7 @@ type ContractBase = Omit<
                 readonly name: { readonly column: 'name' };
                 readonly icon: { readonly column: 'icon' };
                 readonly description: { readonly column: 'description' };
+                readonly pinnedDocumentIds: { readonly column: 'pinnedDocumentIds' };
                 readonly order: { readonly column: 'order' };
                 readonly parentId: { readonly column: 'parentId' };
                 readonly userId: { readonly column: 'userId' };

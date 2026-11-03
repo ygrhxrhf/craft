@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-03T01:47:23.733Z",
+  "generatedAt": "2026-11-03T01:51:03.765Z",
   "total": 1614,
   "status": {
     "aligned": 523,
     "nonaction": 512,
-    "partial": 269,
+    "partial": 270,
     "deliberate": 165,
-    "gap": 125,
+    "gap": 124,
     "unreachable": 20
   },
   "priority": {
@@ -21,7 +21,7 @@
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 119,
+    "P2 / partial": 120,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -29,7 +29,7 @@
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
-    "P2 / gap": 52,
+    "P2 / gap": 51,
     "P? / deliberate": 40,
     "P3 / gap": 39,
     "P? / gap": 34,
@@ -44,7 +44,7 @@
   "explicit": {
     "P0": [
       {
-        "line": 1128,
+        "line": 1129,
         "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
         "cols": 7,
         "id": "G01",
@@ -71,7 +71,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1129,
+        "line": 1130,
         "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
         "cols": 7,
         "id": "G02",
@@ -98,7 +98,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1130,
+        "line": 1131,
         "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
         "cols": 7,
         "id": "G03",
@@ -124,7 +124,7 @@
         "baseStatus": "partial"
       },
       {
-        "line": 1131,
+        "line": 1132,
         "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
         "cols": 7,
         "id": "G04",
@@ -150,7 +150,7 @@
         "baseStatus": "partial"
       },
       {
-        "line": 1132,
+        "line": 1133,
         "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
         "cols": 7,
         "id": "G05",
@@ -176,7 +176,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1133,
+        "line": 1134,
         "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
         "cols": 7,
         "id": "G06",
@@ -202,7 +202,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1134,
+        "line": 1135,
         "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
         "cols": 7,
         "id": "G07",
@@ -228,7 +228,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1135,
+        "line": 1136,
         "section": "一、P0（先做：功能真实不存在但界面上有入口，或权限/正确性错）",
         "cols": 7,
         "id": "G08",
@@ -256,7 +256,7 @@
     ],
     "P1": [
       {
-        "line": 1141,
+        "line": 1142,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G11",
@@ -281,7 +281,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1142,
+        "line": 1143,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G12",
@@ -308,7 +308,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1143,
+        "line": 1144,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G13",
@@ -333,7 +333,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1144,
+        "line": 1145,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G14",
@@ -358,7 +358,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1145,
+        "line": 1146,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G15",
@@ -383,7 +383,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1146,
+        "line": 1147,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G16",
@@ -408,7 +408,7 @@
         "baseStatus": "partial"
       },
       {
-        "line": 1147,
+        "line": 1148,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G17",
@@ -432,7 +432,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1148,
+        "line": 1149,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G18",
@@ -457,7 +457,7 @@
         "baseStatus": "partial"
       },
       {
-        "line": 1149,
+        "line": 1150,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G19",
@@ -481,7 +481,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1150,
+        "line": 1151,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G20",
@@ -504,7 +504,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1151,
+        "line": 1152,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G21",
@@ -529,7 +529,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1152,
+        "line": 1153,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G22",
@@ -554,7 +554,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1153,
+        "line": 1154,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G40",
@@ -579,7 +579,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1154,
+        "line": 1155,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G41",
@@ -605,7 +605,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1155,
+        "line": 1156,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G42",
@@ -630,7 +630,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1156,
+        "line": 1157,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G43",
@@ -653,7 +653,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1157,
+        "line": 1158,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G44",
@@ -677,7 +677,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1158,
+        "line": 1159,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G45",
@@ -701,7 +701,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1159,
+        "line": 1160,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G46",
@@ -726,7 +726,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1160,
+        "line": 1161,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G47",
@@ -749,7 +749,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1161,
+        "line": 1162,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G48",
@@ -769,7 +769,7 @@
         "baseStatus": "deliberate"
       },
       {
-        "line": 1162,
+        "line": 1163,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G49",
@@ -794,7 +794,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1164,
+        "line": 1165,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G51",
@@ -819,7 +819,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1165,
+        "line": 1166,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G52",
@@ -844,7 +844,7 @@
         "baseStatus": "partial"
       },
       {
-        "line": 1166,
+        "line": 1167,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G53",
@@ -868,7 +868,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1167,
+        "line": 1168,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G23",
@@ -894,7 +894,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1168,
+        "line": 1169,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G24",
@@ -920,7 +920,7 @@
         "baseStatus": "partial"
       },
       {
-        "line": 1175,
+        "line": 1176,
         "section": "三、P2（细节与手感）",
         "cols": 5,
         "id": "G32",
@@ -943,7 +943,7 @@
         "baseStatus": "gap"
       },
       {
-        "line": 1176,
+        "line": 1177,
         "section": "三、P2（细节与手感）",
         "cols": 5,
         "id": "G33",
@@ -969,7 +969,7 @@
     ],
     "P2": [
       {
-        "line": 1163,
+        "line": 1164,
         "section": "二、P1（高频交互缺口，官方有明确入口且用户能逐项比对）",
         "cols": 6,
         "id": "G50",
@@ -994,7 +994,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1174,
+        "line": 1175,
         "section": "三、P2（细节与手感）",
         "cols": 5,
         "id": "G31",
@@ -1016,7 +1016,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1177,
+        "line": 1178,
         "section": "三、P2（细节与手感）",
         "cols": 5,
         "id": "G34",
@@ -1040,7 +1040,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1178,
+        "line": 1179,
         "section": "三、P2（细节与手感）",
         "cols": 5,
         "id": "G35",
@@ -1059,7 +1059,7 @@
         "baseStatus": "deliberate"
       },
       {
-        "line": 1179,
+        "line": 1180,
         "section": "三、P2（细节与手感）",
         "cols": 5,
         "id": "G36",
@@ -1084,7 +1084,7 @@
         "baseStatus": "partial"
       },
       {
-        "line": 1180,
+        "line": 1181,
         "section": "三、P2（细节与手感）",
         "cols": 5,
         "id": "G37",
@@ -1110,7 +1110,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1181,
+        "line": 1182,
         "section": "三、P2（细节与手感）",
         "cols": 5,
         "id": "G38",
@@ -1129,7 +1129,7 @@
         "baseStatus": "aligned"
       },
       {
-        "line": 1182,
+        "line": 1183,
         "section": "三、P2（细节与手感）",
         "cols": 5,
         "id": "G39",
@@ -1157,7 +1157,7 @@
   "conflicts": [
     {
       "id": "G95",
-      "line": 1241,
+      "line": 1242,
       "status": "aligned",
       "conflict": "local-says-missing",
       "local": "✎ 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否 @ 分成 `comment_mention`／`comment`；解决线程发 `comment_resolved`；编辑请求发 `document_access_request`；`block_mention`（@区块/文档）与 `share_page_comment`（公开",
@@ -1165,7 +1165,7 @@
     },
     {
       "id": "G112",
-      "line": 1262,
+      "line": 1263,
       "status": "aligned",
       "conflict": "local-says-missing",
       "local": "无 ✎ 现读（2026-11-02）更正：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"start\"/\"success\"`）；② 解析＝`lib/collection/csv",
@@ -1173,7 +1173,7 @@
     },
     {
       "id": "G300",
-      "line": 1581,
+      "line": 1582,
       "status": "aligned",
       "conflict": "local-says-missing",
       "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。链接创建、账户删除、邀请单复、空间头像在本仓无对应动作（无链接/空间/团队/账户",
@@ -1181,7 +1181,7 @@
     },
     {
       "id": "G623",
-      "line": 2242,
+      "line": 2243,
       "status": "aligned",
       "conflict": "local-says-missing",
       "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderId`、删除走软删 `deleteDocument`。入口以直接按钮呈现（浏览屏 ",
@@ -1189,7 +1189,7 @@
     },
     {
       "id": "G1223",
-      "line": 3904,
+      "line": 3905,
       "status": "aligned",
       "conflict": "local-says-missing",
       "local": "本轮实扫＝`src/app/layout.tsx` 与 `src/app/globals.css` **都没有** `color-scheme` 与 `theme-color` 的处理 ⇒ ★ 新 gap 行（本地两条都缺，且都是一行改动的量级）⇒ ✎ **第 116 批实测否证了这条判据的一半**＝\"`grep` 零命中\"推不出\"行为上没有\"（next-themes 初始化脚本逐字 `d.sty",
@@ -1197,7 +1197,7 @@
     },
     {
       "id": "G1228",
-      "line": 3936,
+      "line": 3937,
       "status": "aligned",
       "conflict": "local-says-missing",
       "local": "`grep -n toggle src/lib/import/markdown.ts` ⇒ **0 命中**＝本地把 `-`／`+`／`*` 一律读成 `bulletList`；本地 toggle 节点是另一个东西（`src/lib/document-codec/index.ts` 的 `toggleBlock`），**导入侧无入口** ✎ 现读（2026-11-02）：G674 的 Markdo",
@@ -1205,7 +1205,7 @@
     },
     {
       "id": "G1574",
-      "line": 5552,
+      "line": 5553,
       "status": "aligned",
       "conflict": "local-says-missing",
       "local": "本地对照＝任务行未设可聚焦属性（点击后 `activeElement` 是 `body`）；完成态载体是 `span[role=\"checkbox\"][aria-checked]`（base-ui checkbox），鼠标可点、键盘无绑定 ✎ 现读（2026-11-02）：任务行容器已改 `role=\"button\" tabIndex=0`，聚焦后 `Space` 或 `Ctrl/⌘-Alt-T`",

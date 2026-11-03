@@ -5291,10 +5291,11 @@
       ]
     },
     "G453": {
-      "status": "gap",
-      "note": "只有 relation，无 linkToBlock 单元格与 {name,url} 快照",
+      "status": "partial",
+      "note": "第 201 批：正文区块链接为活引用并补上改名/移除；集合 linkToBlock 列仍按文本编辑，无 {name,url} 快照",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:74"
+        "src/components/editor/extensions/block-link-view.tsx:1",
+        "src/lib/collection/cell-editors.ts:48"
       ]
     },
     "G454": {

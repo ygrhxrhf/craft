@@ -132,13 +132,13 @@
 
 | G号 | 行 | 当前状态 | 冲突 | 本地列摘要 |
 | --- | --- | --- | --- | --- |
-| G95 | 1241 | 已对齐 | local-says-missing | 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否  |
-| G112 | 1262 | 已对齐 | local-says-missing | 无 ✎ 现读（2026-11-02）更正：已实现。① 守卫与取名＝lib/collection/csv-file.ts（ |
-| G300 | 1581 | 已对齐 | local-says-missing | 本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：PENDING_STATES 逐字 11 条；已接「正在 |
-| G623 | 2242 | 已对齐 | local-says-missing | 本地已补批量选择模式 ✎ 现读（2026-11-02）更正：SortableDocGrid 工具栏有「选择」；进入后卡片 |
-| G1223 | 3904 | 已对齐 | local-says-missing | 本轮实扫＝src/app/layout.tsx 与 src/app/globals.css 都没有 color-sche |
-| G1228 | 3936 | 已对齐 | local-says-missing | grep -n toggle src/lib/import/markdown.ts ⇒ 0 命中＝本地把 -／+／* 一 |
-| G1574 | 5552 | 已对齐 | local-says-missing | 本地对照＝任务行未设可聚焦属性（点击后 activeElement 是 body）；完成态载体是 span[role=" |
+| G95 | 1242 | 已对齐 | local-says-missing | 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否  |
+| G112 | 1263 | 已对齐 | local-says-missing | 无 ✎ 现读（2026-11-02）更正：已实现。① 守卫与取名＝lib/collection/csv-file.ts（ |
+| G300 | 1582 | 已对齐 | local-says-missing | 本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：PENDING_STATES 逐字 11 条；已接「正在 |
+| G623 | 2243 | 已对齐 | local-says-missing | 本地已补批量选择模式 ✎ 现读（2026-11-02）更正：SortableDocGrid 工具栏有「选择」；进入后卡片 |
+| G1223 | 3905 | 已对齐 | local-says-missing | 本轮实扫＝src/app/layout.tsx 与 src/app/globals.css 都没有 color-sche |
+| G1228 | 3937 | 已对齐 | local-says-missing | grep -n toggle src/lib/import/markdown.ts ⇒ 0 命中＝本地把 -／+／* 一 |
+| G1574 | 5553 | 已对齐 | local-says-missing | 本地对照＝任务行未设可聚焦属性（点击后 activeElement 是 body）；完成态载体是 span[role=" |
 
 ## 十、待重扫
 

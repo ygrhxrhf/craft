@@ -3624,8 +3624,10 @@
     },
     "G96": {
       "status": "partial",
-      "note": "任务四档已落但 inbox/all 同集；日历按日/月并节，无官方五档语义",
+      "note": "第 210 批：四档列表 + 日历 day/remaining/month 原有；新增 ongoing（过去未完成）与过去日只留已完成的语义；later 档未命名",
       "evidence": [
+        "src/lib/calendar/timeline.ts:173",
+        "src/components/calendar/CalendarTimeline.tsx:60",
         "src/lib/task/grouping.ts:103"
       ]
     },

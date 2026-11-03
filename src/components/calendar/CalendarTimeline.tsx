@@ -13,8 +13,12 @@ import {
   SHOW_PREVIOUS_DAYS,
 } from '@/lib/calendar/timeline-copy';
 import {
+  ONGOING_TITLE,
   dateLabel,
   dayInSection,
+  isPastDay,
+  ongoingTasks,
+  pastDayKeeps,
   sectionActionDate,
   timelineSections,
   type TimelineSection,
@@ -52,6 +56,8 @@ export function CalendarTimeline({
   onCreateNote,
 }: CalendarTimelineProps) {
   const sections = timelineSections({ anchor, today, earlierDays, laterMonths });
+  // G96：过去未完成的任务收进「进行中」，过去的日期节只留已完成/已取消。
+  const ongoing = ongoingTasks(tasks, today);
   const [openForm, setOpenForm] = useState<string | null>(null);
 
   return (
@@ -63,12 +69,21 @@ export function CalendarTimeline({
       >
         {SHOW_PREVIOUS_DAYS}
       </button>
+      {ongoing.length > 0 && (
+        <section data-testid="calendar-section-ongoing" className="flex flex-col gap-3 rounded-xl p-3">
+          <h3 className="text-sm font-semibold text-foreground/80">{ONGOING_TITLE}</h3>
+          {ongoing.map((task) => (
+            <CalendarTaskRow key={task.id} task={task} onToggle={onToggleTask} />
+          ))}
+        </section>
+      )}
       {sections.map((section) => (
         <Section
           key={section.key}
           section={section}
           tasks={tasks}
           notes={notes}
+          today={today}
           formOpen={openForm === section.key}
           onToggleForm={() =>
             setOpenForm((open) => (open === section.key ? null : section.key))
@@ -96,6 +111,7 @@ function Section({
   section,
   tasks,
   notes,
+  today,
   formOpen,
   onToggleForm,
   onToggleTask,
@@ -105,6 +121,7 @@ function Section({
   section: TimelineSection;
   tasks: TaskItem[];
   notes: DailyNoteItem[];
+  today: Date;
   formOpen: boolean;
   onToggleForm: () => void;
   onToggleTask: (id: string) => void;
@@ -112,8 +129,11 @@ function Section({
   onCreateNote: () => void;
 }) {
   const isToday = section.kind === 'day' && section.relative === '今天';
+  const pastDay = section.kind === 'day' && isPastDay(section.date, today);
   const dayTasks = tasks
     .filter((task) => task.scheduleDate && dayInSection(section, new Date(task.scheduleDate)))
+    // G96：过去的日期节只放已完成/已取消；未完成的历史任务已在「进行中」。
+    .filter((task) => !pastDay || pastDayKeeps(task))
     .sort((a, b) => new Date(a.scheduleDate ?? 0).getTime() - new Date(b.scheduleDate ?? 0).getTime());
   const dayNotes = notes.filter(
     (note) => note.dailyNoteDate && dayInSection(section, new Date(note.dailyNoteDate))

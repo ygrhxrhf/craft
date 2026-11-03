@@ -155,6 +155,41 @@ export function sectionActionDate(section: TimelineSection): Date {
   return sectionSpan(section).start;
 }
 
+/** G96：`进行中` 这一节的标题（语言包 `in.progress`）。 */
+export const ONGOING_TITLE = '进行中';
+export const ONGOING_KEY = 'in.progress';
+
+export interface ScheduledTaskLike {
+  scheduleDate?: string | null;
+  isCompleted?: boolean;
+  status?: string;
+}
+
+function isDone(task: ScheduledTaskLike): boolean {
+  return task.isCompleted === true || task.status === 'done' || task.status === 'cancelled';
+}
+
+/** 过去（严格早于今天）且未完成、未取消的任务——它们不留在各自的日子里，而是收进「进行中」。 */
+export function ongoingTasks<T extends ScheduledTaskLike>(tasks: readonly T[], today: Date): T[] {
+  return tasks
+    .filter((task) => {
+      if (!task.scheduleDate) return false;
+      const day = new Date(task.scheduleDate);
+      if (Number.isNaN(day.getTime())) return false;
+      return dayDiff(day, today) < 0 && !isDone(task);
+    })
+    .sort((a, b) => new Date(a.scheduleDate ?? 0).getTime() - new Date(b.scheduleDate ?? 0).getTime());
+}
+
+/** 过去的日子只放已完成/已取消（G96 的"过去段"语义）。 */
+export function pastDayKeeps(task: ScheduledTaskLike): boolean {
+  return isDone(task);
+}
+
+export function isPastDay(day: Date, today: Date): boolean {
+  return dayDiff(day, today) < 0;
+}
+
 export function dayInSection(section: TimelineSection, day: Date): boolean {
   const { start, end } = sectionSpan(section);
   const value = startOfDay(day).getTime();

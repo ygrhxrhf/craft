@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T01:28:20.868Z",
+  "generatedAt": "2026-11-03T01:31:20.526Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 919,
@@ -2066,8 +2066,8 @@
       "cols": 5,
       "id": "G56",
       "official": "桌面 HTML5 backend 与移动 Touch backend 两套 DnD 分流（`HTML5DnDProvider`/`TouchDnDProvider`）",
-      "local": "单一拖拽实现，触摸端未分流",
-      "verdict": "行为不同",
+      "local": "单一拖拽实现，触摸端未分流 ⇒ ✎ 现读（2026-11-02 第 197 批）：后端在 pointerdown 一次选定（`dragBackendFor`），块把手按设备读不同阈值列（触摸读 hold、指针读 move）；但侧栏行与卡片仍是 HTML5 `draggable`，触摸端没有 Touch 通路 ⇒ 只对了\"块把手\"一处",
+      "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",
       "scoreParsed": {
@@ -2539,8 +2539,8 @@
       "cols": 5,
       "id": "G82",
       "official": "同步状态机 11 态，**`connected` ≠ `synced`**，worker 生命周期显式（`creating_worker/worker_ready/terminated`）；文档加载区分 `loadedFromCache` / `loadedFromServer`（§三）",
-      "local": "Hocuspocus 事件直连 UI，无\"已连接但未同步\"与\"缓存来源\"表达",
-      "verdict": "行为不同",
+      "local": "Hocuspocus 事件直连 UI，无\"已连接但未同步\"与\"缓存来源\"表达 ⇒ ✎ 现读（2026-11-02）：已有五态 `synced/syncing/offline/degraded/error`（`degraded`＝实时连接断开，即 connected≠synced 的本地形），仍无 11 态全集与 `loadedFromCache`/`loadedFromServer` 来源",
+      "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",
       "scoreParsed": {
@@ -2612,8 +2612,8 @@
       "cols": 5,
       "id": "G86",
       "official": "**离线门禁清单**（`dialogs.md` §4）：评论增删改、表情反应、导入、导出、共享、白板新建元素、查看特定文档 全部要求联网；离线写入落本地并在离开时询问，回连后有\"已恢复/将同步/已同步\"三段反馈",
-      "local": "`offline/draft-store.ts` 只有编辑器草稿，无按动作的门禁矩阵与状态文案",
-      "verdict": "缺失",
+      "local": "`offline/draft-store.ts` 只有编辑器草稿，无按动作的门禁矩阵与状态文案 ⇒ ✎ 现读（2026-11-02）：已有 7 处 `navigator.onLine` 门禁——新建文档/文件夹（G1608 静默）、回收站删除、AI 工具条、评论提交、编辑器保存、导入、命令面板；仍无\"评论/表情/导入/导出/共享/白板/查看\"的完整矩阵与回连后\"已恢复/将同步/已同步\"三段反馈",
+      "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",
       "scoreParsed": {
@@ -2797,8 +2797,8 @@
       "cols": 5,
       "id": "G96",
       "official": "任务列表视图权威四档 `inbox / today / upcoming / all`（zod `listType`，AI 缺省补 `all`）+ 日历分节五档 `ongoing/day/remainingDaysInMonth/month/later`（含\"ongoing 段含过去未完成项、过去段只放已完成/已取消\"的语义）",
-      "local": "`src/app/(app)/tasks/page.tsx` 单页无档位；日历页无五档分节语义",
-      "verdict": "缺失",
+      "local": "`src/app/(app)/tasks/page.tsx` 单页无档位；日历页无五档分节语义 ⇒ ✎ 现读（2026-11-02）：四档列表已落——`/tasks`（inbox）/`/tasks/today`/`/tasks/upcoming`/`/tasks/all` 各有路由，`TasksView` 顶部四枚组切换，upcoming 另有 7/30/all 窗口；日历仍只有 `day`/`range` 两型分节，缺 ongoing/remainingDaysInMonth/month/later 五档语义",
+      "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",
       "scoreParsed": {

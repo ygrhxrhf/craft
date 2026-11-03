@@ -26,3 +26,20 @@ describe('the task input rule', () => {
     expect(source).toContain("$at.depth !== 1 || $at.parent.type.name !== 'paragraph'");
   });
 });
+
+describe('the #### rule (G1557)', () => {
+  it('turns "#### " into bold text instead of a fourth-level heading', () => {
+    expect(source).toContain('find: /^####\\s$/');
+    expect(source).toContain("state.schema.marks.bold.create()");
+    expect(source).toContain('tr.addStoredMark(');
+  });
+
+  it('limits headings to ### in the editor configuration', () => {
+    const editor = readFileSync(
+      join(process.cwd(), 'src/components/editor/Editor.tsx'),
+      'utf8',
+    );
+    expect(editor).toContain('levels: [1, 2, 3],');
+    expect(editor).toContain("'linkPreview', 'heading']");
+  });
+});

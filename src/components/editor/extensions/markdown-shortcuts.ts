@@ -7,6 +7,23 @@ export const MarkdownShortcuts = Extension.create({
   addInputRules() {
     const rules: InputRule[] = [];
 
+    // G1557：官方 `#### ` 是 Strong（粗体），不是四级标题——标题只到 ###。
+    // 删掉标记后把粗体放进 stored mark，后续输入即为粗体。
+    if (this.editor.schema.marks.bold) {
+      rules.push(
+        new InputRule({
+          find: /^####\s$/,
+          handler: ({ state, range }) => {
+            const { tr } = state;
+            const $from = tr.doc.resolve(range.from);
+            if ($from.parent.type.name !== 'paragraph') return;
+            tr.delete(range.from, range.to);
+            tr.addStoredMark(state.schema.marks.bold.create());
+          },
+        })
+      );
+    }
+
     // Strikethrough: ~~text~~
     if (this.editor.schema.marks.strikethrough) {
       rules.push(

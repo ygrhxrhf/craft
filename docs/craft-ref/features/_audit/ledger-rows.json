@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T04:05:45.240Z",
+  "generatedAt": "2026-11-03T04:31:19.875Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 899,
-    "aligned": 281,
+    "gap": 898,
+    "aligned": 282,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 328,
+    "P2 / gap": 327,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 177,
+    "P2 / aligned": 178,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -29046,10 +29046,10 @@
       "cols": 5,
       "id": "G1557",
       "official": "★★★ **Markdown 输入规则的五档里，四档两侧**类型一致**、第五档**语义相反**（本批新增加性档 `kinds`，`runs/wave1-23-*`，两侧 19 步 0 error、selfCheck 两侧 5/5 PASS）：逐字输入五条\"档位串\"，两侧的块**类型**名册（`kinds`，两侧归一到同一枚举）＝① `# ` → 官方 `title`／本地 `title` **一致**（leaf 15px/400 → 23px/700）；② ★★ `#### ` → 官方 **`strong`**（强调档，leaf 16px/700）／本地 **`heading4`**（`h4:BBB`）⇒ **语义相反**（官方\"强调\"、本地\"四级标题\"）；③ `- ` → 两侧 `bullet` **一致**；④ `1. ` → 两侧 `numbered` **一致**（且官方序号**画进文本节点**：块文本 `1. EEE`、本地 `EEE`）；⑤ `[ ] ` → 两侧 `task` **一致**。⇒ 静态账 `G866`（盘上批：官方 `uF` 表 18 条、本地 `markdown-shortcuts.ts` 6 条）的**第一条屏上复证**，并**收窄**其结论：真差异**不是**\"四条缺失\"，而是 **① `#### ` 语义相反 ② 本地每档多一枚空块**（见下）＋ 序号画法（③④ 属呈现机制差异）。differ＝`editor.md-rules.block-kind` **95 行／36 sev2+／21 declared deviations**（21 条已声明偏差＝侧栏大纲行计数、本地 checkbox 可及名、官方序号与大纲行进文本、官方目录空态提示四类）",
-      "local": "**行为不同（一处语义相反）**＝本地规则表在 `src/components/editor/extensions/markdown-shortcuts.ts:107-134`（六条 `InputRule`，任务档 pattern `/^\\s*\\[([ xX])\\]\\s$/`）；`#### ` 落到 `Editor.tsx:250` 的 `StarterKit` 默认 `heading: { levels: [1,2,3,4] }` ⇒ 四级标题，而官方是 `at.Strong`。★ **本地每档都多一枚空块**（`blocks` 名册 18/18 步单侧多一项，如 step 2 官方 `[\"AAA\"]` ↔ 本地 `[\"AAA\",\"\"]`）＝**不是本批新缺陷**：与 G1556 同源，根因＝`StarterKit` 的 `TrailingNode`\"末块不是段落就补一枚空段\"，`Editor.tsx:327` 的 `notAfter` **只豁免三族列表**（G1485 那条豁免的已知边界）。★ 本批为此**新增一档加性观测面 `kinds`**（`observe.mjs`＋`lab.mjs`＋`diff.mjs` ⑤e）＝两侧块类型归一（para/title/subtitle/heading/heading4/strong/bullet/numbered/task）；加性自证＝既有 15 条 spec 判定与 sev2+ 数**逐字未变**。☆ 一处**已声明不采**：官方折叠块 `+ ` 在 DOM 上无独有信号（`probe-w1aq`：`+ ` 组的 `data-*` 名册与普通段落逐字相同）⇒ 不把\"读不出\"写成\"一致\"",
-      "verdict": "行为不同（`#### ` 语义相反 ＋ 本地每档多一枚空块）",
+      "local": "**行为不同（一处语义相反）**＝本地规则表在 `src/components/editor/extensions/markdown-shortcuts.ts:107-134`（六条 `InputRule`，任务档 pattern `/^\\s*\\[([ xX])\\]\\s$/`）；`#### ` 落到 `Editor.tsx:250` 的 `StarterKit` 默认 `heading: { levels: [1,2,3,4] }` ⇒ 四级标题，而官方是 `at.Strong`。★ **本地每档都多一枚空块**（`blocks` 名册 18/18 步单侧多一项，如 step 2 官方 `[\"AAA\"]` ↔ 本地 `[\"AAA\",\"\"]`）＝**不是本批新缺陷**：与 G1556 同源，根因＝`StarterKit` 的 `TrailingNode`\"末块不是段落就补一枚空段\"，`Editor.tsx:327` 的 `notAfter` **只豁免三族列表**（G1485 那条豁免的已知边界）。★ 本批为此**新增一档加性观测面 `kinds`**（`observe.mjs`＋`lab.mjs`＋`diff.mjs` ⑤e）＝两侧块类型归一（para/title/subtitle/heading/heading4/strong/bullet/numbered/task）；加性自证＝既有 15 条 spec 判定与 sev2+ 数**逐字未变**。☆ 一处**已声明不采**：官方折叠块 `+ ` 在 DOM 上无独有信号（`probe-w1aq`：`+ ` 组的 `data-*` 名册与普通段落逐字相同）⇒ 不把\"读不出\"写成\"一致\"。✎ 现读（2026-11-03 第 229 批）：已对齐 — 标题只到 ###，`#### ` 由 `MarkdownShortcuts` 转 **Strong**（删标记＋stored bold）；`trailingNode` 在 heading 后不再补空段 ⇒ 每档块数一致（真浏览器验：`#### 粗体` ⇒ `<p><strong>粗体</strong></p>`、`# 标题` ⇒ 单个 H1 无尾随空段）",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

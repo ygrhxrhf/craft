@@ -39,13 +39,13 @@ describe('the cheat-sheet lists the rules this build actually fires', () => {
       'utf8',
     );
     const rules = source.match(/find:\s*\//g) ?? [];
-    expect(rules.length).toBe(6);
+    expect(rules.length).toBe(7);
     expect(MARKDOWN_SHORTCUTS.length).toBe(rules.length);
   });
 
-  it('covers strikethrough, highlight, link, both formulas and the task box', () => {
+  it('covers strong, strikethrough, highlight, link, both formulas and the task box', () => {
     const labels = MARKDOWN_SHORTCUTS.map((row) => row.label);
-    expect(labels).toEqual(['删除线', '高亮', '链接', '块级公式', '行内公式', '待办事项']);
+    expect(labels).toEqual(['粗体', '删除线', '高亮', '链接', '块级公式', '行内公式', '待办事项']);
   });
 });
 

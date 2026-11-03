@@ -33,6 +33,8 @@ export interface MarkdownShortcut {
  * the panel and the test can both read one list.
  */
 export const MARKDOWN_SHORTCUTS: readonly MarkdownShortcut[] = [
+  // G1557：`#### ` 是粗体（Strong），不是四级标题。
+  { syntax: '#### 文本', label: '粗体' },
   { syntax: '~~文本~~', label: '删除线' },
   { syntax: '==文本==', label: '高亮' },
   { syntax: '[文本](链接)', label: '链接' },

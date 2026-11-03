@@ -356,14 +356,15 @@ export function Editor({
         // for the `---` input rule and produce a second, featureless node.
         horizontalRule: false,
         heading: {
-          levels: [1, 2, 3, 4],
+          // G1557：官方标题只到 ###；`#### ` 是 Strong（粗体），由 MarkdownShortcuts 接管。
+          levels: [1, 2, 3],
         },
         underline: {},
         // StarterKit's TrailingNode appends an empty paragraph whenever the doc's last
         // block isn't a paragraph, so wrapping the tail blocks in a list left a stray
         // empty line (G1485). A list item already holds a paragraph, so the caret is
         // reachable without it — Enter on an empty item still exits the list.
-        trailingNode: { notAfter: ['bulletList', 'orderedList', 'taskList', 'linkPreview'] },
+        trailingNode: { notAfter: ['bulletList', 'orderedList', 'taskList', 'linkPreview', 'heading'] },
         link: {
           openOnClick: false,
           HTMLAttributes: {

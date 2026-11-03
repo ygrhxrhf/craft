@@ -9430,10 +9430,13 @@
       ]
     },
     "G1557": {
-      "status": "partial",
-      "note": "标题/列表/任务四档一致；#### 落 h4，官方落强调档",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "#### 转 Strong（非四级标题）；标题只到 ###；heading 后不再补空段，块数两侧一致",
       "evidence": [
-        "src/components/editor/extensions/markdown-shortcuts.ts:107"
+        "src/components/editor/extensions/markdown-shortcuts.ts:15",
+        "src/components/editor/Editor.tsx:359",
+        "src/components/editor/Editor.tsx:368"
       ]
     },
     "G1558": {

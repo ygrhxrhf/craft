@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T13:18:13.610Z",
+  "generatedAt": "2026-11-03T13:30:58.279Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 855,
-    "aligned": 323,
+    "gap": 854,
+    "aligned": 324,
     "unknown": 194,
     "deliberate": 105,
     "partial": 65,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 284,
+    "P2 / gap": 283,
     "P? / gap": 226,
-    "P2 / aligned": 219,
+    "P2 / aligned": 220,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -10065,10 +10065,10 @@
       "cols": 5,
       "id": "G497",
       "official": "★ **表格虚拟化的完整参数与滞回**：判定 latch **只置 true 永不复位**（effect 里只有 `Ae(true)`）⇒ 删行/隐藏列不会立刻切换渲染路径；`Le = !Se && Ie` 单独表示\"曾大今小\"的退化边沿；**表格档 `overscan: 25`**（同 chunk 另有 10 / 5 ⇒ 不是全站常数）；固定高 `estimateSize: () => rowHeight` + 自定义 `observeElementOffset` + 卸载双清理（`clearTimeout` + `cancelAnimationFrame`）（§十四 5）",
-      "local": "`grep -rn \"overscan|useVirtualizer\" src` ⇒ **0 命中**，`package.json` 里 `virtuoso|react-window|virtual` 亦 0 ⇒ 本地大表**全量渲染**，也没有任何\"阈值 + 滞回\"的降级设计（G484 的参数面本批补齐）",
-      "verdict": "缺失",
+      "local": "☆ 原判（本轮现读后作废）＝本地大表全量渲染、没有任何\"阈值＋滞回\"的降级设计（当时按 `overscan`／`useVirtualizer` 的 grep 判空）。✎ 现读（2026-11-03 第 275 批）＝**四件逐一对上**：① **判定 latch 只置 true、永不复位**＝纯核 `createVirtualizationLatch()`（`src/lib/collection/virtual-rows.ts`）＋ `TableView` 里按实例持有的 `useRef`，行删空／列藏起都不会切回全量渲染；② **退化边沿单列**＝同一个 `decide()` 返回的 `regressed`（＝`!bigNow && latched`，对应官方 `Le = !Se && Ie`），消费点在滚动监听：尺寸回落后**仍继续跟滚**，行数再涨回来时窗口直接接得上；③ **表格档 `overscan: 25`**＝`TABLE_OVERSCAN`（窗口档另有通用值 2，官方同 chunk 的 10／5 两档本轮未采到，故不臆造）；④ **固定高估算＋卸载双清理**＝`estimateRowHeight(grouped)`（36px／分组再含 40px 表头行）取代测量，滚动更新的两条挂起任务（rAF 与 150ms 防抖）在 `useEffect` 卸载回调里一次清掉，`scheduleScrollUpdate` 本就返回 `cancel`。☆ 真浏览器取证（:3000，给「视觉基线集合」临时种到 631 行 ×1 列＝631 格 >600）：屏上**只渲染 42 行**（窗口＋上下占位），随后在库里删到 131 行（131 格 <600）再点「新增条目」触发一次 `router.refresh`（同一挂载不重mount），行数 132、**屏上仍是那 42 行窗口** ⇒ latch 不复位在屏上成立；未 latch 的话这里会退回全量 132 行。种子行已清空（`collection_items` 回到 1 行、`max(order)=0`，未产生孤立 `documents`）。单测＝`virtual-rows.test.ts` 新增 4 条（latch 永不复位／小表不 engages 且无退化边沿／固定行高估算／`TableView` 接 latch 且卸载清两条任务）。",
+      "verdict": "已清（第 275 批；latch＋退化边沿＋表格档过扫＋固定高与双清理，latch 已浏览器实点）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

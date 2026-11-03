@@ -11,11 +11,10 @@ import { operationFailed } from '@/lib/errors/alert-copy';
 import { confirmDialog } from '@/lib/dialog/show';
 import { getSyncManager } from '@/lib/sync-core';
 import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-reorder';
-import { exceedsVirtualTableThreshold } from '@/lib/collection/limits';
-import { TABLE_OVERSCAN, visibleRowWindow, scheduleScrollUpdate } from '@/lib/collection/virtual-rows';
+import { TABLE_OVERSCAN, createVirtualizationLatch, estimateRowHeight, scheduleScrollUpdate, visibleRowWindow } from '@/lib/collection/virtual-rows';
 import { titleColumnLabel } from '@/lib/collection/title-column';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PropertyCell } from '@/components/collection/PropertyCell';
 import { SummaryCell, aggregationFromConfig } from '@/components/collection/SummaryCell';
 import { FieldMenu } from '@/components/collection/FieldMenu';
@@ -102,6 +101,17 @@ export function TableView({ collection, view }: TableViewProps) {
   const [scrollTop, setScrollTop] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(600);
   const cancelScrollUpdate = useRef<(() => void) | null>(null);
+  // G497：判定 latch 只置 true、永不复位 ⇒ 删行或隐藏列不会立刻退回全量渲染。
+  const virtualizationLatch = useRef(createVirtualizationLatch()).current;
+
+  useEffect(
+    () => () => {
+      // 卸载时两条挂起任务都要清（rAF 与 150ms 防抖）。
+      cancelScrollUpdate.current?.();
+      cancelScrollUpdate.current = null;
+    },
+    [],
+  );
 
   const persistConfig = (
     next: { filters: any[]; sorts: any[]; groupBy: string | null; fields?: ViewFields },
@@ -183,9 +193,22 @@ export function TableView({ collection, view }: TableViewProps) {
   processedItems = applyFilters(processedItems, filters, collection.properties);
   processedItems = applySorts(processedItems, sorts, collection.properties);
   const groupedItems = applyGrouping(processedItems, groupBy, collection.properties);
-  const virtualized = !groupBy && exceedsVirtualTableThreshold(processedItems.length, visibleProperties.length);
+  // G497：latch 只前进不复位；`regressed` 是"曾大今小"那条退化边沿，用来在尺寸回落后
+  // 仍然接着滚动，等行数再涨回去时窗口立刻接得上。分组渲染另有表头行，行高按两枚常数估。
+  const rowHeight = estimateRowHeight(Boolean(groupBy));
+  const { virtualize: latched, regressed } = virtualizationLatch.decide(
+    processedItems.length,
+    visibleProperties.length,
+  );
+  const virtualized = !groupBy && latched;
   const rowWindow = virtualized
-    ? visibleRowWindow({ scrollTop, viewportHeight, rowCount: processedItems.length, overscan: TABLE_OVERSCAN })
+    ? visibleRowWindow({
+        scrollTop,
+        viewportHeight,
+        rowCount: processedItems.length,
+        rowHeight,
+        overscan: TABLE_OVERSCAN,
+      })
     : null;
   const renderedItems = rowWindow ? processedItems.slice(rowWindow.start, rowWindow.end) : processedItems;
 
@@ -441,7 +464,8 @@ export function TableView({ collection, view }: TableViewProps) {
       <div
         className="flex-1 overflow-auto"
         onScroll={(event) => {
-          if (!virtualized) return;
+          // 尺寸回落后（regressed）仍要跟着滚，等行数再涨回来窗口接得上；分组档不窗口化。
+          if (groupBy || (!virtualized && !regressed)) return;
           const el = event.currentTarget;
           cancelScrollUpdate.current?.();
           cancelScrollUpdate.current = scheduleScrollUpdate(() => {

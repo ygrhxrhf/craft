@@ -49,8 +49,14 @@ describe('the collection view config is wired to the offline kernel', () => {
     expect(tableView).toContain('setFilters(config.filters ?? [])');
     expect(tableView).toContain('setSorts(config.sorts ?? [])');
     expect(tableView).toContain('setGroupBy(config.groupBy ?? null)');
-    // 该文件目前不持有任何 effect；将来若新增 effect，这条会失败，逼作者显式更新本守卫。
-    expect(tableView).not.toMatch(/\buseEffect\s*\(/);
+    // 这个文件本来一个 effect 都没有；第 275 批为"卸载时清掉两条挂起的滚动任务"加了一枚
+    // 只读清理 effect（官方 G497 的 clearTimeout + cancelAnimationFrame 双清理）。守卫因此
+    // 从"禁止 useEffect"改成"effect 里不得回灌 config 状态"——上面那几行渲染期同步才是本守卫保护的实质。
+    expect(tableView.match(/\buseEffect\s*\(/g)).toHaveLength(1);
+    const effectStart = tableView.indexOf('useEffect(');
+    const effectBody = tableView.slice(effectStart, effectStart + 320);
+    expect(effectBody).toContain('cancelScrollUpdate.current?.()');
+    expect(effectBody).not.toMatch(/setFilters|setSorts|setGroupBy|persistConfig\(/);
   });
 
   it('reorders rows from the whole collection, never from the filtered subset', () => {

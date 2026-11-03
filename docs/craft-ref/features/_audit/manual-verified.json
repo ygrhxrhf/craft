@@ -5628,11 +5628,13 @@
       ]
     },
     "G497": {
-      "status": "partial",
-      "note": "第 212 批：窗口虚拟化（表格档 overscan 25、rAF+150ms）已落；缺 latch 永不复位与 estimateSize/observe 参数",
+      "status": "aligned",
+      "note": "第 275 批：四件齐——判定 latch 只置 true 永不复位（createVirtualizationLatch ＋ TableView 按实例 useRef）、退化边沿 regressed 单列并用来在尺寸回落后仍跟滚、表格档 overscan 25 走固定行高 estimateRowHeight（36／分组 76）、卸载一次清掉 rAF 与 150ms 两条挂起任务。浏览器实点：631 行 ×1 列只渲染 42 行；库里删到 131 行后点「新增条目」触发 router.refresh（同一挂载）仍是 42 行 ⇒ latch 不复位成立。种子行已清空。",
       "evidence": [
-        "src/lib/collection/virtual-rows.ts:1",
-        "src/app/(app)/collections/[id]/TableView.tsx:184"
+        "src/lib/collection/virtual-rows.ts:84",
+        "src/app/(app)/collections/[id]/TableView.tsx:105",
+        "src/app/(app)/collections/[id]/TableView.tsx:199",
+        "src/lib/collection/virtual-rows.test.ts:1"
       ]
     },
     "G498": {

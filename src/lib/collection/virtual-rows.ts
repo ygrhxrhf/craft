@@ -5,6 +5,7 @@
  * 这一层只算"该渲染哪几行、上下各留多高"，没有 DOM，便于单测；行高是本地常量
  * （官方另有分组标题行的独立常数，这里是 36px 与 40px 两枚）。
  */
+import { exceedsVirtualTableThreshold } from './limits';
 
 export const ROW_HEIGHT = 36;
 export const GROUP_HEADER_HEIGHT = 40;
@@ -67,4 +68,34 @@ export function scheduleScrollUpdate(update: () => void): () => void {
     if (frame !== null && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(frame);
     if (timer !== null) clearTimeout(timer);
   };
+}
+
+/**
+ * G497: the official decision is a **latch that only ever sets true** — the effect body contains
+ * nothing but `set(true)`, so deleting rows or hiding a column does not drop the table back to full
+ * rendering mid-session. `regressed` is the separate `Le = !Se && Ie` edge ("was big, now small"),
+ * which is what keeps the scroll listener alive while the size test no longer holds.
+ */
+export interface VirtualizationLatch {
+  readonly latched: boolean;
+  decide(rowCount: number, visibleColumnCount: number): { virtualize: boolean; regressed: boolean };
+}
+
+export function createVirtualizationLatch(): VirtualizationLatch {
+  let latched = false;
+  return {
+    get latched() {
+      return latched;
+    },
+    decide(rowCount, visibleColumnCount) {
+      const bigNow = exceedsVirtualTableThreshold(rowCount, visibleColumnCount);
+      if (bigNow) latched = true;
+      return { virtualize: latched, regressed: !bigNow && latched };
+    },
+  };
+}
+
+/** G497: `estimateSize: () => rowHeight` — one fixed row height, plus the group header row. */
+export function estimateRowHeight(grouped: boolean): number {
+  return grouped ? ROW_HEIGHT + GROUP_HEADER_HEIGHT : ROW_HEIGHT;
 }

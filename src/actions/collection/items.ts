@@ -7,6 +7,7 @@ import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { toTypedValue } from '@/lib/collection/cell-value';
 import { validateMultiSelect, validateSelect } from '@/lib/collection/value-validation';
 import { normalizeCellValue } from '@/lib/collection/cell-edit';
+import { coerceTextForType } from '@/lib/collection/coerce';
 import { addMembership, removeMembership } from '@/lib/collection/object-membership';
 
 export async function addItem(collectionId: string) {
@@ -122,7 +123,12 @@ export async function setItemValue(
   const propType = String((property as any).type ?? 'text');
   const isMulti = propType === 'multi_select' || propType === 'multiSelect';
   // G452：空只有一种形态——空串／纯空格、空数组、items 为空的关联对象都先收敛成 null。
-  const normalizedValue = normalizeCellValue(value);
+  let normalizedValue = normalizeCellValue(value);
+  // G92：勾选框只认 true/false 白名单；日期非法静默丢弃（整格不落值）。
+  if (typeof normalizedValue === 'string' && (propType === 'checkbox' || propType === 'date' || propType === 'datetime')) {
+    const coerced = coerceTextForType(propType, normalizedValue);
+    normalizedValue = coerced.ok ? coerced.value : null;
+  }
   if (propType === 'select' || isMulti) {
     const optionIds = readOptionIds((property as any).config);
     const check = isMulti

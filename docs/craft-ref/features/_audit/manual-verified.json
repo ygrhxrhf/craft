@@ -3575,9 +3575,11 @@
     },
     "G92": {
       "status": "partial",
-      "note": "有「, 」多值连接；无类型推断、percent 语义、precision 与币种",
+      "note": "第 193 批：percent/货币/精度已在渲染与解析层；复选框白名单与非法日期丢弃接到写入前。仍缺字符串→列类型推断",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:81"
+        "src/lib/collection/coerce.ts:1",
+        "src/actions/collection/items.ts:129",
+        "src/lib/collection/property-types.ts:145"
       ]
     },
     "G93": {
@@ -3624,8 +3626,8 @@
       ]
     },
     "G99": {
-      "status": "partial",
-      "note": "右栏 4 tab，Actions/Comments 塞进信息 tab",
+      "status": "aligned",
+      "note": "第 193 批：按屏（V8）取数——四 tab 插入/格式/样式/信息与官方一致；枚举里的 PageStyle/Actions/Comments 分别落在样式页、信息页子页签与评论区",
       "evidence": [
         "src/components/editor/tabs/RightPanel.tsx:15"
       ]

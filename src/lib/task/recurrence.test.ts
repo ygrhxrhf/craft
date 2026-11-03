@@ -321,3 +321,56 @@ describe('repeat.startDate (G664)', () => {
     expect(localDateString(new Date(2026, 8, 28))).toBe('2026-09-28');
   });
 });
+
+// G406: monthly takes a **day list** and **relative days**, not just one clamped day.
+describe('monthly multi-day and relative days (G406)', () => {
+  const rule = (value: unknown) => JSON.stringify(value);
+
+  it('parses a day list and rejects out-of-range entries', () => {
+    expect(parseRecurrence(rule({ freq: 'monthly', days: [3, 15] }))?.days).toEqual([3, 15]);
+    expect(parseRecurrence(rule({ freq: 'monthly', days: [0, 32] }))).toBeNull();
+    expect(parseRecurrence(rule({ freq: 'monthly', days: [3, 40] }))?.days).toEqual([3]);
+  });
+
+  it('parses last-day and last-weekday selectors, rejecting unknown ones', () => {
+    const parsed = parseRecurrence(
+      rule({ freq: 'monthly', dynamicDays: [{ type: 'day', selector: 'last' }, { type: 'friday', selector: 'last' }] }),
+    );
+    expect(parsed?.dynamicDays).toHaveLength(2);
+    expect(parseRecurrence(rule({ freq: 'monthly', dynamicDays: [{ type: 'blursday', selector: 'last' }] }))).toBeNull();
+    expect(parseRecurrence(rule({ freq: 'monthly', dynamicDays: [{ type: 'friday', selector: 9 }] }))).toBeNull();
+  });
+
+  it('advances through the earliest listed day', () => {
+    const raw = rule({ freq: 'monthly', days: [3, 15] });
+    // 本地既有口径：monthly 的下一发落在**下一个月**（与 byMonthDay 的老行为一致）。
+    const from10 = new Date('2026-01-10T09:00:00Z');
+    expect(nextOccurrence(raw, from10)?.toISOString().slice(0, 10)).toBe('2026-02-03');
+    const fromFeb = new Date('2026-02-03T09:00:00Z');
+    expect(nextOccurrence(raw, fromFeb)?.toISOString().slice(0, 10)).toBe('2026-03-03');
+  });
+
+  it('resolves month end and the last Friday', () => {
+    const monthEnd = rule({ freq: 'monthly', dynamicDays: [{ type: 'day', selector: 'last' }] });
+    expect(nextOccurrence(monthEnd, new Date('2026-01-31T09:00:00Z'))?.toISOString().slice(0, 10)).toBe('2026-02-28');
+    const lastFriday = rule({ freq: 'monthly', dynamicDays: [{ type: 'friday', selector: 'last' }] });
+    expect(nextOccurrence(lastFriday, new Date('2026-01-01T09:00:00Z'))?.toISOString().slice(0, 10)).toBe('2026-02-27');
+  });
+
+  it('skips months without a fifth weekday', () => {
+    const fifthWednesday = rule({ freq: 'monthly', dynamicDays: [{ type: 'wednesday', selector: 5 }] });
+    expect(nextOccurrence(fifthWednesday, new Date('2026-01-01T09:00:00Z'))?.toISOString().slice(0, 10)).toBe(
+      '2026-04-29',
+    );
+  });
+
+  it('describes the rule in the official phrasing shape', () => {
+    expect(describeRecurrence(rule({ freq: 'monthly', days: [3, 15] }))).toBe('每月 3 日、15 日重复');
+    expect(describeRecurrence(rule({ freq: 'monthly', dynamicDays: [{ type: 'day', selector: 'last' }] }))).toBe(
+      '每月 月末重复',
+    );
+    expect(describeRecurrence(rule({ freq: 'monthly', dynamicDays: [{ type: 'friday', selector: 'last' }] }))).toBe(
+      '每月 最后一个周五重复',
+    );
+  });
+});

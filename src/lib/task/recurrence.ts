@@ -12,10 +12,19 @@ export interface RecurrenceRule {
   type?: RecurrenceAnchor;
   /** G404: every N units; absent means 1. */
   interval?: number;
-  /** Weekly: 0 = Sunday through 6 = Saturday. */
+  /**
+   * Weekly: 0 = Sunday through 6 = Saturday.
+   * G406: monthly reuses the same `days` key for **day numbers** (1–31) — the official model
+   * keeps `days: number[]` on monthly too, and `freq` is what disambiguates.
+   */
   days?: number[];
   /** Monthly: 1 to 31, clamped to the length of the target month. */
   byMonthDay?: number;
+  /**
+   * G406: relative days. `{type:'day', selector:'last'}` = 月末；`{type:'friday', selector:'last'}`
+   * = 最后一个周五；`selector` 还可以是 `first` 或 1–5（第 N 个）。
+   */
+  dynamicDays?: DynamicDay[];
   /** G547: daily/monthly only — skip Saturday and Sunday occurrences. Absent means no. */
   skipWeekends?: boolean;
   /**
@@ -25,6 +34,27 @@ export interface RecurrenceRule {
   startDate?: string;
   /** Inclusive upper bound, ISO date or datetime. */
   until?: string;
+}
+
+export type DynamicDaySelector = 'first' | 'last' | number;
+
+export interface DynamicDay {
+  /** `day`（日号）或英文星期名（`monday`…`sunday`，小写）。 */
+  type: string;
+  selector: DynamicDaySelector;
+}
+
+const WEEKDAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+
+/** G406：`dynamicDays` 的形状校验——只认 `day`／星期名 与 first/last/1–5。 */
+function isDynamicDay(value: unknown): value is DynamicDay {
+  if (!value || typeof value !== 'object') return false;
+  const entry = value as Record<string, unknown>;
+  if (typeof entry.type !== 'string') return false;
+  if (entry.type !== 'day' && !WEEKDAY_NAMES.includes(entry.type as (typeof WEEKDAY_NAMES)[number])) return false;
+  const selector = entry.selector;
+  if (selector === 'first' || selector === 'last') return true;
+  return Number.isInteger(selector) && (selector as number) >= 1 && (selector as number) <= 5;
 }
 
 /** G404: the official per-frequency ceiling for `interval`. */
@@ -69,6 +99,21 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
       if (normalized.length === 0 && rule.days.length > 0) return null;
       rule.days = normalized;
     }
+    // G406：monthly 的 `days` 是**日号**（多日号），只留 1–31 的整数。
+    if (rule.freq === 'monthly') {
+      const rawDays = rule.days as unknown[];
+      const days = (rawDays as unknown[]).filter(
+        (value): value is number => Number.isInteger(value) && (value as number) >= 1 && (value as number) <= 31,
+      );
+      if (days.length === 0 && rawDays.length > 0) return null;
+      rule.days = days;
+    }
+  }
+  if (rule.dynamicDays !== undefined) {
+    if (!Array.isArray(rule.dynamicDays)) return null;
+    const dynamicDays = rule.dynamicDays.filter(isDynamicDay);
+    if (dynamicDays.length === 0 && rule.dynamicDays.length > 0) return null;
+    rule.dynamicDays = dynamicDays;
   }
   if (rule.byMonthDay !== undefined && !(Number.isInteger(rule.byMonthDay) && (rule.byMonthDay as number) >= 1 && (rule.byMonthDay as number) <= 31)) {
     return null;
@@ -87,6 +132,7 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
   if (rule.type === 'fixed' || rule.type === 'flexible') result.type = rule.type;
   if (rule.interval !== undefined) result.interval = rule.interval as number;
   if (Array.isArray(rule.days)) result.days = rule.days as number[];
+  if (Array.isArray(rule.dynamicDays)) result.dynamicDays = rule.dynamicDays as DynamicDay[];
   if (rule.byMonthDay !== undefined) result.byMonthDay = rule.byMonthDay as number;
   if (typeof rule.until === 'string') result.until = rule.until;
   if (typeof rule.startDate === 'string') result.startDate = rule.startDate;
@@ -202,10 +248,30 @@ export function describeRecurrence(raw: string | null | undefined): string | nul
   if (rule.freq === 'weekly' && rule.days?.length) {
     return `${every}：${rule.days.map((day) => WEEKDAY_LABELS[day] ?? '').filter(Boolean).join('、')}${anchor}`;
   }
-  if (rule.freq === 'monthly' && rule.byMonthDay) {
-    return `${every} ${rule.byMonthDay} 日重复${anchor}`;
+  if (rule.freq === 'monthly') {
+    const parts: string[] = [];
+    if (rule.days?.length) {
+      parts.push(`${rule.days.slice().sort((a, b) => a - b).join(' 日、')} 日`);
+    } else if (rule.byMonthDay) {
+      parts.push(`${rule.byMonthDay} 日`);
+    }
+    for (const entry of rule.dynamicDays ?? []) parts.push(dynamicDayLabel(entry));
+    if (parts.length) return `${every} ${parts.join('、')}重复${anchor}`;
   }
   return `${every}重复${anchor}`;
+}
+
+/** G406：相对日的人话（`月末` / `第一个周五` / `第 3 个周三` / `第 15 日`）。 */
+export function dynamicDayLabel(entry: DynamicDay): string {
+  if (entry.type === 'day') {
+    if (entry.selector === 'last') return '月末';
+    if (entry.selector === 'first') return '月初';
+    return `第 ${entry.selector} 日`;
+  }
+  const weekday = `${WEEKDAY_LABELS[WEEKDAY_NAMES.indexOf(entry.type as (typeof WEEKDAY_NAMES)[number])] ?? ''}`;
+  if (entry.selector === 'last') return `最后一个${weekday}`;
+  if (entry.selector === 'first') return `第一个${weekday}`;
+  return `第 ${entry.selector} 个${weekday}`;
 }
 
 /** The preset rules the task scheduler offers; the value is the stored JSON text. */
@@ -315,6 +381,33 @@ function clampDay(year: number, month: number, day: number): number {
   return Math.min(day, daysInMonth(year, month));
 }
 
+function weekdayOfDate(year: number, month: number, day: number): number {
+  return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+}
+
+/**
+ * G406：把相对日解成某个月的日号。`{type:'day'}` 是日号侧（月末/月初/第 N 日），
+ * 星期名侧是「第一个/最后一个/第 N 个周X」；第 5 个周X 不存在的月份回 `null`。
+ */
+export function resolveDynamicDay(entry: DynamicDay, year: number, month: number): number | null {
+  const last = daysInMonth(year, month);
+  if (entry.type === 'day') {
+    if (entry.selector === 'last') return last;
+    if (entry.selector === 'first') return 1;
+    return clampDay(year, month, entry.selector);
+  }
+  const target = WEEKDAY_NAMES.indexOf(entry.type as (typeof WEEKDAY_NAMES)[number]);
+  if (target < 0) return null;
+  const firstWeekday = weekdayOfDate(year, month, 1);
+  const firstHit = 1 + ((target - firstWeekday + 7) % 7);
+  if (entry.selector === 'first') return firstHit;
+  if (entry.selector === 'last') {
+    return last - ((weekdayOfDate(year, month, last) - target + 7) % 7);
+  }
+  const nth = firstHit + (entry.selector - 1) * 7;
+  return nth <= last ? nth : null;
+}
+
 function untilBound(rule: RecurrenceRule, timeZone: string): number | null {
   if (!rule.until) return null;
   const stamp = Date.parse(rule.until);
@@ -357,14 +450,28 @@ export function nextOccurrence(
       }
     }
   } else if (rule.freq === 'monthly') {
-    const wanted = rule.byMonthDay ?? base.day;
-    for (let index = 1; index <= 24; index += 1) {
-      const probe = addMonths(base, index * step);
-      probe.day = clampDay(probe.year, probe.month, wanted);
-      const instant = wallToInstant(probe, timeZone);
-      if (instant > from.getTime()) {
-        candidate = probe;
-        break;
+    // G406：显式日号（多日）与相对日可以并存；同一月里取**严格晚于 from**的最早一天。
+    // 两者都没写时才回落到"排期那天"。
+    const explicit = rule.days?.length
+      ? rule.days
+      : rule.dynamicDays?.length
+        ? []
+        : [rule.byMonthDay ?? base.day];
+    const dynamic = rule.dynamicDays ?? [];
+    outer: for (let index = 1; index <= 36; index += 1) {
+      const shifted = addMonths(base, index * step);
+      const days = new Set<number>();
+      for (const day of explicit) days.add(clampDay(shifted.year, shifted.month, day));
+      for (const entry of dynamic) {
+        const resolved = resolveDynamicDay(entry, shifted.year, shifted.month);
+        if (resolved !== null) days.add(resolved);
+      }
+      for (const day of [...days].sort((a, b) => a - b)) {
+        const probe = { ...shifted, day };
+        if (wallToInstant(probe, timeZone) > from.getTime()) {
+          candidate = probe;
+          break outer;
+        }
       }
     }
   } else {

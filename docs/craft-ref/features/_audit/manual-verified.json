@@ -5076,10 +5076,12 @@
       ]
     },
     "G406": {
-      "status": "gap",
-      "note": "只有单值 byMonthDay，无多日号/dynamicDays/skipWeekends",
+      "status": "partial",
+      "note": "第 192 批：monthly 多日号 + dynamicDays（月末/首个/末个/第N个周X）已入模型与推进；缺 yearly months[] 与选择器 UI",
       "evidence": [
-        "src/lib/task/recurrence.ts:8"
+        "src/lib/task/recurrence.ts:27",
+        "src/lib/task/recurrence.ts:265",
+        "src/lib/task/recurrence.ts:392"
       ]
     },
     "G409": {

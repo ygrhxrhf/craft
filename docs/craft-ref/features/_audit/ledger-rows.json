@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T00:56:20.368Z",
+  "generatedAt": "2026-11-03T01:02:58.286Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 922,
@@ -8393,8 +8393,8 @@
       "cols": 5,
       "id": "G406",
       "official": "`monthly` 有 **`days: number[]`（多日号）+ `dynamicDays: {selector,type}[]`（相对日：`{selector:\"last\",type:\"day\"}`＝月末、`{type:星期名, selector:first|last|数字}`＝\"最后一个周五\"）+ `skipWeekends`**；`yearly` 有 `months[]`+`days[]`+`dynamicDays[]`（`model.md` §一之八、`tasks.md` §9.3）",
-      "local": "本地只有单值 `byMonthDay?: number`（月末靠 clamp 近似）⇒ **\"每月 3 日和 15 日\"、\"每月最后一个周五\"两种表达不存在**",
-      "verdict": "缺失",
+      "local": "本地只有单值 `byMonthDay?: number`（月末靠 clamp 近似）⇒ **\"每月 3 日和 15 日\"、\"每月最后一个周五\"两种表达不存在** ⇒ ✎ 现读（2026-11-02 第 192 批）：模型已扩——monthly 的 `days: number[]`（多日号 1–31，与 weekly 的星期轴同键不同义）＋ `dynamicDays: [{type:'day'|星期名, selector:'first'|'last'|1–5}]`（月末/第一个/最后一个/第 N 个周X，5 个不存在的月份跳过），`describeRecurrence` 出「每月 3 日、15 日重复」「每月 最后一个周五重复」；`skipWeekends` 原已支持。仍缺：yearly 的 `months[]` 与选择器 UI（日期弹层目前只给预设）",
+      "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",
       "scoreParsed": {

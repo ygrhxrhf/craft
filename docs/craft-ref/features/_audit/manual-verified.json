@@ -9698,9 +9698,11 @@
     },
     "G1582": {
       "status": "partial",
-      "note": "走 TipTap 默认 Mod-Shift-s/h/e，与官方表不符",
+      "priority": "P2",
+      "note": "三条官方行内键位已接入中央表并分派；浏览器复验待做。",
       "evidence": [
-        "node_modules/@tiptap/extension-strike/src/strike.ts:113"
+        "src/lib/editor/keymap.ts:264",
+        "src/components/editor/extensions/craft-keymap.ts:148"
       ]
     },
     "G1583": {

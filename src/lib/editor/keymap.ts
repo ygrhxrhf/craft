@@ -260,6 +260,10 @@ export const KEY_BINDINGS: KeyBinding[] = [
   { id: 'MOVE_BLOCK_TOP_MAC', label: '区块移至顶部', group: 'editing', mac: chord({ metaKey: true, altKey: true }, 'ArrowUp', 'ArrowUp'), win: null },
   { id: 'MOVE_BLOCK_BOTTOM_MAC', label: '区块移至底部', group: 'editing', mac: chord({ metaKey: true, altKey: true }, 'ArrowDown', 'ArrowDown'), win: null },
   { id: 'DUPLICATE', label: '创建副本', group: 'editing', mac: chord({ metaKey: true }, 'd', 'KeyD'), win: chord({ ctrlKey: true }, 'd', 'KeyD') },
+  // G1582：行内格式三条官方键位（TipTap 默认键位与之不一致，故由本表接管）。
+  { id: 'STRIKE_INLINE', label: '删除线', group: 'editing', mac: chord({ metaKey: true, shiftKey: true }, '-', 'Minus'), win: chord({ ctrlKey: true, shiftKey: true }, '-', 'Minus') },
+  { id: 'HIGHLIGHT_INLINE', label: '高亮', group: 'editing', mac: chord({ metaKey: true, shiftKey: true }, 'b', 'KeyB'), win: chord({ ctrlKey: true, shiftKey: true }, 'b', 'KeyB') },
+  { id: 'CODE_INLINE', label: '代码', group: 'editing', mac: chord({ metaKey: true, shiftKey: true }, 'c', 'KeyC'), win: chord({ ctrlKey: true, shiftKey: true }, 'c', 'KeyC') },
   // G1588 / G1594: 组合与取消组合（官方在块选择态里成组 / 拆组）。
   { id: 'GROUP_BLOCKS', label: '组合区块', group: 'editing', mac: chord({ metaKey: true }, 'g', 'KeyG'), win: chord({ ctrlKey: true }, 'g', 'KeyG') },
   { id: 'UNGROUP_BLOCKS', label: '取消组合', group: 'editing', mac: chord({ metaKey: true, shiftKey: true }, 'g', 'KeyG'), win: chord({ ctrlKey: true, shiftKey: true }, 'g', 'KeyG') },

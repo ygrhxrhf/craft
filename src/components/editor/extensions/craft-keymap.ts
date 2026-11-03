@@ -144,6 +144,10 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
 
   if (id === 'DUPLICATE') return duplicateTopBlock(editor);
 
+  // G1582: the official inline chords toggle the same marks the punctuation forms do.
+  if (id === 'STRIKE_INLINE') return editor.chain().focus().toggleStrike().run();
+  if (id === 'HIGHLIGHT_INLINE') return editor.chain().focus().toggleHighlight().run();
+  if (id === 'CODE_INLINE') return editor.chain().focus().toggleCode().run();
   // G1588 / G1594: 组合与取消组合。组合＝把选中的顶层块包进卡片；取消组合＝把卡片子块提回顶层
   // （官方取消组合留的是「块＋子块」，本地按 G197 的卡片模型提回顶层）。
   if (id === 'GROUP_BLOCKS') {

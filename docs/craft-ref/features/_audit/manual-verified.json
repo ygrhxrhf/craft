@@ -3290,7 +3290,7 @@
     },
     "G1430": {
       "status": "partial",
-      "note": "官方 17 项，本地 16 项（合集为组标题）且 8 项禁用占位。",
+      "note": "官方 17 项，本地 16 项（合集为组标题）；✎ 第 269 批：「合集」组三条已能真建集合对象，禁用占位从 8 项降到 2 项＝插入 Unsplash 图片、插入表格。",
       "evidence": [
         "src/components/editor/tabs/InsertTab.tsx:47"
       ]
@@ -4267,7 +4267,7 @@
     "G206": {
       "status": "aligned",
       "priority": "P2",
-      "note": "插入面板名册/结构与官方一致；Mermaid、分页符已可建，其余 6 项禁用占位（G207/G214）",
+      "note": "插入面板名册/结构与官方一致；✎ 第 269 批：Mermaid、分页符、页面、「合集」三条（表格／图库／Kanban 建集合对象）都已可建，禁用占位只剩 2 项＝插入 Unsplash 图片、插入表格。",
       "evidence": [
         "src/components/editor/tabs/InsertTab.tsx:56",
         "src/components/editor/tabs/InsertTab.tsx:70",
@@ -4276,12 +4276,13 @@
       ]
     },
     "G207": {
-      "status": "gap",
+      "status": "aligned",
       "priority": "P2",
-      "note": "页面与分页符入口已可用；合集（新建 collection）仍缺，本地无 collection 块节点（G214）。",
+      "note": "三枚对象入口都在：页面＝setPageBlock、分页符＝setDivider('pageSeparator')、合集＝「合集」组三条走 setCollectionBlock（点下真建集合行，浏览器实点 Kanban 建出 type:kanban 集合并落块，reload 读回）。块内直接渲染集合内容那一层记 G1614（partial）。",
       "evidence": [
-        "src/components/editor/tabs/InsertTab.tsx:52",
-        "src/components/editor/slash-menu/slash-commands.ts:279"
+        "src/components/editor/tabs/InsertTab.tsx:65",
+        "src/components/editor/extensions/collection-block.tsx:1",
+        "src/lib/collection/embed-block.test.ts:1"
       ]
     },
     "G208": {
@@ -4312,10 +4313,14 @@
       ]
     },
     "G214": {
-      "status": "gap",
-      "note": "合集组表格/图库/Kanban 三项均禁用，文档内不能建集合对象",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 269 批：插入面板「合集」组表格／图库／Kanban 三条与斜杠同名三条都真建集合对象（createCollection({name, viewType})），文档内落 collectionBlock 原子块（collectionId/title/view）。浏览器实点 Kanban＝集合行 {name:看板集合, type:kanban}＋块 {block:true, view:kanban}，reload 读回。块形＝指向 /collections/{id} 的集合卡，块内直接渲染归 G1614／集合视图簇。",
       "evidence": [
-        "src/components/editor/tabs/InsertTab.tsx:63"
+        "src/components/editor/tabs/InsertTab.tsx:65",
+        "src/components/editor/extensions/collection-block.tsx:1",
+        "src/lib/collection/embed-block.ts:1",
+        "src/lib/collection/embed-block.test.ts:1"
       ]
     },
     "G216": {
@@ -9961,10 +9966,13 @@
       ]
     },
     "G1614": {
-      "status": "gap",
-      "note": "无表格/画廊/看板集合插入；白板只有一份且落成只读预览卡",
+      "status": "partial",
+      "priority": "P2",
+      "note": "第 269 批：三条「插入集合」建成（斜杠三命令＋面板「合集」三行→createCollection＋collectionBlock 原子块，实点 Kanban 落 view:kanban 并 reload 读回）；仍差＝块内直接渲染集合内容（本地是指向 /collections/{id} 的卡）。白板那枚形态差异同批不变。",
       "evidence": [
-        "src/components/editor/slash-menu/slash-commands.ts:568"
+        "src/components/editor/slash-menu/slash-commands.ts:652",
+        "src/components/editor/extensions/collection-block.tsx:1",
+        "src/lib/collection/embed-block.test.ts:1"
       ]
     },
     "G1615": {

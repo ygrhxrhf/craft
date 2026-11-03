@@ -61,11 +61,10 @@ const UNTITLED_ITEMS: PanelItem[] = [
 ];
 
 const COLLECTION_ITEMS: PanelItem[] = [
-  // Official 「合集」 组下是三种集合对象 (G214); the local 表格 slash command is a table *block*
-  // and is deliberately not mapped onto this row — different object, same word.
-  { label: '表格', missing: true },
-  { label: '图库', missing: true },
-  { label: 'Kanban', missing: true },
+  // G214：官方「合集」组下这三条都是集合对象（表格／画廊／看板三种初始视图）。
+  { label: '表格', command: '插入表格集合' },
+  { label: '图库', command: '插入画廊集合' },
+  { label: 'Kanban', command: '插入看板集合' },
 ];
 
 const TAIL_ITEMS: PanelItem[] = [

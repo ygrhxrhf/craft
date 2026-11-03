@@ -34,7 +34,7 @@ describe('the insert panel enables buildable entries', () => {
   });
 
   it('keeps the genuinely unbuildable objects disabled', () => {
-    for (const label of ['插入 Unsplash 图片', '表格', '图库', 'Kanban']) {
+    for (const label of ['插入 Unsplash 图片']) {
       expect(insertTab, label).toContain(`{ label: '${label}', missing: true }`);
     }
   });

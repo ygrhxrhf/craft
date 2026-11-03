@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 // 名册本身是纯数据，但它 import 了 server action（`createWhiteboard`）与几个客户端模块；
 // 后者会经 next-auth 拉进 `next/server`（vitest 里解析不到）⇒ 只桩掉这几处，名册照读。
 vi.mock('@/actions/whiteboard/whiteboard', () => ({ createWhiteboard: vi.fn() }));
+vi.mock('@/actions/collection/collection', () => ({ createCollection: vi.fn() }));
 vi.mock('@/components/editor/ai/ImageGenDialog', () => ({ requestImageGen: vi.fn() }));
 vi.mock('@/lib/dialog/show', () => ({ promptDialog: vi.fn() }));
 vi.mock('@/lib/upload-client', () => ({ uploadFile: vi.fn() }));

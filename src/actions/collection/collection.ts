@@ -17,6 +17,8 @@ export async function createCollection(data: {
   icon?: string;
   description?: string;
   folderId?: string;
+  /** G1614：官方三条「插入集合」只差初始视图，创建的都是同一个 collection 对象。 */
+  viewType?: 'table' | 'kanban' | 'gallery';
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
@@ -37,7 +39,7 @@ export async function createCollection(data: {
     id: crypto.randomUUID(),
     collectionId,
     name: '默认视图',
-    type: 'table',
+    type: data.viewType ?? 'table',
     isActive: true,
   });
 
@@ -55,7 +57,7 @@ export async function createCollection(data: {
     ['collection', 'collection_view', 'collection_property'], collectionId);
 
   revalidatePath('/collections');
-  return { id: collectionId };
+  return { id: collectionId, name: data.name };
 }
 
 export async function updateCollection(

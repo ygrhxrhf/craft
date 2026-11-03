@@ -51,6 +51,8 @@ import { ALIGNMENT_CONTROLS } from '@/lib/editor/format-commands';
 import { promptDialog } from '@/lib/dialog/show';
 import { uploadFile } from '@/lib/upload-client';
 import { createWhiteboard } from '@/actions/whiteboard/whiteboard';
+import { createCollection } from '@/actions/collection/collection';
+import { COLLECTION_EMBED_LABELS, type CollectionEmbedView } from '@/lib/collection/embed-block';
 import { requestImageGen } from '@/components/editor/ai/ImageGenDialog';
 import { useTemplatePickerStore } from '@/lib/store/use-template-picker-store';
 
@@ -645,6 +647,37 @@ export const slashCommands: SlashCommand[] = [
       }
     },
   },
+  // G1614：官方三条「插入集合」——建出的都是同一个集合对象，只是初始视图不同。
+  {
+    name: '插入表格集合',
+    description: '新建一个表格视图的集合',
+    icon: Table,
+    keywords: ['collection', 'table', '集合', '表格集合'],
+    category: '嵌入',
+    command: async (editor, range) => {
+      await insertCollectionBlock(editor, range, 'table');
+    },
+  },
+  {
+    name: '插入画廊集合',
+    description: '新建一个画廊视图的集合',
+    icon: Image,
+    keywords: ['collection', 'gallery', '集合', '画廊集合'],
+    category: '嵌入',
+    command: async (editor, range) => {
+      await insertCollectionBlock(editor, range, 'gallery');
+    },
+  },
+  {
+    name: '插入看板集合',
+    description: '新建一个看板视图的集合',
+    icon: LayoutGrid,
+    keywords: ['collection', 'kanban', '集合', '看板集合'],
+    category: '嵌入',
+    command: async (editor, range) => {
+      await insertCollectionBlock(editor, range, 'kanban');
+    },
+  },
   {
     name: '设定截止日期',
     description: '设定任务块的截止日期',
@@ -730,4 +763,27 @@ export function getCommandCategories(): string[] {
   const categories = new Set<string>();
   slashCommands.forEach((cmd) => categories.add(cmd.category));
   return Array.from(categories);
+}
+
+/**
+ * G1614：三条「插入集合」共用的一条通路——先建集合对象（初始视图按档），再在正文里
+ * 落一枚指回它的 collection 块。建失败时与白板那枚一样给一句提示，不静默吞掉。
+ */
+async function insertCollectionBlock(
+  editor: Editor,
+  range: { from: number; to: number },
+  view: CollectionEmbedView,
+) {
+  editor.chain().focus().deleteRange(range).run();
+  try {
+    const name = `${COLLECTION_EMBED_LABELS[view]}集合`;
+    const created = await createCollection({ name, viewType: view });
+    editor
+      .chain()
+      .focus()
+      .setCollectionBlock({ collectionId: created.id, title: created.name, view })
+      .run();
+  } catch (err) {
+    alert(err instanceof Error ? err.message : '创建集合失败');
+  }
 }

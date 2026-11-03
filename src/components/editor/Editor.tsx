@@ -84,6 +84,7 @@ import { WhiteboardLink } from './extensions/whiteboard-link';
 import { WhiteboardEmbed } from './extensions/whiteboard-embed';
 import { SidebarDrop } from './extensions/sidebar-drop';
 import { CardBlock } from './extensions/card-block';
+import { CollectionBlock } from './extensions/collection-block';
 import { PageBlock } from './extensions/page-block';
 import { CommentMark } from './extensions/comment-mark';
 import { FindReplace } from './extensions/find-replace';
@@ -604,6 +605,7 @@ export function Editor({
       WhiteboardEmbed,
       SidebarDrop,
       CardBlock,
+      CollectionBlock,
       PageBlock.configure({ hostDocumentId: documentId }),
       MarkdownShortcuts,
       SlashCommand,

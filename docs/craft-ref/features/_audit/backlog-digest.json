@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T02:48:36.390Z",
+  "generatedAt": "2026-11-03T03:02:39.159Z",
   "total": 1614,
   "status": {
-    "aligned": 529,
+    "aligned": 530,
     "nonaction": 512,
-    "partial": 273,
+    "partial": 272,
     "deliberate": 165,
     "gap": 115,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 214,
+    "P2 / aligned": 215,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 123,
+    "P2 / partial": 122,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1134,7 +1134,7 @@
         "cols": 5,
         "id": "G39",
         "official": "AI：提示库、写作风格分析、PDF 问答、AI 额度与清除历史（`assistant.*` 223 条）",
-        "local": "✎ 现读（2026-11-02）：已有改写/续写/翻译/总结、生图、提示库（`ai-prompts.ts`，含「分析写作风格」）、联网搜索、PDF 问答；仍缺 AI 额度与清除历史两项（设置侧零命中）",
+        "local": "✎ 现读（2026-11-03 第 216 批）：已有改写/续写/翻译/总结、生图、提示库（`ai-prompt-library.ts`＝34 条官方模板）、联网搜索、PDF 问答；仍缺 AI 额度入口与设置侧清除历史（浮层里有「清除历史」一枚）",
         "verdict": "局部",
         "score": "2/2",
         "status": "partial",
@@ -1251,12 +1251,12 @@
       7
     ],
     [
-      "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",
+      "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
       6
     ],
     [
-      "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
-      6
+      "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",
+      5
     ],
     [
       "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",

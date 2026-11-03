@@ -10,8 +10,14 @@ import { aiBubbleKey, mainBubbleKey } from './keys';
 import { requestImageGen } from '@/components/editor/ai/ImageGenDialog';
 import { toast } from '@/components/ui/toast';
 import { aiWriteMessage } from '@/lib/editor/ai-write-message';
-import { AI_PROMPT_PRESETS, type AiPromptPreset } from '@/lib/editor/ai-prompts';
+import {
+  fillPromptTemplate,
+  promptsInGroup,
+  PROMPT_GROUP_LABELS,
+  type PromptGroupId,
+} from '@/lib/editor/ai-prompt-library';
 import type { CustomPrompt } from '@/lib/editor/custom-prompts';
+import { SAVED_PROMPTS_TITLE } from '@/lib/editor/custom-prompts';
 import { getCustomPrompts } from '@/actions/user/custom-prompts';
 import { clearAiHistory, recordAiHistory } from '@/lib/ai/history';
 import { promptDialog } from '@/lib/dialog/show';
@@ -210,7 +216,7 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
   }, []);
 
   const runPrompt = useCallback(
-    async (preset: AiPromptPreset) => {
+    async (item: { id: string; label: string; prompt: string }) => {
       const { from, to } = editor.state.selection;
       const selectedText = editor.state.doc.textBetween(from, to, '\n');
       if (!selectedText.trim()) return;
@@ -224,7 +230,7 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
         const response = await fetch('/api/ai', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: preset.prompt, text: selectedText }),
+          body: JSON.stringify({ prompt: item.prompt, text: selectedText }),
         });
         const data = await response.json();
         if (!response.ok) {
@@ -232,12 +238,20 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
           return;
         }
         setResult(data.text);
-        rememberAi(preset.label, data.text);
+        rememberAi(item.label, data.text);
       } catch {
         setError('网络错误，请重试');
       } finally {
         setLoading(null);
       }
+    },
+    [editor]
+  );
+
+  const fillFromSelection = useCallback(
+    (template: string) => {
+      const { from, to } = editor.state.selection;
+      return fillPromptTemplate(template, editor.state.doc.textBetween(from, to, '\n'));
     },
     [editor]
   );
@@ -409,32 +423,52 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
               清除历史
             </button>
             {showPrompts && (
-              <div className="mt-1 flex flex-col gap-1">
-                {AI_PROMPT_PRESETS.map((preset) => (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    disabled={loading !== null}
-                    onClick={() => void runPrompt(preset)}
-                    className="rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
-                  >
-                    {preset.label}
-                  </button>
+              <div className="mt-1 flex max-h-64 flex-col gap-1 overflow-y-auto">
+                {(Object.keys(PROMPT_GROUP_LABELS) as PromptGroupId[]).map((group) => (
+                  <div key={group} className="flex flex-col gap-0.5">
+                    <div className="px-2 pt-1 text-[10px] font-medium tracking-wide text-foreground/35">
+                      {PROMPT_GROUP_LABELS[group]}
+                    </div>
+                    {promptsInGroup(group).map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        disabled={loading !== null}
+                        onClick={() =>
+                          void runPrompt({
+                            id: item.id,
+                            label: item.label,
+                            prompt: fillFromSelection(item.template),
+                          })
+                        }
+                        className="rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
                 ))}
-                {customPrompts.map((item) => (
-                  <button
-                    key={`custom-${item.id}`}
-                    type="button"
-                    title={item.prompt}
-                    disabled={loading !== null}
-                    onClick={() =>
-                      void runPrompt({ id: item.id, label: item.prompt, prompt: item.prompt })
-                    }
-                    className="line-clamp-2 rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
-                  >
-                    {item.prompt}
-                  </button>
-                ))}
+                {customPrompts.length > 0 && (
+                  <div className="flex flex-col gap-0.5">
+                    <div className="px-2 pt-1 text-[10px] font-medium tracking-wide text-foreground/35">
+                      {SAVED_PROMPTS_TITLE}
+                    </div>
+                    {customPrompts.map((item) => (
+                      <button
+                        key={`custom-${item.id}`}
+                        type="button"
+                        title={item.prompt}
+                        disabled={loading !== null}
+                        onClick={() =>
+                          void runPrompt({ id: item.id, label: item.prompt, prompt: item.prompt })
+                        }
+                        className="line-clamp-2 rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+                      >
+                        {item.prompt}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             {error && <p className="px-1 pt-1.5 text-meta text-destructive">{error}</p>}

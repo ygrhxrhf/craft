@@ -3786,10 +3786,14 @@
       ]
     },
     "G119": {
-      "status": "partial",
-      "note": "仅 4 条本地预设；缺 35 条模板库、{0} 插槽与 9 语种",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "34 条官方提示模板逐字入册（含 write.template 同形键陷阱），{0} 选区插槽在点击时填充；五分组 + 9 语种翻译齐；第 35 个名字 find.action.items 无模板",
       "evidence": [
-        "src/lib/editor/ai-prompts.ts:11"
+        "src/lib/editor/ai-prompt-library.ts:25",
+        "src/lib/editor/ai-prompt-library.ts:238",
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:432",
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:441"
       ]
     },
     "G120": {

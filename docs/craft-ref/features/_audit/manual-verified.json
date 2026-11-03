@@ -9043,10 +9043,14 @@
       ]
     },
     "G1435": {
-      "status": "partial",
-      "note": "有文本/字号/行内/列表/对齐/缩进/方向/折叠/颜色，缺分组与装饰",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "格式页签五组齐：分组/字符样式/缩进/对齐（含两端）/装饰（焦点·块），全部渲染",
       "evidence": [
-        "src/components/editor/tabs/FormatTab.tsx:183"
+        "src/lib/editor/format-commands.ts:148",
+        "src/lib/editor/format-commands.ts:161",
+        "src/components/editor/tabs/FormatTab.tsx:301",
+        "src/components/editor/tabs/FormatTab.tsx:389"
       ]
     },
     "G1438": {

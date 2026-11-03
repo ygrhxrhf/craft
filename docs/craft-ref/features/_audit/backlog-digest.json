@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T03:59:49.689Z",
+  "generatedAt": "2026-11-03T04:04:15.277Z",
   "total": 1614,
   "status": {
-    "aligned": 542,
+    "aligned": 543,
     "nonaction": 512,
-    "partial": 264,
+    "partial": 263,
     "deliberate": 165,
     "gap": 111,
     "unreachable": 20
@@ -17,11 +17,11 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 227,
+    "P2 / aligned": 228,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
-    "P2 / partial": 114,
+    "P2 / partial": 113,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -1275,10 +1275,6 @@
       5
     ],
     [
-      "三点一一一二、第 173 批新登记的官方行为（2026-10-09 机器",
-      5
-    ],
-    [
       "三点一一一四、第 175 批新登记的官方行为（2026-10-09 机器",
       5
     ],
@@ -1300,6 +1296,10 @@
     ],
     [
       "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
+      4
+    ],
+    [
+      "三点一九、右侧栏三面板实屏对照（动态 V10–V12，插入 / 格式 /",
       4
     ]
   ]

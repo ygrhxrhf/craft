@@ -37,6 +37,7 @@ import { ALL_CHANGES_SAVED, offlineSaveLabel } from '@/lib/offline/save-status';
 import { planTrailingClick } from '@/lib/editor/trailing-click';
 import { TaskDateQuickMenu } from '@/components/editor/TaskDateQuickMenu';
 import { FloatingThreadWindow } from '@/components/editor/comments/FloatingThreadWindow';
+import { LeftToolRail } from '@/components/editor/LeftToolRail';
 
 const TAB_ORDER = ['insert', 'format', 'style', 'info'] as const;
 const TAB_ICONS = { insert: LayoutGrid, format: Type, style: Palette, info: Info };
@@ -410,6 +411,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               editor.chain().focus('end').run();
             }}
           >
+            {/* G100：左侧常驻工具（附件 / 查找和替换 / 目录 / 任务）。 */}
+            <LeftToolRail editor={editor} />
             {washiGradient && (
               <div
                 aria-hidden

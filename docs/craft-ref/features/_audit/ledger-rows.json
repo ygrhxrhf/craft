@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T01:31:20.526Z",
+  "generatedAt": "2026-11-03T01:35:14.907Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 919,
-    "aligned": 264,
+    "gap": 918,
+    "aligned": 265,
     "unknown": 195,
     "deliberate": 103,
     "partial": 61,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 348,
+    "P2 / gap": 347,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 160,
+    "P2 / aligned": 161,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -2869,11 +2869,11 @@
       "cols": 6,
       "id": "G100",
       "official": "左侧栏工具 tab 权威集 `LeftSidebarTab` = **4 个**：`Attachments / FindReplace / TableOfContents / Tasks` ⇒ 查找替换、目录、附件、任务是**左栏常驻 tab**（`FindReplace` 线值即 `FIND_IN_PAGE` 的落点）",
-      "local": "✎ 现读（2026-10-31）更正：查找替换面板在编辑器顶部；无左栏附件/目录/任务常驻 tab",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-10-31）更正：查找替换面板在编辑器顶部；无左栏附件/目录/任务常驻 tab ⇒ ✎ 再读（2026-11-02 第 198 批）：左栏四 tab 已落——`LeftToolRail.tsx` 在页面左侧常驻（xl 以上；窄屏按官方收进抽屉，本地先隐藏）：附件（文档内 attachment/imageBlock 列表、点击定位）、目录（复用 `extractToc`）、任务（taskItem 列表含勾选态、点击定位）；「查找和替换」不重复面板，直接打开既有查找条（`FIND_IN_PAGE` 的落点） ☆ 已清（第 198 批）",
+      "verdict": "对齐",
       "score": "2/2",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝全无（无左栏工具 tab；无查找替换见 G12）",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

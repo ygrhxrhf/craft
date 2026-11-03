@@ -3,11 +3,13 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { extractBlocks } from '@/lib/search/extract';
+import { snippetAround, type Snippet } from '@/lib/search/highlight';
 
 export interface SearchResultDoc {
   id: string;
   title: string;
   icon: string | null;
+  createdAt: string;
   updatedAt: string;
 }
 
@@ -15,6 +17,10 @@ export interface SearchResultBlock {
   documentId: string;
   documentTitle: string;
   text: string;
+  /** G1286: the match is marked inside the snippet. */
+  snippet: Snippet;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SearchResultRow {
@@ -124,6 +130,7 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
           id: (doc as any).id,
           title: (doc as any).title,
           icon: (doc as any).icon,
+          createdAt: (doc as any).createdAt,
           updatedAt: (doc as any).updatedAt,
         });
       }
@@ -136,6 +143,7 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
       id: d.id,
       title: d.title,
       icon: d.icon,
+      createdAt: d.createdAt,
       updatedAt: d.updatedAt,
     })),
     ...taggedDocs,
@@ -156,6 +164,9 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
         documentId: d.id,
         documentTitle: d.title,
         text: hit.text.length > 120 ? hit.text.slice(0, 120) + '…' : hit.text,
+        snippet: snippetAround(hit.text, q),
+        createdAt: d.createdAt,
+        updatedAt: d.updatedAt,
       });
       if (blocks.length >= 12) break;
     }
@@ -164,6 +175,7 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
         id: d.id,
         title: d.title,
         icon: d.icon,
+        createdAt: d.createdAt,
         updatedAt: d.updatedAt,
       });
       matchedIds.add(d.id);

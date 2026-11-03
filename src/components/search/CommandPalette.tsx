@@ -458,7 +458,20 @@ export function CommandPalette() {
                   <Type className="size-4 shrink-0 text-muted-foreground" />
                   <div className="min-w-0 flex flex-col">
                     <span className="truncate text-xs text-muted-foreground">{block.documentTitle}</span>
-                    <span className="truncate">{block.text}</span>
+                    {/* G1286：命中词加粗，片段围绕首个命中截取。 */}
+                    <span className="truncate">
+                      {block.snippet.prefix ? '…' : ''}
+                      {block.snippet.segments.map((segment, index) =>
+                        segment.hit ? (
+                          <strong key={index} className="font-semibold text-foreground">
+                            {segment.text}
+                          </strong>
+                        ) : (
+                          <span key={index}>{segment.text}</span>
+                        )
+                      )}
+                      {block.snippet.suffix ? '…' : ''}
+                    </span>
                   </div>
                 </CommandItem>
               ))}

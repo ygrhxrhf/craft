@@ -8822,10 +8822,13 @@
       ]
     },
     "G1286": {
-      "status": "partial",
-      "note": "已有块级命中，但无块 id、命中高亮与逐命中时间戳",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "搜索按块聚合命中，片段围绕首个命中并加粗命中词（大小写不敏感），文档结果带创建/修改时间，回收站排除",
       "evidence": [
-        "src/actions/document/search.ts:139"
+        "src/lib/search/highlight.ts:1",
+        "src/actions/document/search.ts:167",
+        "src/components/search/CommandPalette.tsx:460"
       ]
     },
     "G1291": {

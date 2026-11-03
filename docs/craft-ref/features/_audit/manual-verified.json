@@ -4534,11 +4534,13 @@
       ]
     },
     "G273": {
-      "status": "partial",
-      "note": "第 208 批：集合表格窗口渲染（overscan 2、rAF+150ms、两种行高常数）；文档列表等仍全量",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "集合表格与回收站均按窗口渲染：固定行高、overscan 2、rAF+150ms；浏览器 61 行只渲染 10 行",
       "evidence": [
-        "src/lib/collection/virtual-rows.ts:10",
-        "src/app/(app)/collections/[id]/TableView.tsx:402"
+        "src/lib/collection/virtual-rows.ts:1",
+        "src/components/document/TrashList.tsx:1",
+        "src/app/(app)/collections/[id]/TableView.tsx:183"
       ]
     },
     "G281": {

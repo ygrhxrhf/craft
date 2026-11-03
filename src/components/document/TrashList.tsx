@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Check, File, Minus, MoreHorizontal, RotateCcw, Trash2, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
@@ -23,6 +23,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { getDeletedDocuments } from '@/actions/document/get';
 import { TRASH_DISCLAIMER, TRASH_EMPTY } from '@/lib/browse/trash-copy';
+import { visibleRowWindow, scheduleScrollUpdate } from '@/lib/collection/virtual-rows';
 import {
   COULD_NOT_DELETE_DOCUMENT,
   EMPTY_TRASH_ACTION,
@@ -39,6 +40,10 @@ interface TrashDoc {
   icon: string | null;
   deletedAt: string | null;
 }
+
+const TRASH_VIRTUAL_THRESHOLD = 60;
+const TRASH_ROW_HEIGHT = 64;
+const TRASH_VIEWPORT_HEIGHT = 480;
 
 interface TrashListProps {
   documents: TrashDoc[];
@@ -78,6 +83,7 @@ export function TrashList({ documents }: TrashListProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [emptyConfirmOpen, setEmptyConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [scrollTop, setScrollTop] = useState(0);
   // G300: permanent deletion has its own progress sentence (single vs plural).
   const [busyLabel, setBusyLabel] = useState<string | null>(null);
 
@@ -183,6 +189,19 @@ export function TrashList({ documents }: TrashListProps) {
     }
   }
 
+  // G273：长回收站也走窗口渲染（行高固定、overscan 2、滚动 rAF + 150ms）。
+  const virtualized = rows.length > TRASH_VIRTUAL_THRESHOLD;
+  const trashWindow = virtualized
+    ? visibleRowWindow({
+        scrollTop,
+        viewportHeight: TRASH_VIEWPORT_HEIGHT,
+        rowCount: rows.length,
+        rowHeight: TRASH_ROW_HEIGHT,
+        overscan: 2,
+      })
+    : null;
+  const renderRows = trashWindow ? rows.slice(trashWindow.start, trashWindow.end) : rows;
+
   if (rows.length === 0) {
     return (
       <div className="flex min-h-[180px] flex-col items-center justify-center rounded-[15px] bg-foreground/[0.03] px-6 text-center">
@@ -285,7 +304,17 @@ export function TrashList({ documents }: TrashListProps) {
         </button>
       )}
 
-      {rows.map(doc => {
+      <div
+        data-testid="trash-rows"
+        className={virtualized ? 'max-h-[480px] overflow-y-auto pr-1' : undefined}
+        onScroll={(event) => {
+          if (!virtualized) return;
+          const top = event.currentTarget.scrollTop;
+          scheduleScrollUpdate(() => setScrollTop(top));
+        }}
+      >
+      {trashWindow && <div aria-hidden style={{ height: trashWindow.topPad }} />}
+      {renderRows.map(doc => {
         const deletedDate = doc.deletedAt
           ? new Date(doc.deletedAt).toLocaleDateString('zh-CN')
           : '';
@@ -295,6 +324,7 @@ export function TrashList({ documents }: TrashListProps) {
           <div
             key={doc.id}
             className="flex items-center gap-3 rounded-lg border border-border p-3 transition-colors duration-150 hover:bg-foreground/[0.03]"
+            style={virtualized ? { height: TRASH_ROW_HEIGHT } : undefined}
           >
             {selecting ? (
               <button
@@ -337,6 +367,8 @@ export function TrashList({ documents }: TrashListProps) {
           </div>
         );
       })}
+      {trashWindow && <div aria-hidden style={{ height: trashWindow.bottomPad }} />}
+      </div>
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="sm:max-w-md">

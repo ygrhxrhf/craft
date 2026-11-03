@@ -465,7 +465,8 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
           // (G268). Reading the distance from the same helper the backend picks keeps the two from
           // drifting apart. A touch pointer's movement gate is Infinity, so it never arms here; the
           // hold timer below does.
-          const armAt = pointerArmDistance('general', st.pointerType);
+          // G268：块把手属于官方「无阈值」那一类（`handle`），按下即拖。
+          const armAt = pointerArmDistance('handle', st.pointerType);
           const dist = Math.hypot(ev.clientX - st.startX, ev.clientY - st.startY);
           if (dist < armAt) return;
           st.range = resolveDragRange();
@@ -517,7 +518,8 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
       // G461: a touch pointer has no movement gate (`pointerArmDistance` is Infinity), so the hold
       // is what arms it — the Touch backend's own activation. The timer fires only while the finger
       // is still down and no range has been taken yet; a move past the tolerance clears it.
-      const holdDelay = touchArmDelay('general', e.pointerType);
+      // G268：把手桶两列都是 0，因此这里拿不到计时器，按下即可拖。
+      const holdDelay = touchArmDelay('handle', e.pointerType);
       const holdTimer =
         holdDelay > 0
           ? window.setTimeout(() => {

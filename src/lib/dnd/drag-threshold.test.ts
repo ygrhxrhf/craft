@@ -91,9 +91,9 @@ describe('touch pointer detection', () => {
 /**
  * The table is only worth anything if the editor's handle reads it. The handle cannot be armed in a
  * headless probe (it mounts on hover and re-resolves its block from the live DOM), so the wiring is
- * pinned statically instead: the 8px gate must come from the table, not a bare literal.
+ * pinned statically instead.
  */
-describe('the editor handle reads the general threshold', () => {
+describe('the editor handle reads the eager threshold', () => {
   const source = readFileSync(
     join(process.cwd(), 'src/components/editor/drag-handle/DragHandle.tsx'),
     'utf8',
@@ -103,10 +103,12 @@ describe('the editor handle reads the general threshold', () => {
     expect(source).toContain("from '@/lib/dnd/drag-threshold'");
   });
 
-  it('gates on the general threshold through the shared helper, not a hard-coded 4', () => {
-    // G461: the gate now comes from `pointerArmDistance('general', …)` so the same call decides
-    // both the backend and the distance; the reading still has to be the general column.
-    expect(source).toContain("pointerArmDistance('general'");
+  it('takes both gates from the handle column, not a hard-coded 4', () => {
+    // G268: the block handle belongs to the official 「无阈值」 bucket, so both the movement gate and
+    // the touch hold read the `handle` row (0/0). G461 still requires them to come from the table.
+    expect(source).toContain("pointerArmDistance('handle'");
+    expect(source).toContain("touchArmDelay('handle'");
+    expect(source).not.toContain("pointerArmDistance('general'");
     expect(source).not.toMatch(/if \(dist < 4\)/);
   });
 });

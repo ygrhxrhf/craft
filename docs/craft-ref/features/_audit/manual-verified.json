@@ -4449,9 +4449,10 @@
     },
     "G268": {
       "status": "partial",
-      "note": "三档阈值表已落；实际只接编辑器块把手通用档",
+      "note": "第 191 批：三档表已落；块把手改读 handle 档（按下即拖），看板卡片仍无消费方",
       "evidence": [
-        "src/lib/dnd/drag-threshold.ts:27"
+        "src/lib/dnd/drag-threshold.ts:27",
+        "src/components/editor/drag-handle/DragHandle.tsx:469"
       ]
     },
     "G271": {
@@ -6038,7 +6039,7 @@
     "G607": {
       "status": "partial",
       "priority": "P2",
-      "note": "同层拖拽改为整批顺序（0…n-1）落库，已覆盖子文档/文件夹层；星标区、标签区与 tag_pin 本仓无宿主，仍缺。",
+      "note": "第 191 批现读：文档树同层拖拽按整批顺序（0…n-1）落库；文件夹树仍逐条写 parentId/folderId，星标/标签区与 tag_pin 本仓无宿主。",
       "evidence": [
         "src/lib/document/sibling-order.ts",
         "src/components/sidebar/DocumentTreeItem.tsx:229",

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T00:50:30.008Z",
+  "generatedAt": "2026-11-03T00:56:20.368Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 922,
@@ -5890,7 +5890,7 @@
       "cols": 5,
       "id": "G268",
       "official": "**起拖阈值按场景分三档**（`ui-affordances.md` §7.1）：通用＝指针 8px 位移 / 触摸 150ms 长按（容差 5ms）；另一类把手＝**无阈值按下即拖**；看板卡片＝**一律 150ms 长按不分设备**",
-      "local": "☆ 部分落地（第 250 批）＝① **三档表已落**＝纯核 `src/lib/dnd/drag-threshold.ts`：`DRAG_THRESHOLDS`（`general` 8px／150ms／容差 5、`handle` 全 0、`board` 0px／150ms）＋`pointerArmDistance`／`touchArmDelay`／`armsOnPress`／`isTouchPointer`（触摸/笔不吃位移门限，改由长按计时决定；`handle` 档两列皆 0 ⇒ 按下即拖）；② **接线一处**＝编辑器块把手原硬编码 `if (dist < 4)`（既非官方 8px、也无设备分档）⇒ 改读 `DRAG_THRESHOLDS.general.pointerDistance`，并加静态闸钉住\"必须来自表、不许再写裸 4\"；③ **仍缺**＝`board`（看板卡片一律长按）与 `handle`（无阈值把手）两档**本地无消费方**（看板视图未走该 DnD 通路），触摸端 150ms 长按**未实现计时器**（块把手是 `mousemove` 悬停才挂载，触摸到不了该路径）⇒ 登记为待办",
+      "local": "☆ 部分落地（第 250 批）＝① **三档表已落**＝纯核 `src/lib/dnd/drag-threshold.ts`：`DRAG_THRESHOLDS`（`general` 8px／150ms／容差 5、`handle` 全 0、`board` 0px／150ms）＋`pointerArmDistance`／`touchArmDelay`／`armsOnPress`／`isTouchPointer`（触摸/笔不吃位移门限，改由长按计时决定；`handle` 档两列皆 0 ⇒ 按下即拖）；② **接线一处**＝编辑器块把手原硬编码 `if (dist < 4)`（既非官方 8px、也无设备分档）⇒ 改读 `DRAG_THRESHOLDS.general.pointerDistance`，并加静态闸钉住\"必须来自表、不许再写裸 4\"；③ **仍缺**＝`board`（看板卡片一律长按）本地仍无消费方（看板视图未走该 DnD 通路）⇒ ✎ 现读（2026-11-02 第 191 批）：块拖拽把手两列改读 `handle`（`pointerArmDistance('handle')` / `touchArmDelay('handle')`，按下即拖），触摸长按计时器本身早已实现（`holdTimer` 读同一张表）",
       "verdict": "部分落地",
       "score": "2/1",
       "status": "partial",
@@ -8069,8 +8069,8 @@
       "cols": 5,
       "id": "G388",
       "official": "★ **\"查看更多\"不是阈值而是虚拟分页行**：结果数组里插 `type:\"loadingMore\"`（提及分组另有 `loadingMoreMentions`），渲染成 `browse.searching.for.other.matches` ⇒ 主结果与提及**各有独立游标**（§10.1）",
-      "local": "本地搜索无分页、无哨兵行",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-02）：分页与哨兵已有——`searchAll(q, offset)` 返回 `nextOffset`，面板底部渲染「查看更多结果」（`SEE_MORE_RESULTS`）并追加文档；仍差两点：哨兵是列表尾的独立项而不是 `type:\"loadingMore\"` 结果行、文档/块共用一个 `nextOffset`（无提及独立游标，本地也没有提及结果组）",
+      "verdict": "缺失（局部）",
       "score": "2/2",
       "status": "gap",
       "scoreParsed": {
@@ -12020,7 +12020,7 @@
       "local": "✎ 现读（2026-10-31）更正：侧栏拖拽按相邻中点算 order 逐条写，无整批 orderedIds",
       "verdict": "缺失（排序面）",
       "score": "2/2",
-      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本轮实跑：`grep -rn \"reorder|orderedIds\" src` ⇒ 本地仅有 `src/lib/authz/folder-tree.ts` 的父链校验与导入路径，**无任何\"提交完整顺序\"的排序 action**；标签置顶本地无对应 ⇒ ★ 官方\"重排一律整批提交\"在四处独立出现（`setRowsOrder`/`reorderTasks`/`tag_reorder`/`root_reorder`）⇒ 高度一致的产品决策",
+      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本轮实跑：`grep -rn \"reorder|orderedIds\" src` ⇒ 本地仅有 `src/lib/authz/folder-tree.ts` 的父链校验与导入路径，**无任何\"提交完整顺序\"的排序 action**；标签置顶本地无对应 ⇒ ★ 官方\"重排一律整批提交\"在四处独立出现（`setRowsOrder`/`reorderTasks`/`tag_reorder`/`root_reorder`）⇒ 高度一致的产品决策 ✎ 现读（2026-11-02 第 191 批）：**文档树同层拖拽已按整批顺序落库**（`lib/document/sibling-order.ts` 的 `orderAfterDrop`＋`orderPatches(0…n-1)`，`DocumentTreeItem.tsx` 逐条 patch 该批 id）；仍缺：文件夹树拖拽只写 `parentId/folderId`（无整批 order）、星标区与标签区无拖拽重排、标签无置顶（`tag_pin`）",
       "status": "gap",
       "scoreParsed": {
         "impact": 2,

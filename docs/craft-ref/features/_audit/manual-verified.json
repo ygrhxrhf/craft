@@ -3774,10 +3774,14 @@
       ]
     },
     "G116": {
-      "status": "gap",
-      "note": "请求体只有 {action,text}；无 document/page 结构化上下文",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "AI 请求带结构化上下文 {type,documentId,hasChildren:\"true\"|\"false\",subtitle?,textContent}，服务端校验形状并按 documentId 去重后拼入 user 消息",
       "evidence": [
-        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:119"
+        "src/lib/ai/context.ts:1",
+        "src/app/api/ai/route.ts:33",
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:153",
+        "src/components/editor/Editor.tsx:920"
       ]
     },
     "G118": {

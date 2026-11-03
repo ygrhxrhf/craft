@@ -917,7 +917,7 @@ export function Editor({
       <CursorLayer editor={editor} awareness={collabAwareness} documentId={documentId} />
       <DragHandle editor={editor} documentId={documentId} />
       <EditorBubbleMenu editor={editor} />
-      <AiBubbleMenu editor={editor} />
+      <AiBubbleMenu editor={editor} documentId={documentId} />
       <TableToolbar editor={editor} />
       {collaborative && (collabState === 'error' || collabState === 'offline') && (
         <p

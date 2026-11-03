@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth/auth';
+import { parseAiContext, renderContextPrompt } from '@/lib/ai/context';
 import OpenAI from 'openai';
 
 const actionPrompts: Record<string, string> = {
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: '未配置 OPENAI_API_KEY' }, { status: 500 });
   }
 
-  let body: { action?: string; prompt?: string; text?: string };
+  let body: { action?: string; prompt?: string; text?: string; context?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -28,6 +29,10 @@ export async function POST(req: NextRequest) {
   }
 
   const { action, prompt, text } = body;
+  // G116: structured context, deduped by document id before it reaches the model.
+  const context = parseAiContext(body.context);
+  const contextPrompt = renderContextPrompt(context);
+  const userContent = contextPrompt ? `${contextPrompt}\n\n${text ?? ''}` : text;
   const systemPrompt = prompt?.trim() ? prompt.trim().slice(0, 2000) : action ? actionPrompts[action] : undefined;
   if (!systemPrompt || !text?.trim()) {
     return Response.json({ error: '缺少参数' }, { status: 400 });
@@ -39,7 +44,7 @@ export async function POST(req: NextRequest) {
       model: process.env['OPENAI_MODEL'] ?? 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: text },
+        { role: 'user', content: userContent ?? '' },
       ],
       temperature: 0.7,
     });

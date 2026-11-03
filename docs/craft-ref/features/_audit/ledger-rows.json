@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T03:16:24.065Z",
+  "generatedAt": "2026-11-03T03:20:29.227Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 909,
-    "aligned": 272,
+    "gap": 908,
+    "aligned": 273,
     "unknown": 196,
     "deliberate": 103,
     "partial": 62,
@@ -18,10 +18,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 338,
+    "P2 / gap": 337,
     "P? / gap": 226,
     "P1 / gap": 191,
-    "P2 / aligned": 168,
+    "P2 / aligned": 169,
     "P3 / gap": 154,
     "P? / unknown": 112,
     "P1 / aligned": 40,
@@ -3159,10 +3159,10 @@
       "cols": 5,
       "id": "G116",
       "official": "上下文是**结构化对象**：`{type:\"document\"|\"page\", documentId, hasChildren:\"true\"|\"false\"(字符串), subtitle, …textContent}`，且同一上下文 id **去重**（`existing.has(id) → return`）（§四）",
-      "local": "只 POST `{action, text}` 纯文本（`route.ts:23`），无 id/类型/去重",
-      "verdict": "行为不同",
+      "local": "✎ 现读（2026-11-03 第 219 批）：已对齐 — 客户端 POST 带 `context:[{type:\"document\", documentId, hasChildren:\"false\", textContent}]`（`lib/ai/context.ts` 校验形状并把 `hasChildren` 归一为字符串、按 documentId 去重），route 用 `parseAiContext`/`renderContextPrompt` 把上下文块拼进 user 消息；本地无多文档页上下文，`type:\"page\"` 已支持解析但客户端只发 document",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

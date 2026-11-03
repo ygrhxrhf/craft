@@ -19,11 +19,13 @@ import {
 import type { CustomPrompt } from '@/lib/editor/custom-prompts';
 import { SAVED_PROMPTS_TITLE } from '@/lib/editor/custom-prompts';
 import { getCustomPrompts } from '@/actions/user/custom-prompts';
+import { contextFromDocument } from '@/lib/ai/context';
 import { clearAiHistory, recordAiHistory } from '@/lib/ai/history';
 import { promptDialog } from '@/lib/dialog/show';
 
 interface AiBubbleMenuProps {
   editor: Editor;
+  documentId?: string;
 }
 
 type AiAction = 'rewrite' | 'continue' | 'translate' | 'summarize';
@@ -47,7 +49,7 @@ interface CapturedSelection {
   action: AiAction;
 }
 
-export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
+export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
   const isOpen = useAiBubbleStore((s) => s.isOpen);
   const close = useAiBubbleStore((s) => s.close);
   const [loading, setLoading] = useState<AiAction | null>(null);
@@ -123,6 +125,15 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
     };
   }, [showPrompts]);
 
+  // G116: attach the current document as structured context, once per request.
+  const contextForRequest = useCallback(
+    () =>
+      documentId
+        ? [contextFromDocument({ documentId, textContent: editor.getText() })]
+        : [],
+    [documentId, editor]
+  );
+
   const runAction = useCallback(
     async (action: AiAction, replace: boolean) => {
       const { from, to } = editor.state.selection;
@@ -139,7 +150,7 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
         const res = await fetch('/api/ai', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action, text: selectedText }),
+          body: JSON.stringify({ action, text: selectedText, context: contextForRequest() }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -154,7 +165,7 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
         setLoading(null);
       }
     },
-    [editor]
+    [editor, contextForRequest]
   );
 
   const runWebSearch = useCallback(async () => {
@@ -230,7 +241,7 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
         const response = await fetch('/api/ai', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: item.prompt, text: selectedText }),
+          body: JSON.stringify({ prompt: item.prompt, text: selectedText, context: contextForRequest() }),
         });
         const data = await response.json();
         if (!response.ok) {
@@ -245,7 +256,7 @@ export function AiBubbleMenu({ editor }: AiBubbleMenuProps) {
         setLoading(null);
       }
     },
-    [editor]
+    [editor, contextForRequest]
   );
 
   const fillFromSelection = useCallback(

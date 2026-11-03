@@ -4468,10 +4468,11 @@
     },
     "G268": {
       "status": "partial",
-      "note": "第 191 批：三档表已落；块把手改读 handle 档（按下即拖），看板卡片仍无消费方",
+      "note": "第 209 批：三档表齐——块把手读 handle、看板卡片长按 150ms 起拖；general 由浏览器默认承担",
       "evidence": [
         "src/lib/dnd/drag-threshold.ts:27",
-        "src/components/editor/drag-handle/DragHandle.tsx:469"
+        "src/components/editor/drag-handle/DragHandle.tsx:469",
+        "src/lib/collection/kanban-drag.ts:1"
       ]
     },
     "G271": {

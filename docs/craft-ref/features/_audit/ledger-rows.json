@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T02:21:55.478Z",
+  "generatedAt": "2026-11-03T02:25:27.340Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 915,
@@ -5890,7 +5890,7 @@
       "cols": 5,
       "id": "G268",
       "official": "**起拖阈值按场景分三档**（`ui-affordances.md` §7.1）：通用＝指针 8px 位移 / 触摸 150ms 长按（容差 5ms）；另一类把手＝**无阈值按下即拖**；看板卡片＝**一律 150ms 长按不分设备**",
-      "local": "☆ 部分落地（第 250 批）＝① **三档表已落**＝纯核 `src/lib/dnd/drag-threshold.ts`：`DRAG_THRESHOLDS`（`general` 8px／150ms／容差 5、`handle` 全 0、`board` 0px／150ms）＋`pointerArmDistance`／`touchArmDelay`／`armsOnPress`／`isTouchPointer`（触摸/笔不吃位移门限，改由长按计时决定；`handle` 档两列皆 0 ⇒ 按下即拖）；② **接线一处**＝编辑器块把手原硬编码 `if (dist < 4)`（既非官方 8px、也无设备分档）⇒ 改读 `DRAG_THRESHOLDS.general.pointerDistance`，并加静态闸钉住\"必须来自表、不许再写裸 4\"；③ **仍缺**＝`board`（看板卡片一律长按）本地仍无消费方（看板视图未走该 DnD 通路）⇒ ✎ 现读（2026-11-02 第 191 批）：块拖拽把手两列改读 `handle`（`pointerArmDistance('handle')` / `touchArmDelay('handle')`，按下即拖），触摸长按计时器本身早已实现（`holdTimer` 读同一张表）",
+      "local": "☆ 部分落地（第 250 批）＝① **三档表已落**＝纯核 `src/lib/dnd/drag-threshold.ts`：`DRAG_THRESHOLDS`（`general` 8px／150ms／容差 5、`handle` 全 0、`board` 0px／150ms）＋`pointerArmDistance`／`touchArmDelay`／`armsOnPress`／`isTouchPointer`（触摸/笔不吃位移门限，改由长按计时决定；`handle` 档两列皆 0 ⇒ 按下即拖）；② **接线一处**＝编辑器块把手原硬编码 `if (dist < 4)`（既非官方 8px、也无设备分档）⇒ 改读 `DRAG_THRESHOLDS.general.pointerDistance`，并加静态闸钉住\"必须来自表、不许再写裸 4\"；③ **仍缺**＝`board`（看板卡片一律长按）本地仍无消费方（看板视图未走该 DnD 通路） ⇒ ✎ 再读（2026-11-02 第 209 批）：看板卡片已长按 150ms 起拖（`kanban-drag.ts`：150ms ＋ 8px 容差），落点按列 id 改分组值、卡片显示高亮；三档里 `handle`/`board` 都有消费方，`general` 仍由浏览器原生拖拽的默认位移承担（无显式消费者）⇒ ✎ 现读（2026-11-02 第 191 批）：块拖拽把手两列改读 `handle`（`pointerArmDistance('handle')` / `touchArmDelay('handle')`，按下即拖），触摸长按计时器本身早已实现（`holdTimer` 读同一张表）",
       "verdict": "部分落地",
       "score": "2/1",
       "status": "partial",

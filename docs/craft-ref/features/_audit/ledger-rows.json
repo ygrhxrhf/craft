@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T07:03:30.211Z",
+  "generatedAt": "2026-11-03T07:11:18.370Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 883,
-    "aligned": 297,
+    "gap": 882,
+    "aligned": 298,
     "unknown": 196,
     "deliberate": 103,
     "partial": 63,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 312,
+    "P2 / gap": 311,
     "P? / gap": 226,
-    "P2 / aligned": 193,
+    "P2 / aligned": 194,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -15556,10 +15556,10 @@
       "cols": 5,
       "id": "G1622",
       "official": "★★★★ **快捷键面板的**完整分类名册**首次读到**（第 401 批）：面板 7 个分类逐字＝**通用／文档／任务／编辑／样式／整理／合集**，末段另有一组**「在表格中」**规则（首四条逐字：清除单元格内容 `⌫`、在前面添加行 `Ctrl Shift ⏎`、添加行 `Ctrl ⏎`、在前面添加列 `Ctrl Alt ⏎`）。★ 与 `keyboard.md` 表 A–E 的**静态分类不同**：静态表按「文本样式／块操作／外壳／任务视图／表格」五分，**面板按上下文七分**（多出「样式」「整理」，且「合集」独立成类）⇒ 面板是**按编辑器上下文分组**的视图，不是静态表的子集",
-      "local": "本地无该面板（`G771`：本地帮助菜单/快捷键面板不存在）⇒ ✎ 现读（2026-11-02）更正：面板已在（设置 → 快捷键），且分类名册逐字＝通用／文档／任务／编辑／样式／整理／合集，段一层是官方那 18 段（`shortcut-panel.ts`）；仍缺「在表格中」段的四条（表格增行增列键走 `tableAxisForShortcut` 分发、不在 `KEY_BINDINGS` 里）",
+      "local": "本地无该面板（`G771`：本地帮助菜单/快捷键面板不存在）⇒ ✎ 现读（2026-11-02）更正：面板已在（设置 → 快捷键），且分类名册逐字＝通用／文档／任务／编辑／样式／整理／合集，段一层是官方那 18 段（`shortcut-panel.ts`）；✎ 现读（2026-11-03 第 249 批）：已补齐「在表格中」段四条——`TABLE_CLEAR_CELL`（清除单元格内容 ⌫）、`TABLE_ROW_BEFORE`（Ctrl/⌘-Shift-⏎）、`TABLE_ROW_AFTER`（Ctrl/⌘-⏎）、`TABLE_COLUMN_BEFORE`（Ctrl/⌘-Alt-⏎）入 `KEY_BINDINGS` 并映射到 `collections-tables`；浏览器实测「合集」页签下「在表格中」恰这四行",
       "verdict": "缺失（局部）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

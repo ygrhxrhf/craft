@@ -7114,11 +7114,13 @@
       ]
     },
     "G1622": {
-      "status": "partial",
-      "note": "第 187 批：7 类名册与「在表格中」段位已进数据层；表格四条键不在 KEY_BINDINGS，该段仍空",
+      "status": "aligned",
+      "priority": "P2",
+      "note": "快捷键面板七分类齐，「在表格中」段四条（清格/前置行/加行/前置列）已入绑定表并渲染",
       "evidence": [
-        "src/lib/editor/shortcut-panel.ts:32",
-        "src/lib/editor/shortcut-panel.ts:92"
+        "src/lib/editor/shortcut-panel.ts:30",
+        "src/lib/editor/keymap.ts:230",
+        "src/lib/editor/shortcut-table-rows.test.ts:1"
       ]
     },
     "G803": {

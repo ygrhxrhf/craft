@@ -265,12 +265,13 @@
       "priority": "P2"
     },
     "G39": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "第 177 批现读：提示库/写作风格分析/PDF 问答/联网搜索已有；仍缺 AI 额度与清除历史",
+      "note": "提示库/写作改写/生图/联网/PDF 问答已在；设置侧新增清除 AI 历史；额度入口按 G462 有意偏差不复刻。",
       "evidence": [
-        "src/lib/editor/ai-prompts.ts:14",
-        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:345"
+        "src/lib/editor/ai-prompt-library.ts",
+        "src/lib/ai/history.ts:36",
+        "src/components/settings/AssistantPanel.tsx"
       ]
     },
     "G40": {
@@ -4031,15 +4032,14 @@
       ]
     },
     "G162": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "助手两轴禁用（用户级/按空间）与提示库管理、限额说明已落并接服务端门禁；仅差额度入口（本地无计费屏）",
+      "note": "两轴禁用、提示管理、限额说明、服务端门禁已在；额度入口按 G462 有意偏差不复刻。",
       "evidence": [
         "src/lib/ai/assistant-access.ts:1",
         "src/actions/user/assistant.ts:1",
         "src/components/settings/AssistantPanel.tsx:1",
-        "src/app/api/ai/route.ts:23",
-        "src/lib/sync/tables.ts:44"
+        "src/app/api/ai/route.ts:23"
       ]
     },
     "G163": {

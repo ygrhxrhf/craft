@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-03T08:03:43.410Z",
+  "generatedAt": "2026-11-03T08:11:07.920Z",
   "total": 1614,
   "status": {
-    "aligned": 575,
+    "aligned": 577,
     "nonaction": 512,
-    "partial": 236,
+    "partial": 234,
     "deliberate": 165,
     "gap": 106,
     "unreachable": 20
@@ -17,12 +17,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 260,
+    "P2 / aligned": 262,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
     "P1 / nonaction": 89,
-    "P2 / partial": 86,
+    "P2 / partial": 84,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P2 / deliberate": 73,
@@ -1134,10 +1134,10 @@
         "cols": 5,
         "id": "G39",
         "official": "AI：提示库、写作风格分析、PDF 问答、AI 额度与清除历史（`assistant.*` 223 条）",
-        "local": "✎ 现读（2026-11-03 第 216 批）：已有改写/续写/翻译/总结、生图、提示库（`ai-prompt-library.ts`＝34 条官方模板）、联网搜索、PDF 问答；仍缺 AI 额度入口与设置侧清除历史（浮层里有「清除历史」一枚）",
-        "verdict": "局部",
+        "local": "✎ 现读（2026-11-03 第 257 批）：提示库（34 条官方模板）、改写/续写/翻译/总结、生图、联网搜索、PDF 问答已在；设置侧补上「AI 历史 → 清除历史」（`clearAiHistory` 清本机 `craft.ai.history`）。AI 额度入口按 G462 的有意偏差口径不复刻（本地无订阅/计费体系）",
+        "verdict": "已对齐（额度＝有意偏差）",
         "score": "2/2",
-        "status": "partial",
+        "status": "aligned",
         "scoreParsed": {
           "impact": 2,
           "cost": 2,
@@ -1145,12 +1145,13 @@
         },
         "conflict": null,
         "priority": "P2",
-        "note": "第 177 批现读：提示库/写作风格分析/PDF 问答/联网搜索已有；仍缺 AI 额度与清除历史",
+        "note": "提示库/写作改写/生图/联网/PDF 问答已在；设置侧新增清除 AI 历史；额度入口按 G462 有意偏差不复刻。",
         "evidence": [
-          "src/lib/editor/ai-prompts.ts:14",
-          "src/components/editor/bubble-menu/AiBubbleMenu.tsx:345"
+          "src/lib/editor/ai-prompt-library.ts",
+          "src/lib/ai/history.ts:36",
+          "src/components/settings/AssistantPanel.tsx"
         ],
-        "baseStatus": "gap"
+        "baseStatus": "deliberate"
       }
     ]
   },
@@ -1307,10 +1308,6 @@
       4
     ],
     [
-      "三点一三、设置与账户追加（来自 `settings.md`，静态证据 +",
-      4
-    ],
-    [
       "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
       4
     ],
@@ -1324,6 +1321,10 @@
     ],
     [
       "三点八九、第 77 批（★★★ 行为级实测：样式落库形状／四频率 rep",
+      4
+    ],
+    [
+      "三点九三、第 79 批·下半 B79B（2026-09-28 07:33",
       4
     ]
   ]

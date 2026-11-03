@@ -18,6 +18,7 @@ import {
   SPACE_ASSISTANT_DESC,
 } from '@/lib/ai/assistant-access';
 import { operationFailed } from '@/lib/errors/alert-copy';
+import { clearAiHistory } from '@/lib/ai/history';
 import {
   CREATE_CUSTOM_PROMPT,
   CUSTOM_PROMPT_LIMIT_TOAST_MS,
@@ -210,6 +211,24 @@ export function AssistantPanel() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* G39 `clear.history`：AI 结果只存在本机，设置内清空即删掉全部本地历史。 */}
+      <div className="flex items-center justify-between gap-4 rounded-xl bg-foreground/4 px-4 py-3">
+        <div className="min-w-0">
+          <div className="text-[13px] font-medium">AI 历史</div>
+          <p className="mt-0.5 text-[12px] text-foreground/55">清除保存在此设备上的全部 AI 结果。</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            clearAiHistory(window.localStorage);
+            toast.add({ type: 'success', title: '已清除 AI 历史' });
+          }}
+          className="shrink-0 rounded-md border border-border px-3 py-1 text-[12px] transition-colors hover:bg-foreground/6"
+        >
+          清除历史
+        </button>
       </div>
     </div>
   );

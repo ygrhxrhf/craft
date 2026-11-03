@@ -101,7 +101,7 @@
 | G36 | 已对齐 | 1/2 | 离线语义可见：「离线更新于 [0]」、离线禁用表情/评论（R13） | 部分落地（第 220 批）＝① 离线保存徽标已清＝纯核 src/lib/offline/save-status.ts（offli | 离线徽标三态与离线表情门禁已落；在线文案归 G1528，离线评论门禁为有意偏差；`src/lib/offline/save-status.ts`、`src/components/editor/DocumentEditor.tsx:105`、`src/components/editor/comments/offline-reaction.ts` |
 | G37 | 已对齐 | 1/2 | 移动端抽屉多档吸附（data-vaul-snap-points 17 处） | 现读（2026-11-02）：ui/sheet.tsx 支持 snapPoints（规范化/最近档/拖拽吸附，lib/ui/sn | 第 177 批现读：Sheet 支持 snapPoints（规范化/最近档/拖拽吸附），表格视图与右侧栏两处底部 Sheet 已传三档；`src/lib/ui/snap-points.ts:1`、`src/components/ui/sheet.tsx:45`、`src/app/(app)/collections/[id]/TableView.tsx:252`、`src/components/editor/tabs/RightPanel.tsx:159` |
 | G38 | 已对齐 | 1/1 | 未发布文档作者/展示控制（toolbar.author.hidden/shown） | 已清（第 219 批）＝官方把它归在发布面板的 toolbar.visual.options 五组之一（publishing.m | 无需动作；抽检证据见台账行 |
-| G39 | 部分落地 | 2/2 | AI：提示库、写作风格分析、PDF 问答、AI 额度与清除历史（assistant.* 223 条） | 现读（2026-11-03 第 216 批）：已有改写/续写/翻译/总结、生图、提示库（ai-prompt-library.ts | 第 177 批现读：提示库/写作风格分析/PDF 问答/联网搜索已有；仍缺 AI 额度与清除历史；`src/lib/editor/ai-prompts.ts:14`、`src/components/editor/bubble-menu/AiBubbleMenu.tsx:345` |
+| G39 | 已对齐 | 2/2 | AI：提示库、写作风格分析、PDF 问答、AI 额度与清除历史（assistant.* 223 条） | 现读（2026-11-03 第 257 批）：提示库（34 条官方模板）、改写/续写/翻译/总结、生图、联网搜索、PDF 问答已 | 提示库/写作改写/生图/联网/PDF 问答已在；设置侧新增清除 AI 历史；额度入口按 G462 有意偏差不复刻；`src/lib/editor/ai-prompt-library.ts`、`src/lib/ai/history.ts:36`、`src/components/settings/AssistantPanel.tsx` |
 
 ## 七、建议批次
 
@@ -170,11 +170,11 @@
 | 5 | 三点一一一四、第 175 批新登记的官方行为（2026-10-09 机器 |
 | 4 | 三点一〇、协同与权限追加（来自 collab.md，静态证据） |
 | 4 | 三点一一、发布与共享控制中心追加（来自 publishing.md， |
-| 4 | 三点一三、设置与账户追加（来自 settings.md，静态证据 + |
 | 4 | 三点五一、第 42 批（集合输入层 + 白板预览本体，model.md |
 | 4 | 三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe |
 | 4 | 三点八五、第 74 批（★★★ 静态补账：撤销计步器的生成/消费 ＋ 提 |
 | 4 | 三点八九、第 77 批（★★★ 行为级实测：样式落库形状／四频率 rep |
+| 4 | 三点九三、第 79 批·下半 B79B（2026-09-28 07:33 |
 
 ## 十一、不进复刻 backlog
 

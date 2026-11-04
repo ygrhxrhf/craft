@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-04T07:42:16.640Z",
+  "generatedAt": "2026-11-04T07:49:47.900Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 836,
+    "gap": 835,
     "aligned": 341,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
-    "nonaction": 57,
+    "nonaction": 58,
     "unreachable": 16
   },
   "priorityDistribution": {
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 266,
+    "P2 / gap": 265,
     "P2 / aligned": 236,
     "P? / gap": 226,
     "P1 / gap": 191,
@@ -34,8 +34,8 @@
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
     "P? / nonaction": 23,
+    "P2 / nonaction": 20,
     "P? / aligned": 19,
-    "P2 / nonaction": 19,
     "P1 / partial": 16,
     "P3 / nonaction": 14,
     "P3 / partial": 10,
@@ -15104,10 +15104,10 @@
       "cols": 5,
       "id": "G776",
       "official": "★★★ **【本条已于第 87 批·下半改判作废：读到渲染源码后确认官方只有**一种**结构——所有行都是 `span.rowName`／`span.rowAlternative`（纯文案）＋兄弟 `span.keys` 挂多个 `<kbd>`，主行与别名行的 `innerText` **同样无分隔**；所谓\"两种序列化风格\"是我第 85 批两条读取路径不对称造成的**仪器效应**。\"数键帽只准数 kbd 元素\"的结论保留且更强 ⇒ 见 G796】** ★★★ **键位模型恒等式二：`kbd` 计数可完全重算，代价是发现别名行用了第二种序列化风格**。逐类重算\"主行键帽＋别名键帽\"与屏上 `<kbd>` 元素数比对，**七类全等**（16／11／34／27／80／13／38＝219；主行 208＋别名 11），平均键帽／主行 `样式` 2.81 最高、`通用` 2.00 最低。⇒ ★ 但**主行与别名行的字符串形状不同**：主行 `Ctrl+Shift+,` 带 `+`，别名行只有 innerText（`或者CtrlP`、`或者Ctrl/`、`或者CtrlE`、`或者Shift⏎`）**无分隔符** ⇒ 按 `+` 切会把 6 条别名里的 5 条双键各少数 1 枚（219→214），差值逐类吻合（通用 1／任务 1／样式 2／合集 1，其余 0）。⇒ ☆ **按字符走查同样错**（`Delete` 被拆成 6 枚）⇒ 判\"这行几枚键帽\"唯一可靠＝数 `<kbd>` 元素，任何由文本反推的计数都要声明切分法",
-      "local": "本地键位显示层是**整串文本、不拆枚**：`src/components/ui/command.tsx:173-188`（`CommandShortcut`＝`<span data-slot=\"command-shortcut\">`，className 里直接吃 children）与 `src/components/ui/dropdown-menu.tsx:235-249`、`src/components/ui/context-menu.tsx:238` 同形；全仓 `<kbd>` 只有两处硬编码单枚 —— `src/components/sidebar/SidebarHeader.tsx:28-30` 与 `src/components/search/CommandPalette.tsx:205` ⇒ 本地既无\"逐枚键帽\"组件、也无多键数据模型 ⇒ 复刻面板时必须先把键位存成 `string[]` 再渲染，否则数不出 219 这种口径，也无法做别名行",
-      "verdict": "行为不同（整串 vs 逐枚）＋ 缺失（无 `<kbd>` 组件族）",
+      "local": "本地键位显示层是**整串文本、不拆枚**：`src/components/ui/command.tsx:173-188`（`CommandShortcut`＝`<span data-slot=\"command-shortcut\">`，className 里直接吃 children）与 `src/components/ui/dropdown-menu.tsx:235-249`、`src/components/ui/context-menu.tsx:238` 同形；全仓 `<kbd>` 只有两处硬编码单枚 —— `src/components/sidebar/SidebarHeader.tsx:28-30` 与 `src/components/search/CommandPalette.tsx:205` ⇒ 本地既无\"逐枚键帽\"组件、也无多键数据模型 ⇒ 复刻面板时必须先把键位存成 `string[]` 再渲染，否则数不出 219 这种口径，也无法做别名行 ⇒ ✎ 现读（2026-11-04 第 293 批）：上一段是**陈旧读数**——本地现在就是**多键模型＋逐枚 `<kbd>`**：`src/lib/editor/keymap.ts` 的 `capParts(binding, platform): string[]` 产出逐枚键帽，`ShortcutsPanel.tsx` 用它 `caps.map(cap => <kbd>)` 一枚一个 ✓ ⇒ 本行保留的那条判据（\"数键帽只准数 kbd 元素、别按 `+` 切文本\"）在本地可直接套用；★ 且本行官方句开头已由第 87 批·下半**自我作废**（\"两种序列化风格\"是仪器效应）⇒ 本行只剩判据面；别名行（官方 11 枚别名键帽）仍缺，继续记在 `G771`／`G755`",
+      "verdict": "行为不同（整串 vs 逐枚）＋ 缺失（无 `<kbd>` 组件族） ⇒ 第 293 批：多键模型与逐枚 kbd 都已落、主问已作废 ⇒ 不适用（口径/判据行）",
       "score": "P2",
-      "status": "gap",
+      "status": "nonaction",
       "scoreParsed": {
         "impact": 2,
         "cost": null,

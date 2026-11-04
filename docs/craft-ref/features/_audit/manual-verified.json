@@ -7055,10 +7055,11 @@
       ]
     },
     "G776": {
-      "status": "partial",
-      "note": "本地整串渲染进一枚 kbd，未按逐枚键帽拆 span.keys",
+      "status": "nonaction",
+      "note": "第 293 批改判（陈旧读数＋主问已作废）：本地现在就是多键模型＋逐枚 kbd——keymap.ts 的 capParts(binding, platform): string[] 产出逐枚键帽，ShortcutsPanel 用它 caps.map(cap => <kbd>) 一枚一个 ⇒ 本行保留的判据（数键帽只准数 kbd 元素、别按 + 切文本）在本地可直接套用；且本行官方句开头已被第 87 批·下半自我作废（两种序列化风格是仪器效应）⇒ 只剩判据面。别名行（官方 11 枚别名键帽）仍缺，继续记在 G771/G755。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:57"
+        "src/lib/editor/keymap.ts:136",
+        "src/components/settings/ShortcutsPanel.tsx:60"
       ]
     },
     "G778": {

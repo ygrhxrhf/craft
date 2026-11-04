@@ -7256,10 +7256,14 @@
       ]
     },
     "G812": {
-      "status": "partial",
-      "note": "栈语义有纯实现，无 44 处注册点与全局分派底座",
+      "status": "aligned",
+      "note": "第 291 批改判（陈旧读数）：「无焦点栈、栈式分派语义缺位」不成立——本地已有全局焦点栈 src/lib/focus/focus-stack.ts，API 语义与官方一一对应：push（同名先去重＝upsert）、aboveId、disabled、allowPropagation、ids()、自顶向下 dispatch ＋顶层未命中即断链的 break 规则，单测 9 条；注册点＝设置弹层、命令式确认框、集合三枚单元格弹层（第 285 批）＋ FocusStackBridge 挂 document capture 派发（屏上实测一次 Esc 只关一层，第 282 批）。与官方 44 处 pushIntoFocus 的差是弹层种类数的差（本地弹层更少），全局和弦在另一条 KeyContextStack（G1478）＋capture 分发（G489）＝载体差异已在那两行登记；可观察面一致。",
       "evidence": [
-        "src/lib/editor/key-context-stack.ts:21"
+        "src/lib/focus/focus-stack.ts:25",
+        "src/lib/focus/focus-stack.ts:56",
+        "src/components/focus/FocusStackBridge.tsx:21",
+        "src/lib/focus/focus-stack.test.ts:20",
+        "src/components/collection/cell-editor-escape.ts:15"
       ]
     },
     "G813": {

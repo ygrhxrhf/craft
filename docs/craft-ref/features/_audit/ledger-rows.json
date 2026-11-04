@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T03:52:17.800Z",
+  "generatedAt": "2026-11-04T04:21:28.192Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 847,
-    "aligned": 330,
+    "gap": 845,
+    "aligned": 332,
     "unknown": 194,
     "deliberate": 105,
     "partial": 66,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 277,
+    "P2 / gap": 275,
+    "P2 / aligned": 227,
     "P? / gap": 226,
-    "P2 / aligned": 225,
     "P1 / gap": 191,
     "P3 / gap": 153,
     "P? / unknown": 112,
@@ -14672,10 +14672,10 @@
       "cols": 5,
       "id": "G752",
       "official": "★ **官方弹层是栈，`Escape` 只弹一层**：面板开着时按 Esc → `[role=dialog]` 消失、DOM 从 `133,990` 减到 `128,211`，但下层帮助菜单的 `role=menu` 与 6 个 `menuitem` **仍在 DOM 且完全可见**（`display:flex`、`visibility:visible`、`opacity:1`、`pointer-events:auto`、rect `482,44 278×204`）⇒ 关栈顶会把下一层**回显**，不是连带关闭（V64）",
-      "local": "`grep -rn \"Escape\" src/components` 命中九处**各自独立**的关法：`src/components/settings/SettingsModal.tsx:95`（`if (event.key === 'Escape') close()`）、`src/components/editor/extensions/block-link-menu.tsx:130`、`src/components/editor/slash-menu/SlashCommandMenu.tsx:16`（注释写明\"Arrow／Enter／Escape 由 suggestion 插件处理\"）等；★ 该目录里 `layer` 与 `zIndex` 都查不到 ⇒ 全仓**没有**共享浮层栈或弹层序号，两层叠着时各自监听器都会响应，一次 Esc **把两层一起关掉**",
-      "verdict": "行为不同（本地缺栈语义，Esc 关多层）",
+      "local": "`grep -rn \"Escape\" src/components` 命中九处**各自独立**的关法：`src/components/settings/SettingsModal.tsx:95`（`if (event.key === 'Escape') close()`）、`src/components/editor/extensions/block-link-menu.tsx:130`、`src/components/editor/slash-menu/SlashCommandMenu.tsx:16`（注释写明\"Arrow／Enter／Escape 由 suggestion 插件处理\"）等；★ 该目录里 `layer` 与 `zIndex` 都查不到 ⇒ 全仓**没有**共享浮层栈或弹层序号，两层叠着时各自监听器都会响应，一次 Esc **把两层一起关掉** ⇒ ✎ 现读（2026-11-04 第 282 批）：上一段是**陈旧读数**——本地已有全局焦点栈 `src/lib/focus/focus-stack.ts`（自顶向下派发、顶层未命中且 `allowPropagation` 为假即截断）＋ `FocusStackBridge` 挂 document capture，`SettingsModal`／`DialogHost` 各自 `focusStack.push`（G478/G491 那批落的）。本批补上缺的那一环：**面板打开时焦点原本留在帮助菜单里** ⇒ Esc 撞上 `eventInNestedPopup` 旁路、栈根本不派发（实测一次 Esc 两层都不动）；把面板挂载即把焦点放进**第一枚分类按钮**（＝官方默认落点）后实测：Esc ⇒ 事件被 `preventDefault`、面板消失、`dialog` 2→1、**`menu:1`／`menuitem:6` 仍在**，且菜单 `display:block`／`visibility:visible`／`opacity:1`／`128×236` 完全可见 ⇒ 关栈顶会把下一层**回显**，不是连带关闭",
+      "verdict": "已对齐",
       "score": "P2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": null,
@@ -15374,10 +15374,10 @@
       "cols": 5,
       "id": "G791",
       "official": "★☆ **关面板（`Close` 按钮）不关下层帮助菜单 ⇒ 还原复核口径要加两项**。程序点 `Close` 关掉 dialog 之后立刻读角色计数，得到 `menu:1`、`menuitem:6`、`group:1` ⇒ **G761 的\"关一层露一层\"在 `Close` 通路下同样成立**（此前只在 `Escape` 通路观测过），该残留菜单一直挂到 `reload` 才消失。⇒ 还原复核不能只看 `dialog===0`",
-      "local": "本地弹层走 `src/components/ui/dialog.tsx:18-19`（`DialogPortal`）、菜单在 `src/components/ui/dropdown-menu.tsx`／`context-menu.tsx`（各自独立开关，无堆叠管理 ⇒ 承 G761 本地九处 Esc 独立的旧账）⇒ 本地同样缺\"关一层露一层\"的栈语义。★ **可执行口径**：每次还原复核必须同时报 `dialog`／`menu`／`group`／`menuitem` 四个计数，全 0 才算干净",
-      "verdict": "缺失（弹层栈语义）＋ 判据（复核口径）",
+      "local": "本地弹层走 `src/components/ui/dialog.tsx:18-19`（`DialogPortal`）、菜单在 `src/components/ui/dropdown-menu.tsx`／`context-menu.tsx`（各自独立开关，无堆叠管理 ⇒ 承 G761 本地九处 Esc 独立的旧账）⇒ 本地同样缺\"关一层露一层\"的栈语义。★ **可执行口径**：每次还原复核必须同时报 `dialog`／`menu`／`group`／`menuitem` 四个计数，全 0 才算干净 ⇒ ✎ 现读（2026-11-04 第 282 批）：上一段\"无堆叠管理\"是**陈旧读数**——本地已有 `focusStack`＋`FocusStackBridge`（见 G752 的更正），且帮助菜单点「快捷键」后**菜单本来就不关**。实测（照本行的四计数口径）：菜单开着（`menu:1`／`menuitem:6`）点「快捷键」⇒ 面板开、菜单仍在；点面板的 Close ⇒ `dialog` 2→1、面板消失、**`menu:1`／`menuitem:6` 原样留着**（与官方读数同数）⇒ `Close` 通路同样只关一层。前提件＝面板挂载即把焦点放进第一枚分类按钮（否则 Esc 通路会被嵌套弹层旁路吃掉，G752）",
+      "verdict": "已对齐",
       "score": "P2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": null,

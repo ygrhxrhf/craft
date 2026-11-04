@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 
 import { KEY_BINDINGS, capParts, type KeyBinding } from '@/lib/editor/keymap';
 import {
@@ -30,6 +30,17 @@ export function ShortcutsPanel() {
   const narrow = useIsMobile();
   const [active, setActive] = useState<PanelTabId>(PANEL_TABS[0].id);
   const view = panelView(KEY_BINDINGS);
+  const firstCategoryRef = useRef<HTMLButtonElement | null>(null);
+
+  /**
+   * G752/G782：面板一打开，焦点就落进**第一枚分类按钮**（官方的默认落点＝第一个分类）。
+   * 这一步还决定 Escape 归谁——焦点在面板里，全局焦点栈看到的栈顶就是面板，
+   * 于是只关面板、下面那层帮助菜单原样留着；焦点若还留在帮助菜单里，Esc 会走
+   * Base UI 的嵌套弹层旁路（`eventInNestedPopup`），面板反而关不掉（实测）。
+   */
+  useEffect(() => {
+    firstCategoryRef.current?.focus();
+  }, []);
 
   const renderRows = (rows: KeyBinding[]) => (
     <ul className="mt-2 space-y-1">
@@ -102,6 +113,7 @@ export function ShortcutsPanel() {
       {PANEL_TABS.map((tab) => (
         <button
           key={tab.id}
+          ref={tab.id === PANEL_TABS[0].id ? firstCategoryRef : undefined}
           type="button"
           aria-current={active === tab.id ? 'true' : undefined}
           data-testid={`shortcuts-category-${tab.id}`}

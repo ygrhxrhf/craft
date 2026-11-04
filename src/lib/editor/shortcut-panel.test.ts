@@ -149,4 +149,13 @@ describe('the shortcuts rail navigation (G784/G782/G789)', () => {
     expect(body).not.toContain("'Space'");
     expect(body).not.toContain('ArrowLeft');
   });
+
+  // G752：面板一打开焦点就落进第一枚分类按钮——焦点在哪决定 Esc 归谁（焦点在面板里，
+  // 全局焦点栈的栈顶就是面板 ⇒ 只关面板、下面的帮助菜单原样留着）。
+  it('takes focus into the first category as soon as the panel opens', () => {
+    const panel = readFileSync(join(process.cwd(), 'src/components/settings/ShortcutsPanel.tsx'), 'utf8');
+    expect(panel).toContain('firstCategoryRef.current?.focus()');
+    expect(panel).toContain('ref={tab.id === PANEL_TABS[0].id ? firstCategoryRef : undefined}');
+    expect(panel).toContain('useEffect(() => {');
+  });
 });

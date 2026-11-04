@@ -37,6 +37,7 @@ import {
 } from '@/lib/editor/format-commands';
 import { MIXED_LABEL, type TriState } from '@/lib/editor/format-presence';
 import { PANEL_HEADING_SHORT_LABEL, TEXT_STYLE_LABELS, headingLabel } from '@/lib/editor/semantic-levels';
+import { GRADIENT_PRESETS, presetValue } from '@/lib/editor/gradient-highlight';
 import { getFontStack } from '../themes/page-style';
 
 interface FormatTabProps {
@@ -434,6 +435,34 @@ export function FormatTab({ editor }: FormatTabProps) {
               onClick={() => editor.chain().focus().setColor(color).run()}
             />
           ))}
+        </div>
+      </section>
+      {/* G532：高亮是 90° 线性渐变（官方线格式 `色1;色2;…;g`）。四档预设；单色档仍走工具条那枚开关。 */}
+      <section>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">渐变高亮</h4>
+        <div className="grid grid-cols-4 gap-2">
+          {GRADIENT_PRESETS.map((preset) => {
+            const value = presetValue(preset.colors);
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                title={preset.label}
+                aria-label={`渐变高亮 ${preset.label}`}
+                aria-pressed={editor.isActive('gradientHighlight', { value })}
+                onClick={() => editor.chain().focus().setHighlightGradient([...preset.colors]).run()}
+                className={cn(
+                  'h-7 rounded-md border border-foreground/10 transition-transform hover:scale-105',
+                  editor.isActive('gradientHighlight', { value }) && 'ring-2 ring-craft-accent ring-offset-1',
+                )}
+                style={{
+                  backgroundImage: `linear-gradient(90deg, ${preset.colors
+                    .map((name) => `var(--editor-${name})`)
+                    .join(', ')})`,
+                }}
+              />
+            );
+          })}
         </div>
       </section>
       {/* G208: 装饰（焦点 / 块）——两族各七色，另有一枚清除。 */}

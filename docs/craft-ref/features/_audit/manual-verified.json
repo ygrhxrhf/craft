@@ -5915,10 +5915,13 @@
       ]
     },
     "G532": {
-      "status": "partial",
-      "note": "可开单色高亮；另有固定六色渐变 mark，但无任意 colorStops",
+      "status": "aligned",
+      "note": "第 303 批：高亮渐变按官方线格式落地——`色1;色2;…;g` 分号分隔＋末尾 g 标记；色标百分比按索引均分（i×100/(n−1)）；色标支持明/暗一对；单色标退化成普通色、全脏回 null、部分脏只丢坏段（纯函数 7 条测试钉住）。渲染出 90° linear-gradient，屏上 computed backgroundImage 实测 rgb 渐变已生效；格式面板新增四档渐变预设。本地偏差：官方每个色标自带明暗两值，本地只有一枚 --editor-* token、由 .dark 整体换值承担同一效果",
       "evidence": [
-        "src/components/editor/extensions/gradient-highlight.tsx:14"
+        "src/lib/editor/gradient-highlight.ts:63",
+        "src/lib/editor/gradient-highlight.test.ts:15",
+        "src/components/editor/extensions/gradient-highlight.tsx:49",
+        "src/components/editor/tabs/FormatTab.tsx:442"
       ]
     },
     "G533": {

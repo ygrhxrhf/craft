@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-04T06:00:43.497Z",
+  "generatedAt": "2026-11-04T06:14:29.296Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 840,
+    "gap": 839,
     "aligned": 338,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
-    "nonaction": 56,
+    "nonaction": 57,
     "unreachable": 16
   },
   "priorityDistribution": {
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 270,
+    "P2 / gap": 269,
     "P2 / aligned": 233,
     "P? / gap": 226,
     "P1 / gap": 191,
@@ -35,7 +35,7 @@
     "P1 / unknown": 23,
     "P? / nonaction": 23,
     "P? / aligned": 19,
-    "P2 / nonaction": 18,
+    "P2 / nonaction": 19,
     "P1 / partial": 16,
     "P3 / nonaction": 14,
     "P3 / partial": 10,
@@ -14942,10 +14942,10 @@
       "cols": 5,
       "id": "G767",
       "official": "★★★ **`合集` 行数 18 vs 17 结案**：18 个 `_row_dm375_102` 里**第 13 行不是命令行** —— 它的第一个子是 `SPAN._rowAlternative_dm375_118`（文案 `或者`）而不是 `_rowName_dm375_110` ⇒ 它是上一条 `添加一行 = Ctrl ⏎` 的**别名键位行** `Shift ⏎`。⇒ **行容器数 ≠ 命令数**：`合集`＝**17 条命令／18 行／38 枚键帽**；逐行形状（`kids` 两枚：名称 span ＋ `SPAN._keys_dm375_124`）见 `_harvest/b84-e-rows.txt`",
-      "local": "本地若复刻面板：**行节点要分\"主行\"与\"别名行\"两种形状**（官方用不同子元素 class 区分，而不是同一形状换文案）⇒ 自家审计脚本数\"命令数\"必须按主行计；本轮 `grep -rln 'keyboard' src` 无命中 ⇒ 本地无面板亦无相关 e2e，此项属纯新增面",
-      "verdict": "缺失（面板）＋ 判据（计数口径）",
+      "local": "本地若复刻面板：**行节点要分\"主行\"与\"别名行\"两种形状**（官方用不同子元素 class 区分，而不是同一形状换文案）⇒ 自家审计脚本数\"命令数\"必须按主行计；本轮 `grep -rln 'keyboard' src` 无命中 ⇒ 本地无面板亦无相关 e2e，此项属纯新增面 ⇒ ✎ 现读（2026-11-04 第 289 批）：上一段\"本地无面板\"是**陈旧读数**——第 187 批起本地就有设置 → 快捷键面板（`ShortcutsPanel.tsx`：7 枚分类钮 → 分类标题 → 段标题 → 行，逐枚 `<kbd>`），且本地行是**单一形状**（没有别名行）⇒ 官方那条\"行容器数 ≠ 命令数\"的计数判据在本地**没有落点**（本地不会数出多于命令的行）；别名行这一形状的缺口由 `G771`／`G755` 继续跟（行数 29 vs 89 与 `_rowAlternative_` 都记在那两行）＝本行只登记官方侧的行数测量与计数口径",
+      "verdict": "不适用（判据行；本地面板已落、行数＝命令数）｜第 289 批",
       "score": "P2",
-      "status": "gap",
+      "status": "nonaction",
       "scoreParsed": {
         "impact": 2,
         "cost": null,

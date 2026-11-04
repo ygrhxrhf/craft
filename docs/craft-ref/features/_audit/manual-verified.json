@@ -7028,10 +7028,12 @@
       ]
     },
     "G767": {
-      "status": "partial",
-      "note": "本地一行一枚 kbd、无双行别名结构",
+      "status": "nonaction",
+      "note": "第 289 批改判（判据/仪器类）：本行登记的是官方面板的行数测量与计数口径——合集 18 个行容器里第 13 行是别名键位行（SPAN._rowAlternative_，文案「或者」），所以行容器数 ≠ 命令数（17 命令/18 行/38 键帽）。本地面板第 187 批就已落地（7 分类钮 → 分类标题 → 段标题 → 行，逐枚 kbd），且本地行是单一形状、没有别名行 ⇒ 这条计数判据在本地没有落点（本地不会数出多于命令的行）。旧注「本地无面板」是陈旧读数；别名行形状的缺口由 G771/G755 继续跟。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:50"
+        "src/components/settings/ShortcutsPanel.tsx:113",
+        "src/lib/editor/shortcut-panel.ts:70",
+        "docs/craft-ref/features/_harvest/b84-e-rows.txt"
       ]
     },
     "G771": {

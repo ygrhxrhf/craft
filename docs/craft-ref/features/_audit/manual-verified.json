@@ -9385,10 +9385,12 @@
       ]
     },
     "G1471": {
-      "status": "partial",
-      "note": "单枚真手柄（悬停显隐），无零内容热区对",
+      "status": "aligned",
+      "note": "第 287 批改判：本行两条产出都已落地——① 指代改判（G1157／G1187 行末那两枚 ✎「热区属性名不是把手本体」）第 181 批就挂好了；② 本地可观察面＝悬停露出真按钮把手（第 277 批起 general 档还接了起拖闸门），与官方「零内容热区＋祖先 opacity 淡入」是同一屏上行为的两种载体 ⇒ 按载体差异收口，不为对齐载体硬造热区。行内的 10 枚/250×28/opacity 门等几何是官方侧一手测量，本地无对应面也不需要。",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:427"
+        "src/components/editor/drag-handle/DragHandle.tsx:126",
+        "src/components/editor/drag-handle/DragHandle.tsx:301",
+        "docs/craft-ref/features/gap.md"
       ]
     },
     "G1472": {

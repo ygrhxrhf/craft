@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-04T09:19:20.790Z",
+  "generatedAt": "2026-11-04T09:36:49.036Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 830,
+    "gap": 829,
     "aligned": 345,
     "unknown": 193,
     "deliberate": 105,
-    "partial": 67,
+    "partial": 68,
     "nonaction": 58,
     "unreachable": 16
   },
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 260,
+    "P2 / gap": 259,
     "P2 / aligned": 240,
     "P? / gap": 226,
     "P1 / gap": 191,
@@ -29,7 +29,7 @@
     "P3 / aligned": 40,
     "P? / deliberate": 33,
     "P2 / unknown": 33,
-    "P2 / partial": 29,
+    "P2 / partial": 30,
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
@@ -2248,18 +2248,17 @@
     {
       "line": 1199,
       "section": "三点五、P2 追加（来自 `modules.md` 模块清单，静态证据）",
-      "cols": 6,
+      "cols": 5,
       "id": "G64",
       "official": "**文档导出为分享卡片图片**，可配字体大小（大/标准/小）与页面大小（适应文档/横排/竖排/正方形）；私密链接可开评论（`panels.md` §三）",
-      "local": "✎ 现读（2026-11-02）：InfoTab 导出面板已有图片两段配置——字体大小三档（临时改 `<html>` 根字号，rem 正文随之缩放）与页面大小四档（`shareImageCanvas` 只加画布高度不裁内容），标签逐字取 `blockdetails.share.image.panel.config.*`；仍缺「私密链接可开评论」",
-      "verdict": "局部",
-      "score": "2/2",
-      "extra5": "☆ 原判（2026-10-31 现读后作废）＝无图片导出与版式配置（第 177 批补版式）",
-      "status": "gap",
+      "local": "✎ 现读（2026-11-02）：InfoTab 导出面板已有图片两段配置——字体大小三档（临时改 `<html>` 根字号，rem 正文随之缩放）与页面大小四档（`shareImageCanvas` 只加画布高度不裁内容），标签逐字取 `blockdetails.share.image.panel.config.*`；仍缺「私密链接可开评论」 ⇒ ✎ 现读（2026-11-04 第 300 批）：**补上了**——纯核 `src/lib/share/comment-level.ts`（三档 `add`／`view`／`none`，前两档文案逐字取 `toolbar.visitors.add.comments`「访客可以添加评论」与 `toolbar.visitors.view.comments`「访客可以查看评论」、第三档语言包无专句；`visitorInteractionShown` 按官方 `level===\"view\"` 或 `\"add\"` 判定、`normalizeCommentLevel` 缺列落默认 `add`）＋ `ShareDialog` 的一条**枚举写通路**（`commentLevel` 不是布尔，走 `applyLocal` 的 `patch: { commentLevel }`，镜像无行时回退新 action `setShareCommentLevel`）。屏上实点分享弹层：默认「访客可以添加评论」⇒ 点「切换」变「访客可以查看评论」，库里 `document_shares.commentLevel` 回读 `view` ⇒ 再切两次回到默认后把库恢复成 `add`（回读确认）",
+      "verdict": "已对齐",
+      "score": "2/2（☆ 原判（2026-10-31 现读后作废）＝无图片导出与版式配置，第 177 批补版式）",
+      "status": "partial",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
-        "raw": "2/2"
+        "raw": "2/2（☆ 原判（2026-10-31 现读后作废）＝无图片导出与版式配置，第 177 批补版式）"
       },
       "conflict": null,
       "priority": "P2"

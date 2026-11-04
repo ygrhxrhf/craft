@@ -3397,11 +3397,14 @@
       ]
     },
     "G64": {
-      "status": "partial",
-      "note": "第 177 批补字体大小（大/标准/小）与页面大小（适应/横排/竖排/正方形）；仍缺私密链接评论开关",
+      "status": "aligned",
+      "note": "第 300 批补齐最后一项「私密链接可开评论」：纯核 share/comment-level.ts 三档（add／view／none，前两档文案逐字 toolbar.visitors.add.comments「访客可以添加评论」与 toolbar.visitors.view.comments「访客可以查看评论」，第三档语言包无专句；visitorInteractionShown 按官方 level===\"view\"||\"add\" 判定、缺列落默认 add）＋ ShareDialog 一条枚举写通路（applyLocal 的 patch:{commentLevel}，镜像无行回退新 action setShareCommentLevel）。屏上实点分享弹层：默认「访客可以添加评论」⇒ 切换 ⇒「访客可以查看评论」，库里 commentLevel 回读 view；再切两次回默认并把库恢复成 add（回读确认）。导出为分享卡片图片那一半承第 177 批（字体三档＋页面四档）。",
       "evidence": [
-        "src/lib/editor/share-image-config.ts:1",
-        "src/components/editor/tabs/InfoTab.tsx:237"
+        "src/lib/share/comment-level.ts:1",
+        "src/lib/share/comment-level.test.ts:1",
+        "src/components/share/ShareDialog.tsx:669",
+        "src/actions/document/share.ts:163",
+        "src/lib/editor/share-image-config.ts:1"
       ]
     },
     "G67": {

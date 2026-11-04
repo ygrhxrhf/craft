@@ -191,6 +191,23 @@ export async function setShareVisualOption(
   return await getOrCreateShare(documentId);
 }
 
+/** G64：访客评论权限三档（枚举，不是布尔）——镜像没有那一行时的回退路；有行走 `applyLocal`。 */
+export async function setShareCommentLevel(
+  documentId: string,
+  commentLevel: 'add' | 'view' | 'none',
+) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const doc = await db.orm.public.Document.first({ id: documentId });
+  if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
+
+  await db.orm.public.DocumentShare.where({ documentId }).update({ commentLevel });
+  await emitShare(db, session.user.id, documentId);
+  return await getOrCreateShare(documentId);
+}
+
 /** G38：发布页「显示作者」开关（镜像没有那一行时的回退路；有行走 `applyLocal`）。 */
 export async function setShareShowAuthor(documentId: string, showAuthor: boolean) {
   const session = await auth();

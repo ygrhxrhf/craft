@@ -29,6 +29,7 @@ import {
   setShareShowAuthor,
   setShareSlug,
   setShareVisualOption,
+  setShareCommentLevel,
   setShareExpiry,
 } from '@/actions/document/share';
 import {
@@ -41,6 +42,12 @@ import { ONLY_COLLABORATORS_LABEL, normalizeSharePermission } from '@/lib/share/
 import { ACCESS_LEVEL_COPY } from '@/lib/share/access-levels';
 import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
 import { VISUAL_OPTIONS, visualOptionStatus } from '@/lib/share/visual-options';
+import {
+  COMMENT_LEVEL_COPY,
+  normalizeCommentLevel,
+  nextCommentLevel,
+  type CommentLevel,
+} from '@/lib/share/comment-level';
 import { SEO_DESC, expiryLabel } from '@/lib/share/publishing-options';
 import {
   linkOperationDone,
@@ -76,6 +83,8 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [link, setLink] = useState<string | null>(null);
   const [isPublished, setIsPublished] = useState(false);
   const [showAuthor, setShowAuthor] = useState(true);
+  // G64：私密链接的访客评论权限三档（默认 add，与官方 commentLevel 默认一致）。
+  const [commentLevel, setCommentLevel] = useState<CommentLevel>('add');
   // G1534：visual.options 其余四组（键与 document_share 列同名）。
   const [visuals, setVisuals] = useState<Record<string, boolean>>({
     showPageTitle: true,
@@ -141,6 +150,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       setLink(`${window.location.origin}/s/${view.token}`);
       if (typeof view.isPublished === 'boolean') setIsPublished(view.isPublished);
       if (typeof view.showAuthor === 'boolean') setShowAuthor(view.showAuthor);
+      if (view.commentLevel !== undefined) setCommentLevel(normalizeCommentLevel(view.commentLevel));
       setVisuals((prev) => {
         const next = { ...prev };
         for (const key of ['showPageTitle', 'hideTableOfContents', 'hidePresentationMode', 'showWatermark', 'enableSeo', 'enableObjectLinks', 'showDuplicateAsTemplate', 'emailBasedAccessEnabled', 'hideHashTagWords'] as const) {
@@ -302,6 +312,23 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
         await getSyncManager().applyLocal({ table: 'document_share', id: shareId, patch: { expiresAt: next } });
       } else {
         await setShareExpiry(documentId, next);
+      }
+    });
+  };
+
+  /** G64：commentLevel 是枚举不是布尔 ⇒ 单独一条写通路（与视觉开关同形：镜像优先、回退 action）。 */
+  const handleCommentLevel = (next: CommentLevel) => {
+    setCommentLevel(next);
+    startTransition(async () => {
+      const shareId = await findDocumentShareId(documentId);
+      if (shareId) {
+        await getSyncManager().applyLocal({
+          table: 'document_share',
+          id: shareId,
+          patch: { commentLevel: next },
+        });
+      } else {
+        await setShareCommentLevel(documentId, next);
       }
     });
   };
@@ -639,6 +666,23 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   />
                 </div>
               ))}
+              {/* G64：「访客可以添加评论 / 访客可以查看评论」三档（commentLevel，默认 add）。
+                  官方判定 `view|add` 才显示下面这组「访客互动」，所以 none 时整组不渲染。 */}
+              <div className="mt-3 rounded-md border border-border px-3 py-2.5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm">{COMMENT_LEVEL_COPY[commentLevel].label}</p>
+                    <p className="text-xs text-muted-foreground">访客通过此链接能对评论做什么</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                    onClick={() => handleCommentLevel(nextCommentLevel(commentLevel))}
+                  >
+                    切换
+                  </button>
+                </div>
+              </div>
               {/* G1535：链接到期是独立一轴（官方 expiration.date／expire.on [0]／expire.never）。 */}
               <div className="mt-3 rounded-md border border-border px-3 py-2.5">
                 <div className="flex items-center justify-between">

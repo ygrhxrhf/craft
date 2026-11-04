@@ -11,10 +11,17 @@ import { operationFailed } from '@/lib/errors/alert-copy';
 import { confirmDialog } from '@/lib/dialog/show';
 import { getSyncManager } from '@/lib/sync-core';
 import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-reorder';
+import {
+  COLUMN_DROP_MIME,
+  columnDragState,
+  columnLocationAt,
+  columnOrderAfterLocation,
+  type AfterTableColumnLocation,
+} from '@/lib/collection/column-drop';
 import { TABLE_OVERSCAN, createVirtualizationLatch, estimateRowHeight, scheduleScrollUpdate, visibleRowWindow } from '@/lib/collection/virtual-rows';
 import { titleColumnLabel } from '@/lib/collection/title-column';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type DragEvent as ReactDragEvent } from 'react';
 import { PropertyCell } from '@/components/collection/PropertyCell';
 import { SummaryCell, aggregationFromConfig } from '@/components/collection/SummaryCell';
 import { FieldMenu } from '@/components/collection/FieldMenu';
@@ -278,6 +285,105 @@ export function TableView({ collection, view }: TableViewProps) {
   });
   const [dragId, setDragId] = useState<string | null>(null);
 
+  // G397：列拖拽走的是**独立于块寻址的第二套落点协议**（`afterTableColumnLocation`），
+  // 与行拖拽（`dragId`）分开一条线——载荷、落点、写回各管各的。
+  // 「在拖哪一列」走模块级载荷（同侧栏 `sidebarDragState`）：`dragover` 读不到 dataTransfer，
+  // React state 又要等一轮渲染，两处都会让落点判定扑空。
+  const [columnDropTarget, setColumnDropTarget] = useState<{
+    id: string;
+    side: 'before' | 'after';
+    location: AfterTableColumnLocation;
+  } | null>(null);
+
+  const visibleIds = visibleProperties.map((property: any) => String(property.id));
+
+  /** 落点侧认载荷：dataTransfer 优先，坏掉或缺失时退回内存那份。 */
+  const readColumnPayload = (event: ReactDragEvent<HTMLTableCellElement>) => {
+    const raw = event.dataTransfer?.getData(COLUMN_DROP_MIME);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as { column?: unknown };
+        if (typeof parsed.column === 'string') return { tableId: view.id, column: parsed.column };
+      } catch {
+        // 载荷坏掉时退回内存载荷，不让一次脏数据把拖拽整个废掉。
+      }
+    }
+    return columnDragState.payload;
+  };
+
+  const sideAtPointer = (event: ReactDragEvent<HTMLTableCellElement>): 'before' | 'after' => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    return event.clientX > rect.left + rect.width / 2 ? 'after' : 'before';
+  };
+
+  const locationAtPointer = (event: ReactDragEvent<HTMLTableCellElement>, index: number) =>
+    columnLocationAt({ tableId: view.id, visibleIds, index, side: sideAtPointer(event) });
+
+  const handleColumnDragOver = (
+    event: ReactDragEvent<HTMLTableCellElement>,
+    index: number,
+    propertyId: string,
+  ) => {
+    if (!columnDragState.payload || !reorderEnabled) return;
+    const location = locationAtPointer(event, index);
+    if (!location) return; // 第一列左边没有「after」语义 ⇒ 这一格不收落点
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    const side = sideAtPointer(event);
+    if (columnDropTarget?.id !== propertyId || columnDropTarget.side !== side) {
+      setColumnDropTarget({ id: propertyId, side, location });
+    }
+  };
+
+  const handleColumnDrop = (event: ReactDragEvent<HTMLTableCellElement>, index: number) => {
+    const sourceId = readColumnPayload(event)?.column ?? null;
+    columnDragState.payload = null;
+    setColumnDropTarget(null);
+    if (!sourceId || !reorderEnabled) return;
+    const location = locationAtPointer(event, index);
+    if (!location) return;
+    const nextOrder = columnOrderAfterLocation(visibleIds, sourceId, location);
+    if (nextOrder.join(' ') === visibleIds.join(' ')) return;
+    const next: ViewFields = { ...viewFields, order: nextOrder };
+    setViewFields(next);
+    void persistConfig({ filters, sorts, groupBy, fields: next });
+  };
+
+  const COLUMN_HEADER_CLASS =
+    'border-b border-r border-border px-[var(--st-cell-padding-x)] py-[var(--st-cell-padding-y)] text-left typography-caption-md-500 text-muted-foreground first:border-l first:max-md:sticky first:max-md:left-0 first:max-md:z-[var(--st-z-sticky-header-index)] first:max-md:bg-muted';
+
+  const columnHeaderProps = (property: any, index: number) => {
+    const dropSide = columnDropTarget?.id === String(property.id) ? columnDropTarget.side : null;
+    return {
+      // 标题列由 withTitleFirst 钉在第一位（G105）⇒ 不给拖；带筛选/排序/分组时也不给拖。
+      draggable: reorderEnabled && index > 0,
+      'data-column-drop': dropSide ?? undefined,
+      className:
+        COLUMN_HEADER_CLASS +
+        (dropSide === 'after'
+          ? ' border-r-2 border-r-primary'
+          : dropSide === 'before'
+            ? ' border-l-2 border-l-primary'
+            : ''),
+      onDragStart: (event: ReactDragEvent<HTMLTableCellElement>) => {
+        columnDragState.payload = { tableId: view.id, column: String(property.id) };
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData(
+          COLUMN_DROP_MIME,
+          JSON.stringify({ tableId: view.id, column: property.id }),
+        );
+      },
+      onDragEnd: () => {
+        columnDragState.payload = null;
+        setColumnDropTarget(null);
+      },
+      onDragOver: (event: ReactDragEvent<HTMLTableCellElement>) =>
+        handleColumnDragOver(event, index, String(property.id)),
+      onDragLeave: () => setColumnDropTarget(null),
+      onDrop: (event: ReactDragEvent<HTMLTableCellElement>) => handleColumnDrop(event, index),
+    };
+  };
+
   // 手柄的可及名要能认出是哪一行 ⇒ 取第一个可见字段的值当行标签
   const rowLabel = (item: any) => {
     const first = visibleProperties[0];
@@ -509,10 +615,7 @@ export function TableView({ collection, view }: TableViewProps) {
                     <thead className="sticky top-0 z-[var(--st-z-sticky-header)] bg-muted/50 max-md:bg-muted">
                       <tr>
                         {visibleProperties.map((property: any, index: number) => (
-                          <th
-                            key={property.id}
-                            className="border-b border-r border-border px-[var(--st-cell-padding-x)] py-[var(--st-cell-padding-y)] text-left typography-caption-md-500 text-muted-foreground first:border-l first:max-md:sticky first:max-md:left-0 first:max-md:z-[var(--st-z-sticky-header-index)] first:max-md:bg-muted"
-                          >
+                          <th key={property.id} {...columnHeaderProps(property, index)}>
                             <span className="flex items-center gap-1">
                               <span className="min-w-0 truncate">
                                 {index === 0
@@ -606,10 +709,7 @@ export function TableView({ collection, view }: TableViewProps) {
               <tr>
                 {reorderEnabled && <th className="w-6 border-b border-r border-border px-0 py-0" />}
                 {visibleProperties.map((property: any, index: number) => (
-                  <th
-                    key={property.id}
-                    className="border-b border-r border-border px-[var(--st-cell-padding-x)] py-[var(--st-cell-padding-y)] text-left typography-caption-md-500 text-muted-foreground first:border-l first:max-md:sticky first:max-md:left-0 first:max-md:z-[var(--st-z-sticky-header-index)] first:max-md:bg-muted"
-                  >
+                  <th key={property.id} {...columnHeaderProps(property, index)}>
                     <span className="flex items-center gap-1">
                       <span className="min-w-0 truncate">
                         {index === 0

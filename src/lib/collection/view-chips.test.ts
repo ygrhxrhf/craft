@@ -27,4 +27,24 @@ describe('collection view chips (G105)', () => {
     ];
     expect(withTitleFirst(props).map((p) => p.id)).toEqual(['t', 'n', 'd']);
   });
+
+  // G397：视图的 customPropertyOrder 必须活过这一层——它只该"把标题列挪到最前"，
+  // 不能顺手按属性行的 order 重排（否则视图列序永远显示不出来，G81 的上/下移也是空转）。
+  it('preserves an incoming order that differs from the property order', () => {
+    const props = [
+      { id: 't', type: 'text', order: 0 },
+      { id: 'n', type: 'number', order: 2 },
+      { id: 'd', type: 'date', order: 1 },
+    ];
+    expect(withTitleFirst(props).map((p) => p.id)).toEqual(['t', 'n', 'd']);
+  });
+
+  it('still pulls a title column that the view parked in the middle', () => {
+    const props = [
+      { id: 'd', type: 'date', order: 5 },
+      { id: 't', type: 'text', order: 9 },
+      { id: 'n', type: 'number', order: 1 },
+    ];
+    expect(withTitleFirst(props).map((p) => p.id)).toEqual(['t', 'd', 'n']);
+  });
 });

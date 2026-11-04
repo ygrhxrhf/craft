@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-03T15:31:14.881Z",
+  "generatedAt": "2026-11-04T01:25:34.151Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 853,
-    "aligned": 324,
+    "gap": 852,
+    "aligned": 325,
     "unknown": 194,
     "deliberate": 105,
     "partial": 66,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 282,
+    "P2 / gap": 281,
     "P? / gap": 226,
-    "P2 / aligned": 220,
+    "P2 / aligned": 221,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -8263,10 +8263,10 @@
       "cols": 5,
       "id": "G397",
       "official": "**列拖拽落点是独立于块的第二套协议**：`{type:\"afterTableColumnLocation\", tableId, column, maxCol}`（§一之七 4）⇒ 与 §一之六 的块级六寻址不共用",
-      "local": "本地无列拖拽",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-04 第 278 批）：协议形状逐字落进纯核 `src/lib/collection/column-drop.ts`——`afterTableColumnLocation`（`maxCol` **构造期**就钳进 `[0, maxCol-1]`，空表给不出落点）＋`columnLocationAt`（表头**右半**＝插到本列之后、**左半**＝插到前一列之后；第一列左边没有 after 语义 ⇒ 回 `null`，要那得用 before 族＝G590 的行）＋`columnOrderAfterLocation`（先删后插，落点列取**原表**下标）；载荷与侧栏同一口径＝模块级 `columnDragState` ＋独立 MIME（`dragover` 读不到 dataTransfer、React state 又要等一轮渲染，实测两条都会让落点判定扑空）；两处分组／未分组表头都挂 `columnHeaderProps`（`draggable: reorderEnabled && index > 0`——标题列由 `withTitleFirst` 钉首位不给拖，带筛选/排序/分组也不给拖），写回走**视图**的 `customPropertyOrder`（`persistConfig`）。★ 顺带修掉一处根因：`withTitleFirst` 原先按**属性行 order 重排**，把 `fieldsForView` 按视图 `customPropertyOrder` 排好的列序整份抹掉 ⇒ **视图列序从来没在屏上生效过**（G81 的上／下移同属空转）；改成\"只把标题列挪到最前、其余保持入参顺序\"并加两条回归测试。浏览器实点（三列表 Title／状态／进度）：拖「进度」到「状态」左半 ⇒ 落点高亮 `before`、松手列序立刻变 `[Title, 进度, 状态]`、刷新后服务端仍按视图顺序渲染、再拖一次回原序并落库；**加排序后所有表头 `draggable=false`**（G1539/G283 禁拖规则对列同样生效）。★ 半格几何在 0×0 视口里量不到（`getBoundingClientRect` 全 0），左右两半是**注入 rect** 后验的；验证用的两枚字段与排序已清干净",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

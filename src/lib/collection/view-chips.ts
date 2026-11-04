@@ -36,9 +36,15 @@ export function groupChipText(propertyName: string): string {
 export function withTitleFirst<T extends { id: string; type: string; order?: number }>(
   properties: readonly T[],
 ): T[] {
-  const sorted = [...properties].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  const titleIndex = sorted.findIndex((property) => property.type === 'text');
-  if (titleIndex <= 0) return sorted;
-  const [title] = sorted.splice(titleIndex, 1);
-  return [title, ...sorted];
+  // 标题列＝按属性行 order 找出的第一枚文本列（G105 的口径），但**展示顺序以入参为准**：
+  // 入参是 `fieldsForView` 按视图 `customPropertyOrder` 排好的，这里再按 order 排一次
+  // 会把视图列序整份抹掉（G397 实测：视图里把列拖换了位，刷新后永远退回属性行的顺序）。
+  const titleId = [...properties]
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .find((property) => property.type === 'text')?.id;
+  if (!titleId) return [...properties];
+  const titleIndex = properties.findIndex((property) => property.id === titleId);
+  if (titleIndex <= 0) return [...properties];
+  const title = properties[titleIndex];
+  return [title, ...properties.filter((_, index) => index !== titleIndex)];
 }

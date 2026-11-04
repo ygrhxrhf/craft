@@ -5153,10 +5153,19 @@
       ]
     },
     "G397": {
-      "status": "gap",
-      "note": "列头没有 draggable，只有行拖拽；无列落点协议",
+      "status": "aligned",
+      "note": "第 278 批：列拖拽落点按官方形状落成第二套协议（`afterTableColumnLocation`，maxCol 构造期钳制、空表无落点、第一列左边不给 after 语义），两处表头挂同一组拖拽属性，写回视图的 customPropertyOrder；载荷走模块级 slot ＋ 独立 MIME（同侧栏口径）。顺带修根因：withTitleFirst 先前按属性行 order 重排，把视图列序整份抹掉 ⇒ G81 的列序从来没显示过，改成只把标题列挪到最前并补两条回归测试。浏览器实点：拖列→高亮 before→列序立刻变→刷新后服务端仍按视图顺序渲染→再拖回原序并落库；加排序后所有表头 draggable=false。半格几何在 0×0 视口量不到，左右两半靠注入 rect 验。验证用的两枚字段与排序已清干净。",
       "evidence": [
-        "src/app/(app)/collections/[id]/TableView.tsx:340"
+        "src/lib/collection/column-drop.ts:35",
+        "src/lib/collection/column-drop.ts:50",
+        "src/lib/collection/column-drop.ts:64",
+        "src/lib/collection/column-drop.ts:20",
+        "src/app/(app)/collections/[id]/TableView.tsx:322",
+        "src/app/(app)/collections/[id]/TableView.tsx:338",
+        "src/app/(app)/collections/[id]/TableView.tsx:355",
+        "src/lib/collection/view-chips.ts:36",
+        "src/lib/collection/column-drop.test.ts:1",
+        "src/lib/collection/view-chips.test.ts:33"
       ]
     },
     "G398": {

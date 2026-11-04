@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T04:21:28.192Z",
+  "generatedAt": "2026-11-04T04:37:51.544Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 845,
-    "aligned": 332,
+    "gap": 843,
+    "aligned": 334,
     "unknown": 194,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 275,
-    "P2 / aligned": 227,
+    "P2 / gap": 273,
+    "P2 / aligned": 229,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -9730,10 +9730,10 @@
       "cols": 5,
       "id": "G478",
       "official": "★ **Esc 关闭 = 往全局焦点栈注册一条 keyDef**，不是 `addEventListener`：`bn.pushIntoFocus({id, keyDefs:[{matcher: Vn(\"Escape\"), handler: () => latestRef.current()}], allowPropagation}, aboveId)`，卸载 `removeFromFocus(id)`（§十三 1）",
-      "local": "`grep -rn \"pushIntoFocus|FocusStack|focusStack\" src` ⇒ **0 命中**；本地是 **14 处各自判 `'Escape'`** + 5 处 `addEventListener('keydown')` + Base UI 的 `src/components/ui/{dialog,popover}.tsx` 各管各的关闭 ⇒ **没有跨弹层的统一栈**（G456/G471 的根因，本批给出官方实现本体）",
-      "verdict": "缺失（架构）",
+      "local": "`grep -rn \"pushIntoFocus|FocusStack|focusStack\" src` ⇒ **0 命中**；本地是 **14 处各自判 `'Escape'`** + 5 处 `addEventListener('keydown')` + Base UI 的 `src/components/ui/{dialog,popover}.tsx` 各管各的关闭 ⇒ **没有跨弹层的统一栈**（G456/G471 的根因，本批给出官方实现本体） ⇒ ✎ 现读（2026-11-04 第 283 批）：上一段\"`focusStack` 0 命中／没有统一栈\"是**陈旧读数**——本地已有全局焦点栈 `src/lib/focus/focus-stack.ts`：`push(entry, aboveId)` 支持**插到指定项之上**、`keyDefs` 是 `{match, handler}` 形、`allowPropagation` 与\"顶层未命中即截断\"的官方 break 规则同款、`remove(id)` 在组件卸载时调（`SettingsModal` 的 `useEffect` 清理）；派发只有**一处**＝`FocusStackBridge` 挂 document **capture** 阶段（不是各弹层各挂 `addEventListener`）。屏上实测（第 282 批）：面板开着按 Esc ⇒ 事件被 `preventDefault`、**只关面板**、下层帮助菜单原样留着 ⇒ \"注册 keyDef 而非 addEventListener\"的可观察面成立",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -15716,10 +15716,10 @@
       "cols": 5,
       "id": "G809",
       "official": "★★★ **面板纵导航出处结案**：`tJ=\"CategorizedShortcutsPanel\"` @2,118,334（组件 `qZ`，CSS 模块 `dm375`，与 §19 样式反查同源）＝打开期间 `bn.pushIntoFocus({id:tJ, keyDefs:[Esc→f.current(), ot.TOGGLE_KEY_SHORTCUTS→f.current(), ↑→idx−1, ↓→idx+1], allowPropagation:!1})`；索引 `Math.min(Math.max(cur+y,0),len-1)` ＝**夹紧不环绕**；handler 只 `c(C[w]??x)` **改选中 state、不搬焦点**（G782 的代码级解释）；`keyDefs` **无 `Home`／`End`／左右键**；关闭走 `wO(t)={type:\"setIsShortcutsModalOpen\",isOpen:t}` @613,695（store action）；`HelpButton` @2,596,520 另注册 `TOGGLE_KEY_SHORTCUTS`",
-      "local": "本轮 `grep -rn \"addEventListener(\\\"keydown\\\"\" src --include=*.ts --include=*.tsx` **无命中** ⇒ 本地无 document 级分派器；`src/components/ui/tabs.tsx:2`＝`@base-ui/react/tabs` ⇒ 本地若用 Tabs 复刻面板 rail 会得到 **roving tabindex（焦点跟随）**，与官方\"改选中不搬焦点\"不同",
-      "verdict": "机制（代码级）＋ 判据（G801 三条新屏上预测：三键 no-op／首末分类夹紧 no-op／`Ctrl+↑` 宽松也切分类）",
+      "local": "本轮 `grep -rn \"addEventListener(\\\"keydown\\\"\" src --include=*.ts --include=*.tsx` **无命中** ⇒ 本地无 document 级分派器；`src/components/ui/tabs.tsx:2`＝`@base-ui/react/tabs` ⇒ 本地若用 Tabs 复刻面板 rail 会得到 **roving tabindex（焦点跟随）**，与官方\"改选中不搬焦点\"不同 ⇒ ✎ 现读（2026-11-04 第 283 批）：上一段\"无 document 级分派器\"已过期——`FocusStackBridge` 正是 document capture 单一入口；面板纵导航的**可观察面**已齐（第 281／282 批实测）：`ArrowUp`／`ArrowDown` 只改**选中**、`document.activeElement` 留在原分类（无 roving tabindex）、首末**夹紧不环绕**（`nextTabIndex` 用 `Math.min/Math.max`，与官方 `Math.min(Math.max(cur+y,0),len-1)` 同形）、上下之外的键一律不接（静态闸钉住 handler 里没有左右键与 `Home`／`End`）、Esc 走焦点栈只关一层。★ `TOGGLE_KEY_SHORTCUTS` 那一条按**屏上口径**记：官方源码确实把它注册进 keyDefs，但 G1592 实测官方 web 上 `Ctrl-Shift-,` 无反应、本地据此保持 inert（键位仍印在面板里）⇒ 不为对齐载体硬改",
+      "verdict": "已对齐",
       "score": "P2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": null,

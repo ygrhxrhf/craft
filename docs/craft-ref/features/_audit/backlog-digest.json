@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-04T04:21:28.547Z",
+  "generatedAt": "2026-11-04T04:37:51.908Z",
   "total": 1614,
   "status": {
-    "aligned": 605,
+    "aligned": 607,
     "nonaction": 512,
-    "partial": 222,
+    "partial": 220,
     "deliberate": 165,
     "gap": 90,
     "unreachable": 20
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 289,
+    "P2 / aligned": 291,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
@@ -25,7 +25,7 @@
     "P? / partial": 80,
     "P? / aligned": 78,
     "P2 / deliberate": 73,
-    "P2 / partial": 72,
+    "P2 / partial": 70,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 60,
@@ -1328,10 +1328,6 @@
       4
     ],
     [
-      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
-      4
-    ],
-    [
       "三点八五、第 74 批（★★★ 静态补账：撤销计步器的生成/消费 ＋ 提",
       4
     ],
@@ -1341,6 +1337,10 @@
     ],
     [
       "三点九九、第 82 批·下半 C（2026-09-28 08:48–08",
+      4
+    ],
+    [
+      "三点一〇一三、第 90 批·上半〔零写入·**视口探针 ＋ `qZ` r",
       4
     ]
   ]

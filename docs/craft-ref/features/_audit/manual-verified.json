@@ -5528,10 +5528,13 @@
       ]
     },
     "G478": {
-      "status": "partial",
-      "note": "弹窗走 Base UI 自带 Esc，集合下拉只有点遮罩；无跨层焦点栈",
+      "status": "aligned",
+      "note": "第 283 批改判（陈旧读数）：本地早已有全局焦点栈 src/lib/focus/focus-stack.ts——push(entry, aboveId) 支持插到指定项之上、keyDefs 是 {match,handler}、allowPropagation 与「顶层未命中即截断」的官方 break 规则同款、remove(id) 在组件卸载时调（SettingsModal 的 useEffect 清理）；派发只有一处＝FocusStackBridge 挂 document capture（不是各弹层各挂 addEventListener）。屏上实测（第 282 批）：面板开着按 Esc ⇒ 事件被 preventDefault、只关面板、下层帮助菜单原样留着 ⇒ 「注册 keyDef 而非 addEventListener」的可观察面成立。旧注「弹窗走 Base UI 自带 Esc、无跨层焦点栈」与 G479（已 aligned）自相矛盾。",
       "evidence": [
-        "src/components/ui/dialog.tsx:4"
+        "src/lib/focus/focus-stack.ts:22",
+        "src/lib/focus/focus-stack.ts:56",
+        "src/components/focus/FocusStackBridge.tsx:21",
+        "src/components/settings/SettingsModal.tsx:100"
       ]
     },
     "G479": {
@@ -7224,10 +7227,13 @@
       ]
     },
     "G809": {
-      "status": "partial",
-      "note": "有键上下文栈类但未接线，面板纵导航与 pushIntoFocus 皆无",
+      "status": "aligned",
+      "note": "第 283 批改判（陈旧读数）：「无 document 级分派器」已过期——FocusStackBridge 正是 document capture 单一入口；面板纵导航的可观察面已齐（第 281／282 批实测）：ArrowUp/ArrowDown 只改选中、activeElement 留在原分类（无 roving tabindex）、首末夹紧不环绕（nextTabIndex 用 Math.min/Math.max，与官方 Math.min(Math.max(cur+y,0),len-1) 同形）、上下之外的键一律不接（静态闸钉住没有左右键与 Home/End）、Esc 走焦点栈只关一层。★ TOGGLE_KEY_SHORTCUTS 按屏上口径记：官方源码确实注册进 keyDefs，但 G1592 实测官方 web 上 Ctrl-Shift-, 无反应、本地据此保持 inert（键位仍印在面板里）⇒ 不为对齐载体硬改。",
       "evidence": [
-        "src/lib/editor/key-context-stack.ts:21"
+        "src/components/settings/ShortcutsPanel.tsx:89",
+        "src/lib/editor/shortcut-panel.ts:179",
+        "src/components/focus/FocusStackBridge.tsx:21",
+        "src/lib/editor/shortcut-key-inert.test.ts:11"
       ]
     },
     "G811": {

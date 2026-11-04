@@ -12,6 +12,9 @@ import {
   parseLinkToBlock,
   serializeLinkToBlock,
 } from '@/lib/collection/link-to-block';
+import { parsePersonSnapshot, personLabel, personSnapshot } from '@/lib/collection/person-value';
+import { optionColor, readSelectOptions } from '@/lib/collection/select-options';
+import { getPersonCandidates } from '@/actions/space/space';
 import { anchorHref } from '@/lib/editor/block-anchor';
 import { searchBlockAnchors, type BlockAnchorHit } from '@/actions/document/anchors';
 import { useState, useRef, useEffect } from 'react';
@@ -79,8 +82,10 @@ export function PropertyCell({ property, value, onChange, item, properties }: Pr
       return <URLCell value={parsed} onChange={onChange} />;
     case 'email':
       return <EmailCell value={parsed} onChange={onChange} />;
-    case 'phone':
+    // G454: `person` 存四字段快照 `{userId, profileImgUrl?, firstName?, lastName?}`（单选）。
     case 'person':
+      return <PersonCell value={parsed} onChange={onChange} />;
+    case 'phone':
       return <TextCell value={parsed} onChange={onChange} />;
     case 'formula':
       return <FormulaCell property={property} item={item} properties={properties} />;
@@ -115,6 +120,9 @@ export function CellDisplay({ value }: { value: any }) {
   // G453：`linkToBlock` 的 `{name,url}` 快照在只读展示面只印快照名，别落成 [object Object]。
   const snapshot = parseLinkToBlock(parsed);
   if (snapshot) return <span>{snapshot.name}</span>;
+  // G454：`person` 的四字段快照同理，印"名 姓"。
+  const person = parsePersonSnapshot(parsed);
+  if (person) return <span>{personLabel(person)}</span>;
   return <span>{String(parsed)}</span>;
 }
 
@@ -325,9 +333,12 @@ function SelectCell({ property, value, onChange }: { property: Property; value: 
         {selected ? (
           <span
             className="rounded-md px-2 py-0.5 text-ui font-medium"
-            style={{ backgroundColor: selected.color + '20', color: selected.color }}
+            style={{
+              backgroundColor: optionColor(selected.themeString) + '20',
+              color: optionColor(selected.themeString),
+            }}
           >
-            {selected.label}
+            {selected.value}
           </span>
         ) : (
           <span className="text-muted-foreground/50">-</span>
@@ -346,9 +357,9 @@ function SelectCell({ property, value, onChange }: { property: Property; value: 
               >
                 <span
                   className="size-2.5 rounded-full"
-                  style={{ backgroundColor: option.color }}
+                  style={{ backgroundColor: optionColor(option.themeString) }}
                 />
-                <span>{option.label}</span>
+                <span>{option.value}</span>
                 {value === option.id && <Check className="ml-auto size-3" />}
               </button>
             ))}
@@ -393,9 +404,12 @@ function MultiSelectCell({ property, value, onChange }: { property: Property; va
               <span
                 key={id}
                 className="rounded-md px-2 py-0.5 text-ui font-medium"
-                style={{ backgroundColor: opt.color + '20', color: opt.color }}
+                style={{
+                  backgroundColor: optionColor(opt.themeString) + '20',
+                  color: optionColor(opt.themeString),
+                }}
               >
-                {opt.label}
+                {opt.value}
               </span>
             );
           })
@@ -416,9 +430,9 @@ function MultiSelectCell({ property, value, onChange }: { property: Property; va
               >
                 <span
                   className="size-2.5 rounded-full"
-                  style={{ backgroundColor: option.color }}
+                  style={{ backgroundColor: optionColor(option.themeString) }}
                 />
-                <span>{option.label}</span>
+                <span>{option.value}</span>
                 {selected.includes(option.id) && <Check className="ml-auto size-3" />}
               </button>
             ))}
@@ -826,12 +840,100 @@ function LinkToBlockCell({ value, onChange }: { value: any; onChange: (v: any) =
   );
 }
 
-// ─── Helpers ────────────────────────────────────────
-interface SelectOption {
-  id: string;
-  label: string;
-  color: string;
+// ─── Person ─────────────────────────────────────────
+/**
+ * G454：`person` 一列存**四字段快照**（`{userId, profileImgUrl?, firstName?, lastName?}`），
+ * `allowMultiple` 默认 false ⇒ 单选。选择器从空间成员里挑，选中即写快照（之后成员改名/换头像不跟随）。
+ */
+function PersonCell({ value, onChange }: { value: any; onChange: (v: any) => void }) {
+  const snapshot = parsePersonSnapshot(value);
+  const [open, setOpen] = useState(false);
+  const [rows, setRows] = useState<Array<{ userId: string; name: string; image: string | null }>>([]);
+  useCellEditorEscape(open, 'collection-v2-person-editor', () => setOpen(false));
+
+  useEffect(() => {
+    if (!open) return;
+    let alive = true;
+    getPersonCandidates()
+      .then((list) => alive && setRows(list))
+      .catch(() => alive && setRows([]));
+    return () => {
+      alive = false;
+    };
+  }, [open]);
+
+  return (
+    <div className="relative min-h-8 px-2 py-1">
+      <button
+        type="button"
+        className="flex w-full items-center gap-1.5 text-left text-ui transition-colors duration-150 hover:text-foreground/70"
+        onClick={() => setOpen(!open)}
+      >
+        {snapshot ? (
+          <>
+            {snapshot.profileImgUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={snapshot.profileImgUrl} alt="" className="size-4 shrink-0 rounded-full" />
+            ) : (
+              <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-muted text-[9px] text-muted-foreground">
+                {personLabel(snapshot).slice(0, 1)}
+              </span>
+            )}
+            <span className="min-w-0 flex-1 truncate">{personLabel(snapshot)}</span>
+          </>
+        ) : (
+          <span className="min-w-0 flex-1 truncate text-muted-foreground/50">-</span>
+        )}
+        <ChevronDown className="size-3.5 shrink-0 text-muted-foreground/60" />
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full z-20 max-h-60 w-56 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md">
+          {rows.length === 0 && (
+            <p className="px-2 py-1.5 text-sm text-muted-foreground">空间里还没有成员</p>
+          )}
+          {rows.map((row) => (
+            <button
+              key={row.userId}
+              type="button"
+              className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-muted"
+              onClick={() => {
+                onChange(personSnapshot(row));
+                setOpen(false);
+              }}
+            >
+              {row.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={row.image} alt="" className="size-4 shrink-0 rounded-full" />
+              ) : (
+                <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-muted text-[9px] text-muted-foreground">
+                  {(row.name || '?').slice(0, 1)}
+                </span>
+              )}
+              <span className="min-w-0 flex-1 truncate">{row.name || row.userId.slice(0, 8)}</span>
+              {snapshot?.userId === row.userId && <Check className="size-3.5" />}
+            </button>
+          ))}
+          {snapshot && (
+            <button
+              type="button"
+              className="mt-1 w-full rounded-sm px-2 py-1.5 text-left text-[12px] text-destructive hover:bg-muted"
+              onClick={() => {
+                onChange(null);
+                setOpen(false);
+              }}
+            >
+              清除
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
+
+// ─── Helpers ────────────────────────────────────────
+// G454：选项对象是官方的 `{id, value, themeString}`（读写与配色见 `lib/collection/select-options`）。
+type SelectOption = import('@/lib/collection/select-options').SelectOption;
 
 function readConfig(config: string | null): Record<string, any> | null {
   if (!config) return null;
@@ -850,5 +952,6 @@ function readNumberFormat(config: string | null): NumberFormat {
 }
 
 function getSelectOptions(config: string | null): SelectOption[] {
-  return readConfig(config)?.options ?? [];
+  // G454：认官方 `{id,value,themeString}`，也认本地老行里的 `{id,label,color}`。
+  return readSelectOptions(readConfig(config)?.options);
 }

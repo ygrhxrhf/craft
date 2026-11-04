@@ -169,6 +169,44 @@ export async function guestWarningFor(email: string): Promise<boolean> {
 }
 
 /**
+ * G454：`person` 列的候选人＝空间成员（官方选择器同样从成员里挑）。只回快照需要的三格，
+ * 前端用 `personSnapshot` 拼成 `{userId, profileImgUrl?, firstName?, lastName?}`。
+ */
+export async function getPersonCandidates(): Promise<
+  Array<{ userId: string; name: string; image: string | null }>
+> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+  const context = await getSpaceContext();
+  const db = await getDb();
+
+  const space = await db.orm.public.Space.first({ id: context.id });
+  const members = (await db.orm.public.SpaceMember
+    .where({ spaceId: context.id })
+    .all()) as any[];
+  // 空间所有者不一定是成员行（个人空间就没有 SpaceMember 记录）⇒ 把 ownerId 也并进来、去重。
+  const userIds: string[] = [];
+  const ownerId = (space as any)?.ownerId ? String((space as any).ownerId) : null;
+  if (ownerId) userIds.push(ownerId);
+  for (const member of members) {
+    const id = String(member.userId);
+    if (!userIds.includes(id)) userIds.push(id);
+  }
+
+  const rows: Array<{ userId: string; name: string; image: string | null }> = [];
+  for (const userId of userIds) {
+    const user = await db.orm.public.User.first({ id: userId });
+    if (!user) continue;
+    rows.push({
+      userId: String((user as any).id),
+      name: String((user as any).name ?? (user as any).email ?? ''),
+      image: ((user as any).image as string | null) ?? null,
+    });
+  }
+  return rows;
+}
+
+/**
  * G421 —— 团队上下文：两档权限（admin/member）＋生命周期态，管理员**可多人**。
  * 没有团队时就地建一个（调用者＝唯一管理员）。
  */

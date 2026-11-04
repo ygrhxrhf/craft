@@ -5416,10 +5416,15 @@
       ]
     },
     "G454": {
-      "status": "partial",
-      "note": "person 走 TextCell 无用户快照；选项无 themeString，多选恒多选",
+      "status": "aligned",
+      "note": "第 298 批：两半都补上——① person 存四字段快照 {userId, profileImgUrl?, firstName?, lastName?}（纯核 person-value.ts：personSnapshot 按名字切名/姓、parsePersonSnapshot 只认 userId 形状、PERSON_ALLOW_MULTIPLE_DEFAULT=false）＋ PropertyCell 的 PersonCell（候选取空间成员并含 owner，getPersonCandidates；选中写快照、之后改名换头像不跟随）；② 选项对象改成官方 {id, value, themeString}（纯核 select-options.ts：readSelectOptions 认官方三键、也认本地老 {label,color} 并把老色值还原成主题档，optionColor 是主题→颜色的唯一出口，单选/多选渲染都改读 value/themeString）。屏上实点：新增人员列 ⇒ 弹层列出成员「视觉基线」⇒ 选中后单元格显示该名；库里回读 {type:person,theme:null,value:{userId,firstName}}。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:65"
+        "src/lib/collection/person-value.ts:1",
+        "src/lib/collection/person-value.test.ts:1",
+        "src/lib/collection/select-options.ts:1",
+        "src/lib/collection/select-options.test.ts:1",
+        "src/components/collection/PropertyCell.tsx:65",
+        "src/actions/space/space.ts:166"
       ]
     },
     "G455": {

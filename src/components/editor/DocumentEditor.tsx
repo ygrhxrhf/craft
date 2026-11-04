@@ -384,7 +384,9 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             <DocumentActionsMenu
               onPageStyle={() => setActiveTab('style')}
               onFindInPage={() => useFindReplaceStore.getState().openWith(false)}
-              onTableOfContents={() => setActiveTab('info')}
+              // G288/G1451：官方这枚「目录」是**在正文里插一张目录块**（`table.of.contents` 的宿主
+              // 就是文档级 `⋯` 的 navigationSection），不是切面板。此前接到右侧信息页是接错了。
+              onTableOfContents={() => editor?.chain().focus().insertTableOfContents().run()}
               onMoveTo={() => setActiveTab('info')}
               onUndo={() => editor?.chain().focus().undo().run()}
               onViewTab={(tab) =>

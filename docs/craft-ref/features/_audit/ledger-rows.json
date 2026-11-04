@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-04T09:08:37.200Z",
+  "generatedAt": "2026-11-04T09:19:20.790Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 831,
+    "gap": 830,
     "aligned": 345,
     "unknown": 193,
     "deliberate": 105,
-    "partial": 66,
+    "partial": 67,
     "nonaction": 58,
     "unreachable": 16
   },
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 261,
+    "P2 / gap": 260,
     "P2 / aligned": 240,
     "P? / gap": 226,
     "P1 / gap": 191,
@@ -29,7 +29,7 @@
     "P3 / aligned": 40,
     "P? / deliberate": 33,
     "P2 / unknown": 33,
-    "P2 / partial": 28,
+    "P2 / partial": 29,
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
@@ -6291,10 +6291,10 @@
       "cols": 5,
       "id": "G288",
       "official": "**表格块另有 4 项独立能力**：`row.color.alternating` 隔行颜色 · `header.row` 与 `header.column` **两个独立开关** · `of.contents`「目录」（表内 TOC） · `error.row.limit`「你不能添加多于 [0] 行。」（远端配额）",
-      "local": "✎ 现读（2026-11-02）：四项里三项已在——① 隔行颜色存主题色 id（第 182 批）；② 标题行与标题列是两枚独立开关（`toggleHeaderRow` / `toggleHeaderColumn`）；③ 加行越 50 行上限时报官方句 `table.error.row.limit`「你不能添加多于 50 行。」，列/总格越线仍报合并句（第 186 批）；仍缺 **表内「目录」**，且其语义在采集面只有一条标签、无动线证据",
-      "verdict": "缺失（局部）",
+      "local": "✎ 现读（2026-11-02）：四项里三项已在——① 隔行颜色存主题色 id（第 182 批）；② 标题行与标题列是两枚独立开关（`toggleHeaderRow` / `toggleHeaderColumn`）；③ 加行越 50 行上限时报官方句 `table.error.row.limit`「你不能添加多于 50 行。」，列/总格越线仍报合并句（第 186 批）；仍缺 **表内「目录」**，且其语义在采集面只有一条标签、无动线证据 ⇒ ✎ 现读（2026-11-04 第 299 批）：**第 4 项已落，但宿主不是\"表内\"**——官方 `table.of.contents` 逐字出现在**文档级 `⋯` 的 `navigationSection`**（`G1451` 的 bundle 读回：`{id:\"tableOfContents\", text:b(\"table.of.contents\")}`），语义是\"在正文里生成一张目录\"，不是表格块内的按钮。本地早有真目录块（`extensions/toc.ts` 的 `insertTableOfContents` ＋ `toc-view`），但文档级菜单那一项此前误接到\"切右侧信息页\"。本批改真：`onTableOfContents={() => editor?.chain().focus().insertTableOfContents().run()}`，屏上实点文档 ⋯ → 「目录」⇒ 正文插入 `node-tableOfContents`（`ed.state.doc` 里 `hasTocNode: true`），撤销后回到原样。⇒ 四项齐：隔行色／标题行列两开关／行上限句／目录",
+      "verdict": "已对齐｜第 299 批",
       "score": "2/2",
-      "status": "gap",
+      "status": "partial",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

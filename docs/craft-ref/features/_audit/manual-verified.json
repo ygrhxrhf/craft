@@ -4594,11 +4594,13 @@
       ]
     },
     "G288": {
-      "status": "partial",
-      "note": "第 186 批：标题行/列两开关 + 隔行色（主题色 id）+ 官方行上限句已落；仍缺表内「目录」",
+      "status": "aligned",
+      "note": "第 299 批补齐第 4 项：官方 table.of.contents 的宿主其实是文档级 ⋯ 的 navigationSection（G1451 bundle 逐字），语义是「在正文里生成一张目录」而不是表格块内按钮。本地早有真目录块（toc.ts 的 insertTableOfContents ＋ toc-view），但文档级菜单那一项此前误接到「切右侧信息页」；本批改成 editor.chain().focus().insertTableOfContents()，屏上实点文档 ⋯ → 目录 ⇒ 正文插入 node-tableOfContents（doc 里 hasTocNode:true），撤销后还原。四项齐：隔行色（主题色 id）／标题行列两独立开关／行上限官方句／目录。",
       "evidence": [
+        "src/components/editor/DocumentEditor.tsx:387",
+        "src/lib/editor/toc-menu-wiring.test.ts:1",
+        "src/components/editor/extensions/toc.ts:18",
         "src/lib/collection/limits.ts:42",
-        "src/lib/table-utils.ts:276",
         "src/components/editor/table/TableToolbar.tsx:224"
       ]
     },

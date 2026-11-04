@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-04T09:08:37.432Z",
+  "generatedAt": "2026-11-04T09:19:21.051Z",
   "total": 1614,
   "status": {
-    "aligned": 618,
+    "aligned": 619,
     "nonaction": 515,
-    "partial": 207,
+    "partial": 206,
     "deliberate": 165,
     "gap": 89,
     "unreachable": 20
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 302,
+    "P2 / aligned": 303,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 169,
@@ -28,7 +28,7 @@
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 60,
-    "P2 / partial": 57,
+    "P2 / partial": 56,
     "P? / deliberate": 40,
     "P3 / gap": 38,
     "P? / gap": 34,
@@ -1272,11 +1272,11 @@
       10
     ],
     [
-      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      10
+      "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
+      9
     ],
     [
-      "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
+      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
       9
     ],
     [

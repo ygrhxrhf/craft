@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-04T09:36:49.255Z",
+  "generatedAt": "2026-11-04T10:29:29.988Z",
   "total": 1614,
   "status": {
-    "aligned": 620,
+    "aligned": 621,
     "nonaction": 515,
     "partial": 205,
     "deliberate": 165,
-    "gap": 89,
+    "gap": 88,
     "unreachable": 20
   },
   "priority": {
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 304,
+    "P2 / aligned": 305,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 169,
@@ -34,7 +34,7 @@
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
-    "P2 / gap": 17,
+    "P2 / gap": 16,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
     "P3 / unreachable": 4,
@@ -1308,10 +1308,6 @@
       4
     ],
     [
-      "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
-      4
-    ],
-    [
       "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
       4
     ],
@@ -1333,6 +1329,10 @@
     ],
     [
       "三点一〇四一、第 98 批〔★★★ **拖拽移动的撤销粒度到手＝一次拖拽",
+      4
+    ],
+    [
+      "三点一〇四五、第 100 批·上半〔★★★ **推翻第 97 批·尾记二",
       4
     ]
   ]

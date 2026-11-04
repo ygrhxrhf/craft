@@ -3957,10 +3957,16 @@
       ]
     },
     "G145": {
-      "status": "gap",
-      "note": "公开页只读；enableObjectLinks 与 showDuplicateAsTemplate 全库零命中",
+      "status": "aligned",
+      "note": "第 301 批：面板「用户互动」两枚真开关各带描述句与成对状态句（逐字 i18n）；enableObjectLinks 关闭时公开页跨文档区块链接点击无动作、打开后真跳转；showDuplicateAsTemplate 打开才出「用作模板」并复制到访客空间（关掉即消失，均屏上实测）；评论查看/添加两枚是三档 commentLevel 的两端（官方在独立子页，本地并入同一分区，已声明偏差）",
       "evidence": [
-        "src/app/p/[slug]/page.tsx:74"
+        "src/lib/share/visitor-interaction.ts:49",
+        "src/components/share/ShareDialog.tsx:680",
+        "src/components/editor/extensions/block-link-view.tsx:26",
+        "src/components/share/SharedDocView.tsx:96",
+        "src/app/p/[slug]/page.tsx:108",
+        "src/app/s/[token]/page.tsx:60",
+        "src/actions/document/share.ts:274"
       ]
     },
     "G146": {

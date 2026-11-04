@@ -265,6 +265,45 @@ export async function setShareSlug(documentId: string, rawSlug: string | null): 
   return await getOrCreateShare(documentId);
 }
 
+/**
+ * G145：公开页的「用作模板」——访客把这一页复制进**自己的空间**。
+ *
+ * 门槛与读页同源：分享行在发布态、未到期、链接给对方角色，且 `showDuplicateAsTemplate`
+ * 打开（官方默认关）。登录是必须的（复制出来的文档要有归属）；未登录时客户端先送去登录。
+ */
+export async function duplicateSharedDocument(identifier: string): Promise<{ id: string }> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const share = await findShare(identifier);
+  if (!isOpenableShare(share)) throw new Error('页面不存在');
+  const s = share as any;
+  if (!tierOpensToLink(s.permission)) throw new Error('页面不存在');
+  if (isExpired(s.expiresAt ? String(s.expiresAt) : null)) throw new Error('页面不存在');
+  if (s.showDuplicateAsTemplate !== true) throw new Error('此页面不允许复制');
+
+  const doc = await db.orm.public.Document.first({ id: s.documentId });
+  if (!doc || (doc as any).isDeleted) throw new Error('页面不存在');
+  const d = doc as any;
+
+  const copy = await db.orm.public.Document.create({
+    id: crypto.randomUUID(),
+    title: d.title || '无标题文档',
+    icon: d.icon,
+    content: d.content,
+    plainText: d.plainText ?? '',
+    pageStyle: d.pageStyle,
+    coverImage: d.coverImage,
+    coverType: d.coverType,
+    width: d.width,
+    userId: session.user.id,
+    metaUpdatedAt: new Date().toISOString(),
+  });
+  await emitSyncEventSafe(db, session.user.id, ['document'], (copy as any).id);
+  return { id: (copy as any).id };
+}
+
 /** Accepts either the human slug or the share token. */
 export async function getSharedDocument(identifier: string) {
   const db = await getDb();
@@ -316,6 +355,9 @@ export async function getSharedDocument(identifier: string) {
     hidePresentationMode: s.hidePresentationMode === true,
     enableSeo: s.enableSeo === true,
     expiresAt: s.expiresAt ? String(s.expiresAt) : null,
+    // G145：访客互动的两条公开页能力（默认都关，与官方一致）。
+    enableObjectLinks: s.enableObjectLinks === true,
+    showDuplicateAsTemplate: s.showDuplicateAsTemplate === true,
   };
 }
 

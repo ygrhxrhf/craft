@@ -186,6 +186,11 @@ interface EditorProps {
   /** Page-level spell check (G65). Off unless the page turns it on. */
   spelling?: boolean;
   spellingLang?: string;
+  /**
+   * G145：访客可否跟随**跨文档**区块链接（官方 `enableObjectLinks`）。公开页把分享行的开关传进来；
+   * 文档页不传（默认 true）。
+   */
+  followBlockLinks?: boolean;
 }
 
 export function Editor({
@@ -199,6 +204,7 @@ export function Editor({
   onSaveNowReady,
   spelling = false,
   spellingLang,
+  followBlockLinks = true,
 }: EditorProps) {
   // Created during the first render so the Collaboration extension can be built
   // synchronously; a ref write here would violate the rules of hooks.
@@ -589,7 +595,7 @@ export function Editor({
       MathBlock,
       InlineMath,
       Mention,
-      BlockLink,
+      BlockLink.configure({ hostDocumentId: documentId, followOtherDocuments: followBlockLinks }),
       BlockId,
       BlockReminderAttr,
       TaskItemId,
@@ -765,6 +771,18 @@ export function Editor({
   useEffect(() => {
     editor?.setEditable(!locked);
   }, [editor, locked]);
+
+  // G145：公开页的「访客可以跳转区块链接」可能在编辑器建好之后才读到（镜像刷新），所以
+  // 把开关写回 storage，而不是重建编辑器——重建会丢掉撤销栈与协作房间。
+  useEffect(() => {
+    if (!editor) return;
+    const storage = editor.storage.blockLink as
+      | { hostDocumentId?: string; followOtherDocuments?: boolean }
+      | undefined;
+    if (!storage) return;
+    storage.hostDocumentId = documentId;
+    storage.followOtherDocuments = followBlockLinks;
+  }, [editor, documentId, followBlockLinks]);
 
   useEffect(() => {
     if (!editor) return;

@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { anchorHref } from '@/lib/editor/block-anchor';
 import { untitledFor } from '@/lib/document/untitled-copy';
 
-export function BlockLinkView({ node, updateAttributes, deleteNode }: NodeViewProps) {
+export function BlockLinkView({ node, editor, updateAttributes, deleteNode }: NodeViewProps) {
   const router = useRouter();
   // G453：已插入的区块链接要能改名或移除（官方存的是 {name,url} 快照；本地刻意留活引用）。
   const [editing, setEditing] = useState(false);
@@ -17,11 +17,15 @@ export function BlockLinkView({ node, updateAttributes, deleteNode }: NodeViewPr
   const title = node.attrs.title as string;
   const blockId = node.attrs.blockId as string | null;
   const blockIndex = node.attrs.blockIndex as number | null;
-
+  // G145：官方「访客可以跳转区块链接」默认关，关着时公开页上的**跨文档**链接不动作
+  //（同文档锚点不受影响——它不是跨文档权限）。读 storage 而不是渲染时快照：开关变化不重建编辑器。
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!documentId) return;
+    const hostDocumentId = editor.storage.blockLink?.hostDocumentId ?? '';
+    const followOthers = editor.storage.blockLink?.followOtherDocuments !== false;
+    if (documentId !== hostDocumentId && !followOthers) return;
     const href = anchorHref({ documentId, blockId, blockIndex });
     const base = `/documents/${documentId}`;
     const fragment = href.startsWith(base) ? href.slice(base.length) : '';

@@ -45,9 +45,14 @@ import { VISUAL_OPTIONS, visualOptionStatus } from '@/lib/share/visual-options';
 import {
   COMMENT_LEVEL_COPY,
   normalizeCommentLevel,
-  nextCommentLevel,
   type CommentLevel,
 } from '@/lib/share/comment-level';
+import {
+  BLOCK_LINKS_SWITCH,
+  DUPLICATE_SWITCH,
+  USER_INTERACTIVITY_TITLE,
+  visitorSwitchStatus,
+} from '@/lib/share/visitor-interaction';
 import { SEO_DESC, expiryLabel } from '@/lib/share/publishing-options';
 import {
   linkOperationDone,
@@ -85,13 +90,17 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [showAuthor, setShowAuthor] = useState(true);
   // G64：私密链接的访客评论权限三档（默认 add，与官方 commentLevel 默认一致）。
   const [commentLevel, setCommentLevel] = useState<CommentLevel>('add');
-  // G1534：visual.options 其余四组（键与 document_share 列同名）。
+  // G1534/G141：visual.options 与其余发布开关（键与 document_share 列同名，默认值照官方 13 项）。
   const [visuals, setVisuals] = useState<Record<string, boolean>>({
     showPageTitle: true,
     hideTableOfContents: false,
     hidePresentationMode: false,
     showWatermark: true,
     enableSeo: false,
+    enableObjectLinks: false,
+    showDuplicateAsTemplate: false,
+    emailBasedAccessEnabled: false,
+    hideHashTagWords: false,
   });
   const [permission, setPermission] = useState<DocumentSharePermission | null>(null);
   const [shareId, setShareId] = useState<string | null>(null);
@@ -648,11 +657,9 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   aria-label="启用搜索引擎索引"
                 />
               </div>
-              {/* G141: the four later boolean publish settings of the official 13. */}
+              {/* G141：其余两项布尔发布设置。 */}
               {(
                 [
-                  ['enableObjectLinks', '允许访问者跟随区块链接'],
-                  ['showDuplicateAsTemplate', '允许访问者复制为模板'],
                   ['emailBasedAccessEnabled', '启用基于邮箱的访问限制'],
                   ['hideHashTagWords', '在公开页隐藏 # 标签词'],
                 ] as const
@@ -666,21 +673,63 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   />
                 </div>
               ))}
-              {/* G64：「访客可以添加评论 / 访客可以查看评论」三档（commentLevel，默认 add）。
-                  官方判定 `view|add` 才显示下面这组「访客互动」，所以 none 时整组不渲染。 */}
-              <div className="mt-3 rounded-md border border-border px-3 py-2.5">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-sm">{COMMENT_LEVEL_COPY[commentLevel].label}</p>
-                    <p className="text-xs text-muted-foreground">访客通过此链接能对评论做什么</p>
+              {/* G145：官方「用户互动」分区——每个开关都带描述句与成对状态句（不是只有 tooltip）。
+                  评论两枚是三档 `commentLevel` 的两个端点（G64）。官方把它们放在独立子页，且在
+                  `commentLevel==='none'` 时主面板整区隐藏；本地没有子页入口，整区隐藏会把「查看评论」
+                  一起藏掉、再也打不开 ⇒ 本地区块常驻（声明的本地偏差）。 */}
+              <div className="mt-5" data-testid="visitor-interactivity">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {USER_INTERACTIVITY_TITLE}
+                </p>
+                <div className="flex flex-col gap-2">
+                  {[DUPLICATE_SWITCH, BLOCK_LINKS_SWITCH].map((copy) => {
+                    const key = copy === DUPLICATE_SWITCH ? 'showDuplicateAsTemplate' : 'enableObjectLinks';
+                    const on = visuals[key];
+                    return (
+                      <div
+                        key={copy.labelKey}
+                        className="rounded-md border border-border px-3 py-2.5"
+                        data-visitor-switch={key}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-sm">{copy.label}</p>
+                          <Switch
+                            checked={on}
+                            onCheckedChange={(next) => handleVisualOption(key, next)}
+                            aria-label={copy.label}
+                          />
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">{copy.description}</p>
+                        <p className="mt-1 text-xs text-foreground/60" data-visitor-status>
+                          {visitorSwitchStatus(copy, on)}
+                        </p>
+                      </div>
+                    );
+                  })}
+                  {/* 评论那两枚在官方是**独立子页**（`C==="comments"` 才渲染 `Yc`）。本地没有子页
+                      路由，就把这两枚真开关放在同一分区：查看＝档位不是 none；添加＝档位是 add，
+                      且 none 时禁用（官方也是先有查看才谈添加）。 */}
+                  <div className="rounded-md border border-border px-3 py-2.5" data-comment-switch="view">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm">{COMMENT_LEVEL_COPY.view.label}</p>
+                      <Switch
+                        checked={commentLevel !== 'none'}
+                        onCheckedChange={(next) => handleCommentLevel(next ? 'view' : 'none')}
+                        aria-label={COMMENT_LEVEL_COPY.view.label}
+                      />
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    className="rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
-                    onClick={() => handleCommentLevel(nextCommentLevel(commentLevel))}
-                  >
-                    切换
-                  </button>
+                  <div className="rounded-md border border-border px-3 py-2.5" data-comment-switch="add">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm">{COMMENT_LEVEL_COPY.add.label}</p>
+                      <Switch
+                        checked={commentLevel === 'add'}
+                        disabled={commentLevel === 'none'}
+                        onCheckedChange={(next) => handleCommentLevel(next ? 'add' : 'view')}
+                        aria-label={COMMENT_LEVEL_COPY.add.label}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
               {/* G1535：链接到期是独立一轴（官方 expiration.date／expire.on [0]／expire.never）。 */}

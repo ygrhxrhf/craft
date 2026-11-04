@@ -18,6 +18,11 @@ interface SharedDocViewProps {
   authorByline?: string | null;
   /** G1534：`showPageTitle` 关掉时不渲染标题块（与 pageStyle.showTitle 取与）。 */
   showPageTitle?: boolean;
+  /**
+   * G145：访客可否跟随**跨文档**区块链接（官方 `enableObjectLinks`，默认关）。公开页传进来，
+   * 关着时点跨文档链接不动作；同文档锚点不受影响。编辑视图不传 ⇒ 按允许处理。
+   */
+  followBlockLinks?: boolean;
   header?: React.ReactNode;
 }
 
@@ -33,6 +38,7 @@ export function SharedDocView({
   collaborative = false,
   authorByline = null,
   showPageTitle = true,
+  followBlockLinks = true,
   header,
 }: SharedDocViewProps) {
   const style = useMemo(() => normalizePageStyle(pageStyle), [pageStyle]);
@@ -87,6 +93,7 @@ export function SharedDocView({
           initialContent={content}
           collaborative={collaborative}
           readOnly={!collaborative}
+          followBlockLinks={followBlockLinks}
           spelling={style.spelling === true}
           spellingLang={style.spellingLang}
         />

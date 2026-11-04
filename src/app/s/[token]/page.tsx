@@ -57,6 +57,7 @@ export default async function SharedPage({ params }: SharedPageProps) {
       collaborative={collaborative}
       authorByline={doc.showAuthor ? authorByline(doc.authorName) : null}
       showPageTitle={doc.showPageTitle}
+      followBlockLinks={doc.enableObjectLinks}
       header={
         <PublicDocBanner
           collaborative={collaborative}
@@ -65,6 +66,7 @@ export default async function SharedPage({ params }: SharedPageProps) {
           signedIn={Boolean(session?.user?.id)}
           permission={doc.permission}
           loginNext={`/s/${token}`}
+          duplicateAsTemplate={doc.showDuplicateAsTemplate}
         />
       }
     />

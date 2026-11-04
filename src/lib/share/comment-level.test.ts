@@ -58,8 +58,11 @@ describe('the share dialog exposes the level (G64)', () => {
     expect(dialog).toContain('setShareCommentLevel(documentId, next)');
   });
 
-  it('renders the three-state control with the harvested label', () => {
-    expect(dialog).toContain('COMMENT_LEVEL_COPY[commentLevel].label');
-    expect(dialog).toContain('nextCommentLevel(commentLevel)');
+  it('renders the two comment switches that share the one three-state level', () => {
+    // 官方两枚（查看／添加）在独立子页；本地放在同一分区，各自是真开关，共用 `commentLevel`。
+    expect(dialog).toContain('COMMENT_LEVEL_COPY.view.label');
+    expect(dialog).toContain('COMMENT_LEVEL_COPY.add.label');
+    expect(dialog).toContain("handleCommentLevel(next ? 'view' : 'none')");
+    expect(dialog).toContain("handleCommentLevel(next ? 'add' : 'view')");
   });
 });

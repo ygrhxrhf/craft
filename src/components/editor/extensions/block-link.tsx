@@ -15,12 +15,38 @@ declare module '@tiptap/react' {
   }
 }
 
-export const BlockLink = Node.create({
+interface BlockLinkOptions {
+  /** 本文档 id（判断一条区块链接是不是跨文档）。 */
+  hostDocumentId: string;
+  /**
+   * G145：公开页访客跟不跟得上**跨文档**区块链接（官方 `enableObjectLinks`，默认关）。
+   * 关着时同文档的锚点跳转照常，指向别的文档的那条不动作。
+   */
+  followOtherDocuments: boolean;
+}
+
+declare module '@tiptap/core' {
+  interface Storage {
+    blockLink: { hostDocumentId: string; followOtherDocuments: boolean };
+  }
+}
+
+export const BlockLink = Node.create<BlockLinkOptions>({
   name: 'blockLink',
   group: 'inline',
   inline: true,
   atom: true,
 
+  addOptions() {
+    return { hostDocumentId: '', followOtherDocuments: true };
+  },
+
+  addStorage() {
+    return {
+      hostDocumentId: this.options.hostDocumentId,
+      followOtherDocuments: this.options.followOtherDocuments,
+    };
+  },
   addAttributes() {
     return {
       documentId: {

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T09:36:49.036Z",
+  "generatedAt": "2026-11-04T10:29:29.728Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 829,
-    "aligned": 345,
+    "gap": 828,
+    "aligned": 346,
     "unknown": 193,
     "deliberate": 105,
     "partial": 68,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 259,
-    "P2 / aligned": 240,
+    "P2 / gap": 258,
+    "P2 / aligned": 241,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -3724,13 +3724,13 @@
       "id": "G145",
       "official": "访客互动 **5 组开关且每个都写\"允许/不允许\"两版描述**；其中 `enableObjectLinks` 是**跨文档权限**（文案明确\"即使它们指向其他文档\"）；`showDuplicateAsTemplate` 默认关（§四）",
       "local": "公开页 `/p/[slug]` 无访客能力开关，区块链接在公开页的行为未定义",
-      "verdict": "缺失",
-      "score": "2/2",
-      "status": "gap",
+      "verdict": "已对齐",
+      "score": "2/2（第 301 批：面板「用户互动」区两枚真开关逐字带描述＋成对状态句；跨文档区块链接在公开页按 `enableObjectLinks` 实拦；`showDuplicateAsTemplate` 打开才出「用作模板」并真复制到访客空间；评论两枚是三档的两端（见 G64）",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
-        "raw": "2/2"
+        "raw": "2/2（第 301 批：面板「用户互动」区两枚真开关逐字带描述＋成对状态句；跨文档区块链接在公开页按 `enableObjectLinks` 实拦；`showDuplicateAsTemplate` 打开才出「用作模板」并真复制到访客空间；评论两枚是三档的两端（见 G64）"
       },
       "conflict": null,
       "priority": "P2"

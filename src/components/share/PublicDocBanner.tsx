@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
 import { RequestEditAccess } from './RequestEditAccess';
+import { UseAsTemplateButton } from './UseAsTemplateButton';
 import { normalizeSharePermission } from '@/lib/share/permission';
 
 export function PublicDocBanner({
@@ -12,6 +13,7 @@ export function PublicDocBanner({
   signedIn = false,
   permission,
   loginNext,
+  duplicateAsTemplate = false,
 }: {
   collaborative?: boolean;
   /** G1534：官方 `showWatermark`（页脚是否提及 Craft），默认显示。 */
@@ -21,6 +23,8 @@ export function PublicDocBanner({
   signedIn?: boolean;
   permission?: string;
   loginNext?: string;
+  /** G145：`showDuplicateAsTemplate`——给访客一枚「用作模板」。 */
+  duplicateAsTemplate?: boolean;
 }) {
   // G131：五档里只有 linkView（旧值 view 归一而来）是"可看不可编"的链接档，请求编辑那枚才对；
   // linkEdit 已是可编辑，其余档（协作者/可评论）走登录提示。
@@ -35,19 +39,24 @@ export function PublicDocBanner({
       ) : (
         <span className="text-meta text-foreground/40">{collaborative ? '可编辑视图' : '只读视图'}</span>
       )}
-      {!collaborative && (
-        tier === 'linkView' && signedIn && identifier ? (
-          <RequestEditAccess identifier={identifier} />
-        ) : (
-          <Link
-            href={loginNext ? `/login?next=${encodeURIComponent(loginNext)}` : '/login'}
-            className="flex items-center gap-1.5 rounded-md px-2 py-1 text-meta text-foreground/40 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground/85"
-          >
-            <LogIn className="size-3.5" />
-            {tier === 'linkView' ? '登录后请求编辑' : '登录后编辑'}
-          </Link>
-        )
-      )}
+      <div className="flex items-center gap-3">
+        {!collaborative && duplicateAsTemplate && identifier && (
+          <UseAsTemplateButton identifier={identifier} />
+        )}
+        {!collaborative && (
+          tier === 'linkView' && signedIn && identifier ? (
+            <RequestEditAccess identifier={identifier} />
+          ) : (
+            <Link
+              href={loginNext ? `/login?next=${encodeURIComponent(loginNext)}` : '/login'}
+              className="flex items-center gap-1.5 rounded-md px-2 py-1 text-meta text-foreground/40 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground/85"
+            >
+              <LogIn className="size-3.5" />
+              {tier === 'linkView' ? '登录后请求编辑' : '登录后编辑'}
+            </Link>
+          )
+        )}
+      </div>
     </footer>
   );
 }

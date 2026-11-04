@@ -105,6 +105,7 @@ export default async function PublishPage({ params }: PublishPageProps) {
       styled
       authorByline={doc.showAuthor ? authorByline(doc.authorName) : null}
       showPageTitle={doc.showPageTitle}
+      followBlockLinks={doc.enableObjectLinks}
       header={
         <PublicDocBanner
           showWatermark={doc.showWatermark}
@@ -112,6 +113,7 @@ export default async function PublishPage({ params }: PublishPageProps) {
           signedIn={Boolean(session?.user?.id)}
           permission={doc.permission}
           loginNext={`/p/${slug}`}
+          duplicateAsTemplate={doc.showDuplicateAsTemplate}
         />
       }
     />

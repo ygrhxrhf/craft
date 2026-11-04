@@ -4858,10 +4858,15 @@
       ]
     },
     "G336": {
-      "status": "gap",
-      "note": "斜杠菜单只插固定 3×3，无 NxM 快捷输入",
+      "status": "aligned",
+      "note": "第 280 批：`NxM` 快捷输入落成纯核 nx-m-table.ts（官方正则用位置捕获组读同一形状，因 target 低于 ES2018；cols 省略即等于 rows；抑制条件＝≤9 的正方形与任一边为 0 逐条照抄），分隔符收成 `[x×]`——实测 TipTap Typography 的 multiplication 规则会把数字间的 x 换成 ×，真打字到解析层屏上已是 `/12×3`；尺寸按本地表格上限（50 行／15 列／750 格）收口。接线在 filterCommands：解析成功就把候选插到最前，标签逐字照官方 H3(t,e) 的 label `${rows}x${cols}`。★ 改判官方那句「两个构造器产两种块」：回读采集包 index-DiTmKH3z.js，H3 与 Z3 产的是同一种块（表、都调 h2e），差别只在菜单注册（parentId tables vs insertTable、analyticsId、removeSourceBlockIfEmpty）⇒ 采集时「普通表 vs 集合/看板式」的推测是错的；本地接的是行内快捷面板那条，另一条注册归块 ⋯ 菜单的插入表格子菜单（G111）。浏览器实点：打 `/12x3` 出候选「12x3 插入表格」、点它插入 12 行 × 3 列的表；打 `/4x4` 显示无匹配命令（抑制生效）。测试文档已移入回收站。",
       "evidence": [
-        "src/components/editor/slash-menu/slash-commands.ts:229"
+        "src/lib/editor/nx-m-table.ts:20",
+        "src/lib/editor/nx-m-table.ts:31",
+        "src/components/editor/slash-menu/slash-commands.ts:757",
+        "src/components/editor/slash-menu/slash-commands.ts:775",
+        "src/components/editor/slash-menu/SlashCommandExtension.ts:23",
+        "src/lib/editor/nx-m-table.test.ts:1"
       ]
     },
     "G337": {

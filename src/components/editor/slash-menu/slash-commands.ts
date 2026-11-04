@@ -47,6 +47,7 @@ import {
 import type { Editor } from '@tiptap/react';
 import type { ComponentType } from 'react';
 import { readDefaultLanguage, readDefaultTheme } from '@/lib/editor/code-preferences';
+import { parseTableShortcut, type TableShortcutSize } from '@/lib/editor/nx-m-table';
 import { ALIGNMENT_CONTROLS } from '@/lib/editor/format-commands';
 import { promptDialog } from '@/lib/dialog/show';
 import { uploadFile } from '@/lib/upload-client';
@@ -746,17 +747,46 @@ slashCommands.push({
   },
 });
 
+/**
+ * G336：快捷面板里 `12x3` 这种输入本身就是一条候选。只在真解析成尺寸时多给这一条，
+ * 官方抑制的那些（≤9 的正方形、任一边为 0）在解析层就回 `null`，这里自然什么都不加。
+ *
+ * 标签逐字照官方构造器 `H3(t,e)` 的 `label: \`${t}x${e}\``（bundle `index-DiTmKH3z.js`）；
+ * `description` 官方节点没有，这里填静态表格命令同一句「插入表格」。
+ */
+function tableShortcutCommand(size: TableShortcutSize): SlashCommand {
+  return {
+    name: `${size.rows}x${size.cols}`,
+    description: '插入表格',
+    icon: Table,
+    keywords: ['表格', 'table'],
+    category: '高级块',
+    command: (editor, range) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertTable({ rows: size.rows, cols: size.cols, withHeaderRow: true })
+        .run();
+    },
+  };
+}
+
 export function filterCommands(query: string): SlashCommand[] {
   const lowerQuery = query.toLowerCase().trim();
 
-  if (!lowerQuery) return slashCommands;
+  const matched = lowerQuery
+    ? slashCommands.filter(
+        (cmd) =>
+          cmd.name.toLowerCase().includes(lowerQuery) ||
+          cmd.description.toLowerCase().includes(lowerQuery) ||
+          cmd.keywords.some((kw) => kw.toLowerCase().includes(lowerQuery))
+      )
+    : slashCommands;
 
-  return slashCommands.filter(
-    (cmd) =>
-      cmd.name.toLowerCase().includes(lowerQuery) ||
-      cmd.description.toLowerCase().includes(lowerQuery) ||
-      cmd.keywords.some((kw) => kw.toLowerCase().includes(lowerQuery))
-  );
+  const size = parseTableShortcut(query);
+  if (!size) return matched;
+  return [tableShortcutCommand(size), ...matched];
 }
 
 export function getCommandCategories(): string[] {

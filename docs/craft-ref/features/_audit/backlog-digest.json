@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-04T06:14:29.886Z",
+  "generatedAt": "2026-11-04T06:20:56.202Z",
   "total": 1614,
   "status": {
-    "aligned": 611,
+    "aligned": 612,
     "nonaction": 514,
-    "partial": 214,
+    "partial": 213,
     "deliberate": 165,
     "gap": 90,
     "unreachable": 20
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 295,
+    "P2 / aligned": 296,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 168,
@@ -27,7 +27,7 @@
     "P2 / deliberate": 73,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
-    "P2 / partial": 64,
+    "P2 / partial": 63,
     "P3 / aligned": 60,
     "P? / deliberate": 40,
     "P3 / gap": 38,
@@ -1332,7 +1332,7 @@
       4
     ],
     [
-      "三点一〇一三、第 90 批·上半〔零写入·**视口探针 ＋ `qZ` r",
+      "三点一〇三一、第 96 批·尾记六〔★★★**判据盲区一次性结掉三条老结",
       4
     ]
   ]

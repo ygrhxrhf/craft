@@ -7291,10 +7291,13 @@
       ]
     },
     "G817": {
-      "status": "partial",
-      "note": "本地分组是硬编码六组，未按 7 分类/段建模",
+      "status": "aligned",
+      "note": "第 290 批改判（陈旧读数）：第 187 批起本地就是 7 分类 × 18 段的静态表（PANEL_TABS／PANEL_SECTIONS，逐段带官方键，shortcut-panel.test.ts 钉名册与顺序），不是「硬编码六组」；documents 那条按官方「该分类无段标题」落成该标签页不产生段（BINDING_SECTIONS 注释直写 null＝该标签页无段，即「文档」）⇒ 屏上与官方一致；Mac 变体（JX＝*_MAC 追加）本地用同名 _MAC 条目承载（MOVE_BLOCK_TOP_MAC 等在册），Safari 档 TOGGLE_QUICK_OPEN_SAFARI 与 SET_CANCELLED_SLASH 也都在名册里。差异只剩载体：官方把无标题段仍包一层 div、本地直接不产生段（屏上同形）。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:12"
+        "src/lib/editor/shortcut-panel.ts:70",
+        "src/lib/editor/shortcut-panel.ts:91",
+        "src/components/settings/ShortcutsPanel.tsx:113",
+        "src/lib/editor/shortcut-panel.test.ts:1"
       ]
     },
     "G818": {

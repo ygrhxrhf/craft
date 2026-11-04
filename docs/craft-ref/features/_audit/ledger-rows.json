@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T06:14:29.296Z",
+  "generatedAt": "2026-11-04T06:20:55.677Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 839,
-    "aligned": 338,
+    "gap": 838,
+    "aligned": 339,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 269,
-    "P2 / aligned": 233,
+    "P2 / gap": 268,
+    "P2 / aligned": 234,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -15860,10 +15860,10 @@
       "cols": 5,
       "id": "G817",
       "official": "★★ **`k9t` 分类清单构造器 @2,109,810（队列\"`k9t` 定义\"结案）**：`k9t=t=>{const{tableShortcuts:e}=ot,…}` ⇒ **`ot.tableShortcuts` 字段实存**（同名队列项一并结案）；返回 7 分类数组 `{id,getLabel,icon,sections:[{id,getTitle?,shortcuts:[{getName,shortcuts:[描述符]}]}]}`；★ **`documents` 分类只有 `documents-base` 一段且无 `getTitle`** ⇒ 屏上\"`文档` 是唯一没有段标题的分类\"的**源码级解释**（`general` 有 `general-navigation`/`general-view` 带标题 ⇒ 屏上\"导航/视图\"两段名 ✓）；★ **`JX=t=>{const e=S9t.get(t);return Ll&&e!=null?[t,e]:[t]}`＝Mac 才追加 `*_MAC` 变体**（§13 结论的函数名到手）；Mac-only 分支逐字：`SET_CANCELLED` 档 `Ll?[SET_CANCELLED,SET_CANCELLED_SLASH]:[SET_CANCELLED]`、`SELECT_TO_TOP` 档 `Ll?[COMMON,MAC]:[COMMON]`；快速开启按 `Hd`（Safari 判定）切 `TOGGLE_QUICK_OPEN_SAFARI`",
-      "local": "本地无面板（G771）；若复刻：分类/分段/命令清单＝**纯静态数据**（入参只有 `hideFromUI` 与 `Ll`），可直接硬编码 7×sections 表；★ \"无标题段\"＝`getTitle` 缺省即不渲染 `h3` 的**可选字段**语义",
-      "verdict": "机制（代码级）＋ 建模规格",
+      "local": "本地无面板（G771）；若复刻：分类/分段/命令清单＝**纯静态数据**（入参只有 `hideFromUI` 与 `Ll`），可直接硬编码 7×sections 表；★ \"无标题段\"＝`getTitle` 缺省即不渲染 `h3` 的**可选字段**语义 ⇒ ✎ 现读（2026-11-04 第 290 批）：上一段\"本地无面板／硬编码六组\"是**陈旧读数**——第 187 批起本地就是 **7 分类 × 18 段**的静态表（`shortcut-panel.ts` 的 `PANEL_TABS`／`PANEL_SECTIONS`，逐段带官方键，`shortcut-panel.test.ts` 钉名册与顺序），`documents` 那条按官方\"该分类无段标题\"落成**该标签页不产生段**（`BINDING_SECTIONS` 注释直写「`null`＝该标签页无段，即「文档」」）⇒ 屏上与官方\"文档是唯一没有段标题的分类\"一致；Mac 变体（`JX`＝`*_MAC` 追加）本地用同名 `_MAC` 条目承载（`MOVE_BLOCK_TOP_MAC` 等在册）、Safari 档 `TOGGLE_QUICK_OPEN_SAFARI` 与 `SET_CANCELLED_SLASH` 也都在名册里 ⇒ 机制面已齐，差异只剩\"官方把无标题段仍包一层 div、本地直接不产生段\"这一载体差",
+      "verdict": "已对齐｜第 290 批",
       "score": "P2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": null,

@@ -10,9 +10,11 @@ import { useFocusStore } from '@/lib/store/use-focus-store';
 import { KeyContextStack, type KeyLayer } from '@/lib/editor/key-context-stack';
 
 /**
- * The table C (shell) chords. They are global in the official build — they sit in the focus
- * stack's resident dispatcher, not in the editor — so they listen on `window` and are deliberately
- * claimed *after* the editor layer, which returns false for the ids it does not own.
+ * The table C (shell) chords. They are global in the official build — one **document-level,
+ * capture-phase** dispatcher (`document.addEventListener("keydown", tEe, opts, true)`, G489),
+ * which is why official shortcuts run *before* any component's own keydown. Locally the same
+ * shape: this listener sits on `document` with `capture`, so it beats every bubble-phase
+ * component handler instead of waiting for them to let the event through.
  *
  * Only chords with a measured action are handled: `⌘.` opens focus mode (G11). The official web
  * build measures `⌘\` / `⌘⌥,` / `⌘⌥N` as inert (G1587/G1592/G1585), so those stay listed in the
@@ -67,8 +69,10 @@ export function ShellShortcuts() {
       useFocusStore.getState().toggle();
     };
 
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    // G489：官方快捷键＝**单一入口且挂 document 的 capture 阶段** ⇒ 先于任何组件自己的
+    // keydown 被处理（组件若在冒泡阶段 stopPropagation，快捷键照样先跑）。
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => document.removeEventListener('keydown', onKeyDown, true);
   }, [pathname]);
 
   return null;

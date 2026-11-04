@@ -19,7 +19,8 @@ describe('the tag reorder wiring (G94)', () => {
 
   it('pins and unpins a tag through the same table', () => {
     expect(list).toContain("patch: { pinned: !group.pinned }");
-    expect(list).toContain("group.pinned ? '取消固定' : '固定'");
+    // G173：按钮文案换成官方成对句「固定标签 / 取消固定标签」。
+    expect(list).toContain('pinToggleLabel(Boolean(group.pinned)).label');
   });
 
   it('renders the tree through the client list', () => {

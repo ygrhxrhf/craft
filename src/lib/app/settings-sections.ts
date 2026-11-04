@@ -34,8 +34,8 @@ export const SETTINGS_SECTIONS: readonly SettingsSection[] = [
   { id: 'space', label: '空间', wired: true },
   // Published content renders fixed sample rows.
   { id: 'published', label: '已发布内容', wired: false },
-  // The tag switch is a local default with no backing column.
-  { id: 'tags', label: '标签', wired: false },
+  // G173：固定标签管理入口落在这一区（计数读真实的 `tag.pinned`）⇒ 这一区已经接线。
+  { id: 'tags', label: '标签', wired: true },
   { id: 'appearance', label: '外观', wired: true },
   // One language exists, and the row says so instead of pretending to offer a choice.
   { id: 'language', label: '语言', wired: true },

@@ -190,11 +190,39 @@ export async function getCollection(id: string) {
     else valuesByItem.set(key, [value]);
   }
 
+  // G173：标签可直接进集合筛选。条目若指向一篇文档，就把那篇文档的标签名挂到行上（`itemTags`），
+  // 供「标签」这一虚拟列求值——没有文档的条目就是空数组，与官方"无标签"同义。
+  const documentIds = items
+    .map((item: Record<string, unknown>) => item.documentId)
+    .filter((id: unknown): id is string => Boolean(id));
+  const tagNamesByDocument = new Map<string, string[]>();
+  if (documentIds.length > 0) {
+    const links = await db.orm.public.DocumentTag
+      .where((m: any) => m.documentId.in(documentIds))
+      .all() as Record<string, unknown>[];
+    const tagIds = [...new Set(links.map((link) => String(link.tagId)))];
+    const tags = tagIds.length === 0
+      ? []
+      : await db.orm.public.Tag
+        .where((m: any) => m.id.in(tagIds))
+        .all() as Record<string, unknown>[];
+    const nameById = new Map(tags.map((tag) => [String(tag.id), String(tag.name)]));
+    for (const link of links) {
+      const name = nameById.get(String(link.tagId));
+      if (!name) continue;
+      const key = String(link.documentId);
+      const bucket = tagNamesByDocument.get(key);
+      if (bucket) bucket.push(name);
+      else tagNamesByDocument.set(key, [name]);
+    }
+  }
+
   const itemsWithValues = [];
   for (const item of items) {
     itemsWithValues.push({
       ...item,
       values: valuesByItem.get(String(item.id)) ?? [],
+      itemTags: item.documentId ? (tagNamesByDocument.get(String(item.documentId)) ?? []) : [],
     });
   }
 

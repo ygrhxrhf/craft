@@ -10,12 +10,19 @@ import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
 import type { TagBrowseGroup } from '@/lib/browse/tag-browse';
 import { tagLevel } from '@/lib/browse/tag-browse';
 import { formatDocCount } from '@/lib/browse/official-copy';
+import {
+  PINNED_ERROR,
+  PIN_SHOW_CHILDREN_LABEL,
+  pinDecision,
+  pinToggleLabel,
+} from '@/lib/browse/pinned-tags';
+import { confirmDialog } from '@/lib/dialog/show';
 
 function TagRow({ group, nested = false }: { group: TagBrowseGroup; nested?: boolean }) {
   return (
     <Link
       href={`/tags/${group.id}`}
-      className="flex min-h-9 items-center gap-2 rounded-lg px-2 text-[13px] transition-colors hover:bg-foreground/4"
+      className="flex h-8 items-center gap-2 rounded-md px-2 text-ui transition-colors hover:bg-foreground/4"
     >
       <span
         aria-hidden
@@ -26,7 +33,7 @@ function TagRow({ group, nested = false }: { group: TagBrowseGroup; nested?: boo
       <span className="min-w-0 flex-1 truncate">
         {nested ? tagLevel(group.name).leaf : group.name}
       </span>
-      <span className="shrink-0 text-muted-foreground">{formatDocCount(group.documentCount)}</span>
+      <span className="shrink-0 text-foreground/55">{formatDocCount(group.documentCount)}</span>
     </Link>
   );
 }
@@ -39,6 +46,8 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
   const router = useRouter();
   const [items, setItems] = useState(groups);
   const [dragging, setDragging] = useState<number | null>(null);
+  // G173：固定失败/到上限时的那一句（不是静默吞掉）。
+  const [pinError, setPinError] = useState<string | null>(null);
 
   // router.refresh() 之后服务端重排的结果要回到本地列表（置顶切换会改变顺序）。
   useEffect(() => {
@@ -74,16 +83,57 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
     if (next.length === items.length) await commitOrder(next);
   };
 
-  /** G607 `tag_pin` / `tag_unpin`：置顶是标签自己的布尔位，不依赖整批顺序。 */
+  /**
+   * G607 `tag_pin` / `tag_unpin`：置顶是标签自己的布尔位，不依赖整批顺序。
+   * G173：固定前有三件事——上限判据（`pinned.limit.reached`）、「固定并显示所有子项」
+   * （连带把后代一并固定）、失败句（`pinned.error`）。
+   */
   const togglePin = async (group: TagBrowseGroup) => {
-    const manager = getSyncManager();
-    await manager.applyLocal({ table: 'tag', id: group.id, patch: { pinned: !group.pinned } });
-    await manager.flushNow();
-    router.refresh();
+    setPinError(null);
+    const pinnedCount = items.filter((item) => item.pinned).length;
+    const withChildren = group.children.length > 0 ? await confirmDialog({
+      title: PIN_SHOW_CHILDREN_LABEL,
+      message: `是否连同「${group.name}」的所有子标签一起固定？`,
+      confirmLabel: PIN_SHOW_CHILDREN_LABEL,
+    }) : false;
+    const childrenOf = (id: string): string[] => {
+      const find = (list: TagBrowseGroup[]): TagBrowseGroup | undefined => {
+        for (const candidate of list) {
+          if (candidate.id === id) return candidate;
+          const nested = find(candidate.children);
+          if (nested) return nested;
+        }
+        return undefined;
+      };
+      return (find(items)?.children ?? []).map((child) => child.id);
+    };
+    const decision = group.pinned
+      ? { allowed: true, reason: null, ids: [group.id] }
+      : pinDecision({ pinnedCount, withChildren, tagId: group.id, childrenOf });
+    if (!decision.allowed) {
+      setPinError(decision.reason ?? PINNED_ERROR);
+      return;
+    }
+    try {
+      const manager = getSyncManager();
+      for (const id of decision.ids) {
+        await manager.applyLocal({ table: 'tag', id, patch: { pinned: !group.pinned } });
+      }
+      await manager.flushNow();
+      router.refresh();
+    } catch {
+      setPinError(PINNED_ERROR);
+    }
   };
 
   return (
-    <ul className="flex flex-col gap-0.5">
+    <div>
+      {pinError && (
+        <p role="status" className="mb-2 text-meta text-destructive">
+          {pinError}
+        </p>
+      )}
+      <ul className="flex flex-col gap-px">
       {items.map((group, index) => (
         <li
           key={group.id}
@@ -105,8 +155,8 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
             </div>
             <button
               type="button"
-              aria-label={group.pinned ? '取消固定' : '固定'}
-              title={group.pinned ? '取消固定' : '固定'}
+              aria-label={pinToggleLabel(Boolean(group.pinned)).label}
+              title={pinToggleLabel(Boolean(group.pinned)).label}
               onClick={() => void togglePin(group)}
               className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-foreground"
             >
@@ -114,7 +164,7 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
             </button>
           </div>
           {group.children.length > 0 && (
-            <ul className="ml-5 border-l border-border/60 pl-2">
+            <ul className="ml-5 flex flex-col gap-px border-l border-border/60 pl-2">
               {group.children.map((child) => (
                 <li key={child.id}>
                   <TagRow group={child} nested />
@@ -124,6 +174,7 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
           )}
         </li>
       ))}
-    </ul>
+      </ul>
+    </div>
   );
 }

@@ -8,6 +8,12 @@ import { OPERATORS, applyFilter, operatorsFor, resolveOperator } from '@/lib/col
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
 
+/**
+ * G173：标签是**虚拟列**——它的值不来自 `collection_value`，而是条目所指向文档的标签名
+ *（`item.itemTags`，由 `getCollection` 挂上）。所以这里单独取一次值，其余列照旧。
+ */
+export const TAG_FILTER_PROPERTY_ID = '__tags__';
+
 interface Filter {
   id: string;
   propertyId: string;
@@ -25,12 +31,15 @@ export function FilterBar({ collection, filters, onFiltersChange }: FilterBarPro
   const [isOpen, setIsOpen] = useState(false);
 
   const properties = collection.properties.filter((p: any) => p.isVisible);
+  // G173：标签是虚拟列（不属于 `collection_property` 表），下拉里排在真实列之后。
+  const tagProperty = { id: TAG_FILTER_PROPERTY_ID, name: '标签', type: 'tags', isVisible: true };
+  const selectableProperties = [...properties, tagProperty];
 
   const handleAddFilter = () => {
     // A column type with no permitted operator cannot be filtered at all — official `TKe` has no
     // default branch, so start from the first column that actually has one instead of silently
     // doing nothing when the title column happens to be an unfilterable type.
-    const first = properties.find((p: any) => operatorsFor(p.type).length > 0);
+    const first = selectableProperties.find((p: any) => operatorsFor(p.type).length > 0);
     if (!first) return;
     const allowed = operatorsFor(first.type);
 
@@ -55,6 +64,7 @@ export function FilterBar({ collection, filters, onFiltersChange }: FilterBarPro
   };
 
   const getProperty = (propertyId: string) => {
+    if (propertyId === TAG_FILTER_PROPERTY_ID) return tagProperty;
     return properties.find((p: any) => p.id === propertyId);
   };
 
@@ -110,7 +120,7 @@ export function FilterBar({ collection, filters, onFiltersChange }: FilterBarPro
                 onChange={(e) => handlePropertyChange(filter, e.target.value)}
                 className="h-7 rounded-md border border-border bg-background px-2 text-ui transition-colors duration-150 hover:bg-foreground/4 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
               >
-                {properties.map((p: any) => (
+                {selectableProperties.map((p: any) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
                   </option>
@@ -168,6 +178,10 @@ export function applyFilters(items: any[], filters: Filter[], properties: any[])
 
   return items.filter(item => {
     return filters.every(filter => {
+      if (filter.propertyId === TAG_FILTER_PROPERTY_ID) {
+        // 标签按名字比较；操作符仍走 select 那一档（任何/无/是/不是）。
+        return applyFilter(filter, item.itemTags ?? [], 'tags');
+      }
       const property = properties.find((p: any) => p.id === filter.propertyId);
       // No property, or a line value this column type may not ask: the filter is inert, which is
       // the official `xw` rule — dropped, not answered.

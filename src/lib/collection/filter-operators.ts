@@ -25,7 +25,9 @@ export type LocalColumnType =
   | 'relation'
   | 'formula'
   | 'created_at'
-  | 'updated_at';
+  | 'updated_at'
+  // G173：标签是可筛选的虚拟列（取值来自 `item.itemTags`，不是 collection_value）。
+  | 'tags';
 
 export interface OperatorDef {
   /** Verbatim from the ledger: protocol.md §九 「显示」, cross-checked against feature-catalog.md. */
@@ -121,6 +123,8 @@ export const OPERATORS_BY_TYPE: Record<LocalColumnType, readonly string[]> = {
   formula: [],
   created_at: [],
   updated_at: [],
+  // G173：标签按名字比较——「包含某个标签」是 select 那档的语义（任何/无）。
+  tags: SELECT_TIER,
 };
 
 export function operatorsFor(type: string): readonly string[] {
@@ -262,6 +266,8 @@ export function evaluateOperator(op: string, value: unknown, operand: unknown, c
     case 'select_isNoneOf': {
       // Official: a null value answers `true` without consulting the operand.
       if (value == null) return true;
+      // G173：标签列的空数组＝「没有标签」，与 null 同义（否则「无某标签」会把无标签条目漏掉）。
+      if (columnType === 'tags' && Array.isArray(value) && value.length === 0) return true;
       const right = toOperandArray(operand);
       if (!right) return false;
       return toValueArray(value).every((v) => !right.includes(v));

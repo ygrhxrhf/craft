@@ -4111,10 +4111,17 @@
       ]
     },
     "G173": {
-      "status": "gap",
-      "note": "标签列表无固定/上限/管理入口，标签也不能进集合筛选",
+      "status": "aligned",
+      "note": "第 305 批：固定标签四件齐——固定/取消固定按官方成对文案；固定前有上限判据（pinned.limit.reached）+「固定并显示所有子项」（连带全部后代）+ 失败句（pinned.error），屏上实测固定与取消均落库 tag.pinned；设置「标签」区从 wired:false 打开并加「管理固定标签」入口与引导句/上限句；标签也进了集合筛选（虚拟列『标签』取条目文档的标签名，操作符走 select 档，空标签按『无』算），浏览器实测下拉出现「标签」且过滤条件可加可删、视图配置复位干净",
       "evidence": [
-        "src/app/(app)/tags/page.tsx:70"
+        "src/lib/browse/pinned-tags.ts:34",
+        "src/lib/browse/pinned-tags.ts:49",
+        "src/components/browse/TagTreeList.tsx:112",
+        "src/components/settings/SettingsPanels.tsx:552",
+        "src/lib/app/settings-sections.ts:38",
+        "src/components/collection/FilterBar.tsx:15",
+        "src/actions/collection/collection.ts:225",
+        "src/lib/collection/filter-operators.ts:127"
       ]
     },
     "G174": {

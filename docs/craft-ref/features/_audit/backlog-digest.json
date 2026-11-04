@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-04T14:39:13.233Z",
+  "generatedAt": "2026-11-04T15:17:12.295Z",
   "total": 1614,
   "status": {
-    "aligned": 624,
+    "aligned": 625,
     "nonaction": 515,
     "partial": 203,
     "deliberate": 165,
-    "gap": 87,
+    "gap": 86,
     "unreachable": 20
   },
   "priority": {
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 308,
+    "P2 / aligned": 309,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 169,
@@ -34,7 +34,7 @@
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
-    "P2 / gap": 15,
+    "P2 / gap": 14,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
     "P3 / unreachable": 4,
@@ -1181,6 +1181,14 @@
       "verdict": "☆ 已清（第 128 批）"
     },
     {
+      "id": "G173",
+      "line": 1367,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "无固定标签、无标签进筛选",
+      "verdict": "缺失"
+    },
+    {
       "id": "G300",
       "line": 1582,
       "status": "aligned",
@@ -1272,12 +1280,12 @@
       10
     ],
     [
-      "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
+      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
       9
     ],
     [
-      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      9
+      "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
+      8
     ],
     [
       "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",

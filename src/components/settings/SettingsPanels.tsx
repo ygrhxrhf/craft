@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useSession } from 'next-auth/react';
 import {
@@ -40,6 +41,8 @@ import {
   type TeamSummary,
 } from '@/actions/space/space';
 import { GUEST_WARNING_CONFIRM, GUEST_WARNING_DESC } from '@/lib/share/guest-warning';
+import { MANAGE_PINNED, PINNED_LIMIT_REACHED, PINNED_TAG_LIMIT, PIN_KEY_TAGS_HINT } from '@/lib/browse/pinned-tags';
+import { getTags } from '@/actions/tag/tag';
 import {
   DISCONNECT_CONFIRM,
   DISCONNECT_DESC,
@@ -191,11 +194,16 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   // G183：自定义域名四态。
   const [domain, setDomain] = useState<DomainContext | null>(null);
   const [domainError, setDomainError] = useState<string | null>(null);
+  // G173：固定标签数（管理入口上的引导句/上限句据此切换）。
+  const [pinnedCount, setPinnedCount] = useState(0);
 
   useEffect(() => {
     getSpaceContext().then(setSpace).catch(() => setSpace(null));
     getTeamContext().then(setTeam).catch(() => setTeam(null));
     getDomainContext().then(setDomain).catch(() => setDomain(null));
+    getTags()
+      .then((tags) => setPinnedCount(tags.filter((tag) => tag.pinned).length))
+      .catch(() => setPinnedCount(0));
   }, []);
 
   useEffect(() => {
@@ -537,6 +545,19 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
           <RowCard className="flex items-center justify-between px-4 py-3">
             <div className="text-[13px] font-medium">使用标签</div>
             <Switch defaultChecked className="data-checked:bg-(--craft-accent)" />
+          </RowCard>
+          {/* G173：官方「管理固定标签」入口 + 固定关键标签的引导句 / 到上限那句。 */}
+          <RowCard className="flex items-center justify-between px-4 py-3">
+            <div>
+              <div className="text-[13px] font-medium">{MANAGE_PINNED}</div>
+              <p className="mt-0.5 text-[12px] text-foreground/45">{pinnedCount >= PINNED_TAG_LIMIT ? PINNED_LIMIT_REACHED : PIN_KEY_TAGS_HINT}</p>
+            </div>
+            <Link
+              href="/tags"
+              className="rounded-md border border-border px-2.5 py-1 text-[12px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              管理
+            </Link>
           </RowCard>
           <GroupDesc>忽略列表中的标签不会显示在侧栏与设置里。</GroupDesc>
         </div>

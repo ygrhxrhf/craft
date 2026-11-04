@@ -139,6 +139,7 @@
 | G491 | 1927 | 已对齐 | local-says-missing | 无该语义（5 处监听彼此独立，各自判键）⇒ 本地"多层弹层 + 全局快捷键"必然互相干扰（与 G456/G471/G47 |
 | G503 | 1946 | 已对齐 | local-says-missing | grep -rn "cropMask\|aspectRatio" src ⇒ 0 命中 ⇒ 本地既无裁剪框、也不区分"用户 |
 | G623 | 2243 | 已对齐 | local-says-missing | 本地已补批量选择模式 ✎ 现读（2026-11-02）更正：SortableDocGrid 工具栏有「选择」；进入后卡片 |
+| G691 | 2473 | 已对齐 | local-says-missing | 本地 Collection.name（默认「未命名集合」）＋ 行标题走 CollectionItem.documentI |
 | G1223 | 3905 | 已对齐 | local-says-missing | 本轮实扫＝src/app/layout.tsx 与 src/app/globals.css 都没有 color-sche |
 | G1228 | 3937 | 已对齐 | local-says-missing | grep -n toggle src/lib/import/markdown.ts ⇒ 0 命中＝本地把 -／+／* 一 |
 | G1231 | 3940 | 部分落地 | local-says-missing | 现读（2026-11-03 第 259 批）：HTML 块导入与注释丢弃已在；本批补上「emoji-only 首块→页面 |
@@ -174,8 +175,8 @@
 | 4 | 三点五一、第 42 批（集合输入层 + 白板预览本体，model.md |
 | 4 | 三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe |
 | 4 | 三点八五、第 74 批（★★★ 静态补账：撤销计步器的生成/消费 ＋ 提 |
-| 4 | 三点八九、第 77 批（★★★ 行为级实测：样式落库形状／四频率 rep |
 | 4 | 三点九三、第 79 批·下半 B79B（2026-09-28 07:33 |
+| 4 | 三点九九、第 82 批·下半 C（2026-09-28 08:48–08 |
 
 ## 十一、不进复刻 backlog
 

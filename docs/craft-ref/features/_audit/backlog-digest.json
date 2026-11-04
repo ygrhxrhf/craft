@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-04T01:25:34.545Z",
+  "generatedAt": "2026-11-04T01:45:05.187Z",
   "total": 1614,
   "status": {
-    "aligned": 598,
+    "aligned": 599,
     "nonaction": 512,
-    "partial": 223,
+    "partial": 222,
     "deliberate": 165,
     "gap": 96,
     "unreachable": 20
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 283,
+    "P2 / aligned": 284,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
@@ -25,7 +25,7 @@
     "P? / partial": 80,
     "P? / aligned": 78,
     "P2 / deliberate": 73,
-    "P2 / partial": 73,
+    "P2 / partial": 72,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 59,
@@ -1213,6 +1213,14 @@
       "verdict": "☆ 已清（第 154 批）"
     },
     {
+      "id": "G691",
+      "line": 2473,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地 `Collection.name`（默认「未命名集合」）＋ 行标题走 `CollectionItem.documentId` 关联的文档标题 ⇒ ★ 方向一致（行＝文档）；✎ 现读（2026-11-03 第 221 批）：**标题列名可自定义**已落——`Collection.titleColumn` 默认 `Title`，集合 ⋯ 菜单「重命名标题列」写入，表头首列（首个文本属性）显示该名",
+      "verdict": "已对齐"
+    },
+    {
       "id": "G1223",
       "line": 3905,
       "status": "aligned",
@@ -1328,11 +1336,11 @@
       4
     ],
     [
-      "三点八九、第 77 批（★★★ 行为级实测：样式落库形状／四频率 rep",
+      "三点九三、第 79 批·下半 B79B（2026-09-28 07:33",
       4
     ],
     [
-      "三点九三、第 79 批·下半 B79B（2026-09-28 07:33",
+      "三点九九、第 82 批·下半 C（2026-09-28 08:48–08",
       4
     ]
   ]

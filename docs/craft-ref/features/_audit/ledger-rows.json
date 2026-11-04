@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T01:25:34.151Z",
+  "generatedAt": "2026-11-04T01:45:04.782Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 852,
-    "aligned": 325,
+    "gap": 851,
+    "aligned": 326,
     "unknown": 194,
     "deliberate": 105,
     "partial": 66,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 281,
+    "P2 / gap": 280,
     "P? / gap": 226,
-    "P2 / aligned": 221,
+    "P2 / aligned": 222,
     "P1 / gap": 191,
     "P3 / gap": 154,
     "P? / unknown": 112,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 11,
+  "conflicts": 12,
   "conflictRows": [
     {
       "id": "G95",
@@ -106,6 +106,14 @@
       "conflict": "local-says-missing",
       "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderI",
       "verdict": "☆ 已清（第 154 批）"
+    },
+    {
+      "id": "G691",
+      "line": 2473,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地 `Collection.name`（默认「未命名集合」）＋ 行标题走 `CollectionItem.documentId` 关联的文档标题 ⇒ ★ 方向一致（行＝文档）；✎ 现读（2026-11-03 第 221 批）：**标题列名可自定义**已落——`Collection.titleColumn` 默认 `T",
+      "verdict": "已对齐"
     },
     {
       "id": "G1223",
@@ -13565,16 +13573,16 @@
       "cols": 5,
       "id": "G691",
       "official": "★★ **`collections create` 的 `--title` 不是集合名**：`--name` 才是集合名，★ `--title <columnName>` 是**行标题列的名字**（默认 `Title`），并警告「不要把行标题建成常规列，否则行显示 `(untitled)` 且名字被塞进侧列」；☆ 集合必带 `--document <rootBlockId>`（即集合是**插进某篇文档的块**），`--position start|end` 默认 end",
-      "local": "本地 `Collection.name`（默认「未命名集合」）＋ 行标题走 `CollectionItem.documentId` 关联的文档标题 ⇒ ★ 方向一致（行＝文档）；✎ 现读（2026-11-03 第 221 批）：**标题列名可自定义**已落——`Collection.titleColumn` 默认 `Title`，集合 ⋯ 菜单「重命名标题列」写入，表头首列（首个文本属性）显示该名；仍差官方「集合是插进文档的块」（`--document <rootBlockId>` 与 `--position start|end`）这一层",
-      "verdict": "缺失（文档内嵌）",
+      "local": "本地 `Collection.name`（默认「未命名集合」）＋ 行标题走 `CollectionItem.documentId` 关联的文档标题 ⇒ ★ 方向一致（行＝文档）；✎ 现读（2026-11-03 第 221 批）：**标题列名可自定义**已落——`Collection.titleColumn` 默认 `Title`，集合 ⋯ 菜单「重命名标题列」写入，表头首列（首个文本属性）显示该名；仍差官方「集合是插进文档的块」（`--document <rootBlockId>` 与 `--position start|end`）这一层 ⇒ ✎ 现读（2026-11-04 第 279 批）：**集合就是文档里的一块**已屏上实点＝插入面板「合集 → 表格」当场建出集合对象并把 `collectionBlock` 节点插进正文（DOM 上 `.node-collectionBlock` 带 `/collections/<id>` 链接），**刷新后仍在**；库里该文档 `content` 同时含 `collectionBlock` 与该集合 id（＝官方 `--document <rootBlockId>` 那一层），集合行 `name=表格集合`、`titleColumn=Title`（＝官方 `--title` 的默认值）、1 视图 1 字段；官方那句「别把行标题建成常规列、否则显示 `(untitled)`」的对应面＝本地首列显示 `titleColumnLabel`（行标题仍由 `documentId` 关联的文档标题承担，没有\"把标题另建一列\"的通路）。`--position start|end` 是 CLI 参数（默认 end），交互侧无对应入口 ⇒ 按 CLI 面记 N/A，插入落点由光标决定",
+      "verdict": "已对齐",
       "score": "2/1",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

@@ -6669,14 +6669,17 @@
       ]
     },
     "G691": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "行标题列名可自定义（titleColumn 默认 Title，集合 ⋯ 菜单重命名，表头首列显示）；仍差\"集合作为文档内块 + position\"这一层",
+      "note": "第 279 批屏上实点：插入面板「合集 → 表格」当场建出集合对象并把 collectionBlock 节点插进正文（.node-collectionBlock 带 /collections/<id> 链接），刷新后仍在；库里该文档 content 同时含 collectionBlock 与该集合 id（＝官方 --document <rootBlockId> 那一层），集合行 name=表格集合、titleColumn=Title（＝官方 --title 默认值）、1 视图 1 字段；行标题仍由 documentId 关联的文档标题承担、首列显示 titleColumnLabel（＝官方「别把行标题另建一列」那句的对应面）。★ --position start|end 是 CLI 参数（默认 end），交互侧无对应入口 ⇒ 按 CLI 面记 N/A，插入落点由光标决定。",
       "evidence": [
         "src/prisma/contract.prisma:282",
-        "src/lib/collection/title-column.ts:1",
-        "src/app/(app)/collections/[id]/CollectionHeader.tsx:54",
-        "src/app/(app)/collections/[id]/TableView.tsx:468"
+        "src/lib/collection/title-column.ts:14",
+        "src/app/(app)/collections/[id]/CollectionHeader.tsx:56",
+        "src/components/editor/tabs/InsertTab.tsx:65",
+        "src/components/editor/slash-menu/slash-commands.ts:658",
+        "src/components/editor/extensions/collection-block.tsx:27",
+        "src/components/editor/extensions/collection-block-view.tsx:33"
       ]
     },
     "G693": {

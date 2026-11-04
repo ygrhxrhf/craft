@@ -16,6 +16,13 @@ import {
   MARKDOWN_SHORTCUTS_TITLE,
   type InsertSubView,
 } from '@/lib/editor/insert-panel';
+import {
+  TABLE_GRID_COLS,
+  TABLE_GRID_ROWS,
+  cellInPreview,
+  tableSizeAtCell,
+  type TableSize,
+} from '@/lib/editor/table-grid-picker';
 
 interface InsertTabProps {
   editor: Editor;
@@ -42,6 +49,8 @@ interface PanelItem {
   onInsert?: (editor: Editor) => void;
   /** This build cannot create it yet. */
   missing?: boolean;
+  /** Opens an inline picker instead of inserting directly (the official row/column grid). */
+  picker?: 'tableGrid';
   /** Official-only note printed under the label. */
   hint?: string;
   icon?: React.ComponentType<{ className?: string }>;
@@ -70,7 +79,8 @@ const COLLECTION_ITEMS: PanelItem[] = [
 const TAIL_ITEMS: PanelItem[] = [
   { label: '插入 线', command: '分隔线 - 常规' },
   { label: '插入分页符', command: '插入分页符' },
-  { label: '插入表格', missing: true, hint: '插入一个包含所选行数和列数的表格。' },
+  // 官方末项带提示语且是**行列网格选择器**（V10 屏侧读回），不是固定 3×3。
+  { label: '插入表格', picker: 'tableGrid', hint: '插入一个包含所选行数和列数的表格。' },
 ];
 
 const PANEL_ITEMS: { title?: string; items: PanelItem[] }[] = [
@@ -81,6 +91,8 @@ const PANEL_ITEMS: { title?: string; items: PanelItem[] }[] = [
 
 export function InsertTab({ editor }: InsertTabProps) {
   const [subView, setSubView] = useState<InsertSubView>('insert');
+  const [gridOpen, setGridOpen] = useState(false);
+  const [gridHover, setGridHover] = useState<TableSize | null>(null);
   const findCommand = (item: PanelItem): SlashCommand | undefined =>
     item.command ? slashCommands.find((c) => c.name === item.command) : undefined;
 
@@ -164,12 +176,25 @@ export function InsertTab({ editor }: InsertTabProps) {
           <div className="space-y-2">
             {group.items.map((item) => {
               const cmd = findCommand(item);
-              const unavailable = item.missing || (!cmd && !item.onInsert);
+              const unavailable = item.missing || (!cmd && !item.onInsert && !item.picker);
               const draggable = !unavailable && !!cmd;
               const Icon = item.icon ?? cmd?.icon;
+              const isGrid = item.picker === 'tableGrid';
+              const insertAt = (size: TableSize) => {
+                const { from, to } = editor.state.selection;
+                const range = from === to ? { from, to: from } : { from, to };
+                editor
+                  .chain()
+                  .focus()
+                  .deleteRange(range)
+                  .insertTable({ rows: size.rows, cols: size.cols, withHeaderRow: true })
+                  .run();
+                setGridOpen(false);
+                setGridHover(null);
+              };
               return (
+                <div key={item.label} className="space-y-1">
                 <button
-                  key={item.label}
                   type="button"
                   draggable={draggable}
                   onDragStart={draggable ? (e) => handleDragStart(e, cmd!) : undefined}
@@ -177,9 +202,14 @@ export function InsertTab({ editor }: InsertTabProps) {
                   onClick={
                     unavailable
                       ? undefined
-                      : cmd
-                        ? () => handleInsert(cmd)
-                        : () => item.onInsert!(editor)
+                      : isGrid
+                        ? () => {
+                            setGridOpen((open) => !open);
+                            setGridHover(null);
+                          }
+                        : cmd
+                          ? () => handleInsert(cmd)
+                          : () => item.onInsert!(editor)
                   }
                   disabled={unavailable}
                   className={cn(
@@ -212,6 +242,45 @@ export function InsertTab({ editor }: InsertTabProps) {
                   </span>
                   {draggable && <GripVertical className="size-4 shrink-0 text-muted-foreground/40" />}
                 </button>
+                  {isGrid && gridOpen && (
+                    <div
+                      data-testid="table-grid-picker"
+                      onMouseLeave={() => setGridHover(null)}
+                      className="rounded-lg border border-border bg-background p-2"
+                    >
+                      <p className="mb-1.5 text-[10px] text-muted-foreground/60">
+                        {gridHover ? `${gridHover.rows} × ${gridHover.cols}` : '选择行数和列数'}
+                      </p>
+                      <div
+                        className="grid gap-1"
+                        style={{ gridTemplateColumns: `repeat(${TABLE_GRID_COLS}, minmax(0, 1fr))` }}
+                      >
+                        {Array.from({ length: TABLE_GRID_ROWS }, (_, row) =>
+                          Array.from({ length: TABLE_GRID_COLS }, (_, col) => {
+                            const size = tableSizeAtCell(row, col);
+                            const active = cellInPreview({ row, col }, gridHover);
+                            return (
+                              <button
+                                key={`${row}-${col}`}
+                                type="button"
+                                aria-label={`${size.rows} 行 ${size.cols} 列`}
+                                data-active={active ? 'true' : undefined}
+                                onMouseEnter={() => setGridHover(size)}
+                                onClick={() => insertAt(size)}
+                                className={cn(
+                                  'size-4 rounded-sm border transition-colors',
+                                  active
+                                    ? 'border-ring bg-primary/30'
+                                    : 'border-border bg-muted/30 hover:bg-muted'
+                                )}
+                              />
+                            );
+                          })
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>

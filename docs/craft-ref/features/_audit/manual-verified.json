@@ -3289,10 +3289,13 @@
       "evidence": []
     },
     "G1430": {
-      "status": "partial",
-      "note": "官方 17 项，本地 16 项（合集为组标题）；✎ 第 269 批：「合集」组三条已能真建集合对象，禁用占位从 8 项降到 2 项＝插入 Unsplash 图片、插入表格。",
+      "status": "aligned",
+      "note": "第 286 批：屏侧 17 行名册本地逐字齐（无标题组 10 ＋「合集」组标题 ＋ 组内 3 ＋ 末尾三行，顺序与两份字节一致的 V10 捕获相同）；末项「插入表格」此前是 missing 占位，本批补上官方那层语义＝行列网格选择器（table-grid-picker.ts：10×10、悬停铺开预览、点格插 (row+1)×(col+1) 的表，提示语仍是官方那句「插入一个包含所选行数和列数的表格。」；网格尺寸是本地边界、官方尺寸未采到）。屏上实点：点末项⇒网格 100 格、悬停「3 行 5 列」⇒标签 3 × 5 且高亮 15 格、点下⇒插入 2×3 的表、再点收起。仍禁用的只剩「插入 Unsplash 图片」＝外部图库服务（本构建无密钥），按外部依赖记。",
       "evidence": [
-        "src/components/editor/tabs/InsertTab.tsx:47"
+        "src/components/editor/tabs/InsertTab.tsx:83",
+        "src/lib/editor/table-grid-picker.ts:19",
+        "src/lib/editor/table-grid-picker.test.ts:1",
+        "docs/craft-ref/features/interactions.md:114"
       ]
     },
     "G1431": {

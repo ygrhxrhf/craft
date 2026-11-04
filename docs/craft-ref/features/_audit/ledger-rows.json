@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T08:25:56.603Z",
+  "generatedAt": "2026-11-04T08:43:42.531Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 833,
-    "aligned": 343,
+    "gap": 832,
+    "aligned": 344,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 263,
-    "P2 / aligned": 238,
+    "P2 / gap": 262,
+    "P2 / aligned": 239,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -9280,10 +9280,10 @@
       "cols": 5,
       "id": "G453",
       "official": "★ **`linkToBlock` 落库是 `{name, url}`，不是 blockId**（保存时 `items.map(({name,url}) => …)`）⇒ 类型名与存储形态相反，**改名/移动后是快照不是活引用**；选择器为带搜索框弹层（`blocksRef = docStore.blocks` 全量）（§一之十三 4）",
-      "local": "本地无 blockLink 编辑通路 ⇒ ✎ 现读（2026-11-02 第 201 批）：**正文里的区块链接**是活引用（`{documentId,title,blockId/blockIndex}`），插入（带搜索的 `BlockLinkMenu`）、跳转、改名/移除（节点旁铅笔弹层，Enter 保存、Esc 关闭、× 删节点）四级通路齐；**集合列 `linkToBlock`** 目前按文本引用编辑（`cell-editors.ts` 映射到 TextEditor），没有官方 `{name,url}` 快照这一层存储 ⇒ 仍差集合侧的快照形态",
-      "verdict": "缺失（局部）",
+      "local": "本地无 blockLink 编辑通路 ⇒ ✎ 现读（2026-11-02 第 201 批）：**正文里的区块链接**是活引用（`{documentId,title,blockId/blockIndex}`），插入（带搜索的 `BlockLinkMenu`）、跳转、改名/移除（节点旁铅笔弹层，Enter 保存、Esc 关闭、× 删节点）四级通路齐；**集合列 `linkToBlock`** 目前按文本引用编辑（`cell-editors.ts` 映射到 TextEditor），没有官方 `{name,url}` 快照这一层存储 ⇒ 仍差集合侧的快照形态 ⇒ ✎ 现读（2026-11-04 第 297 批）：**集合侧已补齐**——纯核 `src/lib/collection/link-to-block.ts`（`linkToBlockValue`／`parseLinkToBlock`／`serializeLinkToBlock`／`hitLabel`，快照只有 `name`／`url` 两格，老数据裸文本按\"没有快照\"兼容）＋ `PropertyCell.tsx` 的 `LinkToBlockCell`：点开是**带搜索框的弹层**（数据源＝全部块，`searchBlockAnchors(query,{all:true})`——空查询也列，官方 `blocksRef = docStore.blocks` 同口径），命中一行＝块文本截 40 字 ＋ 文档标题，选中写 `{name:<当时文本>, url:<anchorHref 拼的 /documents/<id>#b-<blockId> 或 #i-<index>>}`。屏上实点：新增「区块链接」列 ⇒ 点单元格开弹层（列出一条真实块「基线正文，用于像素回归。」＋文档名）⇒ 选中后单元格显示快照名并链到 `/documents/792befd4…#b-c0cdc812…`、弹层关闭；库里回读 `{type:\"linkToBlock\",theme:null,value:\"{\\\"name\\\":\\\"基线正文，用于像素回归。\\\",\\\"url\\\":\\\"/documents/792befd4…#b-c0cdc812…\\\"}\"}` ⇒ 与官方 `items.map(({name,url}))` 同形（改名/移动后是快照、不跟随）。验证用的列已删净（集合回读只剩「名称」）",
+      "verdict": "已对齐｜第 297 批",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

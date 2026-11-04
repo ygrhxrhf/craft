@@ -5406,11 +5406,13 @@
       ]
     },
     "G453": {
-      "status": "partial",
-      "note": "第 201 批：正文区块链接为活引用并补上改名/移除；集合 linkToBlock 列仍按文本编辑，无 {name,url} 快照",
+      "status": "aligned",
+      "note": "第 297 批：集合侧补齐——纯核 link-to-block.ts（linkToBlockValue／parseLinkToBlock／serializeLinkToBlock／hitLabel，快照只存 name／url，老裸文本按无快照兼容）＋ PropertyCell 的 LinkToBlockCell：带搜索框的弹层、数据源＝全部块（searchBlockAnchors(query,{all:true})，空查询也列，与官方 blocksRef=docStore.blocks 同口径），选中写 {name:<当时文本>, url:<anchorHref 的 /documents/<id>#b-<blockId> 或 #i-<index>>}。屏上实点：新增区块链接列 ⇒ 弹层列出真实块并选中 ⇒ 单元格显示快照名、链到 #b-c0cdc812…，弹层关闭；库里回读 {type:\"linkToBlock\",theme:null,value:\"{\\\"name\\\"…,\\\"url\\\"…}\"} ⇒ 与官方 items.map(({name,url})) 同形（改名/移动后不跟随）。正文区块链接的活引用通路承第 201 批。",
       "evidence": [
-        "src/components/editor/extensions/block-link-view.tsx:1",
-        "src/lib/collection/cell-editors.ts:48"
+        "src/lib/collection/link-to-block.ts:1",
+        "src/lib/collection/link-to-block.test.ts:1",
+        "src/components/collection/PropertyCell.tsx:728",
+        "src/actions/document/anchors.ts:20"
       ]
     },
     "G454": {

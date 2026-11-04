@@ -7,6 +7,13 @@ import { DEFAULT_NUMBER_FORMAT, formatNumber as formatNumberFor, isNumberFormat,
 import { cellKeyAction } from '@/lib/collection/cell-key';
 import { draftTextFor, normalizeTextCommit, parseNumberInput } from '@/lib/collection/cell-edit';
 import { useCellEditorEscape } from './cell-editor-escape';
+import {
+  hitLabel,
+  parseLinkToBlock,
+  serializeLinkToBlock,
+} from '@/lib/collection/link-to-block';
+import { anchorHref } from '@/lib/editor/block-anchor';
+import { searchBlockAnchors, type BlockAnchorHit } from '@/actions/document/anchors';
 import { useState, useRef, useEffect } from 'react';
 import { Check, X, ChevronDown, Calendar as CalendarIcon, Link2, Paperclip } from 'lucide-react';
 import { cn } from 'cn';
@@ -86,9 +93,9 @@ export function PropertyCell({ property, value, onChange, item, properties }: Pr
     // G393: `media` is the official name for the local `file` column.
     case 'media':
       return <FileCell value={parsed} onChange={onChange} />;
-    // G393: `linkToBlock` points at a block, so it edits like a text reference.
+    // G453: `linkToBlock` 落库是 `{name,url}` 快照（不是活引用），编辑器带搜索框。
     case 'linkToBlock':
-      return <TextCell value={parsed} onChange={onChange} />;
+      return <LinkToBlockCell value={parsed} onChange={onChange} />;
     case 'relation':
       return <RelationCell property={property} value={parsed} onChange={onChange} />;
     default:
@@ -105,6 +112,9 @@ export function CellDisplay({ value }: { value: any }) {
   if (Array.isArray(parsed)) {
     return <span>{parsed.join(', ')}</span>;
   }
+  // G453：`linkToBlock` 的 `{name,url}` 快照在只读展示面只印快照名，别落成 [object Object]。
+  const snapshot = parseLinkToBlock(parsed);
+  if (snapshot) return <span>{snapshot.name}</span>;
   return <span>{String(parsed)}</span>;
 }
 
@@ -707,6 +717,110 @@ function RelationCell({
             ))}
           </div>
         </>
+      )}
+    </div>
+  );
+}
+
+// ─── Link to block ──────────────────────────────────
+/**
+ * G453：官方这一列落库是 **`{name, url}` 快照**（不是 blockId）——改名/移动之后不跟随；
+ * 选择器是带搜索框的弹层，数据源是全部块（`blocksRef = docStore.blocks`）。
+ * 本地用 `searchBlockAnchors` 拿同形命中、`anchorHref` 拼地址，写回快照 JSON。
+ */
+function LinkToBlockCell({ value, onChange }: { value: any; onChange: (v: any) => void }) {
+  const snapshot = parseLinkToBlock(value);
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [hits, setHits] = useState<BlockAnchorHit[]>([]);
+  useCellEditorEscape(open, 'collection-v2-linktoblock-editor', () => setOpen(false));
+
+  useEffect(() => {
+    if (!open) return;
+    let alive = true;
+    const timer = setTimeout(() => {
+      searchBlockAnchors(query, { all: true })
+        .then((rows) => alive && setHits(rows))
+        .catch(() => alive && setHits([]));
+    }, 180);
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
+  }, [open, query]);
+
+  const pick = (hit: BlockAnchorHit) => {
+    onChange(
+      serializeLinkToBlock({
+        name: hitLabel(hit.text),
+        url: anchorHref({
+          documentId: hit.documentId,
+          blockId: hit.blockId,
+          blockIndex: hit.blockIndex,
+        }),
+      }),
+    );
+    setOpen(false);
+    setQuery('');
+  };
+
+  return (
+    <div className="relative min-h-8 px-2 py-1">
+      <button
+        type="button"
+        className="flex w-full items-center gap-1 text-left text-ui transition-colors duration-150 hover:text-foreground/70"
+        onClick={() => setOpen(!open)}
+      >
+        {snapshot ? (
+          <a
+            href={snapshot.url}
+            className="min-w-0 flex-1 truncate text-(--craft-accent) hover:underline"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {snapshot.name}
+          </a>
+        ) : (
+          <span className="min-w-0 flex-1 truncate text-muted-foreground/50">-</span>
+        )}
+        <ChevronDown className="size-3.5 shrink-0 text-muted-foreground/60" />
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full z-20 max-h-60 w-64 overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md">
+          <input
+            autoFocus
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="搜索区块…"
+            aria-label="搜索区块"
+            className="mb-1 w-full rounded-sm border border-border bg-background px-2 py-1 text-sm outline-none"
+          />
+          {hits.length === 0 && (
+            <p className="px-2 py-1.5 text-sm text-muted-foreground">没有匹配的区块</p>
+          )}
+          {hits.map((hit) => (
+            <button
+              key={`${hit.documentId}-${hit.blockId ?? hit.blockIndex}`}
+              type="button"
+              className="flex w-full flex-col items-start gap-0.5 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-muted"
+              onClick={() => pick(hit)}
+            >
+              <span className="min-w-0 max-w-full truncate">{hitLabel(hit.text)}</span>
+              <span className="text-[11px] text-muted-foreground">{hit.documentTitle}</span>
+            </button>
+          ))}
+          {snapshot && (
+            <button
+              type="button"
+              className="mt-1 w-full rounded-sm px-2 py-1.5 text-left text-[12px] text-destructive hover:bg-muted"
+              onClick={() => {
+                onChange(null);
+                setOpen(false);
+              }}
+            >
+              清除
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

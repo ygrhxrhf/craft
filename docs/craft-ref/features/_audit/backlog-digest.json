@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-04T08:25:56.849Z",
+  "generatedAt": "2026-11-04T08:43:42.791Z",
   "total": 1614,
   "status": {
-    "aligned": 616,
+    "aligned": 617,
     "nonaction": 515,
-    "partial": 209,
+    "partial": 208,
     "deliberate": 165,
     "gap": 89,
     "unreachable": 20
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 300,
+    "P2 / aligned": 301,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 169,
@@ -28,7 +28,7 @@
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 60,
-    "P2 / partial": 59,
+    "P2 / partial": 58,
     "P? / deliberate": 40,
     "P3 / gap": 38,
     "P? / gap": 34,
@@ -1312,10 +1312,6 @@
       4
     ],
     [
-      "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
-      4
-    ],
-    [
       "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
       4
     ],
@@ -1333,6 +1329,10 @@
     ],
     [
       "三点一〇三一、第 96 批·尾记六〔★★★**判据盲区一次性结掉三条老结",
+      4
+    ],
+    [
+      "三点一〇四一、第 98 批〔★★★ **拖拽移动的撤销粒度到手＝一次拖拽",
       4
     ]
   ]

@@ -17,10 +17,17 @@ export interface BlockAnchorHit {
  * Block-level link targets. An id is only present once a jump has stamped one
  * into the block, so a fresh hit is addressed by position.
  */
-export async function searchBlockAnchors(query: string): Promise<BlockAnchorHit[]> {
+/**
+ * @param options.all 空查询时也列块。集合 `linkToBlock` 的弹层要这个（官方选择器的数据源是
+ *   全量块）；正文里带搜索的区块链接菜单不要（空查询应当什么都不列）。
+ */
+export async function searchBlockAnchors(
+  query: string,
+  options: { all?: boolean } = {},
+): Promise<BlockAnchorHit[]> {
   const userId = await requireUserId();
   const term = query.trim().toLowerCase();
-  if (!term) return [];
+  if (!term && !options.all) return [];
 
   const db = await getDb();
   const docs = (await db.orm.public.Document
@@ -32,16 +39,15 @@ export async function searchBlockAnchors(query: string): Promise<BlockAnchorHit[
   const hits: BlockAnchorHit[] = [];
   for (const doc of docs) {
     for (const candidate of collectAnchorCandidates(doc.content)) {
-      if (candidate.text.toLowerCase().includes(term)) {
-        hits.push({
-          documentId: doc.id,
-          documentTitle: doc.title || untitledFor('list'),
-          blockIndex: candidate.index,
-          blockId: candidate.blockId,
-          text: candidate.text,
-        });
-        if (hits.length >= 8) return hits;
-      }
+      if (term && !candidate.text.toLowerCase().includes(term)) continue;
+      hits.push({
+        documentId: doc.id,
+        documentTitle: doc.title || untitledFor('list'),
+        blockIndex: candidate.index,
+        blockId: candidate.blockId,
+        text: candidate.text,
+      });
+      if (hits.length >= 8) return hits;
     }
   }
   return hits;

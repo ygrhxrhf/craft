@@ -7062,17 +7062,21 @@
       ]
     },
     "G782": {
-      "status": "gap",
-      "note": "本地分类按钮无 Space 激活焦点项语义，也无焦点/选中分离",
+      "status": "aligned",
+      "note": "第 281 批：分类按钮本来就是原生 <button>（onClick setActive），Space 走浏览器原生「激活焦点所在项」、没有自写 onSelect 分支。屏上实测：焦点放通用、选中先用方向键挪到任务，按真键 Space ⇒ capture 监听记到一枚 isTrusted click 落在焦点那枚、选中随之回到通用 ⇒ 与官方「效果跟随焦点不跟随选中」一致。",
       "evidence": [
-        "src/components/settings/SettingsModal.tsx:179"
+        "src/components/settings/ShortcutsPanel.tsx:103",
+        "src/lib/editor/shortcut-panel.ts:179"
       ]
     },
     "G784": {
-      "status": "gap",
-      "note": "本地导航按钮不处理方向键，焦点与选中不分家",
+      "status": "aligned",
+      "note": "第 281 批：按官方规格落地两套状态——纯核 nextTabIndex(currentId, delta)（顶/底夹住不循环，官方未观测边界不编规格）＋ rail 上一枚 onKeyDown（只 preventDefault 挡滚动、不碰焦点），静态闸钉住方向键通路里不许出现 .focus( 与 tabIndex。屏上实测：焦点在通用按 ArrowDown ⇒ 选中挪到文档而 activeElement 仍是通用（无 roving tabindex），三态「选中跟 Arrow／焦点跟 Tab／激活跟焦点」齐了。",
       "evidence": [
-        "src/components/settings/SettingsModal.tsx:179"
+        "src/lib/editor/shortcut-panel.ts:179",
+        "src/components/settings/ShortcutsPanel.tsx:89",
+        "src/components/settings/ShortcutsPanel.tsx:100",
+        "src/lib/editor/shortcut-panel.test.ts:118"
       ]
     },
     "G785": {
@@ -7097,10 +7101,11 @@
       ]
     },
     "G789": {
-      "status": "gap",
-      "note": "本地无分类激活通路，Space 生效时刻无可对齐",
+      "status": "aligned",
+      "note": "第 281 批：本地分类按钮不拦 Space（方向键那枚 handler 只接 ArrowDown／ArrowUp），激活走浏览器原生 button 的 keyup → click 同帧链路、无 React 节流与人为延迟。屏上实测：按真键 Space 后 capture 监听立刻记到一枚 isTrusted click、选中当场跟着焦点变。★ 口径：本机隐藏页 setTimeout 被节流到约 1s，亚帧时序量不到 ⇒「keyup 当帧」以原生 button 语义为准，屏上只证「点了立刻生效、没有 400ms 级延迟」。",
       "evidence": [
-        "src/components/settings/SettingsModal.tsx:179"
+        "src/components/settings/ShortcutsPanel.tsx:89",
+        "src/components/settings/ShortcutsPanel.tsx:103"
       ]
     },
     "G790": {

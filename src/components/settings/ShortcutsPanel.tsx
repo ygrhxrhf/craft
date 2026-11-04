@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 
 import { KEY_BINDINGS, capParts, type KeyBinding } from '@/lib/editor/keymap';
 import {
   PANEL_TABS,
+  nextTabIndex,
   panelView,
   type PanelTabId,
   type PanelTabView,
@@ -80,11 +81,23 @@ export function ShortcutsPanel() {
     </div>
   );
 
+  /**
+   * G784：方向键只动**选中**（`active`），焦点留在按下去的那枚按钮上——官方 rail 没有
+   * roving tabindex：选中跟随 Arrow、焦点跟随 Tab／程序焦点、激活跟随焦点。后两条（G782/G789）
+   * 走原生 `<button>` 语义：Space 在 keyup 当帧合成 click、且激活的是**焦点**所在项，不用自写。
+   */
+  const onRailKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+    event.preventDefault();
+    setActive((current) => nextTabIndex(current, event.key === 'ArrowDown' ? 1 : -1));
+  };
+
   const rail = (
     <div
       className={cn('flex gap-1', narrow ? 'flex-wrap' : 'w-32 shrink-0 flex-col')}
       data-testid="shortcuts-rail"
       aria-label="快捷键分类"
+      onKeyDown={onRailKeyDown}
     >
       {PANEL_TABS.map((tab) => (
         <button

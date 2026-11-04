@@ -168,3 +168,17 @@ export function panelView(bindings: readonly KeyBinding[]): PanelTabView[] {
     };
   });
 }
+
+/**
+ * G784：方向键只挪**选中**，焦点留在原地——官方分类 rail 没有 roving tabindex，
+ * 三者各走各的（选中跟随 Arrow、焦点跟随 Tab／程序焦点、激活跟随焦点，G782/G789）。
+ * 所以这里只算"下一个选中项是谁"，绝不碰 `document.activeElement`。
+ *
+ * 顶/底边界官方未观测 ⇒ **夹住不循环**（不把未证的行为编成规格）。
+ */
+export function nextTabIndex(currentId: PanelTabId, delta: -1 | 1): PanelTabId {
+  const index = PANEL_TABS.findIndex((tab) => tab.id === currentId);
+  if (index < 0) return PANEL_TABS[0].id;
+  const next = Math.min(PANEL_TABS.length - 1, Math.max(0, index + delta));
+  return PANEL_TABS[next].id;
+}

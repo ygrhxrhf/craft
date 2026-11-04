@@ -6100,10 +6100,13 @@
       ]
     },
     "G582": {
-      "status": "partial",
-      "note": "已有 chord 预设与 Win 回退；Shift+Enter 落到 RENAME，无 eT/Vn 包装器",
+      "status": "aligned",
+      "note": "第 292 批改判（陈旧读数）：keymap.ts 的 chord(mods,key,code) 就是官方那族包装器的本地等价物——mo/qi/y2/Co 各置修饰位、eT＝Shift+Alt、chordFor 负责 Win 回退与 win:null 的显式不绑；「不限修饰键」由 anyModifiers ＋ matchesIgnoringModifiers 承载（注释直写对应官方 Vn(t)，Ctrl+Esc 与 Esc 同效）；Shift-Enter 在 craft-keymap.ts 有显式分支（setHardBreak，G1552 已收回旧的 inert 读法并注明选中块仍走 RENAME）⇒ 与官方「块内软换行」同形。剩余差异只是命名与落点（官方六个闭包 vs 本地预设表＋两枚 helper），无屏上差异。",
       "evidence": [
-        "src/lib/editor/keymap.ts:60"
+        "src/lib/editor/keymap.ts:79",
+        "src/lib/editor/keymap.ts:186",
+        "src/lib/editor/keymap.ts:191",
+        "src/components/editor/extensions/craft-keymap.ts:529"
       ]
     },
     "G584": {

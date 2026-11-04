@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T06:30:33.312Z",
+  "generatedAt": "2026-11-04T07:42:16.640Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 837,
-    "aligned": 340,
+    "gap": 836,
+    "aligned": 341,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 267,
-    "P2 / aligned": 235,
+    "P2 / gap": 266,
+    "P2 / aligned": 236,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -11605,10 +11605,10 @@
       "cols": 5,
       "id": "G582",
       "official": "★ **action/键位层的四个包装器名与预设**：`mo(t)` ＝ 无任何修饰键、`qi(t)` ＝ Shift、`y2(t)` ＝ Alt、`Co(t)` ＝ Meta、`eT(t)` ＝ Shift+Alt **且带 `winMatcher`**（再次印证 §十四 的平台双写）、`Vn(t)` ＝ 只给 `keyCondition` 即**不限修饰键**；`Enter` 注册为 `mo(oo)`、`Shift+Enter` 注册为 `qi(oo)` 且 handler `N9e` **函数体只有 `return {preventDefault:!1}` ⇒ 官方对软换行是\"显式不拦截\"**；`undoSideEffect` **仅在 `vo.isRange(selection)` 时生成**",
-      "local": "本地无同类包装器族：键位分散在各组件的 `e.key ===` 判断（G577 列的 6 处），**无「修饰键组合预设」抽象** ⇒ 新增键位时无法保证 Win/Mac 与\"不限修饰键\"三种语义一致；`Shift+Enter` 未见任何显式处理（TipTap 默认 `splitBlock(false)` 产生 `br`，语义与官方\"不拦截\"是否等价**未验**）",
-      "verdict": "行为不同（抽象层缺失）",
+      "local": "本地无同类包装器族：键位分散在各组件的 `e.key ===` 判断（G577 列的 6 处），**无「修饰键组合预设」抽象** ⇒ 新增键位时无法保证 Win/Mac 与\"不限修饰键\"三种语义一致；`Shift+Enter` 未见任何显式处理（TipTap 默认 `splitBlock(false)` 产生 `br`，语义与官方\"不拦截\"是否等价**未验**） ⇒ ✎ 现读（2026-11-04 第 292 批）：上一段是**陈旧读数**——`src/lib/editor/keymap.ts` 的 `chord(mods, key, code)` 就是那族预设的本地等价物（`mo`＝四个修饰位全 false、`qi`/`y2`/`Co`＝各置一枚、`eT`＝Shift+Alt，`chordFor` 另负责 Win 回退与 `win: null` 的\"显式不绑\"）；\"不限修饰键\"那条由 `anyModifiers(key, code)` ＋ `matchesIgnoringModifiers(chord, combo)` 承载（注释直写对应官方 `Vn(t)`：`Ctrl+Esc` 与 `Esc` 同效）；`Shift+Enter` 在 `craft-keymap.ts` 有**显式分支**（`setHardBreak()`，G1552 已收回旧的 \"inert\" 读法并注明\"选中块仍走 RENAME\"）⇒ 与官方\"块内软换行\"同形。剩余差异只是**命名与落点**（官方六个闭包 vs 本地预设表＋两枚 helper），无屏上差异",
+      "verdict": "行为不同（抽象层缺失） ⇒ 第 292 批：预设表／chordFor／anyModifiers／Shift-Enter 显式分支都已落 ⇒ 已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

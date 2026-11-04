@@ -104,11 +104,13 @@ const KEY_NAMES: Record<string, string> = {
   ArrowDown: '↓',
   ArrowLeft: '←',
   ArrowRight: '→',
-  Home: '↖',
-  End: '↘',
+  // G802：官方字形表 `pEe` 里 Home／End 印的是 **⤒／⤓**（不是 ↖／↘），而 `Tab` 不在表里、
+  // 13 条裸键名册逐字印 **`Tab`**（不是 ⇥）。这三枚此前是本地自造字形。
+  Home: '⤒',
+  End: '⤓',
   Enter: '⏎',
   Escape: 'esc',
-  Tab: '⇥',
+  Tab: 'Tab',
   Backspace: '⌫',
   Delete: '⌦',
   ' ': 'space',

@@ -78,8 +78,8 @@ describe('display strings match the collected ones character for character', () 
     ['NO_LIST', 'win', 'Ctrl-Shift-`'],
     ['MOVE_BLOCK_UP', 'mac', '⌥ ↑'],
     ['MOVE_BLOCK_UP', 'win', 'Alt-↑'],
-    ['MOVE_BLOCK_TOP', 'mac', '⌥ ↖'],
-    ['MOVE_BLOCK_BOTTOM', 'win', 'Alt-↘'],
+    ['MOVE_BLOCK_TOP', 'mac', '⌥ ⤒'],
+    ['MOVE_BLOCK_BOTTOM', 'win', 'Alt-⤓'],
     ['MOVE_BLOCK_TOP_MAC', 'mac', '⌘ ⌥ ↑'],
     // On Windows this row is deliberately unbound (G1479), so it prints nothing.
     ['MOVE_BLOCK_TOP_MAC', 'win', ''],
@@ -106,6 +106,21 @@ describe('display strings match the collected ones character for character', () 
 
   it.each(expected)('%s on %s prints %s', (id, platform, text) => {
     expect(displayFor(by(id), platform)).toBe(text);
+  });
+
+  // G802：官方字形表 `pEe` 里 Home／End 是 **⤒／⤓**（"到顶/到底"箭头），`Tab` 不在表里、
+  // 13 条裸键名册逐字印 **`Tab`**。本地此前自造成 ↖／↘／⇥，屏上因此对不上官方名册。
+  it('uses the collected glyphs for Home, End and Tab', () => {
+    const glyphs = (key: string) => {
+      const bare = { metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, key };
+      return displayFor(
+        { id: 'X', label: 'x', group: 'general', mac: { ...bare }, win: { ...bare } },
+        'win',
+      );
+    };
+    expect(glyphs('Home')).toBe('⤒');
+    expect(glyphs('End')).toBe('⤓');
+    expect(glyphs('Tab')).toBe('Tab');
   });
 });
 

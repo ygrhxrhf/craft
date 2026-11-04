@@ -9300,7 +9300,7 @@
     "G1455": {
       "status": "aligned",
       "priority": "P2",
-      "note": "动作页 12 项按有无选中块分档禁用：新增 action-availability.ts（两枚免选区项恒可用、其余 10 枚要选区），InfoTab 动作区接线。",
+      "note": "动作页 12 项按有无选中块分档禁用：新增 action-availability.ts（两枚免选区项恒可用、其余 10 枚要选区），InfoTab 动作区接线。★ 第 295 批补：面板里「移动到顶部／移动到底部」的键帽字形此前是本地自造的 ↖／↘，已按官方字形表 pEe 改成 ⤒／⤓（屏上实测 `区块移至顶部 | Alt | ⤒`、`区块移至底部 | Alt | ⤓`），同批把 Tab 的 ⇥ 改回官方名册的 `Tab`。",
       "evidence": [
         "src/lib/editor/action-availability.ts",
         "src/lib/editor/action-availability.test.ts",

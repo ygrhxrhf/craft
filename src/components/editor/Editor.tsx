@@ -66,6 +66,8 @@ import { CodeBlockView } from './extensions/code-block-view';
 import { ReminderPill } from './extensions/reminder-pill';
 import { MathBlock } from './extensions/math-block';
 import { InlineMath } from './extensions/math-inline';
+import { DayAtom } from './extensions/day-atom';
+import { TagAtom } from './extensions/tag-atom';
 import { Mention } from './extensions/mention';
 import { BlockLink } from './extensions/block-link';
 import { BlockId } from './extensions/block-id';
@@ -594,6 +596,8 @@ export function Editor({
       BlockIndent,
       MathBlock,
       InlineMath,
+      DayAtom,
+      TagAtom,
       Mention,
       BlockLink.configure({ hostDocumentId: documentId, followOtherDocuments: followBlockLinks }),
       BlockId,

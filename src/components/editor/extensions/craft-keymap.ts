@@ -22,6 +22,7 @@ import { localDayInstant } from '@/lib/task/wall-clock';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { isImeComposing } from '@/lib/editor/ime-guard';
 import { deleteStepFor } from '@/lib/editor/forward-delete';
+import { caretInsideAtom, countAtomicInlines } from '@/lib/editor/inline-atoms';
 import { tableDimensions, clearCellContents } from '@/lib/table-utils';
 import { nextOpenForAllToggles, setOpenOnAllToggles, toggleSummaryTarget } from './toggle-all';
 import { tableAxisForShortcut } from '@/lib/editor/table-shortcuts';
@@ -558,7 +559,7 @@ export const CraftKeymap = Extension.create({
                 // guard a paragraph with text would step its indent down instead of splitting.
                 const empty = isEmptyBlock({
                   textLength: $from.parent.textContent.length,
-                  atomicInlines: 0,
+                  atomicInlines: countAtomicInlines($from.parent),
                   childBlocks: 0,
                 });
                 if (!empty) return false;
@@ -629,7 +630,7 @@ export const CraftKeymap = Extension.create({
               !(view.state.selection instanceof CellSelection)
             ) {
               const { $from } = view.state.selection;
-              if ($from.parent.isTextblock && !isEmptyBlock({ textLength: $from.parent.textContent.length, atomicInlines: 0, childBlocks: 0 })) {
+              if ($from.parent.isTextblock && !isEmptyBlock({ textLength: $from.parent.textContent.length, atomicInlines: countAtomicInlines($from.parent), childBlocks: 0 })) {
                 const split = editor.chain().focus().splitBlock().run();
                 if (split) {
                   view.dispatch(closeHistory(view.state.tr));
@@ -758,6 +759,15 @@ export const CraftKeymap = Extension.create({
                 }
               }
             }
+            // G580：光标落在**原子内联元素**内部（官方 `Wc(r) != null`，四类 `math/day/mention/tag`）
+            // 时，Backspace 直接让位默认行为——原子是节点，不是可逐字退格的文本；不让位会先走
+            // 下面那条「块首」链，把整块的格式链或整块删掉，与官方行为不一样。
+            if (event.key === 'Backspace' && !event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey) {
+              const { $from } = view.state.selection;
+              if (caretInsideAtom($from.parent.type.name, $from.nodeBefore, $from.nodeAfter)) {
+                return false;
+              }
+            }
             // G578/G585: Backspace at the very start of a block walks the official six-step chain
             // (list → indent → decoration, then the four block-level steps). Only the first two
             // format steps are drivable here; the rest fall through to ProseMirror's own
@@ -780,7 +790,7 @@ export const CraftKeymap = Extension.create({
                   },
                   blockEmpty: isEmptyBlock({
                     textLength: $from.parent.textContent.length,
-                    atomicInlines: 0,
+                    atomicInlines: countAtomicInlines($from.parent),
                     childBlocks: $from.parent.childCount,
                   }),
                   hasPrevious: topLevelIndexOf(view.state.doc, view.state.selection.from) > 0,

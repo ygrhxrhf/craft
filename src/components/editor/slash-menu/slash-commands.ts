@@ -30,6 +30,7 @@ import {
   Copy,
   Flag,
   CalendarDays,
+  Tag,
   Globe,
   Sparkles,
   PenLine,
@@ -50,6 +51,7 @@ import { readDefaultLanguage, readDefaultTheme } from '@/lib/editor/code-prefere
 import { parseTableShortcut, type TableShortcutSize } from '@/lib/editor/nx-m-table';
 import { ALIGNMENT_CONTROLS } from '@/lib/editor/format-commands';
 import { promptDialog } from '@/lib/dialog/show';
+import { normalizeTagAtomName } from '@/lib/editor/inline-atoms';
 import { uploadFile } from '@/lib/upload-client';
 import { createWhiteboard } from '@/actions/whiteboard/whiteboard';
 import { createCollection } from '@/actions/collection/collection';
@@ -543,6 +545,42 @@ export const slashCommands: SlashCommand[] = [
     category: '高级块',
     command: (editor, range) => {
       editor.chain().focus().deleteRange(range).setInlineMath({ latex: '' }).run();
+    },
+  },
+  // G580：官方四类原子内联元素里的 `day` 与 `tag`——与 `行内公式`／`提及` 同类，Backspace
+  // 落在它们内部时让位默认行为。
+  {
+    name: '日期',
+    description: '插入指向某天每日笔记的日期',
+    icon: CalendarDays,
+    keywords: ['day', 'date', 'daily note', '日期', '每日笔记', '今天'],
+    category: '嵌入',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).insertDayAtom().run();
+    },
+  },
+  {
+    name: '标签',
+    description: '插入一枚标签，点击进入该标签',
+    icon: Tag,
+    keywords: ['tag', 'label', '标签', '话题'],
+    category: '嵌入',
+    command: async (editor, range) => {
+      const name = await promptDialog({
+        title: '标签',
+        placeholder: '标签名，例如 项目/设计',
+        confirmLabel: '插入',
+      });
+      const cleaned = normalizeTagAtomName(name);
+      if (!cleaned) return;
+      editor.chain().focus().deleteRange(range).run();
+      // 已有同名标签就带上 id，点它才能落到那枚标签的浏览页。
+      // 动态引入：这个模块被纯逻辑测试直接 import，静态引入会把 next-auth 一并拉进来。
+      const tags = await import('@/actions/tag/tag')
+        .then((mod) => mod.getTags())
+        .catch(() => []);
+      const existing = tags.find((tag) => tag.name === cleaned) ?? null;
+      editor.chain().focus().insertTagAtom({ name: cleaned, tagId: existing?.id ?? null }).run();
     },
   },
   {

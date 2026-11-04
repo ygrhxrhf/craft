@@ -6121,10 +6121,16 @@
       ]
     },
     "G580": {
-      "status": "gap",
-      "note": "无 day/tag 内联原子，也无光标在原子内让位的守卫",
+      "status": "aligned",
+      "note": "第 304 批：补齐官方四类原子内联里的 `day` 与 `tag` 两个节点（`math`/`mention` 已有）——dayAtom 存 YYYY.MM.DD 严格日期、点开对应每日笔记；tagAtom 存标签名（去 # 归一）、点进标签页；斜杠菜单「日期」「标签」两条入口，浏览器实插并 reload 后仍在、落库 type:dayAtom。Backspace 守卫按官方 `Jm` 四类枚举让位默认行为（`defaultPrevented=false` 实测），并且 `atomicInlines` 不再写死 0、按真实原子计数（只含一枚原子的段不再被误判为空块）",
       "evidence": [
-        "src/components/editor/Editor.tsx:486"
+        "src/lib/editor/inline-atoms.ts:11",
+        "src/lib/editor/inline-atoms.ts:29",
+        "src/lib/editor/inline-atoms.ts:82",
+        "src/components/editor/extensions/day-atom.tsx:22",
+        "src/components/editor/extensions/tag-atom.tsx:21",
+        "src/components/editor/extensions/craft-keymap.ts:767",
+        "src/components/editor/slash-menu/slash-commands.ts:554"
       ]
     },
     "G582": {

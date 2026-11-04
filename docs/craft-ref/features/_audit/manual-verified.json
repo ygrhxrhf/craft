@@ -7198,10 +7198,11 @@
       ]
     },
     "G801": {
-      "status": "gap",
-      "note": "本地分类按钮无 role=menuitem，也无 Home/End 处理",
+      "status": "aligned",
+      "note": "第 296 批：照本行判据（带 activeElement 记录）补测本地——帮助菜单 6 项全带 role=menuitem，焦点在第一项「意见反馈」时按 End ⇒ 跳到末项「Markdown 快捷方式」，按 Home ⇒ 回第一项，ArrowDown／ArrowUp 逐项移动 ⇒ 与官方第 401 批同面同结果。面板分类 rail 本地不是 menuitem 列表、Home／End 不走选中；官方 rail 这一档本行自己记着「role 未记录、未测」⇒ 不据此另立缺口。",
       "evidence": [
-        "src/components/settings/SettingsModal.tsx:179"
+        "src/components/app/HelpMenu.tsx:52",
+        "src/components/ui/dropdown-menu.tsx:75"
       ]
     },
     "G1622": {

@@ -6,6 +6,7 @@ import { rawValueOf } from '@/lib/collection/cell-value';
 import { DEFAULT_NUMBER_FORMAT, formatNumber as formatNumberFor, isNumberFormat, type NumberFormat } from '@/lib/collection/property-types';
 import { cellKeyAction } from '@/lib/collection/cell-key';
 import { draftTextFor, normalizeTextCommit, parseNumberInput } from '@/lib/collection/cell-edit';
+import { useCellEditorEscape } from './cell-editor-escape';
 import { useState, useRef, useEffect } from 'react';
 import { Check, X, ChevronDown, Calendar as CalendarIcon, Link2, Paperclip } from 'lucide-react';
 import { cn } from 'cn';
@@ -299,6 +300,8 @@ function DateCell({ value, onChange }: { value: any; onChange: (v: any) => void 
 // ─── Select ──────────────────────────────────────────
 function SelectCell({ property, value, onChange }: { property: Property; value: any; onChange: (v: any) => void }) {
   const [open, setOpen] = useState(false);
+  // G456：弹层开时按名字进全局焦点栈，Esc 由栈按名字路由关掉它。
+  useCellEditorEscape(open, 'collection-v2-select-editor', () => setOpen(false));
   const options = getSelectOptions(property.config);
 
   const selected = options.find(o => o.id === value);
@@ -355,6 +358,7 @@ function SelectCell({ property, value, onChange }: { property: Property; value: 
 // ─── Multi Select ────────────────────────────────────
 function MultiSelectCell({ property, value, onChange }: { property: Property; value: any; onChange: (v: any) => void }) {
   const [open, setOpen] = useState(false);
+  useCellEditorEscape(open, 'collection-v2-multiselect-editor', () => setOpen(false));
   const options = getSelectOptions(property.config);
   const selected: string[] = Array.isArray(value) ? value : [];
 
@@ -632,6 +636,7 @@ function RelationCell({
   const selected: string[] = relationItems(value);
   const [options, setOptions] = useState<{ id: string; label: string }[]>([]);
   const [open, setOpen] = useState(false);
+  useCellEditorEscape(open, 'collection-v2-relation-editor', () => setOpen(false));
 
   useEffect(() => {
     if (!targetId) return;

@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-04T05:00:40.867Z",
+  "generatedAt": "2026-11-04T05:20:28.583Z",
   "total": 1614,
   "status": {
-    "aligned": 608,
+    "aligned": 609,
     "nonaction": 512,
-    "partial": 219,
+    "partial": 218,
     "deliberate": 165,
     "gap": 90,
     "unreachable": 20
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 292,
+    "P2 / aligned": 293,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 166,
@@ -26,7 +26,7 @@
     "P? / aligned": 78,
     "P2 / deliberate": 73,
     "P3 / partial": 70,
-    "P2 / partial": 69,
+    "P2 / partial": 68,
     "P3 / nonaction": 66,
     "P3 / aligned": 60,
     "P? / deliberate": 40,
@@ -1304,10 +1304,6 @@
       6
     ],
     [
-      "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
-      5
-    ],
-    [
       "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",
       5
     ],
@@ -1321,6 +1317,10 @@
     ],
     [
       "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
+      4
+    ],
+    [
+      "三点四八、第 41 批（集合单元格十个按类型编辑器，`model.md`",
       4
     ],
     [

@@ -5425,10 +5425,14 @@
       ]
     },
     "G456": {
-      "status": "partial",
-      "note": "日期输入自己处理 Esc，其余弹层只点遮罩关闭；无具名浮层栈",
+      "status": "aligned",
+      "note": "第 285 批：三枚弹层编辑器（单选／多选／关联）按名字注册进全局焦点栈——useCellEditorEscape(open, 'collection-v2-{select,multiselect,relation}-editor', …)（开时 push 带 escapeKeyDef、关或卸载时 remove，close 走 ref 不随渲染重刷）。官方四枚里的 date／person 本地是行内编辑不是弹层（日期自己吃 Esc＝cellKeyAction 的 cancel 分支、人员落 TextCell，见 G454）⇒ 按载体差异记。屏上实测：单选单元格点开弹层（含「清除」项）⇒ 弹层内派发 Esc ⇒ 事件被 preventDefault、弹层当场消失（此前毫无反应）。命名沿用官方 collection-v2-…-editor 前缀，relation 是本地多出来的类型。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:275"
+        "src/components/collection/cell-editor-escape.ts:15",
+        "src/components/collection/PropertyCell.tsx:304",
+        "src/components/collection/PropertyCell.tsx:361",
+        "src/components/collection/PropertyCell.tsx:639",
+        "src/lib/collection/cell-editor-escape.test.ts:1"
       ]
     },
     "G457": {

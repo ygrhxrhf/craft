@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T05:00:40.539Z",
+  "generatedAt": "2026-11-04T05:20:28.237Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 842,
-    "aligned": 335,
+    "gap": 841,
+    "aligned": 336,
     "unknown": 194,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 272,
-    "P2 / aligned": 230,
+    "P2 / gap": 271,
+    "P2 / aligned": 231,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -9334,10 +9334,10 @@
       "cols": 5,
       "id": "G456",
       "official": "★ **存在具名浮层栈**：弹层第一行注册 `collection-v2-{date,select,multiselect,person}-editor` + `onClose` + `{isDisabled: !open}` ⇒ Esc/关闭由全局栈**按名字路由**；★ 命名带 **`v2`** ⇒ 集合模块重做过一次（与 `plans.md` §五之二 C 的 `upgrade.team.v2.*` 同现象）（§一之十三 6）",
-      "local": "本地弹层各自处理 Esc ⇒ 多层叠加时\"一次 Esc 全关\"或\"关不掉\"",
-      "verdict": "缺失（架构）",
+      "local": "本地弹层各自处理 Esc ⇒ 多层叠加时\"一次 Esc 全关\"或\"关不掉\" ⇒ ✎ 现读（2026-11-04 第 285 批）：三枚弹层编辑器（单选／多选／关联）现在**按名字注册进全局焦点栈**——`useCellEditorEscape(open, 'collection-v2-{select,multiselect,relation}-editor', …)`（`cell-editor-escape.ts`：开时 `focusStack.push({id, keyDefs:[escapeKeyDef(close)]})`、关或卸载时 `remove(id)`，`close` 走 ref 不随渲染重刷）。官方四枚里的 `date`／`person` 本地是**行内编辑**不是弹层（日期自己吃 Esc＝`cellKeyAction` 的 cancel 分支、人员落 `TextCell`，见 G454）⇒ 按载体差异记，不硬造弹层。屏上实测：单选单元格点开弹层（含「清除」项）⇒ 在弹层内派发 Esc ⇒ 事件被 `preventDefault`、弹层当场消失（此前这一步毫无反应）。★ 命名沿用官方 `collection-v2-…-editor` 前缀；`relation` 是本地多出来的类型",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

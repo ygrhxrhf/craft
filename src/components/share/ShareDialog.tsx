@@ -14,6 +14,7 @@ import {
   Copy,
   Eye,
   Globe,
+  Info,
   KeyRound,
   LinkIcon,
   Loader2,
@@ -37,6 +38,7 @@ import {
   decideAccessRequest,
   type AccessRequestItem,
 } from '@/actions/document/access-requests';
+import { countSubpages } from '@/actions/document/get';
 import type { DocumentSharePermission } from '@/lib/share/permission';
 import { ONLY_COLLABORATORS_LABEL, normalizeSharePermission } from '@/lib/share/permission';
 import { ACCESS_LEVEL_COPY } from '@/lib/share/access-levels';
@@ -54,6 +56,11 @@ import {
   visitorSwitchStatus,
 } from '@/lib/share/visitor-interaction';
 import { SEO_DESC, expiryLabel } from '@/lib/share/publishing-options';
+import {
+  SHARE_SCOPE_WARNING,
+  hasSubpages,
+  shareScopeConfirmation,
+} from '@/lib/share/document-scope';
 import {
   linkOperationDone,
   linkOperationPending,
@@ -122,6 +129,8 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [accessRequests, setAccessRequests] = useState<AccessRequestItem[]>([]);
   const [requestBusy, setRequestBusy] = useState<string | null>(null);
   const [requestError, setRequestError] = useState<string | null>(null);
+  // G138：子页数——决定要不要给「分享适用于整个文档」那句与改档前确认。
+  const [subpageCount, setSubpageCount] = useState(0);
 
   /**
    * Run a link write with its own named progress line, then announce its result on success.
@@ -214,6 +223,21 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       cancelled = true;
     };
   }, [open, link, documentId, reloadShareFromMirror]);
+
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    countSubpages(documentId)
+      .then((count) => {
+        if (!cancelled) setSubpageCount(count);
+      })
+      .catch(() => {
+        if (!cancelled) setSubpageCount(0);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, documentId]);
 
   // G04：面板每次打开都读一次待批准请求；批准／拒绝后再读一次。
   const reloadAccessRequests = useCallback(async () => {
@@ -376,9 +400,13 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     if (next === permission) return;
     const previous = permission;
     setTierError(null);
-    setPermission(next);
     startTransition(async () => {
       try {
+        // G138：档位是**整篇文档**的，不是当前子页。有子页时先把话说清，并把作用域写进确认按钮；
+        // 只有一页时不打扰（那句话在此刻没有信息量）。确认前不动选区，免得闪一下再退回来。
+        const scope = shareScopeConfirmation(subpageCount);
+        if (scope && !(await confirmDialog(scope))) return;
+        setPermission(next);
         // 档位是元数据 ⇒ 走离线内核（G1491）：本地镜像里有这一行就只改这两列；
         // 镜像还没有（这篇文档刚被分享、或本机还没拉过这张表）就连着面板挂载时读回来的那一行
         // 一起写进去——一枚 op，档位与建档不分成两趟；两条都不成立才退回服务端 action（那条路
@@ -563,6 +591,17 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   </ul>
                   {requestError && <p className="mt-1.5 text-xs text-destructive">{requestError}</p>}
                 </div>
+              )}
+              {/* G138：这是**整篇文档**的分享面板。有子页时把作用域说在档位列表之前——
+                  官方那句「分享适用于整个文档。你对查看或编辑权限所做的任何更改都将应用于整个文档。」 */}
+              {hasSubpages(subpageCount) && (
+                <p
+                  data-testid="share-scope-warning"
+                  className="mt-3 flex items-start gap-1.5 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground"
+                >
+                  <Info className="mt-0.5 size-3.5 shrink-0" />
+                  <span>{SHARE_SCOPE_WARNING}</span>
+                </p>
               )}
               <div className="mt-3 flex flex-col gap-2">
                 {TIERS.map((tier) => {

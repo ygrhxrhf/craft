@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { requestViewAccess, type RequestEditAccessStatus } from '@/actions/document/access-requests';
-import { REQUEST_ACCESS_FAILED, REQUEST_ACCESS_TITLE } from '@/lib/share/request-access-copy';
+import { REQUEST_ACCESS_FAILED, REQUEST_ACCESS_TITLE, REQUEST_SENT } from '@/lib/share/request-access-copy';
 
 /**
  * G75：查看者侧的「想要查看」入口。与编辑请求同一条待处理队列（role `requested_view`），
@@ -27,7 +27,7 @@ export function RequestViewAccess({ identifier }: { identifier: string }) {
   };
 
   if (status === 'requested' || status === 'pending') {
-    return <span className="text-meta text-foreground/40">已请求，等待批准</span>;
+    return <span className="text-meta text-foreground/40">{REQUEST_SENT}</span>;
   }
   if (status === 'already-member') {
     return <span className="text-meta text-foreground/40">你已有查看权限</span>;

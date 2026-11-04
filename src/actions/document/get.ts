@@ -64,6 +64,40 @@ export async function getSubpageStats(rootId: string): Promise<SubpageStats[]> {
   return stats;
 }
 
+/**
+ * G138：这篇文档带不带子页（分享面板只在多页文档上给「分享适用于整个文档」那一句）。
+ * 只看调用者有权的文档；自己不是所有者时，别人的子页不计入。
+ */
+export async function countSubpages(rootId: string): Promise<number> {
+  const userId = await requireUserId();
+  const access = await resolveDocumentAccess(rootId, userId);
+  if (!access) return 0;
+
+  const db = await getDb();
+  const rows: Array<{ id: string; parentId: string | null }> = await db.orm.public.Document
+    .where({ userId, isDeleted: false })
+    .select('id', 'parentId')
+    .all();
+
+  const byParent = new Map<string, string[]>();
+  for (const row of rows) {
+    if (!row.parentId) continue;
+    const list = byParent.get(row.parentId) ?? [];
+    list.push(row.id);
+    byParent.set(row.parentId, list);
+  }
+
+  const seen = new Set<string>([rootId]);
+  const pending = [...(byParent.get(rootId) ?? [])];
+  while (pending.length > 0) {
+    const id = pending.pop()!;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    pending.push(...(byParent.get(id) ?? []));
+  }
+  return seen.size - 1;
+}
+
 export async function getDocument(id: string): Promise<AuthorizedDocument | null> {
   const userId = await requireUserId();
   const access = await resolveDocumentAccess(id, userId);

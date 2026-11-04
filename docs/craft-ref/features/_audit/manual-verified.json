@@ -3929,10 +3929,17 @@
       ]
     },
     "G138": {
-      "status": "partial",
-      "note": "有访问请求审批与链接档移除说明；缺整文档作用域确认",
+      "status": "aligned",
+      "note": "第 302 批：有子页时档位列表上方出现官方作用域警告句，改档前弹确认且按钮逐字为「是的，更改整个文档」（取消不改档、确认才落，均屏上实测）；移除协作者后按「此人在我其它未删文档是否还有授权」弹两问合一的「移除所有访问权限」，确认后跨文档删除实测生效；请求-审批闭环原有（G04/G75），请求发出句改用官方 collab.shared.document.request.sent",
       "evidence": [
-        "src/actions/document/access-requests.ts:101"
+        "src/lib/share/document-scope.ts:15",
+        "src/components/share/ShareDialog.tsx:403",
+        "src/components/share/ShareDialog.tsx:602",
+        "src/components/editor/tabs/MembersSection.tsx:168",
+        "src/actions/document/members.ts:124",
+        "src/actions/document/members.ts:142",
+        "src/actions/document/get.ts:71",
+        "src/components/share/RequestEditAccess.tsx:31"
       ]
     },
     "G140": {

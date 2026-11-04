@@ -118,6 +118,45 @@ export async function resolveDocumentMember(input: {
 }
 
 /**
+ * G138 第二问（`collab.question.revoke.access`）：此人在**我拥有的其它文档**里还有几处单独授权。
+ * 0 ＝ 没有第二问可答，调用方按"只从本文档移除"处理。
+ */
+export async function countMemberElsewhere(
+  documentId: string,
+  memberUserId: string,
+): Promise<number> {
+  const userId = await requireUserId();
+  const documents = await getTable('Document');
+  const owned = await documents.where({ userId, isDeleted: false }).all();
+  const ownedIds = new Set(owned.map((row) => row.id as string));
+
+  const members = await getTable('DocumentMember');
+  const rows = await members.where({ userId: memberUserId }).all();
+  return rows.filter((row) => row.documentId !== documentId && ownedIds.has(row.documentId as string)).length;
+}
+
+/**
+ * G138「移除所有访问权限」：把该成员在**我拥有的全部文档**里的授权行删掉，返回删除条数。
+ * 只动调用者自己拥有的文档——别人文档里的授权不归他管（服务端边界，不是界面提示）。
+ */
+export async function revokeMemberEverywhere(memberUserId: string): Promise<number> {
+  const userId = await requireUserId();
+  const documents = await getTable('Document');
+  const owned = await documents.where({ userId, isDeleted: false }).all();
+  const ownedIds = new Set(owned.map((row) => row.id as string));
+
+  const members = await getTable('DocumentMember');
+  const rows = await members.where({ userId: memberUserId }).all();
+  let removed = 0;
+  for (const row of rows) {
+    if (!ownedIds.has(row.documentId as string)) continue;
+    await members.where({ id: row.id as string }).delete();
+    removed += 1;
+  }
+  return removed;
+}
+
+/**
  * G298 —— **成员自己离开共享文档**。与"所有者移除协作者"是两件事：这里调用者移除的是**自己**
  * 那一行。所有者不能离开自己的文档（他是 `Document.userId`，没有成员行可删）⇒ 拒绝。
  * 返回是否真的删掉了一行（没在名册里 ⇒ 无操作，不报错——幂等）。

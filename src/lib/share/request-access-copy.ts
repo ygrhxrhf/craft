@@ -22,6 +22,10 @@ export function viewRequestDeclinedTitle(documentTitle: string): string {
 export const VIEW_REQUEST_LABEL = '想要查看';
 export const EDIT_REQUEST_LABEL = '想要编辑';
 
+/** G138：请求发出后的那句（官方 `collab.shared.document.request.sent`「请求已发送」）。 */
+export const REQUEST_SENT = '请求已发送';
+export const REQUEST_SENT_KEY = 'collab.shared.document.request.sent';
+
 /** 访问门禁页与按钮：官方 `collab.request.access.to.document(.subtitle)` 与失败句。 */
 export const REQUEST_ACCESS_TITLE = '请求访问此文档';
 export const REQUEST_ACCESS_TITLE_KEY = 'collab.request.access.to.document';

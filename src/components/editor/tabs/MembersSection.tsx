@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Loader2, X } from 'lucide-react';
 import {
+  countMemberElsewhere,
   listDocumentMembers,
   resolveDocumentMember,
+  revokeMemberEverywhere,
   type MemberRole,
 } from '@/actions/document/members';
 import { getSyncManager } from '@/lib/sync-core';
@@ -14,6 +16,7 @@ import { overlayMemberRows } from '@/components/sync/member-rows';
 import { rememberUserDisplay } from '@/components/sync/user-display';
 import { persistUserDisplay } from '@/components/sync/user-display-persist';
 import { memberRemovalNote } from '@/lib/share/member-access-notes';
+import { revokeAcrossDocumentsPrompt } from '@/lib/share/document-scope';
 import { SHARE_ERROR } from '@/lib/share/share-guards';
 import { confirmDialog } from '@/lib/dialog/show';
 
@@ -137,6 +140,7 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
 
   const handleRemove = async (id: string) => {
     setError(null);
+    const target = members.find((m) => m.id === id);
     // G85：链接档是 edit 时，移除个人条目**不代表**他失去编辑权 ⇒ 先给官方那句解释再动手
     //   （权限是多路叠加的）。view 档、或镜像里还没有这一行，照常移除、不打扰。
     const share = await findDocumentShare(documentId).catch(() => null);
@@ -153,6 +157,22 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
       await getSyncManager().applyLocal({ table: 'document_member', id, patch: null });
     } catch (err) {
       setMembers(previous);
+      message(err, SHARE_ERROR.deletePermission);
+      return;
+    }
+    // G138：移除是**两问合一**——此人在我别的文档里还有单独授权时，再问一句要不要一并撤销；
+    // 答"是"就把那些授权行也删掉（服务端只动调用者拥有的文档）。
+    if (!target) return;
+    try {
+      const elsewhere = await countMemberElsewhere(documentId, target.userId);
+      const prompt = revokeAcrossDocumentsPrompt(elsewhere);
+      if (!prompt) return;
+      const revokeAll = await confirmDialog(prompt);
+      if (!revokeAll) return;
+      await revokeMemberEverywhere(target.userId);
+      // 那些行在别的文档里，本屏看不到；内核那几张镜像表挂在同一库上，重读一次即可。
+      await reload();
+    } catch (err) {
       message(err, SHARE_ERROR.deletePermission);
     }
   };

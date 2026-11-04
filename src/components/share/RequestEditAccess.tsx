@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { requestEditAccess, type RequestEditAccessStatus } from '@/actions/document/access-requests';
+import { REQUEST_SENT } from '@/lib/share/request-access-copy';
 
 /**
  * Viewer-side entry for the approval flow (G04). The link is view-only, so the
@@ -27,7 +28,7 @@ export function RequestEditAccess({ identifier }: { identifier: string }) {
   };
 
   if (status === 'requested' || status === 'pending') {
-    return <span className="text-meta text-foreground/40">已请求，等待批准</span>;
+    return <span className="text-meta text-foreground/40">{REQUEST_SENT}</span>;
   }
   if (status === 'already-member') {
     return <span className="text-meta text-foreground/40">你已是协作者</span>;

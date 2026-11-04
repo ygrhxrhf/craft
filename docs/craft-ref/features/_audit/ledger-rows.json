@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T07:49:47.900Z",
+  "generatedAt": "2026-11-04T08:00:12.554Z",
   "totalRows": 1614,
   "statusDistribution": {
-    "gap": 835,
-    "aligned": 341,
+    "gap": 834,
+    "aligned": 342,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 265,
-    "P2 / aligned": 236,
+    "P2 / gap": 264,
+    "P2 / aligned": 237,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -15752,10 +15752,10 @@
       "cols": 5,
       "id": "G811",
       "official": "★★ **键位条件／修饰 builder 全家族 @15,973–17,500（G808 完整化）**：条件构造 `q7`=`key` 型／`Vr`=`code` 型／`Oo`=`letter` 型（单 ASCII 字母→小写，非字母 throw 并提示改 `code()`）／`yae`=非字母单字符（**字母与数字都 throw ⇒ 数字快捷键必须走 `code()`**）／`na`=字符串自动包 `key`；修饰构造 `Vn`=只带 keyCondition ⇒ **`XI` 对 `==null` 修饰不校验 ⇒ 任意修饰组合都匹配（宽松）**、`mo`=修饰全 false（严格裸键）、`Co`=⌘＋`winMatcher` Ctrl、`qi`=Shift、`y2`=Alt、`iEe`=Ctrl、`ci`=⌘Shift↔CtrlShift、`JI`=⌘⌥⇧、`zr`=⌘⌥、`QM`=winMatcher 恒 false（**Mac-only**）、`bae(t)=Ll?t:t.winMatcher??t` 平台选择；`XI` 全文 @14,301（`key` 型带 `toUpperCase()` 兜底、`letter` 走 `rEe`）",
-      "local": "本轮 `grep -rn \"keycap\" src --include=*.ts --include=*.tsx` **无命中** ⇒ 本地无键帽/键位条件系统（承 G775／G802）；可落地四条：**宽松/严格两档修饰语义、`winMatcher` 平台双份、字母走 `letter`、数字与物理键走 `code`**",
-      "verdict": "建模规格",
+      "local": "本轮 `grep -rn \"keycap\" src --include=*.ts --include=*.tsx` **无命中** ⇒ 本地无键帽/键位条件系统（承 G775／G802）；可落地四条：**宽松/严格两档修饰语义、`winMatcher` 平台双份、字母走 `letter`、数字与物理键走 `code`** ⇒ ✎ 现读（2026-11-04 第 294 批）：四条**全部已落**（`src/lib/editor/keymap.ts`）——① 宽松/严格两档＝`matches()`（四个修饰位逐一比对）＋ `anyModifiers`／`matchesIgnoringModifiers`（注释直写对应官方 `Vn(t)`，`Ctrl+Esc` 与 `Esc` 同效）；② 平台双份＝`chordFor` 的 mac/win 与 `win: null` 显式不绑；③ 字母走 `letter`＝`letterChord()` 只收单 ASCII 字母、非字母 **throw 且错误文案逐字照官方**（`For non-letter physical keys, use code() instead.`）；④ 数字与物理键走 `code`＝keymap 的 `Digit1…` 全按 `code` 匹配，`letterChord('1')` 按官方\"数字也必须走 code()\"抛错（单测钉住）。⇒ 本行\"可落地四条\"逐条在册",
+      "verdict": "建模规格 ⇒ 第 294 批：四条逐条在册且有单测 ⇒ 已对齐",
       "score": "P2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": null,

@@ -7253,10 +7253,14 @@
       ]
     },
     "G811": {
-      "status": "partial",
-      "note": "平台双份/显式不绑/严格修饰已建模；缺 letter 与数字断言两档",
+      "status": "aligned",
+      "note": "第 294 批改判：账本列的「可落地四条」全部在册——① 宽松/严格两档＝matches()（四个修饰位逐一比对）＋ anyModifiers／matchesIgnoringModifiers（注释直写对应官方 Vn(t)）；② 平台双份＝chordFor 的 mac/win 与 win:null 显式不绑；③ 字母走 letter＝letterChord() 只收单 ASCII 字母、非字母 throw 且错误文案逐字照官方（For non-letter physical keys, use code() instead.）；④ 数字与物理键走 code＝keymap 的 Digit1… 全按 code 匹配，letterChord('1') 按官方口径抛错（单测钉住）。",
       "evidence": [
-        "src/lib/editor/keymap.ts:137"
+        "src/lib/editor/keymap.ts:37",
+        "src/lib/editor/keymap.ts:79",
+        "src/lib/editor/keymap.ts:164",
+        "src/lib/editor/keymap.ts:186",
+        "src/lib/editor/keymap.test.ts:223"
       ]
     },
     "G812": {

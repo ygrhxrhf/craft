@@ -8857,12 +8857,13 @@
       ]
     },
     "G1231": {
-      "status": "partial",
+      "status": "nonaction",
       "priority": "P2",
-      "note": "HTML 块与注释已在；本批补 emoji-only 首块→页面图标；aside 装饰位仍缺。",
+      "note": "第 288 批改判（无宿主子项写 N/A 的口径）：本行官方句是导出侧一条 turndown 规则（qvt：阈值 50、handleIconsInAsideTags 开关、首子元素判定、静默返回空串）——本地两条导出通路都不产 <aside>（markdown 走 <callout…> 见 G1403、HTML 走 <blockquote data-type=\"callout\">，只有 import 把 aside 当普通容器解开）⇒ 该规则在本地没有触发面。aside 开合标签驱动的装饰位本身是另一条在册行 G1243（P2 gap，仍开着）的主张，不在本行重复计。★ 重开条件：G1243 若落地（本地开始产 aside），本行的导出规则必须回来复验。",
       "evidence": [
-        "src/lib/import/markdown.ts:147",
-        "src/actions/document/import.ts:59"
+        "src/lib/document-codec/index.ts:152",
+        "src/lib/document-codec/index.ts:255",
+        "src/lib/import/markdown.ts:125"
       ]
     },
     "G1233": {

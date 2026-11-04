@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T05:50:40.077Z",
+  "generatedAt": "2026-11-04T06:00:43.497Z",
   "totalRows": 1614,
   "statusDistribution": {
     "gap": 840,
@@ -23322,8 +23322,8 @@
       "cols": 5,
       "id": "G1231",
       "criteria": "★★★ **`<aside>` 里的第一张小图会被导出器整条丢掉**＝逐字 `qvt(t)`＝`{filter:e=>e.tagName===\"IMG\",replacement:(e,n)=>{const o=n,s=o.parentElement;if(s&&s.tagName===\"ASIDE\"&&s.firstElementChild===o){const c=o.getAttribute(\"width\");if(c){const d=parseInt(c,10);if(!isNaN(d)&&d<t.widthThreshold)return\"\"}}…}}` ＋ 装配点 `BJ=(t,e)=>oI(n=>zhe(n,s=>{e.handleIconsInAsideTags&&s.addRule(\"asideImgSkip\",qvt({widthThreshold:50}))}),wV)(t)` ⇒ ⇒ ① 阈值**逐字 50**；② 只在配置开关 `handleIconsInAsideTags` 打开时生效；③ 判定条件是\"父级是 `aside` **且自己是第一个子元素**\"＝侧栏图标；④ ☆ 返回空串＝**静默丢弃，没有警告**（与第 113 批\"未知语言不报错\"同族的官方沉默）",
-      "local": "✎ 现读（2026-11-03 第 259 批）：HTML 块导入与注释丢弃已在；本批补上「emoji-only 首块→页面图标」（`splitLeadingEmojiIcon` 取无标记单文本 emoji 段落作 `Document.icon` 并从正文移除）；aside 开合标签驱动的装饰位仍未做（本地没有 aside 图标概念）",
-      "verdict": "缺失（局部）",
+      "local": "✎ 现读（2026-11-03 第 259 批）：HTML 块导入与注释丢弃已在；本批补上「emoji-only 首块→页面图标」（`splitLeadingEmojiIcon` 取无标记单文本 emoji 段落作 `Document.icon` 并从正文移除）；aside 开合标签驱动的装饰位仍未做（本地没有 aside 图标概念） ⇒ ✎ 现读（2026-11-04 第 288 批）：本行官方句是**导出侧**的一条 turndown 规则（`qvt`：阈值 50、`handleIconsInAsideTags` 开关、首子元素判定、静默返回空串）——本地两条导出通路都**不产 `<aside>`**（markdown 走 `<callout…>` 见 G1403、HTML 走 `<blockquote data-type=\"callout\">`，只有 import 把 `aside` 当普通容器解开）⇒ 该规则在本地**没有触发面**，照\"无宿主子项写 N/A\"的口径记；aside 开合标签驱动的装饰位本身是**另一条在册行 `G1243`**（P2 gap，仍开着）的主张，不在本行重复计。**重开条件**：`G1243` 若落地（本地开始产 aside），本行的导出规则必须回来复验",
+      "verdict": "无对应面（导出器不产 `<aside>`）＋ aside 机制归 `G1243` 另册｜第 288 批",
       "score": "2/1",
       "status": "gap",
       "scoreParsed": {

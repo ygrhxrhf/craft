@@ -142,7 +142,6 @@
 | G691 | 2473 | 已对齐 | local-says-missing | 本地 Collection.name（默认「未命名集合」）＋ 行标题走 CollectionItem.documentI |
 | G1223 | 3905 | 已对齐 | local-says-missing | 本轮实扫＝src/app/layout.tsx 与 src/app/globals.css 都没有 color-sche |
 | G1228 | 3937 | 已对齐 | local-says-missing | grep -n toggle src/lib/import/markdown.ts ⇒ 0 命中＝本地把 -／+／* 一 |
-| G1231 | 3940 | 部分落地 | local-says-missing | 现读（2026-11-03 第 259 批）：HTML 块导入与注释丢弃已在；本批补上「emoji-only 首块→页面 |
 | G1574 | 5553 | 已对齐 | local-says-missing | 本地对照＝任务行未设可聚焦属性（点击后 activeElement 是 body）；完成态载体是 span[role=" |
 | G1611 | 5591 | 已对齐 | local-says-missing | 本地：无上限提示（G1577 记本地表格键整族无绑定 ⇒ 连"加到上限"这条通路都走不到）。✎ 现读（2026-11-0 |
 

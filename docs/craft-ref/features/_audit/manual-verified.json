@@ -3360,8 +3360,8 @@
       ]
     },
     "G57": {
-      "status": "gap",
-      "note": "无 space 实体；侧栏只有 folder 树，缺全部空间/我的空间/迁移团队",
+      "status": "deliberate",
+      "note": "deliberate（第 8 批裁决：本项目不引入 space/team 实体）；侧栏只有 folder 树，缺全部空间/我的空间/迁移团队",
       "evidence": [
         "src/components/sidebar/Sidebar.tsx"
       ]
@@ -3898,8 +3898,8 @@
       ]
     },
     "G132": {
-      "status": "gap",
-      "note": "无 space 实体与成员/owner 治理；降级所有权路径不存在",
+      "status": "deliberate",
+      "note": "deliberate（第 8 批裁决：本项目不引入 space/team 实体）；无 space 实体与成员/owner 治理；降级所有权路径不存在",
       "evidence": [
         "src/lib/app/settings-sections.ts:34"
       ]
@@ -3943,8 +3943,8 @@
       ]
     },
     "G140": {
-      "status": "gap",
-      "note": "无空间三档离开/移除/删除，也无 show.in.finder 本地落点",
+      "status": "deliberate",
+      "note": "deliberate（第 8 批裁决：本项目不引入 space/team 实体）；无空间三档离开/移除/删除，也无 show.in.finder 本地落点",
       "evidence": [
         "src/components/sidebar/Sidebar.tsx"
       ]

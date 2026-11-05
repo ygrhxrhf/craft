@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-04T15:17:12.295Z",
+  "generatedAt": "2026-11-05T04:28:23.312Z",
   "total": 1614,
   "status": {
     "aligned": 625,
     "nonaction": 515,
     "partial": 203,
-    "deliberate": 165,
-    "gap": 86,
+    "deliberate": 168,
+    "gap": 83,
     "unreachable": 20
   },
   "priority": {
@@ -24,7 +24,7 @@
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
-    "P2 / deliberate": 73,
+    "P2 / deliberate": 76,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 60,
@@ -34,7 +34,7 @@
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
-    "P2 / gap": 14,
+    "P2 / gap": 11,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
     "P3 / unreachable": 4,
@@ -1296,12 +1296,12 @@
       7
     ],
     [
-      "三点五、P2 追加（来自 `modules.md` 模块清单，静态证据）",
+      "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
       6
     ],
     [
-      "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
-      6
+      "三点五、P2 追加（来自 `modules.md` 模块清单，静态证据）",
+      5
     ],
     [
       "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",

@@ -5375,10 +5375,11 @@
       ]
     },
     "G435": {
-      "status": "partial",
-      "note": "主题是底色+washi+字体包，无 pluginName/themeAssetId/渐变背景",
+      "status": "deliberate",
+      "note": "deliberate（族拆批第 3c 批裁决）：本地主题＝散落的样式变量（底色/渐变/washi/字体档），不引入 `pluginName` 白名单＋`themeAssetId` 的两层插件/资产体系——那层只对第三方主题生态与资产 id 复用有意义，本项目自用不接外部主题包；可观察面里背景渐变已由样式面板六档承担（G210 note 记），「界面风格随主题下发」与资产 id 无本地屏幕面。将来若接第三方主题包再回看本条",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:19"
+        "src/components/editor/themes/page-style.ts",
+        "src/components/editor/tabs/StyleTab.tsx"
       ]
     },
     "G436": {

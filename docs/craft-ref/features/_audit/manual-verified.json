@@ -4043,9 +4043,11 @@
     },
     "G157": {
       "status": "partial",
-      "note": "仅和纸胶带一档；涂鸦/图案/径向/纸与图库浏览缺",
+      "note": "✎ 现读（2026-11-06 族拆批第 3g 批）：和纸胶带面已按官方落——96 档胶带图进 `public/washi/`＋样式面板图库浏览（见 G210）；块级分隔符的材质轴（线／和纸＋六档图案＋颜色）早在 G1247 落地。剩余素材面：页面级图案/径向/纸三档、背景高级参数（渐变起止色／淡化／图像模糊／沉浸式）、Unsplash 图片源，以及涂鸦素材本体",
       "evidence": [
-        "src/components/editor/tabs/StyleTab.tsx:210"
+        "src/lib/editor/themes/washi-catalog.ts",
+        "src/lib/editor/separator-material.ts",
+        "src/components/editor/tabs/StyleTab.tsx"
       ]
     },
     "G159": {
@@ -4337,9 +4339,12 @@
     "G210": {
       "status": "partial",
       "priority": "P2",
-      "note": "胶带段标题已用官方串「和纸胶带」；分隔符三种样式与和纸图库浏览仍缺。",
+      "note": "✎ 现读（2026-11-06 族拆批第 3g 批）：页面「分隔符样式」置成官方三档（线／和纸胶带／涂鸦），和纸胶带开**图库浏览**——官方 `washiPresets` 96 档胶带图已从 `res.craft.do` 下载进 `public/washi/`（672×160 JPEG，约 3.2 MB），图库网格 96 档＋老六档渐变兼容项；浏览器实点：三档切换正常、图库 96 档、选 mint-pixels 页顶出现 `/washi/mint-pixels.jpg`、涂鸦出页顶横带、切回线清空。**未闭项**：涂鸦的素材本体未采（`separator-style: doodle` 无参数、官方为内置素材，本地现为平铺手绘 SVG 近似）——按逐项对照保持 partial，待涂鸦素材采集后复判",
       "evidence": [
-        "src/components/editor/tabs/StyleTab.tsx:344"
+        "src/lib/editor/themes/washi-catalog.ts",
+        "src/lib/editor/themes/washi-catalog.test.ts",
+        "src/components/editor/tabs/StyleTab.tsx",
+        "public/washi"
       ]
     },
     "G214": {

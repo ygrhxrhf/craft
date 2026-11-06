@@ -33,7 +33,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ShareDialog } from '@/components/share/ShareDialog';
-import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, showsDocumentTitle } from './themes/page-style';
+import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, separatorStyleOf, showsDocumentTitle } from './themes/page-style';
+import { DOODLE_SEPARATOR_CSS, washiTapeSrc } from '@/lib/editor/themes/washi-catalog';
 import type { PageStyle } from './themes/page-style';
 import { getDraft } from '@/lib/offline/draft-store';
 import type { JSONContent } from '@tiptap/core';
@@ -264,6 +265,9 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const measure = width === 'narrow' ? '580px' : width === 'wide' ? '900px' : '720px';
   const themeColor = getThemeColor(pageStyle.theme, pageStyle.themeColor);
   const washiGradient = getWashiGradient(pageStyle.washi);
+  // G210：页面分隔符三档——和纸胶带优先用官方图库的胶带图，老文档沿用内置渐变；涂鸦用手绘线近似。
+  const separatorStyle = separatorStyleOf(pageStyle);
+  const washiTapeImg = washiTapeSrc(pageStyle.washi);
 
   // G156：随机封面每次加载在 coverImages 里挑一张；关掉时用 coverImage。
   const displayCover = useMemo(
@@ -462,11 +466,27 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
           >
             {/* G100：左侧常驻工具（附件 / 查找和替换 / 目录 / 任务）。 */}
             <LeftToolRail editor={editor} />
-            {washiGradient && (
+            {separatorStyle === 'washi' &&
+              (washiTapeImg ? (
+                <img
+                  aria-hidden
+                  src={washiTapeImg}
+                  alt=""
+                  className="pointer-events-none absolute left-1/2 top-0 z-10 h-5 w-32 -translate-x-1/2 -rotate-2 rounded-b-sm object-cover opacity-80 shadow-sm"
+                />
+              ) : washiGradient ? (
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute left-1/2 top-0 z-10 h-5 w-32 -translate-x-1/2 -rotate-2 rounded-b-sm opacity-80 shadow-sm"
+                  style={{ background: washiGradient }}
+                />
+              ) : null)}
+            {separatorStyle === 'doodle' && (
               <div
                 aria-hidden
-                className="pointer-events-none absolute left-1/2 top-0 z-10 h-5 w-32 -translate-x-1/2 -rotate-2 rounded-b-sm opacity-80 shadow-sm"
-                style={{ background: washiGradient }}
+                data-testid="page-doodle-separator"
+                className="pointer-events-none absolute left-1/2 top-0 z-10 h-3.5 w-32 -translate-x-1/2 opacity-70"
+                style={{ background: DOODLE_SEPARATOR_CSS }}
               />
             )}
             {/* 封面 */}

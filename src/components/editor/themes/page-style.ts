@@ -1,8 +1,12 @@
+import { normalizeSeparatorStyle, type SeparatorStyle } from '@/lib/editor/themes/washi-catalog';
+
 export interface PageStyle {
   fontPack?: FontPackId;
   theme?: PageThemeId;
   /** G682：远端主题清单里的背景色（明档）——内置六档之外的主题靠它落地。 */
   themeColor?: string;
+  /** G210：页面分隔符三档（线／和纸胶带／涂鸦）；缺省按 `washi` 字段回推。 */
+  separatorStyle?: SeparatorStyle;
   washi?: WashiId;
   /** Page-level "显示文档标题" (G65). Absent means shown, which is how every existing page reads. */
   showTitle?: boolean;
@@ -81,7 +85,7 @@ export const fontPacks: { id: FontPackId; label: string; stack: string }[] = [
   { id: 'system-rounded', label: '圆体', stack: 'ui-rounded, "Hiragino Maru Gothic ProN", Quicksand, var(--cjk-rounded), sans-serif' },
 ];
 
-export type WashiId = 'none' | 'sunset' | 'ocean' | 'forest' | 'candy' | 'aurora';
+export type WashiId = string;
 
 /** G682：远端清单里任意具名主题都可选，内置六档只是离线兜底。 */
 export type PageThemeId = string;
@@ -139,6 +143,12 @@ export function getWashiGradient(id: WashiId | undefined): string {
   return washiTapes.find((w) => w.id === id)?.gradient ?? '';
 }
 
+/** G210：页面分隔符三档；老文档只有 `washi` 字段，缺省按它回推。 */
+export function separatorStyleOf(pageStyle: PageStyle | null | undefined): SeparatorStyle {
+  if (pageStyle?.separatorStyle) return pageStyle.separatorStyle;
+  return pageStyle?.washi && pageStyle.washi !== 'none' ? 'washi' : 'line';
+}
+
 export function normalizePageStyle(value: unknown): PageStyle {
   if (!value || typeof value !== 'object') return {};
   const v = value as Record<string, unknown>;
@@ -146,6 +156,7 @@ export function normalizePageStyle(value: unknown): PageStyle {
     fontPack: v.fontPack === undefined ? undefined : canonicalFontId(v.fontPack),
     theme: typeof v.theme === 'string' ? (v.theme as PageThemeId) : undefined,
     themeColor: typeof v.themeColor === 'string' ? v.themeColor : undefined,
+    separatorStyle: normalizeSeparatorStyle(v.separatorStyle),
     washi: typeof v.washi === 'string' ? (v.washi as WashiId) : undefined,
     showTitle: typeof v.showTitle === 'boolean' ? v.showTitle : undefined,
     spelling: typeof v.spelling === 'boolean' ? v.spelling : undefined,

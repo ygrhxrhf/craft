@@ -15,6 +15,7 @@ import {
   type CustomStyleRow,
 } from '@/actions/style/custom-styles';
 import { isStyleDirty, stylePatchOf } from '@/lib/editor/themes/custom-style-patch';
+import { WASHI_TAPE_PRESETS, type SeparatorStyle } from '@/lib/editor/themes/washi-catalog';
 import { promptDialog } from '@/lib/dialog/show';
 import { toast } from '@/components/ui/toast';
 import {
@@ -36,6 +37,7 @@ import {
   filterSpellingLanguages,
   fontPacks,
   pageStyleForPreset,
+  separatorStyleOf,
   pageThemes,
   showsDocumentTitle,
   washiTapes,
@@ -170,6 +172,8 @@ export function StyleTab({
   const setPageStyle = (patch: Partial<PageStyle>) => {
     onUpdate({ pageStylePatch: patch });
   };
+  // G210：页面分隔符三档的当前值（老文档按 washi 字段回推）。
+  const currentSeparatorStyle = separatorStyleOf(pageStyle);
 
   return (
     <div className="space-y-5 p-3">
@@ -541,26 +545,67 @@ export function StyleTab({
         </div>
       </section>
 
-      {/* Washi */}
+      {/* G210：分隔符样式三档（线／和纸胶带／涂鸦）＋和纸图库浏览（官方 96 档胶带）。 */}
       <section>
-        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">和纸胶带</h4>
-        <div className="grid grid-cols-5 gap-1.5">
-          {washiTapes.map((tape) => (
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">分隔符样式</h4>
+        <div className="mb-2 flex gap-1.5">
+          {([
+            ['line', '线'],
+            ['washi', '和纸胶带'],
+            ['doodle', '涂鸦'],
+          ] as Array<[SeparatorStyle, string]>).map(([id, label]) => (
             <button
-              key={tape.id}
-              title={tape.label}
+              key={id}
+              type="button"
+              data-testid={`separator-style-${id}`}
               className={cn(
-                'h-5 rounded-sm border border-foreground/10 transition-transform hover:scale-110',
-                (pageStyle.washi ?? 'none') === tape.id && 'ring-2 ring-craft-accent'
+                'flex-1 rounded-lg border px-2 py-1 text-meta transition-colors duration-150 ease-craft',
+                currentSeparatorStyle === id
+                  ? 'border-craft-accent bg-craft-accent/12 text-craft-accent'
+                  : 'border-foreground/10 text-foreground/60 hover:bg-foreground/4',
               )}
-              style={{
-                background:
-                  tape.gradient || 'repeating-conic-gradient(var(--checker-a) 0% 25%, var(--checker-b) 0% 50%) 6px',
-              }}
-              onClick={() => setPageStyle({ washi: tape.id })}
-            />
+              onClick={() => setPageStyle(id === 'washi' ? { separatorStyle: 'washi' } : { separatorStyle: id, washi: 'none' })}
+            >
+              {label}
+            </button>
           ))}
         </div>
+        {currentSeparatorStyle === 'washi' && (
+          <div className="max-h-36 overflow-y-auto pr-1" data-testid="washi-gallery">
+            <div className="grid grid-cols-4 gap-1.5">
+              {WASHI_TAPE_PRESETS.map((tape) => (
+                <button
+                  key={tape.key}
+                  type="button"
+                  title={tape.label}
+                  data-testid={`washi-tape-${tape.key}`}
+                  className={cn(
+                    'h-6 rounded-sm border border-foreground/10 bg-cover bg-center transition-transform hover:scale-105',
+                    pageStyle.washi === tape.key && 'ring-2 ring-craft-accent',
+                  )}
+                  style={{ backgroundImage: `url(/washi/${tape.key}.jpg)` }}
+                  onClick={() => setPageStyle({ separatorStyle: 'washi', washi: tape.key })}
+                />
+              ))}
+              {/* 向后兼容：老文档的六档内置渐变仍留在图库尾部。 */}
+              {washiTapes
+                .filter((tape) => tape.id !== 'none')
+                .map((tape) => (
+                  <button
+                    key={tape.id}
+                    type="button"
+                    title={tape.label}
+                    className={cn(
+                      'h-6 rounded-sm border border-foreground/10 transition-transform hover:scale-105',
+                      pageStyle.washi === tape.id && 'ring-2 ring-craft-accent',
+                    )}
+                    style={{ background: tape.gradient }}
+                    onClick={() => setPageStyle({ separatorStyle: 'washi', washi: tape.id })}
+                  />
+                ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Page settings (G65): the title switch and the spell checker with its searchable language. */}

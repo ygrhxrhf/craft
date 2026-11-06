@@ -24,6 +24,13 @@ import {
   deleteBlock,
   insertBlockAbove,
   insertBlockBelow,
+  setImageStyle,
+  setLinkPreviewLayout,
+  reloadLinkPreview,
+  renameLinkPreview,
+  linkPreviewToText,
+  textToLinkPreview,
+  unwrapCardBlock,
 } from './block-actions';
 
 // A two-node schema is enough: every top-level block is a paragraph whose text
@@ -33,7 +40,36 @@ const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
     paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null }, emoji: { default: null }, remindAt: { default: null } } },
-    cardBlock: { content: 'block+', group: 'block' },
+    cardBlock: {
+      content: 'block+',
+      group: 'block',
+      attrs: { bgColor: { default: '#ffffff' }, emoji: { default: null } },
+    },
+    // G111：图片块两根轴、链接预览四档布局＋元信息、白板嵌入。
+    imageBlock: {
+      group: 'block',
+      atom: true,
+      attrs: { src: { default: null }, imageSize: { default: 'auto' }, imageFit: { default: 'fill' } },
+    },
+    linkPreview: {
+      group: 'block',
+      atom: true,
+      attrs: {
+        url: { default: null },
+        title: { default: null },
+        description: { default: null },
+        image: { default: null },
+        favicon: { default: null },
+        siteName: { default: null },
+        layout: { default: 'regular' },
+        reloadSeq: { default: 0 },
+      },
+    },
+    whiteboardEmbed: {
+      group: 'block',
+      atom: true,
+      attrs: { whiteboardId: { default: null } },
+    },
     taskItem: {
       content: 'text*',
       group: 'block',
@@ -53,7 +89,7 @@ const schema = new Schema({
     callout: { content: 'block+', group: 'block', attrs: { type: { default: 'info' } } },
     text: {},
   },
-  marks: {},
+  marks: { link: { attrs: { href: { default: null } } } },
 });
 
 function stateWith(labels: string[]) {
@@ -774,5 +810,153 @@ describe('代码块九项名册（G1440）', () => {
     const labels = blockMenuItems({ canDelete: true, isCodeBlock: true }).map((item) => item.label);
     expect(labels).not.toContain('转换为卡片');
     expect(labels).not.toContain('添加表情');
+  });
+});
+
+// G111 —— 官方块菜单按块类型封闭：图片 4 档、链接预览 4 档＋6 项、页面卡 3 项、白板 2 项。
+describe('按块类型封闭的菜单名册（G111）', () => {
+  it('图片块先列四档样式，再列下载与新窗口', () => {
+    expect(
+      blockMenuItems({ canDelete: true, isImageBlock: true, canDownload: true }).map((item) => item.id),
+    ).toEqual([
+      'image-auto',
+      'image-large',
+      'image-fill',
+      'image-fit',
+      'download',
+      'open-in-new-window',
+      'add-comment',
+      'insert-above',
+      'insert-below',
+      'copy-link',
+      'delete',
+    ]);
+  });
+
+  it('链接预览列四档布局与六项链接动作', () => {
+    expect(
+      blockMenuItems({ canDelete: true, isLinkPreview: true }).map((item) => item.label),
+    ).toEqual([
+      '小尺寸',
+      '常规',
+      '卡片',
+      '嵌入',
+      '重命名链接',
+      '重新加载链接信息',
+      '转为文本链接',
+      '在新标签页打开',
+      '复制链接地址',
+      '添加评论',
+      '在上方插入区块',
+      '在下方插入区块',
+      '复制区块链接',
+      '删除',
+    ]);
+  });
+
+  it('页面卡与白板各走自己的那几项', () => {
+    expect(blockMenuItems({ canDelete: true, isCardBlock: true }).map((item) => item.label)).toEqual([
+      '卡片样式',
+      '转换为普通页面',
+      '添加评论',
+      '在上方插入区块',
+      '在下方插入区块',
+      '复制区块链接',
+      '删除',
+    ]);
+    expect(blockMenuItems({ canDelete: true, isWhiteboard: true }).map((item) => item.label)).toEqual([
+      '全屏',
+      '重新加载',
+      '在新窗口打开',
+      '添加评论',
+      '在上方插入区块',
+      '在下方插入区块',
+      '复制区块链接',
+      '删除',
+    ]);
+  });
+
+  it('CSV 文件块先给「转为集合」', () => {
+    expect(
+      blockMenuItems({ canDelete: true, isCsvAttachment: true, canDownload: true }).map((item) => item.id),
+    ).toEqual([
+      'turn-into-collection',
+      'download',
+      'open-in-new-window',
+      'add-comment',
+      'insert-above',
+      'insert-below',
+      'copy-link',
+      'delete',
+    ]);
+  });
+
+  it('正文就是链接的段落才多出「转为富链接」', () => {
+    const without = blockMenuItems({ canDelete: true }).map((item) => item.id);
+    expect(without).not.toContain('turn-to-rich-link');
+    const withLink = blockMenuItems({ canDelete: true, canTurnToRichLink: true }).map((item) => item.id);
+    expect(withLink).toContain('turn-to-rich-link');
+  });
+});
+
+describe('G111 块级样式动作', () => {
+  function single(node: ReturnType<typeof schema.nodes.paragraph.create>) {
+    return EditorState.create({ schema, doc: schema.nodes.doc.create(null, [node]) });
+  }
+
+  it('图片四项各改自己那根轴，另一根保持', () => {
+    const state = single(schema.nodes.imageBlock.create({ src: '/a.png' }));
+    const large = runState(state, (d) => setImageStyle(state, d, 0, 'image-large'));
+    expect(large.doc.child(0).attrs.imageSize).toBe('large');
+    expect(large.doc.child(0).attrs.imageFit).toBe('fill');
+    const fit = runState(state, (d) => setImageStyle(state, d, 0, 'image-fit'));
+    expect(fit.doc.child(0).attrs.imageSize).toBe('auto');
+    expect(fit.doc.child(0).attrs.imageFit).toBe('fit');
+  });
+
+  it('链接预览四档写进 layout，重载清元信息并推进序号', () => {
+    const state = single(
+      schema.nodes.linkPreview.create({ url: 'https://example.com', title: '示例', siteName: 'Example' }),
+    );
+    const card = runState(state, (d) => setLinkPreviewLayout(state, d, 0, 'preview-card'));
+    expect(card.doc.child(0).attrs.layout).toBe('card');
+    const reloaded = runState(state, (d) => reloadLinkPreview(state, d, 0));
+    expect(reloaded.doc.child(0).attrs.title).toBeNull();
+    expect(reloaded.doc.child(0).attrs.siteName).toBeNull();
+    expect(reloaded.doc.child(0).attrs.reloadSeq).toBe(1);
+  });
+
+  it('重命名只换标题', () => {
+    const state = single(schema.nodes.linkPreview.create({ url: 'https://example.com', title: '旧' }));
+    const next = runState(state, (d) => renameLinkPreview(state, d, 0, '新'));
+    expect(next.doc.child(0).attrs.title).toBe('新');
+    expect(next.doc.child(0).attrs.url).toBe('https://example.com');
+  });
+
+  it('预览 ↔ 文本链接两个方向都换节点形状', () => {
+    const preview = single(schema.nodes.linkPreview.create({ url: 'https://example.com', title: '示例' }));
+    const text = runState(preview, (d) => linkPreviewToText(preview, d, 0));
+    expect(text.doc.child(0).type.name).toBe('paragraph');
+    expect(text.doc.child(0).textContent).toBe('示例');
+    expect(text.doc.child(0).firstChild?.marks[0]?.attrs.href).toBe('https://example.com');
+
+    const plain = single(schema.nodes.paragraph.create(null, schema.text('https://example.com')));
+    const rich = runState(plain, (d) => textToLinkPreview(plain, d, 0));
+    expect(rich.doc.child(0).type.name).toBe('linkPreview');
+    expect(rich.doc.child(0).attrs.url).toBe('https://example.com');
+
+    const prose = single(schema.nodes.paragraph.create(null, schema.text('一段正文')));
+    expect(textToLinkPreview(prose, () => {}, 0)).toBe(false);
+  });
+
+  it('卡片拆回普通页面时内容原样平铺', () => {
+    const state = EditorState.create({
+      schema,
+      doc: schema.nodes.doc.create(null, [
+        schema.nodes.cardBlock.create(null, [schema.nodes.paragraph.create(null, schema.text('甲'))]),
+      ]),
+    });
+    const next = runState(state, (d) => unwrapCardBlock(state, d, 0));
+    expect(shapeOf(next)).toEqual([['paragraph', '甲']]);
   });
 });

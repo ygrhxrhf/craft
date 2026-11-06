@@ -35,7 +35,45 @@ export type BlockActionId =
   | 'code-theme'
   | 'code-fullscreen'
   | 'code-copy'
+  | 'image-auto'
+  | 'image-large'
+  | 'image-fill'
+  | 'image-fit'
+  | 'preview-small'
+  | 'preview-regular'
+  | 'preview-card'
+  | 'preview-embed'
+  | 'rename-link'
+  | 'reload-link-info'
+  | 'turn-into-text-link'
+  | 'turn-to-rich-link'
+  | 'open-link-new-tab'
+  | 'copy-link-url'
+  | 'open-page-card-style'
+  | 'turn-into-regular-page'
+  | 'turn-into-collection'
+  | 'whiteboard-fullscreen'
+  | 'reload-whiteboard'
+  | 'download'
+  | 'open-in-new-window'
   | 'delete';
+
+/** G111: 官方 `LayoutStyle` 四档（与 `panels.md` §八 的 `previewTo*Style` 逐档吻合）。 */
+export type LinkPreviewLayout = 'small' | 'regular' | 'card' | 'embed';
+
+const PREVIEW_LAYOUTS: Partial<Record<BlockActionId, LinkPreviewLayout>> = {
+  'preview-small': 'small',
+  'preview-regular': 'regular',
+  'preview-card': 'card',
+  'preview-embed': 'embed',
+};
+
+const IMAGE_STYLES: Partial<Record<BlockActionId, { axis: 'imageSize' | 'imageFit'; value: string }>> = {
+  'image-auto': { axis: 'imageSize', value: 'auto' },
+  'image-large': { axis: 'imageSize', value: 'large' },
+  'image-fill': { axis: 'imageFit', value: 'fill' },
+  'image-fit': { axis: 'imageFit', value: 'fit' },
+};
 
 const MOVE_TARGETS: Record<string, MoveTarget> = {
   'move-up': 'up',
@@ -91,6 +129,13 @@ export function blockMenuItems({
   isDivider,
   isCallout,
   isCodeBlock,
+  isImageBlock,
+  isLinkPreview,
+  isCardBlock,
+  isWhiteboard,
+  isCsvAttachment,
+  canDownload,
+  canTurnToRichLink,
 }: {
   canDelete: boolean;
   isTask?: boolean;
@@ -103,10 +148,78 @@ export function blockMenuItems({
   isCallout?: boolean;
   /** G384/G1440: a code block has its own nine-item roster, not the generic one. */
   isCodeBlock?: boolean;
+  /** G111: 每种块自己的专属项（官方按块类型封闭的那张表）。 */
+  isImageBlock?: boolean;
+  isLinkPreview?: boolean;
+  isCardBlock?: boolean;
+  isWhiteboard?: boolean;
+  /** G111：CSV 文件块（`attachment` 且名字以 `.csv` 结尾）才有「转为集合」。 */
+  isCsvAttachment?: boolean;
+  canDownload?: boolean;
+  /** G111 `turnToRichLink`：正文本身就是链接的段落，可以升成链接预览块。 */
+  canTurnToRichLink?: boolean;
 }): BlockAction[] {
   // 代码块走它自己那份名册（9 项、逐字按序）——这正是 G384 说的"不能共用一份菜单配置"。
   if (isCodeBlock) {
     return CODE_BLOCK_MENU.filter((item) => item.id !== 'delete' || canDelete).map((item) => ({ ...item }));
+  }
+  // G111：官方块菜单是**按块类型封闭**的——图片 4 档、链接预览 4 档＋6 项、页面卡 3 项、
+  // 白板 2 项，各自先列专属项，再接公共尾（插入／复制链接／删除）。
+  if (isImageBlock) {
+    return [
+      { id: 'image-auto', label: '自动', group: 1 },
+      { id: 'image-large', label: '大图', group: 1 },
+      { id: 'image-fill', label: '填充', group: 1 },
+      { id: 'image-fit', label: '适应', group: 1 },
+      ...(canDownload
+        ? [
+            { id: 'download' as const, label: '下载', group: 2 },
+            { id: 'open-in-new-window' as const, label: '在新窗口打开', group: 2 },
+          ]
+        : []),
+      ...commonTail(canDelete),
+    ];
+  }
+  if (isLinkPreview) {
+    return [
+      { id: 'preview-small', label: '小尺寸', group: 1 },
+      { id: 'preview-regular', label: '常规', group: 1 },
+      { id: 'preview-card', label: '卡片', group: 1 },
+      { id: 'preview-embed', label: '嵌入', group: 1 },
+      { id: 'rename-link', label: '重命名链接', group: 2 },
+      { id: 'reload-link-info', label: '重新加载链接信息', group: 2 },
+      { id: 'turn-into-text-link', label: '转为文本链接', group: 2 },
+      { id: 'open-link-new-tab', label: '在新标签页打开', group: 3 },
+      { id: 'copy-link-url', label: '复制链接地址', group: 3 },
+      ...commonTail(canDelete),
+    ];
+  }
+  if (isCardBlock) {
+    return [
+      { id: 'open-page-card-style', label: '卡片样式', group: 1 },
+      { id: 'turn-into-regular-page', label: '转换为普通页面', group: 1 },
+      ...commonTail(canDelete),
+    ];
+  }
+  if (isWhiteboard) {
+    return [
+      { id: 'whiteboard-fullscreen', label: '全屏', group: 1 },
+      { id: 'reload-whiteboard', label: '重新加载', group: 1 },
+      { id: 'open-in-new-window', label: '在新窗口打开', group: 1 },
+      ...commonTail(canDelete),
+    ];
+  }
+  if (isCsvAttachment) {
+    return [
+      { id: 'turn-into-collection', label: '转为集合', group: 1 },
+      ...(canDownload
+        ? [
+            { id: 'download' as const, label: '下载', group: 2 },
+            { id: 'open-in-new-window' as const, label: '在新窗口打开', group: 2 },
+          ]
+        : []),
+      ...commonTail(canDelete),
+    ];
   }
   const items: BlockAction[] = [
     { id: 'add-content', label: '添加内容', group: 1 },
@@ -127,6 +240,7 @@ export function blockMenuItems({
   if (isToggle) items.push({ id: 'toggle-open', label: toggleOpen ? '收起' : '展开', group: 3 });
   if (isDivider) items.push({ id: 'divider-style', label: '分隔符样式', group: 3 });
   if (isCallout) items.push({ id: 'callout-type', label: '提示类型', group: 3 });
+  if (canTurnToRichLink) items.push({ id: 'turn-to-rich-link', label: '转为富链接', group: 3 });
   items.push(
     { id: 'insert-above', label: '在上方插入区块', group: 4 },
     { id: 'insert-below', label: '在下方插入区块', group: 4 },
@@ -135,6 +249,17 @@ export function blockMenuItems({
   );
   if (canDelete) items.push({ id: 'delete', label: '删除', group: 6 });
   return items;
+}
+
+/** G111 公共尾：官方那 6 项里本地有承载面的四枚（评论／复制链接／删除＋插入两枚）。 */
+function commonTail(canDelete: boolean): BlockAction[] {
+  return [
+    { id: 'add-comment', label: '添加评论', group: 9 },
+    { id: 'insert-above', label: '在上方插入区块', group: 9 },
+    { id: 'insert-below', label: '在下方插入区块', group: 9 },
+    { id: 'copy-link', label: '复制区块链接', group: 10 },
+    ...(canDelete ? [{ id: 'delete' as const, label: '删除', group: 11 }] : []),
+  ];
 }
 
 /** The positions on either side of a top-level block, outside it rather than inside. */
@@ -510,6 +635,144 @@ export function deleteBlock(state: EditorState, dispatch: (tr: Transaction) => v
   dispatch(state.tr.delete(before, after).scrollIntoView());
 }
 
+/**
+ * G111 —— 图片块的 4 档样式。官方把两根轴（尺寸 auto|large × 适配 fill|fit）摊平成四项，
+ * 每一项只改自己那根轴（`styles.md` 记的结构），另一根保持原值。
+ */
+export function setImageStyle(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  id: BlockActionId,
+) {
+  const style = IMAGE_STYLES[id];
+  if (!style) return;
+  const node = state.doc.child(index);
+  if (node.type.name !== 'imageBlock') return;
+  const { before } = blockBounds(state, index);
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, [style.axis]: style.value }));
+}
+
+/** G111 —— 链接预览的 `LayoutStyle` 四档（small／regular／card／embed）。 */
+export function setLinkPreviewLayout(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  id: BlockActionId,
+) {
+  const layout = PREVIEW_LAYOUTS[id];
+  if (!layout) return;
+  const node = state.doc.child(index);
+  if (node.type.name !== 'linkPreview') return;
+  const { before } = blockBounds(state, index);
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, layout }));
+}
+
+/** G111 `renameLink` —— 只换标题；摘要与站点信息原样留着。 */
+export function renameLinkPreview(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  title: string | null,
+) {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'linkPreview') return;
+  const { before } = blockBounds(state, index);
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, title }));
+}
+
+/**
+ * G111 `reloadLinkInfo` —— 清掉缓存的元信息并让视图重新抓一次。`reloadSeq` 是视图 effect 的
+ * 依赖：只清属性时若原值本来就空，effect 不会重跑，所以还要动这枚序号。
+ */
+export function reloadLinkPreview(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+) {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'linkPreview') return;
+  const { before } = blockBounds(state, index);
+  const seq = typeof node.attrs.reloadSeq === 'number' ? node.attrs.reloadSeq : 0;
+  dispatch(
+    state.tr.setNodeMarkup(before, undefined, {
+      ...node.attrs,
+      title: null,
+      description: null,
+      image: null,
+      favicon: null,
+      siteName: null,
+      reloadSeq: seq + 1,
+    }),
+  );
+}
+
+/**
+ * G111 `turnIntoTextLink` —— 整块换成一个带链接标记的段落（标题优先，没有就用 URL）。
+ * 返回 false 表示这颗 schema 里没有 `link` 标记，调用方不该假装动作发生过。
+ */
+export function linkPreviewToText(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+): boolean {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'linkPreview') return false;
+  const link = state.schema.marks.link;
+  const paragraph = state.schema.nodes.paragraph;
+  const url = typeof node.attrs.url === 'string' ? node.attrs.url : '';
+  if (!link || !paragraph || !url) return false;
+  const label = (typeof node.attrs.title === 'string' && node.attrs.title) || url;
+  const { before, after } = blockBounds(state, index);
+  dispatch(
+    state.tr.replaceWith(before, after, paragraph.create(null, state.schema.text(label, [link.create({ href: url })]))),
+  );
+  return true;
+}
+
+/**
+ * G111 `turnToRichLink` —— 反向：把一个「正文就是链接地址」的段落（或段落里有链接标记）
+ * 换成链接预览块。官方那两项互逆，所以两处共用同一套 URL 判据。
+ */
+export function textToLinkPreview(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+): boolean {
+  const node = state.doc.child(index);
+  const preview = state.schema.nodes.linkPreview;
+  if (!preview) return false;
+  const text = node.textContent.trim();
+  let url: string | null = /^https?:\/\/\S+$/i.test(text) ? text : null;
+  if (!url) {
+    node.descendants((child) => {
+      const mark = child.marks.find((candidate) => candidate.type.name === 'link');
+      if (mark && typeof mark.attrs.href === 'string') {
+        url = mark.attrs.href;
+        return false;
+      }
+      return true;
+    });
+  }
+  if (!url) return false;
+  const { before, after } = blockBounds(state, index);
+  dispatch(state.tr.replaceWith(before, after, preview.create({ url })));
+  return true;
+}
+
+/** G111 `turnIntoRegularPage` —— 卡片拆回普通页面（内容原样平铺，不再套一层卡）。 */
+export function unwrapCardBlock(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+): boolean {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'cardBlock' || node.childCount === 0) return false;
+  const { before, after } = blockBounds(state, index);
+  dispatch(state.tr.replaceWith(before, after, node.content));
+  return true;
+}
+
 /** The menu hands us an id; this is the only place that decides what it does. */
 export function applyBlockAction(
   state: EditorState,
@@ -567,6 +830,39 @@ export function applyBlockAction(
       break;
     case 'code-copy':
       // 由调用点读代码文本写剪贴板。
+      break;
+    case 'image-auto':
+    case 'image-large':
+    case 'image-fill':
+    case 'image-fit':
+      setImageStyle(state, dispatch, index, id);
+      break;
+    case 'preview-small':
+    case 'preview-regular':
+    case 'preview-card':
+    case 'preview-embed':
+      setLinkPreviewLayout(state, dispatch, index, id);
+      break;
+    case 'turn-into-text-link':
+      linkPreviewToText(state, dispatch, index);
+      break;
+    case 'turn-to-rich-link':
+      textToLinkPreview(state, dispatch, index);
+      break;
+    case 'turn-into-regular-page':
+      unwrapCardBlock(state, dispatch, index);
+      break;
+    case 'rename-link':
+    case 'reload-link-info':
+    case 'open-link-new-tab':
+    case 'copy-link-url':
+    case 'open-page-card-style':
+    case 'whiteboard-fullscreen':
+    case 'reload-whiteboard':
+    case 'turn-into-collection':
+    case 'download':
+    case 'open-in-new-window':
+      // 这几枚需要 DOM／剪贴板／面板状态，调用点接（与 copy-link、code-copy 同形）。
       break;
     case 'copy-link':
       // The link needs the document id and the clipboard, neither of which the editor state

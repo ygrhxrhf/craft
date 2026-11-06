@@ -3,14 +3,14 @@
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { FileText, Download, Table2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { formatFileSize } from '@/lib/upload-client';
 import { collectionNameFromFile, isCsvFileBlock } from '@/lib/collection/csv-file';
 import { createCollectionFromCsv } from '@/actions/collection/collection';
 import { toast } from '@/components/ui/toast';
 
-export function AttachmentView({ node, deleteNode }: NodeViewProps) {
+export function AttachmentView({ node, editor, getPos, deleteNode }: NodeViewProps) {
   const router = useRouter();
   const url = node.attrs.url as string;
   const name = (node.attrs.name as string) ?? '附件';
@@ -18,6 +18,10 @@ export function AttachmentView({ node, deleteNode }: NodeViewProps) {
   // G112：只有 `.csv` 文件块才给「转为集合」这一枚。
   const csv = isCsvFileBlock(name);
   const [converting, setConverting] = useState(false);
+
+  // G111：官方块菜单的 `turnIntoCollection` 也落在同一枚动作上（菜单在 DragHandle 里）。
+  const pos = getPos?.();
+  const myIndex = typeof pos === 'number' ? editor.state.doc.resolve(pos).index(0) : -1;
 
   const convertToCollection = async () => {
     if (converting) return;
@@ -36,6 +40,17 @@ export function AttachmentView({ node, deleteNode }: NodeViewProps) {
       setConverting(false);
     }
   };
+
+  useEffect(() => {
+    if (!csv) return;
+    const onConvert = (event: Event) => {
+      if ((event as CustomEvent<{ index?: number }>).detail?.index === myIndex) {
+        void convertToCollection();
+      }
+    };
+    document.addEventListener('craft-csv-to-collection', onConvert);
+    return () => document.removeEventListener('craft-csv-to-collection', onConvert);
+  }, [csv, myIndex, converting]);
 
   return (
     <NodeViewWrapper as="div" className="my-2">

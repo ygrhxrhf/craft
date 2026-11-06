@@ -3758,10 +3758,19 @@
       ]
     },
     "G111": {
-      "status": "partial",
-      "note": "块菜单 11 项基础动作；缺约 24 项（turnInto/imageTo/previewTo 等）",
+      "status": "aligned",
+      "note": "G111 现读（2026-11-06 第 3i 批）：块菜单按块类型封闭的名册已落地。图片 4 档（自动/大图/填充/适应，对应尺寸与适配两根轴各改一枝）；链接预览 4 档布局（小尺寸/常规/卡片/嵌入）＋6 项动作（重命名/重新加载/转为文本链接/转为富链接/在新标签页打开/复制链接地址）；页面卡 3 项（卡片样式/转换为卡片/转换为普通页面）；白板 2 项（全屏/重新加载）；CSV 文件块「转为集合」；代码块 4 项沿用既有名册。通用尾含评论/插入/复制区块链接/删除，图片与 CSV 文件块另给下载与在新窗口打开。浏览器实点：链接预览四档（含嵌入 iframe）、图片两轴、卡片样式面板、白板全屏与重载、CSV 菜单项均生效。",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:57"
+        "src/components/editor/drag-handle/block-actions.ts:122",
+        "src/components/editor/drag-handle/block-actions.ts:642",
+        "src/components/editor/drag-handle/block-actions.ts:688",
+        "src/components/editor/drag-handle/block-actions.ts:714",
+        "src/components/editor/drag-handle/DragHandle.tsx:787",
+        "src/components/editor/extensions/link-preview.tsx:73",
+        "src/components/editor/extensions/link-preview-view.tsx:95",
+        "src/components/editor/extensions/whiteboard-embed-view.tsx:163",
+        "src/components/editor/extensions/attachment-view.tsx:51",
+        "src/components/editor/drag-handle/block-actions.test.ts:817"
       ]
     },
     "G112": {

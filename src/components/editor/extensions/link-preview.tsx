@@ -69,6 +69,18 @@ export const LinkPreview = Node.create({
           return { 'data-site-name': attributes.siteName };
         },
       },
+      // G111：官方 `LayoutStyle` 四档（small／regular／card／embed），块菜单的四项就是它。
+      layout: {
+        default: 'regular',
+        parseHTML: (element) => element.getAttribute('data-layout') || 'regular',
+        renderHTML: (attributes) => ({ 'data-layout': attributes.layout || 'regular' }),
+      },
+      // G111 `reloadLinkInfo`：清元信息后靠这枚序号把视图的抓取 effect 重新跑一遍。
+      reloadSeq: {
+        default: 0,
+        parseHTML: (element) => Number(element.getAttribute('data-reload-seq')) || 0,
+        renderHTML: (attributes) => ({ 'data-reload-seq': String(attributes.reloadSeq ?? 0) }),
+      },
     };
   },
 

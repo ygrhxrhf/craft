@@ -5,7 +5,8 @@ import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import type { Editor } from '@tiptap/react';
 import {
   ArrowDown, ArrowUp, Ban, Bell, ChevronDown, ChevronRight, ChevronUp, Code, Copy, CreditCard,
-  GripVertical, Info, Link2, Maximize2, MessageSquare, Minus, MoreHorizontal, Palette, Plus, Smile, Trash2,
+  Download, ExternalLink, FileText, GripVertical, Image as ImageIcon, Info, LayoutTemplate, Link2,
+  Maximize2, MessageSquare, Minus, MoreHorizontal, Palette, Pencil, Plus, RefreshCw, Smile, Table2, Trash2, Type,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -21,7 +22,7 @@ import { dropTargetFor, visibleRows } from './drop-band';
 import { resolveDropAddress } from '@/lib/editor/drop-address';
 import { indentRunOf } from '@/lib/editor/indent-run';
 import { topLevelStart } from '@/lib/editor/block-move';
-import { applyBlockAction, anchorableBlockTarget, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, setBlockEmoji, setBlockReminder, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, setTaskReminderAt, setBlockReminderAt, taskItemTarget, type BlockActionId } from './block-actions';
+import { applyBlockAction, anchorableBlockTarget, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, renameLinkPreview, reloadLinkPreview, setBlockEmoji, setBlockReminder, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, setTaskReminderAt, setBlockReminderAt, taskItemTarget, type BlockActionId } from './block-actions';
 import { promptDialog } from '@/lib/dialog/show';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
 import { DIVIDER_STYLE_CHOICES, type DividerStyle } from '@/lib/editor/divider-styles';
@@ -54,6 +55,27 @@ const BLOCK_ACTION_ICONS: Record<BlockActionId, React.ComponentType<{ className?
   'code-theme': Palette,
   'code-fullscreen': Maximize2,
   'code-copy': Copy,
+  'image-auto': ImageIcon,
+  'image-large': ImageIcon,
+  'image-fill': ImageIcon,
+  'image-fit': ImageIcon,
+  'preview-small': LayoutTemplate,
+  'preview-regular': LayoutTemplate,
+  'preview-card': LayoutTemplate,
+  'preview-embed': LayoutTemplate,
+  'rename-link': Pencil,
+  'reload-link-info': RefreshCw,
+  'turn-into-text-link': Type,
+  'turn-to-rich-link': Link2,
+  'open-link-new-tab': ExternalLink,
+  'copy-link-url': Copy,
+  'open-page-card-style': Palette,
+  'turn-into-regular-page': FileText,
+  'whiteboard-fullscreen': Maximize2,
+  'reload-whiteboard': RefreshCw,
+  'turn-into-collection': Table2,
+  download: Download,
+  'open-in-new-window': ExternalLink,
   delete: Trash2,
 };
 
@@ -67,6 +89,8 @@ import type { RemindPresetId } from '@/lib/task/remind-presets';
 import { toast } from '@/components/ui/toast';
 import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { useCommentRequestStore } from '@/lib/store/use-comment-request-store';
+import { useCardConfigStore } from '@/lib/store/use-card-config-store';
+import { isCsvFileBlock } from '@/lib/collection/csv-file';
 
 interface HandlePosition {
   top: number;
@@ -232,6 +256,52 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     [editor, indexOfBlock],
   );
 
+  // G111：官方块菜单按块类型封闭——下面四类各自有专属项。
+  const blockTypeIs = useCallback(
+    (blockEl: HTMLElement, type: string) => {
+      const index = indexOfBlock(blockEl);
+      return index >= 0 && editor.state.doc.child(index).type.name === type;
+    },
+    [editor, indexOfBlock],
+  );
+
+  const canDownloadBlock = useCallback(
+    (blockEl: HTMLElement) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return false;
+      const node = editor.state.doc.child(index);
+      return typeof node.attrs.src === 'string' || typeof node.attrs.url === 'string';
+    },
+    [editor, indexOfBlock],
+  );
+
+  const isCsvAttachmentBlock = useCallback(
+    (blockEl: HTMLElement) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return false;
+      const node = editor.state.doc.child(index);
+      return node.type.name === 'attachment' && isCsvFileBlock(node.attrs.name as string);
+    },
+    [editor, indexOfBlock],
+  );
+
+  const canBecomeRichLink = useCallback(
+    (blockEl: HTMLElement) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return false;
+      const node = editor.state.doc.child(index);
+      if (node.type.name === 'linkPreview') return false;
+      if (/^https?:\/\/\S+$/i.test(node.textContent.trim())) return true;
+      let found = false;
+      node.descendants((child) => {
+        if (child.marks.some((mark) => mark.type.name === 'link')) found = true;
+        return !found;
+      });
+      return found;
+    },
+    [editor, indexOfBlock],
+  );
+
   const restyleDivider = useCallback(
     (blockEl: HTMLElement, style: DividerStyle) => {
       const index = indexOfBlock(blockEl);
@@ -306,6 +376,71 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
       if (id === 'code-fullscreen') {
         const node = blockEl;
         node.dispatchEvent(new CustomEvent('craft-code-fullscreen', { bubbles: true }));
+        return;
+      }
+      // G111：链接预览六项里需要 DOM／剪贴板／对话框的那几枚。
+      if (id === 'rename-link') {
+        const current = state.doc.child(index).attrs.title;
+        void promptDialog({
+          title: '重命名链接',
+          defaultValue: typeof current === 'string' ? current : '',
+          placeholder: '链接标题',
+          confirmLabel: '保存',
+        }).then((value) => {
+          if (value === null || value === undefined) return;
+          renameLinkPreview(editor.state, editor.view.dispatch, index, value || null);
+        });
+        return;
+      }
+      if (id === 'reload-link-info') {
+        reloadLinkPreview(state, view.dispatch, index);
+        return;
+      }
+      if (id === 'open-link-new-tab') {
+        const url = state.doc.child(index).attrs.url;
+        if (typeof url === 'string' && url) window.open(url, '_blank', 'noopener,noreferrer');
+        return;
+      }
+      if (id === 'copy-link-url') {
+        const url = state.doc.child(index).attrs.url;
+        if (typeof url !== 'string' || !url) return;
+        void navigator.clipboard.writeText(url).then(
+          () => toast.add({ title: '已复制链接地址', type: 'success' }),
+          () => toast.add({ title: COPY_LINK_FAILED, type: 'error' }),
+        );
+        return;
+      }
+      // G111 `openPageCardStyle`：官方打开卡片样式混排面板；本地就是既有的「配置卡片」。
+      if (id === 'open-page-card-style') {
+        useCardConfigStore.getState().ask(index);
+        return;
+      }
+      // G111 白板两项交给白板 NodeView（它与代码块同形，用事件跨组件）。
+      if (id === 'whiteboard-fullscreen' || id === 'reload-whiteboard' || id === 'turn-into-collection') {
+        const name =
+          id === 'whiteboard-fullscreen'
+            ? 'craft-whiteboard-fullscreen'
+            : id === 'reload-whiteboard'
+              ? 'craft-whiteboard-reload'
+              : 'craft-csv-to-collection';
+        blockEl.dispatchEvent(new CustomEvent(name, { bubbles: true, detail: { index } }));
+        return;
+      }
+      if (id === 'download') {
+        const attrs = state.doc.child(index).attrs;
+        const href = typeof attrs.src === 'string' ? attrs.src : typeof attrs.url === 'string' ? attrs.url : '';
+        if (!href) return;
+        const anchor = document.createElement('a');
+        anchor.href = href;
+        anchor.download = '';
+        anchor.rel = 'noopener';
+        anchor.click();
+        return;
+      }
+      if (id === 'open-in-new-window') {
+        const attrs = state.doc.child(index).attrs;
+        const href = typeof attrs.src === 'string' ? attrs.src : typeof attrs.url === 'string' ? attrs.url : '';
+        if (href) window.open(href, '_blank', 'noopener,noreferrer');
         return;
       }
       applyBlockAction(state, view.dispatch, index, id);
@@ -649,6 +784,13 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                 isDivider: isDividerBlock(target.blockEl),
                 isCallout: isCalloutBlock(target.blockEl),
                 isCodeBlock: isCodeBlock(target.blockEl),
+                isImageBlock: blockTypeIs(target.blockEl, 'imageBlock'),
+                isLinkPreview: blockTypeIs(target.blockEl, 'linkPreview'),
+                isCardBlock: blockTypeIs(target.blockEl, 'cardBlock'),
+                isWhiteboard: blockTypeIs(target.blockEl, 'whiteboardEmbed'),
+                isCsvAttachment: isCsvAttachmentBlock(target.blockEl),
+                canDownload: canDownloadBlock(target.blockEl),
+                canTurnToRichLink: canBecomeRichLink(target.blockEl),
               }).map((item, index, items) => (
                 <Fragment key={item.id}>
                   {index > 0 && items[index - 1].group !== item.group && <DropdownMenuSeparator />}

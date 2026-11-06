@@ -31,7 +31,7 @@ interface Grant {
  * The signed claim comes from Next.js, so who may reach the board is decided
  * server-side; a refusal here just degrades the embed to a link.
  */
-function useBoardUri(whiteboardId: string | null) {
+function useBoardUri(whiteboardId: string | null, reloadSeq = 0) {
   const [grant, setGrant] = useState<{
     whiteboardId: string;
     uri: string | null;
@@ -70,7 +70,7 @@ function useBoardUri(whiteboardId: string | null) {
     return () => {
       cancelled = true;
     };
-  }, [whiteboardId]);
+  }, [whiteboardId, reloadSeq]);
 
   return { uri, state };
 }
@@ -137,14 +137,36 @@ function Preview({ uri, isDark, title }: { uri: string; isDark: boolean; title: 
   );
 }
 
-export function WhiteboardEmbedView({ node }: NodeViewProps) {
+export function WhiteboardEmbedView({ node, editor, getPos }: NodeViewProps) {
   const router = useRouter();
   const whiteboardId = node.attrs.whiteboardId as string;
   const title = (node.attrs.title as string) || '未命名白板';
   const icon = (node.attrs.icon as string) || '🎨';
   const [zoomed, setZoomed] = useState(false);
-  const { uri, state } = useBoardUri(whiteboardId);
+  // G111：官方白板块菜单有「全屏」与「重新加载」两枚，都作用在这一枚嵌入上。
+  const [reloadSeq, setReloadSeq] = useState(0);
+  const { uri, state } = useBoardUri(whiteboardId, reloadSeq);
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+
+  const pos = getPos?.();
+  const myIndex = typeof pos === 'number' ? editor.state.doc.resolve(pos).index(0) : -1;
+
+  useEffect(() => {
+    const onFullscreen = (event: Event) => {
+      if ((event as CustomEvent<{ index?: number }>).detail?.index === myIndex) setZoomed(true);
+    };
+    const onReload = (event: Event) => {
+      if ((event as CustomEvent<{ index?: number }>).detail?.index === myIndex) {
+        setReloadSeq((seq) => seq + 1);
+      }
+    };
+    document.addEventListener('craft-whiteboard-fullscreen', onFullscreen);
+    document.addEventListener('craft-whiteboard-reload', onReload);
+    return () => {
+      document.removeEventListener('craft-whiteboard-fullscreen', onFullscreen);
+      document.removeEventListener('craft-whiteboard-reload', onReload);
+    };
+  }, [myIndex]);
 
   const openBoard = useCallback(() => router.push(`/whiteboards/${whiteboardId}`), [router, whiteboardId]);
 

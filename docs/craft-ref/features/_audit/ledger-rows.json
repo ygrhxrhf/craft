@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-06T13:00:21.217Z",
+  "generatedAt": "2026-11-06T15:12:11.392Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 828,
-    "aligned": 347,
+    "gap": 827,
+    "aligned": 348,
     "unknown": 193,
     "deliberate": 105,
     "partial": 68,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 258,
-    "P2 / aligned": 241,
+    "P2 / gap": 257,
+    "P2 / aligned": 242,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -3108,10 +3108,10 @@
       "cols": 5,
       "id": "G111",
       "official": "块右键菜单是**按块类型封闭的 30 项**（`panels.md` §八）：代码块 4（含 `openCodeTheme` 单独一项）、图片 4 档 `imageTo{Auto,Large,Fill,Fit}Style`、链接预览 4 档 `previewTo{Small,Regular,Card,Embed}Style` + 链接 6 项、页面卡 3 项、白板 2 项、通用 6 项。图片/预览档位与 `pd`、`Xn` 两处枚举**互相印证**",
-      "local": "全库对 `turnInto|imageTo|previewTo|PageCard|openCodeTheme` **零命中**（仅 `src/lib/storage.ts` 的 mime 列表提到 csv）⇒ 块级\"转为/换档\"动作面整体不存在",
-      "verdict": "缺失（约 24 项动作）",
+      "local": "✎ 现读（2026-11-06 第 3i 批）：按块类型封闭的名册已落地——图片 4 档（自动/大图/填充/适应，尺寸×适配两根轴各改一枝）、链接预览 4 档布局＋6 项动作（重命名/重载/转文本/转富链接/新标签页/复制地址）、页面卡 3 项（卡片样式/转换为卡片/转换为普通页面）、白板 2 项（全屏/重新加载）、CSV 文件块「转为集合」、代码块 4 项；通用尾接评论/插入/复制链接/删除与下载/新窗口；浏览器实点逐类菜单与布局切换均生效",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

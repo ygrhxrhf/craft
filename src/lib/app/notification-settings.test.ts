@@ -78,4 +78,10 @@ describe('the notifications panel renders the shared labels', () => {
     expect(panels).toContain('{NOTIFICATION_EVENTS.reminders.label}');
     expect(panels).toContain('{NOTIFICATION_EVENTS.dailyTasks.label}');
   });
+
+  it('renders the per-space email row from the real action (G163)', () => {
+    expect(panels).toContain('{EMAIL_PER_SPACE_DESC}');
+    expect(panels).toContain('getSpaceEmailNotification()');
+    expect(panels).toContain('setSpaceEmailNotification(enabled)');
+  });
 });

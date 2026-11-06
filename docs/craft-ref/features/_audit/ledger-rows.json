@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-06T15:50:35.703Z",
+  "generatedAt": "2026-11-06T16:12:28.356Z",
   "totalRows": 1615,
   "statusDistribution": {
     "gap": 824,
-    "aligned": 352,
+    "aligned": 353,
     "unknown": 193,
     "deliberate": 105,
-    "partial": 67,
+    "partial": 66,
     "nonaction": 58,
     "unreachable": 16
   },
@@ -19,7 +19,7 @@
   },
   "statusByPriority": {
     "P2 / gap": 254,
-    "P2 / aligned": 246,
+    "P2 / aligned": 247,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -29,7 +29,7 @@
     "P3 / aligned": 40,
     "P? / deliberate": 33,
     "P2 / unknown": 33,
-    "P2 / partial": 29,
+    "P2 / partial": 28,
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
@@ -4050,10 +4050,10 @@
       "cols": 5,
       "id": "G163",
       "official": "通知是**三通道 × 三事件 × 可分空间**：推送 / 邮件 / **每日电子邮件**（「当天所有任务和提醒的摘要，你还将收到今天截止的摘要推送」）× 评论·提及·提醒，邮件通知描述明确\"在**此空间**中\"（§四）",
-      "local": "有 notifications 分区（`SettingsModal.tsx:57`）；☆ **第 286 批复核＝原判\"无每日摘要\"半作废、另半属实**：三档（评论提及／提醒／每日电子邮件）**早已是三个真开关**（落 `user.notify*` 三列、走 `applyLocal`），「每日电子邮件」的摘要句也逐字在；**无按空间粒度**确属实 ⇒ 但本批发现分区末尾那行「空间」不只是\"没有\"，而是**承诺了一个不存在的功能**（文案说可覆盖单空间设置、右侧带 `ChevronRight` 暗示可进入，实测是裸 DIV、无 `onClick`，且本地**零按空间的通知存储**）⇒ 按\"有列就接线、没列就移除\"移除该行；**真浏览器取证**＝通知分区「覆盖单个空间」文案消失、三枚 `role=switch` 仍在、「每日电子邮件」仍在",
-      "verdict": "部分落地",
+      "local": "✎ 现读（2026-11-07 第 3n 批）：三档开关（评论和提及／提醒／每日电子邮件）早已是真开关；按空间粒度已补上——邮件通知的覆盖值按成员分格存进 `Space.settings.notifications.emailComments[userId]`，设置面板「通知」末尾新增「空间」组（逐字描述＋当前空间＋开关＋「恢复全局」），生效值＝覆盖值 ?? 全局值。浏览器实点：跟随全局 → 切成仅此空间并落库 → 恢复全局后库内覆盖清空、面板回到「跟随全局设置」。邮件投递通道本身另见 G1488",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "partial",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

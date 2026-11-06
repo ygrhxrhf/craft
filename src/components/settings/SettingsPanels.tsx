@@ -13,7 +13,12 @@ import {
 import { getPreferences, updatePreferences } from '@/actions/user/preferences';
 import { APP_VERSION } from '@/lib/app/app-version';
 import { pendingLabel } from '@/lib/app/pending-states';
-import { NOTIFICATION_EVENTS } from '@/lib/app/notification-settings';
+import { NOTIFICATION_EVENTS, EMAIL_PER_SPACE_DESC } from '@/lib/app/notification-settings';
+import {
+  getSpaceEmailNotification,
+  setSpaceEmailNotification,
+  type SpaceEmailNotification,
+} from '@/actions/space/space-notifications';
 import type { Preferences } from '@/actions/user/preferences';
 import { logout } from '@/actions/user/profile';
 import { getSyncManager } from '@/lib/sync-core';
@@ -187,6 +192,10 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [savingSwitch, setSavingSwitch] = useState(false);
   const [switchError, setSwitchError] = useState<string | null>(null);
+  // G163：邮件通知按空间覆盖（每名成员各管自己那枚）。
+  const [spaceEmail, setSpaceEmail] = useState<SpaceEmailNotification | null>(null);
+  const [savingSpaceEmail, setSavingSpaceEmail] = useState(false);
+  const [spaceEmailError, setSpaceEmailError] = useState<string | null>(null);
   // G324/G166：空间与团队实体（本批新落库）。
   const [space, setSpace] = useState<SpaceSummary | null>(null);
   const [team, setTeam] = useState<TeamSummary | null>(null);
@@ -210,6 +219,9 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     getPreferences()
       .then(setPrefs)
       .catch(() => setPrefs(null));
+    getSpaceEmailNotification()
+      .then(setSpaceEmail)
+      .catch(() => setSpaceEmail(null));
   }, []);
 
   // profile 是父组件异步取的（`SettingsModal` 的 useEffect）⇒ 初值那一刻它还是 null。
@@ -325,6 +337,19 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       setSwitchError('开关没有保存，请重试');
     } finally {
       setSavingSwitch(false);
+    }
+  };
+
+  /** G163：写当前空间的邮件覆盖值；`null` 恢复跟随全局。 */
+  const setSpaceEmailPref = async (enabled: boolean | null) => {
+    setSavingSpaceEmail(true);
+    setSpaceEmailError(null);
+    try {
+      setSpaceEmail(await setSpaceEmailNotification(enabled));
+    } catch {
+      setSpaceEmailError('按空间的设置没有保存，请重试');
+    } finally {
+      setSavingSpaceEmail(false);
     }
   };
 
@@ -945,11 +970,43 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                 （只有 `preferences.daily.email` 与其 desc），且该行带按钮式外框与 ChevronsUpDown
                 图标、看着能点却是个无处理器/无输入的裸 DIV ⇒ 已删除，不再伪造一个不存在的设置。 */}
           </div>
-          {/* G163：这里原有「空间」一行——文案承诺可以按空间覆盖这些设置、右侧还带
-              ChevronRight 暗示可进入，但实测是裸 DIV（不在 button 里、无 onClick），而且本地
-              **没有任何按空间的通知存储**（零 spaceId／perSpace 列，`per-space` 只作为
-              `notification-settings.ts` 里的一句描述存在）⇒ 它承诺了一个不存在的功能。
-              按"有列就接线、没列就移除"的同一把尺删掉：三档开关（真落库）保留，不画按空间那层。 */}
+          {/* G163：邮件通知可按空间覆盖。覆盖值按成员分格存进 `Space.settings`，
+              面板只列当前空间；「恢复全局」清掉覆盖值。 */}
+          {spaceEmail && (
+            <div>
+              <GroupTitle>空间</GroupTitle>
+              <GroupDesc>{EMAIL_PER_SPACE_DESC}</GroupDesc>
+              <RowCard className="mt-3 flex items-center justify-between px-4 py-3">
+                <div className="min-w-0">
+                  <div className="truncate text-[13px] font-medium">{spaceEmail.spaceName}</div>
+                  <p className="mt-0.5 text-[12px] text-foreground/55">
+                    {spaceEmail.emailComments === null ? '跟随全局设置' : '仅此空间'}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  {spaceEmail.emailComments !== null && (
+                    <button
+                      type="button"
+                      onClick={() => void setSpaceEmailPref(null)}
+                      className="text-[12px] text-foreground/55 hover:underline"
+                    >
+                      恢复全局
+                    </button>
+                  )}
+                  <NotifySwitch
+                    value={spaceEmail.emailComments ?? (prefs?.notifyComments ?? spaceEmail.globalEmailComments)}
+                    busy={savingSpaceEmail}
+                    onChange={(next) => void setSpaceEmailPref(next)}
+                  />
+                </div>
+              </RowCard>
+              {spaceEmailError && (
+                <p role="status" className="mt-2 text-[12px] text-destructive">
+                  {spaceEmailError}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       );
 

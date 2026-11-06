@@ -4094,10 +4094,16 @@
       ]
     },
     "G163": {
-      "status": "partial",
-      "note": "三档邮件开关已落库；无推送通道与按空间粒度",
+      "status": "aligned",
+      "note": "G163 现读（2026-11-07 第 3n 批）：三档开关（评论和提及/提醒/每日电子邮件）早已是真开关；按空间的邮件通知粒度已补齐——覆盖值按成员分格存进 Space.settings.notifications.emailComments[userId]，设置面板通知分区末尾新增「空间」组（逐字描述、当前空间、开关、恢复全局），生效值＝覆盖值 ?? 全局值。浏览器实点：跟随全局 → 切成仅此空间并落库 → 恢复全局后库内覆盖清空、面板回到跟随全局。邮件投递通道本身另见 G1488。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:598"
+        "src/lib/app/space-notifications.ts:23",
+        "src/lib/app/space-notifications.ts:35",
+        "src/actions/space/space-notifications.ts:41",
+        "src/actions/space/space-notifications.ts:49",
+        "src/components/settings/SettingsPanels.tsx:978",
+        "src/lib/app/space-notifications.test.ts:11",
+        "src/actions/space/space-notifications.test.ts:1"
       ]
     },
     "G165": {

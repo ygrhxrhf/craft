@@ -7,6 +7,7 @@ import { isSharePermission, normalizeSharePermission, tierOpensToLink, type Docu
 import { findShare, isOpenableShare } from '@/lib/share/resolve';
 import { isExpired } from '@/lib/share/publishing-options';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { readAccessLists } from '@/lib/share/email-allowlist';
 
 export interface ShareState {
   /**
@@ -35,6 +36,9 @@ export interface ShareState {
   enableObjectLinks: boolean;
   showDuplicateAsTemplate: boolean;
   emailBasedAccessEnabled: boolean;
+  /** G144: the two email-access lists (individual addresses + domain suffixes). */
+  allowedEmails: string[];
+  allowedDomains: string[];
   hideHashTagWords: boolean;
   defaultDomain: string | null;
   /**
@@ -65,6 +69,8 @@ function stateOf(s: any): ShareState {
     enableObjectLinks: s.enableObjectLinks === true,
     showDuplicateAsTemplate: s.showDuplicateAsTemplate === true,
     emailBasedAccessEnabled: s.emailBasedAccessEnabled === true,
+    allowedEmails: readAccessLists(s).emails,
+    allowedDomains: readAccessLists(s).domains,
     hideHashTagWords: s.hideHashTagWords === true,
     defaultDomain: typeof s.defaultDomain === 'string' && s.defaultDomain ? s.defaultDomain : null,
     shareVersion: s.shareVersion ?? 0,
@@ -187,6 +193,27 @@ export async function setShareVisualOption(
   if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
 
   await db.orm.public.DocumentShare.where({ documentId }).update({ [key]: value });
+  await emitShare(db, session.user.id, documentId);
+  return await getOrCreateShare(documentId);
+}
+
+/** G144: email-access lists (individual addresses + domain suffixes). */
+export async function setShareAccessLists(
+  documentId: string,
+  emails: string[],
+  domains: string[],
+) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const doc = await db.orm.public.Document.first({ id: documentId });
+  if (!doc || (doc as any).userId !== session.user.id) throw new Error('未授权');
+
+  await db.orm.public.DocumentShare.where({ documentId }).update({
+    allowedEmails: emails,
+    allowedDomains: domains,
+  } as any);
   await emitShare(db, session.user.id, documentId);
   return await getOrCreateShare(documentId);
 }

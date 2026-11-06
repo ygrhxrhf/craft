@@ -30,6 +30,7 @@ import {
   setShareShowAuthor,
   setShareSlug,
   setShareVisualOption,
+  setShareAccessLists,
   setShareCommentLevel,
   setShareExpiry,
 } from '@/actions/document/share';
@@ -42,6 +43,15 @@ import { countSubpages } from '@/actions/document/get';
 import type { DocumentSharePermission } from '@/lib/share/permission';
 import { ONLY_COLLABORATORS_LABEL, normalizeSharePermission } from '@/lib/share/permission';
 import { ACCESS_LEVEL_COPY } from '@/lib/share/access-levels';
+import {
+  ADD_EMAIL_ACCESS_FAIL,
+  ADD_EMAIL_DOMAIN_ACCESS_FAIL,
+  ADD_EMAIL_DOMAIN,
+  ADD_EMAILS_PLACEHOLDER,
+  allEmailAddresses,
+  parseDomains,
+  parseEmails,
+} from '@/lib/share/email-allowlist';
 import { SHOW_AUTHOR_LABEL, authorStatusLabel, showsAuthor } from '@/lib/share/author-visibility';
 import { VISUAL_OPTIONS, visualOptionStatus } from '@/lib/share/visual-options';
 import {
@@ -110,6 +120,9 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     hideHashTagWords: false,
   });
   const [permission, setPermission] = useState<DocumentSharePermission | null>(null);
+  // G144: the two email-access lists, kept as the pasted text while editing.
+  const [emailDraft, setEmailDraft] = useState('');
+  const [domainDraft, setDomainDraft] = useState('');
   const [shareId, setShareId] = useState<string | null>(null);
   const [serverVersion, setServerVersion] = useState(0);
   const [tierError, setTierError] = useState<string | null>(null);
@@ -181,6 +194,8 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
         const normalized = normalizeSharePermission(view.permission);
         if (normalized) setPermission(normalized);
       }
+      if (view.allowedEmails) setEmailDraft(view.allowedEmails.join(', '));
+      if (view.allowedDomains) setDomainDraft(view.allowedDomains.join(', '));
       if (typeof view.shareVersion === 'number') setServerVersion(view.shareVersion);
       if (typeof view.hasPasscode === 'boolean') setHasPasscode(view.hasPasscode);
       // ☆ 镜像里的到期是完整 ISO 时间戳，而 `type="date"` 只认 `YYYY-MM-DD` ⇒ 截前 10 位，
@@ -215,6 +230,8 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
         setHasPasscode(share.hasPasscode);
         setSlug(share.slug);
         setSlugDraft(share.slug ?? '');
+        setEmailDraft(share.allowedEmails.join(', '));
+        setDomainDraft(share.allowedDomains.join(', '));
       } catch {
         // 首次分享也失败（断链且镜像没有行）：停在"生成链接中…"，不谎报档位
       }
@@ -393,6 +410,26 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
       } else {
         await setShareVisualOption(documentId, key, checked);
       }
+    });
+  };
+
+  // G144: save both allowlists; invalid entries get the official failure sentence.
+  const handleSaveAccessLists = () => {
+    const emails = parseEmails(emailDraft);
+    const domains = parseDomains(domainDraft);
+    if (emails.invalid.length > 0) {
+      toast.add({ id: 'email-access-fail', type: 'error', title: ADD_EMAIL_ACCESS_FAIL });
+      return;
+    }
+    if (domains.invalid.length > 0) {
+      toast.add({ id: 'email-domain-access-fail', type: 'error', title: ADD_EMAIL_DOMAIN_ACCESS_FAIL });
+      return;
+    }
+    startTransition(async () => {
+      const next = await setShareAccessLists(documentId, emails.valid, domains.valid);
+      setEmailDraft(next.allowedEmails.join(', '));
+      setDomainDraft(next.allowedDomains.join(', '));
+      toast.add({ id: 'email-access-saved', type: 'success', title: allEmailAddresses(next.allowedEmails.length) });
     });
   };
 
@@ -712,6 +749,34 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   />
                 </div>
               ))}
+              {/* G144：邮箱访问的两级白名单——个人地址（逗号分隔批量粘贴）与域名。 */}
+              {visuals.emailBasedAccessEnabled && (
+                <div className="mt-3 space-y-2 rounded-md border border-border px-3 py-2.5" data-testid="email-access-lists">
+                  <textarea
+                    value={emailDraft}
+                    onChange={(event) => setEmailDraft(event.target.value)}
+                    placeholder={ADD_EMAILS_PLACEHOLDER}
+                    aria-label={ADD_EMAILS_PLACEHOLDER}
+                    rows={2}
+                    className="w-full resize-none rounded-md border border-border bg-transparent px-2 py-1.5 text-sm outline-none"
+                  />
+                  <input
+                    value={domainDraft}
+                    onChange={(event) => setDomainDraft(event.target.value)}
+                    placeholder={ADD_EMAIL_DOMAIN}
+                    aria-label={ADD_EMAIL_DOMAIN}
+                    className="w-full rounded-md border border-border bg-transparent px-2 py-1.5 text-sm outline-none"
+                  />
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      {allEmailAddresses(parseEmails(emailDraft).valid.length)}
+                    </span>
+                    <Button size="sm" variant="secondary" onClick={handleSaveAccessLists}>
+                      保存访问名单
+                    </Button>
+                  </div>
+                </div>
+              )}
               {/* G145：官方「用户互动」分区——每个开关都带描述句与成对状态句（不是只有 tooltip）。
                   评论两枚是三档 `commentLevel` 的两个端点（G64）。官方把它们放在独立子页，且在
                   `commentLevel==='none'` 时主面板整区隐藏；本地没有子页入口，整区隐藏会把「查看评论」

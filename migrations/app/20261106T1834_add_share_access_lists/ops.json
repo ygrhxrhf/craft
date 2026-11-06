@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.document_shares.allowedDomains",
+    "label": "Add column \"allowedDomains\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "allowedDomains",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"allowedDomains\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "allowedDomains"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"allowedDomains\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"allowedDomains\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"allowedDomains\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "allowedDomains"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.document_shares.allowedEmails",
+    "label": "Add column \"allowedEmails\" to \"document_shares\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "allowedEmails",
+        "table": "document_shares"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"allowedEmails\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "allowedEmails"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"allowedEmails\"",
+        "sql": "ALTER TABLE \"public\".\"document_shares\" ADD COLUMN \"allowedEmails\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"allowedEmails\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "document_shares",
+          "allowedEmails"
+        ]
+      }
+    ]
+  }
+]

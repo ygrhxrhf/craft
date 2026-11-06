@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'84d5c32bb73cbbbd7358fba9b91a0e5f7900481eeb8a02275bf9b44c05072a09'>;
+  StorageHashBase<'a06395d7ad3617c2b18d353e80c8876ed805db51dcd7affe26a952f55c18c400'>;
 export type ExecutionHash =
   ExecutionHashBase<'4ab4e86facf3f98e2d7366b96f6cf51036cc4f660f085fb81a7fda131a187cff'>;
 export type ProfileHash =
@@ -440,6 +440,8 @@ export type FieldOutputTypes = {
       readonly enableObjectLinks: CodecTypes['pg/bool@1']['output'];
       readonly showDuplicateAsTemplate: CodecTypes['pg/bool@1']['output'];
       readonly emailBasedAccessEnabled: CodecTypes['pg/bool@1']['output'];
+      readonly allowedEmails: CodecTypes['pg/json@1']['output'] | null;
+      readonly allowedDomains: CodecTypes['pg/json@1']['output'] | null;
       readonly hideHashTagWords: CodecTypes['pg/bool@1']['output'];
       readonly defaultDomain: CodecTypes['pg/text@1']['output'] | null;
       readonly shareVersion: CodecTypes['pg/int4@1']['output'];
@@ -847,6 +849,8 @@ export type FieldInputTypes = {
       readonly enableObjectLinks: CodecTypes['pg/bool@1']['input'];
       readonly showDuplicateAsTemplate: CodecTypes['pg/bool@1']['input'];
       readonly emailBasedAccessEnabled: CodecTypes['pg/bool@1']['input'];
+      readonly allowedEmails: CodecTypes['pg/json@1']['input'] | null;
+      readonly allowedDomains: CodecTypes['pg/json@1']['input'] | null;
       readonly hideHashTagWords: CodecTypes['pg/bool@1']['input'];
       readonly defaultDomain: CodecTypes['pg/text@1']['input'] | null;
       readonly shareVersion: CodecTypes['pg/int4@1']['input'];
@@ -1199,6 +1203,8 @@ export type StorageColumnTypes = {
       readonly userId: CodecTypes['pg/text@1']['output'];
     };
     readonly document_shares: {
+      readonly allowedDomains: CodecTypes['pg/json@1']['output'] | null;
+      readonly allowedEmails: CodecTypes['pg/json@1']['output'] | null;
       readonly commentLevel: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly defaultDomain: CodecTypes['pg/text@1']['output'] | null;
@@ -1606,6 +1612,8 @@ export type StorageColumnInputTypes = {
       readonly userId: CodecTypes['pg/text@1']['input'];
     };
     readonly document_shares: {
+      readonly allowedDomains: CodecTypes['pg/json@1']['input'] | null;
+      readonly allowedEmails: CodecTypes['pg/json@1']['input'] | null;
       readonly commentLevel: CodecTypes['pg/text@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly defaultDomain: CodecTypes['pg/text@1']['input'] | null;
@@ -2340,6 +2348,8 @@ export namespace Models {
     enableObjectLinks: CodecTypes['pg/bool@1']['output'];
     showDuplicateAsTemplate: CodecTypes['pg/bool@1']['output'];
     emailBasedAccessEnabled: CodecTypes['pg/bool@1']['output'];
+    allowedEmails: CodecTypes['pg/json@1']['output'] | null;
+    allowedDomains: CodecTypes['pg/json@1']['output'] | null;
     hideHashTagWords: CodecTypes['pg/bool@1']['output'];
     defaultDomain: CodecTypes['pg/text@1']['output'] | null;
     shareVersion: CodecTypes['pg/int4@1']['output'];
@@ -3806,6 +3816,16 @@ type ContractBase = Omit<
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/bool@1', false>;
                   };
+                };
+                readonly allowedEmails: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: true;
+                };
+                readonly allowedDomains: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: true;
                 };
                 readonly hideHashTagWords: {
                   readonly nativeType: 'bool';
@@ -7466,6 +7486,14 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly allowedEmails: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
+              readonly allowedDomains: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
               readonly hideHashTagWords: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
@@ -7536,6 +7564,8 @@ type ContractBase = Omit<
                 readonly enableObjectLinks: { readonly column: 'enableObjectLinks' };
                 readonly showDuplicateAsTemplate: { readonly column: 'showDuplicateAsTemplate' };
                 readonly emailBasedAccessEnabled: { readonly column: 'emailBasedAccessEnabled' };
+                readonly allowedEmails: { readonly column: 'allowedEmails' };
+                readonly allowedDomains: { readonly column: 'allowedDomains' };
                 readonly hideHashTagWords: { readonly column: 'hideHashTagWords' };
                 readonly defaultDomain: { readonly column: 'defaultDomain' };
                 readonly shareVersion: { readonly column: 'shareVersion' };

@@ -615,6 +615,9 @@ model DocumentShare {
   enableObjectLinks        Boolean @default(false)
   showDuplicateAsTemplate  Boolean @default(false)
   emailBasedAccessEnabled  Boolean @default(false)
+  // G144：邮箱访问的两级白名单——个人邮箱（逗号分隔批量粘贴）与邮箱域名。
+  allowedEmails            Json?
+  allowedDomains           Json?
   hideHashTagWords         Boolean @default(false)
   defaultDomain            String? // null = unset (the official default is `undefined`)
   shareVersion Int      @default(0)

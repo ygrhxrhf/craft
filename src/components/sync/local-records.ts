@@ -130,6 +130,9 @@ export interface DocumentShareView {
   enableObjectLinks?: boolean;
   showDuplicateAsTemplate?: boolean;
   emailBasedAccessEnabled?: boolean;
+  /** G144: the two email-access lists. */
+  allowedEmails?: string[];
+  allowedDomains?: string[];
   hideHashTagWords?: boolean;
   defaultDomain?: string | null;
   shareVersion?: number;
@@ -160,6 +163,12 @@ export function shareViewFromRow(id: string, data: Record<string, unknown>): Doc
     enableObjectLinks: typeof data.enableObjectLinks === 'boolean' ? data.enableObjectLinks : undefined,
     showDuplicateAsTemplate: typeof data.showDuplicateAsTemplate === 'boolean' ? data.showDuplicateAsTemplate : undefined,
     emailBasedAccessEnabled: typeof data.emailBasedAccessEnabled === 'boolean' ? data.emailBasedAccessEnabled : undefined,
+    allowedEmails: Array.isArray(data.allowedEmails)
+      ? data.allowedEmails.filter((entry): entry is string => typeof entry === 'string')
+      : undefined,
+    allowedDomains: Array.isArray(data.allowedDomains)
+      ? data.allowedDomains.filter((entry): entry is string => typeof entry === 'string')
+      : undefined,
     hideHashTagWords: typeof data.hideHashTagWords === 'boolean' ? data.hideHashTagWords : undefined,
     defaultDomain: data.defaultDomain === undefined ? undefined : typeof data.defaultDomain === 'string' ? data.defaultDomain : null,
     shareVersion: typeof data.shareVersion === 'number' ? data.shareVersion : undefined,

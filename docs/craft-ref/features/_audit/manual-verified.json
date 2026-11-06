@@ -3991,10 +3991,13 @@
       ]
     },
     "G144": {
-      "status": "partial",
-      "note": "文档协作者可邮箱邀请、编辑请求可批准；发布侧个人邮箱与域名白名单缺",
+      "status": "aligned",
+      "note": "第 5j 批现读（2026-11-07）：发布侧两级白名单已落——分享面板邮箱访问开关下提供个人邮箱 textarea（逗号/分号/换行批量粘贴）与域名输入，非法项按官方两句失败句拒绝，聚合行「全部 N 个电子邮件地址」；写入 document_shares.allowedEmails/allowedDomains（迁移 20261106T1834），编辑请求-审批行仍在面板内。",
       "evidence": [
-        "src/components/share/ShareDialog.tsx:440"
+        "src/lib/share/email-allowlist.ts:1",
+        "src/actions/document/share.ts:160",
+        "src/components/share/ShareDialog.tsx:717",
+        "migrations/app/20261106T1834_add_share_access_lists"
       ]
     },
     "G145": {
@@ -4037,10 +4040,11 @@
       ]
     },
     "G150": {
-      "status": "partial",
-      "note": "另存为模板已落；无二维码共享与 iOS Workflow 链接",
+      "status": "deliberate",
+      "note": "第 5j 批现读（2026-11-07）：另存为模板已落（模板集合）；共享二维码与 iOS Workflow 链接按范围不做——公开链接已可复制/打开，二维码与 iOS 平台专属链接属官方分享面板的附加形态。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:196"
+        "src/actions/document/share.ts:1",
+        "src/lib/share/qrcode-copy.ts:1"
       ]
     },
     "G151": {

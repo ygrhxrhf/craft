@@ -2456,6 +2456,20 @@
           },
           "DocumentShare": {
             "fields": {
+              "allowedDomains": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "allowedEmails": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "commentLevel": {
                 "nullable": false,
                 "type": {
@@ -2645,6 +2659,12 @@
             },
             "storage": {
               "fields": {
+                "allowedDomains": {
+                  "column": "allowedDomains"
+                },
+                "allowedEmails": {
+                  "column": "allowedEmails"
+                },
                 "commentLevel": {
                   "column": "commentLevel"
                 },
@@ -6811,6 +6831,16 @@
             },
             "document_shares": {
               "columns": {
+                "allowedDomains": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
+                "allowedEmails": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
                 "commentLevel": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -9355,7 +9385,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "84d5c32bb73cbbbd7358fba9b91a0e5f7900481eeb8a02275bf9b44c05072a09"
+    "storageHash": "a06395d7ad3617c2b18d353e80c8876ed805db51dcd7affe26a952f55c18c400"
   },
   "execution": {
     "executionHash": "4ab4e86facf3f98e2d7366b96f6cf51036cc4f660f085fb81a7fda131a187cff",

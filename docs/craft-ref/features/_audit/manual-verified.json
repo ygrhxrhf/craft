@@ -6678,10 +6678,14 @@
       ]
     },
     "G682": {
-      "status": "partial",
-      "note": "主题六档硬编码、每档一色；官方约 130–150 项且动态加载",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 族拆批第 3e 批，用户裁决采官方清单后落地）：第 3d 批从官方会话抓到 `res.craft.do/themes/presets.json` 原文落盘（**131 条主题**＋96 条和纸胶带预设；采集器 `interaction-lab/themes-presets-census.mjs`）——台账此前「整表手抄必错」的通路缺口就此补上。本地照同一形制改**运行时加载**：原文在 `public/themes-presets.json`，`loadPageThemes()` 启动拉取并缓存、失败回内置六档；StyleTab「页面色调」渲染 131 项可滚动网格；应用时把本地承载得住的字段写进 pageStyle（theme／themeColor 明档／textColor 明档／fontPack），官方 `separator-style`／`backdrop`／`card-assets` 三条素材面原样保留待 G157/G210 素材批。浏览器实点：网格 131 项（首 Original、末 Lovey Dovey）、选 Fire Horse 后页面底色 `#f7c98f`、pageStyle 库读回 `{theme,themeColor,textColor,fontPack}` ⇒ 已对齐（规模以采集实况 131 为准，「约 150」是旧估计）",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:15"
+        "public/themes-presets.json",
+        "src/lib/editor/themes/page-theme-catalog.ts",
+        "src/lib/editor/themes/page-theme-catalog.test.ts",
+        "src/components/editor/tabs/StyleTab.tsx",
+        "docs/craft-ref/interaction-lab/themes-presets-census.mjs"
       ]
     },
     "G683": {

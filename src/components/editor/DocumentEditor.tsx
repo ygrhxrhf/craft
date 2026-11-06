@@ -262,7 +262,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   };
 
   const measure = width === 'narrow' ? '580px' : width === 'wide' ? '900px' : '720px';
-  const themeColor = getThemeColor(pageStyle.theme);
+  const themeColor = getThemeColor(pageStyle.theme, pageStyle.themeColor);
   const washiGradient = getWashiGradient(pageStyle.washi);
 
   // G156：随机封面每次加载在 coverImages 里挑一张；关掉时用 coverImage。

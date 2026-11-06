@@ -1,6 +1,8 @@
 export interface PageStyle {
   fontPack?: FontPackId;
   theme?: PageThemeId;
+  /** G682：远端主题清单里的背景色（明档）——内置六档之外的主题靠它落地。 */
+  themeColor?: string;
   washi?: WashiId;
   /** Page-level "显示文档标题" (G65). Absent means shown, which is how every existing page reads. */
   showTitle?: boolean;
@@ -81,7 +83,8 @@ export const fontPacks: { id: FontPackId; label: string; stack: string }[] = [
 
 export type WashiId = 'none' | 'sunset' | 'ocean' | 'forest' | 'candy' | 'aurora';
 
-export type PageThemeId = 'default' | 'cream' | 'mint' | 'sky' | 'lavender' | 'peach';
+/** G682：远端清单里任意具名主题都可选，内置六档只是离线兜底。 */
+export type PageThemeId = string;
 
 export const pageThemes: { id: PageThemeId; label: string; color: string }[] = [
   { id: 'default', label: '默认', color: 'transparent' },
@@ -125,7 +128,10 @@ export function getFontStack(id: FontPackId | undefined): string {
   return fontPacks.find((f) => f.id === id)?.stack ?? fontPacks[0].stack;
 }
 
-export function getThemeColor(id: PageThemeId | undefined): string {
+export function getThemeColor(id: PageThemeId | undefined, storedColor?: string | null): string {
+  // G682：远端主题清单里任意一条都可能被选中——应用时把解析出的背景色存进 `themeColor`，
+  // 内置六档没有存档值时再查静态表。
+  if (storedColor) return storedColor;
   return pageThemes.find((t) => t.id === id)?.color ?? 'transparent';
 }
 
@@ -139,6 +145,7 @@ export function normalizePageStyle(value: unknown): PageStyle {
   return {
     fontPack: v.fontPack === undefined ? undefined : canonicalFontId(v.fontPack),
     theme: typeof v.theme === 'string' ? (v.theme as PageThemeId) : undefined,
+    themeColor: typeof v.themeColor === 'string' ? v.themeColor : undefined,
     washi: typeof v.washi === 'string' ? (v.washi as WashiId) : undefined,
     showTitle: typeof v.showTitle === 'boolean' ? v.showTitle : undefined,
     spelling: typeof v.spelling === 'boolean' ? v.spelling : undefined,

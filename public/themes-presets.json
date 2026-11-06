@@ -1,0 +1,2660 @@
+{
+    "themes": [
+        {
+            "title": "Original",
+            "themeId": "default",
+            "pageStyleProps": {
+                "theme-id": "default",
+                "color": "#1F2225 #F4F4F4",
+                "background-color": "#FFFFFF #222222",
+                "font-family": "system",
+                "separator-style": "line",
+                "backdrop": "none",
+                "card-assets": "none"
+            }
+        },
+        {
+            "themeId": "fire-horse",
+            "title": "Fire Horse",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Ffire-horse-backdrop.png\",\"LAOAh#01??$j00S3%KDl?s%KoKtQ\")",
+                "theme-id": "fire-horse",
+                "color": "#400000 #400000",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/theme-washi/fire-horse-washi.png\", \"LDN6iCDQIV_K%eDkIV?tx@af%eMy\")",
+                "background-color": "#f7c98f #f7c98f",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-horse-card-1.png\", \"LUP:I#H[oikB.joyaeofoLyVVtay\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-horse-card-2.png\", \"LNQi9;tkt*R7.j%iofVtyVWVWBkB\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-horse-card-3.png\", \"LFQ6E#MLR*x[8wyBV[R6*GV[RQba\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-horse-card-4.png\", \"LZQZ.S*HoyoyRQtQWVR6yBRkRQj[\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-horse-card-5.png\", \"L7Oh2d2_JCFz2N0hR%25EO1%259I%5EMRk\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-horse-card-6.png\", \"LUP:I#H[oikB.joyaeofoLyVVtay\")"
+            }
+        },
+        {
+            "themeId": "fire-petals",
+            "title": "Fire Petals",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Ffire-petals-backdrop.png\",\"LBR3G=NG~pM|%MofRjWV~pt6Rjxu\")",
+                "theme-id": "fire-petals",
+                "color": "#51512b #51512b",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/theme-washi/fire-petals-washi.png\", \"LKSYU6gNu4env~W;S2nO*JkCicV@\")",
+                "background-color": "#e8e4d9 #e8e4d9",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-petals-card-1.png\", \"LWQS-pM{_N%Mxas:RkR*_Mt7DjR*\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-petals-card-2.png\", \"LQQl%7C8M%7B_N.7t7ofayRj%25foLIUW%3A\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-petals-card-3.png\", \"LLQ]vVNa~q-pnit7kCRP%goLIUNa\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-petals-card-4.png\", \"LVRC*%25%25M_NIUxat7NGRjtRoLRPfk\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-petals-card-5.png\", \"LaRVqbM%7B_N%25M%24*oLS2kC%25%23WBIAt7\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffire-petals-card-6.png\", \"LlQJJ%40M%7B%3F%5Et7%25Mt7RjRk_Nt7IAWB\")"
+            }
+        },
+        {
+            "themeId": "prosperity-bloom",
+            "title": "Prosperity Bloom",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fprosperity-boom-backdrop.png\",\"L6J}n].g%Z.44VQ]M$H]ouNFkUb[\")",
+                "theme-id": "prosperity-bloom",
+                "color": "#8e2b0b #8e2b0b",
+                "separator-style": "doodle",
+                "background-color": "#fff2d5 #fff2d5",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fprosperity-boom-card-1.png\", \"LBOlfgs9y]oftOf6nQkCy]a#UWj?\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fprosperity-boom-card-2.png\", \"L4NPFUyAD6rF.jpGM2QpL-a$cVMf\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fprosperity-boom-card-3.png\", \"L3N$or_PTD%{@1LUxuJTp-q*Xjk-\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fprosperity-boom-card-4.png\", \"L6ObvHrFhhyUhjafuekBy%7Cj%5BP*kB\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fprosperity-boom-card-5.png\", \"LBP2OMzFy%7BUWvPXQX*nQzGTaPPm%3A\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fprosperity-boom-card-6.png\", \"L8PxCPqyumd7wfi%7BXQb%5DunX*UCmo\")"
+            }
+        },
+        {
+            "themeId": "lunar-ink",
+            "title": "Lunar Ink",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/lunar-ink-cover.png",
+                "uri": "https://res.craft.do/assets/theme/cover/lunar-ink-cover.png",
+                "aspectRatio": 3.31,
+                "imageWidth": 1024,
+                "rawImageWidth": 1024,
+                "blurHash": "LER3D%2Cay~pt7t7ofofof-%3BofM%7BRj"
+            },
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "#831100 #831100",
+                "theme-id": "lunar-ink",
+                "color": "#000000 #000000",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/theme-washi/lunar-ink-washi.png\", \"LL4Q9%24Q%3FbM%7B00M%7Bof00~p%3Faj%5B00_3\")",
+                "background-color": "#f5f1e8 #f5f1e8",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-ink-card-1.png\", \"LVQcbZj%5B~pofE1Rj%25Lt7%3FaWBIVof\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-ink-card-2.png\", \"LHRfXqt7~pRkIUWB%25Mof%25Mayayj%5B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-ink-card-3.png\", \"LGRMPLxt~pIVt7t7ayof-%3AayM%7Ct7\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-ink-card-4.png\", \"LMRC%23l%25L~pWBRjxuj%5BM%7B_3WVD*j%40\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-ink-card-5.png\", \"LGQ%5DyXWB~pxut6t6fQRj%3FbWBIUxu\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-ink-card-6.png\", \"LORo%5DJay~qt7RjWBt6of%25MayM%7Bof\")"
+            }
+        },
+        {
+            "themeId": "soft-spring",
+            "title": "Soft Spring",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/soft-spring-cover.png",
+                "uri": "https://res.craft.do/assets/theme/cover/soft-spring-cover.png",
+                "aspectRatio": 2.33,
+                "imageWidth": 1680,
+                "rawImageWidth": 1680,
+                "blurHash": "L7IY8.ESD*-n~Cw%3FXANMIWt3s.I%3B"
+            },
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fsoft-spring-backdrop.png\",\"LGG%5B%5Bux%5DslR*X%3DxvR%25WBRsS5adoH\")",
+                "theme-id": "soft-spring",
+                "color": "#56562e #56562e",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/theme-washi/soft-spring-washi.png\", \"L5NKO%5B~WEA0f%25Jj%3DnjjokENGIqWD\")",
+                "background-color": "#f1ede2 #f1ede2",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-spring-card-1.png\", \"L9IOqISb01a*~XR%24M%5DM%7C%25ORhs*Rj\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-spring-card-2.png\", \"L7IY8.ESD*-n~Cw%3FXANMIWt3s.I%3B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-spring-card-3.png\", \"L5KBQ~06%7D%5D9r%5Ei~9%3D%7BRi02nhkF%251\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-spring-card-4.png\", \"L8I%3DPn~1%5EkRkI8%253xuRjIBW%3DWDae\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-spring-card-5.png\", \"LFIY2iwF%3DDs%3D~CRpr%5EogE4o~tRWA\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-spring-card-6.png\", \"L8KBK*1AR%5D01s%3BNeNGRj9ZoIofj%5B\")"
+            }
+        },
+        {
+            "themeId": "sunrise",
+            "title": "Sunrise",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fsunrise-backdrop.jpeg\",\"%40SMl3%24s%3Asm0*oJoeV%40s.j%5Bo%23bIoLRkWVfkbva%23R%2BNGWCWCo%23R*ayRjazWV\")",
+                "theme-id": "sunrise",
+                "color": "#030302 #030302",
+                "separator-style": "line",
+                "background-color": "#fdfbf9 #fdfbf9",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunrise-card-1.jpeg\", \"L9Rxo%23_Om-*x%5B5ujeSZ%24_OAMUHR*\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunrise-card-2.jpeg\", \"L5NU-ZDo%3Ds-%3A0I3r%5DgIq0R02-UNe\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunrise-card-3.jpeg\", \"LANUI%7C0%40-g%2510IID%250NI4r04xtRk\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunrise-card-4.jpeg\", \"LDR_L%7BGJo%7B%251_O%40EL2RkUuHrb_nN\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunrise-card-5.jpeg\", \"L7Oh2d2_JCFz2N0hR%25EO1%259I%5EMRk\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunrise-card-6.jpeg\", \"LHOqB30%3BI%5BIt0%5B9HV%40N1D%2CIv-nay\")"
+            }
+        },
+        {
+            "themeId": "golden-hour",
+            "title": "Golden Hour",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fgolden-hour-backdrop.jpeg\",\"%40ISNi%7C.-K*.%40m6t5u%25F%7DXmh~yXX-Q.ngn3-VOFV%5BRjt7ofxDWBaKWsazni\")",
+                "theme-id": "golden-hour",
+                "color": "#030302 #030302",
+                "separator-style": "line",
+                "background-color": "#fdf6f0 #fdf6f0",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgolden-hour-card-1.jpeg\", \"L9Rxo%23_Om-*x%5B5ujeSZ%24_OAMUHR*\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgolden-hour-card-2.jpeg\", \"L5NU-ZDo%3Ds-%3A0I3r%5DgIq0R02-UNe\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgolden-hour-card-3.jpeg\", \"LANUI%7C0%40-g%2510IID%250NI4r04xtRk\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgolden-hour-card-4.jpeg\", \"LDR_L%7BGJo%7B%251_O%40EL2RkUuHrb_nN\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgolden-hour-card-5.jpeg\", \"L7Oh2d2_JCFz2N0hR%25EO1%259I%5EMRk\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgolden-hour-card-6.jpeg\", \"LHOqB30%3BI%5BIt0%5B9HV%40N1D%2CIv-nay\")"
+            }
+        },
+        {
+            "themeId": "sunset",
+            "title": "Sunset",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fsunset-backdrop.jpeg\",\"%40pM%40~CR.s%2B0qazofIqj%5BRlWFj%3FWCxZjst6oga%7Dj%3FNHayWCt7aza%23WBoLj%5B\")",
+                "theme-id": "sunset",
+                "color": "#030302 #030302",
+                "separator-style": "line",
+                "background-color": "#fdfbf9 #fdfbf9",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunset-card-1.jpeg\", \"L9Rxo%23_Om-*x%5B5ujeSZ%24_OAMUHR*\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunset-card-2.jpeg\", \"L5NU-ZDo%3Ds-%3A0I3r%5DgIq0R02-UNe\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunset-card-3.jpeg\", \"LANUI%7C0%40-g%2510IID%250NI4r04xtRk\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunset-card-4.jpeg\", \"LDR_L%7BGJo%7B%251_O%40EL2RkUuHrb_nN\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunset-card-5.jpeg\", \"L7Oh2d2_JCFz2N0hR%25EO1%259I%5EMRk\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsunset-card-6.jpeg\", \"LHOqB30%3BI%5BIt0%5B9HV%40N1D%2CIv-nay\")"
+            }
+        },
+        {
+            "themeId": "midnight",
+            "title": "Midnight",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fmidnight-backdrop.jpeg\",\"%40E9Q%2C~j%5Dj%5B53j%5BfRsmfQfQa%24ayfPadfPayogayfQWAj%5BfQogj%5Bj%5BWAfQfR\")",
+                "theme-id": "midnight",
+                "color": "#030302 #030302",
+                "separator-style": "line",
+                "background-color": "#fdfbf9 #fdfbf9",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fmidnight-card-1.jpeg\", \"L19%40x%7Dogayog00a%7Cjta%7B%7Dcjua%7Bju\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fmidnight-card-2.jpeg\", \"LG85Exo%25fkj%5DtpflfQfRj%5DfQfRfQ\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fmidnight-card-3.jpeg\", \"L16v7pkDaykD00f6juay.TfRa%7Bfk\")"
+            }
+        },
+        {
+            "themeId": "spring",
+            "title": "Spring",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "#B4B9CD #B4B9CD",
+                "theme-id": "spring",
+                "color": "#1f0e00 #1f0e00",
+                "separator-style": "line",
+                "background-color": "#e6e1de #e6e1de",
+                "card-assets": "#EFE56C #EFE56C|#CFC9AC #CFC9AC|#FD7C3E #FD7C3E|#C3DAC6 #C3DAC6|#EFA4D7 #EFA4D7|#83FD7B #83FD7B"
+            }
+        },
+        {
+            "themeId": "old-money",
+            "title": "Old Money",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "#E8E4D9 #E8E4D9",
+                "theme-id": "old-money",
+                "color": "#1f0e00 #1f0e00",
+                "separator-style": "line",
+                "background-color": "#f5f1eb #f5f1eb",
+                "card-assets": "#E8E4D9 #E8E4D9|#1B0C00 #1B0C00|#004830 #004830"
+            }
+        },
+        {
+            "themeId": "soil-and-clay",
+            "title": "Soil and Clay",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "none",
+                "theme-id": "soil-and-clay",
+                "color": "#edecea #edecea",
+                "separator-style": "line",
+                "background-color": "#5c5b54 #5c5b54",
+                "card-assets": "#A59D95 #A59D95|#BF9B9D #BF9B9D|#DD7F5D #DD7F5D|#3D3C38 #3D3C38|#261C1F #261C1F|#463820 #463820"
+            }
+        },
+        {
+            "themeId": "techy",
+            "title": "Techy",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "none",
+                "theme-id": "techy",
+                "color": "#2b4332 #2b4332",
+                "separator-style": "line",
+                "background-color": "#BAD6C0 #BAD6C0",
+                "card-assets": "#878787 #878787|#494259 #494259|#267C74 #267C74|#373737 #373737|#292532 #292532|#164743 #164743"
+            }
+        },
+        {
+            "themeId": "mdr",
+            "title": "MDR",
+            "pageStyleProps": {
+                "font-family": "system-mono",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fmdr-backdrop.jpeg\",\"%403B%7DKrkBRQ_LafayRRj%5BaytQazj%5BayayaytQaykBofj%5BkBoyayf7ofj%5Bj%5B\")",
+                "theme-id": "mdr",
+                "color": "#cefefc #cefefc",
+                "separator-style": "line",
+                "background-color": "#18395c #18395c",
+                "card-assets": "#D8E1E0 #D8E1E0|#1F3D3E #1F3D3E|#A2B1B1 #A2B1B1|#7F6754 #7F6754|#093B79 #093B79|#0979A4 #0979A4"
+            }
+        },
+        {
+            "themeId": "photo-lab",
+            "title": "Photo Lab",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "none",
+                "theme-id": "photo-lab",
+                "color": "#edecea #edecea",
+                "separator-style": "line",
+                "background-color": "#21201e #21201e",
+                "card-assets": "#3F3C38 #3F3C38"
+            }
+        },
+        {
+            "themeId": "hello",
+            "title": "Hello",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "none",
+                "theme-id": "hello",
+                "color": "#1f0e00 #1f0e00",
+                "separator-style": "line",
+                "background-color": "#F7F3B8 #F7F3B8",
+                "card-assets": "#F3EFE2 #F3EFE2|#D4E2FF #D4E2FF|#FCB25E #FCB25E"
+            }
+        },
+        {
+            "themeId": "leopard",
+            "title": "Leopard",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "none",
+                "theme-id": "leopard",
+                "color": "#422D29 #422D29",
+                "separator-style": "washi(image, \"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fwashi%2Fwashi-purr-statement.jpg\", \"LJFOV%5Eoe~ooJxaozfkt6xtofWBt6\")",
+                "background-color": "#EBE9E5 #EBE9E5",
+                "card-assets": "#A59D95 #A59D95|#5F5D57 #5F5D57|#3D3C38 #3D3C38|#D7CCC0 #D7CCC0|#D6BE9B #D6BE9B|#624C37 #624C37"
+            }
+        },
+        {
+            "themeId": "drafts-and-drawings",
+            "title": "Drafts and Drawings",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "none",
+                "theme-id": "drafts-and-drawings",
+                "color": "#131519 #131519",
+                "separator-style": "line",
+                "background-color": "#DFE1DB #DFE1DB",
+                "card-assets": "#707070 #707070|#2680F4 #2680F4|#FBE36B #FBE36B|#343434 #343434|#0955B6 #0955B6|#FBD826 #FBD826"
+            }
+        },
+        {
+            "themeId": "azure-breeze",
+            "title": "Azure Breeze",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fazure-breeze-backdrop.jpeg\",\"%40WJl1%3Aoe%25M.TayWAIVWVkCX8bHj%5B%3D%7CWVRjaKjZaz%25gofofw%5Dayf6%25Mf6WB\")",
+                "theme-id": "azure-breeze",
+                "color": "#2B4745 #2B4745",
+                "separator-style": "washi(image, \"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fwashi%2Fwashi-beige-paper.jpg\", \"LARe~Z%3FwM%7BMdMHj%3FozM_%25gt7oftR\")",
+                "background-color": "#CCE0DF #CCE0DF",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fazure-breeze-card-1.jpeg\", \"LIEN329u%25N%25M1g-o%24%25R*~pNHRPt7\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fazure-breeze-card-2.jpeg\", \"LSFsb_AI%2C.%24%24LNtSnhaeyEodb%5EW%3D\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fazure-breeze-card-3.jpeg\", \"LLG02%2CIU%3FbofuP9GjYt7%25%24%25gf5ae\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fazure-breeze-card-4.jpeg\", \"LZGb3Lt6E%2Bbb~Af6R%2Boe~VoLNHWV\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fazure-breeze-card-5.jpeg\", \"LVGTc~aJ%3Fboz0noLe.oe~DkWVrWA\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fazure-breeze-card-6.jpeg\", \"LKJRaL%24*Mx%25M~pRjaeWB.Tb%5EbIkC\")"
+            }
+        },
+        {
+            "themeId": "film",
+            "title": "Film",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Ffilm-backdrop.jpeg\",\"%40IG8%3Dl~qIVI%2CN%5Bks%3D_V%40IpxVRjM%7DxtkBoy-pV%5BWBNGkCa%7BRkoLxaWXkCbF\")",
+                "theme-id": "film",
+                "color": "#CDAB92 #CDAB92",
+                "separator-style": "doodle",
+                "background-color": "#020204 #020204",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffilm-card-1.jpeg\", \"LGHLo2NG4ot7_MRjM%7Bof00WB%252of\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffilm-card-2.jpeg\", \"L4FsGBi%2B00_N.TIHXAk%3D00xa~EI9\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffilm-card-3.jpeg\", \"LJIzd%5EEO5W%24~~6IqNKR-07xWs%2CNI\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffilm-card-4.jpeg\", \"LLH27mx%5BE1s.~pWVR*ax00RkxuWB\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffilm-card-5.jpeg\", \"L9CP*Ijc0dxY%3F%5Dsp9%5BNF0JNa%24%2Bni\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Ffilm-card-6.jpeg\", \"L7A%5ERMH~_4H%5EES%252%25NjJ00x%5BRO%25f\")"
+            }
+        },
+        {
+            "themeId": "road-trip",
+            "title": "Road Trip",
+            "pageStyleProps": {
+                "theme-id": "road-trip",
+                "background-color": "#EAECE6 #EAECE6",
+                "color": "#312A22 #312A22",
+                "font-family": "system",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/road-trip-backdrop.jpeg\", \"dPE%7CM7MxDiS5AJ%25LoLR+?wxtkCIoM%7Cozt8RjD*xut7Rj\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/road-trip-card-1.jpeg\", \"UTHyXWNHM%7Bxu.9s.R%2Bof~Vt7f6bH%250adRja%7D\") | image(\"https://res.craft.do/assets/theme/cards/road-trip-card-2.jpeg\", \"U%3FGcfLf%2CWAof_NkBWBj%5D-pf5bIj%5BWBWVj%5Bf6\") | image(\"https://res.craft.do/assets/theme/cards/road-trip-card-3.jpeg\", \"UDEp%24ZEM9Ft88Jt7s%3AbI0zRQxuWBD%25RjoLae\") | image(\"https://res.craft.do/assets/theme/cards/road-trip-card-4.jpeg\", \"UTDKiI%25Mn%24ozT%7DWBRkWWT0oeoLj%5B9FR%2BoLj%3F\") | image(\"https://res.craft.do/assets/theme/cards/road-trip-card-5.jpeg\", \"U%3DIiB%3Ds%3AWVof~pofWBoexZjsWCWBM%7BayR*WB\") | image(\"https://res.craft.do/assets/theme/cards/road-trip-card-6.jpeg\", \"UqJl4%7BozRjt7_4fRWBaynhjsj%5DjZofofWBj%5B\")"
+            }
+        },
+        {
+            "themeId": "market-walks",
+            "title": "Market Walks",
+            "pageStyleProps": {
+                "theme-id": "market-walks",
+                "background-color": "#E9DED9 #E9DED9",
+                "color": "#70281D #70281D",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/market-walks-backdrop.jpeg\", \"dnK_2oR5IAtlysslt7adFyS$ofnis9b%5ER*WBRiozoza%7B\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/market-walks-card-1.jpeg\", \"UoNBAOxuxu%25M%3F%5EbIRQWVIoWBofj%5B%25%23ofbHkC\") | image(\"https://res.craft.do/assets/theme/cards/market-walks-card-2.jpeg\", \"UXKv%2CNxVj%5E%25gy%3FadRPt8Nfn5MdWURjsDnOjE\") | image(\"https://res.craft.do/assets/theme/cards/market-walks-card-3.jpeg\", \"UCM6hv%3Dx-o_2~VtRD%25VY4%3AM%7CpIkD~VaxxatR\") | image(\"https://res.craft.do/assets/theme/cards/market-walks-card-4.jpeg\", \"UOHBMR-prDN_~qw%7BVsxG%24jr%3DV%5BaK%2BvV%40t7I%3B\") | image(\"https://res.craft.do/assets/theme/cards/market-walks-card-5.jpeg\", \"UeJ%24s%24%24jE*R*%7Dsa%7CjYs%3AL1Nb%24gxZ%25gjYR-R%2B\") | image(\"https://res.craft.do/assets/theme/cards/market-walks-card-6.jpeg\", \"UQH.A%7BXS.8M_uPtST0IAF%7Ct8ozxuyDR%2BW%3Dn%25\")"
+            }
+        },
+        {
+            "themeId": "beach",
+            "title": "Beach",
+            "pageStyleProps": {
+                "theme-id": "beach",
+                "background-color": "#A79D88 #A79D88",
+                "color": "#070E07 #070E07",
+                "font-family": "system-mono",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/beach-backdrop.jpeg\", \"dLGbhs%252_3~q0KD$9F%25M8%5E-;M%7BD%259ut8?bIU%252M%7CWDae\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/beach-card-1.jpeg\", \"UcFYPys%3AR*s%3A%5EijZa%7Coe~pofR*oeNGa%7Bayj%5B\") | image(\"https://res.craft.do/assets/theme/cards/beach-card-2.jpeg\", \"UXH-_Un%23V%3F%25M9EofxuRj~qayt8ae%5E%2BWBM%7Bt8\") | image(\"https://res.craft.do/assets/theme/cards/beach-card-3.jpeg\", \"ULLW%3BN00NH_39EIpIUae~W%3FHxuMx~V%252xvfk\") | image(\"https://res.craft.do/assets/theme/cards/beach-card-4.jpeg\", \"UFD%2BuK-paK%25001-Us-n%2400Md-oof~V%25LxZt6\") | image(\"https://res.craft.do/assets/theme/cards/beach-card-5.jpeg\", \"UD7dRP%251xas.9asls%2CxZ~Axat6oe9ajYjZof\") | image(\"https://res.craft.do/assets/theme/cards/beach-card-6.jpeg\", \"UJ9a54ozxuWq00RjNGax~pt7ofof4oR*j%3FWC\")"
+            }
+        },
+        {
+            "themeId": "vibrant-nights",
+            "title": "Vibrant Nights",
+            "pageStyleProps": {
+                "theme-id": "vibrant-nights",
+                "background-color": "#000000 #000000",
+                "color": "#78F99C #78F99C",
+                "font-family": "system-serif",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/vibrant-nights-backdrop.jpeg\", \"d9BOf%25068z.402q4U~$g8z.5udHwtQh+jHYKOnjFkSj0\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/vibrant-nights-card-1.jpeg\", \"UEEffl.h0gH_RCxD%25uTt8%7DQ%3D%24Rx%3Fx%40bZR8Vc\") | image(\"https://res.craft.do/assets/theme/cards/vibrant-nights-card-2.jpeg\", \"UN7fwms%2CHzR-*BnRQ%5BX6RUVejuklRUVxk%2Bow\") | image(\"https://res.craft.do/assets/theme/cards/vibrant-nights-card-3.jpeg\", \"U75k%40Zy%3DHXZMujb%40pEs%24D4RXt%2Co~pdbJRlV%7B\") | image(\"https://res.craft.do/assets/theme/cards/vibrant-nights-card-4.jpeg\", \"UIB%3DT%7D*S4Xq8KJMiySx%3F8%24Xj%25daf%25ws%3AQ%3BWC\") | image(\"https://res.craft.do/assets/theme/cards/vibrant-nights-card-5.jpeg\", \"U40.AdZRY-l%24UylOkphmiee%3DcUeVk%3AepigcU\") | image(\"https://res.craft.do/assets/theme/cards/vibrant-nights-card-6.jpeg\", \"U99uDR%2B%5E04LvR%2CRSX7thD%2CV_xsjFtOjaV%5EbZ\")"
+            }
+        },
+        {
+            "themeId": "weather-clearing",
+            "title": "Weather Clearing",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/winter-light-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/winter-light-cover.jpeg",
+                "aspectRatio": 1.2722,
+                "imageWidth": 1000,
+                "rawImageWidth": 1000,
+                "blurHash": "UhLzpO~SM}WXIrM}axxYIqIWj[s:R*RkWCWV"
+            },
+            "pageStyleProps": {
+                "theme-id": "weather-clearing",
+                "background-color": "#E8E4D2 #E8E4D2",
+                "color": "#39698C #39698C",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/winter-light-backdrop.jpeg\", \"dFMtW%7C_2H?bF*0XAxWNG0hEMM%7B%25M9cD*%250oM9cRls+M%7C\")",
+                "card-assets": "#39698C #39698C"
+            }
+        },
+        {
+            "themeId": "outlines",
+            "title": "Outlines",
+            "pageStyleProps": {
+                "theme-id": "outlines",
+                "background-color": "#3E210C #3E210C",
+                "color": "#DBC8AF #DBC8AF",
+                "font-family": "system-serif",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/outlines-backdrop.jpeg\", \"dJEePjWXxDRk~B5Sxat7=%7BxaR*jZs-%250Rj%2519aIoIqxt\")",
+                "card-assets": "#DBC8AF #DBC8AF"
+            }
+        },
+        {
+            "themeId": "time-period",
+            "title": "Time Period",
+            "pageStyleProps": {
+                "theme-id": "time-period",
+                "background-color": "#181C1F #181C1F",
+                "color": "#F1CC8B #F1CC8B",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/time-period-backdrop.jpeg\", \"d5BV%7CRxZ=%5ER+IqS3t6kC~ToLE3WWM%7CS4%251WY_0kBE3Rk\")",
+                "card-assets": "#F1CC8B #F1CC8B"
+            }
+        },
+        {
+            "themeId": "silk-screen",
+            "title": "Silk Screen",
+            "pageStyleProps": {
+                "theme-id": "silk-screen",
+                "background-color": "#DEDCD4 #DEDCD4",
+                "color": "#746C5B #746C5B",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/silk-screen-backdrop.jpeg\", \"dDO3%7CHMyM%7Ct7~qaxRjWBM%7Bj%5DxaWBbaWBWCayRjayayof\")",
+                "card-assets": "#DEDCD4 #DEDCD4"
+            }
+        },
+        {
+            "themeId": "bubble-optics",
+            "title": "Bubble Optics",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/bubble-optics-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/bubble-optics-cover.jpeg",
+                "aspectRatio": 1.3333,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UMRLk0v$%#?b_MWCRObJt.o|a_R6-;t7bctm"
+            },
+            "pageStyleProps": {
+                "theme-id": "bubble-optics",
+                "background-color": "#465D6E #465D6E",
+                "color": "#EAEADF #EAEADF",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/bubble-optics-backdrop.jpeg\", \"d6E%7B%7CLT0NI0g-=4;x%5E-p00%5E$xtNgNe-oWZNL~U4:?Ft6\")",
+                "card-assets": "#EAEADF #EAEADF"
+            }
+        },
+        {
+            "themeId": "cold-beauty",
+            "title": "Cold Beauty",
+            "pageStyleProps": {
+                "theme-id": "cold-beauty",
+                "background-color": "#F5F5EF #F5F5EF",
+                "color": "#5996A6 #5996A6",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/cold-beauty-backdrop.jpeg\", \"d8HW=NXn56~VxasCkC%252IBixxtIo9uE1-Vs-E1M%7B$*s:\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/cold-beauty-card-1.jpeg\", \"UtKVv%5Bt8R*xu~VRjbHof-pazWBWV-pt7ofWB\") | image(\"https://res.craft.do/assets/theme/cards/cold-beauty-card-2.jpeg\", \"UjI5GFt6WBozkDRjWBj%5B~qWWazofkDjZf6a%23\") | image(\"https://res.craft.do/assets/theme/cards/cold-beauty-card-3.jpeg\", \"UMKB%5D-%25gXT%252~Wf6nhxuRjWBaxof9ubHX8ae\") | image(\"https://res.craft.do/assets/theme/cards/cold-beauty-card-4.jpeg\", \"U7FFTzjW00x%5DITNGkCM%7B00-%3B_4Ri~qInD%25t8\") | image(\"https://res.craft.do/assets/theme/cards/cold-beauty-card-5.jpeg\", \"UsI~V%3D-%3DRjIU_4azRjxuofIUt7oftRfkkBWB\") | image(\"https://res.craft.do/assets/theme/cards/cold-beauty-card-6.jpeg\", \"UkH.Wq_3IUt6_N%25NRiRjxus%3AofWB%25Mt7oft7\")"
+            }
+        },
+        {
+            "themeId": "shopping-list",
+            "title": "Shopping List",
+            "pageStyleProps": {
+                "theme-id": "shopping-list",
+                "background-color": "#FBF7F3 #FBF7F3",
+                "color": "#1E4C41 #1E4C41",
+                "font-family": "system-rounded",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/shopping-list-backdrop.jpeg\", \"@AJafgH??%5DDN.AE0%25~4n-:TI$%2Cw%7CBoTcIWE5NZ%25LoxniM%7B%25K-UnnOEV?sV\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/shopping-list-card-1.jpeg\", \"UNH-%5BMxa%7DHxuniRjt8t6%2Csj%5DW%3DM%7BS1WAjrog\") | image(\"https://res.craft.do/assets/theme/cards/shopping-list-card-2.jpeg\", \"UBI~Fm%3F%3D.FVb9u-o%25cE4-%7COQec-q%3Fsa7IVXL\") | image(\"https://res.craft.do/assets/theme/cards/shopping-list-card-3.jpeg\", \"UNL%7CozITOnyX_N9FbExu.mNFaLwJo4xBjdNH\") | image(\"https://res.craft.do/assets/theme/cards/shopping-list-card-4.jpeg\", \"UYIN%7Bmt7aIoe~pfk9FR*%3Faj%5BM%7BayIUj%5Bxuay\") | image(\"https://res.craft.do/assets/theme/cards/shopping-list-card-5.jpeg\", \"UrN09%24xukqxt~WbHjFoLfioeV%3FWC%252j%5BkCa%7C\") | image(\"https://res.craft.do/assets/theme/cards/shopping-list-card-6.jpeg\", \"UDL%3B%24%7B5rtR_2lU%237TKWW.m.8%237Ej-%3BN%7BRk-7\")"
+            }
+        },
+        {
+            "themeId": "handmade",
+            "title": "Handmade",
+            "pageStyleProps": {
+                "theme-id": "handmade",
+                "background-color": "#F5D5D9 #F5D5D9",
+                "color": "#3146E2 #3146E2",
+                "font-family": "system-rounded",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-handmade.jpeg\", \"L5J?U-WZa8WZR=a%23f8a%23%7Dkfio@fi\")",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/handmade-backdrop.jpeg\", \"VBNTzbxfES8w5Qc=Mh01EMXM$myF0%7BveXT%5EB?r-1Kn9$\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/handmade-card-1.jpeg\", \"USQumjo%24Me%5Ej~U-n%24%25RjrG9bTJW%3F-C-Tt7xu\") | image(\"https://res.craft.do/assets/theme/cards/handmade-card-2.jpeg\", \"UYOx%3F%7C%7DJm%2C%24%2C*HSbNZV%5D%2ByrqpIxZ9Exa%25Mr%3F\") | image(\"https://res.craft.do/assets/theme/cards/handmade-card-3.jpeg\", \"UFM7S%5BDi*h~C%25%2500n2-p%3A4-%3Do%5DA9%3DqE9N4AW\") | image(\"https://res.craft.do/assets/theme/cards/handmade-card-4.jpeg\", \"UCPP_g~VoM~o%3FawbbF%2CCj%5Bjua%7Co2%3FawbbF%2CV\") | image(\"https://res.craft.do/assets/theme/cards/handmade-card-5.jpeg\", \"UNM*Nn_0szQ%2C*Ix%3FoukXrTH%40xdtm%25gkrt9em\") | image(\"https://res.craft.do/assets/theme/cards/handmade-card-6.jpeg\", \"USP%24Rb%3FJRRm%2C_Mogw0s%3D%24xNxjEfi%24%2CNLM%7Bt2\")"
+            }
+        },
+        {
+            "themeId": "frozen",
+            "title": "Frozen",
+            "pageStyleProps": {
+                "theme-id": "frozen",
+                "background-color": "#ECDDFE #ECDDFE",
+                "color": "#FF5500 #FF5500",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "none",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/frozen-card-1.jpeg\", \"UmP%259uxcfijw~oj%3BWEt6t3j%5BjsofxvWFfiay\") | image(\"https://res.craft.do/assets/theme/cards/frozen-card-2.jpeg\", \"UIN%2CM%2B%253Ri%25M~pfiofogkRoej%5BWC%3FIkCagof\") | image(\"https://res.craft.do/assets/theme/cards/frozen-card-3.jpeg\", \"UCNmT%25-qWC-%3D%5E-kCbHj%5DNGoefQay~XoejZj%5B\") | image(\"https://res.craft.do/assets/theme/cards/frozen-card-4.jpeg\", \"UHOyet%252oe-p_NofayjuoyWBWBaf%5E%2CoeayoL\") | image(\"https://res.craft.do/assets/theme/cards/frozen-card-5.jpeg\", \"UEOMN%5E-qof-q~Xjbayofogaeayay%5E%2Cj%5Bayj%5D\") | image(\"https://res.craft.do/assets/theme/cards/frozen-card-6.jpeg\", \"UnQT3%5Dxuofxu%3FdWTa%23j%5Dfyj%5BWUWB%25Lj%5Dj%5Bj%5B\")"
+            }
+        },
+        {
+            "themeId": "optical-illusions",
+            "title": "Optical Illusions",
+            "pageStyleProps": {
+                "theme-id": "optical-illusions",
+                "background-color": "#FCF5DB #FCF5DB",
+                "color": "#3146E2 #3146E2",
+                "font-family": "system-rounded",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-beige-paper.jpg\", \"LARe~Z?wM%7BMdMHj?ozM_%25gt7oftR\")",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/optical-illusions-backdrop.jpeg\", \"VmM?*~t%2CD-oas:t:WAaiogWA0Ca1XOe.oMV%7DkCa%23WCob\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/optical-illusions-card-1.jpeg\", \"U~JJI.xaFzoz*0sokCj%5BEkaerqaxt6kCbEj%5B\") | image(\"https://res.craft.do/assets/theme/cards/optical-illusions-card-2.jpeg\", \"U%23S~z%40xvavxu%25Qj%3DfTj%5BfLfOj%5DfOxvj%5Djqj%5B\") | image(\"https://res.craft.do/assets/theme/cards/optical-illusions-card-3.jpeg\", \"UZQI%40sctR6%3B2%7DR%2CoT0kS%2BakrT0nMYQT0XTS%7D\") | image(\"https://res.craft.do/assets/theme/cards/optical-illusions-card-4.jpeg\", \"UPSZ5*kd%3D%2C%7D%3F~Ur%3FM-OIs%3Ff.OZWG%5E*sjS%40St\") | image(\"https://res.craft.do/assets/theme/cards/optical-illusions-card-5.jpeg\", \"UORWJ6~B-ok%40_3t7M%7BNG%2C-9voz%3D_%3FakCNGWB\") | image(\"https://res.craft.do/assets/theme/cards/optical-illusions-card-6.jpeg\", \"UTMlLSW%2B2_P9UaO%3F%241OX2xi%7B%2BsX7%25Z%24kR-W%3D\")"
+            }
+        },
+        {
+            "themeId": "retro",
+            "title": "Retro",
+            "pageStyleProps": {
+                "theme-id": "retro",
+                "background-color": "#141414 #141414",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/retro-backdrop.jpeg\", \"V6C~Mai:00$%2CafIj0J%25E=$9b0JIyw9~TIXnz-?D-%25B-m\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/retro-card-1.jpeg\", \"U6FNoP%7D%5E0J%3F3%3FN-T9%245Y00%3DpM%3B0o%3Dhxl-TwP\") | image(\"https://res.craft.do/assets/theme/cards/retro-card-2.jpeg\", \"UKJY-%5EaQbIxH%7D%2CR%2Cj%3DWXxVn~oJs*%24%2CoJWYj%5D\") | image(\"https://res.craft.do/assets/theme/cards/retro-card-3.jpeg\", \"U6C%7D%5E%40%3FK00M%5Ew%3Fn%3AELI%2C00RO%7D%5EXlI*WHsuxs\") | image(\"https://res.craft.do/assets/theme/cards/retro-card-4.jpeg\", \"UIFDvU5jEZw%7D%3Dz%3D*EdoII%2C%3DyEOW.-CbDI%3BI-\") | image(\"https://res.craft.do/assets/theme/cards/retro-card-5.jpeg\", \"UEJ~%5Bs%3Fq%3D%3A~1-%3BEjNMJ6O*Os-TXRxwXS-gJ8\") | image(\"https://res.craft.do/assets/theme/cards/retro-card-6.jpeg\", \"UDGjt3bx0kxB~10%5DRj%24l56ERNWjEIyRoR.EL\")"
+            }
+        },
+        {
+            "themeId": "one-of-a-kind",
+            "title": "One of a Kind",
+            "pageStyleProps": {
+                "theme-id": "one-of-a-kind",
+                "background-color": "#DBD5D3 #DBD5D3",
+                "color": "#3B3230 #3B3230",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/one-of-a-kind-backdrop.jpeg\", \"V4M%25l?IU00%25M9F~q%25MM%7BRjt74nof-;M%7B%252-;NGRjofof\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/one-of-a-kind-card-1.jpeg\", \"U9Mi%2Bo%5E%2BjE%3FH~pozt%2CaeozVXWBoe~AVrWBe-\") | image(\"https://res.craft.do/assets/theme/cards/one-of-a-kind-card-2.jpeg\", \"U4HKa%2B%25L%3D%7Bs%2C~VR*j%5B01SONGt7%5Ej%3D%7BIUxa-p\") | image(\"https://res.craft.do/assets/theme/cards/one-of-a-kind-card-3.jpeg\", \"UAM%3F%40*%3FaWB%3FG~pofRjt7ofxuM%7BV%40~WV%40WBV%40\") | image(\"https://res.craft.do/assets/theme/cards/one-of-a-kind-card-4.jpeg\", \"UAODB%2B%3Faj%5B%3Fa~pofayofkCfQkCof~VjsayjZ\") | image(\"https://res.craft.do/assets/theme/cards/one-of-a-kind-card-5.jpeg\", \"U8GR%5E%23-%3Bof%25L_3a%23ofxuxuIVM%7B%252~pt7M%7B%25L\") | image(\"https://res.craft.do/assets/theme/cards/one-of-a-kind-card-6.jpeg\", \"U8K-Xp%3Fbf8%3Fb~qt6ogxDoetRWBtm~qbcaeOZ\")"
+            }
+        },
+        {
+            "themeId": "da-ba-dee",
+            "title": "Da Ba Dee",
+            "pageStyleProps": {
+                "theme-id": "da-ba-dee",
+                "background-color": "#01449D #01449D",
+                "color": "#F7D3C7 #F7D3C7",
+                "font-family": "system",
+                "separator-style": "washi(pattern, \"hex\", #F7D3C7 #F7D3C7)",
+                "backdrop": "none",
+                "card-assets": "#F7D3C7 #F7D3C7"
+            }
+        },
+        {
+            "themeId": "almost-bright",
+            "title": "Almost Bright",
+            "pageStyleProps": {
+                "theme-id": "almost-bright",
+                "background-color": "#5A5D6F #5A5D6F",
+                "color": "#F5E4B5 #F5E4B5",
+                "font-family": "system-serif",
+                "backdrop": "none",
+                "separator-style": "washi(pattern, \"solid\", #F5E4B5 #F5E4B5)",
+                "card-assets": "#F5E4B5 #F5E4B5"
+            }
+        },
+        {
+            "themeId": "leaves",
+            "title": "Leaves",
+            "pageStyleProps": {
+                "theme-id": "leaves",
+                "background-color": "#E6E8FF #E6E8FF",
+                "color": "#33A56D #33A56D",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "none",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/leaves-card-1.jpeg\", \"UMLY3x01M%23.7_L%25f%25L%25L%25MxtofWE.5ofa%24M%7C\") | image(\"https://res.craft.do/assets/theme/cards/leaves-card-2.jpeg\", \"USP%40H%24kOoN%25L~XoeWUs%3BRia%23oMWB.6a%7Baxj%3F\") | image(\"https://res.craft.do/assets/theme/cards/leaves-card-3.jpeg\", \"UkNU8wod%3Fb%25L~pofMyt7t8oeWUWCtPWBj%5BWB\") | image(\"https://res.craft.do/assets/theme/cards/leaves-card-4.jpeg\", \"UJO%3A%7CI%25Mj%5E-%3A.AWBWBayM%7Cj%5BkBay%3Faj%5Bj%5Bof\") | image(\"https://res.craft.do/assets/theme/cards/leaves-card-5.jpeg\", \"UFMIDr.6WT%25f_4bEf%23ofV%23bEkBfP%3Fuk9a%23kA\") | image(\"https://res.craft.do/assets/theme/cards/leaves-card-6.jpeg\", \"UGL~2H%25gou-%3B_4kBR%25j%5DaibEa%23ay%3Fuj%5Ba~j%5D\")"
+            }
+        },
+        {
+            "themeId": "warmer-layers",
+            "title": "Warmer Layers",
+            "pageStyleProps": {
+                "theme-id": "warmer-layers",
+                "background-color": "#E9D1B3 #E9D1B3",
+                "color": "#6F4B20 #6F4B20",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/warmer-layers-backdrop.jpeg\", \"@sGadhNINd~AR+R-xtWVayS4WBs-NHWBs.NHayoeR+WVoeWVWVoLWXWVj%5B\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/warmer-layers-card-1.jpeg\", \"UAJ7p%2B~pxu%3FFxWIoD*WB9FIURj%252Io-pxaoz\") | image(\"https://res.craft.do/assets/theme/cards/warmer-layers-card-2.jpeg\", \"UNJGfn%5Eh-oSi~pR%2BW%3Fxt%25gWBR-t6t7oJkCbH\") | image(\"https://res.craft.do/assets/theme/cards/warmer-layers-card-3.jpeg\", \"UFH0z-M%7CIps%3A~qv~sSWXuO9vbFt6uORjI%3BbH\") | image(\"https://res.craft.do/assets/theme/cards/warmer-layers-card-4.jpeg\", \"UDG%243IE%23AExF%7DXsmJ9w%7B1KjaoLWpNcAE%24if*\") | image(\"https://res.craft.do/assets/theme/cards/warmer-layers-card-5.jpeg\", \"UUC6*%40%25LRkoe*HkpR*bGCQX8jFW%3A%25Lwwaea%7B\") | image(\"https://res.craft.do/assets/theme/cards/warmer-layers-card-6.jpeg\", \"U8EKof~AJU%24%25-U-Ut6WW0hadIpIp5RRj%3DwbH\")"
+            }
+        },
+        {
+            "themeId": "monday-to-friday",
+            "title": "Monday to Friday",
+            "pageStyleProps": {
+                "theme-id": "monday-to-friday",
+                "background-color": "#EEF4F6 #EEF4F6",
+                "color": "#24796B #24796B",
+                "font-family": "system",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/monday-to-friday-backdrop.jpeg\", \"fCHx?4=%7B%25Mt7?byD~qNGbb%25Ns;M%7B%25MRP%25MRjxu4.%25LM%7BNGIURjNG_3-pRj-;IUt7\")",
+                "card-assets": "#027558 #027558"
+            }
+        },
+        {
+            "themeId": "blurry-bloom",
+            "title": "Blurry Bloom",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/blurry-bloom-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/blurry-bloom-cover.jpeg",
+                "aspectRatio": 1.499531396438613,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "U8C$[d^h8|-o000zEMw|~V-p4:tQRlninjRQ"
+            },
+            "pageStyleProps": {
+                "theme-id": "blurry-bloom",
+                "background-color": "#E8E4D9 #E8E4D9",
+                "color": "#004D41 #004D41",
+                "font-family": "system-mono",
+                "separator-style": "doodle",
+                "backdrop": "#EC655F #EC655F",
+                "card-assets": "#D6CAB2 #D6CAB2"
+            }
+        },
+        {
+            "themeId": "preservation",
+            "title": "Preservation",
+            "pageStyleProps": {
+                "theme-id": "preservation",
+                "background-color": "#E0E0E0 #E0E0E0",
+                "color": "#61634A #61634A",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/preservation-backdrop.jpeg\", \"fGK_E_4n9FM%7BRj%25MIUM%7D4n9Fxuof~q9GIU?bj%5Dogxut6WBj%5BD%25fP00V@oft7-=of\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/preservation-card-1.jpeg\", \"U13SkH%3F%40x%40tPNEo%5ERQVuMyRQV%5BV%5Ba%23MzafR7\") | image(\"https://res.craft.do/assets/theme/cards/preservation-card-2.jpeg\", \"U8AK4%7D~n%3FaM%7Cx.4%3ARjxt9HR*M%7CoeWB%3FaV%5ER*\") | image(\"https://res.craft.do/assets/theme/cards/preservation-card-3.jpeg\", \"U35%3Dj%5Bx%3D_Kt3%3F%3D--xtRQRUIB%25KDktQRkRRX3\") | image(\"https://res.craft.do/assets/theme/cards/preservation-card-4.jpeg\", \"U49%25X*~Q05-%2Bt5IrRlag4sV%5D-nah%25Iodj%5BoK\") | image(\"https://res.craft.do/assets/theme/cards/preservation-card-5.jpeg\", \"U042%7Cgf%7DMfov03R8DSQ%408ztiyAX3pFS0yBo_\") | image(\"https://res.craft.do/assets/theme/cards/preservation-card-6.jpeg\", \"UBD%2C7I00%253IU~pV%40xun%23XAs.xuMyx%5BocogRj\")"
+            }
+        },
+        {
+            "themeId": "earthbound",
+            "title": "Earthbound",
+            "pageStyleProps": {
+                "theme-id": "earthbound",
+                "background-color": "#705C53 #705C53",
+                "color": "#CCCCCC #CCCCCC",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "#EDDFE0 #EDDFE0",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/earthbound-card-1.jpeg\", \"UCHnpO~VyD%25MV%40oJi_WAX.IoVs%25L-6xuXTM%7C\") | image(\"https://res.craft.do/assets/theme/cards/earthbound-card-2.jpeg\", \"U5A%2B%5DO_30MZ%23008_tl_2%3Fwx%5DVsaKE1E1Rj%24%25\") | image(\"https://res.craft.do/assets/theme/cards/earthbound-card-3.jpeg\", \"U99~Tf%7DXNbI%40sm-9oLJ8I%3Bn%25oebHxZS4WWs.\") | image(\"https://res.craft.do/assets/theme/cards/earthbound-card-4.jpeg\", \"U8FOiXIA00~B00-%3B%25g%3DY5m0fS3%3D%7BWYE2SgEM\") | image(\"https://res.craft.do/assets/theme/cards/earthbound-card-5.jpeg\", \"U5GHI%3A0NE2~9%7Drof9v9bF0smtQWBIBS5w%5E%251\") | image(\"https://res.craft.do/assets/theme/cards/earthbound-card-6.jpeg\", \"UqI5VsD%24IotR~qIURit7%25gRjoJs%3AM%7BofWXWV\")"
+            }
+        },
+        {
+            "themeId": "candybar",
+            "title": "Candybar",
+            "pageStyleProps": {
+                "theme-id": "candybar",
+                "background-color": "#FFF4B5 #FFF4B5",
+                "color": "#3B56B4 #3B56B4",
+                "font-family": "system-rounded",
+                "separator-style": "doodle",
+                "backdrop": "#C4D7FF #C4D7FF",
+                "card-assets": "#FFD7C4 #FFD7C4 | #C4D7FF #C4D7FF | #87A2FF #87A2FF | #C6EFCE #C6EFCE"
+            }
+        },
+        {
+            "themeId": "skylight",
+            "title": "Skylight",
+            "pageStyleProps": {
+                "theme-id": "skylight",
+                "background-color": "#D2E0FB #D2E0FB",
+                "color": "#4D7BAE #4D7BAE",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "#FEF9D9 #FEF9D9",
+                "card-assets": "#8EACCD #8EACCD"
+            }
+        },
+        {
+            "themeId": "inner-personality",
+            "title": "Inner Personality",
+            "pageStyleProps": {
+                "theme-id": "inner-personality",
+                "background-color": "#FFDBE5 #FFDBE5",
+                "color": "#181C14 #181C14",
+                "font-family": "system-serif",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-purr-statement.jpg\", \"LJFOV%5Eoe~ooJxaozfkt6xtofWBt6\")",
+                "backdrop": "#181C14 #181C14",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/inner-personality-card-1.jpeg\", \"UVIX%5DfIUkq_4nNWVobRPIU%25g-pWBx%5BtRs%3At7\") | image(\"https://res.craft.do/assets/theme/cards/inner-personality-card-2.jpeg\", \"UCBysv%3D%7C000fD*ja%252NG00R*~V%252t7NGWB-p\") | image(\"https://res.craft.do/assets/theme/cards/inner-personality-card-3.jpeg\", \"UQDKGI%5E%2BHrTdIAIAWVt7%7Dt.8X-n4-%3Bt6M%7BR*\") | image(\"https://res.craft.do/assets/theme/cards/inner-personality-card-4.jpeg\", \"UFIOb1I%3Btm%3Fv.AIotQ%25MNxofM%7BWA_N%25MDiD%25\") | image(\"https://res.craft.do/assets/theme/cards/inner-personality-card-5.jpeg\", \"UwFPHSRj-%3BRj~qj%5B%25MfQ-%3Bxuoft7xut7WBt7\") | image(\"https://res.craft.do/assets/theme/cards/inner-personality-card-6.jpeg\", \"UHLzaA~W9u%252Mx9as%3ARPVrNGs%3Ao%7D-oozR%2BV%40\")"
+            }
+        },
+        {
+            "themeId": "planetopia",
+            "title": "Planetopia",
+            "pageStyleProps": {
+                "theme-id": "planetopia",
+                "background-color": "#330F06 #330F06",
+                "color": "#F7C6BA #F7C6BA",
+                "font-family": "system",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/planetopia-backdrop.jpeg\", \"V9Ch+l-VH%5Bniv$00V%5Bx%5BjFxa_Lo%7C5RRkJ857E2NHtQxG\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/planetopia-card-1.jpeg\", \"UE8g~lMx%25it7Y8NGXAozIpxuMwofn%24ofRORj\") | image(\"https://res.craft.do/assets/theme/cards/planetopia-card-2.jpeg\", \"UFHJ%7BPMy4%3Dxt%7Dn%2500%25W%3D05kWS4NGE3NH%3Dvn%24\") | image(\"https://res.craft.do/assets/theme/cards/planetopia-card-3.jpeg\", \"UPGbL%23%2529vbH~ot6E2ay0MNGnhf6IWoexYWV\") | image(\"https://res.craft.do/assets/theme/cards/planetopia-card-4.jpeg\", \"UOF%3DaCjF9a-%3A~Ut6D*Rj0gt7M%7BIVEMj%5Bxtof\") | image(\"https://res.craft.do/assets/theme/cards/planetopia-card-5.jpeg\", \"UJ8Ffv*0bptlB%40RiZzWB%2BXVXMdV%5BMvtSo%24kB\") | image(\"https://res.craft.do/assets/theme/cards/planetopia-card-6.jpeg\", \"UC7%3AOvD*OW.mMeofHqs%2CHXx%5Dr%3FMJl9RPyYM%7B\")"
+            }
+        },
+        {
+            "themeId": "fruitymalistic",
+            "title": "Fruity",
+            "pageStyleProps": {
+                "theme-id": "fruitymalistic",
+                "background-color": "#EBEBEB #EBEBEB",
+                "color": "#D6000F #D6000F",
+                "font-family": "system",
+                "separator-style": "washi(pattern, \"hex\", #FFFFFF #FFFFFF)",
+                "backdrop": "#FFFFFF #FFFFFF",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/fruitymalistic-card-1.jpeg\", \"UVRM3wxa.m%25L-pofRjae.mtRMdRP.8R*kBt7\") | image(\"https://res.craft.do/assets/theme/cards/fruitymalistic-card-2.jpeg\", \"UOR%7Bof%3Fb%3F%5E.8-%3Bj%5BayjZ%3FvW%3BDOni%25MjZoLof\") | image(\"https://res.craft.do/assets/theme/cards/fruitymalistic-card-3.jpeg\", \"UWRCb%40%252yr.8%252ozbba0y%3FNHMJaK%25gR5nOpc\") | image(\"https://res.craft.do/assets/theme/cards/fruitymalistic-card-4.jpeg\", \"UTRyW-%3Fb*Jx%5D%25Mj%5BkCj%40%25%24RkMcxa%25gj%5BWBfR\") | image(\"https://res.craft.do/assets/theme/cards/fruitymalistic-card-5.jpeg\", \"UESY%3AS%5E%2B.m_N%3FboLkCj%5B.mR*DOxG_3bHVss%3A\") | image(\"https://res.craft.do/assets/theme/cards/fruitymalistic-card-6.jpeg\", \"UkRCrW-%3B%3F%5Eo%7D%252j%5BbHj%5BozWVV%40oexuj%5BkCfk\")"
+            }
+        },
+        {
+            "themeId": "shape-shifting",
+            "title": "Shape Shift",
+            "pageStyleProps": {
+                "theme-id": "shape-shifting",
+                "background-color": "#000000 #000000",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system",
+                "separator-style": "line",
+                "backdrop": "#FFFFFF #FFFFFF",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/shape-shifting-card-1.jpeg\", \"UFC%3Fr%5Dj%5B%25MxuD%25%25MIUWB00M%7BM%7BIU~qD%25%3Fb%25M\") | image(\"https://res.craft.do/assets/theme/cards/shape-shifting-card-2.jpeg\", \"UDHV9w~qD%25_3M%7BM%7BWBt7D%25t7t7D%25_3ayM%7BfQ\") | image(\"https://res.craft.do/assets/theme/cards/shape-shifting-card-3.jpeg\", \"UXK1%25f-%3B9F~q9F9FRj9F00j%5B%25MxuWB-%3BWBWB\") | image(\"https://res.craft.do/assets/theme/cards/shape-shifting-card-4.jpeg\", \"UcMtaORjM%7BIU~qM%7Bj%5BD%259FIUD%25j%5B-%3BM%7BIUj%5B\") | image(\"https://res.craft.do/assets/theme/cards/shape-shifting-card-5.jpeg\", \"UzMtaO%3Fbj%5B%25M-%3BxuM%7Bay~qM%7Bj%5Bj%5BayfQxuj%5B\") | image(\"https://res.craft.do/assets/theme/cards/shape-shifting-card-6.jpeg\", \"U7J8V0_3009F%25M%25Mxu~q00j%5Bj%5BM%7B_3xuM%7BM%7B\")"
+            }
+        },
+        {
+            "themeId": "stillness",
+            "title": "Stillness",
+            "pageStyleProps": {
+                "theme-id": "stillness",
+                "background-color": "#DBF3FA #DBF3FA",
+                "color": "#116076 #116076",
+                "font-family": "system",
+                "separator-style": "washi(pattern, \"stripe\", #71B2FF #71B2FF)",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/stillness-backdrop.jpeg\", \"fGKCFX0u:4x9%2C%2CJVIl-PkEItV%5BXTNKnhtQtRbwadv%7DE+afs8bw$exCbuxBRkI%5Br?\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/stillness-card-1.jpeg\", \"UDSWof%5E-f%24%3D%7C.nnUaeeUQ%5DidkWba~Ci%7Bj%5Boz\") | image(\"https://res.craft.do/assets/theme/cards/stillness-card-2.jpeg\", \"UkBiK%5EoTMIoitknmaMWCWXj%40j%5BbGo%23ahbGag\") | image(\"https://res.craft.do/assets/theme/cards/stillness-card-3.jpeg\", \"UiKy9%5ENF-qxt~qoeoMf7t7s%3AR%25ayS0jubFWB\") | image(\"https://res.craft.do/assets/theme/cards/stillness-card-4.jpeg\", \"UkMGiVsrtPs%3D~oWCj%3Fj%5D%25eoeRkWBRSj%5BoMay\") | image(\"https://res.craft.do/assets/theme/cards/stillness-card-5.jpeg\", \"UCR%5Dmt%5E-cG%5E6%5BmoGVzn.Q%2Ci_VZo~%7D%5DoLaxnj\") | image(\"https://res.craft.do/assets/theme/cards/stillness-card-6.jpeg\", \"UGS5OL%5EwRS%3Ds%3F%5Btka0oMgPkXo%7Df4%2CCfAkCjE\")"
+            }
+        },
+        {
+            "themeId": "start-of-the-day",
+            "title": "Start of the Day",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/start-of-the-day-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/start-of-the-day-cover.jpeg",
+                "aspectRatio": 1.499531396438613,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UUEoSos:jYju~VRkaexaozM{RjozbbWBNGa{"
+            },
+            "pageStyleProps": {
+                "theme-id": "start-of-the-day",
+                "background-color": "#FAF7F0 #FAF7F0",
+                "color": "#B17457 #B17457",
+                "font-family": "system-mono",
+                "separator-style": "doodle",
+                "backdrop": "#4A4947 #4A4947",
+                "card-assets": "#D6CAB2 #D6CAB2"
+            }
+        },
+        {
+            "themeId": "hopefully-sweet",
+            "title": "Hopefully Sweet",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/hopefully-sweet-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/hopefully-sweet-cover.jpeg",
+                "aspectRatio": 1.499531396438613,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UBLL51_G2.-iCy^{GWpX6N]*$z%vIYm=n7x="
+            },
+            "pageStyleProps": {
+                "theme-id": "hopefully-sweet",
+                "background-color": "#F5F5F5 #F5F5F5",
+                "color": "#604CC3 #604CC3",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "#FF6600 #FF6600",
+                "card-assets": "#FF6600 #FF6600"
+            }
+        },
+        {
+            "themeId": "holowaves",
+            "title": "Holowaves",
+            "pageStyleProps": {
+                "theme-id": "holowaves",
+                "background-color": "#E7F5F9 #E7F5F9",
+                "color": "#690BF4 #690BF4",
+                "font-family": "system-mono",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-radiants.jpg\", \"LBPiSuGdYdvP_KStnUoh%5EvrWvU-n\")",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/holowaves-backdrop.jpeg\", \"f7He%25%5B02+%5Dr?MN?9D39P*e*OT%5DM%7DVaTHu2K$CQ%2CV@uUDxBK4:SWB+HzEiIrGO;Fe\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/holowaves-card-1.jpeg\", \"UKJk%5BwIBWS.0~Xr%5Eo%7CxsxUknX9Rq~B%251V%5DJA\") | image(\"https://res.craft.do/assets/theme/cards/holowaves-card-2.jpeg\", \"UELDy2EUN1pd~pY3I9%2529Hr_afRP%3FvbW%24yVs\") | image(\"https://res.craft.do/assets/theme/cards/holowaves-card-3.jpeg\", \"UGKd.1tlR6.S~W%25zV%5DWB_NV%3DVts%25x_aJs%3FtR\") | image(\"https://res.craft.do/assets/theme/cards/holowaves-card-4.jpeg\", \"UJE4%24KVZnzOZ%25%25%25Mt5WYwcSjbwXA%25gR%25R%3Abw\") | image(\"https://res.craft.do/assets/theme/cards/holowaves-card-5.jpeg\", \"UEL%7DKeD%24IUt6~qx%5Dt8%25Lsq%253ofob_NNGRiRQ\") | image(\"https://res.craft.do/assets/theme/cards/holowaves-card-6.jpeg\", \"UQHfh_xKV%7Bx_.Tng%25JbYyBe%3BNMRP%25hRpMzWV\")"
+            }
+        },
+        {
+            "themeId": "end-of-day",
+            "title": "End of Day",
+            "pageStyleProps": {
+                "theme-id": "end-of-day",
+                "background-color": "#E6DACF #E6DACF",
+                "color": "#1E4C41 #1E4C41",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/end-of-day-backdrop.jpeg\", \"fOCsv@%7D@R69%5EENn$uiSzR6w%5Er?wJOWRjn%25t6bHWCRksAt7SgS4S4ENS2t6jZsmSh\")",
+                "card-assets": "gradient(#E6DACF #E6DACF, #CFE4E6 #CFE4E6) | gradient(#E6DACF #E6DACF, #E6CFE1 #E6CFE1) | gradient(#E6DACF #E6DACF, #E5E6CF #E5E6CF)"
+            }
+        },
+        {
+            "themeId": "drawn-in-the-sky",
+            "title": "Drawn in the Sky",
+            "pageStyleProps": {
+                "theme-id": "drawn-in-the-sky",
+                "background-color": "#1C4855 #1C4855",
+                "color": "#E3DBA6 #E3DBA6",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/drawn-in-the-sky-backdrop.jpeg\", \"V28Y@n-.00IW0200bF%252oLt6LzRk?bt7-n8wt6NGaeR+\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/drawn-in-the-sky-card-1.jpeg\", \"UFCj%404_Me.%25gv2t7oeRP02NGoLNG-%3AoLozxu\") | image(\"https://res.craft.do/assets/theme/cards/drawn-in-the-sky-card-2.jpeg\", \"UEBN_*_Mr%3Bx%5DDkSzM_Rj01IUkCbb%5E%25xtxvtR\") | image(\"https://res.craft.do/assets/theme/cards/drawn-in-the-sky-card-3.jpeg\", \"UAD%5DJR~pt2-qDg%252Riju029Fa%23t9_2oxxvs%3A\") | image(\"https://res.craft.do/assets/theme/cards/drawn-in-the-sky-card-4.jpeg\", \"UFFF7o~UIqt50%2CWXM%7DR%2C4pM%7BxYWB%25Lxtt6WC\") | image(\"https://res.craft.do/assets/theme/cards/drawn-in-the-sky-card-5.jpeg\", \"ULHURK~VS4xt5%2CX7WCWB4VVsfPWB%3FaX8ofxt\") | image(\"https://res.craft.do/assets/theme/cards/drawn-in-the-sky-card-6.jpeg\", \"UIF%24OS~oxa%252M%7Ds%3AM%7CWB01M%7BoxWB%3Fat7t7oy\")"
+            }
+        },
+        {
+            "themeId": "pre-phones",
+            "title": "Pre-Phones",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/pre-phones-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/pre-phones-cover.jpeg",
+                "aspectRatio": 1.499531396438613,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UFAA8cNGRjV@~pRjozad%MRjtRoeWBaexvoz"
+            },
+            "pageStyleProps": {
+                "theme-id": "pre-phones",
+                "background-color": "#FFF5E4 #FFF5E4",
+                "color": "#6A9C89 #6A9C89",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "#CD5C08 #CD5C08",
+                "card-assets": "#6A9C89 #6A9C89"
+            }
+        },
+        {
+            "themeId": "little-world",
+            "title": "Little World",
+            "pageStyleProps": {
+                "theme-id": "little-world",
+                "background-color": "#FEF9D9 #FEF9D9",
+                "color": "#A21B76 #A21B76",
+                "font-family": "system-rounded",
+                "separator-style": "washi(pattern, \"hex\", #FFABE4 #FFABE4)",
+                "backdrop": "#FFE0F5 #FFE0F5",
+                "card-assets": "#E0FFE1 #E0FFE1"
+            }
+        },
+        {
+            "themeId": "stop-time",
+            "title": "Stop Time",
+            "pageStyleProps": {
+                "theme-id": "stop-time",
+                "background-color": "#D2BECB #D2BECB",
+                "color": "#C13B29 #C13B29",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "#597394 #597394",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/stop-time-card-1.jpeg\", \"UjI%24HAkC%25Mt7RiWBkCkB~payRjofkVfQs%3Aj%5B\") | image(\"https://res.craft.do/assets/theme/cards/stop-time-card-2.jpeg\", \"UaHe%3F%5Et7%3Fbof8%7BWBt7WB~pWVRQt7M%7Bayofju\") | image(\"https://res.craft.do/assets/theme/cards/stop-time-card-3.jpeg\", \"UXMG%40mxa%3FbxuMxWBxuj%5B%3F%5EbbRPWCxZs%3ARkR*\") | image(\"https://res.craft.do/assets/theme/cards/stop-time-card-4.jpeg\", \"UXI6D%2Bxu%3FHtREMf6oLWV~pkCM%7Bj%40Inayt7j%5B\") | image(\"https://res.craft.do/assets/theme/cards/stop-time-card-5.jpeg\", \"UXLEp9%25M%253t7-.oeWCj%5B~pWBWAof4.WCxtWB\") | image(\"https://res.craft.do/assets/theme/cards/stop-time-card-6.jpeg\", \"UaG%5D%5DnW%3D%3FHtR4%3Aa%7BxuWC~Vt7RjafS4a%7De.jF\")"
+            }
+        },
+        {
+            "themeId": "bright-sun",
+            "title": "Bright Sun",
+            "pageStyleProps": {
+                "theme-id": "bright-sun",
+                "background-color": "#FEFBE9 #FEFBE9",
+                "color": "#5613F5 #5613F5",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "#FFED94 #FFED94",
+                "card-assets": "#5613F5 #5613F5"
+            }
+        },
+        {
+            "themeId": "floradora",
+            "title": "Floradora",
+            "pageStyleProps": {
+                "theme-id": "floradora",
+                "background-color": "#DCD6C6 #DCD6C6",
+                "color": "#726646 #726646",
+                "font-family": "system-rounded",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/floradora-backdrop.jpeg\", \"@4NwM~$y0m_4DhoeS$WVNH%25Mj;V@IUxuD$tR-;s.RORj%251%25Mj%5Dj%5DIUaes-\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/floradora-card-1.jpeg\", \"UIQT4M%3Fb%25N%25M-%3ARiM_t7%25Mj%3Fj%3Fof_NofWBof\") | image(\"https://res.craft.do/assets/theme/cards/floradora-card-2.jpeg\", \"U9KLQ%23%3Fa4%3A-%3A_MxuoeWTDOt7s%3DV%40%3FatRoLWY\") | image(\"https://res.craft.do/assets/theme/cards/floradora-card-3.jpeg\", \"ULRC*y-%3B%3Fc~q%3Fcj%5BR%25WV%3Fvt7D%25MyyCa%7BjFoe\") | image(\"https://res.craft.do/assets/theme/cards/floradora-card-4.jpeg\", \"UJN%2Cu3XpE4~qxrM%7Bog%25LIUs.Rit6-.ogR.oz\") | image(\"https://res.craft.do/assets/theme/cards/floradora-card-5.jpeg\", \"UGQ%2C5g~q%3F%5E-%3B~WkVNGaeyqMwDix%5D-%3BV%40RPoz\") | image(\"https://res.craft.do/assets/theme/cards/floradora-card-6.jpeg\", \"ULKxM8xu9at8%25MIVWXtR*0a%23Mwj%5B-%3Bt7WAkC\")"
+            }
+        },
+        {
+            "themeId": "childhood",
+            "title": "Childhood",
+            "pageStyleProps": {
+                "theme-id": "childhood",
+                "background-color": "#E7DEE2 #E7DEE2",
+                "color": "#613E13 #613E13",
+                "font-family": "system-rounded",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-childhood.jpg\", \"L6NcH5xnRqWHD%7Bxla%23-dIfN5WFIx\")",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/childhood-backdrop.jpeg\", \"@1MPwi-qoaxej%5BobWFWFj=xMobxloaN5t1xft0WGWFN5WFn@N5RqN5If%25B\")",
+                "card-assets": "#BC9FB6 #BC9FB6 | #E6CC48 #E6CC48 | #BE4049 #BE4049 | #E3D9DD #E3D9DD | #3B4867 #3B4867 | #D08558 #D08558"
+            }
+        },
+        {
+            "themeId": "electric",
+            "title": "Electric",
+            "pageStyleProps": {
+                "theme-id": "electric",
+                "background-color": "#1527EB #1527EB",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/theme-washi/electric-washi.jpg\", \"LPE{7FDu,+oMs,n$e-oG5etiJEWD\")",
+                "backdrop": "#ED6D3E #ED6D3E",
+                "card-assets": "#D3FC64 #D3FC64"
+            }
+        },
+        {
+            "themeId": "geometric",
+            "title": "Geometric",
+            "pageStyleProps": {
+                "theme-id": "geometric",
+                "background-color": "#EEEEF0 #EEEEF0",
+                "color": "#1F2225 #1F2225",
+                "font-family": "system-mono",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/geometric-backdrop.jpeg\", \"@ILN.4of%25M-;oft7?bay_3-;WB~q9Fj%5B9F9FWBD%25j%5BWBM%7Bxuj%5B9FRjayWB\")",
+                "card-assets": "#252525 #252525"
+            }
+        },
+        {
+            "themeId": "gradient",
+            "title": "Gradient",
+            "pageStyleProps": {
+                "theme-id": "gradient",
+                "background-color": "#000000 #000000",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-radiants.jpg\", \"LBPiSuGdYdvP_KStnUoh%5EvrWvU-n\")",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/gradient-backdrop.jpeg\", \"@WG%2CCkc%7Cvhrtv~rcW;S%7Doca~s9S5jZbGf8sAnjnjf8njahjufjbFfPj?jb\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/gradient-card-1.jpeg\", \"U%23KweM%7CntdwM%5DepnJpagxAOrNfs*t7ahobs9\") | image(\"https://res.craft.do/assets/theme/cards/gradient-card-2.jpeg\", \"URKu%25i%5B%5BRW9.OwwHbq%5Dwk9-2wIxS%24mShWFS%7D\") | image(\"https://res.craft.do/assets/theme/cards/gradient-card-3.jpeg\", \"UVJP~Y%3AP-n3skaWUz%3B%5D%7BrawZvi%2Bt%24-R-jcWV\") | image(\"https://res.craft.do/assets/theme/cards/gradient-card-4.jpeg\", \"UnJGawxI%7B%5D%5DM%2C%5Bsks*oajcfPS6s*xba%23sljZ\") | image(\"https://res.craft.do/assets/theme/cards/gradient-card-5.jpeg\", \"UcEX6Uv%5B%25x_P%24%2Crsr%3FrsXlVtXROmt8W%3DoLnP\") | image(\"https://res.craft.do/assets/theme/cards/gradient-card-6.jpeg\", \"UnL3BI%7B%5E1jFgjfn%2Bi%25oJWEagj%3FfSt8sla%23Sz\")"
+            }
+        },
+        {
+            "themeId": "savoir-faire",
+            "title": "Savoir-Faire",
+            "pageStyleProps": {
+                "theme-id": "savoir-faire",
+                "background-color": "#FFFCF8 #FFFCF8",
+                "color": "#EC6509 #EC6509",
+                "font-family": "system",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-savoire-faire.jpg\", \"L3NmWb%25ME1-;~qE1Io9a4Tt5%5E+s+\")",
+                "backdrop": "#F6F1EB #F6F1EB",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/savoir-faire-card-1.jpeg\", \"UKNuwy~Ut6-U%3FZt7t7xaNH%251bbbH-oj%5BWpt7\") | image(\"https://res.craft.do/assets/theme/cards/savoir-faire-card-2.jpeg\", \"U4Am6hOtt6-o~AW%3DM%7Ds%2B4.E2s.%252%3Fa%3FG-%3Axt\") | image(\"https://res.craft.do/assets/theme/cards/savoir-faire-card-3.jpeg\", \"UEQY3E-8NI-8%7Dqj%40f7j%40R%2BazbHa%7C%5E3j%40j%40oK\") | image(\"https://res.craft.do/assets/theme/cards/savoir-faire-card-4.jpeg\", \"U%40PB~M%243SN%24i%7DEnioLbbK5V%5BoLSgxZniW%3Bso\") | image(\"https://res.craft.do/assets/theme/cards/savoir-faire-card-5.jpeg\", \"UBL4mEn%24IT-%3B~pt7jsWBjZkCs%3Aof%3FafQRjay\") | image(\"https://res.craft.do/assets/theme/cards/savoir-faire-card-6.jpeg\", \"UNNs%5Bv%3B%7Bs-%24g%7DUEjNwbH13sm%24%24WC%5D*%3Dw9%5ENc\")"
+            }
+        },
+        {
+            "themeId": "cat",
+            "title": "Cat",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/cat-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/cat-cover.jpeg",
+                "aspectRatio": 1.3333333333333333,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UIL:coG$9Ho@~AG7vpX51Vsq^SRn;TV@agoM"
+            },
+            "pageStyleProps": {
+                "theme-id": "cat",
+                "background-color": "#F3ECE9 #F3ECE9",
+                "color": "#405592 #405592",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "#EE8DBD #EE8DBD",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/cat-card-1.jpeg\", \"UFJbcm%2Bq0fp0BpjKN2NGDlt7%5Ez-3~RWX9c%25K\") | image(\"https://res.craft.do/assets/theme/cards/cat-card-2.jpeg\", \"UYIr%2BS%252sk%25K_KkCNwxuVrxE%252-VyCozaet6\") | image(\"https://res.craft.do/assets/theme/cards/cat-card-3.jpeg\", \"UQK_L1%5E%25D%25t3~7RkRot6VqNGx%5DtR-qxaV%3FM%7C\")"
+            }
+        },
+        {
+            "themeId": "antiquities",
+            "title": "Antiquities",
+            "pageStyleProps": {
+                "theme-id": "antiquities",
+                "background-color": "#F3EBDC #F3EBDC",
+                "color": "#7E5019 #7E5019",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/antiquities-backdrop.jpeg\", \"@2H_PSx%5D0001kC~q8%7Be:%25MRkR*tQkWkCR*?HjF9F02V%5B%251D%2CxaV@SOWAxu\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/antiquities-card-1.jpeg\", \"UEK-d*-o.T%3Fb.AogIAWBNHt7MxM%7BV%3FRPxu%25M\") | image(\"https://res.craft.do/assets/theme/cards/antiquities-card-2.jpeg\", \"UeG%2Bs%7Bk%3DVWW%3A%3FwbcR5j%5DN1ofWBf8M%7BWWxtbH\") | image(\"https://res.craft.do/assets/theme/cards/antiquities-card-3.jpeg\", \"UlHLxTVrIVtR%3FwaxaejtI%5BtSoKRjo%23bIWCof\") | image(\"https://res.craft.do/assets/theme/cards/antiquities-card-4.jpeg\", \"UBIqu%2CDO%3FvDO00ItR%2BxZ0QyDaeoz%3FwxuxuIU\") | image(\"https://res.craft.do/assets/theme/cards/antiquities-card-5.jpeg\", \"UcI%23lWI9R.oe_4V%3FRjogtS%25MRiaex%5Dozj%40ad\") | image(\"https://res.craft.do/assets/theme/cards/antiquities-card-6.jpeg\", \"UrJRgWV%40Rjt6%3FwofWBj%5DIot8ofj%5BVsWBkCa%7C\")"
+            }
+        },
+        {
+            "themeId": "black-white",
+            "title": "Black & White",
+            "pageStyleProps": {
+                "theme-id": "black-white",
+                "background-color": "#E4E4E4 #262626",
+                "color": "#424242 #DDDDDD",
+                "font-family": "system-serif",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/black-white-backdrop.jpg\", \"@oGu%2Cm9F9F~qD%25IU-;M%7BofWBj%5Bt7Rjoft7ayofWBxuayM%7BofayayRjj%5Bt7\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/black-white-card-1.jpeg\", \"UdKUZk-%3Bayof~qRjofj%5B9FD%25t7ofIUj%5Bxuof\") | image(\"https://res.craft.do/assets/theme/cards/black-white-card-2.jpeg\", \"UCMHMq00-%3B_3~qV%40IURkW.M%7BIURj%3FbxufjM%7B\") | image(\"https://res.craft.do/assets/theme/cards/black-white-card-3.jpeg\", \"U9CP%40e0000%3Fb~qay4nj%5B00~q~q9F00t7_3IU\") | image(\"https://res.craft.do/assets/theme/cards/black-white-card-4.jpeg\", \"U%5EKUZkofWBof~qj%5BfQofxufQfQj%5BWBoffQay\") | image(\"https://res.craft.do/assets/theme/cards/black-white-card-5.jpeg\", \"UDB3.%5E%25MD%259FWBIU%25Mxu9FIUxuxu~q%25MIU9F\") | image(\"https://res.craft.do/assets/theme/cards/black-white-card-6.jpeg\", \"UNIhplt7ayIU4nD%25Rjxu_3Rj%25MRj~qM%7BM%7BfQ\")"
+            }
+        },
+        {
+            "themeId": "le-mans",
+            "title": "Le Mans",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/le-mans-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/le-mans-cover.jpeg",
+                "aspectRatio": 1.3514328808446456,
+                "imageWidth": 896,
+                "rawImageWidth": 896,
+                "blurHash": "UqE3xRjsV@xu?wkCaeogo~t7j]RjR-kCj[ay"
+            },
+            "pageStyleProps": {
+                "theme-id": "le-mans",
+                "background-color": "#D9EDF3 #D9EDF3",
+                "color": "#12327D #12327D",
+                "font-family": "system-mono",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-le-mans.jpg\", \"L7K%7BPIxas%2CxatRfQfQfQ0uWXa%23WX\")",
+                "backdrop": "#84C8F5 #84C8F5",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/le-mans-card-1.jpeg\", \"UHK0mFOFjtFz%5EOWVfQR%2Bj%40a%7CfQa%7C%7DnR%2BfQNH\") | image(\"https://res.craft.do/assets/theme/cards/le-mans-card-2.jpeg\", \"UEJ%25I5N1j%40IE%5EiazfQagj%40fQfQfQ~TazfQWC\") | image(\"https://res.craft.do/assets/theme/cards/le-mans-card-3.jpeg\", \"UAGu8Y~p%252X9Diaef6ayt7j%5BfRfQ%3D%7Bofj%5Bfk\") | image(\"https://res.craft.do/assets/theme/cards/le-mans-card-4.jpeg\", \"U3I3z7%5Eiay%5Ej%5EioLfQj%5BayfQfQfQ%5Ejj%5BfQoL\") | image(\"https://res.craft.do/assets/theme/cards/le-mans-card-5.jpeg\", \"UMN%2C3g%3Faju~o%3FaoffQoyj%5BfQfQf7~ooyfQt6\") | image(\"https://res.craft.do/assets/theme/cards/le-mans-card-6.jpeg\", \"U3KAl~~Vaz%5E*~VoebGj%5BazfQfQfQ%5E*j%5Bf7j%5B\")"
+            }
+        },
+        {
+            "themeId": "a-blogger-from-philly",
+            "title": "A Blogger from Philly",
+            "pageStyleProps": {
+                "theme-id": "a-blogger-from-philly",
+                "background-color": "#4B525A #4B525A",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system",
+                "separator-style": "line",
+                "backdrop": "none",
+                "card-assets": "#2B2F33 #2B2F33"
+            }
+        },
+        {
+            "themeId": "collage",
+            "title": "Collage",
+            "pageStyleProps": {
+                "theme-id": "collage",
+                "background-color": "#F7F3F1 #F7F3F1",
+                "color": "#3053D0 #3053D0",
+                "font-family": "system-rounded",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/theme-washi/collage-washi.jpg\", \"LPE{7FDu,+oMs,n$e-oG5etiJEWD\")",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/collage-backdrop.jpg\", \"@PEqd%5D9a%7D%235CXoW?$wR+V?s;R:s.ofWBjcoea_obWEa%7DWXofn%25afWXoKWX\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/collage-card-1.jpeg\", \"UnO46f~qWZWBt1WAWEt7j%3DWAWBoet7fRfObD\") | image(\"https://res.craft.do/assets/theme/cards/collage-card-2.jpeg\", \"U%3BJ%5BnnWT%24%2Bogt*t7R%25X4%7D_r%5EkBn%2C%25MO9nmfi\") | image(\"https://res.craft.do/assets/theme/cards/collage-card-3.jpeg\", \"UdRBg%5D.Stk%25M*0V%40V%3Fj%5ByYadeSV%3FyEWYk9kD\") | image(\"https://res.craft.do/assets/theme/cards/collage-card-4.jpeg\", \"USCI2%3B%3F7%3F5o%23kA-fIcR%3A~G-e-fjsxsxlRpWF\") | image(\"https://res.craft.do/assets/theme/cards/collage-card-5.jpeg\", \"UwMaFf%7DznMt6tmA0oHxBt6IuS6S7ofR%2CS6of\") | image(\"https://res.craft.do/assets/theme/cards/collage-card-6.jpeg\", \"UEMZ%2Ce%25%7DSd%2C%3B00%3DL-%3DyDRP56DODi~qIAOrtR\")"
+            }
+        },
+        {
+            "themeId": "infinity-void",
+            "title": "Infinity Void",
+            "pageStyleProps": {
+                "theme-id": "infinity-void",
+                "background-color": "#131615 #131615",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system-mono",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/infinity-void-backdrop.jpeg\", \"@iG~U:%7DGOUADJ7aeAZNxw%7CX9W=bHjEaeWCs.oLW=oLo1azn*jZa%7Ba%7Ca%7Cj@\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/infinity-void-card-1.jpeg\", \"U%5EHbA8%7DE-8smSebFoLoLS3WVjtoLoLoKj%40j%40\") | image(\"https://res.craft.do/assets/theme/cards/infinity-void-card-2.jpeg\", \"UiIU9%7D1ZEz%3DM%7DAJBJ8slOR%248NwNtxHWUS3n%2C\") | image(\"https://res.craft.do/assets/theme/cards/infinity-void-card-3.jpeg\", \"U9ICA%2BYN0pw~0gvh%7CZNZ13f8%7DWSeoMSgxFj%5B\") | image(\"https://res.craft.do/assets/theme/cards/infinity-void-card-4.jpeg\", \"UY2aHPbwZ%7Bi%5Ek%5DbwaIi%5Ef%2Cf%2Cflf5j%5BflbIfl\") | image(\"https://res.craft.do/assets/theme/cards/infinity-void-card-5.jpeg\", \"UfCin5iZm-kr~Divn4kW%3D_jci_j%3D-VjYe.jb\") | image(\"https://res.craft.do/assets/theme/cards/infinity-void-card-6.jpeg\", \"UcCDXJJQAWw%7B%7C%7BJREzso%3DKS2JRo1%24QWpNua%7C\")"
+            }
+        },
+        {
+            "themeId": "light-blue",
+            "title": "Light Blue",
+            "pageStyleProps": {
+                "theme-id": "light-blue",
+                "background-color": "#F5F4F0 #F5F4F0",
+                "color": "#4363A4 #4363A4",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "gradient(#C5E1F4 #C5E1F4, #F0F8FF #F0F8FF, radial)",
+                "card-assets": "#4363A4 #4363A4"
+            }
+        },
+        {
+            "themeId": "anime",
+            "title": "Anime",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/anime-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/anime-cover.jpeg",
+                "aspectRatio": 1.7708333333333333,
+                "imageWidth": 1360,
+                "rawImageWidth": 1360,
+                "blurHash": "UEO3^7t*LdtkQ2NG1EO:9?$++{aLqD$kM_$+"
+            },
+            "pageStyleProps": {
+                "theme-id": "anime",
+                "background-color": "#F3EDE9 #F3EDE9",
+                "color": "#2D2D96 #2D2D96",
+                "font-family": "system-rounded",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-kids-room.jpg\", \"L1Lh*U%25MNFx%5B_2%253fR-W0woLoLs:\")",
+                "backdrop": "gradient(#B5CFB7 #B5CFB7, #F3ECE9 #F3ECE9, radial)",
+                "card-assets": "#F3D2D3 #F3D2D3 | #E4EADB #E4EADB | #C4E2E2 #C4E2E2 | #F4E5DC #F4E5DC | #EDEAE9 #EDEAE9 | #B6B8C6 #B6B8C6"
+            }
+        },
+        {
+            "themeId": "objects-contrasts",
+            "title": "Objects & Contrasts",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/objects-contrasts-cover.png",
+                "uri": "https://res.craft.do/assets/theme/cover/objects-contrasts-cover.png",
+                "aspectRatio": 5.142857142857143,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "U01fC^ofRjofxuj[ayj[fQfQfQfQxuj[ayj["
+            },
+            "pageStyleProps": {
+                "theme-id": "objects-contrasts",
+                "background-color": "#D3FC64 #D3FC64",
+                "color": "#202225 #202225",
+                "font-family": "system",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/theme-washi/objects-contrasts-washi.jpg\", \"LGLOSGt5f8oxy]j[f7fkHHtOfjxr\")",
+                "backdrop": "#2C03AF #2C03AF",
+                "card-assets": "#D3FC64 #D3FC64"
+            }
+        },
+        {
+            "themeId": "old-movie",
+            "title": "Old Movie",
+            "pageStyleProps": {
+                "theme-id": "old-movie",
+                "background-color": "#F0EDB6 #F0EDB6",
+                "color": "#1B1502 #1B1502",
+                "font-family": "system-mono",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/old-movie-backdrop.jpeg\", \"@WI5VpR*NH?wM%7Bae~Xt7kC-pRjjY-pt7kCxYWBaexZofj%5DRjaejZofs:of\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/old-movie-card-1.jpeg\", \"U8I5by%7D%40~o~o00RO-oIpIVrW4T01Q%2CRQX.pd\") | image(\"https://res.craft.do/assets/theme/cards/old-movie-card-2.jpeg\", \"U7GSGQ%5EOTd_N0fSexuM_8%7BkSnSfm0M.8Rkxa\") | image(\"https://res.craft.do/assets/theme/cards/old-movie-card-3.jpeg\", \"UUF~dIxu00RP~qt79FayD%25Rjoft8RORjtSog\") | image(\"https://res.craft.do/assets/theme/cards/old-movie-card-4.jpeg\", \"UBJ%40%3Ass*0K~qJ7x%5DoM9Fn4xbD%25oz~WE1%25g%25M\") | image(\"https://res.craft.do/assets/theme/cards/old-movie-card-5.jpeg\", \"UkKBj%23RjkWt7_4ozRjj%5BOFWVfkWCWAWBofax\") | image(\"https://res.craft.do/assets/theme/cards/old-movie-card-6.jpeg\", \"UIO%3A-C%5E%2Bof%3Fv%3Fwxvj%5BaeV%40WBaeog-%3Bofofae\")"
+            }
+        },
+        {
+            "themeId": "paper",
+            "title": "Paper",
+            "pageStyleProps": {
+                "theme-id": "paper",
+                "background-color": "#E2D0B6 #E2D0B6",
+                "color": "#5F4726 #5F4726",
+                "font-family": "system",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/paper-backdrop.jpg\", \"@1N+Xz~osl~V%25LxuxtWCoz_2V%5BRPbvV%5BW=-Tt7tRWBj%5Bof?GM%7BkCkWV@kB\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/paper-card-1.jpeg\", \"UGR%7B%23%3F%3FHjt%3Fb_3off7j%5BWBfQj%5BfQ~qkBfQof\") | image(\"https://res.craft.do/assets/theme/cards/paper-card-2.jpeg\", \"ULOfJK%3Fat7%25L~VRkfQj%5Bofayj%5Bfj%3FGj%5Bj%5Bj%5B\") | image(\"https://res.craft.do/assets/theme/cards/paper-card-3.jpeg\", \"UHRCrP-%3Boz-%3B~poej%5Bj%5Daxa%7Ca%7CfQ~poffkof\") | image(\"https://res.craft.do/assets/theme/cards/paper-card-4.jpeg\", \"UCRy%2C0~Xsl~q_3ofazoft5fQfQjt_3ofazof\") | image(\"https://res.craft.do/assets/theme/cards/paper-card-5.jpeg\", \"UIRfB%5Bx%5DkX-%3A~qjsj%5BoLV%40ayayf6_2j%5BfRj%5B\") | image(\"https://res.craft.do/assets/theme/cards/paper-card-6.jpeg\", \"UDQ%5D%2Bw-%3BWB%3Fb~qayj%5BofofayfQfQ~qj%5Bj%5Bj%5B\")"
+            }
+        },
+        {
+            "themeId": "soft-green",
+            "title": "Soft Green",
+            "pageStyleProps": {
+                "theme-id": "soft-green",
+                "background-color": "#D3DACA #344627",
+                "color": "#2E3E23 #D3DAC9",
+                "font-family": "system-serif",
+                "separator-style": "line",
+                "backdrop": "#D3DAC9 #D3DAC9",
+                "card-assets": "#C4D2C7 #C4D2C7 | #C4D6A4 #C4D6A4 | #D5D0AB #D5D0AB | #D6CDB1 #D6CDB1 | #BFCED6 #BFCED6 | #B9BBBB #B9BBBB"
+            }
+        },
+        {
+            "themeId": "space",
+            "title": "Space",
+            "pageStyleProps": {
+                "theme-id": "space",
+                "background-color": "#000000 #000000",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system-serif",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/space-backdrop.jpeg\", \"@14L:poz0003kC~n$wV%5BE4TeofrWibkCXngNaenORQbGtPWAayogozayV@\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/space-card-1.jpeg\", \"U87Bft%3F%5Ez%2C%2BD%3Fa%25KxA%24yqs%23P%25hpKibxDxvRn\") | image(\"https://res.craft.do/assets/theme/cards/space-card-2.jpeg\", \"U2AAXP%25M00-%3B0001xuD%2500%3Fb~q%3Fa-%3B_3%3FaM%7B\") | image(\"https://res.craft.do/assets/theme/cards/space-card-3.jpeg\", \"UBBDG_~T009GD%2BIWS5t700E2%3Fu%25f%3FH-onhM%7B\") | image(\"https://res.craft.do/assets/theme/cards/space-card-4.jpeg\", \"UNG%5B1gPDBq9FystTberqE%2CtSi~s%3AWtbxxtR.\") | image(\"https://res.craft.do/assets/theme/cards/space-card-5.jpeg\", \"UNCGx%5E%5Ej000g%3Fw%3Fbm%2B8%5ERjtl-%3BrVo%23kCofxt\") | image(\"https://res.craft.do/assets/theme/cards/space-card-6.jpeg\", \"UF8%3B_bxuWBoz00RjjsWA%3FwoKkCofbwozj%3Fa%23\")"
+            }
+        },
+        {
+            "themeId": "the-tour",
+            "title": "The Tour",
+            "pageStyleProps": {
+                "theme-id": "the-tour",
+                "background-color": "#222222 #222222",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/theme-washi/the-tour-washi.jpeg\", \"L1S5I$-pj=-:~Wk9j[WXbFfSoJjt\")",
+                "backdrop": "#FFFF00 #FFFF00",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/the-tour-card-1.jpeg\", \"U9ShAz~Caz~C~CoLfQoLa%7CfQfQfQ~CoLfQoL\") | image(\"https://res.craft.do/assets/theme/cards/the-tour-card-2.jpeg\", \"U9Sq%2CI~RfQ~R~RoKfQoKfQfQfQfQ~RoKfQoK\") | image(\"https://res.craft.do/assets/theme/cards/the-tour-card-3.jpeg\", \"U4B6%7B%5Ey-fQy-y-kBfQkBfQfQfQfQy-kBfQkB\") | image(\"https://res.craft.do/assets/theme/cards/the-tour-card-4.jpeg\", \"U9TSUA~qfQ~q~qoffQoffQfQfQfQ~qoffQof\")"
+            }
+        },
+        {
+            "themeId": "underwater",
+            "title": "Underwater",
+            "pageStyleProps": {
+                "theme-id": "underwater",
+                "background-color": "#08161A #08161A",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system",
+                "separator-style": "line",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/underwater-backdrop.jpeg\", \"@B8q~OVs9Z-?t5E1~9RjSxR:oJRk-VWVt6aen%25R.%252axe.W?juWUxZa%7BWW\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/underwater-card-1.jpeg\", \"UBDSm%5Bdp2wEcIJtQnPS000O%3F%7DA%23W%2Bst9NY%24%2C\") | image(\"https://res.craft.do/assets/theme/cards/underwater-card-2.jpeg\", \"UC7VGgEAt9WsL4nlVsoLNds8n%7DofNLoJogM%7C\") | image(\"https://res.craft.do/assets/theme/cards/underwater-card-3.jpeg\", \"UD9kc_KiROW%3BYRIqrqogXVn%2Bi_R%2CtlM%7Cn%23oe\") | image(\"https://res.craft.do/assets/theme/cards/underwater-card-4.jpeg\", \"U88Dzy-m0259WENHoLxZ00IW~V%3FEt4%25LWCE2\") | image(\"https://res.craft.do/assets/theme/cards/underwater-card-5.jpeg\", \"UJB4j%2C%3A%2BqtF%7BX%3DrqwHNe%2CoxDflWA%25fr%3FV%40W%3B\") | image(\"https://res.craft.do/assets/theme/cards/underwater-card-6.jpeg\", \"UBBp%3Ay05i_xF%5Dn5S-nXS06%7D%3B-RE314~TIWNc\")"
+            }
+        },
+        {
+            "themeId": "writer",
+            "title": "Writer",
+            "pageStyleProps": {
+                "theme-id": "writer",
+                "background-color": "#7D211E #7D211E",
+                "color": "#F9E49F #F9E49F",
+                "font-family": "system",
+                "separator-style": "doodle",
+                "backdrop": "#000000 #000000",
+                "card-assets": "#7D211E #7D211E"
+            }
+        },
+        {
+            "themeId": "paris-2024",
+            "title": "Paris 2024",
+            "pageStyleProps": {
+                "theme-id": "paris-2024",
+                "background-color": "#D3D3F8 #D3D3F8",
+                "color": "#3E3ED8 #3E3ED8",
+                "font-family": "system-rounded",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/paris-2024-backdrop.jpg\", \"@CD%5DpXxtoe~ooeayxsoeayxuoeazoxj@WCt7j%5Bazoej@ayogj@azoefQaz\")",
+                "separator-style": "washi(pattern, \"solid\", #FFFFFF #FFFFFF)",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/paris-2024-card-1.jpeg\", \"UF9u.6x%40oeox%3F%40oyfQj%40xtofayayx%40ofayay\") | image(\"https://res.craft.do/assets/theme/cards/paris-2024-card-2.jpeg\", \"UK6K4Bo~kBkYyZoffQflozkBayayp1kBaza%23\") | image(\"https://res.craft.do/assets/theme/cards/paris-2024-card-3.jpeg\", \"UGRa%2Br-Sba%3Db~PkBa%7CoJknbaf6f6%5EMkBf6n%25\") | image(\"https://res.craft.do/assets/theme/cards/paris-2024-card-4.jpeg\", \"U83T42tSkCkDyZozfQa%7DtSofayaytSofayay\") | image(\"https://res.craft.do/assets/theme/cards/paris-2024-card-5.jpeg\", \"UDC%3A%3FoxZoLsn%7DYs%3AfQjsxGoLayay%24joLayay\") | image(\"https://res.craft.do/assets/theme/cards/paris-2024-card-6.jpeg\", \"U12%3D%24H-%3Bt7j%5B%5E%2CxufRay%25Nt8WBWB%25Mt7WBWB\")"
+            }
+        },
+        {
+            "themeId": "gjjb-craft",
+            "title": "Thinker by GJJB",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fgjjb-craft-backdrop.jpeg\",\"%40GRL%3BFt%2CCjMJWBpc*JVsL~%25fxuics.s%3Axao%7DjYRP%25MxuxuWCRjR*x%5DM%7BtR\")",
+                "theme-id": "gjjb-craft",
+                "color": "#1D160E #1D160E",
+                "separator-style": "doodle",
+                "background-color": "#F8F4F0 #F8F4F0",
+                "card-assets": "#E3333D #E3333D"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/gjjb-craft-cover.png",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/gjjb-craft-cover.png",
+                "aspectRatio": 5.213095238095238,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UCFeKO$P1GAp|_o163S2fQfQfQa||_o163S2"
+            }
+        },
+        {
+            "themeId": "breeze",
+            "title": "Breeze",
+            "pageStyleProps": {
+                "font-family": "system-mono",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fbreeze-backdrop.jpeg\",\"%40CCs%25A0aS%2302%7D%23sA%24vJqV%5BskM~tPjYxoNLbbRnxVenoyRokCaej%40WCkBo0\")",
+                "theme-id": "breeze",
+                "color": "#376188 #376188",
+                "separator-style": "doodle",
+                "background-color": "#D2E0ED #D2E0ED",
+                "card-assets": "#2F5374 #2F5374"
+            }
+        },
+        {
+            "themeId": "citrus",
+            "title": "Citrus",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "#D7C337 #D7C337",
+                "theme-id": "citrus",
+                "color": "#364308 #364308",
+                "separator-style": "washi(pattern, \"solid\", #EF6E0E #EF6E0E)",
+                "background-color": "#D6CAB2 #D6CAB2",
+                "card-assets": "#42520A #42520A"
+            }
+        },
+        {
+            "themeId": "oasis",
+            "title": "Oasis",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Foasis-backdrop.jpeg\",\"%40gHCP%3BR%2Bxu~VR.og%3FHt6NGxYRiR*jXs%3AfiNFt7azbIWCt7WXR*ayRkj%5DWB\")",
+                "theme-id": "oasis",
+                "color": "#3D3930 #3D3930",
+                "separator-style": "washi(pattern, \"solid\", #506E4C #506E4C)",
+                "background-color": "#8BABB5 #8BABB5",
+                "card-assets": "#C3BEB2 #C3BEB2"
+            }
+        },
+        {
+            "themeId": "blushblue",
+            "title": "Blush Blue",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "gradient(#E70F00, #3964D9, radial)",
+                "theme-id": "blushblue",
+                "color": "#F4F4F4 #F4F4F4",
+                "separator-style": "doodle",
+                "background-color": "#3964D9 #3964D9",
+                "card-assets": "#3964D9 #3964D9"
+            }
+        },
+        {
+            "themeId": "harmony",
+            "title": "Harmony",
+            "pageStyleProps": {
+                "font-family": "system-rounded",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fharmony-backdrop.jpeg\",\"%403O3wb%3FwmP020LMfN%25Inia9GkZ%23hI9R%3B%25Ls%7CWIWTT1ROt0Rht8t7xmRUWF\")",
+                "theme-id": "harmony",
+                "color": "#494439 #494439",
+                "separator-style": "washi(image, \"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fwashi%2Fwashi-beige-paper.jpg\", \"LARe~Z?wM%7BMdMHj?ozM_%25gt7oftR\")",
+                "background-color": "#C3BEB2 #C3BEB2",
+                "card-assets": "#C3BEB2 #C3BEB2"
+            }
+        },
+        {
+            "themeId": "dark-glow",
+            "title": "Dark Glow",
+            "pageStyleProps": {
+                "font-family": "system-mono",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fdark-glow-backdrop.jpeg\",\"%40TIfPQKgH%5B%7B-j0J*03wNcX32On%23%3D-oR%25v%23w~wcoaRispwfrqsoWYf%2CwcOB\")",
+                "theme-id": "dark-glow",
+                "color": "#F4F4F4 #F4F4F4",
+                "separator-style": "doodle",
+                "background-color": "#000000 #000000",
+                "card-assets": "#000000 #000000"
+            }
+        },
+        {
+            "themeId": "indigo",
+            "title": "Indigo",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Findigo-backdrop.jpeg\",\"%4055tqaDqM%24Tho%7DQ%2BH%3B%25~bx%25hQ%2Ct6Qkg3kYpyW%3DVXaJkCo%7Deme-WskrV%40aJ\")",
+                "theme-id": "indigo",
+                "color": "#BDCAFF #BDCAFF",
+                "separator-style": "washi(image, \"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fwashi%2Fwashi-beige-paper.jpg\", \"LARe~Z?wM%7BMdMHj?ozM_%25gt7oftR\")",
+                "background-color": "#011F99 #011F99",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Findigo-card-1.jpeg\", \"U%23LE%3FCR%3A%25Lo%23~UxYRjt6s.ofRkWAS6R*j%3FbI\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Findigo-card-2.jpeg\", \"UMH%3A8%3FtTRQbe%25MR--%3AaxRiR%2BD%2BM%7CNMM%7C~ns.\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Findigo-card-3.jpeg\", \"UeKxegt70IXB%25ME%3ANM%5EZR.S6w%3FxUx%5DWER%2Bf%2C\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Findigo-card-4.jpeg\", \"UEJ%2BTE.9Ip%25h4%3FD%2B%25LRk~St5%25LWC05E2%25LE2\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Findigo-card-5.jpeg\", \"UN5thJRWbbo%25u6kqVsozMItRafV%3FRWi%5EtlWE\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Findigo-card-6.jpeg\", \"UWHfYytRoc%25M~ot6t6-o%251-.9HfktS%25LWBRk\")"
+            }
+        },
+        {
+            "themeId": "breathe",
+            "title": "Breathe",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "#007558 #007558",
+                "theme-id": "breathe",
+                "color": "#00664D #D6FFF5",
+                "separator-style": "line",
+                "background-color": "#CBF1E8 #00503C",
+                "card-assets": "#007558 #007558"
+            }
+        },
+        {
+            "themeId": "honey",
+            "title": "Honey",
+            "pageStyleProps": {
+                "font-family": "system-mono",
+                "backdrop": "#FBA441 #FBA441",
+                "theme-id": "honey",
+                "color": "#784103 #FEE6CC",
+                "separator-style": "doodle",
+                "background-color": "#FEEAD2 #7D4403",
+                "card-assets": "#FBA441 #FBA441"
+            }
+        },
+        {
+            "themeId": "wave",
+            "title": "Wave",
+            "pageStyleProps": {
+                "font-family": "system-rounded",
+                "backdrop": "#71B2FF #71B2FF",
+                "theme-id": "wave",
+                "color": "#00428F #CBE3FF",
+                "separator-style": "doodle",
+                "background-color": "#C6E0FF #00408B",
+                "card-assets": "#71B2FF #71B2FF"
+            }
+        },
+        {
+            "themeId": "nostalgia",
+            "title": "Nostalgia",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fnostalgia-backdrop.jpeg\",\"%40CJ8R%5DIo9F.AE2-nIpae-oR-WBIqxYRjs%3AtRxaxaxuoJaet8oKs%3As%2Coff%2C\")",
+                "theme-id": "nostalgia",
+                "color": "#704784 #704784",
+                "separator-style": "doodle",
+                "background-color": "#CAC8CB #CAC8CB",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fnostalgia-card-1.jpeg\", \"UAGu%3ArEl009alCjZ9GM%7C00-oaext%5E*%25M9tkC\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fnostalgia-card-2.jpeg\", \"UEEp%5B%5B_Ml9.SD%2BxaWARjJCbbvzRPofxa%25Lt7\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fnostalgia-card-3.jpeg\", \"UGIF6x%2Br.8Na*0iaIU-%3BkD_2xXR%2B~q~p%251NH\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fnostalgia-card-4.jpeg\", \"UuIY5%3FWBoft7~qWBayofRjRjWBWBM%7BRjayay\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fnostalgia-card-5.jpeg\", \"UfE%7B%40LWqo%23xu%25%25bIkCbI4%3AofjYRkIUjYV%40j%3F\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fnostalgia-card-6.jpeg\", \"UBCQoSK*NykX~WTKnhs%3AElrCslkWo%23%24gNxni\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/nostalgia-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/nostalgia-cover.jpeg",
+                "aspectRatio": 1.4895,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UJKe7gE3b_WUIoR*t7bH_ND%9FRj_3R+D*of"
+            }
+        },
+        {
+            "themeId": "gummy",
+            "title": "Gummy",
+            "pageStyleProps": {
+                "font-family": "system-rounded",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fgummy-backdrop.jpeg\",\"%40EP5%5B%25tRrCUHoenNv0Tever%3Daei_X9XTTevzX9nirDrWnOoyjZi%5Ebvf%2Cni\")",
+                "theme-id": "gummy",
+                "color": "#A2441D #A2441D",
+                "separator-style": "doodle",
+                "background-color": "#D3D3D1 #D3D3D1",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgummy-card-1.jpeg\", \"UJPshkkqyX-U_NniRPbv.mxuQ%2CS~rXb%5Ex%5Drq\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgummy-card-2.jpeg\", \"UJP%25Catl%25h-V_NnhRjkW%3FvxuIAShn4kXx%5Dr%3F\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgummy-card-3.jpeg\", \"UKP6%7Box%5D.8xa~qaeM%7BtR_3xaD%25kWMxtR%25MV%40\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgummy-card-4.jpeg\", \"UIP6%7Bpxu.8%252~qaeM%7Bt7_NxbD%25ozMxtR%25gRP\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgummy-card-5.jpeg\", \"UHPsq%3Ao%7D%25%23-o_No0RPkW.SxuI9S%23nNkW%25Mnh\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fgummy-card-6.jpeg\", \"UJO%7CeA%25M%5E%2Bs%3A~qWBM%7Bxu~qt79Ft7IUt7%25gM%7C\")"
+            }
+        },
+        {
+            "themeId": "soft-keys",
+            "title": "Soft Keys",
+            "pageStyleProps": {
+                "font-family": "system-mono",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fsoft-keys-backdrop.jpeg\",\"%403M%40Jr00n%25~qnND%24~qM%7C%3Fvxt-%3A~qD*I9D%254TWCxuVsozxa%25Mof%25gWAM%7BWV\")",
+                "theme-id": "soft-keys",
+                "color": "#3D392C #3D392C",
+                "separator-style": "line",
+                "background-color": "#D8D5C9 #D8D5C9",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-keys-card-1.jpeg\", \"UGIX%5DN0001%3Fbt2V%3FoM%25M~q9Gt7Ri%25LIUxuRj\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-keys-card-2.jpeg\", \"UFK%2Cvc%7D%23%3FZ%25L%3FF%25KR%2CIVWAt6WEM%7B%5E%25xZM%7CRj\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-keys-card-3.jpeg\", \"UMIX%3A4oJofxa~poLWBayxuj%5Bayay%25Layj%5Bt6\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-keys-card-4.jpeg\", \"U4I4%7Cb00%3FvIA~U01.8-%3A00.8jXjY%5E*-%3BIBD*\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-keys-card-5.jpeg\", \"U8MZ%3Ac%3FGDi%3FG~Vx%5DV%40-%3BD%25IUtSWV~VWBWBMx\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsoft-keys-card-6.jpeg\", \"UJNTXP~pRj%25N-%3A%25LRPITV%40x%5EDin~_4oyRj%25g\")"
+            }
+        },
+        {
+            "themeId": "prism",
+            "title": "Prism",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fprism-backdrop.jpeg\",\"%40RMt%3FQNHcuJ3%3FHp0yXoaR5MyROs%2CXUkXf%2Cs%2BnhjEWBWXkDt6ofa%23Rkaeoc\")",
+                "theme-id": "prism",
+                "color": "#2544A5 #2544A5",
+                "separator-style": "doodle",
+                "background-color": "#CADEE2 #CADEE2",
+                "card-assets": "gradient(#A3DDD7 #A3DDD7, #E7E6E9 #E7E6E9)"
+            }
+        },
+        {
+            "themeId": "plum",
+            "title": "Plum",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "gradient(#AD9AA9 #AD9AA9, #D7CED5 #D7CED5, radial)",
+                "theme-id": "plum",
+                "color": "#715C6D #E0D9DF",
+                "separator-style": "doodle",
+                "background-color": "#DFD8DE #685564",
+                "card-assets": "gradient(#BBABB7 #BBABB7, #E0D9DF #E0D9DF)"
+            }
+        },
+        {
+            "themeId": "coral",
+            "title": "Coral",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fcoral-backdrop.jpeg\",\"%408PgjN5l00-V%7D%40_M01Sh4%3A9uWB0f%252w%5EofX8kC9trWxuIpRjShjFozozoe\")",
+                "theme-id": "coral",
+                "color": "#6F2605 #6F2605",
+                "separator-style": "doodle",
+                "background-color": "#FCD3C0 #FCD3C0",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fcoral-card-1.jpeg\", \"U8MPE%24%5E%259w~Cq%5D%25gXQ-oSge%3B.7R%25-5nhMyyD\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fcoral-card-2.jpeg\", \"UESxig%3D_o%7C%3D_%7DrnijFs.kVkCofba%7Droeayaz\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fcoral-card-3.jpeg\", \"UKRlwn%7D%40O%3D%3Dw%5EjR%2Bs%3Ae.R*WCt7o%7C%2B%5Ds.o%7DtR\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fcoral-card-4.jpeg\", \"UKRlwn%7D%40O%3D%3Dw%5EjR%2Bs%3Ae.R*WCt7o%7C%2B%5Ds.o%7DtR\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fcoral-card-5.jpeg\", \"UFOCd4-Ay%3Fz%3B%3Fuo%7DaetltlWVRjg3%5E*kWj%5Be.\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fcoral-card-6.jpeg\", \"UDSB%3Ba%5D-W%3B%7Dr%5E%25oybHofa%7DbbjZfk%3D%7BoKe.oK\")"
+            }
+        },
+        {
+            "themeId": "chrome",
+            "title": "Chrome",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "gradient(#9AA9AD #9AA9AD, #C8D0D2 #C8D0D2, radial)",
+                "theme-id": "chrome",
+                "color": "#63757A #DDE2E3",
+                "separator-style": "doodle",
+                "background-color": "#D7DDDE #63757A",
+                "card-assets": "gradient(#AAB6BA #AAB6BA, #D4DBDC #D4DBDC)|gradient(#AAB6BA #AAB6BA, #D4DBDC #D4DBDC)|gradient(#AAB6BA #AAB6BA, #D4DBDC #D4DBDC)"
+            }
+        },
+        {
+            "themeId": "rewind",
+            "title": "Rewind",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "#E32057 #E32057",
+                "theme-id": "rewind",
+                "color": "#3A2614 #F6EEE6",
+                "separator-style": "line",
+                "background-color": "#F4E9DF #332111",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frewind-card-1.jpeg\", \"UNHx%2B*nz9FD%25~pxuD*Rj-%3BD*t6xuWAaexuof\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frewind-card-2.jpeg\", \"U7EUf0xG9bIV0iRjE39bOs~AM%7C9v4%3D%5EO%3D_NH\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frewind-card-3.jpeg\", \"UCGag%250Nxupd00%5EM-TIA%2C-I%40Ejt7~VM%7BnhtS\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frewind-card-4.jpeg\", \"UIGRk%2301R.4%3B~WM%7BR*s.0gR*%3FFxa%252R*WVfR\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frewind-card-5.jpeg\", \"UEHd4%7D~A0Ls%3B0hIo5Q9u%5E%2BWBv%7CozF%7D%3Dx%2C-e%3B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frewind-card-6.jpeg\", \"U6Bx%2BDAZD%2B%7D%3DxZWBV%5Bn%2558%250x%5BEM%25Kt6ENR%2B\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/rewind-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/rewind-cover.jpeg",
+                "aspectRatio": 0.6666666666666666,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UADuF]5S0M~B9wI;f*of02-U?Z4;}=-nWCRk"
+            }
+        },
+        {
+            "themeId": "sage",
+            "title": "Sage",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "gradient(#A4AD94 #A4AD94, #D6CFC2 #D6CFC2, radial)",
+                "theme-id": "sage",
+                "color": "#637A73 #E5E0D5",
+                "separator-style": "doodle",
+                "background-color": "#E5E0D5 #637A73",
+                "card-assets": "gradient(#A4AD94 #A4AD94, #D6CFC2 #D6CFC2)"
+            }
+        },
+        {
+            "themeId": "let-it-go",
+            "title": "Let It Go",
+            "pageStyleProps": {
+                "font-family": "system-rounded",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Flet-it-go-backdrop.jpeg\",\"%409F*NZ%3F%5EMxS5RjWBMxofj%3FozayayWBjtj%5BkDfQayaeayayoga%7CjsayfQfQ\")",
+                "theme-id": "let-it-go",
+                "color": "#3B73B2 #EDEEE9",
+                "separator-style": "washi(image, \"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fwashi%2Fwashi-let-it-go.png\", \"L8L5%3A%3DE49b~TAJoeIqof%3FbNHNH%3D_\")",
+                "background-color": "#EDEEE9 #3B73B2",
+                "card-assets": "#3B73B2 #3B73B2"
+            }
+        },
+        {
+            "themeId": "paradise",
+            "title": "Paradise",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fparadise-backdrop.jpeg\",\"%40DIEwV000k%3Fwitoy9%23oLs*WVWFs%2BM_tRNIt6j%5DRjR%3Aadt6xtWBR%2BR-ayj%3D\")",
+                "theme-id": "paradise",
+                "color": "#4A5355 #E2E5E2",
+                "separator-style": "doodle",
+                "background-color": "#E2E5E2 #484E3F",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fparadise-card-1.jpeg\", \"UKIhDu~2%3D_sk9v4%3B%25L%2509bRoENM%7DoeofNGM%7D\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fparadise-card-2.jpeg\", \"UKIhDu~2%3D_sk9v4%3B%25L%2509bRoENM%7DoeofNGM%7D\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fparadise-card-3.jpeg\", \"U6GH%40Z00%3Fw-LpJ0%23%252Mx04S%25ROX9%24%5E-qM_t8\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fparadise-card-4.jpeg\", \"UJJSC7Sio~.T76o~VsR%2BDibcR4VrtSt8VrV%40\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fparadise-card-5.jpeg\", \"UAGc*%400%7CZ5O%3DqF-VJ7xaR.WBbaxH%25%23WBt7W%3B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fparadise-card-6.jpeg\", \"UZMjv_%252%25N%2529aj%5Do%23Rk.TR*RPWBVYoJs8o0\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/paradise-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/paradise-cover.jpeg",
+                "aspectRatio": 1.508433734939759,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "U6Jky9~V4nx]00I[D$oy$e%MR4t7?b%iMxM_"
+            }
+        },
+        {
+            "themeId": "astro-wave",
+            "title": "Astro Wave",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fastro-wave-backdrop.jpeg\",\"%40AEV%7Bpml00z%2C00B%3D%2Bi%23%24x1N%24.AOFRzR%3AR3%24vI%5D-m-nE3xZ%2B%5DS%24VrrXkqV%5B\")",
+                "theme-id": "astro-wave",
+                "color": "#000000 #F4F4F4",
+                "separator-style": "line",
+                "background-color": "#C0E3F5 #005BE8",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fastro-wave-card-1.jpeg\", \"UDIxdcOqF1nV5I%5D%24%24y%7DU0ri~%2CDS4tP5%3DES15\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fastro-wave-card-2.jpeg\", \"U39%3Dth%23jIQEuKUEGx1o%2C0%5Dv%5ES.Ot77EbEZ%3DJ\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fastro-wave-card-3.jpeg\", \"UCD6%5D*EcNDo*5y68%3Dkab6Q%2C-%2ClAba*oGNsW%3F\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fastro-wave-card-4.jpeg\", \"UEFo%3F8k60cWJ%3F0SeIoa%250wWG%7DwoGD*sDtSX4\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fastro-wave-card-5.jpeg\", \"U61FlQoUVlX%40Y%2Bgsk%5DkaQFVlkdiQpujYV7X1\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fastro-wave-card-6.jpeg\", \"U8Acc8%7DQ*dRjRl9tAd21WCWXS%24oJxboIjFoL\")"
+            }
+        },
+        {
+            "themeId": "echo",
+            "title": "Echo",
+            "pageStyleProps": {
+                "font-family": "system-rounded",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fecho-backdrop.jpeg\",\"%408J%5B6K%3Do0P_MAmXU049t%3D%3F%5DV%23to%7D-XxIo%7DDi%5EkD%25XzxcyDtktSxbxm%24*tS\")",
+                "theme-id": "echo",
+                "color": "#1F2225 #E2E3DD",
+                "separator-style": "doodle",
+                "background-color": "#E2E3DD #1F2225",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fecho-card-1.jpeg\", \"UrKUclt8x%5Ds%3A~qxut6WWtRt7RPt6X9WBRPoK\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fecho-card-2.jpeg\", \"UNHf9f.S_3%25M_NyDM%7BV%404oH%3F9GM%7BWCaKofx%5D\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fecho-card-3.jpeg\", \"UjNT5p%25g_Nt7.SjFRPWBoMkCRPoL%252V%40j%5Boz\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fecho-card-4.jpeg\", \"ULRJoi%5BE%40%23%2Cv%7BNKQo%5Dt4%3B7oI9~R%24%3DzxVNFR.\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fecho-card-5.jpeg\", \"UcIX%7Baaf_3-p*Jt7XSbvs%3At6jFRjRQWCRPaL\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fecho-card-6.jpeg\", \"UDHH%2BQ1b1bEg1u%252%5BX%2B_9%5D%5BW7eS%23%23pJ7%7C%5EGE\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/echo-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/echo-cover.jpeg",
+                "aspectRatio": 1.499267935578331,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "USLYArR*.8x].7ozx]oz_Nay9FM{xuoLIURj"
+            }
+        },
+        {
+            "themeId": "lemonade",
+            "title": "Lemonade",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "gradient(#8EB4E2 #8EB4E2, #CCD8EA #CCD8EA, top-to-bottom)",
+                "theme-id": "lemonade",
+                "color": "#4A5355 #D9EAEE",
+                "separator-style": "washi(pattern, \"hex\", #8EB4E2 #8EB4E2)",
+                "background-color": "#EDE9C2 #464431",
+                "card-assets": "#D5DCE8 #D5DCE8"
+            }
+        },
+        {
+            "themeId": "sparkles",
+            "title": "Sparkles",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fsparkles-backdrop.jpeg\",\"%4079Gs%409aWTxb~UIp0K%3FH%5Ejk9Io-o%25MM_bJRiR%2BxtD%25%252IpxtNHWAozRjof\")",
+                "theme-id": "sparkles",
+                "color": "#F5E7F4 #000000",
+                "separator-style": "line",
+                "background-color": "#000000 #F5E7F4",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsparkles-card-1.jpeg\", \"UF9%245%3FACwJJ%2C5lSeofwd%7DES4oKNaOXJ7r%3Ff*\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsparkles-card-2.jpeg\", \"UA8%3Ak%3BkDbwa%24%7D%5BI%3BS2bGxaI%40kWxas%3AI%3As%3Bxa\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsparkles-card-3.jpeg\", \"U8Au~%3F0zE3%7D%5B0xxa%24%24I.NGs%3ANaI.V%7Ct6%24%2Bs%3B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsparkles-card-4.jpeg\", \"U59iV.%7DII%3FXR0%7Bt5%2C%3FEM%25NkYOY-Vrww1NtXT\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsparkles-card-5.jpeg\", \"U02~T19arVES~qE0R4I%5B8wt1Itovq%40.8NgRN\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsparkles-card-6.jpeg\", \"UGBxQ9oLkBsoWW%7DrsobG9%5DR%2B%5E5s.juEgWX-A\")"
+            }
+        },
+        {
+            "themeId": "rose",
+            "title": "Rosé",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Frose-backdrop.jpeg\",\"%401Rxix%3FbP9%5BbeTmmP.b%5Ev%24%5ERayg3rEjFTJ_3a%7CaKXRban4%3FHaykqa0aebu\")",
+                "theme-id": "rose",
+                "color": "#1E4C41 #D1EDE6",
+                "separator-style": "doodle",
+                "background-color": "#FAF2F4 #401922",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frose-card-1.jpeg\", \"UFGkIO3W2uoz1~%2CD%3B%7Cni7z%2BbnOt8%7B%7BOrOYJ7\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frose-card-2.jpeg\", \"UC9j%5Bjt7IUt800jaRkIo~qWBs%3Axt00of%25LoL\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frose-card-3.jpeg\", \"UAKVEf%3F%5EE%2B_NPBaxs8ofIps%3A%24*Rj~Vf6ENoz\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frose-card-4.jpeg\", \"UNMHJi-%3DWC-%3Bpfe.jZfPI9fRflj%5B-qbIf5Wr\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frose-card-5.jpeg\", \"UBG%5B%24aD%253%3B%3Fv%7D%5BRjOrW%3B47sT%3ARNaUFbv%2Bbi_\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Frose-card-6.jpeg\", \"U7Bg%7DI%25%245F-%3BKlj%5BxAWs03xZ%3FFNH~Tt6Iqt5\")"
+            }
+        },
+        {
+            "themeId": "koi",
+            "title": "Koi",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fkoi-backdrop.jpeg\",\"%401Oyz%2CnLS%7C%5E*Myxss~t6IW-%2Cxut8%24QVtxYIC%25e%25MrX%3Fa_L%5E%25emIps%25s%3BaL\")",
+                "theme-id": "koi",
+                "color": "#472422 #472422",
+                "separator-style": "washi(pattern, \"hex\", #FFFFFF #FFFFFF)",
+                "background-color": "#D9C9AF #D9C9AF",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fkoi-card-1.jpeg\", \"U8MPE%24%5E%259w~Cq%5D%25gXQ-oSge%3B.7R%25-5nhMyyD\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fkoi-card-2.jpeg\", \"UELX%3D3%3FauPt%2C%25Mn%24t7bvyERjR4xu.SX9M%7Brq\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fkoi-card-3.jpeg\", \"UEPFldnm%25L~o%3FZt5n%24e.%5E%24%25KIVD*%3FGNLS5kW\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fkoi-card-4.jpeg\", \"UDOMf%7C%251_2~o%3Fat7xtWBxtt6NGM%7C%3FGayxtt7\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fkoi-card-5.jpeg\", \"UHO%3AkWMw.S-%3B~qj%5BV%3FV%3FaeRjoffk%5E%2BaeoeWV\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fkoi-card-6.jpeg\", \"UFOCd4-Ay%3Fz%3B%3Fuo%7DaetltlWVRjg3%5E*kWj%5Be.\")"
+            }
+        },
+        {
+            "themeId": "morning",
+            "title": "Morning",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/morning-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/morning-cover.jpeg",
+                "aspectRatio": 1.78125,
+                "imageWidth": 1368,
+                "rawImageWidth": 1368,
+                "blurHash": "USP68Qe=9txu.mI;a~bHk=M|WBWB%2aekCay"
+            },
+            "pageStyleProps": {
+                "theme-id": "morning",
+                "background-color": "#F3EDE9 #F3EDE9",
+                "color": "#5F5B4E #5F5B4E",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "gradient(#D9E0E3 #D9E0E3, #EBD7D2 #EBD7D2, top-to-bottom)",
+                "card-assets": "gradient(#D9E0E3 #D9E0E3, #EBD7D2 #EBD7D2) | gradient(#F5DAB9 #F5DAB9, #C6D7F8 #C6D7F8) | gradient(#F5DAB9 #F5DAB9, #F8CAC6 #F8CAC6) | gradient(#F5DAB9 #F5DAB9, #D1C4B6 #D1C4B6) | gradient(#E9D5CE #E9D5CE, #E2DDE2 #E2DDE2) | gradient(#E0EAFC #E0EAFC, #DBE0E2 #DBE0E2)"
+            }
+        },
+        {
+            "themeId": "partners-in-crime",
+            "title": "Partners in Crime",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/partners-in-crime-cover.jpg",
+                "uri": "https://res.craft.do/assets/theme/cover/partners-in-crime-cover.jpg",
+                "aspectRatio": 1.499531396438613,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "U66@vKso57S4~payNHkC%#ay$$j[.8WVi_oL"
+            },
+            "pageStyleProps": {
+                "theme-id": "partners-in-crime",
+                "background-color": "#545B56 #545B56",
+                "color": "#E9B669 #E9B669",
+                "font-family": "system-serif",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-spooky.png\", \"LBBg6$Rj00xuIUxuxuIU00j%5B~qay\")",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/partners-in-crime-backdrop.jpeg\", \"V67AxZjF0gbH=_~pWBNHj%5BjFyEay$%25WVIpyDWBrroLSh\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/partners-in-crime-card-1.jpeg\", \"U996%7Bx%5E*tQjHOXxFRPM%7B~U-%3Aoyso%25LxaxGNG\") | image(\"https://res.craft.do/assets/theme/cards/partners-in-crime-card-2.jpeg\", \"UZD%5D6p-pWWR*~ptRW%3Bay_2t7oeoL%3FbbHjsof\") | image(\"https://res.craft.do/assets/theme/cards/partners-in-crime-card-3.jpeg\", \"UIC6S%25~VtRtR~V-%3AkWxuo%7DIpWBxaM%7BRje.t6\") | image(\"https://res.craft.do/assets/theme/cards/partners-in-crime-card-4.jpeg\", \"UeGk%3At~p%25MofxtbHfkkC-oNHRjoKt7j%40j%40j%5B\") | image(\"https://res.craft.do/assets/theme/cards/partners-in-crime-card-5.jpeg\", \"U8A%5Dc%3F-%3A0MMx~V%25LD%25Mx%3FutRVsVstRtQs-Rj\") | image(\"https://res.craft.do/assets/theme/cards/partners-in-crime-card-6.jpeg\", \"U87n8qRjE1WB~pRjRPRk~WM%7BIVoe~VM%7BIVoe\")"
+            }
+        },
+        {
+            "themeId": "night-guests",
+            "title": "Night Guests",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/fun-begins-at-night-cover.jpg",
+                "uri": "https://res.craft.do/assets/theme/cover/fun-begins-at-night-cover.jpg",
+                "aspectRatio": 1.499531396438613,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "U24ef?s.0LIp~qofE3RlD*j]-ot74;R*^$xs"
+            },
+            "pageStyleProps": {
+                "theme-id": "night-guests",
+                "background-color": "#000000 #000000",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system-serif",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/fun-begins-at-night-backdrop.jpeg\", \"V41p*PiJU_g~i%7BqEVFZilSeUcrZii_l8eUghiwjFb%5Ea1\")",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/fun-begins-at-night-card-1.jpeg\", \"UA4C%40m%250W%3FMyu6nhkWWBIXROozt7MdRjafof\") | image(\"https://res.craft.do/assets/theme/cards/fun-begins-at-night-card-2.jpeg\", \"Ue7%3A%3BMofIWR-ysofMxWWR%2Ba%7Cnhf6S%25axofoJ\") | image(\"https://res.craft.do/assets/theme/cards/fun-begins-at-night-card-3.jpeg\", \"US5%40P%7Bo~L~RPysozR5WCpJkCV%3FayV%5Bayj%5Bj%40\") | image(\"https://res.craft.do/assets/theme/cards/fun-begins-at-night-card-4.jpeg\", \"U54y_st%2C5UO%40y%3FkWWBbcKjX8%23%2Bs%3ATdbIr%3FoL\") | image(\"https://res.craft.do/assets/theme/cards/fun-begins-at-night-card-5.jpeg\", \"U14_%25y.601~pyYxu%25LRj01IB%3FGD*01MxxtD*\") | image(\"https://res.craft.do/assets/theme/cards/fun-begins-at-night-card-6.jpeg\", \"UD6cQeH%3FMHn%25*0RjQ-oeHqtQadkDRPn~aekD\")"
+            }
+        },
+        {
+            "themeId": "acid-surprise",
+            "title": "Acid Surprise",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/acid-surprise-cover.jpg",
+                "uri": "https://res.craft.do/assets/theme/cover/acid-surprise-cover.jpg",
+                "aspectRatio": 1.499531396438613,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "U9G9id_C3ACi?u.$mutQm4M4@{vow6=Oy9tP"
+            },
+            "pageStyleProps": {
+                "theme-id": "acid-surprise",
+                "background-color": "#5F1DBB #5F1DBB",
+                "color": "#FFFFFF #FFFFFF",
+                "font-family": "system-rounded",
+                "separator-style": "doodle",
+                "backdrop": "image(\"https://res.craft.do/assets/theme/backdrop/acid-surprise-backdrop.jpeg\", \"V87.:to%23X%5EoOUJaykCfjfRkAkBj%5Df%7Do4YCkBj%5BbFjuf$\")",
+                "card-assets": "#63C458 #63C458"
+            }
+        },
+        {
+            "themeId": "crust-or-no-crust",
+            "title": "Crust or No Crust",
+            "coverImage": {
+                "enabled": true,
+                "rawUrl": "https://res.craft.do/assets/theme/cover/crust-or-no-crust-cover.jpeg",
+                "uri": "https://res.craft.do/assets/theme/cover/crust-or-no-crust-cover.jpeg",
+                "aspectRatio": 1.49953,
+                "imageWidth": 1300,
+                "rawImageWidth": 1300,
+                "blurHash": "UKJt0M0MTdM_.TMxM|WA.8IrMx-o%MaKbFj]"
+            },
+            "pageStyleProps": {
+                "theme-id": "crust-or-no-crust",
+                "background-color": "#F8F3E2 #F8F3E2",
+                "color": "#3B4513 #3B4513",
+                "font-family": "system-serif",
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-beige-paper.jpg\", \"LARe~Z?wM%7BMdMHj?ozM_%25gt7oftR\")",
+                "backdrop": "#ECB24A #ECB24A",
+                "card-assets": "image(\"https://res.craft.do/assets/theme/cards/crust-or-no-crust-card-1.jpeg\", \"UGG%40xo0LEM%7D%3F%3BKIqx%5D%3D_yYIo9axZ0LkC9_%25L\") | image(\"https://res.craft.do/assets/theme/cards/crust-or-no-crust-card-2.jpeg\", \"UDJ%40OA009v~VyZ4T%3Fb%25MXTDi%3Fb%5E*%3Fan%23x%5DM%7B\") | image(\"https://res.craft.do/assets/theme/cards/crust-or-no-crust-card-3.jpeg\", \"UAEeV%40~q101Oi%5EZ%23IVEM5S%23RoyO%3FJ6Kj%3FH-V\") | image(\"https://res.craft.do/assets/theme/cards/crust-or-no-crust-card-4.jpeg\", \"U6BVIY%24MEk%7D%3F0%23%7D%3FIVE3J-Ip%7D%3F-n0h-o%5EP%24g\") | image(\"https://res.craft.do/assets/theme/cards/crust-or-no-crust-card-5.jpeg\", \"UGDIj%3A~BIVb%5EtRX9IURPEkXSNGRk-%3AsmaKog\") | image(\"https://res.craft.do/assets/theme/cards/crust-or-no-crust-card-6.jpeg\", \"UaGaRC%7D%3FE3I%3B%251WqEMIpJ-S%23jbRRt6t6oLWB\")"
+            }
+        },
+        {
+            "themeId": "memento",
+            "title": "Memento",
+            "pageStyleProps": {
+                "font-family": "system-rounded",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fmemento-backdrop.jpeg\",\"%404JH%3Ad%40X005t_1O%2B00qto5%3F%5Btk9fD4-pnN00%25NxHIYyE%3FaKi-p-AVqspNG\")",
+                "theme-id": "memento",
+                "color": "#1E4C41 #1E4C41",
+                "separator-style": "washi(pattern, \"hex\", #C3361D #C3361D)",
+                "background-color": "#C7C2B6 #C7C2B6",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fmemento-card-1.jpeg\", \"UMJ%40tP%7Du4T%25N_Nx%5DkCt7E1X8xuWVr%3FnOa0oL\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fmemento-card-2.jpeg\", \"UCJtxP~W00%25L_4V%5BRQRj0dInMwIApcXlSfnN\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fmemento-card-3.jpeg\", \"U5C%25EZ%3FG00%3FH.80Ji_.800D%25_NRieSIV%25M%25M\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fmemento-card-4.jpeg\", \"UFJai%24%7DG00xH%5DnD5%253ni00nQ.8J7%2Bws%3Ar%3Dae\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fmemento-card-5.jpeg\", \"UQHB%23p~qD%25IU-pVtkW%25MIAMwn%2BtSITMwM%7BbF\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fmemento-card-6.jpeg\", \"UIJk1JR49s%252rvOUTcRkNZROv~rr%3F%5EozRjRi\")"
+            }
+        },
+        {
+            "themeId": "winter-charm",
+            "title": "Winter Charm",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fwinter-charm-backdrop.jpeg\",\"%409Q%2C5Z%25LHqpKgQozL%7DsQ.9toVWbbM_WGtnngMxocbI%25%25tSemx%5EogSkWCag\")",
+                "theme-id": "winter-charm",
+                "color": "#775225 #775225",
+                "separator-style": "washi(image, \"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fwashi%2Fwashi-winter-charm.jpeg\", \"U3RC*t%5EifQ~4%5E9EjfQ14z-NsfQEdMexafQ%3D%7C\")",
+                "background-color": "#F1F2ED #F1F2ED",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinter-charm-card-1.jpeg\", \"UGQ%5Di%5D_4Hq%5E%23%25MkYawRhR2kBx%5Enz-%3Bn1V%3FZ%7C\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinter-charm-card-2.jpeg\", \"UKO%3B0x~qxt-%3BM%7Dt7%252oeRlWBWUt6%25MRjj%5Bof\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinter-charm-card-3.jpeg\", \"UMMtptxu~q%25Moyf7j%5Bay~Wj%5B_3xuxuj%5B%25Ms%3B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinter-charm-card-4.jpeg\", \"UJP%24%7B%3F%3FH*J%25z%25LayWUj%40.SkCMdnP-%3Bj%5Bjaju\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinter-charm-card-5.jpeg\", \"UeQ02C%24kaftQ%25Mj%5BkCfk.mXRkBs%3A%3FHjtaejs\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinter-charm-card-6.jpeg\", \"UOPQ81%25M_3xuxufkofof~qf6Rkof%3FaWBRjof\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/winter-charm-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/winter-charm-cover.jpeg",
+                "aspectRatio": 1.621,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UGR3NB-;_N?a?vj[n$kBx]jZofoz^+ofozf6"
+            }
+        },
+        {
+            "themeId": "christmas-glow",
+            "title": "Christmas Glow",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fchristmas-glow-backdrop.jpeg\",\"%40BECnI-ro%23I9jbjF00oJj%40_4xcof%5E*oKjD4.R*ngM~Nej%5B%3Faa%7Bobr%3FodWB\")",
+                "theme-id": "christmas-glow",
+                "color": "#D7D89D #D7D89D",
+                "separator-style": "washi(image, \"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fwashi%2Fwashi-christmas-glow.jpeg\", \"U1JPx*s%3AR*s9ozj%5BayoL47ayaeayXmj%5BfQoL\")",
+                "background-color": "#113013 #113013",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fchristmas-glow-card-1.jpeg\", \"U8BgME%3FctSxuVrn%25ads.00R%24k9WT%3Fwxvs%3DRm\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/christmas-glow-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/christmas-glow-cover.jpeg",
+                "aspectRatio": 1.3404825737265416,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "U04f52--00P8*GkCMeVs0{S#,bMy--btNaog"
+            }
+        },
+        {
+            "themeId": "sparkle-night",
+            "title": "Sparkle Night",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fsparkle-night-backdrop.jpeg\",\"%40EB2%23zxDE2%7D%3DNIR*9uIr-nIpju-nt6jZjY%251RkM%7C%250NHNIoIIqW%3DWBNHkC\")",
+                "theme-id": "sparkle-night",
+                "color": "#FCE4B5 #FCE4B5",
+                "separator-style": "doodle",
+                "background-color": "#4A2913 #4A2913",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsparkle-night-card-1.jpeg\", \"UQFE.G%3Fa%3FG%25M~U%25N%25Mt8Oao~o%23R.kXt8t7bc\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsparkle-night-card-2.jpeg\", \"U7BVz%3Df%2B0%23%25M~UIpV%3F%252oys.jFt7-UoeI%3Bn%25\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsparkle-night-card-3.jpeg\", \"U6A02L%25f10Xm%7D%3D%25LtR9v%3D_t6xZog-7NbSh-U\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/sparkle-night-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/sparkle-night-cover.jpeg",
+                "aspectRatio": 1.5,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "U58prt=_590g~A$%9aIp0gI;M{^PNKNd?F%1"
+            }
+        },
+        {
+            "themeId": "new-years-resolutions",
+            "title": "Fresh Start",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fnew-years-resolutions-backdrop.jpeg\",\"%40HDbZdNI59~9j%5BI%3BE3s.%250S4WBs.NHazjtIpoLs.xZR*j%5BR%2Bj%5BWCjsoeWC\")",
+                "theme-id": "new-years-resolutions",
+                "color": "#FCE4B5 #FCE4B5",
+                "separator-style": "washi(image, \"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fwashi%2Fwashi-new-years-resolutions.jpeg\", \"U09Q52offQofxZfkfQR%2BxZaxfQae-noLfQoe\")",
+                "background-color": "#000000 #000000",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fnew-years-resolutions-card-1.jpeg\", \"U4HTTNxZ%24z%7D%3A%5EgWXxYs-%24gs.NIxF%7D%3BWqjts.\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/new-years-resolutions-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/new-years-resolutions-cover.jpeg",
+                "aspectRatio": 2.606,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "U03*xPs.0Ps.xZjuWXoL05WX~8WCNIfjs.R+"
+            }
+        },
+        {
+            "themeId": "snowfall",
+            "title": "Snowfall",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fsnowfall-backdrop.jpeg\",\"%402L%23X%2B~p-.V%5DbXogRijZRkt8WVWoRkWUt7tRofj%3FM%7BxtWBtRoMt5WBRjof\")",
+                "theme-id": "snowfall",
+                "color": "#394344 #394344",
+                "separator-style": "doodle",
+                "background-color": "#CBD2D4 #CBD2D4",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnowfall-card-1.jpeg\", \"U7KU%2BgS~xa.8%25g-%3BE1WBoft7IoRj~qR*%25LM%7B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnowfall-card-2.jpeg\", \"U8J*q%25%251ae-%3A_Maxbbaej%3FozV%5BRj%3Faozeoix\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnowfall-card-3.jpeg\", \"U7Kv_%23%5EgoJ~8%3D%5Ds%2CbHs.WpoeW%3Bj%40%3FDoeoeoe\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnowfall-card-4.jpeg\", \"U3GiH5%7DZof%7DZ%3DyxGoLWBs%3As%3AWBof%5D%3AxGjFWV\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnowfall-card-5.jpeg\", \"UAM%40P%5E~qTL%3Fa%3FvRjs8oJTzV%40v%7Ca%7D%3DvxZkXkX\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnowfall-card-6.jpeg\", \"U6H%7BA%5B-%3BaK%3FH_Ni_bwofozVsWWem%5E%2Cofe.i_\")"
+            }
+        },
+        {
+            "themeId": "winterlight",
+            "title": "Winterlight",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Fwinterlight-backdrop.jpeg\",\"%40FLN77-TIU~AR-j%5D01NejYNGj%40oeIUR*oKt6RkR*kCoJbHt7oJjtayj%5Bay\")",
+                "theme-id": "winterlight",
+                "color": "#3A2D28 #3A2D28",
+                "separator-style": "doodle",
+                "background-color": "#D1C3BD #D1C3BD",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinterlight-card-1.jpeg\", \"UEDlpN0LI%3A%5E*~WE1WVt702%5EPs9E20L%3D%7Bo0NG\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinterlight-card-2.jpeg\", \"ULC%3FZd56E0%3FH~CE2S2%25LjrNGs%3BxaxvaxRjs%3B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinterlight-card-3.jpeg\", \"U%25G*c%3BNIRkof~ARkR%2Bj%5B%3D_afWVfkxYoLjua%7C\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinterlight-card-4.jpeg\", \"UODIwb9u9a%251~CIpIps.IqjExFR%2B9vxFxZWD\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinterlight-card-5.jpeg\", \"UDLXlL%3FaJDx%5E%3FcngRiM%7D-%3DkCIUM%7B~qR*xvxu\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fwinterlight-card-6.jpeg\", \"UOD9ew~B%251xu-%3Dxaj%5BbI0e9uNGRjM%7BRkf6o0\")"
+            }
+        },
+        {
+            "themeId": "snake-fire",
+            "title": "Snake Fire",
+            "pageStyleProps": {
+                "font-family": "system",
+                "backdrop": "#ECECE9 #ECECE9",
+                "theme-id": "snake-fire",
+                "color": "#DA3A27 #DA3A27",
+                "separator-style": "doodle",
+                "background-color": "#ECECE9 #ECECE9",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnake-fire-card-1.jpeg\", \"UQOKlAqaX9qu%3F%5Ej%3FVEaKo%7Dbbaej%3F%2C%40ozozj%3F\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnake-fire-card-2.jpeg\", \"UDP4oW%3D%7CWF-%3A%7B%7CuOkCVEibp_pIl9%7D%5BZ3b%5Eg%25\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnake-fire-card-3.jpeg\", \"UFOTOm*0T%7B-7_3YQa%23oecDoeg%23a~%5DUkqgMcE\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnake-fire-card-4.jpeg\", \"UkOxB%2BR5kWm%2C_Nt7RPV%40pIyDrWof-%3BX9aet7\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnake-fire-card-5.jpeg\", \"UJP%7D3~%2C%3BQS%24k_NL%23VEpcVYU%5Epwp__2pIkqZ%24\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Fsnake-fire-card-6.jpeg\", \"UnOo3RxaWBrW.mj%5BjFVYa0VYWBV%40wIa0ofjt\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/snake-fire-cover.png",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/snake-fire-cover.png",
+                "aspectRatio": 2,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UFO9Is]-oyXR-VNaS}$%oJsSJSxZ}rsAJmSL"
+            }
+        },
+        {
+            "themeId": "crimson-coil",
+            "title": "Crimson Coil",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "#861C1B #861C1B",
+                "theme-id": "crimson-coil",
+                "color": "#F4F4F4 #F4F4F4",
+                "separator-style": "washi(image, \"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Ftheme-washi%2Fcrimson-coil-washi.jpeg\", \"U3M%401O-pWXxuMxoLjut6MwbGt7V%5B~qofofkC\")",
+                "background-color": "#7D1A1A #7D1A1A",
+                "card-assets": "#861C1B #861C1B"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/crimson-coil-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/crimson-coil-cover.jpeg",
+                "aspectRatio": 2,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "UGN00j8w00_N4TtRShxvWBMx%MtS?IV@D%x]"
+            }
+        },
+        {
+            "themeId": "lunar-glow",
+            "title": "Lunar Glow",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fbackdrop%2Flunar-glow-backdrop.jpeg\",\"%407Kc%7B%5BE3aL9GRlNH~T%251t6M%7CIpIpNH%251t6-nRkRlxss%3AaxRkt6ofoeoeay\")",
+                "theme-id": "lunar-glow",
+                "color": "#F4F4F4 #F4F4F4",
+                "separator-style": "line",
+                "background-color": "#BE1E1C #BE1E1C",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-glow-card-1.jpeg\", \"U7H_0%3A0049-%3B%2C-NHOFWB01x%5Ey%40%3FH*09F~WD%25\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-glow-card-2.jpeg\", \"U2B1-*%7DiNi%5D%24v3%2B%24S%5ENIGeBqW7%5DoIM5R%2C%5DAD\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-glow-card-3.jpeg\", \"UBFh3YYPLzZi~VO%3FpcMyofWBtRMx%3FGaxyCSe\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-glow-card-4.jpeg\", \"UZEdepwvXSW%3BFdkBoLjs5lX8nij%40%7DYjGWWj%5B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-glow-card-5.jpeg\", \"U2D%40ag9F0d%25M00nl%7D%5DE148M%7BM%7BkCF_xuEKM%7B\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flunar-glow-card-6.jpeg\", \"U24-qsI%3A0%7Bs91dni%5D%3ANZ%7D%5DNa5js9Ftn%2B%2C%5BR%25\")"
+            }
+        },
+        {
+            "themeId": "lovelight",
+            "title": "Lovelight",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "gradient(#C60902 #C60902, #F6E8CB #F6E8CB, radial)",
+                "theme-id": "lovelight",
+                "color": "#B00802 #B00802",
+                "separator-style": "doodle",
+                "background-color": "#F6E8CB #F6E8CB",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovelight-card-1.jpeg\", \"LBE-%3FluhMe0LI%3D%25LRPkW0000%5Ektm\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovelight-card-2.jpeg\", \"L7I%7DCl4T00~W4T9%40hLpHKjF2D%25SO\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovelight-card-3.jpeg\", \"LCK%5Ey.In00Hqvfs%3B8wV%40ysMxRjyX\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovelight-card-4.jpeg\", \"LSMjjt%3FwEMtmS5s8bbt8yDM%7Bn4xu\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovelight-card-5.jpeg\", \"LII49K00~VoI%5E%2B%24%25RPxatlozNGI%3A\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovelight-card-6.jpeg\", \"LFHm%249yErra000H%3FxutR.TyDn%24bY\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/lovelight-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/lovelight-cover.jpeg",
+                "aspectRatio": 1.4981273408239701,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "LOIEOr_NIVtQ00m+bvWYSitlM{IV"
+            }
+        },
+        {
+            "themeId": "pure",
+            "title": "Pure",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "none",
+                "theme-id": "pure",
+                "color": "#ce3116 #ce3116",
+                "separator-style": "doodle",
+                "background-color": "#ebe6e6 #ebe6e6",
+                "card-assets": "gradient(#EBE6E6 #EBE6E6, #CE3116 #CE3116)"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/pure-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/pure-cover.jpeg",
+                "aspectRatio": 1.47929,
+                "imageWidth": 1600,
+                "rawImageWidth": 1600,
+                "blurHash": "LVP$UXj?qFj[rCWBkqWBctfkVEoe"
+            }
+        },
+        {
+            "themeId": "lovey-dovey",
+            "title": "Lovey Dovey",
+            "pageStyleProps": {
+                "font-family": "system-serif",
+                "backdrop": "#EBF9FD #EBF9FD",
+                "theme-id": "lovey-dovey",
+                "color": "#5e4027 #5e4027",
+                "separator-style": "doodle",
+                "background-color": "#fffff2 #fffff2",
+                "card-assets": "image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovey-dovey-card-1.jpeg\", \"L8ODg%3B~q8_xu00e.tRj%5B4nIVbca%24\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovey-dovey-card-2.jpeg\", \"L1Nm.r8%7B00~q00%24%2500%25000Di%25%25Mx\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovey-dovey-card-3.jpeg\", \"L0ON5k00000z00HX%5B8Gs00005X%3Ds\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovey-dovey-card-4.jpeg\", \"L9NT%2Cf~q0KxuD%25M%7Bxujs00Rj%25LWA\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovey-dovey-card-5.jpeg\", \"L3NwTH%3Fv00Mc4n%25%23nOxu00Rjd%3D_N\")|image(\"https%3A%2F%2Fres.craft.do%2Fassets%2Ftheme%2Fcards%2Flovey-dovey-card-6.jpeg\", \"L9Nm_%5E~qM%7BX900sRt7WY4nngkCR*\")"
+            },
+            "coverImage": {
+                "enabled": true,
+                "uri": "https://res.craft.do/assets/theme/cover/lovey-dovey-cover.jpeg",
+                "rawUrl": "https://res.craft.do/assets/theme/cover/lovey-dovey-cover.jpeg",
+                "aspectRatio": 1.327586,
+                "imageWidth": 1232,
+                "rawImageWidth": 1232,
+                "blurHash": "LEN1AO~VD%NHRPRjkCV@E2M|s.xt"
+            }
+        }
+    ],
+    "washiPresets": [
+        {
+            "key": "childhood",
+            "label": "Childhood",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-childhood.jpg\", \"L6NcH5xnRqWHD%7Bxla%23-dIfN5WFIx\")"
+            }
+        },
+        {
+            "key": "groovy-water",
+            "label": "Groovy Water",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-groovy-water.jpg\", \"L9Jl2WE8~Q~R9ixr~Q-m%5EzxYE44@\")"
+            }
+        },
+        {
+            "key": "peachy-peach",
+            "label": "Peachy Peach",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-peachy-peach.jpg\", \"LFPYk-WUY*tl9Fg$RPEL%5E+WB%23RAD\")"
+            }
+        },
+        {
+            "key": "mint-pixels",
+            "label": "Mint Pixels",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-mint-pixels.jpg\", \"@8OqT6t6fk_Lj[a|IVInju_LWBjtIVoff6_LaxjtIVoga{_Lj[a}MyWUfR\")"
+            }
+        },
+        {
+            "key": "blueberry-basket",
+            "label": "Blueberry Basket",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-blueberry-basket.jpg\", \"@XIiRgoffQxufQfQX9fkay%Mj[ay01aya|E2ayfQ%Mj[fQtRfQfQo0fQj[\")"
+            }
+        },
+        {
+            "key": "colorama",
+            "label": "Colorama",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-colorama.jpg\", \"LCO1Gy3fv0%7C%7C=Y=eEh9%5Ew%5EEk%2C?Na\")"
+            }
+        },
+        {
+            "key": "swoopy-orange",
+            "label": "Swoopy Orange",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-swoopy-orange.jpg\", \"L1QG4%5D-ma%7C?q~lpFfQt$Q=VufQQ=\")"
+            }
+        },
+        {
+            "key": "beige-paper",
+            "label": "Beige Paper",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-beige-paper.jpg\", \"LARe~Z?wM%7BMdMHj?ozM_%25gt7oftR\")"
+            }
+        },
+        {
+            "key": "daisy-season",
+            "label": "Daisy Season",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-daisy-season.jpg\", \"@9Nw7J-;NL~X%29a9FxYRitjIVWBIYkYM|?FSi%1D,M}ay-:WBRjM{V@a_\")"
+            }
+        },
+        {
+            "key": "golden-blooms",
+            "label": "Golden Blooms",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-golden-blooms.jpg\", \"@RN+%Z=qbH~7xCWX9wR,s:xBRjR.adoejYT1kCbHR*oLbHxaf6jsf+WCWX\")"
+            }
+        },
+        {
+            "key": "frosted-petals",
+            "label": "Frosted Petals",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-frosted-petals.jpg\", \"@9Q0]et7jb_Nj?fQIBa}fQ?^a}a|9Xayay~qj?jsIUj@fP_Nfkf7IUfkfQ\")"
+            }
+        },
+        {
+            "key": "lemon-fields",
+            "label": "Lemon Fields",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-lemon-fields.jpg\", \"@9RB:0xZkC~Qn#fkD=WAf6~SWBj[E3aeay^yWXazE3oJfQ?6azjZIUaxa|\")"
+            }
+        },
+        {
+            "key": "bubble-cells",
+            "label": "Bubble Cells",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-bubble-cells.jpg\", \"L38g%5DSmw2%7Ct%23tSV@o%7DafbJs:tRRQ\")"
+            }
+        },
+        {
+            "key": "pyjama-pink",
+            "label": "Pyjama Pink",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-pyjama-pink.jpg\", \"L5R.cZ+749o%7C-=H%5BToII7X.h%25CVG\")"
+            }
+        },
+        {
+            "key": "lavender-dream",
+            "label": "Lavender Dream",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-lavender-dream.jpg\", \"@8Mjzqt7az^-f7fQ9FfQay?dfRj@V?fQj[^-j[j@xWayay_4j[ays*fRj[\")"
+            }
+        },
+        {
+            "key": "caramel-picnic",
+            "label": "Caramel Picnic",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-caramel-picnic.jpg\", \"@9OMKIs:tR~qWVj]XnfkI9~Wj[WBT1fRMw~Wj[e:Sjj[RP^*j[aeIofkoh\")"
+            }
+        },
+        {
+            "key": "olive-cloth",
+            "label": "Olive Cloth",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-olive-cloth.jpg\", \"@5J[Y6t7of_3jba#xvj[WU_Mj[WVsGfQj@_3j[ayIUj[ay_Mf7j[D%fPa|\")"
+            }
+        },
+        {
+            "key": "cranberry-wool",
+            "label": "Cranberry Wool",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-cranberry-wool.jpg\", \"@8NcNVkDa{_MRjofFwt7of}[bbWVIoWBay^kayjtIofQay^kj[f8Ioayju\")"
+            }
+        },
+        {
+            "key": "terrazzo",
+            "label": "Terrazzo",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-terrazzo.jpg\", \"L6OV%5BM_2v1-:tlIU%25KIT%7DlNu8%7BnO\")"
+            }
+        },
+        {
+            "key": "mt-fuji",
+            "label": "Mt. Fuji",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-mt-fuji.jpg\", \"@RO|8}x[WB~CozozMxofnjxuWBIAj[Rjs;t7j[j[f6f6WU%LjFofR*WBRj\")"
+            }
+        },
+        {
+            "key": "spring-whisper",
+            "label": "Spring Whisper",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-spring-whisper.jpg\", \"@BOpDEMeO9~CDiOnMx%LR*-:$QRQM{j]xt?bpHozR*enV@_2WBRjogaeV[\")"
+            }
+        },
+        {
+            "key": "handle-with-care",
+            "label": "Handle with Care",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-handle-with-care.jpg\", \"LJTQusn%25loozt7e-e.f+hyf%2Cdpen\")"
+            }
+        },
+        {
+            "key": "work-in-progress",
+            "label": "Work in Progress",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-work-in-progress.jpg\", \"L3PZEG%5E_?B%5E_~Oj@j@WDE59fD:9M\")"
+            }
+        },
+        {
+            "key": "taro-paradise",
+            "label": "Taro Paradise",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-taro-paradise.jpg\", \"@9OMy|IU4n~X?a^+4.Rjof%gInj=Ios:%M_3f6t6SJRjae?baeM{NFt7xt\")"
+            }
+        },
+        {
+            "key": "flora-fauna",
+            "label": "Flora Fauna",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-flora-fauna.jpg\", \"L5J7U8~V4pD*D*kCoe02_1IV-:IV\")"
+            }
+        },
+        {
+            "key": "folk-art-blue",
+            "label": "Folk Art Blue",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-folk-art-blue.jpg\", \"L2L=U*tSjt-:?b-ofQ~A9bM%7CfPE2\")"
+            }
+        },
+        {
+            "key": "outline-flowers",
+            "label": "Outline Flowers",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-outline-flowers.jpg\", \"L4OMpZ-pxaxt~Wt6?Ht7IVt7%25MIo\")"
+            }
+        },
+        {
+            "key": "imprint-flower",
+            "label": "Imprint Flower",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-imprint-flower.jpg\", \"L0P%25R;%252004T00F%7DD%253s00-5D%25%5D3\")"
+            }
+        },
+        {
+            "key": "flat-pastels",
+            "label": "Flat Pastels",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-flat-pastels.jpg\", \"L4QbtUxWfQwHI$wHfQ+Y4TNffQEn\")"
+            }
+        },
+        {
+            "key": "sunny-seville",
+            "label": "Sunny Seville",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-sunny-seville.jpg\", \"@DRUQKoeWX^ha|az9~a|j@^df6az1Qa#fk$qjbj@nOfQj[={ayayNcayfQ\")"
+            }
+        },
+        {
+            "key": "red-orchid",
+            "label": "Red Orchid",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-red-orchid.jpg\", \"@JNGPfoLoKxtjtjZ1ca|f6$*jtf6tQj[a|$*jta|oyj[fQxZfjaybFj[az\")"
+            }
+        },
+        {
+            "key": "ocean-mosaic",
+            "label": "Ocean Mosaic",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-ocean-mosaic.jpg\", \"@QJ[I+j]ayxufQay-;jufQxufQfPM_a|fR%2j[fQ01a|j[kCj[j@IUfQay\")"
+            }
+        },
+        {
+            "key": "golden-palace",
+            "label": "Golden Palace",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-golden-palace.jpg\", \"@8P}^wt5a$}.f5j@DiW=js}=j]kCD%aej[~9ofkBE2kBbF~Ua|j[NfaxkC\")"
+            }
+        },
+        {
+            "key": "two-tone-leaf",
+            "label": "Two Tone Leaf",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-two-tone-leaf.jpg\", \"LIKBBl00-:0Kt6-:4oIo~pWBayWC\")"
+            }
+        },
+        {
+            "key": "summer-napkin ",
+            "label": "Summer Napkin ",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-summer-napkin.jpg\", \"LCP?Hl%7DtRn%5E+-;tm?d%25LyYxwMwD$\")"
+            }
+        },
+        {
+            "key": "flower-feast",
+            "label": "Flower Feast",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-flower-feast.jpg\", \"L7JG$gOmY$1S0q%5Dzs:vU0Q=x0MK5\")"
+            }
+        },
+        {
+            "key": "azulejo",
+            "label": "Azulejo",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-azulejo.jpg\", \"@CLXMVofbH-:ayj@Rjj[ay-;j@ay9Fj[fQxuofaz~pf6ay?bf6az9Zj@ay\")"
+            }
+        },
+        {
+            "key": "mediterranean-bloom",
+            "label": "Mediterranean Bloom",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-mediterranean-bloom.jpg\", \"@BJt^;xuWB-;WBWV^*j[ay-:offP^*ayjs-;j[ay~UfQay_2fQf64:ayj[\")"
+            }
+        },
+        {
+            "key": "old-town-tile",
+            "label": "Old Town Tile",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-old-town-tile.jpg\", \"@FKw:}of%L-pofj]~oayxa?Hj[ofD%a}NH-pWCoft6ayIo-;WBWB9GayWB\")"
+            }
+        },
+        {
+            "key": "radiants",
+            "label": "Radiants",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-radiants.jpg\", \"LBPiSuGdYdvP_KStnUoh%5EvrWvU-n\")"
+            }
+        },
+        {
+            "key": "kids-room",
+            "label": "Kid’s Room",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-kids-room.jpg\", \"L1Lh*U%25MNFx%5B_2%253fR-W0woLoLs:\")"
+            }
+        },
+        {
+            "key": "cuddly-bears",
+            "label": "Cuddly Bears",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-cuddly-bears.jpg\", \"LEM7.dofaeof_Nj%5Bj%5Bj%5B%25%25fRj%5BfR\")"
+            }
+        },
+        {
+            "key": "stick-it",
+            "label": "Stick It",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-stick-it.jpg\", \"LAJj*f14?4%23i$;%252RYv_049%25xwDv\")"
+            }
+        },
+        {
+            "key": "eye-spy",
+            "label": "Eye Spy",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-eye-spy.jpg\", \"LJLqFV~C?=5?:AaQVoo%5B:-IBNYs=\")"
+            }
+        },
+        {
+            "key": "old-money",
+            "label": "Old Money",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-old-money.jpg\", \"@9J7?RjY$x~TNfads:tQxt^%e.%1t6R+Rl-.oeayoJa}od^%ayWCR+t6R+\")"
+            }
+        },
+        {
+            "key": "cosmic-signs",
+            "label": "Cosmic Signs",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-cosmic-signs.jpg\", \"@ZOCsRoe0Mxtj@R*%Ljb%1xtayjaMxayt6xZfjbHkWjuaextjufPRjfjof\")"
+            }
+        },
+        {
+            "key": "bibbidi-bobbidi-boo",
+            "label": "Bibbidi Bobbidi Boo",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-bibbidi-bobbidi-boo.jpg\", \"@AK,S=R+oe9dxYj[0%R+jZodoKbG9{WWjt%JjtfQ9wfQa|$~a|fQE4jtfj\")"
+            }
+        },
+        {
+            "key": "magical-forest",
+            "label": "Magical Forest",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-magical-forest.jpg\", \"@DJk3.%L0g^h$zIqIU%0NI%1j[W?n%a#R*%1s-WBE1s,xaxts.WBNHoJoe\")"
+            }
+        },
+        {
+            "key": "andy-banana",
+            "label": "Andy Banana",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-andy-banana.jpg\", \"LKLCoC%25WRO1i=qXkv~@R%7BYaAs=n%2C\")"
+            }
+        },
+        {
+            "key": "sheeptation",
+            "label": "Sheeptation",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-sheeptation.jpg\", \"LCN%5Exgoc~Ut7-:-o9bt7W?M%7C4:oe\")"
+            }
+        },
+        {
+            "key": "doggy-power",
+            "label": "Doggy Power",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-doggy-power.jpg\", \"LGNB0%5E%5E+ae0K~XE0RP%25MD%259Fx%5D-q\")"
+            }
+        },
+        {
+            "key": "cowabanga",
+            "label": "Cowabanga",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-cowabanga.jpg\", \"L5J9lExuR5yZ%25f0%23%7D?%2CA-:%23Y9F6*\")"
+            }
+        },
+        {
+            "key": "frogalicious",
+            "label": "Frogalicious",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-frogalicious.jpg\", \"LKG%5D$-.7t8?%5BM-tStRohS$%25fxtx%5D\")"
+            }
+        },
+        {
+            "key": "purr-statement",
+            "label": "Purr Statement",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-purr-statement.jpg\", \"LJFOV%5Eoe~ooJxaozfkt6xtofWBt6\")"
+            }
+        },
+        {
+            "key": "pattern-cats",
+            "label": "Pattern Cats",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-pattern-cats.jpg\", \"L4I%7DOqNG~px%5BIV00IB?aVu%25LDk4p\")"
+            }
+        },
+        {
+            "key": "foliage-season",
+            "label": "Foliage Season",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-foliage-season.jpg\", \"@AO{v|WVFb^*V@o}Vtofw{~WkCt6E1ozoz?HofWBo}%Mx]~pozV@E1MyR*\")"
+            }
+        },
+        {
+            "key": "zoo-wash",
+            "label": "Zoo Wash",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-zoo-wash.jpg\", \"LJO35w4TX:%25jMgx%5BkqM%23IEx?T0jp\")"
+            }
+        },
+        {
+            "key": "to-pug-or-not-to-pug",
+            "label": "To Pug, or Not to Pug",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-to-pug-or-not-to-pug.jpg\", \"LKP6jRazfQWVxuoffQt7~VoffQt7\")"
+            }
+        },
+        {
+            "key": "unamused-dogs",
+            "label": "Unamused Dogs",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-unamused-dogs.jpg\", \"LFF~T%7DR6fQD5f2W%2CfQbp?KM%7CfQD*\")"
+            }
+        },
+        {
+            "key": "skate-dog",
+            "label": "Skate Dog",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-skate-dog.jpg\", \"L4LOAl%23SfQ+c.mWBfQWBQ;NHfQNH\")"
+            }
+        },
+        {
+            "key": "kitty-meal",
+            "label": "Kitty Meal",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-kitty-meal.jpg\", \"LAO%7Bz1ISOz%2C@NPITaPRj_4oHtJE1\")"
+            }
+        },
+        {
+            "key": "puffs-and-cream",
+            "label": "Puffs and Cream",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-puffs-and-cream.jpg\", \"LJODd%5E%7Dj%25$k?TgXCM_O;enxCJ;RV\")"
+            }
+        },
+        {
+            "key": "cotton-meow",
+            "label": "Cotton Meow",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-cotton-meow.jpg\", \"@DR-|_s:j?_3jsfkI9j]fk~qkCj[OGaefj_3a#fPOaWAj[=|offQS1kBfP\")"
+            }
+        },
+        {
+            "key": "dino-parade",
+            "label": "Dino Parade",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-dino-parade.jpg\", \"@CK{Cis+o0~Vf5bHDNnhj?^as-fk:#slj@t-jsj@MHofa}yEj[jYR4W=a|\")"
+            }
+        },
+        {
+            "key": "fruity-season",
+            "label": "Fruity Season",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-fruity-season.jpg\", \"@OQ]1gs:f7-Vj[fRV@j[jt.8ayfRSJayfQ?^fkfQX7ayfQv}j[f6RQayfQ\")"
+            }
+        },
+        {
+            "key": "edible-plushi",
+            "label": "Edible Plushi",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-edible-plushi.jpg\", \"L9P=pN0z*%23vz4TF%7Bv%23-V%7C5xvtkwH\")"
+            }
+        },
+        {
+            "key": "sushi-sketch",
+            "label": "Sushi Sketch",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-sushi-sketch.jpg\", \"L9MtU1WB~pxuRjj%5B-:ay%25Moft7%25M\")"
+            }
+        },
+        {
+            "key": "donut-or-teddy",
+            "label": "Donut or Teddy",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-donut-or-teddy.jpg\", \"LXQ+i:IVf7E1j%5BWBWCWB_Lt7azxa\")"
+            }
+        },
+        {
+            "key": "donut-hearts",
+            "label": "Donut Hearts",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-donut-hearts.jpg\", \"LENB3xf098Dg4S=MpTAw1%23t%2CpGn5\")"
+            }
+        },
+        {
+            "key": "secret-garden",
+            "label": "Secret Garden",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-secret-garden.jpg\", \"@8OM~YL1Nx-:kWQmzqRit7_MR6tl9ZVsNF~WR*gNM{n+ay_3ozofE1njt7\")"
+            }
+        },
+        {
+            "key": "nomadic-bloom",
+            "label": "Nomadic Bloom",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-nomadic-bloom.jpg\", \"@CQl]^WqS#~qs:r?RjRPrr-oV[tRNGoga#?bj]RPIoogfk?bkCbIIos:j]\")"
+            }
+        },
+        {
+            "key": "savoire-faire",
+            "label": "Savoire-Faire",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-savoire-faire.jpg\", \"L3NmWb%25ME1-;~qE1Io9a4Tt5%5E+s+\")"
+            }
+        },
+        {
+            "key": "le-mans",
+            "label": "Le Mans",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-le-mans.jpg\", \"L7K%7BPIxas%2CxatRfQfQfQ0uWXa%23WX\")"
+            }
+        },
+        {
+            "key": "finish-line",
+            "label": "Finish Line",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-finish-line.jpg\", \"L0L4yu?bs;?b~qD%25ayD%254nj%5Bfjj%5B\")"
+            }
+        },
+        {
+            "key": "tartan-beige",
+            "label": "Tartan Beige",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-tartan-beige.jpg\", \"LRJ*Ch4;Rkni~UR*ayjZNGj%5BjtfQ\")"
+            }
+        },
+        {
+            "key": "handmade",
+            "label": "Handmade",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-handmade.jpeg\", \"L5J?U-WZa8WZR=a%23f8a%23%7Dkfio@fi\")"
+            }
+        },
+        {
+            "key": "spooky",
+            "label": "Spooky",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-spooky.png\", \"LBBg6$Rj00xuIUxuxuIU00j%5B~qay\")"
+            }
+        },
+        {
+            "key": "early-bird",
+            "label": "Early Bird",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-early-bird.png\", \"L3F?:4pYSvI%5BudVwnQRS06s:M%7Cni\")"
+            }
+        },
+        {
+            "key": "emotional-support",
+            "label": "Emotional Support",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-emotional-support.png\", \"L2S%7DOO%251X9%252%5Bni_g3i%5E_Os:nObb\")"
+            }
+        },
+        {
+            "key": "improvise",
+            "label": "Improvise",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-improvise.png\", \"L4J~%7CR-.DqaRM:%25Goe-$0FRT_Cxp\")"
+            }
+        },
+        {
+            "key": "input-needed",
+            "label": "Input Needed",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-input-needed.png\", \"LGS_%2CCn%2CqMoyr2f7cAf%25l%5EbGYwjI\")"
+            }
+        },
+        {
+            "key": "just-weird",
+            "label": "Just Weird",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-just-weird.png\", \"LT2qN$f%25gvf7g0fjf7f7hWe;eEf%25\")"
+            }
+        },
+        {
+            "key": "let-it-go",
+            "label": "Let It Go",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-let-it-go.png\", \"L8L5:=E49b~TAJoeIqof?bNHNH=_\")"
+            }
+        },
+        {
+            "key": "cap",
+            "label": "Cap",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-cap.png\", \"LBAKOVWY0FxWR:j@t2WE0Yj%5B~0a%23\")"
+            }
+        },
+        {
+            "key": "no-cap",
+            "label": "No Cap",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-no-cap.png\", \"L9AbYBfQ1IoLNbWVsooL0%7Djt%7DFWV\")"
+            }
+        },
+        {
+            "key": "time-box",
+            "label": "Time Box",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-time-box.png\", \"L7Ip%7Crs.0Wa$Rns%2Cs%2Ca%230Ej@~KoL\")"
+            }
+        },
+        {
+            "key": "tldr",
+            "label": "TL;DR",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-tldr.png\", \"L99t-0Rp0D%25Jt8ocfQWE0Ct3~eIb\")"
+            }
+        },
+        {
+            "key": "very-nice",
+            "label": "Very Nice",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-very-nice.png\", \"LgNUFcj%5D?1j%5Bt9ayR%25ju-sfRImfj\")"
+            }
+        },
+        {
+            "key": "want",
+            "label": "Want",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-want.png\", \"LFHW4aNz0G9a%251s+s%2Ct702Rj~V%25L\")"
+            }
+        },
+        {
+            "key": "the-notebook",
+            "label": "The Notebook",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-the-notebook.jpg\", \"@9QlBvs:ay~Uj[j[NGj[ay^*ayfQM|j[j@~Uj[azIpa{fj~Uj[fQIpayjt\")"
+            }
+        },
+        {
+            "key": "play-mode",
+            "label": "Play Mode",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-play-mode.jpg\", \"@BN0hzt7K%}@M{kpxtNI,s?ab^smD%x[kW$PXSM{M{baRj_2i_RQRPRQV@\")"
+            }
+        },
+        {
+            "key": "lab-notes",
+            "label": "Lab Notes",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-lab-notes.jpg\", \"@7ON5pnORj~qIpxas,D%IV~pIUDO9GWB%g?be.%gs9xu?H_MxtfR9ZRjxa\")"
+            }
+        },
+        {
+            "key": "atomic-grid",
+            "label": "Atomic Grid",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-atomic-grid.jpg\", \"@AO|kPt7xa~qt6M|RPM{t7_3WBfQRj%2t7-;fQfQRPs:ay_3ofR*MxWBRk\")"
+            }
+        },
+        {
+            "key": "christmas-glow",
+            "label": "Christmas Glow",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-christmas-glow.jpeg\", \"L0IWWebvr%3Dozx%5DjboLn%2A4SoLoLay\")"
+            }
+        },
+        {
+            "key": "winter-charm",
+            "label": "Winter Charm",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-winter-charm.jpeg\", \"L5RMMD%252ju-o%3FHR%2CfPNI%7DXS6jaNh\")"
+            }
+        },
+        {
+            "key": "new-years-resolutions",
+            "label": "New Year’s Resolutions",
+            "pageStyleProps": {
+                "separator-style": "washi(image, \"https://res.craft.do/assets/theme/washi/washi-new-years-resolutions.jpeg\", \"L08%3A%7CnoffQs%3A%251ayfQWCxZWCfQWB\")"
+            }
+        }
+    ]
+}

@@ -1,11 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Editor } from '@tiptap/react';
 import { cn } from 'cn';
 import { readImageFrame, zoomFrame, DEFAULT_FRAME } from '@/lib/editor/image-frame';
 import { cropMaskForFrame } from '@/lib/editor/image-crop';
 import { Plus, Minus, RotateCcw } from 'lucide-react';
+import {
+  colorPair,
+  loadPageThemes,
+  pageStylePatchForTheme,
+  type ThemePreset,
+} from '@/lib/editor/themes/page-theme-catalog';
 import {
   DEFAULT_SPELLING_LANG,
   PAGE_STYLE_PRESETS,
@@ -66,6 +72,19 @@ export function StyleTab({
   pageStyle,
   onUpdate,
 }: StyleTabProps) {
+  // G682：主题清单运行时加载（预设 JSON 在 public/ 下）；未取到前用内置六档兜底。
+  const [themePresets, setThemePresets] = useState<ThemePreset[]>(() =>
+    pageThemes.map((theme) => ({ themeId: theme.id, title: theme.label, props: { 'background-color': theme.color } })),
+  );
+  useEffect(() => {
+    let alive = true;
+    void loadPageThemes().then((list) => {
+      if (alive && list.length) setThemePresets(list);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
   const [coverUrlInput, setCoverUrlInput] = useState('');
   // G156：封面图集（逗号分隔）与随机轮换开关。
   const [coverSetInput, setCoverSetInput] = useState(() => coverImages.join(', '));
@@ -171,13 +190,14 @@ export function StyleTab({
                 (pageStyle.theme ?? 'default') !== 'default' && 'ring-2 ring-craft-accent'
               )}
               style={{
-                backgroundColor: pageThemes.find(t => t.id === pageStyle.theme)?.color || '#fff',
+                backgroundColor: themePresets.find((preset) => preset.themeId === pageStyle.theme)?.props['background-color']?.split(/\s+/)[0] || pageStyle.themeColor || '#fff',
               }}
               title="文档颜色"
               onClick={() => {
                 const current = pageStyle.theme ?? 'default';
-                const index = pageThemes.findIndex((theme) => theme.id === current);
-                setPageStyle({ theme: pageThemes[(index + 1) % pageThemes.length].id });
+                const index = themePresets.findIndex((preset) => preset.themeId === current);
+                const next = themePresets[(index + 1) % themePresets.length];
+                setPageStyle(pageStylePatchForTheme(next));
               }}
             />
           </div>
@@ -295,26 +315,32 @@ export function StyleTab({
       {/* Page theme colors */}
       <section>
         <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">页面色调</h4>
-        <div className="grid grid-cols-6 gap-1.5">
-          {pageThemes.map((theme) => (
-            <button
-              key={theme.id}
-              title={theme.label}
-              className={cn(
-                'flex size-7 items-center justify-center rounded-md border border-foreground/10 transition-transform hover:scale-110',
-                (pageStyle.theme ?? 'default') === theme.id && 'ring-2 ring-craft-accent'
-              )}
-              style={{
-                backgroundColor: theme.color === 'transparent' ? undefined : theme.color,
-                backgroundImage:
-                  theme.color === 'transparent'
-                    ? 'repeating-conic-gradient(var(--checker-a) 0% 25%, var(--checker-b) 0% 50%)'
-                    : undefined,
-                backgroundSize: theme.color === 'transparent' ? '6px 6px' : undefined,
-              }}
-              onClick={() => setPageStyle({ theme: theme.id })}
-            />
-          ))}
+        {/* G682：官方清单约 131 条、运行时加载 ⇒ 这里给可滚动网格。 */}
+        <div className="max-h-40 overflow-y-auto pr-1" data-testid="page-theme-catalog">
+          <div className="grid grid-cols-6 gap-1.5">
+            {themePresets.map((preset) => {
+              const swatch = colorPair(preset.props['background-color']).light;
+              return (
+                <button
+                  key={preset.themeId}
+                  title={preset.title}
+                  className={cn(
+                    'flex size-7 items-center justify-center rounded-md border border-foreground/10 transition-transform hover:scale-110',
+                    (pageStyle.theme ?? 'default') === preset.themeId && 'ring-2 ring-craft-accent'
+                  )}
+                  style={{
+                    backgroundColor: swatch === 'transparent' ? undefined : swatch,
+                    backgroundImage:
+                      swatch === 'transparent'
+                        ? 'repeating-conic-gradient(var(--checker-a) 0% 25%, var(--checker-b) 0% 50%)'
+                        : undefined,
+                    backgroundSize: swatch === 'transparent' ? '6px 6px' : undefined,
+                  }}
+                  onClick={() => setPageStyle(pageStylePatchForTheme(preset))}
+                />
+              );
+            })}
+          </div>
         </div>
       </section>
 

@@ -52,7 +52,7 @@ export function SharedDocView({
       style={
         styled
           ? {
-              backgroundColor: getThemeColor(style.theme),
+              backgroundColor: getThemeColor(style.theme, style.themeColor),
               fontFamily: getFontStack(style.fontPack),
             }
           : undefined

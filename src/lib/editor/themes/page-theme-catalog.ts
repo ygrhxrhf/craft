@@ -1,0 +1,78 @@
+/**
+ * G682：官方页面主题是一张**具名清单**、且「Themes loaded dynamically from S3」——
+ * 第 3d 批把 `https://res.craft.do/themes/presets.json` 原文抓到盘上（131 条，
+ * 每条 `{themeId, title, pageStyleProps}`），本地照同一形制**运行时加载**：
+ * `public/themes-presets.json` 就是这份原文，面板启动后 `loadPageThemes()` 拉取。
+ *
+ * 本地能承载的属性做映射：主题 id、背景色（明/暗成对取明档）、文字色（同上）、
+ * 字体族（`system*` 家族）；官方还有 `separator-style`（线/和纸/涂鸦）、`backdrop`
+ * （渐变/图片）与 `card-assets` 三条素材面，本地尚无对应承载（G157/G210 的素材批），
+ * 解析时原样保留、不丢弃。
+ */
+import { canonicalFontId, type PageStyle } from '@/components/editor/themes/page-style';
+
+export interface ThemePreset {
+  themeId: string;
+  title: string;
+  props: Record<string, string>;
+}
+
+const PAIR_SPLIT = /\s+(?=#)/;
+
+/** `"#1F2225 #F4F4F4"`＝明/暗成对；单值＝两档同色。 */
+export function colorPair(value: string | undefined): { light: string; dark: string } {
+  const raw = (value ?? '').trim();
+  if (!raw) return { light: 'transparent', dark: 'transparent' };
+  const parts = raw.split(PAIR_SPLIT).map((part) => part.trim()).filter(Boolean);
+  return { light: parts[0] ?? 'transparent', dark: parts[1] ?? parts[0] ?? 'transparent' };
+}
+
+/** 解析 `themes/presets.json` 原文；坏条目直接跳过，不让一张脏表拖垮面板。 */
+export function parseThemePresets(json: unknown): ThemePreset[] {
+  const themes = (json as { themes?: unknown })?.themes;
+  if (!Array.isArray(themes)) return [];
+  const presets: ThemePreset[] = [];
+  for (const entry of themes) {
+    if (!entry || typeof entry !== 'object') continue;
+    const record = entry as { themeId?: unknown; title?: unknown; pageStyleProps?: unknown };
+    if (typeof record.themeId !== 'string' || !record.themeId) continue;
+    const props: Record<string, string> = {};
+    if (record.pageStyleProps && typeof record.pageStyleProps === 'object') {
+      for (const [key, value] of Object.entries(record.pageStyleProps as Record<string, unknown>)) {
+        if (typeof value === 'string') props[key] = value;
+      }
+    }
+    presets.push({ themeId: record.themeId, title: typeof record.title === 'string' ? record.title : record.themeId, props });
+  }
+  return presets;
+}
+
+/** 一条官方主题 → 本地页样式补丁（只写本地承载得住的字段）。 */
+export function pageStylePatchForTheme(preset: ThemePreset): Partial<PageStyle> {
+  const background = colorPair(preset.props['background-color']);
+  const text = colorPair(preset.props.color);
+  const patch: Partial<PageStyle> = {
+    theme: preset.themeId,
+    themeColor: background.light,
+  };
+  if (text.light !== 'transparent') patch.textColor = text.light;
+  const font = preset.props['font-family'];
+  if (font) patch.fontPack = canonicalFontId(font);
+  return patch;
+}
+
+let cache: Promise<ThemePreset[]> | null = null;
+
+/** 运行时拉取主题清单（一进程只拉一次）；失败回空表，面板退回内置六档。 */
+export function loadPageThemes(fetcher: typeof fetch = fetch): Promise<ThemePreset[]> {
+  cache ??= fetcher('/themes-presets.json')
+    .then((response) => (response.ok ? response.json() : null))
+    .then((json) => parseThemePresets(json))
+    .catch(() => []);
+  return cache;
+}
+
+/** 测试用：清掉模块级缓存。 */
+export function resetPageThemesCache(): void {
+  cache = null;
+}

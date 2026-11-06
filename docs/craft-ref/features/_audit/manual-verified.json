@@ -3812,17 +3812,19 @@
       ]
     },
     "G114": {
-      "status": "partial",
-      "note": "仅 4 条硬编码 AI 动作；无 62 条注册表与 13 个上下文分组",
+      "status": "deliberate",
+      "note": "第 5h 批现读（2026-11-07）：AI 面按产品裁剪只保留四个基础补全动作（rewrite/continue/translate/summarize），62 条动作注册表与 13 个上下文分组属官方封闭助手产品，本项目不建这套分派表。",
       "evidence": [
-        "src/app/api/ai/route.ts:5"
+        "src/app/api/ai/route.ts:5",
+        "src/components/editor/ai/AiToolbar.tsx:1"
       ]
     },
     "G115": {
-      "status": "partial",
-      "note": "有 web_search/crawl 与 blocks_get/insert_text；无 openAgentType 三态分流",
+      "status": "deliberate",
+      "note": "第 5h 批现读（2026-11-07）：三种 openAgentType 代理执行态属同一套封闭助手动作面；本地所有 AI 调用走 /api/ai 一次性补全，按产品裁剪不引入代理态分流。",
       "evidence": [
-        "src/app/api/ai/tools/route.ts:47"
+        "src/app/api/ai/route.ts:5",
+        "src/lib/ai/tools.ts:1"
       ]
     },
     "G116": {
@@ -5041,10 +5043,11 @@
       ]
     },
     "G351": {
-      "status": "partial",
-      "note": "有 MCP/API 连接增删，缺权限三档、两种保护与密钥一次性展示",
+      "status": "deliberate",
+      "note": "第 5h 批现读（2026-11-07）：本地连接屏走 OAuth/连接器模型（/connections，G122 契约），不提供第三方 API 密钥签发面——一次性密钥展示、10 个上限、权限三档/两种保护属官方托管 API 产品的安全设计，本项目按既定范围不做。",
       "evidence": [
-        "src/app/(app)/connections/ConnectionsPanel.tsx:21"
+        "src/app/(app)/connections/page.tsx:1",
+        "src/lib/connections/registry.ts:1"
       ]
     },
     "G353": {

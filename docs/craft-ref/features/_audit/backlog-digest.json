@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-06T18:30:15.103Z",
+  "generatedAt": "2026-11-06T18:31:50.149Z",
   "total": 1615,
   "status": {
     "aligned": 669,
     "nonaction": 520,
-    "deliberate": 173,
-    "partial": 160,
+    "deliberate": 176,
+    "partial": 157,
     "gap": 73,
     "unreachable": 20
   },
@@ -22,7 +22,7 @@
     "P2 / nonaction": 174,
     "P1 / aligned": 171,
     "P1 / nonaction": 89,
-    "P2 / deliberate": 81,
+    "P2 / deliberate": 84,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P3 / partial": 70,
@@ -34,8 +34,8 @@
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
-    "P2 / partial": 10,
     "P0 / aligned": 8,
+    "P2 / partial": 7,
     "P3 / unreachable": 4,
     "P? / unreachable": 4,
     "P2 / gap": 1,
@@ -1352,11 +1352,11 @@
       3
     ],
     [
-      "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",
+      "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
       3
     ],
     [
-      "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
+      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
       3
     ]
   ]

@@ -280,21 +280,17 @@ export function StyleTab({
         </div>
       </section>
 
-      {/* G1436: 「Original」 — one click back to the untouched page style. */}
-      <section>
-        <button
-          type="button"
-          className="flex w-full items-center justify-between rounded-md border border-foreground/10 px-2 py-1.5 text-ui text-foreground/70 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground"
-          onClick={() => onUpdate({ pageStylePatch: { fontPack: 'system', theme: 'default', washi: 'none', stylePreset: 'default' } })}
-        >
-          <span>Original</span>
-          <RotateCcw className="size-3.5" />
-        </button>
-      </section>
-
       {/* G1457：官方样式页 20 项里的「所有样式」一栏——四个具名整页样式预设。 */}
       <section>
         <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">所有样式</h4>
+                <button
+        type="button"
+        className="flex w-full items-center justify-between rounded-md border border-foreground/10 px-2 py-1.5 text-ui text-foreground/70 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground"
+        onClick={() => onUpdate({ pageStylePatch: { fontPack: 'system', theme: 'default', washi: 'none', stylePreset: 'default' } })}
+        >
+        <span>Original</span>
+        <RotateCcw className="size-3.5" />
+        </button>
         <div className="grid grid-cols-2 gap-1.5">
           {PAGE_STYLE_PRESETS.map((preset) => (
             <button
@@ -380,6 +376,34 @@ export function StyleTab({
                 setPageStyle(pageStylePatchForTheme(next));
               }}
             />
+          </div>
+        </div>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">页面色调</h4>
+        {/* G682：官方清单约 131 条、运行时加载 ⇒ 这里给可滚动网格。 */}
+        <div className="max-h-40 overflow-y-auto pr-1" data-testid="page-theme-catalog">
+          <div className="grid grid-cols-6 gap-1.5">
+            {themePresets.map((preset) => {
+              const swatch = colorPair(preset.props['background-color']).light;
+              return (
+                <button
+                  key={preset.themeId}
+                  title={preset.title}
+                  className={cn(
+                    'flex size-7 items-center justify-center rounded-md border border-foreground/10 transition-transform hover:scale-110',
+                    (pageStyle.theme ?? 'default') === preset.themeId && 'ring-2 ring-craft-accent'
+                  )}
+                  style={{
+                    backgroundColor: swatch === 'transparent' ? undefined : swatch,
+                    backgroundImage:
+                      swatch === 'transparent'
+                        ? 'repeating-conic-gradient(var(--checker-a) 0% 25%, var(--checker-b) 0% 50%)'
+                        : undefined,
+                    backgroundSize: swatch === 'transparent' ? '6px 6px' : undefined,
+                  }}
+                  onClick={() => setPageStyle(pageStylePatchForTheme(preset))}
+                />
+              );
+            })}
           </div>
         </div>
       </section>
@@ -492,59 +516,6 @@ export function StyleTab({
         )}
       </section>
 
-      {/* Page theme colors */}
-      <section>
-        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">页面色调</h4>
-        {/* G682：官方清单约 131 条、运行时加载 ⇒ 这里给可滚动网格。 */}
-        <div className="max-h-40 overflow-y-auto pr-1" data-testid="page-theme-catalog">
-          <div className="grid grid-cols-6 gap-1.5">
-            {themePresets.map((preset) => {
-              const swatch = colorPair(preset.props['background-color']).light;
-              return (
-                <button
-                  key={preset.themeId}
-                  title={preset.title}
-                  className={cn(
-                    'flex size-7 items-center justify-center rounded-md border border-foreground/10 transition-transform hover:scale-110',
-                    (pageStyle.theme ?? 'default') === preset.themeId && 'ring-2 ring-craft-accent'
-                  )}
-                  style={{
-                    backgroundColor: swatch === 'transparent' ? undefined : swatch,
-                    backgroundImage:
-                      swatch === 'transparent'
-                        ? 'repeating-conic-gradient(var(--checker-a) 0% 25%, var(--checker-b) 0% 50%)'
-                        : undefined,
-                    backgroundSize: swatch === 'transparent' ? '6px 6px' : undefined,
-                  }}
-                  onClick={() => setPageStyle(pageStylePatchForTheme(preset))}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Font */}
-      <section>
-        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">字体</h4>
-        <div className="flex gap-1.5">
-          {fontPacks.map((font) => (
-            <button
-              key={font.id}
-              type="button"
-              className={cn(
-                'flex-1 rounded-lg border border-foreground/10 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
-                (pageStyle.fontPack ?? 'system') === font.id && 'border-craft-accent bg-craft-accent/12 text-craft-accent'
-              )}
-              style={{ fontFamily: font.stack }}
-              onClick={() => setPageStyle({ fontPack: font.id })}
-            >
-              {font.label}
-            </button>
-          ))}
-        </div>
-      </section>
-
       {/* G210：分隔符样式三档（线／和纸胶带／涂鸦）＋和纸图库浏览（官方 96 档胶带）。 */}
       <section>
         <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">分隔符样式</h4>
@@ -608,7 +579,50 @@ export function StyleTab({
         )}
       </section>
 
-      {/* Page settings (G65): the title switch and the spell checker with its searchable language. */}
+{/* Font */}
+      <section>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">字体</h4>
+        <div className="flex gap-1.5">
+          {fontPacks.map((font) => (
+            <button
+              key={font.id}
+              type="button"
+              className={cn(
+                'flex-1 rounded-lg border border-foreground/10 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
+                (pageStyle.fontPack ?? 'system') === font.id && 'border-craft-accent bg-craft-accent/12 text-craft-accent'
+              )}
+              style={{ fontFamily: font.stack }}
+              onClick={() => setPageStyle({ fontPack: font.id })}
+            >
+              {font.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+{/* Advanced: width toggle */}
+      <section>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">高级</h4>
+        <div className="flex items-center justify-between">
+          <span className="text-ui">宽页</span>
+          <button
+            type="button"
+            onClick={() => onUpdate({ width: width === 'wide' ? 'default' : 'wide' })}
+            className={cn(
+              'relative h-5 w-9 rounded-full transition-colors',
+              width === 'wide' ? 'bg-craft-accent' : 'bg-foreground/15'
+            )}
+          >
+            <span
+              className={cn(
+                'absolute left-0.5 top-0.5 size-4 rounded-full bg-background shadow-sm transition-transform',
+                width === 'wide' && 'translate-x-4'
+              )}
+            />
+          </button>
+        </div>
+      </section>
+{/* Page settings (G65): the title switch and the spell checker with its searchable language. */}
       <section className="space-y-2">
         <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">页面</h4>
         <div className="flex items-center justify-between">
@@ -668,28 +682,6 @@ export function StyleTab({
         )}
       </section>
 
-      {/* Advanced: width toggle */}
-      <section>
-        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">高级</h4>
-        <div className="flex items-center justify-between">
-          <span className="text-ui">宽页</span>
-          <button
-            type="button"
-            onClick={() => onUpdate({ width: width === 'wide' ? 'default' : 'wide' })}
-            className={cn(
-              'relative h-5 w-9 rounded-full transition-colors',
-              width === 'wide' ? 'bg-craft-accent' : 'bg-foreground/15'
-            )}
-          >
-            <span
-              className={cn(
-                'absolute left-0.5 top-0.5 size-4 rounded-full bg-background shadow-sm transition-transform',
-                width === 'wide' && 'translate-x-4'
-              )}
-            />
-          </button>
-        </div>
-      </section>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { SortableDocGrid } from '@/components/document/SortableDocGrid';
+import { buildPreviewSrc } from '@/lib/preview/signature';
 import { RichText } from '@/components/ui/rich-text';
 import { ONBOARDING_DESC, ONBOARDING_DESC2, ONBOARDING_WELCOME } from '@/lib/i18n/onboarding-copy';
 
@@ -61,7 +62,7 @@ export default async function DocumentsPage() {
         <section>
           <h2 className="mb-3 text-lg font-medium">最近编辑</h2>
           {recentDocs.length > 0 ? (
-            <SortableDocGrid documents={recentDocs} folders={folderNodes} />
+            <SortableDocGrid documents={recentDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))} folders={folderNodes} />
           ) : (
             <div className="rounded-lg border border-dashed border-border p-8 text-center">
               {/* G320：官方那句带 `<br/>`（`onboarding.welcome.to.craft.desc`），走 RichText
@@ -69,9 +70,9 @@ export default async function DocumentsPage() {
               <p className="text-lg font-medium">{ONBOARDING_WELCOME}</p>
               <RichText
                 value={ONBOARDING_DESC}
-                className="mt-1 block text-sm text-muted-foreground"
+                className="mt-1 block text-sm text-foreground/55"
               />
-              <p className="mt-1 text-xs text-muted-foreground/70">{ONBOARDING_DESC2}</p>
+              <p className="mt-1 text-xs text-foreground/55">{ONBOARDING_DESC2}</p>
             </div>
           )}
         </section>

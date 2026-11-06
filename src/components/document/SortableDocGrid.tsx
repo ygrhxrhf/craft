@@ -54,6 +54,8 @@ interface SortableDoc {
   title: string;
   icon: string | null;
   updatedAt: string;
+  /** G216: 服务端生成的签名预览 URL。 */
+  previewSrc?: string | null;
   createdAt?: string | null;
   lastViewedAt?: string | null;
   /** G223: 每日笔记可以整类隐藏（⋯ → 显示每日笔记）。 */

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { getRecentDocuments } from '@/actions/document/get';
 import { DocumentCard } from '@/components/document/DocumentCard';
+import { buildPreviewSrc } from '@/lib/preview/signature';
 import { Clock } from 'lucide-react';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
@@ -20,7 +21,7 @@ export default async function RecentPage() {
         {recentDocs.length > 0 ? (
           <BrowseGrid>
             {recentDocs.map(doc => (
-              <DocumentCard key={doc.id} document={doc} />
+              <DocumentCard key={doc.id} document={{ ...doc, previewSrc: buildPreviewSrc(doc) }} />
             ))}
           </BrowseGrid>
         ) : (

@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth/auth';
 import { getDocuments } from '@/actions/document/get';
 import { getTagBrowseRows } from '@/actions/tag/tag';
 import { DocumentCard } from '@/components/document/DocumentCard';
+import { buildPreviewSrc } from '@/lib/preview/signature';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
@@ -32,7 +33,7 @@ export default async function TagDetailPage({ params }: TagPageProps) {
         {group.documents.length > 0 ? (
           <BrowseGrid>
             {group.documents.map((doc) => (
-              <DocumentCard key={doc.id} document={doc} />
+              <DocumentCard key={doc.id} document={{ ...doc, previewSrc: buildPreviewSrc(doc) }} />
             ))}
           </BrowseGrid>
         ) : (

@@ -8,6 +8,7 @@ import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { DocumentCard } from '@/components/document/DocumentCard';
+import { buildPreviewSrc } from '@/lib/preview/signature';
 import { FolderPinnedSection } from '@/components/folder/FolderPinnedSection';
 
 interface FolderRouteProps {
@@ -59,7 +60,7 @@ export default async function FolderRoute({ params }: FolderRouteProps) {
           {documents.length > 0 ? (
             <BrowseGrid>
               {documents.map((doc) => (
-                <DocumentCard key={doc.id} document={doc} />
+                <DocumentCard key={doc.id} document={{ ...doc, previewSrc: buildPreviewSrc(doc) }} />
               ))}
             </BrowseGrid>
           ) : (

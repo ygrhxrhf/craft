@@ -14,6 +14,8 @@ interface StarredDoc {
   icon: string | null;
   updatedAt: string;
   favoriteId: string;
+  /** G216: 服务端生成的签名预览 URL。 */
+  previewSrc?: string | null;
 }
 
 interface StarredGridProps {

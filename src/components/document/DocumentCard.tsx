@@ -15,6 +15,8 @@ interface DocumentCardProps {
     updatedAt: string;
     /** G250: the card head's location breadcrumb, already joined by the caller. */
     breadcrumb?: string | null;
+    /** G216: signed preview URL built on the server (`buildPreviewSrc`); absent → no preview layer. */
+    previewSrc?: string | null;
   };
   /** G623: batch selection mode — the card shows a checkbox instead of navigating on click. */
   selectable?: boolean;
@@ -42,7 +44,7 @@ export function DocumentCard({ document: doc, selectable = false, selected = fal
           event.preventDefault();
           setMenuAt({ x: event.clientX, y: event.clientY });
         }}
-        className="group relative block rounded-lg px-1.5 pt-1.5 pb-0 transition-colors duration-300 hover:bg-foreground/[0.03]"
+        className="group relative block rounded-xl px-1.5 pt-1.5 pb-0 transition-colors duration-300 hover:bg-foreground/[0.03]"
       >
       {selectable && (
         <span
@@ -59,9 +61,20 @@ export function DocumentCard({ document: doc, selectable = false, selected = fal
           own z-index and is hidden until the card is focused. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-[-1px] z-[1] hidden rounded-lg border-[3px] border-(--craft-accent) group-focus-visible:block"
+        className="pointer-events-none absolute inset-[-1px] z-[1] hidden rounded-xl border-[3px] border-(--craft-accent) group-focus-visible:block"
       />
-      <div className="relative rounded-lg bg-card px-2.5 pt-[7px] pb-2 shadow-sm">
+      <div className="relative rounded-xl bg-card px-2.5 pt-[7px] pb-2 shadow-sm">
+        {/* G216：后端渲染的文档预览（签名 URL，内容变更会换 ts 自动推翻缓存）。 */}
+        {doc.previewSrc && (
+          <img
+            src={doc.previewSrc}
+            alt=""
+            loading="lazy"
+            draggable={false}
+            data-testid={`card-preview-${doc.id}`}
+            className="mb-1.5 aspect-[16/10] w-full rounded-lg border border-foreground/8 bg-background object-cover"
+          />
+        )}
         {/* Hover/focus swap (G1077): the resting layer fades out and the action layer fades in —
             a swap, not an overlay, so the card's height never moves. The `group-hover` variant is
             already gated on the intent attribute, so a touch device never latches it. */}
@@ -71,11 +84,12 @@ export function DocumentCard({ document: doc, selectable = false, selected = fal
           ) : (
             <File className="size-5 shrink-0 text-foreground/40" />
           )}
-          {/* G250：未命名文档的标题是**斜体灰**——它在说"这篇还没有名字"。 */}
+          {/* G250：未命名文档的标题是**斜体灰**——它在说"这篇还没有名字"。
+              G28：只改斜体与颜色，字号/字重仍是 `text-card-title font-semibold`（15/600/18）。 */}
           <h3
             className={cn(
               'flex-1 truncate text-card-title font-semibold',
-              head.placeholder && 'italic font-normal text-foreground/45',
+              head.placeholder && 'italic text-foreground/25',
             )}
           >
             {head.title}

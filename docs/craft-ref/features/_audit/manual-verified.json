@@ -4350,10 +4350,13 @@
       ]
     },
     "G216": {
-      "status": "gap",
-      "note": "卡片无内容预览图，也无后端渲染服务",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 族拆批第 3a 批，用户裁决实现本地预览渲染服务）：路径与查询参数照官方形制 `/api/render/document_preview/v1/<doc>/t/<ts>?v=1&s=<sig>&size=m&theming=true`——HMAC 签名钉死 doc/ts/size/theming（篡改任一即 403）、`ts` 取 updatedAt 毫秒（内容变即换 URL、推翻缓存）、尺寸 s/m/l＝240×150／320×200／480×300、`theming=true` 时按 `theme=dark` 出暗色。渲染＝把 `Document.content` 镜像确定性渲成 SVG（标题行＋首屏块：段落/标题/列表/引用/代码/分隔线/媒体占位），零无头浏览器依赖。卡片层：documents／favorites／recent／folders／tags 五处服务端签名并挂懒加载 `<img>`；浏览器实点 4 张卡预览全 200（320×200、`image/svg+xml`）、篡改 `s` 全 403。载体差异：官方出位图快照、本地 SVG 重绘 ⇒ 可观察面（卡片带预览图）一致",
       "evidence": [
-        "src/components/document/DocumentCard.tsx:20"
+        "src/lib/preview/document-preview.ts",
+        "src/lib/preview/signature.ts",
+        "src/app/api/render/document_preview/v1/[documentId]/t/[ts]/route.ts",
+        "src/components/document/DocumentCard.tsx"
       ]
     },
     "G217": {

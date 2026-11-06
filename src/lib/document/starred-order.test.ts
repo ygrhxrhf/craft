@@ -22,7 +22,8 @@ describe('the starred area keeps its own order (G94)', () => {
   });
 
   it('is mounted on the favorites page with favoriteId in the payload', () => {
-    expect(read('app/(app)/favorites/page.tsx')).toContain('<StarredGrid documents={favoriteDocs} />');
+    // G216：页面在挂载前给每行补签名预览 URL（spread 保留 favoriteId）。
+    expect(read('app/(app)/favorites/page.tsx')).toContain('<StarredGrid documents={favoriteDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))} />');
     expect(read('actions/document/get.ts')).toContain('favoriteId: String(');
   });
 });

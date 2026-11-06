@@ -3,13 +3,16 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Pin, PinOff } from 'lucide-react';
+import { EyeOff, Pin, PinOff } from 'lucide-react';
 
 import { getSyncManager } from '@/lib/sync-core';
 import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
 import type { TagBrowseGroup } from '@/lib/browse/tag-browse';
 import { tagLevel } from '@/lib/browse/tag-browse';
 import { formatDocCount } from '@/lib/browse/official-copy';
+import { addIgnoreRule } from '@/actions/tag/ignore-rules';
+import { TAG_ADDED_TO_IGNORE_LIST } from '@/lib/tag/ignore-copy';
+import { toast } from '@/components/ui/toast';
 import {
   PINNED_ERROR,
   PIN_SHOW_CHILDREN_LABEL,
@@ -159,6 +162,23 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
             <div className="min-w-0 flex-1">
               <TagRow group={group} />
             </div>
+            <button
+              type="button"
+              aria-label={`忽略标签 ${group.name}`}
+              title="忽略"
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={() => {
+                void addIgnoreRule(group.name)
+                  .then(() => {
+                    toast.add({ title: TAG_ADDED_TO_IGNORE_LIST, type: 'success' });
+                    router.refresh();
+                  })
+                  .catch(() => toast.add({ title: '没有添加到忽略列表，请重试', type: 'error' }));
+              }}
+              className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-foreground"
+            >
+              <EyeOff className="size-3.5" />
+            </button>
             <button
               type="button"
               aria-label={pinToggleLabel(Boolean(group.pinned)).label}

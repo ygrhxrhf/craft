@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-06T16:12:28.558Z",
+  "generatedAt": "2026-11-06T16:53:52.400Z",
   "total": 1615,
   "status": {
-    "aligned": 645,
+    "aligned": 646,
     "nonaction": 516,
     "partial": 184,
     "deliberate": 170,
-    "gap": 80,
+    "gap": 79,
     "unreachable": 20
   },
   "priority": {
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 328,
+    "P2 / aligned": 329,
     "P? / nonaction": 191,
     "P1 / aligned": 171,
     "P2 / nonaction": 170,
@@ -36,7 +36,7 @@
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
-    "P2 / gap": 8,
+    "P2 / gap": 7,
     "P3 / unreachable": 4,
     "P? / unreachable": 4,
     "P1 / unreachable": 1
@@ -1280,11 +1280,11 @@
       9
     ],
     [
-      "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
-      8
+      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
+      7
     ],
     [
-      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
+      "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
       7
     ],
     [

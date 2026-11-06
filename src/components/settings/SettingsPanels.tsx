@@ -49,6 +49,22 @@ import { GUEST_WARNING_CONFIRM, GUEST_WARNING_DESC } from '@/lib/share/guest-war
 import { MANAGE_PINNED, PINNED_LIMIT_REACHED, PINNED_TAG_LIMIT, PIN_KEY_TAGS_HINT } from '@/lib/browse/pinned-tags';
 import { getTags } from '@/actions/tag/tag';
 import {
+  addIgnoreRule,
+  deleteIgnoreRule,
+  getIgnoreOverview,
+  renameIgnoreRule,
+  type IgnoreRule,
+} from '@/actions/tag/ignore-rules';
+import {
+  ADD_RULE_LABEL,
+  IGNORE_LIST_DESC,
+  IGNORE_LIST_TITLE,
+  TEXT_TO_IGNORE,
+  deleteRuleMessage,
+  ignoredByRuleLabel,
+} from '@/lib/tag/ignore-copy';
+import { toast } from '@/components/ui/toast';
+import {
   DISCONNECT_CONFIRM,
   DISCONNECT_DESC,
   DNS_RECORD_TABLE,
@@ -205,6 +221,12 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const [domainError, setDomainError] = useState<string | null>(null);
   // G173：固定标签数（管理入口上的引导句/上限句据此切换）。
   const [pinnedCount, setPinnedCount] = useState(0);
+  // G171：忽略规则列表与每条规则命中的标签（来源标注）。
+  const [ignoreRules, setIgnoreRules] = useState<IgnoreRule[]>([]);
+  const [ignoreMatches, setIgnoreMatches] = useState<Record<string, string[]>>({});
+  const [ignoreDraft, setIgnoreDraft] = useState('');
+  const [savingIgnore, setSavingIgnore] = useState(false);
+  const [ignoreError, setIgnoreError] = useState<string | null>(null);
 
   useEffect(() => {
     getSpaceContext().then(setSpace).catch(() => setSpace(null));
@@ -222,6 +244,15 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     getSpaceEmailNotification()
       .then(setSpaceEmail)
       .catch(() => setSpaceEmail(null));
+    getIgnoreOverview()
+      .then(({ rules, matches }) => {
+        setIgnoreRules(rules);
+        setIgnoreMatches(matches);
+      })
+      .catch(() => {
+        setIgnoreRules([]);
+        setIgnoreMatches({});
+      });
   }, []);
 
   // profile 是父组件异步取的（`SettingsModal` 的 useEffect）⇒ 初值那一刻它还是 null。
@@ -350,6 +381,68 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       setSpaceEmailError('按空间的设置没有保存，请重试');
     } finally {
       setSavingSpaceEmail(false);
+    }
+  };
+
+  /** G171：规则增删改之后重读规则与来源标注。 */
+  const refreshIgnore = async () => {
+    const overview = await getIgnoreOverview();
+    setIgnoreRules(overview.rules);
+    setIgnoreMatches(overview.matches);
+  };
+
+  const addIgnore = async () => {
+    const text = ignoreDraft.trim();
+    if (!text) return;
+    setSavingIgnore(true);
+    setIgnoreError(null);
+    try {
+      await addIgnoreRule(text);
+      setIgnoreDraft('');
+      await refreshIgnore();
+      toast.add({ title: '已添加到忽略列表', type: 'success' });
+    } catch {
+      setIgnoreError('规则没有保存，请重试');
+    } finally {
+      setSavingIgnore(false);
+    }
+  };
+
+  const renameIgnore = async (rule: IgnoreRule) => {
+    const next = await promptDialog({
+      title: TEXT_TO_IGNORE,
+      defaultValue: rule.text,
+      confirmLabel: '保存',
+    });
+    if (next === null) return;
+    setSavingIgnore(true);
+    setIgnoreError(null);
+    try {
+      await renameIgnoreRule(rule.id, next);
+      await refreshIgnore();
+    } catch {
+      setIgnoreError('规则没有保存，请重试');
+    } finally {
+      setSavingIgnore(false);
+    }
+  };
+
+  const removeIgnore = async (rule: IgnoreRule) => {
+    const confirmed = await confirmDialog({
+      title: IGNORE_LIST_TITLE,
+      message: deleteRuleMessage(rule.text),
+      confirmLabel: '删除',
+    });
+    if (!confirmed) return;
+    setSavingIgnore(true);
+    setIgnoreError(null);
+    try {
+      await deleteIgnoreRule(rule.id);
+      await refreshIgnore();
+    } catch {
+      setIgnoreError('规则没有删除，请重试');
+    } finally {
+      setSavingIgnore(false);
     }
   };
 
@@ -584,7 +677,77 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
               管理
             </Link>
           </RowCard>
-          <GroupDesc>忽略列表中的标签不会显示在侧栏与设置里。</GroupDesc>
+          {/* G171：忽略列表——自定义规则是一等实体，命中后标签从侧栏与标签页消失。 */}
+          <div>
+            <GroupTitle>{IGNORE_LIST_TITLE}</GroupTitle>
+            <GroupDesc>{IGNORE_LIST_DESC}</GroupDesc>
+            <RowCard className="mt-3 space-y-3 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <input
+                  value={ignoreDraft}
+                  onChange={(event) => setIgnoreDraft(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') void addIgnore();
+                  }}
+                  placeholder={TEXT_TO_IGNORE}
+                  aria-label={TEXT_TO_IGNORE}
+                  className="min-w-0 flex-1 rounded-md border border-border bg-transparent px-2 py-1 text-[13px] outline-none focus:border-foreground/30"
+                />
+                <button
+                  type="button"
+                  disabled={savingIgnore || !ignoreDraft.trim()}
+                  onClick={() => void addIgnore()}
+                  className="shrink-0 rounded-md border border-border px-2.5 py-1 text-[12px] transition-colors hover:bg-muted disabled:opacity-40"
+                >
+                  {ADD_RULE_LABEL}
+                </button>
+              </div>
+              {ignoreRules.length === 0 ? (
+                <p className="text-[12px] text-foreground/45">还没有忽略规则</p>
+              ) : (
+                ignoreRules.map((rule) => (
+                  <div
+                    key={rule.id}
+                    className="flex items-start justify-between gap-3 border-t border-foreground/6 pt-2"
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate text-[13px] font-medium">{rule.text}</div>
+                      {ignoreMatches[rule.id]?.length ? (
+                        <p className="mt-0.5 text-[12px] text-foreground/45">
+                          {ignoredByRuleLabel(ignoreMatches[rule.id])}
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="flex shrink-0 gap-2 text-[12px] text-foreground/55">
+                      <button
+                        type="button"
+                        aria-label={`重命名规则 ${rule.text}`}
+                        disabled={savingIgnore}
+                        onClick={() => void renameIgnore(rule)}
+                        className="hover:underline disabled:opacity-40"
+                      >
+                        重命名
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`删除规则 ${rule.text}`}
+                        disabled={savingIgnore}
+                        onClick={() => void removeIgnore(rule)}
+                        className="hover:underline disabled:opacity-40"
+                      >
+                        删除
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+              {ignoreError && (
+                <p role="status" className="text-[12px] text-destructive">
+                  {ignoreError}
+                </p>
+              )}
+            </RowCard>
+          </div>
         </div>
       );
 

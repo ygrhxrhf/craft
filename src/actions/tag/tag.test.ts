@@ -184,6 +184,8 @@ describe('读侧墓碑过滤（C-1）', () => {
           Tag: {
             where: query,
           },
+          // G171：读标签前会读一次用户的忽略规则。
+          User: { first: vi.fn(async () => ({ tagIgnoreRules: null })) },
         },
       },
     });

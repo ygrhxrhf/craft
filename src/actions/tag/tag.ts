@@ -4,6 +4,7 @@ import { assertOwned, requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { normalizeTagColor, normalizeTagName } from '@/lib/tag/normalize';
+import { parseIgnoreRules, splitIgnored } from '@/lib/tag/ignore-rules';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 
 export interface TagRecord {
@@ -24,7 +25,15 @@ export async function getTags(): Promise<TagRecord[]> {
     documents?: unknown[];
   })[];
 
-  return tags.map(({ documents, ...tag }) => ({ ...tag }));
+  // G171：被忽略规则命中的标签不再出现在标签列表（侧栏/标签页/设置都在这一条读上）。
+  const rules = await ignoreRulesFor(db, userId);
+  const { visible } = splitIgnored(tags, rules);
+  return visible.map(({ documents, ...tag }) => ({ ...tag }));
+}
+
+async function ignoreRulesFor(db: any, userId: string) {
+  const user = await db.orm.public.User.first({ id: userId });
+  return parseIgnoreRules((user as { tagIgnoreRules?: unknown } | null)?.tagIgnoreRules);
 }
 
 export async function getDocumentTags(documentId: string): Promise<TagRecord[]> {
@@ -57,12 +66,15 @@ export async function getTagBrowseRows(): Promise<{
   const tags = (await db.orm.public.Tag.where({ userId, deletedAt: null })
     .orderBy((m: { order: { asc: () => unknown } }) => m.order.asc())
     .all()) as TagRecord[];
-  const owned = new Set(tags.map((tag) => tag.id));
+  // G171：忽略规则命中的标签连同它们的链接一起从浏览面消失。
+  const rules = await ignoreRulesFor(db, userId);
+  const { visible } = splitIgnored(tags, rules);
+  const owned = new Set(visible.map((tag) => tag.id));
   const rows = (await db.orm.public.DocumentTag.where({ deletedAt: null }).all()) as {
     tagId: string;
     documentId: string;
   }[];
-  return { tags, links: rows.filter((row) => owned.has(row.tagId)) };
+  return { tags: visible, links: rows.filter((row) => owned.has(row.tagId)) };
 }
 
 /** Finds the user's tag by normalised name, creating it on first use. */

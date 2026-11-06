@@ -4132,10 +4132,18 @@
       ]
     },
     "G171": {
-      "status": "gap",
-      "note": "无忽略规则实体与增删改；标签设置只有一句说明",
+      "status": "aligned",
+      "note": "G171 现读（2026-11-07 第 3o 批）：忽略规则引擎已落地。规则存 users.tagIgnoreRules（[{id,text}]，匹配＝标签名包含规则文本，大小写不敏感、两侧去开头 #）；设置「标签」页有忽略列表（官方描述、要忽略的文本输入、增删改、删除确认），并逐条标注「被自定义规则忽略的标签：[…]」；getTags 与标签浏览面按规则过滤；标签行的「忽略」按钮写入后提示「标签已添加到忽略列表。你可以在“设置”中管理它」。浏览器实点：加规则 → 标签页消失 → 来源标注出现 → 标签行直接忽略 → 设置删除后标签恢复。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:311"
+        "src/lib/tag/ignore-rules.ts:62",
+        "src/lib/tag/ignore-rules.ts:72",
+        "src/actions/tag/ignore-rules.ts:41",
+        "src/actions/tag/ignore-rules.ts:50",
+        "src/actions/tag/tag.ts:71",
+        "src/components/settings/SettingsPanels.tsx:682",
+        "src/components/browse/TagTreeList.tsx:167",
+        "src/lib/tag/ignore-rules.test.ts:1",
+        "src/actions/tag/ignore-rules.test.ts:1"
       ]
     },
     "G173": {

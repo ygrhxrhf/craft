@@ -10,8 +10,6 @@
  * 渲染层不给这一档印 H3。
  */
 
-import type { KeyBinding } from './keymap';
-
 export type PanelTabId =
   | 'general'
   | 'document'
@@ -138,35 +136,9 @@ export const BINDING_SECTIONS: Readonly<Record<string, PanelSectionId | null>> =
   FIND_PREVIOUS: 'editing-find-replace',
 } as const;
 
-export interface PanelSectionRows extends PanelSection {
-  rows: KeyBinding[];
-}
-
-export interface PanelTabView {
-  tab: PanelTab;
-  /** 「文档」这类无段标签页的行落在这里。 */
-  unsectioned: KeyBinding[];
-  sections: PanelSectionRows[];
-}
-
 export function tabOfSection(section: PanelSectionId | null): PanelTabId {
   if (section === null) return 'document';
   return PANEL_SECTIONS.find((entry) => entry.id === section)?.tab ?? 'document';
-}
-
-/** 把绑定表折成「标签页 → 段 → 行」，顺序全按官方分类与段序。 */
-export function panelView(bindings: readonly KeyBinding[]): PanelTabView[] {
-  return PANEL_TABS.map((tab) => {
-    const owned = bindings.filter((binding) => tabOfSection(BINDING_SECTIONS[binding.id] ?? null) === tab.id);
-    return {
-      tab,
-      unsectioned: owned.filter((binding) => (BINDING_SECTIONS[binding.id] ?? null) === null),
-      sections: PANEL_SECTIONS.filter((section) => section.tab === tab.id).map((section) => ({
-        ...section,
-        rows: owned.filter((binding) => BINDING_SECTIONS[binding.id] === section.id),
-      })),
-    };
-  });
 }
 
 /**

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
 import { useRouter } from 'next/navigation';
-import {ChevronDown, ChevronUp, Database, FileText, Keyboard, Plus, Search, Terminal, Type, Folder, Calendar} from 'lucide-react';
+import {Database, FileText, Plus, Search, Terminal, Type, Folder, Calendar} from 'lucide-react';
 import {
   CommandDialog,
   CommandGroup,
@@ -13,9 +13,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
-import { useSettingsStore } from '@/lib/store/use-settings-store';
 import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
-import { runAllToggles } from '@/lib/editor/toggle-all-command';
 import { slashCommands } from '@/components/editor/slash-menu/slash-commands';
 import { filterCommands, type PaletteCommand } from '@/lib/commands/registry';
 import { OFFICIAL_COMMANDS } from '@/lib/commands/official-catalog';
@@ -217,28 +215,6 @@ export function CommandPalette() {
     });
   };
 
-  const handleNewDocument = async () => {
-    close();
-    setQuery('');
-    // 新建文档 → 本地 id + applyLocal + flushNow 后跳转（服务端可见）
-    const id = await createDocumentLocal({ userId: session?.user?.id });
-    router.push(`/documents/${id}`);
-  };
-
-  /** G13：与 TOGGLE_KEY_SHORTCUTS 同落点——打开设置的快捷键分区。 */
-  const handleSeeAllShortcuts = () => {
-    close();
-    setQuery('');
-    useSettingsStore.getState().openSettings('shortcuts');
-  };
-
-  /** G16：命令面板缺注册表（G33）前的直接落点，与格式页/slash 共用同一组命令。 */
-  const handleAllToggles = (expand: boolean) => {
-    close();
-    setQuery('');
-    runAllToggles(useActiveEditorStore.getState().editor, expand);
-  };
-
   const hasQuery = query.trim().length > 0;
   // G354: a query that parses as a date gets one extra `type:"date"` result. The official parser
   // is async chrono; local parsing is synchronous, so no extra round trip is visible.
@@ -390,43 +366,6 @@ export function CommandPalette() {
                 )}
               </CommandItem>
             ))}
-          </CommandGroup>
-        )}
-
-        {!hasQuery && (
-          <CommandGroup heading="操作">
-            <CommandItem onSelect={handleNewDocument}>
-              <Plus className="size-4" />
-              <span>新建文档</span>
-            </CommandItem>
-            {/* G13 第二半：官方命令菜单有 `commands.open.shortcuts`「查看所有快捷键」
-                （`feature-catalog.md:3051`）。落点与 shell-shortcuts 的 TOGGLE_KEY_SHORTCUTS 一致
-                ——打开设置的快捷键分区，不另造一个面板。 */}
-            <CommandItem
-              value="see-all-shortcuts"
-              data-testid="palette-see-shortcuts"
-              onSelect={handleSeeAllShortcuts}
-            >
-              <Keyboard className="size-4" />
-              <span>查看所有快捷键</span>
-            </CommandItem>
-            {/* G16：折叠块全部展开/收起。官方两档命令在采集表里；这里直接落到同一命令。 */}
-            <CommandItem
-              value="expand-all-toggles"
-              data-testid="palette-expand-all-toggles"
-              onSelect={() => handleAllToggles(true)}
-            >
-              <ChevronDown className="size-4" />
-              <span>全部展开折叠块</span>
-            </CommandItem>
-            <CommandItem
-              value="collapse-all-toggles"
-              data-testid="palette-collapse-all-toggles"
-              onSelect={() => handleAllToggles(false)}
-            >
-              <ChevronUp className="size-4" />
-              <span>全部收起折叠块</span>
-            </CommandItem>
           </CommandGroup>
         )}
 

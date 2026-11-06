@@ -3,14 +3,11 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { KEY_BINDINGS } from './keymap';
 import {
   BINDING_SECTIONS,
   PANEL_SECTIONS,
   PANEL_TABS,
   nextTabIndex,
-  panelView,
-  tabOfSection,
   type PanelTabId,
 } from './shortcut-panel';
 
@@ -69,45 +66,12 @@ describe('the panel taxonomy (G755 / G771 / G1622)', () => {
 });
 
 describe('how local bindings fold into it', () => {
-  it('places every local binding, so nothing disappears from the panel', () => {
-    const unplaced = KEY_BINDINGS.filter((binding) => !(binding.id in BINDING_SECTIONS));
-    expect(unplaced.map((binding) => binding.id)).toEqual([]);
-  });
-
   it('only names sections that exist', () => {
     const ids = new Set<string>(PANEL_SECTIONS.map((section) => section.id));
     for (const [id, section] of Object.entries(BINDING_SECTIONS)) {
       if (section === null) continue;
       expect(ids.has(section), id).toBe(true);
     }
-  });
-
-  it('keeps 文档 unsectioned and the rest under their tab', () => {
-    expect(tabOfSection(null)).toBe('document');
-    expect(tabOfSection('style-list')).toBe('style');
-    const view = panelView(KEY_BINDINGS);
-    const byId = new Map(view.map((entry) => [entry.tab.id, entry]));
-    expect(byId.get('document')?.sections).toHaveLength(0);
-    expect(byId.get('document')?.unsectioned.map((binding) => binding.id)).toEqual(['OPEN_DAILY_NOTE']);
-    // 每一行都被某个分类接走。
-    const total = view.reduce(
-      (sum, entry) => sum + entry.unsectioned.length + entry.sections.reduce((n, s) => n + s.rows.length, 0),
-      0,
-    );
-    expect(total).toBe(KEY_BINDINGS.length);
-  });
-
-  it('prints sections in the collected order inside a tab', () => {
-    const editing = panelView(KEY_BINDINGS).find((entry) => entry.tab.id === 'editing');
-    expect(editing?.sections.map((section) => section.title)).toEqual([
-      '插入新区块',
-      '编辑选择',
-      '评论',
-      '在查找和替换中',
-      '其他',
-    ]);
-    expect(editing?.sections.find((section) => section.id === 'editing-selection')?.rows.map((r) => r.label))
-      .toEqual(['创建副本', '编辑页面区块']);
   });
 });
 

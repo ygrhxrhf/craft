@@ -7035,12 +7035,12 @@
       ]
     },
     "G755": {
-      "status": "partial",
-      "note": "第 187 批：面板两层结构（7 钮分类栏 + 分类/段标题）与逐枚键帽已对齐；名册行数（29 vs 89）与别名行仍缺",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 第 1 批）：面板按官方 89 行名册渲染（`shortcut-official-rows.ts`），分类行数 7/4/15/13/27/6/17 与键帽数 16/11/34/27/80/13/38＝219 由 `shortcut-official-rows.test.ts` 逐项钉住；6 条「或者」别名行以子行渲染；未接线行走官方键帽置灰＋「未接入」标记；名册外 4 条本地绑定（Mac 专用/Safari 键位）补渲染；浏览器实点七分类 DOM 行数 8/4/16/13/27/8/17（＝官方 89＋补渲染 4）全对 ⇒ 已对齐",
       "evidence": [
-        "src/lib/editor/shortcut-panel.ts:1",
-        "src/components/settings/ShortcutsPanel.tsx:1",
-        "src/lib/editor/keymap.ts:136"
+        "src/lib/editor/shortcut-official-rows.ts",
+        "src/lib/editor/shortcut-official-rows.test.ts",
+        "src/components/settings/ShortcutsPanel.tsx"
       ]
     },
     "G756": {
@@ -7081,11 +7081,12 @@
       ]
     },
     "G771": {
-      "status": "partial",
-      "note": "第 187 批：7 分类 + 18 段名册已按官方顺序落数据层并单测；行数/别名行/键帽数三口径仍不齐",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 第 1 批）：三口径（行数/别名行/键帽数）随官方名册落地并单测钉住＝89 主行＋6 别名行＋219 键帽，与 §十五 全表逐项相等；段序按官方 18 段（编辑五段顺序、文档无段标题）单测钉住；浏览器实点各分类行数与未接入数全对 ⇒ 已对齐",
       "evidence": [
-        "src/lib/editor/shortcut-panel.ts:1",
-        "src/lib/editor/shortcut-panel.test.ts:1"
+        "src/lib/editor/shortcut-official-rows.ts",
+        "src/lib/editor/shortcut-official-rows.test.ts",
+        "src/lib/editor/shortcut-panel.test.ts"
       ]
     },
     "G775": {
@@ -9555,9 +9556,10 @@
     },
     "G1543": {
       "status": "partial",
-      "note": "本地 Ctrl-K 开真命令面板，官方式是「跳转到」面板",
+      "note": "✎ 现读（2026-11-06 第 1 批，用户裁决）：Ctrl-K 已改为「跳转到」面板＝只留搜索/跳转/创建行，操作组（新建文档·查看所有快捷键·全部展开/收起折叠块）移出，入口沿用侧栏「新建文档」、设置→快捷键与帮助菜单；仍差官方形制三处＝placeholder 逐字「打开」、header 浮层（本地是 role=dialog 整屏浮层）、条目形如「在zhang's Space中 …」",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:214"
+        "src/components/search/CommandPalette.tsx",
+        "src/lib/editor/shortcut-key-inert.test.ts"
       ]
     },
     "G1544": {

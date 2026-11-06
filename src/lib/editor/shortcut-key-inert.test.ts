@@ -6,7 +6,8 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf
 
 /**
  * G1592：`Ctrl-Shift-,` 在官方 web 编辑器里没有反应。键位仍留在表里供面板展示，
- * 但 shell 不再接管它；设置/快捷键面板仍可从帮助菜单与命令面板进入。
+ * 但 shell 不再接管它；设置/快捷键面板仍可从帮助菜单与设置页进入
+ * （第 1 批：Ctrl-K 只做「跳转到」，不再承担设置入口）。
  */
 describe('the shortcuts-panel key stays inert (G1592)', () => {
   it('is no longer handled by the shell dispatcher', () => {
@@ -24,8 +25,10 @@ describe('the shortcuts-panel key stays inert (G1592)', () => {
     expect(keymap).toContain("win: chord({ ctrlKey: true, shiftKey: true }, ',', 'Comma')");
   });
 
-  it('keeps the panel reachable from the help menu and the palette', () => {
+  it('keeps the panel reachable from the help menu and the settings page', () => {
     expect(read('../../components/app/HelpMenu.tsx')).toContain("openSettings('shortcuts')");
-    expect(read('../../components/search/CommandPalette.tsx')).toContain("openSettings('shortcuts')");
+    expect(read('../../components/settings/SettingsPanels.tsx')).toContain('ShortcutsPanel');
+    // Ctrl-K 面板只做「跳转到」，不再有打开设置的动作项。
+    expect(read('../../components/search/CommandPalette.tsx')).not.toContain("openSettings('shortcuts')");
   });
 });

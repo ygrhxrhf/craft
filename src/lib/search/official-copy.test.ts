@@ -76,14 +76,16 @@ describe('search palette official group headings (G1419)', () => {
     expect(source).not.toMatch(/<CommandEmpty/);
   });
 
-  it('offers the official see-all-shortcuts command (G13)', () => {
-    // `commands.open.shortcuts`「查看所有快捷键」：本地命令面板此前只有「新建文档」。
+  it('keeps the official commands out of the jump palette (第 1 批)', () => {
+    // 第 1 批裁决：Ctrl-K 是「跳转到」面板，操作项（含 `commands.open.shortcuts`）
+    // 移出面板，入口沿用帮助菜单与设置页本身。
     const source = readFileSync(
       join(process.cwd(), 'src/components/search/CommandPalette.tsx'),
       'utf8',
     );
-    expect(source).toContain('查看所有快捷键');
-    // 落点与 TOGGLE_KEY_SHORTCUTS 一致：打开设置的快捷键分区，不另造面板。
-    expect(source).toMatch(/openSettings\('shortcuts'\)/);
+    expect(source).not.toContain('查看所有快捷键');
+    expect(source).not.toMatch(/openSettings\('shortcuts'\)/);
+    const help = readFileSync(join(process.cwd(), 'src/components/app/HelpMenu.tsx'), 'utf8');
+    expect(help).toContain("openSettings('shortcuts')");
   });
 });

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-06T18:27:35.987Z",
+  "generatedAt": "2026-11-06T18:30:15.103Z",
   "total": 1615,
   "status": {
-    "aligned": 667,
+    "aligned": 669,
     "nonaction": 520,
     "deliberate": 173,
-    "partial": 161,
-    "gap": 74,
+    "partial": 160,
+    "gap": 73,
     "unreachable": 20
   },
   "priority": {
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 350,
+    "P2 / aligned": 352,
     "P? / nonaction": 191,
     "P2 / nonaction": 174,
     "P1 / aligned": 171,
@@ -33,12 +33,12 @@
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
-    "P2 / partial": 11,
     "P2 / unreachable": 11,
+    "P2 / partial": 10,
     "P0 / aligned": 8,
     "P3 / unreachable": 4,
     "P? / unreachable": 4,
-    "P2 / gap": 2,
+    "P2 / gap": 1,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1292,15 +1292,15 @@
       8
     ],
     [
-      "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
-      7
-    ],
-    [
       "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
       7
     ],
     [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
+      6
+    ],
+    [
+      "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
       6
     ],
     [

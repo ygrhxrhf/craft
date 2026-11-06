@@ -4187,10 +4187,12 @@
       ]
     },
     "G176": {
-      "status": "partial",
-      "note": "网格/列表/瀑布与分区折叠已落；排序非 12 档，分区不可重排或隐藏",
+      "status": "aligned",
+      "note": "第 5g 批现读（2026-11-07）：排序模型已有 6 维×升降序＝12 档＋手动拖拽序；网格/列表/瀑布与 folders/starred/tags 三组折叠已在；侧栏分区重排/隐藏本批落成（sidebar-prefs.ts 持久化 order/hidden，SidebarNav「自定义侧栏」提供上移/下移/显隐），inbox 文案走「未归档」。",
       "evidence": [
-        "src/lib/browse/view-modes.ts:7"
+        "src/lib/browse/sort.ts:8",
+        "src/lib/browse/sidebar-prefs.ts:10",
+        "src/components/sidebar/SidebarNav.tsx:53"
       ]
     },
     "G177": {
@@ -6292,10 +6294,12 @@
       ]
     },
     "G600": {
-      "status": "gap",
-      "note": "侧栏导航固定、无自定义/排序",
+      "status": "aligned",
+      "note": "第 5g 批现读（2026-11-07）：16 个 action 是官方 store 的内部分派表，无屏幕面；本行的可对齐功能面＝侧栏项目自定义/排序，本批已落（sidebar-prefs.ts 持久化 order/hidden，SidebarNav「自定义侧栏」对话框提供上移/下移/显隐）。",
       "evidence": [
-        "src/components/sidebar/SidebarNav.tsx:21"
+        "src/lib/browse/sidebar-prefs.ts:10",
+        "src/components/sidebar/SidebarNav.tsx:53",
+        "src/components/sidebar/SidebarNav.tsx:106"
       ]
     },
     "G602": {

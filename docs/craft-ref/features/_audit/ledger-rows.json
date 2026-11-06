@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-06T18:27:35.774Z",
+  "generatedAt": "2026-11-06T18:30:14.901Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 797,
-    "aligned": 375,
+    "gap": 795,
+    "aligned": 377,
     "unknown": 193,
     "deliberate": 108,
     "partial": 66,
@@ -18,9 +18,9 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 269,
-    "P2 / gap": 227,
+    "P2 / aligned": 271,
     "P? / gap": 226,
+    "P2 / gap": 225,
     "P1 / gap": 191,
     "P3 / gap": 153,
     "P? / unknown": 112,
@@ -4303,10 +4303,10 @@
       "cols": 5,
       "id": "G176",
       "official": "浏览面：**排序 12 档**（含\"手动的\"＝拖拽序，与五种 reorder 作用域对上）、网格/列表两视图、仅 folders/starred/tags 三组可折叠、**侧栏分区可重排可隐藏**（`sidebar.reorder.or.hide`）、inbox 官方译作「未归档」与 `isArchived` 轴呼应（§七）",
-      "local": "侧栏是固定顺序固定分组；排序档位远少于 12；无\"重排或隐藏分区\"偏好",
-      "verdict": "行为不同",
+      "local": "✎ 现读（2026-11-07 第 5g 批）：排序模型已有 6 维×升降序＝12 档（`lib/browse/sort.ts` 的 SORT_DIMENSIONS/SORT_DIRECTIONS）＋手动的拖拽序；网格/列表/瀑布与 folders/starred/tags 三组折叠已在；侧栏分区重排/隐藏本批落成（`sidebar-prefs.ts`＋SidebarNav「自定义侧栏」，上/下移与显隐写本机）；inbox 文案走「未归档」",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -11944,10 +11944,10 @@
       "cols": 5,
       "id": "G600",
       "official": "★★ **16 个 action 只在分派表出现、不在 261 构造器表**（`restoreTextEdit`、`setDocumentSearchString`、`setCurrentlyFocusedSearchIndex`、`updateHighlightedTextReplaceItemsAction`、`toggleObjectListRowSelection`、`openFullSearchAction`、`openSharedWithMeAction`、`openPlaygroundAction`、**`openEasterEggAction`**、`toggleWebappDebugPanelAction`、`notificationChangesLoaded`、`updateSpaceInvitesData`、`updateTeamMemberRoleAction`、`removeTeamMemberAction`、`setTeamStatusAction`、`setSelectionDraggingActive`）⇒ ★ **协议全集必须取\"构造器 ∪ 分派表\"两者并集**（两向差集已写进技能）",
-      "local": "本地无 action 层 ⇒ 无对照；但**功能面**有具体缺口：★ 侧栏项目自定义（`setCustomizeLeftSidebarOption{option,isChecked}` + `…OptionsOrder{order}`）在本地是固定项无排序（G600 的可对齐部分）",
-      "verdict": "缺失（功能面）",
+      "local": "✎ 现读（2026-11-07 第 5g 批）：16 个 action 是官方 store 的内部分派表，无屏幕面；本行的可对齐功能面＝侧栏项目自定义/排序，本批已落（`sidebar-prefs.ts` 持久化 order/hidden，SidebarNav「自定义侧栏」对话框提供上移/下移/显隐）",
+      "verdict": "已对齐（功能面）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

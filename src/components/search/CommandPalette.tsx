@@ -288,7 +288,7 @@ export function CommandPalette() {
       description="搜索文档与内容"
       className="max-w-xl max-md:w-[calc(100vw-1.5rem)]"
     >
-      <CommandInput value={query} onValueChange={setQuery} placeholder="搜索文档、内容…" />
+      <CommandInput value={query} onValueChange={setQuery} placeholder="打开" />
 
       <CommandList>
         {!hasQuery && recents.length > 0 && (

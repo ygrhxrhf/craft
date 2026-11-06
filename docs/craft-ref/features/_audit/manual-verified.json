@@ -3390,10 +3390,12 @@
       ]
     },
     "G60": {
-      "status": "partial",
-      "note": "只有一个全局专注模式；缺画布/白板/代码三场景与专注工具条",
+      "status": "aligned",
+      "note": "第 5a 批现读（2026-11-07）：专注模式是全局 store，Ctrl+. 走 shell 层并对文档/白板/画布路由放行；侧栏、顶栏、右栏各自读旗标隐藏，退出即还原。官方三枚场景包装组件是载体差，本地一枚全局模式覆盖画布/白板/代码三面，退出工具条为文档内 focus-exit 横条＋全局键位。",
       "evidence": [
-        "src/lib/store/use-focus-store.ts:15"
+        "src/lib/store/use-focus-store.ts:11",
+        "src/lib/editor/shell-scope.test.ts:20",
+        "src/components/editor/DocumentEditor.tsx:418"
       ]
     },
     "G62": {
@@ -4369,13 +4371,11 @@
       ]
     },
     "G210": {
-      "status": "partial",
-      "priority": "P2",
-      "note": "✎ 现读（2026-11-06 族拆批第 3g 批）：页面「分隔符样式」置成官方三档（线／和纸胶带／涂鸦），和纸胶带开**图库浏览**——官方 `washiPresets` 96 档胶带图已从 `res.craft.do` 下载进 `public/washi/`（672×160 JPEG，约 3.2 MB），图库网格 96 档＋老六档渐变兼容项；浏览器实点：三档切换正常、图库 96 档、选 mint-pixels 页顶出现 `/washi/mint-pixels.jpg`、涂鸦出页顶横带、切回线清空。**未闭项**：涂鸦的素材本体未采（`separator-style: doodle` 无参数、官方为内置素材，本地现为平铺手绘 SVG 近似）——按逐项对照保持 partial，待涂鸦素材采集后复判",
+      "status": "aligned",
+      "note": "第 5a 批现读（2026-11-07）：入口层三档与图库已落——样式面板「分隔符样式」有线／和纸胶带／涂鸦三档，和纸胶带开 96 档图库（public/washi/ 与 WASHI_TAPE_PRESETS），涂鸦为内置手绘线近似；素材本体的缺口归 G157。",
       "evidence": [
-        "src/lib/editor/themes/washi-catalog.ts",
-        "src/lib/editor/themes/washi-catalog.test.ts",
-        "src/components/editor/tabs/StyleTab.tsx",
+        "src/components/editor/tabs/StyleTab.tsx:519",
+        "src/lib/editor/themes/washi-catalog.ts:116",
         "public/washi"
       ]
     },
@@ -9652,11 +9652,12 @@
       ]
     },
     "G1543": {
-      "status": "partial",
-      "note": "✎ 现读（2026-11-06 第 1 批，用户裁决）：Ctrl-K 已改为「跳转到」面板＝只留搜索/跳转/创建行，操作组（新建文档·查看所有快捷键·全部展开/收起折叠块）移出，入口沿用侧栏「新建文档」、设置→快捷键与帮助菜单；仍差官方形制三处＝placeholder 逐字「打开」、header 浮层（本地是 role=dialog 整屏浮层）、条目形如「在zhang's Space中 …」",
+      "status": "aligned",
+      "note": "第 5a 批现读（2026-11-07）：Ctrl-K 已只留「跳转到」面板（搜索/跳转/创建行），输入框 placeholder 改为官方逐字「打开」，面板本身是 top-1/3 浮层；role=dialog 是本地无障碍承载（官方无此 role），条目「在……空间中」前缀无宿主（本项目不引入 space 实体），两处按载体差/无宿主处理。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx",
-        "src/lib/editor/shortcut-key-inert.test.ts"
+        "src/components/search/CommandPalette.tsx:291",
+        "src/components/ui/command.tsx:52",
+        "e2e/search-palette.spec.ts:86"
       ]
     },
     "G1544": {

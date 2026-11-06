@@ -83,7 +83,7 @@ function trackErrors(page: Page): string[] {
 async function openPalette(page: Page, query: string) {
   await page.goto('/documents');
   await page.keyboard.press('ControlOrMeta+K');
-  await page.getByPlaceholder('搜索文档、内容…').fill(query);
+  await page.getByPlaceholder('打开').fill(query);
 }
 
 test.beforeEach(async ({ page }) => {
@@ -130,7 +130,7 @@ test('another account rows never appear in my palette', async ({ page }) => {
   // renders during the 200ms debounce, so a dead search path shows zero options too.
   await expect(page.getByRole('option', { name: new RegExp(CELL) })).toBeVisible();
 
-  await page.getByPlaceholder('搜索文档、内容…').fill(FOREIGN);
+  await page.getByPlaceholder('打开').fill(FOREIGN);
   // Disappearance is the only reading that can follow a second response rather than precede it.
   await expect(page.getByRole('option', { name: new RegExp(CELL) })).toHaveCount(0);
   expect(errors).toEqual([]);

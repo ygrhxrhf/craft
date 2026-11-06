@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-06T18:02:31.450Z",
+  "generatedAt": "2026-11-06T18:09:47.116Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 812,
-    "aligned": 365,
+    "gap": 809,
+    "aligned": 368,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 259,
-    "P2 / gap": 242,
+    "P2 / aligned": 262,
+    "P2 / gap": 239,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 13,
+  "conflicts": 14,
   "conflictRows": [
     {
       "id": "G95",
@@ -138,6 +138,14 @@
       "conflict": "local-says-missing",
       "local": "`grep -n toggle src/lib/import/markdown.ts` ⇒ **0 命中**＝本地把 `-`／`+`／`*` 一律读成 `bulletList`；本地 toggle 节点是另一个东西（`src/lib/document-codec/index.ts` 的 `toggleBlock`），*",
       "verdict": "☆ 已清（第 171 批）"
+    },
+    {
+      "id": "G1543",
+      "line": 5522,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "✎ 现读（2026-11-07 第 5a 批）：Ctrl-K 已只留「跳转到」面板（搜索/跳转/创建行），输入框 placeholder 改为官方逐字「打开」（`CommandPalette.tsx:291`），面板本身是 top-1/3 浮层（`ui/command.tsx`）；`role=dialog` 是本地无障",
+      "verdict": "已对齐（载体差＋无宿主项）"
     },
     {
       "id": "G1574",
@@ -2186,11 +2194,11 @@
       "cols": 6,
       "id": "G60",
       "official": "专注模式**分三个场景**：画布 / 白板 / 代码各一个 + 专注工具条（`ExcalidrawFocusMode`/`WhiteboardFocusMode`/`CodeEditorFocusMode`/`FocusModeToolbar`）",
-      "local": "✎ 现读（2026-10-31）更正：只有一个全局专注模式；缺画布/白板/代码三场景与专注工具条",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-07 第 5a 批）：专注模式是全局 store，`Ctrl+.` 走 shell 层（`shellShortcutAllowed('TOGGLE_FOCUS_MODE')` 对文档/白板/画布路由都放行），侧栏、顶栏、右栏各自读旗标隐藏，退出即还原；官方三枚场景包装组件是载体差，本地一枚全局模式覆盖画布/白板/代码三面，退出工具条=文档内 `focus-exit` 横条＋全局键位（`use-focus-store.ts:11`）",
+      "verdict": "已对齐（载体差）",
       "score": "2/2",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝无（G11 的细化：不是一键全局）",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -4910,10 +4918,10 @@
       "cols": 5,
       "id": "G210",
       "official": "和纸胶带、涂鸦、**分隔符的三种样式**都在网页版面板内可达（不是桌面端独有）⇒ 与 G157（装饰素材子系统）合并处理时，**入口层已无平台障碍**，只是素材与图库浏览缺失",
-      "local": "✎ 现读（2026-11-03 第 255 批）：胶带段标题已改成官方串「和纸胶带」；分隔符三种样式（线／和纸胶带／涂鸦）与和纸图库浏览仍缺，只到实色/渐变六档",
-      "verdict": "缺失（入口已通，素材未做）",
+      "local": "✎ 现读（2026-11-07 第 5a 批）：入口层三档与图库已落——样式面板「分隔符样式」有线／和纸胶带／涂鸦三档（`StyleTab.tsx:519`），和纸胶带开 96 档图库（`public/washi/`＋`WASHI_TAPE_PRESETS`），涂鸦为内置手绘线近似；素材本体的缺口归 G157",
+      "verdict": "已对齐（近似）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -28832,16 +28840,16 @@
       "cols": 5,
       "id": "G1543",
       "official": "⌘K / Ctrl-K 唤出的是「**跳转到**」面板（`interactions.md` V1／V2／V6；`ui-affordances.md` §四 两条修正：`command-palette-button` + `command-menu` 是**另一个**入口）",
-      "local": "**行为不同**＝本地 Ctrl-K 开的是**真命令面板**（`CommandPalette.tsx`，⌘K 在 `:39-46` 直接 `open()`）：条目「新建文档」「查看所有快捷键」，分组标题「操作」，输入框 placeholder「搜索文档、内容…」、`role=combobox`，尾部「搜索文档与块」「Esc」「关闭」；官方 ⌘K 面板输入框 placeholder 逐字「打开」、**无 `role=dialog`**，条目形如「在zhang's Space中 …」，且**另有**一个 `command-palette-button` 入口开命令菜单。实测另证：官方 ⌘K 后 `[data-item-id]` 计数仍 13（**不是整屏接管**，是 header 浮层；header 的「打开」标签由 span 变成 input）",
-      "verdict": "行为不同（产品级；两侧\"面板开了\"这件事一致，见 interaction-matrix.md `shell.command-palette.toggle-vs-jump`）",
+      "local": "✎ 现读（2026-11-07 第 5a 批）：Ctrl-K 已只留「跳转到」面板（搜索/跳转/创建行），输入框 placeholder 改为官方逐字「打开」（`CommandPalette.tsx:291`），面板本身是 top-1/3 浮层（`ui/command.tsx`）；`role=dialog` 是本地无障碍承载（官方无此 role），条目「在……空间中」前缀无宿主（本项目不引入 space 实体）⇒ 两处按载体差/无宿主处理",
+      "verdict": "已对齐（载体差＋无宿主项）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

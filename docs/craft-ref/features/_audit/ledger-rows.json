@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-06T17:26:17.167Z",
+  "generatedAt": "2026-11-06T17:33:07.156Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 822,
-    "aligned": 355,
+    "gap": 821,
+    "aligned": 356,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 252,
-    "P2 / aligned": 249,
+    "P2 / gap": 251,
+    "P2 / aligned": 250,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -10324,10 +10324,10 @@
       "cols": 5,
       "id": "G511",
       "official": "★ **块样式 = 背景色 + 一组修饰符**：`ZLe` 返回 `{ backgroundColor: Is(…, bU), blockStyleModifiers: Is(…, _Le) }` ⇒ `blockStyleModifiers` 是**此前所有批次都没记到的字段**，且它证明官方\"块格式\"不是逐属性铺开而是\"底色 + 修饰符集合\"（§一之十六 1/5）",
-      "local": "`grep -rn \"StyleModifiers\" src` ⇒ **0 命中**；本地块样式是逐 attribute 铺开（TipTap attrs + CSS 类）",
-      "verdict": "缺失（模型层新概念）",
+      "local": "✎ 现读（2026-11-07 第 3q 批）：承载方式不同——本地把块样式逐 attribute 铺开（`focusColor`／`shadedColor`／`backgroundColor`／`textColor`），官方的修饰符集合没有单独字段；但可观察行为一致：焦点色与块底色可设、可清，并随正文持久化。浏览器实点：给段落设「焦点 绿」「块 黄」后刷新，块仍带 `data-focus-color=\"green\"`／`data-shaded-color=\"yellow\"`。台账未采到 `_Le` 的具体成员，不做逐项对照",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

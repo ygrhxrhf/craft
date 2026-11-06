@@ -5858,10 +5858,13 @@
       ]
     },
     "G511": {
-      "status": "partial",
-      "note": "无块底色/修饰符集合；focus/shaded 属性与 CSS 在但无设置入口",
+      "status": "aligned",
+      "note": "G511 现读（2026-11-07 第 3q 批）：承载方式不同——本地把块样式逐 attribute 铺开（focusColor/shadedColor/backgroundColor/textColor），官方是底色＋blockStyleModifiers 集合；可观察行为一致：焦点色与块底色可设、可清并随正文持久化。浏览器实点：给段落设「焦点 绿」「块 黄」后刷新，块仍带 data-focus-color=green 与 data-shaded-color=yellow。台账未采到 _Le 的成员清单，不做逐项对照。",
       "evidence": [
-        "src/components/editor/extensions/focus-style.tsx:20"
+        "src/components/editor/extensions/focus-style.tsx:42",
+        "src/components/editor/extensions/shaded-style.tsx:26",
+        "src/lib/editor/format-commands.ts:228",
+        "src/components/editor/tabs/FormatTab.tsx:478"
       ]
     },
     "G512": {

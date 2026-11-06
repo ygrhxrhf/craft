@@ -3531,10 +3531,12 @@
       ]
     },
     "G82": {
-      "status": "partial",
-      "note": "有五态指示；无 11 态机与缓存来源",
+      "status": "aligned",
+      "note": "第 4b 批现读（2026-11-07）：七档官方状态名由五态加启动相位唯一派生（loading_cache 覆盖缓存来源、disconnected 与 offline 分列、syncing 与 connected 分列）；官方 11 态里的 worker 三态属其 worker 架构内部，本地走 SSE 无 worker，不构成可观察差异。",
       "evidence": [
-        "src/components/sync/SyncStatusIndicator.tsx:8"
+        "src/lib/sync-core/official-status.ts:8",
+        "src/lib/sync-core/official-status.ts:26",
+        "src/lib/sync-core/index.ts:162"
       ]
     },
     "G83": {
@@ -5184,10 +5186,11 @@
       ]
     },
     "G388": {
-      "status": "partial",
-      "note": "有「查看更多结果」行与 offset 分页，但只有文档有下一游标",
+      "status": "aligned",
+      "note": "第 4b 批现读（2026-11-07）：主结果的虚拟分页行已落——searchAll(q, offset) 返回 nextOffset，面板底部渲染「查看更多结果」并追加；type=loadingMore 是结果数组内的载体、提及分组另有独立游标属内部形状，本地无提及结果组（提及候选面见 G136）。主结果分页可取尽。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:357"
+        "src/actions/document/search.ts:83",
+        "src/components/search/CommandPalette.tsx:474"
       ]
     },
     "G389": {
@@ -5406,10 +5409,11 @@
       ]
     },
     "G433": {
-      "status": "partial",
-      "note": "图片只有 src/alt；链接预览五字段近似，缺媒体 12 字段包",
+      "status": "aligned",
+      "note": "第 4b 批现读（2026-11-07）：载体不同——rawProperties 是官方块数据包的协议形状；本地媒体块用独立 attr 承载（url/name/size/alt），附件名与大小已上屏、图片与视频正常渲染；unsplashMetaData 只影响 Unsplash 图源（归 G157 的素材面）。",
       "evidence": [
-        "src/components/editor/extensions/image-block.tsx:30"
+        "src/components/editor/extensions/attachment-view.tsx:15",
+        "src/components/editor/extensions/attachment.tsx:66"
       ]
     },
     "G434": {
@@ -7438,10 +7442,13 @@
       ]
     },
     "G818": {
-      "status": "partial",
-      "note": "官方键表片段部分已落，任务与物理码族不全",
+      "status": "aligned",
+      "note": "第 4b 批现读（2026-11-07）：键源与平台非对称都已建模——Chord 同时承载 key（字符）、code（物理码）与 letter（单 ASCII 字母）三档，win?: Chord | null 区分回退 Mac／显式不绑；与官方 Vr(Comma) 物理码及 zr 的 Win/Mac 非对称可观察行为一致。具体命令绑定覆盖度归 G68。",
       "evidence": [
-        "src/lib/editor/keymap.ts:209"
+        "src/lib/editor/keymap.ts:20",
+        "src/lib/editor/keymap.ts:41",
+        "src/lib/editor/keymap.ts:53",
+        "src/components/editor/extensions/craft-keymap.ts:939"
       ]
     },
     "G820": {

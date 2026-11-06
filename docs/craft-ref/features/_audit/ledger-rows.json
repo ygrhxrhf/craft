@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-06T15:28:04.768Z",
+  "generatedAt": "2026-11-06T15:33:13.446Z",
   "totalRows": 1615,
   "statusDistribution": {
     "gap": 826,
-    "aligned": 349,
+    "aligned": 350,
     "unknown": 193,
     "deliberate": 105,
-    "partial": 68,
+    "partial": 67,
     "nonaction": 58,
     "unreachable": 16
   },
@@ -19,7 +19,7 @@
   },
   "statusByPriority": {
     "P2 / gap": 256,
-    "P2 / aligned": 243,
+    "P2 / aligned": 244,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -29,7 +29,7 @@
     "P3 / aligned": 40,
     "P? / deliberate": 33,
     "P2 / unknown": 33,
-    "P2 / partial": 30,
+    "P2 / partial": 29,
     "P3 / unknown": 25,
     "P3 / deliberate": 24,
     "P1 / unknown": 23,
@@ -5623,10 +5623,10 @@
       "cols": 5,
       "id": "G250",
       "official": "**网格卡片是\"真实内容预览\"而非占位图**：表格连单元格与表头一起渲染、子集合出缩略图、彩色正文保留配色；卡片头 = 标题 / 位置面包屑（📁 日记 •）/「已更新 N 小时前」，**未命名文档标题为斜体灰**",
-      "local": "☆ 部分落地（第 255 批）＝① **卡片头三件已落**＝纯核 `src/lib/document/card-head.ts`（`cardTitle`／`cardBreadcrumb`／`cardUpdatedLabel`（逐字 `daily.updated.x`「已更新 [0]」＋相对时间）／`cardHead`／`isUntitled`），`DocumentCard` 改渲染三行：标题（**未命名＝斜体灰** `italic text-foreground/45`）／位置面包屑（📁 名 • 名）／「已更新 N 小时前」——原先是**裸日期**（`toLocaleDateString`）且未命名标题无样式区分；真浏览器取证＝卡片显示 `已更新 2小时前`（相对时间带动词、无裸日期）、3 枚未命名标题带 `italic`；② **仍缺**＝卡片内的**真实内容预览**（表格连单元格渲染／子集合缩略图／彩色正文保配色，走官方 `document_preview` 服务）——需正文渲染投影，留作待办",
-      "verdict": "部分落地",
+      "local": "✎ 现读（2026-11-06 第 3k 批）：卡片头三件在册（标题／面包屑／「已更新 N 小时前」，未命名斜体灰，第 255 批）；真实内容预览由 SVG 渲染内核补齐——表格逐格画表头与单元格并出网格线、彩色正文按 `textStyle.color` 出 `<tspan>`、子集合出标题＋三行行条缩略图。浏览器核对：含表格与彩字的文档卡片，其预览 SVG 同时含「名称/数量/甲」、彩色 tspan 与 3 条网格线",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "partial",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

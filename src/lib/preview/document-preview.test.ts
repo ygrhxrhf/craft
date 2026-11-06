@@ -62,3 +62,53 @@ describe('文档预览 SVG 渲染（G216）', () => {
     expect(renderDocumentPreview({ title: 't', content: 'nope' })).toContain('<svg');
   });
 });
+// G250 —— 卡片是"真实内容预览"：表格连单元格、彩色正文保配色、子集合出缩略图。
+describe('真实内容预览（G250）', () => {
+  const cell = (...texts: string[]) => ({
+    type: 'tableHeader',
+    content: [{ type: 'paragraph', content: texts.map((text) => ({ type: 'text', text })) }],
+  });
+  const table = {
+    type: 'table',
+    content: [
+      { type: 'tableRow', content: [cell('名称'), cell('数量')] },
+      {
+        type: 'tableRow',
+        content: [
+          { type: 'tableCell', content: [{ type: 'paragraph', content: [{ type: 'text', text: '甲' }] }] },
+          { type: 'tableCell', content: [{ type: 'paragraph', content: [{ type: 'text', text: '3' }] }] },
+        ],
+      },
+    ],
+  };
+
+  it('表格逐格画文字，并有表头底色与网格线', () => {
+    const svg = renderDocumentPreview({ title: '表', content: doc(table) }, { size: 'm' });
+    for (const text of ['名称', '数量', '甲', '3']) expect(svg).toContain(text);
+    expect(svg).toContain('fill-opacity="0.5"');
+    expect((svg.match(/<line /g) ?? []).length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('彩色正文保留颜色（tspan），普通文本仍走纯文本', () => {
+    const colored = {
+      type: 'paragraph',
+      content: [
+        { type: 'text', text: '红字', marks: [{ type: 'textStyle', attrs: { color: '#cc0000' } }] },
+        { type: 'text', text: '普通' },
+      ],
+    };
+    const svg = renderDocumentPreview({ title: '色', content: doc(colored) }, { size: 'm' });
+    expect(svg).toContain('<tspan fill="#cc0000">红字</tspan>');
+    expect(svg).toContain('普通');
+    expect(svg).not.toContain('<tspan fill="&quot;');
+  });
+
+  it('子集合出缩略图（标题 + 三条行条）', () => {
+    const svg = renderDocumentPreview(
+      { title: '集', content: doc({ type: 'collectionBlock', attrs: { title: '任务清单' } }) },
+      { size: 'm' },
+    );
+    expect(svg).toContain('任务清单');
+    expect((svg.match(/height="2.5"/g) ?? []).length).toBe(3);
+  });
+});

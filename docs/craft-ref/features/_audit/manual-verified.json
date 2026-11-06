@@ -4511,10 +4511,14 @@
       ]
     },
     "G250": {
-      "status": "partial",
-      "note": "卡头标题/面包屑/已更新已落；无真实内容预览与表格缩略图",
+      "status": "aligned",
+      "note": "G250 现读（2026-11-06 第 3k 批）：卡片头三件已在册（标题/面包屑/「已更新 N 小时前」，未命名斜体灰）。真实内容预览由 SVG 渲染内核补齐：表格逐格画表头与单元格并出网格线；彩色正文按 textStyle.color 出 tspan 保留配色；子集合出标题＋三行行条缩略图。浏览器核对：含表格与彩字的文档卡片，其预览 SVG 同时含「名称/数量/甲」、彩色 tspan 与 3 条网格线。",
       "evidence": [
-        "src/components/document/DocumentCard.tsx:20"
+        "src/lib/preview/document-preview.ts:221",
+        "src/lib/preview/document-preview.ts:262",
+        "src/lib/preview/document-preview.ts:304",
+        "src/lib/preview/document-preview.test.ts:66",
+        "src/components/document/DocumentCard.tsx:68"
       ]
     },
     "G251": {

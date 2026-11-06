@@ -32,11 +32,23 @@ const PALETTES: Record<PreviewTheme, Record<'bg' | 'title' | 'text' | 'faint' | 
 const FONT = "system-ui, -apple-system, 'Segoe UI', sans-serif";
 const MONO = "'Cascadia Mono', Consolas, monospace";
 
+interface PmMark {
+  type?: string;
+  attrs?: Record<string, unknown>;
+}
+
 interface PmNode {
   type?: string;
   attrs?: Record<string, unknown>;
   content?: PmNode[];
   text?: string;
+  marks?: PmMark[];
+}
+
+interface TextRun {
+  text: string;
+  /** G250：正文里的彩色文本（`textStyle` 的 `color`）保留配色。 */
+  color?: string;
 }
 
 function escapeXml(value: string): string {
@@ -78,12 +90,74 @@ function wrap(text: string, maxWidth: number, fontSize: number): { lines: string
   return { lines, truncated };
 }
 
+/** 彩色 run 的换行：逐字累计，保留每个字属于哪一段颜色。 */
+function wrapRuns(runs: TextRun[], maxWidth: number, fontSize: number): { lines: TextRun[][]; truncated: boolean } {
+  const lines: TextRun[][] = [];
+  let line: TextRun[] = [];
+  let width = 0;
+  let current = '';
+  let currentColor: string | undefined;
+  let truncated = false;
+
+  const flushSegment = () => {
+    if (current) {
+      line.push({ text: current, color: currentColor });
+      current = '';
+    }
+  };
+  const flushLine = () => {
+    flushSegment();
+    if (line.length) lines.push(line);
+    line = [];
+    width = 0;
+  };
+
+  outer: for (const run of runs) {
+    for (const char of run.text) {
+      const charWidth = measure(char, fontSize);
+      if (width + charWidth > maxWidth && width > 0) {
+        flushLine();
+        if (lines.length > 40) {
+          truncated = true;
+          break outer;
+        }
+      }
+      if (currentColor !== run.color) {
+        flushSegment();
+        currentColor = run.color;
+      }
+      current += char;
+      width += charWidth;
+    }
+  }
+  flushLine();
+  return { lines, truncated };
+}
+
 function inlineText(node: PmNode | undefined): string {
   if (!node) return '';
   if (node.type === 'text') return node.text ?? '';
   if (Array.isArray(node.content)) return node.content.map(inlineText).join('');
   const label = node.attrs?.title ?? node.attrs?.name;
   return typeof label === 'string' ? label : '';
+}
+
+function colorOf(node: PmNode): string | undefined {
+  const mark = node.marks?.find((candidate) => candidate.type === 'textStyle');
+  const color = mark?.attrs?.color;
+  return typeof color === 'string' && color ? color : undefined;
+}
+
+/** 把一段富文本拆成带颜色的 run；嵌套容器（如列表项）按顺序摊平。 */
+function inlineRuns(node: PmNode | undefined): TextRun[] {
+  if (!node) return [];
+  if (node.type === 'text') {
+    const color = colorOf(node);
+    return node.text ? [{ text: node.text, color }] : [];
+  }
+  if (Array.isArray(node.content)) return node.content.flatMap((child) => inlineRuns(child));
+  const label = node.attrs?.title ?? node.attrs?.name;
+  return typeof label === 'string' ? [{ text: label }] : [];
 }
 
 const MEDIA_LABEL: Record<string, string> = {
@@ -144,6 +218,108 @@ export function renderDocumentPreview(input: PreviewInput, options?: { size?: Pr
     y += 2;
   };
 
+  const drawRuns = (runs: TextRun[], fontSize: number, indent: number, fill: string, weight = 400) => {
+    if (!runs.length) return;
+    // 没有彩色 run 时走原来的纯文本换行（输出形状不变，既有单测与预览都对得上）。
+    if (!runs.some((run) => run.color)) {
+      drawParagraph(runs.map((run) => run.text).join(''), fontSize, indent, fill, weight);
+      return;
+    }
+    const wrapped = wrapRuns(runs, innerWidth - indent, fontSize);
+    for (let index = 0; index < wrapped.lines.length && y + lineHeight <= bottom; index += 1) {
+      const isLastDrawn = y + lineHeight * 2 > bottom;
+      const segments = wrapped.lines[index].map((run) => ({ ...run }));
+      if (isLastDrawn && (wrapped.truncated || index < wrapped.lines.length - 1) && segments.length) {
+        segments[segments.length - 1].text += '…';
+      }
+      const body = segments
+        .map((run) =>
+          run.color
+            ? `<tspan fill="${escapeXml(run.color)}">${escapeXml(run.text)}</tspan>`
+            : escapeXml(run.text),
+        )
+        .join('');
+      parts.push(
+        `<text x="${pad + indent}" y="${y + fontSize}" font-family="${FONT}" font-size="${fontSize}" font-weight="${weight}" fill="${fill}">${body}</text>`,
+      );
+      y += lineHeight;
+    }
+    y += 2;
+  };
+
+  /** 单元格文字按列宽截断（预览是缩略图，不做多行单元格）。 */
+  const fit = (text: string, maxWidth: number, fontSize: number): string => {
+    if (measure(text, fontSize) <= maxWidth) return text;
+    let out = '';
+    for (const char of text) {
+      if (measure(out + char + '…', fontSize) > maxWidth) break;
+      out += char;
+    }
+    return `${out}…`;
+  };
+
+  // G250：表格连单元格与表头一起画——首行是表头底色，其余按行画文字与横线。
+  const drawTable = (node: PmNode) => {
+    const rows = (node.content ?? []).map((row) => (row.content ?? []).map((cell) => inlineText(cell)));
+    const cols = Math.max(1, ...rows.map((cells) => cells.length));
+    const rowHeight = 15;
+    const visible = rows.slice(0, 5);
+    const tableHeight = visible.length * rowHeight;
+    if (!visible.length || y + tableHeight > bottom) {
+      drawMedia('表格');
+      return;
+    }
+    const colWidth = innerWidth / cols;
+    parts.push(
+      `<rect x="${pad}" y="${y}" width="${innerWidth}" height="${tableHeight}" fill="${palette.fill}" fill-opacity="0.5"/>`,
+    );
+    parts.push(
+      `<rect x="${pad}" y="${y}" width="${innerWidth}" height="${rowHeight}" fill="${palette.fill}"/>`,
+    );
+    visible.forEach((cells, rowIndex) => {
+      const top = y + rowIndex * rowHeight;
+      cells.forEach((text, colIndex) => {
+        if (!text) return;
+        pushText(
+          pad + colIndex * colWidth + 3,
+          top + 11,
+          fit(text, colWidth - 6, 8),
+          8,
+          rowIndex === 0 ? palette.title : palette.text,
+          rowIndex === 0 ? 600 : 400,
+        );
+      });
+      parts.push(
+        `<line x1="${pad}" y1="${top + rowHeight}" x2="${width - pad}" y2="${top + rowHeight}" stroke="${palette.rule}"/>`,
+      );
+    });
+    for (let col = 1; col < cols; col += 1) {
+      const x = pad + col * colWidth;
+      parts.push(`<line x1="${x}" y1="${y}" x2="${x}" y2="${y + tableHeight}" stroke="${palette.rule}"/>`);
+    }
+    y += tableHeight + 4;
+  };
+
+  // G250：子集合出缩略图——标题 + 三条行条，代表集合里的记录。
+  const drawCollectionThumb = (node: PmNode) => {
+    const label = inlineText(node) || (typeof node.attrs?.title === 'string' ? node.attrs.title : '集合');
+    const boxHeight = 34;
+    if (y + boxHeight > bottom) {
+      drawMedia('集合');
+      return;
+    }
+    parts.push(
+      `<rect x="${pad}" y="${y}" width="${innerWidth}" height="${boxHeight}" rx="4" fill="${palette.fill}"/>`,
+    );
+    pushText(pad + 7, y + 12, fit(label, innerWidth - 14, 8.5), 8.5, palette.title, 600);
+    for (let row = 0; row < 3; row += 1) {
+      parts.push(
+        `<rect x="${pad + 7}" y="${y + 16 + row * 5}" width="${Math.max(20, innerWidth - 14)}" height="2.5" rx="1.2" fill="${palette.rule}"/>`,
+      );
+    }
+    y += boxHeight + 4;
+  };
+
   const drawMedia = (label: string) => {
     if (y + 22 > bottom) return;
     parts.push(`<rect x="${pad}" y="${y}" width="${innerWidth}" height="20" rx="4" fill="${palette.fill}"/>`);
@@ -155,13 +331,19 @@ export function renderDocumentPreview(input: PreviewInput, options?: { size?: Pr
     if (y > bottom) return;
     switch (node.type) {
       case 'paragraph':
-        drawParagraph(inlineText(node), 9.5, indent, palette.text);
+        drawRuns(inlineRuns(node), 9.5, indent, palette.text);
         break;
       case 'heading': {
         const level = Number(node.attrs?.level ?? 3);
-        drawParagraph(inlineText(node), Math.max(9.5, 13 - level), indent, palette.title, 600);
+        drawRuns(inlineRuns(node), Math.max(9.5, 13 - level), indent, palette.title, 600);
         break;
       }
+      case 'table':
+        drawTable(node);
+        break;
+      case 'collectionBlock':
+        drawCollectionThumb(node);
+        break;
       case 'bulletList':
       case 'orderedList':
       case 'taskList':
@@ -169,7 +351,7 @@ export function renderDocumentPreview(input: PreviewInput, options?: { size?: Pr
           const marker =
             node.type === 'bulletList' ? '• ' : node.type === 'orderedList' ? `${index + 1}. ` : item.attrs?.checked === true ? '☑ ' : '☐ ';
           const itemNode = item.content?.[0];
-          drawParagraph(`${marker}${inlineText(itemNode)}`, 9.5, indent + 2, palette.text);
+          drawRuns([{ text: marker }, ...inlineRuns(itemNode)], 9.5, indent + 2, palette.text);
         });
         break;
       case 'blockquote':

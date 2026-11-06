@@ -2123,10 +2123,12 @@
       ]
     },
     "G834": {
-      "note": "本地表格无集合层命令：无 table 组件，collections.add.a.row 零命中，表格仍走 StarterKit。",
+      "status": "nonaction",
+      "note": "第 5f 批现读（2026-11-07）：官方 u8 是表格/集合的键位注册表；本地集合表格把同名动作做成行内按钮——新增条目、复制条目（duplicateItem 复制记录与成员归属）、移出行/删除，单元格清除走编辑器空值语义。键位表属内部注册表，无独立屏幕面；全选行在本地没有行选择模型。",
       "evidence": [
-        "src/components/editor/table/TableToolbar.tsx",
-        "src/lib/commands/official-catalog.ts"
+        "src/actions/collection/items.ts:42",
+        "src/app/(app)/collections/[id]/TableView.tsx:489",
+        "src/app/(app)/collections/[id]/TableView.tsx:664"
       ]
     },
     "G1007": {
@@ -3459,10 +3461,12 @@
       ]
     },
     "G72": {
-      "status": "gap",
-      "note": "tldraw 单代白板；无两代格式升级流、副本引用语义与元素/图片上限",
+      "status": "deliberate",
+      "note": "第 5f 批现读（2026-11-07）：本地白板走 tldraw 单代格式（G472 同源），官方两代 Excalidraw 格式与升级流无对应面；白板块以 whiteboardId 引用同一张白板，复制块即副本引用；元素/图片上限的具体数值来自官方远端配置（bundle 无常量），本地不设硬上限。",
       "evidence": [
-        "src/components/editor/extensions/whiteboard-embed.tsx"
+        "src/components/editor/extensions/whiteboard-embed.tsx:1",
+        "src/components/whiteboard/Board.tsx:40",
+        "docs/craft-ref/features/longtail.md:110"
       ]
     },
     "G73": {
@@ -5784,10 +5788,11 @@
       ]
     },
     "G500": {
-      "status": "partial",
-      "note": "第 212 批现读：paragraphSpacing 三档已存在（官方两档 dynamic/fix，名不同）；字体四档 id 已对齐；仍缺五种卡片主题白名单",
+      "status": "nonaction",
+      "note": "第 5f 批现读（2026-11-07）：本行是官方样式词表的枚举区——五种卡片主题 pluginName 属 space 卡片布局白名单；本项目按既定决策不引入 space 实体与卡片布局面，无宿主。段落间距两档、字体四档 id、外观三档、渐变方向等已按官方名为准（G209/G682）。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:19"
+        "src/components/editor/themes/page-style.ts:60",
+        "src/components/editor/tabs/StyleTab.tsx:584"
       ]
     },
     "G501": {

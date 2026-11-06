@@ -39,6 +39,52 @@ export async function addItem(collectionId: string) {
   return { id: itemId, collectionId, order: maxOrder + 1 };
 }
 
+/**
+ * G834: duplicate a row. Values are copied as-is (the official `collections.duplicate.row`
+ * copies the record, not a link), and the copy joins the same collection memberships.
+ */
+export async function duplicateItem(itemId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+
+  const item = await db.orm.public.CollectionItem.first({ id: itemId });
+  if (!item) throw new Error('项目不存在');
+
+  const collectionId = String((item as any).collectionId ?? '');
+  const collection = await db.orm.public.Collection.first({ id: collectionId });
+  if (!collection || (collection as any).userId !== session.user.id) {
+    throw new Error('集合不存在');
+  }
+
+  const items = await db.orm.public.CollectionItem.where({ collectionId }).all();
+  const maxOrder = items.reduce((max: number, row: any) => Math.max(max, row.order ?? 0), -1);
+
+  const newId = crypto.randomUUID();
+  await db.orm.public.CollectionItem.create({
+    id: newId,
+    collectionId,
+    schemas: (item as any).schemas ?? [collectionId],
+    order: maxOrder + 1,
+  });
+
+  const values = await db.orm.public.CollectionValue.where({ itemId }).all();
+  for (const value of values as any[]) {
+    if (value.deletedAt) continue;
+    await db.orm.public.CollectionValue.create({
+      id: crypto.randomUUID(),
+      itemId: newId,
+      propertyId: value.propertyId,
+      value: value.value ?? null,
+    });
+  }
+
+  await emitSyncEventSafe(db, session.user.id, ['collection_item', 'collection_value'], newId);
+  revalidatePath(`/collections/${collectionId}`);
+  return { id: newId, collectionId, order: maxOrder + 1 };
+}
+
 export async function deleteItem(itemId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');

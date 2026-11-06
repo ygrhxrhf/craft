@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-06T18:23:24.029Z",
+  "generatedAt": "2026-11-06T18:27:35.987Z",
   "total": 1615,
   "status": {
     "aligned": 667,
-    "nonaction": 518,
-    "deliberate": 172,
-    "partial": 163,
-    "gap": 75,
+    "nonaction": 520,
+    "deliberate": 173,
+    "partial": 161,
+    "gap": 74,
     "unreachable": 20
   },
   "priority": {
@@ -19,10 +19,10 @@
   "statusByPriority": {
     "P2 / aligned": 350,
     "P? / nonaction": 191,
-    "P2 / nonaction": 172,
+    "P2 / nonaction": 174,
     "P1 / aligned": 171,
     "P1 / nonaction": 89,
-    "P2 / deliberate": 80,
+    "P2 / deliberate": 81,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P3 / partial": 70,
@@ -33,12 +33,12 @@
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
-    "P2 / partial": 13,
+    "P2 / partial": 11,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
     "P3 / unreachable": 4,
     "P? / unreachable": 4,
-    "P2 / gap": 3,
+    "P2 / gap": 2,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1300,16 +1300,16 @@
       7
     ],
     [
-      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
-      6
-    ],
-    [
       "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
       6
     ],
     [
       "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
       6
+    ],
+    [
+      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
+      5
     ],
     [
       "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",

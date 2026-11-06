@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
-import { ExternalLink, FolderMinus, GripVertical, Plus, SlidersHorizontal, Trash2, X } from 'lucide-react';
+import { ExternalLink, Copy, FolderMinus, GripVertical, Plus, SlidersHorizontal, Trash2, X } from 'lucide-react';
 import { useIsMobile } from '@/lib/use-is-mobile';
-import { addItem, clearGroupValues, deleteItem, removeItemFromCollection, setItemValue } from '@/actions/collection/items';
+import { addItem, clearGroupValues, deleteItem, duplicateItem, removeItemFromCollection, setItemValue } from '@/actions/collection/items';
 import { createDocument } from '@/actions/document/create';
 import { toast } from '@/components/ui/toast';
 import { operationFailed } from '@/lib/errors/alert-copy';
@@ -226,6 +226,12 @@ export function TableView({ collection, view }: TableViewProps) {
 
   const handleDeleteItem = async (itemId: string) => {
     await deleteItem(itemId);
+    router.refresh();
+  };
+
+  // G834: `collections.duplicate.row` — the copy keeps the same collection memberships.
+  const handleDuplicateItem = async (itemId: string) => {
+    await duplicateItem(itemId);
     router.refresh();
   };
 
@@ -668,6 +674,15 @@ export function TableView({ collection, view }: TableViewProps) {
                             <Button
                               variant="ghost"
                               size="sm"
+                              aria-label="复制条目" title="复制条目"
+                              className="opacity-0 group-hover:opacity-100"
+                              onClick={() => void handleDuplicateItem(item.id)}
+                            >
+                              <Copy className="size-4 text-muted-foreground" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               className="opacity-0 group-hover:opacity-100"
                               onClick={() => handleDeleteItem(item.id)}
                             >
@@ -793,6 +808,15 @@ export function TableView({ collection, view }: TableViewProps) {
                       onClick={() => void handleMoveOut(item.id)}
                     >
                       <FolderMinus className="size-4 text-muted-foreground" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label="复制条目" title="复制条目"
+                      className="opacity-0 group-hover:opacity-100"
+                      onClick={() => void handleDuplicateItem(item.id)}
+                    >
+                      <Copy className="size-4 text-muted-foreground" />
                     </Button>
                     <Button
                       variant="ghost"

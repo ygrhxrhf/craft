@@ -9567,9 +9567,10 @@
     },
     "G1544": {
       "status": "partial",
-      "note": "/ 菜单是分组带副标题长列表，官方是扁平 20 枚分组入口",
+      "note": "本地 / 菜单是分组带副标题长列表，官方是扁平 20 枚分组入口（容器 data-testid=command-menu、项上无 aria-haspopup/role）。✎ 第 430 批普查（slash-stage2-census.mjs，round-430 日志）补齐官方第二段：入口 0–14 为分组入口、Enter 开子菜单，15–19（取消样式/插入白板/三集合）为叶子直接执行——20 项选择通路逐项采到子项集（列表5/文本样式8/装饰2/颜色12/缩进2/对齐4/字体4/文字格式4/日期和时间4/插入文件2/插入片段4/插入表格8档2x2–9x9/插入分隔符5/动作1/提醒我…6）。本地两段形制仍未做",
       "evidence": [
-        "src/components/editor/slash-menu/slash-commands.ts:64"
+        "docs/craft-ref/interaction-lab/slash-stage2-census.mjs",
+        "src/components/editor/slash-menu/slash-commands.ts"
       ]
     },
     "G1545": {
@@ -10097,9 +10098,10 @@
     },
     "G1613": {
       "status": "partial",
-      "note": "本地是分类标题加平铺命令的一段结构，无二段分组菜单",
+      "note": "本地是分类标题加平铺命令的一段结构，无二段分组菜单。✎ 第 430 批选择通路普查（round-430）已把 15 个分组入口的第二段子项集逐项采全（含 G1613 过滤通路测不到的 8 个纯分组头：文本样式8/装饰2/文字格式4/日期和时间4/插入片段4/插入分隔符5/动作1/提醒我…6）；过滤与选择两通路的子项顺序不一致（列表：过滤=[编号/待办/取消格式/无序…] vs 选择=[待办/折叠/无序/编号/取消列表格式]，对齐同理）——本地复刻取选择通路顺序",
       "evidence": [
-        "src/components/editor/slash-menu/SlashCommandMenu.tsx:65"
+        "docs/craft-ref/interaction-lab/slash-stage2-census.mjs",
+        "src/components/editor/slash-menu/SlashCommandMenu.tsx"
       ]
     },
     "G1614": {

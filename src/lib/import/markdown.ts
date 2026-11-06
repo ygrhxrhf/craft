@@ -2,6 +2,8 @@ import { DEFAULT_DIVIDER_STYLE, DIVIDER_MARKUP_PATTERN, dividerStyleFromMarkup }
 import { hasHeaderContent, isAlignmentRow, mintTableIds, parseCellBlocks, splitRow } from '@/lib/import/table';
 import { DEFAULT_HIGHLIGHT_COLOR } from '@/lib/import/inline-html';
 import { mathFromLink } from '@/lib/import/inline-runs';
+import { STYLE_KEY_DECORATION } from '@/lib/editor/style-keys';
+import { htmlToMarkdown } from '@/lib/import/sources';
 
 export interface PmNode {
   type: string;
@@ -163,6 +165,54 @@ export function parseMarkdownWithIcon(source: string): { content: PmNode; icon: 
   const content = parseBlocks(lines);
   const doc = { type: 'doc', content: content.length ? content : [{ type: 'paragraph' }] };
   return splitLeadingEmojiIcon(doc);
+}
+
+/**
+ * G1243：官方把 `<aside>…</aside>` 当**装饰位**而不是块类型——开标签给区间内每块写
+ * `styleAttributes.decorations.isBlock=true`，合标签只把标志置回 `false`（其它都不回滚）。
+ *
+ * 本地落点：区间内的块经 `htmlToMarkdown → parseBlocks` 走常规块解析，再逐块打上默认
+ * 块装饰色（`shadedColor`，与 Ctrl-Shift-' 同一档）＝ isBlock；关闭标签之后的块不带装饰。
+ * 附带规则①（纯 emoji 首块提为页面图标）由 G1231 的 `splitLeadingEmojiIcon` 承担同一判据；
+ * 附带规则②（前一个 token 是 html_block 且是合标签 ⇒ 最前面补一个空段）在下面按原始段文本判。
+ */
+function appendAsideRun(blocks: PmNode[], source: string) {
+  const pattern = /<aside[^>]*>([\s\S]*?)<\/aside>/gi;
+  let cursor = 0;
+  let handled = false;
+  for (const match of source.matchAll(pattern)) {
+    if (match.index === undefined) continue;
+    handled = true;
+    const before = source.slice(cursor, match.index);
+    appendHtmlSegment(blocks, before);
+    const previous = blocks[blocks.length - 1];
+    const previousIsClosingToken =
+      /<\/[a-zA-Z][\w:-]*>$/.test(before.trim()) ||
+      (previous?.type === 'htmlBlock' && /<\/[a-zA-Z][\w:-]*>\s*$/.test(String(previous.attrs?.html ?? '').trim()));
+    if (previousIsClosingToken) blocks.push({ type: 'paragraph' });
+    const inner = match[1] ?? '';
+    const innerBlocks = inner.trim() ? parseHtmlSegment(inner) : [{ type: 'paragraph' }];
+    for (const block of innerBlocks) {
+      blocks.push({ ...block, attrs: { ...(block.attrs ?? {}), shadedColor: STYLE_KEY_DECORATION } });
+    }
+    cursor = match.index + match[0].length;
+  }
+  // 没有闭合标签的 `<aside>`：按原来的 raw html 段处理（不让半截标签吞掉正文）。
+  if (!handled) {
+    blocks.push({ type: 'htmlBlock', attrs: { html: source } });
+    return;
+  }
+  appendHtmlSegment(blocks, source.slice(cursor));
+}
+
+function appendHtmlSegment(blocks: PmNode[], segment: string) {
+  if (!segment.trim()) return;
+  blocks.push(...parseHtmlSegment(segment));
+}
+
+function parseHtmlSegment(html: string): PmNode[] {
+  const markdown = htmlToMarkdown(html);
+  return markdown.trim() ? parseBlocks(markdown.split(/\r\n?|\n/)) : [];
 }
 
 function parseBlocks(lines: string[]): PmNode[] {
@@ -334,7 +384,11 @@ function parseBlocks(lines: string[]): PmNode[] {
       }
       const source = html.join('\n');
       if (!source.trimStart().startsWith('<!--')) {
-        blocks.push({ type: 'htmlBlock', attrs: { html: source } });
+        if (/<aside[\s>]/i.test(source)) {
+          appendAsideRun(blocks, source);
+        } else {
+          blocks.push({ type: 'htmlBlock', attrs: { html: source } });
+        }
       }
       continue;
     }

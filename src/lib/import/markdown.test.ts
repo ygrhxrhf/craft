@@ -435,3 +435,55 @@ describe('the leading emoji page icon (G1231)', () => {
     expect(parseMarkdownWithIcon('😀').content).toEqual({ type: 'doc', content: [{ type: 'paragraph' }] });
   });
 });
+
+/**
+ * G1243：官方把 `<aside>…</aside>` 当**装饰位**（`decorations.isBlock`）而不是块类型——
+ * 开标签给区间内每块写 true、合标签只置回 false；本地落点是逐块默认块装饰色
+ * （`shadedColor`＝Ctrl-Shift-' 同档）。纯 emoji 首块提图标走 G1231 的同一判据。
+ */
+describe('aside 驱动的块装饰位（G1243）', () => {
+  it('marks every block inside the aside range instead of emitting one htmlBlock', () => {
+    const result = blocks('<aside>\n<p>第一段</p>\n<p>第二段</p>\n</aside>');
+    expect(result.map((node) => node.type)).toEqual(['paragraph', 'paragraph']);
+    expect(result.map((node) => node.attrs?.shadedColor)).toEqual(['red', 'red']);
+    expect(result.map((node) => node.content?.[0]?.text)).toEqual(['第一段', '第二段']);
+  });
+
+  it('accepts a single-line aside', () => {
+    const result = blocks('<aside><p>一行</p></aside>');
+    expect(result).toHaveLength(1);
+    expect(result[0].attrs?.shadedColor).toBe('red');
+    expect(result[0].content?.[0]?.text).toBe('一行');
+  });
+
+  it('leaves blocks after the closing tag undecorated (the flag only resets)', () => {
+    const result = blocks('<aside>\n<p>内</p>\n</aside>\n<p>外</p>');
+    const decorated = result.filter((node) => node.attrs?.shadedColor);
+    expect(decorated).toHaveLength(1);
+    expect(decorated[0].content?.[0]?.text).toBe('内');
+    expect(result[result.length - 1].content?.[0]?.text).toBe('外');
+    expect(result[result.length - 1].attrs?.shadedColor).toBeUndefined();
+  });
+
+  it('prepends an empty paragraph when the previous raw token is a closing tag', () => {
+    const result = blocks('</div>\n<aside>\n<p>里</p>\n</aside>');
+    expect(result.map((node) => node.type)).toEqual(['paragraph', 'paragraph']);
+    expect(result[0].content ?? []).toEqual([]);
+    expect(result[1].attrs?.shadedColor).toBe('red');
+  });
+
+  it('hands an emoji-only first block to the page-icon extractor (G1231 judge)', () => {
+    const { content, icon } = parseMarkdownWithIcon('<aside>\n<p>🔥</p>\n<p>正文</p>\n</aside>');
+    expect(icon).toBe('🔥');
+    expect(content.content?.[0].content?.[0]?.text).toBe('正文');
+  });
+
+  it('falls back to a raw html block when the aside never closes', () => {
+    const result = blocks('<aside>\n<p>半截</p>');
+    expect(result[0].type).toBe('htmlBlock');
+  });
+
+  it('keeps ordinary block-level HTML as a raw html block', () => {
+    expect(blocks('<div>普通</div>')[0].type).toBe('htmlBlock');
+  });
+});

@@ -2,7 +2,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import 'dotenv/config';
 import * as Y from 'yjs';
-import { isRoomName, loadState, storeState } from './persist.mjs';
+import { deriveSnapshot, isRoomName, loadState, storeState } from './persist.mjs';
 
 const hasDb = Boolean(process.env.DATABASE_URL);
 
@@ -62,5 +62,42 @@ describe.skipIf(!hasDb)('collab room persistence', () => {
     const missing = crypto.randomUUID();
     await storeState(missing, new Uint8Array([1, 2, 3]));
     expect(await loadState(missing)).toBeNull();
+  });
+});
+
+/**
+ * 空房间判定（导入丢正文缺陷）：y-sync 绑定就把「一枚空段落」写进房间，只判
+ * `length === 0` 会让还没播种的房间把 `Document.content` 镜像清空。
+ */
+describe('deriveSnapshot empty-room guards', () => {
+  const stateOf = (fill) => {
+    const doc = new Y.Doc();
+    fill(doc.getXmlFragment('default'));
+    return Y.encodeStateAsUpdate(doc);
+  };
+
+  it('returns null for a fresh room', () => {
+    expect(deriveSnapshot(stateOf(() => {}))).toBeNull();
+  });
+
+  it('returns null when the room only holds the bind-time empty paragraph', () => {
+    expect(deriveSnapshot(stateOf((fragment) => fragment.insert(0, [new Y.XmlElement('paragraph')])))).toBeNull();
+  });
+
+  it('returns null for the scaffold run of blank paragraphs (incl. trailing node)', () => {
+    expect(
+      deriveSnapshot(stateOf((fragment) => fragment.insert(0, [new Y.XmlElement('paragraph'), new Y.XmlElement('paragraph')]))),
+    ).toBeNull();
+  });
+
+  it('derives the mirror once the room has text', () => {
+    const doc = new Y.Doc();
+    const fragment = doc.getXmlFragment('default');
+    const paragraph = new Y.XmlElement('paragraph');
+    paragraph.insert(0, [new Y.XmlText('正文')]);
+    fragment.insert(0, [paragraph]);
+    const snapshot = deriveSnapshot(Y.encodeStateAsUpdate(doc));
+    expect(snapshot?.content).toMatchObject({ type: 'doc' });
+    expect(snapshot?.plainText).toBe('正文');
   });
 });

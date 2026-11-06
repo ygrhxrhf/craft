@@ -48,6 +48,21 @@ function nodeText(node) {
 }
 
 /**
+ * 空房间判据：**每个子节点都是没有子节点的段落**。y-sync 绑定编辑器时就会把脚手架
+ * 空段写进房间（可能还多一枚 trailing 空段），只判 `length === 0` 会让「还没播种的
+ * 空房间」在客户端播种前先把镜像清空（族拆批 2e 发现的导入丢正文缺陷）。
+ */
+function hasNoBody(fragment) {
+  if (fragment.length === 0) return true;
+  for (let index = 0; index < fragment.length; index += 1) {
+    const child = fragment.get(index);
+    const blankParagraph = child instanceof Y.XmlElement && child.nodeName === 'paragraph' && child.length === 0;
+    if (!blankParagraph) return false;
+  }
+  return true;
+}
+
+/**
  * Render the room state back into the ProseMirror mirror stored on `Document`.
  *
  * Returns null when the room has no body yet, which is the important guard: a
@@ -64,7 +79,7 @@ export function deriveSnapshot(state) {
     return null;
   }
 
-  if (ydoc.getXmlFragment(YJS_FIELD).length === 0) return null;
+  if (hasNoBody(ydoc.getXmlFragment(YJS_FIELD))) return null;
 
   let content;
   try {

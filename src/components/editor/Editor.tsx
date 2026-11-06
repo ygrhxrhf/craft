@@ -94,6 +94,7 @@ import { CraftKeymap } from './extensions/craft-keymap';
 import { saveDraft, getDraft, deleteDraft } from '@/lib/offline/draft-store';
 import { jumpToAnchor, readAnchorHash } from '@/lib/editor/block-anchor';
 import { useCollabSession } from '@/lib/collaboration/use-collab-session';
+import { isEffectivelyEmptyFragment } from '@/lib/collaboration/empty-fragment';
 import { CursorLayer } from './collab/CursorLayer';
 import Collaboration from '@tiptap/extension-collaboration';
 
@@ -815,7 +816,9 @@ export function Editor({
     if (!editor || locked) return;
     if (collaborative && collabState === 'synced' && collabDoc && initialContent) {
       const fragment = collabDoc.getXmlFragment('default');
-      if (fragment.length === 0 && editor.isEmpty) {
+      // y-sync 绑定就把脚手架空段写进房间（可能还多一枚 trailing 空段），
+      // 所以「还没播种」不能只看 length===0，也不能依赖 editor.isEmpty。
+      if (isEffectivelyEmptyFragment(fragment)) {
         // Migrating a legacy document into its room. Only the client that wins
         // the server-side claim may do it: two seeders mean two independent
         // inserts of the same body, and the CRDT merge keeps both.
@@ -834,7 +837,7 @@ export function Editor({
           if (!granted) return;
           // Re-check under the claim: another client may have seeded while the
           // request was in flight.
-          if (collabDoc.getXmlFragment('default').length > 0) return;
+          if (!isEffectivelyEmptyFragment(collabDoc.getXmlFragment('default'))) return;
           editor.commands.setContent(initialContent as never);
         })();
       }

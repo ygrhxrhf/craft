@@ -7257,6 +7257,17 @@
         "src/lib/editor/shortcut-table-rows.test.ts:1"
       ]
     },
+    "G1623": {
+      "status": "aligned",
+      "note": "族拆批第 2f 批（实施批）：导入件开页丢正文——y-sync 绑定时把脚手架空段（初始空段＋可能的 trailing 空段）写进房间，播种与镜像两处「空房间」守卫双双失配，空镜像回写覆盖导入内容。修复＝两处守卫改为「每个子节点都是空段落才算空房间」（`isEffectivelyEmptyFragment`／`hasNoBody`）、播种去掉 `editor.isEmpty` 依赖；单测 7＋7 条；浏览器实点导入→打开→刷新，正文与 aside 装饰块均保留（库轮询曾见 270B→117B→208B，修复后不再发生）",
+      "evidence": [
+        "src/lib/collaboration/empty-fragment.ts",
+        "src/lib/collaboration/empty-fragment.test.ts",
+        "src/collab/persist.mjs",
+        "src/collab/persist.test.mjs",
+        "src/components/editor/Editor.tsx"
+      ]
+    },
     "G803": {
       "status": "nonaction",
       "note": "Enter 抑制的候选排查属静态源码排除法",
@@ -8944,7 +8955,7 @@
     },
     "G1243": {
       "status": "aligned",
-      "note": "✎ 现读（2026-11-06 族拆批第 2e 批，用户裁决复刻官方 aside 驱动模型）：导入侧把 `<aside>…</aside>` 当装饰位而非块类型——区间内每块经 `htmlToMarkdown → parseBlocks` 后逐块打默认块装饰色（`shadedColor=red`，对应官方 `decorations.isBlock`）、合标签只复位不回滚；前一个 raw token 以合标签结尾时最前面补一个空段；纯 emoji 首块提文档图标沿用 G1231 的同一判据。验证：7 条单测钉住四条规则；真实 UI 导入两篇探针并用库轮询在开页前读回——aside-b 的 content＝🔥 已提为图标＋正文块 `shadedColor:red`，aside-a/c 写入 270B、首块「甲一」带装饰形态。★ 屏上装饰回归受阻于既有缺陷（任何导入件打开时 Yjs 播种未获 claim、空态被回写覆盖，与 aside 无关，已另行上报）；官方 iconBlockIds 的「从 aside 建子页」在本地导入不建子页 ⇒ 该子项 N/A；callout 节点与斜杠入口保留为 app 内创建通路（本增项）",
+      "note": "✎ 现读（2026-11-06 族拆批第 2e 批，用户裁决复刻官方 aside 驱动模型）：导入侧把 `<aside>…</aside>` 当装饰位而非块类型——区间内每块经 `htmlToMarkdown → parseBlocks` 后逐块打默认块装饰色（`shadedColor=red`，对应官方 `decorations.isBlock`）、合标签只复位不回滚；前一个 raw token 以合标签结尾时最前面补一个空段；纯 emoji 首块提文档图标沿用 G1231 的同一判据。验证：7 条单测钉住四条规则；真实 UI 导入两篇探针并用库轮询在开页前读回——aside-b 的 content＝🔥 已提为图标＋正文块 `shadedColor:red`，aside-a/c 写入 270B、首块「甲一」带装饰形态。★ 屏上装饰回归曾被既有缺陷挡住（导入件开页被脚手架空段回写清空）——该缺陷已在本会话**同批修复并登记为 G1623**；修复后浏览器实点：导入 → 打开即见「正文」块带 `data-shaded-color=red`、刷新仍在；官方 iconBlockIds 的「从 aside 建子页」在本地导入不建子页 ⇒ 该子项 N/A；callout 节点与斜杠入口保留为 app 内创建通路（本增项）",
       "evidence": [
         "src/lib/import/markdown.ts",
         "src/lib/import/markdown.test.ts"

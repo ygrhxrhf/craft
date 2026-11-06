@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { normalizeViewConfig } from '@/lib/collection/view-config';
 
 export async function createView(
   collectionId: string,
@@ -32,7 +33,7 @@ export async function createView(
     collectionId,
     name: data.name,
     type: data.type,
-    config: data.config ? JSON.stringify(data.config) : null,
+    config: data.config ? JSON.stringify(normalizeViewConfig(data.config)) : null,
     order: maxOrder + 1,
     isActive: false,
   });
@@ -64,7 +65,7 @@ export async function updateView(
   const updateData: Record<string, any> = {};
   if (data.name !== undefined) updateData.name = data.name;
   if (data.isActive !== undefined) updateData.isActive = data.isActive;
-  if (data.config !== undefined) updateData.config = JSON.stringify(data.config);
+  if (data.config !== undefined) updateData.config = JSON.stringify(normalizeViewConfig(data.config));
 
   await db.orm.public.CollectionView.where({ id: viewId }).update(updateData);
 

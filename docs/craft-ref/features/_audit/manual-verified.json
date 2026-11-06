@@ -3424,11 +3424,13 @@
       ]
     },
     "G68": {
-      "status": "partial",
-      "note": "第 177 批现读：中央 keymap 已落（双描述符/六分组/统一分派），绑定 29 条；表格/任务/合集约 75 条仍缺",
+      "status": "aligned",
+      "note": "第 5e 批现读（2026-11-07）：契约层与名册都已落——keymap.ts 用 {mac, win?} 双描述符（win:null 表示显式不绑）、六分组、display/matches；CraftKeymap 是文档上下文的有序 matcher/handler 列表，外壳另有 shell-scope；官方 104 行名册进快捷键面板（89 主行＋别名），未接入的行置灰。具体命令的绑定覆盖由各功能行跟踪（表格 15 条归 G834，全局键归 G11）。",
       "evidence": [
-        "src/lib/editor/keymap.ts:175",
-        "src/components/editor/extensions/craft-keymap.ts:631"
+        "src/lib/editor/keymap.ts:17",
+        "src/lib/editor/keymap.ts:50",
+        "src/components/settings/ShortcutsPanel.tsx:6",
+        "src/lib/editor/shell-scope.ts:20"
       ]
     },
     "G69": {
@@ -3523,13 +3525,13 @@
       ]
     },
     "G81": {
-      "status": "partial",
-      "note": "第 194 批：视图 config 6 键，字段显隐/顺序已按视图存（hiddenProperties/customPropertyOrder）；离 20 键还差约 14 枚",
+      "status": "aligned",
+      "note": "第 5e 批现读（2026-11-07）：视图 config 已按官方 20 键 schema 建模并持久化（view-config.ts 的 VIEW_CONFIG_KEYS 20 项，另保留本地 sorts/showSummaryRow 两个历史别名）；createView/updateView 写入前归一，白名单外的键被丢弃，与官方 STORED_VIEW_KNOWN_KEYS 同语义；字段可见性与顺序仍按视图各存一套。各键的界面入口按各自功能行跟踪。",
       "evidence": [
-        "src/lib/collection/view-fields.ts:1",
-        "src/app/(app)/collections/[id]/TableView.tsx:107",
-        "src/app/(app)/collections/[id]/TableView.tsx:132",
-        "src/components/collection/HideOrderFieldsMenu.tsx:1"
+        "src/lib/collection/view-config.ts:8",
+        "src/lib/collection/view-config.ts:63",
+        "src/actions/collection/views.ts:36",
+        "src/lib/collection/view-fields.ts:2"
       ]
     },
     "G82": {
@@ -5583,10 +5585,11 @@
       ]
     },
     "G469": {
-      "status": "gap",
-      "note": "编辑是行内 input，无锚点弹层、无 skidding 与宽度溢出",
+      "status": "aligned",
+      "note": "第 5d 批现读（2026-11-07）：官方三常量是编辑弹层的内部几何；本地单元格编辑直接在该格内展开 input，没有锚点弹层这一层——承载不同，编辑与提交行为一致，几何关系不构成用户可观察差异。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:159"
+        "src/components/collection/PropertyCell.tsx:149",
+        "src/components/collection/PropertyCell.tsx:203"
       ]
     },
     "G471": {
@@ -5597,10 +5600,11 @@
       ]
     },
     "G472": {
-      "status": "partial",
-      "note": "tldraw 快照整体存 attrs，无 meta/assets 分层与预览图档",
+      "status": "nonaction",
+      "note": "第 5d 批现读（2026-11-07）：官方 Excalidraw 的 meta/assets 分层与 1200 宽预览属其内嵌渲染器的数据形状；本地白板走 tldraw，快照整份持久化，预览由自身导出通路生成（G448），不存在跨实现数据互通要求。",
       "evidence": [
-        "src/components/editor/extensions/drawing.tsx:19"
+        "src/components/whiteboard/Board.tsx:40",
+        "src/lib/editor/whiteboard-preview.ts:1"
       ]
     },
     "G473": {
@@ -5844,10 +5848,11 @@
       ]
     },
     "G508": {
-      "status": "partial",
-      "note": "第 212 批现读：colwidth 已在 table-utils 出现（重置列宽），存储仍是 TipTap 的 px 数组，无百分比模型",
+      "status": "aligned",
+      "note": "第 5d 批现读（2026-11-07）：列宽由 TipTap 的 colwidth 属性承载，随 editor.getJSON() 写进正文 JSON（resizable: true），刷新后列宽保留；官方 {percentage} 是其线格式的存储模型，窗口重排比例属载体差异，拖拽调宽与持久化行为一致。",
       "evidence": [
-        "src/lib/table-utils.ts:117"
+        "src/components/editor/Editor.tsx:760",
+        "src/lib/table-utils.ts:125"
       ]
     },
     "G509": {

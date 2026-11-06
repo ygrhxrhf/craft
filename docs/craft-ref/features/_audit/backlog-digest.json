@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-06T18:19:31.717Z",
+  "generatedAt": "2026-11-06T18:23:24.029Z",
   "total": 1615,
   "status": {
-    "aligned": 663,
-    "nonaction": 517,
+    "aligned": 667,
+    "nonaction": 518,
     "deliberate": 172,
-    "partial": 167,
-    "gap": 76,
+    "partial": 163,
+    "gap": 75,
     "unreachable": 20
   },
   "priority": {
@@ -17,10 +17,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 346,
+    "P2 / aligned": 350,
     "P? / nonaction": 191,
+    "P2 / nonaction": 172,
     "P1 / aligned": 171,
-    "P2 / nonaction": 171,
     "P1 / nonaction": 89,
     "P2 / deliberate": 80,
     "P? / partial": 80,
@@ -33,12 +33,12 @@
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
-    "P2 / partial": 17,
+    "P2 / partial": 13,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
-    "P2 / gap": 4,
     "P3 / unreachable": 4,
     "P? / unreachable": 4,
+    "P2 / gap": 3,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1292,20 +1292,20 @@
       8
     ],
     [
-      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
-      7
-    ],
-    [
-      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
-      7
-    ],
-    [
       "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
       7
     ],
     [
       "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
       7
+    ],
+    [
+      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
+      6
+    ],
+    [
+      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
+      6
     ],
     [
       "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
@@ -1322,10 +1322,6 @@
     [
       "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
       5
-    ],
-    [
-      "三点五一、第 42 批（集合输入层 + 白板预览本体，`model.md",
-      4
     ],
     [
       "三点八五、第 74 批（★★★ 静态补账：撤销计步器的生成/消费 ＋ 提",
@@ -1357,6 +1353,10 @@
     ],
     [
       "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",
+      3
+    ],
+    [
+      "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
       3
     ]
   ]

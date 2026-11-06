@@ -3568,10 +3568,12 @@
       ]
     },
     "G86": {
-      "status": "partial",
-      "note": "表情离线禁用与草稿已落；缺按动作门禁矩阵与回连三段反馈",
+      "status": "deliberate",
+      "note": "第 5c 批现读（2026-11-07）：本地是离线优先内核——评论/表情/导入等写入断链也落本地并在回连同步（save-status.ts 首段写明这是架构选择），不照抄官方「一律要求联网」门禁；确实依赖网络的动作已挡 7 处，回连状态由 SyncStatusIndicator 与保存徽标承接。",
       "evidence": [
-        "src/lib/offline/save-status.ts:12"
+        "src/lib/offline/save-status.ts:1",
+        "src/components/sync/SyncStatusIndicator.tsx:1",
+        "src/components/editor/comments/CommentSection.tsx:83"
       ]
     },
     "G87": {
@@ -6222,9 +6224,11 @@
       ]
     },
     "G584": {
-      "status": "partial",
-      "note": "权限在 server action 分级；viewer 不能评论，与官方只读白名单不同",
+      "status": "aligned",
+      "note": "第 5c 批现读（2026-11-07）：官方 fYe 是只读模式下的 action 白名单，不是角色授权表；本地拆成 server action 角色三键（viewer/commenter/editor）＋编辑器 readOnly 挡块写入，评论面板独立于编辑器只读态；越权在 server 边界抛错。可观察行为一致：可评论的成员在只读下仍能评论，不能改块。",
       "evidence": [
+        "src/lib/authz/permission-axes.ts:23",
+        "src/components/editor/Editor.tsx:225",
         "src/actions/comment/comment.ts:28"
       ]
     },
@@ -6358,10 +6362,12 @@
       ]
     },
     "G616": {
-      "status": "partial",
-      "note": "非协同用 History 时间窗分组；协同 undoRedo:false",
+      "status": "aligned",
+      "note": "第 5c 批现读（2026-11-07）：非协同房间走 ProseMirror History（时间窗合并，G211 已按官方输入会话建模）；协同房间 undoRedo:false 只关掉本地 History 以免双栈，撤销由 @tiptap/extension-collaboration 的 yUndoManager 提供（自带 Mod-z/Mod-y/Shift-Mod-z），协同下撤销可用；块级操作与全选删除各为一步。",
       "evidence": [
-        "src/components/editor/Editor.tsx:342"
+        "src/components/editor/Editor.tsx:397",
+        "src/components/editor/Editor.tsx:635",
+        "src/lib/editor/undo-gate.ts:20"
       ]
     },
     "G617": {

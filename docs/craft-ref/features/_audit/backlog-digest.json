@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-06T18:15:46.959Z",
+  "generatedAt": "2026-11-06T18:19:31.717Z",
   "total": 1615,
   "status": {
-    "aligned": 661,
+    "aligned": 663,
     "nonaction": 517,
-    "deliberate": 171,
-    "partial": 170,
+    "deliberate": 172,
+    "partial": 167,
     "gap": 76,
     "unreachable": 20
   },
@@ -17,13 +17,13 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 344,
+    "P2 / aligned": 346,
     "P? / nonaction": 191,
     "P1 / aligned": 171,
     "P2 / nonaction": 171,
     "P1 / nonaction": 89,
+    "P2 / deliberate": 80,
     "P? / partial": 80,
-    "P2 / deliberate": 79,
     "P? / aligned": 78,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
@@ -33,7 +33,7 @@
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
-    "P2 / partial": 20,
+    "P2 / partial": 17,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
     "P2 / gap": 4,
@@ -1288,15 +1288,15 @@
       11
     ],
     [
-      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
-      8
-    ],
-    [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
       8
     ],
     [
       "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
+      7
+    ],
+    [
+      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
       7
     ],
     [

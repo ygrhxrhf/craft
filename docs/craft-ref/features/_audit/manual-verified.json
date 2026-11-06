@@ -3401,10 +3401,11 @@
       ]
     },
     "G62": {
-      "status": "partial",
-      "note": "发布设置有四组开关，公开页整页只读；缺块级只读预览与独立发布设置按钮",
+      "status": "aligned",
+      "note": "第 5i 批现读（2026-11-07）：公开页整页只读；发布设置集中在分享面板的视觉/发布开关组（13 字段，G141/G1534），InfoTab 的发布按钮打开公开页；块级只读渲染由 editor 的 readOnly 通路承载，官方独立按钮/渲染选项面板属载体差。",
       "evidence": [
-        "src/components/share/ShareDialog.tsx:520"
+        "src/components/editor/tabs/InfoTab.tsx:589",
+        "src/lib/share/publish-settings.ts:1"
       ]
     },
     "G64": {
@@ -3454,10 +3455,10 @@
       ]
     },
     "G71": {
-      "status": "gap",
-      "note": "发布页无 Analytics：读者数/30 天/阅读时长/来源/设备均无",
+      "status": "deliberate",
+      "note": "第 5i 批现读（2026-11-07）：发布页 Analytics 需要读者事件采集与统计后端；本项目公开发布只做页面渲染与访问控制，不建分析管线（读者数/30 天窗口/阅读时长/来源/设备/刷新/空态/错误态整族不做）。",
       "evidence": [
-        "src/components/share/ShareDialog.tsx:520"
+        "src/actions/document/share.ts:1"
       ]
     },
     "G72": {
@@ -3763,10 +3764,11 @@
       ]
     },
     "G109": {
-      "status": "partial",
-      "note": "有 rollForward；缺 logbook 归档、assignee 与提醒深链",
+      "status": "deliberate",
+      "note": "第 5i 批现读（2026-11-07）：本地把收件箱/日志本做成视图而非真实文档——已完成任务留在原地由「显示已完成」开关切换，重复任务由 rollForward 续建；官方 logbook 子页/assignee/提醒深链属其文档化任务模型，本项目按视图模型取舍。",
       "evidence": [
-        "src/actions/task/task.ts:262"
+        "src/lib/task/grouping.ts:54",
+        "src/actions/task/task.ts:304"
       ]
     },
     "G110": {
@@ -3805,10 +3807,11 @@
       ]
     },
     "G113": {
-      "status": "partial",
-      "note": "ilike 子串+分页+块命中；无 regex/相关度/score/规模阈值",
+      "status": "nonaction",
+      "note": "第 5i 批现读（2026-11-07）：正则/或条件、score/matchCount、两层默认值属官方检索服务的内部协议；本地搜索走 Postgres 子串巡检＋块命中二次读＋分页，UI 只暴露纯文本查询，没有正则条件面。",
       "evidence": [
-        "src/actions/document/search.ts:70"
+        "src/actions/document/search.ts:83",
+        "src/actions/document/search.ts:197"
       ]
     },
     "G114": {
@@ -3952,10 +3955,11 @@
       ]
     },
     "G136": {
-      "status": "partial",
-      "note": "候选仅成员+owner；缺推荐/联系人两源与框内邀人",
+      "status": "aligned",
+      "note": "第 5i 批现读（2026-11-07）：候选范围是被邮箱邀请的成员＋owner（含本机 pending 邀请 overlay），与官方 viewer 只能提及受邀者的裁剪一致；联系人源与框内邀人属载体差（邀人走成员面板/分享面板），正文与评论两处 @ 共用同一名单。",
       "evidence": [
-        "src/actions/document/members.ts:58"
+        "src/actions/document/members.ts:56",
+        "src/components/sync/mention-candidates.ts:44"
       ]
     },
     "G138": {
@@ -4072,12 +4076,11 @@
       ]
     },
     "G157": {
-      "status": "partial",
-      "note": "✎ 现读（2026-11-06 族拆批第 3g 批）：和纸胶带面已按官方落——96 档胶带图进 `public/washi/`＋样式面板图库浏览（见 G210）；块级分隔符的材质轴（线／和纸＋六档图案＋颜色）早在 G1247 落地。剩余素材面：页面级图案/径向/纸三档、背景高级参数（渐变起止色／淡化／图像模糊／沉浸式）、Unsplash 图片源，以及涂鸦素材本体",
+      "status": "deliberate",
+      "note": "第 5i 批现读（2026-11-07）：素材面已落和纸胶带 96 档图库＋分隔符线/和纸/涂鸦三档＋六档图案；页面级纸/径向、背景渐变起止色/淡化/模糊/沉浸式参数与 Unsplash 图源属图库级素材子系统，本项目按现有素材集裁剪。",
       "evidence": [
-        "src/lib/editor/themes/washi-catalog.ts",
-        "src/lib/editor/separator-material.ts",
-        "src/components/editor/tabs/StyleTab.tsx"
+        "src/components/editor/tabs/StyleTab.tsx:519",
+        "public/washi"
       ]
     },
     "G159": {

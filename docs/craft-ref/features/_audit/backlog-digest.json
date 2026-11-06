@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-06T18:31:50.149Z",
+  "generatedAt": "2026-11-06T18:33:04.593Z",
   "total": 1615,
   "status": {
-    "aligned": 669,
-    "nonaction": 520,
-    "deliberate": 176,
-    "partial": 157,
-    "gap": 73,
+    "aligned": 671,
+    "nonaction": 521,
+    "deliberate": 179,
+    "partial": 152,
+    "gap": 72,
     "unreachable": 20
   },
   "priority": {
@@ -17,12 +17,12 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 352,
+    "P2 / aligned": 354,
     "P? / nonaction": 191,
-    "P2 / nonaction": 174,
+    "P2 / nonaction": 175,
     "P1 / aligned": 171,
     "P1 / nonaction": 89,
-    "P2 / deliberate": 84,
+    "P2 / deliberate": 87,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P3 / partial": 70,
@@ -35,10 +35,9 @@
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
-    "P2 / partial": 7,
     "P3 / unreachable": 4,
     "P? / unreachable": 4,
-    "P2 / gap": 1,
+    "P2 / partial": 2,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1296,20 +1295,12 @@
       7
     ],
     [
-      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
-      6
-    ],
-    [
       "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
       6
     ],
     [
       "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
       6
-    ],
-    [
-      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
-      5
     ],
     [
       "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",
@@ -1322,6 +1313,14 @@
     [
       "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
       5
+    ],
+    [
+      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
+      4
+    ],
+    [
+      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
+      4
     ],
     [
       "三点八五、第 74 批（★★★ 静态补账：撤销计步器的生成/消费 ＋ 提",
@@ -1348,15 +1347,15 @@
       4
     ],
     [
-      "三点五、P2 追加（来自 `modules.md` 模块清单，静态证据）",
-      3
-    ],
-    [
       "三点一一、发布与共享控制中心追加（来自 `publishing.md`，",
       3
     ],
     [
       "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
+      3
+    ],
+    [
+      "三点八二、第 71 批（★ 静态补账：任务三时间动线 G 项结案 ⇒ 重",
       3
     ]
   ]

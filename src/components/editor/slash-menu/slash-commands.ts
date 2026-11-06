@@ -44,12 +44,27 @@ import {
   AlignRight,
   AlignJustify,
   Palette,
+  Bell,
+  Bold,
+  Eraser,
+  Focus,
+  IndentDecrease,
+  IndentIncrease,
+  Italic,
+  Square,
+  Strikethrough,
 } from 'lucide-react';
 import type { Editor } from '@tiptap/react';
 import type { ComponentType } from 'react';
 import { readDefaultLanguage, readDefaultTheme } from '@/lib/editor/code-preferences';
 import { parseTableShortcut, type TableShortcutSize } from '@/lib/editor/nx-m-table';
-import { ALIGNMENT_CONTROLS } from '@/lib/editor/format-commands';
+import { ALIGNMENT_CONTROLS, decorationAt } from '@/lib/editor/format-commands';
+import { toggledDecoration } from '@/lib/editor/style-keys';
+import { clampIndent, indentTargets } from '@/lib/editor/block-indent';
+import { topLevelIndexOf } from '@/lib/editor/block-move';
+import { setBlockReminder } from '@/components/editor/drag-handle/block-actions';
+import { type RemindPresetId } from '@/lib/task/remind-presets';
+import { consumedCommandNames } from '@/lib/editor/slash-roster';
 import { promptDialog } from '@/lib/dialog/show';
 import { normalizeTagAtomName } from '@/lib/editor/inline-atoms';
 import { uploadFile } from '@/lib/upload-client';
@@ -810,27 +825,214 @@ function tableShortcutCommand(size: TableShortcutSize): SlashCommand {
   };
 }
 
-export function filterCommands(query: string): SlashCommand[] {
-  const lowerQuery = query.toLowerCase().trim();
-
-  const matched = lowerQuery
-    ? slashCommands.filter(
-        (cmd) =>
-          cmd.name.toLowerCase().includes(lowerQuery) ||
-          cmd.description.toLowerCase().includes(lowerQuery) ||
-          cmd.keywords.some((kw) => kw.toLowerCase().includes(lowerQuery))
-      )
-    : slashCommands;
-
-  const size = parseTableShortcut(query);
-  if (!size) return matched;
-  return [tableShortcutCommand(size), ...matched];
+/** 日子原子的日期键（本地 YYYY-MM-DD）。 */
+function dayKeyOf(offsetDays: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + offsetDays);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-export function getCommandCategories(): string[] {
-  const categories = new Set<string>();
-  slashCommands.forEach((cmd) => categories.add(cmd.category));
-  return Array.from(categories);
+/** 斜杠入口的缩进/反缩进：与 Tab／Shift-Tab 同一套 `indentTargets` 规则（多块选区一起走）。 */
+function stepIndent(editor: Editor, range: { from: number; to: number }, delta: 1 | -1) {
+  editor.chain().focus().deleteRange(range).run();
+  const { state, view } = editor;
+  const changed = indentTargets(state.doc, state.selection.from, state.selection.to).filter(
+    (target) => clampIndent(target.level + delta) !== target.level,
+  );
+  if (!changed.length) return;
+  const tr = state.tr;
+  for (const target of changed) {
+    tr.setNodeMarkup(target.pos, undefined, { ...target.attrs, indent: clampIndent(target.level + delta) });
+  }
+  view.dispatch(tr);
+}
+
+// ── 官方名册第二段的映射层（G1544 / G1613；第 430 批普查的子项集逐条对应）──
+// 只补「本地有能力但没有斜杠入口」的子项；名册里 `command: null` 的子项不在这里造命令。
+
+slashCommands.push(
+  {
+    name: '页面',
+    description: '把当前块变成页面块',
+    icon: LayoutTemplate,
+    keywords: ['page', '页面块', '页面'],
+    category: '文本样式',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).setPageBlock().run();
+    },
+  },
+  {
+    name: '块',
+    description: '切换区块底色装饰',
+    icon: Square,
+    keywords: ['block decoration', '块', '装饰'],
+    category: '装饰',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      const current = decorationAt(editor.state).block;
+      editor.chain().focus().setShadedStyle(toggledDecoration(current)).run();
+    },
+  },
+  {
+    name: '焦点',
+    description: '切换区块焦点装饰',
+    icon: Focus,
+    keywords: ['focus decoration', '焦点', '装饰'],
+    category: '装饰',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      const current = decorationAt(editor.state).focus;
+      editor.chain().focus().setFocusStyle(toggledDecoration(current)).run();
+    },
+  },
+  {
+    name: '缩进',
+    description: '增加当前块的缩进',
+    icon: IndentIncrease,
+    keywords: ['indent', '缩进'],
+    category: '缩进',
+    command: (editor, range) => stepIndent(editor, range, 1),
+  },
+  {
+    name: '减少缩进',
+    description: '减少当前块的缩进',
+    icon: IndentDecrease,
+    keywords: ['outdent', '减少缩进', '缩进'],
+    category: '缩进',
+    command: (editor, range) => stepIndent(editor, range, -1),
+  },
+  {
+    name: '粗体',
+    description: '把选区切换为粗体',
+    icon: Bold,
+    keywords: ['bold', '粗体', '加粗'],
+    category: '文字格式',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).toggleBold().run();
+    },
+  },
+  {
+    name: '斜体',
+    description: '把选区切换为斜体',
+    icon: Italic,
+    keywords: ['italic', '斜体'],
+    category: '文字格式',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).toggleItalic().run();
+    },
+  },
+  {
+    name: '删除线',
+    description: '把选区切换为删除线',
+    icon: Strikethrough,
+    keywords: ['strike', 'strikethrough', '删除线'],
+    category: '文字格式',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).toggleStrike().run();
+    },
+  },
+  {
+    name: '代码',
+    description: '把选区切换为行内代码',
+    icon: Code,
+    keywords: ['inline code', '代码'],
+    category: '文字格式',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).toggleCode().run();
+    },
+  },
+  {
+    name: '今天',
+    description: '插入今天的日期原子',
+    icon: CalendarDays,
+    keywords: ['today', '今天', '日期'],
+    category: '日期和时间',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).insertDayAtom({ date: dayKeyOf(0) }).run();
+    },
+  },
+  {
+    name: '明天',
+    description: '插入明天的日期原子',
+    icon: CalendarDays,
+    keywords: ['tomorrow', '明天', '日期'],
+    category: '日期和时间',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).insertDayAtom({ date: dayKeyOf(1) }).run();
+    },
+  },
+  {
+    name: '昨天',
+    description: '插入昨天的日期原子',
+    icon: CalendarDays,
+    keywords: ['yesterday', '昨天', '日期'],
+    category: '日期和时间',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).insertDayAtom({ date: dayKeyOf(-1) }).run();
+    },
+  },
+  {
+    name: '取消样式',
+    description: '清除当前块的行内样式与块样式',
+    icon: Eraser,
+    keywords: ['clear style', '清除样式', '取消样式'],
+    category: '官方名册',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).unsetAllMarks().clearNodes().run();
+    },
+  },
+);
+
+/** 提醒的五个即时/顺延档——官方 /提醒我… 的第二段（G1596 的七档去掉「自定义…」与「留着以后用」）。 */
+const REMIND_SLASH_PRESETS: ReadonlyArray<{ name: string; preset: RemindPresetId }> = [
+  { name: '20 分钟后', preset: 'in20min' },
+  { name: '1小时后', preset: 'in1hour' },
+  { name: '3小时后', preset: 'in3hours' },
+  // 「明天」与日期原子同名 ⇒ 命令名区分开，菜单展示走名册的官方标签。
+  { name: '提醒·明天', preset: 'tomorrow' },
+  { name: '下周', preset: 'nextWeek' },
+];
+
+for (const { name, preset } of REMIND_SLASH_PRESETS) {
+  slashCommands.push({
+    name,
+    description: `给当前区块设置提醒（${preset}）`,
+    icon: Bell,
+    keywords: ['remind', '提醒', name],
+    category: '提醒',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).run();
+      const index = topLevelIndexOf(editor.state.doc, editor.state.selection.from);
+      if (index < 0) return;
+      setBlockReminder(editor.state, editor.view.dispatch, index, preset, new Date());
+    },
+  });
+}
+
+// 官方 /插入表格 的第二段是八个方形尺寸（2x2–9x9）；`12x3` 这类非方形仍由输入解析动态补一条（G336）。
+for (const size of [2, 3, 4, 5, 6, 7, 8, 9] as const) {
+  slashCommands.push({
+    name: `${size}x${size}`,
+    description: '插入表格',
+    icon: Table,
+    keywords: ['表格', 'table', `${size}x${size}`],
+    category: '插入表格',
+    command: (editor, range) => {
+      editor.chain().focus().deleteRange(range).insertTable({ rows: size, cols: size, withHeaderRow: true }).run();
+    },
+  });
+}
+
+/** 名册没覆盖的本地命令（进「更多」桶，本地能力一条不丢）。 */
+export function extraSlashCommands(): SlashCommand[] {
+  const consumed = consumedCommandNames();
+  return slashCommands.filter((cmd) => !consumed.has(cmd.name));
+}
+
+/** `/12x3` 这类输入本身的候选（G336）：只在真解析成尺寸时回一条。 */
+export function sizeShortcutCommand(query: string): SlashCommand | null {
+  const size = parseTableShortcut(query);
+  return size ? tableShortcutCommand(size) : null;
 }
 
 /**

@@ -9566,11 +9566,13 @@
       ]
     },
     "G1544": {
-      "status": "partial",
-      "note": "本地 / 菜单是分组带副标题长列表，官方是扁平 20 枚分组入口（容器 data-testid=command-menu、项上无 aria-haspopup/role）。✎ 第 430 批普查（slash-stage2-census.mjs，round-430 日志）补齐官方第二段：入口 0–14 为分组入口、Enter 开子菜单，15–19（取消样式/插入白板/三集合）为叶子直接执行——20 项选择通路逐项采到子项集（列表5/文本样式8/装饰2/颜色12/缩进2/对齐4/字体4/文字格式4/日期和时间4/插入文件2/插入片段4/插入表格8档2x2–9x9/插入分隔符5/动作1/提醒我…6）。本地两段形制仍未做",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 族拆批第 2d 批，浏览器实点）：/ 菜单改官方两段形制——第一段扁平 20 入口（官方顺序逐字、无分类标题、无副标题），分组入口带 › 钻入第二段、5 个叶子直接执行；过滤改官方机制（只按第二段子项/叶子名字做子串、入口本身不参赛）；官方名册外的本地命令进「更多」桶（本增项，20+1＝21 行）。实点：空查询 21 行且首 20 项与官方阵容逐字一致、进「列表」二段读到 [返回／待办列表／折叠列表／无序列表／编号列表／取消列表格式]、选「待办列表」落 taskItem、过滤「列表」回 5 项、纯分组头「文本样式」回 0 ⇒ 已对齐（「更多」桶与返回行记为本地载体增项）",
       "evidence": [
-        "docs/craft-ref/interaction-lab/slash-stage2-census.mjs",
-        "src/components/editor/slash-menu/slash-commands.ts"
+        "src/lib/editor/slash-roster.ts",
+        "src/lib/editor/slash-roster.test.ts",
+        "src/components/editor/slash-menu/SlashCommandMenu.tsx",
+        "docs/craft-ref/interaction-lab/slash-stage2-census.mjs"
       ]
     },
     "G1545": {
@@ -10097,11 +10099,13 @@
       ]
     },
     "G1613": {
-      "status": "partial",
-      "note": "本地是分类标题加平铺命令的一段结构，无二段分组菜单。✎ 第 430 批选择通路普查（round-430）已把 15 个分组入口的第二段子项集逐项采全（含 G1613 过滤通路测不到的 8 个纯分组头：文本样式8/装饰2/文字格式4/日期和时间4/插入片段4/插入分隔符5/动作1/提醒我…6）；过滤与选择两通路的子项顺序不一致（列表：过滤=[编号/待办/取消格式/无序…] vs 选择=[待办/折叠/无序/编号/取消列表格式]，对齐同理）——本地复刻取选择通路顺序",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 族拆批第 2d 批）：15 个分组入口的 15 组子项集按第 430 批**选择通路顺序**逐字落进 `slash-roster.ts`（26 条断言钉住，含 5 叶子身份）；过滤机制按官方实测口径复刻并单测逐条对上——子项/叶子名字串匹配、纯分组头回 0、插入表格只回插入表格集合、同名的「明天」两处并存；本地未接子项（说明／字体四档／颜色 11 档／Unsplash／正文片段／现在／留着以后用）按名册 null 置灰「未接入」⇒ 已对齐",
       "evidence": [
-        "docs/craft-ref/interaction-lab/slash-stage2-census.mjs",
-        "src/components/editor/slash-menu/SlashCommandMenu.tsx"
+        "src/lib/editor/slash-roster.ts",
+        "src/lib/editor/slash-roster.test.ts",
+        "src/components/editor/slash-menu/SlashCommandExtension.ts",
+        "docs/craft-ref/interaction-lab/slash-stage2-census.mjs"
       ]
     },
     "G1614": {

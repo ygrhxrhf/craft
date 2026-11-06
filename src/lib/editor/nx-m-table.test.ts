@@ -69,8 +69,8 @@ describe('the slash menu feeds the shortcut (G336)', () => {
 
   it('prepends a table candidate when the query parses', () => {
     expect(commands).toContain("import { parseTableShortcut, type TableShortcutSize } from '@/lib/editor/nx-m-table';");
-    expect(commands).toContain('return [tableShortcutCommand(size), ...matched];');
-    expect(commands).toContain('if (!size) return matched;');
+    expect(commands).toContain('export function sizeShortcutCommand(query: string): SlashCommand | null');
+    expect(commands).toContain('return size ? tableShortcutCommand(size) : null;');
   });
 
   it('builds the candidate with the parsed size and the shared table command', () => {
@@ -84,6 +84,9 @@ describe('the slash menu feeds the shortcut (G336)', () => {
       join(process.cwd(), 'src/components/editor/slash-menu/SlashCommandExtension.ts'),
       'utf8',
     );
-    expect(extension).toContain('filterCommands');
+    // 两段式之后候选由 `rowsFor` 组装：动态尺寸行（`size-shortcut`）走 `sizeShortcutCommand`。
+    expect(extension).toContain('sizeShortcutCommand(query)');
+    expect(extension).toContain("id: 'size-shortcut'");
+    expect(extension).toContain('rowsFor(');
   });
 });

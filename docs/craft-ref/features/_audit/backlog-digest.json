@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-06T08:52:29.977Z",
+  "generatedAt": "2026-11-06T09:36:28.889Z",
   "total": 1614,
   "status": {
-    "aligned": 631,
+    "aligned": 633,
     "nonaction": 515,
-    "partial": 196,
+    "partial": 194,
     "deliberate": 169,
     "gap": 83,
     "unreachable": 20
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 315,
+    "P2 / aligned": 317,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 169,
@@ -28,7 +28,7 @@
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 60,
-    "P2 / partial": 46,
+    "P2 / partial": 44,
     "P? / deliberate": 40,
     "P3 / gap": 38,
     "P? / gap": 34,
@@ -1280,10 +1280,6 @@
       9
     ],
     [
-      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      9
-    ],
-    [
       "三点一四、标签系统与浏览面追加（来自 `tags-browse.md`，",
       8
     ],
@@ -1293,6 +1289,10 @@
     ],
     [
       "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
+      7
+    ],
+    [
+      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
       7
     ],
     [

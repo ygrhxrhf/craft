@@ -8,45 +8,37 @@ vi.mock('@/components/editor/ai/ImageGenDialog', () => ({ requestImageGen: vi.fn
 vi.mock('@/lib/dialog/show', () => ({ promptDialog: vi.fn() }));
 vi.mock('@/lib/upload-client', () => ({ uploadFile: vi.fn() }));
 
-import { filterCommands, slashCommands } from './slash-commands';
+import { consumedCommandNames } from '@/lib/editor/slash-roster';
+import { extraSlashCommands, sizeShortcutCommand, slashCommands } from './slash-commands';
 
 /**
- * G1616 —— 官方斜杠菜单过滤「对齐」回**四项**（居中对齐／两端对齐／右对齐／左对齐）。
- * 本地这四档能力本就在格式面板里，缺的是斜杠入口 ⇒ 本测试钉住"过滤「对齐」回这四项"。
- * ★ 对齐是**属性**不是块型（官方按 Enter 后块型仍是 `para`），所以断言只看候选名册。
+ * G1544 / G1613：斜杠菜单改成官方两段形制后，本地命令名册是**映射层**——
+ * 名册里指到本地命令的子项必须真的存在（否则菜单一点就空转）；名册没覆盖的本地命令
+ * 进「更多」桶，保证本地能力一条不丢。
  */
-describe('slash menu · 对齐组 (G1616)', () => {
-  it('filtering 「对齐」 returns the official four tiers', () => {
-    const names = filterCommands('对齐').map((c) => c.name);
-    expect(names.sort()).toEqual(['两端对齐', '右对齐', '居中对齐', '左对齐'].sort());
+describe('斜杠名册接线（G1544 / G1613）', () => {
+  it('every mapped roster command exists in the local inventory', () => {
+    const names = new Set(slashCommands.map((command) => command.name));
+    for (const name of consumedCommandNames()) {
+      expect(names.has(name), `名册指向了不存在的命令：${name}`).toBe(true);
+    }
   });
 
-  it('each align entry carries a value and no 默认 tier leaks in', () => {
-    const align = filterCommands('对齐');
-    expect(align).toHaveLength(4);
-    expect(align.map((c) => c.name)).not.toContain('默认');
+  it('keeps the local-only commands reachable through the 「更多」 bucket', () => {
+    const extras = extraSlashCommands().map((command) => command.name);
+    expect(extras.length).toBeGreaterThan(0);
+    // 本地独有能力（官方 20 入口里没有）仍在桶里。
+    expect(extras).toContain('引用');
+    expect(extras).toContain('全部展开');
+    expect(extras).toContain('标签');
   });
 
-  it('the four entries are derived from the canonical alignment table, not a second copy', () => {
-    // 名字必须与 `ALIGNMENT_CONTROLS` 的 label 逐字一致（两组各写一遍就会分叉）。
-    const align = filterCommands('对齐').map((c) => c.name).sort();
-    expect(align).toEqual(['左对齐', '居中对齐', '右对齐', '两端对齐'].sort());
-  });
-});
-
-/**
- * G1617 —— 官方 `/颜色` 回**一项**「默认颜色」（`style.color.default`）。本地颜色只在格式面板色板里，
- * 斜杠菜单没有入口 ⇒ 补这一项。★ `/文字格式` 两侧都是 0 候选（一致），不在本组断言内。
- */
-describe('slash menu · 颜色组 (G1617)', () => {
-  it('filtering 「颜色」 returns 默认颜色', () => {
-    expect(filterCommands('颜色').map((c) => c.name)).toContain('默认颜色');
-  });
-
-  it('the entry is unique and clears the colour rather than setting one', () => {
-    const hits = filterCommands('颜色').filter((c) => c.name === '默认颜色');
-    expect(hits).toHaveLength(1);
-    expect(hits[0].description).toContain('清除');
+  it('the four alignment tiers keep their official labels (G1616)', () => {
+    const labels = slashCommands.map((command) => command.name);
+    for (const label of ['左对齐', '居中对齐', '右对齐', '两端对齐']) {
+      expect(labels).toContain(label);
+    }
+    expect(labels).toContain('默认颜色');
   });
 });
 
@@ -60,5 +52,18 @@ describe('slash menu · 名册卫生', () => {
     for (const cmd of slashCommands) {
       expect(cmd.keywords.length, `${cmd.name} 没有关键词 ⇒ 只能按名字筛`).toBeGreaterThan(0);
     }
+  });
+});
+
+/**
+ * G336：`12x3` 这类输入本身就是一条候选。官方抑制的那些（≤9 的正方形、任一边为 0）
+ * 在解析层就回 `null`（正方形由名册的 2x2–9x9 八条承担），这里对齐同一口径。
+ */
+describe('表格尺寸快捷（G336）', () => {
+  it('derives a candidate for non-square sizes only', () => {
+    const wide = sizeShortcutCommand('12x3');
+    expect(wide?.name).toBe('12x3');
+    expect(sizeShortcutCommand('3x3')).toBeNull();
+    expect(sizeShortcutCommand('随便')).toBeNull();
   });
 });

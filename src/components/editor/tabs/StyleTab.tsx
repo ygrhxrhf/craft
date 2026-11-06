@@ -580,29 +580,52 @@ export function StyleTab({
       </section>
 
 {/* Font */}
+      {/* Font: official splits the family list into 默认 / 高级 tiers (G209). */}
       <section>
         <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">字体</h4>
+        <p className="mb-1 text-meta text-foreground/40">默认</p>
         <div className="flex gap-1.5">
-          {fontPacks.map((font) => (
-            <button
-              key={font.id}
-              type="button"
-              className={cn(
-                'flex-1 rounded-lg border border-foreground/10 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
-                (pageStyle.fontPack ?? 'system') === font.id && 'border-craft-accent bg-craft-accent/12 text-craft-accent'
-              )}
-              style={{ fontFamily: font.stack }}
-              onClick={() => setPageStyle({ fontPack: font.id })}
-            >
-              {font.label}
-            </button>
-          ))}
+          {fontPacks
+            .filter((font) => font.id === 'system')
+            .map((font) => (
+              <button
+                key={font.id}
+                type="button"
+                className={cn(
+                  'flex-1 rounded-lg border border-foreground/10 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
+                  (pageStyle.fontPack ?? 'system') === font.id && 'border-craft-accent bg-craft-accent/12 text-craft-accent'
+                )}
+                style={{ fontFamily: font.stack }}
+                onClick={() => setPageStyle({ fontPack: font.id })}
+              >
+                {font.label}
+              </button>
+            ))}
+        </div>
+        <p className="mb-1 mt-2 text-meta text-foreground/40">高级</p>
+        <div className="flex gap-1.5">
+          {fontPacks
+            .filter((font) => font.id !== 'system')
+            .map((font) => (
+              <button
+                key={font.id}
+                type="button"
+                className={cn(
+                  'flex-1 rounded-lg border border-foreground/10 px-2 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4',
+                  (pageStyle.fontPack ?? 'system') === font.id && 'border-craft-accent bg-craft-accent/12 text-craft-accent'
+                )}
+                style={{ fontFamily: font.stack }}
+                onClick={() => setPageStyle({ fontPack: font.id })}
+              >
+                {font.label}
+              </button>
+            ))}
         </div>
       </section>
 
-{/* Advanced: width toggle */}
+{/* Width toggle */}
       <section>
-        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">高级</h4>
+        <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">宽页</h4>
         <div className="flex items-center justify-between">
           <span className="text-ui">宽页</span>
           <button

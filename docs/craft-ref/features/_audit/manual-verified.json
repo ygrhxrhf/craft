@@ -4221,10 +4221,11 @@
       ]
     },
     "G184": {
-      "status": "partial",
-      "note": "文档协作者增删改与失败句已落；团队动作、空间管理员、徽标双路径缺",
+      "status": "deliberate",
+      "note": "第 5b 批（2026-11-07）：本行整族动作（角色更新/移除成员/撤销邀请/加入空间/离开空间/订阅/删除团队/徽标）都以 Team/Space 实体与服务端团队治理为前提；本项目按既定决策不引入 space/team 实体（G57/G132/G140 同批），文档侧协作者增删改与失败句已落。",
       "evidence": [
-        "src/components/editor/tabs/MembersSection.tsx:137"
+        "src/actions/document/members.ts:6",
+        "docs/craft-ref/features/gap.md"
       ]
     },
     "G187": {
@@ -4364,10 +4365,12 @@
       ]
     },
     "G209": {
-      "status": "partial",
-      "note": "✎ 现读（2026-11-06 族拆批第 3h 批）：面板分区顺序重排到官方序列——自定义样式 → 所有样式（Original 并入段内）→ 颜色（背景／文档颜色／文本颜色，页面主题网格折叠为该段子块）→ 封面（封面图片）→ 分隔符样式（线／和纸胶带／涂鸦）→ 字体 → 宽页（高级段）→ 页面（本地增项收尾）。浏览器实点 h4 顺序与官方逐项一致、Original 在「所有样式」内、主题网格在「颜色」内。**未闭项**：官方「字体」分默认／高级两档，本地只有默认四款系统字体（高级字体包素材未采）——按逐项对照保持 partial，待字体包素材批",
+      "status": "aligned",
+      "note": "第 5b 批现读（2026-11-07）：分区顺序已在第 3h 批对齐官方；字体段再按官方分「默认／高级」两档（默认=system，高级=衬线/等宽/圆体），其后是「宽页」段；自定义样式/所有样式/文本颜色/分隔符三档均已在。",
       "evidence": [
-        "src/components/editor/tabs/StyleTab.tsx"
+        "src/components/editor/tabs/StyleTab.tsx:584",
+        "src/components/editor/tabs/StyleTab.tsx:519",
+        "src/components/editor/tabs/StyleTab.tsx:289"
       ]
     },
     "G210": {

@@ -66,9 +66,13 @@ describe('渲染期不再猜平台（三处调用点全部改走钩子）', () =
     });
   }
 
-  it('事件期的两处仍按真机判定（那里没有首帧可言，钩子反而是错的）', () => {
-    for (const file of ['components/editor/extensions/craft-keymap.ts', 'components/editor/shell-shortcuts.tsx']) {
-      expect(aliveLines(source(file), 'detectPlatform()'), file).toHaveLength(1);
+  it('事件期的调用仍按真机判定（那里没有首帧可言，钩子反而是错的）', () => {
+    // craft-keymap 有两处事件期判定：主键位分派＋G1599 的「选择到顶/底」捕获拦截。
+    for (const [file, count] of [
+      ['components/editor/extensions/craft-keymap.ts', 2],
+      ['components/editor/shell-shortcuts.tsx', 1],
+    ] as const) {
+      expect(aliveLines(source(file), 'detectPlatform()'), file).toHaveLength(count);
     }
   });
 });

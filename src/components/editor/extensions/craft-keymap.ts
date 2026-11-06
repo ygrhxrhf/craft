@@ -39,6 +39,7 @@ import { useRightPanelStore } from '@/lib/store/use-right-panel-store';
 import { promptDialog } from '@/lib/dialog/show';
 import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
 import { useCardConfigStore } from '@/lib/store/use-card-config-store';
+import { selectToEdgeAction } from '@/lib/editor/select-to-edge';
 
 export const CRAFT_KEYMAP_KEY = new PluginKey('craftKeymap');
 
@@ -287,6 +288,41 @@ function previousBlockInfo(
 
 export const CraftKeymap = Extension.create({
   name: 'craftKeymap',
+
+  addStorage() {
+    return { selectEdgeHandler: null as ((event: KeyboardEvent) => void) | null };
+  },
+
+  /**
+   * G1599：这组弦要在 ProseMirror 默认键位之前吃掉——`selectTextUp/Down` 是 core keymap
+   * 的行为，挂在 `handleKeyDown` 里会与插件顺序赛跑，所以用编辑器 DOM 的捕获阶段。
+   */
+  onCreate() {
+    const handler = (event: KeyboardEvent) => {
+      const action = selectToEdgeAction(
+        {
+          key: event.key,
+          ctrlKey: event.ctrlKey,
+          metaKey: event.metaKey,
+          altKey: event.altKey,
+          shiftKey: event.shiftKey,
+          isComposing: event.isComposing,
+        },
+        detectPlatform(),
+      );
+      if (!action) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (action === 'blur') this.editor.view.dom.blur();
+    };
+    this.storage.selectEdgeHandler = handler;
+    this.editor.view.dom.addEventListener('keydown', handler, true);
+  },
+
+  onDestroy() {
+    const handler = this.storage.selectEdgeHandler;
+    if (handler) this.editor.view.dom.removeEventListener('keydown', handler, true);
+  },
 
   addProseMirrorPlugins() {
     const editor = this.editor;

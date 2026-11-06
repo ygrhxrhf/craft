@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-06T15:38:05.730Z",
+  "generatedAt": "2026-11-06T15:50:35.703Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 825,
-    "aligned": 351,
+    "gap": 824,
+    "aligned": 352,
     "unknown": 193,
     "deliberate": 105,
     "partial": 67,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 255,
-    "P2 / aligned": 245,
+    "P2 / gap": 254,
+    "P2 / aligned": 246,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -29835,10 +29835,10 @@
       "cols": 5,
       "id": "G1599",
       "official": "★★★ **`Ctrl-Shift-↑/↓`（面板 Windows 串 `CtrlShift⤒/⤓`＝「选择到顶部/底部」）：本地**会扩选**，官方**按下去选区不扩**（且焦点随即离开编辑器）**（第 381 批，`editor.selection.select-to-top-bottom`，三块 `AAA/BBB/CCC`、光标在 BBB 行尾）：本地 `Ctrl-Shift-↑` ⇒ `collapsed:false`、选区文本 **`\"\\nBBB\"`**（向上扩了一块）；`Ctrl-Shift-↓` ⇒ 扩到 **`\"\\nCCC\"`**。官方同一序列：`Ctrl-Shift-↑` 后 **`collapsed` 仍为 `true`、选区文本为空**；紧随的 `Ctrl-Shift-↓` 之后 `selection` 变成 `undefined`（**焦点已离开编辑器**）⇒ 官方这条 Windows 串**既没扩选、还丢了焦点**。★ 诚实边界：① 官方侧只拿到 `↑` 这一步的有效读数（`↓` 那步起焦点已丢），**不能**据此断言\"官方 `↓` 也不选\"；② 官方面板上这组键**本是为 Mac 字形 `⌘⇧⤒` 印的**，Windows 列是否本就不该有它，`keyboard.md` 已有并列的 COMMON 档（`Ctrl-Shift-Home/End`）——本批实测**官方 COMMON 档同样丢了焦点**（第 10/11 步 `undefined`），与本地\"COMMON 档能扩选到 `AAA\\n\\nBBB`／`\\nCCC`\"也不同",
-      "local": "本地对照＝`src/lib/editor/keymap.ts`／ProseMirror 默认键位：`Mod-Shift-ArrowUp/Down` 走 ProseMirror 的 `selectTextUp/Down`",
-      "verdict": "行为不同（本地扩选／官方不扩且丢焦点）",
+      "local": "✎ 现读（2026-11-06 第 3m 批）：按官方读数复刻——Windows 下 `Ctrl-Shift-↑` 在编辑器 DOM 捕获阶段被拦下、不扩选且焦点留在编辑器；`Ctrl-Shift-↓` 与 COMMON 档 `Ctrl-Shift-Home/End` 同样拦下、不扩选并把焦点交给 body。浏览器按台账同一序列实点三块 `AAA/BBB/CCC`：`↑` 后 `collapsed:true`／选区文本空／`activeElement` 仍是编辑器；`↓` 与 `End` 后 `activeElement` 变 `BODY`、选区空。Mac 侧无同组实测，保留默认",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

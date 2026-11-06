@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-06T15:38:05.974Z",
+  "generatedAt": "2026-11-06T15:50:35.999Z",
   "total": 1615,
   "status": {
-    "aligned": 643,
+    "aligned": 644,
     "nonaction": 516,
-    "partial": 186,
+    "partial": 185,
     "deliberate": 170,
     "gap": 80,
     "unreachable": 20
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 326,
+    "P2 / aligned": 327,
     "P? / nonaction": 191,
     "P1 / aligned": 171,
     "P2 / nonaction": 170,
@@ -30,7 +30,7 @@
     "P3 / aligned": 60,
     "P? / deliberate": 40,
     "P3 / gap": 38,
-    "P2 / partial": 36,
+    "P2 / partial": 35,
     "P? / gap": 34,
     "P3 / deliberate": 32,
     "P1 / deliberate": 20,
@@ -1292,11 +1292,11 @@
       7
     ],
     [
-      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      7
+      "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
+      6
     ],
     [
-      "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
+      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
       6
     ],
     [

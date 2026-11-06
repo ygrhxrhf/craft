@@ -10057,10 +10057,12 @@
       ]
     },
     "G1599": {
-      "status": "partial",
-      "note": "表内无 Shift+Arrow 行，落 PM 默认扩选；官方不扩且焦点离开",
+      "status": "aligned",
+      "note": "G1599 现读（2026-11-06 第 3m 批）：按官方读数复刻。Windows 下 Ctrl-Shift-↑ 在编辑器 DOM 捕获阶段被拦下、不扩选且焦点留在编辑器；Ctrl-Shift-↓ 与 COMMON 档 Ctrl-Shift-Home/End 同样拦下、不扩选并 blur 到 body。浏览器按台账同一序列实点 AAA/BBB/CCC：↑ 后 collapsed true、选区文本空、activeElement 仍是编辑器；↓ 与 End 后 activeElement 变 BODY、选区空。Mac 侧没有同组实测，保留默认扩选。",
       "evidence": [
-        "src/lib/editor/keymap.ts:196"
+        "src/lib/editor/select-to-edge.ts:31",
+        "src/components/editor/extensions/craft-keymap.ts:300",
+        "src/lib/editor/select-to-edge.test.ts:1"
       ]
     },
     "G1600": {

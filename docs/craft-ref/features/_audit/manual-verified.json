@@ -5824,10 +5824,13 @@
       ]
     },
     "G509": {
-      "status": "partial",
-      "note": "工具栏已有标题行/列开关，但靠换 tableHeader 节点类型，非表级布尔",
+      "status": "aligned",
+      "note": "G509 现读（2026-11-06 第 3l 批）：承载方式与官方不同（本地用单元格节点类型 tableHeader/tableCell，官方是 hasRowsHeader/hasColumnsHeader 布尔元数据），但用户可观察行为一致：表格工具栏的「标题行」「标题列」是两个独立开关，各自只切首行/首列。浏览器实点 2×2 表：开标题列、关标题行后第一列仍是 TH、第二行回到 TD。按可观察行为结案，不为了对齐载体改模型。",
       "evidence": [
-        "src/components/editor/table/TableToolbar.tsx:192"
+        "src/components/editor/table/TableToolbar.tsx:222",
+        "src/components/editor/table/TableToolbar.tsx:232",
+        "src/components/editor/table/TableToolbar.tsx:37",
+        "src/components/editor/Editor.tsx:22"
       ]
     },
     "G510": {

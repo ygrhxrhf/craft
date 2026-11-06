@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-06T15:33:13.446Z",
+  "generatedAt": "2026-11-06T15:38:05.730Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 826,
-    "aligned": 350,
+    "gap": 825,
+    "aligned": 351,
     "unknown": 193,
     "deliberate": 105,
     "partial": 67,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 256,
-    "P2 / aligned": 244,
+    "P2 / gap": 255,
+    "P2 / aligned": 245,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -10288,10 +10288,10 @@
       "cols": 5,
       "id": "G509",
       "official": "★ **标题行是两层承载**：表级开关 `hasRowsHeader` + 行级标记 `metadata.isHeaderRow`（`FLe` 是行 metadata 的**唯一字段**）；列侧另有独立开关 `hasColumnsHeader` ⇒ **\"标题行/标题列是两个独立开关\"从文案证据升级为模型证据**（G091 结案）（§一之十六 1）",
-      "local": "本地用 **node type 名**承载（`src/components/editor/table/TableToolbar.tsx:27` 判 `name === 'tableCell' || name === 'tableHeader'`、`:37` 看首子节点是否 `tableHeader`）⇒ **切换标题行要换节点类型**，而不是翻一个布尔 ⇒ 与 G190（块转换丢属性）同族根因",
-      "verdict": "行为不同（承载方式）",
+      "local": "✎ 现读（2026-11-06 第 3l 批）：承载方式仍不同——本地用单元格节点类型（`tableHeader`／`tableCell`）而不是布尔元数据；但可观察行为一致：表格工具栏的「标题行」「标题列」是两个独立开关，各自切换首行／首列。浏览器实点 2×2 表：开标题列、关标题行后第一列仍是 `TH`、第二行回到 `TD`",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

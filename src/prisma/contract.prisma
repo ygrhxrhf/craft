@@ -22,6 +22,9 @@ model User {
   // （`assistantDisabledSpaces` 是 spaceId 列表），所以不影响同一空间的其他成员。
   assistantEnabled       Boolean @default(true)
   assistantDisabledSpaces Json?
+  // G171：标签忽略规则（自定义规则是一等实体，但本地存成对象列表即可——与 `prompts` 同一形状：
+  // `[{id, text}]`，匹配是"标签名包含该文本"）。命中后这些词不再出现在标签列表，即使带 `#`。
+  tagIgnoreRules Json?
   createdAt     TimestamptzString @default(now())
   updatedAt     temporal.updatedAtString()
 
@@ -42,8 +45,28 @@ model User {
   teamMemberships TeamMember[]
   ownedSpaces   Space[]
   oauthCodes    OAuthCode[]
+  customStyles  CustomStyle[]
 
   @@map("users")
+}
+
+// G151：自定义样式是一等内容实体——保存当前页样式、重命名、套用、设为文档默认；
+// `style` 存与 `Document.pageStyle` 同形状的字段子集（theme/themeColor/textColor/fontPack/washi）。
+model CustomStyle {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  style     Json
+  isDefault Boolean  @default(false)
+  order     Float    @default(0)
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+  deletedAt TimestamptzString?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("custom_styles")
 }
 
 // G227：Sign in with Craft——Craft 作为外部站点的身份提供方。外部站点先在 `OAuthClient` 注册

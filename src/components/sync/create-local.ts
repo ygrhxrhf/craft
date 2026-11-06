@@ -5,6 +5,7 @@
 import { getSyncManager } from '@/lib/sync-core';
 import { createDocument } from '@/actions/document/create';
 import { createFolder } from '@/actions/folder/create';
+import { listCustomStyles } from '@/actions/style/custom-styles';
 import { UNTITLED_FOLDER } from '@/lib/document/untitled-copy';
 
 /**
@@ -29,6 +30,13 @@ export async function createDocumentLocal(input: {
   }
   const userId = input.userId;
   const id = crypto.randomUUID();
+  // G151：新建文档套用「设为文档默认」的自定义样式；离线取不到时退回无样式。
+  let defaultPageStyle: Record<string, unknown> | null = null;
+  try {
+    defaultPageStyle = (await listCustomStyles()).find((style) => style.isDefault)?.style ?? null;
+  } catch {
+    defaultPageStyle = null;
+  }
   const manager = getSyncManager();
   await manager.applyLocal({
     table: 'document',
@@ -42,7 +50,7 @@ export async function createDocumentLocal(input: {
       coverImage: null,
       coverType: null,
       width: null,
-      pageStyle: null,
+      pageStyle: defaultPageStyle,
       isTemplate: false,
       isDailyNote: false,
       dailyNoteDate: null,

@@ -44,6 +44,10 @@
       "model": "Connection",
       "namespace": "public"
     },
+    "custom_styles": {
+      "model": "CustomStyle",
+      "namespace": "public"
+    },
     "daily_notes_config": {
       "model": "DailyNotesConfig",
       "namespace": "public"
@@ -1527,6 +1531,124 @@
               },
               "namespaceId": "public",
               "table": "connections"
+            }
+          },
+          "CustomStyle": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "deletedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "isDefault": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "order": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "style": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "deletedAt": {
+                  "column": "deletedAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isDefault": {
+                  "column": "isDefault"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "order": {
+                  "column": "order"
+                },
+                "style": {
+                  "column": "style"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "custom_styles"
             }
           },
           "DailyNotesConfig": {
@@ -4602,6 +4724,13 @@
                   "kind": "scalar"
                 }
               },
+              "tagIgnoreRules": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "theme": {
                 "nullable": false,
                 "type": {
@@ -4660,6 +4789,21 @@
                 },
                 "to": {
                   "model": "Connection",
+                  "namespace": "public"
+                }
+              },
+              "customStyles": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "CustomStyle",
                   "namespace": "public"
                 }
               },
@@ -4924,6 +5068,9 @@
                 },
                 "prompts": {
                   "column": "prompts"
+                },
+                "tagIgnoreRules": {
+                  "column": "tagIgnoreRules"
                 },
                 "theme": {
                   "column": "theme"
@@ -6363,6 +6510,102 @@
                   ],
                   "name": "connections_userId_idx_a489d58a",
                   "prefix": "connections_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "custom_styles": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "deletedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "isDefault": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "order": {
+                  "codecId": "pg/float8@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nativeType": "float8",
+                  "nullable": false
+                },
+                "style": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "custom_styles"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "custom_styles_userId_idx_a489d58a",
+                  "prefix": "custom_styles_userId_idx",
                   "unique": false
                 }
               ],
@@ -8837,6 +9080,11 @@
                   "nativeType": "json",
                   "nullable": true
                 },
+                "tagIgnoreRules": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
                 "theme": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -9107,10 +9355,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "014b0070093120244dd4539997489b5bf794564e996340d05bb7e2a84a2a0021"
+    "storageHash": "84d5c32bb73cbbbd7358fba9b91a0e5f7900481eeb8a02275bf9b44c05072a09"
   },
   "execution": {
-    "executionHash": "d6c2494caa9acc54d54d3b1757b0bc4444f736f2dc16b94972c103a70d42af32",
+    "executionHash": "4ab4e86facf3f98e2d7366b96f6cf51036cc4f660f085fb81a7fda131a187cff",
     "mutations": {
       "defaults": [
         {
@@ -9356,6 +9604,32 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "connections"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "custom_styles"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "custom_styles"
           }
         },
         {

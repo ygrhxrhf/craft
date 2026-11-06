@@ -5,7 +5,24 @@ import type { Editor } from '@tiptap/react';
 import { cn } from 'cn';
 import { readImageFrame, zoomFrame, DEFAULT_FRAME } from '@/lib/editor/image-frame';
 import { cropMaskForFrame } from '@/lib/editor/image-crop';
-import { Plus, Minus, RotateCcw } from 'lucide-react';
+import { Plus, Minus, RotateCcw, Star, MoreHorizontal } from 'lucide-react';
+import {
+  createCustomStyle,
+  deleteCustomStyle,
+  listCustomStyles,
+  renameCustomStyle,
+  setDefaultCustomStyle,
+  type CustomStyleRow,
+} from '@/actions/style/custom-styles';
+import { isStyleDirty, stylePatchOf } from '@/lib/editor/themes/custom-style-patch';
+import { promptDialog } from '@/lib/dialog/show';
+import { toast } from '@/components/ui/toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   colorPair,
   loadPageThemes,
@@ -86,6 +103,62 @@ export function StyleTab({
     };
   }, []);
   const [coverUrlInput, setCoverUrlInput] = useState('');
+  // G151：自定义样式（一等实体）——列表 + 最近一次套用的样式（脏态判定用）。
+  const [customStyles, setCustomStyles] = useState<CustomStyleRow[]>([]);
+  const [appliedStyle, setAppliedStyle] = useState<{ id: string; patch: Record<string, unknown> } | null>(null);
+  const reloadCustomStyles = async () => {
+    try {
+      setCustomStyles(await listCustomStyles());
+    } catch {
+      // 未登录/离线时面板照用，只是没有样式列表。
+    }
+  };
+  useEffect(() => {
+    void reloadCustomStyles();
+  }, []);
+  const saveCurrentStyle = async () => {
+    const name = await promptDialog({ title: '保存当前样式', placeholder: '样式名称', confirmLabel: '保存' });
+    if (!name?.trim()) return;
+    try {
+      await createCustomStyle({ name: name.trim(), style: stylePatchOf(pageStyle) });
+      await reloadCustomStyles();
+      toast.add({ id: 'style-saved', type: 'success', title: '已保存样式' });
+    } catch (error) {
+      toast.add({ id: 'style-save-failed', type: 'error', title: error instanceof Error ? error.message : '保存样式失败' });
+    }
+  };
+  const applyCustomStyle = (row: CustomStyleRow) => {
+    setPageStyle(row.style as Partial<PageStyle>);
+    setAppliedStyle({ id: row.id, patch: row.style });
+  };
+  const renameStyle = async (row: CustomStyleRow) => {
+    const name = await promptDialog({ title: '重命名样式', defaultValue: row.name, confirmLabel: '保存' });
+    if (!name?.trim()) return;
+    try {
+      await renameCustomStyle(row.id, name.trim());
+      await reloadCustomStyles();
+    } catch (error) {
+      toast.add({ id: 'style-rename-failed', type: 'error', title: error instanceof Error ? error.message : '重命名失败' });
+    }
+  };
+  const removeStyle = async (row: CustomStyleRow) => {
+    try {
+      await deleteCustomStyle(row.id);
+      if (appliedStyle?.id === row.id) setAppliedStyle(null);
+      await reloadCustomStyles();
+    } catch (error) {
+      toast.add({ id: 'style-delete-failed', type: 'error', title: error instanceof Error ? error.message : '删除失败' });
+    }
+  };
+  const makeDefaultStyle = async (row: CustomStyleRow) => {
+    try {
+      await setDefaultCustomStyle(row.isDefault ? null : row.id);
+      await reloadCustomStyles();
+    } catch (error) {
+      toast.add({ id: 'style-default-failed', type: 'error', title: error instanceof Error ? error.message : '设置默认失败' });
+    }
+  };
+  const swatchOf = (style: Record<string, unknown>) => (typeof style.themeColor === 'string' ? style.themeColor : undefined);
   // G156：封面图集（逗号分隔）与随机轮换开关。
   const [coverSetInput, setCoverSetInput] = useState(() => coverImages.join(', '));
   // G1436: the text-colour row.
@@ -100,6 +173,109 @@ export function StyleTab({
 
   return (
     <div className="space-y-5 p-3">
+      {/* G151：自定义样式（一等实体）——「保存/重命名/套用/脏态/设为文档默认」，
+          按作者分两栏：Craft 的样式（内置预设）vs 你的样式（已保存）。 */}
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <h4 className="text-caption font-medium uppercase tracking-wider text-foreground/40">自定义样式</h4>
+          <button
+            type="button"
+            data-testid="save-custom-style"
+            onClick={() => void saveCurrentStyle()}
+            className="rounded-md border border-foreground/10 px-2 py-0.5 text-meta text-foreground/70 transition-colors hover:bg-foreground/4 hover:text-foreground"
+          >
+            保存当前样式
+          </button>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <p className="mb-1 text-meta text-foreground/40">你的样式</p>
+            {customStyles.length === 0 ? (
+              <p className="text-meta text-foreground/35">还没有保存的样式</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {customStyles.map((row) => {
+                  const active = appliedStyle?.id === row.id;
+                  const dirty = active && isStyleDirty(row.style, pageStyle);
+                  return (
+                    <div key={row.id} className="flex w-14 flex-col items-center gap-0.5">
+                      <button
+                        type="button"
+                        title={row.name}
+                        data-testid={`custom-style-${row.id}`}
+                        onClick={() => applyCustomStyle(row)}
+                        className={cn(
+                          'relative flex size-7 items-center justify-center rounded-md border border-foreground/10 transition-transform hover:scale-110',
+                          active && 'ring-2 ring-craft-accent',
+                        )}
+                        style={{
+                          backgroundColor: swatchOf(row.style),
+                          backgroundImage: swatchOf(row.style)
+                            ? undefined
+                            : 'repeating-conic-gradient(var(--checker-a) 0% 25%, var(--checker-b) 0% 50%)',
+                          backgroundSize: swatchOf(row.style) ? undefined : '6px 6px',
+                        }}
+                      >
+                        {row.isDefault && <Star className="size-3 fill-current text-foreground/60" />}
+                        {dirty && (
+                          <span
+                            data-testid="style-dirty-dot"
+                            className="absolute -right-0.5 -top-0.5 size-1.5 rounded-full bg-craft-accent"
+                          />
+                        )}
+                      </button>
+                      <div className="flex items-center gap-0.5">
+                        <span className="w-9 truncate text-[10px] text-foreground/60" title={row.name}>
+                          {row.name}
+                        </span>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger
+                            render={
+                              <button
+                                type="button"
+                                aria-label={`${row.name} 样式操作`}
+                                className="rounded p-0.5 text-foreground/40 transition-colors hover:text-foreground"
+                              />
+                            }
+                          >
+                            <MoreHorizontal className="size-3" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start">
+                            <DropdownMenuItem onClick={() => void renameStyle(row)}>重命名</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => void makeDefaultStyle(row)}>
+                              {row.isDefault ? '取消文档默认' : '设为文档默认'}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => void removeStyle(row)}>删除</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          <div>
+            <p className="mb-1 text-meta text-foreground/40">Craft 的样式</p>
+            <div className="flex flex-wrap gap-2">
+              {PAGE_STYLE_PRESETS.map((preset) => (
+                <div key={preset} className="flex w-14 flex-col items-center gap-0.5">
+                  <button
+                    type="button"
+                    title={preset}
+                    onClick={() => setPageStyle(pageStyleForPreset(preset))}
+                    className="flex size-7 items-center justify-center rounded-md border border-foreground/10 text-[9px] text-foreground/60 transition-transform hover:scale-110"
+                  >
+                    {preset.slice(0, 2)}
+                  </button>
+                  <span className="w-9 truncate text-center text-[10px] text-foreground/60">{preset}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* G1436: 「Original」 — one click back to the untouched page style. */}
       <section>
         <button

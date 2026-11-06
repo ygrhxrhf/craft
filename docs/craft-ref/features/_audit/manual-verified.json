@@ -4010,10 +4010,14 @@
       ]
     },
     "G151": {
-      "status": "gap",
-      "note": "无自定义样式实体、图库与文档默认样式",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 族拆批第 3f 批，用户裁决建子系统）：自定义样式落成一等实体——`custom_styles` 表（迁移 `20261106T1116_add_custom_styles`，additive）＋ server actions（列/建/重命名/软删/设默认）；样式面板顶栏新增「自定义样式」区：保存当前样式（按 `custom-style-patch` 键表捕获 theme/themeColor/textColor/fontPack/washi）、套用、未保存脏态圆点、Craft 的样式 vs 你的样式两栏、设为文档默认（新建文档创建时套用，含离线内核 `createDocumentLocal` 路径）、重命名/删除菜单＋空态文案。浏览器实点全链路：保存（库行与补丁逐字一致）→套用（ring＋底色）→改主题出脏点→设默认出星标→新建文档 pageStyle 与样式逐字一致→重命名→删除（软删并清默认）；三篇探针文档已软删。★ 载体说明：官方「样式图库」由本地两栏样式网格承担（未另做全屏图库弹层）；「条数上限受套餐门禁」＝付费面，本项目自用 N/A ⇒ 已对齐",
       "evidence": [
-        "src/components/editor/tabs/StyleTab.tsx:38"
+        "src/actions/style/custom-styles.ts",
+        "src/components/editor/tabs/StyleTab.tsx",
+        "src/lib/editor/themes/custom-style-patch.ts",
+        "src/components/sync/create-local.ts",
+        "src/prisma/contract.prisma"
       ]
     },
     "G152": {

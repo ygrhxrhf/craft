@@ -11,7 +11,15 @@ describe('createDocument metaUpdatedAt（T4 缺口：新行须进增量同步）
 
   it('新建文档行显式带 metaUpdatedAt', async () => {
     const create = vi.fn(async (_data?: Record<string, unknown>) => ({}));
-    (getDb as any).mockResolvedValue({ orm: { public: { Document: { create, first: vi.fn(async () => null) } } } });
+    (getDb as any).mockResolvedValue({
+      orm: {
+        public: {
+          Document: { create, first: vi.fn(async () => null) },
+          // G151：新建路径会查「设为文档默认」的自定义样式。
+          CustomStyle: { where: () => ({ all: async () => [] }) },
+        },
+      },
+    });
     await createDocument({ title: '新文档' });
     expect(create).toHaveBeenCalledTimes(1);
     const arg = create.mock.calls[0]![0]!;

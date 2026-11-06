@@ -36,6 +36,8 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'tag', model: 'Tag', cols: ['id','name','color','order','pinned','userId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   { table: 'document_tag', model: 'DocumentTag', cols: ['documentId','tagId','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => `${r.documentId}__${r.tagId}` },
   { table: 'favorite', model: 'Favorite', cols: ['id','userId','documentId','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
+  // G151：自定义样式（用户级实体，软删走 deletedAt；只有服务端 action 建行，无离线铸造面）。
+  { table: 'customStyle', model: 'CustomStyle', cols: ['id','userId','name','style','isDefault','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id) },
   // G1513：task 的单点动作＝改排期 {dueDate,remindAt,recurrence,recurrenceEnd}／删除（patch:null）；
   // 离线新建（taskPatchFor.create）一定带 title（哪怕空串）⇒ title 把改排期在陈旧行上的铸壳挡住。
   { table: 'task', model: 'Task', cols: ['id','userId','documentId','blockId','title','isCompleted','dueDate','scheduleDate','remindAt','recurrence','recurrenceEnd','seriesId','completedAt','cancelledAt','status','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['title'] },

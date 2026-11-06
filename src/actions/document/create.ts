@@ -62,12 +62,18 @@ export async function createDocument(input: {
   const now = new Date().toISOString();
   // G236：从模板新建时在页面样式里留一枚「来自模板」的来源标记（模板 id）。
   const basePageStyle = sourceDoc ? (sourceDoc.pageStyle ?? null) : null;
-  const pageStyle = input.useTemplateId
+  let pageStyle = input.useTemplateId
     ? {
         ...(basePageStyle && typeof basePageStyle === 'object' ? basePageStyle : {}),
         fromTemplate: input.useTemplateId,
       }
     : basePageStyle;
+  // G151：全新文档（非副本、非模板、非模板派生）套用用户「设为文档默认」的自定义样式。
+  if (!sourceDoc && !input.isTemplate && !input.useTemplateId && !input.duplicateFrom) {
+    const defaults = (await db.orm.public.CustomStyle.where({ userId: session.user.id, isDefault: true }).all()) as any[];
+    const picked = defaults.find((row) => !row.deletedAt);
+    if (picked?.style && typeof picked.style === 'object') pageStyle = picked.style;
+  }
   const doc = await db.orm.public.Document.create({
     id: crypto.randomUUID(),
     title,

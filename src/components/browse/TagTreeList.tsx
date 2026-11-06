@@ -17,6 +17,7 @@ import {
   pinToggleLabel,
 } from '@/lib/browse/pinned-tags';
 import { confirmDialog } from '@/lib/dialog/show';
+import { useDragArm } from '@/lib/dnd/use-drag-arm';
 
 function TagRow({ group, nested = false }: { group: TagBrowseGroup; nested?: boolean }) {
   return (
@@ -46,6 +47,8 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
   const router = useRouter();
   const [items, setItems] = useState(groups);
   const [dragging, setDragging] = useState<number | null>(null);
+  // G56：触摸端长按走合成的拖拽事件，桌面仍由原生 HTML5 拖拽接管。
+  const dragArm = useDragArm('general');
   // G173：固定失败/到上限时的那一句（不是静默吞掉）。
   const [pinError, setPinError] = useState<string | null>(null);
 
@@ -139,6 +142,9 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
           key={group.id}
           draggable
           data-testid={`tag-row-${group.id}`}
+          onPointerDown={dragArm.onPointerDown}
+          onPointerMove={dragArm.onPointerMove}
+          onPointerUp={dragArm.onPointerUp}
           onDragStart={() => setDragging(index)}
           onDragEnd={() => setDragging(null)}
           onDragOver={(event) => event.preventDefault()}

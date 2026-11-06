@@ -7,6 +7,7 @@ import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { DocumentCard } from '@/components/document/DocumentCard';
 import { getSyncManager } from '@/lib/sync-core';
 import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
+import { useDragArm } from '@/lib/dnd/use-drag-arm';
 
 interface StarredDoc {
   id: string;
@@ -31,6 +32,8 @@ export function StarredGrid({ documents }: StarredGridProps) {
   const [items, setItems] = useState(documents);
   const [dragging, setDragging] = useState<number | null>(null);
   const [dropAt, setDropAt] = useState<{ index: number; after: boolean } | null>(null);
+  // G56：触摸端长按走合成的拖拽事件，桌面仍由原生 HTML5 拖拽接管。
+  const dragArm = useDragArm('general');
 
   const commitOrder = async (next: StarredDoc[]) => {
     setItems(next);
@@ -69,6 +72,9 @@ export function StarredGrid({ documents }: StarredGridProps) {
           key={doc.favoriteId}
           draggable
           data-testid={`starred-card-${doc.favoriteId}`}
+          onPointerDown={dragArm.onPointerDown}
+          onPointerMove={dragArm.onPointerMove}
+          onPointerUp={dragArm.onPointerUp}
           onDragStart={() => setDragging(index)}
           onDragEnd={() => {
             setDragging(null);

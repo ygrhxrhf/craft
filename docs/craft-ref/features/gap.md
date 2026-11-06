@@ -1188,7 +1188,7 @@
 |---|---|---|---|---|
 | G54 | Unsplash 搜索面板是正式功能模块（`UnsplashSearchPanel`），且 slash 里有 `commands.insert.image.unsplash` | 决策为"跳过且不出入口" | **与 1:1 标准冲突，需重判** | 2/2 |
 | G55 | blurhash worker：图片先显示模糊占位再换清晰图 | 图片直接加载，无 blurhash | 缺失 | 1/2 |
-| G56 | 桌面 HTML5 backend 与移动 Touch backend 两套 DnD 分流（`HTML5DnDProvider`/`TouchDnDProvider`） | 单一拖拽实现，触摸端未分流 ⇒ ✎ 现读（2026-11-02 第 197 批）：后端在 pointerdown 一次选定（`dragBackendFor`），块把手按设备读不同阈值列（触摸读 hold、指针读 move）；但侧栏行与卡片仍是 HTML5 `draggable`，触摸端没有 Touch 通路 ⇒ 只对了"块把手"一处 | 缺失（局部） | 2/2 |
+| G56 | 桌面 HTML5 backend 与移动 Touch backend 两套 DnD 分流（`HTML5DnDProvider`/`TouchDnDProvider`） | ✎ 现读（2026-11-06 第 3j 批）：分流已落地——`dragBackendFor` 按发起指针选后端（touch/pen→touch，其余→html5）；触摸端长按越过 150ms 由 `touch-drag` 合成 `dragstart/dragenter/dragover/drop/dragend`，复用原 HTML5 落点逻辑，指针移动超过 8px 视为滚动；侧栏三棵树与收藏／标签两个排序列表都接同一 hook。浏览器实点：标签列表长按拖动整行，顺序落库并从首位移到目标位 | 已对齐 | 2/2 |
 | G57 | 空间级管理：全部空间侧栏、我的空间、空间迁移到团队（`AllSpacesSidebar`/`MySpaces`/`SpacesClientMini`/`MoveSpaceToTeamPopupContent`） | 无空间概念，只有 folder 树 | 缺失 | 2/3 |
 | G58 | 评论两种形态：侧栏整页 + **浮动线程窗口**（`SideMenuCommentsPage`/`FloatingThreadWindow`） | ✎ 现读（2026-11-02 第 196 批）：两种形态都在——信息页是整页列表（含回复/表情/解决）；**浮动线程窗口**（`FloatingThreadWindow.tsx`）在点正文 `[data-thread-id]` 高亮时弹出，显示该线程全部评论、可标记/取消解决、Esc 关一层。窗口内不提供撰写（回复仍走面板），这是本批声明的作用域 ☆ 已清（第 196 批） | 对齐 | 2/2 |
 | G59 | 可观测性 UI 四块：同步日志、性能面板、浏览同步、浏览器兼容检查（`SyncLogTab`/`PerformanceTab`/`BrowseSyncTab`/`IncompatibleBrowserCheck`，对应 i18n `diagnostics.*`、`error.report.*`） | 完全没有 | 缺失 | 1/3 |

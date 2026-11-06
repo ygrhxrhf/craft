@@ -3353,10 +3353,17 @@
       ]
     },
     "G56": {
-      "status": "partial",
-      "note": "编辑器拖拽走 pointer 阈值；侧栏仍原生 HTML5 draggable，触摸端未分流",
+      "status": "aligned",
+      "note": "G56 现读（2026-11-06 第 3j 批）：两套拖拽后端的设备分流已落地。dragBackendFor 按发起拖拽的指针类型选后端（touch/pen 走 touch，其余走 html5）；触摸端没有原生 HTML5 拖拽，所以在长按越过该档 touchDelay（general 150ms）后由 touch-drag 合成 dragstart/dragenter/dragover/drop/dragend，把原有落点逻辑原样复用；指针移动超过 8px 视为滚动并取消长按；拖拽期间拦 touchmove 防页面滚动。侧栏文档树、文件夹树、白板树与收藏网格、标签排序列表五处共用 useDragArm。浏览器实点：标签列表长按首行拖至第四行后，顺序落库并从首位移到目标位。",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:28"
+        "src/lib/dnd/touch-drag.ts:81",
+        "src/lib/dnd/use-drag-arm.ts:26",
+        "src/components/sidebar/DocumentTreeItem.tsx:371",
+        "src/components/sidebar/FolderTreeItem.tsx:383",
+        "src/components/sidebar/WhiteboardTree.tsx:63",
+        "src/components/document/StarredGrid.tsx:75",
+        "src/components/browse/TagTreeList.tsx:145",
+        "src/lib/dnd/touch-drag.test.ts:1"
       ]
     },
     "G57": {

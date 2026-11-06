@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-06T15:12:11.392Z",
+  "generatedAt": "2026-11-06T15:28:04.768Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 827,
-    "aligned": 348,
+    "gap": 826,
+    "aligned": 349,
     "unknown": 193,
     "deliberate": 105,
     "partial": 68,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 257,
-    "P2 / aligned": 242,
+    "P2 / gap": 256,
+    "P2 / aligned": 243,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -2106,10 +2106,10 @@
       "cols": 5,
       "id": "G56",
       "official": "桌面 HTML5 backend 与移动 Touch backend 两套 DnD 分流（`HTML5DnDProvider`/`TouchDnDProvider`）",
-      "local": "单一拖拽实现，触摸端未分流 ⇒ ✎ 现读（2026-11-02 第 197 批）：后端在 pointerdown 一次选定（`dragBackendFor`），块把手按设备读不同阈值列（触摸读 hold、指针读 move）；但侧栏行与卡片仍是 HTML5 `draggable`，触摸端没有 Touch 通路 ⇒ 只对了\"块把手\"一处",
-      "verdict": "缺失（局部）",
+      "local": "✎ 现读（2026-11-06 第 3j 批）：分流已落地——`dragBackendFor` 按发起指针选后端（touch/pen→touch，其余→html5）；触摸端长按越过 150ms 由 `touch-drag` 合成 `dragstart/dragenter/dragover/drop/dragend`，复用原 HTML5 落点逻辑，指针移动超过 8px 视为滚动；侧栏三棵树与收藏／标签两个排序列表都接同一 hook。浏览器实点：标签列表长按拖动整行，顺序落库并从首位移到目标位",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

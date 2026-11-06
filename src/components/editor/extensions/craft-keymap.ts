@@ -40,6 +40,7 @@ import { promptDialog } from '@/lib/dialog/show';
 import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
 import { useCardConfigStore } from '@/lib/store/use-card-config-store';
 import { selectToEdgeAction } from '@/lib/editor/select-to-edge';
+import { applyToggleList } from '@/lib/editor/toggle-list';
 
 export const CRAFT_KEYMAP_KEY = new PluginKey('craftKeymap');
 
@@ -70,7 +71,12 @@ const STYLE_SLOTS: Record<string, (editor: Editor) => boolean> = {
     return editor.chain().focus().setParagraph().run();
   },
   TODO_LIST: (editor) => editor.chain().focus().toggleTaskList().run(),
-  TOGGLE_LIST: (editor) => editor.chain().focus().setToggleBlock().run(),
+  TOGGLE_LIST: (editor) =>
+    applyToggleList({
+      state: editor.state,
+      dispatch: (tr) => editor.view.dispatch(tr),
+      chain: () => editor.chain(),
+    }),
   BULLET_LIST: (editor) => editor.chain().focus().toggleBulletList().run(),
   NUMBERED_LIST: (editor) => editor.chain().focus().toggleOrderedList().run(),
   NO_LIST: (editor) => unsetList(editor),
@@ -299,6 +305,24 @@ export const CraftKeymap = Extension.create({
    */
   onCreate() {
     const handler = (event: KeyboardEvent) => {
+      // G517：TipTap 内置把 `Mod-Shift-7` 绑成编号列表，会抢在官方 `Ctrl-Shift-7＝折叠列表`
+      // 之前；这条冲突必须在捕获阶段截下，否则段落永远变不成折叠块。
+      if (
+        detectPlatform() !== 'mac' &&
+        (event.ctrlKey || event.metaKey) &&
+        event.shiftKey &&
+        !event.altKey &&
+        event.code === 'Digit7'
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        applyToggleList({
+          state: this.editor.state,
+          dispatch: (tr) => this.editor.view.dispatch(tr),
+          chain: () => this.editor.chain(),
+        });
+        return;
+      }
       const action = selectToEdgeAction(
         {
           key: event.key,

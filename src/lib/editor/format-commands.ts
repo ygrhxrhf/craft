@@ -10,6 +10,7 @@ import {
   type TriState,
   type WritingMode,
 } from './format-presence';
+import { applyToggleList } from './toggle-list';
 
 /**
  * 「格式」页签的控件表。四条线各自成组，命名不再互相冒名（`gap.md` G153 记的就是本地把缩进
@@ -31,6 +32,11 @@ import {
 export interface FormatChain {
   focus(): this;
   run(): unknown;
+  /** G517：列表样式切换要把顶层段落就地换成折叠块（保留正文）。 */
+  toggleNode(name: string, type: string): FormatChain;
+  unsetToggleBlock(): FormatChain;
+  /** G517：光标不在可换的顶层段落上时，退回"插入新折叠块"。 */
+  setToggleBlock(): FormatChain;
 }
 
 export interface FormatCommands extends FormatChain {
@@ -95,7 +101,7 @@ export const ALIGNMENT_CONTROLS: readonly AlignControl[] = [
 
 export const LIST_CONTROLS: readonly ListControl[] = [
   { kind: 'todo', key: 'style.list.todo', label: '待办列表', apply: (h) => h.chain().focus().toggleTaskList().run() },
-  { kind: 'toggle', key: 'style.list.toggle', label: '折叠列表', apply: (h) => h.chain().focus().setToggleBlock().run() },
+  { kind: 'toggle', key: 'style.list.toggle', label: '折叠列表', apply: (h) => void applyToggleList(h) },
   { kind: 'bullet', key: 'style.list.bullet', label: '无序列表', apply: (h) => h.chain().focus().toggleBulletList().run() },
   { kind: 'numbered', key: 'style.list.numbered', label: '编号列表', apply: (h) => h.chain().focus().toggleOrderedList().run() },
   {

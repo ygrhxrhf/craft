@@ -5886,10 +5886,15 @@
       ]
     },
     "G517": {
-      "status": "partial",
-      "note": "格式面板五档含折叠，但折叠是独立节点，切换靠换节点类型",
+      "status": "aligned",
+      "note": "G517 现读（2026-11-07 第 3p 批）：承载方式仍是节点类型，但五档行为齐全且可切换。折叠列表改为就地换节点：顶层段落包进 toggleBlock（正文跟着走），在折叠块里再按一次拆回段落；其余位置退回插入新块的旧语义。顺带修掉 TipTap 内置 Mod-Shift-7（编号列表）抢占官方 Ctrl-Shift-7 的冲突，改在捕获阶段接管。浏览器实点：段落按 Ctrl-Shift-7 变折叠块且正文保留，再按一次回段落。",
       "evidence": [
-        "src/lib/editor/format-commands.ts:91"
+        "src/lib/editor/toggle-list.ts:33",
+        "src/lib/editor/toggle-list.ts:59",
+        "src/components/editor/extensions/craft-keymap.ts:74",
+        "src/components/editor/extensions/craft-keymap.ts:315",
+        "src/lib/editor/format-commands.ts:104",
+        "src/lib/editor/toggle-list.test.ts:1"
       ]
     },
     "G518": {

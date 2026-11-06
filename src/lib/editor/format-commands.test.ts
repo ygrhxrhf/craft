@@ -126,6 +126,8 @@ const schema = new Schema({
     },
     bulletList: { group: 'block', content: 'listItem+' },
     listItem: { group: 'block', content: 'paragraph block*' },
+    // G517：折叠列表是块级节点（就地换样式时要把段落包进来）。
+    toggleBlock: { group: 'block', content: 'block+' },
     text: { marks: 'bold' },
   },
   marks: { bold: {} },
@@ -181,6 +183,14 @@ function fakeHost(state = textState('alpha')) {
     },
     setToggleBlock: () => {
       calls.push('setToggleBlock');
+      return chain;
+    },
+    toggleNode: (name: string, type: string) => {
+      calls.push(`toggleNode(${name},${type})`);
+      return chain;
+    },
+    unsetToggleBlock: () => {
+      calls.push('unsetToggleBlock');
       return chain;
     },
     toggleBulletList: () => {
@@ -252,16 +262,21 @@ describe('every control fires the command its label promises', () => {
   it('reaches the list family through the four toggles and one explicit clear', () => {
     const expected: Record<string, string[]> = {
       待办列表: ['focus', 'toggleTaskList', 'run'],
-      折叠列表: ['focus', 'setToggleBlock', 'run'],
       无序列表: ['focus', 'toggleBulletList', 'run'],
       编号列表: ['focus', 'toggleOrderedList', 'run'],
     };
     for (const control of LIST_CONTROLS) {
-      const { host, calls } = fakeHost();
+      const { host, calls, dispatched } = fakeHost();
       control.apply(host);
       if (control.kind === 'none') {
         // 取消列表格式走 PM 自己的 lift，不需要 chain 命令；无列表时它应当一事务都不发。
         expect(calls).toEqual([]);
+        continue;
+      }
+      if (control.kind === 'toggle') {
+        // G517：折叠列表是就地换节点（事务），不再走 chain 插入新块。
+        expect(calls).toEqual([]);
+        expect(dispatched).toHaveLength(1);
         continue;
       }
       expect(calls, control.label).toEqual(expected[control.label]);

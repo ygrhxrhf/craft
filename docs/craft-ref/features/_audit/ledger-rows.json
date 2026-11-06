@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-06T16:53:52.091Z",
+  "generatedAt": "2026-11-06T17:26:17.167Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 823,
-    "aligned": 354,
+    "gap": 822,
+    "aligned": 355,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 253,
-    "P2 / aligned": 248,
+    "P2 / gap": 252,
+    "P2 / aligned": 249,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -10432,10 +10432,10 @@
       "cols": 5,
       "id": "G517",
       "official": "★★ **`listStyle` 权威五值 `{none, bullet, numbered, todo, toggle}`** ⇒ **\"折叠块\"在官方模型里只是一种列表样式**，与项目符号/编号/任务共用同一字段；配合 §一之八\"块类型判定是优先级链且 `listStyle` 压过 `textStyle`\"⇒ **项目符号 + Heading 判为 `listItem` 的成因即在此**（§一之十七 3）",
-      "local": "本地 `toggleBlock` 是**独立节点类型**（`src/components/editor/extensions/focus-style.tsx:20` 的 types 列表里与 `bulletList`/`orderedList`/`taskList`/`callout` 并列）⇒ 在\"普通段落 ⇄ 折叠块\"之间切换要**换节点类型**而不是改一个字段 ⇒ 与 G190（块转换丢属性）、G509（表头用 node type 承载）**同一族根因**",
-      "verdict": "行为不同（承载方式）",
+      "local": "✎ 现读（2026-11-07 第 3p 批）：承载方式仍是独立节点类型（段落／列表／`toggleBlock`），但五档行为都在且可切换：折叠列表改为**就地换节点**——顶层段落包进 `toggleBlock`（正文跟着走）、在折叠块里再按一次拆回段落；另修掉 TipTap 内置 `Mod-Shift-7`（编号列表）抢占官方 `Ctrl-Shift-7` 的冲突，改为捕获阶段接管。浏览器实点：段落按 Ctrl-Shift-7 变成折叠块且正文保留，再按一次回到段落",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

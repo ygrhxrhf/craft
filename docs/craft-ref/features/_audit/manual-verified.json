@@ -8765,10 +8765,11 @@
       ]
     },
     "G1162": {
-      "status": "partial",
-      "note": "无 CM6 基准主题兜底层，暗档靠 .dark 整块重指",
+      "status": "nonaction",
+      "note": "✎ 现读（2026-11-06 族拆批第 3b 批）：本地代码块不走 CodeMirror（package 无 codemirror 依赖，代码块＝TipTap codeBlock＋lowlight），CM6 基准主题的 35 条 `&light`／`&dark` 规则在本地**没有对应屏幕面**；可观察的代码块配色由 `--code-*` 十枚 token（craftlight／craftdark 逐字）承担（见 G1180）⇒ 按「官方源码内部结构、本地无对应面」记 nonaction；将来若引入 CM6 编辑器再回看本条",
       "evidence": [
-        "src/app/globals.css:380"
+        "src/lib/editor/plain-fallback-lowlight.ts",
+        "src/app/globals.css"
       ]
     },
     "G1165": {
@@ -8833,10 +8834,12 @@
       ]
     },
     "G1180": {
-      "status": "partial",
-      "note": "未注册语言不高亮，由 lowlight 覆盖表决定，不自动顶替",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 族拆批第 3b 批）：给 lowlight 包了一层（`plain-fallback-lowlight.ts`）——未注册语言不再回落到 `highlightAuto`（自动检测顶掉用户选择），改按纯文本返回 ⇒ 与官方「无 grammar＝整块单色」同形。浏览器实点同文档两块围栏：ada 块 0 个 `hljs-*` token（整块单色）、python 块 5 个 token（keyword/title/params）；单测 5 条。两侧 grammar 语言集差异属素材面，不在本行 ⇒ 已对齐",
       "evidence": [
-        "src/lib/editor/grammar-coverage.ts:17"
+        "src/lib/editor/plain-fallback-lowlight.ts",
+        "src/lib/editor/plain-fallback-lowlight.test.ts",
+        "src/components/editor/Editor.tsx"
       ]
     },
     "G1183": {

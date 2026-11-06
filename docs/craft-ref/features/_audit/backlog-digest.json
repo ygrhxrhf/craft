@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-06T10:47:12.020Z",
+  "generatedAt": "2026-11-06T10:58:28.685Z",
   "total": 1615,
   "status": {
-    "aligned": 636,
-    "nonaction": 515,
-    "partial": 194,
+    "aligned": 637,
+    "nonaction": 516,
+    "partial": 192,
     "deliberate": 169,
     "gap": 81,
     "unreachable": 20
@@ -17,10 +17,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 319,
+    "P2 / aligned": 320,
     "P? / nonaction": 191,
     "P1 / aligned": 171,
-    "P2 / nonaction": 169,
+    "P2 / nonaction": 170,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
@@ -28,7 +28,7 @@
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 60,
-    "P2 / partial": 44,
+    "P2 / partial": 42,
     "P? / deliberate": 40,
     "P3 / gap": 38,
     "P? / gap": 34,
@@ -1340,8 +1340,8 @@
       4
     ],
     [
-      "三点一〇六二、第 112 批〔★★★ **代码块主题的\"装配处\"与\"缺省",
-      4
+      "三点八、AI 助手与接入中心追加（来自 `assistant.md`，静",
+      3
     ]
   ]
 }

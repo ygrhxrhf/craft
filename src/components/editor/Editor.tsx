@@ -95,10 +95,12 @@ import { saveDraft, getDraft, deleteDraft } from '@/lib/offline/draft-store';
 import { jumpToAnchor, readAnchorHash } from '@/lib/editor/block-anchor';
 import { useCollabSession } from '@/lib/collaboration/use-collab-session';
 import { isEffectivelyEmptyFragment } from '@/lib/collaboration/empty-fragment';
+import { plainFallbackLowlight } from '@/lib/editor/plain-fallback-lowlight';
 import { CursorLayer } from './collab/CursorLayer';
 import Collaboration from '@tiptap/extension-collaboration';
 
-const lowlight = createLowlight(common);
+// G1180：未注册语言按纯文本渲染（官方「无 grammar 就单色」），不回落到自动检测。
+const lowlight = plainFallbackLowlight(createLowlight(common));
 
 function collectLinkedDocIds(content: unknown): string[] {
   const ids = new Set<string>();

@@ -149,8 +149,8 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
   if (id === 'STRIKE_INLINE') return editor.chain().focus().toggleStrike().run();
   if (id === 'HIGHLIGHT_INLINE') return editor.chain().focus().toggleHighlight().run();
   if (id === 'CODE_INLINE') return editor.chain().focus().toggleCode().run();
-  // G1588 / G1594: 组合与取消组合。组合＝把选中的顶层块包进卡片；取消组合＝把卡片子块提回顶层
-  // （官方取消组合留的是「块＋子块」，本地按 G197 的卡片模型提回顶层）。
+  // G1588 / G1594: 组合与取消组合。组合＝把选中的顶层块包进卡片；取消组合照官方 REST 定案
+  // 降级成「页面块（h3 标题）＋子块」且再按一次不变（首子升标题位、其余子块原地保留）。
   if (id === 'GROUP_BLOCKS') {
     const selection = useBlockSelectStore.getState();
     if (selection.active && selection.indices.length > 1) {

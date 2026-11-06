@@ -1,10 +1,11 @@
 import type { Node } from '@tiptap/pm/model';
-import type { EditorState, Transaction } from '@tiptap/pm/state';
+import { TextSelection, type EditorState, type Transaction } from '@tiptap/pm/state';
 
 /**
  * G197「组合 / 取消组合」。官方把多块归成一组是块级一等操作；本地没有独立的 group 节点，
  * 容器形状就是 `cardBlock`（插入面板的「卡片」与块菜单的「转换为卡片」共用它），所以组合＝
- * 包进卡片、取消组合＝把卡片的子块提回顶层。
+ * 包进卡片。取消组合照 G1594 的官方 REST 定案＝**降级成「页面块（h3 标题）＋子块」**
+ * （首子升为 h3 标题位、其余子块原地保留），不是把子块提回顶层。
  */
 
 const CARD = 'cardBlock';
@@ -83,14 +84,32 @@ export function applyGroupIndices(
   return true;
 }
 
-/** 取消组合：把光标所在卡片的子块提回顶层，卡片本身消失。 */
+/**
+ * 取消组合（G1594）：官方 REST 定案的形状是 `{"type":"page","textStyle":"h3","markdown":"### ALPHA",
+ * "content":[…]}`——**降级成「页面块（h3 标题）＋子块」，且再按一次一字不变**。
+ * 本地对应：卡片首子升为 `heading level 3` 标题位、其余子块原地保留；首子已是标题时
+ * 观察面不再变化（不发事务、仍算已处理，挡住后续派发）。
+ */
 export function applyUngroup(state: EditorState, dispatch?: (tr: Transaction) => void): boolean {
   const { $from } = state.selection;
   for (let depth = $from.depth; depth > 0; depth -= 1) {
     const node = $from.node(depth);
     if (node.type.name !== CARD) continue;
+    const first = node.firstChild;
+    // 降级形或无法取标题的首子（列表/代码等非段落）：观察面保持原样。
+    if (!first || first.type.name !== 'paragraph') return true;
     if (!dispatch) return true;
-    dispatch(state.tr.replaceWith($from.before(depth), $from.after(depth), node.content));
+    const heading = state.schema.nodes.heading;
+    if (!heading) return false;
+    const title = heading.createAndFill({ level: 3 }, first.content);
+    if (!title) return false;
+    const children = [title];
+    for (let index = 1; index < node.childCount; index += 1) children.push(node.child(index));
+    const cardStart = $from.before(depth);
+    const tr = state.tr.replaceWith(cardStart, $from.after(depth), node.type.create(node.attrs, children));
+    // 整卡替换的映射会把光标送到卡外——显式留在卡内，第二次按才是"已处理、观察面不变"。
+    tr.setSelection(TextSelection.near(tr.doc.resolve(cardStart + 1)));
+    dispatch(tr);
     return true;
   }
   return false;

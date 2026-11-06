@@ -683,7 +683,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
               <kbd className="ml-auto text-[10px] text-foreground/40">{shortcutGlyph(bindingId)}</kbd>
             </button>
           ))}
-          {/* G197：组合＝把选区触及的块包进卡片；取消组合＝把卡片拆回顶层。 */}
+          {/* G197/G1594：组合＝把选区触及的块包进卡片；取消组合＝降级成「h3 标题＋子块」的页面块形。 */}
           <button
             type="button"
             onClick={() => groupSelection(editor)}

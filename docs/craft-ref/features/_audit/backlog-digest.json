@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-06T07:58:17.264Z",
+  "generatedAt": "2026-11-06T08:33:40.003Z",
   "total": 1614,
   "status": {
-    "aligned": 630,
+    "aligned": 631,
     "nonaction": 515,
-    "partial": 197,
+    "partial": 196,
     "deliberate": 169,
     "gap": 83,
     "unreachable": 20
@@ -17,7 +17,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 314,
+    "P2 / aligned": 315,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 169,
@@ -28,7 +28,7 @@
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 60,
-    "P2 / partial": 47,
+    "P2 / partial": 46,
     "P? / deliberate": 40,
     "P3 / gap": 38,
     "P? / gap": 34,
@@ -1276,11 +1276,11 @@
       10
     ],
     [
-      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      10
+      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
+      9
     ],
     [
-      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
+      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
       9
     ],
     [

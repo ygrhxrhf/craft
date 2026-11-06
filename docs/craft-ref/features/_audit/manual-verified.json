@@ -9951,12 +9951,12 @@
       ]
     },
     "G1594": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "Ctrl-Shift-G 已绑且幂等；但本地取消组把子块提到顶层，官方留下「块＋子块」。",
+      "note": "✎ 现读（2026-11-06 族拆批第 2 批，用户裁决复刻官方形状）：取消组合降级成「页面块（h3 标题）＋子块」——`applyUngroup` 把卡片首子升为 `heading level 3`、其余子块原地保留，整卡替换后显式把光标留回卡内；首子已是标题时不发事务、仍算已处理。浏览器实点完整序列 Escape→Shift-↓→Ctrl-G 成组→Ctrl-Shift-G 降级读到卡片子项 `[H3:ALPHA, P:BETA]`、光标链 `[doc,cardBlock,heading]`，第二次按已处理且卡片 outerHTML 一字不变 ⇒ 已对齐",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:143",
-        "src/lib/editor/block-group.ts:69"
+        "src/lib/editor/block-group.ts",
+        "src/lib/editor/block-group.test.ts"
       ]
     },
     "G1595": {

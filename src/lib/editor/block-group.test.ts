@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { Node as ProseNode, Schema } from '@tiptap/pm/model';
-import { EditorState, TextSelection } from '@tiptap/pm/state';
+import { EditorState, TextSelection, type Transaction } from '@tiptap/pm/state';
 import { describe, expect, it } from 'vitest';
 
 import { applyGroup, applyGroupIndices, applyUngroup, canGroup, canUngroup } from './block-group';
@@ -12,6 +12,7 @@ const cardSchema = new Schema({
   nodes: {
     doc: { content: 'block+' },
     paragraph: { group: 'block', content: 'text*' },
+    heading: { group: 'block', content: 'text*', attrs: { level: { default: 3 } } },
     cardBlock: { group: 'block', content: 'block+' },
     text: {},
   },
@@ -62,8 +63,8 @@ describe('组合 (G197)', () => {
   });
 });
 
-describe('取消组合 (G197)', () => {
-  it('lifts the card children back to the top level', () => {
+describe('取消组合 (G197 / G1594)', () => {
+  it('downgrades the card to an h3 title wrapping the rest (官方 REST 形状)', () => {
     const doc = docOf(c(p('甲'), p('乙')), p('丙'));
     const dispatched: ProseNode[] = [];
 
@@ -75,9 +76,44 @@ describe('取消组合 (G197)', () => {
     expect(dispatched).toHaveLength(1);
 
     const result = dispatched[0]!;
-    expect(result.childCount).toBe(3);
-    expect(result.child(0).type.name).toBe('paragraph');
-    expect(result.child(2).textContent).toBe('丙');
+    expect(result.childCount).toBe(2);
+    // 卡片不消失：首子升为 h3 标题位，其余子块原地保留（页面块包着子块）。
+    expect(result.child(0).type.name).toBe('cardBlock');
+    const title = result.child(0).child(0);
+    expect(title.type.name).toBe('heading');
+    expect(title.attrs.level).toBe(3);
+    expect(title.textContent).toBe('甲');
+    expect(result.child(0).child(1).textContent).toBe('乙');
+    expect(result.child(1).textContent).toBe('丙');
+  });
+
+  it('changes nothing observable when pressed again on a downgraded card', () => {
+    const doc = docOf(c(p('甲'), p('乙')), p('丙'));
+    let after = doc;
+    applyUngroup(stateOf(doc, 3), (tr) => {
+      after = tr.doc;
+    });
+
+    const dispatched: ProseNode[] = [];
+    expect(
+      applyUngroup(stateOf(after, 3), (tr) => {
+        dispatched.push(tr.doc);
+      }),
+    ).toBe(true);
+    expect(dispatched).toHaveLength(0);
+  });
+
+  it('keeps the caret inside the card after the downgrade', () => {
+    const doc = docOf(c(p('甲'), p('乙')), p('丙'));
+    let caret: Transaction | undefined;
+    applyUngroup(stateOf(doc, 3), (tr) => {
+      caret = tr;
+    });
+    expect(caret).toBeDefined();
+    const chain: string[] = [];
+    const $from = caret!.selection.$from;
+    for (let depth = 0; depth <= $from.depth; depth += 1) chain.push($from.node(depth).type.name);
+    expect(chain).toContain('cardBlock');
   });
 
   it('does nothing outside a card', () => {

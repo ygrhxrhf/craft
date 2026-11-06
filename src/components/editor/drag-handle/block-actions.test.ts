@@ -103,9 +103,10 @@ describe('the caret after inserting', () => {
 });
 
 describe('blockMenuItems', () => {
-  // Craft's block menus vary per block type (V43), but every entry we render has to do
-  // something — 提醒我／转换为卡片／添加表情 stay out until they have a local action.
+  // Craft's block menus vary per block type (V43), and every entry we render has to do
+  // something — 提醒我／转换为卡片／添加表情 each carry a handler in this module.
   it('offers the Craft block actions, delete last', () => {
+    // G1439：官方普通文本块菜单逐字 9 项（canRemind/isTask 才有提醒那枚），没有移动项。
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).toEqual([
       'add-content',
       'add-emoji',
@@ -113,10 +114,17 @@ describe('blockMenuItems', () => {
       'convert-card',
       'insert-above',
       'insert-below',
-      'move-up',
-      'move-down',
-      'move-top',
-      'move-bottom',
+      'copy-link',
+      'delete',
+    ]);
+    expect(blockMenuItems({ canDelete: true, canRemind: true }).map((item) => item.id)).toEqual([
+      'add-content',
+      'add-emoji',
+      'add-comment',
+      'convert-card',
+      'remind',
+      'insert-above',
+      'insert-below',
       'copy-link',
       'delete',
     ]);
@@ -130,10 +138,6 @@ describe('blockMenuItems', () => {
       '转换为卡片',
       '在上方插入区块',
       '在下方插入区块',
-      '上移',
-      '下移',
-      '移至顶部',
-      '移至底部',
       '复制区块链接',
       '删除',
     ]);
@@ -183,10 +187,6 @@ describe('blockMenuItems', () => {
       'convert-card',
       'insert-above',
       'insert-below',
-      'move-up',
-      'move-down',
-      'move-top',
-      'move-bottom',
       'copy-link',
     ]);
   });

@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-06T06:19:24.247Z",
+  "generatedAt": "2026-11-06T07:58:17.264Z",
   "total": 1614,
   "status": {
-    "aligned": 627,
+    "aligned": 630,
     "nonaction": 515,
-    "partial": 201,
-    "deliberate": 168,
+    "partial": 197,
+    "deliberate": 169,
     "gap": 83,
     "unreachable": 20
   },
@@ -17,18 +17,18 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 311,
+    "P2 / aligned": 314,
     "P? / nonaction": 191,
     "P1 / aligned": 170,
     "P2 / nonaction": 169,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P? / aligned": 78,
-    "P2 / deliberate": 76,
+    "P2 / deliberate": 77,
     "P3 / partial": 70,
     "P3 / nonaction": 66,
     "P3 / aligned": 60,
-    "P2 / partial": 51,
+    "P2 / partial": 47,
     "P? / deliberate": 40,
     "P3 / gap": 38,
     "P? / gap": 34,
@@ -1272,11 +1272,11 @@
       11
     ],
     [
-      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      11
+      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
+      10
     ],
     [
-      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
+      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
       10
     ],
     [

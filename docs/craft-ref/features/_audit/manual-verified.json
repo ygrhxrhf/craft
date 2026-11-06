@@ -9249,22 +9249,24 @@
       ]
     },
     "G1438": {
-      "status": "partial",
-      "note": "块内 + 是真 button 且带 aria-label，与官方零内容热区相反",
+      "status": "deliberate",
+      "note": "deliberate（族拆批第 2 批裁决）＝本地块把手的 `+` 是真 `button` 带 aria-label（键盘/读屏可达），官方是 `data-hover-only` 空 DIV、AX 名册零命中＝可及性取舍：照官方会让读屏用户失去入口，判有意偏差；官方侧「本尺下不可得」的有界负结论照录不改",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:437"
+        "src/components/editor/drag-handle/DragHandle.tsx"
       ]
     },
     "G1439": {
-      "status": "partial",
-      "note": "本地已 11 项（多出移动四枚），官方 9 项",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 族拆批第 2 批，浏览器实点临时文档）：普通文本块 ⋯ 菜单逐字 9 项、按官方序＝添加内容（带次级说明「在此区块内添加内容」，本批补上）／添加表情／添加评论／转换为卡片／提醒我…／在上方插入区块／在下方插入区块／复制区块链接／删除；本地 4 枚移动项按用户裁决删除（移动走拖拽与 Alt+↑↓，信息页动作另有入口）；残留两问（手柄 + 语义、单块文档删除呈现）是官方侧观察项，不构成本地缺口 ⇒ 已对齐",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:74"
+        "src/components/editor/drag-handle/block-actions.ts",
+        "src/components/editor/drag-handle/DragHandle.tsx",
+        "src/components/editor/drag-handle/block-actions.test.ts"
       ]
     },
     "G1441": {
       "status": "partial",
-      "note": "已是内核＋按块类型注入两层，但内核多出四枚移动项",
+      "note": "✎ 现读（2026-11-06 族拆批第 2 批）：内核四枚移动项已删（G1439 同批），文本块 9＝内核 5＋专属 4、代码块 9＝内核 5＋专属 4 两面闭合并有单测钉住；任务块项集仍差官方 8＝5＋3 的两枚本增项（添加内容、将任务标记为已取消），需按任务块名册单独对齐",
       "evidence": [
         "src/components/editor/drag-handle/block-actions.ts:87"
       ]
@@ -9455,10 +9457,11 @@
       ]
     },
     "G1472": {
-      "status": "partial",
-      "note": "同时只留一枚手柄、无 sticky 多枚并存",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-06 族拆批第 2 批）：sticky 多手柄已落——hover 出现过的行进名册各留一枚，live 那枚清掉后名册不清；mousemove 与 editor update 重算 top、脱离 DOM 或折叠隐藏的行自动清出；浏览器实点三行依次悬停读到 `[data-drag-handle]` 1→2→3 枚并存、top 互不重叠 ⇒ 已对齐（官方「上限未测」照录；两枚浮标组件不同属官方内部形状，不改可观察行为）",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:421"
+        "src/components/editor/drag-handle/DragHandle.tsx",
+        "src/components/editor/drag-handle/drag-handle-sticky.test.ts"
       ]
     },
     "G1473": {
@@ -10100,9 +10103,9 @@
       ]
     },
     "G1614": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "第 269 批：三条「插入集合」建成（斜杠三命令＋面板「合集」三行→createCollection＋collectionBlock 原子块，实点 Kanban 落 view:kanban 并 reload 读回）；仍差＝块内直接渲染集合内容（本地是指向 /collections/{id} 的卡）。白板那枚形态差异同批不变。",
+      "note": "✎ 现读（2026-11-06 族拆批第 2 批）：三条「插入集合」命令与插入面板「合集」三行已落（第 269 批浏览器实点 Kanban 读回 `{block:true, view:'kanban'}` 并 reload 复核），插入通路两侧同型；块内直接渲染集合内容转挂 G81/G454，本行无独有未落项；白板那枚形态差异由同批另行登记 ⇒ 已对齐",
       "evidence": [
         "src/components/editor/slash-menu/slash-commands.ts:652",
         "src/components/editor/extensions/collection-block.tsx:1",

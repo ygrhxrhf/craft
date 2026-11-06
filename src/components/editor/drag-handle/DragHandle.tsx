@@ -89,6 +89,11 @@ const HANDLE_OFFSET = -26;
 
 export function DragHandle({ editor, documentId }: { editor: Editor; documentId: string }) {
   const [handle, setHandle] = useState<HandlePosition | null>(null);
+  /**
+   * G1472：官方的 `⋯` 浮标不是恒 1 枚——每个「曾激活」（把手出现过）的行各留一枚 sticky，
+   * 新行激活后旧的不撤（官方上限未测）。`handle` 只是当前 live 的那枚，sticky 是留下的那批。
+   */
+  const [sticky, setSticky] = useState<HandlePosition[]>([]);
   const [indicator, setIndicator] = useState<IndicatorPosition>({ top: 0, visible: false });
   const dragStateRef = useRef<{
     startX: number;
@@ -126,11 +131,32 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
   const updateHandlePosition = useCallback((blockEl: HTMLElement) => {
     const editorRect = editor.view.dom.getBoundingClientRect();
     const blockRect = blockEl.getBoundingClientRect();
-    setHandle({
+    const next: HandlePosition = {
       top: blockRect.top - editorRect.top,
       left: HANDLE_OFFSET,
       blockEl,
-    });
+    };
+    setHandle(next);
+    // G1472：这行的把手亮过就进 sticky 名册（同块只刷新 top，不重复计数）。
+    setSticky((prev) => [...prev.filter((s) => s.blockEl !== blockEl), next]);
+  }, [editor]);
+
+  /**
+   * G1472 的重算点：mousemove 与编辑器事务都会挪动块的相对 top；顺带把已脱离 DOM
+   * 或被折叠隐藏（rect.height 为 0）的行清出名册。
+   */
+  const refreshSticky = useCallback(() => {
+    const dom = editor.view.dom as HTMLElement;
+    const editorRect = dom.getBoundingClientRect();
+    setSticky((prev) =>
+      prev.flatMap((s) => {
+        if (!s.blockEl.isConnected) return [];
+        const rect = s.blockEl.getBoundingClientRect();
+        if (rect.height === 0) return [];
+        const top = rect.top - editorRect.top;
+        return top === s.top ? s : [{ ...s, top }];
+      }),
+    );
   }, [editor]);
 
   const indexOfBlock = useCallback(
@@ -293,6 +319,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
 
     const handleMouseMove = (e: MouseEvent) => {
       if (dragStateRef.current) return;
+      refreshSticky();
       const target = e.target as HTMLElement;
       const block = target.closest('.ProseMirror > *');
       const editorRect = dom.getBoundingClientRect();
@@ -315,11 +342,14 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
 
     dom.addEventListener('mousemove', handleMouseMove);
     dom.addEventListener('mouseleave', handleMouseLeave);
+    // 打字/事务会平移下方各行的相对 top——sticky 不跟着鼠标走，得靠 update 事件自己刷新。
+    editor.on('update', refreshSticky);
     return () => {
       dom.removeEventListener('mousemove', handleMouseMove);
       dom.removeEventListener('mouseleave', handleMouseLeave);
+      editor.off('update', refreshSticky);
     };
-  }, [editor, updateHandlePosition]);
+  }, [editor, updateHandlePosition, refreshSticky]);
 
   const selectBlock = useCallback(
     (blockEl: HTMLElement, extend: boolean) => {
@@ -412,8 +442,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
   );
 
   const onHandlePointerDown = useCallback(
-    (e: React.PointerEvent) => {
-      if (!handle) return;
+    (e: React.PointerEvent, top: number) => {
       e.preventDefault();
 
       // ProseMirror replaces block elements whenever the Yjs echo or the autosave
@@ -421,7 +450,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
       // detached by the time the pointer goes down. Re-resolve it from the handle's
       // own offset, or the drag silently refuses to arm.
       const dom = editor.view.dom as HTMLElement;
-      const wantedTop = dom.getBoundingClientRect().top + handle.top;
+      const wantedTop = dom.getBoundingClientRect().top + top;
       const blockEl = (Array.from(dom.children) as HTMLElement[]).find((child) => {
         const rect = child.getBoundingClientRect();
         return rect.top <= wantedTop && rect.bottom >= wantedTop;
@@ -566,22 +595,27 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
         window.addEventListener('pointerup', clearHold, { once: true });
       }
     },
-    [handle, editor, getTopLevelRange, computeDropTarget, performMove, selectBlock]
+    [editor, getTopLevelRange, computeDropTarget, performMove, selectBlock]
   );
 
-  if (!handle && !isDragging) return null;
+  // G1472：live 那枚排最前，其余「曾激活」的行按 sticky 各留一枚并存。
+  const targets = handle
+    ? [handle, ...sticky.filter((s) => s.blockEl !== handle.blockEl)]
+    : sticky;
+  if (targets.length === 0 && !isDragging) return null;
 
   return (
     <>
-      {handle && (
+      {targets.map((target) => (
         <div
+          key={indexOfBlock(target.blockEl)}
           className="absolute z-50 flex cursor-grab items-center text-muted-foreground/50 transition-colors hover:text-foreground active:cursor-grabbing max-md:hidden"
           style={{
-            top: handle.top,
+            top: target.top,
             left: HANDLE_OFFSET,
             height: '24px',
           }}
-          onPointerDown={onHandlePointerDown}
+          onPointerDown={(e) => onHandlePointerDown(e, target.top)}
           data-drag-handle=""
         >
           <GripVertical className="size-4" />
@@ -591,7 +625,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
             title="在下方插入区块"
             className="rounded-md p-0.5 transition-colors hover:bg-muted hover:text-foreground"
             onPointerDown={(e) => e.stopPropagation()}
-            onClick={() => handle.blockEl && runBlockAction(handle.blockEl, 'insert-below')}
+            onClick={() => target.blockEl && runBlockAction(target.blockEl, 'insert-below')}
           >
             <Plus className="size-4" />
           </button>
@@ -608,13 +642,13 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
             <DropdownMenuContent align="start" className="max-h-[70vh] overflow-y-auto">
               {blockMenuItems({
                 canDelete: editor.state.doc.childCount > 1,
-                isTask: taskTargetOf(handle.blockEl) !== null,
-                taskCancelled: taskTargetOf(handle.blockEl)?.node.attrs.cancelled === true,
-                canRemind: canRemindBlock(handle.blockEl),
-                ...toggleState(handle.blockEl),
-                isDivider: isDividerBlock(handle.blockEl),
-                isCallout: isCalloutBlock(handle.blockEl),
-                isCodeBlock: isCodeBlock(handle.blockEl),
+                isTask: taskTargetOf(target.blockEl) !== null,
+                taskCancelled: taskTargetOf(target.blockEl)?.node.attrs.cancelled === true,
+                canRemind: canRemindBlock(target.blockEl),
+                ...toggleState(target.blockEl),
+                isDivider: isDividerBlock(target.blockEl),
+                isCallout: isCalloutBlock(target.blockEl),
+                isCodeBlock: isCodeBlock(target.blockEl),
               }).map((item, index, items) => (
                 <Fragment key={item.id}>
                   {index > 0 && items[index - 1].group !== item.group && <DropdownMenuSeparator />}
@@ -627,7 +661,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                       {CALLOUT_CHOICES.map((choice) => (
                         <DropdownMenuItem
                           key={choice.type}
-                          onClick={() => retypeCallout(handle.blockEl, choice.type)}
+                          onClick={() => retypeCallout(target.blockEl, choice.type)}
                         >
                           {choice.label}
                         </DropdownMenuItem>
@@ -643,7 +677,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                       {DIVIDER_STYLE_CHOICES.map((choice) => (
                         <DropdownMenuItem
                           key={choice.style}
-                          onClick={() => restyleDivider(handle.blockEl, choice.style)}
+                          onClick={() => restyleDivider(target.blockEl, choice.style)}
                         >
                           {choice.label}
                         </DropdownMenuItem>
@@ -653,13 +687,13 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                       {WASHI_PATTERN_CHOICES.map((choice) => (
                         <DropdownMenuItem
                           key={choice.name}
-                          onClick={() => restyleSeparator(handle.blockEl, WASHI_SEPARATOR, choice.name)}
+                          onClick={() => restyleSeparator(target.blockEl, WASHI_SEPARATOR, choice.name)}
                         >
                           {SEPARATOR_MATERIAL_LABELS.washi} - {choice.label}
                         </DropdownMenuItem>
                       ))}
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => restyleSeparator(handle.blockEl, 'line')}>
+                      <DropdownMenuItem onClick={() => restyleSeparator(target.blockEl, 'line')}>
                         分隔线（普通）
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>
@@ -673,7 +707,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                       {BLOCK_EMOJIS.map((emoji) => (
                         <DropdownMenuItem
                           key={emoji}
-                          onClick={() => reactToBlock(handle.blockEl, emoji)}
+                          onClick={() => reactToBlock(target.blockEl, emoji)}
                         >
                           {emoji}
                         </DropdownMenuItem>
@@ -707,7 +741,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                                 if (!value) return;
                                 const at = new Date(value);
                                 if (Number.isNaN(at.getTime())) return;
-                                const index = indexOfBlock(handle.blockEl);
+                                const index = indexOfBlock(target.blockEl);
                                 if (index < 0) return;
                                 if (taskItemTarget(editor.state, index)) {
                                   setTaskReminderAt(editor.state, editor.view.dispatch, index, at.toISOString());
@@ -718,12 +752,12 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                               return;
                             }
                             if (preset.id === 'saveForLater') {
-                              const index = indexOfBlock(handle.blockEl);
+                              const index = indexOfBlock(target.blockEl);
                               if (index < 0) return;
                               setTaskReminderAt(editor.state, editor.view.dispatch, index, null);
                               return;
                             }
-                            remindBlock(handle.blockEl, preset.id);
+                            remindBlock(target.blockEl, preset.id);
                           }}
                         >
                           {preset.label}
@@ -735,10 +769,18 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                   <DropdownMenuItem
                     key={item.id}
                     aria-label={item.label}
-                    onClick={() => runBlockAction(handle.blockEl, item.id)}
+                    onClick={() => runBlockAction(target.blockEl, item.id)}
                   >
                     <BlockActionIcon id={item.id} />
-                    {item.label}
+                    {item.id === 'add-content' ? (
+                      /* G1439：官方「添加内容」带次级说明文案，逐字取采集面。 */
+                      <span className="flex flex-col">
+                        <span>{item.label}</span>
+                        <span className="text-[11px] font-normal text-muted-foreground/80">在此区块内添加内容</span>
+                      </span>
+                    ) : (
+                      item.label
+                    )}
                   </DropdownMenuItem>
                 )}
                 </Fragment>
@@ -746,7 +788,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      )}
+      ))}
       {indicator.visible && (
         <div
           className="pointer-events-none absolute left-0 right-0 z-40 h-0.5 rounded-full bg-primary/70"

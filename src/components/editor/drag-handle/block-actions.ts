@@ -53,9 +53,9 @@ export interface BlockAction {
 
 /**
  * Craft's own block menus vary per block type, but every entry we render has to do
- * something — the reminder, card and emoji entries stay out until they have an action.
+ * something — the reminder, card and emoji entries carry their own handlers now.
  */
-/** The 「提醒我…」 submenu, only offered on a task item. */
+/** The 「提醒我…」 submenu: a task item or any anchorable block (G252). */
 export const REMIND_MENU = REMIND_PRESETS;
 
 /** The short row the 添加表情 entry offers. Picking the current one again clears it. */
@@ -130,10 +130,7 @@ export function blockMenuItems({
   items.push(
     { id: 'insert-above', label: '在上方插入区块', group: 4 },
     { id: 'insert-below', label: '在下方插入区块', group: 4 },
-    { id: 'move-up', label: '上移', group: 4 },
-    { id: 'move-down', label: '下移', group: 4 },
-    { id: 'move-top', label: '移至顶部', group: 4 },
-    { id: 'move-bottom', label: '移至底部', group: 4 },
+    // G1439：官方普通文本块菜单逐字 9 项、没有移动项——移动走拖拽与 Alt+↑↓（信息页动作里另有）。
     { id: 'copy-link', label: '复制区块链接', group: 5 },
   );
   if (canDelete) items.push({ id: 'delete', label: '删除', group: 6 });

@@ -139,6 +139,7 @@
 | G300 | 1582 | 已对齐 | local-says-missing | 本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：PENDING_STATES 逐字 11 条；已接「正在 |
 | G491 | 1927 | 已对齐 | local-says-missing | 无该语义（5 处监听彼此独立，各自判键）⇒ 本地"多层弹层 + 全局快捷键"必然互相干扰（与 G456/G471/G47 |
 | G503 | 1946 | 已对齐 | local-says-missing | grep -rn "cropMask\|aspectRatio" src ⇒ 0 命中 ⇒ 本地既无裁剪框、也不区分"用户 |
+| G605 | 2206 | 已对齐 | local-says-missing | 现读（2026-11-07 第 4a 批）：查询层分组替代 store 层剪枝——tasksForGroup 按 sch |
 | G623 | 2243 | 已对齐 | local-says-missing | 本地已补批量选择模式 ✎ 现读（2026-11-02）更正：SortableDocGrid 工具栏有「选择」；进入后卡片 |
 | G691 | 2473 | 已对齐 | local-says-missing | 本地 Collection.name（默认「未命名集合」）＋ 行标题走 CollectionItem.documentI |
 | G1223 | 3905 | 已对齐 | local-says-missing | 本轮实扫＝src/app/layout.tsx 与 src/app/globals.css 都没有 color-sche |
@@ -160,7 +161,7 @@
 | 12 | 三点一〇六十、第 110 批〔★★★ 代码块主题的作用域结案＝块级， |
 | 11 | 三点一〇三八、第 97 批〔★★★ G943 裁定＝连接器的按键不自 |
 | 9 | 三点七、P2 追加（来自 dialogs.md 与 protoco |
-| 9 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
+| 8 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
 | 7 | 三点六、P2 追加（来自 longtail.md 与 keyboa |
 | 7 | 三点一四、标签系统与浏览面追加（来自 tags-browse.md， |
 | 7 | 三点一〇五九、第 109 批〔★★★ 代码块的写侧字段结案＝typ |

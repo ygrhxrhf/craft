@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-06T17:33:07.156Z",
+  "generatedAt": "2026-11-06T17:58:42.624Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 821,
-    "aligned": 356,
+    "gap": 816,
+    "aligned": 361,
     "unknown": 193,
     "deliberate": 105,
     "partial": 66,
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / gap": 251,
-    "P2 / aligned": 250,
+    "P2 / aligned": 255,
+    "P2 / gap": 246,
     "P? / gap": 226,
     "P1 / gap": 191,
     "P3 / gap": 153,
@@ -49,7 +49,7 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 12,
+  "conflicts": 13,
   "conflictRows": [
     {
       "id": "G95",
@@ -98,6 +98,14 @@
       "conflict": "local-says-missing",
       "local": "`grep -rn \"cropMask|aspectRatio\" src` ⇒ **0 命中** ⇒ 本地既无裁剪框、也不区分\"用户裁过的尺寸\"与\"原图尺寸\"；✎ 现读（2026-11-03 第 246 批）：图片块已按同形补齐——`cropMask` 用竖线串、解析全有或全无，节点并列保存处理后/原始两套尺寸，帧变化",
       "verdict": "已对齐"
+    },
+    {
+      "id": "G605",
+      "line": 2206,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "✎ 现读（2026-11-07 第 4a 批）：查询层分组替代 store 层剪枝——`tasksForGroup` 按 `scheduleDate` 分「未归档／今天／即将进行／所有任务」，排期空缺的任务落未归档、今天与即将进行只收排期命中的行（`lib/task/grouping.ts:34`），与官方只保留带排期",
+      "verdict": "已对齐（实现层不同）"
     },
     {
       "id": "G623",
@@ -6704,10 +6712,10 @@
       "cols": 5,
       "id": "G311",
       "official": "**样式数量有官方口径**：`v3.intro.3.content`「从 **100 多种预设样式**中选择，或用涂鸦、和纸胶带、纸张和文字颜色打造你自己的风格」⇒ `styles.md` 此前无总数",
-      "local": "本地预设样式远少于此",
-      "verdict": "缺失（规模）",
+      "local": "✎ 现读（2026-11-07 第 4a 批）：预设样式数量已到官方口径之上——官方主题清单 131 项（`public/themes-presets.json` 的 `themes`）在样式面板渲染为网格（`StyleTab.tsx:385`），另有和纸胶带 96 档与四个具名整页样式预设；「100 多种预设样式」的数量口径成立",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -9135,10 +9143,10 @@
       "cols": 5,
       "id": "G445",
       "official": "★ **白板在实现上就是「链接预览」的一种**：`<iframe class=\"link-preview__embed-frame\" loading=\"lazy\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; web-share; fullscreen\">`，URL 由 `block.url.url` 经 **smartLink** 解析得到 ⇒ 白板与\"粘贴链接生成的预览\"共用一套外壳（`longtail.md` §24.1）",
-      "local": "`grep -rn \"postMessage\" src` ⇒ **0 命中**；`<iframe>` 只出现在 videoEmbed 序列化（`src/lib/document-codec/index.ts:187`）⇒ **本地没有\"链接预览 = iframe 嵌入\"这一统一层**",
-      "verdict": "缺失（架构）",
+      "local": "`grep -rn \"postMessage\" src` ⇒ **0 命中**；`<iframe>` 只出现在 videoEmbed 序列化（`src/lib/document-codec/index.ts:187`）✎ 现读（2026-11-07 第 4a 批）：承载不同——官方把白板当 smartLink iframe 的一种；本地白板是应用内 embed（静态预览图三态＋打开白板，`whiteboard-embed-view.tsx:79`），链接预览另有 `layout=\"embed\"` 的沙箱 iframe 档（`link-preview-view.tsx:93`）。可观察行为一致：白板在正文内有预览、可进入编辑，链接预览可选整页嵌入",
+      "verdict": "已对齐（载体差）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -10846,10 +10854,10 @@
       "cols": 5,
       "id": "G540",
       "official": "★ **`decorations` 形状是 `{focus?, block?}`**，写条件 `S || !n`（`S = w.focus != null || w.block != null`）⇒ **更新已有块恒写、新建时只有确有 focus/block 才写**；正好对应本地两个 CSS 实现的语义（§一之二十一 4）",
-      "local": "★ **本地存在对应实现但承载不同**：`src/components/editor/extensions/focus-style.tsx`（`types:` 覆盖 paragraph/heading/blockquote/codeBlock/lists/callout/toggleBlock）与 `shaded-style.tsx`（同款 types 列表）⇒ 本地是**编辑器样式扩展**，官方是**块上的持久化数据字段** ⇒ 持久化/跨设备一致性、以及\"新建 vs 更新\"的写条件本地都没有",
-      "verdict": "行为不同（承载方式，第 5 例）",
+      "local": "★ **本地存在对应实现但承载不同**：`src/components/editor/extensions/focus-style.tsx`（`types:` 覆盖 paragraph/heading/blockquote/codeBlock/lists/callout/toggleBlock）与 `shaded-style.tsx`（同款 types 列表）✎ 现读（2026-11-07 第 4a 批）：承载不同——本地把焦点与块底色做成编辑器全局属性（`data-focus-color`、背景色/文字色，`focus-style.tsx:42`），随正文持久化（G511 同批实点：设「焦点 绿」「块 黄」刷新后仍在）；官方是块上 `decorations` 字段。用户可观察的装饰行为一致，写条件差异属内部形状",
+      "verdict": "已对齐（载体差）",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -12016,20 +12024,19 @@
     {
       "line": 2206,
       "section": "三点七五、第 65 批（★★★ 任务数据 store 22 项 ＋ `$Je` 蛇形 payload 方言 ＋ ★ 更正第 64 批\"看 default 判分派器\"判据，`model.md` §一之三十五）",
-      "cols": 6,
+      "cols": 5,
       "id": "G605",
       "official": "★★★ **任务\"从列表消失\"是本地剪枝，不是服务端删块**：`hb()` 重建 `taskBlocks` 时，**新结果里没有但带 `taskData.schedule` 或 `taskData.deadline` 的任务块被保留**，其余剔除；且 `zW()` 先跳过三类特殊文档（`isRestrictedTaskDocument` ‖ `id===inboxDocumentId` ‖ `id===logbookDocumentId`）⇒ ★ **收件箱与日志本各是一篇真实文档**（id 存在 store 里）",
-      "local": "✎ 现读（2026-10-31）更正：getTasks 全量取 200 条，无排期/截止剪枝",
-      "verdict": "缺失（潜在）",
+      "local": "✎ 现读（2026-11-07 第 4a 批）：查询层分组替代 store 层剪枝——`tasksForGroup` 按 `scheduleDate` 分「未归档／今天／即将进行／所有任务」，排期空缺的任务落未归档、今天与即将进行只收排期命中的行（`lib/task/grouping.ts:34`），与官方只保留带排期/截止块的可观察结果一致；收件箱/日志本真实文档属 G109 的 logbook 归档面；☆ 原判（2026-10-31 现读后作废）＝本地每次全量查库 ⇒ 该规则**当前不显形**；但一旦加分页/增量（G604），无此规则会出现\"勾掉或有排期的任务从视图里消失\" ⇒ 记为**上分页后必显形的风险项**；`inboxDocumentId|logbookDocumentId|isRestrictedTaskDocument` 在 `src` 未检索（不断言本地无此概念）",
+      "verdict": "已对齐（实现层不同）",
       "score": "2/2",
-      "extra5": "☆ 原判（2026-10-31 现读后作废）＝本地每次全量查库 ⇒ 该规则**当前不显形**；但一旦加分页/增量（G604），无此规则会出现\"勾掉或有排期的任务从视图里消失\" ⇒ 记为**上分页后必显形的风险项**；`inboxDocumentId|logbookDocumentId|isRestrictedTaskDocument` 在 `src` 未检索（不断言本地无此概念）",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {
@@ -15805,10 +15812,10 @@
       "cols": 5,
       "id": "G814",
       "official": "★★ **`qZ` 分类 rail 双态（组件源 @2,117,855±）**：sidebar 态＝`nav`(`Aa.sidebar`, `aria-label`=`preferences.keyboard.shortcuts`) 内 `l.map(b=>jsx(a6,{variant: b.id===d.id?\"active\":\"default\", leftContent:jsx(Do,{icon}), onClick:()=>c(b.id), children:label}, b.id))` ⇒ **真 DS 按钮、`onClick` 直连选中 setter、无 `role`/`onKeyDown`/`tabIndex` 覆写**（屏上 `BUTTON._action_1j891_1` 佐证）；compact 态＝`nav`(`Aa.compactNav`) 内 `Npe`（@2,096,517：`{items,value,onValueChange,size,className}` 图标分段控件，`dataset.whatintent===\"touch\"` 时走 `_2()` 重置、带 `ResizeObserver`）；条件 `i=hn()`（**`hn` 未定位**），dialog 外层 `{[Aa.isCompact]:i}`；关闭＝`ls.CloseButton`＋`aria-labelledby`；滚动区＝`ks.Root/Viewport/Content/Scrollbar`。⇒ **G803 候选 (a) 静态清白**：真 `<button>` ＋ 面板/主包/`vendor-ds` 三处**都没有 Enter 拦截** ⇒ 与屏上\"Enter 不激活\"构成**代码-屏上悖论**",
-      "local": "本轮 `grep -rn \"onKeyDown\" src/components/ui/*.tsx` **无命中**；`src/components/ui/button.tsx:1`＝`@base-ui/react/button` 原生 Button（cva variants、无键处理）；`grep -rln \"onKeyDown|keydown\" src` 只命中 app/editor 组件（`tasks/page`、`Editor.tsx`、`AiBubbleMenu.tsx` 等）⇒ 本地同样\"无按钮级 Enter 拦截\"，复刻 rail 若用 Base UI Button，**Enter 激活与否完全取决于浏览器默认行为**",
-      "verdict": "机制（代码级）＋ **悖论登记**（复测设计见 G803 第五次收窄）",
+      "local": "本轮 `grep -rn \"onKeyDown\" src/components/ui/*.tsx` **无命中**；`src/components/ui/button.tsx:1`＝`@base-ui/react/button` 原生 Button（cva variants、无键处理）；`grep -rln \"onKeyDown|keydown\" src` 只命中 app/editor 组件（`tasks/page`、`Editor.tsx`、`AiBubbleMenu.tsx` 等）✎ 现读（2026-11-07 第 4a 批）：分类 rail 已在快捷键面板落地——`PANEL_TABS` 七枚原生 `<button>`、`onClick` 直连 `setActive`、选中态用 `aria-current`＋强调底色、方向键只改选中（`ShortcutsPanel.tsx:123`）；与官方 sidebar 态「真 DS 按钮＋onClick 直连 setter＋无 role 覆写」的可观察行为一致，compact 态本地是 `data-nav=\"compact\"` 换行排布",
+      "verdict": "已对齐（载体差）",
       "score": "P2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": null,

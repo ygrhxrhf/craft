@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-06T17:33:07.364Z",
+  "generatedAt": "2026-11-06T17:58:42.987Z",
   "total": 1615,
   "status": {
-    "aligned": 648,
-    "nonaction": 516,
-    "partial": 182,
+    "aligned": 653,
+    "nonaction": 517,
+    "partial": 179,
     "deliberate": 170,
-    "gap": 79,
+    "gap": 76,
     "unreachable": 20
   },
   "priority": {
@@ -17,10 +17,10 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 331,
+    "P2 / aligned": 336,
     "P? / nonaction": 191,
     "P1 / aligned": 171,
-    "P2 / nonaction": 170,
+    "P2 / nonaction": 171,
     "P1 / nonaction": 89,
     "P? / partial": 80,
     "P2 / deliberate": 78,
@@ -31,12 +31,12 @@
     "P? / deliberate": 40,
     "P3 / gap": 38,
     "P? / gap": 34,
-    "P2 / partial": 32,
     "P3 / deliberate": 32,
+    "P2 / partial": 29,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
-    "P2 / gap": 7,
+    "P2 / gap": 4,
     "P3 / unreachable": 4,
     "P? / unreachable": 4,
     "P1 / unreachable": 1
@@ -1213,6 +1213,14 @@
       "verdict": "已对齐"
     },
     {
+      "id": "G605",
+      "line": 2206,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "✎ 现读（2026-11-07 第 4a 批）：查询层分组替代 store 层剪枝——`tasksForGroup` 按 `scheduleDate` 分「未归档／今天／即将进行／所有任务」，排期空缺的任务落未归档、今天与即将进行只收排期命中的行（`lib/task/grouping.ts:34`），与官方只保留带排期/截止块的可观察结果一致；收件箱/日志本真实文档属 G109 的 logbook",
+      "verdict": "已对齐（实现层不同）"
+    },
+    {
       "id": "G623",
       "line": 2243,
       "status": "aligned",
@@ -1277,7 +1285,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      9
+      8
     ],
     [
       "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",

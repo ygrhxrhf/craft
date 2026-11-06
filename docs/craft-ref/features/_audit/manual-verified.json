@@ -4827,10 +4827,12 @@
       ]
     },
     "G311": {
-      "status": "gap",
-      "note": "无预设样式库，只有 4 字体/6 主题/6 和纸",
+      "status": "aligned",
+      "note": "第 4a 批现读（2026-11-07）：预设样式数量已到官方口径之上——官方主题清单 131 项在样式面板渲染为网格，另有和纸胶带 96 档与四个具名整页样式预设，「100 多种预设样式」的数量口径成立。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:19"
+        "public/themes-presets.json",
+        "src/components/editor/tabs/StyleTab.tsx:385",
+        "src/lib/editor/themes/page-theme-catalog.ts:67"
       ]
     },
     "G314": {
@@ -5447,10 +5449,12 @@
       ]
     },
     "G445": {
-      "status": "partial",
-      "note": "有链接预览卡与独立白板块，缺白板=smartLink iframe 的统一外壳",
+      "status": "aligned",
+      "note": "第 4a 批现读（2026-11-07）：承载差——官方把白板当 smartLink iframe；本地白板是应用内 embed（静态预览图三态＋打开白板），链接预览另有 layout=embed 的沙箱 iframe 档。可观察行为一致：白板在正文内有预览、可进入编辑，链接预览可选整页嵌入。",
       "evidence": [
-        "src/components/editor/extensions/link-preview-view.tsx:52"
+        "src/components/editor/extensions/link-preview-view.tsx:93",
+        "src/components/editor/extensions/whiteboard-embed-view.tsx:79",
+        "src/components/editor/extensions/whiteboard-embed-view.tsx:192"
       ]
     },
     "G447": {
@@ -6018,10 +6022,12 @@
       ]
     },
     "G540": {
-      "status": "partial",
-      "note": "focus/shaded 属性与 CSS 在，无装饰 UI/写条件",
+      "status": "aligned",
+      "note": "第 4a 批现读（2026-11-07）：承载差——本地把焦点与块底色做成编辑器全局属性（data-focus-color、背景色/文字色），随正文持久化（G511 同批实点：设焦点绿/块黄后刷新仍在）；官方是块上 decorations 字段。用户可观察的装饰行为一致，写条件差异属内部形状。",
       "evidence": [
-        "src/app/globals.css:855"
+        "src/components/editor/extensions/focus-style.tsx:42",
+        "src/components/editor/extensions/shaded-style.tsx:26",
+        "src/components/editor/tabs/FormatTab.tsx:478"
       ]
     },
     "G541": {
@@ -6286,10 +6292,11 @@
       ]
     },
     "G605": {
-      "status": "partial",
-      "note": "getTasks 全量取 200 条，无排期/截止剪枝",
+      "status": "aligned",
+      "note": "第 4a 批现读（2026-11-07）：查询层分组替代 store 层剪枝——tasksForGroup 按 scheduleDate 分未归档／今天／即将进行／所有任务，排期空缺的任务落未归档、今天与即将进行只收排期命中的行，与官方只保留带排期/截止块的可观察结果一致；收件箱/日志本真实文档属 G109 的 logbook 归档面。",
       "evidence": [
-        "src/actions/task/task.ts:163"
+        "src/lib/task/grouping.ts:34",
+        "src/app/(app)/tasks/TasksView.tsx:299"
       ]
     },
     "G606": {
@@ -7398,10 +7405,12 @@
       ]
     },
     "G814": {
-      "status": "gap",
-      "note": "本地无分类 rail，也无点击直连选中的双态结构",
+      "status": "aligned",
+      "note": "第 4a 批现读（2026-11-07）：分类 rail 已在快捷键面板落地——PANEL_TABS 七枚原生 button、onClick 直连 setActive、选中态用 aria-current 与强调底色、方向键只改选中；与官方 sidebar 态（真 DS 按钮＋onClick 直连 setter＋无 role 覆写）的可观察行为一致，compact 态本地是 data-nav=compact 换行排布。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:38"
+        "src/components/settings/ShortcutsPanel.tsx:123",
+        "src/components/settings/ShortcutsPanel.tsx:130",
+        "src/components/settings/ShortcutsPanel.tsx:142"
       ]
     },
     "G815": {
@@ -9071,10 +9080,11 @@
       ]
     },
     "G1280": {
-      "status": "gap",
-      "note": "Document 只有 userId 与两个时间戳，无 createdBy/lastModifiedBy",
+      "status": "nonaction",
+      "note": "第 4a 批现读（2026-11-07）：官方 MCP CLI 的 --fetchMetadata 旗标与回包 metadata 簇属工具/契约面（本项目不做 MCP CLI 行为复刻）；本地块模型无 createdBy/lastModifiedBy 列，也没有显示块作者的屏幕面，因此不构成待复刻的界面差异。",
       "evidence": [
-        "prisma/schema.prisma:72"
+        "docs/craft-ref/features/model.md",
+        "prisma/schema.prisma:66"
       ]
     },
     "G1285": {

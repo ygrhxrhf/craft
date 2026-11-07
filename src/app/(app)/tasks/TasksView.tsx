@@ -350,9 +350,13 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
       {/* G263: the pinned-documents area. A document is pinned by favouriting it (the existing
           `favorite` table is the store), and the empty state says how to fill it. */}
       <section className="px-4 pt-3" data-testid="pinned-docs">
-        <h2 className="mb-2 text-xs font-medium text-muted-foreground">{PIN_COPY.pin.label}</h2>
+        {/* G34：craft 任务屏分区标题 15/600/18、α0.85（此前 12/500）。 */}
+        <h2 className="mb-2 text-[15px] font-semibold leading-[18px] text-foreground/85">
+          {PIN_COPY.pin.label}
+        </h2>
         {pinned.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
+          // G35：craft 空态是纯文本、居中、无虚线边框（pad 0 64，13/16）。
+          <p className="px-16 py-1 text-center text-[13px] leading-4 text-foreground/55">
             {PIN_COPY.emptyPage.label}
           </p>
         ) : (
@@ -478,7 +482,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
 
             {completed.length > 0 && (
               <section>
-                <h2 className="mb-2 text-sm font-medium text-muted-foreground">
+                <h2 className="mb-2 text-[15px] font-semibold leading-[18px] text-foreground/85">
                   已完成 · {completed.length}
                 </h2>
                 <TaskList
@@ -492,7 +496,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
             )}
             {cancelled.length > 0 && (
               <section>
-                <h2 className="mb-2 text-sm font-medium text-muted-foreground">
+                <h2 className="mb-2 text-[15px] font-semibold leading-[18px] text-foreground/85">
                   {CANCELLED_LABEL} · {cancelled.length}
                 </h2>
                 <TaskList

@@ -99,7 +99,7 @@ export function SidebarNav() {
   };
 
   return (
-    <nav className="flex flex-col gap-1 px-2 py-2">
+    <nav className="flex flex-col gap-px px-2.5 py-2">
       {visible.map((id) => {
         const item = SECTIONS[id];
         const isActive = pathname === id || pathname.startsWith(id + '/');
@@ -108,13 +108,14 @@ export function SidebarNav() {
             key={id}
             href={id}
             className={cn(
-              'flex min-h-9 items-center gap-2.5 rounded-lg px-3 text-[13px] transition-colors',
+              // G17：craft 导航行 268×32、步进 33、radius 8、图标 20×20，未激活文字 α0.85（G38）。
+              'flex h-8 items-center gap-2.5 rounded-md px-1.5 text-[length:13px] leading-4 transition-colors',
               isActive
                 ? 'bg-sidebar-active text-sidebar-accent-foreground font-medium shadow-sm'
-                : 'text-sidebar-foreground/70 hover:bg-sidebar-hover hover:text-sidebar-foreground'
+                : 'text-sidebar-foreground/85 hover:bg-sidebar-hover hover:text-sidebar-foreground'
             )}
           >
-            <item.icon className="size-[18px] shrink-0" />
+            <item.icon className="size-5 shrink-0" />
             {item.label}
           </Link>
         );
@@ -127,9 +128,9 @@ export function SidebarNav() {
       <Popover open={viewMenuOpen} onOpenChange={setViewMenuOpen}>
         <PopoverTrigger
           data-testid="sidebar-view-switch"
-          className="mt-1 flex min-h-9 items-center gap-2.5 rounded-lg px-3 text-[13px] text-sidebar-foreground/50 transition-colors hover:bg-sidebar-hover hover:text-sidebar-foreground"
+          className="mt-1 flex h-8 items-center gap-2.5 rounded-md px-1.5 text-[length:13px] leading-4 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-hover hover:text-sidebar-foreground"
         >
-          <SlidersHorizontal className="size-[18px] shrink-0" />
+          <SlidersHorizontal className="size-5 shrink-0" />
           {SHOW_GROUP_TITLE}
         </PopoverTrigger>
         <PopoverContent align="start" className="w-56 p-1">
@@ -184,7 +185,7 @@ export function SidebarNav() {
               const hidden = prefs.hidden.includes(id);
               return (
                 <li key={id} className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-foreground/4">
-                  <span className="min-w-0 flex-1 truncate text-ui">{SECTIONS[id].label}</span>
+                  <span className="min-w-0 flex-1 truncate text-[length:13px] leading-4">{SECTIONS[id].label}</span>
                   <button
                     type="button"
                     aria-label={`上移 ${SECTIONS[id].label}`}

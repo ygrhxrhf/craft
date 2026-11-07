@@ -41,13 +41,16 @@ import {
   resolveDomainVerification,
   setSpaceIcon,
   setSpaceName,
-  INVITE_ALREADY_MEMBER,
-  INVITE_ALREADY_MEMBER_SUBTITLE,
-  INVITE_ALREADY_MEMBER_TITLE,
   type DomainContext,
   type SpaceSummary,
   type TeamSummary,
 } from '@/actions/space/space';
+// G187：邀请去重的三句与判据是纯文案/纯判据，放在 lib 里（`'use server'` 文件不能导出它们）。
+import {
+  INVITE_ALREADY_MEMBER,
+  INVITE_ALREADY_MEMBER_SUBTITLE,
+  INVITE_ALREADY_MEMBER_TITLE,
+} from '@/lib/share/invite-duplicate';
 import { GUEST_WARNING_CONFIRM, GUEST_WARNING_DESC } from '@/lib/share/guest-warning';
 import { MANAGE_PINNED, PINNED_LIMIT_REACHED, PINNED_TAG_LIMIT, PIN_KEY_TAGS_HINT } from '@/lib/browse/pinned-tags';
 import {

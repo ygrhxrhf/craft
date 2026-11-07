@@ -16,17 +16,19 @@ export function SidebarSection({ title, children, defaultOpen = true, action }: 
 
   return (
     <div className="py-1">
-      <div className="flex items-center justify-between px-1.5 py-1">
+      {/* G18/G30：craft 分区头是 32 高的行、标题 @x19、12/600/12/ls0.05/满对比，且**没有 chevron**。
+          本地保留折叠扳手（G385 的可及性要求），把它放进行左的 gutter，不挤动标题位置。 */}
+      <div className="relative flex h-8 items-center justify-between">
         <button
           onClick={() => setIsOpen(!isOpen)}
           // G385：折叠控件要在无障碍层声明开/合，否则读屏只听到一个没有状态的按钮。
           aria-expanded={isOpen}
           aria-label={`${isOpen ? '收起' : '展开'}${title}`}
-          className="flex items-center gap-1 text-meta font-semibold text-foreground/40 hover:text-foreground transition-colors duration-150"
+          className="relative flex items-center pl-[9px] text-[12px] font-semibold leading-3 tracking-[0.05px] text-foreground transition-colors duration-150 hover:text-foreground"
         >
           <ChevronRight
             className={cn(
-              'size-3.5 transition-transform duration-150',
+              'absolute -left-2 size-3.5 text-muted-foreground transition-transform duration-150',
               isOpen && 'rotate-90'
             )}
           />

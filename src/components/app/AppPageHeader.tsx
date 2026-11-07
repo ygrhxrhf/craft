@@ -34,7 +34,8 @@ export function AppPageHeader({ title, actions, className }: AppPageHeaderProps)
       >
         <Menu className="size-5" />
       </Button>
-      <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight">
+      {/* G12/G13/G25：craft 页头带 1120×52、h1 22/600/26.4/ls0，带内 y=61（带顶 +13）。 */}
+      <h1 className="min-w-0 flex-1 truncate text-[22px] font-semibold leading-[26.4px] tracking-normal">
         {title}
       </h1>
       {/* On a phone the action button keeps the right edge and the bell queues in

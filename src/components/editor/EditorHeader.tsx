@@ -65,7 +65,8 @@ export function EditorHeader({
             <span className="mt-1 flex size-10 shrink-0 items-center justify-center text-2xl">
               {icon || '📄'}
             </span>
-            <h1 className="flex-1 font-serif text-3xl font-normal italic break-words">
+            {/* G26：craft 文档标题 23/700/28/ls−0.3、色 rgb(31,34,37)、Inter 无衬线；此前是 serif+italic。 */}
+            <h1 className="flex-1 text-[23px] font-bold leading-7 tracking-[-0.3px] text-foreground break-words">
               {title || untitledFor('topBar')}
             </h1>
           </>
@@ -96,7 +97,7 @@ export function EditorHeader({
           value={draftTitle ?? ''}
           onChange={(e) => setDraftTitle(e.target.value)}
           placeholder="页面标题"
-          className="flex-1 bg-transparent font-serif text-3xl font-normal italic outline-none placeholder:text-muted-foreground/50"
+          className="flex-1 bg-transparent text-[23px] font-bold leading-7 tracking-[-0.3px] outline-none placeholder:text-muted-foreground/50"
         />
           </>
         )}

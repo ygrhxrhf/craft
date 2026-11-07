@@ -267,20 +267,25 @@ function Section({
 function SectionHeading({ section }: { section: TimelineSection }) {
   if (section.kind === 'day') {
     return (
-      <h2 className="flex flex-wrap items-center gap-2 text-sm">
-        <span className="font-semibold">{dateLabel(section.date)}</span>
+      // G32：craft 日行标题「11月4日」16/600/19.2、「今天」15/600/18、星期 13/500/16。
+      <h2 className="flex flex-wrap items-center gap-2">
+        <span className="text-base font-semibold leading-[19.2px]">{dateLabel(section.date)}</span>
         {section.relative && (
           <>
             <span aria-hidden className="text-muted-foreground">
               •
             </span>
-            <span className="font-medium text-foreground/70">{section.relative}</span>
+            <span className="text-[15px] font-semibold leading-[18px] text-foreground/85">
+              {section.relative}
+            </span>
           </>
         )}
         <span aria-hidden className="text-muted-foreground">
           •
         </span>
-        <span className="text-muted-foreground">{section.weekday}</span>
+        <span className="text-[13px] font-medium leading-4 text-muted-foreground">
+          {section.weekday}
+        </span>
       </h2>
     );
   }

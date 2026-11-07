@@ -11,8 +11,10 @@ export function SidebarFooter() {
   const openSettings = useSettingsStore((s) => s.openSettings);
 
   return (
-    <div className="mt-auto flex items-center justify-between border-t border-sidebar-border px-3 py-3">
-      <div className="flex items-center gap-1">
+    // G07/G40：craft 底栏 288×61、1px 分隔线 @y839（左右各内缩 10px）、按钮 28×28 @x18。
+    // 分隔线用 foreground/6（238,240,241），不是更深的 --sidebar-border。
+    <div className="mt-auto flex items-center justify-between border-t border-foreground/6 px-3 py-2.5">
+      <div className="flex items-center gap-0.5">
         <ImportButton />
         <Button
           variant="ghost"

@@ -16,6 +16,7 @@ import {
   type TeamPermissionRole,
 } from '@/lib/team/team-roles';
 import { needsGuestWarning } from '@/lib/share/guest-warning';
+import { INVITE_ALREADY_MEMBER } from '@/lib/share/invite-duplicate';
 import { resolveScopedSetting, scopeOfSetting, type SettingsScope } from '@/lib/app/settings-scope';
 import {
   nextDomainState,
@@ -131,21 +132,6 @@ export async function setSpaceName(name: string): Promise<SpaceSummary> {
   await db.orm.public.Space.where({ id: context.id }).update({ name: trimmed });
   await emitSyncEventSafe(db, userId, ['space'], context.id);
   return getSpaceContext();
-}
-
-/**
- * G187 —— 邀请去重：官方把"已是团队成员"与"有待处理的邀请"并成同一句判据，
- * 所以这里不再按 existing 复用/改档，而是直接以这句拒绝。
- */
-export const INVITE_ALREADY_MEMBER = '已是团队成员或有待处理的邀请';
-/** `invite.already.member.title`／`.subtitle`：本地只收到判据那句逐字，标题沿用同一句，
- * 副标题是本地措辞（官方那两句的逐字文本尚未采集，不要当成官方句引用）。 */
-export const INVITE_ALREADY_MEMBER_TITLE = INVITE_ALREADY_MEMBER;
-export const INVITE_ALREADY_MEMBER_SUBTITLE = '这个邮箱已被邀请过这个空间，无需重复邀请。';
-
-/** 有待处理的邀请＝成员行在、但还没有加入（`SpaceMember.joined` 为假）。 */
-export function isPendingInvite(member: { joined?: boolean | null } | null): boolean {
-  return Boolean(member) && member?.joined === false;
 }
 
 /**

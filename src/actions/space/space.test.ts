@@ -14,9 +14,7 @@ const {
   setSpaceName,
   setSpaceIcon,
   inviteSpaceMember,
-  isPendingInvite,
   guestWarningFor,
-  INVITE_ALREADY_MEMBER,
   getTeamContext,
   createTeam,
   changeTeamRole,
@@ -25,6 +23,7 @@ const {
   resolveDomainVerification,
   disconnectDomain,
 } = await import('./space');
+const { isPendingInvite, INVITE_ALREADY_MEMBER } = await import('@/lib/share/invite-duplicate');
 
 let db: Awaited<ReturnType<typeof getDb>>;
 let ownerId = '';

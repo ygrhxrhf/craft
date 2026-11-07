@@ -294,7 +294,8 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
   }
 
   const rowClass = cn(
-    'relative flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] transition-colors hover:bg-sidebar-hover',
+    // G29：13/16；写成显式长度而不是 `text-ui`——`text-ui` 会和后面的文字色类在 merge 时互相吞掉。
+    'relative flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-[length:13px] leading-4 transition-colors hover:bg-sidebar-hover',
     'text-sidebar-fg',
     zone === 'into' && 'bg-primary/10'
   );

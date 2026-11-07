@@ -22,7 +22,8 @@ export default async function FavoritesPage() {
         {favoriteDocs.length > 0 ? (
           <StarredGrid documents={favoriteDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))} />
         ) : (
-          <div className="rounded-lg border border-dashed border-border p-8 text-center">
+          // G22/G33：craft 空态是 1120×72、radius 10、bg rgba(26,28,30,.03)、无虚线边框，文案 13/15.6/α0.55。
+          <div className="flex min-h-[72px] flex-col items-center justify-center rounded-[10px] bg-foreground/[0.03] px-4 text-center">
             <Star className="mx-auto mb-2 size-8 text-muted-foreground" />
             <p className="text-ui leading-[15.6px] text-foreground/55">{STARRED_EMPTY}</p>
           </div>

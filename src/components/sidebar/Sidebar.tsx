@@ -67,7 +67,8 @@ function SidebarBody() {
       <SidebarHeader />
       <SidebarNav />
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-1">
+      {/* G08：craft 的树区容器 x=10（内容行 268 宽），本地此前 px-1（x=4）。 */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-2.5">
         <TreeSections view={view} />
       </div>
 

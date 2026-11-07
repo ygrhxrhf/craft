@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-07T01:54:13.542Z",
+  "generatedAt": "2026-11-07T01:58:00.958Z",
   "total": 1615,
   "status": {
-    "aligned": 691,
+    "aligned": 692,
     "nonaction": 524,
-    "deliberate": 182,
+    "deliberate": 183,
     "partial": 130,
-    "gap": 66,
+    "gap": 64,
     "unreachable": 22
   },
   "priority": {
@@ -23,15 +23,15 @@
     "P1 / aligned": 171,
     "P1 / nonaction": 89,
     "P2 / deliberate": 88,
+    "P3 / aligned": 80,
     "P? / partial": 80,
-    "P3 / aligned": 79,
     "P? / aligned": 78,
     "P3 / nonaction": 69,
     "P3 / partial": 50,
     "P? / deliberate": 40,
-    "P3 / deliberate": 34,
+    "P3 / deliberate": 35,
     "P? / gap": 34,
-    "P3 / gap": 32,
+    "P3 / gap": 30,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
@@ -1338,10 +1338,6 @@
       3
     ],
     [
-      "三点八五、第 74 批（★★★ 静态补账：撤销计步器的生成/消费 ＋ 提",
-      3
-    ],
-    [
       "三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP ",
       3
     ],
@@ -1355,6 +1351,10 @@
     ],
     [
       "三点九四、第 80 批·开场（2026-09-28 07:44–07:4",
+      3
+    ],
+    [
+      "三点九五、第 81 批（2026-09-28 08:03–08:18，★",
       3
     ]
   ]

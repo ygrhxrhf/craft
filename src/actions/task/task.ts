@@ -316,8 +316,10 @@ async function rollForward(db: any, task: any, timeZone?: string): Promise<void>
     id: crypto.randomUUID(),
     userId: task.userId,
     title: task.title,
-    documentId: null,
-    blockId: null,
+    // G645: the next occurrence stays bound to the source block/document; a rolled reminder
+    // without them would lose the deep link the original had.
+    documentId: task.documentId ?? null,
+    blockId: task.blockId ?? null,
     isCompleted: false,
     status: 'todo',
     dueDate: upcoming.toISOString(),

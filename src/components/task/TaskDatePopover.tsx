@@ -206,10 +206,30 @@ export function TaskDatePopover({
           data-testid="task-date-popover"
           className="fixed z-50 w-72 rounded-xl border border-border bg-background p-2 shadow-lg"
           aria-label={`${label}日期`}
+          onKeyDown={(event) => {
+            // G364: Escape closes the date popover (official panel behaviour).
+            if (event.key !== 'Escape') return;
+            event.stopPropagation();
+            setOpen(false);
+          }}
         >
           {mode === 'time' ? (
             <div className="space-y-2 p-1">
               <p className="text-xs font-medium text-muted-foreground">时间</p>
+              {/* G639: an existing reminder can be cleared from the top of the moment menu. */}
+              {reminder?.value && (
+                <button
+                  type="button"
+                  data-testid="time-clear-row"
+                  onClick={() => {
+                    reminder.onChange(null);
+                    setOpen(false);
+                  }}
+                  className="block w-full rounded px-2 py-1 text-left text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  无提醒
+                </button>
+              )}
               {/* G411: the official moment menu is a 96-slot, 15-minute-step day list that opens
                   scrolled to the current slot. Slots are the only way to pick a time here. */}
               <div
@@ -285,7 +305,7 @@ export function TaskDatePopover({
                     setPreview(null);
                   }}
                 >
-                  清除
+                  清除 日期
                 </Button>
                 <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={() => commit(new Date())}>
                   今天

@@ -11,6 +11,7 @@ import { cn } from 'cn';
 import {
   INTERVAL_MAX,
   clampInterval,
+  describeRecurrence,
   parseRecurrence,
   scheduleWithRecurrence,
 } from '@/lib/task/recurrence';
@@ -810,7 +811,9 @@ function TaskRow({
 
         {task.recurrence && (
           <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
-            {FREQUENCY_LABELS[parseFrequency(task.recurrence)] ?? '重复'}
+            {describeRecurrence(task.recurrence) ??
+              FREQUENCY_LABELS[parseFrequency(task.recurrence)] ??
+              '重复'}
           </span>
         )}
         {task.remindAt && (

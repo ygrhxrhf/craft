@@ -6594,10 +6594,13 @@
       ]
     },
     "G645": {
-      "status": "gap",
-      "note": "rollForward 新建任务时写 documentId/blockId 为 null，与来源文档/块断链",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：滚出路径不再断链——rollForward 新建下一条时拷贝 documentId/blockId（task.ts:315-321），下一条与来源文档/块保持指针，块级提醒投影与块内完成态回写因此仍可定位；标题沿用来源任务标题（块文本），空标题走本地 untitled 兜底。",
       "evidence": [
-        "src/actions/task/task.ts:276"
+        "src/actions/task/task.ts:315",
+        "src/actions/task/task.ts:321",
+        "src/lib/task/reminder-entity.ts:41",
+        "src/actions/notification/block-reminders.ts:22"
       ]
     },
     "G646": {
@@ -6648,10 +6651,12 @@
       ]
     },
     "G657": {
-      "status": "gap",
-      "note": "任务勾选与 rollForward 都在服务端，客户端撤销栈没有这一步",
+      "status": "deliberate",
+      "note": "第 5k 批现读（2026-11-07）：官方把「翻勾选态＋生成下一实例」融进客户端同一个 undoRedoPatchId，属客户端文档撤销栈模型；本地勾选与 rollForward 都在服务端执行（客户端撤销域不含服务端写入），且无收件箱旁路概念。把任务写路径整体搬进客户端文档事务属架构级替换，与 G654 同一口径判 deliberate。",
       "evidence": [
-        "src/actions/task/task.ts:252"
+        "src/actions/task/task.ts:302",
+        "src/actions/task/task.ts:315",
+        "src/lib/editor/patch-stack.ts:1"
       ]
     },
     "G658": {

@@ -69,14 +69,23 @@ export async function duplicateItem(itemId: string) {
     order: maxOrder + 1,
   });
 
+  // Copy values in the typed `{type, theme, value}` shape used by `setItemValue` and import.
+  // Writing the decoded bare value back fails on read: the ORM's pg/json codec parses a stored
+  // JSON string again, so a plain string value cannot be decoded after INSERT ... RETURNING.
+  const properties = (await db.orm.public.CollectionProperty.where({ collectionId }).all()) as any[];
+  const typeByPropertyId = new Map(
+    properties.map((property) => [String(property.id), String(property.type ?? 'text')]),
+  );
+
   const values = await db.orm.public.CollectionValue.where({ itemId }).all();
   for (const value of values as any[]) {
     if (value.deletedAt) continue;
+    const propType = typeByPropertyId.get(String(value.propertyId)) ?? 'text';
     await db.orm.public.CollectionValue.create({
       id: crypto.randomUUID(),
       itemId: newId,
       propertyId: value.propertyId,
-      value: value.value ?? null,
+      value: toTypedValue(propType, value.value ?? null),
     });
   }
 

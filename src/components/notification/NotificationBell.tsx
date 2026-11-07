@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bell } from 'lucide-react';
 import {
@@ -21,6 +21,9 @@ import { getSyncManager } from '@/lib/sync-core';
 // component's, so a hook-local ref would be rebuilt on the very remount being coalesced.
 const inboxRead = createReadPerRevision<InboxRow[]>();
 
+/** G602: the notification list remembers its scroll position across opens. */
+const NOTIFICATION_SCROLL_KEY = 'craft.notifications.scroll-top';
+
 function formatReminder(remindAt: string | null): string {
   if (remindAt === null) return '';
   const at = reminderInstant(remindAt);
@@ -35,6 +38,7 @@ function formatReminder(remindAt: string | null): string {
 
 export function NotificationBell() {
   const router = useRouter();
+  const listRef = useRef<HTMLUListElement | null>(null);
   // Rows stay server-generated (materialize + resolve), but they now ride the
   // sync stream: another device's reminder lands as a 'notification' store
   // change and this re-pulls the inbox instead of waiting for tab focus.
@@ -164,6 +168,13 @@ export function NotificationBell() {
 
   const unreadCount = visible.filter((item) => item.readAt === null).length;
 
+  // G602: restore the remembered offset whenever the panel opens.
+  useEffect(() => {
+    if (!open || !listRef.current) return;
+    const saved = Number(window.localStorage.getItem(NOTIFICATION_SCROLL_KEY) ?? '0');
+    listRef.current.scrollTop = Number.isFinite(saved) ? saved : 0;
+  }, [open]);
+
   return (
     <div className="relative shrink-0">
       <button
@@ -227,7 +238,20 @@ export function NotificationBell() {
               {view === 'resolved' ? '暂无已解决的通知。' : '暂无通知。'}
             </p>
           ) : (
-            <ul className="space-y-1">
+            <ul
+              ref={listRef}
+              className="max-h-80 space-y-1 overflow-y-auto"
+              onScroll={(event) => {
+                try {
+                  window.localStorage.setItem(
+                    NOTIFICATION_SCROLL_KEY,
+                    String(event.currentTarget.scrollTop),
+                  );
+                } catch {
+                  // Storage may be unavailable; the list still scrolls within the session.
+                }
+              }}
+            >
               {listed.map((item) => (
                 <li key={item.id} className="flex items-start justify-between gap-2 px-2 py-1.5">
                   <div className="flex min-w-0 items-start gap-1.5">

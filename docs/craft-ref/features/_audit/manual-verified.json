@@ -2146,10 +2146,11 @@
       ]
     },
     "G1444": {
-      "status": "partial",
-      "note": "本地有「移动到…」入口（信息面板），但无 ctx-move-to 稳定 testid 锚点。",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：「移动到…」按钮补上稳定 test 锚点 ctx-move-to 与条件禁用（busy 时置灰），与官方 `data-testid:\"ctx-move-to\"` ＋ `disabled:x` 两项对齐；承载组件仍是信息面板的移动弹层。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:615"
+        "src/components/editor/tabs/InfoTab.tsx:615",
+        "src/lib/browse/official-copy.ts:54"
       ]
     },
     "G172": {
@@ -3511,10 +3512,12 @@
       ]
     },
     "G77": {
-      "status": "partial",
-      "note": "个别 1/N 文案分键；无 CLDR 六档复数框架",
+      "status": "nonaction",
+      "note": "第 5k 批现读（2026-11-07）：CLDR 六档是 i18n 框架事实，本产品单语（中文只有一档、无 Intl.PluralRules 调用面），屏上不产生单复数差异；现有 1/N 分键文案（official-copy.ts 的 zero/one 等）已覆盖中文下可观察的区别。",
       "evidence": [
-        "src/lib/browse/official-copy.ts:75"
+        "src/lib/task/official-copy.ts:31",
+        "src/lib/browse/official-copy.ts:8",
+        "src/lib/i18n/onboarding-copy.ts:1"
       ]
     },
     "G78": {
@@ -3604,10 +3607,12 @@
       ]
     },
     "G89": {
-      "status": "partial",
-      "note": "单字段 10000 字符上限已落；表格/字段数/提醒/白板元素远端配额无",
+      "status": "unreachable",
+      "note": "第 5k 批现读（2026-11-07）：可落的一半已落——单字段 10000 字符上限（character-limit.ts ＋ TextCell 触限截住）；剩余表格尺寸/合集字段数/提醒数/白板元素数四组远端配额值本仓从未采集过（本行自述「登记为未采」），按措辞纪律记 unreachable（采集边界），不写「不做」。",
       "evidence": [
-        "src/lib/collection/character-limit.ts:11"
+        "src/lib/collection/character-limit.ts:11",
+        "src/components/collection/PropertyCell.tsx:159",
+        "docs/craft-ref/features/gap.md:1234"
       ]
     },
     "G91": {
@@ -6328,10 +6333,13 @@
       ]
     },
     "G602": {
-      "status": "partial",
-      "note": "有更新横幅；无彩蛋/调试面板，通知滚动位置未实现",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：用户可见两半已落——「有新版本待刷新」由 UpdateBanner 覆盖（web 前端提示），通知面板现在记住滚动位置（NotificationBell 的列表 max-h-80 overflow-y-auto，开关时读写 localStorage 'craft.notifications.scroll-top'）。彩蛋/Playground/调试面板/setDebugLimit 等是官方 dev 内部分派，无用户屏幕面。",
       "evidence": [
-        "src/components/app/UpdateBanner.tsx:12"
+        "src/components/app/UpdateBanner.tsx:19",
+        "src/lib/app/update-banner.ts:22",
+        "src/components/notification/NotificationBell.tsx:25",
+        "src/components/notification/NotificationBell.tsx:243"
       ]
     },
     "G603": {
@@ -6631,10 +6639,12 @@
       ]
     },
     "G654": {
-      "status": "partial",
-      "note": "撤销交给 ProseMirror history，按事务/相邻输入归并；无 undoRedoPatch 槽位",
+      "status": "deliberate",
+      "note": "第 5k 批现读（2026-11-07）：官方「一步撤销＝一个 undoRedoPatch 槽＋同 blockId 去重」是其内部步骤表模型；本地撤销走 ProseMirror history / Yjs UndoManager（Editor 的 StarterKit 未关 history），用户可观察的撤销/重做存在但粒度按事务与相邻输入归并。把编辑器撤销整体换成自建 patch 槽属架构级替换，按本项目现有撤销栈（G211/G381 已按 PM/Yjs 收口）判 deliberate，不再为对齐内部槽位改写撤销内核。",
       "evidence": [
-        "src/components/editor/Editor.tsx:342"
+        "src/lib/editor/patch-stack.ts:1",
+        "src/components/editor/Editor.tsx:244",
+        "src/lib/editor/patch-stack.ts:36"
       ]
     },
     "G657": {
@@ -7360,10 +7370,11 @@
       ]
     },
     "G799": {
-      "status": "partial",
-      "note": "本地无面板导航 aria-label，别名行也不存在",
+      "status": "nonaction",
+      "note": "第 5k 批现读（2026-11-07）：两条官方 i18n key 的可观察输出已在屏上——面板导航 aria-label「快捷键分类」（ShortcutsPanel.tsx:143）、别名行连接词「或者」（shortcut-official-rows.ts:151）；本地无 key 目录层（单语硬编码文案），key 间接层属内部结构，不构成屏幕差异。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:38"
+        "src/components/settings/ShortcutsPanel.tsx:143",
+        "src/lib/editor/shortcut-official-rows.ts:151"
       ]
     },
     "G800": {
@@ -7486,10 +7497,12 @@
       ]
     },
     "G816": {
-      "status": "partial",
-      "note": "Base UI 弹层自带焦点陷阱；自绘设置弹窗无 Tab 圈内循环",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：Tab 圈内循环由 Base UI 弹层提供——其 FocusGuard（document 级 focus guard）把焦点约束在弹层内，与官方 DS 的「首尾 tabbable 互跳」在用户可观察层一致；本地不另写 TreeWalker 版陷阱，属库内机制差异。",
       "evidence": [
-        "src/components/ui/dialog.tsx:2"
+        "node_modules/@base-ui/react/utils/FocusGuard.mjs:18",
+        "src/components/ui/dialog.tsx:4",
+        "src/components/ui/dialog.tsx:53"
       ]
     },
     "G817": {
@@ -9628,10 +9641,11 @@
       ]
     },
     "G1473": {
-      "status": "partial",
-      "note": "子菜单箭头走 Radix 默认、无 aria-label",
+      "status": "nonaction",
+      "note": "第 5k 批现读（2026-11-07）：本地代码块 ⋯ 弹层没有官方那组带子菜单箭头的图标，无对应可及名面可比；本行的价值是实施纪律（图标可及名照官方逐字、含 Cevron 错拼），已记入本 note，不产生代码改动。",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:509"
+        "src/components/editor/slash-menu/SlashCommandMenu.tsx:1",
+        "src/components/editor/drag-handle/block-actions.ts:75"
       ]
     },
     "G1490": {

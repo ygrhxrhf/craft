@@ -612,8 +612,10 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
           </button>
           <button
             type="button"
+            data-testid="ctx-move-to"
             onClick={openMoveMenu}
-            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
+            disabled={busy}
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
           >
             <Folder className="size-3.5 text-muted-foreground" />
             <span>{MOVE_TO}</span>

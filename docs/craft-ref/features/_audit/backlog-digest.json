@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-07T01:43:05.158Z",
+  "generatedAt": "2026-11-07T01:54:13.542Z",
   "total": 1615,
   "status": {
-    "aligned": 688,
-    "nonaction": 521,
-    "deliberate": 181,
-    "partial": 138,
+    "aligned": 691,
+    "nonaction": 524,
+    "deliberate": 182,
+    "partial": 130,
     "gap": 66,
-    "unreachable": 21
+    "unreachable": 22
   },
   "priority": {
     "P2": 629,
@@ -24,18 +24,18 @@
     "P1 / nonaction": 89,
     "P2 / deliberate": 88,
     "P? / partial": 80,
+    "P3 / aligned": 79,
     "P? / aligned": 78,
-    "P3 / aligned": 76,
-    "P3 / nonaction": 66,
-    "P3 / partial": 58,
+    "P3 / nonaction": 69,
+    "P3 / partial": 50,
     "P? / deliberate": 40,
+    "P3 / deliberate": 34,
     "P? / gap": 34,
-    "P3 / deliberate": 33,
     "P3 / gap": 32,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
-    "P3 / unreachable": 5,
+    "P3 / unreachable": 6,
     "P? / unreachable": 4,
     "P1 / unreachable": 1
   },
@@ -1306,18 +1306,6 @@
       5
     ],
     [
-      "三点一一一四、第 175 批新登记的官方行为（2026-10-09 机器",
-      5
-    ],
-    [
-      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
-      4
-    ],
-    [
-      "三点八五、第 74 批（★★★ 静态补账：撤销计步器的生成/消费 ＋ 提",
-      4
-    ],
-    [
       "三点九三、第 79 批·下半 B79B（2026-09-28 07:33",
       4
     ],
@@ -1338,11 +1326,19 @@
       4
     ],
     [
+      "三点一一一四、第 175 批新登记的官方行为（2026-10-09 机器",
+      4
+    ],
+    [
       "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
       4
     ],
     [
-      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
+      "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
+      3
+    ],
+    [
+      "三点八五、第 74 批（★★★ 静态补账：撤销计步器的生成/消费 ＋ 提",
       3
     ],
     [
@@ -1355,6 +1351,10 @@
     ],
     [
       "三点八九、第 77 批（★★★ 行为级实测：样式落库形状／四频率 rep",
+      3
+    ],
+    [
+      "三点九四、第 80 批·开场（2026-09-28 07:44–07:4",
       3
     ]
   ]

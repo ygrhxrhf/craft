@@ -42,7 +42,7 @@ describe('the promise', () => {
     const { bridge } = harness();
     const pending = bridge.show({ id: 'a' });
     bridge.cancel();
-    await expect(pending).resolves.toEqual({ type: 'cancelled' });
+    await expect(pending).resolves.toEqual({ type: 'cancelled', reason: 'dismiss' });
   });
 
   it('tells a submitted empty value apart from a cancellation', async () => {
@@ -64,7 +64,7 @@ describe('idempotency', () => {
     bridge.submitResult({ value: 'late' });
     await new Promise((tick) => setTimeout(tick, 0));
     expect(resolve).toHaveBeenCalledTimes(1);
-    expect(resolve).toHaveBeenCalledWith({ type: 'cancelled' });
+    expect(resolve).toHaveBeenCalledWith({ type: 'cancelled', reason: 'dismiss' });
     expect(events.map((event) => event.type)).toEqual(['open', 'closed']);
   });
 

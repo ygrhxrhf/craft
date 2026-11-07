@@ -89,7 +89,7 @@ describe('comment actions wire the notification switch', () => {
     await createThread(documentId, { body: '新评论' });
     const rows = await ownerNotifications();
     expect(rows).toHaveLength(1);
-    expect(rows[0].title).toBe('评论者 评论了「评论接线样本」');
+    expect(rows[0].title).toBe('<username>评论者</username> 评论了<highlight>「评论接线样本」</highlight>');
   });
 
   it('addReply notifies with reply wording', async () => {
@@ -98,7 +98,7 @@ describe('comment actions wire the notification switch', () => {
     await addReply(threadId, '回复一下');
     const rows = await ownerNotifications();
     expect(rows).toHaveLength(1);
-    expect(rows[0].title).toBe('评论者 回复了「评论接线样本」中的评论');
+    expect(rows[0].title).toBe('<username>评论者</username> 回复了<highlight>「评论接线样本」</highlight>中的评论');
   });
 
   it('does not notify when the recipient switch is off', async () => {

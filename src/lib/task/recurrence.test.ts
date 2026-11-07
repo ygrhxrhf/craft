@@ -485,6 +485,37 @@ describe('the official repeat JSON shape is read too (G687)', () => {
   });
 
   it('describes an official-shaped rule through the same templates', () => {
-    expect(describeRecurrence('{"frequency":"weekly","weekly":{"days":["monday"]}}')).toBe('每周 于 周一');
+    expect(describeRecurrence('{"type":"fixed","frequency":"weekly","weekly":{"days":["monday"]}}')).toBe('每周 于 周一');
+  });
+});
+
+// G637 —— `type` 缺省值按**形状**分流：官方形缺省＝flexible（反序列化器的缺省），
+// 旧本地 `freq` 形缺省＝fixed（它一直就是这个行为）。
+describe('the missing `type` default depends on the shape (G637)', () => {
+  it('an official-shaped rule without `type` reads as flexible', () => {
+    expect(parseRecurrence('{"frequency":"weekly","weekly":{"days":["monday"]}}')?.type).toBe('flexible');
+    expect(describeRecurrence('{"frequency":"weekly","weekly":{"days":["monday"]}}')).toBe('一周后');
+  });
+
+  it('a legacy local `freq` rule keeps the fixed reading it always had', () => {
+    expect(parseRecurrence('{"freq":"weekly","days":[1]}')?.type).toBeUndefined();
+    expect(describeRecurrence('{"freq":"weekly","days":[1]}')).toBe('每周 于 周一');
+  });
+
+  it('an explicit `type` wins on either shape', () => {
+    expect(parseRecurrence('{"frequency":"weekly","type":"fixed"}')?.type).toBe('fixed');
+    expect(parseRecurrence('{"freq":"weekly","type":"flexible"}')?.type).toBe('flexible');
+  });
+
+  it('the default decides which axis the next occurrence moves along', () => {
+    const from = new Date('2026-09-29T09:00:00Z'); // a Tuesday
+    // Official shape, no `type` ⇒ completion-anchored: Friday's axis is ignored, +7 days from now.
+    expect(iso(nextOccurrence('{"frequency":"weekly","weekly":{"days":["friday"]}}', from)!)).toBe(
+      '2026-10-06T09:00:00.000Z',
+    );
+    // Same rule spelled `fixed` ⇒ calendar-anchored: the next Friday.
+    expect(iso(nextOccurrence('{"frequency":"weekly","type":"fixed","weekly":{"days":["friday"]}}', from)!)).toBe(
+      '2026-10-02T09:00:00.000Z',
+    );
   });
 });

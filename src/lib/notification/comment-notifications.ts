@@ -30,9 +30,33 @@ export function mentionsUser(body: string, user: { name?: unknown; email?: unkno
 }
 
 /**
+ * The author and the document name are the two runs the official build styles, so they are
+ * interpolated inside the collected tag vocabulary (`<username>` / `<highlight>`, G76) and the
+ * bell renders them through `RichText`. Angle brackets are removed from the values first: the
+ * parser reads `<` as a tag opener, so a document titled `<b>x` would otherwise lose its text.
+ */
+function noAngleBrackets(value: string): string {
+  return value.replace(/<[^<>]*>/g, '').replace(/[<>]/g, '');
+}
+
+/** The author run — `<username>` is the collected tag for a person's name (G76). */
+export function usernameRun(name: string): string {
+  return `<username>${noAngleBrackets(name)}</username>`;
+}
+
+/** The document run — `<highlight>` is the collected tag for the emphasised subject (G76). */
+export function documentRun(title: string): string {
+  return `<highlight>「${noAngleBrackets(title)}」</highlight>`;
+}
+
+/**
  * Notification copy is local composition: the official push/notification
  * strings for comments were not collected. The visible fact (who, which
  * document, mention vs reply) is carried by the title.
+ *
+ * The title is stored **with** its style tags (G76): every reader goes through
+ * `RichText`/`stripEmbeddedTags`, so the tags are the styling channel, not markup
+ * that leaks into the UI.
  */
 export function commentNotificationTitle(input: {
   authorName: string;
@@ -41,9 +65,11 @@ export function commentNotificationTitle(input: {
   mentioned: boolean;
 }): string {
   const documentTitle = input.documentTitle || '无标题';
-  if (input.mentioned) return `${input.authorName} 在「${documentTitle}」中提到了你`;
-  if (input.kind === 'reply') return `${input.authorName} 回复了「${documentTitle}」中的评论`;
-  return `${input.authorName} 评论了「${documentTitle}」`;
+  const author = usernameRun(input.authorName);
+  const document = documentRun(documentTitle);
+  if (input.mentioned) return `${author} 在${document}中提到了你`;
+  if (input.kind === 'reply') return `${author} 回复了${document}中的评论`;
+  return `${author} 评论了${document}`;
 }
 
 /**
@@ -137,7 +163,7 @@ export async function notifyThreadResolved(
         userId,
         kind: 'comment_resolved',
         documentId: input.documentId,
-        title: `${resolverName} 解决了「${String(document.title ?? '无标题')}」中的评论`,
+        title: `${usernameRun(resolverName)} 解决了${documentRun(String(document.title ?? '无标题'))}中的评论`,
         remindAt: new Date().toISOString(),
       });
       await emitSyncEventSafe(db, userId, ['notification'], id);

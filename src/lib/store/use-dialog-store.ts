@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { createPromiseBridge, type DialogEvent, type DialogResult } from '@/lib/dialog/bridge';
+import { createPromiseBridge, type CloseReason, type DialogEvent, type DialogResult } from '@/lib/dialog/bridge';
 
 /** 只有"要不要做"的弹层；`confirmLabel` 是动作本身（官方没有通用「确定」串）。 */
 export interface ConfirmDialogConfig {
@@ -28,7 +28,7 @@ interface DialogState {
   open: boolean;
   config: DialogConfig | null;
   show: (config: DialogConfig) => Promise<DialogResult<DialogSubmission>>;
-  cancel: () => void;
+  cancel: (reason?: CloseReason) => void;
   submitResult: (submission: DialogSubmission) => void;
 }
 

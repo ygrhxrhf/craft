@@ -103,6 +103,22 @@ export async function getSpaceContext(): Promise<SpaceSummary> {
   };
 }
 
+/**
+ * G179 —— 空间图标：`Space.icon` 是真实列，存的是本地面板给出的预设 id（`gradient:*`）。
+ * 与改名同一道门（`canChangeSettings`）；空串按"回到默认图标"处理。
+ */
+export async function setSpaceIcon(icon: string | null): Promise<SpaceSummary> {
+  const context = await getSpaceContext();
+  if (!context.capabilities.canChangeSettings) throw new Error('没有更改空间设置的权限');
+
+  const userId = (await auth())!.user!.id;
+  const db = await getDb();
+  const next = icon?.trim() ? icon.trim() : null;
+  await db.orm.public.Space.where({ id: context.id }).update({ icon: next });
+  await emitSyncEventSafe(db, userId, ['space'], context.id);
+  return getSpaceContext();
+}
+
 /** 空间改名（owner 才有能力；`capabilities.canChangeSettings` 就是这道门）。 */
 export async function setSpaceName(name: string): Promise<SpaceSummary> {
   const context = await getSpaceContext();
@@ -118,8 +134,24 @@ export async function setSpaceName(name: string): Promise<SpaceSummary> {
 }
 
 /**
+ * G187 —— 邀请去重：官方把"已是团队成员"与"有待处理的邀请"并成同一句判据，
+ * 所以这里不再按 existing 复用/改档，而是直接以这句拒绝。
+ */
+export const INVITE_ALREADY_MEMBER = '已是团队成员或有待处理的邀请';
+/** `invite.already.member.title`／`.subtitle`：本地只收到判据那句逐字，标题沿用同一句，
+ * 副标题是本地措辞（官方那两句的逐字文本尚未采集，不要当成官方句引用）。 */
+export const INVITE_ALREADY_MEMBER_TITLE = INVITE_ALREADY_MEMBER;
+export const INVITE_ALREADY_MEMBER_SUBTITLE = '这个邮箱已被邀请过这个空间，无需重复邀请。';
+
+/** 有待处理的邀请＝成员行在、但还没有加入（`SpaceMember.joined` 为假）。 */
+export function isPendingInvite(member: { joined?: boolean | null } | null): boolean {
+  return Boolean(member) && member?.joined === false;
+}
+
+/**
  * G228 —— 邀请一名成员进空间。**非成员＝访客**：角色给 guest、并在 UI 侧出后果确认框
  * （`needsGuestWarning` 判据在客户端调；服务端只按传入角色落库）。
+ * G187：已有成员行（含待处理邀请）时以那句判据拒绝，不重复写行、也不顺手改档。
  */
 export async function inviteSpaceMember(input: {
   email: string;
@@ -137,20 +169,15 @@ export async function inviteSpaceMember(input: {
     spaceId: context.id,
     userId: String((target as any).id),
   });
-  if (existing) {
-    await db.orm.public.SpaceMember.where({ id: String((existing as any).id) }).update({
-      role: input.role,
-      joined: true,
-    });
-  } else {
-    await db.orm.public.SpaceMember.create({
-      id: crypto.randomUUID(),
-      spaceId: context.id,
-      userId: String((target as any).id),
-      role: input.role,
-      joined: true,
-    });
-  }
+  if (existing) throw new Error(INVITE_ALREADY_MEMBER);
+
+  await db.orm.public.SpaceMember.create({
+    id: crypto.randomUUID(),
+    spaceId: context.id,
+    userId: String((target as any).id),
+    role: input.role,
+    joined: true,
+  });
   await emitSyncEventSafe(db, (await auth())!.user!.id, ['space_member'], context.id);
   return getSpaceContext();
 }

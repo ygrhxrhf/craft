@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth/auth';
-import { parseAiContext, renderContextPrompt } from '@/lib/ai/context';
+import { parseAiContext, parseAiScope, renderContextPrompt, renderScopePrompt } from '@/lib/ai/context';
 import { ASSISTANT_DISABLED } from '@/lib/ai/assistant-access';
 import { assistantAvailableForUser } from '@/actions/user/assistant';
 import OpenAI from 'openai';
@@ -27,7 +27,18 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: '未配置 OPENAI_API_KEY' }, { status: 500 });
   }
 
-  let body: { action?: string; prompt?: string; text?: string; context?: unknown };
+  let body: {
+    action?: string;
+    prompt?: string;
+    text?: string;
+    context?: unknown;
+    scope?: unknown;
+    spaceId?: unknown;
+    rootBlockId?: unknown;
+    documentId?: unknown;
+    blockIds?: unknown;
+    folderId?: unknown;
+  };
   try {
     body = await req.json();
   } catch {
@@ -38,7 +49,12 @@ export async function POST(req: NextRequest) {
   // G116: structured context, deduped by document id before it reaches the model.
   const context = parseAiContext(body.context);
   const contextPrompt = renderContextPrompt(context);
-  const userContent = contextPrompt ? `${contextPrompt}\n\n${text ?? ''}` : text;
+  // G97: the location chain (space → page → scope) plus the user-selected block ids. Absent
+  // fields render nothing, so a caller that only sends {action,text} keeps the old message shape.
+  const scopePrompt = renderScopePrompt(parseAiScope(body));
+  const userContent = [[scopePrompt, contextPrompt].filter(Boolean).join('\n\n'), text ?? '']
+    .filter((part) => part.length > 0)
+    .join('\n\n');
   const systemPrompt = prompt?.trim() ? prompt.trim().slice(0, 2000) : action ? actionPrompts[action] : undefined;
   if (!systemPrompt || !text?.trim()) {
     return Response.json({ error: '缺少参数' }, { status: 400 });

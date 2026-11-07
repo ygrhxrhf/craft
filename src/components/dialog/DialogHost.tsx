@@ -35,7 +35,7 @@ export function DialogHost() {
   // 这一层接管（命中即 preventDefault），不会双触发。
   useEffect(() => {
     if (!open) return;
-    focusStack.push({ id: 'imperative-dialog', keyDefs: [escapeKeyDef(cancel)] });
+    focusStack.push({ id: 'imperative-dialog', keyDefs: [escapeKeyDef(() => cancel('escape'))] });
     return () => focusStack.remove('imperative-dialog');
   }, [open, cancel]);
 
@@ -45,8 +45,16 @@ export function DialogHost() {
   return (
     <Dialog
       open={open}
-      onOpenChange={(next) => {
-        if (!next) cancel();
+      onOpenChange={(next, details) => {
+        if (next) return;
+        // G482: the terminal state carries why the dialog closed. Base UI names the reason, so
+        // Escape and an outside press stay distinguishable from an explicit Cancel.
+        const reason = details?.reason === 'escape-key'
+          ? 'escape'
+          : details?.reason === 'outside-press'
+            ? 'overlay'
+            : 'dismiss';
+        cancel(reason);
       }}
     >
       <DialogContent data-testid="imperative-dialog" showCloseButton={false} className="sm:max-w-md">

@@ -4,6 +4,7 @@ import 'katex/dist/katex.min.css';
 import './globals.css';
 import { Providers } from '@/components/providers/Providers';
 import { UpdateBanner } from '@/components/app/UpdateBanner';
+import { BrowserCompatNotice } from '@/components/app/BrowserCompatNotice';
 import { directUploadEnabled } from '@/lib/storage';
 
 const inter = Inter({
@@ -40,6 +41,8 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       <body className="flex h-full flex-col">
         <Providers>{children}</Providers>
         <UpdateBanner />
+        {/* G346：不兼容浏览器是可绕过警告，四条官方文案在组件里。 */}
+        <BrowserCompatNotice />
         <script dangerouslySetInnerHTML={{ __html: swRegister }} />
         <script dangerouslySetInnerHTML={{ __html: storageFlag }} />
       </body>

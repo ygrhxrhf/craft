@@ -90,15 +90,22 @@ function renderList(node: any, depth: number): string {
   // (list items here, the export map below) cannot drift from the official spelling.
   const pad = DEFAULT_FLAVOUR.indentationCharacters.repeat(depth);
   return (node.content ?? []).map((item: any, index: number) => {
+    // G666: a cancelled task item keeps the **unchecked** box and says the third state with a
+    // strikethrough over the title (`- [ ] ~title~`) — the measured official export. `checked`
+    // stays `[ ]` even when both attrs are set, because the cancel axis wins (task-status.ts).
+    const cancelled = item.attrs?.cancelled === true;
+    const checked = item.attrs?.checked === true && !cancelled;
     const marker = node.type === 'taskList'
-      ? (item.attrs?.checked ? DEFAULT_FLAVOUR.todoListStyleChecked : DEFAULT_FLAVOUR.todoListStyleUnchecked)
+      ? (checked ? DEFAULT_FLAVOUR.todoListStyleChecked : DEFAULT_FLAVOUR.todoListStyleUnchecked)
       : node.type === 'orderedList'
         ? DEFAULT_FLAVOUR.numberedListStyle.replace('{number}', String(index + 1))
         : DEFAULT_FLAVOUR.bulletListStyle;
     const children = item.content ?? [];
     const own = children.filter((child: any) => !LIST_NODE_TYPES.includes(child.type)).map(textContent).join(' ');
+    // The measured export uses a **single** `~` (not the flavour's `~~` text-mark spelling).
+    const line = cancelled && own ? `~${own}~` : own;
     const nested = children.filter((child: any) => LIST_NODE_TYPES.includes(child.type));
-    return [`${pad}${marker}${own}`, ...nested.map((child: any) => renderList(child, depth + 1))].join('\n');
+    return [`${pad}${marker}${line}`, ...nested.map((child: any) => renderList(child, depth + 1))].join('\n');
   }).join('\n');
 }
 

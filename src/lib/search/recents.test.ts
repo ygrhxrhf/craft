@@ -76,4 +76,50 @@ describe('the recent-documents group (G355)', () => {
     expect(recentForDisplay(list, null)).toHaveLength(20);
     expect(recentForDisplay(list, null)[0].id).toBe('d0');
   });
+
+  it('sorts by each document\'s updatedAt, oldest first', () => {
+    const list = [
+      { id: 'new', title: 'New', updatedAt: '2026-11-07T10:00:00.000Z' },
+      { id: 'old', title: 'Old', updatedAt: '2026-01-02T10:00:00.000Z' },
+      { id: 'mid', title: 'Mid', updatedAt: '2026-06-01T10:00:00.000Z' },
+    ];
+    expect(recentForDisplay(list, null).map((item) => item.id)).toEqual(['old', 'mid', 'new']);
+  });
+
+  it('drops the current document before sorting, so it never takes a slot', () => {
+    const list = [
+      { id: 'a', title: 'A', updatedAt: '2026-01-01T00:00:00.000Z' },
+      { id: 'b', title: 'B', updatedAt: '2026-02-01T00:00:00.000Z' },
+    ];
+    expect(recentForDisplay(list, 'a').map((item) => item.id)).toEqual(['b']);
+  });
+
+  it('pushes entries with no updatedAt (legacy storage) behind the dated ones', () => {
+    const list = [
+      { id: 'undated', title: 'U' },
+      { id: 'dated', title: 'D', updatedAt: '2026-05-05T00:00:00.000Z' },
+      { id: 'bad', title: 'B', updatedAt: 'not-a-date' },
+    ];
+    expect(recentForDisplay(list, null).map((item) => item.id)).toEqual(['dated', 'undated', 'bad']);
+  });
+
+  it('stores updatedAt with the entry and keeps it when a doc is reopened without one', () => {
+    const stored = rememberRecent([], { id: 'a', title: 'A', updatedAt: '2026-03-01T00:00:00.000Z' });
+    expect(stored[0].updatedAt).toBe('2026-03-01T00:00:00.000Z');
+    expect(rememberRecent(stored, { id: 'a', title: 'A' })[0].updatedAt).toBe(
+      '2026-03-01T00:00:00.000Z',
+    );
+  });
+
+  it('round-trips updatedAt through storage and drops a malformed one', () => {
+    const store = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => void store.set(key, value),
+    };
+    saveRecents(storage, [{ id: 'a', title: 'A', updatedAt: '2026-03-01T00:00:00.000Z' }]);
+    expect(loadRecents(storage)[0].updatedAt).toBe('2026-03-01T00:00:00.000Z');
+    store.set('craft.search.recents', JSON.stringify([{ id: 'b', title: 'B', updatedAt: 'nope' }]));
+    expect(loadRecents(storage)).toEqual([{ id: 'b', title: 'B' }]);
+  });
 });

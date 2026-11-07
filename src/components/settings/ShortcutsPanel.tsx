@@ -5,8 +5,18 @@ import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent }
 import {
   PANEL_TABS,
   nextTabIndex,
+  type PanelTabIcon,
   type PanelTabId,
 } from '@/lib/editor/shortcut-panel';
+import {
+  FileText,
+  FolderTree,
+  Keyboard,
+  LayoutGrid,
+  ListTodo,
+  Palette,
+  Pencil,
+} from 'lucide-react';
 import { panelRoster, type RosterRow, type RosterTab } from '@/lib/editor/shortcut-official-rows';
 import { usePlatform } from '@/lib/editor/use-platform';
 import { useIsMobile } from '@/lib/use-is-mobile';
@@ -14,6 +24,17 @@ import { cn } from 'cn';
 
 /** G756: the active category survives a reload; any local carrier is enough. */
 const SHORTCUT_TAB_STORAGE_KEY = 'craft.shortcuts.active-tab';
+
+/** G1447: each of the seven tabs carries its own icon in the official panel. */
+const TAB_ICONS: Record<PanelTabIcon, typeof Keyboard> = {
+  keyboard: Keyboard,
+  document: FileText,
+  tasks: ListTodo,
+  editing: Pencil,
+  style: Palette,
+  organize: FolderTree,
+  collections: LayoutGrid,
+};
 
 /**
  * G13 / G755 / G771：设置 → 快捷键（`preferences.keyboard.shortcuts`）。结构三件照官方
@@ -152,12 +173,16 @@ export function ShortcutsPanel() {
           data-testid={`shortcuts-category-${tab.id}`}
           onClick={() => setActive(tab.id)}
           className={cn(
-            'rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors',
+            'flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors',
             active === tab.id
               ? 'bg-(--craft-accent) text-white'
               : 'border border-transparent text-foreground/60 hover:bg-foreground/4',
           )}
         >
+          {(() => {
+            const Icon = TAB_ICONS[tab.icon];
+            return <Icon className="size-3.5 shrink-0" aria-hidden="true" />;
+          })()}
           {tab.label}
         </button>
       ))}

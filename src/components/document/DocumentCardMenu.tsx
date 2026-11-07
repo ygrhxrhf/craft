@@ -15,6 +15,7 @@ import { resolveFavoriteState, toggleFavoriteLocal } from '@/lib/favorite/toggle
 import { getSyncManager } from '@/lib/sync-core';
 import { confirmDialog } from '@/lib/dialog/show';
 import { toast } from '@/components/ui/toast';
+import { showFavoriteFeedback } from '@/components/ui/favorite-feedback';
 import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { cn } from 'cn';
 
@@ -86,6 +87,8 @@ export function DocumentCardMenu({ documentId, title, at, onClose }: DocumentCar
             userId: session?.user?.id ?? null,
           });
           setFavorite(next);
+          // G1446: one info toast for either direction, 1500 ms.
+          showFavoriteFeedback(next);
           router.refresh();
         } catch {
           toast.add({ title: '收藏失败', type: 'error' });

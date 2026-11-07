@@ -17,6 +17,13 @@ export interface PageStyle {
   /** G1436: the page text colour; absent means the theme default. */
   textColor?: string;
   /**
+   * G673/G686: the page background channel. Same shape as `textColor` — `#RRGGBB`, or the
+   * official light/dark pair `"#light #dark"` stored as **one string** (the CLI writes
+   * `--bg-color "#222222"` and reads it back verbatim, so the pair is never split into fields).
+   * Absent means the theme's own background wins.
+   */
+  backgroundColor?: string;
+  /**
    * G282: `setPageParagraphSpacingType` — the paragraph spacing preset. `null`/absent means
    * "not set, follow the document", which is **not** the same as a zero-spacing preset.
    */
@@ -149,6 +156,45 @@ export function separatorStyleOf(pageStyle: PageStyle | null | undefined): Separ
   return pageStyle?.washi && pageStyle.washi !== 'none' ? 'washi' : 'line';
 }
 
+/**
+ * G673/G686 —— 三通道色（`--text-color`／`--bg-color`／`--theme-color`）的值有两种写法：
+ * 单值 `#RRGGBB`，或**明暗双值** `"#light #dark"`。双值在库里就是**一个字符串**（官方
+ * 写 `--bg-color "#111111 #eeeeee"`，读回 `backgroundColor:"#111111 #eeeeee"`），所以
+ * 模型层既不拆成两个字段，也不丢空格位置——只做合法性归一。
+ */
+const HEX = /^#[0-9a-f]{6}$/i;
+
+export interface DualColor {
+  light: string;
+  /** 只有写了双值才有；单值色在暗色下仍用它自己。 */
+  dark?: string;
+}
+
+/** 解析一档色通道值；两半任一不合法就返回 `null`（宁可丢值，不猜）。 */
+export function parseDualColor(value: unknown): DualColor | null {
+  if (typeof value !== 'string') return null;
+  const parts = value.trim().split(/\s+/);
+  if (parts.length === 1 && HEX.test(parts[0])) return { light: parts[0] };
+  if (parts.length === 2 && HEX.test(parts[0]) && HEX.test(parts[1])) {
+    return { light: parts[0], dark: parts[1] };
+  }
+  return null;
+}
+
+/** 存回去的形状：单值就是它自己，双值用一枚空格连起来。 */
+export function normalizeColorChannel(value: unknown): string | undefined {
+  const parsed = parseDualColor(value);
+  if (!parsed) return undefined;
+  return parsed.dark ? `${parsed.light} ${parsed.dark}` : parsed.light;
+}
+
+/** 按当前明暗取那一半；单值色两档同值。 */
+export function resolveColorChannel(value: unknown, isDark: boolean): string | undefined {
+  const parsed = parseDualColor(value);
+  if (!parsed) return undefined;
+  return isDark ? parsed.dark ?? parsed.light : parsed.light;
+}
+
 export function normalizePageStyle(value: unknown): PageStyle {
   if (!value || typeof value !== 'object') return {};
   const v = value as Record<string, unknown>;
@@ -162,6 +208,7 @@ export function normalizePageStyle(value: unknown): PageStyle {
     spelling: typeof v.spelling === 'boolean' ? v.spelling : undefined,
     spellingLang: typeof v.spellingLang === 'string' ? v.spellingLang : undefined,
     textColor: typeof v.textColor === 'string' && /^#[0-9a-f]{6}$/i.test(v.textColor) ? v.textColor : undefined,
+    backgroundColor: normalizeColorChannel(v.backgroundColor),
     // G282: `null` means "not set, follow the document" — kept distinct from a real preset value.
     paragraphSpacing: isParagraphSpacingType(v.paragraphSpacing) ? v.paragraphSpacing : undefined,
     stylePreset: isPageStylePreset(v.stylePreset) ? v.stylePreset : undefined,

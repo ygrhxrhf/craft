@@ -107,13 +107,13 @@ describe('panelRoster 装配', () => {
     ]);
   });
 
-  it('flags the 33 official rows this build does not wire up', () => {
+  it('flags the 31 official rows this build does not wire up', () => {
     const rows = view.flatMap((entry) => [
       ...entry.unsectioned,
       ...entry.sections.flatMap((section) => section.rows),
     ]);
     const unbound = rows.filter((row) => row.official && row.unbound);
-    expect(unbound).toHaveLength(33);
+    expect(unbound).toHaveLength(31);
     for (const row of unbound) expect(row.emptyTag, row.label).toBe('未接入');
     // 绑定的行走本机键帽，未绑定的行走官方键帽（置灰展示的那串）。
     const nav = rows.find((row) => row.id === 'o-general-2');

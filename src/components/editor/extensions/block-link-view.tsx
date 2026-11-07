@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { Link2, Pencil, Pilcrow, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { anchorHref } from '@/lib/editor/block-anchor';
+import { BLOCK_LINK_READ_ERROR } from '@/lib/i18n/error-copy';
+import { toast } from '@/components/ui/toast';
 import { untitledFor } from '@/lib/document/untitled-copy';
 
 export function BlockLinkView({ node, editor, updateAttributes, deleteNode }: NodeViewProps) {
@@ -22,7 +24,12 @@ export function BlockLinkView({ node, editor, updateAttributes, deleteNode }: No
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!documentId) return;
+    // G330: a block link without a target document is a **failed read**, not a no-op — the
+    // official build reports it through its own error source (`error.reading.blocklink`).
+    if (!documentId) {
+      toast.add({ type: 'error', title: BLOCK_LINK_READ_ERROR });
+      return;
+    }
     const hostDocumentId = editor.storage.blockLink?.hostDocumentId ?? '';
     const followOthers = editor.storage.blockLink?.followOtherDocuments !== false;
     if (documentId !== hostDocumentId && !followOthers) return;

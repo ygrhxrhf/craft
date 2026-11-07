@@ -16,6 +16,11 @@ export const RECENTS_LIMIT = 20;
 export interface RecentDocument {
   id: string;
   title: string;
+  /**
+   * G355：官方那支「最近文档」组按文档自己的 `updatedAt` 排，不按打开顺序。每条记下打开那一刻
+   * 读到的 ISO 时间；缺失（旧存量数据）的条目排在有时间的条目之后。
+   */
+  updatedAt?: string;
 }
 
 export function rememberRecent(
@@ -25,7 +30,13 @@ export function rememberRecent(
 ): RecentDocument[] {
   const id = String(doc.id ?? '').trim();
   if (!id) return [...list];
-  const next = [{ id, title: doc.title || '未命名' }, ...list.filter((item) => item.id !== id)];
+  // 重开一条已在列表里的文档时，调用方未必带 updatedAt；沿用存量值而不是抹成 undefined，
+  // 否则排序会在"从最近里再点开一次"之后失效。
+  const previous = list.find((item) => item.id === id);
+  const updatedAt = doc.updatedAt ?? previous?.updatedAt;
+  const entry: RecentDocument = { id, title: doc.title || '未命名' };
+  if (updatedAt) entry.updatedAt = updatedAt;
+  const next = [entry, ...list.filter((item) => item.id !== id)];
   return next.slice(0, Math.max(1, limit));
 }
 
@@ -34,9 +45,9 @@ export function forgetRecent(list: readonly RecentDocument[], id: string): Recen
 }
 
 /**
- * G355：官方那支「最近文档」组先把**正在看的这篇**剔除，再截断 20 条
- * （`[...docs].filter(d => d.id !== currentDocId).sort(cmp).slice(0, git)`）。本地列表按打开顺序
- * 排（最新的在前），剔与截断这两步与官方一致。`currentDocumentId` 为空时只截断。
+ * G355：官方那支「最近文档」组先把**正在看的这篇**剔除，再按 `getDocumentSortFunction(Updated,
+ * Ascending)` 排、最后截断 20 条（`[...docs].filter(d => d.id !== currentDocId).sort(cmp).slice(0, git)`）。
+ * 升序＝最久没更新的一篇在最前。没有 `updatedAt` 的旧条目排在所有有时间的条目之后（保持原有相对顺序）。
  */
 export function recentForDisplay(
   list: readonly RecentDocument[],
@@ -44,7 +55,26 @@ export function recentForDisplay(
   limit = RECENTS_LIMIT,
 ): RecentDocument[] {
   const current = currentDocumentId ?? null;
-  return list.filter((item) => item.id !== current).slice(0, Math.max(1, limit));
+  return list
+    .filter((item) => item.id !== current)
+    .sort(compareUpdatedAscending)
+    .slice(0, Math.max(1, limit));
+}
+
+/** `Updated` 升序；缺失/坏时间戳一律排到末尾，同档保持调用方给的顺序（`sort` 是稳定的）。 */
+function compareUpdatedAscending(a: RecentDocument, b: RecentDocument): number {
+  const left = updatedAtMs(a.updatedAt);
+  const right = updatedAtMs(b.updatedAt);
+  if (left === null && right === null) return 0;
+  if (left === null) return 1;
+  if (right === null) return -1;
+  return left - right;
+}
+
+function updatedAtMs(value: string | undefined): number | null {
+  if (!value) return null;
+  const ms = Date.parse(value);
+  return Number.isNaN(ms) ? null : ms;
 }
 
 /** 读 localStorage；坏数据或不可用（SSR/隐私模式）一律当空列表。 */
@@ -58,7 +88,13 @@ export function loadRecents(storage?: Pick<Storage, 'getItem'>): RecentDocument[
     return parsed
       .filter((item): item is RecentDocument =>
         Boolean(item) && typeof item === 'object' && typeof (item as RecentDocument).id === 'string')
-      .map((item) => ({ id: item.id, title: String(item.title || '未命名') }))
+      .map((item) => {
+        const entry: RecentDocument = { id: item.id, title: String(item.title || '未命名') };
+        if (typeof item.updatedAt === 'string' && !Number.isNaN(Date.parse(item.updatedAt))) {
+          entry.updatedAt = item.updatedAt;
+        }
+        return entry;
+      })
       .slice(0, RECENTS_LIMIT);
   } catch {
     return [];

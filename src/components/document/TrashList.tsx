@@ -256,14 +256,6 @@ export function TrashList({ documents }: TrashListProps) {
           </>
         ) : (
           <>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="rounded-md text-ui"
-              onClick={() => setSelecting(true)}
-            >
-              选择
-            </Button>
             {/* G242：回收站屏的 ⋯ 是按屏裁剪的子集——官方这里是「选择」＋「清空最近删除」，
                 没有所有文档 ⋯ 里的排序方式／导入／导出／空间设置。 */}
             <DropdownMenu>
@@ -281,6 +273,7 @@ export function TrashList({ documents }: TrashListProps) {
                 <MoreHorizontal />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setSelecting(true)}>选择</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setEmptyConfirmOpen(true)}>
                   {EMPTY_TRASH_ACTION}
                 </DropdownMenuItem>

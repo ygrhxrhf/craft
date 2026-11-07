@@ -14,6 +14,7 @@ import { BrowseToolbarMenu } from '@/components/document/BrowseToolbarMenu';
 import { Button } from '@/components/ui/button';
 import { confirmDialog } from '@/lib/dialog/show';
 import { toast } from '@/components/ui/toast';
+import { showFavoriteFeedback } from '@/components/ui/favorite-feedback';
 import { getSyncManager } from '@/lib/sync-core';
 import { isDocumentFavorite } from '@/actions/document/favorite';
 import { deleteDocument } from '@/actions/document/delete';
@@ -128,7 +129,8 @@ export function SortableDocGrid({
         const favored = await isDocumentFavorite(id).catch(() => false);
         if (!favored) await toggleFavoriteLocal({ documentId: id, favored: false, userId: session?.user?.id });
       }
-      toast.add({ id: 'browse-favorite', type: 'success', title: '已收藏' });
+      // G1446: the batch star answers with the same info toast as the single-document menu.
+      showFavoriteFeedback(true);
       stopSelecting();
       router.refresh();
     } finally {

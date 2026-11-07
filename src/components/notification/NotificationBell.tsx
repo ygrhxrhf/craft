@@ -11,6 +11,7 @@ import {
   setNotificationRead,
 } from '@/actions/notification/notification';
 import { confirmDialog } from '@/lib/dialog/show';
+import { RichText } from '@/components/ui/rich-text';
 import { cn } from 'cn';
 import type { InboxRow } from '@/lib/notification/inbox';
 import { createReadPerRevision } from '@/lib/read-per-revision';
@@ -269,7 +270,10 @@ export function NotificationBell() {
                         disabled={!item.documentId}
                         className="block max-w-full truncate text-left text-[13px] disabled:cursor-default"
                       >
-                        {item.title}
+                        {/* G76: a title is not plain text — the author and document runs carry
+                            `<username>`/`<highlight>` tags, so it goes through the same embedded-tag
+                            renderer the i18n copy uses instead of leaking the tags as raw text. */}
+                        <RichText value={item.title} />
                       </button>
                       <p className="text-[11px] text-muted-foreground">{formatReminder(item.remindAt)}</p>
                     </div>

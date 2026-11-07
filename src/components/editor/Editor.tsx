@@ -73,6 +73,7 @@ import { BlockLink } from './extensions/block-link';
 import { BlockId } from './extensions/block-id';
 import { BlockReminderAttr } from './extensions/block-reminder';
 import { TaskItemId } from './extensions/task-id';
+import { BlockSelectionChrome } from './extensions/block-selection-chrome';
 import { BlockEmoji } from './extensions/block-emoji';
 import { MirrorBlock } from './extensions/mirror-block';
 import { BlockLinkSuggestion } from './extensions/block-link-suggestion';
@@ -626,6 +627,8 @@ export function Editor({
       SlashCommand,
       FindReplace,
       CraftKeymap,
+      // G618: block selection gets a visible outline plus a per-block badge node.
+      BlockSelectionChrome,
       CommentMark.configure({
         HTMLAttributes: {
           class: 'comment-mark',

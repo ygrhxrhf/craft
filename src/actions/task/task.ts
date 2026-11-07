@@ -5,7 +5,7 @@ import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
 import { nextOccurrence, parseRecurrence, scheduleWithRecurrence } from '@/lib/task/recurrence';
-import { defaultReminderForRepeat } from '@/lib/task/repeat-reminder';
+import { defaultReminderForRepeat, rollForwardReminder } from '@/lib/task/repeat-reminder';
 import { listsTaskFromDocument } from '@/lib/task/display';
 import { applyToggled, taskLineStatus, type TaskAttrs } from '@/lib/editor/task-status';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
@@ -306,11 +306,9 @@ async function rollForward(db: any, task: any, timeZone?: string): Promise<void>
   const upcoming = nextOccurrence(task.recurrence, from, timeZone);
   if (!upcoming) return;
 
-  let remindAt: string | null = null;
-  if (task.remindAt) {
-    const lead = base ? new Date(base).getTime() - new Date(task.remindAt).getTime() : 0;
-    remindAt = new Date(upcoming.getTime() - lead).toISOString();
-  }
+  // G644: the reminder is recomputed as "this occurrence's day ＋ the previous minute-of-day",
+  // not carried as a relative lead; a target already in the past is dropped silently.
+  const remindAt = rollForwardReminder(task.remindAt, upcoming, timeZone);
 
   await db.orm.public.Task.create({
     id: crypto.randomUUID(),
@@ -356,7 +354,25 @@ export async function setTaskSchedule(id: string, schedule: TaskSchedule) {
   // G667: a repeat with no reminder defaults to 09:00 on that day — only when the repeat is new,
   // so clearing a reminder later is not undone by the next save.
   const isNewRepeat = Boolean(schedule.recurrence) && !Boolean((task as any).recurrence);
-  const remindAt = isNewRepeat ? defaultReminderForRepeat(scheduleDate, schedule.remindAt) : schedule.remindAt;
+  let remindAt = isNewRepeat ? defaultReminderForRepeat(scheduleDate, schedule.remindAt) : schedule.remindAt;
+  /**
+   * G644: the reminder is an expression — the schedule supplies the date and the previous
+   * reminder supplies the minute-of-day. When the day moves and the user did not touch the
+   * time, recompute it instead of keeping the old date attached to the absolute instant.
+   */
+  const previousRemindAt = (task as any).remindAt ?? null;
+  const previousScheduleDate = (task as any).scheduleDate ?? null;
+  const repeat = parseRecurrence(schedule.recurrence);
+  if (
+    repeat &&
+    !isNewRepeat &&
+    remindAt &&
+    previousRemindAt === remindAt &&
+    scheduleDate !== previousScheduleDate
+  ) {
+    const day = scheduleDate ? new Date(scheduleDate) : schedule.dueDate ? new Date(schedule.dueDate) : null;
+    if (day) remindAt = rollForwardReminder(previousRemindAt, day);
+  }
 
   await db.orm.public.Task.where({ id }).update({
     dueDate: schedule.dueDate,

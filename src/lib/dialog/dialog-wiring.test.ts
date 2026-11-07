@@ -48,7 +48,9 @@ describe('the imperative dialog is wired', () => {
 
   it('resolves a close as a cancellation instead of leaving it dangling', () => {
     const host = read('components/dialog/DialogHost.tsx');
-    expect(host).toMatch(/if \(!next\) cancel\(\);/);
+    expect(host).toMatch(/onOpenChange=\{\(next, details\)/);
+    // G482: the close reason travels with the cancellation.
+    expect(host).toMatch(/cancel\(reason\)/);
     expect(host).toMatch(/submit\(\{ kind: 'prompt', value \}\)/);
     expect(host).toContain('取消');
   });

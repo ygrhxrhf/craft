@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { hasDecoration, isEmptyBlock, mergeCaretIndex, nextBackspaceStep, nextFormatStep } from './format-downgrade';
+import { hasDecoration, isEmptyBlock, mergeCaretIndex, nextBackspaceStep, nextFormatStep, previousSibling } from './format-downgrade';
 
 // G570: the three-step chain, in order, first applicable step wins.
 describe('the format downgrade chain', () => {
@@ -75,6 +75,35 @@ describe('the Backspace chain', () => {
   it('lands the merge caret at the previous block end', () => {
     expect(mergeCaretIndex(7)).toBe(7);
     expect(mergeCaretIndex(null)).toBe(-1);
+  });
+});
+
+// G628: "the previous block" is the previous *sibling*, read from the block's own container.
+// A document-flat lookup would hand a nested block its parent's predecessor instead.
+describe('the previous sibling lookup', () => {
+  const text = (value: string, type = 'paragraph') => ({ type: { name: type }, textContent: value });
+  const image = { type: { name: 'imageBlock' }, textContent: '' };
+
+  it('reports no previous sibling for the first child of its container', () => {
+    expect(previousSibling([text('甲'), text('乙')], 0)).toBeUndefined();
+  });
+
+  it('reads the sibling immediately before, not the flattened predecessor', () => {
+    // Nested inside a toggle: the container just holds these two children.
+    expect(previousSibling([text('甲'), text('乙')], 1)).toEqual({ isText: true, empty: false });
+  });
+
+  it('treats a heading as a text block and an image as a non-text one', () => {
+    expect(previousSibling([text('甲', 'heading'), text('乙')], 1)).toEqual({ isText: true, empty: false });
+    expect(previousSibling([image, text('乙')], 1)).toEqual({ isText: false, empty: false });
+  });
+
+  it('flags an empty previous text block for the delete arm', () => {
+    expect(previousSibling([text(''), text('乙')], 1)).toEqual({ isText: true, empty: true });
+  });
+
+  it('returns undefined for an index outside the sibling list', () => {
+    expect(previousSibling([text('甲')], 3)).toBeUndefined();
   });
 });
 

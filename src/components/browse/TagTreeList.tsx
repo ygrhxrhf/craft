@@ -1,15 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { EyeOff, Pin, PinOff } from 'lucide-react';
 
 import { getSyncManager } from '@/lib/sync-core';
 import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
-import type { TagBrowseGroup } from '@/lib/browse/tag-browse';
-import { tagLevel } from '@/lib/browse/tag-browse';
-import { formatDocCount } from '@/lib/browse/official-copy';
+import type { TagBrowseGroup, TagCaseMode } from '@/lib/browse/tag-browse';
+import {
+  TAG_CASE_LABELS,
+  TAG_CASE_MODES,
+  formatTagLabel,
+  readTagCaseModeNow,
+  serverTagCaseMode,
+  subscribeTagCaseMode,
+  tagLevel,
+  writeTagCaseMode,
+} from '@/lib/browse/tag-browse';
+import { TAGS_EMPTY, formatDocCount } from '@/lib/browse/official-copy';
 import { addIgnoreRule } from '@/actions/tag/ignore-rules';
 import { TAG_ADDED_TO_IGNORE_LIST } from '@/lib/tag/ignore-copy';
 import { toast } from '@/components/ui/toast';
@@ -22,7 +31,16 @@ import {
 import { confirmDialog } from '@/lib/dialog/show';
 import { useDragArm } from '@/lib/dnd/use-drag-arm';
 
-function TagRow({ group, nested = false }: { group: TagBrowseGroup; nested?: boolean }) {
+function TagRow({
+  group,
+  nested = false,
+  caseMode,
+}: {
+  group: TagBrowseGroup;
+  nested?: boolean;
+  caseMode: TagCaseMode;
+}) {
+  const label = nested ? tagLevel(group.name).leaf : group.name;
   return (
     <Link
       href={`/tags/${group.id}`}
@@ -34,9 +52,7 @@ function TagRow({ group, nested = false }: { group: TagBrowseGroup; nested?: boo
         style={{ backgroundColor: group.color }}
       />
       {/* A nested row sits under its parent already, so only its own level is repeated. */}
-      <span className="min-w-0 flex-1 truncate">
-        {nested ? tagLevel(group.name).leaf : group.name}
-      </span>
+      <span className="min-w-0 flex-1 truncate">{formatTagLabel(label, caseMode)}</span>
       <span className="shrink-0 text-foreground/55">{formatDocCount(group.documentCount)}</span>
     </Link>
   );
@@ -54,6 +70,16 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
   const dragArm = useDragArm('general');
   // G173：固定失败/到上限时的那一句（不是静默吞掉）。
   const [pinError, setPinError] = useState<string | null>(null);
+  // G175：标签名大小写两档（本机偏好；服务端快照按「按原样」，水合一致）。
+  const caseMode = useSyncExternalStore(
+    subscribeTagCaseMode,
+    readTagCaseModeNow,
+    serverTagCaseMode,
+  );
+
+  const chooseCaseMode = (mode: TagCaseMode) => {
+    if (typeof localStorage !== 'undefined') writeTagCaseMode(localStorage, mode);
+  };
 
   // router.refresh() 之后服务端重排的结果要回到本地列表（置顶切换会改变顺序）。
   useEffect(() => {
@@ -134,11 +160,34 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
 
   return (
     <div>
+      {/* G175：大小写两档（只换显示）。 */}
+      <div className="mb-2 flex justify-end gap-1" role="group" aria-label="标签名大小写">
+        {TAG_CASE_MODES.map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            aria-pressed={caseMode === mode}
+            data-testid={`tag-case-${mode}`}
+            onClick={() => chooseCaseMode(mode)}
+            className={
+              caseMode === mode
+                ? 'rounded-md bg-foreground/8 px-2 py-1 text-meta font-medium'
+                : 'rounded-md px-2 py-1 text-meta text-foreground/55 hover:bg-foreground/4'
+            }
+          >
+            {TAG_CASE_LABELS[mode]}
+          </button>
+        ))}
+      </div>
       {pinError && (
         <p role="status" className="mb-2 text-meta text-destructive">
           {pinError}
         </p>
       )}
+      {/* G175：树为空时的那句（列表页已有一次，这里是组件自己兜底的一档）。 */}
+      {items.length === 0 ? (
+        <p className="text-ui leading-[15.6px] text-foreground/55">{TAGS_EMPTY}</p>
+      ) : (
       <ul className="flex flex-col gap-px">
       {items.map((group, index) => (
         <li
@@ -160,7 +209,7 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
         >
           <div className="flex items-center gap-1">
             <div className="min-w-0 flex-1">
-              <TagRow group={group} />
+              <TagRow group={group} caseMode={caseMode} />
             </div>
             <button
               type="button"
@@ -193,7 +242,7 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
             <ul className="ml-5 flex flex-col gap-px border-l border-border/60 pl-2">
               {group.children.map((child) => (
                 <li key={child.id}>
-                  <TagRow group={child} nested />
+                  <TagRow group={child} nested caseMode={caseMode} />
                 </li>
               ))}
             </ul>
@@ -201,6 +250,7 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
         </li>
       ))}
       </ul>
+      )}
     </div>
   );
 }

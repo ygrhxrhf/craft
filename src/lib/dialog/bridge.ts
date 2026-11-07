@@ -12,7 +12,9 @@ export type ClosedEvent = { type: 'closed' };
 export type DialogEvent<C> = OpenEvent<C> | ClosedEvent;
 
 export type Submitted<S> = { type: 'submitted'; config: S };
-export type Cancelled = { type: 'cancelled' };
+/** G482: how the dialog was dismissed, so form panels can tell the terminal states apart. */
+export type CloseReason = 'escape' | 'overlay' | 'dismiss';
+export type Cancelled = { type: 'cancelled'; reason?: CloseReason };
 export type DialogResult<S> = Submitted<S> | Cancelled;
 
 type Noop = () => void;
@@ -33,8 +35,8 @@ export function createPromiseBridge<C, S>(dispatch: (event: DialogEvent<C>) => v
         dispatch({ type: 'open', config });
       });
     },
-    cancel(): void {
-      callback({ type: 'cancelled' });
+    cancel(reason: CloseReason = 'dismiss'): void {
+      callback({ type: 'cancelled', reason });
     },
     submitResult(config: S): void {
       callback({ type: 'submitted', config });

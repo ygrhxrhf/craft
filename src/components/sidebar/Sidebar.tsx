@@ -3,6 +3,12 @@
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { useFocusStore } from '@/lib/store/use-focus-store';
 import { useIsMobile } from '@/lib/use-is-mobile';
+import { useSyncExternalStore } from 'react';
+import {
+  readSidebarViewNow,
+  serverSidebarView,
+  subscribeSidebarView,
+} from '@/lib/browse/sidebar-view';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { SidebarHeader } from './SidebarHeader';
 import { SidebarNav } from './SidebarNav';
@@ -15,28 +21,54 @@ import { CollectionTree } from './CollectionTree';
 import { WhiteboardTree } from './WhiteboardTree';
 import { cn } from 'cn';
 
+/**
+ * G1452：视图档（文档 / 文件夹）决定树区里**先出哪一组**。本地两棵树是可以同时挂在侧栏上的
+ * （官方在两种档下各只出一棵），所以这里按档重排而不是把另一棵藏掉——导航不丢，但弹层里选的
+ * 那一档确实排在前面。
+ */
+function TreeSections({ view }: { view: 'document' | 'browse' }) {
+  const documents = (
+    <SidebarSection title="文档">
+      <DocumentTree />
+    </SidebarSection>
+  );
+  const folders = (
+    <>
+      <SidebarSection title="文件夹">
+        <FolderTree />
+      </SidebarSection>
+
+      <SidebarSection title="集合">
+        <CollectionTree />
+      </SidebarSection>
+
+      <SidebarSection title="白板">
+        <WhiteboardTree />
+      </SidebarSection>
+    </>
+  );
+  return view === 'browse' ? (
+    <>
+      {folders}
+      {documents}
+    </>
+  ) : (
+    <>
+      {documents}
+      {folders}
+    </>
+  );
+}
+
 function SidebarBody() {
+  const view = useSyncExternalStore(subscribeSidebarView, readSidebarViewNow, serverSidebarView);
   return (
     <>
       <SidebarHeader />
       <SidebarNav />
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-1">
-        <SidebarSection title="文档">
-          <DocumentTree />
-        </SidebarSection>
-
-        <SidebarSection title="文件夹">
-          <FolderTree />
-        </SidebarSection>
-
-        <SidebarSection title="集合">
-          <CollectionTree />
-        </SidebarSection>
-
-        <SidebarSection title="白板">
-          <WhiteboardTree />
-        </SidebarSection>
+        <TreeSections view={view} />
       </div>
 
       <SidebarFooter />

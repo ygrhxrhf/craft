@@ -4,6 +4,8 @@ config();
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
+import { parseEmbeddedTags, stripEmbeddedTags } from '@/lib/i18n/embedded-tags';
+
 const { getDb } = await import('@/prisma/db');
 const {
   notifyCommentRecipients,
@@ -84,13 +86,29 @@ describe('comment notification helpers', () => {
   it('builds mention, reply and comment titles', () => {
     expect(commentNotificationTitle({
       authorName: '评论者', documentTitle: '样本', kind: 'thread', mentioned: true,
-    })).toBe('评论者 在「样本」中提到了你');
+    })).toBe('<username>评论者</username> 在<highlight>「样本」</highlight>中提到了你');
     expect(commentNotificationTitle({
       authorName: '评论者', documentTitle: '样本', kind: 'reply', mentioned: false,
-    })).toBe('评论者 回复了「样本」中的评论');
+    })).toBe('<username>评论者</username> 回复了<highlight>「样本」</highlight>中的评论');
     expect(commentNotificationTitle({
       authorName: '评论者', documentTitle: '样本', kind: 'thread', mentioned: false,
-    })).toBe('评论者 评论了「样本」');
+    })).toBe('<username>评论者</username> 评论了<highlight>「样本」</highlight>');
+  });
+
+  it('carries the two style runs the bell renders (G76)', () => {
+    const title = commentNotificationTitle({
+      authorName: '评论者', documentTitle: '样本', kind: 'thread', mentioned: false,
+    });
+    // The bell renders through `RichText`, so the plain reading is what a user sees.
+    expect(stripEmbeddedTags(title)).toBe('评论者 评论了「样本」');
+    const kinds = parseEmbeddedTags(title).map((segment) => segment.kind);
+    expect(kinds).toContain('text');
+    // A title that itself holds angle brackets must not turn into tags.
+    const hostile = commentNotificationTitle({
+      authorName: '<b>甲</b>', documentTitle: '<i>乙</i>', kind: 'thread', mentioned: false,
+    });
+    expect(parseEmbeddedTags(hostile).some((segment) => segment.kind === 'link')).toBe(false);
+    expect(stripEmbeddedTags(hostile)).toBe('甲 评论了「乙」');
   });
 });
 
@@ -109,7 +127,7 @@ describe('notifyCommentRecipients', () => {
       userId: ownerId,
       kind: 'comment',
       documentId,
-      title: '评论者 评论了「评论通知样本」',
+      title: '<username>评论者</username> 评论了<highlight>「评论通知样本」</highlight>',
     });
     expect(await notificationsFor(authorId)).toHaveLength(0);
   });
@@ -133,7 +151,7 @@ describe('notifyCommentRecipients', () => {
       kind: 'thread',
     })).toBe(1);
     const [row] = await notificationsFor(ownerId);
-    expect(row.title).toBe('评论者 在「评论通知样本」中提到了你');
+    expect(stripEmbeddedTags(String(row.title))).toBe('评论者 在「评论通知样本」中提到了你');
     expect(row.kind).toBe('comment_mention');
   });
 
@@ -141,7 +159,7 @@ describe('notifyCommentRecipients', () => {
     expect(await notifyThreadResolved(db, { documentId, resolverId: authorId })).toBe(1);
     const [row] = await notificationsFor(ownerId);
     expect(row.kind).toBe('comment_resolved');
-    expect(row.title).toBe('评论者 解决了「评论通知样本」中的评论');
+    expect(stripEmbeddedTags(String(row.title))).toBe('评论者 解决了「评论通知样本」中的评论');
   });
 
   it('uses the reply wording for replies', async () => {
@@ -152,6 +170,6 @@ describe('notifyCommentRecipients', () => {
       kind: 'reply',
     })).toBe(1);
     const [row] = await notificationsFor(ownerId);
-    expect(row.title).toBe('评论者 回复了「评论通知样本」中的评论');
+    expect(stripEmbeddedTags(String(row.title))).toBe('评论者 回复了「评论通知样本」中的评论');
   });
 });

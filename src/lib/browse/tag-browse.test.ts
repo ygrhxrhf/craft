@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildTagTree, tagLevel } from './tag-browse';
+import {
+  TAG_CASE_STORAGE_KEY,
+  buildTagTree,
+  formatTagLabel,
+  readTagCaseMode,
+  tagLevel,
+  writeTagCaseMode,
+} from './tag-browse';
 
 const doc = (id: string, updatedAt: string, title = id) => ({
   id,
@@ -149,5 +156,42 @@ describe('pinned tags (G607)', () => {
       [],
     );
     expect(tree.groups.map((group) => group.name)).toEqual(['乙', '甲']);
+  });
+});
+
+/** G175：标签名大小写两档只换显示，不换存下来的名字；档位存本机。 */
+describe('tag label case is a display-only two-state preference', () => {
+  const storage = () => {
+    const box = new Map<string, string>();
+    return {
+      getItem: (key: string) => box.get(key) ?? null,
+      setItem: (key: string, value: string) => void box.set(key, value),
+      box,
+    };
+  };
+
+  it('keeps the typed name or lowercases it', () => {
+    expect(formatTagLabel('Work/Idea', 'asTyped')).toBe('Work/Idea');
+    expect(formatTagLabel('Work/Idea', 'lowercase')).toBe('work/idea');
+    // 中文没有大小写，两档读出同一串。
+    expect(formatTagLabel('工作', 'lowercase')).toBe('工作');
+  });
+
+  it('defaults to as-typed and survives a round-trip under its own key', () => {
+    const box = storage();
+    expect(readTagCaseMode(box)).toBe('asTyped');
+    expect(writeTagCaseMode(box, 'lowercase')).toBe(true);
+    expect(box.box.get(TAG_CASE_STORAGE_KEY)).toBe('lowercase');
+    expect(readTagCaseMode(box)).toBe('lowercase');
+  });
+
+  it('reports a failed write instead of pretending it saved', () => {
+    const failing = {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error('quota');
+      },
+    };
+    expect(writeTagCaseMode(failing, 'lowercase')).toBe(false);
   });
 });

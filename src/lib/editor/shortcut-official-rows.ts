@@ -43,8 +43,8 @@ export const OFFICIAL_ROWS: readonly OfficialRow[] = [
   // 通用（7 行 ＋ 快速开启 1 别名；16 枚键帽）
   { label: '取消', keys: ['esc'], tab: 'general', section: null, bound: null },
   { label: '查看所有快捷键', keys: ['Ctrl', 'Shift', ','], tab: 'general', section: null, bound: 'TOGGLE_KEY_SHORTCUTS' },
-  { label: '导航到', keys: ['Ctrl', '→'], tab: 'general', section: 'general-navigation', bound: null },
-  { label: '返回上层', keys: ['Ctrl', '←'], tab: 'general', section: 'general-navigation', bound: null },
+  { label: '导航到', keys: ['Ctrl', '→'], tab: 'general', section: 'general-navigation', bound: 'NAVIGATE_INTO' },
+  { label: '返回上层', keys: ['Ctrl', '←'], tab: 'general', section: 'general-navigation', bound: 'NAVIGATE_OUT' },
   { label: '快速开启', keys: ['Ctrl', 'O'], tab: 'general', section: 'general-navigation', bound: 'TOGGLE_QUICK_OPEN', alt: { keys: ['Ctrl', 'P'], bound: 'TOGGLE_QUICK_OPEN_ALT' } },
   { label: '切换专注模式', keys: ['Ctrl', '.'], tab: 'general', section: 'general-view', bound: 'TOGGLE_FOCUS_MODE' },
   { label: '切换左侧边栏', keys: ['Ctrl', '\\'], tab: 'general', section: 'general-view', bound: 'TOGGLE_LEFT_SIDEBAR' },

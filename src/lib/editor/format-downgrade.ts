@@ -121,3 +121,31 @@ export function nextBackspaceStep(ctx: BackspaceContext): BackspaceStep | null {
 export function mergeCaretIndex(previousTextLength: number | null | undefined): number {
   return typeof previousTextLength === 'number' ? previousTextLength : -1;
 }
+
+/** The node kinds the chain counts as *text* blocks (`paragraph` and `heading`). */
+export const TEXT_BLOCK_NAMES: readonly string[] = ['paragraph', 'heading'];
+
+/** The little the chain needs from a sibling node. */
+export interface SiblingBlockLike {
+  type: { name: string };
+  textContent: string;
+}
+
+/**
+ * G628: the block **before this one among its own siblings**. The official dispatcher reads the
+ * container's `subblocks`, so a block nested in a toggle compares against the previous child of
+ * that toggle — not against the previous entry of the document's flattened order, which is what
+ * a top-level-only lookup hands back.
+ *
+ * Returns `undefined` when this block is first among its siblings, which is exactly the
+ * "no previous sibling" arm of the chain (delete self when empty, do nothing otherwise).
+ */
+export function previousSibling(
+  siblings: readonly SiblingBlockLike[],
+  index: number,
+): { isText: boolean; empty: boolean } | undefined {
+  if (index <= 0 || index >= siblings.length) return undefined;
+  const previous = siblings[index - 1];
+  const isText = TEXT_BLOCK_NAMES.includes(previous.type.name);
+  return { isText, empty: isText && previous.textContent.length === 0 };
+}

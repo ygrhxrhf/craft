@@ -2,6 +2,7 @@ import { Extension } from '@tiptap/core';
 import { NodeSelection, Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
 import { CellSelection } from '@tiptap/pm/tables';
 import type { EditorView } from '@tiptap/pm/view';
+import type { Node as PMNode } from '@tiptap/pm/model';
 import { closeHistory } from '@tiptap/pm/history';
 import type { Editor } from '@tiptap/react';
 
@@ -9,7 +10,7 @@ import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from 
 import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
 import { buildDowngradeFlatten } from '@/lib/editor/downgrade-command';
 import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
-import { nextFormatStep, nextBackspaceStep, isEmptyBlock, hasDecoration } from '@/lib/editor/format-downgrade';
+import { nextFormatStep, nextBackspaceStep, isEmptyBlock, hasDecoration, previousSibling } from '@/lib/editor/format-downgrade';
 import { decorationAt } from '@/lib/editor/format-commands';
 import { toggledDecoration } from '@/lib/editor/style-keys';
 import { applyGroup, applyGroupIndices, applyUngroup } from '@/lib/editor/block-group';
@@ -119,6 +120,47 @@ function duplicateTopBlock(editor: Editor): boolean {
   return true;
 }
 
+/**
+ * G198: `NAVIGATE_INTO` (⌘→) / `NAVIGATE_OUT` (⌘←) are the official ids behind the two arrow
+ * chords; the collected panel prints them as 进入／退出. The local meaning of the chord is the
+ * word jump (G1553), so the command *is* that jump — the ids exist so the chord is claimed by the
+ * keymap table (`KEY_BINDINGS`) and printed in the panel, not only by the inline branch below.
+ */
+function navigateWord(editor: Editor, direction: 'left' | 'right'): boolean {
+  const { state, view } = editor;
+  if (!state.selection.empty) return false;
+  const { $from } = state.selection;
+  if (!$from.parent.isTextblock) return false;
+  const text = $from.parent.textContent;
+  const offset = $from.parentOffset;
+  const target =
+    direction === 'right' ? nextWordOffset(text, offset) : prevWordOffset(text, offset);
+  view.dispatch(
+    state.tr.setSelection(TextSelection.create(state.doc, $from.start() + target)),
+  );
+  // The official build consumes the key even when the caret cannot move (it never leaves the
+  // block), which is what keeps the browser's own word jump out of the way.
+  return true;
+}
+
+/** G198: 「编辑页面区块」 on a selected page block rewrites that block's own title. */
+async function renamePageBlock(editor: Editor, pos: number, node: PMNode): Promise<void> {
+  const current = node.attrs.title;
+  const next = await promptDialog({
+    title: '编辑页面区块',
+    defaultValue: typeof current === 'string' ? current : '',
+    confirmLabel: '保存',
+  });
+  if (next === null) return;
+  const title = next.trim();
+  const after = editor.state;
+  const target = after.doc.nodeAt(pos);
+  if (!target || target.type.name !== 'pageBlock') return;
+  editor.view.dispatch(
+    after.tr.setNodeMarkup(pos, target.type, { ...target.attrs, title: title || null }),
+  );
+}
+
 export function applyKeymapAction(editor: Editor, id: string): boolean {
   const style = STYLE_SLOTS[id];
   if (style) return style(editor);
@@ -226,12 +268,21 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
   // line-break branch above already claimed it (G1552). This build has no page-block node
   // (G53/G1408) — the document title input is the page title, so that is the rename target.
   if (id === 'RENAME') {
-    const selection = editor.state.selection as { node?: unknown };
+    const selection = editor.state.selection as { node?: PMNode; from?: number };
     if (!selection.node) return false;
+    // G198: 「编辑页面区块」 is a **block-level** rename. A page block carries its own `title`
+    // attribute, so with one selected the target is that block, not the document title.
+    if (selection.node.type.name === 'pageBlock' && typeof selection.from === 'number') {
+      void renamePageBlock(editor, selection.from, selection.node);
+      return true;
+    }
     if (typeof document === 'undefined' || !document.querySelector('[data-document-title]')) return false;
     useTitleRequestStore.getState().ask();
     return true;
   }
+
+  if (id === 'NAVIGATE_INTO') return navigateWord(editor, 'right');
+  if (id === 'NAVIGATE_OUT') return navigateWord(editor, 'left');
 
   // `⌘⇧M` asks for a comment on the block holding the caret. The request store
   // opens the info panel's composer, the same path the block menu uses (G1470).
@@ -281,16 +332,19 @@ function listDepthOf(resolved: { depth: number; node: (depth: number) => { type:
   return depth;
 }
 
-/** The previous top-level block's kind, for the Backspace chain's steps 5–7 (G578). */
-function previousBlockInfo(
-  state: { doc: { childCount: number; child: (i: number) => { type: { name: string }; textContent: string } } },
-  $from: { depth: number; before: (depth: number) => number },
-): { isText: boolean; empty: boolean } | undefined {
-  const index = topLevelIndexOf(state.doc as never, $from.before($from.depth));
-  if (index <= 0) return undefined;
-  const previous = state.doc.child(index - 1);
-  const isText = previous.type.name === 'paragraph' || previous.type.name === 'heading';
-  return { isText, empty: isText && previous.textContent.length === 0 };
+/**
+ * The block's own sibling context (G628). The official chain reads the container's `subblocks`,
+ * so "the previous block" is the previous child of *the same parent* — for a top-level block that
+ * is the parent container (`$from.node(0)`), for a nested one it is the enclosing node.
+ */
+function siblingContext(
+  $from: { depth: number; node: (depth: number) => PMNode; index: (depth: number) => number },
+): { container: PMNode; index: number; siblings: PMNode[] } {
+  const container = $from.node($from.depth - 1);
+  const index = $from.index($from.depth - 1);
+  const siblings: PMNode[] = [];
+  for (let i = 0; i < container.childCount; i += 1) siblings.push(container.child(i));
+  return { container, index, siblings };
 }
 
 export const CraftKeymap = Extension.create({
@@ -613,21 +667,13 @@ export const CraftKeymap = Extension.create({
             // G1553: Mod+←/→ is word-level navigation, lands on the word *end* going forward,
             // never leaves the block, and — unlike the browser default — consumes the key.
             if (
-              event.key === 'ArrowLeft' || event.key === 'ArrowRight'
+              (event.key === 'ArrowLeft' || event.key === 'ArrowRight') &&
+              (event.metaKey || event.ctrlKey) &&
+              !event.shiftKey &&
+              !event.altKey
             ) {
-              const isMod = event.metaKey || event.ctrlKey;
-              if (isMod && !event.shiftKey && !event.altKey && view.state.selection.empty) {
-                const { $from } = view.state.selection;
-                if ($from.parent.isTextblock) {
-                  const text = $from.parent.textContent;
-                  const offset = $from.parentOffset;
-                  const target =
-                    event.key === 'ArrowRight' ? nextWordOffset(text, offset) : prevWordOffset(text, offset);
-                  const start = $from.start();
-                  view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, start + target)));
-                  return true;
-                }
-              }
+              // G198: the same two chords are the `NAVIGATE_INTO` / `NAVIGATE_OUT` commands.
+              return navigateWord(editor, event.key === 'ArrowRight' ? 'right' : 'left');
             }
             // G1552: Shift-Enter inserts a line break inside the block (four independent official
             // runs; the older "inert" reading G615 was withdrawn). A selected block still routes
@@ -884,6 +930,7 @@ export const CraftKeymap = Extension.create({
             ) {
               const { $from } = view.state.selection;
               if ($from.parentOffset === 0 && $from.parent.isTextblock) {
+                const { container, index, siblings } = siblingContext($from);
                 const step = nextBackspaceStep({
                   block: {
                     indentLevel: Number($from.parent.attrs?.indent ?? 0),
@@ -895,8 +942,8 @@ export const CraftKeymap = Extension.create({
                     atomicInlines: countAtomicInlines($from.parent),
                     childBlocks: $from.parent.childCount,
                   }),
-                  hasPrevious: topLevelIndexOf(view.state.doc, view.state.selection.from) > 0,
-                  previous: previousBlockInfo(view.state, $from),
+                  hasPrevious: index > 0,
+                  previous: previousSibling(siblings, index),
                 });
                 if (step === 'list') {
                   if (editor.isActive('taskList')) return editor.chain().focus().liftListItem('taskItem').run();
@@ -918,64 +965,60 @@ export const CraftKeymap = Extension.create({
                 // G578 step 5: a previous block that is an **empty text block** is removed
                 // outright — ProseMirror's joinBackward would instead merge into it and leave the
                 // caret in an empty block, which is not what the official chain does.
-                if (step === 'delete-previous') {
-                  const index = topLevelIndexOf(view.state.doc, view.state.selection.from);
-                  if (index > 0) {
-                    const prev = view.state.doc.child(index - 1);
-                    const prevStart = topLevelStart(view.state.doc, index - 1);
-                    view.dispatch(view.state.tr.delete(prevStart, prevStart + prev.nodeSize));
-                    return true;
-                  }
+                if (step === 'delete-previous' && index > 0) {
+                  const start = $from.before($from.depth);
+                  const prev = container.child(index - 1);
+                  view.dispatch(view.state.tr.delete(start - prev.nodeSize, start));
+                  return true;
                 }
                 // G578 step 6: merge into a previous text block. The official rule picks which
                 // side's style survives (G585's four-way winner); locally the merge itself is
                 // ProseMirror's joinBackward, and the winner decides whether the merged block
                 // keeps this block's style or the previous one's.
-                if (step === 'merge-into-previous') {
-                  const index = topLevelIndexOf(view.state.doc, view.state.selection.from);
-                  if (index > 0) {
-                    const prev = view.state.doc.child(index - 1);
-                    const current = view.state.doc.child(index);
-                    const winner = mergeStyleWinner(
-                      {
-                        textContent: prev.textContent,
-                        isListItem: prev.type.name === 'listItem' || prev.type.name === 'taskItem',
-                        childBlocks: prev.childCount,
-                      },
-                      {
-                        textContent: current.textContent,
-                        isListItem: current.type.name === 'listItem' || current.type.name === 'taskItem',
-                        childBlocks: current.childCount,
-                      },
-                    );
-                    const join = editor.chain().focus().joinBackward();
-                    // The previous block wins ⇒ after joining, re-assert its node type so the
-                    // merged block carries the winning style rather than whatever joinBackward left.
-                    if (winner === 'previous' && prev.type.name !== current.type.name) {
-                      const prevStart = topLevelStart(view.state.doc, index - 1);
-                      const applied = join.run();
-                      if (applied) {
-                        const merged = view.state.doc.nodeAt(prevStart);
-                        if (merged && merged.type.name !== prev.type.name) {
-                          view.dispatch(
-                            view.state.tr.setNodeMarkup(prevStart, prev.type, prev.attrs),
-                          );
-                        }
+                if (step === 'merge-into-previous' && index > 0) {
+                  const start = $from.before($from.depth);
+                  const prev = container.child(index - 1);
+                  const current = container.child(index);
+                  const winner = mergeStyleWinner(
+                    {
+                      textContent: prev.textContent,
+                      isListItem: prev.type.name === 'listItem' || prev.type.name === 'taskItem',
+                      childBlocks: prev.childCount,
+                    },
+                    {
+                      textContent: current.textContent,
+                      isListItem: current.type.name === 'listItem' || current.type.name === 'taskItem',
+                      childBlocks: current.childCount,
+                    },
+                  );
+                  const join = editor.chain().focus().joinBackward();
+                  // The previous block wins ⇒ after joining, re-assert its node type so the
+                  // merged block carries the winning style rather than whatever joinBackward left.
+                  if (winner === 'previous' && prev.type.name !== current.type.name) {
+                    const prevStart = start - prev.nodeSize;
+                    const applied = join.run();
+                    if (applied) {
+                      const merged = view.state.doc.nodeAt(prevStart);
+                      if (merged && merged.type.name !== prev.type.name) {
+                        view.dispatch(
+                          view.state.tr.setNodeMarkup(prevStart, prev.type, prev.attrs),
+                        );
                       }
-                      return applied;
                     }
-                    return join.run();
+                    return applied;
                   }
+                  return join.run();
                 }
-                // G628 step 4: no previous block — an empty block deletes itself. A top-level
-                // block can go; the document's only block cannot (an empty doc is not a valid
-                // ProseMirror document), and a nested empty block is left to ProseMirror's own
-                // delete, which removes just that paragraph.
+                // G628 step 4: no previous sibling — an empty block deletes itself, a non-empty
+                // one does nothing (the model returns null for that arm, so this branch is only
+                // reached when the block is empty). "First sibling" is read from the block's own
+                // container, so a nested empty block deletes itself too, not just a top-level one.
                 if (step === 'delete-self') {
-                  const index = topLevelIndexOf(view.state.doc, view.state.selection.from);
-                  if ($from.depth !== 1 || index !== 0 || view.state.doc.childCount <= 1) return false;
-                  const self = view.state.doc.child(index);
-                  const start = topLevelStart(view.state.doc, index);
+                  // A container must keep a child — the document's only block and the only child
+                  // of a nested container are not deletable — so those fall through.
+                  if (index !== 0 || container.childCount <= 1) return false;
+                  const self = container.child(0);
+                  const start = $from.before($from.depth);
                   const tr = view.state.tr.delete(start, start + self.nodeSize);
                   tr.setSelection(TextSelection.near(tr.doc.resolve(Math.min(start, tr.doc.content.size))));
                   view.dispatch(tr.scrollIntoView());
@@ -985,16 +1028,14 @@ export const CraftKeymap = Extension.create({
                 // block) and this block is empty → delete this block and select the previous one.
                 // ProseMirror's joinBackward has no merge to fall back on here, so the step is
                 // driven locally instead of being left to the default.
-                if (step === 'select-previous') {
-                  const index = topLevelIndexOf(view.state.doc, view.state.selection.from);
-                  if (index > 0) {
-                    const self = view.state.doc.child(index);
-                    const start = topLevelStart(view.state.doc, index);
-                    const tr = view.state.tr.delete(start, start + self.nodeSize);
-                    tr.setSelection(NodeSelection.create(tr.doc, topLevelStart(tr.doc, index - 1)));
-                    view.dispatch(tr.scrollIntoView());
-                    return true;
-                  }
+                if (step === 'select-previous' && index > 0) {
+                  const start = $from.before($from.depth);
+                  const prev = container.child(index - 1);
+                  const self = container.child(index);
+                  const tr = view.state.tr.delete(start, start + self.nodeSize);
+                  tr.setSelection(NodeSelection.create(tr.doc, start - prev.nodeSize));
+                  view.dispatch(tr.scrollIntoView());
+                  return true;
                 }
               }
             }

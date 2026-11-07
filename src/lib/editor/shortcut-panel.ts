@@ -24,18 +24,45 @@ export interface PanelTab {
   label: string;
   /** 官方语言包里的键；`null`＝屏上有这一档但语言包没有专键（本地串取自采集面）。 */
   key: string | null;
+  /**
+   * G1447：官方每个 tab 带一枚 `icon`（源里是压缩后的组件引用 `Wpe` 之类，取不到它的形状）。
+   * 这一层只落**名**：一个语义化的图标名，渲染层按名字映射到具体图标。
+   */
+  icon: PanelTabIcon;
 }
 
-/** 屏上左栏七档，顺序照官方。 */
+/** 七档的图标名（官方只留下组件引用，这里记的是"每档都有自己的图标"这件事）。 */
+export type PanelTabIcon =
+  | 'keyboard'
+  | 'document'
+  | 'tasks'
+  | 'editing'
+  | 'style'
+  | 'organize'
+  | 'collections';
+
+/**
+ * 屏上左栏七档，顺序照官方。
+ *
+ * G1447：三枚取词键本批对齐——`documents`←`browse.documents`、`tasks`←`tasks`、
+ * `style`←`style.style`（旧值 `onboarding.menu.styling` 是设置页那枚"样式"，不是面板这一枚）。
+ * 「文档」档仍是唯一没有段标题的一档。tab id 仍写作单数 `document`（改 id 会连带
+ * `shortcut-official-rows.ts` 的名册行；官方 id 是 `documents`，差异登记在 G1447 报告里）。
+ */
 export const PANEL_TABS: readonly PanelTab[] = [
-  { id: 'general', label: '通用', key: 'commands.shortcuts.keyboard.general' },
-  { id: 'document', label: '文档', key: null },
-  { id: 'tasks', label: '任务', key: null },
-  { id: 'editing', label: '编辑', key: 'commands.shortcuts.keyboard.editing' },
-  { id: 'style', label: '样式', key: 'onboarding.menu.styling' },
-  { id: 'organize', label: '整理', key: 'organize' },
-  { id: 'collections', label: '合集', key: 'collections' },
+  { id: 'general', label: '通用', key: 'commands.shortcuts.keyboard.general', icon: 'keyboard' },
+  { id: 'document', label: '文档', key: 'browse.documents', icon: 'document' },
+  { id: 'tasks', label: '任务', key: 'tasks', icon: 'tasks' },
+  { id: 'editing', label: '编辑', key: 'commands.shortcuts.keyboard.editing', icon: 'editing' },
+  { id: 'style', label: '样式', key: 'style.style', icon: 'style' },
+  { id: 'organize', label: '整理', key: 'organize', icon: 'organize' },
+  { id: 'collections', label: '合集', key: 'collections', icon: 'collections' },
 ] as const;
+
+/** 按 id 取那一档，渲染 rail 时省一次 `find`。 */
+export function panelTab(id: PanelTabId): PanelTab | undefined {
+  return PANEL_TABS.find((tab) => tab.id === id);
+}
 
 export type PanelSectionId =
   | 'general-navigation'

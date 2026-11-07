@@ -295,6 +295,60 @@ describe('勾选框那一次点击走三值循环（tasks.md:12）', () => {
   });
 });
 
+// G644 —— 滚到下一期时提醒按「排期日 ＋ 当日分钟数」现算，不是把旧的提前量照搬。
+describe('roll-forward 的提醒重算（G644）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const row = (over: Row): Row => ({
+    id: 't1',
+    userId: 'u1',
+    documentId: null,
+    blockId: null,
+    title: '任务',
+    isCompleted: false,
+    status: 'todo',
+    cancelledAt: null,
+    remindAt: null,
+    recurrence: null,
+    deletedAt: null,
+    ...over,
+  });
+
+  it('下一期的提醒＝新排期日的那天 ＋ 原提醒的时刻', async () => {
+    const log = setupDb([row({
+      dueDate: '2030-05-01T00:00:00.000Z',
+      remindAt: '2030-05-01T09:00:00.000Z',
+      recurrence: '{"freq":"daily","type":"fixed"}',
+    })]);
+    await toggleTask('t1');
+    expect(log.creates).toHaveLength(1);
+    expect(log.creates[0]).toMatchObject({
+      dueDate: '2030-05-02T00:00:00.000Z',
+      remindAt: '2030-05-02T09:00:00.000Z',
+    });
+  });
+
+  it('算出来已经过去的提醒不落（静默留空）', async () => {
+    const log = setupDb([row({
+      dueDate: '2020-01-01T00:00:00.000Z',
+      remindAt: '2020-01-01T09:00:00.000Z',
+      recurrence: '{"freq":"daily","type":"fixed"}',
+    })]);
+    await toggleTask('t1');
+    expect(log.creates).toHaveLength(1);
+    expect(log.creates[0]!.remindAt).toBeNull();
+  });
+
+  it('没有提醒的重复任务派生出的下一期也没有提醒', async () => {
+    const log = setupDb([row({
+      dueDate: '2030-05-01T00:00:00.000Z',
+      recurrence: '{"freq":"daily","type":"fixed"}',
+    })]);
+    await toggleTask('t1');
+    expect(log.creates[0]!.remindAt).toBeNull();
+  });
+});
+
 describe('读侧三档排序（G52）', () => {
   beforeEach(() => vi.clearAllMocks());
 

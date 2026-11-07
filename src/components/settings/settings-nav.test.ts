@@ -129,31 +129,52 @@ describe('the account panel can actually rename the user', () => {
 });
 
 /**
- * G179：空间分区曾有两枚**无宿主**的假控件——「更换空间图标」相机按钮（无 onClick）与
- * 「空间名称」右侧的裸 `<EditIcon />`。本地没有 `Space` 实体（空间名由用户 name 派生、
- * 图标是固定渐变）⇒ 没有可写入的地方，只能移除。判据与 G164 同一把尺，结论相反：
- * 那边有 `user.name`／`image` 列可接，这边没有。
+ * G179：空间分区那两枚「无宿主」的假控件，宿主已经到位（`Space` 实体＋`Space.icon` 列）⇒ 接线。
+ * 与 G164 同一把尺：有列就接，失败各一句。
  */
-describe('the space panel does not fake controls it cannot back', () => {
+describe('the space panel can actually rename the space and change its icon', () => {
   const panels = readFileSync(
     fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
     'utf8',
   );
 
-  it('has no space-icon camera button', () => {
-    // 只看属性位置，不看注释（注释里会引用那条旧标签作说明）。
-    expect(panels).not.toMatch(/aria-label="更换空间图标"/);
+  it('wires the icon picker to the real action', () => {
+    expect(panels).toMatch(/aria-label="更换空间图标"[\s\S]{0,1800}chooseSpaceIcon/);
+    expect(panels).toContain('setSpace(await setSpaceIcon(icon))');
+    expect(panels).toContain('没有改成空间图标，请重试');
   });
 
-  it('still shows the space name and its icon', () => {
-    expect(panels).toContain('空间名称');
-    expect(panels).toContain('<SpaceIcon');
+  it('keeps the rename button and its failure sentence', () => {
+    expect(panels).toMatch(/aria-label="重命名空间"[\s\S]{0,900}setSpaceName/);
+    expect(panels).toContain('没有改成空间名称，请重试');
+  });
+
+  it('renders the stored icon and the space initial, not a hard-coded glyph', () => {
+    expect(panels).toContain('icon={space?.icon}');
+    expect(panels).toContain('SPACE_ICON_PRESETS');
+    expect(panels).not.toMatch(/>\s*Zs\s*</);
   });
 
   it('keeps the avatar camera button, which has a real column behind it', () => {
-    // 与空间图标形成对照：这枚相机是接真了的（写 user.image）。
     expect(panels).toContain('更换头像');
     expect(panels).toContain('avatarInputRef.current?.click()');
+  });
+});
+
+/**
+ * G187：邀请去重——已有成员行（含待处理邀请）时以官方那句判据拒绝，面板出 title+subtitle 一块。
+ */
+describe('the invite flow reports the duplicate state instead of silently rewriting the row', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('switches to the collected sentences when the action rejects', () => {
+    expect(panels).toContain('INVITE_ALREADY_MEMBER');
+    expect(panels).toContain('{INVITE_ALREADY_MEMBER_TITLE}');
+    expect(panels).toContain('{INVITE_ALREADY_MEMBER_SUBTITLE}');
+    expect(panels).toContain('data-testid="invite-already-member"');
   });
 });
 
@@ -322,5 +343,27 @@ describe('the assistant panel confirms before clearing the AI history', () => {
     expect(assistant).toContain('CLEAR_HISTORY_CONFIRM');
     expect(assistant).toMatch(/confirmDialog\(\{[\s\S]{0,240}CLEAR_HISTORY_CONFIRM[\s\S]{0,240}\}\)\.then/);
     expect(assistant).toContain('clearAiHistory(window.localStorage)');
+  });
+});
+
+/**
+ * G161：高级设置里两件不需要新列的项——「重置文档缓存」（先确认再删离线内核那一库）与
+ * 「每日笔记默认显示」（复用浏览页已有那面本机旗）。
+ */
+describe('the advanced panel hosts the settings that need no schema change', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('confirms before resetting the document cache', () => {
+    expect(panels).toContain('data-testid="advanced-reset-cache"');
+    expect(panels).toMatch(/confirmDialog\(\{\s*title: RESET_CACHE_TITLE[\s\S]{0,200}confirmLabel: RESET_CACHE_ACTION/);
+    expect(panels).toContain('resetDocumentCache({ indexedDB: window.indexedDB })');
+  });
+
+  it('binds 每日笔记默认显示 to the existing local flag', () => {
+    expect(panels).toContain('data-testid="advanced-daily-notes-default"');
+    expect(panels).toContain('storeShowDailyNotes(next === true)');
   });
 });

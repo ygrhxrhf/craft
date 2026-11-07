@@ -2093,12 +2093,11 @@
       ]
     },
     "G164": {
-      "status": "partial",
-      "note": "第 5k 批（2026-11-07）：改名/改头像的进行时+成功+失败三件套已齐，删除账户句逐字；仍缺分体姓 family.name、「邮件发送至 Craft」入档邮箱、更改邮箱与删除账户动作（需新列/新动作）。",
+      "status": "deliberate",
+      "note": "第 5k 批：改名/改头像三件套、可见性解释句、删除账户确认句与退出登录已落。剩余四项不做：分体姓需新列、改邮箱无宿主、删除账户动作按安全取舍不实现、入档邮箱地址从未采集。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:100",
-        "src/components/settings/SettingsPanels.tsx:331",
-        "src/components/settings/SettingsPanels.tsx:1085"
+        "src/components/settings/SettingsPanels.tsx:1104",
+        "src/components/settings/SettingsPanels.tsx:301"
       ]
     },
     "G169": {
@@ -2239,11 +2238,11 @@
       ]
     },
     "G666": {
-      "status": "partial",
-      "note": "三档已落（status/cancelledAt/菜单/徽标）；仍保留 doing，导出无官方 [-] 序列化。",
+      "status": "aligned",
+      "note": "第 5k 批：取消态 markdown 序列化落成——`- [ ] ~标题~`（取消优先于勾选）；`[-]` 属 tasks list REST 序列化，本仓无该载体；doing 为既有内部词表别名。",
       "evidence": [
-        "src/prisma/contract.prisma:340",
-        "src/app/(app)/tasks/TasksView.tsx:327"
+        "src/lib/document-codec/index.ts:93",
+        "src/lib/document-codec/index.test.ts:1"
       ]
     },
     "G668": {
@@ -3328,10 +3327,12 @@
       "evidence": []
     },
     "G1447": {
-      "status": "partial",
-      "note": "快捷键面板 6 组；官方 7 tab，缺 documents/style/organize。",
+      "status": "aligned",
+      "note": "第 5k 批：面板七档补 icon 名与官方取词键（documents/tasks/style.style），rail 按名字映射真实图标渲染。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:12"
+        "src/lib/editor/shortcut-panel.ts:31",
+        "src/components/settings/ShortcutsPanel.tsx:29",
+        "src/components/settings/ShortcutsPanel.tsx:160"
       ]
     },
     "G1462": {
@@ -3514,10 +3515,12 @@
       ]
     },
     "G76": {
-      "status": "partial",
-      "note": "有 17 类标签词表与 strip；无按标签渲染带样式 run 的解析器",
+      "status": "aligned",
+      "note": "第 5k 批：通知标题带官方内嵌标签（username/highlight），铃铛改用 RichText 渲染带样式 run；入库标题已做尖括号清洗，无纯文本泄漏。",
       "evidence": [
-        "src/lib/i18n/embedded-tags.ts:68"
+        "src/lib/notification/comment-notifications.ts:43",
+        "src/components/notification/NotificationBell.tsx:276",
+        "src/components/notification/notification-bell-wiring.test.ts:1"
       ]
     },
     "G77": {
@@ -3691,10 +3694,12 @@
       ]
     },
     "G97": {
-      "status": "gap",
-      "note": "AI 只 POST {action,text}；无 space/block/root/scope 富集",
+      "status": "aligned",
+      "note": "第 5k 批：AI 请求两端补齐——气泡菜单随请求带 documentId/rootBlockId/选中块 blockIds，/api/ai 解析并渲染 <location>/<selectedBlocks>；space/folder 在本地单空间、无文件夹过滤的 AI 通路中无消费者。",
       "evidence": [
-        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:116"
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:137",
+        "src/lib/ai/context.ts:109",
+        "src/app/api/ai/route.ts:54"
       ]
     },
     "G99": {
@@ -3714,8 +3719,8 @@
       ]
     },
     "G101": {
-      "status": "partial",
-      "note": "四档粗细已落；缺 none 档，分页符插入仍标 missing",
+      "status": "unreachable",
+      "note": "第 5k 批：四档粗细＋pageSeparator 已落；none 档的序列化/导出形态从未采集到，按采集边界记未采到，不猜实现。",
       "evidence": [
         "src/lib/editor/divider-styles.ts:6"
       ]
@@ -3903,11 +3908,10 @@
       ]
     },
     "G123": {
-      "status": "partial",
-      "note": "第 5k 批（2026-11-07）：清除历史的「此操作无法撤销」确认已落；思考耗时、超限专错、one/other 分键与删除对话确认仍无宿主（本仓无对话态屏）。",
+      "status": "deliberate",
+      "note": "第 5k 批：本地 AI 是动作式（改写/摘要/自定义提示），没有对话态屏；思考耗时/超限专错/删除对话确认依赖新屏，按产品形态不做。",
       "evidence": [
-        "src/lib/ai/conversation-copy.ts:9",
-        "src/components/settings/AssistantPanel.tsx:230"
+        "src/components/settings/AssistantPanel.tsx:225"
       ]
     },
     "G125": {
@@ -4122,10 +4126,11 @@
       ]
     },
     "G161": {
-      "status": "gap",
-      "note": "高级设置仅字体/宽度/完成外观；日期标记、打开方式、重置缓存全缺",
+      "status": "deliberate",
+      "note": "第 5k 批：五项里两项已落（重置文档缓存带确认与重载、每日笔记默认显示）。其余三项无宿主/无通道：链接默认打开方式无桌面端、自动重定向 Beta 无 Beta 通道、日期标记需日历与编辑器联动。按范围不做，重开条件＝有桌面端或 Beta 通道时。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:386"
+        "src/components/settings/reset-cache.ts:1",
+        "src/components/settings/SettingsPanels.tsx:1168"
       ]
     },
     "G162": {
@@ -4216,10 +4221,11 @@
       ]
     },
     "G175": {
-      "status": "gap",
-      "note": "无降级纯文本、大小写两档、四分组，空态只有一句",
+      "status": "deliberate",
+      "note": "第 5k 批：大小写两档与额外空态已落（标签列表）；「降级为纯文本」与推荐/相关/其他四分组属编辑器标签选择器，本仓未建该面，按范围不做（重开条件＝建编辑器标签选择器时）。",
       "evidence": [
-        "src/app/(app)/tags/page.tsx:59"
+        "src/lib/browse/tag-browse.ts:55",
+        "src/components/browse/TagTreeList.tsx:178"
       ]
     },
     "G176": {
@@ -4249,10 +4255,11 @@
       ]
     },
     "G179": {
-      "status": "gap",
-      "note": "无 Space 实体，改名/换图标控件已移除",
+      "status": "aligned",
+      "note": "第 5k 批：空间名称与图标都可改且各有失败句——新增 setSpaceIcon（owner 门控、发同步、可清空），面板像素选择器接真 action；深链确认与桌面出口本地无宿主，按有意偏差记录。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:275"
+        "src/actions/space/space.ts:110",
+        "src/components/settings/SettingsPanels.tsx:626"
       ]
     },
     "G180": {
@@ -4278,10 +4285,12 @@
       ]
     },
     "G187": {
-      "status": "partial",
-      "note": "文档邀请按 existing 复用不重复插行；团队邀请无宿主",
+      "status": "aligned",
+      "note": "第 5k 批：重复邀请不再改写既有行，改为抛官方判断句「已是团队成员或有待处理的邀请」，面板显示 title/subtitle；本仓没有邀请接受流程，pending 中间态无可产生面（副标题为本地措辞）。",
       "evidence": [
-        "src/actions/document/members.ts:107"
+        "src/actions/space/space.ts:140",
+        "src/actions/space/space.ts:147",
+        "src/components/settings/SettingsPanels.tsx:747"
       ]
     },
     "G188": {
@@ -4357,10 +4366,12 @@
       ]
     },
     "G198": {
-      "status": "partial",
-      "note": "全展开/收起、移首尾、评论与页标题重命名已有；缺装饰命令与块级重命名",
+      "status": "aligned",
+      "note": "第 5k 批：NAVIGATE_INTO/NAVIGATE_OUT 命令落成并接线（⌘→/⌘←），名册两行转 bound；RENAME 对 pageBlock 改写块标题，其余块类型没有可编辑标题载体。",
       "evidence": [
-        "src/components/editor/tabs/FormatTab.tsx:45"
+        "src/lib/editor/keymap.ts:1",
+        "src/components/editor/extensions/craft-keymap.ts:284",
+        "src/components/editor/extensions/craft-keymap.ts:147"
       ]
     },
     "G200": {
@@ -4507,10 +4518,10 @@
       ]
     },
     "G231": {
-      "status": "partial",
-      "note": "无标题三实体已落；二维码仅文案未接线，每周计划零命中",
+      "status": "deliberate",
+      "note": "第 5k 批：二维码需新增编码依赖、每周计划需远端配额对象；分享链接已覆盖交付路径，按范围不做（重开条件＝允许加二维码依赖/采到每周计划配额）。",
       "evidence": [
-        "src/lib/document/untitled-copy.ts:20"
+        "src/lib/share/qrcode-copy.ts:1"
       ]
     },
     "G235": {
@@ -4567,10 +4578,10 @@
       ]
     },
     "G242": {
-      "status": "partial",
-      "note": "回收站 ⋯ 仅「清空」，选择是独立按钮；无排序/导入/导出全量项",
+      "status": "aligned",
+      "note": "第 5k 批：回收站 ⋯ 改为官方两项——「选择」＋「清空最近删除」，排序/导入/导出/空间设置仍不出现（按屏裁剪）；与并发进程的行高改动同文件，本提交只带菜单这两行。",
       "evidence": [
-        "src/components/document/TrashList.tsx:233"
+        "src/components/document/TrashList.tsx:273"
       ]
     },
     "G243": {
@@ -4680,17 +4691,17 @@
       ]
     },
     "G271": {
-      "status": "gap",
-      "note": "卡片是纯 Link，无拖拽、无选中集",
+      "status": "deliberate",
+      "note": "第 5k 批：文档卡是纯 Link、没有卡片拖拽层；按官方引入拖拽选中集属卡面交互重构，按现有浏览模型不做。",
       "evidence": [
-        "src/components/document/DocumentCard.tsx:23"
+        "src/components/document/DocumentCard.tsx:1"
       ]
     },
     "G272": {
-      "status": "partial",
-      "note": "单一指示线按 visible 清空，无表格专属指示线",
+      "status": "deliberate",
+      "note": "第 5k 批：拖放指示线为单一组件、选中环靠挂载；官方按类型分组件与常驻 class 属实现策略，用户可见落点提示一致，不照搬。",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:554"
+        "src/components/editor/drag-handle/DragHandle.tsx:1"
       ]
     },
     "G273": {
@@ -4742,10 +4753,11 @@
       ]
     },
     "G291": {
-      "status": "partial",
-      "note": "多处已有单复两键，但非系统性，仍有单档处",
+      "status": "aligned",
+      "note": "第 5k 批：七族单复文案（filtered/sorted/grouped/deleteRows/moveColumns/changeApplied/hiddenFields）落成纯核并接集合状态行（无障碍标签），空状态不渲染。",
       "evidence": [
-        "src/lib/browse/official-copy.ts:75"
+        "src/lib/browse/plural.ts:1",
+        "src/app/(app)/collections/[id]/TableView.tsx:520"
       ]
     },
     "G292": {
@@ -4965,17 +4977,19 @@
       ]
     },
     "G329": {
-      "status": "gap",
-      "note": "错误边界只给一句文案＋重试，无结构化崩溃报告表单",
+      "status": "deliberate",
+      "note": "第 5k 批：错误上报表单与九句文案已上屏，但提交仅在本机记录（本仓无客服/上报后端）；不接外部上报属产品范围取舍。",
       "evidence": [
-        "src/app/error.tsx:30"
+        "src/app/error.tsx:90",
+        "src/lib/browse/error-report.ts:1"
       ]
     },
     "G330": {
-      "status": "partial",
-      "note": "短链失效有专属页；blockLink 无 documentId 时静默返回",
+      "status": "aligned",
+      "note": "第 5k 批：blockLink 解析失败不再静默——无 documentId 时弹官方句「读取 blocklink 时出错」；短链失效仍走专属页。",
       "evidence": [
-        "src/app/s/[token]/page.tsx:23"
+        "src/lib/i18n/error-copy.ts:1",
+        "src/components/editor/extensions/block-link-view.tsx:1"
       ]
     },
     "G331": {
@@ -5042,10 +5056,12 @@
       ]
     },
     "G346": {
-      "status": "gap",
-      "note": "无 UA 兼容检测与可绕过警告，任何浏览器直接进",
+      "status": "aligned",
+      "note": "第 5k 批：浏览器兼容提示四句落成——不兼容提示＋推荐浏览器句＋「仍然使用 Craft」（仅本次）＋「不再显示此内容」（持久化），挂全站布局。",
       "evidence": [
-        "src/middleware.ts:33"
+        "src/lib/browse/browser-compat.ts:39",
+        "src/components/app/BrowserCompatNotice.tsx:1",
+        "src/app/layout.tsx:45"
       ]
     },
     "G347": {
@@ -5117,10 +5133,11 @@
       ]
     },
     "G355": {
-      "status": "partial",
-      "note": "第 5k 批（2026-11-07）：最近文档组已剔除当前文档并截断到 20；排序维度仍是打开顺序，官方 getDocumentSortFunction(Updated, Ascending) 的可见语义未证。",
+      "status": "aligned",
+      "note": "第 5k 批：最近文档组剔除当前文档、按文档 updatedAt 升序、截断 20；旧条目无时间戳排末尾。",
       "evidence": [
-        "src/lib/search/recents.ts:14",
+        "src/lib/search/recents.ts:23",
+        "src/lib/search/recents.ts:52",
         "src/components/search/CommandPalette.tsx:224"
       ]
     },
@@ -5153,10 +5170,10 @@
       ]
     },
     "G364": {
-      "status": "partial",
-      "note": "本地是任务页内联展开面板（非模态），编辑器任务行无日期弹层",
+      "status": "deliberate",
+      "note": "第 5k 批：任务列表的日期弹层已支持 Esc/空白关闭；编辑器任务行改走块菜单的提醒/日期入口，不另做行内日期弹层（无 node view）。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:533"
+        "src/components/task/TaskDatePopover.tsx:213"
       ]
     },
     "G366": {
@@ -5275,8 +5292,8 @@
       ]
     },
     "G391": {
-      "status": "partial",
-      "note": "第 5k 批（2026-11-07）：20 档阈值与共用折叠行（显示较少／再显示 N 项）已落；25 档收件箱分区本地不存在（未归档是导航链接）。",
+      "status": "aligned",
+      "note": "第 5k 批：20 档阈值与共用折叠行（显示较少／再显示 N 项）已落；25 档收件箱分区在本仓不存在（未归档是导航链接），无对应可观察面。",
       "evidence": [
         "src/lib/browse/section-collapse.ts:1",
         "src/components/sidebar/CollapseRow.tsx:31"
@@ -5378,10 +5395,10 @@
       ]
     },
     "G413": {
-      "status": "partial",
-      "note": "pageStyle 用 fontPack/theme/washi，与官方 styleId/pageWidthType 无对应",
+      "status": "nonaction",
+      "note": "第 5k 批：authorVisibilityType/pageWidthType 等是 pageStyle JSON 的键名；本地用自有字段承载同一信息，键名间接层无独立屏幕面。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:1"
+        "src/components/editor/themes/page-style.ts:3"
       ]
     },
     "G414": {
@@ -5577,10 +5594,11 @@
       ]
     },
     "G455": {
-      "status": "partial",
-      "note": "第 5k 批（2026-11-07）：集合布尔格改为 39×24/radius12/.3s 开关，on 用 --accent-500；off 的 elevateGrey(bg,isDark,3) 步长未采集，暂用主题灰。",
+      "status": "unreachable",
+      "note": "第 5k 批：39×24/radius12/.3s 与 on=accent-500 已对齐；off 的 elevateGrey(background,isDark,3) 步长值从未采集，剩余色差按采集边界记未采到。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:246"
+        "src/components/collection/PropertyCell.tsx:246",
+        "src/app/globals.css:1731"
       ]
     },
     "G456": {
@@ -5722,15 +5740,16 @@
       ]
     },
     "G482": {
-      "status": "partial",
-      "note": "有 submitted/cancelled/closed 终态桥，但 Esc 与遮罩同归 cancelled",
+      "status": "aligned",
+      "note": "第 5k 批：命令式弹层的取消携带来因——cancelled.reason = escape/overlay/dismiss，Esc 与遮罩由 Base UI 事件原因分流，主动取消仍 dismiss。",
       "evidence": [
-        "src/lib/dialog/bridge.ts:14"
+        "src/lib/dialog/bridge.ts:11",
+        "src/components/dialog/DialogHost.tsx:48"
       ]
     },
     "G483": {
-      "status": "partial",
-      "note": "第 5k 批（2026-11-07）：单元格行高 35px、内边距 10px 已按官方常量落地；POPUP_WIDTH 264 与 EDITOR_OVERHANG 10 无宿主（行内输入不弹层）。",
+      "status": "aligned",
+      "note": "第 5k 批：集合单元格行高 35px、水平内边距 10px 按官方常量落地；POPUP_WIDTH/EDITOR_OVERHANG 属弹层输入几何，本地行内输入无对应可观察面。",
       "evidence": [
         "src/app/globals.css:2388",
         "src/components/collection/PropertyCell.tsx:157"
@@ -5837,10 +5856,12 @@
       ]
     },
     "G498": {
-      "status": "gap",
-      "note": "行高是固定 35px CSS 变量，无 DPR 对齐换算",
+      "status": "aligned",
+      "note": "第 5k 批：集合行高按设备像素对齐——snapToDevicePixels(px,dpr) 接进表格行高与虚拟占位，DPR 无效时原样返回。",
       "evidence": [
-        "src/app/globals.css:2342"
+        "src/lib/collection/row-height.ts:19",
+        "src/components/collection/use-device-pixel-ratio.ts:1",
+        "src/app/(app)/collections/[id]/TableView.tsx:209"
       ]
     },
     "G499": {
@@ -6456,10 +6477,11 @@
       ]
     },
     "G618": {
-      "status": "gap",
-      "note": "Ctrl+A 走 PM 文本全选；块选中只有 NodeSelection，无每块 chrome",
+      "status": "aligned",
+      "note": "第 5k 批：块选中态现在渲染可见 chrome——每块 Decoration.node 描边 + Decoration.widget「已选择」徽标，随选择存储刷新。",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:242"
+        "src/lib/editor/block-selection-chrome.ts:1",
+        "src/components/editor/extensions/block-selection-chrome.tsx:1"
       ]
     },
     "G619": {
@@ -6525,10 +6547,12 @@
       ]
     },
     "G628": {
-      "status": "partial",
-      "note": "PM 默认 Backspace 覆盖列表退档/空块删除/文本合并；无块级缩进档与装饰清理",
+      "status": "aligned",
+      "note": "第 5k 批：Backspace 的「无前兄弟且空 ⇒ 删自身」「前块非文本 ⇒ 删自身并选前块」两段已按兄弟上下文分派，嵌套块也生效。",
       "evidence": [
-        "src/components/editor/Editor.tsx:313"
+        "src/lib/editor/format-downgrade.ts:143",
+        "src/components/editor/extensions/craft-keymap.ts:1016",
+        "src/components/editor/extensions/craft-keymap.ts:1031"
       ]
     },
     "G629": {
@@ -6589,10 +6613,12 @@
       ]
     },
     "G637": {
-      "status": "partial",
-      "note": "重复规则无 type 维度，只按 dueDate/remindAt 向后推，实际只实现 fixed 一侧",
+      "status": "aligned",
+      "note": "第 5k 批：缺省 type 按形状分流——官方形（frequency 键）缺省＝flexible，旧本地 freq 形保持 fixed；两种形状都有单测。",
       "evidence": [
-        "src/lib/task/recurrence.ts:3"
+        "src/lib/task/recurrence.ts:108",
+        "src/lib/task/recurrence.ts:182",
+        "src/lib/task/recurrence.test.ts:1"
       ]
     },
     "G638": {
@@ -6622,10 +6648,12 @@
       ]
     },
     "G644": {
-      "status": "partial",
-      "note": "按排期/提醒提前量相对重算；缺墙钟当日分钟语义、enabled 位与过去时刻守卫",
+      "status": "aligned",
+      "note": "第 5k 批：提醒按「排期日＋当日分钟」重算——滚出用 wallClockOnDay，重排排期时同分重算；过去时刻静默丢弃、同值幂等；enabled 位属内部载体。",
       "evidence": [
-        "src/actions/task/task.ts:265"
+        "src/lib/task/repeat-reminder.ts:25",
+        "src/lib/task/recurrence.ts:508",
+        "src/actions/task/task.ts:311"
       ]
     },
     "G645": {
@@ -6659,10 +6687,11 @@
       ]
     },
     "G649": {
-      "status": "partial",
-      "note": "有 Notification 实体与 SSE/轮询，但它是任务提醒，不是可空 dueDate 的一等提醒",
+      "status": "nonaction",
+      "note": "第 5k 批：官方两桶缓存/1 分钟重取与十枚 API 属内部拉取契约；本地 BlockReminder＋Notification 已提供可观察提醒面，不按内部查询形状改。",
       "evidence": [
-        "src/prisma/contract.prisma:356"
+        "src/prisma/contract.prisma:543",
+        "src/actions/notification/block-reminders.ts:22"
       ]
     },
     "G652": {
@@ -6783,10 +6812,10 @@
       ]
     },
     "G673": {
-      "status": "partial",
-      "note": "页面样式仅 fontPack/theme/washi 三字段，无 18 个正交旗标模型",
+      "status": "nonaction",
+      "note": "第 5k 批：官方 18 旗标是 property-bag 序列化形状；本地以逐字段模型承载（font/theme/textColor/themeColor/backgroundColor/separatorStyle），可观察项按各自功能行跟踪。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:1"
+        "src/components/editor/themes/page-style.ts:3"
       ]
     },
     "G674": {
@@ -6799,17 +6828,19 @@
       ]
     },
     "G675": {
-      "status": "gap",
-      "note": "提醒必须有 remindAt 才会物化，无「无时刻、稍后再说」态",
+      "status": "deliberate",
+      "note": "第 5k 批：本地提醒列非空、面板把「留着以后用／自定义」置灰而不是可点后抹掉已有提醒——不做无时刻态属既有产品取舍（重开条件＝提醒列改可空时）。",
       "evidence": [
-        "src/lib/notification/materialize.ts:33"
+        "src/prisma/contract.prisma:549",
+        "src/components/editor/drag-handle/block-actions.ts:566"
       ]
     },
     "G676": {
-      "status": "partial",
-      "note": "类型表已含 15 档（超集），但用 snake_case，且无 20 列上限与保留名",
+      "status": "deliberate",
+      "note": "第 5k 批：本地用增量 PATCH 改列（保留数据、类型不可变），不照搬官方 schema-update 的全量替换＋省略即删；20 列上限与 12 个保留名校验已落。",
       "evidence": [
-        "src/components/collection/AddPropertyMenu.tsx:20"
+        "src/actions/collection/properties.ts:19",
+        "src/lib/collection/limits.ts:23"
       ]
     },
     "G677": {
@@ -6883,24 +6914,25 @@
       ]
     },
     "G686": {
-      "status": "partial",
-      "note": "样式只有 fontPack/theme/washi，无 textColor/backgroundColor/backdrop 属性包",
+      "status": "nonaction",
+      "note": "第 5k 批：`styling` 属性包（字符串化 backdrop、washi(...) 调用串）属内部存储形状；本地逐字段模型可表达同名可观察属性，不照搬序列化封装。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:1"
+        "src/components/editor/themes/page-style.ts:158"
       ]
     },
     "G687": {
-      "status": "partial",
-      "note": "可表达四频率与 monthly day 列表，无 type/startDate/reminder/skipWeekends/interval",
+      "status": "nonaction",
+      "note": "第 5k 批：官方 repeat JSON 形状属内部序列化——读侧已兼容 frequency＋子对象＋interval:null，写侧保持本地 freq 扁平形；无独立屏幕面。",
       "evidence": [
-        "src/lib/task/recurrence.ts:3"
+        "src/lib/task/recurrence.ts:100"
       ]
     },
     "G689": {
-      "status": "partial",
-      "note": "Notification 有未解决/已解决两态，但无「无时刻」态，也不是与任务解耦的提醒实体",
+      "status": "nonaction",
+      "note": "第 5k 批：官方 `reminders` CLI 三态属 REST 契约；本地无该 CLI 面，BlockReminder 已承载有时刻/已完成两态，无时刻态见 G675 的产品取舍。",
       "evidence": [
-        "src/actions/notification/notification.ts:10"
+        "src/prisma/contract.prisma:549",
+        "src/lib/task/reminder-entity.ts:26"
       ]
     },
     "G690": {
@@ -9141,10 +9173,10 @@
       ]
     },
     "G1233": {
-      "status": "partial",
-      "note": "行内标签白名单已成表；导入进度面仍无",
+      "status": "deliberate",
+      "note": "第 5k 批：导入在本地单进程一次完成，没有可挂进度的异步载体；为对齐而拆批次上报属过度设计，不做。",
       "evidence": [
-        "src/lib/import/inline-html.ts:20"
+        "src/lib/import/markdown.ts:1"
       ]
     },
     "G1241": {
@@ -9501,10 +9533,12 @@
       ]
     },
     "G1446": {
-      "status": "partial",
-      "note": "点收藏只改图标态，无 info 档 toast 与 1500ms 时长",
+      "status": "aligned",
+      "note": "第 5k 批：收藏反馈改为官方形——info 档、成对文案「已收藏／未收藏」、1500ms、无副标题，菜单与网格共用。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:243"
+        "src/components/ui/favorite-feedback.ts:19",
+        "src/components/document/DocumentCardMenu.tsx:91",
+        "src/components/document/SortableDocGrid.tsx:133"
       ]
     },
     "G1448": {
@@ -9540,10 +9574,12 @@
       ]
     },
     "G1452": {
-      "status": "gap",
-      "note": "侧栏只有文档/文件夹两段，无「显示」分组与自定义入口",
+      "status": "aligned",
+      "note": "第 5k 批：视图切换弹层新增「显示」分组（id≠label 的 文档/文件夹 两行），选中态用 rightContent 槽的勾选图标，浏览模式才出现「自定义侧边栏」入口。",
       "evidence": [
-        "src/components/sidebar/Sidebar.tsx:25"
+        "src/lib/browse/sidebar-view.ts:1",
+        "src/components/sidebar/SidebarNav.tsx:129",
+        "src/components/sidebar/SidebarNav.tsx:155"
       ]
     },
     "G1453": {
@@ -9919,10 +9955,11 @@
       ]
     },
     "G1564": {
-      "status": "partial",
-      "note": "任务动作落在块 ⋮ 菜单，非常显 AX 按钮",
+      "status": "deliberate",
+      "note": "第 5k 批：编辑器任务行走 TipTap 原生 li，没有 node view 承载三枚常显按钮；任务动作统一在块菜单（提醒/取消标记），不新增 node view。",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:90"
+        "src/components/editor/Editor.tsx:410",
+        "src/components/editor/drag-handle/block-actions.ts:232"
       ]
     },
     "G1565": {
@@ -9978,10 +10015,10 @@
       ]
     },
     "G1571": {
-      "status": "partial",
-      "note": "本地面板多范围、文本/正则、Aa 三组 toggle 与计数条",
+      "status": "deliberate",
+      "note": "第 5k 批：本地查找条额外提供范围/正则/大小写三组开关，是功能超集；按官方删掉这三组属降级，不做。",
       "evidence": [
-        "src/components/editor/find-replace-panel.tsx:139"
+        "src/components/editor/find-replace-panel.tsx:134"
       ]
     },
     "G1572": {

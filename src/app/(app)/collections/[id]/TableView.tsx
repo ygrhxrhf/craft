@@ -19,6 +19,8 @@ import {
   type AfterTableColumnLocation,
 } from '@/lib/collection/column-drop';
 import { TABLE_OVERSCAN, createVirtualizationLatch, estimateRowHeight, scheduleScrollUpdate, visibleRowWindow } from '@/lib/collection/virtual-rows';
+import { snapToDevicePixels, snappedRowHeightCss } from '@/lib/collection/row-height';
+import { useDevicePixelRatio } from '@/components/collection/use-device-pixel-ratio';
 import { titleColumnLabel } from '@/lib/collection/title-column';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type DragEvent as ReactDragEvent } from 'react';
@@ -44,6 +46,8 @@ import {
   type ViewFields,
 } from '@/lib/collection/view-fields';
 import { filterChipText, groupChipText, sortChipText, withTitleFirst } from '@/lib/collection/view-chips';
+// G291: the status line reads the official one/x copy per lane instead of a bare count template.
+import { collectionStatusLabel } from '@/lib/browse/plural';
 import { OPERATORS } from '@/lib/collection/filter-operators';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
@@ -202,7 +206,9 @@ export function TableView({ collection, view }: TableViewProps) {
   const groupedItems = applyGrouping(processedItems, groupBy, collection.properties);
   // G497：latch 只前进不复位；`regressed` 是"曾大今小"那条退化边沿，用来在尺寸回落后
   // 仍然接着滚动，等行数再涨回去时窗口立刻接得上。分组渲染另有表头行，行高按两枚常数估。
-  const rowHeight = estimateRowHeight(Boolean(groupBy));
+  const rowHeightDpr = useDevicePixelRatio();
+  const rowHeightCss = snappedRowHeightCss(rowHeightDpr);
+  const rowHeight = snapToDevicePixels(estimateRowHeight(Boolean(groupBy)), rowHeightDpr);
   const { virtualize: latched, regressed } = virtualizationLatch.decide(
     processedItems.length,
     visibleProperties.length,
@@ -511,6 +517,11 @@ export function TableView({ collection, view }: TableViewProps) {
         <div
           className="flex flex-wrap gap-1.5 border-b border-border px-[var(--editor-pad-x)] py-1.5"
           data-testid="collection-view-chips"
+          aria-label={collectionStatusLabel({
+            filters: filters.length,
+            sorts: sorts.length,
+            grouped: Boolean(groupBy),
+          })}
         >
           {filters.map((filter: any) => {
             const property = collection.properties.find((p: any) => p.id === filter.propertyId);
@@ -617,7 +628,10 @@ export function TableView({ collection, view }: TableViewProps) {
                       </Button>
                     )}
                   </h3>
-                  <table className="w-full border-collapse">
+                  <table
+                    className="w-full border-collapse"
+                    style={{ ['--st-row-height' as string]: rowHeightCss }}
+                  >
                     <thead className="sticky top-0 z-[var(--st-z-sticky-header)] bg-muted/50 max-md:bg-muted">
                       <tr>
                         {visibleProperties.map((property: any, index: number) => (
@@ -719,7 +733,10 @@ export function TableView({ collection, view }: TableViewProps) {
             })}
           </div>
         ) : (
-          <table className="w-full border-collapse">
+          <table
+            className="w-full border-collapse"
+            style={{ ['--st-row-height' as string]: rowHeightCss }}
+          >
             <thead className="sticky top-0 z-[var(--st-z-sticky-header)] bg-muted/50 max-md:bg-muted">
               <tr>
                 {reorderEnabled && <th className="w-6 border-b border-r border-border px-0 py-0" />}

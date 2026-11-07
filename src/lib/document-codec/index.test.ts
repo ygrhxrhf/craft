@@ -17,6 +17,27 @@ describe('serializeDocument', () => {
     expect(serializeDocument(document, 'markdown')).toBe('# 标题\n\n正文\n\n- [X] 完成任务');
   });
 
+  it('writes a cancelled task item as an unchecked, struck-through line (G666)', () => {
+    // The block's own `cancelled` attr is the carrier (`buildTaskItemBlock` / `syncTaskToDocument`
+    // both write it), and the measured official export keeps `[ ]` while the title is struck out.
+    const cancelled = {
+      type: 'doc',
+      content: [
+        {
+          type: 'taskList',
+          content: [
+            { type: 'taskItem', attrs: { checked: false, cancelled: true }, content: [{ type: 'paragraph', content: [{ type: 'text', text: '交报告' }] }] },
+            { type: 'taskItem', attrs: { checked: true, cancelled: true }, content: [{ type: 'paragraph', content: [{ type: 'text', text: '已取消又勾选' }] }] },
+            { type: 'taskItem', attrs: { checked: false }, content: [{ type: 'paragraph', content: [{ type: 'text', text: '正常待办' }] }] },
+          ],
+        },
+      ],
+    };
+    expect(serializeDocument(cancelled, 'markdown')).toBe(
+      '- [ ] ~交报告~\n- [ ] ~已取消又勾选~\n- [ ] 正常待办',
+    );
+  });
+
   it('writes a highlight as ::text:: in markdown (G1200)', () => {
     const highlighted = {
       type: 'doc',

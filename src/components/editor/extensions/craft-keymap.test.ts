@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { applyKeymapAction } = await import('./craft-keymap');
@@ -60,5 +62,33 @@ describe('G14 RENAME / COMMENT wiring', () => {
     expect(applyKeymapAction(fakeEditor('ALPHA', 1, true), 'RENAME')).toBe(false);
     expect(useTitleRequestStore.getState().request).toBe(0);
     vi.unstubAllGlobals();
+  });
+});
+
+/**
+ * G628: the two block-level Backspace arms that were still falling through to ProseMirror —
+ * "no previous sibling + empty ⇒ delete self" and "previous sibling is not text ⇒ delete self and
+ * select it". Reading the file is the gate: the decision itself is unit-tested in
+ * `format-downgrade.test.ts`, but only the branch here makes it happen in a real editor.
+ */
+describe('G628 block-level Backspace arms', () => {
+  const source = readFileSync(new URL('./craft-keymap.ts', import.meta.url), 'utf8');
+
+  it('takes the previous block from the sibling list, not the flattened document order', () => {
+    expect(source).toContain('const { container, index, siblings } = siblingContext($from)');
+    expect(source).toContain('hasPrevious: index > 0');
+    expect(source).toContain('previous: previousSibling(siblings, index)');
+    expect(source).not.toContain('previousBlockInfo(');
+  });
+
+  it('drives delete-self by deleting the block inside its own container', () => {
+    expect(source).toContain("if (step === 'delete-self')");
+    expect(source).toContain('const self = container.child(0)');
+    expect(source).not.toContain("$from.depth !== 1 || index !== 0");
+  });
+
+  it('deletes the block and selects the non-text previous sibling', () => {
+    expect(source).toContain("if (step === 'select-previous' && index > 0)");
+    expect(source).toContain('NodeSelection.create(tr.doc, start - prev.nodeSize)');
   });
 });

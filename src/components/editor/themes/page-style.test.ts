@@ -4,8 +4,11 @@ import { canonicalFontId,
   DEFAULT_SPELLING_LANG,
   SPELLING_LANGUAGES,
   filterSpellingLanguages,
+  normalizeColorChannel,
   normalizePageStyle,
   pageStyleForPreset,
+  parseDualColor,
+  resolveColorChannel,
   showsDocumentTitle,
 } from './page-style';
 
@@ -67,6 +70,44 @@ describe('the page text colour', () => {
     expect(normalizePageStyle({ textColor: 'red' }).textColor).toBeUndefined();
     expect(normalizePageStyle({ textColor: '#25f' }).textColor).toBeUndefined();
     expect(normalizePageStyle({}).textColor).toBeUndefined();
+  });
+});
+
+/**
+ * G673/G686: a colour channel is either `#RRGGBB` or the light/dark pair `"#light #dark"`,
+ * and the pair stays **one string** in storage — never two fields.
+ */
+describe('the colour channels', () => {
+  it('parses a single value and a light/dark pair', () => {
+    expect(parseDualColor('#222222')).toEqual({ light: '#222222' });
+    expect(parseDualColor('#111111 #eeeeee')).toEqual({ light: '#111111', dark: '#eeeeee' });
+    expect(parseDualColor('  #111111   #eeeeee  ')).toEqual({ light: '#111111', dark: '#eeeeee' });
+  });
+
+  it('rejects anything that is not one or two hex colours', () => {
+    expect(parseDualColor(undefined)).toBeNull();
+    expect(parseDualColor('#25f')).toBeNull();
+    expect(parseDualColor('#111111 red')).toBeNull();
+    expect(parseDualColor('#111111 #eeeeee #333333')).toBeNull();
+  });
+
+  it('stores the pair verbatim, not split', () => {
+    expect(normalizeColorChannel('#111111 #eeeeee')).toBe('#111111 #eeeeee');
+    expect(normalizeColorChannel('#222222')).toBe('#222222');
+    expect(normalizeColorChannel('nope')).toBeUndefined();
+  });
+
+  it('picks the half the current appearance needs', () => {
+    expect(resolveColorChannel('#111111 #eeeeee', false)).toBe('#111111');
+    expect(resolveColorChannel('#111111 #eeeeee', true)).toBe('#eeeeee');
+    // A single value serves both appearances.
+    expect(resolveColorChannel('#222222', true)).toBe('#222222');
+  });
+
+  it('round-trips a background channel through the page style', () => {
+    expect(normalizePageStyle({ backgroundColor: '#111111 #eeeeee' }).backgroundColor).toBe('#111111 #eeeeee');
+    expect(normalizePageStyle({ backgroundColor: '#222222' }).backgroundColor).toBe('#222222');
+    expect(normalizePageStyle({ backgroundColor: 'transparent' }).backgroundColor).toBeUndefined();
   });
 });
 

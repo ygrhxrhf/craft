@@ -39,7 +39,11 @@ import {
   guestWarningFor,
   inviteSpaceMember,
   resolveDomainVerification,
+  setSpaceIcon,
   setSpaceName,
+  INVITE_ALREADY_MEMBER,
+  INVITE_ALREADY_MEMBER_SUBTITLE,
+  INVITE_ALREADY_MEMBER_TITLE,
   type DomainContext,
   type SpaceSummary,
   type TeamSummary,
@@ -100,6 +104,22 @@ import {
 } from '@/lib/task/completed-appearance';
 import { ShortcutsPanel } from './ShortcutsPanel';
 import { AssistantPanel } from './AssistantPanel';
+import {
+  RESET_CACHE_ACTION,
+  RESET_CACHE_BUSY,
+  RESET_CACHE_CONFIRM_MESSAGE,
+  RESET_CACHE_DESC,
+  RESET_CACHE_DONE,
+  RESET_CACHE_FAILED,
+  RESET_CACHE_TITLE,
+  resetDocumentCache,
+} from './reset-cache';
+import {
+  readShowDailyNotes,
+  serverShowDailyNotes,
+  storeShowDailyNotes,
+  subscribeShowDailyNotes,
+} from '@/lib/browse/daily-notes-visibility';
 
 /**
  * G164：账户面板的"进行时+成功+失败"三件套与删除后果句，逐字取自语言包：
@@ -163,16 +183,38 @@ function EditIcon() {
   return <Pencil className="size-3.5 shrink-0 text-foreground/45" />;
 }
 
-function SpaceIcon({ className }: { className?: string }) {
+/**
+ * G179 —— 空间图标现在有宿主了（`Space.icon`）：预设取值存成 `gradient:*`，未知/空值落回紫色。
+ * 字母取空间名首字（此前写死的 `Zs` 与任何真实空间都无关）。
+ */
+const SPACE_ICON_PRESETS = [
+  { id: 'gradient:purple', label: '紫色', from: '#d33bf0', to: '#7e22ce' },
+  { id: 'gradient:blue', label: '蓝色', from: '#2e6de9', to: '#1e3a8a' },
+  { id: 'gradient:green', label: '绿色', from: '#00c2a6', to: '#047857' },
+  { id: 'gradient:orange', label: '橙色', from: '#f59e0b', to: '#b45309' },
+  { id: 'gradient:gray', label: '灰色', from: '#525c66', to: '#1f2937' },
+] as const;
+
+function spaceIconPreset(icon: string | null | undefined) {
+  return SPACE_ICON_PRESETS.find((preset) => preset.id === icon) ?? SPACE_ICON_PRESETS[0];
+}
+
+function SpaceIcon({
+  icon,
+  initial,
+  className,
+}: {
+  icon?: string | null;
+  initial?: string;
+  className?: string;
+}) {
+  const preset = spaceIconPreset(icon);
   return (
     <div
       className={cn('flex items-center justify-center font-semibold text-white', className)}
-      style={{
-        backgroundImage:
-          'repeating-linear-gradient(45deg, rgb(255 255 255 / .16) 0 26px, rgb(255 255 255 / 0) 26px 68px), linear-gradient(to bottom right, #d33bf0, #7e22ce)',
-      }}
+      style={{ backgroundImage: `linear-gradient(to bottom right, ${preset.from}, ${preset.to})` }}
     >
-      Zs
+      {initial ?? '我'}
     </div>
   );
 }
@@ -242,6 +284,20 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const [space, setSpace] = useState<SpaceSummary | null>(null);
   const [team, setTeam] = useState<TeamSummary | null>(null);
   const [spaceError, setSpaceError] = useState<string | null>(null);
+  // G179：图标选择器默认收起；保存中禁用、失败落到 spaceError（与改名同一套三件套）。
+  const [iconPickerOpen, setIconPickerOpen] = useState(false);
+  const [savingIcon, setSavingIcon] = useState(false);
+  // G187：邀请命中"已是成员/待处理邀请"时出 title+subtitle 那一块，而不是再弹一句错误。
+  const [inviteAlreadyMember, setInviteAlreadyMember] = useState(false);
+  // G161：重置文档缓存。
+  const [resettingCache, setResettingCache] = useState(false);
+  const [cacheNotice, setCacheNotice] = useState<string | null>(null);
+  // G161：每日笔记默认显示——与浏览页工具栏「显示每日笔记」同一面本机旗。
+  const showDailyNotes = useSyncExternalStore(
+    subscribeShowDailyNotes,
+    readShowDailyNotes,
+    serverShowDailyNotes,
+  );
   // G183：自定义域名四态。
   const [domain, setDomain] = useState<DomainContext | null>(null);
   const [domainError, setDomainError] = useState<string | null>(null);
@@ -388,6 +444,45 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     }
   };
 
+  /** G179：写空间图标（`Space.icon`）。失败一句；成功就地换掉预览并收起选择器。 */
+  const chooseSpaceIcon = async (icon: string) => {
+    setSavingIcon(true);
+    setSpaceError(null);
+    try {
+      setSpace(await setSpaceIcon(icon));
+      setIconPickerOpen(false);
+    } catch {
+      setSpaceError('没有改成空间图标，请重试');
+    } finally {
+      setSavingIcon(false);
+    }
+  };
+
+  /**
+   * G161 「重置文档缓存」：官方这枚动作只清本地缓存，先过确认（会丢未同步的修改），
+   * 成功后重载一次——离线内核的实例还拿着被删掉的那个库的句柄。
+   */
+  const resetCache = async () => {
+    const ok = await confirmDialog({
+      title: RESET_CACHE_TITLE,
+      message: RESET_CACHE_CONFIRM_MESSAGE,
+      confirmLabel: RESET_CACHE_ACTION,
+    });
+    if (!ok) return;
+    setCacheNotice(null);
+    setResettingCache(true);
+    try {
+      if (typeof window === 'undefined' || !window.indexedDB) throw new Error('no indexedDB');
+      await resetDocumentCache({ indexedDB: window.indexedDB });
+      setCacheNotice(RESET_CACHE_DONE);
+      window.location.reload();
+    } catch {
+      setCacheNotice(RESET_CACHE_FAILED);
+    } finally {
+      setResettingCache(false);
+    }
+  };
+
   const setSwitch = async (key: SwitchKey, value: boolean) => {    const base = prefs ?? (await getPreferences().catch(() => null));
     if (!base) return;
 
@@ -516,8 +611,51 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
             </p>
           )}
           <div className="flex justify-center pt-6">
-            <SpaceIcon className="size-32 rounded-[28px] text-5xl" />
+            <SpaceIcon
+              icon={space?.icon}
+              initial={(space?.name ?? spaceName ?? '我').slice(0, 1)}
+              className="size-32 rounded-[28px] text-5xl"
+            />
           </div>
+          {/* G179：图标有 `Space.icon` 可写 ⇒ 相机按钮接 `setSpaceIcon`（此前无处理器被移除）。
+              owner 才有能力，失败给一句、选择器保持打开。 */}
+          {space?.capabilities.canChangeSettings ? (
+            <div className="flex flex-col items-center">
+              <button
+                type="button"
+                aria-label="更换空间图标"
+                data-testid="space-icon-picker"
+                aria-expanded={iconPickerOpen}
+                disabled={savingIcon}
+                onClick={() => setIconPickerOpen((open) => !open)}
+                className="mt-2 rounded-md px-2 py-1 text-[12px] text-(--craft-accent) hover:bg-foreground/4 disabled:opacity-40"
+              >
+                更换空间图标
+              </button>
+              {iconPickerOpen && (
+                <div
+                  role="group"
+                  aria-label="选择空间图标"
+                  className="mt-2 flex flex-wrap justify-center gap-2"
+                >
+                  {SPACE_ICON_PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      aria-label={`空间图标：${preset.label}`}
+                      aria-pressed={spaceIconPreset(space.icon).id === preset.id}
+                      disabled={savingIcon}
+                      onClick={() => void chooseSpaceIcon(preset.id)}
+                      className="size-9 rounded-xl ring-offset-2 transition-transform hover:scale-105 disabled:opacity-40 aria-pressed:ring-2 aria-pressed:ring-craft-accent"
+                      style={{
+                        backgroundImage: `linear-gradient(to bottom right, ${preset.from}, ${preset.to})`,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : null}
           {/* G324：空间现在是真实体——名字可改（owner 才有能力，`capabilities.canChangeSettings`），
               且给出调用者在这个空间里的角色与那句官方说明。此前这里是只读的派生名。 */}
           <RowCard className="flex items-center justify-between px-4 py-3">
@@ -562,7 +700,8 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
             </RowCard>
           )}
           {/* G228：邀成员——owner 才有能力（`canInviteMembers`）。非成员＝访客 ⇒ 先出后果确认框
-              （`guest.warning.desc` 逐字），确认后才落库。 */}
+              （`guest.warning.desc` 逐字），确认后才落库。
+              G187：已有成员行（含待处理邀请）时服务端以那句判据拒绝 ⇒ 面板出 title+subtitle 一块。 */}
           {space?.capabilities.canInviteMembers && (
             <RowCard className="px-4 py-3">
               <button
@@ -576,6 +715,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                   }).then(async (email) => {
                     if (!email) return;
                     setSpaceError(null);
+                    setInviteAlreadyMember(false);
                     try {
                       if (await guestWarningFor(email)) {
                         const ok = await confirmDialog({
@@ -586,7 +726,12 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                         if (!ok) return;
                       }
                       setSpace(await inviteSpaceMember({ email, role: 'guest' }));
-                    } catch {
+                    } catch (error) {
+                      const message = error instanceof Error ? error.message : '';
+                      if (message === INVITE_ALREADY_MEMBER) {
+                        setInviteAlreadyMember(true);
+                        return;
+                      }
                       setSpaceError('没有邀请成功，请重试');
                     }
                   });
@@ -596,6 +741,18 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                 <SquarePlus className="size-4" />
                 邀请新成员
               </button>
+              {inviteAlreadyMember && (
+                <div
+                  role="status"
+                  data-testid="invite-already-member"
+                  className="mt-2 rounded-lg bg-foreground/4 px-3 py-2"
+                >
+                  <div className="text-[13px] font-medium">{INVITE_ALREADY_MEMBER_TITLE}</div>
+                  <p className="mt-0.5 text-[12px] text-foreground/55">
+                    {INVITE_ALREADY_MEMBER_SUBTITLE}
+                  </p>
+                </div>
+              )}
             </RowCard>
           )}
         </div>
@@ -993,6 +1150,47 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                 </button>
               ))}
             </div>
+          </RowCard>
+          {/* G161：官方高级设置里的「每日笔记默认显示」——本地这面旗已存在于浏览页
+              （`craft.browse.showDailyNotes`），这里把它也放到高级设置里，同一面旗、同一默认值。 */}
+          <RowCard className="flex items-center justify-between px-4 py-3">
+            <div className="text-[13px] font-medium">每日笔记默认显示</div>
+            <Switch
+              checked={showDailyNotes}
+              aria-label="每日笔记默认显示"
+              data-testid="advanced-daily-notes-default"
+              onCheckedChange={(next) => storeShowDailyNotes(next === true)}
+              className="data-checked:bg-(--craft-accent)"
+            />
+          </RowCard>
+          {/* G161：官方高级设置里的「重置文档缓存」——本地唯一的文档缓存是离线内核的 IndexedDB，
+              先确认（会丢未同步修改）再删库。官方该处确认长文未采集逐字，用本地措辞。 */}
+          <RowCard className="px-4 py-3" data-testid="advanced-reset-cache">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-[13px] font-medium">{RESET_CACHE_TITLE}</div>
+                <p className="mt-0.5 text-[12px] text-muted-foreground">{RESET_CACHE_DESC}</p>
+              </div>
+              <button
+                type="button"
+                disabled={resettingCache}
+                onClick={() => void resetCache()}
+                className="shrink-0 rounded-md border border-border px-2.5 py-1 text-[12px] text-destructive transition-colors hover:bg-muted disabled:opacity-40"
+              >
+                {resettingCache ? RESET_CACHE_BUSY : RESET_CACHE_ACTION}
+              </button>
+            </div>
+            {cacheNotice && (
+              <p
+                role="status"
+                className={cn(
+                  'mt-2 text-[12px]',
+                  cacheNotice === RESET_CACHE_DONE ? 'text-foreground/55' : 'text-destructive',
+                )}
+              >
+                {cacheNotice}
+              </p>
+            )}
           </RowCard>
         </div>
       );

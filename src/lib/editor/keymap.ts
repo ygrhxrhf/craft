@@ -270,6 +270,12 @@ export const KEY_BINDINGS: KeyBinding[] = [
   { id: 'GROUP_BLOCKS', label: '组合区块', group: 'editing', mac: chord({ metaKey: true }, 'g', 'KeyG'), win: chord({ ctrlKey: true }, 'g', 'KeyG') },
   { id: 'UNGROUP_BLOCKS', label: '取消组合', group: 'editing', mac: chord({ metaKey: true, shiftKey: true }, 'g', 'KeyG'), win: chord({ ctrlKey: true, shiftKey: true }, 'g', 'KeyG') },
   { id: 'RENAME', label: '编辑页面区块', group: 'editing', mac: chord({ shiftKey: true }, 'Enter') },
+  // G198: the two navigation commands. `keyboard.md:76-77` names them NAVIGATE_INTO/OUT, and the
+  // panel prints them as 「导航到」「返回上层」(`keyboard.md:358-359`). They sit in the
+  // panel's `general-navigation` section, which is this table's `general` group. The same chords
+  // are the word jumps locally (G1553) — the id is what lets the panel print the pair at all.
+  { id: 'NAVIGATE_INTO', label: '导航到', group: 'general', mac: chord({ metaKey: true }, 'ArrowRight', 'ArrowRight'), win: chord({ ctrlKey: true }, 'ArrowRight', 'ArrowRight') },
+  { id: 'NAVIGATE_OUT', label: '返回上层', group: 'general', mac: chord({ metaKey: true }, 'ArrowLeft', 'ArrowLeft'), win: chord({ ctrlKey: true }, 'ArrowLeft', 'ArrowLeft') },
 
   // 表 C · 外壳 / 全局
   { id: 'TOGGLE_LEFT_SIDEBAR', label: '切换侧栏', group: 'general', mac: chord({ metaKey: true }, '\\', 'Backslash'), win: chord({ ctrlKey: true }, '\\', 'Backslash') },

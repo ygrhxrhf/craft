@@ -134,6 +134,31 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
     [documentId, editor]
   );
 
+  /**
+   * G97: the official request enriches the prompt with the position it was invoked from —
+   * the page root and the blocks the selection touches. A bare `{action,text}` loses that.
+   */
+  const scopeForRequest = useCallback(() => {
+    const doc = editor.state.doc;
+    const { from, to } = editor.state.selection;
+    const blockIds: string[] = [];
+    let offset = 0;
+    for (let index = 0; index < doc.childCount; index += 1) {
+      const child = doc.child(index);
+      const start = offset;
+      const end = offset + child.nodeSize;
+      if (from <= end && to >= start) {
+        const id = child.attrs?.id;
+        if (typeof id === 'string' && id) blockIds.push(id);
+      }
+      offset = end;
+    }
+    return {
+      ...(documentId ? { documentId, rootBlockId: documentId } : {}),
+      ...(blockIds.length ? { blockIds } : {}),
+    };
+  }, [documentId, editor]);
+
   const runAction = useCallback(
     async (action: AiAction, replace: boolean) => {
       const { from, to } = editor.state.selection;
@@ -150,7 +175,12 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
         const res = await fetch('/api/ai', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action, text: selectedText, context: contextForRequest() }),
+          body: JSON.stringify({
+            action,
+            text: selectedText,
+            context: contextForRequest(),
+            ...scopeForRequest(),
+          }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -165,7 +195,7 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
         setLoading(null);
       }
     },
-    [editor, contextForRequest]
+    [editor, contextForRequest, scopeForRequest]
   );
 
   const runWebSearch = useCallback(async () => {
@@ -241,7 +271,12 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
         const response = await fetch('/api/ai', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: item.prompt, text: selectedText, context: contextForRequest() }),
+          body: JSON.stringify({
+            prompt: item.prompt,
+            text: selectedText,
+            context: contextForRequest(),
+            ...scopeForRequest(),
+          }),
         });
         const data = await response.json();
         if (!response.ok) {
@@ -256,7 +291,7 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
         setLoading(null);
       }
     },
-    [editor, contextForRequest]
+    [editor, contextForRequest, scopeForRequest]
   );
 
   const fillFromSelection = useCallback(

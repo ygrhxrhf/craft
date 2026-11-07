@@ -12,8 +12,11 @@ const { getDb } = await import('@/prisma/db');
 const {
   getSpaceContext,
   setSpaceName,
+  setSpaceIcon,
   inviteSpaceMember,
+  isPendingInvite,
   guestWarningFor,
+  INVITE_ALREADY_MEMBER,
   getTeamContext,
   createTeam,
   changeTeamRole,
@@ -75,6 +78,14 @@ describe('space context (G324)', () => {
     expect(renamed.name).toBe('我的工作空间');
   });
 
+  it('G179: changes the stored icon and clears it back to the default', async () => {
+    session.userId = ownerId;
+    const blue = await setSpaceIcon('gradient:blue');
+    expect(blue.icon).toBe('gradient:blue');
+    const cleared = await setSpaceIcon(null);
+    expect(cleared.icon).toBeNull();
+  });
+
   it('G228: inviting a non-member yields the guest warning', async () => {
     session.userId = ownerId;
     expect(await guestWarningFor(otherEmail)).toBe(true);
@@ -84,6 +95,20 @@ describe('space context (G324)', () => {
     session.userId = ownerId;
     await inviteSpaceMember({ email: otherEmail, role: 'guest' });
     expect(await guestWarningFor(otherEmail)).toBe(false);
+  });
+
+  it('G187: a second invite is refused with the collected duplicate sentence', async () => {
+    session.userId = ownerId;
+    expect(INVITE_ALREADY_MEMBER).toBe('已是团队成员或有待处理的邀请');
+    await expect(inviteSpaceMember({ email: otherEmail, role: 'member' })).rejects.toThrow(
+      INVITE_ALREADY_MEMBER,
+    );
+  });
+
+  it('G187: a row that has not joined yet counts as a pending invite', () => {
+    expect(isPendingInvite({ joined: false })).toBe(true);
+    expect(isPendingInvite({ joined: true })).toBe(false);
+    expect(isPendingInvite(null)).toBe(false);
   });
 
   it('G324: an invited member has no settings/invite capability', async () => {

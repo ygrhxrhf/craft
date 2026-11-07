@@ -7,9 +7,13 @@ export type RecurrenceAnchor = 'fixed' | 'flexible';
 export interface RecurrenceRule {
   freq: RecurrenceFrequency;
   /**
-   * G256: `fixed` advances from the scheduled date (the official default label set),
-   * `flexible` advances from the moment the task is completed. Absent means `fixed` —
-   * the behaviour every rule written before this field existed already had.
+   * G256: `fixed` advances from the scheduled date, `flexible` advances from the moment the task
+   * is completed.
+   *
+   * G637: absent means the **shape's own** default, and the two shapes disagree. A legacy local
+   * rule (`freq`) that predates this field has always acted as `fixed`; an official-shaped rule
+   * (`frequency`) is read by the official deserializer, whose default is `flexible`. Parsing
+   * materialises the default, so no caller has to know which shape it just read.
    */
   type?: RecurrenceAnchor;
   /** G404: every N units; absent means 1. */
@@ -99,6 +103,9 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
    */
   const frequency = rule.freq ?? rule.frequency;
   if (typeof frequency !== 'string' || !FREQUENCIES.includes(frequency as RecurrenceFrequency)) return null;
+  // G637: which shape this JSON is decides the missing-`type` default below, so it has to be read
+  // before `freq` is filled in.
+  const officialShape = rule.freq === undefined && rule.frequency !== undefined;
   rule.freq = frequency;
   // Official writes `interval: null` for "unset"; here that is the absent key.
   if (rule.interval === null) delete rule.interval;
@@ -166,6 +173,13 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
 
   const result: RecurrenceRule = { freq: rule.freq as RecurrenceFrequency };
   if (rule.type === 'fixed' || rule.type === 'flexible') result.type = rule.type;
+  /**
+   * G637: the official deserializer defaults a missing `type` to **`flexible`** (「相对于完成」),
+   * so an official-shaped rule without one comes back flexible here too. A legacy local `freq`
+   * rule keeps its historical `fixed` reading — writing `flexible` into it would silently turn
+   * every existing repeat into a completion-anchored one.
+   */
+  else if (officialShape) result.type = 'flexible';
   if (rule.interval !== undefined) result.interval = rule.interval as number;
   if (Array.isArray(rule.days)) result.days = rule.days as number[];
   if (Array.isArray(rule.dynamicDays)) result.dynamicDays = rule.dynamicDays as DynamicDay[];
@@ -484,6 +498,22 @@ function wallToInstant(wall: WallClock, timeZone: string): number {
   const asUtc = Date.UTC(wall.year, wall.month - 1, wall.day, wall.hour, wall.minute, wall.second);
   const firstPass = asUtc - zoneOffsetAt(timeZone, new Date(asUtc));
   return asUtc - zoneOffsetAt(timeZone, new Date(firstPass));
+}
+
+/**
+ * G644: `clock`'s **minute-of-day** laid onto `day`'s **calendar day**, in one zone. That pair is
+ * the shape the official reminder expression has ("排期日 ＋ 当日分钟数，每次现算"): the time of
+ * day travels with the occurrence, the date comes from the schedule.
+ */
+export function wallClockOnDay(day: Date, clock: Date, timeZone = 'UTC'): Date {
+  const datePart = wallOf(day, timeZone);
+  const timePart = wallOf(clock, timeZone);
+  return new Date(
+    wallToInstant(
+      { ...datePart, hour: timePart.hour, minute: timePart.minute, second: timePart.second },
+      timeZone,
+    ),
+  );
 }
 
 function daysInMonth(year: number, month: number): number {

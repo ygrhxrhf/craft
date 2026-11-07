@@ -202,8 +202,15 @@ export function CommandPalette() {
   };
 
   const handleOpenDocument = (id: string, title?: string) => {
+    // G355：每条最近文档记下这篇文档自己的 updatedAt（来自搜索结果），供「最近文档」组按
+    // Updated 升序排；从最近列表里再点开时 rememberRecent 会沿用存量值。
+    const updatedAt = docs.find((doc) => doc.id === id)?.updatedAt;
     setRecents((current) => {
-      const next = rememberRecent(current, { id, title: title || current.find((item) => item.id === id)?.title || '未命名' });
+      const next = rememberRecent(current, {
+        id,
+        title: title || current.find((item) => item.id === id)?.title || '未命名',
+        updatedAt,
+      });
       saveRecents(typeof window === 'undefined' ? undefined : window.localStorage, next);
       return next;
     });

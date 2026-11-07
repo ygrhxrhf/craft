@@ -265,3 +265,20 @@ describe('declared-modifier matching', () => {
     expect(matchesIgnoringModifiers(escapeChord, { metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, key: 'Enter', code: 'Enter' })).toBe(false);
   });
 });
+
+// G198: the two navigation commands the panel prints as 进入／退出 (`keyboard.md:76-77`).
+describe('the navigation commands', () => {
+  it('binds ⌘→ / ⌘← on Mac and Ctrl-→ / Ctrl-← on Windows', () => {
+    expect(chordFor(by('NAVIGATE_INTO'), 'mac')).toMatchObject({ metaKey: true, key: 'ArrowRight' });
+    expect(chordFor(by('NAVIGATE_INTO'), 'win')).toMatchObject({ ctrlKey: true, key: 'ArrowRight' });
+    expect(chordFor(by('NAVIGATE_OUT'), 'mac')).toMatchObject({ metaKey: true, key: 'ArrowLeft' });
+    expect(chordFor(by('NAVIGATE_OUT'), 'win')).toMatchObject({ ctrlKey: true, key: 'ArrowLeft' });
+  });
+
+  it('prints the collected panel labels', () => {
+    expect(by('NAVIGATE_INTO').label).toBe('导航到');
+    expect(by('NAVIGATE_OUT').label).toBe('返回上层');
+    expect(by('NAVIGATE_INTO').group).toBe('general');
+    expect(by('NAVIGATE_OUT').group).toBe('general');
+  });
+});

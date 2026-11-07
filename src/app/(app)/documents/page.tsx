@@ -5,7 +5,6 @@ import { getFavoriteDocuments } from '@/actions/document/get';
 import { getFolders } from '@/actions/folder/get';
 import { locationPathLabel } from '@/lib/document/location-path';
 import { DocumentCard } from '@/components/document/DocumentCard';
-import { QuickActions } from '@/components/document/QuickActions';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
@@ -46,8 +45,7 @@ export default async function DocumentsPage() {
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title="文档" />
       <AppPageContainer>
-        <QuickActions />
-
+        {/* G15：craft 的 /all 首屏只有卡片网格；本地那条五按钮快捷条已撤（入口改挂侧栏与顶栏）。 */}
         {favoriteDocs.length > 0 && (
           <section className="mb-8">
             <h2 className="mb-3 text-lg font-medium">收藏</h2>

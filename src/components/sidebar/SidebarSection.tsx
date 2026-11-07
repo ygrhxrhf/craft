@@ -15,7 +15,7 @@ export function SidebarSection({ title, children, defaultOpen = true, action }: 
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="py-1">
+    <div className="group/section py-1">
       {/* G18/G30：craft 分区头是 32 高的行、标题 @x19、12/600/12/ls0.05/满对比，且**没有 chevron**。
           本地保留折叠扳手（G385 的可及性要求），把它放进行左的 gutter，不挤动标题位置。 */}
       <div className="relative flex h-8 items-center justify-between">

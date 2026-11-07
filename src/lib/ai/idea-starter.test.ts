@@ -63,9 +63,13 @@ describe('the Idea Starter copy (G70)', () => {
     expect(ideaTitle('project', '')).toBe('项目文档');
   });
 
-  it('is mounted on the documents screen and backed by a server action', () => {
-    const quick = readFileSync(new URL('../../components/document/QuickActions.tsx', import.meta.url), 'utf8');
-    expect(quick).toContain('<IdeaStarterDialog');
+  it('is mounted on a blank page and backed by a server action', () => {
+    // G15 撤掉首页快捷条后，「从想法开始」只剩空白页那一份（G349 的弹层就在编辑器里）。
+    const editor = readFileSync(
+      new URL('../../components/editor/DocumentEditor.tsx', import.meta.url),
+      'utf8',
+    );
+    expect(editor).toContain('<IdeaStarterDialog');
     const action = readFileSync(new URL('../../actions/ai/idea-starter.ts', import.meta.url), 'utf8');
     expect(action).toContain('serializeDocument(content, \'text\')');
     expect(action).toContain('emitSyncEventSafe');

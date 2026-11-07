@@ -40,6 +40,8 @@ export function SidebarHeader() {
   }, []);
 
   async function handleNewDoc() {
+    // G1608：离线时点了没有可观察反应（静默早退，不改禁用态、不弹 toast）。
+    if (!navigator.onLine) return;
     const id = await createDocumentLocal({ userId: session?.user?.id });
     router.push(`/documents/${id}`);
   }

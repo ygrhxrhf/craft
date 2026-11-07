@@ -15,6 +15,7 @@ import { SidebarNav } from './SidebarNav';
 import { SidebarFooter } from './SidebarFooter';
 import { SidebarResizer } from './SidebarResizer';
 import { SidebarSection } from './SidebarSection';
+import { NewFolderButton } from './NewFolderButton';
 import { FolderTree } from './FolderTree';
 import { DocumentTree } from './DocumentTree';
 import { CollectionTree } from './CollectionTree';
@@ -34,7 +35,8 @@ function TreeSections({ view }: { view: 'document' | 'browse' }) {
   );
   const folders = (
     <>
-      <SidebarSection title="文件夹">
+      {/* G15：首页快捷条撤掉后，「新建文件夹」只剩这一个入口（分区头 hover 出现的 ＋）。 */}
+      <SidebarSection title="文件夹" action={<NewFolderButton />}>
         <FolderTree />
       </SidebarSection>
 

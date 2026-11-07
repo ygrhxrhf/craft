@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-07T02:44:29.632Z",
+  "generatedAt": "2026-11-07T02:46:17.703Z",
   "total": 1615,
   "status": {
-    "aligned": 714,
+    "aligned": 717,
     "nonaction": 525,
-    "deliberate": 188,
-    "partial": 117,
-    "gap": 48,
+    "deliberate": 192,
+    "partial": 113,
+    "gap": 45,
     "unreachable": 23
   },
   "priority": {
@@ -21,18 +21,18 @@
     "P? / nonaction": 191,
     "P2 / nonaction": 175,
     "P1 / aligned": 171,
-    "P3 / aligned": 102,
+    "P3 / aligned": 105,
     "P1 / nonaction": 89,
     "P2 / deliberate": 88,
     "P? / partial": 80,
     "P? / aligned": 78,
     "P3 / nonaction": 70,
-    "P3 / deliberate": 40,
+    "P3 / deliberate": 44,
     "P? / deliberate": 40,
-    "P3 / partial": 37,
     "P? / gap": 34,
+    "P3 / partial": 33,
     "P1 / deliberate": 20,
-    "P3 / gap": 14,
+    "P3 / gap": 11,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
     "P3 / unreachable": 7,
@@ -1291,7 +1291,7 @@
     ],
     [
       "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      6
+      5
     ],
     [
       "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",

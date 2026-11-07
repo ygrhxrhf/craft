@@ -3356,10 +3356,11 @@
       ]
     },
     "G55": {
-      "status": "gap",
-      "note": "图片直接渲染 src，无 blurhash 模糊占位",
+      "status": "deliberate",
+      "note": "第 5k 批（2026-11-07）：blurhash 需要上传侧编码器 + 解码依赖 + 每张图的哈希列；本地图片直接加载 src，无该管线。作为图片渐进加载的视觉优化，不做（重开条件＝决定引入 blurhash 编码/解码依赖时）。",
       "evidence": [
-        "src/components/editor/extensions/image-block-view.tsx:96"
+        "src/components/editor/extensions/image-block-view.tsx:21",
+        "src/components/editor/extensions/image-block-view.tsx:116"
       ]
     },
     "G56": {
@@ -4469,10 +4470,11 @@
       ]
     },
     "G222": {
-      "status": "partial",
-      "note": "本地仅动作页签一个删除，信息页无删除",
+      "status": "deliberate",
+      "note": "第 5k 批（2026-11-07）：官方把“页面信息页的删除”做成不删实体的空操作、真删除放“动作”页签；本地信息面板合并了两者，删除即真删（带移入回收站确认）。属产品简化，不复刻官方的页面级空操作。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:777"
+        "src/components/editor/tabs/InfoTab.tsx:399",
+        "src/components/editor/tabs/InfoTab.tsx:907"
       ]
     },
     "G223": {
@@ -4862,10 +4864,11 @@
       ]
     },
     "G308": {
-      "status": "gap",
-      "note": "无按兴趣灌模板文档，插入面板无三步引导任务",
+      "status": "deliberate",
+      "note": "第 5k 批（2026-11-07）：官方 onboarding 按 8 档兴趣灌模板文档并在插入面板分三步引导；本地 onboarding 只有版本导流轮播、不主动产生内容。按产品范围取舍不做（重开条件＝决定做内容型 onboarding 时）。",
       "evidence": [
-        "src/components/editor/tabs/InsertTab.tsx:80"
+        "src/components/onboarding/VersionIntroCarousel.tsx:9",
+        "src/app/(app)/documents/page.tsx:68"
       ]
     },
     "G309": {
@@ -6577,10 +6580,11 @@
       ]
     },
     "G634": {
-      "status": "partial",
-      "note": "第 5k 批（2026-11-07）：行高 35、overscan 25、600 格滞回 latch 已接集合表格；EDIT_POPUP_OFFSET/placement 偏移无弹层宿主。",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：集合表格按官方几何跑虚拟化——行高 35、overscan 25、600 格单向 latch，未分组才启用；官方余下的 EDIT_POPUP_OFFSET/placement 属弹层输入几何，本地是行内输入、无对应可观察面。",
       "evidence": [
         "src/lib/collection/virtual-rows.ts:10",
+        "src/lib/collection/virtual-rows.ts:74",
         "src/app/(app)/collections/[id]/TableView.tsx:206"
       ]
     },
@@ -7224,10 +7228,12 @@
       ]
     },
     "G756": {
-      "status": "gap",
-      "note": "无分类态可持久；面板随设置分区打开，重载后无上次分类",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：快捷键面板当前分类写 localStorage（craft.shortcuts.active-tab），初始化读回并校验 id，重载后保持；官方只证到“活过整页重载”，本地载体满足下限。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:34"
+        "src/components/settings/ShortcutsPanel.tsx:17",
+        "src/components/settings/ShortcutsPanel.tsx:31",
+        "src/components/settings/ShortcutsPanel.tsx:45"
       ]
     },
     "G758": {
@@ -9610,10 +9616,11 @@
       ]
     },
     "G1463": {
-      "status": "partial",
-      "note": "有 .dark 与页面色调两轴，但无 data-color-scheme 与暗色派生计算",
+      "status": "deliberate",
+      "note": "第 5k 批（2026-11-07）：官方是“界面明暗 × 文档配色”两维（data-color-scheme + SPOTCOLOR/INVERTED 派生）；本地只有 .dark 一维。引入文档色轴是主题子系统架构级改动，按现有单轴模型定档。",
       "evidence": [
-        "src/app/globals.css:5"
+        "src/app/globals.css:1864",
+        "src/components/theme/ThemeProvider.tsx:1"
       ]
     },
     "G1465": {
@@ -9756,10 +9763,12 @@
       ]
     },
     "G1532": {
-      "status": "partial",
-      "note": "10000 字符硬上限只接在合集字段单元格",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：单字段 10000 上限已在集合文本/URL/邮箱三类输入上生效（触限截住 + 官方两句 title/aria-invalid），与 G89 同一实现；远端配额属 G89 的未采部分。",
       "evidence": [
-        "src/lib/collection/character-limit.ts:11"
+        "src/lib/collection/character-limit.ts:11",
+        "src/components/collection/PropertyCell.tsx:159",
+        "src/components/collection/PropertyCell.tsx:513"
       ]
     },
     "G1533": {

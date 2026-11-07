@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-06T18:38:27.622Z",
+  "generatedAt": "2026-11-07T01:36:52.913Z",
   "total": 1615,
   "status": {
-    "aligned": 672,
+    "aligned": 685,
     "nonaction": 521,
-    "deliberate": 180,
-    "partial": 150,
-    "gap": 72,
+    "deliberate": 181,
+    "partial": 139,
+    "gap": 69,
     "unreachable": 20
   },
   "priority": {
@@ -25,13 +25,13 @@
     "P2 / deliberate": 88,
     "P? / partial": 80,
     "P? / aligned": 78,
-    "P3 / partial": 70,
+    "P3 / aligned": 73,
     "P3 / nonaction": 66,
-    "P3 / aligned": 60,
+    "P3 / partial": 59,
     "P? / deliberate": 40,
-    "P3 / gap": 38,
+    "P3 / gap": 35,
     "P? / gap": 34,
-    "P3 / deliberate": 32,
+    "P3 / deliberate": 33,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
@@ -1299,7 +1299,7 @@
     ],
     [
       "三点八〇、第 70 批（★ 静态补账：键位分派器全解 ⇒ B / D /",
-      6
+      5
     ],
     [
       "三点一〇二四、第 96 批·上半〔★★**行为级仍未解锁（视口第 8 次",
@@ -1310,15 +1310,7 @@
       5
     ],
     [
-      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
-      5
-    ],
-    [
       "三点六、P2 追加（来自 `longtail.md` 与 `keyboa",
-      4
-    ],
-    [
-      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
       4
     ],
     [
@@ -1346,7 +1338,11 @@
       4
     ],
     [
-      "三点五二、第 43 批（★ 弹层关闭与快捷键同源 = 焦点栈 keyDe",
+      "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第",
+      4
+    ],
+    [
+      "三点七、P2 追加（来自 `dialogs.md` 与 `protoco",
       3
     ],
     [
@@ -1355,6 +1351,10 @@
     ],
     [
       "三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP ",
+      3
+    ],
+    [
+      "三点八七、第 76 批（★★ 契约面穷尽：`--help` 逐条读满 `",
       3
     ]
   ]

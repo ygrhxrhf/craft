@@ -3301,10 +3301,13 @@
       ]
     },
     "G1431": {
-      "status": "partial",
-      "note": "本地只有 table 块 slash 入口；合集型表格与插入表格均占位，两入口未分。",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：两枚「表格」已分开——插入面板「表格」插集合实体（InsertTab.tsx:74）、「插入表格」开行列网格（InsertTab.tsx:83）；斜杠侧分别是「插入表格集合」（slash-commands.ts:706）与网格命令（slash-commands.ts:1016）。",
       "evidence": [
-        "src/components/editor/tabs/InsertTab.tsx:63"
+        "src/components/editor/tabs/InsertTab.tsx:74",
+        "src/components/editor/tabs/InsertTab.tsx:83",
+        "src/components/editor/slash-menu/slash-commands.ts:706",
+        "src/components/editor/slash-menu/slash-commands.ts:1016"
       ]
     },
     "G1442": {
@@ -3703,10 +3706,13 @@
       ]
     },
     "G102": {
-      "status": "partial",
-      "note": "仍 inter/serif/mono/rounded 且字体栈写死 Georgia；未改 system-* 系统族",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：字体族已改用官方规范名 system/system-serif/system-mono/system-rounded（page-style.ts:63），四别名按官方不规则表映射（sans-serif→system，page-style.ts:65-76），四档字体栈全部落在系统族；G685 的同一结论适用于本条。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:13"
+        "src/components/editor/themes/page-style.ts:63",
+        "src/components/editor/themes/page-style.ts:65",
+        "src/components/editor/themes/page-style.ts:81",
+        "src/lib/editor/themes/page-theme-catalog.ts:37"
       ]
     },
     "G103": {
@@ -4014,10 +4020,13 @@
       ]
     },
     "G146": {
-      "status": "gap",
-      "note": "发布面板无标签词可见性开关，hideHashTagWords 零命中",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：hideHashTagWords 已是落库字段（document_share.hideHashTagWords，sync 白名单在册）并在分享面板公开页开关组渲染「在公开页隐藏 # 标签词」（ShareDialog.tsx:740），读写通路齐全（actions/document/share.ts:42/74/185）。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:291"
+        "src/components/share/ShareDialog.tsx:740",
+        "src/actions/document/share.ts:42",
+        "src/actions/document/share.ts:185",
+        "src/lib/sync/tables.ts:57"
       ]
     },
     "G148": {
@@ -5043,10 +5052,12 @@
       ]
     },
     "G350": {
-      "status": "gap",
-      "note": "AI 只有 spinner，无分类型四段进度文案",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：AI 生成已是分类型四句进度轮播（IDEA_PROGRESS 六类各四句＋默认兜底，idea-starter.ts:34-52），对话层以 420ms 步进轮播并显示状态行（IdeaStarterDialog.tsx:63-65），不再只有单一 spinner。",
       "evidence": [
-        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:308"
+        "src/lib/ai/idea-starter.ts:34",
+        "src/lib/ai/idea-starter.ts:52",
+        "src/components/ai/IdeaStarterDialog.tsx:63"
       ]
     },
     "G351": {
@@ -5712,10 +5723,12 @@
       ]
     },
     "G487": {
-      "status": "partial",
-      "note": "已有关键字形表，缺标点原字符档与官方真实字形",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：键帽字形表按官方逐字落成——Home/End 印 ⤒/⤓、Tab 印 Tab、Enter/Backspace/Delete 印 ⏎/⌫/⌦、空格印 space，未映射字符回落 event.key 原字符（keymap.ts:101-124）。",
       "evidence": [
-        "src/lib/editor/keymap.ts:83"
+        "src/lib/editor/keymap.ts:101",
+        "src/lib/editor/keymap.ts:112",
+        "src/lib/editor/keymap.ts:118"
       ]
     },
     "G488": {
@@ -6409,10 +6422,13 @@
       ]
     },
     "G619": {
-      "status": "partial",
-      "note": "仅 PM joinBackward：合并/删空块默认等价，缩进档确定缺",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：Backspace 链已在 craft-keymap 落地——列表降级/缩进退一档/装饰清除/前一空块删除/前一文本块合并且按 G585 判定样式胜负，链路与官方六段一致（craft-keymap.ts:859-925；format-downgrade.ts 提供首块判据）。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:148"
+        "src/components/editor/extensions/craft-keymap.ts:859",
+        "src/components/editor/extensions/craft-keymap.ts:879",
+        "src/components/editor/extensions/craft-keymap.ts:892",
+        "src/lib/editor/format-downgrade.ts:100"
       ]
     },
     "G620": {
@@ -6423,9 +6439,11 @@
       ]
     },
     "G622": {
-      "status": "partial",
-      "note": "侧栏删除已有确认框，但文案是「移至最近删除」而非官方「删除 N 个项目/无法撤销」",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：删除确认已对齐官方两句式——回收站批量删显示「删除 N 个项目 你确定吗？你无法撤销此操作。」（TrashList.tsx:378-382），侧栏单项删除也先弹确认（DocumentTreeItem.tsx:146-153）。官方那两套 DS/缺 aria-modal 属其缺陷，本地用统一 Dialog 不复刻。",
       "evidence": [
+        "src/components/document/TrashList.tsx:378",
+        "src/components/sidebar/DocumentTreeItem.tsx:146",
         "src/lib/browse/trash-subcopy.ts:31"
       ]
     },
@@ -6472,10 +6490,12 @@
       ]
     },
     "G629": {
-      "status": "partial",
-      "note": "PM 默认 Enter 切块，空列表项可退出列表；缺缩进→列表→装饰逐级退格式",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：空块 Enter 的逐级退档已落地——缩进→列表→装饰按反序退档，非空块走 splitBlock 并保留属性、关闭 history 边界（craft-keymap.ts:604-700）。",
       "evidence": [
-        "src/components/editor/Editor.tsx:313"
+        "src/components/editor/extensions/craft-keymap.ts:604",
+        "src/components/editor/extensions/craft-keymap.ts:683",
+        "src/lib/editor/format-downgrade.ts:29"
       ]
     },
     "G630": {
@@ -7250,17 +7270,20 @@
       ]
     },
     "G785": {
-      "status": "gap",
-      "note": "本地面板无分类栏，左右键行为无从对齐",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：快捷键面板键盘规格与官方一致——Tab 走原生焦点、Space 激活原生按钮、↑/↓ 移选中且不循环、←/→ 不响应、Esc 关一层（ShortcutsPanel.tsx:117-137；shortcut-panel.ts:151-156 无 wrap）。",
       "evidence": [
-        "src/components/settings/SettingsModal.tsx:179"
+        "src/components/settings/ShortcutsPanel.tsx:117",
+        "src/components/settings/ShortcutsPanel.tsx:131",
+        "src/lib/editor/shortcut-panel.ts:151"
       ]
     },
     "G786": {
-      "status": "partial",
-      "note": "本地每段必印 h3；官方允许段无标题",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：面板分段标题可选——无分段的页签（文档）只渲染行、不加 <h3>（ShortcutsPanel.tsx:93-110），有分段的页签按段渲染；官方 7 类里那类无标题的形态已被覆盖。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:45"
+        "src/lib/editor/shortcut-panel.ts:30",
+        "src/components/settings/ShortcutsPanel.tsx:93"
       ]
     },
     "G788": {
@@ -9145,10 +9168,12 @@
       ]
     },
     "G1291": {
-      "status": "partial",
-      "note": "四档字体有，id 是 inter/serif/mono/rounded，官方用 system-* 名",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：字体名册（page-style.ts:81-85）与 G685/G102 同源落地——四档规范名 system/system-serif/system-mono/system-rounded，别名 sans-serif/serif/mono/rounded 走读侧归一；卡片把别名当清单展示这一官方形态不再构成差异。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:13"
+        "src/components/editor/themes/page-style.ts:63",
+        "src/components/editor/themes/page-style.ts:65",
+        "src/components/editor/themes/page-style.ts:81"
       ]
     },
     "G1296": {
@@ -9358,10 +9383,12 @@
       ]
     },
     "G1434": {
-      "status": "partial",
-      "note": "材质词表含和纸/胶带/涂鸦，写入侧只支持 line/washi",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：分隔符种类轴已落三档——SEPARATOR_MATERIALS = washi/washi.tape/doodle（decorations.ts:38），样式面板渲三档按钮与和纸图库（StyleTab.tsx:519-544），渲染侧接官方胶带图与涂鸦横带（DocumentEditor.tsx:470-491）；粗细轴由 G101 的四档承担。",
       "evidence": [
-        "src/lib/editor/separator-material.ts:19"
+        "src/lib/editor/decorations.ts:38",
+        "src/components/editor/tabs/StyleTab.tsx:519",
+        "src/components/editor/DocumentEditor.tsx:470"
       ]
     },
     "G1435": {
@@ -9480,10 +9507,12 @@
       ]
     },
     "G1456": {
-      "status": "partial",
-      "note": "两枚时间同一 relativeTime 通路，未复制官方的中英并存分裂",
+      "status": "deliberate",
+      "note": "第 5k 批现读（2026-11-07）：官方 zh/en 两种时间格式分裂是官方缺陷（i18n 两套词表各走一路），本地创建与更新都走同一 relativeTime（InfoTab.tsx:478/483；relative-time.ts:17 单一 Intl.RelativeTimeFormat('zh-CN')），按本条自己的结论「记录、不作为设计依据」判 deliberate，不复刻该分裂。",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:369"
+        "src/components/editor/tabs/InfoTab.tsx:478",
+        "src/components/editor/tabs/InfoTab.tsx:483",
+        "src/lib/document/relative-time.ts:17"
       ]
     },
     "G1457": {
@@ -9907,10 +9936,13 @@
       ]
     },
     "G1575": {
-      "status": "partial",
-      "note": "斜杠菜单只一条「表格」，默认 3×3；无 9 档尺寸二级菜单",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：斜杠「插入表格」已是二段入口，子项 2x2…9x9 八档（slash-roster.ts:134-146），每档插入对应 N×N（slash-commands.ts:1011-1022）；插入面板末项也改为行列网格选择器。",
       "evidence": [
-        "src/components/editor/slash-menu/slash-commands.ts:222"
+        "src/lib/editor/slash-roster.ts:134",
+        "src/lib/editor/slash-roster.ts:207",
+        "src/components/editor/slash-menu/slash-commands.ts:1011",
+        "src/components/editor/tabs/InsertTab.tsx:83"
       ]
     },
     "G1576": {

@@ -171,11 +171,12 @@ function Section({
   const shownNotes = expanded ? dayNotes : dayNotes.slice(0, NOTES_PER_SECTION);
 
   return (
+    // G23：craft 日历 1120 宽（用到主列全宽），日行 1120×105、radius 20、步进 121（行距 16）。
     <section
       data-testid={isToday ? 'calendar-section-today' : `calendar-section-${section.kind}`}
       className={cn(
-        'flex flex-col gap-3 p-3',
-        isToday ? 'rounded-xl border border-border bg-muted/40' : 'rounded-xl'
+        'flex min-h-[105px] flex-col gap-3 p-3',
+        isToday ? 'rounded-[20px] border border-border bg-muted/40' : 'rounded-[20px]'
       )}
     >
       <SectionHeading section={section} />

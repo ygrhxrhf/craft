@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KEY_BINDINGS, detectPlatform, matches } from '@/lib/editor/keymap';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {Database, FileText, Plus, Search, Terminal, Type, Folder, Calendar} from 'lucide-react';
 import {
   CommandDialog,
@@ -25,11 +25,12 @@ import { parseDateExpression } from '@/lib/task/date-parse';
 import { getOrCreateDayNote } from '@/actions/daily-notes/daily-notes';
 import { exportLibraryZip } from '@/actions/document/export-library';
 import { downloadBase64File } from '@/lib/download/base64-file';
-import { BLOCKS_HEADING, DOCS_HEADING, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel, noResultsFor } from '@/lib/search/official-copy';
+import { BLOCKS_HEADING, DOCS_HEADING, NO_RESULTS_FOUND, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel, noResultsFor } from '@/lib/search/official-copy';
 import {
   REMOVE_FROM_RECENTS,
   forgetRecent,
   loadRecents,
+  recentForDisplay,
   rememberRecent,
   saveRecents,
   type RecentDocument,
@@ -81,6 +82,7 @@ const paletteCommands: PaletteCommand[] = [
 
 export function CommandPalette() {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session } = useSession();
   const { isOpen, close, open, seedQuery } = useCommandPaletteStore();
   const [query, setQuery] = useState('');
@@ -219,6 +221,10 @@ export function CommandPalette() {
   };
 
   const hasQuery = query.trim().length > 0;
+  // G355：官方「最近文档」组先把**正在看的这篇**剔除，再按 20 条截断。
+  const currentDocumentId =
+    pathname?.startsWith('/documents/') ? (pathname.split('/')[2] ?? null) : null;
+  const recentsForDisplay = recentForDisplay(recents, currentDocumentId);
   // G354: a query that parses as a date gets one extra `type:"date"` result. The official parser
   // is async chrono; local parsing is synchronous, so no extra round trip is visible.
   const parsedDate = useMemo(() => {
@@ -294,9 +300,9 @@ export function CommandPalette() {
       <CommandInput value={query} onValueChange={setQuery} placeholder="打开" />
 
       <CommandList>
-        {!hasQuery && recents.length > 0 && (
+        {!hasQuery && recentsForDisplay.length > 0 && (
           <CommandGroup heading="最近使用" data-testid="search-recents">
-            {recents.map((recent) => (
+            {recentsForDisplay.map((recent) => (
               <CommandItem
                 key={recent.id}
                 value={`recent-${recent.id}`}
@@ -318,6 +324,13 @@ export function CommandPalette() {
               </CommandItem>
             ))}
           </CommandGroup>
+        )}
+
+        {/* G178：没有查询、也没有最近使用时的空态（官方裸键 `browse.no.results.found`）。 */}
+        {!hasQuery && recentsForDisplay.length === 0 && (
+          <div data-testid="palette-empty" className="py-6 text-center text-ui text-foreground/40">
+            {NO_RESULTS_FOUND}
+          </div>
         )}
 
         {parsedDate && (
@@ -374,11 +387,9 @@ export function CommandPalette() {
 
         {/* G235：空态是显式分支，不是 `CommandEmpty`。结果项里永远有一条「创建 [0]」，
             它的 value 含查询词、于是自己命中自己 ⇒ 列表从不"空"，`CommandEmpty` 永不渲染，
-            官方那句「未找到 [0] 的结果」就永远出不来（探针实测：搜不存在的词只剩创建行）。 */}
-        {hasQuery && searching && docs.length === 0 && folders.length === 0 && blocks.length === 0 && rows.length === 0 && (
-          <div className="py-6 text-center text-ui text-foreground/40">{SEARCHING_OTHER_MATCHES}</div>
-        )}
-
+            官方那句「未找到 [0] 的结果」就永远出不来（探针实测：搜不存在的词只剩创建行）。
+            G178：搜索是分阶段返回的——「正在搜索其他匹配项」是**分页哨兵行**（官方 `type:
+            "loadingMore"`），所以它在列表末尾、有一类结果时也照样出现，不只在空列表里。 */}
         {hasQuery && !searching && totalResultCount === 0 && (
           <div className="py-6 text-center text-ui text-foreground/40">{noResultsFor(query.trim())}</div>
         )}
@@ -472,6 +483,16 @@ export function CommandPalette() {
               ))}
             </CommandGroup>
           </>
+        )}
+
+        {/* G178：哨兵行——已有结果但仍在找其他类匹配时也出现（官方把它当分页行钉在末尾）。 */}
+        {hasQuery && searching && (
+          <div
+            data-testid="palette-searching"
+            className="py-3 text-center text-ui text-foreground/40"
+          >
+            {SEARCHING_OTHER_MATCHES}
+          </div>
         )}
 
         {nextOffset !== null && (

@@ -21,6 +21,7 @@ import {
   blockLinkFor,
   blockMenuItems,
   CODE_BLOCK_MENU,
+  KERNEL_LABELS,
   deleteBlock,
   insertBlockAbove,
   insertBlockBelow,
@@ -39,7 +40,7 @@ import {
 const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
-    paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null }, emoji: { default: null }, remindAt: { default: null } } },
+    paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null }, emoji: { default: null }, remindAt: { default: null }, indent: { default: 0 } } },
     cardBlock: {
       content: 'block+',
       group: 'block',
@@ -188,6 +189,28 @@ describe('blockMenuItems', () => {
     expect(source).toContain('items[index - 1].group !== item.group');
   });
 
+  // G1441：三个枚数在同一式子上闭合——文本 9＝5＋4、代码 9＝5＋4、任务 8＝5＋3，内核五枚同名同序。
+  it('closes the roster arithmetic: 9 = 5+4, 9 = 5+4, 8 = 5+3', () => {
+    const ids = (items: { id: string }[]) => items.map((item) => item.id);
+    const kernel = (items: { label: string }[]) =>
+      items.map((item) => item.label).filter((label) => (KERNEL_LABELS as readonly string[]).includes(label));
+
+    const text = blockMenuItems({ canDelete: true, canRemind: true });
+    const code = blockMenuItems({ canDelete: true, isCodeBlock: true });
+    const task = blockMenuItems({ canDelete: true, isTask: true });
+
+    expect(text).toHaveLength(5 + 4);
+    expect(code).toHaveLength(5 + 4);
+    expect(task).toHaveLength(5 + 3);
+    expect(kernel(text)).toEqual([...KERNEL_LABELS]);
+    expect(kernel(code)).toEqual([...KERNEL_LABELS]);
+    expect(kernel(task)).toEqual([...KERNEL_LABELS]);
+    // 专属项与内核的差集逐块稳定：任务块独缺「添加内容」。
+    expect(ids(task)).not.toContain('add-content');
+    expect(ids(text)).toContain('add-content');
+    expect(ids(code)).toContain('code-copy');
+  });
+
   it('offers 提示类型 only on a callout', () => {
     expect(blockMenuItems({ canDelete: true, isCallout: true }).map((item) => item.label)).toContain('提示类型');
     expect(blockMenuItems({ canDelete: true }).map((item) => item.id)).not.toContain('callout-type');
@@ -276,6 +299,26 @@ describe('deleteBlock', () => {
   it('refuses to empty the document', () => {
     const state = stateWith(['甲']);
     expect(() => run(state, (d) => deleteBlock(state, d, 0))).toThrow();
+  });
+
+  // G660：删除带走缩进子树（与 Alt+↑↓ 同一个 `indentRunOf` 区间）。
+  it('takes the indented subtree with it', () => {
+    const doc = schema.nodes.doc.create(null, [
+      schema.nodes.paragraph.create({ indent: 0 }, schema.text('parent')),
+      schema.nodes.paragraph.create({ indent: 1 }, schema.text('child')),
+      schema.nodes.paragraph.create(null, schema.text('sibling')),
+    ]);
+    const state = EditorState.create({ schema, doc });
+    expect(run(state, (d) => deleteBlock(state, d, 0))).toEqual(blocks('sibling'));
+  });
+
+  it('a same-level follower survives (G613)', () => {
+    const doc = schema.nodes.doc.create(null, [
+      schema.nodes.paragraph.create({ indent: 1 }, schema.text('parent')),
+      schema.nodes.paragraph.create({ indent: 1 }, schema.text('sibling')),
+    ]);
+    const state = EditorState.create({ schema, doc });
+    expect(run(state, (d) => deleteBlock(state, d, 0))).toEqual(blocks('sibling'));
   });
 });
 
@@ -709,25 +752,29 @@ describe('取消＝同一枚轴上的第三档（G52）', () => {
     ]);
   });
 
-  it('菜单：任务块两枚齐全，普通块只有提醒（G252），已取消时标签翻成「取消标记」', () => {
+  it('菜单：任务块＝内核 5＋专属 3（G1441），普通块只有提醒（G252）', () => {
     const plain = blockMenuItems({ canDelete: true }).map((item) => item.id);
-    expect(plain).not.toContain('set-cancelled');
     expect(plain).not.toContain('remind');
 
-    // G252：可寻址的普通块（段落／标题）能挂提醒，但拿不到取消这一档（那是任务行专属）。
+    // G252：可寻址的普通块（段落／标题）能挂提醒，但拿不到任务块的专属项。
     const anchorable = blockMenuItems({ canDelete: true, canRemind: true }).map((item) => item.id);
     expect(anchorable).toContain('remind');
     expect(anchorable).not.toContain('set-cancelled');
 
-    const ids = blockMenuItems({ canDelete: true, isTask: true, canRemind: true }).map((item) => item.id);
-    expect(ids).toContain('remind');
-    expect(ids).toContain('set-cancelled');
-
-    const labels = blockMenuItems({ canDelete: true, isTask: true, taskCancelled: true });
-    expect(labels.find((item) => item.id === 'set-cancelled')?.label).toBe('取消标记');
-    expect(
-      blockMenuItems({ canDelete: true, isTask: true }).find((item) => item.id === 'set-cancelled')?.label,
-    ).toBe('将任务标记为已取消');
+    // G1441：任务块 8＝内核 5（提醒/上插/下插/复制链接/删除）＋专属 3（表情/评论/转换卡片），
+    // 独缺「添加内容」；「将任务标记为已取消」不在这张名册里（它走 SET_CANCELLED 键位）。
+    expect(blockMenuItems({ canDelete: true, isTask: true }).map((item) => item.label)).toEqual([
+      '添加表情',
+      '添加评论',
+      '转换为卡片',
+      '提醒我…',
+      '在上方插入区块',
+      '在下方插入区块',
+      '复制区块链接',
+      '删除',
+    ]);
+    expect(blockMenuItems({ canDelete: true, isTask: true }).map((item) => item.id)).not.toContain('add-content');
+    expect(blockMenuItems({ canDelete: true, isTask: true }).map((item) => item.id)).not.toContain('set-cancelled');
   });
 
   it('非任务块上这枚菜单项不发事务（不许把段落改出属性）', () => {

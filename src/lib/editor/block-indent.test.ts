@@ -9,6 +9,7 @@ import {
   indentDown,
   indentStyle,
   indentTargets,
+  indentTargetsWithChildren,
   indentUp,
   indentWidth,
 } from './block-indent';
@@ -144,5 +145,48 @@ describe('the blocks a Tab press touches', () => {
     expect(targets.map((target) => target.index)).toEqual([0]);
     // The following block is not among the targets, so its level is untouched by the caller.
     expect(targets).toHaveLength(1);
+  });
+});
+
+// G627/G912：Tab 的作用单位是「块＋它的缩进子块」——官方屏上 0 档父块按一次 Tab 后，紧随其后的
+// 两块 1 档一起 ＋28（A1 384／A2 412／A3 412）。
+describe('the blocks a Tab press carries (G627)', () => {
+  const paragraphs = (...levels: (number | null)[]) =>
+    schema.node(
+      'doc',
+      null,
+      levels.map((level) =>
+        schema.node('paragraph', level == null ? null : { indent: level }, [schema.text('x')]),
+      ),
+    );
+
+  it('unions the indented children into the same batch', () => {
+    const doc = paragraphs(0, 1, 1);
+    expect(indentTargetsWithChildren(doc, 2, 2).map((target) => target.index)).toEqual([0, 1, 2]);
+    expect(indentTargetsWithChildren(doc, 2, 2).map((target) => target.level)).toEqual([0, 1, 1]);
+  });
+
+  it('leaves a same-level following block out (G613 stays true)', () => {
+    const doc = paragraphs(1, 1);
+    expect(indentTargetsWithChildren(doc, 2, 2).map((target) => target.index)).toEqual([0]);
+  });
+
+  it('stops at the first block that is not deeper', () => {
+    const doc = paragraphs(0, 1, 0, 1);
+    expect(indentTargetsWithChildren(doc, 2, 2).map((target) => target.index)).toEqual([0, 1]);
+  });
+
+  it('does not count an overlapping selection twice', () => {
+    const doc = paragraphs(0, 1, 1);
+    const targets = indentTargetsWithChildren(doc, 2, doc.content.size - 1);
+    expect(targets.map((target) => target.index)).toEqual([0, 1, 2]);
+  });
+
+  it('a base block that cannot carry an indent has no children of its own to carry', () => {
+    const list = schema.node('bulletList', null, [
+      schema.node('listItem', null, [schema.node('paragraph', null, [schema.text('item')])]),
+    ]);
+    const doc = schema.node('doc', null, [list, schema.node('paragraph', { indent: 1 }, [schema.text('x')])]);
+    expect(indentTargetsWithChildren(doc, 2, 2)).toEqual([]);
   });
 });

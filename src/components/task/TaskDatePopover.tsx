@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { CalendarDays, Flag } from 'lucide-react';
+import { CalendarDays, Flag, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -13,7 +13,9 @@ import {
   startOfLocalDay,
 } from '@/lib/task/date-parse';
 import { describeRecurrence, parseRecurrence, recurrencePresetsFor } from '@/lib/task/recurrence';
-import { ruleWithAnchor } from '@/lib/task/recurrence-picker';
+import { WEEKEND_OPTIONS, ruleWithAnchor, weekendOptionOf, withWeekendOption } from '@/lib/task/recurrence-picker';
+import { RepeatAnchorNote } from '@/components/task/RepeatAnchorNote';
+import { RepeatIntervalSelect } from '@/components/task/RepeatIntervalSelect';
 import { RecurrenceRuleEditor } from '@/components/task/RecurrenceRuleEditor';
 import { slotIndexForTime, timeSlots } from '@/lib/task/time-menu';
 import { scheduleChipLabel } from '@/lib/task/schedule-chip';
@@ -150,15 +152,16 @@ export function TaskDatePopover({
 
   const openTimeState = () => {
     const existing = reminder?.value ? new Date(reminder.value) : null;
-    const base = existing ?? new Date();
-    setHour(existing ? base.getHours() : 17);
-    setMinute(existing ? base.getMinutes() : 0);
+    // G639: without a reminder the menu opens on the slot the wall clock currently sits in —
+    // the official 17:00 in the capture was only the moment of that capture, not a default.
+    const index = slotIndexForTime(existing ?? new Date());
+    setHour(Math.floor((index * 15) / 60));
+    setMinute((index * 15) % 60);
     setMode('time');
     // G411: scroll the 96-slot list to the current slot once it has rendered.
     window.requestAnimationFrame(() => {
       const list = slotListRef.current;
       if (!list) return;
-      const index = slotIndexForTime(existing ?? base);
       const row = list.children[index] as HTMLElement | undefined;
       if (row) list.scrollTop = Math.max(0, row.offsetTop - list.clientHeight / 2);
     });
@@ -269,20 +272,32 @@ export function TaskDatePopover({
             </div>
           ) : (
             <>
-              <Input
-                autoFocus
-                value={text}
-                placeholder="日期"
-                aria-label="日期"
-                onChange={(event) => handleText(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault();
-                    commitText();
-                  }
-                }}
-                className="mb-1 h-8"
-              />
+              <div className="mb-1 flex items-center gap-1">
+                <Input
+                  autoFocus
+                  value={text}
+                  placeholder="日期"
+                  aria-label="日期"
+                  onChange={(event) => handleText(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      commitText();
+                    }
+                  }}
+                  className="h-8"
+                />
+                {/* G372: the top-right × only closes the popover — clearing is the 「清除 日期」 row. */}
+                <button
+                  type="button"
+                  data-testid="date-popover-close"
+                  aria-label="关闭"
+                  onClick={() => setOpen(false)}
+                  className="shrink-0 rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <X className="size-3.5" />
+                </button>
+              </div>
               <Calendar
                 mode="single"
                 selected={preview ?? (value ?? inheritFrom ? new Date((value ?? inheritFrom)!) : undefined)}
@@ -341,6 +356,12 @@ export function TaskDatePopover({
                     <span>{(recurrence.value && describeRecurrence(recurrence.value)) || '重复…'}</span>
                     <span aria-hidden="true">›</span>
                   </button>
+                  {/* G637: the accent banner explains what 「按计划日」/「相对于完成」 means. */}
+                  {submenu === 'repeat' && (
+                    <div className="mt-1">
+                      <RepeatAnchorNote raw={recurrence.value ?? null} />
+                    </div>
+                  )}
                   {submenu === 'repeat' && repeatStep === 'anchor' && (
                     <div className="mt-1 rounded-md border border-border/60 p-1" data-testid="repeat-anchor-step">
                       <p className="px-1 py-0.5 text-[11px] text-muted-foreground">重复依据</p>
@@ -419,17 +440,8 @@ export function TaskDatePopover({
                         <div className="mt-1 space-y-1 rounded-md border border-border/60 p-1">
                           <label className="flex items-center justify-between gap-2 px-1 text-xs text-muted-foreground">
                             每 N 个单位
-                            <input
-                              type="number"
-                              min={1}
-                              aria-label="重复间隔"
-                              className="h-6 w-14 rounded border border-border bg-background px-1 text-xs"
-                              defaultValue={1}
-                              onChange={(event) => {
-                                const interval = Math.max(1, Number(event.target.value) || 1);
-                                recurrence.onChange(patchRule(recurrence.value, { interval }));
-                              }}
-                            />
+                            {/* G266/G404: a 1…ceiling menu, and picking a smaller entry resets to 1. */}
+                            <RepeatIntervalSelect raw={recurrence.value ?? null} onChange={(next) => recurrence.onChange(next)} />
                           </label>
                           <label className="flex items-center justify-between gap-2 px-1 text-xs text-muted-foreground">
                             重复依据
@@ -453,22 +465,31 @@ export function TaskDatePopover({
                             raw={recurrence.value ?? null}
                             onChange={(next) => recurrence.onChange(next)}
                           />
-                          {/* G547: 「跳过周末」只属于 daily／monthly 两档（官方字段集如此）。 */}
+                          {/* G266: two mutually exclusive rows with a tick on the right (`tasks.also.on.weekends` /
+                              `tasks.skip.weekends`); either click also collapses this sub-layer. */}
                           {(() => {
-                            const rule = parseRecurrence(recurrence.value);
-                            if (!rule || (rule.freq !== 'daily' && rule.freq !== 'monthly')) return null;
+                            const picked = weekendOptionOf(recurrence.value);
+                            if (!picked) return null;
                             return (
-                              <label className="flex items-center justify-between gap-2 px-1 text-xs text-muted-foreground">
-                                跳过周末
-                                <input
-                                  type="checkbox"
-                                  aria-label="跳过周末"
-                                  checked={rule.skipWeekends === true}
-                                  onChange={(event) =>
-                                    recurrence.onChange(patchRule(recurrence.value, { skipWeekends: event.target.checked }))
-                                  }
-                                />
-                              </label>
+                              <div data-testid="daily-weekend-items">
+                                {WEEKEND_OPTIONS.map((option) => (
+                                  <button
+                                    key={option.id}
+                                    type="button"
+                                    role="menuitemcheckbox"
+                                    aria-checked={picked === option.id}
+                                    data-testid={`repeat-${option.id}`}
+                                    onClick={() => {
+                                      recurrence.onChange(withWeekendOption(recurrence.value, option.id));
+                                      setCustomOpen(false);
+                                    }}
+                                    className="flex w-full items-center justify-between rounded px-1 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                                  >
+                                    <span>{option.label}</span>
+                                    <span aria-hidden="true">{picked === option.id ? '✓' : ''}</span>
+                                  </button>
+                                ))}
+                              </div>
                             );
                           })()}
                         </div>

@@ -4,12 +4,17 @@ import {
   INDENT_STEP_PX,
   INDENTABLE_TYPES,
   clampIndent,
-  indentTargets,
+  indentTargetsWithChildren,
 } from '@/lib/editor/block-indent';
 
 /**
  * G581/G912/G913: Tab indents the blocks the selection touches (paragraphs and headings),
  * Shift-Tab takes one level back.
+ *
+ * G627/G912: the unit is the block **together with its indented children** — the official
+ * `sm([id], map, ±1)` unions `Ft.getIndentChildrenOfBlock` in and then applies `og(ids, δ)` once,
+ * so a 0-level parent followed by two 1-level blocks moves all three by 28px. `indentTargetsWithChildren`
+ * is that union; a following block at the *same* level is not a child (G613's measurement).
  *
  * G1546: inside a list item the official build keeps increasing the block's `--indent-w`
  * (28→56→84px) instead of stopping when there is no previous sibling to sink under. So a list
@@ -69,7 +74,7 @@ export const BlockIndent = Extension.create({
         return true;
       }
 
-      const targets = indentTargets(state.doc, state.selection.from, state.selection.to);
+      const targets = indentTargetsWithChildren(state.doc, state.selection.from, state.selection.to);
       if (!targets.length) return false;
       const changed = targets.filter((target) => clampIndent(target.level + delta) !== target.level);
       if (!changed.length) return false;

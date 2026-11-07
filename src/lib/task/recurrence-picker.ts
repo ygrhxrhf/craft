@@ -145,3 +145,47 @@ export function patchRuleAxis(
   }
   return JSON.stringify(next);
 }
+
+/**
+ * G266 —— 周末处理是**两条互斥勾选菜单项**（`on-weekends` / `skip-weekends`），不是开关：
+ * `tasks.also.on.weekends`「周末也有」 与 `tasks.skip.weekends`「跳过周末」，各带一枚勾选态。
+ * 只有 daily／monthly 的字段集里有这一层（`daily-weekend-items`）。
+ */
+export const WEEKEND_OPTIONS: readonly { id: 'on-weekends' | 'skip-weekends'; label: string; key: string }[] = [
+  { id: 'on-weekends', label: '周末也有', key: 'tasks.also.on.weekends' },
+  { id: 'skip-weekends', label: '跳过周末', key: 'tasks.skip.weekends' },
+] as const;
+
+export type WeekendOptionId = (typeof WEEKEND_OPTIONS)[number]['id'];
+
+/** Which of the two rows is ticked; `null` when the rule cannot carry the layer at all. */
+export function weekendOptionOf(raw: string | null | undefined): WeekendOptionId | null {
+  const rule = parseRecurrence(raw);
+  if (!rule || (rule.freq !== 'daily' && rule.freq !== 'monthly')) return null;
+  return rule.skipWeekends ? 'skip-weekends' : 'on-weekends';
+}
+
+/** Write the picked row; the two are mutually exclusive, so one write settles both. */
+export function withWeekendOption(raw: string | null | undefined, option: WeekendOptionId): string {
+  return patchRuleAxis(raw, { skipWeekends: option === 'skip-weekends' });
+}
+
+/**
+ * G266 —— 间隔菜单的回退规则：`T = (An) => { const ft = interval ?? 1; ft > An ? 1 : … }`。
+ * **往小选**（选中的档小于当前间隔）时官方把间隔重置为 1，而不是落到选中的那一档；这一格是
+ * 官方自己的怪癖，照抄。
+ */
+export function nextInterval(current: number | undefined, selected: number): number {
+  const from = current ?? 1;
+  return from > selected ? 1 : selected;
+}
+
+/** Merge an interval pick into the rule; `1` is the absent value (no interval key). */
+export function patchInterval(raw: string | null | undefined, selected: number): string {
+  const rule = parseRecurrence(raw) ?? { freq: 'daily' as RecurrenceFrequency };
+  const interval = nextInterval(rule.interval, selected);
+  const next: Record<string, unknown> = { ...(rule as unknown as Record<string, unknown>) };
+  if (interval > 1) next.interval = interval;
+  else delete next.interval;
+  return JSON.stringify(next);
+}

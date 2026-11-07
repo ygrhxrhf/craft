@@ -29,7 +29,9 @@ describe('the tags collection is wired to the official copy (G47)', () => {
   });
 
   it('reaches the collection from the sidebar and keeps its own header', () => {
-    expect(sidebar).toContain("{ href: '/tags', label: TAGS_TITLE");
+    // 侧栏那张表已改成 `Record<SidebarSectionId, {label, icon}>`（G176/G600 的排序/隐藏需要 id 键），
+    // 旧断言还停在"数组 + href"的形态。
+    expect(sidebar).toContain("'/tags': { label: TAGS_TITLE");
     expect(header).toContain("'/tags',");
   });
 

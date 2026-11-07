@@ -24,6 +24,21 @@ describe('indentRunOf', () => {
     expect(indentRunOf(rows(0, 1), 5)).toEqual({ start: 5, end: 5 });
     expect(indentRunOf([], 0)).toEqual({ start: 0, end: 0 });
   });
+
+  // G660：显式 `null` 的层级行既不算子树、也不切断子树；没有缩进槽的块类型（`undefined`）
+  // 断在哪里，因为它根本不能被嵌进缩进段。
+  it('passes an explicit null row without counting it or ending the run', () => {
+    expect(indentRunOf([0, 1, null, 1, 0], 0)).toEqual({ start: 0, end: 4 });
+  });
+
+  it('ends at a block type that has no indent slot at all', () => {
+    expect(indentRunOf([0, 1, undefined, 1], 0)).toEqual({ start: 0, end: 2 });
+  });
+
+  it('reads a missing base level as zero (the official `Aw` rule)', () => {
+    expect(indentRunOf([null, 1, 0], 0)).toEqual({ start: 0, end: 2 });
+    expect(indentRunOf([undefined, 1], 0)).toEqual({ start: 0, end: 2 });
+  });
 });
 
 describe('selectionRunOf', () => {

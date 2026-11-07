@@ -16,6 +16,7 @@ import {
   DELETE_FOLDER_LABEL,
   DELETE_FOLDER_SUBTITLE,
 } from '@/lib/folder/delete-copy';
+import { folderDescriptionLabel } from '@/lib/browse/folder-description';
 import { confirmDialog, promptDialog } from '@/lib/dialog/show';
 import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
 import {
@@ -380,6 +381,8 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
       className={rowClass}
       style={rowStyle}
       draggable
+      // G385：折叠态要在无障碍层声明"还能展开"；Web 的对应物是 `aria-expanded`。
+      aria-expanded={hasChildren ? expanded : undefined}
       onPointerDown={dragArm.onPointerDown}
       onPointerMove={dragArm.onPointerMove}
       onPointerUp={dragArm.onPointerUp}
@@ -406,7 +409,9 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
           <ContextMenuContent>
             <ContextMenuItem onClick={startRename}>重命名</ContextMenuItem>
             <ContextMenuItem onClick={() => void editIcon()}>设置图标</ContextMenuItem>
-            <ContextMenuItem onClick={() => void editDescription()}>编辑描述</ContextMenuItem>
+            <ContextMenuItem onClick={() => void editDescription()}>
+              {folderDescriptionLabel(folder.description)}
+            </ContextMenuItem>
             <ContextMenuItem onClick={() => void createDocumentInFolder()}>
               新建文档
             </ContextMenuItem>

@@ -7,7 +7,11 @@
 
 export const REMOVE_FROM_RECENTS = '从最近使用中移除';
 export const RECENTS_STORAGE_KEY = 'craft.search.recents';
-export const RECENTS_LIMIT = 8;
+/**
+ * G355：官方「最近文档」组的截断常量是 20（`git = 20`，`tags-browse.md` §9.4）。此前本地取 8，
+ * 是面板自己的选择，不是官方值。
+ */
+export const RECENTS_LIMIT = 20;
 
 export interface RecentDocument {
   id: string;
@@ -27,6 +31,20 @@ export function rememberRecent(
 
 export function forgetRecent(list: readonly RecentDocument[], id: string): RecentDocument[] {
   return list.filter((item) => item.id !== id);
+}
+
+/**
+ * G355：官方那支「最近文档」组先把**正在看的这篇**剔除，再截断 20 条
+ * （`[...docs].filter(d => d.id !== currentDocId).sort(cmp).slice(0, git)`）。本地列表按打开顺序
+ * 排（最新的在前），剔与截断这两步与官方一致。`currentDocumentId` 为空时只截断。
+ */
+export function recentForDisplay(
+  list: readonly RecentDocument[],
+  currentDocumentId?: string | null,
+  limit = RECENTS_LIMIT,
+): RecentDocument[] {
+  const current = currentDocumentId ?? null;
+  return list.filter((item) => item.id !== current).slice(0, Math.max(1, limit));
 }
 
 /** 读 localStorage；坏数据或不可用（SSR/隐私模式）一律当空列表。 */

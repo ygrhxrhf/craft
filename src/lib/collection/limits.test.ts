@@ -6,11 +6,13 @@ import {
   MAX_TABLE_CELLS,
   MAX_TABLE_COLS,
   MAX_TABLE_ROWS,
+  RESERVED_COLUMN_NAMES,
   ROW_LIMIT_TEMPLATE,
   TABLE_SIZE_LIMIT_DURATION,
   TABLE_SIZE_LIMIT_SUBTITLE,
   canAddColumn,
   exceedsVirtualTableThreshold,
+  isReservedColumnName,
   rowLimitMessage,
   tableLimitToastTitle,
   tableSizeAllowed,
@@ -30,6 +32,15 @@ describe('collection column limit', () => {
     expect(COLLECTION_COLUMN_LIMIT_MESSAGE).toBe(
       'Validation failed: properties: Collection cannot have more than 20 columns (properties)'
     );
+  });
+
+  it('rejects the collected reserved names as new column names (G676)', () => {
+    expect(isReservedColumnName('title')).toBe(true);
+    expect(isReservedColumnName('  Property ')).toBe(true);
+    expect(isReservedColumnName('客户')).toBe(false);
+    expect(isReservedColumnName('notes')).toBe(false);
+    // Only the twelve names the ledger spells out are enforced.
+    expect(RESERVED_COLUMN_NAMES).toHaveLength(12);
   });
 });
 

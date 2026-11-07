@@ -70,4 +70,12 @@ describe('代码块的语言与主题选择器＝带搜索框的菜单，展示�
   it('主题按钮默认显示 Auto，与语言是否为空无关', () => {
     expect(pickerText(render(null), '代码主题')).toContain('Auto');
   });
+
+  // G1161：活跃行的行号槽按 `lineHighlight`（底）＋ `gutterActiveForeground`（前景）上色。
+  it('行号槽认活跃行，并用两个不同来源的主题键上色', () => {
+    const source = readFileSync(fileURLToPath(new URL('./code-block-view.tsx', import.meta.url)), 'utf8');
+    expect(source).toContain('activeLineGutterStyle(surface)');
+    expect(source).toContain("editor.on('selectionUpdate', read)");
+    expect(source).toContain('caretOffsetInNode(');
+  });
 });

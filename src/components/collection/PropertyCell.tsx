@@ -6,6 +6,12 @@ import { rawValueOf } from '@/lib/collection/cell-value';
 import { DEFAULT_NUMBER_FORMAT, formatNumber as formatNumberFor, isNumberFormat, type NumberFormat } from '@/lib/collection/property-types';
 import { cellKeyAction } from '@/lib/collection/cell-key';
 import { draftTextFor, normalizeTextCommit, parseNumberInput } from '@/lib/collection/cell-edit';
+import {
+  inlineInputMode,
+  inlinePlaceholder,
+  type InlineInputMode,
+  type InlinePropertyType,
+} from '@/lib/collection/inline-input';
 import { useCellEditorEscape } from './cell-editor-escape';
 import {
   hitLabel,
@@ -86,7 +92,8 @@ export function PropertyCell({ property, value, onChange, item, properties }: Pr
     case 'person':
       return <PersonCell value={parsed} onChange={onChange} />;
     case 'phone':
-      return <TextCell value={parsed} onChange={onChange} inputMode="tel" />;
+      // G457: phone is one of the four inline siblings — same input, `inputMode="tel"`.
+      return <TextCell value={parsed} onChange={onChange} propertyType="phone" />;
     case 'formula':
       return <FormulaCell property={property} item={item} properties={properties} />;
     case 'created_at':
@@ -127,7 +134,18 @@ export function CellDisplay({ value }: { value: any }) {
 }
 
 // ─── Text ────────────────────────────────────────────
-function TextCell({ value, onChange, inputMode }: { value: any; onChange: (v: any) => void; inputMode?: 'tel' }) {
+function TextCell({
+  value,
+  onChange,
+  propertyType = 'text',
+  inputMode,
+}: {
+  value: any;
+  onChange: (v: any) => void;
+  /** G457: `propertyType` is overridable from outside; it only decides `inputMode`/placeholder. */
+  propertyType?: InlinePropertyType;
+  inputMode?: InlineInputMode;
+}) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value ?? '');
   const [limitHit, setLimitHit] = useState(false);
@@ -139,7 +157,7 @@ function TextCell({ value, onChange, inputMode }: { value: any; onChange: (v: an
 
   if (!editing) {
     return (
-      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
+      <div className="min-h-[var(--st-row-height)] cursor-pointer px-[var(--st-cell-padding-x)] py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
         <span className="typography-ui-sm-500">{value || <span className="text-muted-foreground/50">-</span>}</span>
       </div>
     );
@@ -149,7 +167,8 @@ function TextCell({ value, onChange, inputMode }: { value: any; onChange: (v: an
     <input
       ref={ref}
       type="text"
-      inputMode={inputMode}
+      inputMode={inlineInputMode(propertyType, inputMode)}
+      placeholder={inlinePlaceholder(propertyType) || undefined}
       value={text}
       title={limitHit ? `${CHARACTER_LIMIT_TITLE}：${CHARACTER_LIMIT_SUBTITLE}` : undefined}
       aria-invalid={limitHit || undefined}
@@ -194,7 +213,7 @@ function NumberCell({ value, onChange, format }: { value: any; onChange: (v: any
 
   if (!editing) {
     return (
-      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(draftTextFor(value, format)); setEditing(true); }}>
+      <div className="min-h-[var(--st-row-height)] cursor-pointer px-[var(--st-cell-padding-x)] py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(draftTextFor(value, format)); setEditing(true); }}>
         <span className="text-ui tabular-nums">{value != null ? formatNumberFor(value, format) : <span className="text-muted-foreground/50">-</span>}</span>
       </div>
     );
@@ -225,18 +244,28 @@ function NumberCell({ value, onChange, format }: { value: any; onChange: (v: any
 
 // ─── Checkbox ────────────────────────────────────────
 function CheckboxCell({ value, onChange }: { value: any; onChange: (v: any) => void }) {
+  // G455 official constants: 39×24, radius = height/2 = 12, transition .3s, thumb on the right
+  // when on. The on fill is the accent channel (`--accent-500`); the off fill is a theme-derived
+  // grey (the exact `elevateGrey(bg, isDark, 3)` step size was never collected, so the local
+  // token stays theme-aware instead of a fixed #e6e6e6).
   return (
-    <div className="flex min-h-8 items-center px-2 py-1">
+    <div className="flex min-h-[var(--st-row-height)] items-center px-[var(--st-cell-padding-x)] py-1">
       <button
+        type="button"
+        role="switch"
+        aria-checked={Boolean(value)}
         onClick={() => onChange(!value)}
         className={cn(
-          'flex size-4 items-center justify-center rounded-md border transition-colors duration-150',
-          value
-            ? 'border-craft-accent bg-craft-accent text-white'
-            : 'border-foreground/25 hover:border-craft-accent'
+          'relative h-6 w-[39px] rounded-[12px] transition-colors duration-300',
+          value ? 'bg-[var(--accent-500)]' : 'bg-input',
         )}
       >
-        {value && <Check className="size-3" />}
+        <span
+          className={cn(
+            'absolute top-1/2 size-[18px] -translate-y-1/2 rounded-full bg-white shadow-sm transition-[left] duration-300',
+            value ? 'left-[18px]' : 'left-[3px]',
+          )}
+        />
       </button>
     </div>
   );
@@ -254,14 +283,14 @@ function DateCell({ value, onChange }: { value: any; onChange: (v: any) => void 
 
   if (!editing) {
     return (
-      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
+      <div className="min-h-[var(--st-row-height)] cursor-pointer px-[var(--st-cell-padding-x)] py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
         <span className="typography-ui-sm-500">{value || <span className="text-muted-foreground/50">-</span>}</span>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-8 px-2 py-1">
+    <div className="relative min-h-[var(--st-row-height)] px-[var(--st-cell-padding-x)] py-1">
       <div className="flex items-center gap-1">
         <input
           ref={ref}
@@ -326,7 +355,7 @@ function SelectCell({ property, value, onChange }: { property: Property; value: 
   const selected = options.find(o => o.id === value);
 
   return (
-    <div className="relative min-h-8 px-2 py-1">
+    <div className="relative min-h-[var(--st-row-height)] px-[var(--st-cell-padding-x)] py-1">
       <button
         className="flex w-full items-center gap-1 text-left text-ui transition-colors duration-150 hover:text-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
         onClick={() => setOpen(!open)}
@@ -392,7 +421,7 @@ function MultiSelectCell({ property, value, onChange }: { property: Property; va
   };
 
   return (
-    <div className="relative min-h-8 px-2 py-1">
+    <div className="relative min-h-[var(--st-row-height)] px-[var(--st-cell-padding-x)] py-1">
       <button
         className="flex w-full flex-wrap items-center gap-1 text-left text-ui transition-colors duration-150 hover:text-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
         onClick={() => setOpen(!open)}
@@ -448,6 +477,7 @@ function MultiSelectCell({ property, value, onChange }: { property: Property; va
 function URLCell({ value, onChange }: { value: any; onChange: (v: any) => void }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value ?? '');
+  const [limitHit, setLimitHit] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -456,7 +486,7 @@ function URLCell({ value, onChange }: { value: any; onChange: (v: any) => void }
 
   if (!editing) {
     return (
-      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
+      <div className="min-h-[var(--st-row-height)] cursor-pointer px-[var(--st-cell-padding-x)] py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
         {value ? (
           <a
             href={String(value)}
@@ -479,8 +509,22 @@ function URLCell({ value, onChange }: { value: any; onChange: (v: any) => void }
       ref={ref}
       type="url"
       inputMode="url"
+      // G457: the url sibling's default placeholder reuses `style.inline.link` (「链接」).
+      placeholder={inlinePlaceholder('url')}
       value={text}
-      onChange={e => setText(e.target.value)}
+      title={limitHit ? `${CHARACTER_LIMIT_TITLE}：${CHARACTER_LIMIT_SUBTITLE}` : undefined}
+      aria-invalid={limitHit || undefined}
+      onChange={e => {
+        // G1532: the four inline siblings share the 10000-character cap.
+        const next = e.target.value;
+        if (exceedsCharacterLimit(next)) {
+          setText(clampToCharacterLimit(next));
+          setLimitHit(true);
+          return;
+        }
+        setLimitHit(false);
+        setText(next);
+      }}
       onBlur={e => { if (!e.currentTarget.isConnected) return; setEditing(false); onChange(normalizeTextCommit(text)); }}
       onKeyDown={e => {
         if (e.key === 'Enter') { setEditing(false); onChange(normalizeTextCommit(text)); }
@@ -495,6 +539,7 @@ function URLCell({ value, onChange }: { value: any; onChange: (v: any) => void }
 function EmailCell({ value, onChange }: { value: any; onChange: (v: any) => void }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value ?? '');
+  const [limitHit, setLimitHit] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -503,7 +548,7 @@ function EmailCell({ value, onChange }: { value: any; onChange: (v: any) => void
 
   if (!editing) {
     return (
-      <div className="min-h-8 cursor-pointer px-2 py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
+      <div className="min-h-[var(--st-row-height)] cursor-pointer px-[var(--st-cell-padding-x)] py-1 transition-colors duration-150 hover:bg-foreground/[0.03]" onClick={() => { setText(value ?? ''); setEditing(true); }}>
         {value ? (
           <a
             href={`mailto:${String(value)}`}
@@ -525,7 +570,19 @@ function EmailCell({ value, onChange }: { value: any; onChange: (v: any) => void
       type="email"
       inputMode="email"
       value={text}
-      onChange={e => setText(e.target.value)}
+      title={limitHit ? `${CHARACTER_LIMIT_TITLE}：${CHARACTER_LIMIT_SUBTITLE}` : undefined}
+      aria-invalid={limitHit || undefined}
+      onChange={e => {
+        // G1532: same 10000-character cap as the text sibling.
+        const next = e.target.value;
+        if (exceedsCharacterLimit(next)) {
+          setText(clampToCharacterLimit(next));
+          setLimitHit(true);
+          return;
+        }
+        setLimitHit(false);
+        setText(next);
+      }}
       onBlur={e => { if (!e.currentTarget.isConnected) return; setEditing(false); onChange(normalizeTextCommit(text)); }}
       onKeyDown={e => {
         if (e.key === 'Enter') { setEditing(false); onChange(normalizeTextCommit(text)); }
@@ -556,7 +613,7 @@ function FormulaCell({
   const result = expression ? evaluateFormula(expression, row) : { ok: false as const, error: '未设置公式' };
 
   return (
-    <div className="min-h-[32px] px-2 py-1 text-sm tabular-nums">
+    <div className="min-h-[var(--st-row-height)] px-[var(--st-cell-padding-x)] py-1 text-sm tabular-nums">
       {result.ok ? (
         <span>{formatNumber(result.value)}</span>
       ) : (
@@ -574,7 +631,7 @@ function formatNumber(value: number): string {
 function TimestampCell({ value }: { value?: string }) {
   const date = value ? new Date(value) : null;
   return (
-    <div className="min-h-[32px] px-2 py-1 text-sm">
+    <div className="min-h-[var(--st-row-height)] px-[var(--st-cell-padding-x)] py-1 text-sm">
       {date && !Number.isNaN(date.getTime()) ? (
         <span className="text-muted-foreground">{date.toLocaleDateString('zh-CN')}</span>
       ) : (
@@ -598,7 +655,7 @@ function FileCell({ value, onChange }: { value: any; onChange: (v: any) => void 
     value && typeof value === 'object' ? (value as FileValue) : null;
 
   return (
-    <div className="flex min-h-[32px] items-center gap-1 px-2 py-1">
+    <div className="flex min-h-[var(--st-row-height)] items-center gap-1 px-[var(--st-cell-padding-x)] py-1">
       <input
         ref={inputRef}
         type="file"
@@ -697,7 +754,7 @@ function RelationCell({
   };
 
   return (
-    <div className="relative min-h-[32px] px-2 py-1">
+    <div className="relative min-h-[var(--st-row-height)] px-[var(--st-cell-padding-x)] py-1">
       <button
         className="flex w-full flex-wrap items-center gap-1 text-left text-sm"
         disabled={!targetId}
@@ -782,7 +839,7 @@ function LinkToBlockCell({ value, onChange }: { value: any; onChange: (v: any) =
   };
 
   return (
-    <div className="relative min-h-8 px-2 py-1">
+    <div className="relative min-h-[var(--st-row-height)] px-[var(--st-cell-padding-x)] py-1">
       <button
         type="button"
         className="flex w-full items-center gap-1 text-left text-ui transition-colors duration-150 hover:text-foreground/70"
@@ -866,7 +923,7 @@ function PersonCell({ value, onChange }: { value: any; onChange: (v: any) => voi
   }, [open]);
 
   return (
-    <div className="relative min-h-8 px-2 py-1">
+    <div className="relative min-h-[var(--st-row-height)] px-[var(--st-cell-padding-x)] py-1">
       <button
         type="button"
         className="flex w-full items-center gap-1.5 text-left text-ui transition-colors duration-150 hover:text-foreground/70"

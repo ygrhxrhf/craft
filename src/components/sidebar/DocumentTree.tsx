@@ -6,8 +6,10 @@ import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { DocumentTreeItem } from './DocumentTreeItem';
+import { CollapseRow } from './CollapseRow';
 import { untitledFor } from '@/lib/document/untitled-copy';
 import { LOADING } from '@/lib/browse/official-copy';
+import { SECTION_COLLAPSE_THRESHOLD, collapseSection } from '@/lib/browse/section-collapse';
 
 export interface Document {
   id: string;
@@ -49,6 +51,8 @@ export function DocumentTree({ folderId = null }: DocumentTreeProps) {
   const snapshot = useSidebarSnapshot();
   const bumpTree = useSidebarStore((s) => s.bumpTree);
   const [pending, setPending] = useState<Map<string, PendingRow>>(new Map());
+  // G391：分区超过硬编码阈值时收成"前 N 行 + 折叠行"，折叠行可再展开。
+  const [showAllRows, setShowAllRows] = useState(false);
 
   // 未推送的本地意图（applyLocal 后立刻可见）；快照每次更新后重读
   useEffect(() => {
@@ -79,9 +83,11 @@ export function DocumentTree({ folderId = null }: DocumentTreeProps) {
     return null;
   }
 
+  const section = collapseSection(rootDocuments, SECTION_COLLAPSE_THRESHOLD, showAllRows);
+
   return (
     <div className="flex flex-col gap-0.5">
-      {rootDocuments.map(doc => (
+      {section.visible.map(doc => (
         <DocumentTreeItem
           key={doc.id}
           document={doc}
@@ -89,6 +95,13 @@ export function DocumentTree({ folderId = null }: DocumentTreeProps) {
           level={0}
         />
       ))}
+      {section.collapsible && (
+        <CollapseRow
+          isExpanded={showAllRows}
+          remainingCount={section.remainingCount}
+          onToggle={() => setShowAllRows((open) => !open)}
+        />
+      )}
     </div>
   );
 }

@@ -39,10 +39,15 @@ export function topLevelStart(doc: Node, index: number): number {
   return start;
 }
 
-/** The indent level a top-level block carries; list items and others without the attr read as 0. */
-function indentOf(node: Node): number {
+/**
+ * The indent level a top-level block carries. G660: an explicit `null` (a block whose style prop
+ * is set to "none") is neutral for the run, while `undefined` — a block type with no indent slot
+ * at all, e.g. a code block — ends it, because such a block cannot be nested.
+ */
+function indentOf(node: Node): number | null | undefined {
   const raw = node.attrs?.indent;
-  return typeof raw === 'number' && Number.isFinite(raw) ? raw : 0;
+  if (raw === null) return null;
+  return typeof raw === 'number' && Number.isFinite(raw) ? raw : undefined;
 }
 
 export function buildBlockMove(state: EditorState, target: MoveTarget): Transaction | null {

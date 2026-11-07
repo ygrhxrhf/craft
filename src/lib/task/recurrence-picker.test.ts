@@ -11,12 +11,17 @@ import {
   RECURRENCE_FREQUENCIES,
   SELECTOR_OPTIONS,
   WEEKDAY_PICK,
+  WEEKEND_OPTIONS,
   axesFor,
+  nextInterval,
+  patchInterval,
   patchRuleAxis,
   ruleWithAnchor,
   ruleWithFrequency,
   toggleDynamicDay,
   toggleNumber,
+  weekendOptionOf,
+  withWeekendOption,
 } from './recurrence-picker';
 
 /**
@@ -73,13 +78,13 @@ describe('writing the rule', () => {
   it('builds 「每月 3 日、15 日」 and reads it back the same way', () => {
     const raw = patchRuleAxis('{"freq":"monthly","type":"fixed"}', { days: [3, 15] });
     expect(parseRecurrence(raw)?.days).toEqual([3, 15]);
-    expect(describeRecurrence(raw)).toBe('每月 3 日、15 日重复');
+    expect(describeRecurrence(raw)).toBe('每月 于 3、15 日');
   });
 
   it('stacks a relative day onto the day numbers', () => {
     let raw = patchRuleAxis('{"freq":"monthly"}', { days: [3, 15] });
     raw = patchRuleAxis(raw, { dynamicDays: [{ type: 'friday', selector: 'last' }] });
-    expect(describeRecurrence(raw)).toBe('每月 3 日、15 日、最后一个周五重复');
+    expect(describeRecurrence(raw)).toBe('每月 于 3、15 日，每月 于 最后一个周五');
   });
 
   it('removes the key when the axis is emptied', () => {
@@ -160,5 +165,47 @@ describe('the popover wires the picker in', () => {
     expect(popover).toContain("recurrence.onChange(ruleWithAnchor(recurrence.value, 'fixed'))");
     // And a rule that cannot be described still shows the entry label.
     expect(popover).toContain("|| '重复…'");
+  });
+});
+
+// G266 —— 周末处理是两条互斥勾选行（`on-weekends` / `skip-weekends`），不是开关。
+describe('the two weekend rows (G266)', () => {
+  it('uses the official labels and keys', () => {
+    expect(WEEKEND_OPTIONS.map((option) => option.id)).toEqual(['on-weekends', 'skip-weekends']);
+    expect(WEEKEND_OPTIONS.map((option) => option.label)).toEqual(['周末也有', '跳过周末']);
+    expect(WEEKEND_OPTIONS.map((option) => option.key)).toEqual([
+      'tasks.also.on.weekends',
+      'tasks.skip.weekends',
+    ]);
+  });
+
+  it('ticks exactly one row, and only where the field set has the layer', () => {
+    expect(weekendOptionOf('{"freq":"daily"}')).toBe('on-weekends');
+    expect(weekendOptionOf('{"freq":"monthly","skipWeekends":true}')).toBe('skip-weekends');
+    expect(weekendOptionOf('{"freq":"weekly"}')).toBeNull();
+    expect(weekendOptionOf('{"freq":"yearly","skipWeekends":true}')).toBeNull();
+    expect(weekendOptionOf(null)).toBeNull();
+  });
+
+  it('writes the pick and clears it again', () => {
+    const skipped = withWeekendOption('{"freq":"daily"}', 'skip-weekends');
+    expect(parseRecurrence(skipped)?.skipWeekends).toBe(true);
+    const back = withWeekendOption(skipped, 'on-weekends');
+    expect(JSON.parse(back)).not.toHaveProperty('skipWeekends');
+  });
+});
+
+// G266 —— 间隔菜单：往小选时官方把间隔重置为 1（而不是落到选中的那一档）。
+describe('the interval rollback (G266)', () => {
+  it('resets to 1 when the picked entry is smaller than the current interval', () => {
+    expect(nextInterval(3, 2)).toBe(1);
+    expect(nextInterval(1, 4)).toBe(4);
+    expect(nextInterval(2, 2)).toBe(2);
+    expect(nextInterval(undefined, 2)).toBe(2);
+  });
+
+  it('writes 1 as the absent key', () => {
+    expect(JSON.parse(patchInterval('{"freq":"weekly","interval":5}', 2))).not.toHaveProperty('interval');
+    expect(JSON.parse(patchInterval('{"freq":"weekly"}', 4)).interval).toBe(4);
   });
 });

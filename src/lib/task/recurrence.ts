@@ -1,3 +1,5 @@
+import { fillPositional } from '@/lib/i18n/interpolation';
+
 export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 export type RecurrenceAnchor = 'fixed' | 'flexible';
@@ -88,7 +90,28 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
   if (!parsed || typeof parsed !== 'object') return null;
 
   const rule = parsed as Record<string, unknown>;
-  if (typeof rule.freq !== 'string' || !FREQUENCIES.includes(rule.freq as RecurrenceFrequency)) return null;
+  /**
+   * G687: the official `repeat` JSON spells the frequency `frequency`, writes `interval: null` when
+   * unset, and nests each frequency's own axes under a key of the same name
+   * (`daily:{skipWeekends}`, `weekly:{days}`, `monthly:{days,dynamicDays}`, `yearly:{months,days,…}`).
+   * The local writer uses `freq` + flat keys; accept both shapes here so a rule captured from the
+   * official build is read the same way instead of parsing as "no repeat".
+   */
+  const frequency = rule.freq ?? rule.frequency;
+  if (typeof frequency !== 'string' || !FREQUENCIES.includes(frequency as RecurrenceFrequency)) return null;
+  rule.freq = frequency;
+  // Official writes `interval: null` for "unset"; here that is the absent key.
+  if (rule.interval === null) delete rule.interval;
+  const nested = rule[frequency];
+  if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+    const inner = nested as Record<string, unknown>;
+    for (const key of ['days', 'months', 'dynamicDays'] as const) {
+      if (rule[key] === undefined && Array.isArray(inner[key])) rule[key] = inner[key];
+    }
+    if (rule.skipWeekends === undefined && typeof inner.skipWeekends === 'boolean') {
+      rule.skipWeekends = inner.skipWeekends;
+    }
+  }
 
   if (rule.days !== undefined) {
     if (!Array.isArray(rule.days)) return null;
@@ -246,37 +269,109 @@ export function startOfWeekMonday(date: Date): Date {
   return copy;
 }
 
+/**
+ * G257 —— the three official natural-language templates for "which day does this repeat land on".
+ * Verbatim from `feature-catalog.md`: `tasks.0.on.1`「[0] 于 [1]」 (by weekday),
+ * `tasks.0.on.the.1.day`「[0] 于 [1] 日」 (by day-of-month) and
+ * `tasks.0.on.the.1.day.of.2`「[0] 于 [2] 的第 [1] 天」 (the Nth day of a given month).
+ */
+export const REPEAT_ON_KEY = 'tasks.0.on.1';
+export const REPEAT_ON_DAY_KEY = 'tasks.0.on.the.1.day';
+export const REPEAT_ON_DAY_OF_MONTH_KEY = 'tasks.0.on.the.1.day.of.2';
+
+const ON_TEMPLATES: Record<string, string> = {
+  [REPEAT_ON_KEY]: '[0] 于 [1]',
+  [REPEAT_ON_DAY_KEY]: '[0] 于 [1] 日',
+  [REPEAT_ON_DAY_OF_MONTH_KEY]: '[0] 于 [2] 的第 [1] 天',
+};
+
+export interface RepeatOnPhrase {
+  /** One of the three `tasks.0.on.*` keys. */
+  key: string;
+  /** The filled sentence, e.g. 「每周 于 周一、周四」. */
+  text: string;
+  /** `[0]` is always the frequency phrase; the rest are the template's own slots. */
+  args: string[];
+}
+
+/** 「每天」/「每 3 天」… — slot `[0]` of all three templates. */
+export function repeatEveryPhrase(rule: RecurrenceRule): string {
+  const step = rule.interval ?? 1;
+  switch (rule.freq) {
+    case 'daily':
+      return step > 1 ? `每 ${step} 天` : '每天';
+    case 'weekly':
+      return step > 1 ? `每 ${step} 周` : '每周';
+    case 'monthly':
+      return step > 1 ? `每 ${step} 个月` : '每月';
+    case 'yearly':
+      return step > 1 ? `每 ${step} 年` : '每年';
+  }
+}
+
+/**
+ * G637/G663: a `flexible` rule is labelled by the official "after N units" set
+ * (`tasks.after.1.week`「一周后」, `tasks.after.x.weeks`「[0] 周后」) — it has no calendar landing.
+ */
+const AFTER_ONE = { daily: '1 天后', weekly: '一周后', monthly: '1 个月后', yearly: '一年后' } as const;
+const AFTER_UNIT = { daily: '天', weekly: '周', monthly: '个月', yearly: '年' } as const;
+
+export function repeatAfterPhrase(rule: RecurrenceRule): string {
+  const step = rule.interval ?? 1;
+  if (step === 1) return AFTER_ONE[rule.freq];
+  return `${step} ${AFTER_UNIT[rule.freq]}后`;
+}
+
+/** Every "on …" phrase the rule earns, one per template that applies. */
+export function repeatOnPhrases(raw: string | null | undefined): RepeatOnPhrase[] {
+  const rule = parseRecurrence(raw);
+  if (!rule) return [];
+  const every = repeatEveryPhrase(rule);
+  const phrase = (key: string, args: string[]): RepeatOnPhrase => ({
+    key,
+    args,
+    text: fillPositional(ON_TEMPLATES[key], args),
+  });
+  const out: RepeatOnPhrase[] = [];
+
+  if (rule.freq === 'weekly' && rule.days?.length) {
+    const weekdays = rule.days.map((day) => WEEKDAY_LABELS[day] ?? '').filter(Boolean).join('、');
+    if (weekdays) out.push(phrase(REPEAT_ON_KEY, [every, weekdays]));
+    return out;
+  }
+
+  if (rule.freq === 'monthly' || rule.freq === 'yearly') {
+    const explicit = rule.days?.length
+      ? [...rule.days].sort((a, b) => a - b)
+      : rule.byMonthDay
+        ? [rule.byMonthDay]
+        : [];
+    if (explicit.length) {
+      if (rule.freq === 'yearly' && rule.months?.length) {
+        const months = `${[...rule.months].sort((a, b) => a - b).join('、')} 月`;
+        out.push(phrase(REPEAT_ON_DAY_OF_MONTH_KEY, [every, explicit.join('、'), months]));
+      } else {
+        out.push(phrase(REPEAT_ON_DAY_KEY, [every, explicit.join('、')]));
+      }
+    }
+    const relative = (rule.dynamicDays ?? []).map(dynamicDayLabel);
+    if (relative.length) out.push(phrase(REPEAT_ON_KEY, [every, relative.join('、')]));
+    if (out.length === 0 && rule.freq === 'yearly' && rule.months?.length) {
+      out.push(phrase(REPEAT_ON_KEY, [every, `${[...rule.months].sort((a, b) => a - b).join('、')} 月`]));
+    }
+  }
+  return out;
+}
+
 export function describeRecurrence(raw: string | null | undefined): string | null {
   const rule = parseRecurrence(raw);
   if (!rule) return null;
-  const step = rule.interval ?? 1;
-  const anchor = rule.type === 'flexible' ? '（完成时起算）' : '';
-  const every =
-    rule.freq === 'daily'
-      ? step > 1 ? `每 ${step} 天` : '每天'
-      : rule.freq === 'weekly'
-        ? step > 1 ? `每 ${step} 周` : '每周'
-        : rule.freq === 'monthly'
-          ? step > 1 ? `每 ${step} 个月` : '每月'
-          : step > 1 ? `每 ${step} 年` : '每年';
-
-  if (rule.freq === 'weekly' && rule.days?.length) {
-    return `${every}：${rule.days.map((day) => WEEKDAY_LABELS[day] ?? '').filter(Boolean).join('、')}${anchor}`;
-  }
-  if (rule.freq === 'monthly' || rule.freq === 'yearly') {
-    const parts: string[] = [];
-    if (rule.freq === 'yearly' && rule.months?.length) {
-      parts.push(`${rule.months.slice().sort((a, b) => a - b).join('、')} 月`);
-    }
-    if (rule.days?.length) {
-      parts.push(`${rule.days.slice().sort((a, b) => a - b).join(' 日、')} 日`);
-    } else if (rule.byMonthDay) {
-      parts.push(`${rule.byMonthDay} 日`);
-    }
-    for (const entry of rule.dynamicDays ?? []) parts.push(dynamicDayLabel(entry));
-    if (parts.length) return `${every} ${parts.join(rule.freq === 'yearly' ? ' ' : '、')}重复${anchor}`;
-  }
-  return `${every}重复${anchor}`;
+  // Official inline suffix `tasks.skip.weekends.single`「（跳过周末）」.
+  const weekend = rule.skipWeekends ? '（跳过周末）' : '';
+  if (rule.type === 'flexible') return `${repeatAfterPhrase(rule)}${weekend}`;
+  const phrases = repeatOnPhrases(raw).map((entry) => entry.text);
+  if (phrases.length) return `${phrases.join('，')}${weekend}`;
+  return `${repeatEveryPhrase(rule)}重复${weekend}`;
 }
 
 /** G406：相对日的人话（`月末` / `第一个周五` / `第 3 个周三` / `第 15 日`）。 */
@@ -454,7 +549,21 @@ export function nextOccurrence(
   const step = rule.interval ?? 1;
   let candidate: WallClock | null = null;
 
-  if (rule.freq === 'daily') {
+  if (rule.type === 'flexible') {
+    /**
+     * G637/G663: 「相对于完成」 is the official "After N units" step measured from `from` (the
+     * completion moment). Measured on the official build: a mon/fri flexible rule completed on
+     * 2026-09-28 lands on 2026-10-05 (＝ completion + 7 days), not on the next listed weekday —
+     * the day axes belong to the calendar-anchored (`fixed`) label, which is the other branch.
+     */
+    const shifted =
+      rule.freq === 'daily'
+        ? addDays(base, step)
+        : rule.freq === 'weekly'
+          ? addDays(base, step * 7)
+          : addMonths(base, rule.freq === 'monthly' ? step : step * 12);
+    candidate = clampWallDay(shifted);
+  } else if (rule.freq === 'daily') {
     candidate = addDays(base, step);
   } else if (rule.freq === 'weekly') {
     const wanted = rule.days?.length ? new Set(rule.days) : new Set([weekdayOf(base, timeZone)]);
@@ -580,4 +689,9 @@ function addMonths(wall: WallClock, months: number): WallClock {
     minute: wall.minute,
     second: wall.second,
   };
+}
+
+/** A month step can land on a day the target month does not have (Jan 31 + 1 month). */
+function clampWallDay(wall: WallClock): WallClock {
+  return { ...wall, day: clampDay(wall.year, wall.month, wall.day) };
 }

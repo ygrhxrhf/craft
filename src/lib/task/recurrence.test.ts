@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MONDAY_FIRST, SUNDAY_FIRST, fromMondayFirst, startOfWeekMonday, toMondayFirst, RECURRENCE_PRESETS, normalizeWeekdays, serializeWeekdays, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor, scheduleWithRecurrence, localDateString } from './recurrence';
+import { MONDAY_FIRST, SUNDAY_FIRST, REPEAT_ON_DAY_KEY, REPEAT_ON_DAY_OF_MONTH_KEY, REPEAT_ON_KEY, fromMondayFirst, startOfWeekMonday, toMondayFirst, RECURRENCE_PRESETS, normalizeWeekdays, serializeWeekdays, describeRecurrence, nextOccurrence, parseRecurrence, recurrencePresetsFor, repeatOnPhrases, scheduleWithRecurrence, localDateString } from './recurrence';
 
 const iso = (date: Date) => date.toISOString();
 
@@ -7,8 +7,8 @@ describe('describeRecurrence', () => {
   it('names each preset rule', () => {
     expect(describeRecurrence('{"freq":"daily"}')).toBe('每天重复');
     expect(describeRecurrence('{"freq":"weekly"}')).toBe('每周重复');
-    expect(describeRecurrence('{"freq":"weekly","days":[1,4]}')).toBe('每周：周一、周四');
-    expect(describeRecurrence('{"freq":"monthly","byMonthDay":31}')).toBe('每月 31 日重复');
+    expect(describeRecurrence('{"freq":"weekly","days":[1,4]}')).toBe('每周 于 周一、周四');
+    expect(describeRecurrence('{"freq":"monthly","byMonthDay":31}')).toBe('每月 于 31 日');
     expect(describeRecurrence('{"freq":"yearly"}')).toBe('每年重复');
   });
 
@@ -96,7 +96,7 @@ describe('nextOccurrence', () => {
     expect(iso(nextOccurrence(rule, new Date('2026-09-10T09:00:00Z'))!)).toBe(
       '2027-03-10T09:00:00.000Z'
     );
-    expect(describeRecurrence(rule)).toBe('每年 3、9 月 10 日重复');
+    expect(describeRecurrence(rule)).toBe('每年 于 3、9 月 的第 10 天');
   });
 
   it('yearly resolves a relative day inside a chosen month', () => {
@@ -172,8 +172,8 @@ describe('interval and anchor', () => {
 
   it('keeps the anchor when present and describes it', () => {
     expect(parseRecurrence('{"freq":"daily","type":"flexible"}')?.type).toBe('flexible');
-    expect(describeRecurrence('{"freq":"daily","type":"flexible"}')).toBe('每天重复（完成时起算）');
-    expect(describeRecurrence('{"freq":"weekly","days":[5],"interval":2}')).toBe('每 2 周：周五');
+    expect(describeRecurrence('{"freq":"daily","type":"flexible"}')).toBe('1 天后');
+    expect(describeRecurrence('{"freq":"weekly","days":[5],"interval":2}')).toBe('每 2 周 于 周五');
     expect(parseRecurrence('{"freq":"daily","type":"weekly"}')).toBeNull();
   });
 });
@@ -389,12 +389,102 @@ describe('monthly multi-day and relative days (G406)', () => {
   });
 
   it('describes the rule in the official phrasing shape', () => {
-    expect(describeRecurrence(rule({ freq: 'monthly', days: [3, 15] }))).toBe('每月 3 日、15 日重复');
+    expect(describeRecurrence(rule({ freq: 'monthly', days: [3, 15] }))).toBe('每月 于 3、15 日');
     expect(describeRecurrence(rule({ freq: 'monthly', dynamicDays: [{ type: 'day', selector: 'last' }] }))).toBe(
-      '每月 月末重复',
+      '每月 于 月末',
     );
     expect(describeRecurrence(rule({ freq: 'monthly', dynamicDays: [{ type: 'friday', selector: 'last' }] }))).toBe(
-      '每月 最后一个周五重复',
+      '每月 于 最后一个周五',
     );
+  });
+});
+
+// G257 —— 频率文案的三档官方模板（`feature-catalog.md` 的 `tasks.0.on.*` 三键）。
+describe('the three 「on …」 templates (G257)', () => {
+  it('keeps the catalog keys verbatim', () => {
+    expect(REPEAT_ON_KEY).toBe('tasks.0.on.1');
+    expect(REPEAT_ON_DAY_KEY).toBe('tasks.0.on.the.1.day');
+    expect(REPEAT_ON_DAY_OF_MONTH_KEY).toBe('tasks.0.on.the.1.day.of.2');
+  });
+
+  it('renders a weekday rule through 「[0] 于 [1]」', () => {
+    expect(repeatOnPhrases('{"freq":"weekly","days":[1,4]}')).toEqual([
+      { key: REPEAT_ON_KEY, args: ['每周', '周一、周四'], text: '每周 于 周一、周四' },
+    ]);
+  });
+
+  it('renders a day-of-month rule through 「[0] 于 [1] 日」', () => {
+    const [phrase] = repeatOnPhrases('{"freq":"monthly","days":[3,15]}');
+    expect(phrase.key).toBe(REPEAT_ON_DAY_KEY);
+    expect(phrase.text).toBe('每月 于 3、15 日');
+  });
+
+  it('renders the Nth day of a named month through 「[0] 于 [2] 的第 [1] 天」', () => {
+    const [phrase] = repeatOnPhrases('{"freq":"yearly","months":[9],"days":[28]}');
+    expect(phrase.key).toBe(REPEAT_ON_DAY_OF_MONTH_KEY);
+    expect(phrase.args).toEqual(['每年', '28', '9 月']);
+    expect(phrase.text).toBe('每年 于 9 月 的第 28 天');
+  });
+
+  it('carries the interval into slot [0]', () => {
+    expect(repeatOnPhrases('{"freq":"weekly","interval":2,"days":[5]}')[0].text).toBe('每 2 周 于 周五');
+  });
+
+  it('has no on-phrase for daily rules', () => {
+    expect(repeatOnPhrases('{"freq":"daily"}')).toEqual([]);
+    expect(describeRecurrence('{"freq":"daily","skipWeekends":true}')).toBe('每天重复（跳过周末）');
+  });
+});
+
+// G637/G663 —— 两档锚点在屏外的实测差：同一天完成，fixed 走原序列，flexible 加一个 interval。
+describe('the two anchors land differently (G637/G663)', () => {
+  it('fixed walks the original sequence from 2026-09-28 (a Monday)', () => {
+    const next = nextOccurrence('{"freq":"weekly","type":"fixed","days":[1,3,5]}', new Date('2026-09-28T09:00:00Z'))!;
+    expect(iso(next)).toBe('2026-09-30T09:00:00.000Z');
+  });
+
+  it('flexible adds the interval to the completion day (mon/fri → 2026-10-05)', () => {
+    const next = nextOccurrence('{"freq":"weekly","type":"flexible","days":[1,5]}', new Date('2026-09-28T09:00:00Z'))!;
+    expect(iso(next)).toBe('2026-10-05T09:00:00.000Z');
+    expect(next.getUTCDay()).toBe(1);
+  });
+
+  it('flexible daily adds N days and clamps a month step', () => {
+    expect(iso(nextOccurrence('{"freq":"daily","type":"flexible","interval":3}', new Date('2026-09-28T09:00:00Z'))!)).toBe(
+      '2026-10-01T09:00:00.000Z',
+    );
+    expect(
+      nextOccurrence('{"freq":"monthly","type":"flexible"}', new Date('2026-01-31T09:00:00Z'))!
+        .toISOString()
+        .slice(0, 10),
+    ).toBe('2026-02-28');
+  });
+});
+
+// G687 —— 官方 repeat JSON 是 `frequency` + 每个频率自己的子对象；读侧两种形都收。
+describe('the official repeat JSON shape is read too (G687)', () => {
+  const dailyOfficial =
+    '{"type":"fixed","frequency":"daily","startDate":"2026-09-28","daily":{"skipWeekends":false},"reminder":{"enabled":true,"dateOffset":540}}';
+
+  it('maps `frequency` onto `freq`', () => {
+    expect(parseRecurrence(dailyOfficial)).toEqual({ freq: 'daily', type: 'fixed', startDate: '2026-09-28' });
+  });
+
+  it('lifts each frequency\'s nested axes', () => {
+    expect(parseRecurrence('{"frequency":"weekly","weekly":{"days":["monday","friday"]}}')?.days).toEqual([1, 5]);
+    expect(parseRecurrence('{"frequency":"monthly","monthly":{"days":[1,15]}}')?.days).toEqual([1, 15]);
+    expect(parseRecurrence('{"frequency":"yearly","yearly":{"months":[9],"days":[28]}}')).toMatchObject({
+      months: [9],
+      days: [28],
+    });
+    expect(parseRecurrence('{"frequency":"daily","daily":{"skipWeekends":true}}')?.skipWeekends).toBe(true);
+  });
+
+  it('treats `interval: null` as unset', () => {
+    expect(parseRecurrence('{"frequency":"weekly","interval":null}')?.interval).toBeUndefined();
+  });
+
+  it('describes an official-shaped rule through the same templates', () => {
+    expect(describeRecurrence('{"frequency":"weekly","weekly":{"days":["monday"]}}')).toBe('每周 于 周一');
   });
 });

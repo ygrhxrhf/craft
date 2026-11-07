@@ -228,3 +228,99 @@ describe('the about panel buttons are wired or removed, never inert', () => {
     expect(panels).not.toMatch(/<button[^>]*>\s*意见反馈\s*<\/button>/);
   });
 });
+
+/**
+ * G164：改名与改头像各配"进行时+成功+失败"三件套，四句都逐字取自语言包
+ * （`preferences.name.updating` / `.name.updated` / `preferences.alert.change.name` /
+ * `preferences.profile.photo.updated` / `preferences.alert.update.photo`）。
+ * 删除帐户那句此前多了个空格、且写成"撤销"——官方是「…此操作无法撤消。」
+ */
+describe('the account panel reports all three legs of a name or photo change', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('keeps the official progress, success and failure sentences for the name', () => {
+    expect(panels).toContain("const NAME_UPDATING = '正在更新名称…'");
+    expect(panels).toContain("const NAME_UPDATED = '名称已更新'");
+    expect(panels).toContain("const NAME_UPDATE_FAILED = '无法更改名称'");
+    expect(panels).toContain('{NAME_UPDATING}');
+    expect(panels).toContain('title: NAME_UPDATED');
+    expect(panels).toContain('setSwitchError(NAME_UPDATE_FAILED)');
+  });
+
+  it('keeps the official success and failure sentences for the avatar', () => {
+    expect(panels).toContain("const PROFILE_PHOTO_UPDATED = '个人资料照片已更新'");
+    expect(panels).toContain("const IMAGE_UPDATE_FAILED = '无法更新照片'");
+    expect(panels).toContain('title: PROFILE_PHOTO_UPDATED');
+    expect(panels).toContain('setSwitchError(IMAGE_UPDATE_FAILED)');
+  });
+
+  it('states the delete-account consequence verbatim', () => {
+    // preferences.account.delete.message（注意官方的"无法撤消"与句内无空格）
+    expect(panels).toContain('删除帐户将永久删除你的所有文档。此操作无法撤消。');
+    expect(panels).not.toContain('此操作无法撤销。');
+  });
+});
+
+/**
+ * G174：空间标签开关是"隐藏不是删除"——关掉之前要说清后果，且那面旗要能真的把标签藏起来
+ * （侧栏与 /tags 页都读同一面旗）。
+ */
+describe('the space tag switch hides instead of deleting', () => {
+  const panels = readFileSync(
+    fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
+    'utf8',
+  );
+  const nav = readFileSync(
+    fileURLToPath(new URL('../sidebar/SidebarNav.tsx', import.meta.url)),
+    'utf8',
+  );
+  const gate = readFileSync(
+    fileURLToPath(new URL('../../app/(app)/tags/tags-visibility-gate.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('wires the switch and shows the confirm with both official button labels', () => {
+    expect(panels).toContain('data-testid="space-tags-switch"');
+    expect(panels).toContain('onCheckedChange={(next) => setTagsEnabled(next === true)}');
+    expect(panels).toContain('{TAGS_OFF_CONFIRM_TITLE}');
+    expect(panels).toContain('{TAGS_OFF_CONFIRM_DESC}');
+    expect(panels).toContain('{TAGS_KEEP_ON}');
+    expect(panels).toContain('{TAGS_OFF_CONFIRM}');
+  });
+
+  it('prints the per-member scope note next to the switch', () => {
+    expect(panels).toContain('{TAGS_SCOPE_NOTE}');
+  });
+
+  it('never deletes a tag row: the flow only writes the visibility flag', () => {
+    const block = panels.slice(panels.indexOf('const applyTagsHidden'), panels.indexOf('/** G171'));
+    expect(block).toContain('writeTagsHidden');
+    expect(block).not.toMatch(/deleteTag|removeTag/);
+  });
+
+  it('hides the tags entry in the sidebar and the collection on /tags', () => {
+    expect(nav).toContain("!(tagsHidden && id === '/tags')");
+    expect(gate).toContain('{TAGS_DISABLED_LINE}');
+    expect(gate).toContain('{ENABLE_TAGS_IN_SETTINGS}');
+    expect(gate).toContain("openSettings('tags')");
+  });
+});
+
+/**
+ * G123：清除 AI 历史前要先过一句"无法撤销"的确认（官方对"清除历史"与"删除对话"各一句）。
+ */
+describe('the assistant panel confirms before clearing the AI history', () => {
+  const assistant = readFileSync(
+    fileURLToPath(new URL('./AssistantPanel.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('asks first, then clears', () => {
+    expect(assistant).toContain('CLEAR_HISTORY_CONFIRM');
+    expect(assistant).toMatch(/confirmDialog\(\{[\s\S]{0,240}CLEAR_HISTORY_CONFIRM[\s\S]{0,240}\}\)\.then/);
+    expect(assistant).toContain('clearAiHistory(window.localStorage)');
+  });
+});

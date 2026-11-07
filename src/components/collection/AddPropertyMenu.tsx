@@ -24,7 +24,7 @@ import {
   type NumberFormat,
 } from '@/lib/collection/property-types';
 import { TWO_WAY_COPY } from '@/lib/collection/two-way-relation';
-import { COLLECTION_COLUMN_LIMIT_MESSAGE, canAddColumn } from '@/lib/collection/limits';
+import { COLLECTION_COLUMN_LIMIT_MESSAGE, canAddColumn, isReservedColumnName } from '@/lib/collection/limits';
 import { FieldIcon, FieldTypeIcon } from './FieldIcon';
 
 /** Local extras that exist next to the official vocabulary (G393). */
@@ -60,6 +60,12 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
 
   const submit = async () => {
     if (!name.trim()) return;
+    // G676: reserved names cannot be new column names. The official failure sentence was never
+    // collected, so this copy is local.
+    if (isReservedColumnName(name)) {
+      setError(`不能使用保留名「${name.trim()}」作为列名`);
+      return;
+    }
     setBusy(true);
     try {
       const config =

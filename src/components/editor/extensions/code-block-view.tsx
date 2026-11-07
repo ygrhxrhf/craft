@@ -9,16 +9,20 @@ import { appearsInLanguageMenu } from '@/lib/editor/mermaid-surface';
 import { CODE_CLOSE_PREVIEW, CODE_SPLIT_VIEW, hasCodePreview } from '@/lib/editor/code-block-detail';
 import { storeDefaultLanguage, storeDefaultTheme } from '@/lib/editor/code-preferences';
 import { CODE_THEMES, DEFAULT_CODE_THEME, filterThemes, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
+import { activeLineGutterStyle, activeLineIndex, caretOffsetInNode } from '@/lib/editor/code-active-line';
 import { cn } from 'cn';
 import { SearchableSelect } from './searchable-select';
 import { MermaidPreview } from './mermaid-preview';
 
-export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
+export function CodeBlockView({ node, updateAttributes, editor, getPos }: NodeViewProps) {
   const [copied, setCopied] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   // G148: 拆分视图（预览与源码左右并排）与关闭预览。
   const [split, setSplit] = useState(false);
   const [previewClosed, setPreviewClosed] = useState(false);
+  // G1161: 活跃行（光标所在行）——行号槽的底色来自 `lineHighlight`、前景来自
+  // `gutterActiveForeground`。没有这把光标状态时，行号槽就只是静态渲染。
+  const [activeLine, setActiveLine] = useState<number | null>(null);
   const language = (node.attrs.language as string) ?? '';
   const previewable = hasCodePreview(language);
   const showPreview = previewable && !previewClosed;
@@ -44,6 +48,28 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [fullscreen]);
+
+  // G1161: follow the selection so the gutter knows which line is the active one. A node view
+  // does not re-render on selection changes by itself, so the reading is pushed in as state.
+  useEffect(() => {
+    if (!editor || typeof getPos !== 'function') return;
+    const read = () => {
+      const position = getPos();
+      if (typeof position !== 'number') {
+        setActiveLine(null);
+        return;
+      }
+      const offset = caretOffsetInNode(editor.state.selection.head, position, (node.textContent ?? '').length);
+      setActiveLine(offset === null ? null : activeLineIndex(node.textContent ?? '', offset));
+    };
+    read();
+    editor.on('selectionUpdate', read);
+    editor.on('update', read);
+    return () => {
+      editor.off('selectionUpdate', read);
+      editor.off('update', read);
+    };
+  }, [editor, getPos, node]);
 
   const copy = async () => {
     try {
@@ -175,7 +201,14 @@ export function CodeBlockView({ node, updateAttributes }: NodeViewProps) {
             style={{ color: surface.gutterForeground }}
           >
             {Array.from({ length: lineCount }, (_, index) => (
-              <div key={index}>{index + 1}</div>
+              <div
+                key={index}
+                // G1161: the active line's cell takes the two-theme-key rule — an empty object
+                // (no declarations at all) when the palette declares neither key.
+                style={activeLine === index ? activeLineGutterStyle(surface) : undefined}
+              >
+                {index + 1}
+              </div>
             ))}
           </div>
           <pre className="min-w-0 flex-1 overflow-x-auto py-3 pr-3 font-mono">

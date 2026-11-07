@@ -634,7 +634,9 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
         if (startIndex >= 0) {
           const indents = Array.from({ length: doc.childCount }, (_, i) => {
             const raw = doc.child(i).attrs?.indent;
-            return typeof raw === 'number' && Number.isFinite(raw) ? raw : 0;
+            // G660: an explicit null is neutral for the run; a block with no indent slot ends it.
+            if (raw === null) return null;
+            return typeof raw === 'number' && Number.isFinite(raw) ? raw : undefined;
           });
           const run = indentRunOf(indents, startIndex);
           if (run.end > run.start + 1) {
@@ -778,7 +780,6 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
               {blockMenuItems({
                 canDelete: editor.state.doc.childCount > 1,
                 isTask: taskTargetOf(target.blockEl) !== null,
-                taskCancelled: taskTargetOf(target.blockEl)?.node.attrs.cancelled === true,
                 canRemind: canRemindBlock(target.blockEl),
                 ...toggleState(target.blockEl),
                 isDivider: isDividerBlock(target.blockEl),

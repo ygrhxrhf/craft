@@ -6,6 +6,7 @@ import { ANCHORABLE_TYPES } from '@/lib/search/anchors';
 import { REMIND_PRESETS, isInstantPreset, remindInstantFor, type RemindPresetId } from '@/lib/task/remind-presets';
 import { applyCancelled } from '@/lib/editor/task-status';
 import { buildBlockMove, type MoveTarget } from '@/lib/editor/block-move';
+import { indentRunOf } from '@/lib/editor/indent-run';
 import { type DividerStyle } from '@/lib/editor/divider-styles';
 import {
   normalizeWashiColor,
@@ -100,29 +101,86 @@ export const REMIND_MENU = REMIND_PRESETS;
 export const BLOCK_EMOJIS = ['👍', '❤️', '😄', '🎉', '🔥', '👀'] as const;
 
 /**
+ * G1441 —— 块级 `⋯` 菜单**不是每种块一张清单**，而是「**公共内核五枚**＋按块类型注入的专属
+ * 项」。内核＝`提醒我…`／`在上方插入区块`／`在下方插入区块`／`复制区块链接`／`删除`（三块共有）；
+ * 普通文本块专属 4 枚＝`添加内容`／`添加表情`／`添加评论`／`转换为卡片`；代码块专属 4 枚＝
+ * `语言`／`主题`／`全屏模式`／`复制代码`；任务块专属 **3** 枚＝`添加表情`／`添加评论`／
+ * `转换为卡片`（独缺 `添加内容`——任务块已有子内容语义）。
+ *
+ * ⇒ 三个枚数在同一式子上闭合：9＝5＋4、9＝5＋4、**8＝5＋3**。`composeMenu` 就是这条式子；
+ * 每种块只交自己的专属项，内核由它装。
+ */
+export interface MenuSlots {
+  /** 专属项里排在提醒之前的那几枚（文本块四枚／代码块三枚／任务块三枚）。 */
+  lead?: BlockAction[];
+  /** 与提醒同段、紧随其后的本地增项（展开、分隔符样式、提示类型、转为富链接）。 */
+  middle?: BlockAction[];
+  /** 内核里「复制区块链接」之前的那一枚（代码块的 `复制代码`，官方逐字序如此）。 */
+  beforeLink?: BlockAction[];
+}
+
+export const KERNEL_LABELS = [
+  '提醒我…',
+  '在上方插入区块',
+  '在下方插入区块',
+  '复制区块链接',
+  '删除',
+] as const;
+
+/**
+ * 公共内核五枚，组号由 `base` 起算：`base`＝提醒所在段，`base+1`＝插入两枚，`base+2`＝
+ * 复制链接（代码块的 `复制代码` 与它同段），`base+3`＝删除。
+ */
+function kernelActions(base: number, canDelete: boolean, slots: MenuSlots = {}): BlockAction[] {
+  const items: BlockAction[] = [
+    { id: 'remind', label: '提醒我…', group: base },
+    ...(slots.middle ?? []).map((item) => ({ ...item, group: base })),
+    { id: 'insert-above', label: '在上方插入区块', group: base + 1 },
+    { id: 'insert-below', label: '在下方插入区块', group: base + 1 },
+    ...(slots.beforeLink ?? []).map((item) => ({ ...item, group: base + 2 })),
+    { id: 'copy-link', label: '复制区块链接', group: base + 2 },
+  ];
+  if (canDelete) items.push({ id: 'delete', label: '删除', group: base + 3 });
+  return items;
+}
+
+/**
  * G1440 —— 代码块的块级 `⋯` 菜单是**逐字 9 项、按此序**（官方 `blockdetails.*` 那族专属项
  * ＋ `commands.*` 公共项）：`语言`／`主题`／`全屏模式`／`提醒我…`／`在上方插入区块`／
- * `在下方插入区块`／`复制代码`／`复制区块链接`／`删除`。
- *
- * ⇒ 这是 G384 那条"块级菜单＝**一枚公共内核＋按块类型注入的专属项**"的直接证据：
- * 专属项（语言/主题/全屏/复制代码）来自 `blockdetails.*`，其余五枚是公共内核。
+ * `在下方插入区块`／`复制代码`／`复制区块链接`／`删除`。＝内核五枚＋专属四枚。
  */
-export const CODE_BLOCK_MENU: readonly BlockAction[] = [
+const CODE_LEAD: BlockAction[] = [
   { id: 'code-language', label: '语言', group: 1 },
   { id: 'code-theme', label: '主题', group: 1 },
   { id: 'code-fullscreen', label: '全屏模式', group: 1 },
-  { id: 'remind', label: '提醒我…', group: 2 },
-  { id: 'insert-above', label: '在上方插入区块', group: 3 },
-  { id: 'insert-below', label: '在下方插入区块', group: 3 },
-  { id: 'code-copy', label: '复制代码', group: 4 },
-  { id: 'copy-link', label: '复制区块链接', group: 4 },
-  { id: 'delete', label: '删除', group: 5 },
-] as const;
+];
+
+export const CODE_BLOCK_MENU: readonly BlockAction[] = [
+  ...CODE_LEAD,
+  ...kernelActions(2, true, { beforeLink: [{ id: 'code-copy', label: '复制代码', group: 4 }] }),
+];
+
+/** 普通文本块专属四枚（官方 9＝5＋4 的加数）。 */
+export const TEXT_BLOCK_EXTRAS: readonly BlockAction[] = [
+  { id: 'add-content', label: '添加内容', group: 1 },
+  { id: 'add-emoji', label: '添加表情', group: 1 },
+  { id: 'add-comment', label: '添加评论', group: 1 },
+  { id: 'convert-card', label: '转换为卡片', group: 2 },
+];
+
+/**
+ * 任务块专属三枚（官方 8＝5＋3 的加数）。**没有 `添加内容`** —— 任务块已有子内容语义，
+ * 官方那一格是空的；`将任务标记为已取消` 也不在这张名册里（它走 `SET_CANCELLED` 键位）。
+ */
+export const TASK_BLOCK_EXTRAS: readonly BlockAction[] = [
+  { id: 'add-emoji', label: '添加表情', group: 1 },
+  { id: 'add-comment', label: '添加评论', group: 1 },
+  { id: 'convert-card', label: '转换为卡片', group: 2 },
+];
 
 export function blockMenuItems({
   canDelete,
   isTask,
-  taskCancelled,
   canRemind,
   isToggle,
   toggleOpen,
@@ -139,7 +197,6 @@ export function blockMenuItems({
 }: {
   canDelete: boolean;
   isTask?: boolean;
-  taskCancelled?: boolean;
   /** G252: any anchorable block can carry a reminder, not only a task item. */
   canRemind?: boolean;
   isToggle?: boolean;
@@ -222,32 +279,22 @@ export function blockMenuItems({
     ];
   }
   const items: BlockAction[] = [
-    { id: 'add-content', label: '添加内容', group: 1 },
-    { id: 'add-emoji', label: '添加表情', group: 1 },
-    { id: 'add-comment', label: '添加评论', group: 1 },
-    { id: 'convert-card', label: '转换为卡片', group: 2 },
+    ...(isTask ? TASK_BLOCK_EXTRAS : TEXT_BLOCK_EXTRAS).map((item) => ({ ...item })),
   ];
-  // G252：提醒在**任意可寻址块**上都能挂（不只是任务块），所以这一枚由 `canRemind` 决定，
-  // 不再绑在 `isTask` 上；任务块本身一定可挂，`isTask` 也算数。`set-cancelled` 才是任务块专属。
-  if (canRemind || isTask) items.push({ id: 'remind', label: '提醒我…', group: 3 });
-  if (isTask) {
-    items.push({
-      id: 'set-cancelled',
-      label: taskCancelled ? '取消标记' : '将任务标记为已取消',
-      group: 3,
-    });
+  // G252：提醒在**任意可寻址块**上都能挂（不只是任务块）——内核那一枚由 `canRemind` 决定：
+  // 任务块本身一定可挂，普通文本块要靠 `canRemind`。够不上内核时整枚不出现，其余内核照列。
+  const middle: BlockAction[] = [];
+  if (isToggle) middle.push({ id: 'toggle-open', label: toggleOpen ? '收起' : '展开', group: 3 });
+  if (isDivider) middle.push({ id: 'divider-style', label: '分隔符样式', group: 3 });
+  if (isCallout) middle.push({ id: 'callout-type', label: '提示类型', group: 3 });
+  if (canTurnToRichLink) middle.push({ id: 'turn-to-rich-link', label: '转为富链接', group: 3 });
+  // G1441：内核五枚。普通文本块与任务块的内核起点是第 3 段（前两段是专属项）。
+  const kernel = kernelActions(3, canDelete, { middle });
+  if (canRemind || isTask) {
+    items.push(...kernel);
+  } else {
+    items.push(...kernel.filter((item) => item.id !== 'remind'));
   }
-  if (isToggle) items.push({ id: 'toggle-open', label: toggleOpen ? '收起' : '展开', group: 3 });
-  if (isDivider) items.push({ id: 'divider-style', label: '分隔符样式', group: 3 });
-  if (isCallout) items.push({ id: 'callout-type', label: '提示类型', group: 3 });
-  if (canTurnToRichLink) items.push({ id: 'turn-to-rich-link', label: '转为富链接', group: 3 });
-  items.push(
-    { id: 'insert-above', label: '在上方插入区块', group: 4 },
-    { id: 'insert-below', label: '在下方插入区块', group: 4 },
-    // G1439：官方普通文本块菜单逐字 9 项、没有移动项——移动走拖拽与 Alt+↑↓（信息页动作里另有）。
-    { id: 'copy-link', label: '复制区块链接', group: 5 },
-  );
-  if (canDelete) items.push({ id: 'delete', label: '删除', group: 6 });
   return items;
 }
 
@@ -630,8 +677,19 @@ function locationOrigin(): string {
 }
 
 export function deleteBlock(state: EditorState, dispatch: (tr: Transaction) => void, index: number) {
-  if (state.doc.childCount <= 1) throw new Error('文档至少要保留一个区块');
-  const { before, after } = blockBounds(state, index);
+  // G660: deletion takes the block's **indent subtree** with it (`G0e` /
+  // `extendWithIndentChildren` is the same union the move path uses), so a parent block does not
+  // leave its children orphaned at the parent's own depth. A block with no indented followers is
+  // still just itself.
+  const indents = Array.from({ length: state.doc.childCount }, (_, i) => {
+    const raw = state.doc.child(i).attrs?.indent;
+    if (raw === null) return null;
+    return typeof raw === 'number' && Number.isFinite(raw) ? raw : undefined;
+  });
+  const run = indentRunOf(indents, index);
+  if (run.end - run.start >= state.doc.childCount) throw new Error('文档至少要保留一个区块');
+  const before = blockBounds(state, run.start).before;
+  const after = blockBounds(state, run.end - 1).after;
   dispatch(state.tr.delete(before, after).scrollIntoView());
 }
 

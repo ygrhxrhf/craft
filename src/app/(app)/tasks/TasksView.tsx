@@ -9,8 +9,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from 'cn';
 import {
-  INTERVAL_MAX,
-  clampInterval,
   describeRecurrence,
   parseRecurrence,
   scheduleWithRecurrence,
@@ -19,6 +17,9 @@ import { repeatRuleFor } from '@/lib/task/repeat-validity';
 import { defaultReminderForRepeat } from '@/lib/task/repeat-reminder';
 import { REMIND_PRESETS, isInstantPreset, remindInstantFor } from '@/lib/task/remind-presets';
 import { REMIND_OFFSET_TIERS, remindAtFromOffset, remindOffsetLabel } from '@/lib/task/remind-offset';
+import { instantForSlot, slotIndexForTime, timeSlots } from '@/lib/task/time-menu';
+import { RepeatIntervalSelect } from '@/components/task/RepeatIntervalSelect';
+import { RepeatAnchorNote } from '@/components/task/RepeatAnchorNote';
 import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
 import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
 import { SERIES_OPS } from '@/lib/task/series-ops';
@@ -710,26 +711,21 @@ function toDayInput(value: string | null): string {
   return toDayInputValue(value);
 }
 
-function toMomentInput(value: string | null): string {
-  if (!value) return '';
-  const date = new Date(value);
+/**
+ * G639: the reminder is a **minute-of-day slot**, so the panel offers the same 96-entry grid the
+ * popover does. A stored moment that is not on a slot keeps its own row (no silent snapping).
+ */
+function reminderSlotValue(remindAt: string | null): string {
+  if (!remindAt) return '';
+  const date = new Date(remindAt);
   if (Number.isNaN(date.getTime())) return '';
-  return `${toDayInput(value)}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-function pad(value: number): string {
-  return String(value).padStart(2, '0');
+  const index = slotIndexForTime(date);
+  return instantForSlot(date, index).getTime() === date.getTime() ? String(index) : 'current';
 }
 
 function fromDayInput(value: string): string | null {
   // G401: a day input stores the UTC instant of local midnight, not of the input's own zone.
   return fromDayInputValue(value);
-}
-
-function fromMomentInput(value: string): string | null {
-  if (!value) return null;
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
 function TaskRow({
@@ -930,11 +926,40 @@ function TaskRow({
         >
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             提醒时间
-            <Input
-              type="datetime-local"
-              value={toMomentInput(task.remindAt)}
-              onChange={(event) => update({ remindAt: fromMomentInput(event.target.value) })}
-            />
+            <select
+              aria-label="提醒时间"
+              data-testid="task-remind-slot"
+              value={reminderSlotValue(task.remindAt)}
+              onChange={(event) => {
+                const picked = event.target.value;
+                if (picked === '' || picked === 'current') return;
+                // G639: 「无提醒」 is a row of its own and only exists once a reminder is set.
+                if (picked === 'none') return update({ remindAt: null });
+                const day = task.scheduleDate ?? task.dueDate;
+                const base = day ? new Date(day) : new Date();
+                if (Number.isNaN(base.getTime())) return;
+                update({ remindAt: instantForSlot(base, Number(picked)).toISOString() });
+              }}
+              className="h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground"
+            >
+              {!task.remindAt && <option value="">未设置</option>}
+              {reminderSlotValue(task.remindAt) === 'current' && (
+                <option value="current">
+                  {new Date(task.remindAt as string).toLocaleString('zh-CN', {
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </option>
+              )}
+              {task.remindAt && <option value="none">无提醒</option>}
+              {timeSlots().map((slot) => (
+                <option key={slot.index} value={slot.index}>
+                  {slot.label}
+                </option>
+              ))}
+            </select>
           </label>
           {/* G648：重复任务的那条提醒走**第二套 UI**——`dateOffset` 96 档（相对排期日提前多久），
               与上面那根绝对时刻是**两个不同的字段**。选了档位就按排期日换算成绝对时刻落库。 */}
@@ -981,22 +1006,15 @@ function TaskRow({
           </label>
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             每 N 个单位
-            <Input
-              type="number"
-              min={1}
-              max={rule ? INTERVAL_MAX[rule.freq] : 1}
-              disabled={!rule}
-              value={rule?.interval ?? 1}
-              onChange={(event) =>
-                update({
-                  recurrence: rule
-                    ? patchRule(task.recurrence, {
-                        interval: clampInterval(rule.freq, Number(event.target.value)),
-                      })
-                    : task.recurrence,
-                })
-              }
-            />
+            {rule ? (
+              <RepeatIntervalSelect
+                raw={task.recurrence}
+                onChange={(next) => update({ recurrence: next })}
+                className="h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground"
+              />
+            ) : (
+              <Input type="number" disabled value={1} readOnly />
+            )}
           </label>
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             重复依据
@@ -1012,6 +1030,10 @@ function TaskRow({
               <option value="flexible">相对于完成</option>
             </select>
           </label>
+          {/* G637: the anchor is explained in the official accent banner. */}
+          <div className="sm:col-span-2">
+            <RepeatAnchorNote raw={task.recurrence} />
+          </div>
           <label className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             重复结束于
             <Input

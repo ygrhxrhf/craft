@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { isSafeRemoteUrl } from '@/lib/url-guard';
+import { extractBodyExcerpt } from '@/lib/share/link-preview';
 
 function absoluteUrl(base: string, target: string | null): string | null {
   if (!target) return null;
@@ -92,11 +93,11 @@ export async function POST(req: NextRequest) {
       metaContent(html, ['og:title', 'twitter:title']) ??
       html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() ??
       null;
-    const description = metaContent(html, [
-      'og:description',
-      'twitter:description',
-      'description',
-    ]);
+    const description =
+      metaContent(html, ['og:description', 'twitter:description', 'description']) ??
+      // G1567: pages without OG/meta description still get the first body paragraph, which is
+      // what the official card shows (`example.com` has no og:description).
+      extractBodyExcerpt(html);
     const image = absoluteUrl(
       finalUrl,
       metaContent(html, ['og:image', 'twitter:image', 'og:image:secure_url'])

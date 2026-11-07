@@ -19,6 +19,9 @@ export function SidebarSection({ title, children, defaultOpen = true, action }: 
       <div className="flex items-center justify-between px-1.5 py-1">
         <button
           onClick={() => setIsOpen(!isOpen)}
+          // G385：折叠控件要在无障碍层声明开/合，否则读屏只听到一个没有状态的按钮。
+          aria-expanded={isOpen}
+          aria-label={`${isOpen ? '收起' : '展开'}${title}`}
           className="flex items-center gap-1 text-meta font-semibold text-foreground/40 hover:text-foreground transition-colors duration-150"
         >
           <ChevronRight

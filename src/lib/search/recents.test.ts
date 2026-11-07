@@ -5,6 +5,7 @@ import {
   REMOVE_FROM_RECENTS,
   forgetRecent,
   loadRecents,
+  recentForDisplay,
   rememberRecent,
   saveRecents,
 } from './recents';
@@ -54,5 +55,25 @@ describe('search recents (G235)', () => {
     expect(loadRecents(storage)).toEqual([]);
     store.set('craft.search.recents', JSON.stringify([{ id: 1 }, null, { id: 'ok', title: 2 }]));
     expect(loadRecents(storage)).toEqual([{ id: 'ok', title: '2' }]);
+  });
+});
+
+describe('the recent-documents group (G355)', () => {
+  it('truncates at the official 20, not the old local 8', () => {
+    expect(RECENTS_LIMIT).toBe(20);
+  });
+
+  it('drops the document that is open right now', () => {
+    const list = [
+      { id: 'a', title: 'A' },
+      { id: 'b', title: 'B' },
+    ];
+    expect(recentForDisplay(list, 'a').map((item) => item.id)).toEqual(['b']);
+  });
+
+  it('keeps the whole list when nothing is open, up to the cap', () => {
+    const list = Array.from({ length: 25 }, (_, i) => ({ id: `d${i}`, title: `D${i}` }));
+    expect(recentForDisplay(list, null)).toHaveLength(20);
+    expect(recentForDisplay(list, null)[0].id).toBe('d0');
   });
 });

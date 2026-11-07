@@ -368,6 +368,9 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
       className={rowClass}
       style={rowStyle}
       draggable
+      // G385：官方这行的无障碍节点是「button (collapsed) … Secondary Actions: Expand」——
+      // 折叠态要把展开/收起这个次级动作暴露出去。Web 上的对应物是行按钮上的 `aria-expanded`。
+      aria-expanded={hasChildren ? expanded : undefined}
       onPointerDown={dragArm.onPointerDown}
       onPointerMove={dragArm.onPointerMove}
       onPointerUp={dragArm.onPointerUp}

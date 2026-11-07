@@ -3,11 +3,11 @@
  * （隐藏列不计），滚动更新走 **rAF + 150ms 防抖** 双路，窗口外多留 `overscan: 2` 行。
  *
  * 这一层只算"该渲染哪几行、上下各留多高"，没有 DOM，便于单测；行高是本地常量
- * （官方另有分组标题行的独立常数，这里是 36px 与 40px 两枚）。
+ * （官方 `ROW_HEIGHT: 35` 与分组标题行 `40`）。
  */
 import { exceedsVirtualTableThreshold } from './limits';
 
-export const ROW_HEIGHT = 36;
+export const ROW_HEIGHT = 35;
 export const GROUP_HEADER_HEIGHT = 40;
 export const OVERSCAN = 2;
 /** G497：表格那一档的 overscan 是 25（同 chunk 另有 10/5，不是全站常数）。 */

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useSession } from 'next-auth/react';
@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { getPreferences, updatePreferences } from '@/actions/user/preferences';
 import { APP_VERSION } from '@/lib/app/app-version';
-import { pendingLabel } from '@/lib/app/pending-states';
 import { NOTIFICATION_EVENTS, EMAIL_PER_SPACE_DESC } from '@/lib/app/notification-settings';
 import {
   getSpaceEmailNotification,
@@ -47,6 +46,20 @@ import {
 } from '@/actions/space/space';
 import { GUEST_WARNING_CONFIRM, GUEST_WARNING_DESC } from '@/lib/share/guest-warning';
 import { MANAGE_PINNED, PINNED_LIMIT_REACHED, PINNED_TAG_LIMIT, PIN_KEY_TAGS_HINT } from '@/lib/browse/pinned-tags';
+import {
+  TAGS_KEEP_ON,
+  TAGS_OFF_CONFIRM,
+  TAGS_OFF_CONFIRM_DESC,
+  TAGS_OFF_CONFIRM_TITLE,
+  TAGS_SAVE_ERROR,
+  TAGS_SCOPE_NOTE,
+  USE_TAGS_LABEL,
+  readTagsHiddenNow,
+  serverTagsHidden,
+  shouldConfirmTagTurnOff,
+  subscribeTagsVisibility,
+  writeTagsHidden,
+} from '@/lib/browse/tag-visibility';
 import { getTags } from '@/actions/tag/tag';
 import {
   addIgnoreRule,
@@ -87,6 +100,19 @@ import {
 } from '@/lib/task/completed-appearance';
 import { ShortcutsPanel } from './ShortcutsPanel';
 import { AssistantPanel } from './AssistantPanel';
+
+/**
+ * G164：账户面板的"进行时+成功+失败"三件套与删除后果句，逐字取自语言包：
+ * `preferences.name.updating` / `preferences.name.updated` / `preferences.alert.change.name`
+ * `preferences.profile.photo.updated` / `preferences.alert.update.photo`
+ * `preferences.account.delete.message`
+ */
+const NAME_UPDATING = '正在更新名称…';
+const NAME_UPDATED = '名称已更新';
+const NAME_UPDATE_FAILED = '无法更改名称';
+const PROFILE_PHOTO_UPDATED = '个人资料照片已更新';
+const IMAGE_UPDATE_FAILED = '无法更新照片';
+const DELETE_ACCOUNT_MESSAGE = '删除帐户将永久删除你的所有文档。此操作无法撤消。';
 
 interface PanelProps {
   section: SettingsSection;
@@ -227,6 +253,14 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const [ignoreDraft, setIgnoreDraft] = useState('');
   const [savingIgnore, setSavingIgnore] = useState(false);
   const [ignoreError, setIgnoreError] = useState<string | null>(null);
+  // G174：「使用标签」是"隐藏不是删除"——关掉之前先把后果说清楚（官方两句按钮文案）。
+  const tagsHidden = useSyncExternalStore(
+    subscribeTagsVisibility,
+    readTagsHiddenNow,
+    serverTagsHidden,
+  );
+  const [confirmingTagsOff, setConfirmingTagsOff] = useState(false);
+  const [tagSwitchError, setTagSwitchError] = useState<string | null>(null);
 
   useEffect(() => {
     getSpaceContext().then(setSpace).catch(() => setSpace(null));
@@ -297,6 +331,8 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   /**
    * G164 改头像：上传走与编辑器图片同一条通道（`uploadFile`），落库走 `applyLocal(table:'user')`
    * 写 `image`——元数据仍过离线内核，不新开 Server Action。失败给一句、并把乐观值撤回。
+   * 三件套：进行时＝按钮禁用＋spinner，成功＝`preferences.profile.photo.updated`，
+   * 失败＝`preferences.alert.update.photo`（两句逐字）。
    */
   const changeAvatar = async (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -312,24 +348,26 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       const { url } = await uploadFile(file);
       setAvatarUrl(url);
       await getSyncManager().applyLocal({ table: 'user', id: userId, patch: { image: url } });
-    } catch (error) {
+      toast.add({ type: 'success', title: PROFILE_PHOTO_UPDATED });
+    } catch {
       setAvatarUrl(previous);
-      setSwitchError(error instanceof Error ? error.message : '头像上传失败');
+      setSwitchError(IMAGE_UPDATE_FAILED);
     } finally {
       setUploadingAvatar(false);
     }
   };
 
   /**
-   * G164 改名。官方给这一档配"进行时+成功+失败"三件套；本地走 `promptDialog` 收名字、
-   * `applyLocal(table:'user')` 写 `name`（元数据过离线内核，不新开 Server Action），
-   * 失败给一句并把乐观值撤回。空串/纯空格按"没改"处理（官方那套也 trim 后再落）。
+   * G164 改名。官方给这一档配"进行时+成功+失败"三件套（`preferences.name.updating` /
+   * `preferences.name.updated` / `preferences.alert.change.name`，三句逐字）；本地走
+   * `promptDialog` 收名字、`applyLocal(table:'user')` 写 `name`（元数据过离线内核，不新开
+   * Server Action）。空串/纯空格按"没改"处理（官方那套也 trim 后再落）。
    */
   const renameSelf = async () => {
     const userId = session?.user?.id;
     if (!userId) return;
     const next = await promptDialog({
-      title: '更改名称',
+      title: '更改姓名',
       placeholder: '你的名字',
       confirmLabel: '保存',
     });
@@ -341,9 +379,10 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     setSavingProfile(true);
     try {
       await getSyncManager().applyLocal({ table: 'user', id: userId, patch: { name: trimmed } });
-    } catch (error) {
+      toast.add({ type: 'success', title: NAME_UPDATED });
+    } catch {
       setDisplayName(previous);
-      setSwitchError(error instanceof Error ? error.message : '名称更新失败');
+      setSwitchError(NAME_UPDATE_FAILED);
     } finally {
       setSavingProfile(false);
     }
@@ -382,6 +421,27 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     } finally {
       setSavingSpaceEmail(false);
     }
+  };
+
+  /** G174：写入"隐藏标签"这面旗；存不下就用官方那句失败句。 */
+  const applyTagsHidden = (hidden: boolean) => {
+    setTagSwitchError(null);
+    const saved = writeTagsHidden(
+      typeof window === 'undefined' ? undefined : window.localStorage,
+      hidden,
+    );
+    if (!saved) setTagSwitchError(TAGS_SAVE_ERROR);
+    setConfirmingTagsOff(false);
+  };
+
+  const setTagsEnabled = (next: boolean) => {
+    // 关掉要先确认（「此空间中的标签仍处于活动状态……」）；重新打开不需要。
+    if (shouldConfirmTagTurnOff(next)) {
+      setTagSwitchError(null);
+      setConfirmingTagsOff(true);
+      return;
+    }
+    applyTagsHidden(false);
   };
 
   /** G171：规则增删改之后重读规则与来源标注。 */
@@ -660,9 +720,52 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     case 'tags':
       return (
         <div className="space-y-4">
-          <RowCard className="flex items-center justify-between px-4 py-3">
-            <div className="text-[13px] font-medium">使用标签</div>
-            <Switch defaultChecked className="data-checked:bg-(--craft-accent)" />
+          {/* G174：官方这枚开关是"关闭 ≠ 删除"——确认句逐字说明标签仍处于活动状态、
+              只是在所有位置隐藏；同一处还有"每用户×每空间"的作用域句。 */}
+          <RowCard className="px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="text-[13px] font-medium">{USE_TAGS_LABEL}</div>
+              <Switch
+                checked={!tagsHidden}
+                aria-label={USE_TAGS_LABEL}
+                data-testid="space-tags-switch"
+                onCheckedChange={(next) => setTagsEnabled(next === true)}
+                className="data-checked:bg-(--craft-accent)"
+              />
+            </div>
+            <p className="mt-1 text-[12px] text-foreground/45">{TAGS_SCOPE_NOTE}</p>
+            {confirmingTagsOff && (
+              <div
+                role="alertdialog"
+                aria-label={TAGS_OFF_CONFIRM_TITLE}
+                data-testid="tags-off-confirm"
+                className="mt-3 rounded-lg border border-border px-3 py-2"
+              >
+                <div className="text-[13px] font-medium">{TAGS_OFF_CONFIRM_TITLE}</div>
+                <p className="mt-1 text-[12px] text-foreground/55">{TAGS_OFF_CONFIRM_DESC}</p>
+                <div className="mt-2 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingTagsOff(false)}
+                    className="rounded-md px-2.5 py-1 text-[12px] text-foreground/70 hover:bg-foreground/4"
+                  >
+                    {TAGS_KEEP_ON}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyTagsHidden(true)}
+                    className="rounded-md bg-(--craft-accent) px-2.5 py-1 text-[12px] text-white"
+                  >
+                    {TAGS_OFF_CONFIRM}
+                  </button>
+                </div>
+              </div>
+            )}
+            {tagSwitchError && (
+              <p role="status" className="mt-2 text-[12px] text-destructive">
+                {tagSwitchError}
+              </p>
+            )}
           </RowCard>
           {/* G173：官方「管理固定标签」入口 + 固定关键标签的引导句 / 到上限那句。 */}
           <RowCard className="flex items-center justify-between px-4 py-3">
@@ -942,7 +1045,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                   <div className="mt-1 text-[15px]">{displayName || '未设置'}</div>
                   {savingProfile && (
                     <div role="status" aria-live="polite" className="mt-1 text-xs text-foreground/55">
-                      {pendingLabel('updatingUser')}
+                      {NAME_UPDATING}
                     </div>
                   )}
                   <div className="mt-1 text-xs text-foreground/55">
@@ -995,7 +1098,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
             <RowCard className="mt-3 px-4 py-3">
               <div className="text-[15px] font-semibold text-destructive">删除帐户</div>
               <div className="mt-1 text-[13px] text-foreground/55">
-                删除帐户将永久删除你的所有文档。 此操作无法撤销。
+                {DELETE_ACCOUNT_MESSAGE}
               </div>
             </RowCard>
           </div>

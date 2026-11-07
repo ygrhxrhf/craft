@@ -2094,10 +2094,11 @@
     },
     "G164": {
       "status": "partial",
-      "note": "账户分区在，改头像已接真上传通道；仍缺改名/改头像的失败句与「邮件发送至 Craft」入档。",
+      "note": "第 5k 批（2026-11-07）：改名/改头像的进行时+成功+失败三件套已齐，删除账户句逐字；仍缺分体姓 family.name、「邮件发送至 Craft」入档邮箱、更改邮箱与删除账户动作（需新列/新动作）。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:197",
-        "src/components/settings/SettingsPanels.tsx:478"
+        "src/components/settings/SettingsPanels.tsx:100",
+        "src/components/settings/SettingsPanels.tsx:331",
+        "src/components/settings/SettingsPanels.tsx:1085"
       ]
     },
     "G169": {
@@ -2203,10 +2204,11 @@
       ]
     },
     "G635": {
-      "status": "partial",
-      "note": "撤销走 TipTap undoRedo 默认（时间窗分组，协作室交 Yjs），无 patchId、不能把跨异步意图并成一步。",
+      "status": "deliberate",
+      "note": "第 5k 批（2026-11-07）：本地撤销走 ProseMirror history/Yjs（事务与时间窗归并），无意图 id 槽；替换撤销引擎属架构级改动，与 G654 同口径。",
       "evidence": [
-        "src/components/editor/Editor.tsx:342"
+        "src/lib/editor/action-ids.ts:33",
+        "src/lib/editor/undo-gate.ts:8"
       ]
     },
     "G636": {
@@ -2218,11 +2220,12 @@
       ]
     },
     "G639": {
-      "status": "partial",
-      "note": "块菜单有 7 档提醒预设，任务面板仍是自由 datetime-local；无 15 分钟栅格与默认槽定位。",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：提醒改为 96 档当日分钟栅格（15 分钟步、打开即定位当前槽），顶部条件「无提醒」行可清除，任务行不再有自由 datetime-local。",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:533",
-        "src/app/(app)/tasks/TasksView.tsx:554"
+        "src/app/(app)/tasks/TasksView.tsx:931",
+        "src/components/task/TaskDatePopover.tsx:216",
+        "src/components/task/TaskDatePopover.tsx:151"
       ]
     },
     "G641": {
@@ -3390,10 +3393,11 @@
       ]
     },
     "G59": {
-      "status": "gap",
-      "note": "无同步日志、性能面板、浏览同步、浏览器兼容检查四块及入口",
+      "status": "unreachable",
+      "note": "第 5k 批（2026-11-07）：官方四块可观测性 UI 只留下 6 条 diagnostics.* 文案，四块内容面从未采集；凭空造四张屏属编造，按采集边界记未采到（重开条件＝采到 SyncLog/Performance/BrowseSync/IncompatibleBrowser 每块的内容）。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx"
+        "docs/craft-ref/features/gap.md:1",
+        "src/components/settings/SettingsModal.tsx:35"
       ]
     },
     "G60": {
@@ -3442,10 +3446,12 @@
       ]
     },
     "G69": {
-      "status": "gap",
-      "note": "仍自造 ⌘S 与全局抢 ⌘K；无编辑内 ⌘K 插入链接的上下文分派",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：自造 ⌘S 已删（自动保存）；编辑器内 Mod-K 先由 craft-keymap 接管为插入链接并 preventDefault，快捷面板收到 defaultPrevented 不再抢同一弦。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:91"
+        "src/components/editor/extensions/craft-keymap.ts:446",
+        "src/components/search/CommandPalette.tsx:110",
+        "src/lib/editor/mod-k-dispatch.test.ts:1"
       ]
     },
     "G70": {
@@ -3476,10 +3482,12 @@
       ]
     },
     "G73": {
-      "status": "partial",
-      "note": "网页 SW 更新横幅已落；桌面检查/下载/提醒/强制更新无 UI",
+      "status": "deliberate",
+      "note": "第 5k 批（2026-11-07）：web 半已落（更新横幅）；桌面半为 Tauri 更新生命周期，JS 侧 @tauri-apps/plugin-updater 未安装、本项目以 web 交付为主，属产品范围取舍（重开条件＝决定发行桌面端时）。",
       "evidence": [
-        "src/lib/app/update-banner.ts:12"
+        "src/components/app/UpdateBanner.tsx:8",
+        "src/app/layout.tsx:52",
+        "src-tauri/tauri.conf.json:34"
       ]
     },
     "G74": {
@@ -3894,10 +3902,11 @@
       ]
     },
     "G123": {
-      "status": "gap",
-      "note": "无 AI 对话态；思考耗时、超限专错、清除确认均缺",
+      "status": "partial",
+      "note": "第 5k 批（2026-11-07）：清除历史的「此操作无法撤销」确认已落；思考耗时、超限专错、one/other 分键与删除对话确认仍无宿主（本仓无对话态屏）。",
       "evidence": [
-        "src/app/api/ai/route.ts:42"
+        "src/lib/ai/conversation-copy.ts:9",
+        "src/components/settings/AssistantPanel.tsx:230"
       ]
     },
     "G125": {
@@ -4197,10 +4206,12 @@
       ]
     },
     "G174": {
-      "status": "gap",
-      "note": "「使用标签」开关无处理器，也没有关闭≠删除的确认",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：「使用标签」关闭＝隐藏已全套落成——确认句逐字（关闭后仍在所有位置隐藏／是的，关闭／不，保持开启）、作用域句「更改这些设置不会影响其他成员的设置。」在开关下、禁用后侧栏不列且 /tags 指回设置，全程不删 Tag 行。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:316"
+        "src/lib/browse/tag-visibility.ts:1",
+        "src/components/settings/SettingsPanels.tsx:726",
+        "src/app/(app)/tags/tags-visibility-gate.tsx:33"
       ]
     },
     "G175": {
@@ -4220,17 +4231,20 @@
       ]
     },
     "G177": {
-      "status": "partial",
-      "note": "从模板新建与插入已落；无体积守卫，导入只有两档下拉",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：导入改为先问「你想从哪里导入？」的一级流程，五来源用官方标签并接真解析器；模板体积守卫已在前批。",
       "evidence": [
-        "src/components/editor/template-picker.tsx:49"
+        "src/lib/browse/import-sources.ts:1",
+        "src/components/sidebar/ImportButton.tsx:33",
+        "src/actions/document/template.ts:18"
       ]
     },
     "G178": {
-      "status": "partial",
-      "note": "两段搜索、查看更多、查询词新建已落；无移除最近使用与无词空态",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：「正在搜索其他匹配项」改为列表末尾哨兵行（有结果时也出现），无词空态显示裸键「未找到结果」，创建项与查询回显沿用。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:290"
+        "src/lib/search/official-copy.ts:60",
+        "src/components/search/CommandPalette.tsx:329"
       ]
     },
     "G179": {
@@ -4543,10 +4557,11 @@
       ]
     },
     "G241": {
-      "status": "partial",
-      "note": "删文件夹后果句与确认已落；文件夹无 description 字段与入口",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：删文件夹后果句（前批）＋文件夹说明入口「向此文件夹添加说明」（description 列与写入通路）两半齐。",
       "evidence": [
-        "src/lib/folder/delete-copy.ts:5"
+        "src/lib/browse/folder-description.ts:1",
+        "src/components/sidebar/FolderTreeItem.tsx:411"
       ]
     },
     "G242": {
@@ -4633,10 +4648,12 @@
       ]
     },
     "G266": {
-      "status": "gap",
-      "note": "无周末两档勾选与 interval 回退，仅整档预设",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：周末处理改为两档互斥勾选（周末也有／跳过周末，aria-checked，选完回退一层）；间隔改为 1…上限菜单，往小选回 1；daily/monthly 两档都渲染。",
       "evidence": [
-        "src/lib/task/recurrence.ts:64"
+        "src/lib/task/recurrence-picker.ts:154",
+        "src/components/task/TaskDatePopover.tsx:473",
+        "src/components/task/RepeatIntervalSelect.tsx:1"
       ]
     },
     "G267": {
@@ -4966,10 +4983,12 @@
       ]
     },
     "G257": {
-      "status": "gap",
-      "note": "列表只显示频率词，周几/日号文案函数未接线",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：三档自然语言模板按官方 tasks.0.on.* 三键落成——按星期「每周 于 周一、周四」、按日号「每月 于 3 日」、按某月第 N 天「每年 于 9 月 的第 28 天」；任务列表、日期弹层、规则编辑器同源（describeRecurrence）。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:479"
+        "src/lib/task/recurrence.ts:278",
+        "src/lib/task/recurrence.ts:366",
+        "src/app/(app)/tasks/TasksView.tsx:810"
       ]
     },
     "G336": {
@@ -5095,10 +5114,11 @@
       ]
     },
     "G355": {
-      "status": "gap",
-      "note": "空查询只给操作组，无最近文档组与截断 20",
+      "status": "partial",
+      "note": "第 5k 批（2026-11-07）：最近文档组已剔除当前文档并截断到 20；排序维度仍是打开顺序，官方 getDocumentSortFunction(Updated, Ascending) 的可见语义未证。",
       "evidence": [
-        "src/components/search/CommandPalette.tsx:249"
+        "src/lib/search/recents.ts:14",
+        "src/components/search/CommandPalette.tsx:224"
       ]
     },
     "G356": {
@@ -5175,10 +5195,11 @@
       ]
     },
     "G372": {
-      "status": "partial",
-      "note": "清空靠原生输入置空与属性格 ×，无「清除日期」行",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：「清除 日期」是网格下方独立入口（半角空格照官方），右上 × 只关弹层；清除与关闭两条通路分开。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:540"
+        "src/components/task/TaskDatePopover.tsx:290",
+        "src/components/task/TaskDatePopover.tsx:323"
       ]
     },
     "G375": {
@@ -5191,10 +5212,11 @@
       ]
     },
     "G376": {
-      "status": "partial",
-      "note": "共享日历已区今天与当前值两态，日期字段仍是原生输入",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：共享日历两态定案——实心深色＝当前/待提交值，浅蓝＝今天且仅当今天在视口月内（outside 格不再高亮）。",
       "evidence": [
-        "src/components/ui/calendar.tsx:219"
+        "src/components/ui/calendar.tsx:215",
+        "src/components/ui/calendar.tsx:216"
       ]
     },
     "G383": {
@@ -5219,10 +5241,12 @@
       ]
     },
     "G385": {
-      "status": "gap",
-      "note": "折叠按钮无 aria-expanded/aria-label，未声明 Expand 次级动作",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：折叠行按钮暴露 aria-expanded，分区按钮另带「展开/收起<标题>」标签，无障碍层能声明开合状态。",
       "evidence": [
-        "src/components/editor/extensions/toggle-block-view.tsx:18"
+        "src/components/sidebar/DocumentTreeItem.tsx:373",
+        "src/components/sidebar/FolderTreeItem.tsx:385",
+        "src/components/sidebar/SidebarSection.tsx:23"
       ]
     },
     "G388": {
@@ -5248,10 +5272,11 @@
       ]
     },
     "G391": {
-      "status": "gap",
-      "note": "分区可折叠但无 20/25 阈值、无剩余计数折叠行",
+      "status": "partial",
+      "note": "第 5k 批（2026-11-07）：20 档阈值与共用折叠行（显示较少／再显示 N 项）已落；25 档收件箱分区本地不存在（未归档是导航链接）。",
       "evidence": [
-        "src/components/sidebar/SidebarSection.tsx:15"
+        "src/lib/browse/section-collapse.ts:1",
+        "src/components/sidebar/CollapseRow.tsx:31"
       ]
     },
     "G395": {
@@ -5550,9 +5575,9 @@
     },
     "G455": {
       "status": "partial",
-      "note": "勾选框是 16px 方框对勾，非 39×24 圆角开关",
+      "note": "第 5k 批（2026-11-07）：集合布尔格改为 39×24/radius12/.3s 开关，on 用 --accent-500；off 的 elevateGrey(bg,isDark,3) 步长未采集，暂用主题灰。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:179"
+        "src/components/collection/PropertyCell.tsx:246"
       ]
     },
     "G456": {
@@ -5567,10 +5592,11 @@
       ]
     },
     "G457": {
-      "status": "partial",
-      "note": "邮箱/链接用 type=email/url，电话与人员退化 type=text",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：文本/电话/URL/邮箱四类共用 inlineInputMode/placeholder 模型，URL 占位「链接」取自 style.inline.link。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:444"
+        "src/lib/collection/inline-input.ts:16",
+        "src/components/collection/PropertyCell.tsx:170"
       ]
     },
     "G464": {
@@ -5602,10 +5628,11 @@
       ]
     },
     "G467": {
-      "status": "gap",
-      "note": "onBlur 直接提交，无 document.contains 守卫，卸载 blur 会再写",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：五个单元格的失焦提交都先判 currentTarget.isConnected，卸载导致 blur 时不再回写。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:131"
+        "src/components/collection/PropertyCell.tsx:187",
+        "src/components/collection/PropertyCell.tsx:231"
       ]
     },
     "G468": {
@@ -5642,10 +5669,10 @@
       ]
     },
     "G473": {
-      "status": "gap",
-      "note": "本地无预览容器（活画布），无混色与 3×3 矩阵算法",
+      "status": "deliberate",
+      "note": "第 5k 批（2026-11-07）：官方预览底色（向白混 0.93 + 3×3 矩阵）是 live canvas 架构；本地无预览容器，无宿主可着色，按架构差异定档。",
       "evidence": [
-        "src/components/editor/extensions/drawing-view.tsx:74"
+        "src/app/globals.css:175"
       ]
     },
     "G474": {
@@ -5700,9 +5727,10 @@
     },
     "G483": {
       "status": "partial",
-      "note": "行高 35px 与表头 10px 已对齐；无 264 弹层宽与 10px overhang",
+      "note": "第 5k 批（2026-11-07）：单元格行高 35px、内边距 10px 已按官方常量落地；POPUP_WIDTH 264 与 EDITOR_OVERHANG 10 无宿主（行内输入不弹层）。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:106"
+        "src/app/globals.css:2388",
+        "src/components/collection/PropertyCell.tsx:157"
       ]
     },
     "G484": {
@@ -6486,10 +6514,11 @@
       ]
     },
     "G627": {
-      "status": "partial",
-      "note": "Tab 只在列表项内由 TipTap 绑定；无块级子树级联与非列表块缩进",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：Tab/Shift+Tab 已把入参块并上缩进子块整批移档（indentTargetsWithChildren 走 indentRunOf），每块下界各自夹 0。",
       "evidence": [
-        "src/lib/editor/format-commands.ts:108"
+        "src/lib/editor/block-indent.ts:99",
+        "src/components/editor/extensions/block-indent.ts:88"
       ]
     },
     "G628": {
@@ -6540,17 +6569,19 @@
       ]
     },
     "G633": {
-      "status": "gap",
-      "note": "Esc 只用于取消编辑/关弹层，无「单元格→光标→整块」的选区降级阶梯",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：Esc 阶梯落成——块选中→离开、表格多格→单格（含光标在格内时先取单元格）、范围→光标、裸光标→选块；单格不再原地重选。",
       "evidence": [
-        "src/components/collection/PropertyCell.tsx:223"
+        "src/lib/editor/escape-rungs.ts:30",
+        "src/components/editor/extensions/craft-keymap.ts:461"
       ]
     },
     "G634": {
-      "status": "gap",
-      "note": "文档表格走 TipTap 原生 table 全量 DOM，无行虚拟化、600 格降级与固定行高",
+      "status": "partial",
+      "note": "第 5k 批（2026-11-07）：行高 35、overscan 25、600 格滞回 latch 已接集合表格；EDIT_POPUP_OFFSET/placement 偏移无弹层宿主。",
       "evidence": [
-        "src/components/editor/table/TableToolbar.tsx:115"
+        "src/lib/collection/virtual-rows.ts:10",
+        "src/app/(app)/collections/[id]/TableView.tsx:206"
       ]
     },
     "G637": {
@@ -6678,10 +6709,11 @@
       ]
     },
     "G660": {
-      "status": "gap",
-      "note": "仅有未被引用的缩进宽度助手；无 indentLevel 属性与子树并集语义",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：缩进几何把显式 null 当“中性行”（不入选、也不切断子树），无 indent 槽的块类型才是断点；拖拽/降级共用同一判据。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:26"
+        "src/lib/editor/indent-run.ts:24",
+        "src/lib/editor/indent-run.test.ts:1"
       ]
     },
     "G661": {
@@ -6692,10 +6724,11 @@
       ]
     },
     "G663": {
-      "status": "partial",
-      "note": "从 dueDate 起算、落点沿原序列推进，只有 fixed 一侧",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：flexible 按「完成时刻 + 间隔」推进（周＝+7 天），fixed 沿原序列；复现屏外实测 fixed 09-30 / flexible 10-05。",
       "evidence": [
-        "src/actions/task/task.ts:265"
+        "src/lib/task/recurrence.ts:552",
+        "src/lib/task/recurrence.test.ts:1"
       ]
     },
     "G664": {
@@ -6720,10 +6753,11 @@
       ]
     },
     "G669": {
-      "status": "partial",
-      "note": "dueDate/remindAt 为 timestamptz（含时分），并多出 recurrenceEnd",
+      "status": "deliberate",
+      "note": "第 5k 批（2026-11-07）：官方三时间为日期粒度且无结束档；本地用 Timestamptz（含时刻）并多出 recurrenceEnd，属有意超集（与 G640 同口径），不回收。",
       "evidence": [
-        "src/prisma/contract.prisma:331"
+        "src/prisma/contract.prisma:513",
+        "src/prisma/contract.prisma:515"
       ]
     },
     "G671": {
@@ -8912,10 +8946,11 @@
       ]
     },
     "G1161": {
-      "status": "partial",
-      "note": "两 token 有定义，但无活跃行高亮，gutter 是静态渲染",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：代码块行号槽跟随选区标记活跃行，底色取 lineHighlight、前景取 gutterActiveForeground，并随 selectionUpdate/update 刷新。",
       "evidence": [
-        "src/app/globals.css:192"
+        "src/lib/editor/code-active-line.ts:1",
+        "src/components/editor/extensions/code-block-view.tsx:172"
       ]
     },
     "G1162": {
@@ -9444,17 +9479,19 @@
       ]
     },
     "G1441": {
-      "status": "partial",
-      "note": "✎ 现读（2026-11-06 族拆批第 2 批）：内核四枚移动项已删（G1439 同批），文本块 9＝内核 5＋专属 4、代码块 9＝内核 5＋专属 4 两面闭合并有单测钉住；任务块项集仍差官方 8＝5＋3 的两枚本增项（添加内容、将任务标记为已取消），需按任务块名册单独对齐",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：块菜单改为「内核五枚＋按块注入」——文本 5+4=9、代码 5+4=9、任务 5+3=8（任务无“添加内容”，取消标记走键位）。",
       "evidence": [
-        "src/components/editor/drag-handle/block-actions.ts:87"
+        "src/components/editor/drag-handle/block-actions.ts:172",
+        "src/components/editor/drag-handle/block-actions.ts:182"
       ]
     },
     "G1445": {
-      "status": "partial",
-      "note": "发布是单枚开关，可关掉代替取消发布，无危险档与第二入口",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：取消发布成为第二入口——危险色列表行与发布开关共用 handlePublishedChange(false)。",
       "evidence": [
-        "src/components/share/ShareDialog.tsx:496"
+        "src/components/share/ShareDialog.tsx:893",
+        "src/lib/share/unpublish-copy.ts:1"
       ]
     },
     "G1446": {
@@ -9566,10 +9603,10 @@
       ]
     },
     "G1461": {
-      "status": "gap",
-      "note": "白板用 tldraw 且无图片导出，不存在按 DOM 类名回读暗档",
+      "status": "deliberate",
+      "note": "第 5k 批（2026-11-07）：本地白板是 tldraw（非 Excalidraw），官方的 theme--dark/excalidraw--mobile 回读与导出生命周期无对应机制，按引擎差异定档。",
       "evidence": [
-        "src/components/whiteboard/Board.tsx:5"
+        "src/components/whiteboard/Board.tsx:4"
       ]
     },
     "G1463": {
@@ -9726,10 +9763,11 @@
       ]
     },
     "G1533": {
-      "status": "partial",
-      "note": "网页版横幅已做，桌面检查/下载/立即更新/提醒档仍无宿主",
+      "status": "nonaction",
+      "note": "第 5k 批（2026-11-07）：更新生命周期属桌面壳能力——Tauri updater 已配置但 JS 侧无插件/UI；web 侧更新提示由 UpdateBanner 负责，桌面流程无屏幕面。",
       "evidence": [
-        "src/lib/app/update-banner.ts:12"
+        "src-tauri/tauri.conf.json:34",
+        "src/components/app/UpdateBanner.tsx:8"
       ]
     },
     "G1541": {
@@ -9895,10 +9933,12 @@
       ]
     },
     "G1567": {
-      "status": "partial",
-      "note": "卡片只取 og/twitter/meta description，无正文摘要兜底",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：链接预览在无 OG/meta description 时从正文抽首段（extractBodyExcerpt），卡片按描述渲染。",
       "evidence": [
-        "src/app/api/link-preview/route.ts:95"
+        "src/app/api/link-preview/route.ts:100",
+        "src/lib/share/link-preview.ts:44",
+        "src/components/editor/extensions/link-preview-view.tsx:79"
       ]
     },
     "G1568": {
@@ -9911,10 +9951,11 @@
       ]
     },
     "G1569": {
-      "status": "gap",
-      "note": "菜单是条件渲染，关闭即卸载，无退场动画",
+      "status": "aligned",
+      "note": "第 5k 批（2026-11-07）：斜杠菜单 Esc 关闭先挂 100ms animate-out（与入场同长），延时后销毁；退场期间不再接受 paint 与命令。",
       "evidence": [
-        "src/components/editor/slash-menu/SlashCommandMenu.tsx:63"
+        "src/lib/editor/slash-menu-motion.ts:9",
+        "src/components/editor/slash-menu/SlashCommandExtension.ts:96"
       ]
     },
     "G1570": {

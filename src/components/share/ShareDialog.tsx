@@ -76,6 +76,7 @@ import {
   linkOperationPending,
   type LinkOperation,
 } from '@/lib/share/link-operation-copy';
+import { UNPUBLISH } from '@/lib/share/unpublish-copy';
 import { toast } from '@/components/ui/toast';
 import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { EDIT_REQUEST_LABEL, VIEW_REQUEST_LABEL, ACCESS_REQUESTS_HEADING } from '@/lib/share/request-access-copy';
@@ -885,6 +886,18 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                     </Button>
                   </div>
                   {slugError && <p className="mt-1.5 text-xs text-destructive">{slugError}</p>}
+                  {/* G1445: 「取消发布」是发布动作的第二入口；官方把危险档只放在这一枚列表行上
+                      （两处共用同一个 onClick）。 */}
+                  <button
+                    type="button"
+                    data-testid="share-unpublish"
+                    onClick={() => handlePublishedChange(false)}
+                    disabled={isPending}
+                    className="mt-2 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-destructive transition-colors hover:bg-destructive/10"
+                  >
+                    <X className="size-3.5" />
+                    {UNPUBLISH}
+                  </button>
                 </div>
               )}
               <div className="mt-3 rounded-md border border-border px-3 py-2.5">

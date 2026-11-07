@@ -19,6 +19,8 @@ import {
 } from '@/lib/ai/assistant-access';
 import { operationFailed } from '@/lib/errors/alert-copy';
 import { clearAiHistory } from '@/lib/ai/history';
+import { CLEAR_HISTORY_CONFIRM, CLEAR_HISTORY_LABEL } from '@/lib/ai/conversation-copy';
+import { confirmDialog } from '@/lib/dialog/show';
 import {
   CREATE_CUSTOM_PROMPT,
   CUSTOM_PROMPT_LIMIT_TOAST_MS,
@@ -213,7 +215,8 @@ export function AssistantPanel() {
         </div>
       </div>
 
-      {/* G39 `clear.history`：AI 结果只存在本机，设置内清空即删掉全部本地历史。 */}
+      {/* G39 `clear.history`：AI 结果只存在本机，设置内清空即删掉全部本地历史。
+          G123：官方给"清除历史"配了一句无法撤销的确认（与"删除对话"各一句）⇒ 清空之前先问。 */}
       <div className="flex items-center justify-between gap-4 rounded-xl bg-foreground/4 px-4 py-3">
         <div className="min-w-0">
           <div className="text-[13px] font-medium">AI 历史</div>
@@ -222,12 +225,19 @@ export function AssistantPanel() {
         <button
           type="button"
           onClick={() => {
-            clearAiHistory(window.localStorage);
-            toast.add({ type: 'success', title: '已清除 AI 历史' });
+            void confirmDialog({
+              title: CLEAR_HISTORY_LABEL,
+              message: CLEAR_HISTORY_CONFIRM,
+              confirmLabel: CLEAR_HISTORY_LABEL,
+            }).then((confirmed) => {
+              if (!confirmed) return;
+              clearAiHistory(window.localStorage);
+              toast.add({ type: 'success', title: '已清除 AI 历史' });
+            });
           }}
           className="shrink-0 rounded-md border border-border px-3 py-1 text-[12px] transition-colors hover:bg-foreground/6"
         >
-          清除历史
+          {CLEAR_HISTORY_LABEL}
         </button>
       </div>
     </div>

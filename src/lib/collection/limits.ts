@@ -20,6 +20,30 @@ export function canAddColumn(count: number): boolean {
   return Number.isFinite(count) && count < MAX_COLLECTION_COLUMNS;
 }
 
+/**
+ * G676: the reserved names a new column may not take. The ledger records "14" but only these
+ * twelve are spelled out (`model.md:2432`), so only the collected twelve are enforced — the
+ * remaining two names were never read off the official help text.
+ */
+export const RESERVED_COLUMN_NAMES = [
+  'allow-new-options',
+  'collection',
+  'content',
+  'debug',
+  'document',
+  'help',
+  'id',
+  'name',
+  'position',
+  'property',
+  'title',
+  'verbose',
+] as const;
+
+export function isReservedColumnName(name: string): boolean {
+  return (RESERVED_COLUMN_NAMES as readonly string[]).includes(name.trim().toLowerCase());
+}
+
 export const MAX_TABLE_ROWS = 50;
 export const MAX_TABLE_COLS = 15;
 export const MAX_TABLE_CELLS = 750;

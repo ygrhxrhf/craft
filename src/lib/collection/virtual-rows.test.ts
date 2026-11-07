@@ -21,17 +21,19 @@ const tableViewSource = readFileSync(
 describe('the virtual row window (G484 / G273)', () => {
   it('keeps two extra rows on each side', () => {
     const window = visibleRowWindow({ scrollTop: 0, viewportHeight: 360, rowCount: 1000 });
+    const visible = Math.ceil(360 / ROW_HEIGHT);
     expect(window.start).toBe(0);
-    expect(window.end).toBe(10 + OVERSCAN);
+    expect(window.end).toBe(visible + OVERSCAN);
     expect(window.topPad).toBe(0);
-    expect(window.bottomPad).toBe((1000 - (10 + OVERSCAN)) * ROW_HEIGHT);
+    expect(window.bottomPad).toBe((1000 - (visible + OVERSCAN)) * ROW_HEIGHT);
   });
 
   it('follows the scroll position without leaving gaps', () => {
-    const scrollTop = 36 * 100;
+    const scrollTop = ROW_HEIGHT * 100;
     const window = visibleRowWindow({ scrollTop, viewportHeight: 360, rowCount: 1000 });
+    const visible = Math.ceil(360 / ROW_HEIGHT);
     expect(window.start).toBe(100 - OVERSCAN);
-    expect(window.end).toBe(110 + OVERSCAN);
+    expect(window.end).toBe(100 + visible + OVERSCAN);
     expect(window.topPad).toBe((100 - OVERSCAN) * ROW_HEIGHT);
   });
 
@@ -103,6 +105,7 @@ describe('the one-way virtualization latch (G497)', () => {
   });
 
   it('estimates a fixed row height, plus the group header when grouped', () => {
+    expect(ROW_HEIGHT).toBe(35);
     expect(estimateRowHeight(false)).toBe(ROW_HEIGHT);
     expect(estimateRowHeight(true)).toBe(ROW_HEIGHT + GROUP_HEADER_HEIGHT);
   });

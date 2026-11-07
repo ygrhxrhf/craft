@@ -36,6 +36,11 @@ import {
   type SidebarSectionId,
 } from '@/lib/browse/sidebar-prefs';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import {
+  readTagsHiddenNow,
+  serverTagsHidden,
+  subscribeTagsVisibility,
+} from '@/lib/browse/tag-visibility';
 
 const SECTIONS: Record<SidebarSectionId, { label: string; icon: typeof Home }> = {
   '/documents': { label: '首页', icon: Home },
@@ -56,8 +61,16 @@ export function SidebarNav() {
   const pathname = usePathname();
   // G176/G600: the order and visibility live on this device; the server snapshot is the default.
   const prefs = useSyncExternalStore(subscribeSidebarPrefs, readSidebarPrefsNow, serverSidebarPrefs);
+  // G174：标签在空间设置里被关闭时「标签将在所有位置隐藏」——侧栏这一行也不该再列出来。
+  const tagsHidden = useSyncExternalStore(
+    subscribeTagsVisibility,
+    readTagsHiddenNow,
+    serverTagsHidden,
+  );
   const [customizing, setCustomizing] = useState(false);
-  const visible = visibleSidebarSections(prefs);
+  const visible = visibleSidebarSections(prefs).filter(
+    (id) => !(tagsHidden && id === '/tags'),
+  );
 
   const save = (next: SidebarPrefs) => {
     if (typeof localStorage !== 'undefined') writeSidebarPrefs(localStorage, next);

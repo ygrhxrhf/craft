@@ -9,7 +9,9 @@ import { overlayDocumentRows, type Document } from './DocumentTree';
 import { folderDocumentCounts } from '@/lib/browse/folder-counts';
 import { UNTITLED_FOLDER } from '@/lib/document/untitled-copy';
 import { FolderTreeItem } from './FolderTreeItem';
+import { CollapseRow } from './CollapseRow';
 import { LOADING } from '@/lib/browse/official-copy';
+import { SECTION_COLLAPSE_THRESHOLD, collapseSection } from '@/lib/browse/section-collapse';
 
 export interface Folder {
   id: string;
@@ -43,6 +45,8 @@ export function FolderTree() {
   const bumpTree = useSidebarStore((s) => s.bumpTree);
   const [pendingFolders, setPendingFolders] = useState<Map<string, PendingRow>>(new Map());
   const [pendingDocs, setPendingDocs] = useState<Map<string, PendingRow>>(new Map());
+  // G391：与文档分区共用同一枚折叠行与阈值。
+  const [showAllRows, setShowAllRows] = useState(false);
 
   // 未推送的本地意图（applyLocal 后立刻可见）；快照每次更新后重读
   useEffect(() => {
@@ -82,9 +86,11 @@ export function FolderTree() {
     );
   }
 
+  const section = collapseSection(rootFolders, SECTION_COLLAPSE_THRESHOLD, showAllRows);
+
   return (
     <div className="flex flex-col gap-0.5">
-      {rootFolders.map(folder => (
+      {section.visible.map(folder => (
         <FolderTreeItem
           key={folder.id}
           folder={folder}
@@ -94,6 +100,13 @@ export function FolderTree() {
           level={0}
         />
       ))}
+      {section.collapsible && (
+        <CollapseRow
+          isExpanded={showAllRows}
+          remainingCount={section.remainingCount}
+          onToggle={() => setShowAllRows((open) => !open)}
+        />
+      )}
     </div>
   );
 }

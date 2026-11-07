@@ -41,6 +41,7 @@ import { useTitleRequestStore } from '@/lib/store/use-title-request-store';
 import { useCardConfigStore } from '@/lib/store/use-card-config-store';
 import { selectToEdgeAction } from '@/lib/editor/select-to-edge';
 import { applyToggleList } from '@/lib/editor/toggle-list';
+import { escapeRung } from '@/lib/editor/escape-rungs';
 
 export const CRAFT_KEYMAP_KEY = new PluginKey('craftKeymap');
 
@@ -452,8 +453,10 @@ export const CraftKeymap = Extension.create({
               requestLink();
               return true;
             }
-            // G1583: Escape steps out one layer. Text caret → select the block it sits in
-            // (the local block-select state); a block selection → leave the editor entirely.
+            // G1583/G633: Escape steps out one layer. Block selection → leave the editor; a multi-cell
+            // table selection → the single cell under the caret (official `singleCellSelection`);
+            // a text range or one-cell selection → collapse to a caret; a bare caret → select the
+            // block it sits in.
             if (
               event.key === 'Escape' &&
               !event.metaKey &&
@@ -462,10 +465,49 @@ export const CraftKeymap = Extension.create({
               !event.shiftKey
             ) {
               const state = view.state;
-              if (state.selection instanceof NodeSelection) {
+              const cellSelection =
+                state.selection instanceof CellSelection ? state.selection : null;
+              // A caret inside a cell has no CellSelection yet; resolve the cell that holds it so
+              // the first rung can still land on `singleCellSelection`.
+              let cellAnchorPos: number | null = null;
+              if (cellSelection) {
+                cellAnchorPos = cellSelection.$anchorCell.pos;
+              } else {
+                for (let depth = state.selection.$from.depth; depth > 0; depth -= 1) {
+                  if (state.selection.$from.node(depth).type.spec.tableRole === 'cell') {
+                    cellAnchorPos = state.selection.$from.before(depth);
+                    break;
+                  }
+                }
+              }
+              const rung = escapeRung({
+                blockSelected: state.selection instanceof NodeSelection,
+                inTableCell: cellAnchorPos !== null,
+                singleCellSelected: cellSelection !== null && cellSelection.ranges.length === 1,
+                hasRange: !state.selection.empty,
+              });
+              if (rung === 'leave') {
                 event.preventDefault();
                 useBlockSelectStore.getState().clear();
                 view.dom.blur();
+                return true;
+              }
+              if (rung === 'table-cell' && cellAnchorPos !== null) {
+                // Official `Ft.singleCellSelection(…coordinateOfCell(cellId), tableId)`: the
+                // multi-cell selection collapses to the cell the anchor sits in.
+                view.dispatch(
+                  state.tr.setSelection(CellSelection.create(state.doc, cellAnchorPos)),
+                );
+                event.preventDefault();
+                return true;
+              }
+              if (rung === 'collapse') {
+                // Official `eo.select({focus, anchor: focus})`: the range becomes a caret at the
+                // **focus** end (ProseMirror's `head`), not at the block boundary.
+                view.dispatch(
+                  state.tr.setSelection(TextSelection.near(state.doc.resolve(state.selection.head), -1)).scrollIntoView(),
+                );
+                event.preventDefault();
                 return true;
               }
               const index = topLevelIndexOf(state.doc, state.selection.from);
@@ -925,8 +967,35 @@ export const CraftKeymap = Extension.create({
                     return join.run();
                   }
                 }
-                // The remaining block-level step (select-previous) is left to ProseMirror's
-                // joinBackward, which already does it.
+                // G628 step 4: no previous block — an empty block deletes itself. A top-level
+                // block can go; the document's only block cannot (an empty doc is not a valid
+                // ProseMirror document), and a nested empty block is left to ProseMirror's own
+                // delete, which removes just that paragraph.
+                if (step === 'delete-self') {
+                  const index = topLevelIndexOf(view.state.doc, view.state.selection.from);
+                  if ($from.depth !== 1 || index !== 0 || view.state.doc.childCount <= 1) return false;
+                  const self = view.state.doc.child(index);
+                  const start = topLevelStart(view.state.doc, index);
+                  const tr = view.state.tr.delete(start, start + self.nodeSize);
+                  tr.setSelection(TextSelection.near(tr.doc.resolve(Math.min(start, tr.doc.content.size))));
+                  view.dispatch(tr.scrollIntoView());
+                  return true;
+                }
+                // G628 step 7: the previous block is **not** text (an image, a table, a code
+                // block) and this block is empty → delete this block and select the previous one.
+                // ProseMirror's joinBackward has no merge to fall back on here, so the step is
+                // driven locally instead of being left to the default.
+                if (step === 'select-previous') {
+                  const index = topLevelIndexOf(view.state.doc, view.state.selection.from);
+                  if (index > 0) {
+                    const self = view.state.doc.child(index);
+                    const start = topLevelStart(view.state.doc, index);
+                    const tr = view.state.tr.delete(start, start + self.nodeSize);
+                    tr.setSelection(NodeSelection.create(tr.doc, topLevelStart(tr.doc, index - 1)));
+                    view.dispatch(tr.scrollIntoView());
+                    return true;
+                  }
+                }
               }
             }
             const binding = KEY_BINDINGS.find((candidate) =>

@@ -57,3 +57,10 @@ export function noResultsFor(query: string): string {
   return NO_RESULTS_FOUND_FOR_TEMPLATE.replace('[0]', query);
 }
 
+/**
+ * G178: the *no-query* empty state — no recents, no query ⇒ the panel says 「未找到结果」
+ * (`browse.no.results.found`, the bare key next to `no.results.found.for`).
+ */
+export const NO_RESULTS_FOUND_KEY = 'browse.no.results.found';
+export const NO_RESULTS_FOUND = '未找到结果';
+

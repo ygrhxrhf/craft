@@ -110,15 +110,17 @@ export function Sidebar() {
     <>
       <aside
         className={cn(
-          'relative flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-all duration-200',
-          isOpen ? 'opacity-100' : 'w-0 opacity-0 overflow-hidden border-r-0'
+          // G02/G04：craft 侧栏 288×852 @(0,48)、**没有右边框**（全站无竖向 hairline），
+          // 288/1152 的接缝纯靠相邻摆位。此前是 `border-r` + h-full（y=0）。
+          'relative flex h-full min-h-0 shrink-0 flex-col bg-sidebar transition-all duration-200',
+          isOpen ? 'opacity-100' : 'w-0 opacity-0 overflow-hidden'
         )}
         aria-label="导航侧栏"
         style={{ width: isOpen ? width : 0 }}
       >
         <SidebarBody />
+        {isOpen && <SidebarResizer />}
       </aside>
-      {isOpen && <SidebarResizer />}
     </>
   );
 }

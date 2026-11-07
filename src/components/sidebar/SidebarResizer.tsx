@@ -36,11 +36,13 @@ export function SidebarResizer() {
   }, [width, setWidth]);
 
   return (
+    // G03：手柄**绝对定位**在侧栏右缘，不占 flex 宽度——此前 `w-1 shrink-0` 把主列从
+    // 288/1152 挤成 292/1148（craft main @x=288 宽 1152）。
     <div
-      className="group relative w-1 shrink-0 cursor-col-resize touch-none transition-colors hover:bg-border/80 data-resizing:bg-craft-accent/50"
+      className="group absolute inset-y-0 -right-1.5 w-3 cursor-col-resize touch-none transition-colors"
       onPointerDown={startResize}
     >
-      <div className="absolute inset-y-0 -left-0.5 -right-0.5" />
+      <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-transparent transition-colors group-hover:bg-border/80 group-data-resizing:bg-craft-accent/50" />
     </div>
   );
 }

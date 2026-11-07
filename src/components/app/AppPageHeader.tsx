@@ -20,8 +20,9 @@ export function AppPageHeader({ title, actions, className }: AppPageHeaderProps)
   return (
     <header
       className={cn(
-        'flex min-h-12 items-center gap-3 border-b border-border/60 bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6',
-        'pt-[calc(0.5rem+env(safe-area-inset-top))]',
+        // G12/G13/G14：craft 页头带 1120×52 @(304,48)、内容左内距 16（无图标屏 h1 @main+16）。
+        'flex h-[52px] shrink-0 items-center gap-3 border-b border-border/60 bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80',
+        'pt-[env(safe-area-inset-top)]',
         className,
       )}
     >

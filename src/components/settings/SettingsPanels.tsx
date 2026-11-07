@@ -28,6 +28,7 @@ import { Switch } from '@/components/ui/switch';
 import { RichText } from '@/components/ui/rich-text';
 import { loggedInAsText } from '@/lib/i18n/account-copy';
 import { SCOPE_COPY } from '@/lib/app/settings-scope';
+import { SPACE_ICON_PRESETS, spaceIconPreset } from '@/lib/app/space-icons';
 import {
   changeTeamRole,
   createTeam,
@@ -187,21 +188,8 @@ function EditIcon() {
 }
 
 /**
- * G179 —— 空间图标现在有宿主了（`Space.icon`）：预设取值存成 `gradient:*`，未知/空值落回紫色。
- * 字母取空间名首字（此前写死的 `Zs` 与任何真实空间都无关）。
+ * G179 —— 空间图标预设表与 `spaceInitial` 挪到 `@/lib/app/space-icons`，侧栏的空间行共用。
  */
-const SPACE_ICON_PRESETS = [
-  { id: 'gradient:purple', label: '紫色', from: '#d33bf0', to: '#7e22ce' },
-  { id: 'gradient:blue', label: '蓝色', from: '#2e6de9', to: '#1e3a8a' },
-  { id: 'gradient:green', label: '绿色', from: '#00c2a6', to: '#047857' },
-  { id: 'gradient:orange', label: '橙色', from: '#f59e0b', to: '#b45309' },
-  { id: 'gradient:gray', label: '灰色', from: '#525c66', to: '#1f2937' },
-] as const;
-
-function spaceIconPreset(icon: string | null | undefined) {
-  return SPACE_ICON_PRESETS.find((preset) => preset.id === icon) ?? SPACE_ICON_PRESETS[0];
-}
-
 function SpaceIcon({
   icon,
   initial,

@@ -252,11 +252,12 @@
      else in the app writes them, so a breakpoint change is one edit.
      `--editor-max-w` is absent above 747px on purpose: the editor falls back to
      the reader's own measure, and only phones force it to the full column. */
-  /* Measured against the logged-in craft.do web app (2026-09-25): the rail is 288px
-     wide (`--header-height: 48px` for the top bar); the right panel is ~360px. */
+  /* Measured against the logged-in craft.do web app (2026-11-04 重采，`_shell-truth.json`)：
+     全宽顶栏 1440×48、侧栏 288×852 @(0,48)、右检查器 296×853 @(1144,47)。
+     此前把右栏记成 ~360px（2026-09-25 的旧读数），1104 轮实测为 296。 */
   --layout-sidebar-w: 288px;
   --layout-header-h: 48px;
-  --panel-w: 360px;
+  --panel-w: 296px;
   --editor-measure: 720px;
   --editor-pad-x: 3rem;
 }

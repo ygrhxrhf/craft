@@ -18,7 +18,7 @@ export default async function InboxPage() {
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title={UNSORTED_TITLE} />
       <AppPageContainer>
-        <p className="mb-4 text-sm text-muted-foreground">{INBOX_DESC}</p>
+        <p className="mb-4 text-sm text-foreground/55">{INBOX_DESC}</p>
         <InboxList documents={documents} folders={folders} />
       </AppPageContainer>
     </div>

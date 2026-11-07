@@ -67,17 +67,17 @@ export function InboxList({ documents, folders }: InboxListProps) {
   }
 
   if (rows.length === 0) {
-    return <p className="px-1 py-6 text-sm text-muted-foreground">{INBOX_EMPTY}</p>;
+    return <p className="px-1 py-6 text-ui leading-[15.6px] text-foreground/55">{INBOX_EMPTY}</p>;
   }
 
   return (
     <div className="flex flex-col">
-      <p className="mb-2 text-[13px] text-muted-foreground">{formatDocCount(rows.length)}</p>
+      <p className="mb-2 text-ui text-foreground/55">{formatDocCount(rows.length)}</p>
       <ul className="flex flex-col gap-0.5">
         {rows.map((doc) => (
           <li
             key={doc.id}
-            className="flex items-center gap-2 rounded-md px-2 py-1.5 text-[13px] transition-colors hover:bg-sidebar-hover"
+            className="flex h-10 items-center gap-2 rounded-md px-2 text-ui transition-colors hover:bg-sidebar-hover"
           >
             <Link
               href={`/documents/${doc.id}`}

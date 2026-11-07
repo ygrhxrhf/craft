@@ -31,8 +31,8 @@ export function TemplateCard({ document: doc }: TemplateCardProps) {
   };
 
   return (
-    <div className="group flex flex-col rounded-lg px-1.5 pt-1.5 pb-2 transition-colors duration-300 hover:bg-foreground/[0.03]">
-      <div className="flex flex-1 flex-col rounded-lg bg-card px-2.5 pt-[7px] pb-2 shadow-sm">
+    <div className="group flex flex-col rounded-xl px-1.5 pt-1.5 pb-2 transition-colors duration-300 hover:bg-foreground/[0.03]">
+      <div className="flex flex-1 flex-col rounded-xl bg-card px-2.5 pt-[7px] pb-2 shadow-sm">
         <Link href={`/documents/${doc.id}`} className="flex items-start gap-2">
           {doc.icon ? (
             <span className="text-2xl leading-none">{doc.icon}</span>

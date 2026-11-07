@@ -25,9 +25,10 @@ export default async function TemplatesPage() {
             ))}
           </BrowseGrid>
         ) : (
-          <div className="rounded-lg border border-dashed border-border p-8 text-center">
+          // G22：craft 的空态是 1120×72、radius 10、bg rgba(26,28,30,.03)、无虚线边框。
+          <div className="flex min-h-[72px] flex-col items-center justify-center rounded-[10px] bg-foreground/[0.03] px-4 text-center">
             <LayoutTemplate className="mx-auto mb-2 size-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{FOLDER_EMPTY}</p>
+            <p className="text-ui leading-[15.6px] text-foreground/55">{FOLDER_EMPTY}</p>
           </div>
         )}
       </AppPageContainer>

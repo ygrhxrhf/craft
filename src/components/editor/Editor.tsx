@@ -873,19 +873,6 @@ export function Editor({
   }, [editor, onSaveNowReady, locked, savePending, retryDerived]);
 
   useEffect(() => {
-    if (!editor || locked) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
-        event.preventDefault();
-        if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-        void savePending();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [editor, locked, savePending]);
-
-  useEffect(() => {
     // DOM-level intercept for slash-command drag-and-drop.
     // PM processes the drop first (inserting text/plain as fallback), then our command overwrites it.
     if (!editor) return;

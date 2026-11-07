@@ -12,6 +12,9 @@ import { usePlatform } from '@/lib/editor/use-platform';
 import { useIsMobile } from '@/lib/use-is-mobile';
 import { cn } from 'cn';
 
+/** G756: the active category survives a reload; any local carrier is enough. */
+const SHORTCUT_TAB_STORAGE_KEY = 'craft.shortcuts.active-tab';
+
 /**
  * G13 / G755 / G771：设置 → 快捷键（`preferences.keyboard.shortcuts`）。结构三件照官方
  * 采到的定版：左栏七枚按钮（选中态靠 class，不是 `role=tab`）；正文 分类标题 → 段标题 → 行；
@@ -24,7 +27,20 @@ import { cn } from 'cn';
 export function ShortcutsPanel() {
   const platform = usePlatform();
   const narrow = useIsMobile();
-  const [active, setActive] = useState<PanelTabId>(PANEL_TABS[0].id);
+  const [active, setActive] = useState<PanelTabId>(() => {
+    if (typeof window === 'undefined') return PANEL_TABS[0].id;
+    const saved = window.localStorage.getItem(SHORTCUT_TAB_STORAGE_KEY);
+    return PANEL_TABS.some((tab) => tab.id === saved) ? (saved as PanelTabId) : PANEL_TABS[0].id;
+  });
+  // G756: write the active category after every change. The initializer above already read the
+  // stored value, so the first write is the same value, not a reset.
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SHORTCUT_TAB_STORAGE_KEY, active);
+    } catch {
+      // Storage can be unavailable (private mode); the panel still works within the session.
+    }
+  }, [active]);
   const view = panelRoster(platform);
   const firstCategoryRef = useRef<HTMLButtonElement | null>(null);
 

@@ -8,6 +8,7 @@
 import {
   MONDAY_FIRST,
   WEEKDAY_LABELS,
+  clampInterval,
   parseRecurrence,
   type DynamicDay,
   type DynamicDaySelector,
@@ -107,7 +108,8 @@ export function axesFor(freq: RecurrenceFrequency): { days: boolean; months: boo
 export function ruleWithFrequency(raw: string | null | undefined, freq: RecurrenceFrequency): string {
   const rule = parseRecurrence(raw);
   const next: Record<string, unknown> = { freq, type: rule?.type ?? 'fixed' };
-  const interval = rule?.interval ?? 1;
+  // G638: the new frequency's ceiling applies at switch time, not only when the field is edited.
+  const interval = clampInterval(freq, rule?.interval);
   if (interval > 1) next.interval = interval;
   if ((freq === 'daily' || freq === 'monthly') && rule?.skipWeekends) next.skipWeekends = true;
   return JSON.stringify(next);

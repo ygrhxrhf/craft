@@ -33,7 +33,9 @@ export function decodeTemplate(
   inline: boolean,
   flavour: MarkdownFlavour = DEFAULT_FLAVOUR,
 ): string {
-  const softLine = inline ? ' ' : '<br>';
+  // G1172: inline, the soft break is a space only when the template itself carries a backtick;
+  // without one the official decoder still emits `<br>`.
+  const softLine = inline && template.includes('`') ? ' ' : '<br>';
   return stripTemplateLayout(template)
     .replace(/\\dl/g, '\n\n')
     .replace(/\\sl/g, softLine)

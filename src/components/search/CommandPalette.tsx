@@ -105,6 +105,9 @@ export function CommandPalette() {
       'TOGGLE_QUICK_OPEN_SAFARI',
     ]);
     const handleKeyDown = (e: KeyboardEvent) => {
+      // G69: the editor's own document-capture handler claims Mod-K for the link picker and
+      // preventDefaults it. A chord already handled there must not also open the palette.
+      if (e.defaultPrevented) return;
       // G1580: only the plain Ctrl/⌘-K opens the palette; Ctrl-Shift-K belongs to block links and
       // must not be swallowed here.
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'k') {

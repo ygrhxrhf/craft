@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-07T01:36:52.913Z",
+  "generatedAt": "2026-11-07T01:43:05.158Z",
   "total": 1615,
   "status": {
-    "aligned": 685,
+    "aligned": 688,
     "nonaction": 521,
     "deliberate": 181,
-    "partial": 139,
-    "gap": 69,
-    "unreachable": 20
+    "partial": 138,
+    "gap": 66,
+    "unreachable": 21
   },
   "priority": {
     "P2": 629,
@@ -25,17 +25,17 @@
     "P2 / deliberate": 88,
     "P? / partial": 80,
     "P? / aligned": 78,
-    "P3 / aligned": 73,
+    "P3 / aligned": 76,
     "P3 / nonaction": 66,
-    "P3 / partial": 59,
+    "P3 / partial": 58,
     "P? / deliberate": 40,
-    "P3 / gap": 35,
     "P? / gap": 34,
     "P3 / deliberate": 33,
+    "P3 / gap": 32,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
-    "P3 / unreachable": 4,
+    "P3 / unreachable": 5,
     "P? / unreachable": 4,
     "P1 / unreachable": 1
   },
@@ -1346,15 +1346,15 @@
       3
     ],
     [
-      "三点八二、第 71 批（★ 静态补账：任务三时间动线 G 项结案 ⇒ 重",
-      3
-    ],
-    [
       "三点八六、第 75 批（★★ 行为级实测：新开通路＝官方桌面端 MCP ",
       3
     ],
     [
       "三点八七、第 76 批（★★ 契约面穷尽：`--help` 逐条读满 `",
+      3
+    ],
+    [
+      "三点八九、第 77 批（★★★ 行为级实测：样式落库形状／四频率 rep",
       3
     ]
   ]

@@ -38,6 +38,12 @@ describe('parseRecurrence', () => {
     expect(parseRecurrence('{"freq":"hourly"}')).toBeNull();
     expect(parseRecurrence('{"freq":"weekly","days":["mon"]}')).toBeNull();
   });
+
+  it('tolerates a numeric string interval on read and stores the number (G410)', () => {
+    expect(parseRecurrence('{"freq":"daily","interval":"3"}')).toEqual({ freq: 'daily', interval: 3 });
+    expect(parseRecurrence('{"freq":"daily","interval":"0"}')).toBeNull();
+    expect(parseRecurrence('{"freq":"daily","interval":"2.5"}')).toBeNull();
+  });
 });
 
 describe('nextOccurrence', () => {

@@ -2850,10 +2850,11 @@
       ]
     },
     "G1234": {
-      "status": "gap",
-      "note": "官方导入把 ` -- ` 改写为破折号；本地 parseInline 无此改写，原样保留。",
+      "status": "unreachable",
+      "note": "第 5k 批现读（2026-11-07）：官方句在本台账为空，仅本地行留下「mojibake 反推 em dash、未重取原文」的推断（行内自述「待重取确认，不升为屏上事实」）。按措辞纪律不据推断改产品代码；待重取官方原文后再定（重开条件＝`_harvest` 里拿到该 import 规则的干净原文）。",
       "evidence": [
-        "src/lib/import/markdown.ts:348"
+        "docs/craft-ref/features/gap.md:3943",
+        "src/lib/import/markdown.ts:567"
       ]
     },
     "G1235": {
@@ -5336,10 +5337,11 @@
       ]
     },
     "G410": {
-      "status": "partial",
-      "note": "只存预设 JSON 文本且严格 typeof；导入官方数据会丢规则",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：读侧容忍字符串数字——parseRecurrence 对 interval 先按 Number 归一（`Number(\"3\")→3`），非整数/越界仍判废；写侧不变。单测覆盖 \"3\"/\"0\"/\"2.5\" 三例。",
       "evidence": [
-        "src/lib/task/recurrence.ts:26"
+        "src/lib/task/recurrence.ts:136",
+        "src/lib/task/recurrence.test.ts:42"
       ]
     },
     "G413": {
@@ -6551,10 +6553,13 @@
       ]
     },
     "G638": {
-      "status": "gap",
-      "note": "RecurrenceRule 无 interval 字段，四档预设均为间隔 1",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：interval 字段与每档上限表（daily31/weekly52/monthly12/yearly10）已在；切频率时按官方「单向复位」处理——ruleWithFrequency 走 clampInterval，超新档上限整条吞成 1（键不写出）。单测覆盖 weekly 40→monthly 复位与 daily 20→weekly 保留。",
       "evidence": [
-        "src/lib/task/recurrence.ts:3"
+        "src/lib/task/recurrence.ts:64",
+        "src/lib/task/recurrence.ts:71",
+        "src/lib/task/recurrence-picker.ts:107",
+        "src/lib/task/recurrence-picker.test.ts:106"
       ]
     },
     "G640": {
@@ -8927,10 +8932,12 @@
       ]
     },
     "G1172": {
-      "status": "gap",
-      "note": "导出直接拼字符串，没有三令牌层",
+      "status": "aligned",
+      "note": "第 5k 批现读（2026-11-07）：三令牌层已在 document-codec/template-decode.ts（\\dl/\\sl/\\i__craft 固定顺序），并按官方逐字补上 inline 语境的反引号条件——`i && (s.includes(\"`\") ? \" \" : \"<br>\")`；单测覆盖有/无反引号与块语境三例。",
       "evidence": [
-        "src/lib/document-codec/index.ts:105"
+        "src/lib/document-codec/template-decode.ts:40",
+        "src/lib/document-codec/template-decode.ts:36",
+        "src/lib/document-codec/template-decode.test.ts:33"
       ]
     },
     "G1173": {

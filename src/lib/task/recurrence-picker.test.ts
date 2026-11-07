@@ -108,6 +108,19 @@ describe('writing the rule', () => {
     );
   });
 
+  it('resets an interval above the new frequency ceiling to 1 (G638)', () => {
+    // Weekly allows 52 while monthly allows 12, so 40 is swallowed when the frequency changes.
+    expect(JSON.parse(ruleWithFrequency('{"freq":"weekly","interval":40}', 'monthly'))).not.toHaveProperty(
+      'interval',
+    );
+    // 20 is still legal weekly, so it survives the switch.
+    expect(JSON.parse(ruleWithFrequency('{"freq":"daily","interval":20}', 'weekly'))).toEqual({
+      freq: 'weekly',
+      type: 'fixed',
+      interval: 20,
+    });
+  });
+
   it('schedules the occurrence the picker describes', () => {
     // 每月最后一个周五：本地口径里 monthly 的下一发落在**下一个月**（既有行为，见 recurrence.test.ts），
     // 所以从 2026-11-03 起算是 12 月的最后一个周五 = 2026-12-25。

@@ -86,7 +86,7 @@ export function PropertyCell({ property, value, onChange, item, properties }: Pr
     case 'person':
       return <PersonCell value={parsed} onChange={onChange} />;
     case 'phone':
-      return <TextCell value={parsed} onChange={onChange} />;
+      return <TextCell value={parsed} onChange={onChange} inputMode="tel" />;
     case 'formula':
       return <FormulaCell property={property} item={item} properties={properties} />;
     case 'created_at':
@@ -127,7 +127,7 @@ export function CellDisplay({ value }: { value: any }) {
 }
 
 // ─── Text ────────────────────────────────────────────
-function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void }) {
+function TextCell({ value, onChange, inputMode }: { value: any; onChange: (v: any) => void; inputMode?: 'tel' }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value ?? '');
   const [limitHit, setLimitHit] = useState(false);
@@ -149,6 +149,7 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
     <input
       ref={ref}
       type="text"
+      inputMode={inputMode}
       value={text}
       title={limitHit ? `${CHARACTER_LIMIT_TITLE}：${CHARACTER_LIMIT_SUBTITLE}` : undefined}
       aria-invalid={limitHit || undefined}
@@ -164,7 +165,7 @@ function TextCell({ value, onChange }: { value: any; onChange: (v: any) => void 
         setLimitHit(false);
         setText(next);
       }}
-      onBlur={() => { setEditing(false); onChange(normalizeTextCommit(text)); }}
+      onBlur={e => { if (!e.currentTarget.isConnected) return; setEditing(false); onChange(normalizeTextCommit(text)); }}
       onKeyDown={e => {
         // G466: Enter commits and the event is stopped — otherwise it bubbles into the block-level
         // Enter (split/new block) when the cell is rendered inside the editor. Shift-Enter is left
@@ -208,7 +209,7 @@ function NumberCell({ value, onChange, format }: { value: any; onChange: (v: any
       inputMode="decimal"
       value={text}
       onChange={e => setText(e.target.value)}
-      onBlur={() => { setEditing(false); onChange(parseNumberInput(text, format)); }}
+      onBlur={e => { if (!e.currentTarget.isConnected) return; setEditing(false); onChange(parseNumberInput(text, format)); }}
       onKeyDown={e => {
         const action = cellKeyAction(e);
         if (action === 'none') return;
@@ -267,7 +268,7 @@ function DateCell({ value, onChange }: { value: any; onChange: (v: any) => void 
           type="date"
           value={text}
           onChange={e => setText(e.target.value)}
-          onBlur={() => { setEditing(false); onChange(normalizeDateValue(text)); }}
+          onBlur={e => { if (!e.currentTarget.isConnected) return; setEditing(false); onChange(normalizeDateValue(text)); }}
           onKeyDown={e => {
             const action = cellKeyAction(e);
             if (action === 'none') return;
@@ -477,9 +478,10 @@ function URLCell({ value, onChange }: { value: any; onChange: (v: any) => void }
     <input
       ref={ref}
       type="url"
+      inputMode="url"
       value={text}
       onChange={e => setText(e.target.value)}
-      onBlur={() => { setEditing(false); onChange(normalizeTextCommit(text)); }}
+      onBlur={e => { if (!e.currentTarget.isConnected) return; setEditing(false); onChange(normalizeTextCommit(text)); }}
       onKeyDown={e => {
         if (e.key === 'Enter') { setEditing(false); onChange(normalizeTextCommit(text)); }
         if (e.key === 'Escape') { setText(value ?? ''); setEditing(false); }
@@ -521,9 +523,10 @@ function EmailCell({ value, onChange }: { value: any; onChange: (v: any) => void
     <input
       ref={ref}
       type="email"
+      inputMode="email"
       value={text}
       onChange={e => setText(e.target.value)}
-      onBlur={() => { setEditing(false); onChange(normalizeTextCommit(text)); }}
+      onBlur={e => { if (!e.currentTarget.isConnected) return; setEditing(false); onChange(normalizeTextCommit(text)); }}
       onKeyDown={e => {
         if (e.key === 'Enter') { setEditing(false); onChange(normalizeTextCommit(text)); }
         if (e.key === 'Escape') { setText(value ?? ''); setEditing(false); }

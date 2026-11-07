@@ -30,8 +30,10 @@ describe('expanding the tokens', () => {
     expect(decodeTemplate(`a${TOKEN_DOUBLE_LINE}b`, false)).toBe('a\n\nb');
   });
 
-  it('turns \\sl into a space inline, and a br in block context', () => {
-    expect(decodeTemplate(`a${TOKEN_SOFT_LINE}b`, true)).toBe('a b');
+  it('turns \\sl into a space only when an inline template carries a backtick (G1172)', () => {
+    // The official decoder: `i && (s.includes("`") ? " " : "<br>")`.
+    expect(decodeTemplate(`a${TOKEN_SOFT_LINE}b`, true)).toBe('a<br>b');
+    expect(decodeTemplate(`\`x\`a${TOKEN_SOFT_LINE}b`, true)).toBe('`x`a b');
     expect(decodeTemplate(`a${TOKEN_SOFT_LINE}b`, false)).toBe('a<br>b');
   });
 

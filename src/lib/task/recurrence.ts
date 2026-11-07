@@ -134,9 +134,11 @@ export function parseRecurrence(raw: string | null | undefined): RecurrenceRule 
   if (rule.skipWeekends !== undefined && typeof rule.skipWeekends !== 'boolean') return null;
   if (rule.type !== undefined && rule.type !== 'fixed' && rule.type !== 'flexible') return null;
   if (rule.interval !== undefined) {
-    const interval = rule.interval as number;
-    if (typeof interval !== 'number' || !Number.isInteger(interval)) return null;
+    // G410: the stored JSON may carry a numeric string; treat it as the number it spells.
+    const interval = typeof rule.interval === 'string' ? Number(rule.interval) : (rule.interval as number);
+    if (!Number.isInteger(interval)) return null;
     if (interval < 1 || interval > INTERVAL_MAX[rule.freq as RecurrenceFrequency]) return null;
+    rule.interval = interval;
   }
 
   const result: RecurrenceRule = { freq: rule.freq as RecurrenceFrequency };

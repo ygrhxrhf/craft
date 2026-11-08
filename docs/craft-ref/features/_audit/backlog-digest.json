@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-07T03:13:50.819Z",
+  "generatedAt": "2026-11-08T14:11:03.885Z",
   "total": 1615,
   "status": {
-    "aligned": 739,
+    "aligned": 748,
     "nonaction": 531,
     "deliberate": 206,
-    "partial": 80,
-    "gap": 34,
-    "unreachable": 25
+    "partial": 84,
+    "unreachable": 24,
+    "gap": 22
   },
   "priority": {
     "P2": 629,
@@ -24,17 +24,18 @@
     "P3 / aligned": 127,
     "P1 / nonaction": 89,
     "P2 / deliberate": 88,
-    "P? / partial": 80,
-    "P? / aligned": 78,
+    "P? / aligned": 87,
+    "P? / partial": 83,
     "P3 / nonaction": 76,
     "P3 / deliberate": 58,
     "P? / deliberate": 40,
-    "P? / gap": 34,
+    "P? / gap": 22,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
-    "P3 / unreachable": 9,
     "P0 / aligned": 8,
+    "P3 / unreachable": 8,
     "P? / unreachable": 4,
+    "P3 / partial": 1,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1281,7 +1282,7 @@
     ],
     [
       "三点一〇三八、第 97 批〔★★★ **G943 裁定＝连接器的按键不自",
-      11
+      8
     ],
     [
       "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
@@ -1293,10 +1294,6 @@
     ],
     [
       "三点九三、第 79 批·下半 B79B（2026-09-28 07:33",
-      4
-    ],
-    [
-      "三点九九、第 82 批·下半 C（2026-09-28 08:48–08",
       4
     ],
     [
@@ -1320,7 +1317,7 @@
       3
     ],
     [
-      "三点一〇三四、第 96 批·尾记九〔★★★**V79 裁定结案（桌面档）",
+      "三点九九、第 82 批·下半 C（2026-09-28 08:48–08",
       3
     ],
     [
@@ -1353,6 +1350,10 @@
     ],
     [
       "三点一〇二一、第 94 批·上半〔零写入·★★**G803 静态结案：C",
+      2
+    ],
+    [
+      "三点一〇二五、第 96 批·下半〔★★★**取证通路拓扑改判：`brow",
       2
     ]
   ]

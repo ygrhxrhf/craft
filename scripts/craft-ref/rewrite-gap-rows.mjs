@@ -44,8 +44,10 @@ for (let i = 0; i < lines.length; i += 1) {
     process.exitCode = 1;
     continue;
   }
-  if (patch.local !== undefined) cells[2] = ` ${patch.local.replace(/\|/g, '\\|')} `;
-  if (patch.verdict !== undefined) cells[3] = ` ${patch.verdict.replace(/\|/g, '\\|')} `;
+  // cells[0] is the empty slice before the leading pipe ⇒ data columns are 1..5
+  // (id / official / local / verdict / score).
+  if (patch.local !== undefined) cells[3] = ` ${patch.local.replace(/\|/g, '\\|')} `;
+  if (patch.verdict !== undefined) cells[4] = ` ${patch.verdict.replace(/\|/g, '\\|')} `;
   lines[i] = cells.join('|');
   done.add(id);
 }

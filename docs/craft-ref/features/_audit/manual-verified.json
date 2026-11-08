@@ -2425,10 +2425,13 @@
       ]
     },
     "G862": {
-      "status": "gap",
-      "note": "本地无快捷键弹层：快捷键只是设置面板一节（导航 280px），720/560、184px rail、747 compact 档均无。",
+      "status": "partial",
+      "note": "响应式断点已与官方 747px 对齐；外壳仍为 960×594、导航 280px，未采用官方 720×560、184px rail 几何。",
       "evidence": [
-        "src/components/settings/SettingsModal.tsx:116"
+        "src/components/settings/SettingsModal.tsx:115",
+        "src/components/settings/SettingsModal.tsx:117",
+        "src/lib/use-is-mobile.ts:6",
+        "src/components/settings/ShortcutsPanel.tsx:162"
       ]
     },
     "G863": {
@@ -2573,10 +2576,12 @@
       ]
     },
     "G939": {
-      "status": "gap",
-      "note": "设置分类栏只有 onClick，无方向键导航与 activeIndex 推进。",
+      "status": "partial",
+      "note": "本地按 active 分类状态推进，不读取 activeElement；但 keydown 处理只绑定分类栏，焦点离开 rail 后不再响应，而官方处理不依赖元素焦点。",
       "evidence": [
-        "src/components/settings/SettingsModal.tsx:182"
+        "src/components/settings/ShortcutsPanel.tsx:154",
+        "src/components/settings/ShortcutsPanel.tsx:165",
+        "src/lib/editor/shortcut-panel.ts:178"
       ]
     },
     "G942": {
@@ -3619,8 +3624,8 @@
       ]
     },
     "G89": {
-      "status": "unreachable",
-      "note": "第 5k 批现读（2026-11-07）：可落的一半已落——单字段 10000 字符上限（character-limit.ts ＋ TextCell 触限截住）；剩余表格尺寸/合集字段数/提醒数/白板元素数四组远端配额值本仓从未采集过（本行自述「登记为未采」），按措辞纪律记 unreachable（采集边界），不写「不做」。",
+      "status": "partial",
+      "note": "第 5k 批现读（2026-11-07）：可落的一半已落——单字段 10000 字符上限（character-limit.ts ＋ TextCell 触限截住）；剩余表格尺寸/合集字段数/提醒数/白板元素数四组远端配额值本仓从未采集（采集边界，不写「不做」）。按「官方句含多个子项、缺一项即 partial」的纪律记 partial，不记已清。",
       "evidence": [
         "src/lib/collection/character-limit.ts:11",
         "src/components/collection/PropertyCell.tsx:159",
@@ -7150,10 +7155,12 @@
       ]
     },
     "G738": {
-      "status": "gap",
-      "note": "快捷键面板无分类导航，打开固定落到设置分区，无上次分类记忆",
+      "status": "aligned",
+      "note": "分类选择跨重载保留；active-tab 从 localStorage 初始化并在变化后写回。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:38"
+        "src/components/settings/ShortcutsPanel.tsx:26",
+        "src/components/settings/ShortcutsPanel.tsx:51",
+        "src/components/settings/ShortcutsPanel.tsx:58"
       ]
     },
     "G739": {
@@ -7179,9 +7186,10 @@
     },
     "G743": {
       "status": "partial",
-      "note": "本地同键同实现，无 handler 级平台分支；官方是两平台两套行为",
+      "note": "键位处理仍共用同一 handler 路径；当前未按平台分派出官方的两种行为。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:70"
+        "src/components/editor/extensions/craft-keymap.ts:424",
+        "src/components/editor/extensions/craft-keymap.ts:442"
       ]
     },
     "G744": {
@@ -7192,31 +7200,40 @@
       ]
     },
     "G745": {
-      "status": "partial",
-      "note": "本地是六组平铺设置页，官方是 7 分类/18 段的可折叠面板",
+      "status": "aligned",
+      "note": "快捷键面板已按 7 个标签与 18 个官方分段组织。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:12"
+        "src/lib/editor/shortcut-panel.ts:52",
+        "src/lib/editor/shortcut-panel.ts:95",
+        "src/lib/editor/shortcut-official-rows.ts:221"
       ]
     },
     "G746": {
       "status": "partial",
-      "note": "本地按平台裁显示（win:null 不打印），但无 Safari 等浏览器级条件",
+      "note": "面板按平台裁剪 win:null 键位；Safari 专属项仍会在非 Safari 平台显示，handler 也没有浏览器条件。",
       "evidence": [
-        "src/lib/editor/keymap.ts:113"
+        "src/lib/editor/keymap.ts:138",
+        "src/lib/editor/keymap.ts:252",
+        "src/lib/editor/keymap.ts:289",
+        "src/lib/editor/shortcut-official-rows.ts:203"
       ]
     },
     "G747": {
       "status": "partial",
-      "note": "本地 29 行描述符子集，官方为 66 项且含完整工厂归属",
+      "note": "本地已有 48 项共享绑定表，但官方具名描述符全集为 66 项，仍缺一部分命令描述符。",
       "evidence": [
-        "src/lib/editor/keymap.ts:172"
+        "src/lib/editor/keymap.ts:219",
+        "src/lib/editor/shortcut-official-rows.ts:42"
       ]
     },
     "G749": {
-      "status": "gap",
-      "note": "任务注册表无对应：本地任务视图没有任何键位绑定",
+      "status": "partial",
+      "note": "分组标题键只检查按键本身，与官方宽松判据一致；任务行快捷键只覆盖部分官方动作。",
       "evidence": [
-        "src/lib/editor/keymap.ts:172"
+        "src/lib/task/section-key.ts:7",
+        "src/lib/task/task-row-key.ts:9",
+        "src/app/(app)/tasks/TasksView.tsx:384",
+        "src/app/(app)/tasks/TasksView.tsx:783"
       ]
     },
     "G750": {
@@ -7715,10 +7732,12 @@
       ]
     },
     "G855": {
-      "status": "gap",
-      "note": "设置导航为普通按钮，无 aria-selected、无方向键/Home-End 纵导航",
+      "status": "partial",
+      "note": "分类栏已支持上下键改选中项，但处理器局限于 rail 且修饰键组合也会被拦截；官方还支持方向键让路及焦点搬移。",
       "evidence": [
-        "src/components/settings/SettingsModal.tsx:179"
+        "src/components/settings/ShortcutsPanel.tsx:154",
+        "src/components/settings/ShortcutsPanel.tsx:165",
+        "src/lib/editor/shortcut-panel.ts:178"
       ]
     },
     "G856": {
@@ -7996,24 +8015,30 @@
       ]
     },
     "G924": {
-      "status": "gap",
-      "note": "本地快捷键面板按分组滚动，无分类按钮可读 aria-selected",
+      "status": "aligned",
+      "note": "桌面分类栏使用原生按钮，选中态由样式表达；没有 role=tab 或 aria-selected 复合标签语义。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:41"
+        "src/components/settings/ShortcutsPanel.tsx:167",
+        "src/components/settings/ShortcutsPanel.tsx:172",
+        "src/components/settings/ShortcutsPanel.tsx:175"
       ]
     },
     "G925": {
-      "status": "gap",
-      "note": "本地无分类选中态与上次分类持久化",
+      "status": "aligned",
+      "note": "焦点初始落在第一枚按钮，而所选分类由独立的持久化 active 状态恢复。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:41"
+        "src/components/settings/ShortcutsPanel.tsx:51",
+        "src/components/settings/ShortcutsPanel.tsx:53",
+        "src/components/settings/ShortcutsPanel.tsx:75"
       ]
     },
     "G926": {
-      "status": "gap",
-      "note": "本地无分类 rail，方向键改选中、夹紧不环绕均未实现",
+      "status": "aligned",
+      "note": "上下键改变选中分类但不搬焦点，边界使用夹紧而非环绕。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:41"
+        "src/components/settings/ShortcutsPanel.tsx:154",
+        "src/components/settings/ShortcutsPanel.tsx:157",
+        "src/lib/editor/shortcut-panel.ts:178"
       ]
     },
     "G928": {
@@ -8080,10 +8105,11 @@
       ]
     },
     "G941": {
-      "status": "gap",
-      "note": "本地无 7 枚常聚焦分类按钮，Tab 走完整 rail 无从对照",
+      "status": "aligned",
+      "note": "桌面分类按钮均保持常规 Tab 可达，没有 roving tabindex；本地额外用 aria-current 暴露选中状态。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:41"
+        "src/components/settings/ShortcutsPanel.tsx:167",
+        "src/components/settings/ShortcutsPanel.tsx:172"
       ]
     },
     "G943": {
@@ -8115,17 +8141,21 @@
       ]
     },
     "G947": {
-      "status": "gap",
-      "note": "本地快捷键面板无分类 rail，Enter/Space 原生激活无对应物",
+      "status": "aligned",
+      "note": "分类项是真实 button，Enter 与 Space 使用浏览器原生激活，不另写键盘激活分支。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:41"
+        "src/components/settings/ShortcutsPanel.tsx:167",
+        "src/components/settings/ShortcutsPanel.tsx:171",
+        "src/components/settings/ShortcutsPanel.tsx:174"
       ]
     },
     "G948": {
-      "status": "gap",
-      "note": "本地无分类 rail，Home/End/横轴键与 Tab 行为无对照",
+      "status": "aligned",
+      "note": "上下键仅改变选中项，左右键与 Home/End 没有自定义导航；Tab 仍按原生按钮顺序移动焦点。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:41"
+        "src/components/settings/ShortcutsPanel.tsx:154",
+        "src/components/settings/ShortcutsPanel.tsx:167",
+        "src/lib/editor/shortcut-panel.ts:178"
       ]
     },
     "G949": {
@@ -8178,10 +8208,14 @@
       ]
     },
     "G959": {
-      "status": "partial",
-      "note": "设置内已有快捷键面板（6 组 29 条），非缺失；规模不同",
+      "status": "aligned",
+      "note": "本地面板已渲染官方 89 行名册与本机绑定状态，未接入项置灰标示，另补本机专有绑定；没有把未接入命令伪装成本地可用。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:41"
+        "src/lib/editor/shortcut-official-rows.ts:42",
+        "src/lib/editor/shortcut-official-rows.ts:221",
+        "src/lib/editor/shortcut-official-rows.test.ts:21",
+        "src/components/settings/ShortcutsPanel.tsx:91",
+        "src/components/settings/ShortcutsPanel.tsx:110"
       ]
     },
     "G960": {
@@ -8193,9 +8227,10 @@
     },
     "G962": {
       "status": "partial",
-      "note": "只读仅 editable:!locked 一处，无键定义闸门与派发白名单",
+      "note": "只读仍只通过 editable: !locked 禁止编辑；没有官方的键定义注册闸门与派发白名单两层模型。",
       "evidence": [
-        "src/components/editor/Editor.tsx:519"
+        "src/components/editor/Editor.tsx:226",
+        "src/components/editor/Editor.tsx:659"
       ]
     },
     "G963": {
@@ -8220,10 +8255,13 @@
       ]
     },
     "G966": {
-      "status": "gap",
-      "note": "本地 keydown 分散在各菜单，无焦点栈与栈顶吞传播，叠层可多族同响",
+      "status": "partial",
+      "note": "本地已有捕获阶段全局焦点栈与栈顶阻断，但未实现 keyCode 229/IME 组合态跳过，生产注册点也远少于官方。",
       "evidence": [
-        "src/components/editor/slash-menu/SlashCommandExtension.ts:85"
+        "src/lib/focus/focus-stack.ts:25",
+        "src/lib/focus/focus-stack.ts:56",
+        "src/components/focus/FocusStackBridge.tsx:15",
+        "src/lib/editor/ime-guard.ts:3"
       ]
     },
     "G967": {
@@ -8270,9 +8308,11 @@
     },
     "G973": {
       "status": "partial",
-      "note": "快捷键面落在设置面板，非官方独立 dialog 几何",
+      "note": "官方面板的尺寸、rail 宽度与键帽样式已有可对照基准；本地仍嵌在较大的设置外壳中，尺寸和紧凑档布局不同。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:639"
+        "src/components/settings/SettingsModal.tsx:115",
+        "src/components/settings/SettingsModal.tsx:117",
+        "src/components/settings/ShortcutsPanel.tsx:162"
       ]
     },
     "G974": {

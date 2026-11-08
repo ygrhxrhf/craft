@@ -103,3 +103,7 @@ dist/
 # 原先只写在 .git/info/exclude 里（本地生效、不随仓库共享），换台机器 clone 就会把
 # 副本当成未跟踪文件；vitest 也会把里面的测试再跑一遍（实测 814→272 个文件）。
 /.delta/
+.openbitfun/
+/.openbitfun/search/flashgrep-index/
+/docs/craft-ref/layout-20261102/
+/docs/craft-ref/layout-20261104/

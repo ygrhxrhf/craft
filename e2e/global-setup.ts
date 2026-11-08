@@ -1,6 +1,7 @@
 import { chromium, expect, type Browser, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
+import { INTRO_SEEN_KEY, INTRO_VERSIONS } from '../src/lib/onboarding/versioned-intro';
 
 /** The account the visual matrix owns. No other spec signs in as it. */
 export const VISUAL_USER = { email: 'craft-visual@example.com', password: 'visual-baseline-1' };
@@ -27,6 +28,30 @@ const BASE_URL = process.env.E2E_BASE_URL ?? 'http://localhost:3000';
  * compile budget, not a login budget.
  */
 const COLD_COMPILE = 90_000;
+
+/**
+ * G305：版本更新轮播挂在全局 Providers 上，z-60 的遮罩会盖住登录按钮。全新浏览器上下文
+ * 没有 `craft.intro.seen.version`，setup 每次都会撞上它；而且它是在 `useEffect` 里挂载的，
+ * 进页面就点「关闭」会抢在它挂载之前。所以在**页面启动前**把最新版本写进 localStorage
+ * （`addInitScript` 每次导航都生效），这一版的已读记录再随 `storageState` 传给所有用例。
+ */
+const LATEST_INTRO_VERSION = INTRO_VERSIONS[INTRO_VERSIONS.length - 1].version;
+
+/** Every context this file opens needs the intro suppressed, or the login click is blocked. */
+async function newVisualContext(browser: Browser) {
+  const context = await browser.newContext({ baseURL: BASE_URL, viewport: { width: 1440, height: 900 } });
+  await context.addInitScript(
+    ([key, version]) => {
+      try {
+        window.localStorage.setItem(key, version);
+      } catch {
+        // An opaque origin has no storage; the real document runs this again.
+      }
+    },
+    [INTRO_SEEN_KEY, LATEST_INTRO_VERSION],
+  );
+  return context;
+}
 
 async function signIn(page: Page) {
   await page.goto('/login');
@@ -148,7 +173,7 @@ async function ensureBoard(browser: Browser, page: Page) {
  * silently no-ops turns the whole visual matrix into a diff against junk data.
  */
 async function readOnServer<T>(browser: Browser, read: (page: Page) => Promise<T>): Promise<T> {
-  const context = await browser.newContext({ baseURL: BASE_URL, viewport: { width: 1440, height: 900 } });
+  const context = await newVisualContext(browser);
   try {
     const page = await context.newPage();
     page.setDefaultTimeout(30_000);
@@ -170,7 +195,8 @@ async function expectOnServer(browser: Browser, what: string, read: (page: Page)
 
 export default async function globalSetup() {
   const browser = await chromium.launch();
-  const page = await browser.newPage({ baseURL: BASE_URL, viewport: { width: 1440, height: 900 } });
+  const context = await newVisualContext(browser);
+  const page = await context.newPage();
   page.setDefaultTimeout(30_000);
 
   try {
@@ -184,6 +210,10 @@ export default async function globalSetup() {
     await ensureBoard(browser, page);
 
     await mkdir(path.dirname(STORAGE_STATE), { recursive: true });
+    // `storageState` restores localStorage AFTER the spec's `addInitScript` runs, so a
+    // persisted `theme` here would overwrite the dark/light value each test sets up —
+    // every dark shot then renders light and fails the theme assertion. Drop it.
+    await page.evaluate(() => window.localStorage.removeItem('theme')).catch(() => undefined);
     await page.context().storageState({ path: STORAGE_STATE });
   } finally {
     await browser.close();

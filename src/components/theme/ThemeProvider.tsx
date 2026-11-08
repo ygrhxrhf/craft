@@ -55,6 +55,17 @@ function StoredThemeRestorer() {
 
     let alive = true;
     const apply = async () => {
+      // G1224 的初衷是「换台设备（或清了 localStorage）打开」时把库里那份补上。
+      // 这台设备**已经选过**主题（next-themes 已把选择写进 localStorage 的 `theme`）
+      // 就不该被库里的镜像每轮启动都覆盖回头——否则本机切了深色、刷新一次又变浅。
+      let hasLocalChoice = false;
+      try {
+        hasLocalChoice = Boolean(window.localStorage.getItem('theme'));
+      } catch {
+        hasLocalChoice = false;
+      }
+      if (hasLocalChoice) return;
+
       const rows = await readLocalRecords('user');
       const row = rows.find((r) => r.id === userId && r.op !== 'delete');
       if (!alive || !row) return;

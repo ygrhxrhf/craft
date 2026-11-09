@@ -24,16 +24,27 @@ function AccentRestorer() {
  */
 function ThemeAxesWriter() {
   useEffect(() => {
+    const fine = window.matchMedia('(pointer: fine)');
     const coarse = window.matchMedia('(pointer: coarse)');
     const persistentScrollbar = window.matchMedia('(scrollbar-gutter: stable)');
     const sync = () =>
       applyThemeAxes(
         document.documentElement,
-        themeAxes({ coarsePointer: coarse.matches, persistentScrollbar: persistentScrollbar.matches }),
+        themeAxes({
+          finePointer: fine.matches,
+          coarsePointer: coarse.matches,
+          persistentScrollbar: persistentScrollbar.matches,
+        }),
       );
     sync();
+    fine.addEventListener('change', sync);
     coarse.addEventListener('change', sync);
-    return () => coarse.removeEventListener('change', sync);
+    persistentScrollbar.addEventListener('change', sync);
+    return () => {
+      fine.removeEventListener('change', sync);
+      coarse.removeEventListener('change', sync);
+      persistentScrollbar.removeEventListener('change', sync);
+    };
   }, []);
   return null;
 }

@@ -6,18 +6,25 @@
  *   classList.add('no-transitions')
  *   dataset.theme = scheme
  *   dataset.accent = accent
- *   dataset.pointer = 'fine' | 'coarse'
+ *   dataset.pointer = 'fine' | 'coarse' | 'none'
  *   dataset.scrollbar = 'persistent' | (deleted)
  *
  * Locally the colour scheme is next-themes' class and the accent is applied separately; this
  * module covers the two input-media axes and the transition guard, so the same four facts exist
  * on the element and CSS can key on them.
+ *
+ * G1206: the pointer value is the official `Rtt` — a three-way read where `none` is the fall
+ * through when neither media query matches (a document with no pointing device at all), not an
+ * error and not a second spelling of fine.
  */
 
-export type PointerAxis = 'fine' | 'coarse';
+export type PointerAxis = 'fine' | 'coarse' | 'none';
 
-export function pointerAxisOf(matchesCoarse: boolean): PointerAxis {
-  return matchesCoarse ? 'coarse' : 'fine';
+/** `Rtt`: fine first, then coarse, then none — the official order, not a boolean. */
+export function pointerAxisOf(fine: boolean, coarse: boolean): PointerAxis {
+  if (fine) return 'fine';
+  if (coarse) return 'coarse';
+  return 'none';
 }
 
 /** The scrollbar axis is written only when persistent; otherwise the attribute is removed. */
@@ -31,9 +38,9 @@ export interface ThemeAxes {
 }
 
 /** The axes derived from the two media queries the official effect reads. */
-export function themeAxes(env: { coarsePointer: boolean; persistentScrollbar: boolean }): ThemeAxes {
+export function themeAxes(env: { finePointer: boolean; coarsePointer: boolean; persistentScrollbar: boolean }): ThemeAxes {
   return {
-    pointer: pointerAxisOf(env.coarsePointer),
+    pointer: pointerAxisOf(env.finePointer, env.coarsePointer),
     scrollbar: scrollbarAxisOf(env.persistentScrollbar),
   };
 }

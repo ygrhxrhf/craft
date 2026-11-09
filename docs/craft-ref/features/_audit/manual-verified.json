@@ -1705,11 +1705,13 @@
       ]
     },
     "G1200": {
-      "status": "aligned",
-      "note": "导出器改读 flavour 表：缩进三空格、编号/无序/待办标记（含大写 X）全部来自 29 字段表，不再硬编码。",
+      "status": "partial",
+      "note": "现读导出器确认三空格缩进、大写 - [X]、highlight ::text::、Strong→H4 均已实现；PageCard/PageRegular 在本地页面模型中按段落 p 导出，未保留官方独立的 #### 页面样式，故仍是部分差异。",
       "evidence": [
-        "src/lib/document-codec/flavour.ts:44",
-        "src/lib/document-codec/index.ts:77"
+        "src/lib/document-codec/flavour.ts:42",
+        "src/lib/document-codec/index.ts:60",
+        "src/lib/document-codec/index.ts:88",
+        "src/lib/editor/text-style.ts:80"
       ]
     },
     "G1205": {
@@ -1722,9 +1724,11 @@
     },
     "G1206": {
       "status": "aligned",
-      "note": "解析链四级已落（特性开关>URL>存储>system），本次补「派生字段」：resolvedTheme 镜像到 data-resolved-scheme，不入库。",
+      "note": "URL 覆写、resolvedTheme→data-resolved-scheme 的非持久派生镜像，以及 fine/coarse/none pointer 档均已落地；fine、coarse、scrollbar media query 变化时重同步。",
       "evidence": [
-        "src/components/theme/ThemeProvider.tsx:104"
+        "src/components/theme/ThemeProvider.tsx:25",
+        "src/components/theme/ThemeProvider.tsx:134",
+        "src/components/theme/ThemeProvider.tsx:172"
       ]
     },
     "G1209": {
@@ -1982,11 +1986,13 @@
       ]
     },
     "G1384": {
-      "status": "aligned",
-      "note": "补齐运行期写入的两条输入轴：data-pointer / data-scrollbar（关闭时删属性），随媒体查询同步；颜色仍由 next-themes class + accent 承担，禁过渡在 provider 上。",
+      "status": "partial",
+      "note": "主题四轴已齐：class 挂主题（有意偏差）、accent、data-pointer（fine/coarse/none）、data-scrollbar（关闭删属性），媒体查询变化时重同步；disableTransitionOnChange 覆盖过渡抑制。首帧内联脚本官方侧亦未采到，不可达。",
       "evidence": [
         "src/lib/theme/theme-axes.ts:24",
-        "src/components/theme/ThemeProvider.tsx:20"
+        "src/components/theme/ThemeProvider.tsx:25",
+        "src/components/theme/ThemeProvider.tsx:134",
+        "src/components/theme/ThemeProvider.tsx:172"
       ]
     },
     "G1385": {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T07:19:27.432Z",
+  "generatedAt": "2026-11-09T07:32:19.342Z",
   "totalRows": 1615,
   "statusDistribution": {
     "gap": 696,
@@ -19206,8 +19206,8 @@
       "cols": 5,
       "id": "G1002",
       "official": "★★ **破坏性确认框第二次复现（承 G622）＋ 计数是动态插值**＝文案逐字「**删除 12 个项目 你确定吗？你无法撤销此操作。**」（本轮 12＝我实际选中的条数）；两按钮＝「取消」`419,311,154×32` ／「删除」`581,311,154×32`（**等宽 154、并排、间距 8**）；☆ 与 G622 那条（浏览屏批量选择删除）在**文案骨架上完全同族** ⇒ 官方破坏性确认是**一套复用组件**，不是逐处手写",
-      "local": "✎ 现读（2026-11-09）：回收站那处**已逐字对齐**＝`src/components/document/TrashList.tsx:374` 两句式带条数插值「删除 {selected.size} 个项目 你确定吗？你无法撤销此操作。」，两按钮「取消」／「删除」在 `DialogFooter`；★ 另三处仍不带计数＝`src/components/settings/SettingsPanels.tsx:343`「删除帐户将永久删除你的所有文档。 此操作无法撤销。」（双句但无条数）＋ `src/components/editor/tabs/InfoTab.tsx:428`「确认删除」（**无\"无法撤销\"句**）＋ `src/components/editor/tabs/VersionDialog.tsx:68` 用 **`window.confirm`**（原生框、不可样式化）⇒ 复刻建议＝把那三处统一成官方两句式＋条数插值，且 `window.confirm` 应换成 `src/components/ui/dialog.tsx`",
-      "verdict": "**✓实测；部分落地（回收站已对齐，另三处待统一）**",
+      "local": "✎ 现读（2026-11-09）：回收站那处**已逐字对齐**＝`src/components/document/TrashList.tsx:374` 两句式带条数插值「删除 {selected.size} 个项目 你确定吗？你无法撤销此操作。」，两按钮「取消」／「删除」在 `DialogFooter`；★ 另两处仍不带计数＝`src/components/settings/SettingsPanels.tsx:139`「删除帐户将永久删除你的所有文档。此操作无法撤消。」（双句但无条数，且用的是官方\"撤消\"写法）＋ `src/components/editor/tabs/InfoTab.tsx:919`「确认删除」，其上方一句是「移入回收站？可在回收站恢复。」（**无\"无法撤销\"句**，且这是软删语义，与官方\"永久删除＋无法撤销\"不同源）＋ `src/components/editor/tabs/VersionDialog.tsx` **无删除确认面**（该组件只有\"恢复\"确认，走 `confirmDialog` 共享弹层 `:104-107`；`window.confirm` 全库已零命中，见 `src/lib/dialog/dialog-wiring.test.ts`）⇒ 复刻建议＝把 `InfoTab` 那处按官方两句式＋条数插值改写（回收站那句已对齐）",
+      "verdict": "**✓实测；部分落地（回收站已对齐；InfoTab 软删确认文案未统一）**",
       "other4": "P2",
       "status": "partial",
       "scoreParsed": {

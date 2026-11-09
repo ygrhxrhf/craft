@@ -3264,9 +3264,11 @@
     },
     "G1417": {
       "status": "gap",
-      "note": "图片块只有裁剪/缩放；无 6 档长宽比、0.1 就近律与 freeform 回退。",
+      "note": "现读（2026-11-09）：图片块只有一套裁剪/缩放帧模型（image-frame.ts:8-57，SCALE_STEP=0.25，zoomFrame/moveFrame/frameStyle），控件为「重新定位或裁剪」「放大」「缩小」（image-block-view.tsx:190/198/206）；aspectRatio 仅一个导入默认 1.5（image-block.tsx:80/86、import/markdown.ts:442）⇒ 无 6 档名册、无 |比例差|<0.1 就近律、无 freeform 回退。复刻关键＝容差与 freeform 回退两条，只做档位名会让同一张图在两边落到不同档。",
       "evidence": [
-        "src/components/editor/extensions/image-block-view.tsx:147"
+        "src/lib/editor/image-frame.ts:14",
+        "src/components/editor/extensions/image-block.tsx:86",
+        "src/components/editor/extensions/image-block-view.tsx:190"
       ]
     },
     "G1420": {
@@ -6986,9 +6988,11 @@
     },
     "G694": {
       "status": "gap",
-      "note": "Unsplash 仅作为插入项的 missing 占位，无检索、分页与署名",
+      "note": "现读（2026-11-09）：Unsplash 仅作为插入菜单的禁用占位（InsertTab.tsx:65 missing:true、slash-roster.ts:121 command:null），无检索、无分页、无 cover/backdrop 双落点、无署名字段；封面/背景仍是 StyleTab 的 12 个写死色值（:74-78）＋手粘 URL 输入框（:107、:424-440）。旧格引的 editor/panels/PageStylePanel.tsx 已在第 297 批整文件删除，该目录不存在。",
       "evidence": [
-        "src/components/editor/tabs/InsertTab.tsx:53"
+        "src/components/editor/tabs/InsertTab.tsx:65",
+        "src/lib/editor/slash-roster.ts:121",
+        "src/components/editor/tabs/StyleTab.tsx:107"
       ]
     },
     "G696": {
@@ -7085,9 +7089,10 @@
     },
     "G717": {
       "status": "gap",
-      "note": "没有 web→桌面「在应用中打开？」提示层，无交接浮层与记住选择",
+      "note": "现读（2026-11-09）：全仓 grep 在应用中打开|桌面应用|desktopApp|openInApp 零命中；Sidebar.tsx:70 只挂 <SidebarNav />（SidebarNav.tsx:74，无视图档外的交接层）⇒ 本地没有 web→桌面交接提示层，无浮层、无「记住我的选择」偏好。",
       "evidence": [
-        "src/components/sidebar/Sidebar.tsx:21"
+        "src/components/sidebar/Sidebar.tsx:70",
+        "src/components/sidebar/SidebarNav.tsx:74"
       ]
     },
     "G718": {
@@ -8217,9 +8222,11 @@
     },
     "G955": {
       "status": "gap",
-      "note": "无 /shared-with-me 路由与侧栏入口，整屏缺失",
+      "note": "现读（2026-11-09）：无 /shared-with-me 路由（grep src/app src/components 零命中）、无侧栏入口、无该屏空态；但数据侧已能取到共享文档——getRecentDocuments（actions/document/get.ts:270）查 DocumentMember（:301 where({userId})）把协作者授予的文档并入「最近编辑」并盖 role（:329），get.test.ts:189-215 钉住这一支。⇒ 共享文档混在最近编辑里，没有独立屏、没有空态话术。",
       "evidence": [
-        "src/components/sidebar/SidebarNav.tsx:22"
+        "src/actions/document/get.ts:301",
+        "src/actions/document/get.ts:329",
+        "src/actions/document/get.test.ts:189"
       ]
     },
     "G956": {
@@ -9499,16 +9506,20 @@
     },
     "G1414": {
       "status": "gap",
-      "note": "本地只有反馈说明文字，无 13 键弹窗、评分与匿名邮箱字段",
+      "note": "现读（2026-11-09）：设置「关于」分区的「意见反馈」组只有 GroupTitle＋GroupDesc（SettingsPanels.tsx:1507-1508），原按钮按「无宿主」已删（就地注释 :1509-1513）；Help→意见反馈 仅 openSettings('about')（HelpMenu.tsx:37、lib/app/help-menu.ts:32 kind=dialog）⇒ 屏上无 13 键弹窗、无评分、无匿名邮箱字段；grep rateAppInStore|topApi 零命中（评分交桌面壳的通路也没有）。旧格引的 :678 是空间角色行，并非反馈分区。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:678"
+        "src/components/settings/SettingsPanels.tsx:1507",
+        "src/components/app/HelpMenu.tsx:37",
+        "src/lib/app/help-menu.ts:32"
       ]
     },
     "G1415": {
       "status": "gap",
-      "note": "公式块只有 LaTeX 文本框，无函数表空态与缺函数反馈入口",
+      "note": "现读（2026-11-09）：公式侧并非只有 LaTeX 文本框，但确实没有函数表与缺函数反馈口——集合公式编辑器在 AddPropertyMenu.tsx:194-210（placeholder「{价格} * {数量}」、aria-label=公式表达式、实时「示例结果：」／无输入时「用 {属性名} 引用同一行的其它属性」）；表格侧 TableToolbar.tsx:326 title=「计算公式(=SUM(A1:B3) 等)」；编辑器公式块是 TeX 输入（math-block-view.tsx，renderMath），无函数名补全与函数表。⇒ 复刻要么给反馈入口要么明确不做，且不要用报错语气。旧格「只有 LaTeX 文本框」不成立。",
       "evidence": [
-        "src/components/editor/extensions/math-block-view.tsx:9"
+        "src/components/collection/AddPropertyMenu.tsx:194",
+        "src/components/editor/table/TableToolbar.tsx:326",
+        "src/components/editor/extensions/math-block-view.tsx:10"
       ]
     },
     "G1416": {

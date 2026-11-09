@@ -42,7 +42,8 @@ interface TrashDoc {
 }
 
 const TRASH_VIRTUAL_THRESHOLD = 60;
-const TRASH_ROW_HEIGHT = 64;
+/** Row step 42 = 40 row + 2 gap, the same 40/8/42 geometry the other list surfaces use. */
+const TRASH_ROW_STEP = 42;
 const TRASH_VIEWPORT_HEIGHT = 480;
 
 interface TrashListProps {
@@ -196,7 +197,7 @@ export function TrashList({ documents }: TrashListProps) {
         scrollTop,
         viewportHeight: TRASH_VIEWPORT_HEIGHT,
         rowCount: rows.length,
-        rowHeight: TRASH_ROW_HEIGHT,
+        rowHeight: TRASH_ROW_STEP,
         overscan: 2,
       })
     : null;
@@ -206,7 +207,7 @@ export function TrashList({ documents }: TrashListProps) {
     return (
       <div className="flex min-h-[180px] flex-col items-center justify-center rounded-[15px] bg-foreground/[0.03] px-6 text-center">
         <Trash2 className="mx-auto mb-2 size-8 text-foreground/40" />
-        <p className="text-ui font-medium text-foreground/40">{TRASH_EMPTY}</p>
+        <p className="text-ui leading-[15.6px] text-foreground/55">{TRASH_EMPTY}</p>
       </div>
     );
   }
@@ -222,7 +223,7 @@ export function TrashList({ documents }: TrashListProps) {
           something in it, not in the empty state. */}
       <p className="text-meta text-foreground/55">{TRASH_DISCLAIMER}</p>
       {busyLabel && (
-        <p role="status" aria-live="polite" className="text-meta text-muted-foreground">
+        <p role="status" aria-live="polite" className="text-meta text-foreground/55">
           {busyLabel}
         </p>
       )}
@@ -299,7 +300,11 @@ export function TrashList({ documents }: TrashListProps) {
 
       <div
         data-testid="trash-rows"
-        className={virtualized ? 'max-h-[480px] overflow-y-auto pr-1' : undefined}
+        className={
+          virtualized
+            ? 'flex max-h-[480px] flex-col gap-0.5 overflow-y-auto pr-1'
+            : 'flex flex-col gap-0.5'
+        }
         onScroll={(event) => {
           if (!virtualized) return;
           const top = event.currentTarget.scrollTop;
@@ -316,8 +321,7 @@ export function TrashList({ documents }: TrashListProps) {
         return (
           <div
             key={doc.id}
-            className="flex items-center gap-3 rounded-lg border border-border p-3 transition-colors duration-150 hover:bg-foreground/[0.03]"
-            style={virtualized ? { height: TRASH_ROW_HEIGHT } : undefined}
+            className="flex h-10 items-center gap-3 rounded-md px-2 transition-colors duration-150 hover:bg-foreground/[0.03]"
           >
             {selecting ? (
               <button
@@ -338,7 +342,7 @@ export function TrashList({ documents }: TrashListProps) {
               )
             )}
             <div className="flex-1 truncate">
-              <p className="truncate text-body font-medium">{doc.title || untitledFor('list')}</p>
+              <p className="truncate text-ui font-medium">{doc.title || untitledFor('list')}</p>
               <p className="text-meta text-foreground/55">
                 删除于 {deletedDate}
               </p>

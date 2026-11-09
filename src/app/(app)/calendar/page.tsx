@@ -22,6 +22,7 @@ import { useCompletedTaskAppearance } from '@/components/task/use-completed-appe
 import { completedTaskClasses } from '@/lib/task/completed-appearance';
 import { applyCompletedFilter } from '@/lib/task/grouping';
 import { agendaDays, revealPreviousDays } from '@/lib/calendar/previous-days';
+import { tasksByCalendarDay } from '@/lib/calendar/task-grid';
 import { dayInSpan, spanOf, type CalendarSpan } from '@/lib/calendar/week-view';
 import { TODAY_LABEL } from '@/lib/calendar/month-grid';
 import { SHOW_MONTH_VIEW } from '@/lib/calendar/timeline-copy';
@@ -59,17 +60,11 @@ export default function CalendarPage() {
     load();
   }, [load]);
 
-  const tasksByDay = useMemo(() => {
-    const map = new Map<string, TaskItem[]>();
-    for (const task of applyCompletedFilter(tasks, showCompleted)) {
-      if (!task.dueDate) continue;
-      const key = new Date(task.dueDate).toDateString();
-      const list = map.get(key) ?? [];
-      list.push(task);
-      map.set(key, list);
-    }
-    return map;
-  }, [tasks, showCompleted]);
+  // G15：网格按计划日期与截止日两个落点分别标点（同天只标一次）。
+  const tasksByDay = useMemo(
+    () => tasksByCalendarDay(tasks, showCompleted),
+    [tasks, showCompleted],
+  );
 
   const window = selected ? spanOf(selected, span) : null;
   const inWindow = (key: string) => (window ? dayInSpan(new Date(key), window) : true);

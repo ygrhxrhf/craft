@@ -117,15 +117,16 @@
       ]
     },
     "G15": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P1",
-      "note": "第 503 批现读：两列独立并分别持久化，纵向时间轴按 scheduleDate 筛选排序；残差＝日历月/周网格 tasksByDay 仍以 dueDate 落点，而该页新增任务写的是 scheduleDate。",
+      "note": "第 505 批现读：两列独立并分别持久化，纵向时间轴按 scheduleDate 筛选排序；日历月/周网格经 tasksByCalendarDay 按计划日期与截止日双落点分别标点（同天去重），截止单落点路径（编辑器快捷菜单、setTasksDeadline、rollForward、系列顺延）不从网格消失。单测 3 条（task-grid）。",
       "evidence": [
         "src/actions/task/task.ts:61-64",
         "src/actions/task/task.ts:131-142",
         "src/lib/calendar/timeline.ts:181-200",
-        "src/app/(app)/calendar/page.tsx:62-72",
-        "src/app/(app)/calendar/page.tsx:104-123"
+        "src/lib/calendar/task-grid.ts",
+        "src/lib/calendar/task-grid.test.ts",
+        "src/app/(app)/calendar/page.tsx:63-67"
       ]
     },
     "G16": {

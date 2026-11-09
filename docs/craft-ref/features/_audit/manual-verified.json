@@ -88,10 +88,12 @@
     "G12": {
       "status": "aligned",
       "priority": "P1",
-      "note": "台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在。",
+      "note": "第 503 批现读回填：独立扩展以 inline decorations 高亮命中，前后查找回绕并滚动到命中，逐个/全部替换、计数与序号均在面板；实屏 e2e 覆盖。",
       "evidence": [
-        "src/components/editor/extensions/find-replace.ts",
-        "src/components/editor/find-replace-panel.tsx",
+        "src/components/editor/extensions/find-replace.ts:96-140",
+        "src/components/editor/extensions/find-replace.ts:142-218",
+        "src/components/editor/find-replace-panel.tsx:99-101",
+        "src/components/editor/find-replace-panel.tsx:176-211",
         "src/lib/store/use-find-replace-store.ts",
         "e2e/find-replace-case.spec.ts"
       ]
@@ -115,12 +117,15 @@
       ]
     },
     "G15": {
-      "status": "aligned",
+      "status": "partial",
       "priority": "P1",
-      "note": "Task 已有独立 scheduleDate 列与迁移，任务页按计划日期分组，dueDate 仍是截止。",
+      "note": "第 503 批现读：两列独立并分别持久化，纵向时间轴按 scheduleDate 筛选排序；残差＝日历月/周网格 tasksByDay 仍以 dueDate 落点，而该页新增任务写的是 scheduleDate。",
       "evidence": [
-        "src/prisma/contract.prisma:333",
-        "src/actions/task/task.ts:60"
+        "src/actions/task/task.ts:61-64",
+        "src/actions/task/task.ts:131-142",
+        "src/lib/calendar/timeline.ts:181-200",
+        "src/app/(app)/calendar/page.tsx:62-72",
+        "src/app/(app)/calendar/page.tsx:104-123"
       ]
     },
     "G16": {
@@ -135,9 +140,13 @@
     "G17": {
       "status": "aligned",
       "priority": "P1",
-      "note": "Mermaid 渲染器与斜杠入口已落，导出仍保留代码围栏。",
+      "note": "第 503 批现读回填：slash 名册含「Mermaid 图表」，代码块挂 MermaidPreview 渲染，导入接受 mermaid 语言，导出仍写 ``` 围栏。",
       "evidence": [
-        "src/components/editor/extensions/mermaid-preview.tsx"
+        "src/lib/editor/slash-roster.ts:131",
+        "src/components/editor/extensions/mermaid-preview.tsx:7-26",
+        "src/lib/editor/mermaid-surface.ts",
+        "src/lib/import/markdown.ts:106",
+        "src/lib/document-codec/index.ts:131-132"
       ]
     },
     "G18": {
@@ -312,9 +321,11 @@
     "G44": {
       "status": "aligned",
       "priority": "P1",
-      "note": "连接屏即 MCP/API 接入中心，两段文案与添加入口均落。",
+      "note": "第 503 批现读回填：/connections 即 MCP/API 接入中心，两段官方文案逐字落在 COPY，页面直读 listConnections，添加走 createConnection。",
       "evidence": [
-        "src/app/(app)/connections/ConnectionsPanel.tsx:21"
+        "src/app/(app)/connections/ConnectionsPanel.tsx:13-18",
+        "src/app/(app)/connections/ConnectionsPanel.tsx:36-51",
+        "src/app/(app)/connections/page.tsx:4-7"
       ]
     },
     "G45": {

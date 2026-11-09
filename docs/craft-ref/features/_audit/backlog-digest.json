@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-09T08:15:24.922Z",
+  "generatedAt": "2026-11-09T09:57:01.580Z",
   "total": 1615,
   "status": {
-    "aligned": 752,
+    "aligned": 751,
     "nonaction": 531,
     "deliberate": 206,
-    "partial": 94,
+    "partial": 95,
     "unreachable": 24,
     "gap": 8
   },
@@ -20,7 +20,7 @@
     "P2 / aligned": 355,
     "P? / nonaction": 191,
     "P2 / nonaction": 175,
-    "P1 / aligned": 169,
+    "P1 / aligned": 168,
     "P3 / aligned": 127,
     "P? / aligned": 93,
     "P? / partial": 90,
@@ -35,8 +35,8 @@
     "P3 / unreachable": 8,
     "P? / gap": 8,
     "P? / unreachable": 4,
+    "P1 / partial": 3,
     "P3 / partial": 2,
-    "P1 / partial": 2,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -284,10 +284,10 @@
         "cols": 6,
         "id": "G12",
         "official": "查找替换（R15 独立快捷键分组 `commands.shortcuts.in.find.and.replace`、`find.*` 14 条）",
-        "local": "✎ 现读（2026-10-31）更正：台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在。",
-        "verdict": "缺失",
+        "local": "☆ 已清（第 503 批现读回填）＝独立扩展＋面板＋store＋e2e 全在：装饰高亮走 `find-replace.ts:205-218` 的 `Decoration.inline`（当前命中加 `find-replace-current` 类）；`findNext`/`findPrevious` 末尾回绕并把选区 `scrollIntoView`（`find-replace.ts:96-140`）；`findReplaceCurrent`/`findReplaceAll` 倒序遍历防位移（`:142-192`）；命中计数 `find-replace-panel.tsx:99-102`（`formatResultCount`）＋当前序号 `:176-178`；替换/全部替换按钮 `:194-211`；面板另有 文本/正则、Aa 大小写、在页面上/在文档中 三组开关（`:134-175`）。四条快捷键在 `keymap.ts` 统一表（`find-replace.ts:196-198` 注）。实屏 `e2e/find-replace-case.spec.ts`。 ☆ 原判（2026-10-31 现读后作废）＝无（只有 AI 的替换选区 `AiBubbleMenu.tsx:230`）",
+        "verdict": "已清",
         "score": "2/2",
-        "criteria": "全文档查找高亮、逐个/全部替换、命中计数  ☆ 原判（2026-10-31 现读后作废）＝无（只有 AI 的替换选区 `AiBubbleMenu.tsx:230`）",
+        "criteria": "全文档查找高亮、逐个/全部替换、命中计数",
         "status": "aligned",
         "scoreParsed": {
           "impact": 2,
@@ -296,14 +296,16 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "台账本地列仍写着「无」，已过期：查找替换独立扩展、面板、store 与 e2e 都在。",
+        "note": "第 503 批现读回填：独立扩展以 inline decorations 高亮命中，前后查找回绕并滚动到命中，逐个/全部替换、计数与序号均在面板；实屏 e2e 覆盖。",
         "evidence": [
-          "src/components/editor/extensions/find-replace.ts",
-          "src/components/editor/find-replace-panel.tsx",
+          "src/components/editor/extensions/find-replace.ts:96-140",
+          "src/components/editor/extensions/find-replace.ts:142-218",
+          "src/components/editor/find-replace-panel.tsx:99-101",
+          "src/components/editor/find-replace-panel.tsx:176-211",
           "src/lib/store/use-find-replace-store.ts",
           "e2e/find-replace-case.spec.ts"
         ],
-        "baseStatus": "gap"
+        "baseStatus": "aligned"
       },
       {
         "line": 1144,
@@ -361,11 +363,11 @@
         "cols": 6,
         "id": "G15",
         "official": "任务 Deadline 与 Schedule 是**两套独立属性**（R4）",
-        "local": "✎ 现读（2026-10-31）更正：Task 已有独立 scheduleDate 列与迁移，任务页按计划日期分组，dueDate 仍是截止。",
-        "verdict": "行为不同",
+        "local": "☆ 部分落地（第 503 批现读）＝Task 的 `dueDate`（截止）与 `scheduleDate`（计划日期）是独立列且分别持久化（`src/actions/task/task.ts:61-64, 131-142`）；时间轴按 `scheduleDate` 筛选/排序（`src/lib/calendar/timeline.ts:181-200`）。残差：日历月/周网格 `tasksByDay` 仍用 `dueDate`（`src/app/(app)/calendar/page.tsx:62-72`），而该页「添加任务」明确写 `scheduleDate`（`:104-123`），故网格无法按计划日期落点，判据尚未全满足。",
+        "verdict": "部分落地",
         "score": "2/3",
-        "criteria": "两属性独立可设可清，日历分别按二者落点  ☆ 原判（2026-10-31 现读后作废）＝只有 `dueDate` + `remindAt`；`TaskSchedule` 是四合一批量入参名，非独立概念（`task.ts:205-210`、`contract.prisma:299-300`）",
-        "status": "aligned",
+        "criteria": "两属性独立可设可清；纵向时间轴按计划日期，日历网格需分别按截止与计划日期落点",
+        "status": "partial",
         "scoreParsed": {
           "impact": 2,
           "cost": 3,
@@ -373,12 +375,15 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "Task 已有独立 scheduleDate 列与迁移，任务页按计划日期分组，dueDate 仍是截止。",
+        "note": "第 503 批现读：两列独立并分别持久化，纵向时间轴按 scheduleDate 筛选排序；残差＝日历月/周网格 tasksByDay 仍以 dueDate 落点，而该页新增任务写的是 scheduleDate。",
         "evidence": [
-          "src/prisma/contract.prisma:333",
-          "src/actions/task/task.ts:60"
+          "src/actions/task/task.ts:61-64",
+          "src/actions/task/task.ts:131-142",
+          "src/lib/calendar/timeline.ts:181-200",
+          "src/app/(app)/calendar/page.tsx:62-72",
+          "src/app/(app)/calendar/page.tsx:104-123"
         ],
-        "baseStatus": "gap"
+        "baseStatus": "partial"
       },
       {
         "line": 1147,
@@ -411,10 +416,10 @@
         "cols": 6,
         "id": "G17",
         "official": "Mermaid 图表是插入片段之一（轴 C 四类 snippet）",
-        "local": "✎ 现读（2026-10-31）更正：Mermaid 渲染器与斜杠入口已落，导出仍保留代码围栏。",
-        "verdict": "缺失",
+        "local": "☆ 已清（第 503 批现读回填）＝slash「Mermaid 图表」在名册（`src/lib/editor/slash-roster.ts:131`）；`MermaidPreview` 渲染（`src/components/editor/extensions/mermaid-preview.tsx:7-26`）；`mermaid-surface.ts` 提供渲染计划与失败回退；导入侧 `mermaid` 进 `PSEUDO_LANGUAGES`（`src/lib/import/markdown.ts:106`）；导出保留 ``` 围栏（`src/lib/document-codec/index.ts:131-132`）",
+        "verdict": "已清",
         "score": "2/2",
-        "criteria": "slash「Mermaid 图表」渲染图；导出 md 保留代码围栏  ☆ 原判（2026-10-31 现读后作废）＝全库零匹配（含 package.json）",
+        "criteria": "slash「Mermaid 图表」渲染图；导出 md 保留代码围栏",
         "status": "aligned",
         "scoreParsed": {
           "impact": 2,
@@ -423,11 +428,15 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "Mermaid 渲染器与斜杠入口已落，导出仍保留代码围栏。",
+        "note": "第 503 批现读回填：slash 名册含「Mermaid 图表」，代码块挂 MermaidPreview 渲染，导入接受 mermaid 语言，导出仍写 ``` 围栏。",
         "evidence": [
-          "src/components/editor/extensions/mermaid-preview.tsx"
+          "src/lib/editor/slash-roster.ts:131",
+          "src/components/editor/extensions/mermaid-preview.tsx:7-26",
+          "src/lib/editor/mermaid-surface.ts",
+          "src/lib/import/markdown.ts:106",
+          "src/lib/document-codec/index.ts:131-132"
         ],
-        "baseStatus": "gap"
+        "baseStatus": "aligned"
       },
       {
         "line": 1149,
@@ -656,10 +665,10 @@
         "cols": 6,
         "id": "G44",
         "official": "**侧栏「连接」屏 = MCP / API 接入中心**（「你的 MCP 连接 — 让 AI 工具访问你的文档」「你的 API 连接 — 添加你的第一个 API 连接」，`dom-route-connections.html` ✓）",
-        "local": "✎ 现读（2026-10-31）更正：连接屏即 MCP/API 接入中心，两段文案与添加入口均落。",
-        "verdict": "缺失",
+        "local": "☆ 已清（第 503 批现读回填）＝`/connections` 屏文案逐字落在 `src/app/(app)/connections/ConnectionsPanel.tsx:13/:14/:17/:18`，页面直读 `listConnections()`（`page.tsx:4-7`）；添加入口走 `createConnection`（`ConnectionsPanel.tsx:36-51`）",
+        "verdict": "已清",
         "score": "2/3",
-        "criteria": "要么建 `/connections` 集成中心屏，要么显式记为不复刻（需产品决策）  ☆ 原判（2026-10-31 现读后作废）＝本地无此路由；`BacklinksPanel` 挂在右栏信息 tab（`actions/document/backlinks.ts:18`），语义完全不同",
+        "criteria": "`/connections` 集成中心屏（两段文案＋添加入口）",
         "status": "aligned",
         "scoreParsed": {
           "impact": 2,
@@ -668,11 +677,13 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "连接屏即 MCP/API 接入中心，两段文案与添加入口均落。",
+        "note": "第 503 批现读回填：/connections 即 MCP/API 接入中心，两段官方文案逐字落在 COPY，页面直读 listConnections，添加走 createConnection。",
         "evidence": [
-          "src/app/(app)/connections/ConnectionsPanel.tsx:21"
+          "src/app/(app)/connections/ConnectionsPanel.tsx:13-18",
+          "src/app/(app)/connections/ConnectionsPanel.tsx:36-51",
+          "src/app/(app)/connections/page.tsx:4-7"
         ],
-        "baseStatus": "gap"
+        "baseStatus": "aligned"
       },
       {
         "line": 1159,

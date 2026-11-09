@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-08T14:11:03.885Z",
+  "generatedAt": "2026-11-09T01:56:52.753Z",
   "total": 1615,
   "status": {
-    "aligned": 748,
+    "aligned": 750,
     "nonaction": 531,
     "deliberate": 206,
-    "partial": 84,
+    "partial": 95,
     "unreachable": 24,
-    "gap": 22
+    "gap": 9
   },
   "priority": {
     "P2": 629,
-    "P?": 427,
+    "P?": 426,
     "P1": 281,
-    "P3": 270,
+    "P3": 271,
     "P0": 8
   },
   "statusByPriority": {
@@ -22,20 +22,20 @@
     "P2 / nonaction": 175,
     "P1 / aligned": 171,
     "P3 / aligned": 127,
+    "P? / partial": 93,
     "P1 / nonaction": 89,
+    "P? / aligned": 89,
     "P2 / deliberate": 88,
-    "P? / aligned": 87,
-    "P? / partial": 83,
     "P3 / nonaction": 76,
     "P3 / deliberate": 58,
     "P? / deliberate": 40,
-    "P? / gap": 22,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
+    "P? / gap": 9,
     "P0 / aligned": 8,
     "P3 / unreachable": 8,
     "P? / unreachable": 4,
-    "P3 / partial": 1,
+    "P3 / partial": 2,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1282,7 +1282,7 @@
     ],
     [
       "三点一〇三八、第 97 批〔★★★ **G943 裁定＝连接器的按键不自",
-      8
+      7
     ],
     [
       "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
@@ -1310,10 +1310,6 @@
     ],
     [
       "三点九四、第 80 批·开场（2026-09-28 07:44–07:4",
-      3
-    ],
-    [
-      "三点九五、第 81 批（2026-09-28 08:03–08:18，★",
       3
     ],
     [
@@ -1346,6 +1342,10 @@
     ],
     [
       "三点九二、第 79 批·数据面（2026-09-28 07:21–07:",
+      2
+    ],
+    [
+      "三点九五、第 81 批（2026-09-28 08:03–08:18，★",
       2
     ],
     [

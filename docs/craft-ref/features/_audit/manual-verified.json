@@ -2154,10 +2154,13 @@
       ]
     },
     "G172": {
-      "status": "gap",
-      "note": "标签设置只有未接线的「使用标签」开关，无「隐藏以 # 开头的词语」控件与 # 分词隐藏。",
+      "status": "partial",
+      "note": "现读（2026-11-09）：hideHashTagWords 只有发布页签一处——document_share 实列（contract.d.ts:445）＋「在公开页隐藏 # 标签词」开关（ShareDialog.tsx:741、share.ts:42/74、publish-settings.ts:34/51）；官方说的是标签设置里的控件，本地标签面板只有「使用标签」一枚开关，无「隐藏以 # 开头的词语」控件。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:311"
+        "src/components/share/ShareDialog.tsx:741",
+        "src/lib/share/publish-settings.ts:34",
+        "src/components/settings/SettingsPanels.tsx:875",
+        "src/lib/browse/tag-visibility.ts:20"
       ]
     },
     "G199": {
@@ -2533,10 +2536,11 @@
       ]
     },
     "G909": {
-      "status": "gap",
-      "note": "无块级全选绑定，Ctrl+A 交给浏览器选中整个 contenteditable，随后退格清空全篇。",
+      "status": "partial",
+      "note": "现读（2026-11-09）：Ctrl-A 两档阶梯已落地（craft-keymap.ts:600-631 块文本 → NodeSelection，G1550 已结案）；但块选区态下 Backspace 走 ProseMirror 默认 deleteSelection＝删掉整个块，不保 id、不是官方的「清空留块」。",
       "evidence": [
-        "src/lib/editor/keymap.ts:211"
+        "src/components/editor/extensions/craft-keymap.ts:614",
+        "src/components/editor/extensions/craft-keymap.ts:627"
       ]
     },
     "G910": {
@@ -2592,10 +2596,14 @@
       ]
     },
     "G951": {
-      "status": "gap",
-      "note": "提醒只有 datetime-local 绝对时刻，无预设档列表与「取消/应用」两步提交。",
+      "status": "aligned",
+      "note": "现读（2026-11-09）：三层结构全落地——96 档 15 分钟列表（TaskDatePopover.tsx:238-263 + remind-offset.ts:16）、「取消/应用」按钮对且只有应用提交（:264-269、applyTime :170）、7 档提醒预设（remind-presets.ts）＋任务行偏移面（TasksView.tsx:935/984）；datetime-local 已零命中。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:554"
+        "src/components/task/TaskDatePopover.tsx:238",
+        "src/components/task/TaskDatePopover.tsx:264",
+        "src/lib/task/remind-offset.ts:16",
+        "src/lib/task/remind-presets.ts:1",
+        "src/app/(app)/tasks/TasksView.tsx:935"
       ]
     },
     "G957": {
@@ -2657,9 +2665,9 @@
     },
     "G991": {
       "status": "gap",
-      "note": "回收站行不可点击、无打开已删文档的预览或编辑器通路，只有恢复与多选删除。",
+      "note": "现读（2026-11-09）：回收站每行是裸 div（图标＋标题＋删除于＋恢复按钮），无 Link/href、无进编辑器通路 ⇒ 只有恢复与多选删除两种动作；复刻时须二选一并写明（只读预览 or 带「已删除」横幅），否则会出现「以为在编辑、实际改的是已删副本」。",
       "evidence": [
-        "src/components/document/TrashList.tsx:282"
+        "src/components/document/TrashList.tsx:321"
       ]
     },
     "G992": {
@@ -6755,10 +6763,14 @@
       ]
     },
     "G661": {
-      "status": "gap",
-      "note": "日记按 dailyNoteDate 列与路由取数，无 day://YYYY.MM.DD 深链",
+      "status": "partial",
+      "note": "现读（2026-11-09）：day:// 编解码已建（craft-schemes.ts:28 写、:34 解析、:48 路由 → /daily-notes?date=…）且读侧接线（Editor.tsx:683）；写侧无生产调用点（grep dayNoteHref 只命中定义与测试）；差值口径 round≠官方 floor（timeline.ts:81-84）。",
       "evidence": [
-        "src/actions/daily-notes/daily-notes.ts:12"
+        "src/lib/links/craft-schemes.ts:28",
+        "src/lib/links/craft-schemes.ts:34",
+        "src/lib/links/craft-schemes.ts:48",
+        "src/components/editor/Editor.tsx:683",
+        "src/lib/calendar/timeline.ts:82"
       ]
     },
     "G663": {
@@ -7030,9 +7042,10 @@
     },
     "G706": {
       "status": "gap",
-      "note": "无 backdrop 通道、渐变方向与铺满尺寸；StyleTab 背景色只是封面颜色",
+      "note": "现读（2026-11-09）：素材名册里有 backdrop「背景」档（decorations.ts:35），但全仓除该 id 与 Tailwind backdrop-blur 外零命中 → 无渐变起止色/方向的 JSON 载体、无 size=full 铺满语义；StyleTab 的「背景」只是封面颜色（写 coverImage/coverType，不是字符串化 backdrop JSON）。",
       "evidence": [
-        "src/components/editor/tabs/StyleTab.tsx:87"
+        "src/lib/editor/decorations.ts:35",
+        "src/components/editor/tabs/StyleTab.tsx:336"
       ]
     },
     "G708": {
@@ -7106,10 +7119,12 @@
       ]
     },
     "G725": {
-      "status": "gap",
-      "note": "键位表无 GROUP/UNGROUP，编辑器也没有分组/取消分组能力",
+      "status": "aligned",
+      "note": "GROUP/UNGROUP 快捷键已绑定并接入 applyGroup/applyUngroup；块分组能力已实现。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:26"
+        "src/lib/editor/keymap.ts",
+        "src/components/editor/extensions/craft-keymap.ts",
+        "src/lib/editor/block-group.ts"
       ]
     },
     "G726": {
@@ -7120,10 +7135,14 @@
       ]
     },
     "G727": {
-      "status": "gap",
-      "note": "本地无任务类键位；计划/截止只在单一内联面板，非三个独立入口",
+      "status": "partial",
+      "note": "现读（2026-11-09）：六条全局任务键全接（new-task-shortcut.ts:3 + TasksView.tsx:212；task-row-key.ts:15-25 接在 TasksView.tsx:783）+ 分组 ←/→/Space（section-key.ts:7 接在 TasksView.tsx:384）；Shift⏎ 显示名已是「编辑页面区块」（keymap.ts:272）。缺「在任务视图中」半：↑↓ 行导航、⌫/Delete 删任务、⏎ 编辑、Ctrl→、视图级撤销重做。",
       "evidence": [
-        "src/lib/editor/keymap.ts:172"
+        "src/lib/task/task-row-key.ts:15",
+        "src/lib/task/new-task-shortcut.ts:3",
+        "src/lib/task/section-key.ts:7",
+        "src/app/(app)/tasks/TasksView.tsx:783",
+        "src/lib/editor/keymap.ts:272"
       ]
     },
     "G730": {
@@ -7966,10 +7985,12 @@
       ]
     },
     "G907": {
-      "status": "gap",
-      "note": "块首 Backspace 三档退档序本地不存在",
+      "status": "partial",
+      "note": "现读（2026-11-09）：七档 Backspace 臂全在（format-downgrade.ts:100-118 按官方序短路）且真被键驱动（craft-keymap.ts:913-1041，逐档 liftListItem/indent-1/清三色/删前空块/joinBackward+mergeStyleWinner/删自身/选前块）；「退档优先于合并」由短路顺序保证。★ 但档位先后按 G578 静态序「列表先于缩进」，与本条屏上读数「先缩进后列表」相反，待裁决；mergeCaretIndex 仍是模型侧未接线。",
       "evidence": [
-        "src/lib/editor/format-commands.ts:107"
+        "src/lib/editor/format-downgrade.ts:100",
+        "src/components/editor/extensions/craft-keymap.ts:934",
+        "src/lib/editor/format-downgrade.test.ts:48"
       ]
     },
     "G911": {
@@ -8180,10 +8201,11 @@
       ]
     },
     "G953": {
-      "status": "gap",
-      "note": "有 28px/8 档常量但无运行时命令，Tab 未绑定",
+      "status": "partial",
+      "note": "Tab/Shift+Tab 已接入运行态缩进并联动连续子树；步长 28px，但本地上限 8 档，与官方无上限存在差异。",
       "evidence": [
-        "src/lib/editor/block-indent.ts:1"
+        "src/components/editor/extensions/block-indent.ts",
+        "src/lib/editor/block-indent.ts"
       ]
     },
     "G954": {
@@ -8415,8 +8437,9 @@
     },
     "G1001": {
       "status": "gap",
-      "note": "永久删只删 Document，Task 外键 SetNull，任务行不随文档消失",
+      "note": "现读（2026-11-09）：Task.document onDelete SetNull（contract.prisma:530），permanentDeleteDocument 只删 Document、全函数无 Task 写入（delete.ts:40-55）⇒ 任务行留下成孤儿，与官方「连行一并抹掉」相反。",
       "evidence": [
+        "src/prisma/contract.prisma:530",
         "src/actions/document/delete.ts:48"
       ]
     },
@@ -8477,10 +8500,11 @@
       ]
     },
     "G1026": {
-      "status": "gap",
-      "note": "无 Alt+↑/↓/⤒/⤓ 移块命令，ArrowUp 仅菜单导航",
+      "status": "partial",
+      "note": "四条 Alt+方向键/主键位与 buildBlockMove 事务已实现；无选区时按本地光标语义移动，官方观测异常不外推为本地行为。",
       "evidence": [
-        "src/components/editor/slash-menu/SlashCommandExtension.ts:85"
+        "src/lib/editor/keymap.ts",
+        "src/components/editor/extensions/craft-keymap.ts"
       ]
     },
     "G1028": {
@@ -8904,10 +8928,12 @@
       ]
     },
     "G1129": {
-      "status": "gap",
-      "note": "无框选：浏览屏没有选择模式状态，也没有 pointerdown 起手判定",
+      "status": "partial",
+      "note": "框选基础机制已存在，但 MarqueeLayer 的容器引用指向工具栏而非卡片区，且命中结果未接入批量选择状态。",
       "evidence": [
-        "src/components/document/SortableDocGrid.tsx:57"
+        "src/lib/browse/marquee.ts",
+        "src/components/document/MarqueeLayer.tsx",
+        "src/components/document/SortableDocGrid.tsx"
       ]
     },
     "G1130": {
@@ -8932,24 +8958,27 @@
       ]
     },
     "G1135": {
-      "status": "gap",
-      "note": "无框选命中判定器；严格矩形相交与 5px 起手阈值缺失",
+      "status": "partial",
+      "note": "严格矩形相交、5px 起手阈值与 fixed 覆盖层已实现；边缘滚动、起手否决名单、旧选择保存/清除及 Escape 焦点注册仍缺。",
       "evidence": [
-        "src/components/document/DocumentListView.tsx:161"
+        "src/lib/browse/marquee.ts",
+        "src/components/document/MarqueeLayer.tsx"
       ]
     },
     "G1136": {
-      "status": "gap",
-      "note": "三档视图有，但没有按型制分派的命中模型",
+      "status": "partial",
+      "note": "当前以 DOM 矩形统一命中；官方分型算法、文件夹独立命中、网格剪枝与瀑布流二分查找尚未实现。",
       "evidence": [
-        "src/components/document/SortableDocGrid.tsx:108"
+        "src/components/document/MarqueeLayer.tsx",
+        "src/lib/browse/marquee.ts"
       ]
     },
     "G1137": {
-      "status": "gap",
-      "note": "卡片外壳只有 class，没有 data-item-id 寻址约定",
+      "status": "partial",
+      "note": "卡片链接外壳有 data-item-id 并用于框选收集；列表行尚未接入同样寻址，官方表格档载体未复查。",
       "evidence": [
-        "src/components/document/DocumentCard.tsx:23"
+        "src/components/document/DocumentCard.tsx",
+        "src/components/document/MarqueeLayer.tsx"
       ]
     },
     "G1139": {

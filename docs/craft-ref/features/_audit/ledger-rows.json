@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-09T09:57:01.318Z",
+  "generatedAt": "2026-11-09T10:24:51.513Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 691,
-    "aligned": 446,
+    "gap": 690,
+    "aligned": 449,
     "unknown": 185,
     "deliberate": 129,
-    "partial": 80,
+    "partial": 78,
     "nonaction": 66,
     "unreachable": 18
   },
@@ -18,8 +18,8 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 274,
-    "P2 / gap": 214,
+    "P2 / aligned": 277,
+    "P2 / gap": 213,
     "P? / gap": 198,
     "P1 / gap": 185,
     "P? / unknown": 107,
@@ -31,8 +31,8 @@
     "P? / aligned": 34,
     "P? / deliberate": 33,
     "P2 / unknown": 33,
-    "P2 / partial": 28,
     "P? / partial": 27,
+    "P2 / partial": 26,
     "P1 / unknown": 23,
     "P2 / nonaction": 23,
     "P? / nonaction": 23,
@@ -49,121 +49,8 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 14,
-  "conflictRows": [
-    {
-      "id": "G95",
-      "line": 1242,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "✎ 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否 @ 分成 `comment_mention`／`comment`；解决线程发 `comment_resolved`；编辑请求发 `document_access_request`；`block_m",
-      "verdict": "☆ 已清（第 157 批）"
-    },
-    {
-      "id": "G96",
-      "line": 1243,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "`src/app/(app)/tasks/page.tsx` 单页无档位；日历页无五档分节语义 ⇒ ✎ 现读（2026-11-02）：四档列表已落——`/tasks`（inbox）/`/tasks/today`/`/tasks/upcoming`/`/tasks/all` 各有路由，`TasksView` 顶部四枚组切",
-      "verdict": "已对齐"
-    },
-    {
-      "id": "G112",
-      "line": 1263,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "无 ✎ 现读（2026-11-02）更正：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"sta",
-      "verdict": "☆ 已清（第 128 批）"
-    },
-    {
-      "id": "G300",
-      "line": 1582,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。",
-      "verdict": "☆ 已清（第 147 批）"
-    },
-    {
-      "id": "G491",
-      "line": 1927,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "无该语义（5 处监听彼此独立，各自判键）⇒ 本地\"多层弹层 + 全局快捷键\"必然互相干扰（与 G456/G471/G478 同一根因，本批给出算法）；✎ 现读（2026-11-03 第 238 批）：已实现 — `dispatch` 逐层自顶向下，命中只跑第一条 keyDef 并停；未命中且 `allowPropaga",
-      "verdict": "已对齐"
-    },
-    {
-      "id": "G503",
-      "line": 1946,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "`grep -rn \"cropMask|aspectRatio\" src` ⇒ **0 命中** ⇒ 本地既无裁剪框、也不区分\"用户裁过的尺寸\"与\"原图尺寸\"；✎ 现读（2026-11-03 第 246 批）：图片块已按同形补齐——`cropMask` 用竖线串、解析全有或全无，节点并列保存处理后/原始两套尺寸，帧变化",
-      "verdict": "已对齐"
-    },
-    {
-      "id": "G605",
-      "line": 2206,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "✎ 现读（2026-11-07 第 4a 批）：查询层分组替代 store 层剪枝——`tasksForGroup` 按 `scheduleDate` 分「未归档／今天／即将进行／所有任务」，排期空缺的任务落未归档、今天与即将进行只收排期命中的行（`lib/task/grouping.ts:34`），与官方只保留带排期",
-      "verdict": "已对齐（实现层不同）"
-    },
-    {
-      "id": "G623",
-      "line": 2243,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderI",
-      "verdict": "☆ 已清（第 154 批）"
-    },
-    {
-      "id": "G691",
-      "line": 2473,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "本地 `Collection.name`（默认「未命名集合」）＋ 行标题走 `CollectionItem.documentId` 关联的文档标题 ⇒ ★ 方向一致（行＝文档）；✎ 现读（2026-11-03 第 221 批）：**标题列名可自定义**已落——`Collection.titleColumn` 默认 `T",
-      "verdict": "已对齐"
-    },
-    {
-      "id": "G1223",
-      "line": 3905,
-      "status": "partial",
-      "conflict": "local-says-missing",
-      "local": "本轮实扫＝`src/app/layout.tsx` 与 `src/app/globals.css` **都没有** `color-scheme` 与 `theme-color` 的处理 ⇒ ★ 新 gap 行（本地两条都缺，且都是一行改动的量级）⇒ ✎ **第 116 批实测否证了这条判据的一半**＝\"`grep` 零",
-      "verdict": "☆ 已清（第 171 批）"
-    },
-    {
-      "id": "G1228",
-      "line": 3937,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "`grep -n toggle src/lib/import/markdown.ts` ⇒ **0 命中**＝本地把 `-`／`+`／`*` 一律读成 `bulletList`；本地 toggle 节点是另一个东西（`src/lib/document-codec/index.ts` 的 `toggleBlock`），*",
-      "verdict": "☆ 已清（第 171 批）"
-    },
-    {
-      "id": "G1543",
-      "line": 5522,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "✎ 现读（2026-11-07 第 5a 批）：Ctrl-K 已只留「跳转到」面板（搜索/跳转/创建行），输入框 placeholder 改为官方逐字「打开」（`CommandPalette.tsx:291`），面板本身是 top-1/3 浮层（`ui/command.tsx`）；`role=dialog` 是本地无障",
-      "verdict": "已对齐（载体差＋无宿主项）"
-    },
-    {
-      "id": "G1574",
-      "line": 5553,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "本地对照＝任务行未设可聚焦属性（点击后 `activeElement` 是 `body`）；完成态载体是 `span[role=\"checkbox\"][aria-checked]`（base-ui checkbox），鼠标可点、键盘无绑定 ✎ 现读（2026-11-02）：任务行容器已改 `role=\"button\" ",
-      "verdict": "☆ 已清（第 163 批）"
-    },
-    {
-      "id": "G1611",
-      "line": 5591,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "本地：无上限提示（`G1577` 记本地表格键整族无绑定 ⇒ 连\"加到上限\"这条通路都走不到）。✎ 现读（2026-11-03 第 222 批）：已实现 — `lib/collection/limits.ts` 定 15 列／50 行／750 格三条件，`table-utils.insertTableAxis` 与 `",
-      "verdict": "已对齐"
-    }
-  ],
+  "conflicts": 0,
+  "conflictRows": [],
   "sectionRows": [
     {
       "name": "八十四、第 184 批新登记的官方行为（2026-10-09 本机钟 11:2x 开批＝纯盘上静态批＝工单三族＋记账两枚＝本线零发送零桥零屏幕零写入零网络⇒ `manifest.jsonl` 行数不变＝净新增 9 条＝G1475—G1483＝☆ 全部读数落在 `_harvest/js/` 的 105 份官方包体（主包 `index-DiTmKH3z.js` 6,864,717 B／6,844,206 字符，mtime 2026-09-30）＝★ **包体字节漂移**：历批 87—96 的 `len 6,841,180`（b87 快照）与本批现量 6,844,206 差 **+3,026**，那批的 @offset 锚的是**当时的干净原件面**（Temp 原件，91 批已清、只在 b87—b96 的 json 快照转义面存续）＝✎ **同批后段翻案（11:4x）**：漂移成因判死＝**盘上 `js/` 拷贝的编码损伤**（真符号 ⌃⌥⇧⌘ 在盘上 0 枚、`鈥`361／`鈱`7／`鈬`3＝UTF-8 被 GBK 误读的在册家族；ASCII 面逐字相同＝非官方换构建）＝+3,026 是乱码展开的累计、不是代码插入；⇒ 采集线规矩改写＝**从 `_harvest/js/` 逐字引用非 ASCII 一律不可信**（与 i18n-zh.tsv 同族），ASCII 针与偏移不受影响；本批 @offset 全部是**现字节面**的字符坐标）",
@@ -2832,7 +2719,7 @@
       "cols": 6,
       "id": "G95",
       "official": "通知类型是**封闭 6 集**：`comment_mention` `comment` `comment_resolved` `block_mention` `share_page_comment` `document_access_request` ⇒ @文档 与 @人 是两类通知",
-      "local": "✎ 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否 @ 分成 `comment_mention`／`comment`；解决线程发 `comment_resolved`；编辑请求发 `document_access_request`；`block_mention`（@区块/文档）与 `share_page_comment`（公开页评论）本仓无对应输入面（提及仅人员、公开页只读）⇒ N/A。单测覆盖 kind 与解决事件。",
+      "local": "✎ 现读（2026-11-09，第 504 批）：评论通知按是否 @ 分成 `comment_mention`／`comment`；解决线程发 `comment_resolved`；编辑请求发 `document_access_request`；提及输入限于人员，公开页为只读，因此 `block_mention` 与 `share_page_comment` 按 N/A 处理。单测覆盖 kind 与解决事件（`comment-notifications.test.ts`）。",
       "verdict": "☆ 已清（第 157 批）",
       "score": "2/2",
       "extra5": "☆ 原判（2026-10-31 现读后作废）＝无通知模型、无通知中心（`src` 下无任何 notif 文件）",
@@ -2842,7 +2729,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -2851,7 +2738,7 @@
       "cols": 5,
       "id": "G96",
       "official": "任务列表视图权威四档 `inbox / today / upcoming / all`（zod `listType`，AI 缺省补 `all`）+ 日历分节五档 `ongoing/day/remainingDaysInMonth/month/later`（含\"ongoing 段含过去未完成项、过去段只放已完成/已取消\"的语义）",
-      "local": "`src/app/(app)/tasks/page.tsx` 单页无档位；日历页无五档分节语义 ⇒ ✎ 现读（2026-11-02）：四档列表已落——`/tasks`（inbox）/`/tasks/today`/`/tasks/upcoming`/`/tasks/all` 各有路由，`TasksView` 顶部四枚组切换，upcoming 另有 7/30/all 窗口；日历仍只有 `day`/`range` 两型分节，缺 ongoing/remainingDaysInMonth/month/later 五档语义 ⇒ ✎ 再读（2026-11-02 第 210 批）：**ongoing 语义已落**——过去未完成/未取消的任务收进「进行中」一节（`ongoingTasks`），过去的日期节只留已完成/已取消（`pastDayKeeps`）；day / remainingDaysInMonth（本地 `range` 并节）/ month 原已有 ⇒ ✎ 现读（2026-11-03 第 248 批）：「之后」一节已落——加载月份之后的任务收进 `later` 分节（标题取 `calendar.date.later`「之后」，无此类任务时不渲染）；浏览器实测 2027-02 任务出现在「之后」节 ⇒ 五档语义齐",
+      "local": "✎ 现读（2026-11-09，第 504 批）：四档列表已落——`/tasks`（inbox）/`/tasks/today`/`/tasks/upcoming`/`/tasks/all` 各有路由（`TasksView.tsx:65-70` 的 `GROUPS`），`TasksView` 顶部四枚组切换，upcoming 另有 7/30/all 窗口（`grouping.ts:23`）；日历五档分节齐——ongoing 语义（过去未完成/未取消收进「进行中」，过去日期节只留已完成/已取消）、day、remainingDaysInMonth（本地 `range` 并节）、month、「之后」`later` 分节（`timeline.ts:38-43`，加载月份之后的任务收进该节；浏览器实测 2027-02 任务出现在「之后」节）",
       "verdict": "已对齐",
       "score": "2/2",
       "status": "partial",
@@ -2860,7 +2747,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -3141,7 +3028,7 @@
       "cols": 5,
       "id": "G112",
       "official": "**CSV 文件块一键转集合**：`isCsvFileBlock` 守卫 + 集合名取文件名去扩展 + 正文走 `proxyUrl` 代理 + 埋点带 `state:\"start\"` 阶段",
-      "local": "无 ✎ 现读（2026-11-02）更正：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"start\"/\"success\"`）；② 解析＝`lib/collection/csv.ts` 的 `parseCsv`（RFC 4180：引号内逗号/换行/双写引号、BOM、LF 与 CRLF）；③ 落库＝`createCollectionFromCsv`（表头→属性列、每行→条目+每列值、默认属性改造成表头首列不留孤儿）；④ 入口＝附件块在 `isCsvFileBlock` 时出现「转为集合」（`data-testid=\"csv-to-collection\"`），完成后跳新集合。单测 14 条。",
+      "local": "✎ 现读（2026-11-09，第 504 批）：**已实现**。① 守卫与取名＝`lib/collection/csv-file.ts`（`isCsvFileBlock` 认 .csv/.CSV、`collectionNameFromFile` 去扩展、`csvProxyUrlFor` 走代理位、埋点 `state:\"start\"/\"success\"`）；② 解析＝`lib/collection/csv.ts` 的 `parseCsv`（RFC 4180：引号内逗号/换行/双写引号、BOM、LF 与 CRLF）；③ 落库＝`createCollectionFromCsv`（表头→属性列、每行→条目+每列值、默认属性改造成表头首列不留孤儿）；④ 入口＝附件块在 `isCsvFileBlock` 时出现「转为集合」（`data-testid=\"csv-to-collection\"`），完成后跳新集合。单测 14 条。",
       "verdict": "☆ 已清（第 128 批）",
       "score": "2/1",
       "status": "aligned",
@@ -3150,7 +3037,7 @@
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -4247,10 +4134,10 @@
       "cols": 5,
       "id": "G173",
       "official": "**固定标签**含「固定并显示所有子项」、固定数上限（`pinned.limit.reached`，数值远端）、管理入口、失败句；且与 `registries.md` 的 `tag_{pin,unpin,reorder}` 三动作互证 ✓；标签可直接进集合筛选（include/exclude tag in filter）（§四）",
-      "local": "无固定标签、无标签进筛选",
-      "verdict": "缺失",
+      "local": "✎ 现读（2026-11-09，第 504 批现读回填）＝四件齐落：① 固定/取消固定按官方成对文案＋「固定并显示所有子项」（连带全部后代）＋失败句，判据与文案集中在 `lib/browse/pinned-tags.ts:15-34`（`PINNED_TAG_LIMIT=10` 承远端 `[0]` 槽）；② 上限判据 `pinned.limit.reached` 落 `pinDecision`；③ 管理入口＝设置「标签」区「管理固定标签」（`SettingsPanels.tsx:552`）；④ 标签进集合筛选＝虚拟列『标签』取条目文档标签名、操作符走 select 档（`tag-filter.test.ts`），浏览器实测下拉出现「标签」。标签树固定位 `TagTreeList.tsx:112` 落库 `tag.pinned`",
+      "verdict": "已对齐",
       "score": "2/2",
-      "status": "gap",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -6519,7 +6406,7 @@
       "cols": 5,
       "id": "G300",
       "official": "**异步 pending 态全集是 11 条进行时句**：创建文档/文件夹/链接、删除账户/文档(单复)/邀请(单复)/导出文档/更新空间头像/更新用户（`dialogs.md` §8.5）⇒ **导出与头像更新也有独立 loading 态**",
-      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。链接创建、账户删除、邀请单复、空间头像在本仓无对应动作（无链接/空间/团队/账户删除面）⇒ N/A。",
+      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条（`lib/app/pending-states.ts:29-41`）；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。链接创建、账户删除、邀请单复、空间头像在本地项目中没有对应操作面（链接/空间/团队/账户删除入口均不引入）⇒ N/A。✎ 复读（2026-11-09 第 504 批）：上述 5 条仍在线，其余 6 条保持 N/A。",
       "verdict": "☆ 已清（第 147 批）",
       "score": "2/1",
       "status": "aligned",
@@ -6528,7 +6415,7 @@
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -9977,7 +9864,7 @@
       "cols": 5,
       "id": "G491",
       "official": "★ **断链规则是 `if (hit || !allowPropagation) break`** ⇒ 栈顶项**即便没命中也会吃掉这条键**（`allowPropagation` 默认 false），下面所有弹层与全局绑定都收不到；命中时**一项内只跑第一条 keyDef**（`break`）（§十四 2 条 2）",
-      "local": "无该语义（5 处监听彼此独立，各自判键）⇒ 本地\"多层弹层 + 全局快捷键\"必然互相干扰（与 G456/G471/G478 同一根因，本批给出算法）；✎ 现读（2026-11-03 第 238 批）：已实现 — `dispatch` 逐层自顶向下，命中只跑第一条 keyDef 并停；未命中且 `allowPropagation=false` 也停（不触碰默认行为，输入不受影响）；9 例单测覆盖",
+      "local": "未接该语义（5 处监听彼此独立，各自判键）⇒ 本地\"多层弹层 + 全局快捷键\"必然互相干扰（与 G456/G471/G478 同一根因，本批给出算法）；✎ 现读（2026-11-03 第 238 批）：已实现 — `dispatch` 逐层自顶向下（`lib/focus/focus-stack.ts:53-68`），命中只跑第一条 keyDef 并停；未命中且 `allowPropagation=false` 也停（不触碰默认行为，输入不受影响）；9 例单测覆盖（`focus-stack.test.ts`）。✎ 复读（2026-11-09 第 504 批）：断链规则 `if (hit || !entry.allowPropagation) return hit` 与官方 `if (hit || !allowPropagation) break` 同构，仍在。",
       "verdict": "已对齐",
       "score": "2/2",
       "status": "aligned",
@@ -9986,7 +9873,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -10193,16 +10080,16 @@
       "cols": 5,
       "id": "G503",
       "official": "★ **`cropMask` 序列化成 `\"x|y|w|h\"` 竖线字符串**，解析**全有或全无**（任一分量非法 ⇒ 整块 mask 为 `null`，不部分接受）；封面同时存**处理后**与**原始**两套尺寸（`aspectRatio/imageWidth` 与 `rawAspectRatio/rawImageWidth`）（§一之十五 4/6）",
-      "local": "`grep -rn \"cropMask|aspectRatio\" src` ⇒ **0 命中** ⇒ 本地既无裁剪框、也不区分\"用户裁过的尺寸\"与\"原图尺寸\"；✎ 现读（2026-11-03 第 246 批）：图片块已按同形补齐——`cropMask` 用竖线串、解析全有或全无，节点并列保存处理后/原始两套尺寸，帧变化时写 mask；封面侧的裁剪框仍未做",
+      "local": "`grep -rn \"cropMask|aspectRatio\" src` 曾 ⇒ **0 命中**；✎ 现读（2026-11-03 第 246 批）：图片块已按同形补齐——`cropMask` 用竖线串、解析全有或全无，节点并列保存处理后/原始两套尺寸，帧变化时写 mask；✎ 复读（2026-11-09 第 504 批）：封面侧同落——`lib/editor/image-crop.ts:20-29` `parseCropMask` 逐分量全有或全无（任一非法 ⇒ 整块 `null`）、`:31-35` `serializeCropMask` 产 `\"x|y|w|h\"` 竖线串、`:52-53` `cropMaskForFrame`，`DocumentEditor.tsx:519` 与 `StyleTab.tsx:501,510` 在封面帧变更时同写 `coverFrame`＋`coverCropMask`，即封面裁剪框实际落库；单测 `image-crop.test.ts`。",
       "verdict": "已对齐",
       "score": "2/2",
-      "status": "partial",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -12032,7 +11919,7 @@
       "cols": 5,
       "id": "G605",
       "official": "★★★ **任务\"从列表消失\"是本地剪枝，不是服务端删块**：`hb()` 重建 `taskBlocks` 时，**新结果里没有但带 `taskData.schedule` 或 `taskData.deadline` 的任务块被保留**，其余剔除；且 `zW()` 先跳过三类特殊文档（`isRestrictedTaskDocument` ‖ `id===inboxDocumentId` ‖ `id===logbookDocumentId`）⇒ ★ **收件箱与日志本各是一篇真实文档**（id 存在 store 里）",
-      "local": "✎ 现读（2026-11-07 第 4a 批）：查询层分组替代 store 层剪枝——`tasksForGroup` 按 `scheduleDate` 分「未归档／今天／即将进行／所有任务」，排期空缺的任务落未归档、今天与即将进行只收排期命中的行（`lib/task/grouping.ts:34`），与官方只保留带排期/截止块的可观察结果一致；收件箱/日志本真实文档属 G109 的 logbook 归档面；☆ 原判（2026-10-31 现读后作废）＝本地每次全量查库 ⇒ 该规则**当前不显形**；但一旦加分页/增量（G604），无此规则会出现\"勾掉或有排期的任务从视图里消失\" ⇒ 记为**上分页后必显形的风险项**；`inboxDocumentId|logbookDocumentId|isRestrictedTaskDocument` 在 `src` 未检索（不断言本地无此概念）",
+      "local": "✎ 现读（2026-11-09 第 504 批）：任务视图通过 `tasksForGroup` 按 `scheduleDate` 分「未归档／今天／即将进行／所有任务」，排期空缺的任务归未归档，今天与即将进行只收排期命中的行（`lib/task/grouping.ts:34`）；收件箱/日志本真实文档属 G109 的 logbook 归档面。官方 `hb()` 的本地剪枝及三类特殊文档 ID 不构成本地当前查询路径，`src` 未检得 `inboxDocumentId`、`logbookDocumentId` 或 `isRestrictedTaskDocument`；当前全量查库下用户可观察分组一致，分页/增量时再核验剪枝行为。",
       "verdict": "已对齐（实现层不同）",
       "score": "2/2",
       "status": "aligned",
@@ -12041,7 +11928,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -12359,16 +12246,16 @@
       "cols": 5,
       "id": "G623",
       "official": "★ **浏览屏有批量选择模式**：⋯ 菜单第 1 项即「选择」，进入后卡片渲染复选框（`_selectionCheckbox_dhebv_367`）、工具栏换成「已选 N 项」+ 星 + 文件夹 + 垃圾桶，且**进入模式即自动选中首张卡**（本批实测）",
-      "local": "本地已补批量选择模式 ✎ 现读（2026-11-02）更正：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**；星标走 `toggleFavoriteLocal`、移动写 `folderId`、删除走软删 `deleteDocument`。入口以直接按钮呈现（浏览屏 ⋯ 菜单本仓仍未做，另见 G223）。纯核 `selection.ts` 单测 4 条。",
+      "local": "本地已补批量选择模式：`SortableDocGrid` 工具栏有「选择」；进入后卡片左上角出复选框、工具条换成「已选 N 项」+ 星标 + 移动到文件夹 + 删除 + 取消，**进入即自动选中首张卡**（`SortableDocGrid.tsx:93-96`、选择条 `:204-236`）；星标走 `toggleFavoriteLocal`、移动写 `folderId`、删除走软删 `deleteDocument`。入口以直接按钮呈现（浏览屏 ⋯ 菜单本仓缺该入口，另见 G223）。纯核 `selection.ts` 单测 4 条。✎ 复读（2026-11-09 第 504 批）：选择条与自动选中首卡仍在（`selection.ts` 供状态机）。",
       "verdict": "☆ 已清（第 154 批）",
       "score": "2/1",
-      "status": "partial",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -13584,7 +13471,7 @@
       "cols": 5,
       "id": "G691",
       "official": "★★ **`collections create` 的 `--title` 不是集合名**：`--name` 才是集合名，★ `--title <columnName>` 是**行标题列的名字**（默认 `Title`），并警告「不要把行标题建成常规列，否则行显示 `(untitled)` 且名字被塞进侧列」；☆ 集合必带 `--document <rootBlockId>`（即集合是**插进某篇文档的块**），`--position start|end` 默认 end",
-      "local": "本地 `Collection.name`（默认「未命名集合」）＋ 行标题走 `CollectionItem.documentId` 关联的文档标题 ⇒ ★ 方向一致（行＝文档）；✎ 现读（2026-11-03 第 221 批）：**标题列名可自定义**已落——`Collection.titleColumn` 默认 `Title`，集合 ⋯ 菜单「重命名标题列」写入，表头首列（首个文本属性）显示该名；仍差官方「集合是插进文档的块」（`--document <rootBlockId>` 与 `--position start|end`）这一层 ⇒ ✎ 现读（2026-11-04 第 279 批）：**集合就是文档里的一块**已屏上实点＝插入面板「合集 → 表格」当场建出集合对象并把 `collectionBlock` 节点插进正文（DOM 上 `.node-collectionBlock` 带 `/collections/<id>` 链接），**刷新后仍在**；库里该文档 `content` 同时含 `collectionBlock` 与该集合 id（＝官方 `--document <rootBlockId>` 那一层），集合行 `name=表格集合`、`titleColumn=Title`（＝官方 `--title` 的默认值）、1 视图 1 字段；官方那句「别把行标题建成常规列、否则显示 `(untitled)`」的对应面＝本地首列显示 `titleColumnLabel`（行标题仍由 `documentId` 关联的文档标题承担，没有\"把标题另建一列\"的通路）。`--position start|end` 是 CLI 参数（默认 end），交互侧无对应入口 ⇒ 按 CLI 面记 N/A，插入落点由光标决定",
+      "local": "本地 `Collection.name`（默认「未命名集合」）＋ 行标题走 `CollectionItem.documentId` 关联的文档标题 ⇒ ★ 方向一致（行＝文档）；✎ 现读（2026-11-03 第 221 批）：**标题列名可自定义**已落——`Collection.titleColumn` 默认 `Title`，集合 ⋯ 菜单「重命名标题列」写入，表头首列（首个文本属性）显示该名；仍差官方「集合是插进文档的块」（`--document <rootBlockId>` 与 `--position start|end`）这一层 ✎ 现读（2026-11-04 第 279 批）：**集合就是文档里的一块**已屏上实点＝插入面板「合集 → 表格」当场建出集合对象并把 `collectionBlock` 节点插进正文（DOM 上 `.node-collectionBlock` 带 `/collections/<id>` 链接），**刷新后仍在**；库里该文档 `content` 同时含 `collectionBlock` 与该集合 id（＝官方 `--document <rootBlockId>` 那一层），集合行 `name=表格集合`、`titleColumn=Title`（＝官方 `--title` 的默认值，`lib/collection/title-column.ts:7-19`）、1 视图 1 字段；官方那句「别把行标题建成常规列、否则显示 `(untitled)`」的对应面＝本地首列显示 `titleColumnLabel`（行标题仍由 `documentId` 关联的文档标题承担，标题不被另建成一列）。`--position start|end` 是 CLI 参数（默认 end），交互侧没有该入口 ⇒ 按 CLI 面记 N/A，插入落点由光标决定。✎ 复读（2026-11-09 第 504 批）：`titleColumn` 默认值与 `titleColumnLabel` 仍在（`title-column.ts:7-19`）。",
       "verdict": "已对齐",
       "score": "2/1",
       "status": "aligned",
@@ -13593,7 +13480,7 @@
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -23189,7 +23076,7 @@
       "cols": 5,
       "id": "G1223",
       "official": "★★ **官方换档时有两条本地没有的 DOM 副作用**＝逐字（`index` @5,189,1xx 的 `vn` 类体内）`document.querySelector(\"meta[name='theme-color']\")?.setAttribute(\"content\",_t.background(e))` ＋ `document.documentElement.style.setProperty(\"color-scheme\",e?\"dark\":\"light\")` ⇒ ⇒ ★ 前者让**浏览器 UI（标签页／地址栏）跟着主题变色**，后者影响**原生滚动条／表单控件配色**（与第 112 批那组\"滚动条常量受 `isScrollbarPersistent` 门控\"是同一条链的下游）；⇒ ☆ 另同一段还有一条 `finalCalcDarkMode()`＝`systemDarkMode` → 存储值覆盖 → flag 再覆盖 → `calcDarkMode(e)` ⇒ 与 store 侧 `Ik()` 四级优先级**同构但顺序不同**（这条把 `calcDarkMode` 放在 flag 之前）⇒ ☆ 记为\"两份实现顺序漂移\"第 N 例",
-      "local": "本轮实扫＝`src/app/layout.tsx` 与 `src/app/globals.css` **都没有** `color-scheme` 与 `theme-color` 的处理 ⇒ ★ 新 gap 行（本地两条都缺，且都是一行改动的量级）⇒ ✎ **第 116 批实测否证了这条判据的一半**＝\"`grep` 零命中\"推不出\"行为上没有\"（next-themes 初始化脚本逐字 `d.style.colorScheme=n` 代写 inline，实测亮／暗＝`light`／`dark`）⇒ 只缺 `theme-color` ✎ 现读（2026-11-02）：`ThemeProvider` 新增 `ThemeColorWriter`——按解析后的明暗读页面计算底色，创建/更新 `meta[name=\"theme-color\"]`；`color-scheme` 仍由 next-themes 写入。接线断言见 `theme-color-meta.test.ts`（未做浏览器标签栏实拍）。",
+      "local": "本轮实扫＝`src/app/layout.tsx` 与 `src/app/globals.css` **都没有** `color-scheme` 与 `theme-color` 的处理 ⇒ ★ 新 gap 行（本地两条都缺，且都是一行改动的量级）⇒ ✎ **第 116 批实测否证了这条判据的一半**＝\"`grep` 零命中\"推不出\"行为上没有\"（next-themes 初始化脚本逐字 `d.style.colorScheme=n` 代写 inline，实测亮／暗＝`light`／`dark`）⇒ 只缺 `theme-color` ✎ 现读（2026-11-02）：`ThemeProvider` 新增 `ThemeColorWriter`——按解析后的明暗读页面计算底色，创建/更新 `meta[name=\"theme-color\"]`；`color-scheme` 仍由 next-themes 写入。接线断言见 `theme-color-meta.test.ts`。✎ 复读（2026-11-09 第 504 批浏览器实测）：localhost:3000 文档页 `document.documentElement.style.colorScheme === \"dark\"`、`meta[name=\"theme-color\"]` content 随解析主题更新为 `lab(11.26 0 -0.00000596046)`，两条官方 DOM 副作用均在线（`ThemeProvider.tsx:149-164`）。",
       "verdict": "☆ 已清（第 171 批）",
       "score": "2/2",
       "status": "partial",
@@ -23198,7 +23085,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -23279,7 +23166,7 @@
       "cols": 5,
       "id": "G1228",
       "criteria": "★★ **列表种类判据＝逐字 `OJ=t=>{if(t.type.startsWith(\"bullet_list_\"))return t.markup===\"+\"?\"toggle\":\"bullet\";if(t.type.startsWith(\"ordered_list_\"))return\"numbered\";if(t.type.startsWith(\"todo_list_\"))return\"todo\"}`** ⇒ ★★★ 用 **`+` 号弹出来的项目符号＝toggle（可折叠）列表**＝第 114 批 flavour 里 `toggleListStyle:\"+ \"` 那条的**导入侧反向判据**（此前只有写侧一个字符串常量，现在有了\"怎么认出来\"）；⇒ 四档词表＝`toggle`／`bullet`／`numbered`／`todo`（不是 `ordered`／`taskList`）",
-      "local": "`grep -n toggle src/lib/import/markdown.ts` ⇒ **0 命中**＝本地把 `-`／`+`／`*` 一律读成 `bulletList`；本地 toggle 节点是另一个东西（`src/lib/document-codec/index.ts` 的 `toggleBlock`），**导入侧无入口** ✎ 现读（2026-11-02）：G674 的 Markdown 导入已加行首 `+ ` → `toggleBlock` 分支（缩进子行收进折叠块内容）；`-`／`*` 仍按项目符号解析 ⇒ `+` 与 `-` 在导入侧已是两种列表。",
+      "local": "✎ 现读（2026-11-02）：G674 的 Markdown 导入已加行首 `+ ` → `toggleBlock` 分支（缩进子行收进折叠块内容）；`-`／`*` 仍按项目符号解析 ⇒ `+` 与 `-` 在导入侧已是两种列表。✎ 复读（2026-11-09 第 504 批）：分支仍在 `lib/import/markdown.ts:406`，`+ ` 映射为 `toggleBlock`（类型字面 `toggleBlock`，与官方 `toggle` 同义；原「导入侧没有入口」的旧读由本条作废）。",
       "verdict": "☆ 已清（第 171 批）",
       "score": "2/2",
       "status": "aligned",
@@ -23288,7 +23175,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -28836,7 +28723,7 @@
       "cols": 5,
       "id": "G1543",
       "official": "⌘K / Ctrl-K 唤出的是「**跳转到**」面板（`interactions.md` V1／V2／V6；`ui-affordances.md` §四 两条修正：`command-palette-button` + `command-menu` 是**另一个**入口）",
-      "local": "✎ 现读（2026-11-07 第 5a 批）：Ctrl-K 已只留「跳转到」面板（搜索/跳转/创建行），输入框 placeholder 改为官方逐字「打开」（`CommandPalette.tsx:291`），面板本身是 top-1/3 浮层（`ui/command.tsx`）；`role=dialog` 是本地无障碍承载（官方无此 role），条目「在……空间中」前缀无宿主（本项目不引入 space 实体）⇒ 两处按载体差/无宿主处理",
+      "local": "✎ 现读（2026-11-07 第 5a 批）：Ctrl-K 已只留「跳转到」面板（搜索/跳转/创建行），输入框 placeholder 改为官方逐字「打开」（`CommandPalette.tsx:307`），面板本身是 top-1/3 浮层（`ui/command.tsx`）；`role=dialog` 是本地无障碍承载（官方没有该 role），条目「在……空间中」前缀没有宿主（本项目不引入 space 实体）⇒ 两处按承载方式不同/缺少宿主处理。✎ 复读（2026-11-09 第 504 批）：placeholder「打开」仍在 `CommandPalette.tsx:307`。",
       "verdict": "已对齐（载体差＋无宿主项）",
       "score": "2/2",
       "status": "aligned",
@@ -28845,7 +28732,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -29396,7 +29283,7 @@
       "cols": 5,
       "id": "G1574",
       "official": "★★★ **任务行的**键盘可达性**两侧不同：本地点任务行后焦点落在 `body`，表 D 的整族键位（`↑/↓` 选行、`⏎` 编辑、`Space` 勾选、`Ctrl-Alt-T` 完成）**没有作用对象**；官方同一序列把任务完成掉了**（第 312 批，`Ctrl-Alt-T` 逐句实测）：官方建一条 `TASKKEY` → 点任务文本（焦点落 `DIV`）→ `Ctrl-Alt-T` ⇒ **REST 读回 `- [x] TASKKEY`**（任务确实变成完成态）；本地同序列后任务仍是 `todo`、`aria-checked` 仍 `false`、`document.activeElement.tagName === \"BODY\"`。★ 本地**不是不能完成**：点那枚 `<span role=\"checkbox\" aria-checked>` 就能完成（实测列表 `aria-checked=false` 由 18→17、该任务从 todo 列表消失）⇒ 缺的只是**键盘通路**。★★ 一条方法学教训：官方的\"完成\"会让任务**离开 todo 列表** ⇒ 屏幕上\"没变化\"是**假阴性**，本批第一轮就误判过一次，靠 REST 读回才纠正 ✎ **第 319 批补强**：官方任务行实测是**可聚焦的 `div[role=\"button\"]`**（点击后 `document.activeElement` 即它），且 `Space` 能把它切成完成态（REST 读回 `state:\"done\"`／markdown 变 `- [x]`；连按两下才落定，第一下把焦点交回 `body`）⇒ 两侧差别不只是\"能不能点中\"，是**本地根本不给行 `role`/`tabindex`**。 ✎ **第 386 批补 `DELETE` 一族（表 D 的 `⌫`／`del`）**：官方任务屏上——点行后焦点是 **`div[role=\"button\"]`**，此时按 **`⌫` 任务仍在**（REST 读回三条不变）；**再点一次进编辑态（焦点 `TEXTAREA`）后按 `Delete`，任务消失**（读回剩两条）⇒ **删除要先进编辑态**，不是行级快捷键。★ 边界：`⌫` 那次没删掉，**不能**断言\"行上 ⌫ 无效\"（可能与\"第一下被吃\"同族，本批没复测第二下）。",
-      "local": "本地对照＝任务行未设可聚焦属性（点击后 `activeElement` 是 `body`）；完成态载体是 `span[role=\"checkbox\"][aria-checked]`（base-ui checkbox），鼠标可点、键盘无绑定 ✎ 现读（2026-11-02）：任务行容器已改 `role=\"button\" tabIndex=0`，聚焦后 `Space` 或 `Ctrl/⌘-Alt-T` 把任务勾成完成态（`task-row-key.ts` 判定）。单测 3 条。",
+      "local": "本地对照＝任务行曾只靠 `span[role=\"checkbox\"][aria-checked]`（base-ui checkbox）承载完成态，鼠标可点、键盘缺通路 ✎ 现读（2026-11-02）：任务行容器已改 `role=\"button\" tabIndex=0`（`TasksView.tsx:778-779`），聚焦后 `Space` 或 `Ctrl/⌘-Alt-T` 把任务勾成完成态（`task-row-key.ts` 判定，`lib/task/task-row-key.ts:1-27`）。单测 3 条。✎ 复读（2026-11-09 第 504 批）：行聚焦与键位判定仍在。",
       "verdict": "☆ 已清（第 163 批）",
       "score": "2/2",
       "status": "aligned",
@@ -29405,7 +29292,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {
@@ -30062,7 +29949,7 @@
       "cols": 5,
       "id": "G1611",
       "official": "★★★★ **表格上限 = **15 列 × 50 行**，且超限时给的是**块内提示**而不是对话框**（第 391 批，`alert.table.size.limit.reached` 的 `[0]`/`[1]` 首次读到实值）：REST 先塞一张 **1×40** 的表（服务端**接受**了 40 列），进编辑器后在 `c0` 格按 `Ctrl-Shift-⏎` ⇒ 列数**停在 40 不变**，同时正文出现逐字 **「已达到表格大小限制（15 列，50 行）」＋「尝试多个较小的表格吗？」**、`role=\"dialog\"` **为 0** ⇒ **是内联提示、不弹窗**",
-      "local": "本地：无上限提示（`G1577` 记本地表格键整族无绑定 ⇒ 连\"加到上限\"这条通路都走不到）。✎ 现读（2026-11-03 第 222 批）：已实现 — `lib/collection/limits.ts` 定 15 列／50 行／750 格三条件，`table-utils.insertTableAxis` 与 `craft-keymap` 在插入前拦截，超限弹官方句「已达到表格大小限制（15 列，50 行）」＋「尝试多个较小的表格吗？」4 秒（行轴越线用「你不能添加多于 50 行。」）",
+      "local": "✎ 现读（2026-11-03 第 222 批）：已实现 — `lib/collection/limits.ts:47-49` 定 `MAX_TABLE_COLS=15`／`MAX_TABLE_ROWS=50`／`MAX_TABLE_CELLS=750` 三条件，`table-utils.insertTableAxis` 与 `craft-keymap` 在插入前拦截，超限给块内内联提示官方句「已达到表格大小限制（15 列，50 行）」＋「尝试多个较小的表格吗？」4 秒（行轴越线用「你不能添加多于 50 行。」），不弹 `role=\"dialog\"`。原判「本地缺上限提示」与 G1577「表格键整族未接键位」的旧读均由第 222 批实现作废。✎ 复读（2026-11-09 第 504 批）：三常量仍在 `limits.ts:47-49`。",
       "verdict": "已对齐",
       "score": "2/2",
       "status": "aligned",
@@ -30071,7 +29958,7 @@
         "cost": 2,
         "raw": "2/2"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {

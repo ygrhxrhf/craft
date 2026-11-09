@@ -132,21 +132,7 @@
 
 | G号 | 行 | 当前状态 | 冲突 | 本地列摘要 |
 | --- | --- | --- | --- | --- |
-| G95 | 1242 | 已对齐 | local-says-missing | 现读（2026-10-31）更正：有通知表与铃铛（四类），缺官方六类 ✎ 现读（2026-11-02）：评论通知按是否  |
-| G96 | 1243 | 已对齐 | local-says-missing | src/app/(app)/tasks/page.tsx 单页无档位；日历页无五档分节语义 ⇒ ✎ 现读（2026-11 |
-| G112 | 1263 | 已对齐 | local-says-missing | 无 ✎ 现读（2026-11-02）更正：已实现。① 守卫与取名＝lib/collection/csv-file.ts（ |
-| G173 | 1367 | 已对齐 | local-says-missing | 无固定标签、无标签进筛选 |
-| G300 | 1582 | 已对齐 | local-says-missing | 本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：PENDING_STATES 逐字 11 条；已接「正在 |
-| G491 | 1927 | 已对齐 | local-says-missing | 无该语义（5 处监听彼此独立，各自判键）⇒ 本地"多层弹层 + 全局快捷键"必然互相干扰（与 G456/G471/G47 |
-| G503 | 1946 | 已对齐 | local-says-missing | grep -rn "cropMask\|aspectRatio" src ⇒ 0 命中 ⇒ 本地既无裁剪框、也不区分"用户 |
-| G605 | 2206 | 已对齐 | local-says-missing | 现读（2026-11-07 第 4a 批）：查询层分组替代 store 层剪枝——tasksForGroup 按 sch |
-| G623 | 2243 | 已对齐 | local-says-missing | 本地已补批量选择模式 ✎ 现读（2026-11-02）更正：SortableDocGrid 工具栏有「选择」；进入后卡片 |
-| G691 | 2473 | 已对齐 | local-says-missing | 本地 Collection.name（默认「未命名集合」）＋ 行标题走 CollectionItem.documentI |
-| G1223 | 3905 | 已对齐 | local-says-missing | 本轮实扫＝src/app/layout.tsx 与 src/app/globals.css 都没有 color-sche |
-| G1228 | 3937 | 已对齐 | local-says-missing | grep -n toggle src/lib/import/markdown.ts ⇒ 0 命中＝本地把 -／+／* 一 |
-| G1543 | 5522 | 已对齐 | local-says-missing | 现读（2026-11-07 第 5a 批）：Ctrl-K 已只留「跳转到」面板（搜索/跳转/创建行），输入框 place |
-| G1574 | 5553 | 已对齐 | local-says-missing | 本地对照＝任务行未设可聚焦属性（点击后 activeElement 是 body）；完成态载体是 span[role=" |
-| G1611 | 5591 | 已对齐 | local-says-missing | 本地：无上限提示（G1577 记本地表格键整族无绑定 ⇒ 连"加到上限"这条通路都走不到）。✎ 现读（2026-11-0 |
+
 
 ## 十、待重扫
 

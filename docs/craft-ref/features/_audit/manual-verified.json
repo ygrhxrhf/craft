@@ -8437,17 +8437,21 @@
     },
     "G1000": {
       "status": "nonaction",
-      "note": "官方永久清除执行记录与判据；本地另有 emptyTrash 通路",
+      "note": "官方永久清除执行记录与五判据复核（仪器面）。本地通路的旧账（\"回收站屏只有还原\"）已由 60cc5fcb 结清：TrashList 选择条「永久删除所选」调 permanentDeleteDocument、⋯ 菜单「清空最近删除」调 emptyTrash。",
       "evidence": [
-        "src/actions/document/delete.ts:64"
+        "src/components/document/TrashList.tsx:126",
+        "src/components/document/TrashList.tsx:390",
+        "src/actions/document/delete.ts:58"
       ]
     },
     "G1001": {
-      "status": "gap",
-      "note": "现读（2026-11-09）：Task.document onDelete SetNull（contract.prisma:530），permanentDeleteDocument 只删 Document、全函数无 Task 写入（delete.ts:40-55）⇒ 任务行留下成孤儿，与官方「连行一并抹掉」相反。",
+      "status": "aligned",
+      "note": "现读（2026-11-09）已补齐：级联档仍是 Task.document SetNull（contract.prisma:530），改在删除动作里先圈任务行后删文档——deleteTasksOfDocuments 按 documentId.in([...]) 选 id 集合再 deleteAndCount，permanentDeleteDocument 与 emptyTrash 两个永久删除入口都接了，广播点名 task/notification。软删刻意不动（官方软删保留行、屏上由 getTasks 过滤）。证据：真 ORM 用例 permanent-delete.test.ts 四条 + 假 ORM 单测 delete.test.ts 四条级联例。",
       "evidence": [
-        "src/prisma/contract.prisma:530",
-        "src/actions/document/delete.ts:48"
+        "src/actions/document/delete.ts:47",
+        "src/actions/document/permanent-delete.test.ts",
+        "src/actions/document/delete.test.ts",
+        "src/prisma/contract.prisma:530"
       ]
     },
     "G1002": {

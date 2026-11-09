@@ -2173,13 +2173,12 @@
       ]
     },
     "G172": {
-      "status": "partial",
-      "note": "现读（2026-11-09）：hideHashTagWords 只有发布页签一处——document_share 实列（contract.d.ts:445）＋「在公开页隐藏 # 标签词」开关（ShareDialog.tsx:741、share.ts:42/74、publish-settings.ts:34/51）；官方说的是标签设置里的控件，本地标签面板只有「使用标签」一枚开关，无「隐藏以 # 开头的词语」控件。",
+      "status": "aligned",
+      "note": "第 505 批现读（2026-11-10）：官方证据校正——「隐藏以 # 开头的词语」是发布面板「视觉选项」组里 hideHashTagWords 开关的标签（ShareSheet bundle），不是标签设置控件；tags.hide.tags 无渲染调用。本地同槽位开关已落，文案本批改为官方逐字；本地标签面板只有「使用标签」，与官方一致。",
       "evidence": [
         "src/components/share/ShareDialog.tsx:741",
-        "src/lib/share/publish-settings.ts:34",
-        "src/components/settings/SettingsPanels.tsx:875",
-        "src/lib/browse/tag-visibility.ts:20"
+        "docs/craft-ref/features/_harvest/js/ShareSheet-DVttiwLH.js",
+        "docs/craft-ref/features/tags-browse.md:34"
       ]
     },
     "G199": {

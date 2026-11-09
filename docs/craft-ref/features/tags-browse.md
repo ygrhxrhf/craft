@@ -31,7 +31,7 @@
 
 `ignore.list`「忽略列表」+ desc「**这里的任何内容都不会出现在你的标签列表中，即使带有 #**」；对规则本身有完整 CRUD：`add.custom.rule` / `add.ignore.rule` / `edit.rule` / `edit.ignore.rule` / `delete.rule` + 确认 `delete.rule.message`「你确定要删除"[0]"吗？」+ 输入项 `text.to.ignore`；命中后可见来源 `tag.ignored.by.custom.rule.x`「被自定义规则忽略的标签：[0]」；添加后提示 `tag.added.to.the.ignore.list`「标签已添加到忽略列表。你可以在"设置"中管理它」⇒ **从标签上直接"忽略"再回设置管理**是条双向路径。
 
-**交叉验证成功** ✓✓：`hide.word.with.hashtag`「隐藏以 # 开头的词语」/ `hide.tags`「隐藏标签」正是 `publishing.md` §一 里那个**只在代码里出现、发布文案里没有对应句**的 `hideHashTagWords` 字段的界面标签 —— 上一节的遗留项在此结案。
+**交叉验证成功** ✓✓（2026-11-10 校正）：`hide.word.with.hashtag`「隐藏以 # 开头的词语」是 `publishing.md` §一 里 `hideHashTagWords` 字段的界面标签，但**渲染位置在发布/共享面板的「视觉选项」组**（`ShareSheet-DVttiwLH.js`：紧邻 `toolbar.show.presentation.mode`、组标题 `toolbar.visual.options`），不在标签设置；`tags.hide.tags`「隐藏标签」在所有 bundle 中只有词典一条、无渲染调用。上一节的遗留项（"代码有、文案无"）在此结案。
 
 ## 四、固定标签（pinned）与筛选联动 ✓
 

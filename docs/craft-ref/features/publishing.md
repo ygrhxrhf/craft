@@ -22,7 +22,7 @@
 | `showDuplicateAsTemplate` | `false` | 访客可否**把本页当模板复制**（`visitors.can.duplicate.desc`「可以将内容复制到他们的空间中」）——默认关闭 |
 | `emailBasedAccessEnabled` | `false` | 邮箱/域名访问限制 |
 | `defaultDomain` | `undefined` | 域名档（见下） |
-| `hideHashTagWords` | `false` | **是否在公开页隐藏 # 标签词**（100 条文案里没有对应句，纯代码字段）⇒ 第 14 个可见开关藏在代码里 |
+| `hideHashTagWords` | `false` | 控制是否隐藏以 `#` 开头的词语；官方界面文案为「隐藏以 # 开头的词语」，在发布面板的「视觉选项」中显示 |
 
 **域名三档**（`$a()` 映射）✓：`default-craft` → "craft"（`craft.me`）/ `custom-craft`（自定义 Craft 域，需 Plus）/ `external`（外部域名，需 Business）。
 
@@ -80,7 +80,7 @@
 ## 七、仍未覆盖
 
 1. `expirationDate` 的具体档位（几天/自定义）未在文案中，只有 `expire.on [0]` 结果句。
-2. `hideHashTagWords` 的界面标签（13 个字段里唯一没有对应文案的）——需动态在面板上找。
+2. ~~`hideHashTagWords` 的界面标签~~——已找到：`tags.hide.word.with.hashtag`「隐藏以 # 开头的词语」，渲染在发布面板「视觉选项」组（`ShareSheet-DVttiwLH.js`）。
 3. 密码保护与邮箱访问、到期三者叠加时的优先级未见约束代码。
 4. 二维码生成后是否可下载/重生成。
 5. 发布页对**集合/任务/白板**的渲染规则（只知道任务区有空态）。

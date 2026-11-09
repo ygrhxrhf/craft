@@ -738,7 +738,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
               {(
                 [
                   ['emailBasedAccessEnabled', '启用基于邮箱的访问限制'],
-                  ['hideHashTagWords', '在公开页隐藏 # 标签词'],
+                  ['hideHashTagWords', '隐藏以 # 开头的词语'],
                 ] as const
               ).map(([key, label]) => (
                 <div key={key} className="mt-3 flex items-start justify-between gap-3 rounded-md border border-border px-3 py-2.5">

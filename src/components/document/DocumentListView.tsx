@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { File } from 'lucide-react';
+import { File, Check } from 'lucide-react';
 import { cn } from 'cn';
 
 import {
@@ -50,11 +50,18 @@ export function DocumentListView({
   documents,
   sort,
   onSortChange,
+  selectable = false,
+  selectedIds,
+  onToggleSelect,
 }: {
   documents: ListDoc[];
   /** G247：列头即排序器——当前档与方向由外部持有，点列头回调上去。 */
   sort?: BrowseSortSpec;
   onSortChange?: (next: BrowseSortSpec) => void;
+  /** G1129: marquee/batch selection keeps the list layout — the row grows a checkbox. */
+  selectable?: boolean;
+  selectedIds?: ReadonlySet<string>;
+  onToggleSelect?: (id: string) => void;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const headerRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -159,13 +166,42 @@ export function DocumentListView({
         </div>
       </div>
 
-      {(sort ? sortBrowseRows(documents, sort) : documents).map((doc) => (
+      {(sort ? sortBrowseRows(documents, sort) : documents).map((doc) => {
+        const checked = selectedIds?.has(doc.id) ?? false;
+        return (
         <Link
           key={doc.id}
           href={`/documents/${doc.id}`}
+          data-item-id={doc.id}
+          aria-selected={selectable ? checked : undefined}
           style={{ height: 65 }}
+          onClick={(event) => {
+            if (!selectable) return;
+            event.preventDefault();
+            onToggleSelect?.(doc.id);
+          }}
           className="flex items-center gap-3 rounded-md px-3 transition-colors duration-150 hover:bg-foreground/[0.03]"
         >
+          {selectable && (
+            // G1138/G1555 ②: selection is read off `role=checkbox` + `aria-checked`.
+            <button
+              type="button"
+              role="checkbox"
+              aria-checked={checked}
+              aria-label={`选择 ${doc.title}`}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onToggleSelect?.(doc.id);
+              }}
+              className={cn(
+                'flex size-4 shrink-0 items-center justify-center rounded border',
+                checked ? 'border-craft-accent bg-craft-accent text-white' : 'border-foreground/30 bg-background',
+              )}
+            >
+              {checked && <Check className="size-3" />}
+            </button>
+          )}
           <div className="flex min-w-0 flex-1 items-center gap-2">
             {doc.icon ? (
               <span className="text-lg leading-none">{doc.icon}</span>
@@ -213,7 +249,8 @@ export function DocumentListView({
             {doc.createdAt ? relativeTime(doc.createdAt) : ''}
           </div>
         </Link>
-      ))}
+        );
+      })}
     </div>
   );
 }

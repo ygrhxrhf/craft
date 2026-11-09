@@ -47,8 +47,14 @@ export function DocumentCard({ document: doc, selectable = false, selected = fal
         className="group relative block rounded-xl transition-colors duration-300 hover:bg-foreground/[0.03]"
       >
       {selectable && (
+        // G1138/G1555 ②: the selection state is read off `role=checkbox` + `aria-checked`, never
+        // off a class name — the official build's `_isActive_` class is on every resting card.
+        // A span, not a button: the whole card is already an anchor, and a nested control there is
+        // invalid HTML; the anchor's own click handler is what toggles.
         <span
-          aria-hidden
+          role="checkbox"
+          aria-checked={selected}
+          aria-label={`选择 ${head.title}`}
           className={cn(
             'absolute left-2 top-2 z-[2] flex size-4 items-center justify-center rounded border',
             selected ? 'border-craft-accent bg-craft-accent text-white' : 'border-foreground/30 bg-background',

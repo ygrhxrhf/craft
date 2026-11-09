@@ -2070,11 +2070,13 @@
     },
     "G1555": {
       "status": "aligned",
-      "note": "浏览屏加拖拽框选：卡片带 data-item-id，MarqueeLayer 画固定层矩形（严格相交 + 5px 起手阈值），命中集写在容器的 data-marquee-selected。",
+      "note": "第 501 批：浏览屏框选三层齐——两档 data-item-id 寻址、hitTest 三型分派、fixed 矩形层；命中集经 onChange→setSelected 接入批量选择，松手保留。e2e 五条真浏览器取证。",
       "evidence": [
-        "src/lib/browse/marquee.ts:26",
-        "src/components/document/MarqueeLayer.tsx:20",
-        "src/components/document/DocumentCard.tsx:24"
+        "src/components/document/MarqueeLayer.tsx:176",
+        "src/components/document/SortableDocGrid.tsx:298",
+        "src/components/document/DocumentListView.tsx:175",
+        "src/lib/browse/hit-test.ts:117",
+        "e2e/marquee-selection.spec.ts"
       ]
     },
     "G1560": {
@@ -8939,12 +8941,14 @@
       ]
     },
     "G1129": {
-      "status": "partial",
-      "note": "框选基础机制已存在，但 MarqueeLayer 的容器引用指向工具栏而非卡片区，且命中结果未接入批量选择状态。",
+      "status": "aligned",
+      "note": "第 501 批：containerRef 已挂到 browse-content，空白起手斜拖即进选择模式并以命中集整体替换批量选择；松手保留。e2e 五条取证。",
       "evidence": [
-        "src/lib/browse/marquee.ts",
-        "src/components/document/MarqueeLayer.tsx",
-        "src/components/document/SortableDocGrid.tsx"
+        "src/components/document/SortableDocGrid.tsx:97",
+        "src/components/document/SortableDocGrid.tsx:121",
+        "src/components/document/SortableDocGrid.tsx:259",
+        "src/components/document/MarqueeLayer.tsx:87",
+        "e2e/marquee-selection.spec.ts"
       ]
     },
     "G1130": {
@@ -8970,26 +8974,33 @@
     },
     "G1135": {
       "status": "partial",
-      "note": "严格矩形相交、5px 起手阈值与 fixed 覆盖层已实现；边缘滚动、起手否决名单、旧选择保存/清除及 Escape 焦点注册仍缺。",
+      "note": "第 501 批：①起手否决名单 ②5px 阈值 ③边缘自动滚动(30*min(d/200,1)^1.5) ④命中集整体替换 ⑥fixed 覆盖层 ⑦dragstart/selectstart 拦截均已落地并有浏览器取证；仍缺⑤起手前选择集快照与 Escape 焦点注册表接管。",
       "evidence": [
-        "src/lib/browse/marquee.ts",
-        "src/components/document/MarqueeLayer.tsx"
+        "src/lib/browse/marquee.ts:20",
+        "src/lib/browse/marquee.ts:26",
+        "src/lib/browse/marquee.ts:73",
+        "src/components/document/MarqueeLayer.tsx:109",
+        "src/components/document/MarqueeLayer.tsx:147",
+        "e2e/marquee-selection.spec.ts"
       ]
     },
     "G1136": {
-      "status": "partial",
-      "note": "当前以 DOM 矩形统一命中；官方分型算法、文件夹独立命中、网格剪枝与瀑布流二分查找尚未实现。",
+      "status": "aligned",
+      "note": "第 501 批：hitTest 即官方 IVt 等价分派（list/cards/waterfall＋文件夹区），网格算术剪枝与瀑布流列＋二分查找已实现，单测与平扫逐例相等；几何改实时量取。",
       "evidence": [
-        "src/components/document/MarqueeLayer.tsx",
-        "src/lib/browse/marquee.ts"
+        "src/lib/browse/hit-test.ts:39",
+        "src/lib/browse/hit-test.ts:82",
+        "src/lib/browse/hit-test.ts:117",
+        "src/lib/browse/hit-test.test.ts"
       ]
     },
     "G1137": {
-      "status": "partial",
-      "note": "卡片链接外壳有 data-item-id 并用于框选收集；列表行尚未接入同样寻址，官方表格档载体未复查。",
+      "status": "aligned",
+      "note": "第 501 批：卡片与列表两档 Link 都带 data-item-id 并驱动框选收集，两档勾选载体均为 role=checkbox＋aria-checked；官方表格档载体仍属未采样本。",
       "evidence": [
-        "src/components/document/DocumentCard.tsx",
-        "src/components/document/MarqueeLayer.tsx"
+        "src/components/document/DocumentCard.tsx:36",
+        "src/components/document/DocumentListView.tsx:175",
+        "src/components/document/MarqueeLayer.tsx:62"
       ]
     },
     "G1139": {

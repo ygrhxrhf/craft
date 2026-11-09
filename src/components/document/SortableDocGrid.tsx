@@ -94,7 +94,8 @@ export function SortableDocGrid({
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [selectionBusy, setSelectionBusy] = useState(false);
-  // G1555：框选层要一个容器句柄来收集卡片矩形。
+  // G1555/G1129：框选层要一个容器句柄——它必须是**渲染条目的那个容器**，否则 `[data-item-id]`
+  //   收集不到任何卡片；早先这个 ref 挂在了工具栏上，框选因此永远零命中。
   const containerRef = useRef<HTMLDivElement | null>(null);
   // G247：列表档的列头排序是**另一套四档**（名称/上次浏览/已更新/已创建），与 ⋯ 菜单那套
   //   （name/lastViewed/created/updated）不同源，故单独持一份，互不覆盖。
@@ -115,6 +116,15 @@ export function SortableDocGrid({
   const startSelecting = () => {
     setSelecting(true);
     setSelected(enterSelection(sorted.map((doc) => doc.id)));
+  };
+  // G1135 ⑤：框选起手即进选择模式并**清空**旧选择（官方不是"选中首张"那条入口）。
+  const startMarquee = () => {
+    setSelecting(true);
+    setSelected(new Set());
+  };
+  // G1135 ④：每次移动**整体替换**命中集，不并进旧集合。
+  const replaceMarqueeHits = (hits: string[]) => {
+    setSelected(new Set(hits));
   };
   const stopSelecting = () => {
     setSelecting(false);
@@ -228,59 +238,69 @@ export function SortableDocGrid({
           </Button>
         </div>
       ) : (
-      <div
-        ref={containerRef}
-        className="mb-3 flex flex-wrap items-center gap-2"
-        data-testid="browse-sort"
-        aria-label={LAYOUT_ENTRY_LABEL}
-      >
-        <div className="ml-auto flex items-center gap-1">
-          <ViewModeSwitcher value={viewMode} onChange={pickMode} />
-          <BrowseToolbarMenu
-            sortChoice={sortChoice}
-            onSortChange={setSortChoice}
-            showDailyNotes={showDailyNotes}
-            onToggleDailyNotes={() => storeShowDailyNotes(!showDailyNotes)}
-            onSelect={startSelecting}
-          />
+        <div
+          className="mb-3 flex flex-wrap items-center gap-2"
+          data-testid="browse-sort"
+          aria-label={LAYOUT_ENTRY_LABEL}
+        >
+          <div className="ml-auto flex items-center gap-1">
+            <ViewModeSwitcher value={viewMode} onChange={pickMode} />
+            <BrowseToolbarMenu
+              sortChoice={sortChoice}
+              onSortChange={setSortChoice}
+              showDailyNotes={showDailyNotes}
+              onToggleDailyNotes={() => storeShowDailyNotes(!showDailyNotes)}
+              onSelect={startSelecting}
+            />
+          </div>
         </div>
-      </div>
       )}
 
-      {!selecting && viewMode === 'list' ? (
-        <DocumentListView
-          documents={sorted}
-          sort={browseSort}
-          onSortChange={setBrowseSort}
-        />
-      ) : !selecting && viewMode === 'waterfall' ? (
-        <div data-testid="browse-waterfall" className="columns-2 gap-5 md:columns-3 xl:columns-4">
-          {sorted.map((doc) => (
-            <div key={doc.id} className="mb-5 break-inside-avoid">
+      <div ref={containerRef} data-testid="browse-content">
+        {/* G1129：进入选择模式不换布局——官方是同一份列表上长复选框，不是跳去网格档。 */}
+        {viewMode === 'list' ? (
+          <DocumentListView
+            documents={sorted}
+            sort={browseSort}
+            onSortChange={setBrowseSort}
+            selectable={selecting}
+            selectedIds={selected}
+            onToggleSelect={(id) => setSelected((current) => toggleSelection(current, id))}
+          />
+        ) : viewMode === 'waterfall' ? (
+          <div data-testid="browse-waterfall" className="columns-2 gap-5 md:columns-3 xl:columns-4">
+            {sorted.map((doc) => (
+              <div key={doc.id} className="mb-5 break-inside-avoid">
+                <DocumentCard
+                  document={doc}
+                  selectable={selecting}
+                  selected={selected.has(doc.id)}
+                  onToggleSelect={(id) => setSelected((current) => toggleSelection(current, id))}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <BrowseGrid>
+            {sorted.map((doc) => (
               <DocumentCard
+                key={doc.id}
                 document={doc}
                 selectable={selecting}
                 selected={selected.has(doc.id)}
                 onToggleSelect={(id) => setSelected((current) => toggleSelection(current, id))}
               />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <BrowseGrid>
-          {sorted.map((doc) => (
-            <DocumentCard
-              key={doc.id}
-              document={doc}
-              selectable={selecting}
-              selected={selected.has(doc.id)}
-              onToggleSelect={(id) => setSelected((current) => toggleSelection(current, id))}
-            />
-          ))}
-        </BrowseGrid>
-      )}
-      {/* G1555：浏览屏框选层（覆盖在内容区之上，pointer-events: none）。 */}
-      <MarqueeLayer containerRef={containerRef} />
+            ))}
+          </BrowseGrid>
+        )}
+      </div>
+      {/* G1555/G1129：框选层覆盖在**条目容器**上（pointer-events: none），命中集直接进选择模式。 */}
+      <MarqueeLayer
+        containerRef={containerRef}
+        layout={viewMode === 'grid' ? 'cards' : viewMode}
+        onStart={startMarquee}
+        onChange={replaceMarqueeHits}
+      />
     </>
   );
 }

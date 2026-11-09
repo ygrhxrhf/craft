@@ -3,31 +3,72 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
+  autoScrollVelocity,
   isMarqueeDrag,
-  marqueeHits,
+  isMarqueeVetoTarget,
   rectFromPoints,
   type ItemRect,
   type Rect,
 } from '@/lib/browse/marquee';
+import { hitTest, type MarqueeLayout } from '@/lib/browse/hit-test';
+
+/** The nearest ancestor that actually scrolls — the official build hands the hook a scroll ref. */
+function findScrollParent(element: HTMLElement | null): HTMLElement | null {
+  let node: HTMLElement | null = element?.parentElement ?? null;
+  while (node) {
+    const overflow = getComputedStyle(node).overflowY;
+    if (overflow === 'auto' || overflow === 'scroll') return node;
+    node = node.parentElement;
+  }
+  return null;
+}
 
 /**
- * G1555: drag-marquee selection over the browse cards.
+ * G1555: drag-marquee selection over the browse items.
  *
- * The overlay is a fixed-position, `pointer-events: none` rectangle; the item rects are captured
- * once when the drag starts, so scrolling mid-drag cannot shift the hit test under the band.
+ * The overlay is a fixed-position, `pointer-events: none` rectangle — viewport coordinates, as the
+ * official one is. G1135 ④/⑤: a press on empty space starts the gesture, the first move past the
+ * threshold enters selection mode with the selection cleared, and every later move *replaces* the
+ * selection with the hit set.
+ *
+ * The item rects are measured at hit-test time rather than captured at the press: entering
+ * selection mode swaps the toolbar row out, which can move the content a few pixels, and auto-scroll
+ * moves it far more. Live rects follow both; a captured snapshot would need to model them.
  */
-export function MarqueeLayer({ containerRef }: { containerRef: React.RefObject<HTMLElement | null> }) {
+export function MarqueeLayer({
+  containerRef,
+  layout,
+  onStart,
+  onChange,
+}: {
+  containerRef: React.RefObject<HTMLElement | null>;
+  /** G1136: the visible layout decides which hit algorithm runs. */
+  layout: MarqueeLayout;
+  /** The drag passed the start threshold; the screen should enter selection mode. */
+  onStart?: () => void;
+  /** The live hit set — the official build replaces the selection with it on every move. */
+  onChange?: (ids: string[]) => void;
+}) {
   const [band, setBand] = useState<Rect | null>(null);
-  const [selected, setSelected] = useState<string[]>([]);
-  const start = useRef<{ x: number; y: number; items: ItemRect[] } | null>(null);
+  const start = useRef<{ x: number; y: number; started: boolean } | null>(null);
+  const pointer = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const scrollParent = useRef<HTMLElement | null>(null);
+  const frame = useRef<number | null>(null);
+  // The callbacks are re-created on every parent render (selection state changes each move), so
+  // they live in a ref — otherwise the listeners would tear down and re-add mid-drag.
+  const handlers = useRef({ onStart, onChange, layout });
+  useEffect(() => {
+    handlers.current = { onStart, onChange, layout };
+  });
 
-  const collectItems = useCallback((): ItemRect[] => {
+  const collect = useCallback((selector: 'data-item-id' | 'data-folder-id'): ItemRect[] => {
     const container = containerRef.current;
     if (!container) return [];
-    return Array.from(container.querySelectorAll<HTMLElement>('[data-item-id]')).map((element) => {
+    const attribute = selector === 'data-item-id' ? 'data-item-id' : 'data-folder-id';
+    return Array.from(container.querySelectorAll<HTMLElement>(`[${attribute}]`)).map((element) => {
       const rect = element.getBoundingClientRect();
       return {
-        id: element.dataset.itemId ?? '',
+        id: (selector === 'data-item-id' ? element.dataset.itemId : element.dataset.folderId) ?? '',
         left: rect.left,
         top: rect.top,
         width: rect.width,
@@ -39,45 +80,100 @@ export function MarqueeLayer({ containerRef }: { containerRef: React.RefObject<H
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    // G1555: the press listens on the *scroll* surface, not on the item container — in the list
+    // layout the rows fill the container edge to edge, so there is no empty space to press inside
+    // it. The official hook takes a `scrollElementRef` for exactly this.
+    const gestureTarget = findScrollParent(container) ?? container;
+    scrollParent.current = gestureTarget;
+
+    const update = (): boolean => {
+      const origin = start.current;
+      if (!origin) return false;
+      if (!isMarqueeDrag(origin, pointer.current)) return false;
+      if (!origin.started) {
+        origin.started = true;
+        handlers.current.onStart?.();
+      }
+      const next = rectFromPoints(origin.x, origin.y, pointer.current.x, pointer.current.y);
+      setBand(next);
+      // G1136: the folder region is a separate hit set in the official build. Locally folders live
+      // in the sidebar, outside this container, so that set is always empty.
+      handlers.current.onChange?.(
+        hitTest(next, {
+          layout: handlers.current.layout,
+          items: collect('data-item-id'),
+          folders: collect('data-folder-id'),
+        }),
+      );
+      return true;
+    };
+
+    const autoScroll = () => {
+      frame.current = null;
+      const parent = scrollParent.current;
+      const origin = start.current;
+      if (!parent || !origin?.started) return;
+      const bounds = parent.getBoundingClientRect();
+      // G1135 ③: 30px per frame at most, ramped in over the first 200px past the edge.
+      const velocity = autoScrollVelocity(pointer.current.y, bounds.top, bounds.bottom);
+      if (velocity !== 0) parent.scrollTop += velocity;
+      if (update()) frame.current = requestAnimationFrame(autoScroll);
+    };
 
     const onPointerDown = (event: PointerEvent) => {
-      // Only a press on empty space starts a marquee; a press on a card is a click/drag of the card.
+      // G1135 ①: a press on a card, a link, a control or a text field belongs to that thing.
       if (event.button !== 0) return;
-      const target = event.target as HTMLElement | null;
-      if (target?.closest('[data-item-id]')) return;
-      start.current = { x: event.clientX, y: event.clientY, items: collectItems() };
+      if (isMarqueeVetoTarget(event.target as Element | null)) return;
+      // The press surface starts at the items' top edge and runs to the bottom of the scroller —
+      // that is the browse area. The page header and the toolbar above it are not marquee surface.
+      const items = containerRef.current?.getBoundingClientRect();
+      if (items && event.clientY < items.top) return;
+      pointer.current = { x: event.clientX, y: event.clientY };
+      start.current = { x: event.clientX, y: event.clientY, started: false };
     };
 
     const onPointerMove = (event: PointerEvent) => {
-      const origin = start.current;
-      if (!origin) return;
-      if (!isMarqueeDrag(origin, { x: event.clientX, y: event.clientY })) return;
-      const next = rectFromPoints(origin.x, origin.y, event.clientX, event.clientY);
-      setBand(next);
-      setSelected(marqueeHits(next, origin.items));
+      if (!start.current) return;
+      pointer.current = { x: event.clientX, y: event.clientY };
+      if (update() && frame.current == null) frame.current = requestAnimationFrame(autoScroll);
     };
 
     const onPointerUp = () => {
+      // G1555 ③: the band goes away on release; the selection it produced stays.
       start.current = null;
       setBand(null);
+      if (frame.current != null) cancelAnimationFrame(frame.current);
+      frame.current = null;
     };
 
-    container.addEventListener('pointerdown', onPointerDown);
+    const onKeyDown = (event: KeyboardEvent) => {
+      // Abandons the gesture in flight; what is already selected is left as it stands.
+      if (event.key !== 'Escape' || !start.current) return;
+      onPointerUp();
+    };
+
+    // G1135 ⑦: mid-drag, a card's own drag/text-selection gesture must not take over.
+    const onGestureStart = (event: Event) => {
+      if (start.current) event.preventDefault();
+    };
+
+    gestureTarget.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('keydown', onKeyDown);
+    gestureTarget.addEventListener('dragstart', onGestureStart);
+    gestureTarget.addEventListener('selectstart', onGestureStart);
     return () => {
-      container.removeEventListener('pointerdown', onPointerDown);
+      gestureTarget.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('keydown', onKeyDown);
+      gestureTarget.removeEventListener('dragstart', onGestureStart);
+      gestureTarget.removeEventListener('selectstart', onGestureStart);
+      if (frame.current != null) cancelAnimationFrame(frame.current);
+      frame.current = null;
     };
-  }, [containerRef, collectItems]);
-
-  // The selection is exposed on the container so the surrounding screen can act on it.
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    container.dataset.marqueeSelected = selected.join(',');
-  }, [containerRef, selected]);
+  }, [containerRef, collect]);
 
   if (!band) return null;
   return (

@@ -52,7 +52,7 @@ export function TemplateCard({ document: doc }: TemplateCardProps) {
             type="button"
             onClick={handleUse}
             disabled={creating}
-            className="flex h-7 shrink-0 items-center gap-1 rounded-md border border-border px-2 text-ui transition-colors duration-150 hover:bg-foreground/4 disabled:opacity-50"
+            className="flex h-7 shrink-0 items-center gap-1 rounded-md border border-border px-2 text-ui transition-colors duration-150 hover:bg-foreground/4"
           >
             {creating ? (
               <Loader2 className="size-3 animate-spin" />

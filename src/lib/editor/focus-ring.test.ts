@@ -22,21 +22,25 @@ function ruleBody(fragment: string): string | null {
 
 describe('the focus ring is drawn with outline inside the keyboard gate', () => {
   it('gives the general rule a 1px ring at a 1.5px offset', () => {
-    expect(ruleBody("[data-whatintent='keyboard'] :focus {")).toBe(
-      'outline: 1px solid var(--craft-accent); outline-offset: 1.5px;',
-    );
+    expect(
+      ruleBody("[data-whatintent='keyboard'] :focus:not([data-static]):not([data-disabled]) {"),
+    ).toBe('outline: 1px solid var(--craft-accent); outline-offset: 1.5px;');
   });
 
   it('tucks the ring inside a control that is itself the focus target', () => {
-    expect(ruleBody("[data-whatintent='keyboard'] [data-slot='button']:focus")).toContain(
-      'outline-offset: -1px',
-    );
+    expect(
+      ruleBody(
+        "[data-whatintent='keyboard'] [data-slot='button']:focus:not([data-static]):not([data-disabled])",
+      ),
+    ).toContain('outline-offset: -1px');
   });
 
   it('gives the tab strip its own 2px ring at a -2px offset', () => {
-    expect(ruleBody("[data-whatintent='keyboard'] [role='tab']:focus")).toBe(
-      'outline: 2px solid var(--craft-accent); outline-offset: -2px;',
-    );
+    expect(
+      ruleBody(
+        "[data-whatintent='keyboard'] [role='tab']:focus:not([data-static]):not([data-disabled]) {",
+      ),
+    ).toBe('outline: 2px solid var(--craft-accent); outline-offset: -2px;');
   });
 
   it('removes the ring from the editor body, which holds focus by design', () => {

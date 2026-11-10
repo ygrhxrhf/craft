@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -11,6 +14,7 @@ import {
   marqueeHits,
   rectFromPoints,
   rectsIntersect,
+  sameIdSet,
 } from './marquee';
 
 // G1135/G1555: the marquee is a strict-intersection hit test with a start threshold.
@@ -39,6 +43,14 @@ describe('the marquee geometry', () => {
     ];
     expect(marqueeHits({ left: 0, top: 0, width: 40, height: 40 }, items)).toEqual(['a', 'c']);
   });
+
+  // G1135 ④: the official build skips the state write when the hit set did not change (`TVt`).
+  it('detects an unchanged hit set so a still drag writes no state', () => {
+    expect(sameIdSet(new Set(['a', 'b']), ['b', 'a'])).toBe(true);
+    expect(sameIdSet(new Set(['a', 'b']), ['a'])).toBe(false);
+    expect(sameIdSet(new Set(['a']), ['a', 'b'])).toBe(false);
+    expect(sameIdSet(new Set(), [])).toBe(true);
+  });
 });
 
 // G1135 ①/③: the veto selector and the 1.5-power auto-scroll ramp are verbatim official.
@@ -66,5 +78,51 @@ describe('the marquee start veto and edge auto-scroll', () => {
     expect(autoScrollVelocity(-100, 100, 900)).toBeCloseTo(-30, 6);
     // Halfway, `(100/200)^1.5 = 0.3536` — a linear ramp would say 0.5.
     expect(autoScrollVelocity(1_000, 100, 900)).toBeCloseTo(30 * Math.pow(0.5, 1.5), 6);
+  });
+});
+
+// G1135 ⑦: Escape during the drag goes through the focus registry, not a window listener, so a
+// dialog stacked above the gesture takes the key first. Pinned against the component source
+// because the wiring lives in an effect with no render surface of its own.
+describe('the band escape is registered on the focus stack', () => {
+  const source = readFileSync(
+    join(process.cwd(), 'src/components/document/MarqueeLayer.tsx'),
+    'utf8',
+  );
+
+  it('pushes the official entry id with an Escape key definition', () => {
+    expect(source).toContain("const MARQUEE_ESCAPE_ID = 'BrowseSelectionRubberBandEscape';");
+    expect(source).toContain('keyDefs: [escapeKeyDef(');
+    expect(source).toContain('allowPropagation: true');
+  });
+
+  it('removes the entry on release and on unmount, and keeps no window keydown', () => {
+    expect(source).not.toContain("window.addEventListener('keydown'");
+    expect(source.match(/focusStack\.remove\(MARQUEE_ESCAPE_ID\)/g)?.length).toBe(2);
+  });
+});
+
+// G1135 ⑤: the press records the selection it found, so an abandoned gesture can put it back.
+describe('the pre-gesture selection snapshot', () => {
+  const source = readFileSync(
+    join(process.cwd(), 'src/components/document/MarqueeLayer.tsx'),
+    'utf8',
+  );
+
+  it('records the selection on pointerdown, before the gesture clears anything', () => {
+    expect(source).toContain('preGesture.current = handlers.current.selectedIds ?? [];');
+    const pointerdown = source.slice(source.indexOf('const onPointerDown'));
+    expect(pointerdown.indexOf('preGesture.current')).toBeLessThan(
+      pointerdown.indexOf('start.current ='),
+    );
+  });
+
+  it('restores the snapshot only when the gesture picked nothing', () => {
+    expect(source).toContain('const picked = hits.current.length > 0;');
+    expect(source).toContain('if (!picked) handlers.current.onCancel?.(preGesture.current);');
+  });
+
+  it('skips the selection write when the hit set did not change', () => {
+    expect(source).toContain('if (sameIdSet(new Set(hits.current), ids)) return true;');
   });
 });

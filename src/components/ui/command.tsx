@@ -79,7 +79,7 @@ function CommandInput({
         <CommandPrimitive.Input
           data-slot="command-input"
           className={cn(
-            "w-full text-ui font-medium outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+            "w-full text-ui font-medium outline-hidden",
             className
           )}
           {...props}
@@ -160,7 +160,7 @@ function CommandItem({
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        "group/command-item relative flex h-9 cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-ui outline-hidden select-none transition-colors duration-150 in-data-[slot=dialog-content]:rounded-md! data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-foreground/4 data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:*:[svg]:text-foreground",
+        "group/command-item relative flex h-9 cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-ui outline-hidden select-none transition-colors duration-150 in-data-[slot=dialog-content]:rounded-md! data-[disabled=true]:pointer-events-none data-selected:bg-foreground/4 data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:*:[svg]:text-foreground",
         className
       )}
       {...props}

@@ -85,7 +85,7 @@ export function ImageGalleryView({ node, updateAttributes }: NodeViewProps) {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-foreground/15 py-1.5 text-meta text-foreground/40 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground/70 disabled:opacity-50"
+          className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-foreground/15 py-1.5 text-meta text-foreground/40 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground/70"
         >
           <Plus className="size-3.5" />
           添加图片

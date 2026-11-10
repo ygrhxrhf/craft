@@ -544,7 +544,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
                   type="button"
                   disabled={busy}
                   onClick={() => handleMove({ folderId: null, parentId: null })}
-                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-meta text-muted-foreground transition-colors hover:bg-foreground/4 disabled:opacity-50"
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-meta text-muted-foreground transition-colors hover:bg-foreground/4"
                 >
                   <span>📁</span>
                   <span className="truncate">{UNSORTED_TITLE}</span>
@@ -555,7 +555,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
                     type="button"
                     disabled={busy}
                     onClick={() => handleMove({ folderId: folder.id, parentId: null })}
-                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4 disabled:opacity-50"
+                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4"
                   >
                     <span>{folder.icon || '📁'}</span>
                     <span className="truncate">{folder.name}</span>
@@ -570,7 +570,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
                       type="button"
                       disabled={busy}
                       onClick={() => handleMove({ parentId: doc.id, folderId: null })}
-                      className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4 disabled:opacity-50"
+                      className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4"
                     >
                       <span>{doc.icon || '📄'}</span>
                       <span className="truncate">{doc.title || untitledFor('list')}</span>
@@ -605,7 +605,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
               }
             }}
             disabled={busy}
-            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
           >
             <Play className="size-3.5 text-muted-foreground" />
             <span>展示</span>
@@ -615,7 +615,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             data-testid="ctx-move-to"
             onClick={openMoveMenu}
             disabled={busy}
-            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
           >
             <Folder className="size-3.5 text-muted-foreground" />
             <span>{MOVE_TO}</span>
@@ -640,7 +640,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
               useCommentRequestStore.getState().ask();
             }}
             disabled={!actionEnabled('addComment', hasBlockSelection)}
-            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
           >
             <MessageSquare className="size-3.5 text-muted-foreground" />
             <span>添加评论</span>
@@ -678,7 +678,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
               type="button"
               disabled={!actionEnabled('moveUp', hasBlockSelection)}
               onClick={() => moveSelection(editor, target)}
-              className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+              className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
             >
               <Icon className="size-3.5 text-muted-foreground" />
               <span>{label}</span>
@@ -690,7 +690,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             type="button"
             onClick={() => groupSelection(editor)}
             disabled={!editor || !canGroup(editor.state)}
-            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
           >
             <Group className="size-3.5 text-muted-foreground" />
             <span>组合</span>
@@ -699,7 +699,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             type="button"
             onClick={() => ungroupSelection(editor)}
             disabled={!editor || !canUngroup(editor.state)}
-            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
           >
             <Ungroup className="size-3.5 text-muted-foreground" />
             <span>取消组合</span>
@@ -708,7 +708,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             type="button"
             onClick={handleDuplicate}
             disabled={busy || !actionEnabled('duplicate', hasBlockSelection)}
-            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
           >
             <Copy className="size-3.5 text-muted-foreground" />
             <span>创建副本</span>
@@ -717,7 +717,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
             type="button"
             onClick={handleToggleFavorite}
             disabled={busy}
-            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4 disabled:opacity-50"
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-ui transition-colors hover:bg-foreground/4"
           >
             <Star className={cn('size-3.5', isFavorite ? 'fill-current text-amber-500' : 'text-muted-foreground')} />
             <span>{isFavorite ? '取消收藏' : '收藏文档'}</span>
@@ -782,7 +782,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
                     type="button"
                     disabled={busy}
                     onClick={() => handleExport(format)}
-                    className="rounded-md border border-foreground/10 px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4 disabled:opacity-50"
+                    className="rounded-md border border-foreground/10 px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4"
                   >
                     {format === 'markdown'
                       ? 'Markdown'
@@ -849,7 +849,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
                 type="button"
                 disabled={busy}
                 onClick={() => void handleExportImage()}
-                className="w-full rounded-md border border-foreground/10 px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4 disabled:opacity-50"
+                className="w-full rounded-md border border-foreground/10 px-2 py-1.5 text-meta transition-colors hover:bg-foreground/4"
               >
                 图片
               </button>
@@ -914,7 +914,7 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
                   type="button"
                   disabled={busy}
                   onClick={handleDelete}
-                  className="flex-1 rounded-md bg-destructive px-2 py-1 text-meta text-white disabled:opacity-50"
+                  className="flex-1 rounded-md bg-destructive px-2 py-1 text-meta text-white"
                 >
                   确认删除
                 </button>

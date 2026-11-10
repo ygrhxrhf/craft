@@ -202,7 +202,7 @@ export function VersionDialog({ documentId, open, onOpenChange }: VersionDialogP
                   type="button"
                   onClick={() => handleRestore(previewId)}
                   disabled={restoring !== null}
-                  className="mt-3 flex items-center gap-1.5 rounded-md border border-foreground/10 px-2.5 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+                  className="mt-3 flex items-center gap-1.5 rounded-md border border-foreground/10 px-2.5 py-1.5 text-meta transition-colors duration-150 ease-craft hover:bg-foreground/4"
                 >
                   {restoring ? (
                     <Loader2 className="size-3.5 animate-spin" />

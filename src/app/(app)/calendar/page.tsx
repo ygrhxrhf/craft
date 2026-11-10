@@ -286,7 +286,7 @@ export default function CalendarPage() {
                   <button
                     type="submit"
                     disabled={addingTask || !taskTitle.trim()}
-                    className="rounded-md border border-border px-3 py-1 text-sm text-foreground/70 hover:bg-muted/60 disabled:opacity-50"
+                    className="rounded-md border border-border px-3 py-1 text-sm text-foreground/70 hover:bg-muted/60"
                   >
                     添加任务
                   </button>
@@ -297,7 +297,7 @@ export default function CalendarPage() {
                   type="button"
                   onClick={() => selected && void createNote(selected)}
                   disabled={creating}
-                  className="mb-3 rounded-md border border-border px-3 py-1.5 text-sm text-foreground/70 hover:bg-muted/60 disabled:opacity-50"
+                  className="mb-3 rounded-md border border-border px-3 py-1.5 text-sm text-foreground/70 hover:bg-muted/60"
                 >
                   {creating ? '创建中…' : '创建每日笔记'}
                 </button>

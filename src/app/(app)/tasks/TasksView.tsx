@@ -322,7 +322,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
             <button
               onClick={handleAdd}
               disabled={adding || !newTitle.trim()}
-              className="flex shrink-0 items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground transition-opacity disabled:opacity-50"
+              className="flex shrink-0 items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground transition-opacity"
             >
               <Plus className="size-4" />
               添加
@@ -416,7 +416,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
             type="button"
             onClick={() => void handleBulkCheck()}
             disabled={bulkBusy}
-            className="ml-2 shrink-0 rounded px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-foreground disabled:opacity-50"
+            className="ml-2 shrink-0 rounded px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-foreground"
           >
             {bulkCheckLabel(visible)}
           </button>
@@ -1028,7 +1028,7 @@ function TaskRow({
               onChange={(event) =>
                 update({ recurrence: patchRule(task.recurrence, { type: event.target.value }) })
               }
-              className="h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground disabled:opacity-50"
+              className="h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground"
             >
               <option value="fixed">按计划日</option>
               <option value="flexible">相对于完成</option>

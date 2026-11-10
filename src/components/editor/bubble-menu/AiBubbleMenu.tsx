@@ -378,7 +378,7 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
                   onClick={() => runAction(action.id, action.replace)}
                   className={cn(
                     'flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-ui transition-colors duration-150 ease-craft',
-                    'text-foreground/85 hover:bg-foreground/4 disabled:opacity-50'
+                    'text-foreground/85 hover:bg-foreground/4'
                   )}
                 >
                   {loading === action.id ? (
@@ -425,7 +425,7 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
               type="button"
               disabled={loading !== null}
               onClick={() => void runWebSearch()}
-              className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+              className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4"
             >
               <Sparkles className="size-3.5 text-muted-foreground" />
               联网搜索
@@ -453,7 +453,7 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
               type="button"
               disabled={loading !== null}
               onClick={() => pdfInputRef.current?.click()}
-              className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+              className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4"
             >
               <Sparkles className="size-3.5 text-muted-foreground" />
               询问 PDF
@@ -487,7 +487,7 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
                             prompt: fillFromSelection(item.template),
                           })
                         }
-                        className="rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+                        className="rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4"
                       >
                         {item.label}
                       </button>
@@ -508,7 +508,7 @@ export function AiBubbleMenu({ editor, documentId }: AiBubbleMenuProps) {
                         onClick={() =>
                           void runPrompt({ id: item.id, label: item.prompt, prompt: item.prompt })
                         }
-                        className="line-clamp-2 rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+                        className="line-clamp-2 rounded-md px-2 py-1.5 text-left text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4"
                       >
                         {item.prompt}
                       </button>

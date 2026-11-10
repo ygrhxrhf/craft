@@ -138,7 +138,7 @@ export default function ErrorBoundary({
             <button
               type="submit"
               disabled={!isReportSubmittable(draft)}
-              className="h-7 rounded-md bg-craft-accent px-3 text-xs text-white transition-opacity disabled:opacity-50"
+              className="h-7 rounded-md bg-craft-accent px-3 text-xs text-white transition-opacity"
             >
               {REPORT_SUBMIT}
             </button>

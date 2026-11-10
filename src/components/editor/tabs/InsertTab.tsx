@@ -212,11 +212,12 @@ export function InsertTab({ editor }: InsertTabProps) {
                           : () => item.onInsert!(editor)
                   }
                   disabled={unavailable}
+                  data-disabled={unavailable || undefined}
                   className={cn(
                     'group flex w-full items-center gap-2.5 rounded-lg border border-border/70 bg-card px-2.5 py-2',
                     'text-[13px] text-foreground shadow-xxs transition-colors',
                     unavailable
-                      ? 'cursor-not-allowed opacity-50'
+                      ? ''
                       : draggable
                         ? 'hover:bg-muted cursor-grab active:cursor-grabbing'
                         : 'hover:bg-muted'

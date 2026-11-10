@@ -10,7 +10,7 @@ import { buildBlockMove, topLevelIndexOf, topLevelStart, type MoveTarget } from 
 import { cloneWithFreshBlockIds } from '@/lib/editor/clone-block';
 import { buildDowngradeFlatten } from '@/lib/editor/downgrade-command';
 import { nextWordOffset, prevWordOffset } from '@/lib/editor/word-nav';
-import { nextFormatStep, nextBackspaceStep, isEmptyBlock, hasDecoration, previousSibling } from '@/lib/editor/format-downgrade';
+import { nextFormatStep, nextBackspaceStep, isEmptyBlock, hasDecoration, mergeCaretIndex, previousSibling } from '@/lib/editor/format-downgrade';
 import { decorationAt } from '@/lib/editor/format-commands';
 import { toggledDecoration } from '@/lib/editor/style-keys';
 import { applyGroup, applyGroupIndices, applyUngroup } from '@/lib/editor/block-group';
@@ -992,6 +992,21 @@ export const CraftKeymap = Extension.create({
                     },
                   );
                   const join = editor.chain().focus().joinBackward();
+                  // G578 step 6's redo selection: `textSelectionIndex` at the previous block's own
+                  // text length — the caret lands at the end of the previous block. `joinBackward`
+                  // usually leaves it there, but the official rule states it explicitly, so a block
+                  // whose own join put the caret elsewhere still ends up at that same index.
+                  const placeCaret = () => {
+                    const caret = mergeCaretIndex(prev.textContent.length);
+                    if (caret < 0) return;
+                    const prevStart = start - prev.nodeSize;
+                    const position = prevStart + 1 + caret;
+                    if (position <= view.state.doc.content.size) {
+                      view.dispatch(
+                        view.state.tr.setSelection(TextSelection.create(view.state.doc, position)),
+                      );
+                    }
+                  };
                   // The previous block wins ⇒ after joining, re-assert its node type so the
                   // merged block carries the winning style rather than whatever joinBackward left.
                   if (winner === 'previous' && prev.type.name !== current.type.name) {
@@ -1004,10 +1019,13 @@ export const CraftKeymap = Extension.create({
                           view.state.tr.setNodeMarkup(prevStart, prev.type, prev.attrs),
                         );
                       }
+                      placeCaret();
                     }
                     return applied;
                   }
-                  return join.run();
+                  const applied = join.run();
+                  if (applied) placeCaret();
+                  return applied;
                 }
                 // G628 step 4: no previous sibling — an empty block deletes itself, a non-empty
                 // one does nothing (the model returns null for that arm, so this branch is only

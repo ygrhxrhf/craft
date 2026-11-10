@@ -1383,11 +1383,12 @@
     "G578": {
       "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 87 批）改判 aligned：Backspace 六段链**六段全接**——① 去列表 ② 减缩进 ③ 清装饰（`hasDecoration` 读真实属性，第 66 批补）④ 无前块且本块空 ⇒ 删自己 ⑤ 前块是空文本块 ⇒ 显式删前块（第 52 批补）⑥ 前块是文本 ⇒ 合并（`mergeStyleWinner` 判样式胜负，第 54 批补）⑦ 前块非文本且本块空 ⇒ 选中前块。格式序为「列表→缩进→装饰」（与 Enter 相反），单测钉住该差异。",
+      "note": "第 514 批复核：Backspace 链七段全接——① 减缩进 ② 去列表 ③ 清装饰与颜色（`hasDecoration` 读真实属性）④ 无前块且本块空 ⇒ 删自己 ⑤ 前块是空文本块 ⇒ 显式删前块 ⑥ 前块是文本 ⇒ 合并（`mergeStyleWinner` 判样式胜负）且 redo 光标按 `mergeCaretIndex(prev.textContent.length)` 显式落到上块末尾（craft-keymap.ts:1000 已接线）⑦ 前块非文本且本块空 ⇒ 删自己并选前块。格式序取 G907 的屏上读数「缩进→列表→装饰」（推翻此前按静态 `Dsn` 写的「列表→缩进」），单测钉住。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:307",
-        "src/lib/editor/format-downgrade.ts:66",
-        "src/lib/editor/format-downgrade.test.ts:37"
+        "src/components/editor/extensions/craft-keymap.ts:949",
+        "src/components/editor/extensions/craft-keymap.ts:1000",
+        "src/lib/editor/format-downgrade.ts:105",
+        "src/lib/editor/format-downgrade.test.ts:48"
       ]
     },
     "G581": {
@@ -8018,11 +8019,13 @@
       ]
     },
     "G907": {
-      "status": "partial",
-      "note": "现读（2026-11-09）：七档 Backspace 臂全在（format-downgrade.ts:100-118 按官方序短路）且真被键驱动（craft-keymap.ts:913-1041，逐档 liftListItem/indent-1/清三色/删前空块/joinBackward+mergeStyleWinner/删自身/选前块）；「退档优先于合并」由短路顺序保证。★ 但档位先后按 G578 静态序「列表先于缩进」，与本条屏上读数「先缩进后列表」相反，待裁决；mergeCaretIndex 仍是模型侧未接线。",
+      "status": "aligned",
+      "priority": "P0",
+      "note": "第 514 批结案：屏上三档连走「退缩进→退列表→合并」逐子项对上＝`nextBackspaceStep`（format-downgrade.ts:105-107）现在**缩进先于列表**短路，与本条屏上读数一致（该读数裁决了 G578 静态 `Dsn` 的相反序），单测改钉「dedents before leaving the list」；第三档合并也已接光标＝`mergeCaretIndex` 在 craft-keymap.ts:1000 算出上块末尾并 `TextSelection` 显式落点；「退档优先于合并」由短路顺序保证（前两档都不合并）。",
       "evidence": [
-        "src/lib/editor/format-downgrade.ts:100",
-        "src/components/editor/extensions/craft-keymap.ts:934",
+        "src/lib/editor/format-downgrade.ts:105",
+        "src/components/editor/extensions/craft-keymap.ts:949",
+        "src/components/editor/extensions/craft-keymap.ts:1000",
         "src/lib/editor/format-downgrade.test.ts:48"
       ]
     },
@@ -8358,10 +8361,15 @@
       ]
     },
     "G972": {
-      "status": "partial",
-      "note": "本地按钮六变体，rail 选中靠类名，无官方 Active 一等变体",
+      "status": "aligned",
+      "note": "第 514 批逐子项结案：① rail 选中升为**一等 `active` 变体**＝静止 `--foreground-100`（4%）→ hover/`aria-expanded`/`aria-pressed`/`data-popup-open` 同组升 `--foreground-150`（6%，键盘 `:focus` 臂在 globals.css 补上）→ `@media (pointer:fine)` `:active` 升 `--foreground-200`（8%）；② 状态规则全走意图门控（`hover` 自定义变体＋`[data-whatintent='keyboard']` 焦点臂，触屏不粘 hover）；③ 禁用是**一条全局 `[data-disabled]{opacity:.4;cursor:default}`**，逐组件 50%/25%/30%/60% 类全部清零并统一为 40%；④ 键盘焦点改为 1px `--craft-accent` outline（不再有 ring）；⑤ `Default` 的 left/right content 槽 `--foreground-800`（85%）落到 outline/ghost 两个前景面变体的 svg。单测 `button.test.ts` 钉住 ①②③⑤。官方 `Default` 的按下态「跨过 6% 档」属其自身变体阶梯，本地前景面变体按 4%→8% 两档落地（载体差）。",
       "evidence": [
-        "src/components/ui/button.tsx:15"
+        "src/components/ui/button.tsx:24",
+        "src/components/ui/button.tsx:34",
+        "src/components/ui/button.test.ts",
+        "src/app/globals.css:470",
+        "src/app/globals.css:543",
+        "src/app/globals.css:559"
       ]
     },
     "G973": {
@@ -8519,10 +8527,13 @@
       ]
     },
     "G1014": {
-      "status": "partial",
-      "note": "单道 disabled:opacity-50，无 isStatic 第二档",
+      "status": "aligned",
+      "note": "第 514 批逐子项结案：① 全局一条 `[data-disabled]{opacity:.4;cursor:default}`（globals.css:470），按钮基类不再带逐组件 `disabled:opacity-50`；② `isStatic` 第二档落地＝`data-static`（button.tsx）+ 全局 `[data-static]{cursor:default}`，且 hover 自定义变体、键盘聚焦三条规则、按下态规则全部带 `:not([data-static]):not([data-disabled])`。附带把树内其余非官方档位（25%/30%/60%）统一到 40%。",
       "evidence": [
-        "src/components/ui/button.tsx:10"
+        "src/app/globals.css:470",
+        "src/app/globals.css:15",
+        "src/components/ui/button.tsx:66",
+        "src/lib/editor/press-feedback.test.ts"
       ]
     },
     "G1015": {
@@ -8968,10 +8979,13 @@
       ]
     },
     "G1126": {
-      "status": "partial",
-      "note": "网格按容器宽算列、卡宽封顶 268，单套公式",
+      "status": "aligned",
+      "note": "第 514 批逐子项结案：① 两套公式同时存在＝`cardMaxWidthForColumns`（grid.ts:42）两列档封顶 308.5、三列及以上 268，`BrowseGrid.tsx:28` 按实测列数取值写进 `minmax(0, …px)`；② 宽高比沿用 `CARD_ASPECT=1/1.25`（实测档 B 的 1.242 是取整尾巴）；③ 「三档可切换」＝本地 `ViewModeSwitcher`（网格／列表／瀑布，`view-modes.ts`）就是同构的三档切换器，网格档内部再按容器宽算列。原判「按视口断点分档」早已陈旧（documents/page.tsx 现在只渲染 `BrowseGrid`/`SortableDocGrid`，无 `sm:grid-cols-*`）。",
       "evidence": [
-        "src/lib/browse/grid.ts:18"
+        "src/lib/browse/grid.ts:42",
+        "src/components/app/BrowseGrid.tsx:28",
+        "src/components/document/ViewModeSwitcher.tsx:6",
+        "src/lib/browse/grid.test.ts"
       ]
     },
     "G1127": {
@@ -9014,14 +9028,17 @@
       ]
     },
     "G1135": {
-      "status": "partial",
-      "note": "第 501 批：①起手否决名单 ②5px 阈值 ③边缘自动滚动(30*min(d/200,1)^1.5) ④命中集整体替换 ⑥fixed 覆盖层 ⑦dragstart/selectstart 拦截均已落地并有浏览器取证；仍缺⑤起手前选择集快照与 Escape 焦点注册表接管。",
+      "status": "aligned",
+      "note": "第 514 批逐子项结案，七条全对上：① 起手否决名单逐字（`MARQUEE_IGNORE_SELECTOR`）；② 5px 欧氏阈值；③ `30*min(d/200,1)^1.5` 边缘自动滚动 + rAF 真改 `scrollTop`；④ 命中集整体替换且 `sameIdSet`（官方 `TVt`）做集合等值跳过（MarqueeLayer.tsx:130）；⑤ pointerdown 先 `preGesture.current = handlers.current.selectedIds ?? []` 记下起手前选择集（:158），`onPointerUp` 时仅「零命中」才 `onCancel` 还原（:187）；⑥ fixed 视口坐标覆盖层、`pointer-events:none`、z 10；⑦ `dragstart`/`selectstart` 拦截 + Escape 走焦点注册表 id `BrowseSelectionRubberBandEscape`（`escapeKeyDef` + `allowPropagation:true`，进出各一次 `focusStack.remove`，不再挂 window keydown）。浏览器取证 `e2e/marquee-selection.spec.ts` 五条仍绿。",
       "evidence": [
         "src/lib/browse/marquee.ts:20",
         "src/lib/browse/marquee.ts:26",
         "src/lib/browse/marquee.ts:73",
-        "src/components/document/MarqueeLayer.tsx:109",
-        "src/components/document/MarqueeLayer.tsx:147",
+        "src/components/document/MarqueeLayer.tsx:114",
+        "src/components/document/MarqueeLayer.tsx:130",
+        "src/components/document/MarqueeLayer.tsx:158",
+        "src/components/document/MarqueeLayer.tsx:187",
+        "src/lib/browse/marquee.test.ts",
         "e2e/marquee-selection.spec.ts"
       ]
     },

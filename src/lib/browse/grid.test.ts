@@ -7,8 +7,10 @@ import {
   CARD_GAP,
   CARD_GAP_NARROW,
   CARD_MAX_WIDTH,
+  CARD_MAX_WIDTH_WIDE,
   NARROW_THRESHOLD,
   cardHeightForWidth,
+  cardMaxWidthForColumns,
   cardWidthForWidth,
   columnsForWidth,
 } from './grid';
@@ -49,6 +51,20 @@ describe('the column count is computed from the container width', () => {
 describe('card geometry', () => {
   it('caps the card at 268', () => {
     expect(cardWidthForWidth(4000)).toBeLessThanOrEqual(CARD_MAX_WIDTH);
+  });
+
+  it('uses the wider 308.5 ceiling while the grid is two columns', () => {
+    // G1126: two formulas coexist — the two-column tier tops out at 308.5, three or more at 268.
+    expect(CARD_MAX_WIDTH_WIDE).toBe(308.5);
+    expect(cardMaxWidthForColumns(2)).toBe(CARD_MAX_WIDTH_WIDE);
+    for (const columns of [3, 4, 5]) {
+      expect(cardMaxWidthForColumns(columns)).toBe(CARD_MAX_WIDTH);
+    }
+    // Just below the 3-column threshold the grid is still two columns, so the share exceeds 268
+    // and is held at 308.5 instead.
+    expect(columnsForWidth(671)).toBe(2);
+    expect(cardWidthForWidth(671)).toBeGreaterThan(CARD_MAX_WIDTH);
+    expect(cardWidthForWidth(671)).toBeLessThanOrEqual(CARD_MAX_WIDTH_WIDE);
   });
 
   it('makes the card taller than it is wide, at the official 1.25 ratio', () => {

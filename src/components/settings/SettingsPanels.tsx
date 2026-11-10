@@ -1211,7 +1211,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
                 aria-label="更换头像"
                 disabled={uploadingAvatar}
                 onClick={() => avatarInputRef.current?.click()}
-                className="absolute -right-1 -bottom-1 flex size-10 items-center justify-center rounded-full bg-background shadow-(--shadow-xxs) disabled:opacity-50"
+                className="absolute -right-1 -bottom-1 flex size-10 items-center justify-center rounded-full bg-background shadow-(--shadow-xxs)"
               >
                 <Camera className="size-4" />
               </button>

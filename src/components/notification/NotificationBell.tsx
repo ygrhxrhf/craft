@@ -228,7 +228,7 @@ export function NotificationBell() {
                 type="button"
                 onClick={markAllRead}
                 disabled={isPending}
-                className="text-[12px] text-(--craft-accent) disabled:opacity-50"
+                className="text-[12px] text-(--craft-accent)"
               >
                 全部标为已读
               </button>
@@ -285,7 +285,7 @@ export function NotificationBell() {
                           type="button"
                           onClick={() => toggleRead(item.id, item.readAt === null)}
                           disabled={isPending}
-                          className="text-[12px] text-muted-foreground disabled:opacity-50"
+                          className="text-[12px] text-muted-foreground"
                         >
                           {item.readAt ? '标为未读' : '标为已读'}
                         </button>
@@ -293,7 +293,7 @@ export function NotificationBell() {
                           type="button"
                           onClick={() => void remove(item.id)}
                           disabled={isPending}
-                          className="text-[12px] text-(--craft-accent) disabled:opacity-50"
+                          className="text-[12px] text-(--craft-accent)"
                         >
                           删除
                         </button>

@@ -57,7 +57,7 @@ export function TaskDateQuickMenu() {
               type="button"
               disabled={custom}
               onClick={() => apply(option.date)}
-              className="rounded-md px-2 py-1.5 text-left text-sm hover:bg-foreground/4 disabled:opacity-50"
+              className="rounded-md px-2 py-1.5 text-left text-sm hover:bg-foreground/4"
             >
               {option.label}
             </button>
@@ -66,7 +66,7 @@ export function TaskDateQuickMenu() {
             type="button"
             disabled={custom}
             onClick={() => void askCustom()}
-            className="rounded-md px-2 py-1.5 text-left text-sm hover:bg-foreground/4 disabled:opacity-50"
+            className="rounded-md px-2 py-1.5 text-left text-sm hover:bg-foreground/4"
           >
             {taskDateCustomLabel(kind)}
           </button>

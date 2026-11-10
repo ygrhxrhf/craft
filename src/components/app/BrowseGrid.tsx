@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from 'cn';
 
-import { CARD_GAP, CARD_GAP_NARROW, CARD_MAX_WIDTH, columnsForWidth } from '@/lib/browse/grid';
+import { CARD_GAP, CARD_GAP_NARROW, cardMaxWidthForColumns, columnsForWidth } from '@/lib/browse/grid';
 import { useIsMobile } from '@/lib/use-is-mobile';
 
 /**
@@ -24,6 +24,8 @@ export function BrowseGrid({
   // G1096：官方 gap 逐字 `({$isMobile:t}) => t ? 8 : 20` —— 窄档（≤747px）用 8，桌面用 20。
   const isMobile = useIsMobile();
   const gap = isMobile ? CARD_GAP_NARROW : CARD_GAP;
+  // G1126: the 2-column tier stretches up to 308.5px, while 3+ column layouts cap at 268px.
+  const maxWidth = cardMaxWidthForColumns(columns);
 
   useEffect(() => {
     const node = ref.current;
@@ -43,9 +45,9 @@ export function BrowseGrid({
       data-columns={columns}
       style={{
         // The official card has a width ceiling, so a very wide container stretches the gap
-        // rather than the card. `minmax(0, 268px)` is that ceiling; the leftover space is
+        // rather than the card. `minmax(0, maxWidth)` is that ceiling; the leftover space is
         // distributed by `justify-content`.
-        gridTemplateColumns: `repeat(${columns}, minmax(0, ${CARD_MAX_WIDTH}px))`,
+        gridTemplateColumns: `repeat(${columns}, minmax(0, ${maxWidth}px))`,
         gap: `${gap}px`,
         justifyContent: 'start',
       }}

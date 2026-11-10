@@ -26,6 +26,7 @@ import {
   toggleSelection,
 } from '@/lib/browse/selection';
 import { sortDocs } from '@/lib/browse/sort';
+import { sameIdSet } from '@/lib/browse/marquee';
 import {
   DEFAULT_BROWSE_SORT_SPEC,
   type BrowseSortSpec,
@@ -122,9 +123,14 @@ export function SortableDocGrid({
     setSelecting(true);
     setSelected(new Set());
   };
-  // G1135 ④：每次移动**整体替换**命中集，不并进旧集合。
+  // G1135 ④：每次移动**整体替换**命中集，不并进旧集合；命中集不变时不写状态（官方 `TVt`）。
   const replaceMarqueeHits = (hits: string[]) => {
-    setSelected(new Set(hits));
+    setSelected((current) => (sameIdSet(current, hits) ? current : new Set(hits)));
+  };
+  // G1135 ⑤：起手中途撤框且尚未命中任何卡片时，恢复起手前的选择集；原集为空则退出选择模式。
+  const restoreMarqueeSelection = (restored: readonly string[]) => {
+    setSelected(new Set(restored));
+    if (restored.length === 0) setSelecting(false);
   };
   const stopSelecting = () => {
     setSelecting(false);
@@ -298,8 +304,10 @@ export function SortableDocGrid({
       <MarqueeLayer
         containerRef={containerRef}
         layout={viewMode === 'grid' ? 'cards' : viewMode}
+        selectedIds={ids}
         onStart={startMarquee}
         onChange={replaceMarqueeHits}
+        onCancel={restoreMarqueeSelection}
       />
     </>
   );

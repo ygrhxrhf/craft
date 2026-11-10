@@ -48,7 +48,7 @@ export function PageBlockView({ node, editor, updateAttributes, selected }: Node
         disabled={busy}
         onClick={() => void open()}
         aria-label={title || PAGE_PREVIEW_COPY}
-        className="flex w-full items-start gap-3 rounded-lg border border-foreground/8 bg-card px-4 py-3 text-left transition-colors hover:bg-foreground/[0.03] disabled:opacity-50"
+        className="flex w-full items-start gap-3 rounded-lg border border-foreground/8 bg-card px-4 py-3 text-left transition-colors hover:bg-foreground/[0.03]"
       >
         <FileText className="mt-0.5 size-4 shrink-0 text-foreground/40" />
         <span className={title ? 'text-body font-medium' : 'text-body text-foreground/45'}>

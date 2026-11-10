@@ -72,7 +72,7 @@ export function HideOrderFieldsMenu({ rows, hidden, onToggle, onMove }: HideOrde
                     aria-label={`上移 ${row.name}`}
                     disabled={index === 0}
                     onClick={() => onMove(row.id, -1)}
-                    className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30"
+                    className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
                   >
                     <ArrowUp className="size-3.5" />
                   </button>
@@ -81,7 +81,7 @@ export function HideOrderFieldsMenu({ rows, hidden, onToggle, onMove }: HideOrde
                     aria-label={`下移 ${row.name}`}
                     disabled={index === rows.length - 1}
                     onClick={() => onMove(row.id, 1)}
-                    className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30"
+                    className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
                   >
                     <ArrowDown className="size-3.5" />
                   </button>

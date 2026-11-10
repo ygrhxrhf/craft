@@ -16,7 +16,7 @@ const css = readFileSync(cssPath, 'utf8');
 describe('the hover variant is gated on the intent attribute', () => {
   it('redefines the variant with the official ancestor gate', () => {
     expect(css).toContain(
-      "@custom-variant hover ([data-whatintent]:not([data-whatintent='touch']) &:hover);",
+      "@custom-variant hover ([data-whatintent]:not([data-whatintent='touch']) &:hover:not([data-static]):not([data-disabled]));",
     );
   });
 
@@ -29,7 +29,7 @@ describe('the hover variant is gated on the intent attribute', () => {
     // reading the source alone would not catch a syntax error the plugin rejects.
     const probe = `
       @import "tailwindcss";
-      @custom-variant hover ([data-whatintent]:not([data-whatintent='touch']) &:hover);
+      @custom-variant hover ([data-whatintent]:not([data-whatintent='touch']) &:hover:not([data-static]):not([data-disabled]));
       @source inline("hover:bg-muted group-hover:opacity-100");
     `;
     const out = await postcss([tailwind()]).process(probe, { from: 'probe.css' });
@@ -39,5 +39,7 @@ describe('the hover variant is gated on the intent attribute', () => {
     expect(compiled).toMatch(
       /\[data-whatintent\]:not\(\[data-whatintent='touch'\]\)[^,{]*:hover/,
     );
+    // G1014 ②: a static or disabled control must never latch a hover tint either.
+    expect(compiled).toContain(':hover:not([data-static]):not([data-disabled])');
   });
 });

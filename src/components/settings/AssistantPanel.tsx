@@ -182,7 +182,7 @@ export function AssistantPanel() {
                 onClick={() => void remove(item.id)}
                 disabled={busy}
                 aria-label="删除提示"
-                className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-destructive disabled:opacity-50"
+                className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-destructive"
               >
                 <Trash2 className="size-3.5" />
               </button>
@@ -207,7 +207,7 @@ export function AssistantPanel() {
               type="button"
               onClick={() => void add()}
               disabled={busy || !draft.trim()}
-              className="rounded-md bg-(--craft-accent) px-3 py-1 text-[12px] text-white transition-colors hover:bg-(--craft-accent-hover) disabled:opacity-50"
+              className="rounded-md bg-(--craft-accent) px-3 py-1 text-[12px] text-white transition-colors hover:bg-(--craft-accent-hover)"
             >
               {CREATE_CUSTOM_PROMPT}
             </button>

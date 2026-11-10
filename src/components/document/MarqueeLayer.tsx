@@ -2,15 +2,20 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { escapeKeyDef, focusStack } from '@/lib/focus/focus-stack';
 import {
   autoScrollVelocity,
   isMarqueeDrag,
   isMarqueeVetoTarget,
   rectFromPoints,
+  sameIdSet,
   type ItemRect,
   type Rect,
 } from '@/lib/browse/marquee';
 import { hitTest, type MarqueeLayout } from '@/lib/browse/hit-test';
+
+/** G1135 ⑦: the focus-registry entry id the official build uses for the band's Escape. */
+const MARQUEE_ESCAPE_ID = 'BrowseSelectionRubberBandEscape';
 
 /** The nearest ancestor that actually scrolls — the official build hands the hook a scroll ref. */
 function findScrollParent(element: HTMLElement | null): HTMLElement | null {
@@ -38,27 +43,37 @@ function findScrollParent(element: HTMLElement | null): HTMLElement | null {
 export function MarqueeLayer({
   containerRef,
   layout,
+  selectedIds,
   onStart,
   onChange,
+  onCancel,
 }: {
   containerRef: React.RefObject<HTMLElement | null>;
   /** G1136: the visible layout decides which hit algorithm runs. */
   layout: MarqueeLayout;
+  /** G1135 ⑤: the selection the gesture found on entry, so an abandoned gesture can put it back. */
+  selectedIds?: readonly string[];
   /** The drag passed the start threshold; the screen should enter selection mode. */
   onStart?: () => void;
   /** The live hit set — the official build replaces the selection with it on every move. */
   onChange?: (ids: string[]) => void;
+  /** G1135 ⑤: the gesture was abandoned before it picked anything; restore the pre-gesture selection. */
+  onCancel?: (restored: readonly string[]) => void;
 }) {
   const [band, setBand] = useState<Rect | null>(null);
   const start = useRef<{ x: number; y: number; started: boolean } | null>(null);
   const pointer = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const scrollParent = useRef<HTMLElement | null>(null);
   const frame = useRef<number | null>(null);
+  // G1135 ⑤: the official hook records `new Set(selectedIds)` on pointerdown, before anything is
+  // cleared. Keeping it here (not in a render closure) means a mid-drag re-render cannot lose it.
+  const preGesture = useRef<readonly string[]>([]);
+  const hits = useRef<string[]>([]);
   // The callbacks are re-created on every parent render (selection state changes each move), so
   // they live in a ref — otherwise the listeners would tear down and re-add mid-drag.
-  const handlers = useRef({ onStart, onChange, layout });
+  const handlers = useRef({ onStart, onChange, onCancel, layout, selectedIds });
   useEffect(() => {
-    handlers.current = { onStart, onChange, layout };
+    handlers.current = { onStart, onChange, onCancel, layout, selectedIds };
   });
 
   const collect = useCallback((selector: 'data-item-id' | 'data-folder-id'): ItemRect[] => {
@@ -92,19 +107,29 @@ export function MarqueeLayer({
       if (!isMarqueeDrag(origin, pointer.current)) return false;
       if (!origin.started) {
         origin.started = true;
+        // G1135 ⑦: the official build registers the band's Escape in the focus registry, so a
+        // dialog stacked above the gesture takes the key first. `allowPropagation` keeps lower
+        // entries reachable for every other key.
+        focusStack.push({
+          id: MARQUEE_ESCAPE_ID,
+          keyDefs: [escapeKeyDef(() => cancel())],
+          allowPropagation: true,
+        });
         handlers.current.onStart?.();
       }
       const next = rectFromPoints(origin.x, origin.y, pointer.current.x, pointer.current.y);
       setBand(next);
       // G1136: the folder region is a separate hit set in the official build. Locally folders live
       // in the sidebar, outside this container, so that set is always empty.
-      handlers.current.onChange?.(
-        hitTest(next, {
-          layout: handlers.current.layout,
-          items: collect('data-item-id'),
-          folders: collect('data-folder-id'),
-        }),
-      );
+      const ids = hitTest(next, {
+        layout: handlers.current.layout,
+        items: collect('data-item-id'),
+        folders: collect('data-folder-id'),
+      });
+      // G1135 ④: the official build skips the write when the hit set did not change (`TVt`).
+      if (sameIdSet(new Set(hits.current), ids)) return true;
+      hits.current = ids;
+      handlers.current.onChange?.(ids);
       return true;
     };
 
@@ -129,6 +154,9 @@ export function MarqueeLayer({
       const items = containerRef.current?.getBoundingClientRect();
       if (items && event.clientY < items.top) return;
       pointer.current = { x: event.clientX, y: event.clientY };
+      // G1135 ⑤: the pre-gesture selection is recorded here, before the gesture clears it.
+      preGesture.current = handlers.current.selectedIds ?? [];
+      hits.current = [];
       start.current = { x: event.clientX, y: event.clientY, started: false };
     };
 
@@ -139,17 +167,24 @@ export function MarqueeLayer({
     };
 
     const onPointerUp = () => {
-      // G1555 ③: the band goes away on release; the selection it produced stays.
+      // G1555 ③: the band goes away on release; the selection it produced stays. The Escape entry
+      // leaves with the gesture — a released drag has no key of its own any more.
       start.current = null;
       setBand(null);
+      focusStack.remove(MARQUEE_ESCAPE_ID);
       if (frame.current != null) cancelAnimationFrame(frame.current);
       frame.current = null;
     };
 
-    const onKeyDown = (event: KeyboardEvent) => {
-      // Abandons the gesture in flight; what is already selected is left as it stands.
-      if (event.key !== 'Escape' || !start.current) return;
+    /**
+     * G1135 ⑤: Escape abandons the gesture. What the drag already picked stays — but a gesture
+     * that never picked anything puts back the selection the press found, which is why the
+     * pointerdown snapshot exists at all.
+     */
+    const cancel = () => {
+      const picked = hits.current.length > 0;
       onPointerUp();
+      if (!picked) handlers.current.onCancel?.(preGesture.current);
     };
 
     // G1135 ⑦: mid-drag, a card's own drag/text-selection gesture must not take over.
@@ -160,16 +195,15 @@ export function MarqueeLayer({
     gestureTarget.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('keydown', onKeyDown);
     gestureTarget.addEventListener('dragstart', onGestureStart);
     gestureTarget.addEventListener('selectstart', onGestureStart);
     return () => {
       gestureTarget.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
-      window.removeEventListener('keydown', onKeyDown);
       gestureTarget.removeEventListener('dragstart', onGestureStart);
       gestureTarget.removeEventListener('selectstart', onGestureStart);
+      focusStack.remove(MARQUEE_ESCAPE_ID);
       if (frame.current != null) cancelAnimationFrame(frame.current);
       frame.current = null;
     };

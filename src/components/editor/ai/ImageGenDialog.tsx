@@ -110,7 +110,7 @@ export function ImageGenDialogHost({ editor }: ImageGenDialogProps) {
             type="button"
             onClick={handleGenerate}
             disabled={loading || !prompt.trim()}
-            className="flex items-center gap-1.5 rounded-lg bg-craft-accent px-4 py-1.5 text-ui font-medium text-white transition-colors duration-150 ease-craft hover:bg-craft-accent-hover disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-lg bg-craft-accent px-4 py-1.5 text-ui font-medium text-white transition-colors duration-150 ease-craft hover:bg-craft-accent-hover"
           >
             {loading && <Loader2 className="size-3.5 animate-spin" />}
             生成
@@ -119,7 +119,7 @@ export function ImageGenDialogHost({ editor }: ImageGenDialogProps) {
             type="button"
             onClick={handleInsert}
             disabled={!preview}
-            className="rounded-lg border border-foreground/10 px-4 py-1.5 text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4 disabled:opacity-50"
+            className="rounded-lg border border-foreground/10 px-4 py-1.5 text-ui text-foreground/85 transition-colors duration-150 ease-craft hover:bg-foreground/4"
           >
             插入文档
           </button>

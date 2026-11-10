@@ -40,7 +40,7 @@ export function UseAsTemplateButton({ identifier }: { identifier: string }) {
         data-testid="use-as-template"
         disabled={pending}
         onClick={onClick}
-        className="flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1 text-meta text-foreground/70 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground disabled:opacity-60"
+        className="flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1 text-meta text-foreground/70 transition-colors duration-150 ease-craft hover:bg-foreground/4 hover:text-foreground disabled:opacity-40"
       >
         <LayoutTemplate className="size-3.5" />
         用作模板

@@ -30,7 +30,7 @@ export function DailyNoteNav() {
         type="button"
         onClick={() => void go(-1)}
         disabled={busy}
-        className="inline-flex items-center gap-0.5 rounded px-1.5 py-1 hover:bg-foreground/4 hover:text-foreground disabled:opacity-50"
+        className="inline-flex items-center gap-0.5 rounded px-1.5 py-1 hover:bg-foreground/4 hover:text-foreground"
       >
         <ChevronLeft className="size-3.5" />
         前一天
@@ -39,7 +39,7 @@ export function DailyNoteNav() {
         type="button"
         onClick={() => void go(1)}
         disabled={busy}
-        className="inline-flex items-center gap-0.5 rounded px-1.5 py-1 hover:bg-foreground/4 hover:text-foreground disabled:opacity-50"
+        className="inline-flex items-center gap-0.5 rounded px-1.5 py-1 hover:bg-foreground/4 hover:text-foreground"
       >
         后一天
         <ChevronRight className="size-3.5" />

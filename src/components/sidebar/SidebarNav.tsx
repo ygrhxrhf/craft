@@ -191,7 +191,7 @@ export function SidebarNav() {
                     aria-label={`上移 ${SECTIONS[id].label}`}
                     disabled={index === 0}
                     onClick={() => save(moveSidebarSection(prefs, id, -1))}
-                    className="rounded p-1 text-foreground/50 disabled:opacity-25"
+                    className="rounded p-1 text-foreground/50 disabled:opacity-40"
                   >
                     <ChevronUp className="size-4" />
                   </button>
@@ -200,7 +200,7 @@ export function SidebarNav() {
                     aria-label={`下移 ${SECTIONS[id].label}`}
                     disabled={index === prefs.order.length - 1}
                     onClick={() => save(moveSidebarSection(prefs, id, 1))}
-                    className="rounded p-1 text-foreground/50 disabled:opacity-25"
+                    className="rounded p-1 text-foreground/50 disabled:opacity-40"
                   >
                     <ChevronDown className="size-4" />
                   </button>

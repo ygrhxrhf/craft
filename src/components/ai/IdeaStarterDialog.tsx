@@ -111,7 +111,7 @@ export function IdeaStarterDialog({
               aria-pressed={type === suggestion.id}
               disabled={busy}
               onClick={() => setType(suggestion.id)}
-              className="rounded-md border border-foreground/10 px-2.5 py-1 text-[13px] transition-colors hover:bg-foreground/4 aria-pressed:border-foreground/40 aria-pressed:bg-foreground/6 disabled:opacity-50"
+              className="rounded-md border border-foreground/10 px-2.5 py-1 text-[13px] transition-colors hover:bg-foreground/4 aria-pressed:border-foreground/40 aria-pressed:bg-foreground/6"
             >
               {suggestion.label}
             </button>
@@ -125,7 +125,7 @@ export function IdeaStarterDialog({
           disabled={busy}
           aria-label={IDEA_STARTER.placeholder}
           placeholder={IDEA_STARTER.placeholder}
-          className="mt-3 w-full resize-none rounded-lg border border-input bg-transparent p-3 text-[13px] leading-relaxed outline-none transition-colors focus:border-ring disabled:opacity-60"
+          className="mt-3 w-full resize-none rounded-lg border border-input bg-transparent p-3 text-[13px] leading-relaxed outline-none transition-colors focus:border-ring disabled:opacity-40"
         />
 
         <div className="mt-1 h-5 text-[12px] text-foreground/55" role="status" aria-live="polite">
@@ -137,7 +137,7 @@ export function IdeaStarterDialog({
             type="button"
             onClick={onClose}
             disabled={busy}
-            className="rounded-md px-3 py-1.5 text-[13px] text-foreground/70 transition-colors hover:bg-foreground/4 disabled:opacity-50"
+            className="rounded-md px-3 py-1.5 text-[13px] text-foreground/70 transition-colors hover:bg-foreground/4"
           >
             {IDEA_STARTER.close}
           </button>
@@ -145,7 +145,7 @@ export function IdeaStarterDialog({
             type="button"
             onClick={() => void submit()}
             disabled={busy}
-            className="rounded-md bg-(--craft-accent) px-3 py-1.5 text-[13px] text-white transition-colors hover:bg-(--craft-accent-hover) disabled:opacity-50"
+            className="rounded-md bg-(--craft-accent) px-3 py-1.5 text-[13px] text-white transition-colors hover:bg-(--craft-accent-hover)"
           >
             {IDEA_STARTER.create}
           </button>

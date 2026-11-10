@@ -71,7 +71,7 @@ export function AttachmentView({ node, editor, getPos, deleteNode }: NodeViewPro
             data-testid="csv-to-collection"
             disabled={converting}
             onClick={() => void convertToCollection()}
-            className="flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-meta text-(--craft-accent) transition-colors duration-150 ease-craft hover:bg-foreground/6 disabled:opacity-50"
+            className="flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-meta text-(--craft-accent) transition-colors duration-150 ease-craft hover:bg-foreground/6"
             title="转为集合"
           >
             <Table2 className="size-3.5" />

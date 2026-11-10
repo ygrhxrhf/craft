@@ -62,7 +62,7 @@ export function AuthorizePanel({ request }: { request: AuthorizeRequest }) {
           disabled={busy}
           onClick={() => void approve()}
           data-testid="authorize-approve"
-          className="rounded-lg bg-(--craft-accent) px-4 py-2 text-[13px] font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-(--craft-accent) px-4 py-2 text-[13px] font-medium text-white"
         >
           授权
         </button>

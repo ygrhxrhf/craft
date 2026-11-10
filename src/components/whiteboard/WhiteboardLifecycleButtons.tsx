@@ -58,7 +58,7 @@ export function WhiteboardDeleteButton({ id, name }: WhiteboardDeleteButtonProps
       disabled={busy}
       aria-label="删除白板"
       title="删除"
-      className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+      className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
     >
       <Trash2 className="size-4" />
     </button>
@@ -103,7 +103,7 @@ export function WhiteboardRestoreButton({ id }: WhiteboardRestoreButtonProps) {
       disabled={busy}
       aria-label="恢复白板"
       title="恢复"
-      className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+      className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
     >
       <RotateCcw className="size-4" />
     </button>

@@ -397,7 +397,7 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
               type="button"
               disabled={!draft.trim()}
               onClick={handleCreate}
-              className="rounded-lg bg-craft-accent px-3 py-1 text-meta font-medium text-white transition-colors duration-150 ease-craft hover:bg-craft-accent-hover disabled:opacity-50"
+              className="rounded-lg bg-craft-accent px-3 py-1 text-meta font-medium text-white transition-colors duration-150 ease-craft hover:bg-craft-accent-hover"
             >
               发布
             </button>
@@ -435,7 +435,7 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
                       disabled={offline}
                       title={offline ? offlineReactionMessage(mine) : undefined}
                       onClick={() => void handleReact(comment, glyph)}
-                      className="rounded px-0.5 opacity-0 group-hover:opacity-100 disabled:cursor-not-allowed"
+                      className="rounded px-0.5 opacity-0 group-hover:opacity-100"
                     >
                       {glyph}
                     </button>
@@ -493,7 +493,7 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
                 type="button"
                 disabled={!replyDrafts[thread.id]?.trim()}
                 onClick={() => void handleReply(thread.id)}
-                className="rounded-md px-2 py-1 text-meta font-medium text-craft-accent transition-colors duration-150 ease-craft hover:bg-craft-accent/12 disabled:opacity-50"
+                className="rounded-md px-2 py-1 text-meta font-medium text-craft-accent transition-colors duration-150 ease-craft hover:bg-craft-accent/12"
               >
                 回复
               </button>

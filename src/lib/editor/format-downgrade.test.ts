@@ -34,8 +34,9 @@ describe('the empty-block test', () => {
   });
 });
 
-// G578: Backspace's six-step chain. Format order is list → indent → decoration (the reverse of
-// Enter's), then the four block-level steps.
+// G578/G907: Backspace's chain. The format order is indent → list → decoration — G907's on-screen
+// ★★★ reading (dedent first, then drop the list, then merge) beats G578's static `Dsn` inference
+// that read the reverse. Then the four block-level steps.
 describe('the Backspace chain', () => {
   const plain = { indentLevel: 0, inList: false, decorated: false };
   const ctx = (patch: Partial<Parameters<typeof nextBackspaceStep>[0]> = {}) => ({
@@ -45,9 +46,9 @@ describe('the Backspace chain', () => {
     ...patch,
   });
 
-  it('leaves a list before touching indentation, unlike Enter', () => {
-    expect(nextBackspaceStep(ctx({ block: { indentLevel: 2, inList: true, decorated: true } }))).toBe('list');
-    expect(nextBackspaceStep(ctx({ block: { indentLevel: 2, inList: false, decorated: true } }))).toBe('indent');
+  it('dedents before leaving the list, unlike Enter', () => {
+    expect(nextBackspaceStep(ctx({ block: { indentLevel: 2, inList: true, decorated: true } }))).toBe('indent');
+    expect(nextBackspaceStep(ctx({ block: { indentLevel: 0, inList: true, decorated: true } }))).toBe('list');
     expect(nextBackspaceStep(ctx({ block: { indentLevel: 0, inList: false, decorated: true } }))).toBe('decoration');
   });
 

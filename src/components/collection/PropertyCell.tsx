@@ -694,7 +694,7 @@ function FileCell({ value, onChange }: { value: any; onChange: (v: any) => void 
         </>
       ) : (
         <button
-          className="text-sm text-muted-foreground hover:text-foreground disabled:opacity-50"
+          className="text-sm text-muted-foreground hover:text-foreground"
           disabled={busy}
           onClick={() => inputRef.current?.click()}
         >

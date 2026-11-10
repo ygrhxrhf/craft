@@ -59,17 +59,19 @@ describe('the touch press feedback is gated on the intent attribute', () => {
 });
 
 describe('the mouse press darkens the foreground-surface variants only', () => {
-  it('pins the three variants to --foreground-200 inside the fine-pointer query', () => {
+  it('pins the four variants to --foreground-200 inside the fine-pointer query', () => {
     expect(ruleBody('@media (pointer: fine)')).toContain(
       "background: var(--foreground-200)",
     );
-    for (const variant of ['outline', 'secondary', 'ghost']) {
-      expect(flat).toContain(`[data-slot='button'][data-variant='${variant}']:not(:disabled):active`);
+    for (const variant of ['outline', 'secondary', 'ghost', 'active']) {
+      expect(flat).toContain(
+        `[data-slot='button'][data-variant='${variant}']:not([data-static]):not([data-disabled]):not(:disabled):active`,
+      );
     }
   });
 
   it('does not darken the filled CTA, which carries its own colour', () => {
-    expect(flat).not.toContain(`data-variant='default']:not(:disabled):active`);
+    expect(flat).not.toContain(`data-variant='default']:not([data-static]):not([data-disabled]):not(:disabled):active`);
   });
 });
 
@@ -90,5 +92,27 @@ describe('the miscellaneous press rules land on their local carriers', () => {
 
   it('drops a pressed link preview to .91 opacity without scaling it', () => {
     expect(ruleBody("[data-type='link-preview'] a:active {")).toBe('opacity: 0.91;');
+  });
+});
+
+describe('the disabled and static gates are global (G1014)', () => {
+  it('gives every disabled control one global opacity rule, no per-component class', () => {
+    expect(ruleBody('[data-disabled] {')).toBe('opacity: 0.4; cursor: default;');
+  });
+
+  it('leaves static text with the default cursor and no state styling', () => {
+    expect(ruleBody('[data-static] {')).toBe('cursor: default;');
+    // Every state rule that could fire on a static control must exclude it.
+    for (const probe of [
+      "[data-whatintent='keyboard'] :focus:not([data-static]):not([data-disabled])",
+      "[data-whatintent='keyboard'] [data-slot='button']:focus:not([data-static]):not([data-disabled])",
+      "[data-whatintent='keyboard'] [role='tab']:focus:not([data-static]):not([data-disabled])",
+    ]) {
+      expect(flat).toContain(probe);
+    }
+  });
+
+  it('never attaches a hover tint to a static or disabled control', () => {
+    expect(css).toContain('&:hover:not([data-static]):not([data-disabled])');
   });
 });

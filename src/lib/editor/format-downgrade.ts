@@ -98,10 +98,12 @@ export interface BackspaceContext {
 
 /** The first Backspace step that applies, in the official order. */
 export function nextBackspaceStep(ctx: BackspaceContext): BackspaceStep | null {
-  // Steps 1–3: the format chain — but Backspace's order is **list → indent → decoration**, the
-  // reverse of Enter's (`Dsn` vs `lGe` in the ledger). Only the last step is shared.
-  if (ctx.block.inList) return 'list';
+  // Steps 1–3: the format chain. Dedent runs before leaving the list — G907's on-screen reading
+  // (★★★) pressed twice on one block and saw indent drop first, then listStyle+taskInfo vanish.
+  // That overrides G578's static `Dsn` inference (which read the reverse order); the on-screen
+  // reading is the one with executed evidence, so indent wins.
   if (ctx.block.indentLevel > 0) return 'indent';
+  if (ctx.block.inList) return 'list';
   if (ctx.block.decorated) return 'decoration';
 
   // Step 4: no previous block at all — an empty block is deleted, a non-empty one does nothing.

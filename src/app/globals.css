@@ -4,13 +4,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ── Hover gate (G972 / G1081) ────────────────────────────────────────────────
+/* ── Hover gate (G972 / G1081 / G1014) ────────────────────────────────────────
    Official Craft compiles `:hover` into an attribute-gated selector so a touch device never
    latches a hover state — it has no hover to leave. The gate is "the intent attribute exists and
-   is not touch", so mouse *and* keyboard keep their hover. Redefining the `hover` variant here
-   re-aims every `hover:` and `group-hover:` utility at once, which is the same move the official
-   compile layer makes. */
-@custom-variant hover ([data-whatintent]:not([data-whatintent='touch']) &:hover);
+   is not touch", so mouse *and* keyboard keep their hover. Every official state rule also carries
+   `:not(._isStatic,[data-disabled])`, so a disabled control and the static-text variant get no
+   state styling at all — that second gate rides along on the same redefinition. Redefining the
+   `hover` variant here re-aims every `hover:` and `group-hover:` utility at once, which is the
+   same move the official compile layer makes. */
+@custom-variant hover ([data-whatintent]:not([data-whatintent='touch']) &:hover:not([data-static]):not([data-disabled]));
 
 
 @theme inline {
@@ -460,6 +462,20 @@
     @apply font-sans;
   }
 
+  /* ── Two disabled gates (G1014 ①/②) ────────────────────────────────────────
+     Disabled is one global attribute rule, not a per-component class: `[data-disabled]` drops to
+     40% and restores the default cursor. `[data-static]` is the *other* gate — a control used as
+     static text keeps its normal opacity but gets no state styling at all, which the hover
+     variant above and the focus rules below both honour. */
+  [data-disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  [data-static] {
+    cursor: default;
+  }
+
   /* ── Input-intent gate (G1080 / G1081 / G1064 / G1110) ──────────────────────
      The official build compiles standard pseudo-classes into attribute selectors keyed on the
      two attributes the gate writes, so the focus layer replaces the browser's own
@@ -468,7 +484,7 @@
      the general rule protrudes 1.5px, a control that is itself the focusable target tucks in at
      -1px, and a compact tab at 2px/-2px. The editor body draws nothing on purpose. */
 
-  [data-whatintent='keyboard'] :focus {
+  [data-whatintent='keyboard'] :focus:not([data-static]):not([data-disabled]) {
     outline: 1px solid var(--craft-accent);
     outline-offset: 1.5px;
   }
@@ -479,14 +495,14 @@
   }
 
   /* Controls that *are* the focusable target tuck the ring inside their own box. */
-  [data-whatintent='keyboard'] [data-slot='button']:focus,
-  [data-whatintent='keyboard'] [data-slot='checkbox']:focus {
+  [data-whatintent='keyboard'] [data-slot='button']:focus:not([data-static]):not([data-disabled]),
+  [data-whatintent='keyboard'] [data-slot='checkbox']:focus:not([data-static]):not([data-disabled]) {
     outline: 1px solid var(--craft-accent);
     outline-offset: -1px;
   }
 
   /* The compact tab strip carries its own, heavier ring. */
-  [data-whatintent='keyboard'] [role='tab']:focus {
+  [data-whatintent='keyboard'] [role='tab']:focus:not([data-static]):not([data-disabled]) {
     outline: 2px solid var(--craft-accent);
     outline-offset: -2px;
   }
@@ -513,17 +529,21 @@
     opacity: 0.75;
   }
 
-  /* ── Pressed background (G1063 ①/④) ────────────────────────────────────────
+  /* ── Pressed background (G1063 ①/④, G972) ─────────────────────────────────
      The official action component darkens its background variants on `:active`, and the rule
      sits inside `@media (pointer: fine)` — a touch device must not also darken, it already has
      the scale/opacity feedback above. Local's `outline` / `secondary` / `ghost` are the three
      foreground-surface variants (the filled `default` is the colored CTA), so those are the
-     ones that take the darkened background. The six remaining official `:active` rules are not
-     pointer-gated; each is reproduced on the local carrier that mirrors it. */
+     ones that take the darkened background; `active` is the official rail-selected variant and
+     climbs the same ladder to 8% on press. Every rule carries the official
+     `:not([data-static],[data-disabled])` gate, plus `:not(:disabled)` for native buttons.
+     The six remaining official `:active` rules are not pointer-gated; each is reproduced on the
+     local carrier that mirrors it. */
   @media (pointer: fine) {
-    [data-slot='button'][data-variant='outline']:not(:disabled):active,
-    [data-slot='button'][data-variant='secondary']:not(:disabled):active,
-    [data-slot='button'][data-variant='ghost']:not(:disabled):active {
+    [data-slot='button'][data-variant='outline']:not([data-static]):not([data-disabled]):not(:disabled):active,
+    [data-slot='button'][data-variant='secondary']:not([data-static]):not([data-disabled]):not(:disabled):active,
+    [data-slot='button'][data-variant='ghost']:not([data-static]):not([data-disabled]):not(:disabled):active,
+    [data-slot='button'][data-variant='active']:not([data-static]):not([data-disabled]):not(:disabled):active {
       background: var(--foreground-200);
     }
   }
@@ -531,6 +551,14 @@
   [data-slot='dialog-close']:active,
   [data-slot='sheet-close']:active,
   [data-slot='toggle']:active {
+    background: var(--foreground-150);
+  }
+
+  /* G972: the Active variant's hover group carries a keyboard-focus arm as well, so focus
+     lands on the same 6% rung as hover and popup-open before a press climbs to 8%. It sits
+     after the focus-ring rules above, which only draw the outline. */
+  [data-whatintent='keyboard']
+    [data-slot='button'][data-variant='active']:focus:not([data-static]):not([data-disabled]) {
     background: var(--foreground-150);
   }
 

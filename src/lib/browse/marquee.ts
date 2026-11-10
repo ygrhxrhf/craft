@@ -67,6 +67,15 @@ export function marqueeHits(band: Rect, items: readonly ItemRect[]): string[] {
 }
 
 /**
+ * G1135 ④: the official build compares the new hit set with the current one and skips the state
+ * write when they are equal (`TVt`), so a drag that stays inside the same cards does not re-render.
+ */
+export function sameIdSet(current: ReadonlySet<string>, next: readonly string[]): boolean {
+  if (current.size !== next.length) return false;
+  return next.every((id) => current.has(id));
+}
+
+/**
  * G1135 ③: dragging past an edge of the scroll viewport auto-scrolls it. The official curve is
  * `±30 * min(distance / 200, 1) ** 1.5` px per frame — so it ramps in gently and caps at 30.
  */

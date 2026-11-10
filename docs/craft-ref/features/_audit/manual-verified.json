@@ -6780,13 +6780,15 @@
       ]
     },
     "G661": {
-      "status": "partial",
-      "note": "现读（2026-11-09）：day:// 编解码已建（craft-schemes.ts:28 写、:34 解析、:48 路由 → /daily-notes?date=…）且读侧接线（Editor.tsx:683）；写侧无生产调用点（grep dayNoteHref 只命中定义与测试）；差值口径 round≠官方 floor（timeline.ts:81-84）。",
+      "status": "aligned",
+      "note": "第 509 批（2026-11-10）：day:// 编解码（craft-schemes.ts）、写侧 inline atom 生成（inline-atoms.ts:dayAtomHref）、读侧拦截跳转（Editor.tsx:683）、日记路由 searchParams 接线（daily-notes/page.tsx:date 导航到指定日记文档）已全通；差值口径采用官方 floor(Δms/864e5)（timeline.ts:dayDiff）。",
       "evidence": [
         "src/lib/links/craft-schemes.ts:28",
         "src/lib/links/craft-schemes.ts:34",
         "src/lib/links/craft-schemes.ts:48",
+        "src/lib/editor/inline-atoms.ts:133",
         "src/components/editor/Editor.tsx:683",
+        "src/app/(app)/daily-notes/page.tsx:25",
         "src/lib/calendar/timeline.ts:82"
       ]
     },

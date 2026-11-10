@@ -78,9 +78,13 @@ export function endOfMonth(day: Date): Date {
   return new Date(day.getFullYear(), day.getMonth() + 1, 0);
 }
 
-/** Whole days from `today` to `day`, negative for earlier days. */
+/**
+ * Whole days from `today` to `day`, negative for earlier days. Official `Kq` is
+ * `floor(Δms/864e5)` on midnight-normalised instants — not a rounded difference, so a
+ * shortened/lengthened day (DST) still maps onto its calendar day rather than drifting one.
+ */
 export function dayDiff(day: Date, today: Date): number {
-  return Math.round((startOfDay(day).getTime() - startOfDay(today).getTime()) / 86_400_000);
+  return Math.floor((startOfDay(day).getTime() - startOfDay(today).getTime()) / 86_400_000);
 }
 
 export function relativeDayLabel(day: Date, today: Date): string | null {

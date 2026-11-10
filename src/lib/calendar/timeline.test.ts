@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import {
   TIMELINE_DAY_RUN,
   addDays,
+  dayDiff,
   dayInSection,
   dateLabel,
   monthLabel,
@@ -138,6 +139,15 @@ describe('an anchor that runs past the end of its month', () => {
     ]);
     expect(relativeDayLabel(new Date(2026, 9, 28), new Date(2026, 9, 27))).toBe('明天');
     expect(relativeDayLabel(new Date(2026, 9, 26), new Date(2026, 9, 27))).toBeNull();
+  });
+
+  it('calculates dayDiff with floor convention matching official Kq (G661)', () => {
+    const base = new Date(2026, 8, 27, 12, 0, 0);
+    const tomorrow = new Date(2026, 8, 28, 18, 0, 0);
+    const yesterday = new Date(2026, 8, 26, 6, 0, 0);
+    expect(dayDiff(base, base)).toBe(0);
+    expect(dayDiff(tomorrow, base)).toBe(1);
+    expect(dayDiff(yesterday, base)).toBe(-1);
   });
 });
 

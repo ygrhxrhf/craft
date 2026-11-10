@@ -30,10 +30,13 @@ export function dayNoteHref(date: Date): string {
   return `day://${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())}`;
 }
 
-/** The local calendar day a `day://` link points at, or `null` when it is not one. */
+/**
+ * The local calendar day a `day://` link points at, or `null` when it is not one.
+ * G661: the official reader accepts both separators (`day://2026.09.27` and `day://2026-09-27`).
+ */
 export function parseDayNoteHref(href: unknown): Date | null {
   if (typeof href !== 'string') return null;
-  const match = /^day:\/\/(\d{4})\.(\d{2})\.(\d{2})$/i.exec(href.trim());
+  const match = /^day:\/\/(\d{4})[.-](\d{2})[.-](\d{2})$/i.exec(href.trim());
   if (!match) return null;
   const year = Number(match[1]);
   const month = Number(match[2]);

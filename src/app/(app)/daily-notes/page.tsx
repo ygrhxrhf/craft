@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
-import { getDailyNotes, getDailyNoteStartTime } from '@/actions/daily-notes/daily-notes';
+import { getDailyNotes, getDailyNoteStartTime, getOrCreateDayNote } from '@/actions/daily-notes/daily-notes';
 import type { DailyNoteItem } from '@/actions/daily-notes/daily-notes';
 import { DAILY_NOTE_BUCKETS, dailyNoteBucket, type DailyNoteBucket } from '@/lib/utils/daily-note-window';
 import { TodayNoteButton } from './TodayNoteButton';
@@ -16,9 +16,35 @@ const BUCKET_LABELS: Record<DailyNoteBucket, string> = {
   earlier: '更早',
 };
 
-export default async function DailyNotesPage() {
+export default async function DailyNotesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ date?: string }>;
+}) {
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
+
+  const params = await searchParams;
+  if (params?.date) {
+    const raw = params.date.trim();
+    const match = /^(\d{4})[.-](\d{1,2})[.-](\d{1,2})$/.exec(raw);
+    if (match) {
+      const year = Number(match[1]);
+      const month = Number(match[2]);
+      const day = Number(match[3]);
+      const targetDate = new Date(year, month - 1, day);
+      if (
+        targetDate.getFullYear() === year &&
+        targetDate.getMonth() === month - 1 &&
+        targetDate.getDate() === day
+      ) {
+        const note = await getOrCreateDayNote(targetDate);
+        if (note?.id) {
+          redirect(`/documents/${note.id}`);
+        }
+      }
+    }
+  }
 
   // G20：分组必须与 `getOrCreateDayNote` 同源——它按配置的起始时间算日窗，页面此前却按午夜分组，
   // 于是起始时间非 00:00 时同一条笔记在两处被归到不同的天（04:00 起始时凌晨写的那篇落到「昨天」）。

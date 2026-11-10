@@ -37,6 +37,12 @@ describe('the daily-note deep link', () => {
     expect(day?.getMonth()).toBe(8);
     expect(day?.getDate()).toBe(27);
     expect(day?.getHours()).toBe(0);
+
+    // G661: accepts dash as well as dot
+    const dashDay = parseDayNoteHref('day://2026-09-27');
+    expect(dashDay?.getFullYear()).toBe(2026);
+    expect(dashDay?.getMonth()).toBe(8);
+    expect(dashDay?.getDate()).toBe(27);
   });
 
   it('rejects a malformed or impossible day', () => {

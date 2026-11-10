@@ -8,6 +8,8 @@
  * - `ATOM_NODE_NAMES` 是"光标在里面就不动默认行为"的判据，直接照官方 `Wc`/`Jm` 的四类枚举。
  */
 
+import { dayNoteHref } from '@/lib/links/craft-schemes';
+
 export const ATOM_NODE_NAMES = ['mathBlock', 'inlineMath', 'dayAtom', 'mention', 'tagAtom'] as const;
 
 /**
@@ -51,10 +53,12 @@ export function parseDayAtomDate(raw: unknown): string | null {
   return `${year}.${pad(month)}.${pad(day)}`;
 }
 
-/** 原子的 `day://` 深链（与官方 `e1e` 同一形态：点分隔 + 两位零填充）。 */
+/** 原子的 `day://` 深链（与官方 `e1e` 同一形态：点分隔 + 两位零填充，由 craft-schemes:dayNoteHref 统一生成）。 */
 export function dayAtomHref(date: string | null | undefined): string {
   const normalized = parseDayAtomDate(date);
-  return normalized ? `day://${normalized}` : '';
+  if (!normalized) return '';
+  const [y, m, d] = normalized.split('.').map(Number);
+  return dayNoteHref(new Date(y, m - 1, d));
 }
 
 /** 胶囊上显示的那一行（`2026.09.27` 直接印出来）。 */

@@ -7,6 +7,7 @@ import { PASTE_FAILED } from '@/lib/errors/alert-copy';
 import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
 import type { Editor as TiptapEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { disableKeyDefs, enableKeyDefs } from '@/lib/focus/focus-stack';
 import TextAlign from '@tiptap/extension-text-align';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
@@ -945,6 +946,22 @@ export function Editor({
     else dom.removeAttribute('lang');
     dom.setAttribute('data-completed-appearance', completedAppearance);
   }, [editor, spelling, spellingLang, completedAppearance]);
+
+  // G865: while an IME candidate window is open the official editor takes its key definitions out
+  // of the focus stack, so no shortcut can fire on a half-typed word.
+  useEffect(() => {
+    const dom = editor?.view.dom;
+    if (!dom) return;
+    const onStart = () => disableKeyDefs();
+    const onEnd = () => enableKeyDefs();
+    dom.addEventListener('compositionstart', onStart);
+    dom.addEventListener('compositionend', onEnd);
+    return () => {
+      dom.removeEventListener('compositionstart', onStart);
+      dom.removeEventListener('compositionend', onEnd);
+      enableKeyDefs();
+    };
+  }, [editor]);
 
   if (!editor) return null;
 

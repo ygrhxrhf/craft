@@ -41,10 +41,14 @@ export const MARKDOWN_SHORTCUTS: readonly MarkdownShortcut[] = [
   { syntax: '`文本`', label: '行内代码' },
   { syntax: '~~文本~~', label: '删除线' },
   { syntax: '==文本==', label: '高亮' },
+  { syntax: '::文本::', label: '高亮' },
   { syntax: '[文本](链接)', label: '链接' },
   { syntax: '$$公式$$', label: '块级公式' },
   { syntax: '$公式$', label: '行内公式' },
   { syntax: '[] 或 [x]', label: '待办事项' },
+  { syntax: '+ 折叠列表', label: '折叠列表' },
+  { syntax: '| 引用块', label: '引用块' },
+  { syntax: '• 无序列表', label: '无序列表' },
 ] as const;
 
 /** The subtitle the official panel prints (`sidebar.insert.subtitle`). */

@@ -88,14 +88,16 @@ export const MarkdownShortcuts = Extension.create({
     // top-level paragraphs — inside a bullet list the replacement would be content the
     // schema rejects, and `- [ ]` there is the importer's job, not the editor's.
     // G358：官方表 `uF` 的 pattern 一律 `^\s*`（允许前导空白），故 `  [] ` 也应转任务块。
+    // G866：官方任务四写法 `[x×☐□]`／`[ ]`／`-[]`／`[x]`，其中 `[x×]` 直接置 Checked，其余 Unchecked。
     if (this.editor.schema.nodes.taskList && this.editor.schema.nodes.taskItem) {
       rules.push(
         new InputRule({
-          find: /^\s*\[([ xX])\]\s$/,
+          find: /^\s*-?\[([ xX×☐□]?)\]\s$/,
           handler: ({ state, range, match }) => {
             const $at = state.doc.resolve(range.from);
             if ($at.depth !== 1 || $at.parent.type.name !== 'paragraph') return;
 
+            const checked = /^[xX×]$/.test(match[1]);
             const { taskList, taskItem, paragraph } = state.schema.nodes;
             const blockStart = $at.before(1);
             const tail = $at.parent.textContent.slice(range.to - blockStart - 1);
@@ -106,10 +108,82 @@ export const MarkdownShortcuts = Extension.create({
               $at.after(1),
               taskList.create(
                 null,
-                taskItem.create(
-                  { checked: match[1].toLowerCase() === 'x' },
-                  paragraph.create(null, tail ? state.schema.text(tail) : null)
-                )
+                taskItem.create({ checked }, paragraph.create(null, tail ? state.schema.text(tail) : null))
+              )
+            );
+          },
+        })
+      );
+    }
+
+    // G866: `+ ` → 折叠列表（官方 `Nt.Toggle`）。与任务规则同型：整段落包成 toggleBlock。
+    if (this.editor.schema.nodes.toggleBlock) {
+      rules.push(
+        new InputRule({
+          find: /^\s*\+\s$/,
+          handler: ({ state, range }) => {
+            const $at = state.doc.resolve(range.from);
+            if ($at.depth !== 1 || $at.parent.type.name !== 'paragraph') return;
+            const { toggleBlock, paragraph } = state.schema.nodes;
+            const blockStart = $at.before(1);
+            const tail = $at.parent.textContent.slice(range.to - blockStart - 1);
+            const { tr } = state;
+            tr.replaceWith(
+              blockStart,
+              $at.after(1),
+              toggleBlock.create(
+                { open: null },
+                paragraph.create(null, tail ? state.schema.text(tail) : null)
+              )
+            );
+          },
+        })
+      );
+    }
+
+    // G866: `| ` → callout（官方把 `>` 与 `|` 一起派成 `P2`）。`>` 由 Blockquote 承担。
+    if (this.editor.schema.nodes.callout) {
+      rules.push(
+        new InputRule({
+          find: /^\s*\|\s$/,
+          handler: ({ state, range }) => {
+            const $at = state.doc.resolve(range.from);
+            if ($at.depth !== 1 || $at.parent.type.name !== 'paragraph') return;
+            const { callout, paragraph } = state.schema.nodes;
+            const blockStart = $at.before(1);
+            const tail = $at.parent.textContent.slice(range.to - blockStart - 1);
+            const { tr } = state;
+            tr.replaceWith(
+              blockStart,
+              $at.after(1),
+              callout.create(
+                { type: 'info' },
+                paragraph.create(null, tail ? state.schema.text(tail) : null)
+              )
+            );
+          },
+        })
+      );
+    }
+
+    // G866: `• ` → 无序列表（官方 `-*•` 三记号同派 `Nt.Bullet`；StarterKit 只认前两个）。
+    if (this.editor.schema.nodes.bulletList && this.editor.schema.nodes.listItem) {
+      rules.push(
+        new InputRule({
+          find: /^\s*•\s$/,
+          handler: ({ state, range }) => {
+            const $at = state.doc.resolve(range.from);
+            if ($at.depth !== 1 || $at.parent.type.name !== 'paragraph') return;
+            const { bulletList, listItem, paragraph } = state.schema.nodes;
+            const blockStart = $at.before(1);
+            const tail = $at.parent.textContent.slice(range.to - blockStart - 1);
+            const { tr } = state;
+            tr.replaceWith(
+              blockStart,
+              $at.after(1),
+              bulletList.create(
+                null,
+                listItem.create(null, paragraph.create(null, tail ? state.schema.text(tail) : null))
               )
             );
           },

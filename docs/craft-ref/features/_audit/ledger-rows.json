@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-11-10T07:40:04.855Z",
+  "generatedAt": "2026-11-10T10:50:26.643Z",
   "totalRows": 1615,
   "statusDistribution": {
     "gap": 676,
     "aligned": 467,
     "unknown": 183,
-    "deliberate": 133,
+    "deliberate": 134,
     "nonaction": 72,
     "partial": 65,
-    "unreachable": 19
+    "unreachable": 18
   },
   "priorityDistribution": {
     "P2": 631,
@@ -28,7 +28,7 @@
     "P2 / deliberate": 51,
     "P1 / aligned": 48,
     "P? / aligned": 48,
-    "P3 / deliberate": 38,
+    "P3 / deliberate": 39,
     "P? / deliberate": 36,
     "P2 / unknown": 33,
     "P? / nonaction": 29,
@@ -40,9 +40,9 @@
     "P? / partial": 19,
     "P1 / partial": 14,
     "P1 / deliberate": 8,
-    "P3 / unreachable": 7,
     "P2 / unreachable": 7,
     "P0 / aligned": 6,
+    "P3 / unreachable": 6,
     "P3 / partial": 4,
     "P? / unreachable": 4,
     "P0 / partial": 2,
@@ -2608,9 +2608,9 @@
       "id": "G89",
       "official": "上限常量位置：单字段 10000 字符（硬编码）；表格尺寸/合集字段数/提醒数/白板元素数由**远端配置下发**（`dialogs.md` §1）",
       "local": "✎ 现读（2026-11-10 第 508 批）：可落的一半已落——单字段 10000 字符上限（`character-limit.ts` ＋ TextCell 触限截住）；表格尺寸/合集字段数/提醒数/白板元素数四组配额值由远端配置下发，本仓从未采集到这四组配置的下发内容，属于采集边界（主动不采，配额数值在盘上拿不到）。",
-      "verdict": "其余四组配额属采集边界（远端配置未采，盘上拿不到）",
+      "verdict": "其余四组配额不做（采集边界：远端配置未采，盘上拿不到）",
       "score": "1/1",
-      "status": "unreachable",
+      "status": "deliberate",
       "scoreParsed": {
         "impact": 1,
         "cost": 1,

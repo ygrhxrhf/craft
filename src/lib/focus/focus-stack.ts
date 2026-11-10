@@ -6,6 +6,8 @@
  * disabled without being removed.
  */
 
+import { isImeComposing } from '@/lib/editor/ime-guard';
+
 export interface FocusKeyDef {
   match: (event: KeyboardEvent) => boolean;
   handler: () => void;
@@ -52,8 +54,16 @@ export class FocusStack {
    * Dispatches a key event. Returns true when a handler ran (the caller prevents default).
    * Break rule (`if (hit || !allowPropagation) break`): a top entry without a hit and without
    * `allowPropagation` blocks every lower entry. Disabled entries are skipped entirely.
+   *
+   * G865: an IME composition owns the key — the official dispatcher returns before walking the
+   * stack, so a candidate-window Escape never closes a popup and a candidate-confirm Enter never
+   * submits a cell. The check sits here, at the single entry point, instead of at each caller.
    */
-  dispatch(event: Pick<KeyboardEvent, 'key' | 'ctrlKey' | 'metaKey' | 'altKey' | 'shiftKey'>): boolean {
+  dispatch(
+    event: Pick<KeyboardEvent, 'key' | 'ctrlKey' | 'metaKey' | 'altKey' | 'shiftKey'> &
+      Partial<Pick<KeyboardEvent, 'keyCode' | 'isComposing'>>
+  ): boolean {
+    if (isImeComposing(event)) return false;
     for (let index = this.entries.length - 1; index >= 0; index -= 1) {
       const entry = this.entries[index];
       if (entry.disabled) continue;
@@ -82,6 +92,17 @@ export function escapeKeyDef(handler: () => void): FocusKeyDef {
     match: (event) => event.key === 'Escape',
     handler,
   };
+}
+
+/** G865: the official `disableKeyDefs` pushes one empty, non-propagating entry on top. */
+export const KEY_DEFS_COMPOSITION_ID = 'composition-key-defs';
+
+export function disableKeyDefs(): void {
+  focusStack.push({ id: KEY_DEFS_COMPOSITION_ID, keyDefs: [], allowPropagation: false });
+}
+
+export function enableKeyDefs(): void {
+  focusStack.remove(KEY_DEFS_COMPOSITION_ID);
 }
 
 /**

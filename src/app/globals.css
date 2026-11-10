@@ -76,6 +76,31 @@
   --background: oklch(0.9936 0.0017 247.8);
   --foreground: oklch(0.2252 0.0049 248);
 
+  /* G971/G1010: the official foreground ramp is 20 alpha steps over one colour channel —
+     `rgb(var(--foreground) / N%)`, so flipping the theme recomputes all 20 at once. The local
+     token is an oklch colour rather than a triplet, so each step is the same percentage mixed
+     into transparency; the table (index → %) is copied verbatim from the official spec. */
+  --foreground-0: color-mix(in oklab, var(--foreground) 0%, transparent);
+  --foreground-25: color-mix(in oklab, var(--foreground) 2%, transparent);
+  --foreground-50: color-mix(in oklab, var(--foreground) 3%, transparent);
+  --foreground-100: color-mix(in oklab, var(--foreground) 4%, transparent);
+  --foreground-150: color-mix(in oklab, var(--foreground) 6%, transparent);
+  --foreground-200: color-mix(in oklab, var(--foreground) 8%, transparent);
+  --foreground-250: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --foreground-300: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --foreground-350: color-mix(in oklab, var(--foreground) 18%, transparent);
+  --foreground-400: color-mix(in oklab, var(--foreground) 25%, transparent);
+  --foreground-450: color-mix(in oklab, var(--foreground) 32%, transparent);
+  --foreground-500: color-mix(in oklab, var(--foreground) 40%, transparent);
+  --foreground-550: color-mix(in oklab, var(--foreground) 48%, transparent);
+  --foreground-600: color-mix(in oklab, var(--foreground) 55%, transparent);
+  --foreground-650: color-mix(in oklab, var(--foreground) 62%, transparent);
+  --foreground-700: color-mix(in oklab, var(--foreground) 70%, transparent);
+  --foreground-750: color-mix(in oklab, var(--foreground) 78%, transparent);
+  --foreground-800: color-mix(in oklab, var(--foreground) 85%, transparent);
+  --foreground-850: color-mix(in oklab, var(--foreground) 92%, transparent);
+  --foreground-900: color-mix(in oklab, var(--foreground) 100%, transparent);
+
   /* Card / Popover — --base-overlay rgb(252 252 252) */
   --card: oklch(0.9911 0 0);
   --card-foreground: oklch(0.2252 0.0049 248);

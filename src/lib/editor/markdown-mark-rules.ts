@@ -23,6 +23,8 @@ export const SPACE_MARK_RULES: readonly SpaceMarkRule[] = [
   { mark: 'code', find: /(?<=^|\s)`([^`]+)`\s$/, textGroup: 1 },
   { mark: 'strike', find: /(?<=^|\s)~~([^~]+)~~\s$/, textGroup: 1 },
   { mark: 'highlight', find: /(?<=^|\s)==([^=]+)==\s$/, textGroup: 1 },
+  // G878: `::text::` is the official highlight alias; `==text==` is the other spelling of the same slot.
+  { mark: 'highlight', find: /(?<=^|\s)::([^:]+)::\s$/, textGroup: 1 },
   { mark: 'link', find: /(?<=^|\s)\[([^\]]+)\]\(([^)\s]+)\)\s$/, textGroup: 1, hrefGroup: 2 },
 ];
 

@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   DEFAULT_FRAME,
+  ASPECT_TIER_ORDER,
   frameStyle,
+  matchAspectTier,
   moveFrame,
   readImageFrame,
   zoomFrame,
@@ -53,5 +55,41 @@ describe('zooming', () => {
       objectPosition: '0% 100%',
       transform: 'scale(2)',
     });
+  });
+});
+
+describe('aspect ratio tiers (G1417)', () => {
+  it('keeps the six official tiers in order', () => {
+    expect(ASPECT_TIER_ORDER).toEqual(['default', 'freeform', '16:9', '2:1', '3:1', '4:3']);
+  });
+
+  it('matches a ratio inside the 0.1 tolerance to a fixed tier', () => {
+    expect(matchAspectTier(16 / 9)).toBe('16:9');
+    expect(matchAspectTier(2)).toBe('2:1');
+    expect(matchAspectTier(3)).toBe('3:1');
+    expect(matchAspectTier(4 / 3)).toBe('4:3');
+    expect(matchAspectTier(1.5, 1.5)).toBe('default');
+  });
+
+  it('uses a strict tolerance — 0.1 or greater is not a match', () => {
+    expect(matchAspectTier(2.1)).toBe('freeform');
+    expect(matchAspectTier(2.099)).toBe('2:1');
+    expect(matchAspectTier(1.901)).toBe('2:1');
+    expect(matchAspectTier(1.9)).toBe('freeform');
+  });
+
+  it('falls back to freeform for a ratio belonging to no tier', () => {
+    expect(matchAspectTier(1)).toBe('freeform');
+    expect(matchAspectTier(2.5)).toBe('freeform');
+    expect(matchAspectTier(0.5)).toBe('freeform');
+  });
+
+  it('never matches freeform itself, which carries no value', () => {
+    expect(matchAspectTier(Number.NaN)).toBe('freeform');
+  });
+
+  it('resolves the default tier from the block aspect ratio, not a constant', () => {
+    expect(matchAspectTier(1.5, 1.5)).toBe('default');
+    expect(matchAspectTier(1.5, 1.4)).toBe('freeform');
   });
 });

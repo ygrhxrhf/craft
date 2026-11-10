@@ -15,7 +15,7 @@ const source = readFileSync(
 
 describe('the task input rule', () => {
   it('allows leading whitespace, as the official pattern does', () => {
-    expect(source).toContain('find: /^\\s*\\[([ xX])\\]\\s$/');
+    expect(source).toContain('find: /^\\s*-?\\[([ xX×☐□]?)\\]\\s$/');
   });
 
   it('does not anchor strictly at the paragraph start', () => {
@@ -24,6 +24,41 @@ describe('the task input rule', () => {
 
   it('still refuses to fire outside a top-level paragraph', () => {
     expect(source).toContain("$at.depth !== 1 || $at.parent.type.name !== 'paragraph'");
+  });
+});
+
+/**
+ * G866: the official `uF` table has four task spellings (`[x×☐□]` / `[ ]` / `-[]` / `[x]`), a
+ * `+` → toggle entry, a `|` alias beside `>` for the reference/callout slot, and `•` as a third
+ * bullet mark. These are pinned statically for the same reason the task rule is (no live editor).
+ */
+describe('the remaining markdown triggers (G866)', () => {
+  it('accepts the four task spellings and only [x]/[×] start checked', () => {
+    expect(source).toContain('-?\\[');
+    expect(source).toContain('[ xX×☐□]');
+    expect(source).toContain('const checked = /^[xX×]$/.test(match[1]);');
+    expect(source).not.toContain("match[1].toLowerCase() === 'x'");
+  });
+
+  it('turns "+ " into a toggle block', () => {
+    expect(source).toContain('find: /^\\s*\\+\\s$/');
+    expect(source).toContain('toggleBlock.create(');
+  });
+
+  it('turns "| " into a callout', () => {
+    expect(source).toContain('find: /^\\s*\\|\\s$/');
+    expect(source).toContain('callout.create(');
+  });
+
+  it('turns "• " into a bullet list', () => {
+    expect(source).toContain('find: /^\\s*•\\s$/');
+    expect(source).toContain('bulletList.create(');
+  });
+
+  it('gates each rule on the node type being present', () => {
+    expect(source).toContain('if (this.editor.schema.nodes.toggleBlock)');
+    expect(source).toContain('if (this.editor.schema.nodes.callout)');
+    expect(source).toContain('if (this.editor.schema.nodes.bulletList');
   });
 });
 

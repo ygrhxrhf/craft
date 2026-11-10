@@ -48,12 +48,12 @@ describe('the cheat-sheet lists the rules this build actually fires', () => {
     const rules =
       (extensionSource.match(/find:\s*\//g) ?? []).length +
       (markRuleSource.match(/find:\s*\//g) ?? []).length;
-    expect(rules).toBe(12);
+    expect(rules).toBe(16);
     expect(MARKDOWN_SHORTCUTS.length).toBeLessThanOrEqual(rules);
-    expect(MARKDOWN_SHORTCUTS.length).toBe(10);
+    expect(MARKDOWN_SHORTCUTS.length).toBe(14);
   });
 
-  it('covers strong, italic, inline code, strikethrough, highlight, link, both formulas and the task box', () => {
+  it('covers strong, italic, inline code, strikethrough, both highlights, link, both formulas, the task box and the three block starters', () => {
     const labels = MARKDOWN_SHORTCUTS.map((row) => row.label);
     expect(labels).toEqual([
       '粗体',
@@ -62,10 +62,14 @@ describe('the cheat-sheet lists the rules this build actually fires', () => {
       '行内代码',
       '删除线',
       '高亮',
+      '高亮',
       '链接',
       '块级公式',
       '行内公式',
       '待办事项',
+      '折叠列表',
+      '引用块',
+      '无序列表',
     ]);
   });
 });

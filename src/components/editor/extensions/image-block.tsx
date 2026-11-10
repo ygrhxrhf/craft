@@ -85,6 +85,12 @@ export const ImageBlock = Node.create({
         },
         renderHTML: (attributes) => ({ 'data-aspect-ratio': String(attributes.aspectRatio ?? 1.5) }),
       },
+      // G1417：用户选中的长宽比档位（六档名册之一）。没选过不写，渲染也不改形。
+      aspectTier: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('data-aspect-tier'),
+        renderHTML: (attributes) => (attributes.aspectTier ? { 'data-aspect-tier': attributes.aspectTier } : {}),
+      },
       // G156：图片样式是两根轴——尺寸 auto|large × 填充 fill|fit。
       imageSize: {
         default: 'auto',

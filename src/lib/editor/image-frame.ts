@@ -60,3 +60,74 @@ export function frameStyle(frame: ImageFrame): { objectPosition: string; transfo
     transform: frame.scale === 1 ? 'none' : `scale(${frame.scale})`,
   };
 }
+
+/**
+ * G1417: Image editor aspect ratio roster and nearest-match logic.
+ * Official bundle extracts (ImageEditorPopup):
+ * 6 tiers: default, freeform, 16:9, 2:1, 3:1, 4:3
+ * Iterates ["default", "16:9", "2:1", "3:1", "4:3"], strict Math.abs(t - value) < 0.1, fallback "freeform".
+ */
+export type AspectTier = 'default' | 'freeform' | '16:9' | '2:1' | '3:1' | '4:3';
+
+export interface AspectDefinition {
+  type: 'fixed' | 'free';
+  value?: number;
+}
+
+export const ASPECT_TIER_ORDER: AspectTier[] = [
+  'default',
+  'freeform',
+  '16:9',
+  '2:1',
+  '3:1',
+  '4:3',
+];
+
+export const ASPECT_MATCH_CANDIDATES: AspectTier[] = [
+  'default',
+  '16:9',
+  '2:1',
+  '3:1',
+  '4:3',
+];
+
+export const ASPECT_TOLERANCE = 0.1;
+
+export function buildAspectTable(defaultValue: number = 1.5): Map<AspectTier, AspectDefinition> {
+  return new Map<AspectTier, AspectDefinition>([
+    ['default', { type: 'fixed', value: Number(defaultValue.toFixed(4)) }],
+    ['freeform', { type: 'free' }],
+    ['16:9', { type: 'fixed', value: Number((16 / 9).toFixed(4)) }],
+    ['2:1', { type: 'fixed', value: 2 }],
+    ['3:1', { type: 'fixed', value: 3 }],
+    ['4:3', { type: 'fixed', value: Number((4 / 3).toFixed(4)) }],
+  ]);
+}
+
+/**
+ * Match a numeric aspect ratio (width / height) to the nearest fixed tier within 0.1 tolerance.
+ * Falls back to 'freeform' when no tier matches.
+ */
+export function matchAspectTier(
+  ratio: number,
+  defaultValue: number = 1.5,
+  table: Map<AspectTier, AspectDefinition> = buildAspectTable(defaultValue),
+): AspectTier {
+  for (const tier of ASPECT_MATCH_CANDIDATES) {
+    const def = table.get(tier);
+    if (def?.type === 'fixed' && typeof def.value === 'number') {
+      if (Math.abs(ratio - def.value) < ASPECT_TOLERANCE) {
+        return tier;
+      }
+    }
+  }
+  return 'freeform';
+}
+
+/** The ratio a picked tier stands for. Freeform and default fall back to the given ratio. */
+export function aspectValueFor(tier: AspectTier, defaultRatio: number = 1.5): number {
+  if (tier === 'freeform' || tier === 'default') return defaultRatio;
+  const def = buildAspectTable(defaultRatio).get(tier);
+  return def?.type === 'fixed' && typeof def.value === 'number' ? def.value : defaultRatio;
+}
+

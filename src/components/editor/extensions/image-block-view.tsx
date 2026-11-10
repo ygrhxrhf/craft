@@ -7,7 +7,17 @@ import { useRef, useState } from 'react';
 import { Crop, ImagePlus, Link2, Loader2, Minus, Plus } from 'lucide-react';
 import { uploadFile } from '@/lib/upload-client';
 import { promptDialog } from '@/lib/dialog/show';
-import { frameStyle, moveFrame, readImageFrame, zoomFrame, type ImageFrame } from '@/lib/editor/image-frame';
+import {
+  ASPECT_TIER_ORDER,
+  aspectValueFor,
+  frameStyle,
+  matchAspectTier,
+  moveFrame,
+  readImageFrame,
+  zoomFrame,
+  type AspectTier,
+  type ImageFrame,
+} from '@/lib/editor/image-frame';
 import { cropMaskForFrame } from '@/lib/editor/image-crop';
 import { primaryColorFromInt, samplePrimaryColor } from '@/lib/editor/image-primary-color';
 import { useLightboxStore } from '@/lib/store/use-lightbox-store';
@@ -28,8 +38,22 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
   const primaryColor = primaryColorFromInt(node.attrs.primaryColor);
   const frame = readImageFrame(node.attrs);
   const [framing, setFraming] = useState(false);
+  // G1417：当前档位＝用户选过的档；没选过就按图比例就近匹配（落不进任何档即 freeform）。
+  const storedTier = node.attrs.aspectTier as AspectTier | null;
+  const aspectRatio = typeof node.attrs.aspectRatio === 'number' ? node.attrs.aspectRatio : 1.5;
+  const aspectTier: AspectTier = storedTier ?? matchAspectTier(aspectRatio, 1.5);
+  const [aspectOpen, setAspectOpen] = useState(false);
   const drag = useRef<{ x: number; y: number; frame: ImageFrame } | null>(null);
   const frameBox = useRef<HTMLDivElement>(null);
+
+  const pickAspect = (tier: AspectTier) => {
+    updateAttributes({
+      aspectTier: tier,
+      // 档位落成具体比例：freeform / default 保留图自身比例。
+      aspectRatio: aspectValueFor(tier, aspectRatio),
+    });
+    setAspectOpen(false);
+  };
 
   const writeFrame = (next: ImageFrame) => {
     updateAttributes({
@@ -111,7 +135,15 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
                 <div className="size-6 animate-pulse rounded-full bg-muted-foreground/20" />
               </div>
             )}
-            <div ref={frameBox} className="h-72 overflow-hidden rounded-lg" style={{ backgroundColor: primaryColor }}>
+            <div
+              ref={frameBox}
+              className="h-72 overflow-hidden rounded-lg"
+              style={
+                storedTier
+                  ? { backgroundColor: primaryColor, aspectRatio: String(aspectRatio), height: 'auto' }
+                  : { backgroundColor: primaryColor }
+              }
+            >
               <img
                 src={src}
                 alt={alt || ''}
@@ -211,6 +243,37 @@ export function ImageBlockView({ node, updateAttributes }: NodeViewProps) {
                   </button>
                 </>
               )}
+              <div className="relative">
+                <button
+                  type="button"
+                  aria-pressed={aspectOpen}
+                  aria-haspopup="menu"
+                  onClick={() => setAspectOpen((open) => !open)}
+                  className="flex h-7 items-center gap-1 rounded-md bg-background/80 px-2 text-muted-foreground shadow-sm backdrop-blur transition-colors hover:bg-background hover:text-foreground"
+                  title="图片长宽比"
+                >
+                  <span className="text-meta">{aspectTier}</span>
+                </button>
+                {aspectOpen && (
+                  <div role="menu" className="absolute right-0 top-8 z-20 w-28 rounded-md border border-foreground/10 bg-background py-1 shadow-lg">
+                    {ASPECT_TIER_ORDER.map((tier) => (
+                      <button
+                        key={tier}
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={tier === aspectTier}
+                        onClick={() => pickAspect(tier)}
+                        className={`flex w-full items-center justify-between px-2 py-1 text-left text-meta transition-colors hover:bg-foreground/6 ${
+                          tier === aspectTier ? 'text-foreground' : 'text-muted-foreground'
+                        }`}
+                      >
+                        <span>{tier}</span>
+                        {tier === aspectTier && <span aria-hidden="true">✓</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <button
                 type="button"
                 onClick={handleUrl}

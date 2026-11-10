@@ -38,9 +38,24 @@ export function htmlToText(html: string): string {
 }
 
 /**
- * 从正文里抽第一段有内容的段落。官方拿的是"页面摘要"，不是整页文本：
- * 优先第一个够长的 `<p>`（`example.com` 的正文就是这一形），没有再退回整页文本。
+ * G1370/G1397: the official card summary is capped at **160 characters with a trailing `...`**
+ * — not silently sliced at 300. An empty summary falls back to the URL itself so the card never
+ * renders a blank line.
  */
+export const LINK_SUMMARY_MAX = 160;
+
+export function summarizeDescription(summary: string | null | undefined, url: string): string {
+  const text = (summary ?? '').replace(/\s+/g, ' ').trim();
+  if (!text) return url;
+  if (text.length <= LINK_SUMMARY_MAX) return text;
+  return `${text.slice(0, LINK_SUMMARY_MAX)}...`;
+}
+
+/** What the search index sees: title and summary together, not the title alone (G1370). */
+export function linkSearchText(title: string | null, description: string | null): string {
+  return [title, description].filter(Boolean).join(' ').trim();
+}
+
 export function extractBodyExcerpt(html: string, maxLength = 300): string | null {
   const withoutNoise = html.replace(DROP_BLOCKS, ' ');
   for (const match of withoutNoise.matchAll(PARAGRAPH)) {

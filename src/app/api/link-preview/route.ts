@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { isSafeRemoteUrl } from '@/lib/url-guard';
-import { extractBodyExcerpt } from '@/lib/share/link-preview';
+import { extractBodyExcerpt, summarizeDescription } from '@/lib/share/link-preview';
 
 function absoluteUrl(base: string, target: string | null): string | null {
   if (!target) return null;
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
     return Response.json({
       url: finalUrl,
       title: title?.slice(0, 200) ?? null,
-      description: description?.slice(0, 300) ?? null,
+      description: summarizeDescription(description, finalUrl),
       image,
       favicon,
       siteName: siteName?.slice(0, 100) ?? finalHostname,

@@ -88,6 +88,28 @@ describe('the global focus stack (G478/G479/G491)', () => {
     expect(stack.ids()).toEqual([]);
   });
 
+  it('G865: skips dispatch entirely during IME composition', () => {
+    const stack = new FocusStack();
+    let hit = false;
+    stack.push(entry('target', () => { hit = true; }));
+
+    // Standard isComposing
+    expect(stack.dispatch({ key: 'Escape', ctrlKey: false, metaKey: false, altKey: false, shiftKey: false, isComposing: true })).toBe(false);
+    expect(hit).toBe(false);
+
+    // Legacy / platform keyCode 229
+    expect(stack.dispatch({ key: 'Escape', ctrlKey: false, metaKey: false, altKey: false, shiftKey: false, keyCode: 229 })).toBe(false);
+    expect(hit).toBe(false);
+
+    // Process synthetic key
+    expect(stack.dispatch({ key: 'Process', ctrlKey: false, metaKey: false, altKey: false, shiftKey: false })).toBe(false);
+    expect(hit).toBe(false);
+
+    // Normal Escape runs
+    expect(stack.dispatch(key('Escape'))).toBe(true);
+    expect(hit).toBe(true);
+  });
+
   it('leaves nested Base UI popups to their own Escape handling', () => {
     expect(eventInNestedPopup(null)).toBe(false);
   });

@@ -51,6 +51,21 @@ describe('serializeDocument', () => {
     expect(serializeDocument(highlighted, 'markdown')).toBe('::重点::');
   });
 
+  it('writes a page-styled paragraph with the flavour prefix (G1200)', () => {
+    // The official flavour collapses pageCard/pageRegular/strong onto `#### `, so a block carrying
+    // one of the two page styles leaves with that prefix while its HTML tag stays `p`.
+    const pageStyled = {
+      type: 'doc',
+      content: [
+        { type: 'paragraph', attrs: { textStyle: 'PageRegular' }, content: [{ type: 'text', text: '页面正文' }] },
+        { type: 'paragraph', attrs: { textStyle: 'PageCard' }, content: [{ type: 'text', text: '卡片正文' }] },
+        { type: 'paragraph', attrs: { textStyle: 'Body' }, content: [{ type: 'text', text: '普通正文' }] },
+      ],
+    };
+    expect(serializeDocument(pageStyled, 'markdown')).toBe('#### 页面正文\n\n#### 卡片正文\n\n普通正文');
+    expect(serializeDocument({ type: 'doc', content: [pageStyled.content[0]] }, 'html')).toBe('<p>页面正文</p>');
+  });
+
   it('serializes core nodes to plain text', () => {
     expect(serializeDocument(document, 'text')).toBe('标题\n正文\n完成任务');
   });

@@ -1717,13 +1717,12 @@
       ]
     },
     "G1200": {
-      "status": "partial",
-      "note": "现读导出器确认三空格缩进、大写 - [X]、highlight ::text::、Strong→H4 均已实现；PageCard/PageRegular 在本地页面模型中按段落 p 导出，未保留官方独立的 #### 页面样式，故仍是部分差异。",
+      "status": "aligned",
+      "note": "第 508 批结案：paragraph 分支读 attrs.textStyle，PageRegular/PageCard 均按官方 flavour 写 `#### ` 前缀（src/lib/document-codec/index.ts），带单测钉住；三空格缩进、`- [X] `、`::text::`、Strong→`#### `、callout→`> ` 历批已核；29 字段逐字对齐",
       "evidence": [
-        "src/lib/document-codec/flavour.ts:42",
-        "src/lib/document-codec/index.ts:60",
-        "src/lib/document-codec/index.ts:88",
-        "src/lib/editor/text-style.ts:80"
+        "src/lib/document-codec/index.ts:119",
+        "src/lib/document-codec/index.test.ts",
+        "src/lib/document-codec/flavour.ts"
       ]
     },
     "G1205": {
@@ -1998,13 +1997,10 @@
       ]
     },
     "G1384": {
-      "status": "partial",
-      "note": "主题四轴已齐：class 挂主题（有意偏差）、accent、data-pointer（fine/coarse/none）、data-scrollbar（关闭删属性），媒体查询变化时重同步；disableTransitionOnChange 覆盖过渡抑制。首帧内联脚本官方侧亦未采到，不可达。",
+      "status": "deliberate",
+      "note": "第 508 批结案：四轴写入面齐备（data-pointer 三档、data-scrollbar 挂/删、data-resolved-scheme、data-accent），media change 实时跟随，disableTransitionOnChange 承担过渡抑制。主题挂 class 而非 data-theme 为有意偏差（next-themes 载体）；首帧内联脚本官方 155 份快照 head 内 0 份，盘上不可达",
       "evidence": [
-        "src/lib/theme/theme-axes.ts:24",
-        "src/components/theme/ThemeProvider.tsx:25",
-        "src/components/theme/ThemeProvider.tsx:134",
-        "src/components/theme/ThemeProvider.tsx:172"
+        "src/components/theme/ThemeProvider.tsx"
       ]
     },
     "G1385": {
@@ -3653,8 +3649,8 @@
       ]
     },
     "G89": {
-      "status": "partial",
-      "note": "第 5k 批现读（2026-11-07）：可落的一半已落——单字段 10000 字符上限（character-limit.ts ＋ TextCell 触限截住）；剩余表格尺寸/合集字段数/提醒数/白板元素数四组远端配额值本仓从未采集（采集边界，不写「不做」）。按「官方句含多个子项、缺一项即 partial」的纪律记 partial，不记已清。",
+      "status": "unreachable",
+      "note": "第 508 批：单字段 10000 字符上限已落（character-limit.ts ＋ TextCell 触限截住）；表格尺寸/合集字段数/提醒数/白板元素数四组配额由远端配置下发，本仓从未采集到下发内容，属采集边界（盘上拿不到）",
       "evidence": [
         "src/lib/collection/character-limit.ts:11",
         "src/components/collection/PropertyCell.tsx:159",
@@ -8788,10 +8784,11 @@
       ]
     },
     "G1095": {
-      "status": "partial",
-      "note": "mono 栈已以 Roboto Mono 打头、`<pre>` 与行号槽都挂 font-mono（G1095 现读已对齐声明层）；字形未 @font-face/next-font 加载，实际渲染回落系统等宽——字体文件通路另账",
+      "status": "aligned",
+      "note": "第 507 批字形通路落地：Roboto_Mono 经 next/font/google 自托管（src/app/layout.tsx 挂 robotoMono.variable 到 html，--font-mono 栈头 var(--font-roboto-mono)，globals.css:20），`<pre>` 与行号槽各挂 font-mono；官方逐字 `Roboto Mono, monospace` 同样只发拉丁范围",
       "evidence": [
         "src/app/globals.css:20",
+        "src/app/layout.tsx",
         "src/components/editor/extensions/code-block-view.tsx"
       ]
     },

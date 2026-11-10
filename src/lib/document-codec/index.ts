@@ -114,8 +114,15 @@ function renderMarkdown(node: any): string {
   switch (node.type) {
     case 'doc':
       return (node.content ?? []).map(renderMarkdown).filter(Boolean).join('\n\n');
-    case 'paragraph':
-      return (node.content ?? []).map(renderInlineMarkdown).join('');
+    case 'paragraph': {
+      const body = (node.content ?? []).map(renderInlineMarkdown).join('');
+      // G1200: a page-styled paragraph exports with the flavour's own prefix — `pageRegular` and
+      // `pageCard` are both `#### `, even though the official export tag table maps them to `p`.
+      const style = node.attrs?.textStyle;
+      if (style === 'PageRegular') return `${DEFAULT_FLAVOUR.pageRegular}${body}`;
+      if (style === 'PageCard') return `${DEFAULT_FLAVOUR.pageCard}${body}`;
+      return body;
+    }
     case 'heading': {
       // G275: the tag comes from the official export table, not from the level directly.
       const level = node.attrs?.level ?? 1;

@@ -64,7 +64,7 @@
 | G12 | 已对齐 | 2/2 | 查找替换（R15 独立快捷键分组 commands.shortcuts.in.find.and.replace、find.* 1 | 已清（第 503 批现读回填）＝独立扩展＋面板＋store＋e2e 全在：装饰高亮走 find-replace.ts:205-2 | 第 503 批现读回填：独立扩展以 inline decorations 高亮命中，前后查找回绕并滚动到命中，逐个/全部替换、计数与序号均在面板；实屏 e2e 覆盖；`src/components/editor/extensions/find-replace.ts:96-140`、`src/components/editor/extensions/find-replace.ts:142-218`、`src/components/editor/find-replace-panel.tsx:99-101`、`src/components/editor/find-replace-panel.tsx:176-211`、`src/lib/store/use-find-replace-store.ts`、`e2e/find-replace-case.spec.ts` |
 | G13 | 已对齐 | 2/2 | 快捷键面板按 6 个上下文分组 +「查看所有快捷键」命令（R15/R16）；全表 104 项键位已解出，见 keyboard.m | 现读（2026-10-31）更正：快捷键面板已按官方六组渲染且只印本地真实绑定；命令面板「查看所有快捷键」指向同一面板。 | 快捷键面板已按官方六组渲染且只印本地真实绑定；命令面板「查看所有快捷键」指向同一面板；`src/components/settings/ShortcutsPanel.tsx`、`src/components/search/CommandPalette.tsx` |
 | G14 | 已对齐 | 2/1 | 块移动与样式槽快捷键（keyboard.md 表 A/B：⌥↑↓↖↘ 移动块、⌘⌥1-9/0 样式槽、⇧⏎ 重命名、⌘D 副本、 | 现读（2026-10-31）更正：块移动／样式槽／副本／查找／专注／侧栏／日记／快捷键面板已接；RENAME（Shift+Ent | RENAME 与 COMMENT 两个处理分支已接（选中块时 Shift+Enter 改标题、Ctrl+Shift+M 开评论入口）；`src/components/editor/extensions/craft-keymap.ts:113`、`src/components/editor/extensions/craft-keymap.ts:123` |
-| G15 | 部分落地 | 2/3 | 任务 Deadline 与 Schedule 是两套独立属性（R4） | 部分落地（第 503 批现读）＝Task 的 dueDate（截止）与 scheduleDate（计划日期）是独立列且分别持久化 | 第 503 批现读：两列独立并分别持久化，纵向时间轴按 scheduleDate 筛选排序；残差＝日历月/周网格 tasksByDay 仍以 dueDate 落点，而该页新增任务写的是 scheduleDate；`src/actions/task/task.ts:61-64`、`src/actions/task/task.ts:131-142`、`src/lib/calendar/timeline.ts:181-200`、`src/app/(app)/calendar/page.tsx:62-72`、`src/app/(app)/calendar/page.tsx:104-123` |
+| G15 | 已对齐 | 3/3 | 任务 Deadline 与 Schedule 是两套独立属性（R4） | ✅ 已落地（第 505 批现读）＝Task 的 dueDate（截止）与 scheduleDate（计划日期）是独立列且分别持久 | 第 505 批现读：两列独立并分别持久化，纵向时间轴按 scheduleDate 筛选排序；日历月/周网格经 tasksByCalendarDay 按计划日期与截止日双落点分别标点（同天去重），截止单落点路径（编辑器快捷；`src/actions/task/task.ts:61-64`、`src/actions/task/task.ts:131-142`、`src/lib/calendar/timeline.ts:181-200`、`src/lib/calendar/task-grid.ts`、`src/lib/calendar/task-grid.test.ts`、`src/app/(app)/calendar/page.tsx:63-67` |
 | G16 | 已对齐 | 2/1 | 折叠块「全部展开/收起」（R8） | 本行系陈旧记录：extensions/toggle-all.ts 的 setOpenOnAllToggles 遍历全文改 ope | 「全部展开／全部收起」两档已注册进命令面板，执行后遍历全文改 open；`src/lib/editor/toggle-all-command.ts`、`src/components/search/CommandPalette.tsx` |
 | G17 | 已对齐 | 2/2 | Mermaid 图表是插入片段之一（轴 C 四类 snippet） | 已清（第 503 批现读回填）＝slash「Mermaid 图表」在名册（src/lib/editor/slash-roster | 第 503 批现读回填：slash 名册含「Mermaid 图表」，代码块挂 MermaidPreview 渲染，导入接受 mermaid 语言，导出仍写 围栏；`src/lib/editor/slash-roster.ts:131`、`src/components/editor/extensions/mermaid-preview.tsx:7-26`、`src/lib/editor/mermaid-surface.ts`、`src/lib/import/markdown.ts:106`、`src/lib/document-codec/index.ts:131-132` |
 | G18 | 已对齐 | 2/2 | 备份/历史版本对协作者可用；版本条目带变更计数与时间分组（V4 实测：「9月26日周六 22:46, 2 项变更」+ 作者名，按 | 部分落地（第 225 批）＝① 协作者可看/可恢复已清＝version.ts 四个函数此前一律 doc.userId !== s | 标题与样式变更也落版本快照，Document.version 随快照单调递增；`src/lib/versioning/snapshot.ts:3`、`src/actions/document/update.ts:8` |
@@ -146,25 +146,25 @@
 | 条数 | 节 |
 | --- | --- |
 | 9 | 三点一〇六十、第 110 批〔★★★ 代码块主题的作用域结案＝块级， |
-| 7 | 三点一〇三八、第 97 批〔★★★ G943 裁定＝连接器的按键不自 |
-| 7 | 三点一〇五九、第 109 批〔★★★ 代码块的写侧字段结案＝typ |
-| 5 | 三点一〇二四、第 96 批·上半〔★★行为级仍未解锁（视口第 8 次 |
+| 6 | 三点一〇三八、第 97 批〔★★★ G943 裁定＝连接器的按键不自 |
+| 6 | 三点一〇五九、第 109 批〔★★★ 代码块的写侧字段结案＝typ |
 | 4 | 三点九三、第 79 批·下半 B79B（2026-09-28 07:33 |
-| 4 | 三点一〇三一、第 96 批·尾记六〔★★★判据盲区一次性结掉三条老结 |
+| 4 | 三点一〇二四、第 96 批·上半〔★★行为级仍未解锁（视口第 8 次 |
 | 4 | 三点一〇四一、第 98 批〔★★★ 拖拽移动的撤销粒度到手＝一次拖拽 |
 | 4 | 三点一〇四五、第 100 批·上半〔★★★ 推翻第 97 批·尾记二 |
 | 3 | 三点九四、第 80 批·开场（2026-09-28 07:44–07:4 |
-| 3 | 三点九九、第 82 批·下半 C（2026-09-28 08:48–08 |
 | 3 | 三点一〇三五、第 96 批·尾记十一〔★★★分享面首次到手（此前 9 |
 | 3 | 三点一〇四〇、第 97 批·尾记二〔★★★ 官方 CSS 首次落盘  |
-| 3 | 三点一〇四三、第 99 批〔★★★ 「清空最近删除」的屏上入口定位成 |
 | 3 | 三点一〇五二、第 105 批〔★★★ CSS 分层体量结案＝官方主体 |
-| 3 | 三点一〇五七、第 107 批〔★★★ [data-what*]  |
 | 3 | 三点一一一一、第 172 批新登记的官方行为（2026-10-08 机器 |
 | 2 | 三点九二、第 79 批·数据面（2026-09-28 07:21–07: |
-| 2 | 三点九五、第 81 批（2026-09-28 08:03–08:18，★ |
-| 2 | 三点一〇二一、第 94 批·上半〔零写入·★★G803 静态结案：C |
 | 2 | 三点一〇二五、第 96 批·下半〔★★★取证通路拓扑改判：brow |
+| 2 | 三点一〇三一、第 96 批·尾记六〔★★★判据盲区一次性结掉三条老结 |
+| 2 | 三点一〇四二、第 98 批·尾记〔★★ 回收站屏首次整屏枚举手＝「清 |
+| 2 | 三点一〇四三、第 99 批〔★★★ 「清空最近删除」的屏上入口定位成 |
+| 2 | 三点一〇五六、第 106 批〔★★★ 名册结案＝13 份 CSS 全 |
+| 2 | 三点一〇五七、第 107 批〔★★★ [data-what*]  |
+| 2 | 三点一一〇七、第 168 批新登记的官方行为（2026-10-06 机器 |
 
 ## 十一、不进复刻 backlog
 

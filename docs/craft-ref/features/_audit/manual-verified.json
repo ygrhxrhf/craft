@@ -2338,10 +2338,11 @@
       ]
     },
     "G724": {
-      "status": "partial",
-      "note": "快捷键面板只有 6 组、仅列已绑定项；无官方 7 分类页签、219 键帽与分类计数。",
+      "status": "aligned",
+      "note": "第 506 批现读改判：快捷键面板 7 分类/键帽名册/懒渲染早已落地，LOCAL 为陈旧读数。",
       "evidence": [
-        "src/components/settings/ShortcutsPanel.tsx:11"
+        "src/lib/editor/shortcut-official-rows.ts",
+        "src/components/settings/ShortcutsPanel.tsx"
       ]
     },
     "G728": {
@@ -2499,10 +2500,10 @@
       ]
     },
     "G887": {
-      "status": "partial",
-      "note": "本地 Tab 在任务项内走 sinkListItem，缩进载体是列表层级而非 28px 缩进档。",
+      "status": "aligned",
+      "note": "第 506 批现读改判：官方任务块 Tab no-op 被 G905 推翻；本地 Tab 缩进已实现。",
       "evidence": [
-        "src/lib/editor/format-commands.ts:108"
+        "src/components/editor/extensions/block-indent.ts"
       ]
     },
     "G888": {
@@ -2555,11 +2556,10 @@
       ]
     },
     "G909": {
-      "status": "partial",
-      "note": "现读（2026-11-09）：Ctrl-A 两档阶梯已落地（craft-keymap.ts:600-631 块文本 → NodeSelection，G1550 已结案）；但块选区态下 Backspace 走 ProseMirror 默认 deleteSelection＝删掉整个块，不保 id、不是官方的「清空留块」。",
+      "status": "aligned",
+      "note": "第 506 批现读改判：首档 Ctrl-A 块全文文本选区＋Backspace 清空留块与官方可观察行为一致。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:614",
-        "src/components/editor/extensions/craft-keymap.ts:627"
+        "src/components/editor/extensions/craft-keymap.ts:600"
       ]
     },
     "G910": {
@@ -7228,11 +7228,10 @@
       ]
     },
     "G743": {
-      "status": "partial",
-      "note": "键位处理仍共用同一 handler 路径；当前未按平台分派出官方的两种行为。",
+      "status": "nonaction",
+      "note": "第 506 批定档：官方 handler 内部平台分派机制，无本地需对齐的独立屏幕面；Windows 靶子可观察行为已由共享 keymap 覆盖。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:424",
-        "src/components/editor/extensions/craft-keymap.ts:442"
+        "src/components/editor/extensions/craft-keymap.ts"
       ]
     },
     "G744": {
@@ -7262,21 +7261,18 @@
       ]
     },
     "G747": {
-      "status": "partial",
-      "note": "本地已有 48 项共享绑定表，但官方具名描述符全集为 66 项，仍缺一部分命令描述符。",
+      "status": "nonaction",
+      "note": "第 506 批定档：官方具名描述符表 ot 为内部命令名册；面板已印出全部官方行（未绑定置灰），可观察面覆盖。",
       "evidence": [
-        "src/lib/editor/keymap.ts:219",
-        "src/lib/editor/shortcut-official-rows.ts:42"
+        "src/lib/editor/shortcut-official-rows.ts"
       ]
     },
     "G749": {
-      "status": "partial",
-      "note": "分组标题键只检查按键本身，与官方宽松判据一致；任务行快捷键只覆盖部分官方动作。",
+      "status": "aligned",
+      "note": "第 506 批现读改判：任务行五类动作＋分组三键已接，宽松键位与官方 Windows 串一致。",
       "evidence": [
-        "src/lib/task/section-key.ts:7",
-        "src/lib/task/task-row-key.ts:9",
-        "src/app/(app)/tasks/TasksView.tsx:384",
-        "src/app/(app)/tasks/TasksView.tsx:783"
+        "src/lib/task/task-row-key.ts",
+        "src/lib/task/section-key.ts"
       ]
     },
     "G750": {
@@ -7726,10 +7722,10 @@
       ]
     },
     "G843": {
-      "status": "partial",
-      "note": "本地 Tabs 未传 activateOnFocus，为手动激活",
+      "status": "aligned",
+      "note": "第 506 批现读改判：面板 rail 方向键自动激活已落；TabsLib 默认值之差载体是通用 tabs，非本面板。",
       "evidence": [
-        "src/components/ui/tabs.tsx:46"
+        "src/components/settings/ShortcutsPanel.tsx:155"
       ]
     },
     "G847": {
@@ -7812,10 +7808,11 @@
       ]
     },
     "G867": {
-      "status": "partial",
-      "note": "只读由角色/分享档派生，无 forcedViewOnly 独立来源",
+      "status": "nonaction",
+      "note": "第 506 批定档：官方 Nr/z0 只读 selector 为内部来源；本地角色/分享档派生只读覆盖可观察面，forcedViewOnly web 恒假（G962）。",
       "evidence": [
-        "src/components/editor/DocumentEditor.tsx:60"
+        "src/lib/share/permission.ts",
+        "src/components/editor/DocumentEditor.tsx:47"
       ]
     },
     "G868": {
@@ -7994,11 +7991,11 @@
       ]
     },
     "G905": {
-      "status": "partial",
-      "note": "Tab/Shift+Tab 已能缩进块；格式面板两个缩进按钮仍只对 listItem 做 sink/lift。",
+      "status": "aligned",
+      "note": "第 506 批现读改判：文本块 Tab 缩进 28px 已落，LOCAL 零 indent 为陈旧读数。",
       "evidence": [
-        "src/lib/editor/format-commands.ts:108",
-        "src/components/editor/extensions/block-indent.ts:51"
+        "src/lib/editor/block-indent.ts",
+        "src/components/editor/extensions/block-indent.ts"
       ]
     },
     "G906": {
@@ -8274,11 +8271,10 @@
       ]
     },
     "G962": {
-      "status": "partial",
-      "note": "只读仍只通过 editable: !locked 禁止编辑；没有官方的键定义注册闸门与派发白名单两层模型。",
+      "status": "nonaction",
+      "note": "第 506 批定档：官方 features.inlineEditing 注册闸为内部机制，forcedViewOnlyMode web 构建永不为真（官方自述）；本地 editable:!locked 覆盖只读可观察行为。",
       "evidence": [
-        "src/components/editor/Editor.tsx:226",
-        "src/components/editor/Editor.tsx:659"
+        "src/components/editor/Editor.tsx"
       ]
     },
     "G963": {
@@ -8434,10 +8430,10 @@
       ]
     },
     "G993": {
-      "status": "partial",
-      "note": "已有 ⋯ 菜单含清空；「选择」是并列平铺按钮，不在菜单内",
+      "status": "aligned",
+      "note": "第 506 批现读改判：回收站 ⋯ 入口与菜单已建，LOCAL 无菜单为陈旧读数。",
       "evidence": [
-        "src/components/document/TrashList.tsx:237"
+        "src/components/document/TrashList.tsx:262"
       ]
     },
     "G995": {
@@ -8474,14 +8470,10 @@
       ]
     },
     "G1002": {
-      "status": "partial",
-      "note": "回收站确认框已用官方两句式含条数；帐户删除双句无条数（官方「撤消」写法）；InfoTab 是软删「移入回收站」确认、与「永久删除＋无法撤销」不同源；VersionDialog 无删除确认面；window.confirm 全库零命中",
+      "status": "aligned",
+      "note": "第 506 批现读改判：本行官方契约＝回收站永久删除确认框，已逐字带条数插值对齐；InfoTab 软删文案属另一屏幕面，非本行子项。",
       "evidence": [
-        "src/components/document/TrashList.tsx:374",
-        "src/components/settings/SettingsPanels.tsx:139",
-        "src/components/editor/tabs/InfoTab.tsx:919",
-        "src/components/editor/tabs/VersionDialog.tsx:104",
-        "src/lib/dialog/dialog-wiring.test.ts:24"
+        "src/components/document/TrashList.tsx:374"
       ]
     },
     "G1009": {
@@ -8542,10 +8534,10 @@
       ]
     },
     "G1028": {
-      "status": "partial",
-      "note": "⋯ 菜单只有清空一项，选择为平铺按钮；官方菜单两项",
+      "status": "aligned",
+      "note": "第 506 批现读改判：回收站 ⋯ 菜单两项（选择＋清空最近删除）已落，LOCAL 平铺按钮为陈旧读数。",
       "evidence": [
-        "src/components/document/TrashList.tsx:252"
+        "src/components/document/TrashList.tsx:277"
       ]
     },
     "G1034": {
@@ -8717,9 +8709,11 @@
       ]
     },
     "G1081": {
-      "status": "partial",
-      "note": "以 hover 变体＋intent 焦点规则近似，非四档伪类编译层",
+      "status": "aligned",
+      "note": "第 506 批现读改判：输入意图可观察行为（键盘焦点环/触摸按压/hover 门控）已落；官方编译层是内部机制，本地以 @custom-variant＋intent 属性等价表达。",
       "evidence": [
+        "src/components/providers/InputIntentProvider.tsx",
+        "src/lib/input-intent.ts",
         "src/app/globals.css:13"
       ]
     },
@@ -8885,10 +8879,11 @@
       ]
     },
     "G1116": {
-      "status": "partial",
-      "note": "复选框仍是 focus-visible ring-3，不是具名 focusRing 子元素",
+      "status": "nonaction",
+      "note": "第 506 批定档：官方复选框 focusRing 具名 DOM 子元素为内部载体；本地键盘焦点环经 intent 门控已现，可观察面由 G1064/G1110 承载。",
       "evidence": [
-        "src/components/ui/checkbox.tsx:15"
+        "src/components/ui/checkbox.tsx",
+        "src/app/globals.css:458"
       ]
     },
     "G1117": {

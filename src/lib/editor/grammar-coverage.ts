@@ -1,37 +1,23 @@
 /**
  * Grammar coverage (G1179). Official Craft loads a language extension only when the roster's
  * `langCode` is a key in its grammar table — the gate does no alias normalisation, so a name that
- * is not there simply does not load. Locally the highlighter is lowlight (highlight.js grammars),
- * whose key set is different from the official table's, so the two "selectable but not highlighted"
- * sets do not coincide.
+ * is not there simply does not load. Locally the highlighter is lowlight (highlight.js grammars).
  *
- * This module records the local fact: for each roster entry, whether lowlight has a grammar for its
- * `langCode`. `plaintext` needs no grammar (highlighting off), and a few entries map onto a
- * differently-named local grammar.
+ * This module records the local fact: for each roster entry, whether the highlighter accepts its
+ * `langCode`. The check goes through `registered()` rather than the raw grammar map, because
+ * highlight.js's built-in aliases (`html` for `xml`, `tsx` for `typescript`) never appear in
+ * `Object.keys`.
  */
-import { common } from 'lowlight';
-
+import { codeLowlight, LOCAL_GRAMMAR_ALIASES, LOCAL_GRAMMARS } from './code-grammars';
 import { CODE_LANGUAGES } from './code-languages';
 
-/** The grammar names lowlight registers. */
-export const LOCAL_GRAMMARS: readonly string[] = Object.keys(common);
+export { codeLowlight, LOCAL_GRAMMARS, LOCAL_GRAMMAR_ALIASES };
 
-const GRAMMAR_SET = new Set(LOCAL_GRAMMARS);
-
-/**
- * Entries whose `langCode` is not a lowlight key, but which map onto one under a different name.
- * These highlight locally; the official gate has no equivalent step, which is why the two sets
- * differ.
- */
-export const LOCAL_GRAMMAR_ALIASES: Record<string, string> = {
-  objectiveC: 'objectivec',
-};
-
-/** The lowlight grammar a `langCode` uses, or null when this build cannot highlight it. */
+/** The grammar a `langCode` resolves to, or null when this build cannot highlight it. */
 export function localGrammarFor(langCode: string | null): string | null {
   if (langCode === null) return null; // plaintext: highlighting off by design
-  if (GRAMMAR_SET.has(langCode)) return langCode;
-  return LOCAL_GRAMMAR_ALIASES[langCode] ?? null;
+  if (!codeLowlight.registered(langCode)) return null;
+  return LOCAL_GRAMMAR_ALIASES[langCode] ?? langCode;
 }
 
 /** Whether a roster entry highlights in this build. */

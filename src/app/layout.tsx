@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Roboto_Mono } from 'next/font/google';
 import 'katex/dist/katex.min.css';
 import './globals.css';
 import { Providers } from '@/components/providers/Providers';
@@ -10,6 +10,14 @@ import { directUploadEnabled } from '@/lib/storage';
 const inter = Inter({
   variable: '--font-sans',
   subsets: ['latin'],
+});
+
+// G1095: official code blocks set `Roboto Mono, monospace`; self-host the face so the name in
+// the stack actually resolves instead of falling through to the system mono.
+const robotoMono = Roboto_Mono({
+  variable: '--font-roboto-mono',
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -37,7 +45,7 @@ const storageFlag = `window.__STORAGE_CONFIG__=${JSON.stringify({ directUpload: 
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="zh-Hans" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="zh-Hans" className={`${inter.variable} ${robotoMono.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="flex h-full flex-col">
         <Providers>{children}</Providers>
         <UpdateBanner />

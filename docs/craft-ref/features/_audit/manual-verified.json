@@ -8789,9 +8789,10 @@
     },
     "G1095": {
       "status": "partial",
-      "note": "font-mono 栈以 Roboto Mono 打头但未加载，实际回落系统等宽",
+      "note": "mono 栈已以 Roboto Mono 打头、`<pre>` 与行号槽都挂 font-mono（G1095 现读已对齐声明层）；字形未 @font-face/next-font 加载，实际渲染回落系统等宽——字体文件通路另账",
       "evidence": [
-        "src/app/globals.css:19"
+        "src/app/globals.css:20",
+        "src/components/editor/extensions/code-block-view.tsx"
       ]
     },
     "G1096": {
@@ -8823,24 +8824,26 @@
       ]
     },
     "G1105": {
-      "status": "partial",
-      "note": "已拆 storedLangCode/langCode 两拼写；块体仍只有 node text",
+      "status": "aligned",
+      "note": "现读：字段名 language 对上；名册 39 档含 storedLangCode/langCode 分拼写（cs/csharp、typescript/tsx、math_formula/stex、objectivec/objectiveC、plaintext=null）；无语言时存空串不再兜底 plaintext。残留偏差＝正文载体是 TipTap node text、无 rawCode 概念，判载体差（TipTap 内核），不影响行为对齐",
       "evidence": [
-        "src/lib/editor/code-languages.ts:18"
+        "src/lib/editor/code-languages.ts:18",
+        "src/components/editor/extensions/code-block-view.tsx:26"
       ]
     },
     "G1106": {
-      "status": "partial",
-      "note": "无语言时存空串并回落占位符，官方是省略 language 键",
+      "status": "aligned",
+      "note": "现读：`|| 'plaintext'` 回落已删（改 `?? ''`），无语言即空串＝不写键语义同形；官方 plaintext 档可选、other/未知不写键，本地同构",
       "evidence": [
-        "src/components/editor/extensions/code-block-view.tsx:18"
+        "src/components/editor/extensions/code-block-view.tsx:26"
       ]
     },
     "G1107": {
-      "status": "partial",
-      "note": "官方 theme 不是块字段；本地放块属性 themeId，属已声明偏差",
+      "status": "deliberate",
+      "note": "主题面已实现但走声明偏差：官方 theme 不在块模型（pluginData.pluginConfigurationData.themeId），本地是 TipTap 块属性 themeId（Editor.tsx extend 注释声明），20 档主题名册＋菜单＋缺省解析齐全",
       "evidence": [
-        "src/components/editor/Editor.tsx:417"
+        "src/components/editor/Editor.tsx:493",
+        "src/lib/editor/code-themes.ts"
       ]
     },
     "G1109": {
@@ -8901,24 +8904,25 @@
       ]
     },
     "G1120": {
-      "status": "partial",
-      "note": "主题存块属性；官方键路径是 pluginData 内 themeId",
+      "status": "deliberate",
+      "note": "官方键路径 pluginData.pluginConfigurationData.themeId；本地 document-codec 有 pluginData 容器但 codeBlock 绑 blob、主题落块属性——载体差已声明，不追插件槽",
       "evidence": [
-        "src/components/editor/Editor.tsx:417"
+        "src/lib/document-codec/block-payload.ts",
+        "src/components/editor/Editor.tsx:493"
       ]
     },
     "G1121": {
-      "status": "partial",
-      "note": "无 plugin 列，主题随 content JSON 落库",
+      "status": "nonaction",
+      "note": "schema 层无 plugin 列是既定存储架构：本地块 attrs 随 content JSON 落库，Prisma 无 plugin 前缀列不补；主题写入与内容/语言同为一次 update，撤销分组差异随载体差一并声明",
       "evidence": [
-        "src/components/editor/extensions/code-block-view.tsx:83"
+        "src/prisma/contract.prisma"
       ]
     },
     "G1122": {
-      "status": "partial",
-      "note": "编辑态是组件内 state 与全屏开关，无全局当前编辑块",
+      "status": "deliberate",
+      "note": "编辑态走组件内 useState（全屏/拆分/预览/活跃行），无 uiStore codeEditorState.blockId 全局当前编辑块；单块 surface 行为已齐，跨块互斥与撤销归组判取舍不追",
       "evidence": [
-        "src/components/editor/extensions/code-block-view.tsx:16"
+        "src/components/editor/extensions/code-block-view.tsx:21"
       ]
     },
     "G1123": {
@@ -9163,10 +9167,11 @@
       ]
     },
     "G1179": {
-      "status": "partial",
-      "note": "grammar 覆盖已建模，但 basicSetup 裁剪与特性开关两道闸门没有",
+      "status": "aligned",
+      "note": "现读：三道闸门之①已收口——grammar 表统一 code-grammars.ts（common 37＋补 10＝47 名），别名 objectiveC/stex 登记进 lowlight，覆盖判定与渲染同源；39 档名册仅 mermaid/other/plaintext 无 grammar（与官方 by-design 集合同形）。②basicSetup 裁剪与③41 条特性开关是 CM6/灰度体系，本地无对应层＝nonaction 不复刻",
       "evidence": [
-        "src/lib/editor/grammar-coverage.ts:17"
+        "src/lib/editor/code-grammars.ts",
+        "src/lib/editor/grammar-coverage.ts"
       ]
     },
     "G1180": {

@@ -21,7 +21,7 @@ import { Table } from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
-import { common, createLowlight } from 'lowlight';
+import { createLowlight } from 'lowlight';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Y from 'yjs';
 import { updateDocument } from '@/actions/document/update';
@@ -97,11 +97,13 @@ import { jumpToAnchor, readAnchorHash } from '@/lib/editor/block-anchor';
 import { useCollabSession } from '@/lib/collaboration/use-collab-session';
 import { isEffectivelyEmptyFragment } from '@/lib/collaboration/empty-fragment';
 import { plainFallbackLowlight } from '@/lib/editor/plain-fallback-lowlight';
+import { codeLowlight } from '@/lib/editor/code-grammars';
 import { CursorLayer } from './collab/CursorLayer';
 import Collaboration from '@tiptap/extension-collaboration';
 
 // G1180：未注册语言按纯文本渲染（官方「无 grammar 就单色」），不回落到自动检测。
-const lowlight = plainFallbackLowlight(createLowlight(common));
+// G1179：语法表与别名走 `code-grammars` 这一份，覆盖判定（`grammar-coverage`）与渲染同源。
+const lowlight = plainFallbackLowlight(codeLowlight);
 
 function collectLinkedDocIds(content: unknown): string[] {
   const ids = new Set<string>();

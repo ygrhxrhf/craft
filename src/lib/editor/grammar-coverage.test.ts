@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { CODE_LANGUAGES } from './code-languages';
 import {
+  CODE_GRAMMARS,
   LOCAL_GRAMMARS,
+  codeLowlight,
+} from './code-grammars';
+import {
   highlightsLocally,
   localGrammarFor,
   unhighlightedLanguages,
@@ -27,11 +31,55 @@ describe('resolving a langCode to a local grammar', () => {
   it('maps a differently-named grammar onto its local key', () => {
     expect(localGrammarFor('objectiveC')).toBe('objectivec');
     expect(highlightsLocally('objectiveC')).toBe(true);
+    // The formula language's grammar is highlight.js's TeX one (`stex` is only the stored name).
+    expect(localGrammarFor('stex')).toBe('latex');
+    expect(highlightsLocally('stex')).toBe(true);
   });
 
   it('returns null for a language this build cannot highlight', () => {
     expect(localGrammarFor('mermaid')).toBeNull();
     expect(highlightsLocally('mermaid')).toBe(false);
+  });
+});
+
+describe('extra grammars close the roster gap', () => {
+  it('registers the ten grammars `common` leaves out', () => {
+    for (const name of [
+      'ada',
+      'dart',
+      'dockerfile',
+      'groovy',
+      'haskell',
+      'julia',
+      'latex',
+      'matlab',
+      'prolog',
+      'scala',
+    ]) {
+      expect(LOCAL_GRAMMARS, name).toContain(name);
+      expect(Object.keys(CODE_GRAMMARS), name).toContain(name);
+    }
+  });
+
+  it('leaves only the three by-design entries without a grammar', () => {
+    // `plaintext` has no langCode at all; `mermaid` has its own surface; `other` is the
+    // unknown-language catch-all.
+    expect(unhighlightedLanguages()).toEqual(['mermaid', 'plaintext', 'other']);
+  });
+
+  it('resolves every other sector entry to a grammar', () => {
+    for (const entry of CODE_LANGUAGES) {
+      if (entry.langCode === null || entry.langCode === 'mermaid' || entry.langCode === 'other') {
+        continue;
+      }
+      expect(highlightsLocally(entry.langCode), entry.storedLangCode).toBe(true);
+    }
+  });
+
+  it('hands lowlight the aliases too, so a stored-name lookup highlights', () => {
+    expect(codeLowlight.registered('stex')).toBe(true);
+    expect(codeLowlight.registered('dockerfile')).toBe(true);
+    expect(codeLowlight.highlight('stex', 'x^2').children.length).toBeGreaterThan(0);
   });
 });
 

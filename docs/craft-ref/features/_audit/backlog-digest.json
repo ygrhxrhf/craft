@@ -1,34 +1,34 @@
 {
-  "generatedAt": "2026-11-09T20:51:10.649Z",
+  "generatedAt": "2026-11-10T05:16:24.331Z",
   "total": 1615,
   "status": {
-    "aligned": 763,
-    "nonaction": 536,
-    "deliberate": 206,
-    "partial": 78,
+    "aligned": 766,
+    "nonaction": 537,
+    "deliberate": 209,
+    "partial": 71,
     "unreachable": 24,
     "gap": 8
   },
   "priority": {
-    "P2": 629,
-    "P?": 426,
+    "P2": 630,
+    "P?": 425,
     "P1": 281,
     "P3": 271,
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 355,
-    "P? / nonaction": 196,
+    "P2 / aligned": 356,
+    "P? / nonaction": 197,
     "P2 / nonaction": 175,
     "P1 / aligned": 169,
     "P3 / aligned": 128,
-    "P? / aligned": 103,
+    "P? / aligned": 105,
     "P1 / nonaction": 89,
     "P2 / deliberate": 88,
     "P3 / nonaction": 76,
-    "P? / partial": 75,
+    "P? / partial": 68,
     "P3 / deliberate": 58,
-    "P? / deliberate": 40,
+    "P? / deliberate": 43,
     "P1 / deliberate": 20,
     "P2 / unreachable": 11,
     "P0 / aligned": 8,
@@ -1169,15 +1169,11 @@
   "unknownSections": [],
   "gapSections": [
     [
-      "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",
-      9
-    ],
-    [
       "三点一〇三八、第 97 批〔★★★ **G943 裁定＝连接器的按键不自",
       6
     ],
     [
-      "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
+      "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",
       6
     ],
     [
@@ -1210,6 +1206,10 @@
     ],
     [
       "三点一〇五二、第 105 批〔★★★ **CSS 分层体量结案＝官方主体",
+      3
+    ],
+    [
+      "三点一〇五九、第 109 批〔★★★ **代码块的写侧字段结案＝`typ",
       3
     ],
     [

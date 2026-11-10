@@ -8639,17 +8639,21 @@
       ]
     },
     "G1063": {
-      "status": "partial",
-      "note": "触摸档已落；鼠标按下仍只有 translate-y-px",
+      "status": "aligned",
+      "note": "精细指针200底色+全局触摸缩放透明度+关闭/切换150底色+滚动条与外链预览全落地，单测覆盖",
       "evidence": [
-        "src/app/globals.css:467"
+        "src/app/globals.css:500",
+        "src/app/globals.css:523",
+        "src/lib/editor/press-feedback.test.ts:31"
       ]
     },
     "G1064": {
-      "status": "partial",
-      "note": "焦点环已 intent 门控并去正文环；Action 无环例外未分",
+      "status": "aligned",
+      "note": "通用1.5px外凸、控件-1px内缩、Tab重环、正文去环四档全按input-intent门控，单测覆盖",
       "evidence": [
-        "src/app/globals.css:438"
+        "src/app/globals.css:471",
+        "src/app/globals.css:482",
+        "src/lib/editor/focus-ring.test.ts:40"
       ]
     },
     "G1065": {
@@ -8869,10 +8873,12 @@
       ]
     },
     "G1110": {
-      "status": "partial",
-      "note": "焦点环已 outline 1px、offset -1px，但颜色取 accent",
+      "status": "aligned",
+      "note": "移除旧box-shadow环，按钮/复选框改为1px/-1px outline并由input-intent门控，单测覆盖",
       "evidence": [
-        "src/app/globals.css:438"
+        "src/components/ui/button.tsx:10",
+        "src/components/ui/checkbox.tsx:15",
+        "src/lib/editor/focus-ring.test.ts:50"
       ]
     },
     "G1113": {

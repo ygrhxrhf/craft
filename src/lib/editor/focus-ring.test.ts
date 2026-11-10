@@ -48,4 +48,13 @@ describe('the focus ring is drawn with outline inside the keyboard gate', () => 
   it('gates on the intent attribute, which the compiled CSS uses', () => {
     expect(css).toContain("[data-whatintent='keyboard']");
   });
+
+  it('leaves the outline ring as the only ring on buttons and checkboxes', () => {
+    // G1110 ①: the official ring is `outline`, so a control must not also draw a box-shadow
+    // ring from `:focus-visible` — a keyboard focus would then show two rings at once.
+    for (const file of ['../../components/ui/button.tsx', '../../components/ui/checkbox.tsx']) {
+      const source = readFileSync(fileURLToPath(new URL(file, import.meta.url)), 'utf8');
+      expect(source).not.toContain('focus-visible:ring-3');
+    }
+  });
 });

@@ -512,6 +512,35 @@
     transform: scale(0.99);
     opacity: 0.75;
   }
+
+  /* ── Pressed background (G1063 ①/④) ────────────────────────────────────────
+     The official action component darkens its background variants on `:active`, and the rule
+     sits inside `@media (pointer: fine)` — a touch device must not also darken, it already has
+     the scale/opacity feedback above. Local's `outline` / `secondary` / `ghost` are the three
+     foreground-surface variants (the filled `default` is the colored CTA), so those are the
+     ones that take the darkened background. The six remaining official `:active` rules are not
+     pointer-gated; each is reproduced on the local carrier that mirrors it. */
+  @media (pointer: fine) {
+    [data-slot='button'][data-variant='outline']:not(:disabled):active,
+    [data-slot='button'][data-variant='secondary']:not(:disabled):active,
+    [data-slot='button'][data-variant='ghost']:not(:disabled):active {
+      background: var(--foreground-200);
+    }
+  }
+
+  [data-slot='dialog-close']:active,
+  [data-slot='sheet-close']:active,
+  [data-slot='toggle']:active {
+    background: var(--foreground-150);
+  }
+
+  [data-slot='scroll-area-thumb']:active {
+    background: var(--scrollbar-thumb-active, var(--foreground-500));
+  }
+
+  [data-type='link-preview'] a:active {
+    opacity: 0.91;
+  }
 }
 
 /* ═══════════════════════════════════════════

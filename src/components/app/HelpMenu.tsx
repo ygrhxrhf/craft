@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { CircleHelp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,22 +10,43 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { HELP_ENTRIES, helpEntryUrl, type HelpEntry } from '@/lib/app/help-menu';
+import {
+  SYNC_STATUS_LABEL,
+  helpEntriesFor,
+  helpEntryUrl,
+  syncStatusText,
+  type HelpEntry,
+} from '@/lib/app/help-menu';
+import { getSyncManager, type SyncStatus } from '@/lib/sync-core';
 import { useSettingsStore } from '@/lib/store/use-settings-store';
+import { useIsMobile } from '@/lib/use-is-mobile';
 
 /**
- * The help menu (G754). Six entries, verbatim. Three kinds of landing (G765):
- *   - `inAppPanel`（快捷键）→ 打开设置里的快捷键面板；
- *   - `externalLink`（最新特性／Web 和 Windows 版最新特性／常见问题／markdown 小抄）→ 帮助站；
- *   - `dialog`（意见反馈）→ 官方该条**不调 `window.open`**、落点未确认，本地落到设置里的反馈分区。
+ * The help menu (G754). The listed entries depend on the viewport tier and on whether a document
+ * is open (G877 / G883 / G891 / G950): desktop document page 8 rows, desktop space page 6, compact
+ * 5 — the two sync rows and 「快捷键」 drop out in that order.
  *
- * 第五项（快捷键）开应用内面板；第六项（markdown 小抄）是**与它并列**的外链，不是面板里的一节——
- * 这正是本行要复刻的那件事：编辑器一直有 markdown 输入规则（`extensions/markdown-shortcuts.ts`），
- * 但用户此前看不到这份对照表。
- */export function HelpMenu() {
+ * Three kinds of landing (G765):
+ *   - `inAppPanel`（快捷键）→ 打开设置里的快捷键面板；
+ *   - `externalLink`（最新特性／Web 和 Windows 版最新特性／常见问题／Markdown 快捷方式／报告同步）→ 帮助站；
+ *   - `dialog`（意见反馈）→ 官方该条**不调 `window.open`**、落点未确认，本地落到设置里的反馈分区；
+ *   - `status`（`Sync Status`）→ 不是动作，是当前同步态的一行读数。
+ */
+export function HelpMenu() {
   const openSettings = useSettingsStore((s) => s.openSettings);
+  const compact = useIsMobile();
+  const pathname = usePathname();
+  const documentPage = pathname.startsWith('/documents/');
+  const entries = helpEntriesFor({ compact, documentPage });
+
+  const [status, setStatus] = useState<SyncStatus>('synced');
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    return getSyncManager().subscribe((s) => setStatus(s));
+  }, []);
 
   const open = (entry: HelpEntry) => {
+    if (entry.kind === 'status') return;
     if (entry.kind === 'externalLink') {
       const url = helpEntryUrl(entry.id);
       // noopener：官方三个外链闭包逐字带 `"noopener=true"`。
@@ -48,11 +71,24 @@ import { useSettingsStore } from '@/lib/store/use-settings-store';
         <CircleHelp className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        {HELP_ENTRIES.map((entry) => (
-          <DropdownMenuItem key={entry.id} onClick={() => open(entry)}>
-            {entry.label}
-          </DropdownMenuItem>
-        ))}
+        {entries.map((entry) =>
+          entry.kind === 'status' ? (
+            // 官方这一行在中文界面里仍是英文 `Sync Status`（G950 的 i18n 缺口，逐字保留），
+            // 行内文字是当前同步态（G891 读到的 `All changes synced` 就是它）。
+            <div
+              key={entry.id}
+              aria-label={SYNC_STATUS_LABEL}
+              title={SYNC_STATUS_LABEL}
+              className="px-2 py-1.5 text-[13px] text-muted-foreground select-none"
+            >
+              {syncStatusText(status)}
+            </div>
+          ) : (
+            <DropdownMenuItem key={entry.id} onClick={() => open(entry)}>
+              {entry.label}
+            </DropdownMenuItem>
+          ),
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

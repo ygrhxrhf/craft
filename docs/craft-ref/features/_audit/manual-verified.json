@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-01",
-  "method": "P0/P1 逐条现读代码（grep + 读文件），不改产品代码；其余行按台账文本归一化，标为待重扫。第 2 批现读 10 条（块模型族）、第 3 批 9 条（集合族）、第 4 批 11 条（任务时间语义）、第 5 批 176 条（其余全部 P1 gap/partial：bundle/桥契约记非交互面、付费面记有意偏差）。第 104 批清 G252（块级提醒）、第 105 批清 G440/G441/G442/G1511（同步冲突三方合并）。",
+  "verifiedAt": "2026-11-10",
+  "method": "第 511 批：帮助菜单条目集按视口档位＋页面态门控落地（G877/G883/G891/G950），现读复核 src/lib/app/help-menu.ts 与 HelpMenu.tsx",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -7878,10 +7878,12 @@
       ]
     },
     "G877": {
-      "status": "partial",
-      "note": "本地帮助菜单固定 6 项且含快捷键，与 compact 5 项不同",
+      "status": "aligned",
+      "note": "帮助浮层在 compact 档（<=747px）恰好 5 项、无「快捷键」；桌面档补齐。官方 5/6/8 三项读数由此统一为视口门控",
       "evidence": [
-        "src/lib/app/help-menu.ts:31"
+        "src/lib/app/help-menu.ts",
+        "src/components/app/HelpMenu.tsx",
+        "src/lib/app/help-menu.test.ts"
       ]
     },
     "G879": {
@@ -7899,10 +7901,12 @@
       ]
     },
     "G883": {
-      "status": "partial",
-      "note": "本地帮助菜单恒 6 项，不随窄视口裁项",
+      "status": "aligned",
+      "note": "638px 属 compact 档；本地以 useIsMobile()（max-width:747px）同一断点裁到 5 项，窄视口与 0 宽档表现一致",
       "evidence": [
-        "src/lib/app/help-menu.ts:31"
+        "src/lib/use-is-mobile.ts",
+        "src/lib/app/help-menu.ts",
+        "src/lib/app/help-menu.test.ts"
       ]
     },
     "G884": {
@@ -7927,10 +7931,12 @@
       ]
     },
     "G891": {
-      "status": "partial",
-      "note": "官方桌面 8 项；本地 6 项，缺 Sync Status 与报告同步",
+      "status": "aligned",
+      "note": "桌面文档页 8 项逐字：Sync Status／报告同步／意见反馈／最新特性／Web 和 Windows 版最新特性／常见问题／快捷键／Markdown 快捷方式；Sync Status 行读实时同步态，synced 显示 All changes synced",
       "evidence": [
-        "src/lib/app/help-menu.ts:31"
+        "src/lib/app/help-menu.ts",
+        "src/components/app/HelpMenu.tsx",
+        "src/lib/app/help-menu.test.ts"
       ]
     },
     "G893": {
@@ -8214,10 +8220,12 @@
       ]
     },
     "G950": {
-      "status": "partial",
-      "note": "本地帮助菜单 6 项固定，不随档位/页面态增减",
+      "status": "aligned",
+      "note": "条目集随档位＋页面态：桌面文档页 8、桌面空间页 6、compact 5；Sync Status 保留英文（i18n 缺口逐字复刻）",
       "evidence": [
-        "src/lib/app/help-menu.ts:31"
+        "src/lib/app/help-menu.ts",
+        "src/components/app/HelpMenu.tsx",
+        "src/lib/app/help-menu.test.ts"
       ]
     },
     "G952": {

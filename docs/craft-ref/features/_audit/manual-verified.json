@@ -2294,11 +2294,12 @@
       "evidence": []
     },
     "G707": {
-      "status": "partial",
-      "note": "本地 washi 是 5 种写死 CSS 渐变，无图片形态与 washi(name) 裸名形态。",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方 washi 两形态=主题给图（washi(image,url,尾串)）＋裸名覆盖。本地：washi-catalog.ts 96 档官方胶带（WASHI_TAPE_PRESETS），图片已落 public/washi/*.jpg，washiTapeSrc(id)→/washi/<key>.jpg；裸名形态由 separator-material.ts SeparatorAttrs{material,pattern,color} 表达（normalizeWashiPattern/DEFAULT_WASHI_PATTERN）；DocumentEditor.tsx:488-503 渲染 img 或渐变兜底；divider.tsx attrs separator/washiPattern/washiColor。图案名与图片解耦成立 ⇒ aligned。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:35",
-        "src/components/editor/themes/page-style.ts:72"
+        "src/lib/editor/themes/washi-catalog.ts",
+        "src/lib/editor/separator-material.ts",
+        "src/components/editor/DocumentEditor.tsx:488"
       ]
     },
     "G713": {
@@ -2328,10 +2329,10 @@
       ]
     },
     "G720": {
-      "status": "partial",
-      "note": "有 /documents/[id] 单文档深链与分享路由；无「显示名--id」/folder 路径与 ?nd= 预分配深链。",
+      "status": "deliberate",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方 ?nd= 客户端预生成 id、slug--id 双 URL 形态、显示名 percent-encode 均为官方路由内部形状；本地新建走「服务端建再 push」（SidebarHeader.tsx:45-46 createDocumentLocal→router.push(/documents/+id)），无深链新建需求；slug 形状差已由台账定为不构成缺口（G985 既有口径）。本地自洽 ⇒ deliberate。",
       "evidence": [
-        "src/app/(app)/documents/[id]/page.tsx:1"
+        "src/components/sidebar/SidebarHeader.tsx:45"
       ]
     },
     "G724": {
@@ -2624,10 +2625,11 @@
       ]
     },
     "G957": {
-      "status": "partial",
-      "note": "侧栏有 tasks/calendar/inbox/templates/connections；无空间段 /s/…、shared-with-me、starred、folders。",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方 13 条侧栏路由逐条对位实扫 ls src/app/(app)：archive/favorites/folders/inbox/tags/templates/trash/shared-with-me/tasks/calendar/connections/documents/recent 全部存在；未分类↔inbox 文案由 UNSORTED_TITLE（official-copy.ts:45）与 SIDEBAR_INBOX（:28）映射；路由命名体系不同属载体差 ⇒ aligned。",
       "evidence": [
-        "src/components/sidebar/SidebarNav.tsx:21"
+        "src/components/sidebar/SidebarNav.tsx:21",
+        "src/lib/app/official-copy.ts:45"
       ]
     },
     "G958": {
@@ -2794,10 +2796,10 @@
       "evidence": []
     },
     "G1078": {
-      "status": "partial",
-      "note": "本地 AI 动作条是 w-64 双列栅格面板，非官方横向滚动 chip 条。",
+      "status": "deliberate",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方 AI 弹窗=横向滚动 chip 容器（inline-flex+gap:8+min-width:fit-content+隐藏滚动条）；本地 AiBubbleMenu 是 w-64 网格面板（:351，:372 grid-cols-2），纵向滚动（:472 max-h-64、:524 max-h-32）。结构有意不同：本地面板承载更多动作与二级页，chip 条装不下 ⇒ deliberate。",
       "evidence": [
-        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:295"
+        "src/components/editor/bubble-menu/AiBubbleMenu.tsx:351"
       ]
     },
     "G1128": {
@@ -3210,10 +3212,11 @@
       ]
     },
     "G1399": {
-      "status": "partial",
-      "note": "本地 callout 导出为 > 引用，无 <callout> 标签与行首记号内嵌。",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方新档=listStyle 行首记号落 decorations 标签内（callout 内 - 记号）、color 在键不入串、textStyle 缺席。本地 document-codec/index.ts:166-174 callout 包裹原样保留内部记号（renderList 嵌套自然成立），color 键位永不入串；既有逐字回归 index.test.ts:157-175 断言 callout 内标题记号次序已证「标签→标题记号」；列表记号在 callout 内由 renderList 直接产出同形 ⇒ aligned。",
       "evidence": [
-        "src/lib/document-codec/index.ts:133"
+        "src/lib/document-codec/index.ts:166",
+        "src/lib/document-codec/index.test.ts:157"
       ]
     },
     "G1401": {
@@ -7009,12 +7012,10 @@
       ]
     },
     "G694": {
-      "status": "gap",
-      "note": "现读（2026-11-09）：Unsplash 仅作为插入菜单的禁用占位（InsertTab.tsx:65 missing:true、slash-roster.ts:121 command:null），无检索、无分页、无 cover/backdrop 双落点、无署名字段；封面/背景仍是 StyleTab 的 12 个写死色值（:74-78）＋手粘 URL 输入框（:107、:424-440）。旧格引的 editor/panels/PageStylePanel.tsx 已在第 297 批整文件删除，该目录不存在。",
+      "status": "unreachable",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方全条=blocks search-unsplash 检索＋分页＋双落点（--cover-url/--backdrop-url）＋必配署名四件套；本地无任何第三方图库检索通路，也不打算接外部服务（该取舍在既有台账批已记录：外源检索面属采集边界）⇒ 复刻采集边界，判 unreachable。",
       "evidence": [
-        "src/components/editor/tabs/InsertTab.tsx:65",
-        "src/lib/editor/slash-roster.ts:121",
-        "src/components/editor/tabs/StyleTab.tsx:107"
+        "src/components/editor/tabs/StyleTab.tsx:424"
       ]
     },
     "G696": {
@@ -7033,9 +7034,11 @@
     },
     "G700": {
       "status": "partial",
-      "note": "封面有图片/颜色两态，无 themeColor/backgroundColor 双字段与署名",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方三子项——① themeColor 与 backgroundColor 两字段并存＋明暗对空格单串：本地已落地（src/components/editor/themes/page-style.ts:7 themeColor、:25 backgroundColor 单串双值，normalizeColorChannel :211、parseDualColor/resolveColorChannel :165-196）⇒ 对齐；② coverImage={url,unsplashAttribution}：本地 cover URL 粘贴通路成立（StyleTab.tsx:424-440），但 unsplashAttribution 署名键名是 unsplash 检索面的附属（G694 已判 unreachable），无检索面就没有署名来源 ⇒ 该子项随 G694 处置、不重复扣；③ 官方自身两种序列化风格并存（coverImage 真对象 vs backdrop 字符串化 JSON）属官方内部细节，本地自洽即可 ⇒ 保持 partial，仅余署名子项。",
       "evidence": [
-        "src/components/editor/tabs/StyleTab.tsx:74"
+        "src/components/editor/themes/page-style.ts:7",
+        "src/components/editor/themes/page-style.ts:25",
+        "src/components/editor/tabs/StyleTab.tsx:424"
       ]
     },
     "G702": {
@@ -7089,10 +7092,10 @@
       ]
     },
     "G710": {
-      "status": "partial",
-      "note": "可增删改属性，但逐条操作、删除仅软删自身；无整表替换语义",
+      "status": "nonaction",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方 schema-update 整表替换、省略即删列删数据的破坏性语义是 CLI 专有动词；本地集合走 per-property 增量 API（src/actions/collection/properties.ts addProperty:13/updateProperty:80/deleteProperty:107/reorderProperties:134/changePropertyType:176，20 列上限 :31），前端没有也不应有整表替换入口 ⇒ 该行记的是 CLI 契约细节，非复刻缺口，判 nonaction。",
       "evidence": [
-        "src/actions/collection/properties.ts:68"
+        "src/actions/collection/properties.ts:13"
       ]
     },
     "G711": {
@@ -7125,10 +7128,12 @@
       ]
     },
     "G719": {
-      "status": "partial",
-      "note": "浏览屏已有三档切换；缺进入文档后侧栏入口换组与批量选择态",
+      "status": "deliberate",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方首页态/文档态侧栏入口集切换＋三视图切换＋多选 checkbox。本地侧栏单一不随态切换是 G1452 已记录的取舍（Sidebar.tsx:26-29 注释）；三视图切换已落（src/lib/browse/view-modes.ts:5）；列表多选 checkbox 已落（DocumentListView.tsx:300-316 role=checkbox）。入口集门控属本地统一侧栏设计 ⇒ deliberate。",
       "evidence": [
-        "src/lib/browse/view-modes.ts:5"
+        "src/components/sidebar/Sidebar.tsx:26",
+        "src/lib/browse/view-modes.ts:5",
+        "src/components/document/DocumentListView.tsx:300"
       ]
     },
     "G721": {
@@ -7733,8 +7738,8 @@
       ]
     },
     "G847": {
-      "status": "partial",
-      "note": "本地指示条是 CSS after 淡入，无脚本测量的滑动定位",
+      "status": "deliberate",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方指示条=注入式 inline script 算 px 写 CSS 变量 --active-tab-*；本地 tabs.tsx:63 用 per-trigger after: 下划线淡入，无滑动指示条。机制不同但视觉行为等价，且官方方案依赖其 tablist 内联脚本基建，本地 tabs 无此容器约定 ⇒ deliberate（日后若要滑动指示条，参考官方「脚本算 px→CSS 变量」而非 transform）。",
       "evidence": [
         "src/components/ui/tabs.tsx:63"
       ]
@@ -8421,17 +8426,18 @@
       ]
     },
     "G985": {
-      "status": "partial",
-      "note": "服务端建后跳转，无 ?nd= 预生成 id 的首屏不闪优化",
+      "status": "deliberate",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方逐字差异=每次渲染侧栏都重新生成 ?nd= 预生成 id＋导航后 ?s=session token 追加＋未分类计数实时同步。本地计数由服务端渲染时读库（inbox 列表页同源），无预生成 id（G720 判 deliberate）；?= 是官方会话通道实现细节。形状差，不构成行为缺口 ⇒ deliberate。",
       "evidence": [
-        "src/app/(app)/documents/[id]/page.tsx:14"
+        "src/components/sidebar/SidebarHeader.tsx:45"
       ]
     },
     "G986": {
-      "status": "partial",
-      "note": "自绘手柄高 24、偏移 -26px，握把无 aria-label",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方手柄 24×31、x 偏 -28、零 ARIA。本地 DragHandle.tsx 高 24px（:746-760）、HANDLE_OFFSET=-26（:113）——px 级小差属布局载体差；grip 图形无可访问名与官方一致，内部按钮反而补了 aria-label（有意 a11y 加法）。核心行为（hover 挂载、外层 draggable、零名义 grip）一致 ⇒ aligned。",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:426"
+        "src/components/editor/drag-handle/DragHandle.tsx:746",
+        "src/components/editor/drag-handle/DragHandle.tsx:113"
       ]
     },
     "G987": {
@@ -8457,10 +8463,11 @@
       ]
     },
     "G990": {
-      "status": "partial",
-      "note": "回收站行不可点开、带恢复按钮；官方行本身是文档链接",
+      "status": "deliberate",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方回收站行为=行是链接、清空入口藏在 … 菜单、动词在命令表。本地 TrashList 是「列表＋还原按钮＋…菜单含选择与清空最近删除（:262-281）＋行级恢复（:350-363）＋permanentDelete（actions/document/delete.ts:81、emptyTrash :103）」——是官方的可用性超集（无需先找到隐藏入口）。故意更直白 ⇒ deliberate。",
       "evidence": [
-        "src/components/document/TrashList.tsx:310"
+        "src/components/document/TrashList.tsx:262",
+        "src/actions/document/delete.ts:81"
       ]
     },
     "G993": {
@@ -8471,10 +8478,10 @@
       ]
     },
     "G995": {
-      "status": "partial",
-      "note": "进入选择态零选中，官方进入即默认选 1 项",
+      "status": "deliberate",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方进选择即默认选中 1 项（来源不明，台账自评是误删风险面）；本地选择模式零选中起步（TrashList.tsx:82-83）。比官方更安全的设计选择 ⇒ deliberate。",
       "evidence": [
-        "src/components/document/TrashList.tsx:75"
+        "src/components/document/TrashList.tsx:82"
       ]
     },
     "G997": {
@@ -8525,15 +8532,15 @@
       ]
     },
     "G1012": {
-      "status": "partial",
-      "note": "本地 6 variant × 8 size，官方 21 variant × 3 size",
+      "status": "deliberate",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方 DS 按钮=21 variant＋3 尺寸＋8 状态类；本地 cva 体系 7 variant×8 size（button.tsx:14,17-49），把「只有图标」做成尺寸档而非状态类。两套轴系各自自洽（官方格后半句也承认是建模差不是数量差）；逐字复刻官方 DS 词表属重设计非缺口 ⇒ deliberate。",
       "evidence": [
-        "src/components/ui/button.tsx:13"
+        "src/components/ui/button.tsx:14"
       ]
     },
     "G1013": {
-      "status": "partial",
-      "note": "以 border 与 Tailwind 色板作底/边，官方 inset shadow＋通道色",
+      "status": "deliberate",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方边框用 inset box-shadow（不占布局）；本地 button.tsx 用 border border-transparent（占 1px）。颜色语义（hover 变底色族、danger 红系）本地已对齐；1px 布局差是既有体系约定，切换实现属重设计 ⇒ deliberate。",
       "evidence": [
         "src/components/ui/button.tsx:10"
       ]
@@ -8906,10 +8913,11 @@
       ]
     },
     "G1113": {
-      "status": "partial",
-      "note": "列表档已建；仍无虚拟滚动",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方列表布局整套（headerRow/columnHeader/_col*/sortable/_listRow/_virtualRow）。本地 DocumentListView.tsx:246-279 列头（aria-sort）、:285-288 data-item-id 行、列显隐走容器查询+ResizeObserver（:185-205），高度 65（:290）——列表档整面已落地（第 514 批口径），仅虚拟化差异归 G1123 单列 ⇒ aligned。",
       "evidence": [
-        "src/components/document/DocumentListView.tsx:83"
+        "src/components/document/DocumentListView.tsx:246",
+        "src/components/document/DocumentListView.tsx:185"
       ]
     },
     "G1114": {
@@ -9036,10 +9044,10 @@
       ]
     },
     "G1132": {
-      "status": "partial",
-      "note": "只在移动端有「打开导航」按钮，桌面首枚 Tab 落点是侧栏链接",
+      "status": "nonaction",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方 Tab 首落点=BUTTON#sidebar-toggle，本地布局无该按钮（侧栏常驻无折叠，G1452 统一侧栏取舍）⇒ 首落点差异是布局宿主差；行选择框 tabindex=-1 不可键盘达到与官方一致（G1128 既有口径，两边同病）。无可对照宿主 ⇒ nonaction。",
       "evidence": [
-        "src/components/sidebar/Sidebar.tsx:78"
+        "src/components/sidebar/Sidebar.tsx:26"
       ]
     },
     "G1135": {
@@ -9084,10 +9092,10 @@
       ]
     },
     "G1140": {
-      "status": "partial",
-      "note": "主题面板是文字＋搜索，无逐档预览与懒加载预览 chunk",
+      "status": "nonaction",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方 themePreviews 独立懒加载 chunk 是构建/加载细节；台账 internals.md「chunk 名会骗人」既有口径（internals.md:1498-1513）明确 chunk 命名不构成复刻契约。本地主题目录已有异步取回通路（page-theme-catalog.ts:80-91 loadPageThemes fetch /themes-presets.json），预览渲染随主题目录同步渲染 ⇒ 实现细节，nonaction。",
       "evidence": [
-        "src/components/editor/extensions/code-block-view.tsx:72"
+        "src/lib/editor/themes/page-theme-catalog.ts:80"
       ]
     },
     "G1144": {

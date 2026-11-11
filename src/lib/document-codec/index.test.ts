@@ -175,6 +175,34 @@ describe('rich blocks survive export', () => {
     expect(serializeDocument(doc, 'markdown')).toBe('<callout>#### On iOS :</callout>');
   });
 
+  it('keeps a list marker inside callout as the official G1399 shape', () => {
+    const doc = {
+      type: 'doc',
+      content: [
+        {
+          type: 'callout',
+          attrs: { color: '#004abd' },
+          content: [
+            {
+              type: 'bulletList',
+              content: [
+                {
+                  type: 'listItem',
+                  content: [
+                    { type: 'paragraph', content: [{ type: 'text', text: 'If blocks have the same styles, they also merge visually.' }] },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    expect(serializeDocument(doc, 'markdown')).toBe(
+      '<callout>- If blocks have the same styles, they also merge visually.</callout>'
+    );
+  });
+
   it('renders a real markdown table', () => {
     const md = serializeDocument(richDoc, 'markdown');
     expect(md).toContain('| 名称 | 数量 |');

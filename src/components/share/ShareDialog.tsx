@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import {
   Check,
+  ChevronDown,
   Copy,
   Eye,
   Globe,
@@ -82,6 +83,21 @@ import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { EDIT_REQUEST_LABEL, VIEW_REQUEST_LABEL, ACCESS_REQUESTS_HEADING } from '@/lib/share/request-access-copy';
 import { confirmDialog } from '@/lib/dialog/show';
 import { PASSWORD_XOR_EMAIL, PREVIOUS_LINK_INACTIVE, SHARE_ERROR } from '@/lib/share/share-guards';
+import {
+  COPY_LINK_DONE,
+  COPY_LINK_LABEL,
+  INVITE_DESCRIPTION,
+  INVITE_EMAIL_PLACEHOLDER,
+  INVITE_SEND_LABEL,
+  INVITE_TITLE,
+  SHARE_HELP_HREF,
+  SHARE_HELP_LABEL,
+  SHARE_TIER_DESCRIPTION,
+  memberRoleForTier,
+} from '@/lib/share/invite-copy';
+import { rememberUserDisplay } from '@/components/sync/user-display';
+import { persistUserDisplay } from '@/components/sync/user-display-persist';
+import { resolveDocumentMember } from '@/actions/document/members';
 import { cn } from 'cn';
 import { getSyncManager } from '@/lib/sync-core';
 import { findDocumentShare, findDocumentShareId } from '@/components/sync/local-records';
@@ -121,6 +137,8 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     hideHashTagWords: false,
   });
   const [permission, setPermission] = useState<DocumentSharePermission | null>(null);
+  // G932：官方档位选择器是**下拉单值**——收起时只显示当前档名。
+  const [tierOpen, setTierOpen] = useState(false);
   // G144: the two email-access lists, kept as the pasted text while editing.
   const [emailDraft, setEmailDraft] = useState('');
   const [domainDraft, setDomainDraft] = useState('');
@@ -143,6 +161,10 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
   const [accessRequests, setAccessRequests] = useState<AccessRequestItem[]>([]);
   const [requestBusy, setRequestBusy] = useState<string | null>(null);
   const [requestError, setRequestError] = useState<string | null>(null);
+  // G931：官方浮层第一格是邀请邮箱——把受邀人写进协作者名册（与信息页的邀请同一条内核通路）。
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteBusy, setInviteBusy] = useState(false);
+  const [inviteError, setInviteError] = useState<string | null>(null);
   // G138：子页数——决定要不要给「分享适用于整个文档」那句与改档前确认。
   const [subpageCount, setSubpageCount] = useState(0);
 
@@ -434,6 +456,39 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
     });
   };
 
+  // G931：邀请走与信息页成员区同一条通路——服务端解析邮箱、名册行经 applyLocal 落内核（离线可排队）。
+  const handleInvite = async () => {
+    if (!inviteEmail.trim() || inviteBusy) return;
+    setInviteBusy(true);
+    setInviteError(null);
+    try {
+      const resolved = await resolveDocumentMember({
+        documentId,
+        email: inviteEmail,
+        role: memberRoleForTier(permission),
+      });
+      rememberUserDisplay({ userId: resolved.userId, name: resolved.name, email: resolved.email });
+      persistUserDisplay();
+      await getSyncManager().applyLocal({
+        table: 'document_member',
+        id: resolved.id,
+        patch: resolved.existing
+          ? { role: resolved.role }
+          : {
+              documentId,
+              userId: resolved.userId,
+              role: resolved.role,
+              addedBy: resolved.addedBy,
+            },
+      });
+      setInviteEmail('');
+    } catch (err) {
+      setInviteError(err instanceof Error ? err.message : SHARE_ERROR.addPermission);
+    } finally {
+      setInviteBusy(false);
+    }
+  };
+
   const handleTier = (next: DocumentSharePermission) => {
     if (next === permission) return;
     const previous = permission;
@@ -560,10 +615,42 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
           生成此文档的分享链接，并选择查看或编辑档
         </DialogDescription>
         <div className="p-4">
+          {/* G931：官方浮层头两行＝标题「邀请协作」＋说明句；入口按钮照官方沿用可见文本「共享」。 */}
           <div className="mb-3 flex items-center gap-2">
             <Globe className="size-4 text-muted-foreground" />
-            <span className="text-sm font-medium">分享此文档</span>
+            <span className="text-sm font-medium">{INVITE_TITLE}</span>
           </div>
+          <p className="mb-3 text-xs text-muted-foreground">{INVITE_DESCRIPTION}</p>
+          <div className="mb-3 flex items-center gap-1.5">
+            <input
+              type="text"
+              value={inviteEmail}
+              onChange={(event) => {
+                setInviteEmail(event.target.value);
+                setInviteError(null);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') void handleInvite();
+              }}
+              placeholder={INVITE_EMAIL_PLACEHOLDER}
+              aria-label={INVITE_EMAIL_PLACEHOLDER}
+              className="h-8 min-w-0 flex-1 rounded-md border border-input bg-transparent px-2 text-xs outline-none transition-colors focus:border-ring"
+            />
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => void handleInvite()}
+              disabled={inviteBusy || !inviteEmail.trim()}
+              className="h-8 shrink-0 text-xs"
+            >
+              {inviteBusy ? <Loader2 className="size-3 animate-spin" /> : INVITE_SEND_LABEL}
+            </Button>
+          </div>
+          {inviteError && (
+            <p role="alert" className="mb-3 text-[11px] text-destructive">
+              {inviteError}
+            </p>
+          )}
           {!link ? (
             <div className="flex items-center gap-2 py-3 text-sm text-muted-foreground">
               <Loader2 className="size-4 animate-spin" />
@@ -578,7 +665,7 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                 </div>
                 <Button size="sm" variant="outline" onClick={handleCopy}>
                   {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-                  {copied ? '已复制' : '复制'}
+                  {copied ? COPY_LINK_DONE : COPY_LINK_LABEL}
                 </Button>
                 <Button size="sm" variant="ghost" onClick={() => void handleResetLink()} aria-label="重置链接">
                   重置
@@ -641,7 +728,26 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   <span>{SHARE_SCOPE_WARNING}</span>
                 </p>
               )}
-              <div className="mt-3 flex flex-col gap-2">
+              {/* G932：官方那句档位说明逐字放在选择器之前。 */}
+              <p className="mt-3 text-xs text-muted-foreground">{SHARE_TIER_DESCRIPTION}</p>
+              {/* G932/G933：官方选择器是**下拉单值**，当前值直接显示在触发器上（不是状态词）。 */}
+              <button
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded={tierOpen}
+                onClick={() => setTierOpen((prev) => !prev)}
+                disabled={permission === null || isPending}
+                className="mt-2 flex w-full items-center justify-between rounded-md border border-border px-3 py-2 text-left transition-colors hover:bg-muted"
+                data-testid="share-tier-trigger"
+                data-share-permission-value={permission ?? ''}
+              >
+                <span className="text-sm font-medium">
+                  {(permission ? TIERS.find((tier) => tier.value === permission)?.label : null) ?? ' '}
+                </span>
+                <ChevronDown className={cn('size-3.5 text-muted-foreground transition-transform', tierOpen && 'rotate-180')} />
+              </button>
+              {tierOpen && (
+                <div role="listbox" aria-label={SHARE_TIER_DESCRIPTION} className="mt-2 flex flex-col gap-2">
                 {TIERS.map((tier) => {
                   const Icon = tier.icon;
                   const selected = tier.value === permission;
@@ -652,7 +758,10 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                       data-share-permission={tier.value}
                       aria-pressed={selected}
                       disabled={permission === null || isPending}
-                      onClick={() => handleTier(tier.value)}
+                      onClick={() => {
+                        setTierOpen(false);
+                        handleTier(tier.value);
+                      }}
                       className={cn(
                         'flex items-start gap-3 rounded-lg border border-border px-3 py-2.5 text-left transition-colors hover:bg-muted',
                         selected && 'border-primary bg-muted',
@@ -667,7 +776,8 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   );
                 })}
                 {tierError && <p className="text-xs text-destructive">{tierError}</p>}
-              </div>
+                </div>
+              )}
               <div className="mt-3 flex items-center justify-between rounded-md border border-border px-3 py-2.5">
                 <div>
                   <p className="text-sm">发布为公开页面</p>
@@ -977,12 +1087,16 @@ export function ShareDialog({ documentId, open, onClose }: ShareDialogProps) {
                   </div>
                 )}
               </div>
+              {/* G931：官方浮层尾部的帮助文字「共享功能如何使用？」逐字。 */}
               <p className="mt-3 text-xs text-muted-foreground">
-                {permission === 'linkEdit' || permission === 'editAndComment'
-                  ? '拥有链接的登录用户可以协作编辑，匿名访客只能查看'
-                  : permission === 'collaborators'
-                    ? '链接不再放行，只有已被授权的协作者能打开'
-                    : '任何拥有链接的人都只能查看该文档'}
+                <a
+                  href={SHARE_HELP_HREF}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline-offset-2 hover:underline"
+                >
+                  {SHARE_HELP_LABEL}
+                </a>
               </p>
             </>
           )}

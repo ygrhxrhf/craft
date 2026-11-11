@@ -8114,24 +8114,30 @@
       ]
     },
     "G931": {
-      "status": "partial",
-      "note": "分享弹层有链接/复制/档位，缺邀请邮箱输入与「邀请协作」文案",
+      "status": "aligned",
+      "note": "入口按钮可见文案「共享」（无 aria-label）、邀请标题/说明/邮箱输入/复制链接/帮助链接齐全；无 role=dialog 同官方（G918 同族）",
       "evidence": [
-        "src/components/share/ShareDialog.tsx:400"
+        "src/components/editor/DocumentEditor.tsx",
+        "src/components/share/ShareDialog.tsx",
+        "src/lib/share/invite-copy.ts",
+        "src/components/share/share-dialog-copy.test.ts"
       ]
     },
     "G932": {
-      "status": "partial",
-      "note": "三档齐全；本地编辑档要求登录，官方编辑档对匿名开放",
+      "status": "deliberate",
+      "note": "档位说明逐字句在选择器之前、下拉单值触发器回显所选档名已落地；官方「知道链接的任何人都可以编辑」允许匿名写，本地 linkEdit 对匿名只读（shareWriteRole 要求 userId）——安全取舍，保留三档之外的两档命名差异",
       "evidence": [
-        "src/lib/share/permission.ts:33"
+        "src/components/share/ShareDialog.tsx",
+        "src/lib/share/permission.ts",
+        "src/components/share/share-dialog-copy.test.ts"
       ]
     },
     "G933": {
-      "status": "partial",
-      "note": "档位选择以按钮高亮表达，无触发器文本回显所选档",
+      "status": "aligned",
+      "note": "触发器直接显示所选档 label（TIERS.find(...)?.label），无额外「已分享」徽标",
       "evidence": [
-        "src/components/share/ShareDialog.tsx:476"
+        "src/components/share/ShareDialog.tsx",
+        "src/components/share/share-dialog-copy.test.ts"
       ]
     },
     "G935": {
@@ -8267,10 +8273,11 @@
       ]
     },
     "G956": {
-      "status": "partial",
-      "note": "六项动作与四标签齐全，且无跨文档保持",
+      "status": "aligned",
+      "note": "动作区六项与四标签齐全（超集）；新增跨文档持久：localStorage craft.editor.right-tab 记开/关与所在标签，导航后恢复",
       "evidence": [
-        "src/components/editor/tabs/InfoTab.tsx:615"
+        "src/components/editor/DocumentEditor.tsx",
+        "src/components/editor/document-editor-persist.test.ts"
       ]
     },
     "G959": {
@@ -8435,10 +8442,11 @@
       ]
     },
     "G988": {
-      "status": "partial",
-      "note": "拖完 view.focus() 抢焦点，官方案后 rangeCount 0",
+      "status": "aligned",
+      "note": "performMove 以 closeHistory(tr) 提交（一次拖拽=一个 undo 步，不受 500ms newGroupDelay 并组），且不再 view.focus() 抢焦点——官方案后 rangeCount 0",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:306"
+        "src/components/editor/drag-handle/DragHandle.tsx",
+        "src/components/editor/document-editor-persist.test.ts"
       ]
     },
     "G989": {

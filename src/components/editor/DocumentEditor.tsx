@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ShareDialog } from '@/components/share/ShareDialog';
+import { SHARE_TRIGGER_LABEL } from '@/lib/share/invite-copy';
 import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, separatorStyleOf, showsDocumentTitle } from './themes/page-style';
 import { DOODLE_SEPARATOR_CSS, washiTapeSrc } from '@/lib/editor/themes/washi-catalog';
 import type { PageStyle } from './themes/page-style';
@@ -54,6 +55,10 @@ const TAB_LABELS: Record<RightTabId, string> = {
   style: '样式',
   info: '信息',
 };
+// G956: whether the right rail is open and which tab it sits on is a persistent
+// state that survives document switches — carry it in localStorage like G756.
+const RIGHT_TAB_STORAGE_KEY = 'craft.editor.right-tab';
+const RIGHT_TAB_CLOSED = 'closed';
 
 interface DocumentEditorProps {
   document: {
@@ -101,7 +106,21 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const [width, setWidth] = useState(doc.width ?? 'default');
   const [pageStyle, setPageStyle] = useState<PageStyle>(() => normalizePageStyle(doc.pageStyle));
   const pageStyleRef = useRef(pageStyle);
-  const [activeTab, setActiveTab] = useState<RightTabId | null>(null);
+  const [activeTab, setActiveTab] = useState<RightTabId | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const saved = window.localStorage.getItem(RIGHT_TAB_STORAGE_KEY);
+    return (TAB_ORDER as readonly string[]).includes(saved ?? '') ? (saved as RightTabId) : null;
+  });
+  // G956: the initializer above already read the stored tab, so this only records changes.
+  // 「关着」也要记：官方那对状态是「开没开 ＋ 在哪个标签」，只记标签会让关掉的面板在下一篇文档里
+  // 又自己打开。
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(RIGHT_TAB_STORAGE_KEY, activeTab ?? RIGHT_TAB_CLOSED);
+    } catch {
+      // Private mode can refuse storage; the rail still holds state within the session.
+    }
+  }, [activeTab]);
   // 添加评论 from the block menu opens the info panel, which holds the composer.
   const commentRequest = useCommentRequestStore((state) => state.request);
   // 请求号变了就打开信息面板。放渲染期按上一值调整（React 规定的「props 变化时调整 state」写法），
@@ -400,14 +419,14 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               }
             />
             {isOwner && !isMobile && (
+              // G931：官方分享入口是**文案为「共享」的按钮**（可见文本、没有 `aria-label`）。
               <button
                 onClick={() => setShareOpen(true)}
                 type="button"
-                aria-label="分享"
-                title="分享"
-                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 <Share2 className="size-4" />
+                {SHARE_TRIGGER_LABEL}
               </button>
             )}
           </div>

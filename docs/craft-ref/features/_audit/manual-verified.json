@@ -8990,10 +8990,12 @@
       ]
     },
     "G1123": {
-      "status": "partial",
-      "note": "列表行已渲染，但行壳无 data-item-id 与虚拟化",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 522 批）：列表行早已带 data-item-id，缺口只剩窗口渲染；本轮在 DocumentListView 补 visibleRowWindow（行高 65＝官方盘上常量、overscan 2、rAF+150ms）与 browse-list-body 滚动壳，表头留在壳外对应 _virtualBody。",
       "evidence": [
-        "src/components/document/DocumentListView.tsx:161"
+        "src/components/document/DocumentListView.tsx:249",
+        "src/components/document/DocumentListView.tsx:310",
+        "src/components/document/DocumentListView.test.ts:56"
       ]
     },
     "G1124": {

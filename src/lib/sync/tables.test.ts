@@ -42,7 +42,14 @@ interface Site { file: string; table: string | null; patchKind: 'literal' | 'oth
 // ☆ 15→16（第 188 批 G679）：`src/lib/document/move.ts` 的 `applyMove` 写的是 `patch: plan.patch`
 //   ⇒ 静态面判不出来。已人工复核：四种落点的键只可能是 `folderId`/`parentId`/`isTemplate`，
 //   且 `move.test.ts` 另有一条守卫逐键比对 `DOC_META_COLS`（不靠这里的一次性复核）。
-const UNRESOLVED_BASELINE = 16;
+// ☆ 16→17（第 522 批复核）：`src/lib/favorite/toggle-local.ts` 两处——`:50` 是
+//   `patch: favoritePatch(input, now, now)`（函数返回值，判不出来），`:61` 是
+//   `{ ...favoritePatch(...), createdAt: now }`（spread 一个函数调用，判不出来）。
+//   已人工复核：`favoritePatch` 只会产 `documentId`/`userId`（仅传入时）/`deletedAt`/`updatedAt`，
+//   加 `createdAt` 共五键，全在 `favorite.cols`；`favorite ∈ USER_ID_TABLES` ⇒ `userId` 由服务端
+//   覆盖，本地镜像写不写都推不动越权。函数包一层是为了"只在有 userId 时才带这一列"，
+//   摊平会改成无条件写 `userId: null`，语义变了，故按原约定回填基线而不是摊平。
+const UNRESOLVED_BASELINE = 17;
 
 /** 服务端写侧把 payload.userId 无条件覆盖成会话 userId 的表（`route.ts:161` 的
  * `USER_ID_TABLES`，用在 `:284`）。这些表的 `userId` 不在 cols 里也不算丢列——列照发，
@@ -222,9 +229,14 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     const byTable = new Map(SYNC_TABLES.map((d) => [d.table, new Set(d.cols)]));
     const serverUserId = serverOwnedUserIdTables();
     const dropped: string[] = [];
+    const unresolvedSites: string[] = [];
     let literalKeys = 0, unresolved = 0;
     for (const s of sites) {
-      if (s.patchKind !== 'literal') { unresolved++; continue; }
+      if (s.patchKind !== 'literal') {
+        unresolved++;
+        unresolvedSites.push(`${s.file} (table=${s.table ?? '?'}, patch 整体非字面量)`);
+        continue;
+      }
       const cols = byTable.get(s.table!);
       if (!cols) { dropped.push(`${s.file}：表 ${s.table} 根本没注册`); continue; }
       for (const k of s.keys) {
@@ -234,7 +246,10 @@ describe('SYNC_TABLES coverage (R-9)', () => {
           if (!cols.has(k.name)) {
             dropped.push(`${s.file} ${s.table}.${k.name} 不在 cols ⇒ 本地已改，却永远推不到服务端`);
           }
-        } else unresolved++;
+        } else {
+          unresolved++;
+          unresolvedSites.push(`${s.file} ${s.table}.${k.name} (键判不出来)`);
+        }
       }
     }
     expect(dropped).toEqual([]);
@@ -243,7 +258,7 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     expect(byTable.get('document')!.has('isTemplate'), 'isTemplate 又不在 document.cols 里了').toBe(true);
     expect(serverUserId.size, 'USER_ID_TABLES 解析出来是空的＝判据失效').toBeGreaterThanOrEqual(10);
     expect(literalKeys, '字面量键解析得太少＝这条闸在空转').toBeGreaterThan(60);
-    expect(unresolved, '新增一处 spread/计算键/变量 patch ⇒ 静态面判不出来，请人工复核后回填基线')
+    expect(unresolved, `新增一处 spread/计算键/变量 patch ⇒ 静态面判不出来，请人工复核后回填基线；判不出来的站点：\n${unresolvedSites.join('\n')}`)
       .toBeLessThanOrEqual(UNRESOLVED_BASELINE);
   });
 

@@ -54,6 +54,33 @@ describe('the row height is the collected 65', () => {
   });
 });
 
+describe('long lists render through the shared row window (G1123)', () => {
+  it('computes the window from the shared helper at the 65px row step', () => {
+    expect(source).toContain('visibleRowWindow({');
+    expect(source).toContain('rowHeight: LIST_ROW_STEP');
+    expect(source).toContain('overscan: 2');
+    expect(source).toContain('LIST_VIRTUAL_THRESHOLD = 60');
+    // 行高就是步长：行是 65px 且没有 gap，占位高度才对得上滚动位置。
+    expect(source).toContain('const LIST_ROW_STEP = 65');
+    expect(source).toContain('flex max-h-[480px] flex-col overflow-y-auto');
+  });
+
+  it('schedules scroll updates through the shared rAF + debounce helper', () => {
+    expect(source).toContain('scheduleScrollUpdate(() => setScrollTop(top))');
+    expect(source).toContain('data-testid="browse-list-body"');
+  });
+
+  it('renders the top and bottom spacers around the visible slice', () => {
+    expect(source).toContain('listWindow.topPad');
+    expect(source).toContain('listWindow.bottomPad');
+    expect(source).toContain('rows.slice(listWindow.start, listWindow.end)');
+  });
+
+  it('keeps the row identity attribute the marquee collects on', () => {
+    expect(source).toContain('data-item-id={doc.id}');
+  });
+});
+
 describe('the typography is declared, not inherited', () => {
   it('hangs the three collected classes on header, title and cell', () => {
     expect(source).toContain('LIST_HEADER_TYPOGRAPHY');

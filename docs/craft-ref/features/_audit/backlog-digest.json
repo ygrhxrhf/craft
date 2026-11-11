@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-11T14:57:36.213Z",
+  "generatedAt": "2026-11-11T16:24:08.903Z",
   "total": 1615,
   "status": {
-    "aligned": 819,
+    "aligned": 820,
     "nonaction": 540,
     "deliberate": 223,
     "unreachable": 27,
-    "partial": 5,
+    "partial": 4,
     "gap": 1
   },
   "priority": {
@@ -21,7 +21,7 @@
     "P? / nonaction": 200,
     "P2 / nonaction": 175,
     "P1 / aligned": 170,
-    "P? / aligned": 156,
+    "P? / aligned": 157,
     "P3 / aligned": 128,
     "P1 / nonaction": 89,
     "P2 / deliberate": 88,
@@ -33,7 +33,7 @@
     "P0 / aligned": 9,
     "P3 / unreachable": 9,
     "P? / unreachable": 6,
-    "P? / partial": 5,
+    "P? / partial": 4,
     "P? / gap": 1,
     "P1 / unreachable": 1
   },
@@ -1180,10 +1180,6 @@
     ],
     [
       "三点一〇五七、第 107 批〔★★★ **`[data-what*]` ",
-      1
-    ],
-    [
-      "三点一〇六十、第 110 批〔★★★ **代码块主题的作用域结案＝块级，",
       1
     ],
     [

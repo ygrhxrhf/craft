@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { File, Check } from 'lucide-react';
 import { cn } from 'cn';
+
+import { scheduleScrollUpdate, visibleRowWindow } from '@/lib/collection/virtual-rows';
 
 import {
   COLUMN_WIDTH_VARS,
@@ -68,6 +70,11 @@ const WIDTH_CLASSES: Record<string, string> = {
   '--col-updated-width': 'w-[var(--col-updated-width,112px)]',
   '--col-created-width': 'w-[var(--col-created-width,112px)]',
 };
+
+/** G1123：官方行高固定 65，列表档超过这个行数才切窗口渲染。 */
+const LIST_VIRTUAL_THRESHOLD = 60;
+const LIST_ROW_STEP = 65;
+const LIST_VIEWPORT_HEIGHT = 480;
 
 /** The all-documents header: 名称／上次浏览／已更新／已创建. */
 const ALL_COLUMNS: ColumnDef[] = [
@@ -179,6 +186,7 @@ export function DocumentListView({
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const headerRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [scrollTop, setScrollTop] = useState(0);
   const isShared = variant === 'shared';
   const columns = isShared ? SHARED_COLUMNS : ALL_COLUMNS;
 
@@ -238,6 +246,20 @@ export function DocumentListView({
       ? sortBrowseRows(documents, sort)
       : documents;
 
+  // G1123：长列表也走窗口渲染（行高固定 65、overscan 2、滚动 rAF + 150ms），
+  //   与回收站、集合表格共用同一套虚拟化核。
+  const virtualized = rows.length > LIST_VIRTUAL_THRESHOLD;
+  const listWindow = virtualized
+    ? visibleRowWindow({
+        scrollTop,
+        viewportHeight: LIST_VIEWPORT_HEIGHT,
+        rowCount: rows.length,
+        rowHeight: LIST_ROW_STEP,
+        overscan: 2,
+      })
+    : null;
+  const renderRows = listWindow ? rows.slice(listWindow.start, listWindow.end) : rows;
+
   return (
     <div ref={ref} data-testid="browse-list" className="flex flex-col">
       <div
@@ -279,7 +301,18 @@ export function DocumentListView({
         ))}
       </div>
 
-      {rows.map((doc) => {
+      {/* G1123：官方列表把行放进 `_virtualBody` 滚动壳里，列头留在壳外，行高 65 即步长。 */}
+      <div
+        data-testid="browse-list-body"
+        className={virtualized ? 'flex max-h-[480px] flex-col overflow-y-auto' : 'flex flex-col'}
+        onScroll={(event) => {
+          if (!virtualized) return;
+          const top = event.currentTarget.scrollTop;
+          scheduleScrollUpdate(() => setScrollTop(top));
+        }}
+      >
+      {listWindow && <div aria-hidden style={{ height: listWindow.topPad }} />}
+      {renderRows.map((doc) => {
         const checked = selectedIds?.has(doc.id) ?? false;
         return (
         <Link
@@ -348,6 +381,8 @@ export function DocumentListView({
         </Link>
         );
       })}
+      {listWindow && <div aria-hidden style={{ height: listWindow.bottomPad }} />}
+      </div>
     </div>
   );
 }

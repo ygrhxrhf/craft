@@ -8801,10 +8801,15 @@
       ]
     },
     "G1084": {
-      "status": "partial",
-      "note": "已落纯函数与测试，尚未接入渲染调用点",
+      "status": "aligned",
+      "note": "字形缺失探测机制与消费点齐备：纯核按官方「宽度为零＝整条兜底栈无字形」判定，适配层因本地缺 AdobeBlank 而补「与 U+FFFF 哨兵同宽即缺」，正文 emoji 菜单与评论框补全两个候选面出列表前过滤；实测 :hot 原始 8 条、菜单 7 条，缺字形档被滤掉、可画字符原序保留。",
       "evidence": [
-        "src/lib/editor/glyph-probe.ts:41"
+        "src/lib/editor/glyph-probe.ts:18",
+        "src/lib/emoji/glyph-support.ts:22",
+        "src/lib/emoji/glyph-support.ts:48",
+        "src/components/editor/extensions/emoji-suggestion.tsx:65",
+        "src/components/editor/extensions/emoji-suggestion.tsx:82",
+        "src/components/editor/comments/EmojiSuggest.tsx:33"
       ]
     },
     "G1086": {

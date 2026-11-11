@@ -6,6 +6,7 @@ import Suggestion from '@tiptap/suggestion';
 import type { SuggestionProps } from '@tiptap/suggestion';
 import { PluginKey } from '@tiptap/pm/state';
 import { loadEmojiIndex, searchEmojis, type EmojiEntry } from '@/lib/emoji/data';
+import { dropUnavailableGlyphs } from '@/lib/emoji/glyph-support';
 
 type Props = SuggestionProps<EmojiEntry, EmojiEntry>;
 
@@ -60,7 +61,8 @@ export const EmojiSuggestion = Extension.create({
         allowedPrefixes: null,
         // Two characters before the menu appears: typing a colon in prose
         // ("注意:") must not open a picker.
-        items: ({ query }) => (query.length >= 2 ? searchEmojis(emojiCache, query) : []),
+        items: ({ query }) =>
+          query.length >= 2 ? dropUnavailableGlyphs(searchEmojis(emojiCache, query)) : [],
         command: ({ editor, range, props }) => {
           editor.chain().focus().deleteRange(range).insertContent(props.char).run();
         },
@@ -75,7 +77,9 @@ export const EmojiSuggestion = Extension.create({
 
           const refresh = (props: Props) => {
             latest = props;
-            entries = props.items.length ? props.items : searchEmojis(emojiCache, props.query);
+            entries = props.items.length
+              ? props.items
+              : dropUnavailableGlyphs(searchEmojis(emojiCache, props.query));
             selected = 0;
 
             if (!renderer) {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { loadEmojiIndex, searchEmojis, type EmojiEntry } from '@/lib/emoji/data';
+import { dropUnavailableGlyphs } from '@/lib/emoji/glyph-support';
 import { acceptEmoji, emojiQueryAt, type EmojiQuery } from './emoji-query';
 
 /**
@@ -29,7 +30,7 @@ export function EmojiSuggest({
     let alive = true;
     loadEmojiIndex()
       .then((index) => {
-        if (alive) setMatches(searchEmojis(index, term));
+        if (alive) setMatches(dropUnavailableGlyphs(searchEmojis(index, term)));
       })
       .catch(() => {});
     return () => {

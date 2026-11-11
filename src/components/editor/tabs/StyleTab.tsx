@@ -535,7 +535,10 @@ export function StyleTab({
                   ? 'border-craft-accent bg-craft-accent/12 text-craft-accent'
                   : 'border-foreground/10 text-foreground/60 hover:bg-foreground/4',
               )}
-              onClick={() => setPageStyle(id === 'washi' ? { separatorStyle: 'washi' } : { separatorStyle: id, washi: 'none' })}
+              // G708：三档开关是用户接管——主题写下的原始表达式一并清掉，否则渲染期被 raw 顶回。
+              onClick={() =>
+                setPageStyle(id === 'washi' ? { separatorStyle: 'washi', separatorStyleRaw: undefined } : { separatorStyle: id, washi: 'none', separatorStyleRaw: undefined })
+              }
             >
               {label}
             </button>
@@ -555,7 +558,7 @@ export function StyleTab({
                     pageStyle.washi === tape.key && 'ring-2 ring-craft-accent',
                   )}
                   style={{ backgroundImage: `url(/washi/${tape.key}.jpg)` }}
-                  onClick={() => setPageStyle({ separatorStyle: 'washi', washi: tape.key })}
+                  onClick={() => setPageStyle({ separatorStyle: 'washi', washi: tape.key, separatorStyleRaw: undefined })}
                 />
               ))}
               {/* 向后兼容：老文档的六档内置渐变仍留在图库尾部。 */}
@@ -571,7 +574,7 @@ export function StyleTab({
                       pageStyle.washi === tape.id && 'ring-2 ring-craft-accent',
                     )}
                     style={{ background: tape.gradient }}
-                    onClick={() => setPageStyle({ separatorStyle: 'washi', washi: tape.id })}
+                    onClick={() => setPageStyle({ separatorStyle: 'washi', washi: tape.id, separatorStyleRaw: undefined })}
                   />
                 ))}
             </div>

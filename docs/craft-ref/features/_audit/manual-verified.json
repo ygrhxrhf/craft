@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-11 第 518 批：G746 平台/浏览器面板裁条、G855 面板方向键文档捕获、G862/G973 官方 720×560/184px 几何、G939 方向键不抢焦点不 preventDefault、G966 焦点栈 G966 对齐",
-  "method": "第 517 批：G901/G896 任务行键路（taskItem 感知 keymap）、G1026 块移动历史边界、G953 缩进上限、G910 撤销粒度取舍、G983 拖拽影子载体差",
+  "verifiedAt": "2026-11-11 第 520 批：G708 主题一次写多字段（light-dark 双值通道）、G706 backdrop 字符串载体与解析渲染、G700 收口（coverImage 署名随 G694 unreachable）",
+  "method": "第 520 批：page-style 双值通道改 light-dark() CSS 解析（修注水失配）、backdropBackground 单参+双 stop、washi-patterns color-mix、page-theme-catalog 一次写七键、custom-style-patch 新键",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -7033,12 +7033,12 @@
       ]
     },
     "G700": {
-      "status": "partial",
-      "note": "✎ 现读（2026-11-11 第 519 批）：官方三子项——① themeColor 与 backgroundColor 两字段并存＋明暗对空格单串：本地已落地（src/components/editor/themes/page-style.ts:7 themeColor、:25 backgroundColor 单串双值，normalizeColorChannel :211、parseDualColor/resolveColorChannel :165-196）⇒ 对齐；② coverImage={url,unsplashAttribution}：本地 cover URL 粘贴通路成立（StyleTab.tsx:424-440），但 unsplashAttribution 署名键名是 unsplash 检索面的附属（G694 已判 unreachable），无检索面就没有署名来源 ⇒ 该子项随 G694 处置、不重复扣；③ 官方自身两种序列化风格并存（coverImage 真对象 vs backdrop 字符串化 JSON）属官方内部细节，本地自洽即可 ⇒ 保持 partial，仅余署名子项。",
+      "status": "unreachable",
+      "note": "✎ 现读（2026-11-11 第 520 批）：官方三子项——① themeColor 与 backgroundColor 两字段并存＋明暗对空格单串：本地已落地（page-style.ts themeColor/backgroundColor 单串双值，normalizeColorChannel/parseDualColor/colorChannelCss，DocumentEditor 渲染）⇒ 对齐；② coverImage={url,unsplashAttribution}：本地 cover URL 粘贴通路成立（StyleTab.tsx:424），但 unsplashAttribution 署名键随第三方图库检索面 G694（已判 unreachable）——本地无检索面就没有署名来源 ⇒ unreachable（随 G694，依 G101/G455 先例）；③ 官方自身两种序列化风格并存（coverImage 真对象 vs backdrop 字符串化 JSON）属官方内部细节 ⇒ nonaction。整体判 unreachable，余下仅采集边界子项。",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:7",
-        "src/components/editor/themes/page-style.ts:25",
-        "src/components/editor/tabs/StyleTab.tsx:424"
+        "src/components/editor/themes/page-style.ts:220",
+        "src/components/editor/tabs/StyleTab.tsx:436",
+        "docs/craft-ref/features/gap.md"
       ]
     },
     "G702": {
@@ -7070,18 +7070,21 @@
       ]
     },
     "G706": {
-      "status": "gap",
-      "note": "现读（2026-11-09）：素材名册里有 backdrop「背景」档（decorations.ts:35），但全仓除该 id 与 Tailwind backdrop-blur 外零命中 → 无渐变起止色/方向的 JSON 载体、无 size=full 铺满语义；StyleTab 的「背景」只是封面颜色（写 coverImage/coverType，不是字符串化 backdrop JSON）。",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 520 批）：官方落库 backdrop 是字符串化 JSON（direction/size 为旗标给不到的默认值）。本地 pageStyle.backdrop 承载同一字符串（normalizeBackdrop 原样保留 JSON/gradient()/image()/纯色对），parseBackdrop 解析 direction 与 size（缺省 top-to-bottom/full），backdropBackground 输出渐变/图片/双值色（明暗对走 light-dark()），DocumentEditor.tsx:461 与 SharedDocView.tsx:82 以 inset-0 全幅渲染；本地无 CLI ⇒ 逗号分隔的旗标语法属载体差、无对位物。实测 radial 渐变整页渲染 ⇒ aligned",
       "evidence": [
-        "src/lib/editor/decorations.ts:35",
-        "src/components/editor/tabs/StyleTab.tsx:336"
+        "src/lib/editor/themes/backdrop.ts:118",
+        "src/components/editor/DocumentEditor.tsx:461",
+        "src/components/share/SharedDocView.tsx:82"
       ]
     },
     "G708": {
-      "status": "partial",
-      "note": "主题只是一个色值，不会一次写 fontFamily/textColor/backgroundColor/themeId/separatorStyle",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 520 批）：官方 `--theme-id` 一次写五字段（fontFamily/textColor/backgroundColor 空格双值/themeId/separatorStyle）。本地 pageStylePatchForTheme（src/lib/editor/themes/page-theme-catalog.ts:56）一次产出 theme+themeColor+backgroundColor+textColor+fontPack+separatorStyleRaw+backdrop 七键，明暗对原样成串（等值对也保留，normalizeColorChannel），separatorStyle 原文存 separatorStyleRaw 并由 separatorKindOf/parseSeparatorExpression 渲染；StyleTab 主题网格与文档色循环钮走同一 patch。实测 fire-horse 主题页渲染 #f7c98f/#1a1208 与 #400000/#f4f4f4、washi 图案取明暗半 ⇒ aligned",
       "evidence": [
-        "src/components/editor/themes/page-style.ts:26"
+        "src/lib/editor/themes/page-theme-catalog.ts:56",
+        "src/components/editor/themes/page-style.ts:220",
+        "src/components/editor/tabs/StyleTab.tsx:376"
       ]
     },
     "G709": {

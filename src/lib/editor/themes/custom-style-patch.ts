@@ -4,7 +4,16 @@ import type { PageStyle } from '@/components/editor/themes/page-style';
  * G151：自定义样式保存的字段子集——「保存当前样式」捕获的就是这些可观察外观位。
  * 套用与脏态判定都走这张键表（键序固定 ⇒ 两个补丁可以直接按 JSON 比对）。
  */
-export const CUSTOM_STYLE_KEYS = ['theme', 'themeColor', 'textColor', 'fontPack', 'washi'] as const;
+export const CUSTOM_STYLE_KEYS = [
+  'theme',
+  'themeColor',
+  'textColor',
+  'backgroundColor',
+  'fontPack',
+  'washi',
+  'separatorStyleRaw',
+  'backdrop',
+] as const;
 
 export function stylePatchOf(pageStyle: Partial<PageStyle> | null | undefined): Record<string, string> {
   const patch: Record<string, string> = {};

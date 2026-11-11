@@ -25,6 +25,28 @@ export const WASHI_PATTERNS: readonly WashiPattern[] = [
   { name: 'wave', description: 'Wave pattern', type: 'built-in' },
 ] as const;
 
+export type WashiPatternName = (typeof WASHI_PATTERNS)[number]['name'];
+
+/**
+ * The tape fill for a built-in pattern at one colour (G708). Mirrors the block-level
+ * `hr[data-separator="washi"]` rules in globals.css, in inline form because the page-top
+ * tape carries no `data-separator` attribute to hook a selector on.
+ */
+export function washiPatternBackground(name: WashiPatternName, color: string): {
+  backgroundColor: string;
+  backgroundImage: string;
+} {
+  const images: Record<WashiPatternName, string> = {
+    hex: `repeating-linear-gradient(60deg, ${color} 0 2px, transparent 2px 10px), repeating-linear-gradient(-60deg, ${color} 0 2px, transparent 2px 10px)`,
+    dot: `radial-gradient(${color} 1.5px, transparent 1.5px)`,
+    stripe: `repeating-linear-gradient(0deg, ${color} 0 3px, transparent 3px 7px)`,
+    diagonal: `repeating-linear-gradient(45deg, ${color} 0 3px, transparent 3px 8px)`,
+    grid: `repeating-linear-gradient(0deg, ${color} 0 1px, transparent 1px 8px), repeating-linear-gradient(90deg, ${color} 0 1px, transparent 1px 8px)`,
+    wave: `repeating-radial-gradient(circle at 0 50%, transparent 0 4px, ${color} 4px 5px, transparent 5px 9px)`,
+  };
+  return { backgroundColor: `color-mix(in srgb, ${color} 18%, transparent)`, backgroundImage: images[name] };
+}
+
 /** The separator value that selects a washi tape rather than a plain rule. */
 export const WASHI_SEPARATOR = 'washi';
 

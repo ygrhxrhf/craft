@@ -17,6 +17,20 @@ export interface PageStyle {
   /** G1436: the page text colour; absent means the theme default. */
   textColor?: string;
   /**
+   * G708: the official `separator-style` expression verbatim (`line` / `doodle` /
+   * `washi(image, "<url>", "<token>")` / `washi(pattern, "<name>", "#light #dark")`). Themes
+   * write this raw form because the image half has no local asset; the three-way
+   * `separatorStyle` switch stays the user-facing control and wins once the user touches it.
+   */
+  separatorStyleRaw?: string;
+  /**
+   * G706: the official `backdrop` value verbatim — `none`, a bare colour pair, the CLI's
+   * stringified JSON `{"type":"gradient",...}`, or `image("<url>","<token>")`. One string
+   * keeps all four shapes round-trippable without inventing key names the official format
+   * never showed.
+   */
+  backdrop?: string;
+  /**
    * G673/G686: the page background channel. Same shape as `textColor` — `#RRGGBB`, or the
    * official light/dark pair `"#light #dark"` stored as **one string** (the CLI writes
    * `--bg-color "#222222"` and reads it back verbatim, so the pair is never split into fields).
@@ -152,8 +166,29 @@ export function getWashiGradient(id: WashiId | undefined): string {
 
 /** G210：页面分隔符三档；老文档只有 `washi` 字段，缺省按它回推。 */
 export function separatorStyleOf(pageStyle: PageStyle | null | undefined): SeparatorStyle {
+  const fromRaw = separatorKindOf(pageStyle?.separatorStyleRaw);
+  if (fromRaw) return fromRaw;
   if (pageStyle?.separatorStyle) return pageStyle.separatorStyle;
   return pageStyle?.washi && pageStyle.washi !== 'none' ? 'washi' : 'line';
+}
+
+/**
+ * G708/G707: the three-way kind of an official `separator-style` expression. The raw form may
+ * name a washi image the local build cannot load — it still counts as `washi`, the three-way
+ * switch's own `separatorStyle` field only wins when the raw expression is absent.
+ */
+export function separatorKindOf(value: unknown): SeparatorStyle | null {
+  if (typeof value !== 'string') return null;
+  const raw = value.trim();
+  if (raw === 'line' || raw === 'doodle' || raw === 'washi') return raw;
+  if (raw.startsWith('washi(')) return 'washi';
+  return null;
+}
+
+/** The light half of a colour channel — what a colour picker that ignores scheme shows. */
+export function lightHalfOf(value: unknown): string | null {
+  const parsed = parseDualColor(value);
+  return parsed?.light ?? null;
 }
 
 /**
@@ -188,11 +223,20 @@ export function normalizeColorChannel(value: unknown): string | undefined {
   return parsed.dark ? `${parsed.light} ${parsed.dark}` : parsed.light;
 }
 
-/** 按当前明暗取那一半；单值色两档同值。 */
-export function resolveColorChannel(value: unknown, isDark: boolean): string | undefined {
+/** 双值色的 CSS 写法：交给 `light-dark()` 按页面自己的 `color-scheme` 取半。单值色原样。 */
+export function colorPairCss(light: string, dark?: string): string {
+  return dark && dark !== light ? `light-dark(${light}, ${dark})` : light;
+}
+
+/**
+ * 一档色通道 → CSS 颜色。**不用** JS 判断明暗：服务端拿不到主题、首个客户端渲染能拿到，
+ * 两帧写法不同就成了注水失配（React 不补，页面上留下服务端那份明档值）。`light-dark()`
+ * 两边产出同一字符串，由 `color-scheme`（next-themes 预绘制写在 `<html>` 上）当场取半。
+ */
+export function colorChannelCss(value: unknown): string | undefined {
   const parsed = parseDualColor(value);
   if (!parsed) return undefined;
-  return isDark ? parsed.dark ?? parsed.light : parsed.light;
+  return colorPairCss(parsed.light, parsed.dark);
 }
 
 export function normalizePageStyle(value: unknown): PageStyle {
@@ -203,17 +247,45 @@ export function normalizePageStyle(value: unknown): PageStyle {
     theme: typeof v.theme === 'string' ? (v.theme as PageThemeId) : undefined,
     themeColor: typeof v.themeColor === 'string' ? v.themeColor : undefined,
     separatorStyle: normalizeSeparatorStyle(v.separatorStyle),
+    separatorStyleRaw: normalizeSeparatorStyleRaw(v.separatorStyleRaw),
+    backdrop: normalizeBackdrop(v.backdrop),
     washi: typeof v.washi === 'string' ? (v.washi as WashiId) : undefined,
     showTitle: typeof v.showTitle === 'boolean' ? v.showTitle : undefined,
     spelling: typeof v.spelling === 'boolean' ? v.spelling : undefined,
     spellingLang: typeof v.spellingLang === 'string' ? v.spellingLang : undefined,
-    textColor: typeof v.textColor === 'string' && /^#[0-9a-f]{6}$/i.test(v.textColor) ? v.textColor : undefined,
+    textColor: normalizeColorChannel(v.textColor),
     backgroundColor: normalizeColorChannel(v.backgroundColor),
     // G282: `null` means "not set, follow the document" — kept distinct from a real preset value.
     paragraphSpacing: isParagraphSpacingType(v.paragraphSpacing) ? v.paragraphSpacing : undefined,
     stylePreset: isPageStylePreset(v.stylePreset) ? v.stylePreset : undefined,
     fromTemplate: typeof v.fromTemplate === 'string' ? v.fromTemplate : undefined,
   };
+}
+
+/**
+ * G708: the raw separator expression is stored verbatim when it is one of the official shapes;
+ * anything else is dropped (the three-way switch still applies). A literal `none` is not in the
+ * vocabulary but is the switch's own clearing value, so it is kept rather than guessed away.
+ */
+export function normalizeSeparatorStyleRaw(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const raw = value.trim();
+  return separatorKindOf(raw) || raw === 'none' ? raw : undefined;
+}
+
+/**
+ * G706: the backdrop carrier accepts exactly the shapes the official format showed — a bare
+ * colour pair, the CLI's stringified gradient JSON, or `image("<url>","<token>")`. A literal
+ * `none` clears; anything else is not a backdrop.
+ */
+export function normalizeBackdrop(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const raw = value.trim();
+  if (!raw || raw === 'none') return undefined;
+  if (/^#[0-9a-f]{6}(\s+#?[0-9a-f]{6})?$/i.test(raw)) return raw;
+  if (raw.startsWith('gradient(') || raw.startsWith('image(')) return raw;
+  if (raw.startsWith('{') && raw.includes('"gradientColors"')) return raw;
+  return undefined;
 }
 
 function isParagraphSpacingType(value: unknown): value is ParagraphSpacingType {

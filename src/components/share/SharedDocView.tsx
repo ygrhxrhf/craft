@@ -2,7 +2,19 @@
 
 import { useMemo } from 'react';
 import { Editor } from '@/components/editor/Editor';
-import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, showsDocumentTitle } from '@/components/editor/themes/page-style';
+import {
+  normalizePageStyle,
+  getFontStack,
+  getThemeColor,
+  getWashiGradient,
+  showsDocumentTitle,
+  colorChannelCss,
+  colorPairCss,
+  separatorStyleOf,
+} from '@/components/editor/themes/page-style';
+import { backdropBackground, parseBackdrop } from '@/lib/editor/themes/backdrop';
+import { parseSeparatorExpression } from '@/lib/editor/separator-expression';
+import { washiPatternBackground } from '@/lib/editor/washi-patterns';
 
 interface SharedDocViewProps {
   documentId: string;
@@ -44,6 +56,14 @@ export function SharedDocView({
   const style = useMemo(() => normalizePageStyle(pageStyle), [pageStyle]);
   const isColorCover = coverType === 'color' && coverImage;
   const isImageCover = coverType === 'image' && coverImage;
+  // G708/G706：与编辑器同一条读法——双值色写成 `light-dark()` 交给 `color-scheme` 取半，
+  // 原始分隔线表达式优先于三档回推。JS 不判明暗，服务端与首帧客户端的字符串才一致。
+  const backgroundChannel =
+    colorChannelCss(style.backgroundColor) ?? getThemeColor(style.theme, style.themeColor);
+  const textColorChannel = colorChannelCss(style.textColor);
+  const backdropCss = backdropBackground(parseBackdrop(style.backdrop));
+  const separatorStyle = separatorStyleOf(style);
+  const separatorExpr = parseSeparatorExpression(style.separatorStyleRaw);
   const washiGradient = getWashiGradient(style.washi);
 
   return (
@@ -52,13 +72,41 @@ export function SharedDocView({
       style={
         styled
           ? {
-              backgroundColor: getThemeColor(style.theme, style.themeColor),
+              backgroundColor: backgroundChannel,
+              color: textColorChannel,
               fontFamily: getFontStack(style.fontPack),
             }
           : undefined
       }
     >
-      {styled && washiGradient && (
+      {styled && backdropCss && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{ background: backdropCss }}
+        />
+      )}
+      {styled && separatorStyle === 'washi' && separatorExpr?.kind === 'washi-image' && (
+        <img
+          aria-hidden
+          src={separatorExpr.url}
+          alt=""
+          className="pointer-events-none absolute left-1/2 top-0 z-10 h-5 w-32 -translate-x-1/2 -rotate-2 rounded-b-sm object-cover opacity-80 shadow-sm"
+        />
+      )}
+      {styled && separatorStyle === 'washi' && separatorExpr?.kind === 'washi-pattern' && (
+        <div
+          aria-hidden
+          data-testid="page-washi-pattern"
+          data-washi-pattern={separatorExpr.pattern}
+          className="pointer-events-none absolute left-1/2 top-0 z-10 h-5 w-32 -translate-x-1/2 -rotate-2 rounded-b-sm opacity-80 shadow-sm"
+          style={washiPatternBackground(
+            separatorExpr.pattern,
+            colorPairCss(separatorExpr.light, separatorExpr.dark),
+          )}
+        />
+      )}
+      {styled && separatorStyle === 'washi' && !separatorExpr?.kind.startsWith('washi') && washiGradient && (
         <div
           aria-hidden
           className="pointer-events-none absolute left-1/2 top-0 z-10 h-5 w-32 -translate-x-1/2 -rotate-2 rounded-b-sm opacity-80 shadow-sm"

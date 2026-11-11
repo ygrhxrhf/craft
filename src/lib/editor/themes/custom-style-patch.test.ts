@@ -8,8 +8,11 @@ describe('自定义样式补丁与脏态（G151）', () => {
       theme: 'fire-horse',
       themeColor: '#f7c98f',
       textColor: '#400000',
+      backgroundColor: '#FFF8F0 #1A1208',
       fontPack: 'system-serif',
       washi: 'sunset',
+      separatorStyleRaw: 'washi(pattern, "grid", "#3B82F6")',
+      backdrop: '#FDE68A',
       showTitle: false,
       spelling: true,
     });
@@ -17,10 +20,22 @@ describe('自定义样式补丁与脏态（G151）', () => {
       theme: 'fire-horse',
       themeColor: '#f7c98f',
       textColor: '#400000',
+      backgroundColor: '#FFF8F0 #1A1208',
       fontPack: 'system-serif',
       washi: 'sunset',
+      separatorStyleRaw: 'washi(pattern, "grid", "#3B82F6")',
+      backdrop: '#FDE68A',
     });
-    expect(Object.keys(patch)).toEqual(['theme', 'themeColor', 'textColor', 'fontPack', 'washi']);
+    expect(Object.keys(patch)).toEqual([
+      'theme',
+      'themeColor',
+      'textColor',
+      'backgroundColor',
+      'fontPack',
+      'washi',
+      'separatorStyleRaw',
+      'backdrop',
+    ]);
   });
 
   it('ignores non-string and empty values', () => {

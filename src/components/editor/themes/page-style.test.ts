@@ -4,11 +4,15 @@ import { canonicalFontId,
   DEFAULT_SPELLING_LANG,
   SPELLING_LANGUAGES,
   filterSpellingLanguages,
+  lightHalfOf,
   normalizeColorChannel,
   normalizePageStyle,
   pageStyleForPreset,
   parseDualColor,
-  resolveColorChannel,
+  colorChannelCss,
+  colorPairCss,
+  separatorKindOf,
+  separatorStyleOf,
   showsDocumentTitle,
 } from './page-style';
 
@@ -71,6 +75,52 @@ describe('the page text colour', () => {
     expect(normalizePageStyle({ textColor: '#25f' }).textColor).toBeUndefined();
     expect(normalizePageStyle({}).textColor).toBeUndefined();
   });
+
+  it('accepts the light/dark pair the official themes write', () => {
+    expect(normalizePageStyle({ textColor: '#1F2225 #F4F4F4' }).textColor).toBe('#1F2225 #F4F4F4');
+  });
+});
+
+// G708/G706: the raw separator expression and the backdrop verbatim carrier.
+describe('raw separator and backdrop carriers', () => {
+  it('keeps an official separator expression and `none`, drops junk', () => {
+    expect(normalizePageStyle({ separatorStyleRaw: 'washi(image, "https://a/b.png", "tok")' }).separatorStyleRaw).toBe(
+      'washi(image, "https://a/b.png", "tok")',
+    );
+    expect(normalizePageStyle({ separatorStyleRaw: ' none ' }).separatorStyleRaw).toBe('none');
+    expect(normalizePageStyle({ separatorStyleRaw: 'solid' }).separatorStyleRaw).toBeUndefined();
+    expect(normalizePageStyle({ separatorStyleRaw: 42 }).separatorStyleRaw).toBeUndefined();
+  });
+
+  it('keeps a backdrop in any official shape and drops junk', () => {
+    const gradientJson = JSON.stringify({
+      type: 'gradient',
+      gradientColors: { startColor: '#ff0000', endColor: '#00ff00' },
+      direction: 'top-to-bottom',
+      size: 'full',
+    });
+    expect(normalizePageStyle({ backdrop: '#C5E1F4 #C5E1F4' }).backdrop).toBe('#C5E1F4 #C5E1F4');
+    expect(normalizePageStyle({ backdrop: gradientJson }).backdrop).toBe(gradientJson);
+    expect(normalizePageStyle({ backdrop: 'gradient(#AABBCC, #DDEEFF, radial)' }).backdrop).toBe(
+      'gradient(#AABBCC, #DDEEFF, radial)',
+    );
+    expect(normalizePageStyle({ backdrop: 'image("https://a/b.png", "tok")' }).backdrop).toBe(
+      'image("https://a/b.png", "tok")',
+    );
+    expect(normalizePageStyle({ backdrop: 'none' }).backdrop).toBeUndefined();
+    expect(normalizePageStyle({ backdrop: 'url(https://a/b.png)' }).backdrop).toBeUndefined();
+  });
+
+  it('prefers the raw expression when reading the separator kind', () => {
+    const style = normalizePageStyle({
+      separatorStyleRaw: 'washi(pattern, "grid", "#3B82F6")',
+      separatorStyle: 'line',
+    });
+    expect(separatorStyleOf(style)).toBe('washi');
+    expect(separatorKindOf('doodle')).toBe('doodle');
+    expect(separatorKindOf('solid')).toBeNull();
+    expect(lightHalfOf('#1F2225 #F4F4F4')).toBe('#1F2225');
+  });
 });
 
 /**
@@ -97,11 +147,12 @@ describe('the colour channels', () => {
     expect(normalizeColorChannel('nope')).toBeUndefined();
   });
 
-  it('picks the half the current appearance needs', () => {
-    expect(resolveColorChannel('#111111 #eeeeee', false)).toBe('#111111');
-    expect(resolveColorChannel('#111111 #eeeeee', true)).toBe('#eeeeee');
-    // A single value serves both appearances.
-    expect(resolveColorChannel('#222222', true)).toBe('#222222');
+  it('leaves the half-picking to the browser (light-dark), never to JS', () => {
+    expect(colorChannelCss('#111111 #eeeeee')).toBe('light-dark(#111111, #eeeeee)');
+    // A single value serves both appearances; a pair whose halves agree collapses.
+    expect(colorChannelCss('#222222')).toBe('#222222');
+    expect(colorPairCss('#333333', '#333333')).toBe('#333333');
+    expect(colorChannelCss('nope')).toBeUndefined();
   });
 
   it('round-trips a background channel through the page style', () => {

@@ -34,8 +34,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ShareDialog } from '@/components/share/ShareDialog';
 import { SHARE_TRIGGER_LABEL } from '@/lib/share/invite-copy';
-import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, separatorStyleOf, showsDocumentTitle } from './themes/page-style';
+import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, separatorStyleOf, showsDocumentTitle, colorChannelCss, colorPairCss } from './themes/page-style';
+import { backdropBackground, parseBackdrop } from '@/lib/editor/themes/backdrop';
+import { parseSeparatorExpression } from '@/lib/editor/separator-expression';
 import { DOODLE_SEPARATOR_CSS, washiTapeSrc } from '@/lib/editor/themes/washi-catalog';
+import { washiPatternBackground } from '@/lib/editor/washi-patterns';
 import type { PageStyle } from './themes/page-style';
 import { getDraft } from '@/lib/offline/draft-store';
 import type { JSONContent } from '@tiptap/core';
@@ -282,10 +285,19 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   };
 
   const measure = width === 'narrow' ? '580px' : width === 'wide' ? '900px' : '720px';
-  const themeColor = getThemeColor(pageStyle.theme, pageStyle.themeColor);
+  // G708：主题补丁写的 backgroundColor 是明暗对，交给 `light-dark()` 按 `color-scheme` 取半；
+  // 单值与老文档走原路。不用 JS 判断明暗——服务端与首个客户端渲染的字符串必须一致（注水）。
+  const backgroundChannel =
+    colorChannelCss(pageStyle.backgroundColor) ?? getThemeColor(pageStyle.theme, pageStyle.themeColor);
+  const textColorChannel = colorChannelCss(pageStyle.textColor) ?? pageStyle.textColor;
+  // G706：backdrop 画在页面列外层（官方是整页铺满），页面卡的底色仍是主题背景。
+  const backdrop = parseBackdrop(pageStyle.backdrop);
+  const backdropCss = backdropBackground(backdrop);
   const washiGradient = getWashiGradient(pageStyle.washi);
   // G210：页面分隔符三档——和纸胶带优先用官方图库的胶带图，老文档沿用内置渐变；涂鸦用手绘线近似。
   const separatorStyle = separatorStyleOf(pageStyle);
+  // G708/G707：主题写下的原始分隔线表达式（image/pattern 两形态）优先于三档开关的回推。
+  const separatorExpr = parseSeparatorExpression(pageStyle.separatorStyleRaw);
   const washiTapeImg = washiTapeSrc(pageStyle.washi);
 
   // G156：随机封面每次加载在 coverImages 里挑一张；关掉时用 coverImage。
@@ -446,13 +458,16 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
         )}
         <div className="flex-1 overflow-y-auto">
         <div className="relative min-h-full bg-background px-3 py-5 sm:px-8">
+          {backdropCss && (
+            <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: backdropCss }} />
+          )}
           <div
             className="relative mx-auto rounded-2xl px-[var(--editor-pad-x)] pb-32 shadow-doc"
             style={{
               ['--editor-measure' as string]: measure,
               maxWidth: 'var(--editor-max-w, var(--editor-measure))',
-              backgroundColor: themeColor,
-              color: pageStyle.textColor,
+              backgroundColor: backgroundChannel,
+              color: textColorChannel,
               fontFamily: getFontStack(pageStyle.fontPack),
             }}
             /**
@@ -486,6 +501,29 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             {/* G100：左侧常驻工具（附件 / 查找和替换 / 目录 / 任务）。 */}
             <LeftToolRail editor={editor} />
             {separatorStyle === 'washi' &&
+              separatorExpr?.kind === 'washi-image' && (
+                <img
+                  aria-hidden
+                  src={separatorExpr.url}
+                  alt=""
+                  className="pointer-events-none absolute left-1/2 top-0 z-10 h-5 w-32 -translate-x-1/2 -rotate-2 rounded-b-sm object-cover opacity-80 shadow-sm"
+                />
+              )}
+            {separatorStyle === 'washi' &&
+              separatorExpr?.kind === 'washi-pattern' && (
+                <div
+                  aria-hidden
+                  data-testid="page-washi-pattern"
+                  data-washi-pattern={separatorExpr.pattern}
+                  className="pointer-events-none absolute left-1/2 top-0 z-10 h-5 w-32 -translate-x-1/2 -rotate-2 rounded-b-sm opacity-80 shadow-sm"
+                  style={washiPatternBackground(
+                    separatorExpr.pattern,
+                    colorPairCss(separatorExpr.light, separatorExpr.dark),
+                  )}
+                />
+              )}
+            {separatorStyle === 'washi' &&
+              !separatorExpr?.kind.startsWith('washi') &&
               (washiTapeImg ? (
                 <img
                   aria-hidden

@@ -36,10 +36,28 @@ describe('官方页面主题清单（G682）', () => {
     const presets = parseThemePresets(JSON.parse(raw));
     const original = presets.find((preset) => preset.themeId === 'default')!;
     const patch = pageStylePatchForTheme(original);
+    // G708：官方 `--theme-id` 一次写五个字段，明暗对原样成串（等值的对也保留）。
     expect(patch.theme).toBe('default');
     expect(patch.themeColor).toBe('#FFFFFF');
-    expect(patch.textColor).toBe('#1F2225');
+    expect(patch.textColor).toBe('#1F2225 #F4F4F4');
+    expect(patch.backgroundColor).toBe('#FFFFFF #222222');
+    expect(patch.separatorStyleRaw).toBe('line');
     expect(patch.fontPack).toBe('system');
+    expect(patch.backdrop).toBeUndefined();
+  });
+
+  it('keeps the official washi expression and gradient backdrop verbatim', () => {
+    const presets = parseThemePresets(JSON.parse(raw));
+    const washi = presets.find((preset) => preset.props['separator-style'].startsWith('washi('))!;
+    const washiPatch = pageStylePatchForTheme(washi);
+    expect(washiPatch.separatorStyleRaw).toBe(washi.props['separator-style']);
+    const gradient = presets.find((preset) => preset.props.backdrop.startsWith('gradient('))!;
+    const gradientPatch = pageStylePatchForTheme(gradient);
+    expect(gradientPatch.backdrop).toBe(gradient.props.backdrop);
+    const colored = presets.find(
+      (preset) => /^#/.test(preset.props.backdrop) && preset.props.backdrop !== preset.props['background-color'],
+    )!;
+    expect(pageStylePatchForTheme(colored).backdrop).toBe(colored.props.backdrop);
   });
 
   it('skips malformed entries instead of failing the whole list', () => {

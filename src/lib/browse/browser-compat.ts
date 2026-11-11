@@ -48,6 +48,18 @@ export function isSupportedBrowser(userAgent: string | null | undefined): boolea
   return false;
 }
 
+/**
+ * G746 —— 官方「快速开启」在 Safari（含 iOS Safari）上主键换成 ⌘⇧O（`Hd` 分支）。
+ * 判据：带 `Safari/` 与 `Version/`，且不含任何 Chromium/Firefox 系 token
+ * （Chrome 的 UA 同样带 `Safari/`，必须先排除）。
+ */
+export function isSafariBrowser(userAgent: string | null | undefined): boolean {
+  const ua = (userAgent ?? '').trim();
+  if (!ua) return false;
+  if (/Chrome\/|Chromium\/|CriOS\/|Edg\/|OPR\/|Firefox\/|FxiOS\//.test(ua)) return false;
+  return /Safari\//.test(ua) && /Version\//.test(ua);
+}
+
 /** 警告是否该出现：UA 不支持 **且** 用户没有选过「不再显示此内容」。 */
 export function shouldShowCompatNotice(
   userAgent: string | null | undefined,

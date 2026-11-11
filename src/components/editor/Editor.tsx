@@ -7,7 +7,7 @@ import { PASTE_FAILED } from '@/lib/errors/alert-copy';
 import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
 import type { Editor as TiptapEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { disableKeyDefs, enableKeyDefs } from '@/lib/focus/focus-stack';
+import { disableKeyDefs, enableKeyDefs, nextTextEditorId } from '@/lib/focus/focus-stack';
 import TextAlign from '@tiptap/extension-text-align';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
@@ -254,6 +254,11 @@ export function Editor({
    *   派生表那一路（不清脏标＝徽标一直红着，用户不会误以为已经同步好）。
    */
   const derivedDirtyRef = useRef<{ content: unknown } | null>(null);
+
+  // G966: the official editor registers under `textEditor-${++instanceCount}` and disables its
+  // key defs during composition under `${id}disabled-for-ime`, so two live editors never share
+  // one disabled entry.
+  const [textEditorId] = useState(nextTextEditorId);
 
   const syncDerivedTables = async (content: unknown): Promise<boolean> => {
     const results = await Promise.allSettled([
@@ -947,21 +952,24 @@ export function Editor({
     dom.setAttribute('data-completed-appearance', completedAppearance);
   }, [editor, spelling, spellingLang, completedAppearance]);
 
-  // G865: while an IME candidate window is open the official editor takes its key definitions out
-  // of the focus stack, so no shortcut can fire on a half-typed word.
+  // G865/G966: while an IME candidate window is open the official editor takes its key
+  // definitions out of the focus stack, so no shortcut can fire on a half-typed word. The entry
+  // id is per editor instance (`<textEditor-N>disabled-for-ime`), not one global constant.
   useEffect(() => {
     const dom = editor?.view.dom;
     if (!dom) return;
-    const onStart = () => disableKeyDefs();
-    const onEnd = () => enableKeyDefs();
+    const onStart = () => disableKeyDefs(textEditorId);
+    const onEnd = () => enableKeyDefs(textEditorId);
     dom.addEventListener('compositionstart', onStart);
     dom.addEventListener('compositionend', onEnd);
+    dom.addEventListener('blur', onEnd);
     return () => {
       dom.removeEventListener('compositionstart', onStart);
       dom.removeEventListener('compositionend', onEnd);
-      enableKeyDefs();
+      dom.removeEventListener('blur', onEnd);
+      enableKeyDefs(textEditorId);
     };
-  }, [editor]);
+  }, [editor, textEditorId]);
 
   if (!editor) return null;
 

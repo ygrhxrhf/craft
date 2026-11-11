@@ -10,6 +10,7 @@ import {
   USE_ANYWAYS,
   dismissCompat,
   isCompatDismissed,
+  isSafariBrowser,
   isSupportedBrowser,
   shouldShowCompatNotice,
 } from './browser-compat';
@@ -51,8 +52,51 @@ describe('the UA gate', () => {
   });
 });
 
-describe('the persistent dismiss flag (not.show.this.again)', () => {
-  const store = () => {
+/**
+ * G746：官方「快速开启」在 Safari 上主键换成 ⌘⇧O（`Hd` 分支）。判据必须把 Chrome 那类
+ * 「带 `Safari/` 的 Chromium UA」与 iOS 上的第三方壳一起排除，只认真 Safari／iOS Safari。
+ */
+describe('the Safari gate (G746)', () => {
+  it('accepts Safari and iOS Safari', () => {
+    expect(
+      isSafariBrowser(
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+      ),
+    ).toBe(true);
+    expect(
+      isSafariBrowser(
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects Chromium shells that still carry a Safari token', () => {
+    expect(
+      isSafariBrowser(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      ),
+    ).toBe(false);
+    expect(
+      isSafariBrowser(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
+      ),
+    ).toBe(false);
+    expect(
+      isSafariBrowser(
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/131.0.0.0 Mobile/15E148 Safari/604.1',
+      ),
+    ).toBe(false);
+    expect(
+      isSafariBrowser(
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/131.0 Mobile/15E148 Safari/605.1.15',
+      ),
+    ).toBe(false);
+    expect(isSafariBrowser('')).toBe(false);
+    expect(isSafariBrowser(null)).toBe(false);
+  });
+});
+
+describe('the persistent dismiss flag (not.show.this.again)', () => {  const store = () => {
     const map = new Map<string, string>();
     return {
       map,

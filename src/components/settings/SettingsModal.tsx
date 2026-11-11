@@ -112,9 +112,9 @@ export function SettingsModal() {
         role="dialog"
         aria-modal="true"
         aria-label="设置"
-        className="relative flex h-[594px] w-[960px] max-h-[calc(100dvh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl bg-background shadow-(--shadow-md)"
+        className="relative flex h-[560px] w-[720px] max-h-[calc(100dvh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl bg-background shadow-(--shadow-md)"
       >
-        <nav className="w-[280px] shrink-0 overflow-y-auto pt-4 pb-3" aria-label="设置导航">
+        <nav className="w-[184px] shrink-0 overflow-y-auto border-r border-(--foreground-150) pt-4 pb-3" aria-label="设置导航">
           <div className="px-4">
             <div className="flex flex-col items-center">
               <div className="relative">

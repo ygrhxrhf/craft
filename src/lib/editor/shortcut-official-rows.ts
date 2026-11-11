@@ -25,11 +25,40 @@ export interface OfficialRow {
   /** `null` ＝ 行挂在分类标题下（「通用」前两行与「文档」全段没有 H3）。 */
   section: PanelSectionId | null;
   bound: string | null;
+  /** 这一行只在列出的平台上算接线（G746：Mac 无从实测的行在 Mac 面板上仍是「未接入」）。 */
+  boundPlatforms?: readonly Platform[];
   /** 第二键位（官方那句 `或者`）；`bound` 与主行同语义：keymap id／接线标记／`null`。 */
   alt?: { keys: string[]; bound: string | null };
+  /** G746：只在 Mac 面板上出现的第二键位（官方 `Ll ? [COMMON, MAC] : [COMMON]`）。 */
+  macAlt?: { keys: string[]; bound: string | null };
 }
 
-/** 接线标记：键生效、但分发点不在 `KEY_BINDINGS` 表里。 */
+/** G746 ②⑤：官方的两组「Mac 才加印第二条」映射（`tasks.mark.task.as.cancelled` 与装配器 `S9t`）。 */
+const MAC_ALT_BINDINGS: Readonly<Record<string, string>> = {
+  SET_CANCELLED: 'SET_CANCELLED_SLASH',
+  MOVE_BLOCK_TOP: 'MOVE_BLOCK_TOP_MAC',
+  MOVE_BLOCK_BOTTOM: 'MOVE_BLOCK_BOTTOM_MAC',
+};
+
+/** G746 ①：快速开启在 Safari 上的主键位（官方 `Hd ? [SAFARI, ALT] : [QUICK_OPEN, ALT]`）。 */
+const SAFARI_MAIN_BINDING: Readonly<Record<string, string>> = {
+  TOGGLE_QUICK_OPEN: 'TOGGLE_QUICK_OPEN_SAFARI',
+};
+
+/** 面板读的是哪一套浏览器键位；`safari` 只换「快速开启」的展示，分发不看它（G1589）。 */
+export type PanelBrowser = 'safari' | 'other';
+
+/** G746 ①：快速开启的两条弦互斥出现——Safari 图不印 ⌘O，其余浏览器图不印 ⌘⇧O。 */
+const SAFARI_PRUNED: Readonly<Record<string, (browser: PanelBrowser) => boolean>> = {
+  TOGGLE_QUICK_OPEN: (browser) => browser === 'safari',
+  TOGGLE_QUICK_OPEN_SAFARI: (browser) => browser !== 'safari',
+};
+
+/**
+ * 接线标记：键生效、但分发点不在 `KEY_BINDINGS` 表里。
+ * `select-edge` 是 G1599 的接管点（`select-to-edge.ts`）：官方实测 Ctrl-Shift-↑/↓ 与
+ * Ctrl-Shift-Home/End 都不扩选，本机同样拦下，所以 Windows 面板那两行算已接入。
+ */
 export const OFFICIAL_WIRING = new Set([
   'task-row',
   'new-task',
@@ -37,6 +66,7 @@ export const OFFICIAL_WIRING = new Set([
   'editor-slash',
   'space-insert',
   'table-axis',
+  'select-edge',
 ]);
 
 export const OFFICIAL_ROWS: readonly OfficialRow[] = [
@@ -52,8 +82,8 @@ export const OFFICIAL_ROWS: readonly OfficialRow[] = [
   // 文档（4 行，无段标题；11 枚键帽）
   { label: '每日笔记', keys: ['Ctrl', 'Alt', 'N'], tab: 'document', section: null, bound: 'OPEN_DAILY_NOTE' },
   { label: '全选', keys: ['Ctrl', 'A'], tab: 'document', section: null, bound: 'pm-default' },
-  { label: '选择到顶部', keys: ['Ctrl', 'Shift', '⤒'], tab: 'document', section: null, bound: null },
-  { label: '选择到底部', keys: ['Ctrl', 'Shift', '⤓'], tab: 'document', section: null, bound: null },
+  { label: '选择到顶部', keys: ['Ctrl', 'Shift', '⤒'], tab: 'document', section: null, bound: 'select-edge', boundPlatforms: ['win'], macAlt: { keys: ['⌘', '⇧', '↑'], bound: null } },
+  { label: '选择到底部', keys: ['Ctrl', 'Shift', '⤓'], tab: 'document', section: null, bound: 'select-edge', boundPlatforms: ['win'], macAlt: { keys: ['⌘', '⇧', '↓'], bound: null } },
 
   // 任务（15 行 ＋ 已完成/删除 2 别名；34 枚键帽）
   { label: '新任务', keys: ['Ctrl', 'J'], tab: 'tasks', section: 'tasks-global', bound: 'new-task' },
@@ -180,13 +210,28 @@ export interface RosterTab {
 
 type PanelSection = (typeof PANEL_SECTIONS)[number];
 
-function toRosterRow(row: OfficialRow, key: string, bindings: ReadonlyMap<string, KeyBinding>, platform: Platform): RosterRow {
-  const alt = row.alt ? altView(row.alt, bindings, platform) : undefined;
-  if (row.bound && OFFICIAL_WIRING.has(row.bound)) {
+function toRosterRow(
+  row: OfficialRow,
+  key: string,
+  bindings: ReadonlyMap<string, KeyBinding>,
+  platform: Platform,
+  browser: PanelBrowser,
+): RosterRow {
+  const derivedMacAlt = platform === 'mac' && row.bound ? MAC_ALT_BINDINGS[row.bound] : undefined;
+  const alt = row.alt
+    ? altView(row.alt, bindings, platform)
+    : row.macAlt && platform === 'mac'
+      ? altView(row.macAlt, bindings, platform)
+      : derivedMacAlt
+        ? altFromBinding(derivedMacAlt, bindings, platform)
+        : undefined;
+  const main = row.bound && browser === 'safari' ? (SAFARI_MAIN_BINDING[row.bound] ?? row.bound) : row.bound;
+  const mainPlatformOk = !row.boundPlatforms || row.boundPlatforms.includes(platform);
+  if (main && mainPlatformOk && OFFICIAL_WIRING.has(main)) {
     return { id: key, label: row.label, official: true, unbound: false, caps: row.keys, emptyTag: null, alt };
   }
-  if (row.bound) {
-    const caps = capParts(bindings.get(row.bound)!, platform);
+  if (main && mainPlatformOk) {
+    const caps = capParts(bindings.get(main)!, platform);
     return {
       id: key,
       label: row.label,
@@ -214,25 +259,42 @@ function altView(
   return { caps: alt.keys, conjunction: '或者', unbound };
 }
 
+/** G746：`_MAC` 变体的键帽按 Mac 实绑打印（`capParts` 对 `win: null` 给空 ⇒ 该行在 Win 不出现）。 */
+function altFromBinding(bindingId: string, bindings: ReadonlyMap<string, KeyBinding>, platform: Platform): RosterAlt {
+  const caps = capParts(bindings.get(bindingId)!, platform);
+  return { caps: caps.length > 0 ? caps : [], conjunction: '或者', unbound: caps.length === 0 };
+}
+
 /**
  * 面板的最终形状：官方名册 89 行按分类／段排好，再把名册没覆盖的本地绑定
  * （Mac 专用与 Safari 键位那几条）按原分区补进去——本地已绑的行一条都不消失。
+ *
+ * G746：`platform` 与 `browser` 决定**展示层**裁条目（官方四类条件写法）。`browser` 只影响
+ * 「快速开启」主键位；分发不看浏览器（G1589 实测 Chrome 上三弦都开面板）。
  */
-export function panelRoster(platform: Platform): RosterTab[] {
+export function panelRoster(platform: Platform, browser: PanelBrowser = 'other'): RosterTab[] {
   const bindings = new Map(KEY_BINDINGS.map((binding) => [binding.id, binding]));
   const consumed = new Set(
-    OFFICIAL_ROWS.flatMap((row) => [row.bound, row.alt?.bound])
-      .filter((id): id is string => Boolean(id) && !OFFICIAL_WIRING.has(id!)),
+    OFFICIAL_ROWS.flatMap((row) => {
+      const main =
+        row.bound && browser === 'safari' ? (SAFARI_MAIN_BINDING[row.bound] ?? row.bound) : row.bound;
+      const macDerived = platform === 'mac' && row.bound ? MAC_ALT_BINDINGS[row.bound] : undefined;
+      return [main, row.alt?.bound, row.macAlt?.bound, macDerived];
+    }).filter((id): id is string => Boolean(id) && !OFFICIAL_WIRING.has(id!)),
   );
 
   return PANEL_TABS.map((tab) => {
     const official: Array<{ section: PanelSectionId | null; view: RosterRow }> = OFFICIAL_ROWS
       .map((row, index) => ({ row, index }))
       .filter(({ row }) => row.tab === tab.id)
-      .map(({ row, index }) => ({ section: row.section, view: toRosterRow(row, `o-${tab.id}-${index}`, bindings, platform) }));
+      .map(({ row, index }) => ({ section: row.section, view: toRosterRow(row, `o-${tab.id}-${index}`, bindings, platform, browser) }));
 
     const leftover: Array<{ section: PanelSectionId | null; view: RosterRow }> = KEY_BINDINGS
       .filter((binding) => !consumed.has(binding.id) && tabOfSection(BINDING_SECTIONS[binding.id] ?? null) === tab.id)
+      // G746 ①：快速开启的另一条弦只在对面的浏览器图上印（Safari 印 `_SAFARI`，其余印 `_QUICK_OPEN`）。
+      .filter((binding) => !SAFARI_PRUNED[binding.id]?.(browser))
+      // 本机这一侧没有键帽的绑定（`win: null` 的 Mac 专用项）不印——官方同样按平台裁。
+      .filter((binding) => capParts(binding, platform).length > 0)
       .map((binding) => {
         const caps = capParts(binding, platform);
         return {

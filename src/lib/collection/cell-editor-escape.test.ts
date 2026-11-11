@@ -17,22 +17,22 @@ describe('cell editors register in the focus stack by name (G456)', () => {
     const closed: string[] = [];
     focusStack.push({
       id: 'collection-v2-select-editor',
-      keyDefs: [escapeKeyDef(() => closed.push('select'))],
+      keyDefs: [escapeKeyDef(() => { closed.push('select'); })],
     });
     focusStack.push({
       id: 'collection-v2-multiselect-editor',
-      keyDefs: [escapeKeyDef(() => closed.push('multi'))],
+      keyDefs: [escapeKeyDef(() => { closed.push('multi'); })],
     });
 
     const event = { key: 'Escape', ctrlKey: false, metaKey: false, altKey: false, shiftKey: false };
-    expect(focusStack.dispatch(event)).toBe(true);
+    expect(focusStack.dispatch(event).handled).toBe(true);
     // 栈顶先吃键：只有 multiselect 那枚关掉。
     expect(closed).toEqual(['multi']);
     // 关掉的那枚要被 remove（组件卸载的 cleanup 在真实代码里做，这里直接模拟同一动作）。
     focusStack.remove('collection-v2-multiselect-editor');
     expect(focusStack.ids()).toEqual(['collection-v2-select-editor']);
 
-    expect(focusStack.dispatch(event)).toBe(true);
+    expect(focusStack.dispatch(event).handled).toBe(true);
     expect(closed).toEqual(['multi', 'select']);
     focusStack.clear();
   });

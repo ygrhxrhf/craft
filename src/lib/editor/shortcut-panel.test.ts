@@ -89,16 +89,21 @@ describe('the shortcuts rail navigation (G784/G782/G789)', () => {
     expect(nextTabIndex('not-a-tab' as PanelTabId, 1)).toBe(PANEL_TABS[0].id);
   });
 
-  it('wires the arrows onto the rail without ever moving focus', () => {
+  // G939：官方是 document 级捕获监听——只在没被更深层拦下、非 IME、非嵌套弹层、
+  // 非可编辑目标时推进选中；不 preventDefault（页面滚动照旧）、不挪焦点、只认 ↑/↓。
+  it('wires the arrows via a document-capture listener that never moves focus', () => {
     const panel = readFileSync(join(process.cwd(), 'src/components/settings/ShortcutsPanel.tsx'), 'utf8');
-    expect(panel).toContain('onKeyDown={onRailKeyDown}');
+    expect(panel).toContain("document.addEventListener('keydown', onKeyDown, true)");
+    expect(panel).toContain('if (event.defaultPrevented) return;');
+    expect(panel).toContain('if (isImeComposing(event)) return;');
+    expect(panel).toContain('if (eventInNestedPopup(event.target)) return;');
+    expect(panel).toContain('if (isEditableTarget(event.target)) return;');
     expect(panel).toContain("event.key !== 'ArrowDown' && event.key !== 'ArrowUp'");
-    expect(panel).toContain('event.preventDefault()');
     expect(panel).toContain('setActive((current) => nextTabIndex(');
-    const start = panel.indexOf('const onRailKeyDown');
+    const start = panel.indexOf('const onKeyDown = (event: KeyboardEvent)');
     const body = panel.slice(start, panel.indexOf('const rail ='));
-    // 没有 roving tabindex：方向键那条通路里不许出现 focus()/tabIndex
     expect(start).toBeGreaterThan(0);
+    expect(body).not.toContain('event.preventDefault()');
     expect(body).not.toContain('.focus(');
     expect(body).not.toContain('tabIndex');
   });
@@ -108,7 +113,7 @@ describe('the shortcuts rail navigation (G784/G782/G789)', () => {
     // 原生 <button>：Space 在 keyup 合成 click、点击焦点所在项（G782/G789 的语义来自原生，
     // 本地只要**不拦**这两个键就是对的）。
     expect(panel).toContain('<button');
-    const start = panel.indexOf('const onRailKeyDown');
+    const start = panel.indexOf('const onKeyDown = (event: KeyboardEvent)');
     const body = panel.slice(start, panel.indexOf('const rail ='));
     expect(body).not.toContain("'Space'");
     expect(body).not.toContain('ArrowLeft');

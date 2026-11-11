@@ -79,20 +79,17 @@ describe('官方名册 89 行（G755 / G771）', () => {
 describe('panelRoster 装配', () => {
   const view = panelRoster('win');
 
-  it('emits 89 official rows plus the four local-only bindings, with unique ids', () => {
+  // G746：Win 上这四条 Mac/Safari 专用弦都不印（官方同样按平台裁），名册没覆盖的本地键
+  // 一条不剩——每一条要么已在名册里（或作 Mac 别名），要么在对面的键位图上。
+  it('emits exactly the 89 official rows on Windows: no local-only leftovers survive', () => {
     const rows = view.flatMap((entry) => [
       ...entry.unsectioned,
       ...entry.sections.flatMap((section) => section.rows),
     ]);
     expect(rows.filter((row) => row.official)).toHaveLength(89);
-    expect(rows.filter((row) => !row.official).map((row) => row.id).sort()).toEqual([
-      'l-MOVE_BLOCK_BOTTOM_MAC',
-      'l-MOVE_BLOCK_TOP_MAC',
-      'l-SET_CANCELLED_SLASH',
-      'l-TOGGLE_QUICK_OPEN_SAFARI',
-    ]);
+    expect(rows.filter((row) => !row.official)).toEqual([]);
     expect(new Set(rows.map((row) => row.id)).size).toBe(rows.length);
-    expect(rows).toHaveLength(93);
+    expect(rows).toHaveLength(89);
     // 名册没覆盖的本地绑定少一条，就说明有本地键从面板上消失了。
     const consumed = new Set(
       OFFICIAL_ROWS.flatMap((row) => [row.bound, row.alt?.bound])
@@ -107,13 +104,13 @@ describe('panelRoster 装配', () => {
     ]);
   });
 
-  it('flags the 31 official rows this build does not wire up', () => {
+  it('flags the 29 official rows this build does not wire up', () => {
     const rows = view.flatMap((entry) => [
       ...entry.unsectioned,
       ...entry.sections.flatMap((section) => section.rows),
     ]);
     const unbound = rows.filter((row) => row.official && row.unbound);
-    expect(unbound).toHaveLength(31);
+    expect(unbound).toHaveLength(29);
     for (const row of unbound) expect(row.emptyTag, row.label).toBe('未接入');
     // 绑定的行走本机键帽，未绑定的行走官方键帽（置灰展示的那串）。
     const nav = rows.find((row) => row.id === 'o-general-2');
@@ -121,6 +118,17 @@ describe('panelRoster 装配', () => {
     expect(nav?.caps).toEqual(['Ctrl', '→']);
     const sidebar = rows.find((row) => row.id === 'o-general-6');
     expect(sidebar?.caps).toEqual(['Ctrl', '\\']);
+  });
+
+  // G1599：`Ctrl-Shift-↑/↓` 已被本机接管（`select-to-edge.ts`），Win 上这两行不再置灰；
+  // Home/End 那对 COMMON 弦同样在接管范围内。
+  it('G1599: the select-to-top/bottom rows are wired on Windows', () => {
+    const doc = view.find((entry) => entry.tab.id === 'document')!;
+    const top = doc.unsectioned.find((row) => row.label === '选择到顶部')!;
+    expect(top.unbound).toBe(false);
+    expect(top.alt).toBeUndefined();
+    const bottom = doc.unsectioned.find((row) => row.label === '选择到底部')!;
+    expect(bottom.unbound).toBe(false);
   });
 
   it('splits the sections the official panel prints, in collected order', () => {
@@ -153,5 +161,46 @@ describe('panelRoster 装配', () => {
     const code = view.find((entry) => entry.tab.id === 'style')!.sections
       .find((section) => section.section.id === 'style-format')!.rows.find((row) => row.label === '代码')!;
     expect(code.alt?.unbound).toBe(true);
+  });
+
+  /**
+   * G746：官方四处按平台/浏览器裁条目（`keyboard.md` §十三）：
+   *  - 标记任务取消：Mac 追加 `SET_CANCELLED_SLASH` 一条别名（`Ll` 分支）；
+   *  - 区块移到顶/底：Mac 追加 `_MAC` 那条（汇编器的 `S9t` 表）；
+   *  - 选择到顶/底：Mac 主键变成 `⌘⇧↑/↓`（`COMMON` 在 Mac 上追加 `MAC`）；
+   *  - 快速开启：Safari 主键换成 `⌘⇧O`（`Hd` 分支），普通那条从面板上消失。
+   */
+  it('G746: appends the Mac-only alias on Mac, and only there', () => {
+    const mac = panelRoster('mac');
+    const macRows = mac.flatMap((entry) => [
+      ...entry.unsectioned,
+      ...entry.sections.flatMap((section) => section.rows),
+    ]);
+    const cancelAlt = macRows.filter((row) => row.alt?.caps.join('') === '⌘⌥/');
+    expect(cancelAlt.map((row) => row.label)).toEqual(['将任务标记为已取消', '将任务标记为已取消']);
+    expect(cancelAlt.every((row) => row.alt?.unbound === false)).toBe(true);
+
+    const moved = macRows.filter((row) => ['移动到顶部', '移动到底部'].includes(row.label));
+    expect(moved.map((row) => row.alt?.caps.join(' '))).toEqual(['⌘ ⌥ ↑', '⌘ ⌥ ↓']);
+
+    const doc = mac.find((entry) => entry.tab.id === 'document')!;
+    const top = doc.unsectioned.find((row) => row.label === '选择到顶部')!;
+    expect(top.unbound).toBe(true);
+    expect(top.alt?.caps).toEqual(['⌘', '⇧', '↑']);
+    expect(top.alt?.unbound).toBe(true);
+    expect(macRows.filter((row) => !row.official)).toEqual([]);
+  });
+
+  it('G746: swaps the quick-open main chord on Safari', () => {
+    const safari = panelRoster('win', 'safari');
+    const rows = safari.flatMap((entry) => [
+      ...entry.unsectioned,
+      ...entry.sections.flatMap((section) => section.rows),
+    ]);
+    const quick = rows.find((row) => row.label === '快速开启')!;
+    expect(quick.caps).toEqual(['Ctrl', 'Shift', 'O']);
+    expect(quick.alt?.caps).toEqual(['Ctrl', 'P']);
+    // Safari 图上普通那条不另占一行。
+    expect(rows.filter((row) => row.label === '快速开启')).toHaveLength(1);
   });
 });

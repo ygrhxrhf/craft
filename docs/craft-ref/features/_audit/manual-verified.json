@@ -7121,11 +7121,14 @@
       ]
     },
     "G717": {
-      "status": "gap",
-      "note": "现读（2026-11-09）：全仓 grep 在应用中打开|桌面应用|desktopApp|openInApp 零命中；Sidebar.tsx:70 只挂 <SidebarNav />（SidebarNav.tsx:74，无视图档外的交接层）⇒ 本地没有 web→桌面交接提示层，无浮层、无「记住我的选择」偏好。",
+      "status": "aligned",
+      "note": "web 端进文档弹非模态「在桌面应用中打开？」提示：Close / 记住我的选择（默认未选、勾选才落 localStorage）/ 在应用中打开（craft://doc/{id}）；Escape 不消失、其它交互挤掉。",
       "evidence": [
-        "src/components/sidebar/Sidebar.tsx:70",
-        "src/components/sidebar/SidebarNav.tsx:74"
+        "src/lib/browse/open-in-app.ts:9",
+        "src/components/app/OpenInAppNotice.tsx:24",
+        "src/components/app/OpenInAppNotice.tsx:43",
+        "src/components/editor/DocumentEditor.tsx:672",
+        "src/lib/platform.ts:24"
       ]
     },
     "G718": {

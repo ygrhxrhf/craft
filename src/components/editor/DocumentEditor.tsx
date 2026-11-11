@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ShareDialog } from '@/components/share/ShareDialog';
+import { OpenInAppNotice } from '@/components/app/OpenInAppNotice';
 import { SHARE_TRIGGER_LABEL } from '@/lib/share/invite-copy';
 import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, separatorStyleOf, showsDocumentTitle, colorChannelCss, colorPairCss } from './themes/page-style';
 import { backdropBackground, parseBackdrop } from '@/lib/editor/themes/backdrop';
@@ -667,6 +668,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
       {/* G58：点正文评论高亮弹出的浮动线程窗口。 */}
       <FloatingThreadWindow documentId={doc.id} />
       <TaskDateQuickMenu />
+      {/* G717：web 端进文档的非模态「在桌面应用中打开？」提示。 */}
+      {!focusActive && <OpenInAppNotice documentId={doc.id} />}
     </div>
   );
 }

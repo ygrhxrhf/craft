@@ -189,7 +189,9 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
     }
     const tr = buildBlockMove(editor.state, target);
     if (!tr) return false;
-    editor.view.dispatch(tr);
+    // G1026: one move = one undo step = one redo step. Without a history boundary the 500ms
+    // group window merges two quick Alt+↑ presses into a single undo entry.
+    editor.view.dispatch(closeHistory(tr));
     return true;
   }
 
@@ -323,11 +325,16 @@ export function applyKeymapAction(editor: Editor, id: string): boolean {
   return false;
 }
 
-/** How deep the caret sits inside list items (0 when not in a list). */
+/**
+ * How deep the caret sits inside list items (0 when not in a list). G901: task rows are list
+ * items too — counting only `listItem` made every task block report "not in a list", so the
+ * Backspace/Enter "leave the list" rung never fired for them.
+ */
 function listDepthOf(resolved: { depth: number; node: (depth: number) => { type: { name: string } } }): number {
   let depth = 0;
   for (let level = resolved.depth; level > 0; level -= 1) {
-    if (resolved.node(level).type.name === 'listItem') depth += 1;
+    const name = resolved.node(level).type.name;
+    if (name === 'listItem' || name === 'taskItem') depth += 1;
   }
   return depth;
 }
@@ -724,7 +731,13 @@ export const CraftKeymap = Extension.create({
                   return true;
                 }
                 if (step === 'list') {
-                  editor.chain().focus().liftListItem('listItem').run();
+                  // G901: a task row leaves its own list type; `liftListItem('listItem')` returns
+                  // false there and would swallow the key without doing anything.
+                  if (editor.isActive('taskList')) {
+                    editor.chain().focus().liftListItem('taskItem').run();
+                  } else {
+                    editor.chain().focus().liftListItem('listItem').run();
+                  }
                   return true;
                 }
                 if (step === 'decoration') {
@@ -779,7 +792,15 @@ export const CraftKeymap = Extension.create({
             ) {
               const { $from } = view.state.selection;
               if ($from.parent.isTextblock && !isEmptyBlock({ textLength: $from.parent.textContent.length, atomicInlines: countAtomicInlines($from.parent), childBlocks: 0 })) {
-                const split = editor.chain().focus().splitBlock().run();
+                // G896: Enter inside a list item splits into a **same-type sibling item** —
+                // `splitBlock()` at task-item depth would yield two paragraphs in one task row
+                // instead. Delegating to `splitListItem` keeps the official behaviour; the
+                // history boundary below still applies to whatever the split produced.
+                const split = editor.isActive('taskList')
+                  ? editor.chain().focus().splitListItem('taskItem').run()
+                  : editor.isActive('listItem')
+                    ? editor.chain().focus().splitListItem('listItem').run()
+                    : editor.chain().focus().splitBlock().run();
                 if (split) {
                   view.dispatch(closeHistory(view.state.tr));
                   return true;

@@ -92,3 +92,32 @@ describe('G628 block-level Backspace arms', () => {
     expect(source).toContain('NodeSelection.create(tr.doc, start - prev.nodeSize)');
   });
 });
+
+/**
+ * G901/G896/G1026: three list-level key behaviours. G901 (leaving a task row via Backspace) and
+ * G896 (Enter splitting a task row into a same-type sibling) both hinge on recognising `taskItem`
+ * as a list item; G1026 needs the move transaction to carry its own history boundary.
+ */
+describe('G901/G896/G1026 list and move key wiring', () => {
+  // The file is CRLF; normalize so multi-line assertions can use plain \n.
+  const source = readFileSync(new URL('./craft-keymap.ts', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
+
+  it('counts task rows as list items (G901)', () => {
+    expect(source).toContain("name === 'listItem' || name === 'taskItem'");
+  });
+
+  it('leaves a task row through its own list type on an empty Enter (G901)', () => {
+    expect(source).toContain("if (editor.isActive('taskList')) {\n                    editor.chain().focus().liftListItem('taskItem').run();");
+  });
+
+  it('splits a list row into a same-type sibling instead of a paragraph (G896)', () => {
+    expect(source).toContain("editor.isActive('taskList')\n                  ? editor.chain().focus().splitListItem('taskItem').run()");
+    expect(source).toContain("editor.isActive('listItem')\n                    ? editor.chain().focus().splitListItem('listItem').run()");
+    expect(source).toContain('.splitBlock().run();');
+  });
+
+  it('closes the history group around a keyboard block move (G1026)', () => {
+    expect(source).toContain('editor.view.dispatch(closeHistory(tr));');
+    expect(source).not.toContain('editor.view.dispatch(tr);');
+  });
+});

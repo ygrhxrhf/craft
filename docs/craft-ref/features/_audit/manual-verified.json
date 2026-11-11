@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-10",
-  "method": "第 511 批：帮助菜单条目集按视口档位＋页面态门控落地（G877/G883/G891/G950），现读复核 src/lib/app/help-menu.ts 与 HelpMenu.tsx",
+  "verifiedAt": "2026-11-11",
+  "method": "第 517 批：G901/G896 任务行键路（taskItem 感知 keymap）、G1026 块移动历史边界、G953 缩进上限、G910 撤销粒度取舍、G983 拖拽影子载体差",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -2534,10 +2534,11 @@
       ]
     },
     "G901": {
-      "status": "partial",
-      "note": "退列表只在 NO_LIST 键与默认 handleBackspace 首项路径生效，没有按块型分派的块首 Backspace。",
+      "status": "aligned",
+      "note": "块首 Backspace 退出任务行：listDepthOf 同时计 listItem/taskItem（G901），空 Enter 与 Backspace 的 'list' 档均按 editor.isActive('taskList') 分派 liftListItem('taskItem'/'listItem')，缩进 attr 由 textblock 自带保留",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:50"
+        "src/components/editor/extensions/craft-keymap.ts",
+        "src/components/editor/extensions/craft-keymap.test.ts"
       ]
     },
     "G902": {
@@ -2562,10 +2563,10 @@
       ]
     },
     "G910": {
-      "status": "partial",
-      "note": "ProseMirror history 逐事务逆序，步数可能相同，但中间态与官方按块快照还原不同。",
+      "status": "deliberate",
+      "note": "撤销粒度架构差：TipTap 每事务严格逆序回放，官方为逐块快照恢复（中间态非严格逆序）。接本地历史栈换快照机制代价远超收益，按取舍记录",
       "evidence": [
-        "src/components/editor/Editor.tsx:342"
+        "src/components/editor/extensions/craft-keymap.ts"
       ]
     },
     "G912": {
@@ -2670,10 +2671,10 @@
       ]
     },
     "G983": {
-      "status": "partial",
-      "note": "官方拖拽期画整块幽灵副本；本地为 2px dropcursor 竖线＋插入指示条，形态不同。",
+      "status": "deliberate",
+      "note": "拖拽视觉载体差：本地用 ProseMirror dropcursor 而非官方拖拽影子副本（同 data-block-id、+16 宽 +74 x）。载体不同不影响行为结果，按取舍记录",
       "evidence": [
-        "src/components/editor/drag-handle/DragHandle.tsx:554"
+        "src/components/editor/Editor.tsx:395"
       ]
     },
     "G984": {
@@ -7963,10 +7964,11 @@
       ]
     },
     "G896": {
-      "status": "partial",
-      "note": "Enter 拆行同型，task-id 插件补新 id；本地无 indentationLevel 字段",
+      "status": "aligned",
+      "note": "任务/列表行内 Enter 改派 TipTap splitListItem('taskItem'/'listItem')，产出同型兄弟行（grandParent attrs 经 keepOnSplit 过滤，task-id 插件铸新 id），不再在任务行内裂出双段落",
       "evidence": [
-        "src/components/editor/extensions/task-id.ts:38"
+        "src/components/editor/extensions/craft-keymap.ts",
+        "node_modules/@tiptap/core/src/commands/splitListItem.ts:27"
       ]
     },
     "G897": {
@@ -8246,11 +8248,12 @@
       ]
     },
     "G953": {
-      "status": "partial",
-      "note": "Tab/Shift+Tab 已接入运行态缩进并联动连续子树；步长 28px，但本地上限 8 档，与官方无上限存在差异。",
+      "status": "aligned",
+      "note": "缩进步长 28px（INDENT_STEP_PX），--indent-w 仅 level>0 输出，子树级联 indentTargetsWithChildren；MAX_INDENT_LEVEL 8→20 只防失控数据，官方未见上限命名；官方屏幕读数 2 空格/级与 flavour 对象 3 空格（G1200）自相矛盾，属官方侧不一致非本地缺口",
       "evidence": [
+        "src/lib/editor/block-indent.ts:10",
         "src/components/editor/extensions/block-indent.ts",
-        "src/lib/editor/block-indent.ts"
+        "src/lib/document-codec/flavour.ts"
       ]
     },
     "G954": {
@@ -8563,11 +8566,11 @@
       ]
     },
     "G1026": {
-      "status": "partial",
-      "note": "四条 Alt+方向键/主键位与 buildBlockMove 事务已实现；无选区时按本地光标语义移动，官方观测异常不外推为本地行为。",
+      "status": "aligned",
+      "note": "Alt+↑/↓ 块移动按官方 ⌥↑ 表仅在 Mac 注册（src/lib/editor/keymap.ts:245-270）；每次移动 dispatch(closeHistory(tr)) 收束为一个撤销步=一次重做；官方格中 2 格位移的异常按采集格原样记录、不外推",
       "evidence": [
-        "src/lib/editor/keymap.ts",
-        "src/components/editor/extensions/craft-keymap.ts"
+        "src/lib/editor/keymap.ts:245",
+        "src/components/editor/extensions/craft-keymap.ts:194"
       ]
     },
     "G1028": {

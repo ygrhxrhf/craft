@@ -25,7 +25,12 @@ export function indentStyle(level: number): Record<string, string> {
 }
 
 /** Increase a level by one, up to a ceiling. */
-export const MAX_INDENT_LEVEL = 8;
+/**
+ * G953: the official screen reached level 4 with no ceiling in sight and no i18n or help text
+ * naming a maximum — the cap here only guards runaway data, so it is generous rather than an
+ * observed official limit.
+ */
+export const MAX_INDENT_LEVEL = 20;
 
 export function indentUp(level: number): number {
   return Math.min(MAX_INDENT_LEVEL, Math.max(0, Math.trunc(level)) + 1);

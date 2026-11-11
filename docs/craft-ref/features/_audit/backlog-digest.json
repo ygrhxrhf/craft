@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-11T16:39:51.737Z",
+  "generatedAt": "2026-11-11T16:48:43.570Z",
   "total": 1615,
   "status": {
     "aligned": 821,
-    "nonaction": 540,
+    "nonaction": 541,
     "deliberate": 223,
     "unreachable": 27,
-    "partial": 3,
+    "partial": 2,
     "gap": 1
   },
   "priority": {
@@ -18,7 +18,7 @@
   },
   "statusByPriority": {
     "P2 / aligned": 357,
-    "P? / nonaction": 200,
+    "P? / nonaction": 201,
     "P2 / nonaction": 175,
     "P1 / aligned": 170,
     "P? / aligned": 157,
@@ -33,7 +33,7 @@
     "P0 / aligned": 9,
     "P3 / unreachable": 9,
     "P? / unreachable": 6,
-    "P? / partial": 3,
+    "P? / partial": 2,
     "P? / gap": 1,
     "P1 / unreachable": 1
   },
@@ -1176,10 +1176,6 @@
     ],
     [
       "三点一〇五七、第 107 批〔★★★ **`[data-what*]` ",
-      1
-    ],
-    [
-      "三点一一〇八、第 169 批新登记的官方行为（2026-10-06 机器",
       1
     ]
   ]

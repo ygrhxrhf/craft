@@ -9605,10 +9605,10 @@
       ]
     },
     "G1400": {
-      "status": "partial",
-      "note": "只有列表行 plainText 摘要，无 3 枚/304 字符双预算",
+      "status": "nonaction",
+      "note": "载体差：官方这条是 MCP contentPreviewMd 页卡片串的算术（3 枚上限／304 格字符预算／尾行 N 与已列枚数共用循环变量，分叉样本 35a36f35 与 f6b5793d 支撑枚数上限）；本地浏览行副标题是 row-subtitle 80 字单串截断，没有页卡片预览入口，算术只作为「将来若做页卡片」的契约留档。与 G1398／G1401／G1412 同族同判。",
       "evidence": [
-        "src/components/document/DocumentListView.tsx:178"
+        "src/lib/browse/row-subtitle.ts:17"
       ]
     },
     "G1404": {

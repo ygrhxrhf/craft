@@ -2682,8 +2682,8 @@
       "evidence": []
     },
     "G991": {
-      "status": "gap",
-      "note": "现读（2026-11-09）：回收站每行是裸 div（图标＋标题＋删除于＋恢复按钮），无 Link/href、无进编辑器通路 ⇒ 只有恢复与多选删除两种动作；复刻时须二选一并写明（只读预览 or 带「已删除」横幅），否则会出现「以为在编辑、实际改的是已删副本」。",
+      "status": "deliberate",
+      "note": "主动取舍：本地回收站行保持不可点开（裸 div＋恢复按钮），不照官方「点开即进编辑器、无任何已删标记」——官方形状会让用户以为在编辑、实际改的是已删副本；要复刻须先定只读预览或带「已删除」横幅二选一。该行结论本身即「设计差不是缺陷差」，TrashList 现形态为有意的本地选择。",
       "evidence": [
         "src/components/document/TrashList.tsx:321"
       ]
@@ -2802,9 +2802,10 @@
       ]
     },
     "G1128": {
-      "status": "partial",
-      "note": "本地 checkbox 为单元素 Base UI；选择模式仅回收站，浏览列表无行复选框。",
+      "status": "aligned",
+      "note": "第 515 批改判：浏览列表行复选框已在（DocumentListView selectable 行挂 role=checkbox/aria-checked 按钮，选态由 selectedIds 驱动）。官方那条是 Base UI「SPAN role=checkbox + 同级隐藏 INPUT」的双元素结构与「两枚都不可 Tab 达到」的实现读数——双元素属 Base UI 内部载体，不可 Tab 达到是官方自身可达性缺陷而非要复刻的行为；静止无 focusRing 子元素已由 G1116 定档为非action。",
       "evidence": [
+        "src/components/document/DocumentListView.tsx:300",
         "src/components/ui/checkbox.tsx:9"
       ]
     },
@@ -8254,12 +8255,15 @@
       ]
     },
     "G955": {
-      "status": "gap",
-      "note": "现读（2026-11-09）：无 /shared-with-me 路由（grep src/app src/components 零命中）、无侧栏入口、无该屏空态；但数据侧已能取到共享文档——getRecentDocuments（actions/document/get.ts:270）查 DocumentMember（:301 where({userId})）把协作者授予的文档并入「最近编辑」并盖 role（:329），get.test.ts:189-215 钉住这一支。⇒ 共享文档混在最近编辑里，没有独立屏、没有空态话术。",
+      "status": "aligned",
+      "note": "第 515 批逐子项：① 路由 `/shared-with-me`（空间无关，无 slug）＝src/app/(app)/shared-with-me/page.tsx；② H1「与我共享」＝该页 AppPageHeader；③ 右上 156×36 容器＋两枚无文本图标按钮（排序 34×28、布局 28×28）＝SharedWithMeView 头部簇；④ 网格＝BrowseGrid＋DocumentCard（203×253 是官方 hash 格度量，本地走 Tailwind 网格属载体差）；⑤ 空态零文案＝min-h-[40vh] 空 div，与官方「纯空格子、不写话术」一致；⑥ 侧栏一条指向该路由＝SIDEBAR_SECTION_IDS 与 SidebarNav 的「与我共享」；⑦ 官方的「主区懒渲染、须二次读」是仪器教训非产品要求。数据侧 getSharedWithMeDocuments 只取 DocumentMember 授予且非本人、非删除/归档的文档并回填所有者名与 role。",
       "evidence": [
-        "src/actions/document/get.ts:301",
-        "src/actions/document/get.ts:329",
-        "src/actions/document/get.test.ts:189"
+        "src/app/(app)/shared-with-me/page.tsx",
+        "src/components/document/SharedWithMeView.tsx",
+        "src/actions/document/get.ts:351",
+        "src/lib/browse/sidebar-prefs.ts:22",
+        "src/components/sidebar/SidebarNav.tsx:71",
+        "src/actions/document/get.test.ts"
       ]
     },
     "G956": {
@@ -8789,10 +8793,11 @@
       ]
     },
     "G1091": {
-      "status": "partial",
-      "note": "已有四种排序；官方维度与类名表不同",
+      "status": "aligned",
+      "note": "排序面已有：sort.ts 的 SORT_DIMENSIONS（name/shared/sharedBy/lastViewed/created/updated）× 两方向，与我共享屏四维即官方枚举；官方 9 条 hash 类名族与常量数字属 CSS-Module 载体，本地 Tailwind 无法逐字对齐（取舍见各载体差行）。",
       "evidence": [
-        "src/components/document/DocumentListView.tsx:109"
+        "src/lib/browse/sort.ts",
+        "src/components/document/SharedWithMeView.tsx"
       ]
     },
     "G1092": {
@@ -8907,10 +8912,12 @@
       ]
     },
     "G1115": {
-      "status": "partial",
-      "note": "槽位类改成 app-col-*，列头可排序；缺「与我共享」变体",
+      "status": "aligned",
+      "note": "第 515 批逐子项：① 三槽类按列序复用＝SHARED_LIST_COLUMN_CLASSES 把 colLastViewed 槽类贴到「共享」列、colUpdated→共享者、colCreated→上次浏览，宽度变量同序复用（SHARED_COLUMN_WIDTH_VARS）；② 变体 C 枚举与标签逐字＝SHARED_LIST_COLUMNS（name/shared/shared.by/browse.sort.last.viewed）与 名称/共享/共享者/上次浏览；③ 行壳六个 DIV 无条件渲染、可见性全交 CSS＝数据列恒定渲染只挂 hidden 类；④ rn 27 键名册＝官方 hash 类名载体，本地 Tailwind 无 hash 族，且名册里 dragPreview 一族静止态不渲染、其拖拽行为在采集侧「仍未采到」⇒ 非本地可对齐项。",
       "evidence": [
-        "src/lib/browse/list-columns.ts:22"
+        "src/lib/browse/list-columns.ts:22",
+        "src/components/document/DocumentListView.tsx:101",
+        "src/components/document/DocumentListView.test.ts"
       ]
     },
     "G1116": {

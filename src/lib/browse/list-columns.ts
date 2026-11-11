@@ -56,6 +56,43 @@ export function columnWidthValue(width: number): string {
   return `${Math.round(width)}px`;
 }
 
+/**
+ * Variant C — the "与我共享" list (G1115). The official header row there is 名称／共享／共享者／
+ * 上次浏览, and the three data columns reuse the *same positional slot classes*: `colLastViewed`
+ * hangs on the 共享 column, `colUpdated` on 共享者, `colCreated` on 上次浏览. So the container query
+ * still gates "column 2/3/4 is visible", not what those columns hold.
+ */
+export const SHARED_LIST_COLUMNS = ['name', 'shared', 'sharedBy', 'lastViewed'] as const;
+export type SharedListColumn = (typeof SHARED_LIST_COLUMNS)[number];
+
+export const SHARED_LIST_COLUMN_LABELS: Record<SharedListColumn, string> = {
+  name: '名称',
+  shared: '共享',
+  sharedBy: '共享者',
+  lastViewed: '上次浏览',
+};
+
+/** Bare `name` plus two bare keys and one browse.sort key — as the official header reads them. */
+export const SHARED_LIST_COLUMN_KEYS: Record<SharedListColumn, string> = {
+  name: 'name',
+  shared: 'shared',
+  sharedBy: 'shared.by',
+  lastViewed: 'browse.sort.last.viewed',
+};
+
+/** Slot classes for variant C, mapped by position (2nd/3rd/4th column), not by content. */
+export const SHARED_LIST_COLUMN_CLASSES: Record<Exclude<SharedListColumn, 'name'>, string> = {
+  shared: LIST_COLUMN_CLASSES.lastViewed,
+  sharedBy: LIST_COLUMN_CLASSES.updated,
+  lastViewed: LIST_COLUMN_CLASSES.created,
+};
+
+export const SHARED_COLUMN_WIDTH_VARS: Record<Exclude<SharedListColumn, 'name'>, string> = {
+  shared: COLUMN_WIDTH_VARS.lastViewed,
+  sharedBy: COLUMN_WIDTH_VARS.updated,
+  lastViewed: COLUMN_WIDTH_VARS.created,
+};
+
 /** The header cell's typography class, verbatim from the collected class table. */
 export const LIST_HEADER_TYPOGRAPHY = 'typography-caption-md-500';
 export const LIST_TITLE_TYPOGRAPHY = 'typography-ui-md-600';

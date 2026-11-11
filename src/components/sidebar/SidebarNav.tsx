@@ -17,6 +17,7 @@ import {
   LayoutTemplate,
   Trash2,
   Cable,
+  Users,
   ChevronDown,
   ChevronUp,
   Eye,
@@ -67,6 +68,7 @@ const SECTIONS: Record<SidebarSectionId, { label: string; icon: typeof Home }> =
   '/calendar': { label: '日历', icon: CalendarDays },
   '/templates': { label: '模板', icon: LayoutTemplate },
   '/connections': { label: '连接', icon: Cable },
+  '/shared-with-me': { label: '与我共享', icon: Users },
   '/trash': { label: '回收站', icon: Trash2 },
   '/archive': { label: '归档', icon: Archive },
 };

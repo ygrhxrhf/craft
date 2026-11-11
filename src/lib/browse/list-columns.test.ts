@@ -11,6 +11,11 @@ import {
   LIST_HEADER_TYPOGRAPHY,
   LIST_TITLE_TYPOGRAPHY,
   LIST_CELL_TYPOGRAPHY,
+  SHARED_COLUMN_WIDTH_VARS,
+  SHARED_LIST_COLUMN_CLASSES,
+  SHARED_LIST_COLUMN_KEYS,
+  SHARED_LIST_COLUMN_LABELS,
+  SHARED_LIST_COLUMNS,
   columnWidthValue,
 } from './list-columns';
 
@@ -63,14 +68,17 @@ describe('the three data columns are slots, not identities', () => {
 
   it('keeps the view\'s literal fallbacks in step with the constant', () => {
     // Tailwind's JIT cannot see a class built from a variable, so `w-[var(--col-…,112px)]` has to
-    // stay a literal in the view — which means the constant and those six sites can drift apart
-    // silently. Pin them together.
+    // stay a literal in the view — which means the constant and the literals can drift apart
+    // silently. Pin them together. The literals now live in one map (`WIDTH_CLASSES`), and both
+    // the header and the row resolve through it, so there is one literal per slot variable.
     const source = readFileSync(
       join(process.cwd(), 'src/components/document/DocumentListView.tsx'),
       'utf8',
     );
-    const literals = source.match(/w-\[var\(--col-[a-z-]+width,(\d+px)\)\]/g) ?? [];
-    expect(literals.length).toBe(6);
+    const literals = source.match(/w-\[var\((--col-[a-z-]+width),(\d+px)\)\]/g) ?? [];
+    expect(
+      literals.map((literal) => literal.match(/--col-[a-z-]+width/)?.[0]).sort(),
+    ).toEqual([...Object.values(COLUMN_WIDTH_VARS)].sort());
     for (const literal of literals) {
       expect(literal).toContain(`,${COLUMN_WIDTH_FALLBACK})`);
     }
@@ -79,6 +87,32 @@ describe('the three data columns are slots, not identities', () => {
   it('writes a hidden column as 0px so the fallback never fires', () => {
     expect(columnWidthValue(0)).toBe('0px');
     expect(columnWidthValue(112.4)).toBe('112px');
+  });
+});
+
+describe('variant C: the 与我共享 list reuses the same slots', () => {
+  it('renders 名称/共享/共享者/上次浏览 from the collected keys', () => {
+    expect(SHARED_LIST_COLUMNS).toEqual(['name', 'shared', 'sharedBy', 'lastViewed']);
+    for (const column of SHARED_LIST_COLUMNS) {
+      expect(ledgerValue(SHARED_LIST_COLUMN_KEYS[column])).toBe(
+        SHARED_LIST_COLUMN_LABELS[column],
+      );
+    }
+    // The variant's own bare `name`, and the two shared-screen keys the catalog holds.
+    expect(SHARED_LIST_COLUMN_KEYS.name).toBe('name');
+    expect(SHARED_LIST_COLUMN_KEYS.shared).toBe('shared');
+    expect(SHARED_LIST_COLUMN_KEYS.sharedBy).toBe('shared.by');
+    expect(SHARED_LIST_COLUMN_KEYS.lastViewed).toBe('browse.sort.last.viewed');
+  });
+
+  it('hangs colLastViewed on the 共享 column — classes follow position, not content', () => {
+    // G1115: the official header passes `rn.colLastViewed` for the 共享 column.
+    expect(SHARED_LIST_COLUMN_CLASSES.shared).toBe('app-col-last-viewed');
+    expect(SHARED_LIST_COLUMN_CLASSES.sharedBy).toBe('app-col-updated');
+    expect(SHARED_LIST_COLUMN_CLASSES.lastViewed).toBe('app-col-created');
+    expect(SHARED_COLUMN_WIDTH_VARS.shared).toBe('--col-last-viewed-width');
+    expect(SHARED_COLUMN_WIDTH_VARS.sharedBy).toBe('--col-updated-width');
+    expect(SHARED_COLUMN_WIDTH_VARS.lastViewed).toBe('--col-created-width');
   });
 });
 

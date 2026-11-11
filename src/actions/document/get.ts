@@ -334,6 +334,63 @@ export async function getRecentDocuments(limit = 20) {
   return docs.slice(0, limit);
 }
 
+/** G955: the 与我共享 screen — documents a collaborator granted to me, with who granted them. */
+export interface SharedWithMeDoc {
+  id: string;
+  title: string;
+  icon: string | null;
+  updatedAt: string;
+  createdAt: string;
+  plainText: string;
+  lastViewedAt: string | null;
+  shared: true;
+  sharedBy: string | null;
+  role: string;
+}
+
+export async function getSharedWithMeDocuments(limit = 50): Promise<SharedWithMeDoc[]> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const grants = await db.orm.public.DocumentMember
+    .where({ userId: session.user.id })
+    .all();
+
+  const docs: SharedWithMeDoc[] = [];
+  for (const grant of grants) {
+    // `userId` and the delete/archive flags are read to filter and then dropped.
+    const doc = await db.orm.public.Document
+      .where({ id: (grant as { documentId: string }).documentId })
+      .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'userId', 'isDeleted', 'isArchived', 'plainText', 'lastViewedAt')
+      .first() as {
+        id: string; title: string; icon: string | null; updatedAt: string; createdAt: string;
+        userId: string; isDeleted: boolean; isArchived: boolean; plainText: string | null; lastViewedAt: string | null;
+      } | null;
+    if (!doc || doc.isDeleted || doc.isArchived) continue;
+    if (doc.userId === session.user.id) continue;
+
+    const owner = await db.orm.public.User.first({ id: doc.userId }) as
+      | { name: string | null; email: string | null }
+      | null;
+    docs.push({
+      id: doc.id,
+      title: doc.title,
+      icon: doc.icon,
+      updatedAt: doc.updatedAt,
+      createdAt: doc.createdAt,
+      plainText: doc.plainText ?? '',
+      lastViewedAt: doc.lastViewedAt ?? null,
+      shared: true,
+      sharedBy: owner?.name?.trim() || owner?.email || null,
+      role: (grant as { role: string }).role,
+    });
+  }
+
+  docs.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
+  return docs.slice(0, limit);
+}
+
 /** G93: the archive view — archived documents, newest archive-relevant update first. */
 export async function getArchivedDocuments() {
   const session = await auth();

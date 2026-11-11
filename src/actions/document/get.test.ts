@@ -17,6 +17,7 @@ const {
   getDeletedDocuments,
   getFavoriteDocuments,
   getRecentDocuments,
+  getSharedWithMeDocuments,
   getTemplateContent,
   getTemplates,
 } = await import('@/actions/document/get');
@@ -208,6 +209,25 @@ describe('the other document list reads', () => {
       | undefined;
     expect(shared?.role).toBe('editor');
     expect(shared?.title).toBe('别人共享给我的文档');
+  });
+
+  it('getSharedWithMeDocuments returns the grant rows with the owner name (G955)', async () => {
+    const rows = await getSharedWithMeDocuments();
+    const shared = rows.find((r) => r.id === sharedId);
+    expect(shared).toBeTruthy();
+    expect(Object.keys(shared ?? {}).sort()).toEqual(
+      [
+        'createdAt', 'icon', 'id', 'lastViewedAt', 'plainText', 'role', 'shared', 'sharedBy',
+        'title', 'updatedAt',
+      ].sort()
+    );
+    // 共享者 is the owner's display name, not their id — that is what the column prints.
+    expect(shared?.sharedBy).toBe('共享来源测试账号');
+    expect(shared?.shared).toBe(true);
+    expect(shared?.role).toBe('editor');
+    // Only granted documents: the caller's own row never reaches this screen.
+    expect(rows.map((r) => r.id)).not.toContain(documentId);
+    expect(rows.map((r) => r.id)).not.toContain(trashedId);
   });
 });
 

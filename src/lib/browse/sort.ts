@@ -85,3 +85,17 @@ export function compareDocs(a: SortableDoc, b: SortableDoc, spec: SortSpec): num
 export function sortDocs<T extends SortableDoc>(docs: readonly T[], spec: SortSpec): T[] {
   return [...docs].sort((a, b) => compareDocs(a, b, spec));
 }
+
+/**
+ * Clicking a column header (G1115): the active one flips direction, a fresh one starts descending
+ * — the same behaviour the all-documents list header already uses (`nextSortSpec` in list-sort).
+ */
+export function nextSortForDimension(current: SortSpec, dimension: SortDimension): SortSpec {
+  if (current.dimension === dimension) {
+    return {
+      dimension,
+      direction: current.direction === 'descending' ? 'ascending' : 'descending',
+    };
+  }
+  return { dimension, direction: 'descending' };
+}

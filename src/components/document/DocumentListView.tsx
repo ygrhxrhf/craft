@@ -12,6 +12,9 @@ import {
   LIST_COLUMN_LABELS,
   LIST_HEADER_TYPOGRAPHY,
   LIST_TITLE_TYPOGRAPHY,
+  SHARED_COLUMN_WIDTH_VARS,
+  SHARED_LIST_COLUMN_CLASSES,
+  SHARED_LIST_COLUMN_LABELS,
   columnWidthValue,
 } from '@/lib/browse/list-columns';
 import { relativeTime } from '@/lib/document/relative-time';
@@ -24,6 +27,13 @@ import {
   sortBrowseRows,
   type BrowseSortSpec,
 } from '@/lib/browse/list-sort';
+import type { BrowseSortOption } from '@/lib/browse/toolbar-menu';
+import {
+  nextSortForDimension,
+  sortDocs,
+  type SortDimension,
+  type SortSpec,
+} from '@/lib/browse/sort';
 
 interface ListDoc {
   id: string;
@@ -34,6 +44,103 @@ interface ListDoc {
   lastViewedAt?: string | null;
   /** G248: the row's subtitle comes from the body, not from a date. */
   plainText?: string | null;
+  /** Variant C: whether the document is shared at all, and with whom. */
+  shared?: boolean;
+  sharedBy?: string | null;
+}
+
+export type ListVariant = 'all' | 'shared';
+
+interface ColumnDef {
+  id: string;
+  label: string;
+  slotClass: string;
+  widthVar: string;
+  widthClass: string;
+}
+
+/**
+ * The three width classes, verbatim. They are literal strings so Tailwind can see them; the
+ * `112px` fallback is what the official container writes inline.
+ */
+const WIDTH_CLASSES: Record<string, string> = {
+  '--col-last-viewed-width': 'w-[var(--col-last-viewed-width,112px)]',
+  '--col-updated-width': 'w-[var(--col-updated-width,112px)]',
+  '--col-created-width': 'w-[var(--col-created-width,112px)]',
+};
+
+/** The all-documents header: 名称／上次浏览／已更新／已创建. */
+const ALL_COLUMNS: ColumnDef[] = [
+  {
+    id: 'lastViewed',
+    label: LIST_COLUMN_LABELS.lastViewed,
+    slotClass: LIST_COLUMN_CLASSES.lastViewed,
+    widthVar: COLUMN_WIDTH_VARS.lastViewed,
+    widthClass: WIDTH_CLASSES['--col-last-viewed-width'],
+  },
+  {
+    id: 'updated',
+    label: LIST_COLUMN_LABELS.updated,
+    slotClass: LIST_COLUMN_CLASSES.updated,
+    widthVar: COLUMN_WIDTH_VARS.updated,
+    widthClass: WIDTH_CLASSES['--col-updated-width'],
+  },
+  {
+    id: 'created',
+    label: LIST_COLUMN_LABELS.created,
+    slotClass: LIST_COLUMN_CLASSES.created,
+    widthVar: COLUMN_WIDTH_VARS.created,
+    widthClass: WIDTH_CLASSES['--col-created-width'],
+  },
+];
+
+/**
+ * Variant C — 与我共享: 名称／共享／共享者／上次浏览. The slot classes stay positional, so
+ * `colLastViewed` lands on the 共享 column (see list-columns.ts).
+ */
+const SHARED_COLUMNS: ColumnDef[] = [
+  {
+    id: 'shared',
+    label: SHARED_LIST_COLUMN_LABELS.shared,
+    slotClass: SHARED_LIST_COLUMN_CLASSES.shared,
+    widthVar: SHARED_COLUMN_WIDTH_VARS.shared,
+    widthClass: WIDTH_CLASSES['--col-last-viewed-width'],
+  },
+  {
+    id: 'sharedBy',
+    label: SHARED_LIST_COLUMN_LABELS.sharedBy,
+    slotClass: SHARED_LIST_COLUMN_CLASSES.sharedBy,
+    widthVar: SHARED_COLUMN_WIDTH_VARS.sharedBy,
+    widthClass: WIDTH_CLASSES['--col-updated-width'],
+  },
+  {
+    id: 'lastViewed',
+    label: SHARED_LIST_COLUMN_LABELS.lastViewed,
+    slotClass: SHARED_LIST_COLUMN_CLASSES.lastViewed,
+    widthVar: SHARED_COLUMN_WIDTH_VARS.lastViewed,
+    widthClass: WIDTH_CLASSES['--col-created-width'],
+  },
+];
+
+function cellContent(doc: ListDoc, column: ColumnDef) {
+  switch (column.id) {
+    case 'shared':
+      return doc.shared ? (
+        <Check className="size-4 text-craft-accent" role="img" aria-label="已共享" />
+      ) : (
+        ''
+      );
+    case 'sharedBy':
+      return doc.sharedBy ?? '';
+    case 'lastViewed':
+      return doc.lastViewedAt ? relativeTime(doc.lastViewedAt) : '';
+    case 'updated':
+      return relativeTime(doc.updatedAt);
+    case 'created':
+      return doc.createdAt ? relativeTime(doc.createdAt) : '';
+    default:
+      return '';
+  }
 }
 
 /**
@@ -50,6 +157,9 @@ export function DocumentListView({
   documents,
   sort,
   onSortChange,
+  variant = 'all',
+  sharedSort,
+  onSharedSortChange,
   selectable = false,
   selectedIds,
   onToggleSelect,
@@ -58,6 +168,10 @@ export function DocumentListView({
   /** G247：列头即排序器——当前档与方向由外部持有，点列头回调上去。 */
   sort?: BrowseSortSpec;
   onSortChange?: (next: BrowseSortSpec) => void;
+  /** G1115 变体 C：与我共享列表的列序与排序词表都不同（名称／共享／共享者／上次浏览）。 */
+  variant?: ListVariant;
+  sharedSort?: SortSpec;
+  onSharedSortChange?: (next: SortSpec) => void;
   /** G1129: marquee/batch selection keeps the list layout — the row grows a checkbox. */
   selectable?: boolean;
   selectedIds?: ReadonlySet<string>;
@@ -65,15 +179,18 @@ export function DocumentListView({
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const headerRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const isShared = variant === 'shared';
+  const columns = isShared ? SHARED_COLUMNS : ALL_COLUMNS;
 
   useEffect(() => {
     const root = ref.current;
     if (!root) return;
 
     const sync = () => {
-      for (const [column, variable] of Object.entries(COLUMN_WIDTH_VARS)) {
-        const cell = headerRefs.current[column];
+      for (const column of columns) {
+        const cell = headerRefs.current[column.id];
         if (!cell) continue;
+        const variable = column.widthVar;
         root.style.setProperty(variable, columnWidthValue(cell.offsetWidth));
       }
     };
@@ -85,7 +202,41 @@ export function DocumentListView({
       if (cell) observer.observe(cell);
     }
     return () => observer.disconnect();
-  }, [documents]);
+  }, [columns, documents]);
+
+  const ariaFor = (id: string) => {
+    if (isShared) {
+      if (!sharedSort || sharedSort.dimension !== id) return 'none' as const;
+      return sharedSort.direction;
+    }
+    return sort ? ariaSortValue(sort, id as BrowseSortOption) : undefined;
+  };
+
+  const markFor = (id: string): '↑' | '↓' | null => {
+    if (isShared) {
+      if (!sharedSort || sharedSort.dimension !== id) return null;
+      return sharedSort.direction === 'ascending' ? '↑' : '↓';
+    }
+    return sort ? sortArrow(sort, id as BrowseSortOption) : null;
+  };
+
+  const pickSort = (id: string) => {
+    if (isShared) {
+      if (!sharedSort || !onSharedSortChange) return;
+      onSharedSortChange(nextSortForDimension(sharedSort, id as SortDimension));
+      return;
+    }
+    if (!sort || !onSortChange) return;
+    onSortChange(nextSortSpec(sort, id as BrowseSortOption));
+  };
+
+  const rows = isShared
+    ? sharedSort
+      ? sortDocs(documents, sharedSort)
+      : documents
+    : sort
+      ? sortBrowseRows(documents, sort)
+      : documents;
 
   return (
     <div ref={ref} data-testid="browse-list" className="flex flex-col">
@@ -94,79 +245,41 @@ export function DocumentListView({
       >
         <button
           type="button"
-          onClick={() => sort && onSortChange?.(nextSortSpec(sort, 'name'))}
-          aria-sort={sort ? ariaSortValue(sort, 'name') : undefined}
+          onClick={() => pickSort('name')}
+          aria-sort={ariaFor('name')}
           className={cn('min-w-0 flex-1 text-left', LIST_HEADER_TYPOGRAPHY, 'text-muted-foreground')}
         >
           名称
-          {sort && sortArrow(sort, 'name') ? <span className="ml-1">{sortArrow(sort, 'name')}</span> : null}
+          {markFor('name') ? <span className="ml-1">{markFor('name')}</span> : null}
         </button>
-        <div
-          ref={(node) => {
-            headerRefs.current.lastViewed = node;
-          }}
-          className={cn(
-            'hidden w-[var(--col-last-viewed-width,112px)] shrink-0',
-            LIST_HEADER_TYPOGRAPHY,
-            'text-muted-foreground',
-            LIST_COLUMN_CLASSES.lastViewed,
-          )}
-        >
-          <button
-            type="button"
-            onClick={() => sort && onSortChange?.(nextSortSpec(sort, 'lastViewed'))}
-            aria-sort={sort ? ariaSortValue(sort, 'lastViewed') : undefined}
-            className="w-full text-left"
+        {columns.map((column) => (
+          <div
+            key={column.id}
+            ref={(node) => {
+              headerRefs.current[column.id] = node;
+            }}
+            className={cn(
+              'hidden shrink-0',
+              column.widthClass,
+              LIST_HEADER_TYPOGRAPHY,
+              'text-muted-foreground',
+              column.slotClass,
+            )}
           >
-            {LIST_COLUMN_LABELS.lastViewed}
-            {sort && sortArrow(sort, 'lastViewed') ? <span className="ml-1">{sortArrow(sort, 'lastViewed')}</span> : null}
-          </button>
-        </div>
-        <div
-          ref={(node) => {
-            headerRefs.current.updated = node;
-          }}
-          className={cn(
-            'hidden w-[var(--col-updated-width,112px)] shrink-0',
-            LIST_HEADER_TYPOGRAPHY,
-            'text-muted-foreground',
-            LIST_COLUMN_CLASSES.updated,
-          )}
-        >
-          <button
-            type="button"
-            onClick={() => sort && onSortChange?.(nextSortSpec(sort, 'updated'))}
-            aria-sort={sort ? ariaSortValue(sort, 'updated') : undefined}
-            className="w-full text-left"
-          >
-            {LIST_COLUMN_LABELS.updated}
-            {sort && sortArrow(sort, 'updated') ? <span className="ml-1">{sortArrow(sort, 'updated')}</span> : null}
-          </button>
-        </div>
-        <div
-          ref={(node) => {
-            headerRefs.current.created = node;
-          }}
-          className={cn(
-            'hidden w-[var(--col-created-width,112px)] shrink-0',
-            LIST_HEADER_TYPOGRAPHY,
-            'text-muted-foreground',
-            LIST_COLUMN_CLASSES.created,
-          )}
-        >
-          <button
-            type="button"
-            onClick={() => sort && onSortChange?.(nextSortSpec(sort, 'created'))}
-            aria-sort={sort ? ariaSortValue(sort, 'created') : undefined}
-            className="w-full text-left"
-          >
-            {LIST_COLUMN_LABELS.created}
-            {sort && sortArrow(sort, 'created') ? <span className="ml-1">{sortArrow(sort, 'created')}</span> : null}
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => pickSort(column.id)}
+              aria-sort={ariaFor(column.id)}
+              className="w-full text-left"
+            >
+              {column.label}
+              {markFor(column.id) ? <span className="ml-1">{markFor(column.id)}</span> : null}
+            </button>
+          </div>
+        ))}
       </div>
 
-      {(sort ? sortBrowseRows(documents, sort) : documents).map((doc) => {
+      {rows.map((doc) => {
         const checked = selectedIds?.has(doc.id) ?? false;
         return (
         <Link
@@ -218,36 +331,20 @@ export function DocumentListView({
               <OfflineBadge documentId={doc.id} listedUpdatedAt={doc.updatedAt} className="self-start" />
             </div>
           </div>
-          <div
-            className={cn(
-              'hidden w-[var(--col-last-viewed-width,112px)] shrink-0 truncate',
-              LIST_CELL_TYPOGRAPHY,
-              'text-muted-foreground',
-              LIST_COLUMN_CLASSES.lastViewed,
-            )}
-          >
-            {doc.lastViewedAt ? relativeTime(doc.lastViewedAt) : ''}
-          </div>
-          <div
-            className={cn(
-              'hidden w-[var(--col-updated-width,112px)] shrink-0 truncate',
-              LIST_CELL_TYPOGRAPHY,
-              'text-muted-foreground',
-              LIST_COLUMN_CLASSES.updated,
-            )}
-          >
-            {relativeTime(doc.updatedAt)}
-          </div>
-          <div
-            className={cn(
-              'hidden w-[var(--col-created-width,112px)] shrink-0 truncate',
-              LIST_CELL_TYPOGRAPHY,
-              'text-muted-foreground',
-              LIST_COLUMN_CLASSES.created,
-            )}
-          >
-            {doc.createdAt ? relativeTime(doc.createdAt) : ''}
-          </div>
+          {columns.map((column) => (
+            <div
+              key={column.id}
+              className={cn(
+                'hidden shrink-0 truncate',
+                column.widthClass,
+                LIST_CELL_TYPOGRAPHY,
+                'text-muted-foreground',
+                column.slotClass,
+              )}
+            >
+              {cellContent(doc, column)}
+            </div>
+          ))}
         </Link>
         );
       })}

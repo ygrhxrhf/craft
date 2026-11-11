@@ -19,6 +19,7 @@ export const SIDEBAR_SECTION_IDS = [
   '/calendar',
   '/templates',
   '/connections',
+  '/shared-with-me',
   '/trash',
   '/archive',
 ] as const;

@@ -61,3 +61,23 @@ describe('the typography is declared, not inherited', () => {
     expect(source).toContain('LIST_CELL_TYPOGRAPHY');
   });
 });
+
+describe('variant C reuses the same slots for 与我共享 (G1115)', () => {
+  it('renders 共享/共享者/上次浏览 through the variant-C column table', () => {
+    expect(source).toContain('SHARED_LIST_COLUMN_LABELS');
+    expect(source).toContain('SHARED_LIST_COLUMN_CLASSES');
+    expect(source).toContain('SHARED_COLUMN_WIDTH_VARS');
+    expect(source).toContain("variant === 'shared'");
+  });
+
+  it('sorts the shared list with the sort.ts vocabulary, not the browse one', () => {
+    expect(source).toContain('nextSortForDimension');
+    expect(source).toContain('sortDocs');
+    expect(source).toContain('onSharedSortChange');
+  });
+
+  it('keeps the width sync writing the measured header width', () => {
+    expect(source).toContain('const variable = column.widthVar;');
+    expect(source).toContain('style.setProperty(variable, columnWidthValue(cell.offsetWidth))');
+  });
+});

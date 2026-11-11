@@ -16,6 +16,7 @@ import {
   TableCellsSplit,
 } from 'lucide-react';
 import { cn } from 'cn';
+import { MissingFunctionFeedback } from '@/components/app/MissingFunctionFeedback';
 import { tableBubbleKey } from '../bubble-menu/keys';
 import { TABLE_CONTEXT_UNAVAILABLE, tableRedirectCopy } from '@/lib/editor/table-context-copy';
 import {
@@ -96,7 +97,11 @@ function applyCellAttr(editor: Editor, attr: string, value: string | null): void
 }
 
 export function TableToolbar({ editor }: TableToolbarProps) {
-  const [notice, setNotice] = useState<{ x: number; y: number } | null>(null);
+  /**
+   * `kind`：`context` 是右键表格的禁用提示（G34）；`formula` 是「计算公式」这枚按钮**没算出任何
+   * 结果**时的空态——G1415 的第二处宿主：官方把「函数表不够用」当一条可反馈的缺口，不是报错。
+   */
+  const [notice, setNotice] = useState<{ x: number; y: number; kind: 'context' | 'formula' } | null>(null);
 
   // G631：把 TipTap 的 CellSelection 读成官方那三态之一（single/full/empty），好让工具栏知道
   // "当前是选中一格、整表、还是没选"。非 CellSelection 时 `selectedCells()` 回空数组 ⇒ empty。
@@ -115,7 +120,7 @@ export function TableToolbar({ editor }: TableToolbarProps) {
       const target = event.target as HTMLElement | null;
       if (!target?.closest('table')) return;
       event.preventDefault();
-      setNotice({ x: event.clientX, y: event.clientY });
+      setNotice({ x: event.clientX, y: event.clientY, kind: 'context' });
     };
     const onPointerDown = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
@@ -324,7 +329,13 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         </ToolButton>
         <ToolButton
           title="计算公式(=SUM(A1:B3) 等)"
-          onClick={() => evalFormulas(editor)}
+          onClick={() => {
+            // 算不出任何结果＝这条工具栏的公式空态（含"函数名不在表里"）⇒ 给 G1415 的反馈口，
+            // 语气是"可以反馈"，不是报错。
+            if (!evalFormulas(editor)) {
+              setNotice({ x: window.innerWidth / 2, y: 96, kind: 'formula' });
+            }
+          }}
         >
           <Equal className="size-4" />
         </ToolButton>
@@ -342,17 +353,27 @@ export function TableToolbar({ editor }: TableToolbarProps) {
     {notice && (
       <div
         data-table-context-notice
+        data-notice-kind={notice.kind}
         role="dialog"
         aria-label="表格操作提示"
         style={{ left: notice.x, top: notice.y }}
         className="fixed z-50 w-64 rounded-lg border border-border bg-background p-3 text-xs shadow-lg"
       >
-        <p role="menuitem" aria-disabled="true" className="text-muted-foreground">
-          {TABLE_CONTEXT_UNAVAILABLE}
-        </p>
-        <p className="mt-1.5 text-foreground/70">
-          {tableRedirectCopy('工具栏', '编辑表格')}
-        </p>
+        {notice.kind === 'formula' ? (
+          <>
+            <p className="text-muted-foreground">表格里没有可计算的公式。</p>
+            <MissingFunctionFeedback className="mt-1.5 text-xs text-foreground/70" />
+          </>
+        ) : (
+          <>
+            <p role="menuitem" aria-disabled="true" className="text-muted-foreground">
+              {TABLE_CONTEXT_UNAVAILABLE}
+            </p>
+            <p className="mt-1.5 text-foreground/70">
+              {tableRedirectCopy('工具栏', '编辑表格')}
+            </p>
+          </>
+        )}
         <button
           type="button"
           onClick={() => setNotice(null)}

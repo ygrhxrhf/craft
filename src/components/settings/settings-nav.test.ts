@@ -230,11 +230,10 @@ describe('the notifications panel does not promise per-space overrides it cannot
 });
 
 /**
- * About 面板末尾两枚按钮此前都是 inert（无 onClick）。按同一把尺分开处置：社媒那枚有可推导的
- * 目标（官方串逐字给了句柄）故**接线**；反馈那枚的宿主是官方一个 13 键弹窗（G1414 记其"没上屏、
- * 实际长什么样未证"）而本地零反馈弹窗基建，故**移除**。
+ * About 面板末尾两枚按钮此前都是 inert（无 onClick）。社媒那枚有可推导的目标（官方串逐字给了
+ * 句柄）故接线；反馈那枚在 G1414 落地（13 键反馈弹窗已实现）后也接线——开站内反馈弹窗。
  */
-describe('the about panel buttons are wired or removed, never inert', () => {
+describe('the about panel buttons are wired, never inert', () => {
   const panels = readFileSync(
     fileURLToPath(new URL('./SettingsPanels.tsx', import.meta.url)),
     'utf8',
@@ -244,9 +243,11 @@ describe('the about panel buttons are wired or removed, never inert', () => {
     expect(panels).toMatch(/window\.open\('https:\/\/x\.com\/CraftDocs', '_blank', 'noopener,noreferrer'\)/);
   });
 
-  it('drops the feedback button it cannot host', () => {
+  it('opens the feedback dialog from the about panel', () => {
     expect(panels).toContain('有想法、功能请求或发现了错误');
-    expect(panels).not.toMatch(/<button[^>]*>\s*意见反馈\s*<\/button>/);
+    const group = panels.slice(panels.indexOf('<GroupTitle>意见反馈</GroupTitle>'));
+    // 非空断言：那枚「意见反馈」按钮必须带开弹窗的 onClick，而不是 inert 的装饰。
+    expect(group).toMatch(/onClick=\{\(\) => useFeedbackStore\.getState\(\)\.openFeedback\(\)\}/);
   });
 });
 

@@ -19,6 +19,7 @@ import {
 } from '@/lib/app/help-menu';
 import { getSyncManager, type SyncStatus } from '@/lib/sync-core';
 import { useSettingsStore } from '@/lib/store/use-settings-store';
+import { useFeedbackStore } from '@/lib/store/use-feedback-store';
 import { useIsMobile } from '@/lib/use-is-mobile';
 
 /**
@@ -29,7 +30,7 @@ import { useIsMobile } from '@/lib/use-is-mobile';
  * Three kinds of landing (G765):
  *   - `inAppPanel`（快捷键）→ 打开设置里的快捷键面板；
  *   - `externalLink`（最新特性／Web 和 Windows 版最新特性／常见问题／Markdown 快捷方式／报告同步）→ 帮助站；
- *   - `dialog`（意见反馈）→ 官方该条**不调 `window.open`**、落点未确认，本地落到设置里的反馈分区；
+ *   - `dialog`（意见反馈）→ 官方该条**不调 `window.open`**，本地开站内反馈弹窗（G1414）；
  *   - `status`（`Sync Status`）→ 不是动作，是当前同步态的一行读数。
  */
 export function HelpMenu() {
@@ -57,7 +58,11 @@ export function HelpMenu() {
       openSettings('shortcuts');
       return;
     }
-    // 意见反馈：落到设置的「关于」分区（本地已有的反馈入口所在）。
+    // 意见反馈：开站内反馈弹窗（G1414）。
+    if (entry.id === 'feedback') {
+      useFeedbackStore.getState().openFeedback();
+      return;
+    }
     openSettings('about');
   };
 

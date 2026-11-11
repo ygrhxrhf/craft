@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-11T14:00:15.451Z",
+  "generatedAt": "2026-11-11T14:57:36.213Z",
   "total": 1615,
   "status": {
-    "aligned": 817,
+    "aligned": 819,
     "nonaction": 540,
     "deliberate": 223,
     "unreachable": 27,
     "partial": 5,
-    "gap": 3
+    "gap": 1
   },
   "priority": {
     "P2": 630,
@@ -21,7 +21,7 @@
     "P? / nonaction": 200,
     "P2 / nonaction": 175,
     "P1 / aligned": 170,
-    "P? / aligned": 154,
+    "P? / aligned": 156,
     "P3 / aligned": 128,
     "P1 / nonaction": 89,
     "P2 / deliberate": 88,
@@ -34,7 +34,7 @@
     "P3 / unreachable": 9,
     "P? / unreachable": 6,
     "P? / partial": 5,
-    "P? / gap": 3,
+    "P? / gap": 1,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1166,10 +1166,6 @@
   "conflicts": [],
   "unknownSections": [],
   "gapSections": [
-    [
-      "三点一一一一、第 172 批新登记的官方行为（2026-10-08 机器",
-      2
-    ],
     [
       "三点九二、第 79 批·数据面（2026-09-28 07:21–07:",
       1

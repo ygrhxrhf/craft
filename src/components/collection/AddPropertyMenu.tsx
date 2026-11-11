@@ -16,6 +16,7 @@ import { getCollections } from '@/actions/collection/collection';
 import { getSyncManager } from '@/lib/sync-core';
 import { readLocalRecords } from '@/components/sync/local-records';
 import { evaluateFormula, type FormulaResult } from '@/lib/collection/formula';
+import { MissingFunctionFeedback } from '@/components/app/MissingFunctionFeedback';
 
 import {
   DEFAULT_NUMBER_FORMAT,
@@ -206,6 +207,8 @@ export function AddPropertyMenu({ collectionId }: { collectionId: string }) {
                       : (preview as Extract<FormulaResult, { ok: false }>).error
                     : '用 {属性名} 引用同一行的其它属性'}
                 </p>
+                {/* G1415：官方把「函数表不够用」当一条可反馈的缺口（不是 bug）⇒ 非报错语气。 */}
+                <MissingFunctionFeedback />
               </div>
             )}
 

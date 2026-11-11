@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-11 第 521 批：G727 任务视图键位（行导航/删/编辑/Ctrl→/撤销重做）、G1077 零态卡 idle/action 换脸与 -1px 焦点环、tabs 横滑",
-  "method": "第 521 批：task-view-key/undo-stack 纯核 + renameTask/restoreTask 服务端 + TasksView 行键与零态卡接线；浏览器实测卡几何与 tabs 横滑计算值",
+  "verifiedAt": "2026-11-11",
+  "method": "第 521 批：task-view-key/undo-stack 纯核 + renameTask/restoreTask 服务端 + TasksView 行键与零态卡接线；浏览器实测卡几何与 tabs 横滑计算值；第 522 批：G1414 反馈弹窗全族（13 键／匿名邮箱门／感谢屏／评分桥门控）、G1415 缺函数反馈入口（两处公式面）＝纯核＋接线＋单测＋浏览器实测",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -9613,21 +9613,26 @@
       ]
     },
     "G1414": {
-      "status": "gap",
-      "note": "现读（2026-11-09）：设置「关于」分区的「意见反馈」组只有 GroupTitle＋GroupDesc（SettingsPanels.tsx:1507-1508），原按钮按「无宿主」已删（就地注释 :1509-1513）；Help→意见反馈 仅 openSettings('about')（HelpMenu.tsx:37、lib/app/help-menu.ts:32 kind=dialog）⇒ 屏上无 13 键弹窗、无评分、无匿名邮箱字段；grep rateAppInStore|topApi 零命中（评分交桌面壳的通路也没有）。旧格引的 :678 是空间角色行，并非反馈分区。",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 522 批）：逐子项对照官方格——①13 条 feedback.* 键逐字在 src/lib/app/feedback.ts:16；②邮箱格由 showFeedbackEmail(anonymous) 门控（feedback.ts:68），登录态不渲染（FeedbackDialog.tsx:158）；③三枚字段 subject/email/message 齐（FeedbackDialog.tsx:158-176），占位逐字；④感谢屏 feedback.thanks.title/subtitle/support＋次按钮 feedback.thanks.secondarybutton（FeedbackDialog.tsx:83-95）；⑤商店评分为独立引导，按钮体调 rateAppInStore()（feedback.ts:94、FeedbackDialog.tsx:109），宿主取 window.topApi.rateAppInStore，入口按 storeRatingAvailable() 门控（feedback.ts:105）——本地无桌面宿主故该入口当前不可达（宿主缺失，非载体缺失），不留 inert 按钮。入口三处：设置关于按钮（SettingsPanels.tsx:1514）、Help→意见反馈（HelpMenu.tsx:63）、全局挂载（app/(app)/layout.tsx:28）；Esc 走 focusStack（FeedbackDialog.tsx:39）；overlay 不挂 role=dialog，与官方 role=dialog=0 一致。第 416 批屏上读数＋第 522 批浏览器实测（emoji 选中后主按钮启用、提交到感谢屏、以后再说关闭、Esc 关闭）通过。",
       "evidence": [
-        "src/components/settings/SettingsPanels.tsx:1507",
-        "src/components/app/HelpMenu.tsx:37",
-        "src/lib/app/help-menu.ts:32"
+        "src/lib/app/feedback.ts:16",
+        "src/lib/app/feedback.ts:68",
+        "src/lib/app/feedback.ts:94",
+        "src/components/app/FeedbackDialog.tsx:39",
+        "src/components/app/FeedbackDialog.tsx:158",
+        "src/components/settings/SettingsPanels.tsx:1514",
+        "src/components/app/HelpMenu.tsx:63",
+        "src/app/(app)/layout.tsx:28"
       ]
     },
     "G1415": {
-      "status": "gap",
-      "note": "现读（2026-11-09）：公式侧并非只有 LaTeX 文本框，但确实没有函数表与缺函数反馈口——集合公式编辑器在 AddPropertyMenu.tsx:194-210（placeholder「{价格} * {数量}」、aria-label=公式表达式、实时「示例结果：」／无输入时「用 {属性名} 引用同一行的其它属性」）；表格侧 TableToolbar.tsx:326 title=「计算公式(=SUM(A1:B3) 等)」；编辑器公式块是 TeX 输入（math-block-view.tsx，renderMath），无函数名补全与函数表。⇒ 复刻要么给反馈入口要么明确不做，且不要用报错语气。旧格「只有 LaTeX 文本框」不成立。",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 522 批）：官方两处同形入口＝同一文案 feedback.table.missing.function＋同一按钮键 preferences.send.feedback、排版参数逐字相同。本地两个公式面各挂一处：集合公式类型块（AddPropertyMenu.tsx:195-213、:211 渲染 MissingFunctionFeedback）、表格「计算公式」算不出结果的通知（TableToolbar.tsx:335 判定、:365 渲染同组件）；文案与按钮同源（MissingFunctionFeedback.tsx:16-19 取 FEEDBACK_KEYS['feedback.table.missing.function'] 与 FEEDBACK_SUBMIT_LABEL），按钮开同一反馈弹窗。语气是可反馈而非报错（muted，无 destructive）。载体差：官方两处是函数自动补全表的空态，本地没有函数表，入口改挂到两处公式编辑面，数量同为两处、同形同文案。第 522 批已在集合公式编辑器实点验证入口可开弹窗。",
       "evidence": [
-        "src/components/collection/AddPropertyMenu.tsx:194",
-        "src/components/editor/table/TableToolbar.tsx:326",
-        "src/components/editor/extensions/math-block-view.tsx:10"
+        "src/components/collection/AddPropertyMenu.tsx:211",
+        "src/components/editor/table/TableToolbar.tsx:365",
+        "src/components/app/MissingFunctionFeedback.tsx:16"
       ]
     },
     "G1416": {

@@ -2,6 +2,7 @@ import { Sidebar } from '@/components/sidebar/Sidebar';
 import { CommandPalette } from '@/components/search/CommandPalette';
 import { ShellShortcuts } from '@/components/editor/shell-shortcuts';
 import { SettingsModal } from '@/components/settings/SettingsModal';
+import { FeedbackDialog } from '@/components/app/FeedbackDialog';
 import { AppTopBar } from '@/components/app/AppTopBar';
 import { AppShellHeader } from '@/components/app/AppPageHeader';
 
@@ -24,6 +25,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <CommandPalette />
       <ShellShortcuts />
       <SettingsModal />
+      <FeedbackDialog />
     </div>
   );
 }

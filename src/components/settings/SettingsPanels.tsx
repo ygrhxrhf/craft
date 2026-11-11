@@ -28,6 +28,7 @@ import { Switch } from '@/components/ui/switch';
 import { RichText } from '@/components/ui/rich-text';
 import { loggedInAsText } from '@/lib/i18n/account-copy';
 import { SCOPE_COPY } from '@/lib/app/settings-scope';
+import { useFeedbackStore } from '@/lib/store/use-feedback-store';
 import { SPACE_ICON_PRESETS, spaceIconPreset } from '@/lib/app/space-icons';
 import {
   changeTeamRole,
@@ -1506,10 +1507,15 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
           <div className="border-t border-foreground/4 pt-6">
             <GroupTitle>意见反馈</GroupTitle>
             <GroupDesc>有想法、功能请求或发现了错误？ 请告诉我们，我们会尽快处理！</GroupDesc>
-            {/* G164 复核：这里原有第二枚 inert 按钮。官方那是个 **13 键的反馈弹窗**（G1414：
-                subject／email／message 三字段＋提交屏＋感谢屏；`email` 格只在匿名用户下渲染），
-                而本目录明确记该弹窗**没上屏、实际长什么样未证**，本地也没有任何反馈弹窗基建
-                ⇒ 无宿主。按"有列就接线、没列就移除"删掉按钮，只留说明文字。 */}
+            {/* G1414：反馈弹窗（13 条键）本地已实现（`components/app/FeedbackDialog.tsx`），
+                这枚按钮按官方「意见反馈」按钮体接线、开弹窗。 */}
+            <button
+              type="button"
+              onClick={() => useFeedbackStore.getState().openFeedback()}
+              className="mt-3 rounded-lg border border-foreground/8 px-4 py-2 text-[13px] font-medium"
+            >
+              意见反馈
+            </button>
           </div>
         </div>
       );

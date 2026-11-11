@@ -165,9 +165,11 @@ export type SaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'error';
  * G252 —— 非任务块的提醒投影输入。与 `collectTaskItems` 分开走：任务块的 `remindAt` 随任务行投影
  * （`Task.remindAt`），普通段落／标题块没有任务行可依，得靠自己的 `(documentId, blockId)` 地址。
  * 判据＝块上有 `blockId`（深链要它寻址）与 `remindAt`（时间），缺任一枚就跳过。
+ *
+ * G703 —— 顺手带上 `completedAt`：完成戳与提醒时刻并存，「标记为已解决」只打戳不删提醒。
  */
-function collectBlockReminders(content: unknown): { blockId: string; title: string; remindAt: string }[] {
-  const reminders: { blockId: string; title: string; remindAt: string }[] = [];
+function collectBlockReminders(content: unknown): { blockId: string; title: string; remindAt: string; completedAt: string | null }[] {
+  const reminders: { blockId: string; title: string; remindAt: string; completedAt: string | null }[] = [];
   const walk = (node: any) => {
     if (!node || typeof node !== 'object') return;
     const attrs = node.attrs ?? {};
@@ -176,7 +178,12 @@ function collectBlockReminders(content: unknown): { blockId: string; title: stri
       typeof attrs.blockId === 'string' && attrs.blockId &&
       typeof attrs.remindAt === 'string' && attrs.remindAt
     ) {
-      reminders.push({ blockId: attrs.blockId, title: pmNodeText(node).trim(), remindAt: attrs.remindAt });
+      reminders.push({
+        blockId: attrs.blockId,
+        title: pmNodeText(node).trim(),
+        remindAt: attrs.remindAt,
+        completedAt: typeof attrs.reminderCompletedAt === 'string' ? attrs.reminderCompletedAt : null,
+      });
     }
     if (Array.isArray(node.content)) node.content.forEach(walk);
   };
@@ -446,6 +453,15 @@ export function Editor({
               parseHTML: (element) => element.getAttribute('data-remind-at'),
               renderHTML: (attributes) => attributes.remindAt
                 ? { 'data-remind-at': attributes.remindAt }
+                : {},
+            },
+            // G703: 「标记为已解决」在提醒上打完成戳，remindAt 原样留着（官方 completionDate 与
+            // dueDate 并存）。两枚属性一起进 doc JSON，完成态才谈得上持久。
+            reminderCompletedAt: {
+              default: null,
+              parseHTML: (element) => element.getAttribute('data-reminder-completed-at'),
+              renderHTML: (attributes) => attributes.reminderCompletedAt
+                ? { 'data-reminder-completed-at': attributes.reminderCompletedAt }
                 : {},
             },
             // 官方是「一条轴、三档」（tasks.md:11）：取消不是第二个勾选框，它把完成态让出来，

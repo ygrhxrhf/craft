@@ -811,6 +811,14 @@
     white-space: nowrap;
   }
 
+  /* G703：已解决的提醒仍留在块上，pill 只弱化——不隐藏，时刻照旧可读。 */
+  .reminder-pill-resolved {
+    background: color-mix(in srgb, var(--foreground) 6%, transparent);
+    color: color-mix(in srgb, var(--foreground) 55%, transparent);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+
   .task-list-item > label {
     flex-shrink: 0;
     margin-top: 0.25rem;

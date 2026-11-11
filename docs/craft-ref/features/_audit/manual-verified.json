@@ -7049,10 +7049,15 @@
       ]
     },
     "G703": {
-      "status": "partial",
-      "note": "Notification 同时保留 remindAt 与 resolvedAt，标题取任务标题而非块文本",
+      "status": "aligned",
+      "note": "完成戳落 reminderCompletedAt 且与 remindAt 并存；BlockReminder 投影写 isCompleted + completionDate，remindAt 与 title 照旧写回；title 取块首行文本。",
       "evidence": [
-        "src/actions/notification/notification.ts:35"
+        "src/lib/task/reminder-entity.ts:96",
+        "src/lib/task/reminder-entity.ts:119",
+        "src/actions/notification/block-reminders.ts:59",
+        "src/components/editor/extensions/reminder-pill.ts:54",
+        "src/components/editor/Editor.tsx:183",
+        "src/components/editor/drag-handle/block-actions.ts:550"
       ]
     },
     "G704": {

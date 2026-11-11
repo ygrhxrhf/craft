@@ -15,6 +15,8 @@ import {
   clearBlockReminder,
   setBlockReminderAt,
   setTaskReminderAt,
+  resolveTaskReminder,
+  resolveBlockReminder,
   setTaskCancelled,
   toggleTaskCancelledAtSelection,
   taskItemTarget,
@@ -40,7 +42,7 @@ import {
 const schema = new Schema({
   nodes: {
     doc: { content: 'block+' },
-    paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null }, emoji: { default: null }, remindAt: { default: null }, indent: { default: 0 } } },
+    paragraph: { content: 'text*', group: 'block', attrs: { blockId: { default: null }, emoji: { default: null }, remindAt: { default: null }, reminderCompletedAt: { default: null }, indent: { default: 0 } } },
     cardBlock: {
       content: 'block+',
       group: 'block',
@@ -76,6 +78,7 @@ const schema = new Schema({
       group: 'block',
       attrs: {
         remindAt: { default: null },
+        reminderCompletedAt: { default: null },
         checked: { default: false },
         cancelled: { default: false },
         cancelledAt: { default: null },
@@ -532,6 +535,73 @@ describe('setBlockReminder / clearBlockReminder（G252）', () => {
     expect(() => run(state, (d) => setBlockReminder(state, d, 0, 'in20min', new Date()))).toThrow(
       'the action dispatched nothing',
     );
+  });
+});
+
+// G703 —— 「标记为已解决」是打完成戳，不是删提醒：remindAt 留着，completionDate 加在旁边。
+describe('resolveReminder（G703）', () => {
+  const now = new Date('2026-09-28T07:23:00.307Z');
+
+  function taskState() {
+    const doc = schema.nodes.doc.create(null, [
+      schema.nodes.taskItem.create(null, schema.text('交周报')),
+    ]);
+    return EditorState.create({ schema, doc });
+  }
+
+  it('stamps the completion time and keeps the reminder moment on a task item', () => {
+    const state = taskState();
+    const set = runState(state, (d) => setTaskReminder(state, d, 0, 'in1hour', now));
+    const next = runState(set, (d) => resolveTaskReminder(set, d, 0, now));
+    expect(next.doc.child(0).attrs.reminderCompletedAt).toBe('2026-09-28T07:23:00.307Z');
+    expect(next.doc.child(0).attrs.remindAt).toBe('2026-09-28T08:23:00.307Z');
+  });
+
+  it('does nothing when the reminder is already resolved — no second dispatch', () => {
+    const state = taskState();
+    const set = runState(state, (d) => setTaskReminder(state, d, 0, 'in1hour', now));
+    const resolved = runState(set, (d) => resolveTaskReminder(set, d, 0, now));
+    expect(() => run(resolved, (d) => resolveTaskReminder(resolved, d, 0, now))).toThrow(
+      'the action dispatched nothing',
+    );
+  });
+
+  it('does nothing when there is no reminder to resolve', () => {
+    const state = taskState();
+    expect(() => run(state, (d) => resolveTaskReminder(state, d, 0, now))).toThrow(
+      'the action dispatched nothing',
+    );
+  });
+
+  it('drops the completion stamp when the reminder is set again', () => {
+    const state = taskState();
+    const set = runState(state, (d) => setTaskReminder(state, d, 0, 'in1hour', now));
+    const resolved = runState(set, (d) => resolveTaskReminder(set, d, 0, now));
+    const rescheduled = runState(resolved, (d) => setTaskReminder(resolved, d, 0, 'in20min', now));
+    expect(rescheduled.doc.child(0).attrs.reminderCompletedAt).toBeNull();
+    expect(rescheduled.doc.child(0).attrs.remindAt).toBe('2026-09-28T07:43:00.307Z');
+  });
+
+  it('clearing removes both the moment and the completion stamp', () => {
+    const state = taskState();
+    const set = runState(state, (d) => setTaskReminder(state, d, 0, 'in1hour', now));
+    const resolved = runState(set, (d) => resolveTaskReminder(set, d, 0, now));
+    const cleared = runState(resolved, (d) => clearTaskReminder(resolved, d, 0));
+    expect(cleared.doc.child(0).attrs.remindAt).toBeNull();
+    expect(cleared.doc.child(0).attrs.reminderCompletedAt).toBeNull();
+  });
+
+  it('stamps a non-task block the same way, keeping its remindAt', () => {
+    const state = EditorState.create({
+      schema,
+      doc: schema.nodes.doc.create(null, [
+        schema.nodes.paragraph.create({ blockId: 'blk-1' }, schema.text('一段普通正文')),
+      ]),
+    });
+    const set = runState(state, (d) => setBlockReminder(state, d, 0, 'in1hour', now));
+    const next = runState(set, (d) => resolveBlockReminder(set, d, 0, now));
+    expect(next.doc.child(0).attrs.reminderCompletedAt).toBe('2026-09-28T07:23:00.307Z');
+    expect(next.doc.child(0).attrs.remindAt).toBe('2026-09-28T08:23:00.307Z');
   });
 });
 

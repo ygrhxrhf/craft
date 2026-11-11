@@ -538,7 +538,49 @@ export function toggleTaskCancelledAtSelection(
   return true;
 }
 
-/** Clears a task item's reminder. Both 移除提醒 and 标记为已解决 end with the pill gone. */
+/** 已解决的提醒照样带着 `remindAt`；这里只判完成戳在不在。 */
+function isResolved(attrs: Record<string, unknown>): boolean {
+  return typeof attrs.reminderCompletedAt === 'string' && attrs.reminderCompletedAt !== '';
+}
+
+/**
+ * G703 —— 「标记为已解决」：在提醒上打完成戳，**不删提醒**（官方 resolve 写 `isCompleted`＋
+ * `completionDate`，与 `dueDate` 并存）。已经解决过、或本就没有提醒 ⇒ 不发事务，重复点不挪时间戳。
+ */
+export function resolveTaskReminder(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  now: Date,
+) {
+  const target = taskItemTarget(state, index);
+  if (!target || !target.node.attrs.remindAt || isResolved(target.node.attrs)) return;
+  dispatch(
+    state.tr.setNodeMarkup(target.pos, undefined, {
+      ...target.node.attrs,
+      reminderCompletedAt: now.toISOString(),
+    }),
+  );
+}
+
+/** G703 —— 非任务块那一支的「标记为已解决」（与 `resolveTaskReminder` 对称）。 */
+export function resolveBlockReminder(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  now: Date,
+) {
+  const target = anchorableBlockTarget(state, index);
+  if (!target || !target.node.attrs.remindAt || isResolved(target.node.attrs)) return;
+  dispatch(
+    state.tr.setNodeMarkup(target.pos, undefined, {
+      ...target.node.attrs,
+      reminderCompletedAt: now.toISOString(),
+    }),
+  );
+}
+
+/** 清掉任务行的提醒。移除提醒清两枚属性（时刻与完成戳一起走）。 */
 export function clearTaskReminder(
   state: EditorState,
   dispatch: (tr: Transaction) => void,
@@ -546,7 +588,13 @@ export function clearTaskReminder(
 ) {
   const target = taskItemTarget(state, index);
   if (!target || !target.node.attrs.remindAt) return;
-  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, remindAt: null }));
+  dispatch(
+    state.tr.setNodeMarkup(target.pos, undefined, {
+      ...target.node.attrs,
+      remindAt: null,
+      reminderCompletedAt: null,
+    }),
+  );
 }
 
 /**
@@ -586,7 +634,14 @@ export function setTaskReminderAt(
 ) {
   const target = taskItemTarget(state, index);
   if (!target) return;
-  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, remindAt: iso }));
+  // G703：写新时刻即开启新一次提醒 ⇒ 顺手清掉旧的完成戳（已解决的那枚不再算数）。
+  dispatch(
+    state.tr.setNodeMarkup(target.pos, undefined, {
+      ...target.node.attrs,
+      remindAt: iso,
+      reminderCompletedAt: null,
+    }),
+  );
 }
 
 /** G1466 —— 非任务块上的显式时刻提醒（「自定义…」的块那一支）。 */
@@ -598,7 +653,13 @@ export function setBlockReminderAt(
 ) {
   const target = anchorableBlockTarget(state, index);
   if (!target) return;
-  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, remindAt: iso }));
+  dispatch(
+    state.tr.setNodeMarkup(target.pos, undefined, {
+      ...target.node.attrs,
+      remindAt: iso,
+      reminderCompletedAt: null,
+    }),
+  );
 }
 
 export function setTaskReminder(
@@ -616,10 +677,12 @@ export function setTaskReminder(
   if (!isInstantPreset(preset)) return;
   const instant = remindInstantFor(preset, now);
   if (!instant) return;
+  // G703：写新时刻即开启新一次提醒 ⇒ 旧的完成戳一起清掉。
   dispatch(
     state.tr.setNodeMarkup(target.pos, undefined, {
       ...target.node.attrs,
       remindAt: instant.toISOString(),
+      reminderCompletedAt: null,
     }),
   );
 }
@@ -653,15 +716,17 @@ export function setBlockReminder(
   if (!isInstantPreset(preset)) return;
   const instant = remindInstantFor(preset, now);
   if (!instant) return;
+  // G703：写新时刻即开启新一次提醒 ⇒ 旧的完成戳一起清掉。
   dispatch(
     state.tr.setNodeMarkup(target.pos, undefined, {
       ...target.node.attrs,
       remindAt: instant.toISOString(),
+      reminderCompletedAt: null,
     }),
   );
 }
 
-/** G252 —— 清掉非任务块的提醒（与 `clearTaskReminder` 对称）。 */
+/** G252 —— 清掉非任务块的提醒（与 `clearTaskReminder` 对称；两枚属性一起清）。 */
 export function clearBlockReminder(
   state: EditorState,
   dispatch: (tr: Transaction) => void,
@@ -669,7 +734,13 @@ export function clearBlockReminder(
 ) {
   const target = anchorableBlockTarget(state, index);
   if (!target || !target.node.attrs.remindAt) return;
-  dispatch(state.tr.setNodeMarkup(target.pos, undefined, { ...target.node.attrs, remindAt: null }));
+  dispatch(
+    state.tr.setNodeMarkup(target.pos, undefined, {
+      ...target.node.attrs,
+      remindAt: null,
+      reminderCompletedAt: null,
+    }),
+  );
 }
 
 function locationOrigin(): string {

@@ -16,6 +16,8 @@ import {
   anchorableBlockTarget,
   clearBlockReminder,
   clearTaskReminder,
+  resolveBlockReminder,
+  resolveTaskReminder,
   setBlockReminder,
   setBlockReminderAt,
   setTaskDateField,
@@ -41,6 +43,16 @@ function reminderAtOf(view: EditorView, index: number): unknown {
 function clearReminderAt(view: EditorView, index: number) {
   if (taskItemTarget(view.state, index)) clearTaskReminder(view.state, view.dispatch, index);
   else clearBlockReminder(view.state, view.dispatch, index);
+}
+
+/**
+ * G703 —— 「标记为已解决」只打完成戳，提醒本身留着（官方 resolve 写 `isCompleted`＋
+ * `completionDate`，与提醒时刻并存）。与「移除提醒」是两回事。
+ */
+function resolveReminderAt(view: EditorView, index: number) {
+  const now = new Date();
+  if (taskItemTarget(view.state, index)) resolveTaskReminder(view.state, view.dispatch, index, now);
+  else resolveBlockReminder(view.state, view.dispatch, index, now);
 }
 
 /**
@@ -149,8 +161,8 @@ function menuItem(label: string, onPick: () => void): HTMLButtonElement {  const
 }
 
 /**
- * The pill's own menu (G1468): 标记为已解决, 改期, 移除提醒. The first and the last both end with
- * the reminder gone; 改期 reopens the seven presets, since that is the only reschedule surface.
+ * The pill's own menu (G1468): 标记为已解决, 改期, 移除提醒. 改期 reopens the seven presets, since that
+ * is the only reschedule surface. ☆ G703：已解决是**打完成戳**，提醒留在块上；只有移除提醒才清掉它。
  * ☆ G87：块上已有**即将到期**的提醒时，改期要先确认（官方那对逐字句），过了就照旧直接开七档。
  */
 function openReminderMenu(anchor: HTMLElement, view: EditorView, pos: number) {
@@ -182,6 +194,10 @@ function openReminderMenu(anchor: HTMLElement, view: EditorView, pos: number) {
             return;
           }
           openPresetMenu(anchor, view, pos);
+          return;
+        }
+        if (action.id === 'markResolved') {
+          run(() => resolveReminderAt(view, blockIndexAt(view, pos)));
           return;
         }
         run(() => clearReminderAt(view, blockIndexAt(view, pos)));
@@ -285,13 +301,17 @@ export const ReminderPill = Extension.create({
               if (Number.isNaN(at.getTime())) return;
               const label = reminderPillLabel(at, now);
               if (!label) return;
+              // G703：完成戳在 ⇒ 这枚提醒已解决，pill 仍显示原时刻但换成弱化样式（提醒没被删）。
+              const completedAt = node.attrs.reminderCompletedAt;
+              const resolved = typeof completedAt === 'string' && completedAt !== '';
               widgets.push(
                 Decoration.widget(
                   pos + node.nodeSize - 1,
                   (view) => {
                     const pill = document.createElement('button');
                     pill.type = 'button';
-                    pill.className = 'reminder-pill';
+                    pill.className = resolved ? 'reminder-pill reminder-pill-resolved' : 'reminder-pill';
+                    pill.dataset.reminderResolved = resolved ? 'true' : '';
                     pill.textContent = label;
                     pill.addEventListener('mousedown', (event) => {
                       event.preventDefault();

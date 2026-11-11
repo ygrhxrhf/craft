@@ -5,6 +5,7 @@ import {
   enrichReminder,
   isTempReminder,
   mintTempReminderId,
+  reminderCompletion,
   resolveReminder,
   unresolveReminder,
   type Reminder,
@@ -49,6 +50,13 @@ describe('the reminder entity (G252)', () => {
     expect(unresolveReminder(resolveReminder(base, 1000)).completionDate).toBeUndefined();
   });
 
+  it('keeps the reminder itself when resolving — completion does not erase the due moment', () => {
+    const resolved = resolveReminder(base, 1000);
+    expect(resolved.id).toBe(base.id);
+    expect(resolved.blockId).toBe('b1');
+    expect(resolved.documentId).toBe('d1');
+  });
+
   it('identifies a not-yet-persisted reminder by its id prefix', () => {
     const temp = mintTempReminderId('abc');
     expect(temp).toBe('new_reminder_abc');
@@ -58,8 +66,25 @@ describe('the reminder entity (G252)', () => {
 });
 
 /**
- * G357: three parallel time icons, each its own entry to one time semantic.
+ * G703: the completion stamp is additive — `completionDate` lives beside the reminder moment,
+ * never replacing it, and an empty/broken stamp reads back as unresolved.
  */
+describe('the completion stamp (G703)', () => {
+  it('maps an ISO stamp onto isCompleted + completionDate', () => {
+    const iso = '2026-09-28T07:23:00.307Z';
+    expect(reminderCompletion(iso)).toEqual({
+      isCompleted: true,
+      completionDate: Date.parse(iso),
+    });
+  });
+
+  it('reads back unresolved for empty, missing and broken stamps', () => {
+    for (const value of [null, undefined, '', 'not-a-date']) {
+      expect(reminderCompletion(value)).toEqual({ isCompleted: false, completionDate: undefined });
+    }
+  });
+});
+
 describe('the three time icons (G357)', () => {
   it('names three icons', () => {
     expect(TIME_ICONS.map((i) => i.kind)).toEqual(['schedule', 'deadline', 'reminder']);

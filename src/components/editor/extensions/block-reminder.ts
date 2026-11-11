@@ -25,6 +25,15 @@ export const BlockReminderAttr = Extension.create({
             renderHTML: (attributes) =>
               attributes.remindAt ? { 'data-remind-at': attributes.remindAt } : {},
           },
+          // G703：完成戳与 remindAt 并存（官方 resolve 打 `completionDate`，不删提醒）。
+          reminderCompletedAt: {
+            default: null,
+            parseHTML: (element) => element.getAttribute('data-reminder-completed-at'),
+            renderHTML: (attributes) =>
+              attributes.reminderCompletedAt
+                ? { 'data-reminder-completed-at': attributes.reminderCompletedAt }
+                : {},
+          },
         },
       },
     ];

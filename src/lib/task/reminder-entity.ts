@@ -83,12 +83,42 @@ export function enrichReminder(reminder: Reminder): ReminderEnrich {
   return { kind: 'unknown', warning: 'Unknown reminder type' };
 }
 
+/**
+ * G703 —— 提醒完成态的两枚字段。官方的 resolve 不是"删掉提醒"，而是**在提醒上打完成戳**：
+ * `completionDate` 与原 `dueDate`／`remindAt` 并存、互不抹除（`interactions.md:1036`）。
+ */
+export interface ReminderCompletion {
+  isCompleted: boolean;
+  completionDate?: number;
+}
+
+/** resolve 那支：置 `isCompleted` 并写 `completionDate`（官方 `Dzt`）。 */
+export function resolveCompletion(now: number): ReminderCompletion {
+  return { isCompleted: true, completionDate: now };
+}
+
+/** unresolve 那支：把 `completionDate` 显式清成 `undefined`（官方 `completionDate:void 0`）。 */
+export function unresolveCompletion(): ReminderCompletion {
+  return { isCompleted: false, completionDate: undefined };
+}
+
 /** resolve：置 `isCompleted` 并写 `completionDate`（官方 `Dzt`）。 */
 export function resolveReminder(reminder: Reminder, now: number): Reminder {
-  return { ...reminder, isCompleted: true, completionDate: now };
+  return { ...reminder, ...resolveCompletion(now) };
 }
 
 /** unresolve：把 `completionDate` 清成 `undefined`（官方反向那支）。 */
 export function unresolveReminder(reminder: Reminder): Reminder {
-  return { ...reminder, isCompleted: false, completionDate: undefined };
+  return { ...reminder, ...unresolveCompletion() };
+}
+
+/**
+ * 正文属性 → 完成态。`reminderCompletedAt` 是 ISO 串（块被"标记为已解决"时写入）。
+ * 有值且可解析 ⇒ resolve 那支；空值或坏值 ⇒ unresolve 那支。
+ */
+export function reminderCompletion(completedAt?: string | null): ReminderCompletion {
+  if (!completedAt) return unresolveCompletion();
+  const ms = Date.parse(completedAt);
+  if (Number.isNaN(ms)) return unresolveCompletion();
+  return resolveCompletion(ms);
 }

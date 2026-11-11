@@ -2,6 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
+import { closeHistory } from '@tiptap/pm/history';
 import type { Editor } from '@tiptap/react';
 import {
   ArrowDown, ArrowUp, Ban, Bell, ChevronDown, ChevronRight, ChevronUp, Code, Copy, CreditCard,
@@ -570,8 +571,9 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
       tr.insert(insertPos, slice.content);
       const $new = tr.doc.resolve(Math.min(insertPos + 1, tr.doc.content.size));
       tr.setSelection(TextSelection.near($new));
-      view.dispatch(tr);
-      view.focus();
+      // G988: one drag is one undo step even when it lands inside the 500ms newGroupDelay,
+      // and the move must not steal focus — official leaves rangeCount at 0 after a drop.
+      view.dispatch(closeHistory(tr));
     },
     [editor]
   );

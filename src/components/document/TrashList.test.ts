@@ -97,8 +97,32 @@ describe('the trash copy is the official text, and the disclaimer is conditional
   });
 });
 
-describe('G233 清空最近删除', () => {
+describe('G997 回收站行带已存快照的内容摘要', () => {
   const source = readFileSync(
+    fileURLToPath(new URL('./TrashList.tsx', import.meta.url)),
+    'utf8',
+  );
+
+  it('renders the summary from the stored plainText through the shared fallback chain', () => {
+    // 官方卡片预览＝服务端最后落库态；本地回收站同一条回退链（正文预览/空文档/「/」）。
+    expect(source).toContain('rowSubtitle({ plainText: doc.plainText })');
+    expect(source).toMatch(/import\s*\{[^}]*rowSubtitle[^}]*\}\s*from\s*'@\/lib\/browse\/row-subtitle'/);
+    // 没有快照的 pending 行不渲染这一行，避免把「空文档」当成本地新建删除的真相。
+    expect(source).toContain("typeof doc.plainText === 'string'");
+  });
+
+  it('never re-renders the deleted document body inside the trash', () => {
+    expect(source).not.toContain('doc.content');
+    expect(source).not.toContain('serializeDocument');
+  });
+
+  it('keeps the row two lines tall and moves the delete date beside it', () => {
+    expect(source).toContain('删除于 {deletedDate}');
+    expect(source).toMatch(/className="flex h-10 items-center gap-3 rounded-md px-2/);
+  });
+});
+
+describe('G233 清空最近删除', () => {  const source = readFileSync(
     fileURLToPath(new URL('./TrashList.tsx', import.meta.url)),
     'utf8',
   );

@@ -33,12 +33,15 @@ import {
 import { useRouter } from 'next/navigation';
 import { untitledFor } from '@/lib/document/untitled-copy';
 import { pendingLabel } from '@/lib/app/pending-states';
+import { rowSubtitle } from '@/lib/browse/row-subtitle';
 
 interface TrashDoc {
   id: string;
   title: string;
   icon: string | null;
   deletedAt: string | null;
+  /** G997: the stored plain-text snapshot the row's summary line renders. */
+  plainText?: string | null;
 }
 
 const TRASH_VIRTUAL_THRESHOLD = 60;
@@ -341,12 +344,19 @@ export function TrashList({ documents }: TrashListProps) {
                 <File className="size-5 shrink-0 text-foreground/40" />
               )
             )}
-            <div className="flex-1 truncate">
+            <div className="flex min-w-0 flex-1 flex-col">
               <p className="truncate text-ui font-medium">{doc.title || untitledFor('list')}</p>
-              <p className="text-meta text-foreground/55">
-                删除于 {deletedDate}
-              </p>
+              {/* G997：行副标题是已存快照的内容摘要（与浏览列表同一条回退链），
+                  不在回收站里重渲染正文。pending 行没有快照时这条不渲染。 */}
+              {typeof doc.plainText === 'string' && (
+                <p className="truncate text-meta text-foreground/55">
+                  {rowSubtitle({ plainText: doc.plainText })}
+                </p>
+              )}
             </div>
+            <span className="shrink-0 text-meta text-foreground/55">
+              删除于 {deletedDate}
+            </span>
             {!selecting && (
               <Button
                 variant="ghost"

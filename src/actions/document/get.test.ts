@@ -170,8 +170,10 @@ describe('the other document list reads', () => {
   it('getDeletedDocuments returns only what the trash row renders', async () => {
     const rows = await getDeletedDocuments();
     expect(rows.map((r) => (r as { id: string }).id)).toContain(trashedId);
+    // G997: `plainText` joined for the row's content summary — the stored snapshot, which is
+    // what the official card preview shows; it is never re-derived from `content`.
     expect(keys(rows)).toEqual(
-      rows.map(() => ['deletedAt', 'icon', 'id', 'title'].sort())
+      rows.map(() => ['deletedAt', 'icon', 'id', 'plainText', 'title'].sort())
     );
   });
 

@@ -164,11 +164,15 @@ export async function getDeletedDocuments() {
     title: string;
     icon: string | null;
     deletedAt: string | null;
+    plainText: string;
   }> = [];
 
+  // G997: the trash row's content summary is the **stored snapshot**, never re-rendered from the
+  // deleted document's `content` — that is what the official card preview shows (the last state
+  // the server persisted). Only the trash read carries `plainText`; the live lists still do not.
   const result = await db.orm.public.Document
     .where({ userId: session.user.id, isDeleted: true })
-    .select('id', 'title', 'icon', 'deletedAt')
+    .select('id', 'title', 'icon', 'deletedAt', 'plainText')
     .orderBy((m: any) => m.deletedAt.desc())
     .all();
 

@@ -8491,11 +8491,15 @@
       ]
     },
     "G997": {
-      "status": "partial",
-      "note": "回收站行仅标题＋删除日期，无正文摘要卡片",
+      "status": "aligned",
+      "note": "官方三子项逐条对照：①卡片/行带内容摘要——回收站行副标题渲染已存快照摘要；②摘要反映服务端最后落库态——读的是 plainText 列而非重渲染 content；③任务块以文本形态出现——plainText 由 renderText 序列化，任务块即文本行。载体差：本地回收站是列表档而非网格卡片，摘要落在行副标题。",
       "evidence": [
-        "src/components/document/TrashList.tsx:304"
-      ]
+        "src/actions/document/get.ts:176",
+        "src/components/document/TrashList.tsx",
+        "src/components/document/TrashList.test.ts",
+        "src/actions/document/get.test.ts:170"
+      ],
+      "priority": "P2"
     },
     "G1000": {
       "status": "nonaction",

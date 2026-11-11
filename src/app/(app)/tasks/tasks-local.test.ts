@@ -60,6 +60,7 @@ const task = (over: Partial<TaskItem> & { id: string }): TaskItem => ({
   recurrence: null,
   recurrenceEnd: null,
   documentId: null,
+  blockId: null,
   documentTitle: null,
   ...over,
 });

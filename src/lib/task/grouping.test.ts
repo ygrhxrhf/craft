@@ -16,6 +16,7 @@ const task = (dueDate: string | null): TaskItem => ({
   recurrence: null,
   recurrenceEnd: null,
   documentId: null,
+  blockId: null,
 });
 
 // Fixed local noon so the assertions are about the *calendar day* and never about when the test

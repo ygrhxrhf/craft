@@ -15,6 +15,7 @@ function task(overrides: Partial<TaskItem> = {}): TaskItem {
     recurrence: null,
     recurrenceEnd: null,
     documentId: null,
+    blockId: null,
     ...overrides,
   };
 }

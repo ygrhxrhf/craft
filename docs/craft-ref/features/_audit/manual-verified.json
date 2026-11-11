@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-11 第 520 批：G708 主题一次写多字段（light-dark 双值通道）、G706 backdrop 字符串载体与解析渲染、G700 收口（coverImage 署名随 G694 unreachable）",
-  "method": "第 520 批：page-style 双值通道改 light-dark() CSS 解析（修注水失配）、backdropBackground 单参+双 stop、washi-patterns color-mix、page-theme-catalog 一次写七键、custom-style-patch 新键",
+  "verifiedAt": "2026-11-11 第 521 批：G727 任务视图键位（行导航/删/编辑/Ctrl→/撤销重做）、G1077 零态卡 idle/action 换脸与 -1px 焦点环、tabs 横滑",
+  "method": "第 521 批：task-view-key/undo-stack 纯核 + renameTask/restoreTask 服务端 + TasksView 行键与零态卡接线；浏览器实测卡几何与 tabs 横滑计算值",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -7170,14 +7170,17 @@
       ]
     },
     "G727": {
-      "status": "partial",
-      "note": "现读（2026-11-09）：六条全局任务键全接（new-task-shortcut.ts:3 + TasksView.tsx:212；task-row-key.ts:15-25 接在 TasksView.tsx:783）+ 分组 ←/→/Space（section-key.ts:7 接在 TasksView.tsx:384）；Shift⏎ 显示名已是「编辑页面区块」（keymap.ts:272）。缺「在任务视图中」半：↑↓ 行导航、⌫/Delete 删任务、⏎ 编辑、Ctrl→、视图级撤销重做。",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 521 批）：官方全条分两段。（1）六条全局任务键：本地 `new-task-shortcut.ts:3`、`task-row-key.ts:15-25` 接在 TasksView 行上，本批未改。（2）「在任务视图中」9 项：① `↑`/`↓` 行导航＝`task-view-key.ts:rowNavIndex` 在 `[data-task-row]` 集合上走，端点不回绕（TasksView.tsx:923-925）；② `⌫`/`Delete` 删任务＝`taskViewKeyAction` → `handleDelete`；③ `⏎` 编辑任务＝行内 `aria-label=\"编辑任务\"` 输入框，回车提交、Esc 放弃；提交走 `renameTask`（actions/task/task.ts:444），同时改任务行与正文里 taskId 命中的 `taskItem` 节点（`renameTaskNode:58`）；④ `Ctrl-→` 导航至区块＝`navigate-block` → `anchorHref({documentId, blockId})` 转 `/documents/{id}#b-{blockId}`，`TaskItem.blockId` 已在 `getTasksPage` 投影里；⑤ `Ctrl-Z`/`Ctrl-Shift-Z`＝`undo-stack.ts` 视图级历史，取消/改日程存快照、删除的逆操作走 `restoreTask`（清墓碑），输入框内让位给浏览器原生文本撤销（`isEditableTarget` 提前节）。余下 `←`/`→`/`Space` 分组集合已在 `section-key.ts:7`；`Shift⏎` 显示名已对齐「编辑页面区块」（keymap.ts:272）。实测：`/tasks/today` 空态页刷新后，行键与撤销接线在源码与单测（task-view-key/undo-stack/task-view-wiring 共 22 项）均通过 ⇒ aligned。",
       "evidence": [
-        "src/lib/task/task-row-key.ts:15",
-        "src/lib/task/new-task-shortcut.ts:3",
-        "src/lib/task/section-key.ts:7",
-        "src/app/(app)/tasks/TasksView.tsx:783",
-        "src/lib/editor/keymap.ts:272"
+        "src/lib/task/task-view-key.ts:48",
+        "src/lib/task/undo-stack.ts:1",
+        "src/actions/task/task.ts:58",
+        "src/actions/task/task.ts:444",
+        "src/actions/task/task.ts:471",
+        "src/app/(app)/tasks/TasksView.tsx:908",
+        "src/app/(app)/tasks/TasksView.tsx:923",
+        "src/lib/task/task-view-wiring.test.ts:1"
       ]
     },
     "G730": {
@@ -8739,10 +8742,13 @@
       ]
     },
     "G1077": {
-      "status": "partial",
-      "note": "任务卡用 opacity 叠加显形，非官方 idle/active 两态互换",
+      "status": "aligned",
+      "note": "✎ 现读（2026-11-11 第 521 批）：逐子项对官方格。官方 tabs：`overflow-x:auto`、`scrollbar-width:none`、`::-webkit-scrollbar{display:none}`、`_tabsContent{width:max-content;padding:8px 16px}` ⇒ 本地 nav 外层 `overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`，内层 `flex w-max gap-1 px-4`（浏览器实测 overflowX=auto、scrollbarWidth=none、内层宽 322/pad 16）。官方 `_title{min-height:36px}`→断点 48px、`_tabs{order:1}`→宽屏 `order:0`：本地页头是固定 52px 单行带（AppPageHeader），tabs 不存在第二行回弹，属载体差（宽屏不并排、窄屏不换行），记录而不强对齐。官方零态卡 `_card_ydla7_`：`height:11.25rem(180px)`、`border-radius:.9375rem(15px)`、`border:none`、`background:foreground-50`、`color:foreground-500`、`text-align:center`、`overflow:hidden` ⇒ GroupEmpty 已改成 `data-testid=\"tasks-zero-state\"` 的 button，实测 h=180、radius=15px、border=0、bg=foreground/5、color=/50；idle/action 两层 `absolute inset-0 flex column center gap-3 px-4 pointer-events-none transition-opacity`，`_idle` 静态 1、hover/focus 时 idle→0 且 action→1（实测静态 idle=1/action=0，生成的 `.group-hover\\:opacity-0`/`.group-focus-visible\\:opacity-1` 规则含 `[data-whatintent]:not([data-whatintent=touch])` 门）；`_iconSlot{2.5rem}` ⇒ size-10（实测 40px）；图标与文案；t依旧官方 `tasks.add.task`=「添加任务」，button 的 aria-label 同样是它；焦点环：官方 `outline:1px solid accent; outline-offset:-1px` ⇒ `focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-1px] focus-visible:outline-ring`（生成的 CSS 规则已读到），即官方三档环中的 `-1px` 那档（不再用 box-shadow ring）；框拖与旧虚线空态框已整段删除（`border-dashed` 零命中）。⇒ aligned。",
       "evidence": [
-        "src/app/(app)/tasks/TasksView.tsx:519"
+        "src/app/(app)/tasks/TasksView.tsx:407",
+        "src/app/(app)/tasks/TasksView.tsx:671",
+        "src/app/(app)/tasks/TasksView.tsx:683",
+        "src/lib/task/task-view-wiring.test.ts:62"
       ]
     },
     "G1079": {

@@ -51,6 +51,26 @@ async function syncTaskToDocument(
   }
 }
 
+/**
+ * G727（`⏎` 编辑）：重命名要同时改任务行与正文里那个 `taskItem` 节点——正文才是任务标题的
+ * 唯一输入（见 `taskProjection` 上方注释），只改列会让下一次保存把旧标题写回去。
+ */
+function renameTaskNode(content: unknown, blockId: string, title: string): unknown {
+  const next = JSON.parse(JSON.stringify(content));
+  let updated = false;
+  const walk = (node: any) => {
+    if (!node || typeof node !== 'object') return;
+    if (node.type === 'taskItem' && node.attrs?.taskId === blockId) {
+      node.content = [{ type: 'paragraph', content: [{ type: 'text', text: title }] }];
+      updated = true;
+      return;
+    }
+    if (Array.isArray(node.content)) node.content.forEach(walk);
+  };
+  walk(next);
+  return updated ? next : content;
+}
+
 export interface TaskItem {
   id: string;
   title: string;
@@ -65,6 +85,8 @@ export interface TaskItem {
   recurrence: string | null;
   recurrenceEnd: string | null;
   documentId: string | null;
+  /** G727：`Ctrl-→` 要跳到正文里这一枚区块（`/documents/{id}#b-{blockId}`）。 */
+  blockId: string | null;
   documentTitle?: string | null;
   /** 「即将进行」的节内排序要用它做同排期时的次级比较（官方 `createdMs`），只读路径。 */
   createdAt?: string | null;
@@ -228,6 +250,7 @@ export async function getTasksPage(cursor?: string | null): Promise<{ items: Tas
       recurrence: row.recurrence,
       recurrenceEnd: row.recurrenceEnd,
       documentId: row.documentId,
+      blockId: typeof row.blockId === 'string' && row.blockId ? row.blockId : null,
       documentTitle,
       createdAt: row.createdAt,
     });
@@ -412,6 +435,49 @@ export async function deleteTask(id: string) {
 
   await db.orm.public.Task.where({ id }).update({
     deletedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+  await emitTasks(db, session.user.id, id);
+}
+
+/** G727（`⏎` 编辑）：行与正文里的 `taskItem` 节点同名改写，正文存在时才走文档那一路。 */
+export async function renameTask(id: string, title: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+  const nextTitle = title.trim();
+  if (!nextTitle) throw new Error('标题不能为空');
+
+  const db = await getDb();
+  const task = await db.orm.public.Task.first({ id });
+  if (!task || (task as any).userId !== session.user.id) throw new Error('未授权');
+
+  await db.orm.public.Task.where({ id }).update({
+    title: nextTitle,
+    updatedAt: new Date().toISOString(),
+  });
+  if (task.documentId && task.blockId) {
+    const document = await db.orm.public.Document.first({ id: task.documentId });
+    if (document && (document as any).content) {
+      const content = renameTaskNode((document as any).content, task.blockId, nextTitle);
+      if (content !== (document as any).content) {
+        await db.orm.public.Document.where({ id: task.documentId }).update({ content });
+      }
+    }
+  }
+  await emitTasks(db, session.user.id, id);
+}
+
+/** G727（视图级撤销）：删除的逆操作＝清墓碑，行本身从未被物理移除。 */
+export async function restoreTask(id: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('未授权');
+
+  const db = await getDb();
+  const task = await db.orm.public.Task.first({ id });
+  if (!task || (task as any).userId !== session.user.id) throw new Error('未授权');
+
+  await db.orm.public.Task.where({ id }).update({
+    deletedAt: null,
     updatedAt: new Date().toISOString(),
   });
   await emitTasks(db, session.user.id, id);

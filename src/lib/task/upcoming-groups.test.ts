@@ -31,6 +31,7 @@ function task(id: string, dueDate: string | null, createdAt: string | null = nul
     recurrence: null,
     recurrenceEnd: null,
     documentId: null,
+    blockId: null,
     createdAt,
   };
 }

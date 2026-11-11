@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -20,7 +20,7 @@ import { REMIND_OFFSET_TIERS, remindAtFromOffset, remindOffsetLabel } from '@/li
 import { instantForSlot, slotIndexForTime, timeSlots } from '@/lib/task/time-menu';
 import { RepeatIntervalSelect } from '@/components/task/RepeatIntervalSelect';
 import { RepeatAnchorNote } from '@/components/task/RepeatAnchorNote';
-import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasks, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
+import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasks, renameTask, restoreTask, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
 import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
 import { SERIES_OPS } from '@/lib/task/series-ops';
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
@@ -37,6 +37,9 @@ import { fromDayInputValue, toDayInputValue, localDayInstant } from '@/lib/task/
 import { taskDateOptions } from '@/lib/task/task-date-menu';
 import { isNewTaskShortcut } from '@/lib/task/new-task-shortcut';
 import { taskRowKeyAction } from '@/lib/task/task-row-key';
+import { anchorHref } from '@/lib/editor/block-anchor';
+import { isEditableTarget, rowNavIndex, taskHistoryKeyAction, taskViewKeyAction } from '@/lib/task/task-view-key';
+import { EMPTY_UNDO, pushUndo, takeRedo, takeUndo, type UndoEntry, type UndoState } from '@/lib/task/undo-stack';
 import { applySectionAction, sectionKeyAction } from '@/lib/task/section-key';
 import { bulkCheckLabel, bulkCheckTargets } from '@/lib/task/bulk-check';
 import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
@@ -184,6 +187,15 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     await manager.flushNow();
   };
 
+  /**
+   * G727：视图级撤销／重做（`Ctrl-Z`／`Ctrl-Shift-Z`）。栈只存**已发生**的那一步与它的逆，
+   * 判定与出栈全在 `undo-stack.ts` 纯核里；这里只负责给每一步记下"怎么退回去"。
+   */
+  const historyRef = useRef<UndoState>(EMPTY_UNDO);
+  const recordUndo = (entry: UndoEntry) => {
+    historyRef.current = pushUndo(historyRef.current, entry);
+  };
+
   const handleAdd = async () => {
     const title = newTitle.trim();
     if (!title) return;
@@ -215,6 +227,15 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
         return;
       }
       if (event.key === 'Escape') setQuickOpen(false);
+      // G727：`Ctrl-Z`／`Ctrl-Shift-Z` 是视图级撤销重做；输入框里让位给浏览器原生的文本撤销。
+      if (isEditableTarget(event.target as HTMLElement | null)) return;
+      const history = taskHistoryKeyAction(event);
+      if (!history) return;
+      event.preventDefault();
+      const taken = history === 'undo' ? takeUndo(historyRef.current) : takeRedo(historyRef.current);
+      if (!taken.entry) return;
+      historyRef.current = taken.state;
+      void (history === 'undo' ? taken.entry.undo() : taken.entry.redo());
     };
     globalThis.addEventListener('keydown', onKey);
     return () => globalThis.removeEventListener('keydown', onKey);
@@ -262,6 +283,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   };
 
   const handleCancel = async (id: string) => {
+    const prior = tasks.find((task) => task.id === id);
     const now = new Date().toISOString();
     await getSyncManager().applyLocal({
       table: 'task',
@@ -269,17 +291,69 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
       patch: { isCompleted: false, status: 'cancelled', cancelledAt: now, updatedAt: now },
     });
     await load();
+    if (prior) {
+      recordUndo({
+        label: '取消任务',
+        undo: async () => {
+          await getSyncManager().applyLocal({
+            table: 'task',
+            id,
+            patch: {
+              isCompleted: prior.isCompleted,
+              status: prior.status,
+              cancelledAt: prior.cancelledAt,
+              updatedAt: new Date().toISOString(),
+            },
+          });
+          await load();
+        },
+        redo: () => handleCancel(id),
+      });
+    }
   };
 
   const handleSchedule = async (id: string, schedule: TaskSchedule) => {
+    const prior = tasks.find((task) => task.id === id);
     const now = new Date().toISOString();
     await writeTask(id, () => taskPatchFor.schedule(schedule, now), () => setTaskSchedule(id, schedule));
     await load();
+    if (prior) {
+      const before: TaskSchedule = {
+        dueDate: prior.dueDate,
+        scheduleDate: prior.scheduleDate,
+        remindAt: prior.remindAt,
+        recurrence: prior.recurrence,
+        recurrenceEnd: prior.recurrenceEnd,
+      };
+      recordUndo({
+        label: '改任务日程',
+        undo: () => handleSchedule(id, before),
+        redo: () => handleSchedule(id, schedule),
+      });
+    }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, record = true) => {
     // patch === null 才是 delete op（applyLocal 据此定 op，服务端 delete 分支写墓碑列）
     await writeTask(id, () => null, () => deleteTask(id));
+    await load();
+    // G727：删除是视图里最不可逆的一步 ⇒ 逆操作＝清墓碑（行从未被物理移除）。
+    if (record) {
+      recordUndo({
+        label: '删除任务',
+        undo: async () => {
+          await restoreTask(id);
+          await load();
+        },
+        redo: () => handleDelete(id, false),
+      });
+    }
+  };
+
+  const handleRename = async (id: string, title: string) => {
+    const next = title.trim();
+    if (!next) return;
+    await renameTask(id, next);
     await load();
   };
 
@@ -330,22 +404,29 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
           </div>
         }
       />
-      <nav className="flex gap-1 border-b border-border px-4" data-testid="task-groups">
-        {GROUPS.map((entry) => (
-          <Link
-            key={entry.group}
-            href={entry.href}
-            aria-current={entry.group === group ? 'page' : undefined}
-            className={cn(
-              'border-b-2 px-3 py-2 text-sm transition-colors',
-              entry.group === group
-                ? 'border-foreground text-foreground'
-                : 'border-transparent text-muted-foreground hover:text-foreground',
-            )}
-          >
-            {entry.label}
-          </Link>
-        ))}
+      {/* G1077：官方的 tabs 是 `overflow-x:auto` ＋ `scrollbar-width:none`／
+          `::-webkit-scrollbar{display:none}`，内容行 `width:max-content`；窄屏横滑、不显条。 */}
+      <nav
+        className="overflow-x-auto border-b border-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        data-testid="task-groups"
+      >
+        <div className="flex w-max gap-1 px-4">
+          {GROUPS.map((entry) => (
+            <Link
+              key={entry.group}
+              href={entry.href}
+              aria-current={entry.group === group ? 'page' : undefined}
+              className={cn(
+                'shrink-0 border-b-2 px-3 py-2 text-sm transition-colors',
+                entry.group === group
+                  ? 'border-foreground text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground',
+              )}
+            >
+              {entry.label}
+            </Link>
+          ))}
+        </div>
       </nav>
       {/* G263: the pinned-documents area. A document is pinned by favouriting it (the existing
           `favorite` table is the store), and the empty state says how to fill it. */}
@@ -450,7 +531,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                     items={section.blocks}
                     onToggle={handleToggle}
                     onDelete={handleDelete}
-                    onCancel={handleCancel} onSchedule={handleSchedule} appearance={appearance}
+                    onCancel={handleCancel} onSchedule={handleSchedule} onRename={handleRename} appearance={appearance}
                     subtaskParent={subtaskParent}
                   />
                 </section>
@@ -463,18 +544,13 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
               {visible.length === 0 ? (
                 <GroupEmpty hint={TASK_VIEW_EMPTY[group]} />
               ) : active.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-border p-8 text-center">
-                  <CheckSquare className="mx-auto mb-2 size-5 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
-                    全部完成！在文档中使用任务列表，勾选的任务会同步到这里
-                  </p>
-                </div>
+                <GroupEmpty hint="全部完成！在文档中使用任务列表，勾选的任务会同步到这里" />
               ) : (
                 <TaskList
                   items={active}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onCancel={handleCancel} onSchedule={handleSchedule} appearance={appearance}
+                  onCancel={handleCancel} onSchedule={handleSchedule} onRename={handleRename} appearance={appearance}
                   subtaskParent={subtaskParent}
                 />
               )}
@@ -489,7 +565,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   items={completed}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onCancel={handleCancel} onSchedule={handleSchedule} appearance={appearance}
+                  onCancel={handleCancel} onSchedule={handleSchedule} onRename={handleRename} appearance={appearance}
                   subtaskParent={subtaskParent}
                 />
               </section>
@@ -503,7 +579,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   items={cancelled}
                   onToggle={handleToggle}
                   onDelete={handleDelete}
-                  onCancel={handleCancel} onSchedule={handleSchedule} appearance={appearance}
+                  onCancel={handleCancel} onSchedule={handleSchedule} onRename={handleRename} appearance={appearance}
                   subtaskParent={subtaskParent}
                 />
               </section>
@@ -591,19 +667,43 @@ function focusAddInput(): void {
   document.querySelector<HTMLInputElement>('input[placeholder="添加任务，按回车确认…"]')?.focus();
 }
 
+/**
+ * G1077：`_card_ydla7_` 那族是**零态卡**（`tasks-zero-state`），不是普通空态框——
+ * `height:180px / radius:15px / border:none / background:foreground-50 / overflow:hidden`，
+ * 两层 `_layer` 绝对铺满且 `pointer-events:none`，静止只显 `_idle`，hover/focus 时
+ * `_idle→0`、`_action→1`（换脸而非叠加）。键盘焦点环是 `outline:1px solid accent`，
+ * `outline-offset:-1px`（官方三档之一，盒子在卡内描）。
+ */
 function GroupEmpty({ hint }: { hint: string }) {
   return (
-    <div className="rounded-lg border border-dashed border-border p-8 text-center">
-      <CheckSquare className="mx-auto mb-2 size-5 text-muted-foreground" />
-      <p className="text-sm text-muted-foreground">{hint}</p>
-      <button
-        type="button"
-        onClick={focusAddInput}
-        className="mt-3 rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground"
+    <button
+      type="button"
+      onClick={focusAddInput}
+      aria-label={TASKS_ADD_TASK}
+      data-testid="tasks-zero-state"
+      className="group relative block h-[180px] w-full shrink-0 cursor-pointer select-none overflow-hidden rounded-[15px] border-none bg-foreground/5 text-center text-foreground/50 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-1px] focus-visible:outline-ring"
+    >
+      <span
+        aria-hidden
+        data-testid="tasks-zero-state-idle"
+        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 opacity-100 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0"
       >
-        {TASKS_ADD_TASK}
-      </button>
-    </div>
+        <span className="flex size-10 shrink-0 items-center justify-center">
+          <CheckSquare className="size-10" />
+        </span>
+        <span className="text-sm">{hint}</span>
+      </span>
+      <span
+        aria-hidden
+        data-testid="tasks-zero-state-action"
+        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+      >
+        <span className="flex size-10 shrink-0 items-center justify-center">
+          <Plus className="size-10" />
+        </span>
+        <span className="text-sm">{TASKS_ADD_TASK}</span>
+      </span>
+    </button>
   );
 }
 
@@ -613,6 +713,7 @@ function TaskList({
   onDelete,
   onCancel,
   onSchedule,
+  onRename,
   appearance,
   subtaskParent,
 }: {
@@ -621,6 +722,7 @@ function TaskList({
   onDelete: (id: string) => void;
   onCancel: (id: string) => void;
   onSchedule: (id: string, schedule: TaskSchedule) => Promise<void>;
+  onRename: (id: string, title: string) => Promise<void>;
   appearance: 'faded' | 'strike' | 'none';
   subtaskParent: Map<string, string>;
 }) {
@@ -694,6 +796,7 @@ function TaskList({
             onDelete={onDelete}
             onCancel={onCancel}
             onSchedule={onSchedule}
+            onRename={onRename}
             appearance={appearance}
             isSubtask={subtaskParent.has(task.id)}
           />
@@ -738,6 +841,7 @@ function TaskRow({
   onDelete,
   onCancel,
   onSchedule,
+  onRename,
   appearance,
   isSubtask = false,
 }: {
@@ -746,12 +850,17 @@ function TaskRow({
   onDelete: (id: string) => void;
   onCancel: (id: string) => void;
   onSchedule: (id: string, schedule: TaskSchedule) => Promise<void>;
+  onRename: (id: string, title: string) => Promise<void>;
   appearance: 'faded' | 'strike' | 'none';
   /** G408: whether this task is a subtask of another (derived server-side). */
   isSubtask?: boolean;
 }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [dateMenu, setDateMenu] = useState<'date' | 'deadline' | null>(null);
+  // G727：`⏎` 就地把行标题换成输入框；Enter 提交、Escape 放弃、失焦提交。
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(task.title);
   const rule = parseRecurrence(task.recurrence);
   const schedule = {
     dueDate: task.dueDate,
@@ -779,33 +888,82 @@ function TaskRow({
         tabIndex={0}
         aria-label={task.title}
         onKeyDown={(event) => {
+          // 行内输入框/勾选框/按钮自己的键不归行处理（否则在就地编辑里敲空格会切换完成态）。
+          if (event.target !== event.currentTarget) return;
           // G1574/G1603: the row is focusable; the table-D chords act on it.
           const action = taskRowKeyAction(event);
-          if (!action) return;
-          event.preventDefault();
-          if (action === 'toggle') return onToggle(task.id);
-          if (action === 'cancel') return onCancel(task.id);
-          if (action === 'schedule-today') {
-            update({ scheduleDate: localDayInstant(new Date()) });
+          if (action) {
+            event.preventDefault();
+            if (action === 'toggle') return onToggle(task.id);
+            if (action === 'cancel') return onCancel(task.id);
+            if (action === 'schedule-today') {
+              update({ scheduleDate: localDayInstant(new Date()) });
+              return;
+            }
+            setDateMenu(action);
             return;
           }
-          setDateMenu(action);
+          // G727「在任务视图中」那半：`↑`／`↓` 行导航、`⌫`／`Delete` 删任务、`⏎` 编辑、
+          // `Ctrl-→` 导航至区块。
+          const view = taskViewKeyAction(event);
+          if (!view) return;
+          event.preventDefault();
+          if (view === 'delete') return onDelete(task.id);
+          if (view === 'edit') {
+            setDraft(task.title);
+            setEditing(true);
+            return;
+          }
+          if (view === 'navigate-block') {
+            if (task.documentId) {
+              router.push(anchorHref({ documentId: task.documentId, blockId: task.blockId }));
+            }
+            return;
+          }
+          const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-task-row]'));
+          const target = rowNavIndex(rows.indexOf(event.currentTarget as HTMLElement), rows.length, view);
+          if (target != null) rows[target]?.focus();
         }}
+        data-task-row
         className="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
       >
         <Checkbox checked={task.isCompleted} onCheckedChange={() => onToggle(task.id)} />
-        <span
-          className={cn(
-            'flex-1 truncate text-sm',
-            (task.isCompleted || task.status === 'cancelled') && completedTaskClasses(appearance)
-          )}
-        >
-          {isSubtask && <span className="mr-1.5 text-xs text-muted-foreground" data-testid="subtask-marker">↳</span>}
-          {task.title}
-          {task.dueDate && isOverdue(task.dueDate, task.isCompleted || task.status === 'cancelled') && (
-            <span className="ml-2 text-xs text-destructive">{overdueLabel(task.dueDate)}</span>
-          )}
-        </span>
+        {editing ? (
+          <input
+            autoFocus
+            value={draft}
+            aria-label="编辑任务"
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                setEditing(false);
+                void onRename(task.id, draft);
+              } else if (event.key === 'Escape') {
+                event.preventDefault();
+                setEditing(false);
+              }
+            }}
+            onBlur={() => {
+              setEditing(false);
+              if (draft.trim() && draft.trim() !== task.title) void onRename(task.id, draft);
+            }}
+            className="min-w-0 flex-1 rounded border border-border bg-background px-1 py-0.5 text-sm text-foreground"
+          />
+        ) : (
+          <span
+            className={cn(
+              'flex-1 truncate text-sm',
+              (task.isCompleted || task.status === 'cancelled') && completedTaskClasses(appearance)
+            )}
+          >
+            {isSubtask && <span className="mr-1.5 text-xs text-muted-foreground" data-testid="subtask-marker">↳</span>}
+            {task.title}
+            {task.dueDate && isOverdue(task.dueDate, task.isCompleted || task.status === 'cancelled') && (
+              <span className="ml-2 text-xs text-destructive">{overdueLabel(task.dueDate)}</span>
+            )}
+          </span>
+        )}
 
         {task.status === 'cancelled' && <CancelledBadge cancelledAt={task.cancelledAt} />}
 

@@ -72,6 +72,7 @@ function taskDefaults(id: string, p: PendingRow): TaskItem {
     recurrence: null,
     recurrenceEnd: null,
     documentId: null,
+    blockId: null,
     documentTitle: null,
     createdAt: typeof data.createdAt === 'string' ? data.createdAt : null,
   };

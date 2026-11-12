@@ -4857,9 +4857,9 @@
       ]
     },
     "G300": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "✎ 改判（2026-11-12 第 531 批）：原判「有宿主的 5 条已接」经逐条复读只剩 3 条真在线——「正在删除文档／正在删除文档…」（TrashList.tsx:127 与 :400）与「正在导出文档」（InfoTab.tsx:903）。「正在创建文档／正在创建文件夹」的唯一宿主是 QuickActions.tsx，该文件已随 G15（76c2e0ba）删除，现侧栏 ＋ 与 NewFolderButton 都是纯图标按钮、无 busy 文案 ⇒ 这两句无宿主。「正在更新用户…」被更精确的官方键 preferences.name.updating「正在更新名称…」取代（SettingsPanels.tsx:135，非 alert.updating.user）。11 条句面本身完整（pending-states.ts:29-41），故按「官方句多子项缺一项即 partial」判部分落地。",
+      "note": "✎ 补接（2026-11-12 第 532 批）：两句重新有宿主——`SidebarHeader.tsx` 的 ＋ 与 `NewFolderButton.tsx` 的分区头 ＋ 在创建期间换 spinner、挂 `aria-busy`、由 `role=\"status\" aria-live=\"polite\"` 的 `sr-only` 行播报采集句（可访问名仍是动作名，进度走 live region）；文件夹那颗忙碌时强制 `opacity-100`。G1608 静默离线早退与防重入保留。真在线 5 条：创建文档／文件夹、删除文档单复（`TrashList.tsx:127`／`:400`）、导出文档（`InfoTab.tsx:903`）；「正在更新用户…」由 `preferences.name.updating` 承接。其余 5 条无操作面（链接创建／删除账户／邀请单复／空间头像上传）⇒ N/A。",
       "evidence": [
         "src/lib/app/pending-states.ts:29-41",
         "src/components/document/TrashList.tsx:127",

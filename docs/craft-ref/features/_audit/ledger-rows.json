@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-12T10:24:01.690Z",
+  "generatedAt": "2026-11-12T11:19:45.574Z",
   "totalRows": 1615,
   "statusDistribution": {
     "gap": 664,
-    "aligned": 477,
+    "aligned": 478,
     "unknown": 185,
     "deliberate": 135,
     "nonaction": 72,
-    "partial": 66,
+    "partial": 65,
     "unreachable": 16
   },
   "priorityDistribution": {
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 276,
+    "P2 / aligned": 277,
     "P2 / gap": 214,
     "P1 / gap": 185,
     "P? / gap": 171,
@@ -32,7 +32,7 @@
     "P? / deliberate": 36,
     "P2 / unknown": 33,
     "P? / nonaction": 29,
-    "P2 / partial": 27,
+    "P2 / partial": 26,
     "P1 / unknown": 23,
     "P2 / nonaction": 23,
     "P3 / unknown": 22,
@@ -49,8 +49,17 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 0,
-  "conflictRows": [],
+  "conflicts": 1,
+  "conflictRows": [
+    {
+      "id": "G300",
+      "line": 1582,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条（`lib/app/pending-states.ts:29-41`）。✎ 改判（2026-11-12 第 531 批）：复读只剩 3 条真在线——「正在创建文档／正在创建文件夹」的唯一宿主 `QuickAc",
+      "verdict": "☆ 已对齐（第 532 批）"
+    }
+  ],
   "sectionRows": [
     {
       "name": "八十四、第 184 批新登记的官方行为（2026-10-09 本机钟 11:2x 开批＝纯盘上静态批＝工单三族＋记账两枚＝本线零发送零桥零屏幕零写入零网络⇒ `manifest.jsonl` 行数不变＝净新增 9 条＝G1475—G1483＝☆ 全部读数落在 `_harvest/js/` 的 105 份官方包体（主包 `index-DiTmKH3z.js` 6,864,717 B／6,844,206 字符，mtime 2026-09-30）＝★ **包体字节漂移**：历批 87—96 的 `len 6,841,180`（b87 快照）与本批现量 6,844,206 差 **+3,026**，那批的 @offset 锚的是**当时的干净原件面**（Temp 原件，91 批已清、只在 b87—b96 的 json 快照转义面存续）＝✎ **同批后段翻案（11:4x）**：漂移成因判死＝**盘上 `js/` 拷贝的编码损伤**（真符号 ⌃⌥⇧⌘ 在盘上 0 枚、`鈥`361／`鈱`7／`鈬`3＝UTF-8 被 GBK 误读的在册家族；ASCII 面逐字相同＝非官方换构建）＝+3,026 是乱码展开的累计、不是代码插入；⇒ 采集线规矩改写＝**从 `_harvest/js/` 逐字引用非 ASCII 一律不可信**（与 i18n-zh.tsv 同族），ASCII 针与偏移不受影响；本批 @offset 全部是**现字节面**的字符坐标）",
@@ -6406,16 +6415,16 @@
       "cols": 5,
       "id": "G300",
       "official": "**异步 pending 态全集是 11 条进行时句**：创建文档/文件夹/链接、删除账户/文档(单复)/邀请(单复)/导出文档/更新空间头像/更新用户（`dialogs.md` §8.5）⇒ **导出与头像更新也有独立 loading 态**",
-      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条（`lib/app/pending-states.ts:29-41`）；已接「正在创建文档」「正在创建文件夹」（快速操作按钮禁用 + 文案替换）、「正在删除文档／正在删除文档…」（回收站单选/多选/清空）、「正在导出文档」（信息面板导出状态行）、「正在更新用户…」（设置改名）。链接创建、账户删除、邀请单复、空间头像在本地项目中没有对应操作面（链接/空间/团队/账户删除入口均不引入）⇒ N/A。✎ 复读（2026-11-09 第 504 批）：上述 5 条仍在线，其余 6 条保持 N/A。 ✎ 改判（2026-11-12 第 531 批）：复读只有 3 条真在线＝「正在删除文档／正在删除文档…」（`TrashList.tsx:127` 与 `:400`）＋「正在导出文档」（`InfoTab.tsx:903`）；「正在创建文档／正在创建文件夹」的唯一宿主 `QuickActions.tsx` 已随 G15（`76c2e0ba`）删除、侧栏 ＋ 与 `NewFolderButton` 是纯图标按钮无 busy 文案 ⇒ 两句无宿主；「正在更新用户…」被更精确的官方键 `preferences.name.updating`「正在更新名称…」取代（`SettingsPanels.tsx:135`）。句面 11 条完整（`pending-states.ts:29-41`），按「官方句多子项缺一项即 partial」改判",
-      "verdict": "☆ 部分落地（第 147 批判已清，第 531 批改判）",
+      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条（`lib/app/pending-states.ts:29-41`）。✎ 改判（2026-11-12 第 531 批）：复读只剩 3 条真在线——「正在创建文档／正在创建文件夹」的唯一宿主 `QuickActions.tsx` 已随 G15（`76c2e0ba`）删除，侧栏 ＋ 与 `NewFolderButton` 是纯图标按钮无 busy 文案。✎ 补接（2026-11-12 第 532 批）：两句重新有宿主——`SidebarHeader.tsx` 的 ＋ 与 `NewFolderButton.tsx` 的分区头 ＋ 在创建期间换 spinner、挂 `aria-busy`、由 `role=\"status\" aria-live=\"polite\"` 的 `sr-only` 行播报 `pendingLabel()` 采集句（可访问名仍是动作名，进度走 live region）；文件夹那颗忙碌时强制 `opacity-100`，否则鼠标移开会把进度一起藏掉；G1608 的静默离线早退与防重入 `if (creating) return` 都在。现真在线 5 条：创建文档／文件夹（侧栏两枚 ＋）、删除文档单复（`TrashList.tsx:127`／`:400`）、导出文档（`InfoTab.tsx:903`）；「正在更新用户…」由更精确的官方键 `preferences.name.updating`「正在更新名称…」承接（`SettingsPanels.tsx:135`）。其余 5 条本地无对应操作面：链接创建（无链接实体）、删除账户（危险区只有只读说明，`SettingsPanels.tsx:1289`）、邀请单复（分享面板无撤回邀请入口）、更新空间头像（本地只有图标预设 `setSpaceIcon`，不是头像上传，语义不同，不硬挂以免错配）⇒ N/A。",
+      "verdict": "☆ 已对齐（第 532 批）",
       "score": "2/1",
-      "status": "partial",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": null,
+      "conflict": "local-says-missing",
       "priority": "P2"
     },
     {

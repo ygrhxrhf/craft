@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronsUpDown, Plus, Search } from 'lucide-react';
+import { ChevronsUpDown, Loader2, Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
 import { createDocumentLocal } from '@/components/sync/create-local';
@@ -10,6 +10,7 @@ import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { useSettingsStore } from '@/lib/store/use-settings-store';
 import { getSpaceContext } from '@/actions/space/space';
 import { spaceIconPreset, spaceInitial } from '@/lib/app/space-icons';
+import { pendingLabel } from '@/lib/app/pending-states';
 
 /**
  * G05 —— craft 的侧栏顶行是**空间切换**（268×36 @x10），搜索在全局顶栏中央。
@@ -24,6 +25,8 @@ export function SidebarHeader() {
   const openPalette = useCommandPaletteStore((s) => s.open);
   const openSettings = useSettingsStore((s) => s.openSettings);
   const [space, setSpace] = useState<{ name: string; icon: string | null } | null>(null);
+  // G300: while the document is being created the button carries the collected progress sentence.
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -42,8 +45,14 @@ export function SidebarHeader() {
   async function handleNewDoc() {
     // G1608：离线时点了没有可观察反应（静默早退，不改禁用态、不弹 toast）。
     if (!navigator.onLine) return;
-    const id = await createDocumentLocal({ userId: session?.user?.id });
-    router.push(`/documents/${id}`);
+    if (creating) return;
+    setCreating(true);
+    try {
+      const id = await createDocumentLocal({ userId: session?.user?.id });
+      router.push(`/documents/${id}`);
+    } finally {
+      setCreating(false);
+    }
   }
 
   const preset = spaceIconPreset(space?.icon);
@@ -81,10 +90,15 @@ export function SidebarHeader() {
         variant="ghost"
         size="icon-sm"
         onClick={handleNewDoc}
+        disabled={creating}
+        aria-busy={creating || undefined}
         aria-label="新建文档"
       >
-        <Plus className="size-4" />
+        {creating ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Plus className="size-4" />}
       </Button>
+      <span role="status" aria-live="polite" className="sr-only">
+        {creating ? pendingLabel('creatingDocuments') : ''}
+      </span>
     </div>
   );
 }

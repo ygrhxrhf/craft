@@ -1,12 +1,11 @@
 {
-  "generatedAt": "2026-11-12T10:24:37.244Z",
+  "generatedAt": "2026-11-12T11:19:45.909Z",
   "total": 1615,
   "status": {
-    "aligned": 825,
+    "aligned": 826,
     "nonaction": 541,
     "deliberate": 223,
-    "unreachable": 25,
-    "partial": 1
+    "unreachable": 25
   },
   "priority": {
     "P2": 631,
@@ -16,7 +15,7 @@
     "P0": 9
   },
   "statusByPriority": {
-    "P2 / aligned": 357,
+    "P2 / aligned": 358,
     "P? / nonaction": 201,
     "P2 / nonaction": 175,
     "P1 / aligned": 170,
@@ -32,7 +31,6 @@
     "P0 / aligned": 9,
     "P3 / unreachable": 9,
     "P? / unreachable": 5,
-    "P2 / partial": 1,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1163,12 +1161,16 @@
       }
     ]
   },
-  "conflicts": [],
+  "conflicts": [
+    {
+      "id": "G300",
+      "line": 1582,
+      "status": "aligned",
+      "conflict": "local-says-missing",
+      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条（`lib/app/pending-states.ts:29-41`）。✎ 改判（2026-11-12 第 531 批）：复读只剩 3 条真在线——「正在创建文档／正在创建文件夹」的唯一宿主 `QuickActions.tsx` 已随 G15（`76c2e0ba`）删除，侧栏 ＋ 与 `",
+      "verdict": "☆ 已对齐（第 532 批）"
+    }
+  ],
   "unknownSections": [],
-  "gapSections": [
-    [
-      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
-      1
-    ]
-  ]
+  "gapSections": []
 }

@@ -170,8 +170,10 @@
     "G20": {
       "status": "aligned",
       "priority": "P1",
+      "note": "✎ 证据重指（2026-11-12 第 531 批）：原证据 `src/lib/daily/daily-notes.ts` 全库不存在（该路径从未出现过），真身在 action：模板播种 `src/actions/daily-notes/daily-notes.ts:89-110`，日窗分档 `src/lib/utils/daily-note-window.ts:86`。",
       "evidence": [
-        "src/lib/daily/daily-notes.ts:73-86"
+        "src/actions/daily-notes/daily-notes.ts:89-110",
+        "src/lib/utils/daily-note-window.ts:86"
       ]
     },
     "G21": {
@@ -1754,7 +1756,7 @@
       "status": "aligned",
       "note": "读侧归一已覆盖（未知值回落 system）；「键不存在」与存 system 语义等价，已在 theme-resolution 注释中写明。",
       "evidence": [
-        "src/lib/theme-resolution.ts:78"
+        "src/lib/theme-resolution.ts:70"
       ]
     },
     "G1236": {
@@ -2626,10 +2628,10 @@
     },
     "G957": {
       "status": "aligned",
-      "note": "✎ 现读（2026-11-11 第 519 批）：官方 13 条侧栏路由逐条对位实扫 ls src/app/(app)：archive/favorites/folders/inbox/tags/templates/trash/shared-with-me/tasks/calendar/connections/documents/recent 全部存在；未分类↔inbox 文案由 UNSORTED_TITLE（official-copy.ts:45）与 SIDEBAR_INBOX（:28）映射；路由命名体系不同属载体差 ⇒ aligned。",
+      "note": "✎ 现读（2026-11-11 第 519 批）：官方 13 条侧栏路由逐条对位实扫 ls src/app/(app)：archive/favorites/folders/inbox/tags/templates/trash/shared-with-me/tasks/calendar/connections/documents/recent 全部存在；未分类↔inbox 文案由 UNSORTED_TITLE（src/lib/browse/official-copy.ts:45）与 SIDEBAR_INBOX（:28）映射；路由命名体系不同属载体差 ⇒ aligned。✎ 证据重指（第 531 批）：原证据 `src/lib/app/official-copy.ts` 与 `SidebarNav.tsx:21` 均已漂移，真身是 `src/lib/browse/official-copy.ts`，SidebarNav 的 import 现于 :28。",
       "evidence": [
-        "src/components/sidebar/SidebarNav.tsx:21",
-        "src/lib/app/official-copy.ts:45"
+        "src/components/sidebar/SidebarNav.tsx:28",
+        "src/lib/browse/official-copy.ts:45"
       ]
     },
     "G958": {
@@ -3482,7 +3484,7 @@
         "src/lib/editor/keymap.ts:17",
         "src/lib/editor/keymap.ts:50",
         "src/components/settings/ShortcutsPanel.tsx:6",
-        "src/lib/editor/shell-scope.ts:20"
+        "src/lib/editor/shell-scope.ts:15"
       ]
     },
     "G69": {
@@ -3497,12 +3499,12 @@
     "G70": {
       "status": "aligned",
       "priority": "P2",
-      "note": "Idea Starter 弹层、六型四条进度句、创建/关闭/成功/失败文案与服务端骨架创建均已落。",
+      "note": "Idea Starter 弹层、六型四条进度句、创建/关闭/成功/失败文案与服务端骨架创建均已落。✎ 证据重指（2026-11-12 第 531 批）：原证据 `src/components/document/QuickActions.tsx` 已随 G15 删除（提交 76c2e0ba），弹层的现存宿主是编辑器（`DocumentEditor.tsx:632`）。",
       "evidence": [
         "src/lib/ai/idea-starter.ts",
         "src/components/ai/IdeaStarterDialog.tsx",
         "src/actions/ai/idea-starter.ts",
-        "src/components/document/QuickActions.tsx"
+        "src/components/editor/DocumentEditor.tsx:632"
       ]
     },
     "G71": {
@@ -4855,15 +4857,14 @@
       ]
     },
     "G300": {
-      "status": "aligned",
+      "status": "partial",
       "priority": "P2",
-      "note": "有宿主的 5 条 pending 句已接（新建文档/文件夹、删除文档单复、导出、更新用户）；其余动作本仓无宿主。",
+      "note": "✎ 改判（2026-11-12 第 531 批）：原判「有宿主的 5 条已接」经逐条复读只剩 3 条真在线——「正在删除文档／正在删除文档…」（TrashList.tsx:127 与 :400）与「正在导出文档」（InfoTab.tsx:903）。「正在创建文档／正在创建文件夹」的唯一宿主是 QuickActions.tsx，该文件已随 G15（76c2e0ba）删除，现侧栏 ＋ 与 NewFolderButton 都是纯图标按钮、无 busy 文案 ⇒ 这两句无宿主。「正在更新用户…」被更精确的官方键 preferences.name.updating「正在更新名称…」取代（SettingsPanels.tsx:135，非 alert.updating.user）。11 条句面本身完整（pending-states.ts:29-41），故按「官方句多子项缺一项即 partial」判部分落地。",
       "evidence": [
-        "src/lib/app/pending-states.ts",
-        "src/components/document/QuickActions.tsx:28",
-        "src/components/editor/tabs/InfoTab.tsx:223",
-        "src/components/document/TrashList.tsx:114",
-        "src/components/settings/SettingsPanels.tsx:283"
+        "src/lib/app/pending-states.ts:29-41",
+        "src/components/document/TrashList.tsx:127",
+        "src/components/document/TrashList.tsx:400",
+        "src/components/editor/tabs/InfoTab.tsx:903"
       ]
     },
     "G301": {
@@ -5146,10 +5147,10 @@
     },
     "G351": {
       "status": "deliberate",
-      "note": "第 5h 批现读（2026-11-07）：本地连接屏走 OAuth/连接器模型（/connections，G122 契约），不提供第三方 API 密钥签发面——一次性密钥展示、10 个上限、权限三档/两种保护属官方托管 API 产品的安全设计，本项目按既定范围不做。",
+      "note": "第 5h 批现读（2026-11-07）：本地连接屏走 OAuth/连接器模型（/connections，G122 契约），不提供第三方 API 密钥签发面——一次性密钥展示、10 个上限、权限三档/两种保护属官方托管 API 产品的安全设计，本项目按既定范围不做。✎ 证据重指（2026-11-12 第 531 批）：`src/lib/connections/registry.ts` 全库从未存在，契约真身是 `src/lib/connections/connection-spec.ts`（提交 406faa97 引入）。",
       "evidence": [
         "src/app/(app)/connections/page.tsx:1",
-        "src/lib/connections/registry.ts:1"
+        "src/lib/connections/connection-spec.ts:1"
       ]
     },
     "G353": {
@@ -6796,7 +6797,7 @@
         "src/lib/links/craft-schemes.ts:28",
         "src/lib/links/craft-schemes.ts:34",
         "src/lib/links/craft-schemes.ts:48",
-        "src/lib/editor/inline-atoms.ts:133",
+        "src/lib/editor/inline-atoms.ts:57",
         "src/components/editor/Editor.tsx:683",
         "src/app/(app)/daily-notes/page.tsx:25",
         "src/lib/calendar/timeline.ts:82"
@@ -10547,9 +10548,10 @@
     "G1608": {
       "status": "aligned",
       "priority": "P2",
-      "note": "离线点新建文档/文件夹静默早退：不置灰、不弹提示、不跳转，不再进浏览器错误页。",
+      "note": "离线点新建文档/文件夹静默早退：不置灰、不弹提示、不跳转，不再进浏览器错误页。✎ 证据重指（2026-11-12 第 531 批）：原证据 `src/components/document/QuickActions.tsx` 已随 G15（76c2e0ba）删除，现两个入口分别在侧栏标题栏与新建文件夹按钮。",
       "evidence": [
-        "src/components/document/QuickActions.tsx:19",
+        "src/components/sidebar/SidebarHeader.tsx:44",
+        "src/components/sidebar/NewFolderButton.tsx:19",
         "src/lib/app/offline-gate.test.ts"
       ]
     },

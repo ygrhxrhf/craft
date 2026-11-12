@@ -1,7 +1,7 @@
 # 复刻执行清单（台账归一化审计）
 
 > **〔历史快照〕** 2026-10-30 的归一化审计结论，**不再是待办口径**。权威待办只有 `_audit/ledger-backlog.csv`
-> 里 `priority` 对应档且 `status∈{gap,partial}` 的行数；截至 2026-11-12 现读已全部清零（`gap` 0、`partial` 0）。
+> 里 `priority` 对应档且 `status∈{gap,partial}` 的行数；截至 2026-11-12 现读 `gap` 已清零，`partial` 余 1 条（G300，P2——11 条 pending 句里「正在创建文档／正在创建文件夹」随 G15 删除快捷条后无宿主，第 531 批改判）。
 > 本文的 1614 条口径、P0/P1/P2 三张显式表与「1053 行未动」统计都停在审计当天，读数值请以 CSV 为准。
 
 > 生成日期：2026-10-30。本文件只出清单：**未改产品代码，也未回写 `gap.md`**。
@@ -73,7 +73,7 @@
 | G17 | 已对齐 | 2/2 | Mermaid 图表是插入片段之一（轴 C 四类 snippet） | 已清（第 503 批现读回填）＝slash「Mermaid 图表」在名册（src/lib/editor/slash-roster | 第 503 批现读回填：slash 名册含「Mermaid 图表」，代码块挂 MermaidPreview 渲染，导入接受 mermaid 语言，导出仍写 围栏；`src/lib/editor/slash-roster.ts:131`、`src/components/editor/extensions/mermaid-preview.tsx:7-26`、`src/lib/editor/mermaid-surface.ts`、`src/lib/import/markdown.ts:106`、`src/lib/document-codec/index.ts:131-132` |
 | G18 | 已对齐 | 2/2 | 备份/历史版本对协作者可用；版本条目带变更计数与时间分组（V4 实测：「9月26日周六 22:46, 2 项变更」+ 作者名，按 | 部分落地（第 225 批）＝① 协作者可看/可恢复已清＝version.ts 四个函数此前一律 doc.userId !== s | 标题与样式变更也落版本快照，Document.version 随快照单调递增；`src/lib/versioning/snapshot.ts:3`、`src/actions/document/update.ts:8` |
 | G19 | 已对齐 | 2/2 | 模板：另存 / 从模板新建 / 在文内插入模板片段（commands.insert.template.inline） | 前两个有（actions/document/template.ts:6、TemplateCard.tsx:25）；本行第三档系陈 | 无需动作；抽检证据见台账行；`e2e/template-insert.spec.ts`、`src/actions/document/template.ts:6` |
-| G20 | 已对齐 | 已清 | 日记有模板与起始时间配置、前一天/后一天导航（daily.*） | 已清（第 275 批）＝原判"templateId＋startTime 是死字段、取值但从不使用"是陈旧账：两者早已驱动生成逻辑 | 无需动作；抽检证据见台账行；`src/lib/daily/daily-notes.ts:73-86` |
+| G20 | 已对齐 | 已清 | 日记有模板与起始时间配置、前一天/后一天导航（daily.*） | 已清（第 275 批）＝原判"templateId＋startTime 是死字段、取值但从不使用"是陈旧账：两者早已驱动生成逻辑 | 证据重指（2026-11-12 第 531 批）：原证据 src/lib/daily/daily-notes.ts 全库不存在（该路径从未出现过），真身在 action：模板播种 src/actions/daily-no；`src/actions/daily-notes/daily-notes.ts:89-110`、`src/lib/utils/daily-note-window.ts:86` |
 | G21 | 已对齐 | 2/2 | 侧栏一级有独立「连接」屏（✓ 屏上实测；官方有 connections 视图） | 现读（2026-10-31）更正：侧栏一级「连接」屏已建（/connections），列出并新增 MCP/API 连接。 | 侧栏一级「连接」屏已建（/connections），列出并新增 MCP/API 连接；`src/app/(app)/connections/page.tsx`、`src/components/sidebar/SidebarNav.tsx` |
 | G22 | 已对齐 | 2/3 | 导出 7 类：DOCX / PDF（纸张、页码、水印、深色）/ Markdown / HTML / TextBundle / P | 有 markdown/html/text/json 四种导出 + 仅 Markdown 导入（actions/document/ | 导出补 DOCX/PDF/TextBundle/整库 zip/图片，导入补 Markdown/HTML/Evernote/Readwise/Notion 五源；`src/lib/export/docx.ts`、`src/lib/import/sources.ts` |
 | G40 | 已对齐 | 2/2 | 官方块词表含 mermaid、audio、iframe/embed/html、subtitle（model.md 一、频次证据） | Mermaid 无（G17）；音频块无；linkPreview 只近似 iframe；无独立副标题块 | 音频块、iframe/网页嵌入、HTML 沙箱嵌入、副标题（h2）与 Mermaid 均已接；`src/components/editor/extensions/audio-embed.tsx`、`src/components/editor/extensions/html-embed.tsx` |
@@ -149,7 +149,7 @@
 
 | 条数 | 节 |
 | --- | --- |
-
+| 1 | 三点二五、第 2 批前置（任务三套时间语义的契约面结案，~  |
 
 ## 十一、不进复刻 backlog
 

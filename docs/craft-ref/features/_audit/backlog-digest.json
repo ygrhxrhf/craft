@@ -1,11 +1,12 @@
 {
-  "generatedAt": "2026-11-12T09:43:38.760Z",
+  "generatedAt": "2026-11-12T10:24:37.244Z",
   "total": 1615,
   "status": {
-    "aligned": 826,
+    "aligned": 825,
     "nonaction": 541,
     "deliberate": 223,
-    "unreachable": 25
+    "unreachable": 25,
+    "partial": 1
   },
   "priority": {
     "P2": 631,
@@ -15,7 +16,7 @@
     "P0": 9
   },
   "statusByPriority": {
-    "P2 / aligned": 358,
+    "P2 / aligned": 357,
     "P? / nonaction": 201,
     "P2 / nonaction": 175,
     "P1 / aligned": 170,
@@ -31,6 +32,7 @@
     "P0 / aligned": 9,
     "P3 / unreachable": 9,
     "P? / unreachable": 5,
+    "P2 / partial": 1,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -489,7 +491,7 @@
         "id": "G20",
         "official": "日记有模板与起始时间配置、前一天/后一天导航（`daily.*`）",
         "local": "☆ 已清（第 275 批）＝**原判\"`templateId`＋`startTime` 是死字段、取值但从不使用\"是陈旧账**：两者**早已驱动生成逻辑**——`templateId` 让配置模板的 `content` 成为新日记的初始正文（`daily-notes.ts:73-86`）；`startTime` 平移\"一天\"的边界，`dayWindow`／`shiftDay`／`noteDateKey` 都按它算，`getOrCreateDayNote` 用它定窗口与翻页。**顺带修掉一条真错**＝`/daily-notes` 列表页此前用自己的午夜 `startOfDay` 分组、与 action 的配置日窗**不同源** ⇒ 起始时间非 00:00 时同一条笔记在两处归到不同的天（起始 04:00 且此刻未到 04:00 时，当前那篇落到「昨天」）⇒ 抽纯函数 `dailyNoteBucket`（按窗口起点相差的整日数分档）＋ action 补 `getDailyNoteStartTime()`，页面改用它们",
-        "verdict": "☆ **已清**（第 275 批复核＋补强）＝**原判\"两枚死字段\"是陈旧账，且顺带修掉一条真错**：① `templateId` **早已驱动生成**＝`daily-notes.ts:73-86` 读配置里的模板、按 `isTemplate && !isDeleted` 校验后把其 `content` 作为新日记的初始内容（陈旧模板被忽略，不让设置卡死当天生成）；② `startTime` **早已驱动日窗**＝`dayWindow`／`shiftDay`／`noteDateKey`（`src/lib/utils/daily-note-window.ts`）按它把\"一天\"的边界整体平移，`getOrCreateDayNote` 用它算窗口与前一天/后一天；③ **前一天/后一天导航早已落地**＝`DailyNoteNav.tsx`（编辑器里 `doc.isDailyNote` 时渲染）两个按钮走 `getOrCreateDayNote(±1)`，与\"打开今天\"同路；④ **本批修的真错**＝`/daily-notes` 列表页此前**用自己的午夜 `startOfDay` 分组**，与 action 的配置日窗**不同源** ⇒ 起始时间非 00:00 时同一条笔记在两处被归到不同的天（起始 04:00 且此刻未到 04:00 时，当前那篇会在列表里落到「昨天」）⇒ 抽纯函数 `dailyNoteBucket`（按**窗口起点相差的整日数**分档，非毫秒差）＋ action 新增 `getDailyNoteStartTime()`，页面改用它们、与 `getOrCreateDayNote` 同源",
+        "verdict": "☆ **已清**（第 275 批复核＋补强）＝**原判\"两枚死字段\"是陈旧账，且顺带修掉一条真错**：① `templateId` **早已驱动生成**＝`daily-notes.ts:73-86` 读配置里的模板、按 `isTemplate && !isDeleted` 校验后把其 `content` 作为新日记的初始内容（陈旧模板被忽略，不让设置卡死当天生成）；② `startTime` **早已驱动日窗**＝`dayWindow`／`shiftDay`／`noteDateKey`（`src/lib/utils/daily-note-window.ts`）按它把\"一天\"的边界整体平移，`getOrCreateDayNote` 用它算窗口与前一天/后一天；③ **前一天/后一天导航早已落地**＝`DailyNoteNav.tsx`（编辑器里 `doc.isDailyNote` 时渲染）两个按钮走 `getOrCreateDayNote(±1)`，与\"打开今天\"同路；④ **本批修的真错**＝`/daily-notes` 列表页此前**用自己的午夜 `startOfDay` 分组**，与 action 的配置日窗**不同源** ⇒ 起始时间非 00:00 时同一条笔记在两处被归到不同的天（起始 04:00 且此刻未到 04:00 时，当前那篇会在列表里落到「昨天」）⇒ 抽纯函数 `dailyNoteBucket`（按**窗口起点相差的整日数**分档，非毫秒差）＋ action 新增 `getDailyNoteStartTime()`，页面改用它们、与 `getOrCreateDayNote` 同源；✎ 现读（2026-11-12 第 531 批）：上文两处 `daily-notes.ts:73-86` 是错引，全库无该路径，模板播种真身是 `src/actions/daily-notes/daily-notes.ts:89-110`，日窗分档是 `src/lib/utils/daily-note-window.ts:86`",
         "score": "已清",
         "criteria": "2/1",
         "status": "aligned",
@@ -500,8 +502,10 @@
         },
         "conflict": null,
         "priority": "P1",
+        "note": "✎ 证据重指（2026-11-12 第 531 批）：原证据 `src/lib/daily/daily-notes.ts` 全库不存在（该路径从未出现过），真身在 action：模板播种 `src/actions/daily-notes/daily-notes.ts:89-110`，日窗分档 `src/lib/utils/daily-note-window.ts:86`。",
         "evidence": [
-          "src/lib/daily/daily-notes.ts:73-86"
+          "src/actions/daily-notes/daily-notes.ts:89-110",
+          "src/lib/utils/daily-note-window.ts:86"
         ],
         "baseStatus": "aligned"
       },
@@ -1161,5 +1165,10 @@
   },
   "conflicts": [],
   "unknownSections": [],
-  "gapSections": []
+  "gapSections": [
+    [
+      "三点二五、第 2 批前置（任务三套时间语义的**契约面**结案，`~` ",
+      1
+    ]
+  ]
 }

@@ -24,8 +24,12 @@ describe('sticky block handles (G1472)', () => {
 
   it('re-anchors sticky tops on edits and prunes rows that left the DOM', () => {
     expect(source).toContain("editor.on('update', refreshSticky)");
-    expect(source).toContain('if (!s.blockEl.isConnected) return [];');
+    // 第 530 批：live 那枚也走同一套重算（否则插入区块后菜单动作落到隔壁块），
+    // 失效判定收敛进 followBlock，返回 null 的行由 flatMap 清掉。
+    expect(source).toContain('if (!s.blockEl.isConnected) return null;');
     // 折叠/隐藏的行（高度 0）也不再留浮标。
-    expect(source).toContain('if (rect.height === 0) return [];');
+    expect(source).toContain('if (rect.height === 0) return null;');
+    expect(source).toContain('setHandle((prev) => (prev ? followBlock(prev) : prev))');
+    expect(source).toContain('const next = followBlock(s);');
   });
 });

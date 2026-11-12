@@ -479,6 +479,9 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             onMouseDown={(event) => {
               if (!canEdit || !editor) return;
               const target = event.target as HTMLElement;
+              // 菜单等 portal 里的按下沿 React 树冒泡到这里，DOM 上却不在本列——
+              // 它们不是「点了页面空白」，放进来就会凭空补一个末尾空块。
+              if (!event.currentTarget.contains(target)) return;
               // 点在已有块/控件上时不插手——交给 ProseMirror 自己的落点规则。
               if (target.closest('.ProseMirror, button, input, a, [role="button"]')) return;
               const lastDom = editor.view.nodeDOM(editor.state.doc.childCount - 1) as HTMLElement | null;

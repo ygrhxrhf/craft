@@ -8,7 +8,14 @@ import { CODE_LANGUAGES, filterLanguages } from '@/lib/editor/code-languages';
 import { appearsInLanguageMenu } from '@/lib/editor/mermaid-surface';
 import { CODE_CLOSE_PREVIEW, CODE_SPLIT_VIEW, hasCodePreview } from '@/lib/editor/code-block-detail';
 import { storeDefaultLanguage, storeDefaultTheme } from '@/lib/editor/code-preferences';
-import { CODE_THEMES, DEFAULT_CODE_THEME, filterThemes, resolveCodeTheme, themeLabel } from '@/lib/editor/code-themes';
+import {
+  CODE_THEMES,
+  DEFAULT_CODE_THEME,
+  codeSurfaceStyle,
+  filterThemes,
+  resolveCodeTheme,
+  themeLabel,
+} from '@/lib/editor/code-themes';
 import { activeLineGutterStyle, activeLineIndex, caretOffsetInNode } from '@/lib/editor/code-active-line';
 import { cn } from 'cn';
 import { SearchableSelect } from './searchable-select';
@@ -193,7 +200,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos }: NodeVi
         )}
         <div
           className={cn('flex min-w-0', fullscreen && 'min-h-0 flex-1', split && showPreview && 'w-1/2 flex-1')}
-          style={{ background: surface.background, color: surface.foreground }}
+          style={codeSurfaceStyle(surface)}
         >
           <div
             aria-hidden

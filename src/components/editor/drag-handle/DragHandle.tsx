@@ -176,13 +176,20 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
   const refreshSticky = useCallback(() => {
     const dom = editor.view.dom as HTMLElement;
     const editorRect = dom.getBoundingClientRect();
+    const followBlock = (s: HandlePosition): HandlePosition | null => {
+      if (!s.blockEl.isConnected) return null;
+      const rect = s.blockEl.getBoundingClientRect();
+      if (rect.height === 0) return null;
+      const top = rect.top - editorRect.top;
+      return top === s.top ? s : { ...s, top };
+    };
+    // live 那枚也得跟着自己的块走：只刷 sticky 时，一次事务（如「在上方插入区块」）
+    // 会让把手停在旧位置，随后的菜单动作就落到隔壁块上。
+    setHandle((prev) => (prev ? followBlock(prev) : prev));
     setSticky((prev) =>
       prev.flatMap((s) => {
-        if (!s.blockEl.isConnected) return [];
-        const rect = s.blockEl.getBoundingClientRect();
-        if (rect.height === 0) return [];
-        const top = rect.top - editorRect.top;
-        return top === s.top ? s : [{ ...s, top }];
+        const next = followBlock(s);
+        return next ? [next] : [];
       }),
     );
   }, [editor]);
@@ -617,6 +624,10 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
 
   const onHandlePointerDown = useCallback(
     (e: React.PointerEvent, top: number) => {
+      // G1440: the dropdown renders through a portal, so its presses still bubble here through
+      // the React tree — preventing their default would cancel the mousedown/mouseup/click the
+      // Base UI items rely on and every pick would silently do nothing.
+      if (!(e.target instanceof Node) || !e.currentTarget.contains(e.target)) return;
       e.preventDefault();
 
       // ProseMirror replaces block elements whenever the Yjs echo or the autosave

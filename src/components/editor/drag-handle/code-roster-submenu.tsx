@@ -40,7 +40,8 @@ export function CodeRosterSubmenu({
         {icon}
         {label}
       </DropdownMenuSubTrigger>
-      <DropdownMenuSubContent className="w-56">
+      {/* 官方 G1474 量到 256×176；行高仍用全站菜单的 28px（官方 ≈32.8px/行是它自己的样式）*/}
+      <DropdownMenuSubContent className="w-64">
         <div className="p-1">
           <input
             value={query}
@@ -51,9 +52,12 @@ export function CodeRosterSubmenu({
             onKeyDown={(event) => event.stopPropagation()}
             className="mb-1 w-full rounded bg-transparent px-2 py-1 text-xs outline-none placeholder:text-muted-foreground"
           />
-          <div className="max-h-56 overflow-y-auto">
+          <div className="max-h-44 overflow-y-auto">
             {shown.map((option) => (
-              <DropdownMenuItem key={option.value} onSelect={() => onPick(option.value)}>
+              <DropdownMenuItem
+                key={option.value}
+                onClick={() => onPick(option.value)}
+              >
                 <Check
                   className={option.value === value ? 'mr-2 size-3' : 'mr-2 size-3 opacity-0'}
                 />

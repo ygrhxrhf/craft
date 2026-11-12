@@ -7,6 +7,7 @@ import {
   CRAFTDARK,
   CRAFTLIGHT,
   DEFAULT_CODE_THEME,
+  codeSurfaceStyle,
   filterThemes,
   isCodeThemeId,
   resolveCodeTheme,
@@ -193,6 +194,38 @@ describe('resolving a stored id', () => {
   it('falls back to auto rather than rendering unstyled for an unknown id', () => {
     expect(resolveCodeTheme('nonsense', false)).toBe(CRAFTLIGHT);
     expect(resolveCodeTheme(null, true)).toBe(CRAFTDARK);
+  });
+});
+
+/**
+ * The block surface (G1163 / batch 530). The wrapper paints the gutter strip, but the `<pre>`
+ * inside it is painted by the stylesheet's `pre { background: var(--code-background); color:
+ * var(--code-foreground) }`, so the palette only reaches the code area when the block also
+ * re-points those two variables — otherwise a named theme changes the gutter strip alone.
+ */
+describe('the block surface re-points the variables the pre reads', () => {
+  it.each(CODE_THEMES.filter((theme) => theme.surface))('$id carries the palette vars', (theme) => {
+    const style = codeSurfaceStyle(theme.surface as CodeThemeSurface);
+    expect(style.background).toBe((theme.surface as CodeThemeSurface).background);
+    expect(style.color).toBe((theme.surface as CodeThemeSurface).foreground);
+    expect(style['--code-background']).toBe((theme.surface as CodeThemeSurface).background);
+    expect(style['--code-foreground']).toBe((theme.surface as CodeThemeSurface).foreground);
+  });
+
+  it('does not stay on the document palette for a named theme', () => {
+    const dracula = resolveCodeTheme('dracula', false);
+    expect(codeSurfaceStyle(dracula)['--code-background']).toBe(dracula.background);
+    expect(dracula.background).not.toBe(CRAFTLIGHT.background);
+    expect(dracula.background).not.toBe(CRAFTDARK.background);
+  });
+
+  it('keeps auto on the app light/dark palette', () => {
+    expect(codeSurfaceStyle(resolveCodeTheme('auto', false))['--code-background']).toBe(
+      CRAFTLIGHT.background,
+    );
+    expect(codeSurfaceStyle(resolveCodeTheme('auto', true))['--code-background']).toBe(
+      CRAFTDARK.background,
+    );
   });
 });
 

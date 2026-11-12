@@ -17,6 +17,7 @@ const editor = readFileSync(
   fileURLToPath(new URL('../../components/editor/Editor.tsx', import.meta.url)),
   'utf8',
 );
+const css = readFileSync(fileURLToPath(new URL('../../app/globals.css', import.meta.url)), 'utf8');
 
 describe('the block carries a theme', () => {
   it('gives the node a themeId attribute with the auto default', () => {
@@ -32,10 +33,13 @@ describe('the block carries a theme', () => {
     expect(view).toContain('placeholder="搜索主题"');
   });
 
-  it('paints the surface from the resolved palette', () => {
+  it('paints the code area from the resolved palette, pre included', () => {
     expect(view).toContain('resolveCodeTheme(themeId, isDark)');
-    expect(view).toContain('background: surface.background');
-    expect(view).toContain('color: surface.foreground');
+    expect(view).toContain('codeSurfaceStyle(surface)');
+    // The wrapper alone is not enough: `pre` paints itself from these two variables, so the
+    // block's style must carry them (the `codeSurfaceStyle` assertions live in code-themes.test).
+    expect(css).toMatch(/pre\s*\{[^}]*background:\s*var\(--code-background\)/);
+    expect(css).toMatch(/pre\s*\{[^}]*color:\s*var\(--code-foreground\)/);
   });
 
   it('reads the app light/dark state for auto', () => {

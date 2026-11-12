@@ -4565,12 +4565,13 @@
     "G235": {
       "status": "aligned",
       "priority": "P2",
-      "note": "第 529 批：面板「查看更多结果」由面板内 loadMore 续页改为官方末行形态——「查看更多结果」＋「按 Enter 键」(commands.press.enter) 一行路由 /search?q=…&scope=ALL；两段式 searching 句、用词新建、有词空态、最近使用移除各项不变。",
+      "note": "第 529 批：面板「查看更多结果」由面板内 loadMore 续页改为官方末行形态——「查看更多结果」＋「按 Enter 键」(commands.press.enter) 一行路由 /search?q=…&scope=ALL；两段式 searching 句、用词新建、有词空态、最近使用移除各项不变。 第 530 批真面回放：末行实点跳完整结果页，面板内无续页；文档行命中数在真面读到。",
       "evidence": [
         "src/components/search/CommandPalette.tsx:196",
         "src/components/search/CommandPalette.tsx:507",
         "src/lib/search/official-copy.ts:88",
-        "src/app/(app)/search/page.tsx:32"
+        "src/app/(app)/search/page.tsx:32",
+        "src/components/search/CommandPalette.tsx:512"
       ]
     },
     "G236": {
@@ -7123,7 +7124,7 @@
     },
     "G717": {
       "status": "aligned",
-      "note": "web 端进文档弹非模态「在桌面应用中打开？」提示：Close / 记住我的选择（默认未选、勾选才落 localStorage）/ 在应用中打开（craft://doc/{id}）；Escape 不消失、其它交互挤掉。",
+      "note": "web 端进文档弹非模态「在桌面应用中打开？」提示：Close / 记住我的选择（默认未选、勾选才落 localStorage）/ 在应用中打开（craft://doc/{id}）；Escape 不消失、其它交互挤掉。 第 530 批真面回放：提示在文档入口逐次可见，Escape 不消失、他处点击退场、重载再现；三动作文案与顺序在屏上读到。",
       "evidence": [
         "src/lib/browse/open-in-app.ts:9",
         "src/components/app/OpenInAppNotice.tsx:24",
@@ -10666,7 +10667,7 @@
     },
     "G1440": {
       "status": "aligned",
-      "note": "第 528 批：代码块九项名册逐字按序落地（CODE_BLOCK_MENU），语言／主题两枚补齐为搜索框＋勾的子菜单（38 语言／21 主题，写块上 language／themeId 并更新设备默认），全屏与复制代码接 NodeView 与剪贴板；单测覆盖名册、名册过滤与写侧。",
+      "note": "第 528 批：代码块九项名册逐字按序落地（CODE_BLOCK_MENU），语言／主题两枚补齐为搜索框＋勾的子菜单（38 语言／21 主题，写块上 language／themeId 并更新设备默认），全屏与复制代码接 NodeView 与剪贴板；单测覆盖名册、名册过滤与写侧。 第 530 批：真浏览器实测子菜单可选并落值（Dark → pre 背景 rgb(40,41,43)、pyth → 块头标签 Python）；同批修掉 portal 按下冒泡（把手与编辑列各加 containment 守卫）与 live 把手不随事务刷新两处根因，e2e 五条全过。",
       "evidence": [
         "src/components/editor/drag-handle/block-actions.ts:167",
         "src/components/editor/drag-handle/block-actions.ts:177",
@@ -10675,12 +10676,16 @@
         "src/components/editor/drag-handle/DragHandle.tsx:255",
         "src/components/editor/drag-handle/DragHandle.tsx:883",
         "src/components/editor/drag-handle/code-roster-submenu.tsx:14",
-        "src/components/editor/drag-handle/block-actions.test.ts:934"
+        "src/components/editor/drag-handle/block-actions.test.ts:934",
+        "src/components/editor/drag-handle/DragHandle.tsx:630",
+        "src/components/editor/DocumentEditor.tsx:484",
+        "src/components/editor/drag-handle/DragHandle.tsx:179",
+        "e2e/drag-handle-menu.spec.ts:67"
       ]
     },
     "G1474": {
       "status": "aligned",
-      "note": "第 528 批：主题／语言两个选择器均为搜索框＋单组清单＋当前值打勾，名册 21 主题／38 语言与官方逐字同表；块头选择器与块级 ⋯ 子菜单共用同一份名册与过滤规则，mermaid 不可选但可显示。",
+      "note": "第 528 批：主题／语言两个选择器均为搜索框＋单组清单＋当前值打勾，名册 21 主题／38 语言与官方逐字同表；块头选择器与块级 ⋯ 子菜单共用同一份名册与过滤规则，mermaid 不可选但可显示。 第 530 批：真浏览器实测两个子菜单可选可落值；修掉命名主题只改包装层、`pre` 仍读文档级变量的真错（新增 codeSurfaceStyle 同时重指两枚 --code 变量，Dark → pre 背景 rgb(40,41,43)）。语法 token 色不随命名主题走仍是限定。",
       "evidence": [
         "src/components/editor/extensions/searchable-select.tsx:14",
         "src/components/editor/extensions/code-block-view.tsx:104",
@@ -10688,12 +10693,16 @@
         "src/lib/editor/code-themes.ts:279",
         "src/lib/editor/code-themes.ts:317",
         "src/lib/editor/code-languages.ts:14",
-        "src/lib/editor/mermaid-surface.ts:53"
+        "src/lib/editor/mermaid-surface.ts:53",
+        "src/lib/editor/code-themes.ts:356",
+        "src/components/editor/extensions/code-block-view.tsx:203",
+        "src/lib/editor/code-themes.test.ts:205",
+        "src/lib/editor/code-theme-wiring.test.ts:36"
       ]
     },
     "G1419": {
       "status": "aligned",
-      "note": "第 529 批：完整搜索结果页按第 419 批采样落地——服务端页单一「[0] 的搜索结果」标题＋文档卡网格，每卡带命中数（标题＋正文顶层块、不重叠、大小写不敏感），50+ 是采到的显示上限不是已证常量；快速打开面板每行印同一计数，末行「查看更多结果＋按 Enter 键」路由 /search?q=…&scope=ALL，面板内 loadMore 删除。scope=ALL 下官方与本地都不渲染三档分组。",
+      "note": "第 529 批：完整搜索结果页按第 419 批采样落地——服务端页单一「[0] 的搜索结果」标题＋文档卡网格，每卡带命中数（标题＋正文顶层块、不重叠、大小写不敏感），50+ 是采到的显示上限不是已证常量；快速打开面板每行印同一计数，末行「查看更多结果＋按 Enter 键」路由 /search?q=…&scope=ALL，面板内 loadMore 删除。scope=ALL 下官方与本地都不渲染三档分组。 第 530 批真面回放：面板末行实点（以及按 Enter）跳 /search?q=…&scope=ALL；结果页标题与每卡命中数在真浏览器读到，空态句亦已读。",
       "evidence": [
         "src/lib/search/hit-count.ts:10",
         "src/lib/search/hit-count.ts:13",
@@ -10713,7 +10722,8 @@
         "src/actions/document/search-hit-count.test.ts:1",
         "src/lib/search/hit-count.test.ts:5",
         "src/components/search/palette-wiring.test.ts:46",
-        "src/lib/search/official-copy.test.ts:100"
+        "src/lib/search/official-copy.test.ts:100",
+        "src/components/search/CommandPalette.tsx:512"
       ]
     }
   }

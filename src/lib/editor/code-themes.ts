@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 /**
  * The code-block theme roster (G1093). Twenty selectable themes plus `auto`, which follows the
  * app's own light/dark state — `auto` is not a theme of its own but a pointer at one of the two
@@ -337,4 +339,25 @@ export function resolveCodeTheme(id: unknown, isDark: boolean): CodeThemeSurface
   const theme = typeof id === 'string' ? BY_ID.get(id) : undefined;
   if (!theme || theme.id === 'auto' || !theme.surface) return isDark ? CRAFTDARK : CRAFTLIGHT;
   return theme.surface;
+}
+
+/**
+ * The container style for one code block. `background`/`color` paint the wrapper strip that holds
+ * the gutter, but the `<pre>` inside it is painted by the stylesheet's own
+ * `pre { background: var(--code-background); color: var(--code-foreground) }` rule (G1163), so a
+ * palette only reaches the code area when the block re-points those two variables too — without
+ * them a named theme changes the gutter strip and nothing else.
+ */
+export type CodeSurfaceStyle = CSSProperties & {
+  '--code-background': string;
+  '--code-foreground': string;
+};
+
+export function codeSurfaceStyle(surface: CodeThemeSurface): CodeSurfaceStyle {
+  return {
+    background: surface.background,
+    color: surface.foreground,
+    '--code-background': surface.background,
+    '--code-foreground': surface.foreground,
+  };
 }

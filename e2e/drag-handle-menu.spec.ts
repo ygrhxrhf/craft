@@ -31,6 +31,11 @@ async function newDoc(page: import('@playwright/test').Page, lines: string[]) {
   await page.getByRole('button', { name: /新建/ }).first().click();
   await page.waitForURL(/\/documents\//);
 
+  // G349: a blank page auto-opens the idea starter, whose modal sits over the editor and
+  // swallows every click aimed at it. Close it before typing.
+  const starter = page.locator('[data-testid="idea-starter"]');
+  if (await starter.count()) await starter.getByRole('button', { name: '关闭' }).click();
+
   const editor = page.locator('.ProseMirror');
   await editor.click();
   for (const [index, line] of lines.entries()) {
@@ -52,7 +57,9 @@ const texts = async (page: import('@playwright/test').Page) =>
 async function hoverGutterOf(page: import('@playwright/test').Page, editorBox: { x: number }, index: number) {
   const rows = await readRows(page);
   await page.mouse.move(editorBox.x + 20, rows[index].top + rows[index].height / 2);
-  const handle = page.locator('[data-drag-handle]');
+  // G1472: earlier-activated rows keep their own sticky handle, so more than one can be on
+  // screen. The live one — the row under the pointer — is rendered first.
+  const handle = page.locator('[data-drag-handle]').first();
   await expect(handle).toBeVisible();
   return handle;
 }

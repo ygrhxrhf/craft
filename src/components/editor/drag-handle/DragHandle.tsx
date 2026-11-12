@@ -23,7 +23,10 @@ import { dropTargetFor, visibleRows } from './drop-band';
 import { resolveDropAddress } from '@/lib/editor/drop-address';
 import { indentRunOf } from '@/lib/editor/indent-run';
 import { topLevelStart } from '@/lib/editor/block-move';
-import { applyBlockAction, anchorableBlockTarget, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, REMIND_MENU, renameLinkPreview, reloadLinkPreview, setBlockEmoji, setBlockReminder, setCalloutType, setDividerStyle, setSeparatorMaterial, setTaskReminder, setTaskReminderAt, setBlockReminderAt, taskItemTarget, type BlockActionId } from './block-actions';
+import { applyBlockAction, anchorableBlockTarget, BLOCK_EMOJIS, blockLinkFor, blockMenuItems, codeLanguageOptions, codeThemeOptions, filterCodeLanguageOptions, filterCodeThemeOptions, REMIND_MENU, renameLinkPreview, reloadLinkPreview, setBlockEmoji, setBlockReminder, setCalloutType, setCodeBlockLanguage, setCodeBlockTheme, setDividerStyle, setSeparatorMaterial, setTaskReminder, setTaskReminderAt, setBlockReminderAt, taskItemTarget, type BlockActionId } from './block-actions';
+import { CodeRosterSubmenu } from './code-roster-submenu';
+import { storeDefaultLanguage, storeDefaultTheme } from '@/lib/editor/code-preferences';
+import { DEFAULT_CODE_THEME } from '@/lib/editor/code-themes';
 import { promptDialog } from '@/lib/dialog/show';
 import { CALLOUT_CHOICES, type CalloutType } from '@/components/editor/extensions/callout';
 import { DIVIDER_STYLE_CHOICES, type DividerStyle } from '@/lib/editor/divider-styles';
@@ -253,6 +256,40 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     (blockEl: HTMLElement) => {
       const index = indexOfBlock(blockEl);
       return index >= 0 && editor.state.doc.child(index).type.name === 'codeBlock';
+    },
+    [editor, indexOfBlock],
+  );
+
+  // G1440：`语言`／`主题` 子菜单要知道块上当前的两根值（当前值在清单里打勾）。
+  const codeBlockAttrs = useCallback(
+    (blockEl: HTMLElement) => {
+      const index = indexOfBlock(blockEl);
+      const node = index >= 0 ? editor.state.doc.child(index) : null;
+      return {
+        language: typeof node?.attrs.language === 'string' ? node.attrs.language : '',
+        themeId: typeof node?.attrs.themeId === 'string' ? node.attrs.themeId : DEFAULT_CODE_THEME,
+      };
+    },
+    [editor, indexOfBlock],
+  );
+
+  // 选完即写块属性，同时把片区默认偏好一起更新（官方选主题＝写账号默认＋块，G1166）。
+  const chooseCodeLanguage = useCallback(
+    (blockEl: HTMLElement, language: string) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return;
+      setCodeBlockLanguage(editor.state, editor.view.dispatch, index, language);
+      storeDefaultLanguage(language);
+    },
+    [editor, indexOfBlock],
+  );
+
+  const chooseCodeTheme = useCallback(
+    (blockEl: HTMLElement, themeId: string) => {
+      const index = indexOfBlock(blockEl);
+      if (index < 0) return;
+      setCodeBlockTheme(editor.state, editor.view.dispatch, index, themeId);
+      storeDefaultTheme(themeId);
     },
     [editor, indexOfBlock],
   );
@@ -843,6 +880,30 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
+                ) : item.id === 'code-language' ? (
+                  <CodeRosterSubmenu
+                    key={item.id}
+                    icon={<BlockActionIcon id={item.id} />}
+                    label={item.label}
+                    placeholder="搜索语言"
+                    value={codeBlockAttrs(target.blockEl).language}
+                    options={codeLanguageOptions(codeBlockAttrs(target.blockEl).language)}
+                    filter={(query) =>
+                      filterCodeLanguageOptions(codeLanguageOptions(codeBlockAttrs(target.blockEl).language), query)
+                    }
+                    onPick={(value) => chooseCodeLanguage(target.blockEl, value)}
+                  />
+                ) : item.id === 'code-theme' ? (
+                  <CodeRosterSubmenu
+                    key={item.id}
+                    icon={<BlockActionIcon id={item.id} />}
+                    label={item.label}
+                    placeholder="搜索主题"
+                    value={codeBlockAttrs(target.blockEl).themeId}
+                    options={codeThemeOptions()}
+                    filter={filterCodeThemeOptions}
+                    onPick={(value) => chooseCodeTheme(target.blockEl, value)}
+                  />
                 ) : item.id === 'add-emoji' ? (
                   <DropdownMenuSub key={item.id}>
                     <DropdownMenuSubTrigger aria-label={item.label}>

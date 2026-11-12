@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-11",
-  "method": "第 521 批：task-view-key/undo-stack 纯核 + renameTask/restoreTask 服务端 + TasksView 行键与零态卡接线；浏览器实测卡几何与 tabs 横滑计算值；第 522 批：G1414 反馈弹窗全族（13 键／匿名邮箱门／感谢屏／评分桥门控）、G1415 缺函数反馈入口（两处公式面）＝纯核＋接线＋单测＋浏览器实测",
+  "verifiedAt": "2026-11-12",
+  "method": "第 521 批：task-view-key/undo-stack 纯核 + renameTask/restoreTask 服务端 + TasksView 行键与零态卡接线；浏览器实测卡几何与 tabs 横滑计算值；第 522 批：G1414 反馈弹窗全族（13 键／匿名邮箱门／感谢屏／评分桥门控）、G1415 缺函数反馈入口（两处公式面）＝纯核＋接线＋单测＋浏览器实测；第 528 批：G1440 代码块九项名册的 语言／主题 子菜单落地（38 语言／21 主题、搜索框＋勾、写块属性与设备默认），G1474 两块 LOCAL 回读＝纯核＋接线＋单测",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -10661,6 +10661,33 @@
       "note": "官方 Alt-←/→ 与 Ctrl-Shift-⌫ 送达无作用，本地未接键，两侧无变化",
       "evidence": [
         "src/lib/editor/keymap.ts:196"
+      ]
+    },
+    "G1440": {
+      "status": "aligned",
+      "note": "第 528 批：代码块九项名册逐字按序落地（CODE_BLOCK_MENU），语言／主题两枚补齐为搜索框＋勾的子菜单（38 语言／21 主题，写块上 language／themeId 并更新设备默认），全屏与复制代码接 NodeView 与剪贴板；单测覆盖名册、名册过滤与写侧。",
+      "evidence": [
+        "src/components/editor/drag-handle/block-actions.ts:167",
+        "src/components/editor/drag-handle/block-actions.ts:177",
+        "src/components/editor/drag-handle/block-actions.ts:512",
+        "src/components/editor/drag-handle/block-actions.ts:528",
+        "src/components/editor/drag-handle/DragHandle.tsx:255",
+        "src/components/editor/drag-handle/DragHandle.tsx:883",
+        "src/components/editor/drag-handle/code-roster-submenu.tsx:14",
+        "src/components/editor/drag-handle/block-actions.test.ts:934"
+      ]
+    },
+    "G1474": {
+      "status": "aligned",
+      "note": "第 528 批：主题／语言两个选择器均为搜索框＋单组清单＋当前值打勾，名册 21 主题／38 语言与官方逐字同表；块头选择器与块级 ⋯ 子菜单共用同一份名册与过滤规则，mermaid 不可选但可显示。",
+      "evidence": [
+        "src/components/editor/extensions/searchable-select.tsx:14",
+        "src/components/editor/extensions/code-block-view.tsx:104",
+        "src/components/editor/drag-handle/code-roster-submenu.tsx:14",
+        "src/lib/editor/code-themes.ts:279",
+        "src/lib/editor/code-themes.ts:317",
+        "src/lib/editor/code-languages.ts:14",
+        "src/lib/editor/mermaid-surface.ts:53"
       ]
     }
   }

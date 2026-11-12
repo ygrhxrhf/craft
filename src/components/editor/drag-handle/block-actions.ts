@@ -14,6 +14,15 @@ import {
   type SeparatorMaterial,
 } from '@/lib/editor/separator-material';
 import { type CalloutType } from '@/components/editor/extensions/callout';
+import { CODE_LANGUAGES, filterLanguages } from '@/lib/editor/code-languages';
+import { appearsInLanguageMenu } from '@/lib/editor/mermaid-surface';
+import { CODE_THEMES, themeLabel, filterThemes } from '@/lib/editor/code-themes';
+
+/** One entry of the two code-block submenus: the stored value plus what the menu prints. */
+export interface CodeRosterOption {
+  value: string;
+  label: string;
+}
 
 export type BlockActionId =
   | 'remind'
@@ -159,6 +168,35 @@ export const CODE_BLOCK_MENU: readonly BlockAction[] = [
   ...CODE_LEAD,
   ...kernelActions(2, true, { beforeLink: [{ id: 'code-copy', label: '复制代码', group: 4 }] }),
 ];
+
+/**
+ * G1440 —— `语言` 子菜单的名册：`CODE_LANGUAGES` 里除 mermaid 之外的全部（官方语言表 38 项）。
+ * mermaid 不进菜单，但**已经**是 mermaid 的块仍把它列出来——否则那一格显示不出当前值
+ * （与 `code-block-view` 的表头选择器同一条规则）。
+ */
+export function codeLanguageOptions(current: string): CodeRosterOption[] {
+  return CODE_LANGUAGES.filter(
+    (item) => appearsInLanguageMenu(item.storedLangCode) || item.storedLangCode === current,
+  ).map((item) => ({ value: item.storedLangCode, label: item.label }));
+}
+
+/** G1440 —— `主题` 子菜单的名册：`CODE_THEMES` 全 21 项，`Auto` 在最前（官方显示序）。 */
+export function codeThemeOptions(): CodeRosterOption[] {
+  return CODE_THEMES.map((theme) => ({ value: theme.id, label: themeLabel(theme) }));
+}
+
+/** 子菜单搜索框的过滤规则：语言按标签子串、主题按标签子串或关键词全等（G1474）。 */
+export function filterCodeLanguageOptions(
+  options: readonly CodeRosterOption[],
+  query: string,
+): CodeRosterOption[] {
+  return filterLanguages(options, query);
+}
+
+export function filterCodeThemeOptions(query: string): CodeRosterOption[] {
+  const shown = new Set(filterThemes(query).map((theme) => theme.id));
+  return codeThemeOptions().filter((option) => shown.has(option.value));
+}
 
 /** 普通文本块专属四枚（官方 9＝5＋4 的加数）。 */
 export const TEXT_BLOCK_EXTRAS: readonly BlockAction[] = [
@@ -465,6 +503,38 @@ export function setBlockEmoji(
   const node = state.doc.child(index);
   const next = node.attrs.emoji === emoji ? null : emoji;
   dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, emoji: next }));
+}
+
+/**
+ * G1440 —— 代码块 `⋯` 菜单的 `语言` 选择。写块上的 `language` 属性（高亮器读的那根轴），
+ * 与块头选择器 `updateAttributes({ language })` 同一根；非代码块不做事。
+ */
+export function setCodeBlockLanguage(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  storedLangCode: string,
+) {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'codeBlock') return;
+  const { before } = blockBounds(state, index);
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, language: storedLangCode }));
+}
+
+/**
+ * G1440/G1474 —— 代码块 `⋯` 菜单的 `主题` 选择。写块上的 `themeId`，与块头选择器同一根。
+ * 非代码块不做事。
+ */
+export function setCodeBlockTheme(
+  state: EditorState,
+  dispatch: (tr: Transaction) => void,
+  index: number,
+  themeId: string,
+) {
+  const node = state.doc.child(index);
+  if (node.type.name !== 'codeBlock') return;
+  const { before } = blockBounds(state, index);
+  dispatch(state.tr.setNodeMarkup(before, undefined, { ...node.attrs, themeId }));
 }
 
 /**

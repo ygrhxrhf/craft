@@ -24,6 +24,12 @@ import {
   blockMenuItems,
   CODE_BLOCK_MENU,
   KERNEL_LABELS,
+  codeLanguageOptions,
+  codeThemeOptions,
+  filterCodeLanguageOptions,
+  filterCodeThemeOptions,
+  setCodeBlockLanguage,
+  setCodeBlockTheme,
   deleteBlock,
   insertBlockAbove,
   insertBlockBelow,
@@ -91,6 +97,12 @@ const schema = new Schema({
     toggleBlock: { content: 'block+', group: 'block', attrs: { open: { default: false } } },
     divider: { group: 'block', atom: true, attrs: { style: { default: 'regular' } } },
     callout: { content: 'block+', group: 'block', attrs: { type: { default: 'info' } } },
+    // G1440：代码块的两根值——`language`（高亮器读）与 `themeId`（配色读）。
+    codeBlock: {
+      content: 'text*',
+      group: 'block',
+      attrs: { language: { default: null }, themeId: { default: 'auto' } },
+    },
     text: {},
   },
   marks: { link: { attrs: { href: { default: null } } } },
@@ -927,6 +939,66 @@ describe('代码块九项名册（G1440）', () => {
     const labels = blockMenuItems({ canDelete: true, isCodeBlock: true }).map((item) => item.label);
     expect(labels).not.toContain('转换为卡片');
     expect(labels).not.toContain('添加表情');
+  });
+});
+
+// G1440 —— 语言／主题两枚是子菜单，名册与搜索规则与块头选择器同一份。
+describe('代码块 语言／主题 子菜单（G1440）', () => {
+  it('语言名册是 38 项：mermaid 不进菜单', () => {
+    const options = codeLanguageOptions('');
+    expect(options).toHaveLength(38);
+    expect(options.map((option) => option.value)).not.toContain('mermaid');
+    expect(options[0]).toEqual({ value: 'ada', label: 'Ada' });
+  });
+
+  it('已经是 mermaid 的块把 mermaid 列出来，当前值才有勾', () => {
+    const options = codeLanguageOptions('mermaid');
+    expect(options).toHaveLength(39);
+    expect(options.map((option) => option.value)).toContain('mermaid');
+  });
+
+  it('主题名册是 21 项、Auto 在最前', () => {
+    const options = codeThemeOptions();
+    expect(options).toHaveLength(21);
+    expect(options[0]).toEqual({ value: 'auto', label: 'Auto' });
+    expect(options.map((option) => option.label)).toContain('VS Code');
+  });
+
+  it('搜索：语言按标签子串，主题按标签子串或关键词全等', () => {
+    const languages = codeLanguageOptions('');
+    expect(filterCodeLanguageOptions(languages, 'py').map((option) => option.value)).toEqual(['python']);
+    expect(filterCodeThemeOptions('dark').map((option) => option.value)).toContain('craftdark');
+    // 关键词是全等而不是子串：`syst` 找不到 auto，`system` 才找得到。
+    expect(filterCodeThemeOptions('syst').map((option) => option.value)).not.toContain('auto');
+    expect(filterCodeThemeOptions('system').map((option) => option.value)).toEqual(['auto']);
+  });
+
+  it('选语言／主题各写自己那根属性，非代码块不做事', () => {
+    const state = EditorState.create({
+      schema,
+      doc: schema.nodes.doc.create(null, [schema.nodes.codeBlock.create(null, schema.text('a'))]),
+    });
+    const withLang = runState(state, (d) => setCodeBlockLanguage(state, d, 0, 'python'));
+    expect(withLang.doc.child(0).attrs.language).toBe('python');
+    expect(withLang.doc.child(0).textContent).toBe('a');
+
+    const withTheme = runState(state, (d) => setCodeBlockTheme(state, d, 0, 'nord'));
+    expect(withTheme.doc.child(0).attrs.themeId).toBe('nord');
+    expect(withTheme.doc.child(0).attrs.language).toBeNull();
+
+    const paragraph = stateWith(['正文']);
+    expect(setCodeBlockLanguage(paragraph, () => {}, 0, 'python')).toBeUndefined();
+    expect(setCodeBlockTheme(paragraph, () => {}, 0, 'nord')).toBeUndefined();
+  });
+
+  it('DragHandle 里两枚都接了子菜单与写侧', () => {
+    const source = readFileSync(new URL('./DragHandle.tsx', import.meta.url), 'utf8');
+    expect(source).toContain("item.id === 'code-language'");
+    expect(source).toContain("item.id === 'code-theme'");
+    expect(source).toContain('placeholder="搜索语言"');
+    expect(source).toContain('placeholder="搜索主题"');
+    expect(source).toContain('setCodeBlockLanguage(editor.state');
+    expect(source).toContain('setCodeBlockTheme(editor.state');
   });
 });
 

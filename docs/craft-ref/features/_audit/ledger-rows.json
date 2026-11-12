@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-11-11T18:26:24.530Z",
+  "generatedAt": "2026-11-12T04:15:02.683Z",
   "totalRows": 1615,
   "statusDistribution": {
-    "gap": 662,
+    "gap": 663,
     "aligned": 478,
     "unknown": 186,
     "deliberate": 134,
     "nonaction": 72,
     "partial": 65,
-    "unreachable": 18
+    "unreachable": 17
   },
   "priorityDistribution": {
     "P2": 631,
@@ -19,7 +19,7 @@
   },
   "statusByPriority": {
     "P2 / aligned": 278,
-    "P2 / gap": 213,
+    "P2 / gap": 214,
     "P1 / gap": 185,
     "P? / gap": 170,
     "P? / unknown": 108,
@@ -40,9 +40,9 @@
     "P? / partial": 19,
     "P1 / partial": 14,
     "P1 / deliberate": 8,
-    "P2 / unreachable": 7,
     "P0 / aligned": 6,
     "P3 / unreachable": 6,
+    "P2 / unreachable": 6,
     "P3 / partial": 4,
     "P? / unreachable": 4,
     "P0 / partial": 2,
@@ -27027,10 +27027,10 @@
       "cols": 5,
       "id": "G1440",
       "official": "★★★★ **代码块的块级 `⋯` 菜单＝逐字 9 项、按此序**＝`语言`／`主题`／`全屏模式`／`提醒我…`／`在上方插入区块`／`在下方插入区块`／`复制代码`／`复制区块链接`／`删除`＝样本＝`QODER-HARVEST-B111-THEME` 的第一枚代码块（C 逐字读回、**未进「主题」子菜单**＝⇒ 主题档位与候选集不落、只落\"有这一项\"）＝☆ 本线盘上对撞＝四枚专属项逐枚落在**同一枚命名空间 `blockdetails.*`**＝`blockdetails.language`（语言）／`blockdetails.theme`（主题）／`blockdetails.full.screen.mode`（全屏模式）／`blockdetails.copy.code`（复制代码）＝而五枚公共项落在 `commands.*` 与 `delete`＝⇒ 两枚名册合起来给出一条命名层证据＝**块级菜单＝一枚公共内核＋按块类型注入的专属项、专属项在语言包里成族**",
-      "local": "☆ 本地代码块无任何块级菜单扩展＝`block-actions.ts` 那 3 项对代码块同样出现＝即本地是\"一套项集通吃所有块型\"＝与 G1440／G1441 判出的形状相反",
-      "verdict": "屏侧（二手＝经观测会话转录、冲突以 C 为准）＋键面一手（四枚专属项同族逐枚取到）＝☆ 限定＝本行只证\"这 9 项在代码块的块级弹层里被读到\"、不证它们的可点后果（未选任何项）＝主题子菜单与语言候选集仍未采＝☆☆ **第 181 批改判＝这两格都已到手**＝取证线在同一轮把 `主题` 子菜单 **21 枚**（单组、带搜索框、勾在 `Auto`）与 `语言` 子菜单 **38 枚**（默认 `JavaScript`）逐字读回＝落 `G1474`＝☆ 而 21 枚这一档历批早从包体拿到（`G1139` 的 `V` 全 21 条／`G1093` 的实现体）＝屏侧这次是**第一次让包体名册在界面上逐字成立**＝本行那句「未进「主题」子菜单」只对**那一次读数**成立、不再是册内缺口＝☆ 另＝本行\"专属项同落 `blockdetails.*`\"那半句被本批复证一次（搜索框 placeholder 就取 `blockdetails.search.themes`／`blockdetails.search.languages`）",
+      "local": "✎ 现读（2026-11-12 第 528 批）：代码块走自己那份九项名册：`block-actions.ts:158` 的 `CODE_BLOCK_MENU` 逐字 9 项、按官方序（语言／主题／全屏模式／提醒我…／在上方插入区块／在下方插入区块／复制代码／复制区块链接／删除），`DragHandle.tsx:289` 起 `isCodeBlock` 认块型、按该名册渲染；`语言`／`主题` 两枚是子菜单（`code-roster-submenu.tsx`：搜索框＋单组清单＋当前值打勾），语言名册 38 项（mermaid 不进菜单、已为 mermaid 的块仍列出当前值）、主题名册 21 项（Auto 在最前），搜索规则与块头选择器同一份（`filterCodeLanguages`／`filterCodeThemes`）；选一项写块上 `language`／`themeId` 两根属性并同时更新设备默认偏好（`setCodeBlockLanguage`／`setCodeBlockTheme`）；`全屏模式` 向块 NodeView 派 `craft-code-fullscreen`、`复制代码` 走剪贴板，均有单测（`block-actions.test.ts` 的九项名册与子菜单两节）",
+      "verdict": "**已对齐**：九项名册逐字按序落地，四枚专属项各自有承载面——语言／主题是带搜索框与勾的子菜单（名册与块头选择器同一份、都写块属性），全屏与复制代码接块 NodeView 与剪贴板。官方本行的限定（只证九项被读到、未证可点后果）在本地由实现与单测补齐",
       "score": "2/2",
-      "status": "unreachable",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,
@@ -27641,10 +27641,10 @@
       "cols": 5,
       "id": "G1474",
       "official": "★★★★★ **`主题`／`语言` 两枚子菜单的屏上形状同时到手（历批这两格都写\"未采\"）**＝同容器位 `div.sc-ba7fjt-2` `x=830 y=215`、**256×176**＝① `主题`＝`children 21`、`scrollHeight 688`（≈32.8 px/行 ⇒ 一屏只见 5.4 行、超出 512 px＝688−176 本线算）、`inputs=1`、placeholder 逐字「搜索主题」、**无分隔线＝单组**、当前勾在 `Auto`（带 `Checkmark Icon`＝新插入代码块的默认档）＝名册逐字序＝`Auto`｜`Dark`｜`Light`｜`Atom One`｜`Aura`｜`BBEdit`｜`Darcula`｜`Dracula`｜`GitHub Dark`｜`GitHub Light`｜`Gruvbox Dark`｜`Gruvbox Light`｜`Material Dark`｜`Material Light`｜`Noctis Lilac`｜`Nord`｜`Sublime`｜`Tokyo Night`｜`Tokyo Night Day`｜`Tokyo Night Storm`｜`VS Code`＝⇒ ★★★ **与在册包体名册逐字对上**＝`G1139` 的 `V` 全 21 条（`auto`／\"Auto\" 到 `vscodedark`／\"VS Code\"）＝屏侧这次是**第一次让包体那 21 条在界面上逐字成立**、且勾档形状复证历批第 112 批那三句（单组 `themes`、每项文字＋勾图标、上方搜索框）＝☆ 并给 `gap.md:3721` ④ 那句\"名册 19 档（MCP）与 21 档（界面）之差是裁剪还是拒绝未判\"补上界面那一侧的逐字面（MCP 侧仍 19、差 `craftdark`／`craftlight`＝`longtail.md:1218` 在册）＝② `语言`＝`children 38`、`scrollHeight 1232`（超出 1056 px＝1232−176 本线算）、`inputs=0`、默认勾 `JavaScript`（第 13 行）＝名册逐字 38 枚（`Ada`…`Other`）＝★★ **本线包体逐字节重算＝屏侧这 38 枚与 `pe.filter(L=>L.langCode!==\"mermaid\")` 那一档逐字同集（两侧差集全空）**＝⇒ 屏侧读的是过滤后名册、不是 `pe` 的 39 枚全集（`G1086`）＝**这枚复证 `G1177`／`G1179`／`interactions.md:2475` 已在册的那个排除动作**（`languages:c` 两处调用点＝块级 `⋯`→`语言` 与代码块行内头 `Sa`）＝☆ 而当前语言解析走全集（`pe.find(P=>P.storedLangCode===r)`）⇒ 一块若已是 mermaid 仍能解析出标签＝**\"不可选但可显示\"**＝☆ 名册里另两枚有用的形状＝含 `Formula (TeX)`（与插入面板的「公式（TeX）」**全半角括号不同**＝同一产品两种写法、映射表别合并）、末位是兜底档 `Other`＝☆☆ **屏侧两处归因本批判为不成立、不落为官方事实**＝(a)「前 3 枚 `Auto`／`Dark`／`Light` 是跟随档、后 18 枚才是具名」＝数据面只支持 `auto` 一枚（`G1139` 里 `settings:null` 只有 `auto`；`craftdark`／`craftlight` 各有实现体＝`G1093` 逐字）＝**\"名册前 N 枚\"不是类型证据**＝(b)「`语言` 子菜单没有搜索框＝与 `主题` 不同、同层两套实现」＝包体两支**同构**（`st` @45842ff 与 `it` @47576ff 各渲染 `Ie` 输入框、placeholder 分别取 `blockdetails.search.themes`／`blockdetails.search.languages`）＝`候选＝屏侧那发的 inputs 只圈了列表容器、搜索框在浮层父容器里｜未证`（取证线在同一包里自纠过一枚同形错＝\"取最大 overflow:auto 抓到侧栏插入面板\"）＝判据＝**两面冲突时先怀疑量具再怀疑官方**",
-      "local": "本地代码块只有 `<select>` 22 项、label 直接印 id（`src/components/editor/extensions/code-block-view.tsx:9-32`＋`:57-61`＝本批现跑枚数 22）＝⇒ 本地**整面无主题档**（无 `Auto`／无 21 档）、无搜索框、无\"两档成员集\"概念；☆ 一条反向提醒＝本地\"没有搜索框\"这一点**恰好与屏侧那句假象相同**＝若照那句实现就掩盖了缺口（官方两支都有搜索框）＝而成员集差 22 vs 38／39＝`G1086` 已判缺 17 档",
+      "local": "✎ 现读（2026-11-12 第 528 批）：主题／语言两个选择器都有搜索框＋单组清单＋当前值打勾（`searchable-select.tsx`，placeholder 逐字「搜索主题」／「搜索语言」），两处入口共用同一份名册——代码块行内头（`code-block-view.tsx:104,115`）与块级 `⋯` 的 `主题`／`语言` 子菜单（`code-roster-submenu.tsx`）；主题名册 `CODE_THEMES` 全 21 项、显示序 Auto 在最前（`code-themes.ts:279`，标签与官方逐字同表）；语言名册 `CODE_LANGUAGES` 39 项去掉 mermaid＝38 项（`code-languages.ts`＋`mermaid-surface.ts:53`），已为 mermaid 的块仍解析出标签＝不可选但可显示；主题搜索按标签子串或关键词全等（`filterThemes`：`syst` 找不到、`system` 找得到 Auto）",
       "verdict": "屏侧一手（本线逐字回读取证线记录面第 3264 行）＋本线包体面一手（`pe` 与过滤档各逐字节重算）＝☆ 两面冲突两处已登记、未升格＝☆ 限定＝21 枚与 38 枚都只证\"在该子菜单里被逐字读到\"、未选任何一项（选＝写主题或写语言）",
       "score": "2/2",
-      "status": "aligned",
+      "status": "gap",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

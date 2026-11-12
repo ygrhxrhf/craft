@@ -31,11 +31,6 @@ async function newDoc(page: import('@playwright/test').Page, lines: string[]) {
   await page.getByRole('button', { name: /新建/ }).first().click();
   await page.waitForURL(/\/documents\//);
 
-  // G349: a blank page auto-opens the idea starter, whose modal sits over the editor and
-  // swallows every click aimed at it. Close it before typing.
-  const starter = page.locator('[data-testid="idea-starter"]');
-  if (await starter.count()) await starter.getByRole('button', { name: '关闭' }).click();
-
   const editor = page.locator('.ProseMirror');
   await editor.click();
   for (const [index, line] of lines.entries()) {

@@ -104,6 +104,7 @@ async function ensureDocument(browser: Browser, page: Page) {
 }
 
 async function typeBody(browser: Browser, page: Page) {
+  await page.locator('.ProseMirror').first().waitFor({ state: 'visible', timeout: 20_000 });
   const body = page.locator('[contenteditable="true"]').first();
   await body.click();
   // `fill` writes the DOM directly and ProseMirror reconciles that as a bulk

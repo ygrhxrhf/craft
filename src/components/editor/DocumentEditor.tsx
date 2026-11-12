@@ -42,9 +42,6 @@ import { DOODLE_SEPARATOR_CSS, washiTapeSrc } from '@/lib/editor/themes/washi-ca
 import { washiPatternBackground } from '@/lib/editor/washi-patterns';
 import type { PageStyle } from './themes/page-style';
 import { getDraft } from '@/lib/offline/draft-store';
-import type { JSONContent } from '@tiptap/core';
-import { IdeaStarterDialog } from '@/components/ai/IdeaStarterDialog';
-import { isBlankDocumentContent } from '@/lib/ai/idea-starter';
 import { ALL_CHANGES_SAVED, offlineSaveLabel } from '@/lib/offline/save-status';
 import { planTrailingClick } from '@/lib/editor/trailing-click';
 import { TaskDateQuickMenu } from '@/components/editor/TaskDateQuickMenu';
@@ -147,10 +144,6 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const platform = usePlatform();
   const [shareOpen, setShareOpen] = useState(false);
   const [editor, setEditor] = useState<import('@tiptap/react').Editor | null>(null);
-  // G349: the official blank page opens the Idea Starter on its own — a page with nothing on it is
-  // where the structure offer belongs. Decided at mount, from the stored content, so a document whose
-  // blocks are still syncing in does not get a false pop-up.
-  const [ideaOpen, setIdeaOpen] = useState(() => canEdit && isBlankDocumentContent(doc.content));
   const [saveState, setSaveState] = useState<SaveState>('saved');
   // The editor hands us its save function on mount. A ref, not state: the editor
   // recreates that function on every render, so storing it in state feeds a
@@ -277,12 +270,6 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     } catch {
       setSaveState('error');
     }
-  };
-
-  /** G349：空白页弹层把结构写进**当前这一篇**（官方就是在这页上生成），而不是另建一篇。 */
-  const applyIdeaPlan = (content: unknown) => {
-    if (!editor) return;
-    editor.chain().focus().setContent(content as JSONContent).run();
   };
 
   const measure = width === 'narrow' ? '580px' : width === 'wide' ? '900px' : '720px';
@@ -626,15 +613,6 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               onSaveNowReady={handleSaveNowReady}
               onUpdate={(_, __, count) => setWordCount(count)}
             />
-            {/* G349: waiting for the editor means 创建 can never fire against a null editor and
-                silently write nothing into the page. */}
-            {editor && (
-              <IdeaStarterDialog
-                open={ideaOpen}
-                onClose={() => setIdeaOpen(false)}
-                onApply={applyIdeaPlan}
-              />
-            )}
             </div>
           </div>
         </div>

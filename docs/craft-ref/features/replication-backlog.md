@@ -1,5 +1,9 @@
 # 复刻执行清单（台账归一化审计）
 
+> **〔历史快照〕** 2026-10-30 的归一化审计结论，**不再是待办口径**。权威待办只有 `_audit/ledger-backlog.csv`
+> 里 `priority` 对应档且 `status∈{gap,partial}` 的行数；截至 2026-11-12 现读已全部清零（`gap` 0、`partial` 0）。
+> 本文的 1614 条口径、P0/P1/P2 三张显式表与「1053 行未动」统计都停在审计当天，读数值请以 CSV 为准。
+
 > 生成日期：2026-10-30。本文件只出清单：**未改产品代码，也未回写 `gap.md`**。
 > 审计对象：[gap.md](gap.md) 全部 1614 条 G 行；P0/P1 逐条现读代码，其余按台账文本归一化并标为待重扫。
 > 机器可读全量清单：`_audit/ledger-backlog.csv`、`_audit/ledger-rows.json`、`_audit/backlog-digest.json`。

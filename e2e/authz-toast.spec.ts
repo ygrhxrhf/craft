@@ -67,6 +67,12 @@ async function moveToTrash(page: Page, title: string) {
   for (let attempt = 0; attempt < 3; attempt++) {
     await row.click({ button: 'right' });
     await page.getByRole('menu').getByRole('menuitem', { name: /移至最近删除/ }).click();
+    // G233 put a confirmation in front of the sidebar's move-to-trash. Its confirm button
+    // carries the same sentence as the menu item, so it is scoped to the dialog.
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: `将"${title}"移至最近删除` })
+      .click();
     const took = await expect(gone)
       .toHaveCount(0, { timeout: 6_000 })
       .then(() => true)
@@ -79,12 +85,18 @@ async function moveToTrash(page: Page, title: string) {
   await expect(gone).toHaveCount(0, { timeout: 20_000 });
 }
 
+/** G242: the trash screen's 「选择」 is an item in the ⋯ menu, not a toolbar button. */
+async function enterSelection(page: Page) {
+  await page.getByRole('button', { name: '更多', exact: true }).click();
+  await page.getByRole('menuitem', { name: '选择', exact: true }).click();
+}
+
 /** Permanently deletes the one row this case put into the trash. */
 async function purgeFromTrash(page: Page, title: string) {
   await page.goto('/trash');
   const row = page.locator('main').getByText(title, { exact: true }).first();
   await expect(row).toBeVisible({ timeout: 20_000 });
-  await page.getByRole('button', { name: '选择', exact: true }).click();
+  await enterSelection(page);
   await page.locator('main').getByRole('checkbox', { name: `选择 ${title}` }).click();
   await page.getByRole('button', { name: '永久删除所选' }).click();
   await page.getByRole('dialog').getByRole('button', { name: '删除' }).click();
@@ -105,7 +117,7 @@ async function emptyTrash(page: Page) {
   await page.goto('/trash');
   const restoreButtons = page.getByRole('button', { name: '恢复', exact: true });
   if ((await restoreButtons.count()) === 0) return;
-  await page.getByRole('button', { name: '选择', exact: true }).click();
+  await enterSelection(page);
   await page.getByRole('checkbox', { name: '全选' }).click();
   await page.getByRole('button', { name: '永久删除所选' }).click();
   await page.getByRole('dialog').getByRole('button', { name: '删除' }).click();
@@ -146,7 +158,7 @@ test('the batch 还原 path reports the same rejection through the same signal',
 
   await purgeFromTrash(page, title);
 
-  await stale.getByRole('button', { name: '选择', exact: true }).click();
+  await enterSelection(stale);
   await stale.locator('main').getByRole('checkbox', { name: `选择 ${title}` }).click();
   await stale.getByRole('button', { name: '还原所选' }).click();
   await expect(stale.getByText(REJECTION)).toBeVisible({ timeout: 20_000 });

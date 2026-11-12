@@ -535,6 +535,11 @@ test('sidebar tree items expose a right-click menu', async ({ page }) => {
   await page.getByRole('link', { name: '文档' }).first().click();
   await openMenu(renamed);
   await page.getByRole('menu').getByRole('menuitem', { name: /移至最近删除/ }).click();
+  // G233 confirms before the sidebar deletes; the confirm button repeats the menu sentence.
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: `将"${renamed}"移至最近删除` })
+    .click();
   await expect(sidebar.getByText(renamed, { exact: true })).toHaveCount(0);
 });
 

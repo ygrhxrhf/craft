@@ -32,6 +32,12 @@ test('trash selection deletes only the checked documents', async ({ page }) => {
 
   await row.click({ button: 'right' });
   await page.getByRole('menu').getByRole('menuitem', { name: /移至最近删除/ }).click();
+  // The sidebar's move-to-trash is confirmed first (G233); the dialog's confirm button is
+  // labelled with the same sentence as the menu item, so scope it to the dialog.
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: `将"${title}"移至最近删除` })
+    .click();
   await expect(sidebar.getByText(title, { exact: true })).toHaveCount(0, { timeout: 20_000 });
 
   const main = page.locator('main');
@@ -39,7 +45,9 @@ test('trash selection deletes only the checked documents', async ({ page }) => {
   const trashRow = main.getByText(title, { exact: true }).first();
   await expect(trashRow).toBeVisible({ timeout: 20_000 });
 
-  await page.getByRole('button', { name: '选择', exact: true }).click();
+  // G242: on the trash screen 「选择」 lives in the ⋯ menu, not as its own toolbar button.
+  await page.getByRole('button', { name: '更多', exact: true }).click();
+  await page.getByRole('menuitem', { name: '选择', exact: true }).click();
   await expect(page.getByText('已选 0 项')).toBeVisible();
   await expect(page.getByRole('button', { name: '永久删除所选' })).toBeDisabled();
   await expect(page.getByRole('button', { name: '还原所选' })).toBeDisabled();

@@ -3,14 +3,15 @@ import { describe, expect, it } from 'vitest';
 import {
   UPDATED_PREFIX,
   cardHead,
+  cardSubtitle,
   cardTitle,
   cardUpdatedLabel,
   isUntitled,
 } from './card-head';
 
 /**
- * G250: the grid card head is title / location breadcrumb / 「已更新 14小时前」, and an untitled
- * document's placeholder is italic grey.
+ * G250: the grid card head is the title over one subtitle line — `breadcrumb • 已更新 14小时前` —
+ * and an untitled document's placeholder is italic grey.
  */
 const NOW = Date.parse('2026-10-15T12:00:00.000Z');
 const hoursAgo = (n: number) => new Date(NOW - n * 60 * 60 * 1000).toISOString();
@@ -57,8 +58,23 @@ describe('the update line', () => {
   });
 });
 
+describe('the subtitle line', () => {
+  it('joins the location and the update time with one bullet', () => {
+    expect(cardSubtitle({ breadcrumb: '📁 日记', updated: '已更新 14小时前' })).toBe('📁 日记 • 已更新 14小时前');
+  });
+
+  it('shows a lone part without a dangling separator', () => {
+    expect(cardSubtitle({ breadcrumb: null, updated: '已更新 5天前' })).toBe('已更新 5天前');
+    expect(cardSubtitle({ breadcrumb: '📁 日记', updated: '' })).toBe('📁 日记');
+  });
+
+  it('is empty when neither part exists', () => {
+    expect(cardSubtitle({ breadcrumb: null, updated: '' })).toBe('');
+  });
+});
+
 describe('the whole head', () => {
-  it('assembles the three parts', () => {
+  it('assembles the parts', () => {
     expect(
       cardHead(
         {
@@ -73,6 +89,11 @@ describe('the whole head', () => {
       placeholder: true,
       breadcrumb: '📁 日记',
       updated: '已更新 14小时前',
+      subtitle: '📁 日记 • 已更新 14小时前',
     });
+  });
+
+  it('drops the separator when the card has no location', () => {
+    expect(cardHead({ title: 'a', updatedAt: hoursAgo(5) }, NOW).subtitle).toBe('已更新 5小时前');
   });
 });

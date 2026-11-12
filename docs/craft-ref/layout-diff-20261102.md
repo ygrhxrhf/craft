@@ -177,8 +177,8 @@ craft 侧：`SM` 的 JSON 是底层页面（已知伪差异 5），**弹窗矩�
 | G16 | 结构·P1 | 卡片高度 | `AD c#307`(260) / `AD l#210`(64) | 260（=208×1.25） | 64（内容自适应） | −196 | `src/components/document/DocumentCard.tsx:45,64`（`block rounded-lg …`） | 卡根加 `aspect-[1/1.25]`（或 `height: cardHeightForWidth()`，`lib/browse/grid.ts:42` 已备） |
 | G17 | 外观·P1 | 导航行几何 | `AD c#72,84` / `AD l#12,13` | 32 / step33 / r8 / icon20 @16 | 36 / step40 / r12 / icon18 @20 | +4 / +7 / +4 / −2 / +4 | `src/components/sidebar/SidebarNav.tsx:41`（`gap-1 px-2 py-2`）、`:49`（`min-h-9 … rounded-lg px-3`）、`:55`（`size-[18px]`） | `min-h-9`→`h-8`，`gap-1`→`space-y-px`，`rounded-lg`→`rounded-md`，`size-[18px]`→`size-5`，`px-3`→`px-1.5` |
 | G18 | 外观·P2 | 分区头行高/缩进 | `AD c#133,138` / `AD l#63,64` | 32 / 标题 @x19 | 23 / 标题 @x10 | −9 / −9 | `src/components/sidebar/SidebarSection.tsx:19-22`（`px-1.5 py-1`，前置 `ChevronRight size-3.5`） | `py-1`→`py-[5px]`，`px-1.5`→`px-2.5`，chevron 改 absolute |
-| G19 | 结构·P0 | `IB` 列表 vs 卡 | `AD c#304` / `IB l#164` | 208×260 卡 | 1084×40 行 | −220 | `src/components/document/InboxList.tsx:76-81`（`ul gap-0.5`、`li rounded-md px-2 py-1.5`） | 若要复刻 craft，改 `BrowseGrid`+`DocumentCard`；若保留列表，行高按 `LIST_ROW_HEIGHT=65`（`lib/browse/grid.ts:23`） |
-| G20 | 结构·P0 | `TR` 行几何 | `TR l#170,175` | 208×260 卡 | 1080×64 r12 step64 | −196 | `src/components/document/TrashList.tsx:326`（`rounded-lg border p-3`） | 同上；保留列表时行高对 65、去边框 |
+| G19 | 结构·P0 | `IB` 列表 vs 卡 | `AD c#304` / `IB l#164` | 208×260 卡 | 1084×40 行 | −220 | `src/components/document/InboxList.tsx:58-71`（`<BrowseGrid>` + `DocumentCard`，卡 208×260、gap 20/8） | 已改成卡片网格，副行只有「已更新 N」——收件箱卡片没有位置 |
+| G20 | 结构·P0 | `TR` 行几何 | `TR l#170,175` | 208×260 卡 | 1080×64 r12 step64 | −196 | `src/components/document/TrashList.tsx:295-324`（`<BrowseGrid>` + `DocumentCard`） | 已改成卡片网格；删掉的页没有路由，卡片是静态磁贴（`href={null}`），副行「最近删除 • 已更新 N」，预览用落库纯文本快照，悬停动作是「恢复」 |
 | G21 | 结构·P1 | `TG` 行高 | `TG c#286` / `TG l#168` | 32 | 36 | +4 | `src/components/browse/TagTreeList.tsx:18`（`min-h-9 … rounded-lg`） | `min-h-9`→`h-8`，`rounded-lg`→`rounded-md` |
 | G22 | 结构·P1 | `TP` 空态盒 | `TP c#300` / `TP l#160` | 1120×72 r10 bg α0.03 | 1084×126 r12 虚线 | +54 | `src/app/(app)/templates/page.tsx:28`（`rounded-lg border border-dashed p-8`） | 空态改 `rounded-[10px] bg-foreground/[0.03] px-6 py-6`，去虚线 |
 | G23 | 结构·P0 | `CA` 内容列宽/日行 | `CA c#274,293` / `CA l#167,181` | 1120 宽、日行 105 r20 | 896（`max-w-4xl`）、日行 92 r16 | −288 / −13 | `src/app/(app)/calendar/page.tsx:138`（`<AppPageContainer className="max-w-4xl">`）；`src/components/calendar/CalendarTimeline.tsx:265-270`（日行 section） | 去掉 `max-w-4xl`；日行 `rounded-[20px]` 并把内距调到总高 105，步进 121 |
@@ -229,19 +229,19 @@ craft 侧：`SM` 的 JSON 是底层页面（已知伪差异 5），**弹窗矩�
 | G03 | 主列 4px | ✅ | 手柄改绝对定位；main 1152×852 @(288,48)（原 292/1148） |
 | G04 | 侧栏右边框 | ✅ | `border-r` 已去（craft 全站无竖向 hairline） |
 | G05 | 搜索入口 | ✅（部分） | 桌面搜索迁进顶栏；侧栏顶行改成空间行 242×36 @(10,56)（craft 268×36 —— 本地该行还要放「新建文档」，少 26px）。手机不挂顶栏，搜索留在抽屉里 |
-| G06 | 右检查器宽 | ✅ | `--panel-w` 360 → **296**（craft 296×853 @(1144,47)），`responsive-spec.md` 同步改口 |
+| G06 | 右检查器 | ✅（宽度）／⏳ 默认展开**待产品裁决** | `--panel-w` 360 → **296**（craft 296×853 @(1144,47)），`responsive-spec.md` 同步改口。默认展开这一半不按像素对齐办：craft 文档屏常开右栏，本地按需开（顶栏 `⋯` 拉面板）——常开会把主列从 1120 压到 824 |
+| G24 | 任务分段 | ⏳ **待产品裁决** | craft 该屏没有本地这排 tab（分段标题另算，已按 G34 改好）。本地 tabs＝「全部／今天／即将／已完成」四段**导航**，照 craft 删掉会少一条导航 ⇒ 不按像素对齐处理 |
 | G07 | 侧栏底栏 | ✅ | `py-2.5` + `border-foreground/6` |
 | G08 | 树区 padding | ✅ | `px-1` → `px-2.5`（x=10） |
 | G12/G13 | 页头带高/标题 y | ✅ | 带 `h-[52px]`、h1 y=+12.8（craft +13） |
 | G14 | h1 x | ✅（无图标档） | h1 @main+16（craft 无图标屏 304=main+16）；craft 有图标屏是 main+70，本地**没有 36×36 图标位**，图标名册未采 |
-| G15/G16 | 卡片形态 | ✅ | 5 列 × 208px、gap 20、卡 208×260；首屏五按钮快捷条已撤，「新建文件夹」挪到侧栏文件夹分区头（hover ＋）、「新建文档」在空间行、「从想法开始」由空白页弹层承担 |
-| G19/G20 | 收件箱/回收站形态 | ⏳ | 现在是 40 高列表行（`LIST_ROW_HEIGHT` 是 65）；craft 该屏同样是 208×260 卡片。转卡片会动到并发进程正在改的两个文件，暂缓 |
+| G15/G16 | 卡片形态 | ✅ | 5 列 × 208px、gap 20、卡 208×260；首屏五按钮快捷条已撤，「新建文件夹」挪到侧栏文件夹分区头（hover ＋）、「新建文档」在空间行、「从想法开始」由空白页弹层承担（2026-11-13 按用户要求连弹层一并移除，空白页直接进编辑器） |
+| G19/G20 | 收件箱/回收站形态 | ✅ | 两屏都改 `BrowseGrid`+`DocumentCard`（208×260 卡）。回收站卡是静态磁贴（`href={null}`、无右键菜单），副行「最近删除 • 已更新 N」，预览用落库纯文本快照（G997），悬停「恢复」；删除 patch 不带 `updatedAt`，pending 行用 `syncTs` 补。列表虚拟化随行高一并撤掉（卡网格没有固定行高） |
 | G17 | 导航行几何 | ✅ | 32 / 步进 33 / r8 / 图标 20 / 13-16 |
 | G18/G30 | 分区头 | ✅ | 行高 32、12/600/12/ls.05 满对比、标题 @x19；本地保留折叠 chevron 叠在左 gutter（craft 该处无 chevron，属可及性保留） |
 | G21 | 标签行高 | ✅ | 已是 h-8/r-md |
 | G22 | 模板空态 | ✅ | 72 高 / r10 / foreground-3% / 无虚线 |
 | G23 | 日历列宽/日行 | ✅ | 去 `max-w-4xl`；日行 1120×105、radius 20、步进 121 |
-| G24 | 任务分段 | ⏳ | craft 该屏没有本地这排 tab（分段标题另算，已按 G34 改好），形态待定 |
 | G25 | h1 字阶 | ✅ | 22/600/26.4/ls0 |
 | G26 | 文档标题 | ✅ | 23/700/28/ls−0.3、去 serif+italic |
 | G28 | 占位标题 | ✅ | 保留 `text-card-title font-semibold`，只 italic + α0.25 |
@@ -253,6 +253,5 @@ craft 侧：`SM` 的 JSON 是底层页面（已知伪差异 5），**弹窗矩�
 | G39 | 圆角 | ✅ | 卡片 16、导航行 8 |
 | G40 | 分隔线 | ✅ | `foreground/6` |
 
-仍未做：G19/G20 收件箱/回收站转卡片（并发进程占着那两个文件）、G24 任务分段（craft 该屏
-没有本地这排 tab，删掉会少导航）、G06 右检查器默认展开（craft 文档屏常开，本地按需开）、
-G14 的 36×36 图标位（需先采各屏图标名册）。
+仍未做（**两条都是产品裁决行，等裁决**）：G24 任务分段（craft 该屏没有本地这排 tab，删掉会少导航）、G06 右检查器默认展开
+（craft 文档屏常开，本地按需开，常开会把主列压到 824）；待采：G14 的 36×36 图标位（需先采各屏图标名册）。

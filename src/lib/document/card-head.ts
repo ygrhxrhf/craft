@@ -1,9 +1,10 @@
 /**
- * The grid card's head (G250). Three parts, in the order the collected screen shows them:
+ * The grid card's head (G250). The collected card renders the title, then **one** inline subtitle
+ * line — the location and the update time share it, separated by a bullet:
  *
- *   title / location breadcrumb (📁 日记 •) / 「已更新 14 小时前」
+ *   title / 📁 日记 • 已更新 14 小时前
  *
- * Two details are easy to get wrong. The update line is a **relative** time with a verb
+ * Two details are easy to get wrong. The update time is a **relative** time with a verb
  * (`daily.updated.x` = 「已更新 [0]」), not a bare date. And an untitled document's placeholder is
  * rendered in **italic grey** — the card is telling the reader "this has no name yet", which a
  * normal-weight title would not.
@@ -53,18 +54,31 @@ export function cardUpdatedLabel(updatedAt: string, now: number = Date.now()): s
   return `${UPDATED_PREFIX} ${relative}`;
 }
 
+/**
+ * The single subtitle line under the title: `breadcrumb • 已更新 1 小时前`, with the bullet only
+ * when both parts exist. The collected card shows one line, not two stacked ones — an empty part
+ * simply disappears rather than leaving a dangling separator.
+ */
+export function cardSubtitle(input: { breadcrumb: string | null; updated: string }): string {
+  return [input.breadcrumb, input.updated].filter((part): part is string => !!part).join(` ${CARD_CRUMB_SEPARATOR} `);
+}
+
 /** The whole head, so a caller can render it without re-deriving the pieces. */
 export function cardHead(input: CardHeadInput, now: number = Date.now()): {
   title: string;
   placeholder: boolean;
   breadcrumb: string | null;
   updated: string;
+  subtitle: string;
 } {
   const { text, placeholder } = cardTitle(input.title);
+  const breadcrumb = input.breadcrumb?.trim() ? input.breadcrumb : null;
+  const updated = cardUpdatedLabel(input.updatedAt, now);
   return {
     title: text,
     placeholder,
-    breadcrumb: input.breadcrumb?.trim() ? input.breadcrumb : null,
-    updated: cardUpdatedLabel(input.updatedAt, now),
+    breadcrumb,
+    updated,
+    subtitle: cardSubtitle({ breadcrumb, updated }),
   };
 }

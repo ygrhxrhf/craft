@@ -18,10 +18,16 @@ export interface PreviewInput {
   content?: unknown;
 }
 
+/**
+ * 画布是**页面比例**（A4 竖版 ≈ 1:1.414），不是横版缩略图。卡片预览槽是竖版、图按
+ * `object-cover object-top` 铺满 ⇒ 横版画布会被放大 ~1.4 倍再左右裁掉，标题只剩末尾一个字
+ * （第 533 批真面核验抓到的既存缺陷）。竖版画布则是"露出页面顶端、底部被卡片裁掉"，与官方
+ * 预览盒溢出裁切同形。SVG 是矢量，尺寸只决定排版坐标系，不影响清晰度。
+ */
 export const PREVIEW_SIZE_DIMS: Record<PreviewSize, { width: number; height: number }> = {
-  s: { width: 240, height: 150 },
-  m: { width: 320, height: 200 },
-  l: { width: 480, height: 300 },
+  s: { width: 240, height: 340 },
+  m: { width: 320, height: 452 },
+  l: { width: 480, height: 679 },
 };
 
 const PALETTES: Record<PreviewTheme, Record<'bg' | 'title' | 'text' | 'faint' | 'rule' | 'fill', string>> = {

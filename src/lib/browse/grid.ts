@@ -8,7 +8,7 @@
  *   200 card base width · 20 desktop gap · 8 narrow gap · 16 side padding
  *   268 card width ceiling (three-plus columns) · 308.5 card width ceiling (two columns)
  *   5 column ceiling · 1/1.25 card aspect (height = width × 1.25)
- *   240×300 empty placeholder · 65 list row height
+ *   240×300 empty placeholder
  *
  * Column count: `width < 452` gives 2; otherwise `floor((width − 32 + 20) / 220)` clamped to 2–5.
  *
@@ -27,7 +27,6 @@ export const COLUMN_CEILING = 5;
 export const CARD_ASPECT = 1 / 1.25;
 export const EMPTY_PLACEHOLDER_WIDTH = 240;
 export const EMPTY_PLACEHOLDER_HEIGHT = 300;
-export const LIST_ROW_HEIGHT = 65;
 
 /** The threshold below which the grid drops to two columns, verbatim `16*2 + 200*2 + 20`. */
 export const NARROW_THRESHOLD = SIDE_PADDING * 2 + CARD_BASE_WIDTH * 2 + CARD_GAP;

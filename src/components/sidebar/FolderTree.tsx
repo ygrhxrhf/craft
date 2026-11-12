@@ -12,6 +12,7 @@ import { FolderTreeItem } from './FolderTreeItem';
 import { CollapseRow } from './CollapseRow';
 import { LOADING } from '@/lib/browse/official-copy';
 import { SECTION_COLLAPSE_THRESHOLD, collapseSection } from '@/lib/browse/section-collapse';
+import { compareFolderOrder } from '@/lib/folder/order';
 
 export interface Folder {
   id: string;
@@ -22,6 +23,7 @@ export interface Folder {
   parentId: string | null;
   order: number;
   isDeleted: boolean;
+  createdAt?: string | null;
 }
 
 /** 纯逻辑：行集合 + 本地 pending overlay（过滤条件与 getFolders 同源）。 */
@@ -29,13 +31,16 @@ export function overlayFolderRows(
   rows: Folder[],
   pending: Map<string, import('@/components/sync/local-records').PendingRow>,
 ): Folder[] {
-  const merged = mergePending<Folder>(rows, pending, (id) => ({
+  const merged = mergePending<Folder>(rows, pending, (id, p) => ({
     id,
     name: UNTITLED_FOLDER,
     icon: null,
     parentId: null,
     order: 0,
     isDeleted: false,
+    // 与服务端行的排序位对齐：新行 order 0、createdAt 最新 ⇒ 排在并列组末尾，
+    // ack 前后位置不跳（DocumentTree 的 pending 骨架同理用 syncTs）。
+    createdAt: p.syncTs,
   }));
   return merged.filter(f => !f.isDeleted);
 }
@@ -76,7 +81,7 @@ export function FolderTree() {
 
   const rootFolders = folders
     .filter(f => f.parentId === null)
-    .sort((a, b) => a.order - b.order);
+    .sort(compareFolderOrder);
 
   if (rootFolders.length === 0) {
     return (

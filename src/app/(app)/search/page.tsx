@@ -30,6 +30,8 @@ export default async function SearchPage({
   }
 
   const result = await searchAll(q);
+  // 卡片副行的「已更新 N」必须在服务端只取一次时钟：SSR 与 hydration 各取一次会撞 Hydration failed。
+  const now = Date.now();
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -41,6 +43,7 @@ export default async function SearchPage({
               <DocumentCard
                 key={doc.id}
                 document={{ ...doc, previewSrc: buildPreviewSrc(doc) }}
+                now={now}
               />
             ))}
           </BrowseGrid>

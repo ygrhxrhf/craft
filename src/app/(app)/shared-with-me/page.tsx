@@ -15,7 +15,7 @@ export default async function SharedWithMePage() {
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title="与我共享" />
       <AppPageContainer>
-        <SharedWithMeView documents={documents} />
+        <SharedWithMeView documents={documents} now={Date.now()} />
       </AppPageContainer>
     </div>
   );

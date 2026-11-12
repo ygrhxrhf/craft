@@ -3497,14 +3497,13 @@
       ]
     },
     "G70": {
-      "status": "aligned",
+      "status": "deliberate",
       "priority": "P2",
-      "note": "Idea Starter 弹层、六型四条进度句、创建/关闭/成功/失败文案与服务端骨架创建均已落。✎ 证据重指（2026-11-12 第 531 批）：原证据 `src/components/document/QuickActions.tsx` 已随 G15 删除（提交 76c2e0ba），弹层的现存宿主是编辑器（`DocumentEditor.tsx:632`）。",
+      "note": "按用户要求移除（2026-11-13）：空白页「你想从什么开始？」Idea Starter 弹层整条删除——弹层组件、六型×四条进度句、服务端骨架创建动作、纯核与单测一并移除，编辑器不再挂载；e2e 两处关弹层的等待同步清理。空白页现在直接进编辑器。",
       "evidence": [
-        "src/lib/ai/idea-starter.ts",
-        "src/components/ai/IdeaStarterDialog.tsx",
-        "src/actions/ai/idea-starter.ts",
-        "src/components/editor/DocumentEditor.tsx:632"
+        "src/components/editor/DocumentEditor.tsx",
+        "e2e/global-setup.ts",
+        "e2e/drag-handle-menu.spec.ts"
       ]
     },
     "G71": {
@@ -4495,12 +4494,12 @@
     },
     "G216": {
       "status": "aligned",
-      "note": "✎ 现读（2026-11-06 族拆批第 3a 批，用户裁决实现本地预览渲染服务）：路径与查询参数照官方形制 `/api/render/document_preview/v1/<doc>/t/<ts>?v=1&s=<sig>&size=m&theming=true`——HMAC 签名钉死 doc/ts/size/theming（篡改任一即 403）、`ts` 取 updatedAt 毫秒（内容变即换 URL、推翻缓存）、尺寸 s/m/l＝240×150／320×200／480×300、`theming=true` 时按 `theme=dark` 出暗色。渲染＝把 `Document.content` 镜像确定性渲成 SVG（标题行＋首屏块：段落/标题/列表/引用/代码/分隔线/媒体占位），零无头浏览器依赖。卡片层：documents／favorites／recent／folders／tags 五处服务端签名并挂懒加载 `<img>`；浏览器实点 4 张卡预览全 200（320×200、`image/svg+xml`）、篡改 `s` 全 403。载体差异：官方出位图快照、本地 SVG 重绘 ⇒ 可观察面（卡片带预览图）一致",
+      "note": "✎ 现读（2026-11-12 第 533 批）：路径与查询参数照官方形制 `/api/render/document_preview/v1/<doc>/t/<ts>?v=1&s=<sig>&size=m&theming=true`（`route.ts:18`）——HMAC 签名钉死 doc/ts/size/theming（篡改任一即 403，`signature.ts:19`）、`ts` 取 updatedAt 毫秒（内容变即换 URL、推翻缓存）、尺寸 s/m/l＝240×340／320×452／480×679（`document-preview.ts:21`，竖版页面比例）、`theming=true` 时按 `theme=dark` 出暗色。渲染＝把 `Document.content` 镜像确定性渲成 SVG（标题行＋段落/标题/列表/引用/代码/表格/分隔线/媒体占位），零无头浏览器依赖。卡片层：documents／favorites／recent／folders／tags／inbox 六处服务端签名并挂懒加载 `<img>`；浏览器实拍复查：/inbox 59 张已加载预览全 320×452 竖版、标题与正文可见、控制台零报错。☆ 同批修掉一处既存缺陷：画布原是横版 320×200，卡片竖版预览槽 `object-cover` 放大 ~1.4 倍再左右裁掉，标题只剩末尾一个字；改竖版后三屏（inbox/recent/trash）真面核验正常。载体差异：官方出位图快照、本地 SVG 重绘 ⇒ 可观察面（卡片带预览图）一致",
       "evidence": [
-        "src/lib/preview/document-preview.ts",
-        "src/lib/preview/signature.ts",
-        "src/app/api/render/document_preview/v1/[documentId]/t/[ts]/route.ts",
-        "src/components/document/DocumentCard.tsx"
+        "src/lib/preview/document-preview.ts:21",
+        "src/lib/preview/signature.ts:19",
+        "src/app/api/render/document_preview/v1/[documentId]/t/[ts]/route.ts:18",
+        "src/components/document/DocumentCard.tsx:115"
       ]
     },
     "G217": {
@@ -4749,10 +4748,10 @@
     "G273": {
       "status": "aligned",
       "priority": "P2",
-      "note": "集合表格与回收站均按窗口渲染：固定行高、overscan 2、rAF+150ms；浏览器 61 行只渲染 10 行",
+      "note": "集合表格与文档列表/表格视图按窗口渲染：固定行高、overscan 2、rAF+150ms；浏览器 61 行只渲染 10 行。✎ 第 533 批：回收站转卡片网格（layout G20）后不再窗口化——卡无固定行高；官方该屏同样是卡网格，对齐面不变。",
       "evidence": [
         "src/lib/collection/virtual-rows.ts:1",
-        "src/components/document/TrashList.tsx:1",
+        "src/components/document/DocumentListView.tsx:1",
         "src/app/(app)/collections/[id]/TableView.tsx:183"
       ]
     },
@@ -5126,24 +5125,22 @@
       ]
     },
     "G349": {
-      "status": "aligned",
-      "note": "第 272 批：空白页自动开 Idea Starter 弹层（按库里正文判空、等编辑器就绪再挂），结构就地写进当前这篇；七类＝六种建议＋隐形 default；标题两态逐字（正在创建文档／正在创建[0]→类型名）；即时生成也跑满四段进度（ideaProgressRunMs 兜最短时长）。浏览器实测：URL 不变、正文落骨架、toast「文档已创建！」。",
+      "status": "deliberate",
+      "note": "按用户要求移除（2026-11-13）：空白页自动弹层整条删除（原第 272 批的上屏取证作废）——判空触发、七类骨架就地写正文、标题两态、四段进度全部移除；空白页不再弹任何层。真浏览器复核（:3000）：新建文档弹层计数 0、「你想从什么开始」0 命中、编辑器聚焦、控制台无错。",
       "evidence": [
-        "src/components/editor/DocumentEditor.tsx:129",
-        "src/components/editor/DocumentEditor.tsx:259",
-        "src/lib/ai/idea-starter.ts:71",
-        "src/lib/ai/idea-starter.ts:89",
-        "src/lib/ai/idea-starter.test.ts:1"
-      ]
+        "src/components/editor/DocumentEditor.tsx",
+        "e2e/global-setup.ts",
+        "e2e/drag-handle-menu.spec.ts"
+      ],
+      "priority": "P2"
     },
     "G350": {
-      "status": "aligned",
-      "note": "第 5k 批现读（2026-11-07）：AI 生成已是分类型四句进度轮播（IDEA_PROGRESS 六类各四句＋默认兜底，idea-starter.ts:34-52），对话层以 420ms 步进轮播并显示状态行（IdeaStarterDialog.tsx:63-65），不再只有单一 spinner。",
+      "status": "deliberate",
+      "note": "按用户要求移除（2026-11-13）：分类型四句进度轮播随 Idea Starter 整条删除而消失，空白页无任何进度反馈。",
       "evidence": [
-        "src/lib/ai/idea-starter.ts:34",
-        "src/lib/ai/idea-starter.ts:52",
-        "src/components/ai/IdeaStarterDialog.tsx:63"
-      ]
+        "src/components/editor/DocumentEditor.tsx"
+      ],
+      "priority": "P3"
     },
     "G351": {
       "status": "deliberate",
@@ -7572,6 +7569,22 @@
         "src/components/editor/Editor.tsx"
       ]
     },
+    "G1624": {
+      "status": "aligned",
+      "priority": 3,
+      "note": "第 533 批：文件夹「重命名后看不见」＝排序键塌成常量＋折叠两件事叠加——`getFolders()` 只按 `order.asc()` 排而 craft-test 57 个根夹 order 全 0 ⇒ 落到 Postgres 堆序；重命名 UPDATE 把元组挪到堆尾 ⇒ 该行掉出「前 20＋再显示 37 项」的渲染窗口、不在 DOM 里。修＝服务端三连 orderBy（order/createdAt/id）＋客户端同序比较器 `compareFolderOrder`（FolderTree／FolderTreeItem 拖放兄弟序／lib/browse/inbox）＋新建 order=max(兄弟)+1（服务端与离线 createFolderLocal 各一份）＋pending 骨架带 createdAt=syncTs 让乐观行与 ack 行同位。官方「新建文件夹落点」从未上屏采集，本地「追加末尾」记为本地决策。单测 4 条，受影响面 73 文件 518 用例全绿",
+      "evidence": [
+        "src/actions/folder/get.ts",
+        "src/lib/folder/order.ts",
+        "src/lib/folder/order.test.ts",
+        "src/actions/folder/create.ts",
+        "src/components/sync/create-local.ts",
+        "src/components/sidebar/FolderTree.tsx",
+        "src/components/sidebar/FolderTreeItem.tsx",
+        "src/lib/browse/inbox.ts",
+        "e2e/sidebar-folders.ts"
+      ]
+    },
     "G803": {
       "status": "nonaction",
       "note": "Enter 抑制的候选排查属静态源码排除法",
@@ -8503,10 +8516,12 @@
     },
     "G997": {
       "status": "aligned",
-      "note": "官方三子项逐条对照：①卡片/行带内容摘要——回收站行副标题渲染已存快照摘要；②摘要反映服务端最后落库态——读的是 plainText 列而非重渲染 content；③任务块以文本形态出现——plainText 由 renderText 序列化，任务块即文本行。载体差：本地回收站是列表档而非网格卡片，摘要落在行副标题。",
+      "note": "官方三子项逐条对照：①卡片带内容摘要——回收站转 `BrowseGrid`+`DocumentCard`，摘要落卡片预览层（`previewText`＝`rowSubtitle({plainText})` 同一条回退链）；②摘要反映服务端最后落库态——读的是 plainText 列而非重渲染 content；③任务块以文本形态出现——plainText 由 renderText 序列化，任务块即文本行。第 533 批起与官方同为网格卡片档，列表档的载体差已消。",
       "evidence": [
         "src/actions/document/get.ts:176",
-        "src/components/document/TrashList.tsx",
+        "src/components/document/TrashList.tsx:295",
+        "src/components/document/TrashList.tsx:307",
+        "src/components/document/DocumentCard.tsx:124",
         "src/components/document/TrashList.test.ts",
         "src/actions/document/get.test.ts:170"
       ],

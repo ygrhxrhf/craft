@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Check, File, Minus, MoreHorizontal, RotateCcw, Trash2, Trash } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Check, Minus, MoreHorizontal, RotateCcw, Trash2, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import {
@@ -22,35 +22,34 @@ import { bulkDeleteAlert, bulkRestoreAlert, runBulkAction } from '@/lib/document
 import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { getDeletedDocuments } from '@/actions/document/get';
-import { TRASH_DISCLAIMER, TRASH_EMPTY } from '@/lib/browse/trash-copy';
-import { visibleRowWindow, scheduleScrollUpdate } from '@/lib/collection/virtual-rows';
+import { TRASH_DISCLAIMER, TRASH_EMPTY, TRASH_TITLE } from '@/lib/browse/trash-copy';
 import {
   COULD_NOT_DELETE_DOCUMENT,
   EMPTY_TRASH_ACTION,
   EMPTY_TRASH_CONFIRM,
-  PERMANENT_DELETE_DOCUMENT,
 } from '@/lib/browse/trash-subcopy';
 import { useRouter } from 'next/navigation';
 import { untitledFor } from '@/lib/document/untitled-copy';
 import { pendingLabel } from '@/lib/app/pending-states';
 import { rowSubtitle } from '@/lib/browse/row-subtitle';
+import { BrowseGrid } from '@/components/app/BrowseGrid';
+import { DocumentCard } from './DocumentCard';
 
 interface TrashDoc {
   id: string;
   title: string;
   icon: string | null;
   deletedAt: string | null;
-  /** G997: the stored plain-text snapshot the row's summary line renders. */
+  /** G20: the card's 「已更新 N」 line. */
+  updatedAt: string;
+  /** G997: the stored plain-text snapshot the card preview renders. */
   plainText?: string | null;
 }
 
-const TRASH_VIRTUAL_THRESHOLD = 60;
-/** Row step 42 = 40 row + 2 gap, the same 40/8/42 geometry the other list surfaces use. */
-const TRASH_ROW_STEP = 42;
-const TRASH_VIEWPORT_HEIGHT = 480;
-
 interface TrashListProps {
   documents: TrashDoc[];
+  /** 卡片副行「已更新 N」的时钟基准，由服务端页面算一次传下来（hydration 安全）。 */
+  now: number;
 }
 
 /** 纯逻辑：服务端删除行 + 本地未推送意图 → 回收站行（过滤条件同 getDeletedDocuments）。 */
@@ -60,6 +59,9 @@ export function overlayTrashRows(serverDocs: TrashDoc[], pending: Map<string, Pe
     title: untitledFor('list'),
     icon: null,
     deletedAt: null,
+    // 删除 patch 只带 isDeleted/deletedAt、不带 updatedAt——本地刚移入未推送的行用同步时钟补上，
+    // 否则卡片副行只剩「最近删除 •」。
+    updatedAt: p.syncTs,
     ...(p.data as Partial<TrashDoc>),
   }));
   // getDeletedDocuments 按 isDeleted/deletedAt 过滤；pending 行要补同样的过滤
@@ -79,7 +81,12 @@ export async function loadTrashRows(): Promise<TrashDoc[]> {
   return overlayTrashRows(fresh, pending);
 }
 
-export function TrashList({ documents }: TrashListProps) {
+/**
+ * G20：官方「最近删除」是卡片网格，与浏览列表同一张卡——位置行写「最近删除」，
+ * 预览用删除时落库的纯文本快照（G997），悬停动作是「恢复」而不是「打开」
+ * （G991：删掉的页没有路由，卡片是静态磁贴）。
+ */
+export function TrashList({ documents, now }: TrashListProps) {
   const router = useRouter();
   const [rows, setRows] = useState<TrashDoc[]>(documents);
   const [selecting, setSelecting] = useState(false);
@@ -87,7 +94,6 @@ export function TrashList({ documents }: TrashListProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [emptyConfirmOpen, setEmptyConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [scrollTop, setScrollTop] = useState(0);
   // G300: permanent deletion has its own progress sentence (single vs plural).
   const [busyLabel, setBusyLabel] = useState<string | null>(null);
 
@@ -193,19 +199,6 @@ export function TrashList({ documents }: TrashListProps) {
     }
   }
 
-  // G273：长回收站也走窗口渲染（行高固定、overscan 2、滚动 rAF + 150ms）。
-  const virtualized = rows.length > TRASH_VIRTUAL_THRESHOLD;
-  const trashWindow = virtualized
-    ? visibleRowWindow({
-        scrollTop,
-        viewportHeight: TRASH_VIEWPORT_HEIGHT,
-        rowCount: rows.length,
-        rowHeight: TRASH_ROW_STEP,
-        overscan: 2,
-      })
-    : null;
-  const renderRows = trashWindow ? rows.slice(trashWindow.start, trashWindow.end) : rows;
-
   if (rows.length === 0) {
     return (
       <div className="flex min-h-[180px] flex-col items-center justify-center rounded-[15px] bg-foreground/[0.03] px-6 text-center">
@@ -301,81 +294,37 @@ export function TrashList({ documents }: TrashListProps) {
         </button>
       )}
 
-      <div
-        data-testid="trash-rows"
-        className={
-          virtualized
-            ? 'flex max-h-[480px] flex-col gap-0.5 overflow-y-auto pr-1'
-            : 'flex flex-col gap-0.5'
-        }
-        onScroll={(event) => {
-          if (!virtualized) return;
-          const top = event.currentTarget.scrollTop;
-          scheduleScrollUpdate(() => setScrollTop(top));
-        }}
-      >
-      {trashWindow && <div aria-hidden style={{ height: trashWindow.topPad }} />}
-      {renderRows.map(doc => {
-        const deletedDate = doc.deletedAt
-          ? new Date(doc.deletedAt).toLocaleDateString('zh-CN')
-          : '';
-        const isChecked = selected.has(doc.id);
-
-        return (
-          <div
+      <BrowseGrid>
+        {rows.map(doc => (
+          <DocumentCard
             key={doc.id}
-            className="flex h-10 items-center gap-3 rounded-md px-2 transition-colors duration-150 hover:bg-foreground/[0.03]"
-          >
-            {selecting ? (
-              <button
-                type="button"
-                role="checkbox"
-                aria-checked={isChecked}
-                aria-label={`选择 ${doc.title || untitledFor('list')}`}
-                onClick={() => toggle(doc.id)}
-                className="shrink-0"
-              >
-                <SelectionMark state={isChecked ? 'on' : 'off'} />
-              </button>
-            ) : (
-              doc.icon ? (
-                <span className="text-xl">{doc.icon}</span>
-              ) : (
-                <File className="size-5 shrink-0 text-foreground/40" />
-              )
-            )}
-            <div className="flex min-w-0 flex-1 flex-col">
-              <p className="truncate text-ui font-medium">{doc.title || untitledFor('list')}</p>
-              {/* G997：行副标题是已存快照的内容摘要（与浏览列表同一条回退链），
-                  不在回收站里重渲染正文。pending 行没有快照时这条不渲染。 */}
-              {typeof doc.plainText === 'string' && (
-                <p className="truncate text-meta text-foreground/55">
-                  {rowSubtitle({ plainText: doc.plainText })}
-                </p>
-              )}
-            </div>
-            <span className="shrink-0 text-meta text-foreground/55">
-              删除于 {deletedDate}
-            </span>
-            {!selecting && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="rounded-md text-ui hover:bg-foreground/4"
-                onClick={() => handleRestore(doc.id)
-                  .catch((error: unknown) => toast.add({
-                    title: error instanceof Error ? error.message : '恢复失败',
-                    type: 'error',
-                  }))}
-              >
-                恢复
-              </Button>
-            )}
-          </div>
-        );
-      })}
-      {trashWindow && <div aria-hidden style={{ height: trashWindow.bottomPad }} />}
-      </div>
+            now={now}
+            document={{
+              id: doc.id,
+              title: doc.title,
+              icon: doc.icon,
+              updatedAt: doc.updatedAt,
+              breadcrumb: TRASH_TITLE,
+              // G997：卡片预览是已存快照的内容摘要（与浏览列表同一条回退链），
+              // 不在回收站里重渲染正文。pending 行没有快照时这条不渲染。
+              previewText: typeof doc.plainText === 'string'
+                ? rowSubtitle({ plainText: doc.plainText })
+                : null,
+            }}
+            // G20/G991：删除的页没有路由，卡片是静态磁贴；选择模式下点整张卡切换选中。
+            href={null}
+            selectable={selecting}
+            selected={selected.has(doc.id)}
+            onToggleSelect={toggle}
+            onRestore={selecting
+              ? undefined
+              : (id) => void handleRestore(id).catch((error: unknown) => toast.add({
+                title: error instanceof Error ? error.message : '恢复失败',
+                type: 'error',
+              }))}
+          />
+        ))}
+      </BrowseGrid>
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="sm:max-w-md">

@@ -31,7 +31,7 @@ export interface SharedDoc {
 }
 
 /** G955: the top-right cluster is two icon buttons — sort (34×28) and the grid/list toggle (28×28). */
-export function SharedWithMeView({ documents }: { documents: SharedDoc[] }) {
+export function SharedWithMeView({ documents, now }: { documents: SharedDoc[]; now: number }) {
   const [listMode, setListMode] = useState(false);
   const [sharedSort, setSharedSort] = useState<SortSpec>(DEFAULT_SORT);
   const [sortOpen, setSortOpen] = useState(false);
@@ -106,6 +106,7 @@ export function SharedWithMeView({ documents }: { documents: SharedDoc[] }) {
         <DocumentListView
           variant="shared"
           documents={sorted}
+          now={now}
           sharedSort={sharedSort}
           onSharedSortChange={setSharedSort}
         />
@@ -114,6 +115,7 @@ export function SharedWithMeView({ documents }: { documents: SharedDoc[] }) {
           {sorted.map((doc) => (
             <DocumentCard
               key={doc.id}
+              now={now}
               document={{ ...doc, previewSrc: undefined }}
             />
           ))}

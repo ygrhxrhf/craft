@@ -53,3 +53,29 @@ describe('the hover swap is a two-layer exchange, not an overlay', () => {
     expect(source).toContain('pointer-events-none');
   });
 });
+
+/**
+ * G19/G20: the card head is one subtitle line (`breadcrumb • 已更新 N`), and the trash grid reuses
+ * the same card — a static tile with no route, whose preview is the stored text snapshot and whose
+ * hover action is 恢复.
+ */
+describe('the subtitle line and the trash variant', () => {
+  it('renders the joined subtitle, not the old stacked lines', () => {
+    expect(source).toContain('{head.subtitle}');
+    expect(source).not.toContain('{head.updated}');
+  });
+
+  it('carries the folder glyph only when a location exists', () => {
+    expect(source).toContain('head.breadcrumb && <Folder');
+  });
+
+  it('offers the static-tile form for non-openable rows', () => {
+    expect(source).toContain('href === undefined ? `/documents/${doc.id}` : href');
+    expect(source).toContain('{target ? (');
+  });
+
+  it('previews the trash row from its stored text and offers 恢复', () => {
+    expect(source).toContain('doc.previewText');
+    expect(source).toContain('onRestore(doc.id)');
+  });
+});

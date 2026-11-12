@@ -24,6 +24,15 @@ describe('文档预览 SVG 渲染（G216）', () => {
     }
   });
 
+  it('画布是竖版页面比例（第 533 批真面核验：横版画布被卡片 cover 放大裁掉标题）', () => {
+    for (const size of ['s', 'm', 'l'] as const) {
+      const dims = PREVIEW_SIZE_DIMS[size];
+      expect(dims.height, `${size} 档必须是竖版`).toBeGreaterThan(dims.width);
+      // A4 竖版 1:1.414，允许 ±2% 的取整误差
+      expect(dims.height / dims.width).toBeCloseTo(1.414, 1);
+    }
+  });
+
   it('flips the background with the theme parameter', () => {
     const light = renderDocumentPreview({ title: 't', content: doc() }, { theme: 'light' });
     const dark = renderDocumentPreview({ title: 't', content: doc() }, { theme: 'dark' });

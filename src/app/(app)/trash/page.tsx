@@ -16,7 +16,7 @@ export default async function TrashPage() {
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title={TRASH_TITLE} />
       <AppPageContainer>
-        <TrashList documents={deletedDocs} />
+        <TrashList documents={deletedDocs} now={Date.now()} />
       </AppPageContainer>
     </div>
   );

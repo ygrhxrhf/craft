@@ -2,6 +2,8 @@
  * The unsorted collection (`/inbox`, G45): documents that belong to no folder and are not a page
  * inside another document. Daily notes are excluded — they live in their own section.
  */
+import { compareFolderOrder } from '@/lib/folder/order';
+
 export interface LocatableDocument {
   id: string;
   parentId: string | null;
@@ -23,6 +25,7 @@ export interface FolderLike {
   parentId: string | null;
   order: number;
   isDeleted: boolean;
+  createdAt?: string | null;
 }
 
 export interface FolderOption {
@@ -46,7 +49,7 @@ export function folderOptions(folders: readonly FolderLike[]): FolderOption[] {
     if (siblings) siblings.push(folder);
     else byParent.set(folder.parentId, [folder]);
   }
-  const byOrder = (a: FolderLike, b: FolderLike) => a.order - b.order;
+  const byOrder = compareFolderOrder;
   roots.sort(byOrder);
   for (const siblings of byParent.values()) siblings.sort(byOrder);
 

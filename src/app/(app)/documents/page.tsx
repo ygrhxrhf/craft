@@ -41,6 +41,9 @@ export default async function DocumentsPage() {
     breadcrumb: breadcrumbFor(doc),
   }));
 
+  // 卡片副行的「已更新 N」必须在服务端只取一次时钟：SSR 与 hydration 各取一次会撞 Hydration failed。
+  const now = Date.now();
+
   return (
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title="文档" />
@@ -51,7 +54,7 @@ export default async function DocumentsPage() {
             <h2 className="mb-3 text-lg font-medium">收藏</h2>
             <BrowseGrid>
               {favoriteCards.slice(0, 6).map(doc => (
-                <DocumentCard key={doc.id} document={doc} />
+                <DocumentCard key={doc.id} document={doc} now={now} />
               ))}
             </BrowseGrid>
           </section>
@@ -60,7 +63,7 @@ export default async function DocumentsPage() {
         <section>
           <h2 className="mb-3 text-lg font-medium">最近编辑</h2>
           {recentDocs.length > 0 ? (
-            <SortableDocGrid documents={recentDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))} folders={folderNodes} />
+            <SortableDocGrid documents={recentDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))} folders={folderNodes} now={now} />
           ) : (
             <div className="rounded-lg border border-dashed border-border p-8 text-center">
               {/* G320：官方那句带 `<br/>`（`onboarding.welcome.to.craft.desc`），走 RichText

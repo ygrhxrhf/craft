@@ -129,7 +129,7 @@ const SHARED_COLUMNS: ColumnDef[] = [
   },
 ];
 
-function cellContent(doc: ListDoc, column: ColumnDef) {
+function cellContent(doc: ListDoc, column: ColumnDef, now: number) {
   switch (column.id) {
     case 'shared':
       return doc.shared ? (
@@ -140,11 +140,11 @@ function cellContent(doc: ListDoc, column: ColumnDef) {
     case 'sharedBy':
       return doc.sharedBy ?? '';
     case 'lastViewed':
-      return doc.lastViewedAt ? relativeTime(doc.lastViewedAt) : '';
+      return doc.lastViewedAt ? relativeTime(doc.lastViewedAt, now) : '';
     case 'updated':
-      return relativeTime(doc.updatedAt);
+      return relativeTime(doc.updatedAt, now);
     case 'created':
-      return doc.createdAt ? relativeTime(doc.createdAt) : '';
+      return doc.createdAt ? relativeTime(doc.createdAt, now) : '';
     default:
       return '';
   }
@@ -162,6 +162,7 @@ function cellContent(doc: ListDoc, column: ColumnDef) {
  */
 export function DocumentListView({
   documents,
+  now,
   sort,
   onSortChange,
   variant = 'all',
@@ -172,6 +173,8 @@ export function DocumentListView({
   onToggleSelect,
 }: {
   documents: ListDoc[];
+  /** The server-computed clock the three time cells format against (hydration safety). */
+  now: number;
   /** G247：列头即排序器——当前档与方向由外部持有，点列头回调上去。 */
   sort?: BrowseSortSpec;
   onSortChange?: (next: BrowseSortSpec) => void;
@@ -375,7 +378,7 @@ export function DocumentListView({
                 column.slotClass,
               )}
             >
-              {cellContent(doc, column)}
+              {cellContent(doc, column, now)}
             </div>
           ))}
         </Link>

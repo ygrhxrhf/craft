@@ -18,11 +18,15 @@ export async function getFolders() {
     parentId: string | null;
     order: number;
     isDeleted: boolean;
+    /** 并列 order 时的确定性次序（见下方 orderBy 三连）。 */
+    createdAt: string | null;
   }> = [];
 
+  // `order` 大量并列 0 时不能交给 Postgres 堆序：一次 UPDATE（如重命名）会把行挪到堆尾，
+  // 侧栏折叠只渲染前 20 项，挪出的行就永远看不见。三连排序让「改了名字」不改变排位。
   const result = await db.orm.public.Folder
     .where({ userId: session.user.id, isDeleted: false })
-    .orderBy((m: any) => m.order.asc())
+    .orderBy([(m: any) => m.order.asc(), (m: any) => m.createdAt.asc(), (m: any) => m.id.asc()])
     .all();
 
   for (const folder of result) {
@@ -55,7 +59,7 @@ export async function getFolderPage(id: string) {
   const children: FolderRow[] = [];
   const childRows = await db.orm.public.Folder
     .where({ userId: session.user.id, isDeleted: false, parentId: id })
-    .orderBy((m: any) => m.order.asc())
+    .orderBy([(m: any) => m.order.asc(), (m: any) => m.createdAt.asc(), (m: any) => m.id.asc()])
     .all();
   for (const child of childRows) children.push(child as FolderRow);
 

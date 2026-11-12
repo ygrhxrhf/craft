@@ -1,4 +1,19 @@
 import { defineConfig, devices } from '@playwright/test';
+import { INTRO_SEEN_KEY, INTRO_VERSIONS } from './src/lib/onboarding/versioned-intro';
+
+// G305: the version carousel mounts globally and its z-60 overlay covers the login button.
+// Functional specs sign in as a fresh context, so every one of them would hit it. Pre-seed the
+// seen-version key for the app origin; specs that pass their own `storageState` (the visual
+// matrix) already carry it.
+const INTRO_SEEN_STATE = {
+  cookies: [],
+  origins: [
+    {
+      origin: 'http://localhost:3000',
+      localStorage: [{ name: INTRO_SEEN_KEY, value: INTRO_VERSIONS[INTRO_VERSIONS.length - 1].version }],
+    },
+  ],
+};
 
 export default defineConfig({
   testDir: './e2e',
@@ -23,6 +38,9 @@ export default defineConfig({
   outputDir: './test-results',
   use: {
     baseURL: 'http://localhost:3000',
+    // Functional specs sign in with a fresh context; this keeps the z-60 intro overlay out
+    // of their way. The visual matrix overrides this with its signed-in state file.
+    storageState: INTRO_SEEN_STATE,
     viewport: { width: 1440, height: 900 },
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',

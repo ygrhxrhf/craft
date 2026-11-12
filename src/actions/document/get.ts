@@ -164,15 +164,18 @@ export async function getDeletedDocuments() {
     title: string;
     icon: string | null;
     deletedAt: string | null;
+    updatedAt: string;
     plainText: string;
   }> = [];
 
   // G997: the trash row's content summary is the **stored snapshot**, never re-rendered from the
   // deleted document's `content` — that is what the official card preview shows (the last state
   // the server persisted). Only the trash read carries `plainText`; the live lists still do not.
+  // G20: `updatedAt` feeds the card's 已更新 line, which the official trash card prints beside
+  // the 最近删除 location.
   const result = await db.orm.public.Document
     .where({ userId: session.user.id, isDeleted: true })
-    .select('id', 'title', 'icon', 'deletedAt', 'plainText')
+    .select('id', 'title', 'icon', 'deletedAt', 'updatedAt', 'plainText')
     .orderBy((m: any) => m.deletedAt.desc())
     .all();
 

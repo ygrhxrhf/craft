@@ -23,7 +23,11 @@ describe('the starred area keeps its own order (G94)', () => {
 
   it('is mounted on the favorites page with favoriteId in the payload', () => {
     // G216：页面在挂载前给每行补签名预览 URL（spread 保留 favoriteId）。
-    expect(read('app/(app)/favorites/page.tsx')).toContain('<StarredGrid documents={favoriteDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))} />');
+    const page = read('app/(app)/favorites/page.tsx');
+    expect(page).toContain('<StarredGrid');
+    expect(page).toContain('documents={favoriteDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))}');
+    // 卡片副行的时钟基准在服务端取一次，避免 SSR/hydration 各取一次撞 Hydration failed。
+    expect(page).toContain('now={Date.now()}');
     expect(read('actions/document/get.ts')).toContain('favoriteId: String(');
   });
 });

@@ -76,14 +76,33 @@ export async function createFolderLocal(input: {
   const userId = input.userId;
   const id = crypto.randomUUID();
   const manager = getSyncManager();
+  const parentId = input.parentId ?? null;
+  // 与服务端 createFolder 同一条落点规则（同层末尾）：本地行若固定写 0，在已拖动重排过
+  // 的层里会先插到前面、ack 后再跳到末尾。读不到镜像时退回 0（仍由 createdAt 兜到末尾）。
+  let order = 0;
+  try {
+    const store = await manager.readyStore();
+    const siblings = await store.all('folder');
+    const maxOrder = siblings
+      .filter(
+        (s) =>
+          s.op !== 'delete' &&
+          (((s.data?.parentId as string | null | undefined) ?? null) === parentId),
+      )
+      .reduce((max, s) => Math.max(max, (s.data?.order as number | undefined) ?? 0), -1);
+    order = maxOrder + 1;
+  } catch {
+    order = 0;
+  }
   await manager.applyLocal({
     table: 'folder',
     id,
     patch: {
       userId,
       name: input.name ?? UNTITLED_FOLDER,
-      parentId: input.parentId ?? null,
+      parentId,
       icon: null,
+      order,
       isDeleted: false,
       deletedAt: null,
     },

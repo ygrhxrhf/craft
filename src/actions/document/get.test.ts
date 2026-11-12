@@ -170,10 +170,11 @@ describe('the other document list reads', () => {
   it('getDeletedDocuments returns only what the trash row renders', async () => {
     const rows = await getDeletedDocuments();
     expect(rows.map((r) => (r as { id: string }).id)).toContain(trashedId);
-    // G997: `plainText` joined for the row's content summary — the stored snapshot, which is
+    // G997: `plainText` joined for the card's content summary — the stored snapshot, which is
     // what the official card preview shows; it is never re-derived from `content`.
+    // G20: `updatedAt` joined for the card's 已更新 line.
     expect(keys(rows)).toEqual(
-      rows.map(() => ['deletedAt', 'icon', 'id', 'plainText', 'title'].sort())
+      rows.map(() => ['deletedAt', 'icon', 'id', 'plainText', 'title', 'updatedAt'].sort())
     );
   });
 

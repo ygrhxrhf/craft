@@ -21,13 +21,15 @@ interface StarredDoc {
 
 interface StarredGridProps {
   documents: StarredDoc[];
+  /** 卡片副行「已更新 N」的时钟基准，由服务端页面算一次传下来（hydration 安全）。 */
+  now: number;
 }
 
 /**
  * G94：收藏区有自己的**整批顺序**（`starred_reorder`）——拖一张卡，就把这一区的新顺序
  * 一次性写进 `favorite.order`（0…n-1），与侧栏文档树同一条"整批而非中点"的口径。
  */
-export function StarredGrid({ documents }: StarredGridProps) {
+export function StarredGrid({ documents, now }: StarredGridProps) {
   const router = useRouter();
   const [items, setItems] = useState(documents);
   const [dragging, setDragging] = useState<number | null>(null);
@@ -101,7 +103,7 @@ export function StarredGrid({ documents }: StarredGridProps) {
                 : ''
           }
         >
-          <DocumentCard document={doc} />
+          <DocumentCard document={doc} now={now} />
         </div>
       ))}
     </BrowseGrid>

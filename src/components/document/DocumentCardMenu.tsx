@@ -13,6 +13,7 @@ import { deleteDocument } from '@/actions/document/delete';
 import { getFolders } from '@/actions/folder/get';
 import { resolveFavoriteState, toggleFavoriteLocal } from '@/lib/favorite/toggle-local';
 import { getSyncManager } from '@/lib/sync-core';
+import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { confirmDialog } from '@/lib/dialog/show';
 import { toast } from '@/components/ui/toast';
 import { showFavoriteFeedback } from '@/components/ui/favorite-feedback';
@@ -135,8 +136,13 @@ export function DocumentCardMenu({ documentId, title, at, onClose }: DocumentCar
   };
 
   const move = async (folderId: string | null) => {
+    const manager = getSyncManager();
     try {
-      await getSyncManager().applyLocal({ table: 'document', id: documentId, patch: { folderId } });
+      await manager.applyLocal({ table: 'document', id: documentId, patch: { folderId } });
+      // G19：覆盖层只活到 flush ack。若不等队列清空就重取 RSC，这一卡会带着旧 folderId
+      // 重新出现在原位置（收件箱列表实测约 1.5s 后回弹）。
+      await manager.flushNow();
+      useSidebarStore.getState().bumpTree();
       router.refresh();
     } catch {
       toast.add({ title: '移动失败', type: 'error' });
@@ -156,25 +162,28 @@ export function DocumentCardMenu({ documentId, title, at, onClose }: DocumentCar
       {moveOpen ? (
         <>
           <div className="px-2 py-1 text-[11px] text-muted-foreground">移至</div>
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => void move(null)}
-            className="flex w-full rounded px-2 py-1.5 text-left text-ui hover:bg-foreground/4"
-          >
-            未分类
-          </button>
-          {folders.map((folder) => (
+          {/* G19：文件夹是整棵树（craft-test 有 61 个根夹），不封高会把目标顶到视口外且滚不到。 */}
+          <div className="max-h-[min(60vh,360px)] overflow-y-auto">
             <button
-              key={folder.id}
               type="button"
               role="menuitem"
-              onClick={() => void move(folder.id)}
-              className="flex w-full truncate rounded px-2 py-1.5 text-left text-ui hover:bg-foreground/4"
+              onClick={() => void move(null)}
+              className="flex w-full rounded px-2 py-1.5 text-left text-ui hover:bg-foreground/4"
             >
-              {folder.name}
+              未分类
             </button>
-          ))}
+            {folders.map((folder) => (
+              <button
+                key={folder.id}
+                type="button"
+                role="menuitem"
+                onClick={() => void move(folder.id)}
+                className="flex w-full truncate rounded px-2 py-1.5 text-left text-ui hover:bg-foreground/4"
+              >
+                {folder.name}
+              </button>
+            ))}
+          </div>
         </>
       ) : (
         DOCUMENT_CARD_MENU.map((item) => (

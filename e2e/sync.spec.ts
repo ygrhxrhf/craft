@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { expandFolderSection, waitFolderTreeReady } from './sidebar-folders';
 
 // 双端收敛 E2E（task 14）：两个独立 browser context = 两台机器。
 // 选择器全部来自真实 UI：新建文件夹在 /documents 的 QuickActions；
@@ -38,42 +39,34 @@ async function ensureAccount(page: Page) {
 }
 
 /**
- * 进入 /documents 并等侧栏文件夹树**正向就绪**（渲染出文件夹行或空态）。
+ * 进入 /documents 并等侧栏文件夹树**正向就绪**（渲染出文件夹行或空态），随后把
+ * 「文件夹」分区展开到全量行。
  * 两个已知坑：
  * 1. 登录后已客户端导航到 /documents，随后整页 goto 会中止在途的 getFolders
- *    server-action POST（status -1），FolderTree.load() 无 catch/重试 → 永远「加载中...」；
+ *    server-action POST（status -1），树取数无 catch/重试 → 永远「加载中...」；
  * 2. 仅等「加载中」消失不够——转瞬的 0 状态会让后续 count 取到假基线。
  * 故：等 loading 清空 + 文件夹区出现行/空态，超时则刷新重触发，最多两次。
- * task-14 run-2：双 context 实测首屏就绪 ~31s（探测脚本 probe 复现），单次尝试
- * 给 45s loading + 15s 正向信号；首轮一次通过则不触发 reload。
+ * ☆ 区段头按钮的可及名是「收起文件夹／展开文件夹」（aria-label），此前这里用
+ * `name: '文件夹', exact: true` 过滤——永远匹配不到区段，判据落在空集合上，
+ * 每次都走到 reload 分支后抛「never became ready」。现统一走 e2e/sidebar-folders.ts。
  */
 async function gotoDocuments(page: Page) {
   await page.goto('/documents');
-  const aside = page.locator('aside');
-  await expect(aside).toBeVisible();
-  // 「文件夹」区段（SidebarSection div.py-1，区段标题按钮 exact='文件夹'）
-  const section = aside.locator('div.py-1').filter({
-    has: page.getByRole('button', { name: '文件夹', exact: true }),
-  });
-  const loading = section.getByText('加载中...');
-  const empty = section.getByText('暂无文件夹');
-  const rows = section.getByRole('button');
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const ready = await (async () => {
-      try {
-        await expect(loading).toHaveCount(0, { timeout: 60_000 });
-        // 正向信号：空态，或除区段标题外确有文件夹行
-        await expect
-          .poll(async () => (await empty.count()) > 0 || (await rows.count()) > 1, { timeout: 15_000 })
-          .toBe(true);
-        return true;
-      } catch {
-        return false;
-      }
-    })();
-    if (ready) return;
+  await expect(page.locator('aside')).toBeVisible();
+  // 每次尝试都要有上限：两次 × (就绪 40s + 展开 30s) ≈ 140s，双端 280s，留 300s 给收敛断言。
+  // 不设上限时一次尝试就能吃满整条 test timeout（实测 600s 撞死，侧栏一直「加载中…」）。
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const ready = await waitFolderTreeReady(page, 40_000)
+      .then(() => true)
+      .catch(() => false);
+    if (ready) {
+      // 57 个根夹时侧栏只渲染前 20 行；新建/改名的行排在并列组末尾，必须展开才在 DOM 里。
+      // 折叠是组件态，每次整页 reload 后都要重新展开——所以放在这里的就绪分支里。
+      await expandFolderSection(page, 30_000);
+      return;
+    }
     await page.reload();
-    await expect(aside).toBeVisible();
+    await expect(page.locator('aside')).toBeVisible();
   }
   throw new Error('folder tree never became ready');
 }
@@ -89,10 +82,17 @@ function folderRow(page: Page, name: string) {
   return page.locator('aside').getByRole('button', { name });
 }
 
-/** QuickActions 的「新建文件夹」→ 侧栏出现新行（默认名）。按计数 +1 断言，避免存量行干扰。 */
+/**
+ * QuickActions 的「新建文件夹」→ 侧栏出现新行（默认名）。按计数 +1 断言，避免存量行干扰。
+ * 计数前后都要把分区展开到全量：craft-test 有 61 个根夹，折叠窗口只渲染前 20 行，
+ * 新夹排在并列组末尾——不展开时基线取的是窗口内的 13 个，新建的那个根本不在 DOM 里。
+ */
 async function createFolder(page: Page) {
+  await expandFolderSection(page);
   const before = await folderRow(page, UNTITLED).count();
   await page.getByRole('button', { name: '新建文件夹' }).click();
+  // 建夹后树会重载（bumpTree）：折叠行可能瞬时消失，showAllRows 也要重新确认。
+  await expandFolderSection(page);
   await expect(folderRow(page, UNTITLED)).toHaveCount(before + 1, { timeout: 60_000 });
 }
 
@@ -141,6 +141,7 @@ test('双端改元数据 5 秒内互见', async ({ browser }) => {
   // (a) 新建：A 落库（flushNow 直推）→ B 侧栏 +1 行
   // 45s：全量 e2e 套件负载下 B 的 SSE 可能退化 → 30s 轮询兜底（poller 30_000ms），
   // 加上树重载的 server action 延迟，20s 不够（attempt-6 实测失败）。
+  await expandFolderSection(pageB);
   const before = await folderRow(pageB, UNTITLED).count();
   await createFolder(pageA);
   await expect(

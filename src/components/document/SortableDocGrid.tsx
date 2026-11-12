@@ -83,9 +83,12 @@ interface SortableDoc {
 export function SortableDocGrid({
   documents,
   folders = [],
+  now,
 }: {
   documents: SortableDoc[];
   folders?: { id: string; name: string }[];
+  /** 卡片副行与列表时间列的时钟基准，由服务端页面算一次传下来（hydration 安全）。 */
+  now: number;
 }) {
   const router = useRouter();
   const { data: session } = useSession();
@@ -267,6 +270,7 @@ export function SortableDocGrid({
         {viewMode === 'list' ? (
           <DocumentListView
             documents={sorted}
+            now={now}
             sort={browseSort}
             onSortChange={setBrowseSort}
             selectable={selecting}
@@ -279,6 +283,7 @@ export function SortableDocGrid({
               <div key={doc.id} className="mb-5 break-inside-avoid">
                 <DocumentCard
                   document={doc}
+                  now={now}
                   selectable={selecting}
                   selected={selected.has(doc.id)}
                   onToggleSelect={(id) => setSelected((current) => toggleSelection(current, id))}
@@ -292,6 +297,7 @@ export function SortableDocGrid({
               <DocumentCard
                 key={doc.id}
                 document={doc}
+                now={now}
                 selectable={selecting}
                 selected={selected.has(doc.id)}
                 onToggleSelect={(id) => setSelected((current) => toggleSelection(current, id))}

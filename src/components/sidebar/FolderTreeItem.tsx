@@ -19,6 +19,7 @@ import {
 import { folderDescriptionLabel } from '@/lib/browse/folder-description';
 import { confirmDialog, promptDialog } from '@/lib/dialog/show';
 import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
+import { compareFolderOrder } from '@/lib/folder/order';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -146,7 +147,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
 
   const childFolders = allFolders
     .filter(f => f.parentId === folder.id)
-    .sort((a, b) => a.order - b.order);
+    .sort(compareFolderOrder);
 
   const childDocuments = allDocuments
     .filter(d => d.folderId === folder.id && d.parentId === null)
@@ -272,7 +273,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
           // G607/G338：同层重排与文档树同一口径——整批写 0…n-1，而不是给被拖行算中点。
           const siblings = allFolders
             .filter(f => f.parentId === folder.parentId && f.id !== draggedFolderId)
-            .sort((a, b) => a.order - b.order);
+            .sort(compareFolderOrder);
           const ids = orderAfterDrop(
             siblings.map(f => ({ id: f.id, order: f.order })),
             draggedFolderId,

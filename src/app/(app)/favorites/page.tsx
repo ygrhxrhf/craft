@@ -20,7 +20,10 @@ export default async function FavoritesPage() {
       <AppPageContainer>
         <p className="mb-4 text-sm text-foreground/55">{STARRED_PRIVACY}</p>
         {favoriteDocs.length > 0 ? (
-          <StarredGrid documents={favoriteDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))} />
+          <StarredGrid
+            documents={favoriteDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))}
+            now={Date.now()}
+          />
         ) : (
           // G22/G33：craft 空态是 1120×72、radius 10、bg rgba(26,28,30,.03)、无虚线边框，文案 13/15.6/α0.55。
           <div className="flex min-h-[72px] flex-col items-center justify-center rounded-[10px] bg-foreground/[0.03] px-4 text-center">

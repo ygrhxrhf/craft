@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Check, File } from 'lucide-react';
+import { Check, File, Folder } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from 'cn';
 import { cardHead } from '@/lib/document/card-head';
@@ -18,37 +18,43 @@ interface DocumentCardProps {
     breadcrumb?: string | null;
     /** G216: signed preview URL built on the server (`buildPreviewSrc`); absent → no preview layer. */
     previewSrc?: string | null;
+    /** G20: the trash card previews the stored text snapshot — a deleted page has no route. */
+    previewText?: string | null;
     /** G1419: hit count printed beside the title on the search results page. */
     hitCount?: number;
   };
+  /**
+   * 副行「已更新 N」的时钟基准。必须是**服务端算好的同一个数**：`cardHead` 的默认
+   * `Date.now()` 会在服务端渲染和 hydration 那一帧各取一次，跨过秒/分钟边界就撞
+   * 「Hydration failed」。必填是故意的——漏传就编译不过，这类不一致不该靠肉眼找。
+   */
+  now: number;
+  /** G20/G991: `null` → a static tile that neither navigates nor opens the card menu. */
+  href?: string | null;
   /** G623: batch selection mode — the card shows a checkbox instead of navigating on click. */
   selectable?: boolean;
   selected?: boolean;
   onToggleSelect?: (id: string) => void;
+  /** G20: the trash card's hover layer offers 恢复 instead of 打开. */
+  onRestore?: (id: string) => void;
 }
 
-export function DocumentCard({ document: doc, selectable = false, selected = false, onToggleSelect }: DocumentCardProps) {
-  const head = cardHead({ title: doc.title, updatedAt: doc.updatedAt, breadcrumb: doc.breadcrumb });
+export function DocumentCard({
+  document: doc,
+  now,
+  href,
+  selectable = false,
+  selected = false,
+  onToggleSelect,
+  onRestore,
+}: DocumentCardProps) {
+  const head = cardHead({ title: doc.title, updatedAt: doc.updatedAt, breadcrumb: doc.breadcrumb }, now);
   // G384/G1439：卡片没有常驻 `⋯`，入口只有右键（7 项）。
   const [menuAt, setMenuAt] = useState<{ x: number; y: number } | null>(null);
+  const target = href === undefined ? `/documents/${doc.id}` : href;
 
-  return (
+  const body = (
     <>
-      <Link
-        href={`/documents/${doc.id}`}
-        data-item-id={doc.id}
-        aria-selected={selectable ? selected : undefined}
-        onClick={(event) => {
-          if (!selectable) return;
-          event.preventDefault();
-          onToggleSelect?.(doc.id);
-        }}
-        onContextMenu={(event) => {
-          event.preventDefault();
-          setMenuAt({ x: event.clientX, y: event.clientY });
-        }}
-        className="group relative block rounded-xl transition-colors duration-300 hover:bg-foreground/[0.03]"
-      >
       {selectable && (
         // G1138/G1555 ②: the selection state is read off `role=checkbox` + `aria-checked`, never
         // off a class name — the official build's `_isActive_` class is on every resting card.
@@ -102,20 +108,18 @@ export function DocumentCard({ document: doc, selectable = false, selected = fal
             </span>
           )}
         </div>
-        {/* G250：「已更新 14 小时前」是**相对时间带动词**，不是裸日期；它占 craft 的副行位。 */}
-        <p className="mt-1 truncate text-meta text-foreground/55 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
-          {head.updated}
-        </p>
-        {/* G250：位置面包屑（📁 日记 •）是本地多出来的一行，放在副行下面，不抢标题位。 */}
-        {head.breadcrumb && (
-          <p className="mt-0.5 truncate text-meta text-foreground/45 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
-            {head.breadcrumb}
-          </p>
+        {/* G250/G19：官方卡片只有**一行**副标题——位置与「已更新 N」用圆点连起来，不是本地
+            此前那样上下两行。收件箱卡片没有位置，这一行就只剩更新时间。 */}
+        {head.subtitle && (
+          <div className="mt-1 flex min-w-0 items-center gap-1 text-meta text-foreground/55 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">
+            {head.breadcrumb && <Folder className="size-3.5 shrink-0 text-foreground/45" />}
+            <p className="truncate">{head.subtitle}</p>
+          </div>
         )}
         <div aria-hidden className="mt-2 h-px bg-foreground/[0.06]" />
         {/* G216：后端渲染的文档预览（签名 URL，内容变更会换 ts 自动推翻缓存）。
             盒子从分隔线下开始、撑满剩余高度，溢出由卡片裁掉（同 craft）。 */}
-        {doc.previewSrc && (
+        {doc.previewSrc ? (
           <img
             src={doc.previewSrc}
             alt=""
@@ -124,19 +128,82 @@ export function DocumentCard({ document: doc, selectable = false, selected = fal
             data-testid={`card-preview-${doc.id}`}
             className="mt-2 min-h-0 w-full flex-1 rounded-lg border border-foreground/8 bg-background object-cover object-top"
           />
-        )}
+        ) : doc.previewText ? (
+          // G20/G997：回收站条目打不开（G991），预览层用删除时落库的纯文本快照——正是官方卡片
+          // 显示的"最后一次保存的样子"。
+          <div
+            data-testid={`card-preview-${doc.id}`}
+            className="mt-2 min-h-0 w-full flex-1 overflow-hidden rounded-lg border border-foreground/8 bg-background px-2 py-1.5"
+          >
+            <p className="line-clamp-8 whitespace-pre-wrap break-words text-[11px] leading-[15px] text-foreground/55">
+              {doc.previewText}
+            </p>
+          </div>
+        ) : null}
 
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-          <span className="text-ui font-medium text-foreground/70">打开</span>
-        </div>
+        {/* G20：选择模式下的回收站磁贴既不导航也没有单行恢复动作，这一层就不该出现——
+            否则每张卡悬停都印一个假的「打开」。 */}
+        {(onRestore || target) && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 group-focus-within:opacity-100">
+            {onRestore ? (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onRestore(doc.id);
+                }}
+                className="pointer-events-auto rounded-md border border-foreground/15 bg-background px-3 py-1 text-ui font-medium text-foreground/85 shadow-sm hover:bg-foreground/[0.04]"
+              >
+                恢复
+              </button>
+            ) : (
+              <span className="text-ui font-medium text-foreground/70">打开</span>
+            )}
+          </div>
+        )}
       </div>
-      </Link>
-      <DocumentCardMenu
-        documentId={doc.id}
-        title={doc.title}
-        at={menuAt}
-        onClose={() => setMenuAt(null)}
-      />
+    </>
+  );
+
+  return (
+    <>
+      {target ? (
+        <Link
+          href={target}
+          data-item-id={doc.id}
+          aria-selected={selectable ? selected : undefined}
+          onClick={(event) => {
+            if (!selectable) return;
+            event.preventDefault();
+            onToggleSelect?.(doc.id);
+          }}
+          onContextMenu={(event) => {
+            event.preventDefault();
+            setMenuAt({ x: event.clientX, y: event.clientY });
+          }}
+          className="group relative block rounded-xl transition-colors duration-300 hover:bg-foreground/[0.03]"
+        >
+          {body}
+        </Link>
+      ) : (
+        <div
+          data-item-id={doc.id}
+          aria-selected={selectable ? selected : undefined}
+          onClick={selectable ? () => onToggleSelect?.(doc.id) : undefined}
+          className="group relative block rounded-xl transition-colors duration-300 hover:bg-foreground/[0.03]"
+        >
+          {body}
+        </div>
+      )}
+      {target && (
+        <DocumentCardMenu
+          documentId={doc.id}
+          title={doc.title}
+          at={menuAt}
+          onClose={() => setMenuAt(null)}
+        />
+      )}
     </>
   );
 }

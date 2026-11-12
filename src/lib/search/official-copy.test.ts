@@ -12,10 +12,17 @@ import {
   NO_RESULTS_FOUND_FOR_KEY,
   NO_RESULTS_FOUND_FOR_TEMPLATE,
   ROWS_HEADING,
+  PRESS_ENTER,
+  PRESS_ENTER_KEY,
+  SEARCH_RESULTS,
+  SEARCH_RESULTS_FOR_KEY,
+  SEARCH_RESULTS_FOR_TEMPLATE,
+  SEARCH_RESULTS_KEY,
   SEE_MORE_RESULTS,
   SEE_MORE_RESULTS_KEY,
   SEARCHING_OTHER_MATCHES,
   SEARCHING_OTHER_MATCHES_KEY,
+  searchResultsTitle,
   SHOW_X_MORE_TEMPLATE,
   SHOW_X_MORE_KEY,
   createDocLabel,
@@ -87,5 +94,32 @@ describe('search palette official group headings (G1419)', () => {
     expect(source).not.toMatch(/openSettings\('shortcuts'\)/);
     const help = readFileSync(join(process.cwd(), 'src/components/app/HelpMenu.tsx'), 'utf8');
     expect(help).toContain("openSettings('shortcuts')");
+  });
+});
+
+describe('full-results page copy (G1419)', () => {
+  it('matches the ledger heading for both shapes', () => {
+    expect(SEARCH_RESULTS).toBe(ledgerValue(SEARCH_RESULTS_KEY));
+    expect(SEARCH_RESULTS_FOR_TEMPLATE).toBe(ledgerValue(SEARCH_RESULTS_FOR_KEY));
+  });
+
+  it('substitutes the query into the heading, and trims it', () => {
+    expect(searchResultsTitle('季度复盘')).toBe('季度复盘 的搜索结果');
+    // An empty query falls back to the bare heading — the page never prints " 的搜索结果".
+    expect(searchResultsTitle('   ')).toBe('搜索结果');
+  });
+
+  it('takes the Enter hint verbatim from the ledger', () => {
+    expect(PRESS_ENTER).toBe(ledgerValue(PRESS_ENTER_KEY));
+  });
+
+  it('renders the results page as a server component over searchAll', () => {
+    const page = readFileSync(join(process.cwd(), 'src/app/(app)/search/page.tsx'), 'utf8');
+    expect(page).toContain('searchResultsTitle(q)');
+    expect(page).toContain('await searchAll(q)');
+    expect(page).toContain('<DocumentCard');
+    // The old client stub stays reachable for a bare /search visit.
+    const launcher = readFileSync(join(process.cwd(), 'src/app/(app)/search/SearchLauncher.tsx'), 'utf8');
+    expect(launcher).toContain('CommandPalette');
   });
 });

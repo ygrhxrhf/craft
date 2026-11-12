@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { extractBlocks } from '@/lib/search/extract';
+import { documentHitCount } from '@/lib/search/hit-count';
 import { snippetAround, type Snippet } from '@/lib/search/highlight';
 
 export interface SearchResultDoc {
@@ -11,6 +12,8 @@ export interface SearchResultDoc {
   icon: string | null;
   createdAt: string;
   updatedAt: string;
+  /** G1419: the count the official result card prints beside the title. */
+  hitCount: number;
 }
 
 export interface SearchResultBlock {
@@ -80,7 +83,7 @@ export async function searchDocumentsForLink(query: string): Promise<LinkCandida
   return matches.map((d: any) => ({ id: d.id, title: d.title, icon: d.icon }));
 }
 
-export async function searchAll(query: string, offset = 0): Promise<SearchResult> {
+export async function searchAll(query: string, offset = 0, limit = PAGE_SIZE): Promise<SearchResult> {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
 
@@ -91,11 +94,20 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
   const uid = session.user.id;
   const pattern = `%${q.replace(/[%_]/g, (m) => `\\${m}`)}%`;
 
+  const toDoc = (d: any): SearchResultDoc => ({
+    id: d.id,
+    title: d.title,
+    icon: d.icon,
+    createdAt: d.createdAt,
+    updatedAt: d.updatedAt,
+    hitCount: documentHitCount(d.content, d.title ?? '', q),
+  });
+
   const titleMatches = await db.orm.public.Document
     .where({ userId: uid, isDeleted: false })
     .where((d: any) => d.title.ilike(pattern))
     .orderBy((d: any) => d.updatedAt.desc())
-    .limit(PAGE_SIZE)
+    .limit(limit)
     .offset(offset)
     .all();
 
@@ -103,7 +115,7 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
     .where({ userId: uid, isDeleted: false })
     .where((d: any) => d.plainText.ilike(pattern))
     .orderBy((d: any) => d.updatedAt.desc())
-    .limit(PAGE_SIZE)
+    .limit(limit)
     .offset(offset)
     .all();
 
@@ -126,26 +138,14 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
         userId: uid,
       });
       if (doc && doc.isDeleted !== true) {
-        taggedDocs.push({
-          id: (doc as any).id,
-          title: (doc as any).title,
-          icon: (doc as any).icon,
-          createdAt: (doc as any).createdAt,
-          updatedAt: (doc as any).updatedAt,
-        });
+        taggedDocs.push(toDoc(doc));
       }
     }
   }
 
   const seen = new Set<string>();
   const documents: SearchResultDoc[] = [
-    ...titleMatches.map((d: any) => ({
-      id: d.id,
-      title: d.title,
-      icon: d.icon,
-      createdAt: d.createdAt,
-      updatedAt: d.updatedAt,
-    })),
+    ...titleMatches.map(toDoc),
     ...taggedDocs,
   ].filter((doc) => (seen.has(doc.id) ? false : (seen.add(doc.id), true)));
 
@@ -170,14 +170,8 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
       });
       if (blocks.length >= 12) break;
     }
-    if (!matchedIds.has(d.id) && documents.length < 20 && hits.length > 0) {
-      documents.push({
-        id: d.id,
-        title: d.title,
-        icon: d.icon,
-        createdAt: d.createdAt,
-        updatedAt: d.updatedAt,
-      });
+    if (!matchedIds.has(d.id) && documents.length < limit && hits.length > 0) {
+      documents.push(toDoc(d));
       matchedIds.add(d.id);
     }
     if (blocks.length >= 12) break;
@@ -185,7 +179,7 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
 
   const rows = offset === 0 ? await searchCollectionRows(db, uid, q) : [];
 
-  const hasMore = titleMatches.length === PAGE_SIZE || contentMatches.length === PAGE_SIZE;
+  const hasMore = titleMatches.length === limit || contentMatches.length === limit;
 
   const folderRows = await db.orm.public.Folder
     .where({ userId: uid, deletedAt: null })
@@ -194,7 +188,7 @@ export async function searchAll(query: string, offset = 0): Promise<SearchResult
     .all();
   const folders: SearchResultFolder[] = folderRows.map((f: any) => ({ id: f.id, title: f.name }));
 
-  return { documents, folders, blocks, rows, nextOffset: hasMore ? offset + PAGE_SIZE : null };
+  return { documents, folders, blocks, rows, nextOffset: hasMore ? offset + limit : null };
 }
 
 /** Collection rows are searched by their stored cell text. */

@@ -64,3 +64,27 @@ export function noResultsFor(query: string): string {
 export const NO_RESULTS_FOUND_KEY = 'browse.no.results.found';
 export const NO_RESULTS_FOUND = '未找到结果';
 
+/**
+ * G1419 — the full results page the palette's Enter row opens (sampled 第 419 批 as a single
+ * 「搜索结果」 heading over one list of cards with per-item hit counts). The heading and its
+ * with-query variant both have official keys; `browse.search.results.for` fills the query in.
+ */
+export const SEARCH_RESULTS_KEY = 'browse.search.results';
+export const SEARCH_RESULTS = '搜索结果';
+
+export const SEARCH_RESULTS_FOR_TEMPLATE = '[0] 的搜索结果';
+export const SEARCH_RESULTS_FOR_KEY = 'browse.search.results.for';
+
+/** The page title: bare 「搜索结果」, or 「某词 的搜索结果」 when a query was carried in. */
+export function searchResultsTitle(query: string): string {
+  const q = query.trim();
+  return q ? SEARCH_RESULTS_FOR_TEMPLATE.replace('[0]', q) : SEARCH_RESULTS;
+}
+
+/**
+ * G1419 — the palette's bottom row is 「查看更多结果」 plus this keycap hint, and Enter there
+ * routes to the full results page (sampled: URL becomes `…?q=…&scope=ALL`). Key `commands.press.enter`.
+ */
+export const PRESS_ENTER_KEY = 'commands.press.enter';
+export const PRESS_ENTER = '按 Enter 键';
+

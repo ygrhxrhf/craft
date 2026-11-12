@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-11-12T04:15:02.683Z",
+  "generatedAt": "2026-11-12T05:50:05.815Z",
   "totalRows": 1615,
   "statusDistribution": {
     "gap": 663,
-    "aligned": 478,
+    "aligned": 479,
     "unknown": 186,
     "deliberate": 134,
     "nonaction": 72,
     "partial": 65,
-    "unreachable": 17
+    "unreachable": 16
   },
   "priorityDistribution": {
     "P2": 631,
@@ -25,7 +25,7 @@
     "P? / unknown": 108,
     "P3 / gap": 94,
     "P3 / aligned": 87,
-    "P? / aligned": 59,
+    "P? / aligned": 60,
     "P2 / deliberate": 51,
     "P1 / aligned": 48,
     "P3 / deliberate": 39,
@@ -44,7 +44,7 @@
     "P3 / unreachable": 6,
     "P2 / unreachable": 6,
     "P3 / partial": 4,
-    "P? / unreachable": 4,
+    "P? / unreachable": 3,
     "P0 / partial": 2,
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
@@ -5253,8 +5253,8 @@
       "cols": 5,
       "id": "G235",
       "official": "**搜索是两段式且可\"搜不到就建\"**：`searching.for.other.matches`「正在搜索其他匹配项」+ `see.more.results` + `show.x.more` + `search.create.doc`「创建 [0]」+ 空态分\"有词/无词\"两句 + `remove.from.recents`「从最近使用中移除」",
-      "local": "☆ **部分落地**（第 269 批）＝**原判\"本地只有一轮命中、无查看更多、无用查询词新建\"整条作废（全是陈旧账）**，逐项实读：① **两段式已落地**＝`CommandPalette` 有 `searching` 态渲染 `SEARCHING_OTHER_MATCHES`、`nextOffset !== null` 时渲染 `SEE_MORE_RESULTS` 并可续页（`loadMore` 按 offset 追加去重）；② **用查询词新建已落地**＝`createDocLabel(query)` 渲染「创建 [0]」并走 `createDocumentLocal`（离线内核路径）；③ **有词空态本批接真**＝原写死「未找到与 \"x\" 相关的结果」改为官方 `noResultsFor(query)`（逐字「未找到 [0] 的结果」，键 `browse.no.results.found.for`）；④ **一处真错当场修**＝该空态原用 `CommandEmpty` 渲染，而结果里**永远有一条「创建 [0]」**、其 value 含查询词于是自己命中自己 ⇒ 列表从不\"空\"、`CommandEmpty` **永不渲染**，官方那句根本出不来（探针实测：搜不存在的词，面板只剩创建行、无任何空态句）⇒ 改为显式条件分支；☆ 一处**行内陈旧账更正**＝本行把 `show.x.more` 记作搜索串，但 `tags-browse.md` §10.4 已定案它**不属于搜索面板**（是侧栏折叠行的\"展开\"文案，与 `tasks.show.less` 成对），故本地 `showMoreLabel` 无搜索侧消费者是**正确**的、非缺口；☆ **仍未接**＝`remove.from.recents`「从最近使用中移除」（本地无\"最近使用\"列表可移除；`/recent` 是文档卡片网格、非可移除的最近列表）；「无词空态」那句官方另有一枚 `browse.no.results.found`，但本地空查询走的是启动器操作列表、不存在该态，故只接有词那句；⑤ 现读（2026-11-02）：`remove.from.recents` 已接——搜索面板空查询时渲染持久化的「最近使用」列表（`src/lib/search/recents.ts`），每项带「从最近使用中移除」按钮，最多 8 条、重开前移。",
-      "verdict": "☆ 已清（第 135 批）",
+      "local": "☆ **部分落地**（第 269 批）＝**原判\"本地只有一轮命中、无查看更多、无用查询词新建\"整条作废（全是陈旧账）**，逐项实读：① **两段式已落地**＝`CommandPalette` 有 `searching` 态渲染 `SEARCHING_OTHER_MATCHES`；② **用查询词新建已落地**＝`createDocLabel(query)` 渲染「创建 [0]」并走 `createDocumentLocal`（离线内核路径）；③ **有词空态本批接真**＝原写死「未找到与 \"x\" 相关的结果」改为官方 `noResultsFor(query)`（逐字「未找到 [0] 的结果」，键 `browse.no.results.found.for`）；④ **一处真错当场修**＝该空态原用 `CommandEmpty` 渲染，而结果里**永远有一条「创建 [0]」**、其 value 含查询词于是自己命中自己 ⇒ 列表从不\"空\"、`CommandEmpty` **永不渲染**，官方那句根本出不来 ⇒ 改为显式条件分支；☆ 一处**行内陈旧账更正**＝本行把 `show.x.more` 记作搜索串，但 `tags-browse.md` §10.4 已定案它**不属于搜索面板**（是侧栏折叠行的\"展开\"文案，与 `tasks.show.less` 成对），故本地 `showMoreLabel` 无搜索侧消费者是**正确**的、非缺口；☆ **仍未接**＝「无词空态」那句官方另有一枚 `browse.no.results.found`，但本地空查询走的是启动器操作列表、不存在该态，故只接有词那句；⑤ 现读（2026-11-02）：`remove.from.recents` 已接——搜索面板空查询时渲染持久化的「最近使用」列表（`src/lib/search/recents.ts`），每项带\"从最近使用中移除\"按钮，最多 8 条、重开前移 ✎ **第 529 批：查看更多改为官方形态**——原先 `nextOffset !== null` 时渲染 `SEE_MORE_RESULTS` 并可续页（`loadMore`）；第 419 批采到官方面板底部是「查看更多结果」＋「按 Enter 键」一枚行、按 Enter 进入完整结果页 ⇒ 本地改成同一行（`value=\"see-more-results\"`、`PRESS_ENTER` 键 `commands.press.enter`）路由 `/search?q=…&scope=ALL`，面板内分页整段删除；结果页走 `searchAll` 一次（`limit` 参数已备、`nextOffset` 仍返回，页内续页未接）。",
+      "verdict": "☆ 已清（第 135 批）；第 529 批把\"查看更多\"改为官方面板末行形态（查看更多结果＋按 Enter 键 → 完整结果页），原\"面板内 loadMore 续页\"记作被采到的官方形态取代，其余各项仍成立。",
       "score": "2/2",
       "status": "partial",
       "scoreParsed": {
@@ -26649,10 +26649,10 @@
       "cols": 5,
       "id": "G1419",
       "official": "★★★★ **搜索结果按三档分组标题渲染＝`document`／`pages`／`blocks`＝三枚都是裸键（无点）＝另在快速打开里 `recents` 是一枚分组标签＋带 offset**＝分组构造逐字 x=g({results:T,label:h(\"recents\"),offset:A}),e＝三档渲染处 index@3440591＝☆ 这条的意义＝官方的结果模型里\"文档／页面／块\"是**三种可分开的命中实体**、不是一个列表",
-      "local": "本地搜索结果若只出一张平表＝与官方形状不符＝☆ 至少要有\"按实体类型分组\"这一层＝且 Recents 那组在快速打开里带偏移",
-      "verdict": "✓盘上（两处构造逐字＝index@3440591／index@4010760）＝☆ 限定＝三档的**排序**未证、且无点键在 en 表里是 `word:VAR` 形（与 CSS module 表撞名＝见 internals §一百零三②）＝判死发＝屏上搜一次看分组顺序 ✎ **第 418 批：快速开启面板（`Ctrl-P`）里**只有一个分组**——「文档」**：空查询时结果区顶上是单一「文档」标题、下面全是文档卡（「无标题文档／在 zhang's Space 中」形态）；输入 `Craft`／`QODER`／`HEAD` 后**仍是同一个「文档」标题**、只是条目换成本次命中，底部出现「查看更多结果」＋「按 Enter 键」。⇒ **三档（document／pages／blocks）不在快速开启面板里**，应在**完整搜索结果页**（该页入口本批没找到：侧栏「搜索」不是可点元素，`Ctrl-P` 面板底部的「按 Enter 键」应是通往它的路）。★ 边界：这是\"面板里只有一组\"，不是\"官方没有三档\"——原行的三档来自静态构造，仍成立，只是位置没采到。 ✎✎✎ **第 419 批：完整搜索结果页已采到，**没有三档分组**——这是对\"三档\"读法的正面更正**：快速开启面板里按 Enter 后 URL 变 `…/all?q=Craft&scope=ALL`，页面结果区**只有一个标题「搜索结果」**，条目是**文档卡 + 每条的命中数**（逐字 `Craft Handbook 50+`／`Welcome to Craft 1`／`无标题 3`／`Watch: how to videos 22`／`Quick Start: get going 9`）。⇒ **本 build 在 `scope=ALL` 下不渲染 `document／pages／blocks` 三档**，而是\"单一结果列表 + 逐条命中数\"。★ 措辞边界：这与\"静态构造里三枚分组键存在\"不矛盾——可能三档只在**别的 scope 值**或**别的搜索入口**下渲染，本批没穷举 `scope` 取值。★ 连带：`G1419` 原文\"三档渲染 index@3440591\"仍是盘上事实，但**屏上形态与之不同**，复刻应按屏上（单列表＋命中数）。",
+      "local": "本地搜索结果若只出一张平表＝与官方形状不符＝☆ 至少要有\"按实体类型分组\"这一层＝且 Recents 那组在快速打开里带偏移 ✎ **第 529 批：按第 419 批采到的屏上形态落地**——`/search?q=…` 现在是服务端页（`src/app/(app)/search/page.tsx`）：单一 `AppPageHeader` 标题（有词时官方 `[0] 的搜索结果`）＋`BrowseGrid` 的「文档卡」列表，**每张卡带命中数**（`hitCount` 由 `searchAll` 从整行 `content` 现算：标题命中＋正文顶层块命中，不重叠、大小写不敏感；`50+` 只是采样到的显示约定、不是已证常量）；快速打开面板每行也印同一枚计数（`hitCountLabel(doc.hitCount)`）。底部「查看更多结果」＋「按 Enter 键」行路由到 `…?q=…&scope=ALL`，面板不再承担分页（`loadMore`／`nextOffset` 状态整段删除，`searchAll` 改带 `limit` 参数留给结果页）。★ 限定：`scope=ALL` 下**不渲染** document／pages／blocks 三档（与第 419 批一致），三档是否在别的 scope 值下渲染未穷举；面板里那一组仍叫「文档」。",
+      "verdict": "✓ **按屏上形态对齐**（第 529 批）：完整结果页来自 `searchAll`＋单一标题＋带命中数的文档卡，快速打开面板末行「查看更多结果／按 Enter 键」是它的入口（`/search?q=…&scope=ALL`）；`50+` 记为采样显示约定。三档分组在 `scope=ALL` 下官方也不渲染，本地同样不渲染——原行「三档渲染 index@3440591」仍是盘上事实，但复刻按屏上（单列表＋命中数），按 scope 值穷举仍是未证面。",
       "score": "4/3",
-      "status": "unreachable",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 4,
         "cost": 3,

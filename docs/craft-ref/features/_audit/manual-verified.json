@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-11-12",
-  "method": "第 521 批：task-view-key/undo-stack 纯核 + renameTask/restoreTask 服务端 + TasksView 行键与零态卡接线；浏览器实测卡几何与 tabs 横滑计算值；第 522 批：G1414 反馈弹窗全族（13 键／匿名邮箱门／感谢屏／评分桥门控）、G1415 缺函数反馈入口（两处公式面）＝纯核＋接线＋单测＋浏览器实测；第 528 批：G1440 代码块九项名册的 语言／主题 子菜单落地（38 语言／21 主题、搜索框＋勾、写块属性与设备默认），G1474 两块 LOCAL 回读＝纯核＋接线＋单测",
+  "method": "第 521 批：task-view-key/undo-stack 纯核 + renameTask/restoreTask 服务端 + TasksView 行键与零态卡接线；浏览器实测卡几何与 tabs 横滑计算值；第 522 批：G1414 反馈弹窗全族（13 键／匿名邮箱门／感谢屏／评分桥门控）、G1415 缺函数反馈入口（两处公式面）＝纯核＋接线＋单测＋浏览器实测；第 528 批：G1440 代码块九项名册的 语言／主题 子菜单落地（38 语言／21 主题、搜索框＋勾、写块属性与设备默认），G1474 两块 LOCAL 回读＝纯核＋接线＋单测；第 529 批：G1419 完整搜索结果页（单一标题＋带命中数的文档卡＋面板末行「查看更多结果／按 Enter 键」入口）与 G235 的查看更多形态改版＝纯核（hit-count）＋服务端读数 searchAll＋真库单测＋接线单测",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -4565,11 +4565,12 @@
     "G235": {
       "status": "aligned",
       "priority": "P2",
-      "note": "两段式/续页/用查询词新建/有词空态均已落；最近使用列表及其移除动作本批补齐。",
+      "note": "第 529 批：面板「查看更多结果」由面板内 loadMore 续页改为官方末行形态——「查看更多结果」＋「按 Enter 键」(commands.press.enter) 一行路由 /search?q=…&scope=ALL；两段式 searching 句、用词新建、有词空态、最近使用移除各项不变。",
       "evidence": [
-        "src/lib/search/recents.ts:8",
-        "src/components/search/CommandPalette.tsx:277",
-        "src/lib/search/recents.test.ts"
+        "src/components/search/CommandPalette.tsx:196",
+        "src/components/search/CommandPalette.tsx:507",
+        "src/lib/search/official-copy.ts:88",
+        "src/app/(app)/search/page.tsx:32"
       ]
     },
     "G236": {
@@ -10688,6 +10689,31 @@
         "src/lib/editor/code-themes.ts:317",
         "src/lib/editor/code-languages.ts:14",
         "src/lib/editor/mermaid-surface.ts:53"
+      ]
+    },
+    "G1419": {
+      "status": "aligned",
+      "note": "第 529 批：完整搜索结果页按第 419 批采样落地——服务端页单一「[0] 的搜索结果」标题＋文档卡网格，每卡带命中数（标题＋正文顶层块、不重叠、大小写不敏感），50+ 是采到的显示上限不是已证常量；快速打开面板每行印同一计数，末行「查看更多结果＋按 Enter 键」路由 /search?q=…&scope=ALL，面板内 loadMore 删除。scope=ALL 下官方与本地都不渲染三档分组。",
+      "evidence": [
+        "src/lib/search/hit-count.ts:10",
+        "src/lib/search/hit-count.ts:13",
+        "src/lib/search/hit-count.ts:39",
+        "src/actions/document/search.ts:86",
+        "src/actions/document/search.ts:97",
+        "src/actions/document/search.ts:103",
+        "src/app/(app)/search/page.tsx:18",
+        "src/app/(app)/search/page.tsx:36",
+        "src/components/document/DocumentCard.tsx:99",
+        "src/components/search/CommandPalette.tsx:196",
+        "src/components/search/CommandPalette.tsx:429",
+        "src/components/search/CommandPalette.tsx:507",
+        "src/lib/search/official-copy.ts:79",
+        "src/lib/search/official-copy.ts:89",
+        "src/components/app/AppPageHeader.tsx:73",
+        "src/actions/document/search-hit-count.test.ts:1",
+        "src/lib/search/hit-count.test.ts:5",
+        "src/components/search/palette-wiring.test.ts:46",
+        "src/lib/search/official-copy.test.ts:100"
       ]
     }
   }

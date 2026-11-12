@@ -5,6 +5,7 @@ import { Check, File } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from 'cn';
 import { cardHead } from '@/lib/document/card-head';
+import { hitCountLabel } from '@/lib/search/hit-count';
 import { DocumentCardMenu } from './DocumentCardMenu';
 
 interface DocumentCardProps {
@@ -17,6 +18,8 @@ interface DocumentCardProps {
     breadcrumb?: string | null;
     /** G216: signed preview URL built on the server (`buildPreviewSrc`); absent → no preview layer. */
     previewSrc?: string | null;
+    /** G1419: hit count printed beside the title on the search results page. */
+    hitCount?: number;
   };
   /** G623: batch selection mode — the card shows a checkbox instead of navigating on click. */
   selectable?: boolean;
@@ -92,6 +95,12 @@ export function DocumentCard({ document: doc, selectable = false, selected = fal
           >
             {head.title}
           </h3>
+          {/* G1419：搜索结果卡在标题右侧印命中数（逐字样本 `Craft Handbook 50+`）。 */}
+          {doc.hitCount !== undefined && (
+            <span className="shrink-0 text-meta tabular-nums text-foreground/50">
+              {hitCountLabel(doc.hitCount)}
+            </span>
+          )}
         </div>
         {/* G250：「已更新 14 小时前」是**相对时间带动词**，不是裸日期；它占 craft 的副行位。 */}
         <p className="mt-1 truncate text-meta text-foreground/55 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0">

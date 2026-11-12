@@ -25,7 +25,8 @@ import { parseDateExpression } from '@/lib/task/date-parse';
 import { getOrCreateDayNote } from '@/actions/daily-notes/daily-notes';
 import { exportLibraryZip } from '@/actions/document/export-library';
 import { downloadBase64File } from '@/lib/download/base64-file';
-import { BLOCKS_HEADING, DOCS_HEADING, NO_RESULTS_FOUND, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel, noResultsFor } from '@/lib/search/official-copy';
+import { BLOCKS_HEADING, DOCS_HEADING, NO_RESULTS_FOUND, PRESS_ENTER, ROWS_HEADING, SEE_MORE_RESULTS, SEARCHING_OTHER_MATCHES, createDocLabel, noResultsFor } from '@/lib/search/official-copy';
+import { hitCountLabel } from '@/lib/search/hit-count';
 import {
   REMOVE_FROM_RECENTS,
   forgetRecent,
@@ -90,7 +91,6 @@ export function CommandPalette() {
   const [blocks, setBlocks] = useState<SearchResultBlock[]>([]);
   const [rows, setRows] = useState<SearchResultRow[]>([]);
   const [folders, setFolders] = useState<{ id: string; title: string }[]>([]);
-  const [nextOffset, setNextOffset] = useState<number | null>(null);
   const [searching, setSearching] = useState(false);
   // G235: the panel's 「最近使用」 list, persisted per browser.
   const [recents, setRecents] = useState<RecentDocument[]>([]);
@@ -159,7 +159,6 @@ export function CommandPalette() {
         setDocs([]);
         setBlocks([]);
         setRows([]);
-        setNextOffset(null);
         setSearching(false);
         return;
       }
@@ -175,7 +174,6 @@ export function CommandPalette() {
         setBlocks(result.blocks);
         setRows(result.rows);
         setFolders(result.folders ?? []);
-        setNextOffset(result.nextOffset);
       } finally {
         setSearching(false);
       }
@@ -185,20 +183,17 @@ export function CommandPalette() {
     };
   }, [query]);
 
-  const loadMore = async () => {
+  /**
+   * G1419：面板底部那一行是「查看更多结果 + 按 Enter 键」，选中即进完整结果页
+   * （第 419 批采样：URL 变 `…?q=Craft&scope=ALL`）。分页因此从面板挪到结果页；
+   * 面板只负责第一页 20 条。
+   */
+  const handleSeeAllResults = () => {
     const q = query.trim();
-    if (!q || nextOffset === null) return;
-    setSearching(true);
-    try {
-      const result = await searchAll(q, nextOffset);
-      setDocs((current) => {
-        const seen = new Set(current.map((doc) => doc.id));
-        return [...current, ...result.documents.filter((doc) => !seen.has(doc.id))];
-      });
-      setNextOffset(result.nextOffset);
-    } finally {
-      setSearching(false);
-    }
+    if (!q) return;
+    close();
+    setQuery('');
+    router.push(`/search?q=${encodeURIComponent(q)}&scope=ALL`);
   };
 
   const handleOpenDocument = (id: string, title?: string) => {
@@ -429,6 +424,11 @@ export function CommandPalette() {
                   <FileText className="size-4" />
                 )}
                 <span className="truncate">{doc.title}</span>
+                {doc.hitCount !== undefined && (
+                  <span className="ml-auto shrink-0 text-xs tabular-nums text-muted-foreground">
+                    {hitCountLabel(doc.hitCount)}
+                  </span>
+                )}
               </CommandItem>
             ))}
           </CommandGroup>
@@ -502,9 +502,14 @@ export function CommandPalette() {
           </div>
         )}
 
-        {nextOffset !== null && (
-          <CommandItem value="load-more" onSelect={loadMore} className="justify-center text-muted-foreground">
+        {hasQuery && totalResultCount > 0 && (
+          <CommandItem
+            value="see-more-results"
+            onSelect={handleSeeAllResults}
+            className="justify-center gap-2 text-muted-foreground"
+          >
             {SEE_MORE_RESULTS}
+            <kbd className="rounded border border-border px-1 text-[10px]">{PRESS_ENTER}</kbd>
           </CommandItem>
         )}
       </CommandList>

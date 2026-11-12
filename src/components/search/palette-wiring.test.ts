@@ -37,3 +37,30 @@ describe('G355 — the recent-documents group excludes the open page and caps at
     expect(palette).toContain('recentsForDisplay.map');
   });
 });
+
+/**
+ * G1419 — the official full-results page is reached from the palette's last row: 「查看更多结果」
+ * with the 「按 Enter 键」 hint. The row routes to `/search?q=…&scope=ALL`, and per-document hit
+ * counts are printed on the doc rows rather than only on the results page.
+ */
+describe('G1419 — the Enter row opens the full results page', () => {
+  it('routes to the results URL with the query and scope=ALL', () => {
+    expect(palette).toContain('`/search?q=${encodeURIComponent(q)}&scope=ALL`');
+    expect(palette).toContain('handleSeeAllResults');
+  });
+
+  it('prints the bottom row with the Enter hint from the ledger copy', () => {
+    expect(palette).toContain('value="see-more-results"');
+    expect(palette).toContain('{SEE_MORE_RESULTS}');
+    expect(palette).toContain('{PRESS_ENTER}');
+  });
+
+  it('moved pagination off the palette — no load-more state left', () => {
+    expect(palette).not.toContain('loadMore');
+    expect(palette).not.toContain('nextOffset');
+  });
+
+  it('renders the per-document hit count on the doc rows', () => {
+    expect(palette).toContain('hitCountLabel(doc.hitCount)');
+  });
+});

@@ -1,35 +1,55 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { auth } from '@/lib/auth/auth';
+import { searchAll } from '@/actions/document/search';
+import { DocumentCard } from '@/components/document/DocumentCard';
+import { AppPageContainer } from '@/components/app/AppPageContainer';
+import { AppPageHeader } from '@/components/app/AppPageHeader';
+import { BrowseGrid } from '@/components/app/BrowseGrid';
+import { buildPreviewSrc } from '@/lib/preview/signature';
+import { searchResultsTitle, noResultsFor } from '@/lib/search/official-copy';
+import SearchLauncher from './SearchLauncher';
 
-import { Suspense, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Search } from 'lucide-react';
-import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
+/**
+ * G1419 — the full results page (第 419 批采样：单一标题＋文档卡列表，每卡带命中数；
+ * 不渲染 `document／pages／blocks` 三档分组）。官方入口是快速打开面板里的
+ * 「查看更多结果 + 按 Enter 键」行 ⇒ URL `…?q=…&scope=ALL`；`scope` 的取值空间未穷举，
+ * 本地接受但不区分。无查询词时回退到面板启动页（旧行为：`?tag=` 仍喂给面板）。
+ */
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; scope?: string; tag?: string }>;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) redirect('/login');
 
-function SearchPageInner() {
-  const open = useCommandPaletteStore((s) => s.open);
-  const openWith = useCommandPaletteStore((s) => s.openWith);
-  const params = useSearchParams();
-  const tag = params.get('tag');
+  const params = await searchParams;
+  const q = (params.q ?? '').trim();
+  if (!q) {
+    return <SearchLauncher />;
+  }
 
-  useEffect(() => {
-    if (tag) openWith(tag);
-    else open();
-  }, [tag, open, openWith]);
+  const result = await searchAll(q);
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-2 text-muted-foreground">
-      <Search className="size-5" />
-      <p className="text-sm">
-        {tag ? `搜索标签 “${tag}” 中的文档` : '按 ⌘K 或点击上方按钮开始搜索'}
-      </p>
+    <div className="flex-1 overflow-y-auto">
+      <AppPageHeader title={searchResultsTitle(q)} />
+      <AppPageContainer>
+        {result.documents.length > 0 ? (
+          <BrowseGrid>
+            {result.documents.map((doc) => (
+              <DocumentCard
+                key={doc.id}
+                document={{ ...doc, previewSrc: buildPreviewSrc(doc) }}
+              />
+            ))}
+          </BrowseGrid>
+        ) : (
+          <div className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+            {noResultsFor(q)}
+          </div>
+        )}
+      </AppPageContainer>
     </div>
-  );
-}
-
-export default function SearchPage() {
-  return (
-    <Suspense fallback={null}>
-      <SearchPageInner />
-    </Suspense>
   );
 }

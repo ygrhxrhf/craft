@@ -70,6 +70,7 @@ const ownHeaderRoutes = [
   '/tasks',
   '/calendar',
   '/whiteboards',
+  '/search',
   '/settings',
 ];
 

@@ -130,7 +130,7 @@ export default function CalendarPage() {
   return (
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title="日历" actions={<ShowCompletedToggle onChange={setShowCompleted} />} />
-      {/* G23：craft 日历用满主列宽（日行 1120 = main 1152 − 16×2），此前被 `max-w-4xl` 夹到 896。 */}
+      {/* G43：craft 日历用满主列宽（日行 1120 = main 1152 − 16×2），此前被 `max-w-4xl` 夹到 896。 */}
       <AppPageContainer>
         {/* 视图切换放在正文里而不是页头：手机上页头只有标题＋一个开关的宽度，
             再加一枚带字的按钮会把标题挤掉（截图里 日历 被截成半个字）。 */}

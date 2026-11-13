@@ -11,7 +11,12 @@ async function signIn(page: Page) {
   await expect(page).toHaveURL(/\/documents/);
 }
 
-const sections = (page: Page) => page.locator('section[data-testid^="calendar-section"]');
+/** 时间轴上的成节（日／区间／月／之后）——`calendar-section-ongoing` 是聚合节，没有逐日动作按钮。 */
+const sections = (page: Page) =>
+  page.locator('section[data-testid^="calendar-section-"]:not([data-testid="calendar-section-ongoing"])');
+/** 逐日成节：只有这一档的节头是 `日期 • 相对 • 星期`。 */
+const daySections = (page: Page) =>
+  page.locator('section[data-testid="calendar-section-today"], section[data-testid="calendar-section-day"]');
 
 /** `9月27日`＝官方日期表头写法，不带前导零。 */
 function dateLabel(date: Date): string {
@@ -71,8 +76,8 @@ test('growth buttons extend the timeline in both directions', async ({ page }) =
   const before = await sections(page).count();
   await page.getByRole('button', { name: '↑ 显示前几天' }).click();
   await expect(sections(page)).toHaveCount(before + 3);
-  // 往前补的是三天，最老的一节是今天减三。
-  await expect(sections(page).first().locator('h2')).toContainText(dateLabel(shift(-3)));
+  // 往前补的是三天，最老的一节是今天减三。（`之后` 节若在位，它的 h2 是「之后」，所以按逐日节取首枚）
+  await expect(daySections(page).first().locator('h2')).toContainText(dateLabel(shift(-3)));
 
   const monthSections = page.locator('section[data-testid="calendar-section-month"]');
   const monthsBefore = await monthSections.count();

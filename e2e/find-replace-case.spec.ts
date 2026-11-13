@@ -24,6 +24,16 @@ async function openFindOnNewDoc(page: Page) {
 }
 
 /**
+ * G1418 residual (a): the four options no longer sit flat on the bar — they live in the popup
+ * opened by the header's 「选项」 button, exactly like the captured `frsidebar`. Every option
+ * assertion has to unroll that list first.
+ */
+async function openOptions(page: Page) {
+  await page.getByTestId('find-replace-options-trigger').click();
+  await expect(page.getByTestId('find-replace-options')).toBeVisible();
+}
+
+/**
  * G1418 in-registry shape: `match.case` is its own toggle alongside mode and scope. Off by default
  * the panel's count is case-insensitive; flipping it pins the RegExp to no `i` flag and the count
  * changes accordingly. A single regression loop toggling once each direction would never catch a
@@ -38,6 +48,7 @@ test('the case-sensitive toggle narrows and widens the count as expected', async
   // Off: the count must reflect every match across the mixed-case body — the four substrings
   // `ABC`, `abc`, `Abc`, `aBc` all contain `abc` case-insensitively.
   await expect(panel.getByTestId('find-replace-count')).toHaveText('4 结果');
+  await openOptions(page);
   await expect(page.getByTestId('find-replace-case')).toHaveAttribute('aria-pressed', 'false');
 
   // On: the count drops to the lower-case 'abc' alone (4 → 1), the button flips to pressed.
@@ -70,6 +81,7 @@ test('the diacritics toggle folds accents on by default and stops folding when o
   await expect(panel).toBeVisible();
 
   await page.getByTestId('find-replace-query').fill('cafe');
+  await openOptions(page);
   // Default on: 「Café」 answers to the unaccented query.
   await expect(page.getByTestId('find-replace-diacritics')).toHaveAttribute('aria-pressed', 'true');
   await expect(panel.getByTestId('find-replace-count')).toHaveText('1 结果');
@@ -133,6 +145,7 @@ test('the option row survives a page reload', async ({ page }) => {
   await expect(panel).toBeVisible();
 
   // Move off the defaults: 文本 → 正则, 在页面上 → 在文档中, and turn the diacritics fold off.
+  await openOptions(page);
   await page.getByTestId('find-replace-mode-regex').click();
   await page.getByTestId('find-replace-scope-doc').click();
   await page.getByTestId('find-replace-diacritics').click();
@@ -145,6 +158,7 @@ test('the option row survives a page reload', async ({ page }) => {
   await reloaded.click();
   await page.keyboard.press('Control+f');
   await expect(page.getByTestId('find-replace-panel')).toBeVisible();
+  await openOptions(page);
   await expect(page.getByTestId('find-replace-mode-regex')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('find-replace-scope-doc')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('find-replace-diacritics')).toHaveAttribute('aria-pressed', 'false');

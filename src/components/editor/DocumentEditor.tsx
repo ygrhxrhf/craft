@@ -323,6 +323,9 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
 
   return (
     <div className="flex h-full flex-1 overflow-hidden">
+      {/* G1418：官方查找是**编辑器区最左缘的 288px 整高栏**（`frsidebar`，x=0），不是顶栏下的横条，
+          所以挂在外层横向容器里、排在正文列之前；关着时组件返回 null，不占位。 */}
+      <FindReplacePanel editor={editor} />
       <div className="flex min-w-0 flex-1 flex-col">
         {/* 顶栏：面包屑 + 右侧 tab 按钮 */}
         <div
@@ -457,7 +460,6 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
           </div>
         </div>
 
-        <FindReplacePanel editor={editor} />
         <TemplatePicker />
         {focusActive && focusBinding && (
           <button

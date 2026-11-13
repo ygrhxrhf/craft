@@ -1,23 +1,26 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Editor } from '@tiptap/react';
-import { Search, ChevronUp, ChevronDown, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
+import { cn } from 'cn';
 
 import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import type { FindScope } from '@/lib/find/options';
 import { formatResultCount } from '@/lib/find/matcher';
 
 /**
- * 查找和替换 (`find.*`, `panels.md §六`): one field for the query, one for the replacement, two
- * modes, two scopes, and navigation that carries the hit index.
+ * 查找和替换 (`find.*`, `panels.md §六`) —— G1418 的官方形态是一栏 **288px 左侧栏**
+ * （采集里 `id="frsidebar"`，x=0、整列高）：栏顶是「查找 ⌄」下拉与一枚「选项」图标按钮，
+ * 四档选项（作用域 / 模式 / 区分大小写 / 忽略变音符号）收在「选项」弹出的列表里，
+ * 选中态由行右侧的勾承载，而不是平铺的胶囊。
  *
- * Every string on this panel is a collected key — `find.and.replace` for the title,
- * `find.{text|regex}.{in.doc|on.page}` for the placeholder (which is why it changes with both
- * the mode and the scope), `find.next` / `find.previous` for navigation, `find.replace.search`
- * for the count, `find.replace.with` for the replacement placeholder, and `replace` /
- * `replace.all` for the two buttons. `[1]` in the count key was never collected, so it is left
- * out rather than guessed.
+ * 每一条文案都是采集到的键：`find`（栏题）、`find.and.replace`（下拉里的第二档）、
+ * `find.{text|regex}.{in.doc|on.page}`（占位符，随模式与作用域同时变）、`find.next` /
+ * `find.previous`（导航）、`find.replace.search`（结果数，`[1]` 未采到故省略）、
+ * `find.replace.with`（替换占位符）、`replace` / `replace.all`（两枚按钮）、
+ * `stats.this.page` / `stats.full.document`（作用域两项）、`text` / `regexp`（模式两项）、
+ * `match.case`、`ignore.diacritics`。
  */
 export function FindReplacePanel({ editor }: { editor: Editor | null }) {
   const open = useFindReplaceStore((state) => state.open);
@@ -31,6 +34,9 @@ export function FindReplacePanel({ editor }: { editor: Editor | null }) {
   const matches = useFindReplaceStore((state) => state.matches);
   const current = useFindReplaceStore((state) => state.current);
   const inputRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [titleMenu, setTitleMenu] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
 
   useEffect(() => {
     if (open) inputRef.current?.select();
@@ -53,6 +59,23 @@ export function FindReplacePanel({ editor }: { editor: Editor | null }) {
     };
   }, [editor, open, query, mode, scope, caseSensitive, ignoreDiacritics]);
 
+  // The options list is a settings list, not a command menu: it stays open while the user flips
+  // several rows, so it only closes on an outside press or Escape.
+  useEffect(() => {
+    if (!optionsOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOptionsOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [optionsOpen]);
+
+  useEffect(() => {
+    if (open) return;
+    setOptionsOpen(false);
+    setTitleMenu(false);
+  }, [open]);
+
   if (!open) return null;
 
   const run = (command: 'findNext' | 'findPrevious') => {
@@ -71,7 +94,8 @@ export function FindReplacePanel({ editor }: { editor: Editor | null }) {
       run('findPrevious');
     } else if (event.key === 'Escape') {
       event.preventDefault();
-      useFindReplaceStore.getState().setOpen(false);
+      if (optionsOpen) setOptionsOpen(false);
+      else useFindReplaceStore.getState().setOpen(false);
     }
   };
 
@@ -84,146 +108,249 @@ export function FindReplacePanel({ editor }: { editor: Editor | null }) {
         ? '在文档中查找文本'
         : '在页面上查找文本';
 
+  // 官方「选项」列表的逐项顺序（第 414／415 批采集）：作用域二选一、模式二选一、再两枚
+  // 独立开关；分隔线落在三组之间。
+  const optionRows: Array<{
+    testId: string;
+    label: string;
+    pressed: boolean;
+    divider: boolean;
+    select: () => void;
+  }> = [
+    {
+      testId: 'find-replace-scope-doc',
+      label: '完整文档',
+      pressed: scope === 'doc',
+      divider: false,
+      select: () => useFindReplaceStore.getState().setScope('doc' as FindScope),
+    },
+    {
+      testId: 'find-replace-scope-page',
+      label: '这一页',
+      pressed: scope === 'page',
+      divider: false,
+      select: () => useFindReplaceStore.getState().setScope('page' as FindScope),
+    },
+    {
+      testId: 'find-replace-mode-text',
+      label: '文本',
+      pressed: mode === 'text',
+      divider: true,
+      select: () => useFindReplaceStore.getState().setMode('text'),
+    },
+    {
+      testId: 'find-replace-mode-regex',
+      label: '正则表达式',
+      pressed: mode === 'regex',
+      divider: false,
+      select: () => useFindReplaceStore.getState().setMode('regex'),
+    },
+    {
+      testId: 'find-replace-case',
+      label: '区分大小写',
+      pressed: caseSensitive,
+      divider: true,
+      select: () => useFindReplaceStore.getState().setCaseSensitive(!caseSensitive),
+    },
+    {
+      testId: 'find-replace-diacritics',
+      label: '忽略变音符号（例如 ä = a）',
+      pressed: ignoreDiacritics,
+      divider: false,
+      select: () => useFindReplaceStore.getState().setIgnoreDiacritics(!ignoreDiacritics),
+    },
+  ];
+
   return (
-    <div className="flex w-full flex-col gap-2 border-b border-border p-3" data-testid="find-replace-panel">
-      <div className="flex items-center gap-2">
-        <Search className="size-4 shrink-0 text-muted-foreground" />
+    <div
+      ref={rootRef}
+      id="frsidebar"
+      data-testid="find-replace-panel"
+      className="relative flex h-full w-72 shrink-0 flex-col border-r border-border bg-background"
+    >
+      <div className="flex h-11 shrink-0 items-center gap-1 border-b border-border px-2">
+        <div className="relative">
+          <button
+            type="button"
+            data-testid="find-replace-title"
+            aria-haspopup="menu"
+            aria-expanded={titleMenu}
+            onClick={() => {
+              setTitleMenu(!titleMenu);
+              setOptionsOpen(false);
+            }}
+            className="flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-foreground hover:bg-foreground/4"
+          >
+            查找
+            <ChevronDown className="size-3.5 text-muted-foreground" />
+          </button>
+          {titleMenu && (
+            <div
+              role="menu"
+              data-testid="find-replace-title-menu"
+              className="absolute left-0 top-9 z-40 w-40 rounded-lg border border-border bg-background py-1 shadow-lg"
+            >
+              {/* G1570 的两档：`⌘F` 只开查找框，`⌘⇧F` 才补出替换行；下拉把这两档也做成入口。 */}
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  useFindReplaceStore.getState().openWith(false);
+                  setTitleMenu(false);
+                }}
+                className="flex w-full items-center px-3 py-1.5 text-left text-[13px] hover:bg-foreground/4"
+              >
+                查找
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  useFindReplaceStore.getState().openWith(true);
+                  setTitleMenu(false);
+                }}
+                className="flex w-full items-center px-3 py-1.5 text-left text-[13px] hover:bg-foreground/4"
+              >
+                查找和替换
+              </button>
+            </div>
+          )}
+        </div>
+
+        <span className="flex-1" />
+
+        <button
+          type="button"
+          data-testid="find-replace-options-trigger"
+          aria-label="选项"
+          title="选项"
+          aria-haspopup="true"
+          aria-expanded={optionsOpen}
+          onClick={() => {
+            setOptionsOpen(!optionsOpen);
+            setTitleMenu(false);
+          }}
+          className={cn(
+            'rounded p-1.5 text-muted-foreground hover:bg-foreground/4 hover:text-foreground',
+            optionsOpen && 'bg-foreground/4 text-foreground',
+          )}
+        >
+          <SlidersHorizontal className="size-4" />
+        </button>
+        <button
+          type="button"
+          aria-label="关闭"
+          title="关闭"
+          onClick={() => useFindReplaceStore.getState().setOpen(false)}
+          className="rounded p-1.5 text-muted-foreground hover:bg-foreground/4 hover:text-foreground"
+        >
+          <X className="size-4" />
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-2 border-b border-border p-2">
         <input
           ref={inputRef}
           data-testid="find-replace-query"
-          className="h-8 min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring"
+          className="h-8 w-full min-w-0 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring"
           placeholder={placeholder}
           value={query}
           onChange={(event) => useFindReplaceStore.getState().setQuery(event.target.value)}
           onKeyDown={onKeyDown}
           aria-label="查找"
         />
-        <span className="shrink-0 whitespace-nowrap text-xs tabular-nums text-muted-foreground" data-testid="find-replace-count">
-          {/* An uncompilable pattern simply matches nothing, which is still 「0 结果」. */}
-          {formatResultCount(matches.length)}
-        </span>
-        <button
-          type="button"
-          title="查找上一个"
-          aria-label="查找上一个"
-          disabled={matches.length === 0}
-          onClick={() => run('findPrevious')}
-          className="rounded p-1 text-muted-foreground hover:bg-accent disabled:opacity-40"
-        >
-          <ChevronUp className="size-4" />
-        </button>
-        <button
-          type="button"
-          title="查找下一个"
-          aria-label="查找下一个"
-          disabled={matches.length === 0}
-          onClick={() => run('findNext')}
-          className="rounded p-1 text-muted-foreground hover:bg-accent disabled:opacity-40"
-        >
-          <ChevronDown className="size-4" />
-        </button>
-        <button
-          type="button"
-          title="查找和替换"
-          aria-label="关闭"
-          onClick={() => useFindReplaceStore.getState().setOpen(false)}
-          className="rounded p-1 text-muted-foreground hover:bg-accent"
-        >
-          <X className="size-4" />
-        </button>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 text-xs">
-        {(['text', 'regex'] as const).map((value) => (
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <span className="whitespace-nowrap tabular-nums" data-testid="find-replace-count">
+            {/* An uncompilable pattern simply matches nothing, which is still 「0 结果」. */}
+            {formatResultCount(matches.length)}
+          </span>
+          <span className="whitespace-nowrap tabular-nums" data-testid="find-replace-current">
+            {current >= 0 ? `${current + 1} / ${matches.length}` : ''}
+          </span>
+          <span className="flex-1" />
           <button
-            key={value}
             type="button"
-            data-testid={`find-replace-mode-${value}`}
-            aria-pressed={mode === value}
-            onClick={() => useFindReplaceStore.getState().setMode(value)}
-            className={`rounded-full px-2 py-0.5 ${mode === value ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground'}`}
+            title="查找上一个"
+            aria-label="查找上一个"
+            disabled={matches.length === 0}
+            onClick={() => run('findPrevious')}
+            className="rounded p-1 text-muted-foreground hover:bg-foreground/4 disabled:opacity-40"
           >
-            {value === 'text' ? '文本' : '正则'}
+            <ChevronUp className="size-4" />
           </button>
-        ))}
-        <span className="text-border">|</span>
-        {/* Official menu group shape (gap.md:1418): `match.case` is its own toggle, independent
-            of mode and scope. The panel's on/off label carries the parent key text since
-            `find.replace.match.case` itself is not in the catalog. */}
-        <button
-          type="button"
-          data-testid="find-replace-case"
-          aria-pressed={caseSensitive}
-          title="区分大小写"
-          onClick={() => useFindReplaceStore.getState().setCaseSensitive(!caseSensitive)}
-          className={`rounded-full px-2 py-0.5 font-mono ${caseSensitive ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground'}`}
-        >
-          Aa
-        </button>
-        {/* G1418's fourth option: 「忽略变音符号（例如 ä = a）」, an independent switch next to
-            「区分大小写」 and selected by default in the captured panel. */}
-        <button
-          type="button"
-          data-testid="find-replace-diacritics"
-          aria-pressed={ignoreDiacritics}
-          title="忽略变音符号（例如 ä = a）"
-          aria-label="忽略变音符号（例如 ä = a）"
-          onClick={() => useFindReplaceStore.getState().setIgnoreDiacritics(!ignoreDiacritics)}
-          className={`rounded-full px-2 py-0.5 font-mono ${ignoreDiacritics ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground'}`}
-        >
-          ä=a
-        </button>
-        <span className="text-border">|</span>
-        {(['page', 'doc'] as const).map((value) => (
           <button
-            key={value}
             type="button"
-            data-testid={`find-replace-scope-${value}`}
-            aria-pressed={scope === value}
-            onClick={() => {
-              useFindReplaceStore.getState().setScope(value as FindScope);
-            }}
-            className={`rounded-full px-2 py-0.5 ${scope === value ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground'}`}
+            title="查找下一个"
+            aria-label="查找下一个"
+            disabled={matches.length === 0}
+            onClick={() => run('findNext')}
+            className="rounded p-1 text-muted-foreground hover:bg-foreground/4 disabled:opacity-40"
           >
-            {value === 'page' ? '在页面上' : '在文档中'}
+            <ChevronDown className="size-4" />
           </button>
-        ))}
-        <span className="ml-auto tabular-nums text-muted-foreground" data-testid="find-replace-current">
-          {current >= 0 ? `${current + 1} / ${matches.length}` : ''}
-        </span>
+        </div>
       </div>
 
       {/* G1570: the replacement row only exists on the `⌘⇧F` tier — `⌘F` leaves the panel at
           `replaceInput:0`, which is what the official screen shows. */}
       {showReplace && (
-        <div className="flex items-center gap-2" data-testid="find-replace-replacement-row">
+        <div className="flex flex-col gap-2 border-b border-border p-2" data-testid="find-replace-replacement-row">
           <input
             data-testid="find-replace-replacement"
-            className="h-8 min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring"
+            className="h-8 w-full min-w-0 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring"
             placeholder="替换为……"
             value={replacement}
             onChange={(event) => useFindReplaceStore.getState().setReplacement(event.target.value)}
             onKeyDown={onKeyDown}
             aria-label="替换为"
           />
-          <button
-            type="button"
-            data-testid="find-replace-one"
-            disabled={matches.length === 0 || !editor}
-            onClick={() => editor?.commands.findReplaceCurrent(replacement)}
-            className="rounded border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-40"
-          >
-            替换
-          </button>
-          <button
-            type="button"
-            data-testid="find-replace-all"
-            disabled={matches.length === 0 || !editor}
-            onClick={() => editor?.commands.findReplaceAll(replacement)}
-            className="rounded border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-40"
-          >
-            全部替换
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              data-testid="find-replace-one"
+              disabled={matches.length === 0 || !editor}
+              onClick={() => editor?.commands.findReplaceCurrent(replacement)}
+              className="rounded border border-border px-2 py-1 text-xs hover:bg-foreground/4 disabled:opacity-40"
+            >
+              替换
+            </button>
+            <button
+              type="button"
+              data-testid="find-replace-all"
+              disabled={matches.length === 0 || !editor}
+              onClick={() => editor?.commands.findReplaceAll(replacement)}
+              className="rounded border border-border px-2 py-1 text-xs hover:bg-foreground/4 disabled:opacity-40"
+            >
+              全部替换
+            </button>
+          </div>
+        </div>
+      )}
+
+      {optionsOpen && (
+        <div
+          role="group"
+          aria-label="选项"
+          data-testid="find-replace-options"
+          className="absolute left-2 top-12 z-40 w-64 overflow-hidden rounded-lg border border-border bg-background py-1 shadow-xl"
+        >
+          {optionRows.map((row) => (
+            <button
+              key={row.testId}
+              type="button"
+              data-testid={row.testId}
+              aria-pressed={row.pressed}
+              onClick={row.select}
+              className={cn(
+                'flex w-full items-center gap-2 px-3 py-1.5 text-left text-[13px] text-foreground/80 hover:bg-foreground/4',
+                row.divider && 'border-t border-border',
+              )}
+            >
+              <span className="min-w-0 flex-1 truncate">{row.label}</span>
+              {/* 官方把选中态放在行右侧的勾上（`hasRightContent`）；这里用勾图标承载，同一视觉。 */}
+              {row.pressed && <Check className="size-3.5 shrink-0 text-craft-accent" />}
+            </button>
+          ))}
         </div>
       )}
     </div>

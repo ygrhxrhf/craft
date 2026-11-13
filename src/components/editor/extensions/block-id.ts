@@ -6,10 +6,25 @@ const BLOCK_ID_STAMP = 'blockIdStamp';
 const ANCHORABLE = new Set(ANCHORABLE_TYPES);
 
 /**
+ * A lone empty paragraph is the editor's mount scaffold, not a block the user
+ * can link to. Stamping it mutates the document before ySync's first update(),
+ * and since that gate compares against createAndFill() with attributes
+ * included, the "content unchanged" check then always fails and the scaffold
+ * gets written into the collaboration room.
+ */
+function isBareScaffold(state: EditorState): boolean {
+  const { doc } = state;
+  if (doc.childCount !== 1) return false;
+  const only = doc.firstChild;
+  return !!only && only.type.name === 'paragraph' && only.content.size === 0;
+}
+
+/**
  * G32: every anchorable block carries a `blockId` from the moment the document
  * opens, not only after someone jumps to it. Existing ids are preserved.
  */
 export function stampMissingBlockIds(state: EditorState): Transaction | null {
+  if (isBareScaffold(state)) return null;
   const tr = state.tr;
   let changed = false;
 

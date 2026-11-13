@@ -49,4 +49,21 @@ describe('stampMissingBlockIds (G32)', () => {
     ]);
     expect(stampMissingBlockIds(state)).toBeNull();
   });
+
+  it('leaves the lone empty mount scaffold unstamped', () => {
+    const state = stateWith([{ type: 'paragraph' }]);
+    expect(stampMissingBlockIds(state)).toBeNull();
+  });
+
+  it('still stamps an empty block that sits next to content', () => {
+    const state = stateWith([
+      { type: 'paragraph', content: [{ type: 'text', text: 'A' }] },
+      { type: 'paragraph' },
+    ]);
+    const tr = stampMissingBlockIds(state);
+    expect(tr).not.toBeNull();
+    const next = state.apply(tr!);
+    expect(next.doc.child(0).attrs.blockId).toMatch(UUID);
+    expect(next.doc.child(1).attrs.blockId).toMatch(UUID);
+  });
 });

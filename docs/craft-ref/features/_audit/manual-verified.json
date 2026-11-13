@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-12",
-  "method": "第 521 批：task-view-key/undo-stack 纯核 + renameTask/restoreTask 服务端 + TasksView 行键与零态卡接线；浏览器实测卡几何与 tabs 横滑计算值；第 522 批：G1414 反馈弹窗全族（13 键／匿名邮箱门／感谢屏／评分桥门控）、G1415 缺函数反馈入口（两处公式面）＝纯核＋接线＋单测＋浏览器实测；第 528 批：G1440 代码块九项名册的 语言／主题 子菜单落地（38 语言／21 主题、搜索框＋勾、写块属性与设备默认），G1474 两块 LOCAL 回读＝纯核＋接线＋单测；第 529 批：G1419 完整搜索结果页（单一标题＋带命中数的文档卡＋面板末行「查看更多结果／按 Enter 键」入口）与 G235 的查看更多形态改版＝纯核（hit-count）＋服务端读数 searchAll＋真库单测＋接线单测",
+  "verifiedAt": "2026-11-13",
+  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -223,10 +223,13 @@
     },
     "G32": {
       "status": "aligned",
-      "priority": "P1",
-      "note": "blockId 已常驻：打开文档即给顶层块盖章，深链与刷新后稳定。",
+      "priority": "P2",
+      "note": "第 535 批现读：文档一打开就给**所有**可锚定节点全量盖章——`stampMissingBlockIds()` 沿 `doc.descendants` 补 `crypto.randomUUID()`（已有 id 保留、任意深度），BlockId 扩展在 `onCreate` 与每次 `appendTransaction` 调用；唯一例外是空文档挂载骨架段（`isBareScaffold`，盖章会污染 ySync 空房间判等），首个编辑事务即补。深链目标块必有 `data-block-id`。",
       "evidence": [
-        "src/components/editor/extensions/block-id.ts:18"
+        "src/components/editor/extensions/block-id.ts:15",
+        "src/components/editor/extensions/block-id.ts:26",
+        "src/components/editor/extensions/block-id.ts:62",
+        "src/components/editor/extensions/block-id.ts:71"
       ]
     },
     "G33": {
@@ -468,13 +471,13 @@
       ]
     },
     "G357": {
-      "status": "aligned",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 97 批）改判 aligned：三套时间语义在**文档内与任务屏都有独立入口**——文档内任务块由 `reminder-pill.ts` 的 decoration 为有值的 schedule/deadline 各加一枚可点图标（📅/🚩，点击开「今天/明天/清除」日菜单，`setTaskDateField` 写属性），与提醒 pill 并列；任务屏两枚 `TaskDatePopover` ＋ 一枚提醒按钮。两枚日期经 `syncDocumentTasks` 落任务表、`getTasks` 读回。单测 992 条。",
+      "note": "第 535 批改判 partial（按逐项对照规则）：三套时间语义已各占独立入口——日历图标挂 `scheduleDate`、旗子挂 `dueDate`、提醒 pill 挂 `remindAt`，三者并列落在任务行尾；但三枚都是\"有值才画\"（各图标受 `typeof … === string && …` 守卫），官方 V33 是任务块创建后**立刻浮出三枚并列图标**的常显形态 ⇒ 常显仍缺。",
       "evidence": [
-        "src/components/editor/extensions/reminder-pill.ts:100",
-        "src/actions/task/task.ts:84",
-        "src/lib/task/time-icons.ts:23"
+        "src/components/editor/extensions/reminder-pill.ts:272",
+        "src/components/editor/extensions/reminder-pill.ts:283",
+        "src/components/editor/extensions/reminder-pill.ts:297"
       ]
     },
     "G359": {
@@ -498,10 +501,12 @@
     "G283": {
       "status": "aligned",
       "priority": "P1",
-      "note": "筛选、排序、分组任一激活都不给拖（canReorder 三态齐）；确认句子逐字来自官方文案。",
+      "note": "第 535 批现读：守卫扩到三态齐——`canReorder({sortCount, grouped, filterCount})` 任一非零即拒（注释逐字引官方 `collections.drag.drop.not.available.desc`「已筛选、排序或分组的集合不支持拖放操作」）；`TableView.reorderEnabled` 同时管住行 draggable、行/列 onDragOver 与把手列渲染。",
       "evidence": [
         "src/lib/collection/item-reorder.ts:49",
-        "src/app/(app)/collections/[id]/TableView.tsx:129"
+        "src/app/(app)/collections/[id]/TableView.tsx:310",
+        "src/app/(app)/collections/[id]/TableView.tsx:388",
+        "src/app/(app)/collections/[id]/TableView.tsx:796"
       ]
     },
     "G284": {
@@ -574,11 +579,12 @@
     "G451": {
       "status": "aligned",
       "priority": "P1",
-      "note": "现读（第 88 批）改判 aligned：带类型的判别对象 `{type,theme,value}` **写读两路都落**——`setItemValue` 存判别对象（空值也带 type ⇒ 读得出\"哪种类型的空\"），`PropertyCell.parseValue` 的 `rawValueOf` 取回裸值（裸值/判别对象都读）。单测 6 条（cell-value）。",
+      "note": "第 535 批现读：判别对象写读两路统一——写侧 `toTypedValue(type, raw)` 落 `{type, theme, value}`；读侧 `parseCellValue(raw)` 单一解包（null/空串→null、判别对象→`.value`、JSON 串→逐层还原、裸值原样）。五个渲染面（TableView／Calendar／Gallery／Kanban／List）、`PropertyCell`、筛选/排序/分组三菜单、服务端 `searchCollectionRows`、`clearGroupValues`、`changePropertyType` 全部改走它；CSV 导出保留更窄的本地 `typedValueOf`（只解真判别对象，防 JSON 形状的普通文本被改写）。",
       "evidence": [
-        "src/actions/collection/items.ts:106",
-        "src/lib/collection/cell-value.ts:31",
-        "src/components/collection/PropertyCell.tsx:47"
+        "src/lib/collection/cell-value.ts:25",
+        "src/lib/collection/cell-value.ts:44",
+        "src/app/(app)/collections/[id]/TableView.tsx:304",
+        "src/lib/collection/csv.ts:13"
       ]
     },
     "G252": {
@@ -3589,12 +3595,14 @@
     },
     "G81": {
       "status": "aligned",
-      "note": "第 5e 批现读（2026-11-07）：视图 config 已按官方 20 键 schema 建模并持久化（view-config.ts 的 VIEW_CONFIG_KEYS 20 项，另保留本地 sorts/showSummaryRow 两个历史别名）；createView/updateView 写入前归一，白名单外的键被丢弃，与官方 STORED_VIEW_KNOWN_KEYS 同语义；字段可见性与顺序仍按视图各存一套。各键的界面入口按各自功能行跟踪。",
+      "priority": "P2",
+      "note": "第 535 批补：视图 config 20 键 schema 与归一不变；字段可见性改成**两层合成**——属性行 `isVisible=false` 是全局下线、视图 `hiddenProperties` 在其上再隐藏，`fieldsForView` 两层都过滤、顺序取 `customPropertyOrder` 优先再落回行 `order`；字段面板眼睛与「已隐藏」计数同口径（`fieldShownInView`／`hiddenFieldCount`），`TableView.toggleField` 重新显示时补 `isVisible:true` 并清本视图隐藏项。",
       "evidence": [
-        "src/lib/collection/view-config.ts:8",
-        "src/lib/collection/view-config.ts:63",
-        "src/actions/collection/views.ts:36",
-        "src/lib/collection/view-fields.ts:2"
+        "src/lib/collection/view-config.ts",
+        "src/lib/collection/view-fields.ts:46",
+        "src/lib/collection/view-fields.ts:74",
+        "src/lib/collection/view-fields.ts:78",
+        "src/app/(app)/collections/[id]/TableView.tsx:190"
       ]
     },
     "G82": {
@@ -10741,6 +10749,37 @@
         "src/components/search/palette-wiring.test.ts:46",
         "src/lib/search/official-copy.test.ts:100",
         "src/components/search/CommandPalette.tsx:512"
+      ]
+    },
+    "G1500": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 535 批补登：任务行身份靠 `TaskItemId` 扩展把 `taskId` 写进正文 attrs（拆行撞 id 也在谓词里），投影键 `tasks.blockId === attrs.taskId`；本批加**日期两轴守卫**——`nextSchedule = task.scheduleDate ?? match.scheduleDate ?? null`、`nextDue` 同式，命中变更判定与 update 载荷同用 ⇒ 任务页设的截止日期不会被一次无关的正文保存抹成 null；3 条单测钉住。",
+      "evidence": [
+        "src/components/editor/extensions/task-id.ts",
+        "src/actions/task/task.ts:151",
+        "src/actions/task/task.ts:160",
+        "src/actions/task/task.test.ts"
+      ]
+    },
+    "G1537": {
+      "status": "aligned",
+      "priority": "P1",
+      "note": "第 535 批补登：字段改/删/重排走列头 `⋯` 菜单与「隐藏和排序字段」面板（`applyLocal` 写）；本批把面板眼睛与「已隐藏」计数改成两层合成（全局下线＋本视图 `hiddenProperties`），列从表上消失时面板不再报 0 隐藏；`TableView.toggleField` 重新显示补 `isVisible:true` 并清视图隐藏项。",
+      "evidence": [
+        "src/components/collection/HideOrderFieldsMenu.tsx",
+        "src/lib/collection/view-fields.ts:74",
+        "src/app/(app)/collections/[id]/TableView.tsx:190"
+      ]
+    },
+    "G1539": {
+      "status": "aligned",
+      "priority": "P1",
+      "note": "第 535 批补登：条目重排的拖拽手柄由 `canReorder` 三态守卫（含筛选态）把关，`reorderEnabled` 同管行 draggable / onDragOver / 把手列；`handleDrop` 只写 `order` 真变了的行（`applyLocal`＋`flushNow`＋`refresh`）。",
+      "evidence": [
+        "src/lib/collection/item-reorder.ts:49",
+        "src/app/(app)/collections/[id]/TableView.tsx:310",
+        "src/app/(app)/collections/[id]/TableView.tsx:786"
       ]
     }
   }

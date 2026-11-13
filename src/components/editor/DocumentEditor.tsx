@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { getSyncManager } from '@/lib/sync-core';
 import { Editor, type SaveState } from './Editor';
 import { EditorHeader } from './EditorHeader';
@@ -60,6 +60,25 @@ const TAB_LABELS: Record<RightTabId, string> = {
 // state that survives document switches — carry it in localStorage like G756.
 const RIGHT_TAB_STORAGE_KEY = 'craft.editor.right-tab';
 const RIGHT_TAB_CLOSED = 'closed';
+// 服务端快照的哨兵：不可能等于任何真实存的标签，所以 hydrate 后必有一次客户端重渲染。
+const RIGHT_TAB_UNKNOWN = 'unknown';
+
+function subscribeStoredTab(): () => void {
+  return () => {};
+}
+
+function storedTabSnapshot(): string {
+  if (typeof window === 'undefined') return RIGHT_TAB_UNKNOWN;
+  try {
+    return window.localStorage.getItem(RIGHT_TAB_STORAGE_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+function storedTabServerSnapshot(): string {
+  return RIGHT_TAB_UNKNOWN;
+}
 
 interface DocumentEditorProps {
   document: {
@@ -107,21 +126,27 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const [width, setWidth] = useState(doc.width ?? 'default');
   const [pageStyle, setPageStyle] = useState<PageStyle>(() => normalizePageStyle(doc.pageStyle));
   const pageStyleRef = useRef(pageStyle);
-  const [activeTab, setActiveTab] = useState<RightTabId | null>(() => {
-    if (typeof window === 'undefined') return null;
-    const saved = window.localStorage.getItem(RIGHT_TAB_STORAGE_KEY);
-    return (TAB_ORDER as readonly string[]).includes(saved ?? '') ? (saved as RightTabId) : null;
-  });
-  // G956: the initializer above already read the stored tab, so this only records changes.
-  // 「关着」也要记：官方那对状态是「开没开 ＋ 在哪个标签」，只记标签会让关掉的面板在下一篇文档里
-  // 又自己打开。
+  // 首帧的初值必须与服务端一致（服务端没有 localStorage，只能答「关着」）。在 useState
+  // 初始化器里直接读，会让服务端渲染的 aria-pressed/<aside> 与客户端首帧对不上，重载任何
+  // 开过面板的文档都报 hydration mismatch —— 所以存储走外部快照，hydrate 后按真值调整
+  // 一次 state（同 G1486 的先对齐再修正，也避开 react-hooks/set-state-in-effect）。
+  const storedTab = useSyncExternalStore(subscribeStoredTab, storedTabSnapshot, storedTabServerSnapshot);
+  const [activeTab, setActiveTab] = useState<RightTabId | null>(null);
+  const [tabRestored, setTabRestored] = useState(false);
+  if (!tabRestored && storedTab !== RIGHT_TAB_UNKNOWN) {
+    setTabRestored(true);
+    if ((TAB_ORDER as readonly string[]).includes(storedTab)) setActiveTab(storedTab as RightTabId);
+  }
+  // G956: 「开没开 ＋ 在哪个标签」是空间级持久态。「关着」也要记：只记标签会让关掉的面板在
+  // 下一篇文档里又自己打开。读回之前不写，否则首帧的 null 会先把持久值覆盖成 closed。
   useEffect(() => {
+    if (!tabRestored) return;
     try {
       window.localStorage.setItem(RIGHT_TAB_STORAGE_KEY, activeTab ?? RIGHT_TAB_CLOSED);
     } catch {
       // Private mode can refuse storage; the rail still holds state within the session.
     }
-  }, [activeTab]);
+  }, [activeTab, tabRestored]);
   // 添加评论 from the block menu opens the info panel, which holds the composer.
   const commentRequest = useCommentRequestStore((state) => state.request);
   // 请求号变了就打开信息面板。放渲染期按上一值调整（React 规定的「props 变化时调整 state」写法），

@@ -32,11 +32,23 @@ function fnBody(src: string, name: string): string {
 describe('右侧栏跨文档持久态（G956）', () => {
   const src = read(EDITOR);
 
-  it('挂载时从 localStorage 读回「在哪个标签」', () => {
+  it('挂载后从 localStorage 读回「在哪个标签」，首帧不读（否则 hydration 失配）', () => {
     expect(src, '没有持久键').toContain("const RIGHT_TAB_STORAGE_KEY = 'craft.editor.right-tab'");
+    // 初值必须与服务端一致：服务端没有 localStorage。G1486 的教训——render/初始化器里读
+    // 存储，服务端与客户端首帧就会印出不同的树，重载任何开过面板的文档都报 hydration 错。
     expect(
-      /useState<RightTabId \| null>\(\(\) => \{[\s\S]*?localStorage\.getItem\(RIGHT_TAB_STORAGE_KEY\)/.exec(src)?.[0],
-      '初始值没有读 localStorage ⇒ 换文档后标签复位',
+      /useState<RightTabId \| null>\(null\)/.exec(src)?.[0],
+      'activeTab 初值不是常量 null ⇒ 首帧与服务端不一致',
+    ).toBeTruthy();
+    // 存读取值走外部快照：服务端快照是「不可能等于真实标签」的哨兵，hydrate 后才换成
+    // localStorage 里的真值（effect 里 setState 会被 react-hooks/set-state-in-effect 拦下）。
+    expect(
+      /useSyncExternalStore\(subscribeStoredTab, storedTabSnapshot, storedTabServerSnapshot\)/.exec(src)?.[0],
+      '读回没有走服务端/客户端两套快照 ⇒ 首帧就会读出真值，hydration 失配',
+    ).toBeTruthy();
+    expect(
+      /if \(!tabRestored && storedTab !== RIGHT_TAB_UNKNOWN\) \{[\s\S]*?setActiveTab\(storedTab as RightTabId\)/.exec(src)?.[0],
+      '真值到手后没有按它调整 activeTab ⇒ 换文档后标签复位',
     ).toBeTruthy();
   });
 
@@ -45,6 +57,11 @@ describe('右侧栏跨文档持久态（G956）', () => {
     expect(
       /localStorage\.setItem\(RIGHT_TAB_STORAGE_KEY,\s*activeTab \?\? RIGHT_TAB_CLOSED\)/.exec(src)?.[0],
       '只在 activeTab 非空时才写 ⇒ 关闭动作没被记住',
+    ).toBeTruthy();
+    // 读回之前不许写：首帧的 null 会先把持久值覆盖成 closed，读回就成了「永远关着」。
+    expect(
+      /if \(!tabRestored\) return;[\s\S]*?localStorage\.setItem\(RIGHT_TAB_STORAGE_KEY/.exec(src)?.[0],
+      '写回没等读回完成 ⇒ 首帧把持久值冲掉',
     ).toBeTruthy();
   });
 

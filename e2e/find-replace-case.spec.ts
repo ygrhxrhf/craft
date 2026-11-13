@@ -114,3 +114,38 @@ test('Ctrl-F opens find-only; Ctrl-Shift-F unrolls the replacement row', async (
   await expect(panel).toBeVisible();
   await expect(panel.getByTestId('find-replace-replacement-row')).toBeVisible();
 });
+
+/**
+ * G1418 residual (c): the official regex bit (`isRegexp`) persists, and the three other options
+ * live in the same row. Flipping two of them and reloading must come back with those two still on,
+ * which is what proves the row is written through to storage and re-read at startup rather than
+ * being reset to the defaults every time the editor mounts.
+ */
+test('the option row survives a page reload', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/documents');
+  await page.getByRole('button', { name: /新建/ }).first().click();
+  await page.waitForURL(/\/documents\//);
+  const editor = page.locator('[contenteditable="true"]').first();
+  await editor.click();
+  await page.keyboard.press('Control+f');
+  const panel = page.getByTestId('find-replace-panel');
+  await expect(panel).toBeVisible();
+
+  // Move off the defaults: 文本 → 正则, 在页面上 → 在文档中, and turn the diacritics fold off.
+  await page.getByTestId('find-replace-mode-regex').click();
+  await page.getByTestId('find-replace-scope-doc').click();
+  await page.getByTestId('find-replace-diacritics').click();
+  await expect(page.getByTestId('find-replace-mode-regex')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('find-replace-scope-doc')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('find-replace-diacritics')).toHaveAttribute('aria-pressed', 'false');
+
+  await page.reload();
+  const reloaded = page.locator('[contenteditable="true"]').first();
+  await reloaded.click();
+  await page.keyboard.press('Control+f');
+  await expect(page.getByTestId('find-replace-panel')).toBeVisible();
+  await expect(page.getByTestId('find-replace-mode-regex')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('find-replace-scope-doc')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('find-replace-diacritics')).toHaveAttribute('aria-pressed', 'false');
+});

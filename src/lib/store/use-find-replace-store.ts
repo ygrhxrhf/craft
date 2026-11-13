@@ -1,9 +1,13 @@
 import { create } from 'zustand';
 
 import type { FindMatch, FindMode } from '@/lib/find/matcher';
-
-/** `find.*` / `panels.md §六`: two modes and two scopes, held as options rather than one enum each. */
-export type FindScope = 'doc' | 'page';
+import {
+  DEFAULT_FIND_OPTIONS,
+  readFindOptions,
+  writeFindOptions,
+  type FindOptions,
+  type FindScope,
+} from '@/lib/find/options';
 
 interface FindReplaceState {
   open: boolean;
@@ -45,28 +49,61 @@ interface FindReplaceState {
   clear: () => void;
 }
 
-export const useFindReplaceStore = create<FindReplaceState>((set) => ({
-  open: false,
-  showReplace: false,
-  query: '',
-  replacement: '',
-  mode: 'text',
-  scope: 'page',
-  matches: [],
-  current: -1,
-  invalid: false,
-  caseSensitive: false,
-  ignoreDiacritics: true,
-  setOpen: (open) => set({ open, ...(open ? {} : { matches: [], current: -1 }) }),
-  // G1570: opening via `⌘⇧F` also unrolls the replacement field; opening via `⌘F` does not.
-  openWith: (showReplace) =>
-    set({ open: true, showReplace, ...(showReplace ? {} : {}) }),
-  setQuery: (query) => set({ query }),
-  setReplacement: (replacement) => set({ replacement }),
-  setMode: (mode) => set({ mode }),
-  setScope: (scope) => set({ scope }),
-  setCaseSensitive: (caseSensitive) => set({ caseSensitive }),
-  setIgnoreDiacritics: (ignoreDiacritics) => set({ ignoreDiacritics }),
-  setResults: ({ matches, current, invalid }) => set({ matches, current, invalid }),
-  clear: () => set({ matches: [], current: -1, invalid: false, query: '' }),
-}));
+/**
+ * Read once at store creation: this module is evaluated on the server too, where storage does not
+ * exist, so the guard also keeps the SSR render on the defaults. The panel itself only renders
+ * after an open event, so nothing serialized depends on these four fields — no hydration mismatch.
+ */
+function initialOptions(): FindOptions {
+  if (typeof localStorage === 'undefined') return { ...DEFAULT_FIND_OPTIONS };
+  return readFindOptions(localStorage);
+}
+
+const start = initialOptions();
+
+export const useFindReplaceStore = create<FindReplaceState>((set, get) => {
+  /** Writes the whole option row, not the one field that moved — the record is one JSON blob. */
+  const persistOptions = () => {
+    if (typeof localStorage === 'undefined') return;
+    const { mode, scope, caseSensitive, ignoreDiacritics } = get();
+    writeFindOptions(localStorage, { mode, scope, caseSensitive, ignoreDiacritics });
+  };
+
+  return {
+    open: false,
+    showReplace: false,
+    query: '',
+    replacement: '',
+    mode: start.mode,
+    scope: start.scope,
+    matches: [],
+    current: -1,
+    invalid: false,
+    caseSensitive: start.caseSensitive,
+    ignoreDiacritics: start.ignoreDiacritics,
+    setOpen: (open) => set({ open, ...(open ? {} : { matches: [], current: -1 }) }),
+    // G1570: opening via `⌘⇧F` also unrolls the replacement field; opening via `⌘F` does not.
+    openWith: (showReplace) =>
+      set({ open: true, showReplace, ...(showReplace ? {} : {}) }),
+    setQuery: (query) => set({ query }),
+    setReplacement: (replacement) => set({ replacement }),
+    setMode: (mode) => {
+      set({ mode });
+      persistOptions();
+    },
+    setScope: (scope) => {
+      set({ scope });
+      persistOptions();
+    },
+    setCaseSensitive: (caseSensitive) => {
+      set({ caseSensitive });
+      persistOptions();
+    },
+    setIgnoreDiacritics: (ignoreDiacritics) => {
+      set({ ignoreDiacritics });
+      persistOptions();
+    },
+    setResults: ({ matches, current, invalid }) => set({ matches, current, invalid }),
+    clear: () => set({ matches: [], current: -1, invalid: false, query: '' }),
+  };
+});

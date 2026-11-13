@@ -4,7 +4,8 @@ import { useEffect, useRef } from 'react';
 import type { Editor } from '@tiptap/react';
 import { Search, ChevronUp, ChevronDown, X } from 'lucide-react';
 
-import { useFindReplaceStore, type FindScope } from '@/lib/store/use-find-replace-store';
+import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
+import type { FindScope } from '@/lib/find/options';
 import { formatResultCount } from '@/lib/find/matcher';
 
 /**

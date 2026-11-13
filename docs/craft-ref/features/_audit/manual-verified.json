@@ -9696,17 +9696,18 @@
     },
     "G1418": {
       "status": "partial",
-      "note": "第 542 批：第四档「忽略变音符号（例如 ä = a）」补上——matcher 走 NFD＋去组合符并带折叠位→源区间映射，面板第四枚独立开关默认开；四档语义齐（作用域／模式各一对互斥、大小写与变音各一独立位）。仍差三项：(a) 形态是编辑器内联条，非官方 frsidebar＋「选项」弹出列表；(b) scope 只喂占位文案与胶囊态，扩展与 matcher 都不读，单文档编辑器里「在页面上」＝「在文档中」，需把子页正文接进查找；(c) 官方正则态 isRegexp 持久位本地没有，模式不落 localStorage。",
+      "note": "第 543 批：(c) 持久位补上——四档选项合成一条记录落 localStorage 的 craft.find.options，store 在模块求值期读一次（无 storage 时取默认），四枚 setter 写完即整条回写；readFindOptions 逐字段收窄，半截记录只回落缺失字段。单测 options.test.ts 6 条 + use-find-replace-store.test.ts 3 条，e2e 第四条改三项后 reload 仍选中（4 passed）。仍差两项：(a) 形态是编辑器内联条，非官方 frsidebar＋「选项」弹出列表；(b) scope 只喂占位文案与胶囊态，扩展与 matcher 都不读，单文档编辑器里「在页面上」＝「在文档中」，需把子页正文接进查找。",
       "evidence": [
-        "src/lib/find/matcher.ts:90",
-        "src/lib/find/matcher.ts:105",
-        "src/lib/find/matcher.ts:155",
-        "src/components/editor/extensions/find-replace.ts:30",
-        "src/components/editor/extensions/find-replace.ts:159",
-        "src/components/editor/find-replace-panel.tsx:164",
-        "src/lib/store/use-find-replace-store.ts:59",
-        "src/lib/find/matcher.test.ts:124",
-        "e2e/find-replace-case.spec.ts:60"
+        "src/lib/find/options.ts:17",
+        "src/lib/find/options.ts:31",
+        "src/lib/find/options.ts:48",
+        "src/lib/store/use-find-replace-store.ts:57",
+        "src/lib/store/use-find-replace-store.ts:66",
+        "src/lib/store/use-find-replace-store.ts:90",
+        "src/components/editor/find-replace-panel.tsx:7",
+        "src/lib/find/options.test.ts:1",
+        "src/lib/store/use-find-replace-store.test.ts:1",
+        "e2e/find-replace-case.spec.ts:124"
       ],
       "priority": "P2"
     },

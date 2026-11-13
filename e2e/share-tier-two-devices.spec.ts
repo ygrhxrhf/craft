@@ -37,15 +37,27 @@ async function signIn(page: Page) {
   await page.waitForURL(/\/documents/, { timeout: 25_000 });
 }
 
-/** 打开分享弹层并等档位按钮出现（弹层首帧走的是服务端读，链路可用时才谈得上下面的断言）。 */
+/** 打开分享弹层并等档位选择器可用（弹层首帧走服务端读／本机镜像，链路可用时才谈得上下面的断言）。 */
 async function openSharePanel(page: Page) {
-  await page.locator('button[aria-label="分享"]').click();
-  await expect(page.getByText('分享此文档')).toBeVisible();
-  await expect(page.locator('[data-share-permission="view"]')).toBeVisible();
+  // G931: 入口按钮的可见文本是「共享」；浮层可见头是「邀请协作」。
+  await page.getByRole('button', { name: '共享' }).first().click();
+  await expect(page.getByText('邀请协作')).toBeVisible();
+  await expect(tierTrigger(page)).toBeEnabled({ timeout: 30_000 });
 }
 
-function tierButton(page: Page, tier: 'view' | 'edit') {
-  return page.locator(`[data-share-permission="${tier}"]`);
+/** G932: 档位是下拉单值选择器——先展开，再点选项；当前值看触发器。 */
+function tierTrigger(page: Page) {
+  return page.getByTestId('share-tier-trigger');
+}
+
+async function chooseTier(page: Page, tier: 'linkView' | 'linkEdit') {
+  const trigger = tierTrigger(page);
+  await expect(trigger).toBeEnabled({ timeout: 30_000 });
+  await trigger.click();
+  const option = page.locator(`[data-share-permission="${tier}"]`);
+  await expect(option).toBeEnabled({ timeout: 30_000 });
+  await option.click();
+  await expect(trigger).toHaveAttribute('data-share-permission-value', tier);
 }
 
 /**
@@ -74,24 +86,21 @@ test('改档不靠服务端通路也能成立，并且另一台设备的分享�
 
   // 先正常开一次面板：这一趟要建立 `document_share` 那一行（`getOrCreateShare` 本来就是服务端读）。
   await openSharePanel(page);
-  await expect(tierButton(page, 'view')).toHaveAttribute('aria-pressed', 'true');
+  await expect(tierTrigger(page)).toHaveAttribute('data-share-permission-value', 'linkView');
 
   await blockServerActions(page);
-  await tierButton(page, 'edit').click();
-  await expect(tierButton(page, 'edit')).toHaveAttribute('aria-pressed', 'true');
+  await chooseTier(page, 'linkEdit');
 
   // ☆ 决定性的一条：服务端通路此刻是断的。旧代码这里发的是 `setSharePermission`（500）⇒
   //   面板会翻出「档位没有保存，请重试」并把选中掰回上一档；走内核则什么都不必说。
   await expect(page.getByText('档位没有保存，请重试')).toHaveCount(0);
-  await expect(tierButton(page, 'view')).toHaveAttribute('aria-pressed', 'false');
+  await expect(tierTrigger(page)).toHaveAttribute('data-share-permission-value', 'linkEdit');
 
   // ☆☆ 再来回一次：第一趟走的是"本地镜像还没有这一行 ⇒ 用面板挂载时读到的那行补种"那一路，
   //   补过之后镜像里就有这一行了，后面两趟走的是"镜像已有 ⇒ 只改那两列"那一路。
   //   两段都留在断链的关键路径上（服务端通路自始至终没恢复）。
-  await tierButton(page, 'view').click();
-  await expect(tierButton(page, 'view')).toHaveAttribute('aria-pressed', 'true');
-  await tierButton(page, 'edit').click();
-  await expect(tierButton(page, 'edit')).toHaveAttribute('aria-pressed', 'true');
+  await chooseTier(page, 'linkView');
+  await chooseTier(page, 'linkEdit');
   await expect(page.getByText('档位没有保存，请重试')).toHaveCount(0);
 
   // 另一台设备：独立上下文＝自己的登录态与自己的本地库，读的是服务端权威行。
@@ -101,7 +110,7 @@ test('改档不靠服务端通路也能成立，并且另一台设备的分享�
   await expect(async () => {
     await otherPage.goto(docUrl);
     await openSharePanel(otherPage);
-    await expect(tierButton(otherPage, 'edit')).toHaveAttribute('aria-pressed', 'true');
+    await expect(tierTrigger(otherPage)).toHaveAttribute('data-share-permission-value', 'linkEdit');
   }).toPass({ timeout: 60_000, intervals: [2_000] });
 
   await other.close();

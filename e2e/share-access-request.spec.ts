@@ -37,8 +37,21 @@ async function createDocument(page: Page, title: string, marker: string): Promis
 }
 
 async function openShareDialog(page: Page) {
-  await page.locator('button[aria-label="分享"]').click();
-  await expect(page.getByText('分享此文档')).toBeVisible();
+  // G931: 入口按钮的可见文本是「共享」；浮层可见头是「邀请协作」。
+  await page.getByRole('button', { name: '共享' }).first().click();
+  await expect(page.getByText('邀请协作')).toBeVisible();
+}
+
+/** G932: 档位是下拉单值选择器——当前值挂在触发器上，选项只在展开时渲染。 */
+async function setTier(page: Page, tier: 'linkView' | 'linkEdit') {
+  const trigger = page.getByTestId('share-tier-trigger');
+  await expect(trigger).toBeEnabled({ timeout: 30_000 });
+  if ((await trigger.getAttribute('data-share-permission-value')) === tier) return;
+  await trigger.click();
+  const option = page.locator(`[data-share-permission="${tier}"]`);
+  await expect(option).toBeEnabled({ timeout: 30_000 });
+  await option.click();
+  await expect(trigger).toHaveAttribute('data-share-permission-value', tier);
 }
 
 /** Publishes the link on the view tier and returns its `/s/<token>` path. */
@@ -46,10 +59,7 @@ async function shareViewLink(page: Page): Promise<string> {
   await openShareDialog(page);
   await page.getByRole('switch', { name: '发布为公开页面' }).click();
   await expect(page.getByText('公开页面地址')).toBeVisible();
-  const view = page.locator('[data-share-permission="view"]');
-  await expect(view).toBeEnabled({ timeout: 30_000 });
-  await view.click();
-  await expect(view).toHaveAttribute('aria-pressed', 'true');
+  await setTier(page, 'linkView');
 
   const text = await page.getByText(/\/s\/[A-Za-z0-9-]+/).first().textContent();
   const token = /\/s\/([A-Za-z0-9-]+)/.exec(text ?? '')?.[1];
@@ -62,15 +72,17 @@ async function requestEdit(page: Page, link: string) {
   await page.goto(link);
   await expect(page.getByText('生成 · 只读视图')).toBeVisible({ timeout: 30_000 });
   await page.getByRole('button', { name: '请求编辑' }).click();
-  await expect(page.getByText('已请求，等待批准')).toBeVisible({ timeout: 20_000 });
+  // G138 起这句对齐官方 `collab.shared.document.request.sent`「请求已发送」。
+  await expect(page.getByText('请求已发送')).toBeVisible({ timeout: 20_000 });
 }
 
 async function decideFirstRequest(page: Page, documentId: string, approve: boolean) {
   await page.goto(`/documents/${documentId}`);
   await openShareDialog(page);
-  await expect(page.getByText('编辑请求')).toBeVisible({ timeout: 30_000 });
+  // 第 195 批起队列标题是「访问请求」，行内徽标区分「想要查看／想要编辑」。
+  await expect(page.getByText('访问请求')).toBeVisible({ timeout: 30_000 });
   await page.getByRole('button', { name: approve ? '批准' : '拒绝' }).first().click();
-  await expect(page.getByText('编辑请求')).toHaveCount(0, { timeout: 20_000 });
+  await expect(page.getByText('访问请求')).toHaveCount(0, { timeout: 20_000 });
 }
 
 test('a viewer can only request, and approval turns them into an editor', async ({ browser }) => {

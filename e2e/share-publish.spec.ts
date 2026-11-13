@@ -28,8 +28,9 @@ async function signIn(page: Page) {
 
 /** Opens the share dialog and returns the token the displayed `/s/` link carries. */
 async function shareToken(page: Page) {
-  await page.locator('button[aria-label="分享"]').click();
-  await expect(page.getByText('分享此文档')).toBeVisible();
+  // G931: 入口按钮的可见文本是「共享」；浮层可见头是「邀请协作」。
+  await page.getByRole('button', { name: '共享' }).first().click();
+  await expect(page.getByText('邀请协作')).toBeVisible();
   const link = await page.getByText(/\/s\/[A-Za-z0-9-]+/).first().textContent();
   const token = /\/s\/([A-Za-z0-9-]+)/.exec(link ?? '')?.[1];
   if (!token) throw new Error('分享弹层里没有可读的 /s/ 链接');

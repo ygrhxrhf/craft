@@ -37,8 +37,9 @@ async function createDocument(page: Page, title: string, marker: string): Promis
 }
 
 async function openShareDialog(page: Page) {
-  await page.locator('button[aria-label="分享"]').click();
-  await expect(page.getByText('分享此文档')).toBeVisible();
+  // G931: 入口按钮的可见文本是「共享」；浮层可见头是「邀请协作」。
+  await page.getByRole('button', { name: '共享' }).first().click();
+  await expect(page.getByText('邀请协作')).toBeVisible();
 }
 
 async function shareLink(page: Page): Promise<string> {
@@ -48,10 +49,18 @@ async function shareLink(page: Page): Promise<string> {
   return `/s/${token}`;
 }
 
+/** G932: 档位是下拉单值选择器——当前值挂在触发器上，选项只在展开时渲染。 */
+const TIER_VALUE = { view: 'linkView', edit: 'linkEdit' } as const;
+
 async function setTier(page: Page, tier: 'view' | 'edit') {
-  const option = page.locator(`[data-share-permission="${tier}"]`);
+  const trigger = page.getByTestId('share-tier-trigger');
+  await expect(trigger).toBeEnabled({ timeout: 30_000 });
+  if ((await trigger.getAttribute('data-share-permission-value')) === TIER_VALUE[tier]) return;
+  await trigger.click();
+  const option = page.locator(`[data-share-permission="${TIER_VALUE[tier]}"]`);
   await expect(option).toBeEnabled({ timeout: 30_000 });
   await option.click();
+  await expect(trigger).toHaveAttribute('data-share-permission-value', TIER_VALUE[tier]);
 }
 
 /** Publishes the link on the given tier and returns its path. */
@@ -78,15 +87,19 @@ test('the share dialog offers a view tier and an edit tier, and the tier is what
   const documentId = await createDocument(page, `G04T1${stamp}`, marker);
 
   await openShareDialog(page);
-  await expect(page.locator('[data-share-permission="view"]')).toBeVisible();
-  await expect(page.locator('[data-share-permission="edit"]')).toBeVisible();
+  const trigger = page.getByTestId('share-tier-trigger');
+  await expect(trigger).toBeEnabled({ timeout: 30_000 });
+  await trigger.click();
+  await expect(page.locator('[data-share-permission="linkView"]')).toBeVisible();
+  await expect(page.locator('[data-share-permission="linkEdit"]')).toBeVisible();
+  await trigger.click();
 
   await page.getByRole('switch', { name: '发布为公开页面' }).click();
   await setTier(page, 'edit');
   const link = await shareLink(page);
 
   // The dialog paints the choice from local state, which proves nothing. Reopen it after a
-  // full reload: only a share row that really holds `edit` comes back pressed.
+  // full reload: only a share row that really holds `edit` comes back selected.
   //
   // ☆ 为什么这里要 `toPass` 而不是一次断言：档位现在走内核（`applyLocal` + 2s 去抖推送），
   //   从"点下去"到"服务端那一行真的改了"之间有一个窗口；面板挂载时读的还是上一次的值，
@@ -96,8 +109,7 @@ test('the share dialog offers a view tier and an edit tier, and the tier is what
   await expect(async () => {
     await page.goto(`/documents/${documentId}`);
     await openShareDialog(page);
-    await expect(page.locator('[data-share-permission="edit"]')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('[data-share-permission="view"]')).toHaveAttribute('aria-pressed', 'false');
+    await expect(trigger).toHaveAttribute('data-share-permission-value', 'linkEdit');
   }).toPass({ timeout: 60_000, intervals: [2_000] });
 
   // The edit tier is still read-only for someone with no account at all.

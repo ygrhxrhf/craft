@@ -31,14 +31,26 @@ async function signIn(page: Page) {
   await page.waitForURL(/\/documents/, { timeout: 25_000 });
 }
 
-function tierButton(page: Page, tier: 'view' | 'edit') {
-  return page.locator(`[data-share-permission="${tier}"]`);
+function tierTrigger(page: Page) {
+  return page.getByTestId('share-tier-trigger');
 }
 
 async function openSharePanel(page: Page) {
-  await page.locator('button[aria-label="分享"]').click();
-  await expect(page.getByText('分享此文档')).toBeVisible();
-  await expect(tierButton(page, 'view')).toBeVisible();
+  // G931: 入口按钮的可见文本是「共享」；浮层可见头是「邀请协作」。
+  await page.getByRole('button', { name: '共享' }).first().click();
+  await expect(page.getByText('邀请协作')).toBeVisible();
+  await expect(tierTrigger(page)).toBeEnabled({ timeout: 30_000 });
+}
+
+/** G932: 档位是下拉单值选择器——先展开，再点选项。 */
+async function chooseTier(page: Page, tier: 'linkView' | 'linkEdit') {
+  const trigger = tierTrigger(page);
+  await expect(trigger).toBeEnabled({ timeout: 30_000 });
+  await trigger.click();
+  const option = page.locator(`[data-share-permission="${tier}"]`);
+  await expect(option).toBeEnabled({ timeout: 30_000 });
+  await option.click();
+  await expect(trigger).toHaveAttribute('data-share-permission-value', tier);
 }
 
 test('另一台设备改档时，这一侧开着的分享面板跟着翻新（不重开）', async ({ page, browser }) => {
@@ -55,7 +67,7 @@ test('另一台设备改档时，这一侧开着的分享面板跟着翻新（�
 
   // 建行并坐实为 view（服务端权威行、本机镜像都到位）。
   await openSharePanel(page);
-  await expect(tierButton(page, 'view')).toHaveAttribute('aria-pressed', 'true');
+  await expect(tierTrigger(page)).toHaveAttribute('data-share-permission-value', 'linkView');
 
   // 第二台设备：同一账号、独立上下文。先把面板开着并读到 view。
   const other = await browser.newContext();
@@ -64,16 +76,15 @@ test('另一台设备改档时，这一侧开着的分享面板跟着翻新（�
   await otherPage.goto(docUrl);
   await openSharePanel(otherPage);
   await expect(async () => {
-    await expect(tierButton(otherPage, 'view')).toHaveAttribute('aria-pressed', 'true', { timeout: 10_000 });
+    await expect(tierTrigger(otherPage)).toHaveAttribute('data-share-permission-value', 'linkView', { timeout: 10_000 });
   }).toPass({ timeout: 60_000, intervals: [2_000] });
 
   // 第一台设备改档为 edit——**保持第二台设备的面板开着不动**。
-  await tierButton(page, 'edit').click();
-  await expect(tierButton(page, 'edit')).toHaveAttribute('aria-pressed', 'true');
+  await chooseTier(page, 'linkEdit');
+  await expect(tierTrigger(page)).toHaveAttribute('data-share-permission-value', 'linkEdit');
 
   // 他端推得到（广播 → pull → applyRemote → onStoreChanged）⇒ 开着的那枚面板自己翻新。
-  await expect(tierButton(otherPage, 'edit')).toHaveAttribute('aria-pressed', 'true', { timeout: 60_000 });
-  await expect(tierButton(otherPage, 'view')).toHaveAttribute('aria-pressed', 'false');
+  await expect(tierTrigger(otherPage)).toHaveAttribute('data-share-permission-value', 'linkEdit', { timeout: 60_000 });
 
   await other.close();
 });

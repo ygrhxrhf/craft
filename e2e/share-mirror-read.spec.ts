@@ -32,13 +32,25 @@ async function signIn(page: Page) {
   await page.waitForURL(/\/documents/, { timeout: 25_000 });
 }
 
-function tierButton(page: Page, tier: 'view' | 'edit') {
-  return page.locator(`[data-share-permission="${tier}"]`);
+function tierTrigger(page: Page) {
+  return page.getByTestId('share-tier-trigger');
 }
 
 async function openSharePanel(page: Page) {
-  await page.locator('button[aria-label="分享"]').click();
-  await expect(page.getByText('分享此文档')).toBeVisible();
+  // G931: 入口按钮的可见文本是「共享」；浮层可见头是「邀请协作」。
+  await page.getByRole('button', { name: '共享' }).first().click();
+  await expect(page.getByText('邀请协作')).toBeVisible();
+}
+
+/** G932: 档位是下拉单值选择器——先展开，再点选项。 */
+async function chooseTier(page: Page, tier: 'linkView' | 'linkEdit') {
+  const trigger = tierTrigger(page);
+  await expect(trigger).toBeEnabled({ timeout: 30_000 });
+  await trigger.click();
+  const option = page.locator(`[data-share-permission="${tier}"]`);
+  await expect(option).toBeEnabled({ timeout: 30_000 });
+  await option.click();
+  await expect(trigger).toHaveAttribute('data-share-permission-value', tier);
 }
 
 /** Server Actions are POSTs to the page route carrying a `Next-Action` header. */
@@ -66,14 +78,13 @@ test('服务端通路断掉、整页重载之后，分享面板仍从本机镜�
 
   // 正常开一次面板并改到 edit：这一趟既建了服务端那一行，也把档位经 applyLocal 写进本机镜像。
   await openSharePanel(page);
-  await expect(tierButton(page, 'view')).toHaveAttribute('aria-pressed', 'true');
-  await tierButton(page, 'edit').click();
-  await expect(tierButton(page, 'edit')).toHaveAttribute('aria-pressed', 'true');
+  await expect(tierTrigger(page)).toHaveAttribute('data-share-permission-value', 'linkView');
+  await chooseTier(page, 'linkEdit');
   // 等增量推出去、服务端权威行也拉回来，镜像里这一行坐实（否则下面的重载读的是空镜像）。
   await expect(async () => {
     await page.reload();
     await openSharePanel(page);
-    await expect(tierButton(page, 'edit')).toHaveAttribute('aria-pressed', 'true', { timeout: 10_000 });
+    await expect(tierTrigger(page)).toHaveAttribute('data-share-permission-value', 'linkEdit', { timeout: 10_000 });
   }).toPass({ timeout: 60_000, intervals: [2_000] });
 
   // ☆ 决定性的一步：掐掉 Server Action，再整页重载。挂载读只能靠本机镜像。
@@ -83,6 +94,5 @@ test('服务端通路断掉、整页重载之后，分享面板仍从本机镜�
 
   // 旧代码：挂载 `getOrCreateShare` 收 500 ⇒ 停在「生成链接中…」，档位按钮根本不渲染。
   await expect(page.getByText('生成链接中…')).toHaveCount(0);
-  await expect(tierButton(page, 'edit')).toHaveAttribute('aria-pressed', 'true', { timeout: 20_000 });
-  await expect(tierButton(page, 'view')).toHaveAttribute('aria-pressed', 'false');
+  await expect(tierTrigger(page)).toHaveAttribute('data-share-permission-value', 'linkEdit', { timeout: 20_000 });
 });

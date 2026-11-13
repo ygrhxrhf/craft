@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T16:16:36.196Z",
+  "generatedAt": "2026-11-13T16:40:25.845Z",
   "total": 1616,
   "status": {
     "aligned": 823,
@@ -123,8 +123,8 @@
         "cols": 7,
         "id": "G04",
         "official": "分享有链接查看/编辑两档 + 仅协作者 + 请求批准（R14 `collab.access.*`）",
-        "local": "☆ 部分落地（第 264 批）＝**原判\"无 permission 列、`/s/[token]` 恒只读\"是陈旧账**（第 262 批复核已证）：两档＋撤销即时断会话早已落地。**本批补上第三档**：① `permission` 词表加 `'collaborators'`，`ONLY_COLLABORATORS_LABEL='仅限有访问权限的协作者'`（逐字 `collab.access.only.collaborators`）；② 纯核 `tierOpensToLink(permission)`——`view`/`edit` 放行、`collaborators` **不放行**；③ 两处读侧统一用它挡在授权之前：`resolveShareAccess`（collab token 那条）与 `getSharedDocument`（公开页那条）⇒ **链接对第三档不给任何角色**，打开它只能靠 ownership／membership（正是官方该档语义）；④ `ShareDialog` 的 `TIERS` 变三档（Lock 图标）；真浏览器取证＝分享面板渲染三档，第三档逐字「仅限有访问权限的协作者」；☆ **仍缺**＝「请求批准」流（`collab.access.request.approve`「批准」／`.decline`「拒绝」＋viewer 侧「请求编辑」，全仓 `requestAccess`／`access.request` 零命中）⇒ 行内留为待办",
-        "verdict": "部分落地",
+        "local": "☆ 第 264 批已清三档、第 544 批复核收口＝**原判\"无 permission 列、`/s/[token]` 恒只读\"是陈旧账**（第 262 批复核已证）：两档＋撤销即时断会话早已落地。**本批补上第三档**：① `permission` 词表加 `'collaborators'`，`ONLY_COLLABORATORS_LABEL='仅限有访问权限的协作者'`（逐字 `collab.access.only.collaborators`）；② 纯核 `tierOpensToLink(permission)`——`view`/`edit` 放行、`collaborators` **不放行**；③ 两处读侧统一用它挡在授权之前：`resolveShareAccess`（collab token 那条）与 `getSharedDocument`（公开页那条）⇒ **链接对第三档不给任何角色**，打开它只能靠 ownership／membership（正是官方该档语义）；④ `ShareDialog` 的 `TIERS` 变三档（Lock 图标）；真浏览器取证＝分享面板渲染三档，第三档逐字「仅限有访问权限的协作者」；⑤ **「请求批准」流早已落地（第 544 批复核）**＝viewer 侧「请求编辑」`RequestEditAccess.tsx:47`／「请求访问此文档」`RequestViewAccess.tsx:46`（G75）；owner 侧队列与裁决 `src/actions/document/access-requests.ts:158,184`（批准把 `requested`→`editor`、`requested_view`→`viewer`，拒绝删行，两侧都写通知并发同步事件）＋分享面板「访问请求」区逐字「批准」／「拒绝」（`ShareDialog.tsx:704,712`）；真浏览器取证＝`e2e/share-access-request.spec.ts` 两条线（批准后 `contenteditable=true` 且刷新后正文仍在；拒绝后路由弹回 `/documents`、链接保持只读），本批实跑 2 passed（37.1s／51.1s）⇒ 旧判据作废",
+        "verdict": "☆ 已清",
         "score": "3/3",
         "criteria": "文档分享可设 view/edit，编辑档走同一 collab 鉴权链；撤销即时断会话（照白板 `shareVersion` 范式 `actions/whiteboard/share.ts:16-37`）",
         "regression": "用例",
@@ -136,12 +136,14 @@
         },
         "conflict": null,
         "priority": "P0",
-        "note": "请求批准流已落：viewer 可请求编辑，owner 在分享面板批准/拒绝，批准把 requested 行转 editor。",
+        "note": "请求批准流已落并经浏览器复核：viewer 可请求编辑/查看，owner 在分享面板批准/拒绝，批准把 requested 行转 editor。",
         "evidence": [
-          "src/actions/document/access-requests.ts:65",
-          "src/components/share/RequestEditAccess.tsx:42"
+          "src/actions/document/access-requests.ts:80",
+          "src/actions/document/access-requests.ts:184",
+          "src/components/share/ShareDialog.tsx:704",
+          "e2e/share-access-request.spec.ts"
         ],
-        "baseStatus": "partial"
+        "baseStatus": "aligned"
       },
       {
         "line": 1133,
@@ -441,10 +443,10 @@
         "cols": 6,
         "id": "G18",
         "official": "备份/历史版本对协作者可用；**版本条目带变更计数与时间分组**（V4 实测：「9月26日周六 22:46, 2 项变更」+ 作者名，按「昨天 / 较早」分组，底部 30/180 天付费墙）",
-        "local": "☆ 部分落地（第 225 批）＝① **协作者可看/可恢复**已清＝`version.ts` 四个函数此前一律 `doc.userId !== session.user.id`（owner-only，`:22,49,77,92`），现统一走 `requireDocumentAccess(…, 'editor')`（新增 `requireEditor` 帮手）；**为何是 editor 而非 viewer**＝`restoreVersion` 会改写正文，属写操作。**真浏览器取证**＝owner 把 PEER 加为「可编辑」→ PEER 打开同一篇 → 动作 tab「查看备份」可开、版本列表在场（`v1 · 10月15日 20:09 / 6 项变更`）——此前这一下抛「未授权」；② 变更计数与今天/昨天/较早分组**已在**（`lib/document/version-groups.ts`＋`VersionDialog`）；③ 仍缺＝**纯改标题/样式不产生快照**（`update.ts` 只在 `content !== undefined` 且 10 分钟窗口落快照）、`Document.version` 从不递增 ⇒ 另立 **G1531**",
-        "verdict": "部分落地",
+        "local": "☆ 第 225 批已清协作者可见、第 544 批复核收口＝① **协作者可看/可恢复**已清＝`version.ts` 四个函数此前一律 `doc.userId !== session.user.id`（owner-only，`:22,49,77,92`），现统一走 `requireDocumentAccess(…, 'editor')`（新增 `requireEditor` 帮手）；**为何是 editor 而非 viewer**＝`restoreVersion` 会改写正文，属写操作。**真浏览器取证**＝owner 把 PEER 加为「可编辑」→ PEER 打开同一篇 → 动作 tab「查看备份」可开、版本列表在场（`v1 · 10月15日 20:09 / 6 项变更`）——此前这一下抛「未授权」；② 变更计数与今天/昨天/较早分组**已在**（`lib/document/version-groups.ts`＋`VersionDialog`）；③ **纯改标题/样式不产生快照**这一旧洞已由 G1531 收口（第 544 批复核：`snapshot.ts:3` 的 `METADATA_VERSION_FIELDS` 命中即跳过 10 分钟窗口、`:56` 的 `shouldSnapshot`，快照后 `Document.version` 单调递增见 `update.ts:82`；`snapshot.test.ts` 12 项＋`update.test.ts` 7 项本批全绿）；④ 官方行里的「30/180 天」留存窗口已由 G360 落地（`lib/document/backup-retention.ts` 定 Free 30／Plus 180／Family 180，`VersionDialog` 按窗口过滤并显示官方句「目前显示 [0] 天。」），订阅付费墙本身全仓不复刻（G462／D3）",
+        "verdict": "☆ 已清",
         "score": "2/2",
-        "criteria": "editor 可看/可恢复（本批已清）；标题与样式变更也留快照、version 单调递增（G1531）",
+        "criteria": "editor 可看/可恢复（第 225 批已清）；标题与样式变更也留快照、version 单调递增（G1531 已清）",
         "status": "aligned",
         "scoreParsed": {
           "impact": 2,
@@ -453,12 +455,14 @@
         },
         "conflict": null,
         "priority": "P1",
-        "note": "标题与样式变更也落版本快照，Document.version 随快照单调递增。",
+        "note": "标题与样式变更也落版本快照，Document.version 随快照单调递增（第 544 批复核，与 G1531 同证）。",
         "evidence": [
           "src/lib/versioning/snapshot.ts:3",
-          "src/actions/document/update.ts:8"
+          "src/lib/versioning/snapshot.ts:56",
+          "src/actions/document/update.ts:82",
+          "src/lib/versioning/snapshot.test.ts"
         ],
-        "baseStatus": "partial"
+        "baseStatus": "aligned"
       },
       {
         "line": 1150,

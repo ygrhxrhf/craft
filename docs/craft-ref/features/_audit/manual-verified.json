@@ -1,6 +1,6 @@
 {
-  "verifiedAt": "2026-11-13",
-  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。",
+  "verifiedAt": "2026-11-14",
+  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -34,10 +34,12 @@
     "G04": {
       "status": "aligned",
       "priority": "P0",
-      "note": "请求批准流已落：viewer 可请求编辑，owner 在分享面板批准/拒绝，批准把 requested 行转 editor。",
+      "note": "请求批准流已落并经浏览器复核：viewer 可请求编辑/查看，owner 在分享面板批准/拒绝，批准把 requested 行转 editor。",
       "evidence": [
-        "src/actions/document/access-requests.ts:65",
-        "src/components/share/RequestEditAccess.tsx:42"
+        "src/actions/document/access-requests.ts:80",
+        "src/actions/document/access-requests.ts:184",
+        "src/components/share/ShareDialog.tsx:704",
+        "e2e/share-access-request.spec.ts"
       ]
     },
     "G05": {
@@ -153,10 +155,12 @@
     "G18": {
       "status": "aligned",
       "priority": "P1",
-      "note": "标题与样式变更也落版本快照，Document.version 随快照单调递增。",
+      "note": "标题与样式变更也落版本快照，Document.version 随快照单调递增（第 544 批复核，与 G1531 同证）。",
       "evidence": [
         "src/lib/versioning/snapshot.ts:3",
-        "src/actions/document/update.ts:8"
+        "src/lib/versioning/snapshot.ts:56",
+        "src/actions/document/update.ts:82",
+        "src/lib/versioning/snapshot.test.ts"
       ]
     },
     "G19": {

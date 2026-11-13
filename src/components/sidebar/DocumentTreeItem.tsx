@@ -94,6 +94,8 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
       id: doc.id,
       patch: { title: next },
     });
+    // 与删除同因：ack 前重取读到的是旧快照，pending 已被 ack 清空时旧标题会粘住。
+    await getSyncManager().flushNow();
     bumpTree();
   }
 
@@ -107,7 +109,9 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
     // brief 映射：本地先生成 id → applyLocal → flushNow 后再跳转（服务端可见）
     const childId = await createDocumentLocal({ userId: session?.user?.id, parentId: doc.id });
     setExpanded(true);
-    bumpTree();
+    // 不再 bumpTree：跳转本身就是 pathname 变化，快照 hook 会按新 key 重取；
+    // 这里再 bump 等于在 flush 刚结束时多排一个整棵侧栏的 server action，
+    // 与 editor 的保存动作同队串行，把「点击→跳转」推得更慢（第 535 批实测）。
     router.push(`/documents/${childId}`);
   }
 
@@ -161,6 +165,9 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
         id: doc.id,
         patch: { isDeleted: true, deletedAt: new Date().toISOString() },
       });
+      // applyLocal 已 emitTouched 触发一次重取（那次读的仍是删前快照，靠 pending 覆盖层挡着）；
+      // 这里的重取发生在 push ack 之后——否则 late 回来的删前快照碰上已清空的 pending，行会复活。
+      await getSyncManager().flushNow();
     } catch (error) {
       toast.add({
         title: error instanceof Error ? error.message : '删除失败',
@@ -273,6 +280,7 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
             patch: { parentId: doc.parentId, folderId: doc.folderId, order: patch.order },
           });
         }
+        await manager.flushNow();
         bumpTree();
       } catch (err) {
         console.error('移动文档失败', err);
@@ -282,11 +290,13 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
 
     try {
       // 移动（parent/folder/order 变更）→ applyLocal，patch 只带变更字段
-      await getSyncManager().applyLocal({
+      const manager = getSyncManager();
+      await manager.applyLocal({
         table: 'document',
         id: payload.documentId,
         patch: data,
       });
+      await manager.flushNow();
       bumpTree();
     } catch (err) {
       console.error('移动文档失败', err);

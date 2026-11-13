@@ -53,8 +53,13 @@ export function DocumentTree({ folderId = null }: DocumentTreeProps) {
   const [pending, setPending] = useState<Map<string, PendingRow>>(new Map());
   // G391：分区超过硬编码阈值时收成"前 N 行 + 折叠行"，折叠行可再展开。
   const [showAllRows, setShowAllRows] = useState(false);
+  const [mirrorVersion, setMirrorVersion] = useState(0);
 
-  // 未推送的本地意图（applyLocal 后立刻可见）；快照每次更新后重读
+  // 未推送的本地意图（applyLocal 后立刻可见）。
+  // ☆ 只挂在 `[snapshot]` 上是不够的：重取是 server action，Next 按页面串行排队，
+  //   本地写完到这份快照回来之间隔着别的 action（编辑器派生表、收藏兜底），实测可达 20s。
+  //   所以镜像一有变动就重读一次——pending 还在时这一读就带出新标题，ack 之后
+  //   pending 清空则由紧随其后的快照接上（ack 不触发本信号，不会读到"空覆盖层 + 旧行"）。
   useEffect(() => {
     let alive = true;
     readPendingRows('document').then((p) => {
@@ -63,11 +68,13 @@ export function DocumentTree({ folderId = null }: DocumentTreeProps) {
     return () => {
       alive = false;
     };
-  }, [snapshot]);
+  }, [snapshot, mirrorVersion]);
 
-  // applyLocal 本地写 / pull 远端变化 → 重取（覆盖层保证未推送的本地意图不丢）
+  // applyLocal 本地写 / pull 远端变化 → 覆盖层重读 + 重取（远端行只存在于快照里）
   useEffect(() => getSyncManager().onStoreChanged((table) => {
-    if (table === 'document') bumpTree();
+    if (table !== 'document') return;
+    setMirrorVersion((v) => v + 1);
+    bumpTree();
   }), [bumpTree]);
 
   if (!snapshot) {

@@ -5,7 +5,6 @@
 import { getSyncManager } from '@/lib/sync-core';
 import { createDocument } from '@/actions/document/create';
 import { createFolder } from '@/actions/folder/create';
-import { listCustomStyles } from '@/actions/style/custom-styles';
 import { UNTITLED_FOLDER } from '@/lib/document/untitled-copy';
 
 /**
@@ -28,21 +27,32 @@ export async function createDocumentLocal(input: {
     });
     return doc.id;
   }
-  const userId = input.userId;
   const id = crypto.randomUUID();
-  // G151：新建文档套用「设为文档默认」的自定义样式；离线取不到时退回无样式。
+  const manager = getSyncManager();
+  // G151：新建文档套用「设为文档默认」的自定义样式。从本地镜像取（customStyle 是同步表），
+  // 不能调 listCustomStyles 服务端 action——Next 按页面串行执行客户端 action，它会排在编辑器
+  // 自身的 POST 后面十几秒，把「点击→跳转」整条关键路径拖过 20 s（第 535 批实测）。
   let defaultPageStyle: Record<string, unknown> | null = null;
   try {
-    defaultPageStyle = (await listCustomStyles()).find((style) => style.isDefault)?.style ?? null;
+    const store = await manager.readyStore();
+    const styles = await store.all('customStyle');
+    const candidates = styles
+      .filter((s) => s.op !== 'delete' && (s.data as Record<string, unknown> | undefined)?.isDefault === true)
+      .sort((a, b) => {
+        const orderA = Number(a.data?.order ?? 0);
+        const orderB = Number(b.data?.order ?? 0);
+        return orderA - orderB || String(a.data?.createdAt ?? '').localeCompare(String(b.data?.createdAt ?? ''));
+      });
+    const style = candidates.pop()?.data?.style;
+    defaultPageStyle = style && typeof style === 'object' ? (style as Record<string, unknown>) : null;
   } catch {
     defaultPageStyle = null;
   }
-  const manager = getSyncManager();
   await manager.applyLocal({
     table: 'document',
     id,
     patch: {
-      userId,
+      // userId 不在 document 的同步列里（服务端按会话强制），带上只会吃 G1492 告警。
       title: input.title ?? '',
       parentId: input.parentId ?? null,
       folderId: input.folderId ?? null,

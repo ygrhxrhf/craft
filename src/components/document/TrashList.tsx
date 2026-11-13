@@ -125,6 +125,8 @@ export function TrashList({ documents, now }: TrashListProps) {
       id,
       patch: { isDeleted: false, deletedAt: null },
     });
+    // 与侧栏删除同因：refresh 读的是服务端行，push ack 前读到的还是「在回收站里」。
+    await getSyncManager().flushNow();
     router.refresh();
   }
 

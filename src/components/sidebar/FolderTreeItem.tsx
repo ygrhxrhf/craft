@@ -87,6 +87,8 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
       id: folder.id,
       patch: { icon: next.trim() || null },
     });
+    // 侧栏快照是服务端读，ack 前重取读到的仍是旧图标。
+    await getSyncManager().flushNow();
     bumpTree();
   }
 
@@ -103,6 +105,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
       id: folder.id,
       patch: { description: next.trim() || null },
     });
+    await getSyncManager().flushNow();
     bumpTree();
   }
 
@@ -115,6 +118,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
       id: folder.id,
       patch: { name: next },
     });
+    await getSyncManager().flushNow();
     bumpTree();
   }
 
@@ -124,7 +128,8 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
       folderId: folder.id,
     });
     setExpanded(true);
-    bumpTree();
+    // 与树内「新建子文档」同因：跳转的 pathname 变化会触发快照重取，这里再 bump
+    // 只是往同一条 server action 队里多排一个整棵侧栏的取数。
     router.push(`/documents/${docId}`);
   }
 
@@ -142,6 +147,8 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
       id: folder.id,
       patch: { isDeleted: true, deletedAt: new Date().toISOString() },
     });
+    // 与 document 删除同因：先让 push ack，再重取，免得删前快照晚到把行带回来。
+    await getSyncManager().flushNow();
     bumpTree();
   }
 
@@ -289,6 +296,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
               patch: { parentId: folder.parentId, order: patch.order },
             });
           }
+          await manager.flushNow();
           bumpTree();
           return;
         }
@@ -312,6 +320,7 @@ export function FolderTreeItem({ folder, allFolders, allDocuments, documentCount
         });
         setExpanded(true);
       }
+      await getSyncManager().flushNow();
       bumpTree();
     } catch (err) {
       console.error('移动失败', err);

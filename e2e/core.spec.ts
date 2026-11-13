@@ -60,13 +60,17 @@ test('settings persist preference selection', async ({ page }) => {
     'true'
   );
 
-  // The preference is stored server-side, so a reload must restore the same choice.
-  await page.reload();
-  await page.getByRole('button', { name: '外观', exact: true }).click();
-  await expect(page.getByRole('button', { name: next, exact: true })).toHaveAttribute(
-    'aria-pressed',
-    'true'
-  );
+  // The preference write rides the offline kernel (`applyLocal` + 2s 去抖 flush), so the row the
+  // panel reads after a reload only agrees once the kernel has delivered it. Poll the reloaded
+  // read instead of asserting once — 与 share-*.spec 同一裁定。
+  await expect(async () => {
+    await page.reload();
+    await page.getByRole('button', { name: '外观', exact: true }).click();
+    await expect(page.getByRole('button', { name: next, exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+  }).toPass({ timeout: 60_000, intervals: [2_000] });
 
   await page.getByRole('button', { name: original, exact: true }).click();
   await expect(page.getByRole('button', { name: original, exact: true })).toHaveAttribute(
@@ -80,6 +84,7 @@ test('settings persist preference selection', async ({ page }) => {
 // （队列被丢弃 / boot 没补推 / 列白名单漏了 theme），那才是"屏上改了、库里没改"的分叉。
 // 两个时钟都从不阻塞请求来读：按住 POST 会拖慢同一 URL 上的读，动的正是被测的延迟本身。
 test('theme choice paints optimistically and the offline kernel delivers it', async ({ page }) => {
+  test.setTimeout(180_000);
   await page.goto('/login');
   await page.fill('input[type="email"]', email);
   await page.fill('input[type="password"]', password);
@@ -91,7 +96,7 @@ test('theme choice paints optimistically and the offline kernel delivers it', as
   // gate, because `prefs?.theme ?? 'system'` paints 系统 as chosen while the read is still
   // outstanding, so "some theme is pressed" is not evidence that preferences arrived.
   await page.getByRole('button', { name: '通知', exact: true }).click();
-  await expect(page.getByText('载入中…').first()).toBeHidden();
+  await expect(page.getByText('载入中…').first()).toBeHidden({ timeout: 60_000 });
   await page.getByRole('button', { name: '外观', exact: true }).click();
 
   const pressedTheme = page.getByRole('button', { name: /^(系统|浅色|深色)$/, pressed: true });
@@ -109,7 +114,7 @@ test('theme choice paints optimistically and the offline kernel delivers it', as
       (res) =>
         res.request().method() === 'POST' &&
         (res.request().postData() ?? '').includes(`"${wire[next]}"`),
-      { timeout: 20_000 }
+      { timeout: 60_000 }
     )
     .then((res) => {
       acceptedAt = Date.now();
@@ -148,6 +153,7 @@ test('theme choice paints optimistically and the offline kernel delivers it', as
 // 这里同时验两件事——绘制不等服务端、换页不丢队列——用的是同一笔请求的两个时钟，
 // 且不按住请求来读（按住会拖慢同 URL 的读，动的正是被测延迟）。
 test('sidebar theme choice paints optimistically and survives a reload', async ({ page }) => {
+  test.setTimeout(180_000);
   await signIn(page);
 
   const html = page.locator('html');
@@ -324,42 +330,51 @@ test('collection gains properties, a formula, and gallery and form views', async
   await page.getByRole('button', { name: '创建' }).click();
   await page.waitForURL(/\/collections\/[^/]+$/);
 
-  const addProperty = async (label: string, type: string, expression?: string) => {
+  const addProperty = async (label: string, typeLabel: string, expression?: string) => {
     await page.getByRole('button', { name: '属性' }).click();
     await page.getByLabel('属性名称').fill(label);
-    await page.getByLabel('属性类型').selectOption(type);
+    // G396: the type picker is a radiogroup of icon buttons, not a <select>.
+    await page.getByLabel('属性类型').getByRole('radio', { name: typeLabel }).click();
     if (expression) await page.getByLabel('公式表达式').fill(expression);
     await page.getByRole('button', { name: '创建' }).click();
-    await expect(page.getByRole('columnheader', { name: label, exact: true })).toBeVisible();
+    // The header's accessible name also carries the ⋯ menu button (`价格 字段操作 价格`),
+    // so an exact match never lands; the label as a substring is the stable assertion.
+    await expect(page.getByRole('columnheader', { name: label })).toBeVisible();
   };
 
-  await addProperty('价格', 'number');
-  await addProperty('数量', 'number');
-  await addProperty('金额', 'formula', '{价格} * {数量}');
+  await addProperty('价格', '数字');
+  await addProperty('数量', '数字');
+  await addProperty('金额', '公式', '{价格} * {数量}');
 
   await page.getByRole('button', { name: '新建', exact: true }).click();
   await expect(page.locator('tbody tr')).toHaveCount(1);
 
   const row = page.locator('tbody tr').first();
+  // 无排序/分组/筛选的视图可拖拽重排，每行最前面多一格拖拽手柄 ⇒ 数据列从第 2 格起。
+  // 写死下标会在两种视图形态间来回错位，所以先量出偏移。
+  const offset = (await row.locator('td').first().locator('button[aria-label^="拖动排序"]').count()) > 0 ? 1 : 0;
+  const cellAt = (column: number) => row.locator('td').nth(column + offset);
   const setCell = async (column: number, value: string) => {
-    await row.locator('td').nth(column).click();
-    await page.locator('tbody tr').first().locator('td').nth(column).locator('input').fill(value);
+    await cellAt(column).click();
+    await cellAt(column).locator('input').fill(value);
     await page.keyboard.press('Enter');
-    await expect(row.locator('td').nth(column)).toContainText(value);
+    await expect(cellAt(column)).toContainText(value);
   };
 
   await setCell(0, '苹果');
   await setCell(1, '12');
   await setCell(2, '3');
   // The formula column reads its siblings from the same row.
-  await expect(row.locator('td').nth(3)).toHaveText('36');
+  await expect(cellAt(3)).toHaveText('36');
 
-  await page.getByRole('button', { name: '视图' }).click();
+  // 视图切换按钮的可见文本是「视图」，但工具条上还有一枚 `aria-label="视图操作"` 的按钮，
+  // 不加 exact 会撞严格模式（两者都以「视图」开头）。
+  await page.getByRole('button', { name: '视图', exact: true }).click();
   await page.getByRole('menuitem', { name: '画廊' }).click();
   await page.getByRole('tab', { name: '画廊' }).click();
   await expect(page.getByText('苹果').first()).toBeVisible();
 
-  await page.getByRole('button', { name: '视图' }).click();
+  await page.getByRole('button', { name: '视图', exact: true }).click();
   await page.getByRole('menuitem', { name: '表单' }).click();
   await page.getByRole('tab', { name: '表单' }).click();
   const nameField = page.locator('form label').filter({ hasText: '名称' }).first();
@@ -373,7 +388,10 @@ test('collection gains properties, a formula, and gallery and form views', async
 test('recurring task rolls forward to the next occurrence', async ({ page }) => {
   await signIn(page);
   const title = `每日复盘 ${Date.now()}`;
-  const today = new Date().toISOString().slice(0, 10);
+  // Local calendar date, not the UTC slice: 在 UTC+8 的 08:00 之前 `toISOString()` 还是昨天，
+  // 而 `adoptDateExpression` 会静默忽略过去的日期 ⇒ 芯片永远停在「截止」。
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   await page.goto('/tasks');
 
@@ -389,10 +407,21 @@ test('recurring task rolls forward to the next occurrence', async ({ page }) => 
   const card = page.locator('div.border-b', { has: page.getByText(title, { exact: true }) }).first();
   await expect(card.getByText(title, { exact: true })).toBeVisible();
 
+  // 截止日期是 popover 芯片（G332–G373）：`设置截止日期` 才是触发器，日期框在浮层里。
+  const deadlineChip = card.getByRole('button', { name: '设置截止日期' });
+  await deadlineChip.click();
+  const datePanel = page.getByTestId('task-date-popover');
+  await datePanel.locator('input[aria-label="日期"]').fill(today);
+  await page.keyboard.press('Enter');
+  await expect(deadlineChip).not.toHaveText(/^截止$/);
+
+  // 重复是「设置提醒与重复」面板里的四档 select（值就是 daily），锚点由 repeatRuleFor 补足。
+  // 取 role=combobox 而不是 getByLabel：这根 select 由 <label> 包着，label 的文本里还含各选项，
+  // `getByLabel('重复', { exact: true })` 匹配不上；可及名（aria snapshot 里的 "重复"）才是准的。
   await card.getByLabel('设置提醒与重复').click();
-  await card.getByLabel('截止日期').fill(today);
-  await card.locator('select').selectOption('{"freq":"daily"}');
-  await expect(card.locator('select')).toHaveValue('{"freq":"daily"}');
+  const repeat = card.getByRole('combobox', { name: '重复', exact: true });
+  await repeat.selectOption('daily');
+  await expect(repeat).toHaveValue('daily');
   await expect(card.locator('span', { hasText: '每天' })).toBeVisible();
 
   await card.getByRole('checkbox').click();
@@ -448,7 +477,8 @@ test('镜像 copies another document’s block in read-only form', async ({ page
   });
 });
 
-test('publishing a document serves it at a custom /p address', async ({ page }) => {
+test('publishing a document serves it at a custom /p address', async ({ page, browser }) => {
+  test.setTimeout(180_000);
   await signIn(page);
   const title = `公开文档 ${Date.now()}`;
   const marker = `公开页内容 ${Date.now()}`;
@@ -463,7 +493,8 @@ test('publishing a document serves it at a custom /p address', async ({ page }) 
   await page.keyboard.press('Control+s');
   await expect(page.getByText('所有更改已保存')).toBeVisible({ timeout: 20_000 });
 
-  await page.getByRole('button', { name: '分享' }).first().click();
+  // G931: 入口按钮的可见文本是「共享」，没有 aria-label。
+  await page.getByRole('button', { name: '共享' }).first().click();
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('switch', { name: '发布为公开页面' }).click();
   await expect(dialog.getByLabel('自定义地址')).toBeVisible();
@@ -477,10 +508,36 @@ test('publishing a document serves it at a custom /p address', async ({ page }) 
   await dialog.getByRole('button', { name: '保存' }).click();
   await expect(dialog.getByText(`/p/${slug}`)).toBeVisible();
 
-  await page.goto(`/p/${slug}`);
-  await expect(page.getByText(marker)).toBeVisible();
-  await expect(page).toHaveTitle(new RegExp(title));
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`/p/${slug}$`));
+  const docUrl = page.url();
+
+  // 访客视角用另一个 context：元数据是服务端渲染的，只能重新导航去读；而开关的写入走本地镜像、
+  // 异步 flush，导航**正在操作的那一页**会把这趟 flush 打断。让操作页留在文档上，轮询访客页。
+  const visitor = await browser.newContext();
+  const view = await visitor.newPage();
+
+  // 发布开关与地址保存同样是异步 flush ⇒ 首次访客读也轮询，直到服务端真放行。
+  await expect(async () => {
+    await view.goto(`/p/${slug}`);
+    expect(await view.getByText(marker).count()).toBe(1);
+  }).toPass({ timeout: 60_000, intervals: [2_000] });
+  await expect(view).toHaveTitle(new RegExp(title));
+
+  // G143：搜索引擎索引默认关 ⇒ 公开页只留可读标题并显式 noindex，不输出 canonical。
+  await expect(view.locator('link[rel="canonical"]')).toHaveCount(0);
+  await expect(view.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+
+  // 打开索引后 canonical 才出现。开关外观不是写入落库的证据 ⇒ 轮询访客页直到服务端真改了。
+  await page.goto(docUrl);
+  await page.getByRole('button', { name: '共享' }).first().click();
+  await page.getByRole('dialog').getByRole('switch', { name: '启用搜索引擎索引' }).click();
+  await expect(async () => {
+    await view.goto(`/p/${slug}`);
+    expect(await view.locator('link[rel="canonical"]').count()).toBe(1);
+  }).toPass({ timeout: 60_000, intervals: [2_000] });
+  await expect(view.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`/p/${slug}$`));
+  await expect(view.locator('meta[name="robots"]')).toHaveCount(0);
+
+  await visitor.close();
 });
 
 test('sidebar tree items expose a right-click menu', async ({ page }) => {
@@ -571,7 +628,18 @@ test('an embedded whiteboard previews its content and zooms into a dialog', asyn
   // visible inside the read-only canvas.
   await expect(preview.locator('[data-shape-id]').first()).toBeVisible({ timeout: 30_000 });
 
-  await preview.getByRole('button', { name: '放大白板预览' }).click();
+  // G111: 全屏不是嵌入头里的按钮，而是块 ⋯ 菜单里的「全屏」（嵌入头只有 只读预览 ＋ 打开白板）。
+  const editorBox = await page.locator('.ProseMirror').first().boundingBox();
+  expect(editorBox).not.toBeNull();
+  const embedBox = await preview.boundingBox();
+  expect(embedBox).not.toBeNull();
+  // 把手只在编辑器左槽 64px 内亮起，且指针必须落在这一块的高度上（与 drag-handle-menu.spec 同一手法）。
+  const gutterX = Math.min(embedBox!.x + 8, editorBox!.x + 20);
+  await page.mouse.move(gutterX, embedBox!.y + embedBox!.height / 2);
+  const handle = page.locator('[data-drag-handle]').first();
+  await expect(handle).toBeVisible();
+  await handle.getByRole('button', { name: '区块操作' }).click();
+  await page.getByRole('menuitem', { name: '全屏' }).click();
   await expect(page.getByRole('dialog').locator('[data-shape-id]').first()).toBeVisible({
     timeout: 30_000,
   });

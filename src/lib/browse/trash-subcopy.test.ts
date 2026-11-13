@@ -100,3 +100,49 @@ describe('the move confirmation is actually wired', () => {
     expect(source).not.toContain('window.confirm');
   });
 });
+
+/**
+ * applyLocal only enqueues; the push is debounced two seconds. Re-reading the tree before that
+ * push acks races the ack: a slow pre-write snapshot landing after the queue drains finds no
+ * pending intent to overlay and the old row sticks with no further bump to take it away. Every
+ * tree write that immediately re-reads must await flushNow first.
+ */
+describe('a tree row write waits for the push ack before re-reading', () => {
+  const read = (name: string) =>
+    readFileSync(
+      fileURLToPath(new URL(`../../components/sidebar/${name}`, import.meta.url)),
+      'utf8',
+    );
+
+  // 从 `function name(` 切到下一个同缩进（两格）的函数声明，免得这一条靠后一个函数的 flushNow 蒙混过关。
+  const body = (source: string, name: string) => {
+    const start = source.indexOf(`function ${name}(`);
+    expect(start, `${name} missing`).toBeGreaterThan(-1);
+    const rest = source.slice(start + 1);
+    const next = rest.search(/\n {2}(?:async )?function /);
+    return next < 0 ? source.slice(start) : source.slice(start, start + 1 + next);
+  };
+
+  const cases = [
+    { file: 'DocumentTreeItem.tsx', fn: 'commitRename' },
+    { file: 'DocumentTreeItem.tsx', fn: 'moveToTrash' },
+    { file: 'DocumentTreeItem.tsx', fn: 'handleDrop' },
+    { file: 'FolderTreeItem.tsx', fn: 'editIcon' },
+    { file: 'FolderTreeItem.tsx', fn: 'editDescription' },
+    { file: 'FolderTreeItem.tsx', fn: 'commitRename' },
+    { file: 'FolderTreeItem.tsx', fn: 'moveToTrash' },
+    { file: 'FolderTreeItem.tsx', fn: 'handleDrop' },
+  ];
+
+  for (const { file, fn } of cases) {
+    it(`${file} ${fn}: applyLocal → flushNow → bumpTree`, () => {
+      const source = body(read(file), fn);
+      const apply = source.indexOf('applyLocal(');
+      const flush = source.indexOf('flushNow()');
+      const bump = source.indexOf('bumpTree()');
+      expect(apply).toBeGreaterThan(-1);
+      expect(flush).toBeGreaterThan(apply);
+      expect(bump).toBeGreaterThan(flush);
+    });
+  }
+});

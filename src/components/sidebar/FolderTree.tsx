@@ -52,8 +52,11 @@ export function FolderTree() {
   const [pendingDocs, setPendingDocs] = useState<Map<string, PendingRow>>(new Map());
   // G391：与文档分区共用同一枚折叠行与阈值。
   const [showAllRows, setShowAllRows] = useState(false);
+  const [mirrorVersion, setMirrorVersion] = useState(0);
 
-  // 未推送的本地意图（applyLocal 后立刻可见）；快照每次更新后重读
+  // 未推送的本地意图（applyLocal 后立刻可见）。
+  // ☆ 只挂在 `[snapshot]` 上不够：重取是 server action，Next 按页面串行排队，本地写要等
+  //   排在它前面的 action 跑完才上屏；镜像一变就重读，pending 在时当场带出本地值。
   useEffect(() => {
     let alive = true;
     Promise.all([readPendingRows('folder'), readPendingRows('document')]).then(([f, d]) => {
@@ -64,11 +67,13 @@ export function FolderTree() {
     return () => {
       alive = false;
     };
-  }, [snapshot]);
+  }, [snapshot, mirrorVersion]);
 
-  // applyLocal 本地写 / pull 远端变化 → 重取（覆盖层保证未推送的本地意图不丢）
+  // applyLocal 本地写 / pull 远端变化 → 覆盖层重读 + 重取（远端行只存在于快照里）
   useEffect(() => getSyncManager().onStoreChanged((table) => {
-    if (table === 'folder' || table === 'document') bumpTree();
+    if (table !== 'folder' && table !== 'document') return;
+    setMirrorVersion((v) => v + 1);
+    bumpTree();
   }), [bumpTree]);
 
   if (!snapshot) {

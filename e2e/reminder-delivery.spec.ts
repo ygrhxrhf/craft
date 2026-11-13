@@ -11,13 +11,6 @@ async function signIn(page: Page) {
   await expect(page).toHaveURL(/\/documents/);
 }
 
-/** `datetime-local` takes wall-clock time, not an instant. */
-function localMoment(minutesOffset: number): string {
-  const at = new Date(Date.now() + minutesOffset * 60_000);
-  const pad = (value: number) => String(value).padStart(2, '0');
-  return `${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())}T${pad(at.getHours())}:${pad(at.getMinutes())}`;
-}
-
 async function createTaskWithPastReminder(page: Page, title: string) {
   await page.goto('/tasks');
   await page.getByPlaceholder('添加任务，按回车确认…').fill(title);
@@ -26,7 +19,8 @@ async function createTaskWithPastReminder(page: Page, title: string) {
   const card = page.locator('div.border-b', { has: page.getByText(title, { exact: true }) }).first();
   await expect(card.getByText(title, { exact: true })).toBeVisible();
   await card.getByLabel('设置提醒与重复').click();
-  await card.getByLabel('提醒时间').fill(localMoment(-1));
+  // G332–G373: 提醒时间是 96 槽 select，槽 0 = 基准日 00:00；无计划/截止日期时基准取 now ⇒ 必已过期。
+  await card.getByLabel('提醒时间').selectOption('0');
 }
 
 async function deleteTask(page: Page, title: string) {

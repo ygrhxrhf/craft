@@ -3,6 +3,10 @@ import { expect, test, type Page } from '@playwright/test';
 const email = 'craft-test@example.com';
 const password = 'test1234';
 
+// 这条规格要跑 4 次建行 + 3 趟列表重进 + 一轮清扫，dev 按需编译下 120s 的全局上限不够
+// （实测在全文截图上超时，此时正文断言已全部通过）。与 `e2e/sync.spec.ts` 同因，整测给 300s。
+test.setTimeout(300_000);
+
 async function signIn(page: Page) {
   await page.goto('/login');
   await page.fill('input[type="email"]', email);
@@ -34,11 +38,15 @@ async function createScheduled(page: Page, title: string, due: string | null) {
   const card = page.locator('div.border-b', { has: page.getByText(title, { exact: true }) }).first();
   await expect(card.getByText(title, { exact: true })).toBeVisible();
   if (!due) return;
-  await card.getByLabel('设置提醒与重复').click();
   // G46：即将进行按「计划日期」（Schedule 轴）分节，不是「截止日期」（Deadline）。两者是独立
   // 两轴，只设截止的行没有排期 ⇒ 官方判据 `if (schedule == null) continue` 直接跳过。
-  await card.getByLabel('计划日期').fill(due);
-  await expect(card.getByLabel('计划日期')).toHaveValue(due);
+  // G332–G373：计划日期是 popover 芯片，日期框在浮层里（ISO 串由 parseDateIn 收）。
+  await card.getByRole('button', { name: '设置计划日期' }).click();
+  const dateBox = page.getByTestId('task-date-popover').locator('input[aria-label="日期"]');
+  await dateBox.fill(due);
+  await page.keyboard.press('Enter');
+  const [, month, day] = due.split('-').map(Number);
+  await expect(card.getByRole('button', { name: '设置计划日期' })).toHaveText(`${month}月${day}日`);
 }
 
 /** 「显示已完成」是一枚设备设置：点在哪个方向取决于上一次进来时它是什么状态，所以一律按目标态掰。 */
@@ -56,6 +64,17 @@ async function setShowCompleted(page: Page, show: boolean) {
   const toggle = page.getByLabel('显示已完成的任务');
   if ((await toggle.isChecked()) !== show) await toggle.click();
   await expect(toggle).toBeChecked({ checked: show });
+}
+
+/**
+ * ☆ 每次 `goto('/tasks/upcoming')` 之后都必须过这道闸：行是 `getTasks` 回来后才换上去的，
+ *   而下面有几处是「进去就点复选框」——不等水合，点到的还是那枚「加载中…」的占位屏
+ *   （实测 120s 超时，快照里整页只有加载态）。
+ */
+async function openUpcoming(page: Page) {
+  await page.goto('/tasks/upcoming');
+  await expect(page.getByRole('main').getByText('加载中…')).toBeHidden();
+  await expect(sections(page).first()).toBeVisible();
 }
 
 async function deleteAll(page: Page) {
@@ -108,7 +127,7 @@ test('即将进行 is a week/month/year timeline, not a flat list', async ({ pag
     await createScheduled(page, YEAR, '2027-03-01');
     await createScheduled(page, UNSCHEDULED, null);
 
-    await page.goto('/tasks/upcoming');
+    await openUpcoming(page);
     await expect(sectionOf(page, WEEK)).toHaveCount(1);
 
     await expect(headingOf(page, WEEK)).toHaveText('本周');
@@ -143,16 +162,15 @@ test('即将进行 is a week/month/year timeline, not a flat list', async ({ pag
       await expect(page.getByText(title, { exact: true }).first()).toBeVisible();
     }
 
-    await page.goto('/tasks/upcoming');
-    await expect(sections(page).first()).toBeVisible();
+    await openUpcoming(page);
     await page.screenshot({ path: 'screenshots/tmp-upcoming-sections.png', fullPage: true });
 
     // 官方的 isVisible:false：整节都做完 ⇒ 关掉开关时该节不占位
-    await page.goto('/tasks/upcoming');
+    await openUpcoming(page);
     await sectionOf(page, YEAR).getByRole('checkbox').first().click();
     await expect(sections(page).filter({ hasText: '2027年' }).first()).toBeHidden();
     await setShowCompleted(page, true);
-    await page.goto('/tasks/upcoming');
+    await openUpcoming(page);
     await sectionOf(page, YEAR).getByRole('checkbox').first().click();
     await expect(sectionOf(page, YEAR)).toHaveCount(1);
   } catch (error) {
@@ -160,10 +178,13 @@ test('即将进行 is a week/month/year timeline, not a flat list', async ({ pag
   }
   let cleanupError: unknown = null;
   try {
-    // 同一枚理由：本轮那几行里被服务端动过的那一枚（勾选走了 Server Action，`updatedAt` 是真实钟）
-    // 在假时钟下删不掉，所以把时钟交回真实系统时间再扫。
-    await page.clock.setSystemTime(Date.now());
-    await deleteAll(page);
+    // 清扫必须跑在**真实时钟**上（理由见上面 deleteAll 前的注释：假时钟把 delete 的 syncTs 打到
+    // 残留行较新的 `updatedAt` 之前，服务端原样退回）。`page.clock` 是**按页**装的，所以不去掰
+    // 本页的时间——那会让这一页的客户端 fetch 与定时器一起失准（实测 `setSystemTime` 之后
+    // `/tasks` 一直停在「加载中…」20s，服务端动作的响应再没回来）。开一张新页，它天然是真实钟。
+    const cleanupPage = await page.context().newPage();
+    await deleteAll(cleanupPage);
+    await cleanupPage.close();
   } catch (error) {
     cleanupError = error;
   }

@@ -96,5 +96,7 @@ test('the date popover carries reminder and repeat sub-rows', async ({ page }) =
   await page.getByRole('heading', { name: '任务收件箱' }).click();
   await row.getByRole('button', { name: '设置计划日期' }).click();
   await page.getByRole('button', { name: /重复…/ }).click();
+  // G265：没有既有规则时先落「重复依据」这一步（按计划日／相对于完成），选完才出频率列表。
+  await page.getByTestId('repeat-anchor-fixed').click();
   await expect(page.getByRole('button', { name: /每周 \(周/ })).toBeVisible();
 });

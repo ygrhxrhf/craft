@@ -68,6 +68,21 @@ export function toggleFieldHidden(fields: ViewFields, id: string): ViewFields {
 }
 
 /**
+ * 面板里的眼睛状态与「已隐藏」计数：全局下线（属性行 `isVisible=false`，列菜单「隐藏字段」写的）
+ * 与本视图隐藏两层都算——否则列从表上消失了，面板却报「0 隐藏字段」且眼睛还是睁的。
+ */
+export function fieldShownInView(row: { id: string; isVisible: boolean }, hidden: readonly string[]): boolean {
+  return row.isVisible && !hidden.includes(row.id);
+}
+
+export function hiddenFieldCount(
+  rows: readonly { id: string; isVisible: boolean }[],
+  hidden: readonly string[],
+): number {
+  return rows.filter((row) => !fieldShownInView(row, hidden)).length;
+}
+
+/**
  * 在**当前可见顺序**里把一枚字段上/下移一格，并把整份顺序写进 `customPropertyOrder`。
  * `visibleIds` 是屏上此刻的列序（已含视图顺序与行 order 的合成结果）。
  */

@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { cn } from 'cn';
 import { KANBAN_NO_GROUP_PROPERTY } from '@/lib/collection/kanban-copy';
 import { BOARD_LONG_PRESS_MS, boardHoldCancelled, dropColumnAt } from '@/lib/collection/kanban-drag';
+import { parseCellValue } from '@/lib/collection/cell-value';
 import type { getCollection } from '@/actions/collection/collection';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
@@ -31,16 +32,6 @@ function getSelectOptions(config: string | null): SelectOption[] {
     return parsed.options ?? [];
   } catch {
     return [];
-  }
-}
-
-function parseValue(raw: any): any {
-  if (raw == null || raw === '') return null;
-  if (typeof raw !== 'string') return raw;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return raw;
   }
 }
 
@@ -107,7 +98,7 @@ export function KanbanView({ collection }: KanbanViewProps) {
     }
 
     const value = item.values?.find((v: any) => v.propertyId === groupProperty.id);
-    const parsed = parseValue(value?.value);
+    const parsed = parseCellValue(value?.value) as string | null;
 
     if (parsed && groupedItems.has(parsed)) {
       groupedItems.get(parsed)!.push(item);

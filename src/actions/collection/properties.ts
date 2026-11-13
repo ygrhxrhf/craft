@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { PROPERTY_TYPE_VALUES } from '@/lib/collection/property-types';
 import { convertCellValue } from '@/lib/collection/type-convert';
+import { parseCellValue, toTypedValue } from '@/lib/collection/cell-value';
 import { backColumnOf } from '@/lib/collection/two-way-relation';
 import { relationTargetId } from '@/lib/collection/relation-value';
 import { COLLECTION_COLUMN_LIMIT_MESSAGE, canAddColumn } from '@/lib/collection/limits';
@@ -160,15 +161,6 @@ export async function reorderProperties(
   revalidatePath(`/collections/${collectionId}`);
 }
 
-function decodeStored(raw: unknown): unknown {
-  if (typeof raw !== 'string') return raw ?? null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return raw;
-  }
-}
-
 /**
  * G299：改字段类型时尽力转换现有值（官方「如果可以转换，修改字段类型将会转换当前值。」）。
  * 转不了的写 null，而不是把整列清空；配置与名称不动。
@@ -194,9 +186,11 @@ export async function changePropertyType(propertyId: string, type: string) {
   const values = await db.orm.public.CollectionValue.where({ propertyId }).all();
   for (const row of values) {
     if ((row as any).deletedAt) continue;
-    const converted = convertCellValue(decodeStored((row as any).value), nextType);
+    // 读侧先解包（G451）：存的是 `{type, theme, value}`，直接送进 convert 会把整个对象当值。
+    const converted = convertCellValue(parseCellValue((row as any).value), nextType);
+    const typed = toTypedValue(nextType, converted);
     await db.orm.public.CollectionValue.where({ id: (row as any).id }).update({
-      value: converted === null || converted === undefined ? null : JSON.stringify(converted),
+      value: typed.value == null ? null : JSON.stringify(typed),
     });
   }
 

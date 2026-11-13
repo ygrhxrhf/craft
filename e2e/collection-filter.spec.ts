@@ -56,10 +56,12 @@ async function addProperty(page: Page, name: string, typeLabel: string) {
   await page.getByLabel('属性名称').fill(name);
   // `getByRole('combobox').last()` picked the wrong select — the column was created as text and
   // the operator menu correctly kept showing the string tier, which read like a product bug.
-  await page.getByLabel('属性类型').selectOption({ label: typeLabel });
-  // Assert before submitting: if the select never took the value, the wrong tier reaching the menu
+  // G396: the type picker is a radiogroup of icon buttons, not a <select>.
+  const typeGroup = page.getByLabel('属性类型');
+  await typeGroup.getByRole('radio', { name: typeLabel }).click();
+  // Assert before submitting: if the pick never took, the wrong tier reaching the menu
   // later would otherwise look like a permission-table bug.
-  await expect(page.getByLabel('属性类型')).toHaveValue(typeLabel === '数字' ? 'number' : typeLabel);
+  await expect(typeGroup.getByRole('radio', { name: typeLabel })).toBeChecked();
   await page.getByRole('button', { name: /^创建$|^添加$|^确定$/ }).first().click();
   await expect(page.getByLabel('属性名称')).toHaveCount(0);
 }

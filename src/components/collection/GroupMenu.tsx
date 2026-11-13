@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Group, X } from 'lucide-react';
 import { useState } from 'react';
+import { parseCellValue } from '@/lib/collection/cell-value';
 import type { getCollection } from '@/actions/collection/collection';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
@@ -113,7 +114,7 @@ export function applyGrouping(items: any[], groupBy: string | null, properties: 
     grouped.set('__ungrouped__', []);
 
     for (const item of items) {
-      const value = parseValue(item.values?.find((v: any) => v.propertyId === groupBy)?.value);
+      const value = parseCellValue(item.values?.find((v: any) => v.propertyId === groupBy)?.value) as string | null;
       if (value && grouped.has(value)) {
         grouped.get(value)!.push(item);
       } else {
@@ -125,7 +126,7 @@ export function applyGrouping(items: any[], groupBy: string | null, properties: 
     grouped.set('false', []);
 
     for (const item of items) {
-      const value = parseValue(item.values?.find((v: any) => v.propertyId === groupBy)?.value);
+      const value = parseCellValue(item.values?.find((v: any) => v.propertyId === groupBy)?.value);
       const key = value ? 'true' : 'false';
       grouped.get(key)!.push(item);
     }
@@ -139,7 +140,7 @@ export function applyGrouping(items: any[], groupBy: string | null, properties: 
     grouped.set('__ungrouped__', []);
 
     for (const item of items) {
-      const value = parseValue(item.values?.find((v: any) => v.propertyId === groupBy)?.value);
+      const value = parseCellValue(item.values?.find((v: any) => v.propertyId === groupBy)?.value);
       if (Array.isArray(value) && value.length > 0) {
         for (const optionId of value) {
           if (grouped.has(optionId)) {
@@ -161,15 +162,5 @@ function parseConfig(config: string | null): any {
     return typeof config === 'string' ? JSON.parse(config) : config;
   } catch {
     return {};
-  }
-}
-
-function parseValue(raw: any): any {
-  if (raw == null || raw === '') return null;
-  if (typeof raw !== 'string') return raw;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return raw;
   }
 }

@@ -8,6 +8,7 @@ import { CellDisplay } from '@/components/collection/PropertyCell';
 import { applyFilters } from '@/components/collection/FilterBar';
 import { applySorts } from '@/components/collection/SortMenu';
 import { addItem, deleteItem } from '@/actions/collection/items';
+import { parseCellValue } from '@/lib/collection/cell-value';
 import type { getCollection } from '@/actions/collection/collection';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
@@ -20,16 +21,6 @@ function parseConfig(raw: unknown): any {
     return JSON.parse(raw);
   } catch {
     return {};
-  }
-}
-
-function parseValue(raw: unknown): any {
-  if (raw == null || raw === '') return null;
-  if (typeof raw !== 'string') return raw;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return raw;
   }
 }
 
@@ -61,7 +52,7 @@ export function GalleryView({ collection, view }: { collection: NonNullable<Coll
 
   const coverOf = (item: any): string | null => {
     for (const property of properties) {
-      const value = parseValue(valueOf(item, property.id));
+      const value = parseCellValue(valueOf(item, property.id)) as any;
       if (property.type === 'file' && typeof value?.url === 'string') return value.url;
       if (typeof value === 'string' && /^(https?:\/\/\S+\.(png|jpe?g|gif|webp|avif)|data:image\/)/i.test(value)) return value;
     }
@@ -89,7 +80,7 @@ export function GalleryView({ collection, view }: { collection: NonNullable<Coll
               </div>
               <div className="flex flex-col gap-1 p-3">
                 <p className="truncate text-sm font-medium">
-                  {String(parseValue(valueOf(item, primary?.id)) ?? '') || '未命名'}
+                  {String(parseCellValue(valueOf(item, primary?.id)) ?? '') || '未命名'}
                 </p>
                 {rest.slice(0, 3).map((property: any) => (
                   <p

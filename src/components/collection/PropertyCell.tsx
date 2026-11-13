@@ -2,7 +2,7 @@
 
 import { buildRelationValue, relationItems, relationTargetId } from '@/lib/collection/relation-value';
 import { normalizeDateValue } from '@/lib/collection/date-value';
-import { rawValueOf } from '@/lib/collection/cell-value';
+import { parseCellValue } from '@/lib/collection/cell-value';
 import { DEFAULT_NUMBER_FORMAT, formatNumber as formatNumberFor, isNumberFormat, type NumberFormat } from '@/lib/collection/property-types';
 import { cellKeyAction } from '@/lib/collection/cell-key';
 import { draftTextFor, normalizeTextCommit, parseNumberInput } from '@/lib/collection/cell-edit';
@@ -56,16 +56,9 @@ interface PropertyCellProps {
 }
 
 function parseValue(raw: any): any {
-  if (raw == null || raw === '') return null;
   // G451: a typed cell value `{type, theme, value}` reads back as its bare `value`; a legacy bare
   // value passes through unchanged.
-  if (typeof raw === 'object') return rawValueOf(raw);
-  if (typeof raw !== 'string') return raw;
-  try {
-    return rawValueOf(JSON.parse(raw));
-  } catch {
-    return raw;
-  }
+  return parseCellValue(raw);
 }
 
 export function PropertyCell({ property, value, onChange, item, properties }: PropertyCellProps) {

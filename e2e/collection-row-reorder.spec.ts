@@ -108,11 +108,13 @@ test('a collection row can be dragged to a new position, and the order survives 
 });
 
 /**
- * 筛选只减少屏上行数，不改顺序的来源：重排必须按**全集**算。
- * 旧实现拿筛选后的子集去 renumber，可见行会被压成 0..k-1，与隐藏行撞号 ——
- * 撤掉筛选后顺序就不再是用户拖出来的那个。
+ * G283：带筛选的视图也不提供拖拽——官方 `collections.drag.drop.not.available.desc`
+ * 「已筛选、排序或分组的集合不支持拖放操作」；撤掉筛选后手柄回来，顺序原样。
+ *
+ * 全集重排的序号语义（不把可见子集压成 0..k-1）由 `item-reorder.test.ts` 的 `planReorder`
+ * 用例钉住：筛选期间屏上没有手柄可拖，这条路只剩纯核可测。
  */
-test('a filtered view reorders the whole collection, not just the visible rows', async ({ page }) => {
+test('a filtered view offers no drag handles, and clearing the filter restores them', async ({ page }) => {
   await signIn(page);
   await createCollection(page);
 
@@ -140,35 +142,29 @@ test('a filtered view reorders the whole collection, not just the visible rows',
   await fillFirstCell(page, 1, middle);
   await fillFirstCell(page, 2, last);
 
-  // 筛掉中间那行：屏上只剩 first 与 last，手柄仍在（筛选不在 canReorder 的判据里）
+  // 先等三行的值都进了屏上的行数据，再开筛选：筛选是按行值就地评的，
+  // 值还没回来时（写库后的 RSC 刷新可能晚到十几秒）`string_doesNotContain` 对空值一律为假，
+  // 整屏会 0 行且不会自己恢复。
+  await expect
+    .poll(() => rowLabels(page), { timeout: 30_000 })
+    .toEqual([`拖动排序 ${first}`, `拖动排序 ${middle}`, `拖动排序 ${last}`]);
+
+  // 筛掉中间那行：屏上只剩 first 与 last
   await main.getByRole('button', { name: '添加筛选器' }).click();
   await main.getByRole('button', { name: '添加条件' }).click();
   const filterRow = page.getByTestId('filter-row').first();
   await filterRow.locator('select').first().selectOption({ label: '名称' });
   await filterRow.getByTestId('filter-operator').selectOption('string_doesNotContain');
   await filterRow.getByTestId('filter-value').fill(middle);
-  await expect(page.locator('tbody tr[data-row-id]')).toHaveCount(2, { timeout: 20_000 });
+  await expect(page.locator('tbody tr[data-row-id]')).toHaveCount(2, { timeout: 30_000 });
 
-  // 把 first 拖到 last 的位置：全集下标 0 -> 2
-  await page
-    .getByRole('button', { name: `拖动排序 ${first}` })
-    .dragTo(page.locator('tbody tr[data-row-id]').nth(1));
+  // 筛选生效期间**没有**拖拽手柄（G283：与排序/分组一样禁拖）
+  await expect(page.locator('tbody tr[data-row-id] button[aria-label^="拖动排序"]')).toHaveCount(0);
 
-  // 先等屏上顺序真的换过来（`handleDrop` 是 push 完才 refresh，抢在推送前 reload 会读到旧序）
-  await expect
-    .poll(() => rowLabels(page), { timeout: 20_000 })
-    .toEqual([`拖动排序 ${last}`, `拖动排序 ${first}`]);
-
-  await page.reload();
-  await expect
-    .poll(() => rowLabels(page), { timeout: 20_000 })
-    .toEqual([`拖动排序 ${last}`, `拖动排序 ${first}`]);
-
-  // 撤掉筛选：被藏起来的中间行必须回到它原来的位置，即 middle / last / first
-  await main.getByRole('button', { name: '添加筛选器' }).click();
+  // 撤掉筛选：条件行上的 X 直接删条件（筛选条一直开着，「添加筛选器」入口只在收起时才有）
   await page.getByTestId('filter-row').first().getByRole('button').click();
-  await expect(page.locator('tbody tr[data-row-id]')).toHaveCount(3, { timeout: 20_000 });
+  await expect(page.locator('tbody tr[data-row-id]')).toHaveCount(3, { timeout: 30_000 });
   await expect
-    .poll(() => rowLabels(page), { timeout: 20_000 })
-    .toEqual([`拖动排序 ${middle}`, `拖动排序 ${last}`, `拖动排序 ${first}`]);
+    .poll(() => rowLabels(page), { timeout: 30_000 })
+    .toEqual([`拖动排序 ${first}`, `拖动排序 ${middle}`, `拖动排序 ${last}`]);
 });

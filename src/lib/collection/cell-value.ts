@@ -34,6 +34,24 @@ export function rawValueOf(cell: unknown): unknown {
   return isTypedValue(cell) ? cell.value : cell;
 }
 
+/**
+ * 读侧统一入口：把库里读回来的单元格解成裸值。
+ *
+ * `CollectionValue.value` 是 `Json?`，同一格可能以三种形态到达读侧——判别对象（`db.orm` 已解码）、
+ * 判别对象的 JSON 字符串（未解码），或 G451 之前的裸值。三条路都得归到裸值，否则
+ * `String(cell)` 落成 `[object Object]`、筛选/排序/分组/汇总全按对象比较。
+ */
+export function parseCellValue(raw: unknown): unknown {
+  if (raw == null || raw === '') return null;
+  if (isTypedValue(raw)) return raw.value ?? null;
+  if (typeof raw !== 'string') return raw;
+  try {
+    return rawValueOf(JSON.parse(raw));
+  } catch {
+    return raw;
+  }
+}
+
 /** 判别对象认出来了吗——`type` 与 `value` 两格都在（`value` 允许为 `null`）。 */
 export function isTypedValue(input: unknown): input is { type: unknown; theme?: unknown; value?: unknown } {
   return (

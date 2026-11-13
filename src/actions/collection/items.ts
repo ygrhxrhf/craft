@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { revalidatePath } from 'next/cache';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
-import { toTypedValue } from '@/lib/collection/cell-value';
+import { parseCellValue, toTypedValue } from '@/lib/collection/cell-value';
 import { validateMultiSelect, validateSelect } from '@/lib/collection/value-validation';
 import { normalizeCellValue } from '@/lib/collection/cell-edit';
 import { coerceTextForType } from '@/lib/collection/coerce';
@@ -222,15 +222,6 @@ function readOptionIds(config: unknown): string[] {
   return options.map((o) => String((o as { id?: unknown })?.id ?? '')).filter(Boolean);
 }
 
-function parseStoredValue(raw: unknown): unknown {
-  if (typeof raw !== 'string') return raw ?? null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return raw;
-  }
-}
-
 /**
  * G284：删分组＝清字段值，不删行。官方文案「这将删除 [1] 个项目中的"[0]"值。项目本身不会被删除。」
  * 单选命中组键，多选从数组里摘掉该键（摘空写 null）；检查框按布尔组键处理。
@@ -249,11 +240,12 @@ export async function clearGroupValues(collectionId: string, propertyId: string,
     throw new Error('属性不存在');
   }
 
+  const propType = String((property as any).type ?? 'text');
   const values = await db.orm.public.CollectionValue.where({ propertyId }).all();
   let cleared = 0;
   for (const row of values) {
     if ((row as any).deletedAt) continue;
-    const parsed = parseStoredValue((row as any).value);
+    const parsed = parseCellValue((row as any).value);
     if (parsed === null || parsed === undefined) continue;
 
     let next: unknown;
@@ -267,8 +259,10 @@ export async function clearGroupValues(collectionId: string, propertyId: string,
       continue;
     }
 
+    // 写回也走判别对象（G451）：裸值写进去，读侧就再也分不出这是哪种类型的空。
+    const typed = toTypedValue(propType, next);
     await db.orm.public.CollectionValue.where({ id: (row as any).id }).update({
-      value: next === null ? null : JSON.stringify(next),
+      value: typed.value == null ? null : JSON.stringify(typed),
     });
     cleared += 1;
   }

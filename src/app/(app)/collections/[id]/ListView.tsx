@@ -5,6 +5,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { addItem, deleteItem, setItemValue } from '@/actions/collection/items';
 import { useRouter } from 'next/navigation';
 import { PropertyCell } from '@/components/collection/PropertyCell';
+import { parseCellValue } from '@/lib/collection/cell-value';
 import type { getCollection } from '@/actions/collection/collection';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
@@ -39,7 +40,7 @@ export function ListView({ collection }: ListViewProps) {
 
   const getCellValue = (item: any, propertyId: string) => {
     const v = item.values?.find((val: any) => val.propertyId === propertyId);
-    return v?.value ?? '';
+    return parseCellValue(v?.value);
   };
 
   return (

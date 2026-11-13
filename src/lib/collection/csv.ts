@@ -8,6 +8,19 @@
  *   - 表头＝属性名（按属性 order 排）。
  */
 
+import { isTypedValue, rawValueOf } from './cell-value';
+
+/** 导出只认判别对象，别的字符串原样出去——一段恰好是 JSON 的文本不能被改写。 */
+function typedValueOf(raw: unknown): unknown {
+  if (typeof raw !== 'string') return rawValueOf(raw);
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return isTypedValue(parsed) ? parsed.value : raw;
+  } catch {
+    return raw;
+  }
+}
+
 /** 一个单元格：任何值都转成字符串；null/undefined 记空串。 */
 function cell(value: unknown): string {
   if (value === null || value === undefined) return '';
@@ -127,10 +140,12 @@ export function rowsFromItems(
     const row: CsvRow = {};
     for (const v of item.values) {
       const key = v.propertyId;
+      // G451：库里存的是 `{type, theme, value}` 判别对象，导出要的是裸值。
+      const value = typedValueOf(v.value);
       if (key in row) {
-        row[key] = `${String(row[key])}; ${cell(v.value)}`;
+        row[key] = `${String(row[key])}; ${cell(value)}`;
       } else {
-        row[key] = v.value;
+        row[key] = value;
       }
     }
     return row;

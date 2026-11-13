@@ -25,6 +25,8 @@ async function createCollection(page: Page): Promise<void> {
 
 const dialog = (page: Page): Locator => page.locator('[data-testid="imperative-dialog"]');
 const headerNames = (page: Page) => page.locator('thead th .truncate');
+/** G691: 首个文本列的表头显示行标题列名（默认 `Title`），字段名只进「字段操作」按钮的可及名。 */
+const TITLE_COLUMN_LABEL = 'Title';
 
 /**
  * G1537：集合字段（列）可改名／隐藏／删除／重排。
@@ -52,41 +54,48 @@ test('a collection field can be renamed, hidden, reordered and deleted', async (
   await expect(main.getByRole('button', { name: `字段操作 ${renamed}` })).toBeVisible({ timeout: 20_000 });
   await page.screenshot({ path: 'screenshots/tmp-field-menu-rename.png', fullPage: true });
 
-  // ② 再加一列，好验证排序真的动了位置（而不是只有一列时"动不了"）
+  // ② 再加两列，好验证排序真的动了位置：标题列被钉在第一位（G105），
+  //    能动的只有非标题列，所以要两条非标题列才看得出上移。
   const second = `数字列 ${stamp}`;
-  await main.getByRole('button', { name: '属性', exact: true }).click();
-  await page.getByLabel('属性名称').fill(second);
-  await page.getByLabel('属性类型').selectOption({ label: '数字' });
-  await page.getByRole('button', { name: /^创建$/ }).click();
-  await expect(page.getByLabel('属性名称')).toHaveCount(0);
-  await expect(main.getByRole('button', { name: `字段操作 ${second}` })).toBeVisible({ timeout: 20_000 });
+  const third = `数字列二 ${stamp}`;
+  for (const name of [second, third]) {
+    await main.getByRole('button', { name: '属性', exact: true }).click();
+    await page.getByLabel('属性名称').fill(name);
+    // G396: the type picker is a radiogroup of icon buttons, not a <select>.
+    await page.getByLabel('属性类型').getByRole('radio', { name: '数字' }).click();
+    await page.getByRole('button', { name: /^创建$/ }).click();
+    await expect(page.getByLabel('属性名称')).toHaveCount(0);
+    await expect(main.getByRole('button', { name: `字段操作 ${name}` })).toBeVisible({ timeout: 20_000 });
+  }
 
-  await expect(headerNames(page)).toHaveText([renamed, second]);
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, second, third]);
 
-  // ③ 重排：官方把「隐藏和排序字段」放在视图工具条上，面板里把第二列上移
+  // ③ 重排：官方把「隐藏和排序字段」放在视图工具条上，面板里把第三列上移
   await main.getByRole('button', { name: '隐藏和排序字段' }).click();
   const panel = page.getByRole('dialog');
   await expect(panel.getByRole('heading', { name: '隐藏和排序字段' })).toBeVisible();
-  await panel.getByRole('button', { name: `上移 ${second}` }).click();
-  await expect(headerNames(page)).toHaveText([second, renamed], { timeout: 20_000 });
+  // 标题列钉在第一位 ⇒ 它的上移是禁用的
+  await expect(panel.getByRole('button', { name: `上移 ${renamed}` })).toBeDisabled();
+  await panel.getByRole('button', { name: `上移 ${third}` }).click();
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, third, second], { timeout: 20_000 });
   await panel.getByRole('button', { name: '关闭' }).click();
-  await expect(headerNames(page)).toHaveText([second, renamed]);
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, third, second]);
   await page.screenshot({ path: 'screenshots/tmp-field-menu-reorder.png', fullPage: true });
 
   // 刷新后字段顺序仍保持，确认 order 已持久化
   await page.reload();
-  await expect(headerNames(page)).toHaveText([second, renamed], { timeout: 20_000 });
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, third, second], { timeout: 20_000 });
 
   // ④ 隐藏：官方「隐藏字段」；面板底部的隐藏计数是官方单复数两键
   await main.getByRole('button', { name: `字段操作 ${second}` }).click();
   await page.getByRole('menuitem', { name: '隐藏字段' }).click();
   await expect(main.getByRole('button', { name: `字段操作 ${second}` })).toHaveCount(0, { timeout: 20_000 });
-  await expect(headerNames(page)).toHaveText([renamed]);
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, third]);
 
   // 刷新后隐藏状态仍保持，确认 isVisible 已持久化
   await page.reload();
   await expect(main.getByRole('button', { name: `字段操作 ${second}` })).toHaveCount(0, { timeout: 20_000 });
-  await expect(headerNames(page)).toHaveText([renamed]);
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, third]);
 
   await main.getByRole('button', { name: '隐藏和排序字段' }).click();
   await expect(panel.getByTestId('hidden-field-count')).toHaveText('1 个隐藏字段');
@@ -94,11 +103,11 @@ test('a collection field can be renamed, hidden, reordered and deleted', async (
   await panel.getByRole('button', { name: `显示/隐藏字段 ${second}` }).click();
   await expect(panel.getByTestId('hidden-field-count')).toHaveText('0 隐藏字段', { timeout: 20_000 });
   await panel.getByRole('button', { name: '关闭' }).click();
-  await expect(headerNames(page)).toHaveText([second, renamed], { timeout: 20_000 });
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, third, second], { timeout: 20_000 });
 
   // 恢复显示后再次刷新，确认 isVisible=false -> true 也已持久化
   await page.reload();
-  await expect(headerNames(page)).toHaveText([second, renamed], { timeout: 20_000 });
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, third, second], { timeout: 20_000 });
 
   // ⑤ 删除：确认句逐字是官方那句，删完列从表头消失
   await main.getByRole('button', { name: `字段操作 ${second}` }).click();
@@ -107,9 +116,9 @@ test('a collection field can be renamed, hidden, reordered and deleted', async (
   await page.screenshot({ path: 'screenshots/tmp-field-menu-delete-confirm.png', fullPage: true });
   await dialog(page).getByRole('button', { name: '删除', exact: true }).click();
   await expect(dialog(page)).toHaveCount(0);
-  await expect(headerNames(page)).toHaveText([renamed], { timeout: 20_000 });
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, third], { timeout: 20_000 });
 
   // 刷新后仍是同一个结果（写入真的落了库，不只是本地乐观态）
   await page.reload();
-  await expect(headerNames(page)).toHaveText([renamed], { timeout: 20_000 });
+  await expect(headerNames(page)).toHaveText([TITLE_COLUMN_LABEL, third], { timeout: 20_000 });
 });

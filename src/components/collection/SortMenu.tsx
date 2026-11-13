@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpDown, X, Plus } from 'lucide-react';
 import { useState } from 'react';
 import type { getCollection } from '@/actions/collection/collection';
+import { parseCellValue } from '@/lib/collection/cell-value';
 import { compareForSort } from '@/lib/collection/sort-compare';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
@@ -122,8 +123,8 @@ export function applySorts(items: any[], sorts: SortRule[], properties: any[]): 
       const property = properties.find((p: any) => p.id === sort.propertyId);
       if (!property) continue;
 
-      const aValue = parseValue(a.values?.find((v: any) => v.propertyId === sort.propertyId)?.value);
-      const bValue = parseValue(b.values?.find((v: any) => v.propertyId === sort.propertyId)?.value);
+      const aValue = parseCellValue(a.values?.find((v: any) => v.propertyId === sort.propertyId)?.value);
+      const bValue = parseCellValue(b.values?.find((v: any) => v.propertyId === sort.propertyId)?.value);
 
       // One Collator for every column type, blanks first in both directions — protocol §9's
       // single sort rule, replacing the three-way number/date/string branch this used to take.
@@ -133,14 +134,4 @@ export function applySorts(items: any[], sorts: SortRule[], properties: any[]): 
 
     return 0;
   });
-}
-
-function parseValue(raw: any): any {
-  if (raw == null || raw === '') return null;
-  if (typeof raw !== 'string') return raw;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return raw;
-  }
 }

@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { HIDE_ORDER_FIELDS, SHOW_HIDE_FIELDS, formatHiddenFields } from '@/lib/collection/field-menu-copy';
-import type { ViewFields } from '@/lib/collection/view-fields';
+import { fieldShownInView, hiddenFieldCount, type ViewFields } from '@/lib/collection/view-fields';
 
 interface FieldRow {
   id: string;
@@ -34,10 +34,14 @@ interface HideOrderFieldsMenuProps {
  *
  * G81：可见性与顺序是**每个视图一套** ⇒ 这两枚动作只改视图 config（`hiddenProperties` /
  * `customPropertyOrder`），不再写 `collection_property` 行——换一个视图，字段表就跟着换。
+ *
+ * 眼睛与计数按**两层**算（`fieldShownInView`）：列菜单的「隐藏字段」写的是全局下线，列从表上消失
+ * 后这里若只读本视图那一层，就会报「0 隐藏字段」且眼睛还是睁的。把全局那一枚点回来由 `onToggle`
+ * 的持有者负责（它才知道属性行在哪），面板自己仍然只调这一枚回调。
  */
 export function HideOrderFieldsMenu({ rows, hidden, onToggle, onMove }: HideOrderFieldsMenuProps) {
   const [open, setOpen] = useState(false);
-  const hiddenCount = hidden.length;
+  const hiddenCount = hiddenFieldCount(rows, hidden);
 
   return (
     <>
@@ -54,7 +58,7 @@ export function HideOrderFieldsMenu({ rows, hidden, onToggle, onMove }: HideOrde
 
           <ul className="flex max-h-[50dvh] flex-col gap-1 overflow-y-auto">
             {rows.map((row, index) => {
-              const visible = !hidden.includes(row.id);
+              const visible = fieldShownInView(row, hidden);
               return (
                 <li key={row.id} className="flex items-center gap-2 rounded-md border border-border px-2 py-1.5">
                   <span className="min-w-0 flex-1 truncate text-sm">{row.name}</span>

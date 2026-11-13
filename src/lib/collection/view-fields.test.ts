@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   EMPTY_VIEW_FIELDS,
+  fieldShownInView,
   fieldsForView,
+  hiddenFieldCount,
   moveField,
   readViewFields,
   toggleFieldHidden,
@@ -45,5 +47,14 @@ describe('per-view fields (G81)', () => {
     const moved = moveField(EMPTY_VIEW_FIELDS, ['a', 'b', 'c'], 'b', -1);
     expect(moved.order).toEqual(['b', 'a', 'c']);
     expect(moveField(EMPTY_VIEW_FIELDS, ['a', 'b', 'c'], 'a', -1)).toEqual(EMPTY_VIEW_FIELDS);
+  });
+
+  it('reports hidden for both the global and the per-view layer', () => {
+    expect(fieldShownInView({ id: 'a', isVisible: true }, [])).toBe(true);
+    expect(fieldShownInView({ id: 'a', isVisible: false }, [])).toBe(false);
+    expect(fieldShownInView({ id: 'a', isVisible: true }, ['a'])).toBe(false);
+
+    expect(hiddenFieldCount(columns, [])).toBe(1);
+    expect(hiddenFieldCount(columns, ['b'])).toBe(2);
   });
 });

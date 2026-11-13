@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { cn } from 'cn';
 import type { getCollection } from '@/actions/collection/collection';
+import { parseCellValue } from '@/lib/collection/cell-value';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
 type View = NonNullable<Collection>['views'][number];
@@ -14,16 +15,6 @@ type View = NonNullable<Collection>['views'][number];
 interface CalendarViewProps {
   collection: NonNullable<Collection>;
   view: View;
-}
-
-function parseValue(raw: any): any {
-  if (raw == null || raw === '') return null;
-  if (typeof raw !== 'string') return raw;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return raw;
-  }
 }
 
 function getDaysInMonth(year: number, month: number): number {
@@ -52,7 +43,7 @@ export function CalendarView({ collection }: CalendarViewProps) {
   if (dateProperty) {
     for (const item of collection.items) {
       const value = item.values?.find((v: any) => v.propertyId === dateProperty.id);
-      const parsed = parseValue(value?.value);
+      const parsed = parseCellValue(value?.value);
 
       if (parsed && typeof parsed === 'string') {
         const existing = itemsByDate.get(parsed) ?? [];

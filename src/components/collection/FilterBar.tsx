@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { X, Plus } from 'lucide-react';
 import { useState } from 'react';
 import type { getCollection } from '@/actions/collection/collection';
+import { parseCellValue } from '@/lib/collection/cell-value';
 import { OPERATORS, applyFilter, operatorsFor, resolveOperator } from '@/lib/collection/filter-operators';
 
 type Collection = Awaited<ReturnType<typeof getCollection>>;
@@ -188,17 +189,7 @@ export function applyFilters(items: any[], filters: Filter[], properties: any[])
       if (!property) return true;
 
       const value = item.values?.find((v: any) => v.propertyId === filter.propertyId)?.value;
-      return applyFilter(filter, parseValue(value), property.type);
+      return applyFilter(filter, parseCellValue(value), property.type);
     });
   });
-}
-
-function parseValue(raw: any): any {
-  if (raw == null || raw === '') return null;
-  if (typeof raw !== 'string') return raw;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return raw;
-  }
 }

@@ -5,6 +5,7 @@ import { getDb } from '@/prisma/db';
 import { extractBlocks } from '@/lib/search/extract';
 import { documentHitCount } from '@/lib/search/hit-count';
 import { snippetAround, type Snippet } from '@/lib/search/highlight';
+import { parseCellValue } from '@/lib/collection/cell-value';
 
 export interface SearchResultDoc {
   id: string;
@@ -237,14 +238,7 @@ async function searchCollectionRows(
     const itemId = String(entry.itemId);
     if (seen.has(itemId)) continue;
 
-    let text: unknown = entry.value;
-    if (typeof text === 'string') {
-      try {
-        text = JSON.parse(text);
-      } catch {
-        /* keep the raw string */
-      }
-    }
+    const text = parseCellValue(entry.value);
     const rendered = Array.isArray(text) ? text.join(', ') : String(text ?? '');
     if (!rendered.toLowerCase().includes(needle)) continue;
 

@@ -10,6 +10,7 @@ import { toast } from '@/components/ui/toast';
 import { operationFailed } from '@/lib/errors/alert-copy';
 import { confirmDialog } from '@/lib/dialog/show';
 import { getSyncManager } from '@/lib/sync-core';
+import { parseCellValue } from '@/lib/collection/cell-value';
 import { canReorder, planReorder, type OrderedRow } from '@/lib/collection/item-reorder';
 import {
   COLUMN_DROP_MIME,
@@ -187,6 +188,22 @@ export function TableView({ collection, view }: TableViewProps) {
   })();
 
   const toggleField = (id: string) => {
+    // 全局下线（列菜单「隐藏字段」写的 `isVisible=false`）压在视图之上：视图这层只能再加隐藏，
+    // 不能反向打开。眼睛要把这种列点回来，就得改属性行，否则那一下点了没反应。
+    const row = menuRows.find((entry) => entry.id === id);
+    if (row && !row.isVisible) {
+      const manager = getSyncManager();
+      void manager
+        .applyLocal({ table: 'collection_property', id, patch: { isVisible: true } })
+        .then(() => manager.flushNow())
+        .then(() => router.refresh());
+      if (viewFields.hidden.includes(id)) {
+        const next = toggleFieldHidden(viewFields, id);
+        setViewFields(next);
+        void persistConfig({ filters, sorts, groupBy, fields: next });
+      }
+      return;
+    }
     const next = toggleFieldHidden(viewFields, id);
     setViewFields(next);
     void persistConfig({ filters, sorts, groupBy, fields: next });
@@ -286,7 +303,7 @@ export function TableView({ collection, view }: TableViewProps) {
 
   const getCellValue = (item: any, propertyId: string) => {
     const v = item.values?.find((val: any) => val.propertyId === propertyId);
-    return v?.value ?? null;
+    return parseCellValue(v?.value);
   };
 
   // G1539/G283：带筛选、排序或分组时屏上顺序不由 order 决定 ⇒ 三态任一激活都不给拖。

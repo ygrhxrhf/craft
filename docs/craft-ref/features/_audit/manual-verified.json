@@ -5213,11 +5213,13 @@
     },
     "G363": {
       "status": "aligned",
-      "note": "第 190 批：周一起始 + 固定 6 行 + 今天高亮/选中态原有；补网格上方「今天」快捷行（date.today）",
+      "priority": "P2",
+      "note": "第 190 批：周一起始 + 固定 6 行 + 今天高亮/选中态；第 541 批：Calendar 默认 locale=zhCN（此前两处调用方未传 locale，月份头/星期落回英文 enUS）",
       "evidence": [
         "src/lib/calendar/month-grid.ts:1",
-        "src/components/ui/calendar.tsx:34",
-        "src/app/(app)/calendar/page.tsx:174"
+        "src/components/ui/calendar.tsx:23",
+        "src/app/(app)/calendar/page.tsx:180",
+        "src/components/task/TaskDatePopover.tsx:301"
       ]
     },
     "G364": {

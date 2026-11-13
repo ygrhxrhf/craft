@@ -15,3 +15,13 @@ describe('calendar highlight semantics (G366)', () => {
     expect(source).toContain('data-[selected-single=true]:text-background');
   });
 });
+
+/** G363: no caller passes `locale`, so the default is what makes the grid Chinese. */
+describe('calendar locale (G363)', () => {
+  const source = readFileSync(join(process.cwd(), 'src', 'components', 'ui', 'calendar.tsx'), 'utf8');
+
+  it('defaults to the Chinese locale instead of react-day-picker enUS', () => {
+    expect(source).toMatch(/import \{[^}]*zhCN[^}]*\} from ["']react-day-picker\/locale["']/);
+    expect(source).toMatch(/locale = zhCN/);
+  });
+});

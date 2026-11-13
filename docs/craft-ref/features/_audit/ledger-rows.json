@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T14:30:21.678Z",
+  "generatedAt": "2026-11-13T15:02:00.576Z",
   "totalRows": 1616,
   "statusDistribution": {
     "gap": 657,
@@ -7558,7 +7558,7 @@
       "cols": 5,
       "id": "G363",
       "official": "**日历控件细节**：周一起始（中文 locale）、6 行网格含上下月灰色补位、今天浅蓝底高亮、月份头有 `‹` **圆形靶心按钮** `›` 三控件、网格上方一行「今天」快捷项（V34 ②④⑤）",
-      "local": "✎ 现读（2026-11-02）：日历页用的是 `react-day-picker` 网格——`weekStartsOn={1}` ＋ `fixedWeeks`（恒 6 行、上下月补位灰格），今天浅蓝底（`bg-craft-accent/10`）、选中态 `bg-foreground text-background`，月份头是 `‹`/`›` 圆形按钮；第 190 批补上网格上方那行「今天」（语言包 `date.today`） ☆ 已清（第 190 批）",
+      "local": "✎ 现读（2026-11-02）：日历页用的是 `react-day-picker` 网格——`weekStartsOn={1}` ＋ `fixedWeeks`（恒 6 行、上下月补位灰格），今天浅蓝底（`bg-craft-accent/10`）、选中态 `bg-foreground text-background`，月份头是 `‹`/`›` 圆形按钮；第 190 批补上网格上方那行「今天」（语言包 `date.today`）；第 541 批补上 `locale = zhCN` 默认——此前 `locale` 虽在 `Calendar` 里一路转发，但两处调用方（日历页网格、任务日期弹层）都没传，`react-day-picker` 落回 `enUS`，月份头和星期渲染成英文（`November 2026`／`Mo Tu We…`），与本行「中文 locale」判据相违 ☆ 已清（第 190 批／第 541 批）",
       "verdict": "对齐",
       "score": "2/2",
       "status": "aligned",

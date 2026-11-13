@@ -8,6 +8,7 @@ import {
   type DayButton,
   type Locale,
 } from "react-day-picker"
+import { zhCN } from "react-day-picker/locale"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
@@ -18,7 +19,8 @@ function Calendar({
   showOutsideDays = true,
   captionLayout = "label",
   buttonVariant = "ghost",
-  locale,
+  // 全站中文；不传就落回 rdp 自带的 enUS，月份与星期会变英文。
+  locale = zhCN,
   formatters,
   components,
   ...props

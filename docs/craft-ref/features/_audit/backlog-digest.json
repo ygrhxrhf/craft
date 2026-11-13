@@ -1,12 +1,11 @@
 {
-  "generatedAt": "2026-11-13T00:51:32.863Z",
+  "generatedAt": "2026-11-13T05:24:41.247Z",
   "total": 1616,
   "status": {
-    "aligned": 823,
+    "aligned": 824,
     "nonaction": 541,
     "deliberate": 226,
-    "unreachable": 25,
-    "partial": 1
+    "unreachable": 25
   },
   "priority": {
     "3": 1,
@@ -20,7 +19,7 @@
     "P2 / aligned": 358,
     "P? / nonaction": 201,
     "P2 / nonaction": 175,
-    "P1 / aligned": 169,
+    "P1 / aligned": 170,
     "P? / aligned": 161,
     "P3 / aligned": 125,
     "P2 / deliberate": 90,
@@ -33,7 +32,6 @@
     "P0 / aligned": 9,
     "P3 / unreachable": 9,
     "P? / unreachable": 5,
-    "P1 / partial": 1,
     "P1 / unreachable": 1,
     "3 / aligned": 1
   },
@@ -986,8 +984,8 @@
         "cols": 5,
         "id": "G31",
         "official": "分隔线四档＝极细/细/常规/**粗**（R7）",
-        "local": "词汇表已迁到官方四档（`divider-styles.ts`），但 ★ 渲染层没跟上：`globals.css` 只给旧名 thin/medium/thick/dashed 写了规则，四个官方名全部落回基础 `hr` ⇒ 屏上四条一模一样（实屏截图实测到）。",
-        "verdict": "☆ 已清（四档各有宽度＋slash 四条命令）＝① `src/lib/editor/divider-commands.ts` 逐字收 `commands.insert.line.{extralight,light,regular,strong}` 四条，slash 面板由一条「分隔线」改成四条同名命令（各自 `setDivider(style)`），插入面板「插入 线」指向 常规；② `globals.css` 补官方四名的 `border-top` 宽度阶梯 1/2/3/6，旧名一律保留且宽度一字不动（改名不能改旧文档的样子），`light` 是四档里唯一没有旧名对应的一档；③ 单测 `divider-commands.test.ts` 17 条＝台账串逐字比对＋slash 接线＋**从 `globals.css` 抠出宽度断言严格递增**（这一条专为防\"词汇改了渲染没改\"）；实屏 `e2e/editor.spec.ts` 的 INSERTS 逐档断言 `hr[data-type=\"divider\"][data-style=\"X\"]`，四档截图核对宽度肉眼可辨。★ 遗留：`pageSeparator`（`===`）在官方 slash 四条之外，CSS 仍无规则。",
+        "local": "词汇表已用官方四档（`divider-styles.ts`），渲染层同批跟上：`globals.css:1060-1086` 给官方五名各写了规则——极细＝三点省略号（`radial-gradient`）、细＝2px 点线、常规＝1px 实线、粗＝3px 实线、`pageSeparator`＝`border-top:1px dashed` ＋ `page-break-after:always`；旧名 thin/medium/thick/dashed 一律保留且宽度一字不动（改名不能改旧文档的样子）。单测 `divider-commands.test.ts:68-100` 逐档断言图案/分页与旧名保真。",
+        "verdict": "☆ 已清（四档＋pageSeparator 各有规则，旧名保真）",
         "score": "1/1",
         "status": "aligned",
         "scoreParsed": {
@@ -998,8 +996,11 @@
         "conflict": null,
         "priority": "P2",
         "evidence": [
-          "src/lib/editor/divider-commands.ts"
+          "src/app/globals.css:1060",
+          "src/app/globals.css:1080",
+          "src/lib/editor/divider-commands.test.ts:68"
         ],
+        "note": "官方五名（含 pageSeparator）各有渲染规则，旧名 thin/medium/thick/dashed 宽度保真；单测逐档断言",
         "baseStatus": "aligned"
       },
       {
@@ -1179,10 +1180,5 @@
     }
   ],
   "unknownSections": [],
-  "gapSections": [
-    [
-      "三点三一、第 26 批（V33 首个动态观测：任务块三时间图标 + 信息",
-      1
-    ]
-  ]
+  "gapSections": []
 }

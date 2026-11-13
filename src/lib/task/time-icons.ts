@@ -49,7 +49,12 @@ export function litIcons(state: TimeIconState): TimeIconKind[] {
   return lit;
 }
 
-/** 三枚恒在（未点亮的也占位，好让行内布局稳定）。 */
-export function alwaysVisible(): TimeIconKind[] {
-  return ['schedule', 'deadline', 'reminder'];
+/** G357：行处于**选中或悬停**态时三枚一起出现；否则只留已点亮的那几枚（官方 V37/V42）。 */
+export interface TimeIconVisibility extends TimeIconState {
+  active: boolean;
+}
+
+export function visibleIcons(state: TimeIconVisibility): TimeIconKind[] {
+  const lit = litIcons(state);
+  return TIME_ICONS.map((icon) => icon.kind).filter((kind) => state.active || lit.includes(kind));
 }

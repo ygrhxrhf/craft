@@ -70,12 +70,14 @@ function sourceFiles(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-/** 从 openIdx 处的 '{' 找到配对的 '}'（跳过字符串字面量）。 */
+/** 从 openIdx 处的 '{' 找到配对的 '}'（跳过字符串字面量与注释）。 */
 function matchBrace(text: string, openIdx: number): number {
   let depth = 0, str: string | null = null;
   for (let i = openIdx; i < text.length; i++) {
     const c = text[i];
     if (str) { if (c === str && text[i - 1] !== '\\') str = null; continue; }
+    if (c === '/' && text[i + 1] === '/') { while (i < text.length && text[i] !== '\n') i++; continue; }
+    if (c === '/' && text[i + 1] === '*') { const end = text.indexOf('*/', i + 2); i = end < 0 ? text.length : end + 1; continue; }
     if (c === '"' || c === "'" || c === '`') { str = c; continue; }
     if (c === '{' || c === '(' || c === '[') depth++;
     else if (c === '}' || c === ')' || c === ']') { depth--; if (depth === 0) return i; }
@@ -89,12 +91,20 @@ function topLevelKeys(obj: string): { name: string; resolved: boolean }[] {
   const keys: { name: string; resolved: boolean }[] = [];
   let depth = 0, str: string | null = null, i = 1;
   const ch = (k: number) => obj[k];
+  /** 注释整段跳过（行注释与块注释）；不跳的话注释里的词会被当成键名。 */
+  const skipComment = (): boolean => {
+    if (ch(i) !== '/') return false;
+    if (ch(i + 1) === '/') { while (i < obj.length && ch(i) !== '\n') i++; return true; }
+    if (ch(i + 1) === '*') { const end = obj.indexOf('*/', i + 2); i = end < 0 ? obj.length : end + 2; return true; }
+    return false;
+  };
   /** 走到下一条顶层条目（顶层逗号处连同逗号一起跨过）；顶层 '}' 则停下。 */
   const toNextEntry = (extra = 0) => {
     let d = depth + extra;
     while (i < obj.length - 1) {
       const c = ch(i);
       if (str) { if (c === str && ch(i - 1) !== '\\') str = null; i++; continue; }
+      if (skipComment()) continue;
       if (c === '"' || c === "'" || c === '`') { str = c; i++; continue; }
       if ('{(['.includes(c)) { d++; i++; continue; }
       if ('})]'.includes(c)) { if (d === 0) break; d--; i++; continue; }
@@ -105,6 +115,7 @@ function topLevelKeys(obj: string): { name: string; resolved: boolean }[] {
   while (i < obj.length - 1) {
     const c = ch(i);
     if (str) { if (c === str && ch(i - 1) !== '\\') str = null; i++; continue; }
+    if (skipComment()) continue;
     if (c === '"' || c === "'" || c === '`') { keys.push({ name: '(带引号的键)', resolved: false }); i++; continue; }
     if (depth !== 0 || /\s|,|:/.test(c)) { i++; continue; }
     if (c === '[') { keys.push({ name: '(计算键)', resolved: false }); i++; toNextEntry(1); continue; }

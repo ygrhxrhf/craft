@@ -10,7 +10,7 @@ import {
   unresolveReminder,
   type Reminder,
 } from './reminder-entity';
-import { alwaysVisible, iconSentence, litIcons, TIME_ICONS } from './time-icons';
+import { iconSentence, litIcons, TIME_ICONS, visibleIcons } from './time-icons';
 
 /**
  * G252: reminders attach to any block, block reminders get an editing-allowed deeplink, and an
@@ -101,7 +101,21 @@ describe('the three time icons (G357)', () => {
     expect(litIcons({ schedule: null, deadline: null, reminder: '10:00' })).toEqual(['reminder']);
   });
 
-  it('keeps all three icons present for a stable layout', () => {
-    expect(alwaysVisible()).toEqual(['schedule', 'deadline', 'reminder']);
+  it('floats all three on an active row even when nothing is set (V33/V37)', () => {
+    expect(visibleIcons({ schedule: null, deadline: null, reminder: null, active: true })).toEqual([
+      'schedule',
+      'deadline',
+      'reminder',
+    ]);
+  });
+
+  it('hides unset icons on a resting row (V37)', () => {
+    expect(visibleIcons({ schedule: null, deadline: null, reminder: null, active: false })).toEqual([]);
+  });
+
+  it('keeps the lit icon on a resting row (V42)', () => {
+    expect(
+      visibleIcons({ schedule: '2026-10-09T00:00:00.000Z', deadline: null, reminder: null, active: false }),
+    ).toEqual(['schedule']);
   });
 });

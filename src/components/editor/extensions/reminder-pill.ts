@@ -1,5 +1,6 @@
 import { Extension } from '@tiptap/core';
-import { Plugin, PluginKey } from '@tiptap/pm/state';
+import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
+import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import type { EditorView } from '@tiptap/pm/view';
 
@@ -25,12 +26,23 @@ import {
   setTaskReminderAt,
   taskItemTarget,
 } from '@/components/editor/drag-handle/block-actions';
-import { iconSentence } from '@/lib/task/time-icons';
+import { TIME_ICONS, iconSentence, visibleIcons } from '@/lib/task/time-icons';
+import { scheduleChipLabel } from '@/lib/task/schedule-chip';
 import { ANCHORABLE_TYPES } from '@/lib/search/anchors';
 
 const ANCHORABLE = new Set(ANCHORABLE_TYPES);
 
-export const REMINDER_PILL_KEY = new PluginKey('reminderPill');
+/** G357: the row the pointer is on, as a doc position inside its task item. */
+interface HoverState {
+  hover: number | null;
+}
+
+export const REMINDER_PILL_KEY = new PluginKey<HoverState>('reminderPill');
+
+/** The stored ISO string on a task attr, or `null` when unset. */
+function isoField(value: unknown): string | null {
+  return typeof value === 'string' && value ? value : null;
+}
 
 /** G252: the reminder currently on a top-level block, whichever shape carries it. */
 function reminderAtOf(view: EditorView, index: number): unknown {
@@ -98,24 +110,84 @@ function placeMenu(anchor: HTMLElement, menu: HTMLElement) {
   document.body.appendChild(menu);
 }
 
-/** G357: the calendar (schedule) and flag (deadline) icons shown beside the reminder pill. */
-function timeIcon(kind: 'schedule' | 'deadline', iso: string, view: EditorView, pos: number): HTMLElement {
-  const at = new Date(iso);
-  const dateText = Number.isNaN(at.getTime()) ? '' : `${at.getMonth() + 1}/${at.getDate()}`;
-  const label = dateText ? iconSentence(kind, dateText) : '';
-  const span = document.createElement('button');
-  span.type = 'button';
-  span.className = `task-time-icon task-time-icon-${kind}`;
-  span.dataset.timeIcon = kind;
-  span.textContent = kind === 'schedule' ? '📅' : '🚩';
-  if (label) span.title = label;
-  // Clicking opens the same day-menu the other entry points use; picking a day writes the field.
-  span.addEventListener('mousedown', (event) => {
+/** The innermost task item whose range holds a doc position, as its own start position. */
+function innermostTaskItem(doc: ProseMirrorNode, from: number): number | null {
+  const $pos = doc.resolve(from);
+  for (let depth = $pos.depth; depth > 0; depth -= 1) {
+    if ($pos.node(depth).type.name === 'taskItem') return $pos.before(depth);
+  }
+  return null;
+}
+
+/** G357: the row under the pointer, as the start position of its innermost task item. */
+function taskPosAtDOM(view: EditorView, target: EventTarget | null): number | null {
+  const row = target instanceof Element ? target.closest('.task-list-item') : null;
+  if (!(row instanceof HTMLElement) || !view.dom.contains(row)) return null;
+  try {
+    return innermostTaskItem(view.state.doc, view.posAtDOM(row, 0));
+  } catch {
+    return null;
+  }
+}
+
+/** G357: V34 — an open popover keeps the row selected, so park the caret there before opening. */
+function selectRow(view: EditorView, pos: number) {
+  if (innermostTaskItem(view.state.doc, view.state.selection.from) === pos) return;
+  const selection = TextSelection.near(view.state.doc.resolve(pos + 1));
+  view.dispatch(view.state.tr.setSelection(selection));
+}
+
+/**
+ * G357: the calendar (schedule) and flag (deadline) entries on a task row. A set value shows as a
+ * chip「📅 10月9日」 (V38：日历那枚升级成芯片，旗子仍是纯图标)；empty shows the bare icon.
+ */
+function timeIcon(
+  kind: 'schedule' | 'deadline',
+  iso: string | null,
+  view: EditorView,
+  pos: number,
+): HTMLElement {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = `task-time-icon task-time-icon-${kind}`;
+  button.dataset.timeIcon = kind;
+  const at = iso ? new Date(iso) : null;
+  const dateText = at && !Number.isNaN(at.getTime()) ? `${at.getMonth() + 1}/${at.getDate()}` : '';
+  const sentence = dateText ? iconSentence(kind, dateText) : null;
+  const chip = kind === 'schedule' ? scheduleChipLabel(iso) : null;
+  if (chip) {
+    button.dataset.timeIconValue = 'true';
+    button.textContent = `📅 ${chip}`;
+  } else {
+    button.textContent = kind === 'schedule' ? '📅' : '🚩';
+  }
+  button.title = sentence ?? TIME_ICONS.find((icon) => icon.kind === kind)?.label ?? '';
+  button.addEventListener('mousedown', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    openDayMenu(span, view, pos, kind === 'schedule' ? 'scheduleDate' : 'dueDate');
+    // 先摆菜单再选行：选行的事务会重绘 widget，旧按钮随即脱离文档，先量它就量到 0×0。
+    openDayMenu(button, view, pos, kind === 'schedule' ? 'scheduleDate' : 'dueDate');
+    selectRow(view, pos);
   });
-  return span;
+  return button;
+}
+
+/** G357: the reminder slot while empty — the ⏰ entry that opens the seven presets. */
+function reminderEntryIcon(view: EditorView, pos: number): HTMLElement {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'task-time-icon task-time-icon-reminder';
+  button.dataset.timeIcon = 'reminder';
+  button.textContent = '⏰';
+  button.title = TIME_ICONS.find((icon) => icon.kind === 'reminder')?.label ?? '';
+  button.addEventListener('mousedown', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    closeReminderMenu();
+    openPresetMenu(button, view, pos);
+    selectRow(view, pos);
+  });
+  return button;
 }
 
 /** A tiny day menu: 今天 / 明天 / 清除. Enough to set and clear the two date fields. */
@@ -148,7 +220,8 @@ function openDayMenu(
   placeMenu(anchor, menu);
 }
 
-function menuItem(label: string, onPick: () => void): HTMLButtonElement {  const item = document.createElement('button');
+function menuItem(label: string, onPick: () => void): HTMLButtonElement {
+  const item = document.createElement('button');
   item.type = 'button';
   item.className = 'reminder-menu-item';
   item.textContent = label;
@@ -249,9 +322,19 @@ export const ReminderPill = Extension.create({
   name: 'reminderPill',
 
   addProseMirrorPlugins() {
+    const setHover = (view: EditorView, next: number | null) => {
+      if (view.isDestroyed) return;
+      if ((REMINDER_PILL_KEY.getState(view.state)?.hover ?? null) === next) return;
+      view.dispatch(view.state.tr.setMeta(REMINDER_PILL_KEY, { hover: next }));
+    };
+
     return [
-      new Plugin({
+      new Plugin<HoverState>({
         key: REMINDER_PILL_KEY,
+        state: {
+          init: () => ({ hover: null }),
+          apply: (tr, prev) => tr.getMeta(REMINDER_PILL_KEY) ?? prev,
+        },
         view() {
           const onPointer = (event: PointerEvent) => {
             const target = event.target as HTMLElement | null;
@@ -261,30 +344,45 @@ export const ReminderPill = Extension.create({
           return { destroy: () => document.removeEventListener('pointerdown', onPointer) };
         },
         props: {
+          // G357：三枚图标是**选中/悬停才出现**的临时 affordance（V37），已点亮的那些常驻（V42）。
+          // 悬停态只走 meta 事务，`docChanged` 为假 ⇒ 不会标脏、不会触发保存。
+          handleDOMEvents: {
+            mouseover(view, event) {
+              setHover(view, taskPosAtDOM(view, event.target));
+              return false;
+            },
+            mouseout(view, event) {
+              const related = event.relatedTarget;
+              if (!(related instanceof Node) || !view.dom.contains(related)) setHover(view, null);
+              return false;
+            },
+            mouseleave(view) {
+              setHover(view, null);
+              return false;
+            },
+          },
           decorations(state) {
             const widgets: Decoration[] = [];
             const now = new Date();
+            const hover = REMINDER_PILL_KEY.getState(state)?.hover ?? null;
+            const selected = innermostTaskItem(state.doc, state.selection.from);
             state.doc.descendants((node, pos) => {
               if (node.type.name !== 'taskItem') return;
-              // G357: the schedule (calendar) and deadline (flag) icons ride the row beside the
-              // reminder pill, so the three time semantics each have their own in-document entry
-              // rather than one shared date box.
-              const schedule = node.attrs.scheduleDate;
-              if (typeof schedule === 'string' && schedule) {
+              const schedule = isoField(node.attrs.scheduleDate);
+              const deadline = isoField(node.attrs.dueDate);
+              const reminder = isoField(node.attrs.remindAt);
+              const active = hover === pos || selected === pos;
+              const end = pos + node.nodeSize - 1;
+              for (const kind of visibleIcons({ schedule, deadline, reminder, active })) {
+                // 有提醒时那一位由 pill 自己占着（带时刻文字），不再叠一枚空图标。
+                if (kind === 'reminder' && reminder) continue;
                 widgets.push(
                   Decoration.widget(
-                    pos + node.nodeSize - 1,
-                    (widgetView) => timeIcon('schedule', schedule, widgetView, pos),
-                    { side: -1 },
-                  ),
-                );
-              }
-              const due = node.attrs.dueDate;
-              if (typeof due === 'string' && due) {
-                widgets.push(
-                  Decoration.widget(
-                    pos + node.nodeSize - 1,
-                    (widgetView) => timeIcon('deadline', due, widgetView, pos),
+                    end,
+                    (widgetView) =>
+                      kind === 'reminder'
+                        ? reminderEntryIcon(widgetView, pos)
+                        : timeIcon(kind, kind === 'schedule' ? schedule : deadline, widgetView, pos),
                     { side: -1 },
                   ),
                 );

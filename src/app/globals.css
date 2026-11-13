@@ -819,6 +819,35 @@
     text-decoration-thickness: 1px;
   }
 
+  /* G357：行内三枚时间入口（日历／旗子／提醒）。选中或悬停才浮出；已点亮的常驻（V37／V42）。 */
+  .task-time-icon {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    margin-left: 0.375rem;
+    padding: 0 0.25rem;
+    border-radius: 6px;
+    color: color-mix(in srgb, var(--foreground) 55%, transparent);
+    font-size: 13px;
+    line-height: 24px;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .task-time-icon:hover {
+    background: color-mix(in srgb, var(--foreground) 6%, transparent);
+    color: var(--foreground);
+  }
+
+  /* V38：日期落定后日历位升级成芯片（图标 + 中文短日期，无年份），另两枚保持朴素图标。 */
+  .task-time-icon-schedule[data-time-icon-value="true"] {
+    background: color-mix(in srgb, var(--craft-accent) 12%, transparent);
+    color: var(--craft-accent);
+    font-size: 12px;
+    padding: 0 0.5rem;
+  }
+
   .task-list-item > label {
     flex-shrink: 0;
     margin-top: 0.25rem;

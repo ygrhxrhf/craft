@@ -27,8 +27,8 @@ function collectSlices(doc: Node): TextSlice[] {
  * would otherwise leave decorations pointing at ranges that no longer exist.
  */
 function currentMatches(doc: Node) {
-  const { query, mode, caseSensitive } = useFindReplaceStore.getState();
-  const result = findMatches(collectSlices(doc), query, mode, caseSensitive);
+  const { query, mode, caseSensitive, ignoreDiacritics } = useFindReplaceStore.getState();
+  const result = findMatches(collectSlices(doc), query, mode, caseSensitive, ignoreDiacritics);
   return { ...result, total: result.matches.length };
 }
 
@@ -156,6 +156,7 @@ export const FindReplace = Extension.create({
             replacement,
             store.mode,
             store.caseSensitive,
+            store.ignoreDiacritics,
           );
           if (dispatch) {
             const tr = state.tr.setMeta(FIND_KEY, true).insertText(value, target.from, target.to);
@@ -182,6 +183,7 @@ export const FindReplace = Extension.create({
                 replacement,
                 store.mode,
                 store.caseSensitive,
+                store.ignoreDiacritics,
               );
               tr = tr.insertText(value, target.from, target.to);
             }

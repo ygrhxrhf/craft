@@ -1,6 +1,7 @@
 /**
  * The matching half of 查找和替换 (`find.*`, `gap.md` G12 / `panels.md §六`): two modes
- * (文本 / 正则) over the text runs of a document.
+ * (文本 / 正则) over the text runs of a document, with two independent sensitivities
+ * (区分大小写 / 忽略变音符号).
  *
  * Positions stay in ProseMirror coordinates throughout, so a match spanning two inline nodes
  * reports the range a transaction needs instead of an offset someone has to convert back.
@@ -86,9 +87,62 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+const COMBINING_MARKS = /[\u0300-\u036f\u1ab0-\u1aff\u1dc0-\u1dff\u20d0-\u20f0\ufe20-\ufe2f]/gu;
+
+interface FoldedText {
+  text: string;
+  /** Folded index → the source range it came from, so matches map back to document offsets. */
+  start: number[];
+  end: number[];
+}
+
+/**
+ * G1418 「忽略变音符号（例如 ä = a）」: NFD-decompose and strip combining marks. Folding can change
+ * length (`ǆ` → `dž`), so every folded character remembers the source range it came from; a match
+ * is translated back through that map before it becomes a document range. Off, the map is the
+ * identity so both paths share one scanning loop.
+ */
+function foldText(text: string, enabled: boolean): FoldedText {
+  if (!enabled) {
+    const start: number[] = [];
+    const end: number[] = [];
+    for (let i = 0; i < text.length; i += 1) {
+      start.push(i);
+      end.push(i + 1);
+    }
+    return { text, start, end };
+  }
+  let folded = '';
+  const start: number[] = [];
+  const end: number[] = [];
+  let offset = 0;
+  for (const char of text) {
+    const base = char.normalize('NFD').replace(COMBINING_MARKS, '');
+    const width = char.length;
+    if (base.length === 0) {
+      // A combining mark is part of the previous character, not a matchable position of its own.
+      if (end.length > 0) end[end.length - 1] = offset + width;
+    } else {
+      for (let k = 0; k < base.length; k += 1) {
+        start.push(offset);
+        end.push(offset + width);
+      }
+      folded += base;
+    }
+    offset += width;
+  }
+  return { text: folded, start, end };
+}
+
+/** A regex source with combining marks stripped so an accented literal still matches its base. */
+function foldPattern(pattern: string, enabled: boolean): string {
+  return enabled ? pattern.normalize('NFD').replace(COMBINING_MARKS, '') : pattern;
+}
+
 /**
  * Case-insensitive unless `caseSensitive` is set: `match.case` (「区分大小写」) is its own toggle,
- * off by default, so the baseline is the toggle's off state.
+ * off by default, so the baseline is the toggle's off state. `diacriticsInsensitive` mirrors the
+ * official 「忽略变音符号（例如 ä = a）」, which the capture shows selected by default.
  *
  * Zero-length matches (`a*`, an empty lookahead) are skipped: there is no text to mark or
  * replace, and counting them would make 「N 结果」 disagree with the marks on screen.
@@ -98,32 +152,39 @@ export function findMatches(
   query: string,
   mode: FindMode,
   caseSensitive: boolean = false,
+  diacriticsInsensitive: boolean = true,
 ): FindResult {
   if (!query || slices.length === 0) return { matches: [], invalid: false };
 
   const flags = matchFlags(caseSensitive);
+  const source = foldPattern(query, diacriticsInsensitive);
+  const index = buildIndex(slices);
+  const folded = foldText(index.text, diacriticsInsensitive);
+
   let pattern: RegExp;
   if (mode === 'regex') {
     try {
-      pattern = new RegExp(query, flags);
+      pattern = new RegExp(source, flags);
     } catch {
       return { matches: [], invalid: true };
     }
   } else {
-    pattern = new RegExp(escapeRegExp(query), flags);
+    pattern = new RegExp(escapeRegExp(source), flags);
   }
 
-  const index = buildIndex(slices);
   const matches: FindMatch[] = [];
   let guard = 0;
-  for (const hit of index.text.matchAll(pattern)) {
+  for (const hit of folded.text.matchAll(pattern)) {
     if (guard++ > 100_000) break;
     if (hit[0].length === 0) {
       pattern.lastIndex += 1;
       continue;
     }
-    const from = hit.index;
-    const to = from + hit[0].length;
+    const hitStart = hit.index;
+    const hitEnd = hitStart + hit[0].length;
+    const from = folded.start[hitStart];
+    const to = folded.end[hitEnd - 1];
+    if (from === undefined || to === undefined) continue;
     if (crossesGap(index, from, to)) continue;
     matches.push({ from: docPosition(index, from), to: docPosition(index, to) });
   }
@@ -146,7 +207,8 @@ export function matchFlags(caseSensitive: boolean): string {
 
 /**
  * What one hit becomes. Text mode writes the replacement verbatim (`$1` stays literal); regex mode
- * expands groups, and honours the same case flag the search used to find the hit.
+ * expands groups, and honours the same flags the search used to find the hit. When diacritics are
+ * folded, the replacement runs over the folded text so a hit found as `a` in `ä` still rewrites.
  */
 export function applyReplacement(
   text: string,
@@ -154,7 +216,12 @@ export function applyReplacement(
   replacement: string,
   mode: FindMode,
   caseSensitive: boolean,
+  diacriticsInsensitive: boolean = true,
 ): string {
   if (mode !== 'regex') return replacement;
-  return text.replace(new RegExp(query, matchFlags(caseSensitive)), replacement);
+  const source = foldPattern(query, diacriticsInsensitive);
+  const target = diacriticsInsensitive
+    ? foldText(text, true).text
+    : text;
+  return target.replace(new RegExp(source, matchFlags(caseSensitive)), replacement);
 }

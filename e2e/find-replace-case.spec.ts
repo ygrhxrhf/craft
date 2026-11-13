@@ -52,6 +52,39 @@ test('the case-sensitive toggle narrows and widens the count as expected', async
 });
 
 /**
+ * G1418's fourth option 「忽略变音符号（例如 ä = a）」, selected by default in the captured panel.
+ * Typing accented body text and searching for the unaccented spelling must hit; switching the
+ * option off must make the same query miss, which is what proves the toggle is wired to the
+ * matcher rather than merely painted.
+ */
+test('the diacritics toggle folds accents on by default and stops folding when off', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/documents');
+  await page.getByRole('button', { name: /新建/ }).first().click();
+  await page.waitForURL(/\/documents\//);
+  const editor = page.locator('[contenteditable="true"]').first();
+  await editor.click();
+  await page.keyboard.type('Café crème', { delay: 4 });
+  await page.keyboard.press('Control+f');
+  const panel = page.getByTestId('find-replace-panel');
+  await expect(panel).toBeVisible();
+
+  await page.getByTestId('find-replace-query').fill('cafe');
+  // Default on: 「Café」 answers to the unaccented query.
+  await expect(page.getByTestId('find-replace-diacritics')).toHaveAttribute('aria-pressed', 'true');
+  await expect(panel.getByTestId('find-replace-count')).toHaveText('1 结果');
+
+  // Off: the same query no longer reaches the accented word.
+  await page.getByTestId('find-replace-diacritics').click();
+  await expect(page.getByTestId('find-replace-diacritics')).toHaveAttribute('aria-pressed', 'false');
+  await expect(panel.getByTestId('find-replace-count')).toHaveText('0 结果');
+
+  // On again: the hit returns.
+  await page.getByTestId('find-replace-diacritics').click();
+  await expect(panel.getByTestId('find-replace-count')).toHaveText('1 结果');
+});
+
+/**
  * G1570: the panel has two tiers. `Ctrl-F` opens it with the query field alone; `Ctrl-Shift-F`
  * unrolls the replacement row. The official reading is `findInput:1 / replaceInput:0` after `Ctrl-F`
  * and both fields after `Ctrl-Shift-F`, so the assertion is on the replacement row's presence.

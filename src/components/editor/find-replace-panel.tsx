@@ -26,6 +26,7 @@ export function FindReplacePanel({ editor }: { editor: Editor | null }) {
   const mode = useFindReplaceStore((state) => state.mode);
   const scope = useFindReplaceStore((state) => state.scope);
   const caseSensitive = useFindReplaceStore((state) => state.caseSensitive);
+  const ignoreDiacritics = useFindReplaceStore((state) => state.ignoreDiacritics);
   const matches = useFindReplaceStore((state) => state.matches);
   const current = useFindReplaceStore((state) => state.current);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,7 +50,7 @@ export function FindReplacePanel({ editor }: { editor: Editor | null }) {
     return () => {
       editor.off('update', refresh);
     };
-  }, [editor, open, query, mode, scope, caseSensitive]);
+  }, [editor, open, query, mode, scope, caseSensitive, ignoreDiacritics]);
 
   if (!open) return null;
 
@@ -157,6 +158,19 @@ export function FindReplacePanel({ editor }: { editor: Editor | null }) {
           className={`rounded-full px-2 py-0.5 font-mono ${caseSensitive ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground'}`}
         >
           Aa
+        </button>
+        {/* G1418's fourth option: 「忽略变音符号（例如 ä = a）」, an independent switch next to
+            「区分大小写」 and selected by default in the captured panel. */}
+        <button
+          type="button"
+          data-testid="find-replace-diacritics"
+          aria-pressed={ignoreDiacritics}
+          title="忽略变音符号（例如 ä = a）"
+          aria-label="忽略变音符号（例如 ä = a）"
+          onClick={() => useFindReplaceStore.getState().setIgnoreDiacritics(!ignoreDiacritics)}
+          className={`rounded-full px-2 py-0.5 font-mono ${ignoreDiacritics ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground'}`}
+        >
+          ä=a
         </button>
         <span className="text-border">|</span>
         {(['page', 'doc'] as const).map((value) => (

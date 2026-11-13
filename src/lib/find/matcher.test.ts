@@ -121,6 +121,44 @@ describe('docPosition', () => {
   });
 });
 
+describe('findMatches — 忽略变音符号 (G1418)', () => {
+  const accented: TextSlice[] = [{ text: 'Café crème ä', from: 0, to: 12 }];
+
+  it('matches an unaccented query against accented text when folding is on', () => {
+    // 「Café」 at 0, 「crème」 at 5, and the lone 「ä」 at 11 all answer to their base letters.
+    const folded = findMatches(accented, 'cafe', 'text', false, true);
+    expect(folded.matches).toEqual([{ from: 0, to: 4 }]);
+    expect(findMatches(accented, 'creme', 'text', false, true).matches).toEqual([{ from: 5, to: 10 }]);
+    expect(findMatches(accented, 'a', 'text', false, true).matches).toEqual([
+      { from: 1, to: 2 },
+      { from: 11, to: 12 },
+    ]);
+  });
+
+  it('reports the source range, not the folded one, when a fold changes length', () => {
+    // A decomposed 「ä」 is two source units (`a` + U+0308) but one folded character, so the
+    // hit must still cover both units of the source rather than stopping at the base letter.
+    const decomposed: TextSlice[] = [{ text: 'a\u0308b', from: 0, to: 3 }];
+    expect(findMatches(decomposed, 'a', 'text', false, true).matches).toEqual([{ from: 0, to: 2 }]);
+    expect(findMatches(decomposed, 'ab', 'text', false, true).matches).toEqual([{ from: 0, to: 3 }]);
+  });
+
+  it('treats the toggle as a real switch — off, an unaccented query misses', () => {
+    expect(findMatches(accented, 'cafe', 'text', false, false).matches).toEqual([]);
+    expect(findMatches(accented, 'café', 'text', false, false).matches).toEqual([{ from: 0, to: 4 }]);
+  });
+
+  it('composes with case sensitivity instead of replacing it', () => {
+    expect(findMatches(accented, 'CAFE', 'text', false, true).matches).toHaveLength(1);
+    expect(findMatches(accented, 'CAFE', 'text', true, true).matches).toHaveLength(0);
+  });
+
+  it('folds the pattern too, so an accented query still hits plain text', () => {
+    const plain: TextSlice[] = [{ text: 'cafe', from: 0, to: 4 }];
+    expect(findMatches(plain, 'café', 'text', false, true).matches).toEqual([{ from: 0, to: 4 }]);
+  });
+});
+
 describe('applyReplacement', () => {
   it('writes the replacement verbatim in text mode, groups included', () => {
     expect(applyReplacement('abc', 'abc', 'X$1', 'text', false)).toBe('X$1');

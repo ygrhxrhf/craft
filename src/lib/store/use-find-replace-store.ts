@@ -27,6 +27,11 @@ interface FindReplaceState {
    * `match.case` label — declared local wording, not a copy of a collected child key.
    */
   caseSensitive: boolean;
+  /**
+   * G1418 「忽略变音符号（例如 ä = a）」 — the fourth official option, selected by default in the
+   * captured panel. Its own bit, so it composes with mode, scope and case instead of replacing one.
+   */
+  ignoreDiacritics: boolean;
   setOpen: (open: boolean) => void;
   /** G1570: which tier the panel opens in (`false` = find only, `true` = find + replace). */
   openWith: (showReplace: boolean) => void;
@@ -35,6 +40,7 @@ interface FindReplaceState {
   setMode: (mode: FindMode) => void;
   setScope: (scope: FindScope) => void;
   setCaseSensitive: (caseSensitive: boolean) => void;
+  setIgnoreDiacritics: (ignoreDiacritics: boolean) => void;
   setResults: (result: { matches: FindMatch[]; current: number; invalid: boolean }) => void;
   clear: () => void;
 }
@@ -50,6 +56,7 @@ export const useFindReplaceStore = create<FindReplaceState>((set) => ({
   current: -1,
   invalid: false,
   caseSensitive: false,
+  ignoreDiacritics: true,
   setOpen: (open) => set({ open, ...(open ? {} : { matches: [], current: -1 }) }),
   // G1570: opening via `⌘⇧F` also unrolls the replacement field; opening via `⌘F` does not.
   openWith: (showReplace) =>
@@ -59,6 +66,7 @@ export const useFindReplaceStore = create<FindReplaceState>((set) => ({
   setMode: (mode) => set({ mode }),
   setScope: (scope) => set({ scope }),
   setCaseSensitive: (caseSensitive) => set({ caseSensitive }),
+  setIgnoreDiacritics: (ignoreDiacritics) => set({ ignoreDiacritics }),
   setResults: ({ matches, current, invalid }) => set({ matches, current, invalid }),
   clear: () => set({ matches: [], current: -1, invalid: false, query: '' }),
 }));

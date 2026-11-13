@@ -75,8 +75,13 @@ test('任务页设的截止日期能穿过下一次正文保存', async ({ page 
   await openTaskList(tasksTab);
   const row = tasksTab.locator('div.border-b').filter({ hasText: title });
   await expect(row).toHaveCount(1);
-  await row.getByLabel('设置提醒与重复').click();
-  await row.getByLabel('截止日期').fill(DUE);
+  // G332–G373：截止日期是 popover 芯片（不再是「设置提醒与重复」里的日期框），提交后列表会重拉。
+  await row.getByRole('button', { name: '设置截止日期' }).click();
+  await tasksTab
+    .getByTestId('task-date-popover')
+    .locator('input[aria-label="日期"]')
+    .fill(DUE);
+  await tasksTab.keyboard.press('Enter');
   await expect(row.getByText(DUE_LABEL)).toBeVisible();
 
   // ★ 决定性的一步：正文再动一次。修好之前这一动就把行换掉，截止日期跟着旧行进了墓碑。

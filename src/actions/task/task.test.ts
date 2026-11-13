@@ -146,6 +146,60 @@ describe('syncDocumentTasks 墓碑语义（C-2）', () => {
   });
 });
 
+/**
+ * G357 × G1500 —— 正文里的 `scheduleDate`／`dueDate` 只在**真的带着值**时才是权威。
+ * 任务页设的日期从不写进正文（唯一写入者是编辑器的快捷面板），正文侧恒为 null；
+ * 若把 null 当权威，下一次无关的正文保存就会把任务页设好的截止日期抹掉
+ * （真面取证：`e2e/task-row-identity.spec.ts` 的「12月31日」在再存一次后消失）。
+ */
+describe('正文保存不许抹掉任务页设的日期（G1500/G357）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const datedRow: Row = {
+    id: 't1',
+    userId: 'u1',
+    documentId: 'd1',
+    blockId: 'b1',
+    title: '块任务',
+    isCompleted: false,
+    status: 'todo',
+    cancelledAt: null,
+    remindAt: null,
+    scheduleDate: '2026-12-31T00:00:00.000Z',
+    dueDate: '2026-12-31T00:00:00.000Z',
+    deletedAt: null,
+  };
+
+  it('正文 attrs 为 null 且其余列未变 → 不更新、不 emit（日期留在行上）', async () => {
+    const log = setupDb([datedRow]);
+    await syncDocumentTasks('d1', [{ taskId: 'b1', title: '块任务', isCompleted: false }]);
+    expect(log.updates).toEqual([]);
+    expect((log as any).emit).not.toHaveBeenCalled();
+  });
+
+  it('正文 attrs 为 null 但标题变了 → 只改标题轴线，日期原样带回', async () => {
+    const log = setupDb([datedRow]);
+    await syncDocumentTasks('d1', [{ taskId: 'b1', title: '改过的标题', isCompleted: false }]);
+    expect(log.updates).toHaveLength(1);
+    expect(log.updates[0]!.data).toMatchObject({
+      title: '改过的标题',
+      scheduleDate: '2026-12-31T00:00:00.000Z',
+      dueDate: '2026-12-31T00:00:00.000Z',
+    });
+  });
+
+  it('正文带着日期 → 正文说了算（编辑器快捷面板设的那一路）', async () => {
+    const log = setupDb([datedRow]);
+    await syncDocumentTasks('d1', [
+      { taskId: 'b1', title: '块任务', isCompleted: false, dueDate: '2027-01-15T00:00:00.000Z' },
+    ]);
+    expect(log.updates[0]!.data).toMatchObject({
+      dueDate: '2027-01-15T00:00:00.000Z',
+      scheduleDate: '2026-12-31T00:00:00.000Z',
+    });
+  });
+});
+
 describe('I2：元数据写入后 emit sync_events', () => {
   beforeEach(() => vi.clearAllMocks());
 

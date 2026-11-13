@@ -143,6 +143,13 @@ export async function syncDocumentTasks(
     const cols = taskProjection(task);
     if (match) {
       const tombstoned = Boolean((match as any).deletedAt);
+      /**
+       * G357 的日期两轴只在正文**真的带着值**时才是权威。任务页设的日期从不写进文档
+       * （唯一的写入者是编辑器里的快捷面板），所以正文侧恒为 null——若把 null 也当权威，
+       * 任务页设的截止日期会在下一次无关的正文保存里被抹成 null。
+       */
+      const nextSchedule = task.scheduleDate ?? (match as any).scheduleDate ?? null;
+      const nextDue = task.dueDate ?? (match as any).dueDate ?? null;
       if (
         tombstoned ||
         (match as any).title !== task.title ||
@@ -150,8 +157,8 @@ export async function syncDocumentTasks(
         (match as any).status !== cols.status ||
         ((match as any).cancelledAt ?? null) !== cols.cancelledAt ||
         ((match as any).remindAt ?? null) !== (task.remindAt ?? null) ||
-        ((match as any).scheduleDate ?? null) !== (task.scheduleDate ?? null) ||
-        ((match as any).dueDate ?? null) !== (task.dueDate ?? null)
+        ((match as any).scheduleDate ?? null) !== nextSchedule ||
+        ((match as any).dueDate ?? null) !== nextDue
       ) {
         // 命中墓碑行且 block 重新出现 → 清墓碑复活（恢复"任务重新可见"语义）
         await db.orm.public.Task.where({ id: (match as any).id }).update({
@@ -159,8 +166,8 @@ export async function syncDocumentTasks(
           title: task.title,
           ...cols,
           remindAt: task.remindAt ?? null,
-          scheduleDate: task.scheduleDate ?? null,
-          dueDate: task.dueDate ?? null,
+          scheduleDate: nextSchedule,
+          dueDate: nextDue,
         });
         mutated = true;
       }

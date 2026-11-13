@@ -42,10 +42,10 @@ const p2 = d.explicit.P2;
 const conflicts = d.conflicts.map((c) => `| ${c.id} | ${c.line} | ${statusZh[c.status] || c.status} | ${c.conflict} | ${clean(c.local, 60)} |`).join('\n');
 const gaps = d.gapSections.map(([k, v]) => `| ${v} | ${clean(k, 70)} |`).join('\n');
 const out = [
-  '## P0（8 条）\n', table(p0),
-  '\n## P1（29 条）\n', table(p1),
-  '\n## P2（显式 8 条）\n', table(p2),
-  '\n## 口径冲突（12 条）\n',
+  `## P0（${p0.length} 条）\n`, table(p0),
+  `\n## P1（${p1.length} 条）\n`, table(p1),
+  `\n## P2（显式 ${p2.length} 条）\n`, table(p2),
+  `\n## 口径冲突（${d.conflicts.length} 条）\n`,
   '| G号 | 行 | 当前状态 | 冲突 | 本地列摘要 |', '| --- | --- | --- | --- | --- |', conflicts,
   '\n## 差异最多的节（前 20）\n', '| 条数 | 节 |', '| --- | --- |', gaps,
 ].join('\n');

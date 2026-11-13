@@ -91,15 +91,15 @@
 | G53 | 已对齐 | 2/3 | 块即树节点、页面 = 有子块的块，子树序列化成 markdown 字符串（pageContent），块带 children 计数 | 本地页面是独立 Document + parentId 自树，块内子页与文档子页两套概念并存；无"块子树 markdown 投影 | page-tree 投影层已建（isPage/children/pageContentMarkdown），导出/搜索/AI 复用同一投影；`src/lib/document/page-tree.ts:72` |
 | G23 | 已对齐 | 2/2 | 集合公式函数 25 个（table.formula.*）、视图可互相转换（collections.views.turn.into | lib/collection/formula.ts 是子集；视图类型有 6 个组件但无「转换为」命令；CollectionPro | 现读（第 32 批）：公式函数集已齐官方 25 键——src/lib/collection/formula.ts 的 FUNCTIONS 18 个（含 above/below/left/right 四向区域引用）＋ CO；`src/lib/collection/formula.ts:39`、`src/lib/collection/property-types.ts:9`、`src/components/collection/ViewActionsMenu.tsx:106` |
 | G24 | 已对齐 | 2/2 | 设置分区真实生效（语言、集成、已发布内容等） | 部分落地（第 265 批复核）＝原判"每分区要么接后端要么移除入口"这条判据已按官方（未接的分区入口已移除）：src/lib/a | 现读（第 32 批）：本行判据＝「每分区要么接后端、要么移除入口，不留假开关」，已满足——src/lib/app/settings-sections.ts 是接线台账（14 分区各带 wired 标志），Settings；`src/lib/app/settings-sections.ts:33`、`src/components/settings/SettingsModal.tsx:160`、`src/components/settings/settings-nav.test.ts:16` |
-| G32 | 已对齐 | 2/2 | 块级深链：URL 直接带 blockUuid（✓ …/d/<doc>/<block>?s=…），data-block-id 恒有 | 本地 blockId 由打开的编辑器惰性盖章（历史记忆里已记），旧文档链接可能指向不到块 | blockId 已常驻：打开文档即给顶层块盖章，深链与刷新后稳定；`src/components/editor/extensions/block-id.ts:18` |
 | G33 | 已对齐 | 2/2 | 命令菜单 189 条命令全量可搜（R16） | 命令面板只有本地已有动作，条目数远小于官方；无 commands.* 命名体系 | 189 条官方命令已进注册表全量可搜，未接入的执行器置灰标「未接入」；`src/lib/commands/official-catalog.ts`、`src/lib/commands/registry.ts` |
 
-## 六、P2（显式 8 条）
+## 六、P2（显式 9 条）
 
 | G号 | 状态 | 影响/成本 | 官方行为（摘要） | 本地现状（摘要） | 下一步／证据 |
 | --- | --- | --- | --- | --- | --- |
 | G50 | 已对齐 | 1/1 | 代理每次写操作附一句给用户看的动作说明（契约原文 "Optional message to display to the use | 现读（2026-11-02）：AiBubbleMenu.tsx 每次落笔后弹一条 toast——aiWriteMessage(a | 第 177 批现读：AI 每次落笔后 toast 说明动作（aiWriteMessage）并带撤销动作；`src/lib/editor/ai-write-message.ts:19`、`src/components/editor/bubble-menu/AiBubbleMenu.tsx:250` |
-| G31 | 已对齐 | 1/1 | 分隔线四档＝极细/细/常规/粗（R7） | 词汇表已迁到官方四档（divider-styles.ts），但 ★ 渲染层没跟上：globals.css 只给旧名 thin/m | 无需动作；抽检证据见台账行；`src/lib/editor/divider-commands.ts` |
+| G31 | 已对齐 | 1/1 | 分隔线四档＝极细/细/常规/粗（R7） | 词汇表已用官方四档（divider-styles.ts），渲染层同批跟上：globals.css:1060-1086 给官方五名 | 官方五名（含 pageSeparator）各有渲染规则，旧名 thin/medium/thick/dashed 宽度保真；单测逐档断言；`src/app/globals.css:1060`、`src/app/globals.css:1080`、`src/lib/editor/divider-commands.test.ts:68` |
+| G32 | 已对齐 | 2/2 | 块级深链：URL 直接带 blockUuid（✓ …/d/<doc>/<block>?s=…），data-block-id 恒有 | 现读（2026-11-13 第 535 批）：原判「惰性盖章 ⇒ 旧文档链接可能指向不到块」已不成立——BlockId 扩展在  | 第 535 批现读：文档一打开就给所有可锚定节点全量盖章——stampMissingBlockIds() 沿 doc.descendants 补 crypto.randomUUID()（已有 id 保留、任意深度），Bl；`src/components/editor/extensions/block-id.ts:15`、`src/components/editor/extensions/block-id.ts:26`、`src/components/editor/extensions/block-id.ts:62`、`src/components/editor/extensions/block-id.ts:71` |
 | G34 | 已对齐 | 1/1 | 表格部分操作禁止走上下文菜单并给「请使用 [0] 来 [1]」改道提示（R10） | 现读（2026-11-02）：TableToolbar.tsx 在编辑器上监听 contextmenu，表内右键弹提示窗——首行 | 第 177 批现读：TableToolbar 表内右键弹「这些操作无法通过上下文菜单执行。」+「请使用工具栏来编辑表格」改道提示；`src/lib/editor/table-context-copy.ts:1`、`src/components/editor/table/TableToolbar.tsx:118` |
 | G35 | 有意偏差 | 1/2 | 白板副本与原件联动、旧版升级迁移（R12） | tldraw 白板无「副本联动原件」概念 | 不做（有意偏差），不进复刻 backlog |
 | G36 | 已对齐 | 1/2 | 离线语义可见：「离线更新于 [0]」、离线禁用表情/评论（R13） | 部分落地（第 220 批）＝① 离线保存徽标已清＝纯核 src/lib/offline/save-status.ts（offli | 离线徽标三态与离线表情门禁已落；在线文案归 G1528，离线评论门禁为有意偏差；`src/lib/offline/save-status.ts`、`src/components/editor/DocumentEditor.tsx:105`、`src/components/editor/comments/offline-reaction.ts` |
@@ -136,13 +136,13 @@
 
 | G号 | 行 | 当前状态 | 冲突 | 本地列摘要 |
 | --- | --- | --- | --- | --- |
-| G300 | 1582 | 已对齐 | local-says-missing | 本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：PENDING_STATES 逐字 11 条（lib/a |
+
 
 ## 十、待重扫
 
 - **192 条 unknown**：文本没有给出可判定状态。集中在批次静态节（第 137/170/172/96/131–133 批），不是 P0/P1。
 - **1053 条文本“未动”**：其中只有 16 条在显式 P0/P1/P2 表里；其余多数是批次里的内部实现差异（键表、同步层、bundle 结构），需要逐条现读才能升级为任务。
-- **14 条口径冲突**：见上表；优先回写台账，避免继续用旧本地列做判断。
+- **0 条口径冲突**：见上表；优先回写台账，避免继续用旧本地列做判断。
 - 下一步建议：按 `priority=P1`＋`status=gap/partial` 从 CSV 里切片，每批 5–10 条做现读确认，确认后再排期。
 
 差异最集中的节（文本统计，未逐条核）：

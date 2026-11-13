@@ -27,7 +27,7 @@
 | 5 | 收藏 | `/favorites` | `app-favorites` | ✅ `ref/starred-desktop.png` | 取消收藏后行的消失方式 | — | ☐ |
 | 6 | 每日笔记 | `/daily-notes` | `app-daily-notes` | ⏳token（官方经 `Ctrl+Alt+N` 进入，非导航路由，未采） | 日期分组标题字重与间距 | — | ☐ |
 | 7 | 任务 | `/tasks` | `app-tasks` | ✅ `ref/tasks-{desktop,tablet,mobile}.png` | 勾选动效、提醒/循环徽标可读性 | — | ☐ |
-| 8 | 日历 | `/calendar` | `app-calendar` | ✅ `ref/calendar-{desktop,tablet,mobile}.png` | 月格行高、今日标记、条目 chip 溢出 | 日详情 Sheet 未做（见偏差表） | ☐ |
+| 8 | 日历 | `/calendar` | `app-calendar` | ✅ `ref/calendar-{desktop,tablet,mobile}.png` | 月格行高、今日标记、条目 chip 溢出 | 月格与右侧日详情列为本地次要视图（官方只采到纵向时间轴，G43） | ☐ |
 | 9 | 模板 | `/templates` | `app-templates` | ✅ `ref/templates-desktop.png` + `ref/templates-gallery-desktop.png`（237 卡片 / 8 分类） | 模板卡缩略比例 | — | ☐ |
 | 10 | 搜索 | `/search` | `app-search` | ✅ `ref/search-panel.png`、`ref/dark-search.png` | 命中高亮色、"加载更多" 反馈 | — | ☐ |
 | 11 | 设置 | `/settings` | `app-settings` | ✅ `ref/settings-open.png` + `ref/settings-{about,account,advanced,appearance,assistant,integrations,language,notify,published,space,subscription,tags,team}.png`（13 张） | 分组分隔线强度、开关动效 | — | ☐ |

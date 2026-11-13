@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T14:03:29.819Z",
+  "generatedAt": "2026-11-13T14:30:21.678Z",
   "totalRows": 1616,
   "statusDistribution": {
     "gap": 657,
@@ -49,17 +49,8 @@
     "P1 / nonaction": 1,
     "P1 / unreachable": 1
   },
-  "conflicts": 1,
-  "conflictRows": [
-    {
-      "id": "G300",
-      "line": 1582,
-      "status": "aligned",
-      "conflict": "local-says-missing",
-      "local": "本地已接有宿主的 5 条 ✎ 现读（2026-11-02）更正：`PENDING_STATES` 逐字 11 条（`lib/app/pending-states.ts:29-41`）。✎ 改判（2026-11-12 第 531 批）：复读只剩 3 条真在线——「正在创建文档／正在创建文件夹」的唯一宿主 `QuickAc",
-      "verdict": "☆ 已对齐（第 532 批）"
-    }
-  ],
+  "conflicts": 0,
+  "conflictRows": [],
   "sectionRows": [
     {
       "name": "八十四、第 184 批新登记的官方行为（2026-10-09 本机钟 11:2x 开批＝纯盘上静态批＝工单三族＋记账两枚＝本线零发送零桥零屏幕零写入零网络⇒ `manifest.jsonl` 行数不变＝净新增 9 条＝G1475—G1483＝☆ 全部读数落在 `_harvest/js/` 的 105 份官方包体（主包 `index-DiTmKH3z.js` 6,864,717 B／6,844,206 字符，mtime 2026-09-30）＝★ **包体字节漂移**：历批 87—96 的 `len 6,841,180`（b87 快照）与本批现量 6,844,206 差 **+3,026**，那批的 @offset 锚的是**当时的干净原件面**（Temp 原件，91 批已清、只在 b87—b96 的 json 快照转义面存续）＝✎ **同批后段翻案（11:4x）**：漂移成因判死＝**盘上 `js/` 拷贝的编码损伤**（真符号 ⌃⌥⇧⌘ 在盘上 0 枚、`鈥`361／`鈱`7／`鈬`3＝UTF-8 被 GBK 误读的在册家族；ASCII 面逐字相同＝非官方换构建）＝+3,026 是乱码展开的累计、不是代码插入；⇒ 采集线规矩改写＝**从 `_harvest/js/` 逐字引用非 ASCII 一律不可信**（与 i18n-zh.tsv 同族），ASCII 针与偏移不受影响；本批 @offset 全部是**现字节面**的字符坐标）",
@@ -6424,7 +6415,7 @@
         "cost": 1,
         "raw": "2/1"
       },
-      "conflict": "local-says-missing",
+      "conflict": null,
       "priority": "P2"
     },
     {

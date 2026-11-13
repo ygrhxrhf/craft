@@ -7584,7 +7584,7 @@
     },
     "G1624": {
       "status": "aligned",
-      "priority": 3,
+      "priority": "P3",
       "note": "第 533 批：文件夹「重命名后看不见」＝排序键塌成常量＋折叠两件事叠加——`getFolders()` 只按 `order.asc()` 排而 craft-test 57 个根夹 order 全 0 ⇒ 落到 Postgres 堆序；重命名 UPDATE 把元组挪到堆尾 ⇒ 该行掉出「前 20＋再显示 37 项」的渲染窗口、不在 DOM 里。修＝服务端三连 orderBy（order/createdAt/id）＋客户端同序比较器 `compareFolderOrder`（FolderTree／FolderTreeItem 拖放兄弟序／lib/browse/inbox）＋新建 order=max(兄弟)+1（服务端与离线 createFolderLocal 各一份）＋pending 骨架带 createdAt=syncTs 让乐观行与 ack 行同位。官方「新建文件夹落点」从未上屏采集，本地「追加末尾」记为本地决策。单测 4 条，受影响面 73 文件 518 用例全绿",
       "evidence": [
         "src/actions/folder/get.ts",

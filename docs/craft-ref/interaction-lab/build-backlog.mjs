@@ -10,7 +10,8 @@ const rows = audit.rows.map((r) => {
 for (const r of rows) {
   const local = r.local ?? '';
   const verdict = r.verdict ?? '';
-  const missingLocal = /^(?:无|全库无|全无|只有|缺失|未实现|没有|无任何)|未采纳|未覆盖|未做|零匹配|无对应|无绑定|无入口|无此|不同构/.test(local);
+  // 与 audit-ledger.mjs 同口径：整条正则锚在行首。
+  const missingLocal = /^(?:(?:无|全库无|全无|只有|缺失|未实现|没有|无任何)|未采纳|未覆盖|未做|零匹配|无对应|无绑定|无入口|无此|不同构)/.test(local);
   const clearVerdict = /已清|已落地|已实现|已补|已建|已接|已对齐|已完成/.test(verdict);
   r.conflict = (r.status === 'aligned' || r.status === 'partial') && missingLocal ? 'local-says-missing'
     : r.status === 'gap' && clearVerdict ? 'verdict-says-clear'

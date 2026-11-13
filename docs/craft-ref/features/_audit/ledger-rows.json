@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-13T05:24:35.871Z",
+  "generatedAt": "2026-11-13T11:51:22.015Z",
   "totalRows": 1616,
   "statusDistribution": {
     "gap": 657,
-    "aligned": 483,
+    "aligned": 484,
     "unknown": 185,
     "deliberate": 138,
     "nonaction": 72,
-    "partial": 65,
+    "partial": 64,
     "unreachable": 16
   },
   "priorityDistribution": {
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 278,
+    "P2 / aligned": 279,
     "P2 / gap": 211,
     "P1 / gap": 182,
     "P? / gap": 171,
@@ -32,7 +32,7 @@
     "P? / deliberate": 36,
     "P2 / unknown": 33,
     "P? / nonaction": 29,
-    "P2 / partial": 26,
+    "P2 / partial": 25,
     "P1 / unknown": 23,
     "P2 / nonaction": 23,
     "P3 / unknown": 22,
@@ -30010,10 +30010,10 @@
       "cols": 5,
       "id": "G1614",
       "official": "★★★★ **斜杠菜单的三条「插入集合」官方都能真插入（REST 读回 `collection` 块），本地一条都没有**（第 392 批）：官方逐项按 Enter 后 `GET /blocks` 的类型名册是 `[…, collection, …, whiteboard, …, collection, …, collection]` ⇒ **表格集合／画廊集合／看板集合都落成 `type:\"collection\"` 块、插入白板落成 `type:\"whiteboard\"`**（三者在类型层**同型**，只是初始视图不同）；`插入表格` 过滤后只回「插入表格集合」、按下去同样得到 `collection` ⇒ **官方菜单里没有\"纯表格\"项**。本地：`/白板` **有**（`filtered=1`，插入后正文出现 `🎨 未命名白板 只读预览`＋canvas）；`/集合` **filtered=0**、按 Enter 只留下字符 `/集合` ⇒ 三条集合插入**本地完全缺失**（`slash-commands.ts` 里没有对应命令）",
-      "local": "✎ 现读（2026-11-03 第 269 批）：三条「插入集合」本地都有了＝斜杠 `插入表格集合／插入画廊集合／插入看板集合` 三条命令 ＋ 插入面板「合集」组同名三行（`InsertTab.tsx`），点下先建集合行（`type` ＝ table／gallery／kanban）再插 `collectionBlock` 原子块（attrs `collectionId/title/view`），浏览器实点 Kanban ⇒ `{block:true, view:\"kanban\"}`、reload 后读回。白板那枚仍是\"只读预览\"卡（形态不同这条不变）。⇒ 插入通路两侧同型，**块内内容差一层**＝官方块在文档内直接渲染集合（表／画廊／看板三种视图的内容），本地这块是指向 `/collections/{id}` 的卡、三种视图只落在徽章与集合本身的 `type` 上（内联渲染归集合视图簇 G81/G454）",
-      "verdict": "部分落地（第 269 批三条集合插入建成；块内直接渲染集合内容仍未做）",
+      "local": "✎ 现读（2026-11-13 第 537 批）：三条「插入集合」本地都有＝斜杠 `插入表格集合／插入画廊集合／插入看板集合` ＋ 插入面板「合集」组同名三行，点下先建集合行（`type` ＝ table／gallery／kanban）再插 `collectionBlock` 原子块（attrs `collectionId/title/view`）。块内不再只是指向 `/collections/{id}` 的入口卡：`CollectionBlockView` 经 `getCollection` 取数后**直接排版集合内容**——表格档印真表格（列序走 `fieldsForView`＋标题列第一，单元格按列型分派）、画廊档印 `article` 卡片网格（封面规则与路由屏同一套）、看板档按单选列分栏（缺分组属性时给 `KANBAN_NO_GROUP_PROPERTY` 原句，且该句排在「暂无条目」之前）；0 行统一「暂无条目」，取数失败/未登录/集合已删各有专句，块头保留集合链接与「刷新集合」。读侧纯核在 `src/lib/collection/embed-content.ts`，浏览器实点三档并 reload 复核（`e2e/collection-embed.spec.ts`）",
+      "verdict": "已对齐｜第 537 批（三条插入命令第 269 批，块内三档内联渲染第 537 批）",
       "score": "2/2",
-      "status": "partial",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 2,

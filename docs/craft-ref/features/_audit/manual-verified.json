@@ -10633,11 +10633,11 @@
     "G1614": {
       "status": "aligned",
       "priority": "P2",
-      "note": "✎ 现读（2026-11-06 族拆批第 2 批）：三条「插入集合」命令与插入面板「合集」三行已落（第 269 批浏览器实点 Kanban 读回 `{block:true, view:'kanban'}` 并 reload 复核），插入通路两侧同型；块内直接渲染集合内容转挂 G81/G454，本行无独有未落项；白板那枚形态差异由同批另行登记 ⇒ 已对齐",
+      "note": "第 537 批：三条插入命令维持第 269 批口径；块内补齐三档内联渲染——表格档真表格、画廊档 article 卡片网格、看板档按单选列分栏（缺分组属性给官方原句且排在「暂无条目」之前），0 行给「暂无条目」，取数失败/未登录/集合已删各有专句；读侧纯核 embed-content.ts，浏览器实点三档并 reload 复核（e2e/collection-embed.spec.ts）。",
       "evidence": [
-        "src/components/editor/slash-menu/slash-commands.ts:652",
-        "src/components/editor/extensions/collection-block.tsx:1",
-        "src/lib/collection/embed-block.test.ts:1"
+        "src/lib/collection/embed-content.ts",
+        "src/components/editor/extensions/collection-block-view.tsx",
+        "e2e/collection-embed.spec.ts"
       ]
     },
     "G1615": {

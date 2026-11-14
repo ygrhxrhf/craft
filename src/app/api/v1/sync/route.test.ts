@@ -292,6 +292,40 @@ describe('POST /api/v1/sync', () => {
     expect(body2.rejected[0].data.id).toBe('f1');
   });
 
+  it('R-19 真库序：唯一键存量行必须在 create **之前**回读（事务里撞键后回读必炸 25P02）', async () => {
+    // Postgres 一条语句失败即整个事务 aborted，后续任何查询抛 `current transaction is aborted`。
+    // 所以"盲 create → 撞唯一键 → 再回读存量行"这条路在真库上永远走不到，只会整批 500
+    // （真机取证：本地镜像持旧 id 点「取消固定」，连 8 次 500）。本用例把顺序钉死：
+    // 存量行存在时 create 一次都不许调，且 first(定位器) 先于 update。
+    const existing = {
+      id: 'f1', userId: 'u1', documentId: 'd1', order: 0,
+      createdAt: '2026-09-01T00:00:00.000Z', updatedAt: '2026-09-28T09:00:00.000Z',
+      deletedAt: null,
+    };
+    const create = vi.fn(async () => { throw new Error('unique violation (would abort tx)'); });
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const first = vi.fn(async (where: any) => (where.id === 'f2' ? null : existing));
+    const chain = { where: () => chain, first, update, create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [{
+      table: 'favorite', id: 'f2', op: 'upsert',
+      data: { id: 'f2', userId: 'u1', documentId: 'd1', deletedAt: '2026-09-28T12:00:00.000Z' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(create).not.toHaveBeenCalled();
+    expect(body.applied).toEqual([{ table: 'favorite', id: 'f1' }]);
+    expect(first.mock.invocationCallOrder[0])
+      .toBeLessThan(update.mock.invocationCallOrder[0]!);
+    // 存量行主键不动：update 按唯一键定位器，payload 剥掉 id
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ deletedAt: '2026-09-28T12:00:00.000Z' }));
+    expect(update.mock.calls[0]![0]).not.toHaveProperty('id');
+  });
+
   it('I1(a)(c)：data 与 def.cols 求交——content 等白名单外键不入写入；带 userId 列的表强制会话 userId', async () => {
     const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
     const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));

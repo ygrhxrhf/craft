@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-11-14T22:26:31.126Z",
-  "total": 1616,
+  "generatedAt": "2026-11-14T23:03:30.355Z",
+  "total": 1617,
   "status": {
-    "aligned": 822,
+    "aligned": 823,
     "nonaction": 541,
     "deliberate": 228,
     "unreachable": 25
@@ -10,7 +10,7 @@
   "priority": {
     "P2": 634,
     "P?": 422,
-    "P1": 281,
+    "P1": 282,
     "P3": 270,
     "P0": 9
   },
@@ -18,7 +18,7 @@
     "P2 / aligned": 359,
     "P? / nonaction": 201,
     "P2 / nonaction": 175,
-    "P1 / aligned": 168,
+    "P1 / aligned": 169,
     "P? / aligned": 160,
     "P3 / aligned": 126,
     "P2 / deliberate": 90,
@@ -518,7 +518,7 @@
         "id": "G21",
         "official": "侧栏一级有独立「连接」屏（✓ 屏上实测；官方有 connections 视图）",
         "local": "✎ 现读（2026-10-31）更正：侧栏一级「连接」屏已建（/connections），列出并新增 MCP/API 连接。",
-        "verdict": "缺失",
+        "verdict": "✎ 第 553 批回填＝**已对齐**（原格写「缺失」是第 99 批旧账，本地已建后未回填判定；raw 状态早为 aligned）",
         "score": "2/2",
         "criteria": "独立屏列出入站/出站与块级来源  ☆ 原判（2026-10-31 现读后作废）＝只有 `BacklinksPanel`，无对应路由（路由清单里无 connections）",
         "status": "aligned",
@@ -835,7 +835,7 @@
         "id": "G52",
         "official": "任务状态含 **cancelled**（与 completed 并列），日历默认**只显示 pending**，任务可按**正则**过滤内容；官方块嵌套上限 **10**",
         "local": "✎ 现读（2026-10-31）更正：cancelled 与默认只显示 pending 已落地；正则过滤与嵌套上限未按原判据做，台账已判不做。",
-        "verdict": "部分落地＋③④ 判**不做（有据，第 206 批）**＝①② 已清（第 190 批）；③④ 不是\"还没做\"，是**不该照原判据做**：④ 那个\"10\"的出处是 `api-contract.md:22` 的 `depth` 参数，原文**\"Maximum depth the structure is displayed\"**＝**显示深度**；而官方编辑器真实的轴是 `indentLevel`（`interactions.md` V23：一次 `Tab` 往 `_flexRow` 里插一个 `--indent-w: 28px` 占位 div、块序列是**扁平**的 `currentPage.subblocks`），下界守卫只有 `indentLevel + delta >= 0`、**盘上无任何\"拒绝第 11 层\"的证据** ⇒ 照做就是拿显示参数当编辑面判据（本台账自己禁止的那件事），故**不做**；③ 的出处是 `api-contract.md:37` 的 `contentRegex` **查询参数**（\"only tasks whose content matches the given regular expression\"），盘上**没有**任何\"任务页有正则过滤控件\"的证据 ⇒ 不据此造 UI，**不做**（若将来采到屏上控件或其输入框，再单独立项）；两条裁决的出处已钉成机器闸 `src/lib/block-depth-gate.test.ts`（4 条：`depth` 那条仍逐字带 `displayed` 与 `10`／V23 的 `--indent-w` 与\"缩进**不是嵌套**\"结语仍在／`contentRegex` 那句原文仍在；对照＝把 `displayed` 改成 `enforced`⇒闸逐字红、还原即绿）",
+        "verdict": "✎ 第 553 批回填＝**有意偏差（③④ 判不做，有据）**：①② 已清（第 190 批）；③④ 不是\"还没做\"，是**不该照原判据做**：④ 那个\"10\"的出处是 `api-contract.md:22` 的 `depth` 参数，原文**\"Maximum depth the structure is displayed\"**＝**显示深度**；而官方编辑器真实的轴是 `indentLevel`（`interactions.md` V23：一次 `Tab` 往 `_flexRow` 里插一个 `--indent-w: 28px` 占位 div、块序列是**扁平**的 `currentPage.subblocks`），下界守卫只有 `indentLevel + delta >= 0`、**盘上无任何\"拒绝第 11 层\"的证据** ⇒ 照做就是拿显示参数当编辑面判据（本台账自己禁止的那件事），故**不做**；③ 的出处是 `api-contract.md:37` 的 `contentRegex` **查询参数**（\"only tasks whose content matches the given regular expression\"），盘上**没有**任何\"任务页有正则过滤控件\"的证据 ⇒ 不据此造 UI，**不做**（若将来采到屏上控件或其输入框，再单独立项）；两条裁决的出处已钉成机器闸 `src/lib/block-depth-gate.test.ts`（4 条：`depth` 那条仍逐字带 `displayed` 与 `10`／V23 的 `--indent-w` 与\"缩进**不是嵌套**\"结语仍在／`contentRegex` 那句原文仍在；对照＝把 `displayed` 改成 `enforced`⇒闸逐字红、还原即绿）",
         "score": "2/2",
         "criteria": "③④ 判**不做（有据）**＝见判定列（第 206 批）；原备注「③ 补正则过滤档；④ 先核实\"10\"到底是显示深度还是编辑上限，再决定拒绝或降级」已由第 206 批结清  ☆ 原判（2026-10-31 现读后作废）＝☆ 本行四件事，第 190 批清掉前两件：① **cancelled 档已落地**＝轴在正文与列两处同源（正文 `checked`／`cancelled` 两枚 attr，状态机单源 `src/lib/editor/task-status.ts`＝官方 `h9e` 线值映射与 `cde` 点击循环，含「`Canceled → Unchecked`」那枚反直觉分支；列 `status: todo|doing|done|cancelled` ＋ 与 `completedAt` 并列的 `cancelledAt`＝`contract.prisma:323`，迁移 `20261014T1105_add_task_cancelled_at`）；官方「已取消」行**只加删除线、原地不动**（`interactions.md:1087`）与「已于/完成于」双时间戳（`tasks.md:104`）都在；入口＝键 `SET_CANCELLED`（`⌘⌥⇧T`／`Ctrl-Alt-Shift-T`）＋ Mac-only `SET_CANCELLED_SLASH`（`⌘⌥/`，☆ win 侧 `chordFor` 返回 `null` 而不是发一枚错键）＋拖拽菜单「将任务标记为已取消／取消标记」；② **默认只显示 pending 已落地**＝任务页与日历同一谓词（`grouping.ts:77`），upcoming 分区里取消行不算未完成（`upcoming-groups.ts:201`），开关打开才与完成行一起回来（`api-contract.md:36`），提醒投递与 materialize 同样对取消档闭嘴（☆ 三处都是**只看 `isCompleted` 兜不住**的形状＝取消行没打勾）；③ **未动**＝按正则过滤任务内容全库零匹配；④ **未动**＝无深度上限校验；☆☆ 两处口径必须记下＝本行旧\"本地对照\"里的 `contract.prisma:304` 已随本批漂移到 323 行；而\"嵌套上限 10\"这个数字的出处是 `api-contract.md:22` 那条 API `depth` **显示深度**参数（\"Maximum depth the structure is displayed\"），本台账把它当作编辑面的嵌套上限，做④之前须先确认官方编辑器真的拒绝第 11 层，否则是拿显示参数立判据",
         "status": "deliberate",
@@ -851,7 +851,7 @@
           "src/lib/editor/task-status.ts:78",
           "src/lib/block-depth-gate.test.ts"
         ],
-        "baseStatus": "partial"
+        "baseStatus": "deliberate"
       },
       {
         "line": 1167,

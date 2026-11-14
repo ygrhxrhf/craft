@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-11-14",
-  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。",
+  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -2142,6 +2142,7 @@
       ]
     },
     "G90": {
+      "status": "aligned",
       "note": "根错误边界与懒加载失败判据已建（第 217 批）：isLazyLoadError 认打包器/浏览器两类错误。",
       "evidence": [
         "src/app/error.tsx",
@@ -2157,12 +2158,14 @@
       ]
     },
     "G169": {
+      "status": "aligned",
       "note": "层级标签已落：splitTagLevels 解析父级/子级，第二个 / 触发「只能一个层级」校验。",
       "evidence": [
         "src/lib/tag/rules.ts"
       ]
     },
     "G170": {
+      "status": "aligned",
       "note": "六条字符校验与四态反馈已落；hexColor 规则先于 # 剥离，故 #ccc 不会伪装成标签。",
       "evidence": [
         "src/lib/tag/rules.ts"
@@ -2188,6 +2191,7 @@
       ]
     },
     "G1007": {
+      "status": "aligned",
       "note": "本地已建批量永久删除通路（第 101 批）：TrashList 多选工具栏 + 计数回显确认框。",
       "evidence": [
         "src/components/document/TrashList.tsx:76",

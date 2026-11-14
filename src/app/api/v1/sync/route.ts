@@ -270,8 +270,10 @@ export async function POST(req: NextRequest) {
   try {
     const result = await applyBatch(db, userId, parsed.data.records);
     return Response.json(result, { headers: { 'Cache-Control': 'no-store' } });
-  } catch {
-    // 事务内任一异常 → 整批 500、无部分确认（客户端整批重推，LWW 幂等安全）
+  } catch (e) {
+    // 事务内任一异常 → 整批 500、无部分确认（客户端整批重推，LWW 幂等安全）。
+    // 响应体仍是通用句（不外泄内部细节），但必须留栈：静默 500 让整条写路径无从诊断。
+    console.error('[sync] batch failed', e);
     return Response.json({ error: 'sync failed' }, { status: 500 });
   }
 }
@@ -388,41 +390,41 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
             });
             continue;
           }
-          try {
-            await model.create({ ...payload, id: rec.table === 'document_tag' ? undefined : rec.id });
-          } catch (err) {
-            // R-19：唯一键冲突（同唯一键存量行、不同 pk）→ 按定位器回读存量行，
-            // 跑与主路径同一条 decideLww（apply→update / reject→回传现值），批保持原子
-            const locator = UNIQUE_KEY_LOCATORS[rec.table]?.(key, userId) ?? null;
-            const existing = locator ? await model.first(locator) : null;
-            if (existing) {
-              const exSrv = new Date(existing[def.tsCol]).toISOString();
-              if (decideLww(rec.op, rec.syncTs, exSrv) === 'reject') {
-                rejected.push({
-                  table: rec.table, id: pk, op: existing.deletedAt ? 'delete' : 'upsert',
-                  data: pickCols(def, existing), syncTs: exSrv, reason: 'stale',
-                });
-                continue;
-              }
-              // 不动存量行主键（Tag.id 被 document_tag 外键引用）→ payload 的 id 剥掉
-              const patch = { ...payload };
-              delete patch.id;
-              await model.where(locator).update(patch);
-              appliedId = def.id(existing);
-            } else {
-              // G1505 的第二副面孔：同一枚 id 已在**他人**名下（越权成员推自己那版元数据，
-              // 带得齐铸造键，闸放得过）。盲 create 撞主键 → 整批 500 → 客户端无限重推＝
-              // 毒批次，这台设备的元数据通路从此卡死。按 not_found 拒绝（不回传他人行一列），
-              // 其余错误照旧上抛维持整批 500——不把真错误吞成"成功"。
-              const foreign = USER_ID_TABLES.has(rec.table)
-                ? await model.first({ id: rec.id })
-                : null;
-              if (!foreign) throw err;
+          // R-19 与 G1505 第二副面孔都必须**先读后写**：Postgres 里一条语句失败后整个事务
+          // 进入 aborted 态（SQLSTATE 25P02），此后任何查询都抛错 ⇒ 批整体 500、客户端无限
+          // 重推同一笔＝毒批次（真机取证：本地镜像持有旧 id 时点「取消固定」，8 次全 500，
+          // 直到重新拉取把权威 id 带回来才通）。故冲突一律在 create 之前用定位器回读。
+          const locator = UNIQUE_KEY_LOCATORS[rec.table]?.(key, userId) ?? null;
+          const existing = locator ? await model.first(locator) : null;
+          if (existing) {
+            // 同唯一键、不同 pk 的存量行：跑与主路径同一条 decideLww（apply→update / reject→回传现值）
+            const exSrv = new Date(existing[def.tsCol]).toISOString();
+            if (decideLww(rec.op, rec.syncTs, exSrv) === 'reject') {
+              rejected.push({
+                table: rec.table, id: pk, op: existing.deletedAt ? 'delete' : 'upsert',
+                data: pickCols(def, existing), syncTs: exSrv, reason: 'stale',
+              });
+              continue;
+            }
+            // 不动存量行主键（Tag.id 被 document_tag 外键引用）→ payload 的 id 剥掉
+            const patch = { ...payload };
+            delete patch.id;
+            await model.where(locator).update(patch);
+            appliedId = def.id(existing);
+          } else {
+            // 同一枚 id 已在**他人**名下（越权成员推自己那版元数据，带得齐铸造键，闸放得过）：
+            // where 带 userId 定位不到、盲 create 会撞主键。只按 id 读一次（不回传任何列），
+            // 命中即按 not_found 拒绝，不把整批打成毒批次。
+            const foreign = USER_ID_TABLES.has(rec.table)
+              ? await model.first({ id: rec.id })
+              : null;
+            if (foreign) {
               rejected.push({
                 table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'not_found',
               });
               continue;
             }
+            await model.create({ ...payload, id: rec.table === 'document_tag' ? undefined : rec.id });
           }
         }
         maxCursor = newer(maxCursor, { ts, id: appliedId });

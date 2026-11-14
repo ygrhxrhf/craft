@@ -1,8 +1,8 @@
 /**
  * G604 —— 任务是一层**独立的分页文档缓存**（`model.md` §一之三十五，官方 22 项 store）。
  *
- * 本地任务查询直读 Prisma、一次 `limit 200`（`src/actions/task/task.ts:168`），没有游标、
- * 没有 loadStatus ⇒ **分页与增量刷新整层缺失**。本模块把官方那层的形状写出来：
+ * 本地任务查询按 `(createdAt, id)` 复合游标分页（`getTasksPage`）；这里把官方那层的**状态形状**
+ * 写出来，任务屏用它承接 `nextCursor` 与滚动加载：
  *
  *   - **三个独立游标**：总表 `continuationToken`、进行中 `ongoingTasks`、即将到期 `upcomingTasks`
  *     ——三条查询各翻各的页，互不推进；
@@ -81,6 +81,15 @@ export function settleLoad(
 /** 重置（官方 `resetFetchDocumentsWithTasks`）：游标与 pageInfo 清空、状态回 `idle`。 */
 export function resetTaskPageState(): TaskPageState {
   return initialTaskPageState();
+}
+
+/**
+ * 追加下一页：按 `id` 去重。首屏叠过本机 pending 行（`overlayTaskRows`），下一页读回同一批行时
+ * 不能再画一遍；顺序保持"首屏在前、后页在后"，与服务端的 `(createdAt, id)` 降序一致。
+ */
+export function appendTaskPage<T extends { id: string }>(current: readonly T[], next: readonly T[]): T[] {
+  const seen = new Set(current.map((row) => row.id));
+  return [...current, ...next.filter((row) => !seen.has(row.id))];
 }
 
 /**

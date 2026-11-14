@@ -1511,12 +1511,15 @@
     "G604": {
       "status": "partial",
       "priority": "P1",
-      "note": "第 547 批收回为 partial：服务端游标分页已落——`getTasksPage(cursor)` 按 `(createdAt,id)` 取一页（`TASK_PAGE_SIZE=100`）返回 `{items, nextCursor}`，`getTasks()` 取首页；但 `nextCursor` 在 src 下除 `task.ts` 自身外零调用点，任务屏 `TasksView.tsx` 仍只 import `getTasks`，`TaskPageState`（三独立游标／loadStatus／reorderAfter）与滚动加载未接，官方 22 个子项里的 `pinDocument`／`unpinDocument`／`updateDailyDocumentIds` 也未见实现 ⇒ 客户端翻页与写侧余项未齐。",
+      "note": "第 548 批：G604 的分页两层都接通。服务端 `getTasksPage` 改真 keyset——`orderBy([createdAt.desc(), id.desc()])`＋`cursor({createdAt,id})`＋`limit(101)` 探测行（不再 `.all()` 全表读后 JS 切片），页内文档标题由逐行 `Document.first()` 合成一次 `in` 查询；任务屏 `TasksView.tsx` 用 `TaskPageState` 的 `load`／`loadMore` 承接游标，底部哨兵 `task-load-more` 由 IntersectionObserver（提前 240px）自动取下一页，`appendTaskPage` 按 id 去重，失败回落 `idle`。真视口核验（临时播种到 105 条活任务）：首屏 91 行 → 滚到底 92 行、游标耗尽后哨兵卸载、console 零错误；单测 3 条（101 行两页／100 行无游标／追加去重）。仍 partial：官方 22 项里三条独立游标本地只有 `continuationToken` 一条，`setFilter`／`setSort`／`updateDailyDocumentIds{map}` 无对应。",
       "evidence": [
         "src/actions/task/task.ts:213",
-        "src/actions/task/task.ts:206",
-        "src/app/(app)/tasks/TasksView.tsx:23",
-        "src/lib/task/task-paging.ts:20"
+        "src/actions/task/task.test.ts:481",
+        "src/app/(app)/tasks/TasksView.tsx:126",
+        "src/app/(app)/tasks/TasksView.tsx:142",
+        "src/app/(app)/tasks/TasksView.tsx:649",
+        "src/lib/task/task-paging.ts:90",
+        "src/lib/task/task-paging.test.ts:64"
       ]
     },
     "G608": {

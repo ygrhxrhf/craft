@@ -216,31 +216,36 @@ export async function getTasksPage(cursor?: string | null): Promise<{ items: Tas
 
   const db = await getDb();
   // G604: the task list is a paged cache with a **cursor** (official `continuationToken`), not a
-  // single unbounded read. The cursor is the `(createdAt, id)` of the last row returned; a next page
-  // asks for rows strictly older than it, so a growing table does not re-read what was already seen.
-  const all = await db.orm.public.Task
-    .where({ userId: session.user.id, deletedAt: null })
-    .orderBy((t: any) => t.createdAt.desc())
-    .all();
+  // single unbounded read. The cursor is the `(createdAt, id)` of the last row returned and seeks
+  // strictly older rows, so a growing table does not re-read what was already seen. The keyset is
+  // composite and descends on `(createdAt, id)`; asking for one row past the page is the `hasMore`
+  // probe — `nextCursor` is only emitted when that probe row exists.
   const after = cursor ? decodeTaskCursor(cursor) : null;
-  const paged = after
-    ? (all as Record<string, unknown>[]).filter((row) => {
-        const ts = String(row.createdAt ?? '');
-        if (ts < after.createdAt) return true;
-        if (ts > after.createdAt) return false;
-        return String(row.id ?? '') < after.id;
-      })
-    : (all as Record<string, unknown>[]);
-  const tasks = paged.slice(0, TASK_PAGE_SIZE);
-  const nextCursor = paged.length > TASK_PAGE_SIZE ? encodeTaskCursor(tasks[tasks.length - 1]) : null;
+  const pageQuery = db.orm.public.Task
+    .where({ userId: session.user.id, deletedAt: null })
+    .orderBy([(t: any) => t.createdAt.desc(), (t: any) => t.id.desc()])
+    .limit(TASK_PAGE_SIZE + 1);
+  const rows: Record<string, unknown>[] = after
+    ? await (pageQuery as any).cursor({ createdAt: after.createdAt, id: after.id }).all()
+    : await pageQuery.all();
+  const tasks = rows.slice(0, TASK_PAGE_SIZE);
+  const nextCursor = rows.length > TASK_PAGE_SIZE ? encodeTaskCursor(tasks[tasks.length - 1]) : null;
+
+  // One read for the page's documents instead of a `Document.first()` round-trip per task.
+  const documentIds = [...new Set(tasks.map((row) => String(row.documentId ?? '')).filter(Boolean))];
+  const docs: Record<string, unknown>[] = documentIds.length
+    ? await db.orm.public.Document
+        .where((m: any) => m.id.in(documentIds))
+        .select('id', 'title', 'isDeleted')
+        .all()
+    : [];
+  const docById = new Map(docs.map((doc) => [String(doc.id), doc]));
 
   const items: TaskItem[] = [];
   for (const t of tasks) {
     const row = t as any;
     let documentTitle: string | null = null;
-    const doc = row.documentId
-      ? await db.orm.public.Document.first({ id: row.documentId })
-      : null;
+    const doc = row.documentId ? (docById.get(String(row.documentId)) ?? null) : null;
     if (!listsTaskFromDocument(row.documentId ?? null, doc ? { isDeleted: (doc as any).isDeleted } : null)) {
       continue;
     }

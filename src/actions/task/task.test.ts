@@ -434,6 +434,87 @@ describe('task page cursors (G604)', () => {
     expect(typeof mod.getTasks).toBe('function');
     expect(typeof mod.getTasksPage).toBe('function');
   });
+
+  // 与 ORM 同语义的本地桩：先按 userId 过滤，再按 (createdAt, id) 降序，cursor 之后续读。
+  function pagedTable(rows: Row[]) {
+    let conds: Row[] = [];
+    let after: { createdAt: string; id: string } | null = null;
+    let limit = Number.POSITIVE_INFINITY;
+    const chain: any = {
+      where(cond: Row) {
+        conds = [...conds, cond];
+        return chain;
+      },
+      orderBy() {
+        return chain;
+      },
+      limit(n: number) {
+        limit = n;
+        return chain;
+      },
+      cursor(c: { createdAt: string; id: string }) {
+        after = c;
+        return chain;
+      },
+      async all() {
+        const scoped = rows.filter((row) => conds.every((c) => matchRow(row, c)));
+        const sorted = [...scoped].sort((a, b) => {
+          const ac = String(a.createdAt);
+          const bc = String(b.createdAt);
+          if (ac !== bc) return ac < bc ? 1 : -1;
+          return String(a.id) < String(b.id) ? 1 : -1;
+        });
+        const seeked = after
+          ? sorted.filter((row) => {
+              const ts = String(row.createdAt);
+              if (ts < after!.createdAt) return true;
+              if (ts > after!.createdAt) return false;
+              return String(row.id) < after!.id;
+            })
+          : sorted;
+        return seeked.slice(0, limit);
+      },
+    };
+    return chain;
+  }
+
+  it('getTasksPage 101 行出 100 行 + 游标，第二页收尾且游标为空', async () => {
+    const rows: Row[] = Array.from({ length: 101 }, (_, i) => ({
+      ...liveTask,
+      id: `t${String(i).padStart(3, '0')}`,
+      // 行 i 比 i+1 新一秒：数组顺序即 (createdAt, id) 降序。
+      createdAt: new Date(Date.UTC(2026, 0, 1, 0, 0, 100 - i)).toISOString(),
+    }));
+    (getDb as ReturnType<typeof vi.fn>).mockResolvedValue({
+      orm: { public: { Task: pagedTable(rows), SyncEvent: { create: vi.fn() } } },
+    });
+
+    const { getTasksPage } = await import('./task');
+    const first = await getTasksPage(null);
+    expect(first.items).toHaveLength(100);
+    expect(first.items[0]!.id).toBe('t000');
+    expect(first.nextCursor).not.toBeNull();
+
+    const second = await getTasksPage(first.nextCursor!);
+    expect(second.items.map((task) => task.id)).toEqual(['t100']);
+    expect(second.nextCursor).toBeNull();
+  });
+
+  it('恰好 100 行时不再发探测行，游标为空', async () => {
+    const rows: Row[] = Array.from({ length: 100 }, (_, i) => ({
+      ...liveTask,
+      id: `t${String(i).padStart(3, '0')}`,
+      createdAt: new Date(Date.UTC(2026, 0, 1, 0, 0, 100 - i)).toISOString(),
+    }));
+    (getDb as ReturnType<typeof vi.fn>).mockResolvedValue({
+      orm: { public: { Task: pagedTable(rows), SyncEvent: { create: vi.fn() } } },
+    });
+
+    const { getTasksPage } = await import('./task');
+    const page = await getTasksPage(null);
+    expect(page.items).toHaveLength(100);
+    expect(page.nextCursor).toBeNull();
+  });
 });
 
 describe('batch schedule / deadline setters (G107)', () => {

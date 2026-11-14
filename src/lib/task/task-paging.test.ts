@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   advanceCursor,
+  appendTaskPage,
   beginLoad,
   cursorFor,
   emptyTaskCursors,
@@ -57,6 +58,19 @@ describe('the load-status machine (G604)', () => {
     const loaded = settleLoad(beginLoad(initialTaskPageState()), 'all', { nextToken: 't2', hasMore: true, count: 5 });
     expect(resetTaskPageState()).not.toEqual(loaded);
     expect(resetTaskPageState()).toEqual(initialTaskPageState());
+  });
+});
+
+describe('appendTaskPage dedupes a page against rows already on screen (G604)', () => {
+  it('keeps the current order and drops ids the list already has', () => {
+    const current = [{ id: 'a' }, { id: 'b' }];
+    const next = [{ id: 'b' }, { id: 'c' }, { id: 'd' }];
+    expect(appendTaskPage(current, next).map((row) => row.id)).toEqual(['a', 'b', 'c', 'd']);
+  });
+
+  it('appending an empty page changes nothing', () => {
+    const current = [{ id: 'a' }];
+    expect(appendTaskPage(current, [])).toEqual(current);
   });
 });
 

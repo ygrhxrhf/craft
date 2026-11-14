@@ -1,14 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
 /**
- * `gap.md` G52 — 官方的任务除"勾上"之外还有**第三档** `cancelled`（`docs/craft-ref/features/tasks.md:11`），
- * 进入它的两条通路都在文档里：`⌘⌥⇧T` / `Ctrl-Alt-Shift-T`（`keyboard.md:116`）与拖拽把手菜单那枚
- * 「将任务标记为已取消」。屏上形态＝"保留原位、只加删除线"（`interactions.md:1087`），
- * 任务页上它属于 pending 之外的那一档（`api-contract.md:36`）——三条都在这里真的走一遍浏览器。
- * 任务页那一侧（第三档分区＋默认只显示 pending）由第三条验——"正文的待办 → `tasks` 行"这条路
- * 在真浏览器里是**通**的（`/tasks/all` 上能数到行；☆ 上一轮记成的"整库 0 行＋POST 500"是这台机器上
- * 那枚 dev server 早于 `contract emit` 启动、内存里还拿着旧契约 ⇒ `Unknown column "cancelledAt"`，
- * 见 G1497 的改判）。
+ * `gap.md` G52 — 官方的任务除"勾上"之外还有**第三档** `cancelled`（`docs/craft-ref/features/tasks.md:11`）。
+ * 唯一入口是键盘键位 `⌘⌥⇧T` / `Ctrl-Alt-Shift-T`（`keyboard.md:116`）；拖拽把手菜单**不含**这一枚
+ * （`block-actions.ts` 的名册只有三枚任务专属项，单测钉住）。屏上形态＝"保留原位、只加删除线"
+ * （`interactions.md:1087`），任务页上它属于 pending 之外的那一档（`api-contract.md:36`）——
+ * 两条都在这里真的走一遍浏览器。任务页那一侧（第三档分区＋默认只显示 pending）由第二条验。
  */
 const email = 'craft-task-cancel@example.com';
 const password = 'test1234';
@@ -64,19 +61,6 @@ async function clickRow(page: Page, index: number) {
   await rows(page).nth(index).locator('p').first().click();
 }
 
-/** Arm the handle in the gutter of the block holding row `index`, and open its menu. */
-async function openBlockMenu(page: Page, index: number) {
-  const editorBox = await page.locator('.ProseMirror').boundingBox();
-  expect(editorBox).not.toBeNull();
-  const row = await rows(page).nth(index).boundingBox();
-  expect(row).not.toBeNull();
-  await page.mouse.move(editorBox!.x + 8, row!.y + row!.height / 2);
-  const handle = page.locator('[data-drag-handle]');
-  await expect(handle).toBeVisible();
-  await handle.getByRole('button', { name: '区块操作' }).click();
-  return page.getByRole('menu');
-}
-
 /** The body is the truth, so the autosave must land before a reload proves anything. */
 async function waitSaved(page: Page) {
   await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 20_000 });
@@ -108,33 +92,6 @@ test('键盘 Ctrl-Alt-Shift-T：只作用在光标那一行，不加勾只加删
   await expect.poll(() => cancelledAttr(page)).toEqual([false, true]);
 });
 
-test('拖拽把手菜单在 taskList 的行上点得到，标签会翻成「取消标记」', async ({ page }) => {
-  await signIn(page);
-  const stamp = Date.now();
-  const title = `丙 ${stamp}`;
-  await newDocWithTwoTasks(page, title, `丁 ${stamp}`);
-  await clickRow(page, 0);
-
-  const menu = await openBlockMenu(page, 0);
-  // ★ 旧代码在这一枚上静默失灵：顶层块是 taskList，菜单那两枚一枚都点不到。
-  await expect(menu.getByRole('menuitem', { name: '将任务标记为已取消' })).toBeVisible();
-  await menu.getByRole('menuitem', { name: '将任务标记为已取消' }).click();
-  await expect.poll(() => cancelledAttr(page)).toEqual([true, false]);
-
-  // 同一枚入口在已取消的行上改名成「取消标记」（官方的标签翻转），点它退出这一档。
-  const again = await openBlockMenu(page, 0);
-  await expect(again.getByRole('menuitem', { name: '将任务标记为已取消' })).toHaveCount(0);
-  await again.getByRole('menuitem', { name: '取消标记' }).click();
-  await expect.poll(() => cancelledAttr(page)).toEqual([false, false]);
-
-  // 「提醒我…」与取消那枚共用同一处寻址：这一形里它也点得到（旧代码两枚都点不到）。
-  const third = await openBlockMenu(page, 0);
-  await expect(third.getByRole('menuitem', { name: '提醒我…' })).toBeVisible();
-  await third.getByRole('menuitem', { name: '将任务标记为已取消' }).click();
-  await expect.poll(() => cancelledAttr(page)).toEqual([true, false]);
-  await waitSaved(page);
-});
-
 test('任务页：正文那一行取消后，它离开未办那节、回到「已取消」分区（api-contract.md:36）', async ({
   page,
 }) => {
@@ -145,8 +102,8 @@ test('任务页：正文那一行取消后，它离开未办那节、回到「�
   const pendingTitle = `己 ${stamp}`;
   await newDocWithTwoTasks(page, cancelledTitle, pendingTitle);
   await clickRow(page, 0);
-  const menu = await openBlockMenu(page, 0);
-  await menu.getByRole('menuitem', { name: '将任务标记为已取消' }).click();
+  // 拖拽菜单按名册不含取消那枚（block-actions.ts 钉住）；这一档走键盘键位。
+  await page.keyboard.press('Control+Alt+Shift+T');
   await expect.poll(() => cancelledAttr(page)).toEqual([true, false]);
   await waitSaved(page);
 

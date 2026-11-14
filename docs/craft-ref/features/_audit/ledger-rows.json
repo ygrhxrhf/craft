@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-14T05:21:39.835Z",
+  "generatedAt": "2026-11-14T06:10:06.610Z",
   "totalRows": 1616,
   "statusDistribution": {
     "gap": 656,
@@ -11901,7 +11901,7 @@
       "cols": 5,
       "id": "G604",
       "official": "★★ **任务是一层独立的分页文档缓存（22 项）**：6 个 upsert（`DocumentsWithTasks`/`ActiveTasks`/`UpcomingTasks`/`InboxDocument`/`LogbookDocument`/`PinnedDocuments`）＋ **3 个独立游标** `updateContinuationToken`/`…OngoingTasks…`/`…UpcomingTasks…` ＋ `updateLoadStatus`/`setPageInfo`/`resetFetchDocumentsWithTasks` ＋ 任务写侧 6（★ `moveTask{blockId, documentId}` 跨文档移动、★ `reorderTasks{blockId, afterBlockId}` **相对定位非索引**）＋ `setFilter`/`setSort` ＋ `pinDocument`/`unpinDocument` ＋ `updateDailyDocumentIds{map}`",
-      "local": "✎ 现读（2026-11-01）更正：分页层纯核已落 `src/lib/task/task-paging.ts`（三个独立游标 advanceCursor 各动一条／loadStatus 三档 + pageInfo／reorderAfter 相对定位非索引），单测 9 条；✎ 第 103 批：`getTasksPage(cursor)` 按 (createdAt,id) 游标取一页（TASK_PAGE_SIZE=100）返回 {items,nextCursor}，`getTasks` 改取首页；✎ 第 547 批复核：`nextCursor` 在 src 下除 `task.ts` 自身外零调用点，任务屏 `TasksView.tsx` 仍只 import `getTasks`，`TaskPageState` 与滚动加载未接 ⇒ 服务端分页已落、客户端翻页未接，仍判部分落地",
+      "local": "✎ 现读（2026-11-01）更正：分页层纯核已落 `src/lib/task/task-paging.ts`（三个独立游标 advanceCursor 各动一条／loadStatus 三档 + pageInfo／reorderAfter 相对定位非索引），单测 9 条；✎ 第 103 批：`getTasksPage(cursor)` 按 (createdAt,id) 游标取一页（TASK_PAGE_SIZE=100）返回 {items,nextCursor}，`getTasks` 改取首页；✎ 第 547 批复核：`nextCursor` 在 src 下除 `task.ts` 自身外零调用点，任务屏 `TasksView.tsx` 仍只 import `getTasks`，`TaskPageState` 与滚动加载未接 ⇒ 服务端分页已落、客户端翻页未接，仍判部分落地。✎ 第 548 批：服务端改真 keyset——`orderBy([createdAt.desc(), id.desc()])`＋`cursor({createdAt,id})`＋`limit(101)` 探测行，不再 `.all()` 读全表后 JS 切片；页内文档标题由逐行 `Document.first()`（最多 101 次往返）合成一次 `in` 查询。任务屏接 `TaskPageState`（`TasksView.tsx` 的 `load`／`loadMore`，失败回落 `idle`），底部哨兵 `task-load-more` 用 IntersectionObserver（提前 240px）自动取下一页，`appendTaskPage` 按 id 去重。真视口核验（临时播种到 105 条活任务）：首屏 91 行 → 滚到底 92 行、游标耗尽后哨兵卸载、console 零错误；单测 3 条（101 行分两页／恰好 100 行无游标／追加去重）＋tsc 干净。仍判部分落地：官方 22 项里**三条独立游标**（总表／进行中／即将到期各翻各的）本地只有一条 `continuationToken`，`setFilter`／`setSort` 与 `updateDailyDocumentIds{map}` 在本地仍无对应（任务屏只有分组 tab 与「显示已完成」）",
       "verdict": "部分落地（分页层）",
       "score": "3/3",
       "status": "partial",

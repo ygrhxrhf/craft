@@ -20,7 +20,8 @@ import { REMIND_OFFSET_TIERS, remindAtFromOffset, remindOffsetLabel } from '@/li
 import { instantForSlot, slotIndexForTime, timeSlots } from '@/lib/task/time-menu';
 import { RepeatIntervalSelect } from '@/components/task/RepeatIntervalSelect';
 import { RepeatAnchorNote } from '@/components/task/RepeatAnchorNote';
-import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasks, renameTask, restoreTask, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
+import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasksPage, renameTask, restoreTask, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
+import { appendTaskPage, beginLoad, cursorFor, initialTaskPageState, settleLoad, type TaskPageState } from '@/lib/task/task-paging';
 import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
 import { SERIES_OPS } from '@/lib/task/series-ops';
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
@@ -77,6 +78,10 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   const { data: session } = useSession();
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [loading, setLoading] = useState(true);
+  // G604：任务列表分页——服务端按 `(createdAt, id)` 游标出页，这里承接游标与加载状态，
+  // ref 与 state 同步写，观察器与手动加载看到的是同一份状态。
+  const [pageState, setPageState] = useState<TaskPageState>(initialTaskPageState);
+  const pageStateRef = useRef(pageState);
   const [newTitle, setNewTitle] = useState('');
   const [adding, setAdding] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
@@ -108,15 +113,50 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   }, [entryRoute, group, router]);
 
   /**
-   * 读路径要叠本机未推送意图：`getTasks()` 读的是服务端权威行，断链时 `applyLocal`
+   * 读路径要叠本机未推送意图：`getTasksPage()` 读的是服务端权威行，断链时 `applyLocal`
    * 只把 op 留在队列里重试 ⇒ 不叠的话，刚删的任务会画回来、刚建的任务看不见
    * （文档树／回收站／评论／成员名册同一处置）。
    */
-  const load = useCallback(async () => {
-    const [data, pending] = await Promise.all([getTasks(), readPendingRows('task')]);
-    setTasks(overlayTaskRows(data, pending));
-    setLoading(false);
+  const applyPageState = useCallback((next: TaskPageState) => {
+    pageStateRef.current = next;
+    setPageState(next);
   }, []);
+
+  const load = useCallback(async () => {
+    const [page, pending] = await Promise.all([getTasksPage(null), readPendingRows('task')]);
+    setTasks(overlayTaskRows(page.items, pending));
+    applyPageState(
+      settleLoad(initialTaskPageState(), 'all', {
+        nextToken: page.nextCursor,
+        hasMore: page.nextCursor !== null,
+        count: page.items.length,
+      }),
+    );
+    setLoading(false);
+  }, [applyPageState]);
+
+  /**
+   * G604：读到底部再要一页。游标只从 ref 取，状态在发请求前就写回 `loading`，
+   * 观察器重复触发也只会翻同一页一次；失败回落 `idle`，再滚一次即重试。
+   */
+  const loadMore = useCallback(async () => {
+    const state = pageStateRef.current;
+    if (state.status !== 'idle' || !state.pageInfo?.hasMore) return;
+    applyPageState(beginLoad(state));
+    try {
+      const page = await getTasksPage(cursorFor(state.cursors, 'all'));
+      setTasks((current) => appendTaskPage(current, page.items));
+      applyPageState(
+        settleLoad(state, 'all', {
+          nextToken: page.nextCursor,
+          hasMore: page.nextCursor !== null,
+          count: page.items.length,
+        }),
+      );
+    } catch {
+      applyPageState({ ...state, status: 'idle' });
+    }
+  }, [applyPageState]);
 
   // G263: the pinned area reads the favourite rows (id + title), in their stored order.
   useEffect(() => {
@@ -138,6 +178,23 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
       setSubtaskParent(map);
     })();
   }, []);
+
+  // G604：哨兵进入视口（含提前 240px）⇒ 取下一页。哨兵只在还有下一页时挂载，
+  // 所以 effect 依赖 hasMore 才能在首屏数据落地后重新挂观察器。
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const hasMore = pageState.pageInfo?.hasMore === true;
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) void loadMore();
+      },
+      { rootMargin: '240px' },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [loadMore, hasMore]);
 
   // 首屏加载走异步 IIFE：effect 体里同步调用会 setState 的回调会被
   // react-hooks/set-state-in-effect 拦下（与 GalleryView / TableView 同一口径）。
@@ -164,7 +221,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
 
   /**
    * 离线优先写：applyLocal 只落本地 store + 入队，**不等 flush**（去抖 2s）。
-   * 而本页读路径是 getTasks（服务端权威行）⇒ 必须紧跟 flushNow，
+   * 而本页读路径是 getTasksPage（服务端权威行）⇒ 必须紧跟 flushNow，
    * 否则紧随其后的 load() 读回的仍是旧数据，这次改动看起来像没发生。
    * flushNow 内部吞错（离线时按退避阶梯留在队列里重试），不会 reject。
    * userId 先走 `currentUserId`：`useSession` 的 data 是异步到位的，登录后立刻点新建会退到
@@ -585,6 +642,15 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
               </section>
             )}
           </>
+        )}
+        {!loading && hasMore && (
+          <div
+            ref={sentinelRef}
+            data-testid="task-load-more"
+            className="py-4 text-center text-sm text-muted-foreground"
+          >
+            {pageState.status === 'loading' ? '加载中…' : '加载更多'}
+          </div>
         )}
       </AppPageContainer>
         </div>

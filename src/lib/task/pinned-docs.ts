@@ -27,9 +27,23 @@ export interface PinnedDocument {
   documentId: string;
   /** The document's title, for the pinned chip (absent when only the id is known). */
   title?: string;
+  /** 收藏行自己的 id：重排写的是 `favorite.order`，文档 id 不是这一行的主键。 */
+  favoriteId?: string;
   /** 固定顺序（0 基，越小越靠前）。 */
   order: number;
 }
+
+/** 固定上限：官方 `xne = 5`，超出就不再收新的（已固定的重排不受影响）。 */
+export const PIN_LIMIT = 5;
+
+/**
+ * 超限提示：官方在 JS 里硬编码英文（`Fin` 里那句 `flashMessage`），zh／en 两份 i18n 都没有它，
+ * 故照抄原文而不是自造中文（同 `official-copy.ts` 的口径）。
+ */
+export const PIN_LIMIT_COPY = {
+  title: "Can't pin document",
+  description: `You can only pin up to ${PIN_LIMIT} documents.`,
+} as const;
 
 /**
  * 固定区该显示哪些文档：按 `order` 升序。**空列表触发空态**（那句"拖放文档即可固定"）。
@@ -44,12 +58,39 @@ export function showsEmptyState(pinned: PinnedDocument[]): boolean {
 }
 
 /**
- * 固定/取消固定的一步：已固定 ⇒ 摘掉（取消固定）；未固定 ⇒ 追加到末尾（固定）。
- * 返回新的固定列表，顺序保持。
+ * 固定/重排一步（官方 `Wsn`）：
+ * - 无锚（`afterDocumentId == null`）⇒ 插到**最前**（官方 `unshift`）；
+ * - 锚就是自己 ⇒ 不动；
+ * - 否则把这篇从原位摘掉、紧跟锚后插入（官方 `flatMap`——锚不在列表时这篇会被摘掉，照抄）；
+ * - 末了保序去重（官方 `f1`），再重排 `order` 0…n-1。
  */
-export function togglePinned(pinned: PinnedDocument[], documentId: string): PinnedDocument[] {
-  const exists = pinned.some((row) => row.documentId === documentId);
-  if (exists) return pinned.filter((row) => row.documentId !== documentId);
-  const nextOrder = pinned.reduce((max, row) => Math.max(max, row.order + 1), 0);
-  return [...pinned, { documentId, order: nextOrder }];
+export function pinAfter(
+  pinned: PinnedDocument[],
+  documentId: string,
+  afterDocumentId?: string | null,
+): PinnedDocument[] {
+  const ordered = pinnedInOrder(pinned);
+  const ids = ordered.map((row) => row.documentId);
+  const inserted =
+    afterDocumentId == null
+      ? [documentId, ...ids]
+      : afterDocumentId === documentId
+        ? ids
+        : ids.flatMap((id) => (id === documentId ? [] : id === afterDocumentId ? [id, documentId] : [id]));
+  const seen = new Set<string>();
+  const deduped = inserted.filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+  const byId = new Map(ordered.map((row) => [row.documentId, row]));
+  return deduped.map((id, order) => ({ ...(byId.get(id) ?? { documentId: id }), order }));
+}
+
+/** 取消固定（官方 `zsn`）：摘掉这篇，剩下的重排。 */
+export function unpinPinned(pinned: PinnedDocument[], documentId: string): PinnedDocument[] {
+  return pinnedInOrder(pinned)
+    .filter((row) => row.documentId !== documentId)
+    .map((row, order) => ({ ...row, order }));
+}
+
+/** 这道闸只拦**新**固定：已固定的重排永远放行（官方 `Fin` 的 `!includes` 条件）。 */
+export function canPin(pinned: PinnedDocument[], documentId: string): boolean {
+  return pinned.some((row) => row.documentId === documentId) || pinned.length < PIN_LIMIT;
 }

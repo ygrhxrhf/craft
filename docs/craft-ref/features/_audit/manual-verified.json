@@ -1510,9 +1510,9 @@
       ]
     },
     "G604": {
-      "status": "partial",
+      "status": "deliberate",
       "priority": "P1",
-      "note": "第 550 批：G604 设置层与三条游标接通。① 三条独立游标：`listForGroup(group)`（grouping.ts:110）把四个 tab 映到官方那三个 cursor（今天→`ongoingTasks`、即将进行→`upcomingTasks`、收件箱/所有任务→`continuationToken`），`cursorFor`／`advanceCursor`（task-paging.ts:46／54）只推进对应那条；今天页另带 `TaskListRange`（`[今天零点, 明天零点)`，「显示过去日期」关时下界就收在今天零点）。② `updateLoadStatus`／`setPageInfo`／`resetFetchDocumentsWithTasks` ⇒ `beginLoad`／`settleLoad`／`load` 首屏即 `settleLoad(initialTaskPageState(), …)`。③ `setFilter`／`setSort` ⇒ `TaskSettingsMenu`（components/task/TaskSettingsMenu.tsx:75）＋设备级 `task-view-settings` store，四个 tab 各一套菜单（收件箱＝排序方式＋显示计划任务＋查看已完成的任务；所有任务＝显示计划任务＋查看已完成的任务，官方那条 `r1` 不传 `taskSort`；今天＝文档排序＋任务排序＋显示过去日期；即将进行＝分组依据＋条件排序），列表派生走 `deriveTaskRows`（task-view-derive.ts:20，所有任务只留文档任务与过了「显示计划任务」闸的收件箱行），过滤/排序纯核 `sortTasksForView`（:226）／`matchesTodayView`（:255）。④ 拖拽闸门（官方 `Ki`）⇒ `tasks-reorder-refused` toast（`timeout: 3000`，仅收件箱给「改用手动排序」，四处 `onReorderRefused`）。⑤ 写侧：`moveTask` ⇒ `moveTaskToDocument`（move.ts:15）、`reorderTasks{blockId, afterBlockId}` 相对定位 ⇒ `reorderTasks`（task.ts:550）＋`reorderAfter`、`pinDocument`／`unpinDocument` ⇒ 收藏行（`getFavoriteDocuments` get.ts:195，`toggleFavoriteLocal` 写侧，顺序靠 G94 的 `favorite.order`）＋`folder.pinnedDocumentIds`。仍判部分落地：① `pinDocument{documentId, afterDocumentId?}` 的**相对插入**没有对应（`src` 下 `afterDocumentId` 零命中）；② `updateDailyDocumentIds{map}` 没有对应（本地是逐行 `Document.dailyNoteDate`，无「日期→文档 id」映射；真实收件箱/日志本文档属 G109／G605）。**有意偏差**：官方「查看已完成的任务」开弹层，本地保留内联 `ShowCompletedToggle`（任务页与日历共用同一个设备设置，菜单那行也写这份存储，开关与列表同源），判据同 G985／G1152。",
+      "note": "第 550 批：G604 设置层与三条游标接通。① 三条独立游标：`listForGroup(group)`（grouping.ts:110）把四个 tab 映到官方那三个 cursor（今天→`ongoingTasks`、即将进行→`upcomingTasks`、收件箱/所有任务→`continuationToken`），`cursorFor`／`advanceCursor`（task-paging.ts:46／54）只推进对应那条；今天页另带 `TaskListRange`（`[今天零点, 明天零点)`，「显示过去日期」关时下界就收在今天零点）。② `updateLoadStatus`／`setPageInfo`／`resetFetchDocumentsWithTasks` ⇒ `beginLoad`／`settleLoad`／`load` 首屏即 `settleLoad(initialTaskPageState(), …)`。③ `setFilter`／`setSort` ⇒ `TaskSettingsMenu`（components/task/TaskSettingsMenu.tsx:75）＋设备级 `task-view-settings` store，四个 tab 各一套菜单（收件箱＝排序方式＋显示计划任务＋查看已完成的任务；所有任务＝显示计划任务＋查看已完成的任务，官方那条 `r1` 不传 `taskSort`；今天＝文档排序＋任务排序＋显示过去日期；即将进行＝分组依据＋条件排序），列表派生走 `deriveTaskRows`（task-view-derive.ts:20，所有任务只留文档任务与过了「显示计划任务」闸的收件箱行），过滤/排序纯核 `sortTasksForView`（:226）／`matchesTodayView`（:255）。④ 拖拽闸门（官方 `Ki`）⇒ `tasks-reorder-refused` toast（`timeout: 3000`，仅收件箱给「改用手动排序」，四处 `onReorderRefused`）。⑤ 写侧：`moveTask` ⇒ `moveTaskToDocument`（move.ts:15）、`reorderTasks{blockId, afterBlockId}` 相对定位 ⇒ `reorderTasks`（task.ts:550）＋`reorderAfter`、`pinDocument`／`unpinDocument` ⇒ 收藏行（`getFavoriteDocuments` get.ts:195，`toggleFavoriteLocal` 写侧，顺序靠 G94 的 `favorite.order`）＋`folder.pinnedDocumentIds`。⑥ 第 552 批：`pinDocument{documentId, afterDocumentId?}` 的相对插入落地——纯核 `pinAfter`（pinned-docs.ts:67）照抄官方 `Wsn` 三分支（无锚 `unshift` 到最前／锚即自己不动／否则先摘原位再紧跟锚后插入，锚不在列表时这篇被摘掉同官方 `flatMap`）＋保序去重（官方 `f1`）＋0…n-1 重排；`unpinPinned`（:87）同官方 `zsn`；`canPin`（:94）承接 `Fin` 的 5 枚上限（`PIN_LIMIT = 5`，:37），只拦新固定、已固定的重排永远放行，超限提示照抄官方硬编码英文 `Can't pin document`／`You can only pin up to 5 documents.`（`PIN_LIMIT_COPY`，:43；zh／en 两份 i18n 都没有这句）。任务页固定区成为真落点：整区空白＝无锚插最前，每枚 chip 左右半区＝插在目标之后／目标之前那枚之后（`handlePinDrop`，TasksView.tsx:309），侧栏拖来的文档先经 `toggleFavoriteLocal` 建收藏行（固定＝收藏）再整份顺序写 `favorite.order`（`commitPinnedOrder`，:238，`applyLocal` 逐行＋`flushNow`），chip 上新增 `PinOff` 取消固定按钮（:753）。⑦ `updateDailyDocumentIds{map}` 不设对应：官方那层是「临时日文档 id → 真文档 id」的重映射（`parseTempDailyDocumentId`／`getDocumentIdForDaily`），本地不建临时 id，日文档直接按 `Document.dailyNoteDate` 定位；真实收件箱/日志本文档属 G109／G605。**有意偏差**：官方「查看已完成的任务」开弹层，本地保留内联 `ShowCompletedToggle`（任务页与日历共用同一个设备设置，菜单那行也写这份存储，开关与列表同源），判据同 G985／G1152。",
       "evidence": [
         "src/lib/task/grouping.ts:110",
         "src/lib/task/task-paging.ts:46",
@@ -1529,7 +1529,15 @@
         "src/components/ui/dropdown-menu-label.test.ts:1",
         "src/actions/task/task.ts:550",
         "src/actions/task/move.ts:15",
-        "src/actions/document/get.ts:195"
+        "src/actions/document/get.ts:195",
+        "src/lib/task/pinned-docs.ts:37",
+        "src/lib/task/pinned-docs.ts:43",
+        "src/lib/task/pinned-docs.ts:67",
+        "src/lib/task/pinned-docs.ts:87",
+        "src/lib/task/pinned-docs.ts:94",
+        "src/app/(app)/tasks/TasksView.tsx:238",
+        "src/app/(app)/tasks/TasksView.tsx:309",
+        "src/app/(app)/tasks/TasksView.tsx:753"
       ]
     },
     "G608": {

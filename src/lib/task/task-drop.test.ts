@@ -2,7 +2,16 @@ import { describe, expect, it } from 'vitest';
 
 import { insertIndexFor, shouldSuppressIndicator, sideFor } from './task-drop';
 import { deriveSubtasks, parentOf, subtaskMap, type TaskBlockRow } from './subtasks';
-import { pinnedInOrder, PIN_COPY, showsEmptyState, togglePinned } from './pinned-docs';
+import {
+  canPin,
+  PIN_COPY,
+  PIN_LIMIT,
+  PIN_LIMIT_COPY,
+  pinAfter,
+  pinnedInOrder,
+  showsEmptyState,
+  unpinPinned,
+} from './pinned-docs';
 
 /**
  * G270: half-region drop targeting, with three indicator-suppression cases.
@@ -96,12 +105,80 @@ describe('the pinned documents area (G263)', () => {
     expect(showsEmptyState([{ documentId: 'a', order: 0 }])).toBe(false);
   });
 
-  it('pins by appending and unpins by removing', () => {
-    const after = togglePinned([{ documentId: 'a', order: 0 }], 'b');
-    expect(after).toEqual([
+  it('unpins by removing the doc and renumbering the rest', () => {
+    const pinned = [
       { documentId: 'a', order: 0 },
       { documentId: 'b', order: 1 },
+      { documentId: 'c', order: 2 },
+    ];
+    expect(unpinPinned(pinned, 'b')).toEqual([
+      { documentId: 'a', order: 0 },
+      { documentId: 'c', order: 1 },
     ]);
-    expect(togglePinned(after, 'a')).toEqual([{ documentId: 'b', order: 1 }]);
+    expect(unpinPinned(pinned, 'missing')).toEqual(pinned);
+  });
+});
+
+/**
+ * G604: the official `pinDocument{documentId, afterDocumentId?}` relative insertion
+ * (`Wsn` in the official bundle) and the 5-pin cap (`Fin`).
+ */
+describe('relative pin insertion (G604)', () => {
+  const base = [
+    { documentId: 'a', order: 0 },
+    { documentId: 'b', order: 1 },
+    { documentId: 'c', order: 2 },
+  ];
+
+  it('inserts at the front when there is no anchor', () => {
+    expect(pinAfter(base, 'z').map((p) => p.documentId)).toEqual(['z', 'a', 'b', 'c']);
+    expect(pinAfter(base, 'z', null).map((p) => p.documentId)).toEqual(['z', 'a', 'b', 'c']);
+  });
+
+  it('inserts right after a named anchor', () => {
+    expect(pinAfter(base, 'z', 'a').map((p) => p.documentId)).toEqual(['a', 'z', 'b', 'c']);
+    expect(pinAfter(base, 'z', 'c').map((p) => p.documentId)).toEqual(['a', 'b', 'c', 'z']);
+  });
+
+  it('moves an already-pinned doc instead of duplicating it', () => {
+    expect(pinAfter(base, 'c', 'a').map((p) => p.documentId)).toEqual(['a', 'c', 'b']);
+  });
+
+  it('leaves the order alone when the anchor is the doc itself', () => {
+    expect(pinAfter(base, 'b', 'b').map((p) => p.documentId)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('drops the doc when the anchor is absent, matching the official flatMap', () => {
+    expect(pinAfter(base, 'z', 'gone').map((p) => p.documentId)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('renumbers the order field 0..n-1 and keeps row metadata', () => {
+    const rows = [
+      { documentId: 'a', title: 'A', order: 5 },
+      { documentId: 'b', title: 'B', order: 9 },
+    ];
+    expect(pinAfter(rows, 'b', null)).toEqual([
+      { documentId: 'b', title: 'B', order: 0 },
+      { documentId: 'a', title: 'A', order: 1 },
+    ]);
+  });
+});
+
+describe('the pin cap (G604)', () => {
+  const rows = (n: number) => Array.from({ length: n }, (_, i) => ({ documentId: `d${i}`, order: i }));
+
+  it('caps new pins at five', () => {
+    expect(PIN_LIMIT).toBe(5);
+    expect(canPin(rows(4), 'new')).toBe(true);
+    expect(canPin(rows(5), 'new')).toBe(false);
+  });
+
+  it('always lets an already-pinned doc be reordered', () => {
+    expect(canPin(rows(5), 'd0')).toBe(true);
+  });
+
+  it('carries the official hardcoded English copy', () => {
+    expect(PIN_LIMIT_COPY.title).toBe("Can't pin document");
+    expect(PIN_LIMIT_COPY.description).toBe('You can only pin up to 5 documents.');
   });
 });

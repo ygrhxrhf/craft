@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Bell, CalendarClock, CheckSquare, ChevronRight, FileText, Plus, Trash2 } from 'lucide-react';
+import { Bell, CalendarClock, CheckSquare, ChevronRight, FileText, PinOff, Plus, Trash2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from 'cn';
@@ -27,7 +27,7 @@ import { SERIES_OPS } from '@/lib/task/series-ops';
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
 import { getSyncManager } from '@/lib/sync-core';
 import { currentUserId } from '@/lib/sync-core/current-user';
-import { readPendingRows } from '@/components/sync/local-records';
+import { readPendingRows, findFavoriteRowId } from '@/components/sync/local-records';
 import { overlayTaskRows, taskPatchFor } from './tasks-local';
 import { applyCompletedFilter, listForGroup, tasksForGroup, withinUpcoming, writeShowCompleted, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
 import { upcomingSections } from '@/lib/task/upcoming-groups';
@@ -77,7 +77,17 @@ import { CancelledBadge } from '@/components/task/cancelled-badge';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { getFavoriteDocuments } from '@/actions/document/get';
-import { PIN_COPY, pinnedInOrder, type PinnedDocument } from '@/lib/task/pinned-docs';
+import { toggleFavoriteLocal } from '@/lib/favorite/toggle-local';
+import { SIDEBAR_DOC_MIME, parseSidebarDragPayload, sidebarDragState } from '@/lib/dnd/sidebar-drag';
+import {
+  PIN_COPY,
+  PIN_LIMIT_COPY,
+  canPin,
+  pinAfter,
+  pinnedInOrder,
+  unpinPinned,
+  type PinnedDocument,
+} from '@/lib/task/pinned-docs';
 
 /** `/tasks` is the inbox view. `/tasks/today` and `/tasks/upcoming` are local paths —
  *  the ledger only records `/tasks/inbox` and `/tasks/all`. */
@@ -202,13 +212,124 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     }
   }, [applyPageState, list, range]);
 
-  // G263: the pinned area reads the favourite rows (id + title), in their stored order.
-  useEffect(() => {
-    void (async () => {
-      const docs = await getFavoriteDocuments().catch(() => []);
-      setPinned(docs.map((doc, index) => ({ documentId: doc.id, title: doc.title, order: index })));
-    })();
+  // G263: the pinned area reads the favourite rows (id + title + favourite row id), in their stored order.
+  const loadPinned = useCallback(async () => {
+    const docs = await getFavoriteDocuments().catch(() => []);
+    setPinned(
+      docs.map((doc, index) => ({
+        documentId: doc.id,
+        title: doc.title,
+        favoriteId: doc.favoriteId,
+        order: index,
+      })),
+    );
   }, []);
+
+  useEffect(() => {
+    void loadPinned();
+  }, [loadPinned]);
+
+  // G604：固定区本身也是拖放落点（官方 `pinDocument{documentId, afterDocumentId?}`）。
+  // 整份顺序落到 `favorite.order`（0…n-1），与收藏区 `starred_reorder` 同一条"整批而非中点"的口径。
+  const [pinDragging, setPinDragging] = useState<string | null>(null);
+  const [pinDropAt, setPinDropAt] = useState<{ documentId: string; after: boolean } | null>(null);
+  const [pinSectionOver, setPinSectionOver] = useState(false);
+
+  const commitPinnedOrder = async (next: PinnedDocument[]) => {
+    setPinned(next);
+    const manager = getSyncManager();
+    for (const row of next) {
+      if (!row.favoriteId) continue;
+      await manager.applyLocal({ table: 'favorite', id: row.favoriteId, patch: { order: row.order } });
+    }
+    await manager.flushNow();
+    await loadPinned();
+  };
+
+  /** 固定一篇文档：新固定先建收藏行（固定＝收藏），再按官方锚点插进整份顺序。 */
+  const pinDocument = async (
+    documentId: string,
+    afterDocumentId: string | null,
+    title?: string,
+  ) => {
+    const ordered = pinnedInOrder(pinned);
+    if (!canPin(ordered, documentId)) {
+      toast.add({
+        id: 'tasks-pin-limit',
+        type: 'info',
+        title: PIN_LIMIT_COPY.title,
+        description: PIN_LIMIT_COPY.description,
+        timeout: 3000,
+      });
+      return;
+    }
+    const already = ordered.some((row) => row.documentId === documentId);
+    let rows = ordered;
+    if (!already) {
+      await toggleFavoriteLocal({ documentId, favored: false, userId: session?.user?.id });
+      rows = [
+        ...ordered,
+        {
+          documentId,
+          title,
+          favoriteId: (await findFavoriteRowId(documentId)) ?? undefined,
+          order: ordered.length,
+        },
+      ];
+    }
+    await commitPinnedOrder(pinAfter(rows, documentId, afterDocumentId));
+  };
+
+  const unpinDocument = async (documentId: string) => {
+    const next = unpinPinned(pinned, documentId);
+    await toggleFavoriteLocal({ documentId, favored: true, userId: session?.user?.id });
+    await commitPinnedOrder(next);
+  };
+
+  /** 侧栏里拖来的是文档、或正在拖本区里已固定的一枚 ⇒ 接；其余拖拽不接。 */
+  const acceptsPinDrag = () => {
+    if (pinDragging) return true;
+    const payload = sidebarDragState.payload;
+    return !!payload && 'type' in payload && payload.type === 'doc';
+  };
+
+  const handlePinDragOver = (event: React.DragEvent, targetId: string | null) => {
+    if (!acceptsPinDrag()) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    if (targetId === null) {
+      setPinSectionOver(true);
+      setPinDropAt(null);
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    setPinDropAt({ documentId: targetId, after: event.clientX > rect.left + rect.width / 2 });
+  };
+
+  const handlePinDrop = async (event: React.DragEvent, targetId: string | null) => {
+    event.preventDefault();
+    setPinSectionOver(false);
+    setPinDropAt(null);
+    const internal = pinDragging;
+    setPinDragging(null);
+    const candidate =
+      parseSidebarDragPayload(event.dataTransfer.getData(SIDEBAR_DOC_MIME)) ?? sidebarDragState.payload;
+    sidebarDragState.payload = null;
+    const payload = candidate && 'type' in candidate && candidate.type === 'doc' ? candidate : null;
+    const documentId = internal ?? payload?.documentId ?? null;
+    if (!documentId || documentId === targetId) return;
+    // 左半落点＝插在目标之前（官方把 `beforeDocumentId` 解析成它前面那枚）；右半＝插在目标之后。
+    // 落在整区空白处＝无锚，官方 `unshift` 到最前。
+    let afterDocumentId: string | null = null;
+    if (targetId !== null) {
+      const ordered = pinnedInOrder(pinned);
+      const index = ordered.findIndex((row) => row.documentId === targetId);
+      const rect = event.currentTarget.getBoundingClientRect();
+      const after = event.clientX > rect.left + rect.width / 2;
+      afterDocumentId = after ? targetId : (ordered[index - 1]?.documentId ?? null);
+    }
+    await pinDocument(documentId, afterDocumentId, payload?.title);
+  };
 
   // G408: the subtask map is derived server-side (root block id → subtask block ids); the row
   // shows a "子任务" marker for a task that has any.
@@ -578,8 +699,21 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
         </div>
       </nav>
       {/* G263: the pinned-documents area. A document is pinned by favouriting it (the existing
-          `favorite` table is the store), and the empty state says how to fill it. */}
-      <section className="px-4 pt-3" data-testid="pinned-docs">
+          `favorite` table is the store), and the empty state says how to fill it.
+          G604：它同时是拖放落点——拖到一枚芯片上按左右半分「前/后」，拖到空白处插到最前。 */}
+      <section
+        className={cn('px-4 pt-3', pinSectionOver && 'bg-primary/5')}
+        data-testid="pinned-docs"
+        onDragOver={(event) => {
+          if (event.defaultPrevented) return;
+          handlePinDragOver(event, null);
+        }}
+        onDragLeave={() => setPinSectionOver(false)}
+        onDrop={(event) => {
+          if (event.defaultPrevented) return;
+          void handlePinDrop(event, null);
+        }}
+      >
         {/* G34：craft 任务屏分区标题 15/600/18、α0.85（此前 12/500）。 */}
         <h2 className="mb-2 text-[15px] font-semibold leading-[18px] text-foreground/85">
           {PIN_COPY.pin.label}
@@ -592,14 +726,38 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
         ) : (
           <div className="flex flex-wrap gap-2">
             {pinnedInOrder(pinned).map((doc) => (
-              <Link
+              <div
                 key={doc.documentId}
-                href={`/documents/${doc.documentId}`}
-                className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-foreground/4 hover:text-foreground"
+                draggable
+                onDragStart={() => setPinDragging(doc.documentId)}
+                onDragEnd={() => {
+                  setPinDragging(null);
+                  setPinDropAt(null);
+                  setPinSectionOver(false);
+                }}
+                onDragOver={(event) => handlePinDragOver(event, doc.documentId)}
+                onDrop={(event) => void handlePinDrop(event, doc.documentId)}
+                className={cn(
+                  'flex items-center gap-1 rounded-md border border-border text-xs text-muted-foreground transition-colors hover:bg-foreground/4 hover:text-foreground',
+                  pinDragging === doc.documentId && 'opacity-40',
+                  pinDropAt?.documentId === doc.documentId &&
+                    (pinDropAt.after ? 'border-r-2 border-foreground/40' : 'border-l-2 border-foreground/40'),
+                )}
               >
-                <FileText className="size-3.5" />
-                <span className="max-w-40 truncate">{doc.title}</span>
-              </Link>
+                <Link href={`/documents/${doc.documentId}`} className="flex items-center gap-1 py-1 pl-2">
+                  <FileText className="size-3.5" />
+                  <span className="max-w-40 truncate">{doc.title}</span>
+                </Link>
+                <button
+                  type="button"
+                  aria-label={PIN_COPY.unpin.label}
+                  title={PIN_COPY.unpin.label}
+                  onClick={() => void unpinDocument(doc.documentId)}
+                  className="shrink-0 rounded-r-md p-1 text-foreground/35 transition-colors hover:bg-foreground/6 hover:text-foreground"
+                >
+                  <PinOff className="size-3" />
+                </button>
+              </div>
             ))}
           </div>
         )}

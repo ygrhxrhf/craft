@@ -9699,8 +9699,8 @@
       ]
     },
     "G1418": {
-      "status": "partial",
-      "note": "第 543 批：(c) 持久位补上——四档选项合成一条记录落 localStorage 的 craft.find.options，store 在模块求值期读一次（无 storage 时取默认），四枚 setter 写完即整条回写；readFindOptions 逐字段收窄，半截记录只回落缺失字段。单测 options.test.ts 6 条 + use-find-replace-store.test.ts 3 条，e2e 第四条改三项后 reload 仍选中（4 passed）。仍差两项：(a) 形态是编辑器内联条，非官方 frsidebar＋「选项」弹出列表；(b) scope 只喂占位文案与胶囊态，扩展与 matcher 都不读，单文档编辑器里「在页面上」＝「在文档中」，需把子页正文接进查找。",
+      "status": "aligned",
+      "note": "第 545 批：(a) 形态补上——查找面板改为官方 frsidebar 形状：288px 通栏侧栏、根节点 id=\"frsidebar\"、「查找 ⌄」下拉＋「选项」按钮，四档选项移入 role=group 弹出列表，选中行右侧勾。第 546 批：(b) 作用域真分档已接——getSubpageStats 按 parentId 逐层 BFS、只取需要的列（回调式 in 避开 where 简写把操作符对象当字面量的静默零命中），面板在 scope=doc 时逐页列子页命中（标题＋计数＋before/hit/after 摘要）并点行跳转，总数＝本页＋子页，e2e 实测同一 query「这一页」2 结果、「在文档中」5 结果且只有 1 条子页命中行；替换仍只作用于打开的这一页（子页正文不在当前 ProseMirror 文档里，官方证据只见 isCurrentPage 的当前页范围，未见跨页替换），子页命中行是导航入口。顺带把 Escape 从两个输入框的 onKeyDown 移到面板根节点，焦点落在「选项」按钮上时也能先收浮层再收面板。tsc 干净，单测 42 条（matcher 22／options 6／store 3／get 11）＋相关目录 376 条全绿，e2e 5 条 1440×900 真视口全过且 console/pageerror 为零。",
       "evidence": [
         "src/lib/find/options.ts:17",
         "src/lib/find/options.ts:31",
@@ -9711,6 +9711,11 @@
         "src/components/editor/find-replace-panel.tsx:7",
         "src/lib/find/options.test.ts:1",
         "src/lib/store/use-find-replace-store.test.ts:1",
+        "src/actions/document/get.ts:36",
+        "src/components/editor/find-replace-panel.tsx:115",
+        "src/components/editor/find-replace-panel.tsx:421",
+        "src/prisma/where-shorthand.test.ts:1",
+        "e2e/find-replace-case.spec.ts:141",
         "e2e/find-replace-case.spec.ts:124"
       ],
       "priority": "P2"

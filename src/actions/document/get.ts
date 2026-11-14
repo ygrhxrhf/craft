@@ -20,6 +20,8 @@ export interface AuthorizedDocument {
 }
 
 export interface SubpageStats {
+  id: string;
+  title: string;
   wordCount: number;
   plainText: string;
   /** Not stored per page, so a subpage contributes none and the open page keeps its own count. */
@@ -37,29 +39,36 @@ export async function getSubpageStats(rootId: string): Promise<SubpageStats[]> {
   if (!access) return [];
 
   const db = await getDb();
-  const rows: Array<{ id: string; parentId: string | null; wordCount: number; plainText: string }> =
-    await db.orm.public.Document
+  type Row = { id: string; title: string; parentId: string | null; wordCount: number; plainText: string };
+
+  // One read per tree level instead of one read of every document the user owns: the old
+  // `where({ userId })` pulled 832 rows (with their `plainText`) to walk a three-page subtree.
+  const stats: SubpageStats[] = [];
+  const seen = new Set<string>([rootId]);
+  let frontier = [rootId];
+  while (frontier.length > 0) {
+    // Callback form, not `.where({ parentId: { in: frontier } })`: the shorthand sends its value
+    // as a SQL literal and an operator object there matches nothing without erroring
+    // (src/prisma/where-shorthand.test.ts).
+    const rows: Row[] = await db.orm.public.Document
+      .where((m: any) => m.parentId.in(frontier))
       .where({ userId, isDeleted: false })
-      .select('id', 'parentId', 'wordCount', 'plainText')
+      .select('id', 'title', 'parentId', 'wordCount', 'plainText')
       .all();
 
-  const byParent = new Map<string, typeof rows>();
-  for (const row of rows) {
-    if (!row.parentId) continue;
-    const list = byParent.get(row.parentId) ?? [];
-    list.push(row);
-    byParent.set(row.parentId, list);
-  }
-
-  const stats: SubpageStats[] = [];
-  const pending = [...(byParent.get(rootId) ?? [])];
-  const seen = new Set<string>([rootId]);
-  while (pending.length > 0) {
-    const row = pending.pop()!;
-    if (seen.has(row.id)) continue;
-    seen.add(row.id);
-    stats.push({ wordCount: row.wordCount ?? 0, plainText: row.plainText ?? '', blockCount: 0 });
-    pending.push(...(byParent.get(row.id) ?? []));
+    frontier = [];
+    for (const row of rows) {
+      if (seen.has(row.id)) continue; // a cycle or a repeated child: stop rather than loop
+      seen.add(row.id);
+      stats.push({
+        id: row.id,
+        title: row.title,
+        wordCount: row.wordCount ?? 0,
+        plainText: row.plainText ?? '',
+        blockCount: 0,
+      });
+      frontier.push(row.id);
+    }
   }
   return stats;
 }
@@ -74,26 +83,23 @@ export async function countSubpages(rootId: string): Promise<number> {
   if (!access) return 0;
 
   const db = await getDb();
-  const rows: Array<{ id: string; parentId: string | null }> = await db.orm.public.Document
-    .where({ userId, isDeleted: false })
-    .select('id', 'parentId')
-    .all();
-
-  const byParent = new Map<string, string[]>();
-  for (const row of rows) {
-    if (!row.parentId) continue;
-    const list = byParent.get(row.parentId) ?? [];
-    list.push(row.id);
-    byParent.set(row.parentId, list);
-  }
-
+  // Same level-by-level walk as `getSubpageStats`: the whole-account read below it counted the
+  // descendants of one root by materialising every document the user owns.
   const seen = new Set<string>([rootId]);
-  const pending = [...(byParent.get(rootId) ?? [])];
-  while (pending.length > 0) {
-    const id = pending.pop()!;
-    if (seen.has(id)) continue;
-    seen.add(id);
-    pending.push(...(byParent.get(id) ?? []));
+  let frontier = [rootId];
+  while (frontier.length > 0) {
+    const rows: Array<{ id: string; parentId: string | null }> = await db.orm.public.Document
+      .where((m: any) => m.parentId.in(frontier))
+      .where({ userId, isDeleted: false })
+      .select('id', 'parentId')
+      .all();
+
+    frontier = [];
+    for (const row of rows) {
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      frontier.push(row.id);
+    }
   }
   return seen.size - 1;
 }
@@ -204,13 +210,22 @@ export async function getFavoriteDocuments() {
     .where({ userId: session.user.id, deletedAt: null })
     .orderBy((m: any) => m.order.asc())
     .all();
+  if (favorites.length === 0) return docs;
+
+  // One read for every favorite instead of a `.first()` per row; the order still comes from the
+  // favorite rows, so the merged list is rebuilt in that order below.
+  const ids = favorites.map((fav: any) => String((fav as { documentId: string }).documentId));
+  const rows = await db.orm.public.Document
+    .where((m: any) => m.id.in(ids))
+    .select('id', 'title', 'icon', 'updatedAt', 'isDeleted', 'isArchived')
+    .all();
+  const byId = new Map(
+    (rows as unknown as Array<{ id: string; title: string; icon: string | null; updatedAt: string; isDeleted: boolean; isArchived: boolean }>)
+      .map((doc) => [doc.id, doc]),
+  );
 
   for (const fav of favorites) {
-    // `isDeleted` is read to filter and then dropped: the card below never sees it.
-    const doc = await db.orm.public.Document
-      .where({ id: (fav as { documentId: string }).documentId })
-      .select('id', 'title', 'icon', 'updatedAt', 'isDeleted', 'isArchived')
-      .first() as { id: string; title: string; icon: string | null; updatedAt: string; isDeleted: boolean; isArchived: boolean } | null;
+    const doc = byId.get(String((fav as { documentId: string }).documentId));
     if (doc && !doc.isDeleted && !doc.isArchived) {
       docs.push({
         id: doc.id,
@@ -295,10 +310,13 @@ export async function getRecentDocuments(limit = 20) {
 
   const docs: RecentDoc[] = [];
 
+  // Bounded at the source: the caller renders `limit` cards, and the old read materialised every
+  // live document (832 rows and their `plainText` for this account) only to sort and slice.
   const own = await db.orm.public.Document
     .where({ userId: session.user.id, isDeleted: false, isArchived: false })
     .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'plainText', 'lastViewedAt', 'folderId', 'parentId', 'isDailyNote')
     .orderBy((m: any) => m.updatedAt.desc())
+    .limit(limit)
     .all();
 
   for (const doc of own) {
@@ -309,32 +327,40 @@ export async function getRecentDocuments(limit = 20) {
   const grants = await db.orm.public.DocumentMember
     .where({ userId: session.user.id })
     .all();
+  const sharedIds = grants.map((grant: any) => (grant as { documentId: string }).documentId);
 
-  for (const grant of grants) {
-    // `userId` and `isDeleted` are read to filter and then dropped.
-    const doc = await db.orm.public.Document
-      .where({ id: (grant as { documentId: string }).documentId })
+  if (sharedIds.length > 0) {
+    // One read for every grant instead of a `.first()` per grant. The tree this sits on is small
+    // (a handful of grants per account), so the `limit` stays applied to the merged list below.
+    const shared = await db.orm.public.Document
+      .where((m: any) => m.id.in(sharedIds))
       .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'userId', 'isDeleted', 'isArchived', 'plainText', 'lastViewedAt', 'folderId', 'parentId', 'isDailyNote')
-      .first() as {
-        id: string; title: string; icon: string | null; updatedAt: string; createdAt: string;
-        userId: string; isDeleted: boolean; isArchived: boolean; plainText: string; lastViewedAt: string | null;
-        folderId: string | null; parentId: string | null; isDailyNote: boolean;
-      } | null;
-    if (!doc || doc.isDeleted || doc.isArchived) continue;
-    if (doc.userId === session.user.id) continue;
-    docs.push({
-      id: doc.id,
-      title: doc.title,
-      icon: doc.icon,
-      updatedAt: doc.updatedAt,
-      createdAt: doc.createdAt,
-      plainText: doc.plainText ?? '',
-      lastViewedAt: doc.lastViewedAt ?? null,
-      folderId: doc.folderId ?? null,
-      parentId: doc.parentId ?? null,
-      role: (grant as { role: string }).role,
-      isDailyNote: doc.isDailyNote === true,
-    });
+      .all();
+
+    const roleByDoc = new Map<string, string>(
+      grants.map((grant: any) => [String((grant as { documentId: string }).documentId), String((grant as { role: string }).role)]),
+    );
+    for (const doc of shared as unknown as Array<{
+      id: string; title: string; icon: string | null; updatedAt: string; createdAt: string;
+      userId: string; isDeleted: boolean; isArchived: boolean; plainText: string | null; lastViewedAt: string | null;
+      folderId: string | null; parentId: string | null; isDailyNote: boolean;
+    }>) {
+      if (doc.isDeleted || doc.isArchived) continue;
+      if (doc.userId === session.user.id) continue;
+      docs.push({
+        id: doc.id,
+        title: doc.title,
+        icon: doc.icon,
+        updatedAt: doc.updatedAt,
+        createdAt: doc.createdAt,
+        plainText: doc.plainText ?? '',
+        lastViewedAt: doc.lastViewedAt ?? null,
+        folderId: doc.folderId ?? null,
+        parentId: doc.parentId ?? null,
+        role: roleByDoc.get(doc.id) ?? 'viewer',
+        isDailyNote: doc.isDailyNote === true,
+      });
+    }
   }
 
   docs.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
@@ -364,22 +390,37 @@ export async function getSharedWithMeDocuments(limit = 50): Promise<SharedWithMe
     .where({ userId: session.user.id })
     .all();
 
-  const docs: SharedWithMeDoc[] = [];
+  const roleByDoc = new Map<string, string>();
   for (const grant of grants) {
-    // `userId` and the delete/archive flags are read to filter and then dropped.
-    const doc = await db.orm.public.Document
-      .where({ id: (grant as { documentId: string }).documentId })
-      .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'userId', 'isDeleted', 'isArchived', 'plainText', 'lastViewedAt')
-      .first() as {
-        id: string; title: string; icon: string | null; updatedAt: string; createdAt: string;
-        userId: string; isDeleted: boolean; isArchived: boolean; plainText: string | null; lastViewedAt: string | null;
-      } | null;
-    if (!doc || doc.isDeleted || doc.isArchived) continue;
+    const g = grant as { documentId: string; role: string };
+    roleByDoc.set(g.documentId, g.role);
+  }
+  const docIds = [...roleByDoc.keys()];
+  if (docIds.length === 0) return [];
+
+  const rows = (await db.orm.public.Document
+    .where((m: any) => m.id.in(docIds))
+    .select('id', 'title', 'icon', 'updatedAt', 'createdAt', 'userId', 'isDeleted', 'isArchived', 'plainText', 'lastViewedAt')
+    .all()) as Array<{
+    id: string; title: string; icon: string | null; updatedAt: string; createdAt: string;
+    userId: string; isDeleted: boolean; isArchived: boolean; plainText: string | null; lastViewedAt: string | null;
+  }>;
+
+  const ownerIds = [...new Set(rows.map((row) => row.userId))];
+  const owners = ownerIds.length === 0
+    ? []
+    : (await db.orm.public.User
+      .where((m: any) => m.id.in(ownerIds))
+      .select('id', 'name', 'email')
+      .all()) as Array<{ id: string; name: string | null; email: string | null }>;
+  const ownerById = new Map(owners.map((owner) => [owner.id, owner]));
+
+  const docs: SharedWithMeDoc[] = [];
+  for (const doc of rows) {
+    if (doc.isDeleted || doc.isArchived) continue;
     if (doc.userId === session.user.id) continue;
 
-    const owner = await db.orm.public.User.first({ id: doc.userId }) as
-      | { name: string | null; email: string | null }
-      | null;
+    const owner = ownerById.get(doc.userId);
     docs.push({
       id: doc.id,
       title: doc.title,
@@ -390,7 +431,7 @@ export async function getSharedWithMeDocuments(limit = 50): Promise<SharedWithMe
       lastViewedAt: doc.lastViewedAt ?? null,
       shared: true,
       sharedBy: owner?.name?.trim() || owner?.email || null,
-      role: (grant as { role: string }).role,
+      role: roleByDoc.get(doc.id) ?? 'viewer',
     });
   }
 

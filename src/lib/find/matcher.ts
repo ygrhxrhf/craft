@@ -193,11 +193,16 @@ export function findMatches(
 }
 
 /**
- * The count line is `find.replace.search` =「[0] 结果 [1]」. Only `[0]` was collected, so `[1]`
- * is dropped rather than guessed.
+ * The count line is scope-dependent in the official panel: `Oe = f(isScopeCurrentPage ?
+ * "on.page" : "in.doc")` is the `[1]` slot of `find.replace.search` (「[0] 结果 [1]」), the `[0]`
+ * slot of `one.result` (「1 个结果 [0]」), and `no.result` (「暂无结果 [0]」) is called with `[0]`
+ * left empty — which is why an empty result prints the bare 「暂无结果」.
  */
-export function formatResultCount(total: number): string {
-  return `${total} 结果`;
+export function formatResultCount(total: number, scope: 'page' | 'doc' = 'page'): string {
+  if (total === 0) return '暂无结果';
+  const where = scope === 'doc' ? '在文档中' : '在页面上';
+  if (total === 1) return `1 个结果 ${where}`;
+  return `${total} 结果 ${where}`;
 }
 
 /** Same flags `findMatches` searches with, so a regex replacement cannot ignore `match.case`. */

@@ -172,9 +172,14 @@ describe('applyReplacement', () => {
 });
 
 describe('formatResultCount', () => {
-  it('fills the collected count key and leaves the uncollected slot out', () => {
-    // find.replace.search =「[0] 结果 [1]」— only [0] was collected, so [1] is dropped.
-    expect(formatResultCount(0)).toBe('0 结果');
-    expect(formatResultCount(12)).toBe('12 结果');
+  it('follows the official three branches, with the scope in the [1] slot', () => {
+    // no.result =「暂无结果 [0]」called with [0] empty; one.result =「1 个结果 [0]」;
+    // find.replace.search =「[0] 结果 [1]」where [1] is in.doc / on.page.
+    expect(formatResultCount(0)).toBe('暂无结果');
+    expect(formatResultCount(1)).toBe('1 个结果 在页面上');
+    expect(formatResultCount(12)).toBe('12 结果 在页面上');
+    expect(formatResultCount(1, 'doc')).toBe('1 个结果 在文档中');
+    expect(formatResultCount(12, 'doc')).toBe('12 结果 在文档中');
+    expect(formatResultCount(0, 'doc')).toBe('暂无结果');
   });
 });

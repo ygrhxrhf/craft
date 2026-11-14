@@ -10,8 +10,9 @@ import { describe, expect, it } from 'vitest';
  * 服务端 LWW 原样退回、界面毫无提示 ⇒ 清扫段删不掉残留，下一轮必然红。
  * 处置（第 190 批，`tasks-upcoming-sections.spec.ts`）＝ 清扫与收尾一律先
  * 回到真实时钟。第 535 批换了承载方式：不再掰本页时钟（实测 `setSystemTime` 之后该页客户端
- * fetch 与定时器一起失准，`/tasks` 停在「加载中…」），改成在同一 context 里**开一张新页**——
- * `page.clock` 是按页装的，新页天然是真实钟。
+ * fetch 与定时器一起失准，`/tasks` 停在「加载中…」）。第 549 批的探针把第 535 批的前提
+ * 证伪了：假钟是**按 context** 装的，同一 context 里开新页照样是 2026-10-14——真正干净的
+ * 承载是**另开一个 context**（`browser.newContext()`），它的钟天然是真实的。
  *
  * 本闸把"全仓清点"冻在这里（第 205 批逐份扫过）：**只有三份 spec 碰 `page.clock`**，
  * 其中只有 `tasks-upcoming-sections` 用 `install`（即真的伪造了计时器并会在假时间下写库）。
@@ -48,8 +49,8 @@ describe('e2e 假时钟闸：伪造计时器的 spec 必须能回到真实时钟
   it('每个 `install` 过的 spec 都把清扫带回真实时钟（否则会被 LWW 静默退回）', () => {
     const installers = files.filter((f) => read(f).includes('page.clock.install('));
     expect(installers.sort(), 'install 清单与上面那份不一致＝判据失效').toEqual([...INSTALL_SPECS].sort());
-    // 两条被批准的承载方式：掰回本页时钟，或另开一张（按页装的假钟带不过去）页跑清扫。
-    const REAL_CLOCK_ESCAPES = ['page.clock.setSystemTime(Date.now())', 'context().newPage()'];
+    // 两条被批准的承载方式：掰回本页时钟，或另开一个 context（同 context 的新页会继承假钟）。
+    const REAL_CLOCK_ESCAPES = ['page.clock.setSystemTime(Date.now())', 'browser.newContext()'];
     for (const f of installers) {
       const source = read(f);
       expect(

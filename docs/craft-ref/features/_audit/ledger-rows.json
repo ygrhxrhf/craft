@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-14T23:03:30.125Z",
+  "generatedAt": "2026-11-14T23:30:13.787Z",
   "totalRows": 1617,
   "statusDistribution": {
     "gap": 655,
@@ -30184,7 +30184,7 @@
       "id": "G1625",
       "official": "☆ 非官方对账项＝**本地时序洞（同步写路径）**：R-19（唯一键定位器）与 G1505 第二副面孔（撞键回读）都必须**先读后写**——Postgres 里一条语句失败即令整个事务进入 aborted 态（SQLSTATE `25P02`），此后任何查询都抛错 ⇒「盲创建 → 撞唯一键 → catch 里回读」这一路永远不可能成功，整批 500、客户端无限重推同一笔＝毒批次（真机取证：本地镜像持有旧 id 点「取消固定」，连续 8 次 500，直到重新拉取把权威 id 带回来才通）",
       "local": "本地原状＝`route.ts` 的 create 支路是「先 create → 撞唯一键 → catch 里回读」：撞键那条语句一失败，事务即进 aborted 态（`25P02`），catch 里的回读必抛 ⇒ 批整体 500、客户端无限重推同一笔＝毒批次",
-      "verdict": "☆ 已清（第 553 批）＝`src/app/api/v1/sync/route.ts` 的 create 支路改为「唯一键定位器回读 → 他人 id 探测 → 才 create」（存量行按 LWW 决定 reject 或原地 update 并删掉 patch 里的 id；`favorite` 无 `createRequires`，旧 id 取消固定正是走 create 撞键的那条路径）；路由 catch 补 `console.error('[sync] batch failed', e)` 留栈（响应体仍是通用句）；回归用例 `src/app/api/v1/sync/route.test.ts`「R-19 真库序：唯一键存量行必须在 create **之前**回读」把顺序钉死（存量行存在时 create 一次都不许调、`applied` 记存量行的权威 id）",
+      "verdict": "☆ 已清（第 553 批）＝`src/app/api/v1/sync/route.ts` 的 create 支路改为「唯一键定位器回读 → 他人 id 探测 → 才 create」（存量行按 LWW 决定 reject 或原地 update 并删掉 patch 里的 id；`favorite` 无 `createRequires`，旧 id 取消固定正是走 create 撞键的那条路径）；路由 catch 补 `console.error('[sync] batch failed', e)` 留栈（响应体仍是通用句）；回归用例 `src/app/api/v1/sync/route.test.ts`「R-19 真库序：唯一键存量行必须在 create **之前**回读」把顺序钉死（存量行存在时 create 一次都不许调、`applied` 记存量行的权威 id）；✎ 第 554 批补真库用例 `src/app/api/v1/sync/route.realdb.test.ts`：①前提复核（真事务里撞唯一键后同一事务内任何读都抛 `25P02`）②端到端（陈旧 id 的取消固定整批 200、墓碑落存量行、不新增行）——反向验证过：把 create 支路临时改回盲 create，②立刻红成 500",
       "score": "3/2",
       "status": "aligned",
       "scoreParsed": {

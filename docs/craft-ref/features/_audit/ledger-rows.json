@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-14T20:49:40.565Z",
+  "generatedAt": "2026-11-14T21:43:39.103Z",
   "totalRows": 1616,
   "statusDistribution": {
     "gap": 656,
     "aligned": 487,
     "unknown": 185,
-    "deliberate": 138,
+    "deliberate": 139,
     "nonaction": 72,
-    "partial": 62,
+    "partial": 61,
     "unreachable": 16
   },
   "priorityDistribution": {
@@ -38,8 +38,8 @@
     "P3 / unknown": 22,
     "P3 / nonaction": 19,
     "P? / partial": 19,
-    "P1 / partial": 13,
-    "P1 / deliberate": 8,
+    "P1 / partial": 12,
+    "P1 / deliberate": 9,
     "P0 / aligned": 7,
     "P3 / unreachable": 6,
     "P2 / unreachable": 6,
@@ -7882,10 +7882,10 @@
       "cols": 5,
       "id": "G381",
       "official": "★ **撤销粒度 ≠ 操作数**：`输入4字 → Enter → 输入4字`（3 个动作）需要 **4 次 Ctrl+Z** 才回基线；同一段内 4 个字符被合并成一步，但换行不与上一段合并（`interactions.md` V46）",
-      "local": "☆ 已核（第 260 批）＝**两条结论分列**：① **粒度不同**（行为不同，留待办）＝同序列（打 4 字→Enter→打 4 字）本地只需 **3 次** Ctrl+Z 回基线（`[\"DDDD\",\"EEEE\"]`→`[\"DDDD\",\"\\n\"]`→`[\"DDDD\"]`→`[\"\\n\"]`），官方要 **4 次**；差在**换行那一步**：本地\"输入→换行→输入\"各占一步（3 步），官方换行不与上一段合并、但也不单独成步（4 步）；官方**段内 4 字符合并成一步**这一点本地一致（第 1 次撤销就整段吃掉 `EEEE`）；② **撤销是服务端态**（与官方**一致**）＝撤一次后等过同步防抖再 `goto` 重开该文档，`乙段文字` **仍不在**（`[\"甲段文字\",\"\\n\"]`）⇒ 本地 undo 不是纯前端内存回滚、会同步到服务端（官方 V46 结论 3 的等价行为已满足）；☆ 一处口径＝① 属\"行为不同\"、需动 history 合并窗口（`Editor.tsx:340` 现为 Tiptap 默认 `undoRedo:{}`），本批**只核不改**、行内留为待办。✎ 第 547 批现测（1440×900 真视口、人手节奏 700ms 停顿）：协同态 `Editor.tsx:413` 是 `undoRedo: false`＋Collaboration 扩展 ⇒ undo 由 Yjs UndoManager 按 500ms captureTimeout 分组，后加的 `craft-keymap.ts:805` `closeHistory` 边界只在单机态生效；实测 `AAAA→Enter→BBBB` 三次 Ctrl+Z 回基线（第 1 次退 BBBB、第 2 次退换行、第 3 次退 AAAA），官方 V46 为 4 次（多出的第 4 步是其补丁栈的初始块残留，非用户可见动作）⇒ 行为差仍在，仍判部分落地",
-      "verdict": "部分落地（②一致；①行为不同待办）",
+      "local": "☆ 已核（第 260 批）＝**两条结论分列**：① **粒度不同**（步数口径见下）＝同序列（打 4 字→Enter→打 4 字）本地只需 **3 次** Ctrl+Z 回基线（`[\"DDDD\",\"EEEE\"]`→`[\"DDDD\",\"\\n\"]`→`[\"DDDD\"]`→`[\"\\n\"]`），官方要 **4 次**；差在**换行那一步**：本地\"输入→换行→输入\"各占一步（3 步），官方换行不与上一段合并、但也不单独成步（4 步）；官方**段内 4 字符合并成一步**这一点本地一致（第 1 次撤销就整段吃掉 `EEEE`）；② **撤销是服务端态**（与官方**一致**）＝撤一次后等过同步防抖再 `goto` 重开该文档，`乙段文字` **仍不在**（`[\"甲段文字\",\"\\n\"]`）⇒ 本地 undo 不是纯前端内存回滚、会同步到服务端（官方 V46 结论 3 的等价行为已满足）；☆ 一处口径＝① 属\"行为不同\"、需动 history 合并窗口（`Editor.tsx:340` 现为 Tiptap 默认 `undoRedo:{}`），本批**只核不改**、行内留为待办。✎ 第 547 批现测（1440×900 真视口、人手节奏 700ms 停顿）：协同态 `Editor.tsx:413` 是 `undoRedo: false`＋Collaboration 扩展 ⇒ undo 由 Yjs UndoManager 按 500ms captureTimeout 分组，后加的 `craft-keymap.ts:805` `closeHistory` 边界只在单机态生效；实测 `AAAA→Enter→BBBB` 三次 Ctrl+Z 回基线（第 1 次退 BBBB、第 2 次退换行、第 3 次退 AAAA），官方 V46 为 4 次（多出的第 4 步是其补丁栈的初始块残留、屏上无可见效果）⇒ 以用户可见动作为口径时两侧同为 3 步、段内合并也一致。✎ 第 551 批裁定＝**有意偏差（撤销内核不替换，同 G654）**：为凑官方内部槽位计数去换 Yjs UndoManager、或给它注 `yUndoOptions` 并在前后补 `stopCapturing()`，属架构级替换（G654 已判不做）；**遗留可观测差异**照记＝合并**方向**相反，一次本地 undo 会把新段连同换行一起退掉，官方 V46 结论 4 是换行不与上一段合并",
+      "verdict": "有意偏差（撤销内核不替换，同 G654）",
       "score": "3/2",
-      "status": "partial",
+      "status": "deliberate",
       "scoreParsed": {
         "impact": 3,
         "cost": 2,

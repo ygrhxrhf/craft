@@ -1065,11 +1065,12 @@
       ]
     },
     "G381": {
-      "status": "partial",
+      "status": "deliberate",
       "priority": "P1",
-      "note": "第 547 批收回为 partial：真视口实测（人手节奏 700ms 停顿）协同态 undo 走 Yjs UndoManager（`Editor.tsx:413` 是 `undoRedo: false`＋Collaboration 扩展），`AAAA→Enter→BBBB` 三次 Ctrl+Z 回基线（第 1 次退 BBBB、第 2 次退换行、第 3 次退 AAAA），官方 V46 为 4 次（多出的第 4 步是其补丁栈的初始块残留，非用户可见动作）；`craft-keymap.ts:805` 的 `closeHistory` 边界只在单机态（`undoRedo:{}`）生效，协同态不参与分组 ⇒ 撤销步数行为差仍在。",
+      "note": "第 551 批改判 deliberate（有意偏差，同 G654「撤销内核不替换」）：真视口实测（人手节奏 700ms 停顿）协同态 undo 走 Yjs UndoManager（`Editor.tsx:413` 是 `undoRedo: false`，`Editor.tsx:662` 的 Collaboration 扩展未注 `yUndoOptions`，默认 `captureTimeout` 500ms），`AAAA→Enter→BBBB` 三次 Ctrl+Z 回基线（第 1 次退 BBBB、第 2 次退换行、第 3 次退 AAAA）；官方 V46 记 4 次，其第 4 次是补丁栈初始块残留、屏上无可见效果 ⇒ 以用户可见动作为口径两侧同为 3 步，段内合并也一致。为凑官方内部槽位计数改写协同撤销内核（注入 `yUndoOptions` 并在前后补 `stopCapturing()`）属架构级替换，G654 已判不做。`craft-keymap.ts:805` 的 `closeHistory` 边界只在单机态（`undoRedo:{}`）生效，协同态不参与分组。遗留可观测差异照记：合并方向相反——一次本地 undo 会把新段连同换行一起退掉，官方 V46 结论 4 是换行不与上一段合并。",
       "evidence": [
         "src/components/editor/Editor.tsx:413",
+        "src/components/editor/Editor.tsx:662",
         "src/components/editor/extensions/craft-keymap.ts:805",
         "src/components/editor/extensions/craft-keymap.ts:194"
       ]

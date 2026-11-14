@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -21,7 +21,7 @@ import { instantForSlot, slotIndexForTime, timeSlots } from '@/lib/task/time-men
 import { RepeatIntervalSelect } from '@/components/task/RepeatIntervalSelect';
 import { RepeatAnchorNote } from '@/components/task/RepeatAnchorNote';
 import { applySeriesOp, createTask, deleteTask, getSubTasks, getTasksPage, renameTask, restoreTask, reorderTasks, setTaskSchedule, toggleTask } from '@/actions/task/task';
-import { appendTaskPage, beginLoad, cursorFor, initialTaskPageState, settleLoad, type TaskPageState } from '@/lib/task/task-paging';
+import { appendTaskPage, beginLoad, cursorFor, initialTaskPageState, settleLoad, type TaskListRange, type TaskPageState } from '@/lib/task/task-paging';
 import { sideFor, shouldSuppressIndicator } from '@/lib/task/task-drop';
 import { SERIES_OPS } from '@/lib/task/series-ops';
 import type { TaskItem, TaskSchedule } from '@/actions/task/task';
@@ -29,8 +29,17 @@ import { getSyncManager } from '@/lib/sync-core';
 import { currentUserId } from '@/lib/sync-core/current-user';
 import { readPendingRows } from '@/components/sync/local-records';
 import { overlayTaskRows, taskPatchFor } from './tasks-local';
-import { applyCompletedFilter, tasksForGroup, withinUpcoming, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
+import { applyCompletedFilter, listForGroup, tasksForGroup, withinUpcoming, writeShowCompleted, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
 import { upcomingSections } from '@/lib/task/upcoming-groups';
+import {
+  canReorderTasks,
+  readTaskViewSettings,
+  serverTaskViewSettings,
+  subscribeTaskViewSettings,
+  writeTaskViewSetting,
+} from '@/lib/task/task-view-settings';
+import { deriveTaskRows } from '@/lib/task/task-view-derive';
+import { TaskSettingsMenu } from '@/components/task/TaskSettingsMenu';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TaskDatePopover } from '@/components/task/TaskDatePopover';
 import { REMINDER_CHANGED_TITLE, REMINDER_TOAST_DURATION_MS, nextReminderText } from '@/lib/task/reminder-toast';
@@ -43,7 +52,13 @@ import { isEditableTarget, rowNavIndex, taskHistoryKeyAction, taskViewKeyAction 
 import { EMPTY_UNDO, pushUndo, takeRedo, takeUndo, type UndoEntry, type UndoState } from '@/lib/task/undo-stack';
 import { applySectionAction, sectionKeyAction } from '@/lib/task/section-key';
 import { bulkCheckLabel, bulkCheckTargets } from '@/lib/task/bulk-check';
-import { TASK_GROUP_LABELS, TASKS_ADD_TASK, TASK_VIEW_EMPTY } from '@/lib/task/official-copy';
+import {
+  TASK_GROUP_LABELS,
+  TASK_SWITCH_TO_MANUAL,
+  TASKS_ADD_TASK,
+  TASK_VIEW_EMPTY,
+  taskReorderRefusedTitle,
+} from '@/lib/task/official-copy';
 import {
   SET_AS_DEFAULT_VIEW,
   defaultViewRedirect,
@@ -122,18 +137,47 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     setPageState(next);
   }, []);
 
+  /**
+   * G604：任务屏三份设置清单（排序方式／分组依据／文档排序…）存本机 `taskViewSettings`，
+   * 与「显示已完成」同一套 `useSyncExternalStore` 读法；服务端快照取默认值，使 SSR 的 HTML
+   * 与首次访问一致。
+   */
+  const settings = useSyncExternalStore(
+    subscribeTaskViewSettings,
+    readTaskViewSettings,
+    serverTaskViewSettings,
+  );
+
+  // 三份官方游标各翻各的：今天只取「进行中」那串，即将进行只取「即将到期」那串。
+  const list = listForGroup(group);
+  /**
+   * 今天档的取数区间（端开 `[from, to)`）：上界永远是本地明日零点；「显示过去日期」关掉时
+   * 下界收在今天零点，逾期行不再进来。
+   */
+  const range = useMemo<TaskListRange | null>(() => {
+    if (group !== 'today') return null;
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(start);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return {
+      from: settings.todayShowPastDueTasks ? null : localDayInstant(start),
+      to: localDayInstant(tomorrow),
+    };
+  }, [group, settings.todayShowPastDueTasks]);
+
   const load = useCallback(async () => {
-    const [page, pending] = await Promise.all([getTasksPage(null), readPendingRows('task')]);
+    const [page, pending] = await Promise.all([getTasksPage(null, range), readPendingRows('task')]);
     setTasks(overlayTaskRows(page.items, pending));
     applyPageState(
-      settleLoad(initialTaskPageState(), 'all', {
+      settleLoad(initialTaskPageState(), list, {
         nextToken: page.nextCursor,
         hasMore: page.nextCursor !== null,
         count: page.items.length,
       }),
     );
     setLoading(false);
-  }, [applyPageState]);
+  }, [applyPageState, list, range]);
 
   /**
    * G604：读到底部再要一页。游标只从 ref 取，状态在发请求前就写回 `loading`，
@@ -144,10 +188,10 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     if (state.status !== 'idle' || !state.pageInfo?.hasMore) return;
     applyPageState(beginLoad(state));
     try {
-      const page = await getTasksPage(cursorFor(state.cursors, 'all'));
+      const page = await getTasksPage(cursorFor(state.cursors, list), range);
       setTasks((current) => appendTaskPage(current, page.items));
       applyPageState(
-        settleLoad(state, 'all', {
+        settleLoad(state, list, {
           nextToken: page.nextCursor,
           hasMore: page.nextCursor !== null,
           count: page.items.length,
@@ -156,7 +200,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     } catch {
       applyPageState({ ...state, status: 'idle' });
     }
-  }, [applyPageState]);
+  }, [applyPageState, list, range]);
 
   // G263: the pinned area reads the favourite rows (id + title), in their stored order.
   useEffect(() => {
@@ -419,6 +463,9 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
    * 官方的「即将进行」不是列表，是分节时间轴：`C` 拿到**全部有排期的块**（无排期跳过，逾期项并进
    * 夹到下周一的当月节），`H1` 再按 `showCompleted ? n : f` 裁掉已完成、空节整节不显示。
    * 窗口开关（接下来的 7/30 天）是本地附加的收窄，`all` 时即官方输入。
+   *
+   * G604：分组依据／文档排序／任务排序三枚设置原样交给 `upcomingSections`——官方那三个
+   * 菜单项改的就是这组选项（`upcomingGroupBy` 缺省按安排分节，选文档时才多出两个排序清单）。
    */
   const sectioned =
     group === 'upcoming'
@@ -426,14 +473,59 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
           window === 'all' ? tasks : tasks.filter((task) => withinUpcoming(task.scheduleDate, window, now)),
           showCompleted,
           now,
+          {
+            groupBy: settings.upcomingGroupBy,
+            documentSort: settings.upcomingDocumentSort,
+            taskSort: settings.upcomingTaskSort,
+          },
         )
       : null;
 
-  const visible = applyCompletedFilter(tasksForGroup(tasks, group, now, window), showCompleted);
+  /**
+   * 收件箱的两步（官方 `Ua`）：先按「显示计划任务」挑行，再按「排序方式」排；
+   * 官方今天视图则是把每篇文档的行按 `todayTaskSort` 排完、文档组按 `todaySortProperty` 排。
+   * 两种排序都走同一份 `sortTasksForView`，空值一律排后、按 id 破平局。
+   *
+   * 今天档不从 `tasksForGroup` 起手：那个分桶把逾期行判成「未归档」，而官方
+   * 「显示过去日期」打开时逾期行正是要并进今天（`Od(tomorrow)` 无下界）。服务端区间已经
+   * 收窄过，这里只按 `matchesTodayView` 复核。
+   */
+  const derived = deriveTaskRows(tasks, group, window, settings, now);
+
+  const visible = applyCompletedFilter(derived, showCompleted);
   // 三档是一枚轴：`isCompleted` 只说"勾没勾"，取消行没勾却不能算进未办那节（官方把它单独叫「已取消」）。
   const active = visible.filter((t) => !t.isCompleted && t.status !== 'cancelled');
   const completed = visible.filter((t) => t.isCompleted);
   const cancelled = visible.filter((t) => t.status === 'cancelled');
+
+  /**
+   * 拖拽闸门（官方 `Ki`）：排序不是「手动的」时落行只弹提示、不写库；收件箱那枚提示带
+   * 「Switch to Manual」把排序改回手动，今天档没有退路、即将进行档没有闸门。
+   */
+  const refusal =
+    group === 'inbox' && canReorderTasks(settings.inboxTaskSort)
+      ? null
+      : group === 'inbox'
+        ? () =>
+            toast.add({
+              id: 'tasks-reorder-refused',
+              type: 'info',
+              title: taskReorderRefusedTitle(settings.inboxTaskSort === 'deadline' ? 'deadline' : 'schedule'),
+              timeout: 3000,
+              actionProps: {
+                children: TASK_SWITCH_TO_MANUAL,
+                onClick: () => writeTaskViewSetting('inboxTaskSort', 'manual'),
+              },
+            })
+        : group === 'today'
+          ? () =>
+              toast.add({
+                id: 'tasks-reorder-refused',
+                type: 'info',
+                title: taskReorderRefusedTitle(settings.todayTaskSort),
+                timeout: 3000,
+              })
+          : null;
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -560,6 +652,11 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
           </button>
         )}
         <ShowCompletedToggle onChange={setShowCompleted} />
+        <TaskSettingsMenu
+          group={group}
+          settings={settings}
+          onShowCompleted={() => writeShowCompleted(globalThis.localStorage, true)}
+        />
         <button
           type="button"
           onClick={handleSetDefaultView}
@@ -590,6 +687,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                     onDelete={handleDelete}
                     onCancel={handleCancel} onSchedule={handleSchedule} onRename={handleRename} appearance={appearance}
                     subtaskParent={subtaskParent}
+                    onReorderRefused={refusal}
                   />
                 </section>
               ))
@@ -609,6 +707,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   onDelete={handleDelete}
                   onCancel={handleCancel} onSchedule={handleSchedule} onRename={handleRename} appearance={appearance}
                   subtaskParent={subtaskParent}
+                  onReorderRefused={refusal}
                 />
               )}
             </section>
@@ -624,6 +723,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   onDelete={handleDelete}
                   onCancel={handleCancel} onSchedule={handleSchedule} onRename={handleRename} appearance={appearance}
                   subtaskParent={subtaskParent}
+                  onReorderRefused={refusal}
                 />
               </section>
             )}
@@ -638,6 +738,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   onDelete={handleDelete}
                   onCancel={handleCancel} onSchedule={handleSchedule} onRename={handleRename} appearance={appearance}
                   subtaskParent={subtaskParent}
+                  onReorderRefused={refusal}
                 />
               </section>
             )}
@@ -782,6 +883,7 @@ function TaskList({
   onRename,
   appearance,
   subtaskParent,
+  onReorderRefused = null,
 }: {
   items: TaskItem[];
   onToggle: (id: string) => void;
@@ -791,6 +893,8 @@ function TaskList({
   onRename: (id: string, title: string) => Promise<void>;
   appearance: 'faded' | 'strike' | 'none';
   subtaskParent: Map<string, string>;
+  /** G604：排序不是「手动的」时官方只弹提示、不落库（`Ki`）；为空表示这一档可拖。 */
+  onReorderRefused?: (() => void) | null;
 }) {
   // G270: dragging a task row lands by **half region** (left half inserts before, right half
   // after) and suppresses the indicator in the three cases the official build does. The reorder
@@ -803,6 +907,8 @@ function TaskList({
 
   const onDragOverRow = (event: React.DragEvent, targetId: string) => {
     if (!draggingId) return;
+    // G604：有闸门时官方整段收起落点预览（`onReorderRefused` 一给，hover 指示器就不画）。
+    if (onReorderRefused) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const side = sideFor(event.clientX, { left: rect.left, right: rect.right });
     const targetIndex = ids.indexOf(targetId);
@@ -827,6 +933,11 @@ function TaskList({
     setDraggingId(null);
     setDropTargetId(null);
     if (!dragged || !target || dragged === target) return;
+    // G604：排序不是「手动的」时落行只弹提示，相对定位一次也不发。
+    if (onReorderRefused) {
+      onReorderRefused();
+      return;
+    }
     // Relative anchor: "after X" for a right-half drop, "after the row before X" for a left-half.
     const afterBlockId = dropBefore ? (ids[ids.indexOf(target) - 1] ?? null) : target;
     await reorderTasks(dragged, afterBlockId).catch(() => {});

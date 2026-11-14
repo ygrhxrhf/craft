@@ -1,5 +1,6 @@
 import type { TaskItem } from '@/actions/task/task';
 import { isPending, type TaskLineStatus } from '@/lib/editor/task-status';
+import type { TaskListKey } from '@/lib/task/task-paging';
 
 /**
  * The four official groups of the tasks page (`gap.md` G46): 未归档 / 今天 / 即将进行 / 所有任务,
@@ -98,6 +99,24 @@ export function applyCompletedFilter<T extends { isCompleted: boolean; status?: 
   return showCompleted
     ? [...tasks]
     : tasks.filter((task) => isPending(task.status ?? (task.isCompleted ? 'done' : 'todo')));
+}
+
+/**
+ * G604: the official paged cache keeps **three independent cursors** — `continuationToken` for the
+ * plain lists, `ongoingTasks` for 今天, `upcomingTasks` for 即将进行 — because each view is a
+ * different server-side query and cannot share a continuation token. This maps a tab onto the
+ * cursor it owns.
+ */
+export function listForGroup(group: TaskGroup): TaskListKey {
+  switch (group) {
+    case 'today':
+      return 'ongoing';
+    case 'upcoming':
+      return 'upcoming';
+    case 'inbox':
+    case 'all':
+      return 'all';
+  }
 }
 
 export function tasksForGroup(

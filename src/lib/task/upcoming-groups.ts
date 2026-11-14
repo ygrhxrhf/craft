@@ -1,5 +1,7 @@
 import type { TaskItem } from '@/actions/task/task';
-import { UPCOMING_THIS_MONTH, UPCOMING_THIS_WEEK } from './official-copy';
+import { TASK_NO_DEADLINE, UPCOMING_THIS_MONTH, UPCOMING_THIS_WEEK } from './official-copy';
+import { documentGroups } from './task-doc-groups';
+import type { DocumentSort, TaskSort, UpcomingGroupBy } from './task-view-settings';
 
 /**
  * 「即将进行」的分组与排序，逐字移植官方 `TasksBrowseUpcomingView.utils-CXbjE4oj.js`
@@ -103,25 +105,42 @@ export function compareScheduled(a: ScheduledLike, b: ScheduledLike): number {
   return schedule.getTime() - other.getTime();
 }
 
-function toSchedule(task: TaskItem): Date | null {
-  if (!task.scheduleDate) return null;
-  const date = new Date(task.scheduleDate);
+function toDate(value?: string | null): Date | null {
+  if (!value) return null;
+  const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function toCreatedMs(task: TaskItem): number {
-  if (!task.createdAt) return 0;
-  const created = new Date(task.createdAt);
-  return Number.isNaN(created.getTime()) ? 0 : created.getTime();
+function toSchedule(task: TaskItem): Date | null {
+  return toDate(task.scheduleDate);
 }
 
-/** 官方的 `C(blocks, timezone)`。 */
+function toDeadline(task: TaskItem): Date | null {
+  return toDate(task.dueDate);
+}
+
+/**
+ * 官方的 `C`：**有效日期**是排期，排期缺失时退回截止日期。分组按它落节，所以只有截止日期的行
+ * 也归「即将进行」；节内排序仍看 `schedule`（官方 `ne` 的第一比较键），本地 `W` 保持无排期在前。
+ */
+function toEffective(task: TaskItem): Date | null {
+  return toSchedule(task) ?? toDeadline(task);
+}
+
+function toCreatedMs(task: TaskItem): number {
+  return toDate(task.createdAt)?.getTime() ?? 0;
+}
+
+const pendingOf = (tasks: readonly TaskItem[]): TaskItem[] =>
+  tasks.filter((task) => !task.isCompleted && task.status !== 'cancelled');
+
+/** 官方的 `me(blocks, timezone)`。 */
 export function upcomingGroups(tasks: readonly TaskItem[], now: Date = new Date()): UpcomingGroup[] {
   const week = weekWindow(now);
   const groups = new Map<string, UpcomingGroup>();
 
   for (const task of tasks) {
-    const schedule = toSchedule(task);
+    const schedule = toEffective(task);
     if (schedule == null) continue;
 
     let kind: UpcomingKind;
@@ -156,6 +175,135 @@ export function upcomingGroups(tasks: readonly TaskItem[], now: Date = new Date(
     .sort((a, b) => compareGroups(a, b, now));
 }
 
+export type DeadlineKind = 'no-deadline' | 'week' | 'month' | 'year';
+
+export type DeadlineGroup = {
+  /** 官方 `H1` 的节 id：`no-deadline` / `week` / `month:<ms>` / `year:<ms>`。 */
+  id: string;
+  kind: DeadlineKind;
+  bucketDate: Date | null;
+  dropDate: Date | null;
+  tasks: TaskItem[];
+};
+
+/**
+ * 官方的 `D(a, b)`：**升序且空值排在最后**（与本文件顶端的 `W` 相反，两者别混用）。
+ * 官方的 `U` / `x` / `N` 一并落在这里：先比日期，再比来源文档 id 升序，最后是创建时间降序＋id 升序。
+ */
+function nullsLastDate(a: Date | null, b: Date | null): number {
+  if (a == null) return b == null ? 0 : 1;
+  if (b == null) return -1;
+  return a.getTime() - b.getTime();
+}
+
+const idAsc = (a: { id: string }, b: { id: string }): number =>
+  a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+
+const createdDesc = (a: TaskItem, b: TaskItem): number =>
+  toCreatedMs(b) - toCreatedMs(a) || idAsc(a, b);
+
+const documentIdAsc = (a: TaskItem, b: TaskItem): number => {
+  const left = a.documentId ?? '';
+  const right = b.documentId ?? '';
+  return left < right ? -1 : left > right ? 1 : 0;
+};
+
+/** 官方的 `N`：有效日期升序（空值最后），再按创建时间降序、id 升序。 */
+const effectiveOrder = (a: TaskItem, b: TaskItem): number =>
+  nullsLastDate(toEffective(a), toEffective(b)) || createdDesc(a, b);
+
+const byDeadline = (a: TaskItem, b: TaskItem): number =>
+  nullsLastDate(toDeadline(a), toDeadline(b)) || documentIdAsc(a, b) || effectiveOrder(a, b);
+
+const bySchedule = (a: TaskItem, b: TaskItem): number =>
+  nullsLastDate(toSchedule(a), toSchedule(b)) || documentIdAsc(a, b) || effectiveOrder(a, b);
+
+/**
+ * 官方的 `fe(blocks, isCompletedFilter, timezone)` —— 「分组依据：截止日期」。四档积木：
+ *
+ * 1. `no-deadline` 一节收所有无截止的行，节内按**排期**排（官方 `u`）；
+ * 2. 截止落在 `[本周一, 下周一)` 的行并进 `week` 一节，节头日期是**明天**（官方 `D()` 作 `dropDate`）；
+ * 3. 其余按截止月份/年份成节，节头＝`bucketDate`（月首/年首），升序排列；
+ * 4. 每节的 `dropDate` 只给落点用：本月一节夹到下周一，本月之前的月首原样保留。
+ *
+ * 与排期分组的关键差别：**这里无截止的行不跳过**，单独占节；排期分组看的是有效日期。
+ */
+export function deadlineGroups(tasks: readonly TaskItem[], now: Date = new Date()): DeadlineGroup[] {
+  const week = weekWindow(now);
+  const nextMonday = week.next;
+  const monthStart = startOfMonth(now);
+
+  const noDeadline: TaskItem[] = [];
+  const thisWeek: TaskItem[] = [];
+  const buckets = new Map<string, DeadlineGroup>();
+
+  const clampDrop = (value: Date): Date =>
+    value < week.start || value >= nextMonday ? value : nextMonday;
+
+  for (const task of tasks) {
+    const deadline = toDeadline(task);
+    if (deadline == null) {
+      noDeadline.push(task);
+      continue;
+    }
+    if (deadline >= week.start && deadline < nextMonday) {
+      thisWeek.push(task);
+      continue;
+    }
+    const kind = deadline.getFullYear() === now.getFullYear() ? 'month' : 'year';
+    const bucketDate = kind === 'month' ? startOfMonth(deadline) : startOfYear(deadline);
+    const dropDate =
+      kind === 'month' && sameMonth(bucketDate, monthStart) ? nextMonday : clampDrop(bucketDate);
+    const id = `${kind}:${bucketDate.getTime()}`;
+    const bucket = buckets.get(id) ?? { id, kind, bucketDate, dropDate, tasks: [] as TaskItem[] };
+    bucket.tasks.push(task);
+    buckets.set(id, bucket);
+  }
+
+  const months = [...buckets.values()]
+    .filter((bucket) => bucket.kind === 'month')
+    .sort((a, b) => (a.bucketDate?.getTime() ?? 0) - (b.bucketDate?.getTime() ?? 0));
+  const years = [...buckets.values()]
+    .filter((bucket) => bucket.kind === 'year')
+    .sort((a, b) => (a.bucketDate?.getTime() ?? 0) - (b.bucketDate?.getTime() ?? 0));
+
+  return [
+    {
+      id: 'no-deadline',
+      kind: 'no-deadline' as const,
+      bucketDate: null,
+      dropDate: null,
+      tasks: [...noDeadline].sort(bySchedule),
+    },
+    {
+      id: 'week',
+      kind: 'week' as const,
+      bucketDate: week.start,
+      dropDate: upcomingStartDay(now),
+      tasks: [...thisWeek].sort(byDeadline),
+    },
+    ...months.map((bucket) => ({ ...bucket, tasks: [...bucket.tasks].sort(byDeadline) })),
+    ...years.map((bucket) => ({ ...bucket, tasks: [...bucket.tasks].sort(byDeadline) })),
+  ].filter((group) => group.tasks.length > 0);
+}
+
+function toSections(
+  groups: readonly { key: string; title: string; tasks: readonly TaskItem[] }[],
+  showCompleted: boolean,
+): UpcomingSection[] {
+  return groups
+    .map((group) => {
+      const undone = pendingOf(group.tasks);
+      return {
+        key: group.key,
+        title: group.title,
+        undone: undone.length,
+        blocks: showCompleted ? [...group.tasks] : undone,
+      };
+    })
+    .filter((section) => section.blocks.length > 0);
+}
+
 /**
  * 节头文案（官方 `H1` 里的 `T`）：`week` 用 `date.this.week`，`year` 用纯年份数字，
  * `month` 在本月时用 `date.this.month`、否则用长月名。官方还套了一层首字母大写
@@ -183,30 +331,78 @@ export type UpcomingSection = {
   blocks: TaskItem[];
 };
 
+/** 官方 `_o`：deadline 档的节头；`no-deadline` 一节固定用 `tasks.no.deadline`。 */
+export function deadlineGroupTitle(group: DeadlineGroup, now: Date = new Date(), locale = 'zh-CN'): string {
+  if (group.kind === 'no-deadline' || group.bucketDate == null) return TASK_NO_DEADLINE;
+  return upcomingGroupTitle({ kind: group.kind, date: group.bucketDate }, now, locale);
+}
+
+/** 「即将进行」在本地可用的三种分组依据（官方 `upcomingGroupBy`）。 */
+export type UpcomingSectionOptions = {
+  groupBy?: UpcomingGroupBy;
+  /** 只在 `groupBy === 'document'` 时生效：文档组之间怎么排（官方 `upcomingDocumentSort`）。 */
+  documentSort?: DocumentSort;
+  /** 每节内部怎么排任务（官方 `upcomingTaskSort`）。 */
+  taskSort?: TaskSort;
+};
+
 /**
  * 官方 `H1` 的两条展示规则：`b = showCompleted ? n : f`（关掉开关就只留未完成），
  * 且 `b.length === 0` 时整节 `{isVisible:false}`（空节不占位）。
  * `hasScheduled` 让调用方分清「这一栏根本没有排期过的任务」与「有，但都做完了」。
+ *
+ * G604：`groupBy` 三档各自落一套分组——`schedule`（默认，`me`）、`deadline`（`fe`）、
+ * `document`（`ke`）。三种模式下 `hasScheduled` 都回答同一个问题：这一栏有没有可展示的节。
  */
 export function upcomingSections(
   tasks: readonly TaskItem[],
   showCompleted: boolean,
-  now: Date = new Date()
+  now: Date = new Date(),
+  options: UpcomingSectionOptions = {}
 ): { sections: UpcomingSection[]; hasScheduled: boolean } {
-  const groups = upcomingGroups(tasks, now);
-  return {
-    sections: groups
-      .map((group) => {
-        // 官方三档里"还活着"的只有 pending：完成与取消都不该在未办计数里，也不该在开关关闭时被显示。
-        const undone = group.tasks.filter((task) => !task.isCompleted && task.status !== 'cancelled');
+  const { groupBy = 'schedule', documentSort = 'modified', taskSort = 'schedule' } = options;
+
+  if (groupBy === 'document') {
+    const { sections, hasAny } = documentGroups(tasks, documentSort, taskSort);
+    const visible = sections
+      .map((section) => {
+        const undone = pendingOf(section.blocks);
         return {
-          key: `${group.kind}:${group.date.getTime()}`,
-          title: upcomingGroupTitle(group, now),
+          key: section.key,
+          title: section.title,
           undone: undone.length,
-          blocks: showCompleted ? group.tasks : undone,
+          blocks: showCompleted ? section.blocks : undone,
         };
       })
-      .filter((section) => section.blocks.length > 0),
+      .filter((section) => section.blocks.length > 0);
+    return { sections: visible, hasScheduled: hasAny };
+  }
+
+  if (groupBy === 'deadline') {
+    const groups = deadlineGroups(tasks, now);
+    return {
+      sections: toSections(
+        groups.map((group) => ({
+          key: `deadline:${group.id}`,
+          title: deadlineGroupTitle(group, now),
+          tasks: group.tasks,
+        })),
+        showCompleted,
+      ),
+      hasScheduled: groups.length > 0,
+    };
+  }
+
+  const groups = upcomingGroups(tasks, now);
+  return {
+    sections: toSections(
+      groups.map((group) => ({
+        key: `${group.kind}:${group.date.getTime()}`,
+        title: upcomingGroupTitle(group, now),
+        tasks: group.tasks,
+      })),
+      showCompleted,
+    ),
     hasScheduled: groups.length > 0,
   };
 }

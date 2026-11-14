@@ -23,6 +23,15 @@ export interface TaskCursors {
   upcomingTasks: string | null;
 }
 
+/**
+ * G604：一条列表的日期界。`from`/`to` 是半开区间 `[from, to)`，`null` 表示那一侧不设界。
+ * 服务端按"排期 ?? 截止"折算成这条界过滤，游标只在界内续读。
+ */
+export interface TaskListRange {
+  from: string | null;
+  to: string | null;
+}
+
 export function emptyTaskCursors(): TaskCursors {
   return { continuationToken: null, ongoingTasks: null, upcomingTasks: null };
 }

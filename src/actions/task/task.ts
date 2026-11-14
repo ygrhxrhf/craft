@@ -9,8 +9,9 @@ import { defaultReminderForRepeat, rollForwardReminder } from '@/lib/task/repeat
 import { listsTaskFromDocument } from '@/lib/task/display';
 import { applyToggled, taskLineStatus, type TaskAttrs } from '@/lib/editor/task-status';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
-import { reorderAfter, encodeTaskCursor, decodeTaskCursor, TASK_PAGE_SIZE } from '@/lib/task/task-paging';
+import { reorderAfter, encodeTaskCursor, decodeTaskCursor, TASK_PAGE_SIZE, type TaskListRange } from '@/lib/task/task-paging';
 import { deriveSubtasks } from '@/lib/task/subtasks';
+import { and, or } from '@prisma/orm-postgres/orm-client';
 
 // I2：任务表用 updatedAt 自动 bump（无需 metaUpdatedAt），落库后广播即可；
 // 失败不阻断业务（与 updateDocument 的 emit 姿态一致）。
@@ -90,6 +91,16 @@ export interface TaskItem {
   documentTitle?: string | null;
   /** 「即将进行」的节内排序要用它做同排期时的次级比较（官方 `createdMs`），只读路径。 */
   createdAt?: string | null;
+  /** G604: 手动排序的落库位次（`Task.order`），拖拽只在 `inboxTaskSort==='manual'` 时放行。 */
+  order?: number | null;
+  /** G604: `todaySortProperty: 'modified'` 与「按修改时间」文档排序的次级比较键。 */
+  updatedAt?: string | null;
+  /** G604: 来源文档是不是每日笔记——「显示每日笔记」这枚筛选要按它分档。 */
+  isDailyNote?: boolean | null;
+  /** G604: 「即将进行」按文档分组时，文档组的排序键（官方 `documentInfo` 的 modified/created）。 */
+  documentUpdatedAt?: string | null;
+  /** G604: 同上，`documentSort: 'created'` 的一档。 */
+  documentCreatedAt?: string | null;
 }
 
 /**
@@ -202,15 +213,50 @@ export async function syncDocumentTasks(
   if (mutated) await emitTasks(db, userId, documentId);
 }
 
+/**
+ * G604: the 今天 / 即将进行 lists are filtered on the official **effective** date — 排期，落空则用
+ * 截止（`schedule ?? deadline`）。 A range bound is half-open `[from, to)`. Written with the
+ * callback form because an operator object in the shorthand compiles to a comparison against a
+ * JSON literal and silently matches nothing (`src/prisma/where-shorthand.test.ts`).
+ */
+function effectiveDateInRange(t: any, range: TaskListRange) {
+  const bounds = (field: any) => [
+    ...(range.from ? [field.gte(range.from)] : []),
+    ...(range.to ? [field.lt(range.to)] : []),
+  ];
+  return or(
+    and(t.scheduleDate.isNotNull(), ...bounds(t.scheduleDate)),
+    and(t.scheduleDate.isNull(), t.dueDate.isNotNull(), ...bounds(t.dueDate)),
+  );
+}
+
+/** G604: the whole list, read through the paged query. The calendar reads this and needs every
+ *  row, so the cursor is followed to the end. */
 export async function getTasks(): Promise<TaskItem[]> {
-  return (await getTasksPage(null)).items;
+  const items: TaskItem[] = [];
+  let cursor: string | null = null;
+  do {
+    const page = await getTasksPage(cursor);
+    items.push(...page.items);
+    cursor = page.nextCursor;
+  } while (cursor);
+  // pending 在前，完成与取消都算"退场"——三档是一枚轴，排序只看是不是还活着。
+  // 排在拼页之后：页内先排序会让游标续读不再严格按 (createdAt, id) 递减。
+  const rank = (item: TaskItem) => (item.status === 'todo' ? 0 : 1);
+  items.sort((a, b) => rank(a) - rank(b));
+  return items;
 }
 
 /**
  * G604: one page of the task list plus the cursor for the next. `getTasks` is the first page; the
- * task screen holds the cursor in `TaskPageState` and asks for more when the reader scrolls.
+ * task screen holds one cursor per tab (`listForGroup`) and asks for more when the reader scrolls.
+ * `range` narrows the list to one tab's date window; the bounds are the **viewer's** local day
+ * boundaries, so they are computed on the client and sent along.
  */
-export async function getTasksPage(cursor?: string | null): Promise<{ items: TaskItem[]; nextCursor: string | null }> {
+export async function getTasksPage(
+  cursor?: string | null,
+  range?: TaskListRange | null,
+): Promise<{ items: TaskItem[]; nextCursor: string | null }> {
   const session = await auth();
   if (!session?.user?.id) throw new Error('未授权');
 
@@ -221,8 +267,9 @@ export async function getTasksPage(cursor?: string | null): Promise<{ items: Tas
   // composite and descends on `(createdAt, id)`; asking for one row past the page is the `hasMore`
   // probe — `nextCursor` is only emitted when that probe row exists.
   const after = cursor ? decodeTaskCursor(cursor) : null;
-  const pageQuery = db.orm.public.Task
-    .where({ userId: session.user.id, deletedAt: null })
+  const base = db.orm.public.Task.where({ userId: session.user.id, deletedAt: null });
+  const scoped = range ? base.where((t: any) => effectiveDateInRange(t, range)) : base;
+  const pageQuery = scoped
     .orderBy([(t: any) => t.createdAt.desc(), (t: any) => t.id.desc()])
     .limit(TASK_PAGE_SIZE + 1);
   const rows: Record<string, unknown>[] = after
@@ -236,7 +283,7 @@ export async function getTasksPage(cursor?: string | null): Promise<{ items: Tas
   const docs: Record<string, unknown>[] = documentIds.length
     ? await db.orm.public.Document
         .where((m: any) => m.id.in(documentIds))
-        .select('id', 'title', 'isDeleted')
+        .select('id', 'title', 'isDeleted', 'isDailyNote', 'createdAt', 'updatedAt')
         .all()
     : [];
   const docById = new Map(docs.map((doc) => [String(doc.id), doc]));
@@ -265,15 +312,15 @@ export async function getTasksPage(cursor?: string | null): Promise<{ items: Tas
       blockId: typeof row.blockId === 'string' && row.blockId ? row.blockId : null,
       documentTitle,
       createdAt: row.createdAt,
+      order: typeof row.order === 'number' ? row.order : null,
+      updatedAt: row.updatedAt ?? null,
+      isDailyNote: doc ? (doc as any).isDailyNote === true : null,
+      documentCreatedAt: doc ? ((doc as any).createdAt ?? null) : null,
+      documentUpdatedAt: doc ? ((doc as any).updatedAt ?? null) : null,
     });
   }
-  // pending 在前，完成与取消都算"退场"——三档是一枚轴，排序只看是不是还活着
-  const rank = (item: TaskItem) => (item.status === 'todo' ? 0 : 1);
-  items.sort((a, b) => rank(a) - rank(b));
   return { items, nextCursor };
 }
-
-/** G604: the task page size (the official list pages rather than reading the whole table). */
 
 export async function createTask(title: string, dueDate?: string | null, scheduleDate?: string | null) {
   const session = await auth();

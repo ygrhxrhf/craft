@@ -11,6 +11,7 @@ import { toast } from '@/components/ui/toast';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -70,16 +71,18 @@ export function TaskMoveMenu({ taskId, disabled = false }: { taskId: string; dis
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem onClick={() => void move({ dailyNote: true })}>每日笔记</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>移至文档</DropdownMenuLabel>
-        {docs.length === 0 ? (
-          <DropdownMenuItem disabled>没有可选的文档</DropdownMenuItem>
-        ) : (
-          docs.map((doc) => (
-            <DropdownMenuItem key={doc.id} onClick={() => void move({ documentId: doc.id })}>
-              <span className="truncate">{doc.title || '无标题文档'}</span>
-            </DropdownMenuItem>
-          ))
-        )}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>移至文档</DropdownMenuLabel>
+          {docs.length === 0 ? (
+            <DropdownMenuItem disabled>没有可选的文档</DropdownMenuItem>
+          ) : (
+            docs.map((doc) => (
+              <DropdownMenuItem key={doc.id} onClick={() => void move({ documentId: doc.id })}>
+                <span className="truncate">{doc.title || '无标题文档'}</span>
+              </DropdownMenuItem>
+            ))
+          )}
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

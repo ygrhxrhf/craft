@@ -5,6 +5,8 @@ import {
   UPCOMING_KIND_RANK,
   compareGroups,
   compareScheduled,
+  deadlineGroupTitle,
+  deadlineGroups,
   sameDay,
   upcomingGroupTitle,
   upcomingGroups,
@@ -12,7 +14,13 @@ import {
   upcomingStartDay,
   weekWindow,
 } from './upcoming-groups';
-import { UPCOMING_THIS_MONTH, UPCOMING_THIS_MONTH_KEY, UPCOMING_THIS_WEEK, UPCOMING_THIS_WEEK_KEY } from './official-copy';
+import {
+  TASK_NO_DEADLINE,
+  UPCOMING_THIS_MONTH,
+  UPCOMING_THIS_MONTH_KEY,
+  UPCOMING_THIS_WEEK,
+  UPCOMING_THIS_WEEK_KEY,
+} from './official-copy';
 
 /** 2026-10-14 是周三 ⇒ 本周＝10/12（周一）…10/18（周日），下周一＝10/19，明天＝10/15。 */
 const NOW = new Date(2026, 9, 14, 13, 30);
@@ -267,8 +275,142 @@ describe('upcomingSections（官方 H1 的展示规则）', () => {
   });
 });
 
-describe('台账核对', () => {
+/** 排期与截止分开写的行——`task()` 把两者写成同一枚日期，deadline 分组测试要的正是这个差别。 */
+function row(
+  id: string,
+  scheduleDate: string | null,
+  dueDate: string | null,
+  extra: Partial<TaskItem> = {}
+): TaskItem {
+  return { ...task(id, null), scheduleDate, dueDate, ...extra };
+}
 
+describe('deadline 分组（官方 fe）', () => {
+  const sections = (tasks: TaskItem[], showCompleted = true) =>
+    upcomingSections(tasks, showCompleted, NOW, { groupBy: 'deadline' });
+
+  it('无截止的行单独一节「No Deadline」，节内按排期排、无排期的排最后', () => {
+    const result = sections([row('稍后', iso(day(10, 20)), null), row('更早', iso(day(9, 25)), null), row('无日期', null, null)]);
+    expect(result.sections[0]!.title).toBe(TASK_NO_DEADLINE);
+    expect(result.sections[0]!.blocks.map((item) => item.id)).toEqual(['更早', '稍后', '无日期']);
+    expect(result.hasScheduled).toBe(true);
+  });
+
+  it('截止落在本周的行并进 week 一节，节头是「本周」；下周一算下一节', () => {
+    const { sections: result } = sections([
+      row('本周', iso(day(9, 12)), iso(day(9, 16))),
+      row('下周一', null, iso(day(9, 19))),
+    ]);
+    expect(result.map((section) => section.title)).toEqual([UPCOMING_THIS_WEEK, UPCOMING_THIS_MONTH]);
+    expect(result[0]!.blocks.map((item) => item.id)).toEqual(['本周']);
+    expect(result[1]!.blocks.map((item) => item.id)).toEqual(['下周一']);
+  });
+
+  it('本月更晚的截止成「本月」一节，落点夹到下周一；下月一节用自己的月首', () => {
+    const groups = deadlineGroups([row('10/25', null, iso(day(9, 25))), row('11/5', null, iso(day(10, 5)))], NOW);
+    expect(groups.map((group) => group.id)).toEqual([
+      `month:${new Date(2026, 9, 1).getTime()}`,
+      `month:${new Date(2026, 10, 1).getTime()}`,
+    ]);
+    expect(groups[0]!.dropDate).toEqual(new Date(2026, 9, 19));
+    expect(groups[1]!.dropDate).toEqual(new Date(2026, 10, 1));
+    expect(deadlineGroupTitle(groups[0]!, NOW)).toBe(UPCOMING_THIS_MONTH);
+    expect(deadlineGroupTitle(groups[1]!, NOW)).toBe('十一月');
+  });
+
+  it('明年的截止升为 year 档，节头日期＝那年一月一号', () => {
+    const groups = deadlineGroups([row('2027/3/1', null, iso(new Date(2027, 2, 1, 9)))], NOW);
+    expect(groups.map((group) => group.id)).toEqual([`year:${new Date(2027, 0, 1).getTime()}`]);
+    expect(deadlineGroupTitle(groups[0]!, NOW)).toBe('2027年');
+  });
+
+  it('只有截止、没有排期的行在 deadline 档里成节，在 schedule 档里按有效日期同样成节', () => {
+    const list = [row('只有截止', null, iso(day(9, 25)))];
+    expect(sections(list).sections).toHaveLength(1);
+    // 官方 `C` ＝ schedule ?? deadline，所以 schedule 分组也收只有截止的行。
+    expect(upcomingSections(list, true, NOW).sections).toHaveLength(1);
+  });
+
+  it('每节内部按截止升序、空截止排最后，再按来源文档 id', () => {
+    const groups = deadlineGroups(
+      [
+        row('10/30', null, iso(day(9, 30))),
+        row('10/20', null, iso(day(9, 20))),
+        row('无截止', iso(day(9, 16)), null),
+      ],
+      NOW
+    );
+    expect(groups[0]!.tasks.map((item) => item.id)).toEqual(['无截止']);
+    expect(groups.flatMap((group) => group.tasks.map((item) => item.id)).slice(1)).toEqual(['10/20', '10/30']);
+  });
+});
+
+describe('document 分组（官方 ke）', () => {
+  const withDoc = (
+    id: string,
+    documentId: string | null,
+    documentTitle: string | null,
+    updatedAt: string | null,
+    scheduleDate: string | null = null
+  ): TaskItem => ({
+    ...task(id, scheduleDate),
+    documentId,
+    documentTitle,
+    documentUpdatedAt: updatedAt,
+    documentCreatedAt: updatedAt,
+  });
+
+  const sections = (
+    tasks: TaskItem[],
+    options: { documentSort?: 'created' | 'modified' | 'title'; taskSort?: 'schedule' | 'deadline' } = {}
+  ) => upcomingSections(tasks, true, NOW, { groupBy: 'document', ...options });
+
+  it('无文档的行钉成「未归档」一节，排在文档组之前', () => {
+    const result = sections([
+      withDoc('a', 'doc-1', '文档一', iso(day(9, 20))),
+      withDoc('b', null, null, null, iso(day(9, 16))),
+    ]);
+    expect(result.sections.map((section) => section.title)).toEqual(['未归档', '文档一']);
+    expect(result.hasScheduled).toBe(true);
+  });
+
+  it('文档组按更新日期降序（新文档在前）', () => {
+    const result = sections([
+      withDoc('旧', 'doc-old', '旧文档', iso(day(8, 1))),
+      withDoc('新', 'doc-new', '新文档', iso(day(9, 20))),
+    ]);
+    expect(result.sections.map((section) => section.title)).toEqual(['新文档', '旧文档']);
+  });
+
+  it('按名称排序时用 localeCompare 升序，同名再比文档 id', () => {
+    const result = sections(
+      [withDoc('b', 'doc-b', '乙', null), withDoc('a', 'doc-a', '甲', null)],
+      { documentSort: 'title' }
+    );
+    expect(result.sections.map((section) => section.title)).toEqual(['乙', '甲'].sort((x, y) => x.localeCompare(y, 'zh-CN')));
+    expect(result.sections.map((section) => section.key)).toEqual(['doc:doc-a', 'doc:doc-b']);
+  });
+
+  it('组内任务按 taskSort 排：deadline 档按截止日期升序', () => {
+    const result = sections(
+      [
+        withDoc('后', 'doc-1', '文档一', null, iso(day(9, 30))),
+        withDoc('前', 'doc-1', '文档一', null, iso(day(9, 20))),
+      ],
+      { taskSort: 'deadline' }
+    );
+    expect(result.sections[0]!.blocks.map((item) => item.id)).toEqual(['前', '后']);
+  });
+
+  it('关掉「显示已完成」时组内只留未完成行，整组全完成则不占位', () => {
+    const done = { ...withDoc('done', 'doc-1', '文档一', null), isCompleted: true, status: 'done' as const };
+    const hidden = upcomingSections([done], false, NOW, { groupBy: 'document' });
+    expect(hidden.sections).toEqual([]);
+    expect(hidden.hasScheduled).toBe(true);
+  });
+});
+
+describe('台账核对', () => {
   const catalog = readFileSync(
     new URL('../../../docs/craft-ref/features/feature-catalog.md', import.meta.url),
     'utf8'

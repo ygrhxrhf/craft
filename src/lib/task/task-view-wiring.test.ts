@@ -77,3 +77,66 @@ describe('task zero-state card and tabs (G1077)', () => {
     expect(source).toContain('flex w-max gap-1 px-4');
   });
 });
+
+// G604: 三份设置清单（`Oi`/`Bd`/`md`）与 `Ki` 拖拽闸门。菜单只有一枚触发钮，四档都在；
+// 所有任务那一档官方调 `Oi` 时不传 `taskSort` ⇒ 只剩两节。
+const menu = () =>
+  readFileSync(join(process.cwd(), 'src', 'components', 'task', 'TaskSettingsMenu.tsx'), 'utf8');
+
+describe('task settings menus and drag gate (G604)', () => {
+  it('renders one trigger for all four groups and none of them bails out', () => {
+    const source = menu();
+    expect(source).toContain('data-testid="tasks-settings-button"');
+    expect(source).toContain('aria-label={TASK_MORE_OPTIONS}');
+    expect(source).toContain('align="end"');
+    expect(source).toContain('min-w-60');
+    for (const group of ['inbox', 'all', 'today', 'upcoming']) {
+      expect(source).toContain(`group === '${group}'`);
+    }
+    expect(source).not.toMatch(/group === 'all'\)\s*return null;/);
+  });
+
+  it('gives inbox the sort list, all only the two shared rows, today three sections', () => {
+    const source = menu();
+    expect(source).toContain("writeTaskViewSetting('inboxTaskSort', ");
+    expect(source).toContain('INBOX_TASK_SORTS');
+    expect(source).toContain('TASK_SHOW_SCHEDULED');
+    expect(source).toContain("writeTaskViewSetting('todaySortProperty', ");
+    expect(source).toContain("writeTaskViewSetting('todayTaskSort', ");
+    expect(source).toContain('TASK_SHOW_PAST_DATES');
+    expect(source).toContain("writeTaskViewSetting('upcomingGroupBy', ");
+    // 仅按文档分组时才出两枚排序清单。
+    expect(source).toMatch(/settings\.upcomingGroupBy === 'document' &&/);
+    // 「所有任务」不出现排序方式那一节：`TASK_INBOX_SORT_BY_LABEL` 只在收件箱块里。
+    const allBlock = source.slice(source.indexOf("group === 'all'"), source.indexOf("group === 'today'"));
+    expect(allBlock).not.toContain('TASK_INBOX_SORT_BY_LABEL');
+    expect(allBlock).toContain('TASK_SHOW_SCHEDULED');
+    expect(allBlock).toContain('TASK_VIEW_COMPLETED');
+  });
+
+  it('gates the drop on the sort and offers switch-to-manual only in the inbox', () => {
+    const source = view();
+    const menuSource = menu();
+    // 闸门只挂在排序不是「手动的」时。
+    expect(source).toContain('canReorderTasks(settings.inboxTaskSort)');
+    expect(source).toContain("id: 'tasks-reorder-refused'");
+    expect(source).toContain('timeout: 3000');
+    expect(source).toContain('TASK_SWITCH_TO_MANUAL');
+    expect(source).toContain("writeTaskViewSetting('inboxTaskSort', 'manual')");
+    // 四份列表（即将进行分节 + 未办/已完成/已取消）全都吃这枚闸门。
+    expect((source.match(/onReorderRefused=\{refusal\}/g) ?? []).length).toBe(4);
+    // 落行处理器先问闸门，再发相对定位。
+    expect(source).toMatch(/if \(onReorderRefused\) \{\s*\n\s*onReorderRefused\(\);\s*\n\s*return;/);
+    expect(source).toMatch(/if \(onReorderRefused\) return;/);
+    // 菜单本体只写设置，不自己拖行。
+    expect(menuSource).not.toContain('reorderTasks');
+  });
+
+  // 真面核验（第 550 批）：菜单里的「查看已完成的任务」若只翻父组件 state，行会冒出来而内联
+  // 开关仍读设备存储的 false——两处显示打架，刷新还会丢。两处必须同源。
+  it('routes the completed menu row through the same device store as the switch', () => {
+    const source = view();
+    expect(source).toContain('writeShowCompleted(globalThis.localStorage, true)');
+    expect(source).not.toContain('onShowCompleted={() => setShowCompleted(true)}');
+  });
+});

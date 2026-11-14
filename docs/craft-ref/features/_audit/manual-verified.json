@@ -1065,13 +1065,13 @@
       ]
     },
     "G381": {
-      "status": "aligned",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 97 批）改判 aligned：撤销粒度的**结构边界**已接——普通 Enter（分割块那一步）在 `splitBlock` 之后 `closeHistory(tr)`，换行不与后面的输入合并；空块的 Enter 走三段降级链（G577），两者互不吞。段内字符合并（官方\"4 字一步\"）由 ProseMirror 时间窗提供，与官方一致。单测 789 条（editor 套件）。",
+      "note": "第 547 批收回为 partial：真视口实测（人手节奏 700ms 停顿）协同态 undo 走 Yjs UndoManager（`Editor.tsx:413` 是 `undoRedo: false`＋Collaboration 扩展），`AAAA→Enter→BBBB` 三次 Ctrl+Z 回基线（第 1 次退 BBBB、第 2 次退换行、第 3 次退 AAAA），官方 V46 为 4 次（多出的第 4 步是其补丁栈的初始块残留，非用户可见动作）；`craft-keymap.ts:805` 的 `closeHistory` 边界只在单机态（`undoRedo:{}`）生效，协同态不参与分组 ⇒ 撤销步数行为差仍在。",
       "evidence": [
-        "src/components/editor/extensions/craft-keymap.ts:297",
-        "src/lib/editor/patch-stack.ts:36",
-        "src/lib/editor/patch-stack.test.ts:18"
+        "src/components/editor/Editor.tsx:413",
+        "src/components/editor/extensions/craft-keymap.ts:805",
+        "src/components/editor/extensions/craft-keymap.ts:194"
       ]
     },
     "G382": {
@@ -1509,13 +1509,14 @@
       ]
     },
     "G604": {
-      "status": "aligned",
+      "status": "partial",
       "priority": "P1",
-      "note": "现读（第 103 批）改判 aligned：分页层**接进真实查询**——`getTasksPage(cursor)` 按 `(createdAt,id)` 游标取一页（`TASK_PAGE_SIZE=100`），返回 `{items, nextCursor}`；`getTasks()` 保持原签名（＝首页），任务屏的 `TaskPageState`（`task-paging.ts` 的三独立游标/loadStatus/reorderAfter 相对定位重排）承接翻页状态；`reorderTasks` 已接真实拖拽（G270）。单测 9+16 条。",
+      "note": "第 547 批收回为 partial：服务端游标分页已落——`getTasksPage(cursor)` 按 `(createdAt,id)` 取一页（`TASK_PAGE_SIZE=100`）返回 `{items, nextCursor}`，`getTasks()` 取首页；但 `nextCursor` 在 src 下除 `task.ts` 自身外零调用点，任务屏 `TasksView.tsx` 仍只 import `getTasks`，`TaskPageState`（三独立游标／loadStatus／reorderAfter）与滚动加载未接，官方 22 个子项里的 `pinDocument`／`unpinDocument`／`updateDailyDocumentIds` 也未见实现 ⇒ 客户端翻页与写侧余项未齐。",
       "evidence": [
-        "src/actions/task/task.ts:178",
-        "src/lib/task/task-paging.ts:20",
-        "src/lib/task/task-paging.test.ts:11"
+        "src/actions/task/task.ts:213",
+        "src/actions/task/task.ts:206",
+        "src/app/(app)/tasks/TasksView.tsx:23",
+        "src/lib/task/task-paging.ts:20"
       ]
     },
     "G608": {

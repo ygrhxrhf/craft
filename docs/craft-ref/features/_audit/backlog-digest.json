@@ -1,11 +1,12 @@
 {
-  "generatedAt": "2026-11-14T05:14:40.091Z",
+  "generatedAt": "2026-11-14T05:21:40.061Z",
   "total": 1616,
   "status": {
-    "aligned": 824,
+    "aligned": 822,
     "nonaction": 541,
     "deliberate": 226,
-    "unreachable": 25
+    "unreachable": 25,
+    "partial": 2
   },
   "priority": {
     "P2": 634,
@@ -18,7 +19,7 @@
     "P2 / aligned": 359,
     "P? / nonaction": 201,
     "P2 / nonaction": 175,
-    "P1 / aligned": 170,
+    "P1 / aligned": 168,
     "P? / aligned": 160,
     "P3 / aligned": 126,
     "P2 / deliberate": 90,
@@ -31,6 +32,7 @@
     "P0 / aligned": 9,
     "P3 / unreachable": 9,
     "P? / unreachable": 5,
+    "P1 / partial": 2,
     "P1 / unreachable": 1
   },
   "explicit": {
@@ -1173,5 +1175,14 @@
   },
   "conflicts": [],
   "unknownSections": [],
-  "gapSections": []
+  "gapSections": [
+    [
+      "三点三七、第 33 批（V46–V48 撤销粒度与卡片菜单，动态）",
+      1
+    ],
+    [
+      "三点七五、第 65 批（★★★ 任务数据 store 22 项 ＋ `$",
+      1
+    ]
+  ]
 }

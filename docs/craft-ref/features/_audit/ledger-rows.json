@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-14T05:14:39.895Z",
+  "generatedAt": "2026-11-14T05:21:39.835Z",
   "totalRows": 1616,
   "statusDistribution": {
     "gap": 656,
@@ -7882,7 +7882,7 @@
       "cols": 5,
       "id": "G381",
       "official": "★ **撤销粒度 ≠ 操作数**：`输入4字 → Enter → 输入4字`（3 个动作）需要 **4 次 Ctrl+Z** 才回基线；同一段内 4 个字符被合并成一步，但换行不与上一段合并（`interactions.md` V46）",
-      "local": "☆ 已核（第 260 批）＝**两条结论分列**：① **粒度不同**（行为不同，留待办）＝同序列（打 4 字→Enter→打 4 字）本地只需 **3 次** Ctrl+Z 回基线（`[\"DDDD\",\"EEEE\"]`→`[\"DDDD\",\"\\n\"]`→`[\"DDDD\"]`→`[\"\\n\"]`），官方要 **4 次**；差在**换行那一步**：本地\"输入→换行→输入\"各占一步（3 步），官方换行不与上一段合并、但也不单独成步（4 步）；官方**段内 4 字符合并成一步**这一点本地一致（第 1 次撤销就整段吃掉 `EEEE`）；② **撤销是服务端态**（与官方**一致**）＝撤一次后等过同步防抖再 `goto` 重开该文档，`乙段文字` **仍不在**（`[\"甲段文字\",\"\\n\"]`）⇒ 本地 undo 不是纯前端内存回滚、会同步到服务端（官方 V46 结论 3 的等价行为已满足）；☆ 一处口径＝① 属\"行为不同\"、需动 history 合并窗口（`Editor.tsx:340` 现为 Tiptap 默认 `undoRedo:{}`），本批**只核不改**、行内留为待办",
+      "local": "☆ 已核（第 260 批）＝**两条结论分列**：① **粒度不同**（行为不同，留待办）＝同序列（打 4 字→Enter→打 4 字）本地只需 **3 次** Ctrl+Z 回基线（`[\"DDDD\",\"EEEE\"]`→`[\"DDDD\",\"\\n\"]`→`[\"DDDD\"]`→`[\"\\n\"]`），官方要 **4 次**；差在**换行那一步**：本地\"输入→换行→输入\"各占一步（3 步），官方换行不与上一段合并、但也不单独成步（4 步）；官方**段内 4 字符合并成一步**这一点本地一致（第 1 次撤销就整段吃掉 `EEEE`）；② **撤销是服务端态**（与官方**一致**）＝撤一次后等过同步防抖再 `goto` 重开该文档，`乙段文字` **仍不在**（`[\"甲段文字\",\"\\n\"]`）⇒ 本地 undo 不是纯前端内存回滚、会同步到服务端（官方 V46 结论 3 的等价行为已满足）；☆ 一处口径＝① 属\"行为不同\"、需动 history 合并窗口（`Editor.tsx:340` 现为 Tiptap 默认 `undoRedo:{}`），本批**只核不改**、行内留为待办。✎ 第 547 批现测（1440×900 真视口、人手节奏 700ms 停顿）：协同态 `Editor.tsx:413` 是 `undoRedo: false`＋Collaboration 扩展 ⇒ undo 由 Yjs UndoManager 按 500ms captureTimeout 分组，后加的 `craft-keymap.ts:805` `closeHistory` 边界只在单机态生效；实测 `AAAA→Enter→BBBB` 三次 Ctrl+Z 回基线（第 1 次退 BBBB、第 2 次退换行、第 3 次退 AAAA），官方 V46 为 4 次（多出的第 4 步是其补丁栈的初始块残留，非用户可见动作）⇒ 行为差仍在，仍判部分落地",
       "verdict": "部分落地（②一致；①行为不同待办）",
       "score": "3/2",
       "status": "partial",
@@ -11901,7 +11901,7 @@
       "cols": 5,
       "id": "G604",
       "official": "★★ **任务是一层独立的分页文档缓存（22 项）**：6 个 upsert（`DocumentsWithTasks`/`ActiveTasks`/`UpcomingTasks`/`InboxDocument`/`LogbookDocument`/`PinnedDocuments`）＋ **3 个独立游标** `updateContinuationToken`/`…OngoingTasks…`/`…UpcomingTasks…` ＋ `updateLoadStatus`/`setPageInfo`/`resetFetchDocumentsWithTasks` ＋ 任务写侧 6（★ `moveTask{blockId, documentId}` 跨文档移动、★ `reorderTasks{blockId, afterBlockId}` **相对定位非索引**）＋ `setFilter`/`setSort` ＋ `pinDocument`/`unpinDocument` ＋ `updateDailyDocumentIds{map}`",
-      "local": "✎ 现读（2026-11-01）更正：分页层纯核已落 `src/lib/task/task-paging.ts`（三个独立游标 advanceCursor 各动一条／loadStatus 三档 + pageInfo／reorderAfter 相对定位非索引），单测 9 条；`getTasks` 仍一次 limit 200 直读 Prisma，分页状态暂无调用点",
+      "local": "✎ 现读（2026-11-01）更正：分页层纯核已落 `src/lib/task/task-paging.ts`（三个独立游标 advanceCursor 各动一条／loadStatus 三档 + pageInfo／reorderAfter 相对定位非索引），单测 9 条；✎ 第 103 批：`getTasksPage(cursor)` 按 (createdAt,id) 游标取一页（TASK_PAGE_SIZE=100）返回 {items,nextCursor}，`getTasks` 改取首页；✎ 第 547 批复核：`nextCursor` 在 src 下除 `task.ts` 自身外零调用点，任务屏 `TasksView.tsx` 仍只 import `getTasks`，`TaskPageState` 与滚动加载未接 ⇒ 服务端分页已落、客户端翻页未接，仍判部分落地",
       "verdict": "部分落地（分页层）",
       "score": "3/3",
       "status": "partial",

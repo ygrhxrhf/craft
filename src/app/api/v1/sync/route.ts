@@ -6,6 +6,7 @@ import { roleSatisfies, type AccessLevel, type ResourceRole } from '@/lib/authz/
 import { getDb } from '@/prisma/db';
 import { SYNC_TABLES } from '@/lib/sync/tables';
 import { UNIQUE_KEY_LOCATORS } from '@/lib/sync/unique-keys';
+import { WRITE_SCOPES } from '@/lib/sync/write-scope';
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
 import { decideLww } from '@/lib/sync/lww';
 import { deleteOpExemptsStale, serverTimestamp } from '@/lib/sync-core/stale-arbiter';
@@ -27,23 +28,15 @@ const DOC_SCOPED_TABLES = new Set(['document_tag', 'comment_thread', 'document_s
 const COLLECTION_SCOPED_TABLES = new Set([
   'collection_item', 'collection_property', 'collection_view',
 ]);
-// G1628：写侧要比 GET 侧多一张——`collection_value` 没有 collectionId 列（两跳 itemId →
-// CollectionItem.collectionId），GET 侧单独按 itemIds 收窄，POST 侧此前一次都没校验。
-const COLLECTION_WRITE_TABLES = new Set([...COLLECTION_SCOPED_TABLES, 'collection_value']);
 
 // G1523 写侧文档作用域鉴权：GET 侧一直按"本人文档"收窄（上面那一段），而 POST 侧此前
 // **一次都没校验**——document_tag/comment_thread/document_share/document_member 都不在
 // USER_ID_TABLES 里（它们没有 userId 列），where 只剩 `{id}`／`{documentId,tagId}` ⇒
 // 任何登录用户 POST 一枚 `document_member{documentId: 别人的文档, userId: 自己, role: editor}`
-// 就能把自己加成那篇文档的编辑（IDOR 提权）。这里的档位逐表对齐各自 action 里的要求：
-// attachTag/detachTag=editor、createThread=commenter、分享档位与成员增删=owner。
-const DOC_WRITE_LEVEL: Record<string, AccessLevel> = {
-  document_tag: 'editor',
-  comment_thread: 'commenter',
-  document_share: 'owner',
-  document_member: 'owner',
-};
-
+// 就能把自己加成那篇文档的编辑（IDOR 提权）。
+// G1628 补集合四表、G1633 补 `comment`（只有写入者 userId、没有归属）⇒ 逐表档位与归属列
+// 全部落在 `src/lib/sync/write-scope.ts` 的 `WRITE_SCOPES`，由 `write-scope.test.ts` 对
+// `contract.json` 现读核对（新增带归属引用的同步表而这里没跟，那边先红）。
 const MEMBER_ROLES: ResourceRole[] = ['editor', 'commenter', 'viewer'];
 
 /**
@@ -88,12 +81,11 @@ async function ownsCollection(scope: any, collectionId: string, userId: string):
 /** 在**同一事务作用域**内解析调用者对该文档的角色并比档（不另开连接，避免读到事务外的旧值）。 */
 async function hasDocumentScope(
   scope: any,
-  table: string,
+  need: AccessLevel,
   documentId: string,
   userId: string,
 ): Promise<boolean> {
-  const need = DOC_WRITE_LEVEL[table];
-  if (!need || !documentId) return false;
+  if (!documentId) return false;
   const doc = await scope.orm.public.Document.first({ id: documentId });
   if (!doc || doc.isDeleted) return false;
   if (doc.userId === userId) return roleSatisfies('owner', need); // 所有者：满足任何档
@@ -101,6 +93,27 @@ async function hasDocumentScope(
   const role = member?.role as ResourceRole | undefined;
   if (!role || !MEMBER_ROLES.includes(role)) return false;
   return roleSatisfies(role, need);
+}
+
+/**
+ * G1633：`comment` 的归属要两跳——`threadId` → `CommentThread.documentId` → 文档档位。
+ * 判据与 `documentId` 直取的那几表同形：存量行自带的 threadId 与这一笔内联的 threadId
+ * 不一致 ⇒ 拿别人的行 id 往自己（或别人）的线程里挪，一律拒；线程不存在或已软删 ⇒ 定位不到。
+ */
+async function resolveCommentThread(
+  scope: any,
+  key: Record<string, unknown>,
+  current: any,
+): Promise<{ documentId: string } | 'mismatch' | null> {
+  const inline = typeof key.threadId === 'string' ? key.threadId : '';
+  const stored = typeof current?.threadId === 'string' ? current.threadId : '';
+  if (inline && stored && inline !== stored) return 'mismatch';
+  const threadId = stored || inline;
+  if (!threadId) return null;
+  const thread = await scope.orm.public.CommentThread.first({ id: threadId });
+  const documentId = typeof thread?.documentId === 'string' ? thread.documentId : '';
+  if (!documentId || thread.deletedAt) return null;
+  return { documentId };
 }
 
 export async function GET(req: NextRequest) {
@@ -249,10 +262,14 @@ type BatchResult = {
 
 // I1(c)：带 userId 列的表（与 GET 侧 else 分支同源）——写侧 where 强制会话 userId 收窄，
 // payload 的 userId 无条件覆盖为会话用户（不取客户端值，防跨用户改写/转移行）。
+// G1633：`customStyle` 此前漏在这份名单外（它有 userId 列、GET 侧一直按 userId 拉），
+// 而 `cols` 含 userId ⇒ 写侧 where 只剩 `{id}`：拿别人样式行 id 发一枚 `{name}` 就能改名，
+// 也能铸一枚 userId 指向别人的样式行（对方下一次 pull 就多出一条陌生样式）。
+// `write-scope.test.ts` 现读契约逐表核对，新加带 userId 的同步表而这里没跟即红。
 const USER_ID_TABLES = new Set([
   'document', 'folder', 'tag', 'favorite', 'task',
   'daily_notes_config', 'collection', 'comment', 'notification', 'block_reminder',
-  'team_member', 'space_member', 'whiteboard',
+  'team_member', 'space_member', 'whiteboard', 'customStyle',
 ]);
 
 // R-19：唯一键定位器（G1627 起落在 `src/lib/sync/unique-keys.ts`，`columns` 与契约唯一约束
@@ -349,8 +366,9 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           continue;
         }
       }
-      // G1523/G1628：作用域表的写侧鉴权（GET 侧一直按"本人文档／本人的集合"收窄，POST 侧此前
-      // 一次都没校验）。先读存量行，再拿「存量行自带的归属」与「这一笔自带的归属」一起判：
+      // G1523/G1628/G1633：作用域表的写侧鉴权（GET 侧一直按"本人文档／本人的集合"收窄，
+      // POST 侧此前一次都没校验）。先读存量行，再拿「存量行自带的归属」与「这一笔自带的归属」
+      // 一起判：
       // - 两者不一致 ⇒ 这笔声称写 A、实际按 pk 命中的是 B 的行（拿别人行 id 配自己的归属）
       //   ⇒ 拒，否则 update 会落到别人的数据上；
       // - 都没有 ⇒ delete 是无写入的幂等 no-op，放它走正常流程（current=null 会跳过 update）；
@@ -358,22 +376,34 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
       // 这些读只用来判"这一行属于哪篇文档／哪个集合"，不把任何列回给调用者。
       // 越权＝not_found（不泄露"这篇文档存在"，与 G1505/G1506 同档）。
       const current = await model.first(where);
-      if (DOC_SCOPED_TABLES.has(rec.table)) {
-        const inline = typeof key.documentId === 'string' ? key.documentId : '';
-        const stored = typeof current?.documentId === 'string' ? current.documentId : '';
-        const docId = stored || inline;
-        const mismatched = Boolean(inline && stored && inline !== stored);
-        if (mismatched || !docId) {
+      const scopeDef = WRITE_SCOPES[rec.table];
+      if (scopeDef?.kind === 'document') {
+        let documentId = '';
+        let mismatched = false;
+        if (scopeDef.field === 'threadId') {
+          const thread = await resolveCommentThread(scope, key, current);
+          if (thread === 'mismatch') {
+            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
+            continue;
+          }
+          documentId = thread?.documentId ?? '';
+        } else {
+          const inline = typeof key.documentId === 'string' ? key.documentId : '';
+          const stored = typeof current?.documentId === 'string' ? current.documentId : '';
+          documentId = stored || inline;
+          mismatched = Boolean(inline && stored && inline !== stored);
+        }
+        if (mismatched || !documentId) {
           if (mismatched || rec.op === 'upsert') {
             rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
             continue;
           }
-        } else if (!(await hasDocumentScope(scope, rec.table, docId, userId))) {
+        } else if (!(await hasDocumentScope(scope, scopeDef.level, documentId, userId))) {
           rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
           continue;
         }
       }
-      if (COLLECTION_WRITE_TABLES.has(rec.table)) {
+      if (scopeDef?.kind === 'collection') {
         const owner = await resolveCollectionScope(scope, rec.table, key, current);
         if (owner === 'mismatch') {
           rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });

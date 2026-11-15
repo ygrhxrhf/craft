@@ -1402,3 +1402,159 @@ describe('POST /api/v1/sync — G1629 值类型闸', () => {
     expect(body.rejected).toEqual([]);
   });
 });
+
+/**
+ * G1633——`comment` 的写侧归属。它是同步表里**唯一**"有 userId 列、但 userId 是写入者而不是
+ * 归属人"的表：`where` 收窄的只是"这行是谁写的"，`threadId` 指向的线程属于谁一次都没判。
+ * 于是任何登录用户 POST 一枚 `comment{threadId: 别人线程, body}` 都能铸出一条自己的评论行，
+ * 而 `getThreads` 按 `threadIds` 读回**全部作者**的行 ⇒ 别人的文档里出现陌生人插的话。
+ * 判据与 G1523／G1628 同形：归属从 `threadId` 两跳到文档，档位＝commenter（与 addReply 同档）。
+ */
+describe('POST /api/v1/sync — G1633 评论写侧归属（threadId 两跳）', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  function commentDb(opts: {
+    documents?: Record<string, unknown>[];
+    members?: Record<string, unknown>[];
+    threads?: Record<string, unknown>[];
+    comments?: Record<string, unknown>[];
+  }) {
+    const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const makeTable = (rows: Record<string, unknown>[]) => {
+      const t: any = {
+        where: () => t,
+        first: async (where: Record<string, unknown>) =>
+          rows.find((r) => Object.entries(where).every(([k, v]) => r[k] === v)) ?? null,
+        create,
+        update,
+        delete: async () => ({}),
+      };
+      return t;
+    };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) =>
+        m === 'SyncEvent' ? { create: vi.fn() }
+          : m === 'Document' ? makeTable(opts.documents ?? [])
+            : m === 'DocumentMember' ? makeTable(opts.members ?? [])
+              : m === 'CommentThread' ? makeTable(opts.threads ?? [])
+                : m === 'Comment' ? makeTable(opts.comments ?? [])
+                  : makeTable([]),
+    }) } });
+    return { create, update };
+  }
+
+  const thread = (id: string, documentId: string, deletedAt: string | null = null) => ({
+    id, documentId, blockText: 'x', resolved: false, deletedAt,
+    updatedAt: '2026-09-28T09:00:00.000Z',
+  });
+
+  it('拒收：往别人文档的评论线程里插话 → not_found，不 create', async () => {
+    const { create } = commentDb({
+      documents: [{ id: 'victim-doc', userId: 'owner-elsewhere', isDeleted: false }],
+      threads: [thread('victim-th', 'victim-doc')],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-forged', op: 'upsert',
+      data: { threadId: 'victim-th', body: '我没被邀请' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected).toEqual([{
+      table: 'comment', id: 'c-forged', op: 'delete',
+      syncTs: '2026-09-28T12:00:00.000Z', reason: 'not_found',
+    }]);
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('拒收：只有 viewer 档的成员想插话 → not_found（档位＝commenter）', async () => {
+    const { create } = commentDb({
+      documents: [{ id: 'shared-doc', userId: 'owner-elsewhere', isDeleted: false }],
+      members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'viewer' }],
+      threads: [thread('th-1', 'shared-doc')],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-viewer', op: 'upsert',
+      data: { threadId: 'th-1', body: '只读也想说话' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('拒收：拿自己的评论行 id 把 threadId 挪到别人的线程（内联与存量行不符）→ 不改', async () => {
+    const { update } = commentDb({
+      threads: [thread('my-th', 'my-doc'), thread('victim-th', 'victim-doc')],
+      comments: [{ id: 'c-mine', threadId: 'my-th', userId: 'u1', body: '原文',
+        updatedAt: '2026-09-28T09:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-mine', op: 'upsert',
+      data: { threadId: 'victim-th', body: '挪过去' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('拒收：线程不存在（陈旧 id 上凭空铸评论）→ not_found，不 create', async () => {
+    const { create } = commentDb({ documents: [], threads: [] });
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-orphan', op: 'upsert',
+      data: { threadId: 'th-gone', body: '孤儿' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('放行：commenter 成员在共享文档的线程里发言 → create', async () => {
+    const { create } = commentDb({
+      documents: [{ id: 'shared-doc', userId: 'owner-elsewhere', isDeleted: false }],
+      members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'commenter' }],
+      threads: [thread('th-1', 'shared-doc')],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-ok', op: 'upsert',
+      data: { threadId: 'th-1', body: '同意' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'comment', id: 'c-ok' }]);
+    expect(create).toHaveBeenCalledTimes(1);
+    // 写入者仍是会话用户（userId 由服务端覆盖，不取 payload）
+    expect(create.mock.calls[0]![0]).toMatchObject({ threadId: 'th-1', userId: 'u1' });
+  });
+
+  it('放行：自己的评论加表情（只带 reactions，归属由存量行的 threadId 自带）', async () => {
+    const { update } = commentDb({
+      documents: [{ id: 'my-doc', userId: 'u1', isDeleted: false }],
+      threads: [thread('my-th', 'my-doc')],
+      comments: [{ id: 'c-mine', threadId: 'my-th', userId: 'u1', body: '原文',
+        updatedAt: '2026-09-28T09:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-mine', op: 'upsert',
+      data: { reactions: [] }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).applied).toEqual([{ table: 'comment', id: 'c-mine' }]);
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ reactions: [] }));
+  });
+
+  it('放行：线程已被软删时，自己的评论删除照旧幂等收口（不因归属读不到而卡队列）', async () => {
+    const { update } = commentDb({
+      threads: [thread('gone-th', 'my-doc', '2026-09-28T10:00:00.000Z')],
+      comments: [{ id: 'c-old', threadId: 'gone-th', userId: 'u1', body: '原文',
+        updatedAt: '2026-09-28T09:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-old', op: 'delete',
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).applied).toEqual([{ table: 'comment', id: 'c-old' }]);
+    expect(update).toHaveBeenCalledTimes(1);
+  });
+});

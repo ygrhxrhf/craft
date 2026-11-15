@@ -183,6 +183,60 @@ describe('sync 写路径的唯一键冲突（真库）', () => {
   });
 });
 
+// G1633 回归：`comment` 的归属此前只按写入者 userId 收窄，threadId 属于谁一次都没判。判据
+// 要从 threadId 两跳到文档档位（commenter），而这趟两跳在 mock 里只能证明"调了 first"——
+// 真库才证得出"别人的线程行在自己的批次里读不到、自己那行照常铸得出"。
+describe('评论写侧归属（真库）', () => {
+  it('别人文档线程里的评论被拒收；自己文档线程里的照常创建', async () => {
+    // 受害者：另一个账号 + 一篇文档 + 一条线程（会话仍是 u1）
+    const victimId = crypto.randomUUID();
+    const victimDocId = crypto.randomUUID();
+    const victimThreadId = crypto.randomUUID();
+    await db.orm.public.User.create({
+      id: victimId,
+      email: `sync-victim-${victimId.slice(0, 8)}@example.com`,
+      name: '别人',
+      password: '!no-login-test-row',
+    });
+    await db.orm.public.Document.create({ id: victimDocId, title: '别人的文档', userId: victimId });
+    await db.orm.public.CommentThread.create({
+      id: victimThreadId, documentId: victimDocId, blockId: null, blockText: '别人写的话',
+    });
+
+    const syncTs = '2026-11-17T00:00:00.000Z';
+    const forged = await POST(post({ records: [{
+      table: 'comment', id: crypto.randomUUID(), op: 'upsert',
+      data: { threadId: victimThreadId, userId, body: '我没被邀请' },
+      syncTs,
+    }] }));
+    const forgedBody = await forged.json();
+    expect(forged.status).toBe(200);
+    expect(forgedBody.applied).toEqual([]);
+    expect(forgedBody.rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
+    expect(await db.orm.public.Comment.where({ threadId: victimThreadId }).all()).toHaveLength(0);
+
+    // 自己的线程：同一批里的好笔照常落
+    const myThreadId = crypto.randomUUID();
+    await db.orm.public.CommentThread.create({
+      id: myThreadId, documentId, blockId: null, blockText: '我自己的话',
+    });
+    const own = await POST(post({ records: [{
+      table: 'comment', id: crypto.randomUUID(), op: 'upsert',
+      data: { threadId: myThreadId, userId, body: '自己线程里说话' },
+      syncTs,
+    }] }));
+    expect((await own.json()).applied).toHaveLength(1);
+    expect(await db.orm.public.Comment.where({ threadId: myThreadId }).all()).toHaveLength(1);
+
+    await db.orm.public.Comment.where({ threadId: victimThreadId }).delete();
+    await db.orm.public.Comment.where({ threadId: myThreadId }).delete();
+    await db.orm.public.CommentThread.where({ id: victimThreadId }).delete();
+    await db.orm.public.CommentThread.where({ id: myThreadId }).delete();
+    await db.orm.public.Document.where({ id: victimDocId }).delete();
+    await db.orm.public.User.where({ id: victimId }).delete();
+  });
+});
+
 // G1632 回归：清理清单此前手抄 11 张，block_reminder 的墓碑永远不清。清理由 GET 侧轮转执行、
 // 失败被 catch 吞掉（"懒清理不阻塞同步"），所以表名/身份列写错时只会静默地什么都不删——
 // mock 证明不了这件事，只有真库能。

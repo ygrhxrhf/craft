@@ -10918,6 +10918,20 @@
         "src/app/api/v1/sync/route.ts",
         "src/app/api/v1/sync/route.realdb.test.ts"
       ]
+    },
+    "G1633": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 562 批：写侧归属搬成声明面（write-scope.ts 的 WRITE_SCOPES，document_tag=editor／comment_thread=commenter／document_share=owner／document_member=owner／comment=threadId@commenter／集合四表），route.ts 改成按 scopeDef.kind 分派、旧的 DOC_WRITE_LEVEL 与 COLLECTION_WRITE_TABLES 删掉；新增 resolveCommentThread 做 threadId 两跳（存量与内联不一致即拒、线程不存在或软删＝定位不到、upsert 拒 delete 幂等、档位 commenter 与 addReply 同档）；顺带把漏在 USER_ID_TABLES 外的 customStyle 补进去（此前写侧 where 只剩 {id}，可按别人样式行 id 改名或铸 userId 指向别人的样式行）。write-scope.test.ts 5 条从 contract.json 现读引用列逐表核对并锚住 customStyle 的大写表名不漏；route.test.ts 7 条、route.realdb.test.ts 1 条真库（别人线程零行落库、自己线程同批照常落）。反向验证：删掉 comment 那格＝归属闸与 4 条 mock 红；从 USER_ID_TABLES 删 customStyle＝归属闸与接线断言红。",
+      "evidence": [
+        "src/lib/sync/write-scope.ts",
+        "src/lib/sync/write-scope.test.ts",
+        "src/app/api/v1/sync/route.ts:103",
+        "src/app/api/v1/sync/route.ts:269",
+        "src/app/api/v1/sync/route.ts:379",
+        "src/app/api/v1/sync/route.test.ts",
+        "src/app/api/v1/sync/route.realdb.test.ts"
+      ]
     }
   }
 }

@@ -221,7 +221,7 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     }
     cachedPending = await store.countPending();
     setStatus('syncing');
-    let res: { pushed: number; status: 'ok' | 'network' | 'http' | 'auth' };
+    let res: { pushed: number; status: 'ok' | 'network' | 'auth' };
     try {
       // 硬规则 1：queue.flush 抛错计为 network
       res = await queue.flush();
@@ -243,11 +243,8 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
       setStatus('error');
       return;
     }
-    if (res.status === 'http') {
-      // 400/413 是程序 bug，不重试
-      setStatus('error');
-      return;
-    }
+    // G1630：'http' 那一档已删——记录级 4xx 在队列内部逐笔隔离（好笔落库、坏笔按 invalid 丢弃），
+    // 不再有"整批不重试、op 却留在队头"的死局。这里只剩 network 一条退避路。
     // network
     if (isOffline()) {
       setStatus('offline');

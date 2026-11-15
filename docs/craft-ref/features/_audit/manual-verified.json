@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-11-15",
-  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。 第 556 批把 G1627 的唯一键定位器名单搬进 src/lib/sync/unique-keys.ts 并从 contract.json 现读 uniques 建闸，补 document_member 的 (documentId,userId) 定位器（mock＋真库各一条回归）。 第 557 批把 G1628 的集合写侧鉴权补齐（COLLECTION_WRITE_TABLES 四表 + 文档侧存量行与内联归属一起判），8 条新用例并反向验证。 第 558 批把 G1629 的值类型闸补上（payload-shape.ts 从 contract.json 现读 codec+nullable，坏值按 reason:invalid 单笔拒收），mock 2＋真库 2 并反向验证。",
+  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。 第 556 批把 G1627 的唯一键定位器名单搬进 src/lib/sync/unique-keys.ts 并从 contract.json 现读 uniques 建闸，补 document_member 的 (documentId,userId) 定位器（mock＋真库各一条回归）。 第 557 批把 G1628 的集合写侧鉴权补齐（COLLECTION_WRITE_TABLES 四表 + 文档侧存量行与内联归属一起判），8 条新用例并反向验证。 第 558 批把 G1629 的值类型闸补上（payload-shape.ts 从 contract.json 现读 codec+nullable，坏值按 reason:invalid 单笔拒收），mock 2＋真库 2 并反向验证。 第 559 批把 G1630 的客户端队列 4xx 隔离补上（记录级 400/413 拆批逐笔判死、代理 HTML 退回 network、Queue 状态收成三档），queue.test.ts 8 条并反向验证。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -10885,6 +10885,17 @@
         "src/lib/sync/rejection-copy.test.ts",
         "src/lib/sync-core/types.ts",
         "src/lib/sync-core/index.ts"
+      ]
+    },
+    "G1630": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 559 批：队列对 400/413 只「不重试」而不把坏的那一笔拿掉——那批 op 仍在队头，下一次 flush 还是同一批同一个 4xx ⇒ 队头永久毒死，之后所有改动都推不上去，只能重置缓存（连未同步改动一起丢）。而服务端这两枚都是记录级故障：413＝请求体超 2MB（单笔或 200 笔合计），400＝bad records／unknown table／user id mismatch／document_tag 缺复合键。修＝① queue.ts 新增 flushRange：整批 4xx 时先判响应体是不是本服务的记录级错误 JSON；不是（代理返回 HTML 400）则退回 network 走退避，一笔都不丢。② 是记录级 ⇒ 对半拆开重发，单笔仍 4xx 就 ack 掉并按 reason:invalid 冒给 UI（复用 G1629 文案）。③ Queue.flush 的 status 从四档收成三档（http 删除），manager 对应段删掉。④ queue.test.ts 重写为 8 条：400 拆批的调用序（[good,bad]→[good]→[bad]，钉住先拆后判死）、413 单笔丢弃、代理 HTML 400 退回 network 且不丢、拆批途中断网时已落的不回滚未落的留队。反向验证：把记录级判据短路成 false，三条新用例同时红。",
+      "evidence": [
+        "src/lib/sync-core/queue.ts",
+        "src/lib/sync-core/queue.test.ts",
+        "src/lib/sync-core/index.ts",
+        "src/lib/sync-core/index.test.ts"
       ]
     }
   }

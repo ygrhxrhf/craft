@@ -26,7 +26,7 @@ interface Harness {
 }
 
 async function makeManager(
-  opts: { flushResult?: 'ok' | 'network' | 'auth' | 'http'; failInitOnce?: boolean } = {},
+  opts: { flushResult?: 'ok' | 'network' | 'auth'; failInitOnce?: boolean } = {},
 ): Promise<Harness> {
   const base = createMemoryStore();
   await base.init();

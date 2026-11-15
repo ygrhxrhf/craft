@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-11-15",
-  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。 第 556 批把 G1627 的唯一键定位器名单搬进 src/lib/sync/unique-keys.ts 并从 contract.json 现读 uniques 建闸，补 document_member 的 (documentId,userId) 定位器（mock＋真库各一条回归）。",
+  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。 第 556 批把 G1627 的唯一键定位器名单搬进 src/lib/sync/unique-keys.ts 并从 contract.json 现读 uniques 建闸，补 document_member 的 (documentId,userId) 定位器（mock＋真库各一条回归）。 第 557 批把 G1628 的集合写侧鉴权补齐（COLLECTION_WRITE_TABLES 四表 + 文档侧存量行与内联归属一起判），8 条新用例并反向验证。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -10860,6 +10860,15 @@
         "src/app/api/v1/sync/route.test.ts",
         "src/app/api/v1/sync/route.realdb.test.ts",
         "src/prisma/contract.json"
+      ]
+    },
+    "G1628": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 557 批：写侧作用域鉴权缺两处。① 集合四表 POST 侧一次都没校验——COLLECTION_SCOPED_TABLES 只在 GET 侧收窄，collection_value 连 collectionId 都没有（两跳 itemId），where 只剩 {id} ⇒ 可往别人集合塞字段、或拿别人字段行 id 改名。② 文档侧只信内联 documentId——`{id: 别人分享行 id, documentId: 我的文档, permission}` 鉴权在自己的文档上通过，first({id}) 命中的却是别人那行，update 落到别人的分享档。修＝① 新增 COLLECTION_WRITE_TABLES（前三表 + collection_value）与 resolveCollectionScope／ownsCollection（collection_value 两跳 itemId → CollectionItem.collectionId，再判 Collection.userId === 会话用户且未软删）。② 文档侧改成先读存量行，存量行自带归属与内联归属不一致即拒，都没有才按 delete 幂等 no-op / upsert 拒处理。③ route.test.ts 新增 8 条（5 条拒收 + 1 条分享行 id 复用 + 2 条放行）。反向验证：去掉集合那 5 条红；改回只信内联的旧语义，分享行那条红。",
+      "evidence": [
+        "src/app/api/v1/sync/route.ts",
+        "src/app/api/v1/sync/route.test.ts"
       ]
     }
   }

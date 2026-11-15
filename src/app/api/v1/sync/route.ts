@@ -25,6 +25,9 @@ const DOC_SCOPED_TABLES = new Set(['document_tag', 'comment_thread', 'document_s
 const COLLECTION_SCOPED_TABLES = new Set([
   'collection_item', 'collection_property', 'collection_view',
 ]);
+// G1628：写侧要比 GET 侧多一张——`collection_value` 没有 collectionId 列（两跳 itemId →
+// CollectionItem.collectionId），GET 侧单独按 itemIds 收窄，POST 侧此前一次都没校验。
+const COLLECTION_WRITE_TABLES = new Set([...COLLECTION_SCOPED_TABLES, 'collection_value']);
 
 // G1523 写侧文档作用域鉴权：GET 侧一直按"本人文档"收窄（上面那一段），而 POST 侧此前
 // **一次都没校验**——document_tag/comment_thread/document_share/document_member 都不在
@@ -40,6 +43,45 @@ const DOC_WRITE_LEVEL: Record<string, AccessLevel> = {
 };
 
 const MEMBER_ROLES: ResourceRole[] = ['editor', 'commenter', 'viewer'];
+
+/**
+ * G1628：集合四表的写侧作用域。解析"这一笔实际会落到哪个集合"——返回 `{id}`＝定位到了，
+ * `'mismatch'`＝内联归属与存量行不符，`null`＝定位不到。
+ *
+ * ☆ 为什么内联与存量行都要看：只信内联就漏掉"拿别人的行 id、配自己的 documentId／collectionId"
+ * 那一类——鉴权在自己的归属上通过，紧接着 `model.first(where)` 按 id 命中的却是别人的行，
+ * update 就落到别人的数据上。两处不一致时没有第三种正确解释，一律拒。
+ */
+async function resolveCollectionScope(
+  scope: any,
+  table: string,
+  key: Record<string, unknown>,
+  current: any,
+): Promise<{ id: string } | 'mismatch' | null> {
+  const stored = current ?? null;
+  if (table === 'collection_value') {
+    // 两跳：value.itemId → CollectionItem.collectionId → Collection.userId
+    const inlineItem = typeof key.itemId === 'string' ? key.itemId : '';
+    const storedItem = typeof stored?.itemId === 'string' ? stored.itemId : '';
+    if (inlineItem && storedItem && inlineItem !== storedItem) return 'mismatch';
+    const itemId = storedItem || inlineItem;
+    if (!itemId) return null;
+    const item = await scope.orm.public.CollectionItem.first({ id: itemId });
+    const collectionId = typeof item?.collectionId === 'string' ? item.collectionId : '';
+    return collectionId ? { id: collectionId } : null;
+  }
+  const inline = typeof key.collectionId === 'string' ? key.collectionId : '';
+  const storedCollection = typeof stored?.collectionId === 'string' ? stored.collectionId : '';
+  if (inline && storedCollection && inline !== storedCollection) return 'mismatch';
+  const id = storedCollection || inline;
+  return id ? { id } : null;
+}
+
+/** 集合归属：本人所有、且未进回收站。 */
+async function ownsCollection(scope: any, collectionId: string, userId: string): Promise<boolean> {
+  const collection = await scope.orm.public.Collection.first({ id: collectionId });
+  return Boolean(collection) && !collection.deletedAt && collection.userId === userId;
+}
 
 /** 在**同一事务作用域**内解析调用者对该文档的角色并比档（不另开连接，避免读到事务外的旧值）。 */
 async function hasDocumentScope(
@@ -293,18 +335,22 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           : USER_ID_TABLES.has(rec.table)
             ? { id: rec.id, userId }
             : { id: rec.id };
-      // G1523：文档作用域表的写侧鉴权（GET 侧一直按"本人文档"收窄，POST 侧此前一次都没有）。
-      // documentId 优先取记录自带（upsert 与带 data 的 delete），没有则回读存量行（不带 data 的
-      // delete、以及 document_share 改档那种只带两列的 patch）；这一读只用来判"这一行属于哪篇
-      // 文档"，不把任何列回给调用者。越权＝not_found（不泄露"这篇文档存在"，与 G1505/G1506 同档）。
+      // G1523/G1628：作用域表的写侧鉴权（GET 侧一直按"本人文档／本人的集合"收窄，POST 侧此前
+      // 一次都没校验）。先读存量行，再拿「存量行自带的归属」与「这一笔自带的归属」一起判：
+      // - 两者不一致 ⇒ 这笔声称写 A、实际按 pk 命中的是 B 的行（拿别人行 id 配自己的归属）
+      //   ⇒ 拒，否则 update 会落到别人的数据上；
+      // - 都没有 ⇒ delete 是无写入的幂等 no-op，放它走正常流程（current=null 会跳过 update）；
+      //   upsert 则是一次"没有归属的铸造"——拒。
+      // 这些读只用来判"这一行属于哪篇文档／哪个集合"，不把任何列回给调用者。
+      // 越权＝not_found（不泄露"这篇文档存在"，与 G1505/G1506 同档）。
+      const current = await model.first(where);
       if (DOC_SCOPED_TABLES.has(rec.table)) {
         const inline = typeof key.documentId === 'string' ? key.documentId : '';
-        const probe = inline ? null : await model.first(where);
-        const docId = inline || (typeof probe?.documentId === 'string' ? probe.documentId : '');
-        if (!docId) {
-          // 定位不到这一行属于哪篇文档：delete 是无写入的幂等 no-op，放它走正常流程（current=null
-          // 会跳过 update）；upsert 则是一次"没有文档可归属的铸造"——拒。
-          if (rec.op === 'upsert') {
+        const stored = typeof current?.documentId === 'string' ? current.documentId : '';
+        const docId = stored || inline;
+        const mismatched = Boolean(inline && stored && inline !== stored);
+        if (mismatched || !docId) {
+          if (mismatched || rec.op === 'upsert') {
             rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
             continue;
           }
@@ -313,7 +359,22 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           continue;
         }
       }
-      const current = await model.first(where);
+      if (COLLECTION_WRITE_TABLES.has(rec.table)) {
+        const owner = await resolveCollectionScope(scope, rec.table, key, current);
+        if (owner === 'mismatch') {
+          rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
+          continue;
+        }
+        if (!owner) {
+          if (rec.op === 'upsert') {
+            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
+            continue;
+          }
+        } else if (!(await ownsCollection(scope, owner.id, userId))) {
+          rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
+          continue;
+        }
+      }
       const tSrv = current ? new Date(current[def.tsCol]).toISOString() : null;
       const decision = decideLww(rec.op, rec.syncTs, tSrv);
 

@@ -1150,3 +1150,191 @@ describe('POST /api/v1/sync — G1523 文档作用域写侧鉴权', () => {
     expect(update).not.toHaveBeenCalled();
   });
 });
+
+/**
+ * G1628——作用域鉴权的两处缺口（与 G1523 同族，只是换了两副面孔）：
+ * ① **集合四表 POST 侧一次都没校验**：`collection_item`／`collection_property`／
+ *    `collection_view`／`collection_value` 都不在 `USER_ID_TABLES` 里（前三个没有 userId 列，
+ *    最后一个连 collectionId 都没有、要经 itemId 两跳），where 只剩 `{id}` ⇒ 任何登录用户
+ *    POST 一枚 `collection_property{collectionId: 别人集合, name: 'x'}` 就能往别人集合里塞字段，
+ *    或者拿别人字段行的 id 一枚 `{name: '改了'}` 直接把人家字段改名。
+ * ② **文档侧只信内联 documentId**：`{id: 别人分享行的 id, documentId: 我的文档, permission: 'edit'}`
+ *    的鉴权在自己的文档上通过，紧接着 `first({id})` 命中的却是别人那行 ⇒ update 落到别人的分享档。
+ * 两处的判据同一条：**这一笔自带的归属与它按 pk 实际命中的那行不一致，就没有第三种解释，拒**。
+ */
+describe('POST /api/v1/sync — G1628 集合写侧鉴权与归属不符', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  function collDb(opts: {
+    collections?: Record<string, unknown>[];
+    items?: Record<string, unknown>[];
+    properties?: Record<string, unknown>[];
+    values?: Record<string, unknown>[];
+    shares?: Record<string, unknown>[];
+    documents?: Record<string, unknown>[];
+  }) {
+    const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const del = vi.fn(async () => ({}));
+    const makeTable = (rows: Record<string, unknown>[]) => {
+      const t: any = {
+        where: () => t,
+        first: async (where: Record<string, unknown>) =>
+          rows.find((r) => Object.entries(where).every(([k, v]) => r[k] === v)) ?? null,
+        create,
+        update,
+        delete: del,
+      };
+      return t;
+    };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) =>
+        m === 'SyncEvent' ? { create: vi.fn() }
+          : m === 'Collection' ? makeTable(opts.collections ?? [])
+            : m === 'CollectionItem' ? makeTable(opts.items ?? [])
+              : m === 'CollectionProperty' ? makeTable(opts.properties ?? [])
+                : m === 'CollectionValue' ? makeTable(opts.values ?? [])
+                  : m === 'DocumentShare' ? makeTable(opts.shares ?? [])
+                    : m === 'Document' ? makeTable(opts.documents ?? [])
+                      : makeTable([]),
+    }) } });
+    return { create, update, del };
+  }
+
+  it('拒收：往别人集合里塞字段（collection_property upsert，collectionId 属他人）→ not_found 不 create', async () => {
+    const { create } = collDb({ collections: [{ id: 'victim-coll', userId: 'owner-elsewhere', isDeleted: false }] });
+    const res = await POST(req({ records: [{
+      table: 'collection_property', id: 'p-new', op: 'upsert',
+      data: { collectionId: 'victim-coll', name: '新字段', type: 'text' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'collection_property', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('拒收：拿别人字段行的 id 只带一枚 patch（collectionId 是行自带的他人集合）→ 不改档', async () => {
+    const { update } = collDb({
+      collections: [{ id: 'victim-coll', userId: 'owner-elsewhere', isDeleted: false }],
+      properties: [{ id: 'p-victim', collectionId: 'victim-coll', name: '原来的', type: 'text',
+        updatedAt: '2026-09-28T09:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'collection_property', id: 'p-victim', op: 'upsert',
+      data: { name: '被改了' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'collection_property', reason: 'not_found' });
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('拒收：内联 collectionId 与命中行不符（拿别人行 id + 自己的集合）→ 不 update', async () => {
+    const { update } = collDb({
+      collections: [{ id: 'my-coll', userId: 'u1', isDeleted: false }],
+      properties: [{ id: 'p-victim', collectionId: 'victim-coll', name: '原来的', type: 'text',
+        updatedAt: '2026-09-28T09:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'collection_property', id: 'p-victim', op: 'upsert',
+      data: { collectionId: 'my-coll', name: '被改了' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'collection_property', reason: 'not_found' });
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('拒收：collection_value 两跳落在别人集合（itemId 属他人条目）→ not_found 不 create', async () => {
+    const { create } = collDb({
+      collections: [{ id: 'victim-coll', userId: 'owner-elsewhere', isDeleted: false }],
+      items: [{ id: 'victim-item', collectionId: 'victim-coll' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'collection_value', id: 'v-new', op: 'upsert',
+      data: { itemId: 'victim-item', propertyId: 'p1', value: '偷写' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'collection_value', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('拒收：collection_item 的陈旧删除落在别人集合 → not_found，不写墓碑', async () => {
+    const { update } = collDb({
+      collections: [{ id: 'victim-coll', userId: 'owner-elsewhere', isDeleted: false }],
+      items: [{ id: 'victim-item', collectionId: 'victim-coll', updatedAt: '2026-09-28T09:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'collection_item', id: 'victim-item', op: 'delete',
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'collection_item', reason: 'not_found' });
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('拒收：别人的分享行 id 配自己的 documentId（旧实现只信内联归属）→ 不改别人的档位', async () => {
+    const { update } = collDb({
+      documents: [{ id: 'my-doc', userId: 'u1', isDeleted: false }],
+      shares: [{ id: 's-victim', documentId: 'victim-doc', permission: 'view',
+        updatedAt: '2026-09-28T09:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'document_share', id: 's-victim', op: 'upsert',
+      data: { documentId: 'my-doc', permission: 'edit', shareVersion: 9 },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'document_share', reason: 'not_found' });
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('放行：自己集合里的字段新建 / 取值 / 级联墓碑照常落库', async () => {
+    const { create, update } = collDb({
+      collections: [{ id: 'my-coll', userId: 'u1', isDeleted: false }],
+      items: [{ id: 'my-item', collectionId: 'my-coll', updatedAt: '2026-09-01T00:00:00.000Z' }],
+      values: [{ id: 'v-old', itemId: 'my-item', propertyId: 'p-old', value: '旧值',
+        updatedAt: '2026-09-01T00:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [
+      { table: 'collection_property', id: 'p-new', op: 'upsert',
+        data: { collectionId: 'my-coll', name: '新字段', type: 'text' },
+        syncTs: '2026-09-28T12:00:00.000Z' },
+      { table: 'collection_value', id: 'v-new', op: 'upsert',
+        data: { itemId: 'my-item', propertyId: 'p-new', value: '值' },
+        syncTs: '2026-09-28T12:00:00.000Z' },
+      // FieldMenu 的级联墓碑：upsert 只带 deletedAt，归属由存量行自带
+      { table: 'collection_value', id: 'v-old', op: 'upsert',
+        data: { deletedAt: '2026-09-28T12:00:00.000Z' },
+        syncTs: '2026-09-28T12:00:00.000Z' },
+    ] }));
+    const body = await res.json();
+    expect(body.rejected).toEqual([]);
+    expect(body.applied.map((r: any) => r.table)).toEqual([
+      'collection_property', 'collection_value', 'collection_value',
+    ]);
+    expect(create).toHaveBeenCalledTimes(2);
+    expect(update).toHaveBeenCalledTimes(1);
+  });
+
+  it('放行：成员推自己的分享行（id 与 documentId 一致且是本人可写的文档）', async () => {
+    const { update } = collDb({
+      documents: [{ id: 'my-doc', userId: 'u1', isDeleted: false }],
+      shares: [{ id: 's-1', documentId: 'my-doc', permission: 'view',
+        updatedAt: '2026-09-28T09:00:00.000Z' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'document_share', id: 's-1', op: 'upsert',
+      data: { permission: 'edit', shareVersion: 2 },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).applied).toEqual([{ table: 'document_share', id: 's-1' }]);
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ permission: 'edit' }));
+  });
+});

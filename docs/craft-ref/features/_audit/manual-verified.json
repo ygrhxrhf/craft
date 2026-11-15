@@ -10932,6 +10932,15 @@
         "src/app/api/v1/sync/route.test.ts",
         "src/app/api/v1/sync/route.realdb.test.ts"
       ]
+    },
+    "G1634": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 563 批：POST /api/v1/sync 的 413 判据用 text.length（UTF-16 码元）而非 UTF-8 字节——汉字一条占 3 字节，2M 字符的中文批次实际约 6MB，本地放行却在中间层撞真正的 413；而 G1630 之后客户端只把本服务的 JSON 413 认成记录级（拆批），代理那枚 HTML 413 退回 network ⇒ 同一批永远重推不拆、联网状态下卡死队列。修＝判据改 new TextEncoder().encode(text).length；route.test.ts 补 2 条（700k 汉字字符<2M/字节>2M 必须 413 且响应体可被客户端认成记录级、400k 汉字照常 200 落库）；反向验证换回 text.length 即红。边界：单笔真超 2MB 时客户端仍按 reason:invalid 丢弃、文案偏「坏数据」，本条只修判据不新增 reason。",
+      "evidence": [
+        "src/app/api/v1/sync/route.ts:295",
+        "src/app/api/v1/sync/route.test.ts"
+      ]
     }
   }
 }

@@ -286,9 +286,13 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // 先整体读文本：>2MB 直接 413（不解析），随后从同一份文本解析 JSON
+  // 先整体读文本：>2MB 直接 413（不解析），随后从同一份文本解析 JSON。
+  // G1634：判据必须是**字节**不是字符——`text.length` 数的是 UTF-16 码元，中文一条占 3 字节
+  // ⇒ 一枚 2M 字符的中文批次实际 6MB，本地这一关放行、却可能在中间层撞上真正的 413；而客户端
+  // 只把**本服务的 JSON 413**认成记录级（会拆批），代理那枚 HTML 413 退回 network ⇒ 同一批
+  // 永远重推、永远不拆，队列在联网状态下卡死（G1630 要修的那种死法，只是触发点换到字节账）。
   const text = await req.text();
-  if (text.length > 2 * 1024 * 1024) {
+  if (new TextEncoder().encode(text).length > 2 * 1024 * 1024) {
     return Response.json({ error: 'payload too large' }, { status: 413 });
   }
   let json: unknown;

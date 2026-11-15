@@ -185,6 +185,36 @@ describe('POST /api/v1/sync', () => {
     expect((await POST(new NextRequest('http://x/api/v1/sync', { method: 'POST', body: big }))).status).toBe(413);
   });
 
+  /**
+   * G1634——413 的判据必须是**字节**，不是字符。`text.length` 数的是 UTF-16 码元：一枚汉字
+   * 在这里只算 1、真发出去占 3 字节。中文批次（本产品主语言）因此能"本地放行、中间层撞 413"，
+   * 而客户端只把本服务的 JSON 413 认成记录级（拆批重发），代理那枚 HTML 413 退回 network
+   * ⇒ 同一批永远重推、永远不拆（G1630 修掉的毒批次换了个触发点回来）。
+   */
+  it('G1634：字符数不到 2M、字节数超 2M 的中文批次 → 413（拆批通路必须拿得到记录级 413）', async () => {
+    // 700k 汉字＝700k 字符（<2M）但 UTF-8 约 2.1MB（>2M）
+    const cjk = '汉'.repeat(700_000);
+    expect(cjk.length).toBeLessThan(2 * 1024 * 1024);
+    expect(new TextEncoder().encode(cjk).length).toBeGreaterThan(2 * 1024 * 1024);
+    const body = JSON.stringify({ records: [{ table: 'document', id: 'x', op: 'upsert',
+      data: { title: cjk }, syncTs: '2026-09-28T10:00:00.000Z' }] });
+    const res = await POST(new NextRequest('http://x/api/v1/sync', { method: 'POST', body }));
+    expect(res.status).toBe(413);
+    expect(await res.json()).toEqual({ error: 'payload too large' });
+  });
+
+  it('G1634：中文批次但字节数在限内 → 照常落库（闸没把正常写拦掉）', async () => {
+    const create = vi.fn(async () => ({}));
+    const chain = { where: () => chain, first: vi.fn(async () => null), update: vi.fn(), create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+    const body = JSON.stringify({ records: [{ table: 'document', id: 'd-cjk', op: 'upsert',
+      data: { title: '汉'.repeat(400_000) }, syncTs: '2026-09-28T12:00:00.000Z' }] });
+    expect((await POST(new NextRequest('http://x/api/v1/sync', { method: 'POST', body }))).status).toBe(200);
+    expect(create).toHaveBeenCalledTimes(1);
+  });
+
   it('R-10 I-1：document_tag 复合键取自 data——applied id 与 cursor 为 documentId__tagId', async () => {
     const create = vi.fn(async () => ({}));
     const chain = { where: () => chain, first: vi.fn(async () => null), update: vi.fn(), create };

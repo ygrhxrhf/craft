@@ -182,3 +182,27 @@ describe('sync 写路径的唯一键冲突（真库）', () => {
     expect(Number(rows[0]!.order)).toBe(0);
   });
 });
+
+// G1632 回归：清理清单此前手抄 11 张，block_reminder 的墓碑永远不清。清理由 GET 侧轮转执行、
+// 失败被 catch 吞掉（"懒清理不阻塞同步"），所以表名/身份列写错时只会静默地什么都不删——
+// mock 证明不了这件事，只有真库能。
+describe('GET 墓碑轮转清理（真库）', () => {
+  it('轮转会轮到 block_reminder：40 天前的墓碑被真删掉', async () => {
+    const oldId = crypto.randomUUID();
+    const fortyDaysAgo = new Date(Date.now() - 40 * 24 * 3600 * 1000).toISOString();
+    await db.orm.public.BlockReminder.create({
+      id: oldId, userId, documentId, blockId: crypto.randomUUID(),
+      title: '过期提醒', remindAt: '2026-01-01T00:00:00.000Z',
+      isCompleted: false, deletedAt: fortyDaysAgo,
+    });
+
+    const { purgePlan } = await import('@/lib/sync/purge-plan');
+    // 轮转每 GET 一张表 ⇒ 走满一整圈必然轮到它（多给两圈余量）
+    for (let i = 0; i < purgePlan().length * 2; i += 1) {
+      await (await import('./route')).GET(new NextRequest('http://x/api/v1/sync?limit=1'));
+    }
+
+    const left = await db.orm.public.BlockReminder.where({ id: oldId }).all();
+    expect(left, 'block_reminder 的 40 天墓碑还在 ⇒ 清理清单又漏了这张表').toHaveLength(0);
+  });
+});

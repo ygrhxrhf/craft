@@ -770,7 +770,7 @@ describe('GET 墓碑 30 天边界（懒清理轮转）', () => {
     expect(seen.ids[0]).toHaveLength(100);
   });
 
-  it('轮转：连续两次 GET 清理不同的表（一轮扫不完全部 11 张）', async () => {
+  it('轮转：连续两次 GET 清理不同的表（一轮只扫一张，清单见 purge-plan）', async () => {
     const seen = mockPurgeDb([{ id: 'old', deletedAt: iso(NOW - 40 * DAY) }]);
     await GET(new NextRequest('http://x/api/v1/sync'));
     await GET(new NextRequest('http://x/api/v1/sync'));

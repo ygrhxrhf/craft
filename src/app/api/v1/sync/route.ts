@@ -10,6 +10,7 @@ import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cu
 import { decideLww } from '@/lib/sync/lww';
 import { deleteOpExemptsStale, serverTimestamp } from '@/lib/sync-core/stale-arbiter';
 import { invalidPayloadColumns } from '@/lib/sync/payload-shape';
+import { purgePlan } from '@/lib/sync/purge-plan';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
 import { materializeTaskReminders } from '@/lib/notification/materialize';
 import { materializeDailyDigest } from '@/lib/notification/daily-digest';
@@ -511,28 +512,15 @@ function newer(a: Cursor, b: Cursor): Cursor {
 // 注意本版 ORM 事实（已核对 orm-client 源码）：where 简写只支持 = / IS NULL，
 // 比较必须用 lambda 字段代理；limit() 不作用于 delete 终端，所以先 select 主键
 // 再按主键集合批量删（deleteAndCount 单查询收口），失败吞掉不阻塞同步。
-const PURGE_TABLES = ['Document', 'Folder', 'Collection', 'Whiteboard', 'Tag',
-  'DocumentTag', 'Favorite', 'Task', 'Comment', 'CommentThread', 'DocumentShare'];
-const PURGE_IDENTITY: Record<string, string[]> = {
-  Document: ['id'],
-  Folder: ['id'],
-  Collection: ['id'],
-  Whiteboard: ['id'],
-  Tag: ['id'],
-  DocumentTag: ['documentId', 'tagId'],
-  Favorite: ['id'],
-  Task: ['id'],
-  Comment: ['id'],
-  CommentThread: ['id'],
-  DocumentShare: ['id'],
-};
+// G1632：清理清单不再手抄——带 `deletedAt` 的同步表全部进轮转，身份列取契约主键
+// （`purge-plan.ts`，`purge-plan.test.ts` 对 `SYNC_TABLES` 与 `contract.json` 两侧核对）。
 let purgeRotation = 0;
 
 async function purgeTombstones(db: any) {
-  const model = PURGE_TABLES[purgeRotation % PURGE_TABLES.length];
+  const plan = purgePlan();
+  const { model, identity: identityCols } = plan[purgeRotation % plan.length]!;
   purgeRotation++;
   try {
-    const identityCols = PURGE_IDENTITY[model];
     const cutoff = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
     const rows: any[] = await db.orm.public[model]
       .where((r: any) => r.deletedAt.lt(cutoff))

@@ -31,14 +31,23 @@ type SendOutcome =
  *   - 4xx 的响应体不是本服务那几种 JSON（例如中间层代理返回 HTML）⇒ 不是记录级故障，
  *     退回 `network` 走退避重试——宁可等，也不许因为一个坏代理把用户所有未同步改动逐笔丢掉。
  */
+/**
+ * 服务端**记录级**错误句（`POST /api/v1/sync` 的 400/413 响应体里的 `error`）。只有这几种
+ * 才能判"这一笔永远不可能成功"；其余 4xx（代理、网关、别人家的 400）必须退回 network 重试。
+ * `queue-record-level.test.ts` 现读 `route.ts` 的 POST 函数体逐句核对——服务端改一句错话而
+ * 这里没跟，那条闸先红（否则记录级隔离会静默退化成"无限重试"）。
+ */
+const RECORD_LEVEL_ERRORS = ['payload too large', 'bad records', 'user id mismatch'] as const;
+
+export function isRecordLevelSyncError(error: string): boolean {
+  return (RECORD_LEVEL_ERRORS as readonly string[]).includes(error)
+    || /^unknown table \S+$/.test(error);
+}
+
 function isRecordLevelBody(raw: string): boolean {
   try {
     const parsed = JSON.parse(raw) as { error?: unknown };
-    if (typeof parsed.error !== 'string') return false;
-    return parsed.error === 'payload too large'
-      || parsed.error === 'bad records'
-      || parsed.error === 'user id mismatch'
-      || parsed.error.startsWith('unknown table ');
+    return typeof parsed.error === 'string' && isRecordLevelSyncError(parsed.error);
   } catch {
     return false;
   }

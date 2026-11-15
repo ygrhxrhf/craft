@@ -17,7 +17,7 @@ vi.mock('@/lib/authz/guard', () => ({
 }));
 
 const { getDb } = await import('@/prisma/db');
-const { POST } = await import('./route');
+const { POST, GET } = await import('./route');
 
 let db: Awaited<ReturnType<typeof getDb>>;
 let userId = '';
@@ -290,6 +290,49 @@ describe('评论表情的多人共写（真库）', () => {
     await db.orm.public.DocumentMember.where({ documentId: docId }).delete();
     await db.orm.public.Document.where({ id: docId }).delete();
     await db.orm.public.User.where({ id: authorId }).delete();
+  });
+});
+
+// G1637 回归：`metaUpdatedAt` 可空且无 DB 默认，历史行的这一列是 NULL。旧 GET 侧
+// `if (!syncTsRaw) continue` 会把整行从增量流里静默跳过（那篇文档永远不上别的设备），
+// 而 POST 侧 `new Date(null)` 得到 1970 ⇒ 每一笔客户端写都被判"比服务端新"、LWW 失效。
+// 这两条都只有真库造得出"代生成器给了 updatedAt、metaUpdatedAt 留空"的行。
+describe('同步时刻列可空的历史行（真库）', () => {
+  it('metaUpdatedAt 为 NULL 的文档照样进增量流，syncTs 取 updatedAt', async () => {
+    const legacyId = crypto.randomUUID();
+    await db.orm.public.Document.create({ id: legacyId, title: '历史行', userId });
+
+    const res = await GET(new NextRequest('http://x/api/v1/sync?limit=1000'));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    const rec = body.records.find((r: any) => r.table === 'document' && r.id === legacyId);
+    expect(rec, 'metaUpdatedAt 为 NULL 的行被跳过了＝那篇文档永远不上别的设备').toBeTruthy();
+    expect(rec.op).toBe('upsert');
+    expect(rec.syncTs).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(rec.syncTs).not.toContain('1970');
+
+    await db.orm.public.Document.where({ id: legacyId }).delete();
+  });
+
+  it('metaUpdatedAt 为 NULL 时 LWW 仍以 updatedAt 为准（更旧的一笔被判 stale）', async () => {
+    const legacyId = crypto.randomUUID();
+    await db.orm.public.Document.create({
+      id: legacyId, title: '历史行', userId, updatedAt: '2026-11-01T00:00:00.000Z',
+    });
+
+    const res = await POST(post({ records: [{
+      table: 'document', id: legacyId, op: 'upsert',
+      data: { title: '旧设备改的' },
+      syncTs: '2026-10-01T00:00:00.000Z',      // 比 updatedAt 旧
+    }] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.applied, 'NULL 让 tSrv 退化成 1970 ⇒ 旧笔被误判为更新的那笔').toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'document', id: legacyId, reason: 'stale' });
+    const row = await db.orm.public.Document.first({ id: legacyId });
+    expect(row?.title).toBe('历史行');
+
+    await db.orm.public.Document.where({ id: legacyId }).delete();
   });
 });
 

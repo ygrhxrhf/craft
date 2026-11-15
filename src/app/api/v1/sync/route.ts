@@ -12,6 +12,7 @@ import { decideLww } from '@/lib/sync/lww';
 import { deleteOpExemptsStale, serverTimestamp } from '@/lib/sync-core/stale-arbiter';
 import { invalidPayloadColumns } from '@/lib/sync/payload-shape';
 import { purgePlan } from '@/lib/sync/purge-plan';
+import { effectiveRowTs } from '@/lib/sync/row-ts';
 import { isReactionOnlyPatch, mergeReactionWrite } from '@/lib/comment/reaction-merge';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
 import { materializeTaskReminders } from '@/lib/notification/materialize';
@@ -193,9 +194,12 @@ export async function GET(req: NextRequest) {
     if (def.table === 'collection_item') itemIds = rows.map((r: any) => String(r.id));
 
     for (const r of rows) {
-      const syncTsRaw = r[def.tsCol];
-      if (!syncTsRaw) continue;
-      const syncTs = new Date(syncTsRaw).toISOString();
+      // G1637：`metaUpdatedAt` 可空且无 DB 默认 ⇒ 历史行的这一列可能是 NULL／坏值。旧写法
+      // `if (!syncTsRaw) continue` 会把整行从增量流里**静默跳过**（那篇文档永远不上别的设备，
+      // 本机镜像还会在全量对账里被当成"服务端没有"删掉）；`new Date(坏串).toISOString()` 则
+      // 直接抛错、整次 pull 500 ⇒ 反复重拉同一页。退回 `updatedAt`（带生成器、必定有值）。
+      const syncTs = effectiveRowTs(r, def.tsCol);
+      if (!syncTs) continue;
       const id = def.id(r);
       if (since && (syncTs < since.ts || (syncTs === since.ts && id <= since.id))) continue;
       if (r.deletedAt) {
@@ -428,7 +432,9 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           continue;
         }
       }
-      const tSrv = current ? new Date(current[def.tsCol]).toISOString() : null;
+      // G1637：存量行的同步时刻同样走 effectiveRowTs（NULL／坏值退回 updatedAt），否则
+      // `new Date(null)` 会得到 1970 ⇒ 每一笔客户端写都被判"比服务端新"，LWW 形同虚设。
+      const tSrv = effectiveRowTs(current, def.tsCol);
       const decision = decideLww(rec.op, rec.syncTs, tSrv);
 
       // G1511①：墓碑不吃 stale——`delete`-op 的语义是"从此刻起不存在"，不跟内容时间戳比大小。
@@ -510,7 +516,7 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           const existing = locator ? await model.first(locator) : null;
           if (existing) {
             // 同唯一键、不同 pk 的存量行：跑与主路径同一条 decideLww（apply→update / reject→回传现值）
-            const exSrv = new Date(existing[def.tsCol]).toISOString();
+            const exSrv = effectiveRowTs(existing, def.tsCol);
             if (decideLww(rec.op, rec.syncTs, exSrv) === 'reject') {
               rejected.push({
                 table: rec.table, id: pk, op: existing.deletedAt ? 'delete' : 'upsert',

@@ -10962,6 +10962,17 @@
         "src/app/api/v1/sync/route.test.ts",
         "src/app/api/v1/sync/route.realdb.test.ts"
       ]
+    },
+    "G1637": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 566 批：document/whiteboard 的同步时刻列 metaUpdatedAt 可空且无 DB 默认（生成器只挂 updatedAt），历史行该列为 NULL ⇒ GET 侧 if (!syncTsRaw) continue 把这行从增量流静默跳过（那篇文档永远不上别的设备、镜像还会被 G1635 全量对账删掉），POST 侧 new Date(null) 得 1970 让 LWW 形同虚设，坏串则抛 Invalid time value 让整次 pull 500。修＝新增纯核 src/lib/sync/row-ts.ts 的 effectiveRowTs（优先 tsCol，取不到退回 updatedAt，两列皆无用才 null），route.ts 三处（GET 收集循环／POST 的 tSrv／唯一键回读的 exSrv）统一改用它；row-ts.test.ts 7 条、realdb 2 条真库（NULL 历史行照样出增量流且 syncTs 不是 1970／NULL 时更旧一笔仍判 stale）。真库复核：Document.create 落库后 metaUpdatedAt 为 NULL、updatedAt 由生成器给值。反向验证：GET 退回旧写法第一条红；tSrv 退回 new Date 第二条红。",
+      "evidence": [
+        "src/lib/sync/row-ts.ts",
+        "src/lib/sync/row-ts.test.ts",
+        "src/app/api/v1/sync/route.ts",
+        "src/app/api/v1/sync/route.realdb.test.ts"
+      ]
     }
   }
 }

@@ -110,4 +110,39 @@ describe('sync 写路径的唯一键冲突（真库）', () => {
     expect(new Date(rows[0]!.deletedAt).toISOString()).toBe(syncTs);
     expect(new Date(rows[0]!.updatedAt).toISOString()).toBe(syncTs);
   });
+
+  // G1627 回归：成员行 `(documentId, userId)` 唯一。两台设备并发加同一人 ⇒ 后到那笔 pk 定位
+  // 不到、只能靠唯一键回读。修前盲 create 撞约束 ⇒ 25P02 ⇒ 整批 500（毒批次）。这条在真库上
+  // 证明定位器确实把这一笔并到存量行——mock 证明不了"不撞约束"这件事。
+  it('成员行撞 (documentId,userId)：整批 200，并到存量行改档，不新增行', async () => {
+    const inviteeId = crypto.randomUUID();
+    await db.orm.public.User.create({
+      id: inviteeId,
+      email: `sync-member-${inviteeId.slice(0, 8)}@example.com`,
+      name: '被授权的成员',
+      password: '!no-login-test-row',
+    });
+    const storedMemberId = crypto.randomUUID();
+    await db.orm.public.DocumentMember.create({
+      id: storedMemberId, documentId, userId: inviteeId, role: 'viewer', addedBy: userId,
+      updatedAt: '2020-01-01T00:00:00.000Z',
+    });
+
+    const res = await POST(post({ records: [{
+      table: 'document_member', id: crypto.randomUUID(), op: 'upsert',
+      data: { documentId, userId: inviteeId, role: 'editor' },
+      syncTs: '2026-11-15T00:00:00.000Z',
+    }] }));
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.applied).toEqual([{ table: 'document_member', id: storedMemberId }]);
+    const rows = await db.orm.public.DocumentMember.where({ documentId }).all() as Record<string, any>[];
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.id).toBe(storedMemberId);
+    expect(rows[0]!.role).toBe('editor');
+
+    await db.orm.public.DocumentMember.where({ documentId }).delete();
+    await db.orm.public.User.where({ id: inviteeId }).delete();
+  });
 });

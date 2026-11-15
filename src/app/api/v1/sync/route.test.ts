@@ -916,8 +916,8 @@ describe('POST /api/v1/sync — G1523 文档作用域写侧鉴权', () => {
     documents?: Record<string, unknown>[];
     members?: Record<string, unknown>[];
   }) {
-    const create = vi.fn(async () => ({}));
-    const update = vi.fn(async () => ({}));
+    const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
     const del = vi.fn(async () => ({}));
     const makeTable = (rows: Record<string, unknown>[]) => {
       const t: any = {
@@ -987,6 +987,52 @@ describe('POST /api/v1/sync — G1523 文档作用域写侧鉴权', () => {
     const body = await res.json();
     expect(body.applied).toEqual([{ table: 'document_member', id: 'm-1' }]);
     expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  /**
+   * G1627——成员行 `(documentId, userId)` 是唯一键。所有者在两台设备上几乎同时加同一个人，
+   * 两笔 `resolveDocumentMember` 各发一枚 uuid（那一次都读到"还没有这一行"）⇒ 第二笔推送按
+   * pk 定位不到、按唯一键才撞得上：盲 create 抛唯一约束 → 事务 aborted（25P02）⇒ 整批 500
+   * 且客户端无限重推同一笔（G1625／G1626 同族）。定位器按 `(documentId, userId)` 回读，
+   * 把这一笔并到存量行、跑同一条 decideLww。
+   */
+  it('G1627：document_member 撞 (documentId,userId) 唯一键 → 并到存量行（不 create、不 500）', async () => {
+    const { create, update } = scopedDb({
+      documents: [{ id: 'my-doc', userId: 'u1', isDeleted: false }],
+      members: [{
+        id: 'm-old', documentId: 'my-doc', userId: 'friend', role: 'viewer',
+        createdAt: '2026-09-01T00:00:00.000Z', updatedAt: '2026-09-28T09:00:00.000Z',
+      }],
+    });
+
+    // 本机较新（12:00 > 09:00）⇒ 改档落到存量行，applied 报存量行的权威 id
+    const res = await POST(req({ records: [{
+      table: 'document_member', id: 'm-new', op: 'upsert',
+      data: { documentId: 'my-doc', userId: 'friend', role: 'editor' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.applied).toEqual([{ table: 'document_member', id: 'm-old' }]);
+    expect(create).not.toHaveBeenCalled();
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ role: 'editor' }));
+    // 不动存量行主键
+    expect(update.mock.calls[0]![0]).not.toHaveProperty('id');
+
+    // 本机更旧（08:00 < 09:00）⇒ 回传现值，仍 200 且不写
+    update.mockClear();
+    const stale = await POST(req({ records: [{
+      table: 'document_member', id: 'm-new2', op: 'upsert',
+      data: { documentId: 'my-doc', userId: 'friend', role: 'editor' },
+      syncTs: '2026-09-28T08:00:00.000Z',
+    }] }));
+    const staleBody = await stale.json();
+    expect(staleBody.applied).toEqual([]);
+    expect(staleBody.rejected[0]).toMatchObject({ id: 'm-new2', reason: 'stale' });
+    // 权威 id 走 data（客户端据此把本地那枚旧 id 换掉）
+    expect(staleBody.rejected[0].data.id).toBe('m-old');
+    expect(update).not.toHaveBeenCalled();
+    expect(create).not.toHaveBeenCalled();
   });
 
   it('放行：editor 成员对本文档挂标签（档位＝editor）', async () => {

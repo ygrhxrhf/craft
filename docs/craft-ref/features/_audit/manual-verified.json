@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-11-15",
-  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。",
+  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。 第 556 批把 G1627 的唯一键定位器名单搬进 src/lib/sync/unique-keys.ts 并从 contract.json 现读 uniques 建闸，补 document_member 的 (documentId,userId) 定位器（mock＋真库各一条回归）。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -10846,6 +10846,19 @@
         "src/lib/sync/create-requires.test.ts",
         "src/lib/sync/tables.test.ts",
         "src/app/api/v1/sync/route.test.ts",
+        "src/prisma/contract.json"
+      ]
+    },
+    "G1627": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 556 批：R-19 的唯一键定位器名单是手抄的——契约给同步表加了唯一约束而 `UNIQUE_KEY_LOCATORS` 没跟，那条路径就退化成「create 抛唯一约束 → 事务 aborted（25P02）→ 整批 500 → 客户端无限重推」（G1625／G1626 同族）。契约核出 `document_member` 的 `(documentId,userId)` 完全没有定位器（两台设备各加同一人时后到那笔必撞），另有 document_share 的 token／slug、whiteboard 的 shareToken、daily_notes_config 的 userId、notification 的 taskId+remindAt、user 的 email。修＝① 定位器搬进 `src/lib/sync/unique-keys.ts` 并加声明列 `columns`（与该表唯一约束逐列对应），route.ts 只引用；document_member 新增 `(documentId,userId)` 定位器（userId 取 payload＝被授权成员，不取会话用户）。② `src/lib/sync/unique-keys.test.ts` 从 contract.json 现读每张同步表的 uniques，逐条要求逐列相同的定位器或逐条登记的豁免理由（7 条豁免全部写明该表 create 不经内核的出处），并反向钉住「不凭空发明列」「豁免条目不过期」「空 key 必返 null」「会话作用域三表的 userId 必须取会话值」。③ route.test.ts 补 G1627 用例（撞键时较新则改档并报存量行 id、较旧则回传现值），route.realdb.test.ts 补真库用例（同唯一键冲突整批 200、不新增行、role 落到存量行）。反向验证：删掉 document_member 定位器，闸测试与真库用例同时红。",
+      "evidence": [
+        "src/lib/sync/unique-keys.ts",
+        "src/lib/sync/unique-keys.test.ts",
+        "src/app/api/v1/sync/route.ts",
+        "src/app/api/v1/sync/route.test.ts",
+        "src/app/api/v1/sync/route.realdb.test.ts",
         "src/prisma/contract.json"
       ]
     }

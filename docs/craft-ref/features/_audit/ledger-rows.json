@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-15T06:11:44.139Z",
-  "totalRows": 1618,
+  "generatedAt": "2026-11-15T06:47:50.330Z",
+  "totalRows": 1619,
   "statusDistribution": {
     "gap": 655,
-    "aligned": 489,
+    "aligned": 490,
     "unknown": 185,
     "deliberate": 141,
     "nonaction": 73,
@@ -13,7 +13,7 @@
   "priorityDistribution": {
     "P2": 631,
     "P?": 425,
-    "P1": 283,
+    "P1": 284,
     "P3": 271,
     "P0": 8
   },
@@ -26,7 +26,7 @@
     "P3 / gap": 93,
     "P3 / aligned": 87,
     "P? / aligned": 61,
-    "P1 / aligned": 55,
+    "P1 / aligned": 56,
     "P2 / deliberate": 54,
     "P3 / deliberate": 40,
     "P? / deliberate": 36,
@@ -946,7 +946,7 @@
     },
     {
       "name": "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第二条写路径＋登记六枚\"有列没面\"的管理动作（2026-10-17 本机钟 21:4x—21:5x＝**真写入批**＝净新增 6 条＝G1536…G1541＝P0 不变 7／8）",
-      "count": 90
+      "count": 91
     }
   ],
   "rows": [
@@ -30203,6 +30203,24 @@
       "official": "☆ 非官方对账项＝**本地缺陷（同步写路径·G1625 同族）**：G1505 的「铸造闸」是**缺省放行**——`route.ts` 判的是 `(def.createRequires ?? []).every(k => k in payload)`，空数组对 `every` 是真 ⇒ 没配闸的同步表，任何单点 patch 在「按 pk 定位不到行」时都能走到 `model.create`；一旦那枚 patch 缺了该表的 NOT NULL 列，create 抛错即令整个事务进 aborted 态（`25P02`）⇒ 后续语句全拒 ⇒ 整批 500 ⇒ 客户端无限重推同一笔＝毒批次（第 554 批时 21 张同步表里有 11 张无闸，逐表契约核对确认 `document_member`／`collection_property`／`document_share`／`block_reminder` 等会真撞 NOT NULL）",
       "local": "本地原状＝`createRequires` 只当「形状判据」随手配了 7 张（document／folder／task／comment／comment_thread／block_reminder／whiteboard），其余各表靠「没配＝放行」；契约侧 `document_member.userId`（不在 `USER_ID_TABLES`，服务端不代填）、`collection_property` 的 `collectionId`／`name`／`type`、`document_share.token`、`block_reminder.title`、`tag.name` 等列都是「无默认值且非服务端生成」⇒ 陈旧行上的单点动作（改成员档位／改字段显隐／分享面板改档／提醒 resolve／拖动标签序）缺它们，铸壳即撞 NOT NULL",
       "verdict": "☆ 已清（第 555 批）＝① `src/lib/sync/tables.ts` 逐表补齐 `createRequires` 到**契约必填列下限**：tag=`name`／document_tag=`documentId,tagId`／favorite=`documentId`／collection=`name,isDeleted`／collection_item=`collectionId`／collection_property=`collectionId,name,type`／collection_value=`itemId,propertyId`／collection_view=`collectionId,type`／comment=`threadId,body`／document_share=`documentId,token`／document_member=`documentId,userId`／block_reminder 补 `title` 成四枚；document／folder／task／comment_thread／whiteboard 原样（现有键已盖下限）。② 新增 `src/lib/sync/create-requires.test.ts`：从 `src/prisma/contract.json` 现读每列 `nullable`／`default` 与 `execution.mutations.defaults` 的 onCreate 生成器，现算「客户端 create 必带」的下限，逐表断言 `createRequires ⊇ 下限`；豁免名单（user／customStyle／notification／daily_notes_config＝无客户端建行面）逐张写明判据并双向钉住（名单必须真在册、名单外每张表都必须配闸）。③ `tables.test.ts` 那条 G1505 用例从「六张配闸、favorite 等不许配」翻成「十七张配闸、四张豁免」，`route.test.ts` 的 favorite 用例改成「离线收藏照旧 create／拖动排序被拒」两段（旧注释与标题里「favorite 无 createRequirements」的前提已假，一并改掉）。反向验证：把任一表回退成无闸，新测试当场红在该表名上。",
+      "score": "3/2",
+      "status": "aligned",
+      "scoreParsed": {
+        "impact": 3,
+        "cost": 2,
+        "raw": "3/2"
+      },
+      "conflict": null,
+      "priority": "P1"
+    },
+    {
+      "line": 5606,
+      "section": "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第二条写路径＋登记六枚\"有列没面\"的管理动作（2026-10-17 本机钟 21:4x—21:5x＝**真写入批**＝净新增 6 条＝G1536…G1541＝P0 不变 7／8）",
+      "cols": 5,
+      "id": "G1627",
+      "official": "☆ 非官方对账项＝**本地缺陷（同步写路径·G1625／G1626 同族）**：R-19 的唯一键定位器名单是**手抄**的——`src/prisma/contract.json` 里同步表加了唯一约束、而 `UNIQUE_KEY_LOCATORS` 没跟，那条路径就退化成「create 抛唯一约束 → 事务进 aborted 态（SQLSTATE `25P02`）→ 整批 500 → 客户端无限重推同一笔」。契约核出三处：`document_member` 的 `(documentId, userId)` 完全没有定位器（两台设备各加同一人时后到那笔必撞）；`document_share` 的 `(token)` 与 `(slug)`、`whiteboard` 的 `(shareToken)`、`daily_notes_config` 的 `(userId)`、`notification` 的 `(taskId, remindAt)`、`user` 的 `(email)` 同样无定位器",
+      "local": "本地原状＝`route.ts` 里 `const UNIQUE_KEY_LOCATORS = { tag, favorite, collection_value, block_reminder }` 四条手写；谁能撞、谁撞不上只靠注释口头保证，契约加约束时没有任何一处会红",
+      "verdict": "☆ 已清（第 556 批）＝① 定位器搬到 `src/lib/sync/unique-keys.ts` 并加声明列 `columns`（与该表唯一约束逐列对应），`route.ts` 只引用；`document_member` 新增 `(documentId, userId)` 定位器（userId 取 payload＝被授权成员，不取会话用户——取会话值就永远定位不到）。② 新增 `src/lib/sync/unique-keys.test.ts`：从 `contract.json` 现读每张同步表的 `uniques`，逐条要求逐列相同的定位器或逐条登记的豁免理由（7 条豁免全部写明\"该表的 create 不经内核\"的出处），并反向钉住「定位器不凭空发明列」「豁免条目不过期」「空 key 必返 null（否则等于全表扫一枚任意行）」「会话作用域三表的 userId 必须取会话值」。③ `route.test.ts` 补 G1627 用例（撞 `(documentId,userId)` 时并到存量行：较新则改档并报存量行 id、较旧则回传现值）；`route.realdb.test.ts` 补**真库**用例（成员行同唯一键冲突整批 200、不新增行、role 落到存量行）。反向验证：删掉 `document_member` 定位器，闸测试与真库用例同时红。",
       "score": "3/2",
       "status": "aligned",
       "scoreParsed": {

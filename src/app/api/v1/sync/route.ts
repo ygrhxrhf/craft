@@ -5,6 +5,7 @@ import { AuthorizationError, requireUserId } from '@/lib/authz/guard';
 import { roleSatisfies, type AccessLevel, type ResourceRole } from '@/lib/authz/resource';
 import { getDb } from '@/prisma/db';
 import { SYNC_TABLES } from '@/lib/sync/tables';
+import { UNIQUE_KEY_LOCATORS } from '@/lib/sync/unique-keys';
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
 import { decideLww } from '@/lib/sync/lww';
 import { deleteOpExemptsStale, serverTimestamp } from '@/lib/sync-core/stale-arbiter';
@@ -210,27 +211,9 @@ const USER_ID_TABLES = new Set([
   'team_member', 'space_member', 'whiteboard',
 ]);
 
-// R-19：唯一键表在「按 pk 定位不到、但唯一键撞上存量（含墓碑）行」时盲 create 会抛
-// 唯一约束 → 整批 500 → 客户端无限重推（毒批次）。冲突时按这里的定位器回读现存行，
-// 跑与主路径同一条 decideLww（update-or-reject）。
-// 作用域强制用批级 userId（R-1），不取 payload 里的 userId，避免越权定位他人行。
-const UNIQUE_KEY_LOCATORS: Record<
-  string,
-  (key: Record<string, unknown>, userId: string) => Record<string, unknown> | null
-> = {
-  tag: (key, userId) => (key.name == null ? null : { name: key.name, userId }),
-  favorite: (key, userId) => (key.documentId == null ? null : { userId, documentId: key.documentId }),
-  collection_value: (key) =>
-    (key.itemId == null || key.propertyId == null)
-      ? null
-      : { itemId: key.itemId, propertyId: key.propertyId },
-  // G252：`(blockId, remindAt)` 是唯一键——换设备用新 uuid 推同一枚块同一时刻的提醒会撞约束，
-  // 按这对键回读存量行再跑同一条 decideLww，而不是盲 create 抛 500 把整批打成毒批次。
-  block_reminder: (key, userId) =>
-    (key.blockId == null || key.remindAt == null)
-      ? null
-      : { blockId: key.blockId, remindAt: key.remindAt, userId },
-};
+// R-19：唯一键定位器（G1627 起落在 `src/lib/sync/unique-keys.ts`，`columns` 与契约唯一约束
+// 逐列对应，由 `unique-keys.test.ts` 现读契约核对）。此处只引用，避免"名单在服务端文件里、
+// 闸在别处读不到"。
 
 export async function POST(req: NextRequest) {
   let userId: string;
@@ -394,7 +377,7 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           // 进入 aborted 态（SQLSTATE 25P02），此后任何查询都抛错 ⇒ 批整体 500、客户端无限
           // 重推同一笔＝毒批次（真机取证：本地镜像持有旧 id 时点「取消固定」，8 次全 500，
           // 直到重新拉取把权威 id 带回来才通）。故冲突一律在 create 之前用定位器回读。
-          const locator = UNIQUE_KEY_LOCATORS[rec.table]?.(key, userId) ?? null;
+          const locator = UNIQUE_KEY_LOCATORS[rec.table]?.where(key, userId) ?? null;
           const existing = locator ? await model.first(locator) : null;
           if (existing) {
             // 同唯一键、不同 pk 的存量行：跑与主路径同一条 decideLww（apply→update / reject→回传现值）

@@ -185,3 +185,75 @@ describe('reconciler.pull', () => {
     expect((await store.get('document', 'd1'))?.data).toMatchObject({ title: '服务端标题' });
   });
 });
+
+/**
+ * `gap.md` G1635——首轮全量对账（spec 6.4）的孤儿判定此前只遍历**手抄的 5 张表**
+ * （document／folder／tag／favorite／task），注释给的理由是"其余表删除以墓碑形式在 30d 内
+ * 到达"。那只对带 `deletedAt` 的表成立：`document_member`／`notification` 是**硬删**，
+ * 带墓碑的表在设备离线超 30 天后墓碑也已被清掉——这两种情况下本地镜像会永远留着一条
+ * 服务端早已不存在的行，而全量对账正是 spec 6.4 为"离线超 30 天"准备的唯一兜底。
+ * 修法＝清单直接取 `SYNC_TABLES`（不再维护第二份名单），但本机未上报的行必须留着。
+ */
+describe('G1635：全量对账的孤儿判定覆盖全部同步表，且不吃掉未上报的改动', () => {
+  const full = () => ok({ records: [], cursor: '1970-01-01T00:00:00.000Z|', hasMore: false });
+
+  it('手抄 5 张之外的表也参与对账：硬删表 document_member 的陈旧行被判定删除', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.applyRemote([
+      { table: 'document_member', id: 'm-gone', op: 'upsert',
+        data: { documentId: 'd1', userId: 'friend', role: 'viewer' }, syncTs: '2026-09-01T00:00:00.000Z' },
+      { table: 'collection_item', id: 'ci-gone', op: 'upsert',
+        data: { collectionId: 'c1', order: 0 }, syncTs: '2026-09-01T00:00:00.000Z' },
+    ]);
+    const r = createReconciler(store, { fetchImpl: ((async () => full()) as any) });
+    const out = await r.pull({ full: true });
+    expect(out.deletedLocally).toEqual(expect.arrayContaining([
+      'document_member::m-gone', 'collection_item::ci-gone',
+    ]));
+    expect((await store.get('document_member', 'm-gone'))?.op).toBe('delete');
+    expect((await store.get('collection_item', 'ci-gone'))?.op).toBe('delete');
+  });
+
+  it('本机还没推上去的行不算孤儿（离线新建/改动不能被全量对账当陈旧行清掉）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.applyRemote([
+      { table: 'document_member', id: 'm-offline', op: 'upsert',
+        data: { documentId: 'd1', userId: 'friend', role: 'editor' }, syncTs: '2026-09-01T00:00:00.000Z' },
+    ]);
+    // 离线时刚加的成员行：还在 pending，服务端此刻必然没有它
+    await store.enqueue({
+      table: 'document_member', recordId: 'm-offline', op: 'upsert',
+      payload: { data: { documentId: 'd1', userId: 'friend', role: 'editor' }, syncTs: '2026-09-01T00:30:00.000Z' },
+      createdAt: '2026-09-01T00:30:00.000Z',
+    });
+    const r = createReconciler(store, { fetchImpl: ((async () => full()) as any) });
+    const out = await r.pull({ full: true });
+    expect(out.deletedLocally).toEqual([]);
+    expect((await store.get('document_member', 'm-offline'))?.op).toBe('upsert');
+  });
+
+  it('增量 pull 不做孤儿判定（只有 full 才对账，避免把"这一页没看到"当删除）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.setCursor({ ts: '2026-09-01T00:00:00.000Z', id: 'z' });
+    await store.applyRemote([
+      { table: 'document_member', id: 'm-keep', op: 'upsert',
+        data: { documentId: 'd1', userId: 'friend', role: 'viewer' }, syncTs: '2026-09-01T00:00:00.000Z' },
+    ]);
+    const r = createReconciler(store, { fetchImpl: ((async () => full()) as any) });
+    const out = await r.pull();
+    expect(out.deletedLocally).toEqual([]);
+    expect((await store.get('document_member', 'm-keep'))?.op).toBe('upsert');
+  });
+
+  it('user 设置行不进孤儿清单（服务端那一行暂时读不到 ≠ 本机设置该被整份判死）', async () => {
+    const store = await createMemoryStore(); await store.init();
+    await store.applyRemote([
+      { table: 'user', id: 'u1', op: 'upsert',
+        data: { theme: 'dark', editorFont: 'serif' }, syncTs: '2026-09-01T00:00:00.000Z' },
+    ]);
+    const r = createReconciler(store, { fetchImpl: ((async () => full()) as any) });
+    const out = await r.pull({ full: true });
+    expect(out.deletedLocally).toEqual([]);
+    expect((await store.get('user', 'u1'))?.op).toBe('upsert');
+  });
+});

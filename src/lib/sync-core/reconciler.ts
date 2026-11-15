@@ -1,4 +1,5 @@
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
+import { SYNC_TABLES } from '@/lib/sync/tables';
 import type { SyncRecord, SyncStore } from './store';
 import { resolveConflict, type PendingIntentLike } from './conflict-resolve';
 
@@ -12,8 +13,29 @@ export class SyncAuthError extends Error {
 
 const PULL_LIMIT = 500;   // spec 常量表
 
-// R-2：首轮全量孤儿判定仅遍历这 5 张表（其余表删除以墓碑形式在 30d 内到达，spec 6.4）
-const FULL_RECONCILE_TABLES = ['document', 'folder', 'tag', 'favorite', 'task'] as const;
+/**
+ * `gap.md` G1635 —— 首轮全量对账（spec 6.4）的**表清单此前是手抄的 5 张**：
+ * `document`／`folder`／`tag`／`favorite`／`task`。注释给的理由是"其余表删除以墓碑形式在
+ * 30 天内到达"—— 那只对**带 `deletedAt` 的表**成立，而且只在墓碑还没被服务端清掉时成立：
+ *  - `document_member`／`notification` 是**硬删**：删行不在增量流里留任何痕迹；
+ *  - 任何带墓碑的表，在设备离线超过 30 天后墓碑已被 `purgeTombstones` 物理删除。
+ * 两种情况下本地镜像都会永远留着一条服务端早已不存在的行——而全量对账正是 spec 6.4 为
+ * "离线超 30 天"准备的唯一兜底。所以这里不再维护第二份名单：**同步表全部参与对账**，
+ * 清单直接取 `SYNC_TABLES`（与 `purgePlan`／`createRequires`／`WRITE_SCOPES` 同一手法）。
+ *
+ * ☆ 但必须先问 pending：本机未上报的 `applyLocal`（离线新建/改动）此刻还不在服务端，
+ *   "全量里没有它"正是它的正常状态——照删就把用户自己的工作当成陈旧行清掉了。
+ *   `pendingKeys()` 读不到时不删任何行（宁可留一条陈旧行，也不删用户未上报的改动）。
+ */
+async function pendingKeys(store: SyncStore): Promise<Set<string> | null> {
+  try {
+    // 与 `index.ts` 的 handleRejected 同一手法：取"全部 pending"，不受退避时刻影响。
+    const ops = await store.peekBatch(Number.MAX_SAFE_INTEGER, '9999-12-31T23:59:59.999Z');
+    return new Set(ops.map((op) => `${op.table}::${op.recordId}`));
+  } catch {
+    return null;
+  }
+}
 
 // C4 父墓碑收养（spec 5.7 C4）：字段 → 被引用行所在表
 // document.folderId → Folder 树；document.parentId → Document 树；folder.parentId → Folder 树
@@ -134,13 +156,22 @@ export function createReconciler(store: SyncStore, opts: { fetchImpl?: typeof fe
       }
 
       if (seen) {
-        for (const table of FULL_RECONCILE_TABLES) {
-          for (const row of await store.all(table)) {
-            const key = `${row.table}::${row.id}`;
-            if (row.op !== 'delete' && !seen.has(key)) {
-              await store.applyRemote([{ ...row, op: 'delete', syncTs: new Date().toISOString() }]);
-              deletedLocally.push(key);
+        // G1635：清单＝全部同步表（不再手抄 5 张）；本机未上报的行不算孤儿。
+        // ☆ `user` 例外：它是账号设置行、永远只有本地这一个 id，GET 正常必带它；把它也纳入
+        //   对账，等于"服务端那一行暂时读不到就把本机设置整份判死"（主题/字体随之回落），
+        //   而它没有"孤儿"这个概念——行不存在时正确的动作是等下次写把它带上去，不是删。
+        const pending = await pendingKeys(store);
+        if (pending) {
+          for (const def of SYNC_TABLES) {
+            if (def.table === 'user') continue;
+            const stale: SyncRecord[] = [];
+            for (const row of await store.all(def.table)) {
+              if (row.op === 'delete' || seen.has(`${row.table}::${row.id}`)) continue;
+              if (pending.has(`${row.table}::${row.id}`)) continue;
+              stale.push({ ...row, op: 'delete', syncTs: new Date().toISOString() });
             }
+            if (stale.length) await store.applyRemote(stale);
+            for (const row of stale) deletedLocally.push(`${row.table}::${row.id}`);
           }
         }
         // 全量判定可能制造新墓碑 → 子引用随之收养

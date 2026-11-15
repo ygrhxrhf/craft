@@ -10941,6 +10941,15 @@
         "src/app/api/v1/sync/route.ts:295",
         "src/app/api/v1/sync/route.test.ts"
       ]
+    },
+    "G1635": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 564 批：spec 6.4 首轮全量对账的孤儿判定只遍历手抄 5 张表（document/folder/tag/favorite/task），而硬删表（document_member/notification）与「离线超 30 天、墓碑已清」的带墓碑表都会在本地镜像留下服务端早已不存在的行——兜底本身漏了 12 张表。修＝清单直接取 SYNC_TABLES（逐表批内一次 applyRemote），新增 pendingKeys 保护本机未上报的改动（读 pending 失败则整轮不删），user 设置行单列跳过（没有孤儿语义，判死会让主题/字体回落）。reconciler.test.ts 补 4 条：硬删表陈旧行被判定删除／pending 行不被清／增量 pull 不做孤儿判定／user 行不被判死。反向验证：清单换回 5 枚常量，第一条红成 []。",
+      "evidence": [
+        "src/lib/sync-core/reconciler.ts",
+        "src/lib/sync-core/reconciler.test.ts"
+      ]
     }
   }
 }

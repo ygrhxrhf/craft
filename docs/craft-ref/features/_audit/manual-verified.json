@@ -10950,6 +10950,18 @@
         "src/lib/sync-core/reconciler.ts",
         "src/lib/sync-core/reconciler.test.ts"
       ]
+    },
+    "G1636": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 565 批：表情存在 comment.reactions 一列，写侧此前只允许行主人改整行（where {id,userId}）⇒ 协作者对别人评论加表情被按 not_found 拒收、界面弹「评论不存在或不属于你」；放开整行等于允许改别人的正文，整数组 LWW 又会让两人同时各加一枚时互相覆盖。修＝新增纯核 src/lib/comment/reaction-merge.ts：mergeReactionWrite 按人切片（别人的条目原样保留、提交里非本人条目一律丢弃、自己的按 glyph 去重、name 截 80 字），isReactionOnlyPatch 只认 payload 仅含 reactions；route.ts 对「只改表情的评论 upsert」按 pk 定位存量行、作用域闸仍要求 commenter 档（threadId 两跳），写回只碰 reactions 与时间戳（不盖 userId、不碰正文/threadId），孤儿评论 not_found、非数组 invalid；reaction-merge.test.ts 12 条 + route.test.ts 6 条 + realdb 1 条（合并后列里就是作者那条 + 我这条、署名与正文一字不动）；客户端无需改（它提交的本来就是整数组）。反向验证：where 退回带 userId 定位，4 条用例含真库那条同时红。",
+      "evidence": [
+        "src/lib/comment/reaction-merge.ts",
+        "src/lib/comment/reaction-merge.test.ts",
+        "src/app/api/v1/sync/route.ts",
+        "src/app/api/v1/sync/route.test.ts",
+        "src/app/api/v1/sync/route.realdb.test.ts"
+      ]
     }
   }
 }

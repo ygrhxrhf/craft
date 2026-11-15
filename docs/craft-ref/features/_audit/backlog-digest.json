@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-11-15T14:11:46.588Z",
-  "total": 1627,
+  "generatedAt": "2026-11-15T14:36:10.575Z",
+  "total": 1628,
   "status": {
-    "aligned": 833,
+    "aligned": 834,
     "nonaction": 541,
     "deliberate": 228,
     "unreachable": 25
   },
   "priority": {
-    "P2": 643,
+    "P2": 644,
     "P?": 422,
     "P1": 282,
     "P3": 271,
     "P0": 9
   },
   "statusByPriority": {
-    "P2 / aligned": 368,
+    "P2 / aligned": 369,
     "P? / nonaction": 201,
     "P2 / nonaction": 175,
     "P1 / aligned": 169,

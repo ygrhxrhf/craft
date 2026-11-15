@@ -12,6 +12,7 @@ import { decideLww } from '@/lib/sync/lww';
 import { deleteOpExemptsStale, serverTimestamp } from '@/lib/sync-core/stale-arbiter';
 import { invalidPayloadColumns } from '@/lib/sync/payload-shape';
 import { purgePlan } from '@/lib/sync/purge-plan';
+import { isReactionOnlyPatch, mergeReactionWrite } from '@/lib/comment/reaction-merge';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
 import { materializeTaskReminders } from '@/lib/notification/materialize';
 import { materializeDailyDigest } from '@/lib/notification/daily-digest';
@@ -350,12 +351,16 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
       const pk = def.id(key); // document_tag → `${documentId}__${tagId}`；其余即 rec.id
       const model = scope.orm.public[def.model];
       // I1(b)(c)：user 表 where 强制会话用户 id（上游已拒 id≠会话用户的记录）；
-      // 带 userId 列的表 where 追加会话 userId——update/first/delete 定位均被收窄到本人行
+      // 带 userId 列的表 where 追加会话 userId——update/first/delete 定位均被收窄到本人行。
+      // G1636：唯一的例外是**只改表情的评论**——表情是多人的共同产物，协作者对别人的评论
+      // 加表情在官方是常态，而 `where {id, userId}` 会把这笔按 not_found 拒掉。这一支按 pk
+      // 定位存量行（下面的作用域闸仍要求 commenter 档），且只替调用者自己那一段切片。
+      const reactionWrite = rec.table === 'comment' && rec.op === 'upsert' && isReactionOnlyPatch(rec.data);
       const where: Record<string, unknown> = rec.table === 'document_tag'
         ? { documentId: key.documentId, tagId: key.tagId }
         : rec.table === 'user'
           ? { id: userId }
-          : USER_ID_TABLES.has(rec.table)
+          : USER_ID_TABLES.has(rec.table) && !reactionWrite
             ? { id: rec.id, userId }
             : { id: rec.id };
       // G1629：值类型闸。坏值（`{isDeleted:'yes'}`／`{order:'3a'}`／非空列收到 null）绑进
@@ -463,13 +468,28 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
         maxCursor = newer(maxCursor, { ts, id: pk });
       } else {
         // I1(a)：payload 与 def.cols 求交——白名单外的键（content/plainText/任意伪造键）直接丢弃；
-        // I1(c)：带 userId 列的表无条件盖会话 userId（create 落库必需，update 与 where 同值）
+        // I1(c)：带 userId 列的表无条件盖会话 userId（create 落库必需，update 与 where 同值）。
+        // G1636：只改表情那一支不能盖 userId（那会把别人的评论改到自己名下），也不写别的列。
         const payload: Record<string, unknown> = { [def.tsCol]: ts };
         for (const c of def.cols) if (c in (rec.data ?? {})) payload[c] = rec.data![c];
-        if (USER_ID_TABLES.has(rec.table)) payload.userId = userId;
+        if (USER_ID_TABLES.has(rec.table) && !reactionWrite) payload.userId = userId;
+        if (reactionWrite && current) {
+          // 表情按人切片合并：别人的条目原样保留，提交里不属于本人的条目丢弃。
+          const merged = mergeReactionWrite(current.reactions, rec.data?.reactions, { id: userId });
+          if (!merged) {
+            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'invalid' });
+            continue;
+          }
+          payload.reactions = merged;
+        }
         if (current) {
           await model.where(where).update(payload);
         } else {
+          // G1636：只改表情却定位不到行 ⇒ 没有可承载的表情行（建行要 threadId+body，见闸）；拒。
+          if (reactionWrite) {
+            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'not_found' });
+            continue;
+          }
           // G1505 铸造闸：定位不到行 ≠ 这台设备在离线新建。离线新建（`create-local.ts`）
           // 一定带齐 `createRequires` 的键（哪怕 title 是空串），而"对一枚陈旧行点了动作"
           // 只带被改的那几列——放过去就会带着会话 userId 铸出一枚服务端从未有过的壳行。

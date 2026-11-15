@@ -237,6 +237,62 @@ describe('评论写侧归属（真库）', () => {
   });
 });
 
+// G1636 回归：表情是多人的共同产物，而写侧此前只允许"行主人"改整行——协作者点别人评论上的
+// 表情会被按 not_found 拒收。真库上才能证明"合并后的数组与署名都还在"：mock 只能证明调了
+// update，证明不了列里最终是什么。
+describe('评论表情的多人共写（真库）', () => {
+  it('commenter 对别人的评论加表情：只追加本人那一段，署名与正文不动', async () => {
+    const authorId = crypto.randomUUID();
+    await db.orm.public.User.create({
+      id: authorId,
+      email: `sync-reaction-${authorId.slice(0, 8)}@example.com`,
+      name: '评论作者',
+      password: '!no-login-test-row',
+    });
+    const docId = crypto.randomUUID();
+    const threadId = crypto.randomUUID();
+    const commentId = crypto.randomUUID();
+    await db.orm.public.Document.create({ id: docId, title: '多人共写', userId: authorId });
+    await db.orm.public.DocumentMember.create({
+      id: crypto.randomUUID(), documentId: docId, userId, role: 'commenter', addedBy: authorId,
+    });
+    await db.orm.public.CommentThread.create({
+      id: threadId, documentId: docId, blockId: null, blockText: '原话',
+    });
+    await db.orm.public.Comment.create({
+      id: commentId, threadId, userId: authorId, body: '作者写的',
+      reactions: [{ glyph: '🎉', userId: authorId, name: '评论作者' }],
+    });
+
+    const res = await POST(post({ records: [{
+      table: 'comment', id: commentId, op: 'upsert',
+      data: { reactions: [
+        { glyph: '👍', userId, name: '会话用户' },
+        { glyph: '🔥', userId: authorId, name: '伪造' },
+      ] },
+      syncTs: '2026-11-18T00:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.applied).toEqual([{ table: 'comment', id: commentId }]);
+
+    const rows = await db.orm.public.Comment.where({ id: commentId }).all() as Record<string, any>[];
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.userId).toBe(authorId);          // 署名没被改成会话用户
+    expect(rows[0]!.body).toBe('作者写的');           // 正文一字不动
+    expect(rows[0]!.reactions).toEqual([
+      { glyph: '🎉', userId: authorId, name: '评论作者' },   // 作者的条目保留
+      { glyph: '👍', userId, name: '会话用户' },             // 只有本人那一条加进去
+    ]);
+
+    await db.orm.public.Comment.where({ threadId }).delete();
+    await db.orm.public.CommentThread.where({ id: threadId }).delete();
+    await db.orm.public.DocumentMember.where({ documentId: docId }).delete();
+    await db.orm.public.Document.where({ id: docId }).delete();
+    await db.orm.public.User.where({ id: authorId }).delete();
+  });
+});
+
 // G1632 回归：清理清单此前手抄 11 张，block_reminder 的墓碑永远不清。清理由 GET 侧轮转执行、
 // 失败被 catch 吞掉（"懒清理不阻塞同步"），所以表名/身份列写错时只会静默地什么都不删——
 // mock 证明不了这件事，只有真库能。

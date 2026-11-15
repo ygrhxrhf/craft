@@ -1588,3 +1588,147 @@ describe('POST /api/v1/sync — G1633 评论写侧归属（threadId 两跳）', 
     expect(update).toHaveBeenCalledTimes(1);
   });
 });
+
+/**
+ * G1636——评论表情的**多人共写**。表情存在 `comment.reactions` 这一 JSON 列上，而写侧此前
+ * 只允许"行主人"改整行（`where {id, userId}`）⇒ 协作者点别人评论上的 👍 被按 not_found 拒收、
+ * 界面弹「评论不存在或不属于你」，可官方那里对别人的评论加表情就是常态。
+ * 放开整行等于允许改别人的正文；按"整条数组 LWW"合并又会让 A、B 同时各加一枚时互相覆盖。
+ * 折中形状＝**按人切片**：只替调用者自己那一段，别人的条目以存量行为准。
+ */
+describe('POST /api/v1/sync — G1636 评论表情的多人共写', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  function reactionDb(opts: {
+    documents?: Record<string, unknown>[];
+    members?: Record<string, unknown>[];
+    threads?: Record<string, unknown>[];
+    comments?: Record<string, unknown>[];
+  }) {
+    const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const makeTable = (rows: Record<string, unknown>[]) => {
+      const t: any = {
+        where: () => t,
+        first: async (where: Record<string, unknown>) =>
+          rows.find((r) => Object.entries(where).every(([k, v]) => r[k] === v)) ?? null,
+        create,
+        update,
+        delete: async () => ({}),
+      };
+      return t;
+    };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) =>
+        m === 'SyncEvent' ? { create: vi.fn() }
+          : m === 'Document' ? makeTable(opts.documents ?? [])
+            : m === 'DocumentMember' ? makeTable(opts.members ?? [])
+              : m === 'CommentThread' ? makeTable(opts.threads ?? [])
+                : m === 'Comment' ? makeTable(opts.comments ?? [])
+                  : makeTable([]),
+    }) } });
+    return { create, update };
+  }
+
+  const thread = (id: string, documentId: string) => ({
+    id, documentId, blockText: 'x', resolved: false, deletedAt: null,
+    updatedAt: '2026-09-28T09:00:00.000Z',
+  });
+  const theirs = () => ({
+    id: 'c-theirs', threadId: 'th-1', userId: 'owner-elsewhere', body: '别人的评论',
+    reactions: [{ glyph: '🎉', userId: 'owner-elsewhere', name: '别人' }],
+    updatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null,
+  });
+  const shared = () => ({
+    documents: [{ id: 'shared-doc', userId: 'owner-elsewhere', isDeleted: false }],
+    members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'commenter' }],
+    threads: [thread('th-1', 'shared-doc')],
+    comments: [theirs()],
+  });
+
+  it('放行：commenter 对**别人的**评论加表情 → 只写 reactions，署名仍是原主', async () => {
+    const { update } = reactionDb(shared());
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-theirs', op: 'upsert',
+      data: { reactions: [{ glyph: '👍', userId: 'u1', name: '我' }] },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'comment', id: 'c-theirs' }]);
+    expect(update).toHaveBeenCalledTimes(1);
+    const patch = update.mock.calls[0]![0];
+    // 别人的条目被保留，我这一枚追加在后
+    expect(patch.reactions).toEqual([
+      { glyph: '🎉', userId: 'owner-elsewhere', name: '别人' },
+      { glyph: '👍', userId: 'u1', name: '我' },
+    ]);
+    // 不改署名、不碰正文
+    expect(patch).not.toHaveProperty('userId');
+    expect(patch).not.toHaveProperty('body');
+    expect(patch).not.toHaveProperty('threadId');
+  });
+
+  it('拒收：提交里夹带「替别人加表情」的条目 → 那些条目被丢弃，只留本人那一段', async () => {
+    const { update } = reactionDb(shared());
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-theirs', op: 'upsert',
+      data: { reactions: [
+        { glyph: '👍', userId: 'u1', name: '我' },
+        { glyph: '🔥', userId: 'owner-elsewhere', name: '伪造' },
+      ] },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).applied).toEqual([{ table: 'comment', id: 'c-theirs' }]);
+    expect(update.mock.calls[0]![0].reactions).toEqual([
+      { glyph: '🎉', userId: 'owner-elsewhere', name: '别人' },
+      { glyph: '👍', userId: 'u1', name: '我' },
+    ]);
+  });
+
+  it('拒收：viewer 对别人的评论加表情 → not_found（档位仍是 commenter）', async () => {
+    const { update } = reactionDb({
+      ...shared(),
+      members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'viewer' }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-theirs', op: 'upsert',
+      data: { reactions: [{ glyph: '👍', userId: 'u1', name: '我' }] },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('拒收：reactions 不是数组 → invalid（这一笔会写坏 JSON 列，永远不可能成功）', async () => {
+    const { update } = reactionDb(shared());
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-theirs', op: 'upsert',
+      data: { reactions: '👍' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.rejected[0]).toMatchObject({ table: 'comment', reason: 'invalid' });
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('拒收：表情之外还带别的列（改别人正文）→ 仍按 not_found 拒，不落库', async () => {
+    const { update } = reactionDb(shared());
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-theirs', op: 'upsert',
+      data: { reactions: [], body: '被我改了' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('拒收：对一枚不存在的评论只发表情（没有可承载的行）→ not_found，不 create', async () => {
+    const { create } = reactionDb({ threads: [thread('th-1', 'my-doc')], comments: [] });
+    const res = await POST(req({ records: [{
+      table: 'comment', id: 'c-ghost', op: 'upsert',
+      data: { reactions: [{ glyph: '👍', userId: 'u1', name: '我' }] },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
+  });
+});

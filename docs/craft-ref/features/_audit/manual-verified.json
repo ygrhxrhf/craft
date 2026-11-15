@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-11-15",
-  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。",
+  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -10835,6 +10835,18 @@
         "src/lib/collection/item-reorder.ts:49",
         "src/app/(app)/collections/[id]/TableView.tsx:310",
         "src/app/(app)/collections/[id]/TableView.tsx:786"
+      ]
+    },
+    "G1626": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 555 批：G1505 的铸造闸是缺省放行（`createRequires ?? []` 对 `every` 是空真）⇒ 11/21 张同步表任何单点 patch 都能在「按 pk 定位不到行」时走到 create，缺 NOT NULL 列即 25P02 毒批次（G1625 同族）。修＝`src/lib/sync/tables.ts` 逐表补齐 createRequires 到契约必填列下限（tag／document_tag／favorite／collection／collection_item／collection_property／collection_value／collection_view／comment 加 body／document_share／document_member／block_reminder 加 title），document／folder／task／comment_thread／whiteboard 原样；新增 `src/lib/sync/create-requires.test.ts` 从 `src/prisma/contract.json` 现读 nullable/default 与 execution 生成器现算下限、逐表断言 createRequires ⊇ 下限，豁免名单（user／customStyle／notification／daily_notes_config）双向钉住；tables.test.ts 断言清单改为十七张配闸／四张豁免，route.test.ts 的 favorite 用例改成「离线收藏照旧 create／拖动排序被拒」。反向验证：任一张回退成无闸即红在该表名上。",
+      "evidence": [
+        "src/lib/sync/tables.ts",
+        "src/lib/sync/create-requires.test.ts",
+        "src/lib/sync/tables.test.ts",
+        "src/app/api/v1/sync/route.test.ts",
+        "src/prisma/contract.json"
       ]
     }
   }

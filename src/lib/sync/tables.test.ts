@@ -210,17 +210,23 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     for (const col of prefs) expect(user!.cols, `${col} 不在 user.cols ⇒ 它永远出不了这台设备`).toContain(col);
   });
 
-  it('☆ G1505：铸造闸逐表配置（不整体锁死），且每一枚必需键都在 cols 里', () => {
-    // 配错的两种死法都在这里红：① 把 favorite／collection_* 这类"单点动作本就是建行"的表一起锁死
-    // ＝离线收藏/新建集合点不动；② 必需键不在 cols＝payload 求交后永远带不上它＝那张表再也建不出行。
-    // G1513：闸从 document 一表推广到"有真建行通路且单点动作会铸壳"的六表。
+  it('☆ G1505/G1626：铸造闸逐表配置（不整体锁死），且每一枚必需键都在 cols 里', () => {
+    // 配错的两种死法都在这里红：① 该配闸的表漏配＝单点动作在陈旧行上铸壳撞必填列、
+    // 把整批打成 25P02 毒批次（G1626）；② 必需键不在 cols＝payload 求交后永远带不上它＝
+    // 那张表再也建不出行。逐表的下限由 `create-requires.test.ts` 对 contract 现算兜住，
+    // 这里钉的是"本仓自己的约定面"：已配闸的表清单，以及键必须落在白名单里。
+    // G1513：闸从 document 一表推广到"有真建行通路且单点动作会铸壳"的六表；
+    // G1626：再把其余 11 张表补齐（停用「没配＝放行」那一档）。
     const gated = SYNC_TABLES.filter(d => (d.createRequires?.length ?? 0) > 0);
-    expect(gated.map(d => d.table)).toEqual(
-      ['document', 'folder', 'task', 'comment', 'comment_thread', 'block_reminder', 'whiteboard'],
-    );
-    // 反面：这几枚**不许**配闸——它们的单点动作（收藏）或复合键写入（打标）本就是建行语义，
-    // 配了就会把正常操作判成 not_found。
-    for (const t of ['favorite', 'document_tag', 'collection_property', 'collection_view']) {
+    expect(gated.map(d => d.table)).toEqual([
+      'document', 'folder', 'tag', 'document_tag', 'favorite', 'task',
+      'collection', 'collection_item', 'collection_property', 'collection_value', 'collection_view',
+      'comment', 'comment_thread', 'document_share', 'document_member',
+      'block_reminder', 'whiteboard',
+    ]);
+    // 反面：这四张**不许**配闸——它们的 create 只可能来自"陈旧行上的单点动作"，
+    // 因为内核与 action 都不在这四张表上建行（也就是闸要挡的那一类本身）。
+    for (const t of ['user', 'customStyle', 'notification', 'daily_notes_config']) {
       expect(SYNC_TABLES.find(d => d.table === t)?.createRequires ?? []).toEqual([]);
     }
     for (const d of gated) {
@@ -318,8 +324,8 @@ describe('SYNC_TABLES coverage (R-9)', () => {
       'id', 'userId', 'documentId', 'blockId', 'title', 'remindAt',
       'isCompleted', 'completionDate', 'deletedAt', 'createdAt', 'updatedAt',
     ]);
-    // 离线新建一定带齐这三枚 ⇒ 三枚合取才认定是新建，挡住 resolve 在陈旧行上铸壳。
-    expect(r!.createRequires).toEqual(['documentId', 'blockId', 'remindAt']);
+    // G1626：contract 的必填列还包括 title（无默认值且非服务端代填）；四枚合取。
+    expect(r!.createRequires).toEqual(['documentId', 'blockId', 'remindAt', 'title']);
     expect(r!.id({ id: 'br-1' })).toBe('br-1');
   });
 

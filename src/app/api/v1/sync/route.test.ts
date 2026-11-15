@@ -420,8 +420,8 @@ describe('POST /api/v1/sync', () => {
     }) } });
 
     const res = await POST(req({ records: [{
-      // 用 favorite（无 createRequirements，单点动作本就是建行）：走到 create 抛错 ⇒ 整批 500。
-      // folder 现在配了闸，改名 patch 会被判 not_found、到不了 create —— 那由 G1513 那组用例覆盖。
+      // 用 favorite（配了闸，但这一笔带齐 documentId ⇒ 放行到 create）：撞键抛错 ⇒ 整批 500。
+      // folder 的改名 patch 会被闸判 not_found、到不了 create —— 那由 G1513 那组用例覆盖。
       table: 'favorite', id: 'fav1', op: 'upsert', data: { documentId: 'd1' },
       syncTs: '2026-09-28T12:00:00.000Z',
     }] }));
@@ -486,7 +486,7 @@ describe('POST /api/v1/sync', () => {
     expect(create.mock.calls[0]![0]!.title).toBe('');
   });
 
-  it('G1505 闸按表配置：favorite 无 createRequirements，陈旧行仍按既有语义建行（不整体锁死）', async () => {
+  it('G1626 闸按表配置：favorite 配闸后，离线收藏照旧 create、拖动排序不再铸壳', async () => {
     const create = vi.fn(async () => ({}));
     const first = vi.fn(async () => null);
     const chain = { where: () => chain, first, update: vi.fn(), create };
@@ -494,13 +494,24 @@ describe('POST /api/v1/sync', () => {
       get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
     }) } });
 
-    // favorite 的"单点动作＝收藏"本就是建行语义 ⇒ 不许配闸（配了会把离线收藏判成 not_found）
-    const res = await POST(req({ records: [{
+    // ① 离线收藏（toggle-local）带 documentId ⇒ 闸放过，照旧建行——配闸不能误伤正常操作
+    const minted = await POST(req({ records: [{
       table: 'favorite', id: 'fav9', op: 'upsert', data: { documentId: 'd1', deletedAt: null },
       syncTs: '2026-09-28T12:00:00.000Z',
     }] }));
-    expect(res.status).toBe(200);
-    expect((await res.json()).applied).toHaveLength(1);
+    expect(minted.status).toBe(200);
+    expect((await minted.json()).applied).toHaveLength(1);
+    expect(create).toHaveBeenCalledTimes(1);
+
+    // ② 拖动排序只带 order ⇒ 不是离线新建：旧代码会在陈旧行上铸一枚缺 documentId 的壳，
+    //    撞 NOT NULL ⇒ 25P02 毒批次（G1626）。现在按 not_found 拒绝。
+    const stale = await POST(req({ records: [{
+      table: 'favorite', id: 'gone-fav', op: 'upsert', data: { order: 2 },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await stale.json();
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'favorite', id: 'gone-fav', reason: 'not_found' });
     expect(create).toHaveBeenCalledTimes(1);
   });
 

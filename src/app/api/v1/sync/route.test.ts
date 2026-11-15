@@ -1338,3 +1338,67 @@ describe('POST /api/v1/sync — G1628 集合写侧鉴权与归属不符', () => 
     expect(update).toHaveBeenCalledWith(expect.objectContaining({ permission: 'edit' }));
   });
 });
+
+/**
+ * G1629——值类型闸。`recordSchema` 只约束 `data` 是 `Record<string, unknown>`，每一列的类型
+ * 此前一律交给 Postgres：一枚 `{isDeleted:'yes'}` 绑不进 bool 列 ⇒ 语句报错 ⇒ 事务进 aborted
+ * 态（25P02）⇒ 整批 500 ⇒ 客户端无限重推同一笔（G1625 家族第四副面孔）。这类笔**永远不可能
+ * 成功**，必须单独拒掉、让客户端丢它，同批其余照常落地。
+ */
+describe('POST /api/v1/sync — G1629 值类型闸', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('坏值单独拒收（reason=invalid），同批好值照常落库', async () => {
+    const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const first = vi.fn(async (_where: Record<string, unknown>): Promise<any> => null);
+    const chain = { where: () => chain, first, update, create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [
+      // 1) 坏值：bool 列收到字符串
+      { table: 'whiteboard', id: 'wb-bad', op: 'upsert',
+        data: { name: '板子', isDeleted: 'yes' }, syncTs: '2026-09-28T12:00:00.000Z' },
+      // 2) 坏值：int4 列收到小数
+      { table: 'collection_property', id: 'p-bad', op: 'upsert',
+        data: { collectionId: 'c1', name: '字段', type: 'text', order: 1.5 },
+        syncTs: '2026-09-28T12:00:00.000Z' },
+      // 3) 坏值：非空列收到 null
+      { table: 'document', id: 'd-bad', op: 'upsert',
+        data: { title: null }, syncTs: '2026-09-28T12:00:00.000Z' },
+      // 4) 好值：同批照常过
+      { table: 'document', id: 'd-good', op: 'upsert',
+        data: { title: '', parentId: null }, syncTs: '2026-09-28T12:00:00.000Z' },
+    ] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.applied).toEqual([{ table: 'document', id: 'd-good' }]);
+    expect(body.rejected.map((r: any) => [r.table, r.reason])).toEqual([
+      ['whiteboard', 'invalid'],
+      ['collection_property', 'invalid'],
+      ['document', 'invalid'],
+    ]);
+    // 坏值一个字节都不写；只有好值那一笔 create
+    expect(create).toHaveBeenCalledTimes(1);
+    expect(create.mock.calls[0]![0]).toMatchObject({ title: '' });
+  });
+
+  it('delete 的 data 不参与写入 ⇒ 不按值类型闸拒（陈旧删除照旧幂等放行）', async () => {
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const first = vi.fn(async (_where: Record<string, unknown>): Promise<any> => null);
+    const chain = { where: () => chain, first, update, create: vi.fn() };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+
+    const res = await POST(req({ records: [{
+      table: 'folder', id: 'f-gone', op: 'delete',
+      data: { isDeleted: 'yes' }, syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'folder', id: 'f-gone' }]);
+    expect(body.rejected).toEqual([]);
+  });
+});

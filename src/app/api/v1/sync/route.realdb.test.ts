@@ -145,4 +145,40 @@ describe('sync 写路径的唯一键冲突（真库）', () => {
     await db.orm.public.DocumentMember.where({ documentId }).delete();
     await db.orm.public.User.where({ id: inviteeId }).delete();
   });
+
+  // G1629 前提复核：坏值绑进参数化确实会让语句失败——这就是值类型闸要挡的那条。
+  it('坏值直接写库会抛（float8 收到非数字串），与唯一键撞约束同属「事务已死」', async () => {
+    let error: unknown = null;
+    try {
+      await db.orm.public.Favorite.where({ id: storedFavoriteId }).update({ order: 'not-a-number' as any });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).not.toBeNull();
+  });
+
+  // G1629 回归：这类笔**永远不可能成功**，服务端必须单独拒收（reason=invalid）而不是让整批 500。
+  it('坏值单独拒收，同批好值照常落库（整批 200）', async () => {
+    const goodId = crypto.randomUUID();
+    // 存量行在上一条用例里被更新到 2026-11-15 ⇒ 这一笔要更晚才算"较新"
+    const syncTs = '2026-11-16T00:00:00.000Z';
+    const res = await POST(post({ records: [
+      { table: 'favorite', id: crypto.randomUUID(), op: 'upsert',
+        data: { documentId, order: 'not-a-number' },
+        syncTs },
+      { table: 'favorite', id: goodId, op: 'upsert',
+        data: { documentId, order: 0 },
+        syncTs },
+    ] }));
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.rejected).toHaveLength(1);
+    expect(body.rejected[0]).toMatchObject({ table: 'favorite', reason: 'invalid' });
+    // 好值那一笔照常落（并入存量行；order 仍是合法数字）
+    expect(body.applied).toEqual([{ table: 'favorite', id: storedFavoriteId }]);
+    const rows = await favoriteRows() as Record<string, any>[];
+    expect(rows).toHaveLength(1);
+    expect(Number(rows[0]!.order)).toBe(0);
+  });
 });

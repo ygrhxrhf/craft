@@ -9,6 +9,7 @@ import { UNIQUE_KEY_LOCATORS } from '@/lib/sync/unique-keys';
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
 import { decideLww } from '@/lib/sync/lww';
 import { deleteOpExemptsStale, serverTimestamp } from '@/lib/sync-core/stale-arbiter';
+import { invalidPayloadColumns } from '@/lib/sync/payload-shape';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
 import { materializeTaskReminders } from '@/lib/notification/materialize';
 import { materializeDailyDigest } from '@/lib/notification/daily-digest';
@@ -240,7 +241,7 @@ type BatchResult = {
   applied: { table: string; id: string }[];
   rejected: {
     table: string; id: string; op: string; data: unknown; syncTs: string;
-    reason?: 'stale' | 'not_found';
+    reason?: 'stale' | 'not_found' | 'invalid';
   }[];
   cursor: string;
 };
@@ -335,6 +336,18 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           : USER_ID_TABLES.has(rec.table)
             ? { id: rec.id, userId }
             : { id: rec.id };
+      // G1629：值类型闸。坏值（`{isDeleted:'yes'}`／`{order:'3a'}`／非空列收到 null）绑进
+      // Postgres 的参数化会直接报错 ⇒ 整个事务 aborted ⇒ 整批 500 ⇒ 客户端无限重推同一笔
+      // （G1625 家族的第四副面孔：前三副分别撞唯一键、缺必填列、撞作用域）。这类笔**永远
+      // 不可能成功**，所以单独拒掉、让客户端丢弃它，同批其余照常落地。只判 upsert：delete
+      // 的 payload 不参与写入。
+      if (rec.op === 'upsert') {
+        const badValues = invalidPayloadColumns(rec.table, rec.data);
+        if (badValues.length) {
+          rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'invalid' });
+          continue;
+        }
+      }
       // G1523/G1628：作用域表的写侧鉴权（GET 侧一直按"本人文档／本人的集合"收窄，POST 侧此前
       // 一次都没校验）。先读存量行，再拿「存量行自带的归属」与「这一笔自带的归属」一起判：
       // - 两者不一致 ⇒ 这笔声称写 A、实际按 pk 命中的是 B 的行（拿别人行 id 配自己的归属）

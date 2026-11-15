@@ -330,6 +330,9 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
         syncLog.add('conflict', `${row.table}/${row.id}`);
       } else if (row.reason === 'not_found') {
         syncLog.add('network', `${row.table}/${row.id} not_found`);
+      } else if (row.reason === 'invalid') {
+        // G1629：值绑不进列类型 ⇒ 这一笔永远不可能成功，服务端已按 invalid 拒收
+        syncLog.add('network', `${row.table}/${row.id} invalid payload`);
       }
     }
     for (const cb of rejectedSubs) cb(rejected);

@@ -35,5 +35,12 @@ export function rejectionCopy(rejected: SyncRejection[]): RejectionCopy | null {
     const names = [...new Set(missing.map(r => label(r.table)))];
     return { title: FAILURE_TITLE, description: `${names.join('、')}不存在或不属于你` };
   }
+  // G1629：坏值不是"旧"也不是"没权限"——那笔改动已被丢掉（客户端会按拒收回执把它盖回本地），
+  // 说成竞态会让用户反复重试一个永远不成功的动作。
+  const invalid = rejected.filter(r => r.reason === 'invalid');
+  if (invalid.length > 0) {
+    const names = [...new Set(invalid.map(r => label(r.table)))];
+    return { title: FAILURE_TITLE, description: `${names.join('、')}的改动包含服务端无法识别的数据，已丢弃` };
+  }
   return { title: FAILURE_TITLE, description: '这台设备的改动比服务端旧，已按服务端的版本显示' };
 }

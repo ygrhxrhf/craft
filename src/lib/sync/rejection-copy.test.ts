@@ -41,6 +41,20 @@ describe('rejectionCopy（服务端拒收时屏上说什么，G1506）', () => {
     expect(copy.description).toContain('比服务端旧');
   });
 
+  it('G1629：坏值说第三种话——不说"不存在"、也不说"比服务端旧"', () => {
+    const copy = rejectionCopy([reject({ reason: 'invalid', table: 'collection_property' })])!;
+    expect(copy.title).toBe('保存失败');
+    expect(copy.description).toContain('无法识别的数据');
+    expect(copy.description).not.toContain('不属于你');
+    expect(copy.description).not.toContain('比服务端旧');
+    // not_found 与 invalid 同批：前者更具体（行不存在／不归你），优先说它
+    const mixed = rejectionCopy([
+      reject({ reason: 'not_found' }),
+      reject({ reason: 'invalid', table: 'collection_property', id: 'p1' }),
+    ])!;
+    expect(mixed.description).toBe('文档不存在或不属于你');
+  });
+
   it('未登记的表用协议名兜底，不会漏出一句没有主语的话', () => {
     const copy = rejectionCopy([reject({ table: 'collection_value' })])!;
     expect(copy.description).toBe('collection_value不存在或不属于你');

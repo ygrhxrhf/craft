@@ -1,6 +1,6 @@
 {
   "verifiedAt": "2026-11-15",
-  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。 第 556 批把 G1627 的唯一键定位器名单搬进 src/lib/sync/unique-keys.ts 并从 contract.json 现读 uniques 建闸，补 document_member 的 (documentId,userId) 定位器（mock＋真库各一条回归）。 第 557 批把 G1628 的集合写侧鉴权补齐（COLLECTION_WRITE_TABLES 四表 + 文档侧存量行与内联归属一起判），8 条新用例并反向验证。",
+  "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。 第 556 批把 G1627 的唯一键定位器名单搬进 src/lib/sync/unique-keys.ts 并从 contract.json 现读 uniques 建闸，补 document_member 的 (documentId,userId) 定位器（mock＋真库各一条回归）。 第 557 批把 G1628 的集合写侧鉴权补齐（COLLECTION_WRITE_TABLES 四表 + 文档侧存量行与内联归属一起判），8 条新用例并反向验证。 第 558 批把 G1629 的值类型闸补上（payload-shape.ts 从 contract.json 现读 codec+nullable，坏值按 reason:invalid 单笔拒收），mock 2＋真库 2 并反向验证。",
   "rows": {
     "G01": {
       "status": "aligned",
@@ -10869,6 +10869,22 @@
       "evidence": [
         "src/app/api/v1/sync/route.ts",
         "src/app/api/v1/sync/route.test.ts"
+      ]
+    },
+    "G1629": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 558 批：recordSchema 只约束 data 是 Record<string,unknown>，列值类型全交给 Postgres——{isDeleted:'yes'}/{order:'3a'}/非空列收 null 绑不进参数化 ⇒ 语句报错 ⇒ 事务 aborted（25P02）⇒ 整批 500 且这类笔永远不可能成功（G1625 家族第四副面孔）。修＝① 新增 `src/lib/sync/payload-shape.ts`，从 `src/prisma/contract.json` 现读每列 codec 与 nullable，codec→kind（text/timestamp/bool/int/float/json），`invalidPayloadColumns` 逐枚值判「绑不绑得进这一列」（bool 收 boolean、int4 收整数且在 ±2^31、float8 收有限数、timestamptz 收可 Date.parse 的串、非空列拒 null、json 任意、未登记 codec 放行）。② 路由在 upsert 写之前调用，命中即按 reason: invalid 整笔拒收（op=delete 回执让客户端丢本地那笔），同批其余照常落地；delete 的 data 不参与写入故不判。③ RejectReason 加 invalid；syncLog 加一支；rejection-copy 加一句「包含服务端无法识别的数据，已丢弃」（not_found 优先）。④ payload-shape.test.ts 6 条（含「同步表每一列都拿得到 kind」的推导不漏闸、150+ 列核对）；route.test.ts 2 条；route.realdb.test.ts 2 条（真库复核坏值直写会抛、整批 200 下坏值单拒）。反向验证：摘掉路由那段闸，mock 用例当场红。",
+      "evidence": [
+        "src/lib/sync/payload-shape.ts",
+        "src/lib/sync/payload-shape.test.ts",
+        "src/app/api/v1/sync/route.ts",
+        "src/app/api/v1/sync/route.test.ts",
+        "src/app/api/v1/sync/route.realdb.test.ts",
+        "src/lib/sync/rejection-copy.ts",
+        "src/lib/sync/rejection-copy.test.ts",
+        "src/lib/sync-core/types.ts",
+        "src/lib/sync-core/index.ts"
       ]
     }
   }

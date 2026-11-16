@@ -10973,6 +10973,18 @@
         "src/app/api/v1/sync/route.ts",
         "src/app/api/v1/sync/route.realdb.test.ts"
       ]
+    },
+    "G1638": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 567 批：syncTs 来自设备自己的钟，服务端只做了「不往回拖」（max(serverNow, rec.syncTs)）没有上界 ⇒ 时间调到 2099 的设备能把行写成未来时刻：GET 的续传游标是各行时间戳的最大值，未来游标一存下来，此后所有正常时刻的改动都被 since 谓词永久跳过、同一行也被 LWW 永久压死。修＝stale-arbiter.ts 新增 clampClientSyncTs(serverNow, clientTs, toleranceMs=5000)：窗口内交给 ③ 原式（落后⇒此刻、略超前⇒保留客户端值），超出窗口一律此刻，无效串按此刻；route.ts 的落库值改用它（decideLww 仍收客户端原值）。stale-arbiter.test.ts 6 条、route.test.ts 4 条、realdb 1 条（2099 落库后 ≤ 此刻，之后一笔正常时刻的写照样 applied 且标题改成功）。反向验证：落库值退回 serverTimestamp，三条用例含真库那条同时红。",
+      "evidence": [
+        "src/lib/sync-core/stale-arbiter.ts",
+        "src/lib/sync-core/stale-arbiter.test.ts",
+        "src/app/api/v1/sync/route.ts",
+        "src/app/api/v1/sync/route.test.ts",
+        "src/app/api/v1/sync/route.realdb.test.ts"
+      ]
     }
   }
 }

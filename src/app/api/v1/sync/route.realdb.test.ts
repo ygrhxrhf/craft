@@ -336,6 +336,40 @@ describe('同步时刻列可空的历史行（真库）', () => {
   });
 });
 
+// G1638 回归：未来戳的界。`rec.syncTs` 由设备自己的钟生成、服务端此前原样采信（G1511③ 的
+// `max` 只会抬得更远）：一台时间调到 2099 的设备能把行写成未来时刻 ⇒ 整个账号的增量游标
+// （各行时间戳的最大值）被推到未来，之后所有正常时刻的改动都被 since 谓词永久跳过、同一行
+// 也被 LWW 永久压死。mock 证明不了"之后那一笔能不能落"，只有真库能。
+describe('未来 syncTs 钳制（真库）', () => {
+  it('2099 的 syncTs 落库后被钳到此刻，之后正常时刻的写照样落得下去', async () => {
+    const docId = crypto.randomUUID();
+    const future = '2099-05-01T12:00:00.000Z';
+    const before = Date.now();
+
+    const first = await POST(post({ records: [{
+      table: 'document', id: docId, op: 'upsert',
+      data: { title: '来自未来' }, syncTs: future,
+    }] }));
+    expect(first.status).toBe(200);
+
+    const stored = await db.orm.public.Document.first({ id: docId });
+    const stamp = new Date(stored!.metaUpdatedAt as string).getTime();
+    expect(stamp, '2099 被原样落库＝续传游标会被推到未来').toBeLessThanOrEqual(Date.now() + 1_000);
+    expect(stamp).toBeGreaterThanOrEqual(before - 1_000);
+
+    // 后续正常时刻的一笔不再被永久判旧
+    const second = await POST(post({ records: [{
+      table: 'document', id: docId, op: 'upsert',
+      data: { title: '后来的正常改动' }, syncTs: new Date().toISOString(),
+    }] }));
+    expect((await second.json()).applied).toEqual([{ table: 'document', id: docId }]);
+    const after = await db.orm.public.Document.first({ id: docId });
+    expect(after?.title).toBe('后来的正常改动');
+
+    await db.orm.public.Document.where({ id: docId }).delete();
+  });
+});
+
 // G1632 回归：清理清单此前手抄 11 张，block_reminder 的墓碑永远不清。清理由 GET 侧轮转执行、
 // 失败被 catch 吞掉（"懒清理不阻塞同步"），所以表名/身份列写错时只会静默地什么都不删——
 // mock 证明不了这件事，只有真库能。

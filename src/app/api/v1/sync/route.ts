@@ -9,7 +9,7 @@ import { UNIQUE_KEY_LOCATORS } from '@/lib/sync/unique-keys';
 import { WRITE_SCOPES } from '@/lib/sync/write-scope';
 import { parseCursor, formatCursor, cmpCursor, type Cursor } from '@/lib/sync/cursor';
 import { decideLww } from '@/lib/sync/lww';
-import { deleteOpExemptsStale, serverTimestamp } from '@/lib/sync-core/stale-arbiter';
+import { clampClientSyncTs, deleteOpExemptsStale } from '@/lib/sync-core/stale-arbiter';
 import { invalidPayloadColumns } from '@/lib/sync/payload-shape';
 import { purgePlan } from '@/lib/sync/purge-plan';
 import { effectiveRowTs } from '@/lib/sync/row-ts';
@@ -450,7 +450,11 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
       // G1511③：落库时间戳取 `max(serverNow, rec.syncTs)`——服务端认这台设备自己给的时间戳，
       // 不把它往回拖。官方那句"同一台设备上刚敲下的那一下与紧接着的第二下不会互相吞"就是这个意思：
       // 先到先落的那笔不该把自己的时间戳抬到"此刻"、从而把同设备后一笔判旧。
-      const ts = serverTimestamp(serverNow(), rec.syncTs);
+      // G1638：但**未来**的客户端戳必须钳到服务端此刻——它不只是"这一笔更新"，而是把整个账号的
+      // 增量游标推到未来（GET 的续传游标＝各行时间戳的最大值）⇒ 之后所有正常时刻的改动都被
+      // since 谓词永久跳过、同一行也被 LWW 永久压死。判旧仍用客户端原值（同设备两笔的前后关系
+      // 由设备自己的钟决定），只有**落库值**被钳。
+      const ts = clampClientSyncTs(serverNow(), rec.syncTs);
       // 撞唯一键改写存量行时，applied/cursor 报存量行真实 pk（与 GET 侧 def.id 同源）
       let appliedId = pk;
       if (rec.op === 'delete') {

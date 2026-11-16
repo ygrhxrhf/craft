@@ -689,7 +689,7 @@ describe('POST /api/v1/sync', () => {
 
   // G1511③：落库时间戳只推进不倒退——客户端那笔比服务端此刻新时，取客户端的时间戳，
   // 免得服务端把时间戳往回拖、把同设备后一笔判旧。
-  it('G1511③：客户端 syncTs 更新时，落库时间戳取 max(serverNow, rec.syncTs)', async () => {
+  it('G1511③：客户端 syncTs 略超前（去抖窗口内）时，落库时间戳就是它（服务端不拖回"此刻"）', async () => {
     const update = vi.fn(async () => ({}));
     const rows = [{ id: 'fut', title: 'old',
       updatedAt: '2026-09-28T10:00:00.000Z', metaUpdatedAt: '2026-09-28T10:00:00.000Z',
@@ -699,14 +699,16 @@ describe('POST /api/v1/sync', () => {
       get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
     }) } });
 
-    const future = '2099-01-01T00:00:00.000Z';
+    // G1638 之后"未来戳"有了上限：去抖窗口（2s）内的略超前仍按客户端值落库，
+    // 超出的（如 2099）才钳到此刻——这条用例钉的是前半句。
+    const ahead = new Date(Date.now() + 2_000).toISOString();
     const res = await POST(req({ records: [
-      { table: 'document', id: 'fut', op: 'upsert', data: { title: 'new' }, syncTs: future },
+      { table: 'document', id: 'fut', op: 'upsert', data: { title: 'new' }, syncTs: ahead },
     ] }));
     const body = await res.json();
     expect(body.applied).toHaveLength(1);
     // 落库那笔的 metaUpdatedAt 就是客户端给的那枚（服务端没有把它拖回"此刻"）
-    expect(update).toHaveBeenCalledWith(expect.objectContaining({ metaUpdatedAt: future }));
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ metaUpdatedAt: ahead }));
   });
 });
 
@@ -1430,6 +1432,77 @@ describe('POST /api/v1/sync — G1629 值类型闸', () => {
     const body = await res.json();
     expect(body.applied).toEqual([{ table: 'folder', id: 'f-gone' }]);
     expect(body.rejected).toEqual([]);
+  });
+});
+
+/**
+ * G1638——客户端时间戳的**未来界**。`syncTs` 来自设备自己的钟，服务端此前原样采信
+ * （G1511③ 的 `max(serverNow, rec.syncTs)` 只会把它抬得更远）：一台时间调到 2099 的设备
+ * 能把行写成未来时刻 ⇒ GET 的续传游标（各行时间戳的最大值）跳到未来 ⇒ 之后所有正常时刻的
+ * 改动都被 since 谓词永久跳过、同一行也被 LWW 永久压死（`tCli <= tSrv` 永远成立）。
+ * 修法＝**落库值**钳到服务端此刻；客户端原值仍参与 LWW 判旧。
+ */
+describe('POST /api/v1/sync — G1638 未来时间戳钳到服务端此刻', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  function tsDb(existing: Record<string, unknown> | null = null) {
+    const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const first = vi.fn(async (_where: Record<string, unknown>): Promise<any> => existing);
+    const chain = { where: () => chain, first, update, create };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+    }) } });
+    return { create, update };
+  }
+
+  const before = Date.now();
+
+  it('落在未来的 syncTs ⇒ 落库时间戳被钳到此刻（不再把续传游标推到未来）', async () => {
+    const { create } = tsDb();
+    const res = await POST(req({ records: [{
+      table: 'document', id: 'd-future', op: 'upsert',
+      data: { title: '来自 2099' }, syncTs: '2099-05-01T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).applied).toEqual([{ table: 'document', id: 'd-future' }]);
+    const stored = new Date(create.mock.calls[0]![0].metaUpdatedAt as string).getTime();
+    expect(stored).toBeGreaterThanOrEqual(before);
+    expect(stored, '未来戳被原样采信＝游标会跳到未来、之后的写全部被跳过').toBeLessThanOrEqual(Date.now() + 1_000);
+  });
+
+  it('落后的 syncTs 仍按 max 抬到服务端此刻（G1511③ 的原语义没有回退）', async () => {
+    const { update } = tsDb({
+      id: 'd1', title: '旧', metaUpdatedAt: '2026-11-16T00:00:00.000Z', updatedAt: '2026-11-16T00:00:00.000Z',
+    });
+    await POST(req({ records: [{
+      table: 'document', id: 'd1', op: 'upsert', data: { title: '新' }, syncTs: '2026-11-16T03:00:00.000Z',
+    }] }));
+    const stored = new Date(update.mock.calls[0]![0].metaUpdatedAt as string).getTime();
+    expect(stored).toBeGreaterThanOrEqual(before);
+  });
+
+  it('未来戳仍然参与 LWW 判旧：比它旧的存量行照样被这一笔盖掉', async () => {
+    // 存量 2026-09 的行、客户端报 2099 ⇒ 判旧用的是客户端原值（apply），不是钳后的此刻
+    const { update } = tsDb({
+      id: 'd1', title: '旧', metaUpdatedAt: '2026-09-28T00:00:00.000Z', updatedAt: '2026-09-28T00:00:00.000Z',
+    });
+    await POST(req({ records: [{
+      table: 'document', id: 'd1', op: 'upsert', data: { title: '新' }, syncTs: '2099-01-01T00:00:00.000Z',
+    }] }));
+    expect(update).toHaveBeenCalledTimes(1);
+  });
+
+  it('未来戳的墓碑也只写此刻（deletedAt / tsCol 同一个值）', async () => {
+    const { update } = tsDb({
+      id: 'd1', title: '旧', metaUpdatedAt: '2026-09-28T00:00:00.000Z', updatedAt: '2026-09-28T00:00:00.000Z',
+      deletedAt: null,
+    });
+    await POST(req({ records: [{
+      table: 'document', id: 'd1', op: 'delete', syncTs: '2099-01-01T00:00:00.000Z',
+    }] }));
+    const patch = update.mock.calls[0]![0];
+    expect(new Date(patch.metaUpdatedAt as string).getTime()).toBeLessThanOrEqual(Date.now() + 1_000);
+    expect(patch.deletedAt).toBe(patch.metaUpdatedAt);
   });
 });
 

@@ -8,6 +8,12 @@ export interface Queue {
    */
   flush(): Promise<{ pushed: number; status: 'ok' | 'network' | 'auth' }>;
   pendingCount(): Promise<number>;
+  /**
+   * G1645：这一记录是否有 op **正在请求中**。`applyLocal` 据此等上一笔落定再生成
+   * 新一笔的 `syncTs`——否则"新建后立刻改名"里，改名会在创建响应之前拿到时间戳，
+   * 而服务端把创建抬到更晚（`max(serverNow, clientTs)`）⇒ 改名被判 `stale` 丢掉。
+   */
+  isInFlight?(table: string, recordId: string): boolean;
 }
 
 const BATCH = 200;               // spec 常量表
@@ -58,6 +64,9 @@ export function createQueue(
   opts: { fetchImpl?: typeof fetch; onRejected?: (rejected: SyncRejection[]) => void } = {},
 ): Queue {
   const fetchImpl = opts.fetchImpl ?? fetch;
+  /** G1645：正在 `send` 里的记录（`table::recordId`）。只活在内存里，窗口就是一次往返。 */
+  const inFlight = new Set<string>();
+  const keyOf = (table: string, recordId: string) => `${table}::${recordId}`;
 
   async function send(ops: PendingOp[]): Promise<SendOutcome> {
     const records = ops.map(op => ({
@@ -89,7 +98,14 @@ export function createQueue(
    * 要么坏的那几笔已被丢弃并冒给 UI；'network'/'auth' 表示没跑完、上层照旧退避或暂停。
    */
   async function flushRange(ops: PendingOp[]): Promise<{ status: 'ok' | 'network' | 'auth'; pushed: number }> {
-    const outcome = await send(ops);
+    const keys = ops.map((op) => keyOf(op.table, op.recordId));
+    for (const key of keys) inFlight.add(key);
+    let outcome: SendOutcome;
+    try {
+      outcome = await send(ops);
+    } finally {
+      for (const key of keys) inFlight.delete(key);
+    }
     if (outcome.status === 'ok') {
       await store.ack(ops.map(op => op.seq));
       // rejected 交由上层：manager 先按权威值覆盖本地，再把明细冒给 UI 订阅者（G1506）
@@ -121,6 +137,7 @@ export function createQueue(
 
   return {
     pendingCount: () => store.countPending(),
+    isInFlight: (table, recordId) => inFlight.has(keyOf(table, recordId)),
 
     async flush() {
       let pushed = 0;

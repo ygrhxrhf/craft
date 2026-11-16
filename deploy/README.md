@@ -8,10 +8,15 @@
 
 ```
 /opt/crafty
-├── src/prisma/contract.json     # Prisma contract，运行时按 cwd 解析
+├── src/prisma/contract.json     # collab 进程（cwd=/opt/crafty）
 ├── web/                          # Next.js standalone (server.js + .next + node_modules)
+│   └── src/prisma/contract.json  # web 进程（Next 会把 cwd 切到 web/）
 ├── collab/                       # server.mjs / tldraw-server.mjs + 独立 node_modules
 └── deploy/                       # 运维资产：systemd unit / Caddyfile / 备份脚本
+
+> 两份 `contract.json` 不是冗余：`db.ts` 与 `persist.mjs` 都按
+> `process.cwd()/src/prisma/contract.json` 解析，而 web 进程的 cwd 是 `web/`、
+> 协作进程的是部署根。`deploy/package.sh` 两处都会放一份。
 
 运行时状态在别处：`/etc/crafty/*.env`（700，密钥）、`/var/backups/crafty`（转储暂存）。
 ```
@@ -35,9 +40,30 @@
 ```bash
 npm ci
 npm run contract:emit     # 生成 src/prisma/contract.json
+# 构建期必须有的生产 NEXT_PUBLIC_*（见下）
 npm run build             # 生成 .next/standalone
 ./deploy/package.sh       # 产出 crafty-deploy-<时间戳>.tar.gz
 ```
+
+**构建期就要有生产 `NEXT_PUBLIC_*`。** Next 在 build 时把这些变量内联进客户端 bundle；
+只在 `/etc/crafty/crafty.env` 里设置运行时值是没用的——浏览器拿到的已经是编译进去的字面量。
+构建机上先放一份 `.env.production`（`.gitignore` 已忽略它），至少填：
+
+```bash
+NEXT_PUBLIC_APP_URL=https://crafty.example.com
+NEXT_PUBLIC_COLLAB_URL=wss://collab.crafty.example.com
+NEXT_PUBLIC_TLDRAW_SYNC_URL=wss://sync.crafty.example.com
+NEXT_PUBLIC_TLDRAW_LICENSE_KEY=          # 拿到 Hobby License 后再填，然后重新 build
+```
+
+`package.sh` **不会**把 `.env*` 打进产物：配置里的 `outputFileTracingExcludes` 先排除一次，
+脚本打包前再剥一次，并在发现产物里仍有 `.env` 时拒发。运行期密钥仍只来自
+`/etc/crafty/crafty.env`。
+
+**产物大小基线**：`.next/standalone` 约 70–80 MB，`crafty-deploy-*.tar.gz` 约 25 MB。
+若 standalone 到了 GB 级，说明 trace 又把整仓带进来了——检查 build 日志里的
+`Dynamic filesystem access causes tracing of the whole project`，并核对
+`next.config.ts` 的 `outputFileTracingExcludes` 是否仍覆盖 `src-tauri`／`docs`／`uploads`。
 
 产物 scp 到目标机：
 

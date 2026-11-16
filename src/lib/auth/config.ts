@@ -29,6 +29,12 @@ export const authConfig = {
     }),
   ],
   session: { strategy: 'jwt' },
+  /**
+   * NextAuth v5 在生产模式（standalone server，`NODE_ENV=production`）默认不信任
+   * Host 头：自托管会直接抛 `UntrustedHost`，登录与会话读全挂。部署形态固定是
+   * Caddy → 127.0.0.1 的单机反代，且 `NEXTAUTH_URL` 已钉公网域名 ⇒ 信任反代传入的 Host。
+   */
+  trustHost: true,
   pages: {
     signIn: '/login',
   },

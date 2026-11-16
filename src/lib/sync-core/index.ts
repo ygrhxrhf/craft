@@ -440,7 +440,7 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
   }
 
   async function applyLocal(o: ApplyLocalOpts): Promise<void> {
-    const syncTs = new Date().toISOString();
+    const localTs = new Date().toISOString();
     const op: 'upsert' | 'delete' = o.patch === null ? 'delete' : 'upsert';
     // 本地立即可见：delete → 墓碑；upsert → 合并
     await store.applyRemote([
@@ -449,9 +449,28 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
         id: o.id,
         op,
         ...(o.patch !== null && o.patch !== undefined ? { data: o.patch } : {}),
-        syncTs,
+        syncTs: localTs,
       },
     ]);
+    // 硬规则 7：UI 树即时刷新。这一句必须留在可能等待上一笔 ack 之前——否则"新建后立刻
+    // 改名"时侧栏要等创建往返完才重渲染，本地明明已经有新名字。
+    emitTouched();
+    /**
+     * G1645：同一记录上一笔还在请求中 ⇒ 等它落定再生成这一笔的 `syncTs`。
+     * 现场：新建文件夹后立刻改名，创建请求在途时改名已入队（`createdAt` 早于创建响应），
+     * 服务端把创建的时间戳抬到 `max(serverNow, clientTs)`（G1511③）⇒ 改名那笔
+     * `tCli <= tSrv`，被判 `stale` 静默丢掉。等 ack 之后再取时间戳，改名就一定晚于
+     * 创建落库时刻；失败时创建仍在 pending，稍后的 enqueue 会把两笔按 (table,recordId)
+     * 合并成一条，也不会再出现"旧的创建 + 新的改名"两笔乱序。
+     */
+    if (queue.isInFlight?.(o.table, o.id) && inFlight) {
+      try {
+        await inFlight;
+      } catch {
+        // 上一轮自己的失败由那一轮处理（退避/状态），这里只等它结束
+      }
+    }
+    const syncTs = new Date().toISOString();
     // spec 5.5 同 (table,recordId) 只留一条；字段级合并 payload——否则「新建后紧跟改名/删除」
     // 会把 create 的全字段（含 userId，服务端建行必需）覆盖丢掉，推送时整批 500。
     let payloadData: Record<string, unknown> | undefined = o.patch ?? undefined;
@@ -483,7 +502,6 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
       payload: { data: payloadData, syncTs },
       createdAt: syncTs,
     });
-    emitTouched();   // UI 树即时刷新（硬规则 7）
 
     cachedPending = await store.countPending();
     if (cachedPending >= FLUSH_AT) {

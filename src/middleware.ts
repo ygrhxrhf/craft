@@ -7,6 +7,8 @@ import { NextResponse } from 'next/server';
 // routes authenticate on the shared secret header instead.
 // /api/whiteboards/ is public on purpose: an anonymous share visitor needs a
 // connection claim, and the route itself authorizes owner vs share token.
+// /api/health is the deployment probe (Caddy / uptime checks): it must answer
+// without a session, and it returns only ok + DB reachability, never any row.
 // PWA assets have to resolve before anyone signs in: the manifest and icons are
 // fetched by the install prompt, and sw.js/offline.html are the offline shell.
 const publicAssets = [
@@ -24,6 +26,7 @@ const publicRoutes = [
   '/api/s/',
   '/api/internal/',
   '/api/whiteboards/',
+  '/api/health',
   '/s/',
   '/p/',
   '/w/',

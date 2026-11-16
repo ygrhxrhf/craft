@@ -108,6 +108,58 @@ describe('SyncManager', () => {
     expect(lastEnqueue()?.op).toBe('delete');
   });
 
+  /**
+   * G1645 —— 同一记录上一笔还在请求中（新建文件夹 → 立刻改名就是这一形）时，后一笔
+   * 必须等上一笔 ack 再取 `syncTs`。否则它的时间戳早于创建响应，而服务端把创建的落库
+   * 时刻抬到 `max(serverNow, clientTs)`（G1511③）⇒ 改名被判 `stale` 静默丢掉。
+   */
+  it('G1645：同一记录上一笔在请求中 → 后一笔等 ack 再取 syncTs', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-01T00:00:00.000Z'));
+
+    const base = createMemoryStore();
+    await base.init();
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const queue: Queue = {
+      flush: vi.fn(async () => {
+        await gate;
+        return { pushed: 1, status: 'ok' as const };
+      }),
+      pendingCount: () => base.countPending(),
+      isInFlight: (table, recordId) => table === 'folder' && recordId === 'f1',
+    };
+    let enqueued: { payload?: { syncTs?: string } } | null = null;
+    const store: SyncStore = {
+      ...base,
+      enqueue: async (op) => {
+        enqueued = op;
+        await base.enqueue(op);
+      },
+    };
+    const manager = createManager({
+      store: () => store,
+      makeQueue: () => queue,
+      makeReconciler: () => ({
+        pull: async () => ({ applied: 0, deletedLocally: [] as string[] }),
+      }),
+      makeBroadcaster: () => ({ start: vi.fn(), stop: vi.fn(), isLive: () => false }),
+    });
+
+    manager.triggerFlushForTest();
+    await vi.advanceTimersByTimeAsync(0);            // 让 flush 进到 queue.flush()
+    const applying = manager.applyLocal({ table: 'folder', id: 'f1', patch: { name: '改名' } });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(enqueued, '上一笔在途时不该先入队').toBeNull();
+
+    vi.setSystemTime(new Date('2026-03-01T00:00:05.000Z'));
+    release();
+    await applying;
+    // TS 看不见异步回调里的赋值，按声明类型取一次（断言值仍是真实入队那一笔）。
+    const sent = enqueued as { payload?: { syncTs?: string } } | null;
+    expect(sent?.payload?.syncTs).toBe('2026-03-01T00:00:05.000Z');
+  });
+
   it('状态机：3 次 network 失败 → error 且仅首转时通知一次；退避 2000/4000', async () => {
     vi.useFakeTimers();
     const { manager, notify } = await makeManager({ flushResult: 'network' });

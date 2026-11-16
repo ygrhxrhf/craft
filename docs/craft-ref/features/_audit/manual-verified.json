@@ -11065,6 +11065,48 @@
         "src/app/(app)/tasks/TasksView.tsx",
         "src/app/(app)/calendar/page.tsx"
       ]
+    },
+    "G1645": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 573 批：新建文件夹后立刻改名，改名那笔在创建请求在途时已取 syncTs；服务端对创建取 max(serverNow, clientTs)（G1511③）把行抬到更晚 ⇒ 改名 tCli<=tSrv 被判 stale 静默丢掉。trace 取证：创建落库 15:10:06.617Z、改名带 15:10:05.848Z、响应 rejected reason:stale。修＝queue 增 inFlight（table::recordId，覆盖整趟 send），applyLocal 先落本地并广播 UI、同记录在途时等 inFlight 落定后再取 syncTs 入队；创建失败时两笔按 (table,recordId) 合并。测试：queue.test.ts 1 条＋index.test.ts 1 条（deferred flush）。双端 sync e2e 3/3：改名收敛 4989ms、断网恢复 11084ms。",
+      "evidence": [
+        "src/lib/sync-core/queue.ts",
+        "src/lib/sync-core/index.ts",
+        "src/lib/sync-core/queue.test.ts",
+        "src/lib/sync-core/index.test.ts",
+        "e2e/sync.spec.ts"
+      ]
+    },
+    "G1646": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 573 批：① 动态 fs（storage-local 的 uploadDir、export/pdf 的字体路径）让 Turbopack 整仓 trace，standalone 3.9 GB（src-tauri/target 3.4 GB、docs 385 MB、uploads 1.3 万文件），目标机仅剩约 5.8 GB；② Next env 加载把仓库根 .env 复制进 standalone，package.sh 原样打包（密钥泄露）；③ contract 只放部署根，但 web 进程 cwd 已切到 web/ ⇒ ENOENT，DB 页面与 /api/health 503。修＝next.config.ts 的 outputFileTracingExcludes 排除 uploads/src-tauri/docs/e2e/screenshots/test-results/deploy/scripts/migrations/prisma/public（standalone 74 MB）；package.sh 剥 web/.env* 并断言产物无 .env（命中删包退出 7）；contract 同时放部署根与 web/src/prisma/；README §1 补构建期 NEXT_PUBLIC_* 必须进 .env.production 与产物大小基线。实跑 tarball 25 MB、无 .env/dev 目录、两份 contract 齐全；standalone 冒烟 /api/health 200。",
+      "evidence": [
+        "next.config.ts",
+        "deploy/package.sh",
+        "deploy/README.md"
+      ]
+    },
+    "G1647": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 573 批：deploy/README §12 用 curl /api/health 判健康，但仓内没有该路由；补上后又被 auth middleware 307 到 /login（未登录探针拿不到 200）。修＝新增 src/app/api/health/route.ts（User.first({id:\"__crafty_health__\"}) 探活，200 {ok:true}/503 {ok:false}，不鉴权、不回行、no-store，失败留栈）；middleware publicRoutes 加 /api/health；route.test.ts 2 条。standalone 冒烟 health 200。",
+      "evidence": [
+        "src/app/api/health/route.ts",
+        "src/app/api/health/route.test.ts",
+        "src/middleware.ts",
+        "deploy/README.md"
+      ]
+    },
+    "G1648": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 573 批：NextAuth v5 在 NODE_ENV=production 下默认不信任 Host，自托管 standalone 抛 UntrustedHost（冒烟日志 URL was http://127.0.0.1:3100/api/auth/session）⇒ 登录与会话读全挂；authConfig 与部署 env 模板都没有 trustHost/AUTH_TRUST_HOST。修＝src/lib/auth/config.ts 增 trustHost: true（信任 Caddy 反代传入的 Host，配 NEXTAUTH_URL）。standalone 冒烟 /api/auth/session 200、/login 200，日志不再出现 UntrustedHost。",
+      "evidence": [
+        "src/lib/auth/config.ts",
+        "deploy/env.template"
+      ]
     }
   }
 }

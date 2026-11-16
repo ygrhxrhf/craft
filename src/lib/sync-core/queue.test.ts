@@ -53,6 +53,35 @@ describe('queue.flush', () => {
     expect(await store.countPending()).toBe(1);   // 非 ok 都不 ack
   });
 
+  /**
+   * G1645：`applyLocal` 要靠这一问决定"后一笔要不要等上一笔 ack 再取时间戳"。
+   * 窗口必须覆盖**整趟请求**（发出 → 响应），而不是只到 ack 前一刻。
+   */
+  it('G1645：请求在途时 isInFlight 为真，落定后为假', async () => {
+    const store = await mk();
+    await store.enqueue({
+      table: 'folder', recordId: 'f1', op: 'upsert',
+      payload: { data: { name: 'n' }, syncTs: NOW }, createdAt: NOW,
+    });
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const fetchImpl = vi.fn(async () => {
+      await gate;
+      return ok();
+    });
+    const q = createQueue(store, { fetchImpl: fetchImpl as any });
+
+    const running = q.flush();
+    await vi.waitFor(() => expect(fetchImpl).toHaveBeenCalledTimes(1));
+    expect(q.isInFlight?.('folder', 'f1')).toBe(true);
+    expect(q.isInFlight?.('folder', 'other')).toBe(false);
+
+    release();
+    await running;
+    expect(q.isInFlight?.('folder', 'f1')).toBe(false);
+    expect(await store.countPending()).toBe(0);
+  });
+
   // I6/spec 9.2：5xx 与其余失败 → network（上层按退避重试）
   it('I6：500/503 → status=network（触发退避重试）', async () => {
     for (const status of [500, 503]) {

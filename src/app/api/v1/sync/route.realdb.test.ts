@@ -370,6 +370,56 @@ describe('未来 syncTs 钳制（真库）', () => {
   });
 });
 
+// G1639 回归：外键悬空。Postgres 对每个 N:1 关系都有真外键——一台设备永久删除文档、另一台
+// 离线收藏它，重连那笔的 documentId 指向不存在的行：旧实现整批 500（25P02 家族的"悬空引用"
+// 面孔），客户端无限重推。mock 证明不了这条，只有真库能。
+describe('外键悬空（真库）', () => {
+  it('收藏一枚已被删掉的文档：整批 200、该笔按 not_found 拒收，不撞外键', async () => {
+    const res = await POST(post({ records: [{
+      table: 'favorite', id: crypto.randomUUID(), op: 'upsert',
+      data: { documentId: crypto.randomUUID() },
+      syncTs: '2026-11-19T00:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.applied).toEqual([]);
+    expect(body.rejected[0]).toMatchObject({ table: 'favorite', reason: 'not_found' });
+  });
+
+  it('可空的引用列悬空 ⇒ 置 null 后照常落库（文档父页不存在就落到根）', async () => {
+    const docId = crypto.randomUUID();
+    const res = await POST(post({ records: [{
+      table: 'document', id: docId, op: 'upsert',
+      data: { title: '父页已删', parentId: crypto.randomUUID() },
+      syncTs: '2026-11-19T00:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.applied).toEqual([{ table: 'document', id: docId }]);
+    const row = await db.orm.public.Document.first({ id: docId });
+    expect(row?.parentId).toBeNull();
+    expect(row?.title).toBe('父页已删');
+    await db.orm.public.Document.where({ id: docId }).delete();
+  });
+
+  it('批内顺序反了（子行先到）也能落：父行被排到前面', async () => {
+    const parentId = crypto.randomUUID();
+    const childId = crypto.randomUUID();
+    const res = await POST(post({ records: [
+      { table: 'favorite', id: crypto.randomUUID(), op: 'upsert',
+        data: { documentId: parentId }, syncTs: '2026-11-19T00:00:01.000Z' },
+      { table: 'document', id: parentId, op: 'upsert',
+        data: { title: '父页' }, syncTs: '2026-11-19T00:00:01.000Z' },
+    ] }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.rejected).toEqual([]);
+    expect(body.applied.map((r: any) => r.table).sort()).toEqual(['document', 'favorite']);
+    await db.orm.public.Favorite.where({ documentId: parentId }).delete();
+    await db.orm.public.Document.where({ id: parentId }).delete();
+  });
+});
+
 // G1632 回归：清理清单此前手抄 11 张，block_reminder 的墓碑永远不清。清理由 GET 侧轮转执行、
 // 失败被 catch 吞掉（"懒清理不阻塞同步"），所以表名/身份列写错时只会静默地什么都不删——
 // mock 证明不了这件事，只有真库能。

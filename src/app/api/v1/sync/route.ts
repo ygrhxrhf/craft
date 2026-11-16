@@ -12,6 +12,7 @@ import { decideLww } from '@/lib/sync/lww';
 import { clampClientSyncTs, deleteOpExemptsStale } from '@/lib/sync-core/stale-arbiter';
 import { invalidPayloadColumns } from '@/lib/sync/payload-shape';
 import { purgePlan } from '@/lib/sync/purge-plan';
+import { createExistenceCache, danglingReferences, orderByReferences } from '@/lib/sync/references';
 import { effectiveRowTs } from '@/lib/sync/row-ts';
 import { isReactionOnlyPatch, mergeReactionWrite } from '@/lib/comment/reaction-merge';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
@@ -290,7 +291,6 @@ export async function POST(req: NextRequest) {
       status: e instanceof AuthorizationError ? 401 : 500,
     });
   }
-
   // 先整体读文本：>2MB 直接 413（不解析），随后从同一份文本解析 JSON。
   // G1634：判据必须是**字节**不是字符——`text.length` 数的是 UTF-16 码元，中文一条占 3 字节
   // ⇒ 一枚 2M 字符的中文批次实际 6MB，本地这一关放行、却可能在中间层撞上真正的 413；而客户端
@@ -321,7 +321,9 @@ export async function POST(req: NextRequest) {
 
   const db = await getDb();
   try {
-    const result = await applyBatch(db, userId, parsed.data.records);
+    // G1639：先按引用关系稳定排序——离线"父页改动 → 子页新建"这类批次里，父页那一笔会因
+    // applyLocal 的合并语义跳到后面；服务端按序执行时子页先插就会撞外键。
+    const result = await applyBatch(db, userId, orderByReferences(parsed.data.records));
     return Response.json(result, { headers: { 'Cache-Control': 'no-store' } });
   } catch (e) {
     // 事务内任一异常 → 整批 500、无部分确认（客户端整批重推，LWW 幂等安全）。
@@ -341,6 +343,10 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
     const applied: { table: string; id: string }[] = [];
     const rejected: any[] = [];
     const touchedTables = new Set<string>();
+    // G1639：一批之内复用"这行在不在"的读（同一批常引用同几行）。
+    const referenceCache = createExistenceCache();
+    // G1639：本批已经落库的新行（`Model::id`）——父行先写、子行引用它时不必再回读。
+    const minted = new Set<string>();
     let maxCursor: Cursor = { ts: '1970-01-01T00:00:00.000Z', id: '' };
     // spec C3 的原始前提是"服务端时钟无条件覆盖"；G1511③ 把它放宽成 `max(serverNow, rec.syncTs)`：
     // 服务端仍不信任客户端钟（不拿更早的时间戳盖掉此刻），但**不把客户端更新的时间戳往回拖**，
@@ -492,6 +498,20 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           }
           payload.reactions = merged;
         }
+        // G1639：外键悬空。Postgres 对每个 N:1 关系都有真外键，而载荷里的引用列此前只被判过
+        // 归属、没判过"被引用的那一行还在不在"——一台设备永久删了文档、另一台离线时收藏它，
+        // 重连后这笔就撞 FK 违例 ⇒ 事务 aborted（25P02）⇒ 整批 500 ⇒ 无限重推（G1625 家族）。
+        // 可空的引用列置 null 照常落库（文档父页没了就落根，与 adoptOrphans 同一语义）；
+        // 非空的（favorite.documentId／comment.threadId／document_tag 两列…）永远不可能成功 ⇒ 逐笔拒。
+        if (!reactionWrite) {
+          const dangling = await danglingReferences(scope, rec.table, payload, referenceCache, minted);
+          const fatal = dangling.filter((ref) => !ref.nullable);
+          if (fatal.length) {
+            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'not_found' });
+            continue;
+          }
+          for (const ref of dangling) payload[ref.field] = null;
+        }
         if (current) {
           await model.where(where).update(payload);
         } else {
@@ -547,6 +567,8 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
               continue;
             }
             await model.create({ ...payload, id: rec.table === 'document_tag' ? undefined : rec.id });
+            // 本批刚写进去的行：后续引用它的同批记录不必再回读（document_tag 的复合键没人引用）。
+            minted.add(`${def.model}::${rec.id}`);
           }
         }
         maxCursor = newer(maxCursor, { ts, id: appliedId });

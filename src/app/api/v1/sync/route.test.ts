@@ -220,7 +220,10 @@ describe('POST /api/v1/sync', () => {
     const chain = { where: () => chain, first: vi.fn(async () => null), update: vi.fn(), create };
     // G1523 写侧鉴权要读 Document 判归属：这一篇归会话用户 u1（所有者）
     const docChain = { first: vi.fn(async () => ({ id: 'd1', userId: 'u1', isDeleted: false })) };
-    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, { get: (_t, m) => m === 'SyncEvent' ? { create } : m === 'Document' ? docChain : chain }) } });
+    // G1639 外键悬空闸要读 Tag：这一枚是真标签
+    const tagChain = { first: vi.fn(async () => ({ id: 't1', userId: 'u1' })) };
+    (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, { get: (_t, m) =>
+      m === 'SyncEvent' ? { create } : m === 'Document' ? docChain : m === 'Tag' ? tagChain : chain }) } });
 
     const res = await POST(req({ records: [
       { table: 'document_tag', id: 'x', op: 'upsert',
@@ -445,8 +448,11 @@ describe('POST /api/v1/sync', () => {
     const create = vi.fn(async () => { throw new Error('boom'); });
     const first = vi.fn(async () => null);
     const chain = { where: () => chain, first, update: vi.fn(), create };
+    // G1639 之后这一笔还多了一道外键闸：被引用的文档必须真在册（这里给一枚），
+    // 否则会在 create 之前就被按悬空拒收、走不到"create 抛错"那条路。
+    const docChain = { first: vi.fn(async () => ({ id: 'd1', userId: 'u1', isDeleted: false })) };
     (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
-      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : m === 'Document' ? docChain : chain),
     }) } });
 
     const res = await POST(req({ records: [{
@@ -520,8 +526,10 @@ describe('POST /api/v1/sync', () => {
     const create = vi.fn(async () => ({}));
     const first = vi.fn(async () => null);
     const chain = { where: () => chain, first, update: vi.fn(), create };
+    // G1639：被收藏的文档必须真在册（外键闸）
+    const docChain = { first: vi.fn(async () => ({ id: 'd1', userId: 'u1', isDeleted: false })) };
     (getDb as any).mockResolvedValue({ orm: { public: new Proxy({}, {
-      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : chain),
+      get: (_t, m) => (m === 'SyncEvent' ? { create: vi.fn() } : m === 'Document' ? docChain : chain),
     }) } });
 
     // ① 离线收藏（toggle-local）带 documentId ⇒ 闸放过，照旧建行——配闸不能误伤正常操作
@@ -947,6 +955,7 @@ describe('POST /api/v1/sync — G1523 文档作用域写侧鉴权', () => {
   function scopedDb(opts: {
     documents?: Record<string, unknown>[];
     members?: Record<string, unknown>[];
+    tags?: Record<string, unknown>[];
   }) {
     const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
     const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
@@ -968,7 +977,8 @@ describe('POST /api/v1/sync — G1523 文档作用域写侧鉴权', () => {
         m === 'SyncEvent' ? { create: vi.fn() }
           : m === 'Document' ? makeTable(opts.documents ?? [])
             : m === 'DocumentMember' ? makeTable(opts.members ?? [])
-              : generic,
+              : m === 'Tag' ? makeTable(opts.tags ?? [])
+                : generic,
     }) } });
     return { create, update, del };
   }
@@ -1071,6 +1081,7 @@ describe('POST /api/v1/sync — G1523 文档作用域写侧鉴权', () => {
     const { create } = scopedDb({
       documents: [{ id: 'shared-doc', userId: 'owner-elsewhere', isDeleted: false }],
       members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'editor' }],
+      tags: [{ id: 't1', userId: 'owner-elsewhere' }],
     });
     const res = await POST(req({ records: [{
       table: 'document_tag', id: 'x', op: 'upsert',

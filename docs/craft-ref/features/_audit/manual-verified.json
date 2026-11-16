@@ -10985,6 +10985,18 @@
         "src/app/api/v1/sync/route.test.ts",
         "src/app/api/v1/sync/route.realdb.test.ts"
       ]
+    },
+    "G1639": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 568 批：Postgres 对每个 N:1 关系都有真外键，而客户端载荷里的引用列此前只被判过归属、没判过「被引用的那一行还在不在」——一台设备永久删文档、另一台离线收藏它，重连那笔撞 FK 违例 ⇒ 事务 aborted ⇒ 整批 500 ⇒ 无限重推。修＝新增 src/lib/sync/references.ts：syncReferences() 从 contract.json 现读每张同步表载荷可写的 N:1 外键（列/目标模型/目标列/可空性，User 目标不判），danglingReferences() 判悬空（null 放行、空串按悬空）、批内存在性缓存；route.ts 在写前分流——非空悬空逐笔 not_found、可空悬空置 null 后照常落库；orderByReferences() 在 applyBatch 前做批内稳定拓扑排序（只有 upsert 提供行，成环按原序），修掉 applyLocal 合并语义让父行那笔跳到子行之后的顺序问题；同批新写的行记进 minted 不再回读。references.test.ts 17 条（声明面与契约双向核对＋悬空判据 7＋排序 6）、realdb 3 条（收藏已删文档整批 200 且 not_found／可空 parentId 悬空置 null／批内子行先到也能落）。反向验证：摘掉悬空判决＝2 条纯核＋2 条真库红；orderByReferences 退回原序＝「子行先到」真库红。",
+      "evidence": [
+        "src/lib/sync/references.ts",
+        "src/lib/sync/references.test.ts",
+        "src/app/api/v1/sync/route.ts",
+        "src/app/api/v1/sync/route.test.ts",
+        "src/app/api/v1/sync/route.realdb.test.ts"
+      ]
     }
   }
 }

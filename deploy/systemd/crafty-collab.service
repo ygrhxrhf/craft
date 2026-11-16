@@ -1,6 +1,6 @@
 [Unit]
 Description=Crafty collaboration server (Hocuspocus / Yjs)
-Documentation=file:/opt/crafty/README.md
+Documentation=file:/opt/crafty/deploy/README.md
 After=network-online.target postgresql.service
 Wants=network-online.target postgresql.service
 

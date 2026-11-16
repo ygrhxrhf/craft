@@ -4,3 +4,11 @@ src/prisma/ops.json linguist-generated
 src/prisma/migration.json linguist-generated
 migrations/snapshots/**/contract.json linguist-generated
 migrations/snapshots/**/contract.d.ts linguist-generated
+
+# 部署资产在 Linux 目标机上会被直接执行/解析。Windows checkout 的 core.autocrlf=true
+# 会把它们写成 CRLF：`#!/usr/bin/env bash\r` 在 Debian 上直接 bad interpreter，
+# systemd/Caddy/PG 配置也可能解析失败。强制 LF。
+*.sh text eol=lf
+deploy/** text eol=lf
+Dockerfile text eol=lf
+.dockerignore text eol=lf

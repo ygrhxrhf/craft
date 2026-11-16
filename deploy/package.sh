@@ -62,7 +62,30 @@ echo "==> staging deploy assets"
 mkdir -p "$STAGE/deploy"
 cp -a deploy/systemd deploy/postgres deploy/backup "$STAGE/deploy/"
 cp -a deploy/Caddyfile deploy/env.template deploy/README.md "$STAGE/deploy/"
+
+# 构建机是 Windows（core.autocrlf=true），仓库文件到工作区是 CRLF。目标机是 Debian：
+# `#!/usr/bin/env bash\r` 会变成 bad interpreter，systemd/Caddy/PG 配置也可能解析失败。
+# `.gitattributes` 已强制 LF，这里再按实际字节归一化一次，然后拒发仍带 CR 的产物。
+echo "==> normalizing deploy asset line endings"
+# 用 Node 而不是 sed/grep：MSYS 的 grep -r 会按文本模式读文件（CR 模式命中每一行），
+# 而 bash 的 $'\r' 在本项目的 Git Bash 下过 find -exec 会退化成空串（两台机器上都实测过）。
+node -e '
+const fs = require("fs"), path = require("path");
+const walk = d => fs.readdirSync(d, { withFileTypes: true })
+  .flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
+for (const f of walk(process.argv[1])) {
+  const s = fs.readFileSync(f, "utf8");
+  if (s.includes("\r")) fs.writeFileSync(f, s.replace(/\r\n/g, "\n").replace(/\r/g, "\n"));
+}
+' "$STAGE/deploy"
 chmod +x "$STAGE"/deploy/backup/*.sh
+node -e '
+const fs = require("fs"), path = require("path");
+const walk = d => fs.readdirSync(d, { withFileTypes: true })
+  .flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
+const bad = walk(process.argv[1]).filter(f => fs.readFileSync(f, "utf8").includes("\r"));
+if (bad.length) { console.error(bad.join("\n")); process.exit(1); }
+' "$STAGE/deploy" || { echo "error: CR still present in staged deploy assets" >&2; exit 8; }
 
 echo "==> packing"
 tar -czf "$OUT" -C "$STAGE" web collab src deploy

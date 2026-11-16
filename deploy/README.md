@@ -312,7 +312,7 @@ tcb storage list crafty-backups/ -e <envId>     # 确认对象在
 ```bash
 su - postgres -c "createdb -O crafty_app crafty_restore_test"
 PGDATABASE=crafty_restore_test /opt/crafty/deploy/backup/crafty-restore.sh <对象名>.enc
-su - postgres -c "psql -d crafty_restore_test -c 'SELECT count(*) FROM \"Document\";'"
+su - postgres -c "psql -d crafty_restore_test -c 'SELECT count(*) FROM documents;'"
 ```
 
 ### 11.8 真实恢复（生产）

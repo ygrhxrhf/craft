@@ -1,6 +1,6 @@
 [Unit]
 Description=Crafty off-site database backup (pg_dump -> CloudBase storage)
-Documentation=file:/opt/crafty/README.md
+Documentation=file:/opt/crafty/deploy/README.md
 After=postgresql.service network-online.target
 Wants=network-online.target
 

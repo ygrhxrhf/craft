@@ -1222,3 +1222,34 @@ Playwright request context：NextAuth credentials 登录 `craft-test@example.com
 
 - 采购清单确认后建 TencentDB/云托管/COS/域名，按 `docs/deploy/cloudbase.md` 执行并以本章追加生产数据
 
+## 上线收尾 acceptance 2026-11-17（VPS 裸机路径）
+
+目标路径：`deploy/README.md` 的 Debian 11 单机（systemd + Caddy + 本机 PG + CloudBase 备份）。`docs/deploy/cloudbase.md` 的 P4 云托管方案本轮**不启用**，其阶段 B 仍为 BLOCKED（未采购）。
+
+### 本轮实跑（本机，占位域名）
+
+构建期用占位 `.env.production`（`crafty.example.com` 等，仅验证链路；产物名带 `-PLACEHOLDER` 后缀，不可发布）：
+
+| 项 | 结果 |
+|---|---|
+| `npm run contract:emit` | ✅ exit 0，`contract.json` / `contract.d.ts` 生成 |
+| `npm run build` | ✅ exit 0；`.next/standalone` **74 MB**（基线 70–80 MB） |
+| `deploy/package.sh` | ✅ `crafty-deploy-20261116-175147-PLACEHOLDER.tar.gz` **25.6 MB**（基线 ~25 MB）；产物内无任何 `.env*`；`web/server.js`、`web/src/prisma/contract.json`、`src/prisma/contract.json`、collab/tldraw 与 systemd/backup 资产齐全；deploy 资产逐文件复核为 LF |
+| standalone 冒烟（解包后在 `web/` 内 `node server.js`，PORT=3100，运行时 env 取自本机 `.env`） | ✅ `/api/health` 200 `{"ok":true}`、`/login` 200、`/` 307→`/login`、`/api/v1/sync` 307→`/login`、`/api/auth/session` 200 |
+| 备份恢复演练（本机 PG：`pg_dump -Fc -Z9 --no-owner --no-acl` → `pg_restore -l` 校验 → sha256 → `openssl enc -aes-256-cbc -pbkdf2` → 解密 → sha256 复核 → `pg_restore --clean --if-exists` 进 `crafty_restore_test`） | ✅ dump 1.07 MB / 263 对象；加密前后 sha256 一致；**34/34 张表行数逐表一致**（documents 1670、document_versions 1201、yjs_document_states 1209、tasks 336、users 54 …）；演练库已删 |
+| `e2e/sync.spec.ts`（双端 3 条） | ⚠️→✅ 首跑 2/3：`双端改元数据 5 秒内互见` 收敛 **10459ms** 超阈 10068ms（功能已收敛，仅超 391ms）；单条复跑 **5975ms** 通过；全量复跑 **3/3 绿**（收敛 4796ms，3.8m）。判定为 dev 冷编译抖动，阈值按 R-20 **不放宽** |
+
+### 本轮修掉的问题（含一条上线阻断）
+
+- `deploy/README.md` §11.7 的核对语句 `SELECT count(*) FROM "Document"` 实测必报 `relation "Document" does not exist`——库内表名全为 snake_case（`documents`/`users`/`tasks`…），已改为 `FROM documents`。
+- `.gitignore` 补 `/crafty-deploy-*.tar.gz`：打包产物每次构建重生成，不再污染工作树。
+- `deploy/systemd/*.service|*.timer` 的 `Documentation=file:/opt/crafty/README.md` 指向打包后**不存在**的根 README（`package.sh` 只落 `deploy/README.md`），已统一改为 `/opt/crafty/deploy/README.md`。
+- **上线阻断（已修）**：Windows 工作区 `core.autocrlf=true` 把 `deploy/**`、`Dockerfile`、`.dockerignore` 全写成 CRLF，打包产物里的 `crafty-backup.sh` shebang 是 `#!/usr/bin/env bash\r`——在 Debian 上直接 bad interpreter，systemd/PG/Caddy 配置也可能解析失败。三件修法：`.gitattributes` 对 `*.sh`/`deploy/**`/`Dockerfile`/`.dockerignore` 强制 `eol=lf`；`package.sh` 打包前用 Node 把暂存 deploy 资产归一化为 LF，并对残留 CR 拒发（`exit 8`）；重建产物后逐文件 `file` 复核。※ 检测一度误用 `grep -rIl $'\r'`：MSYS 的 `-r` 按文本模式读文件、`$'\r'` 经 `find -exec` 退化成空串，会命中所有文件——改用 Node 读字节后稳定。
+
+### 待办（需真实环境/用户输入）
+
+- **重建产物**：把真实三域名与 tldraw Hobby License 填进构建机 `.env.production` 后重新 `npm run build` + `deploy/package.sh`；当前占位产物只能本机冒烟。
+- **目标机**：按 `deploy/README.md` §2–§10 装 Node 22 / PG / Caddy / zram，§6 systemd，§7 三域名，§10 完成 Debian 11 EOL 缓解。
+- **备份上云**：`tcb login --cloudbase-api-key`、`/etc/crafty/backup.env`（`BACKUP_PASSPHRASE` 存密码管理器）、启用 `crafty-backup.timer`；在目标机按 §11.7 再跑一次恢复演练。
+- **真机验收**：两台设备改标题/移动/加标签秒级互见、断网恢复不丢；公网 `curl -fsS https://<域名>/api/health`。
+

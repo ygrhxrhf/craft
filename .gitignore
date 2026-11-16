@@ -99,6 +99,9 @@ dist/
 # 交互实验台的原始记录：含空间名、作者名与个人文档标题（与 ref/、screens/、dom-20261023/ 同因，只留本地对照、不入库）
 /docs/craft-ref/interaction-lab/runs/
 
+# 部署打包产物（deploy/package.sh 生成，每次构建重新产出，不入库）
+/crafty-deploy-*.tar.gz
+
 # 工具生成的仓库副本（worktrees/clones）：整棵源码树的镜像，不是项目内容。
 # 原先只写在 .git/info/exclude 里（本地生效、不随仓库共享），换台机器 clone 就会把
 # 副本当成未跟踪文件；vitest 也会把里面的测试再跑一遍（实测 814→272 个文件）。

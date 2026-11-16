@@ -11051,6 +11051,20 @@
         "src/actions/document/members.ts",
         "src/actions/document/access-requests.ts"
       ]
+    },
+    "G1644": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 572 批：任务完成态此前只有 Server Action 一条写路径 toggleTask（带 syncTaskToDocument 正文回写与 rollForward 下一期派生），断链时任务屏与日历的勾选发不出请求、动作蒸发且队列无重试笔。修＝新增纯核 src/lib/task/toggle-core.ts（toggleColumns 走 task-status 三值循环；rollForwardRow 对齐服务端旧口径：flexible 从完成时刻、fixed 从原排期，提醒按新排期日＋原分钟数重算，recurrenceEnd 到点不派生，seriesId 缺失用原行 id；planToggle 一次给四列与下一期整行）；服务端 toggleTask 改读同一枚纯核并删旧 rollForward，TaskItem 补 seriesId 投影；客户端 toggleTaskLocally 先 applyLocal 四列再落下一期新行（两枚 patch 写字面量键过 G1489，TASK_WS_COLS 补 seriesId 至 19 列）；任务屏单行/批量与日历勾选改走内核，session 到位前退回 Server Action；读侧补 taskItemsFromMirror/readTaskMirrorItems 镜像回落（任务屏与日历 load 在服务端 action 抛错时叠未推送意图）。测试：toggle-core.test.ts 11 条＋tasks-local.test.ts 4 条本地写＋4 条镜像投影。反向验证：去掉 planToggle 的 next 即两处红；把镜像投影的键移出白名单即静态闸红。批内 vitest 583 文件/4550 全绿、tsc 0 错。",
+      "evidence": [
+        "src/lib/task/toggle-core.ts",
+        "src/lib/task/toggle-core.test.ts",
+        "src/actions/task/task.ts",
+        "src/app/(app)/tasks/tasks-local.ts",
+        "src/app/(app)/tasks/tasks-local.test.ts",
+        "src/app/(app)/tasks/TasksView.tsx",
+        "src/app/(app)/calendar/page.tsx"
+      ]
     }
   }
 }

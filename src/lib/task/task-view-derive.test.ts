@@ -19,6 +19,7 @@ function task(id: string, patch: Partial<TaskItem> = {}): TaskItem {
     remindAt: null,
     recurrence: null,
     recurrenceEnd: null,
+    seriesId: null,
     documentId: null,
     blockId: null,
     ...patch,

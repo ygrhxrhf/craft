@@ -28,7 +28,7 @@ import type { TaskItem, TaskSchedule } from '@/actions/task/task';
 import { getSyncManager } from '@/lib/sync-core';
 import { currentUserId } from '@/lib/sync-core/current-user';
 import { readPendingRows, findFavoriteRowId } from '@/components/sync/local-records';
-import { overlayTaskRows, taskPatchFor } from './tasks-local';
+import { overlayTaskRows, readTaskMirrorItems, taskPatchFor, toggleTaskLocally } from './tasks-local';
 import { applyCompletedFilter, listForGroup, tasksForGroup, withinUpcoming, writeShowCompleted, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
 import { upcomingSections } from '@/lib/task/upcoming-groups';
 import {
@@ -177,16 +177,27 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   }, [group, settings.todayShowPastDueTasks]);
 
   const load = useCallback(async () => {
-    const [page, pending] = await Promise.all([getTasksPage(null, range), readPendingRows('task')]);
-    setTasks(overlayTaskRows(page.items, pending));
-    applyPageState(
-      settleLoad(initialTaskPageState(), list, {
-        nextToken: page.nextCursor,
-        hasMore: page.nextCursor !== null,
-        count: page.items.length,
-      }),
-    );
-    setLoading(false);
+    const pending = await readPendingRows('task');
+    try {
+      const page = await getTasksPage(null, range);
+      setTasks(overlayTaskRows(page.items, pending));
+      applyPageState(
+        settleLoad(initialTaskPageState(), list, {
+          nextToken: page.nextCursor,
+          hasMore: page.nextCursor !== null,
+          count: page.items.length,
+        }),
+      );
+    } catch {
+      /**
+       * 断链：服务端 action 够不着 → 退回内核镜像（与评论面板同一处置）。此前这一支直接抛，
+       * 于是离线勾选/新建的本地行虽然已落库，读者却一行也看不到。分页信息保持初始态
+       * （镜像里就是全量），联网后下一次 load() 再按服务端游标重建。
+       */
+      setTasks(overlayTaskRows(await readTaskMirrorItems(), pending));
+    } finally {
+      setLoading(false);
+    }
   }, [applyPageState, list, range]);
 
   /**
@@ -481,11 +492,21 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     router.refresh();
   };
 
-  // toggle 保持 Server Action：它除改四列外还有两条服务端派生
-  // （syncTaskToDocument 回写文档正文的 taskItem 勾选态、rollForward 为重复任务派生下一期行），
-  // 客户端没有等价通路，搬进 applyLocal＝静默功能回归。见 tasks-local.ts 头部裁定 2。
+  /**
+   * 离线优先勾选：状态机与「重复任务派生下一期」已抽进 `toggle-core`，本机 `applyLocal`
+   * 当场落库（断链时留在队列重试），下一期作为同一批的另一笔新行入队。
+   * session 还没到位时（登录后立刻点）退回原 Server Action——与 `writeTask` 同一处置；
+   * 那一支仍带着正文 `taskItem` 回写，本机路径则留给下一次正文保存由编辑器同步。
+   */
   const handleToggle = async (id: string) => {
-    await toggleTask(id, Intl.DateTimeFormat().resolvedOptions().timeZone);
+    const task = tasks.find((row) => row.id === id);
+    const userId = await currentUserId(session?.user?.id);
+    if (task && userId) {
+      await toggleTaskLocally(task, userId);
+      await getSyncManager().flushNow();
+    } else {
+      await toggleTask(id, Intl.DateTimeFormat().resolvedOptions().timeZone);
+    }
     await load();
   };
 
@@ -495,8 +516,14 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     if (targets.length === 0 || bulkBusy) return;
     setBulkBusy(true);
     try {
-      for (const task of targets) {
-        await toggleTask(task.id, Intl.DateTimeFormat().resolvedOptions().timeZone);
+      const userId = await currentUserId(session?.user?.id);
+      if (userId) {
+        for (const task of targets) await toggleTaskLocally(task, userId);
+        await getSyncManager().flushNow();
+      } else {
+        for (const task of targets) {
+          await toggleTask(task.id, Intl.DateTimeFormat().resolvedOptions().timeZone);
+        }
       }
       await load();
     } finally {

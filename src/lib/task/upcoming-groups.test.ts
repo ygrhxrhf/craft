@@ -38,6 +38,7 @@ function task(id: string, dueDate: string | null, createdAt: string | null = nul
     remindAt: null,
     recurrence: null,
     recurrenceEnd: null,
+    seriesId: null,
     documentId: null,
     blockId: null,
     createdAt,

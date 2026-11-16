@@ -4,10 +4,11 @@ import { auth } from '@/lib/auth/auth';
 import { requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
 import { getDb } from '@/prisma/db';
-import { nextOccurrence, parseRecurrence, scheduleWithRecurrence } from '@/lib/task/recurrence';
+import { parseRecurrence, scheduleWithRecurrence } from '@/lib/task/recurrence';
 import { defaultReminderForRepeat, rollForwardReminder } from '@/lib/task/repeat-reminder';
 import { listsTaskFromDocument } from '@/lib/task/display';
-import { applyToggled, taskLineStatus, type TaskAttrs } from '@/lib/editor/task-status';
+import { taskLineStatus } from '@/lib/editor/task-status';
+import { planToggle } from '@/lib/task/toggle-core';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
 import { reorderAfter, encodeTaskCursor, decodeTaskCursor, TASK_PAGE_SIZE, type TaskListRange } from '@/lib/task/task-paging';
 import { deriveSubtasks } from '@/lib/task/subtasks';
@@ -85,6 +86,11 @@ export interface TaskItem {
   remindAt: string | null;
   recurrence: string | null;
   recurrenceEnd: string | null;
+  /**
+   * G260：同一条重复序列的键。客户端离线勾选完成时要用它把派生出的下一期接回同一序列
+   * （服务端 `rollForward` 的 fallback 是原行 id，客户端必须拿到同一枚值才不分叉）。
+   */
+  seriesId: string | null;
   documentId: string | null;
   /** G727：`Ctrl-→` 要跳到正文里这一枚区块（`/documents/{id}#b-{blockId}`）。 */
   blockId: string | null;
@@ -308,6 +314,7 @@ export async function getTasksPage(
       remindAt: row.remindAt,
       recurrence: row.recurrence,
       recurrenceEnd: row.recurrenceEnd,
+      seriesId: typeof row.seriesId === 'string' && row.seriesId ? row.seriesId : null,
       documentId: row.documentId,
       blockId: typeof row.blockId === 'string' && row.blockId ? row.blockId : null,
       documentTitle,
@@ -347,70 +354,28 @@ export async function toggleTask(id: string, timeZone?: string) {
   const task = await db.orm.public.Task.first({ id });
   if (!task || (task as any).userId !== session.user.id) throw new Error('未授权');
 
-  // 三档只有一枚轴（tasks.md:11），而勾选框那一次点击走的是三值循环（tasks.md:12＝
-  // Canceled 回到"未勾选"而不是"完成"）。判定全部走 `task-status.ts` 那个纯核，这里不重复写状态机。
-  const current: TaskAttrs = {
-    checked: (task as any).isCompleted,
-    cancelled: (task as any).status === 'cancelled',
-    cancelledAt: (task as any).cancelledAt ?? null,
-  };
-  const next = applyToggled(current);
-  await db.orm.public.Task.where({ id }).update({
-    isCompleted: next.checked,
-    status: next.cancelled ? 'cancelled' : next.checked ? 'done' : 'todo',
-    completedAt: next.checked ? new Date().toISOString() : null,
-    cancelledAt: next.cancelledAt,
-  });
+  /**
+   * 三档只有一枚轴（tasks.md:11），而勾选框那一次点击走的是三值循环（tasks.md:12＝
+   * Canceled 回到"未勾选"而不是"完成"）。状态机与下一期派生都在 `toggle-core.ts` 那一个
+   * 纯核里——客户端离线勾选读同一份（`toggleTaskLocally`），这里只负责落库。
+   */
+  const plan = planToggle(
+    { ...(task as any), userId: session.user.id },
+    new Date(),
+    timeZone ?? 'UTC',
+    crypto.randomUUID(),
+  );
+  await db.orm.public.Task.where({ id }).update(plan.columns);
   await syncTaskToDocument(db, task, {
-    checked: next.checked,
-    cancelled: next.cancelled,
-    cancelledAt: next.cancelledAt,
+    checked: plan.columns.isCompleted,
+    cancelled: plan.columns.status === 'cancelled',
+    cancelledAt: plan.columns.cancelledAt,
   });
 
-  if (next.checked) await rollForward(db, task as any, timeZone);
-  // rollForward 可能派生下一期任务行——同一次 toggle 合并为一次广播
+  // 下一期可能派生任务行——同一次 toggle 合并为一次广播
+  if (plan.next) await db.orm.public.Task.create(plan.next);
   await emitTasks(db, session.user.id, id);
-  return next.checked;
-}
-
-/**
- * A recurring task repeats by spawning the next occurrence rather than by
- * clearing itself, so the completed one stays as history.
- */
-async function rollForward(db: any, task: any, timeZone?: string): Promise<void> {
-  const rule = parseRecurrence(task.recurrence);
-  if (!rule) return;
-
-  const base = task.dueDate ?? task.remindAt;
-  // G256: `flexible` counts from the moment of completion; `fixed` (and any rule
-  // written before the field existed) walks the original schedule.
-  const from = rule.type === 'flexible' ? new Date() : base ? new Date(base) : new Date();
-  const upcoming = nextOccurrence(task.recurrence, from, timeZone);
-  if (!upcoming) return;
-
-  // G644: the reminder is recomputed as "this occurrence's day ＋ the previous minute-of-day",
-  // not carried as a relative lead; a target already in the past is dropped silently.
-  const remindAt = rollForwardReminder(task.remindAt, upcoming, timeZone);
-
-  await db.orm.public.Task.create({
-    id: crypto.randomUUID(),
-    userId: task.userId,
-    title: task.title,
-    // G645: the next occurrence stays bound to the source block/document; a rolled reminder
-    // without them would lose the deep link the original had.
-    documentId: task.documentId ?? null,
-    blockId: task.blockId ?? null,
-    isCompleted: false,
-    status: 'todo',
-    dueDate: upcoming.toISOString(),
-    remindAt,
-    recurrence: task.recurrence,
-    recurrenceEnd: task.recurrenceEnd,
-    // G260: the next occurrence joins the same series as the task it came from (a task with no
-    // series starts one, using its own id as the series key).
-    seriesId: (task as { seriesId?: string | null }).seriesId ?? task.id,
-    order: task.order,
-  });
+  return plan.columns.isCompleted;
 }
 
 export interface TaskSchedule {

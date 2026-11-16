@@ -1,16 +1,21 @@
-import { describe, it, expect } from 'vitest';
-import { overlayTaskRows, taskPatchFor, TASK_WS_COLS } from './tasks-local';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('@/lib/sync-core', () => ({ getSyncManager: vi.fn() }));
+
+import { getSyncManager } from '@/lib/sync-core';
+import { SYNC_TABLES } from '@/lib/sync/tables';
+import { overlayTaskRows, taskItemsFromMirror, taskPatchFor, toggleTaskLocally, TASK_WS_COLS } from './tasks-local';
 import type { PendingRow } from '@/components/sync/local-records';
 import type { TaskItem } from '@/actions/task/task';
 
 const NOW = '2026-09-30T00:00:00.000Z';
 
 describe('tasks 本地写 patch', () => {
-  it('白名单与 SYNC_TABLES.task 的 18 列一致', () => {
+  it('白名单与 SYNC_TABLES.task 的 19 列一致', () => {
     expect([...TASK_WS_COLS].sort()).toEqual([
       'blockId', 'cancelledAt', 'completedAt', 'createdAt', 'deletedAt', 'documentId', 'dueDate',
       'id', 'isCompleted', 'order', 'recurrence', 'recurrenceEnd', 'remindAt', 'scheduleDate',
-      'status', 'title', 'updatedAt', 'userId',
+      'seriesId', 'status', 'title', 'updatedAt', 'userId',
     ]);
   });
 
@@ -59,6 +64,7 @@ const task = (over: Partial<TaskItem> & { id: string }): TaskItem => ({
   remindAt: null,
   recurrence: null,
   recurrenceEnd: null,
+  seriesId: null,
   documentId: null,
   blockId: null,
   documentTitle: null,
@@ -126,5 +132,138 @@ describe('overlayTaskRows：服务端行 + 未推送意图', () => {
     expect(only.title).toBe('');
     expect(only.cancelledAt).toBeNull();
     expect(only.documentId).toBeNull();
+    expect(only.seriesId).toBeNull();
+  });
+});
+
+describe('taskItemsFromMirror：断链时的读侧镜像', () => {
+  const mirrorTask = (id: string, data: Record<string, unknown>) => ({ id, op: 'upsert', data });
+
+  it('把同步列投影成 TaskItem，并补上宿主文档标题', () => {
+    const items = taskItemsFromMirror(
+      [mirrorTask('t1', {
+        title: '买牛奶',
+        isCompleted: true,
+        status: 'done',
+        dueDate: '2026-10-01T09:00:00.000Z',
+        seriesId: 's1',
+        documentId: 'd1',
+        createdAt: '2026-09-30T00:00:00.000Z',
+      })],
+      [{ id: 'd1', op: 'upsert', data: { title: '文档甲', isDeleted: false, isDailyNote: true } }],
+    );
+
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      id: 't1', title: '买牛奶', isCompleted: true, status: 'done', seriesId: 's1',
+      documentId: 'd1', documentTitle: '文档甲', isDailyNote: true,
+    });
+  });
+
+  it('墓碑行与已删宿主文档里的任务都不进列表（与 getTasksPage 同一条过滤）', () => {
+    const items = taskItemsFromMirror(
+      [
+        mirrorTask('gone', { title: '已删', deletedAt: NOW }),
+        mirrorTask('orphan', { title: '宿主进了回收站', documentId: 'd-gone' }),
+        mirrorTask('keep', { title: '无宿主任务' }),
+      ],
+      [{ id: 'd-gone', op: 'upsert', data: { title: '回收站里', isDeleted: true } }],
+    );
+
+    expect(items.map((task) => task.id)).toEqual(['keep']);
+  });
+
+  it('按 (createdAt, id) 递减，与 getTasksPage 的页序同口径', () => {
+    const items = taskItemsFromMirror(
+      [
+        mirrorTask('old', { createdAt: '2026-09-01T00:00:00.000Z' }),
+        mirrorTask('new', { createdAt: '2026-09-30T00:00:00.000Z' }),
+        mirrorTask('same-a', { createdAt: '2026-09-15T00:00:00.000Z' }),
+        mirrorTask('same-b', { createdAt: '2026-09-15T00:00:00.000Z' }),
+      ],
+    );
+
+    expect(items.map((task) => task.id)).toEqual(['new', 'same-b', 'same-a', 'old']);
+  });
+
+  it('delete op 的镜像行不投影（applyLocal 的删除意图已由 overlay 处理）', () => {
+    const items = taskItemsFromMirror([
+      mirrorTask('t1', { title: '活着' }),
+      { id: 't2', op: 'delete' },
+    ]);
+
+    expect(items.map((task) => task.id)).toEqual(['t1']);
+  });
+});
+
+describe('toggleTaskLocally：离线勾选', () => {
+  type Applied = { table: string; id: string; patch: Record<string, unknown> | null };
+
+  function manager() {
+    const applyLocal = vi.fn(async (_rec: Applied): Promise<void> => {});
+    (getSyncManager as any).mockReturnValue({ applyLocal, flushNow: vi.fn(async () => {}) });
+    return applyLocal;
+  }
+
+  const TOGGLE_NOW = new Date('2030-05-01T12:00:00.000Z');
+
+  it('待办 → 完成：先落四列，再落下一期新行（两笔都进 task 队列）', async () => {
+    const applyLocal = manager();
+    const done = await toggleTaskLocally(
+      task({ id: 't1', dueDate: '2030-05-01T00:00:00.000Z', recurrence: '{"freq":"daily","type":"fixed"}' }),
+      'u1',
+      { now: TOGGLE_NOW, timeZone: 'UTC' },
+    );
+
+    expect(done).toBe(true);
+    expect(applyLocal).toHaveBeenCalledTimes(2);
+    expect(applyLocal.mock.calls[0]![0]).toMatchObject({
+      table: 'task',
+      id: 't1',
+      patch: { isCompleted: true, status: 'done', completedAt: TOGGLE_NOW.toISOString(), updatedAt: TOGGLE_NOW.toISOString() },
+    });
+    const next = applyLocal.mock.calls[1]![0];
+    expect(next.table).toBe('task');
+    expect(next.id).toMatch(/^[0-9a-f-]{36}$/);
+    expect(next.patch).toMatchObject({
+      id: next.id,
+      userId: 'u1',
+      dueDate: '2030-05-02T00:00:00.000Z',
+      seriesId: 't1',
+      status: 'todo',
+    });
+  });
+
+  it('没有重复规则 → 只落一笔（不派生下一期）', async () => {
+    const applyLocal = manager();
+    await toggleTaskLocally(task({ id: 't1' }), 'u1', { now: TOGGLE_NOW, timeZone: 'UTC' });
+
+    expect(applyLocal).toHaveBeenCalledTimes(1);
+  });
+
+  it('取消勾选已完成行 → 只落一笔，且不带 completedAt', async () => {
+    const applyLocal = manager();
+    const done = await toggleTaskLocally(
+      task({ id: 't1', isCompleted: true, status: 'done', recurrence: '{"freq":"daily","type":"fixed"}', dueDate: TOGGLE_NOW.toISOString() }),
+      'u1',
+      { now: TOGGLE_NOW, timeZone: 'UTC' },
+    );
+
+    expect(done).toBe(false);
+    expect(applyLocal).toHaveBeenCalledTimes(1);
+    expect(applyLocal.mock.calls[0]![0].patch).toMatchObject({ isCompleted: false, completedAt: null });
+  });
+
+  it('两笔 patch 的键全部落在 SYNC_TABLES.task 的列白名单内', async () => {
+    const applyLocal = manager();
+    await toggleTaskLocally(
+      task({ id: 't1', dueDate: '2030-05-01T00:00:00.000Z', recurrence: '{"freq":"daily","type":"fixed"}', documentId: 'd1', blockId: 'b1' }),
+      'u1',
+      { now: TOGGLE_NOW, timeZone: 'UTC' },
+    );
+    const cols = SYNC_TABLES.find((def) => def.table === 'task')!.cols;
+    for (const call of applyLocal.mock.calls) {
+      for (const key of Object.keys(call[0].patch ?? {})) expect(cols).toContain(key);
+    }
   });
 });

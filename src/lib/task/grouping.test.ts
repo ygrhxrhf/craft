@@ -15,6 +15,7 @@ const task = (dueDate: string | null): TaskItem => ({
   remindAt: null,
   recurrence: null,
   recurrenceEnd: null,
+  seriesId: null,
   documentId: null,
   blockId: null,
 });

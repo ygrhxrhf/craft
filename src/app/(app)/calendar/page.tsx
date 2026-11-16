@@ -9,7 +9,9 @@ import { cn } from 'cn';
 import { createTask, getTasks, toggleTask } from '@/actions/task/task';
 import { useSession } from 'next-auth/react';
 import { getSyncManager } from '@/lib/sync-core';
-import { taskPatchFor } from '../tasks/tasks-local';
+import { currentUserId } from '@/lib/sync-core/current-user';
+import { readPendingRows } from '@/components/sync/local-records';
+import { overlayTaskRows, readTaskMirrorItems, taskPatchFor, toggleTaskLocally } from '../tasks/tasks-local';
 import { getOrCreateDayNote } from '@/actions/daily-notes/daily-notes';
 import type { TaskItem } from '@/actions/task/task';
 import { getDailyNotes } from '@/actions/daily-notes/daily-notes';
@@ -47,13 +49,20 @@ export default function CalendarPage() {
   const today = useMemo(() => new Date(), []);
 
   const load = useCallback(async () => {
-    try {
-      const [taskData, noteData] = await Promise.all([getTasks(), getDailyNotes()]);
-      setTasks(taskData);
-      setNotes(noteData);
-    } finally {
-      setLoading(false);
+    /**
+     * 日历与任务屏共用一条离线读：服务端 action 够不着时退回内核镜像，并叠上未推送的
+     * 本机意图。此前这里是 `Promise.all` 且无 catch——断链时整个 load 直接抛，离线勾选
+     * 虽然已落库，屏上却一行都不变。日记本条目没有镜像读，失败时保留上一次的值。
+     */
+    const pending = await readPendingRows('task');
+    const [taskResult, noteResult] = await Promise.allSettled([getTasks(), getDailyNotes()]);
+    if (taskResult.status === 'fulfilled') {
+      setTasks(overlayTaskRows(taskResult.value, pending));
+    } else {
+      setTasks(overlayTaskRows(await readTaskMirrorItems(), pending));
     }
+    if (noteResult.status === 'fulfilled') setNotes(noteResult.value);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -79,7 +88,14 @@ export default function CalendarPage() {
   }, [notes]);
 
   const handleToggle = async (id: string) => {
-    await toggleTask(id, Intl.DateTimeFormat().resolvedOptions().timeZone);
+    const task = tasks.find((row) => row.id === id);
+    const userId = await currentUserId(session?.user?.id);
+    if (task && userId) {
+      await toggleTaskLocally(task, userId);
+      await getSyncManager().flushNow();
+    } else {
+      await toggleTask(id, Intl.DateTimeFormat().resolvedOptions().timeZone);
+    }
     await load();
   };
 

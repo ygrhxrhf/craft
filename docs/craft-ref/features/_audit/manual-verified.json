@@ -11015,6 +11015,26 @@
         "src/components/editor/comments/reactions.ts",
         "src/app/api/v1/sync/route.realdb.test.ts"
       ]
+    },
+    "G1641": {
+      "status": "aligned",
+      "note": "第 570 批：G1640 把表情拆成 comment_reaction 后，CommentSection 的 store 订阅仍只写 comment／comment_thread ⇒ 另一台设备拉回来的表情到不了面板（本机点表情时看不出，因为 handleReact 自己 reload 了一次）。修＝订阅白名单补 comment_reaction；comment-overlay.test.ts 追加 3 条静态闸（订阅含三表／读 pending 含 comment_reaction／写路径按行 toggle 且两处 table:'comment_reaction' 各一分支）。反向验证：订阅退回两枚，第一条红。",
+      "evidence": [
+        "src/components/editor/comments/CommentSection.tsx",
+        "src/components/editor/comments/comment-overlay.test.ts"
+      ]
+    },
+    "G1642": {
+      "status": "aligned",
+      "note": "第 570 批：退避时刻存在本地库里、不随重载丢失；而 flushOnce 在 queue.flush 返回 ok 时直接 return ⇒ 若所有 pending 都还在退避窗口内，peekBatch 过滤出空批、flush 立即 ok 却一笔没推，再无人排下一次 flush：整页刷新后同步停摆到下一次无关交互才恢复（桌面端 sqlite 队列跨重启存活，更明显）。修＝SyncStore 新增 nextRetryDelayMs（memory/idb/sqlite 三支各实现；无 pending／有未设退避／已过期 ⇒ 0，不返回负数），store.test.ts 契约用例逐支跑 4 种情形；flushOnce 的 ok 分支在 pending 非空时 >0 就 scheduleBackoff(wait)。index.test.ts 补 2 条：全在窗口内 ⇒ 29s 内不动、31s 后第二次 flush；ok 且清空 ⇒ 十分钟内不空转且 synced。反向验证：删掉排程两行，第一条红。",
+      "evidence": [
+        "src/lib/sync-core/store.ts",
+        "src/lib/sync-core/adapter-idb.ts",
+        "src/lib/sync-core/adapter-sqlite.ts",
+        "src/lib/sync-core/index.ts",
+        "src/lib/sync-core/store.test.ts",
+        "src/lib/sync-core/index.test.ts"
+      ]
     }
   }
 }

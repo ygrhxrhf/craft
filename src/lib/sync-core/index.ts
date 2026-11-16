@@ -130,6 +130,7 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
     ack: guarded(base.ack),
     bumpTry: guarded(base.bumpTry),
     countPending: guarded(base.countPending),
+    nextRetryDelayMs: guarded(base.nextRetryDelayMs),
     getCursor: guarded(base.getCursor),
     setCursor: guarded(base.setCursor),
     getKv: guarded(base.getKv),
@@ -234,7 +235,16 @@ export function createManager(deps: Partial<ManagerDeps> = {}): TestSyncManager 
       failStreak = 0;
       // 硬规则 2（R-13 修订）：'synced' 仅当 flush ok && countPending()===0；
       // ok 但 pending>0 保持 'syncing'（'degraded' 专留给 SSE 断连，spec 9.1）
-      if (cachedPending === 0) setStatus('synced');
+      if (cachedPending === 0) {
+        setStatus('synced');
+        return;
+      }
+      // G1642：ok 但队列非空＝剩下的都还在各自的退避窗口里（peekBatch 按 nextRetryAt 过滤）。
+      // 退避时刻存在**本地库**、不随页面重载丢失——旧实现在这里直接 return，于是整页刷新后
+      // 若所有 op 都还在窗口内，就再没有任何人排下一次 flush：同步停摆到下一次无关交互
+      // （开关页面、改设置…）才恢复。按最早可重试时刻排一次。
+      const wait = await store.nextRetryDelayMs(Date.now()).catch(() => 0);
+      if (wait > 0) scheduleBackoff(wait);
       return;
     }
     if (res.status === 'auth') {

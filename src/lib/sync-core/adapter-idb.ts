@@ -135,6 +135,20 @@ export function createIdbStore(): SyncStore {
     return requireDb().count(PENDING);
   }
 
+  /** G1642：最早一条 pending 距现在还有多久可重试（都到点／没 pending ⇒ 0）。 */
+  async function nextRetryDelayMs(nowMs: number): Promise<number> {
+    const rows = (await requireDb().getAll(PENDING)) as PendingOp[];
+    let earliest: number | null = null;
+    for (const op of rows) {
+      if (!op.nextRetryAt) return 0;
+      const at = Date.parse(op.nextRetryAt);
+      if (Number.isNaN(at)) return 0;
+      if (earliest === null || at < earliest) earliest = at;
+    }
+    if (earliest === null) return 0;
+    return Math.max(0, earliest - nowMs);
+  }
+
   async function getCursor(): Promise<Cursor | null> {
     const c = (await requireDb().get(KV, CURSOR_KEY)) as Cursor | undefined;
     return c ? { ...c } : null;
@@ -154,5 +168,5 @@ export function createIdbStore(): SyncStore {
     await requireDb().put(KV, value, key);
   }
 
-  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, getCursor, setCursor, getKv, setKv };
+  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, nextRetryDelayMs, getCursor, setCursor, getKv, setKv };
 }

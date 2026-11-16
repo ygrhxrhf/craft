@@ -86,6 +86,35 @@ describe.each([
     await s.setKv('lastPullAt', '2026-09-29T00:00:00.000Z');
     expect(await s.getKv('lastPullAt')).toBe('2026-09-29T00:00:00.000Z');
   });
+
+  /**
+   * G1642：退避时刻**存在本地库**里，整页重载后仍然有效。`nextRetryDelayMs` 是调度器唯一能问到
+   * "还要等多久"的口子——三支适配器必须给出同一答案，否则刷新后的续调度只在浏览器成立、
+   * 桌面（sqlite）停摆。
+   */
+  it('nextRetryDelayMs：没有 pending ⇒ 0；有未设退避的 ⇒ 0；全部退避中 ⇒ 最早那条的等待', async () => {
+    expect(await s.nextRetryDelayMs(Date.parse('2026-09-28T10:00:00.000Z'))).toBe(0);
+
+    const enqueueAt = (id: string) => s.enqueue({
+      table: 'document', recordId: id, op: 'upsert',
+      payload: { syncTs: '2026-09-28T10:00:00.000Z' }, createdAt: '2026-09-28T10:00:00.000Z',
+    });
+    await enqueueAt('d1');
+    // 有一条没设退避 ⇒ 现在就该能推
+    expect(await s.nextRetryDelayMs(Date.parse('2026-09-28T10:00:00.000Z'))).toBe(0);
+
+    const [op1] = await s.peekBatch(10, '2026-09-28T10:00:00.000Z');
+    await s.bumpTry(op1.seq, '2026-09-28T10:00:30.000Z');
+    await enqueueAt('d2');
+    const [op2] = await s.peekBatch(10, '2026-09-28T10:00:00.000Z');
+    expect(op2.recordId).toBe('d2');
+    await s.bumpTry(op2.seq, '2026-09-28T10:00:10.000Z');
+
+    // 两笔都在退避中 ⇒ 取最早的那条（d2 的 10s），不是先入队那条
+    expect(await s.nextRetryDelayMs(Date.parse('2026-09-28T10:00:00.000Z'))).toBe(10_000);
+    // 已过期的退避按 0 算（不能返回负数）
+    expect(await s.nextRetryDelayMs(Date.parse('2026-09-28T10:01:00.000Z'))).toBe(0);
+  });
 });
 
 /**

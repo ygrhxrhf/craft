@@ -131,7 +131,9 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
   }, [reload]);
 
   useEffect(() => getSyncManager().onStoreChanged((table) => {
-    if (table === 'comment' || table === 'comment_thread') void reload();
+    // G1641：表情拆表后（G1640）它有了自己的 store 事件——只看 comment/comment_thread 时，
+    // 另一台设备拉到的表情不会刷 panel（本机点的能看见，因为他按键那一刻自己 reload 了）。
+    if (table === 'comment' || table === 'comment_thread' || table === 'comment_reaction') void reload();
   }), [reload]);
 
   // 添加评论 from the block menu opens this composer and names the block it is about.

@@ -218,6 +218,19 @@ export function createSqliteStore(dbPath?: string): SqliteSyncStore {
     return row.c as number;
   }
 
+  /** G1642：最早一条 pending 距现在还有多久可重试（都到点／没 pending ⇒ 0）。 */
+  async function nextRetryDelayMs(nowMs: number): Promise<number> {
+    if (memFallback) return memFallback.nextRetryDelayMs(nowMs);
+    const database = await getDb();
+    const row: any = database
+      .prepare('SELECT MIN(next_retry_at) as earliest, COUNT(*) as n FROM pending_ops')
+      .get();
+    if (!row?.n || !row.earliest) return 0;
+    const at = Date.parse(row.earliest);
+    if (Number.isNaN(at)) return 0;
+    return Math.max(0, at - nowMs);
+  }
+
   async function getCursor(): Promise<Cursor | null> {
     if (memFallback) return memFallback.getCursor();
     const database = await getDb();
@@ -249,5 +262,5 @@ export function createSqliteStore(dbPath?: string): SqliteSyncStore {
     database.prepare('INSERT OR REPLACE INTO sync_state (key, value) VALUES (?, ?)').run(key, value);
   }
 
-  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, getCursor, setCursor, getKv, setKv, backendKind: kind };
+  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, nextRetryDelayMs, getCursor, setCursor, getKv, setKv, backendKind: kind };
 }

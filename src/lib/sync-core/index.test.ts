@@ -126,6 +126,57 @@ describe('SyncManager', () => {
     expect(pullSpy).toHaveBeenCalled();
   });
 
+  /**
+   * G1642 —— 退避时刻存在本地库里，整页重载后仍然有效：若所有 pending 都还在各自的退避窗口内，
+   * `queue.flush` 会立即返回 ok 却一笔都没推。旧实现此时直接 return，于是**再没有任何人排下一次
+   * flush**，同步停摆到下一次无关交互（开关页面、改设置）才恢复。修＝ok 但仍有 pending 时，
+   * 按 store 报告的最早可重试时刻排一次退避。
+   */
+  it('G1642：ok 但 pending 全在退避窗口内 → 按最早可重试时刻自动排下一次 flush', async () => {
+    vi.useFakeTimers();
+    const { manager, queue, store } = await makeManager();
+    await store.enqueue({
+      table: 'document', recordId: 'd1', op: 'upsert',
+      payload: { data: { title: 'a' }, syncTs: '2026-01-01T00:00:00.000Z' },
+      createdAt: '2026-01-01T00:00:00.000Z',
+    });
+    const [op] = await store.peekBatch(10, '9999-12-31T23:59:59.999Z');
+    // 上一轮失败留下的退避：30s 后才可重试
+    await store.bumpTry(op!.seq, new Date(Date.now() + 30_000).toISOString());
+
+    manager.triggerFlushForTest();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(queue.flush).toHaveBeenCalledTimes(1);
+
+    // 窗口内没人动；到点后自动再来一轮（旧实现这里永远是 1）
+    await vi.advanceTimersByTimeAsync(29_000);
+    expect(queue.flush).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1_500);
+    expect(queue.flush).toHaveBeenCalledTimes(2);
+  });
+
+  it('G1642：ok 且队列清空 ⇒ 不再排多余的重试（不会空转）', async () => {
+    vi.useFakeTimers();
+    const { manager, queue, store } = await makeManager();
+    await store.enqueue({
+      table: 'document', recordId: 'd1', op: 'upsert',
+      payload: { data: { title: 'a' }, syncTs: '2026-01-01T00:00:00.000Z' },
+      createdAt: '2026-01-01T00:00:00.000Z',
+    });
+    // queue.flush 的替身不 ack，所以这里手动清空来模拟"这一轮全推上去了"
+    const flush = queue.flush as unknown as ReturnType<typeof vi.fn>;
+    flush.mockImplementation(async () => {
+      const [op] = await store.peekBatch(10, '9999-12-31T23:59:59.999Z');
+      if (op) await store.ack([op.seq]);
+      return { pushed: 1, status: 'ok' as const };
+    });
+
+    manager.triggerFlushForTest();
+    await vi.advanceTimersByTimeAsync(10 * 60_000);
+    expect(flush).toHaveBeenCalledTimes(1);
+    expect(manager.status()).toBe('synced');
+  });
+
   it('boot 幂等：pull(full 无 cursor) + broadcaster.start 一次 + flush', async () => {
     const { manager, pullSpy, broadcasterStart, queue } = await makeManager();
     await manager.boot();

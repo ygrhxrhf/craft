@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { PendingRow } from '@/components/sync/local-records';
 import { overlayCommentThreads, pickViewerId, type ThreadView } from './comment-overlay';
@@ -164,5 +166,36 @@ describe('pickViewerId', () => {
 
   it('镜像里只有墓碑行时不给 id', () => {
     expect(pickViewerId(undefined, [{ id: 'u9', op: 'delete' }])).toBeNull();
+  });
+});
+
+/**
+ * G1641 —— 表情拆表后（G1640）订阅面要跟着扩。`CommentSection` 的 store 订阅此前只看
+ * `comment`／`comment_thread`：本机点表情时它自己会 reload，所以看不出来漏；另一台设备
+ * 拉回来的表情行走到这里就被丢了，面板停在旧状态。这类"拆表后订阅没跟"的洞静态闸能钉死。
+ */
+describe('CommentSection 的 store 订阅（G1641）', () => {
+  const src = readFileSync(
+    join(process.cwd(), 'src', 'components', 'editor', 'comments', 'CommentSection.tsx'),
+    'utf8',
+  );
+
+  it('订阅三个表：comment / comment_thread / comment_reaction', () => {
+    expect(src).toContain("table === 'comment'");
+    expect(src).toContain("table === 'comment_thread'");
+    expect(src, '拆表后漏订阅 comment_reaction ⇒ 另一台设备拉到的表情不刷新面板')
+      .toContain("table === 'comment_reaction'");
+  });
+
+  it('读 pending 也覆盖 comment_reaction（本机未推送的表情要能立刻看见）', () => {
+    expect(src).toContain("readPendingRows('comment_reaction')");
+  });
+
+  it('写路径按行 toggle：有行→墓碑、无行→新建（两个分支各自字面量 patch）', () => {
+    expect(src).toContain("table: 'comment_reaction'");
+    expect(src).toContain('reactionRowId(comment.reactions');
+    // 墓碑分支与新建分支各出现一次 comment_reaction 的 applyLocal
+    const occurrences = src.match(/table: 'comment_reaction'/g) ?? [];
+    expect(occurrences.length).toBeGreaterThanOrEqual(2);
   });
 });

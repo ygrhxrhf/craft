@@ -13,6 +13,13 @@ export interface SyncStore {
   ack(seqList: number[]): Promise<void>;
   bumpTry(seq: number, nextRetryAt: string): Promise<void>;
   countPending(): Promise<number>;
+  /**
+   * G1642：还有 pending 时，距**最早一条**可重试时刻还有多少毫秒（没有 pending／都到点 ⇒ 0）。
+   * 退避时刻存在本地库而不是内存里：整页重载后所有 op 都还在各自的退避窗口内，`flush` 会
+   * 立即返回 ok 却什么都没推——旧实现就此停住，要等下一次无关交互才再试。调度器靠这一问
+   * 排下一次重试。
+   */
+  nextRetryDelayMs(nowMs: number): Promise<number>;
   getCursor(): Promise<Cursor | null>;
   setCursor(c: Cursor): Promise<void>;
   // I7：sync_state 通用 kv（lastPullAt 等键值状态；与 cursor 键空间并存）
@@ -89,6 +96,18 @@ export function createMemoryStore(): SyncStore {
     return pending.size;
   }
 
+  async function nextRetryDelayMs(nowMs: number): Promise<number> {
+    let earliest: number | null = null;
+    for (const op of pending.values()) {
+      if (!op.nextRetryAt) return 0;
+      const at = Date.parse(op.nextRetryAt);
+      if (Number.isNaN(at)) return 0;
+      if (earliest === null || at < earliest) earliest = at;
+    }
+    if (earliest === null) return 0;
+    return Math.max(0, earliest - nowMs);
+  }
+
   async function getCursor(): Promise<Cursor | null> {
     return cursor ? { ...cursor } : null;
   }
@@ -105,5 +124,5 @@ export function createMemoryStore(): SyncStore {
     kv.set(key, value);
   }
 
-  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, getCursor, setCursor, getKv, setKv };
+  return { init, applyRemote, get, all, enqueue, peekBatch, ack, bumpTry, countPending, nextRetryDelayMs, getCursor, setCursor, getKv, setKv };
 }

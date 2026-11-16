@@ -426,6 +426,51 @@ describe('外键悬空（真库）', () => {
   });
 });
 
+// G1643 回归：硬删表的墓碑事件。`document_member` 没有 deletedAt——旧实现删行之后增量流里
+// 什么都不剩，所有者的其他设备会一直显示这位已被移除的协作者。真库证明"删完能拉回一条
+// op:delete、且只发给该看的人"：mock 证明不了 GET 侧按受众收窄这件事。
+describe('硬删表的墓碑事件（真库）', () => {
+  it('移除成员后，所有者拉增量能拿到该成员行的 op:delete；别的账号拿不到', async () => {
+    const memberId = crypto.randomUUID();
+    const inviteeId = crypto.randomUUID();
+    await db.orm.public.User.create({
+      id: inviteeId,
+      email: `sync-tombstone-${inviteeId.slice(0, 8)}@example.com`,
+      name: '被移除的成员',
+      password: '!no-login-test-row',
+    });
+    await db.orm.public.DocumentMember.create({
+      id: memberId, documentId, userId: inviteeId, role: 'editor', addedBy: userId,
+    });
+
+    // 客户端发 delete op（名册页的「移除」就是这一笔）
+    const res = await POST(post({ records: [{
+      table: 'document_member', id: memberId, op: 'delete',
+      syncTs: '2026-11-21T00:00:00.000Z',
+    }] }));
+    expect((await res.json()).applied).toEqual([{ table: 'document_member', id: memberId }]);
+    expect(await db.orm.public.DocumentMember.where({ id: memberId }).all()).toHaveLength(0);
+
+    // 所有者拉增量：墓碑行必须出现在流里，且是 op:delete
+    const pulled = await GET(new NextRequest('http://x/api/v1/sync?limit=1000'));
+    const body = await pulled.json();
+    const record = body.records.find((r: any) => r.table === 'document_member' && r.id === memberId);
+    expect(record, '成员被移除后所有者拉不到墓碑＝名册永远少不掉这一行').toBeTruthy();
+    expect(record.op).toBe('delete');
+
+    // 换成另一个账号：同样的一次拉取里不该有这枚墓碑
+    session.userId = inviteeId;
+    const otherPull = await GET(new NextRequest('http://x/api/v1/sync?limit=1000'));
+    const otherBody = await otherPull.json();
+    expect(otherBody.records.some((r: any) => r.table === 'document_member' && r.id === memberId)).toBe(false);
+    session.userId = userId;
+
+    await db.orm.public.SyncTombstone.where({ recordId: memberId }).delete();
+    await db.orm.public.DocumentMember.where({ documentId }).delete();
+    await db.orm.public.User.where({ id: inviteeId }).delete();
+  });
+});
+
 // G1632 回归：清理清单此前手抄 11 张，block_reminder 的墓碑永远不清。清理由 GET 侧轮转执行、
 // 失败被 catch 吞掉（"懒清理不阻塞同步"），所以表名/身份列写错时只会静默地什么都不删——
 // mock 证明不了这件事，只有真库能。

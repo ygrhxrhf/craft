@@ -1,0 +1,122 @@
+[
+  {
+    "id": "table.sync_tombstones",
+    "label": "Create table \"sync_tombstones\"",
+    "summary": "Creates table \"sync_tombstones\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "sync_tombstones"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"sync_tombstones\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sync_tombstones\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"sync_tombstones\"",
+        "sql": "CREATE TABLE \"public\".\"sync_tombstones\" (\n  \"id\" text NOT NULL,\n  \"recordId\" text NOT NULL,\n  \"syncTs\" timestamptz NOT NULL,\n  \"table\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"sync_tombstones\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sync_tombstones\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.sync_tombstones.sync_tombstones_table_recordId_userId_key",
+    "label": "Add unique constraint on \"sync_tombstones\" (table, recordId, userId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "sync_tombstones_table_recordId_userId_key",
+        "table": "sync_tombstones"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"sync_tombstones_table_recordId_userId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "sync_tombstones_table_recordId_userId_key",
+          "public",
+          "\"public\".\"sync_tombstones\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"sync_tombstones_table_recordId_userId_key\"",
+        "sql": "ALTER TABLE \"public\".\"sync_tombstones\" ADD CONSTRAINT \"sync_tombstones_table_recordId_userId_key\" UNIQUE (\"table\", \"recordId\", \"userId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"sync_tombstones_table_recordId_userId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "sync_tombstones_table_recordId_userId_key",
+          "public",
+          "\"public\".\"sync_tombstones\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.sync_tombstones.sync_tombstones_userId_syncTs_idx_1aa294fc",
+    "label": "Create index \"sync_tombstones_userId_syncTs_idx_1aa294fc\" on \"sync_tombstones\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "sync_tombstones_userId_syncTs_idx_1aa294fc",
+        "table": "sync_tombstones"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"sync_tombstones_userId_syncTs_idx_1aa294fc\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sync_tombstones_userId_syncTs_idx_1aa294fc\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"sync_tombstones_userId_syncTs_idx_1aa294fc\"",
+        "sql": "CREATE INDEX \"sync_tombstones_userId_syncTs_idx_1aa294fc\" ON \"public\".\"sync_tombstones\" (\"userId\", \"syncTs\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"sync_tombstones_userId_syncTs_idx_1aa294fc\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sync_tombstones_userId_syncTs_idx_1aa294fc\""
+        ]
+      }
+    ]
+  }
+]

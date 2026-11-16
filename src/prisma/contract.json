@@ -108,6 +108,10 @@
       "model": "SyncEvent",
       "namespace": "public"
     },
+    "sync_tombstones": {
+      "model": "SyncTombstone",
+      "namespace": "public"
+    },
     "tags": {
       "model": "Tag",
       "namespace": "public"
@@ -4107,6 +4111,67 @@
               },
               "namespaceId": "public",
               "table": "sync_events"
+            }
+          },
+          "SyncTombstone": {
+            "fields": {
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "recordId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "syncTs": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "table": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "recordId": {
+                  "column": "recordId"
+                },
+                "syncTs": {
+                  "column": "syncTs"
+                },
+                "table": {
+                  "column": "table"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "sync_tombstones"
             }
           },
           "Tag": {
@@ -8727,6 +8792,61 @@
               },
               "uniques": []
             },
+            "sync_tombstones": {
+              "columns": {
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "recordId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "syncTs": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "table": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId",
+                    "syncTs"
+                  ],
+                  "name": "sync_tombstones_userId_syncTs_idx_1aa294fc",
+                  "prefix": "sync_tombstones_userId_syncTs_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "table",
+                    "recordId",
+                    "userId"
+                  ]
+                }
+              ]
+            },
             "tags": {
               "columns": {
                 "color": {
@@ -9648,10 +9768,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "5a09311eab7488b8e30aa606e2b0c97a3b057a729390c65e10b6def21bf66876"
+    "storageHash": "7272ebb20e0b550811af3ec9cd4cdcc328d8edc9f5e5bf669d997ef239cc13d8"
   },
   "execution": {
-    "executionHash": "3403624d1347af90aaa0be4eb2d63cf9d34cb935320d0141947407a76f90f772",
+    "executionHash": "6f3b92d22db65c3239c3462d9916827e421b157790414ee82f7a821d5a989ab1",
     "mutations": {
       "defaults": [
         {
@@ -10261,6 +10381,17 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "spaces"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "sync_tombstones"
           }
         },
         {

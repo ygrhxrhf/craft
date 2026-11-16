@@ -11,6 +11,7 @@
 import { auth } from '@/lib/auth/auth';
 import { getDb } from '@/prisma/db';
 import { emitSyncEventSafe } from '@/lib/sync/emit-event';
+import { writeTombstones } from '@/lib/sync/tombstone-write';
 import { findShare, isOpenableShare } from '@/lib/share/resolve';
 import { tierOpensToLink } from '@/lib/share/permission';
 import { normalizeSharePermission } from '@/lib/share/permission';
@@ -206,6 +207,12 @@ export async function decideAccessRequest(
     });
   } else {
     await db.orm.public.DocumentMember.where({ id: String(member.id) }).delete();
+    // G1643：成员行是硬删，删完增量流里不留痕迹 ⇒ 所有者的其他设备会一直显示这条待批准请求。
+    await writeTombstones(db, {
+      table: 'document_member',
+      recordId: String(member.id),
+      audience: [session.user.id],
+    });
   }
   await emitSyncEventSafe(db, session.user.id, ['document_member'], String(member.id));
 

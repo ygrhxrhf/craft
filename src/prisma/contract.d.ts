@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'5a09311eab7488b8e30aa606e2b0c97a3b057a729390c65e10b6def21bf66876'>;
+  StorageHashBase<'7272ebb20e0b550811af3ec9cd4cdcc328d8edc9f5e5bf669d997ef239cc13d8'>;
 export type ExecutionHash =
-  ExecutionHashBase<'3403624d1347af90aaa0be4eb2d63cf9d34cb935320d0141947407a76f90f772'>;
+  ExecutionHashBase<'6f3b92d22db65c3239c3462d9916827e421b157790414ee82f7a821d5a989ab1'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -558,6 +558,13 @@ export type FieldOutputTypes = {
       readonly cursor: CodecTypes['pg/text@1']['output'];
       readonly userId: CodecTypes['pg/text@1']['output'];
     };
+    readonly SyncTombstone: {
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly table: CodecTypes['pg/text@1']['output'];
+      readonly recordId: CodecTypes['pg/text@1']['output'];
+      readonly userId: CodecTypes['pg/text@1']['output'];
+      readonly syncTs: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Tag: {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -975,6 +982,13 @@ export type FieldInputTypes = {
       readonly tables: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
       readonly cursor: CodecTypes['pg/text@1']['input'];
       readonly userId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly SyncTombstone: {
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly table: CodecTypes['pg/text@1']['input'];
+      readonly recordId: CodecTypes['pg/text@1']['input'];
+      readonly userId: CodecTypes['pg/text@1']['input'];
+      readonly syncTs: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Tag: {
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -1394,6 +1408,13 @@ export type StorageColumnTypes = {
       readonly ts: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/text@1']['output'];
     };
+    readonly sync_tombstones: {
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly recordId: CodecTypes['pg/text@1']['output'];
+      readonly syncTs: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly table: CodecTypes['pg/text@1']['output'];
+      readonly userId: CodecTypes['pg/text@1']['output'];
+    };
     readonly tags: {
       readonly color: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1810,6 +1831,13 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly tables: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
       readonly ts: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly userId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly sync_tombstones: {
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly recordId: CodecTypes['pg/text@1']['input'];
+      readonly syncTs: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly table: CodecTypes['pg/text@1']['input'];
       readonly userId: CodecTypes['pg/text@1']['input'];
     };
     readonly tags: {
@@ -2485,6 +2513,14 @@ export namespace Models {
     document: public_Document;
     readonly [RelationKeys]?: 'document';
   };
+  export type public_SyncTombstone = {
+    id: CodecTypes['pg/text@1']['output'];
+    table: CodecTypes['pg/text@1']['output'];
+    recordId: CodecTypes['pg/text@1']['output'];
+    userId: CodecTypes['pg/text@1']['output'];
+    syncTs: CodecTypes['pg/timestamptz-string@1']['output'];
+    readonly [RelationKeys]?: never;
+  };
   export type public_SyncEvent = {
     id: CodecTypes['pg/int4@1']['output'];
     ts: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2529,6 +2565,7 @@ export declare const models: {
     DocumentMember: Models.public_DocumentMember;
     Connection: Models.public_Connection;
     YjsDocumentState: Models.public_YjsDocumentState;
+    SyncTombstone: Models.public_SyncTombstone;
     SyncEvent: Models.public_SyncEvent;
   };
 };
@@ -5166,6 +5203,46 @@ type ContractBase = Omit<
               ];
               foreignKeys: readonly [];
             };
+            readonly sync_tombstones: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly table: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly recordId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly userId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly syncTs: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['table', 'recordId', 'userId'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'sync_tombstones_userId_syncTs_idx_1aa294fc';
+                  readonly prefix: 'sync_tombstones_userId_syncTs_idx';
+                  readonly columns: readonly ['userId', 'syncTs'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [];
+            };
             readonly tags: {
               columns: {
                 readonly id: {
@@ -6041,6 +6118,10 @@ type ContractBase = Omit<
     readonly yjs_document_states: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'YjsDocumentState';
+    };
+    readonly sync_tombstones: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SyncTombstone';
     };
     readonly sync_events: {
       readonly namespace: 'public' & NamespaceId;
@@ -8607,6 +8688,45 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly SyncTombstone: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly table: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly recordId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly syncTs: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'sync_tombstones';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly table: { readonly column: 'table' };
+                readonly recordId: { readonly column: 'recordId' };
+                readonly userId: { readonly column: 'userId' };
+                readonly syncTs: { readonly column: 'syncTs' };
+              };
+            };
+          };
           readonly Tag: {
             readonly fields: {
               readonly id: {
@@ -9940,6 +10060,14 @@ type ContractBase = Omit<
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
           readonly onUpdate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'sync_tombstones';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
         },
         {
           readonly ref: {

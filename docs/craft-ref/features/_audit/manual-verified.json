@@ -11035,6 +11035,22 @@
         "src/lib/sync-core/store.test.ts",
         "src/lib/sync-core/index.test.ts"
       ]
+    },
+    "G1643": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 571 批：document_member／notification 没有 deletedAt、删行即真删，增量流里不留痕迹 ⇒ 别的设备永远停在旧状态（被撤销授权的人还能点开文档、看到名册），唯一兜底是 30 天全量对账。加 deletedAt 不可行：成员行唯一键 (documentId,userId) 不含 deletedAt（移除再邀请会撞墓碑）、通知软删会污染 (taskId,remindAt) 去重。修＝新增 sync_tombstones 表（迁移 20261116T1220_add_sync_tombstones，唯一键 table+recordId+userId）只记「某行在某时刻被删、告诉谁」；纯核 tombstones.ts 的 HARD_DELETE_TABLES 从 SYNC_TABLES 现算（无 deletedAt 且无 isDeleted，排除无删行通路的 user／daily_notes_config），audienceForHardDelete 定受众（成员行只发文档所有者——协作者镜像里没有别人文档的成员行；通知只发收件人），确定性命幂等；写侧 writeTombstones 接 route 硬删分支与 revoke/leave/拒绝请求三个 action；读侧 GET 当 op:delete 补进同一条增量流（按受众收窄、坏时刻跳过）；30 天随轮转最后一槽清理。测试：tombstones.test.ts 8 条 + realdb 1 条（移除成员后所有者拉到 op:delete、别的账号拉不到）+ members.test.ts mock 补写面。反向验证：摘掉 GET 下发或短路写侧都红。",
+      "evidence": [
+        "src/prisma/contract.prisma",
+        "migrations/app/20261116T1220_add_sync_tombstones/migration.ts",
+        "src/lib/sync/tombstones.ts",
+        "src/lib/sync/tombstones.test.ts",
+        "src/lib/sync/tombstone-write.ts",
+        "src/app/api/v1/sync/route.ts",
+        "src/app/api/v1/sync/route.realdb.test.ts",
+        "src/actions/document/members.ts",
+        "src/actions/document/access-requests.ts"
+      ]
     }
   }
 }

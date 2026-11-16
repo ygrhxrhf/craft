@@ -759,6 +759,23 @@ model YjsDocumentState {
   @@map("yjs_document_states")
 }
 
+/// G1643：硬删表的**墓碑事件**。没有 deletedAt 的同步表（document_member／notification）一旦删行，
+/// 增量流里就再没有任何痕迹——别的设备只能等到 30 天全量对账才发现，那之前一直显示已被撤销的授权／
+/// 已删除的通知。这张表把"某行在某时刻被删"记成一条**给某一受众**的事件，GET 在增量流里把它当
+/// op:delete 下发；30 天后随墓碑清理一起删。
+model SyncTombstone {
+  id       String   @id @default(uuid())
+  table    String
+  recordId String
+  /// 受众：这枚墓碑要送给谁（成员被移除时既是**被移除的人**、也是**文档所有者**）。
+  userId   String
+  syncTs   TimestamptzString
+
+  @@unique([table, recordId, userId])
+  @@index([userId, syncTs])
+  @@map("sync_tombstones")
+}
+
 model SyncEvent {
   id     Int    @id @default(autoincrement())
   ts     TimestamptzString @default(now())

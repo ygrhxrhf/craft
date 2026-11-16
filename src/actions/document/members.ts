@@ -2,6 +2,8 @@
 
 import { getTable, requireUserId } from '@/lib/authz/guard';
 import { requireDocumentAccess } from '@/lib/authz/document-access';
+import { getDb } from '@/prisma/db';
+import { writeTombstones } from '@/lib/sync/tombstone-write';
 
 export type MemberRole = 'editor' | 'commenter' | 'viewer';
 
@@ -138,6 +140,9 @@ export async function countMemberElsewhere(
 /**
  * G138「移除所有访问权限」：把该成员在**我拥有的全部文档**里的授权行删掉，返回删除条数。
  * 只动调用者自己拥有的文档——别人文档里的授权不归他管（服务端边界，不是界面提示）。
+ *
+ * G1643：`document_member` 没有 deletedAt，删行之后增量流里什么都不剩 ⇒ 所有者的**其他设备**
+ * 会一直显示这位已被移除的协作者。删完补一枚墓碑事件（受众＝所有者自己）。
  */
 export async function revokeMemberEverywhere(memberUserId: string): Promise<number> {
   const userId = await requireUserId();
@@ -150,7 +155,13 @@ export async function revokeMemberEverywhere(memberUserId: string): Promise<numb
   let removed = 0;
   for (const row of rows) {
     if (!ownedIds.has(row.documentId as string)) continue;
-    await members.where({ id: row.id as string }).delete();
+    const memberId = String(row.id);
+    await members.where({ id: memberId }).delete();
+    await writeTombstones(await getDb(), {
+      table: 'document_member',
+      recordId: memberId,
+      audience: [userId],
+    });
     removed += 1;
   }
   return removed;
@@ -160,12 +171,25 @@ export async function revokeMemberEverywhere(memberUserId: string): Promise<numb
  * G298 —— **成员自己离开共享文档**。与"所有者移除协作者"是两件事：这里调用者移除的是**自己**
  * 那一行。所有者不能离开自己的文档（他是 `Document.userId`，没有成员行可删）⇒ 拒绝。
  * 返回是否真的删掉了一行（没在名册里 ⇒ 无操作，不报错——幂等）。
+ *
+ * G1643：墓碑发给**文档所有者**——他的名册要少一行；离开者自己的镜像里从来没有这一行
+ * （GET 侧成员行按"本人文档"收窄），发给他只是噪声。
  */
 export async function leaveDocument(documentId: string): Promise<boolean> {
   const userId = await requireUserId();
   const members = await getTable('DocumentMember');
   const mine = await members.first({ documentId, userId });
   if (!mine) return false;
+  const db = await getDb();
   await members.where({ id: mine.id as string }).delete();
+  const document = await db.orm.public.Document.first({ id: documentId });
+  const owner = typeof document?.userId === 'string' ? document.userId : '';
+  if (owner) {
+    await writeTombstones(db, {
+      table: 'document_member',
+      recordId: String(mine.id),
+      audience: [owner],
+    });
+  }
   return true;
 }

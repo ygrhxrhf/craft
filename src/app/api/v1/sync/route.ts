@@ -14,6 +14,8 @@ import { invalidPayloadColumns } from '@/lib/sync/payload-shape';
 import { purgePlan } from '@/lib/sync/purge-plan';
 import { createExistenceCache, danglingReferences, orderByReferences } from '@/lib/sync/references';
 import { effectiveRowTs } from '@/lib/sync/row-ts';
+import { audienceForHardDelete, isHardDeleteTable } from '@/lib/sync/tombstones';
+import { writeTombstones } from '@/lib/sync/tombstone-write';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
 import { materializeTaskReminders } from '@/lib/notification/materialize';
 import { materializeDailyDigest } from '@/lib/notification/daily-digest';
@@ -185,7 +187,6 @@ export async function GET(req: NextRequest) {
   }
 
   const collected: { table: string; id: string; op: 'upsert' | 'delete'; data?: any; syncTs: string }[] = [];
-
   let docIds: string[] = [];
   let collectionIds: string[] = [];
   let itemIds: string[] = [];
@@ -237,9 +238,25 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // G1643：硬删表的墓碑事件。`document_member`／`notification` 没有 deletedAt，删行之后
+  // 增量流里不会留下任何痕迹，别的设备只能等 30 天全量对账——对被撤销授权的人来说，那之前
+  // 他那边还能点开文档、看到名册。这里把"某行在某时刻被删"当 `op:'delete'` 补进同一条流，
+  // 与普通行一起按 `(syncTs,id)` 归并排序、同一个游标续传。
+  // ☆ 同一行既被删又有新行（重新邀请的那个人）时，两条都下发：客户端按到达顺序后到者胜。
+  const tombstones: any[] = await db.orm.public.SyncTombstone
+    .where((t: any) => t.userId.eq(userId))
+    .all();
+  for (const row of tombstones) {
+    // 只认硬删表的墓碑（这张表不该被当成"任意表的删除开关"），坏时刻跳过而不是让整次 pull 500。
+    if (!isHardDeleteTable(String(row.table))) continue;
+    const at = effectiveRowTs(row, 'syncTs');
+    if (!at) continue;
+    if (since && (at < since.ts || (at === since.ts && String(row.recordId) <= since.id))) continue;
+    collected.push({ table: String(row.table), id: String(row.recordId), op: 'delete', syncTs: at });
+  }
+
   collected.sort((a, b) =>
-    cmpCursor({ ts: a.syncTs, id: a.id }, { ts: b.syncTs, id: b.id }));
-  const page = collected.slice(0, limit);
+    cmpCursor({ ts: a.syncTs, id: a.id }, { ts: b.syncTs, id: b.id }));  const page = collected.slice(0, limit);
   const hasMore = collected.length > limit;
   const cursor = page.length
     ? { ts: page[page.length - 1].syncTs, id: page[page.length - 1].id }
@@ -506,6 +523,17 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
           if (def.cols.includes('deletedAt') || def.cols.includes('isDeleted')) {
             await model.where(where).update(tombstone);
           } else {
+            // G1643：硬删没有墓碑列 ⇒ 删完增量流里什么都不剩（别的设备只能等 30 天全量对账）。
+            // 先补一枚墓碑事件再删行：受众＝被移除的人＋文档所有者（成员行）／收件人（通知）。
+            if (isHardDeleteTable(rec.table) && current) {
+              const ownerId = rec.table === 'document_member' && typeof current.documentId === 'string'
+                ? ((await scope.orm.public.Document.first({ id: current.documentId }))?.userId as string | undefined)
+                : null;
+              const audience = audienceForHardDelete(rec.table, current, ownerId ?? null);
+              if (audience.length) {
+                await writeTombstones(scope, { table: rec.table, recordId: rec.id, audience }, ts);
+              }
+            }
             await model.where(where).delete();
           }
         } // 本就不存在 → 幂等接受，无写入
@@ -616,8 +644,15 @@ let purgeRotation = 0;
 
 async function purgeTombstones(db: any) {
   const plan = purgePlan();
-  const { model, identity: identityCols } = plan[purgeRotation % plan.length]!;
+  // G1643：墓碑**事件**（`sync_tombstones`）与行墓碑同一条 30 天保留期，占轮转的最后一槽
+  // ——不另开一次全表扫，也不让"每 GET 清一张"的节奏被这张表打乱。
+  const slot = purgeRotation % (plan.length + 1);
   purgeRotation++;
+  if (slot === plan.length) {
+    await purgeTombstoneEvents(db);
+    return;
+  }
+  const { model, identity: identityCols } = plan[slot]!;
   try {
     const cutoff = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
     const rows: any[] = await db.orm.public[model]
@@ -631,5 +666,21 @@ async function purgeTombstones(db: any) {
       : (r: any) => or(...rows.map((row: any) =>
           and(...identityCols.map((c) => r[c].eq(row[c])))));
     await db.orm.public[model].where(predicate).deleteAndCount();
+  } catch { /* 懒清理失败不阻塞同步 */ }
+}
+
+/** G1643：过期墓碑事件（>30 天）与行墓碑同一条保留期——超过它的客户端本来就该走全量对账。 */
+async function purgeTombstoneEvents(db: any) {
+  try {
+    const cutoff = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+    const rows: any[] = await db.orm.public.SyncTombstone
+      .where((r: any) => r.syncTs.lt(cutoff))
+      .select('id')
+      .limit(100)
+      .all();
+    if (rows.length === 0) return;
+    await db.orm.public.SyncTombstone
+      .where((r: any) => r.id.in(rows.map((row: any) => String(row.id))))
+      .deleteAndCount();
   } catch { /* 懒清理失败不阻塞同步 */ }
 }

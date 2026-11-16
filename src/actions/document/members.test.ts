@@ -39,6 +39,24 @@ vi.mock('@/prisma/db', () => ({
         Document: tableOf(() => store.documents),
         DocumentMember: tableOf(() => store.members),
         User: tableOf(() => store.users),
+        // G1643：删硬删行后要补墓碑事件（写面：first 查重 + create / update）
+        SyncTombstone: (() => {
+          const rows: Record<string, unknown>[] = [];
+          const table = tableOf(() => rows);
+          return {
+            ...table,
+            create: async (data: Record<string, unknown>) => {
+              rows.push(data);
+              return data;
+            },
+            where: (filter: Record<string, unknown>) => ({
+              ...table.where(filter),
+              update: async (data: Record<string, unknown>) => {
+                for (const row of rows) if (matches(row, filter)) Object.assign(row, data);
+              },
+            }),
+          };
+        })(),
       },
     },
   }),

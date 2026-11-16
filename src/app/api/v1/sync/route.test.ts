@@ -752,11 +752,12 @@ function mockPurgeDb(tombstones: { id: string; deletedAt: string }[]) {
         });
         (cond as (r: Record<string, ReturnType<typeof field>>) => unknown)(
           new Proxy({}, { get: () => field() }));
-        seen.models.push(currentModel);
       }
       return model;
     },
-    select: (...c: string[]) => { cols = c; return model; },
+    // G1643：模型名只在 purge 的两端（select / deleteAndCount）登记。GET 的墓碑事件读也走
+    // lambda，但它既 select 也不 delete——若在 where 处登记，会被当成一轮清理、把配对打乱。
+    select: (...c: string[]) => { cols = c; seen.models.push(currentModel); return model; },
     limit: (n: number) => { limit = n; seen.limits.push(n); return model; },
     all: async () => {
       if (!purgeChain) return []; // 主循环：本替身只服务 purge，同步流一律空
@@ -765,7 +766,10 @@ function mockPurgeDb(tombstones: { id: string; deletedAt: string }[]) {
         .slice(0, limit)
         .map(t => Object.fromEntries(cols.map(c => [c, (t as Record<string, unknown>)[c]])));
     },
-    deleteAndCount: vi.fn(async () => ({ count: 0 })),
+    deleteAndCount: vi.fn(async () => {
+      seen.models.push(currentModel);
+      return { count: 0 };
+    }),
   };
   (getDb as any).mockResolvedValue({
     orm: { public: new Proxy({}, { get: (_t, m: string) => { currentModel = m; return model; } }) },
@@ -814,7 +818,10 @@ describe('GET 墓碑 30 天边界（懒清理轮转）', () => {
     const seen = mockPurgeDb([{ id: 'old', deletedAt: iso(NOW - 40 * DAY) }]);
     await GET(new NextRequest('http://x/api/v1/sync'));
     await GET(new NextRequest('http://x/api/v1/sync'));
-    const tables = seen.models.filter((_, i) => i % 2 === 0); // 每表 select+delete 两次 where
+    // G1643 起 mockPurgeDb 在 select 与 deleteAndCount 各登记一次模型名 ⇒ 两张表两轮共 4 条，
+    // 隔一条取一条（每轮 select→deleteAndCount 同一张表）。
+    const tables = seen.models.filter((_, i) => i % 2 === 0);
+    expect(tables).toHaveLength(2);
     expect(new Set(tables).size).toBe(2);
   });
 });

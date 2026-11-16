@@ -33,7 +33,8 @@ interface ContractShape {
 const contract = JSON.parse(readFileSync(CONTRACT, 'utf8')) as ContractShape;
 const models = contract.domain.namespaces.public.models;
 
-const REF_FIELDS = ['userId', 'documentId', 'threadId', 'collectionId', 'itemId'] as const;
+// G1640：`commentId` 是表情行的归属列（表达既不是文档也不是集合，但引用指向一条评论）。
+const REF_FIELDS = ['userId', 'documentId', 'threadId', 'commentId', 'collectionId', 'itemId'] as const;
 
 /** 服务端写侧把 where／payload 收窄到会话用户的表（从 route.ts 现读，不在本文件抄一份）。
  *  ☆ 字符类必须收大写：表名里有 `customStyle`——`[a-z_]+` 会把它整枚漏掉（同一份正则的
@@ -75,10 +76,11 @@ describe('G1633：写侧归属声明面（WRITE_SCOPES 覆盖全部引用列）'
       if (scope) continue;
       // 不在声明面里的，只剩"服务端按 userId 收窄"这一条合法通路
       if (userIdTables.has(def.table)) {
-        // 有 userId 收窄 ≠ 归属已判：threadId 指向的线程属于别人的文档，userId 只说明
-        // "这行是谁写的"。这类表必须进声明面，不能靠 userId 蒙混。
-        if (!refs.has('threadId')) continue;
-        uncovered.push(`${def.table}（${def.model}）带 threadId 却没进 WRITE_SCOPES ⇒ 可往别人的评论线程里插行`);
+        // 有 userId 收窄 ≠ 归属已判：threadId／commentId 指向的行属于别人的文档，userId 只说明
+        // "这行是谁写的／谁点的"。这类表必须进声明面，不能靠 userId 蒙混。
+        const hops = ['threadId', 'commentId'].filter((f) => refs.has(f));
+        if (!hops.length) continue;
+        uncovered.push(`${def.table}（${def.model}）带 ${hops.join('／')} 却没进 WRITE_SCOPES ⇒ 可往别人的评论线程里插行`);
         continue;
       }
       uncovered.push(`${def.table}（${def.model}）既不在 WRITE_SCOPES 也不在 USER_ID_TABLES ⇒ where 只剩 {id}，可跨用户写`);
@@ -125,6 +127,7 @@ describe('G1633：写侧归属声明面（WRITE_SCOPES 覆盖全部引用列）'
       document_share: 'documentId@owner',
       document_member: 'documentId@owner',
       comment: 'threadId@commenter',
+      comment_reaction: 'commentId@commenter',
       collection_item: 'collection',
       collection_property: 'collection',
       collection_view: 'collection',

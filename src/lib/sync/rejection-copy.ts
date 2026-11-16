@@ -21,6 +21,7 @@ const TABLE_LABELS: Record<string, string> = {
   tag: '标签',
   favorite: '收藏',
   comment: '评论',
+  comment_reaction: '表情',
   notification: '通知',
 };
 

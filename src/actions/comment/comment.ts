@@ -90,6 +90,23 @@ export async function getThreads(documentId: string) {
     byThread.set(comment.threadId, list);
   }
 
+  // G1640：表情按人一行（`comment_reaction`），一次读回本页全部评论的表情行。
+  const commentIds = (comments as any[]).map((c) => String(c.id));
+  const reactionRows: any[] = commentIds.length === 0
+    ? []
+    : await db.orm.public.CommentReaction
+      .where((r: any) => r.commentId.in(commentIds))
+      .where((r: any) => r.deletedAt.isNull())
+      .orderBy((r: any) => r.createdAt.asc())
+      .all();
+  const reactionsByComment = new Map<string, any[]>();
+  for (const row of reactionRows) {
+    if (row.deletedAt) continue;
+    const list = reactionsByComment.get(row.commentId) ?? [];
+    list.push({ id: row.id, glyph: row.glyph, userId: row.userId, name: row.name ?? '' });
+    reactionsByComment.set(row.commentId, list);
+  }
+
   return live.map((row: any) => ({
     id: row.id,
     documentId: row.documentId,
@@ -105,7 +122,7 @@ export async function getThreads(documentId: string) {
       threadId: c.threadId,
       userId: c.userId,
       body: c.body,
-      reactions: c.reactions ?? null,
+      reactions: reactionsByComment.get(c.id) ?? [],
       createdAt: c.createdAt,
       mine: c.userId === session.user.id,
       deletedAt: null,

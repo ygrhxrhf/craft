@@ -1643,21 +1643,6 @@ describe('POST /api/v1/sync — G1633 评论写侧归属（threadId 两跳）', 
     expect(create.mock.calls[0]![0]).toMatchObject({ threadId: 'th-1', userId: 'u1' });
   });
 
-  it('放行：自己的评论加表情（只带 reactions，归属由存量行的 threadId 自带）', async () => {
-    const { update } = commentDb({
-      documents: [{ id: 'my-doc', userId: 'u1', isDeleted: false }],
-      threads: [thread('my-th', 'my-doc')],
-      comments: [{ id: 'c-mine', threadId: 'my-th', userId: 'u1', body: '原文',
-        updatedAt: '2026-09-28T09:00:00.000Z' }],
-    });
-    const res = await POST(req({ records: [{
-      table: 'comment', id: 'c-mine', op: 'upsert',
-      data: { reactions: [] }, syncTs: '2026-09-28T12:00:00.000Z',
-    }] }));
-    expect((await res.json()).applied).toEqual([{ table: 'comment', id: 'c-mine' }]);
-    expect(update).toHaveBeenCalledWith(expect.objectContaining({ reactions: [] }));
-  });
-
   it('放行：线程已被软删时，自己的评论删除照旧幂等收口（不因归属读不到而卡队列）', async () => {
     const { update } = commentDb({
       threads: [thread('gone-th', 'my-doc', '2026-09-28T10:00:00.000Z')],
@@ -1674,13 +1659,12 @@ describe('POST /api/v1/sync — G1633 评论写侧归属（threadId 两跳）', 
 });
 
 /**
- * G1636——评论表情的**多人共写**。表情存在 `comment.reactions` 这一 JSON 列上，而写侧此前
- * 只允许"行主人"改整行（`where {id, userId}`）⇒ 协作者点别人评论上的 👍 被按 not_found 拒收、
- * 界面弹「评论不存在或不属于你」，可官方那里对别人的评论加表情就是常态。
- * 放开整行等于允许改别人的正文；按"整条数组 LWW"合并又会让 A、B 同时各加一枚时互相覆盖。
- * 折中形状＝**按人切片**：只替调用者自己那一段，别人的条目以存量行为准。
+ * G1640——表情从"评论行上的一枚 JSON 数组"拆成**每人一行**（`comment_reaction`）。
+ * 旧形状下协作者对别人的评论加表情只能走"替行主改整行"的分支（G1636 的按人切片），
+ * 而那是为了绕开载体才有的折中；拆表后每一行只属于一个人：写侧天然收窄到本人、
+ * 两人同时各加一枚也不再互相覆盖，`where {id,userId}` 重新成为唯一语义。
  */
-describe('POST /api/v1/sync — G1636 评论表情的多人共写', () => {
+describe('POST /api/v1/sync — G1640 表情行（per-user）', () => {
   beforeEach(() => vi.clearAllMocks());
 
   function reactionDb(opts: {
@@ -1688,9 +1672,11 @@ describe('POST /api/v1/sync — G1636 评论表情的多人共写', () => {
     members?: Record<string, unknown>[];
     threads?: Record<string, unknown>[];
     comments?: Record<string, unknown>[];
+    reactions?: Record<string, unknown>[];
   }) {
     const create = vi.fn(async (_payload: Record<string, unknown>) => ({}));
     const update = vi.fn(async (_payload: Record<string, unknown>) => ({}));
+    const del = vi.fn(async () => ({}));
     const makeTable = (rows: Record<string, unknown>[]) => {
       const t: any = {
         where: () => t,
@@ -1698,7 +1684,7 @@ describe('POST /api/v1/sync — G1636 评论表情的多人共写', () => {
           rows.find((r) => Object.entries(where).every(([k, v]) => r[k] === v)) ?? null,
         create,
         update,
-        delete: async () => ({}),
+        delete: del,
       };
       return t;
     };
@@ -1709,110 +1695,130 @@ describe('POST /api/v1/sync — G1636 评论表情的多人共写', () => {
             : m === 'DocumentMember' ? makeTable(opts.members ?? [])
               : m === 'CommentThread' ? makeTable(opts.threads ?? [])
                 : m === 'Comment' ? makeTable(opts.comments ?? [])
-                  : makeTable([]),
+                  : m === 'CommentReaction' ? makeTable(opts.reactions ?? [])
+                    : makeTable([]),
     }) } });
-    return { create, update };
+    return { create, update, del };
   }
 
   const thread = (id: string, documentId: string) => ({
     id, documentId, blockText: 'x', resolved: false, deletedAt: null,
     updatedAt: '2026-09-28T09:00:00.000Z',
   });
-  const theirs = () => ({
+  const theirComment = () => ({
     id: 'c-theirs', threadId: 'th-1', userId: 'owner-elsewhere', body: '别人的评论',
-    reactions: [{ glyph: '🎉', userId: 'owner-elsewhere', name: '别人' }],
     updatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null,
   });
   const shared = () => ({
     documents: [{ id: 'shared-doc', userId: 'owner-elsewhere', isDeleted: false }],
     members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'commenter' }],
     threads: [thread('th-1', 'shared-doc')],
-    comments: [theirs()],
+    comments: [theirComment()],
   });
 
-  it('放行：commenter 对**别人的**评论加表情 → 只写 reactions，署名仍是原主', async () => {
-    const { update } = reactionDb(shared());
+  it('放行：commenter 对**别人的**评论加表情 → create 一行，userId 盖成会话用户', async () => {
+    const { create } = reactionDb(shared());
     const res = await POST(req({ records: [{
-      table: 'comment', id: 'c-theirs', op: 'upsert',
-      data: { reactions: [{ glyph: '👍', userId: 'u1', name: '我' }] },
+      table: 'comment_reaction', id: 'r-new', op: 'upsert',
+      data: { commentId: 'c-theirs', glyph: '👍', name: '我' },
       syncTs: '2026-09-28T12:00:00.000Z',
     }] }));
     const body = await res.json();
-    expect(body.applied).toEqual([{ table: 'comment', id: 'c-theirs' }]);
-    expect(update).toHaveBeenCalledTimes(1);
-    const patch = update.mock.calls[0]![0];
-    // 别人的条目被保留，我这一枚追加在后
-    expect(patch.reactions).toEqual([
-      { glyph: '🎉', userId: 'owner-elsewhere', name: '别人' },
-      { glyph: '👍', userId: 'u1', name: '我' },
-    ]);
-    // 不改署名、不碰正文
-    expect(patch).not.toHaveProperty('userId');
-    expect(patch).not.toHaveProperty('body');
-    expect(patch).not.toHaveProperty('threadId');
+    expect(body.applied).toEqual([{ table: 'comment_reaction', id: 'r-new' }]);
+    expect(create).toHaveBeenCalledTimes(1);
+    const row = create.mock.calls[0]![0];
+    expect(row).toMatchObject({ commentId: 'c-theirs', glyph: '👍', userId: 'u1' });
+    // 表情行不碰评论行：没有回写 comment 的 update
+    expect(row).not.toHaveProperty('body');
   });
 
-  it('拒收：提交里夹带「替别人加表情」的条目 → 那些条目被丢弃，只留本人那一段', async () => {
-    const { update } = reactionDb(shared());
+  it('放行：取消表情＝给**自己那一行**写墓碑（别人的行读不到，写不了）', async () => {
+    const { update } = reactionDb({
+      ...shared(),
+      reactions: [{ id: 'r-mine', commentId: 'c-theirs', userId: 'u1', glyph: '👍', name: '我',
+        updatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null }],
+    });
     const res = await POST(req({ records: [{
-      table: 'comment', id: 'c-theirs', op: 'upsert',
-      data: { reactions: [
-        { glyph: '👍', userId: 'u1', name: '我' },
-        { glyph: '🔥', userId: 'owner-elsewhere', name: '伪造' },
-      ] },
+      table: 'comment_reaction', id: 'r-mine', op: 'upsert',
+      data: { commentId: 'c-theirs', deletedAt: '2026-09-28T12:00:00.000Z' },
       syncTs: '2026-09-28T12:00:00.000Z',
     }] }));
-    expect((await res.json()).applied).toEqual([{ table: 'comment', id: 'c-theirs' }]);
-    expect(update.mock.calls[0]![0].reactions).toEqual([
-      { glyph: '🎉', userId: 'owner-elsewhere', name: '别人' },
-      { glyph: '👍', userId: 'u1', name: '我' },
-    ]);
+    expect((await res.json()).applied).toEqual([{ table: 'comment_reaction', id: 'r-mine' }]);
+    expect(update.mock.calls[0]![0]).toMatchObject({ deletedAt: '2026-09-28T12:00:00.000Z' });
   });
 
-  it('拒收：viewer 对别人的评论加表情 → not_found（档位仍是 commenter）', async () => {
+  it('拒收：拿别人的表情行 id 来写自己那一版 → not_found（where 带会话 userId）', async () => {
     const { update } = reactionDb({
+      ...shared(),
+      reactions: [{ id: 'r-theirs', commentId: 'c-theirs', userId: 'owner-elsewhere', glyph: '🎉', name: '别人',
+        updatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment_reaction', id: 'r-theirs', op: 'upsert',
+      data: { commentId: 'c-theirs', glyph: '🔥' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.rejected[0]).toMatchObject({ table: 'comment_reaction', reason: 'not_found' });
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('拒收：viewer 档加表情 → not_found（归属三跳后的档位仍是 commenter）', async () => {
+    const { create } = reactionDb({
       ...shared(),
       members: [{ id: 'm-1', documentId: 'shared-doc', userId: 'u1', role: 'viewer' }],
     });
     const res = await POST(req({ records: [{
-      table: 'comment', id: 'c-theirs', op: 'upsert',
-      data: { reactions: [{ glyph: '👍', userId: 'u1', name: '我' }] },
+      table: 'comment_reaction', id: 'r-viewer', op: 'upsert',
+      data: { commentId: 'c-theirs', glyph: '👍' },
       syncTs: '2026-09-28T12:00:00.000Z',
     }] }));
-    expect((await res.json()).rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
-    expect(update).not.toHaveBeenCalled();
+    expect((await res.json()).rejected[0]).toMatchObject({ table: 'comment_reaction', reason: 'not_found' });
+    expect(create).not.toHaveBeenCalled();
   });
 
-  it('拒收：reactions 不是数组 → invalid（这一笔会写坏 JSON 列，永远不可能成功）', async () => {
-    const { update } = reactionDb(shared());
-    const res = await POST(req({ records: [{
-      table: 'comment', id: 'c-theirs', op: 'upsert',
-      data: { reactions: '👍' }, syncTs: '2026-09-28T12:00:00.000Z',
-    }] }));
-    const body = await res.json();
-    expect(body.rejected[0]).toMatchObject({ table: 'comment', reason: 'invalid' });
-    expect(update).not.toHaveBeenCalled();
-  });
-
-  it('拒收：表情之外还带别的列（改别人正文）→ 仍按 not_found 拒，不落库', async () => {
-    const { update } = reactionDb(shared());
-    const res = await POST(req({ records: [{
-      table: 'comment', id: 'c-theirs', op: 'upsert',
-      data: { reactions: [], body: '被我改了' }, syncTs: '2026-09-28T12:00:00.000Z',
-    }] }));
-    const body = await res.json();
-    expect(body.rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
-    expect(update).not.toHaveBeenCalled();
-  });
-
-  it('拒收：对一枚不存在的评论只发表情（没有可承载的行）→ not_found，不 create', async () => {
+  it('拒收：往不存在的评论上挂表情 → not_found，不 create', async () => {
     const { create } = reactionDb({ threads: [thread('th-1', 'my-doc')], comments: [] });
     const res = await POST(req({ records: [{
-      table: 'comment', id: 'c-ghost', op: 'upsert',
-      data: { reactions: [{ glyph: '👍', userId: 'u1', name: '我' }] },
+      table: 'comment_reaction', id: 'r-ghost', op: 'upsert',
+      data: { commentId: 'c-ghost', glyph: '👍' },
       syncTs: '2026-09-28T12:00:00.000Z',
     }] }));
-    expect((await res.json()).rejected[0]).toMatchObject({ table: 'comment', reason: 'not_found' });
+    expect((await res.json()).rejected[0]).toMatchObject({ table: 'comment_reaction', reason: 'not_found' });
     expect(create).not.toHaveBeenCalled();
+  });
+
+  it('拒收：同 (commentId,userId,glyph) 撞唯一键 → 并到存量行（不 create、不 500）', async () => {
+    const { create, update } = reactionDb({
+      ...shared(),
+      reactions: [{ id: 'r-old', commentId: 'c-theirs', userId: 'u1', glyph: '👍', name: '旧名',
+        updatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment_reaction', id: 'r-new', op: 'upsert',
+      data: { commentId: 'c-theirs', glyph: '👍', name: '新名' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    const body = await res.json();
+    expect(body.applied).toEqual([{ table: 'comment_reaction', id: 'r-old' }]);
+    expect(create).not.toHaveBeenCalled();
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ name: '新名' }));
+    expect(update.mock.calls[0]![0]).not.toHaveProperty('id');
+  });
+
+  it('放行：自己评论上的表情行（归属三跳在本机文档上同样成立）', async () => {
+    const { create } = reactionDb({
+      documents: [{ id: 'my-doc', userId: 'u1', isDeleted: false }],
+      threads: [thread('th-1', 'my-doc')],
+      comments: [{ id: 'c-mine', threadId: 'th-1', userId: 'u1', body: '我的评论',
+        updatedAt: '2026-09-28T09:00:00.000Z', deletedAt: null }],
+    });
+    const res = await POST(req({ records: [{
+      table: 'comment_reaction', id: 'r-own', op: 'upsert',
+      data: { commentId: 'c-mine', glyph: '🎉', name: '我' },
+      syncTs: '2026-09-28T12:00:00.000Z',
+    }] }));
+    expect((await res.json()).applied).toEqual([{ table: 'comment_reaction', id: 'r-own' }]);
+    expect(create).toHaveBeenCalledTimes(1);
   });
 });

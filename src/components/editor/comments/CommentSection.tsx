@@ -15,7 +15,7 @@ import { COMMENT_HINT_MENTION, COMMENT_HINT_NEW_LINE, COMMENT_HINT_SEND, comment
 import { EmojiSuggest } from './EmojiSuggest';
 import { MentionSuggest } from './MentionSuggest';
 import { groupReactions, reactionSentence } from './reaction-copy';
-import { toggleReaction, type Reaction } from './reactions';
+import { reactionRowId, type Reaction } from './reactions';
 import { offlineReactionMessage } from './offline-reaction';
 import { commentSubmitAllowed, offlineCommentMessage } from '@/lib/comment/offline-comment';
 import { THREAD_RESOLVED_TOAST, THREAD_UNRESOLVED_TOAST, TYPE_TO_UNRESOLVE } from '@/lib/comment/thread-copy';
@@ -99,9 +99,10 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
   const [userNameById, setUserNameById] = useState<Map<string, string>>(new Map());
 
   const reload = useCallback(async () => {
-    const [pendingThreads, pendingComments, userRows] = await Promise.all([
+    const [pendingThreads, pendingComments, pendingReactions, userRows] = await Promise.all([
       readPendingRows('comment_thread'),
       readPendingRows('comment'),
+      readPendingRows('comment_reaction'),
       readLocalRecords('user'),
     ]);
     const resolvedViewerId = pickViewerId(userId, userRows);
@@ -120,7 +121,7 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
     } catch {
       // 离线：服务端读不到，退回本地 pending overlay，本地写入仍可见
     }
-    setThreads(toRows(overlayCommentThreads(serverThreads, pendingThreads, pendingComments, resolvedViewerId)));
+    setThreads(toRows(overlayCommentThreads(serverThreads, pendingThreads, pendingComments, pendingReactions, resolvedViewerId)));
   }, [documentId, userId]);
 
   useEffect(() => {
@@ -235,13 +236,25 @@ export function CommentSection({ documentId, editor, canComment = true }: Commen
     if (!actorId) return;
     if (!navigator.onLine) return;
     const name = session?.user?.name ?? session?.user?.email ?? '';
-    const reactions = toggleReaction(comment.reactions, { glyph, userId: actorId, name });
+    // G1640：表情是每人一行——已加过就墓碑那一行，没加过就新建一行（行 id 由本机生成）。
+    // 两个分支各写一份字面量 patch：静态那道闸（G1489）要能逐键核对白名单。
+    const existingId = reactionRowId(comment.reactions, actorId, glyph);
+    const manager = getSyncManager();
     try {
-      await getSyncManager().applyLocal({
-        table: 'comment',
-        id: comment.id,
-        patch: { reactions },
-      });
+      if (existingId) {
+        await manager.applyLocal({
+          table: 'comment_reaction',
+          id: existingId,
+          // commentId 两档都带：墓碑那一笔也要能挂回哪条评论（overlay 按它归属）。
+          patch: { commentId: comment.id, deletedAt: new Date().toISOString() },
+        });
+      } else {
+        await manager.applyLocal({
+          table: 'comment_reaction',
+          id: crypto.randomUUID(),
+          patch: { commentId: comment.id, glyph, name },
+        });
+      }
       await reload();
     } catch {
       // 表情没写上就保持原样

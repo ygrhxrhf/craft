@@ -129,10 +129,11 @@ describe('G1627：唯一键定位器覆盖契约的唯一约束', () => {
     }
   });
 
-  it('会话用户为作用域的那三张表不带 payload 的 userId（防止越权定位他人行）', () => {
-    // tag / favorite / block_reminder 的 userId 是**会话用户**：哪怕 payload 里塞了别人的
-    // userId，where 也必须用会话那一枚。document_member 反过来——它的 userId 是被授权成员。
-    for (const table of ['tag', 'favorite', 'block_reminder']) {
+  it('会话用户为作用域的那几张表不带 payload 的 userId（防止越权定位他人行）', () => {
+    // tag / favorite / block_reminder / comment_reaction 的 userId 是**会话用户**：哪怕 payload
+    // 里塞了别人的 userId，where 也必须用会话那一枚。document_member 反过来——它的 userId 是
+    // 被授权成员（邀请对象），只能取 payload。
+    for (const table of ['tag', 'favorite', 'block_reminder', 'comment_reaction']) {
       const locator = UNIQUE_KEY_LOCATORS[table]!;
       const key: Record<string, unknown> = {};
       for (const col of locator.columns) key[col] = col === 'userId' ? 'someone-else' : `${col}-value`;

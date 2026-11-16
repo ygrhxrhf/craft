@@ -54,4 +54,14 @@ export const UNIQUE_KEY_LOCATORS: Record<string, UniqueKeyLocator> = {
         ? null
         : { documentId: key.documentId, userId: key.userId },
   },
+  // G1640：表情行 `(commentId, userId, glyph)` 唯一。取消表情留下墓碑、再加同一枚时若客户端
+  // 铸新 id 就会撞约束 ⇒ 必须并回那枚墓碑行、跑同一条 decideLww。userId 取**会话用户**：
+  // 客户端载荷里根本不含它（服务端按会话覆盖），拿 payload 会永远定位不到。
+  comment_reaction: {
+    columns: ['commentId', 'userId', 'glyph'],
+    where: (key, userId) =>
+      (key.commentId == null || key.glyph == null)
+        ? null
+        : { commentId: key.commentId, userId, glyph: key.glyph },
+  },
 };

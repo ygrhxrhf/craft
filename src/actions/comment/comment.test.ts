@@ -19,6 +19,8 @@ let userId = '';
 let documentId = '';
 let liveThreadId = '';
 let tombstoneThreadId = '';
+let liveCommentId = '';
+let otherUserId = '';
 
 beforeAll(async () => {
   db = await getDb();
@@ -70,10 +72,35 @@ beforeAll(async () => {
     userId,
     body: '不该出现',
   });
+  // G1640：表情是每人一行。给活线程那条评论挂两行（本人一枚、别人一枚），再挂一行墓碑
+  // ——读面必须按 deletedAt 过滤，且两枚都要带出现在同一条评论上。
+  const liveComments = await db.orm.public.Comment.where({ threadId: liveThreadId }).all() as Record<string, any>[];
+  liveCommentId = String(liveComments.find((row) => row.body === '还在')!.id);
+  const otherId = crypto.randomUUID();
+  await db.orm.public.User.create({
+    id: otherId,
+    email: `comment-other-${otherId.slice(0, 8)}@example.com`,
+    name: '另一个协作者',
+    password: '!no-login-test-row',
+  });
+  await db.orm.public.CommentReaction.create({
+    id: crypto.randomUUID(), commentId: liveCommentId, userId, glyph: '👍', name: '评论读取测试',
+  });
+  await db.orm.public.CommentReaction.create({
+    id: crypto.randomUUID(), commentId: liveCommentId, userId: otherId, glyph: '🎉', name: '另一个协作者',
+  });
+  await db.orm.public.CommentReaction.create({
+    id: crypto.randomUUID(), commentId: liveCommentId, userId, glyph: '❤️', name: '评论读取测试',
+    deletedAt: new Date().toISOString(),
+  });
+  otherUserId = otherId;
 });
 
 afterAll(async () => {
   if (!db) return;
+  await db.orm.public.CommentReaction.where((r: { commentId: { in: (ids: string[]) => unknown } }) =>
+    r.commentId.in([liveCommentId]),
+  ).delete();
   await db.orm.public.Comment.where((c: { threadId: { in: (ids: string[]) => unknown } }) =>
     c.threadId.in([liveThreadId, tombstoneThreadId]),
   ).delete();
@@ -82,6 +109,7 @@ afterAll(async () => {
   ).delete();
   await db.orm.public.Document.where({ id: documentId }).delete();
   await db.orm.public.User.where({ id: userId }).delete();
+  if (otherUserId) await db.orm.public.User.where({ id: otherUserId }).delete();
 });
 
 describe('getThreads', () => {
@@ -90,5 +118,12 @@ describe('getThreads', () => {
     expect(rows.map((row: ThreadRows[number]) => row.id)).toEqual([liveThreadId]);
     expect(rows[0]?.comments.map((comment: ThreadRows[number]['comments'][number]) => comment.body)).toEqual(['还在']);
     expect(rows[0]?.comments[0]?.mine).toBe(true);
+  });
+
+  it('G1640：表情按人一行读回，墓碑行不出现', async () => {
+    const rows: ThreadRows = await getThreads(documentId);
+    const reactions = (rows[0]?.comments[0] as { reactions?: Array<{ glyph: string; userId: string }> })?.reactions;
+    expect(reactions?.map((row) => row.glyph).sort()).toEqual(['🎉', '👍'].sort());
+    expect(reactions?.find((row) => row.glyph === '🎉')?.userId).toBe(otherUserId);
   });
 });

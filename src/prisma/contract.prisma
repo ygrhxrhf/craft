@@ -46,6 +46,7 @@ model User {
   ownedSpaces   Space[]
   oauthCodes    OAuthCode[]
   customStyles  CustomStyle[]
+  commentReactions CommentReaction[]
 
   @@map("users")
 }
@@ -670,17 +671,38 @@ model Comment {
   threadId   String
   userId     String
   body       String
-  // JSON list of {glyph, userId, name}. Absent on every comment written before reactions existed.
-  reactions  Json?
   createdAt  TimestamptzString @default(now())
   updatedAt  temporal.updatedAtString()
   deletedAt  TimestamptzString?
 
   thread     CommentThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
   user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reactions  CommentReaction[]
 
   @@index([threadId])
   @@map("comments")
+}
+
+/// G1640：表情是**每人一行**。此前它是一枚 JSON 数组挂在 `comments.reactions` 上，
+/// 于是"谁加了表情"和"这条评论"共用一行 ⇒ 只有行主人能写（协作者对别人的评论加表情会被
+/// 按越权拒收），两人同时各加一枚还会互相覆盖。拆成行表后每一行只属于一个人，写侧天然收窄
+/// 到本人、并发也不互相覆盖（唯一键 `(commentId,userId,glyph)` 保证同一人同一枚只有一行）。
+model CommentReaction {
+  id        String   @id @default(uuid())
+  commentId String
+  userId    String
+  glyph     String
+  name      String   @default("")
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+  deletedAt TimestamptzString?
+
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId, glyph])
+  @@index([commentId])
+  @@map("comment_reactions")
 }
 
 model DocumentMember {

@@ -14,7 +14,6 @@ import { invalidPayloadColumns } from '@/lib/sync/payload-shape';
 import { purgePlan } from '@/lib/sync/purge-plan';
 import { createExistenceCache, danglingReferences, orderByReferences } from '@/lib/sync/references';
 import { effectiveRowTs } from '@/lib/sync/row-ts';
-import { isReactionOnlyPatch, mergeReactionWrite } from '@/lib/comment/reaction-merge';
 import { emitSyncEvent } from '@/lib/sync/emit-event';
 import { materializeTaskReminders } from '@/lib/notification/materialize';
 import { materializeDailyDigest } from '@/lib/notification/daily-digest';
@@ -113,6 +112,30 @@ async function resolveCommentThread(
   if (inline && stored && inline !== stored) return 'mismatch';
   const threadId = stored || inline;
   if (!threadId) return null;
+  const thread = await scope.orm.public.CommentThread.first({ id: threadId });
+  const documentId = typeof thread?.documentId === 'string' ? thread.documentId : '';
+  if (!documentId || thread.deletedAt) return null;
+  return { documentId };
+}
+
+/**
+ * G1640：`comment_reaction` 的归属要三跳——`commentId` → 评论 → `threadId` → 线程 →
+ * `documentId`。判据与前两支同形：存量行自带的 commentId 与这一笔内联的不一致 ⇒ 挪行，拒；
+ * 评论／线程不存在或已软删 ⇒ 定位不到。
+ */
+async function resolveReactionComment(
+  scope: any,
+  key: Record<string, unknown>,
+  current: any,
+): Promise<{ documentId: string } | 'mismatch' | null> {
+  const inline = typeof key.commentId === 'string' ? key.commentId : '';
+  const stored = typeof current?.commentId === 'string' ? current.commentId : '';
+  if (inline && stored && inline !== stored) return 'mismatch';
+  const commentId = stored || inline;
+  if (!commentId) return null;
+  const comment = await scope.orm.public.Comment.first({ id: commentId });
+  const threadId = typeof comment?.threadId === 'string' ? comment.threadId : '';
+  if (!threadId || comment.deletedAt) return null;
   const thread = await scope.orm.public.CommentThread.first({ id: threadId });
   const documentId = typeof thread?.documentId === 'string' ? thread.documentId : '';
   if (!documentId || thread.deletedAt) return null;
@@ -274,7 +297,7 @@ type BatchResult = {
 // `write-scope.test.ts` 现读契约逐表核对，新加带 userId 的同步表而这里没跟即红。
 const USER_ID_TABLES = new Set([
   'document', 'folder', 'tag', 'favorite', 'task',
-  'daily_notes_config', 'collection', 'comment', 'notification', 'block_reminder',
+  'daily_notes_config', 'collection', 'comment', 'comment_reaction', 'notification', 'block_reminder',
   'team_member', 'space_member', 'whiteboard', 'customStyle',
 ]);
 
@@ -362,15 +385,13 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
       const model = scope.orm.public[def.model];
       // I1(b)(c)：user 表 where 强制会话用户 id（上游已拒 id≠会话用户的记录）；
       // 带 userId 列的表 where 追加会话 userId——update/first/delete 定位均被收窄到本人行。
-      // G1636：唯一的例外是**只改表情的评论**——表情是多人的共同产物，协作者对别人的评论
-      // 加表情在官方是常态，而 `where {id, userId}` 会把这笔按 not_found 拒掉。这一支按 pk
-      // 定位存量行（下面的作用域闸仍要求 commenter 档），且只替调用者自己那一段切片。
-      const reactionWrite = rec.table === 'comment' && rec.op === 'upsert' && isReactionOnlyPatch(rec.data);
+      // G1640：表情已拆成 per-user 行表（`comment_reaction`），它的 userId 就是加表情的人
+      // ⇒ 同样收窄到会话用户：拿别人的表情行 id 来写＝定位不到，越权天然不成立。
       const where: Record<string, unknown> = rec.table === 'document_tag'
         ? { documentId: key.documentId, tagId: key.tagId }
         : rec.table === 'user'
           ? { id: userId }
-          : USER_ID_TABLES.has(rec.table) && !reactionWrite
+          : USER_ID_TABLES.has(rec.table)
             ? { id: rec.id, userId }
             : { id: rec.id };
       // G1629：值类型闸。坏值（`{isDeleted:'yes'}`／`{order:'3a'}`／非空列收到 null）绑进
@@ -406,6 +427,13 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
             continue;
           }
           documentId = thread?.documentId ?? '';
+        } else if (scopeDef.field === 'commentId') {
+          const via = await resolveReactionComment(scope, key, current);
+          if (via === 'mismatch') {
+            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: rec.syncTs, reason: 'not_found' });
+            continue;
+          }
+          documentId = via?.documentId ?? '';
         } else {
           const inline = typeof key.documentId === 'string' ? key.documentId : '';
           const stored = typeof current?.documentId === 'string' ? current.documentId : '';
@@ -485,41 +513,25 @@ async function applyBatch(db: any, userId: string, records: PostRecord[]): Promi
       } else {
         // I1(a)：payload 与 def.cols 求交——白名单外的键（content/plainText/任意伪造键）直接丢弃；
         // I1(c)：带 userId 列的表无条件盖会话 userId（create 落库必需，update 与 where 同值）。
-        // G1636：只改表情那一支不能盖 userId（那会把别人的评论改到自己名下），也不写别的列。
+        // G1640：表情行的 userId 就是加表情的人，这一盖同时把"替别人署名"堵死。
         const payload: Record<string, unknown> = { [def.tsCol]: ts };
         for (const c of def.cols) if (c in (rec.data ?? {})) payload[c] = rec.data![c];
-        if (USER_ID_TABLES.has(rec.table) && !reactionWrite) payload.userId = userId;
-        if (reactionWrite && current) {
-          // 表情按人切片合并：别人的条目原样保留，提交里不属于本人的条目丢弃。
-          const merged = mergeReactionWrite(current.reactions, rec.data?.reactions, { id: userId });
-          if (!merged) {
-            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'invalid' });
-            continue;
-          }
-          payload.reactions = merged;
-        }
+        if (USER_ID_TABLES.has(rec.table)) payload.userId = userId;
         // G1639：外键悬空。Postgres 对每个 N:1 关系都有真外键，而载荷里的引用列此前只被判过
         // 归属、没判过"被引用的那一行还在不在"——一台设备永久删了文档、另一台离线时收藏它，
         // 重连后这笔就撞 FK 违例 ⇒ 事务 aborted（25P02）⇒ 整批 500 ⇒ 无限重推（G1625 家族）。
         // 可空的引用列置 null 照常落库（文档父页没了就落根，与 adoptOrphans 同一语义）；
         // 非空的（favorite.documentId／comment.threadId／document_tag 两列…）永远不可能成功 ⇒ 逐笔拒。
-        if (!reactionWrite) {
-          const dangling = await danglingReferences(scope, rec.table, payload, referenceCache, minted);
-          const fatal = dangling.filter((ref) => !ref.nullable);
-          if (fatal.length) {
-            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'not_found' });
-            continue;
-          }
-          for (const ref of dangling) payload[ref.field] = null;
+        const dangling = await danglingReferences(scope, rec.table, payload, referenceCache, minted);
+        const fatal = dangling.filter((ref) => !ref.nullable);
+        if (fatal.length) {
+          rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'not_found' });
+          continue;
         }
+        for (const ref of dangling) payload[ref.field] = null;
         if (current) {
           await model.where(where).update(payload);
         } else {
-          // G1636：只改表情却定位不到行 ⇒ 没有可承载的表情行（建行要 threadId+body，见闸）；拒。
-          if (reactionWrite) {
-            rejected.push({ table: rec.table, id: pk, op: 'delete', syncTs: ts, reason: 'not_found' });
-            continue;
-          }
           // G1505 铸造闸：定位不到行 ≠ 这台设备在离线新建。离线新建（`create-local.ts`）
           // 一定带齐 `createRequires` 的键（哪怕 title 是空串），而"对一枚陈旧行点了动作"
           // 只带被改的那几列——放过去就会带着会话 userId 铸出一枚服务端从未有过的壳行。

@@ -10997,6 +10997,24 @@
         "src/app/api/v1/sync/route.test.ts",
         "src/app/api/v1/sync/route.realdb.test.ts"
       ]
+    },
+    "G1640": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "第 569 批（用户裁决）：表情从 comments.reactions 的一枚 JSON 数组拆成 per-user 行表 comment_reactions（列 id/commentId/userId/glyph/name/createdAt/updatedAt/deletedAt，唯一键 commentId+userId+glyph，两条 FK 均 CASCADE）。迁移 20261116T1117_add_comment_reactions 建表＋搬历史数据（json_array_elements 逐枚插入 ON CONFLICT DO NOTHING，check＝还有没搬完的旧数组）＋删旧列，npm run db:migrate 实跑通过并真库读回确认老表情已在新表。同步面：SYNC_TABLES（createRequires=commentId/userId/glyph）、USER_ID_TABLES（where 收窄到会话用户＝加表情的人）、WRITE_SCOPES（归属三跳 commentId→评论→线程→文档，commenter 档）、UNIQUE_KEY_LOCATORS（撞唯一键并回存量行）、rejection-copy 加「表情」。路由删掉 G1636 的只改表情特例与 comment 的 reactions 列，新增 resolveReactionComment。读面 getThreads 一次读回本页表情行；overlay 多收未推送表情行（新增/取消按 commentId 归位）；CommentSection 的 handleReact 改行级 toggle（有行→墓碑、无行→新建，两分支各写字面量 patch 让 G1489 闸可核）。删除旧 reaction-merge.ts 及其 12 条单测。测试：route 7 条＋realdb 1 条＋reactions/overlay/comment 读面若干＋write-scope/unique-keys/tables 三张声明面同步。反向验证：从 USER_ID_TABLES 摘掉 comment_reaction＝4 条红；从 WRITE_SCOPES 摘掉＝归属闸 2 条红。",
+      "evidence": [
+        "src/prisma/contract.prisma",
+        "migrations/app/20261116T1117_add_comment_reactions/migration.ts",
+        "src/lib/sync/tables.ts",
+        "src/lib/sync/write-scope.ts",
+        "src/lib/sync/unique-keys.ts",
+        "src/app/api/v1/sync/route.ts",
+        "src/actions/comment/comment.ts",
+        "src/components/editor/comments/CommentSection.tsx",
+        "src/components/editor/comments/comment-overlay.ts",
+        "src/components/editor/comments/reactions.ts",
+        "src/app/api/v1/sync/route.realdb.test.ts"
+      ]
     }
   }
 }

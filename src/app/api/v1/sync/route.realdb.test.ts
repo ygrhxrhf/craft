@@ -237,11 +237,11 @@ describe('评论写侧归属（真库）', () => {
   });
 });
 
-// G1636 回归：表情是多人的共同产物，而写侧此前只允许"行主人"改整行——协作者点别人评论上的
-// 表情会被按 not_found 拒收。真库上才能证明"合并后的数组与署名都还在"：mock 只能证明调了
-// update，证明不了列里最终是什么。
-describe('评论表情的多人共写（真库）', () => {
-  it('commenter 对别人的评论加表情：只追加本人那一段，署名与正文不动', async () => {
+// G1640 回归：表情拆成 per-user 行表后，协作者对**别人的**评论加表情不再需要"替行主改整行"——
+// 他自己那一行独立存在，两次并发各加一枚也不会互相覆盖。真库证明的是"行真的落在别人的评论下、
+// 且评论行本身一字未动"，mock 只能证明调了 create。
+describe('评论表情（per-user 行，真库）', () => {
+  it('commenter 对别人的评论加表情：新建本人一行，评论行不动；再取消＝本人那行落墓碑', async () => {
     const authorId = crypto.randomUUID();
     await db.orm.public.User.create({
       id: authorId,
@@ -261,30 +261,36 @@ describe('评论表情的多人共写（真库）', () => {
     });
     await db.orm.public.Comment.create({
       id: commentId, threadId, userId: authorId, body: '作者写的',
-      reactions: [{ glyph: '🎉', userId: authorId, name: '评论作者' }],
     });
 
+    const reactionId = crypto.randomUUID();
     const res = await POST(post({ records: [{
-      table: 'comment', id: commentId, op: 'upsert',
-      data: { reactions: [
-        { glyph: '👍', userId, name: '会话用户' },
-        { glyph: '🔥', userId: authorId, name: '伪造' },
-      ] },
+      table: 'comment_reaction', id: reactionId, op: 'upsert',
+      data: { commentId, glyph: '👍', name: '会话用户' },
       syncTs: '2026-11-18T00:00:00.000Z',
     }] }));
     const body = await res.json();
     expect(res.status).toBe(200);
-    expect(body.applied).toEqual([{ table: 'comment', id: commentId }]);
+    expect(body.applied).toEqual([{ table: 'comment_reaction', id: reactionId }]);
 
-    const rows = await db.orm.public.Comment.where({ id: commentId }).all() as Record<string, any>[];
+    const rows = await db.orm.public.CommentReaction.where({ commentId }).all() as Record<string, any>[];
     expect(rows).toHaveLength(1);
-    expect(rows[0]!.userId).toBe(authorId);          // 署名没被改成会话用户
-    expect(rows[0]!.body).toBe('作者写的');           // 正文一字不动
-    expect(rows[0]!.reactions).toEqual([
-      { glyph: '🎉', userId: authorId, name: '评论作者' },   // 作者的条目保留
-      { glyph: '👍', userId, name: '会话用户' },             // 只有本人那一条加进去
-    ]);
+    expect(rows[0]).toMatchObject({ userId, glyph: '👍', name: '会话用户' });
+    const comment = await db.orm.public.Comment.first({ id: commentId });
+    expect(comment!.userId).toBe(authorId);   // 评论署名没被改
+    expect(comment!.body).toBe('作者写的');    // 正文一字不动
 
+    // 取消：本人那一行落墓碑（GET 读面按 deletedAt 过滤）
+    const off = await POST(post({ records: [{
+      table: 'comment_reaction', id: reactionId, op: 'upsert',
+      data: { commentId, deletedAt: '2026-11-18T00:10:00.000Z' },
+      syncTs: '2026-11-18T00:10:00.000Z',
+    }] }));
+    expect((await off.json()).applied).toEqual([{ table: 'comment_reaction', id: reactionId }]);
+    const after = await db.orm.public.CommentReaction.first({ id: reactionId });
+    expect(after!.deletedAt).not.toBeNull();
+
+    await db.orm.public.CommentReaction.where({ commentId }).delete();
     await db.orm.public.Comment.where({ threadId }).delete();
     await db.orm.public.CommentThread.where({ id: threadId }).delete();
     await db.orm.public.DocumentMember.where({ documentId: docId }).delete();

@@ -32,6 +32,10 @@
       "model": "Collection",
       "namespace": "public"
     },
+    "comment_reactions": {
+      "model": "CommentReaction",
+      "namespace": "public"
+    },
     "comment_threads": {
       "model": "CommentThread",
       "namespace": "public"
@@ -1158,13 +1162,6 @@
                   "kind": "scalar"
                 }
               },
-              "reactions": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/json@1",
-                  "kind": "scalar"
-                }
-              },
               "threadId": {
                 "nullable": false,
                 "type": {
@@ -1188,6 +1185,21 @@
               }
             },
             "relations": {
+              "reactions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "commentId"
+                  ]
+                },
+                "to": {
+                  "model": "CommentReaction",
+                  "namespace": "public"
+                }
+              },
               "thread": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -1235,9 +1247,6 @@
                 "id": {
                   "column": "id"
                 },
-                "reactions": {
-                  "column": "reactions"
-                },
                 "threadId": {
                   "column": "threadId"
                 },
@@ -1250,6 +1259,130 @@
               },
               "namespaceId": "public",
               "table": "comments"
+            }
+          },
+          "CommentReaction": {
+            "fields": {
+              "commentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "deletedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "glyph": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "comment": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "commentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Comment",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "commentId": {
+                  "column": "commentId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "deletedAt": {
+                  "column": "deletedAt"
+                },
+                "glyph": {
+                  "column": "glyph"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "comment_reactions"
             }
           },
           "CommentThread": {
@@ -4797,6 +4930,21 @@
                   "namespace": "public"
                 }
               },
+              "commentReactions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "CommentReaction",
+                  "namespace": "public"
+                }
+              },
               "connections": {
                 "cardinality": "1:N",
                 "on": {
@@ -6204,6 +6352,126 @@
               },
               "uniques": []
             },
+            "comment_reactions": {
+              "columns": {
+                "commentId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "deletedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "glyph": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": ""
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "commentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "comment_reactions"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "comments"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "comment_reactions"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "commentId"
+                  ],
+                  "name": "comment_reactions_commentId_idx_b5a4f615",
+                  "prefix": "comment_reactions_commentId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "comment_reactions_userId_idx_a489d58a",
+                  "prefix": "comment_reactions_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "commentId",
+                    "userId",
+                    "glyph"
+                  ]
+                }
+              ]
+            },
             "comment_threads": {
               "columns": {
                 "blockId": {
@@ -6339,11 +6607,6 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
-                },
-                "reactions": {
-                  "codecId": "pg/json@1",
-                  "nativeType": "json",
-                  "nullable": true
                 },
                 "threadId": {
                   "codecId": "pg/text@1",
@@ -9385,10 +9648,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a06395d7ad3617c2b18d353e80c8876ed805db51dcd7affe26a952f55c18c400"
+    "storageHash": "5a09311eab7488b8e30aa606e2b0c97a3b057a729390c65e10b6def21bf66876"
   },
   "execution": {
-    "executionHash": "4ab4e86facf3f98e2d7366b96f6cf51036cc4f660f085fb81a7fda131a187cff",
+    "executionHash": "3403624d1347af90aaa0be4eb2d63cf9d34cb935320d0141947407a76f90f772",
     "mutations": {
       "defaults": [
         {
@@ -9556,6 +9819,32 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "collections"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "comment_reactions"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "comment_reactions"
           }
         },
         {

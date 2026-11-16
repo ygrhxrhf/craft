@@ -17,8 +17,11 @@ import type { AccessLevel } from '@/lib/authz/resource';
 export type WriteScope =
   | {
     kind: 'document';
-    /** 定位归属的外键列：`documentId` 直取，`threadId` 经评论线程两跳到文档。 */
-    field: 'documentId' | 'threadId';
+    /**
+     * 定位归属的**本地列**：`documentId` 直取；`threadId` 经评论线程两跳到文档；
+     * `commentId` 是表情行——`commentId` → 评论 → 线程 → 文档（三跳）。
+     */
+    field: 'documentId' | 'threadId' | 'commentId';
     /** 调用者至少要有这一档，才能对这条记录做写动作（与各自 server action 同档）。 */
     level: AccessLevel;
   }
@@ -27,7 +30,7 @@ export type WriteScope =
 /**
  * 逐表档位对齐各自 action 的要求（别按"最小可用"随手放低）：
  *  - `document_tag`＝editor（attachTag/detachTag）
- *  - `comment_thread`／`comment`＝commenter（createThread/addReply）
+ *  - `comment_thread`／`comment`／`comment_reaction`＝commenter（createThread/addReply/加表情）
  *  - `document_share`／`document_member`＝owner（分享档位与成员增删）
  *  - 集合四表＝本人所有且未软删（集合没有协作者概念）
  */
@@ -40,6 +43,9 @@ export const WRITE_SCOPES: Record<string, WriteScope> = {
   // 都能往任意 threadId 下铸一条自己的评论，而 `getThreads` 按 threadIds 读回全部作者的行
   // ⇒ 别人的文档里会出现陌生人插的评论。归属要经 threadId → 线程 → 文档再判 commenter。
   comment: { kind: 'document', field: 'threadId', level: 'commenter' },
+  // G1640：表情行同理——userId 是**加表情的人**；归属经 `commentId` → 评论 → 线程 → 文档。
+  // 档位仍是 commenter（与官方"可评论"档同义：能评论就能对评论加表情）。
+  comment_reaction: { kind: 'document', field: 'commentId', level: 'commenter' },
   collection_item: { kind: 'collection' },
   collection_property: { kind: 'collection' },
   collection_view: { kind: 'collection' },

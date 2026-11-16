@@ -217,11 +217,13 @@ describe('SYNC_TABLES coverage (R-9)', () => {
     // 这里钉的是"本仓自己的约定面"：已配闸的表清单，以及键必须落在白名单里。
     // G1513：闸从 document 一表推广到"有真建行通路且单点动作会铸壳"的六表；
     // G1626：再把其余 11 张表补齐（停用「没配＝放行」那一档）。
+    // G1640：表情拆成 per-user 行表后，`comment_reaction` 也有一条内核建行通路（点表情就建
+    // 一行）⇒ 同样要配闸（缺 commentId/userId/glyph 时不许铸壳）。
     const gated = SYNC_TABLES.filter(d => (d.createRequires?.length ?? 0) > 0);
     expect(gated.map(d => d.table)).toEqual([
       'document', 'folder', 'tag', 'document_tag', 'favorite', 'task',
       'collection', 'collection_item', 'collection_property', 'collection_value', 'collection_view',
-      'comment', 'comment_thread', 'document_share', 'document_member',
+      'comment', 'comment_reaction', 'comment_thread', 'document_share', 'document_member',
       'block_reminder', 'whiteboard',
     ]);
     // 反面：这四张**不许**配闸——它们的 create 只可能来自"陈旧行上的单点动作"，

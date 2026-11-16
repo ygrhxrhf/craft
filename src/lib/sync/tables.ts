@@ -66,9 +66,14 @@ export const SYNC_TABLES: TableDef[] = [
   { table: 'collection_property', model: 'CollectionProperty', cols: ['id','collectionId','name','type','config','order','isVisible','width','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['collectionId', 'name', 'type'] },
   { table: 'collection_value', model: 'CollectionValue', cols: ['id','itemId','propertyId','value','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['itemId', 'propertyId'] },
   { table: 'collection_view', model: 'CollectionView', cols: ['id','collectionId','name','type','config','isActive','order','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['collectionId', 'type'] },
-  // G1513：comment 的单点动作＝加表情 {reactions}／删除 {deletedAt}；离线新建（CommentSection）
-  // 一定带 threadId＋body ⇒ 两枚（也是 contract 必填列）把加表情/删除在陈旧行上的铸壳挡住。
-  { table: 'comment', model: 'Comment', cols: ['id','threadId','userId','body','reactions','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['threadId', 'body'] },
+  // G1513：comment 的单点动作＝删除 {deletedAt}；离线新建（CommentSection）
+  // 一定带 threadId＋body ⇒ 两枚（也是 contract 必填列）把删除在陈旧行上的铸壳挡住。
+  // G1640：表情不再是 `reactions` 列（已拆成 comment_reaction 行表），comment 的写面只剩正文与墓碑。
+  { table: 'comment', model: 'Comment', cols: ['id','threadId','userId','body','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['threadId', 'body'] },
+  // G1640：表情按人一行（每人每枚一行）。写侧天然收窄到本人（userId＝会话用户），
+  // 两人同时各加一枚也不再互相覆盖；唯一键 (commentId,userId,glyph) 由定位器收口。
+  // 契约必填列＝commentId／userId／glyph（name 有默认、其余由生成器给）。
+  { table: 'comment_reaction', model: 'CommentReaction', cols: ['id','commentId','userId','glyph','name','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['commentId', 'userId', 'glyph'] },
   // G1513：comment_thread 的单点动作＝解决 {resolved}／删除 {deletedAt}；离线新建一定带 documentId。
   { table: 'comment_thread', model: 'CommentThread', cols: ['id','documentId','blockId','blockText','resolved','resolvedBy','resolvedAt','createdAt','updatedAt','deletedAt'], tsCol: 'updatedAt', id: r => String(r.id), createRequires: ['documentId'] },
   // G1626：document_share 的离线新建＝ShareDialog 的补种（documentId+token+…）；其余全是单点改档。

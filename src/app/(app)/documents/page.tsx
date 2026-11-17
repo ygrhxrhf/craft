@@ -46,7 +46,8 @@ export default async function DocumentsPage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <AppPageHeader title="文档" />
+      {/* G1649：官方该屏标题是「所有文档」，不是「文档」。 */}
+      <AppPageHeader title="所有文档" />
       <AppPageContainer>
         {/* G15：craft 的 /all 首屏只有卡片网格；本地那条五按钮快捷条已撤（入口改挂侧栏与顶栏）。 */}
         {favoriteDocs.length > 0 && (

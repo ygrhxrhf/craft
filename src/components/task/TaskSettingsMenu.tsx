@@ -1,5 +1,6 @@
 'use client';
 
+import { useSyncExternalStore } from 'react';
 import { Check, MoreHorizontal } from 'lucide-react';
 
 import {
@@ -30,7 +31,13 @@ import {
   TASK_SORT_TASKS_BY,
   TASK_VIEW_COMPLETED,
 } from '@/lib/task/official-copy';
-import type { TaskGroup } from '@/lib/task/grouping';
+import {
+  readShowCompletedNow,
+  serverShowCompleted,
+  subscribeShowCompleted,
+  writeShowCompleted,
+  type TaskGroup,
+} from '@/lib/task/grouping';
 import {
   writeTaskViewSetting,
   type DocumentSort,
@@ -76,12 +83,24 @@ function MenuRow({ label, checked, onClick }: { label: string; checked: boolean;
 export function TaskSettingsMenu({
   group,
   settings,
-  onShowCompleted,
+  onCheckAll,
+  checkAllLabel,
+  onSetDefaultView,
+  setDefaultLabel,
 }: {
   group: TaskGroup;
   settings: TaskViewSettings;
-  onShowCompleted: () => void;
+  /** G1653：官方把「全部完成」「设置为默认视图」「显示已完成」收在分区 ⋯ 里，不在工具条上排开。 */
+  onCheckAll?: () => void;
+  checkAllLabel?: string;
+  onSetDefaultView?: () => void;
+  setDefaultLabel?: string;
 }) {
+  const showCompleted = useSyncExternalStore(
+    subscribeShowCompleted,
+    readShowCompletedNow,
+    serverShowCompleted,
+  );
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -114,8 +133,6 @@ export function TaskSettingsMenu({
                 writeTaskViewSetting('inboxShowScheduledTasks', !settings.inboxShowScheduledTasks)
               }
             />
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onShowCompleted}>{TASK_VIEW_COMPLETED}</DropdownMenuItem>
           </>
         )}
 
@@ -128,8 +145,6 @@ export function TaskSettingsMenu({
                 writeTaskViewSetting('inboxShowScheduledTasks', !settings.inboxShowScheduledTasks)
               }
             />
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onShowCompleted}>{TASK_VIEW_COMPLETED}</DropdownMenuItem>
           </>
         )}
 
@@ -218,6 +233,23 @@ export function TaskSettingsMenu({
               </>
             )}
           </>
+        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          role="menuitemcheckbox"
+          aria-checked={showCompleted}
+          aria-label={TASK_VIEW_COMPLETED}
+          onClick={() => writeShowCompleted(globalThis.localStorage, !showCompleted)}
+        >
+          <span className="truncate">{TASK_VIEW_COMPLETED}</span>
+          {showCompleted && <Check className="ml-auto size-3.5" />}
+        </DropdownMenuItem>
+        {(onCheckAll || onSetDefaultView) && <DropdownMenuSeparator />}
+        {onCheckAll && (
+          <DropdownMenuItem onClick={onCheckAll}>{checkAllLabel}</DropdownMenuItem>
+        )}
+        {onSetDefaultView && (
+          <DropdownMenuItem onClick={onSetDefaultView}>{setDefaultLabel}</DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

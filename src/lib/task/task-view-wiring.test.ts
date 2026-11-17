@@ -71,10 +71,12 @@ describe('task zero-state card and tabs (G1077)', () => {
 
   it('lets the tabs row scroll horizontally with both scrollbar hiders', () => {
     const source = view();
+    // G1652：tabs 从标题下方移进页头右侧的胶囊组，整组仍是横向滚动容器、仍藏两条滚动条。
+    expect(source).toContain('data-testid="task-groups"');
     expect(source).toContain('overflow-x-auto');
     expect(source).toContain('[scrollbar-width:none]');
     expect(source).toContain('[&::-webkit-scrollbar]:hidden');
-    expect(source).toContain('flex w-max gap-1 px-4');
+    expect(source).toContain('rounded-lg bg-foreground/5 p-0.5');
   });
 });
 
@@ -111,7 +113,9 @@ describe('task settings menus and drag gate (G604)', () => {
     const allBlock = source.slice(source.indexOf("group === 'all'"), source.indexOf("group === 'today'"));
     expect(allBlock).not.toContain('TASK_INBOX_SORT_BY_LABEL');
     expect(allBlock).toContain('TASK_SHOW_SCHEDULED');
-    expect(allBlock).toContain('TASK_VIEW_COMPLETED');
+    // G1653：「显示已完成」已是分区 ⋯ 里的共享开关行，不再挂在单个分组块里。
+    expect(allBlock).not.toContain('TASK_VIEW_COMPLETED');
+    expect(source).toContain('aria-checked={showCompleted}');
   });
 
   it('gates the drop on the sort and offers switch-to-manual only in the inbox', () => {
@@ -132,11 +136,13 @@ describe('task settings menus and drag gate (G604)', () => {
     expect(menuSource).not.toContain('reorderTasks');
   });
 
-  // 真面核验（第 550 批）：菜单里的「查看已完成的任务」若只翻父组件 state，行会冒出来而内联
-  // 开关仍读设备存储的 false——两处显示打架，刷新还会丢。两处必须同源。
-  it('routes the completed menu row through the same device store as the switch', () => {
-    const source = view();
-    expect(source).toContain('writeShowCompleted(globalThis.localStorage, true)');
-    expect(source).not.toContain('onShowCompleted={() => setShowCompleted(true)}');
+  // 真面核验（第 550 批 / G1653）：菜单里的「显示已完成」必须与列表读同一份设备存储——
+  // 只翻父组件 state 会让行冒出来而存储仍是旧值，刷新还会丢。
+  it('routes the completed menu row through the same device store as the list', () => {
+    const source = menu();
+    expect(source).toContain('subscribeShowCompleted');
+    expect(source).toContain('writeShowCompleted(globalThis.localStorage, !showCompleted)');
+    expect(view()).toContain('useSyncExternalStore(subscribeShowCompleted');
+    expect(view()).not.toContain('onShowCompleted');
   });
 });

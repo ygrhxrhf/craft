@@ -33,6 +33,7 @@ test('the task date popover parses, rejects the past and clears', async ({ page 
 
   const title = `日期弹层-${Date.now()}`;
   await page.goto('/tasks/all');
+  await page.getByRole('button', { name: '新建任务' }).click();
   await page.fill('input[placeholder="添加任务，按回车确认…"]', title);
   await page.keyboard.press('Enter');
 
@@ -73,6 +74,7 @@ test('the date popover carries reminder and repeat sub-rows', async ({ page }) =
 
   const title = `日期子行-${Date.now()}`;
   await page.goto('/tasks/all');
+  await page.getByRole('button', { name: '新建任务' }).click();
   await page.fill('input[placeholder="添加任务，按回车确认…"]', title);
   await page.keyboard.press('Enter');
 
@@ -93,7 +95,7 @@ test('the date popover carries reminder and repeat sub-rows', async ({ page }) =
   await expect(panel.getByRole('button', { name: '17:00' })).toBeVisible();
 
   // Close, then reopen for the repeat sub-row (G374 offers date-aware labels).
-  await page.getByRole('heading', { name: '任务收件箱' }).click();
+  await page.getByRole('heading', { name: '任务' }).click();
   await row.getByRole('button', { name: '设置计划日期' }).click();
   await page.getByRole('button', { name: /重复…/ }).click();
   // G265：没有既有规则时先落「重复依据」这一步（按计划日／相对于完成），选完才出频率列表。

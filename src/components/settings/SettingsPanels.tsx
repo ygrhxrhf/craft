@@ -603,49 +603,49 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
             </p>
           )}
           <div className="flex justify-center pt-6">
-            <SpaceIcon
-              icon={space?.icon}
-              initial={(space?.name ?? spaceName ?? '我').slice(0, 1)}
-              className="size-32 rounded-[28px] text-5xl"
-            />
-          </div>
-          {/* G179：图标有 `Space.icon` 可写 ⇒ 相机按钮接 `setSpaceIcon`（此前无处理器被移除）。
-              owner 才有能力，失败给一句、选择器保持打开。 */}
-          {space?.capabilities.canChangeSettings ? (
-            <div className="flex flex-col items-center">
-              <button
-                type="button"
-                aria-label="更换空间图标"
-                data-testid="space-icon-picker"
-                aria-expanded={iconPickerOpen}
-                disabled={savingIcon}
-                onClick={() => setIconPickerOpen((open) => !open)}
-                className="mt-2 rounded-md px-2 py-1 text-[12px] text-(--craft-accent) hover:bg-foreground/4 disabled:opacity-40"
-              >
-                更换空间图标
-              </button>
-              {iconPickerOpen && (
-                <div
-                  role="group"
-                  aria-label="选择空间图标"
-                  className="mt-2 flex flex-wrap justify-center gap-2"
+            <div className="relative">
+              <SpaceIcon
+                icon={space?.icon}
+                initial={(space?.name ?? spaceName ?? '我').slice(0, 1)}
+                className="size-32 rounded-[28px] text-5xl"
+              />
+              {/* G179/G1661：官方是图标右下角的相机圆钮，不是下方文字链接。
+                  owner 才有能力，失败给一句、选择器保持打开。 */}
+              {space?.capabilities.canChangeSettings ? (
+                <button
+                  type="button"
+                  aria-label="更换空间图标"
+                  data-testid="space-icon-picker"
+                  aria-expanded={iconPickerOpen}
+                  disabled={savingIcon}
+                  onClick={() => setIconPickerOpen((open) => !open)}
+                  className="absolute -bottom-1 -right-1 flex size-8 items-center justify-center rounded-full bg-background text-foreground shadow-(--shadow-md) transition-colors hover:bg-foreground/8 disabled:opacity-40"
                 >
-                  {SPACE_ICON_PRESETS.map((preset) => (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      aria-label={`空间图标：${preset.label}`}
-                      aria-pressed={spaceIconPreset(space.icon).id === preset.id}
-                      disabled={savingIcon}
-                      onClick={() => void chooseSpaceIcon(preset.id)}
-                      className="size-9 rounded-xl ring-offset-2 transition-transform hover:scale-105 disabled:opacity-40 aria-pressed:ring-2 aria-pressed:ring-craft-accent"
-                      style={{
-                        backgroundImage: `linear-gradient(to bottom right, ${preset.from}, ${preset.to})`,
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
+                  <Camera className="size-4" />
+                </button>
+              ) : null}
+            </div>
+          </div>
+          {space?.capabilities.canChangeSettings && iconPickerOpen ? (
+            <div
+              role="group"
+              aria-label="选择空间图标"
+              className="flex flex-wrap justify-center gap-2"
+            >
+              {SPACE_ICON_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  aria-label={`空间图标：${preset.label}`}
+                  aria-pressed={spaceIconPreset(space.icon).id === preset.id}
+                  disabled={savingIcon}
+                  onClick={() => void chooseSpaceIcon(preset.id)}
+                  className="size-9 rounded-xl ring-offset-2 transition-transform hover:scale-105 disabled:opacity-40 aria-pressed:ring-2 aria-pressed:ring-craft-accent"
+                  style={{
+                    backgroundImage: `linear-gradient(to bottom right, ${preset.from}, ${preset.to})`,
+                  }}
+                />
+              ))}
             </div>
           ) : null}
           {/* G324：空间现在是真实体——名字可改（owner 才有能力，`capabilities.canChangeSettings`），

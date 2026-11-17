@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
-import { Menu } from 'lucide-react';
+import { Menu, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
 import { NotificationBell } from '@/components/notification/NotificationBell';
@@ -16,6 +16,8 @@ interface AppPageHeaderProps {
 
 export function AppPageHeader({ title, actions, className }: AppPageHeaderProps) {
   const toggleMobileNav = useSidebarStore((store) => store.toggleMobileNav);
+  const sidebarOpen = useSidebarStore((store) => store.isOpen);
+  const setSidebarOpen = useSidebarStore((store) => store.setOpen);
 
   return (
     <header
@@ -35,6 +37,19 @@ export function AppPageHeader({ title, actions, className }: AppPageHeaderProps)
       >
         <Menu className="size-5" />
       </Button>
+      {/* G1660：侧栏在桌面端被收起后，页头给一枚展开入口，避免收起后无路可回。 */}
+      {!sidebarOpen && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="-ml-1 hidden size-9 shrink-0 rounded-xl text-muted-foreground md:inline-flex"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="展开侧栏"
+          title="展开侧栏"
+        >
+          <PanelLeft className="size-4" />
+        </Button>
+      )}
       {/* G12/G13/G25：craft 页头带 1120×52、h1 22/600/26.4/ls0，带内 y=61（带顶 +13）。 */}
       <h1 className="min-w-0 flex-1 truncate text-[22px] font-semibold leading-[26.4px] tracking-normal">
         {title}
@@ -69,6 +84,7 @@ const ownHeaderRoutes = [
   '/daily-notes',
   '/tasks',
   '/calendar',
+  '/connections',
   '/whiteboards',
   '/search',
   '/settings',

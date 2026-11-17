@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Bell, CalendarClock, CheckSquare, ChevronRight, FileText, PinOff, Plus, Trash2 } from 'lucide-react';
+import { Bell, CalendarClock, CheckSquare, ChevronRight, FileText, PinOff, Plus, Rows2, Rows3, Trash2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from 'cn';
@@ -29,7 +29,7 @@ import { getSyncManager } from '@/lib/sync-core';
 import { currentUserId } from '@/lib/sync-core/current-user';
 import { readPendingRows, findFavoriteRowId } from '@/components/sync/local-records';
 import { overlayTaskRows, readTaskMirrorItems, taskPatchFor, toggleTaskLocally } from './tasks-local';
-import { applyCompletedFilter, listForGroup, tasksForGroup, withinUpcoming, writeShowCompleted, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
+import { applyCompletedFilter, listForGroup, readShowCompletedNow, serverShowCompleted, subscribeShowCompleted, tasksForGroup, withinUpcoming, type TaskGroup, type UpcomingWindow } from '@/lib/task/grouping';
 import { upcomingSections } from '@/lib/task/upcoming-groups';
 import {
   canReorderTasks,
@@ -40,7 +40,6 @@ import {
 } from '@/lib/task/task-view-settings';
 import { deriveTaskRows } from '@/lib/task/task-view-derive';
 import { TaskSettingsMenu } from '@/components/task/TaskSettingsMenu';
-import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { TaskDatePopover } from '@/components/task/TaskDatePopover';
 import { REMINDER_CHANGED_TITLE, REMINDER_TOAST_DURATION_MS, nextReminderText } from '@/lib/task/reminder-toast';
 import { fromDayInputValue, toDayInputValue, localDayInstant } from '@/lib/task/wall-clock';
@@ -108,8 +107,12 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   const [pageState, setPageState] = useState<TaskPageState>(initialTaskPageState);
   const pageStateRef = useRef(pageState);
   const [newTitle, setNewTitle] = useState('');
+  // G1652：官方的添加入口是标题右侧的 ＋ 圆钮，输入行按需展开；密度两档对应列右的 紧凑/扩展。
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [density, setDensity] = useState<'compact' | 'expanded'>('expanded');
   const [adding, setAdding] = useState(false);
-  const [showCompleted, setShowCompleted] = useState(false);
+  // G1653：「显示已完成」是设备级设置，开关已收进分区 ⋯；这里直接订阅同一份存储。
+  const showCompleted = useSyncExternalStore(subscribeShowCompleted, readShowCompletedNow, serverShowCompleted);
   const [window, setWindow] = useState<UpcomingWindow>('all');
   // G1600: the group's section header collapses its rows.
   const [collapsed, setCollapsed] = useState(false);
@@ -438,6 +441,7 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
       const now = new Date().toISOString();
       await writeTask(id, (userId) => taskPatchFor.create({ id, userId, title }, now), () => createTask(title));
       setNewTitle('');
+      setComposerOpen(false);
       await load();
       router.refresh();
     } finally {
@@ -677,54 +681,85 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
 
   return (
     <div className="flex-1 overflow-y-auto">
+      {/* G1652：标题按官方写「任务」；四档分组与密度、＋ 入口收进页头右侧。 */}
       <AppPageHeader
-        title="任务收件箱"
+        title="任务"
         actions={
-          <div className="flex min-w-0 gap-2">
-            <Input
-              className="w-32 sm:w-56"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleAdd();
-              }}
-              placeholder="添加任务，按回车确认…"
-            />
+          <div className="flex items-center gap-2">
+            <nav
+              className="flex min-w-0 items-center gap-0.5 overflow-x-auto rounded-lg bg-foreground/5 p-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              data-testid="task-groups"
+            >
+              {GROUPS.map((entry) => (
+                <Link
+                  key={entry.group}
+                  href={entry.href}
+                  aria-current={entry.group === group ? 'page' : undefined}
+                  className={cn(
+                    'shrink-0 rounded-md px-2.5 py-1 text-sm transition-colors',
+                    entry.group === group
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground',
+                  )}
+                >
+                  {entry.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="flex items-center gap-0.5" role="group" aria-label="任务密度">
+              <button
+                type="button"
+                aria-label="紧凑"
+                aria-pressed={density === 'compact'}
+                onClick={() => setDensity('compact')}
+                className={cn('flex size-7 items-center justify-center rounded transition-colors', density === 'compact' ? 'bg-foreground/8 text-foreground' : 'text-muted-foreground hover:bg-foreground/4')}
+              >
+                <Rows3 className="size-4" />
+              </button>
+              <button
+                type="button"
+                aria-label="扩展"
+                aria-pressed={density === 'expanded'}
+                onClick={() => setDensity('expanded')}
+                className={cn('flex size-7 items-center justify-center rounded transition-colors', density === 'expanded' ? 'bg-foreground/8 text-foreground' : 'text-muted-foreground hover:bg-foreground/4')}
+              >
+                <Rows2 className="size-4" />
+              </button>
+            </div>
             <button
-              onClick={handleAdd}
-              disabled={adding || !newTitle.trim()}
-              className="flex shrink-0 items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground transition-opacity"
+              type="button"
+              aria-label="新建任务"
+              aria-expanded={composerOpen}
+              onClick={() => setComposerOpen(true)}
+              className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-opacity hover:opacity-90"
             >
               <Plus className="size-4" />
-              添加
             </button>
           </div>
         }
       />
-      {/* G1077：官方的 tabs 是 `overflow-x:auto` ＋ `scrollbar-width:none`／
-          `::-webkit-scrollbar{display:none}`，内容行 `width:max-content`；窄屏横滑、不显条。 */}
-      <nav
-        className="overflow-x-auto border-b border-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        data-testid="task-groups"
-      >
-        <div className="flex w-max gap-1 px-4">
-          {GROUPS.map((entry) => (
-            <Link
-              key={entry.group}
-              href={entry.href}
-              aria-current={entry.group === group ? 'page' : undefined}
-              className={cn(
-                'shrink-0 border-b-2 px-3 py-2 text-sm transition-colors',
-                entry.group === group
-                  ? 'border-foreground text-foreground'
-                  : 'border-transparent text-muted-foreground hover:text-foreground',
-              )}
-            >
-              {entry.label}
-            </Link>
-          ))}
+      {composerOpen && (
+        <div className="flex items-center gap-2 border-b border-border px-4 py-2">
+          <Input
+            autoFocus
+            className="w-full sm:w-72"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleAdd();
+            }}
+            placeholder="添加任务，按回车确认…"
+          />
+          <button
+            onClick={handleAdd}
+            disabled={adding || !newTitle.trim()}
+            className="flex shrink-0 items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground transition-opacity"
+          >
+            <Plus className="size-4" />
+            添加
+          </button>
         </div>
-      </nav>
+      )}
       {/* G263: the pinned-documents area. A document is pinned by favouriting it (the existing
           `favorite` table is the store), and the empty state says how to fill it.
           G604：它同时是拖放落点——拖到一枚芯片上按左右半分「前/后」，拖到空白处插到最前。 */}
@@ -789,68 +824,57 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
           </div>
         )}
       </section>
-      {/* G1600: the group title is one full-width button; ← / → / Space collapse, expand or toggle. */}
-      <button
-        type="button"
-        id={`task-section-${group}`}
-        aria-expanded={!collapsed}
-        onClick={() => setCollapsed((value) => !value)}
-        onKeyDown={(event) => {
-          const action = sectionKeyAction(event);
-          if (!action) return;
-          event.preventDefault();
-          setCollapsed((value) => applySectionAction(value, action));
-        }}
-        className="flex w-full items-center gap-2 border-b border-border px-4 py-2 text-left text-sm font-medium text-foreground transition-colors hover:bg-foreground/4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-      >
-        <ChevronRight className={cn('size-4 transition-transform', !collapsed && 'rotate-90')} />
-        {TASK_GROUP_LABELS[group]}
-      </button>
-      {!collapsed && (
-        <div>
-      <div className="flex items-center justify-between px-4 pt-3">
-        {group === 'upcoming' ? (
-          <div className="flex gap-1 text-sm">
-            {([[7, '接下来的 7 天'], [30, '接下来的 30 天'], ['all', '即将进行']] as const).map(([value, label]) => (
-              <button
-                key={String(value)}
-                type="button"
-                aria-pressed={window === value}
-                onClick={() => setWindow(value)}
-                className={cn('rounded px-2 py-1', window === value ? 'bg-foreground/8 text-foreground' : 'text-foreground/55')}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <span />
-        )}
-        {visible.some((task) => task.status !== 'cancelled') && (
-          <button
-            type="button"
-            onClick={() => void handleBulkCheck()}
-            disabled={bulkBusy}
-            className="ml-2 shrink-0 rounded px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-foreground"
-          >
-            {bulkCheckLabel(visible)}
-          </button>
-        )}
-        <ShowCompletedToggle onChange={setShowCompleted} />
-        <TaskSettingsMenu
-          group={group}
-          settings={settings}
-          onShowCompleted={() => writeShowCompleted(globalThis.localStorage, true)}
-        />
+      {/* G1600/G1653：分组标题与 ⋯ 同一行——← / → / Space 折叠/展开/切换仍挂在标题按钮上。 */}
+      <div className="flex items-center gap-2 border-b border-border px-4 py-2">
         <button
           type="button"
-          onClick={handleSetDefaultView}
-          className="ml-2 shrink-0 rounded px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-foreground/6 hover:text-foreground"
+          id={`task-section-${group}`}
+          aria-expanded={!collapsed}
+          onClick={() => setCollapsed((value) => !value)}
+          onKeyDown={(event) => {
+            const action = sectionKeyAction(event);
+            if (!action) return;
+            event.preventDefault();
+            setCollapsed((value) => applySectionAction(value, action));
+          }}
+          className="flex min-w-0 items-center gap-2 text-left text-sm font-medium text-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         >
-          {SET_AS_DEFAULT_VIEW}
+          <ChevronRight className={cn('size-4 shrink-0 transition-transform', !collapsed && 'rotate-90')} />
+          {TASK_GROUP_LABELS[group]}
         </button>
+        <div className="ml-auto flex items-center gap-1">
+          {group === 'upcoming' && (
+            <div className="flex gap-1 text-sm">
+              {([[7, '接下来的 7 天'], [30, '接下来的 30 天'], ['all', '即将进行']] as const).map(([value, label]) => (
+                <button
+                  key={String(value)}
+                  type="button"
+                  aria-pressed={window === value}
+                  onClick={() => setWindow(value)}
+                  className={cn('rounded px-2 py-1', window === value ? 'bg-foreground/8 text-foreground' : 'text-foreground/55')}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+          <TaskSettingsMenu
+            group={group}
+            settings={settings}
+            onCheckAll={
+              visible.some((task) => task.status !== 'cancelled') && !bulkBusy
+                ? () => void handleBulkCheck()
+                : undefined
+            }
+            checkAllLabel={bulkCheckLabel(visible)}
+            onSetDefaultView={handleSetDefaultView}
+            setDefaultLabel={SET_AS_DEFAULT_VIEW}
+          />
+        </div>
       </div>
-      <AppPageContainer className="max-w-3xl">
+      {!collapsed && (
+        <div>
+      <AppPageContainer className={cn('max-w-3xl', density === 'compact' && '[&_[data-task-row]]:py-1')}>
         {loading ? (
           <p className="text-sm text-muted-foreground">加载中…</p>
         ) : sectioned ? (
@@ -1016,7 +1040,12 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
 }
 
 function focusAddInput(): void {
-  document.querySelector<HTMLInputElement>('input[placeholder="添加任务，按回车确认…"]')?.focus();
+  const input = document.querySelector<HTMLInputElement>('input[placeholder="添加任务，按回车确认…"]');
+  if (input) { input.focus(); return; }
+  document.querySelector<HTMLButtonElement>('button[aria-label="新建任务"]')?.click();
+  globalThis.setTimeout(() => {
+    document.querySelector<HTMLInputElement>('input[placeholder="添加任务，按回车确认…"]')?.focus();
+  }, 0);
 }
 
 /**

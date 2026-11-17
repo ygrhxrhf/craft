@@ -9,9 +9,10 @@ import { useFindReplaceStore } from '@/lib/store/use-find-replace-store';
 import { DailyNoteNav } from './DailyNoteNav';
 import { RightPanel, type RightTabId } from './tabs/RightPanel';
 import { Breadcrumb } from './Breadcrumb';
+import { NotificationBell } from '@/components/notification/NotificationBell';
 import { FindReplacePanel } from './find-replace-panel';
 import { TemplatePicker } from './template-picker';
-import { Share2, LayoutGrid, Type, Palette, Info, Menu, MoreHorizontal, Focus } from 'lucide-react';
+import { Share2, LayoutGrid, Type, Palette, Info, Menu, MoreHorizontal, Focus, PanelLeft } from 'lucide-react';
 import { cn } from 'cn';
 import { useIsCompact, useIsMobile } from '@/lib/use-is-mobile';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
@@ -111,6 +112,7 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
   const isMobile = useIsMobile();
   const isCompact = useIsCompact();
   const toggleMobileNav = useSidebarStore((store) => store.toggleMobileNav);
+  const sidebarOpen = useSidebarStore((store) => store.isOpen);
   const bumpTree = useSidebarStore((store) => store.bumpTree);
   const [title, setTitle] = useState(doc.title);
   const [icon, setIcon] = useState(doc.icon);
@@ -346,6 +348,20 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
                 <Menu className="size-4" />
               </button>
             )}
+            {/* G1660：官方编辑态左上角是「收起侧栏」按钮；本地侧栏默认开着（文档树是主入口），
+                这里给同一枚控制，收起后可从页头或本按钮再展开。 */}
+            {!isMobile && (
+              <button
+                type="button"
+                onClick={() => useSidebarStore.getState().toggle()}
+                aria-label={sidebarOpen ? '收起侧栏' : '展开侧栏'}
+                title={sidebarOpen ? '收起侧栏' : '展开侧栏'}
+                data-testid="editor-sidebar-toggle"
+                className="-ml-1 shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <PanelLeft className="size-4" />
+              </button>
+            )}
             <Breadcrumb title={title} />
             <span
               role="status"
@@ -457,6 +473,8 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
                 {SHARE_TRIGGER_LABEL}
               </button>
             )}
+            {/* G1660：官方文档顶栏右侧常驻通知铃。 */}
+            <NotificationBell />
           </div>
         </div>
 
@@ -471,8 +489,10 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             {`${EXIT_FOCUS_MODE_PREFIX}${displayFor(focusBinding, platform)}`}
           </button>
         )}
-        <div className="flex-1 overflow-y-auto">
-        <div className="relative min-h-full bg-background px-3 py-5 sm:px-8">
+        {/* G1660：官方文档页是浅灰底上一张居中浮起的白色圆角卡片；此前画布与页面同色，
+            看不出卡片边界。卡片本身（rounded-2xl + shadow-doc + 页面底色）已在下一层。 */}
+        <div className="flex-1 overflow-y-auto bg-foreground/[0.03]">
+        <div className="relative min-h-full px-3 py-5 sm:px-8">
           {backdropCss && (
             <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: backdropCss }} />
           )}

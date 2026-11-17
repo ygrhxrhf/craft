@@ -13,6 +13,7 @@ async function signIn(page: Page) {
 
 async function createTaskWithPastReminder(page: Page, title: string) {
   await page.goto('/tasks');
+  await page.getByRole('button', { name: '新建任务' }).click();
   await page.getByPlaceholder('添加任务，按回车确认…').fill(title);
   await page.keyboard.press('Enter');
 

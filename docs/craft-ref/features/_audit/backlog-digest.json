@@ -1,37 +1,39 @@
 {
-  "generatedAt": "2026-11-16T16:34:31.758Z",
-  "total": 1640,
+  "generatedAt": "2026-11-17T14:12:00.058Z",
+  "total": 1653,
   "status": {
-    "aligned": 846,
+    "aligned": 854,
     "nonaction": 541,
-    "deliberate": 228,
-    "unreachable": 25
+    "deliberate": 232,
+    "unreachable": 25,
+    "partial": 1
   },
   "priority": {
-    "P2": 656,
+    "P2": 661,
     "P?": 422,
     "P1": 282,
-    "P3": 271,
+    "P3": 279,
     "P0": 9
   },
   "statusByPriority": {
-    "P2 / aligned": 381,
+    "P2 / aligned": 384,
     "P? / nonaction": 201,
     "P2 / nonaction": 175,
     "P1 / aligned": 169,
     "P? / aligned": 160,
-    "P3 / aligned": 127,
-    "P2 / deliberate": 90,
+    "P3 / aligned": 132,
+    "P2 / deliberate": 91,
     "P1 / nonaction": 89,
     "P3 / nonaction": 76,
-    "P3 / deliberate": 59,
+    "P3 / deliberate": 62,
     "P? / deliberate": 56,
     "P1 / deliberate": 23,
     "P2 / unreachable": 10,
     "P0 / aligned": 9,
     "P3 / unreachable": 9,
     "P? / unreachable": 5,
-    "P1 / unreachable": 1
+    "P1 / unreachable": 1,
+    "P2 / partial": 1
   },
   "explicit": {
     "P0": [
@@ -1173,5 +1175,10 @@
   },
   "conflicts": [],
   "unknownSections": [],
-  "gapSections": []
+  "gapSections": [
+    [
+      "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐",
+      1
+    ]
+  ]
 }

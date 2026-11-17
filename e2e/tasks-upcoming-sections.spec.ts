@@ -36,6 +36,7 @@ const created = [WEEK, MONTH, YEAR, UNSCHEDULED];
 
 async function createScheduled(page: Page, title: string, due: string | null) {
   await page.goto('/tasks');
+  await page.getByRole('button', { name: '新建任务' }).click();
   await page.getByPlaceholder('添加任务，按回车确认…').fill(title);
   await page.keyboard.press('Enter');
   const card = page.locator('div.border-b', { has: page.getByText(title, { exact: true }) }).first();
@@ -67,10 +68,21 @@ async function openList(page: Page) {
 }
 
 /** 开关是 `useState(false)`（不落盘）：只在当前页内存里，按目标态掰，不整页重进。 */
+async function readShowCompleted(page: Page): Promise<boolean> {
+  await page.getByRole('button', { name: '更多选项' }).click();
+  const checked = await page
+    .getByRole('menuitemcheckbox', { name: '显示已完成的任务' })
+    .getAttribute('aria-checked');
+  await page.keyboard.press('Escape');
+  return checked === 'true';
+}
+
 async function toggleShowCompleted(page: Page, show: boolean) {
-  const toggle = page.getByLabel('显示已完成的任务');
-  if ((await toggle.isChecked()) !== show) await toggle.click();
-  await expect(toggle).toBeChecked({ checked: show });
+  if ((await readShowCompleted(page)) !== show) {
+    await page.getByRole('button', { name: '更多选项' }).click();
+    await page.getByRole('menuitemcheckbox', { name: '显示已完成的任务' }).click();
+  }
+  await expect(await readShowCompleted(page)).toBe(show);
 }
 
 /** 列表页重进后再掰开关（清扫用：要先看得见完成行才能删干净）。 */

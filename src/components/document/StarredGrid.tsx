@@ -1,10 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useSyncExternalStore, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { DocumentCard } from '@/components/document/DocumentCard';
+import { DocumentListView } from '@/components/document/DocumentListView';
+import {
+  readViewMode,
+  serverViewMode,
+  subscribeViewMode,
+} from '@/lib/browse/view-modes';
 import { getSyncManager } from '@/lib/sync-core';
 import { orderAfterDrop, orderPatches } from '@/lib/document/sibling-order';
 import { useDragArm } from '@/lib/dnd/use-drag-arm';
@@ -67,45 +73,67 @@ export function StarredGrid({ documents, now }: StarredGridProps) {
     if (next.length === items.length) await commitOrder(next);
   };
 
+  // G1655：官方收藏屏与其它浏览屏共用同一组三档布局切换（网格／列表／瀑布），
+  // 偏好沿用 `craft.browse.viewMode` 这一处存储。
+  const viewMode = useSyncExternalStore(subscribeViewMode, readViewMode, serverViewMode);
+
+  const renderTile = (doc: StarredDoc, index: number) => (
+    <div
+      key={doc.favoriteId}
+      draggable
+      data-testid={`starred-card-${doc.favoriteId}`}
+      onPointerDown={dragArm.onPointerDown}
+      onPointerMove={dragArm.onPointerMove}
+      onPointerUp={dragArm.onPointerUp}
+      onDragStart={() => setDragging(index)}
+      onDragEnd={() => {
+        setDragging(null);
+        setDropAt(null);
+      }}
+      onDragOver={(event) => {
+        event.preventDefault();
+        const rect = event.currentTarget.getBoundingClientRect();
+        setDropAt({ index, after: event.clientY > rect.top + rect.height / 2 });
+      }}
+      onDragLeave={() => setDropAt(null)}
+      onDrop={(event) => {
+        event.preventDefault();
+        const rect = event.currentTarget.getBoundingClientRect();
+        void handleDrop(index, event.clientY > rect.top + rect.height / 2);
+      }}
+      className={
+        dragging === index
+          ? 'opacity-50'
+          : dropAt?.index === index
+            ? dropAt.after
+              ? 'border-b-2 border-craft-accent'
+              : 'border-t-2 border-craft-accent'
+            : ''
+      }
+    >
+      <DocumentCard document={doc} now={now} />
+    </div>
+  );
+
   return (
-    <BrowseGrid>
-      {items.map((doc, index) => (
-        <div
-          key={doc.favoriteId}
-          draggable
-          data-testid={`starred-card-${doc.favoriteId}`}
-          onPointerDown={dragArm.onPointerDown}
-          onPointerMove={dragArm.onPointerMove}
-          onPointerUp={dragArm.onPointerUp}
-          onDragStart={() => setDragging(index)}
-          onDragEnd={() => {
-            setDragging(null);
-            setDropAt(null);
-          }}
-          onDragOver={(event) => {
-            event.preventDefault();
-            const rect = event.currentTarget.getBoundingClientRect();
-            setDropAt({ index, after: event.clientY > rect.top + rect.height / 2 });
-          }}
-          onDragLeave={() => setDropAt(null)}
-          onDrop={(event) => {
-            event.preventDefault();
-            const rect = event.currentTarget.getBoundingClientRect();
-            void handleDrop(index, event.clientY > rect.top + rect.height / 2);
-          }}
-          className={
-            dragging === index
-              ? 'opacity-50'
-              : dropAt?.index === index
-                ? dropAt.after
-                  ? 'border-b-2 border-craft-accent'
-                  : 'border-t-2 border-craft-accent'
-                : ''
-          }
-        >
-          <DocumentCard document={doc} now={now} />
+    <div>
+      {/* 切换器挂在页头（BrowseViewModeBar），这里只按档渲染内容。 */}
+      {viewMode === 'list' ? (
+        <DocumentListView
+          documents={items.map(({ id, title, icon, updatedAt }) => ({ id, title, icon, updatedAt }))}
+          now={now}
+        />
+      ) : viewMode === 'waterfall' ? (
+        <div data-testid="starred-waterfall" className="columns-2 gap-5 md:columns-3 xl:columns-4">
+          {items.map((doc, index) => (
+            <div key={doc.favoriteId} className="mb-5 break-inside-avoid">
+              {renderTile(doc, index)}
+            </div>
+          ))}
         </div>
-      ))}
-    </BrowseGrid>
+      ) : (
+        <BrowseGrid>{items.map((doc, index) => renderTile(doc, index))}</BrowseGrid>
+      )}
+    </div>
   );
 }

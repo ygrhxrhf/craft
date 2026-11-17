@@ -35,6 +35,7 @@ test('任务页勾选完成在断链时也落库，恢复联网后服务端读�
   const title = `离线完成 ${Date.now()}`;
 
   await page.goto('/tasks');
+  await page.getByRole('button', { name: '新建任务' }).click();
   const input = page.getByPlaceholder('添加任务，按回车确认…');
   await input.fill(title);
   await input.press('Enter');
@@ -67,9 +68,9 @@ test('任务页勾选完成在断链时也落库，恢复联网后服务端读�
   await expect(page.getByRole('button', { name: title, exact: true })).toHaveCount(0);
 
   // 打开「显示已完成的任务」：同一行回来，且勾选态真的落了
-  const show = page.getByRole('switch', { name: '显示已完成的任务' });
-  await show.click();
-  await expect(show).toBeChecked();
+  // G1653：开关在分区 ⋯ 里（menuitemcheckbox），点完菜单自动收起。
+  await page.getByRole('button', { name: '更多选项' }).click();
+  await page.getByRole('menuitemcheckbox', { name: '显示已完成的任务' }).click();
   const completed = page.getByRole('button', { name: title, exact: true });
   await expect(completed).toBeVisible();
   await expect(completed.getByRole('checkbox')).toBeChecked();

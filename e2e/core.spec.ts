@@ -397,10 +397,13 @@ test('recurring task rolls forward to the next occurrence', async ({ page }) => 
 
   // 「显示已完成的任务」是设备级开关且默认关，已完成的一期不进列表 ⇒
   // 要看"完成的那期留作历史"必须先开开关，否则断言的是过滤器的结果而不是 rollForward 的结果。
-  const showCompleted = page.getByRole('switch', { name: '显示已完成的任务' });
-  await expect(showCompleted).not.toBeChecked();
-  await showCompleted.check();
+  // G1653：开关收进分区 ⋯，是一枚 menuitemcheckbox。
+  await page.getByRole('button', { name: '更多选项' }).click();
+  const showCompleted = page.getByRole('menuitemcheckbox', { name: '显示已完成的任务' });
+  await expect(showCompleted).toHaveAttribute('aria-checked', 'false');
+  await showCompleted.click();
 
+  await page.getByRole('button', { name: '新建任务' }).click();
   await page.getByPlaceholder('添加任务，按回车确认…').fill(title);
   await page.keyboard.press('Enter');
 

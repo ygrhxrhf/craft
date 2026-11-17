@@ -112,9 +112,11 @@ export function SettingsModal() {
         role="dialog"
         aria-modal="true"
         aria-label="设置"
-        className="relative flex h-[560px] w-[720px] max-h-[calc(100dvh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl bg-background shadow-(--shadow-md)"
+        className="relative flex h-[700px] w-[960px] max-h-[calc(100dvh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl bg-background shadow-(--shadow-md)"
       >
-        <nav className="w-[184px] shrink-0 overflow-y-auto border-r border-(--foreground-150) pt-4 pb-3" aria-label="设置导航">
+        {/* G1661：官方弹层约 960×700，左栏是「可滚动内容＋底部钉住的账号行」。 */}
+        <nav className="flex w-[240px] shrink-0 flex-col border-r border-(--foreground-150)" aria-label="设置导航">
+          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pt-4 pb-3">
           <div className="px-4">
             <div className="flex flex-col items-center">
               <div className="relative">
@@ -131,9 +133,9 @@ export function SettingsModal() {
                   Free
                 </span>
               </div>
-              <div className="mt-4 flex items-center gap-1 text-[15px] font-semibold">
-                {spaceName}
-                <ChevronDown className="size-4 text-foreground/60" />
+              <div className="mt-4 flex max-w-full items-center gap-1 text-[15px] font-semibold">
+                <span className="truncate">{spaceName}</span>
+                <ChevronDown className="size-4 shrink-0 text-foreground/60" />
               </div>
             </div>
             <div
@@ -162,17 +164,7 @@ export function SettingsModal() {
             <div key={groupIndex} className={cn('px-5', groupIndex === 0 ? 'mt-6' : 'mt-6')}>
               {group.title ? (
                 <div className="px-2 pb-1.5 text-xs font-semibold">{group.title}</div>
-              ) : (
-                <div className="flex items-center gap-2.5 px-2 pb-1.5">
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-purple-700 text-[13px] font-semibold text-white">
-                    {profile?.name?.slice(0, 1) ?? '我'}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate text-[13px] font-semibold">{profile?.name ?? '未登录'}</div>
-                    <div className="truncate text-xs text-foreground/55">{profile?.email ?? ''}</div>
-                  </div>
-                </div>
-              )}
+              ) : null}
               <div className="space-y-0">
                 {visible.map(({ key, label, icon: Icon }) => (
                   <button
@@ -181,7 +173,7 @@ export function SettingsModal() {
                     onClick={() => setSection(key)}
                     aria-current={section === key ? 'true' : undefined}
                     className={cn(
-                      'flex h-8 w-[232px] items-center gap-2 rounded-[10px] px-2 text-[13px] font-medium text-foreground/85 transition-colors',
+                      'flex h-8 w-[200px] items-center gap-2 rounded-[10px] px-2 text-[13px] font-medium text-foreground/85 transition-colors',
                       'hover:bg-foreground/4',
                       section === key && 'bg-foreground/8 text-foreground hover:bg-foreground/8'
                     )}
@@ -201,7 +193,7 @@ export function SettingsModal() {
               onClick={() => setSection('about')}
               aria-current={section === 'about' ? 'true' : undefined}
               className={cn(
-                'flex h-8 w-[232px] items-center gap-2 rounded-[10px] px-2 text-[13px] font-medium text-foreground/85 transition-colors',
+                'flex h-8 w-[200px] items-center gap-2 rounded-[10px] px-2 text-[13px] font-medium text-foreground/85 transition-colors',
                 'hover:bg-foreground/4',
                 section === 'about' && 'bg-foreground/8 text-foreground hover:bg-foreground/8'
               )}
@@ -209,6 +201,19 @@ export function SettingsModal() {
               <Info className="size-4 shrink-0 text-foreground/70" />
               <span>关于 Craft</span>
             </button>
+          </div>
+          </div>
+          {/* G1661：官方把账号行钉在左栏底部，不随分组滚动。 */}
+          <div className="shrink-0 border-t border-(--foreground-150) px-5 py-3">
+            <div className="flex items-center gap-2.5 px-2">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-purple-700 text-[13px] font-semibold text-white">
+                {profile?.name?.slice(0, 1) ?? '我'}
+              </div>
+              <div className="min-w-0">
+                <div className="truncate text-[13px] font-semibold">{profile?.name ?? '未登录'}</div>
+                <div className="truncate text-xs text-foreground/55">{profile?.email ?? ''}</div>
+              </div>
+            </div>
           </div>
         </nav>
 

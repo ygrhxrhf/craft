@@ -11107,6 +11107,117 @@
         "src/lib/auth/config.ts",
         "deploy/env.template"
       ]
+    },
+    "G1649": {
+      "status": "aligned",
+      "priority": "P3",
+      "note": "已对齐（第 574 批实施：标题改「所有文档」；＋圆钮/右上 ?/最近编辑三项按裁决保留本地形态）",
+      "evidence": [
+        "screenshots/compare/local-documents-after.png"
+      ]
+    },
+    "G1650": {
+      "status": "deliberate",
+      "priority": "P3",
+      "note": "有意偏差（裁决 2026-11-17：数字未读徽标信息量高于红点；标题字重随有无标题变化；卡片预览内框是本地渲染细节）",
+      "evidence": [
+        "screenshots/compare/official-all-documents.png",
+        "screenshots/compare/local-after-login2.png"
+      ]
+    },
+    "G1651": {
+      "status": "deliberate",
+      "priority": "P2",
+      "note": "有意偏差（裁决 2026-11-17：侧栏信息架构是本地路线选择，与 G48 同族——日记/最近/归档/回收站/标签提为一级导航）",
+      "evidence": [
+        "screenshots/compare/official-all-documents.png",
+        "screenshots/compare/local-after-login2.png"
+      ]
+    },
+    "G1652": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "已对齐（第 574 批实施：标题「任务」；四档 tab 改页头右侧胶囊；＋ 圆钮展开添加行；补 紧凑/扩展 两档密度）",
+      "evidence": [
+        "screenshots/compare/local-tasks-after.png",
+        "e2e/task-groups.spec.ts"
+      ]
+    },
+    "G1653": {
+      "status": "aligned",
+      "priority": "P3",
+      "note": "已对齐（第 574 批：工具条开关撤掉，「显示已完成」是分区 ⋯ 里的 menuitemcheckbox（aria-checked 读设备设置），全部完成/设置为默认视图同在此 ⋯；5 个 e2e 已按菜单改写并全绿）",
+      "evidence": [
+        "e2e/tasks-upcoming-sections.spec.ts",
+        "screenshots/compare/local-tasks-final.png"
+      ]
+    },
+    "G1654": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "已对齐（第 574 批复核更正：日期 chip 时间轴一直在主列，此前登记是截图未滚动造成的误读）",
+      "evidence": [
+        "screenshots/compare/local-calendar-scrolled2.png"
+      ]
+    },
+    "G1655": {
+      "status": "aligned",
+      "priority": "P3",
+      "note": "已对齐（第 574 批实施：空态去掉星形图标、只留 72px 面板内一句文案；页头补三档视图切换）",
+      "evidence": [
+        "screenshots/compare/local-favorites-after2.png"
+      ]
+    },
+    "G1656": {
+      "status": "deliberate",
+      "priority": "P3",
+      "note": "有意偏差（裁决 2026-11-17：本地拆成标签总表＋/tags/[id] 文档页，官方是单页合并）",
+      "evidence": [
+        "screenshots/compare/official-tags2.png",
+        "screenshots/compare/local-tags.png"
+      ]
+    },
+    "G1657": {
+      "status": "deliberate",
+      "priority": "P3",
+      "note": "有意偏差（裁决 2026-11-17：Craft 模板库是外部内容与服务，本地只做自建模板）",
+      "evidence": [
+        "screenshots/compare/official-templates.png",
+        "screenshots/compare/local-templates.png"
+      ]
+    },
+    "G1658": {
+      "status": "aligned",
+      "priority": "P2",
+      "note": "已对齐（第 574 批实施：两段连接卡＋虚线添加卡＋添加走弹层；云朵插画按专有资产不搬）",
+      "evidence": [
+        "screenshots/compare/local-connections-after.png"
+      ]
+    },
+    "G1659": {
+      "status": "aligned",
+      "priority": "P3",
+      "note": "已对齐（第 574 批实施：回收站补网格/列表/瀑布三档，列表档带恢复按钮）",
+      "evidence": [
+        "screenshots/compare/local-trash-after.png"
+      ]
+    },
+    "G1660": {
+      "status": "partial",
+      "priority": "P2",
+      "note": "部分落地：画布卡片化 + 编辑页侧栏收起/展开按钮；顶栏图标簇未动",
+      "evidence": [
+        "screenshots/compare/local-editor-sidebar-open.png",
+        "screenshots/compare/local-editor-sidebar-closed.png"
+      ]
+    },
+    "G1661": {
+      "status": "aligned",
+      "priority": "P3",
+      "note": "已对齐（第 574 批实施：弹层 960×700、左栏加宽、账号行钉底、空间图标改相机钮）",
+      "evidence": [
+        "screenshots/compare/local-settings-after2.png"
+      ]
     }
   }
 }

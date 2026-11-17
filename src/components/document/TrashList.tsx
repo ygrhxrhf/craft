@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Check, Minus, MoreHorizontal, RotateCcw, Trash2, Trash } from 'lucide-react';
+import { useEffect, useSyncExternalStore, useState } from 'react';
+import { Check, File, Minus, MoreHorizontal, RotateCcw, Trash2, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import {
@@ -34,6 +34,14 @@ import { pendingLabel } from '@/lib/app/pending-states';
 import { rowSubtitle } from '@/lib/browse/row-subtitle';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { DocumentCard } from './DocumentCard';
+import { ViewModeSwitcher } from './ViewModeSwitcher';
+import {
+  readViewMode,
+  serverViewMode,
+  storeViewMode,
+  subscribeViewMode,
+} from '@/lib/browse/view-modes';
+import { relativeTime } from '@/lib/document/relative-time';
 
 interface TrashDoc {
   id: string;
@@ -96,6 +104,8 @@ export function TrashList({ documents, now }: TrashListProps) {
   const [busy, setBusy] = useState(false);
   // G300: permanent deletion has its own progress sentence (single vs plural).
   const [busyLabel, setBusyLabel] = useState<string | null>(null);
+  // G1659：官方回收站与其它浏览屏共用同一组三档布局（网格／列表／瀑布）。
+  const viewMode = useSyncExternalStore(subscribeViewMode, readViewMode, serverViewMode);
 
   // 首屏 / router.refresh 后的新 prop 行：只做本地 overlay（不发服务端 action，离线安全）
   useEffect(() => {
@@ -201,6 +211,36 @@ export function TrashList({ documents, now }: TrashListProps) {
     }
   }
 
+  const renderCard = (doc: TrashDoc) => (
+    <DocumentCard
+      key={doc.id}
+      now={now}
+      document={{
+        id: doc.id,
+        title: doc.title,
+        icon: doc.icon,
+        updatedAt: doc.updatedAt,
+        breadcrumb: TRASH_TITLE,
+        // G997：卡片预览是已存快照的内容摘要（与浏览列表同一条回退链），
+        // 不在回收站里重渲染正文。pending 行没有快照时这条不渲染。
+        previewText: typeof doc.plainText === 'string'
+          ? rowSubtitle({ plainText: doc.plainText })
+          : null,
+      }}
+      // G20/G991：删除的页没有路由，卡片是静态磁贴；选择模式下点整张卡切换选中。
+      href={null}
+      selectable={selecting}
+      selected={selected.has(doc.id)}
+      onToggleSelect={toggle}
+      onRestore={selecting
+        ? undefined
+        : (id) => void handleRestore(id).catch((error: unknown) => toast.add({
+          title: error instanceof Error ? error.message : '恢复失败',
+          type: 'error',
+        }))}
+    />
+  );
+
   if (rows.length === 0) {
     return (
       <div className="flex min-h-[180px] flex-col items-center justify-center rounded-[15px] bg-foreground/[0.03] px-6 text-center">
@@ -257,6 +297,7 @@ export function TrashList({ documents, now }: TrashListProps) {
           <>
             {/* G242：回收站屏的 ⋯ 是按屏裁剪的子集——官方这里是「选择」＋「清空最近删除」，
                 没有所有文档 ⋯ 里的排序方式／导入／导出／空间设置。 */}
+            <ViewModeSwitcher value={viewMode} onChange={storeViewMode} />
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
@@ -296,37 +337,59 @@ export function TrashList({ documents, now }: TrashListProps) {
         </button>
       )}
 
-      <BrowseGrid>
-        {rows.map(doc => (
-          <DocumentCard
-            key={doc.id}
-            now={now}
-            document={{
-              id: doc.id,
-              title: doc.title,
-              icon: doc.icon,
-              updatedAt: doc.updatedAt,
-              breadcrumb: TRASH_TITLE,
-              // G997：卡片预览是已存快照的内容摘要（与浏览列表同一条回退链），
-              // 不在回收站里重渲染正文。pending 行没有快照时这条不渲染。
-              previewText: typeof doc.plainText === 'string'
-                ? rowSubtitle({ plainText: doc.plainText })
-                : null,
-            }}
-            // G20/G991：删除的页没有路由，卡片是静态磁贴；选择模式下点整张卡切换选中。
-            href={null}
-            selectable={selecting}
-            selected={selected.has(doc.id)}
-            onToggleSelect={toggle}
-            onRestore={selecting
-              ? undefined
-              : (id) => void handleRestore(id).catch((error: unknown) => toast.add({
-                title: error instanceof Error ? error.message : '恢复失败',
-                type: 'error',
-              }))}
-          />
-        ))}
-      </BrowseGrid>
+      {viewMode === 'list' ? (
+        <ul data-testid="trash-list" className="divide-y divide-border/60 rounded-[10px] border border-border/60">
+          {rows.map(doc => (
+            <li key={doc.id} className="flex h-[65px] items-center gap-3 px-3">
+              {selecting ? (
+                <button
+                  type="button"
+                  role="checkbox"
+                  aria-checked={selected.has(doc.id)}
+                  aria-label={doc.title || untitledFor('list')}
+                  onClick={() => toggle(doc.id)}
+                  className="flex shrink-0 items-center"
+                >
+                  <SelectionMark state={selected.has(doc.id) ? 'on' : 'off'} />
+                </button>
+              ) : (
+                <File className="size-4 shrink-0 text-muted-foreground" />
+              )}
+              <span className="min-w-0 flex-1 truncate text-[14px]">
+                {doc.title || untitledFor('list')}
+              </span>
+              <span className="shrink-0 text-xs text-foreground/55">
+                {relativeTime(doc.updatedAt)}
+              </span>
+              {!selecting && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="恢复"
+                  title="恢复"
+                  disabled={busy}
+                  onClick={() => void handleRestore(doc.id).catch((error: unknown) => toast.add({
+                    title: error instanceof Error ? error.message : '恢复失败',
+                    type: 'error',
+                  }))}
+                >
+                  <RotateCcw className="size-4" />
+                </Button>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : viewMode === 'waterfall' ? (
+        <div data-testid="trash-waterfall" className="columns-2 gap-5 md:columns-3 xl:columns-4">
+          {rows.map(doc => (
+            <div key={doc.id} className="mb-5 break-inside-avoid">
+              {renderCard(doc)}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <BrowseGrid>{rows.map(renderCard)}</BrowseGrid>
+      )}
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="sm:max-w-md">

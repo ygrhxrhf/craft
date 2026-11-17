@@ -1,38 +1,38 @@
 {
-  "generatedAt": "2026-11-16T16:34:31.530Z",
-  "totalRows": 1640,
+  "generatedAt": "2026-11-17T14:11:59.826Z",
+  "totalRows": 1653,
   "statusDistribution": {
     "gap": 655,
-    "aligned": 508,
+    "aligned": 516,
     "unknown": 185,
-    "deliberate": 141,
+    "deliberate": 145,
     "nonaction": 73,
-    "partial": 62,
+    "partial": 63,
     "unreachable": 16
   },
   "priorityDistribution": {
-    "P2": 634,
+    "P2": 639,
     "P?": 425,
     "P1": 302,
-    "P3": 271,
+    "P3": 279,
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 282,
+    "P2 / aligned": 285,
     "P2 / gap": 211,
     "P1 / gap": 182,
     "P? / gap": 169,
     "P? / unknown": 107,
     "P3 / gap": 93,
-    "P3 / aligned": 87,
+    "P3 / aligned": 92,
     "P1 / aligned": 71,
     "P? / aligned": 61,
-    "P2 / deliberate": 54,
-    "P3 / deliberate": 40,
+    "P2 / deliberate": 55,
+    "P3 / deliberate": 43,
     "P? / deliberate": 36,
     "P2 / unknown": 33,
     "P? / nonaction": 30,
-    "P2 / partial": 25,
+    "P2 / partial": 26,
     "P1 / unknown": 23,
     "P2 / nonaction": 23,
     "P3 / unknown": 22,
@@ -947,6 +947,10 @@
     {
       "name": "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第二条写路径＋登记六枚\"有列没面\"的管理动作（2026-10-17 本机钟 21:4x—21:5x＝**真写入批**＝净新增 6 条＝G1536…G1541＝P0 不变 7／8）",
       "count": 112
+    },
+    {
+      "name": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "count": 13
     }
   ],
   "rows": [
@@ -30608,6 +30612,240 @@
       },
       "conflict": null,
       "priority": "P1"
+    },
+    {
+      "line": 5955,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1649",
+      "official": "「所有文档」标题左侧有 ＋ 圆钮；右上角有「?」帮助按钮；标题下直接是卡片网格，没有「最近编辑」小标题。",
+      "local": "标题写「文档」；标题左侧无 ＋ 圆钮；右上角无「?」；多出一行「最近编辑」小标题。",
+      "verdict": "已对齐（第 574 批实施：标题改「所有文档」；＋圆钮/右上 ?/最近编辑三项按裁决保留本地形态）（证：screenshots/compare/local-documents-after.png）",
+      "score": "1/1",
+      "status": "aligned",
+      "scoreParsed": {
+        "impact": 1,
+        "cost": 1,
+        "raw": "1/1"
+      },
+      "conflict": null,
+      "priority": "P3"
+    },
+    {
+      "line": 5956,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1650",
+      "official": "卡片标题一律浅灰、预览区留白；未读通知是铃铛上的红点。",
+      "local": "有标题的文档标题加粗，卡片内嵌白色预览框；通知是数字徽标「23」。",
+      "verdict": "有意偏差（裁决 2026-11-17：数字未读徽标信息量高于红点；标题字重随有无标题变化；卡片预览内框是本地渲染细节）",
+      "score": "1/1",
+      "status": "deliberate",
+      "scoreParsed": {
+        "impact": 1,
+        "cost": 1,
+        "raw": "1/1"
+      },
+      "conflict": null,
+      "priority": "P3"
+    },
+    {
+      "line": 5957,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1651",
+      "official": "一级导航只有 所有文档／任务／日历／连接／与我共享／我的模板 六项；收藏、文件夹、标签是三个可折叠段，文件夹树只在段内。",
+      "local": "一级导航 14 项（首页／收藏／标签／未归档／最近／日记／任务／日历／模板／连接／回收站／归档／与我共享／显示），下方再接文档树与文件夹树两段。",
+      "verdict": "有意偏差（裁决 2026-11-17：侧栏信息架构是本地路线选择，与 G48 同族——日记/最近/归档/回收站/标签提为一级导航）",
+      "score": "2/3",
+      "status": "deliberate",
+      "scoreParsed": {
+        "impact": 2,
+        "cost": 3,
+        "raw": "2/3"
+      },
+      "conflict": null,
+      "priority": "P2"
+    },
+    {
+      "line": 5958,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1652",
+      "official": "标题「任务」＋左侧 ＋ 圆钮；四档 tab（未归档／今天／即将进行／所有任务）在右上胶囊组；另有 紧凑／扩展 两档视图切换。",
+      "local": "标题「任务收件箱」；四档 tab 在标题下方下划线；无视图切换；右上换成「添加任务，按回车确认…」输入框＋「添加」按钮。",
+      "verdict": "已对齐（第 574 批实施：标题「任务」；四档 tab 改页头右侧胶囊；＋ 圆钮展开添加行；补 紧凑/扩展 两档密度）（证：screenshots/compare/local-tasks-after.png、e2e/task-groups.spec.ts）",
+      "score": "2/2",
+      "status": "aligned",
+      "scoreParsed": {
+        "impact": 2,
+        "cost": 2,
+        "raw": "2/2"
+      },
+      "conflict": null,
+      "priority": "P2"
+    },
+    {
+      "line": 5959,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1653",
+      "official": "三分区（未归档／固定文档／带任务的文档）各带折叠箭头与 ⋯；空态是大块灰面板＋图标＋一句文案。",
+      "local": "分区顺序为 固定文档／未归档；多一行「全部完成／显示已完成的任务／⋯／设置为默认视图」；空态是纯文字。",
+      "verdict": "已对齐（第 574 批实施：工具条上的开关撤掉，「显示已完成」成为分区 ⋯ 里的 menuitemcheckbox（aria-checked 读设备设置）；「全部完成／设置为默认视图」也在同一 ⋯ 内；e2e/core、task-cancel、task-side-sync-failure、task-toggle-offline、tasks-upcoming-sections 已按菜单改写并全绿）（证：e2e/tasks-upcoming-sections.spec.ts、screenshots/compare/local-tasks-final.png）",
+      "score": "1/2",
+      "status": "aligned",
+      "scoreParsed": {
+        "impact": 1,
+        "cost": 2,
+        "raw": "1/2"
+      },
+      "conflict": null,
+      "priority": "P3"
+    },
+    {
+      "line": 5960,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1654",
+      "official": "左列是日期 chip 纵向时间轴（11月17日／今天／星期二，逐日向下）；右列是当天内容；顶部只有「↑ 显示前几天」。",
+      "local": "可视主区是「进行中」聚合任务列表；日期 chip 在 DOM 里存在（11月17日／今天／星期二…与「↓ 显示下个月」）但不在主列；右上多「显示已完成的任务」「显示月视图」。",
+      "verdict": "已对齐（第 574 批复核更正：日期 chip 时间轴一直在主列，此前登记是截图未滚动造成的误读；「进行中」聚合节是 G96 的官方语义）（证：screenshots/compare/local-calendar-scrolled2.png）",
+      "score": "2/3",
+      "status": "aligned",
+      "scoreParsed": {
+        "impact": 2,
+        "cost": 3,
+        "raw": "2/3"
+      },
+      "conflict": null,
+      "priority": "P2"
+    },
+    {
+      "line": 5961,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1655",
+      "official": "空态是居中的纯文字「收藏你想要稍后轻松找到的文档」；右上三档视图切换。",
+      "local": "同一句文案放在灰色圆角面板＋星形图标里；多一句「只有你可以查看收藏的项目」；无视图切换。",
+      "verdict": "已对齐（第 574 批实施：空态去掉星形图标、只留 72px 面板内一句文案；页头补三档视图切换）（证：screenshots/compare/local-favorites-after2.png）",
+      "score": "1/1",
+      "status": "aligned",
+      "scoreParsed": {
+        "impact": 1,
+        "cost": 1,
+        "raw": "1/1"
+      },
+      "conflict": null,
+      "priority": "P3"
+    },
+    {
+      "line": 5962,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1656",
+      "official": "标签页是文档卡片网格，空态句「尚无已加标签的文档。从添加 #工作、#想法 或 #学校 等标签开始，为你的笔记建立条理。」；右上三档视图切换。",
+      "local": "标签页是标签列表（每行：色点＋标签名＋「N 个文档」＋眼睛／斜线图标），右侧「按原样／全部小写」，没有文档卡片网格。",
+      "verdict": "有意偏差（裁决 2026-11-17：本地拆成标签总表＋/tags/[id] 文档页，官方是单页合并）",
+      "score": "1/2",
+      "status": "deliberate",
+      "scoreParsed": {
+        "impact": 1,
+        "cost": 2,
+        "raw": "1/2"
+      },
+      "conflict": null,
+      "priority": "P3"
+    },
+    {
+      "line": 5963,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1657",
+      "official": "顶部有「Craft 的模板库」横幅（数百个模板可帮助你加快工作流程…）＋「打开图库」按钮；下方空态「这个文件夹是空的」＋「创建模板」。",
+      "local": "没有模板库横幅，直接是模板卡片列表。",
+      "verdict": "有意偏差（裁决 2026-11-17：Craft 模板库是外部内容与服务，本地只做自建模板）",
+      "score": "1/1",
+      "status": "deliberate",
+      "scoreParsed": {
+        "impact": 1,
+        "cost": 1,
+        "raw": "1/1"
+      },
+      "conflict": null,
+      "priority": "P3"
+    },
+    {
+      "line": 5964,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1658",
+      "official": "整屏天空云朵插画背景；两段「你的 MCP 连接」「你的 API 连接」各以一张连接卡呈现（所有文档的 MCP／所有文档的 API）；左上 ＋。",
+      "local": "白底表单页（类型／名称／地址／令牌／权限／保护／作用域＋添加连接）＋「暂无连接」；两段文案逐字一致。",
+      "verdict": "已对齐（第 574 批实施：两段连接卡＋虚线添加卡＋添加走弹层；云朵插画按专有资产不搬）（证：screenshots/compare/local-connections-after.png）",
+      "score": "2/2",
+      "status": "aligned",
+      "scoreParsed": {
+        "impact": 2,
+        "cost": 2,
+        "raw": "2/2"
+      },
+      "conflict": null,
+      "priority": "P2"
+    },
+    {
+      "line": 5965,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1659",
+      "official": "右上三档视图切换；卡片显示原文档内容预览；无保留期说明。",
+      "local": "右上只有 ⋯；多一句「文档将保留 30 天。之后文档将被永久删除。」；卡片正文显示「空文档」。",
+      "verdict": "已对齐（第 574 批实施：回收站补网格/列表/瀑布三档，列表档带恢复按钮；30 天说明与卡片预览按裁决保留）（证：screenshots/compare/local-trash-after.png）",
+      "score": "1/2",
+      "status": "aligned",
+      "scoreParsed": {
+        "impact": 1,
+        "cost": 2,
+        "raw": "1/2"
+      },
+      "conflict": null,
+      "priority": "P3"
+    },
+    {
+      "line": 5966,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1660",
+      "official": "文档是居中浮起的白色圆角卡片，页面底为浅灰；顶栏极简（标题居中，右侧头像／共享／铃／?／面板开关）；左侧只有图标栏与「目录」区（「使用标题、页面或卡片创建目录。」）。",
+      "local": "白底通栏、无浮起卡片；完整侧栏常驻；顶栏是面包屑＋一排图标（专注／网格／TT／表情／信息／⋯／共享）；无目录区。",
+      "verdict": "部分落地（第 574 批：画布改浅灰底＋居中白卡；编辑页左上角加「收起/展开侧栏」按钮，收起后页头也有展开入口。未做：顶栏仍是面包屑＋功能图标簇——那排 tab 是右栏的入口、18 处 e2e 直接点它，且侧栏默认仍开）（证：screenshots/compare/local-editor-sidebar-open.png、local-editor-sidebar-closed.png）",
+      "score": "2/3",
+      "status": "partial",
+      "scoreParsed": {
+        "impact": 2,
+        "cost": 3,
+        "raw": "2/3"
+      },
+      "conflict": null,
+      "priority": "P2"
+    },
+    {
+      "line": 5967,
+      "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
+      "cols": 5,
+      "id": "G1661",
+      "official": "（对照 ref/settings-open.png）弹层约 960 宽；「空间设置」段下有 已发布内容／标签／空间设置；空间图标是相机按钮；左栏底部有账号行（头像＋名字＋邮箱）。",
+      "local": "弹层更窄；「空间设置」段只有 标签／空间设置（无「已发布内容」）；「更换空间图标」是文字链接；左栏底部账号行不可见。",
+      "verdict": "已对齐（第 574 批实施：弹层 960×700、左栏加宽、账号行钉底、空间图标改相机钮；「已发布内容」按 G24 判据不出现）（证：screenshots/compare/local-settings-after2.png）",
+      "score": "1/2",
+      "status": "aligned",
+      "scoreParsed": {
+        "impact": 1,
+        "cost": 2,
+        "raw": "1/2"
+      },
+      "conflict": null,
+      "priority": "P3"
     }
   ]
 }

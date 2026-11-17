@@ -42,7 +42,7 @@ const typedQuery = (name: string) => `/${name.split(' ')[0]}`;
 
 function slashOption(page: Page, name: string): Locator {
   const exact = new RegExp('^' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$');
-  return page.locator('[role="option"] div.font-medium').filter({ hasText: exact }).first();
+  return page.locator('[role="option"] span').filter({ hasText: exact }).first();
 }
 
 async function openSlash(page: Page, name: string) {
@@ -53,14 +53,14 @@ async function openSlash(page: Page, name: string) {
 }
 
 const ALL_COMMANDS = [
-  '文本', '标题 1', '标题 2', '标题 3', '标题 4',
-  '无序列表', '有序列表', '待办事项', '折叠列表', '引用', '代码块', '表格',
+  '正文', '标题', '副标题', '中标题', '小标题',
+  '无序列表', '编号列表', '待办列表', '折叠列表', '取消列表格式', '引用', '插入代码区块', '表格',
   // 官方把分隔线列为四条命令（G31），一条一个权重档；本地曾经只有一条。
   '分隔线 - 极细', '分隔线 - 细', '分隔线 - 常规', '分隔线 - 粗',
   '从模板插入',
   '信息提示', '警告提示', '错误提示', '成功提示', '备注',
-  'AI 生成图像', '绘图', '图片', '文件附件', '图片网格', '网页链接',
-  '卡片', '@提及', '目录', '分栏', '公式', '行内公式', '镜像块', '视频嵌入', '白板',
+  'AI 生成图像', '绘图', '图片', '插入文件', '图片网格', '网页链接',
+  '卡片', '@提及', '目录', '分栏', '插入 TeX 公式', '行内公式', '镜像块', '视频嵌入', '插入白板',
 ];
 
 test('every slash command is reachable by name', async ({ page }) => {
@@ -81,16 +81,16 @@ test('every slash command is reachable by name', async ({ page }) => {
 
 /** Commands that land a node straight in the document, with the DOM that proves it. */
 const INSERTS: { name: string; marker: string }[] = [
-  { name: '标题 1', marker: 'h1' },
-  { name: '标题 2', marker: 'h2' },
-  { name: '标题 3', marker: 'h3' },
-  { name: '标题 4', marker: 'h4' },
+  { name: '标题', marker: 'h1' },
+  { name: '副标题', marker: 'h2' },
+  { name: '中标题', marker: 'h3' },
+  { name: '小标题', marker: 'h4' },
   { name: '无序列表', marker: 'ul li' },
-  { name: '有序列表', marker: 'ol li' },
-  { name: '待办事项', marker: 'input[type="checkbox"]' },
+  { name: '编号列表', marker: 'ol li' },
+  { name: '待办列表', marker: 'input[type="checkbox"]' },
   { name: '折叠列表', marker: '.toggle-summary' },
   { name: '引用', marker: 'blockquote' },
-  { name: '代码块', marker: '.crafty-code-block' },
+  { name: '插入代码区块', marker: '.crafty-code-block' },
   { name: '表格', marker: 'table' },
   // 逐档核 `data-style`：四档若都落成同一权重，只有带档名的 marker 会红。
   { name: '分隔线 - 极细', marker: 'hr[data-type="divider"][data-style="extraLight"]' },
@@ -100,9 +100,9 @@ const INSERTS: { name: string; marker: string }[] = [
   { name: '信息提示', marker: '.callout-content' },
   { name: '卡片', marker: '.card-block-content' },
   { name: '分栏', marker: 'div[data-type="columns"]' },
-  { name: '公式', marker: 'textarea' },
+  { name: '插入 TeX 公式', marker: 'textarea' },
   { name: '绘图', marker: 'button:has-text("开始绘图")' },
-  { name: '白板', marker: '[data-whiteboard-embed]' },
+  { name: '插入白板', marker: '[data-whiteboard-embed]' },
 ];
 
 /** Chunked rather than one long pass: every block needs its own document, and 18 of them
@@ -174,15 +174,17 @@ test('markdown input rules convert while typing', async ({ page }) => {
   await expect(editor.locator('strong')).toHaveText('重点');
 
   await reset(page, editor);
-  await page.keyboard.type('划掉 ~~旧值~~', { delay: 20 });
+  // 规则是 `\s$` 收尾（markdown-mark-rules.ts）——不收尾空格不触发。
+  await page.keyboard.type('划掉 ~~旧值~~ ', { delay: 20 });
   await expect(editor.locator('s')).toHaveText('旧值');
 
   await reset(page, editor);
-  await page.keyboard.type('高亮 ==新值==', { delay: 20 });
+  // 同上：所有 space-mark 规则都以 `\s$` 收尾。
+  await page.keyboard.type('高亮 ==新值== ', { delay: 20 });
   await expect(editor.locator('mark')).toHaveText('新值');
 
   await reset(page, editor);
-  await page.keyboard.type('[示例站](https://example.com)', { delay: 20 });
+  await page.keyboard.type('[示例站](https://example.com) ', { delay: 20 });
   await expect(editor.locator('a[href="https://example.com"]')).toHaveText('示例站');
 
   await reset(page, editor);

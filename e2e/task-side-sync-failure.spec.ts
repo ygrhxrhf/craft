@@ -89,7 +89,8 @@ test('任务行同步 500 时徽标翻成「保存失败」，重试之后行真
   // 重试不是把徽标洗白了事：那一行确实进了 tasks，并被读到第三档那节里。
   // ☆ 顺序要紧：这一行是 cancelled，默认那枚开关（只显示 pending）本来就藏着它。
   await page.goto('/tasks/all');
-  await page.getByLabel('显示已完成的任务').click();
+  await page.getByRole('button', { name: '更多选项' }).click();
+  await page.getByRole('menuitemcheckbox', { name: '显示已完成的任务' }).click();
   const section = page
     .locator('section')
     .filter({ has: page.getByRole('heading', { level: 2, name: /^已取消 · \d+$/ }) })

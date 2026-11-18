@@ -612,7 +612,7 @@ await vis.set(true);      // 命令 browser_visibility_set —— 等价于"取�
 
 - 工具：ego-browser（ego lite 2.1.0），任务空间 `craft dom snapshot 20261023`（spaceId 1），视口 1440×900 dpr 1。
 - **只做读**（`outerHTML` + 几何/求值），**未做任何插入/输入**；斜线菜单在**本次新建的临时文档**里唤起，未碰用户既有文档 —— 遵守 §12.6 的红线。
-- 落盘快照含**空间名 `zhang's-Space`、作者名 `zhang meng`、若干个人文档标题**；**无邮箱、无头像 URL、无 token**（已扫：`emails=[] / avatars=[] / tokens=[]`）。
+- 落盘快照含**空间名 `<空间名>`、作者名 `<账户持有人>`、若干个人文档标题**；**无邮箱、无头像 URL、无 token**（已扫：`emails=[] / avatars=[] / tokens=[]`）。
   ⇒ 按 `screens/`、`ref/`、`templates-list.json` 的先例只留本地（`.gitignore` 加 `/docs/craft-ref/dom-20261023/`，`git check-ignore` 已验证命中）。
 - ☆ **一次误点**：点侧栏底部第 3 个按钮（Person3 Fill Icon）弹出的**不是账户设置，而是 Teams 试用推广弹窗**（免费档也会触发）；已存证为 `teams-upsell-modal.html` 后按 Escape 关闭。期间弹出过一个 `craft.do/download` 标签页，已 `page.close()` 清掉。
 - ☆ **斜线菜单的可见性陷阱**：它的节点**不在 `document.documentElement.outerHTML` 里**（实测 `outerHTML` 无 `白板` 字样，但 `document.body.innerText` 有），且开合很快。最终靠「先点中正文块 → 全选删除 → `type("/")` → 立刻取整页 HTML」采到；**单靠 `outerHTML` 会误判为「菜单没打开」**。

@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
  * G988 接线：一次拖拽＝一步撤销（`closeHistory`），且拖完不抢焦点（官方 `rangeCount:0`）。
  */
 const EDITOR = join(process.cwd(), 'src', 'components', 'editor', 'DocumentEditor.tsx');
+const PANEL = join(process.cwd(), 'src', 'components', 'editor', 'tabs', 'RightPanel.tsx');
 const DRAG = join(process.cwd(), 'src', 'components', 'editor', 'drag-handle', 'DragHandle.tsx');
 
 function read(path: string): string {
@@ -65,10 +66,25 @@ describe('右侧栏跨文档持久态（G956）', () => {
     ).toBeTruthy();
   });
 
-  it('四个标签名逐字与官方一致', () => {
+  it('四个标签名逐字与官方一致（G1660 后归右栏自己的 tablist）', () => {
+    const panel = read(PANEL);
     for (const label of ['插入', '格式', '样式', '信息']) {
-      expect(src, `标签名少了「${label}」`).toContain(`'${label}'`);
+      expect(panel, `右栏 tablist 少了「${label}」`).toContain(`label: '${label}'`);
     }
+    // 顶栏那排 tab 图标撤掉，入口收成一枚面板开关——标签归面板自己管，不再两处各画一遍。
+    expect(src, '顶栏没有面板开关').toContain('aria-label="编辑器工具面板"');
+  });
+
+  it('面板开关关掉再开，回到上次那一档（G1660）', () => {
+    // 开关管的是「开没开」，不该把「刚才停在哪一档」一起忘掉。
+    expect(
+      /const lastTabRef = useRef<RightTabId>\('insert'\);[\s\S]*?if \(activeTab\) lastTabRef\.current = activeTab;/.exec(src)?.[0],
+      '没有记住上一档 ⇒ 关掉再开只能回默认档',
+    ).toBeTruthy();
+    expect(
+      /setActiveTab\(\(prev\) => \(prev === null \? lastTabRef\.current : null\)\)/.exec(src)?.[0],
+      '开关没按「关着就开回上一档、开着就关」工作',
+    ).toBeTruthy();
   });
 });
 

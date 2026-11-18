@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 /**
  * `gap.md` G1521 —— 官方那一档事实：移除协作者与添加协作者是同一条离线内核通路上的两笔动作，
@@ -72,7 +73,7 @@ test('断链时移除协作者仍成立，且刷新后那一行不再回来', as
   // 邀请 PEER 与 KEEPER（都走内核，但 resolveDocumentMember 那一发是服务端读，此刻链路还通）。
   // ☆ KEEPER 是判据的正控制：移除 PEER 之后，"PEER 不在名册里"只有在名册**已经加载**时才算数，
   //   否则一枚还没渲染出来的空列表会让 toHaveCount(0) 空过（本批第一版就这么假绿了）。
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   const emailBox = page.locator('input[aria-label="协作者邮箱"]');
   for (const person of [PEER, KEEPER]) {
     await emailBox.fill(person.email);
@@ -82,7 +83,7 @@ test('断链时移除协作者仍成立，且刷新后那一行不再回来', as
   // 等两行都真推到服务端并拉回来（刷新后仍在），再谈"移除"。
   await expect(async () => {
     await page.reload();
-    await page.getByRole('button', { name: '信息', exact: true }).click();
+    await openEditorPanel(page, '信息');
     await expect(page.getByText(PEER.name).first()).toBeVisible({ timeout: 10_000 });
     await expect(page.getByText(KEEPER.name).first()).toBeVisible({ timeout: 10_000 });
   }).toPass({ timeout: 60_000, intervals: [2_000] });
@@ -105,7 +106,7 @@ test('断链时移除协作者仍成立，且刷新后那一行不再回来', as
   await signIn(freshPage, OWNER);
   await expect(async () => {
     await freshPage.goto(docUrl);
-    await freshPage.getByRole('button', { name: '信息', exact: true }).click();
+    await openEditorPanel(freshPage, '信息');
     await expect(freshPage.getByText(KEEPER.name).first()).toBeVisible({ timeout: 10_000 });
     await expect(freshPage.getByText(PEER.name)).toHaveCount(0);
   }).toPass({ timeout: 60_000, intervals: [2_000] });
@@ -114,7 +115,7 @@ test('断链时移除协作者仍成立，且刷新后那一行不再回来', as
   // 本机刷新后那一行也不回来。
   await expect(async () => {
     await page.goto(docUrl);
-    await page.getByRole('button', { name: '信息', exact: true }).click();
+    await openEditorPanel(page, '信息');
     await expect(page.getByText(KEEPER.name).first()).toBeVisible({ timeout: 10_000 });
     await expect(page.getByText(PEER.name)).toHaveCount(0);
   }).toPass({ timeout: 60_000, intervals: [2_000] });

@@ -302,7 +302,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.quick-open.alt` | added-only-official |  | QODER-ILAB-ins-page |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.alt` | added-only-official |  | Watch: how to videos |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.alt` | added-only-official |  | Welcome to Craft |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `shell.quick-open.alt` | added-only-official |  | 在zhang's Space中 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.alt` | added-only-official |  | 在<空间名>中 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.alt` | added-only-official |  | 快照 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.alt` | added-only-official |  | 文档 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.alt` | added-only-official |  | 无标题文档 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
@@ -321,7 +321,7 @@ severity 2 = 参与判定；severity 3 = 前置条件不成立。
 | `shell.quick-open.ctrl-o` | added-only-official |  | QODER-ILAB-ins-page |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.ctrl-o` | added-only-official |  | Watch: how to videos |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.ctrl-o` | added-only-official |  | Welcome to Craft |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
-| `shell.quick-open.ctrl-o` | added-only-official |  | 在zhang's Space中 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
+| `shell.quick-open.ctrl-o` | added-only-official |  | 在<空间名>中 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.ctrl-o` | added-only-official |  | 快照 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.ctrl-o` | added-only-official |  | 文档 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |
 | `shell.quick-open.ctrl-o` | added-only-official |  | 无标题文档 |  | 官方侧栏的文档计数随列表重绘出现；是外壳计数不是编辑器内容 | 逐 spec 声明（observe.mjs NOISE_RULES 未覆盖） |

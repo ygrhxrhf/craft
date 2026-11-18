@@ -12,7 +12,7 @@ import { Breadcrumb } from './Breadcrumb';
 import { NotificationBell } from '@/components/notification/NotificationBell';
 import { FindReplacePanel } from './find-replace-panel';
 import { TemplatePicker } from './template-picker';
-import { Share2, LayoutGrid, Type, Palette, Info, Menu, MoreHorizontal, Focus, PanelLeft } from 'lucide-react';
+import { Share2, Menu, Focus, PanelLeft, PanelRight } from 'lucide-react';
 import { cn } from 'cn';
 import { useIsCompact, useIsMobile } from '@/lib/use-is-mobile';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
@@ -27,13 +27,9 @@ import { useRightPanelStore } from '@/lib/store/use-right-panel-store';
 import { capabilitiesFor } from '@/lib/authz/permission-axes';
 import { KEY_BINDINGS, displayFor } from '@/lib/editor/keymap';
 import { usePlatform } from '@/lib/editor/use-platform';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { ShareDialog } from '@/components/share/ShareDialog';
+import { HelpMenu } from '@/components/app/HelpMenu';
+import { useSettingsStore } from '@/lib/store/use-settings-store';
 import { OpenInAppNotice } from '@/components/app/OpenInAppNotice';
 import { SHARE_TRIGGER_LABEL } from '@/lib/share/invite-copy';
 import { normalizePageStyle, getFontStack, getThemeColor, getWashiGradient, separatorStyleOf, showsDocumentTitle, colorChannelCss, colorPairCss } from './themes/page-style';
@@ -50,13 +46,6 @@ import { FloatingThreadWindow } from '@/components/editor/comments/FloatingThrea
 import { LeftToolRail } from '@/components/editor/LeftToolRail';
 
 const TAB_ORDER = ['insert', 'format', 'style', 'info'] as const;
-const TAB_ICONS = { insert: LayoutGrid, format: Type, style: Palette, info: Info };
-const TAB_LABELS: Record<RightTabId, string> = {
-  insert: '插入',
-  format: '格式',
-  style: '样式',
-  info: '信息',
-};
 // G956: whether the right rail is open and which tab it sits on is a persistent
 // state that survives document switches — carry it in localStorage like G756.
 const RIGHT_TAB_STORAGE_KEY = 'craft.editor.right-tab';
@@ -102,9 +91,11 @@ interface DocumentEditorProps {
     isDailyNote?: boolean;
   };
   role?: 'owner' | 'editor' | 'commenter' | 'viewer';
+  /** G1660：顶栏右侧头像上的那一枚字（官方是账号首字）。 */
+  userInitial?: string;
 }
 
-export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditorProps) {
+export function DocumentEditor({ document: doc, role = 'owner', userInitial = '我' }: DocumentEditorProps) {
   // G588: the three capability keys come from the role, each independent — `commenter` can comment
   // without editing, which a single `canEdit` boolean could not express.
   const { canEdit, canComment } = capabilitiesFor(role);
@@ -241,13 +232,15 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
     useActiveEditorStore.getState().setEditor(next);
   }, []);
 
-  const handleTabClick = (tab: RightTabId) => {
-    setActiveTab((prev) => (prev === tab ? null : tab));
+  // G1660：面板开关关的是「开没开」，不该把「刚才停在哪一档」一起忘掉——重新打开要回到
+  // 上次那一档。activeTab 为 null 时这个 ref 不动，所以关掉再开仍回上一档。
+  const lastTabRef = useRef<RightTabId>('insert');
+  useEffect(() => {
+    if (activeTab) lastTabRef.current = activeTab;
+  }, [activeTab]);
+  const handlePanelToggle = () => {
+    setActiveTab((prev) => (prev === null ? lastTabRef.current : null));
   };
-
-  const availableTabs = TAB_ORDER.filter((tab) => canEdit || tab === 'info');
-  const primaryTabs = isMobile ? availableTabs.filter((tab) => tab === 'insert' || tab === 'format') : availableTabs;
-  const overflowTabs = isMobile ? availableTabs.filter((tab) => tab !== 'insert' && tab !== 'format') : [];
 
   const handleUpdate = async (data: {
     title?: string;
@@ -329,15 +322,17 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
           所以挂在外层横向容器里、排在正文列之前；关着时组件返回 null，不占位。 */}
       <FindReplacePanel editor={editor} documentId={doc.id} />
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* 顶栏：面包屑 + 右侧 tab 按钮 */}
+        {/* G1660：官方顶栏极简——**标题居中**，右侧一簇 头像／共享／铃／?／面板开关。
+            本地在这簇左边多留两枚（专注／文档 ⋯）：官方对应物未采到，且两者都有真实处理器
+            （⌘. 与文档级五分组弹层），撤掉会变成「有键位没入口」。 */}
         <div
           data-testid="document-topbar"
           className={cn(
-            'flex h-12 shrink-0 items-center justify-between px-4',
+            'relative flex h-12 shrink-0 items-center justify-between px-4',
             focusActive && 'hidden',
           )}
         >
-          <div className="flex min-w-0 items-center gap-3">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             {isMobile && (
               <button
                 type="button"
@@ -362,7 +357,6 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
                 <PanelLeft className="size-4" />
               </button>
             )}
-            <Breadcrumb title={title} />
             <span
               role="status"
               aria-live="polite"
@@ -390,7 +384,15 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
               )}
             </span>
           </div>
-          <div className="flex items-center gap-0.5">
+          {/* 居中标题：绝对定位，左右两簇宽度不等也不会把它推偏；宽度封到 42% 并让
+              面包屑自己截断，窄屏（<768）整块让位给两簇——手机/平板在正文上方另有
+              整行标题，见 EditorHeader。 */}
+          <div className="pointer-events-none absolute left-1/2 top-1/2 hidden max-w-[42%] -translate-x-1/2 -translate-y-1/2 md:block">
+            <div className="pointer-events-auto">
+              <Breadcrumb title={title} />
+            </div>
+          </div>
+          <div className="flex flex-1 items-center justify-end gap-0.5">
             {/* 专注模式开关：快捷键（⌘/Ctrl+.）已经在 shell-shortcuts 里，但一条键位不是入口——
                 用户不知道键位就没有办法进来。顶栏自身在专注态隐藏，所以退出走下面那条
                 `focus-exit` 横条，不依赖这个按钮。 */}
@@ -403,49 +405,6 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             >
               <Focus className="size-4" />
             </button>
-            {/* Tab toggle buttons; phones keep two in the bar and fold the rest away */}
-            {primaryTabs.map((tab) => {
-              const Icon = TAB_ICONS[tab];
-              return (
-                <button
-                  key={tab}
-                  onClick={() => handleTabClick(tab)}
-                  type="button"
-                  aria-label={TAB_LABELS[tab]}
-                  aria-pressed={activeTab === tab}
-                  title={TAB_LABELS[tab]}
-                  className={cn(
-                    'rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground',
-                    activeTab === tab && 'bg-muted text-foreground'
-                  )}
-                >
-                  <Icon className="size-4" />
-                </button>
-              );
-            })}
-            {overflowTabs.length > 0 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  type="button"
-                  aria-label="更多面板"
-                  title="更多面板"
-                  className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  <MoreHorizontal className="size-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {overflowTabs.map((tab) => (
-                    <DropdownMenuItem key={tab} onClick={() => setActiveTab(tab)}>
-                      {TAB_LABELS[tab]}
-                    </DropdownMenuItem>
-                  ))}
-                  {isOwner && (
-                    <DropdownMenuItem onClick={() => setShareOpen(true)}>分享</DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-            <div className="mx-0.5 h-4 w-px bg-border" />
             {/* G1451：文档级 `⋯` —— 官方那五分组弹层（页面样式／查找·目录／视图／移至／撤销重做）。
                 「视图」是全屏资料的一栏切换，本仓落到右侧面板的对应页签。 */}
             <DocumentActionsMenu
@@ -462,7 +421,18 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
                 setActiveTab(tab === 'tasks' || tab === 'attachments' ? 'info' : 'info')
               }
             />
-            {isOwner && !isMobile && (
+            {/* G1660：账号头像（官方是一枚圆形首字）——落在「账户设置」，不是装饰。 */}
+            <button
+              type="button"
+              onClick={() => useSettingsStore.getState().openSettings('account')}
+              aria-label="账户"
+              title="账户"
+              data-testid="editor-account"
+              className="ml-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-purple-700 text-xs font-semibold text-white"
+            >
+              {userInitial}
+            </button>
+            {isOwner && (
               // G931：官方分享入口是**文案为「共享」的按钮**（可见文本、没有 `aria-label`）。
               <button
                 onClick={() => setShareOpen(true)}
@@ -475,6 +445,23 @@ export function DocumentEditor({ document: doc, role = 'owner' }: DocumentEditor
             )}
             {/* G1660：官方文档顶栏右侧常驻通知铃。 */}
             <NotificationBell />
+            <HelpMenu />
+            {/* G1660 的「面板开关」：原先那排右栏 tab 图标撤掉——tab 条本来就在右栏顶部
+                （RightPanel 的 tablist），这里只负责开／关，并在重开时回到上次那一档。 */}
+            <button
+              type="button"
+              onClick={handlePanelToggle}
+              aria-label="编辑器工具面板"
+              aria-pressed={activeTab !== null}
+              title="编辑器工具面板"
+              data-testid="editor-panel-toggle"
+              className={cn(
+                'rounded-md p-1.5 transition-colors hover:bg-muted hover:text-foreground',
+                activeTab !== null ? 'text-foreground' : 'text-muted-foreground'
+              )}
+            >
+              <PanelRight className="size-4" />
+            </button>
           </div>
         </div>
 

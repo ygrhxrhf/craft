@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 import { expandFolderSection } from './sidebar-folders';
 
 const email = 'craft-test@example.com';
@@ -39,7 +40,7 @@ test('the location section names the folder, or 未分类', async ({ page }) => 
   await page.waitForTimeout(1_500);
 
   const location = page.locator('section').filter({ hasText: '位置' }).first();
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   await expect(location).toContainText('未分类', { timeout: 20_000 });
 
   // G204 之后信息面板是单列，动作项直接排在面板里，没有「动作／页面信息」子页签。

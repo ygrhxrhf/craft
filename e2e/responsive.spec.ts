@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { FIXTURE, STORAGE_STATE } from './global-setup';
+import { openEditorPanel } from './editor-panel';
 
 // Reuse the seeded visual account instead of the login form: the phone-form
 // login path was flaking under the iPhone emulation, and the fixture account
@@ -96,17 +97,11 @@ test('editor right panel opens without collapsing content', async ({ page }, tes
 
   await openFixtureDoc(page);
 
-  if (testInfo.project.name === 'mobile') {
-    // 手机：水合完成后编辑器顶栏才出现汉堡（isMobile 的客户端信号），
-    // 「信息」被折叠进「更多面板」溢出菜单。
-    await expect(page.getByRole('button', { name: '打开导航' })).toBeVisible({ timeout: 15_000 });
-    await page.getByRole('button', { name: '更多面板' }).click();
-    await page.getByRole('menuitem', { name: '信息' }).click();
-  } else {
-    // 平板：顶栏直出四个按钮，容忍水合竞态重试点
-    const clicked = await clickUntil(page, 'button[aria-label="信息"]', '[role="tablist"][aria-label="编辑器工具"]');
-    expect(clicked, 'info tab never opened after retries').toBe(true);
-  }
+  // G1660：手机与平板的入口统一成顶栏右侧那一枚面板开关（原先手机把「信息」折进
+  // 「更多面板」溢出菜单、平板直出四个 tab 图标，两条路合并成一条）。
+  const toggle = page.getByRole('button', { name: '编辑器工具面板', exact: true });
+  await expect(toggle).toBeVisible({ timeout: 15_000 });
+  await openEditorPanel(page, '信息');
 
   // 紧凑布局（平板/手机）下面是底部 Sheet，桌面 rail 是 complementary；
   // 两种形态共享同一个 tablist。

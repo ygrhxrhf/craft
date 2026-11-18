@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { FIXTURE, STORAGE_STATE } from './global-setup';
+import { openEditorPanel } from './editor-panel';
 
 /**
  * Every shot here is compared against a committed baseline, so the pixels must come
@@ -180,19 +181,11 @@ for (const theme of ['light', 'dark'] as const) {
 
       await shootDoc(`${theme}-document-detail`);
 
-      for (const tab of ['插入', '格式', '样式', '信息']) {
-        const trigger = page.getByRole('button', { name: tab, exact: true });
-        if (await trigger.isVisible().catch(() => false)) {
-          await trigger.click();
-        } else {
-          // Phones fold the last two tabs behind the overflow menu.
-          await page.getByRole('button', { name: '更多面板' }).click();
-          await page.getByRole('menuitem', { name: tab }).click();
-        }
+      for (const tab of ['插入', '格式', '样式', '信息'] as const) {
+        // G1660：三档视口同一条路——顶栏面板开关开面板，面板自己的 tablist 选档。
+        await openEditorPanel(page, tab);
         await page.waitForTimeout(300);
         await shootDoc(`${theme}-document-tab-${tab}`);
-        await page.keyboard.press('Escape');
-        await page.waitForTimeout(200);
       }
     });
 

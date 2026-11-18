@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 /**
  * `gap.md` G1519 —— 官方那一档事实：评论框的 `@` 名单与正文同源，且**挂着评论框时**刚邀的人
@@ -65,7 +66,7 @@ test('评论框挂着时刚邀的协作者当场进 `@` 候选，不必整页重
   await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 30_000 });
 
   // 打开信息面板（成员段与评论段同在这一个面板里）。
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
 
   // 先开评论框：此刻名单里只有发起者自己。
   await openComposer(page);

@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 /**
  * `gap.md` G1520 —— 显示名缓存要活过整页重载。
@@ -67,7 +68,7 @@ test('离线邀请后刷新页面，`@` 名单里那枚人还在（显示名缓�
   // 先掐断增量写：下面那次邀请的成员行会一直留在本机 pending。
   await blockSyncPush(page);
 
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   await page.locator('input[aria-label="协作者邮箱"]').fill(PEER.email);
   await page.getByLabel('添加协作者').click();
   await expect(page.getByText(PEER.name).first()).toBeVisible();

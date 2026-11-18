@@ -1,5 +1,5 @@
 {
-  "verifiedAt": "2026-11-15",
+  "verifiedAt": "2026-11-17",
   "method": "逐行读本地实现＋单测后回填；第 535 批把 G451 读侧统一、G283 拖放三态守卫、G32 全量盖章、G357 三图标条件渲染、G81 两层可见性、G1500/G1537/G1539 补登。 第 544 批复核 G04 请求批准流与 G18 版本快照（e2e/share-access-request.spec.ts 2 passed）。 第 553 批复核并补 status：G90/G169/G170/G1007 补 aligned；G21/G52/G1000/G1007 的 gap.md 判定格回填（原格停在旧账）。 第 554 批给 G1625 补真库回归用例（事务撞键后读必抛 25P02 的前提复核＋陈旧 id 取消固定端到端 200），反向验证：改回盲 create 该条立红 500。 第 555 批把 G1626 的铸造闸补齐（11 张表按 contract.json 现算的必填列下限配 createRequires，新增 create-requires.test.ts 双向钉住，tables/route 两处旧前提翻案）。 第 556 批把 G1627 的唯一键定位器名单搬进 src/lib/sync/unique-keys.ts 并从 contract.json 现读 uniques 建闸，补 document_member 的 (documentId,userId) 定位器（mock＋真库各一条回归）。 第 557 批把 G1628 的集合写侧鉴权补齐（COLLECTION_WRITE_TABLES 四表 + 文档侧存量行与内联归属一起判），8 条新用例并反向验证。 第 558 批把 G1629 的值类型闸补上（payload-shape.ts 从 contract.json 现读 codec+nullable，坏值按 reason:invalid 单笔拒收），mock 2＋真库 2 并反向验证。 第 559 批把 G1630 的客户端队列 4xx 隔离补上（记录级 400/413 拆批逐笔判死、代理 HTML 退回 network、Queue 状态收成三档），queue.test.ts 8 条并反向验证。 第 560 批把 G1631 的记录级判据闸补上（isRecordLevelSyncError 抽出，queue-record-level.test.ts 从 route.ts 现读 4xx 逐句对账），反向验证插入新 400 即红。 第 561 批把 G1632 的墓碑清理清单改成现算（purge-plan.ts 从 SYNC_TABLES + contract primaryKey 推导，补齐六张漏表），purge-plan.test.ts 4 条＋真库轮转回归并反向验证。",
   "rows": {
     "G01": {
@@ -11203,12 +11203,13 @@
       ]
     },
     "G1660": {
-      "status": "partial",
+      "status": "aligned",
       "priority": "P2",
-      "note": "部分落地：画布卡片化 + 编辑页侧栏收起/展开按钮；顶栏图标簇未动",
+      "note": "已对齐（第 575 批：顶栏按官方重排——标题居中＋右侧 头像／共享／铃／?／面板开关；撤掉顶栏那排右栏 tab 图标，入口收成带 aria-pressed 的面板开关并记住上一档；共享入口放开到移动端。保留 专注／文档 ⋯ 两枚本地控件与本地侧栏，见 gap.md 该批注）",
       "evidence": [
-        "screenshots/compare/local-editor-sidebar-open.png",
-        "screenshots/compare/local-editor-sidebar-closed.png"
+        "e2e/editor-panel.ts",
+        "e2e/right-tab-persist.spec.ts",
+        "e2e/insert-panel.spec.ts"
       ]
     },
     "G1661": {

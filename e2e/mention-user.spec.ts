@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 // Three accounts, all created by this spec: the writer, the person invited so there
 // is someone to mention, and a stranger whose name must never surface as a candidate.
@@ -45,7 +46,7 @@ async function newDoc(page: Page) {
 
 /** Invites `account` through the 信息 panel, then closes the panel again. */
 async function invite(page: Page, account: Account) {
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   const emailBox = page.locator('input[aria-label="协作者邮箱"]');
   await emailBox.fill(account.email);
   // ☆ 按可及名寻址（`MembersSection.tsx:199`）：信息面板里标签段也有一枚「添加」，

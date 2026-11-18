@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 const email = 'craft-test@example.com';
 const password = 'test1234';
@@ -15,7 +16,7 @@ async function openInsertPanel(page: Page) {
   await page.goto('/documents');
   await page.getByRole('button', { name: /新建/ }).first().click();
   await page.waitForURL(/\/documents\//);
-  await page.getByRole('button', { name: '插入', exact: true }).click();
+  await openEditorPanel(page, '插入');
 }
 
 /**

@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-17T14:11:59.826Z",
+  "generatedAt": "2026-11-18T07:19:21.312Z",
   "totalRows": 1653,
   "statusDistribution": {
     "gap": 655,
-    "aligned": 516,
+    "aligned": 517,
     "unknown": 185,
     "deliberate": 145,
     "nonaction": 73,
-    "partial": 63,
+    "partial": 62,
     "unreachable": 16
   },
   "priorityDistribution": {
@@ -18,7 +18,7 @@
     "P0": 8
   },
   "statusByPriority": {
-    "P2 / aligned": 285,
+    "P2 / aligned": 286,
     "P2 / gap": 211,
     "P1 / gap": 182,
     "P? / gap": 169,
@@ -32,7 +32,7 @@
     "P? / deliberate": 36,
     "P2 / unknown": 33,
     "P? / nonaction": 30,
-    "P2 / partial": 26,
+    "P2 / partial": 25,
     "P1 / unknown": 23,
     "P2 / nonaction": 23,
     "P3 / unknown": 22,
@@ -4879,7 +4879,7 @@
       "cols": 5,
       "id": "G214",
       "official": "**Kanban / 图库 / 表格是插入面板「合集」组下的一等条目**，可在文档内直接建出集合对象（V10 更正 + 两次捕获字节一致）",
-      "local": "✎ 现读（2026-11-03 第 269 批）：三条都成了一等条目——插入面板「合集」组 `表格／图库／Kanban` 三行一个都不禁用（`InsertTab.tsx` 的 `COLLECTION_ITEMS` 各绑一条斜杠命令 `插入表格集合／插入画廊集合／插入看板集合`），斜杠菜单同名三条；点下 `createCollection({ name, viewType })` **在文档内直接建出集合对象**（`collections`＋`collection_views`＋`collection_properties` 三表落行），正文落 `collectionBlock` 原子块（attrs `collectionId/title/view`，`data-view` 三种视图徽章）。浏览器实点＝按 Kanban 那行 ⇒ `{block:true, id:\"07083924-c4e3-463f-b348-f4ebb01099e9\", view:\"kanban\"}` 且集合行是 `{name:\"看板集合\", type:\"kanban\"}`；reload 后块与 `view` 都读回。本地块形＝一张链到 `/collections/{id}` 的集合卡，官方块在文档内直接渲染集合内容 ⇒ 那层差别记 G1614（partial）与集合视图簇 G81",
+      "local": "✎ 现读（2026-11-03 第 269 批）：三条都成了一等条目——插入面板「合集」组 `表格／图库／Kanban` 三行一个都不禁用（`InsertTab.tsx` 的 `COLLECTION_ITEMS` 各绑一条斜杠命令 `插入表格集合／插入画廊集合／插入看板集合`），斜杠菜单同名三条；点下 `createCollection({ name, viewType })` **在文档内直接建出集合对象**（`collections`＋`collection_views`＋`collection_properties` 三表落行），正文落 `collectionBlock` 原子块（attrs `collectionId/title/view`，`data-view` 三种视图徽章）。浏览器实点＝按 Kanban 那行 ⇒ `{block:true, id:\"<objId:58>\", view:\"kanban\"}` 且集合行是 `{name:\"看板集合\", type:\"kanban\"}`；reload 后块与 `view` 都读回。本地块形＝一张链到 `/collections/{id}` 的集合卡，官方块在文档内直接渲染集合内容 ⇒ 那层差别记 G1614（partial）与集合视图簇 G81",
       "verdict": "已清（第 269 批；建对象＝判据本体）",
       "score": "2/2",
       "status": "aligned",
@@ -28958,7 +28958,7 @@
       "section": "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第二条写路径＋登记六枚\"有列没面\"的管理动作（2026-10-17 本机钟 21:4x—21:5x＝**真写入批**＝净新增 6 条＝G1536…G1541＝P0 不变 7／8）",
       "cols": 5,
       "id": "G1556",
-      "official": "★★ **块间转换保真（样式档）＝两侧都真换档，但① 字号/字重口径不同、② 本地换档后多出一枚空块**（`runs/wave1-22-*`，两侧 6 步 0 error；spec `editor.key.turn-into-style`）：单块 `AAA`、光标在块内，依次按 `Ctrl-Shift-1`（TITLE）→ `-3`（HEADING）→ `-2`（SUBTITLE）→ `-5`（回 BODY）。官方是**同一个块就地换档**（块 id `AB4247D0-DA6E-4229-8949-A6F27702BD10` 六步一字未变、块名册恒 `[\"span:AAA\"]`、`found` 恒 1）⇒ **文本不改、块数不改**；样式落在**文本叶**上：`15px/400`(body) → `23px/700`(TITLE) → `18px/600`(HEADING) → `20px/700`(SUBTITLE) → 回 `15px/400`（行高同步 23/28/22/24px）。本地同样真换档（`p:AAA` → `h1:AAA` → `h3:AAA` → `h2:AAA` → `p:AAA`，文本一字未改），但**两处不同**：① **字号/字重口径**＝本地 `30px/700`(TITLE)／`20px/600`(HEADING)／`24px/600`(SUBTITLE) 对官方 `23px/700`／`18px/600`／`20px/700` ⇒ 本地标题更大、副标题更轻（`src/app/globals.css:497-519`：`h1 1.875rem/700`、`h2 1.5rem/600`、`h3 1.25rem/600`）；② ★★ **本地换档后多出一枚空 `<p>`**（`found` 1→2，名册 `[\"h1:AAA\",\"p:\"]`／`[\"h3:AAA\",\"p:\"]`／`[\"h2:AAA\",\"p:\"]`，回 BODY 后仍是 `[\"p:AAA\",\"p:\"]`）⇒ 本地 `Ctrl-Shift-1` 是\"改样式 ＋ 建一枚空块\"，官方不建。☆ 根因不是本批新缺陷：本地 `craft-keymap.ts:27-31` 用 `setHeading` **就地改节点**，而 `StarterKit` 的 `TrailingNode` 规则是\"末块不是段落就补一枚空段\"，`Editor.tsx:327` 的 `notAfter` **只豁免三族列表** ⇒ 末块换成标题档必然补一枚＝正是 G1485 那条豁免的**已知边界**",
+      "official": "★★ **块间转换保真（样式档）＝两侧都真换档，但① 字号/字重口径不同、② 本地换档后多出一枚空块**（`runs/wave1-22-*`，两侧 6 步 0 error；spec `editor.key.turn-into-style`）：单块 `AAA`、光标在块内，依次按 `Ctrl-Shift-1`（TITLE）→ `-3`（HEADING）→ `-2`（SUBTITLE）→ `-5`（回 BODY）。官方是**同一个块就地换档**（块 id `<objId:59>` 六步一字未变、块名册恒 `[\"span:AAA\"]`、`found` 恒 1）⇒ **文本不改、块数不改**；样式落在**文本叶**上：`15px/400`(body) → `23px/700`(TITLE) → `18px/600`(HEADING) → `20px/700`(SUBTITLE) → 回 `15px/400`（行高同步 23/28/22/24px）。本地同样真换档（`p:AAA` → `h1:AAA` → `h3:AAA` → `h2:AAA` → `p:AAA`，文本一字未改），但**两处不同**：① **字号/字重口径**＝本地 `30px/700`(TITLE)／`20px/600`(HEADING)／`24px/600`(SUBTITLE) 对官方 `23px/700`／`18px/600`／`20px/700` ⇒ 本地标题更大、副标题更轻（`src/app/globals.css:497-519`：`h1 1.875rem/700`、`h2 1.5rem/600`、`h3 1.25rem/600`）；② ★★ **本地换档后多出一枚空 `<p>`**（`found` 1→2，名册 `[\"h1:AAA\",\"p:\"]`／`[\"h3:AAA\",\"p:\"]`／`[\"h2:AAA\",\"p:\"]`，回 BODY 后仍是 `[\"p:AAA\",\"p:\"]`）⇒ 本地 `Ctrl-Shift-1` 是\"改样式 ＋ 建一枚空块\"，官方不建。☆ 根因不是本批新缺陷：本地 `craft-keymap.ts:27-31` 用 `setHeading` **就地改节点**，而 `StarterKit` 的 `TrailingNode` 规则是\"末块不是段落就补一枚空段\"，`Editor.tsx:327` 的 `notAfter` **只豁免三族列表** ⇒ 末块换成标题档必然补一枚＝正是 G1485 那条豁免的**已知边界**",
       "local": "**行为不同（两面：字号/字重口径 ＋ 换档后块数）**＝`git grep -n \"ctrl+shift+digit\" -- src` 无命中；键位表在 `src/lib/editor/keymap.ts:177-181`（`TITLE`／`SUBTITLE`／`HEADING`／`BODY` 四条的 `win` 都是 `ctrl+shift+digit`，与官方**同组键位**）；派发在 `src/components/editor/extensions/craft-keymap.ts:24-37` 的 `STYLE_SLOTS`（`TITLE→setHeading(1)`／`SUBTITLE→setHeading(2)`／`HEADING→setHeading(3)`／`STRONG→setHeading(4)`／`BODY→setParagraph`，文件注释逐字\"样式是 set、列表是 toggle\"）⇒ 键位面**一致**、差异全在\"转换行为\"上。判据逐字＝`interaction-matrix.md` 的 `editor.key.turn-into-style`（**19 行／7 sev2+／0 declared deviations**：step 2/3/4 的 `countΔ:AAA` 官方 2 ↔ 本地 1；step 2/3/4/5 的 `blocks` 官方 `[\"AAA\"]` ↔ 本地 `[\"AAA\",\"\"]`）＋ selfCheck 官方 **2 PASS**、本地 `text:AAA` PASS 而 **`blocksCount` FAIL**（期望 1、实得 2）。★ **官方的 `countΔ:AAA` 1→2 不是\"多建块\"**：本批用 `probe-w1aj`／`probe-w1ak` 定位到那第二枚命中是**侧栏大纲行**（`A._row_v0ra3_1 > SPAN._label_v0ra3_131 fade-truncate`，坐标 x=16 y=216，在编辑器之外；块换成标题档后侧栏大纲里出现该块、换回正文档即消失，与 step 5 计数回 1 吻合）⇒ **不得读成重复块**。★ 本 spec 未采 `keys` 档 ⇒ 键是否被消费**未测**（留待补）＝ ✎ 现读（2026-11-03 第 270 批）＝**两面都收了**。**①型制口径**＝`.tiptap` 五档逐档改成实测官方值（`src/app/globals.css:494-533`）：正文 `15px/400/23px`、TITLE `23px/700/28px`、SUBTITLE `20px/700/24px`、HEADING `18px/600/22px`、STRONG（h4＝强调档的本地载体）`16px/700/20px`；真浏览器逐枚按 `Ctrl-Shift-1/3/2/4/5` 后读该块 computed style，五档读数与官方**逐字相同**（`15/400/23`→`23/700/28`→`18/600/22`→`20/700/24`→`16/700`→回 `15/400/23`）。**②块数**＝同一轮复测 `doc.childCount` **恒 1**、文本 `AAA` 不改 ⇒ 换档仍是\"就地改样式\"，尾随空段那档早已由 `trailingNode.notAfter` 含 `heading` 收掉（G1557 同批）。★ **本批另修一处同族回归**：第 229 批为 G1557 把 `Editor.tsx` 的 `heading.levels` 裁成 `[1,2,3]`，连带让 `STRONG`（`Ctrl-Shift-4` → `setHeading({level:4})`）**整枚键槽变成空操作**（实测按键后块仍是 `h2`）；levels 放回 `[1,2,3,4]`，而 `#### ` 的冲突由 `MarkdownShortcuts` 的 `priority: 1000` 抢在 Heading 自动生成的 `/^####\\s$/` 之前——运行时经 ProseMirror `handleTextInput(view, from, to, ' ')` 亲验：`#### ` ⇒ `paragraph` ＋ `storedMarks:[\"bold\"]`（不是 h4），G1557 的判定不受影响。单测＝`src/lib/editor/document-type-scale.test.ts`（五档声明逐字钉住＋旧的 rem 阶梯不得回潮）与 `markdown-shortcuts.test.ts`（levels 含 4 ＋ priority 在场）",
       "verdict": "已对齐（第 270 批；两面对齐，STRONG 键槽同批修回）",
       "score": "2/2",
@@ -29554,7 +29554,7 @@
       "section": "三点二二八、第 293 批（清死代码＋登记新账）＝删掉被离线内核取代的第二条写路径＋登记六枚\"有列没面\"的管理动作（2026-10-17 本机钟 21:4x—21:5x＝**真写入批**＝净新增 6 条＝G1536…G1541＝P0 不变 7／8）",
       "cols": 5,
       "id": "G1589",
-      "official": "★★★ **快速开启有**三条绑定**，本地只有一条**：官方 `Ctrl-P`（`TOGGLE_QUICK_OPEN_ALT`）与 `Ctrl-Shift-O`（`TOGGLE_QUICK_OPEN_SAFARI`）**都开出同一个快速开启面板**，本地这两条**都没有反应**（第 333 批，`shell.quick-open.alt` 两侧各 6 步）：官方按 `Ctrl-P` ⇒ `popup-backdrop` 0→1、名册新增「文档」「在 zhang's Space 中」「无标题文档…」、焦点离开编辑器，`Escape` 关回 0；再按 `Ctrl-Shift-O` ⇒ 同样 0→1（⇒ **web 端 `_SAFARI` 分支同样启用**，不只是 Safari 会印）。本地同序列两条都零反应（`popup-backdrop` 恒 0、名册只多一个「未保存」）。★ 与 `shell.command-palette.toggle-vs-jump` 合起来：官方是**一个面板三条弦**（`Ctrl-K`／`Ctrl-P`／`Ctrl-Shift-O`），本地是**只有 `Ctrl-K`** ✎ **第 380 批补第四条**：`Ctrl-O`（`TOGGLE_QUICK_OPEN`，面板印「快速开启 CtrlO 或者 CtrlP」）官方**同样弹面板**（`popup-backdrop` 0→1、`文档` 计数 3→16），本地**零反应** ⇒ 官方侧是**四条弦**（`Ctrl-K`／`Ctrl-O`／`Ctrl-P`／`Ctrl-Shift-O`）、本地仍只有 `Ctrl-K`",
+      "official": "★★★ **快速开启有**三条绑定**，本地只有一条**：官方 `Ctrl-P`（`TOGGLE_QUICK_OPEN_ALT`）与 `Ctrl-Shift-O`（`TOGGLE_QUICK_OPEN_SAFARI`）**都开出同一个快速开启面板**，本地这两条**都没有反应**（第 333 批，`shell.quick-open.alt` 两侧各 6 步）：官方按 `Ctrl-P` ⇒ `popup-backdrop` 0→1、名册新增「文档」「在 <空间名> 中」「无标题文档…」、焦点离开编辑器，`Escape` 关回 0；再按 `Ctrl-Shift-O` ⇒ 同样 0→1（⇒ **web 端 `_SAFARI` 分支同样启用**，不只是 Safari 会印）。本地同序列两条都零反应（`popup-backdrop` 恒 0、名册只多一个「未保存」）。★ 与 `shell.command-palette.toggle-vs-jump` 合起来：官方是**一个面板三条弦**（`Ctrl-K`／`Ctrl-P`／`Ctrl-Shift-O`），本地是**只有 `Ctrl-K`** ✎ **第 380 批补第四条**：`Ctrl-O`（`TOGGLE_QUICK_OPEN`，面板印「快速开启 CtrlO 或者 CtrlP」）官方**同样弹面板**（`popup-backdrop` 0→1、`文档` 计数 3→16），本地**零反应** ⇒ 官方侧是**四条弦**（`Ctrl-K`／`Ctrl-O`／`Ctrl-P`／`Ctrl-Shift-O`）、本地仍只有 `Ctrl-K`",
       "local": "✎ 现读（2026-11-03 第 263 批）：四条弦都开同一个面板 —— `Ctrl-K` 在面板里直连；本批补 `Ctrl-O`／`Ctrl-P`／`Ctrl-Shift-O` 三行键位，面板用 `KEY_BINDINGS` + `matches` 统一匹配（不再手写字符判断），四个组合都会 preventDefault 后打开",
       "verdict": "已对齐",
       "score": "2/2",
@@ -30614,7 +30614,7 @@
       "priority": "P1"
     },
     {
-      "line": 5955,
+      "line": 5959,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1649",
@@ -30632,7 +30632,7 @@
       "priority": "P3"
     },
     {
-      "line": 5956,
+      "line": 5960,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1650",
@@ -30650,7 +30650,7 @@
       "priority": "P3"
     },
     {
-      "line": 5957,
+      "line": 5961,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1651",
@@ -30668,7 +30668,7 @@
       "priority": "P2"
     },
     {
-      "line": 5958,
+      "line": 5962,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1652",
@@ -30686,7 +30686,7 @@
       "priority": "P2"
     },
     {
-      "line": 5959,
+      "line": 5963,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1653",
@@ -30704,7 +30704,7 @@
       "priority": "P3"
     },
     {
-      "line": 5960,
+      "line": 5964,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1654",
@@ -30722,7 +30722,7 @@
       "priority": "P2"
     },
     {
-      "line": 5961,
+      "line": 5965,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1655",
@@ -30740,7 +30740,7 @@
       "priority": "P3"
     },
     {
-      "line": 5962,
+      "line": 5966,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1656",
@@ -30758,7 +30758,7 @@
       "priority": "P3"
     },
     {
-      "line": 5963,
+      "line": 5967,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1657",
@@ -30776,7 +30776,7 @@
       "priority": "P3"
     },
     {
-      "line": 5964,
+      "line": 5968,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1658",
@@ -30794,7 +30794,7 @@
       "priority": "P2"
     },
     {
-      "line": 5965,
+      "line": 5969,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1659",
@@ -30812,15 +30812,15 @@
       "priority": "P3"
     },
     {
-      "line": 5966,
+      "line": 5970,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1660",
       "official": "文档是居中浮起的白色圆角卡片，页面底为浅灰；顶栏极简（标题居中，右侧头像／共享／铃／?／面板开关）；左侧只有图标栏与「目录」区（「使用标题、页面或卡片创建目录。」）。",
-      "local": "白底通栏、无浮起卡片；完整侧栏常驻；顶栏是面包屑＋一排图标（专注／网格／TT／表情／信息／⋯／共享）；无目录区。",
-      "verdict": "部分落地（第 574 批：画布改浅灰底＋居中白卡；编辑页左上角加「收起/展开侧栏」按钮，收起后页头也有展开入口。未做：顶栏仍是面包屑＋功能图标簇——那排 tab 是右栏的入口、18 处 e2e 直接点它，且侧栏默认仍开）（证：screenshots/compare/local-editor-sidebar-open.png、local-editor-sidebar-closed.png）",
+      "local": "画布已是浅灰底＋居中白卡片；顶栏已按官方重排＝标题居中＋右侧 头像／共享／铃／?／面板开关；那排右栏 tab 图标撤掉，tab 条回归右栏顶部，入口收成一枚带 `aria-pressed` 的面板开关。保留：专注与文档 ⋯ 两枚本地控件；左侧仍是本地侧栏（G1651 同族）。",
+      "verdict": "已对齐（第 575 批：顶栏重排；撤顶栏 tab 簇，e2e 统一走「面板开关＋tablist」；面板开关记住上一档；共享入口放开到移动端）（证：e2e/editor-panel.ts、e2e/right-tab-persist.spec.ts、e2e/insert-panel.spec.ts）",
       "score": "2/3",
-      "status": "partial",
+      "status": "aligned",
       "scoreParsed": {
         "impact": 2,
         "cost": 3,
@@ -30830,7 +30830,7 @@
       "priority": "P2"
     },
     {
-      "line": 5967,
+      "line": 5971,
       "section": "☆ 视觉对照批（2026-11-17，第 574 批）＝ego 浏览器逐屏对照登记（＋13 条＝G1649…G1661）",
       "cols": 5,
       "id": "G1661",

@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 /**
  * `gap.md` G1614 —— 正文里的集合块要**直接渲染集合内容**，不是一枚指回集合屏的入口卡。
@@ -41,13 +42,13 @@ async function insertCollectionBlock(page: Page, label: string) {
   await page.getByRole('button', { name: /新建/ }).first().click();
   await page.waitForURL(/\/documents\//);
   const documentUrl = page.url();
-  await page.getByRole('button', { name: '插入', exact: true }).click();
+  await openEditorPanel(page, '插入');
   const panel = page.getByTestId('insert-panel');
   const entry = panel.getByText(label, { exact: true });
   const block = page.locator('[data-collection-block]').first();
   for (let attempt = 0; attempt < 3 && (await block.count()) === 0; attempt++) {
     if (!(await panel.isVisible().catch(() => false))) {
-      await page.getByRole('button', { name: '插入', exact: true }).click();
+      await openEditorPanel(page, '插入');
       await expect(panel).toBeVisible({ timeout: 12_000 });
     }
     await entry.click();

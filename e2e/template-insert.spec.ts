@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 const email = 'craft-test@example.com';
 const password = 'test1234';
@@ -33,11 +34,15 @@ test('from a template, the body lands at the caret and the slash query is alread
   const editor = page.locator('[contenteditable="true"]').first();
   await editor.click();
   await page.keyboard.type(marker, { delay: 5 });
-  await expect(page.getByRole('status')).toHaveText('所有更改已保存', { timeout: 20_000 });
+  // 保存徽标要按位置取：编辑器页上 `role="status"` 不止一个——侧栏「新建文档」「新建文件夹」
+  // 各带一枚 sr-only 播报区，树一渲染出来就会命中，裸 getByRole('status') 会三枚齐中。
+  await expect(page.locator('[data-testid="document-topbar"] [role="status"]')).toHaveText('所有更改已保存', {
+    timeout: 20_000,
+  });
 
-  // The button lives under 信息 → 动作, the same sub-page the version-history test walks.
-  await page.getByRole('button', { name: '信息', exact: true }).click();
-  await page.getByRole('button', { name: '动作', exact: true }).click();
+  // 这枚按钮在「信息」面板的动作段里。G204 之后信息面板是单列到底，没有「动作／页面信息」
+  // 两个子页签了（document-location.spec 同批记过），所以这里直接点，不再先切一档。
+  await openEditorPanel(page, '信息');
   await page.getByRole('button', { name: '另存为模板' }).click();
   await expect(page.getByRole('button', { name: '已保存为模板' })).toBeVisible();
 
@@ -45,10 +50,12 @@ test('from a template, the body lands at the caret and the slash query is alread
   await newDocument(page);
   const target = page.locator('[contenteditable="true"]').first();
   await target.click();
-  await page.keyboard.type('/', { delay: 60 });
+  // 斜杠菜单在 G1544/G1613 之后是两段式：光打 `/` 只列分组入口，叶子项要带查询词才出来；
+  // 行标题的载体也换成了 `span`，不再是 `div.font-medium`（editor.spec 同批改过同一处，这里漏了）。
+  await page.keyboard.type('/从模板插入', { delay: 25 });
 
   const option = page
-    .locator('[role="option"] div.font-medium')
+    .locator('[role="option"] span')
     .filter({ hasText: /^从模板插入$/ })
     .first();
   await expect(option, 'slash entry missing: 从模板插入').toBeVisible({ timeout: 10_000 });

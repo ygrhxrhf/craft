@@ -16,5 +16,12 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
 
   if (!doc) redirect('/documents');
 
-  return <DocumentEditor document={doc} role={doc.role} />;
+  // G1660：顶栏右侧那枚头像取账号首字（官方是同一枚）。
+  return (
+    <DocumentEditor
+      document={doc}
+      role={doc.role}
+      userInitial={session.user?.name?.slice(0, 1) ?? '我'}
+    />
+  );
 }

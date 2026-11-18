@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 const email = 'craft-test@example.com';
 const password = 'test1234';
@@ -23,7 +24,7 @@ test('the tags collection counts documents and nests the second level', async ({
   // The header debounces the title write, and a reload would abort it in flight.
   await page.waitForTimeout(1_500);
 
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   const panel = page
     .locator('section')
     .filter({ has: page.getByRole('textbox', { name: '添加标签' }) })
@@ -45,7 +46,10 @@ test('the tags collection counts documents and nests the second level', async ({
   await expect(main.getByText('所有标签')).toBeVisible();
   await expect(main.getByText(/\d+ 个标签/)).toBeVisible();
 
-  const parentRow = main.locator('li > a').filter({ hasText: parent }).first();
+  // 「标签名 → 两个小按钮」那一行外面包了一层 `div`（TagTreeList 的可拖行），所以行内
+  // 锚点**不是** `<li>` 的直接子元素：`li > a` 恒为空。用后代选择器，且按文档序取第一枚
+  // ——父行的锚点排在嵌套子列表之前。
+  const parentRow = main.locator('li a').filter({ hasText: parent }).first();
   await expect(parentRow).toContainText('1 个文档');
   // The nested row repeats only its own level, since the parent is already its heading.
   await expect(main.getByText(leaf, { exact: true })).toBeVisible();

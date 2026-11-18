@@ -70,7 +70,7 @@ test('任务页勾选完成在断链时也落库，恢复联网后服务端读�
   // 打开「显示已完成的任务」：同一行回来，且勾选态真的落了
   // G1653：开关在分区 ⋯ 里（menuitemcheckbox），点完菜单自动收起。
   await page.getByRole('button', { name: '更多选项' }).click();
-  await page.getByRole('menuitemcheckbox', { name: '显示已完成的任务' }).click();
+  await page.getByRole('menuitemcheckbox', { name: '查看已完成的任务' }).click();
   const completed = page.getByRole('button', { name: title, exact: true });
   await expect(completed).toBeVisible();
   await expect(completed.getByRole('checkbox')).toBeChecked();

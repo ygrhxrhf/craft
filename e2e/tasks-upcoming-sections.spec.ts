@@ -71,7 +71,7 @@ async function openList(page: Page) {
 async function readShowCompleted(page: Page): Promise<boolean> {
   await page.getByRole('button', { name: '更多选项' }).click();
   const checked = await page
-    .getByRole('menuitemcheckbox', { name: '显示已完成的任务' })
+    .getByRole('menuitemcheckbox', { name: '查看已完成的任务' })
     .getAttribute('aria-checked');
   await page.keyboard.press('Escape');
   return checked === 'true';
@@ -80,7 +80,7 @@ async function readShowCompleted(page: Page): Promise<boolean> {
 async function toggleShowCompleted(page: Page, show: boolean) {
   if ((await readShowCompleted(page)) !== show) {
     await page.getByRole('button', { name: '更多选项' }).click();
-    await page.getByRole('menuitemcheckbox', { name: '显示已完成的任务' }).click();
+    await page.getByRole('menuitemcheckbox', { name: '查看已完成的任务' }).click();
   }
   await expect(await readShowCompleted(page)).toBe(show);
 }

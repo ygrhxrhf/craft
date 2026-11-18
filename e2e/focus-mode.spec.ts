@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 const email = 'craft-test@example.com';
 const password = 'test1234';
@@ -28,7 +29,7 @@ test('focus mode hides the app chrome and restores it on exit', async ({ page })
   await expect(topbar).toBeVisible();
 
   // 右侧栏先打开着，才能验"退出后还原"而不是"退出后再点一次"。
-  await topbar.getByRole('button', { name: '插入' }).click();
+  await openEditorPanel(page, '插入');
   const panel = page.getByTestId('insert-panel');
   await expect(panel).toBeVisible();
 

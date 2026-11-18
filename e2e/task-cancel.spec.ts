@@ -113,7 +113,7 @@ test('任务页：正文那一行取消后，它离开未办那节、回到「�
   await expect(page.getByText(cancelledTitle, { exact: true })).toHaveCount(0);
 
   await page.getByRole('button', { name: '更多选项' }).click();
-  await page.getByRole('menuitemcheckbox', { name: '显示已完成的任务' }).click();
+  await page.getByRole('menuitemcheckbox', { name: '查看已完成的任务' }).click();
   const section = page
     .locator('section')
     .filter({ has: page.getByRole('heading', { level: 2, name: /^已取消 · \d+$/ }) })

@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 const email = 'craft-test@example.com';
 const password = 'test1234';
@@ -267,7 +268,7 @@ test('the four panel tabs each render their controls', async ({ page }) => {
   await signIn(page);
   await blankDocument(page);
 
-  await page.getByRole('button', { name: '插入', exact: true }).click();
+  await openEditorPanel(page, '插入');
   // G1494 改判：这里原来断言 `getByText('标题 1')`，但**插入面板从来不列标题**（`InsertTab.tsx`
   // 的条目是 文本/页面/卡片/文件附件/图片/代码块/公式/白板/分隔线…；标题只活在斜杠菜单里），
   // 所以那是一条**陈旧选择器**（G1502 同族），与"点空了/水合慢"无关——本批连点五次都不出现，
@@ -275,14 +276,14 @@ test('the four panel tabs each render their controls', async ({ page }) => {
   await expect(page.getByTestId('insert-panel')).toBeVisible();
   await expect(page.getByText('将任何项目拖放到文档中')).toBeVisible();
 
-  await page.getByRole('button', { name: '格式', exact: true }).click();
+  await openEditorPanel(page, '格式');
   await expect(page.getByText('字号', { exact: true })).toBeVisible();
   await expect(page.getByLabel('增大字号')).toBeVisible();
 
-  await page.getByRole('button', { name: '样式', exact: true }).click();
+  await openEditorPanel(page, '样式');
   await expect(page.getByText('文档颜色')).toBeVisible();
 
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   await expect(page.getByRole('heading', { name: '协作者' })).toBeVisible();
 });
 
@@ -303,7 +304,7 @@ test('one command opens and closes every toggle block', async ({ page }) => {
   // baseline: the first block's content renders outside its own summary button
   // (toggle-block-view.tsx puts two NodeViewContent elements in one node view),
   // so which blocks are open on arrival is not something this command owns.
-  await page.getByRole('button', { name: '格式', exact: true }).click();
+  await openEditorPanel(page, '格式');
   await page.getByRole('button', { name: '全部展开' }).click();
   await expect(editor.locator('[data-open="true"]')).toHaveCount(2);
 

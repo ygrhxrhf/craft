@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 const email = 'craft-test@example.com';
 const password = 'test1234';
@@ -20,7 +21,7 @@ test('the tag input validates against the official rules', async ({ page }) => {
   // The header debounces the title write, and a reload would abort it in flight.
   await page.waitForTimeout(1_500);
 
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   const section = page.locator('section').filter({ has: page.getByRole('textbox', { name: '添加标签' }) }).first();
   await expect(section).toBeVisible({ timeout: 20_000 });
   const input = section.getByRole('textbox', { name: '添加标签' });
@@ -57,7 +58,7 @@ test('the tag input validates against the official rules', async ({ page }) => {
   await expect(chip).toBeVisible({ timeout: 20_000 });
 
   await page.reload();
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   const reloaded = page.locator('section').filter({ has: page.getByRole('textbox', { name: '添加标签' }) }).first();
   await expect(reloaded.getByText(`工作/${child}`)).toBeVisible({ timeout: 20_000 });
 });

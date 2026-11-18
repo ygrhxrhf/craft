@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 // 「格式」页签的屏上半：G153／G154／G155 的判据在纯核里已经锁死，这一支要证明的是
 // 真屏幕上点得到、正文真写得进去、混合真的显示得出。
@@ -57,9 +58,9 @@ async function newDoc(page: import('@playwright/test').Page, lines: string[]) {
   return editor;
 }
 
-/** 顶栏那一枚 aria-label="格式" 的图标按钮打开面板并停在「格式」页签上。 */
+/** 开面板并停在「格式」页签上（G1660 后入口是顶栏的面板开关＋面板自己的 tablist）。 */
 async function openFormatTab(page: import('@playwright/test').Page) {
-  await page.getByRole('button', { name: '格式', exact: true }).click();
+  await openEditorPanel(page, '格式');
   await expect(segment(page, '粗体')).toBeVisible();
 }
 

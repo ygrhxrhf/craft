@@ -395,11 +395,12 @@ test('recurring task rolls forward to the next occurrence', async ({ page }) => 
 
   await page.goto('/tasks');
 
-  // 「显示已完成的任务」是设备级开关且默认关，已完成的一期不进列表 ⇒
+  // 「显示已完成」是设备级开关且默认关，已完成的一期不进列表 ⇒
   // 要看"完成的那期留作历史"必须先开开关，否则断言的是过滤器的结果而不是 rollForward 的结果。
-  // G1653：开关收进分区 ⋯，是一枚 menuitemcheckbox。
+  // G1653：开关收进分区 ⋯，是一枚 menuitemcheckbox；**行名是 `查看已完成的任务`**
+  // （官方 `tasks.view.completed.tasks`，与开关自己的「显示」是两套措辞，别按直觉写）。
   await page.getByRole('button', { name: '更多选项' }).click();
-  const showCompleted = page.getByRole('menuitemcheckbox', { name: '显示已完成的任务' });
+  const showCompleted = page.getByRole('menuitemcheckbox', { name: '查看已完成的任务' });
   await expect(showCompleted).toHaveAttribute('aria-checked', 'false');
   await showCompleted.click();
 
@@ -698,7 +699,9 @@ test('a typed title reaches the server while the editor keeps re-rendering', asy
   // starving debounce a quiet gap to fire in. Clicking from inside the page keeps the
   // real cadence whatever the machine is doing, and the count proves the churn ran.
   const churn = await page.evaluate(async () => {
-    const labels = ['插入', '格式'];
+    // G1660：顶栏那排 tab 图标撤掉后，能反复改 DocumentEditor 状态的按钮只剩面板开关
+    // （按两下＝开→关，每一下都让整棵树重渲染，正是本例要的churn）。
+    const labels = ['编辑器工具面板'];
     // Match the accessible name, not the text: at 1440px the rail renders these as
     // icon buttons named by aria-label, so a textContent comparison finds nothing
     // and the churn silently clicks nothing (which is how two earlier versions of
@@ -710,7 +713,7 @@ test('a typed title reaches the server while the editor keeps re-rendering', asy
     let clicked = 0;
     let missing = 0;
     for (let i = 0; i < 20; i += 1) {
-      const tab = find(labels[i % 2]);
+      const tab = find(labels[i % labels.length]);
       if (tab) {
         tab.click();
         clicked += 1;
@@ -723,7 +726,7 @@ test('a typed title reaches the server while the editor keeps re-rendering', asy
   });
   expect(
     churn.missing,
-    'the panel tabs were absent from the DOM, so nothing re-rendered and the churn proved nothing',
+    'the panel toggle was absent from the DOM, so nothing re-rendered and the churn proved nothing',
   ).toBe(0);
 
   // Leave while a re-armed debounce still has its 500ms to run. Returning by URL

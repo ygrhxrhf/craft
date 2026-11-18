@@ -38,10 +38,13 @@ test('reloading an open right rail keeps its tab without a hydration mismatch', 
   await page.getByRole('button', { name: '新建文档' }).first().click();
   await page.waitForURL(/\/documents\//);
 
-  const infoButton = page.getByRole('button', { name: '信息', exact: true });
-  await expect(infoButton).toHaveAttribute('aria-pressed', 'false');
-  await infoButton.click();
-  await expect(infoButton).toHaveAttribute('aria-pressed', 'true');
+  // G1660：顶栏那排 tab 图标撤了，"开没开"由面板开关的 aria-pressed 表达，
+  // "停在哪一档"仍由面板自己的 tablist 表达——两件事仍然分开持久化。
+  const toggle = page.getByRole('button', { name: '编辑器工具面板', exact: true });
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('tablist', { name: '编辑器工具' }).getByRole('tab', { name: '信息', exact: true }).click();
   // 面板真开：右侧栏里有「编辑器工具」页签条，且停在信息档。
   await expect(page.getByRole('tablist', { name: '编辑器工具' })).toBeVisible({ timeout: 20_000 });
   await expect(page.getByRole('tab', { name: '信息' })).toHaveAttribute('aria-selected', 'true');
@@ -50,11 +53,7 @@ test('reloading an open right rail keeps its tab without a hydration mismatch', 
   await expect(page.getByText('所有更改已保存').first()).toBeVisible({ timeout: 60_000 });
   await page.reload();
 
-  await expect(page.getByRole('button', { name: '信息', exact: true })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-    { timeout: 60_000 }
-  );
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true', { timeout: 60_000 });
   await expect(page.getByRole('tab', { name: '信息' })).toHaveAttribute('aria-selected', 'true');
   expect(hits(), `hydration 报错：${hits().join(' | ')}`).toEqual([]);
 });
@@ -64,17 +63,13 @@ test('closing the rail also persists — a fresh document does not reopen it', a
   await page.getByRole('button', { name: '新建文档' }).first().click();
   await page.waitForURL(/\/documents\//);
 
-  const infoButton = page.getByRole('button', { name: '信息', exact: true });
-  await infoButton.click();
-  await expect(infoButton).toHaveAttribute('aria-pressed', 'true');
-  await infoButton.click();
-  await expect(infoButton).toHaveAttribute('aria-pressed', 'false');
+  const toggle = page.getByRole('button', { name: '编辑器工具面板', exact: true });
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
 
   await page.reload();
   // 「关着」也写进了存储：重载后仍是关的（只记标签会让关掉的面板自己又打开）。
-  await expect(page.getByRole('button', { name: '信息', exact: true })).toHaveAttribute(
-    'aria-pressed',
-    'false',
-    { timeout: 60_000 }
-  );
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false', { timeout: 60_000 });
 });

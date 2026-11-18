@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 const OWNER = { email: 'craft-test@example.com', password: 'test1234' };
 const INTRUDER = { email: 'e2e-intruder@example.com', password: 'test1234' };
@@ -109,7 +110,7 @@ test('the owner can grant read-only access from the info panel', async ({ browse
   await intruderPage.goto(`/documents/${documentId}`);
   await intruderPage.waitForURL(/\/documents$/);
 
-  await ownerPage.getByRole('button', { name: '信息' }).first().click();
+  await openEditorPanel(ownerPage, '信息');
   await ownerPage.getByLabel('协作者邮箱').fill(INTRUDER.email);
   await ownerPage.getByLabel('新增协作者权限').selectOption('viewer');
   // ☆ 这一枚以前写的是 `getByRole('button',{name:'添加',exact:true})`＝严格模式两枚命中：

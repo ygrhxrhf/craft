@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { openEditorPanel } from './editor-panel';
 
 const email = 'craft-test@example.com';
 const password = 'test1234';
@@ -17,7 +18,7 @@ async function documentWithTagsPanel(page: Page): Promise<Locator> {
   await page.waitForURL(/\/documents\//);
   await page.locator('input[placeholder="页面标题"]').fill(`标签编辑 ${Date.now()}`);
   await page.waitForTimeout(1_500);
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   const panel = page
     .locator('section')
     .filter({ has: page.getByRole('textbox', { name: '添加标签' }) })
@@ -69,7 +70,7 @@ test('a tag can be renamed and recoloured from the editor panel', async ({ page 
 
   // 刷新后仍是新名字与新颜色（写入真的落了库）。右栏的展开态不持久，重开「信息」。
   await page.reload();
-  await page.getByRole('button', { name: '信息', exact: true }).click();
+  await openEditorPanel(page, '信息');
   const panelAfter = page
     .locator('section')
     .filter({ has: page.getByRole('textbox', { name: '添加标签' }) })

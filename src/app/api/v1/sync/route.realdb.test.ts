@@ -264,10 +264,14 @@ describe('评论表情（per-user 行，真库）', () => {
     });
 
     const reactionId = crypto.randomUUID();
+    // ☆ 时间戳必须现取，不能写死：服务端对写入取 `max(serverNow, clientTs)`（G1511③），
+    //   写死的字面量一旦走到过去，行上留的就是 serverNow，后面那笔更早的取消戳会被判 stale
+    //   ⇒ `applied` 空、用例变红。这条曾经就是一颗按日历引爆的哑弹（2026-11-18 当天起必红）。
+    const reactTs = new Date(Date.now() - 60_000).toISOString();
     const res = await POST(post({ records: [{
       table: 'comment_reaction', id: reactionId, op: 'upsert',
       data: { commentId, glyph: '👍', name: '会话用户' },
-      syncTs: '2026-11-18T00:00:00.000Z',
+      syncTs: reactTs,
     }] }));
     const body = await res.json();
     expect(res.status).toBe(200);
@@ -281,10 +285,12 @@ describe('评论表情（per-user 行，真库）', () => {
     expect(comment!.body).toBe('作者写的');    // 正文一字不动
 
     // 取消：本人那一行落墓碑（GET 读面按 deletedAt 过滤）
+    // 取消那笔必须晚于行上留下的戳（那是第一笔请求落库时的 serverNow）。
+    const cancelTs = new Date().toISOString();
     const off = await POST(post({ records: [{
       table: 'comment_reaction', id: reactionId, op: 'upsert',
-      data: { commentId, deletedAt: '2026-11-18T00:10:00.000Z' },
-      syncTs: '2026-11-18T00:10:00.000Z',
+      data: { commentId, deletedAt: cancelTs },
+      syncTs: cancelTs,
     }] }));
     expect((await off.json()).applied).toEqual([{ table: 'comment_reaction', id: reactionId }]);
     const after = await db.orm.public.CommentReaction.first({ id: reactionId });

@@ -58,7 +58,8 @@ async function flip(page: Page, group: Group, checked: 'true' | 'false') {
 async function openNotifications(page: Page) {
   await page.goto('/settings');
   await page.getByRole('button', { name: '通知', exact: true }).click();
-  await expect(page.getByRole('switch')).toHaveCount(3);
+  // 面板里是 4 枚：三枚全局（评论/提醒/每日摘要）＋「空间」段的每空间邮件档（跟随全局设置）。
+  await expect(page.getByRole('switch')).toHaveCount(4);
 
   // The account is shared with other specs, so normalize before asserting rather than
   // assuming the switches are on. 每次纠正都等到落地，后面的"重载后仍是这个值"才有的说。
@@ -74,7 +75,8 @@ async function openNotifications(page: Page) {
 async function reopenNotifications(page: Page) {
   await page.reload();
   await page.getByRole('button', { name: '通知', exact: true }).click();
-  await expect(page.getByRole('switch')).toHaveCount(3);
+  // 面板里是 4 枚：三枚全局（评论/提醒/每日摘要）＋「空间」段的每空间邮件档（跟随全局设置）。
+  await expect(page.getByRole('switch')).toHaveCount(4);
 }
 
 test('the comments switch comes back off after a reload, and its neighbours are untouched', async ({ page }) => {

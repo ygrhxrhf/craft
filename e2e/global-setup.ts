@@ -1,4 +1,5 @@
 import { chromium, expect, type Browser, type Page } from '@playwright/test';
+import { execFileSync } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { INTRO_SEEN_KEY, INTRO_VERSIONS } from '../src/lib/onboarding/versioned-intro';
@@ -195,6 +196,11 @@ async function expectOnServer(browser: Browser, what: string, read: (page: Page)
 }
 
 export default async function globalSetup() {
+  // 29 个规格用 `craft-test@example.com` 登录，而本文件只注册自己的视觉账号 `craft-visual@`。
+  // 空库上整批会卡在 /login 报「邮箱或密码错误」，所以这里先跑一遍仓库自带的种子脚本
+  // （幂等：已存在就只打印 id）。没有这一步时，换一台机器或重建库都要人工记着补。
+  execFileSync(process.execPath, ['scripts/seed-test-user.mjs'], { stdio: 'inherit' });
+
   const browser = await chromium.launch();
   const context = await newVisualContext(browser);
   const page = await context.newPage();

@@ -79,7 +79,7 @@ test('a slash command dialog resolves Esc and leaves no residue', async ({ page:
   await editor.click();
   await p.keyboard.type('/网页链接', { delay: 25 });
   const option = p
-    .locator('[role="option"] div.font-medium')
+    .locator('[role="option"] span')
     .filter({ hasText: /^网页链接$/ })
     .first();
   await expect(option).toBeVisible();
@@ -97,7 +97,7 @@ test('a slash command dialog resolves Esc and leaves no residue', async ({ page:
   await editor.click();
   await p.keyboard.type('/网页链接', { delay: 25 });
   await p
-    .locator('[role="option"] div.font-medium')
+    .locator('[role="option"] span')
     .filter({ hasText: /^网页链接$/ })
     .first()
     .click();
@@ -115,10 +115,11 @@ test('a paste inside a block-level input stays inside it', async ({ page }) => {
   const editor = await blankDocument(page);
 
   await editor.click();
-  await page.keyboard.type('/公式', { delay: 25 });
+  // G1544/G1613 之后斜杠菜单的官方名是「插入 TeX 公式」（editor.spec 的 ALL_COMMANDS 同）。
+  await page.keyboard.type('/插入', { delay: 25 });
   await page
-    .locator('[role="option"] div.font-medium')
-    .filter({ hasText: /^公式$/ })
+    .locator('[role="option"] span')
+    .filter({ hasText: /^插入 TeX 公式$/ })
     .first()
     .click();
 

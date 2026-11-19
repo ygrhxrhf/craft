@@ -80,7 +80,10 @@ test('手机 UA 下打开设置 → 快捷键：整列键位都是 mac 那一串
   await expect(panel).toBeVisible();
 
   // 这一页的键位是**可见文字**（不是 title），所以它是这一族更强的判据。
-  await expect(panel.getByTestId('shortcut-TOGGLE_FOCUS_MODE')).toContainText('⌘');
+  // 官方名册化之后，行的 testid 是 `shortcut-o-<tab>-<index>`（见 shortcut-official-rows 的
+  // `o-${tab}-${index}`），不再按 binding id 命名——按可见标签找这一行。
+  const focusRow = panel.locator('li').filter({ hasText: '切换专注模式' }).first();
+  await expect(focusRow).toContainText('⌘');
   await expect(panel.locator('li').filter({ hasText: 'Ctrl-' })).toHaveCount(0);
 
   expect(hits(), `hydration 报错：\n${hits().join('\n')}`).toEqual([]);

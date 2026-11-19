@@ -15,6 +15,13 @@ export async function openEditorPanel(page: Page, tab: EditorPanelTab) {
   const tablist = page.getByRole('tablist', { name: '编辑器工具' });
   const tabButton = () => tablist.getByRole('tab', { name: tab, exact: true });
 
+  // 刷新后「开没开」是持久态，而首帧总是先画成关着，hydrate 之后才打开（G956 的设计）。
+  // 这段时间里读到 aria-pressed=false 就会去点开关，把本来要自己打开的面板点关掉。
+  // 先给面板 2 秒自己开出来；它确实关着时才走开关那条路。
+  if ((await tablist.count()) === 0) {
+    await tablist.waitFor({ state: 'visible', timeout: 2_000 }).catch(() => {});
+  }
+
   if ((await tablist.count()) > 0) {
     if ((await tabButton().getAttribute('aria-selected')) !== 'true') await tabButton().click();
     return;

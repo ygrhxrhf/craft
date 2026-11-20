@@ -22,8 +22,11 @@ describe('the tag rules are wired into the editor input (G169/G170)', () => {
 
   it('gates both submit paths on the rule table', () => {
     expect(section).toContain('const violation = findTagViolation(name)');
-    expect(section).toContain('disabled={busy || !canSubmit}');
     expect(section).toContain("feedback.kind === 'valid'");
+    // ☆ 提交按钮只看「草稿有效」，**不再挂 busy**：一枚标签落库要几秒，这期间把按钮
+    //   变灰会让下一枚被静默吞掉（连着打 `父/子` 就丢后一个）。落库改成排队（addQueueRef）。
+    expect(section).toContain('disabled={!canSubmit}');
+    expect(section).toContain('addQueueRef');
   });
 
   it('takes the old generic strings out of the component', () => {

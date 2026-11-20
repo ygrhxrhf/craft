@@ -259,6 +259,8 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
   const { setTheme } = useTheme();
   const { data: session } = useSession();
   const [prefs, setPrefs] = useState<Preferences | null>(null);
+  /** 用户已经写过偏好：挂载时那一发读取不再回填，免得把乐观值冲掉。 */
+  const wrotePrefsRef = useRef(false);
   const [accent, setAccent] = useState<Accent>(() => readAccent() ?? 'blue');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(profile?.image ?? null);
   const [displayName, setDisplayName] = useState<string | null>(profile?.name ?? null);
@@ -321,7 +323,9 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
 
   useEffect(() => {
     getPreferences()
-      .then(setPrefs)
+      // 冷启动时这一发要好几秒。若用户在它落地前已经拨过开关，再用服务端旧值覆盖，
+      // 画面上就是「拨了又弹回去」，而写入其实已经成功——两边从此不一致。
+      .then((next) => { if (!wrotePrefsRef.current) setPrefs(next); })
       .catch(() => setPrefs(null));
     getSpaceEmailNotification()
       .then(setSpaceEmail)
@@ -363,6 +367,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
 
     // 偏好（user 表）→ applyLocal；本地已乐观更新，失败（IDB 异常）才回滚。
     // 主题本身随写入一起改：applyLocal 只入队，不再有"服务端未接受"的窗口。
+    wrotePrefsRef.current = true;
     const next = { ...base, ...patch };
     setPrefs(next);
     if (patch.theme) setTheme(patch.theme);
@@ -479,6 +484,7 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
     if (!base) return;
 
     // 开关同 setPref：乐观更新 + applyLocal，失败回滚。
+    wrotePrefsRef.current = true;
     setSavingSwitch(true);
     setSwitchError(null);
     setPrefs({ ...base, [key]: value });

@@ -93,8 +93,22 @@ export function TagsSection({ documentId }: TagsSectionProps) {
     });
   }), []);
 
-  const add = async (name: string) => {
-    if (!name.trim() || busy) return;
+  /**
+   * 一次 attachTag 在冷启动下要几秒（服务端 action 首次编译 + 落库）。此前在 add() 里
+   * `busy` 一真就直接 return，而提交按钮又挂着 `disabled={busy || ...}` —— 于是「上一枚
+   * 标签还在落库时敲的下一枚」被**静默吞掉**：草稿留在框里、既没挂上也没提示。
+   * 用户连着打两个标签（尤其 `父/子` 这种）就会丢后一个；e2e 的 tag-collection 正是这样红的。
+   * 改成排队：按提交顺序串行执行，不丢任何一枚。
+   */
+  const addQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const add = (name: string) => {
+    const task = addQueueRef.current.catch(() => {}).then(() => addNow(name));
+    addQueueRef.current = task;
+    return task;
+  };
+
+  const addNow = async (name: string) => {
+    if (!name.trim()) return;
     // G170：官方规则表在任何写入之前跑一遍，非法草稿不会落到服务端
     const violation = findTagViolation(name);
     if (violation) {
@@ -231,7 +245,7 @@ export function TagsSection({ documentId }: TagsSectionProps) {
         <button
           type="submit"
           aria-label="添加"
-          disabled={busy || !canSubmit}
+          disabled={!canSubmit}
           className="rounded-md border border-border p-1 text-muted-foreground transition-colors hover:bg-muted disabled:opacity-40"
         >
           <Plus className="size-3.5" />

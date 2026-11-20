@@ -164,14 +164,16 @@ function SegmentButton({ icon: Icon, active, mixedGroup, onClick, label }: {
 }
 
 export function FormatTab({ editor }: FormatTabProps) {
-  // 三态判的是选区，选区自己会变而正文一个字没动：tiptap 的 selectionUpdate 是唯一能让本面板
-  // 跟着重画的信号，不订阅就会拿着旧选区算新档位。
+  // 三态判的是选区与块属性：选区变了要重画，**块属性变了（对齐/列表/方向这类靠
+  // transaction 改正文的档位）同样要重画**。此前只订阅 selectionUpdate —— 点「两端对齐」
+  // 正文真上了 `text-align: justify`，可那个按钮永远不点亮（没有 selectionUpdate 送来）。
+  // 一条 transaction 覆盖两种：选区事务本身也是 transaction。
   const [, redraw] = useReducer((count: number) => count + 1, 0);
   useEffect(() => {
-    const onSelection = () => redraw();
-    editor.on('selectionUpdate', onSelection);
+    const onTransaction = () => redraw();
+    editor.on('transaction', onTransaction);
     return () => {
-      editor.off('selectionUpdate', onSelection);
+      editor.off('transaction', onTransaction);
     };
   }, [editor]);
 

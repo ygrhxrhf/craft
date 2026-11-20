@@ -10,6 +10,23 @@ describe('shareGrantStillValid', () => {
     expect(shareGrantStillValid(EDIT_AT_3, publishedEdit3)).toBe(true);
   });
 
+  // G131 之后写入归一成五档，可编辑的链接档叫 `linkEdit`。这一格曾经只认 `edit`，
+  // 五档上线后编辑链接的协作整条被拒（onAuthenticate 抛「未授权」）。
+  it('accepts the canonical linkEdit tier, not only the pre-G131 edit', () => {
+    expect(
+      shareGrantStillValid(EDIT_AT_3, { ...publishedEdit3, permission: 'linkEdit' }),
+    ).toBe(true);
+  });
+
+  it('still refuses the read-only link tiers', () => {
+    for (const tier of ['view', 'linkView', 'collaborators', 'viewAndComment', 'editAndComment']) {
+      expect(
+        shareGrantStillValid(EDIT_AT_3, { ...publishedEdit3, permission: tier }),
+        `tier=${tier}`,
+      ).toBe(false);
+    }
+  });
+
   it('accepts version 0, which is what a link that never changed tiers carries', () => {
     expect(
       shareGrantStillValid(

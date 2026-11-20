@@ -30,9 +30,13 @@ async function signIn(page: import('@playwright/test').Page) {
   await page.waitForURL(/\/documents/, { timeout: 90_000 });
 }
 
-/** 面板里的控件都只有一枚 svg 当内容，可访问名来自 title；未混合时 title 恰为档位中文名。 */
+/**
+ * 面板里的控件都只有一枚 svg 当内容，可访问名来自 title；未混合时 title 恰为档位中文名，
+ * 混合时变成 `<名>（混合）`。所以只锚住开头，并把结尾收到「整名」或「（混合）」两种形态上
+ * ——裸 `^默认` 会连「默认字体」一起命中（字体段那枚是完整的一档，不是对齐段）。
+ */
 const segment = (page: import('@playwright/test').Page, label: string) =>
-  page.locator('[role="tabpanel"]').getByRole('button', { name: new RegExp(`^${label}`) });
+  page.locator('[role="tabpanel"]').getByRole('button', { name: new RegExp(`^${label}($|（混合）)`) });
 
 async function newDoc(page: import('@playwright/test').Page, lines: string[]) {
   await page.goto('/documents');

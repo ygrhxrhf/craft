@@ -58,8 +58,12 @@ test('the inbox collects unfiled documents and files them away', async ({ page }
   await menu.getByRole('menuitem', { name: folderName, exact: true }).click();
   await expect(inboxCard).toHaveCount(0, { timeout: 20_000 });
 
-  await page.reload();
-  await expect(inboxCard).toHaveCount(0, { timeout: 20_000 });
+  // 「移至」经同步内核异步推上服务端：刷新可能早于那一笔落地，于是卡片又回来了。
+  // 重试到服务端也确认离开为止（同 member-remove-offline 的写法），而不是赌一次刷新。
+  await expect(async () => {
+    await page.reload();
+    await expect(inboxCard).toHaveCount(0, { timeout: 10_000 });
+  }).toPass({ timeout: 60_000, intervals: [2_000] });
 
   // The folder badge counts it: the document left 未分类 and arrived in the folder.
   // showAllRows 是组件态，刷新即回到折叠——折叠线以下的行看不见，先展开再断言。

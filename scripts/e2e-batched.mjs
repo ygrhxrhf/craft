@@ -27,7 +27,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const LOGDIR = path.join(ROOT, 'test-results', 'batched');
+// ☆ 不能放 test-results/ 下：Playwright 每轮都清空 outputDir，会把上一批的日志一起删掉。
+const LOGDIR = path.join(ROOT, '.pw-out', 'batched');
 const PORTS = [3000, 3001, 3002];
 
 const argv = process.argv.slice(2);
@@ -90,7 +91,12 @@ function pw(extra, logName) {
   // `next dev`'s `injected env` banner and the webServer log come out on stderr; they are wanted
   // for the counters but must never reach the JSON reader.
   const out = `${stdout}\n${res.stderr || ''}`;
-  if (logName) fs.writeFileSync(path.join(LOGDIR, logName), out);
+  if (logName) {
+    // Playwright 每轮都会清空 outputDir（test-results/），把 LEAD 时建好的 batched/ 一起删掉。
+    // 这里每次写日志前重建，否则第一批跑完就 ENOENT 中断，后两批根本不会跑。
+    fs.mkdirSync(LOGDIR, { recursive: true });
+    fs.writeFileSync(path.join(LOGDIR, logName), out);
+  }
   return { code: res.status, out, stdout };
 }
 

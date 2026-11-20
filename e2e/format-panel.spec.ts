@@ -31,6 +31,23 @@ async function signIn(page: import('@playwright/test').Page) {
 }
 
 /**
+ * 跨块文本选区。**不能用 Ctrl+A**：本编辑器的 Ctrl/⌘-A 是两级阶梯（G1550）——先选中
+ * 当前块文字，再变成块选中，永远不会跨块。所以这里按坐标从头一个块的末尾拖到目标块末尾。
+ */
+async function selectAcrossBlocks(page: import('@playwright/test').Page, from: number, to: number) {
+  const boxes = await page
+    .locator('.ProseMirror > *')
+    .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().toJSON()));
+  const a = boxes[from];
+  const b = boxes[to];
+  if (!a || !b) throw new Error(`selectAcrossBlocks: 块 ${from}/${to} 不存在`);
+  await page.mouse.move(a.x + a.width - 8, a.y + a.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(b.x + b.width - 8, b.y + b.height / 2, { steps: 12 });
+  await page.mouse.up();
+}
+
+/**
  * 面板里的控件都只有一枚 svg 当内容，可访问名来自 title；未混合时 title 恰为档位中文名，
  * 混合时变成 `<名>（混合）`。所以只锚住开头，并把结尾收到「整名」或「（混合）」两种形态上
  * ——裸 `^默认` 会连「默认字体」一起命中（字体段那枚是完整的一档，不是对齐段）。
@@ -121,7 +138,7 @@ test('选区跨档时显示「混合」，且没有任何一档点亮', async ({
   await putCaretIn(page, '.ProseMirror > *', 1);
   await segment(page, '左对齐').click();
 
-  await page.keyboard.press('Control+A');
+  await selectAcrossBlocks(page, 0, 1);
   const mixed = page.locator('[role="tabpanel"] [data-mixed-indicator=""]');
   await expect(mixed, '混合标记没出现').toHaveCount(1);
   await expect(mixed).toHaveText('混合');
@@ -160,7 +177,9 @@ test('两项列表摘走末项：前项留在列表里，且不多出正文行',
   await newDoc(page, ['列表项一', '列表项二']);
   await openFormatTab(page);
 
-  // 面板刚被点过，焦点在按钮上；先把光标放回正文，`Ctrl+A` 才是编辑器的全选而不是浏览器的。
+  // 面板刚被点过，焦点在按钮上；先把光标放回正文。
+  // ☆ 这里要的正是「当前块全选」那一档（Ctrl+A 的第一级，G1550），不是跨块选区——
+  //   所以仍然用键盘，只是把意图写明白。
   await putCaretIn(page, '.ProseMirror > *', 0);
   await page.keyboard.press('Control+A');
   await segment(page, '无序列表').click();
@@ -274,7 +293,7 @@ test('方向跨轴时整组显示混合，两档都不点亮', async ({ page }) 
   await putCaretIn(page, '.ProseMirror > *', 1);
   await expect(segment(page, '从左到右')).toHaveAttribute('aria-pressed', 'true');
 
-  await page.keyboard.press('Control+A');
+  await selectAcrossBlocks(page, 1, 0);
   const mixed = page.locator('[role="tabpanel"] [data-mixed-indicator=""]');
   await expect(mixed, '方向组的混合标记没出现').toHaveCount(1);
   await expect(mixed).toHaveText('混合');

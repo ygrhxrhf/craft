@@ -498,9 +498,12 @@ describe('面板接线（屏上的字必须来自这张表）', () => {
     wired(panel, 'applyDecoration(host', 2);
   });
 
-  it('redraws on selection changes, or the档位 would be read off a stale selection', () => {
-    wired(panel, "editor.on('selectionUpdate'");
-    wired(panel, "editor.off('selectionUpdate'");
+  it('redraws on every transaction — selection AND block-attribute changes', () => {
+    // 只订阅 selectionUpdate 会让「两端对齐／列表／方向」这类改块属性的档位永远不点亮：
+    // 它们的 transaction 不动选区。transaction 覆盖两者（选区事务本身也是 transaction）。
+    wired(panel, "editor.on('transaction'");
+    wired(panel, "editor.off('transaction'");
+    expect(panel).not.toContain("editor.on('selectionUpdate'");
   });
 
   it('aligns the same block types the editor actually gave the attribute to', () => {

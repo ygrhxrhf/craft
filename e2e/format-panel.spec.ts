@@ -177,11 +177,10 @@ test('两项列表摘走末项：前项留在列表里，且不多出正文行',
   await newDoc(page, ['列表项一', '列表项二']);
   await openFormatTab(page);
 
-  // 面板刚被点过，焦点在按钮上；先把光标放回正文。
-  // ☆ 这里要的正是「当前块全选」那一档（Ctrl+A 的第一级，G1550），不是跨块选区——
-  //   所以仍然用键盘，只是把意图写明白。
+  // 两段要一起进列表 ⇒ 需要**跨块**选区。Ctrl+A 在本编辑器里是两级阶梯（G1550），
+  // 第一级只选当前块，选不到第二段，所以按坐标拖选（同上面两条混合态用例）。
   await putCaretIn(page, '.ProseMirror > *', 0);
-  await page.keyboard.press('Control+A');
+  await selectAcrossBlocks(page, 0, 1);
   await segment(page, '无序列表').click();
   await expect(page.locator('.ProseMirror ul > li')).toHaveCount(2);
   // ☆ G1485 结案＝这枚空段落不再出现：包装尾部块的是 StarterKit 的 `TrailingNode`
@@ -215,6 +214,8 @@ test('尾部列表不留游离空块，而光标照样能出列表接着写', as
   await page.keyboard.press('End');
   await page.keyboard.press('Enter');
   await page.keyboard.press('Enter');
+  // 空项被请出列表是一个 transaction：等它真的落地再打字，否则字会落进还没让位的空项里。
+  await expect(page.locator('.ProseMirror > p'), '第二次回车没把空项请出列表').toHaveCount(1);
   await page.keyboard.type('接着写的正文');
   expect(await readRows(page), '离开列表后打的字').toEqual([
     { tag: 'UL', text: '尾列表项' },

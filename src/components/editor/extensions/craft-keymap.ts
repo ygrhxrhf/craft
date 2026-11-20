@@ -806,6 +806,27 @@ export const CraftKeymap = Extension.create({
                   return true;
                 }
               }
+              // 空项上回车＝**离开列表**（官方行为，也是 format-panel 那条用例的判据）。
+              // 这里不显式接管就会落到 ProseMirror 默认命令上，而默认命令对「尾部空项」
+              // 是否真的把它请出列表并不稳定（实测间歇性留在列表里，随后打的字落进空项）。
+              if (
+                $from.parent.isTextblock
+                && isEmptyBlock({
+                  textLength: $from.parent.textContent.length,
+                  atomicInlines: countAtomicInlines($from.parent),
+                  childBlocks: 0,
+                })
+              ) {
+                const lift = editor.isActive('taskList')
+                  ? editor.chain().focus().liftListItem('taskItem').run()
+                  : editor.isActive('listItem')
+                    ? editor.chain().focus().liftListItem('listItem').run()
+                    : false;
+                if (lift) {
+                  view.dispatch(closeHistory(view.state.tr));
+                  return true;
+                }
+              }
             }
             // Enter adds a row only while cells are selected and no text is being edited (G1478).
             // A caret inside a cell is editing, so Enter there keeps its normal meaning.

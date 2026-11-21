@@ -32,22 +32,41 @@ test('收藏 writes through the offline kernel and reads back on the favorites v
   await expect(row).toBeVisible({ timeout: 20_000 });
 
   await row.click({ button: 'right' });
+  // 收藏是内核的异步写（applyLocal → 入队 → flush 推送）。整页 `goto` 会把页面的 JS
+  // 连同**尚未提交的 IDB 事务**一起撕掉——真机上这一跳是 SPA 导航，页面不会卸载；用例里
+  // 必须等这一笔推上去再走，否则下面"重载后镜像还认得"测的是跳转时序，不是持久化。
+  const favoritePushed = page.waitForResponse(
+    (r) =>
+      r.url().includes('/api/v1/sync') &&
+      r.request().method() === 'POST' &&
+      (r.request().postData() ?? '').includes('"table":"favorite"'),
+  );
   await page.getByRole('menu').getByRole('menuitem', { name: '添加到收藏' }).click();
+  await favoritePushed;
 
   await page.goto('/favorites');
   await expect(page.getByText('只有你可以查看收藏的项目')).toBeVisible();
-  await expect(page.getByText(title, { exact: true })).toBeVisible({ timeout: 20_000 });
+  // 侧栏里也有同名的行 ⇒ 只认主区，否则这条断言被侧栏代答（失败时也看不出来）。
+  const favoritesMain = page.locator('main');
+  await expect(favoritesMain.getByText(title, { exact: true })).toBeVisible({ timeout: 20_000 });
 
   // The menu label comes from the mirror, not from a server round trip.
   await page.goto('/documents');
   await expect(row).toBeVisible({ timeout: 20_000 });
   await row.click({ button: 'right' });
+  const unfavoritePushed = page.waitForResponse(
+    (r) =>
+      r.url().includes('/api/v1/sync') &&
+      r.request().method() === 'POST' &&
+      (r.request().postData() ?? '').includes('"table":"favorite"'),
+  );
   await page.getByRole('menu').getByRole('menuitem', { name: '取消收藏' }).click();
+  await unfavoritePushed;
 
   await page.goto('/favorites');
-  await expect(page.getByText(title, { exact: true })).toHaveCount(0);
+  await expect(favoritesMain.getByText(title, { exact: true })).toHaveCount(0);
   await page.reload();
-  await expect(page.getByText(title, { exact: true })).toHaveCount(0);
+  await expect(favoritesMain.getByText(title, { exact: true })).toHaveCount(0);
 });
 
 /** G46: the ledger keeps two names for the unfiled collection -- the row is 未归档, the view is 未分类. */

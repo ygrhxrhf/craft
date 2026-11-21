@@ -13,8 +13,8 @@ import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows } from '@/components/sync/local-records';
 import { findDocumentShare } from '@/components/sync/local-records';
 import { overlayMemberRows } from '@/components/sync/member-rows';
-import { rememberUserDisplay } from '@/components/sync/user-display';
-import { persistUserDisplay } from '@/components/sync/user-display-persist';
+import { rememberUserDisplay, userDisplayOf } from '@/components/sync/user-display';
+import { hydrateUserDisplay, persistUserDisplay } from '@/components/sync/user-display-persist';
 import { memberRemovalNote } from '@/lib/share/member-access-notes';
 import { revokeAcrossDocumentsPrompt } from '@/lib/share/document-scope';
 import { SHARE_ERROR } from '@/lib/share/share-guards';
@@ -54,8 +54,12 @@ export function MembersSection({ documentId, canManage }: MembersSectionProps) {
       const server = await listDocumentMembers(documentId);
       // G1521：叠本机未推送意图——"移除协作者"走内核之后断链时，服务端名册里那一行还在，
       // 只有本机 pending 的墓碑能把它从屏上摘掉（与 R-18 回收站叠法同源）。
+      // G1520：本机**新建**的那一行同样只在本机 pending 里；它的显示名（同步列不带）先
+      // 从内核 kv 段 hydrate 回来，才标得出是谁——否则 `applyLocal` 触发的这次重读会把
+      // `handleAdd` 刚写进 state 的行冲掉，离线时那行于是一直不出现。
+      await hydrateUserDisplay();
       const pending = await readPendingRows('document_member');
-      setMembers(overlayMemberRows(server, pending));
+      setMembers(overlayMemberRows(server, pending, { documentId, displayOf: userDisplayOf }));
     } catch {
       setMembers([]);
     }

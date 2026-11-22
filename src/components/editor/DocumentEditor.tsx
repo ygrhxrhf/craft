@@ -292,7 +292,9 @@ export function DocumentEditor({ document: doc, role = 'owner', userInitial = '�
     }
   };
 
-  const measure = width === 'narrow' ? '580px' : width === 'wide' ? '900px' : '720px';
+  // 三档页宽（G1712）：官方 1440 下默认页面是 **840** 宽的纸（截图量 x 303–1143），正文列约 714；
+  // 本地此前默认 720（正文 624），整篇看着偏窄、宽屏上浮不起来。窄／宽两档等比拉开。
+  const measure = width === 'narrow' ? '700px' : width === 'wide' ? '980px' : '840px';
   // G708：主题补丁写的 backgroundColor 是明暗对，交给 `light-dark()` 按 `color-scheme` 取半；
   // 单值与老文档走原路。不用 JS 判断明暗——服务端与首个客户端渲染的字符串必须一致（注水）。
   const backgroundChannel =
@@ -479,7 +481,9 @@ export function DocumentEditor({ document: doc, role = 'owner', userInitial = '�
         {/* G1660：官方文档页是浅灰底上一张居中浮起的白色圆角卡片；此前画布与页面同色，
             看不出卡片边界。卡片本身（rounded-2xl + shadow-doc + 页面底色）已在下一层。 */}
         <div className="flex-1 overflow-y-auto bg-foreground/[0.03]">
-        <div className="relative min-h-full px-3 py-5 sm:px-8">
+        {/* G1712：宽屏上左右只留 8px——官方 840 宽的纸在 1440＋296 右栏下几乎顶满（截图 x303–1143），
+            本地原来 `sm:px-8` 把可用宽度吐掉 64px，纸只能到 792。窄屏仍留 12/32 的呼吸。 */}
+        <div className="relative min-h-full px-3 py-5 sm:px-2">
           {backdropCss && (
             <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: backdropCss }} />
           )}

@@ -27,15 +27,18 @@ export function SyncStatusIndicator() {
   const [status, setStatus] = useState<SyncStatus>('synced');
   const [pending, setPending] = useState(0);
   const [toastShown, setToastShown] = useState(false);
-
   useEffect(() => getSyncManager().subscribe((s, p) => {
     setStatus(s); setPending(p);
     if (s === 'error' && !toastShown) {           // error toast 仅一次
       setToastShown(true);
+      // 这一档只说明「这一轮推送没成功」，真实原因可能是网络、也可能是服务端拒绝。
+      // 旧的「将在网络恢复后重试」把归因写死成网络：外键/鉴权失败时用户按那句话排查，只会白等。
+      // 能确定的是改动还在本地队列里（applyLocal 先落库再入队），所以说这一句；原因留给下一层。
       toast.add({
         id: 'sync-error',
         type: 'error',
-        title: '同步失败，将在网络恢复后重试',
+        title: '同步失败，改动已存在本机',
+        description: '网络或服务器暂时不可用，恢复后会自动重试。',
       });
     }
     if (s === 'synced') setToastShown(false);

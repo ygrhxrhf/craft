@@ -1,7 +1,9 @@
 'use client';
 
 import { Search } from 'lucide-react';
+
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
+import { usePlatform } from '@/lib/editor/use-platform';
 
 /**
  * G01/G05 —— craft 有一套**全宽 48px 顶栏**（1440×48 @(0,0)），压在侧栏之上；
@@ -12,7 +14,9 @@ import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
  */
 export function AppTopBar() {
   const openPalette = useCommandPaletteStore((state) => state.open);
-
+  // 快捷键提示跟着平台走：官方那套是 Mac 字形，Windows 上印「Ctrl K」才和真实按键对得上。
+  // `usePlatform()` 首帧固定答 `win`，hydration 之后才换成真机值（G1486）。
+  const shortcut = usePlatform() === 'mac' ? '⌘K' : 'Ctrl K';
   return (
     <div className="hidden h-[var(--layout-header-h)] shrink-0 items-center justify-center px-4 md:flex">
       <button
@@ -24,8 +28,8 @@ export function AppTopBar() {
       >
         <Search className="size-4 shrink-0 text-foreground/55" />
         <span className="flex-1 truncate text-left">打开</span>
-        <kbd className="rounded border border-foreground/10 px-1 text-[10px] font-normal text-foreground/55">
-          ⌘K
+        <kbd className="whitespace-nowrap rounded border border-foreground/10 px-1 text-[10px] font-normal text-foreground/55">
+          {shortcut}
         </kbd>
       </button>
     </div>

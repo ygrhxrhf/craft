@@ -126,7 +126,9 @@ export function DocumentCard({
             loading="lazy"
             draggable={false}
             data-testid={`card-preview-${doc.id}`}
-            className="mt-2 min-h-0 w-full flex-1 rounded-lg border border-foreground/8 bg-background object-cover object-top"
+            // G1712：官方卡片里的预览**没有边框也没有底色**，直接融进卡面（截图对照）；
+            // 本地此前画成一张带 border 的白色内嵌块，卡片因此看着像“两张卡叠在一起”。
+            className="mt-2 min-h-0 w-full flex-1 rounded-lg object-cover object-top"
           />
         ) : doc.previewText ? (
           // G20/G997：回收站条目打不开（G991），预览层用删除时落库的纯文本快照——正是官方卡片

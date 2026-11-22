@@ -797,10 +797,15 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
         <div
           key={indexOfBlock(target.blockEl)}
           className="absolute z-50 flex cursor-grab items-center text-muted-foreground/50 transition-colors hover:text-foreground active:cursor-grabbing max-md:hidden"
+          // 这一行有三个控件（握把／+／⋯，约 64px 宽），而正文左侧只剩 |HANDLE_OFFSET|＝26px 的空档：
+          // 若从锚点向右排，+ 与 ⋯ 会压到段落首字上（实测 + 占 456–476，而正文从 446 起，
+          // 悬停/光标所在行永远读不全开头）。改成右端对齐到同一个锚点、向左展开：仍是那 26px 的
+          // 间距，但整排落在页边空白里，不再覆盖正文。
           style={{
             top: target.top,
             left: HANDLE_OFFSET,
             height: '24px',
+            transform: 'translateX(-100%)',
           }}
           onPointerDown={(e) => onHandlePointerDown(e, target.top)}
           data-drag-handle=""

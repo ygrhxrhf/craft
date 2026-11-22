@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { getSyncManager } from '@/lib/sync-core';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
-import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
+import { useSidebarSnapshotState } from '@/lib/sidebar/use-sidebar-snapshot';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { DocumentTreeItem } from './DocumentTreeItem';
 import { CollapseRow } from './CollapseRow';
 import { untitledFor } from '@/lib/document/untitled-copy';
-import { LOADING } from '@/lib/browse/official-copy';
+import { SidebarSectionPlaceholder } from './SidebarSectionPlaceholder';
 import { SECTION_COLLAPSE_THRESHOLD, collapseSection } from '@/lib/browse/section-collapse';
 
 export interface Document {
@@ -48,7 +48,7 @@ interface DocumentTreeProps {
 }
 
 export function DocumentTree({ folderId = null }: DocumentTreeProps) {
-  const snapshot = useSidebarSnapshot();
+  const { snapshot, failed, retry } = useSidebarSnapshotState();
   const bumpTree = useSidebarStore((s) => s.bumpTree);
   const [pending, setPending] = useState<Map<string, PendingRow>>(new Map());
   // G391：分区超过硬编码阈值时收成"前 N 行 + 折叠行"，折叠行可再展开。
@@ -78,7 +78,7 @@ export function DocumentTree({ folderId = null }: DocumentTreeProps) {
   }), [bumpTree]);
 
   if (!snapshot) {
-    return <div className="px-3 py-2 text-[13px] text-muted-foreground">{LOADING}</div>;
+    return <SidebarSectionPlaceholder failed={failed} onRetry={retry} />;
   }
 
   const documents = overlayDocumentRows(snapshot.documents as Document[], pending);

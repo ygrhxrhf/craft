@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react';
 import { getSyncManager } from '@/lib/sync-core';
 import { useSidebarStore } from '@/lib/store/use-sidebar-store';
-import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
+import { useSidebarSnapshotState } from '@/lib/sidebar/use-sidebar-snapshot';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import { overlayDocumentRows, type Document } from './DocumentTree';
 import { folderDocumentCounts } from '@/lib/browse/folder-counts';
 import { UNTITLED_FOLDER } from '@/lib/document/untitled-copy';
 import { FolderTreeItem } from './FolderTreeItem';
 import { CollapseRow } from './CollapseRow';
-import { LOADING } from '@/lib/browse/official-copy';
+import { SidebarSectionPlaceholder } from './SidebarSectionPlaceholder';
 import { SECTION_COLLAPSE_THRESHOLD, collapseSection } from '@/lib/browse/section-collapse';
 import { compareFolderOrder } from '@/lib/folder/order';
 
@@ -46,7 +46,7 @@ export function overlayFolderRows(
 }
 
 export function FolderTree() {
-  const snapshot = useSidebarSnapshot();
+  const { snapshot, failed, retry } = useSidebarSnapshotState();
   const bumpTree = useSidebarStore((s) => s.bumpTree);
   const [pendingFolders, setPendingFolders] = useState<Map<string, PendingRow>>(new Map());
   const [pendingDocs, setPendingDocs] = useState<Map<string, PendingRow>>(new Map());
@@ -77,7 +77,7 @@ export function FolderTree() {
   }), [bumpTree]);
 
   if (!snapshot) {
-    return <div className="px-3 py-2 text-[13px] text-muted-foreground">{LOADING}</div>;
+    return <SidebarSectionPlaceholder failed={failed} onRetry={retry} />;
   }
 
   const folders = overlayFolderRows(snapshot.folders as Folder[], pendingFolders);

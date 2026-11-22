@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
+import { useSidebarSnapshotState } from '@/lib/sidebar/use-sidebar-snapshot';
 import { cn } from 'cn';
-import { LOADING } from '@/lib/browse/official-copy';
+import { SidebarSectionPlaceholder } from './SidebarSectionPlaceholder';
 
 interface Collection {
   id: string;
@@ -15,10 +15,10 @@ interface Collection {
 
 export function CollectionTree() {
   const pathname = usePathname();
-  const snapshot = useSidebarSnapshot();
+  const { snapshot, failed, retry } = useSidebarSnapshotState();
 
   if (!snapshot) {
-    return <div className="px-3 py-2 text-[13px] text-muted-foreground">{LOADING}</div>;
+    return <SidebarSectionPlaceholder failed={failed} onRetry={retry} />;
   }
 
   const collections = snapshot.collections as Collection[];

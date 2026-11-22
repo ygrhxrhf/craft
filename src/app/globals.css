@@ -23,6 +23,7 @@
     'Liberation Mono', 'Courier New', monospace;
   --font-heading: var(--font-sans);
   --font-serif: Georgia, 'Times New Roman', 'Noto Serif SC', 'Songti SC', var(--cjk-serif), serif;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -2578,3 +2579,23 @@ html[lang="zh-Hant"] {
   --cjk-rounded: "Resource Han Rounded TC";
   --cjk-mono: "Noto Sans Mono TC";
 }
+
+/* ── craft 的阴影类（G1712） ─────────────────────────────────────────────────────
+   官方把 `--shadow-*` 定义成整条 `box-shadow` 堆栈，亮暗各一套，值在 `:root` / `.dark`
+   里维护。这些栈**不能**交给 Tailwind 的 `shadow-*` 工具类生成：在 `@theme` 里写
+   `--shadow-doc: var(--shadow-doc)` 时，编译器会把值当“可着色阴影”，产出
+   `--tw-shadow-colored`，六层颜色全被替换成 transparent（实测：纸张 box-shadow 是
+   6 层 `rgba(0,0,0,0)`，卡片是 `0 0 0 0`）——整个界面于是没有层次。
+   这里把类名直接接到变量上，绕开颜色抽取；亮暗切换仍由变量接管。 */
+@layer utilities {
+  .shadow-empty { box-shadow: var(--shadow-empty); }
+  .shadow-xxs { box-shadow: var(--shadow-xxs); }
+  .shadow-xs { box-shadow: var(--shadow-xs); }
+  .shadow-sm { box-shadow: var(--shadow-sm); }
+  .shadow-sr { box-shadow: var(--shadow-sr); }
+  .shadow-md { box-shadow: var(--shadow-md); }
+  .shadow-lg { box-shadow: var(--shadow-lg); }
+  .shadow-doc { box-shadow: var(--shadow-doc); }
+  .shadow-inner { box-shadow: var(--shadow-inner); }
+}
+

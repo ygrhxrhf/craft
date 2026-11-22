@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from 'cn';
 import type { WhiteboardItem } from '@/actions/whiteboard/whiteboard';
-import { useSidebarSnapshot } from '@/lib/sidebar/use-sidebar-snapshot';
+import { useSidebarSnapshotState } from '@/lib/sidebar/use-sidebar-snapshot';
 import { getSyncManager } from '@/lib/sync-core';
 import { readPendingRows, mergePending, type PendingRow } from '@/components/sync/local-records';
 import {
@@ -14,7 +14,7 @@ import {
 } from '@/lib/dnd/sidebar-drag';
 import { pressStartsDrag } from '@/lib/dnd/activation-guard';
 import { useDragArm } from '@/lib/dnd/use-drag-arm';
-import { LOADING } from '@/lib/browse/official-copy';
+import { SidebarSectionPlaceholder } from './SidebarSectionPlaceholder';
 
 interface WhiteboardTreeItemProps {
   board: WhiteboardItem;
@@ -91,7 +91,7 @@ export function overlayWhiteboardRows(
 }
 
 export function WhiteboardTree() {
-  const snapshot = useSidebarSnapshot();
+  const { snapshot, failed, retry } = useSidebarSnapshotState();
   const pathname = usePathname();
   const [version, setVersion] = useState(0);
   const [pending, setPending] = useState<Map<string, PendingRow>>(new Map());
@@ -113,7 +113,7 @@ export function WhiteboardTree() {
   }), []);
 
   if (!snapshot) {
-    return <div className="px-3 py-2 text-[13px] text-muted-foreground">{LOADING}</div>;
+    return <SidebarSectionPlaceholder failed={failed} onRetry={retry} />;
   }
 
   const boards = overlayWhiteboardRows(snapshot.whiteboards, pending);

@@ -168,8 +168,16 @@ export function RightPanel({
   // four tabs arrive as a bottom sheet instead.
   if (isCompact) {
     return (
+      // `showCloseButton={false}`：底部抽屉自带的那枚 `Close` 和下面 `body` 头部的 X 会同时出现，
+      // 屏上变成两个关闭按钮（实测 390×844 两枚 X 相距不到 20px）。保留 body 那一枚——
+      // 它是中文 aria-label、直接接 `onClose`。
       <Sheet open={open} onOpenChange={(next) => (!next ? onClose() : undefined)}>
-        <SheetContent side="bottom" snapPoints={[0.35, 0.6, 0.92]} className="h-[60dvh] max-h-[60dvh] gap-0 p-0">
+        <SheetContent
+          side="bottom"
+          snapPoints={[0.35, 0.6, 0.92]}
+          showCloseButton={false}
+          className="h-[60dvh] max-h-[60dvh] gap-0 p-0"
+        >
           <SheetTitle className="sr-only">编辑器工具</SheetTitle>
           {body}
         </SheetContent>

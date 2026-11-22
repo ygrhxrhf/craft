@@ -1,13 +1,9 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { getRecentDocuments } from '@/actions/document/get';
-import { getFavoriteDocuments } from '@/actions/document/get';
 import { getFolders } from '@/actions/folder/get';
-import { locationPathLabel } from '@/lib/document/location-path';
-import { DocumentCard } from '@/components/document/DocumentCard';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
-import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { SortableDocGrid } from '@/components/document/SortableDocGrid';
 import { buildPreviewSrc } from '@/lib/preview/signature';
 import { RichText } from '@/components/ui/rich-text';
@@ -17,11 +13,7 @@ export default async function DocumentsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
 
-  const [recentDocs, favoriteDocs, folders] = await Promise.all([
-    getRecentDocuments(8),
-    getFavoriteDocuments(),
-    getFolders(),
-  ]);
+  const [recentDocs, folders] = await Promise.all([getRecentDocuments(8), getFolders()]);
 
   // G250：卡片头第二行是**位置面包屑**（📁 日记 •）。这里按每篇文档解出祖先链（无祖先退到它所在
   //   文件夹、再退到「未分类」），卡片只负责渲染，不自己查库。
@@ -33,13 +25,6 @@ export default async function DocumentsPage() {
     folderId: d.folderId ?? null,
   }));
   const folderNodes = folders.map((f) => ({ id: f.id, name: f.name, icon: f.icon }));
-  const breadcrumbFor = (doc: { id: string; folderId?: string | null }) =>
-    locationPathLabel(nodes, doc.id, folderNodes);
-
-  const favoriteCards = favoriteDocs.map((doc) => ({
-    ...doc,
-    breadcrumb: breadcrumbFor(doc),
-  }));
 
   // 卡片副行的「已更新 N」必须在服务端只取一次时钟：SSR 与 hydration 各取一次会撞 Hydration failed。
   const now = Date.now();
@@ -47,22 +32,12 @@ export default async function DocumentsPage() {
   return (
     <div className="flex-1 overflow-y-auto">
       {/* G1649：官方该屏标题是「所有文档」，不是「文档」。 */}
-      <AppPageHeader title="所有文档" />
+      <AppPageHeader title="所有文档" plus="document" />
       <AppPageContainer>
-        {/* G15：craft 的 /all 首屏只有卡片网格；本地那条五按钮快捷条已撤（入口改挂侧栏与顶栏）。 */}
-        {favoriteDocs.length > 0 && (
-          <section className="mb-8">
-            <h2 className="mb-3 text-lg font-medium">收藏</h2>
-            <BrowseGrid>
-              {favoriteCards.slice(0, 6).map(doc => (
-                <DocumentCard key={doc.id} document={doc} now={now} />
-              ))}
-            </BrowseGrid>
-          </section>
-        )}
-
+        {/* G1649/G1662：官方 /all 的标题下**直接**就是卡片网格 —— 既没有「最近编辑」小标题，
+            也没有「收藏」分区（收藏在 /starred 单独成页）。此前本地这两层把网格从 y=116 推到
+            y=200，首屏因此少一整行卡片。 */}
         <section>
-          <h2 className="mb-3 text-lg font-medium">最近编辑</h2>
           {recentDocs.length > 0 ? (
             <SortableDocGrid documents={recentDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))} folders={folderNodes} now={now} />
           ) : (

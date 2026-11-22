@@ -45,6 +45,8 @@ interface RightPanelProps {
   canEdit: boolean;
   /** G588: whether the actor may comment — a viewer can read threads but not compose. */
   canComment?: boolean;
+  /** G1667：文档自身的创建/更新时间与作者，由服务端页面带下来。 */
+  docMeta?: { createdAt: string | null; updatedAt: string | null; authorName: string | null };
   onUpdate: (data: {
     title?: string;
     icon?: string | null;
@@ -79,6 +81,7 @@ export function RightPanel({
   isOwner,
   canEdit,
   canComment = true,
+  docMeta,
   onUpdate,
 }: RightPanelProps) {
   const isCompact = useIsCompact();
@@ -153,6 +156,7 @@ export function RightPanel({
                 wordCount={wordCount}
                 isOwner={isOwner}
                 canComment={canComment}
+                docMeta={docMeta}
                 pageStyle={pageStyle}
                 onPageStylePatch={(patch) => onUpdate({ pageStylePatch: patch })}
                 onClose={onClose}

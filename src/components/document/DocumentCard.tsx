@@ -81,7 +81,7 @@ export function DocumentCard({
       {/* G15/G16：craft 卡片 208×260（aspect 1/1.25），内部顺序是 **标题 → 副行 → 分隔线 → 预览**，
           预览盒从卡内 +68 起、溢出被裁掉（`_previewBox_` 176×268）。此前本地是预览在最上、
           卡高随内容（64/169）。 */}
-      <div className="relative flex aspect-[4/5] flex-col overflow-hidden rounded-xl bg-card px-[6px] pt-[7px] pb-2 shadow-sm">
+      <div className="relative flex aspect-[4/5] flex-col overflow-hidden rounded-t-[10px] bg-white px-[6px] pt-[7px] pb-2">
         {/* Hover/focus swap (G1077): the resting layer fades out and the action layer fades in —
             a swap, not an overlay, so the card's height never moves. The `group-hover` variant is
             already gated on the intent attribute, so a touch device never latches it. */}
@@ -184,7 +184,7 @@ export function DocumentCard({
             event.preventDefault();
             setMenuAt({ x: event.clientX, y: event.clientY });
           }}
-          className="group relative block rounded-xl transition-colors duration-300 hover:bg-foreground/[0.03]"
+          className="group relative block rounded-[10px] transition-colors duration-300 hover:bg-foreground/[0.03]"
         >
           {body}
         </Link>
@@ -193,7 +193,7 @@ export function DocumentCard({
           data-item-id={doc.id}
           aria-selected={selectable ? selected : undefined}
           onClick={selectable ? () => onToggleSelect?.(doc.id) : undefined}
-          className="group relative block rounded-xl transition-colors duration-300 hover:bg-foreground/[0.03]"
+          className="group relative block rounded-[10px] transition-colors duration-300 hover:bg-foreground/[0.03]"
         >
           {body}
         </div>

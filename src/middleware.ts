@@ -27,6 +27,9 @@ const publicRoutes = [
   '/api/internal/',
   '/api/whiteboards/',
   '/api/health',
+  // G1674：「所有文档的 MCP」由外部 AI 工具调用，没有会话 cookie；它自证令牌
+  //   （`Authorization: Bearer`），所以要在中间件里放行，鉴权在路由内完成。
+  '/api/mcp',
   '/s/',
   '/p/',
   '/w/',

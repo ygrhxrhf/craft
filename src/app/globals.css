@@ -164,7 +164,9 @@
 
   /* Editor — --base-overlay surface with --editor-text ink at 90% */
   --editor-bg: oklch(0.9911 0 0);
-  --editor-fg: oklch(0.2501 0.0072 248 / 0.9);
+  /* G1664：官方正文墨色是**实色** rgb(31,34,37)（getComputedStyle 直接读到 alpha=1），
+     本地此前同一色相挂 90% 透明度 ⇒ 白纸上整体偏灰一档。 */
+  --editor-fg: oklch(0.2501 0.0072 248);
   --editor-border: oklch(0.925 0.002 248);
   --editor-muted: oklch(0.4698 0.0205 248.3);
 
@@ -287,7 +289,8 @@
   --layout-header-h: 48px;
   --panel-w: 296px;
   --editor-measure: 720px;
-  --editor-pad-x: 3rem;
+  /* G1665：官方 844 宽的纸里正文列 672 ⇒ 左右各 86（标题 x=386 = 纸左缘 300 + 86）。 */
+  --editor-pad-x: 86px;
 }
 
 /* Tablet: gutters tighten; a block's max-width already caps the measure at 100%. */
@@ -362,7 +365,7 @@
 
   /* Editor */
   --editor-bg: oklch(0.2562 0 0);
-  --editor-fg: oklch(0.9821 0 0 / 0.9);
+  --editor-fg: oklch(0.9821 0 0);
   --editor-border: oklch(0.32 0 0);
   --editor-muted: oklch(0.7 0 0);
 
@@ -578,6 +581,8 @@
 .tiptap {
   font-size: 15px;
   line-height: 23px;
+  /* G1664：官方正文 `letter-spacing:-0.18px`（15/23/Inter 同号同重，只差这一档字距）。 */
+  letter-spacing: -0.18px;
   color: var(--editor-fg, var(--foreground));
 
   &:focus {

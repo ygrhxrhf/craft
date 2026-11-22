@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Calendar as CalendarIcon, FileText } from 'lucide-react';
+import { Calendar as CalendarIcon, FileText, MoreHorizontal } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from 'cn';
 import { createTask, getTasks, toggleTask } from '@/actions/task/task';
@@ -29,6 +29,7 @@ import { dayInSpan, spanOf, type CalendarSpan } from '@/lib/calendar/week-view';
 import { TODAY_LABEL } from '@/lib/calendar/month-grid';
 import { SHOW_MONTH_VIEW } from '@/lib/calendar/timeline-copy';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 export default function CalendarPage() {
   const router = useRouter();
@@ -145,21 +146,35 @@ export default function CalendarPage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <AppPageHeader title="日历" actions={<ShowCompletedToggle onChange={setShowCompleted} />} />
+      <AppPageHeader title="日历" plus="task" />
       {/* G43：craft 日历用满主列宽（日行 1120 = main 1152 − 16×2），此前被 `max-w-4xl` 夹到 896。 */}
       <AppPageContainer>
-        {/* 视图切换放在正文里而不是页头：手机上页头只有标题＋一个开关的宽度，
-            再加一枚带字的按钮会把标题挤掉（截图里 日历 被截成半个字）。 */}
+        {/* G1666：官方日历页头只有「↑ 显示前几天」一枚，没有常驻的「显示已完成的任务」
+            「显示月视图」两个顶层开关（官方把这类开关收在分区 ⋯ 里）。这里把它们收进同一枚 ⋯，
+            页头因此和官方一样只剩标题与 ＋。 */}
         <div className="mb-3 flex justify-end">
-          <button
-            type="button"
-            aria-pressed={view === 'grid'}
-            onClick={() => setView(view === 'timeline' ? 'grid' : 'timeline')}
-            className="rounded-md border border-border px-3 py-1 text-sm text-foreground/70 hover:bg-muted/60"
-          >
-            {/* 「显示月视图」是目录里的原话；反方向的「显示时间轴」本地补名，官方没有对应键。 */}
-            {view === 'timeline' ? SHOW_MONTH_VIEW : '显示时间轴'}
-          </button>
+          <Popover>
+            <PopoverTrigger
+              aria-label="更多选项"
+              data-testid="calendar-more"
+              className="flex size-7 items-center justify-center rounded-md text-foreground/55 hover:bg-foreground/[0.06] hover:text-foreground"
+            >
+              <MoreHorizontal className="size-4" />
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-56 p-1">
+              <div className="px-1 py-1">
+                <ShowCompletedToggle onChange={setShowCompleted} />
+              </div>
+              <button
+                type="button"
+                aria-pressed={view === 'grid'}
+                onClick={() => setView(view === 'timeline' ? 'grid' : 'timeline')}
+                className="flex w-full items-center rounded px-2 py-1.5 text-left text-sm text-foreground/80 hover:bg-foreground/[0.06]"
+              >
+                {view === 'timeline' ? SHOW_MONTH_VIEW : '显示时间轴'}
+              </button>
+            </PopoverContent>
+          </Popover>
         </div>
         {loading ? (
           <p className="text-sm text-muted-foreground">加载中…</p>

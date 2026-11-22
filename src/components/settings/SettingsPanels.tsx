@@ -109,6 +109,7 @@ import {
 } from '@/lib/task/completed-appearance';
 import { ShortcutsPanel } from './ShortcutsPanel';
 import { AssistantPanel } from './AssistantPanel';
+import { IntegrationsPanel } from './IntegrationsPanel';
 import {
   RESET_CACHE_ACTION,
   RESET_CACHE_BUSY,
@@ -1289,6 +1290,13 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
               退出登录
             </button>
           </RowCard>
+          {/* G1669：官方的快捷键表在**高级设置**里，不是侧栏的独立一级项。 */}
+          <div className="border-t border-foreground/4 pt-6">
+            <GroupTitle>快捷键</GroupTitle>
+            <div className="mt-3">
+              <ShortcutsPanel />
+            </div>
+          </div>
           <div className="pt-2">
             <GroupTitle>危险区</GroupTitle>
             <RowCard className="mt-3 px-4 py-3">
@@ -1378,9 +1386,9 @@ export function SettingsPanel({ section, profile, spaceName }: PanelProps) {
       );
 
     case 'integrations':
-      return (
-        <RowCard className="px-4 py-3 text-[13px] text-foreground/55">暂无已连接的集成。</RowCard>
-      );
+      // G1673：这一格此前是一句写死的「暂无已连接的集成」，而连接表（`Connection`）是真表、
+      // `/connections` 页也是真实现 ⇒ 改成读同一张表，接了几条就列几条，并给回接入中心的入口。
+      return <IntegrationsPanel />;
 
     case 'assistant':
       return <AssistantPanel />;

@@ -5,7 +5,7 @@ import {
   Bold, Italic, Strikethrough, Code, List, ListOrdered,
   CheckSquare, ChevronRight, AlignLeft, AlignCenter, AlignRight, AlignJustify,
   Indent, Outdent, ListX, Eraser, FoldVertical, UnfoldVertical,
-  ArrowLeftRight, ArrowUpDown,
+  ArrowLeftRight, ArrowUpDown, ChevronDown,
 } from 'lucide-react';
 import { useEffect, useReducer } from 'react';
 import { cn } from 'cn';
@@ -51,9 +51,8 @@ const textStyles = [
   // duplicating the first entry on purpose. Do not "fix" the duplicate.
   { label: PANEL_HEADING_SHORT_LABEL, action: (e: Editor) => e.chain().focus().toggleHeading({ level: 3 }).run(), check: (e: Editor) => e.isActive('heading', { level: 3 }) },
   { label: headingLabel(4), action: (e: Editor) => e.chain().focus().toggleHeading({ level: 4 }).run(), check: (e: Editor) => e.isActive('heading', { level: 4 }) },
-  // G51: 「页面」 is the sixth official name. Locally a page is a document, so the entry turns the
-  // block into the page-title style the editor already renders (H1 + page semantics).
-  { label: TEXT_STYLE_LABELS.page, action: (e: Editor) => e.chain().focus().setHeading({ level: 1 }).run(), check: (e: Editor) => e.isActive('heading', { level: 1 }) },
+  // G1668：官方「文本」段是六档（标题/副标题/标题/小标题/正文/说明）——「页面」不在这里，
+  // 它和「卡片」一起构成下面那段「分组」。此前本地在文本里也放了一枚「页面」，两处重复。
   { label: TEXT_STYLE_LABELS.body, action: (e: Editor) => e.chain().focus().setParagraph().run(), check: (e: Editor) => e.isActive('paragraph') },
   { label: TEXT_STYLE_LABELS.caption, action: (e: Editor) => e.chain().focus().toggleBlockquote().run(), check: (e: Editor) => e.isActive('blockquote') },
 ];
@@ -289,6 +288,15 @@ export function FormatTab({ editor }: FormatTabProps) {
         </div>
       </section>
 
+      {/* G1668：官方格式面板的可见段只有 文本 / 分组 / 装饰 / 颜色 / 字体。本地多出来的
+          字号、内联标记、列表、对齐、缩进、方向、折叠、渐变高亮保留能力但收进这枚默认折叠的
+          「更多格式」——默认看到的段序因此和官方一致，需要的人多点一次。 */}
+      <details className="group/more" data-testid="format-more">
+        <summary className="flex cursor-pointer list-none items-center justify-between rounded-md px-1 py-1 text-caption font-medium uppercase tracking-wider text-foreground/40 hover:text-foreground/70">
+          更多格式
+          <ChevronDown className="size-3.5 transition-transform group-open/more:rotate-180" />
+        </summary>
+        <div className="mt-2 space-y-4">
       {/* Block font size */}
       <section>
         <h4 className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">字号</h4>
@@ -467,6 +475,9 @@ export function FormatTab({ editor }: FormatTabProps) {
           })}
         </div>
       </section>
+        </div>
+      </details>
+
       {/* G208: 装饰（焦点 / 块）——两族各七色，另有一枚清除。 */}
       <section>
         <h4 className="mb-2 text-caption font-medium uppercase tracking-wider text-foreground/40">{DECORATION_KEYS.title.label}</h4>

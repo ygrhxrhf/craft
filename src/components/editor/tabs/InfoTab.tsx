@@ -100,6 +100,9 @@ interface InfoTabProps {
   canComment?: boolean;
   /** G1453: 页面信息里的「展示」段读写页面显示设置（与样式页签同一份 pageStyle）。 */
   pageStyle?: PageStyle;
+  /** G1667：服务端页面已经带下来的创建/更新时间与作者；面板自己那次 `getDocument`
+   *  只作为兜底（它在离线或 action 失败时拿不到这三行，曾经整段渲染成 `—`）。 */
+  docMeta?: { createdAt: string | null; updatedAt: string | null; authorName: string | null };
   onPageStylePatch?: (patch: Partial<PageStyle>) => void;
   onClose: () => void;
 }
@@ -125,7 +128,7 @@ interface DocItem {
   parentId: string | null;
 }
 
-export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = true, pageStyle, onPageStylePatch, onClose }: InfoTabProps) {
+export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = true, pageStyle, docMeta, onPageStylePatch, onClose }: InfoTabProps) {
   const router = useRouter();
   // G204：官方是单列到底，不再有「页面信息／动作」两个子页签；setSubTab 仅供旧跳转收敛。
   const [, setSubTab] = useState<'info' | 'actions'>('info');
@@ -181,7 +184,11 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
   // G149: PDF 导出的纸张 / 深色 / 页码 / 水印。
   const [pdfOptions, setPdfOptions] = useState<PdfExportOptions>(DEFAULT_PDF_EXPORT_OPTIONS);
   // The property rows read the document's own timestamps and author (G202) rather than fixed strings.
-  const [meta, setMeta] = useState<{ createdAt: string; updatedAt: string; authorName: string | null } | null>(null);
+  const [meta, setMeta] = useState<{ createdAt: string; updatedAt: string; authorName: string | null } | null>(
+    docMeta && (docMeta.createdAt || docMeta.updatedAt || docMeta.authorName)
+      ? { createdAt: docMeta.createdAt ?? '', updatedAt: docMeta.updatedAt ?? '', authorName: docMeta.authorName ?? null }
+      : null,
+  );
   const [statsScope, setStatsScope] = useState<StatsScope>('page');
   const [subpages, setSubpages] = useState<SubpageStats[]>([]);
   // The selection reading has to repaint when the highlight moves, which a render of this panel does
@@ -203,11 +210,11 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
       .then((doc) => {
         if (!alive || !doc) return;
         const row = doc as { createdAt?: string; updatedAt?: string; authorName?: string | null };
-        setMeta({
-          createdAt: row.createdAt ?? '',
-          updatedAt: row.updatedAt ?? '',
-          authorName: row.authorName ?? null,
-        });
+        setMeta((current) => ({
+          createdAt: row.createdAt || current?.createdAt || '',
+          updatedAt: row.updatedAt || current?.updatedAt || '',
+          authorName: row.authorName ?? current?.authorName ?? null,
+        }));
       })
       .catch(() => {});
     return () => {

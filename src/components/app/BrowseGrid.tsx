@@ -30,8 +30,21 @@ export function BrowseGrid({
   useEffect(() => {
     const node = ref.current;
     if (!node || typeof ResizeObserver === 'undefined') return;
+    // 官方的网格铺在稿件纸（paper）的边上，页面滚动条落在纸外的 8px 里，所以它的 1120 可用宽
+    //  里没有扣滚动条；本地的滚动容器在内容区内部，会把 15px 的经典滚动条算进 `contentRect`。
+    // 这里把最近的那个可滚父级的滚动条宽度补回来，列的判据才和官方同一把尺子。
+    const gutter = () => {
+      let el: HTMLElement | null = node;
+      while (el && el !== document.body) {
+        if (el.offsetWidth > el.clientWidth && /auto|scroll/.test(getComputedStyle(el).overflowY)) {
+          return el.offsetWidth - el.clientWidth;
+        }
+        el = el.parentElement;
+      }
+      return 0;
+    };
     const observer = new ResizeObserver((entries) => {
-      const width = entries[0]?.contentRect.width ?? node.clientWidth;
+      const width = (entries[0]?.contentRect.width ?? node.clientWidth) + gutter();
       setColumns(columnsForWidth(width));
     });
     observer.observe(node);

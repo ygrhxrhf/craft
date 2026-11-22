@@ -253,6 +253,43 @@ export async function getTasks(): Promise<TaskItem[]> {
   return items;
 }
 
+export interface DocumentTaskSummary {
+  id: string;
+  title: string;
+  /** 还没完成的（`todo` / `doing`）条数。 */
+  undone: number;
+  total: number;
+}
+
+/**
+ * G1671 —— 任务屏「带任务的文档」那一段的数据源。
+ *
+ * 之前这一段是拿**屏上已加载的任务**聚合出来的，所以没滚动到的页、别的 tab 的窗口里的任务都不算，
+ * 计数和文档集合都会随当前视图漂。这里改成一次服务端聚合：按 `documentId` 分组数任务，再补文档标题。
+ * 只取本账号、未删除、且仍挂着文档的行（`documentId` 为空的是纯任务，不进这一段）。
+ */
+export async function getDocumentsWithTasks(): Promise<DocumentTaskSummary[]> {
+  // 复用已经分页扫全表的 `getTasks()`（它同时带回了 `documentTitle`），不再自己拼 ORM 查询——
+  // 手写那版 `Task.where({ userId }).all()` 在这套 ORM 上取回 0 行，直接聚合会得到空结果。
+  const tasks = await getTasks();
+  const byDoc = new Map<string, DocumentTaskSummary>();
+
+  for (const task of tasks) {
+    if (!task.documentId) continue;
+    const entry = byDoc.get(task.documentId) ?? {
+      id: task.documentId,
+      title: task.documentTitle || '无标题文档',
+      undone: 0,
+      total: 0,
+    };
+    entry.total += 1;
+    if (task.status !== 'done' && task.status !== 'cancelled') entry.undone += 1;
+    byDoc.set(task.documentId, entry);
+  }
+
+  return [...byDoc.values()].sort((a, b) => a.title.localeCompare(b.title, 'zh-Hans-CN'));
+}
+
 /**
  * G604: one page of the task list plus the cursor for the next. `getTasks` is the first page; the
  * task screen holds one cursor per tab (`listForGroup`) and asks for more when the reader scrolls.

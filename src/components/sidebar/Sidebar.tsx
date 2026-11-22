@@ -15,6 +15,8 @@ import { SidebarNav } from './SidebarNav';
 import { SidebarFooter } from './SidebarFooter';
 import { SidebarResizer } from './SidebarResizer';
 import { SidebarSection } from './SidebarSection';
+import { FavoriteList } from './FavoriteList';
+import { SidebarTags } from './SidebarTags';
 import { NewFolderButton } from './NewFolderButton';
 import { FolderTree } from './FolderTree';
 import { DocumentTree } from './DocumentTree';
@@ -28,10 +30,15 @@ import { cn } from 'cn';
  * 那一档确实排在前面。
  */
 function TreeSections({ view }: { view: 'document' | 'browse' }) {
+  // G1670：官方侧栏的段序是 收藏 → 文件夹 → 标签；本地的文档树/集合/白板夹在中间（没有对应
+  // 的官方段，属于本地多出来的两块），所以收藏排在文档树前、标签排在最后。
   const documents = (
-    <SidebarSection title="文档">
-      <DocumentTree />
-    </SidebarSection>
+    <>
+      <FavoriteList />
+      <SidebarSection title="文档">
+        <DocumentTree />
+      </SidebarSection>
+    </>
   );
   const folders = (
     <>
@@ -47,6 +54,8 @@ function TreeSections({ view }: { view: 'document' | 'browse' }) {
       <SidebarSection title="白板">
         <WhiteboardTree />
       </SidebarSection>
+
+      <SidebarTags />
     </>
   );
   return view === 'browse' ? (

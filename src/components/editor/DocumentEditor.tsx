@@ -89,6 +89,10 @@ interface DocumentEditorProps {
     pageStyle: unknown;
     content: any;
     isDailyNote?: boolean;
+    /** G202/G1667：信息面板「属性」段的三行（服务器已经取过一次，别再让面板自己拉一遍）。 */
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    authorName?: string | null;
   };
   role?: 'owner' | 'editor' | 'commenter' | 'viewer';
   /** G1660：顶栏右侧头像上的那一枚字（官方是账号首字）。 */
@@ -294,7 +298,7 @@ export function DocumentEditor({ document: doc, role = 'owner', userInitial = '�
 
   // 三档页宽（G1712）：官方 1440 下默认页面是 **840** 宽的纸（截图量 x 303–1143），正文列约 714；
   // 本地此前默认 720（正文 624），整篇看着偏窄、宽屏上浮不起来。窄／宽两档等比拉开。
-  const measure = width === 'narrow' ? '700px' : width === 'wide' ? '980px' : '840px';
+  const measure = width === 'narrow' ? '700px' : width === 'wide' ? '980px' : '844px';
   // G708：主题补丁写的 backgroundColor 是明暗对，交给 `light-dark()` 按 `color-scheme` 取半；
   // 单值与老文档走原路。不用 JS 判断明暗——服务端与首个客户端渲染的字符串必须一致（注水）。
   const backgroundChannel =
@@ -483,12 +487,14 @@ export function DocumentEditor({ document: doc, role = 'owner', userInitial = '�
         <div className="flex-1 overflow-y-auto bg-foreground/[0.03]">
         {/* G1712：宽屏上左右只留 8px——官方 840 宽的纸在 1440＋296 右栏下几乎顶满（截图 x303–1143），
             本地原来 `sm:px-8` 把可用宽度吐掉 64px，纸只能到 792。窄屏仍留 12/32 的呼吸。 */}
-        <div className="relative min-h-full px-3 py-5 sm:px-2">
+        {/* G1665：官方的纸从内容区顶（y=48）一直铺到底，横向只留 6~8px；此前上下还各有
+            20px 留白，纸因此比官方矮一截、顶边被推下去。 */}
+        <div className="relative flex min-h-full flex-col px-2 py-0">
           {backdropCss && (
             <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: backdropCss }} />
           )}
           <div
-            className="relative mx-auto rounded-2xl px-[var(--editor-pad-x)] pb-32 shadow-doc"
+            className="relative mx-auto w-full flex-1 rounded-[26px] px-[var(--editor-pad-x)] pb-32 shadow-doc"
             style={{
               ['--editor-measure' as string]: measure,
               maxWidth: 'var(--editor-max-w, var(--editor-measure))',
@@ -679,6 +685,7 @@ export function DocumentEditor({ document: doc, role = 'owner', userInitial = '�
           isOwner={isOwner}
           canEdit={canEdit}
           canComment={canComment}
+          docMeta={{ createdAt: doc.createdAt ?? null, updatedAt: doc.updatedAt ?? null, authorName: doc.authorName ?? null }}
           onUpdate={handleUpdate}
         />
       )}

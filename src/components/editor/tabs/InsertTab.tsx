@@ -1,9 +1,10 @@
 'use client';
 
 import type { Editor } from '@tiptap/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GripVertical, FileText } from 'lucide-react';
 import { cn } from 'cn';
+import { UnsplashDialog } from './UnsplashDialog';
 import { slashCommands } from '../slash-menu/slash-commands';
 import { SIDEBAR_SLASH_COMMAND_MIME } from '@/lib/dnd/sidebar-drag';
 import { sidebarDragState } from '@/lib/dnd/sidebar-drag';
@@ -93,6 +94,21 @@ export function InsertTab({ editor }: InsertTabProps) {
   const [subView, setSubView] = useState<InsertSubView>('insert');
   const [gridOpen, setGridOpen] = useState(false);
   const [gridHover, setGridHover] = useState<TableSize | null>(null);
+  // G1675：这一格能不能用取决于服务端有没有配 `UNSPLASH_ACCESS_KEY`（未配回 501）。
+  const [unsplashReady, setUnsplashReady] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    fetch('/api/unsplash/search?q=probe')
+      .then((response) => {
+        if (alive) setUnsplashReady(response.status !== 501);
+      })
+      .catch(() => {
+        if (alive) setUnsplashReady(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
   const findCommand = (item: PanelItem): SlashCommand | undefined =>
     item.command ? slashCommands.find((c) => c.name === item.command) : undefined;
 
@@ -176,6 +192,22 @@ export function InsertTab({ editor }: InsertTabProps) {
           <div className="space-y-2">
             {group.items.map((item) => {
               const cmd = findCommand(item);
+              // G1675：Unsplash 那一格接上了图库服务（`/api/unsplash/search`）；只有配置了
+              // `UNSPLASH_ACCESS_KEY` 才换成选择器，否则仍是原来的禁用占位。
+              if (item.label === '插入 Unsplash 图片' && unsplashReady) {
+                return (
+                  <UnsplashDialog
+                    key={item.label}
+                    onPick={(url, alt) =>
+                      editor
+                        .chain()
+                        .focus()
+                        .insertContent({ type: 'imageBlock', attrs: { src: url, alt } })
+                        .run()
+                    }
+                  />
+                );
+              }
               const unavailable = item.missing || (!cmd && !item.onInsert && !item.picker);
               const draggable = !unavailable && !!cmd;
               const Icon = item.icon ?? cmd?.icon;

@@ -41,6 +41,13 @@ import {
 import { deriveTaskRows } from '@/lib/task/task-view-derive';
 import { TaskSettingsMenu } from '@/components/task/TaskSettingsMenu';
 import { TaskDatePopover } from '@/components/task/TaskDatePopover';
+import { getDocumentsWithTasks } from '@/actions/task/task';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { getDocuments } from '@/actions/document/get';
 import { REMINDER_CHANGED_TITLE, REMINDER_TOAST_DURATION_MS, nextReminderText } from '@/lib/task/reminder-toast';
 import { fromDayInputValue, toDayInputValue, localDayInstant } from '@/lib/task/wall-clock';
 import { taskDateOptions } from '@/lib/task/task-date-menu';
@@ -97,7 +104,16 @@ const GROUPS: { group: TaskGroup; href: string; label: string }[] = [
   { group: 'all', href: '/tasks/all', label: TASK_GROUP_LABELS.all },
 ];
 
-export function TasksView({ group, entryRoute = false }: { group: TaskGroup; entryRoute?: boolean }) {
+export function TasksView({
+  group,
+  entryRoute = false,
+  docsWithTasksServer = null,
+}: {
+  group: TaskGroup;
+  entryRoute?: boolean;
+  /** G1671：「带任务的文档」由服务端页面一次聚合（全表），见 `getDocumentsWithTasks`。 */
+  docsWithTasksServer?: { id: string; title: string; undone: number }[] | null;
+}) {
   const router = useRouter();
   const { data: session } = useSession();
   const [tasks, setTasks] = useState<TaskItem[]>([]);
@@ -121,6 +137,9 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
   }, [group]);
   // G263: pinned documents (the `favorite` rows for this user).
   const [pinned, setPinned] = useState<PinnedDocument[]>([]);
+  // G1671：官方空态里那枚「固定现有文档」——列出本账号的文档，点一篇即固定。
+  const [pinPickerOpen, setPinPickerOpen] = useState(false);
+  const [pinCandidates, setPinCandidates] = useState<{ id: string; title: string }[] | null>(null);
   // G408: derived subtask groups (root block id → its subtask block ids).
   const [subtaskParent, setSubtaskParent] = useState<Map<string, string>>(new Map());
 
@@ -259,6 +278,32 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
     await manager.flushNow();
     await loadPinned();
   };
+
+  /**
+   * G1671：官方任务屏第三段是「带任务的文档」。数据走**一次服务端聚合**
+   * （`getDocumentsWithTasks`）而不是拿屏上已加载的任务凑——否则没滚动到的页、别的 tab 窗口里的
+   * 任务都不进计数，这一段会随视图漂。聚合回来之前先用已加载任务兜一版，避免空闪。
+   */
+  const docsWithTasks = useMemo(() => {
+    // 服务端页面给的聚合优先（它扫的是全表，与当前 tab 的窗口无关）。
+    if (docsWithTasksServer) {
+      return docsWithTasksServer
+        .filter((row) => !pinned.some((pin) => pin.documentId === row.id))
+        .map((row) => ({ id: row.id, title: row.title, undone: row.undone }));
+    }
+    const byDoc = new Map<string, { id: string; title: string; undone: number }>();
+    for (const task of tasks) {
+      if (!task.documentId || pinned.some((pin) => pin.documentId === task.documentId)) continue;
+      const entry = byDoc.get(task.documentId) ?? {
+        id: task.documentId,
+        title: task.documentTitle || '无标题文档',
+        undone: 0,
+      };
+      if (task.status === 'todo') entry.undone += 1;
+      byDoc.set(task.documentId, entry);
+    }
+    return [...byDoc.values()].sort((a, b) => a.title.localeCompare(b.title, 'zh-Hans-CN'));
+  }, [docsWithTasksServer, tasks, pinned]);
 
   /** 固定一篇文档：新固定先建收藏行（固定＝收藏），再按官方锚点插进整份顺序。 */
   const pinDocument = async (
@@ -728,6 +773,20 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
             </div>
             <button
               type="button"
+              onClick={() => document.querySelector('[data-testid="pinned-docs"]')?.scrollIntoView({ block: 'start', behavior: 'smooth' })}
+              className="shrink-0 rounded px-2 py-1 text-[13px] text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+            >
+              跳至固定文档
+            </button>
+            <button
+              type="button"
+              onClick={() => document.querySelector('[data-testid="tasks-docs-with-tasks"]')?.scrollIntoView({ block: 'start', behavior: 'smooth' })}
+              className="shrink-0 rounded px-2 py-1 text-[13px] text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+            >
+              跳至包含任务的文档
+            </button>
+            <button
+              type="button"
               aria-label="新建任务"
               aria-expanded={composerOpen}
               onClick={() => setComposerOpen(true)}
@@ -782,9 +841,47 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
         </h2>
         {pinned.length === 0 ? (
           // G35：craft 空态是纯文本、居中、无虚线边框（pad 0 64，13/16）。
-          <p className="px-16 py-1 text-center text-[13px] leading-4 text-foreground/55">
-            {PIN_COPY.emptyPage.label}
-          </p>
+          <div className="px-16 py-1 text-center">
+            <p className="text-[13px] leading-4 text-foreground/55">{PIN_COPY.emptyPage.label}</p>
+            {/* G1671：同一条空态的下一行是官方那枚「固定现有文档」。 */}
+            <Popover
+              open={pinPickerOpen}
+              onOpenChange={(next) => {
+                setPinPickerOpen(next);
+                if (next && pinCandidates === null) {
+                  getDocuments()
+                    .then((docs) => setPinCandidates(docs.map((d) => ({ id: d.id, title: d.title }))))
+                    .catch(() => setPinCandidates([]));
+                }
+              }}
+            >
+              <PopoverTrigger className="mt-1 rounded px-2 py-1 text-[13px] font-medium text-(--craft-accent) transition-colors hover:bg-foreground/[0.05]">
+                固定现有文档
+              </PopoverTrigger>
+              <PopoverContent align="center" className="max-h-72 w-64 overflow-y-auto p-1">
+                {pinCandidates === null ? (
+                  <p className="px-2 py-1.5 text-[13px] text-foreground/55">加载中…</p>
+                ) : pinCandidates.length === 0 ? (
+                  <p className="px-2 py-1.5 text-[13px] text-foreground/55">还没有文档</p>
+                ) : (
+                  pinCandidates.map((doc) => (
+                    <button
+                      key={doc.id}
+                      type="button"
+                      onClick={() => {
+                        setPinPickerOpen(false);
+                        void pinDocument(doc.id, null, doc.title);
+                      }}
+                      className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[13px] text-foreground/85 hover:bg-foreground/[0.06]"
+                    >
+                      <FileText className="size-4 shrink-0 text-foreground/45" />
+                      <span className="truncate">{doc.title || '无标题文档'}</span>
+                    </button>
+                  ))
+                )}
+              </PopoverContent>
+            </Popover>
+          </div>
         ) : (
           <div className="flex flex-wrap gap-2">
             {pinnedInOrder(pinned).map((doc) => (
@@ -820,6 +917,29 @@ export function TasksView({ group, entryRoute = false }: { group: TaskGroup; ent
                   <PinOff className="size-3" />
                 </button>
               </div>
+            ))}
+          </div>
+        )}
+      </section>
+      {/* G1671：官方在固定区之后还有「带任务的文档」一段（逐篇文档 + 待办计数）。 */}
+      <section className="px-4 pt-3" data-testid="tasks-docs-with-tasks">
+        <h2 className="mb-2 text-[15px] font-semibold leading-[18px] text-foreground/85">带任务的文档</h2>
+        {docsWithTasks.length === 0 ? (
+          <p className="px-16 py-1 text-center text-[13px] leading-4 text-foreground/55">
+            还没有带任务的文档
+          </p>
+        ) : (
+          <div className="flex flex-col gap-0.5">
+            {docsWithTasks.map((doc) => (
+              <Link
+                key={doc.id}
+                href={`/documents/${doc.id}`}
+                className="flex items-center gap-2.5 rounded-md px-1.5 py-1.5 text-[13px] leading-4 text-foreground/85 transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+              >
+                <FileText className="size-4 shrink-0 text-foreground/45" />
+                <span className="min-w-0 flex-1 truncate">{doc.title}</span>
+                <span className="shrink-0 text-foreground/50">{doc.undone} 项待办任务</span>
+              </Link>
             ))}
           </div>
         )}

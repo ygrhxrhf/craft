@@ -7,6 +7,7 @@ import { LayoutTemplate } from 'lucide-react';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
+import { TemplateGallery } from '@/components/document/TemplateGallery';
 
 export default async function TemplatesPage() {
   const session = await auth();
@@ -16,8 +17,10 @@ export default async function TemplatesPage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <AppPageHeader title="我的模板" />
+      <AppPageHeader title="我的模板" plus="template" />
       <AppPageContainer>
+        {/* G1672：官方这一屏顶部是「Craft 的模板库」横幅 +「打开图库」。 */}
+        <TemplateGallery />
         {templates.length > 0 ? (
           <BrowseGrid>
             {templates.map(doc => (

@@ -33,7 +33,14 @@ const KINDS: ConnectionKind[] = ['mcp', 'api'];
  * 本地此前是常开表单。改后结构对齐，空段给一张虚线添加卡。
  * 官方那张天空云朵底图是专有资产，按既定口径不搬（G1658 判定里已写明）。
  */
-export function ConnectionsPanel({ initial }: { initial: ConnectionItem[] }) {
+export function ConnectionsPanel({
+  initial,
+  mcp,
+}: {
+  initial: ConnectionItem[];
+  /** G1674：本空间作为 MCP 服务的地址与令牌（服务端签发，自证令牌，不落库）。 */
+  mcp?: { url: string; token: string } | null;
+}) {
   const router = useRouter();
   const [items, setItems] = useState(initial);
   const [dialogKind, setDialogKind] = useState<ConnectionKind | null>(null);
@@ -108,6 +115,31 @@ export function ConnectionsPanel({ initial }: { initial: ConnectionItem[] }) {
               <p className="mt-0.5 text-[13px] text-muted-foreground">{COPY[sectionKind].description}</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
+              {sectionKind === 'mcp' && mcp && (
+                <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-sky-50 to-background p-4 shadow-sm">
+                  <div className="flex items-start gap-2">
+                    <Cable className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold">所有文档的 MCP</p>
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">所有文档</p>
+                    </div>
+                  </div>
+                  <p className="mt-3 break-all rounded-md bg-background/70 px-2 py-1.5 font-mono text-[11px] leading-4 text-foreground/70">
+                    {typeof window !== 'undefined' ? new URL(mcp.url, window.location.origin).toString() : mcp.url}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const url = new URL(mcp.url, window.location.origin).toString();
+                      void navigator.clipboard?.writeText(`${url}
+Authorization: Bearer ${mcp.token}`);
+                    }}
+                    className="mt-2 rounded px-2 py-1 text-[12px] font-medium text-(--craft-accent) hover:bg-foreground/[0.05]"
+                  >
+                    复制地址与令牌
+                  </button>
+                </div>
+              )}
               {sectionItems.map((item) => (
                 <div
                   key={item.id}

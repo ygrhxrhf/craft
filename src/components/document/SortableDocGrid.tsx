@@ -1,6 +1,8 @@
 'use client';
 
 import { useRef, useSyncExternalStore, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { getHeaderActionsNode, subscribeHeaderActions } from '@/lib/app/header-actions-slot';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Folder, Star, Trash2, X } from 'lucide-react';
@@ -101,6 +103,9 @@ export function SortableDocGrid({
   // G1555/G1129：框选层要一个容器句柄——它必须是**渲染条目的那个容器**，否则 `[data-item-id]`
   //   收集不到任何卡片；早先这个 ref 挂在了工具栏上，框选因此永远零命中。
   const containerRef = useRef<HTMLDivElement | null>(null);
+  // G1663：页头里那枚动作簇挂点（`#page-header-actions`）由 AppPageHeader 登记进外部系统，
+  // 这里订阅它——渲染进页头而不是在网格上方多占一行。
+  const headerSlot = useSyncExternalStore(subscribeHeaderActions, getHeaderActionsNode, () => null);
   // G247：列表档的列头排序是**另一套四档**（名称/上次浏览/已更新/已创建），与 ⋯ 菜单那套
   //   （name/lastViewed/created/updated）不同源，故单独持一份，互不覆盖。
   const [browseSort, setBrowseSort] = useState<BrowseSortSpec>(DEFAULT_BROWSE_SORT_SPEC);
@@ -247,12 +252,9 @@ export function SortableDocGrid({
           </Button>
         </div>
       ) : (
-        <div
-          className="mb-3 flex flex-wrap items-center gap-2"
-          data-testid="browse-sort"
-          aria-label={LAYOUT_ENTRY_LABEL}
-        >
-          <div className="ml-auto flex items-center gap-1">
+        headerSlot &&
+        createPortal(
+          <div className="flex items-center gap-1" data-testid="browse-sort" aria-label={LAYOUT_ENTRY_LABEL}>
             <ViewModeSwitcher value={viewMode} onChange={pickMode} />
             <BrowseToolbarMenu
               sortChoice={sortChoice}
@@ -261,8 +263,9 @@ export function SortableDocGrid({
               onToggleDailyNotes={() => storeShowDailyNotes(!showDailyNotes)}
               onSelect={startSelecting}
             />
-          </div>
-        </div>
+          </div>,
+          headerSlot,
+        )
       )}
 
       <div ref={containerRef} data-testid="browse-content">

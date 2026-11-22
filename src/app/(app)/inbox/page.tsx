@@ -18,7 +18,7 @@ export default async function InboxPage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <AppPageHeader title={UNSORTED_TITLE} />
+      <AppPageHeader title={UNSORTED_TITLE} plus="document" />
       <AppPageContainer>
         <InboxList documents={documents} now={Date.now()} />
       </AppPageContainer>

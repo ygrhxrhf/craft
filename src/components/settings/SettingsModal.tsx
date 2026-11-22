@@ -10,7 +10,6 @@ import {
   Globe,
   Hash,
   Info,
-  Keyboard,
   Paintbrush,
   Plug,
   Settings2,
@@ -47,7 +46,6 @@ const NAV_GROUPS: { title: string | null; items: NavItem[] }[] = [
       { key: 'appearance', label: '外观', icon: Paintbrush },
       { key: 'language', label: '语言', icon: Globe },
       { key: 'advanced', label: '高级设置', icon: SlidersHorizontal },
-      { key: 'shortcuts', label: '快捷键', icon: Keyboard },
     ],
   },
   {
@@ -112,7 +110,7 @@ export function SettingsModal() {
         role="dialog"
         aria-modal="true"
         aria-label="设置"
-        className="relative flex h-[700px] w-[960px] max-h-[calc(100dvh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl bg-background shadow-(--shadow-md)"
+        className="relative flex h-[630px] w-[960px] max-h-[calc(100dvh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl bg-background shadow-(--shadow-md)"
       >
         {/* G1661：官方弹层约 960×700，左栏是「可滚动内容＋底部钉住的账号行」。 */}
         <nav className="flex w-[240px] shrink-0 flex-col border-r border-(--foreground-150)" aria-label="设置导航">

@@ -50,6 +50,7 @@ import {
   type SidebarView,
 } from '@/lib/browse/sidebar-view';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { SidebarSection } from './SidebarSection';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import {
   readTagsHiddenNow,
@@ -58,7 +59,7 @@ import {
 } from '@/lib/browse/tag-visibility';
 
 const SECTIONS: Record<SidebarSectionId, { label: string; icon: typeof Home }> = {
-  '/documents': { label: '首页', icon: Home },
+  '/documents': { label: '所有文档', icon: Home },
   '/favorites': { label: '收藏', icon: Star },
   '/tags': { label: TAGS_TITLE, icon: Tags },
   '/inbox': { label: SIDEBAR_INBOX, icon: Inbox },
@@ -66,7 +67,7 @@ const SECTIONS: Record<SidebarSectionId, { label: string; icon: typeof Home }> =
   '/daily-notes': { label: '日记', icon: FileText },
   '/tasks': { label: '任务', icon: CheckSquare },
   '/calendar': { label: '日历', icon: CalendarDays },
-  '/templates': { label: '模板', icon: LayoutTemplate },
+  '/templates': { label: '我的模板', icon: LayoutTemplate },
   '/connections': { label: '连接', icon: Cable },
   '/shared-with-me': { label: '与我共享', icon: Users },
   '/trash': { label: '回收站', icon: Trash2 },
@@ -100,9 +101,16 @@ export function SidebarNav() {
     setViewMenuOpen(false);
   };
 
+  // G1670：官方左侧一级只有六项（所有文档 / 任务 / 日历 / 连接 / 与我共享 / 我的模板）；
+  // 收藏、文件夹、标签是三段可折叠区（在 Sidebar 的树区里），回收站/归档/最近/日记/未归档
+  // 原先被本地提成一级项。这里把它们收进一枚默认折叠的「更多」，路由一个都不少。
+  const PRIMARY: SidebarSectionId[] = ['/documents', '/tasks', '/calendar', '/connections', '/shared-with-me', '/templates'];
+  const primary = PRIMARY.filter((id) => visible.includes(id));
+  const secondary = visible.filter((id) => !PRIMARY.includes(id));
+
   return (
     <nav className="flex flex-col gap-px px-2.5 py-2">
-      {visible.map((id) => {
+      {primary.map((id) => {
         const item = SECTIONS[id];
         const isActive = pathname === id || pathname.startsWith(id + '/');
         return (
@@ -122,6 +130,29 @@ export function SidebarNav() {
           </Link>
         );
       })}
+      {secondary.length > 0 && (
+        <SidebarSection title="更多" defaultOpen={false}>
+          {secondary.map((id) => {
+            const item = SECTIONS[id];
+            const isActive = pathname === id || pathname.startsWith(id + '/');
+            return (
+              <Link
+                key={id}
+                href={id}
+                className={cn(
+                  'flex h-8 items-center gap-2.5 rounded-md px-1.5 text-[length:13px] leading-4 transition-colors',
+                  isActive
+                    ? 'bg-sidebar-active text-sidebar-accent-foreground font-medium shadow-sm'
+                    : 'text-sidebar-foreground/85 hover:bg-sidebar-hover hover:text-sidebar-foreground',
+                )}
+              >
+                <item.icon className="size-5 shrink-0" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </SidebarSection>
+      )}
       {/*
         G1452 —— 视图切换弹层：分组标题走 `header`（「显示」），行 id 与它显示的文案**不同源**
         （`tableOfContents`/「文档」、`organize`/「文件夹」），当前档用 rightContent 槽里的一枚勾

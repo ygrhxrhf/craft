@@ -1,6 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -11,19 +8,15 @@ import {
   commentHintEmoji,
 } from './comment-hint-copy';
 import { parseEmbeddedTags } from './embedded-tags';
-
-const HARVEST = readFileSync(
-  join(process.cwd(), 'docs', 'craft-ref', 'features', '_harvest', 'i18n-zh.tsv'),
-  'utf8',
-);
+import { hasHarvest, readHarvest } from '@/lib/craft-ref/harvest';
 
 /**
  * G320: the four comment hints carry `<highlight>` tags, so they render through the tag parser.
  */
-describe('the comment hint copy (G320)', () => {
+describe.skipIf(!hasHarvest())('the comment hint copy (G320)', () => {
   it('matches the harvest verbatim', () => {
     for (const hint of COMMENT_HINTS) {
-      const line = HARVEST.split(/\r?\n/).find((l) => l.startsWith(`${hint.key}\t`));
+      const line = readHarvest().split(/\r?\n/).find((l) => l.startsWith(`${hint.key}\t`));
       expect(line, hint.key).toBeTruthy();
       expect(line!.split('\t')[1]).toBe(hint.template);
     }

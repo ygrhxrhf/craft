@@ -78,7 +78,7 @@ describe('the panel and the public page are wired to it (G145)', () => {
 
   it('seeds both switches from the mirror rather than starting at a hardcoded false', () => {
     const dialog = read('src/components/share/ShareDialog.tsx');
-    expect(dialog).toContain('enableObjectLinks: false,\n    showDuplicateAsTemplate: false,');
+    expect(dialog.replace(/\r\n/g, '\n')).toContain('enableObjectLinks: false,\n    showDuplicateAsTemplate: false,');
     expect(dialog).toContain("'showDuplicateAsTemplate', 'emailBasedAccessEnabled'");
   });
 

@@ -216,14 +216,14 @@ interface EditorProps {
 function writeBlockLinkStore(
   editor: TiptapEditor,
   documentId: string,
-  followOtherDocuments: boolean,
+  followBlockLinks: boolean,
 ): void {
   const storage = editor.storage.blockLink as
     | { hostDocumentId?: string; followOtherDocuments?: boolean }
     | undefined;
   if (!storage) return;
   storage.hostDocumentId = documentId;
-  storage.followOtherDocuments = followOtherDocuments;
+  storage.followOtherDocuments = followBlockLinks;
 }
 
 export function Editor({

@@ -19,7 +19,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { dropTargetFor, visibleRows } from './drop-band';
+import { dropTargetFor, suppressesIndicator, visibleRows } from './drop-band';
 import { resolveDropAddress } from '@/lib/editor/drop-address';
 import { indentRunOf } from '@/lib/editor/indent-run';
 import { topLevelStart } from '@/lib/editor/block-move';
@@ -554,6 +554,23 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
     [editor, getTopLevelRange]
   );
 
+  /**
+   * G270：这次落点是不是"原地不动"。被拖的是 `range.els` 这一批顶层块，落点锚也在同一批
+   * 下标里时，插入位必落在 `[from, to]` 内（含紧贴组首／组尾的两格）；`suppressesIndicator`
+   * 是这条判据的纯核。
+   */
+  const dragWouldBeNoOp = useCallback(
+    (range: DragRange, target: { el: HTMLElement }): boolean => {
+      const children = Array.from(editor.view.dom.children);
+      const dragged = range.els
+        .map((el) => children.indexOf(el))
+        .filter((index) => index >= 0);
+      const anchorIndex = children.indexOf(target.el);
+      return anchorIndex >= 0 && suppressesIndicator(dragged, anchorIndex, true);
+    },
+    [editor],
+  );
+
   const computeDropTarget = useCallback(
     (clientY: number): { el: HTMLElement; pos: number; before: boolean } | null => {
       const dom = editor.view.dom as HTMLElement;
@@ -725,6 +742,12 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
         st.range.els.forEach((el) => el.classList.add('opacity-40'));
 
         const target = computeDropTarget(ev.clientY);
+        // G270: 悬在被拖块／被拖组内部，或落在组首前、组尾后的那两格，都是"位置没变"——
+        // 官方这三种情况下不画线，本地此前照画（落地时 performMove 已自行拒绝，线是唯一的错）。
+        if (target && dragWouldBeNoOp(st.range, target)) {
+          setIndicator((prev) => ({ ...prev, visible: false }));
+          return;
+        }
         if (target) {
           const editorRect = editor.view.dom.getBoundingClientRect();
           const targetRect = target.el.getBoundingClientRect();
@@ -755,7 +778,7 @@ export function DragHandle({ editor, documentId }: { editor: Editor; documentId:
 
         st.range.els.forEach((el) => el.classList.remove('opacity-40'));
         const target = computeDropTarget(ev.clientY);
-        if (target) {
+        if (target && !dragWouldBeNoOp(st.range, target)) {
           performMove(st.range, target);
         }
         setHandle(null);

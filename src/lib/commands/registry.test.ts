@@ -18,3 +18,42 @@ describe('command registry search (G33)', () => {
     expect(filterCommands(commands, '不存在')).toEqual([]);
   });
 });
+
+import { commandEnabled, mergePaletteCommands } from './registry';
+
+describe('command availability', () => {
+  it('greys out a command that has no handler at all', () => {
+    expect(commandEnabled({ id: 'x', title: 'x', group: 'g', keywords: [] })).toBe(false);
+  });
+
+  it('honours the context gate when one is given', () => {
+    let ready = false;
+    const command = { id: 'x', title: 'x', group: 'g', keywords: [], run: () => {}, available: () => ready };
+    expect(commandEnabled(command)).toBe(false);
+    ready = true;
+    expect(commandEnabled(command)).toBe(true);
+  });
+});
+
+describe('merging implemented commands with the official roster (G33)', () => {
+  const official = [
+    { id: 'commands.a', title: 'A', group: 'a' },
+    { id: 'commands.a.alias', title: 'A alias', group: 'a' },
+    { id: 'commands.b', title: 'B', group: 'b' },
+  ];
+
+  it('drops the grey row for every id an implemented command claims', () => {
+    const merged = mergePaletteCommands(
+      [{ id: 'commands.a', title: '甲', group: '编辑', keywords: [], run: () => {}, aliases: ['commands.a.alias'] }],
+      official,
+    );
+    expect(merged.map((command) => command.id)).toEqual(['commands.a', 'commands.b']);
+    expect(merged.find((command) => command.id === 'commands.b')?.run).toBeUndefined();
+  });
+
+  it('keeps every unwired official id as a greyed placeholder', () => {
+    const merged = mergePaletteCommands([], official);
+    expect(merged).toHaveLength(3);
+    expect(merged.every((command) => command.run === undefined)).toBe(true);
+  });
+});

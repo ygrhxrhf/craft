@@ -50,6 +50,8 @@ function idDesc(a: { id: string }, b: { id: string }): number {
   return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
 }
 
+const TITLE_SORT_LOCALE = 'zh-Hans';
+
 const idAsc = (a: { id: string }, b: { id: string }): number => a.id.localeCompare(b.id);
 
 /** 官方 `$`：`title` / `modified` / `created` 三个文档比较器。 */
@@ -59,8 +61,10 @@ export function compareDocuments(a: DocumentGroup, b: DocumentGroup, sort: Docum
   const aModified = timeOf(a.modified);
   const bModified = timeOf(b.modified);
   if (sort === 'title') {
+    // 排序口径钉在中文：`undefined` 会跟着机器的 ICU 默认 locale 走，CI（en-US）与
+    // Windows（zh-CN）于是给出不同的中文顺序，同一份数据在两处排出两个次序。
     return (
-      a.title.localeCompare(b.title, undefined, { sensitivity: 'accent' }) || idAsc(a, b)
+      a.title.localeCompare(b.title, TITLE_SORT_LOCALE, { sensitivity: 'accent' }) || idAsc(a, b)
     );
   }
   if (sort === 'created') {

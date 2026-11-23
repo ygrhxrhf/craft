@@ -98,14 +98,22 @@ export function TaskDatePopover({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  // 每次打开（或值被外部改掉）都回到日期页签的初值；render 期调整，和打开同一帧生效。
+  const resetKey = `${open ? 1 : 0}:${value ?? inheritFrom ?? ''}`;
+  const [lastResetKey, setLastResetKey] = useState(resetKey);
+  if (lastResetKey !== resetKey) {
+    setLastResetKey(resetKey);
+    if (open) {
+      setMode('date');
+      setSubmenu('none');
+      setText(value ? formatDay(value) : '');
+      setMonth(value ?? inheritFrom ? new Date((value ?? inheritFrom)!) : new Date());
+      setPreview(null);
+    }
+  }
+
   useEffect(() => {
     if (!open) return;
-    setMode('date');
-    setSubmenu('none');
-    setText(value ? formatDay(value) : '');
-    setMonth(value ?? inheritFrom ? new Date((value ?? inheritFrom)!) : new Date());
-    setPreview(null);
-
     const onPointerDown = (event: MouseEvent) => {
       const target = event.target as Node;
       if (panelRef.current?.contains(target) || buttonRef.current?.contains(target)) return;

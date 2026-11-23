@@ -103,11 +103,15 @@ export function FindReplacePanel({ editor, documentId }: { editor: Editor | null
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [optionsOpen]);
 
-  useEffect(() => {
-    if (open) return;
-    setOptionsOpen(false);
-    setTitleMenu(false);
-  }, [open]);
+  // 关掉面板就收起两层菜单；跟随 `open` 就地调整。
+  const [lastOpen, setLastOpen] = useState(open);
+  if (lastOpen !== open) {
+    setLastOpen(open);
+    if (!open) {
+      setOptionsOpen(false);
+      setTitleMenu(false);
+    }
+  }
 
   // G1418「完整文档」：子页是独立的 Document 行，正文不在当前 ProseMirror doc 里，所以这一档
   // 要另读一次子树（`getSubpageStats` 已按 parentId 展开整棵子树）。

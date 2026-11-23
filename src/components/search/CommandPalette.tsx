@@ -39,6 +39,7 @@ import {
 } from '@/lib/search/recents';
 import { toast } from '@/components/ui/toast';
 import { useSession } from 'next-auth/react';
+import { defer } from '@/lib/react/defer';
 
 async function downloadLibraryArchive() {
   try {
@@ -90,7 +91,9 @@ export function CommandPalette() {
   // G235: the panel's 「最近使用」 list, persisted per browser.
   const [recents, setRecents] = useState<RecentDocument[]>([]);
   useEffect(() => {
-    setRecents(loadRecents(typeof window === 'undefined' ? undefined : window.localStorage));
+    defer(() => {
+      setRecents(loadRecents(typeof window === 'undefined' ? undefined : window.localStorage));
+    });
   }, []);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 

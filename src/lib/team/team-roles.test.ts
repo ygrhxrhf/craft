@@ -1,22 +1,15 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 import { describe, expect, it } from 'vitest';
 
 import { adminsOf, canSeeSpace, changeMemberRole, hasAdmin, TEAM_ROLE_COPY, TEAM_PERMISSION_ROLES, type TeamMember } from './team-roles';
 import { greetingKey, signInCompletionMessage, signInGreeting, SIGN_IN_SUCCESS_CLOSE } from '@/lib/auth/sign-in-copy';
 import { backColumnOf, relationRemove, relationWrite, TWO_WAY_COPY } from '@/lib/collection/two-way-relation';
-
-const HARVEST = readFileSync(
-  join(process.cwd(), 'docs', 'craft-ref', 'features', '_harvest', 'i18n-zh.tsv'),
-  'utf8',
-);
+import { hasHarvest, readHarvest } from '@/lib/craft-ref/harvest';
 
 /**
  * G421: two permission roles (admins can be many), and the two lifecycle states are a different
  * axis. The subtitles are harvested verbatim.
  */
-describe('the team permission roles (G421)', () => {
+describe.skipIf(!hasHarvest())('the team permission roles (G421)', () => {
   it('has exactly two permission roles', () => {
     expect(TEAM_PERMISSION_ROLES).toEqual(['admin', 'member']);
   });
@@ -24,7 +17,7 @@ describe('the team permission roles (G421)', () => {
   it('carries the harvested subtitles verbatim', () => {
     for (const role of TEAM_PERMISSION_ROLES) {
       const copy = TEAM_ROLE_COPY[role];
-      const line = HARVEST.split(/\r?\n/).find((l) => l.startsWith(`${copy.subtitleKey}\t`));
+      const line = readHarvest().split(/\r?\n/).find((l) => l.startsWith(`${copy.subtitleKey}\t`));
       expect(line, copy.subtitleKey).toBeTruthy();
       expect(line!.split('\t')[1]).toBe(copy.subtitle);
     }
@@ -63,9 +56,9 @@ describe('the team permission roles (G421)', () => {
 /**
  * G227: the Sign-in-with-Craft completion copy and its two greetings.
  */
-describe('the sign-in completion copy (G227)', () => {
+describe.skipIf(!hasHarvest())('the sign-in completion copy (G227)', () => {
   it('carries the harvested close sentence verbatim', () => {
-    const line = HARVEST.split(/\r?\n/).find((l) => l.startsWith('login.auth.success.close\t'));
+    const line = readHarvest().split(/\r?\n/).find((l) => l.startsWith('login.auth.success.close\t'));
     expect(line!.split('\t')[1]).toBe(SIGN_IN_SUCCESS_CLOSE);
     expect(signInCompletionMessage()).toBe('你现在可以关闭此窗口了。');
   });

@@ -30,6 +30,7 @@ import { TODAY_LABEL } from '@/lib/calendar/month-grid';
 import { SHOW_MONTH_VIEW } from '@/lib/calendar/timeline-copy';
 import { ShowCompletedToggle } from '@/components/task/ShowCompletedToggle';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { defer } from '@/lib/react/defer';
 
 export default function CalendarPage() {
   const router = useRouter();
@@ -67,7 +68,7 @@ export default function CalendarPage() {
   }, []);
 
   useEffect(() => {
-    load();
+    defer(() => void load());
   }, [load]);
 
   // G15：网格按计划日期与截止日两个落点分别标点（同天只标一次）。

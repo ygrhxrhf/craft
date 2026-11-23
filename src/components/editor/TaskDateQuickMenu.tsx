@@ -17,9 +17,12 @@ export function TaskDateQuickMenu() {
   const [custom, setCustom] = useState(false);
   const editor = useActiveEditorStore((state) => state.editor);
 
-  useEffect(() => {
+  // 面板关掉后自选日期收起；渲染期跟随 `kind` 调整，不留一帧陈旧状态。
+  const [lastKind, setLastKind] = useState(kind);
+  if (lastKind !== kind) {
+    setLastKind(kind);
     if (!kind) setCustom(false);
-  }, [kind]);
+  }
 
   if (!kind) return null;
 

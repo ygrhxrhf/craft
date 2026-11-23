@@ -44,6 +44,7 @@ import {
 } from '../themes/page-style';
 import type { PageStyle } from '../themes/page-style';
 import { SearchableSelect } from '../extensions/searchable-select';
+import { defer } from '@/lib/react/defer';
 
 interface StyleTabProps {
   editor: Editor;
@@ -116,7 +117,7 @@ export function StyleTab({
     }
   };
   useEffect(() => {
-    void reloadCustomStyles();
+    defer(() => void reloadCustomStyles());
   }, []);
   const saveCurrentStyle = async () => {
     const name = await promptDialog({ title: '保存当前样式', placeholder: '样式名称', confirmLabel: '保存' });

@@ -1,24 +1,19 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 import { describe, expect, it } from 'vitest';
 
 import { LOGGED_IN_AS_KEY, LOGGED_IN_AS_TEMPLATE, loggedInAsText } from './account-copy';
 import { parseEmbeddedTags } from './embedded-tags';
+import { hasHarvest, readHarvest } from '@/lib/craft-ref/harvest';
 
 /**
  * G320: the account panel's login line is one of the 53 tagged keys. The template has to keep the
  * `<strong>` tag (it is what the renderer turns into bold) and the key has to match the harvest
  * verbatim.
  */
-describe('the logged-in-as copy (G320)', () => {
-  const harvest = readFileSync(
-    join(process.cwd(), 'docs', 'craft-ref', 'features', '_harvest', 'i18n-zh.tsv'),
-    'utf8',
-  );
+describe.skipIf(!hasHarvest())('the logged-in-as copy (G320)', () => {
+  const harvest = () => readHarvest();
 
   it('carries the harvested key and text verbatim', () => {
-    const line = harvest.split(/\r?\n/).find((l) => l.startsWith(`${LOGGED_IN_AS_KEY}\t`));
+    const line = harvest().split(/\r?\n/).find((l) => l.startsWith(`${LOGGED_IN_AS_KEY}\t`));
     expect(line, `harvest has no ${LOGGED_IN_AS_KEY}`).toBeTruthy();
     expect(line!.split('\t')[1]).toBe(LOGGED_IN_AS_TEMPLATE);
   });

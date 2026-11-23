@@ -96,7 +96,7 @@ describe('the table headers wire the column protocol (G397)', () => {
   it('carries the payload the way the sidebar does: a module-level slot plus the MIME', () => {
     // `dragover` 读不到 dataTransfer，React state 又要等一轮渲染 ⇒ 落点判定必须走内存载荷。
     expect(source).toContain('columnDragState.payload = null;');
-    expect(source).toContain("event.dataTransfer.setData(\n          COLUMN_DROP_MIME,");
+    expect(source.replace(/\r\n/g, '\n')).toContain("event.dataTransfer.setData(\n          COLUMN_DROP_MIME,");
     expect(columnDrop).toContain('export const columnDragState');
   });
 });

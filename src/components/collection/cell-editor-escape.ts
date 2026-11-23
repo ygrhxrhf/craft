@@ -14,7 +14,9 @@ import { escapeKeyDef, focusStack } from '@/lib/focus/focus-stack';
  */
 export function useCellEditorEscape(open: boolean, id: string, close: () => void): void {
   const closeRef = useRef(close);
-  closeRef.current = close;
+  useEffect(() => {
+    closeRef.current = close;
+  }, [close]);
 
   useEffect(() => {
     if (!open) return;

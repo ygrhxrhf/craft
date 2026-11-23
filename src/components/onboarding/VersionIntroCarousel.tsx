@@ -7,6 +7,7 @@ import {
   pendingIntroPages,
   type IntroPage,
 } from '@/lib/onboarding/versioned-intro';
+import { defer } from '@/lib/react/defer';
 
 /**
  * G305: the versioned update carousel. A device that has never seen the intro gets every
@@ -19,16 +20,18 @@ export function VersionIntroCarousel() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    let seen: string | null = null;
-    try {
-      seen = localStorage.getItem(INTRO_SEEN_KEY);
-    } catch {
-      seen = null;
-    }
-    const pending = pendingIntroPages(seen);
-    if (pending.length === 0) return;
-    setPages(pending.flatMap((entry) => entry.pages));
-    setNewestVersion(pending[pending.length - 1].version);
+    defer(() => {
+      let seen: string | null = null;
+      try {
+        seen = localStorage.getItem(INTRO_SEEN_KEY);
+      } catch {
+        seen = null;
+      }
+      const pending = pendingIntroPages(seen);
+      if (pending.length === 0) return;
+      setPages(pending.flatMap((entry) => entry.pages));
+      setNewestVersion(pending[pending.length - 1].version);
+    });
   }, []);
 
   if (pages.length === 0) return null;

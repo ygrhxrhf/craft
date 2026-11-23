@@ -94,6 +94,7 @@ import {
   unpinPinned,
   type PinnedDocument,
 } from '@/lib/task/pinned-docs';
+import { defer } from '@/lib/react/defer';
 
 /** `/tasks` is the inbox view. `/tasks/today` and `/tasks/upcoming` are local paths —
  *  the ledger only records `/tasks/inbox` and `/tasks/all`. */
@@ -103,6 +104,14 @@ const GROUPS: { group: TaskGroup; href: string; label: string }[] = [
   { group: 'upcoming', href: '/tasks/upcoming', label: TASK_GROUP_LABELS.upcoming },
   { group: 'all', href: '/tasks/all', label: TASK_GROUP_LABELS.all },
 ];
+
+/**
+ * 侧栏拖拽的载荷是模块级内存槽（`dragover` 读不到 dataTransfer）；落地后清空只在这里做，
+ * 组件体里不再直接改 import 进来的对象（React Compiler 的 immutability 规则）。
+ */
+function clearSidebarDrag(): void {
+  sidebarDragState.payload = null;
+}
 
 export function TasksView({
   group,
@@ -132,9 +141,12 @@ export function TasksView({
   const [window, setWindow] = useState<UpcomingWindow>('all');
   // G1600: the group's section header collapses its rows.
   const [collapsed, setCollapsed] = useState(false);
-  useEffect(() => {
+  // 换分组就是换一份分区，收起状态随之归零；渲染期就地调整，省掉一帧陈旧渲染。
+  const [collapsedGroup, setCollapsedGroup] = useState(group);
+  if (collapsedGroup !== group) {
+    setCollapsedGroup(group);
     setCollapsed(false);
-  }, [group]);
+  }
   // G263: pinned documents (the `favorite` rows for this user).
   const [pinned, setPinned] = useState<PinnedDocument[]>([]);
   // G1671：官方空态里那枚「固定现有文档」——列出本账号的文档，点一篇即固定。
@@ -259,7 +271,7 @@ export function TasksView({
   }, []);
 
   useEffect(() => {
-    void loadPinned();
+    defer(() => void loadPinned());
   }, [loadPinned]);
 
   // G604：固定区本身也是拖放落点（官方 `pinDocument{documentId, afterDocumentId?}`）。
@@ -373,7 +385,7 @@ export function TasksView({
     setPinDragging(null);
     const candidate =
       parseSidebarDragPayload(event.dataTransfer.getData(SIDEBAR_DOC_MIME)) ?? sidebarDragState.payload;
-    sidebarDragState.payload = null;
+    clearSidebarDrag();
     const payload = candidate && 'type' in candidate && candidate.type === 'doc' ? candidate : null;
     const documentId = internal ?? payload?.documentId ?? null;
     if (!documentId || documentId === targetId) return;

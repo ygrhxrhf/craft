@@ -12,6 +12,7 @@ import {
   shouldOfferDesktopApp,
 } from '@/lib/browse/open-in-app';
 import { isDesktop, openExternal } from '@/lib/platform';
+import { defer } from '@/lib/react/defer';
 
 /**
  * G717：web 端进文档就出现的**非模态**交接提示（`在桌面应用中打开？`）。
@@ -22,15 +23,18 @@ import { isDesktop, openExternal } from '@/lib/platform';
  * （浮层必须不挡页内点击，见 G721）。
  */
 export function OpenInAppNotice({ documentId }: { documentId: string }) {
-  const [visible, setVisible] = useState(false);
+  const [offered, setOffered] = useState(false);
+  const [gone, setGone] = useState(false);
   const noticeRef = useRef<HTMLDivElement | null>(null);
 
   // web 端才有这层；桌面壳里 `isDesktop()` 为真，直接不出现。
   useEffect(() => {
-    if (shouldOfferDesktopApp(isDesktop(), isChoiceRemembered(window.localStorage))) {
-      setVisible(true);
-    }
+    defer(() => {
+      setOffered(shouldOfferDesktopApp(isDesktop(), isChoiceRemembered(window.localStorage)));
+    });
   }, []);
+
+  const visible = offered && !gone;
 
   // 官方行为：它不是模态框，点页内任何别的控件后整组消失（被其它交互挤掉）。
   // 用 pointerdown 而不是 click，和官方「按下去的瞬间就退场」一致。
@@ -38,7 +42,7 @@ export function OpenInAppNotice({ documentId }: { documentId: string }) {
     if (!visible) return;
     const away = (event: PointerEvent) => {
       if (noticeRef.current?.contains(event.target as Node | null)) return;
-      setVisible(false);
+      setGone(true);
     };
     document.addEventListener('pointerdown', away, true);
     return () => document.removeEventListener('pointerdown', away, true);
@@ -62,7 +66,7 @@ export function OpenInAppNotice({ documentId }: { documentId: string }) {
         <button
           type="button"
           aria-label="Close"
-          onClick={() => setVisible(false)}
+          onClick={() => setGone(true)}
           className="h-7 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-muted"
         >
           Close
@@ -74,7 +78,7 @@ export function OpenInAppNotice({ documentId }: { documentId: string }) {
             onChange={(event) => {
               if (!event.target.checked) return;
               rememberChoice(window.localStorage);
-              setVisible(false);
+              setGone(true);
             }}
           />
           {REMEMBER_MY_CHOICE}
@@ -83,7 +87,7 @@ export function OpenInAppNotice({ documentId }: { documentId: string }) {
           type="button"
           onClick={() => {
             openExternal(craftDocLink(documentId));
-            setVisible(false);
+            setGone(true);
           }}
           className="h-7 rounded-md border border-input px-3 text-xs transition-colors hover:bg-muted"
         >

@@ -4,6 +4,7 @@ import { getSharedWithMeDocuments } from '@/actions/document/get';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { SharedWithMeView } from '@/components/document/SharedWithMeView';
+import { requestNow } from '@/lib/app/request-clock';
 
 export default async function SharedWithMePage() {
   const session = await auth();
@@ -15,7 +16,7 @@ export default async function SharedWithMePage() {
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title="与我共享" />
       <AppPageContainer>
-        <SharedWithMeView documents={documents} now={Date.now()} />
+        <SharedWithMeView documents={documents} now={requestNow()} />
       </AppPageContainer>
     </div>
   );

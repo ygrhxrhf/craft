@@ -10,6 +10,7 @@ import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { DocumentCard } from '@/components/document/DocumentCard';
 import { buildPreviewSrc } from '@/lib/preview/signature';
 import { FolderPinnedSection } from '@/components/folder/FolderPinnedSection';
+import { requestNow } from '@/lib/app/request-clock';
 
 interface FolderRouteProps {
   params: Promise<{ id: string }>;
@@ -26,7 +27,7 @@ export default async function FolderRoute({ params }: FolderRouteProps) {
 
   const { folder, children, documents, pinned } = page;
   // 卡片副行的「已更新 N」必须在服务端只取一次时钟：SSR 与 hydration 各取一次会撞 Hydration failed。
-  const now = Date.now();
+  const now = requestNow();
 
   return (
     <div className="flex-1 overflow-y-auto">

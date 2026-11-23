@@ -117,7 +117,9 @@ export function DocumentEditor({ document: doc, role = 'owner', userInitial = '�
   // G503：封面裁剪帧与处理后/原始两套尺寸。
   const [coverFrame, setCoverFrame] = useState<ImageFrame>(() => readImageFrame((doc.coverFrame ?? DEFAULT_FRAME) as any));
   const coverFrameRef = useRef(coverFrame);
-  coverFrameRef.current = coverFrame;
+  useEffect(() => {
+    coverFrameRef.current = coverFrame;
+  }, [coverFrame]);
   const coverDragRef = useRef<{ x: number; y: number; frame: ImageFrame } | null>(null);
   const [coverType, setCoverType] = useState(doc.coverType);
   const [width, setWidth] = useState(doc.width ?? 'default');

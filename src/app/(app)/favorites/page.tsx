@@ -7,6 +7,7 @@ import { STARRED_EMPTY, STARRED_PRIVACY } from '@/lib/browse/official-copy';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseViewModeBar } from '@/components/document/BrowseViewModeBar';
+import { requestNow } from '@/lib/app/request-clock';
 
 export default async function FavoritesPage() {
   const session = await auth();
@@ -22,7 +23,7 @@ export default async function FavoritesPage() {
         {favoriteDocs.length > 0 ? (
           <StarredGrid
             documents={favoriteDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))}
-            now={Date.now()}
+            now={requestNow()}
           />
         ) : (
           // G22/G33/G1655：craft 空态是 1120×72、radius 10、bg rgba(26,28,30,.03)、无虚线边框，

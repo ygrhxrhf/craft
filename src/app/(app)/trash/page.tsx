@@ -5,6 +5,7 @@ import { TrashList } from '@/components/document/TrashList';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { TRASH_TITLE } from '@/lib/browse/trash-copy';
+import { requestNow } from '@/lib/app/request-clock';
 
 export default async function TrashPage() {
   const session = await auth();
@@ -16,7 +17,7 @@ export default async function TrashPage() {
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title={TRASH_TITLE} />
       <AppPageContainer>
-        <TrashList documents={deletedDocs} now={Date.now()} />
+        <TrashList documents={deletedDocs} now={requestNow()} />
       </AppPageContainer>
     </div>
   );

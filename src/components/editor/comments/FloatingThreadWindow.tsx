@@ -8,6 +8,7 @@ import { useThreadWindowStore } from '@/lib/store/use-thread-window-store';
 import { relativeTime } from '@/lib/document/relative-time';
 import type { ThreadView } from './comment-overlay';
 import { cn } from 'cn';
+import { defer } from '@/lib/react/defer';
 
 /**
  * G58：正文评论高亮的**浮动线程窗口**。右侧信息栏是「整页评论」，这里是「只看这一条线程」。
@@ -20,23 +21,25 @@ export function FloatingThreadWindow({ documentId }: { documentId: string }) {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!threadId) {
-      setThread(null);
-      return;
-    }
     let alive = true;
-    setLoading(true);
-    getThreads(documentId)
-      .then((rows: ThreadView[]) => {
-        if (!alive) return;
-        setThread(rows.find((row) => row.id === threadId) ?? null);
-      })
-      .catch(() => {
-        if (alive) setThread(null);
-      })
-      .finally(() => {
-        if (alive) setLoading(false);
-      });
+    defer(() => {
+      if (!threadId) {
+        setThread(null);
+        return;
+      }
+      setLoading(true);
+      getThreads(documentId)
+        .then((rows: ThreadView[]) => {
+          if (!alive) return;
+          setThread(rows.find((row) => row.id === threadId) ?? null);
+        })
+        .catch(() => {
+          if (alive) setThread(null);
+        })
+        .finally(() => {
+          if (alive) setLoading(false);
+        });
+    });
     return () => {
       alive = false;
     };

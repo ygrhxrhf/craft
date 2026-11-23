@@ -7,7 +7,7 @@ const entry = (label: string): UndoEntry => ({ label, undo: () => {}, redo: () =
 // G727 —— 任务视图的 `Ctrl-Z` / `Ctrl-Shift-Z` 历史。
 describe('task view undo stack (G727)', () => {
   it('undoes the most recent entry first', () => {
-    let state = pushUndo(pushUndo(EMPTY_UNDO, entry('a')), entry('b'));
+    const state = pushUndo(pushUndo(EMPTY_UNDO, entry('a')), entry('b'));
     const first = takeUndo(state);
     expect(first.entry?.label).toBe('b');
     const second = takeUndo(first.state);

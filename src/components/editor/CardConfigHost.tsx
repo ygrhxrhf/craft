@@ -20,9 +20,12 @@ export function CardConfigHost({ editor }: { editor: Editor }) {
   const request = useCardConfigStore((state) => state.request);
   const [custom, setCustom] = useState('#ffffff');
 
-  useEffect(() => {
+  // 每次新的 `Ctrl-Shift-L` 请求都把自选色复位；渲染期跟随即可，不必等 effect。
+  const [seenRequest, setSeenRequest] = useState(request);
+  if (seenRequest !== request) {
+    setSeenRequest(request);
     setCustom('#ffffff');
-  }, [request]);
+  }
 
   useEffect(() => {
     if (index === null) return;

@@ -73,6 +73,7 @@ import { TagsSection } from './TagsSection';
 import { MembersSection } from './MembersSection';
 import type { Editor } from '@tiptap/react';
 import { untitledFor } from '@/lib/document/untitled-copy';
+import { defer } from '@/lib/react/defer';
 
 /** Moves the block holding the selection. No-ops at the edge, same as the key chord. */
 function moveSelection(editor: Editor | null, target: MoveTarget) {
@@ -158,11 +159,11 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
 
   useEffect(() => {
     if (!editor) {
-      setToc([]);
+      defer(() => setToc([]));
       return;
     }
     const refresh = () => setToc(extractToc(editor.state.doc as never));
-    refresh();
+    defer(refresh);
     editor.on('update', refresh);
     return () => {
       editor.off('update', refresh);

@@ -14,6 +14,7 @@ import {
   isCompatDismissed,
   shouldShowCompatNotice,
 } from '@/lib/browse/browser-compat';
+import { defer } from '@/lib/react/defer';
 
 /**
  * G346：浏览器的**可绕过**不兼容警告。四条官方文案全部在这里出现：
@@ -23,14 +24,19 @@ import {
  * 「不再显示此内容」写 localStorage 的 `craft.browser.compat.dismissed`，下次不再弹。
  */
 export function BrowserCompatNotice() {
-  const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const [offered, setOffered] = useState(false);
 
   // UA 与 localStorage 只有客户端才有；服务端渲染这一屏不能先生成它，否则水合会闪。
   useEffect(() => {
-    if (typeof navigator === 'undefined') return;
-    const storage = typeof window === 'undefined' ? undefined : window.localStorage;
-    setVisible(shouldShowCompatNotice(navigator.userAgent, isCompatDismissed(storage)));
+    defer(() => {
+      if (typeof navigator === 'undefined') return;
+      const storage = typeof window === 'undefined' ? undefined : window.localStorage;
+      setOffered(shouldShowCompatNotice(navigator.userAgent, isCompatDismissed(storage)));
+    });
   }, []);
+
+  const visible = offered && !dismissed;
 
   if (!visible) return null;
 
@@ -65,14 +71,14 @@ export function BrowserCompatNotice() {
             onChange={(event) => {
               if (!event.target.checked) return;
               dismissCompat(typeof window === 'undefined' ? undefined : window.localStorage);
-              setVisible(false);
+              setDismissed(true);
             }}
           />
           {DONT_SHOW_AGAIN}
         </label>
         <button
           type="button"
-          onClick={() => setVisible(false)}
+          onClick={() => setDismissed(true)}
           className="h-7 rounded-md border border-input px-3 text-xs transition-colors hover:bg-muted"
         >
           {USE_ANYWAYS}

@@ -28,6 +28,7 @@ import { FROM_TEMPLATE_LABEL } from '@/lib/document/template-limits';
 import { MOVE_TO, UNSORTED_TITLE } from '@/lib/browse/official-copy';
 import { pendingLabel } from '@/lib/app/pending-states';
 import { toast } from '@/components/ui/toast';
+import { showFavoriteFeedback } from '@/components/ui/favorite-feedback';
 import { getOrCreateShare, setSharePublished } from '@/actions/document/share';
 import { exportDocument, type ExportFormat } from '@/actions/document/export';
 import {
@@ -358,7 +359,10 @@ export function InfoTab({ documentId, editor, wordCount, isOwner, canComment = t
   const handleToggleFavorite = async () => {
     setBusy(true);
     try {
-      setIsFavorite(await toggleFavoriteLocal({ documentId, favored: isFavorite }));
+      const next = await toggleFavoriteLocal({ documentId, favored: isFavorite });
+      setIsFavorite(next);
+      // G1446: the info panel's star answers with the same info toast as the card menu's.
+      showFavoriteFeedback(next);
       setActionError(null);
     } catch {
       setActionError('收藏操作失败');

@@ -8,6 +8,7 @@ import { cn } from 'cn';
 import { createDocument } from '@/actions/document/create';
 import { setDocumentArchived } from '@/actions/document/archive';
 import { toast } from '@/components/ui/toast';
+import { showFavoriteFeedback } from '@/components/ui/favorite-feedback';
 import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { OfflineBadge } from '@/components/sync/OfflineBadge';
 import { getSyncManager } from '@/lib/sync-core';
@@ -127,11 +128,14 @@ export function DocumentTreeItem({ document: doc, allDocuments, level }: Documen
 
   async function toggleFavoriteSelf() {
     try {
-      setFavorite(await toggleFavoriteLocal({
+      const next = await toggleFavoriteLocal({
         documentId: doc.id,
         favored: favorite === true,
         userId: session?.user?.id ?? null,
-      }));
+      });
+      setFavorite(next);
+      // G1446: starring from the tree reports the new state, like every other star surface.
+      showFavoriteFeedback(next);
       bumpTree();
     } catch {
       // spec D7-④：写本地镜像失败（多为存储不可用）才走到这里，给反馈

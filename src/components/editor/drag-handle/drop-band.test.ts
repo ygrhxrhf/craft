@@ -53,3 +53,35 @@ describe('visibleRows (G280)', () => {
     expect(visibleRows(rows)).toEqual(rows);
   });
 });
+
+import { suppressesIndicator } from './drop-band';
+
+describe('suppressesIndicator (G270)', () => {
+  // 被拖的是第 2、3 块（0 基）；组外相邻两格是 before(2) 与 after(3)。
+  const dragged = [2, 3];
+
+  it('hides the line over any slot inside the dragged group', () => {
+    expect(suppressesIndicator(dragged, 2, true)).toBe(true);
+    expect(suppressesIndicator(dragged, 3, true)).toBe(true);
+    expect(suppressesIndicator(dragged, 2, false)).toBe(true);
+    expect(suppressesIndicator(dragged, 3, false)).toBe(true);
+  });
+
+  it('hides the two adjacent no-op slots', () => {
+    expect(suppressesIndicator(dragged, 2, true)).toBe(true);   // 组首之前＝原位
+    expect(suppressesIndicator(dragged, 3, false)).toBe(true);  // 组尾之后＝原位
+  });
+
+  it('keeps the line for real moves outside the group', () => {
+    expect(suppressesIndicator(dragged, 0, true)).toBe(false);
+    expect(suppressesIndicator(dragged, 1, false)).toBe(false);
+    expect(suppressesIndicator(dragged, 4, true)).toBe(false);
+    expect(suppressesIndicator(dragged, 5, false)).toBe(false);
+  });
+
+  it('hides both neighbours of a single-block drag', () => {
+    expect(suppressesIndicator([4], 4, true)).toBe(true);
+    expect(suppressesIndicator([4], 3, false)).toBe(false);
+    expect(suppressesIndicator([], 4, true)).toBe(false);
+  });
+});

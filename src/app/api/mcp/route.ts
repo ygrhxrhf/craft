@@ -107,7 +107,7 @@ function rpcError(id: unknown, code: number, message: string) {
 export async function POST(request: Request) {
   const auth = request.headers.get('authorization') ?? '';
   const token = auth.toLowerCase().startsWith('bearer ') ? auth.slice(7) : '';
-  const userId = verifyMcpToken(token);
+  const userId = verifyMcpToken(token)?.userId;
   if (!userId) {
     return Response.json(
       { jsonrpc: '2.0', id: null, error: { code: -32001, message: '令牌无效。请在接入中心复制「所有文档的 MCP」的地址与令牌。' } },

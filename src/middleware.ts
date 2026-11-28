@@ -30,6 +30,9 @@ const publicRoutes = [
   // G1674：「所有文档的 MCP」由外部 AI 工具调用，没有会话 cookie；它自证令牌
   //   （`Authorization: Bearer`），所以要在中间件里放行，鉴权在路由内完成。
   '/api/mcp',
+  // 同理：xsxz 把读书笔记推成文档走的是写令牌，不是会话 cookie。放行后鉴权由
+  //   路由内的 `verifyMcpToken` 完成（读令牌在那里被 403），不然请求会被转到 /login。
+  '/api/v1/import/markdown',
   '/s/',
   '/p/',
   '/w/',

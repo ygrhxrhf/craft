@@ -19,7 +19,7 @@ export const IMPORT_FOLDER = 'Imported Notes';
 export const MAX_IMPORT_FILES = 20;
 export const MAX_IMPORT_CHARS = 500_000;
 
-export type ImportErrorCode = 'empty' | 'too_large' | 'not_found';
+export type ImportErrorCode = 'empty' | 'too_large' | 'not_found' | 'invalid_parent';
 
 export class ImportError extends Error {
   constructor(
@@ -47,12 +47,13 @@ export interface ImportedDocument {
 }
 
 type Row = Record<string, unknown>;
+type Db = Awaited<ReturnType<typeof getDb>>;
 
 async function resolveFolder(
+  db: Db,
   userId: string,
   input: { folderId?: string | null; folderName?: string | null; folderIcon?: string },
 ): Promise<string> {
-  const db = await getDb();
   if (input.folderId) {
     await assertOwned('Folder', input.folderId, userId, '目标文件夹不存在');
     return input.folderId;
@@ -72,7 +73,49 @@ async function resolveFolder(
   return String(created.id);
 }
 
+async function ownedDocument(db: Db, userId: string, id: string, message: string): Promise<Row> {
+  const row = (await db.orm.public.Document.first({ id })) as Row | null;
+  if (!row || row.userId !== userId || row.isDeleted) {
+    throw new ImportError('not_found', message);
+  }
+  return row;
+}
+
+// 父链上撞回自己就是环：DocumentTree 从 parentId === null 开始渲染，写出环等于把这篇
+// 连同子树藏到导航之外，所以写之前就拒。
+async function assertNoCycle(db: Db, documentId: string, parentId: string): Promise<void> {
+  if (documentId === parentId) {
+    throw new ImportError('invalid_parent', '父文档不能是文档自己');
+  }
+  const seen = new Set<string>();
+  let cursor: string | null = parentId;
+  while (cursor) {
+    if (cursor === documentId) {
+      throw new ImportError('invalid_parent', '父文档不能是这篇文档的子页面');
+    }
+    if (seen.has(cursor)) return;
+    seen.add(cursor);
+    const row = (await db.orm.public.Document.first({ id: cursor })) as Row | null;
+    cursor = row && typeof row.parentId === 'string' ? row.parentId : null;
+  }
+}
+
+// 先整批校验、再逐篇写：接口承诺「全量成败」，后一篇引用不存在或他人的 id 时，前面
+// 几篇不能已经落库——否则客户端重试会把它们再建一遍。
+async function precheck(db: Db, userId: string, files: MarkdownFile[]): Promise<void> {
+  for (const file of files) {
+    if (file.documentId) {
+      await ownedDocument(db, userId, file.documentId, '目标文档不存在或已删除');
+    }
+    if (file.parentDocumentId) {
+      await ownedDocument(db, userId, file.parentDocumentId, '父文档不存在或已删除');
+      if (file.documentId) await assertNoCycle(db, file.documentId, file.parentDocumentId);
+    }
+  }
+}
+
 async function writeDocument(
+  db: Db,
   userId: string,
   file: MarkdownFile,
   folderId: string | null,
@@ -83,7 +126,6 @@ async function writeDocument(
     throw new ImportError('too_large', `《${file.name}》超过 ${MAX_IMPORT_CHARS} 字符上限`);
   }
 
-  const db = await getDb();
   const { content, icon } = parseMarkdownWithIcon(file.text);
   const title = (
     file.name.replace(/\.(markdown|md|txt)$/i, '').trim() || titleFromMarkdown(file.text)
@@ -108,7 +150,12 @@ async function writeDocument(
     icon,
     metaUpdatedAt,
   };
-  if (parentId) payload.parentId = parentId;
+  if (parentId) {
+    // 挂了父文档就不再占文件夹：移动界面里两者互斥，而文件夹页按 folderId 列表，
+    // 留着会把子页面也当文件夹文档列出来。
+    payload.parentId = parentId;
+    payload.folderId = null;
+  }
 
   if (file.documentId) {
     const existing = (await db.orm.public.Document.first({ id: file.documentId })) as Row | null;
@@ -140,15 +187,25 @@ export async function importMarkdownForUser(
   const files = input.files.filter((file) => file.text?.trim()).slice(0, MAX_IMPORT_FILES);
   if (!files.length) throw new ImportError('empty', '没有可导入的内容');
 
-  // 全部是更新时不必碰文件夹：否则一次纯更新也会凭空多出一个「Imported Notes」。
-  const folderId = files.some((file) => !file.documentId) ? await resolveFolder(userId, input) : null;
-  const written: ImportedDocument[] = [];
-  for (const file of files) {
-    written.push(await writeDocument(userId, file, folderId));
-  }
-
-  // 整批合并为一次广播（文件夹可能同批新建）
   const db = await getDb();
-  await emitSyncEventSafe(db, userId, ['document'], written[written.length - 1]!.id);
-  return written;
+  const run = async (handle: Db): Promise<ImportedDocument[]> => {
+    await precheck(handle, userId, files);
+
+    // 纯更新、以及挂了父文档的都不碰文件夹：否则一次纯更新也会凭空多出一个
+    // 「Imported Notes」。
+    const needsFolder = files.some((file) => !file.documentId && !file.parentDocumentId);
+    const folderId = needsFolder ? await resolveFolder(handle, userId, input) : null;
+
+    const written: ImportedDocument[] = [];
+    for (const file of files) {
+      written.push(await writeDocument(handle, userId, file, folderId));
+    }
+
+    // 整批合并为一次广播（文件夹可能同批新建）
+    await emitSyncEventSafe(handle, userId, ['document'], written[written.length - 1]!.id);
+    return written;
+  };
+
+  // 有 transaction 就整批一个事务（写到一半异常时回滚）；模拟 db 或旧版 ORM 没有就直接跑。
+  return typeof db.transaction === 'function' ? db.transaction(run) : run(db);
 }

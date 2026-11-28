@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Cable, Plus, Trash2 } from 'lucide-react';
+import { BookOpen, Cable, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -36,10 +36,13 @@ const KINDS: ConnectionKind[] = ['mcp', 'api'];
 export function ConnectionsPanel({
   initial,
   mcp,
+  notes,
 }: {
   initial: ConnectionItem[];
   /** G1674：本空间作为 MCP 服务的地址与令牌（服务端签发，自证令牌，不落库）。 */
   mcp?: { url: string; token: string } | null;
+  /** 同一套令牌的写入档：xsxz 推读书笔记用，读令牌在这里会被 403。 */
+  notes?: { url: string; token: string } | null;
 }) {
   const router = useRouter();
   const [items, setItems] = useState(initial);
@@ -137,6 +140,31 @@ Authorization: Bearer ${mcp.token}`);
                     className="mt-2 rounded px-2 py-1 text-[12px] font-medium text-(--craft-accent) hover:bg-foreground/[0.05]"
                   >
                     复制地址与令牌
+                  </button>
+                </div>
+              )}
+              {sectionKind === 'mcp' && notes && (
+                <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-emerald-50 to-background p-4 shadow-sm">
+                  <div className="flex items-start gap-2">
+                    <BookOpen className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold">阅读笔记导入</p>
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">xsxz → 文档（写入令牌）</p>
+                    </div>
+                  </div>
+                  <p className="mt-3 break-all rounded-md bg-background/70 px-2 py-1.5 font-mono text-[11px] leading-4 text-foreground/70">
+                    {typeof window !== 'undefined' ? new URL(notes.url, window.location.origin).toString() : notes.url}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const url = new URL(notes.url, window.location.origin).toString();
+                      void navigator.clipboard?.writeText(`${url}
+Authorization: Bearer ${notes.token}`);
+                    }}
+                    className="mt-2 rounded px-2 py-1 text-[12px] font-medium text-(--craft-accent) hover:bg-foreground/[0.05]"
+                  >
+                    复制地址与写入令牌
                   </button>
                 </div>
               )}

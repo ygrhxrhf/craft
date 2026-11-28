@@ -10,10 +10,14 @@ export default async function ConnectionsPage() {
   // 令牌自证（见 `lib/mcp/token`），不落库；换密钥即全部失效。
   const session = await auth();
   const mcp = session?.user?.id ? { url: '/api/mcp', token: issueMcpToken(session.user.id) } : null;
+  // xsxz 联动：同一套自证令牌的写入档，推读书笔记用（`POST /api/v1/import/markdown`）。
+  const notes = session?.user?.id
+    ? { url: '/api/v1/import/markdown', token: issueMcpToken(session.user.id, 'write') }
+    : null;
   return (
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title="连接" />
-      <ConnectionsPanel initial={connections} mcp={mcp} />
+      <ConnectionsPanel initial={connections} mcp={mcp} notes={notes} />
     </div>
   );
 }

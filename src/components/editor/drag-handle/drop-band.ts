@@ -36,3 +36,22 @@ export function dropTargetFor(clientY: number, rows: RowBox[]): DropTarget | nul
 
   return null;
 }
+
+/**
+ * G270 —— 三种情况要**主动不画指示线**：悬在被拖块自身上、落点落在被拖组内部、以及紧贴
+ * 组首／组尾的那两格（`before(first)` 与 `after(last)` 落地都是原地不动）。
+ *
+ * 判据收敛成一句：落点锚在 `[first, last]` 区间内就抑制——`before(first)` 与 `after(last)`
+ * 正是组外相邻的两格，它们与组内所有格一样都产生"位置没变"。`before` 因此不参与判定；
+ * 留它在签名里是为了让调用点读起来仍是"这一格画不画"。
+ */
+export function suppressesIndicator(
+  dragged: readonly number[],
+  anchor: number,
+  _before: boolean,
+): boolean {
+  if (dragged.length === 0) return false;
+  const first = Math.min(...dragged);
+  const last = Math.max(...dragged);
+  return anchor >= first && anchor <= last;
+}

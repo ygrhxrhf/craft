@@ -59,6 +59,13 @@ interface TableViewProps {
   view: View;
 }
 
+/**
+ * 列拖拽的载荷同样是模块级内存槽；清空收在这里，组件体里不再直接改 import 的对象。
+ */
+function clearColumnDrag(): void {
+  columnDragState.payload = null;
+}
+
 export function TableView({ collection, view }: TableViewProps) {
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -114,7 +121,7 @@ export function TableView({ collection, view }: TableViewProps) {
   const [viewportHeight, setViewportHeight] = useState(600);
   const cancelScrollUpdate = useRef<(() => void) | null>(null);
   // G497：判定 latch 只置 true、永不复位 ⇒ 删行或隐藏列不会立刻退回全量渲染。
-  const virtualizationLatch = useRef(createVirtualizationLatch()).current;
+  const [virtualizationLatch] = useState(() => createVirtualizationLatch());
 
   useEffect(
     () => () => {
@@ -366,7 +373,7 @@ export function TableView({ collection, view }: TableViewProps) {
 
   const handleColumnDrop = (event: ReactDragEvent<HTMLTableCellElement>, index: number) => {
     const sourceId = readColumnPayload(event)?.column ?? null;
-    columnDragState.payload = null;
+    clearColumnDrag();
     setColumnDropTarget(null);
     if (!sourceId || !reorderEnabled) return;
     const location = locationAtPointer(event, index);

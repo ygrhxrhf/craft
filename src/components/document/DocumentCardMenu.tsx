@@ -19,6 +19,7 @@ import { toast } from '@/components/ui/toast';
 import { showFavoriteFeedback } from '@/components/ui/favorite-feedback';
 import { COPY_LINK_FAILED } from '@/lib/errors/alert-copy';
 import { cn } from 'cn';
+import { defer } from '@/lib/react/defer';
 
 interface DocumentCardMenuProps {
   documentId: string;
@@ -40,11 +41,19 @@ export function DocumentCardMenu({ documentId, title, at, onClose }: DocumentCar
   const [folders, setFolders] = useState<{ id: string; name: string }[]>([]);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (!at) return;
+  // 每次重新定位菜单都先把上一份状态清掉，再异步取这颗星的真实值。
+  const [lastAt, setLastAt] = useState(at);
+  if (lastAt !== at) {
+    setLastAt(at);
     setFavorite(false);
     setMoveOpen(false);
-    void resolveFavoriteState(documentId).then(setFavorite).catch(() => setFavorite(false));
+  }
+
+  useEffect(() => {
+    if (!at) return;
+    defer(() => {
+      void resolveFavoriteState(documentId).then(setFavorite).catch(() => setFavorite(false));
+    });
   }, [at, documentId]);
 
   useEffect(() => {

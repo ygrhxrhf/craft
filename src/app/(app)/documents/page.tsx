@@ -8,6 +8,7 @@ import { SortableDocGrid } from '@/components/document/SortableDocGrid';
 import { buildPreviewSrc } from '@/lib/preview/signature';
 import { RichText } from '@/components/ui/rich-text';
 import { ONBOARDING_DESC, ONBOARDING_DESC2, ONBOARDING_WELCOME } from '@/lib/i18n/onboarding-copy';
+import { requestNow } from '@/lib/app/request-clock';
 
 export default async function DocumentsPage() {
   const session = await auth();
@@ -27,7 +28,7 @@ export default async function DocumentsPage() {
   const folderNodes = folders.map((f) => ({ id: f.id, name: f.name, icon: f.icon }));
 
   // 卡片副行的「已更新 N」必须在服务端只取一次时钟：SSR 与 hydration 各取一次会撞 Hydration failed。
-  const now = Date.now();
+  const now = requestNow();
 
   return (
     <div className="flex-1 overflow-y-auto">

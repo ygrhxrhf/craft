@@ -56,6 +56,9 @@ async function newVisualContext(browser: Browser) {
 
 async function signIn(page: Page) {
   await page.goto('/login');
+  // 注册成功会把这条上下文直接带进 /documents（注册页自己签入）。此时 /login 重定向走，
+  // 页面上没有邮箱框，再填一次就会干等到超时——新增账号的首次运行正是这条路径。
+  if (/\/documents/.test(new URL(page.url()).pathname)) return true;
   await page.fill('input[type="email"]', VISUAL_USER.email);
   await page.fill('input[type="password"]', VISUAL_USER.password);
   await page.click('button[type="submit"]');

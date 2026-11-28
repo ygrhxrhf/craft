@@ -15,7 +15,8 @@ import {
 import { useCommandPaletteStore } from '@/lib/store/use-command-palette-store';
 import { useActiveEditorStore } from '@/lib/store/use-active-editor-store';
 import { slashCommands } from '@/components/editor/slash-menu/slash-commands';
-import { filterCommands, type PaletteCommand } from '@/lib/commands/registry';
+import { commandEnabled, filterCommands, mergePaletteCommands, type PaletteCommand } from '@/lib/commands/registry';
+import { APP_COMMANDS } from '@/lib/commands/app-commands';
 import { OFFICIAL_COMMANDS } from '@/lib/commands/official-catalog';
 import { searchAll } from '@/actions/document/search';
 import { cumulativeOffsets, groupResults } from '@/lib/search/result-groups';
@@ -38,6 +39,7 @@ import {
 } from '@/lib/search/recents';
 import { toast } from '@/components/ui/toast';
 import { useSession } from 'next-auth/react';
+import { defer } from '@/lib/react/defer';
 
 async function downloadLibraryArchive() {
   try {
@@ -66,20 +68,14 @@ const implementedCommands: PaletteCommand[] = [
     title: '导出整个资料库',
     group: '操作',
     keywords: ['export', 'zip', '资料库', '导出'],
+    aliases: ['commands.export.home.as'],
     run: () => void downloadLibraryArchive(),
   },
+  ...APP_COMMANDS,
 ];
 
 /** G33: all 189 official ids are searchable; the ones this build has not wired are greyed out. */
-const paletteCommands: PaletteCommand[] = [
-  ...implementedCommands,
-  ...OFFICIAL_COMMANDS.map((command) => ({
-    id: command.id,
-    title: command.title,
-    group: '官方命令',
-    keywords: [command.group],
-  })),
-];
+const paletteCommands: PaletteCommand[] = mergePaletteCommands(implementedCommands, OFFICIAL_COMMANDS);
 
 export function CommandPalette() {
   const router = useRouter();
@@ -95,7 +91,9 @@ export function CommandPalette() {
   // G235: the panel's 「最近使用」 list, persisted per browser.
   const [recents, setRecents] = useState<RecentDocument[]>([]);
   useEffect(() => {
-    setRecents(loadRecents(typeof window === 'undefined' ? undefined : window.localStorage));
+    defer(() => {
+      setRecents(loadRecents(typeof window === 'undefined' ? undefined : window.localStorage));
+    });
   }, []);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -274,10 +272,10 @@ export function CommandPalette() {
   const matchingCommands = hasQuery ? filterCommands(paletteCommands, query).slice(0, 8) : [];
 
   const handleRunCommand = (command: PaletteCommand) => {
-    if (!command.run) return;
+    if (!commandEnabled(command)) return;
     close();
     setQuery('');
-    command.run();
+    command.run?.();
   };
 
   // `browse.search.create.doc` =「创建 [0]」. The row sits above the results and the document is
@@ -374,12 +372,12 @@ export function CommandPalette() {
               <CommandItem
                 key={command.id}
                 value={command.id}
-                disabled={!command.run}
+                disabled={!commandEnabled(command)}
                 onSelect={() => handleRunCommand(command)}
               >
                 <Terminal className="size-4" />
                 <span>{command.title}</span>
-                {!command.run && (
+                {!commandEnabled(command) && (
                   <span className="ml-auto text-[10px] text-muted-foreground/60">未接入</span>
                 )}
               </CommandItem>

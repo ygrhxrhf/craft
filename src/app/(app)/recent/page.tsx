@@ -7,6 +7,7 @@ import { Clock } from 'lucide-react';
 import { AppPageContainer } from '@/components/app/AppPageContainer';
 import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { BrowseGrid } from '@/components/app/BrowseGrid';
+import { requestNow } from '@/lib/app/request-clock';
 
 export default async function RecentPage() {
   const session = await auth();
@@ -14,7 +15,7 @@ export default async function RecentPage() {
 
   const recentDocs = await getRecentDocuments(50);
   // 卡片副行的「已更新 N」必须在服务端只取一次时钟：SSR 与 hydration 各取一次会撞 Hydration failed。
-  const now = Date.now();
+  const now = requestNow();
 
   return (
     <div className="flex-1 overflow-y-auto">

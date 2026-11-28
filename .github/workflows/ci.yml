@@ -37,7 +37,12 @@ jobs:
       - run: npx prisma db migrate
       - run: npx prisma db verify
       - run: npm run lint
+      # PDF 导出对非拉丁正文要求一枚可嵌入的中文字体（DroidSansFallbackFull 是 ttf，
+      # pdf-lib 的 fontkit 直接读得了；noto-cjk 只发 ttc，这里刻意不用）。
+      - run: sudo apt-get update && sudo apt-get install -y fonts-droid-fallback
       - run: npm test
+        env:
+          CRAFTY_PDF_FONT: /usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf
       - run: npm run build
 
   e2e:

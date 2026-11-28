@@ -209,6 +209,23 @@ interface EditorProps {
   followBlockLinks?: boolean;
 }
 
+/**
+ * 块链接的开关写在编辑器的插件 storage 上（不重建 editor，也就不丢撤销栈与协作房间）。
+ * 写入收在模块函数里：组件体只表达"这次写入"，不直接改从 prop 上取到的对象。
+ */
+function writeBlockLinkStore(
+  editor: TiptapEditor,
+  documentId: string,
+  followBlockLinks: boolean,
+): void {
+  const storage = editor.storage.blockLink as
+    | { hostDocumentId?: string; followOtherDocuments?: boolean }
+    | undefined;
+  if (!storage) return;
+  storage.hostDocumentId = documentId;
+  storage.followOtherDocuments = followBlockLinks;
+}
+
 export function Editor({
   documentId,
   initialContent,
@@ -810,12 +827,7 @@ export function Editor({
   // 把开关写回 storage，而不是重建编辑器——重建会丢掉撤销栈与协作房间。
   useEffect(() => {
     if (!editor) return;
-    const storage = editor.storage.blockLink as
-      | { hostDocumentId?: string; followOtherDocuments?: boolean }
-      | undefined;
-    if (!storage) return;
-    storage.hostDocumentId = documentId;
-    storage.followOtherDocuments = followBlockLinks;
+    writeBlockLinkStore(editor, documentId, followBlockLinks);
   }, [editor, documentId, followBlockLinks]);
 
   useEffect(() => {

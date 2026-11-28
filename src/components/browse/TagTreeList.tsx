@@ -82,9 +82,12 @@ export function TagTreeList({ groups }: { groups: TagBrowseGroup[] }) {
   };
 
   // router.refresh() 之后服务端重排的结果要回到本地列表（置顶切换会改变顺序）。
-  useEffect(() => {
+  // 跟随 prop 就地调整：effect 会先渲染一帧旧顺序，视觉上是一次抖动。
+  const [syncedGroups, setSyncedGroups] = useState(groups);
+  if (syncedGroups !== groups) {
+    setSyncedGroups(groups);
     setItems(groups);
-  }, [groups]);
+  }
 
   const commitOrder = async (next: TagBrowseGroup[]) => {
     setItems(next);

@@ -6,6 +6,7 @@ import { AppPageHeader } from '@/components/app/AppPageHeader';
 import { InboxList } from '@/components/document/InboxList';
 import { buildPreviewSrc } from '@/lib/preview/signature';
 import { UNSORTED_TITLE } from '@/lib/browse/official-copy';
+import { requestNow } from '@/lib/app/request-clock';
 
 /** `/inbox` (G45): the unsorted collection — documents that belong to no folder. */
 export default async function InboxPage() {
@@ -20,7 +21,7 @@ export default async function InboxPage() {
     <div className="flex-1 overflow-y-auto">
       <AppPageHeader title={UNSORTED_TITLE} plus="document" />
       <AppPageContainer>
-        <InboxList documents={documents} now={Date.now()} />
+        <InboxList documents={documents} now={requestNow()} />
       </AppPageContainer>
     </div>
   );

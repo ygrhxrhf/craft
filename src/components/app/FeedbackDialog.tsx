@@ -41,12 +41,16 @@ export function FeedbackDialog() {
     return () => focusStack.remove('feedback');
   }, [open, close]);
 
-  useEffect(() => {
-    if (open) return;
-    setMoods([]);
-    setSubject('');
-    setMessage('');
-  }, [open]);
+  // 关掉时把上一轮的草稿清空。渲染期跟随 `open` 调整，不用 effect 等一帧。
+  const [lastOpen, setLastOpen] = useState(open);
+  if (lastOpen !== open) {
+    setLastOpen(open);
+    if (!open) {
+      setMoods([]);
+      setSubject('');
+      setMessage('');
+    }
+  }
 
   if (!open) return null;
 

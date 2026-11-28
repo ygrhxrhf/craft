@@ -10,6 +10,7 @@ import { BrowseGrid } from '@/components/app/BrowseGrid';
 import { NO_DOCS_FOUND, formatDocCount } from '@/lib/browse/official-copy';
 import { buildTagTree } from '@/lib/browse/tag-browse';
 import { Tag } from 'lucide-react';
+import { requestNow } from '@/lib/app/request-clock';
 
 interface TagPageProps {
   params: Promise<{ id: string }>;
@@ -25,7 +26,7 @@ export default async function TagDetailPage({ params }: TagPageProps) {
   const group = buildTagTree(tags, links, documents).byId.get(id);
   if (!group) notFound();
   // 卡片副行的「已更新 N」必须在服务端只取一次时钟：SSR 与 hydration 各取一次会撞 Hydration failed。
-  const now = Date.now();
+  const now = requestNow();
 
   return (
     <div className="flex-1 overflow-y-auto">

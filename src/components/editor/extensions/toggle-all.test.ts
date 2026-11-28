@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { Schema, type Node } from '@tiptap/pm/model';
 import { EditorState, TextSelection } from '@tiptap/pm/state';
@@ -138,7 +139,6 @@ describe('the toggle-all key target (G1593)', () => {
   });
 
   it('is bound to Ctrl-Alt-T and wired into the editor keymap', () => {
-    const { readFileSync } = require('node:fs') as typeof import('node:fs');
     const keymap = readFileSync('src/lib/editor/keymap.ts', 'utf8');
     const craft = readFileSync('src/components/editor/extensions/craft-keymap.ts', 'utf8');
     expect(keymap).toContain("id: 'TOGGLE_TOGGLES'");
@@ -170,7 +170,6 @@ describe('Enter inside a toggle summary (G1590)', () => {
   });
 
   it('is wired into the editor keymap', () => {
-    const { readFileSync } = require('node:fs') as typeof import('node:fs');
     const craft = readFileSync('src/components/editor/extensions/craft-keymap.ts', 'utf8');
     expect(craft).toContain('toggleSummaryTarget(view.state)');
     expect(craft).toContain('open: true');

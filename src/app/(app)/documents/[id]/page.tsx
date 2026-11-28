@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 import { getDocument } from '@/actions/document/get';
@@ -31,12 +32,12 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
           >
             重试
           </a>
-          <a
+          <Link
             href="/documents"
             className="rounded-md px-3 py-1.5 text-ui text-foreground/60 transition-colors hover:bg-foreground/[0.04]"
           >
             返回所有文档
-          </a>
+          </Link>
         </div>
       </div>
     );

@@ -27,7 +27,7 @@ describe('the starred area keeps its own order (G94)', () => {
     expect(page).toContain('<StarredGrid');
     expect(page).toContain('documents={favoriteDocs.map((doc) => ({ ...doc, previewSrc: buildPreviewSrc(doc) }))}');
     // 卡片副行的时钟基准在服务端取一次，避免 SSR/hydration 各取一次撞 Hydration failed。
-    expect(page).toContain('now={Date.now()}');
+    expect(page).toContain('now={requestNow()}');
     expect(read('actions/document/get.ts')).toContain('favoriteId: String(');
   });
 });

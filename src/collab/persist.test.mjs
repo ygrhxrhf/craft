@@ -17,7 +17,17 @@ describe.skipIf(!hasDb)('collab room persistence', () => {
       fs.readFileSync(path.resolve('src/prisma/contract.json'), 'utf8'),
     );
     const db = await mod.default({ contractJson, url: process.env.DATABASE_URL });
-    const user = await db.orm.public.User.first({ email: 'craft-test@example.com' });
+    // CI 的库是干净的：这里自备一行用户，别依赖有人先跑过种子脚本。
+    const email = 'craft-test@example.com';
+    const existing = await db.orm.public.User.first({ email });
+    const user =
+      existing ??
+      (await db.orm.public.User.create({
+        id: crypto.randomUUID(),
+        email,
+        password: 'ci-only-placeholder',
+        name: 'Craft Test',
+      }));
     const doc = await db.orm.public.Document.create({
       id: crypto.randomUUID(),
       title: 'persistence probe',

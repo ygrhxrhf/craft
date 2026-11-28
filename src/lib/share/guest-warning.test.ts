@@ -1,20 +1,15 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 import { describe, expect, it } from 'vitest';
 
 import { GUEST_WARNING_DESC, GUEST_WARNING_KEY, needsGuestWarning } from './guest-warning';
+import { hasHarvest, readHarvest } from '@/lib/craft-ref/harvest';
 
 /**
  * G228: inviting a non-team-member is a guest invite, and the official build confirms it with a
  * consequence sentence. The warning text is harvested verbatim.
  */
-describe('the guest invite warning (G228)', () => {
+describe.skipIf(!hasHarvest())('the guest invite warning (G228)', () => {
   it('carries the harvested sentence verbatim', () => {
-    const harvest = readFileSync(
-      join(process.cwd(), 'docs', 'craft-ref', 'features', '_harvest', 'i18n-zh.tsv'),
-      'utf8',
-    );
+    const harvest = readHarvest();
     const line = harvest.split(/\r?\n/).find((l) => l.startsWith(`${GUEST_WARNING_KEY}\t`));
     expect(line, `harvest has no ${GUEST_WARNING_KEY}`).toBeTruthy();
     expect(line!.split('\t')[1]).toBe(GUEST_WARNING_DESC);

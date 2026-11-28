@@ -83,7 +83,12 @@ async function ownedDocument(db: Db, userId: string, id: string, message: string
 
 // 父链上撞回自己就是环：DocumentTree 从 parentId === null 开始渲染，写出环等于把这篇
 // 连同子树藏到导航之外，所以写之前就拒。
-async function assertNoCycle(db: Db, documentId: string, parentId: string): Promise<void> {
+async function assertNoCycle(
+  db: Db,
+  documentId: string,
+  parentId: string,
+  proposed: Map<string, string>,
+): Promise<void> {
   if (documentId === parentId) {
     throw new ImportError('invalid_parent', '父文档不能是文档自己');
   }
@@ -95,6 +100,11 @@ async function assertNoCycle(db: Db, documentId: string, parentId: string): Prom
     }
     if (seen.has(cursor)) return;
     seen.add(cursor);
+    const next = proposed.get(cursor);
+    if (next) {
+      cursor = next;
+      continue;
+    }
     const row = (await db.orm.public.Document.first({ id: cursor })) as Row | null;
     cursor = row && typeof row.parentId === 'string' ? row.parentId : null;
   }
@@ -109,8 +119,19 @@ async function precheck(db: Db, userId: string, files: MarkdownFile[]): Promise<
     }
     if (file.parentDocumentId) {
       await ownedDocument(db, userId, file.parentDocumentId, '父文档不存在或已删除');
-      if (file.documentId) await assertNoCycle(db, file.documentId, file.parentDocumentId);
     }
+  }
+
+  // 同批可以一边把 A 挂到 B、一边把 B 挂到 A：逐篇对着「库里现状」查环看不见对方还没写
+  // 的改动，所以先把这批建议的父级叠进图里，再走一遍父链。
+  const proposed = new Map<string, string>();
+  for (const file of files) {
+    if (file.documentId && file.parentDocumentId) {
+      proposed.set(file.documentId, file.parentDocumentId);
+    }
+  }
+  for (const [documentId, parentId] of proposed) {
+    await assertNoCycle(db, documentId, parentId, proposed);
   }
 }
 

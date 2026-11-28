@@ -127,4 +127,54 @@ describe('POST /api/v1/import/markdown', () => {
     );
     expect(res.status).toBe(400);
   });
+
+  it('空白正文按 400 拒掉，不会静默跳过（全量成败）', async () => {
+    const { document } = mockDb();
+    const res = await POST(
+      request({ files: [{ name: 'a.md', text: '# a' }, { name: 'b.md', text: '   ' }] }, WRITE),
+    );
+    expect(res.status).toBe(400);
+    expect(document.create).not.toHaveBeenCalled();
+  });
+
+  it('请求体是 JSON null 时 400，而不是取值时 500', async () => {
+    mockDb();
+    const res = await POST(
+      new Request(URL, {
+        method: 'POST',
+        headers: { authorization: `Bearer ${WRITE}` },
+        body: 'null',
+      }),
+    );
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe('invalid_json');
+  });
+
+  it('同批互相挂成子页面按成环拒掉，且一篇都不写', async () => {
+    const { document } = mockDb();
+    const rows: Record<string, Record<string, unknown>> = {
+      A: { id: 'A', userId: 'u1', isDeleted: false, parentId: null },
+      B: { id: 'B', userId: 'u1', isDeleted: false, parentId: null },
+    };
+    document.first = vi.fn(
+      async (where?: Record<string, unknown>): Promise<Record<string, unknown> | null> =>
+        rows[String(where?.id)] ?? null,
+    );
+
+    const res = await POST(
+      request(
+        {
+          files: [
+            { name: 'a.md', text: '# a', documentId: 'A', parentDocumentId: 'B' },
+            { name: 'b.md', text: '# b', documentId: 'B', parentDocumentId: 'A' },
+          ],
+        },
+        WRITE,
+      ),
+    );
+
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe('invalid_parent');
+    expect(document.create).not.toHaveBeenCalled();
+  });
 });

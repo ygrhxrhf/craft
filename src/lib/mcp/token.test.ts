@@ -47,4 +47,9 @@ describe('MCP 令牌档位', () => {
     expect(verifyMcpToken('mcp_dTE.admin.abc')).toBeNull();
     expect(verifyMcpToken('bearer mcp_dTE.read.abc')).toBeNull();
   });
+
+  it('非 ASCII 签名按无效令牌处理，不抛错', () => {
+    const id = Buffer.from('u1', 'utf8').toString('base64url');
+    expect(verifyMcpToken(`mcp_${id}.write.${'é'.repeat(43)}`)).toBeNull();
+  });
 });

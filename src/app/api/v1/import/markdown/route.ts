@@ -47,8 +47,8 @@ function parseFiles(raw: unknown): ParsedFiles {
     if (typeof file.name !== 'string' || !file.name.trim()) {
       return { ok: false, status: 400, message: '每篇都要有 name' };
     }
-    if (typeof file.text !== 'string') {
-      return { ok: false, status: 400, message: '每篇都要有 text（Markdown 正文）' };
+    if (typeof file.text !== 'string' || !file.text.trim()) {
+      return { ok: false, status: 400, message: '每篇都要有非空的 text（Markdown 正文）' };
     }
     if (file.name.length > MAX_NAME_CHARS) return { ok: false, status: 400, message: 'name 过长' };
     if (file.text.length > MAX_IMPORT_CHARS) {
@@ -81,7 +81,11 @@ export async function POST(request: Request) {
 
   let body: Record<string, unknown>;
   try {
-    body = (await request.json()) as Record<string, unknown>;
+    const parsed = (await request.json()) as unknown;
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return fail(400, 'invalid_json', '请求体必须是 JSON 对象');
+    }
+    body = parsed as Record<string, unknown>;
   } catch {
     return fail(400, 'invalid_json', '请求体不是合法 JSON');
   }

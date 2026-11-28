@@ -34,7 +34,9 @@ function mac(payload: string): string {
 }
 
 function matches(provided: string, expected: string): boolean {
-  if (provided.length !== expected.length) return false;
+  // 比的是 utf8 字节：非 ASCII 令牌字符数能对上、字节数对不上，timingSafeEqual 会抛，
+  // 无效令牌就变成了 500。先按 base64url 字符集挡一道。
+  if (provided.length !== expected.length || !/^[A-Za-z0-9_-]+$/.test(provided)) return false;
   return timingSafeEqual(Buffer.from(provided, 'utf8'), Buffer.from(expected, 'utf8'));
 }
 
